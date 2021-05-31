@@ -171,9 +171,12 @@ final class ChatMessageBubbleView_Tests: XCTestCase {
         // Create a bubble without a content
         let bubble = ChatMessageBubbleView()
         bubble.content = nil
+        
+        // Simulate `updateContent` call
+        bubble.updateContent()
 
         // Assert all corners are rounded
-        XCTAssertEqual(bubble.bubbleRoundedCorners, .all)
+        XCTAssertEqual(bubble.layer.maskedCorners, .all)
     }
 
     func test_bubbleRoundedCorners_whenContinuousBubble_returnsAll() {
@@ -185,9 +188,12 @@ final class ChatMessageBubbleView_Tests: XCTestCase {
             message: .mock(id: .unique, text: .unique, author: .mock(id: .unique)),
             layoutOptions: [.continuousBubble, .flipped]
         )
+        
+        // Simulate `updateContent` call
+        bubble.updateContent()
 
         // Assert all corners are rounded
-        XCTAssertEqual(bubble.bubbleRoundedCorners, .all)
+        XCTAssertEqual(bubble.layer.maskedCorners, .all)
     }
 
     func test_bubbleRoundedCorners_whenNotContinuousBubbleButFlipped_roundsBottomRightCorner() {
@@ -199,9 +205,12 @@ final class ChatMessageBubbleView_Tests: XCTestCase {
             message: .mock(id: .unique, text: .unique, author: .mock(id: .unique)),
             layoutOptions: [.flipped]
         )
+        
+        // Simulate `updateContent` call
+        bubble.updateContent()
 
         // Assert all corners are rounded but bottom right
-        XCTAssertEqual(bubble.bubbleRoundedCorners, CACornerMask.all.subtracting(.layerMaxXMaxYCorner))
+        XCTAssertEqual(bubble.layer.maskedCorners, CACornerMask.all.subtracting(.layerMaxXMaxYCorner))
     }
 
     func test_bubbleRoundedCorners_whenNorContinuousBubbleNorFlipped_roundsBottomLeftCorner() {
@@ -213,20 +222,28 @@ final class ChatMessageBubbleView_Tests: XCTestCase {
             message: .mock(id: .unique, text: .unique, author: .mock(id: .unique)),
             layoutOptions: []
         )
+        
+        // Simulate `updateContent` call
+        bubble.updateContent()
 
         // Assert all corners are rounded but bottom left
-        XCTAssertEqual(bubble.bubbleRoundedCorners, CACornerMask.all.subtracting(.layerMinXMaxYCorner))
+        XCTAssertEqual(bubble.layer.maskedCorners, CACornerMask.all.subtracting(.layerMinXMaxYCorner))
     }
 
     // MARK: - Background
 
     func test_bubbleBackgroundColor_whenContentIsNil_returnsClear() {
-        // Create a bubble without a content
+        // Create a bubble
         let bubble = ChatMessageBubbleView()
+        
+        // Reset the content
         bubble.content = nil
+        
+        // Simulate `updateContent` call
+        bubble.updateContent()
 
         // Assert `.clear` color is returned
-        XCTAssertEqual(bubble.bubbleBackgroundColor, .clear)
+        XCTAssertEqual(bubble.backgroundColor, .clear)
     }
 
     func test_bubbleBackgroundColor_whenEphemeralMessage_returnsPopoverBackground() {
@@ -243,9 +260,12 @@ final class ChatMessageBubbleView_Tests: XCTestCase {
             ),
             layoutOptions: []
         )
+        
+        // Simulate `updateContent` call
+        bubble.updateContent()
 
         // Assert correct color is returned
-        XCTAssertEqual(bubble.bubbleBackgroundColor, bubble.appearance.colorPalette.popoverBackground)
+        XCTAssertEqual(bubble.backgroundColor, bubble.appearance.colorPalette.popoverBackground)
     }
 
     func test_bubbleBackgroundColor_whenMessageIsSentByCurrentUser_returnsBackground6() {
@@ -262,9 +282,12 @@ final class ChatMessageBubbleView_Tests: XCTestCase {
             ),
             layoutOptions: []
         )
+        
+        // Simulate `updateContent` call
+        bubble.updateContent()
 
         // Assert correct color is returned
-        XCTAssertEqual(bubble.bubbleBackgroundColor, bubble.appearance.colorPalette.background6)
+        XCTAssertEqual(bubble.backgroundColor, bubble.appearance.colorPalette.background6)
     }
 
     func test_bubbleBackgroundColor_whenMessageIsSentNotByCurrentUser_returnsPopoverBackground() {
@@ -281,9 +304,12 @@ final class ChatMessageBubbleView_Tests: XCTestCase {
             ),
             layoutOptions: []
         )
+        
+        // Simulate `updateContent` call
+        bubble.updateContent()
 
         // Assert correct color is returned
-        XCTAssertEqual(bubble.bubbleBackgroundColor, bubble.appearance.colorPalette.popoverBackground)
+        XCTAssertEqual(bubble.backgroundColor, bubble.appearance.colorPalette.popoverBackground)
     }
 }
 

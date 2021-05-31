@@ -28,34 +28,6 @@ open class _ChatMessageBubbleView<ExtraData: ExtraDataTypes>: _View, AppearanceP
         didSet { updateContentIfNeeded() }
     }
 
-    /// Returns a corner mask based on the `content`. The value is applied in `updateContent`.
-    open var bubbleRoundedCorners: CACornerMask {
-        guard let layout = content?.layoutOptions else { return .all }
-
-        if layout.contains(.continuousBubble) {
-            return .all
-        } else if layout.contains(.flipped) {
-            return CACornerMask.all.subtracting(.layerMaxXMaxYCorner)
-        } else {
-            return CACornerMask.all.subtracting(.layerMinXMaxYCorner)
-        }
-    }
-
-    /// Returns a background color based on the `content`. The value is applied in `updateContent`.
-    open var bubbleBackgroundColor: UIColor {
-        guard let message = content?.message else { return .clear }
-
-        if message.isSentByCurrentUser {
-            if message.type == .ephemeral {
-                return appearance.colorPalette.background8
-            } else {
-                return appearance.colorPalette.background6
-            }
-        } else {
-            return appearance.colorPalette.background8
-        }
-    }
-
     override open func setUpAppearance() {
         super.setUpAppearance()
 
@@ -66,8 +38,31 @@ open class _ChatMessageBubbleView<ExtraData: ExtraDataTypes>: _View, AppearanceP
 
     override open func updateContent() {
         super.updateContent()
+        
+        layer.maskedCorners = {
+            guard let layout = content?.layoutOptions else { return .all }
+            
+            if layout.contains(.continuousBubble) {
+                return .all
+            } else if layout.contains(.flipped) {
+                return CACornerMask.all.subtracting(.layerMaxXMaxYCorner)
+            } else {
+                return CACornerMask.all.subtracting(.layerMinXMaxYCorner)
+            }
+        }()
+        
+        backgroundColor = {
+            guard let message = content?.message else { return .clear }
 
-        layer.maskedCorners = bubbleRoundedCorners
-        backgroundColor = bubbleBackgroundColor
+            if message.isSentByCurrentUser {
+                if message.type == .ephemeral {
+                    return appearance.colorPalette.background8
+                } else {
+                    return appearance.colorPalette.background6
+                }
+            } else {
+                return appearance.colorPalette.background8
+            }
+        }()
     }
 }
