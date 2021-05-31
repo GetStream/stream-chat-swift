@@ -1,0 +1,19 @@
+{
+   "type":"typing.stop",
+   "cid":"messaging:default-channel-5",
+   "channel_id":"default-channel-5",
+   "channel_type":"messaging",
+   "user":{
+      "id":"han_solo",
+      "role":"user",
+      "created_at":"2020-12-07T11:37:34.230369Z",
+      "updated_at":"2021-04-15T11:58:11.078864Z",
+      "last_active":"2021-05-28T17:56:50.174964411Z",
+      "banned":false,
+      "online":true,
+      "image":"https://vignette.wikia.nocookie.net/starwars/images/e/e2/TFAHanSolo.png",
+      "name":"Han Solo"
+   },
+   "parent_id":"27DF5474-B283-4174-95EA-640B0AE3D888",
+   "created_at":"2021-05-28T17:57:02.132607158Z"
+}
