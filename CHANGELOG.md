@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+### ✅ Added
+- Add `areTypingEventsEnabled`, `areReactionsEnabled`, `areRepliesEnabled`, `areReadEventsEnabled`, `areUploadsEnabled` to `ChatChannelListController` [#1085](https://github.com/GetStream/stream-chat-swift/pull/1085)
+
 ### 🐞 Fixed
 - Fix background color of message list in dark mode [#1109](https://github.com/GetStream/stream-chat-swift/pull/1109)
 - Fix inconsistent dismissal of popup actions [#1109](https://github.com/GetStream/stream-chat-swift/pull/1109)
