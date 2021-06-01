@@ -8,7 +8,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### 🐞 Fixed
 - Fix background color of message list in dark mode [#1109](https://github.com/GetStream/stream-chat-swift/pull/1109)
 - Fix inconsistent dismissal of popup actions [#1109](https://github.com/GetStream/stream-chat-swift/pull/1109)
-- Fix `ErrorPayload` access control for client-side handling [#1134](https://github.com/GetStream/stream-chat-swift/pull/1134)
+
+### 🔄 Changed
+- Update `ErrorPayload` access control to expose for client-side handling [#1134](https://github.com/GetStream/stream-chat-swift/pull/1134)
 
 # [4.0-beta.1](https://github.com/GetStream/stream-chat-swift/releases/tag/4.0-beta.1)
 _May 21, 2021_
