@@ -70,6 +70,9 @@ public struct _Components<ExtraData: ExtraDataTypes> {
     
     /// The view that shows a loading indicator.
     public var loadingIndicator: ChatLoadingIndicator.Type = ChatLoadingIndicator.self
+    
+    /// Object with set of function for handling images from CDN
+    public var imageCDN: ImageCDN = StreamImageCDN()
 
     // MARK: - Message list components
 
@@ -99,6 +102,9 @@ public struct _Components<ExtraData: ExtraDataTypes> {
 
     /// The view used to display content of the message, i.e. in the channel detail message list.
     public var messageContentView: _ChatMessageContentView<ExtraData>.Type = _ChatMessageContentView<ExtraData>.self
+
+    /// The view used to display a bubble around a message.
+    public var messageBubbleView: _ChatMessageBubbleView<ExtraData>.Type = _ChatMessageBubbleView<ExtraData>.self
 
     /// The injector used to inject gallery attachment views.
     public var galleryAttachmentInjector: _AttachmentViewInjector<ExtraData>.Type = _GalleryAttachmentViewInjector<ExtraData>.self
@@ -210,7 +216,7 @@ public struct _Components<ExtraData: ExtraDataTypes> {
     public var messageComposerFileAttachmentView: FileAttachmentView.Type = FileAttachmentView.self
 
     /// A view that displays the image attachment.
-    public var messageComposerImageAttachmentView: ImageAttachmentView.Type = ImageAttachmentView.self
+    public var messageComposerImageAttachmentView: _ImageAttachmentView<ExtraData>.Type = _ImageAttachmentView<ExtraData>.self
 
     /// A view controller that shows suggestions of commands or mentions.
     public var suggestionsVC: _ChatSuggestionsViewController<ExtraData>.Type =

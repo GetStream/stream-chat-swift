@@ -433,6 +433,25 @@ public class _ChatChannelController<ExtraData: ExtraDataTypes>: DataController, 
     }
 }
 
+// MARK: - Channel features
+
+public extension _ChatChannelController {
+    /// `true` if the channel has typing events enabled. Defaults to `false` if the channel doesn't exist yet.
+    var areTypingEventsEnabled: Bool { channel?.config.typingEventsEnabled == true }
+    
+    /// `true` if the channel has reactions enabled. Defaults to `false` if the channel doesn't exist yet.
+    var areReactionsEnabled: Bool { channel?.config.reactionsEnabled == true }
+    
+    /// `true` if the channel has replies enabled. Defaults to `false` if the channel doesn't exist yet.
+    var areRepliesEnabled: Bool { channel?.config.repliesEnabled == true }
+    
+    /// `true` if the channel has read events enabled. Defaults to `false` if the channel doesn't exist yet.
+    var areReadEventsEnabled: Bool { channel?.config.readEventsEnabled == true }
+    
+    /// `true` if the channel supports uploading files/images. Defaults to `false` if the channel doesn't exist yet.
+    var areUploadsEnabled: Bool { channel?.config.uploadsEnabled == true }
+}
+
 // MARK: - Channel actions
 
 public extension _ChatChannelController {
@@ -659,7 +678,7 @@ public extension _ChatChannelController {
             self.callback { completion?(error) }
         })
     }
-    
+     
     /// Sends the start typing event and schedule a timer to send the stop typing event.
     ///
     /// This method is meant to be called every time the user presses a key. The method will manage requests and timer as needed.
@@ -667,6 +686,14 @@ public extension _ChatChannelController {
     /// - Parameter completion: a completion block with an error if the request was failed.
     ///
     func sendKeystrokeEvent(completion: ((Error?) -> Void)? = nil) {
+        /// Ignore if typing events are not enabled
+        guard areTypingEventsEnabled else {
+            callback {
+                completion?(nil)
+            }
+            return
+        }
+
         /// Perform action only if channel is already created on backend side and have a valid `cid`.
         guard let cid = cid, isChannelAlreadyCreated else {
             channelModificationFailed { completion?($0) }
@@ -685,6 +712,12 @@ public extension _ChatChannelController {
     /// - Parameter completion: a completion block with an error if the request was failed.
     ///
     func sendStartTypingEvent(completion: ((Error?) -> Void)? = nil) {
+        /// Ignore if typing events are not enabled
+        guard areTypingEventsEnabled else {
+            channelFeatureDisabled(feature: "typing events", completion: completion)
+            return
+        }
+
         /// Perform action only if channel is already created on backend side and have a valid `cid`.
         guard let cid = cid, isChannelAlreadyCreated else {
             channelModificationFailed { completion?($0) }
@@ -703,6 +736,12 @@ public extension _ChatChannelController {
     /// - Parameter completion: a completion block with an error if the request was failed.
     ///
     func sendStopTypingEvent(completion: ((Error?) -> Void)? = nil) {
+        /// Ignore if typing events are not enabled
+        guard areTypingEventsEnabled else {
+            channelFeatureDisabled(feature: "typing events", completion: completion)
+            return
+        }
+
         /// Perform action only if channel is already created on backend side and have a valid `cid`.
         guard let cid = cid, isChannelAlreadyCreated else {
             channelModificationFailed { completion?($0) }
@@ -758,6 +797,16 @@ public extension _ChatChannelController {
             self.callback {
                 completion?(result)
             }
+        }
+    }
+
+    /// A convenience method that invokes the completion? with a ChannelFeatureDisabled error
+    /// ie. VCs should use the `are{FEATURE_NAME}Enabled` props (ie. `areReadEventsEnabled`) before using any feature
+    private func channelFeatureDisabled(feature: String, completion: ((Error?) -> Void)?) {
+        let error = ClientError.ChannelFeatureDisabled("Channel feature: \(feature) is disabled for this channel.")
+        log.error(error.localizedDescription)
+        callback {
+            completion?(error)
         }
     }
 
@@ -824,6 +873,20 @@ public extension _ChatChannelController {
             channelModificationFailed(completion)
             return
         }
+
+        /// Read events are not enabled for this channel
+        guard areReadEventsEnabled else {
+            channelFeatureDisabled(feature: "read events", completion: completion)
+            return
+        }
+        
+        if channel?.isUnread != true {
+            callback {
+                completion?(nil)
+            }
+            return
+        }
+
         updater.markRead(cid: cid) { error in
             self.callback {
                 completion?(error)
@@ -1257,4 +1320,8 @@ extension ClientError {
             "You can't specify a value outside the range 1-120 for cooldown duration."
         }
     }
+}
+
+extension ClientError {
+    class ChannelFeatureDisabled: ClientError {}
 }

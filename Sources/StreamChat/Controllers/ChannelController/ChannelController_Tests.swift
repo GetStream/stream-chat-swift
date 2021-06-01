@@ -143,6 +143,96 @@ class ChannelController_Tests: StressTestCase {
         XCTAssertEqual(Set(controller.messages.map(\.id)), Set(payload.messages.map(\.id)))
     }
 
+    // MARK: - Channel config feature tests
+       
+    func test_readFeatures_onNilChannel_returnsFalse() {
+        XCTAssertFalse(controller.areReactionsEnabled)
+        XCTAssertFalse(controller.areRepliesEnabled)
+        XCTAssertFalse(controller.areUploadsEnabled)
+        XCTAssertFalse(controller.areTypingEventsEnabled)
+        XCTAssertFalse(controller.areReadEventsEnabled)
+    }
+
+    func test_readAreReadEventsEnabled_whenTrue_returnsTrue() throws {
+        let payload = dummyPayload(with: channelId, channelConfig: ChannelConfig(readEventsEnabled: true))
+        try client.databaseContainer.writeSynchronously { session in
+            try session.saveChannel(payload: payload)
+        }
+        XCTAssertTrue(controller.areReadEventsEnabled)
+    }
+    
+    func test_readAreReadEventsEnabled_whenFalse_returnsFalse() throws {
+        let payload = dummyPayload(with: channelId, channelConfig: ChannelConfig(readEventsEnabled: false))
+        try client.databaseContainer.writeSynchronously { session in
+            try session.saveChannel(payload: payload)
+        }
+        XCTAssertFalse(controller.areReadEventsEnabled)
+    }
+    
+    func test_readAreTypingEventsEnabled_whenTrue_returnsTrue() throws {
+        let payload = dummyPayload(with: channelId, channelConfig: ChannelConfig(typingEventsEnabled: true))
+        try client.databaseContainer.writeSynchronously { session in
+            try session.saveChannel(payload: payload)
+        }
+        XCTAssertTrue(controller.areTypingEventsEnabled)
+    }
+    
+    func test_readAreTypingEventsEnabled_whenFalse_returnsFalse() throws {
+        let payload = dummyPayload(with: channelId, channelConfig: ChannelConfig(typingEventsEnabled: false))
+        try client.databaseContainer.writeSynchronously { session in
+            try session.saveChannel(payload: payload)
+        }
+        XCTAssertFalse(controller.areTypingEventsEnabled)
+    }
+    
+    func test_readAreReactionsEnabled_whenTrue_returnsTrue() throws {
+        let payload = dummyPayload(with: channelId, channelConfig: ChannelConfig(reactionsEnabled: true))
+        try client.databaseContainer.writeSynchronously { session in
+            try session.saveChannel(payload: payload)
+        }
+        XCTAssertTrue(controller.areReactionsEnabled)
+    }
+    
+    func test_readAreReactionsEnabled_whenFalse_returnsFalse() throws {
+        let payload = dummyPayload(with: channelId, channelConfig: ChannelConfig(reactionsEnabled: false))
+        try client.databaseContainer.writeSynchronously { session in
+            try session.saveChannel(payload: payload)
+        }
+        XCTAssertFalse(controller.areReactionsEnabled)
+    }
+    
+    func test_readAreRepliesEnabled_whenTrue_returnsTrue() throws {
+        let payload = dummyPayload(with: channelId, channelConfig: ChannelConfig(repliesEnabled: true))
+        try client.databaseContainer.writeSynchronously { session in
+            try session.saveChannel(payload: payload)
+        }
+        XCTAssertTrue(controller.areRepliesEnabled)
+    }
+    
+    func test_readAreRepliesEnabled_whenFalse_returnsFalse() throws {
+        let payload = dummyPayload(with: channelId, channelConfig: ChannelConfig(repliesEnabled: false))
+        try client.databaseContainer.writeSynchronously { session in
+            try session.saveChannel(payload: payload)
+        }
+        XCTAssertFalse(controller.areRepliesEnabled)
+    }
+    
+    func test_readAreUploadsEnabled_whenTrue_returnsTrue() throws {
+        let payload = dummyPayload(with: channelId, channelConfig: ChannelConfig(uploadsEnabled: true))
+        try client.databaseContainer.writeSynchronously { session in
+            try session.saveChannel(payload: payload)
+        }
+        XCTAssertTrue(controller.areUploadsEnabled)
+    }
+    
+    func test_readAreUploadsEnabled_whenFalse_returnsFalse() throws {
+        let payload = dummyPayload(with: channelId, channelConfig: ChannelConfig(uploadsEnabled: false))
+        try client.databaseContainer.writeSynchronously { session in
+            try session.saveChannel(payload: payload)
+        }
+        XCTAssertFalse(controller.areUploadsEnabled)
+    }
+    
     // MARK: - Synchronize tests
     
     func test_synchronize_changesControllerState() {
@@ -1977,7 +2067,12 @@ class ChannelController_Tests: StressTestCase {
     
     // MARK: - Keystroke
     
-    func test_keystroke() {
+    func test_keystroke() throws {
+        let payload = dummyPayload(with: channelId, channelConfig: ChannelConfig(typingEventsEnabled: true))
+        try client.databaseContainer.writeSynchronously { session in
+            try session.saveChannel(payload: payload)
+        }
+
         controller.sendKeystrokeEvent {
             XCTAssertNil($0)
         }
@@ -2008,7 +2103,12 @@ class ChannelController_Tests: StressTestCase {
         AssertAsync.canBeReleased(&weakController)
     }
     
-    func test_startTyping() {
+    func test_startTyping() throws {
+        let payload = dummyPayload(with: channelId, channelConfig: ChannelConfig(typingEventsEnabled: true))
+        try client.databaseContainer.writeSynchronously { session in
+            try session.saveChannel(payload: payload)
+        }
+
         controller.sendStartTypingEvent {
             XCTAssertNil($0)
         }
@@ -2039,7 +2139,12 @@ class ChannelController_Tests: StressTestCase {
         AssertAsync.canBeReleased(&weakController)
     }
     
-    func test_stopTyping() {
+    func test_stopTyping() throws {
+        let payload = dummyPayload(with: channelId, channelConfig: ChannelConfig(typingEventsEnabled: true))
+        try client.databaseContainer.writeSynchronously { session in
+            try session.saveChannel(payload: payload)
+        }
+
         controller.sendStopTypingEvent {
             XCTAssertNil($0)
         }
@@ -2068,6 +2173,77 @@ class ChannelController_Tests: StressTestCase {
         AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
         // `weakController` should be deallocated too
         AssertAsync.canBeReleased(&weakController)
+    }
+    
+    func test_sendKeystrokeEvent_whenTypingEventsAreDisabled_doesNothing() throws {
+        let payload = dummyPayload(with: channelId, channelConfig: ChannelConfig(typingEventsEnabled: false))
+        try client.databaseContainer.writeSynchronously { session in
+            try session.saveChannel(payload: payload)
+        }
+
+        var completionCalled = false
+
+        let error: Error? = try waitFor { completion in
+            controller.sendKeystrokeEvent {
+                completionCalled = true
+                completion($0)
+            }
+        }
+        
+        XCTAssertTrue(completionCalled)
+        XCTAssertNil(error)
+    }
+    
+    func test_sendStartTypingEvent_whenTypingEventsAreDisabled_errors() throws {
+        let payload = dummyPayload(with: channelId, channelConfig: ChannelConfig(typingEventsEnabled: false))
+        try client.databaseContainer.writeSynchronously { session in
+            try session.saveChannel(payload: payload)
+        }
+
+        var completionCalled = false
+
+        let error: Error? = try waitFor { completion in
+            controller.sendStartTypingEvent {
+                completionCalled = true
+                completion($0)
+            }
+        }
+        
+        XCTAssertTrue(completionCalled)
+        XCTAssertNotNil(error)
+        
+        guard let channelFeatureError = error as? ClientError.ChannelFeatureDisabled else {
+            XCTFail()
+            return
+        }
+        
+        XCTAssertEqual(channelFeatureError.localizedDescription, "Channel feature: typing events is disabled for this channel.")
+    }
+    
+    func test_sendStopTypingEvent_whenTypingEventsAreDisabled_errors() throws {
+        let payload = dummyPayload(with: channelId, channelConfig: ChannelConfig(typingEventsEnabled: false))
+        try client.databaseContainer.writeSynchronously { session in
+            try session.saveChannel(payload: payload)
+        }
+
+        var completionCalled = false
+
+        let error: Error? = try waitFor { completion in
+            controller.sendStopTypingEvent {
+                completionCalled = true
+                completion($0)
+            }
+        }
+        
+        XCTAssertTrue(completionCalled)
+        XCTAssertNotNil(error)
+        
+        guard let channelFeatureError = error as? ClientError.ChannelFeatureDisabled else {
+            XCTFail()
+            return
+        }
+        
+        XCTAssertEqual(channelFeatureError.localizedDescription, "Channel feature: typing events is disabled for this channel.")
     }
     
     // MARK: - Message sending
@@ -2327,7 +2503,41 @@ class ChannelController_Tests: StressTestCase {
     }
     
     // MARK: - Mark read
+
+    func test_markRead_whenReadEventsAreDisabled_errors() throws {
+        let payload = dummyPayload(with: channelId, channelConfig: ChannelConfig(readEventsEnabled: false))
+        try client.databaseContainer.writeSynchronously { session in
+            try session.saveChannel(payload: payload)
+        }
+
+        let error: Error? = try waitFor { completion in
+            controller.markRead { error in
+                completion(error)
+            }
+        }
+        
+        guard let channelFeatureError = error as? ClientError.ChannelFeatureDisabled else {
+            XCTFail()
+            return
+        }
+        
+        XCTAssertEqual(channelFeatureError.localizedDescription, "Channel feature: read events is disabled for this channel.")
+    }
     
+    func test_markRead_whenTheChannelIsRead_doesNothing() throws {
+        try client.databaseContainer.writeSynchronously { session in
+            try session.saveChannel(payload: self.dummyPayload(with: self.channelId))
+        }
+
+        let error: Error? = try waitFor { completion in
+            controller.markRead { error in
+                completion(error)
+            }
+        }
+        
+        XCTAssertNil(error)
+    }
+
     func test_markRead_failsForNewChannels() throws {
         //  Create `ChannelController` for new channel
         let query = _ChannelQuery(channelPayload: .unique)
@@ -2341,8 +2551,11 @@ class ChannelController_Tests: StressTestCase {
             }
         }
         XCTAssert(error is ClientError.ChannelNotCreatedYet)
-        
+
         // Simulate successful backend channel creation
+        try client.databaseContainer.writeSynchronously { session in
+            try session.saveChannel(payload: self.dummyPayload(with: query.cid!))
+        }
         env.channelUpdater!.update_channelCreatedCallback?(query.cid!)
         
         // Simulate `markRead` call and assert no error is returned
@@ -2357,9 +2570,22 @@ class ChannelController_Tests: StressTestCase {
         XCTAssertNil(error)
     }
     
-    func test_markRead_callsChannelUpdater() {
+    func test_markRead_callsChannelUpdater() throws {
+        // setup data for this test
+        let payload = dummyPayload(with: channelId)
+        let dummyUserPayload: CurrentUserPayload<NoExtraData> = .dummy(userId: payload.channelReads.first!.user.id, role: .user)
+
+        // Save two channels to DB (only one matching the query) and wait for completion
+        try client.databaseContainer.writeSynchronously { session in
+            try session.saveCurrentUser(payload: dummyUserPayload)
+
+            // Channel with the id matching the query
+            try session.saveChannel(payload: payload)
+        }
+ 
         // Simulate `markRead` call and catch the completion
         var completionCalled = false
+
         controller.markRead { [callbackQueueID] error in
             AssertTestQueue(withId: callbackQueueID)
             XCTAssertNil(error)
@@ -2388,7 +2614,15 @@ class ChannelController_Tests: StressTestCase {
         AssertAsync.canBeReleased(&weakController)
     }
     
-    func test_markRead_propagatesErrorFromUpdater() {
+    func test_markRead_propagatesErrorFromUpdater() throws {
+        let payload = dummyPayload(with: channelId)
+        let dummyUserPayload: CurrentUserPayload<NoExtraData> = .dummy(userId: payload.channelReads.first!.user.id, role: .user)
+        
+        try client.databaseContainer.writeSynchronously { session in
+            try session.saveCurrentUser(payload: dummyUserPayload)
+            try session.saveChannel(payload: payload)
+        }
+
         // Simulate `markRead` call and catch the completion
         var completionCalledError: Error?
         controller.markRead { [callbackQueueID] in

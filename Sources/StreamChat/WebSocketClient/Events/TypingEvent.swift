@@ -8,7 +8,9 @@ public struct TypingEvent: UserSpecificEvent, ChannelSpecificEvent {
     public let isTyping: Bool
     public let cid: ChannelId
     public let userId: UserId
-    
+    public let parentId: MessageId?
+    public let isThread: Bool
+
     let payload: Any
     
     init<ExtraData: ExtraDataTypes>(from response: EventPayload<ExtraData>) throws {
@@ -16,6 +18,8 @@ public struct TypingEvent: UserSpecificEvent, ChannelSpecificEvent {
         userId = try response.value(at: \.user?.id)
         isTyping = response.eventType == .userStartTyping
         payload = response
+        parentId = try? response.value(at: \.parentId)
+        isThread = parentId != nil
     }
 }
 

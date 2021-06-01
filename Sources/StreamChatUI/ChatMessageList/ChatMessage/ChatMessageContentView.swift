@@ -64,7 +64,7 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, ThemeProvi
 
     /// Shows the bubble around message content.
     /// Exists if `layout(options: MessageLayoutOptions)` was invoked with the options containing `.bubble`.
-    public private(set) var bubbleView: ChatMessageBubbleView?
+    public private(set) var bubbleView: _ChatMessageBubbleView<ExtraData>?
 
     /// Shows message author avatar.
     /// Exists if `layout(options: MessageLayoutOptions)` was invoked with the options containing `.author`.
@@ -235,12 +235,7 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, ThemeProvi
             bubbleView.embed(bubbleContentContainer)
 
             if options.contains(.continuousBubble) {
-                bubbleView.roundedCorners = .all
                 mainContainer.layoutMargins.bottom = 0
-            } else if options.contains(.flipped) {
-                bubbleView.roundedCorners = CACornerMask.all.subtracting(.layerMaxXMaxYCorner)
-            } else {
-                bubbleView.roundedCorners = CACornerMask.all.subtracting(.layerMinXMaxYCorner)
             }
 
             bubbleThreadMetaContainer.addArrangedSubview(bubbleView)
@@ -367,18 +362,44 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, ThemeProvi
         // Avatar
         let placeholder = appearance.images.userAvatarPlaceholder1
         if let imageURL = content?.author.imageURL {
-            authorAvatarView?.imageView.loadImage(from: imageURL, placeholder: placeholder)
+            authorAvatarView?.imageView.loadImage(
+                from: imageURL,
+                placeholder: placeholder,
+                preferredSize: .avatarThumbnailSize,
+                components: components
+            )
         } else {
             authorAvatarView?.imageView.image = placeholder
         }
 
         // Bubble view
-        if content?.type == .ephemeral {
-            bubbleView?.backgroundColor = appearance.colorPalette.popoverBackground
-        } else {
-            bubbleView?.backgroundColor = content?.isSentByCurrentUser == true ?
-                appearance.colorPalette.background6 :
-                appearance.colorPalette.popoverBackground
+        bubbleView?.content = content.map { message in
+            var backgroundColor: UIColor {
+                if message.isSentByCurrentUser {
+                    if message.type == .ephemeral {
+                        return appearance.colorPalette.background8
+                    } else {
+                        return appearance.colorPalette.background6
+                    }
+                } else {
+                    return appearance.colorPalette.background8
+                }
+            }
+            
+            var roundedCorners: CACornerMask {
+                if layoutOptions?.contains(.continuousBubble) == true {
+                    return .all
+                } else if layoutOptions?.contains(.flipped) == true {
+                    return CACornerMask.all.subtracting(.layerMaxXMaxYCorner)
+                } else {
+                    return CACornerMask.all.subtracting(.layerMinXMaxYCorner)
+                }
+            }
+            
+            return .init(
+                backgroundColor: backgroundColor,
+                roundedCorners: roundedCorners
+            )
         }
 
         // Metadata
@@ -395,7 +416,7 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, ThemeProvi
 
         // Quoted message view
         quotedMessageView?.content = content?.quotedMessage.map {
-            .init(message: $0, avatarAlignment: $0.isSentByCurrentUser ? .right : .left)
+            .init(message: $0, avatarAlignment: $0.isSentByCurrentUser ? .trailing : .leading)
         }
 
         // Thread info
@@ -408,7 +429,9 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, ThemeProvi
         let latestReplyAuthorAvatar = content?.latestReplies.first?.author.imageURL
         threadAvatarView?.imageView.loadImage(
             from: latestReplyAuthorAvatar,
-            placeholder: appearance.images.userAvatarPlaceholder4
+            placeholder: appearance.images.userAvatarPlaceholder4,
+            preferredSize: .avatarThumbnailSize,
+            components: components
         )
 
         // Reactions view
@@ -526,9 +549,12 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, ThemeProvi
 
     /// Instantiates, configures and assigns `bubbleView` when called for the first time.
     /// - Returns: The `bubbleView` subview.
-    open func createBubbleView() -> ChatMessageBubbleView {
+    open func createBubbleView() -> _ChatMessageBubbleView<ExtraData> {
         if bubbleView == nil {
-            bubbleView = ChatMessageBubbleView().withoutAutoresizingMaskConstraints
+            bubbleView = components
+                .messageBubbleView
+                .init()
+                .withoutAutoresizingMaskConstraints
         }
         return bubbleView!
     }

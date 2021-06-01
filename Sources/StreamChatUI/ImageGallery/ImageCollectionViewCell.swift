@@ -5,8 +5,10 @@
 import StreamChat
 import UIKit
 
+public typealias ImageCollectionViewCell = _ImageCollectionViewCell<NoExtraData>
+
 /// `UICollectionViewCell` for a single image.
-open class ImageCollectionViewCell: _CollectionViewCell, UIScrollViewDelegate {
+open class _ImageCollectionViewCell<ExtraData: ExtraDataTypes>: _CollectionViewCell, UIScrollViewDelegate, ComponentsProvider {
     /// Reuse identifier of this cell.
     open class var reuseId: String { String(describing: self) }
     
@@ -67,7 +69,11 @@ open class ImageCollectionViewCell: _CollectionViewCell, UIScrollViewDelegate {
     override open func updateContent() {
         super.updateContent()
 
-        imageView.loadImage(from: content.payload.imageURL, resizeAutomatically: false)
+        imageView.loadImage(
+            from: content.payload.imageURL,
+            resize: false,
+            components: components
+        )
     }
     
     open func viewForZooming(in scrollView: UIScrollView) -> UIView? {
