@@ -2,6 +2,26 @@
 title: Working with Channel List
 ---
 
+## Displaying the list of Channels
+
+Displaying the list of channels consists of creating the controller for the list you want to display, passing this controller to a `ChatChannelListVC` instance, and displaying the view controller. To demonstrate:
+
+<img align="right" src={require("../assets/channel-list.png").default} width="40%" />
+
+```swift
+// Create the query for the channel list we desire
+let query = ChannelListQuery(filter: .containMembers(userIds: [client.currentUserId!]))
+// Create the ChannelListController for the query
+let controller = chatClient.channelListController(query: query)
+// Create the ChatChannelListVC instance
+let channelListVC = ChatChannelListVC()
+// Pass the controller to the VC
+channelListVC.controller = controller
+// Display the VC
+present(channelListVC, animated: true)
+```
+It's that easy. `ChatChannelListVC` internally handles all parameters, sorting, pagination and updating the list in itself. The rest of this guide will explain how to work with controller, for a guide on `ChatChannelListVC`, please refer to [ChatChannelListVC Component Overview](404)
+
 ## Understanding `ChannelListQuery`
 
 The `ChannelListQuery` is the structure used for specifiying the query parameters for fetching the list of channels from Stream backend.
@@ -55,26 +75,6 @@ Page size is used to specify how many channels the initial page will show. You c
 
 `messagesLimit` is used to specify how many messages the initial fetch will return.
 
-## Displaying the list of Channels
-
-Displaying the list of channels consists of creating the controller for the list you want to display, passing this controller to a `ChatChannelListVC` instance, and displaying the view controller. To demonstrate:
-
-<img align="right" src="..../assets/channel-list.png" width="20%" />
-
-```swift
-// Create the query for the channel list we desire
-let query = ChannelListQuery(filter: .containMembers(userIds: [client.currentUserId!]))
-// Create the ChannelListController for the query
-let controller = chatClient.channelListController(query: query)
-// Create the ChatChannelListVC instance
-let channelListVC = ChatChannelListVC()
-// Pass the controller to the VC
-channelListVC.controller = controller
-// Display the VC
-present(channelListVC, animated: true)
-```
-It's that easy. `ChatChannelListVC` internally handles all parameters, sorting, pagination and updating the list in itself. The rest of this guide will explain how to work with controller, for a guide on `ChatChannelListVC`, please refer to [ChatChannelListVC Component Overview](404)
-
 ## Getting the list of Channels for a User
 
 If you'd like to have your own UI component, for access the list of channels for any other purpose, you can do so as shown here:
@@ -89,7 +89,7 @@ print(firstChannel.name)
 ```
 Accessing the `channels` property of a controller starts the initial database fetch automatically, and will return whatever data you have locally cached.
 
-### Importance of `synchronize`
+## Importance of `synchronize`
 
 As stated above, plainly accessing `channels` property will only make locally available data visible. If your client is not up-to-date with backend, or it never cached any data, you need to call `synchronize` to make local client sync with backend.
 After you call `synchronize`, your `channels` property will be updated and you'll have the latest channels.
@@ -113,11 +113,11 @@ controller.synchronize { error in
 }
 ```
 
-### Observing changes to Channel List
+## Observing changes to Channel List
 
 Accessing `channels` property of the controller is not ideal, so in many cases you'd require a way to observe changes to this property. There are 3 most common ways of doing so: UIKit Delegates, Combine publishers and SwiftUI wrappers.
 
-#### UIKit Delegates
+### UIKit Delegates
 
 `ChatChannelListController` has `ChatChannelListControllerDelegate` with `didChangeChannels` function:
 ```swift
@@ -169,7 +169,7 @@ func controller(_ controller: DataController, didChangeState state: DataControll
 ```
 You can use this delegate function to show any error states you might see. For more information, see [DataController Overview](404).
 
-#### Combine publishers
+### Combine publishers
 
 `ChannelListController` has publishers for its `channels` property so it's observable, like so:
 ```swift
@@ -202,7 +202,7 @@ class ChannelsViewController: UIViewController {
 }
 ```
 
-#### SwiftUI Wrappers
+### SwiftUI Wrappers
 
 `ChannelListController` is fully compatible with SwiftUI.
 ```swift
