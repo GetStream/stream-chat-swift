@@ -12,7 +12,7 @@ extension UIImageView {
     ///   - url: URL of the image.
     ///   - placeholder: Placeholder to show while the image is loading or in case the loading fails.
     ///   - resize: Request thumbnail if supported and resize loaded image to match the size of the image view.
-    ///   - preferredSize: Specify the thumbnail and resized image size.
+    ///   - preferredSize: Specify the thumbnail size.
     ///   - components: dependency injection for components.
     ///   - completion: Image request completion block.
     /// - Returns: Active image download task.
@@ -53,11 +53,11 @@ extension UIImageView {
             return nil
         }
 
-        let size = preferredSize ?? bounds.size
-        let preprocessors: [ImageProcessing] = resize && size != .zero
-            ? [ImageProcessors.Resize(size: size, contentMode: .aspectFill, crop: true)]
+        let preprocessors: [ImageProcessing] = resize
+            ? [ImageProcessors.LateResize(sizeProvider: { [weak self] in self?.bounds.size ?? .zero })]
             : []
-        
+  
+        let size = preferredSize ?? bounds.size
         if resize && size != .zero {
             url = components.imageCDN.thumbnailURL(originalURL: url, preferredSize: size)
         }
@@ -77,5 +77,43 @@ private extension UIImageView {
     var currentImageLoadingTask: ImageTask? {
         get { objc_getAssociatedObject(self, &Self.nukeLoadingTaskKey) as? ImageTask }
         set { objc_setAssociatedObject(self, &Self.nukeLoadingTaskKey, newValue, .OBJC_ASSOCIATION_RETAIN) }
+    }
+}
+
+extension ImageProcessors {
+    /// Scales an image to a specified size.
+    /// The getting of the size is offloaded via closure after the image is loaded.
+    /// The View has time to layout and provide non-zero size.
+    public struct LateResize: ImageProcessing {
+        private var size: CGSize {
+            var size: CGSize = .zero
+            DispatchQueue.main.sync { size = sizeProvider() }
+            return size
+        }
+
+        private let sizeProvider: () -> CGSize
+        
+        /// Initializes the processor with size providing closure.
+        /// - Parameter sizeProvider: Closure to obtain size after the image is loaded.
+        public init(sizeProvider: @escaping () -> CGSize) {
+            self.sizeProvider = sizeProvider
+        }
+
+        public func process(_ image: PlatformImage) -> PlatformImage? {
+            let size = self.size
+            guard size != .zero else { return image }
+            
+            return ImageProcessors.Resize(
+                size: size,
+                unit: .points,
+                contentMode: .aspectFill,
+                crop: true,
+                upscale: false
+            ).process(image)
+        }
+
+        public var identifier: String {
+            "com.github.kean/nuke/lateResize"
+        }
     }
 }
