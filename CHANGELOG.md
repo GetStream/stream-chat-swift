@@ -15,7 +15,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### 🔄 Changed
 - `swipeableViewWillShowActionViews(for:)` and `swipeableViewActionViews(for:)` are `open` now [#1122](https://github.com/GetStream/stream-chat-swift/issues/1122)
-- Add `preferredSize` to `UIImageView.loadImage` function to utilise ImageCDN functions [#1111](https://github.com/GetStream/stream-chat-swift/pull/1111)d
+- Add `preferredSize` to `UIImageView.loadImage` function to utilise ImageCDN functions [#1111](https://github.com/GetStream/stream-chat-swift/pull/1111)
 - Update `ErrorPayload` access control to expose for client-side handling [#1134](https://github.com/GetStream/stream-chat-swift/pull/1134)
 
 # [4.0-beta.1](https://github.com/GetStream/stream-chat-swift/releases/tag/4.0-beta.1)
