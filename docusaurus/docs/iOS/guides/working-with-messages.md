@@ -66,7 +66,7 @@ controller.createNewMessage(
 )
 ```
 
-More info on [Pinning](/stream-chat-swift/guides/pinned-messages) and [Attachments](/stream-chat-swift/guides/working-with-attachments) can be found in corresponding guides.
+More info on [Pinning](pinned-messages) and [Attachments](working-with-attachments) can be found in corresponding guides.
 
 More on [Quoted](#replying-a-message)  messages could be found in this guide below.
 
