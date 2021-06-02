@@ -22,8 +22,13 @@ public struct ChatClientConfig {
     
     /// The folder `ChatClient` uses to store its local cache files.
     public var localStorageFolderURL: URL? = {
+        #if os(macOS)
+        let urls = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)
+        return urls.first.map { $0.appendingPathComponent("io.getstream.StreamChat") }
+        #else
         let urls = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
         return urls.first
+        #endif
     }()
     
     /// The datacenter `ChatClient` uses for connecting.
