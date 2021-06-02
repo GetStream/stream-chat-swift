@@ -280,16 +280,6 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
         }
     }
     
-    /// Will scroll to most recent message on next `updateMessages` call
-    open func setNeedsScrollToMostRecentMessage(animated: Bool = true) {
-        collectionView.setNeedsScrollToMostRecentMessage(animated: animated)
-    }
-
-    /// Force scroll to most recent message check without waiting for `updateMessages`
-    open func scrollToMostRecentMessageIfNeeded() {
-        collectionView.scrollToMostRecentMessageIfNeeded()
-    }
-
     /// Scrolls to most recent message
     open func scrollToMostRecentMessage(animated: Bool = true) {
         collectionView.scrollToMostRecentMessage(animated: animated)
@@ -472,7 +462,7 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
     // MARK: - _ComposerVCDelegate
 
     open func composerDidCreateNewMessage() {
-        setNeedsScrollToMostRecentMessage()
+        scrollToMostRecentMessage()
     }
 
     // MARK: - _ChatChannelControllerDelegate

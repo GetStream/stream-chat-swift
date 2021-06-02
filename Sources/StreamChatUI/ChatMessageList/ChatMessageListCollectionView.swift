@@ -18,10 +18,7 @@ public protocol ChatMessageListCollectionViewDataSource: UICollectionViewDataSou
 /// with the provided content view type and layout options.
 open class ChatMessageListCollectionView<ExtraData: ExtraDataTypes>: UICollectionView, Customizable, ComponentsProvider {
     private var identifiers: Set<String> = .init()
-    
-    open var needsToScrollToMostRecentMessage = false
-    open var needsToScrollToMostRecentMessageAnimated = false
-    
+
     /// View used to display date of currently displayed messages
     open lazy var scrollOverlayView: ChatMessageListScrollOverlayView = {
         let scrollOverlayView = components.messageListScrollOverlayView.init()
@@ -199,11 +196,25 @@ open class ChatMessageListCollectionView<ExtraData: ExtraDataTypes>: UICollectio
                 }
             }
         } completion: { flag in
+
+            if shouldScrollToBottom {
+                self.scrollToMostRecentMessage()
+            }
+
             // If a new message was inserted, reload the previous message to give it chance to update
             // its appearance in case it's now part of a group.
-            self.reloadItems(
-                at: self.indexPathsToMessagesBeforeInsertedAfterBatchUpdate(with: changes)
-            )
+            let indexPaths = self.indexPathsToMessagesBeforeInsertedAfterBatchUpdate(with: changes)
+            if indexPaths.isEmpty == false {
+                self.reloadItems(
+                    at: indexPaths
+                )
+
+                // If the previous cell was updated, we should re-adjust the scrolling again.
+                if self.isLastCellFullyVisible {
+                    self.scrollToMostRecentMessage()
+                }
+            }
+
             completion?(flag)
         }
     }
@@ -231,23 +242,8 @@ open class ChatMessageListCollectionView<ExtraData: ExtraDataTypes>: UICollectio
         }
     }
     
-    /// Will scroll to most recent message on next `updateMessages` call
-    open func setNeedsScrollToMostRecentMessage(animated: Bool = true) {
-        needsToScrollToMostRecentMessage = true
-        needsToScrollToMostRecentMessageAnimated = animated
-    }
-
-    /// Force scroll to most recent message check without waiting for `updateMessages`
-    open func scrollToMostRecentMessageIfNeeded() {
-        guard needsToScrollToMostRecentMessage else { return }
-        
-        scrollToMostRecentMessage(animated: needsToScrollToMostRecentMessageAnimated)
-    }
-
     /// Scrolls to most recent message
     open func scrollToMostRecentMessage(animated: Bool = true) {
-        needsToScrollToMostRecentMessage = false
-
         // our collection is flipped, so (0; 0) item is most recent one
         scrollToItem(at: IndexPath(item: 0, section: 0), at: .bottom, animated: animated)
     }
@@ -269,5 +265,21 @@ open class ChatMessageListCollectionView<ExtraData: ExtraDataTypes>: UICollectio
         Animate(isAnimated: animated) { [scrollOverlayView] in
             scrollOverlayView.alpha = alpha
         }
+    }
+
+    /// A Boolean that returns true if the bottom cell is fully visible.
+    /// Which is also means that the collection view is fully scrolled to the boom.
+    open var isLastCellFullyVisible: Bool {
+        if numberOfItems(inSection: 0) == 0 { return true }
+        let lastIndexPath = IndexPath(item: 0, section: 0)
+
+        guard let attributes = collectionViewLayout.layoutAttributesForItem(at: lastIndexPath) else { return false }
+        return bounds.contains(attributes.frame)
+    }
+
+    /// A Boolean that returns true if the last cell is visible, but can be just partially visible.
+    open var isLastCellVisible: Bool {
+        let lastIndexPath = IndexPath(item: 0, section: 0)
+        return indexPathsForVisibleItems.contains(lastIndexPath)
     }
 }
