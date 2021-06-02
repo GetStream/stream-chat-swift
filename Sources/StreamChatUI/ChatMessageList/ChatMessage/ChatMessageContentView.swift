@@ -349,6 +349,16 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, ThemeProvi
         NSLayoutConstraint.activate(constraintsToActivate)
     }
 
+    // When the content is updated, we want to make sure there
+    // are no unwanted animations caused by the ContainerStackView.
+    func updateContentIfNeeded() {
+        if superview != nil {
+            UIView.performWithoutAnimation {
+                updateContent()
+            }
+        }
+    }
+
     override open func updateContent() {
         super.updateContent()
         defer {
@@ -455,10 +465,10 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, ThemeProvi
     }
 
     /// Cleans up the view so it is ready to display another message.
+    /// We don't need to reset `content` because all subviews are always updated.
     func prepareForReuse() {
         defer { attachmentViewInjector?.contentViewDidPrepareForReuse() }
 
-        content = nil
         delegate = nil
         indexPath = nil
     }
