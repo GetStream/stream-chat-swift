@@ -162,12 +162,6 @@ final class MissingEventsPublisher_Tests: StressTestCase {
 
         AssertAsync.willBeEqual(apiClient.request_allRecordedCalls.count, 1)
 
-        apiClient.test_simulateResponse(
-            Result<MissingEventsPayload<ExtraData>, Error>.failure(
-                ClientError(with: ErrorPayload(code: 0, message: "", statusCode: 400))
-            )
-        )
-
         var refetchCalled = false
         channelDatabaseCleanupUpdater.refetchExistingChannelListQueries_body = {
             refetchCalled = true
@@ -179,6 +173,12 @@ final class MissingEventsPublisher_Tests: StressTestCase {
             // Check refetch wasn't called yet
             XCTAssertFalse(refetchCalled)
         }
+        
+        apiClient.test_simulateResponse(
+            Result<MissingEventsPayload<ExtraData>, Error>.failure(
+                ClientError(with: ErrorPayload(code: 0, message: "", statusCode: 400))
+            )
+        )
 
         AssertAsync {
             Assert.willBeTrue(refetchCalled)
