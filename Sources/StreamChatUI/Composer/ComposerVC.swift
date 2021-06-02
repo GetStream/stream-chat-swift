@@ -455,9 +455,6 @@ open class _ComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
     /// - Parameter text: The text content of the message.
     open func createNewMessage(text: String) {
         guard let cid = channelController?.cid else { return }
-        defer {
-            delegate?.composerDidCreateNewMessage()
-        }
 
         if let threadParentMessageId = content.threadMessage?.id {
             let messageController = channelController?.client.messageController(
@@ -471,7 +468,9 @@ open class _ComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
                 attachments: content.attachments,
                 showReplyInChannel: composerView.checkboxControl.isSelected,
                 quotedMessageId: content.quotingMessage?.id
-            )
+            ) { _ in
+                self.delegate?.composerDidCreateNewMessage()
+            }
             return
         }
 
@@ -480,7 +479,9 @@ open class _ComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
             pinning: nil,
             attachments: content.attachments,
             quotedMessageId: content.quotingMessage?.id
-        )
+        ) { _ in
+            self.delegate?.composerDidCreateNewMessage()
+        }
     }
 
     /// Updates an existing message.
