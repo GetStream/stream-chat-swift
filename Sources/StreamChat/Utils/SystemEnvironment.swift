@@ -2,7 +2,7 @@
 // Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
-import UIKit
+import Foundation
 
 enum SystemEnvironment {
     static let systemName = UIDevice.current.systemName + UIDevice.current.systemVersion

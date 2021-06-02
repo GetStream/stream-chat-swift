@@ -2,7 +2,7 @@
 // Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
-import UIKit
+import Foundation
 
 class WebSocketClient {
     /// Additional options for configuring web socket behavior.
