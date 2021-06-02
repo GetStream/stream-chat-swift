@@ -318,7 +318,7 @@ extension URLSessionConfiguration {
     // simply compares the pointers.
     @available(iOS, deprecated: 12.0, message: "Remove this workaround when dropping iOS 12 support.")
     func isTestEqual(to otherConfiguration: URLSessionConfiguration) -> Bool {
-        identifier == otherConfiguration.identifier
+        let commonEquatability = identifier == otherConfiguration.identifier
             && requestCachePolicy == otherConfiguration.requestCachePolicy
             && timeoutIntervalForRequest == otherConfiguration.timeoutIntervalForRequest
             && timeoutIntervalForResource == otherConfiguration.timeoutIntervalForResource
@@ -333,16 +333,19 @@ extension URLSessionConfiguration {
             && urlCredentialStorage == otherConfiguration.urlCredentialStorage
             && urlCache == otherConfiguration.urlCache
             && shouldUseExtendedBackgroundIdleMode == otherConfiguration.shouldUseExtendedBackgroundIdleMode
-//            && protocolClasses == otherConfiguration.protocolClasses
+            && waitsForConnectivity == otherConfiguration.waitsForConnectivity
+            && isDiscretionary == otherConfiguration.isDiscretionary
+            && sharedContainerIdentifier == otherConfiguration.sharedContainerIdentifier
+            && waitsForConnectivity == otherConfiguration.waitsForConnectivity
+            && isDiscretionary == otherConfiguration.isDiscretionary
+            && sharedContainerIdentifier == otherConfiguration.sharedContainerIdentifier
+        
+        #if os(iOS)
+        return commonEquatability
             && multipathServiceType == otherConfiguration.multipathServiceType
-            && waitsForConnectivity == otherConfiguration.waitsForConnectivity
-            && isDiscretionary == otherConfiguration.isDiscretionary
-            && sharedContainerIdentifier == otherConfiguration.sharedContainerIdentifier
             && sessionSendsLaunchEvents == otherConfiguration.sessionSendsLaunchEvents
-//            && connectionProxyDictionary == otherConfiguration.connectionProxyDictionary
-            && waitsForConnectivity == otherConfiguration.waitsForConnectivity
-            && isDiscretionary == otherConfiguration.isDiscretionary
-            && sharedContainerIdentifier == otherConfiguration.sharedContainerIdentifier
-            && sessionSendsLaunchEvents == otherConfiguration.sessionSendsLaunchEvents
+        #endif
+        
+        return commonEquatability
     }
 }
