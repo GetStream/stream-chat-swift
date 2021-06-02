@@ -107,7 +107,6 @@ extension ImageProcessors {
                 size: size,
                 unit: .points,
                 contentMode: .aspectFill,
-                crop: true,
                 upscale: false
             ).process(image)
         }
