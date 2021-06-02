@@ -68,13 +68,9 @@ class WebSocketClient {
     
     /// An object describing reconnection behavior after the web socket is disconnected.
     private var reconnectionStrategy: WebSocketClientReconnectionStrategy
-    
-    /// Used for starting and ending background tasks. Typically, this is provided by `UIApplication` which conforms
-    /// to `BackgroundTaskScheduler` automatically.
+
+    /// Used for starting and ending background tasks. Hides platform specific logic
     private lazy var backgroundTaskScheduler: BackgroundTaskScheduler? = environment.backgroundTaskScheduler
-    
-    /// The identifier of the currently running background task. `nil` of no background task is running.
-    private var activeBackgroundTask: UIBackgroundTaskIdentifier?
     
     /// The internet connection observer we use for recovering when the connection was offline for some time.
     private let internetConnection: InternetConnection
@@ -124,7 +120,10 @@ class WebSocketClient {
         self.eventNotificationCenter = eventNotificationCenter
         self.eventNotificationCenter.add(middleware: HealthCheckMiddleware(webSocketClient: self))
         
-        startListeningForAppStateUpdates()
+        backgroundTaskScheduler?.startListeningForAppStateUpdates(
+            onEnteringBackground: { [weak self] in self?.handleAppDidEnterBackground() },
+            onEnteringForeground: { [weak self] in self?.handleAppDidBecomeActive() }
+        )
     }
     
     /// Connects the web connect.
@@ -165,49 +164,31 @@ class WebSocketClient {
             engine?.disconnect()
         }
     }
-    
-    private func startListeningForAppStateUpdates() {
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(handleAppDidEnterBackground),
-            name: UIApplication.didEnterBackgroundNotification,
-            object: nil
-        )
-        
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(handleAppDidBecomeActive),
-            name: UIApplication.didBecomeActiveNotification,
-            object: nil
-        )
-    }
-    
-    @objc private func handleAppDidEnterBackground() {
-        guard options.contains(.staysConnectedInBackground), connectionState.isActive else { return }
-        
-        let backgroundTask = backgroundTaskScheduler?.beginBackgroundTask { [weak self] in
+
+    private func handleAppDidEnterBackground() {
+        guard options.contains(.staysConnectedInBackground),
+              connectionState.isActive,
+              let scheduler = backgroundTaskScheduler
+        else { return }
+
+        let succeed = scheduler.beginTask { [weak self] in
             self?.disconnect(source: .systemInitiated)
             // We need to call `endBackgroundTask` else our app will be killed
             self?.cancelBackgroundTaskIfNeeded()
         }
         
-        if backgroundTask != .invalid {
-            activeBackgroundTask = backgroundTask
-        } else {
+        if !succeed {
             // Can't initiate a background task, close the connection
             disconnect(source: .systemInitiated)
         }
     }
     
-    @objc private func handleAppDidBecomeActive() {
+    private func handleAppDidBecomeActive() {
         cancelBackgroundTaskIfNeeded()
     }
-    
+
     private func cancelBackgroundTaskIfNeeded() {
-        if let backgroundTask = activeBackgroundTask {
-            backgroundTaskScheduler?.endBackgroundTask(backgroundTask)
-            activeBackgroundTask = nil
-        }
+        backgroundTaskScheduler?.endTask()
     }
 }
 
@@ -237,15 +218,18 @@ extension WebSocketClient {
                 return StarscreamWebSocketProvider(request: $0, sessionConfiguration: $1, callbackQueue: $2)
             }
         }
-        
+
         var backgroundTaskScheduler: BackgroundTaskScheduler? = {
             if Bundle.main.isAppExtension {
-                /// No background task scheduler exists for app extensions.
+                // No background task scheduler exists for app extensions.
                 return nil
             } else {
-                /// We can't use `UIApplication.shared` directly because there's no way to convince the compiler
-                /// this code is accessible only for non-extension executables.
-                return UIApplication.value(forKeyPath: "sharedApplication") as? UIApplication
+                #if os(iOS)
+                return IOSBackgroundTaskScheduler()
+                #else
+                // No need for background schedulers on macOS, app continues running when inactive.
+                return nil
+                #endif
             }
         }()
     }
@@ -373,14 +357,6 @@ struct WebSocketErrorContainer: Decodable {
     /// A server error was received.
     let error: ErrorPayload
 }
-
-/// Used for starting and ending background tasks. `UIApplication` which conforms to `BackgroundTaskScheduler` automatically.
-protocol BackgroundTaskScheduler {
-    func beginBackgroundTask(expirationHandler: (() -> Void)?) -> UIBackgroundTaskIdentifier
-    func endBackgroundTask(_ identifier: UIBackgroundTaskIdentifier)
-}
-
-extension UIApplication: BackgroundTaskScheduler {}
 
 struct HealthCheckMiddleware: EventMiddleware {
     private(set) weak var webSocketClient: WebSocketClient?
