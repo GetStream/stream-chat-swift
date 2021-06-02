@@ -9,7 +9,10 @@ Pod::Spec.new do |spec|
   spec.author = { "getstream.io" => "support@getstream.io" }
   spec.social_media_url = "https://getstream.io"
   spec.swift_version = "5.2"
-  spec.platform = :ios, "11.0"
+
+  spec.ios.deployment_target  = '11.0'
+  spec.osx.deployment_target  = '10.15'
+
   spec.source = { :git => "https://github.com/GetStream/stream-chat-swift.git", :tag => "#{spec.version}" }
   spec.requires_arc = true
 
@@ -17,7 +20,8 @@ Pod::Spec.new do |spec|
   spec.exclude_files = ["Sources/StreamChat/**/*_Tests.swift", "Sources/StreamChat/**/*_Mock.swift"]
   spec.resource_bundles = { "StreamChat" => ["Sources/StreamChat/**/*.xcdatamodeld"] }
 
-  spec.framework = "Foundation", "UIKit"
+  spec.framework = "Foundation"
+  spec.ios.framework = "UIKit"
 
   spec.dependency "Starscream", "~> 4.0"
 end
