@@ -9,11 +9,18 @@ open class ChatMessageListKeyboardObserver {
     public weak var containerView: UIView!
     public weak var scrollView: UIScrollView!
     public weak var composerBottomConstraint: NSLayoutConstraint?
-    
-    public init(containerView: UIView, scrollView: UIScrollView, composerBottomConstraint: NSLayoutConstraint?) {
+    public weak var viewController: UIViewController?
+
+    public init(
+        containerView: UIView,
+        scrollView: UIScrollView,
+        composerBottomConstraint: NSLayoutConstraint?,
+        viewController: UIViewController?
+    ) {
         self.containerView = containerView
         self.scrollView = scrollView
         self.composerBottomConstraint = composerBottomConstraint
+        self.viewController = viewController
     }
     
     public func register() {
@@ -32,6 +39,7 @@ open class ChatMessageListKeyboardObserver {
     @objc
     private func keyboardWillChangeFrame(_ notification: Notification) {
         guard
+            viewController?.presentedViewController == nil,
             let frame = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue,
             let oldFrame = (notification.userInfo?[UIResponder.keyboardFrameBeginUserInfoKey] as? NSValue)?.cgRectValue,
             let duration = notification.userInfo?[UIResponder.keyboardAnimationDurationUserInfoKey] as? Double,

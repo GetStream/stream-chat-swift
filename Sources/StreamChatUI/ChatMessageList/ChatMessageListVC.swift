@@ -29,7 +29,8 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
     open lazy var keyboardObserver = ChatMessageListKeyboardObserver(
         containerView: view,
         scrollView: collectionView,
-        composerBottomConstraint: messageComposerBottomConstraint
+        composerBottomConstraint: messageComposerBottomConstraint,
+        viewController: self
     )
 
     /// User search controller passed directly to the composer
