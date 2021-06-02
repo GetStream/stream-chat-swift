@@ -847,6 +847,7 @@
 		E7296E942611D50900B1AE79 /* SendButton_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7296E932611D50900B1AE79 /* SendButton_Tests.swift */; };
 		E73262E025ED64AB008CB152 /* ChatChannelNamer_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E73262D725ED6432008CB152 /* ChatChannelNamer_Tests.swift */; };
 		E732A922263B1F13003BD781 /* UserUpdated.json in Resources */ = {isa = PBXBuildFile; fileRef = E732A921263B075F003BD781 /* UserUpdated.json */; };
+		E732C93F26653C4600C252EB /* UISDKDocumentation-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = E732C93E26653C4600C252EB /* UISDKDocumentation-Info.plist */; };
 		E73A8B2B2578EB2B00FBDC56 /* ComposerVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = E73A8B2A2578EB2B00FBDC56 /* ComposerVC.swift */; };
 		E73BD9E6264AC21300E208B7 /* FileAttachmentViewInjector.swift in Sources */ = {isa = PBXBuildFile; fileRef = E73BD9E5264AC21300E208B7 /* FileAttachmentViewInjector.swift */; };
 		E73BD9E9264C04AD00E208B7 /* AttachmentPayloadGiphyWithActions.json in Resources */ = {isa = PBXBuildFile; fileRef = E73BD9E7264C015200E208B7 /* AttachmentPayloadGiphyWithActions.json */; };
@@ -2081,6 +2082,7 @@
 		E7296E932611D50900B1AE79 /* SendButton_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendButton_Tests.swift; sourceTree = "<group>"; };
 		E73262D725ED6432008CB152 /* ChatChannelNamer_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatChannelNamer_Tests.swift; sourceTree = "<group>"; };
 		E732A921263B075F003BD781 /* UserUpdated.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = UserUpdated.json; sourceTree = "<group>"; };
+		E732C93E26653C4600C252EB /* UISDKDocumentation-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "UISDKDocumentation-Info.plist"; sourceTree = "<group>"; };
 		E73A8B2A2578EB2B00FBDC56 /* ComposerVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ComposerVC.swift; sourceTree = "<group>"; };
 		E73BD9E5264AC21300E208B7 /* FileAttachmentViewInjector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileAttachmentViewInjector.swift; sourceTree = "<group>"; };
 		E73BD9E7264C015200E208B7 /* AttachmentPayloadGiphyWithActions.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = AttachmentPayloadGiphyWithActions.json; sourceTree = "<group>"; };
@@ -2427,7 +2429,6 @@
 				7849AF9225F2479A007817D4 /* UITestsEnvironmentSetup.swift */,
 				64B75AFF2631700500A466D1 /* ChatMessage_Tests.swift */,
 				780057F625F634FC00D21095 /* ChatChannel.swift */,
-				E74DB0F32656729A00508D22 /* UISDKdocumentation */,
 			);
 			path = StreamChatUITests;
 			sourceTree = "<group>";
@@ -4033,6 +4034,7 @@
 				792E3D6A25C97D920040B0C2 /* Package.swift */,
 				799C9415247D2F38001F1104 /* Sources */,
 				799C9452247D59B1001F1104 /* Tests */,
+				E74DB0F32656729A00508D22 /* UISDKdocumentation */,
 				792A4F23247FF01800EAF71D /* Sample */,
 				792DDA58256FB69E001DB91B /* DemoApp */,
 				8082785225D1BAD1008039DD /* DocsSnippets */,
@@ -4462,6 +4464,7 @@
 		E74DB0F32656729A00508D22 /* UISDKdocumentation */ = {
 			isa = PBXGroup;
 			children = (
+				E732C93E26653C4600C252EB /* UISDKDocumentation-Info.plist */,
 				E74DB0E72656680900508D22 /* UIView+Annotations.swift */,
 				E74DB10626567FFA00508D22 /* ChatChannelListItemView_Documentation_Tests.swift */,
 			);
@@ -5196,6 +5199,7 @@
 				E74DB0CB2656631700508D22 /* yoda.jpg in Resources */,
 				E74DB0CC2656631700508D22 /* chewbacca.jpg in Resources */,
 				E74DB0CD2656631700508D22 /* r2.jpg in Resources */,
+				E732C93F26653C4600C252EB /* UISDKDocumentation-Info.plist in Resources */,
 				E74DB0CE2656631700508D22 /* vader.jpg in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -7399,7 +7403,7 @@
 				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = EHV7XZLAHA;
-				INFOPLIST_FILE = "UISDKDocumentation-Info.plist";
+				INFOPLIST_FILE = "UISDKdocumentation/UISDKDocumentation-info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -7422,7 +7426,7 @@
 				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = EHV7XZLAHA;
-				INFOPLIST_FILE = "UISDKDocumentation-Info.plist";
+				INFOPLIST_FILE = "UISDKdocumentation/UISDKDocumentation-info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -7444,7 +7448,7 @@
 				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = EHV7XZLAHA;
-				INFOPLIST_FILE = "UISDKDocumentation-Info.plist";
+				INFOPLIST_FILE = "UISDKdocumentation/UISDKDocumentation-info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
