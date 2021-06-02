@@ -48,17 +48,17 @@ final class ListChange_Tests: XCTestCase {
     
     func test_fieldChange() {
         let insertedItem: MemberPayload<NoExtraData> = .dummy()
-        let insertedAt = IndexPath(row: 1, section: 1)
+        let insertedAt = IndexPath(item: 1, section: 1)
 
         let updatedItem: MemberPayload<NoExtraData> = .dummy()
-        let updatedAt = IndexPath(row: 2, section: 3)
+        let updatedAt = IndexPath(item: 2, section: 3)
 
         let removedItem: MemberPayload<NoExtraData> = .dummy()
-        let removedAt = IndexPath(row: 3, section: 4)
+        let removedAt = IndexPath(item: 3, section: 4)
 
         let movedItem: MemberPayload<NoExtraData> = .dummy()
-        let movedFrom = IndexPath(row: 5, section: 6)
-        let movedTo = IndexPath(row: 7, section: 8)
+        let movedFrom = IndexPath(item: 5, section: 6)
+        let movedTo = IndexPath(item: 7, section: 8)
 
         let path = \MemberPayload<NoExtraData>.user.id
 

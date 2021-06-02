@@ -51,7 +51,7 @@ class MessageSender<ExtraData: ExtraDataTypes>: Worker {
                 
                 // Send the existing unsent message first. We can simulate callback from the observer and ignore
                 // the index path completely.
-                if let changes = self?.observer.items.map({ ListChange.insert($0, index: .init(row: 0, section: 0)) }) {
+                if let changes = self?.observer.items.map({ ListChange.insert($0, index: .init(item: 0, section: 0)) }) {
                     self?.handleChanges(changes: changes)
                 }
             } catch {
