@@ -15,6 +15,8 @@ open class MessageActionsTransitionController<ExtraData: ExtraDataTypes>: NSObje
     open var messageContentViewFrame: CGRect = .zero
     /// `messageContentView`'s constraints to be activated after dismissal.
     open var messageContentViewActivateConstraints: [NSLayoutConstraint] = []
+    /// Constraints to be deactivated after dismissal.
+    open var messageContentViewDeactivateConstraints: [NSLayoutConstraint] = []
     /// `messageContentView` instance that is animated.
     open weak var messageContentView: _ChatMessageContentView<ExtraData>!
     /// `messageContentView`'s initial superview.
@@ -57,16 +59,17 @@ open class MessageActionsTransitionController<ExtraData: ExtraDataTypes>: NSObje
             let fromVC = transitionContext.viewController(forKey: .from)
         else { return }
 
+        messageContentViewSuperview = messageContentView.superview
+        
         let messageContentViewSnapshot = messageContentView.snapshotView(afterScreenUpdates: true)
         if let messageContentViewSnapshot = messageContentViewSnapshot {
-            messageContentViewSnapshot.frame = messageContentView.convert(messageContentView.frame, to: fromVC.view)
+            messageContentViewSnapshot.frame = messageContentViewSuperview.convert(messageContentView.frame, to: fromVC.view)
             transitionContext.containerView.addSubview(messageContentViewSnapshot)
         }
     
         messageContentView.isHidden = true
         
         // Prepare `messageContentView` and update its frame to be without reactions.
-        messageContentViewSuperview = messageContentView.superview
         if messageContentView.reactionsBubbleView?.isVisible == true {
             messageContentView.reactionsBubbleView?.isVisible = false
             messageContentView.bubbleToReactionsConstraint?.isActive = false
@@ -82,7 +85,12 @@ open class MessageActionsTransitionController<ExtraData: ExtraDataTypes>: NSObje
         messageContentViewActivateConstraints = Array(
             allMessageContentViewSuperviewConstraints.subtracting(messageContentViewSuperview.constraints)
         )
+        messageContentViewDeactivateConstraints = [
+            messageContentViewSuperview.widthAnchor.constraint(equalToConstant: messageContentViewFrame.width),
+            messageContentViewSuperview.heightAnchor.constraint(equalToConstant: messageContentViewFrame.height)
+        ]
         NSLayoutConstraint.deactivate(messageContentViewActivateConstraints)
+        NSLayoutConstraint.activate(messageContentViewDeactivateConstraints)
         messageContentViewFrame.size = messageContentView.systemLayoutSizeFitting(
             CGSize(width: messageContentViewFrame.width, height: UIView.layoutFittingCompressedSize.height),
             withHorizontalFittingPriority: .streamRequire,
@@ -274,6 +282,7 @@ open class MessageActionsTransitionController<ExtraData: ExtraDataTypes>: NSObje
                 messageContentView.removeFromSuperview()
                 messageContentViewSuperview.addSubview(messageContentView)
                 NSLayoutConstraint.activate(messageContentViewActivateConstraints)
+                NSLayoutConstraint.deactivate(messageContentViewDeactivateConstraints)
                 toVCSnapshot?.removeFromSuperview()
                 blurView.removeFromSuperview()
                 reactionsSnapshot?.removeFromSuperview()
