@@ -437,7 +437,7 @@ public class ContainerStackView: UIView {
 
         spacingConstraintsByView[subview]?.setTemporaryConstant(0)
 
-        layoutIfNeeded()
+        setNeedsLayout()
     }
 
     /// Shows the arranged subview by setting the width, height and spacing constraints to the original value before being hidden.
@@ -460,7 +460,8 @@ public class ContainerStackView: UIView {
         sizeConstraintsByView[subview]?.isActive = true
 
         spacingConstraintsByView[subview]?.resetTemporaryConstant()
-        layoutIfNeeded()
+        
+        setNeedsLayout()
     }
 
     deinit {
