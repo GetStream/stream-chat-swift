@@ -199,7 +199,26 @@ open class ChatMessageListCollectionView<ExtraData: ExtraDataTypes>: UICollectio
                 }
             }
         } completion: { flag in
+            // If a new message was inserted, reload the previous message to give it chance to update
+            // its appearance in case it's now part of a group.
+            self.reloadItems(
+                at: self.indexPathsToMessagesBeforeInsertedAfterBatchUpdate(with: changes)
+            )
             completion?(flag)
+        }
+    }
+    
+    private func indexPathsToMessagesBeforeInsertedAfterBatchUpdate<ExtraData: ExtraDataTypes>(
+        with changes: [ListChange<_ChatMessage<ExtraData>>]
+    ) -> [IndexPath] {
+        changes.compactMap {
+            // Check if the latest message was inserted
+            guard case .insert(_, IndexPath(item: 0, section: 0)) = $0,
+                  numberOfItems(inSection: 0) > 1
+            else { return nil }
+
+            // Reload the second-to latests message
+            return IndexPath(item: 1, section: 0)
         }
     }
     
