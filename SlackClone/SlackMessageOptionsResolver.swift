@@ -13,7 +13,7 @@ final class SlackMessageOptionsResolver: ChatMessageLayoutOptionsResolver {
         with messages: AnyRandomAccessCollection<ChatMessage>
     ) -> ChatMessageLayoutOptions {
         var options = super.optionsForMessage(at: indexPath, in: channel, with: messages)
-        options.remove([.flipped, .bubble, .metadata, .avatar, .avatarSizePadding, .authorName, .threadInfo, .reactions])
+        options.remove([.flipped, .bubble, .timestamp, .avatar, .avatarSizePadding, .authorName, .threadInfo, .reactions])
 
         let isFirstInGroup: Bool = {
             let messageIndex = messages.index(messages.startIndex, offsetBy: indexPath.item)
@@ -26,7 +26,7 @@ final class SlackMessageOptionsResolver: ChatMessageLayoutOptionsResolver {
         }()
 
         if isFirstInGroup {
-            options.insert([.avatar, .metadata, .authorName])
+            options.insert([.avatar, .timestamp, .authorName])
         } else {
             options.insert(.avatarSizePadding)
         }

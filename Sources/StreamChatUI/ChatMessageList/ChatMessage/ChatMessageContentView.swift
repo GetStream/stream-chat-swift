@@ -75,7 +75,7 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, ThemeProvi
     public private(set) var textView: UITextView?
 
     /// Shows message timestamp.
-    /// Exists if `layout(options: MessageLayoutOptions)` was invoked with the options containing `.metadata`.
+    /// Exists if `layout(options: MessageLayoutOptions)` was invoked with the options containing `.timestamp`.
     public private(set) var timestampLabel: UILabel?
 
     /// Shows message author name.
@@ -83,13 +83,13 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, ThemeProvi
     public private(set) var authorNameLabel: UILabel?
 
     /// Shows the icon part of the indicator saying the message is visible for current user only.
-    /// Exists if `layout(options: MessageLayoutOptions)` was invoked with the options containing `.metadata`
-    /// and `.onlyVisibleForYouIndicator`.
+    /// Exists if `layout(options: MessageLayoutOptions)` was invoked with the options
+    /// containing `.onlyVisibleForYouIndicator`.
     public private(set) var onlyVisibleForYouIconImageView: UIImageView?
 
     /// Shows the text part of the indicator saying the message is visible for current user only.
-    /// Exists if `layout(options: MessageLayoutOptions)` was invoked with the options containing `.metadata`
-    /// and `.onlyVisibleForYouIndicator`.
+    /// Exists if `layout(options: MessageLayoutOptions)` was invoked with the options
+    /// containing `.onlyVisibleForYouIndicator`
     public private(set) var onlyVisibleForYouLabel: UILabel?
 
     /// Shows error indicator.
@@ -141,7 +141,9 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, ThemeProvi
     /// The container which holds `threadArrowView`, `threadAvatarView`, and `threadReplyCountButton`
     public private(set) var threadInfoContainer: ContainerStackView?
 
-    /// The container which holds `timestampLabel`, `authorNameLabel`, and `onlyVisibleForYouContainer` if it exists
+    /// The container which holds `timestampLabel`, `authorNameLabel`, and `onlyVisibleForYouContainer`.
+    /// Exists if `layout(options: MessageLayoutOptions)` was invoked with any of
+    /// `.timestamp/.authorName/.onlyVisibleForYouIndicator` options
     public private(set) var metadataContainer: ContainerStackView?
 
     /// The container which holds `onlyVisibleForYouIconImageView` and `onlyVisibleForYouLabel`
@@ -276,20 +278,25 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, ThemeProvi
         }
 
         // Metadata
-        if options.contains(.metadata) {
-            var metadataSubviews: [UIView] = [
-                createAuthorNameLabel(),
-                createTimestampLabel()
-            ]
-
+        if options.hasMetadata {
+            var metadataSubviews: [UIView] = []
+            
+            if options.contains(.authorName) {
+                metadataSubviews.append(createAuthorNameLabel())
+            }
+            if options.contains(.timestamp) {
+                metadataSubviews.append(createTimestampLabel())
+            }
             if options.contains(.onlyVisibleForYouIndicator) {
                 onlyVisibleForYouContainer = ContainerStackView()
                 onlyVisibleForYouContainer!.addArrangedSubview(createOnlyVisibleForYouIconImageView())
                 onlyVisibleForYouContainer!.addArrangedSubview(createOnlyVisibleForYouLabel())
-                metadataSubviews.insert(onlyVisibleForYouContainer!, at: 0)
+                metadataSubviews.append(onlyVisibleForYouContainer!)
             }
 
-            metadataContainer = ContainerStackView(arrangedSubviews: metadataSubviews)
+            metadataContainer = ContainerStackView(
+                arrangedSubviews: options.contains(.flipped) ? metadataSubviews.reversed() : metadataSubviews
+            )
             bubbleThreadMetaContainer.addArrangedSubview(metadataContainer!)
         }
 
@@ -689,5 +696,17 @@ private extension _ChatMessage {
             .keys
             .sorted { $0.rawValue < $1.rawValue }
             .map { .init(type: $0, isChosenByCurrentUser: userReactionIDs.contains($0)) }
+    }
+}
+
+private extension ChatMessageLayoutOptions {
+    static let metadata: Self = [
+        .onlyVisibleForYouIndicator,
+        .authorName,
+        .timestamp
+    ]
+    
+    var hasMetadata: Bool {
+        !intersection(.metadata).isEmpty
     }
 }

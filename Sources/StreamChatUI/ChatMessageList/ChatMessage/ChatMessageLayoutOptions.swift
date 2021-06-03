@@ -30,8 +30,8 @@ public extension ChatMessageLayoutOptions {
     /// If set the message author avatar will be shown.
     static let avatar = Self(rawValue: 1 << 4)
 
-    /// If set the message metadata (timestamp, author name, etc.) will be shown.
-    static let metadata = Self(rawValue: 1 << 5)
+    /// If set the message timestamp will be shown.
+    static let timestamp = Self(rawValue: 1 << 5)
 
     /// If set the message author name will be shown in metadata.
     static let authorName = Self(rawValue: 1 << 6)
@@ -69,7 +69,7 @@ extension ChatMessageLayoutOptions: CustomStringConvertible {
         .continuousBubble,
         .avatarSizePadding,
         .avatar,
-        .metadata,
+        .timestamp,
         .authorName,
         .text,
         .quotedMessage,
@@ -91,8 +91,8 @@ extension ChatMessageLayoutOptions: CustomStringConvertible {
             return "avatarSizePadding"
         case .avatar:
             return "avatar"
-        case .metadata:
-            return "metadata"
+        case .timestamp:
+            return "timestamp"
         case .authorName:
             return "authorName"
         case .text:

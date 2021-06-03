@@ -292,7 +292,7 @@ extension _ChatMessage {
             options.insert(.avatarSizePadding)
         }
         if isLastInGroup {
-            options.insert(.metadata)
+            options.insert(.timestamp)
         }
         if isLastInGroup && isOnlyVisibleForCurrentUser {
             options.insert(.onlyVisibleForYouIndicator)
