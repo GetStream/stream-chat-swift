@@ -7,18 +7,18 @@ import UIKit
 
 open class ChatMessageListKeyboardObserver {
     public weak var containerView: UIView!
-    public weak var scrollView: UIScrollView!
+    public weak var collectionView: UICollectionView!
     public weak var composerBottomConstraint: NSLayoutConstraint?
     public weak var viewController: UIViewController?
 
     public init(
         containerView: UIView,
-        scrollView: UIScrollView,
+        collectionView: UICollectionView,
         composerBottomConstraint: NSLayoutConstraint?,
         viewController: UIViewController?
     ) {
         self.containerView = containerView
-        self.scrollView = scrollView
+        self.collectionView = collectionView
         self.composerBottomConstraint = composerBottomConstraint
         self.viewController = viewController
     }
@@ -40,58 +40,29 @@ open class ChatMessageListKeyboardObserver {
     private func keyboardWillChangeFrame(_ notification: Notification) {
         guard
             viewController?.presentedViewController == nil,
-            let frame = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue,
-            let oldFrame = (notification.userInfo?[UIResponder.keyboardFrameBeginUserInfoKey] as? NSValue)?.cgRectValue,
-            let duration = notification.userInfo?[UIResponder.keyboardAnimationDurationUserInfoKey] as? Double,
-            let curve = notification.userInfo?[UIResponder.keyboardAnimationCurveUserInfoKey] as? UInt
+            let userInfo = notification.userInfo,
+            let keyboardFrame = userInfo[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect,
+            let keyboardAnimationDuration = userInfo[UIResponder.keyboardAnimationDurationUserInfoKey] as? TimeInterval,
+            let keyboardAnimationCurve = userInfo[UIResponder.keyboardAnimationCurveUserInfoKey] as? UInt
         else { return }
 
-        let localFrame = containerView.convert(frame, from: nil)
-        let localOldFrame = containerView.convert(oldFrame, from: nil)
+        let convertedKeyboardFrame = containerView.convert(keyboardFrame, from: UIScreen.main.coordinateSpace)
+        let intersectedKeyboardHeight = containerView.frame.intersection(convertedKeyboardFrame).height
 
-        // message composer follows keyboard
-        composerBottomConstraint?.constant = -(containerView.bounds.height - localFrame.minY)
+        composerBottomConstraint?.constant = -intersectedKeyboardHeight
 
-        // calculate new contentOffset for message list, so bottom message still visible when keyboard appears
-        var keyboardTop = localFrame.minY
-        if keyboardTop == containerView.bounds.height {
-            keyboardTop -= containerView.safeAreaInsets.bottom
-        }
+        let indexPathNearestToKeyboard = collectionView.indexPathsForVisibleItems.sorted().first
 
-        var oldKeyboardTop = localOldFrame.minY
-        if oldKeyboardTop == containerView.bounds.height {
-            oldKeyboardTop -= containerView.safeAreaInsets.bottom
-        }
-
-        let keyboardDelta = oldKeyboardTop - keyboardTop
-        // need to calculate delta in content when `contentSize` is smaller than `frame.size`
-        let contentDelta = max(
-            // 8 is just some padding constant to make it look better
-            scrollView.frame.height - scrollView.contentSize.height + scrollView.contentOffset.y - 8,
-            // 0 is for the case when `contentSize` if larger than `frame.size`
-            0
-        )
-        
-        let newContentOffset = CGPoint(
-            x: 0,
-            y: max(
-                scrollView.contentOffset.y + keyboardDelta - contentDelta,
-                // case when keyboard is activated but not shown, probably only on simulator
-                -scrollView.contentInset.top
-            )
-        )
-        
-        // changing contentOffset will cancel any scrolling in collectionView, bad UX
-        let needUpdateContentOffset = !scrollView.isDecelerating && !scrollView.isDragging
-        
         UIView.animate(
-            withDuration: duration,
+            withDuration: keyboardAnimationDuration,
             delay: 0.0,
-            options: UIView.AnimationOptions(rawValue: curve),
+            options: UIView.AnimationOptions(rawValue: keyboardAnimationCurve),
             animations: { [weak self] in
                 self?.containerView.layoutIfNeeded()
-                if needUpdateContentOffset {
-                    self?.scrollView.contentOffset = newContentOffset
+
+                let isKeyboardShowing = intersectedKeyboardHeight > 0
+                if let indexPathNearestToKeyboard = indexPathNearestToKeyboard, isKeyboardShowing {
+                    self?.collectionView.scrollToItem(at: indexPathNearestToKeyboard, at: .bottom, animated: false)
                 }
             }
         )
