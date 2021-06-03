@@ -257,9 +257,9 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
         XCTAssertFalse(layoutOptions.contains(.avatarSizePadding))
     }
 
-    // MARK: - Metadata
+    // MARK: - Timestamp
 
-    func test_optionsForMessage_whenMessageIsLastInSequence_includesMetadata() {
+    func test_optionsForMessage_whenMessageIsLastInSequence_includesTimestamp() {
         for isSentByCurrentUser in [true, false] {
             // Create message
             let message: ChatMessage = .mock(
@@ -276,12 +276,12 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
                 with: .init([message])
             )
 
-            // Assert `.metadata` is included
-            XCTAssertTrue(layoutOptions.contains(.metadata))
+            // Assert `.timestamp` is included
+            XCTAssertTrue(layoutOptions.contains(.timestamp))
         }
     }
 
-    func test_optionsForMessage_whenMessageIsNotLastInSequence_doesNotIncludeMetadata() {
+    func test_optionsForMessage_whenMessageIsNotLastInSequence_doesNotIncludeTimestamp() {
         // Create a user
         let user: ChatUser = .mock(id: .unique)
 
@@ -313,8 +313,8 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
                 with: .init([message1, message2])
             )
 
-            // Assert `.metadata` is not included since the message is not the last in sequence
-            XCTAssertFalse(layoutOptions.contains(.metadata))
+            // Assert `.timestamp` is not included since the message is not the last in sequence
+            XCTAssertFalse(layoutOptions.contains(.timestamp))
         }
     }
 

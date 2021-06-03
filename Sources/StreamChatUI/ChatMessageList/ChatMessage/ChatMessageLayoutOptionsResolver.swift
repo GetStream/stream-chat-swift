@@ -51,7 +51,7 @@ open class _ChatMessageLayoutOptionsResolver<ExtraData: ExtraDataTypes> {
             options.insert(.avatarSizePadding)
         }
         if isLastInSequence {
-            options.insert(.metadata)
+            options.insert(.timestamp)
         }
         if message.isOnlyVisibleForCurrentUser {
             options.insert(.onlyVisibleForYouIndicator)
