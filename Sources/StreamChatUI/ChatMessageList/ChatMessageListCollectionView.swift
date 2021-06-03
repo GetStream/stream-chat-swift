@@ -212,13 +212,22 @@ open class ChatMessageListCollectionView<ExtraData: ExtraDataTypes>: UICollectio
         with changes: [ListChange<_ChatMessage<ExtraData>>]
     ) -> [IndexPath] {
         changes.compactMap {
+            switch $0 {
             // Check if the latest message was inserted
-            guard case .insert(_, IndexPath(item: 0, section: 0)) = $0,
-                  numberOfItems(inSection: 0) > 1
-            else { return nil }
-
-            // Reload the second-to latests message
-            return IndexPath(item: 1, section: 0)
+            case .insert(_, IndexPath(row: 0, section: 0)):
+                guard numberOfItems(inSection: 0) > 1 else { return nil }
+                
+                // Reload the second-to latests message
+                return .init(item: 1, section: 0)
+            // Check if the message was deleted
+            case let .remove(_, indexPath):
+                guard numberOfItems(inSection: 0) > indexPath.item else { return nil }
+                
+                // Reload the previous message which is now at deleted message positon
+                return indexPath
+            default:
+                return nil
+            }
         }
     }
     
