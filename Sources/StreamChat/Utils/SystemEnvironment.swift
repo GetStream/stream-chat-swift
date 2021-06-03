@@ -5,8 +5,6 @@
 import Foundation
 
 enum SystemEnvironment {
-    static let systemName = UIDevice.current.systemName + UIDevice.current.systemVersion
-    
     static var deviceModelName: String {
         var systemInfo = utsname()
         uname(&systemInfo)
