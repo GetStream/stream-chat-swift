@@ -322,7 +322,10 @@ open class ChatMessageListCollectionViewLayout: UICollectionViewLayout {
         let idx = itemIndexPath.item
         if appearingItems.contains(itemIndexPath) {
             // this is item that have been inserted into collection view in current batch update
-            let attribute = currentItems[idx].attribute(for: idx, width: currentCollectionViewWidth)
+            let attribute = currentItems[idx]
+                .attribute(for: idx, width: currentCollectionViewWidth)
+                .copy() as! UICollectionViewLayoutAttributes
+            
             animatingAttributes[itemIndexPath] = attribute
             return attribute
         } else {
@@ -331,7 +334,12 @@ open class ChatMessageListCollectionViewLayout: UICollectionViewLayout {
             // to properly animate possible change of such item, we need to return its attributes BEFORE batch update
             guard let id = idForItem(at: idx) else { return nil }
             return oldIdxForItem(with: id).map { oldIdx in
-                previousItems[oldIdx].attribute(for: oldIdx, width: currentCollectionViewWidth)
+                let attr = previousItems[oldIdx]
+                    .attribute(for: oldIdx, width: currentCollectionViewWidth)
+                    .copy() as! UICollectionViewLayoutAttributes
+                
+                attr.alpha = 0
+                return attr
             }
         }
     }
@@ -342,15 +350,23 @@ open class ChatMessageListCollectionViewLayout: UICollectionViewLayout {
         if disappearingItems.contains(itemIndexPath) {
             // item gets removed from collection view, we don't do any special delete animations for now, so just return
             // item attributes BEFORE batch update and let it fade away
-            let attribute = previousItems[idx].attribute(for: idx, width: currentCollectionViewWidth)
+            let attribute = previousItems[idx]
+                .attribute(for: idx, width: currentCollectionViewWidth)
+                .copy() as! UICollectionViewLayoutAttributes
+            
             attribute.alpha = 0
             return attribute
+            
         } else if let newIdx = idxForItem(with: id) {
             // this is item that will stay in collection view, but collection view decided to reload it
             // by removing and inserting it back (4head)
             // to properly animate possible change of such item, we need to return its attributes AFTER batch update
-            let attribute = currentItems[newIdx].attribute(for: newIdx, width: currentCollectionViewWidth)
+            let attribute = currentItems[newIdx]
+                .attribute(for: newIdx, width: currentCollectionViewWidth)
+                .copy() as! UICollectionViewLayoutAttributes
+            
             animatingAttributes[attribute.indexPath] = attribute
+            attribute.alpha = 0
             return attribute
         }
 
