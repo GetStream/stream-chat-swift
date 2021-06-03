@@ -14,7 +14,7 @@ open class _ChatMessageLayoutOptionsResolver<ExtraData: ExtraDataTypes> {
     public let minTimeIntervalBetweenMessagesInGroup: TimeInterval
 
     /// Creates the `_ChatMessageLayoutOptionsResolver` with the given `minTimeIntervalBetweenMessagesInGroup` value
-    public init(minTimeIntervalBetweenMessagesInGroup: TimeInterval = 10) {
+    public init(minTimeIntervalBetweenMessagesInGroup: TimeInterval = 30) {
         self.minTimeIntervalBetweenMessagesInGroup = minTimeIntervalBetweenMessagesInGroup
     }
 
