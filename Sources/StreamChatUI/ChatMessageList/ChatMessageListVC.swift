@@ -93,6 +93,9 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
     open lazy var router = components
         .messageListRouter
         .init(rootViewController: self)
+
+    /// The height of the typing indicator view
+    open private(set) var typingIndicatorViewHeight: CGFloat = 22
     
     /// Constraint connection list of messages and composer controller.
     /// It's used to change the message list's height based on the keyboard visibility.
@@ -144,15 +147,11 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
         messageComposerBottomConstraint?.isActive = true
         
         if channelController.areTypingEventsEnabled {
-            let typingIndicatorViewHeight: CGFloat = 22
-            
             view.addSubview(typingIndicatorView)
             typingIndicatorView.heightAnchor.pin(equalToConstant: typingIndicatorViewHeight).isActive = true
             typingIndicatorView.pin(anchors: [.leading, .trailing], to: view)
             typingIndicatorView.bottomAnchor.pin(equalTo: messageComposerVC.view.topAnchor).isActive = true
             typingIndicatorView.isHidden = true
-            
-            collectionView.contentInset.bottom += typingIndicatorViewHeight
         }
         
         view.addSubview(scrollToLatestMessageButton)
@@ -500,6 +499,17 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
     /// Shows typing Indicator
     /// - Parameter typingMembers: typing members gotten from `channelController`
     open func showTypingIndicator(typingMembers: [_ChatChannelMember<ExtraData.User>]) {
+        if typingIndicatorView.isHidden {
+            Animate {
+                self.collectionView.contentInset.bottom += self.typingIndicatorViewHeight
+                self.collectionView.scrollIndicatorInsets.bottom += self.typingIndicatorViewHeight
+            }
+
+            if collectionView.isLastCellVisible {
+                scrollToMostRecentMessage()
+            }
+        }
+
         // If we somehow cannot fetch any member name, we simply show that `Someone is typing`
         guard let member = typingMembers.first(where: { user in user.name != nil }), let name = member.name else {
             typingIndicatorView.content = L10n.MessageList.TypingIndicator.typingUnknown
@@ -514,7 +524,14 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
     /// Hides typing Indicator
     /// - Parameter typingMembers: typing members gotten from `channelController`
     open func hideTypingIndicator() {
+        guard typingIndicatorView.isVisible else { return }
+
         typingIndicatorView.isHidden = true
+
+        Animate {
+            self.collectionView.contentInset.bottom -= self.typingIndicatorViewHeight
+            self.collectionView.scrollIndicatorInsets.bottom -= self.typingIndicatorViewHeight
+        }
     }
     
     // MARK: - _ChatMessageActionsVCDelegate
