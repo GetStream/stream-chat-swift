@@ -496,10 +496,10 @@ class WebSocketClient_Tests: StressTestCase {
         assert(backgroundTaskScheduler.beginBackgroundTask_called == false)
         
         // Set up mock response
-        backgroundTaskScheduler.beginBackgroundTask = UIBackgroundTaskIdentifier(rawValue: .random(in: 1...100))
+        backgroundTaskScheduler.beginBackgroundTask_returns = true
         
         // Simulate app going to the background
-        NotificationCenter.default.post(name: UIApplication.didEnterBackgroundNotification, object: nil)
+        backgroundTaskScheduler.startListeningForAppStateUpdates_onBackground?()
         
         // Check a new background task is scheduled
         AssertAsync.willBeTrue(backgroundTaskScheduler.beginBackgroundTask_called)
@@ -514,10 +514,10 @@ class WebSocketClient_Tests: StressTestCase {
         webSocketClient.options.remove(.staysConnectedInBackground)
         
         // Set up mock response
-        backgroundTaskScheduler.beginBackgroundTask = UIBackgroundTaskIdentifier(rawValue: .random(in: 1...100))
+        backgroundTaskScheduler.beginBackgroundTask_returns = true
         
         // Simulate app going to the background
-        NotificationCenter.default.post(name: UIApplication.didEnterBackgroundNotification, object: nil)
+        backgroundTaskScheduler.startListeningForAppStateUpdates_onBackground?()
         
         // Check a new background task is scheduled
         AssertAsync.staysTrue(backgroundTaskScheduler.beginBackgroundTask_called == false)
@@ -527,7 +527,7 @@ class WebSocketClient_Tests: StressTestCase {
         assert(backgroundTaskScheduler.beginBackgroundTask_called == false)
         
         // Simulate app going to the background
-        NotificationCenter.default.post(name: UIApplication.didEnterBackgroundNotification, object: nil)
+        backgroundTaskScheduler.startListeningForAppStateUpdates_onBackground?()
         
         // Check a new background task is not scheduled
         AssertAsync.staysTrue(backgroundTaskScheduler.beginBackgroundTask_called == false)
@@ -540,7 +540,7 @@ class WebSocketClient_Tests: StressTestCase {
         assert(backgroundTaskScheduler.beginBackgroundTask_called == false)
         
         // Simulate app going to the background
-        NotificationCenter.default.post(name: UIApplication.didEnterBackgroundNotification, object: nil)
+        backgroundTaskScheduler.startListeningForAppStateUpdates_onBackground?()
         
         // Check a new background task is not scheduled
         AssertAsync.staysTrue(backgroundTaskScheduler.beginBackgroundTask_called == false)
@@ -553,8 +553,8 @@ class WebSocketClient_Tests: StressTestCase {
         assert(engine!.disconnect_calledCount == 0)
         
         // Simulate the background task can't be scheduled
-        backgroundTaskScheduler.beginBackgroundTask = .invalid
-        NotificationCenter.default.post(name: UIApplication.didEnterBackgroundNotification, object: nil)
+        backgroundTaskScheduler.beginBackgroundTask_returns = false
+        backgroundTaskScheduler.startListeningForAppStateUpdates_onBackground?()
         
         // Check the connection is terminated
         AssertAsync {
@@ -566,9 +566,9 @@ class WebSocketClient_Tests: StressTestCase {
     func test_connectionIsTerminated_whenBackgroundTaskFinishesExecution() {
         // Simulate connection and start a background task
         test_connectionFlow()
-        backgroundTaskScheduler.beginBackgroundTask = UIBackgroundTaskIdentifier(rawValue: .random(in: 1...100))
-        NotificationCenter.default.post(name: UIApplication.didEnterBackgroundNotification, object: nil)
-        
+        backgroundTaskScheduler.beginBackgroundTask_returns = true
+        backgroundTaskScheduler.startListeningForAppStateUpdates_onBackground?()
+
         assert(engine!.disconnect_calledCount == 0)
         
         // Simulate the background task finishes execution
@@ -584,50 +584,47 @@ class WebSocketClient_Tests: StressTestCase {
     func test_backgroundTaskIsCancelled_whenAppBecomesActive() {
         // Simulate connection and start a background task
         test_connectionFlow()
-        let task = UIBackgroundTaskIdentifier(rawValue: .random(in: 1...100))
-        backgroundTaskScheduler.beginBackgroundTask = task
-        NotificationCenter.default.post(name: UIApplication.didEnterBackgroundNotification, object: nil)
+        backgroundTaskScheduler.beginBackgroundTask_returns = true
+        backgroundTaskScheduler.startListeningForAppStateUpdates_onBackground?()
         
         // Wait for `beginBackgroundTask` being called since it can be done asynchronously
         AssertAsync.willBeTrue(backgroundTaskScheduler.beginBackgroundTask_called)
-        assert(backgroundTaskScheduler.endBackgroundTask_called == nil)
+        assert(backgroundTaskScheduler.endBackgroundTask_called == false)
         
         // Simulate an app going to the foreground
-        NotificationCenter.default.post(name: UIApplication.didBecomeActiveNotification, object: nil)
+        backgroundTaskScheduler.startListeningForAppStateUpdates_onForeground?()
         
         // Check the background task is terminated
-        AssertAsync.willBeEqual(backgroundTaskScheduler.endBackgroundTask_called, task)
+        AssertAsync.willBeEqual(backgroundTaskScheduler.endBackgroundTask_called, true)
     }
     
     func test_backgroundTaskIsCancelled_whenDisconnected() {
         // Simulate connection and start a background task
         test_connectionFlow()
-        let task = UIBackgroundTaskIdentifier(rawValue: .random(in: 1...100))
-        backgroundTaskScheduler.beginBackgroundTask = task
-        NotificationCenter.default.post(name: UIApplication.didEnterBackgroundNotification, object: nil)
+        backgroundTaskScheduler.beginBackgroundTask_returns = true
+        backgroundTaskScheduler.startListeningForAppStateUpdates_onBackground?()
         
         // Wait for `beginBackgroundTask` being called since it can be done asynchronously
         AssertAsync.willBeTrue(backgroundTaskScheduler.beginBackgroundTask_called)
-        assert(backgroundTaskScheduler.endBackgroundTask_called == nil)
+        assert(backgroundTaskScheduler.endBackgroundTask_called == false)
         
         // Simulate the connection is terminated
         webSocketClient.disconnect()
         engine!.simulateDisconnect()
         
         // Check the background task is terminated
-        AssertAsync.willBeEqual(backgroundTaskScheduler.endBackgroundTask_called, task)
+        AssertAsync.willBeEqual(backgroundTaskScheduler.endBackgroundTask_called, true)
     }
     
     func test_backgroundTaskIsCancelled_whenExpirationHandlerIsCalled() {
         // Simulate connection and start a background task
         test_connectionFlow()
-        let task = UIBackgroundTaskIdentifier(rawValue: .random(in: 1...100))
-        backgroundTaskScheduler.beginBackgroundTask = task
-        NotificationCenter.default.post(name: UIApplication.didEnterBackgroundNotification, object: nil)
+        backgroundTaskScheduler.beginBackgroundTask_returns = true
+        backgroundTaskScheduler.startListeningForAppStateUpdates_onBackground?()
         
         // Wait for `beginBackgroundTask` being called since it can be done asynchronously
         AssertAsync.willBeTrue(backgroundTaskScheduler.beginBackgroundTask_called)
-        assert(backgroundTaskScheduler.endBackgroundTask_called == nil)
+        assert(backgroundTaskScheduler.endBackgroundTask_called == false)
         
         // We don't simulate explicit cancelation here
         // since we expect expiration handler to call disconnect
@@ -636,7 +633,7 @@ class WebSocketClient_Tests: StressTestCase {
         backgroundTaskScheduler.beginBackgroundTask_expirationHandler!()
         
         // Check the background task is terminated
-        AssertAsync.willBeEqual(backgroundTaskScheduler.endBackgroundTask_called, task)
+        AssertAsync.willBeEqual(backgroundTaskScheduler.endBackgroundTask_called, true)
     }
 }
 
@@ -762,18 +759,28 @@ extension WebSocketEngineError: Equatable {
 class MockBackgroundTaskScheduler: BackgroundTaskScheduler {
     var beginBackgroundTask_called: Bool = false
     var beginBackgroundTask_expirationHandler: (() -> Void)?
-    var beginBackgroundTask: UIBackgroundTaskIdentifier!
-    
-    var endBackgroundTask_called: UIBackgroundTaskIdentifier?
-    
-    func beginBackgroundTask(expirationHandler: (() -> Void)?) -> UIBackgroundTaskIdentifier {
+    var beginBackgroundTask_returns: Bool = true
+    func beginTask(expirationHandler: (() -> Void)?) -> Bool {
         beginBackgroundTask_called = true
         beginBackgroundTask_expirationHandler = expirationHandler
-        return beginBackgroundTask
+        return beginBackgroundTask_returns
     }
-    
-    func endBackgroundTask(_ identifier: UIBackgroundTaskIdentifier) {
-        endBackgroundTask_called = identifier
+
+    var endBackgroundTask_called: Bool = false
+    func endTask() {
+        endBackgroundTask_called = true
+    }
+
+    var startListeningForAppStateUpdates_called: Bool = false
+    var startListeningForAppStateUpdates_onBackground: (() -> Void)?
+    var startListeningForAppStateUpdates_onForeground: (() -> Void)?
+    func startListeningForAppStateUpdates(
+        onEnteringBackground: @escaping () -> Void,
+        onEnteringForeground: @escaping () -> Void
+    ) {
+        startListeningForAppStateUpdates_called = true
+        startListeningForAppStateUpdates_onBackground = onEnteringBackground
+        startListeningForAppStateUpdates_onForeground = onEnteringForeground
     }
 }
 

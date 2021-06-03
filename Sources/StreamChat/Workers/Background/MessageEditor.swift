@@ -41,7 +41,7 @@ class MessageEditor<ExtraData: ExtraDataTypes>: Worker {
         do {
             try observer.startObserving()
             observer.onChange = { [weak self] in self?.handleChanges(changes: $0) }
-            let changes = observer.items.map { ListChange.insert($0, index: .init(row: 0, section: 0)) }
+            let changes = observer.items.map { ListChange.insert($0, index: .init(item: 0, section: 0)) }
             handleChanges(changes: changes)
         } catch {
             log.error("Failed to start MessageEditor worker. \(error)")

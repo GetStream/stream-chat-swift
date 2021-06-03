@@ -3,7 +3,7 @@
 //
 
 import Combine
-import UIKit
+import Foundation
 
 @available(iOS 13, *)
 extension _ChatMessageController {
