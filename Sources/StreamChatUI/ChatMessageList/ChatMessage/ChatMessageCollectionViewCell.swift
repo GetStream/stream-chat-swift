@@ -41,7 +41,17 @@ public final class _СhatMessageCollectionViewCell<ExtraData: ExtraDataTypes>: _
         // We add the content view to the view hierarchy before invoking `setUpLayoutIfNeeded`
         // (where the subviews are instantiated and configured) to use `components` and `appearance`
         // taken from the responder chain.
-        contentView.embed(messageContentView!)
+        contentView.addSubview(messageContentView!)
+        
+        messageContentView?.pin(anchors: [.leading, .top, .trailing], to: contentView)
+        
+        // Bottom anchor is pinned with a lower priority to make the content view stick to the top of the
+        // cell during animations.
+        messageContentView?.bottomAnchor
+            .pin(lessThanOrEqualTo: contentView.bottomAnchor)
+            .with(priority: .streamAlmostRequire)
+            .isActive = true
+        
         messageContentView!.setUpLayoutIfNeeded(options: options, attachmentViewInjectorType: attachmentViewInjectorType)
     }
 
