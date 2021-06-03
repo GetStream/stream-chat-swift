@@ -84,11 +84,15 @@ open class ChatMessageListCollectionViewLayout: UICollectionViewLayout {
     
     /// As we very often need to preserve scroll offset after performBatchUpdates, the simplest solution is to save original
     /// contentOffset and set it when batch updates end
-    open var restoreOffset: CGFloat?
+    private var restoreOffset: CGFloat?
 
     /// Flag to make sure the `prepare()` function is only executed when the collection view had been loaded.
     /// The rest of the updates should come from `prepare(forCollectionViewUpdates:)`.
     private var didPerformInitialLayout = false
+    
+    /// When `true` the `restoreOffset` is returned from `targetContentOffset(forProposedContentOffset:)`
+    /// which scrolls the message list to the bottom.
+    private var didPerformInitialScrollToBottom = false
 
     // MARK: - Initialization
 
@@ -259,7 +263,10 @@ open class ChatMessageListCollectionViewLayout: UICollectionViewLayout {
     override open func targetContentOffset(forProposedContentOffset proposedContentOffset: CGPoint) -> CGPoint {
         guard let collectionView = self.collectionView else { return proposedContentOffset }
         // if we have any content offset to restore and if the collection view has enough items to scroll, restore it
-        if let restore = restoreOffset, collectionView.contentSize.height > collectionView.bounds.height {
+        if let restore = restoreOffset,
+           collectionView.contentSize.height > collectionView.bounds.height,
+           !didPerformInitialScrollToBottom {
+            didPerformInitialScrollToBottom = true
             return CGPoint(x: 0, y: collectionViewContentSize.height - restore)
         }
         return proposedContentOffset
