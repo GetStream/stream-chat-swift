@@ -26,6 +26,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Fix message list animation glitches when keyboard appears [#1139](https://github.com/GetStream/stream-chat-swift/pull/1139)
 - Fix issue where images might not render in the message composer in some cases [#1140](https://github.com/GetStream/stream-chat-swift/pull/1140)
 - Fix issue with message bubbles not being updated properly when a message withing the same group is sent/deleted [#1141](https://github.com/GetStream/stream-chat-swift/pull/1141), [#1149](https://github.com/GetStream/stream-chat-swift/pull/1149)
+- Fix jumps on message list when old message is edited or when the new message comes [#1148](https://github.com/GetStream/stream-chat-swift/pull/1148)
 
 ### 🔄 Changed
 - `swipeableViewWillShowActionViews(for:)` and `swipeableViewActionViews(for:)` are `open` now [#1122](https://github.com/GetStream/stream-chat-swift/issues/1122)
