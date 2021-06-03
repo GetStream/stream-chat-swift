@@ -573,13 +573,3 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
         return df
     }()
 }
-
-private extension UICollectionView {
-    var isLastCellFullyVisible: Bool {
-        if numberOfItems(inSection: 0) == 0 { return true }
-        let lastIndexPath = IndexPath(item: 0, section: 0)
-
-        guard let attributes = collectionViewLayout.layoutAttributesForItem(at: lastIndexPath) else { return false }
-        return bounds.contains(attributes.frame)
-    }
-}
