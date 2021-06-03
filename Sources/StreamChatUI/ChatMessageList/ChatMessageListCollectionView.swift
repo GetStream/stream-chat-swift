@@ -182,6 +182,10 @@ open class ChatMessageListCollectionView<ExtraData: ExtraDataTypes>: UICollectio
         with changes: [ListChange<_ChatMessage<ExtraData>>],
         completion: ((Bool) -> Void)? = nil
     ) {
+        // Before committing the changes, we need to check if were scrolled
+        // to the bottom, if yes, we should stay scrolled to the bottom
+        let shouldScrollToBottom = isLastCellFullyVisible
+
         performBatchUpdates {
             for change in changes {
                 switch change {
@@ -196,11 +200,6 @@ open class ChatMessageListCollectionView<ExtraData: ExtraDataTypes>: UICollectio
                 }
             }
         } completion: { flag in
-
-            if shouldScrollToBottom {
-                self.scrollToMostRecentMessage()
-            }
-
             // If a new message was inserted, reload the previous message to give it chance to update
             // its appearance in case it's now part of a group.
             let indexPaths = self.indexPathsToMessagesBeforeInsertedAfterBatchUpdate(with: changes)
@@ -213,6 +212,10 @@ open class ChatMessageListCollectionView<ExtraData: ExtraDataTypes>: UICollectio
                 if self.isLastCellFullyVisible {
                     self.scrollToMostRecentMessage()
                 }
+            }
+
+            if shouldScrollToBottom {
+                self.scrollToMostRecentMessage()
             }
 
             completion?(flag)
