@@ -332,7 +332,7 @@ lane :test_release_macos do
 
   setCIEnvironmentVariable("../Tests/StreamChatTests/StreamChatTestPlan.xctestplan")
 
-  match_me
+  match_macos()
 
   scan(
     project: "StreamChat.xcodeproj",
@@ -350,7 +350,7 @@ lane :test_debug_macos do
 
   setCIEnvironmentVariable("../Tests/StreamChatTests/StreamChatTestPlan.xctestplan")
 
-  match_me
+  match_macos()
 
   scan(
     project: "StreamChat.xcodeproj",
@@ -361,6 +361,16 @@ lane :test_debug_macos do
     disable_xcpretty: true,
     destination: 'platform=macOS,arch=x86_64' # will select first from macOS and macOS Catalyst. Let's hope it always will be macOS
   )
+end
+
+def match_macos
+  ["development", "appstore"].each do |type|
+    match(
+      type: type,
+      app_identifier: "io.getstream.StreamChat",
+      platform: "macos"
+    )
+  end
 end
 
 desc "Runs stress tests for Debug config"
