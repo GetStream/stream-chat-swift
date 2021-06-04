@@ -90,7 +90,7 @@ open class _ChatMessageListRouter<ExtraData: ExtraDataTypes>:
         cid: ChannelId,
         client: _ChatClient<ExtraData>
     ) {
-        let threadVC = _ChatThreadVC<ExtraData>()
+        let threadVC = components.threadVC.init()
         threadVC.channelController = client.channelController(for: cid)
         threadVC.messageController = client.messageController(
             cid: cid,
