@@ -95,6 +95,9 @@ public struct _Components<ExtraData: ExtraDataTypes> {
     /// The View Controller by default used to display message actions after long-pressing on the message.
     public var messageActionsVC: _ChatMessageActionsVC<ExtraData>.Type = _ChatMessageActionsVC<ExtraData>.self
 
+    /// The View Controller by default used to display interactive reactions view after long-pressing on the message.
+    public var messageReactionsVC: _ChatMessageReactionsVC<ExtraData>.Type = _ChatMessageReactionsVC<ExtraData>.self
+
     /// The View Controller by default used to display long-press menu of the message.
     public var messagePopupVC: _ChatMessagePopupVC<ExtraData>.Type = _ChatMessagePopupVC<ExtraData>.self
 
