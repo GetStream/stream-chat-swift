@@ -196,12 +196,12 @@ open class ChatMessageListCollectionViewLayout: UICollectionViewLayout {
             for i in 0..<idx {
                 guard let oldId = self.oldIdForItem(at: i) else { return }
                 
-                if let idx = self.idxForItem(with: oldId) {
+                if let idx = self.indexForItem(with: oldId) {
                     self.currentItems[idx].offset -= delta
                 }
             }
             
-            if let idx = self.idxForItem(with: item.id) {
+            if let idx = self.indexForItem(with: item.id) {
                 self.currentItems.remove(at: idx)
             }
         }
@@ -326,28 +326,29 @@ open class ChatMessageListCollectionViewLayout: UICollectionViewLayout {
     }
 
     override open func initialLayoutAttributesForAppearingItem(at itemIndexPath: IndexPath) -> UICollectionViewLayoutAttributes? {
-        let idx = itemIndexPath.item
+        let itemIndex = itemIndexPath.item
         if appearingItems.contains(itemIndexPath) {
             // this is item that have been inserted into collection view in current batch update
-            let attribute = currentItems[idx]
-                .attribute(for: idx, width: currentCollectionViewWidth)
+            let attribute = currentItems[itemIndex]
+                .attribute(for: itemIndex, width: currentCollectionViewWidth)
                 .copy() as! UICollectionViewLayoutAttributes
             
             animatingAttributes[itemIndexPath] = attribute
             return attribute
-        } else {
+        } else if let itemId = idForItem(at: itemIndex), let oldItemIndex = oldIndexForItem(with: itemId) {
             // this is item that already presented in collection view, but collection view decided to reload it
             // by removing and inserting it back (4head)
             // to properly animate possible change of such item, we need to return its attributes BEFORE batch update
-            guard let id = idForItem(at: idx) else { return nil }
-            return oldIdxForItem(with: id).map { oldIdx in
-                let attr = previousItems[oldIdx]
-                    .attribute(for: oldIdx, width: currentCollectionViewWidth)
-                    .copy() as! UICollectionViewLayoutAttributes
-                
-                attr.alpha = 0
-                return attr
-            }
+            let itemStaysInPlace = itemIndex == oldItemIndex
+            
+            let attribute = (itemStaysInPlace ? currentItems[itemIndex] : previousItems[oldItemIndex])
+                .attribute(for: itemStaysInPlace ? itemIndex : oldItemIndex, width: currentCollectionViewWidth)
+                .copy() as! UICollectionViewLayoutAttributes
+            
+            attribute.alpha = 0
+            return attribute
+        } else {
+            return super.initialLayoutAttributesForAppearingItem(at: itemIndexPath)
         }
     }
 
@@ -364,7 +365,7 @@ open class ChatMessageListCollectionViewLayout: UICollectionViewLayout {
             attribute.alpha = 0
             return attribute
             
-        } else if let newIdx = idxForItem(with: id) {
+        } else if let newIdx = indexForItem(with: id) {
             // this is item that will stay in collection view, but collection view decided to reload it
             // by removing and inserting it back (4head)
             // to properly animate possible change of such item, we need to return its attributes AFTER batch update
@@ -387,7 +388,7 @@ open class ChatMessageListCollectionViewLayout: UICollectionViewLayout {
         return currentItems[idx].id
     }
 
-    open func idxForItem(with id: UUID) -> Int? {
+    open func indexForItem(with id: UUID) -> Int? {
         currentItems.firstIndex { $0.id == id }
     }
 
@@ -396,7 +397,7 @@ open class ChatMessageListCollectionViewLayout: UICollectionViewLayout {
         return previousItems[idx].id
     }
 
-    open func oldIdxForItem(with id: UUID) -> Int? {
+    open func oldIndexForItem(with id: UUID) -> Int? {
         previousItems.firstIndex { $0.id == id }
     }
 }
