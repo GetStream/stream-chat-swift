@@ -45,6 +45,23 @@ class EventNotificationCenter: NotificationCenter {
         }
     }
     
+    /// Custom overload for `HealthCheckEvent`
+    ///
+    /// When we receive this event, we first create the `CurrentUserDTO`
+    /// and then inform the `connectionIdWaiters` of `ChatClient`
+    /// that we're connected. Using the normal `process` func, by the time
+    /// we inform the waiters, DB save is not finished so `CurrentUserDTO`
+    /// does not exist in DB yet. Using this overload makes sure that
+    /// we process the event fully before calling completion closures.
+    func process(_ healthCheckEvent: HealthCheckEvent, completion: @escaping ((ConnectionId) -> Void)) {
+        database.write { session in
+            // We don't want to publish `HealthCheckEvent`, so we discard the output
+            _ = self.middlewares.process(event: healthCheckEvent, session: session)
+        } completion: { _ in
+            completion(healthCheckEvent.connectionId)
+        }
+    }
+    
     /// Starts the timer and schedules the processing of events
     private func scheduleProcessing() {
         DispatchQueue.main.asyncAfter(deadline: .now() + eventBatchPeriod) { [weak self] in

@@ -134,16 +134,6 @@ class WebSocketClient_Tests: StressTestCase {
     
     // MARK: - Connection tests
     
-    func test_healthCheckMiddlewareIsThere() {
-        let healthCheckMiddlewares = webSocketClient.eventNotificationCenter.middlewares.compactMap { $0 as? HealthCheckMiddleware }
-       
-        // Assert there is only one `HealthCheckMiddleware`
-        XCTAssertEqual(healthCheckMiddlewares.count, 1)
-        
-        // Assert the middlewares works with the correct client
-        XCTAssertTrue(healthCheckMiddlewares[0].webSocketClient === webSocketClient)
-    }
-    
     func test_connectionFlow() {
         assert(webSocketClient.connectionState == .disconnected())
         
@@ -488,6 +478,53 @@ class WebSocketClient_Tests: StressTestCase {
         AssertAsync.willBeEqual(eventLogger.equatableEvents, expectedEvents)
     }
     
+    func test_currentUserDTOExists_whenStateIsConnected() throws {
+        // Add `EventDataProcessorMiddleware` which is responsible for saving CurrentUser
+        let eventDataProcessorMiddleware = EventDataProcessorMiddleware<NoExtraData>()
+        webSocketClient.eventNotificationCenter.add(middleware: eventDataProcessorMiddleware)
+        
+        // Simulate connection
+        
+        // Simulate response from the encoder
+        let request = URLRequest(url: .unique())
+        requestEncoder.encodeRequest = .success(request)
+        
+        // Assert that `CurrentUserDTO` does not exist
+        var currentUser: CurrentUserDTO? {
+            database.viewContext.currentUser
+        }
+        
+        XCTAssertNil(currentUser)
+        
+        // Call `connect`, it should change connection state and call `connect` on the engine
+        webSocketClient.connectEndpoint = endpoint
+        webSocketClient.connect()
+        
+        AssertAsync {
+            Assert.willBeEqual(self.engine!.connect_calledCount, 1)
+        }
+        
+        // Simulate the engine is connected and check the connection state is updated
+        engine!.simulateConnectionSuccess()
+        AssertAsync.willBeEqual(webSocketClient.connectionState, .waitingForConnectionId)
+        
+        // Simulate a health check event is received and the connection state is updated
+        let payloadCurrentUser = dummyCurrentUser
+        let eventPayload = EventPayload<NoExtraData>(
+            eventType: .healthCheck,
+            connectionId: connectionId,
+            cid: nil,
+            currentUser: payloadCurrentUser,
+            channel: nil
+        )
+        decoder.decodedEvent = .success(try HealthCheckEvent(from: eventPayload))
+        engine!.simulateMessageReceived()
+        
+        // We should see `CurrentUserDTO` being saved before we get connectionId
+        AssertAsync.willBeEqual(currentUser?.user.id, payloadCurrentUser.id)
+        AssertAsync.willBeEqual(webSocketClient.connectionState, .connected(connectionId: connectionId))
+    }
+    
     // MARK: - Background task tests
     
     func test_backgroundTaskIsCreated_whenWebSocketIsConnected_andAppGoesToBackground() {
@@ -634,79 +671,6 @@ class WebSocketClient_Tests: StressTestCase {
         
         // Check the background task is terminated
         AssertAsync.willBeEqual(backgroundTaskScheduler.endBackgroundTask_called, true)
-    }
-}
-
-final class HealthCheckMiddleware_Tests: XCTestCase {
-    var middleware: HealthCheckMiddleware!
-    var webSocketClient: WebSocketClientMock!
-    
-    // The database is not needed for the middleware but it's a requirement by the protocol that we provide a valid
-    // db session, so we need to have it.
-    var database: DatabaseContainer!
-    
-    // MARK: - Setup
-    
-    override func setUp() {
-        super.setUp()
-        
-        webSocketClient = WebSocketClientMock()
-        middleware = HealthCheckMiddleware(webSocketClient: webSocketClient)
-        
-        database = DatabaseContainerMock()
-    }
-    
-    override func tearDown() {
-        AssertAsync.canBeReleased(&webSocketClient)
-        AssertAsync.canBeReleased(&database)
-        
-        super.tearDown()
-    }
-    
-    // MARK: - Tests
-    
-    func test_middleware_forwardsNonHealthCheckEvents() throws {
-        let event = TestEvent()
-        
-        // Simulate incoming public event
-        let forwardedEvent = middleware.handle(event: event, session: database.viewContext)
-        
-        // Assert event is forwared as it is
-        XCTAssertEqual(forwardedEvent as? TestEvent, event)
-    }
-    
-    func test_middleware_filtersHealthCheckEvents_ifClientIsDeallocated() throws {
-        let event = HealthCheckEvent(connectionId: .unique)
-        
-        // Deallocate the client
-        AssertAsync.canBeReleased(&webSocketClient)
-        
-        // Simulate `HealthCheckEvent`
-        let forwardedEvent = middleware.handle(event: event, session: database.viewContext)
-        
-        // Assert event is not forwarded
-        XCTAssertNil(forwardedEvent)
-    }
-    
-    func test_middleware_handlesHealthCheckEvents() throws {
-        let event = HealthCheckEvent(connectionId: .unique)
-        
-        // Simulate `HealthCheckEvent`
-        let forwardedEvent = middleware.handle(event: event, session: database.viewContext)
-
-        // Assert event is not forwared
-        XCTAssertNil(forwardedEvent)
-        // Connection state is updated
-        XCTAssertEqual(middleware.webSocketClient?.connectionState, .connected(connectionId: event.connectionId))
-    }
-    
-    func test_middleware_healthCheckEvents_parsedCorrectly() throws {
-        let eventDecoder = EventDecoder<NoExtraData>()
-        
-        let json = XCTestCase.mockData(fromFile: "HealthCheck")
-        let event = try eventDecoder.decode(from: json) as? HealthCheckEvent
-        
-        XCTAssertEqual(event?.connectionId, "60782eca-0a05-154b-0000-000000a85747")
     }
 }
 

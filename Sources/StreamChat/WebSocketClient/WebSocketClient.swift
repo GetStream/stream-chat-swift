@@ -16,7 +16,7 @@ class WebSocketClient {
     let eventNotificationCenter: EventNotificationCenter
     
     /// The current state the web socket connection.
-    @Atomic fileprivate(set) var connectionState: WebSocketConnectionState = .disconnected() {
+    @Atomic private(set) var connectionState: WebSocketConnectionState = .disconnected() {
         didSet {
             log.info("Web socket connection state changed: \(connectionState)")
             connectionStateDelegate?.webSocketClient(self, didUpdateConectionState: connectionState)
@@ -118,7 +118,6 @@ class WebSocketClient {
         self.internetConnection = internetConnection
 
         self.eventNotificationCenter = eventNotificationCenter
-        self.eventNotificationCenter.add(middleware: HealthCheckMiddleware(webSocketClient: self))
         
         backgroundTaskScheduler?.startListeningForAppStateUpdates(
             onEnteringBackground: { [weak self] in self?.handleAppDidEnterBackground() },
@@ -248,7 +247,14 @@ extension WebSocketClient: WebSocketEngineDelegate {
             log.debug("Event received:\n\(messageData.debugPrettyPrintedJSON)")
 
             let event = try eventDecoder.decode(from: messageData)
-            eventNotificationCenter.process(event)
+            if let healthCheckEvent = event as? HealthCheckEvent {
+                eventNotificationCenter.process(healthCheckEvent) { [weak self] connectionId in
+                    self?.pingController.pongRecieved()
+                    self?.connectionState = .connected(connectionId: connectionId)
+                }
+            } else {
+                eventNotificationCenter.process(event)
+            }
         } catch is ClientError.UnsupportedEventType {
             log.info("Skipping unsupported event type with payload: \(message)")
             
@@ -356,25 +362,4 @@ extension ClientError {
 struct WebSocketErrorContainer: Decodable {
     /// A server error was received.
     let error: ErrorPayload
-}
-
-struct HealthCheckMiddleware: EventMiddleware {
-    private(set) weak var webSocketClient: WebSocketClient?
-
-    func handle(event: Event, session: DatabaseSession) -> Event? {
-        guard let healthCheckEvent = event as? HealthCheckEvent else {
-            // Do nothing and forward the event
-            return event
-        }
-        
-        if let webSocketClient = webSocketClient {
-            webSocketClient.pingController.pongRecieved()
-            if webSocketClient.connectionState.isConnected == false {
-                webSocketClient.connectionState = .connected(connectionId: healthCheckEvent.connectionId)
-            }
-        }
-        
-        // Don't forward the event
-        return nil
-    }
 }
