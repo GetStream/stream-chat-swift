@@ -356,6 +356,10 @@ open class _ComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
 
         if let editingMessage = content.editingMessage {
             editMessage(withId: editingMessage.id, newText: text)
+            
+            // This is just a temporary solution. This will be handled on the LLC level
+            // in CIS-883
+            channelController?.sendStopTypingEvent()
         } else {
             createNewMessage(text: text)
         }
