@@ -88,8 +88,12 @@ public struct _Components<ExtraData: ExtraDataTypes> {
 
     /// The view that shows the date for currently visible messages on top of message list.
     public var messageListScrollOverlayView: ChatMessageListScrollOverlayView.Type = ChatMessageListScrollOverlayView.self
+    
     /// The View Controller used to display the detail of a message thread.
     public var threadVC: _ChatThreadVC<ExtraData>.Type = _ChatThreadVC<ExtraData>.self
+
+    /// The View Controller by default used to display message actions after long-pressing on the message.
+    public var messageActionsVC: _ChatMessageActionsVC<ExtraData>.Type = _ChatMessageActionsVC<ExtraData>.self
 
     /// The View Controller by default used to display long-press menu of the message.
     public var messagePopupVC: _ChatMessagePopupVC<ExtraData>.Type = _ChatMessagePopupVC<ExtraData>.self

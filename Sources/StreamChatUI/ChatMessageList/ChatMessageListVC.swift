@@ -386,7 +386,7 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
             messageId: message.id
         )
         
-        let actionsController = _ChatMessageActionsVC<ExtraData>()
+        let actionsController = components.messageActionsVC.init()
         actionsController.messageController = messageController
         actionsController.channelConfig = channelController.channel?.config
         actionsController.delegate = .init(delegate: self)
