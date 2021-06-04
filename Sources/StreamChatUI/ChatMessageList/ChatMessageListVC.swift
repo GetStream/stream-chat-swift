@@ -397,7 +397,7 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
                 return nil
             }
 
-            let controller = _ChatMessageReactionsVC<ExtraData>()
+            let controller = components.messageReactionsVC.init()
             controller.messageController = messageController
             return controller
         }()
