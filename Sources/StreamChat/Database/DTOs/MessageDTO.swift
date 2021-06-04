@@ -592,7 +592,8 @@ private extension _ChatMessage {
 extension ClientError {
     class CurrentUserDoesNotExist: ClientError {
         override var localizedDescription: String {
-            "There is no `CurrentUserDTO` instance in the DB. Make sure to call `Client.setUser`."
+            "There is no `CurrentUserDTO` instance in the DB."
+                + "Make sure to call `client.currentUserController.reloadUserIfNeeded()`"
         }
     }
 
