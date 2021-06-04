@@ -5,6 +5,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+### 🔄 Changed
+
+# [4.0.0-beta.2](https://github.com/GetStream/stream-chat-swift/releases/tag/4.0.0-beta.2)
+_June 04, 2021_
+
 ### ⚠️ Breaking Changes from `4.0-beta.1`
 **Severity of changes**: 🟢 _minor_ 
 - `MessageLayoutOption.metadata` was renamed to `.timestamp` [#1141](https://github.com/GetStream/stream-chat-swift/pull/1141)
