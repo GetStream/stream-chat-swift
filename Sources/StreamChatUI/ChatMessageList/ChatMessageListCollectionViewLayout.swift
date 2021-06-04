@@ -89,10 +89,6 @@ open class ChatMessageListCollectionViewLayout: UICollectionViewLayout {
     /// Flag to make sure the `prepare()` function is only executed when the collection view had been loaded.
     /// The rest of the updates should come from `prepare(forCollectionViewUpdates:)`.
     private var didPerformInitialLayout = false
-    
-    /// When `true` the `restoreOffset` is returned from `targetContentOffset(forProposedContentOffset:)`
-    /// which scrolls the message list to the bottom.
-    private var didPerformInitialScrollToBottom = false
 
     // MARK: - Initialization
 
@@ -133,7 +129,10 @@ open class ChatMessageListCollectionViewLayout: UICollectionViewLayout {
         currentItems[idx].height = preferredAttributes.frame.height
         // if item have been inserted recently or deleted, we need to update its attributes to prevent weird flickering
         animatingAttributes[preferredAttributes.indexPath]?.frame.size.height = preferredAttributes.frame.height
-
+        
+        // Adjust the content offset by the same amount the cell height is changed
+        restoreOffset = restoreOffset.map { $0 + delta }
+        
         for i in 0..<idx {
             currentItems[i].offset += delta
         }
@@ -180,9 +179,12 @@ open class ChatMessageListCollectionViewLayout: UICollectionViewLayout {
 
     open func _prepare(forCollectionViewUpdates updateItems: [UICollectionViewUpdateItem]) {
         previousItems = currentItems
-        
+
         // used to determine what contentOffset should be restored after batch updates
-        restoreOffset = collectionView.map { collectionViewContentSize.height - $0.contentOffset.y }
+        if !updateItems
+            .contains(where: { $0.updateAction == .insert && $0.indexPathAfterUpdate == IndexPath(item: 0, section: 0) }) {
+            restoreOffset = collectionView.map { collectionViewContentSize.height - $0.contentOffset.y }
+        }
         
         let delete: (UICollectionViewUpdateItem) -> Void = { update in
             guard let ip = update.indexPathBeforeUpdate else { return }
@@ -263,10 +265,7 @@ open class ChatMessageListCollectionViewLayout: UICollectionViewLayout {
     override open func targetContentOffset(forProposedContentOffset proposedContentOffset: CGPoint) -> CGPoint {
         guard let collectionView = self.collectionView else { return proposedContentOffset }
         // if we have any content offset to restore and if the collection view has enough items to scroll, restore it
-        if let restore = restoreOffset,
-           collectionView.contentSize.height > collectionView.bounds.height,
-           !didPerformInitialScrollToBottom {
-            didPerformInitialScrollToBottom = true
+        if let restore = restoreOffset, collectionView.contentSize.height > collectionView.bounds.height {
             return CGPoint(x: 0, y: collectionViewContentSize.height - restore)
         }
         return proposedContentOffset
