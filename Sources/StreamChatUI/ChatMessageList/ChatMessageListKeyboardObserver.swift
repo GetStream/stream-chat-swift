@@ -58,6 +58,11 @@ open class ChatMessageListKeyboardObserver {
             delay: 0.0,
             options: UIView.AnimationOptions(rawValue: keyboardAnimationCurve),
             animations: { [weak self] in
+                
+                UIView.performWithoutAnimation {
+                    self?.collectionView.layoutIfNeeded()
+                }
+                
                 self?.containerView.layoutIfNeeded()
 
                 let isKeyboardShowing = intersectedKeyboardHeight > 0
