@@ -76,8 +76,16 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
         .withoutAutoresizingMaskConstraints
     
     /// View which displays information about current users who are typing.
-    public private(set) lazy var typingIndicatorView: _TypingIndicatorView<ExtraData> = components
+    open private(set) lazy var typingIndicatorView: _TypingIndicatorView<ExtraData> = components
         .typingIndicatorView
+        .init()
+        .withoutAutoresizingMaskConstraints
+    
+    /// A button to scroll the collection view to the bottom.
+    ///
+    /// Visible when there is unread message and the collection view is not at the bottom already.
+    open private(set) lazy var scrollToLatestMessageButton: UIButton = components
+        .scrollToLatestMessageButton
         .init()
         .withoutAutoresizingMaskConstraints
 
@@ -114,6 +122,9 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
                 self?.updateNavigationBarContent()
             }
         }
+        
+        scrollToLatestMessageButton.addTarget(self, action: #selector(scrollToLatestMessage), for: .touchUpInside)
+        
         updateNavigationBarContent()
     }
     
@@ -143,6 +154,13 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
             
             collectionView.contentInset.bottom += typingIndicatorViewHeight
         }
+        
+        view.addSubview(scrollToLatestMessageButton)
+        collectionView.bottomAnchor.pin(equalToSystemSpacingBelow: scrollToLatestMessageButton.bottomAnchor).isActive = true
+        scrollToLatestMessageButton.trailingAnchor.pin(equalTo: view.layoutMarginsGuide.trailingAnchor).isActive = true
+        scrollToLatestMessageButton.widthAnchor.pin(equalTo: scrollToLatestMessageButton.heightAnchor).isActive = true
+        scrollToLatestMessageButton.heightAnchor.pin(equalToConstant: 40).isActive = true
+        setScrollToLatestMessageButton(visible: false, animated: false)
         
         NSLayoutConstraint.activate([
             channelAvatarView.widthAnchor.pin(equalTo: channelAvatarView.heightAnchor),
@@ -246,11 +264,20 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
         }
     }
     
-    public func collectionView(
+    open func collectionView(
         _ collectionView: UICollectionView,
         scrollOverlayTextForItemAt indexPath: IndexPath
     ) -> String? {
         overlayDateFormatter.string(from: channelController.messages[indexPath.item].createdAt)
+    }
+
+    open func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        if collectionView.isLastCellFullyVisible, channelController.channel?.isUnread == true {
+            channelController.markRead()
+            
+            // Hide the button immediately. Temporary solution until CIS-881 is implemented.
+            setScrollToLatestMessageButton(visible: false)
+        }
     }
     
     /// Will scroll to most recent message on next `updateMessages` call
@@ -266,6 +293,27 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
     /// Scrolls to most recent message
     open func scrollToMostRecentMessage(animated: Bool = true) {
         collectionView.scrollToMostRecentMessage(animated: animated)
+    }
+    
+    /// Update the visibility of `scrollToLatestMessageButton` based on unread messages and visible messages.
+    open func updateScrollToLatestMessageButton() {
+        let visible = channelController.channel?.isUnread == true && !collectionView.isLastCellFullyVisible
+        setScrollToLatestMessageButton(visible: visible)
+    }
+    
+    /// Set the visibility of `scrollToLatestMessageButton`.
+    open func setScrollToLatestMessageButton(visible: Bool, animated: Bool = true) {
+        if visible { scrollToLatestMessageButton.isVisible = true }
+        Animate(isAnimated: animated, {
+            self.scrollToLatestMessageButton.alpha = visible ? 1 : 0
+        }, completion: { _ in
+            if !visible { self.scrollToLatestMessageButton.isVisible = false }
+        })
+    }
+    
+    /// Action for `scrollToLatestMessageButton` that scroll to most recent message.
+    @objc open func scrollToLatestMessage() {
+        scrollToMostRecentMessage()
     }
     
     /// Updates the status data in `titleView`.
@@ -441,6 +489,7 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
         didUpdateChannel channel: EntityChange<_ChatChannel<ExtraData>>
     ) {
         updateNavigationBarContent()
+        updateScrollToLatestMessageButton()
     }
 
     open func channelController(
@@ -533,4 +582,14 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
         df.locale = .autoupdatingCurrent
         return df
     }()
+}
+
+private extension UICollectionView {
+    var isLastCellFullyVisible: Bool {
+        if numberOfItems(inSection: 0) == 0 { return true }
+        let lastIndexPath = IndexPath(item: 0, section: 0)
+
+        guard let attributes = collectionViewLayout.layoutAttributesForItem(at: lastIndexPath) else { return false }
+        return bounds.contains(attributes.frame)
+    }
 }

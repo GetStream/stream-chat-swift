@@ -162,6 +162,9 @@ public struct _Components<ExtraData: ExtraDataTypes> {
 
     /// The view that shows a badge on `giphyAttachmentView`.
     public var giphyBadgeView: _ChatMessageGiphyView<ExtraData>.GiphyBadge.Type = _ChatMessageGiphyView<ExtraData>.GiphyBadge.self
+    
+    /// The button that indicates unread messages at the bottom of the message list and scroll to the latest message on tap.
+    public var scrollToLatestMessageButton: UIButton.Type = ScrollToLatestMessageButton.self
 
     // MARK: - Channel list components
 
