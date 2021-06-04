@@ -36,6 +36,7 @@ public extension Appearance {
         public var openAttachments: UIImage = UIImage(named: "clip", in: .streamChatUI)!
         public var shrinkInputArrow: UIImage = UIImage(named: "arrow_shrink_input", in: .streamChatUI)!
         public var sendArrow: UIImage = UIImage(named: "arrow_send", in: .streamChatUI)!
+        public var scrollDownArrow: UIImage = UIImage(named: "arrow_down", in: .streamChatUI)!
         public var messageSent: UIImage = UIImage(named: "checkmark_grey", in: .streamChatUI)!
         public var whiteCheckmark: UIImage = UIImage(named: "checkmark_white", in: .streamChatUI)!
         public var readByAll: UIImage = UIImage(named: "checkmark_double", in: .streamChatUI)!
