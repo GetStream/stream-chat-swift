@@ -40,7 +40,7 @@ open class InputTextView: UITextView, AppearanceProvider {
             self,
             selector: #selector(textDidChange),
             name: UITextView.textDidChangeNotification,
-            object: nil
+            object: self
         )
     }
     
