@@ -69,8 +69,12 @@ public struct ChatClientConfig {
     /// Allows to inject a custom API client for uploading attachments, if not specified `StreamCDNClient` is used
     public var customCDNClient: CDNClient?
     
-    public init(apiKey: APIKey) {
+    // The timeout in seconds for API requests, by default set to 30 seconds
+    public let timeoutInterval: TimeInterval
+
+    public init(apiKey: APIKey, timeoutInterval: TimeInterval = .init(30)) {
         self.apiKey = apiKey
+        self.timeoutInterval = timeoutInterval
         isClientInActiveMode = !Bundle.main.isAppExtension
     }
 }

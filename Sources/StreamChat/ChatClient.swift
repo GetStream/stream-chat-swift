@@ -206,6 +206,8 @@ public class _ChatClient<ExtraData: ExtraDataTypes> {
         let config = URLSessionConfiguration.default
         config.waitsForConnectivity = false
         config.httpAdditionalHeaders = sessionHeaders
+        config.timeoutIntervalForRequest = self.config.timeoutInterval
+        config.timeoutIntervalForResource = self.config.timeoutInterval
         return config
     }
     

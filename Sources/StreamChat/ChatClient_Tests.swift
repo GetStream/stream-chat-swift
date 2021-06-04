@@ -451,6 +451,30 @@ class ChatClient_Tests: StressTestCase {
         XCTAssert(testEnv.apiClient?.init_requestEncoder is TestRequestEncoder)
     }
     
+    func testApiClientConfigurationWithCustomTimeout() throws {
+        let config: ChatClientConfig = .init(apiKey: .init("asd"), timeoutInterval: 42)
+        let client = ChatClient(config: config, tokenProvider: .anonymous)
+        
+        XCTAssertEqual(42, config.timeoutInterval)
+        XCTAssertEqual(42, client.config.timeoutInterval)
+        XCTAssertEqual(
+            client.apiClient.session.configuration.timeoutIntervalForResource,
+            client.apiClient.session.configuration.timeoutIntervalForRequest
+        )
+    }
+    
+    func testApiClientConfigurationWithStandardTimeout() throws {
+        let config: ChatClientConfig = .init(apiKey: .init("asd"))
+        let client = ChatClient(config: config, tokenProvider: .anonymous)
+        
+        XCTAssertEqual(30, config.timeoutInterval)
+        XCTAssertEqual(30, client.config.timeoutInterval)
+        XCTAssertEqual(
+            client.apiClient.session.configuration.timeoutIntervalForResource,
+            client.apiClient.session.configuration.timeoutIntervalForRequest
+        )
+    }
+
     // MARK: - Background workers tests
     
     func test_productionClientIsInitalizedWithAllMandatoryBackgroundWorkers() {
