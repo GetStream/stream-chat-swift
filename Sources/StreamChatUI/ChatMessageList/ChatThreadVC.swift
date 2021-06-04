@@ -130,7 +130,8 @@ open class _ChatThreadVC<ExtraData: ExtraDataTypes>:
         view.backgroundColor = appearance.colorPalette.background
 
         collectionView.backgroundColor = appearance.colorPalette.background
-
+        collectionView.contentInset.top += max(collectionView.layoutMargins.right, collectionView.layoutMargins.left)
+        
         navigationItem.titleView = titleView
     }
 
