@@ -88,7 +88,10 @@ open class _SwipeableView<ExtraData: ExtraDataTypes>: _View, ComponentsProvider,
 
     @objc open func didPan(_ gesture: UIPanGestureRecognizer) {
         // If we don't have indexPath or any actionViews, we don't want to proceed with the swiping.
-        guard let indexPath = indexPath?(), let actionButtons = delegate?.swipeableViewActionViews(for: indexPath) else { return }
+        guard let indexPath = indexPath?(),
+              let actionButtons = delegate?.swipeableViewActionViews(for: indexPath),
+              actionButtons.isEmpty == false
+        else { return }
 
         var swipeVelocity = gesture.velocity(in: self)
         var swipePosition = gesture.translation(in: self)
