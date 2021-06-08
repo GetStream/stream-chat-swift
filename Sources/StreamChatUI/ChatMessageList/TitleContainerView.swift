@@ -5,8 +5,8 @@
 import StreamChat
 import UIKit
 
-/// A view that is used as a wrapper for status data in navigationItem's titleView
-open class TitleContainerView: _View, AppearanceProvider {
+/// A view that is used as a wrapper for status data in navigationItem's titleView.
+open class TitleContainerView: _View, AppearanceProvider, SwiftUIRepresentable {
     /// Content of the view that contains title (first line) and subtitle (second nil)
     open var content: (title: String?, subtitle: String?) = (nil, nil) {
         didSet {
@@ -15,10 +15,14 @@ open class TitleContainerView: _View, AppearanceProvider {
     }
     
     /// Label that represents the first line of the view
-    open private(set) lazy var titleLabel: UILabel = .init()
+    open private(set) lazy var titleLabel: UILabel = UILabel()
+        .withBidirectionalLanguagesSupport
+        .withAdjustingFontForContentSizeCategory
     
     /// Label that represents the second line of the view
-    open private(set) lazy var subtitleLabel: UILabel = .init()
+    open private(set) lazy var subtitleLabel: UILabel = UILabel()
+        .withBidirectionalLanguagesSupport
+        .withAdjustingFontForContentSizeCategory
     
     /// A view that acts as the main container for the subviews
     open private(set) lazy var containerView: ContainerStackView = ContainerStackView()
