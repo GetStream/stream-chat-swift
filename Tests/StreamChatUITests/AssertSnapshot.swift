@@ -160,3 +160,21 @@ func AssertSnapshot<View: SwiftUI.View>(
         )
     }
 }
+
+/// A wrapper view that renders the content in its ideal size
+@available(iOS 13, *)
+struct SnapshotContainer<Content: View>: View {
+    let content: Content
+    
+    var body: some View {
+        VStack {
+            Spacer()
+            HStack {
+                Spacer()
+                content.fixedSize()
+                Spacer()
+            }.fixedSize()
+            Spacer()
+        }.fixedSize()
+    }
+}
