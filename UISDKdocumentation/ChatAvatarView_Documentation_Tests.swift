@@ -8,20 +8,21 @@ import StreamChatTestTools
 import SwiftUI
 import XCTest
 
-class OnlineIndicatorView_Documentation_Tests: XCTestCase {
+class ChatAvatarView_Documentation_Tests: XCTestCase {
     func test_generateDocsSnapshot() {
         // Create a view to annotate and create documentation for.
-        let view = OnlineIndicatorView().withoutAutoresizingMaskConstraints
-        
+        let view = ChatAvatarView().withoutAutoresizingMaskConstraints
+        view.imageView.image = TestImages.yoda.image
+            
         NSLayoutConstraint.activate([
-            view.widthAnchor.constraint(equalToConstant: 20),
-            view.heightAnchor.constraint(equalToConstant: 20),
+            view.widthAnchor.constraint(equalToConstant: 100),
+            view.heightAnchor.constraint(equalToConstant: 100),
         ])
         
         generateDocs(
             for: view,
             annotations: [],
-            name: "OnlineIndicatorView_documentation",
+            name: "ChatAvatarView_documentation",
             variants: .onlyUserInterfaceStyles
         )
     }
