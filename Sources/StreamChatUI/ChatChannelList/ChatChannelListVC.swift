@@ -217,11 +217,15 @@ open class _ChatChannelListVC<ExtraData: ExtraDataTypes>: _ViewController,
 
     /// This function is called when delete button is pressed from action items of a cell.
     /// - Parameter indexPath: IndexPath of given cell to fetch the content of it.
-    open func deleteButtonPressedForCell(at indexPath: IndexPath) {}
+    open func deleteButtonPressedForCell(at indexPath: IndexPath) {
+        router.didTapDeleteButton(for: controller.channels[indexPath.row].cid)
+    }
 
-    /// This function is called when delete more button is pressed from action items of a cell.
+    /// This function is called when more button is pressed from action items of a cell.
     /// - Parameter indexPath: IndexPath of given cell to fetch the content of it.
-    open func moreButtonPressedForCell(at indexPath: IndexPath) {}
+    open func moreButtonPressedForCell(at indexPath: IndexPath) {
+        router.didTapMoreButton(for: controller.channels[indexPath.row].cid)
+    }
 }
 
 extension _ChatChannelListVC: _ChatChannelListControllerDelegate {

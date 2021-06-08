@@ -48,4 +48,28 @@ open class _ChatChannelListRouter<ExtraData: ExtraDataTypes>:
             """
         )
     }
+    
+    /// Called when a user tapped `More` swipe action on a channel
+    ///
+    /// - Parameter cid: `ChannelId` of a channel swipe acton was used on
+    open func didTapMoreButton(for cid: ChannelId) {
+        log.error(
+            """
+            Tapping `more` swipe action for channel is not handled. Subclass `ChatChannelListRouter` and provide your \
+            implementation of the `\(#function)` method.
+            """
+        )
+    }
+    
+    /// Called when a user tapped `Delete` swipe action on a channel
+    ///
+    /// - Parameter cid: `ChannelId` of a channel swipe acton was used on
+    open func didTapDeleteButton(for cid: ChannelId) {
+        log.error(
+            """
+            Tapping `delete` swipe action for channel is not handled. Subclass `ChatChannelListRouter` and provide your \
+            implementation of the `\(#function)` method.
+            """
+        )
+    }
 }
