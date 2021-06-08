@@ -390,9 +390,7 @@ open class _ChatThreadVC<ExtraData: ExtraDataTypes>:
 
     // MARK: - _ComposerVCDelegate
 
-    open func composerDidCreateNewMessage() {
-        scrollToMostRecentMessage()
-    }
+    open func composerDidCreateNewMessage() {}
 
     // MARK: - _ChatChannelControllerDelegate
 
