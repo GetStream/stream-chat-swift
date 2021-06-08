@@ -7,7 +7,7 @@ import UIKit
 
 /// Protocol used to get path to make a cutout in a parent view.
 ///
-/// This protocol is used to make a transparent "border" around online idicator in avatar view.
+/// This protocol is used to make a transparent "border" around online indicator in avatar view.
 public protocol MaskProviding {
     /// Path used to mask space in super view.
     ///
@@ -16,7 +16,7 @@ public protocol MaskProviding {
 }
 
 /// A view used to indicate the presence of a user.
-open class ChatOnlineIndicatorView: _View, AppearanceProvider, MaskProviding {
+open class OnlineIndicatorView: _View, AppearanceProvider, MaskProviding {
     override open func setUpAppearance() {
         super.setUpAppearance()
         backgroundColor = appearance.colorPalette.alternativeActiveTint
