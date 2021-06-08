@@ -242,7 +242,7 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
     open func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let message = channelController.messages[indexPath.item]
         
-        let cell: _СhatMessageCollectionViewCell<ExtraData> = self.collectionView.dequeueReusableCell(
+        let cell: _ChatMessageCollectionViewCell<ExtraData> = self.collectionView.dequeueReusableCell(
             contentViewClass: cellContentClassForMessage(at: indexPath),
             attachmentViewInjectorType: attachmentViewInjectorClassForMessage(at: indexPath),
             layoutOptions: cellLayoutOptionsForMessage(at: indexPath),
@@ -365,7 +365,7 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
     
     open func didSelectMessageCell(at indexPath: IndexPath) {
         guard
-            let cell = collectionView.cellForItem(at: indexPath) as? _СhatMessageCollectionViewCell<ExtraData>,
+            let cell = collectionView.cellForItem(at: indexPath) as? _ChatMessageCollectionViewCell<ExtraData>,
             let messageContentView = cell.messageContentView,
             let message = messageContentView.content,
             message.isInteractionEnabled == true
@@ -414,7 +414,7 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
         at indexPath: IndexPath
     ) {
         guard
-            let cell = collectionView.cellForItem(at: indexPath) as? _СhatMessageCollectionViewCell<ExtraData>,
+            let cell = collectionView.cellForItem(at: indexPath) as? _ChatMessageCollectionViewCell<ExtraData>,
             let message = cell.messageContentView?.content
         else { return }
         router.showImageGallery(
