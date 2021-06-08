@@ -14,7 +14,7 @@ public protocol ChatMessageListCollectionViewDataSource: UICollectionViewDataSou
     func collectionView(_ collectionView: UICollectionView, scrollOverlayTextForItemAt indexPath: IndexPath) -> String?
 }
 
-/// The collection view that provides convenient API for dequeuing `_СhatMessageCollectionViewCell` instances
+/// The collection view that provides convenient API for dequeuing `_ChatMessageCollectionViewCell` instances
 /// with the provided content view type and layout options.
 open class ChatMessageListCollectionView<ExtraData: ExtraDataTypes>: UICollectionView, Customizable, ComponentsProvider {
     private var identifiers: Set<String> = .init()
@@ -140,16 +140,16 @@ open class ChatMessageListCollectionView<ExtraData: ExtraDataTypes>: UICollectio
     ///   - contentViewClass: The type of content view the cell will be displaying.
     ///   - layoutOptions: The option set describing content view layout.
     ///   - indexPath: The cell index path.
-    /// - Returns: The instance of `_СhatMessageCollectionViewCell<ExtraData>` set up with the
+    /// - Returns: The instance of `_ChatMessageCollectionViewCell<ExtraData>` set up with the
     /// provided `contentViewClass` and `layoutOptions`
     open func dequeueReusableCell<ExtraData: ExtraDataTypes>(
         contentViewClass: _ChatMessageContentView<ExtraData>.Type,
         attachmentViewInjectorType: _AttachmentViewInjector<ExtraData>.Type?,
         layoutOptions: ChatMessageLayoutOptions,
         for indexPath: IndexPath
-    ) -> _СhatMessageCollectionViewCell<ExtraData> {
+    ) -> _ChatMessageCollectionViewCell<ExtraData> {
         let reuseIdentifier =
-            "\(_СhatMessageCollectionViewCell<ExtraData>.reuseId)_" + "\(layoutOptions.rawValue)_" +
+            "\(_ChatMessageCollectionViewCell<ExtraData>.reuseId)_" + "\(layoutOptions.rawValue)_" +
             "\(contentViewClass)_" + String(describing: attachmentViewInjectorType)
 
         // There is no public API to find out
@@ -157,13 +157,13 @@ open class ChatMessageListCollectionView<ExtraData: ExtraDataTypes>: UICollectio
         if !identifiers.contains(reuseIdentifier) {
             identifiers.insert(reuseIdentifier)
             
-            register(_СhatMessageCollectionViewCell<ExtraData>.self, forCellWithReuseIdentifier: reuseIdentifier)
+            register(_ChatMessageCollectionViewCell<ExtraData>.self, forCellWithReuseIdentifier: reuseIdentifier)
         }
             
         let cell = dequeueReusableCell(
             withReuseIdentifier: reuseIdentifier,
             for: indexPath
-        ) as! _СhatMessageCollectionViewCell<ExtraData>
+        ) as! _ChatMessageCollectionViewCell<ExtraData>
         cell.setMessageContentIfNeeded(
             contentViewClass: contentViewClass,
             attachmentViewInjectorType: attachmentViewInjectorType,

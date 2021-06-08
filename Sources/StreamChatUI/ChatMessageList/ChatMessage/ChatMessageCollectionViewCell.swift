@@ -8,12 +8,12 @@ import UIKit
 /// The cell that displays the message content of a dynamic type and layout.
 /// Once the cell is set up it is expected to be dequeued for messages with
 /// the same content and layout the cell has already been configured with.
-public typealias СhatMessageCollectionViewCell = _СhatMessageCollectionViewCell<NoExtraData>
+public typealias ChatMessageCollectionViewCell = _ChatMessageCollectionViewCell<NoExtraData>
 
 /// The cell that displays the message content of a dynamic type and layout.
 /// Once the cell is set up it is expected to be dequeued for messages with
 /// the same content and layout the cell has already been configured with.
-public final class _СhatMessageCollectionViewCell<ExtraData: ExtraDataTypes>: _CollectionViewCell {
+public final class _ChatMessageCollectionViewCell<ExtraData: ExtraDataTypes>: _CollectionViewCell {
     public static var reuseId: String { "\(self)" }
 
     public private(set) var messageContentView: _ChatMessageContentView<ExtraData>?
