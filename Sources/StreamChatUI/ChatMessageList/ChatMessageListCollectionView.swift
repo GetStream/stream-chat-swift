@@ -161,7 +161,7 @@ open class ChatMessageListCollectionView<ExtraData: ExtraDataTypes>: UICollectio
     ///   - indexPath: The cell index path.
     /// - Returns: The instance of `_ChatMessageCollectionViewCell<ExtraData>` set up with the
     /// provided `contentViewClass` and `layoutOptions`
-    open func dequeueReusableCell<ExtraData: ExtraDataTypes>(
+    open func dequeueReusableCell(
         contentViewClass: _ChatMessageContentView<ExtraData>.Type,
         attachmentViewInjectorType: _AttachmentViewInjector<ExtraData>.Type?,
         layoutOptions: ChatMessageLayoutOptions,
@@ -197,7 +197,7 @@ open class ChatMessageListCollectionView<ExtraData: ExtraDataTypes>: UICollectio
     }
     
     /// Updates the collection view data with given `changes`.
-    open func updateMessages<ExtraData: ExtraDataTypes>(
+    open func updateMessages(
         with changes: [ListChange<_ChatMessage<ExtraData>>],
         completion: ((Bool) -> Void)? = nil
     ) {
@@ -225,7 +225,7 @@ open class ChatMessageListCollectionView<ExtraData: ExtraDataTypes>: UICollectio
         } completion: { flag in
             // If a new message was inserted or deleted, reload the previous message
             // to give it chance to update its appearance in case it's now end of a group.
-            let indexPaths = self.indexPathsToMessagesBeforeInsertedAfterBatchUpdate(with: changes)
+            let indexPaths = self.indexPathsToReloadAfterBatchUpdates(with: changes)
             if indexPaths.isEmpty == false {
                 self.reloadItems(at: indexPaths)
             }
@@ -240,7 +240,7 @@ open class ChatMessageListCollectionView<ExtraData: ExtraDataTypes>: UICollectio
         }
     }
     
-    private func indexPathsToMessagesBeforeInsertedAfterBatchUpdate<ExtraData: ExtraDataTypes>(
+    private func indexPathsToReloadAfterBatchUpdates(
         with changes: [ListChange<_ChatMessage<ExtraData>>]
     ) -> [IndexPath] {
         changes.compactMap {
