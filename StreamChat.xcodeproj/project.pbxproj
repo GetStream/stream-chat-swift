@@ -213,6 +213,7 @@
 		79567F3D266F9C77007EADD3 /* ConfirmButton_Documentation_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79567F3C266F9C77007EADD3 /* ConfirmButton_Documentation_Tests.swift */; };
 		79567F3F266F9CF3007EADD3 /* AttachmentButton_Documentation_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79567F3E266F9CF3007EADD3 /* AttachmentButton_Documentation_Tests.swift */; };
 		79567F41266F9D78007EADD3 /* AttachmentPlaceholderView_Documentation_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79567F40266F9D78007EADD3 /* AttachmentPlaceholderView_Documentation_Tests.swift */; };
+		79567F43266F9EF7007EADD3 /* CommandButton_Documentation_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79567F42266F9EF7007EADD3 /* CommandButton_Documentation_Tests.swift */; };
 		79617CB125F236B600D54E61 /* UserWatchingEventMiddleware.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79617CB025F236B600D54E61 /* UserWatchingEventMiddleware.swift */; };
 		79617CBA25F23AA400D54E61 /* UserWatchingEventMiddleware_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79617CB925F23AA400D54E61 /* UserWatchingEventMiddleware_Tests.swift */; };
 		7962958C248147430078EB53 /* BaseURL.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7962958B248147430078EB53 /* BaseURL.swift */; };
@@ -1458,6 +1459,7 @@
 		79567F3C266F9C77007EADD3 /* ConfirmButton_Documentation_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfirmButton_Documentation_Tests.swift; sourceTree = "<group>"; };
 		79567F3E266F9CF3007EADD3 /* AttachmentButton_Documentation_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttachmentButton_Documentation_Tests.swift; sourceTree = "<group>"; };
 		79567F40266F9D78007EADD3 /* AttachmentPlaceholderView_Documentation_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttachmentPlaceholderView_Documentation_Tests.swift; sourceTree = "<group>"; };
+		79567F42266F9EF7007EADD3 /* CommandButton_Documentation_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommandButton_Documentation_Tests.swift; sourceTree = "<group>"; };
 		79617CB025F236B600D54E61 /* UserWatchingEventMiddleware.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserWatchingEventMiddleware.swift; sourceTree = "<group>"; };
 		79617CB925F23AA400D54E61 /* UserWatchingEventMiddleware_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserWatchingEventMiddleware_Tests.swift; sourceTree = "<group>"; };
 		7962958B248147430078EB53 /* BaseURL.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseURL.swift; sourceTree = "<group>"; };
@@ -4511,6 +4513,7 @@
 				79567F3C266F9C77007EADD3 /* ConfirmButton_Documentation_Tests.swift */,
 				79567F3E266F9CF3007EADD3 /* AttachmentButton_Documentation_Tests.swift */,
 				79567F40266F9D78007EADD3 /* AttachmentPlaceholderView_Documentation_Tests.swift */,
+				79567F42266F9EF7007EADD3 /* CommandButton_Documentation_Tests.swift */,
 			);
 			path = UISDKdocumentation;
 			sourceTree = "<group>";
@@ -6212,6 +6215,7 @@
 				E74DB0A62656631700508D22 /* iOS13TestCase.swift in Sources */,
 				E74DB0A82656631700508D22 /* SnapshotVariant.swift in Sources */,
 				E74DB0A92656631700508D22 /* ChatChannelListRouter_Mock.swift in Sources */,
+				79567F43266F9EF7007EADD3 /* CommandButton_Documentation_Tests.swift in Sources */,
 				E74DB10726567FFA00508D22 /* ChatChannelListItemView_Documentation_Tests.swift in Sources */,
 				E74DB0AF2656631700508D22 /* AssertAsync.swift in Sources */,
 				E74DB0BB2656631700508D22 /* AssertSnapshot.swift in Sources */,
