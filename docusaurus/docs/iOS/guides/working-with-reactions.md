@@ -43,3 +43,32 @@ messageController.addReaction("like", score: 2) { error in
 }
 ```
 
+# Customizing reactions
+
+You can easily change icons for the default reactions as well as define which reactions you would like to have available.
+
+All you need to do to have custom reactions is to set it to Appearance:
+```swift
+Appearance.default.images.availableReactions = [
+    .init(rawValue: "Confused") : ChatMessageReactionAppearance(
+        smallIcon: UIImage(named: "confusedImage_small.png"),
+        largeIcon: UIImage(named: "confusedImage_Big.png")
+    )
+]
+```
+
+Note that `ChatMessageReactionAppearance` is just concrete implementation of `ChatMessageReactionAppearanceType` which is then carried over when working in internaly. If you want, you can create custom implementation of `ChatMessageReactionAppearanceType` and add any complex logic you need.
+
+If you want to change the current reaction icons for something else, you can somewhere where it is confident for you set the images like this: 
+
+```swift
+Appearance.default.images.reactionLoveSmall = UIImage(named: "customLove_small.png")
+Appearance.default.images.reactionLoveBig = UIImage(named: "customLove_big.png")
+```
+
+Please see the reference documentation for all the reactions default implementations.
+
+# Customizing ReactionsBubble
+
+ `ChatMessageReactionsBubbleView` is the view displayed as background of the reactions, you can edit this to have any shape, and color as you like as simply as setting   `Appearance.default.components.reactionsBubbleView`  to your subclass of `ChatMessageReactionsBubbleView`.  Also if you need add more complex logic for the reactions, `ChatMessageReactionsVC` is the right place to do so.
+
