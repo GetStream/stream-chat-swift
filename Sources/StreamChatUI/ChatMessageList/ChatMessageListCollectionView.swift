@@ -34,6 +34,25 @@ open class ChatMessageListCollectionView<ExtraData: ExtraDataTypes>: UICollectio
     }
     
     private var contentOffsetObservation: NSKeyValueObservation?
+    
+    // In some cases updates coming one by one might require scrolling to bottom.
+    //
+    // Scheduling the action and canceling the previous one ensures the scroll to bottom
+    // is done only once.
+    //
+    // Having a delay gives layout a chance to calculate the correct size for bottom cells
+    // so they are fully visible when scroll to bottom happens.
+    private var scrollToBottomAction: DispatchWorkItem? {
+        didSet {
+            oldValue?.cancel()
+            if let action = scrollToBottomAction {
+                DispatchQueue.main.asyncAfter(
+                    deadline: .now() + .milliseconds(200),
+                    execute: action
+                )
+            }
+        }
+    }
 
     public required init(layout: ChatMessageListCollectionViewLayout) {
         super.init(frame: .zero, collectionViewLayout: layout)
@@ -184,12 +203,16 @@ open class ChatMessageListCollectionView<ExtraData: ExtraDataTypes>: UICollectio
     ) {
         // Before committing the changes, we need to check if were scrolled
         // to the bottom, if yes, we should stay scrolled to the bottom
-        let shouldScrollToBottom = isLastCellFullyVisible
+        var shouldScrollToBottom = isLastCellFullyVisible
 
         performBatchUpdates {
             for change in changes {
                 switch change {
-                case let .insert(_, index):
+                case let .insert(message, index):
+                    if message.isSentByCurrentUser, index == IndexPath(item: 0, section: 0) {
+                        // When the message from current user comes we should scroll to bottom
+                        shouldScrollToBottom = true
+                    }
                     insertItems(at: [index])
                 case let .move(_, fromIndex, toIndex):
                     moveItem(at: fromIndex, to: toIndex)
@@ -200,22 +223,17 @@ open class ChatMessageListCollectionView<ExtraData: ExtraDataTypes>: UICollectio
                 }
             }
         } completion: { flag in
-            // If a new message was inserted, reload the previous message to give it chance to update
-            // its appearance in case it's now part of a group.
+            // If a new message was inserted or deleted, reload the previous message
+            // to give it chance to update its appearance in case it's now end of a group.
             let indexPaths = self.indexPathsToMessagesBeforeInsertedAfterBatchUpdate(with: changes)
             if indexPaths.isEmpty == false {
-                self.reloadItems(
-                    at: indexPaths
-                )
-
-                // If the previous cell was updated, we should re-adjust the scrolling again.
-                if self.isLastCellFullyVisible {
-                    self.scrollToMostRecentMessage()
-                }
+                self.reloadItems(at: indexPaths)
             }
 
             if shouldScrollToBottom {
-                self.scrollToMostRecentMessage()
+                self.scrollToBottomAction = .init { [weak self] in
+                    self?.scrollToMostRecentMessage()
+                }
             }
 
             completion?(flag)
