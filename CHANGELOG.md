@@ -5,10 +5,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+### ✅ Added
+- Add `staysConnectedInBackground` flag to `ChatClientConfig` (#1170)[https://github.com/GetStream/stream-chat-swift/pull/1170] 
+
 ### 🔄 Changed
 
 ### 🐞 Fixed 
 -  `ChatChannelListItemView` now doesn't enable swipe context actions when there are no `swipeableViews` for the cell. (#1161)[https://github.com/GetStream/stream-chat-swift/pull/1161] 
+- Fix websocket connection automatically restored in background (#1170)[https://github.com/GetStream/stream-chat-swift/pull/1170] 
 
 # [4.0.0-beta.2](https://github.com/GetStream/stream-chat-swift/releases/tag/4.0.0-beta.2)
 _June 04, 2021_

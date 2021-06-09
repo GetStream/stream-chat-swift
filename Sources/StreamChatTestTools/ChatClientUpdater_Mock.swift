@@ -23,6 +23,7 @@ class ChatClientUpdaterMock<ExtraData: ExtraDataTypes>: ChatClientUpdater<ExtraD
     @Atomic var connect_completion: ((Error?) -> Void)?
 
     @Atomic var disconnect_called = false
+    @Atomic var disconnect_source: WebSocketConnectionState.DisconnectionSource?
 
     // MARK: - Overrides
 
@@ -43,8 +44,9 @@ class ChatClientUpdaterMock<ExtraData: ExtraDataTypes>: ChatClientUpdater<ExtraD
         connect_completion = completion
     }
 
-    override func disconnect() {
+    override func disconnect(source: WebSocketConnectionState.DisconnectionSource = .userInitiated) {
         disconnect_called = true
+        disconnect_source = source
     }
 
     // MARK: - Clean Up

@@ -66,6 +66,23 @@ public struct ChatClientConfig {
     /// Is `true` by default.
     public var shouldConnectAutomatically = true
     
+    /// If set to `true`, the `ChatClient` will try to stay connected while app is backgrounded.
+    /// If set to `false`, websocket disconnects immediately when app is backgrounded.
+    ///
+    /// This flag aims to reduce unnecessary reconnections while quick app switches,
+    /// like when a user just checks a notification or another app.
+    /// `ChatClient` starts a background task to keep the connection alive,
+    /// and disconnects when background task expires.
+    /// `ChatClient` tries to stay connected while in background up to 5 minutes.
+    /// Usually, disconnection occurs around 2-3 minutes.
+    ///
+    /// - Important: If you're using manual connection flow (`shouldConnectAutomatically` set to `false`), this flag is ineffective.
+    /// You should handle connection manually when sending app to background
+    /// or opening app from background.
+    ///
+    /// Default value is `true`
+    public var staysConnectedInBackground = true
+    
     /// Creates a new instance of `ChatClientConfig`.
     ///
     /// - Parameter apiKey: The API key of the chat app the `ChatClient` connects to.

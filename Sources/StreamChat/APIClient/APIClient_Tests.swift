@@ -344,8 +344,8 @@ extension URLSessionConfiguration {
         return commonEquatability
             && multipathServiceType == otherConfiguration.multipathServiceType
             && sessionSendsLaunchEvents == otherConfiguration.sessionSendsLaunchEvents
-        #endif
-        
+        #else
         return commonEquatability
+        #endif
     }
 }

@@ -196,6 +196,8 @@ public class _ChatClient<ExtraData: ExtraDataTypes> {
     
     private(set) lazy var internetConnection = environment.internetConnection()
     private(set) lazy var clientUpdater = environment.clientUpdaterBuilder(self)
+    /// Used for starting and ending background tasks. Hides platform specific logic.
+    private lazy var backgroundTaskScheduler = environment.backgroundTaskSchedulerBuilder()
     
     /// The environment object containing all dependencies of this `Client` instance.
     private let environment: Environment
@@ -299,6 +301,11 @@ public class _ChatClient<ExtraData: ExtraDataTypes> {
         currentUserId = fetchCurrentUserIdFromDatabase()
 
         clientUpdater.reloadUserIfNeeded(completion: completion)
+        
+        backgroundTaskScheduler?.startListeningForAppStateUpdates(
+            onEnteringBackground: { [weak self] in self?.handleAppDidEnterBackground() },
+            onEnteringForeground: { [weak self] in self?.handleAppDidBecomeActive() }
+        )
     }
     
     deinit {
@@ -341,6 +348,47 @@ public class _ChatClient<ExtraData: ExtraDataTypes> {
             waiters.forEach { $0(token) }
             waiters.removeAll()
         }
+    }
+    
+    private func handleAppDidEnterBackground() {
+        // If user wants to manage connection manaully, we don't handle
+        guard config.shouldConnectAutomatically else { return }
+        // We can't disconnect if we're not connected
+        guard connectionStatus == .connected else { return }
+        
+        guard config.staysConnectedInBackground else {
+            // We immediately disconnect
+            clientUpdater.disconnect(source: .systemInitiated)
+            return
+        }
+        guard let scheduler = backgroundTaskScheduler else { return }
+        
+        let succeed = scheduler.beginTask { [weak self] in
+            self?.clientUpdater.disconnect(source: .systemInitiated)
+            // We need to call `endBackgroundTask` else our app will be killed
+            self?.cancelBackgroundTaskIfNeeded()
+        }
+        
+        if !succeed {
+            // Can't initiate a background task, close the connection
+            clientUpdater.disconnect(source: .systemInitiated)
+        }
+    }
+    
+    private func handleAppDidBecomeActive() {
+        cancelBackgroundTaskIfNeeded()
+        
+        // If user wants to manage connection manaully, we don't handle reconnection
+        guard config.shouldConnectAutomatically else { return }
+        guard connectionStatus != .connected && connectionStatus != .connecting else {
+            // We are connected or connecting anyway
+            return
+        }
+        clientUpdater.connect()
+    }
+    
+    private func cancelBackgroundTaskIfNeeded() {
+        backgroundTaskScheduler?.endTask()
     }
 }
 
@@ -396,6 +444,20 @@ extension _ChatClient {
         var internetConnection: () -> InternetConnection = { InternetConnection() }
 
         var clientUpdaterBuilder = ChatClientUpdater<ExtraData>.init
+        
+        var backgroundTaskSchedulerBuilder: () -> BackgroundTaskScheduler? = {
+            if Bundle.main.isAppExtension {
+                // No background task scheduler exists for app extensions.
+                return nil
+            } else {
+                #if os(iOS)
+                return IOSBackgroundTaskScheduler()
+                #else
+                // No need for background schedulers on macOS, app continues running when inactive.
+                return nil
+                #endif
+            }
+        }
     }
 }
 
