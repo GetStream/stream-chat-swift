@@ -5,13 +5,6 @@
 import Foundation
 
 class WebSocketClient {
-    /// Additional options for configuring web socket behavior.
-    struct Options: OptionSet {
-        let rawValue: Int
-        /// When the app enters background, `WebSocketClient` starts a long term background task and stays connected.
-        static let staysConnectedInBackground = Options(rawValue: 1 << 0)
-    }
-    
     /// The notification center `WebSocketClient` uses to send notifications about incoming events.
     let eventNotificationCenter: EventNotificationCenter
     
@@ -27,11 +20,6 @@ class WebSocketClient {
             
             pingController.connectionStateDidChange(connectionState)
             
-            if case .disconnected = connectionState {
-                // No reconnection attempts are scheduled
-                cancelBackgroundTaskIfNeeded()
-            }
-            
             // Publish Connection event with the new state
             let event = ConnectionStatusUpdated(webSocketConnectionState: connectionState)
             eventNotificationCenter.process(event)
@@ -39,9 +27,6 @@ class WebSocketClient {
     }
     
     weak var connectionStateDelegate: ConnectionStateDelegate?
-    
-    /// Web socket connection options
-    var options: Options = [.staysConnectedInBackground]
     
     /// The endpoint used for creating a web socket connection.
     ///
@@ -68,9 +53,6 @@ class WebSocketClient {
     
     /// An object describing reconnection behavior after the web socket is disconnected.
     private var reconnectionStrategy: WebSocketClientReconnectionStrategy
-
-    /// Used for starting and ending background tasks. Hides platform specific logic
-    private lazy var backgroundTaskScheduler: BackgroundTaskScheduler? = environment.backgroundTaskScheduler
     
     /// The internet connection observer we use for recovering when the connection was offline for some time.
     private let internetConnection: InternetConnection
@@ -118,11 +100,6 @@ class WebSocketClient {
         self.internetConnection = internetConnection
 
         self.eventNotificationCenter = eventNotificationCenter
-        
-        backgroundTaskScheduler?.startListeningForAppStateUpdates(
-            onEnteringBackground: { [weak self] in self?.handleAppDidEnterBackground() },
-            onEnteringForeground: { [weak self] in self?.handleAppDidBecomeActive() }
-        )
     }
     
     /// Connects the web connect.
@@ -163,32 +140,6 @@ class WebSocketClient {
             engine?.disconnect()
         }
     }
-
-    private func handleAppDidEnterBackground() {
-        guard options.contains(.staysConnectedInBackground),
-              connectionState.isActive,
-              let scheduler = backgroundTaskScheduler
-        else { return }
-
-        let succeed = scheduler.beginTask { [weak self] in
-            self?.disconnect(source: .systemInitiated)
-            // We need to call `endBackgroundTask` else our app will be killed
-            self?.cancelBackgroundTaskIfNeeded()
-        }
-        
-        if !succeed {
-            // Can't initiate a background task, close the connection
-            disconnect(source: .systemInitiated)
-        }
-    }
-    
-    private func handleAppDidBecomeActive() {
-        cancelBackgroundTaskIfNeeded()
-    }
-
-    private func cancelBackgroundTaskIfNeeded() {
-        backgroundTaskScheduler?.endTask()
-    }
 }
 
 protocol ConnectionStateDelegate: AnyObject {
@@ -217,20 +168,6 @@ extension WebSocketClient {
                 return StarscreamWebSocketProvider(request: $0, sessionConfiguration: $1, callbackQueue: $2)
             }
         }
-
-        var backgroundTaskScheduler: BackgroundTaskScheduler? = {
-            if Bundle.main.isAppExtension {
-                // No background task scheduler exists for app extensions.
-                return nil
-            } else {
-                #if os(iOS)
-                return IOSBackgroundTaskScheduler()
-                #else
-                // No need for background schedulers on macOS, app continues running when inactive.
-                return nil
-                #endif
-            }
-        }()
     }
 }
 
@@ -274,7 +211,9 @@ extension WebSocketClient: WebSocketEngineDelegate {
     
     func webSocketDidDisconnect(error engineError: WebSocketEngineError?) {
         // Reconnection shouldn't happen for manually initiated disconnect
+        // or system initated disconnect (app enters background)
         let shouldReconnect = connectionState != .disconnecting(source: .userInitiated)
+            && connectionState != .disconnecting(source: .systemInitiated)
         
         let disconnectionError: Error?
         if case let .disconnecting(.serverInitiated(webSocketError)) = connectionState {

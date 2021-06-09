@@ -24,7 +24,6 @@ class WebSocketClient_Tests: StressTestCase {
     var engine: WebSocketEngineMock? { webSocketClient.engine as? WebSocketEngineMock }
     var connectionId: String!
     var user: ChatUser!
-    var backgroundTaskScheduler: MockBackgroundTaskScheduler!
     var requestEncoder: TestRequestEncoder!
     var pingController: WebSocketPingControllerMock { webSocketClient.pingController as! WebSocketPingControllerMock }
     var internetConnectionMonitor: InternetConnectionMonitorMock!
@@ -45,7 +44,6 @@ class WebSocketClient_Tests: StressTestCase {
         )
         
         decoder = EventDecoderMock()
-        backgroundTaskScheduler = MockBackgroundTaskScheduler()
         
         reconnectionStrategy = MockReconnectionStrategy()
         
@@ -62,7 +60,6 @@ class WebSocketClient_Tests: StressTestCase {
         environment.timerType = VirtualTimeTimer.self
         environment.createPingController = WebSocketPingControllerMock.init
         environment.createEngine = WebSocketEngineMock.init
-        environment.backgroundTaskScheduler = backgroundTaskScheduler
         
         webSocketClient = WebSocketClient(
             sessionConfiguration: .ephemeral,
@@ -523,154 +520,6 @@ class WebSocketClient_Tests: StressTestCase {
         // We should see `CurrentUserDTO` being saved before we get connectionId
         AssertAsync.willBeEqual(currentUser?.user.id, payloadCurrentUser.id)
         AssertAsync.willBeEqual(webSocketClient.connectionState, .connected(connectionId: connectionId))
-    }
-    
-    // MARK: - Background task tests
-    
-    func test_backgroundTaskIsCreated_whenWebSocketIsConnected_andAppGoesToBackground() {
-        // Simulate connection
-        test_connectionFlow()
-        assert(backgroundTaskScheduler.beginBackgroundTask_called == false)
-        
-        // Set up mock response
-        backgroundTaskScheduler.beginBackgroundTask_returns = true
-        
-        // Simulate app going to the background
-        backgroundTaskScheduler.startListeningForAppStateUpdates_onBackground?()
-        
-        // Check a new background task is scheduled
-        AssertAsync.willBeTrue(backgroundTaskScheduler.beginBackgroundTask_called)
-    }
-    
-    func test_backgroundTaskIsNotCreated_whenWebSocketIsConnected_appGoesToBackground_andBackgroundConnectionIsForbidden() {
-        // Simulate connection
-        test_connectionFlow()
-        assert(backgroundTaskScheduler.beginBackgroundTask_called == false)
-        
-        // Turn off background connection
-        webSocketClient.options.remove(.staysConnectedInBackground)
-        
-        // Set up mock response
-        backgroundTaskScheduler.beginBackgroundTask_returns = true
-        
-        // Simulate app going to the background
-        backgroundTaskScheduler.startListeningForAppStateUpdates_onBackground?()
-        
-        // Check a new background task is scheduled
-        AssertAsync.staysTrue(backgroundTaskScheduler.beginBackgroundTask_called == false)
-    }
-    
-    func test_backgroundTaskIsNotCreated_whenWebSocketIsNotConnected_andAppGoesToBackground() {
-        assert(backgroundTaskScheduler.beginBackgroundTask_called == false)
-        
-        // Simulate app going to the background
-        backgroundTaskScheduler.startListeningForAppStateUpdates_onBackground?()
-        
-        // Check a new background task is not scheduled
-        AssertAsync.staysTrue(backgroundTaskScheduler.beginBackgroundTask_called == false)
-    }
-    
-    func test_backgroundTaskIsNotCreated_whenWebSocketIsDisconnected_andAppGoesToBackground() {
-        // Simulate disconnection
-        test_disconnect()
-        
-        assert(backgroundTaskScheduler.beginBackgroundTask_called == false)
-        
-        // Simulate app going to the background
-        backgroundTaskScheduler.startListeningForAppStateUpdates_onBackground?()
-        
-        // Check a new background task is not scheduled
-        AssertAsync.staysTrue(backgroundTaskScheduler.beginBackgroundTask_called == false)
-    }
-    
-    func test_connectionIsTerminated_whenBackgroundTaskCantBeInitiated() {
-        // Simulate connection and start a background task
-        test_connectionFlow()
-        
-        assert(engine!.disconnect_calledCount == 0)
-        
-        // Simulate the background task can't be scheduled
-        backgroundTaskScheduler.beginBackgroundTask_returns = false
-        backgroundTaskScheduler.startListeningForAppStateUpdates_onBackground?()
-        
-        // Check the connection is terminated
-        AssertAsync {
-            Assert.willBeEqual(self.engine!.disconnect_calledCount, 1)
-            Assert.willBeEqual(self.webSocketClient.connectionState, .disconnecting(source: .systemInitiated))
-        }
-    }
-    
-    func test_connectionIsTerminated_whenBackgroundTaskFinishesExecution() {
-        // Simulate connection and start a background task
-        test_connectionFlow()
-        backgroundTaskScheduler.beginBackgroundTask_returns = true
-        backgroundTaskScheduler.startListeningForAppStateUpdates_onBackground?()
-
-        assert(engine!.disconnect_calledCount == 0)
-        
-        // Simulate the background task finishes execution
-        backgroundTaskScheduler.beginBackgroundTask_expirationHandler?()
-        
-        // Check the connection is terminated
-        AssertAsync {
-            Assert.willBeEqual(self.engine!.disconnect_calledCount, 1)
-            Assert.willBeEqual(self.webSocketClient.connectionState, .disconnecting(source: .systemInitiated))
-        }
-    }
-    
-    func test_backgroundTaskIsCancelled_whenAppBecomesActive() {
-        // Simulate connection and start a background task
-        test_connectionFlow()
-        backgroundTaskScheduler.beginBackgroundTask_returns = true
-        backgroundTaskScheduler.startListeningForAppStateUpdates_onBackground?()
-        
-        // Wait for `beginBackgroundTask` being called since it can be done asynchronously
-        AssertAsync.willBeTrue(backgroundTaskScheduler.beginBackgroundTask_called)
-        assert(backgroundTaskScheduler.endBackgroundTask_called == false)
-        
-        // Simulate an app going to the foreground
-        backgroundTaskScheduler.startListeningForAppStateUpdates_onForeground?()
-        
-        // Check the background task is terminated
-        AssertAsync.willBeEqual(backgroundTaskScheduler.endBackgroundTask_called, true)
-    }
-    
-    func test_backgroundTaskIsCancelled_whenDisconnected() {
-        // Simulate connection and start a background task
-        test_connectionFlow()
-        backgroundTaskScheduler.beginBackgroundTask_returns = true
-        backgroundTaskScheduler.startListeningForAppStateUpdates_onBackground?()
-        
-        // Wait for `beginBackgroundTask` being called since it can be done asynchronously
-        AssertAsync.willBeTrue(backgroundTaskScheduler.beginBackgroundTask_called)
-        assert(backgroundTaskScheduler.endBackgroundTask_called == false)
-        
-        // Simulate the connection is terminated
-        webSocketClient.disconnect()
-        engine!.simulateDisconnect()
-        
-        // Check the background task is terminated
-        AssertAsync.willBeEqual(backgroundTaskScheduler.endBackgroundTask_called, true)
-    }
-    
-    func test_backgroundTaskIsCancelled_whenExpirationHandlerIsCalled() {
-        // Simulate connection and start a background task
-        test_connectionFlow()
-        backgroundTaskScheduler.beginBackgroundTask_returns = true
-        backgroundTaskScheduler.startListeningForAppStateUpdates_onBackground?()
-        
-        // Wait for `beginBackgroundTask` being called since it can be done asynchronously
-        AssertAsync.willBeTrue(backgroundTaskScheduler.beginBackgroundTask_called)
-        assert(backgroundTaskScheduler.endBackgroundTask_called == false)
-        
-        // We don't simulate explicit cancelation here
-        // since we expect expiration handler to call disconnect
-        
-        // Call expiration handler
-        backgroundTaskScheduler.beginBackgroundTask_expirationHandler!()
-        
-        // Check the background task is terminated
-        AssertAsync.willBeEqual(backgroundTaskScheduler.endBackgroundTask_called, true)
     }
 }
 
