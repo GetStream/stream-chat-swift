@@ -52,7 +52,14 @@ open class _ChatSuggestionsViewController<ExtraData: ExtraDataTypes>: _ViewContr
     // otherwise it causes loop for height of this controller and as a result this controller height will be 0 as well.
     // Note: This value can be 1, it's just for purpose of 1 cell being visible.
     private let defaultRowHeight: CGFloat = 44
-    private var frameObserver: NSKeyValueObservation?
+
+    /// The constraints responsible for setting the height of the main view.
+    public lazy var heightConstraints: NSLayoutConstraint = {
+        let constraint = view.heightAnchor.pin(equalToConstant: 0)
+        constraint.isActive = true
+        return constraint
+    }()
+    
     private var collectionViewHeightObserver: NSKeyValueObservation?
     
     override open func setUp() {
@@ -84,45 +91,24 @@ open class _ChatSuggestionsViewController<ExtraData: ExtraDataTypes>: _ViewContr
             options: [.new],
             changeHandler: { [weak self] collectionView, change in
                 DispatchQueue.main.async {
-                    guard let self = self else { return }
+                    guard let self = self, let newSize = change.newValue else { return }
 
                     // NOTE: The defaultRowHeight height value will be used only once to set visibleCells
                     // once again, not looping it to 0 value so this controller can resize again.
                     let cellHeight = collectionView.visibleCells.first?.bounds.height ?? self.defaultRowHeight
 
-                    guard let newSize = change.newValue,
-                          newSize.height < cellHeight * self.numberOfVisibleRows
-                    else {
-                        self.view.frame.size.height = cellHeight * self.numberOfVisibleRows
-                        self.updateViewFrame()
-                        return
-                    }
-                    self.view.frame.size.height = newSize.height
-                    self.updateViewFrame()
+                    let newHeight = min(newSize.height, cellHeight * self.numberOfVisibleRows)
+                    self.heightConstraints.constant = newHeight
                 }
             }
         )
-        updateContent()
     }
 
     override open func updateContent() {
+        super.updateContent()
+        
         collectionView.dataSource = dataSource
         collectionView.reloadData()
-    }
-
-    private func updateViewFrame() {
-        frameObserver = bottomAnchorView?.observe(
-            \.bounds,
-            options: [.new, .initial],
-            changeHandler: { [weak self] bottomAnchoredView, change in
-                DispatchQueue.main.async {
-                    guard let self = self, let changedFrame = change.newValue else { return }
-
-                    let newFrame = bottomAnchoredView.convert(changedFrame, to: nil)
-                    self.view.frame.origin.y = newFrame.minY - self.view.frame.height
-                }
-            }
-        )
     }
 
     public func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {

@@ -634,6 +634,15 @@ open class _ComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
         if !suggestionsVC.isPresented, let parent = parent {
             parent.addChildViewController(suggestionsVC, targetView: parent.view)
             suggestionsVC.bottomAnchorView = composerView
+            
+            let suggestionsView = suggestionsVC.view!
+            suggestionsView.translatesAutoresizingMaskIntoConstraints = false
+            NSLayoutConstraint.activate([
+                suggestionsView.leadingAnchor.pin(equalTo: parent.view.leadingAnchor),
+                suggestionsView.trailingAnchor.pin(equalTo: parent.view.trailingAnchor),
+                composerView.topAnchor.pin(equalToSystemSpacingBelow: suggestionsView.bottomAnchor),
+                suggestionsView.topAnchor.pin(greaterThanOrEqualTo: parent.view.safeAreaLayoutGuide.topAnchor)
+            ])
         }
     }
 
