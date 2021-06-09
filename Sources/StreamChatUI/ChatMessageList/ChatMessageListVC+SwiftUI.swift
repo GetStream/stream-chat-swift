@@ -23,7 +23,6 @@ extension _ChatMessageListVC {
         public func makeUIViewController(context: Context) -> _ChatMessageListVC<ExtraData> {
             let vc = _ChatMessageListVC<ExtraData>()
             vc.channelController = controller
-            
             return vc
         }
 
