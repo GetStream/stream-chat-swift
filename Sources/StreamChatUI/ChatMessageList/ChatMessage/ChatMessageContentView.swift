@@ -365,6 +365,65 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, ThemeProvi
             }
         }
     }
+    
+    /// Animate changes in layoutOptions.
+    /// - Parameters:
+    ///   - appearingOptions: Layout options added with the update.
+    ///   - disappearingOptions: Layout options removed with the update.
+    open func animateLayoutOptionChanges(
+        appearingOptions: ChatMessageLayoutOptions,
+        disappearingOptions: ChatMessageLayoutOptions
+    ) {
+        if appearingOptions.contains(.reactions) {
+            if let reactionsBubbleView = self.reactionsBubbleView {
+                // Appearing cell
+                // Fake the starting position of mainContainer without reactions and animate it to the original position (with reactions).
+                // Animate appearing of the reactions.
+                let targetFrame = mainContainer.frame
+                let startFrame = CGRect(origin: .zero, size: targetFrame.size)
+                UIView.performWithoutAnimation {
+                    reactionsBubbleView.transform = CGAffineTransform(scaleX: 0.05, y: 0.05)
+                    reactionsBubbleView.alpha = 0
+                    self.mainContainer.frame = startFrame
+                }
+                UIView.animate(withDuration: 1) {
+                    reactionsBubbleView.alpha = 1
+                    reactionsBubbleView.transform = CGAffineTransform(scaleX: 1, y: 1)
+                    self.mainContainer.frame = targetFrame
+                }
+            } else {
+                // Disappearing cell
+                // Hide mainContainer (is visible from the new cell)
+                mainContainer.isHidden = true
+            }
+        }
+            
+        if disappearingOptions.contains(.reactions) {
+            // Y offset of the mainContainer when the reactions bubble is present.
+            let reactionsBubbleHeight: CGFloat = 23
+            
+            if let reactionsBubbleView = self.reactionsBubbleView {
+                // Disappearing cell
+                // Hide mainContainer (is visible from the new cell) and animate disappearing reactions.
+                mainContainer.isHidden = true
+                UIView.animate(withDuration: 1) {
+                    reactionsBubbleView.alpha = 0
+                    reactionsBubbleView.transform = CGAffineTransform(scaleX: 0.05, y: 0.05)
+                }
+            } else {
+                // Appearing cell
+                // Fake the starting position of mainContainer with reactions and animate it to the original position (without reactions).
+                let targetFrame = mainContainer.frame
+                let startFrame = CGRect(origin: CGPoint(x: 0, y: reactionsBubbleHeight), size: targetFrame.size)
+                UIView.performWithoutAnimation {
+                    self.mainContainer.frame = startFrame
+                }
+                UIView.animate(withDuration: 1) {
+                    self.mainContainer.frame = targetFrame
+                }
+            }
+        }
+    }
 
     override open func updateContent() {
         super.updateContent()
@@ -478,6 +537,11 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, ThemeProvi
 
         delegate = nil
         indexPath = nil
+        
+        // Reset any animations
+        mainContainer.isHidden = false
+        reactionsBubbleView?.transform = CGAffineTransform(scaleX: 1, y: 1)
+        reactionsBubbleView?.alpha = 1
     }
 
     // MARK: - Actions

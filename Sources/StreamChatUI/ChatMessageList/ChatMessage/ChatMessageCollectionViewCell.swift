@@ -75,4 +75,14 @@ public final class _ChatMessageCollectionViewCell<ExtraData: ExtraDataTypes>: _C
 
         return preferredAttributes
     }
+
+    override public func apply(_ layoutAttributes: UICollectionViewLayoutAttributes) {
+        super.apply(layoutAttributes)
+        
+        guard let attributes = layoutAttributes as? StreamLayoutAttributes else { return }
+        messageContentView?.animateLayoutOptionChanges(
+            appearingOptions: attributes.appearingOptions ?? [],
+            disappearingOptions: attributes.disappearingOptions ?? []
+        )
+    }
 }
