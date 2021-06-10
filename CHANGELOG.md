@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### ✅ Added
 - Add `staysConnectedInBackground` flag to `ChatClientConfig` (#1170)[https://github.com/GetStream/stream-chat-swift/pull/1170] 
+- Add `asView` helper for getting SwiftUI views from StreamChatUI UIViewControllers (#1174)[https://github.com/GetStream/stream-chat-swift/pull/1174] 
 
 ### 🔄 Changed
 
