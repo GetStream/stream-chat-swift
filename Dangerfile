@@ -6,11 +6,8 @@ if skip_danger_check
 end
 
 # Make it more obvious that a PR is a work in progress and shouldn't be merged yet.
-has_wip_label = github.pr_labels.any? { |label| label.include? "WIP" }
-has_wip_title = github.pr_title.include? "[WIP]"
-
-if has_wip_label || has_wip_title
-    message("Skipping Danger since PR is classed as Work in Progress")
+if github.pr_json["mergeable_state"] == "draft"
+    message("Skipping Danger since PR is classed as Draft")
     return
 end
 
@@ -23,7 +20,7 @@ if github.pr_body.length < 3 && git.lines_of_code > 50
 end
 
 ## Let's check if there are any changes in the project folder
-has_app_changes = !git.modified_files.grep('/Sources/StreamChat/').empty?
+has_app_changes = !git.modified_files.grep(/Sources/).empty?
 
 ## Then, we should check if tests are updated
 # has_test_changes = !git.modified_files.grep(/StreamChatCoreTests/).empty?
@@ -33,10 +30,11 @@ has_app_changes = !git.modified_files.grep('/Sources/StreamChat/').empty?
 # end
 
 has_meta_label = github.pr_labels.any? { |label| label.include? "meta" }
+has_demo_label = github.pr_labels.any? { |label| label.include? "demo" }
 has_no_changelog_tag = github.pr_body.include? "#no_changelog"
 has_skip_changelog_tag = github.pr_body.include? "#skip_changelog"
 
-has_changelog_escape = has_meta_label || has_no_changelog_tag || has_skip_changelog_tag
+has_changelog_escape = has_meta_label || has_demo_label || has_no_changelog_tag || has_skip_changelog_tag
 
 # Add a CHANGELOG entry for app changes
 if !has_changelog_escape && !git.modified_files.include?("CHANGELOG.md") && has_app_changes
