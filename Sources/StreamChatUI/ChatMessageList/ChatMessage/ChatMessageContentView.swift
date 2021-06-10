@@ -34,7 +34,7 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, ThemeProvi
     /// The current layout options of the view.
     /// When this value is set the subviews are instantiated and laid out just once based on
     /// the received options.
-    private var layoutOptions: ChatMessageLayoutOptions!
+    private(set) var layoutOptions: ChatMessageLayoutOptions!
 
     // MARK: Content && Actions
 

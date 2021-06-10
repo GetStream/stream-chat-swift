@@ -18,6 +18,7 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
     ChatMessageContentViewDelegate,
     UICollectionViewDelegate,
     ChatMessageListCollectionViewDataSource,
+    LayoutOptionsDataSource,
     GalleryContentViewDelegate,
     GiphyActionContentViewDelegate,
     LinkPreviewViewDelegate,
@@ -38,9 +39,14 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
         channelController.client.userSearchController()
     
     /// Layout used by the collection view.
-    open lazy var messageListLayout: ChatMessageListCollectionViewLayout = components
-        .messageListLayout
-        .init()
+    open lazy var messageListLayout: ChatMessageListCollectionViewLayout = {
+        let layout = components
+            .messageListLayout
+            .init()
+        
+        layout.dataSource = self
+        return layout
+    }()
     
     override open func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)

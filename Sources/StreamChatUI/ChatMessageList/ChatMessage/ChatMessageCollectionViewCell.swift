@@ -70,6 +70,8 @@ public final class _ChatMessageCollectionViewCell<ExtraData: ExtraDataTypes>: _C
             withHorizontalFittingPriority: .required,
             verticalFittingPriority: .fittingSizeLevel
         )
+        
+        (preferredAttributes as? StreamLayoutAttributes)?.layoutOptions = messageContentView?.layoutOptions
 
         return preferredAttributes
     }

@@ -4,6 +4,14 @@
 
 import UIKit
 
+public protocol LayoutOptionsDataSource {
+    /// Layout options for the message on given `indexPath`.
+    ///
+    /// The layoutOptions are stored for each cell and compared with new value when the message content is updated.
+    /// Difference is provided in `LayoutAttributes` to the cell for animation
+    func cellLayoutOptionsForMessage(at indexPath: IndexPath) -> ChatMessageLayoutOptions
+}
+
 /// Custom Table View like layout that position item at index path 0-0 on bottom of the list.
 ///
 /// Unlike `UICollectionViewFlowLayout` we ignore some invalidation calls and persist items attributes between updates.
@@ -14,6 +22,11 @@ open class ChatMessageListCollectionViewLayout: UICollectionViewLayout {
         let id = UUID()
         public var offset: CGFloat
         public var height: CGFloat
+        
+        // Store layout options and provide diff to cell.
+        public var layoutOptions: ChatMessageLayoutOptions?
+        public var appearingOptions: ChatMessageLayoutOptions?
+        public var disappearingOptions: ChatMessageLayoutOptions?
 
         public var maxY: CGFloat {
             offset + height
@@ -25,13 +38,16 @@ open class ChatMessageListCollectionViewLayout: UICollectionViewLayout {
         }
 
         public func attribute(for index: Int, width: CGFloat) -> UICollectionViewLayoutAttributes {
-            let attribute = UICollectionViewLayoutAttributes(forCellWith: IndexPath(item: index, section: 0))
+            let attribute = StreamLayoutAttributes(forCellWith: IndexPath(item: index, section: 0))
             attribute.frame = CGRect(x: 0, y: offset, width: width, height: height)
             // default `zIndex` value is 0, but for some undocumented reason self-sizing
             // (concretely `contentView.systemLayoutFitting(...)`) doesn't work correctly,
             // so we need to make sure we do not use it, we need to add 1 so indexPath 0-0 doesn't have
             // problematic 0 zIndex
             attribute.zIndex = index + 1
+            attribute.layoutOptions = layoutOptions
+            attribute.appearingOptions = appearingOptions
+            attribute.disappearingOptions = disappearingOptions
             return attribute
         }
     }
@@ -89,6 +105,8 @@ open class ChatMessageListCollectionViewLayout: UICollectionViewLayout {
     /// Flag to make sure the `prepare()` function is only executed when the collection view had been loaded.
     /// The rest of the updates should come from `prepare(forCollectionViewUpdates:)`.
     private var didPerformInitialLayout = false
+    
+    public var dataSource: LayoutOptionsDataSource?
 
     // MARK: - Initialization
 
@@ -127,6 +145,7 @@ open class ChatMessageListCollectionViewLayout: UICollectionViewLayout {
 
         let delta = preferredAttributes.frame.height - currentItems[idx].height
         currentItems[idx].height = preferredAttributes.frame.height
+        currentItems[idx].layoutOptions = dataSource?.cellLayoutOptionsForMessage(at: originalAttributes.indexPath)
         // if item have been inserted recently or deleted, we need to update its attributes to prevent weird flickering
         animatingAttributes[preferredAttributes.indexPath]?.frame.size.height = preferredAttributes.frame.height
         
@@ -227,6 +246,18 @@ open class ChatMessageListCollectionViewLayout: UICollectionViewLayout {
             }
             self.currentItems.insert(item, at: idx)
         }
+        
+        let reload: (UICollectionViewUpdateItem) -> Void = { update in
+            // Store diff in layoutOptions and provide them via LayoutAttributes to the cell.
+            guard let ip = update.indexPathBeforeUpdate ?? update.indexPathAfterUpdate else { return }
+            let idx = ip.item
+            let oldOptions = self.currentItems[idx].layoutOptions ?? []
+            let newOptions = self.dataSource?.cellLayoutOptionsForMessage(at: ip) ?? []
+            let appearingOptions = newOptions.subtracting(oldOptions)
+            let disappearingOptions = oldOptions.subtracting(newOptions)
+            self.currentItems[idx].appearingOptions = appearingOptions
+            self.currentItems[idx].disappearingOptions = disappearingOptions
+        }
 
         for update in updateItems {
             switch update.updateAction {
@@ -237,8 +268,12 @@ open class ChatMessageListCollectionViewLayout: UICollectionViewLayout {
             case .move:
                 delete(update)
                 insert(update)
-            case .reload, .none: break
-            @unknown default: break
+            case .reload:
+                reload(update)
+            case .none:
+                break
+            @unknown default:
+                break
             }
         }
 
@@ -258,6 +293,10 @@ open class ChatMessageListCollectionViewLayout: UICollectionViewLayout {
         appearingItems.removeAll()
         disappearingItems.removeAll()
         animatingAttributes.removeAll()
+        for i in 0..<currentItems.count {
+            currentItems[i].appearingOptions = nil
+            currentItems[i].disappearingOptions = nil
+        }
         super.finalizeCollectionViewUpdates()
         restoreOffset = nil
     }
@@ -342,9 +381,14 @@ open class ChatMessageListCollectionViewLayout: UICollectionViewLayout {
             
             let attribute = (itemStaysInPlace ? currentItems[itemIndex] : previousItems[oldItemIndex])
                 .attribute(for: itemStaysInPlace ? itemIndex : oldItemIndex, width: currentCollectionViewWidth)
-                .copy() as! UICollectionViewLayoutAttributes
+                .copy() as! StreamLayoutAttributes
             
-            attribute.alpha = 0
+            // When there is appearing layout option, we want to get new content size from autolayout.
+            // Adding disappearingOptions to the condition breaks the disappearing animation.
+            if attribute.appearingOptions?.isEmpty == false {
+                animatingAttributes[itemIndexPath] = attribute
+            }
+            
             return attribute
         } else {
             return super.initialLayoutAttributesForAppearingItem(at: itemIndexPath)
@@ -373,7 +417,6 @@ open class ChatMessageListCollectionViewLayout: UICollectionViewLayout {
                 .copy() as! UICollectionViewLayoutAttributes
             
             animatingAttributes[attribute.indexPath] = attribute
-            attribute.alpha = 0
             return attribute
         }
 
