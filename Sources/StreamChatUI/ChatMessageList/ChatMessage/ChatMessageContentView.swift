@@ -335,15 +335,17 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, ThemeProvi
             reactionsBubbleView.addSubview(reactionsView)
             reactionsView.pin(to: reactionsBubbleView.layoutMarginsGuide)
 
-            bubbleToReactionsConstraint = (bubbleView ?? bubbleContentContainer).topAnchor
-                .pin(equalTo: reactionsBubbleView.centerYAnchor)
+            let anchorView = bubbleView ?? bubbleContentContainer
+            bubbleToReactionsConstraint = anchorView.topAnchor
+                .pin(equalTo: reactionsBubbleView.centerYAnchor, constant: 4)
             constraintsToActivate += [
                 reactionsBubbleView.topAnchor.pin(equalTo: topAnchor),
                 bubbleToReactionsConstraint,
                 reactionsBubbleView.centerXAnchor.pin(
                     equalTo: options.contains(.flipped) ?
-                        mainContainer.leadingAnchor :
-                        mainContainer.trailingAnchor
+                        anchorView.leadingAnchor :
+                        anchorView.trailingAnchor,
+                    constant: options.contains(.flipped) ? -4 : 4
                 )
             ]
             .compactMap { $0 }
