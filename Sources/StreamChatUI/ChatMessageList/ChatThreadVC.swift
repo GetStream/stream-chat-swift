@@ -466,3 +466,18 @@ open class _ChatThreadVC<ExtraData: ExtraDataTypes>:
         messageController.replies[indexPath.item]
     }
 }
+
+extension ChatThreadVC: SwiftUIRepresentable {
+    public var content: (
+        channelController: _ChatChannelController<ExtraData>,
+        messageController: _ChatMessageController<ExtraData>
+    ) {
+        get {
+            (channelController, messageController)
+        }
+        set {
+            channelController = newValue.channelController
+            messageController = newValue.messageController
+        }
+    }
+}
