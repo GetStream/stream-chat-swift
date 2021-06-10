@@ -10,13 +10,13 @@ import XCTest
 
 @available(iOS 13.0, *)
 class ChatMessageListView_Tests: iOS13TestCase {
-    var chatMessageList: ChatMessageListView!
+    var chatMessageList: SwiftUIViewControllerRepresentable<ChatMessageListVC>!
     var mockedChannelController: ChatChannelController_Mock<NoExtraData>!
 
     override func setUp() {
         super.setUp()
         mockedChannelController = ChatChannelController_Mock.mock()
-        chatMessageList = ChatMessageListVC.View(controller: mockedChannelController)
+        chatMessageList = ChatMessageListVC.asView(mockedChannelController)
     }
 
     func test_chatMessageList_isPopulated() {
@@ -54,7 +54,7 @@ class ChatMessageListView_Tests: iOS13TestCase {
 
             var body: some View {
                 NavigationView {
-                    ChatMessageListVC.View(controller: mockedChannelController)
+                    ChatMessageListVC.asView(mockedChannelController)
                         .navigationBarTitle("Custom title", displayMode: .inline)
                         .navigationBarItems(
                             leading:

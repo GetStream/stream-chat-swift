@@ -30,3 +30,14 @@ extension _ChatChannelListVC {
         public func updateUIViewController(_ chatChannelListVC: _ChatChannelListVC<ExtraData>, context: Context) {}
     }
 }
+
+extension _ChatChannelListVC: SwiftUIRepresentable {
+    public var content: _ChatChannelListController<ExtraData> {
+        get {
+            controller
+        }
+        set {
+            controller = newValue
+        }
+    }
+}
