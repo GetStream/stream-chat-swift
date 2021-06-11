@@ -161,15 +161,15 @@ open class _ChatMessageComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
         composerView.messageInputView.textView.delegate = self
         
         composerView.attachmentButton.addTarget(self, action: #selector(showAttachmentsPicker), for: .touchUpInside)
-        composerView.sendButton.addTarget(self, action: #selector(sendMessage), for: .touchUpInside)
+        composerView.sendButton.addTarget(self, action: #selector(sendMessageToChannel), for: .touchUpInside)
         composerView.shrinkInputButton.addTarget(self, action: #selector(shrinkInput), for: .touchUpInside)
         composerView.commandsButton.addTarget(self, action: #selector(showAvailableCommands), for: .touchUpInside)
         composerView.messageInputView.rightAccessoryButton.addTarget(
             self,
-            action: #selector(resetState),
+            action: #selector(setInitialState),
             for: .touchUpInside
         )
-        composerView.dismissButton.addTarget(self, action: #selector(resetState), for: .touchUpInside)
+        composerView.dismissButton.addTarget(self, action: #selector(setInitialState), for: .touchUpInside)
         
         composerView.imageAttachmentsView.didTapRemoveItemButton = { [weak self] index in
             self?.imageAttachments.remove(at: index)
@@ -203,7 +203,7 @@ open class _ChatMessageComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
     
     // MARK: Actions
     
-    @objc func sendMessage() {
+    @objc func sendMessageToChannel() {
         switch state {
         case .initial:
             createNewMessage(text: textView.text)
@@ -301,7 +301,7 @@ open class _ChatMessageComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
         }
     }
     
-    @objc func resetState() {
+    @objc func setInitialState() {
         state = .initial
     }
     

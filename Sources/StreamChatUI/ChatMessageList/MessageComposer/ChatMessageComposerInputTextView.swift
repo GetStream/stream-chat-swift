@@ -60,7 +60,7 @@ open class _ChatMessageComposerInputTextView<ExtraData: ExtraDataTypes>: UITextV
     open func setUp() {
         NotificationCenter.default.addObserver(
             self,
-            selector: #selector(textDidChange),
+            selector: #selector(handleTextChange),
             name: UITextView.textDidChangeNotification,
             object: nil
         )
@@ -87,10 +87,10 @@ open class _ChatMessageComposerInputTextView<ExtraData: ExtraDataTypes>: UITextV
     
     func textDidChangeProgrammatically() {
         delegate?.textViewDidChange?(self)
-        textDidChange()
+        handleTextChange()
     }
         
-    @objc func textDidChange() {
+    @objc func handleTextChange() {
         placeholderLabel.isHidden = !text.isEmpty
     }
 }
