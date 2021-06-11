@@ -49,14 +49,6 @@ lane :release do |options|
                    
   push_to_git_remote(tags: true)
   
-  github_release = set_github_release(
-                     repository_name: "GetStream/stream-chat-swift",
-                     api_token: ENV["GITHUB_TOKEN"],
-                     name: version_number,
-                     tag_name: version_number,
-                     description: changes
-                   )
-  
   # First pod release will not have any problems
   pod_push(path: "StreamChat.podspec", allow_warnings: true)
   
@@ -75,7 +67,6 @@ lane :release do |options|
   release_ui
   
   UI.success("Successfully released #{version_number}")
-  UI.success("Github release was created, please visit #{github_release["url"]} to see it")
 end
 
 lane :set_SDK_version do |options|
