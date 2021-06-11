@@ -5,6 +5,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+### 🔄 Changed
+
+# [4.0.0-beta.3](https://github.com/GetStream/stream-chat-swift/releases/tag/4.0.0-beta.3)
+_June 11, 2021_
+
 ### ⚠️ Breaking Changes from `4.0.0-beta.2`
 - Due to App Store Connect suddenly starting rejecting builds, we've renamed the following funcs everywhere:
   - `didPan` -> `handlePan`
