@@ -28,7 +28,7 @@ extension _ChatMessageInteractiveAttachmentView {
         override open func setUp() {
             super.setUp()
 
-            addTarget(self, action: #selector(didTouchUpInside), for: .touchUpInside)
+            addTarget(self, action: #selector(handleTouchUpInside), for: .touchUpInside)
         }
 
         override open func updateContent() {
@@ -56,7 +56,7 @@ extension _ChatMessageInteractiveAttachmentView {
 
         // MARK: - Actions
 
-        @objc open func didTouchUpInside() {
+        @objc open func handleTouchUpInside() {
             didTap?()
         }
     }

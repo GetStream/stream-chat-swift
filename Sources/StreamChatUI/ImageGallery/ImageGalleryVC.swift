@@ -126,7 +126,7 @@ open class _ImageGalleryVC<ExtraData: ExtraDataTypes>:
         closeButton.addTarget(self, action: #selector(closeButtonTapped), for: .touchUpInside)
         shareButton.addTarget(self, action: #selector(shareButtonTapped), for: .touchUpInside)
         
-        let panGestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(didPan))
+        let panGestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(handlePan))
         panGestureRecognizer.delegate = self
         view.addGestureRecognizer(panGestureRecognizer)
     }
@@ -221,7 +221,7 @@ open class _ImageGalleryVC<ExtraData: ExtraDataTypes>:
     
     /// Called whenever user pans with a given `gestureRecognizer`.
     @objc
-    open func didPan(with gestureRecognizer: UIPanGestureRecognizer) {
+    open func handlePan(with gestureRecognizer: UIPanGestureRecognizer) {
         switch gestureRecognizer.state {
         case .began:
             transitionController.isInteractive = true
@@ -229,10 +229,10 @@ open class _ImageGalleryVC<ExtraData: ExtraDataTypes>:
         case .ended:
             guard transitionController.isInteractive else { return }
             transitionController.isInteractive = false
-            transitionController.didPan(with: gestureRecognizer)
+            transitionController.handlePan(with: gestureRecognizer)
         default:
             guard transitionController.isInteractive else { return }
-            transitionController.didPan(with: gestureRecognizer)
+            transitionController.handlePan(with: gestureRecognizer)
         }
     }
     

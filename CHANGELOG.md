@@ -5,6 +5,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+### ⚠️ Breaking Changes from `4.0.0-beta.2`
+- Due to App Store Connect suddenly starting rejecting builds, we've renamed the following funcs everywhere:
+  - `didPan` -> `handlePan`
+  - `didTouchUpInside` -> `handleTouchUpInside`
+  - `didTap` -> `handleTap`
+  - `didLongPress` -> `handleLongPress`
+  - `textDidChange` -> `handleTextChange`
+  If you've subclassed UI components and overridden these functions, you should rename your overrides.
+  For more information, see (#1177)[https://github.com/GetStream/stream-chat-swift/pull/1177] and [#1178](https://github.com/GetStream/stream-chat-swift/issues/1178)
+
 ### ⛔️ Deprecated
 - `_ChatChannelListVC.View` is now deprecated. Please use `asView` instead (#1174)[https://github.com/GetStream/stream-chat-swift/pull/1174]
 

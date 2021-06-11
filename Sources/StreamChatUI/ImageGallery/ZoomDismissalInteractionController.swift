@@ -12,7 +12,7 @@ open class ZoomDismissalInteractionController: NSObject, UIViewControllerInterac
     public var animator: UIViewControllerAnimatedTransitioning?
     
     /// Update interactive dismissal.
-    open func didPan(with gestureRecognizer: UIPanGestureRecognizer) {
+    open func handlePan(with gestureRecognizer: UIPanGestureRecognizer) {
         guard
             let transitionContext = transitionContext,
             let animator = animator as? ZoomAnimator,
