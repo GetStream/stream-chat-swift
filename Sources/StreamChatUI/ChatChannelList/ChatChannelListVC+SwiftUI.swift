@@ -7,26 +7,35 @@ import SwiftUI
 
 @available(iOS 13.0, *)
 /// A `UIViewControllerRepresentable` subclass which wraps `ChatChannelListVC` and shows list of channels.
-public typealias ChatChannelList = _ChatChannelListVC<NoExtraData>.View
+public typealias ChatChannelList = SwiftUIViewControllerRepresentable<_ChatChannelListVC<NoExtraData>>
+
+@available(iOS 13.0, *)
+public extension SwiftUIViewControllerRepresentable where ViewController: _ChatChannelListVC<NoExtraData> {
+    @available(*, deprecated, renamed: "asView")
+    init(controller: _ChatChannelListController<NoExtraData>) {
+        self.init(
+            viewController: ViewController.self,
+            content: controller
+        )
+    }
+}
 
 @available(iOS 13.0, *)
 extension _ChatChannelListVC {
-    /// A `UIViewControllerRepresentable` subclass which wraps `ChatChannelListVC` and shows list of channels.
-    public struct View: UIViewControllerRepresentable {
-        /// The `ChatChannelListController` instance that provides channels data.
-        let controller: _ChatChannelListController<ExtraData>
+    /// A SwiftUI View that wraps `_ChatChannelListVC` and shows list of messages.
+    @available(*, deprecated, renamed: "asView")
+    static func View(controller: _ChatChannelListController<ExtraData>) -> some View {
+        asView(controller)
+    }
+}
 
-        public init(controller: _ChatChannelListController<ExtraData>) {
-            self.controller = controller
+extension _ChatChannelListVC: SwiftUIRepresentable {
+    public var content: _ChatChannelListController<ExtraData> {
+        get {
+            controller
         }
-
-        public func makeUIViewController(context: Context) -> _ChatChannelListVC<ExtraData> {
-            let vc = _ChatChannelListVC<ExtraData>()
-            vc.controller = controller
-            
-            return vc
+        set {
+            controller = newValue
         }
-
-        public func updateUIViewController(_ chatChannelListVC: _ChatChannelListVC<ExtraData>, context: Context) {}
     }
 }

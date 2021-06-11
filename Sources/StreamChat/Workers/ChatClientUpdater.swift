@@ -137,7 +137,7 @@ class ChatClientUpdater<ExtraData: ExtraDataTypes> {
 
     /// Disconnects the chat client the controller represents from the chat servers. No further updates from the servers
     /// are received.
-    func disconnect() {
+    func disconnect(source: WebSocketConnectionState.DisconnectionSource = .userInitiated) {
         // Disconnecting is not possible in connectionless mode (duh)
         guard client.config.isClientInActiveMode else {
             log.error(ClientError.ClientIsNotInActiveMode().localizedDescription)
@@ -150,7 +150,7 @@ class ChatClientUpdater<ExtraData: ExtraDataTypes> {
         }
 
         // Disconnect the web socket
-        client.webSocketClient?.disconnect(source: .userInitiated)
+        client.webSocketClient?.disconnect(source: source)
 
         // Reset `connectionId`. This would happen asynchronously by the callback from WebSocketClient anyway, but it's
         // safer to do it here synchronously to immediately stop all API calls.

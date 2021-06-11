@@ -92,6 +92,11 @@ class URLSessionWebSocketEngine: NSObject, WebSocketEngine, URLSessionDataDelega
     }
     
     func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
+        // If we received this callback because we closed the WS connection
+        // intentionally, `error` param will be `nil`.
+        // Delegate is already informed with `didCloseWith` callback,
+        // so we don't need to call delegate again.
+        guard let error = error else { return }
         delegate?.webSocketDidDisconnect(error: WebSocketEngineError(error: error))
     }
 }

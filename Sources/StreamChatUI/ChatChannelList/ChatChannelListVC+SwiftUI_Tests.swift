@@ -10,7 +10,7 @@ import XCTest
 
 @available(iOS 13.0, *)
 class ChatChannelListView_Tests: iOS13TestCase {
-    var chatChannelList: ChatChannelList!
+    var chatChannelList: SwiftUIViewControllerRepresentable<ChatChannelListVC>!
     var mockedChannelListController: ChatChannelListController_Mock<NoExtraData>!
 
     var channels: [ChatChannel] = []
@@ -18,7 +18,7 @@ class ChatChannelListView_Tests: iOS13TestCase {
     override func setUp() {
         super.setUp()
         mockedChannelListController = ChatChannelListController_Mock.mock()
-        chatChannelList = ChatChannelListVC.View(controller: mockedChannelListController)
+        chatChannelList = ChatChannelListVC.asView(mockedChannelListController)
 
         channels = .dummy()
     }
@@ -48,7 +48,7 @@ class ChatChannelListView_Tests: iOS13TestCase {
 
             var body: some View {
                 NavigationView {
-                    ChatChannelListVC.View(controller: mockedChannelListController)
+                    ChatChannelListVC.asView(mockedChannelListController)
                         .navigationBarTitle("Custom title", displayMode: .inline)
                         .navigationBarItems(
                             leading:

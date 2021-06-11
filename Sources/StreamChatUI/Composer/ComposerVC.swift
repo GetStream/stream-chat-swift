@@ -287,8 +287,9 @@ open class _ComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
         composerView.confirmButton.isEnabled = !content.isEmpty
 
         let isAttachmentButtonHidden = !content.isEmpty || channelConfig?.uploadsEnabled == false
-        let isCommandsButtonHidden = !content.isEmpty
-        let isShrinkInputButtonHidden = content.isEmpty
+        let isCommandsButtonHidden = !content.isEmpty || channelConfig?.commands.isEmpty == true
+        let isShrinkInputButtonHidden = content.isEmpty || (isAttachmentButtonHidden && isCommandsButtonHidden)
+        
         Animate {
             self.composerView.attachmentButton.isHidden = isAttachmentButtonHidden
             self.composerView.commandsButton.isHidden = isCommandsButtonHidden
@@ -555,6 +556,10 @@ open class _ComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
     /// - Parameter typingCommand: The potential command that the current user is typing.
     open func showCommandSuggestions(for typingCommand: String) {
         let availableCommands = channelController?.channel?.config.commands ?? []
+        
+        // Don't show the commands suggestion VC if there are no commands
+        guard availableCommands.isEmpty == false else { return }
+        
         var commandHints: [Command] = availableCommands
 
         if !typingCommand.isEmpty {
@@ -629,6 +634,15 @@ open class _ComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
         if !suggestionsVC.isPresented, let parent = parent {
             parent.addChildViewController(suggestionsVC, targetView: parent.view)
             suggestionsVC.bottomAnchorView = composerView
+            
+            let suggestionsView = suggestionsVC.view!
+            suggestionsView.translatesAutoresizingMaskIntoConstraints = false
+            NSLayoutConstraint.activate([
+                suggestionsView.leadingAnchor.pin(equalTo: parent.view.leadingAnchor),
+                suggestionsView.trailingAnchor.pin(equalTo: parent.view.trailingAnchor),
+                composerView.topAnchor.pin(equalToSystemSpacingBelow: suggestionsView.bottomAnchor),
+                suggestionsView.topAnchor.pin(greaterThanOrEqualTo: parent.view.safeAreaLayoutGuide.topAnchor)
+            ])
         }
     }
 

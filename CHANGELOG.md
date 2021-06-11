@@ -7,8 +7,34 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### 🔄 Changed
 
+# [4.0.0-beta.3](https://github.com/GetStream/stream-chat-swift/releases/tag/4.0.0-beta.3)
+_June 11, 2021_
+
+### ⚠️ Breaking Changes from `4.0.0-beta.2`
+- Due to App Store Connect suddenly starting rejecting builds, we've renamed the following funcs everywhere:
+  - `didPan` -> `handlePan`
+  - `didTouchUpInside` -> `handleTouchUpInside`
+  - `didTap` -> `handleTap`
+  - `didLongPress` -> `handleLongPress`
+  - `textDidChange` -> `handleTextChange`
+  If you've subclassed UI components and overridden these functions, you should rename your overrides.
+  For more information, see [#1177](https://github.com/GetStream/stream-chat-swift/pull/1177) and [#1178](https://github.com/GetStream/stream-chat-swift/issues/1178)
+- `ChannelConfig.commands` is no longer an optional [#1182](https://github.com/GetStream/stream-chat-swift/issues/1182)
+
+### ⛔️ Deprecated
+- `_ChatChannelListVC.View` is now deprecated. Please use `asView` instead [#1174](https://github.com/GetStream/stream-chat-swift/pull/1174)
+
+### ✅ Added
+- Add `staysConnectedInBackground` flag to `ChatClientConfig` [#1170](https://github.com/GetStream/stream-chat-swift/pull/1170)
+- Add `asView` helper for getting SwiftUI views from StreamChatUI UIViewControllers [#1174](https://github.com/GetStream/stream-chat-swift/pull/1174)
+
+### 🔄 Changed
+- Logic for displaying suggestions (commands or mentions) were not compatible with SwiftUI, so it's changed to AutoLayout [#1171](https://github.com/GetStream/stream-chat-swift/pull/1171)
+
 ### 🐞 Fixed 
--  `ChatChannelListItemView` now doesn't enable swipe context actions when there are no `swipeableViews` for the cell. (#1161)[https://github.com/GetStream/stream-chat-swift/pull/1161] 
+-  `ChatChannelListItemView` now doesn't enable swipe context actions when there are no `swipeableViews` for the cell. [#1161](https://github.com/GetStream/stream-chat-swift/pull/1161)
+- Fix websocket connection automatically restored in background [#1170](https://github.com/GetStream/stream-chat-swift/pull/1170)
+- Commands view in composer is no longer displayed when there are no commands [#1171](https://github.com/GetStream/stream-chat-swift/pull/1171) [#1178](https://github.com/GetStream/stream-chat-swift/issues/1178)
 
 # [4.0.0-beta.2](https://github.com/GetStream/stream-chat-swift/releases/tag/4.0.0-beta.2)
 _June 04, 2021_

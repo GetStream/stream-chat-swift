@@ -50,7 +50,7 @@ open class ZoomTransitionController: NSObject, UIViewControllerTransitioningDele
     }
 
     /// Update interactive dismissal.
-    open func didPan(with gestureRecognizer: UIPanGestureRecognizer) {
-        interactionController.didPan(with: gestureRecognizer)
+    open func handlePan(with gestureRecognizer: UIPanGestureRecognizer) {
+        interactionController.handlePan(with: gestureRecognizer)
     }
 }

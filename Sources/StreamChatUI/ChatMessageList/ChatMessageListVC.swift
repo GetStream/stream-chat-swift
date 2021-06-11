@@ -42,6 +42,11 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
         .messageListLayout
         .init()
     
+    override open func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+        view.layoutIfNeeded()
+    }
+    
     /// View used to display the messages
     open private(set) lazy var collectionView: ChatMessageListCollectionView<ExtraData> = {
         let collection = components
@@ -107,7 +112,7 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
     override open func setUp() {
         super.setUp()
         
-        let longPress = UILongPressGestureRecognizer(target: self, action: #selector(didLongPress))
+        let longPress = UILongPressGestureRecognizer(target: self, action: #selector(handleLongPress))
         longPress.minimumPressDuration = 0.33
         collectionView.addGestureRecognizer(longPress)
         
@@ -166,6 +171,8 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
             channelAvatarView.heightAnchor.pin(equalToConstant: 32)
         ])
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: channelAvatarView)
+        
+        collectionView.contentInset.top += max(collectionView.layoutMargins.right, collectionView.layoutMargins.left)
     }
 
     override open func setUpAppearance() {
@@ -174,7 +181,6 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
         view.backgroundColor = appearance.colorPalette.background
         
         collectionView.backgroundColor = appearance.colorPalette.background
-        collectionView.contentInset.top += max(collectionView.layoutMargins.right, collectionView.layoutMargins.left)
 
         navigationItem.titleView = titleView
     }
@@ -334,7 +340,7 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
     ///
     /// Default implementation will convert the gesture location to collection view's `indexPath`
     /// and then call selection action on the selected cell.
-    @objc open func didLongPress(_ gesture: UILongPressGestureRecognizer) {
+    @objc open func handleLongPress(_ gesture: UILongPressGestureRecognizer) {
         let location = gesture.location(in: collectionView)
 
         guard
