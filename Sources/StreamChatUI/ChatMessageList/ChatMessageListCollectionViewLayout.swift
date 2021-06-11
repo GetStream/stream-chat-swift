@@ -38,7 +38,7 @@ open class ChatMessageListCollectionViewLayout: UICollectionViewLayout {
         }
 
         public func attribute(for index: Int, width: CGFloat) -> UICollectionViewLayoutAttributes {
-            let attribute = StreamLayoutAttributes(forCellWith: IndexPath(item: index, section: 0))
+            let attribute = MessageCellLayoutAttributes(forCellWith: IndexPath(item: index, section: 0))
             attribute.frame = CGRect(x: 0, y: offset, width: width, height: height)
             // default `zIndex` value is 0, but for some undocumented reason self-sizing
             // (concretely `contentView.systemLayoutFitting(...)`) doesn't work correctly,
@@ -381,7 +381,7 @@ open class ChatMessageListCollectionViewLayout: UICollectionViewLayout {
             
             let attribute = (itemStaysInPlace ? currentItems[itemIndex] : previousItems[oldItemIndex])
                 .attribute(for: itemStaysInPlace ? itemIndex : oldItemIndex, width: currentCollectionViewWidth)
-                .copy() as! StreamLayoutAttributes
+                .copy() as! MessageCellLayoutAttributes
             
             // When there is appearing layout option, we want to get new content size from autolayout.
             // Adding disappearingOptions to the condition breaks the disappearing animation.

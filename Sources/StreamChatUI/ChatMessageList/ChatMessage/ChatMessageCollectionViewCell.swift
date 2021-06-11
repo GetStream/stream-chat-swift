@@ -71,7 +71,7 @@ public final class _ChatMessageCollectionViewCell<ExtraData: ExtraDataTypes>: _C
             verticalFittingPriority: .fittingSizeLevel
         )
         
-        (preferredAttributes as? StreamLayoutAttributes)?.layoutOptions = messageContentView?.layoutOptions
+        (preferredAttributes as? MessageCellLayoutAttributes)?.layoutOptions = messageContentView?.layoutOptions
 
         return preferredAttributes
     }
@@ -79,7 +79,7 @@ public final class _ChatMessageCollectionViewCell<ExtraData: ExtraDataTypes>: _C
     override public func apply(_ layoutAttributes: UICollectionViewLayoutAttributes) {
         super.apply(layoutAttributes)
         
-        guard let attributes = layoutAttributes as? StreamLayoutAttributes else { return }
+        guard let attributes = layoutAttributes as? MessageCellLayoutAttributes else { return }
         messageContentView?.animateLayoutOptionChanges(
             appearingOptions: attributes.appearingOptions ?? [],
             disappearingOptions: attributes.disappearingOptions ?? []
