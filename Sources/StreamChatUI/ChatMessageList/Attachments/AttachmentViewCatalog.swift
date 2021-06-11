@@ -14,13 +14,6 @@ open class _AttachmentViewCatalog<ExtraData: ExtraDataTypes> {
     ) -> _AttachmentViewInjector<ExtraData>.Type? {
         let attachmentCounts = message.attachmentCounts
 
-        // TODO: loop over attachments and set it to true if any attachment has title_link != ""
-        let containsLink = true
-        
-        message.imageAttachments
-        
-        attachmentCounts.keys.contains(.image) || attachmentCounts.keys.contains(.media) || containsLink
-        
         if attachmentCounts.keys.contains(.image) {
             return components.galleryAttachmentInjector
         } else if attachmentCounts.keys.contains(.giphy) {
