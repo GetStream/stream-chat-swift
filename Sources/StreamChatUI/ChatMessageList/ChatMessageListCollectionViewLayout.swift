@@ -4,14 +4,6 @@
 
 import UIKit
 
-public protocol LayoutOptionsDataSource {
-    /// Layout options for the message on given `indexPath`.
-    ///
-    /// The layoutOptions are stored for each cell and compared with new value when the message content is updated.
-    /// Difference is provided in `LayoutAttributes` to the cell for animation
-    func cellLayoutOptionsForMessage(at indexPath: IndexPath) -> ChatMessageLayoutOptions
-}
-
 /// Custom Table View like layout that position item at index path 0-0 on bottom of the list.
 ///
 /// Unlike `UICollectionViewFlowLayout` we ignore some invalidation calls and persist items attributes between updates.
@@ -22,11 +14,13 @@ open class ChatMessageListCollectionViewLayout: UICollectionViewLayout {
         let id = UUID()
         public var offset: CGFloat
         public var height: CGFloat
+
+        public var tag: String = ""
         
         // Store layout options and provide diff to cell.
         public var layoutOptions: ChatMessageLayoutOptions?
-        public var appearingOptions: ChatMessageLayoutOptions?
-        public var disappearingOptions: ChatMessageLayoutOptions?
+
+        public var previousLayoutOptions: ChatMessageLayoutOptions?
 
         public var maxY: CGFloat {
             offset + height
@@ -37,7 +31,7 @@ open class ChatMessageListCollectionViewLayout: UICollectionViewLayout {
             self.height = height
         }
 
-        public func attribute(for index: Int, width: CGFloat) -> UICollectionViewLayoutAttributes {
+        public func attribute(for index: Int, width: CGFloat) -> MessageCellLayoutAttributes {
             let attribute = MessageCellLayoutAttributes(forCellWith: IndexPath(item: index, section: 0))
             attribute.frame = CGRect(x: 0, y: offset, width: width, height: height)
             // default `zIndex` value is 0, but for some undocumented reason self-sizing
@@ -45,17 +39,36 @@ open class ChatMessageListCollectionViewLayout: UICollectionViewLayout {
             // so we need to make sure we do not use it, we need to add 1 so indexPath 0-0 doesn't have
             // problematic 0 zIndex
             attribute.zIndex = index + 1
+
             attribute.layoutOptions = layoutOptions
-            attribute.appearingOptions = appearingOptions
-            attribute.disappearingOptions = disappearingOptions
+            attribute.previousLayoutOptions = previousLayoutOptions
+            attribute.tag = tag
+
             return attribute
         }
     }
 
     /// Layout items before currently running batch update
-    open var previousItems: [LayoutItem] = []
+    open var previousItems: [LayoutItem] = [] {
+        didSet {
+            print("""
+            ------- previous items: -----
+            \(previousItems)
+
+            """)
+        }
+    }
+
     /// Actual layout
-    open var currentItems: [LayoutItem] = []
+    open var currentItems: [LayoutItem] = [] {
+        didSet {
+            print("""
+            ------- current items: -----
+            \(currentItems)
+
+            """)
+        }
+    }
 
     /// With better approximation you are getting better performance
     open var estimatedItemHeight: CGFloat = 200
@@ -106,8 +119,6 @@ open class ChatMessageListCollectionViewLayout: UICollectionViewLayout {
     /// The rest of the updates should come from `prepare(forCollectionViewUpdates:)`.
     private var didPerformInitialLayout = false
     
-    public var dataSource: LayoutOptionsDataSource?
-
     // MARK: - Initialization
 
     override public required init() {
@@ -144,8 +155,15 @@ open class ChatMessageListCollectionViewLayout: UICollectionViewLayout {
         let idx = originalAttributes.indexPath.item
 
         let delta = preferredAttributes.frame.height - currentItems[idx].height
-        currentItems[idx].height = preferredAttributes.frame.height
-        currentItems[idx].layoutOptions = dataSource?.cellLayoutOptionsForMessage(at: originalAttributes.indexPath)
+
+        var item = currentItems[idx]
+        item.height = preferredAttributes.frame.height
+        item.layoutOptions = (preferredAttributes as? MessageCellLayoutAttributes)?.layoutOptions
+        item.previousLayoutOptions = (preferredAttributes as? MessageCellLayoutAttributes)?.previousLayoutOptions
+        item.tag = (preferredAttributes as? MessageCellLayoutAttributes)!.tag
+
+        currentItems[idx] = item
+
         // if item have been inserted recently or deleted, we need to update its attributes to prevent weird flickering
         animatingAttributes[preferredAttributes.indexPath]?.frame.size.height = preferredAttributes.frame.height
         
@@ -197,6 +215,8 @@ open class ChatMessageListCollectionViewLayout: UICollectionViewLayout {
     // MARK: - Animation updates
 
     open func _prepare(forCollectionViewUpdates updateItems: [UICollectionViewUpdateItem]) {
+        print("\n\n------- prepare ")
+
         previousItems = currentItems
 
         // used to determine what contentOffset should be restored after batch updates
@@ -248,15 +268,17 @@ open class ChatMessageListCollectionViewLayout: UICollectionViewLayout {
         }
         
         let reload: (UICollectionViewUpdateItem) -> Void = { update in
-            // Store diff in layoutOptions and provide them via LayoutAttributes to the cell.
-            guard let ip = update.indexPathBeforeUpdate ?? update.indexPathAfterUpdate else { return }
-            let idx = ip.item
-            let oldOptions = self.currentItems[idx].layoutOptions ?? []
-            let newOptions = self.dataSource?.cellLayoutOptionsForMessage(at: ip) ?? []
-            let appearingOptions = newOptions.subtracting(oldOptions)
-            let disappearingOptions = oldOptions.subtracting(newOptions)
-            self.currentItems[idx].appearingOptions = appearingOptions
-            self.currentItems[idx].disappearingOptions = disappearingOptions
+            _ = super.layoutAttributesForItem(at: update.indexPathAfterUpdate!)
+
+//            // Store diff in layoutOptions and provide them via LayoutAttributes to the cell.
+//            guard let ip = update.indexPathBeforeUpdate ?? update.indexPathAfterUpdate else { return }
+//            let idx = ip.item
+//            let oldOptions = self.currentItems[idx].layoutOptions ?? []
+//            let newOptions = self.dataSource?.cellLayoutOptionsForMessage(at: ip) ?? []
+//            let appearingOptions = newOptions.subtracting(oldOptions)
+//            let disappearingOptions = oldOptions.subtracting(newOptions)
+//            self.currentItems[idx].appearingOptions = appearingOptions
+//            self.currentItems[idx].disappearingOptions = disappearingOptions
         }
 
         for update in updateItems {
@@ -277,6 +299,7 @@ open class ChatMessageListCollectionViewLayout: UICollectionViewLayout {
             }
         }
 
+        print("     --> prepare finished")
         preBatchUpdatesCall = false
     }
     
@@ -294,8 +317,8 @@ open class ChatMessageListCollectionViewLayout: UICollectionViewLayout {
         disappearingItems.removeAll()
         animatingAttributes.removeAll()
         for i in 0..<currentItems.count {
-            currentItems[i].appearingOptions = nil
-            currentItems[i].disappearingOptions = nil
+//            currentItems[i].layoutOptions = nil
+            currentItems[i].previousLayoutOptions = nil
         }
         super.finalizeCollectionViewUpdates()
         restoreOffset = nil
@@ -349,7 +372,13 @@ open class ChatMessageListCollectionViewLayout: UICollectionViewLayout {
                 return !(isBeforeRect || isAfterRect)
             }
             .map {
-                $1.attribute(for: $0, width: currentCollectionViewWidth)
+                let attribute = $1.attribute(for: $0, width: currentCollectionViewWidth)
+
+//                if let oldIndex = oldIndexForItem(with: $1.id), oldIndex == $0 {
+//                    attribute.previousLayoutOptions = previousItems[oldIndex].layoutOptions
+//                }
+
+                return attribute
             }
     }
 
@@ -373,22 +402,32 @@ open class ChatMessageListCollectionViewLayout: UICollectionViewLayout {
             
             animatingAttributes[itemIndexPath] = attribute
             return attribute
+
         } else if let itemId = idForItem(at: itemIndex), let oldItemIndex = oldIndexForItem(with: itemId) {
-            // this is item that already presented in collection view, but collection view decided to reload it
-            // by removing and inserting it back (4head)
-            // to properly animate possible change of such item, we need to return its attributes BEFORE batch update
-            let itemStaysInPlace = itemIndex == oldItemIndex
-            
-            let attribute = (itemStaysInPlace ? currentItems[itemIndex] : previousItems[oldItemIndex])
-                .attribute(for: itemStaysInPlace ? itemIndex : oldItemIndex, width: currentCollectionViewWidth)
-                .copy() as! MessageCellLayoutAttributes
-            
-            // When there is appearing layout option, we want to get new content size from autolayout.
-            // Adding disappearingOptions to the condition breaks the disappearing animation.
-            if attribute.appearingOptions?.isEmpty == false {
-                animatingAttributes[itemIndexPath] = attribute
-            }
-            
+            let attribute = previousItems[oldItemIndex].attribute(for: oldItemIndex, width: currentCollectionViewWidth)
+
+            attribute.tag = "initial for appearing"
+//            attribute.layoutOptions = attribute.layoutOptions
+            attribute.previousLayoutOptions = attribute.layoutOptions
+
+//
+//            // this is item that already presented in collection view, but collection view decided to reload it
+//            // by removing and inserting it back (4head)
+//            // to properly animate possible change of such item, we need to return its attributes BEFORE batch update
+//            let itemStaysInPlace = itemIndex == oldItemIndex
+//
+//            let attribute = (itemStaysInPlace ? currentItems[itemIndex] : previousItems[oldItemIndex])
+//                .attribute(for: itemStaysInPlace ? itemIndex : oldItemIndex, width: currentCollectionViewWidth)
+//                .copy() as! MessageCellLayoutAttributes
+//
+            ////            // When there is appearing layout option, we want to get new content size from autolayout.
+            ////            // Adding disappearingOptions to the condition breaks the disappearing animation.
+            ////            if attribute.appearingOptions?.isEmpty == false {
+            ////                animatingAttributes[itemIndexPath] = attribute
+            ////            }
+
+            print("returning from initialLayoutAttributesForAppearingItem")
+
             return attribute
         } else {
             return super.initialLayoutAttributesForAppearingItem(at: itemIndexPath)
@@ -398,6 +437,7 @@ open class ChatMessageListCollectionViewLayout: UICollectionViewLayout {
     override open func finalLayoutAttributesForDisappearingItem(at itemIndexPath: IndexPath) -> UICollectionViewLayoutAttributes? {
         let idx = itemIndexPath.item
         guard let id = oldIdForItem(at: idx) else { return nil }
+
         if disappearingItems.contains(itemIndexPath) {
             // item gets removed from collection view, we don't do any special delete animations for now, so just return
             // item attributes BEFORE batch update and let it fade away
@@ -405,7 +445,7 @@ open class ChatMessageListCollectionViewLayout: UICollectionViewLayout {
                 .attribute(for: idx, width: currentCollectionViewWidth)
                 .copy() as! UICollectionViewLayoutAttributes
             
-            attribute.alpha = 0
+            attribute.isHidden = true
             return attribute
             
         } else if let newIdx = indexForItem(with: id) {
@@ -417,6 +457,7 @@ open class ChatMessageListCollectionViewLayout: UICollectionViewLayout {
                 .copy() as! UICollectionViewLayoutAttributes
             
             animatingAttributes[attribute.indexPath] = attribute
+            attribute.isHidden = true
             return attribute
         }
 

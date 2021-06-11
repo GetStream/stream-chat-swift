@@ -10,17 +10,15 @@ open class MessageCellLayoutAttributes: UICollectionViewLayoutAttributes {
     /// The current message layout option of the cell
     open var layoutOptions: ChatMessageLayoutOptions?
 
-    /// The message layout options added with the latest update
-    open var appearingOptions: ChatMessageLayoutOptions?
+    open var previousLayoutOptions: ChatMessageLayoutOptions?
 
-    /// The message layout options removed with the latest update
-    open var disappearingOptions: ChatMessageLayoutOptions?
-    
+    open var tag: String = " ❌ "
+
     override open func copy(with zone: NSZone? = nil) -> Any {
         let copy = super.copy(with: zone) as! MessageCellLayoutAttributes
         copy.layoutOptions = layoutOptions
-        copy.appearingOptions = appearingOptions
-        copy.disappearingOptions = disappearingOptions
+        copy.previousLayoutOptions = previousLayoutOptions
+        copy.tag = tag
         return copy
     }
 
@@ -28,8 +26,8 @@ open class MessageCellLayoutAttributes: UICollectionViewLayoutAttributes {
         guard let rhs = object as? MessageCellLayoutAttributes else { return false }
 
         return layoutOptions == rhs.layoutOptions
-            && appearingOptions == rhs.appearingOptions
-            && disappearingOptions == rhs.disappearingOptions
+            && previousLayoutOptions == rhs.previousLayoutOptions
+            && tag == rhs.tag
             && super.isEqual(object)
     }
 }

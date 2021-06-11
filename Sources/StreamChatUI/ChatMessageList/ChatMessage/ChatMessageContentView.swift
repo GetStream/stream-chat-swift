@@ -367,7 +367,27 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, ThemeProvi
             }
         }
     }
-    
+
+    open func animateMessageLayoutOptionChanges(previousLayoutOptions: ChatMessageLayoutOptions) {
+        if !previousLayoutOptions.contains(.reactions) && layoutOptions.contains(.reactions) {
+            guard let reactionsBubbleView = reactionsBubbleView else { return }
+
+//            UIView.performWithoutAnimation {
+//            reactionsBubbleView.transform = CGAffineTransform(scaleX: 0.05, y: 0.05)
+//            reactionsBubbleView.alpha = 0
+
+//            mainContainer.isHidden = true
+
+//                self.mainContainer.frame = startFrame
+//            }
+//            UIView.animate(withDuration: 1) {
+//                reactionsBubbleView.alpha = 1
+//                reactionsBubbleView.transform = CGAffineTransform(scaleX: 1, y: 1)
+            ////                self.mainContainer.frame = targetFrame
+//            }
+        }
+    }
+
     /// Animate changes in layoutOptions.
     /// - Parameters:
     ///   - appearingOptions: Layout options added with the update.

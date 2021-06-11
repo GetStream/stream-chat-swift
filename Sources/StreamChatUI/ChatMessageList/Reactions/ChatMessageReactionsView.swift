@@ -14,11 +14,10 @@ open class _ChatMessageReactionsView<ExtraData: ExtraDataTypes>: _View, ThemePro
 
     // MARK: - Subviews
 
-    public private(set) lazy var stackView: UIStackView = {
-        let stack = UIStackView()
+    public private(set) lazy var stackView: ContainerStackView = {
+        let stack = ContainerStackView()
         stack.axis = .horizontal
-        stack.distribution = .fillEqually
-        stack.spacing = UIStackView.spacingUseSystem
+        stack.distribution = .equal
         return stack.withoutAutoresizingMaskConstraints
     }()
 
@@ -29,9 +28,7 @@ open class _ChatMessageReactionsView<ExtraData: ExtraDataTypes>: _View, ThemePro
     }
 
     override open func updateContent() {
-        stackView.arrangedSubviews.forEach {
-            $0.removeFromSuperview()
-        }
+        stackView.removeAllArrangedSubviews()
 
         guard let content = content else { return }
 
@@ -42,6 +39,7 @@ open class _ChatMessageReactionsView<ExtraData: ExtraDataTypes>: _View, ThemePro
                 reaction: reaction,
                 onTap: content.didTapOnReaction
             )
+            itemView.clipsToBounds = true
             stackView.addArrangedSubview(itemView)
         }
     }

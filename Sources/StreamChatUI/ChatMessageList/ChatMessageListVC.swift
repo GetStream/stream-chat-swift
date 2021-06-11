@@ -18,7 +18,6 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
     ChatMessageContentViewDelegate,
     UICollectionViewDelegate,
     ChatMessageListCollectionViewDataSource,
-    LayoutOptionsDataSource,
     GalleryContentViewDelegate,
     GiphyActionContentViewDelegate,
     LinkPreviewViewDelegate,
@@ -44,7 +43,6 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
             .messageListLayout
             .init()
         
-        layout.dataSource = self
         return layout
     }()
     

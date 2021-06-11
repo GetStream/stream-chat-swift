@@ -26,6 +26,9 @@ extension _ChatMessageReactionsView {
         override open func setUpLayout() {
             super.setUpLayout()
 
+            imageView?.clipsToBounds = true
+//            imageView?.contentMode = .scaleAspectFit
+
             setContentCompressionResistancePriority(.streamRequire, for: .vertical)
             setContentCompressionResistancePriority(.streamRequire, for: .horizontal)
         }
