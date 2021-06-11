@@ -38,7 +38,7 @@ open class InputTextView: UITextView, AppearanceProvider {
     open func setUp() {
         NotificationCenter.default.addObserver(
             self,
-            selector: #selector(textDidChange),
+            selector: #selector(handleTextChange),
             name: UITextView.textDidChangeNotification,
             object: self
         )
@@ -73,10 +73,10 @@ open class InputTextView: UITextView, AppearanceProvider {
 
     func textDidChangeProgrammatically() {
         delegate?.textViewDidChange?(self)
-        textDidChange()
+        handleTextChange()
     }
         
-    @objc func textDidChange() {
+    @objc func handleTextChange() {
         placeholderLabel.isHidden = !text.isEmpty
     }
 }

@@ -83,7 +83,7 @@ open class _ChatThreadVC<ExtraData: ExtraDataTypes>:
     override open func setUp() {
         super.setUp()
 
-        let longPress = UILongPressGestureRecognizer(target: self, action: #selector(didLongPress))
+        let longPress = UILongPressGestureRecognizer(target: self, action: #selector(handleLongPress))
         longPress.minimumPressDuration = 0.33
         collectionView.addGestureRecognizer(longPress)
 
@@ -312,7 +312,7 @@ open class _ChatThreadVC<ExtraData: ExtraDataTypes>:
     ///
     /// Default implementation will convert the gesture location to collection view's `indexPath`
     /// and then call selection action on the selected cell.
-    @objc open func didLongPress(_ gesture: UILongPressGestureRecognizer) {
+    @objc open func handleLongPress(_ gesture: UILongPressGestureRecognizer) {
         let location = gesture.location(in: collectionView)
 
         guard
