@@ -23,7 +23,7 @@ extension UIImageView {
         resize: Bool = true,
         preferredSize: CGSize? = nil,
         components: _Components<ExtraData>,
-        completion: ImageTask.Completion? = nil
+        completion: ((_ result: Result<ImageResponse, ImagePipeline.Error>) -> Void)? = nil
     ) -> ImageTask? {
         guard !SystemEnvironment.isTests else {
             // When running tests, we load the images synchronously

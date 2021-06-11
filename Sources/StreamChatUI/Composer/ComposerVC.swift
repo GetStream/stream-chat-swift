@@ -288,7 +288,7 @@ open class _ComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
 
         let isAttachmentButtonHidden = !content.isEmpty || channelConfig?.uploadsEnabled == false
         let isCommandsButtonHidden = !content.isEmpty || channelConfig?.commands?.isEmpty == true
-        let isShrinkInputButtonHidden = content.isEmpty
+        let isShrinkInputButtonHidden = content.isEmpty || (isAttachmentButtonHidden && isCommandsButtonHidden)
         
         Animate {
             self.composerView.attachmentButton.isHidden = isAttachmentButtonHidden
