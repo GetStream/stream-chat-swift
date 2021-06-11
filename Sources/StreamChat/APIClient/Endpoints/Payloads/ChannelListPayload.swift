@@ -249,14 +249,14 @@ public struct ChannelConfig: Codable {
     /// The max message length. 5000 by default.
     public let maxMessageLength: Int
     /// An array of commands, e.g. /giphy.
-    public let commands: [Command]?
+    public let commands: [Command]
     /// A channel created date.
     public let createdAt: Date
     /// A channel updated date.
     public let updatedAt: Date
     
     /// Determines if users are able to flag messages. Enabled by default.
-    public var flagsEnabled: Bool { commands?.map(\.name).contains("flag") ?? false }
+    public var flagsEnabled: Bool { commands.map(\.name).contains("flag") }
         
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
