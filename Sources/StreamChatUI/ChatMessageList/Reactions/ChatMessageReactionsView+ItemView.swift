@@ -20,7 +20,7 @@ extension _ChatMessageReactionsView {
         override internal func setUp() {
             super.setUp()
 
-            addTarget(self, action: #selector(didTap), for: .touchUpInside)
+            addTarget(self, action: #selector(handleTap), for: .touchUpInside)
         }
 
         override internal func updateContent() {
@@ -36,7 +36,7 @@ extension _ChatMessageReactionsView {
 
         // MARK: - Actions
 
-        @objc internal func didTap() {
+        @objc internal func handleTap() {
             guard let content = self.content else { return }
 
             content.onTap(content.reaction.type)
