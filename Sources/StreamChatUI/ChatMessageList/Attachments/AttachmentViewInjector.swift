@@ -38,6 +38,12 @@ open class _AttachmentViewInjector<ExtraData: ExtraDataTypes> {
         self.contentView = contentView
     }
 
+    public func attachments<Payload: AttachmentPayload>(
+        payloadType: Payload.Type
+    ) -> [_ChatMessageAttachment<Payload>] {
+        contentView.content?.attachments(payloadType: payloadType) ?? []
+    }
+
     @available(*, unavailable)
     public required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")

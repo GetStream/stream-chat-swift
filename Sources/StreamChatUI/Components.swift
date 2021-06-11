@@ -113,6 +113,9 @@ public struct _Components<ExtraData: ExtraDataTypes> {
     /// The view used to display a bubble around a message.
     public var messageBubbleView: _ChatMessageBubbleView<ExtraData>.Type = _ChatMessageBubbleView<ExtraData>.self
 
+    /// The class responsible for returning the correct attachment view injector from a message
+    public var attachmentViewCatalog: _AttachmentViewCatalog<ExtraData>.Type = _AttachmentViewCatalog<ExtraData>.self
+
     /// The injector used to inject gallery attachment views.
     public var galleryAttachmentInjector: _AttachmentViewInjector<ExtraData>.Type = _GalleryAttachmentViewInjector<ExtraData>.self
 

@@ -220,19 +220,10 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
     }
 
     open func attachmentViewInjectorClassForMessage(at indexPath: IndexPath) -> _AttachmentViewInjector<ExtraData>.Type? {
-        let attachmentCounts = messageForIndexPath(indexPath).attachmentCounts
-
-        if attachmentCounts.keys.contains(.image) {
-            return components.galleryAttachmentInjector
-        } else if attachmentCounts.keys.contains(.giphy) {
-            return components.giphyAttachmentInjector
-        } else if attachmentCounts.keys.contains(.file) {
-            return components.filesAttachmentInjector
-        } else if attachmentCounts.keys.contains(.linkPreview) {
-            return components.linkAttachmentInjector
-        } else {
-            return nil
-        }
+        components.attachmentViewCatalog.attachmentViewInjectorClassFor(
+            message: messageForIndexPath(indexPath),
+            components: components
+        )
     }
 
     open func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
