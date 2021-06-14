@@ -30,53 +30,79 @@ public struct WorkoutAttachmentPayload: AttachmentPayload {
     }
 }
 
-open class WorkoutAttachmentViewInjector: AttachmentViewInjector {
-    public private(set) var stackView: UIStackView = .init()
-    public private(set) lazy var imageView: UIImageView = {
-        let imageView = UIImageView()
-        return imageView
-    }()
-
-    public private(set) var distanceLabel: UILabel = .init()
-    public private(set) var durationLabel: UILabel = .init()
-    public private(set) var energyLabel: UILabel = .init()
-
-    override open func contentViewDidLayout(options: ChatMessageLayoutOptions) {
-        stackView.axis = .horizontal
-        stackView.distribution = .fillEqually
-
+class WorkoutAttachmentView: _View {
+    var content: _ChatMessageAttachment<WorkoutAttachmentPayload>? {
+        didSet { updateContentIfNeeded() }
+    }
+    
+    let imageView = UIImageView()
+    let distanceLabel = UILabel()
+    let durationLabel = UILabel()
+    let energyLabel = UILabel()
+    
+    override func setUpAppearance() {
+        super.setUpAppearance()
+        
         distanceLabel.backgroundColor = .yellow
-        stackView.addArrangedSubview(distanceLabel)
+        distanceLabel.numberOfLines = 0
 
         durationLabel.backgroundColor = .green
-        stackView.addArrangedSubview(durationLabel)
+        durationLabel.numberOfLines = 0
 
         energyLabel.backgroundColor = .red
-        stackView.addArrangedSubview(energyLabel)
+        energyLabel.numberOfLines = 0
+    }
+    
+    override func setUpLayout() {
+        super.setUpLayout()
+        
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        addSubview(imageView)
+        
+        let container = ContainerStackView(arrangedSubviews: [distanceLabel, durationLabel, energyLabel])
+        container.translatesAutoresizingMaskIntoConstraints = false
+        container.distribution = .equal
+        addSubview(container)
+        
+        NSLayoutConstraint.activate([
+            imageView.widthAnchor.constraint(equalTo: imageView.heightAnchor),
+            imageView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            imageView.trailingAnchor.constraint(equalTo: trailingAnchor),
+            imageView.topAnchor.constraint(equalTo: topAnchor),
+            imageView.bottomAnchor.constraint(equalTo: container.topAnchor),
 
-        contentView.bubbleContentContainer.insertSubview(stackView, at: 0)
+            container.leadingAnchor.constraint(equalTo: leadingAnchor),
+            container.trailingAnchor.constraint(equalTo: trailingAnchor),
+            container.bottomAnchor.constraint(equalTo: bottomAnchor)
+        ])
+    }
+    
+    override func updateContent() {
+        super.updateContent()
+        
+        if let attachment = content {
+            Nuke.loadImage(with: attachment.imageURL, into: imageView)
+            distanceLabel.text = "you walked \(attachment.WorkoutDistanceMeters ?? 0) meters!"
+            durationLabel.text = "it took you \(attachment.WorkoutDurationSeconds ?? 0) seconds!"
+            energyLabel.text = "you burned \(attachment.WorkoutEnergyCal ?? 0) calories!"
+        } else {
+            imageView.image = nil
+            distanceLabel.text = nil
+            durationLabel.text = nil
+            energyLabel.text = nil
+        }
+    }
+}
 
-//        let container = contentView.bubbleView ?? contentView.bubbleContentContainer
-//        stackView.widthAnchor.constraint(equalTo: container.widthAnchor).isActive = true
-        stackView.widthAnchor.constraint(equalToConstant: 200.0).isActive = true
+open class WorkoutAttachmentViewInjector: AttachmentViewInjector {
+    let workoutView = WorkoutAttachmentView()
 
-        super.contentViewDidLayout(options: options)
+    override open func contentViewDidLayout(options: ChatMessageLayoutOptions) {
+        contentView.bubbleContentContainer.insertArrangedSubview(workoutView, at: 0, respectsLayoutMargins: true)
     }
 
     override open func contentViewDidUpdateContent() {
-        guard let attachment = attachments(payloadType: WorkoutAttachmentPayload.self).first else {
-            return
-        }
-
-        let request = ImageRequest(
-            url: attachment.imageURL,
-            processors: [ImageProcessors.Resize(size: imageView.bounds.size)],
-            priority: .high
-        )
-        Nuke.loadImage(with: request, into: imageView)
-        distanceLabel.text = "you walked \(attachment.WorkoutDistanceMeters ?? 0) meters!"
-        distanceLabel.text = "you walked \(attachment.WorkoutDistanceMeters ?? 0) meters!"
-        energyLabel.text = "you walked \(attachment.WorkoutDistanceMeters ?? 0) meters!"
+        workoutView.content = attachments(payloadType: WorkoutAttachmentPayload.self).first
     }
 }
 
