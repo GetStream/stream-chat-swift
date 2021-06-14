@@ -15,7 +15,7 @@ else
     exit 1
 fi
 
-OUTPUT_DIRECTORY="docusaurus/docs/iOS"
+OUTPUT_DIRECTORY="docusaurus/docs/iOS/ReferenceDocs"
 
 swift-doc generate $TARGET_DIRECTORY  -n $TARGET -o "$OUTPUT_DIRECTORY/$TARGET_DIRECTORY"
 
@@ -35,17 +35,7 @@ bash Scripts/deleteDuplicates.sh "$OUTPUT_DIRECTORY/$TARGET_DIRECTORY" "$TARGET_
 find "$OUTPUT_DIRECTORY/$TARGET_DIRECTORY" -type f -exec sed -i '' '1d' {} +
 
 if [[ "$TARGET" = "StreamChatUI" ]]; then
-   /bin/mv -v "$OUTPUT_DIRECTORY/$TARGET_DIRECTORY/"* "$OUTPUT_DIRECTORY/ui-components/"
-   bash Scripts/addImagesToDocumentation.sh "$OUTPUT_DIRECTORY/ui-components"
-else
-    # Right now, we want to add documentation only for controllers.
-    /bin/mv -v "$OUTPUT_DIRECTORY/$TARGET_DIRECTORY/Controllers/"* "$OUTPUT_DIRECTORY/controllers/"
+   bash Scripts/addImagesToDocumentation.sh "$OUTPUT_DIRECTORY/Sources/StreamChatUI"
 fi
 
-echo
-# Delete unused sources which are not yet documented.
-# TBD: Decide where to put those sources into docusaurus
-#   rm -rf "$OUTPUT_DIRECTORY/Sources"
-
 echo "Documentation for $TARGET generated successfully. Please do check $OUTPUT_DIRECTORY ui-components and controllers folder"
-
