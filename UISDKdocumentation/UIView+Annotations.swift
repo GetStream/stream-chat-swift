@@ -72,7 +72,9 @@ func generateDocs(
     container.addSubview(view.withoutAutoresizingMaskConstraints)
     view.centerYAnchor.constraint(equalTo: container.centerYAnchor).isActive = true
     view.centerXAnchor.constraint(equalTo: container.centerXAnchor).isActive = true
- 
+    view.layer.borderWidth = 1
+    view.layer.borderColor = UIColor.gray.cgColor
+
     container.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 3).isActive = true
     container.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 3).isActive = true
     

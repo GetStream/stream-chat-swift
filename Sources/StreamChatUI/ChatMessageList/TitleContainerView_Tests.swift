@@ -10,7 +10,7 @@ import XCTest
 final class TitleContainerView_Tests: XCTestCase {
     func test_defaultAppearance() {
         let view = TitleContainerView().withoutAutoresizingMaskConstraints
-        view.addSizeContraints()
+        view.addSizeConstraints()
         
         view.content = (nil, nil)
         AssertSnapshot(view, suffix: "empty")
@@ -33,7 +33,7 @@ final class TitleContainerView_Tests: XCTestCase {
         let view = TitleContainerView().withoutAutoresizingMaskConstraints
         view.appearance = appearance
         view.content = ("Red", "Blue")
-        view.addSizeContraints()
+        view.addSizeConstraints()
         
         AssertSnapshot(view)
     }
@@ -59,14 +59,22 @@ final class TitleContainerView_Tests: XCTestCase {
         
         let view = CustomTitleView().withoutAutoresizingMaskConstraints
         view.content = ("Title", "Subtitle")
-        view.addSizeContraints()
+        view.addSizeConstraints()
         
         AssertSnapshot(view)
     }
 }
 
+@available(iOS 13, *)
+final class TitleContainerView_Swift_Tests: iOS13TestCase {
+    func test_swiftUIWrapper() {
+        let view = TitleContainerView.asView((title: "Luke Skywalker", subtitle: "Last seen a long time ago..."))
+        AssertSnapshot(view.frame(width: 320, height: 44))
+    }
+}
+
 extension TitleContainerView {
-    func addSizeContraints() {
+    func addSizeConstraints() {
         NSLayoutConstraint.activate([
             widthAnchor.constraint(equalToConstant: 320),
             heightAnchor.constraint(equalToConstant: 44)

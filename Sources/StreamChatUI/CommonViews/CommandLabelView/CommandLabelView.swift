@@ -6,7 +6,7 @@ import StreamChat
 import UIKit
 
 /// A view that display the command name and icon.
-open class CommandLabelView: _View, AppearanceProvider {
+open class CommandLabelView: _View, AppearanceProvider, SwiftUIRepresentable {
     /// The command that the label displays.
     public var content: Command? {
         didSet {

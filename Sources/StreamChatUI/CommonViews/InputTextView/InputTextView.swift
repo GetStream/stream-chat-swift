@@ -8,17 +8,18 @@ import UIKit
 /// A view for inputting text with placeholder support. Since it is a subclass
 /// of `UITextView`, the `UITextViewDelegate` can be used to observe text changes.
 open class InputTextView: UITextView, AppearanceProvider {
-    public lazy var placeholderLabel: UILabel = UILabel()
+    /// Label used as placeholder for textView when it's empty.
+    open private(set) lazy var placeholderLabel: UILabel = UILabel()
         .withoutAutoresizingMaskConstraints
         .withBidirectionalLanguagesSupport
     
-    override public var text: String! {
+    override open var text: String! {
         didSet {
             textDidChangeProgrammatically()
         }
     }
     
-    override public var attributedText: NSAttributedString! {
+    override open var attributedText: NSAttributedString! {
         didSet {
             textDidChangeProgrammatically()
         }

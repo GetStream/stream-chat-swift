@@ -201,6 +201,20 @@
 		795297062583B52000435B2E /* UserSearchController_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 795297052583B52000435B2E /* UserSearchController_Tests.swift */; };
 		7952B3B324D4560E00AC53D4 /* ChannelController_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7952B3B224D314B100AC53D4 /* ChannelController_Tests.swift */; };
 		7952B3B524D45DA300AC53D4 /* ChannelUpdater_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7952B3B424D45D9400AC53D4 /* ChannelUpdater_Tests.swift */; };
+		79567F2B266F5DB1007EADD3 /* TitleContainerView_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A396B752260CCE7400D8D15B /* TitleContainerView_Tests.swift */; };
+		79567F2D266F6002007EADD3 /* TitleContainerView_Documentation_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79567F2C266F6002007EADD3 /* TitleContainerView_Documentation_Tests.swift */; };
+		79567F2F266F673B007EADD3 /* CreateChatChannelButton_Documentation_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79567F2E266F673B007EADD3 /* CreateChatChannelButton_Documentation_Tests.swift */; };
+		79567F31266F68E1007EADD3 /* OnlineIndicatorView_Documentation_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79567F30266F68E1007EADD3 /* OnlineIndicatorView_Documentation_Tests.swift */; };
+		79567F33266F6DE6007EADD3 /* ChatAvatarView_Documentation_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79567F32266F6DE6007EADD3 /* ChatAvatarView_Documentation_Tests.swift */; };
+		79567F35266F6F12007EADD3 /* CommandLabelView_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79567F34266F6F12007EADD3 /* CommandLabelView_Tests.swift */; };
+		79567F36266F6F12007EADD3 /* CommandLabelView_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79567F34266F6F12007EADD3 /* CommandLabelView_Tests.swift */; };
+		79567F39266F71CE007EADD3 /* CommandLabelView_Documentation_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79567F37266F71CE007EADD3 /* CommandLabelView_Documentation_Tests.swift */; };
+		79567F3B266F9BBE007EADD3 /* SendButton_Documentation_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79567F3A266F9BBE007EADD3 /* SendButton_Documentation_Tests.swift */; };
+		79567F3D266F9C77007EADD3 /* ConfirmButton_Documentation_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79567F3C266F9C77007EADD3 /* ConfirmButton_Documentation_Tests.swift */; };
+		79567F3F266F9CF3007EADD3 /* AttachmentButton_Documentation_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79567F3E266F9CF3007EADD3 /* AttachmentButton_Documentation_Tests.swift */; };
+		79567F41266F9D78007EADD3 /* AttachmentPlaceholderView_Documentation_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79567F40266F9D78007EADD3 /* AttachmentPlaceholderView_Documentation_Tests.swift */; };
+		79567F43266F9EF7007EADD3 /* CommandButton_Documentation_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79567F42266F9EF7007EADD3 /* CommandButton_Documentation_Tests.swift */; };
+		79567F45266F9F67007EADD3 /* ShrinkInputButton_Documentation_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79567F44266F9F67007EADD3 /* ShrinkInputButton_Documentation_Tests.swift */; };
 		79617CB125F236B600D54E61 /* UserWatchingEventMiddleware.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79617CB025F236B600D54E61 /* UserWatchingEventMiddleware.swift */; };
 		79617CBA25F23AA400D54E61 /* UserWatchingEventMiddleware_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79617CB925F23AA400D54E61 /* UserWatchingEventMiddleware_Tests.swift */; };
 		7962958C248147430078EB53 /* BaseURL.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7962958B248147430078EB53 /* BaseURL.swift */; };
@@ -737,7 +751,7 @@
 		AD90D18525D56196001D03BB /* CurrentUserUpdater_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD90D18425D56196001D03BB /* CurrentUserUpdater_Tests.swift */; };
 		AD90D18D25D5619C001D03BB /* CurrentUserUpdater_Mock.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD90D18C25D5619C001D03BB /* CurrentUserUpdater_Mock.swift */; };
 		ADAA377125E43C3700C31528 /* ChatSuggestionsViewController_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADD5A9E725DE8AF6006DC88A /* ChatSuggestionsViewController_Tests.swift */; };
-		ADB22F7C25F1626200853C92 /* ChatOnlineIndicatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADB22F7A25F1626200853C92 /* ChatOnlineIndicatorView.swift */; };
+		ADB22F7C25F1626200853C92 /* OnlineIndicatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADB22F7A25F1626200853C92 /* OnlineIndicatorView.swift */; };
 		ADB22F7D25F1626200853C92 /* ChatPresenceAvatarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADB22F7B25F1626200853C92 /* ChatPresenceAvatarView.swift */; };
 		ADB4166C26208F1C00E623E3 /* AttachmentPreviewProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADB4165026208C7900E623E3 /* AttachmentPreviewProvider.swift */; };
 		ADCDDCC525AE1293004E15FB /* UserUpdateResponse.json in Resources */ = {isa = PBXBuildFile; fileRef = ADCDDCC425AE1293004E15FB /* UserUpdateResponse.json */; };
@@ -1436,6 +1450,18 @@
 		795297052583B52000435B2E /* UserSearchController_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserSearchController_Tests.swift; sourceTree = "<group>"; };
 		7952B3B224D314B100AC53D4 /* ChannelController_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelController_Tests.swift; sourceTree = "<group>"; };
 		7952B3B424D45D9400AC53D4 /* ChannelUpdater_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelUpdater_Tests.swift; sourceTree = "<group>"; };
+		79567F2C266F6002007EADD3 /* TitleContainerView_Documentation_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TitleContainerView_Documentation_Tests.swift; sourceTree = "<group>"; };
+		79567F2E266F673B007EADD3 /* CreateChatChannelButton_Documentation_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateChatChannelButton_Documentation_Tests.swift; sourceTree = "<group>"; };
+		79567F30266F68E1007EADD3 /* OnlineIndicatorView_Documentation_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnlineIndicatorView_Documentation_Tests.swift; sourceTree = "<group>"; };
+		79567F32266F6DE6007EADD3 /* ChatAvatarView_Documentation_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatAvatarView_Documentation_Tests.swift; sourceTree = "<group>"; };
+		79567F34266F6F12007EADD3 /* CommandLabelView_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommandLabelView_Tests.swift; sourceTree = "<group>"; };
+		79567F37266F71CE007EADD3 /* CommandLabelView_Documentation_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommandLabelView_Documentation_Tests.swift; sourceTree = "<group>"; };
+		79567F3A266F9BBE007EADD3 /* SendButton_Documentation_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendButton_Documentation_Tests.swift; sourceTree = "<group>"; };
+		79567F3C266F9C77007EADD3 /* ConfirmButton_Documentation_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfirmButton_Documentation_Tests.swift; sourceTree = "<group>"; };
+		79567F3E266F9CF3007EADD3 /* AttachmentButton_Documentation_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttachmentButton_Documentation_Tests.swift; sourceTree = "<group>"; };
+		79567F40266F9D78007EADD3 /* AttachmentPlaceholderView_Documentation_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttachmentPlaceholderView_Documentation_Tests.swift; sourceTree = "<group>"; };
+		79567F42266F9EF7007EADD3 /* CommandButton_Documentation_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommandButton_Documentation_Tests.swift; sourceTree = "<group>"; };
+		79567F44266F9F67007EADD3 /* ShrinkInputButton_Documentation_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShrinkInputButton_Documentation_Tests.swift; sourceTree = "<group>"; };
 		79617CB025F236B600D54E61 /* UserWatchingEventMiddleware.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserWatchingEventMiddleware.swift; sourceTree = "<group>"; };
 		79617CB925F23AA400D54E61 /* UserWatchingEventMiddleware_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserWatchingEventMiddleware_Tests.swift; sourceTree = "<group>"; };
 		7962958B248147430078EB53 /* BaseURL.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseURL.swift; sourceTree = "<group>"; };
@@ -1978,7 +2004,7 @@
 		AD90D18C25D5619C001D03BB /* CurrentUserUpdater_Mock.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CurrentUserUpdater_Mock.swift; sourceTree = "<group>"; };
 		AD9F7B7C25C8215400DF8CD2 /* SnapshotVariant.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnapshotVariant.swift; sourceTree = "<group>"; };
 		AD9F7B8525C821C300DF8CD2 /* AssertSnapshot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssertSnapshot.swift; sourceTree = "<group>"; };
-		ADB22F7A25F1626200853C92 /* ChatOnlineIndicatorView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatOnlineIndicatorView.swift; sourceTree = "<group>"; };
+		ADB22F7A25F1626200853C92 /* OnlineIndicatorView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OnlineIndicatorView.swift; sourceTree = "<group>"; };
 		ADB22F7B25F1626200853C92 /* ChatPresenceAvatarView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatPresenceAvatarView.swift; sourceTree = "<group>"; };
 		ADB4165026208C7900E623E3 /* AttachmentPreviewProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttachmentPreviewProvider.swift; sourceTree = "<group>"; };
 		ADCDDCC425AE1293004E15FB /* UserUpdateResponse.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = UserUpdateResponse.json; sourceTree = "<group>"; };
@@ -2504,8 +2530,8 @@
 				E768AAFA2627691600328E6E /* TypingAnimationView.swift */,
 				DBC8A563258113F700B20A82 /* ChatThreadVC.swift */,
 				69736BF126413E5D00090B67 /* ChatMessageListScrollOverlayView.swift */,
-				A396B752260CCE7400D8D15B /* TitleContainerView_Tests.swift */,
 				A30DEC98260B47DE0066E8CE /* TitleContainerView.swift */,
+				A396B752260CCE7400D8D15B /* TitleContainerView_Tests.swift */,
 			);
 			path = ChatMessageList;
 			sourceTree = "<group>";
@@ -4267,6 +4293,7 @@
 			isa = PBXGroup;
 			children = (
 				2210525E256FE16600A5F0DB /* CommandLabelView.swift */,
+				79567F34266F6F12007EADD3 /* CommandLabelView_Tests.swift */,
 			);
 			path = CommandLabelView;
 			sourceTree = "<group>";
@@ -4283,7 +4310,7 @@
 		ADB22F7925F1626200853C92 /* ChatPresenceAvatarView */ = {
 			isa = PBXGroup;
 			children = (
-				ADB22F7A25F1626200853C92 /* ChatOnlineIndicatorView.swift */,
+				ADB22F7A25F1626200853C92 /* OnlineIndicatorView.swift */,
 				ADB22F7B25F1626200853C92 /* ChatPresenceAvatarView.swift */,
 			);
 			path = ChatPresenceAvatarView;
@@ -4479,6 +4506,17 @@
 				E732C93E26653C4600C252EB /* UISDKDocumentation-Info.plist */,
 				E74DB0E72656680900508D22 /* UIView+Annotations.swift */,
 				E74DB10626567FFA00508D22 /* ChatChannelListItemView_Documentation_Tests.swift */,
+				79567F2C266F6002007EADD3 /* TitleContainerView_Documentation_Tests.swift */,
+				79567F2E266F673B007EADD3 /* CreateChatChannelButton_Documentation_Tests.swift */,
+				79567F30266F68E1007EADD3 /* OnlineIndicatorView_Documentation_Tests.swift */,
+				79567F32266F6DE6007EADD3 /* ChatAvatarView_Documentation_Tests.swift */,
+				79567F37266F71CE007EADD3 /* CommandLabelView_Documentation_Tests.swift */,
+				79567F3A266F9BBE007EADD3 /* SendButton_Documentation_Tests.swift */,
+				79567F3C266F9C77007EADD3 /* ConfirmButton_Documentation_Tests.swift */,
+				79567F3E266F9CF3007EADD3 /* AttachmentButton_Documentation_Tests.swift */,
+				79567F40266F9D78007EADD3 /* AttachmentPlaceholderView_Documentation_Tests.swift */,
+				79567F42266F9EF7007EADD3 /* CommandButton_Documentation_Tests.swift */,
+				79567F44266F9F67007EADD3 /* ShrinkInputButton_Documentation_Tests.swift */,
 			);
 			path = UISDKdocumentation;
 			sourceTree = "<group>";
@@ -5408,7 +5446,7 @@
 				883998212576397900294DB9 /* ChatMessageImageGallery.swift in Sources */,
 				F64DFA8C26282F8B00F7F6F9 /* CGPoint+Extensions.swift in Sources */,
 				2210525F256FE16600A5F0DB /* CommandLabelView.swift in Sources */,
-				ADB22F7C25F1626200853C92 /* ChatOnlineIndicatorView.swift in Sources */,
+				ADB22F7C25F1626200853C92 /* OnlineIndicatorView.swift in Sources */,
 				AD447586263B463D0030E583 /* ConfirmButton.swift in Sources */,
 				AD7112F325F12AA800932AEE /* ChatUserAvatarView.swift in Sources */,
 				882AE124257A7FFE004095B3 /* UIViewController+Extensions.swift in Sources */,
@@ -5435,6 +5473,7 @@
 				A3C0D774261CA25700A8A1A2 /* ContainerStackView_Tests.swift in Sources */,
 				AD71130225F138BA00932AEE /* ChatChannelAvatarView_Tests.swift in Sources */,
 				BDDD1EA42632C66200BA007B /* Components+SwiftUI_Tests.swift in Sources */,
+				79567F2B266F5DB1007EADD3 /* TitleContainerView_Tests.swift in Sources */,
 				7849AF6725F243C8007817D4 /* ChatChannelListItemView+SwiftUI_Tests.swift in Sources */,
 				F86C887725FA5C020000BCA9 /* ChatChannelAvatarView+SwiftUI_Tests.swift in Sources */,
 				BDDD1EAC2632E32000BA007B /* AppearanceProvider_Tests.swift in Sources */,
@@ -5448,6 +5487,7 @@
 				227299B325DBF52D005EAFCF /* ChatChannelUnreadCountView_Tests.swift in Sources */,
 				78C8474125FA0F2900A5D1D0 /* ChatChannelUnreadCountView+SwiftUI_Tests.swift in Sources */,
 				F86A11142616184300D9FE19 /* ChatMessagePopupVC_Tests.swift in Sources */,
+				79567F35266F6F12007EADD3 /* CommandLabelView_Tests.swift in Sources */,
 				AD71131225F138D500932AEE /* ChatUserAvatarView_Tests.swift in Sources */,
 				7969D20225F15E3D00C66F87 /* TestRunnerEnvironment.swift in Sources */,
 				79158D5325F15BF900186102 /* iOS13TestCase.swift in Sources */,
@@ -6166,21 +6206,33 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				79567F31266F68E1007EADD3 /* OnlineIndicatorView_Documentation_Tests.swift in Sources */,
 				E74DB0922656631700508D22 /* ChatChannel.swift in Sources */,
 				E74DB0942656631700508D22 /* ChannelId.swift in Sources */,
 				E74DB09C2656631700508D22 /* XCTestCase+TestImages.swift in Sources */,
 				E74DB0A52656631700508D22 /* TestRunnerEnvironment.swift in Sources */,
 				E74DB0E92656680900508D22 /* UIView+Annotations.swift in Sources */,
+				79567F2D266F6002007EADD3 /* TitleContainerView_Documentation_Tests.swift in Sources */,
+				79567F36266F6F12007EADD3 /* CommandLabelView_Tests.swift in Sources */,
+				79567F33266F6DE6007EADD3 /* ChatAvatarView_Documentation_Tests.swift in Sources */,
 				E74DB0A62656631700508D22 /* iOS13TestCase.swift in Sources */,
 				E74DB0A82656631700508D22 /* SnapshotVariant.swift in Sources */,
 				E74DB0A92656631700508D22 /* ChatChannelListRouter_Mock.swift in Sources */,
+				79567F43266F9EF7007EADD3 /* CommandButton_Documentation_Tests.swift in Sources */,
 				E74DB10726567FFA00508D22 /* ChatChannelListItemView_Documentation_Tests.swift in Sources */,
 				E74DB0AF2656631700508D22 /* AssertAsync.swift in Sources */,
 				E74DB0BB2656631700508D22 /* AssertSnapshot.swift in Sources */,
 				E74DB0BE2656631700508D22 /* TemporaryData.swift in Sources */,
 				E74DB0C02656631700508D22 /* CustomUIViewSubclasses.swift in Sources */,
+				79567F39266F71CE007EADD3 /* CommandLabelView_Documentation_Tests.swift in Sources */,
+				79567F3D266F9C77007EADD3 /* ConfirmButton_Documentation_Tests.swift in Sources */,
+				79567F3B266F9BBE007EADD3 /* SendButton_Documentation_Tests.swift in Sources */,
 				E74DB0C32656631700508D22 /* Helpers.swift in Sources */,
+				79567F3F266F9CF3007EADD3 /* AttachmentButton_Documentation_Tests.swift in Sources */,
+				79567F45266F9F67007EADD3 /* ShrinkInputButton_Documentation_Tests.swift in Sources */,
+				79567F2F266F673B007EADD3 /* CreateChatChannelButton_Documentation_Tests.swift in Sources */,
 				E74DB0C52656631700508D22 /* UITestsEnvironmentSetup.swift in Sources */,
+				79567F41266F9D78007EADD3 /* AttachmentPlaceholderView_Documentation_Tests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -15,7 +15,7 @@ public struct _Components<ExtraData: ExtraDataTypes> {
     public var createChannelButton: UIButton.Type = CreateChatChannelButton.self
 
     /// A view used as an online activity indicator (online/offline).
-    public var onlineIndicatorView: (UIView & MaskProviding).Type = ChatOnlineIndicatorView.self
+    public var onlineIndicatorView: (UIView & MaskProviding).Type = OnlineIndicatorView.self
 
     /// A view that displays the avatar image. By default a circular image.
     public var avatarView: ChatAvatarView.Type = ChatAvatarView.self
