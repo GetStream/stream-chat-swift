@@ -4,6 +4,7 @@
 
 import StreamChat
 
+/// An object containing visual configuration for whole application.
 public struct Appearance {
     /// A color pallete to provide basic set of colors for the Views.
     ///
