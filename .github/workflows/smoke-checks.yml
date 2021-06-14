@@ -87,8 +87,12 @@ jobs:
         flags: llc-tests-ios12
         fail_ci_if_error: true # if codecov upload fails, should fail ci
         verbose: true
+    - uses: ./.github/actions/prepare-ios-simulator
+      with:
+        device: "iPhone 12"
+        ios: "14.4"
     - name: Run UI Tests (Debug)
-      run: bundle exec fastlane test_ui device:"iPhone 12"
+      run: bundle exec fastlane test_ui device:"iPhone 12 (14.4)"
     - uses: 8398a7/action-slack@v3
       with:
         status: ${{ job.status }}

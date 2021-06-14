@@ -30,7 +30,11 @@ final class ChatThreadVC_Tests: XCTestCase {
     }
     
     func test_emptyAppearance() {
-        AssertSnapshot(vc, isEmbeddedInNavigationController: true)
+        AssertSnapshot(
+            vc,
+            isEmbeddedInNavigationController: true,
+            variants: [.defaultLight]
+        )
     }
     
     func test_defaultAppearance() {

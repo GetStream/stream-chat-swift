@@ -32,8 +32,12 @@ jobs:
     - uses: ./.github/actions/bootstrap
     - name: Run LLC Tests (Release)
       run: bundle exec fastlane test_release
+    - uses: ./.github/actions/prepare-ios-simulator
+      with:
+        device: "iPhone 12"
+        ios: "14.4"
     - name: Run UI Tests (Release)
-      run: bundle exec fastlane test_ui_release device:"iPhone 12"
+      run: bundle exec fastlane test_ui_release device:"iPhone 12 (14.4)"
     - uses: 8398a7/action-slack@v3
       with:
         status: ${{ job.status }}
