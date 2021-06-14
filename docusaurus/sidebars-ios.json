@@ -3,8 +3,8 @@
     "home",
     {
       "Introduction": [
-        "guides/getting-started",
-        "guides/integration"
+        "introduction/integration",
+        "introduction/getting-started"
      ]
     },
     {
