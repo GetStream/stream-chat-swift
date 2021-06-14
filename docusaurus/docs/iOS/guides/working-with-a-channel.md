@@ -124,7 +124,7 @@ channelController
 
 ### SwiftUI Wrappers
 
-`ChannelController` has `observableObject` property availabel that can be used in SwiftUI easily:
+`ChannelController` has `observableObject` property available that can be used in SwiftUI easily:
 ```swift
 struct ChannelListView: View {
     @ObservedObject var channelController: ChatChannelController.ObservableObject
