@@ -104,6 +104,7 @@
 		79177A2D248A6A2600F053A2 /* AssertAsync+Events.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79177A2C248A6A2600F053A2 /* AssertAsync+Events.swift */; };
 		791C0B6324EEBDF40013CA2F /* MessageSender_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 791C0B6224EEBDF40013CA2F /* MessageSender_Tests.swift */; };
 		791C0B6524EFBD260013CA2F /* UnwrapAsync.swift in Sources */ = {isa = PBXBuildFile; fileRef = 791C0B6424EFBD260013CA2F /* UnwrapAsync.swift */; };
+		791D3D9026776BE400E3A0F9 /* ChannelMemberListSortingKey_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 791D3D8F26776BE400E3A0F9 /* ChannelMemberListSortingKey_Tests.swift */; };
 		79200D42250118A1002F4EB1 /* iOS13TestCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79200D41250118A1002F4EB1 /* iOS13TestCase.swift */; };
 		79200D46250140BB002F4EB1 /* StreamChat.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 799C941B247D2F80001F1104 /* StreamChat.framework */; };
 		79200D47250140BB002F4EB1 /* StreamChat.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 799C941B247D2F80001F1104 /* StreamChat.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -1331,6 +1332,7 @@
 		79177A2C248A6A2600F053A2 /* AssertAsync+Events.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AssertAsync+Events.swift"; sourceTree = "<group>"; };
 		791C0B6224EEBDF40013CA2F /* MessageSender_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageSender_Tests.swift; sourceTree = "<group>"; };
 		791C0B6424EFBD260013CA2F /* UnwrapAsync.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnwrapAsync.swift; sourceTree = "<group>"; };
+		791D3D8F26776BE400E3A0F9 /* ChannelMemberListSortingKey_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelMemberListSortingKey_Tests.swift; sourceTree = "<group>"; };
 		79200D41250118A1002F4EB1 /* iOS13TestCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iOS13TestCase.swift; sourceTree = "<group>"; };
 		79200D4B25025B81002F4EB1 /* Error+InternetNotAvailable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Error+InternetNotAvailable.swift"; sourceTree = "<group>"; };
 		7922F30524DACEF100C364BC /* TestDataModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = TestDataModel.xcdatamodel; sourceTree = "<group>"; };
@@ -4366,6 +4368,7 @@
 				DA640FBA2535CF8500D32944 /* ChannelListSortingKey.swift */,
 				DA640FBD2535CF9200D32944 /* UserListSortingKey.swift */,
 				DA640FC02535CFA100D32944 /* ChannelMemberListSortingKey.swift */,
+				791D3D8F26776BE400E3A0F9 /* ChannelMemberListSortingKey_Tests.swift */,
 			);
 			path = Sorting;
 			sourceTree = "<group>";
@@ -5894,6 +5897,7 @@
 				DA8407302526002D005A0F62 /* UserListUpdater_Mock.swift in Sources */,
 				F69C4BC624F66CC200A3D740 /* EventLogger.swift in Sources */,
 				888E8C51252B4BAB00195E03 /* ChannelMemberBanRequestPayload_Tests.swift in Sources */,
+				791D3D9026776BE400E3A0F9 /* ChannelMemberListSortingKey_Tests.swift in Sources */,
 				882C5766252C7F7000E60C44 /* ChannelMemberListUpdater_Tests.swift in Sources */,
 				8836133C25275170003CB958 /* MutedUserPayload.swift in Sources */,
 				88FD711F25B98B61003CEEE4 /* EventPayload_Tests.swift in Sources */,

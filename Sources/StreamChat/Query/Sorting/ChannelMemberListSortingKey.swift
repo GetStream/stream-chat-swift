@@ -6,7 +6,7 @@ import Foundation
 
 /// `ChannelMemberListSortingKey` describes the keys by which you can get sorted channel members after query.
 public enum ChannelMemberListSortingKey: String, SortingKey {
-    case createdAt
+    case createdAt = "memberCreatedAt"
     
     public func encode(to encoder: Encoder) throws {
         var container = encoder.singleValueContainer()
@@ -32,7 +32,7 @@ extension ChannelMemberListSortingKey {
         return .init(keyPath: dateKeyPath, ascending: false)
     }()
     
-    func sortDescriptor(isAscending: Bool) -> NSSortDescriptor? {
+    func sortDescriptor(isAscending: Bool) -> NSSortDescriptor {
         .init(key: rawValue, ascending: isAscending)
     }
 }
