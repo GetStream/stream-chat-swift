@@ -5,11 +5,10 @@ title: Working with MessageList Layout
 ## `ChatMessageLayoutOptionsResolver`
 
 Almost anything related to the layout and appearance of the message cell can be done by subclassing [`ChatMessageLayoutOptionsResolver`](../ReferenceDocs/Sources/StreamChatUI/ChatMessageList/ChatMessage/ChatMessageLayoutOptionsResolver.md). 
-On  `ChatMessageLayoutOptionsResolver` there is intance property `options` ([ChatMessageLayoutOptions](../ReferenceDocs/Sources/StreamChatUI/ChatMessageList/ChatMessage/ChatMessageLayoutOptions.md)) which holds available options for the cell. 
-See guides below for concrete examples.
+`ChatMessageLayoutOptionsResolver` has the `options` ([ChatMessageLayoutOptions](../ReferenceDocs/Sources/StreamChatUI/ChatMessageList/ChatMessage/ChatMessageLayoutOptions.md)) instance property. This property holds available options for the cell. 
 
 ## Left-aligning all messages
- To left-align all messages inside MessageList, you first need to create your custom left-aligned `MessageLayoutOptionsResolver` like this:
+ To left-align all messages inside MessageList, start by creating your custom left-aligned `MessageLayoutOptionsResolver` like this:
  
  ```swift
  class LeftAlignedMessageLayoutOptionsResolver: ChatMessageLayoutOptionsResolver {
@@ -27,7 +26,7 @@ See guides below for concrete examples.
  }
  ```
  
- When your custom `ChatMessageLayoutOptionsResolver` is created, all you need to do is to set this class to `Components` before displaying the `MessageList`:
+ When your custom `ChatMessageLayoutOptionsResolver` is created, set this class to `Components` before displaying the `MessageList`:
  
  ```swift
  Components.default.messageLayoutOptionsResolver = LeftAlignedMessageLayoutOptionsResolver()
@@ -38,8 +37,7 @@ See guides below for concrete examples.
  
 ## Hiding bubbles
 
-If you need to hide only the bubbles, we suggest you to implement custom subclass of  `MessageLayoutOptionsResolver`  as well. 
-After that all you need to do is to remove the `bubble` option.
+If you need to hide only the bubbles, consider implementing a custom subclass of  `MessageLayoutOptionsResolver`. Then, remove the `bubble` option.
 
 ```swift
 
@@ -53,7 +51,7 @@ class NoBubblesMessageLayoutOptionsResolver: ChatMessageLayoutOptionsResolver {
 }
 ``` 
 
-When your custom `ChatMessageLayoutOptionsResolver` is created, all you need to do is to set this class to `Components` before displaying the `MessageList`:
+After creating your custom `ChatMessageLayoutOptionsResolver`, set this class to `Components` before displaying the `MessageList`:
 
 ```swift
 Components.default.messageLayoutOptionsResolver = NoBubblesMessageLayoutOptionsResolver()
@@ -62,8 +60,8 @@ Components.default.messageLayoutOptionsResolver = NoBubblesMessageLayoutOptionsR
 ![](../assets/messagelist-layout-nobubbles.png)
 
 ## Disabling grouping of messages
-The default behaviour of `ChatMessageLayoutOptionsResolver` is that it checks the messages if they are grouped or not. 
-For this being possible we have created `isLastInSequence` property which is used for grouping the messages. 
+The default behaviour of `ChatMessageLayoutOptionsResolver` is to check whether messages are grouped or not. 
+The `isLastInSequence` property enables this operation when grouping messages. 
 
 ```swift
 ...
@@ -82,11 +80,11 @@ if isLastInSequence {
 ...
 ```
 
-So if you want to disable grouping of messages, just subclass `ChatMessageLayoutOptionsResolver` and do not use `isLastInSequence`.  
+If you want to disable grouping messages, just create a subclass of `ChatMessageLayoutOptionsResolver` and do not use `isLastInSequence`.  
 
 ## Square avatars
 
-First subclass `ChatAvatarView` and set it according to your needs 
+First create a subclass of `ChatAvatarView` and set it according to your needs. 
 
 ```swift
 final class SquareAvatarView: ChatAvatarView {
@@ -97,7 +95,7 @@ final class SquareAvatarView: ChatAvatarView {
 }
 ``` 
 
-After doing that, you need to set this custom view to `Components` somewhere where your customisation takes place.. 
+Next, you need to set this custom view to `Components` somewhere where your customisation takes place. 
 
 ```swift
 Components.default.avatarView = SquareAvatarView.self
@@ -106,9 +104,11 @@ Components.default.avatarView = SquareAvatarView.self
 
 ## Moving components of Messages in the layout
 
-To change the layout of the message, you need to subclass [`ChatMessageContentView` ](../ReferenceDocs/Sources/StreamChatUI/ChatMessageList/ChatMessage/ChatMessageBubbleView)
+To change the message layout, you need to create a subclass subclass of [`ChatMessageContentView` ](../ReferenceDocs/Sources/StreamChatUI/ChatMessageList/ChatMessage/ChatMessageBubbleView)
 
 ### Changing layout to reverse order: 
+
+The following example shows how you can reverse the message order in the layout.
 
 ```swift
 
