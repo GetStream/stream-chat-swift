@@ -5,8 +5,10 @@
 import StreamChat
 import UIKit
 
+/// An object containing types of UI Components that are used through the UI SDK.
 public typealias Components = _Components<NoExtraData>
 
+/// An object containing types of UI Components that are used through the UI SDK.
 public struct _Components<ExtraData: ExtraDataTypes> {
     /// The view used as a navigation bar title view for some view controllers.
     public var navigationTitleView: TitleContainerView.Type = TitleContainerView.self

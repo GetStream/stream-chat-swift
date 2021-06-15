@@ -12,6 +12,8 @@ PATH_TO_DOCUSAURUS="docusaurus/docs/iOS"
 # Let's iterate through snapshots we have and add them to the given components:
 for UI_SNAPSHOT in ${PATH_TO_SNAPSHOTS}/*;do
 
+    echo "Here's your snapshot Folder to be iterated to add image to documentation: 🚀"
+    echo $UI_SNAPSHOT
     # Get component name for later processing and finding corresponding file in markdown.
     STRIPPED_PATH=`basename $UI_SNAPSHOT`
     COMPONENT_NAME=${STRIPPED_PATH%_*_*}
