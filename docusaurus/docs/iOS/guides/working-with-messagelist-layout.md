@@ -56,7 +56,7 @@ class NoBubblesMessageLayoutOptionsResolver: ChatMessageLayoutOptionsResolver {
 When your custom `ChatMessageLayoutOptionsResolver` is created, all you need to do is to set this class to `Components` before displaying the `MessageList`:
 
 ```swift
-Components.default.avatarView = NoBubblesMessageLayoutOptionsResolver()
+Components.default.messageLayoutOptionsResolver = NoBubblesMessageLayoutOptionsResolver()
 ```
 
 ![](../assets/messagelist-layout-nobubbles.png)
