@@ -5,7 +5,7 @@ title: Working with MessageList Layout
 ## `ChatMessageLayoutOptionsResolver`
 
 Almost anything related to the layout and appearance of the message cell can be done by subclassing [`ChatMessageLayoutOptionsResolver`](../ReferenceDocs/Sources/StreamChatUI/ChatMessageList/ChatMessage/ChatMessageLayoutOptionsResolver.md). 
-On  `ChatMessageLayoutOptionsResolver` there is intance property `options`([ChatMessageLayoutOptions](../ReferenceDocs/Sources/StreamChatUI/ChatMessageList/ChatMessage/ChatMessageLayoutOptions.md)) which holds available options for the cell. 
+On  `ChatMessageLayoutOptionsResolver` there is intance property `options` ([ChatMessageLayoutOptions](../ReferenceDocs/Sources/StreamChatUI/ChatMessageList/ChatMessage/ChatMessageLayoutOptions.md)) which holds available options for the cell. 
 See guides below for concrete examples.
 
 ## Left-aligning all messages
