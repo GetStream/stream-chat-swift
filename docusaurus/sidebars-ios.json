@@ -1,10 +1,10 @@
 {
   "docs": [
-    "home",
+    "introduction",
     {
-      "Introduction": [
-        "introduction/integration",
-        "introduction/getting-started"
+      "Getting Started": [
+        "getting-started/integration",
+        "getting-started/up-running"
      ]
     },
     {
@@ -134,7 +134,6 @@
         "ReferenceDocs/Sources/StreamChatUI/Components",
         {
           "ChatChannelList": [
-            "ReferenceDocs/Sources/StreamChatUI/ChatChannelList/ChatChannelList",
             "ReferenceDocs/Sources/StreamChatUI/ChatChannelList/ChatChannelListVC",
             {
               "ChatChannelListCollectionViewCell": [
