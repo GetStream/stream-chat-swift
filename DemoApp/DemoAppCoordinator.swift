@@ -43,34 +43,64 @@ class WorkoutAttachmentView: _View {
     override func setUpAppearance() {
         super.setUpAppearance()
         
-        distanceLabel.backgroundColor = .yellow
         distanceLabel.numberOfLines = 0
-
-        durationLabel.backgroundColor = .green
         durationLabel.numberOfLines = 0
-
-        energyLabel.backgroundColor = .red
         energyLabel.numberOfLines = 0
     }
     
     override func setUpLayout() {
         super.setUpLayout()
-        
+        let titleFont = UIFont(name: "HelveticaNeue-Bold", size: 16.0)
+        let valueFont = UIFont(name: "HelveticaNeue-Bold", size: 14.0)
+
+        distanceLabel.font = valueFont
+        durationLabel.font = valueFont
+        energyLabel.font = valueFont
+
         imageView.translatesAutoresizingMaskIntoConstraints = false
         addSubview(imageView)
+
+        let distanceTitleLabel = UILabel()
+        distanceTitleLabel.text = "Distance"
+        distanceTitleLabel.textColor = #colorLiteral(red: 1, green: 0, blue: 0.0002603151661, alpha: 1)
+        distanceTitleLabel.font = titleFont
+
+        let durationTitleLabel = UILabel()
+        durationTitleLabel.text = "Duration"
+        durationTitleLabel.textColor = #colorLiteral(red: 0, green: 1, blue: 0, alpha: 1)
+        durationTitleLabel.font = titleFont
         
-        let container = ContainerStackView(arrangedSubviews: [distanceLabel, durationLabel, energyLabel])
+        let energyTitleLabel = UILabel()
+        energyTitleLabel.text = "Energy"
+        energyTitleLabel.textColor = #colorLiteral(red: 0, green: 1, blue: 0.9998726249, alpha: 1)
+        energyTitleLabel.font = titleFont
+
+        let distanceCell = ContainerStackView(arrangedSubviews: [distanceTitleLabel, distanceLabel])
+        distanceCell.translatesAutoresizingMaskIntoConstraints = false
+        distanceCell.distribution = .natural
+        distanceCell.axis = .vertical
+
+        let durationCell = ContainerStackView(arrangedSubviews: [durationTitleLabel, durationLabel])
+        durationCell.translatesAutoresizingMaskIntoConstraints = false
+        durationCell.distribution = .natural
+        durationCell.axis = .vertical
+
+        let energyCell = ContainerStackView(arrangedSubviews: [energyTitleLabel, energyLabel])
+        energyCell.translatesAutoresizingMaskIntoConstraints = false
+        energyCell.distribution = .natural
+        energyCell.axis = .vertical
+
+        let container = ContainerStackView(arrangedSubviews: [distanceCell, durationCell, energyCell])
         container.translatesAutoresizingMaskIntoConstraints = false
         container.distribution = .equal
         addSubview(container)
-        
+
         NSLayoutConstraint.activate([
             imageView.widthAnchor.constraint(equalTo: imageView.heightAnchor),
             imageView.leadingAnchor.constraint(equalTo: leadingAnchor),
             imageView.trailingAnchor.constraint(equalTo: trailingAnchor),
             imageView.topAnchor.constraint(equalTo: topAnchor),
             imageView.bottomAnchor.constraint(equalTo: container.topAnchor),
-
             container.leadingAnchor.constraint(equalTo: leadingAnchor),
             container.trailingAnchor.constraint(equalTo: trailingAnchor),
             container.bottomAnchor.constraint(equalTo: bottomAnchor)
@@ -82,9 +112,9 @@ class WorkoutAttachmentView: _View {
         
         if let attachment = content {
             Nuke.loadImage(with: attachment.imageURL, into: imageView)
-            distanceLabel.text = "you walked \(attachment.WorkoutDistanceMeters ?? 0) meters!"
-            durationLabel.text = "it took you \(attachment.WorkoutDurationSeconds ?? 0) seconds!"
-            energyLabel.text = "you burned \(attachment.WorkoutEnergyCal ?? 0) calories!"
+            distanceLabel.text = "\(attachment.WorkoutDistanceMeters ?? 0)"
+            durationLabel.text = "\(attachment.WorkoutDurationSeconds ?? 0) "
+            energyLabel.text = "\(attachment.WorkoutEnergyCal ?? 0)"
         } else {
             imageView.image = nil
             distanceLabel.text = nil
