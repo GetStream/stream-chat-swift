@@ -5,7 +5,7 @@
 import StreamChat
 import UIKit
 
-/// A Button subclass that should be used for creating new channels.
+/// A Button subclass used for the create new channel action.
 open class CreateChatChannelButton: _Button, AppearanceProvider {
     override open func setUpAppearance() {
         super.setUpAppearance()

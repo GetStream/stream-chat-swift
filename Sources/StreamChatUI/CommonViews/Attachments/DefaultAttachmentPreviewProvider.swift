@@ -39,7 +39,5 @@ open class AttachmentPlaceholderView: _View, AppearanceProvider {
         borderLayer.lineDashPattern = [2, 2]
         borderLayer.fillColor = nil
         borderLayer.masksToBounds = true
-
-        backgroundColor = appearance.colorPalette.background
     }
 }
