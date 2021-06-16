@@ -5,7 +5,7 @@ title: Working with MessageList Layout
 ## `ChatMessageLayoutOptionsResolver`
 
 Almost anything related to the layout and appearance of the message cell can be done by subclassing [`ChatMessageLayoutOptionsResolver`](../ReferenceDocs/Sources/StreamChatUI/ChatMessageList/ChatMessage/ChatMessageLayoutOptionsResolver.md). 
-`ChatMessageLayoutOptionsResolver` has the `options` ([ChatMessageLayoutOptions](../ReferenceDocs/Sources/StreamChatUI/ChatMessageList/ChatMessage/ChatMessageLayoutOptions.md)) instance property. This property holds available options for the cell. 
+`ChatMessageLayoutOptionsResolver` uses function `optionsForMessage(at indexPath:,in channel:, with messages:)` which returns  `options` ([ChatMessageLayoutOptions](../ReferenceDocs/Sources/StreamChatUI/ChatMessageList/ChatMessage/ChatMessageLayoutOptions.md)) for the given cell to setup it's layout and options.
 
 ## Left-aligning all messages
  To left-align all messages inside MessageList, start by creating your custom left-aligned `MessageLayoutOptionsResolver` like this:
@@ -31,10 +31,12 @@ Almost anything related to the layout and appearance of the message cell can be 
  ```swift
  Components.default.messageLayoutOptionsResolver = LeftAlignedMessageLayoutOptionsResolver()
  ```
- Here is the result: 
- 
- ![](../assets/messagelist-layout-left-alignment.png) 
- 
+  
+  | Default alignment | Left-side alignment |
+  | ------------- | ------------- |
+  | ![Chat with default message alignment](../assets/message-layout-default.png)  | ![Chat with left-only alignment](../assets/message-layout-left.png)  |
+   
+   
 ## Hiding bubbles
 
 If you need to hide only the bubbles, consider implementing a custom subclass of  `MessageLayoutOptionsResolver`. Then, remove the `bubble` option.
@@ -57,30 +59,38 @@ After creating your custom `ChatMessageLayoutOptionsResolver`, set this class to
 Components.default.messageLayoutOptionsResolver = NoBubblesMessageLayoutOptionsResolver()
 ```
 
-![](../assets/messagelist-layout-nobubbles.png)
+| visible bubbles | hidden bubbles |
+| ------------- | ------------- |
+| ![Chat with default message alignment](../assets/message-layout-default.png)  | ![Chat with left-only alignment](../assets/message-layout-nobubbles.png)  |
 
 ## Disabling grouping of messages
 The default behaviour of `ChatMessageLayoutOptionsResolver` is to check whether messages are grouped or not. 
 The `isLastInSequence` property enables this operation when grouping messages. 
 
 ```swift
-...
-// Check if the messages is sent last to create continuous bubble effect.
-if !isLastInSequence {
-    options.insert(.continuousBubble)
-}
-// For current user, add Padding to avatar
-if !isLastInSequence && !message.isSentByCurrentUser {
-    options.insert(.avatarSizePadding)
-}
-// And to make the group effect, let's add timestamp to the bottom.
-if isLastInSequence {
-    options.insert(.timestamp)
-}
-...
-```
 
-If you want to disable grouping messages, just create a subclass of `ChatMessageLayoutOptionsResolver` and do not use `isLastInSequence`.  
+class NotGroupedMessageLayoutOptionsResolver: ChatMessageLayoutOptionsResolver {
+    override func optionsForMessage(at indexPath: IndexPath, in channel: _ChatChannel<NoExtraData>, with messages: AnyRandomAccessCollection<_ChatMessage<NoExtraData>>) -> ChatMessageLayoutOptions {
+        // Get options for the message at given indexPath to change it.
+        var options = super.optionsForMessage(at: indexPath, in: channel, with: messages)
+
+        options.insert(.continuousBubble)
+        options.insert(.timestamp)
+        options.insert(.avatar)
+        
+        // Let's add authorName to the message when it's not send by current user.
+        if !message.isSentByCurrentUser && !channel.isDirectMessageChannel {
+            options.insert(.authorName)
+        }
+        
+        return options
+    }
+}
+``` 
+
+| Message grouped | Messages separated |
+| ------------- | ------------- |
+| ![Chat with default message alignment](../assets/message-layout-squared-grouping.png)  | ![Chat with left-only alignment](../assets/message-layout-squared-nogrouping.png)  |
 
 ## Square avatars
 
@@ -100,29 +110,109 @@ Next, you need to set this custom view to `Components` somewhere where your cust
 ```swift
 Components.default.avatarView = SquareAvatarView.self
 ```
-![](../assets/messagelist-layout-square-avatars.png)
 
+| Default avatars | Square avatars |
+| ------------- | ------------- |
+| ![Chat with default message alignment](../assets/message-layout-default.png)  | ![Chat with square avatart](../assets/message-layout-squared-avatar.png)  |
+
+ 
 ## Moving components of Messages in the layout
 
 To change the message layout, you need to create a subclass subclass of [`ChatMessageContentView` ](../ReferenceDocs/Sources/StreamChatUI/ChatMessageList/ChatMessage/ChatMessageBubbleView)
+It's important to understand the structure of `ChatMessageContentView` so you can move around views, add your custom ones or creating complex layouts.
 
-### Changing layout to reverse order: 
+###  Custom layout 
 
-The following example shows how you can reverse the message order in the layout.
 
+![ChatMessageContentView](../assets/messagelist-layout-annotation.png)
+
+- `mainContainer` is basically the whole view. It's horizontal container which holds all top-hierarchy views inside the `ChatMessageContentView` - `AvatarView`, `Spacer` and `BubbleThreadMetaContainer`.
+- `bubbleThreadMetaContainer` is a vertical container which holds `bubbleView` at the top and `metadataContainer` at the bottom by default. You can easily switch the positions for those elements or even add your own according to your needs.
+- `metadataContainer` is a horizontal container which holds  `authorNameLabel` , `timestampLabel` and `onlyVisibleForYouLabel`. 
+- `bubbleView`  is view that embeds inside `bubbleContentContainer` which is responsible for displaying `quotedMessageView` and `textView`
+
+
+:::danger `bubbleView` vs `bubbleContentContainer`
+ When `ChatMessageContentView`'s `options` contain `.bubble` option, the `bubbleView` is added to `bubbleThreadMetaContainer`. If the option is not contained, the hierarchy contains only `bubbleContentContainer` as subview of `bubbleThreadMetaContainer`
+:::
+Let's achieve this layout: 
+
+ ![](../assets/messagelist-layout-custom.png)
+
+With knowledge from few lines above, it implicates that we need to subclass `ChatMessageContentView` and only switch the `metadataContainer` with `bubbleView`/`bubbleThreadContainer`. 
+
+So let's start: 
+
+First we need to delete the bubble from `layoutOptionsResolver`
 ```swift
 
-final class ReversedMessageContentView: ChatMessageContentView {
-    
-    override func layout(options: ChatMessageLayoutOptions) {
-        super.layout(options: options)
-    
-        // Get subviews from bubbleThreadView
-        let bubbleViewSubviews = bubbleThreadMetaContainer.subviews
-        // Remove the subviews
-        bubbleThreadMetaContainer.removeAllArrangedSubviews()
-        // After the subviews are removed, let's add them in reverse order.
-        bubbleThreadMetaContainer.addArrangedSubviews(bubbleViewSubviews.reversed())
+final class CustomMessageOptionsResolver: ChatMessageLayoutOptionsResolver {
+    override func optionsForMessage(
+        at indexPath: IndexPath,
+        in channel: ChatChannel,
+        with messages: AnyRandomAccessCollection<ChatMessage>
+    ) -> ChatMessageLayoutOptions {
+        // First let's get the default options for the message and clean them up.
+        var options = super.optionsForMessage(at: indexPath, in: channel, with: messages)
+        options.remove([.flipped, .bubble, .timestamp, .avatar, .avatarSizePadding, .authorName, .threadInfo, .reactions])
+
+        // Little helper to figure out if the message is first in group.
+        let isFirstInGroup: Bool = {
+            let messageIndex = messages.index(messages.startIndex, offsetBy: indexPath.item)
+            let message = messages[messageIndex]
+            guard messageIndex < messages.index(before: messages.endIndex) else { return true }
+            let previousMessage = messages[messages.index(after: messageIndex)]
+            guard previousMessage.author == message.author else { return true }
+            let delay = previousMessage.createdAt.timeIntervalSince(message.createdAt)
+            return delay > minTimeIntervalBetweenMessagesInGroup
+        }()
+
+        // If the message is first in group and sent by someone, let's add metadata to it.
+        if isFirstInGroup {
+            options.insert([.avatar, .timestamp, .authorName])
+        } else {
+            // The message needs to have avatarView-sized padding otherwise the message below the first one would 
+            // have leading on the level of the avatar displayed in first message.
+            options.insert(.avatarSizePadding)
+        }
+        return options
     }
 }
 ```
+
+Now let's subclass the  `ChatMessageContentView`  and change the layout of it. 
+
+```swift 
+
+final class CustomChatMessageContentView: ChatMessageContentView {
+    override var maxContentWidthMultiplier: CGFloat { 1 }
+
+    // Let's override the layout function to implement custom layout:
+    override func layout(options: ChatMessageLayoutOptions) {
+        super.layout(options: options)
+
+        // To have the avatarView aligned at top with rest of the we need to set leading alignment to `mainContainer`.
+        mainContainer.alignment = .leading
+        
+        // Get subviews of container holding `bubbleContentContainer` when we disabled `.bubble` option.
+        let subviews = bubbleThreadMetaContainer.subviews
+        // Remove the subviews.
+        bubbleThreadMetaContainer.removeAllArrangedSubviews()
+        // Simply add the subviews in reversed order
+        addArrangedSubviews(subviews.reversed())
+        // By default, there are directionalLayoutMargins with system value because of the bubble border option.
+        // We need to disable them to get cleaner 
+        bubbleContentContainer.directionalLayoutMargins = .zero
+    }
+}
+
+```
+
+Everything that is left is to assign those custom subclasses to `Components` :
+
+```swift
+Components.default.messageLayoutOptionsResolver = CustomMessageOptionsResolver()
+Components.default.messageContentView = CustomChatMessageContentView()
+```
+
+Please take a look at our reference documentation for [`ChatMessageLayoutOptionsResolver`](../ReferenceDocs/Sources/StreamChatUI/ChatMessageList/ChatMessage/ChatMessageLayoutOptionsResolver.md),  [`ChatMessageLayoutOptions`](../ReferenceDocs/Sources/StreamChatUI/ChatMessageList/ChatMessage/ChatMessageLayoutOptions.md) and [`ChatMessageContentView`](../ReferenceDocs/Sources/StreamChatUI/ChatMessageList/ChatMessage/ChatMessageContentView.md)
