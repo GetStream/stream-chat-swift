@@ -4,7 +4,7 @@ title: Working with MessageList Layout
 
 ## `ChatMessageLayoutOptionsResolver`
 
-Almost anything related to the layout and appearance of the message cell can be done by subclassing [`ChatMessageLayoutOptionsResolver`](../ReferenceDocs/Sources/StreamChatUI/ChatMessageList/ChatMessage/ChatMessageLayoutOptionsResolver.md). 
+You can change the layout and appearance settings of message cells by subclassing [`ChatMessageLayoutOptionsResolver`](../ReferenceDocs/Sources/StreamChatUI/ChatMessageList/ChatMessage/ChatMessageLayoutOptionsResolver.md). 
 `ChatMessageLayoutOptionsResolver` uses function `optionsForMessage(at indexPath:,in channel:, with messages:)` which returns [ChatMessageLayoutOptions](../ReferenceDocs/Sources/StreamChatUI/ChatMessageList/ChatMessage/ChatMessageLayoutOptions.md)) for the given cell to setup it's layout and options.
 If the desired customization can't be achieved via `ChatMessageLayoutOptions`, you'll need to subclass `ChatMessageContentView`, which we show [below](#moving-components-of-messages-in-the-layout).
 
@@ -42,7 +42,7 @@ For more information about `ChatMessageLayoutOptions` please see  [`ChatMessageL
    
 ## Hiding bubbles
 
-If you need to hide only the bubbles, consider implementing a custom subclass of  `MessageLayoutOptionsResolver`. Then, remove the `bubble` option.
+If you need to hide the bubbles, consider implementing a custom subclass of  `MessageLayoutOptionsResolver`. Then, remove the `bubble` option.
 
 ```swift
 
@@ -108,7 +108,7 @@ final class SquareAvatarView: ChatAvatarView {
 }
 ``` 
 
-Next, you need to set this custom view to `Components` somewhere where your customisation takes place. 
+Next, you need to set this custom view to `Components` in the context where your customisation takes place. 
 
 ```swift
 Components.default.avatarView = SquareAvatarView.self
@@ -121,8 +121,8 @@ Components.default.avatarView = SquareAvatarView.self
  
 ## Moving components of Messages in the layout
 
-To change the message layout, you need to create a subclass subclass of [`ChatMessageContentView` ](../ReferenceDocs/Sources/StreamChatUI/ChatMessageList/ChatMessage/ChatMessageContentView)
-It's important to understand the structure of `ChatMessageContentView` so you can move around views, add your custom ones or creating complex layouts.
+Creating subclasses of [`ChatMessageContentView`](../ReferenceDocs/Sources/StreamChatUI/ChatMessageList/ChatMessage/ChatMessageContentView) let's you alter views, create custom ones, and create complex layouts for your app.
+
 
 ###  Custom layout 
 
@@ -134,23 +134,21 @@ It's important to understand the structure of `ChatMessageContentView` so you ca
 
 ![ChatMessageContentView detailed components](../assets/messagelist-layout-detail-components-annotation.png)
 
-- `mainContainer` is basically the whole view. It's horizontal container which holds all top-hierarchy views inside the `ChatMessageContentView` - `AvatarView`, `Spacer` and `BubbleThreadMetaContainer`.
-- `bubbleThreadMetaContainer` is a vertical container which holds `bubbleView` at the top and `metadataContainer` at the bottom by default. You can easily switch the positions for those elements or even add your own according to your needs.
-- `metadataContainer` is a horizontal container which holds  `authorNameLabel` , `timestampLabel` and `onlyVisibleForYouLabel`. 
-- `bubbleView`  is view that embeds inside `bubbleContentContainer` which is responsible for displaying `quotedMessageView` and `textView`
+- `mainContainer` is the whole view. It's a horizontal container that holds all top-hierarchy views inside the `ChatMessageContentView` - This includes the `AvatarView`, `Spacer` and `BubbleThreadMetaContainer`.
+- `bubbleThreadMetaContainer` is a vertical container that holds `bubbleView` at the top and `metadataContainer` at the bottom by default. You can switch the positions for those elements or even add your own according to your needs.
+- `metadataContainer` is a horizontal container that holds  `authorNameLabel` , `timestampLabel` and `onlyVisibleForYouLabel`. 
+- `bubbleView`  is a view that embeds inside `bubbleContentContainer` and is responsible for displaying `quotedMessageView` and `textView`
 
 
 :::danger `bubbleView` vs `bubbleContentContainer`
- When `ChatMessageContentView`'s `options` contain `.bubble` option, the `bubbleView` is added to `bubbleThreadMetaContainer`. If the option is not contained, the hierarchy contains only `bubbleContentContainer` as subview of `bubbleThreadMetaContainer`
+ When `ChatMessageContentView`'s `options` contain `.bubble` option, the `bubbleView` is added to `bubbleThreadMetaContainer`. If the option is not contained, the hierarchy includes only `bubbleContentContainer` as subview of `bubbleThreadMetaContainer`
 :::
 
-### Let's achieve this layout: 
+#### Example Layout
 
  ![](../assets/messagelist-layout-custom.png)
 
-With knowledge from few lines above, it implicates that we need to subclass `ChatMessageContentView` and only switch the `metadataContainer` with `bubbleView`/`bubbleThreadContainer`. 
-
-So let's start: 
+As we detailed in the previous section, we can adjust the layout by subclassing `ChatMessageContentView` and switching the `metadataContainer` with `bubbleView`/`bubbleThreadContainer`.  
 
 First we need to delete the bubble from `layoutOptionsResolver`
 ```swift
@@ -172,24 +170,25 @@ final class CustomMessageOptionsResolver: ChatMessageLayoutOptionsResolver {
 }
 ```
 
-Now let's subclass the  `ChatMessageContentView`  and change the layout of it. 
+Now, let's subclass the  `ChatMessageContentView`  and change its layout. 
 
 ```swift 
 
 final class CustomChatMessageContentView: ChatMessageContentView {
     override var maxContentWidthMultiplier: CGFloat { 1 }
 
-    // Let's override the layout function to implement custom layout:
+    // Let's override the layout function to implement a custom layout:
     override func layout(options: ChatMessageLayoutOptions) {
         super.layout(options: options)
 
-        // To have the avatarView aligned at top with rest of the we need to set leading alignment to `mainContainer`.
+        // To have the avatarView aligned at the top with rest of the elements,
+        // we'll need to set the leading alignment for the main container `mainContainer`.
         mainContainer.alignment = .leading
         
-        // Set inset to zero to be aligned with message author
+        // Set inset to zero to align it with the message author
         textView?.textContainerInset = .zero 
         
-        // Get subviews of container holding `bubbleContentContainer` when we disabled `.bubble` option.
+        // Get subviews of the container holding `bubbleContentContainer` when we disabled `.bubble` option.
         let subviews = bubbleThreadMetaContainer.subviews
         // Remove the subviews.
         bubbleThreadMetaContainer.removeAllArrangedSubviews()
@@ -203,16 +202,16 @@ final class CustomChatMessageContentView: ChatMessageContentView {
 
 ```
 
-Everything that is left is to assign those custom subclasses to `Components` :
+The last step is to assign those custom subclasses to `Components` :
 
 ```swift
 Components.default.messageLayoutOptionsResolver = CustomMessageOptionsResolver()
-Components.default.messageContentView = CustomChatMessageContentView.self // Assign type, not instance.
+Components.default.messageContentView = CustomChatMessageContentView.self // Make sure to assign type instead of instance.
 ```
 
 <img src={require("../assets/messagelist-layout-custom-final.png").default} width="40%" />
 
-:::tip Learn more about custom messagelist layout in reference docs
+:::tip Learn more about custom messagelist layout in the reference docs
 
 Please take a look at our reference documentation for [`ChatMessageLayoutOptionsResolver`](../ReferenceDocs/Sources/StreamChatUI/ChatMessageList/ChatMessage/ChatMessageLayoutOptionsResolver.md),  [`ChatMessageLayoutOptions`](../ReferenceDocs/Sources/StreamChatUI/ChatMessageList/ChatMessage/ChatMessageLayoutOptions.md) and [`ChatMessageContentView`](../ReferenceDocs/Sources/StreamChatUI/ChatMessageList/ChatMessage/ChatMessageContentView.md) to find out more about how custom message layout works.
 :::
