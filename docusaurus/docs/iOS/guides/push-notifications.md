@@ -6,7 +6,7 @@ First step on a way to setting up push notifications is authentication.
 Stream supports both **Certificate-based provider connection trust (.p12 certificate)** and **Token-based provider connection trust (JWT)**. Token based authentication is the preferred way to setup push notifications. This method is easy to setup and provides strong security. You can find more on setting up authentication [here](https://getstream.io/chat/docs/php/push_ios/?language=swift).
 
 :::caution
-Make sure you've taken care of authentication before proceeding to the next steps.
+Make sure you've taken care of authentication before proceeding to the next steps
 :::
 
 ## Testing Push Notifications setup
@@ -22,7 +22,11 @@ If the device you want to test notifications on is already added to the list, yo
 This will do several things for you:
 
 1. Pick a random message from a channel that this user is part of
-2. Use the notification templates configured for your push providers to render the payload using this message
+2. Use the [notification templates](https://getstream.io/chat/docs/ios-swift/push_template/?language=swift) configured for your push providers to render the payload using this message
+  
+:::info
+Information about notification templates can be found [here](https://getstream.io/chat/docs/ios-swift/push_template/?language=swift).
+:::
 3. Send this payload to all of the user's devices
 
 :::info
@@ -46,7 +50,7 @@ For testing purposes you can manage devices using Stream CLI:
 ### Getting the list of all devices registered for pushes
     stream chat:push:device:get
 
-## Managing devices in client code
+## Managing devices with StreamChat SDK
 
 If you want for a user to receive push notifications, you need to request permissions for this. One of the most common places to do so is in `AppDelegate`'s `application(_:didFinishLaunchingWithOptions:)`, for instance like this:
 
