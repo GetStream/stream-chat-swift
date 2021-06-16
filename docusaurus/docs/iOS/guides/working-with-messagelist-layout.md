@@ -119,7 +119,7 @@ Components.default.avatarView = SquareAvatarView.self
  
 ## Moving components of Messages in the layout
 
-To change the message layout, you need to create a subclass subclass of [`ChatMessageContentView` ](../ReferenceDocs/Sources/StreamChatUI/ChatMessageList/ChatMessage/ChatMessageBubbleView)
+To change the message layout, you need to create a subclass subclass of [`ChatMessageContentView` ](../ReferenceDocs/Sources/StreamChatUI/ChatMessageList/ChatMessage/ChatMessageContentView)
 It's important to understand the structure of `ChatMessageContentView` so you can move around views, add your custom ones or creating complex layouts.
 
 ###  Custom layout 
@@ -206,7 +206,7 @@ final class CustomChatMessageContentView: ChatMessageContentView {
         // Remove the subviews.
         bubbleThreadMetaContainer.removeAllArrangedSubviews()
         // Simply add the subviews in reversed order
-        addArrangedSubviews(subviews.reversed())
+        bubbleThreadMetaContainer.addArrangedSubviews(subviews.reversed())
         // By default, there are directionalLayoutMargins with system value because of the bubble border option.
         // We need to disable them to get cleaner 
         bubbleContentContainer.directionalLayoutMargins = .zero
@@ -219,7 +219,11 @@ Everything that is left is to assign those custom subclasses to `Components` :
 
 ```swift
 Components.default.messageLayoutOptionsResolver = CustomMessageOptionsResolver()
-Components.default.messageContentView = CustomChatMessageContentView()
+Components.default.messageContentView = CustomChatMessageContentView.self // Assign type, not instance.
 ```
 
-Please take a look at our reference documentation for [`ChatMessageLayoutOptionsResolver`](../ReferenceDocs/Sources/StreamChatUI/ChatMessageList/ChatMessage/ChatMessageLayoutOptionsResolver.md),  [`ChatMessageLayoutOptions`](../ReferenceDocs/Sources/StreamChatUI/ChatMessageList/ChatMessage/ChatMessageLayoutOptions.md) and [`ChatMessageContentView`](../ReferenceDocs/Sources/StreamChatUI/ChatMessageList/ChatMessage/ChatMessageContentView.md)
+![Custom Chat layout](../assets/messagelist-layout-custom-final.png) 
+:::tip Learn more about custom messagelist layout in reference docs
+
+Please take a look at our reference documentation for [`ChatMessageLayoutOptionsResolver`](../ReferenceDocs/Sources/StreamChatUI/ChatMessageList/ChatMessage/ChatMessageLayoutOptionsResolver.md),  [`ChatMessageLayoutOptions`](../ReferenceDocs/Sources/StreamChatUI/ChatMessageList/ChatMessage/ChatMessageLayoutOptions.md) and [`ChatMessageContentView`](../ReferenceDocs/Sources/StreamChatUI/ChatMessageList/ChatMessage/ChatMessageContentView.md) to find out more about how custom message layout works.
+:::
