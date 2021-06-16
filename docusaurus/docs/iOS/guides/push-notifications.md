@@ -24,12 +24,20 @@ This will do several things for you:
 1. Pick a random message from a channel that this user is part of
 2. Use the notification templates configured for your push providers to render the payload using this message
 3. Send this payload to all of the user's devices
+
+:::info
+If the user you want to test push notifications on doesn't have any channels or messages, you can create them with the help of CLI:
+
+    stream chat:channel:create
+    stream chat:message:create
+:::
    
 ## Managing devices for testing purposes
 
 For testing purposes you can manage devices using Stream CLI:
 
 ### Adding devices
+
     stream chat:push:device:add
 
 ### Removing devices
