@@ -8,6 +8,8 @@ Almost anything related to the layout and appearance of the message cell can be 
 `ChatMessageLayoutOptionsResolver` uses function `optionsForMessage(at indexPath:,in channel:, with messages:)` which returns [ChatMessageLayoutOptions](../ReferenceDocs/Sources/StreamChatUI/ChatMessageList/ChatMessage/ChatMessageLayoutOptions.md)) for the given cell to setup it's layout and options.
 If the desired customization can't be achieved via `ChatMessageLayoutOptions`, you'll need to subclass `ChatMessageContentView`, which we show [below](#moving-components-of-messages-in-the-layout).
 
+For more information about `ChatMessageLayoutOptions` please see  [`ChatMessageLayoutOptions` reference docs](../ReferenceDocs/Sources/StreamChatUI/ChatMessageList/ChatMessage/ChatMessageLayoutOptions.md) 
+
 ## Left-aligning all messages
  To left-align all messages inside MessageList, start by creating your custom left-aligned `MessageLayoutOptionsResolver` like this:
  
@@ -163,25 +165,8 @@ final class CustomMessageOptionsResolver: ChatMessageLayoutOptionsResolver {
         var options = super.optionsForMessage(at: indexPath, in: channel, with: messages)
         options.remove([.flipped, .bubble, .timestamp, .avatar, .avatarSizePadding, .authorName, .threadInfo, .reactions])
 
-        // Little helper to figure out if the message is first in group.
-        let isFirstInGroup: Bool = {
-            let messageIndex = messages.index(messages.startIndex, offsetBy: indexPath.item)
-            let message = messages[messageIndex]
-            guard messageIndex < messages.index(before: messages.endIndex) else { return true }
-            let previousMessage = messages[messages.index(after: messageIndex)]
-            guard previousMessage.author == message.author else { return true }
-            let delay = previousMessage.createdAt.timeIntervalSince(message.createdAt)
-            return delay > minTimeIntervalBetweenMessagesInGroup
-        }()
-
-        // If the message is first in group and sent by someone, let's add metadata to it.
-        if isFirstInGroup {
-            options.insert([.avatar, .timestamp, .authorName])
-        } else {
-            // The message needs to have avatarView-sized padding otherwise the message below the first one would 
-            // have leading on the level of the avatar displayed in first message.
-            options.insert(.avatarSizePadding)
-        }
+        options.insert([.avatar, .timestamp, .authorName])
+        
         return options
     }
 }
@@ -200,6 +185,9 @@ final class CustomChatMessageContentView: ChatMessageContentView {
 
         // To have the avatarView aligned at top with rest of the we need to set leading alignment to `mainContainer`.
         mainContainer.alignment = .leading
+        
+        // Set inset to zero to be aligned with message author
+        textView?.textContainerInset = .zero 
         
         // Get subviews of container holding `bubbleContentContainer` when we disabled `.bubble` option.
         let subviews = bubbleThreadMetaContainer.subviews
@@ -222,7 +210,8 @@ Components.default.messageLayoutOptionsResolver = CustomMessageOptionsResolver()
 Components.default.messageContentView = CustomChatMessageContentView.self // Assign type, not instance.
 ```
 
-![Custom Chat layout](../assets/messagelist-layout-custom-final.png) 
+<img src={require("../assets/messagelist-layout-custom-final.png").default} width="40%" />
+
 :::tip Learn more about custom messagelist layout in reference docs
 
 Please take a look at our reference documentation for [`ChatMessageLayoutOptionsResolver`](../ReferenceDocs/Sources/StreamChatUI/ChatMessageList/ChatMessage/ChatMessageLayoutOptionsResolver.md),  [`ChatMessageLayoutOptions`](../ReferenceDocs/Sources/StreamChatUI/ChatMessageList/ChatMessage/ChatMessageLayoutOptions.md) and [`ChatMessageContentView`](../ReferenceDocs/Sources/StreamChatUI/ChatMessageList/ChatMessage/ChatMessageContentView.md) to find out more about how custom message layout works.
