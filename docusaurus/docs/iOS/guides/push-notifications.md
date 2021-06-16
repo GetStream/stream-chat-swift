@@ -5,6 +5,10 @@ title: Push Notifications
 First step on a way to setting up push notifications is authentication.
 Stream supports both **Certificate-based provider connection trust (.p12 certificate)** and **Token-based provider connection trust (JWT)**. Token based authentication is the preferred way to setup push notifications. This method is easy to setup and provides strong security. You can find more on setting up authentication [here](https://getstream.io/chat/docs/php/push_ios/?language=swift).
 
+:::caution
+Make sure you've taken care of authentication before proceeding to the next steps.
+:::
+
 ## Testing Push Notifications setup
 
 Once authentication is taken care of, you can test your setup as explained below.
