@@ -664,6 +664,15 @@ open class _ComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
         content.text = textView.text
     }
 
+    open func textView(
+        _ textView: UITextView,
+        shouldChangeTextIn range: NSRange,
+        replacementText text: String
+    ) -> Bool {
+        guard let maxMessageLength = channelConfig?.maxMessageLength else { return true }
+        return textView.text.count + (text.count - range.length) <= maxMessageLength
+    }
+
     // MARK: - UIImagePickerControllerDelegate
     
     open func imagePickerController(
