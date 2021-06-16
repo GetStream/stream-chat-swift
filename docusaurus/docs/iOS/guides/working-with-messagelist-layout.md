@@ -6,6 +6,7 @@ title: Working with MessageList Layout
 
 Almost anything related to the layout and appearance of the message cell can be done by subclassing [`ChatMessageLayoutOptionsResolver`](../ReferenceDocs/Sources/StreamChatUI/ChatMessageList/ChatMessage/ChatMessageLayoutOptionsResolver.md). 
 `ChatMessageLayoutOptionsResolver` uses function `optionsForMessage(at indexPath:,in channel:, with messages:)` which returns  `options` ([ChatMessageLayoutOptions](../ReferenceDocs/Sources/StreamChatUI/ChatMessageList/ChatMessage/ChatMessageLayoutOptions.md)) for the given cell to setup it's layout and options.
+If the desired customization can't be achieved via `ChatMessageLayoutOptions`, you'll need to subclass `ChatMessageContentView`, which we show [below](#moving-components-of-messages-in-the-layout)
 
 ## Left-aligning all messages
  To left-align all messages inside MessageList, start by creating your custom left-aligned `MessageLayoutOptionsResolver` like this:
@@ -123,8 +124,13 @@ It's important to understand the structure of `ChatMessageContentView` so you ca
 
 ###  Custom layout 
 
+#### Containers positions
 
 ![ChatMessageContentView](../assets/messagelist-layout-annotation.png)
+
+#### Labels positions
+
+![ChatMessageContentView detailed components](../assets/messagelist-layout-detail-components-annotation.png)
 
 - `mainContainer` is basically the whole view. It's horizontal container which holds all top-hierarchy views inside the `ChatMessageContentView` - `AvatarView`, `Spacer` and `BubbleThreadMetaContainer`.
 - `bubbleThreadMetaContainer` is a vertical container which holds `bubbleView` at the top and `metadataContainer` at the bottom by default. You can easily switch the positions for those elements or even add your own according to your needs.
@@ -135,7 +141,8 @@ It's important to understand the structure of `ChatMessageContentView` so you ca
 :::danger `bubbleView` vs `bubbleContentContainer`
  When `ChatMessageContentView`'s `options` contain `.bubble` option, the `bubbleView` is added to `bubbleThreadMetaContainer`. If the option is not contained, the hierarchy contains only `bubbleContentContainer` as subview of `bubbleThreadMetaContainer`
 :::
-Let's achieve this layout: 
+
+### Let's achieve this layout: 
 
  ![](../assets/messagelist-layout-custom.png)
 
