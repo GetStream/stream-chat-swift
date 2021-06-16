@@ -45,6 +45,7 @@ For testing purposes you can manage devices using Stream CLI:
     stream chat:push:device:add
 
 ### Removing devices
+
     stream chat:push:device:delete
 
 ### Getting the list of all devices registered for pushes
@@ -85,6 +86,8 @@ func application(
 ```
 
 ### Removing devices
+
+If a user wants to opt out of push notifications or you're implementing a user log out, you might want to remove a device from the list of devices that receive push notifications:
 
 ```swift
 let deviceId = chatClient.currentUserController().currentUser!.devices.last!.id
