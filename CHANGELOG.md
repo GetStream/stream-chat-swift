@@ -39,6 +39,7 @@ _June 11, 2021_
 -  `ChatChannelListItemView` now doesn't enable swipe context actions when there are no `swipeableViews` for the cell. [#1161](https://github.com/GetStream/stream-chat-swift/pull/1161)
 - Fix websocket connection automatically restored in background [#1170](https://github.com/GetStream/stream-chat-swift/pull/1170)
 - Commands view in composer is no longer displayed when there are no commands [#1171](https://github.com/GetStream/stream-chat-swift/pull/1171) [#1178](https://github.com/GetStream/stream-chat-swift/issues/1178)
+- `ChatMessageContentView` does not add views to main container in reverse order when `.flipped` option is included [#1125](https://github.com/GetStream/stream-chat-swift/pull/1125)
 
 # [4.0.0-beta.2](https://github.com/GetStream/stream-chat-swift/releases/tag/4.0.0-beta.2)
 _June 04, 2021_
