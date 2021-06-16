@@ -90,7 +90,7 @@ Only new messages are pushed to mobile devices, all other chat events are only s
 Push message delivery follows the following logic:
 
 * Only channel members can receive push messages
-* Members that are currently online do not receive push messages
+* Members that are currently [watching the channel](https://getstream.io/chat/docs/ios-swift/watch_channel/?language=swift) do not receive push messages
 * Messages added within a thread are only sent to users that are part of that thread (they posted at least one message or were mentioned)
 * Messages from muted users are not sent
 * Messages are sent to all registered devices for a user (up to 25)
