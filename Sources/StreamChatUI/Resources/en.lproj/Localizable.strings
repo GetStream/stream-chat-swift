@@ -41,7 +41,7 @@
 "composer.checkmark.channel-reply" = "Also send in channel";
 "composer.picker.title" = "Choose attachment type: ";
 "composer.picker.file" = "File";
-"composer.picker.image" = "Photo";
+"composer.picker.media" = "Photo or Video";
 "composer.picker.cancel" = "Cancel";
 
 "composer.suggestions.commands.header" = "Instant Commands";

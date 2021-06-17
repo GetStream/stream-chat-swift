@@ -53,8 +53,8 @@ internal enum L10n {
       internal static let cancel = L10n.tr("Localizable", "composer.picker.cancel")
       /// File
       internal static let file = L10n.tr("Localizable", "composer.picker.file")
-      /// Photo
-      internal static let image = L10n.tr("Localizable", "composer.picker.image")
+      /// Photo or Video
+      internal static let media = L10n.tr("Localizable", "composer.picker.media")
       /// Choose attachment type: 
       internal static let title = L10n.tr("Localizable", "composer.picker.title")
     }
