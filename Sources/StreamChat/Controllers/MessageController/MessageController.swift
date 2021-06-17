@@ -224,6 +224,7 @@ public extension _ChatMessageController {
 //        command: String? = nil,
 //        arguments: String? = nil,
         attachments: [AnyAttachmentPayload] = [],
+        mentionedUserIds: [UserId] = [],
         showReplyInChannel: Bool = false,
         quotedMessageId: MessageId? = nil,
         extraData: ExtraData.Message = .defaultValue,
@@ -237,6 +238,7 @@ public extension _ChatMessageController {
             arguments: nil,
             parentMessageId: messageId,
             attachments: attachments,
+            mentionedUserIds: mentionedUserIds,
             showReplyInChannel: showReplyInChannel,
             quotedMessageId: quotedMessageId,
             extraData: extraData

@@ -405,6 +405,7 @@ final class MessageUpdater_Tests: StressTestCase {
             fileAttachmentEnvelope,
             customAttachmentEnvelope
         ]
+        let mentionedUserIds: [UserId] = [currentUserId]
 
         // Create new reply message
         let newMessageId: MessageId = try waitFor { completion in
@@ -416,6 +417,7 @@ final class MessageUpdater_Tests: StressTestCase {
                 arguments: arguments,
                 parentMessageId: parentMessageId,
                 attachments: attachmentEnvelopes,
+                mentionedUserIds: mentionedUserIds,
                 showReplyInChannel: showReplyInChannel,
                 quotedMessageId: nil,
                 extraData: extraData
@@ -449,6 +451,7 @@ final class MessageUpdater_Tests: StressTestCase {
         XCTAssertEqual(message.extraData, extraData)
         XCTAssertEqual(message.localState, .pendingSend)
         XCTAssertTrue(message.isPinned)
+        XCTAssertEqual(message.mentionedUsers.map(\.id), mentionedUserIds)
     }
     
     func test_createNewMessage_propagatesErrorWhenSavingFails() throws {
@@ -472,6 +475,7 @@ final class MessageUpdater_Tests: StressTestCase {
                 arguments: .unique,
                 parentMessageId: .unique,
                 attachments: [],
+                mentionedUserIds: [.unique],
                 showReplyInChannel: false,
                 quotedMessageId: nil,
                 extraData: .defaultValue

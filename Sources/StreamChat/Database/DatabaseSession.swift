@@ -62,6 +62,7 @@ protocol MessageDatabaseSession {
         arguments: String?,
         parentMessageId: MessageId?,
         attachments: [AnyAttachmentPayload],
+        mentionedUserIds: [UserId],
         showReplyInChannel: Bool,
         quotedMessageId: MessageId?,
         extraData: ExtraData
@@ -117,6 +118,7 @@ extension MessageDatabaseSession {
         pinning: MessagePinning?,
         quotedMessageId: MessageId?,
         attachments: [AnyAttachmentPayload] = [],
+        mentionedUserIds: [UserId] = [],
         extraData: ExtraData = .defaultValue
     ) throws -> MessageDTO {
         try createNewMessage(
@@ -127,6 +129,7 @@ extension MessageDatabaseSession {
             arguments: nil,
             parentMessageId: nil,
             attachments: attachments,
+            mentionedUserIds: mentionedUserIds,
             showReplyInChannel: false,
             quotedMessageId: quotedMessageId,
             extraData: extraData

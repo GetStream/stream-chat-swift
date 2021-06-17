@@ -502,6 +502,7 @@ class MessageDTO_Tests: XCTestCase {
             .mockFile,
             .mockImage
         ]
+        let mentionedUserIds: [UserId] = [currentUserId]
         let messageShowReplyInChannel = true
         let messageExtraData: NoExtraData = .defaultValue
 
@@ -515,6 +516,7 @@ class MessageDTO_Tests: XCTestCase {
                 arguments: messageArguments,
                 parentMessageId: parentMessageId,
                 attachments: attachments,
+                mentionedUserIds: mentionedUserIds,
                 showReplyInChannel: true,
                 quotedMessageId: nil,
                 extraData: messageExtraData
@@ -538,6 +540,7 @@ class MessageDTO_Tests: XCTestCase {
         XCTAssertEqual(requestBody.pinned, true)
         XCTAssertEqual(requestBody.pinExpires, messagePinning!.expirationDate)
         XCTAssertEqual(requestBody.attachments.map(\.type), attachments.map(\.type))
+        XCTAssertEqual(requestBody.mentionedUserIds, mentionedUserIds)
     }
     
     func test_additionalLocalState_isStored() {
@@ -618,6 +621,7 @@ class MessageDTO_Tests: XCTestCase {
                     arguments: nil,
                     parentMessageId: nil,
                     attachments: [],
+                    mentionedUserIds: [],
                     showReplyInChannel: false,
                     quotedMessageId: nil,
                     extraData: NoExtraData.defaultValue
@@ -634,6 +638,7 @@ class MessageDTO_Tests: XCTestCase {
                     arguments: nil,
                     parentMessageId: nil,
                     attachments: [],
+                    mentionedUserIds: [],
                     showReplyInChannel: false,
                     quotedMessageId: nil,
                     extraData: NoExtraData.defaultValue
@@ -719,6 +724,7 @@ class MessageDTO_Tests: XCTestCase {
             .mockImage
         ]
         let newMessagePinning: MessagePinning? = MessagePinning(expirationDate: .unique)
+        let newMentionedUserIds: [UserId] = [.unique]
                 
         _ = try waitFor { completion in
             database.write({
@@ -730,6 +736,7 @@ class MessageDTO_Tests: XCTestCase {
                     arguments: newMessageArguments,
                     parentMessageId: newMessageParentMessageId,
                     attachments: newMessageAttachments,
+                    mentionedUserIds: newMentionedUserIds,
                     showReplyInChannel: true,
                     quotedMessageId: nil,
                     extraData: NoExtraData.defaultValue
@@ -772,6 +779,7 @@ class MessageDTO_Tests: XCTestCase {
                     arguments: .unique,
                     parentMessageId: .unique,
                     attachments: [],
+                    mentionedUserIds: [.unique],
                     showReplyInChannel: true,
                     quotedMessageId: nil,
                     extraData: NoExtraData.defaultValue
@@ -807,6 +815,7 @@ class MessageDTO_Tests: XCTestCase {
                     arguments: .unique,
                     parentMessageId: .unique,
                     attachments: [],
+                    mentionedUserIds: [.unique],
                     showReplyInChannel: true,
                     quotedMessageId: nil,
                     extraData: NoExtraData.defaultValue
@@ -880,6 +889,7 @@ class MessageDTO_Tests: XCTestCase {
                 arguments: nil,
                 parentMessageId: messageId,
                 attachments: [],
+                mentionedUserIds: [],
                 showReplyInChannel: false,
                 quotedMessageId: nil,
                 extraData: NoExtraData.defaultValue

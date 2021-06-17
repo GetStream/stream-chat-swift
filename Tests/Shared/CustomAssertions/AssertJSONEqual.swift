@@ -118,10 +118,21 @@ func CompareJSONEqual(
                         JSONSerialization.data(withJSONObject: nestedDict2)
                     )
                 } else {
-                    throw error(domain: "CompareJSONEqual", message: "Values for key \(key) do not match")
+                    throw error(
+                        domain: "CompareJSONEqual",
+                        message: "Nested values for key \(key) do not match. "
+                            + "Expression 1 value: \(value), Expression 2 value: \(value2)"
+                    )
                 }
             } else if String(describing: value) != String(describing: value2) {
-                throw error(domain: "CompareJSONEqual", message: "Values for key \(key) do not match")
+                // If you get a failure here because your values are arrays, you should
+                // change how you encode the [String: Any] dictionary. Please see
+                // `test_channelEditDetailPayload_encodedCorrectly` for more info
+                throw error(
+                    domain: "CompareJSONEqual",
+                    message: "Values for key \(key) do not match. "
+                        + "Expression 1 value: \(value), Expression 2 value: \(value2)"
+                )
             }
         }
     } catch {

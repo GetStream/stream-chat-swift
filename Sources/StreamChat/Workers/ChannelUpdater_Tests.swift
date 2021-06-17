@@ -156,13 +156,15 @@ class ChannelUpdater_Tests: StressTestCase {
                 command: command,
                 arguments: arguments,
                 attachments: attachmentEnvelopes,
+                mentionedUserIds: [currentUserId],
                 quotedMessageId: nil,
                 extraData: extraData
             ) { result in
-                if let newMessageId = try? result.get() {
+                do {
+                    let newMessageId = try result.get()
                     completion(newMessageId)
-                } else {
-                    XCTFail("Saving the message failed.")
+                } catch {
+                    XCTFail("Saving the message failed. \(error)")
                 }
             }
         }
@@ -188,6 +190,7 @@ class ChannelUpdater_Tests: StressTestCase {
         XCTAssertEqual(message.extraData, extraData)
         XCTAssertEqual(message.localState, .pendingSend)
         XCTAssertEqual(message.isPinned, true)
+        XCTAssertEqual(message.mentionedUsers.map(\.id), [currentUserId])
     }
     
     func test_createNewMessage_propagatesErrorWhenSavingFails() throws {
@@ -220,6 +223,7 @@ class ChannelUpdater_Tests: StressTestCase {
                 text: .unique,
                 command: .unique,
                 arguments: .unique,
+                mentionedUserIds: [.unique],
                 quotedMessageId: nil,
                 extraData: .defaultValue
             ) { completion($0) }
