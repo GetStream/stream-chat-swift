@@ -364,6 +364,7 @@ class MessageDTO_Tests: XCTestCase {
         let fileAttachmentPayload: MessageAttachmentPayload = .file()
         let giphyAttachmentPayload: MessageAttachmentPayload = .giphy()
         let linkAttachmentPayload: MessageAttachmentPayload = .link()
+        let videoAttachmentPayload: MessageAttachmentPayload = .video()
         let testPayload = TestAttachmentPayload.unique
         let testAttachmentPayload: MessageAttachmentPayload = .init(
             type: TestAttachmentPayload.type,
@@ -384,7 +385,8 @@ class MessageDTO_Tests: XCTestCase {
                 fileAttachmentPayload,
                 giphyAttachmentPayload,
                 linkAttachmentPayload,
-                testAttachmentPayload
+                testAttachmentPayload,
+                videoAttachmentPayload
             ],
             authorUserId: messageAuthorId,
             latestReactions: (0..<3).map { _ in
@@ -468,6 +470,10 @@ class MessageDTO_Tests: XCTestCase {
         XCTAssertEqual(loadedMessage.fileAttachments.map(\.payload), [fileAttachmentPayload.decodedFilePayload])
         XCTAssertEqual(loadedMessage.giphyAttachments.map(\.payload), [giphyAttachmentPayload.decodedGiphyPayload])
         XCTAssertEqual(loadedMessage.linkAttachments.map(\.payload), [linkAttachmentPayload.decodedLinkPayload])
+        XCTAssertEqual(
+            loadedMessage.videoAttachments.map(\.payload),
+            [videoAttachmentPayload.decodedVideoPayload]
+        )
         XCTAssertEqual(
             loadedMessage.attachments(payloadType: TestAttachmentPayload.self).map(\.payload),
             [testPayload]

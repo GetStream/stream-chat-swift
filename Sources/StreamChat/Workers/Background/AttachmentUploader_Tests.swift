@@ -51,7 +51,8 @@ final class AttachmentUploader_Tests: StressTestCase {
 
         let attachmentEnvelopes: [AnyAttachmentPayload] = [
             .mockFile,
-            .mockImage
+            .mockImage,
+            .mockVideo
         ]
 
         for (index, envelope) in attachmentEnvelopes.enumerated() {
@@ -105,6 +106,16 @@ final class AttachmentUploader_Tests: StressTestCase {
                     Assert.willBeEqual(fileModel?.uploadingState?.state, .uploaded)
                     // Assert `attachment.assetURL` is set.
                     Assert.willBeEqual(originalURLString(fileModel?.assetURL), payload.file.absoluteString)
+                }
+            case .video:
+                var videoModel: ChatMessageVideoAttachment? {
+                    attachment.asAnyModel()?.attachment(payloadType: VideoAttachmentPayload.self)
+                }
+                AssertAsync {
+                    // Assert attachment state eventually becomes `.uploaded`.
+                    Assert.willBeEqual(videoModel?.uploadingState?.state, .uploaded)
+                    // Assert `attachment.assetURL` is set.
+                    Assert.willBeEqual(originalURLString(videoModel?.videoURL), payload.file.absoluteString)
                 }
             default: throw TestError()
             }
