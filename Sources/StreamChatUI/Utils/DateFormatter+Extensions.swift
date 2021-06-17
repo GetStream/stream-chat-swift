@@ -30,3 +30,11 @@ extension DateComponentsFormatter {
         return formatter
     }()
 }
+
+extension NumberFormatter {
+    static let uploadingPercentage: NumberFormatter = {
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .percent
+        return formatter
+    }()
+}

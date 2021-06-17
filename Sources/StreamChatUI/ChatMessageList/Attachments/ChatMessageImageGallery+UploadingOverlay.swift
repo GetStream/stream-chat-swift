@@ -7,52 +7,30 @@ import UIKit
 
 extension _ChatMessageImageGallery {
     open class UploadingOverlay: _View, ThemeProvider {
-        public var content: ChatMessageImageAttachment? {
+        public var content: AttachmentUploadingState? {
             didSet { updateContentIfNeeded() }
         }
 
-        public var didTapOnAttachment: ((ChatMessageImageAttachment) -> Void)?
+        public var didTapOnAttachmentAction: (() -> Void)?
+        
+        open var minBottomContainerHeight: CGFloat = 24
 
         // MARK: - Subviews
+        
+        public private(set) lazy var actionButton: AttachmentActionButton = components
+            .attachmentActionButton.init()
+            .withoutAutoresizingMaskConstraints
+        
+        public private(set) lazy var loadingIndicator: ChatLoadingIndicator = components
+            .loadingIndicator.init()
+            .withoutAutoresizingMaskConstraints
 
-        public private(set) lazy var fileNameLabel = UILabel()
+        public private(set) lazy var uploadingProgressLabel: UILabel = UILabel()
             .withoutAutoresizingMaskConstraints
             .withBidirectionalLanguagesSupport
             .withAdjustingFontForContentSizeCategory
-
-        public private(set) lazy var fileSizeLabel = UILabel()
-            .withoutAutoresizingMaskConstraints
-            .withBidirectionalLanguagesSupport
-            .withAdjustingFontForContentSizeCategory
-
-        public private(set) lazy var loadingIndicator = components
-            .loadingIndicator
-            .init()
-            .withoutAutoresizingMaskConstraints
-
-        public private(set) lazy var actionIconImageView = UIImageView()
-            .withoutAutoresizingMaskConstraints
-
-        public private(set) lazy var spinnerAndSizeStack: UIStackView = {
-            let stack = UIStackView(arrangedSubviews: [loadingIndicator, fileSizeLabel])
-            stack.axis = .horizontal
-            stack.spacing = UIStackView.spacingUseSystem
-            stack.alignment = .center
-            return stack.withoutAutoresizingMaskConstraints
-        }()
-
-        public private(set) lazy var fileNameAndSizeStack: UIStackView = {
-            let stack = UIStackView(arrangedSubviews: [fileNameLabel, spinnerAndSizeStack])
-            stack.axis = .vertical
-            stack.alignment = .leading
-            stack.spacing = 3
-            return stack.withoutAutoresizingMaskConstraints
-        }()
-
-        public private(set) lazy var fileIconImageView = UIImageView()
-            .withoutAutoresizingMaskConstraints
-
-        public private(set) lazy var fileSizeContainer = UIView()
+        
+        public private(set) lazy var bottomContainer = ContainerStackView()
             .withoutAutoresizingMaskConstraints
 
         // MARK: - Overrides
@@ -60,82 +38,105 @@ extension _ChatMessageImageGallery {
         override open func layoutSubviews() {
             super.layoutSubviews()
 
-            fileSizeContainer.layer.cornerRadius = fileSizeContainer.bounds.height / 2
+            bottomContainer.layer.cornerRadius = minBottomContainerHeight / 2
         }
 
         override open func setUp() {
             super.setUp()
-
-            let tapRecognizer = UITapGestureRecognizer(target: self, action: #selector(didTapOnAttachment(_:)))
-            addGestureRecognizer(tapRecognizer)
+            
+            actionButton.addTarget(
+                self,
+                action: #selector(didTapAttachmentActionButton(_:)),
+                for: .touchUpInside
+            )
         }
 
         override open func setUpAppearance() {
             super.setUpAppearance()
             
-            backgroundColor = appearance.colorPalette.background4
-
-            fileNameLabel.font = appearance.fonts.bodyBold
-            fileSizeLabel.font = appearance.fonts.subheadlineBold
-            fileSizeLabel.textColor = .white
-            fileSizeContainer.backgroundColor = appearance.colorPalette.popoverBackground
-            fileSizeContainer.layer.masksToBounds = true
-            fileIconImageView.contentMode = .center
+            uploadingProgressLabel.numberOfLines = 0
+            uploadingProgressLabel.textColor = appearance.colorPalette.textInverted
+            uploadingProgressLabel.font = appearance.fonts.footnote
+            
+            bottomContainer.backgroundColor = appearance.colorPalette.background4
         }
 
         override open func setUpLayout() {
-            fileSizeContainer.addSubview(spinnerAndSizeStack)
-            spinnerAndSizeStack.pin(to: fileSizeContainer.layoutMarginsGuide)
+            super.setUpLayout()
             
-            addSubview(fileSizeContainer)
-            addSubview(actionIconImageView)
+            loadingIndicator.pin(anchors: [.width, .height], to: 16)
+
+            addSubview(actionButton)
+            actionButton.pin(anchors: [.top, .trailing], to: layoutMarginsGuide)
+           
+            addSubview(bottomContainer)
+            bottomContainer.directionalLayoutMargins = .init(top: 4, leading: 4, bottom: 4, trailing: 4)
+            bottomContainer.addArrangedSubview(loadingIndicator, respectsLayoutMargins: true)
+            bottomContainer.addArrangedSubview(uploadingProgressLabel, respectsLayoutMargins: true)
+            bottomContainer.pin(anchors: [.trailing, .bottom], to: layoutMarginsGuide)
 
             NSLayoutConstraint.activate([
-                actionIconImageView.topAnchor.pin(equalTo: layoutMarginsGuide.topAnchor),
-                actionIconImageView.trailingAnchor.pin(equalTo: layoutMarginsGuide.trailingAnchor),
-                
-                fileSizeContainer.topAnchor.pin(greaterThanOrEqualTo: layoutMarginsGuide.topAnchor),
-                fileSizeContainer.trailingAnchor.pin(equalTo: layoutMarginsGuide.trailingAnchor),
-                fileSizeContainer.leadingAnchor.pin(equalTo: layoutMarginsGuide.leadingAnchor),
-                fileSizeContainer.bottomAnchor.pin(equalTo: layoutMarginsGuide.bottomAnchor),
-                
-                loadingIndicator.widthAnchor.pin(equalToConstant: 16)
+                bottomContainer.leadingAnchor.pin(
+                    greaterThanOrEqualTo: layoutMarginsGuide.leadingAnchor
+                ),
+                bottomContainer.heightAnchor.pin(
+                    greaterThanOrEqualToConstant: minBottomContainerHeight
+                )
             ])
         }
 
         override open func updateContent() {
             super.updateContent()
-
-            fileNameLabel.text = content?.type.rawValue
-
-            if case .uploadingFailed = content?.uploadingState?.state {
-                fileSizeLabel.text = L10n.Message.Sending.attachmentUploadingFailed
-            } else {
-                fileSizeLabel.text = content?.uploadingState?.fileUploadingProgress
+            
+            backgroundColor = content.flatMap {
+                switch $0.state {
+                case .uploaded:
+                    return nil
+                default:
+                    return appearance.colorPalette.background3
+                }
             }
-
-            if let state = content?.uploadingState?.state {
-                actionIconImageView.image = appearance.fileAttachmentActionIcon(for: state)
-            } else {
-                actionIconImageView.image = nil
+            
+            actionButton.content = content.map {
+                switch $0.state {
+                case .pendingUpload, .uploading:
+                    return .cancel
+                case .uploadingFailed:
+                    return .restart
+                case .uploaded:
+                    return .uploaded
+                }
             }
+            actionButton.isHidden = actionButton.content == nil
+            
+            uploadingProgressLabel.text = content.flatMap {
+                switch $0.state {
+                case let .uploading(progress):
+                    return NumberFormatter.uploadingPercentage.string(from: .init(value: progress))
+                case .pendingUpload:
+                    return NumberFormatter.uploadingPercentage.string(from: 0)
+                case .uploaded:
+                    return nil
+                case .uploadingFailed:
+                    return L10n.Message.Sending.attachmentUploadingFailed
+                }
+            }
+            uploadingProgressLabel.isHidden = uploadingProgressLabel.text == nil
 
-            switch content?.uploadingState?.state {
+            switch content?.state {
             case .pendingUpload, .uploading:
                 loadingIndicator.isVisible = true
             default:
                 loadingIndicator.isVisible = false
             }
-
-            fileSizeContainer.isVisible = loadingIndicator.isVisible
+            
+            bottomContainer.isHidden = bottomContainer.subviews.allSatisfy(\.isHidden)
         }
 
         // MARK: - Actions
-
-        @objc open func didTapOnAttachment(_ recognizer: UITapGestureRecognizer) {
-            guard let attachment = content else { return }
-
-            didTapOnAttachment?(attachment)
+        
+        @objc open func didTapAttachmentActionButton(_ button: AttachmentActionButton) {
+            didTapOnAttachmentAction?()
         }
     }
 }

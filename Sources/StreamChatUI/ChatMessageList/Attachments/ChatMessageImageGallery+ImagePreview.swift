@@ -84,7 +84,7 @@ extension _ChatMessageImageGallery {
                     self?.imageTask = nil
                 }
 
-            uploadingOverlay.content = content
+            uploadingOverlay.content = content?.uploadingState
             uploadingOverlay.isVisible = attachment?.uploadingState != nil
         }
 

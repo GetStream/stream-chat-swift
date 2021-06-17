@@ -136,6 +136,9 @@ public struct _Components<ExtraData: ExtraDataTypes> {
     /// The view that shows reactions bubble.
     public var reactionsBubbleView: _ChatMessageReactionsBubbleView<ExtraData>.Type =
         _ChatMessageDefaultReactionsBubbleView<ExtraData>.self
+    
+    /// The button for taking an action on attachment being uploaded.
+    public var attachmentActionButton: AttachmentActionButton.Type = AttachmentActionButton.self
 
     /// The view that shows reactions list in a bubble.
     public var reactionsView: _ChatMessageReactionsView<ExtraData>.Type = _ChatMessageReactionsView<ExtraData>.self
