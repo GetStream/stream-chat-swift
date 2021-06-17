@@ -115,12 +115,13 @@ class MessageRequestBody_Tests: XCTestCase {
             parentId: .unique,
             showReplyInChannel: true,
             quotedMessageId: "quoted-message-id",
+            mentionedUserIds: [.unique],
             pinned: true,
             pinExpires: "2021-05-15T06:43:08.776Z".toDate(),
             extraData: .init(secretNote: "Anakin is Vader ;-)")
         )
         
-        let serialized = try JSONEncoder.stream.encode(payload)
+        let serializedJSON = try JSONEncoder.stream.encode(payload)
         let expected: [String: Any] = [
             "id": payload.id,
             "text": payload.text,
@@ -128,13 +129,15 @@ class MessageRequestBody_Tests: XCTestCase {
             "show_in_channel": true,
             "args": payload.args!,
             "quoted_message_id": "quoted-message-id",
+            "mentioned_users": payload.mentionedUserIds,
             "secret_note": "Anakin is Vader ;-)",
             "command": payload.command!,
             "pinned": true,
             "pin_expires": "2021-05-15T06:43:08.776Z"
         ]
+        let expectedJSON = try JSONSerialization.data(withJSONObject: expected, options: [])
         
-        AssertJSONEqual(serialized, expected)
+        AssertJSONEqual(serializedJSON, expectedJSON)
     }
 }
 
