@@ -496,6 +496,7 @@
         847DD2D82670F75F0084E14B /* VideoAttachmentComposerPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 847DD2D72670F75F0084E14B /* VideoAttachmentComposerPreview.swift */; };
 		843F0BC72677640000B342CB /* VideoAttachmentCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 843F0BC62677640000B342CB /* VideoAttachmentCellView.swift */; };
 		843F0BCD2677667000B342CB /* AttachmentActionButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 843F0BCC2677667000B342CB /* AttachmentActionButton.swift */; };
+		847D602D2679EF8A00FB701D /* VideoPlaybackControlView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 847D602C2679EF8A00FB701D /* VideoPlaybackControlView.swift */; };
 		847DD2DB267233DB0084E14B /* GradientView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 847DD2DA267233DB0084E14B /* GradientView.swift */; };
 		84CC56EC267B3F6B00DF2784 /* AnyAttachmentPayload_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84CC56EA267B3D5900DF2784 /* AnyAttachmentPayload_Tests.swift */; };
 		8800A26F258A04D5006D64C4 /* ChatMessageAttachmentPreviewVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8800A26E258A04D5006D64C4 /* ChatMessageAttachmentPreviewVC.swift */; };
@@ -1743,6 +1744,7 @@
         847DD2D72670F75F0084E14B /* VideoAttachmentComposerPreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoAttachmentComposerPreview.swift; sourceTree = "<group>"; };
 		843F0BC62677640000B342CB /* VideoAttachmentCellView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoAttachmentCellView.swift; sourceTree = "<group>"; };
 		843F0BCC2677667000B342CB /* AttachmentActionButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttachmentActionButton.swift; sourceTree = "<group>"; };
+		847D602C2679EF8A00FB701D /* VideoPlaybackControlView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPlaybackControlView.swift; sourceTree = "<group>"; };
 		847DD2DA267233DB0084E14B /* GradientView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GradientView.swift; sourceTree = "<group>"; };
 		84CC56EA267B3D5900DF2784 /* AnyAttachmentPayload_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnyAttachmentPayload_Tests.swift; sourceTree = "<group>"; };
 		8800A26E258A04D5006D64C4 /* ChatMessageAttachmentPreviewVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageAttachmentPreviewVC.swift; sourceTree = "<group>"; };
@@ -4637,6 +4639,7 @@
 				F80BCA552631D4D900F2107B /* ZoomDismissalInteractionController.swift */,
 				F838F6A82636D3C30025E1F5 /* ZoomTransitionController.swift */,
 				F838F6B22636D42B0025E1F5 /* ZoomAnimator.swift */,
+				847D602C2679EF8A00FB701D /* VideoPlaybackControlView.swift */,
 			);
 			path = ImageGallery;
 			sourceTree = "<group>";
@@ -5492,6 +5495,7 @@
 				22C2359A259CA87B00DC805A /* Animation.swift in Sources */,
 				79088339254876F200896F03 /* ChatMessageListView.swift in Sources */,
 				AD447398263ABD530030E583 /* ChatCommandSuggestionCollectionViewCell.swift in Sources */,
+				847D602D2679EF8A00FB701D /* VideoPlaybackControlView.swift in Sources */,
 				88CABC8E25936E440061BB67 /* ChatMessageReactionsBubbleTail.swift in Sources */,
 				AD87D0AB263C7A7E008B466C /* ShrinkInputButton.swift in Sources */,
 				883998212576397900294DB9 /* ChatMessageGalleryView.swift in Sources */,

@@ -111,7 +111,11 @@ public struct _Components<ExtraData: ExtraDataTypes> {
 
     /// The View Controller used for showing detail of an image message attachment.
     public var imagePreviewVC: _ImageGalleryVC<ExtraData>.Type = _ImageGalleryVC<ExtraData>.self
-
+    
+    /// The view used to control the player for currently visible vide attachment.
+    public var videoPlaybackControlView: _VideoPlaybackControlView<ExtraData>.Type =
+        _VideoPlaybackControlView<ExtraData>.self
+    
     /// The view used to display content of the message, i.e. in the channel detail message list.
     public var messageContentView: _ChatMessageContentView<ExtraData>.Type = _ChatMessageContentView<ExtraData>.self
 

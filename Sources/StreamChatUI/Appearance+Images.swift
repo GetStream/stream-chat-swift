@@ -208,6 +208,9 @@ public extension Appearance {
         
         public var camera: UIImage = UIImage(named: "camera", in: .streamChatUI)!
         public var bigPlay: UIImage = UIImage(named: "play_big", in: .streamChatUI)!
+        
+        public var play: UIImage = UIImage(named: "play", in: .streamChatUI)!
+        public var pause: UIImage = UIImage(named: "pause", in: .streamChatUI)!
 
         // MARK: - CommandIcons
 
