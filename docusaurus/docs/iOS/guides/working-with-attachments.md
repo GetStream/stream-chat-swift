@@ -3,7 +3,7 @@ title: Working with Attachments/Files
 ---
 
 Stream chat allows you to add attachments to a message. There is built-in support for files, images, videos, giphy and URL preview attachments.
-It is also possible to have your own type of attachment and to customize how built-in attachments are rendered. Custom attachments are one of the most useful ways to add application specific content to messages. Examples of custom attachments are: location sharing, workouts, media content and polls.
+It is also possible to have your own type of attachment and to customize how built-in attachments are rendered. Custom attachments are one of the most useful ways to add application specific content to messages. Examples of custom attachments are: location sharing, workouts and voice memos.
 
 The type of attachment is defined by the value on the `Type` field. All SDKs support these built-in attachment types out-of-the-box:
 
