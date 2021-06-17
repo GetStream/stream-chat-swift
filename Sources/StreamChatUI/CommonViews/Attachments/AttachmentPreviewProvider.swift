@@ -38,3 +38,14 @@ extension FileAttachmentPayload: AttachmentPreviewProvider {
         return view
     }
 }
+
+extension VideoAttachmentPayload: AttachmentPreviewProvider {
+    public static var preferredAxis: NSLayoutConstraint.Axis { .horizontal }
+
+    /// The view representing the video attachment.
+    public func previewView<ExtraData: ExtraDataTypes>(components: _Components<ExtraData>) -> UIView {
+        let preview = components.videoAttachmentComposerPreview.init()
+        preview.content = videoURL
+        return preview
+    }
+}

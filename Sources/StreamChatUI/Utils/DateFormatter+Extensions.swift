@@ -21,4 +21,12 @@ extension DateComponentsFormatter {
         df.unitsStyle = .full
         return df
     }()
+    
+    static let videoDuration: DateComponentsFormatter = {
+        let formatter = DateComponentsFormatter()
+        formatter.unitsStyle = .positional
+        formatter.allowedUnits = [.minute, .second]
+        formatter.zeroFormattingBehavior = .pad
+        return formatter
+    }()
 }

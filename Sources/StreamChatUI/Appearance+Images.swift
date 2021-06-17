@@ -205,6 +205,8 @@ public extension Appearance {
             }
             set { _fileAttachmentActionIcons = newValue }
         }
+        
+        public var camera: UIImage = UIImage(named: "camera", in: .streamChatUI)!
 
         // MARK: - CommandIcons
 

@@ -79,6 +79,9 @@ public struct _Components<ExtraData: ExtraDataTypes> {
     /// The object that loads previews for video attachments.
     public var videoPreviewLoader: VideoPreviewLoader = DefaultVideoPreviewLoader()
     
+    /// The view that shows a gradient.
+    public var gradientView: GradientView.Type = GradientView.self
+    
     // MARK: - Message list components
 
     /// The View Controller used to display content of the message, i.e. in the channel detail message list.
@@ -241,7 +244,11 @@ public struct _Components<ExtraData: ExtraDataTypes> {
 
     /// A view that displays the image attachment.
     public var messageComposerImageAttachmentView: _ImageAttachmentView<ExtraData>.Type = _ImageAttachmentView<ExtraData>.self
-
+    
+    /// A view that displays the video attachment preview in composer.
+    public var videoAttachmentComposerPreview: _VideoAttachmentComposerPreview<ExtraData>
+        .Type = _VideoAttachmentComposerPreview<ExtraData>.self
+    
     /// A view controller that shows suggestions of commands or mentions.
     public var suggestionsVC: _ChatSuggestionsViewController<ExtraData>.Type =
         _ChatSuggestionsViewController<ExtraData>.self
