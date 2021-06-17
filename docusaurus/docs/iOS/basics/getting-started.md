@@ -1,5 +1,5 @@
 ---
-title: Up & Running
+title: Getting Started
 ---
 
 To get started with StreamChat, we suggest you register and acquire an API token [on our website](getstream.io). Please enable developer tokens for your app before moving on with the guide, since we'll use them for prototyping.
@@ -44,7 +44,7 @@ In the snippet above, we've:
 
 User Tokens are JWT tokens containing a User ID and used to authenticate a user. In this guide, we use development tokens, since they're the easiest to start with, and are great for prototyping an application before implementing a backend handling for tokens.
 
-For more information regarding user tokens, please check [Working with User guide](working-with-user).
+For more information regarding user tokens, please check [Working with User guide](../guides/working-with-user#user-ids--tokens).
 
 ### [`ChatClientConfig`](../ReferenceDocs/Sources/StreamChat/Config/ChatClientConfig)
 

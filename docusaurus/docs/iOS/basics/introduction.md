@@ -102,7 +102,7 @@ UI SDK components behave similarly to native UIKit components:
 <!-- side by side component -->
 | default `tintColor`  | `tintColor = .systemPink` |
 | ------------- | ------------- |
-| ![Chat UI with default tint color](assets/blue-tint.png)  | ![Chat UI with pink tint color](assets/pink-tint.png)  |
+| ![Chat UI with default tint color](../assets/blue-tint.png)  | ![Chat UI with pink tint color](../assets/pink-tint.png)  |
 
 <p>&nbsp;</p>
 
@@ -111,7 +111,7 @@ UI SDK components behave similarly to native UIKit components:
 <!-- side by side component -->
 | `userInterfaceStyle = .light`  | `userInterfaceStyle = .dark` |
 | ------------- | ------------- |
-|  ![Chat UI with light user interface style](assets/user-interface-style-light.png)  | ![Chat UI with dark user interface style](assets/user-interface-style-dark.png)  |
+|  ![Chat UI with light user interface style](../assets/user-interface-style-light.png)  | ![Chat UI with dark user interface style](../assets/user-interface-style-dark.png)  |
 
 <p>&nbsp;</p>
 
@@ -120,7 +120,7 @@ UI SDK components behave similarly to native UIKit components:
 <!-- side by side component -->
 | `preferredContentSizeCategory = .small`  | `preferredContentSizeCategory = .extraLarge` |
 | ------------- | ------------- |
-|  ![Chat UI with small content size category](assets/content-size-small.png)  | ![Chat UI with extra larga content size category](assets/content-size-extra-large.png)  |
+|  ![Chat UI with small content size category](../assets/content-size-small.png)  | ![Chat UI with extra larga content size category](../assets/content-size-extra-large.png)  |
 
 <p>&nbsp;</p>
 
@@ -143,6 +143,6 @@ Components.default.avatarView = RectangleAvatarView.self
 
 | default `ChatAvatarView`  | custom `RectangleAvatarView ` |
 | ------------- | ------------- |
-|  ![Chat UI with default avatar view](assets/default-avatars.png)  | ![Chat UI with custom rect avatar view](assets/rect-avatars.png)  |
+|  ![Chat UI with default avatar view](../assets/default-avatars.png)  | ![Chat UI with custom rect avatar view](../assets/rect-avatars.png)  |
 
 <p>&nbsp;</p>
