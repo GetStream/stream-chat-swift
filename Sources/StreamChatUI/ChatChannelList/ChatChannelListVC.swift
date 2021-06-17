@@ -12,6 +12,8 @@ public typealias ChatChannelListVC = _ChatChannelListVC<NoExtraData>
 open class _ChatChannelListVC<ExtraData: ExtraDataTypes>: _ViewController,
     UICollectionViewDataSource,
     UICollectionViewDelegate,
+    _ChatChannelListControllerDelegate,
+    DataControllerStateDelegate,
     ThemeProvider,
     SwipeableViewDelegate {
     /// The `ChatChannelListController` instance that provides channels data.
@@ -138,7 +140,7 @@ open class _ChatChannelListVC<ExtraData: ExtraDataTypes>: _ViewController,
         return cell
     }
     
-    public func collectionView(
+    open func collectionView(
         _ collectionView: UICollectionView,
         viewForSupplementaryElementOfKind kind: String,
         at indexPath: IndexPath
@@ -226,16 +228,14 @@ open class _ChatChannelListVC<ExtraData: ExtraDataTypes>: _ViewController,
     open func moreButtonPressedForCell(at indexPath: IndexPath) {
         router.didTapMoreButton(for: controller.channels[indexPath.row].cid)
     }
-}
-
-extension _ChatChannelListVC: _ChatChannelListControllerDelegate {
-    public typealias ExtraData = ExtraData
-
-    public func controllerWillChangeChannels(_ controller: _ChatChannelListController<ExtraData>) {
+    
+    // MARK: - ChatChannelListControllerDelegate
+    
+    open func controllerWillChangeChannels(_ controller: _ChatChannelListController<ExtraData>) {
         channelsCount = controller.channels.count
         collectionView.layoutIfNeeded()
     }
-
+    
     open func controller(
         _ controller: _ChatChannelListController<ExtraData>,
         didChangeChannels changes: [ListChange<_ChatChannel<ExtraData>>]
@@ -245,7 +245,7 @@ extension _ChatChannelListVC: _ChatChannelListControllerDelegate {
         var insertIndexes = Set<IndexPath>()
         var removeIndexes = Set<IndexPath>()
         var updateIndexes = Set<IndexPath>()
-
+        
         // The verification of conflicts is just a temporary solution
         // until the root cause of the conflicts has been solved.
         var hasConflicts = false
@@ -253,12 +253,12 @@ extension _ChatChannelListVC: _ChatChannelListControllerDelegate {
             let (inserted, _) = allIndexes.insert(indexPath)
             hasConflicts = !inserted || hasConflicts
         }
-
+        
         for change in changes {
             if hasConflicts {
                 break
             }
-
+            
             switch change {
             case let .insert(_, index):
                 verifyConflict(index)
@@ -275,11 +275,11 @@ extension _ChatChannelListVC: _ChatChannelListControllerDelegate {
                 updateIndexes.insert(index)
             }
         }
-
+        
         if hasConflicts {
             channelsCount = controller.channels.count
             collectionView.reloadData()
-
+            
             logConflicts(
                 moves: moveIndexes,
                 inserts: insertIndexes,
@@ -288,7 +288,7 @@ extension _ChatChannelListVC: _ChatChannelListControllerDelegate {
             )
             return
         }
-
+        
         collectionView.performBatchUpdates(
             {
                 collectionView.deleteItems(at: Array(removeIndexes))
@@ -307,10 +307,10 @@ extension _ChatChannelListVC: _ChatChannelListControllerDelegate {
             }
         )
     }
-}
-
-extension _ChatChannelListVC: DataControllerStateDelegate {
-    public func controller(_ controller: DataController, didChangeState state: DataController.State) {
+    
+    // MARK: - DataControllerStateDelegate
+    
+    open func controller(_ controller: DataController, didChangeState state: DataController.State) {
         switch state {
         case .initialized, .localDataFetched:
             if self.controller.channels.isEmpty {
