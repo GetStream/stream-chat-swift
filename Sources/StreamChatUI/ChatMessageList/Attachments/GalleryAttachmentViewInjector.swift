@@ -13,6 +13,13 @@ public protocol GalleryContentViewDelegate: ChatMessageContentViewDelegate {
         previews: [ImagePreviewable],
         at indexPath: IndexPath?
     )
+    
+    /// Called when the user taps on one of the media attachments.
+    func didTapOnVideoAttachment(
+        _ attachment: ChatMessageVideoAttachment,
+        previews: [ImagePreviewable],
+        at indexPath: IndexPath?
+    )
 }
 
 public typealias GalleryAttachmentViewInjector = _GalleryAttachmentViewInjector<NoExtraData>
@@ -34,7 +41,7 @@ open class _GalleryAttachmentViewInjector<ExtraData: ExtraDataTypes>: _Attachmen
     }
     
     override open func contentViewDidUpdateContent() {
-        galleryView.content = imageAttachments.map(preview)
+        galleryView.content = videoAttachments.map(preview) + imageAttachments.map(preview)
     }
 
     open func handleTapOnAttachment(_ attachment: ChatMessageImageAttachment) {
@@ -44,11 +51,41 @@ open class _GalleryAttachmentViewInjector<ExtraData: ExtraDataTypes>: _Attachmen
             at: contentView.indexPath?()
         )
     }
+    
+    open func handleTapOnAttachment(_ attachment: ChatMessageVideoAttachment) {
+        guard let indexPath = contentView.indexPath?() else { return }
+        
+        (contentView.delegate as? GalleryContentViewDelegate)?.didTapOnVideoAttachment(
+            attachment,
+            previews: galleryView.content.compactMap { $0 as? ImagePreviewable },
+            at: indexPath
+        )
+    }
 }
 
 private extension _GalleryAttachmentViewInjector {
     var imageAttachments: [ChatMessageImageAttachment] {
         contentView.content?.imageAttachments ?? []
+    }
+    
+    var videoAttachments: [ChatMessageVideoAttachment] {
+        contentView.content?.videoAttachments ?? []
+    }
+    
+    func preview(for videoAttachment: ChatMessageVideoAttachment) -> UIView {
+        let preview = contentView
+            .components
+            .videoAttachmentCellView
+            .init()
+            .withoutAutoresizingMaskConstraints
+        
+        preview.didTapOnAttachment = { [weak self] in
+            self?.handleTapOnAttachment($0)
+        }
+        
+        preview.content = videoAttachment
+
+        return preview
     }
     
     func preview(for imageAttachment: ChatMessageImageAttachment) -> UIView {
