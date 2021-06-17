@@ -76,6 +76,9 @@ public struct _Components<ExtraData: ExtraDataTypes> {
     /// Object with set of function for handling images from CDN
     public var imageCDN: ImageCDN = StreamImageCDN()
 
+    /// The object that loads previews for video attachments.
+    public var videoPreviewLoader: VideoPreviewLoader = DefaultVideoPreviewLoader()
+    
     // MARK: - Message list components
 
     /// The View Controller used to display content of the message, i.e. in the channel detail message list.
