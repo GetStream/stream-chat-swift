@@ -49,6 +49,8 @@ open class _ComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
         public let threadMessage: _ChatMessage<ExtraData>?
         /// The attachments of the message.
         public var attachments: [AnyAttachmentPayload]
+        /// The mentioned users in the message.
+        public var mentionedUsers: Set<_ChatUser<ExtraData.User>>
         /// The command of the message.
         public var command: Command?
 
@@ -69,6 +71,7 @@ open class _ComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
             quotingMessage: _ChatMessage<ExtraData>?,
             threadMessage: _ChatMessage<ExtraData>?,
             attachments: [AnyAttachmentPayload],
+            mentionedUsers: Set<_ChatUser<ExtraData.User>>,
             command: Command?
         ) {
             self.text = text
@@ -77,6 +80,7 @@ open class _ComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
             self.quotingMessage = quotingMessage
             self.threadMessage = threadMessage
             self.attachments = attachments
+            self.mentionedUsers = mentionedUsers
             self.command = command
         }
 
@@ -89,6 +93,7 @@ open class _ComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
                 quotingMessage: nil,
                 threadMessage: nil,
                 attachments: [],
+                mentionedUsers: [],
                 command: nil
             )
         }
@@ -102,6 +107,7 @@ open class _ComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
                 quotingMessage: nil,
                 threadMessage: threadMessage,
                 attachments: [],
+                mentionedUsers: [],
                 command: nil
             )
         }
@@ -117,6 +123,7 @@ open class _ComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
                 quotingMessage: nil,
                 threadMessage: threadMessage,
                 attachments: attachments,
+                mentionedUsers: message.mentionedUsers,
                 command: command
             )
         }
@@ -132,6 +139,7 @@ open class _ComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
                 quotingMessage: message,
                 threadMessage: threadMessage,
                 attachments: attachments,
+                mentionedUsers: mentionedUsers,
                 command: command
             )
         }
@@ -147,6 +155,7 @@ open class _ComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
                 quotingMessage: quotingMessage,
                 threadMessage: message,
                 attachments: attachments,
+                mentionedUsers: mentionedUsers,
                 command: command
             )
         }
@@ -456,6 +465,15 @@ open class _ComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
     /// - Parameter text: The text content of the message.
     open func createNewMessage(text: String) {
         guard let cid = channelController?.cid else { return }
+        
+        // If the user included some mentions via suggestions,
+        // but then removed them from text, we should remove them from
+        // the content we'll send
+        for user in content.mentionedUsers {
+            if !text.contains(mentionText(for: user)) {
+                content.mentionedUsers.remove(user)
+            }
+        }
 
         if let threadParentMessageId = content.threadMessage?.id {
             let messageController = channelController?.client.messageController(
@@ -467,6 +485,7 @@ open class _ComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
                 text: text,
                 pinning: nil,
                 attachments: content.attachments,
+                mentionedUserIds: content.mentionedUsers.map(\.id),
                 showReplyInChannel: composerView.checkboxControl.isSelected,
                 quotedMessageId: content.quotingMessage?.id
             ) { _ in
@@ -479,6 +498,7 @@ open class _ComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
             text: text,
             pinning: nil,
             attachments: content.attachments,
+            mentionedUserIds: content.mentionedUsers.map(\.id),
             quotedMessageId: content.quotingMessage?.id
         ) { _ in
             self.delegate?.composerDidCreateNewMessage()
@@ -496,6 +516,7 @@ open class _ComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
             messageId: id
         )
         // TODO: Adjust LLC to edit attachments also
+        // TODO: Adjust LLC to edit mentions
         messageController?.editMessage(text: newText)
     }
 
@@ -616,17 +637,28 @@ open class _ComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
             let user = self.userSearchController.users[userIndex]
 
             let text = textView.text as NSString
-            let newText = text.replacingCharacters(in: mentionRange, with: user.id)
+            let mentionText = self.mentionText(for: user)
+            let newText = text.replacingCharacters(in: mentionRange, with: mentionText)
             self.content.text = newText
+            self.content.mentionedUsers.insert(user)
 
             let caretLocation = textView.selectedRange.location
-            let newCaretLocation = caretLocation + (user.id.count - typingMention.count)
+            let newCaretLocation = caretLocation + (mentionText.count - typingMention.count)
             textView.selectedRange = NSRange(location: newCaretLocation, length: 0)
 
             self.dismissSuggestions()
         }
 
         showSuggestions()
+    }
+    
+    /// Provides the mention text for composer text field, when the user selects a mention suggestion.
+    open func mentionText(for user: _ChatUser<ExtraData.User>) -> String {
+        if let name = user.name, !name.isEmpty {
+            return name.lowercased()
+        } else {
+            return user.id
+        }
     }
 
     /// Shows the suggestions view
