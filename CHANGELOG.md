@@ -8,6 +8,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### ⚠️ Breaking Changes from `4.0-beta.3`
 - `ChatOnlineIndicatorView` renamed to `OnlineIndicatorView`
 
+### ✅ Added
+- `mentionText(for:)` function added to `ComposerVC` for customizing the text displayed for mentions [#1188](https://github.com/GetStream/stream-chat-swift/issues/1188) [#1000](https://github.com/GetStream/stream-chat-swift/issues/1000)
+
 ### 🐞 Fixed 
 - Fix sorting Member List by `createdAt` causing an issue [#1185](https://github.com/GetStream/stream-chat-swift/issues/1185)
 - Fix ComposerView not respecting `ChannelConfig.maxMessageLength [#1190](https://github.com/GetStream/stream-chat-swift/issues/1190)
