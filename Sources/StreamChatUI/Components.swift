@@ -126,7 +126,7 @@ public struct _Components<ExtraData: ExtraDataTypes> {
     public var giphyAttachmentInjector: _AttachmentViewInjector<ExtraData>.Type = _GiphyAttachmentViewInjector<ExtraData>.self
 
     /// The injector used for injecting file attachment views
-    public var filesAttachmentInjector: _FilesAttachmentViewInjector<ExtraData>.Type = _FilesAttachmentViewInjector<ExtraData>.self
+    public var filesAttachmentInjector: _AttachmentViewInjector<ExtraData>.Type = _FilesAttachmentViewInjector<ExtraData>.self
 
     /// The view that shows reactions bubble.
     public var reactionsBubbleView: _ChatMessageReactionsBubbleView<ExtraData>.Type =
