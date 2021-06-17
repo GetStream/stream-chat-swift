@@ -157,18 +157,26 @@ public struct _Components<ExtraData: ExtraDataTypes> {
     /// The view that shows a single file attachment.
     public var fileAttachmentView: _ChatMessageFileAttachmentListView<ExtraData>.ItemView.Type =
         _ChatMessageFileAttachmentListView<ExtraData>.ItemView.self
-
-    /// The view that shows message's image attachments.
-    public var imageGalleryView: _ChatMessageImageGallery<ExtraData>.Type =
-        _ChatMessageImageGallery<ExtraData>.self
     
     /// The view that shows a link preview in message cell.
     public var linkPreviewView: _ChatMessageLinkPreviewView<ExtraData>.Type =
         _ChatMessageLinkPreviewView<ExtraData>.self
-
+    
+    /// The view that shows message's image and video attachments.
+    public var galleryView: _ChatMessageGalleryView<ExtraData>.Type =
+        _ChatMessageGalleryView<ExtraData>.self
+    
+    /// The view that shows an image attachment inside message cell.
+    public var imageAttachmentCellView: _ChatMessageGalleryView<ExtraData>.ImagePreview.Type =
+        _ChatMessageGalleryView<ExtraData>.ImagePreview.self
+    
+    /// The view that shows a video attachment inside message cell.
+    public var videoAttachmentCellView: _VideoAttachmentCellView<ExtraData>.Type =
+        _VideoAttachmentCellView<ExtraData>.self
+    
     /// The view that shows an overlay with uploading progress for image attachment that is being uploaded.
-    public var imageUploadingOverlay: _ChatMessageImageGallery<ExtraData>.UploadingOverlay.Type =
-        _ChatMessageImageGallery<ExtraData>.UploadingOverlay.self
+    public var imageUploadingOverlay: _ChatMessageGalleryView<ExtraData>.UploadingOverlay.Type =
+        _ChatMessageGalleryView<ExtraData>.UploadingOverlay.self
 
     /// The view that shows giphy attachment with actions.
     public var giphyAttachmentView: _ChatMessageInteractiveAttachmentView<ExtraData>.Type =

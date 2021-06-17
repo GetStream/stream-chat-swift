@@ -6,17 +6,17 @@ import StreamChat
 import StreamChatUI
 import UIKit
 
-final class SlackChatMessageImageGallery: ChatMessageImageGallery {
+final class SlackChatMessageGalleryView: ChatMessageGalleryView {
     private lazy var stackView = UIStackView()
     
     override func setUpLayout() {
-        super.setUpLayout()
         stackView.axis = .horizontal
         stackView.distribution = .fillEqually
         stackView.alignment = .fill
         stackView.spacing = 15
         stackView.translatesAutoresizingMaskIntoConstraints = false
         addSubview(stackView)
+        
         NSLayoutConstraint.activate([
             stackView.leadingAnchor.constraint(equalTo: leadingAnchor),
             stackView.trailingAnchor.constraint(equalTo: trailingAnchor),
@@ -24,13 +24,20 @@ final class SlackChatMessageImageGallery: ChatMessageImageGallery {
             stackView.bottomAnchor.constraint(equalTo: bottomAnchor)
         ])
 
-        previews.forEach {
+        itemSpots.forEach {
             stackView.addArrangedSubview($0)
             NSLayoutConstraint.activate([
                 $0.heightAnchor.constraint(equalTo: $0.widthAnchor)
             ])
-            $0.imageView.clipsToBounds = true
-            $0.imageView.layer.cornerRadius = 10
         }
+    }
+}
+
+final class SlackChatMessageImagePreview: ChatMessageGalleryView.ImagePreview {
+    override func setUpAppearance() {
+        super.setUpAppearance()
+        
+        imageView.clipsToBounds = true
+        imageView.layer.cornerRadius = 10
     }
 }
