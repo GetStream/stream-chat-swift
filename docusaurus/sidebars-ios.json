@@ -136,6 +136,7 @@
     },
     {
       "UI Components": [
+        "ui-components/ui-components-overview",
         "reference-docs/sources/stream-chat-ui/components",
         {
           "ChatChannelList": [
