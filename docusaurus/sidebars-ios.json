@@ -5,6 +5,7 @@
         "basics/introduction",
         "basics/integration",
         "basics/getting-started",
+        "basics/migrating-from-3-to-4",
         "basics/migrating-from-1.x-and-2.x",
         "basics/faq",
         "basics/glossary"
