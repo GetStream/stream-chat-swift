@@ -30,8 +30,8 @@ If you're actively using one of these features, please hold off upgrading until 
 
 # StreamChat v1.x / v2.x -> StreamChatUI v3
 
-None of the UI SDK components we had in v1.x / v2.x were carried over to StreamChatUI and it was written from the ground up. The new UI SDK is much more component-focused and each component can be used separately. Please check [UI Cheat Sheet](https://github.com/GetStream/stream-chat-swift/wiki/UI-Cheat-Sheet) to get familiar on how to use it and convert your screens.
+None of the UI SDK components we had in v1.x / v2.x were carried over to StreamChatUI and it was written from the ground up. The new UI SDK is much more component-focused and each component can be used separately. Please check [UI Customization Guide](../guides/ui-customization) to get familiar on how to use it and convert your screens.
 
 # StreamChatCore v1.x / v2.x and StreamChatClient v2.x -> StreamChat v3
 
-Our low-level frameworks (`Client` + `Core`) were merged and renamed to `StreamChat`. If you use only our low-level frameworks, you can use our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/Cheat-Sheet) to get more familiar with the update API and better assess the impact of the changes on your codebase.
+Our low-level frameworks (`Client` + `Core`) were merged and renamed to `StreamChat`. If you use only our low-level frameworks, you can use our [Introduction page](introduction) to get more familiar with the update API and better assess the impact of the changes on your codebase.
