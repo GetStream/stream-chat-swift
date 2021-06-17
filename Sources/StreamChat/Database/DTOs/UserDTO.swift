@@ -67,7 +67,7 @@ extension UserDTO {
     ///   - id: The id of the user to fetch
     ///   - context: The context used to fetch `UserDTO`
     ///
-    fileprivate static func load(id: String, context: NSManagedObjectContext) -> UserDTO? {
+    static func load(id: String, context: NSManagedObjectContext) -> UserDTO? {
         let request = NSFetchRequest<UserDTO>(entityName: UserDTO.entityName)
         request.predicate = NSPredicate(format: "id == %@", id)
         return try? context.fetch(request).first

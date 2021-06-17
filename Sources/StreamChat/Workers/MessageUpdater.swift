@@ -130,6 +130,7 @@ class MessageUpdater<ExtraData: ExtraDataTypes>: Worker {
         arguments: String?,
         parentMessageId: MessageId,
         attachments: [AnyAttachmentPayload],
+        mentionedUserIds: [UserId],
         showReplyInChannel: Bool,
         quotedMessageId: MessageId?,
         extraData: ExtraData.Message,
@@ -145,6 +146,7 @@ class MessageUpdater<ExtraData: ExtraDataTypes>: Worker {
                 arguments: arguments,
                 parentMessageId: parentMessageId,
                 attachments: attachments,
+                mentionedUserIds: mentionedUserIds,
                 showReplyInChannel: showReplyInChannel,
                 quotedMessageId: quotedMessageId,
                 extraData: extraData

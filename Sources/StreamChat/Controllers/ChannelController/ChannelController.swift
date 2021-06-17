@@ -769,6 +769,7 @@ public extension _ChatChannelController {
 //        command: String? = nil,
 //        arguments: String? = nil,
         attachments: [AnyAttachmentPayload] = [],
+        mentionedUserIds: [UserId] = [],
         quotedMessageId: MessageId? = nil,
         extraData: ExtraData.Message = .defaultValue,
         completion: ((Result<MessageId, Error>) -> Void)? = nil
@@ -791,6 +792,7 @@ public extension _ChatChannelController {
             command: nil,
             arguments: nil,
             attachments: attachments,
+            mentionedUserIds: mentionedUserIds,
             quotedMessageId: quotedMessageId,
             extraData: extraData
         ) { result in

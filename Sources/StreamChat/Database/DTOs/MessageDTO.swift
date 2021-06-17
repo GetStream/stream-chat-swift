@@ -258,6 +258,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         arguments: String?,
         parentMessageId: MessageId?,
         attachments: [AnyAttachmentPayload],
+        mentionedUserIds: [UserId],
         showReplyInChannel: Bool,
         quotedMessageId: MessageId?,
         extraData: ExtraData
@@ -295,6 +296,14 @@ extension NSManagedObjectContext: MessageDatabaseSession {
                 let id = AttachmentId(cid: cid, messageId: message.id, index: index)
                 return try createNewAttachment(attachment: attachment, id: id)
             }
+        )
+        
+        // If a user is able to mention someone,
+        // most probably we have that user already saved in DB.
+        // Ideally, this should be `loadOrCreate` but then
+        // we miss non-optional fields of DTO and fail to save.
+        message.mentionedUsers = Set(
+            mentionedUserIds.compactMap { UserDTO.load(id: $0, context: self) }
         )
                 
         message.showReplyInChannel = showReplyInChannel
@@ -473,6 +482,7 @@ extension MessageDTO {
             attachments: attachments
                 .sorted { $0.attachmentID.index < $1.attachmentID.index }
                 .compactMap { $0.asRequestPayload() },
+            mentionedUserIds: mentionedUsers.map(\.id),
             pinned: pinned,
             pinExpires: pinExpires,
             extraData: extraData ?? .defaultValue
