@@ -28,7 +28,8 @@
       ]
     },
     {
-      "Guides": [        
+      "Guides": [  
+        "guides/customize-message-composer",      
         "guides/working-with-a-channel",
         "guides/working-with-members",
         {
