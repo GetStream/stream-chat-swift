@@ -12,7 +12,6 @@ final class iMessageChatMessageComposerView: ComposerView {
 
         leadingContainer.removeArrangedSubview(commandsButton)
         trailingContainer.removeArrangedSubview(sendButton)
-        centerContainer.removeArrangedSubview(trailingContainer)
         inputMessageView.inputTextContainer.addArrangedSubview(sendButton)
     }
     
