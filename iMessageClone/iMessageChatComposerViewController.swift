@@ -7,12 +7,14 @@ import StreamChatUI
 import UIKit
 
 final class iMessageChatComposerViewController: ComposerVC {
-    override func showCommandSuggestions(for typingCommand: String) {
+    override func typingMention(in textView: UITextView) -> (String, NSRange)? {
         // Don't show suggestions
+        nil
     }
 
-    override func showMentionSuggestions(for typingMention: String, mentionRange: NSRange) {
+    override func typingCommand(in textView: UITextView) -> String? {
         // Don't show suggestions
+        nil
     }
     
     override func updateContent() {
