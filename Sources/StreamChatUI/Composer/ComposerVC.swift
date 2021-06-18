@@ -295,9 +295,11 @@ open class _ComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
         composerView.sendButton.isEnabled = !content.isEmpty
         composerView.confirmButton.isEnabled = !content.isEmpty
 
-        let isAttachmentButtonHidden = !content.isEmpty || channelConfig?.uploadsEnabled == false
-        let isCommandsButtonHidden = !content.isEmpty || channelConfig?.commands.isEmpty == true
-        let isShrinkInputButtonHidden = content.isEmpty || (isAttachmentButtonHidden && isCommandsButtonHidden)
+        let isAttachmentsEnabled = channelConfig?.uploadsEnabled == true
+        let isAttachmentButtonHidden = !content.isEmpty || !isAttachmentsEnabled
+        let isCommandsEnabled = channelConfig?.commands.isEmpty == false
+        let isCommandsButtonHidden = !content.isEmpty || !isCommandsEnabled
+        let isShrinkInputButtonHidden = content.isEmpty || (!isCommandsEnabled && !isAttachmentsEnabled)
         
         Animate {
             self.composerView.attachmentButton.isHidden = isAttachmentButtonHidden

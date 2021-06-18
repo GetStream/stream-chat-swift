@@ -26,6 +26,11 @@ final class ChatMessageListVC_Tests: XCTestCase {
     }
     
     func test_emptyAppearance() {
+        channelControllerMock.simulateInitial(
+            channel: .mock(cid: .unique),
+            messages: [],
+            state: .localDataFetched
+        )
         AssertSnapshot(vc, isEmbeddedInNavigationController: true)
     }
     
