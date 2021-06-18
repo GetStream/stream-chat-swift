@@ -40,7 +40,7 @@ open class _ComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
         /// The text of the input text view.
         public var text: String
         /// The state of the composer.
-        public var state: ComposerState
+        public let state: ComposerState
         /// The editing message if the composer is currently editing a message.
         public let editingMessage: _ChatMessage<ExtraData>?
         /// The quoting message if the composer is currently quoting a message.
