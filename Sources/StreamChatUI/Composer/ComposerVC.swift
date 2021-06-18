@@ -194,7 +194,7 @@ open class _ComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
         .withoutAutoresizingMaskConstraints
 
     /// The view controller that shows the suggestions when the user is typing.
-    open private(set) lazy var suggestionsVC: _ChatSuggestionsViewController<ExtraData> = components
+    open private(set) lazy var suggestionsVC: _ChatSuggestionsVC<ExtraData> = components
         .suggestionsVC
         .init()
     

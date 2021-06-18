@@ -7,7 +7,7 @@ import StreamChatTestTools
 @testable import StreamChatUI
 import XCTest
 
-class ChatSuggestionsViewController_Tests: XCTestCase {
+class ChatSuggestionsVC_Tests: XCTestCase {
     // We need to provide a size to the suggestions view since here we are testing the view in isolation,
     // and so we can't attach it to a bottomAnchorView. The test to verify the height calculation dependent
     // on the rows should be done in the parent view controller tests.
@@ -35,13 +35,13 @@ class ChatSuggestionsViewController_Tests: XCTestCase {
         )
     ]
     
-    var vc: ChatSuggestionsViewController!
+    var vc: ChatSuggestionsVC!
     var appearance = Appearance()
     var components = Components()
     
     override func setUp() {
         super.setUp()
-        vc = ChatSuggestionsViewController()
+        vc = ChatSuggestionsVC()
         appearance.images.commandIcons["yodafy"] = TestImages.yoda.image
         appearance.images.commandFallback = TestImages.vader.image
         vc.appearance = appearance
@@ -105,7 +105,7 @@ class ChatSuggestionsViewController_Tests: XCTestCase {
     }
 
     func test_commands_appearanceCustomization_usingSubclassing() {
-        class TestVC: ChatSuggestionsViewController {
+        class TestVC: ChatSuggestionsVC {
             override func setUpAppearance() {
                 super.setUpAppearance()
                 
@@ -191,7 +191,7 @@ class ChatSuggestionsViewController_Tests: XCTestCase {
     }
 
     func test_mentions_appearanceCustomization_usingSubclassing() {
-        class TestView: ChatSuggestionsViewController {
+        class TestView: ChatSuggestionsVC {
             override func setUpAppearance() {
                 super.setUpAppearance()
                 collectionView.layer.cornerRadius = 0
