@@ -17,7 +17,14 @@ internal enum L10n {
       internal static let cancel = L10n.tr("Localizable", "alert.actions.cancel")
       /// Delete
       internal static let delete = L10n.tr("Localizable", "alert.actions.delete")
+      /// Ok
+      internal static let ok = L10n.tr("Localizable", "alert.actions.ok")
     }
+  }
+
+  internal enum Attachment {
+    /// Attachment size exceed the limit.
+    internal static let maxSizeExceeded = L10n.tr("Localizable", "attachment.max-size-exceeded")
   }
 
   internal enum Channel {

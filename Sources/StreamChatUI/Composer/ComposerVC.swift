@@ -711,18 +711,34 @@ open class _ComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
         _ picker: UIImagePickerController,
         didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]
     ) {
+        var completion: (() -> Void)?
+        defer {
+            picker.dismiss(animated: true, completion: completion)
+        }
+        
+        let urlAndType: (URL, AttachmentType)
+        if let imageURL = info[.imageURL] as? URL {
+            urlAndType = (imageURL, .image)
+        } else if let videoURL = info[.mediaURL] as? URL {
+            urlAndType = (videoURL, .video)
+        } else {
+            log.error("Unexpected item selected in image picker")
+            return
+        }
+        
         do {
-            if let imageURL = info[.imageURL] as? URL {
-                let attachment = try AnyAttachmentPayload(localFileURL: imageURL, attachmentType: .image)
+            let fileSize = try AttachmentFile(url: urlAndType.0).size
+            let maxFileSize = channelController?.client.config.maxAttachmentSize ?? 0
+            
+            if fileSize < maxFileSize {
+                let attachment = try AnyAttachmentPayload(localFileURL: urlAndType.0, attachmentType: urlAndType.1)
                 content.attachments.append(attachment)
-            } else if let videoURL = info[.mediaURL] as? URL {
-                let attachment = try AnyAttachmentPayload(localFileURL: videoURL, attachmentType: .video)
-                content.attachments.append(attachment)
+            } else {
+                completion = showAttachmentExceedsMaxSizeAlert
             }
         } catch {
             log.assertionFailure(error.localizedDescription)
         }
-        picker.dismiss(animated: true, completion: nil)
     }
     
     // MARK: - UIDocumentPickerViewControllerDelegate
@@ -736,5 +752,11 @@ open class _ComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
                 return nil
             }
         })
+    }
+    
+    open func showAttachmentExceedsMaxSizeAlert() {
+        let alert = UIAlertController(title: nil, message: L10n.Attachment.maxSizeExceeded, preferredStyle: .alert)
+        alert.addAction(.init(title: L10n.Alert.Actions.ok, style: .default, handler: { _ in }))
+        present(alert, animated: true)
     }
 }

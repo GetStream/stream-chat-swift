@@ -29,6 +29,7 @@
 
 "alert.actions.cancel" = "Cancel";
 "alert.actions.delete" = "Delete";
+"alert.actions.ok" = "Ok";
 
 "message.only-visible-to-you" = "Only visible to you";
 "message.deleted-message-placeholder" = "Message deleted";
@@ -53,3 +54,5 @@
 "message.title.group" = "%d members, %d online";
 
 "current-selection" = "%d of %d";
+
+"attachment.max-size-exceeded" = "Attachment size exceed the limit.";
