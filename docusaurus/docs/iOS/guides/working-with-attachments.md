@@ -47,21 +47,21 @@ import StreamChat
 import StreamChatUI
 import UIKit
 
-open class MyCustomAttachmentViewInjector: AttachmentViewInjector {
+class MyCustomAttachmentViewInjector: AttachmentViewInjector {
     let attachmentView = MyCustomAttachmentView()
 
-    override open func contentViewDidLayout(options: ChatMessageLayoutOptions) {
+    override func contentViewDidLayout(options: ChatMessageLayoutOptions) {
         contentView.bubbleContentContainer.insertArrangedSubview(attachmentView, at: 0, respectsLayoutMargins: true)
     }
 
-    override open func contentViewDidUpdateContent() {
+    override func contentViewDidUpdateContent() {
         attachmentView.content = attachments(payloadType: FileAttachmentPayload.self).first
     }
 }
 
 
 class MyCustomAttachmentView: _View {
-    var content: _ChatMessageAttachment<FileAttachmentPayload>? {
+    var content: ChatMessageFileAttachment? {
         didSet { updateContentIfNeeded() }
     }
 
@@ -255,8 +255,8 @@ The `AttachmentViewCatalog` class is used to pick the `AttachmentViewInjector` f
 If needed you can also send a message with a workout attachment directly from Swift just to test that everything works correctly:
 
 ```swift
-let controller = client.channelController(for: ChannelId.init(type: .messaging, id: "my-test-channel"))
-let attachment = WorkoutAttachmentPayload.init(WorkoutDistanceMeters: 150, WorkoutDurationSeconds: 42, WorkoutEnergyCal: 1000, imageURL: "https://path.to/some/great/picture.png")
+let controller = client.channelController(for: ChannelId(type: .messaging, id: "my-test-channel"))
+let attachment = WorkoutAttachmentPayload(WorkoutDistanceMeters: 150, WorkoutDurationSeconds: 42, WorkoutEnergyCal: 1000, imageURL: "https://path.to/some/great/picture.png")
 
 controller.createNewMessage(text: "work-out-test", attachments: [.init(payload: attachment)]) { _ in
     print("test message was added")
