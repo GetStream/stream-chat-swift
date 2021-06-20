@@ -119,20 +119,19 @@ public extension AttachmentType {
 }
 
 public struct WorkoutAttachmentPayload: AttachmentPayload {
-    public var imageURL: URL
-
     public static var type: AttachmentType = .workout
 
-    public var WorkoutDistanceMeters: Int?
-    public var WorkoutType: String?
-    public var WorkoutDurationSeconds: Int?
-    public var WorkoutEnergyCal: Int?
+    var imageURL: URL
+    var workoutDistanceMeters: Int?
+    var workoutType: String?
+    var workoutDurationSeconds: Int?
+    var workoutEnergyCal: Int?
 
     private enum CodingKeys: String, CodingKey {
-        case WorkoutDistanceMeters = "workout-distance-meters"
-        case WorkoutType = "workout-type"
-        case WorkoutDurationSeconds = "workout-duration-seconds"
-        case WorkoutEnergyCal = "workout-energy-cal"
+        case workoutDistanceMeters = "workout-distance-meters"
+        case workoutType = "workout-type"
+        case workoutDurationSeconds = "workout-duration-seconds"
+        case workoutEnergyCal = "workout-energy-cal"
         case imageURL = "image_url"
     }
 }
@@ -153,7 +152,7 @@ import StreamChatUI
 import UIKit
 
 class WorkoutAttachmentView: _View {
-    var content: _ChatMessageAttachment<WorkoutAttachmentPayload>? {
+    var content: ChatMessageWorkoutAttachment? {
         didSet { updateContentIfNeeded() }
     }
 
@@ -204,9 +203,9 @@ class WorkoutAttachmentView: _View {
 
         if let attachment = content {
             Nuke.loadImage(with: attachment.imageURL, into: imageView)
-            distanceLabel.text = "you walked \(attachment.WorkoutDistanceMeters ?? 0) meters!"
-            durationLabel.text = "it took you \(attachment.WorkoutDurationSeconds ?? 0) seconds!"
-            energyLabel.text = "you burned \(attachment.WorkoutEnergyCal ?? 0) calories!"
+            distanceLabel.text = "you walked \(attachment.workoutDistanceMeters ?? 0) meters!"
+            durationLabel.text = "it took you \(attachment.workoutDurationSeconds ?? 0) seconds!"
+            energyLabel.text = "you burned \(attachment.workoutEnergyCal ?? 0) calories!"
         } else {
             imageView.image = nil
             distanceLabel.text = nil
@@ -256,7 +255,7 @@ If needed you can also send a message with a workout attachment directly from Sw
 
 ```swift
 let controller = client.channelController(for: ChannelId(type: .messaging, id: "my-test-channel"))
-let attachment = WorkoutAttachmentPayload(WorkoutDistanceMeters: 150, WorkoutDurationSeconds: 42, WorkoutEnergyCal: 1000, imageURL: "https://path.to/some/great/picture.png")
+let attachment = WorkoutAttachmentPayload(workoutDistanceMeters: 150, workoutDurationSeconds: 42, workoutEnergyCal: 1000, imageURL: "https://path.to/some/great/picture.png")
 
 controller.createNewMessage(text: "work-out-test", attachments: [.init(payload: attachment)]) { _ in
     print("test message was added")
