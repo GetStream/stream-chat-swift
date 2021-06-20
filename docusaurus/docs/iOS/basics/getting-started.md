@@ -2,18 +2,17 @@
 title: Getting Started
 ---
 
-To get started with StreamChat, we suggest you register and acquire an API token [on our website](getstream.io). Please enable developer tokens for your app before moving on with the guide, since we'll use them for prototyping.
+This section provides a high level overview of the library setup, core components, and how they fit together. It's a great starting point and you can follow along in your code editor. For a complete, step-by-step guide in terms setting up a React project or instructions on creating specific files, see our [iOS Chat tutorial](/tutorials/ios-chat/).
 
-On the [Dashboard](https://getstream.io/dashboard/):
+## Your First App with Stream Chat React
 
-1. Open Select App.
-1. Select the App you want to enable developer tokens on.
-1. Open Chat dropdown and select overview
-1. Scroll to Chat Events > Authentication
-1. Toggle Disable Auth Checks
-1. Save these settings.
+Before starting, make sure you have installed `StreamChatUI`, as explained in the [Installation](../#installation) section.
 
----
+The below example is all the code you need to launch a fully functioning chat experience. The Chat and Channel components are React context providers that pass a variety of values to their children, including UI components, stateful data, and action handler functions.
+
+
+
+
 
 Getting up & running with our SDK is a couple of lines:
 
