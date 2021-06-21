@@ -1,3 +1,7 @@
+---
+id: chatmessagelistcollectionview 
+title: ChatMessageListCollectionView
+--- 
 
 The collection view that provides convenient API for dequeuing `_ChatMessageCollectionViewCell` instances
 with the provided content view type and layout options.

@@ -1,3 +1,7 @@
+---
+id: chatmessageactionsvc 
+title: ChatMessageActionsVC
+--- 
 
 View controller to show message actions.
 

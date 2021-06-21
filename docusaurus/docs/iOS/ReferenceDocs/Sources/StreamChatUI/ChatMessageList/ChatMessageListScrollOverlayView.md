@@ -1,3 +1,7 @@
+---
+id: chatmessagelistscrolloverlayview 
+title: ChatMessageListScrollOverlayView
+--- 
 
 View that is displayed as top overlay when message list is scrolling
 

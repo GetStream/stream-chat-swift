@@ -1,3 +1,7 @@
+---
+id: chatchannelmember 
+title: ChatChannelMember
+--- 
 
 A type representing a chat channel member. `_ChatChannelMember` is an immutable snapshot of a channel entity at the given time.
 

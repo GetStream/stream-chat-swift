@@ -1,3 +1,7 @@
+---
+id: loglevel 
+title: LogLevel
+--- 
 
 Log level for any messages to be logged.
 Please check [this Apple Logging Article](https:​//developer.apple.com/documentation/os/logging/generating_log_messages_from_your_code) to understand different logging levels.

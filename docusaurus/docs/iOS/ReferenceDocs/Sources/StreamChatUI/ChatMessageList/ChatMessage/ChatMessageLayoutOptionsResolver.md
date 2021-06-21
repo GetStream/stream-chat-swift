@@ -1,3 +1,7 @@
+---
+id: chatmessagelayoutoptionsresolver 
+title: ChatMessageLayoutOptionsResolver
+--- 
 
 Resolves layout options for the message at given `indexPath`.
 

@@ -1,3 +1,7 @@
+---
+id: unblockuseractionitem 
+title: UnblockUserActionItem
+--- 
 
 Instance of `ChatMessageActionItem` for unblocking user.
 

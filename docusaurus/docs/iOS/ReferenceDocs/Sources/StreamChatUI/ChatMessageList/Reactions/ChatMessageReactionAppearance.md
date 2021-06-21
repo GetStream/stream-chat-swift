@@ -1,3 +1,7 @@
+---
+id: chatmessagereactionappearance 
+title: ChatMessageReactionAppearance
+--- 
 
 The default `ReactionAppearanceType` implementation without any additional data
 which can be used to provide custom icons for message reaction.

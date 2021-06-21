@@ -1,3 +1,7 @@
+---
+id: chatmessagelistcollectionviewlayout.layoutitem 
+title: ChatMessageListCollectionViewLayout.LayoutItem
+--- 
 
 ``` swift
 public struct LayoutItem 

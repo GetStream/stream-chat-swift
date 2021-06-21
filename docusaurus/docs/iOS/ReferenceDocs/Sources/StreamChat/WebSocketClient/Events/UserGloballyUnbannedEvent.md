@@ -1,3 +1,7 @@
+---
+id: usergloballyunbannedevent 
+title: UserGloballyUnbannedEvent
+--- 
 
 ``` swift
 public struct UserGloballyUnbannedEvent: UserSpecificEvent 

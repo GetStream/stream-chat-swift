@@ -1,3 +1,7 @@
+---
+id: muteuseractionitem 
+title: MuteUserActionItem
+--- 
 
 Instance of `ChatMessageActionItem` for muting user.
 

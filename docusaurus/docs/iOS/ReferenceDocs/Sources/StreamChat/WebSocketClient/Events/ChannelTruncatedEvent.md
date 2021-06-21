@@ -1,3 +1,7 @@
+---
+id: channeltruncatedevent 
+title: ChannelTruncatedEvent
+--- 
 
 ``` swift
 public struct ChannelTruncatedEvent: ChannelSpecificEvent 

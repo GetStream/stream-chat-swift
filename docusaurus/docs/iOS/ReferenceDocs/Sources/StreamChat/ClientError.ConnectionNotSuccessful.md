@@ -1,3 +1,7 @@
+---
+id: clienterror.connectionnotsuccessful 
+title: ClientError.ConnectionNotSuccessful
+--- 
 
 ``` swift
 public class ConnectionNotSuccessful: ClientError 

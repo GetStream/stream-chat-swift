@@ -1,3 +1,7 @@
+---
+id: createchatchannelbutton 
+title: CreateChatChannelButton
+--- 
 ![CreateChatChannelButton](../../../../../assets/CreateChatChannelButton_documentation.default-light.png)
 
 A Button subclass used for the create new channel action.

@@ -1,3 +1,7 @@
+---
+id: chatmessagelistcollectionviewdatasource 
+title: ChatMessageListCollectionViewDataSource
+--- 
 
 Protocol that adds delegate methods specific for `ChatMessageListCollectionView`
 

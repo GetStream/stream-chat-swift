@@ -1,3 +1,7 @@
+---
+id: chatmessageactioncontrol 
+title: ChatMessageActionControl
+--- 
 
 Button for action displayed in `_ChatMessageActionsView`.
 

@@ -1,3 +1,7 @@
+---
+id: _collectionreusableview 
+title: _CollectionReusableView
+--- 
 
 Base class for overridable views StreamChatUI provides.
 All conformers will have StreamChatUI appearance settings by default.

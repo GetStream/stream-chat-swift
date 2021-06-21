@@ -1,3 +1,7 @@
+---
+id: scrolltolatestmessagebutton 
+title: ScrollToLatestMessageButton
+--- 
 
 A Button that is used to indicate unread messages in the Message list.
 

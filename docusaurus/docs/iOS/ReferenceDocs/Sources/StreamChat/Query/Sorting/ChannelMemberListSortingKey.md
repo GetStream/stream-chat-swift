@@ -1,3 +1,7 @@
+---
+id: channelmemberlistsortingkey 
+title: ChannelMemberListSortingKey
+--- 
 
 `ChannelMemberListSortingKey` describes the keys by which you can get sorted channel members after query.
 

@@ -1,3 +1,7 @@
+---
+id: chatchannellistvc 
+title: ChatChannelListVC
+--- 
 
 A `UIViewController` subclass  that shows list of channels.
 
@@ -5,6 +9,8 @@ A `UIViewController` subclass  that shows list of channels.
 open class _ChatChannelListVC<ExtraData: ExtraDataTypes>: _ViewController,
     UICollectionViewDataSource,
     UICollectionViewDelegate,
+    _ChatChannelListControllerDelegate,
+    DataControllerStateDelegate,
     ThemeProvider,
     SwipeableViewDelegate 
 ```
@@ -12,14 +18,6 @@ open class _ChatChannelListVC<ExtraData: ExtraDataTypes>: _ViewController,
 ## Inheritance
 
 [`_ViewController`](../CommonViews/_ViewController), `DataControllerStateDelegate`, [`SwipeableViewDelegate`](SwipeableViewDelegate), [`SwiftUIRepresentable`](../CommonViews/SwiftUIRepresentable), [`ThemeProvider`](../Utils/ThemeProvider), `UICollectionViewDataSource`, `UICollectionViewDelegate`, `_ChatChannelListControllerDelegate`
-
-## Nested Type Aliases
-
-### `ExtraData`
-
-``` swift
-public typealias ExtraData = ExtraData
-```
 
 ## Properties
 
@@ -143,7 +141,7 @@ open func collectionView(
 ### `collectionView(_:viewForSupplementaryElementOfKind:at:)`
 
 ``` swift
-public func collectionView(
+open func collectionView(
         _ collectionView: UICollectionView,
         viewForSupplementaryElementOfKind kind: String,
         at indexPath: IndexPath
@@ -219,7 +217,7 @@ open func moreButtonPressedForCell(at indexPath: IndexPath)
 ### `controllerWillChangeChannels(_:)`
 
 ``` swift
-public func controllerWillChangeChannels(_ controller: _ChatChannelListController<ExtraData>) 
+open func controllerWillChangeChannels(_ controller: _ChatChannelListController<ExtraData>) 
 ```
 
 ### `controller(_:didChangeChannels:)`
@@ -234,5 +232,5 @@ open func controller(
 ### `controller(_:didChangeState:)`
 
 ``` swift
-public func controller(_ controller: DataController, didChangeState state: DataController.State) 
+open func controller(_ controller: DataController, didChangeState state: DataController.State) 
 ```

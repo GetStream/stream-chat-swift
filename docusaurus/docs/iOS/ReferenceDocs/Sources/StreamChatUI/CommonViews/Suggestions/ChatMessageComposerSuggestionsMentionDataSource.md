@@ -1,3 +1,7 @@
+---
+id: chatmessagecomposersuggestionsmentiondatasource 
+title: ChatMessageComposerSuggestionsMentionDataSource
+--- 
 
 ``` swift
 open class _ChatMessageComposerSuggestionsMentionDataSource<ExtraData: ExtraDataTypes>: NSObject,

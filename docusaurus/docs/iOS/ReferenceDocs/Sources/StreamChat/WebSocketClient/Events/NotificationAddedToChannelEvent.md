@@ -1,3 +1,7 @@
+---
+id: notificationaddedtochannelevent 
+title: NotificationAddedToChannelEvent
+--- 
 
 ``` swift
 public struct NotificationAddedToChannelEvent: ChannelSpecificEvent 

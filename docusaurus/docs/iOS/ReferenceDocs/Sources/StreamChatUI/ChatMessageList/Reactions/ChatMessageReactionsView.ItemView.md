@@ -1,3 +1,7 @@
+---
+id: chatmessagereactionsview.itemview 
+title: ChatMessageReactionsView.ItemView
+--- 
 
 ``` swift
 open class ItemView: _Button, AppearanceProvider 

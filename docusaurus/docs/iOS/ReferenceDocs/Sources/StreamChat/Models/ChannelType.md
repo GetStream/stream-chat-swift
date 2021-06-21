@@ -1,3 +1,7 @@
+---
+id: channeltype 
+title: ChannelType
+--- 
 
 An enum describing possible types of a channel.
 

@@ -1,3 +1,7 @@
+---
+id: chatmessagebubbleview 
+title: ChatMessageBubbleView
+--- 
 
 A view that displays a bubble around a message.
 

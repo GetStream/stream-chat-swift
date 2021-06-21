@@ -1,3 +1,7 @@
+---
+id: galleryattachmentviewinjector 
+title: GalleryAttachmentViewInjector
+--- 
 
 ``` swift
 open class _GalleryAttachmentViewInjector<ExtraData: ExtraDataTypes>: _AttachmentViewInjector<ExtraData> 

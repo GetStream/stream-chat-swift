@@ -1,3 +1,7 @@
+---
+id: unmuteuseractionitem 
+title: UnmuteUserActionItem
+--- 
 
 Instance of `ChatMessageActionItem` for unmuting user.
 

@@ -1,3 +1,7 @@
+---
+id: messageid 
+title: MessageId
+--- 
 
 A unique identifier of a message.
 

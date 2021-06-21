@@ -1,3 +1,7 @@
+---
+id: controller 
+title: Controller
+--- 
 
 A protocol to which all controllers conform to.
 

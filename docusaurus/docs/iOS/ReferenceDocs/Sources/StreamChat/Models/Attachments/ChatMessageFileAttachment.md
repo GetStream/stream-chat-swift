@@ -1,3 +1,7 @@
+---
+id: chatmessagefileattachment 
+title: ChatMessageFileAttachment
+--- 
 
 A type alias for attachment with `FileAttachmentPayload` payload type.
 

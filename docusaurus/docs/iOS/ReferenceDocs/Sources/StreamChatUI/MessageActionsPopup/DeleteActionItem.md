@@ -1,3 +1,7 @@
+---
+id: deleteactionitem 
+title: DeleteActionItem
+--- 
 
 Instance of `ChatMessageActionItem` for deleting message action.
 

@@ -1,3 +1,7 @@
+---
+id: memberrole 
+title: MemberRole
+--- 
 
 An enum describing possible roles of a member in a channel.
 

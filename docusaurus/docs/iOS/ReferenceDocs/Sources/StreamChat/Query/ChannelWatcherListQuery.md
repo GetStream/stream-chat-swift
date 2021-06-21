@@ -1,3 +1,7 @@
+---
+id: channelwatcherlistquery 
+title: ChannelWatcherListQuery
+--- 
 
 A query type used for fetching a channel's watchers from the backend.
 

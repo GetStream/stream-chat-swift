@@ -1,3 +1,7 @@
+---
+id: sortingkey 
+title: SortingKey
+--- 
 
 A sorting key protocol.
 

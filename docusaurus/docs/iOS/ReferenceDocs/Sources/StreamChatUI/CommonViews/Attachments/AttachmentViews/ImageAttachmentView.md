@@ -1,3 +1,7 @@
+---
+id: imageattachmentview 
+title: ImageAttachmentView
+--- 
 
 A view that displays the image attachment.
 

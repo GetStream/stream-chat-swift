@@ -1,3 +1,7 @@
+---
+id: chatmessagereactionappearancetype 
+title: ChatMessageReactionAppearanceType
+--- 
 
 The type describing message reaction appearance.
 

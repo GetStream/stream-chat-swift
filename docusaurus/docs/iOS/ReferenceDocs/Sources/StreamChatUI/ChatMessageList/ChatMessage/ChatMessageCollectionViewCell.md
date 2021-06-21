@@ -1,3 +1,7 @@
+---
+id: chatmessagecollectionviewcell 
+title: ChatMessageCollectionViewCell
+--- 
 
 The cell that displays the message content of a dynamic type and layout.
 Once the cell is set up it is expected to be dequeued for messages with

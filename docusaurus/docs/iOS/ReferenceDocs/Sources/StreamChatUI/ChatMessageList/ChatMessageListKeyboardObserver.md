@@ -1,3 +1,7 @@
+---
+id: chatmessagelistkeyboardobserver 
+title: ChatMessageListKeyboardObserver
+--- 
 
 ``` swift
 open class ChatMessageListKeyboardObserver 

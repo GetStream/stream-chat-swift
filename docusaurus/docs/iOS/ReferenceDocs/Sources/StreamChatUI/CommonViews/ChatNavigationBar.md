@@ -1,3 +1,7 @@
+---
+id: chatnavigationbar 
+title: ChatNavigationBar
+--- 
 
 ``` swift
 open class ChatNavigationBar: _NavigationBar, AppearanceProvider 

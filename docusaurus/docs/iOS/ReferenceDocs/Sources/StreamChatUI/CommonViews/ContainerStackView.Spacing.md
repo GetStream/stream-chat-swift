@@ -1,3 +1,7 @@
+---
+id: containerstackview.spacing 
+title: ContainerStackView.Spacing
+--- 
 
 Describes the Spacing between the arranged subviews.
 

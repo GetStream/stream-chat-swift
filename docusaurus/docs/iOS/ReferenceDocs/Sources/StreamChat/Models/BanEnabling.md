@@ -1,3 +1,7 @@
+---
+id: banenabling 
+title: BanEnabling
+--- 
 
 An option to enable ban users.
 

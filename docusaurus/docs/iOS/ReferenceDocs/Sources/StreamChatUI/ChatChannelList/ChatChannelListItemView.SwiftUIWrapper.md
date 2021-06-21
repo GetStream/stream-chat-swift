@@ -1,3 +1,7 @@
+---
+id: chatchannellistitemview.swiftuiwrapper 
+title: ChatChannelListItemView.SwiftUIWrapper
+--- 
 
 SwiftUI wrapper of `_ChatChannelListItemView`.
 Servers to wrap custom SwiftUI view as a UIKit view so it can be easily injected into `_Components`.

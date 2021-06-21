@@ -1,3 +1,7 @@
+---
+id: notificationmutesupdatedevent 
+title: NotificationMutesUpdatedEvent
+--- 
 
 ``` swift
 public struct NotificationMutesUpdatedEvent<ExtraData: ExtraDataTypes>: CurrentUserEvent 

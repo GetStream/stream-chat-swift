@@ -1,3 +1,7 @@
+---
+id: chatchannelunreadcountview 
+title: ChatChannelUnreadCountView
+--- 
 
 A view that shows a number of unread messages in channel.
 

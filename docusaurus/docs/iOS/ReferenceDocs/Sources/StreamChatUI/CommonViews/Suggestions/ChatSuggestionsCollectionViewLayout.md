@@ -1,3 +1,7 @@
+---
+id: chatsuggestionscollectionviewlayout 
+title: ChatSuggestionsCollectionViewLayout
+--- 
 
 The collection view layout of the suggestions collection view.
 

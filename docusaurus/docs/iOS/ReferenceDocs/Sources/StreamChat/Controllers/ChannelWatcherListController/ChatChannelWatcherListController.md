@@ -1,3 +1,7 @@
+---
+id: chatchannelwatcherlistcontroller 
+title: ChatChannelWatcherListController
+--- 
 
 `_ChatChannelWatcherListController` is a controller class which allows observing
 a list of chat watchers based on the provided query.

@@ -1,3 +1,7 @@
+---
+id: quotedavataralignment 
+title: QuotedAvatarAlignment
+--- 
 
 The quoted author's avatar position in relation with the text message.
 New custom alignments can be added with extensions and by overriding the `QuotedChatMessageView.setAvatarAlignment()`.

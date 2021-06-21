@@ -1,3 +1,7 @@
+---
+id: chatloadingindicator 
+title: ChatLoadingIndicator
+--- 
 
 ``` swift
 open class ChatLoadingIndicator: _View, AppearanceProvider 

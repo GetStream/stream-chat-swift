@@ -1,3 +1,7 @@
+---
+id: filesattachmentviewinjector 
+title: FilesAttachmentViewInjector
+--- 
 
 ``` swift
 public class _FilesAttachmentViewInjector<ExtraData: ExtraDataTypes>: _AttachmentViewInjector<ExtraData> 

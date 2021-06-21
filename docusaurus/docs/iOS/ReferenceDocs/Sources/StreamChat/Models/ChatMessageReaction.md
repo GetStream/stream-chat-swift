@@ -1,3 +1,7 @@
+---
+id: chatmessagereaction 
+title: ChatMessageReaction
+--- 
 
 A type representing a message reaction. `_ChatMessageReaction` is an immutable snapshot
 of a message reaction entity at the given time.

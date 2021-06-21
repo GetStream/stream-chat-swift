@@ -1,3 +1,7 @@
+---
+id: chatchannellistcontroller 
+title: ChatChannelListController
+--- 
 
 `_ChatChannelListController` is a controller class which allows observing a list of chat channels based on the provided query.
 

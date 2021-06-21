@@ -1,3 +1,7 @@
+---
+id: navigationvc 
+title: NavigationVC
+--- 
 
 The navigation controller with navigation bar of `ChatNavigationBar` type.
 

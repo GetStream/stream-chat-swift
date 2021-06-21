@@ -1,3 +1,7 @@
+---
+id: attachmentid 
+title: AttachmentId
+--- 
 
 An object that uniquely identifies a message attachment.
 

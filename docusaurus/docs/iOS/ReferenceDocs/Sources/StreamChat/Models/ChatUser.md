@@ -1,3 +1,7 @@
+---
+id: chatuser 
+title: ChatUser
+--- 
 
 A type representing a chat user. `ChatUser` is an immutable snapshot of a chat user entity at the given time.
 

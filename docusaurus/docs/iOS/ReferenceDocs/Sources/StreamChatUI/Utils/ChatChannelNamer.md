@@ -1,3 +1,7 @@
+---
+id: chatchannelnamer 
+title: ChatChannelNamer
+--- 
 
 Typealias for closure taking `_ChatChannel<ExtraData>` and `UserId` which returns
 the current name of the channel. Use this type when you create closure for naming a channel.

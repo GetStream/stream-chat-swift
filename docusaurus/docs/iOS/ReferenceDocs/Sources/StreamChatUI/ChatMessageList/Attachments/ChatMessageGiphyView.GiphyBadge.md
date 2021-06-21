@@ -1,3 +1,7 @@
+---
+id: chatmessagegiphyview.giphybadge 
+title: ChatMessageGiphyView.GiphyBadge
+--- 
 
 ``` swift
 open class GiphyBadge: _View, AppearanceProvider 

@@ -1,3 +1,7 @@
+---
+id: chatmessagereactionsbubblestyle 
+title: ChatMessageReactionsBubbleStyle
+--- 
 
 ``` swift
 public enum ChatMessageReactionsBubbleStyle 

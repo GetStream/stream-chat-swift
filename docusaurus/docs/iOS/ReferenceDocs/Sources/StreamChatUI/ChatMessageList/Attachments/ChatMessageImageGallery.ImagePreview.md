@@ -1,3 +1,7 @@
+---
+id: chatmessageimagegallery.imagepreview 
+title: ChatMessageImageGallery.ImagePreview
+--- 
 
 ``` swift
 open class ImagePreview: _View, ThemeProvider, ImagePreviewable 

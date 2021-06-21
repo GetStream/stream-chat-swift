@@ -1,3 +1,7 @@
+---
+id: apikey 
+title: APIKey
+--- 
 
 A struct representing an API key of the chat app.
 

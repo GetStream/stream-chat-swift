@@ -1,3 +1,7 @@
+---
+id: clienterror 
+title: ClientError
+--- 
 
 A Client error.
 

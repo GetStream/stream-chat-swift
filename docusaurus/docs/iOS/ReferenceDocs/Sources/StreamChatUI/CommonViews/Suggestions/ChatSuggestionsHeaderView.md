@@ -1,3 +1,7 @@
+---
+id: chatsuggestionsheaderview 
+title: ChatSuggestionsHeaderView
+--- 
 
 The header view of the suggestion collection view.
 

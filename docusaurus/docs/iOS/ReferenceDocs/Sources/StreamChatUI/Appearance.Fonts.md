@@ -1,3 +1,7 @@
+---
+id: appearance.fonts 
+title: Appearance.Fonts
+--- 
 
 ``` swift
 struct Fonts 

@@ -1,3 +1,7 @@
+---
+id: currentchatuser 
+title: CurrentChatUser
+--- 
 
 A type representing the currently logged-in user. `_CurrentChatUser` is an immutable snapshot of a current user entity at
 the given time.

@@ -1,3 +1,7 @@
+---
+id: chatmessageattachmentpreviewvc 
+title: ChatMessageAttachmentPreviewVC
+--- 
 
 ``` swift
 open class ChatMessageAttachmentPreviewVC: _ViewController, WKNavigationDelegate, AppearanceProvider 

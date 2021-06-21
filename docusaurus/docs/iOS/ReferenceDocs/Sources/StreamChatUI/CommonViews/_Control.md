@@ -1,3 +1,7 @@
+---
+id: _control 
+title: _Control
+--- 
 
 Base class for overridable views StreamChatUI provides.
 All conformers will have StreamChatUI appearance settings by default.

@@ -1,3 +1,7 @@
+---
+id: chatpresenceavatarview 
+title: ChatPresenceAvatarView
+--- 
 
 A view that shows a user avatar including an indicator of the user presence (online/offline).
 

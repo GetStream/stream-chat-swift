@@ -1,3 +1,7 @@
+---
+id: channelmemberlistquery 
+title: ChannelMemberListQuery
+--- 
 
 A query type used for fetching channel members from the backend.
 

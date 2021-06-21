@@ -1,3 +1,7 @@
+---
+id: extradatatypes 
+title: ExtraDataTypes
+--- 
 
 A protocol defining extra data types used by `ChatClient`.
 

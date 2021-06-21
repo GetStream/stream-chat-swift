@@ -1,3 +1,7 @@
+---
+id: connectionevent 
+title: ConnectionEvent
+--- 
 
 ``` swift
 public protocol ConnectionEvent: Event 

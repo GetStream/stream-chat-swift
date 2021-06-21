@@ -1,3 +1,7 @@
+---
+id: chatmessagereactionsview.itemview.content 
+title: ChatMessageReactionsView.ItemView.Content
+--- 
 
 ``` swift
 public struct Content 

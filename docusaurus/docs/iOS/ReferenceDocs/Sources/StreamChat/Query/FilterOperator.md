@@ -1,3 +1,7 @@
+---
+id: filteroperator 
+title: FilterOperator
+--- 
 
 An enum with possible operators to use in filters.
 

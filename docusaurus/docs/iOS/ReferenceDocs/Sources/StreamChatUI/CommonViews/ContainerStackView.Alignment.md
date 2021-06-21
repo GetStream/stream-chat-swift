@@ -1,3 +1,7 @@
+---
+id: containerstackview.alignment 
+title: ContainerStackView.Alignment
+--- 
 
 Describes the alignment of the arranged subviews in perpendicular to the container's axis.
 

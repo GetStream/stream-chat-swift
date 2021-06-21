@@ -1,3 +1,7 @@
+---
+id: chatchannellistitemview.content 
+title: ChatChannelListItemView.Content
+--- 
 
 The content of this view.
 

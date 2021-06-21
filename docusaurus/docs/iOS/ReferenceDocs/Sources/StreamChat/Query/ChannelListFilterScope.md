@@ -1,3 +1,7 @@
+---
+id: channellistfilterscope 
+title: ChannelListFilterScope
+--- 
 
 An extra-data-specific namespace for the `FilterKey`s suitable to be used for `_ChannelListQuery`.
 

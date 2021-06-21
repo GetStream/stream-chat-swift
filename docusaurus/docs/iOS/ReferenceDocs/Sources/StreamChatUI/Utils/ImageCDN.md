@@ -1,3 +1,7 @@
+---
+id: imagecdn 
+title: ImageCDN
+--- 
 
 ImageCDN is providing set of functions to improve handling of images from CDN.
 

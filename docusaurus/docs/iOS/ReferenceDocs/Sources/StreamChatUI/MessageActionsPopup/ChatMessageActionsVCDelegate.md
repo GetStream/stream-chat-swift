@@ -1,3 +1,7 @@
+---
+id: chatmessageactionsvcdelegate 
+title: ChatMessageActionsVCDelegate
+--- 
 
 ``` swift
 public protocol _ChatMessageActionsVCDelegate: AnyObject 

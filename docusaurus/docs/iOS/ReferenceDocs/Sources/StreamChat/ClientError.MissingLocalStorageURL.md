@@ -1,3 +1,7 @@
+---
+id: clienterror.missinglocalstorageurl 
+title: ClientError.MissingLocalStorageURL
+--- 
 
 ``` swift
 public class MissingLocalStorageURL: ClientError 

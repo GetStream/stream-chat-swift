@@ -1,3 +1,7 @@
+---
+id: _collectionviewcell 
+title: _CollectionViewCell
+--- 
 
 Base class for overridable views StreamChatUI provides.
 All conformers will have StreamChatUI appearance settings by default.

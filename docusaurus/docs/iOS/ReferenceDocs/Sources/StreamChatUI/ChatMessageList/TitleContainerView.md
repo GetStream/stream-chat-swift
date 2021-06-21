@@ -1,3 +1,7 @@
+---
+id: titlecontainerview 
+title: TitleContainerView
+--- 
 ![TitleContainerView](../../../../assets/TitleContainerView_documentation.default-light.png)
 
 A view that is used as a wrapper for status data in navigationItem's titleView.

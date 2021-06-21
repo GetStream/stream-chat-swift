@@ -1,3 +1,7 @@
+---
+id: clienterror.unexpected 
+title: ClientError.Unexpected
+--- 
 
 An unexpected error.
 

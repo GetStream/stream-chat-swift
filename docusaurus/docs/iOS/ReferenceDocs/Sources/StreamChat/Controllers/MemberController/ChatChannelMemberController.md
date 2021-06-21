@@ -1,3 +1,7 @@
+---
+id: chatchannelmembercontroller 
+title: ChatChannelMemberController
+--- 
 
 `_ChatChannelMemberController` is a controller class which allows mutating and observing changes of a specific chat member.
 

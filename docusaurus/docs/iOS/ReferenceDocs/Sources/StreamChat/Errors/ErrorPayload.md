@@ -1,3 +1,7 @@
+---
+id: errorpayload 
+title: ErrorPayload
+--- 
 
 A parsed server response error.
 

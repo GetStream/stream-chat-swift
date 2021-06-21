@@ -1,3 +1,7 @@
+---
+id: imageprocessors.lateresize 
+title: ImageProcessors.LateResize
+--- 
 
 Scales an image to a specified size.
 The getting of the size is offloaded via closure after the image is loaded.

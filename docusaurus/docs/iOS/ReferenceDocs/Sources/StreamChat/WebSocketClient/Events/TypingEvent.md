@@ -1,3 +1,7 @@
+---
+id: typingevent 
+title: TypingEvent
+--- 
 
 ``` swift
 public struct TypingEvent: UserSpecificEvent, ChannelSpecificEvent 
@@ -5,7 +9,7 @@ public struct TypingEvent: UserSpecificEvent, ChannelSpecificEvent
 
 ## Inheritance
 
-[`ChannelSpecificEvent`](ChannelSpecificEvent), `Equatable`, [`UserSpecificEvent`](UserSpecificEvent)
+[`UserSpecificEvent`](UserSpecificEvent), [`ChannelSpecificEvent`](ChannelSpecificEvent), `Equatable`
 
 ## Properties
 

@@ -1,3 +1,7 @@
+---
+id: messagenewevent 
+title: MessageNewEvent
+--- 
 
 ``` swift
 public struct MessageNewEvent: MessageSpecificEvent 

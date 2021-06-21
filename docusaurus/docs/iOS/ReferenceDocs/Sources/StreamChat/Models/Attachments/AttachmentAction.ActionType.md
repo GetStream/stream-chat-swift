@@ -1,3 +1,7 @@
+---
+id: attachmentaction.actiontype 
+title: AttachmentAction.ActionType
+--- 
 
 An attachment action type, e.g. button.
 

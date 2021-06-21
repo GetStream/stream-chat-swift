@@ -1,3 +1,7 @@
+---
+id: messagepindetails 
+title: MessagePinDetails
+--- 
 
 ``` swift
 public struct _MessagePinDetails<ExtraData: ExtraDataTypes> 

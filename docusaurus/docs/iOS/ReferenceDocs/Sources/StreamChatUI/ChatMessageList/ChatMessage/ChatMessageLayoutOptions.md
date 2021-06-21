@@ -1,3 +1,7 @@
+---
+id: chatmessagelayoutoptions 
+title: ChatMessageLayoutOptions
+--- 
 
 Describes the layout of base message content view.
 

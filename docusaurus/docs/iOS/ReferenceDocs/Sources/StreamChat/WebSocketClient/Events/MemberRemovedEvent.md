@@ -1,3 +1,7 @@
+---
+id: memberremovedevent 
+title: MemberRemovedEvent
+--- 
 
 ``` swift
 public struct MemberRemovedEvent: MemberEvent, ChannelSpecificEvent, EventWithPayload 

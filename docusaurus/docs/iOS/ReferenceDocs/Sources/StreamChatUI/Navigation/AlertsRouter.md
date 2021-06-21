@@ -1,3 +1,7 @@
+---
+id: alertsrouter 
+title: AlertsRouter
+--- 
 
 A `NavigationRouter` instance responsible for presenting alerts.
 
