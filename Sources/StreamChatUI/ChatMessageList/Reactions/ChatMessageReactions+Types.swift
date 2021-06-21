@@ -7,6 +7,7 @@ import UIKit
 
 public struct ChatMessageReactionData {
     public let type: MessageReactionType
+    public let score: Int
     public let isChosenByCurrentUser: Bool
 }
 

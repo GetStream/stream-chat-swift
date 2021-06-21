@@ -38,7 +38,13 @@ open class _ChatMessageReactionsVC<ExtraData: ExtraDataTypes>: _ViewController, 
                 reactions: appearance.images.availableReactions
                     .keys
                     .sorted { $0.rawValue < $1.rawValue }
-                    .map { .init(type: $0, isChosenByCurrentUser: userReactionIDs.contains($0)) },
+                    .map {
+                        .init(
+                            type: $0,
+                            score: message.reactionScores[$0] ?? 0,
+                            isChosenByCurrentUser: userReactionIDs.contains($0)
+                        )
+                    },
                 didTapOnReaction: { [weak self] in
                     self?.toggleReaction($0)
                 }
