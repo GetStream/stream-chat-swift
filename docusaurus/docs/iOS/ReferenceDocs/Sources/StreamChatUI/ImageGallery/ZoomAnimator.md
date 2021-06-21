@@ -1,3 +1,7 @@
+---
+id: zoomanimator 
+title: ZoomAnimator
+--- 
 
 Object for animating transition of an image.
 

@@ -1,3 +1,7 @@
+---
+id: chatchannelavatarview.swiftuiwrapper 
+title: ChatChannelAvatarView.SwiftUIWrapper
+--- 
 
 SwiftUI wrapper of `_ChatChannelAvatarView`.
 

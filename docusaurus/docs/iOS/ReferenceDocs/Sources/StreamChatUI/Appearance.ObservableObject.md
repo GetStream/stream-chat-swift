@@ -1,3 +1,7 @@
+---
+id: appearance.observableobject 
+title: Appearance.ObservableObject
+--- 
 
 ``` swift
 @dynamicMemberLookup

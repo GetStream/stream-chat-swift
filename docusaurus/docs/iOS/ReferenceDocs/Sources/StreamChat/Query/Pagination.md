@@ -1,3 +1,7 @@
+---
+id: pagination 
+title: Pagination
+--- 
 
 Basic pagination with `pageSize` and `offset`.
 Used everywhere except `ChannelQuery`. (See `MessagesPagination`)

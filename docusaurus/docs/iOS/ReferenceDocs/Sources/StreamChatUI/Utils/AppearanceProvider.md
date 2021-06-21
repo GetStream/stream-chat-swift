@@ -1,3 +1,7 @@
+---
+id: appearanceprovider 
+title: AppearanceProvider
+--- 
 
 ``` swift
 public protocol AppearanceProvider: AnyObject 

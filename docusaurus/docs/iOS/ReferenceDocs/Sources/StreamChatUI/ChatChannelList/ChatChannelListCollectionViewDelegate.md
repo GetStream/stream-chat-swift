@@ -1,3 +1,7 @@
+---
+id: chatchannellistcollectionviewdelegate 
+title: ChatChannelListCollectionViewDelegate
+--- 
 
 ``` swift
 open class ChatChannelListCollectionViewDelegate: NSObject, UICollectionViewDelegate 

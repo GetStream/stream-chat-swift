@@ -1,3 +1,7 @@
+---
+id: _navigationbar 
+title: _NavigationBar
+--- 
 
 Base class for overridable views StreamChatUI provides.
 All conformers will have StreamChatUI appearance settings by default.

@@ -1,3 +1,7 @@
+---
+id: userbannedevent 
+title: UserBannedEvent
+--- 
 
 ``` swift
 public struct UserBannedEvent: UserSpecificEvent, ChannelSpecificEvent 

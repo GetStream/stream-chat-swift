@@ -1,3 +1,7 @@
+---
+id: chatclientconfig.localcaching 
+title: ChatClientConfig.LocalCaching
+--- 
 
 Advanced settings for the local caching and model serialization.
 

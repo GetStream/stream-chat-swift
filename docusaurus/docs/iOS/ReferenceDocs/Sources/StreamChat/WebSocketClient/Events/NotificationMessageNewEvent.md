@@ -1,3 +1,7 @@
+---
+id: notificationmessagenewevent 
+title: NotificationMessageNewEvent
+--- 
 
 ``` swift
 public struct NotificationMessageNewEvent: MessageSpecificEvent 

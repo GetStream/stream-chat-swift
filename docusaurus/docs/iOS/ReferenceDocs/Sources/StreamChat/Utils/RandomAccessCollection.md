@@ -1,3 +1,7 @@
+---
+id: randomaccesscollection 
+title: RandomAccessCollection
+--- 
 
 ## Methods
 

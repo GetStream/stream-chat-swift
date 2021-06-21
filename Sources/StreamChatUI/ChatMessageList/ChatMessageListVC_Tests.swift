@@ -2,7 +2,6 @@
 // Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
-import SnapshotTesting
 import StreamChat
 import StreamChatTestTools
 @testable import StreamChatUI
@@ -26,6 +25,11 @@ final class ChatMessageListVC_Tests: XCTestCase {
     }
     
     func test_emptyAppearance() {
+        channelControllerMock.simulateInitial(
+            channel: .mock(cid: .unique),
+            messages: [],
+            state: .localDataFetched
+        )
         AssertSnapshot(vc, isEmbeddedInNavigationController: true)
     }
     

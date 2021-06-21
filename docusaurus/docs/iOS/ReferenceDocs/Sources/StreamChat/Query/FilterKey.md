@@ -1,3 +1,7 @@
+---
+id: filterkey 
+title: FilterKey
+--- 
 
 A helper struct that represents a key of a filter.
 

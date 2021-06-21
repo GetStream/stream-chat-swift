@@ -175,19 +175,7 @@ open class _ChatThreadVC<ExtraData: ExtraDataTypes>:
 
     /// Returns the attachment view injector class for the message at given `ChatMessage`
     open func attachmentViewInjectorClass(for message: _ChatMessage<ExtraData>) -> _AttachmentViewInjector<ExtraData>.Type? {
-        let attachmentCounts = message.attachmentCounts
-
-        if attachmentCounts.keys.contains(.image) {
-            return components.galleryAttachmentInjector
-        } else if attachmentCounts.keys.contains(.giphy) {
-            return components.giphyAttachmentInjector
-        } else if attachmentCounts.keys.contains(.file) {
-            return components.filesAttachmentInjector
-        } else if attachmentCounts.keys.contains(.linkPreview) {
-            return components.linkAttachmentInjector
-        } else {
-            return nil
-        }
+        components.attachmentViewCatalog.attachmentViewInjectorClassFor(message: message, components: components)
     }
 
     /// Returns layout options for the message on given `indexPath`.

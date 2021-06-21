@@ -1,3 +1,7 @@
+---
+id: messagedeletedevent 
+title: MessageDeletedEvent
+--- 
 
 ``` swift
 public struct MessageDeletedEvent: MessageSpecificEvent 

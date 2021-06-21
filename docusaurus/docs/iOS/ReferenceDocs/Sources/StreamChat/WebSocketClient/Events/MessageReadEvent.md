@@ -1,3 +1,7 @@
+---
+id: messagereadevent 
+title: MessageReadEvent
+--- 
 
 `ChannelReadEvent`, this event tells that User has mark read all messages in channel.
 

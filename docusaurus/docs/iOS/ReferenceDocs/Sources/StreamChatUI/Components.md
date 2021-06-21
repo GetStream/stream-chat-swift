@@ -1,3 +1,7 @@
+---
+id: components 
+title: Components
+--- 
 
 An object containing types of UI Components that are used through the UI SDK.
 

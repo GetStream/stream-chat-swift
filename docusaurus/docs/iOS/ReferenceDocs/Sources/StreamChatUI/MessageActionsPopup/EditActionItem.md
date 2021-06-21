@@ -1,3 +1,7 @@
+---
+id: editactionitem 
+title: EditActionItem
+--- 
 
 Instance of `ChatMessageActionItem` for edit message action.
 

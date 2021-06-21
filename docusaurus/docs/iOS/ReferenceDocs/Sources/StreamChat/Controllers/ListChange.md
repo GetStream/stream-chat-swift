@@ -1,3 +1,7 @@
+---
+id: listchange 
+title: ListChange
+--- 
 
 This enum describes the changes of the given collections of items.
 

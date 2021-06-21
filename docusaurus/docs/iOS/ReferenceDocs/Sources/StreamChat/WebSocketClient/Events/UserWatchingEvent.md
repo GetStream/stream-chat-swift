@@ -1,3 +1,7 @@
+---
+id: userwatchingevent 
+title: UserWatchingEvent
+--- 
 
 ``` swift
 public struct UserWatchingEvent: UserSpecificEvent, ChannelSpecificEvent 

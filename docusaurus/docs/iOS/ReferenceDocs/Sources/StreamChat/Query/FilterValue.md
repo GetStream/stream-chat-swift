@@ -1,3 +1,7 @@
+---
+id: filtervalue 
+title: FilterValue
+--- 
 
 A protocol to which all values that can be used as `Filter` values conform.
 

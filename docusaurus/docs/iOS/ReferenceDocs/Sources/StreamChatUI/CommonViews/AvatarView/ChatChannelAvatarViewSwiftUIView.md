@@ -1,3 +1,7 @@
+---
+id: chatchannelavatarviewswiftuiview 
+title: ChatChannelAvatarViewSwiftUIView
+--- 
 
 ``` swift
 @available(iOS 13.0, *)

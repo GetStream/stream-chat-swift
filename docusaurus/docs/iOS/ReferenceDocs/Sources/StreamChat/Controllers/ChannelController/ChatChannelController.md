@@ -1,3 +1,7 @@
+---
+id: chatchannelcontroller 
+title: ChatChannelController
+--- 
 
 `ChatChannelController` is a controller class which allows mutating and observing changes of a specific chat channel.
 
@@ -370,7 +374,7 @@ method and call it every time the user presses a key. The controller will manage
 
   - completion: a completion block with an error if the request was failed.
 
-### `createNewMessage(text:pinning:attachments:quotedMessageId:extraData:completion:)`
+### `createNewMessage(text:pinning:attachments:mentionedUserIds:quotedMessageId:extraData:completion:)`
 
 Creates a new message locally and schedules it for send.
 
@@ -381,6 +385,7 @@ func createNewMessage(
 //        command: String? = nil,
 //        arguments: String? = nil,
         attachments: [AnyAttachmentPayload] = [],
+        mentionedUserIds: [UserId] = [],
         quotedMessageId: MessageId? = nil,
         extraData: ExtraData.Message = .defaultValue,
         completion: ((Result<MessageId, Error>) -> Void)? = nil

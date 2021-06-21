@@ -1,3 +1,7 @@
+---
+id: appearance.colorpalette 
+title: Appearance.ColorPalette
+--- 
 
 ``` swift
 struct ColorPalette 

@@ -1,3 +1,7 @@
+---
+id: datastoreprovider 
+title: DataStoreProvider
+--- 
 
 Types conforming to this protocol automatically exposes public `dataStore` variable.
 

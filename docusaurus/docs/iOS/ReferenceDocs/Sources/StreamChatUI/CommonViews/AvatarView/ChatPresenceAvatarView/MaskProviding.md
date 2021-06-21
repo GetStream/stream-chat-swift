@@ -1,3 +1,7 @@
+---
+id: maskproviding 
+title: MaskProviding
+--- 
 
 Protocol used to get path to make a cutout in a parent view.
 

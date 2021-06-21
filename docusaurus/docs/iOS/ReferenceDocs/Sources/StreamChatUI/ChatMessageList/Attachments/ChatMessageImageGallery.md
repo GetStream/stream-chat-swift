@@ -1,3 +1,7 @@
+---
+id: chatmessageimagegallery 
+title: ChatMessageImageGallery
+--- 
 
 Gallery view that displays images.
 

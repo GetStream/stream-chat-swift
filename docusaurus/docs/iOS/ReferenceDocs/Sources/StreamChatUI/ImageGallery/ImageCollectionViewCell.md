@@ -1,3 +1,7 @@
+---
+id: imagecollectionviewcell 
+title: ImageCollectionViewCell
+--- 
 
 `UICollectionViewCell` for a single image.
 

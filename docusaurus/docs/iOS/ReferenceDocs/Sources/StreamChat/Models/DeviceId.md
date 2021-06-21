@@ -1,3 +1,7 @@
+---
+id: deviceid 
+title: DeviceId
+--- 
 
 A unique identifier of a device.
 

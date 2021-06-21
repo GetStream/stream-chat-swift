@@ -1,3 +1,7 @@
+---
+id: chatreactionsbubbleview 
+title: ChatReactionsBubbleView
+--- 
 
 ``` swift
 open class ChatReactionsBubbleView: _View, AppearanceProvider 

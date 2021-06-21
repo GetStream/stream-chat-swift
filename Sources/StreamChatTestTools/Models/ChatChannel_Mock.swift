@@ -19,7 +19,7 @@ public extension ChannelConfig {
         urlEnrichmentEnabled: Bool = true,
         messageRetention: String = "",
         maxMessageLength: Int = 0,
-        commands: [Command] = [],
+        commands: [Command] = [Command(name: "Giphy", description: "", set: "", args: "")],
         createdAt: Date = .init(),
         updatedAt: Date = .init()
     ) -> Self {

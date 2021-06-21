@@ -1,3 +1,7 @@
+---
+id: lazycachedmapcollection 
+title: LazyCachedMapCollection
+--- 
 
 Read-only collection that applies transformation to element on first access.
 

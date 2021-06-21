@@ -1,3 +1,7 @@
+---
+id: datacontroller 
+title: DataController
+--- 
 
 The base class for controllers which represent and control a data entity. Not meant to be used directly.
 

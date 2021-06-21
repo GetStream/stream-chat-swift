@@ -1,3 +1,7 @@
+---
+id: messagereactionextradata 
+title: MessageReactionExtraData
+--- 
 
 You need to make your custom type conforming to this protocol if you want to use it for extending `ChatMessageReaction` entity
 with your custom additional data.

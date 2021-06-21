@@ -1,3 +1,7 @@
+---
+id: chatchannellistcollectionviewcell 
+title: ChatChannelListCollectionViewCell
+--- 
 
 A `UICollectionViewCell` subclass that shows channel information.
 

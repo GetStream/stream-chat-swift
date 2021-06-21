@@ -1,3 +1,7 @@
+---
+id: channelunreadcount 
+title: ChannelUnreadCount
+--- 
 
 A struct describing unread counts for a channel.
 

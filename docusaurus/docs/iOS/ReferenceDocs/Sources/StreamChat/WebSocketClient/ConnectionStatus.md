@@ -1,3 +1,7 @@
+---
+id: connectionstatus 
+title: ConnectionStatus
+--- 
 
 Describes the possible states of the client connection to the servers.
 

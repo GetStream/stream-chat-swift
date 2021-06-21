@@ -1,3 +1,7 @@
+---
+id: reactionnewevent 
+title: ReactionNewEvent
+--- 
 
 ``` swift
 public struct ReactionNewEvent: ReactionEvent 

@@ -1,3 +1,7 @@
+---
+id: chatmessage 
+title: ChatMessage
+--- 
 
 ## Properties
 

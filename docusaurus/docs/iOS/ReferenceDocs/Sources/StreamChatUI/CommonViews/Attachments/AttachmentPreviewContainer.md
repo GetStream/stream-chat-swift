@@ -1,3 +1,7 @@
+---
+id: attachmentpreviewcontainer 
+title: AttachmentPreviewContainer
+--- 
 
 A view that wraps attachment preview and provides default controls (ie:​ remove button) for it.
 

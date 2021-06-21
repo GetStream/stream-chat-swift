@@ -1,3 +1,7 @@
+---
+id: chatchannelunreadcountview.swiftuiwrapper 
+title: ChatChannelUnreadCountView.SwiftUIWrapper
+--- 
 
 SwiftUI wrapper of `_ChatChannelUnreadCountView`.
 Servers to wrap custom SwiftUI view as a UIKit view so it can be easily injected into `_Components`.

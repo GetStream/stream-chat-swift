@@ -1,3 +1,7 @@
+---
+id: clienterror.clientisnotinactivemode 
+title: ClientError.ClientIsNotInActiveMode
+--- 
 
 ``` swift
 public class ClientIsNotInActiveMode: ClientError 

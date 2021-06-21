@@ -1,3 +1,7 @@
+---
+id: messageactionstransitioncontroller 
+title: MessageActionsTransitionController
+--- 
 
 Transitions controller for `ChatMessagePopupVC`.
 

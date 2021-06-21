@@ -1,3 +1,7 @@
+---
+id: chatmessagecontentviewdelegate 
+title: ChatMessageContentViewDelegate
+--- 
 
 A protocol for message content delegate responsible for action handling.
 

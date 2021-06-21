@@ -1,3 +1,7 @@
+---
+id: swipeableviewdelegate 
+title: SwipeableViewDelegate
+--- 
 
 Delegate responsible for easily assigning swipe action buttons to collectionView cells.
 

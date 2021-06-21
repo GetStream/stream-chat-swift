@@ -1,3 +1,7 @@
+---
+id: chatconnectioncontroller 
+title: ChatConnectionController
+--- 
 
 `ChatConnectionController` is a controller class which allows to explicitly
 connect/disconnect the `ChatClient` and observe connection events.

@@ -1,3 +1,7 @@
+---
+id: chatmentionsuggestioncollectionviewcell 
+title: ChatMentionSuggestionCollectionViewCell
+--- 
 
 `UICollectionView` subclass which embeds inside `ChatMessageComposerMentionCellView`
 

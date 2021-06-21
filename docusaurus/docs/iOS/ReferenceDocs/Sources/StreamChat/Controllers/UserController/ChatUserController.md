@@ -1,3 +1,7 @@
+---
+id: chatusercontroller 
+title: ChatUserController
+--- 
 
 `_ChatUserController` is a controller class which allows mutating and observing changes of a specific chat user.
 

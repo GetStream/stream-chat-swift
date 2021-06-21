@@ -1,3 +1,7 @@
+---
+id: chatmessageinteractiveattachmentview.actionbutton 
+title: ChatMessageInteractiveAttachmentView.ActionButton
+--- 
 
 ``` swift
 open class ActionButton: _Button, AppearanceProvider 

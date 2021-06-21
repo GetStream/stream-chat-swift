@@ -1,3 +1,7 @@
+---
+id: logformatter 
+title: LogFormatter
+--- 
 
 ``` swift
 public protocol LogFormatter 

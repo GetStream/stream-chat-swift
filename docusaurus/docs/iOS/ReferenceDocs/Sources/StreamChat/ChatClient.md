@@ -1,3 +1,7 @@
+---
+id: chatclient 
+title: ChatClient
+--- 
 
 The root object representing a Stream Chat.
 

@@ -1,3 +1,7 @@
+---
+id: attachmentuploadingstate 
+title: AttachmentUploadingState
+--- 
 
 A type representing the uploading state for attachments that require prior uploading.
 

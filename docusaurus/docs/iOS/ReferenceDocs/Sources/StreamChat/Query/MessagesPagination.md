@@ -1,3 +1,7 @@
+---
+id: messagespagination 
+title: MessagesPagination
+--- 
 
 ``` swift
 public struct MessagesPagination: Encodable, Equatable 

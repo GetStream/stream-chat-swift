@@ -1,3 +1,7 @@
+---
+id: chatmessagecontentview.swiftuiwrapper 
+title: ChatMessageContentView.SwiftUIWrapper
+--- 
 
 SwiftUI wrapper of `_ChatMessageContentView`.
 Servers to wrap custom SwiftUI view as a UIKit view so it can be easily injected into `_Components`.

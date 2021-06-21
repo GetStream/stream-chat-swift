@@ -1,3 +1,7 @@
+---
+id: cellactionview 
+title: CellActionView
+--- 
 
 View which wraps inside `SwipeActionButton` for leading layout
 

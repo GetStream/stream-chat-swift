@@ -1,3 +1,7 @@
+---
+id: zoomdismissalinteractioncontroller 
+title: ZoomDismissalInteractionController
+--- 
 
 Controller for interactive dismissal.
 

@@ -1,3 +1,7 @@
+---
+id: chatchannelmemberlistcontroller 
+title: ChatChannelMemberListController
+--- 
 
 `_ChatChannelMemberListController` is a controller class which allows observing
 a list of chat users based on the provided query.

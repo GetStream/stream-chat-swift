@@ -1,3 +1,7 @@
+---
+id: themeprovider 
+title: ThemeProvider
+--- 
 
 ``` swift
 public protocol ThemeProvider: ComponentsProvider, AppearanceProvider 

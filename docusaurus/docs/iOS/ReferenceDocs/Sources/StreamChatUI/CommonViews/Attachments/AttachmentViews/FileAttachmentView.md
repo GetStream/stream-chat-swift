@@ -1,3 +1,7 @@
+---
+id: fileattachmentview 
+title: FileAttachmentView
+--- 
 
 A view that displays the file attachment.
 

@@ -1,3 +1,7 @@
+---
+id: channelhiddenevent 
+title: ChannelHiddenEvent
+--- 
 
 ``` swift
 public struct ChannelHiddenEvent: ChannelSpecificEvent 

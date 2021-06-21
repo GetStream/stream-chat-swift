@@ -1,3 +1,7 @@
+---
+id: quotedchatmessageview 
+title: QuotedChatMessageView
+--- 
 
 A view that displays a quoted message.
 

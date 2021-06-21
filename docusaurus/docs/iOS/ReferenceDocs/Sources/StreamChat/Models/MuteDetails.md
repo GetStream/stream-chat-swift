@@ -1,3 +1,7 @@
+---
+id: mutedetails 
+title: MuteDetails
+--- 
 
 Describes user/channel mute details.
 

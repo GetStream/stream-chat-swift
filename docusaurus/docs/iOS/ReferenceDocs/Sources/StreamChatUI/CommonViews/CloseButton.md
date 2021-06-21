@@ -1,3 +1,7 @@
+---
+id: closebutton 
+title: CloseButton
+--- 
 
 A Button subclass that should be used for closing.
 

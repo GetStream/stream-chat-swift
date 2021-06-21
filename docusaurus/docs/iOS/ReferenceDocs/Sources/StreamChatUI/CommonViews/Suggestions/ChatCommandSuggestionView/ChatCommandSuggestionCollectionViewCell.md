@@ -1,3 +1,7 @@
+---
+id: chatcommandsuggestioncollectionviewcell 
+title: ChatCommandSuggestionCollectionViewCell
+--- 
 
 A view cell that displays a command.
 

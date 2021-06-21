@@ -1,3 +1,7 @@
+---
+id: filterscope 
+title: FilterScope
+--- 
 
 A phantom protocol used to limit the scope of `Filter`.
 

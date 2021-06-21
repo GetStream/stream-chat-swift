@@ -1,3 +1,7 @@
+---
+id: navigationrouter 
+title: NavigationRouter
+--- 
 
 A root class for all routes in the SDK.
 

@@ -1,3 +1,7 @@
+---
+id: chatchannelread 
+title: ChatChannelRead
+--- 
 
 A type representing a user's last read action on a channel.
 

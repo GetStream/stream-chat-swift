@@ -1,3 +1,7 @@
+---
+id: composervc 
+title: ComposerVC
+--- 
 
 A view controller that manages the composer view.
 
@@ -270,6 +274,14 @@ open func showMentionSuggestions(for typingMention: String, mentionRange: NSRang
   - typingMention: The potential user mention the current user is typing.
   - mentionRange: The position where the current user is typing a mention to it can be replaced with the suggestion.
 
+### `mentionText(for:)`
+
+Provides the mention text for composer text field, when the user selects a mention suggestion.
+
+``` swift
+open func mentionText(for user: _ChatUser<ExtraData.User>) -> String 
+```
+
 ### `showSuggestions()`
 
 Shows the suggestions view
@@ -290,6 +302,16 @@ open func dismissSuggestions()
 
 ``` swift
 open func textViewDidChange(_ textView: UITextView) 
+```
+
+### `textView(_:shouldChangeTextIn:replacementText:)`
+
+``` swift
+open func textView(
+        _ textView: UITextView,
+        shouldChangeTextIn range: NSRange,
+        replacementText text: String
+    ) -> Bool 
 ```
 
 ### `imagePickerController(_:didFinishPickingMediaWithInfo:)`

@@ -1,3 +1,7 @@
+---
+id: chatmessageimagegallery.uploadingoverlay 
+title: ChatMessageImageGallery.UploadingOverlay
+--- 
 
 ``` swift
 open class UploadingOverlay: _View, ThemeProvider 

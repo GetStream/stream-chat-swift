@@ -1,3 +1,7 @@
+---
+id: chatthreadarrowview.direction 
+title: ChatThreadArrowView.Direction
+--- 
 
 ``` swift
 public enum Direction 

@@ -1,3 +1,7 @@
+---
+id: blockuseractionitem 
+title: BlockUserActionItem
+--- 
 
 Instance of `ChatMessageActionItem` for blocking user.
 

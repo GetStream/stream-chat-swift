@@ -1,3 +1,7 @@
+---
+id: entitychange 
+title: EntityChange
+--- 
 
 This enum describes the changes to a certain item when observing it.
 

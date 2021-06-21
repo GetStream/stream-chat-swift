@@ -1,3 +1,7 @@
+---
+id: chatmessagegiphyview 
+title: ChatMessageGiphyView
+--- 
 
 ``` swift
 open class _ChatMessageGiphyView<ExtraData: ExtraDataTypes>: _View, ComponentsProvider 

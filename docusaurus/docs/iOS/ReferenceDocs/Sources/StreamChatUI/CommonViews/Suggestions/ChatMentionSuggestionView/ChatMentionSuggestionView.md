@@ -1,3 +1,7 @@
+---
+id: chatmentionsuggestionview 
+title: ChatMentionSuggestionView
+--- 
 
 A View that is embed inside `UICollectionViewCell`  which shows information about user which we want to tag in suggestions
 

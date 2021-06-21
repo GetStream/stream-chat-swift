@@ -1,3 +1,7 @@
+---
+id: chatmessagegiphyattachment 
+title: ChatMessageGiphyAttachment
+--- 
 
 A type alias for attachment with `GiphyAttachmentPayload` payload type.
 

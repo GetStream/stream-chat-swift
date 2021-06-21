@@ -1,3 +1,7 @@
+---
+id: memberaddedevent 
+title: MemberAddedEvent
+--- 
 
 ``` swift
 public struct MemberAddedEvent: MemberEvent, ChannelSpecificEvent, EventWithPayload 

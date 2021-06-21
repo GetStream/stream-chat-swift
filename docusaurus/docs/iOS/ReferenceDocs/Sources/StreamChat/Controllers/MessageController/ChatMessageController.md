@@ -1,3 +1,7 @@
+---
+id: chatmessagecontroller 
+title: ChatMessageController
+--- 
 
 `ChatMessageController` is a controller class which allows observing and mutating a chat message entity.
 
@@ -138,7 +142,7 @@ func deleteMessage(completion: ((Error?) -> Void)? = nil)
 
   - completion: The completion. Will be called on a **callbackQueue** when the network request is finished. If request fails, the completion will be called with an error.
 
-### `createNewReply(text:pinning:attachments:showReplyInChannel:quotedMessageId:extraData:completion:)`
+### `createNewReply(text:pinning:attachments:mentionedUserIds:showReplyInChannel:quotedMessageId:extraData:completion:)`
 
 Creates a new reply message locally and schedules it for send.
 
@@ -149,6 +153,7 @@ func createNewReply(
 //        command: String? = nil,
 //        arguments: String? = nil,
         attachments: [AnyAttachmentPayload] = [],
+        mentionedUserIds: [UserId] = [],
         showReplyInChannel: Bool = false,
         quotedMessageId: MessageId? = nil,
         extraData: ExtraData.Message = .defaultValue,

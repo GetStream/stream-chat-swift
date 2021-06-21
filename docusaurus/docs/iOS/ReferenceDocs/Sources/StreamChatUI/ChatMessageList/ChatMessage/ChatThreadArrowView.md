@@ -1,3 +1,7 @@
+---
+id: chatthreadarrowview 
+title: ChatThreadArrowView
+--- 
 
 ``` swift
 open class ChatThreadArrowView: _View, AppearanceProvider 

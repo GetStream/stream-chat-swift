@@ -1,3 +1,7 @@
+---
+id: listcollectionviewlayoutdelegate 
+title: ListCollectionViewLayoutDelegate
+--- 
 
 The `ListCollectionViewLayout` delegate to control how to display the list.
 

@@ -1,3 +1,7 @@
+---
+id: chatusersearchcontrollerdelegate 
+title: ChatUserSearchControllerDelegate
+--- 
 
 `ChatUserSearchController` uses this protocol to communicate changes to its delegate.
 

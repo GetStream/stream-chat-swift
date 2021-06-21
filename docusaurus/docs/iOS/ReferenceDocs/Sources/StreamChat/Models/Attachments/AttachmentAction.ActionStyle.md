@@ -1,3 +1,7 @@
+---
+id: attachmentaction.actionstyle 
+title: AttachmentAction.ActionStyle
+--- 
 
 An attachment action style, e.g. primary button.
 

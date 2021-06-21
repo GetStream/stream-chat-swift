@@ -1,3 +1,7 @@
+---
+id: chatclientconfig.chatchannel 
+title: ChatClientConfig.ChatChannel
+--- 
 
 `ChatChannel` specific local caching and model serialization settings.
 

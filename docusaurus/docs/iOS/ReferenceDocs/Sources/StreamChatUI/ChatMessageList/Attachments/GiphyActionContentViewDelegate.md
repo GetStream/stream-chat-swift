@@ -1,3 +1,7 @@
+---
+id: giphyactioncontentviewdelegate 
+title: GiphyActionContentViewDelegate
+--- 
 
 The delegate used `GiphyAttachmentViewInjector` to communicate user interactions.
 

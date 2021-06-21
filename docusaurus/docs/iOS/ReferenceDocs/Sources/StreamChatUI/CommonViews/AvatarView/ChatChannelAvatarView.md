@@ -1,3 +1,7 @@
+---
+id: chatchannelavatarview 
+title: ChatChannelAvatarView
+--- 
 
 A view that shows a channel avatar including an online indicator if any user is online.
 

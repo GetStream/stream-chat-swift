@@ -1,3 +1,7 @@
+---
+id: chatchannelreadstatuscheckmarkview 
+title: ChatChannelReadStatusCheckmarkView
+--- 
 
 A view that shows a read/unread status of the last message in channel.
 

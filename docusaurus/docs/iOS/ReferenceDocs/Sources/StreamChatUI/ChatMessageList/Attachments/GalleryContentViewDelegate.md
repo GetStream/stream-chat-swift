@@ -1,3 +1,7 @@
+---
+id: gallerycontentviewdelegate 
+title: GalleryContentViewDelegate
+--- 
 
 The delegate used `GalleryAttachmentViewInjector` to communicate user interactions.
 

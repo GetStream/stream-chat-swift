@@ -1,3 +1,7 @@
+---
+id: imagegalleryvc 
+title: ImageGalleryVC
+--- 
 
 View controller to showcase and slide through multiple images.
 

@@ -1,3 +1,7 @@
+---
+id: chatmessagedefaultreactionsbubbleview 
+title: ChatMessageDefaultReactionsBubbleView
+--- 
 
 ``` swift
 open class _ChatMessageDefaultReactionsBubbleView<ExtraData: ExtraDataTypes>: _ChatMessageReactionsBubbleView<ExtraData> 

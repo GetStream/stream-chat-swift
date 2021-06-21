@@ -1,3 +1,7 @@
+---
+id: messagetype 
+title: MessageType
+--- 
 
 A type of the message.
 

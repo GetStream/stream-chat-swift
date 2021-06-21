@@ -1,3 +1,7 @@
+---
+id: copyactionitem 
+title: CopyActionItem
+--- 
 
 Instance of `ChatMessageActionItem` for copy message action.
 

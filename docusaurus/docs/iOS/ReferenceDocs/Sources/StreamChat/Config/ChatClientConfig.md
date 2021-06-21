@@ -1,3 +1,7 @@
+---
+id: chatclientconfig 
+title: ChatClientConfig
+--- 
 
 A configuration object used to configure a `ChatClient` instance.
 

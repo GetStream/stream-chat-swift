@@ -1,3 +1,7 @@
+---
+id: chatchannelunreadcountviewswiftuiview 
+title: ChatChannelUnreadCountViewSwiftUIView
+--- 
 
 ``` swift
 @available(iOS 13.0, *)

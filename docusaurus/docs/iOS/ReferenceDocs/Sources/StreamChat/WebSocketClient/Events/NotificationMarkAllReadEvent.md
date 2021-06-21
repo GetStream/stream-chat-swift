@@ -1,3 +1,7 @@
+---
+id: notificationmarkallreadevent 
+title: NotificationMarkAllReadEvent
+--- 
 
 ``` swift
 public struct NotificationMarkAllReadEvent: UserSpecificEvent 

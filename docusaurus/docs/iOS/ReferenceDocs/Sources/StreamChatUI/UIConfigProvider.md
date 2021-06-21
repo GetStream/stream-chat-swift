@@ -1,3 +1,7 @@
+---
+id: uiconfigprovider 
+title: UIConfigProvider
+--- 
 
 ``` swift
 @available(

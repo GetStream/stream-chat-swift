@@ -1,3 +1,7 @@
+---
+id: giphyattachmentpayload 
+title: GiphyAttachmentPayload
+--- 
 
 Represents a payload for attachments with `.giphy` type.
 

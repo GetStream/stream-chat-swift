@@ -1,3 +1,7 @@
+---
+id: streamimagecdn 
+title: StreamImageCDN
+--- 
 
 ``` swift
 public struct StreamImageCDN: ImageCDN 

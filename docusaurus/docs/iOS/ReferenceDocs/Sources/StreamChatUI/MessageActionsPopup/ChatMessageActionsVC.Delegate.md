@@ -1,3 +1,7 @@
+---
+id: chatmessageactionsvc.delegate 
+title: ChatMessageActionsVC.Delegate
+--- 
 
 Delegate instance for `_ChatMessageActionsVC`.
 

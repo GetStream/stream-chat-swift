@@ -1,3 +1,7 @@
+---
+id: linkattachmentviewinjector 
+title: LinkAttachmentViewInjector
+--- 
 
 View injector for showing link attachments.
 

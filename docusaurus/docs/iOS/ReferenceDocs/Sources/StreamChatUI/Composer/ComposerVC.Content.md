@@ -1,3 +1,7 @@
+---
+id: composervc.content 
+title: ComposerVC.Content
+--- 
 
 The content of the composer.
 
@@ -7,7 +11,7 @@ public struct Content
 
 ## Initializers
 
-### `init(text:state:editingMessage:quotingMessage:threadMessage:attachments:command:)`
+### `init(text:state:editingMessage:quotingMessage:threadMessage:attachments:mentionedUsers:command:)`
 
 ``` swift
 public init(
@@ -17,6 +21,7 @@ public init(
             quotingMessage: _ChatMessage<ExtraData>?,
             threadMessage: _ChatMessage<ExtraData>?,
             attachments: [AnyAttachmentPayload],
+            mentionedUsers: Set<_ChatUser<ExtraData.User>>,
             command: Command?
         ) 
 ```
@@ -69,6 +74,14 @@ The attachments of the message.
 
 ``` swift
 public var attachments: [AnyAttachmentPayload]
+```
+
+### `mentionedUsers`
+
+The mentioned users in the message.
+
+``` swift
+public var mentionedUsers: Set<_ChatUser<ExtraData.User>>
 ```
 
 ### `command`

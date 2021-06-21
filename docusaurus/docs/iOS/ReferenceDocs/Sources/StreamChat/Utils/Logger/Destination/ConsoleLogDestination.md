@@ -1,3 +1,7 @@
+---
+id: consolelogdestination 
+title: ConsoleLogDestination
+--- 
 
 Basic destination for outputting messages to console.
 

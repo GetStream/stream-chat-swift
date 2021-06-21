@@ -1,3 +1,7 @@
+---
+id: healthcheckevent 
+title: HealthCheckEvent
+--- 
 
 ``` swift
 public struct HealthCheckEvent: ConnectionEvent, EventWithPayload 

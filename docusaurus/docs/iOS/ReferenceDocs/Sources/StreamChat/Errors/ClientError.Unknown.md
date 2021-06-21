@@ -1,3 +1,7 @@
+---
+id: clienterror.unknown 
+title: ClientError.Unknown
+--- 
 
 An unknown error.
 

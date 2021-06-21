@@ -1,3 +1,7 @@
+---
+id: fileattachmentview.content 
+title: FileAttachmentView.Content
+--- 
 
 ``` swift
 public struct Content 

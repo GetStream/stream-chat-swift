@@ -1,3 +1,7 @@
+---
+id: notificationremovedfromchannelevent 
+title: NotificationRemovedFromChannelEvent
+--- 
 
 ``` swift
 public struct NotificationRemovedFromChannelEvent: CurrentUserEvent, ChannelSpecificEvent 

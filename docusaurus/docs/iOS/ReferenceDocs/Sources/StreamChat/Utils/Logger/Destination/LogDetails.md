@@ -1,3 +1,7 @@
+---
+id: logdetails 
+title: LogDetails
+--- 
 
 Encapsulates the components of a log message.
 

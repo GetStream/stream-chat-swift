@@ -1,3 +1,7 @@
+---
+id: appearance 
+title: Appearance
+--- 
 
 An object containing visual configuration for whole application.
 

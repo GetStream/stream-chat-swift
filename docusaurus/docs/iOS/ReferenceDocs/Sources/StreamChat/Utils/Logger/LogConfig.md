@@ -1,3 +1,7 @@
+---
+id: logconfig 
+title: LogConfig
+--- 
 
 ``` swift
 public enum LogConfig 

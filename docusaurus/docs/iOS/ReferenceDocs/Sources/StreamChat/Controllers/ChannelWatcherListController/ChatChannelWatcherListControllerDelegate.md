@@ -1,3 +1,7 @@
+---
+id: chatchannelwatcherlistcontrollerdelegate 
+title: ChatChannelWatcherListControllerDelegate
+--- 
 
 ``` swift
 public protocol _ChatChannelWatcherListControllerDelegate: DataControllerStateDelegate 

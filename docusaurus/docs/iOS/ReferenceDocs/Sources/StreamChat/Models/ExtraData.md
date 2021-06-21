@@ -1,3 +1,7 @@
+---
+id: extradata 
+title: ExtraData
+--- 
 
 A parent protocol for all extra data protocols. Not meant to be adopted directly.
 
