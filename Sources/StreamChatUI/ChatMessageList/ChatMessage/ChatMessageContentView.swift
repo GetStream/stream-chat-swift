@@ -214,7 +214,7 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, ThemeProvi
             let bubbleView = createBubbleView()
             bubbleView.embed(bubbleContentContainer)
 
-            if options.contains(.continuousBubble) {
+            if options.contains(.continuousBubble) && !options.contains(.threadInfo) {
                 mainContainer.layoutMargins.bottom = 0
             }
 
