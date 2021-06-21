@@ -746,9 +746,8 @@ private extension _ChatMessage {
     var reactions: [ChatMessageReactionData] {
         let userReactionIDs = Set(currentUserReactions.map(\.type))
         return reactionScores
-            .keys
-            .sorted { $0.rawValue < $1.rawValue }
-            .map { .init(type: $0, isChosenByCurrentUser: userReactionIDs.contains($0)) }
+            .sorted { $0.key.rawValue < $1.key.rawValue }
+            .map { .init(type: $0.key, score: $0.value, isChosenByCurrentUser: userReactionIDs.contains($0.key)) }
     }
 }
 
