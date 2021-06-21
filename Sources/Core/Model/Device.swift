@@ -17,7 +17,7 @@ public struct Device: Codable {
     /// A device identifier.
     public let id: String
     /// A created date.
-    public let created: Date
+    public let created: Date?
     
     /// Init a device for Push Notifications.
     ///
