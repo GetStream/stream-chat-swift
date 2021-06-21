@@ -1,3 +1,7 @@
+---
+id: chatmessagelistvc 
+title: ChatMessageListVC
+--- 
 
 Controller that shows list of messages and composer together in the selected channel.
 

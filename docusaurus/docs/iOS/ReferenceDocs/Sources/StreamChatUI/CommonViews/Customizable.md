@@ -1,3 +1,7 @@
+---
+id: customizable 
+title: Customizable
+--- 
 
 ``` swift
 public protocol Customizable 

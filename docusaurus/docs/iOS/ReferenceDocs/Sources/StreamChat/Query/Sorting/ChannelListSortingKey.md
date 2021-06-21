@@ -1,3 +1,7 @@
+---
+id: channellistsortingkey 
+title: ChannelListSortingKey
+--- 
 
 `ChannelListSortingKey` is keys by which you can get sorted channels after query.
 

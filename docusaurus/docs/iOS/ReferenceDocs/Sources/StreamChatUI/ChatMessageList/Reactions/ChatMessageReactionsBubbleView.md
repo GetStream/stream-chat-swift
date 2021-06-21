@@ -1,3 +1,7 @@
+---
+id: chatmessagereactionsbubbleview 
+title: ChatMessageReactionsBubbleView
+--- 
 
 ``` swift
 open class _ChatMessageReactionsBubbleView<ExtraData: ExtraDataTypes>: _View, ThemeProvider 

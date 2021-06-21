@@ -1,3 +1,7 @@
+---
+id: chatmessageactionitem 
+title: ChatMessageActionItem
+--- 
 
 Protocol for action item.
 Action items are then showed in `_ChatMessageActionsView`.

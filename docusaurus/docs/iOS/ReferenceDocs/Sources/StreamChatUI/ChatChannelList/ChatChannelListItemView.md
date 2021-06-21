@@ -1,3 +1,7 @@
+---
+id: chatchannellistitemview 
+title: ChatChannelListItemView
+--- 
 ![ChatChannelListItemView](../../../../assets/ChannelListItemView_documentation.default-light.png)
 
 An `UIView` subclass that shows summary and preview information about a given channel.

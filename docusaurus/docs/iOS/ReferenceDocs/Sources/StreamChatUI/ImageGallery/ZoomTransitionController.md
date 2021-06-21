@@ -1,3 +1,7 @@
+---
+id: zoomtransitioncontroller 
+title: ZoomTransitionController
+--- 
 
 Object for controlling zoom transition.
 

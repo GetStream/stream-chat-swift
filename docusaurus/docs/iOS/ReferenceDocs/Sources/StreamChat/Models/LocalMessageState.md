@@ -1,3 +1,7 @@
+---
+id: localmessagestate 
+title: LocalMessageState
+--- 
 
 A possible additional local state of the message. Applies only for the messages of the current user.
 

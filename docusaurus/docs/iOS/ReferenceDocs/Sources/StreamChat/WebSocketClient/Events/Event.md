@@ -1,3 +1,7 @@
+---
+id: event 
+title: Event
+--- 
 
 An `Event` object representing an event in the chat system.
 

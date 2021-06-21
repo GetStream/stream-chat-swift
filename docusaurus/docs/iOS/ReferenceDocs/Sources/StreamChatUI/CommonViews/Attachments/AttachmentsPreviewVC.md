@@ -1,3 +1,7 @@
+---
+id: attachmentspreviewvc 
+title: AttachmentsPreviewVC
+--- 
 
 ``` swift
 open class _AttachmentsPreviewVC<ExtraData: ExtraDataTypes>: _ViewController, ComponentsProvider 

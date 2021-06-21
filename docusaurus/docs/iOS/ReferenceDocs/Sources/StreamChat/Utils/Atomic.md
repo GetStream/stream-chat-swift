@@ -1,3 +1,7 @@
+---
+id: atomic 
+title: Atomic
+--- 
 
 A mutable thread safe variable.
 

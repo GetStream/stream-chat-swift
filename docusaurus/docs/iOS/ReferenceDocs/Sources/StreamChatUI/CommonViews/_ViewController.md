@@ -1,3 +1,7 @@
+---
+id: _viewcontroller 
+title: _ViewController
+--- 
 
 ``` swift
 open class _ViewController: UIViewController, Customizable 

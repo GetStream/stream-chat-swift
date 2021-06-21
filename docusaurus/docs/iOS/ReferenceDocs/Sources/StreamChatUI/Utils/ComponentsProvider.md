@@ -1,3 +1,7 @@
+---
+id: componentsprovider 
+title: ComponentsProvider
+--- 
 
 ``` swift
 public protocol ComponentsProvider: GenericComponentsProvider 

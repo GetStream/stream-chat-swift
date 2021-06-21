@@ -1,3 +1,7 @@
+---
+id: clienterror.fetchfailed 
+title: ClientError.FetchFailed
+--- 
 
 ``` swift
 public class FetchFailed: Error 

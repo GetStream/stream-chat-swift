@@ -1,3 +1,7 @@
+---
+id: device 
+title: Device
+--- 
 
 An object representing a device which can receive push notifications.
 

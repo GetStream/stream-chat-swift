@@ -1,3 +1,7 @@
+---
+id: defaultchatchannelnamer(maxmembernames_separator_) 
+title: DefaultChatChannelNamer(maxMemberNames_separator_)
+--- 
 
 Generates a name for the given channel, given the current user's id.
 

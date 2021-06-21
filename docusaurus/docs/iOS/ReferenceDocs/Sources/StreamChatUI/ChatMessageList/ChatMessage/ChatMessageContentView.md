@@ -1,3 +1,7 @@
+---
+id: chatmessagecontentview 
+title: ChatMessageContentView
+--- 
 
 A view that displays the message content.
 
@@ -97,6 +101,15 @@ Exists if `layout(options:​ MessageLayoutOptions)` was invoked with the option
 public private(set) var authorAvatarView: ChatAvatarView?
 ```
 
+### `authorAvatarSpacer`
+
+Shows a spacer where the author avatar should be.
+Exists if `layout(options:​ MessageLayoutOptions)` was invoked with the options containing `.avatarSizePadding`.
+
+``` swift
+public private(set) var authorAvatarSpacer: UIView?
+```
+
 ### `textView`
 
 Shows message text content.
@@ -147,7 +160,7 @@ public private(set) var onlyVisibleForYouLabel: UILabel?
 ### `errorIndicatorView`
 
 Shows error indicator.
-Exists if `layout(options:​ MessageLayoutOptions)` was invoked with the options containing `.error`.
+Exists if `layout(options:​ MessageLayoutOptions)` was invoked with the options containing `.errorIndicator`.
 
 ``` swift
 public private(set) var errorIndicatorView: ChatMessageErrorIndicator?
@@ -269,6 +282,15 @@ The container which holds `onlyVisibleForYouIconImageView` and `onlyVisibleForYo
 public private(set) var onlyVisibleForYouContainer: ContainerStackView?
 ```
 
+### `errorIndicatorContainer`
+
+The container which holds `errorIndicatorView`
+Exists if `layout(options:​ MessageLayoutOptions)` was invoked with the options containing `.errorIndicator`.
+
+``` swift
+public private(set) var errorIndicatorContainer: UIView?
+```
+
 ### `bubbleToReactionsConstraint`
 
 Constraint between bubble and reactions.
@@ -366,6 +388,18 @@ open func createAvatarView() -> ChatAvatarView
 
 The `authorAvatarView` subview.
 
+### `createAvatarSpacer()`
+
+Instantiates, configures and assigns `createAvatarSpacer` when called for the first time.
+
+``` swift
+open func createAvatarSpacer() -> UIView 
+```
+
+#### Returns
+
+The `authorAvatarSpacer` subview.
+
 ### `createThreadAvatarView()`
 
 Instantiates, configures and assigns `threadAvatarView` when called for the first time.
@@ -449,6 +483,18 @@ open func createErrorIndicatorView() -> ChatMessageErrorIndicator
 #### Returns
 
 The `errorIndicatorView` subview.
+
+### `createErrorIndicatorContainer()`
+
+Instantiates, configures and assigns `errorIndicatorContainer` when called for the first time.
+
+``` swift
+open func createErrorIndicatorContainer() -> UIView 
+```
+
+#### Returns
+
+The `errorIndicatorContainer` subview.
 
 ### `createReactionsBubbleView()`
 

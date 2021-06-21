@@ -1,3 +1,7 @@
+---
+id: command 
+title: Command
+--- 
 
 A command in a message, e.g. /giphy.
 

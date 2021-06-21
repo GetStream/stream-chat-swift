@@ -1,3 +1,7 @@
+---
+id: containerstackview.distribution 
+title: ContainerStackView.Distribution
+--- 
 
 Describes the size distribution of the arranged subviews in a container stack view.
 

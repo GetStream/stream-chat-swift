@@ -1,3 +1,7 @@
+---
+id: chatchannel 
+title: ChatChannel
+--- 
 
 A type representing a chat channel. `_ChatChannel` is an immutable snapshot of a channel entity at the given time.
 

@@ -1,3 +1,7 @@
+---
+id: threadreplyactionitem 
+title: ThreadReplyActionItem
+--- 
 
 Instance of `ChatMessageActionItem` for thread reply.
 

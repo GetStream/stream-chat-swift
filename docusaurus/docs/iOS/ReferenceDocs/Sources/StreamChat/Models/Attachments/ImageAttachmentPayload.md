@@ -1,3 +1,7 @@
+---
+id: imageattachmentpayload 
+title: ImageAttachmentPayload
+--- 
 
 Represents a payload for attachments with `.image` type.
 

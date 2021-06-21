@@ -1,3 +1,7 @@
+---
+id: chatmessagefileattachmentlistview.itemview 
+title: ChatMessageFileAttachmentListView.ItemView
+--- 
 
 ``` swift
 open class ItemView: _View, ThemeProvider 

@@ -1,3 +1,7 @@
+---
+id: clienterror.unsupportedeventtype 
+title: ClientError.UnsupportedEventType
+--- 
 
 ``` swift
 public class UnsupportedEventType: ClientError 

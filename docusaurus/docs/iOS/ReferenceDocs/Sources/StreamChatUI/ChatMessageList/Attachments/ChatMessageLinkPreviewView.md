@@ -1,3 +1,7 @@
+---
+id: chatmessagelinkpreviewview 
+title: ChatMessageLinkPreviewView
+--- 
 
 ``` swift
 open class _ChatMessageLinkPreviewView<ExtraData: ExtraDataTypes>: _Control, ThemeProvider 

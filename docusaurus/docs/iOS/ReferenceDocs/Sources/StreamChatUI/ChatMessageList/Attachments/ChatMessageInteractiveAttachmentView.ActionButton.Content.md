@@ -1,3 +1,7 @@
+---
+id: chatmessageinteractiveattachmentview.actionbutton.content 
+title: ChatMessageInteractiveAttachmentView.ActionButton.Content
+--- 
 
 ``` swift
 public struct Content 

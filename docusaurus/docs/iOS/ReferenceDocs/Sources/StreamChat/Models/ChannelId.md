@@ -1,3 +1,7 @@
+---
+id: channelid 
+title: ChannelId
+--- 
 
 A type representing a unique identifier of a `ChatChannel`.
 

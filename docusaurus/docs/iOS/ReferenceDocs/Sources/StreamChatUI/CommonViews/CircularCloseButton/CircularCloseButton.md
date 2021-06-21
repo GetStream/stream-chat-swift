@@ -1,3 +1,7 @@
+---
+id: circularclosebutton 
+title: CircularCloseButton
+--- 
 
 Button for closing, dismissing or clearing information.
 

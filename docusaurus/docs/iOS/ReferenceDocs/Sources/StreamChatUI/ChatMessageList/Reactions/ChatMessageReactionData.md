@@ -1,3 +1,7 @@
+---
+id: chatmessagereactiondata 
+title: ChatMessageReactionData
+--- 
 
 ``` swift
 public struct ChatMessageReactionData 

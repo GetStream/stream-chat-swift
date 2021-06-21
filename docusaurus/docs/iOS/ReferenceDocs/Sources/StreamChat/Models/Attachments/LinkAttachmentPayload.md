@@ -1,3 +1,7 @@
+---
+id: linkattachmentpayload 
+title: LinkAttachmentPayload
+--- 
 
 Represents a payload for attachments with `.linkPreview` type.
 

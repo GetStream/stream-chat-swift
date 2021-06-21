@@ -1,3 +1,7 @@
+---
+id: channelconfig 
+title: ChannelConfig
+--- 
 
 A channel config.
 

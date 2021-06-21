@@ -1,3 +1,7 @@
+---
+id: resendactionitem 
+title: ResendActionItem
+--- 
 
 Instance of `ChatMessageActionItem` for resending message action.
 

@@ -1,3 +1,7 @@
+---
+id: messagepinning 
+title: MessagePinning
+--- 
 
 Describes the pinning expiration
 

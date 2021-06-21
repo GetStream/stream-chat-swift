@@ -1,3 +1,7 @@
+---
+id: chatavatarview 
+title: ChatAvatarView
+--- 
 ![ChatAvatarView](../../../../../assets/ChatAvatarView_documentation.default-light.png)
 
 A view that displays the avatar image. By default a circular image.

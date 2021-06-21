@@ -1,3 +1,7 @@
+---
+id: inlinereplyactionitem 
+title: InlineReplyActionItem
+--- 
 
 Instance of `ChatMessageActionItem` for inline reply.
 

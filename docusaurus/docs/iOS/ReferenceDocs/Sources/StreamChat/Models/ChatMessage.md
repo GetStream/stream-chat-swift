@@ -1,3 +1,7 @@
+---
+id: chatmessage 
+title: ChatMessage
+--- 
 
 A type representing a chat message. `_ChatMessage` is an immutable snapshot of a chat message entity at the given time.
 

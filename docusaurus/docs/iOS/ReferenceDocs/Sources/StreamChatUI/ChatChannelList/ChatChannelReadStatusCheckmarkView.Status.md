@@ -1,3 +1,7 @@
+---
+id: chatchannelreadstatuscheckmarkview.status 
+title: ChatChannelReadStatusCheckmarkView.Status
+--- 
 
 An underlying type for status in the view.
 Right now corresponding functionality in LLC is missing and it will likely be replaced with the type from LLC.
@@ -8,13 +12,13 @@ public enum Status
 
 ## Enumeration Cases
 
-### `unread`
+### `read`
 
 ``` swift
 case read, unread, empty
 ```
 
-### `read`
+### `unread`
 
 ``` swift
 case read, unread, empty

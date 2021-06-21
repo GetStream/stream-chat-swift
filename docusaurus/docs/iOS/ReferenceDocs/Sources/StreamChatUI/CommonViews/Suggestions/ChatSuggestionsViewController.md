@@ -1,3 +1,7 @@
+---
+id: chatsuggestionsviewcontroller 
+title: ChatSuggestionsViewController
+--- 
 
 A view controller that shows suggestions of commands or mentions.
 

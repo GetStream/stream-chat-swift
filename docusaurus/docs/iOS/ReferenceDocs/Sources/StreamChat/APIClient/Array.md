@@ -1,3 +1,7 @@
+---
+id: array 
+title: Array
+--- 
 
 ## Initializers
 

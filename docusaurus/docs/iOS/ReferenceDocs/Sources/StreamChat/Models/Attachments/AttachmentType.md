@@ -1,3 +1,7 @@
+---
+id: attachmenttype 
+title: AttachmentType
+--- 
 
 An attachment type.
 There are some predefined types on backend but any type can be introduced and sent to backend.

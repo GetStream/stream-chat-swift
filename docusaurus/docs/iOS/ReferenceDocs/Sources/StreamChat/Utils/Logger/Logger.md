@@ -1,3 +1,7 @@
+---
+id: logger 
+title: Logger
+--- 
 
 Entitiy used for loggin messages.
 

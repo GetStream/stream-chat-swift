@@ -1,3 +1,7 @@
+---
+id: currentchatusercontroller 
+title: CurrentChatUserController
+--- 
 
 `CurrentChatUserController` is a controller class which allows observing and mutating the currently logged-in
 user of `ChatClient`.

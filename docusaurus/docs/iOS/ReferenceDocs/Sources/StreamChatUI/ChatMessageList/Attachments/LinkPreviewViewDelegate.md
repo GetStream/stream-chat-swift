@@ -1,3 +1,7 @@
+---
+id: linkpreviewviewdelegate 
+title: LinkPreviewViewDelegate
+--- 
 
 The delegate used in `LinkAttachmentViewInjector` to communicate user interactions.
 

@@ -1,3 +1,7 @@
+---
+id: inputtextview 
+title: InputTextView
+--- 
 
 A view for inputting text with placeholder support. Since it is a subclass
 of `UITextView`, the `UITextViewDelegate` can be used to observe text changes.

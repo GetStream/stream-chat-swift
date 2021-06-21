@@ -1,3 +1,7 @@
+---
+id: imagepreviewable 
+title: ImagePreviewable
+--- 
 
 Properties necessary for image to be previewed.
 

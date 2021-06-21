@@ -1,3 +1,7 @@
+---
+id: listcollectionviewlayout 
+title: ListCollectionViewLayout
+--- 
 
 An `UICollectionViewFlowLayout` implementation to make the collection view behave as a `UITableView`.
 

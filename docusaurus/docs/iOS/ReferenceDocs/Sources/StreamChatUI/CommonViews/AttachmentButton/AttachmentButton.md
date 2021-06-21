@@ -1,3 +1,7 @@
+---
+id: attachmentbutton 
+title: AttachmentButton
+--- 
 ![AttachmentButton](../../../../../assets/AttachmentButton_documentation.default-light.png)
 
 Button for opening attachments.

@@ -1,3 +1,7 @@
+---
+id: checkboxcontrol 
+title: CheckboxControl
+--- 
 
 A view to check/uncheck an option.
 

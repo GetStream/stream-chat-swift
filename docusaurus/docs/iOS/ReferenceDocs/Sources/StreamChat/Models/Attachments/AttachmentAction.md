@@ -1,3 +1,7 @@
+---
+id: attachmentaction 
+title: AttachmentAction
+--- 
 
 An attachment action, e.g. send, shuffle.
 

@@ -1,3 +1,7 @@
+---
+id: chatmessagelistcollectionviewlayout 
+title: ChatMessageListCollectionViewLayout
+--- 
 
 Custom Table View like layout that position item at index path 0-0 on bottom of the list.
 

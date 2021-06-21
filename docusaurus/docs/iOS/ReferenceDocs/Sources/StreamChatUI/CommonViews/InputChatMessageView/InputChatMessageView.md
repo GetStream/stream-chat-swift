@@ -1,3 +1,7 @@
+---
+id: inputchatmessageview 
+title: InputChatMessageView
+--- 
 
 A view to input content of a message.
 

@@ -1,3 +1,7 @@
+---
+id: tokenprovider 
+title: TokenProvider
+--- 
 
 The type designed to provider a `Token` to the `ChatClient` when it asks for it.
 

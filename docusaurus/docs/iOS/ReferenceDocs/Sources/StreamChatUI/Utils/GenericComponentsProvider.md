@@ -1,3 +1,7 @@
+---
+id: genericcomponentsprovider 
+title: GenericComponentsProvider
+--- 
 
 ``` swift
 public protocol GenericComponentsProvider: AnyObject 

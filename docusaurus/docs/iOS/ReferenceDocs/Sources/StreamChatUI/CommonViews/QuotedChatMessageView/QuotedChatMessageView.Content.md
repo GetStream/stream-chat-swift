@@ -1,3 +1,7 @@
+---
+id: quotedchatmessageview.content 
+title: QuotedChatMessageView.Content
+--- 
 
 The content of the view.
 

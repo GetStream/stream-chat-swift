@@ -1,3 +1,7 @@
+---
+id: swiftuirepresentable 
+title: SwiftUIRepresentable
+--- 
 
 Protocol with necessary properties to make `SwiftUIRepresentable` instance
 

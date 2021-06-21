@@ -1,3 +1,7 @@
+---
+id: attachmentpreviewprovider 
+title: AttachmentPreviewProvider
+--- 
 
 ``` swift
 public protocol AttachmentPreviewProvider 

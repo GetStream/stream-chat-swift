@@ -1,3 +1,7 @@
+---
+id: notificationchannelmutesupdatedevent 
+title: NotificationChannelMutesUpdatedEvent
+--- 
 
 ``` swift
 public struct NotificationChannelMutesUpdatedEvent: UserSpecificEvent 

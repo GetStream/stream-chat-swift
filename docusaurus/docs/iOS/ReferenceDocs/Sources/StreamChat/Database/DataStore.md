@@ -1,3 +1,7 @@
+---
+id: datastore 
+title: DataStore
+--- 
 
 `DataStore` provide access to all locally available model objects based on their id.
 

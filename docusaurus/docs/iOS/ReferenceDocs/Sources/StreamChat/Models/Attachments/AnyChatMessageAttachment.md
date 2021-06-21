@@ -1,3 +1,7 @@
+---
+id: anychatmessageattachment 
+title: AnyChatMessageAttachment
+--- 
 
 ## Methods
 

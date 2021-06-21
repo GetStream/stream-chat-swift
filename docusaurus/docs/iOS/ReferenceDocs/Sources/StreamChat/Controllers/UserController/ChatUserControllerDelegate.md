@@ -1,3 +1,7 @@
+---
+id: chatusercontrollerdelegate 
+title: ChatUserControllerDelegate
+--- 
 
 `ChatChannelController` uses this protocol to communicate changes to its delegate.
 

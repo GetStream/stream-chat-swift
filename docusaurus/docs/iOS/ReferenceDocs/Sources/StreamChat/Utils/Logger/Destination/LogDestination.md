@@ -1,3 +1,7 @@
+---
+id: logdestination 
+title: LogDestination
+--- 
 
 ``` swift
 public protocol LogDestination 

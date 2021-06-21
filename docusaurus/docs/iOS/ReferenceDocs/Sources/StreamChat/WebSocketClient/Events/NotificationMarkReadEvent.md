@@ -1,3 +1,7 @@
+---
+id: notificationmarkreadevent 
+title: NotificationMarkReadEvent
+--- 
 
 ``` swift
 public struct NotificationMarkReadEvent: UserSpecificEvent, ChannelSpecificEvent 

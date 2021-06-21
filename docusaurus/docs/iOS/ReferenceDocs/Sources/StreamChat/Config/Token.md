@@ -1,3 +1,7 @@
+---
+id: token 
+title: Token
+--- 
 
 The type is designed to store the JWT and the user it is related to.
 

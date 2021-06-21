@@ -1,3 +1,7 @@
+---
+id: chatmessagelinkattachment 
+title: ChatMessageLinkAttachment
+--- 
 
 A type alias for attachment with `LinkAttachmentPayload` payload type.
 

@@ -1,3 +1,7 @@
+---
+id: chatmessagefileattachmentlistview 
+title: ChatMessageFileAttachmentListView
+--- 
 
 View which holds one or more file attachment views in a message or composer attachment view
 

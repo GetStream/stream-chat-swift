@@ -1,3 +1,7 @@
+---
+id: chatcommandsuggestionview 
+title: ChatCommandSuggestionView
+--- 
 
 A view that displays the command name, image and arguments.
 

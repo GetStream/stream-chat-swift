@@ -1,3 +1,7 @@
+---
+id: chatmessagebubbleview.content 
+title: ChatMessageBubbleView.Content
+--- 
 
 A type describing the content of this view.
 

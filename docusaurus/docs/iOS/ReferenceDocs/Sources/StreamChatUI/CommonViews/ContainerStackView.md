@@ -1,3 +1,7 @@
+---
+id: containerstackview 
+title: ContainerStackView
+--- 
 
 A view that works similar to a `UIStackView` but in a more simpler and flexible way.
 The aim of this view is to make UI customizability easier in the SDK.

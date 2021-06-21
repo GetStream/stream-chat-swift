@@ -1,3 +1,7 @@
+---
+id: chatchannellist 
+title: ChatChannelList
+--- 
 
 ``` swift
 @available(iOS 13.0, *)

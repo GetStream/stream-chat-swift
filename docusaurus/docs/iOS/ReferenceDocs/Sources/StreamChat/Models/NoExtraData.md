@@ -1,3 +1,7 @@
+---
+id: noextradata 
+title: NoExtraData
+--- 
 
 A type representing no extra data for the given model object.
 
@@ -13,7 +17,7 @@ public struct NoExtraData: Codable,
 
 ## Inheritance
 
-`Codable`, [`ExtraDataTypes`](../ExtraDataTypes), [`ChannelExtraData`](ChannelExtraData), `Hashable`, [`MessageExtraData`](MessageExtraData), [`MessageReactionExtraData`](MessageReactionExtraData), [`UserExtraData`](UserExtraData)
+[`ExtraDataTypes`](../ExtraDataTypes), [`ChannelExtraData`](ChannelExtraData), `Codable`, `Hashable`, [`MessageExtraData`](MessageExtraData), [`MessageReactionExtraData`](MessageReactionExtraData), [`UserExtraData`](UserExtraData)
 
 ## Properties
 

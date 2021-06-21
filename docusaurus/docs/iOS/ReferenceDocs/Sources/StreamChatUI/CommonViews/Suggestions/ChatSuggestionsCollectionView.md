@@ -1,3 +1,7 @@
+---
+id: chatsuggestionscollectionview 
+title: ChatSuggestionsCollectionView
+--- 
 
 The collection view of the suggestions view controller.
 

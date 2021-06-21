@@ -1,3 +1,7 @@
+---
+id: memberlistfilterscope 
+title: MemberListFilterScope
+--- 
 
 An extra-data-specific namespace for the `FilterKey`s suitable to be used for `_ChannelMemberListQuery`.
 

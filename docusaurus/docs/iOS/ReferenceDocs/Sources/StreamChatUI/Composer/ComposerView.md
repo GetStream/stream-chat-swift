@@ -1,3 +1,7 @@
+---
+id: composerview 
+title: ComposerView
+--- 
 
 /// The composer view that layouts all the components to create a new message.
 

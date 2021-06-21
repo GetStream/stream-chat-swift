@@ -1,3 +1,7 @@
+---
+id: channelquery 
+title: ChannelQuery
+--- 
 
 A channel query.
 

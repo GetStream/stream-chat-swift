@@ -1,3 +1,7 @@
+---
+id: cdnclient 
+title: CDNClient
+--- 
 
 API client that handles working with content (e.g. uploading attachments)
 

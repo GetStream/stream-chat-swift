@@ -1,3 +1,7 @@
+---
+id: chatmessageinteractiveattachmentview 
+title: ChatMessageInteractiveAttachmentView
+--- 
 
 ``` swift
 open class _ChatMessageInteractiveAttachmentView<ExtraData: ExtraDataTypes>: _View, ThemeProvider 

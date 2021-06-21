@@ -1,3 +1,7 @@
+---
+id: cleanuptypingevent 
+title: CleanUpTypingEvent
+--- 
 
 A special event type which is only emitted by the SDK and never the backend.
 This event is emitted by `TypingStartCleanupMiddleware` to signal that a typing event

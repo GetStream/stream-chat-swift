@@ -1,3 +1,7 @@
+---
+id: view 
+title: View
+--- 
 
 ## Methods
 

@@ -1,3 +1,7 @@
+---
+id: defaultattachmentpreviewprovider 
+title: DefaultAttachmentPreviewProvider
+--- 
 
 Default provider that is used when AttachmentPreviewProvider is not implemented for custom attachment payload. This
 provider always returns a new instance of `AttachmentPlaceholderView`.

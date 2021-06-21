@@ -1,3 +1,7 @@
+---
+id: swiftuiviewrepresentable 
+title: SwiftUIViewRepresentable
+--- 
 
 ``` swift
 @available(iOS 13.0, *)

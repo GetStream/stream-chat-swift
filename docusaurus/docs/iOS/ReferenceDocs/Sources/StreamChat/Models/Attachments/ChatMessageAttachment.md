@@ -1,3 +1,7 @@
+---
+id: chatmessageattachment 
+title: ChatMessageAttachment
+--- 
 
 A type representing a chat message attachment.
 `_ChatMessageAttachment<Payload>` is an immutable snapshot of message attachment at the given time.

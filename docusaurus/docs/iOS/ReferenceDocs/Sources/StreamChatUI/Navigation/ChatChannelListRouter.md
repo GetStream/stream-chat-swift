@@ -1,3 +1,7 @@
+---
+id: chatchannellistrouter 
+title: ChatChannelListRouter
+--- 
 
 A `NavigationRouter` subclass that handles navigation actions of `ChatChannelListVC`.
 

@@ -1,3 +1,7 @@
+---
+id: messagereactiontype 
+title: MessageReactionType
+--- 
 
 The type that describes a message reaction type.
 

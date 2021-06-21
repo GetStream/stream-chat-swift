@@ -1,3 +1,7 @@
+---
+id: userrole 
+title: UserRole
+--- 
 
 ``` swift
 public enum UserRole: String, Codable, Hashable 

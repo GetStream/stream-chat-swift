@@ -1,3 +1,7 @@
+---
+id: chatmessagelistrouter 
+title: ChatMessageListRouter
+--- 
 
 A `NavigationRouter` subclass used for navigating from message-list-based view controllers.
 

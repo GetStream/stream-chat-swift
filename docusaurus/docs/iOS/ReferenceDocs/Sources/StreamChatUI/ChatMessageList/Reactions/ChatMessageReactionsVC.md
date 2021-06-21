@@ -1,3 +1,7 @@
+---
+id: chatmessagereactionsvc 
+title: ChatMessageReactionsVC
+--- 
 
 ``` swift
 open class _ChatMessageReactionsVC<ExtraData: ExtraDataTypes>: _ViewController, ThemeProvider 

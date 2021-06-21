@@ -1,3 +1,7 @@
+---
+id: clienterror.location 
+title: ClientError.Location
+--- 
 
 ``` swift
 public struct Location: Equatable 

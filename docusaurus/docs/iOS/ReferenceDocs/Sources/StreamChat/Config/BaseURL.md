@@ -1,3 +1,7 @@
+---
+id: baseurl 
+title: BaseURL
+--- 
 
 A struct representing base URL for `ChatClient`.
 

@@ -1,3 +1,7 @@
+---
+id: quotedchatmessageview.swiftuiwrapper 
+title: QuotedChatMessageView.SwiftUIWrapper
+--- 
 
 SwiftUI wrapper of `QuotedChatMessageView`.
 

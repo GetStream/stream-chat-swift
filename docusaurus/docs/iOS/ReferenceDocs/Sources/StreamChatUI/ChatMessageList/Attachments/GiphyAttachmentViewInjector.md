@@ -1,3 +1,7 @@
+---
+id: giphyattachmentviewinjector 
+title: GiphyAttachmentViewInjector
+--- 
 
 ``` swift
 public class _GiphyAttachmentViewInjector<ExtraData: ExtraDataTypes>: _AttachmentViewInjector<ExtraData> 

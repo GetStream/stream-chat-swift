@@ -1,3 +1,7 @@
+---
+id: chatsuggestionscollectionreusableview 
+title: ChatSuggestionsCollectionReusableView
+--- 
 
 The header reusable view of the suggestion collection view.
 

@@ -1,3 +1,7 @@
+---
+id: userpresencechangedevent 
+title: UserPresenceChangedEvent
+--- 
 
 ``` swift
 public struct UserPresenceChangedEvent: UserSpecificEvent 

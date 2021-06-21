@@ -1,3 +1,7 @@
+---
+id: components.observableobject 
+title: Components.ObservableObject
+--- 
 
 ``` swift
 @dynamicMemberLookup

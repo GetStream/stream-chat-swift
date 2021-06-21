@@ -1,3 +1,7 @@
+---
+id: sharebutton 
+title: ShareButton
+--- 
 
 A Button subclass that should be used for sharing content.
 

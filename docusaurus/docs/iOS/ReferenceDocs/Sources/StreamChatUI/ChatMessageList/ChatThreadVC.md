@@ -1,3 +1,7 @@
+---
+id: chatthreadvc 
+title: ChatThreadVC
+--- 
 
 Controller responsible for displaying message thread.
 
