@@ -1,7 +1,8 @@
 ---
 id: logdestination 
 title: LogDestination
---- 
+slug: referencedocs/sources/streamchat/utils/logger/destination/logdestination
+---
 
 ``` swift
 public protocol LogDestination 

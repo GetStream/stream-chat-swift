@@ -1,7 +1,8 @@
 ---
 id: device 
 title: Device
---- 
+slug: referencedocs/sources/streamchat/models/device
+---
 
 An object representing a device which can receive push notifications.
 

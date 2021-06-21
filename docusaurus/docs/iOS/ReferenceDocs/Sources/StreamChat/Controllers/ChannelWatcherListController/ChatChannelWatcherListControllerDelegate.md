@@ -1,7 +1,8 @@
 ---
 id: chatchannelwatcherlistcontrollerdelegate 
 title: ChatChannelWatcherListControllerDelegate
---- 
+slug: referencedocs/sources/streamchat/controllers/channelwatcherlistcontroller/chatchannelwatcherlistcontrollerdelegate
+---
 
 ``` swift
 public protocol _ChatChannelWatcherListControllerDelegate: DataControllerStateDelegate 

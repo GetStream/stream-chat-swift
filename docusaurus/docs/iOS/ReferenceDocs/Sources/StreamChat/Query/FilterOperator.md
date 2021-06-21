@@ -1,7 +1,8 @@
 ---
 id: filteroperator 
 title: FilterOperator
---- 
+slug: referencedocs/sources/streamchat/query/filteroperator
+---
 
 An enum with possible operators to use in filters.
 

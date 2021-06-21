@@ -1,7 +1,8 @@
 ---
 id: chatchannelmember 
 title: ChatChannelMember
---- 
+slug: referencedocs/sources/streamchat/models/chatchannelmember
+---
 
 A type representing a chat channel member. `_ChatChannelMember` is an immutable snapshot of a channel entity at the given time.
 

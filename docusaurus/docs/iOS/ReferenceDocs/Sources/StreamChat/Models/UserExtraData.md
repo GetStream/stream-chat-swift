@@ -1,7 +1,8 @@
 ---
 id: userextradata 
 title: UserExtraData
---- 
+slug: referencedocs/sources/streamchat/models/userextradata
+---
 
 You need to make your custom type conforming to this protocol if you want to use it for extending `ChatUser` entity with your
 custom additional data.

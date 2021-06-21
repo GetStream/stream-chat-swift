@@ -1,7 +1,8 @@
 ---
 id: channellistquery 
 title: ChannelListQuery
---- 
+slug: referencedocs/sources/streamchat/query/channellistquery
+---
 
 A query is used for querying specific channels from backend.
 You can specify filter, sorting, pagination, limit for fetched messages in channel and other options.

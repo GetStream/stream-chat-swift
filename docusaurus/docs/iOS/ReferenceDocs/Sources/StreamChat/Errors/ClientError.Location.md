@@ -1,7 +1,8 @@
 ---
 id: clienterror.location 
 title: ClientError.Location
---- 
+slug: referencedocs/sources/streamchat/errors/clienterror.location
+---
 
 ``` swift
 public struct Location: Equatable 

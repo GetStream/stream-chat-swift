@@ -1,7 +1,8 @@
 ---
 id: chatusersearchcontroller 
 title: ChatUserSearchController
---- 
+slug: referencedocs/sources/streamchat/controllers/searchcontrollers/chatusersearchcontroller
+---
 
 `_ChatUserSearchController` is a controller class which allows observing a list of chat users based on the provided query.
 

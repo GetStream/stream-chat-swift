@@ -1,7 +1,8 @@
 ---
 id: channelhiddenevent 
 title: ChannelHiddenEvent
---- 
+slug: referencedocs/sources/streamchat/websocketclient/events/channelhiddenevent
+---
 
 ``` swift
 public struct ChannelHiddenEvent: ChannelSpecificEvent 

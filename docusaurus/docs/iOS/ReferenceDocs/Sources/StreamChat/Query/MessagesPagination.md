@@ -1,7 +1,8 @@
 ---
 id: messagespagination 
 title: MessagesPagination
---- 
+slug: referencedocs/sources/streamchat/query/messagespagination
+---
 
 ``` swift
 public struct MessagesPagination: Encodable, Equatable 

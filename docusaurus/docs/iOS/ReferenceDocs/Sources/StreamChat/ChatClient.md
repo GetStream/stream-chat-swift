@@ -1,7 +1,8 @@
 ---
 id: chatclient 
 title: ChatClient
---- 
+slug: referencedocs/sources/streamchat/chatclient
+---
 
 The root object representing a Stream Chat.
 

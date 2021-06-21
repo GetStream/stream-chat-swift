@@ -1,7 +1,8 @@
 ---
 id: chatchannelcontroller.observableobject 
 title: ChatChannelController.ObservableObject
---- 
+slug: referencedocs/sources/streamchat/controllers/channelcontroller/chatchannelcontroller.observableobject
+---
 
 A wrapper object for `ChannelListController` type which makes it possible to use the controller comfortably in SwiftUI.
 

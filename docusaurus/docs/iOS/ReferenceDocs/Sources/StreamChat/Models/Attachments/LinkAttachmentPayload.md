@@ -1,7 +1,8 @@
 ---
 id: linkattachmentpayload 
 title: LinkAttachmentPayload
---- 
+slug: referencedocs/sources/streamchat/models/attachments/linkattachmentpayload
+---
 
 Represents a payload for attachments with `.linkPreview` type.
 

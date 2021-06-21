@@ -1,7 +1,8 @@
 ---
 id: channeldeletedevent 
 title: ChannelDeletedEvent
---- 
+slug: referencedocs/sources/streamchat/websocketclient/events/channeldeletedevent
+---
 
 ``` swift
 public struct ChannelDeletedEvent: ChannelSpecificEvent 

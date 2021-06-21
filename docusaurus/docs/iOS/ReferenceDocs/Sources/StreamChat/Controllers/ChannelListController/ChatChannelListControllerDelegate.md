@@ -1,7 +1,3 @@
----
-id: chatchannellistcontrollerdelegate 
-title: ChatChannelListControllerDelegate
---- 
 
 `ChatChannelListController` uses this protocol to communicate changes to its delegate.
 

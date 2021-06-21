@@ -1,7 +1,3 @@
----
-id: datacontroller.state 
-title: DataController.State
---- 
 
 Describes the possible states of `DataController`
 

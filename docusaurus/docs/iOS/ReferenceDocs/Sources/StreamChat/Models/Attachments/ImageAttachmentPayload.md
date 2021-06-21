@@ -1,7 +1,8 @@
 ---
 id: imageattachmentpayload 
 title: ImageAttachmentPayload
---- 
+slug: referencedocs/sources/streamchat/models/attachments/imageattachmentpayload
+---
 
 Represents a payload for attachments with `.image` type.
 

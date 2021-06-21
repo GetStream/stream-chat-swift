@@ -1,7 +1,8 @@
 ---
 id: memberremovedevent 
 title: MemberRemovedEvent
---- 
+slug: referencedocs/sources/streamchat/websocketclient/events/memberremovedevent
+---
 
 ``` swift
 public struct MemberRemovedEvent: MemberEvent, ChannelSpecificEvent, EventWithPayload 

@@ -1,7 +1,8 @@
 ---
 id: chatchannelmembercontrollerdelegate 
 title: ChatChannelMemberControllerDelegate
---- 
+slug: referencedocs/sources/streamchat/controllers/membercontroller/chatchannelmembercontrollerdelegate
+---
 
 `_ChatChannelMemberController` uses this protocol to communicate changes to its delegate.
 

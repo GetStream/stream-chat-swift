@@ -1,7 +1,8 @@
 ---
 id: logconfig 
 title: LogConfig
---- 
+slug: referencedocs/sources/streamchat/utils/logger/logconfig
+---
 
 ``` swift
 public enum LogConfig 

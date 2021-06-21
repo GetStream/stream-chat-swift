@@ -1,7 +1,8 @@
 ---
 id: notificationchannelmutesupdatedevent 
 title: NotificationChannelMutesUpdatedEvent
---- 
+slug: referencedocs/sources/streamchat/websocketclient/events/notificationchannelmutesupdatedevent
+---
 
 ``` swift
 public struct NotificationChannelMutesUpdatedEvent: UserSpecificEvent 

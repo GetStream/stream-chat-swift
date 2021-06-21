@@ -1,7 +1,8 @@
 ---
 id: notificationremovedfromchannelevent 
 title: NotificationRemovedFromChannelEvent
---- 
+slug: referencedocs/sources/streamchat/websocketclient/events/notificationremovedfromchannelevent
+---
 
 ``` swift
 public struct NotificationRemovedFromChannelEvent: CurrentUserEvent, ChannelSpecificEvent 

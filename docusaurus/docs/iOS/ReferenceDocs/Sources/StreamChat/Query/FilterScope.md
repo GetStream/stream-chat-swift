@@ -1,7 +1,8 @@
 ---
 id: filterscope 
 title: FilterScope
---- 
+slug: referencedocs/sources/streamchat/query/filterscope
+---
 
 A phantom protocol used to limit the scope of `Filter`.
 

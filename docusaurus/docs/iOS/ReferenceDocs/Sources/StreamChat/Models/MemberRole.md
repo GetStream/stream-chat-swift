@@ -1,7 +1,8 @@
 ---
 id: memberrole 
 title: MemberRole
---- 
+slug: referencedocs/sources/streamchat/models/memberrole
+---
 
 An enum describing possible roles of a member in a channel.
 

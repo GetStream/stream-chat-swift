@@ -1,7 +1,8 @@
 ---
 id: notificationmarkreadevent 
 title: NotificationMarkReadEvent
---- 
+slug: referencedocs/sources/streamchat/websocketclient/events/notificationmarkreadevent
+---
 
 ``` swift
 public struct NotificationMarkReadEvent: UserSpecificEvent, ChannelSpecificEvent 

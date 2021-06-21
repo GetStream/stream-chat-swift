@@ -1,7 +1,8 @@
 ---
 id: connectionstatus 
 title: ConnectionStatus
---- 
+slug: referencedocs/sources/streamchat/websocketclient/connectionstatus
+---
 
 Describes the possible states of the client connection to the servers.
 

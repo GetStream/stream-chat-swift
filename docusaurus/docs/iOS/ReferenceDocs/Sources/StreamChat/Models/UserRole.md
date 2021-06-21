@@ -1,7 +1,8 @@
 ---
 id: userrole 
 title: UserRole
---- 
+slug: referencedocs/sources/streamchat/models/userrole
+---
 
 ``` swift
 public enum UserRole: String, Codable, Hashable 

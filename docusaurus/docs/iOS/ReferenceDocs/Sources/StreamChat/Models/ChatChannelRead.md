@@ -1,7 +1,8 @@
 ---
 id: chatchannelread 
 title: ChatChannelRead
---- 
+slug: referencedocs/sources/streamchat/models/chatchannelread
+---
 
 A type representing a user's last read action on a channel.
 

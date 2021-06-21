@@ -1,7 +1,8 @@
 ---
 id: token 
 title: Token
---- 
+slug: referencedocs/sources/streamchat/config/token
+---
 
 The type is designed to store the JWT and the user it is related to.
 

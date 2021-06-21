@@ -1,7 +1,8 @@
 ---
 id: filter 
 title: Filter
---- 
+slug: referencedocs/sources/streamchat/query/filter
+---
 
 Filter is used to specify the details about which elements should be returned from a specific query.
 

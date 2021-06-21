@@ -1,7 +1,8 @@
 ---
 id: attachmenttype 
 title: AttachmentType
---- 
+slug: referencedocs/sources/streamchat/models/attachments/attachmenttype
+---
 
 An attachment type.
 There are some predefined types on backend but any type can be introduced and sent to backend.

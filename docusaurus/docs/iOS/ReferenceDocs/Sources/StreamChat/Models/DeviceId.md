@@ -1,7 +1,8 @@
 ---
 id: deviceid 
 title: DeviceId
---- 
+slug: referencedocs/sources/streamchat/models/deviceid
+---
 
 A unique identifier of a device.
 

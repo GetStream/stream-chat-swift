@@ -1,7 +1,8 @@
 ---
 id: channeltruncatedevent 
 title: ChannelTruncatedEvent
---- 
+slug: referencedocs/sources/streamchat/websocketclient/events/channeltruncatedevent
+---
 
 ``` swift
 public struct ChannelTruncatedEvent: ChannelSpecificEvent 

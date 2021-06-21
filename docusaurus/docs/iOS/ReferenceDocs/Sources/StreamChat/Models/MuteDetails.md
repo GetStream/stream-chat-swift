@@ -1,7 +1,8 @@
 ---
 id: mutedetails 
 title: MuteDetails
---- 
+slug: referencedocs/sources/streamchat/models/mutedetails
+---
 
 Describes user/channel mute details.
 

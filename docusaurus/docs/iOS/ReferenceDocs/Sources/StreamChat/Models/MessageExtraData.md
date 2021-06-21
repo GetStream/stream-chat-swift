@@ -1,7 +1,8 @@
 ---
 id: messageextradata 
 title: MessageExtraData
---- 
+slug: referencedocs/sources/streamchat/models/messageextradata
+---
 
 You need to make your custom type conforming to this protocol if you want to use it for extending `ChatMessage` entity with
 your custom additional data.

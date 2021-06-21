@@ -1,7 +1,8 @@
 ---
 id: channelquery 
 title: ChannelQuery
---- 
+slug: referencedocs/sources/streamchat/query/channelquery
+---
 
 A channel query.
 

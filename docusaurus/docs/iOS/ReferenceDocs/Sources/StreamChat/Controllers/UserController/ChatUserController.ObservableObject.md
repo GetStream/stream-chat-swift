@@ -1,7 +1,3 @@
----
-id: chatusercontroller.observableobject 
-title: ChatUserController.ObservableObject
---- 
 
 A wrapper object for `ChatUserController` type which makes it possible to use the controller comfortably in SwiftUI.
 

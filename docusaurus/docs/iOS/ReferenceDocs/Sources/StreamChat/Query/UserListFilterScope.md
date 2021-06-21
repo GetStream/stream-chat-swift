@@ -1,7 +1,8 @@
 ---
 id: userlistfilterscope 
 title: UserListFilterScope
---- 
+slug: referencedocs/sources/streamchat/query/userlistfilterscope
+---
 
 An extra-data-specific namespace for the `FilterKey`s suitable to be used for `_UserListQuery`.
 

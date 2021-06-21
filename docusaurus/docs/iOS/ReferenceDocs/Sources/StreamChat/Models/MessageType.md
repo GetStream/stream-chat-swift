@@ -1,7 +1,8 @@
 ---
 id: messagetype 
 title: MessageType
---- 
+slug: referencedocs/sources/streamchat/models/messagetype
+---
 
 A type of the message.
 
