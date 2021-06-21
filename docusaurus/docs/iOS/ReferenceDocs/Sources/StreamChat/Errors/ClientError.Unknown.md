@@ -1,7 +1,8 @@
 ---
 id: clienterror.unknown 
 title: ClientError.Unknown
---- 
+slug: referencedocs/sources/streamchat/errors/clienterror.unknown
+---
 
 An unknown error.
 

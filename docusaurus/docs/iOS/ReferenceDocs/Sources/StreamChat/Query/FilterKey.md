@@ -1,7 +1,8 @@
 ---
 id: filterkey 
 title: FilterKey
---- 
+slug: referencedocs/sources/streamchat/query/filterkey
+---
 
 A helper struct that represents a key of a filter.
 

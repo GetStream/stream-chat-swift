@@ -1,7 +1,8 @@
 ---
 id: chatclientconfig 
 title: ChatClientConfig
---- 
+slug: referencedocs/sources/streamchat/config/chatclientconfig
+---
 
 A configuration object used to configure a `ChatClient` instance.
 

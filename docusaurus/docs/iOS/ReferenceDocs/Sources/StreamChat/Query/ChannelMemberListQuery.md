@@ -1,7 +1,8 @@
 ---
 id: channelmemberlistquery 
 title: ChannelMemberListQuery
---- 
+slug: referencedocs/sources/streamchat/query/channelmemberlistquery
+---
 
 A query type used for fetching channel members from the backend.
 

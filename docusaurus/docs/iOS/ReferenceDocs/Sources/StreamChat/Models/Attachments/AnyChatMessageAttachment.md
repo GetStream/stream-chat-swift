@@ -1,7 +1,8 @@
 ---
 id: anychatmessageattachment 
 title: AnyChatMessageAttachment
---- 
+slug: referencedocs/sources/streamchat/models/attachments/anychatmessageattachment
+---
 
 ## Methods
 

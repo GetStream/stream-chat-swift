@@ -1,7 +1,8 @@
 ---
 id: randomaccesscollection 
 title: RandomAccessCollection
---- 
+slug: referencedocs/sources/streamchat/utils/randomaccesscollection
+---
 
 ## Methods
 

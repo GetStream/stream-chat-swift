@@ -1,7 +1,8 @@
 ---
 id: messagereactiontype 
 title: MessageReactionType
---- 
+slug: referencedocs/sources/streamchat/models/messagereactiontype
+---
 
 The type that describes a message reaction type.
 

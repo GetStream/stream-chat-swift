@@ -1,7 +1,8 @@
 ---
 id: noextradata 
 title: NoExtraData
---- 
+slug: referencedocs/sources/streamchat/models/noextradata
+---
 
 A type representing no extra data for the given model object.
 
@@ -17,7 +18,7 @@ public struct NoExtraData: Codable,
 
 ## Inheritance
 
-[`ExtraDataTypes`](../ExtraDataTypes), [`ChannelExtraData`](ChannelExtraData), `Codable`, `Hashable`, [`MessageExtraData`](MessageExtraData), [`MessageReactionExtraData`](MessageReactionExtraData), [`UserExtraData`](UserExtraData)
+`Codable`, [`ExtraDataTypes`](../ExtraDataTypes), [`ChannelExtraData`](ChannelExtraData), `Hashable`, [`MessageExtraData`](MessageExtraData), [`MessageReactionExtraData`](MessageReactionExtraData), [`UserExtraData`](UserExtraData)
 
 ## Properties
 

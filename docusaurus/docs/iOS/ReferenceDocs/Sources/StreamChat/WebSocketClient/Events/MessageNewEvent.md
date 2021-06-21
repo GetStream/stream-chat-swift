@@ -1,7 +1,8 @@
 ---
 id: messagenewevent 
 title: MessageNewEvent
---- 
+slug: referencedocs/sources/streamchat/websocketclient/events/messagenewevent
+---
 
 ``` swift
 public struct MessageNewEvent: MessageSpecificEvent 

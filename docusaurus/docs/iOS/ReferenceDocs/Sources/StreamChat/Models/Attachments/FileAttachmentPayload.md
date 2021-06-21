@@ -1,7 +1,8 @@
 ---
 id: fileattachmentpayload 
 title: FileAttachmentPayload
---- 
+slug: referencedocs/sources/streamchat/models/attachments/fileattachmentpayload
+---
 
 Represents a payload for attachments with `.file` type.
 

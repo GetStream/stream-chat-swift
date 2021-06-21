@@ -1,7 +1,3 @@
----
-id: chatchannelmemberlistcontroller.observableobject 
-title: ChatChannelMemberListController.ObservableObject
---- 
 
 A wrapper object for `_ChatChannelMemberListController` type which makes it possible to use the controller
 comfortably in SwiftUI.

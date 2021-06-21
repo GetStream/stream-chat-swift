@@ -1,7 +1,8 @@
 ---
 id: entitychange 
 title: EntityChange
---- 
+slug: referencedocs/sources/streamchat/controllers/entitychange
+---
 
 This enum describes the changes to a certain item when observing it.
 

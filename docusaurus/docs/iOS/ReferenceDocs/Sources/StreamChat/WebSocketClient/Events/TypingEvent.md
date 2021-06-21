@@ -1,7 +1,8 @@
 ---
 id: typingevent 
 title: TypingEvent
---- 
+slug: referencedocs/sources/streamchat/websocketclient/events/typingevent
+---
 
 ``` swift
 public struct TypingEvent: UserSpecificEvent, ChannelSpecificEvent 
@@ -9,7 +10,7 @@ public struct TypingEvent: UserSpecificEvent, ChannelSpecificEvent
 
 ## Inheritance
 
-[`UserSpecificEvent`](UserSpecificEvent), [`ChannelSpecificEvent`](ChannelSpecificEvent), `Equatable`
+[`ChannelSpecificEvent`](ChannelSpecificEvent), `Equatable`, [`UserSpecificEvent`](UserSpecificEvent)
 
 ## Properties
 

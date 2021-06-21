@@ -1,7 +1,8 @@
 ---
 id: userunbannedevent 
 title: UserUnbannedEvent
---- 
+slug: referencedocs/sources/streamchat/websocketclient/events/userunbannedevent
+---
 
 ``` swift
 public struct UserUnbannedEvent: UserSpecificEvent, ChannelSpecificEvent 

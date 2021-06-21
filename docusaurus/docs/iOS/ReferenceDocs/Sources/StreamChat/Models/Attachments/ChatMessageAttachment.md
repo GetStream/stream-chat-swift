@@ -1,7 +1,8 @@
 ---
 id: chatmessageattachment 
 title: ChatMessageAttachment
---- 
+slug: referencedocs/sources/streamchat/models/attachments/chatmessageattachment
+---
 
 A type representing a chat message attachment.
 `_ChatMessageAttachment<Payload>` is an immutable snapshot of message attachment at the given time.

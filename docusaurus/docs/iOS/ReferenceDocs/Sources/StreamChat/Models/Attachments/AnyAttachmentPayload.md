@@ -1,7 +1,8 @@
 ---
 id: anyattachmentpayload 
 title: AnyAttachmentPayload
---- 
+slug: referencedocs/sources/streamchat/models/attachments/anyattachmentpayload
+---
 
 A type-erased type that wraps either a local file URL that has to be uploaded
 and attached to the message OR a custom payload which the message attachment

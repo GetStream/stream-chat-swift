@@ -1,7 +1,8 @@
 ---
 id: atomic 
 title: Atomic
---- 
+slug: referencedocs/sources/streamchat/utils/atomic
+---
 
 A mutable thread safe variable.
 

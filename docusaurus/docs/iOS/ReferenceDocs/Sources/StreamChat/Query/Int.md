@@ -1,7 +1,8 @@
 ---
 id: int 
 title: Int
---- 
+slug: referencedocs/sources/streamchat/query/int
+---
 
 ## Properties
 

@@ -1,7 +1,8 @@
 ---
 id: channelid 
 title: ChannelId
---- 
+slug: referencedocs/sources/streamchat/models/channelid
+---
 
 A type representing a unique identifier of a `ChatChannel`.
 

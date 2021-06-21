@@ -1,7 +1,8 @@
 ---
 id: apikey 
 title: APIKey
---- 
+slug: referencedocs/sources/streamchat/config/apikey
+---
 
 A struct representing an API key of the chat app.
 

@@ -1,7 +1,8 @@
 ---
 id: reactionupdatedevent 
 title: ReactionUpdatedEvent
---- 
+slug: referencedocs/sources/streamchat/websocketclient/events/reactionupdatedevent
+---
 
 ``` swift
 public struct ReactionUpdatedEvent: ReactionEvent 

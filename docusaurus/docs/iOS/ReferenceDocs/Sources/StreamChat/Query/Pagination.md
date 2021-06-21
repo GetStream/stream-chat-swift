@@ -1,7 +1,8 @@
 ---
 id: pagination 
 title: Pagination
---- 
+slug: referencedocs/sources/streamchat/query/pagination
+---
 
 Basic pagination with `pageSize` and `offset`.
 Used everywhere except `ChannelQuery`. (See `MessagesPagination`)

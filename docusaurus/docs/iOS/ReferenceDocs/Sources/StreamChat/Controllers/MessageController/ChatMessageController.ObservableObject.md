@@ -1,7 +1,3 @@
----
-id: chatmessagecontroller.observableobject 
-title: ChatMessageController.ObservableObject
---- 
 
 A wrapper object for `CurrentUserController` type which makes it possible to use the controller comfortably in SwiftUI.
 

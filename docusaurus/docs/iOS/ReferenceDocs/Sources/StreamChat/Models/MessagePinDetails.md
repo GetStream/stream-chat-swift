@@ -1,7 +1,8 @@
 ---
 id: messagepindetails 
 title: MessagePinDetails
---- 
+slug: referencedocs/sources/streamchat/models/messagepindetails
+---
 
 ``` swift
 public struct _MessagePinDetails<ExtraData: ExtraDataTypes> 

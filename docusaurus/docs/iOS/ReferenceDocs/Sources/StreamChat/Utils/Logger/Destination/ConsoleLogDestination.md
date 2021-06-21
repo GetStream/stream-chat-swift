@@ -1,7 +1,8 @@
 ---
 id: consolelogdestination 
 title: ConsoleLogDestination
---- 
+slug: referencedocs/sources/streamchat/utils/logger/destination/consolelogdestination
+---
 
 Basic destination for outputting messages to console.
 

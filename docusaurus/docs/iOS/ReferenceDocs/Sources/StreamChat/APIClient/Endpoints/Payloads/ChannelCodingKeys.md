@@ -1,7 +1,8 @@
 ---
 id: channelcodingkeys 
 title: ChannelCodingKeys
---- 
+slug: referencedocs/sources/streamchat/apiclient/endpoints/payloads/channelcodingkeys
+---
 
 Coding keys channel related payloads.
 

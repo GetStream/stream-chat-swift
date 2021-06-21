@@ -1,7 +1,8 @@
 ---
 id: userupdatedevent 
 title: UserUpdatedEvent
---- 
+slug: referencedocs/sources/streamchat/websocketclient/events/userupdatedevent
+---
 
 ``` swift
 public struct UserUpdatedEvent: UserSpecificEvent 

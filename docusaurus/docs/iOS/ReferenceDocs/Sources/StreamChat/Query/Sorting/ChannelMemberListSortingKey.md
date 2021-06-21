@@ -1,7 +1,8 @@
 ---
 id: channelmemberlistsortingkey 
 title: ChannelMemberListSortingKey
---- 
+slug: referencedocs/sources/streamchat/query/sorting/channelmemberlistsortingkey
+---
 
 `ChannelMemberListSortingKey` describes the keys by which you can get sorted channel members after query.
 

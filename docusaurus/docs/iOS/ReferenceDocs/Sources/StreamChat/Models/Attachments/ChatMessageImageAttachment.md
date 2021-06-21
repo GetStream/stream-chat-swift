@@ -1,7 +1,8 @@
 ---
 id: chatmessageimageattachment 
 title: ChatMessageImageAttachment
---- 
+slug: referencedocs/sources/streamchat/models/attachments/chatmessageimageattachment
+---
 
 A type alias for attachment with `ImageAttachmentPayload` payload type.
 

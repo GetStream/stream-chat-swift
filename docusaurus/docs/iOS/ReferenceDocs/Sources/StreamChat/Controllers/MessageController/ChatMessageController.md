@@ -1,7 +1,3 @@
----
-id: chatmessagecontroller 
-title: ChatMessageController
---- 
 
 `ChatMessageController` is a controller class which allows observing and mutating a chat message entity.
 

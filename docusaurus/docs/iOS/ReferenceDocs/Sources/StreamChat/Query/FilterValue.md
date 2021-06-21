@@ -1,7 +1,8 @@
 ---
 id: filtervalue 
 title: FilterValue
---- 
+slug: referencedocs/sources/streamchat/query/filtervalue
+---
 
 A protocol to which all values that can be used as `Filter` values conform.
 

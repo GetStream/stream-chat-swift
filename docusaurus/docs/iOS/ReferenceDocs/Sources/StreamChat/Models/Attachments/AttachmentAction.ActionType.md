@@ -1,7 +1,8 @@
 ---
 id: attachmentaction.actiontype 
 title: AttachmentAction.ActionType
---- 
+slug: referencedocs/sources/streamchat/models/attachments/attachmentaction.actiontype
+---
 
 An attachment action type, e.g. button.
 

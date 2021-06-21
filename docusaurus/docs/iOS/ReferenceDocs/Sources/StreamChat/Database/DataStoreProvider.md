@@ -1,7 +1,8 @@
 ---
 id: datastoreprovider 
 title: DataStoreProvider
---- 
+slug: referencedocs/sources/streamchat/database/datastoreprovider
+---
 
 Types conforming to this protocol automatically exposes public `dataStore` variable.
 
