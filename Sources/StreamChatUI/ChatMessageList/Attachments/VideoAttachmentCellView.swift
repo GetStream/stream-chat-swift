@@ -106,14 +106,14 @@ open class _VideoAttachmentCellView<ExtraData: ExtraDataTypes>: _View, ThemeProv
     }
     
     /// A handler that is invoked when `playButton` is touched up inside.
-    @objc open func handleTapOnPlay(_ recognizer: UIButton) {
+    @objc open func handleTapOnPlay(_ sender: UIButton) {
         guard let attachment = content else { return }
         
         didTapOnAttachment?(attachment)
     }
 }
 
-extension _VideoAttachmentCellView: ImagePreviewable {
+extension _VideoAttachmentCellView: GalleryItemPreview {
     public var attachmentId: AttachmentId? {
         content?.id
     }

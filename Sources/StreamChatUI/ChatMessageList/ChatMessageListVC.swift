@@ -369,21 +369,28 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
     
     open func didTapOnVideoAttachment(
         _ attachment: ChatMessageVideoAttachment,
-        previews: [ImagePreviewable],
-        at indexPath: IndexPath?
-    ) {
-    }
-
-    public func didTapOnImageAttachment(
-        _ attachment: ChatMessageImageAttachment,
-        previews: [ImagePreviewable],
+        previews: [GalleryItemPreview],
         at indexPath: IndexPath?
     ) {
         guard let indexPath = indexPath else { return log.error("IndexPath is not available") }
         
         router.showImageGallery(
             message: messageForIndexPath(indexPath),
-            initialAttachment: attachment,
+            initialAttachmentId: attachment.id,
+            previews: previews
+        )
+    }
+
+    public func didTapOnImageAttachment(
+        _ attachment: ChatMessageImageAttachment,
+        previews: [GalleryItemPreview],
+        at indexPath: IndexPath?
+    ) {
+        guard let indexPath = indexPath else { return log.error("IndexPath is not available") }
+        
+        router.showImageGallery(
+            message: messageForIndexPath(indexPath),
+            initialAttachmentId: attachment,
             previews: previews
         )
     }

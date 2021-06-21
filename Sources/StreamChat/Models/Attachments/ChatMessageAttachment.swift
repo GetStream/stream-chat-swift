@@ -90,7 +90,8 @@ public extension AnyChatMessageAttachment {
     }
 }
 
-extension _ChatMessageAttachment {
+public extension _ChatMessageAttachment {
+    /// Returns an attachment matching `self` but payload casted to `Any`.
     var asAnyAttachment: AnyChatMessageAttachment {
         .init(
             id: id,

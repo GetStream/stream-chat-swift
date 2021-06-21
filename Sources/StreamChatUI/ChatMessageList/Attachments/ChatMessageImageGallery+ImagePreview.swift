@@ -6,18 +6,23 @@ import Nuke
 import StreamChat
 import UIKit
 
-/// Properties necessary for image to be previewed.
-public protocol ImagePreviewable {
-    /// Content containing image attachment.
-    var content: ChatMessageImageAttachment? { get }
-    /// `UIImageView` that is displayed the image preview.
+/// The type preview should conform to in order the gallery can be shown from it.
+public protocol GalleryItemPreview {
+    /// Attachment identifier.
+    var attachmentId: AttachmentId? { get }
+    
+    /// `UIImageView` that is displayed the attachment preview.
     var imageView: UIImageView { get }
 }
 
 extension _ChatMessageGalleryView {
-    open class ImagePreview: _View, ThemeProvider, ImagePreviewable {
+    open class ImagePreview: _View, ThemeProvider, GalleryItemPreview {
         public var content: ChatMessageImageAttachment? {
             didSet { updateContentIfNeeded() }
+        }
+        
+        public var attachmentId: AttachmentId? {
+            content?.id
         }
 
         public var didTapOnAttachment: ((ChatMessageImageAttachment) -> Void)?

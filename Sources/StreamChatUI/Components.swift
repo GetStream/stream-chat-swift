@@ -63,6 +63,9 @@ public struct _Components<ExtraData: ExtraDataTypes> {
 
     /// A button for closing, dismissing or clearing information.
     public var closeButton: UIButton.Type = CloseButton.self
+    
+    /// A button for sharing an information.
+    public var shareButton: UIButton.Type = ShareButton.self
 
     /// A view to check/uncheck an option.
     public var checkmarkControl: CheckboxControl.Type = CheckboxControl.self
@@ -81,6 +84,9 @@ public struct _Components<ExtraData: ExtraDataTypes> {
     
     /// The view that shows a gradient.
     public var gradientView: GradientView.Type = GradientView.self
+    
+    /// The view that shows a playing video.
+    public var playerView: PlayerView.Type = PlayerView.self
     
     // MARK: - Message list components
 
@@ -109,8 +115,8 @@ public struct _Components<ExtraData: ExtraDataTypes> {
     /// The View Controller used for showing detail of a file message attachment.
     public var filePreviewVC: ChatMessageAttachmentPreviewVC.Type = ChatMessageAttachmentPreviewVC.self
 
-    /// The View Controller used for showing detail of an image message attachment.
-    public var imagePreviewVC: _ImageGalleryVC<ExtraData>.Type = _ImageGalleryVC<ExtraData>.self
+    /// The View Controller used for show image and video attachments.
+    public var galleryVC: _GalleryVC<ExtraData>.Type = _GalleryVC<ExtraData>.self
     
     /// The view used to control the player for currently visible vide attachment.
     public var videoPlaybackControlView: _VideoPlaybackControlView<ExtraData>.Type =

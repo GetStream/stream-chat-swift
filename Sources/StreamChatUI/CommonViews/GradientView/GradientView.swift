@@ -44,7 +44,7 @@ open class GradientView: _View {
         CAGradientLayer.self
     }
     
-    /// Returns the layer casted to gradient layer
+    /// Returns the layer casted to gradient layer.
     open var gradientLayer: CAGradientLayer {
         layer as! CAGradientLayer
     }
@@ -70,7 +70,7 @@ extension GradientView.Content.Direction {
             return .init(x: 0.0, y: 0.5)
         case .vertical:
             return .init(x: 0.0, y: 0.0)
-        case .custom(let startPoint, _):
+        case let .custom(startPoint, _):
             return startPoint
         }
     }
@@ -85,7 +85,7 @@ extension GradientView.Content.Direction {
             return .init(x: 1.0, y: 0.5)
         case .vertical:
             return .init(x: 0.0, y: 1.0)
-        case .custom(_, let endPoint):
+        case let .custom(_, endPoint):
             return endPoint
         }
     }
