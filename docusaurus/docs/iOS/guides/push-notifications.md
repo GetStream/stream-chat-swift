@@ -3,41 +3,16 @@ title: Push Notifications
 ---
 
 First step on a way to setting up push notifications is authentication.
-Stream supports both **Certificate-based provider connection trust (.p12 certificate)** and **Token-based provider connection trust (JWT)**. Token based authentication is the preferred way to setup push notifications. This method is easy to setup and provides strong security. You can find more on setting up authentication [here](https://getstream.io/chat/docs/php/push_ios/?language=swift).
+Stream supports both **Certificate-based provider connection trust (.p12 certificate)** and **Token-based provider connection trust (JWT)**. Token based authentication is the preferred way to setup push notifications. This method is easy to setup and provides strong security. 
 
 :::caution
+You can find more on setting up authentication [here](https://getstream.io/chat/docs/php/push_ios/?language=swift).
 Make sure you've taken care of authentication before proceeding to the next steps
 :::
 
-## Testing Push Notifications setup
-
-Once authentication is taken care of, you can test your setup as explained below.
-
-First of all make sure you have at least one [device associated](#managing-devices-for-testing-purposes).
-
-If the device you want to test notifications on is already added to the list, you can now test pushes:
-
-    stream chat:push:test
-
-This will do several things for you:
-
-1. Pick a random message from a channel that this user is part of
-2. Use the [notification templates](https://getstream.io/chat/docs/ios-swift/push_template/?language=swift) configured for your push providers to render the payload using this message
-  
-:::info
-Information about notification templates can be found [here](https://getstream.io/chat/docs/ios-swift/push_template/?language=swift).
-:::
-3. Send this payload to all of the user's devices
-
-:::info
-If the user you want to test push notifications on doesn't have any channels or messages, you can create them with the help of CLI:
-
-    stream chat:channel:create
-    stream chat:message:create
-:::
-   
 ## Managing devices for testing purposes
 
+To test the push notification setup you need to first register at least one device for a user you would like to test with.
 For testing purposes you can manage devices using Stream CLI:
 
 ### Adding devices
@@ -63,11 +38,16 @@ func application(
     UNUserNotificationCenter
         .current() 
         .requestAuthorization(options: [.alert, .sound, .badge]) { granted, _ in
-            print("Permission granted: \(granted)")
+            if granted {
+                DispatchQueue.main.async {
+                    UIApplication.shared.registerForRemoteNotifications()
+                }
+            }
         }
     return true
 }
 ```
+### Adding devices
 
 In case if the device was successfully registered for receiving push notifications, your app will receive an `application(_:didRegisterForRemoteNotificationsWithDeviceToken)` callback. At this point you should send an obtained device token to StreamChat's backend to finish the device's registration for push notifications.
 
@@ -99,6 +79,33 @@ chatClient.currentUserController().removeDevice(id: deviceId) { error in
     }
 }
 ```
+
+## Testing Push Notifications setup
+
+Once authentication is taken care of, you can test your setup as explained below.
+
+First of all make sure you have at least one [device associated](#managing-devices-for-testing-purposes).
+
+If the device you want to test notifications on is already added to the list, you can now test pushes:
+
+    stream chat:push:test
+
+This will do several things for you:
+
+1. Pick a random message from a channel that this user is part of
+2. Use the [notification templates](https://getstream.io/chat/docs/ios-swift/push_template/?language=swift) configured for your push providers to render the payload using this message
+  
+:::info
+Information about notification templates can be found [here](https://getstream.io/chat/docs/ios-swift/push_template/?language=swift).
+:::
+3. Send this payload to all of the user's devices
+
+:::info
+If the user you want to test push notifications on doesn't have any channels or messages, you can create them with the help of CLI:
+
+    stream chat:channel:create
+    stream chat:message:create
+:::
 
 ## Push Delivery Logic
 
