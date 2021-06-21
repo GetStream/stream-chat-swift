@@ -380,48 +380,51 @@ open class _ComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
         content.clear()
     }
     
+    /// Shows a photo/media picker.
+    open func showMediaPicker() {
+        present(mediaPickerVC, animated: true)
+    }
+    
+    /// Shows a document picker.
+    open func showFilePicker() {
+        present(filePickerVC, animated: true)
+    }
+    
+    /// Returns actions for attachments picker.
+    open var attachmentsPickerActions: [UIAlertAction] {
+        let showFilePickerAction = UIAlertAction(
+            title: L10n.Composer.Picker.file,
+            style: .default,
+            handler: { [weak self] _ in self?.showFilePicker() }
+        )
+        
+        let showMediaPickerAction = UIAlertAction(
+            title: L10n.Composer.Picker.media,
+            style: .default,
+            handler: { [weak self] _ in self?.showMediaPicker() }
+        )
+        
+        let cancelAction = UIAlertAction(
+            title: L10n.Composer.Picker.cancel,
+            style: .cancel
+        )
+        
+        return [showMediaPickerAction, showFilePickerAction, cancelAction]
+    }
+    
+    /// Action that handles tap on attachments button in composer.
     @objc open func showAttachmentsPicker(sender: UIButton) {
         // The UI doesn't support mix of image and file attachments so we are limiting this option.
         // Files in the message composer are scrolling vertically and images horizontally.
         // There is no techical limitation for multiple attachment types.
-        
-        let showMediaPicker = { [weak self] in
-            guard let self = self else { return }
-            
-            self.present(self.mediaPickerVC, animated: true)
-        }
-        
-        let showFilePicker = { [weak self] in
-            guard let self = self else { return }
-            
-            self.present(self.filePickerVC, animated: true)
-        }
-        
         if content.attachments.isEmpty {
-            let actionSheet: UIAlertController = UIAlertController(
+            let actionSheet = UIAlertController(
                 title: nil,
                 message: L10n.Composer.Picker.title,
                 preferredStyle: .actionSheet
             )
             actionSheet.popoverPresentationController?.sourceView = sender
-
-            let showFilePickerAction = UIAlertAction(
-                title: L10n.Composer.Picker.file,
-                style: .default,
-                handler: { _ in showFilePicker() }
-            )
-            let showMediaPickerAction = UIAlertAction(
-                title: L10n.Composer.Picker.media,
-                style: .default,
-                handler: { _ in showMediaPicker() }
-            )
-            
-            let cancelAction = UIAlertAction(title: L10n.Composer.Picker.cancel, style: .cancel)
-
-            [showMediaPickerAction, showFilePickerAction, cancelAction].forEach {
-                actionSheet.addAction($0)
-            }
-            
+            attachmentsPickerActions.forEach(actionSheet.addAction)
             present(actionSheet, animated: true)
         } else if content.attachments.contains(where: { $0.type == .file }) {
             showFilePicker()
