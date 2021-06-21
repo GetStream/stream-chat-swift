@@ -42,13 +42,6 @@ open class ZoomAnimator: NSObject, UIViewControllerAnimatedTransitioning {
 
         transitionContext.containerView.addSubview(toVC.view)
         
-        let transitionImageView = UIImageView(image: fromImageView.image)
-        transitionImageView.frame = fromImageView.convert(fromImageView.frame, to: fromVC.view)
-        transitionImageView.contentMode = .scaleAspectFill
-        transitionImageView.clipsToBounds = true
-        transitionContext.containerView.addSubview(transitionImageView)
-        self.transitionImageView = transitionImageView
-        
         let fromVCSnapshot = fromVC.view.snapshotView(afterScreenUpdates: true)
         if let fromVCSnapshot = fromVCSnapshot {
             transitionContext.containerView.addSubview(fromVCSnapshot)
@@ -65,6 +58,19 @@ open class ZoomAnimator: NSObject, UIViewControllerAnimatedTransitioning {
             toVC.view.isHidden = true
         }
         self.toVCSnapshot = toVCSnapshot
+        
+        let backgroundColorView = UIView().withoutAutoresizingMaskConstraints
+        transitionContext.containerView.addSubview(backgroundColorView)
+        backgroundColorView.pin(to: transitionContext.containerView)
+        backgroundColorView.backgroundColor = toVC.view.backgroundColor
+        backgroundColorView.alpha = 0
+        
+        let transitionImageView = UIImageView(image: fromImageView.image)
+        transitionImageView.frame = fromImageView.convert(fromImageView.frame, to: fromVC.view)
+        transitionImageView.contentMode = .scaleAspectFill
+        transitionImageView.clipsToBounds = true
+        transitionContext.containerView.addSubview(transitionImageView)
+        self.transitionImageView = transitionImageView
 
         fromImageView.isHidden = true
         
@@ -74,7 +80,7 @@ open class ZoomAnimator: NSObject, UIViewControllerAnimatedTransitioning {
             animations: {
                 transitionImageView.frame = toVC.view.frame
                 transitionImageView.animateAspectFit()
-                fromVCSnapshot?.alpha = 0
+                backgroundColorView.alpha = 1
             },
             completion: { [self] _ in
                 toVC.view.isHidden = false
@@ -83,6 +89,7 @@ open class ZoomAnimator: NSObject, UIViewControllerAnimatedTransitioning {
                 transitionImageView.removeFromSuperview()
                 fromVCSnapshot?.removeFromSuperview()
                 toVCSnapshot?.removeFromSuperview()
+                backgroundColorView.removeFromSuperview()
                 
                 transitionContext.completeTransition(!transitionContext.transitionWasCancelled)
             }

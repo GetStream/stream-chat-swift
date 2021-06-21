@@ -19,17 +19,31 @@ open class _VideoCollectionViewCell<ExtraData: ExtraDataTypes>: _GalleryCollecti
         playerView.player
     }
     
+    /// Image view to be used for zoom in/out animation.
+    open private(set) lazy var animationPlaceholderImageView: UIImageView = UIImageView()
+        .withoutAutoresizingMaskConstraints
+    
     /// A view that displays currently playing video.
     open private(set) lazy var playerView: PlayerView = components
         .playerView.init()
         .withoutAutoresizingMaskConstraints
     
+    override open func setUpAppearance() {
+        super.setUpAppearance()
+        
+        animationPlaceholderImageView.clipsToBounds = true
+        animationPlaceholderImageView.contentMode = .scaleAspectFit
+    }
+    
     override open func setUpLayout() {
         super.setUpLayout()
         
-        scrollView.addSubview(playerView)
-        playerView.pin(to: scrollView)
-        playerView.pin(anchors: [.height, .width], to: contentView)
+        scrollView.addSubview(animationPlaceholderImageView)
+        animationPlaceholderImageView.pin(anchors: [.height, .width], to: contentView)
+        
+        animationPlaceholderImageView.addSubview(playerView)
+        playerView.pin(to: animationPlaceholderImageView)
+        playerView.pin(anchors: [.height, .width], to: animationPlaceholderImageView)
     }
     
     override open func updateContent() {
@@ -43,10 +57,21 @@ open class _VideoCollectionViewCell<ExtraData: ExtraDataTypes>: _GalleryCollecti
         if newAssetURL != currentAssetURL {
             let playerItem = newAssetURL.map { AVPlayerItem(url: $0) }
             player.replaceCurrentItem(with: playerItem)
+            
+            if let url = newAssetURL {
+                components.videoPreviewLoader.loadPreviewForVideo(at: url) { [weak self] in
+                    switch $0 {
+                    case let .success(preview):
+                        self?.animationPlaceholderImageView.image = preview
+                    case .failure:
+                        self?.animationPlaceholderImageView.image = nil
+                    }
+                }
+            }
         }
     }
     
     override open func viewForZooming(in scrollView: UIScrollView) -> UIView? {
-        playerView
+        animationPlaceholderImageView
     }
 }

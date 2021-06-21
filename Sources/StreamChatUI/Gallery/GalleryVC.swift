@@ -447,11 +447,9 @@ open class _GalleryVC<ExtraData: ExtraDataTypes>:
                 .cellForItem(at: indexPath) as? _ImageCollectionViewCell<ExtraData>
             return cell?.imageView
         case .video:
-            let cell = galleryVC.attachmentsCollectionView
+            let cell = attachmentsCollectionView
                 .cellForItem(at: indexPath) as? _VideoCollectionViewCell<ExtraData>
-            let imageView = UIImageView().withoutAutoresizingMaskConstraints
-            cell?.playerView.addSubview(imageView)
-            return imageView
+            return cell?.animationPlaceholderImageView
         default:
             return nil
         }

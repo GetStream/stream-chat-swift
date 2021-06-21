@@ -41,8 +41,9 @@ final class DefaultVideoPreviewLoader: VideoPreviewLoader {
         
         let asset = AVURLAsset(url: url)
         let imageGenerator = AVAssetImageGenerator(asset: asset)
-        let frameTime = CMTime(seconds: 1, preferredTimescale: 600)
+        let frameTime = CMTime(seconds: 0.1, preferredTimescale: 600)
         
+        imageGenerator.appliesPreferredTrackTransform = true
         imageGenerator.generateCGImagesAsynchronously(forTimes: [.init(time: frameTime)]) { [weak self] _, image, _, _, error in
             guard let self = self else { return }
             
