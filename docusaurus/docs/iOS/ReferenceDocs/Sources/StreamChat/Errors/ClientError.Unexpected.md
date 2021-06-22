@@ -1,7 +1,7 @@
 ---
 id: clienterror.unexpected 
 title: ClientError.Unexpected
-slug: referencedocs/sources/streamchat/errors/clienterror.unexpected
+slug: /ReferenceDocs/Sources/StreamChat/Errors/clienterror.unexpected
 ---
 
 An unexpected error.

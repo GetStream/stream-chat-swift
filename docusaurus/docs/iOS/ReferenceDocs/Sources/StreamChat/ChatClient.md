@@ -1,7 +1,7 @@
 ---
 id: chatclient 
 title: ChatClient
-slug: referencedocs/sources/streamchat/chatclient
+slug: /ReferenceDocs/Sources/StreamChat/chatclient
 ---
 
 The root object representing a Stream Chat.

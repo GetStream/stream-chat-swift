@@ -1,7 +1,7 @@
 ---
 id: clienterror.unsupportedeventtype 
 title: ClientError.UnsupportedEventType
-slug: referencedocs/sources/streamchat/websocketclient/events/clienterror.unsupportedeventtype
+slug: /ReferenceDocs/Sources/StreamChat/WebSocketClient/Events/clienterror.unsupportedeventtype
 ---
 
 ``` swift

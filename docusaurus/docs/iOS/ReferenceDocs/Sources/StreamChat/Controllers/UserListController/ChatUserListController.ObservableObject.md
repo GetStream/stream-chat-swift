@@ -1,3 +1,8 @@
+---
+id: chatuserlistcontroller.observableobject 
+title: ChatUserListController.ObservableObject
+slug: /ReferenceDocs/Sources/StreamChat/Controllers/UserListController/chatuserlistcontroller.observableobject
+---
 
 A wrapper object for `UserListController` type which makes it possible to use the controller comfortably in SwiftUI.
 

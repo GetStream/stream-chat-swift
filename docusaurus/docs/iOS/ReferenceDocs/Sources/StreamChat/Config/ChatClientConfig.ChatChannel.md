@@ -1,7 +1,7 @@
 ---
 id: chatclientconfig.chatchannel 
 title: ChatClientConfig.ChatChannel
-slug: referencedocs/sources/streamchat/config/chatclientconfig.chatchannel
+slug: /ReferenceDocs/Sources/StreamChat/Config/chatclientconfig.chatchannel
 ---
 
 `ChatChannel` specific local caching and model serialization settings.

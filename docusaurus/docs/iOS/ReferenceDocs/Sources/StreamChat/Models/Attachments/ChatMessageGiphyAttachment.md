@@ -1,7 +1,7 @@
 ---
 id: chatmessagegiphyattachment 
 title: ChatMessageGiphyAttachment
-slug: referencedocs/sources/streamchat/models/attachments/chatmessagegiphyattachment
+slug: /ReferenceDocs/Sources/StreamChat/Models/Attachments/chatmessagegiphyattachment
 ---
 
 A type alias for attachment with `GiphyAttachmentPayload` payload type.

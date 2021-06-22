@@ -1,3 +1,8 @@
+---
+id: datacontroller.state 
+title: DataController.State
+slug: /ReferenceDocs/Sources/StreamChat/Controllers/datacontroller.state
+---
 
 Describes the possible states of `DataController`
 

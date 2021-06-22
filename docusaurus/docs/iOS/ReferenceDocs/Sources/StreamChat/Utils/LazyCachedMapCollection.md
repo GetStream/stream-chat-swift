@@ -1,7 +1,7 @@
 ---
 id: lazycachedmapcollection 
 title: LazyCachedMapCollection
-slug: referencedocs/sources/streamchat/utils/lazycachedmapcollection
+slug: /ReferenceDocs/Sources/StreamChat/Utils/lazycachedmapcollection
 ---
 
 Read-only collection that applies transformation to element on first access.

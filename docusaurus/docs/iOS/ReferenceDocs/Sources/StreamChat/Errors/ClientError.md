@@ -1,7 +1,7 @@
 ---
 id: clienterror 
 title: ClientError
-slug: referencedocs/sources/streamchat/errors/clienterror
+slug: /ReferenceDocs/Sources/StreamChat/Errors/clienterror
 ---
 
 A Client error.

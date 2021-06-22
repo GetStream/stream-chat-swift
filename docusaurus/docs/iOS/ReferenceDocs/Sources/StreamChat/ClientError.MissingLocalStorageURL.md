@@ -1,7 +1,7 @@
 ---
 id: clienterror.missinglocalstorageurl 
 title: ClientError.MissingLocalStorageURL
-slug: referencedocs/sources/streamchat/clienterror.missinglocalstorageurl
+slug: /ReferenceDocs/Sources/StreamChat/clienterror.missinglocalstorageurl
 ---
 
 ``` swift

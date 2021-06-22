@@ -1,7 +1,7 @@
 ---
 id: chatchannel 
 title: ChatChannel
-slug: referencedocs/sources/streamchat/models/chatchannel
+slug: /ReferenceDocs/Sources/StreamChat/Models/chatchannel
 ---
 
 A type representing a chat channel. `_ChatChannel` is an immutable snapshot of a channel entity at the given time.

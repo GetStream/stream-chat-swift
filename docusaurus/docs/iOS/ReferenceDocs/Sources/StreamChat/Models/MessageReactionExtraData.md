@@ -1,7 +1,7 @@
 ---
 id: messagereactionextradata 
 title: MessageReactionExtraData
-slug: referencedocs/sources/streamchat/models/messagereactionextradata
+slug: /ReferenceDocs/Sources/StreamChat/Models/messagereactionextradata
 ---
 
 You need to make your custom type conforming to this protocol if you want to use it for extending `ChatMessageReaction` entity

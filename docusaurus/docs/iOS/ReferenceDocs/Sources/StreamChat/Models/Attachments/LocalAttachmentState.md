@@ -1,7 +1,7 @@
 ---
 id: localattachmentstate 
 title: LocalAttachmentState
-slug: referencedocs/sources/streamchat/models/attachments/localattachmentstate
+slug: /ReferenceDocs/Sources/StreamChat/Models/Attachments/localattachmentstate
 ---
 
 A local state of the attachment. Applies only for attachments linked to the new messages sent from current device.

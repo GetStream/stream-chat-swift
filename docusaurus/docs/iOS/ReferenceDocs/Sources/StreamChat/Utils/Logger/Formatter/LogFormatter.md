@@ -1,7 +1,7 @@
 ---
 id: logformatter 
 title: LogFormatter
-slug: referencedocs/sources/streamchat/utils/logger/formatter/logformatter
+slug: /ReferenceDocs/Sources/StreamChat/Utils/Logger/Formatter/logformatter
 ---
 
 ``` swift

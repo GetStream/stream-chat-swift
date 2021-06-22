@@ -1,7 +1,7 @@
 ---
 id: userpresencechangedevent 
 title: UserPresenceChangedEvent
-slug: referencedocs/sources/streamchat/websocketclient/events/userpresencechangedevent
+slug: /ReferenceDocs/Sources/StreamChat/WebSocketClient/Events/userpresencechangedevent
 ---
 
 ``` swift

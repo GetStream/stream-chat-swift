@@ -1,7 +1,7 @@
 ---
 id: paginationparameter 
 title: PaginationParameter
-slug: referencedocs/sources/streamchat/query/paginationparameter
+slug: /ReferenceDocs/Sources/StreamChat/Query/paginationparameter
 ---
 
 Pagination parameters

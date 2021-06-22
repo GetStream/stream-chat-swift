@@ -1,7 +1,7 @@
 ---
 id: datastore 
 title: DataStore
-slug: referencedocs/sources/streamchat/database/datastore
+slug: /ReferenceDocs/Sources/StreamChat/Database/datastore
 ---
 
 `DataStore` provide access to all locally available model objects based on their id.

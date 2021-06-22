@@ -1,7 +1,7 @@
 ---
 id: memberlistfilterscope 
 title: MemberListFilterScope
-slug: referencedocs/sources/streamchat/query/memberlistfilterscope
+slug: /ReferenceDocs/Sources/StreamChat/Query/memberlistfilterscope
 ---
 
 An extra-data-specific namespace for the `FilterKey`s suitable to be used for `_ChannelMemberListQuery`.

@@ -1,7 +1,7 @@
 ---
 id: logconfig 
 title: LogConfig
-slug: referencedocs/sources/streamchat/utils/logger/logconfig
+slug: /ReferenceDocs/Sources/StreamChat/Utils/Logger/logconfig
 ---
 
 ``` swift

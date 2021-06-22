@@ -1,7 +1,7 @@
 ---
 id: localmessagestate 
 title: LocalMessageState
-slug: referencedocs/sources/streamchat/models/localmessagestate
+slug: /ReferenceDocs/Sources/StreamChat/Models/localmessagestate
 ---
 
 A possible additional local state of the message. Applies only for the messages of the current user.

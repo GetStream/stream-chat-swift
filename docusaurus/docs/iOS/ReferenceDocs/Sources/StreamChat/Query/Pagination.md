@@ -1,7 +1,7 @@
 ---
 id: pagination 
 title: Pagination
-slug: referencedocs/sources/streamchat/query/pagination
+slug: /ReferenceDocs/Sources/StreamChat/Query/pagination
 ---
 
 Basic pagination with `pageSize` and `offset`.

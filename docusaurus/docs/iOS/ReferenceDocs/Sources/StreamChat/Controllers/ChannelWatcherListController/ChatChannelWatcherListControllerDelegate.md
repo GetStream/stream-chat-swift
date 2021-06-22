@@ -1,7 +1,7 @@
 ---
 id: chatchannelwatcherlistcontrollerdelegate 
 title: ChatChannelWatcherListControllerDelegate
-slug: referencedocs/sources/streamchat/controllers/channelwatcherlistcontroller/chatchannelwatcherlistcontrollerdelegate
+slug: /ReferenceDocs/Sources/StreamChat/Controllers/ChannelWatcherListController/chatchannelwatcherlistcontrollerdelegate
 ---
 
 ``` swift

@@ -1,7 +1,7 @@
 ---
 id: command 
 title: Command
-slug: referencedocs/sources/streamchat/apiclient/endpoints/payloads/command
+slug: /ReferenceDocs/Sources/StreamChat/APIClient/Endpoints/Payloads/command
 ---
 
 A command in a message, e.g. /giphy.

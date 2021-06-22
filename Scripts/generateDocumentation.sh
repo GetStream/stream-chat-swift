@@ -56,7 +56,7 @@ while read FILEPATH; do
  PATH_WITHOUT_FILE=`dirname $FILEPATH`
 
  #Docusaurus needs path for the ID...
- FINAL_PATH=$(echo "$PATH_WITHOUT_FILE/$LOWERCASED" | sed 's#/#\\/#g')
+ FINAL_PATH=$(echo "/$PATH_WITHOUT_FILE/$LOWERCASED" | sed 's#/#\\/#g')
 
  TITLESTRING="id: $LOWERCASED"
  FIRSTLINE=`head -1 "$FILEPATH"`
@@ -67,8 +67,8 @@ while read FILEPATH; do
     continue
  fi 
 
-echo "WHAT THE FUCK"
-FINAL_PATH=$(echo $FINAL_PATH | tr '[:upper:]' '[:lower:]')
+echo "FINAL_PATH:"
+# FINAL_PATH=$(echo $FINAL_PATH | tr '[:upper:]' '[:lower:]')
 echo $FINAL_PATH
     
 sed -i '' "1s/^/---\nid: $LOWERCASED \ntitle: $CLASSNAME\nslug: $FINAL_PATH\n---\n/" $FILEPATH

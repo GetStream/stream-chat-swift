@@ -1,7 +1,7 @@
 ---
 id: messagepinning 
 title: MessagePinning
-slug: referencedocs/sources/streamchat/models/messagepinning
+slug: /ReferenceDocs/Sources/StreamChat/Models/messagepinning
 ---
 
 Describes the pinning expiration

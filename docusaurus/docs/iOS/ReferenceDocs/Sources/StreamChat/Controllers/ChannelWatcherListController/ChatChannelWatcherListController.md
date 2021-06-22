@@ -1,7 +1,7 @@
 ---
 id: chatchannelwatcherlistcontroller 
 title: ChatChannelWatcherListController
-slug: referencedocs/sources/streamchat/controllers/channelwatcherlistcontroller/chatchannelwatcherlistcontroller
+slug: /ReferenceDocs/Sources/StreamChat/Controllers/ChannelWatcherListController/chatchannelwatcherlistcontroller
 ---
 
 `_ChatChannelWatcherListController` is a controller class which allows observing

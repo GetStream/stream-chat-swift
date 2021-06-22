@@ -1,7 +1,7 @@
 ---
 id: notificationmessagenewevent 
 title: NotificationMessageNewEvent
-slug: referencedocs/sources/streamchat/websocketclient/events/notificationmessagenewevent
+slug: /ReferenceDocs/Sources/StreamChat/WebSocketClient/Events/notificationmessagenewevent
 ---
 
 ``` swift

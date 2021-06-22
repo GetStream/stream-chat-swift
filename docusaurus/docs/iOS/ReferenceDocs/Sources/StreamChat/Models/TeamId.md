@@ -1,7 +1,7 @@
 ---
 id: teamid 
 title: TeamId
-slug: referencedocs/sources/streamchat/models/teamid
+slug: /ReferenceDocs/Sources/StreamChat/Models/teamid
 ---
 
 A unique identifier of team.

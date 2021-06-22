@@ -1,3 +1,8 @@
+---
+id: currentchatusercontrollerdelegate 
+title: CurrentChatUserControllerDelegate
+slug: /ReferenceDocs/Sources/StreamChat/Controllers/CurrentUserController/currentchatusercontrollerdelegate
+---
 
 `CurrentChatUserController` uses this protocol to communicate changes to its delegate.
 

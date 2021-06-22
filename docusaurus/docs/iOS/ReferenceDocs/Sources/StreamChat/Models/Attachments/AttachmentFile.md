@@ -1,7 +1,7 @@
 ---
 id: attachmentfile 
 title: AttachmentFile
-slug: referencedocs/sources/streamchat/models/attachments/attachmentfile
+slug: /ReferenceDocs/Sources/StreamChat/Models/Attachments/attachmentfile
 ---
 
 An attachment file description.

@@ -1,7 +1,7 @@
 ---
 id: extradatatypes 
 title: ExtraDataTypes
-slug: referencedocs/sources/streamchat/extradatatypes
+slug: /ReferenceDocs/Sources/StreamChat/extradatatypes
 ---
 
 A protocol defining extra data types used by `ChatClient`.

@@ -1,7 +1,7 @@
 ---
 id: channeltype 
 title: ChannelType
-slug: referencedocs/sources/streamchat/models/channeltype
+slug: /ReferenceDocs/Sources/StreamChat/Models/channeltype
 ---
 
 An enum describing possible types of a channel.

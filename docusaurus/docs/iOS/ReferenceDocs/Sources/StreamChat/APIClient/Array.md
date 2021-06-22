@@ -1,7 +1,7 @@
 ---
 id: array 
 title: Array
-slug: referencedocs/sources/streamchat/apiclient/array
+slug: /ReferenceDocs/Sources/StreamChat/APIClient/array
 ---
 
 ## Initializers

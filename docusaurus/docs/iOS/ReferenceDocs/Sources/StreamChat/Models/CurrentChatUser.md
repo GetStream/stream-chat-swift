@@ -1,7 +1,7 @@
 ---
 id: currentchatuser 
 title: CurrentChatUser
-slug: referencedocs/sources/streamchat/models/currentchatuser
+slug: /ReferenceDocs/Sources/StreamChat/Models/currentchatuser
 ---
 
 A type representing the currently logged-in user. `_CurrentChatUser` is an immutable snapshot of a current user entity at

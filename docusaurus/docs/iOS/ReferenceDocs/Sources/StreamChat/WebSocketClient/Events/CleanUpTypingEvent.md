@@ -1,7 +1,7 @@
 ---
 id: cleanuptypingevent 
 title: CleanUpTypingEvent
-slug: referencedocs/sources/streamchat/websocketclient/events/cleanuptypingevent
+slug: /ReferenceDocs/Sources/StreamChat/WebSocketClient/Events/cleanuptypingevent
 ---
 
 A special event type which is only emitted by the SDK and never the backend.

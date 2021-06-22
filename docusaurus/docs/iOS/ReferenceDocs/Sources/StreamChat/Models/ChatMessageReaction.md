@@ -1,7 +1,7 @@
 ---
 id: chatmessagereaction 
 title: ChatMessageReaction
-slug: referencedocs/sources/streamchat/models/chatmessagereaction
+slug: /ReferenceDocs/Sources/StreamChat/Models/chatmessagereaction
 ---
 
 A type representing a message reaction. `_ChatMessageReaction` is an immutable snapshot

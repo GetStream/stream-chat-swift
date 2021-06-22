@@ -1,7 +1,7 @@
 ---
 id: logdestination 
 title: LogDestination
-slug: referencedocs/sources/streamchat/utils/logger/destination/logdestination
+slug: /ReferenceDocs/Sources/StreamChat/Utils/Logger/Destination/logdestination
 ---
 
 ``` swift

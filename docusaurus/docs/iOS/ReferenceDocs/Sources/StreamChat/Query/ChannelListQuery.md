@@ -1,7 +1,7 @@
 ---
 id: channellistquery 
 title: ChannelListQuery
-slug: referencedocs/sources/streamchat/query/channellistquery
+slug: /ReferenceDocs/Sources/StreamChat/Query/channellistquery
 ---
 
 A query is used for querying specific channels from backend.

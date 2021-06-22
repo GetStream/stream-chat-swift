@@ -1,7 +1,7 @@
 ---
 id: notificationmarkallreadevent 
 title: NotificationMarkAllReadEvent
-slug: referencedocs/sources/streamchat/websocketclient/events/notificationmarkallreadevent
+slug: /ReferenceDocs/Sources/StreamChat/WebSocketClient/Events/notificationmarkallreadevent
 ---
 
 ``` swift

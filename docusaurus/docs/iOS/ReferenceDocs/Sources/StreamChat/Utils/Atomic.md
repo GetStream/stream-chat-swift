@@ -1,7 +1,7 @@
 ---
 id: atomic 
 title: Atomic
-slug: referencedocs/sources/streamchat/utils/atomic
+slug: /ReferenceDocs/Sources/StreamChat/Utils/atomic
 ---
 
 A mutable thread safe variable.

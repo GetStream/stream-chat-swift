@@ -1,3 +1,8 @@
+---
+id: chatuserlistcontroller 
+title: ChatUserListController
+slug: /ReferenceDocs/Sources/StreamChat/Controllers/UserListController/chatuserlistcontroller
+---
 
 `_ChatUserListController` is a controller class which allows observing a list of chat users based on the provided query.
 

@@ -1,3 +1,8 @@
+---
+id: chatconnectioncontrollerdelegate 
+title: ChatConnectionControllerDelegate
+slug: /ReferenceDocs/Sources/StreamChat/Controllers/ConnectionController/chatconnectioncontrollerdelegate
+---
 
 `ChatConnectionController` uses this protocol to communicate changes to its delegate.
 

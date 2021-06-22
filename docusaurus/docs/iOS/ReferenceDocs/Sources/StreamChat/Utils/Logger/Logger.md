@@ -1,7 +1,7 @@
 ---
 id: logger 
 title: Logger
-slug: referencedocs/sources/streamchat/utils/logger/logger
+slug: /ReferenceDocs/Sources/StreamChat/Utils/Logger/logger
 ---
 
 Entitiy used for loggin messages.

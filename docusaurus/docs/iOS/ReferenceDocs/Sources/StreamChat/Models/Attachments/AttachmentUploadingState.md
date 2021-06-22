@@ -1,7 +1,7 @@
 ---
 id: attachmentuploadingstate 
 title: AttachmentUploadingState
-slug: referencedocs/sources/streamchat/models/attachments/attachmentuploadingstate
+slug: /ReferenceDocs/Sources/StreamChat/Models/Attachments/attachmentuploadingstate
 ---
 
 A type representing the uploading state for attachments that require prior uploading.

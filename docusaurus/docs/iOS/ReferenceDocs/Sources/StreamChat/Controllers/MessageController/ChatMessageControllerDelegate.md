@@ -1,3 +1,8 @@
+---
+id: chatmessagecontrollerdelegate 
+title: ChatMessageControllerDelegate
+slug: /ReferenceDocs/Sources/StreamChat/Controllers/MessageController/chatmessagecontrollerdelegate
+---
 
 `_ChatMessageControllerDelegate` uses this protocol to communicate changes to its delegate.
 

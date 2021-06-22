@@ -1,7 +1,7 @@
 ---
 id: memberevent 
 title: MemberEvent
-slug: referencedocs/sources/streamchat/websocketclient/events/memberevent
+slug: /ReferenceDocs/Sources/StreamChat/WebSocketClient/Events/memberevent
 ---
 
 A protocol for any `MemberEvent` where it has a `member`, and `channel` payload.

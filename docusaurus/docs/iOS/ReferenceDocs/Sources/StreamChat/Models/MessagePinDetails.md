@@ -1,7 +1,7 @@
 ---
 id: messagepindetails 
 title: MessagePinDetails
-slug: referencedocs/sources/streamchat/models/messagepindetails
+slug: /ReferenceDocs/Sources/StreamChat/Models/messagepindetails
 ---
 
 ``` swift

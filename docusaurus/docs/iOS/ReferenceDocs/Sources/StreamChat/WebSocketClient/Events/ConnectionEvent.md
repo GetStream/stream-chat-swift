@@ -1,7 +1,7 @@
 ---
 id: connectionevent 
 title: ConnectionEvent
-slug: referencedocs/sources/streamchat/websocketclient/events/connectionevent
+slug: /ReferenceDocs/Sources/StreamChat/WebSocketClient/Events/connectionevent
 ---
 
 ``` swift

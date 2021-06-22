@@ -1,7 +1,7 @@
 ---
 id: unreadcount 
 title: UnreadCount
-slug: referencedocs/sources/streamchat/models/unreadcount
+slug: /ReferenceDocs/Sources/StreamChat/Models/unreadcount
 ---
 
 A struct containing information about unread counts of channels and messages.

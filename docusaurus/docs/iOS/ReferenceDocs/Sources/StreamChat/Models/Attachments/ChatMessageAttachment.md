@@ -1,7 +1,7 @@
 ---
 id: chatmessageattachment 
 title: ChatMessageAttachment
-slug: referencedocs/sources/streamchat/models/attachments/chatmessageattachment
+slug: /ReferenceDocs/Sources/StreamChat/Models/Attachments/chatmessageattachment
 ---
 
 A type representing a chat message attachment.

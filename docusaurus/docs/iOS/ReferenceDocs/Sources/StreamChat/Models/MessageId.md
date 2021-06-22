@@ -1,7 +1,7 @@
 ---
 id: messageid 
 title: MessageId
-slug: referencedocs/sources/streamchat/models/messageid
+slug: /ReferenceDocs/Sources/StreamChat/Models/messageid
 ---
 
 A unique identifier of a message.
