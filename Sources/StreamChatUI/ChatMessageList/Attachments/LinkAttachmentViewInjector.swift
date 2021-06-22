@@ -19,7 +19,10 @@ public typealias LinkAttachmentViewInjector = _LinkAttachmentViewInjector<NoExtr
 
 /// View injector for showing link attachments.
 open class _LinkAttachmentViewInjector<ExtraData: ExtraDataTypes>: _AttachmentViewInjector<ExtraData> {
-    open private(set) lazy var linkPreviewView = _ChatMessageLinkPreviewView<ExtraData>()
+    open private(set) lazy var linkPreviewView = contentView
+        .components
+        .linkPreviewView
+        .init()
         .withoutAutoresizingMaskConstraints
     
     override open func contentViewDidLayout(options: ChatMessageLayoutOptions) {
