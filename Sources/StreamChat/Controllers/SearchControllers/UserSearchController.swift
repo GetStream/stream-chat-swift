@@ -185,6 +185,32 @@ public class _ChatUserSearchController<ExtraData: ExtraDataTypes>: DataControlle
         }
     }
     
+    /// Searches users for the given query.
+    ///
+    /// When this function is called, `users` property of this controller will refresh with new users matching the term.
+    /// The delegate function `didChangeUsers` will also be called.
+    ///
+    /// - Note: Currently, no local data will be searched, only remote data will be queried.
+    ///
+    /// - Parameters:
+    ///   - query: Search query.
+    ///   - completion: Called when the controller has finished fetching remote data.
+    ///   If the data fetching fails, the error variable contains more details about the problem.
+    public func search(query: _UserListQuery<ExtraData.User>, completion: ((_ error: Error?) -> Void)? = nil) {
+        startUserListObserverIfNeeded()
+        
+        var query = query
+        query.filter?.explicitHash = explicitFilterHash
+        query.shouldBeUpdatedInBackground = false
+        
+        lastQuery = query
+        
+        userQueryUpdater.update(userListQuery: query, policy: .replace) { error in
+            self.state = error == nil ? .remoteDataFetched : .remoteDataFetchFailed(ClientError(with: error))
+            self.callback { completion?(error) }
+        }
+    }
+    
     /// Loads next users from backend.
     ///
     /// - Parameters:
