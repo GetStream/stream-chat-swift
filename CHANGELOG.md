@@ -15,6 +15,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Fix sorting Member List by `createdAt` causing an issue [#1185](https://github.com/GetStream/stream-chat-swift/issues/1185)
 - Fix ComposerView not respecting `ChannelConfig.maxMessageLength [#1190](https://github.com/GetStream/stream-chat-swift/issues/1190)
 - Fix mentions not being parsed correctly [#1188](https://github.com/GetStream/stream-chat-swift/issues/1188)
+- Fix layout feedback loop for Quoted Message without bubble view [#1203](https://github.com/GetStream/stream-chat-swift/issues/1203)
 
 # [4.0.0-beta.3](https://github.com/GetStream/stream-chat-swift/releases/tag/4.0.0-beta.3)
 _June 11, 2021_
