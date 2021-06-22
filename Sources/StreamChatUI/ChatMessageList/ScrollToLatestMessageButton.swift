@@ -2,10 +2,27 @@
 // Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
+import StreamChat
 import UIKit
 
 /// A Button that is used to indicate unread messages in the Message list.
-open class ScrollToLatestMessageButton: _Button, AppearanceProvider {
+public typealias ScrollToLatestMessageButton = _ScrollToLatestMessageButton<NoExtraData>
+
+/// A Button that is used to indicate unread messages in the Message list.
+open class _ScrollToLatestMessageButton<ExtraData: ExtraDataTypes>: _Button, ThemeProvider {
+    /// The unread count that will be shown on the button as a badge icon.
+    var content: ChannelUnreadCount = .noUnread {
+        didSet {
+            updateContentIfNeeded()
+        }
+    }
+    
+    /// The view showing number of unread messages in channel if any.
+    open private(set) lazy var unreadCountView: _ChatMessageListUnreadCountView<ExtraData> = components
+        .messageListUnreadCountView
+        .init()
+        .withoutAutoresizingMaskConstraints
+    
     override open func layoutSubviews() {
         super.layoutSubviews()
         
@@ -20,6 +37,18 @@ open class ScrollToLatestMessageButton: _Button, AppearanceProvider {
         layer.addShadow(color: appearance.colorPalette.shadow)
     }
     
+    override open func setUpLayout() {
+        super.setUpLayout()
         
+        addSubview(unreadCountView)
+        unreadCountView.centerXAnchor.pin(equalTo: centerXAnchor).isActive = true
+        unreadCountView.centerYAnchor.pin(equalTo: topAnchor).isActive = true
+    }
+    
+    override open func updateContent() {
+        super.updateContent()
+        
+        unreadCountView.content = content
+        unreadCountView.invalidateIntrinsicContentSize()
     }
 }
