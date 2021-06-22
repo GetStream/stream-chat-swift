@@ -26,7 +26,8 @@ extension _ChatMessageGalleryView {
         }
 
         public var didTapOnAttachment: ((ChatMessageImageAttachment) -> Void)?
-        
+        public var didTapOnUploadingActionButton: ((ChatMessageImageAttachment) -> Void)?
+
         private var imageTask: ImageTask? {
             didSet { oldValue?.cancel() }
         }
@@ -62,6 +63,12 @@ extension _ChatMessageGalleryView {
             
             let tapRecognizer = UITapGestureRecognizer(target: self, action: #selector(didTapOnAttachment(_:)))
             addGestureRecognizer(tapRecognizer)
+            
+            uploadingOverlay.didTapActionButton = { [weak self] in
+                guard let self = self, let attachment = self.content else { return }
+                
+                self.didTapOnUploadingActionButton?(attachment)
+            }
         }
 
         override open func setUpLayout() {

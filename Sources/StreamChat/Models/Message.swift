@@ -274,6 +274,13 @@ public extension _ChatMessage {
     var linkAttachments: [ChatMessageLinkAttachment] {
         attachments(payloadType: LinkAttachmentPayload.self)
     }
+    
+    /// Returns attachment for the given identifier.
+    /// - Parameter id: Attachment identifier.
+    /// - Returns: A type-erased attachment.
+    func attachment(with id: AttachmentId) -> AnyChatMessageAttachment? {
+        _attachments.first { $0.id == id }
+    }
 }
 
 extension _ChatMessage: Hashable {

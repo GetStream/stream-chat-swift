@@ -11,7 +11,7 @@ extension _ChatMessageGalleryView {
             didSet { updateContentIfNeeded() }
         }
 
-        public var didTapOnAttachmentAction: (() -> Void)?
+        public var didTapActionButton: (() -> Void)?
         
         open var minBottomContainerHeight: CGFloat = 24
 
@@ -46,7 +46,7 @@ extension _ChatMessageGalleryView {
             
             actionButton.addTarget(
                 self,
-                action: #selector(didTapAttachmentActionButton(_:)),
+                action: #selector(handleTapOnActionButton(_:)),
                 for: .touchUpInside
             )
         }
@@ -97,10 +97,11 @@ extension _ChatMessageGalleryView {
                 }
             }
             
-            actionButton.content = content.map {
+            actionButton.content = content.flatMap {
                 switch $0.state {
                 case .pendingUpload, .uploading:
-                    return .cancel
+                    // TODO: Return `.cancel` when it's is supported.
+                    return nil
                 case .uploadingFailed:
                     return .restart
                 case .uploaded:
@@ -135,8 +136,8 @@ extension _ChatMessageGalleryView {
 
         // MARK: - Actions
         
-        @objc open func didTapAttachmentActionButton(_ button: AttachmentActionButton) {
-            didTapOnAttachmentAction?()
+        @objc open func handleTapOnActionButton(_ button: AttachmentActionButton) {
+            didTapActionButton?()
         }
     }
 }

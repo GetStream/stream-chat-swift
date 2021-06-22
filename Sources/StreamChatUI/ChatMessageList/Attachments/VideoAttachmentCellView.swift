@@ -19,6 +19,9 @@ open class _VideoAttachmentCellView<ExtraData: ExtraDataTypes>: _View, ThemeProv
     /// A handler that will be invoked when the view is tapped
     open var didTapOnAttachment: ((ChatMessageVideoAttachment) -> Void)?
     
+    /// A handler that will be invoked when action button on uploading overlay is tapped
+    open var didTapOnUploadingActionButton: ((ChatMessageVideoAttachment) -> Void)?
+    
     /// An image view used to display video preview image
     open private(set) lazy var imageView = UIImageView()
         .withoutAutoresizingMaskConstraints
@@ -51,10 +54,15 @@ open class _VideoAttachmentCellView<ExtraData: ExtraDataTypes>: _View, ThemeProv
         super.setUp()
         
         let tapRecognizer = UITapGestureRecognizer(target: self, action: #selector(handleTapOnAttachment(_:)))
-        uploadingOverlay.addGestureRecognizer(tapRecognizer)
         addGestureRecognizer(tapRecognizer)
         
         playButton.addTarget(self, action: #selector(handleTapOnPlay), for: .touchUpInside)
+        
+        uploadingOverlay.didTapActionButton = { [weak self] in
+            guard let self = self, let attachment = self.content else { return }
+            
+            self.didTapOnUploadingActionButton?(attachment)
+        }
     }
 
     override open func setUpLayout() {

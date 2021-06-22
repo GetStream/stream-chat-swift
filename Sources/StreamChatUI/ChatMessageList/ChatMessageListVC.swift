@@ -358,41 +358,42 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
         )
     }
 
-    /// Restarts upload of given `attachment` in case of failure
-    open func restartUploading(for attachmentId: AttachmentId) {
-        channelController.client
-            .messageController(cid: attachmentId.cid, messageId: attachmentId.messageId)
-            .restartFailedAttachmentUploading(with: attachmentId)
-    }
-
     // MARK: - Cell action handlers
     
-    open func didTapOnVideoAttachment(
-        _ attachment: ChatMessageVideoAttachment,
-        previews: [GalleryItemPreview],
-        at indexPath: IndexPath?
+    open func galleryMessageContentView(
+        at indexPath: IndexPath?,
+        didTapAttachmentPreview attachmentId: AttachmentId,
+        previews: [GalleryItemPreview]
     ) {
         guard let indexPath = indexPath else { return log.error("IndexPath is not available") }
         
-        router.showImageGallery(
+        router.showGallery(
             message: messageForIndexPath(indexPath),
-            initialAttachmentId: attachment.id,
+            initialAttachmentId: attachmentId,
             previews: previews
         )
     }
-
-    public func didTapOnImageAttachment(
-        _ attachment: ChatMessageImageAttachment,
-        previews: [GalleryItemPreview],
-        at indexPath: IndexPath?
+    
+    open func galleryMessageContentView(
+        at indexPath: IndexPath?,
+        didTakeActionOnUploadingAttachment attachmentId: AttachmentId
     ) {
         guard let indexPath = indexPath else { return log.error("IndexPath is not available") }
         
-        router.showImageGallery(
-            message: messageForIndexPath(indexPath),
-            initialAttachmentId: attachment,
-            previews: previews
-        )
+        let message = messageForIndexPath(indexPath)
+         
+        guard let localState = message.attachment(with: attachmentId)?.uploadingState else {
+            return log.error("Failed to take an action on attachment with \(attachmentId)")
+        }
+        
+        switch localState.state {
+        case .uploadingFailed:
+            channelController.client
+                .messageController(cid: attachmentId.cid, messageId: attachmentId.messageId)
+                .restartFailedAttachmentUploading(with: attachmentId)
+        default:
+            break
+        }
     }
     
     open func didTapOnLinkAttachment(
