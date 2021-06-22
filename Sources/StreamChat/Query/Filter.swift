@@ -47,6 +47,9 @@ public enum FilterOperator: String {
     
     /// Matches none of the values specified in an array.
     case nor = "$nor"
+    
+    /// Matches if the key array contains the given value.
+    case contains = "$contains"
 }
 
 /// A phantom protocol used to limit the scope of `Filter`.
@@ -226,6 +229,11 @@ public extension Filter {
     static func exists<Value: Encodable>(_ key: FilterKey<Scope, Value>, exists: Bool = true) -> Filter {
         .init(operator: .exists, key: key, value: exists)
     }
+    
+    /// Matches if the key contains the given value.
+    static func contains<Value: Encodable>(_ key: FilterKey<Scope, Value>, value: String) -> Filter {
+        .init(operator: .contains, key: key, value: value)
+    }
 }
 
 extension Filter {
@@ -267,6 +275,8 @@ extension Filter: CustomStringConvertible {
             return "\(key) AUTOCOMPLETE \(value)"
         case .exists:
             return "\(key) EXISTS \(value)"
+        case .contains:
+            return "\(key) CONTAINS \(value)"
         case .and:
             let filters = value as? [Filter] ?? []
             return "(" + filters.map(\.description).joined(separator: ") AND (") + ")"
