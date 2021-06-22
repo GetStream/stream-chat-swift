@@ -17,6 +17,7 @@ open class _ChatThreadVC<ExtraData: ExtraDataTypes>:
     _ChatMessageControllerDelegate,
     _ChatMessageActionsVCDelegate,
     ChatMessageContentViewDelegate,
+    GiphyActionContentViewDelegate,
     UICollectionViewDelegate,
     UICollectionViewDataSource {
     /// Controller for observing data changes within the channel
