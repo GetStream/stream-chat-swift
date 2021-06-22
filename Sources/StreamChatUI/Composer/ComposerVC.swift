@@ -716,11 +716,23 @@ open class _ComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
         _ picker: UIImagePickerController,
         didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]
     ) {
-        guard let url = info[UIImagePickerController.InfoKey.imageURL] as? URL else { return }
-        
         do {
-            let attachment = try AnyAttachmentPayload(localFileURL: url, attachmentType: .image)
-            content.attachments.append(attachment)
+            if let imageURL = info[.imageURL] as? URL {
+                let attachment = try AnyAttachmentPayload(localFileURL: imageURL, attachmentType: .image)
+                content.attachments.append(attachment)
+            } else if let videoURL = info[.mediaURL] as? URL {
+                let attachment = try AnyAttachmentPayload(localFileURL: videoURL, attachmentType: .video)
+                content.attachments.append(attachment)
+            } else {
+                // Support images from the camera picker.
+                let editedImage = info[.editedImage] as? UIImage
+                let pickedImage = editedImage ?? info[.originalImage] as? UIImage
+                guard let image = pickedImage else { return }
+
+                guard let photoURL = try image.temporaryLocalFileUrl() else { return }
+                let attachment = try AnyAttachmentPayload(localFileURL: photoURL, attachmentType: .image)
+                content.attachments.append(attachment)
+            }
         } catch {
             log.assertionFailure(error.localizedDescription)
         }
