@@ -406,9 +406,9 @@ open class _ChatThreadVC<ExtraData: ExtraDataTypes>:
 
     open func didTapOnAttachment(
         _ attachment: ChatMessageFileAttachment,
-        at indexPath: IndexPath
+        at indexPath: IndexPath?
     ) {
-        router.showFilePreview(fileURL: attachment.payload.assetURL)
+        router.showFilePreview(fileURL: attachment.assetURL)
     }
 
     // MARK: - _ComposerVCDelegate

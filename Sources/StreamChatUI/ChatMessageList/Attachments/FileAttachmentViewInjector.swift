@@ -8,7 +8,7 @@ import UIKit
 /// The delegate used `GiphyAttachmentViewInjector` to communicate user interactions.
 public protocol FileActionContentViewDelegate: ChatMessageContentViewDelegate {
     /// Called when the user taps on attachment action
-    func didTapOnAttachment(_ attachment: ChatMessageFileAttachment, at indexPath: IndexPath)
+    func didTapOnAttachment(_ attachment: ChatMessageFileAttachment, at indexPath: IndexPath?)
 }
 
 public typealias FilesAttachmentViewInjector = _FilesAttachmentViewInjector<NoExtraData>
@@ -21,11 +21,10 @@ public class _FilesAttachmentViewInjector<ExtraData: ExtraDataTypes>: _Attachmen
             .init()
         
         attachmentListView.didTapOnAttachment = { [weak self] attachment in
-            guard let delegate = self?.contentView.delegate as? FileActionContentViewDelegate,
-                  let indexPath = self?.contentView.indexPath?()
+            guard
+                let delegate = self?.contentView.delegate as? FileActionContentViewDelegate
             else { return }
-            
-            delegate.didTapOnAttachment(attachment, at: indexPath)
+            delegate.didTapOnAttachment(attachment, at: self?.contentView.indexPath?())
         }
         
         return attachmentListView.withoutAutoresizingMaskConstraints

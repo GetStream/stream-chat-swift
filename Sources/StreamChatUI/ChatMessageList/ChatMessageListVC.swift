@@ -428,9 +428,9 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
 
     open func didTapOnAttachment(
         _ attachment: ChatMessageFileAttachment,
-        at indexPath: IndexPath
+        at indexPath: IndexPath?
     ) {
-        router.showFilePreview(fileURL: attachment.payload.assetURL)
+        router.showFilePreview(fileURL: attachment.assetURL)
     }
     
     /// Executes the provided action on the message
