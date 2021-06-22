@@ -10,7 +10,7 @@ public protocol LinkPreviewViewDelegate: ChatMessageContentViewDelegate {
     /// Called when the user taps the link preview.
     func didTapOnLinkAttachment(
         _ attachment: ChatMessageLinkAttachment,
-        at indexPath: IndexPath
+        at indexPath: IndexPath?
     )
 }
 
@@ -19,7 +19,10 @@ public typealias LinkAttachmentViewInjector = _LinkAttachmentViewInjector<NoExtr
 
 /// View injector for showing link attachments.
 open class _LinkAttachmentViewInjector<ExtraData: ExtraDataTypes>: _AttachmentViewInjector<ExtraData> {
-    open private(set) lazy var linkPreviewView = _ChatMessageLinkPreviewView<ExtraData>()
+    open private(set) lazy var linkPreviewView = contentView
+        .components
+        .linkPreviewView
+        .init()
         .withoutAutoresizingMaskConstraints
     
     override open func contentViewDidLayout(options: ChatMessageLayoutOptions) {
@@ -38,13 +41,12 @@ open class _LinkAttachmentViewInjector<ExtraData: ExtraDataTypes>: _AttachmentVi
     @objc
     open func handleTapOnAttachment() {
         guard
-            let attachment = linkPreviewView.content,
-            let indexPath = contentView.indexPath?()
+            let attachment = linkPreviewView.content
         else { return }
         (contentView.delegate as? LinkPreviewViewDelegate)?
             .didTapOnLinkAttachment(
                 attachment,
-                at: indexPath
+                at: contentView.indexPath?()
             )
     }
 }

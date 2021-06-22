@@ -404,18 +404,16 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
     }
 
     // MARK: - Cell action handlers
-
-    public func didTapOnImageAttachment(
+    
+    open func didTapOnImageAttachment(
         _ attachment: ChatMessageImageAttachment,
         previews: [ImagePreviewable],
-        at indexPath: IndexPath
+        at indexPath: IndexPath?
     ) {
-        guard
-            let cell = collectionView.cellForItem(at: indexPath) as? _ChatMessageCollectionViewCell<ExtraData>,
-            let message = cell.messageContentView?.content
-        else { return }
+        guard let indexPath = indexPath else { return log.error("IndexPath is not available") }
+        
         router.showImageGallery(
-            message: message,
+            message: messageForIndexPath(indexPath),
             initialAttachment: attachment,
             previews: previews
         )
@@ -423,13 +421,16 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
     
     open func didTapOnLinkAttachment(
         _ attachment: ChatMessageLinkAttachment,
-        at indexPath: IndexPath
+        at indexPath: IndexPath?
     ) {
         router.showLinkPreview(link: attachment.originalURL)
     }
 
-    public func didTapOnAttachment(_ attachment: ChatMessageFileAttachment, at indexPath: IndexPath) {
-        router.showFilePreview(fileURL: attachment.payload.assetURL)
+    open func didTapOnAttachment(
+        _ attachment: ChatMessageFileAttachment,
+        at indexPath: IndexPath?
+    ) {
+        router.showFilePreview(fileURL: attachment.assetURL)
     }
     
     /// Executes the provided action on the message

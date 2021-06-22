@@ -155,6 +155,10 @@ public struct _Components<ExtraData: ExtraDataTypes> {
     /// The view that shows message's image attachments.
     public var imageGalleryView: _ChatMessageImageGallery<ExtraData>.Type =
         _ChatMessageImageGallery<ExtraData>.self
+    
+    /// The view that shows a link preview in message cell.
+    public var linkPreviewView: _ChatMessageLinkPreviewView<ExtraData>.Type =
+        _ChatMessageLinkPreviewView<ExtraData>.self
 
     /// The view that shows an overlay with uploading progress for image attachment that is being uploaded.
     public var imageUploadingOverlay: _ChatMessageImageGallery<ExtraData>.UploadingOverlay.Type =
