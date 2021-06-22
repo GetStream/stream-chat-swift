@@ -271,10 +271,11 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
     open func scrollViewDidScroll(_ scrollView: UIScrollView) {
         if collectionView.isLastCellFullyVisible, channelController.channel?.isUnread == true {
             channelController.markRead()
-            
-            // Hide the button immediately. Temporary solution until CIS-881 is implemented.
-            setScrollToLatestMessageButton(visible: false)
+
+            // Hide the badge immediately. Temporary solution until CIS-881 is implemented.
+            scrollToLatestMessageButton.content = .noUnread
         }
+        setScrollToLatestMessageButton(visible: !collectionView.isLastCellFullyVisible)
     }
     
     /// Scrolls to most recent message

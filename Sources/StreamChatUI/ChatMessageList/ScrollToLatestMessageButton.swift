@@ -6,6 +6,12 @@ import UIKit
 
 /// A Button that is used to indicate unread messages in the Message list.
 open class ScrollToLatestMessageButton: _Button, AppearanceProvider {
+    override open func layoutSubviews() {
+        super.layoutSubviews()
+        
+        layer.cornerRadius = bounds.height / 2
+    }
+
     override open func setUpAppearance() {
         super.setUpAppearance()
         
@@ -14,9 +20,6 @@ open class ScrollToLatestMessageButton: _Button, AppearanceProvider {
         layer.addShadow(color: appearance.colorPalette.shadow)
     }
     
-    override open func layoutSubviews() {
-        super.layoutSubviews()
         
-        layer.cornerRadius = bounds.height / 2
     }
 }
