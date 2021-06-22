@@ -404,8 +404,8 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
     }
 
     // MARK: - Cell action handlers
-
-    public func didTapOnImageAttachment(
+    
+    open func didTapOnImageAttachment(
         _ attachment: ChatMessageImageAttachment,
         previews: [ImagePreviewable],
         at indexPath: IndexPath
@@ -428,7 +428,10 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
         router.showLinkPreview(link: attachment.originalURL)
     }
 
-    public func didTapOnAttachment(_ attachment: ChatMessageFileAttachment, at indexPath: IndexPath) {
+    open func didTapOnAttachment(
+        _ attachment: ChatMessageFileAttachment,
+        at indexPath: IndexPath
+    ) {
         router.showFilePreview(fileURL: attachment.payload.assetURL)
     }
     
