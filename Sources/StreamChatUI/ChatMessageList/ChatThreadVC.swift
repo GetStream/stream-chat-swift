@@ -17,7 +17,10 @@ open class _ChatThreadVC<ExtraData: ExtraDataTypes>:
     _ChatMessageControllerDelegate,
     _ChatMessageActionsVCDelegate,
     ChatMessageContentViewDelegate,
+    GalleryContentViewDelegate,
     GiphyActionContentViewDelegate,
+    LinkPreviewViewDelegate,
+    FileActionContentViewDelegate,
     UICollectionViewDelegate,
     UICollectionViewDataSource {
     /// Controller for observing data changes within the channel
@@ -375,6 +378,32 @@ open class _ChatThreadVC<ExtraData: ExtraDataTypes>:
                 messageId: messageController.replies[indexPath.item].id
             )
             .dispatchEphemeralMessageAction(action)
+    }
+    
+    open func didTapOnImageAttachment(
+        _ attachment: ChatMessageImageAttachment,
+        previews: [ImagePreviewable],
+        at indexPath: IndexPath
+    ) {
+        router.showImageGallery(
+            message: messageForIndexPath(indexPath),
+            initialAttachment: attachment,
+            previews: previews
+        )
+    }
+    
+    open func didTapOnLinkAttachment(
+        _ attachment: ChatMessageLinkAttachment,
+        at indexPath: IndexPath
+    ) {
+        router.showLinkPreview(link: attachment.originalURL)
+    }
+
+    open func didTapOnAttachment(
+        _ attachment: ChatMessageFileAttachment,
+        at indexPath: IndexPath
+    ) {
+        router.showFilePreview(fileURL: attachment.payload.assetURL)
     }
 
     // MARK: - _ComposerVCDelegate
