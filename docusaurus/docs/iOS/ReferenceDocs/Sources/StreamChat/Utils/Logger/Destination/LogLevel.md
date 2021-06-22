@@ -1,7 +1,7 @@
 ---
 id: loglevel 
 title: LogLevel
-slug: referencedocs/sources/streamchat/utils/logger/destination/loglevel
+slug: /ReferenceDocs/Sources/StreamChat/Utils/Logger/Destination/loglevel
 ---
 
 Log level for any messages to be logged.

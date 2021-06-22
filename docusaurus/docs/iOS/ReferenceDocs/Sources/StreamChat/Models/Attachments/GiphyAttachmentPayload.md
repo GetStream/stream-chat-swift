@@ -1,7 +1,7 @@
 ---
 id: giphyattachmentpayload 
 title: GiphyAttachmentPayload
-slug: referencedocs/sources/streamchat/models/attachments/giphyattachmentpayload
+slug: /ReferenceDocs/Sources/StreamChat/Models/Attachments/giphyattachmentpayload
 ---
 
 Represents a payload for attachments with `.giphy` type.

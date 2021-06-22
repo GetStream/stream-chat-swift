@@ -1,7 +1,7 @@
 ---
 id: clienterror.eventdecoding 
 title: ClientError.EventDecoding
-slug: referencedocs/sources/streamchat/websocketclient/events/clienterror.eventdecoding
+slug: /ReferenceDocs/Sources/StreamChat/WebSocketClient/Events/clienterror.eventdecoding
 ---
 
 ``` swift

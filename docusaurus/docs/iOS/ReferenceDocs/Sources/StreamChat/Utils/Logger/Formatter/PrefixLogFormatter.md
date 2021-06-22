@@ -1,7 +1,7 @@
 ---
 id: prefixlogformatter 
 title: PrefixLogFormatter
-slug: referencedocs/sources/streamchat/utils/logger/formatter/prefixlogformatter
+slug: /ReferenceDocs/Sources/StreamChat/Utils/Logger/Formatter/prefixlogformatter
 ---
 
 Formats the given log message with the given prefixes by log level.

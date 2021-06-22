@@ -1,7 +1,7 @@
 ---
 id: messagereadevent 
 title: MessageReadEvent
-slug: referencedocs/sources/streamchat/websocketclient/events/messagereadevent
+slug: /ReferenceDocs/Sources/StreamChat/WebSocketClient/Events/messagereadevent
 ---
 
 `ChannelReadEvent`, this event tells that User has mark read all messages in channel.

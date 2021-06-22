@@ -1,7 +1,7 @@
 ---
 id: attachmentaction.actionstyle 
 title: AttachmentAction.ActionStyle
-slug: referencedocs/sources/streamchat/models/attachments/attachmentaction.actionstyle
+slug: /ReferenceDocs/Sources/StreamChat/Models/Attachments/attachmentaction.actionstyle
 ---
 
 An attachment action style, e.g. primary button.

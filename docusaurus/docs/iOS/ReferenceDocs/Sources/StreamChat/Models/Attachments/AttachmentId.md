@@ -1,7 +1,7 @@
 ---
 id: attachmentid 
 title: AttachmentId
-slug: referencedocs/sources/streamchat/models/attachments/attachmentid
+slug: /ReferenceDocs/Sources/StreamChat/Models/Attachments/attachmentid
 ---
 
 An object that uniquely identifies a message attachment.

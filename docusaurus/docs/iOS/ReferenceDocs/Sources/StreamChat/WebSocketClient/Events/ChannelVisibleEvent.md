@@ -1,7 +1,7 @@
 ---
 id: channelvisibleevent 
 title: ChannelVisibleEvent
-slug: referencedocs/sources/streamchat/websocketclient/events/channelvisibleevent
+slug: /ReferenceDocs/Sources/StreamChat/WebSocketClient/Events/channelvisibleevent
 ---
 
 ``` swift

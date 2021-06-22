@@ -1,7 +1,7 @@
 ---
 id: channelconfig 
 title: ChannelConfig
-slug: referencedocs/sources/streamchat/apiclient/endpoints/payloads/channelconfig
+slug: /ReferenceDocs/Sources/StreamChat/APIClient/Endpoints/Payloads/channelconfig
 ---
 
 A channel config.

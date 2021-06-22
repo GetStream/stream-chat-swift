@@ -1,7 +1,7 @@
 ---
 id: attachmentpayload 
 title: AttachmentPayload
-slug: referencedocs/sources/streamchat/models/attachments/attachmentpayload
+slug: /ReferenceDocs/Sources/StreamChat/Models/Attachments/attachmentpayload
 ---
 
 A protocol an attachment payload type has to conform in order it can be

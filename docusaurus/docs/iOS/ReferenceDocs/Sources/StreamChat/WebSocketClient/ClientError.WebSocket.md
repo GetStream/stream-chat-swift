@@ -1,7 +1,7 @@
 ---
 id: clienterror.websocket 
 title: ClientError.WebSocket
-slug: referencedocs/sources/streamchat/websocketclient/clienterror.websocket
+slug: /ReferenceDocs/Sources/StreamChat/WebSocketClient/clienterror.websocket
 ---
 
 ``` swift

@@ -1,3 +1,8 @@
+---
+id: chatmessagecontroller.observableobject 
+title: ChatMessageController.ObservableObject
+slug: /ReferenceDocs/Sources/StreamChat/Controllers/MessageController/chatmessagecontroller.observableobject
+---
 
 A wrapper object for `CurrentUserController` type which makes it possible to use the controller comfortably in SwiftUI.
 

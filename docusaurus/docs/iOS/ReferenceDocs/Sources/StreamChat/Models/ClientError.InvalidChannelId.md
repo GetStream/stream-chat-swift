@@ -1,7 +1,7 @@
 ---
 id: clienterror.invalidchannelid 
 title: ClientError.InvalidChannelId
-slug: referencedocs/sources/streamchat/models/clienterror.invalidchannelid
+slug: /ReferenceDocs/Sources/StreamChat/Models/clienterror.invalidchannelid
 ---
 
 ``` swift

@@ -1,3 +1,8 @@
+---
+id: datacontrollerstatedelegate 
+title: DataControllerStateDelegate
+slug: /ReferenceDocs/Sources/StreamChat/Controllers/datacontrollerstatedelegate
+---
 
 A delegate protocol some Controllers use to propagate the information about controller `state` changes. You can use it to let
 users know a certain activity is happening in the background, i.e. using a non-blocking activity indicator.

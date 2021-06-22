@@ -1,7 +1,7 @@
 ---
 id: listordering 
 title: ListOrdering
-slug: referencedocs/sources/streamchat/controllers/channelcontroller/listordering
+slug: /ReferenceDocs/Sources/StreamChat/Controllers/ChannelController/listordering
 ---
 
 Describes the flow of the items in the list

@@ -1,7 +1,7 @@
 ---
 id: anyattachmentpayload 
 title: AnyAttachmentPayload
-slug: referencedocs/sources/streamchat/models/attachments/anyattachmentpayload
+slug: /ReferenceDocs/Sources/StreamChat/Models/Attachments/anyattachmentpayload
 ---
 
 A type-erased type that wraps either a local file URL that has to be uploaded

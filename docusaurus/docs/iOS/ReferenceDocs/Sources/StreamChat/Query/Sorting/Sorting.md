@@ -1,7 +1,7 @@
 ---
 id: sorting 
 title: Sorting
-slug: referencedocs/sources/streamchat/query/sorting/sorting
+slug: /ReferenceDocs/Sources/StreamChat/Query/Sorting/sorting
 ---
 
 Sorting options.

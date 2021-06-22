@@ -1,7 +1,7 @@
 ---
 id: logdetails 
 title: LogDetails
-slug: referencedocs/sources/streamchat/utils/logger/destination/logdetails
+slug: /ReferenceDocs/Sources/StreamChat/Utils/Logger/Destination/logdetails
 ---
 
 Encapsulates the components of a log message.

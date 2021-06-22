@@ -1,7 +1,7 @@
 ---
 id: chatchannelwatcherlistcontroller.observableobject 
 title: ChatChannelWatcherListController.ObservableObject
-slug: referencedocs/sources/streamchat/controllers/channelwatcherlistcontroller/chatchannelwatcherlistcontroller.observableobject
+slug: /ReferenceDocs/Sources/StreamChat/Controllers/ChannelWatcherListController/chatchannelwatcherlistcontroller.observableobject
 ---
 
 A wrapper object for `_ChatChannelWatcherListController` type which makes it possible to use the controller

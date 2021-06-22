@@ -1,7 +1,7 @@
 ---
 id: messagespagination 
 title: MessagesPagination
-slug: referencedocs/sources/streamchat/query/messagespagination
+slug: /ReferenceDocs/Sources/StreamChat/Query/messagespagination
 ---
 
 ``` swift

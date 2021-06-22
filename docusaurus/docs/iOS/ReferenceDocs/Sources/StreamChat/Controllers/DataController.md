@@ -1,3 +1,8 @@
+---
+id: datacontroller 
+title: DataController
+slug: /ReferenceDocs/Sources/StreamChat/Controllers/datacontroller
+---
 
 The base class for controllers which represent and control a data entity. Not meant to be used directly.
 

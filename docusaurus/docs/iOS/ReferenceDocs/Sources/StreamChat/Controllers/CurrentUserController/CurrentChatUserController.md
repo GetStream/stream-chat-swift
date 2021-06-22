@@ -1,3 +1,8 @@
+---
+id: currentchatusercontroller 
+title: CurrentChatUserController
+slug: /ReferenceDocs/Sources/StreamChat/Controllers/CurrentUserController/currentchatusercontroller
+---
 
 `CurrentChatUserController` is a controller class which allows observing and mutating the currently logged-in
 user of `ChatClient`.

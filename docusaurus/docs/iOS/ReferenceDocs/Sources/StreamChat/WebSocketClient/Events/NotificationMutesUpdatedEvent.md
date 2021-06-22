@@ -1,7 +1,7 @@
 ---
 id: notificationmutesupdatedevent 
 title: NotificationMutesUpdatedEvent
-slug: referencedocs/sources/streamchat/websocketclient/events/notificationmutesupdatedevent
+slug: /ReferenceDocs/Sources/StreamChat/WebSocketClient/Events/notificationmutesupdatedevent
 ---
 
 ``` swift

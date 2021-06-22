@@ -1,7 +1,7 @@
 ---
 id: reactionnewevent 
 title: ReactionNewEvent
-slug: referencedocs/sources/streamchat/websocketclient/events/reactionnewevent
+slug: /ReferenceDocs/Sources/StreamChat/WebSocketClient/Events/reactionnewevent
 ---
 
 ``` swift

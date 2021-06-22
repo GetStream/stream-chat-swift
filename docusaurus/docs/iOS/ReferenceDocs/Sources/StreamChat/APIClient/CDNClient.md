@@ -1,7 +1,7 @@
 ---
 id: cdnclient 
 title: CDNClient
-slug: referencedocs/sources/streamchat/apiclient/cdnclient
+slug: /ReferenceDocs/Sources/StreamChat/APIClient/cdnclient
 ---
 
 API client that handles working with content (e.g. uploading attachments)

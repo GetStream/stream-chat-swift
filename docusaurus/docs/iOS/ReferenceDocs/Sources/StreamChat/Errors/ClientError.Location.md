@@ -1,7 +1,7 @@
 ---
 id: clienterror.location 
 title: ClientError.Location
-slug: referencedocs/sources/streamchat/errors/clienterror.location
+slug: /ReferenceDocs/Sources/StreamChat/Errors/clienterror.location
 ---
 
 ``` swift

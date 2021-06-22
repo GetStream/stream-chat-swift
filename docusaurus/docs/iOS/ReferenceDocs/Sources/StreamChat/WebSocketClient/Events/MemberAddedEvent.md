@@ -1,7 +1,7 @@
 ---
 id: memberaddedevent 
 title: MemberAddedEvent
-slug: referencedocs/sources/streamchat/websocketclient/events/memberaddedevent
+slug: /ReferenceDocs/Sources/StreamChat/WebSocketClient/Events/memberaddedevent
 ---
 
 ``` swift

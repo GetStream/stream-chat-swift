@@ -1,7 +1,7 @@
 ---
 id: channellistfilterscope 
 title: ChannelListFilterScope
-slug: referencedocs/sources/streamchat/query/channellistfilterscope
+slug: /ReferenceDocs/Sources/StreamChat/Query/channellistfilterscope
 ---
 
 An extra-data-specific namespace for the `FilterKey`s suitable to be used for `_ChannelListQuery`.

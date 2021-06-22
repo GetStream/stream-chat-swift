@@ -1,7 +1,7 @@
 ---
 id: attachmenttype 
 title: AttachmentType
-slug: referencedocs/sources/streamchat/models/attachments/attachmenttype
+slug: /ReferenceDocs/Sources/StreamChat/Models/Attachments/attachmenttype
 ---
 
 An attachment type.

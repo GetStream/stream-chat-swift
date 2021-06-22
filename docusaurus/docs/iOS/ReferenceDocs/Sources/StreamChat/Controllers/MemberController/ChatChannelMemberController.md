@@ -1,7 +1,7 @@
 ---
 id: chatchannelmembercontroller 
 title: ChatChannelMemberController
-slug: referencedocs/sources/streamchat/controllers/membercontroller/chatchannelmembercontroller
+slug: /ReferenceDocs/Sources/StreamChat/Controllers/MemberController/chatchannelmembercontroller
 ---
 
 `_ChatChannelMemberController` is a controller class which allows mutating and observing changes of a specific chat member.

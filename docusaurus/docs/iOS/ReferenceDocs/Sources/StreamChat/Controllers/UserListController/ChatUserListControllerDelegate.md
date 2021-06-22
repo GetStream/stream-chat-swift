@@ -1,3 +1,8 @@
+---
+id: chatuserlistcontrollerdelegate 
+title: ChatUserListControllerDelegate
+slug: /ReferenceDocs/Sources/StreamChat/Controllers/UserListController/chatuserlistcontrollerdelegate
+---
 
 `ChatUserListController` uses this protocol to communicate changes to its delegate.
 

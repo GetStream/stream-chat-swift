@@ -1,7 +1,7 @@
 ---
 id: sortingkey 
 title: SortingKey
-slug: referencedocs/sources/streamchat/query/sorting/sortingkey
+slug: /ReferenceDocs/Sources/StreamChat/Query/Sorting/sortingkey
 ---
 
 A sorting key protocol.

@@ -1,7 +1,7 @@
 ---
 id: clienterror.invalidtoken 
 title: ClientError.InvalidToken
-slug: referencedocs/sources/streamchat/config/clienterror.invalidtoken
+slug: /ReferenceDocs/Sources/StreamChat/Config/clienterror.invalidtoken
 ---
 
 ``` swift

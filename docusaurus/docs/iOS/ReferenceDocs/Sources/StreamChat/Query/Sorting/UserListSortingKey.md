@@ -1,7 +1,7 @@
 ---
 id: userlistsortingkey 
 title: UserListSortingKey
-slug: referencedocs/sources/streamchat/query/sorting/userlistsortingkey
+slug: /ReferenceDocs/Sources/StreamChat/Query/Sorting/userlistsortingkey
 ---
 
 `UserListSortingKey` is keys by which you can get sorted users after query.

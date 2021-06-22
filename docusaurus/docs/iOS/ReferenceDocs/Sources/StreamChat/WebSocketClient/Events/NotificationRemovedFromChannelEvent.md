@@ -1,7 +1,7 @@
 ---
 id: notificationremovedfromchannelevent 
 title: NotificationRemovedFromChannelEvent
-slug: referencedocs/sources/streamchat/websocketclient/events/notificationremovedfromchannelevent
+slug: /ReferenceDocs/Sources/StreamChat/WebSocketClient/Events/notificationremovedfromchannelevent
 ---
 
 ``` swift

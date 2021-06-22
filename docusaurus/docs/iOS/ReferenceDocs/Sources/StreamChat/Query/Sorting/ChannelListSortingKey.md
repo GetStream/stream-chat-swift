@@ -1,7 +1,7 @@
 ---
 id: channellistsortingkey 
 title: ChannelListSortingKey
-slug: referencedocs/sources/streamchat/query/sorting/channellistsortingkey
+slug: /ReferenceDocs/Sources/StreamChat/Query/Sorting/channellistsortingkey
 ---
 
 `ChannelListSortingKey` is keys by which you can get sorted channels after query.

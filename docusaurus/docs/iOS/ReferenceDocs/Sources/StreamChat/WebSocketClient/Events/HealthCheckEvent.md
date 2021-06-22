@@ -1,7 +1,7 @@
 ---
 id: healthcheckevent 
 title: HealthCheckEvent
-slug: referencedocs/sources/streamchat/websocketclient/events/healthcheckevent
+slug: /ReferenceDocs/Sources/StreamChat/WebSocketClient/Events/healthcheckevent
 ---
 
 ``` swift

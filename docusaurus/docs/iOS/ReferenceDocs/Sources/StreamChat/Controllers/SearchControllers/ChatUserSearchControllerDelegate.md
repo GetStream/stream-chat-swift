@@ -1,7 +1,7 @@
 ---
 id: chatusersearchcontrollerdelegate 
 title: ChatUserSearchControllerDelegate
-slug: referencedocs/sources/streamchat/controllers/searchcontrollers/chatusersearchcontrollerdelegate
+slug: /ReferenceDocs/Sources/StreamChat/Controllers/SearchControllers/chatusersearchcontrollerdelegate
 ---
 
 `ChatUserSearchController` uses this protocol to communicate changes to its delegate.

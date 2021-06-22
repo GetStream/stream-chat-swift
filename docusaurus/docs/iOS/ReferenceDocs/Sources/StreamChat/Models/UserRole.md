@@ -1,7 +1,7 @@
 ---
 id: userrole 
 title: UserRole
-slug: referencedocs/sources/streamchat/models/userrole
+slug: /ReferenceDocs/Sources/StreamChat/Models/userrole
 ---
 
 ``` swift

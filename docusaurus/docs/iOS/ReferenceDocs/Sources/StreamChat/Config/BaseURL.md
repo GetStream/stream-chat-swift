@@ -1,7 +1,7 @@
 ---
 id: baseurl 
 title: BaseURL
-slug: referencedocs/sources/streamchat/config/baseurl
+slug: /ReferenceDocs/Sources/StreamChat/Config/baseurl
 ---
 
 A struct representing base URL for `ChatClient`.

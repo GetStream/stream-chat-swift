@@ -1,3 +1,8 @@
+---
+id: chatmessagecontroller 
+title: ChatMessageController
+slug: /ReferenceDocs/Sources/StreamChat/Controllers/MessageController/chatmessagecontroller
+---
 
 `ChatMessageController` is a controller class which allows observing and mutating a chat message entity.
 

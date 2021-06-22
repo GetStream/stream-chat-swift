@@ -1,7 +1,7 @@
 ---
 id: banenabling 
 title: BanEnabling
-slug: referencedocs/sources/streamchat/models/banenabling
+slug: /ReferenceDocs/Sources/StreamChat/Models/banenabling
 ---
 
 An option to enable ban users.

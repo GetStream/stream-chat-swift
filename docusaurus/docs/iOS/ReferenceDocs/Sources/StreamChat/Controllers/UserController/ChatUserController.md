@@ -1,3 +1,8 @@
+---
+id: chatusercontroller 
+title: ChatUserController
+slug: /ReferenceDocs/Sources/StreamChat/Controllers/UserController/chatusercontroller
+---
 
 `_ChatUserController` is a controller class which allows mutating and observing changes of a specific chat user.
 

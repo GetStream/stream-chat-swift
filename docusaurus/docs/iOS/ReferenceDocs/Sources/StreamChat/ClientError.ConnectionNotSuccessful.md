@@ -1,7 +1,7 @@
 ---
 id: clienterror.connectionnotsuccessful 
 title: ClientError.ConnectionNotSuccessful
-slug: referencedocs/sources/streamchat/clienterror.connectionnotsuccessful
+slug: /ReferenceDocs/Sources/StreamChat/clienterror.connectionnotsuccessful
 ---
 
 ``` swift

@@ -1,7 +1,7 @@
 ---
 id: typingevent 
 title: TypingEvent
-slug: referencedocs/sources/streamchat/websocketclient/events/typingevent
+slug: /ReferenceDocs/Sources/StreamChat/WebSocketClient/Events/typingevent
 ---
 
 ``` swift

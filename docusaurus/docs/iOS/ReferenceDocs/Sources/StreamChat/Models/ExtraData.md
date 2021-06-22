@@ -1,7 +1,7 @@
 ---
 id: extradata 
 title: ExtraData
-slug: referencedocs/sources/streamchat/models/extradata
+slug: /ReferenceDocs/Sources/StreamChat/Models/extradata
 ---
 
 A parent protocol for all extra data protocols. Not meant to be adopted directly.

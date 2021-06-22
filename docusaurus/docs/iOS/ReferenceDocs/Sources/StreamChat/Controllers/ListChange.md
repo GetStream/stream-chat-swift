@@ -1,3 +1,8 @@
+---
+id: listchange 
+title: ListChange
+slug: /ReferenceDocs/Sources/StreamChat/Controllers/listchange
+---
 
 This enum describes the changes of the given collections of items.
 

@@ -1,7 +1,7 @@
 ---
 id: chatuser 
 title: ChatUser
-slug: referencedocs/sources/streamchat/models/chatuser
+slug: /ReferenceDocs/Sources/StreamChat/Models/chatuser
 ---
 
 A type representing a chat user. `ChatUser` is an immutable snapshot of a chat user entity at the given time.

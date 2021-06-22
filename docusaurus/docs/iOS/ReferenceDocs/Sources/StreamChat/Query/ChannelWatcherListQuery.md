@@ -1,7 +1,7 @@
 ---
 id: channelwatcherlistquery 
 title: ChannelWatcherListQuery
-slug: referencedocs/sources/streamchat/query/channelwatcherlistquery
+slug: /ReferenceDocs/Sources/StreamChat/Query/channelwatcherlistquery
 ---
 
 A query type used for fetching a channel's watchers from the backend.

@@ -1,7 +1,7 @@
 ---
 id: clienterror.clientisnotinactivemode 
 title: ClientError.ClientIsNotInActiveMode
-slug: referencedocs/sources/streamchat/clienterror.clientisnotinactivemode
+slug: /ReferenceDocs/Sources/StreamChat/clienterror.clientisnotinactivemode
 ---
 
 ``` swift

@@ -1,7 +1,7 @@
 ---
 id: userunbannedevent 
 title: UserUnbannedEvent
-slug: referencedocs/sources/streamchat/websocketclient/events/userunbannedevent
+slug: /ReferenceDocs/Sources/StreamChat/WebSocketClient/Events/userunbannedevent
 ---
 
 ``` swift

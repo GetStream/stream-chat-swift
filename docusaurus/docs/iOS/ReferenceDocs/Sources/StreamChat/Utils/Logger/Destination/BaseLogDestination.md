@@ -1,7 +1,7 @@
 ---
 id: baselogdestination 
 title: BaseLogDestination
-slug: referencedocs/sources/streamchat/utils/logger/destination/baselogdestination
+slug: /ReferenceDocs/Sources/StreamChat/Utils/Logger/Destination/baselogdestination
 ---
 
 Base class for log destinations. Already implements basic functionaly to allow easy destination implementation.

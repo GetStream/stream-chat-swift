@@ -1,7 +1,7 @@
 ---
 id: userlistquery 
 title: UserListQuery
-slug: referencedocs/sources/streamchat/query/userlistquery
+slug: /ReferenceDocs/Sources/StreamChat/Query/userlistquery
 ---
 
 A query is used for querying specific users from backend.

@@ -1,3 +1,8 @@
+---
+id: chatchannellistcontroller 
+title: ChatChannelListController
+slug: /ReferenceDocs/Sources/StreamChat/Controllers/ChannelListController/chatchannellistcontroller
+---
 
 `_ChatChannelListController` is a controller class which allows observing a list of chat channels based on the provided query.
 

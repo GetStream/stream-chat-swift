@@ -1,7 +1,7 @@
 ---
 id: errorpayload 
 title: ErrorPayload
-slug: referencedocs/sources/streamchat/errors/errorpayload
+slug: /ReferenceDocs/Sources/StreamChat/Errors/errorpayload
 ---
 
 A parsed server response error.

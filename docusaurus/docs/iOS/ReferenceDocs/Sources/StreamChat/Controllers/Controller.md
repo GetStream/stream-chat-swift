@@ -1,3 +1,8 @@
+---
+id: controller 
+title: Controller
+slug: /ReferenceDocs/Sources/StreamChat/Controllers/controller
+---
 
 A protocol to which all controllers conform to.
 

@@ -1,7 +1,7 @@
 ---
 id: attachmentaction 
 title: AttachmentAction
-slug: referencedocs/sources/streamchat/models/attachments/attachmentaction
+slug: /ReferenceDocs/Sources/StreamChat/Models/Attachments/attachmentaction
 ---
 
 An attachment action, e.g. send, shuffle.
