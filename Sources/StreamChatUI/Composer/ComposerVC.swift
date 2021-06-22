@@ -618,13 +618,33 @@ open class _ComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
 
         showSuggestions()
     }
+    
+    /// Returns the query to be used for searching users for the given typing mention.
+    ///
+    /// This function is called in `showMentionSuggestions` to retrieve the query
+    /// that will be used to search the users. You should override this if you want to change the
+    /// user searching logic.
+    ///
+    /// - Parameter typingMention: The potential user mention the current user is typing.
+    /// - Returns: `_UserListQuery` instance that will be used for searching users.
+    open func queryForMentionSuggestionsSearch(typingMention term: String) -> _UserListQuery<ExtraData.User> {
+        _UserListQuery<ExtraData.User>(
+            filter: .or([
+                .autocomplete(.name, text: term),
+                .autocomplete(.id, text: term)
+            ]),
+            sort: [.init(key: .name, isAscending: true)]
+        )
+    }
 
     /// Shows the mention suggestions for the potential mention the current user is typing.
     /// - Parameters:
     ///   - typingMention: The potential user mention the current user is typing.
     ///   - mentionRange: The position where the current user is typing a mention to it can be replaced with the suggestion.
     open func showMentionSuggestions(for typingMention: String, mentionRange: NSRange) {
-        userSearchController.search(term: typingMention)
+        userSearchController.search(
+            query: queryForMentionSuggestionsSearch(typingMention: typingMention)
+        )
         let dataSource = _ChatMessageComposerSuggestionsMentionDataSource(
             collectionView: suggestionsVC.collectionView,
             searchController: userSearchController

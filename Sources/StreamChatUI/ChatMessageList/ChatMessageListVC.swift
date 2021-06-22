@@ -115,8 +115,6 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
         messageComposerVC.setDelegate(self)
         messageComposerVC.channelController = channelController
         messageComposerVC.userSearchController = userSuggestionSearchController
-
-        userSuggestionSearchController.search(term: nil)
         
         channelController.setDelegate(self)
         channelController.synchronize()
