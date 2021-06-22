@@ -294,8 +294,10 @@ open class ChatMessageListCollectionView<ExtraData: ExtraDataTypes>: UICollectio
         if numberOfItems(inSection: 0) == 0 { return true }
         let lastIndexPath = IndexPath(item: 0, section: 0)
 
-        guard let attributes = collectionViewLayout.layoutAttributesForItem(at: lastIndexPath) else { return false }
-        return bounds.contains(attributes.frame)
+        guard let frame = collectionViewLayout.layoutAttributesForItem(at: lastIndexPath)?.frame else { return false }
+        // Fix frame height to return true after scrollToMostRecentMessage animation finishes.
+        let fixedFrame = CGRect(origin: frame.origin, size: CGSize(width: frame.width, height: frame.height - 1))
+        return bounds.contains(fixedFrame)
     }
 
     /// A Boolean that returns true if the last cell is visible, but can be just partially visible.
