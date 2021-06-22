@@ -44,6 +44,7 @@ pushd docusaurus/docs/iOS/
 # --- 
 # id: ${classname}
 # header: ClassName
+# slug: lowecased path
 # --- 
 # sed is cool and everything but having it on macOS hurts
 find ReferenceDocs -type f > /tmp/allFiles.txt  
@@ -68,10 +69,10 @@ while read FILEPATH; do
  fi 
 
 echo "FINAL_PATH:"
-# FINAL_PATH=$(echo $FINAL_PATH | tr '[:upper:]' '[:lower:]')
+FINAL_PATH=$(echo $FINAL_PATH | tr '[:upper:]' '[:lower:]')
 echo $FINAL_PATH
     
-sed -i '' "1s/^/---\nid: $LOWERCASED \ntitle: $CLASSNAME\nslug: $FINAL_PATH\n---\n/" $FILEPATH
+sed -i '' "1s/^/---\ntitle: $CLASSNAME\n---\n/" $FILEPATH
 done </tmp/allFiles.txt
 popd
 
