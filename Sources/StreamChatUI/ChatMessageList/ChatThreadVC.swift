@@ -261,6 +261,7 @@ open class _ChatThreadVC<ExtraData: ExtraDataTypes>:
             )
             collectionView.addSubview(messageView)
             messageView.content = message
+            messageView.delegate = self
 
             let messageViewSize = messageView.systemLayoutSizeFitting(
                 CGSize(
@@ -383,10 +384,14 @@ open class _ChatThreadVC<ExtraData: ExtraDataTypes>:
     open func didTapOnImageAttachment(
         _ attachment: ChatMessageImageAttachment,
         previews: [ImagePreviewable],
-        at indexPath: IndexPath
+        at indexPath: IndexPath?
     ) {
+        guard let message = indexPath.map(messageForIndexPath) ?? messageController.message else {
+            return log.error("Failed to get the message")
+        }
+        
         router.showImageGallery(
-            message: messageForIndexPath(indexPath),
+            message: message,
             initialAttachment: attachment,
             previews: previews
         )

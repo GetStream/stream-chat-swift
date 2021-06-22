@@ -408,14 +408,12 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
     open func didTapOnImageAttachment(
         _ attachment: ChatMessageImageAttachment,
         previews: [ImagePreviewable],
-        at indexPath: IndexPath
+        at indexPath: IndexPath?
     ) {
-        guard
-            let cell = collectionView.cellForItem(at: indexPath) as? _ChatMessageCollectionViewCell<ExtraData>,
-            let message = cell.messageContentView?.content
-        else { return }
+        guard let indexPath = indexPath else { return log.error("IndexPath is not available") }
+        
         router.showImageGallery(
-            message: message,
+            message: messageForIndexPath(indexPath),
             initialAttachment: attachment,
             previews: previews
         )
