@@ -10,9 +10,9 @@ public typealias ChatMessageDefaultReactionsBubbleView = _ChatMessageDefaultReac
 open class _ChatMessageDefaultReactionsBubbleView<ExtraData: ExtraDataTypes>: _ChatMessageReactionsBubbleView<ExtraData> {
     // MARK: - Subviews
 
-    private let contentViewBackground = UIView().withoutAutoresizingMaskConstraints
-    private let tailBehind = UIImageView().withoutAutoresizingMaskConstraints
-    private let tailInFront = UIImageView().withoutAutoresizingMaskConstraints
+    public let contentViewBackground = UIView().withoutAutoresizingMaskConstraints
+    public let tailBehind = UIImageView().withoutAutoresizingMaskConstraints
+    public let tailInFront = UIImageView().withoutAutoresizingMaskConstraints
 
     override open var tailLeadingAnchor: NSLayoutXAxisAnchor { tailBehind.leadingAnchor }
     override open var tailTrailingAnchor: NSLayoutXAxisAnchor { tailBehind.trailingAnchor }
