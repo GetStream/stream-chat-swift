@@ -399,7 +399,7 @@ open class _ChatThreadVC<ExtraData: ExtraDataTypes>:
     
     open func didTapOnLinkAttachment(
         _ attachment: ChatMessageLinkAttachment,
-        at indexPath: IndexPath
+        at indexPath: IndexPath?
     ) {
         router.showLinkPreview(link: attachment.originalURL)
     }

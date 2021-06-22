@@ -10,7 +10,7 @@ public protocol LinkPreviewViewDelegate: ChatMessageContentViewDelegate {
     /// Called when the user taps the link preview.
     func didTapOnLinkAttachment(
         _ attachment: ChatMessageLinkAttachment,
-        at indexPath: IndexPath
+        at indexPath: IndexPath?
     )
 }
 
@@ -38,13 +38,12 @@ open class _LinkAttachmentViewInjector<ExtraData: ExtraDataTypes>: _AttachmentVi
     @objc
     open func handleTapOnAttachment() {
         guard
-            let attachment = linkPreviewView.content,
-            let indexPath = contentView.indexPath?()
+            let attachment = linkPreviewView.content
         else { return }
         (contentView.delegate as? LinkPreviewViewDelegate)?
             .didTapOnLinkAttachment(
                 attachment,
-                at: indexPath
+                at: contentView.indexPath?()
             )
     }
 }
