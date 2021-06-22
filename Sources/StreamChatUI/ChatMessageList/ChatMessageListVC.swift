@@ -482,6 +482,8 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
         _ channelController: _ChatChannelController<ExtraData>,
         didChangeTypingMembers typingMembers: Set<_ChatChannelMember<ExtraData.User>>
     ) {
+        guard channelController.areTypingEventsEnabled else { return }
+        
         let typingMembersWithoutCurrentUser = typingMembers
             .sorted { $0.id < $1.id }
             .filter { $0.id != self.channelController.client.currentUserId }
