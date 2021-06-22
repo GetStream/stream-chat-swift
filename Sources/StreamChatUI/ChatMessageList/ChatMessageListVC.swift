@@ -89,7 +89,7 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
     /// A button to scroll the collection view to the bottom.
     ///
     /// Visible when there is unread message and the collection view is not at the bottom already.
-    open private(set) lazy var scrollToLatestMessageButton: UIButton = components
+    open private(set) lazy var scrollToLatestMessageButton: _ScrollToLatestMessageButton<ExtraData> = components
         .scrollToLatestMessageButton
         .init()
         .withoutAutoresizingMaskConstraints
@@ -283,10 +283,9 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
         collectionView.scrollToMostRecentMessage(animated: animated)
     }
     
-    /// Update the visibility of `scrollToLatestMessageButton` based on unread messages and visible messages.
+    /// Update the `scrollToLatestMessageButton` based on unread messages.
     open func updateScrollToLatestMessageButton() {
-        let visible = channelController.channel?.isUnread == true && !collectionView.isLastCellFullyVisible
-        setScrollToLatestMessageButton(visible: visible)
+        scrollToLatestMessageButton.content = channelController.channel?.unreadCount ?? .noUnread
     }
     
     /// Set the visibility of `scrollToLatestMessageButton`.
