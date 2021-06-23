@@ -9,6 +9,7 @@ public extension _ChatMessage {
     /// Creates a new `_ChatMessage` object from the provided data.
     static func mock(
         id: MessageId,
+        cid: ChannelId,
         text: String,
         type: MessageType = .reply,
         author: _ChatUser<ExtraData.User>,
@@ -39,6 +40,7 @@ public extension _ChatMessage {
     ) -> Self {
         .init(
             id: id,
+            cid: cid,
             text: text,
             type: type,
             command: command,

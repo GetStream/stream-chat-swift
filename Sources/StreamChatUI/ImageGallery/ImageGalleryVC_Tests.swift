@@ -16,6 +16,7 @@ final class ImageGalleryVC_Tests: XCTestCase {
         
         content = .mock(
             id: .unique,
+            cid: .unique,
             text: "",
             author: .mock(
                 id: .unique,
