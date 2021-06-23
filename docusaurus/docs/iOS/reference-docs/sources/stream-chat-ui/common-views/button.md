@@ -11,7 +11,7 @@ open class _Button: UIButton, Customizable
 
 ## Inheritance
 
-[`Customizable`](customizable), `UIButton`
+[`Customizable`](../customizable), `UIButton`
 
 ## Methods
 

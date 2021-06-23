@@ -19,7 +19,7 @@ Learn more about using custom extra data in our [cheat sheet](https://github.com
 
 ## Inheritance
 
-[`DataController`](../data-controller), [`DelegateCallable`](../delegate-callable), [`DataStoreProvider`](../../database/data-store-provider)
+[`DataController`](../../data-controller), [`DelegateCallable`](../../delegate-callable), [`DataStoreProvider`](../../../database/data-store-provider)
 
 ## Properties
 
@@ -373,7 +373,7 @@ method and call it every time the user presses a key. The controller will manage
 
   - completion: a completion block with an error if the request was failed.
 
-### `createNewMessage(text:pinning:attachments:mentionedUserIds:quotedMessageId:extraData:completion:)`
+### `createNewMessage(text:pinning:isSilent:attachments:mentionedUserIds:quotedMessageId:extraData:completion:)`
 
 Creates a new message locally and schedules it for send.
 
@@ -383,6 +383,7 @@ func createNewMessage(
         pinning: MessagePinning? = nil,
 //        command: String? = nil,
 //        arguments: String? = nil,
+        isSilent: Bool = false,
         attachments: [AnyAttachmentPayload] = [],
         mentionedUserIds: [UserId] = [],
         quotedMessageId: MessageId? = nil,
@@ -395,6 +396,7 @@ func createNewMessage(
 
   - text: Text of the message.
   - pinning: Pins the new message. `nil` if should not be pinned.
+  - isSilent: A flag indicating whether the message is a silent message. Silent messages are special messages that don't increase the unread messages count nor mark a channel as unread.
   - attachments: An array of the attachments for the message. `Note`: can be built-in types, custom attachment types conforming to `AttachmentEnvelope` protocol and `ChatMessageAttachmentSeed`s.
   - quotedMessageId: An id of the message new message quotes. (inline reply)
   - extraData: Additional extra data of the message object.

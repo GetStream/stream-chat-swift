@@ -10,7 +10,7 @@ open class _ChatChannelAvatarView<ExtraData: ExtraDataTypes>: _View, ThemeProvid
 
 ## Inheritance
 
-[`_View`](../_view), [`SwiftUIRepresentable`](../swift-ui-representable), [`ThemeProvider`](../../utils/theme-provider)
+[`_View`](../../_view), [`SwiftUIRepresentable`](../../swift-ui-representable), [`ThemeProvider`](../../../utils/theme-provider)
 
 ## Nested Type Aliases
 

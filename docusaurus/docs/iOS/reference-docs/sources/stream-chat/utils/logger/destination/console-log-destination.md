@@ -10,7 +10,7 @@ public class ConsoleLogDestination: BaseLogDestination
 
 ## Inheritance
 
-[`BaseLogDestination`](base-log-destination)
+[`BaseLogDestination`](../base-log-destination)
 
 ## Methods
 

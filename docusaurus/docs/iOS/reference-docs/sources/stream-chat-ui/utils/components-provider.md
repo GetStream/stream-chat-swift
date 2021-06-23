@@ -8,7 +8,7 @@ public protocol ComponentsProvider: GenericComponentsProvider
 
 ## Inheritance
 
-[`GenericComponentsProvider`](generic-components-provider)
+[`GenericComponentsProvider`](../generic-components-provider)
 
 ## Default Implementations
 

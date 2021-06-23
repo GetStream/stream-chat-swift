@@ -10,4 +10,4 @@ public protocol ChannelExtraData: ExtraData
 
 ## Inheritance
 
-[`ExtraData`](extra-data)
+[`ExtraData`](../extra-data)

@@ -15,7 +15,7 @@ open class _ComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
 
 ## Inheritance
 
-[`_ViewController`](../common-views/_view-controller), [`ThemeProvider`](../utils/theme-provider), `UIDocumentPickerDelegate`, `UIImagePickerControllerDelegate`, `UINavigationControllerDelegate`, `UITextViewDelegate`
+[`_ViewController`](../../common-views/_view-controller), [`ThemeProvider`](../../utils/theme-provider), `UIDocumentPickerDelegate`, `UIImagePickerControllerDelegate`, `UINavigationControllerDelegate`, `UITextViewDelegate`
 
 ## Properties
 

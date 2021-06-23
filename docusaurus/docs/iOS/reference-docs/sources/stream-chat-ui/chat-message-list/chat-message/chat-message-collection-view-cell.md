@@ -12,7 +12,7 @@ public final class _ChatMessageCollectionViewCell<ExtraData: ExtraDataTypes>: _C
 
 ## Inheritance
 
-[`_CollectionViewCell`](../../common-views/_collection-view-cell)
+[`_CollectionViewCell`](../../../common-views/_collection-view-cell)
 
 ## Properties
 

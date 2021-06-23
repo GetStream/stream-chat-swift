@@ -10,7 +10,7 @@ public protocol FileActionContentViewDelegate: ChatMessageContentViewDelegate
 
 ## Inheritance
 
-[`ChatMessageContentViewDelegate`](../chat-message/chat-message-content-view-delegate)
+[`ChatMessageContentViewDelegate`](../../chat-message/chat-message-content-view-delegate)
 
 ## Requirements
 
@@ -19,5 +19,5 @@ public protocol FileActionContentViewDelegate: ChatMessageContentViewDelegate
 Called when the user taps on attachment action
 
 ``` swift
-func didTapOnAttachment(_ attachment: ChatMessageFileAttachment, at indexPath: IndexPath)
+func didTapOnAttachment(_ attachment: ChatMessageFileAttachment, at indexPath: IndexPath?)
 ```

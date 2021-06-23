@@ -10,7 +10,7 @@ open class _ChatMentionSuggestionView<ExtraData: ExtraDataTypes>: _View, ThemePr
 
 ## Inheritance
 
-[`_View`](../../_view), [`ThemeProvider`](../../../utils/theme-provider)
+[`_View`](../../../_view), [`ThemeProvider`](../../../../utils/theme-provider)
 
 ## Properties
 

@@ -8,7 +8,7 @@ open class _AttachmentsPreviewVC<ExtraData: ExtraDataTypes>: _ViewController, Co
 
 ## Inheritance
 
-[`_ViewController`](../_view-controller), [`ComponentsProvider`](../../utils/components-provider)
+[`_ViewController`](../../_view-controller), [`ComponentsProvider`](../../../utils/components-provider)
 
 ## Properties
 

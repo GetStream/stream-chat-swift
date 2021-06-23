@@ -10,7 +10,7 @@ open class CircularCloseButton: _Button, AppearanceProvider
 
 ## Inheritance
 
-[`_Button`](../_button), [`AppearanceProvider`](../../utils/appearance-provider)
+[`_Button`](../../_button), [`AppearanceProvider`](../../../utils/appearance-provider)
 
 ## Methods
 

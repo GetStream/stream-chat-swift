@@ -11,7 +11,7 @@ open class ChatAvatarView: _View
 
 ## Inheritance
 
-[`_View`](../_view)
+[`_View`](../../_view)
 
 ## Properties
 

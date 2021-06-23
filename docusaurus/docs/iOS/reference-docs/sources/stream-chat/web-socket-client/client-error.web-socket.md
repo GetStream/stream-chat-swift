@@ -8,4 +8,4 @@ public class WebSocket: ClientError
 
 ## Inheritance
 
-[`ClientError`](../errors/client-error)
+[`ClientError`](../../errors/client-error)

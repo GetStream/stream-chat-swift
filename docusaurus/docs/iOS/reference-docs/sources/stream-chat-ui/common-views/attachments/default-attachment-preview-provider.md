@@ -11,7 +11,7 @@ public struct DefaultAttachmentPreviewProvider: AttachmentPreviewProvider
 
 ## Inheritance
 
-[`AttachmentPreviewProvider`](attachment-preview-provider)
+[`AttachmentPreviewProvider`](../attachment-preview-provider)
 
 ## Properties
 

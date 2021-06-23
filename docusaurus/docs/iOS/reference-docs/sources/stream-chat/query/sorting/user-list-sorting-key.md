@@ -10,7 +10,7 @@ public enum UserListSortingKey: String, SortingKey
 
 ## Inheritance
 
-[`SortingKey`](sorting-key), `String`
+[`SortingKey`](../sorting-key), `String`
 
 ## Enumeration Cases
 

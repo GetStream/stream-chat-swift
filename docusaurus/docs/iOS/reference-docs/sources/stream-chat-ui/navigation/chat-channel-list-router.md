@@ -12,7 +12,7 @@ open class _ChatChannelListRouter<ExtraData: ExtraDataTypes>:
 
 ## Inheritance
 
-[`ComponentsProvider`](../utils/components-provider), `NavigationRouter<_ChatChannelListVC<ExtraData>>`
+[`ComponentsProvider`](../../utils/components-provider), `NavigationRouter<_ChatChannelListVC<ExtraData>>`
 
 ## Methods
 

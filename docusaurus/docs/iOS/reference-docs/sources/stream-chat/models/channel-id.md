@@ -12,7 +12,7 @@ It reflects channel's type and a unique id.
 
 ## Inheritance
 
-[`APIPathConvertible`](../api-client/api-path-convertible), `Codable`, `CustomStringConvertible`, `Hashable`
+[`APIPathConvertible`](../../api-client/api-path-convertible), `Codable`, `CustomStringConvertible`, `Hashable`
 
 ## Initializers
 

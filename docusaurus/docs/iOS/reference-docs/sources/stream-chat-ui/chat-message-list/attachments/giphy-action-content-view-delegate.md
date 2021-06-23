@@ -10,7 +10,7 @@ public protocol GiphyActionContentViewDelegate: ChatMessageContentViewDelegate
 
 ## Inheritance
 
-[`ChatMessageContentViewDelegate`](../chat-message/chat-message-content-view-delegate)
+[`ChatMessageContentViewDelegate`](../../chat-message/chat-message-content-view-delegate)
 
 ## Requirements
 

@@ -8,7 +8,7 @@ open class ActionButton: _Button, AppearanceProvider
 
 ## Inheritance
 
-[`_Button`](../../common-views/_button), [`AppearanceProvider`](../../utils/appearance-provider)
+[`_Button`](../../../common-views/_button), [`AppearanceProvider`](../../../utils/appearance-provider)
 
 ## Properties
 

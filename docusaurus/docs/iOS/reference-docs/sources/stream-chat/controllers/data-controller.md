@@ -10,7 +10,7 @@ public class DataController: Controller
 
 ## Inheritance
 
-[`Controller`](controller)
+[`Controller`](../controller)
 
 ## Properties
 

@@ -8,7 +8,7 @@ public protocol _ChatChannelWatcherListControllerDelegate: DataControllerStateDe
 
 ## Inheritance
 
-[`DataControllerStateDelegate`](../data-controller-state-delegate)
+[`DataControllerStateDelegate`](../../data-controller-state-delegate)
 
 ## Requirements
 

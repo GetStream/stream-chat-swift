@@ -10,7 +10,7 @@ open class _ImageCollectionViewCell<ExtraData: ExtraDataTypes>: _CollectionViewC
 
 ## Inheritance
 
-[`_CollectionViewCell`](../common-views/_collection-view-cell), [`ComponentsProvider`](../utils/components-provider), `UIScrollViewDelegate`
+[`_CollectionViewCell`](../../common-views/_collection-view-cell), [`ComponentsProvider`](../../utils/components-provider), `UIScrollViewDelegate`
 
 ## Properties
 

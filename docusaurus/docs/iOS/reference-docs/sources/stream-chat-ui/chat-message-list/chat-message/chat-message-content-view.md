@@ -10,7 +10,7 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, ThemeProvi
 
 ## Inheritance
 
-[`_View`](../../common-views/_view), [`ThemeProvider`](../../utils/theme-provider)
+[`_View`](../../../common-views/_view), [`ThemeProvider`](../../../utils/theme-provider)
 
 ## Nested Type Aliases
 

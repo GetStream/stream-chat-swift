@@ -10,7 +10,7 @@ open class _ChatPresenceAvatarView<ExtraData: ExtraDataTypes>: _View, Components
 
 ## Inheritance
 
-[`_View`](../../_view), [`ComponentsProvider`](../../../utils/components-provider)
+[`_View`](../../../_view), [`ComponentsProvider`](../../../../utils/components-provider)
 
 ## Properties
 

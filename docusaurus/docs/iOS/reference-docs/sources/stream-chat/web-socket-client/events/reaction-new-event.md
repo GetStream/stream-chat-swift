@@ -8,7 +8,7 @@ public struct ReactionNewEvent: ReactionEvent
 
 ## Inheritance
 
-[`ReactionEvent`](reaction-event)
+[`ReactionEvent`](../reaction-event)
 
 ## Properties
 

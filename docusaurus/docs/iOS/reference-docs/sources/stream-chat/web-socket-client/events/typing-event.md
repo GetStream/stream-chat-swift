@@ -8,7 +8,7 @@ public struct TypingEvent: UserSpecificEvent, ChannelSpecificEvent
 
 ## Inheritance
 
-[`UserSpecificEvent`](user-specific-event), [`ChannelSpecificEvent`](channel-specific-event), `Equatable`
+[`ChannelSpecificEvent`](../channel-specific-event), `Equatable`, [`UserSpecificEvent`](../user-specific-event)
 
 ## Properties
 

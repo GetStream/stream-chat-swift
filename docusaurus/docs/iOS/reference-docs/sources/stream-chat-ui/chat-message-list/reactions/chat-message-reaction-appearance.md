@@ -11,7 +11,7 @@ public struct ChatMessageReactionAppearance: ChatMessageReactionAppearanceType
 
 ## Inheritance
 
-[`ChatMessageReactionAppearanceType`](chat-message-reaction-appearance-type)
+[`ChatMessageReactionAppearanceType`](../chat-message-reaction-appearance-type)
 
 ## Initializers
 

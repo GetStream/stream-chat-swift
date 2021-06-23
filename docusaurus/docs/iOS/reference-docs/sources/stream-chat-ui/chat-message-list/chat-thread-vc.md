@@ -13,13 +13,17 @@ open class _ChatThreadVC<ExtraData: ExtraDataTypes>:
     _ChatMessageControllerDelegate,
     _ChatMessageActionsVCDelegate,
     ChatMessageContentViewDelegate,
+    GalleryContentViewDelegate,
+    GiphyActionContentViewDelegate,
+    LinkPreviewViewDelegate,
+    FileActionContentViewDelegate,
     UICollectionViewDelegate,
     UICollectionViewDataSource 
 ```
 
 ## Inheritance
 
-[`_ViewController`](../common-views/_view-controller), [`ChatMessageContentViewDelegate`](chat-message/chat-message-content-view-delegate), [`ComposerVCDelegate`](../composer/composer-vc-delegate), `UICollectionViewDataSource`, `UICollectionViewDelegate`, `_ChatChannelControllerDelegate`, [`_ChatMessageActionsVCDelegate`](../message-actions-popup/chat-message-actions-vc-delegate), [`ThemeProvider`](../utils/theme-provider), `_ChatMessageControllerDelegate`
+[`_ViewController`](../../common-views/_view-controller), [`FileActionContentViewDelegate`](../attachments/file-action-content-view-delegate), [`GalleryContentViewDelegate`](../attachments/gallery-content-view-delegate), [`GiphyActionContentViewDelegate`](../attachments/giphy-action-content-view-delegate), [`LinkPreviewViewDelegate`](../attachments/link-preview-view-delegate), [`ChatMessageContentViewDelegate`](../chat-message/chat-message-content-view-delegate), [`ComposerVCDelegate`](../../composer/composer-vc-delegate), [`ThemeProvider`](../../utils/theme-provider), `UICollectionViewDataSource`, `UICollectionViewDelegate`, `_ChatChannelControllerDelegate`, [`_ChatMessageActionsVCDelegate`](../../message-actions-popup/chat-message-actions-vc-delegate), `_ChatMessageControllerDelegate`
 
 ## Properties
 
@@ -299,6 +303,34 @@ Executes the provided action on the message
 open func didTapOnAttachmentAction(
         _ action: AttachmentAction,
         at indexPath: IndexPath
+    ) 
+```
+
+### `didTapOnImageAttachment(_:previews:at:)`
+
+``` swift
+open func didTapOnImageAttachment(
+        _ attachment: ChatMessageImageAttachment,
+        previews: [ImagePreviewable],
+        at indexPath: IndexPath?
+    ) 
+```
+
+### `didTapOnLinkAttachment(_:at:)`
+
+``` swift
+open func didTapOnLinkAttachment(
+        _ attachment: ChatMessageLinkAttachment,
+        at indexPath: IndexPath?
+    ) 
+```
+
+### `didTapOnAttachment(_:at:)`
+
+``` swift
+open func didTapOnAttachment(
+        _ attachment: ChatMessageFileAttachment,
+        at indexPath: IndexPath?
     ) 
 ```
 

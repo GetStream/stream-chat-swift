@@ -10,7 +10,7 @@ public struct UnmuteUserActionItem: ChatMessageActionItem
 
 ## Inheritance
 
-[`ChatMessageActionItem`](chat-message-action-item)
+[`ChatMessageActionItem`](../chat-message-action-item)
 
 ## Initializers
 

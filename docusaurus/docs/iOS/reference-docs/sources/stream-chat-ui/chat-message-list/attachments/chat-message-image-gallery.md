@@ -10,7 +10,7 @@ open class _ChatMessageImageGallery<ExtraData: ExtraDataTypes>: _View, ThemeProv
 
 ## Inheritance
 
-[`_View`](../../common-views/_view), [`ThemeProvider`](../../utils/theme-provider)
+[`_View`](../../../common-views/_view), [`ThemeProvider`](../../../utils/theme-provider)
 
 ## Properties
 

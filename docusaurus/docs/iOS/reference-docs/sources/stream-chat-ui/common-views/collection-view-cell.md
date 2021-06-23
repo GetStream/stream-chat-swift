@@ -11,7 +11,7 @@ open class _CollectionViewCell: UICollectionViewCell, Customizable
 
 ## Inheritance
 
-[`Customizable`](customizable), `UICollectionViewCell`
+[`Customizable`](../customizable), `UICollectionViewCell`
 
 ## Methods
 

@@ -8,7 +8,7 @@ open class ChatNavigationBar: _NavigationBar, AppearanceProvider
 
 ## Inheritance
 
-[`_NavigationBar`](_navigation-bar), [`AppearanceProvider`](../utils/appearance-provider)
+[`_NavigationBar`](../_navigation-bar), [`AppearanceProvider`](../../utils/appearance-provider)
 
 ## Methods
 

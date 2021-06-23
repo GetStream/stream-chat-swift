@@ -10,7 +10,7 @@ open class _ChatCommandSuggestionCollectionViewCell<ExtraData: ExtraDataTypes>: 
 
 ## Inheritance
 
-[`_CollectionViewCell`](../../_collection-view-cell), [`ComponentsProvider`](../../../utils/components-provider)
+[`_CollectionViewCell`](../../../_collection-view-cell), [`ComponentsProvider`](../../../../utils/components-provider)
 
 ## Properties
 

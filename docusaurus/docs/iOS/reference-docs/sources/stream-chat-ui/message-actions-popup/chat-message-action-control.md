@@ -10,7 +10,7 @@ open class ChatMessageActionControl: _Control, AppearanceProvider
 
 ## Inheritance
 
-[`_Control`](../common-views/_control), [`AppearanceProvider`](../utils/appearance-provider)
+[`_Control`](../../common-views/_control), [`AppearanceProvider`](../../utils/appearance-provider)
 
 ## Properties
 

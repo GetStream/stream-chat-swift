@@ -10,7 +10,7 @@ open class CheckboxControl: _Control, AppearanceProvider
 
 ## Inheritance
 
-[`_Control`](../_control), [`AppearanceProvider`](../../utils/appearance-provider)
+[`_Control`](../../_control), [`AppearanceProvider`](../../../utils/appearance-provider)
 
 ## Properties
 

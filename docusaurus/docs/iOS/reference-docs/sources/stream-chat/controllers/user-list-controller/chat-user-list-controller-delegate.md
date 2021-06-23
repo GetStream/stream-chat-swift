@@ -13,7 +13,7 @@ named `ChatUserListControllerDelegate`, which hides the generic types, and make 
 
 ## Inheritance
 
-[`DataControllerStateDelegate`](../data-controller-state-delegate)
+[`DataControllerStateDelegate`](../../data-controller-state-delegate)
 
 ## Default Implementations
 

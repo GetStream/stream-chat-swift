@@ -12,7 +12,7 @@ open class _ChatMessagePopupVC<ExtraData: ExtraDataTypes>: _ViewController, Comp
 
 ## Inheritance
 
-[`_ViewController`](../common-views/_view-controller), [`ComponentsProvider`](../utils/components-provider)
+[`_ViewController`](../../common-views/_view-controller), [`ComponentsProvider`](../../utils/components-provider)
 
 ## Properties
 

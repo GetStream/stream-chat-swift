@@ -8,7 +8,7 @@ public protocol ConnectionEvent: Event
 
 ## Inheritance
 
-[`Event`](event)
+[`Event`](../event)
 
 ## Requirements
 

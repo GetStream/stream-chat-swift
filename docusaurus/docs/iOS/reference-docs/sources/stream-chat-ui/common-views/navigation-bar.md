@@ -11,7 +11,7 @@ open class _NavigationBar: UINavigationBar, Customizable
 
 ## Inheritance
 
-[`Customizable`](customizable), `UINavigationBar`
+[`Customizable`](../customizable), `UINavigationBar`
 
 ## Methods
 
