@@ -107,6 +107,14 @@ If the user you want to test push notifications on doesn't have any channels or 
     stream chat:message:create
 :::
 
+### Checking Delivery Status from Dashboard
+
+If the push notification doesn't seem to work, please head over to [Dashboard](https://getstream.io/dashboard/), choose your app, from the dropdown menu at the top, choose Chat -> Webhook & Push Logs. From there, you can see if your push was delivered to the device correctly.
+
+One of the most common errors is `BadDeviceToken`. This happens when device token and APN certificate are not from the same type of distribution (eg device token is from development mode and certficiate is a production one, or vice versa).
+
+Please try to follow the configuration guide [here](https://getstream.io/chat/docs/ios-swift/push_ios/?language=swift) from scratch.
+
 ## Push Delivery Logic
 
 Only new messages are pushed to mobile devices, all other chat events are only send to WebSocket clients and webhook endpoints if configured.
