@@ -260,6 +260,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         attachments: [AnyAttachmentPayload],
         mentionedUserIds: [UserId],
         showReplyInChannel: Bool,
+        isSilent: Bool,
         quotedMessageId: MessageId?,
         extraData: ExtraData
     ) throws -> MessageDTO {
@@ -288,7 +289,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         message.args = arguments
         message.parentMessageId = parentMessageId
         message.extraData = try JSONEncoder.default.encode(extraData)
-        message.isSilent = false
+        message.isSilent = isSilent
         message.reactionScores = [:]
 
         message.attachments = Set(
@@ -478,6 +479,7 @@ extension MessageDTO {
             args: args,
             parentId: parentMessageId,
             showReplyInChannel: showReplyInChannel,
+            isSilent: isSilent,
             quotedMessageId: quotedMessage?.id,
             attachments: attachments
                 .sorted { $0.attachmentID.index < $1.attachmentID.index }

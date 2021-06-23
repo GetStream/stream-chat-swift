@@ -102,6 +102,7 @@ class ChannelUpdater<ExtraData: ExtraDataTypes>: Worker {
     ///   - cid: The cid of the channel the message is create in.
     ///   - text: Text of the message.
     ///   - pinning: Pins the new message. Nil if should not be pinned.
+    ///   - isSilent: A flag indicating whether the message is a silent message. Silent messages are special messages that don't increase the unread messages count nor mark a channel as unread.
     ///   - attachments: An array of the attachments for the message.
     ///   - quotedMessageId: An id of the message new message quotes. (inline reply)
     ///   - extraData: Additional extra data of the message object.
@@ -111,6 +112,7 @@ class ChannelUpdater<ExtraData: ExtraDataTypes>: Worker {
         in cid: ChannelId,
         text: String,
         pinning: MessagePinning? = nil,
+        isSilent: Bool,
         command: String?,
         arguments: String?,
         attachments: [AnyAttachmentPayload] = [],
@@ -131,6 +133,7 @@ class ChannelUpdater<ExtraData: ExtraDataTypes>: Worker {
                 attachments: attachments,
                 mentionedUserIds: mentionedUserIds,
                 showReplyInChannel: false,
+                isSilent: isSilent,
                 quotedMessageId: quotedMessageId,
                 extraData: extraData
             )

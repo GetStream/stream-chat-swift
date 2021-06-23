@@ -41,6 +41,7 @@ class ChannelUpdaterMock<ExtraData: ExtraDataTypes>: ChannelUpdater<ExtraData> {
 
     @Atomic var createNewMessage_cid: ChannelId?
     @Atomic var createNewMessage_text: String?
+    @Atomic var createNewMessage_isSilent: Bool?
     @Atomic var createNewMessage_command: String?
     @Atomic var createNewMessage_arguments: String?
     @Atomic var createNewMessage_attachments: [AnyAttachmentPayload]?
@@ -106,6 +107,7 @@ class ChannelUpdaterMock<ExtraData: ExtraDataTypes>: ChannelUpdater<ExtraData> {
         
         createNewMessage_cid = nil
         createNewMessage_text = nil
+        createNewMessage_isSilent = nil
         createNewMessage_command = nil
         createNewMessage_arguments = nil
         createNewMessage_attachments = nil
@@ -180,6 +182,7 @@ class ChannelUpdaterMock<ExtraData: ExtraDataTypes>: ChannelUpdater<ExtraData> {
         in cid: ChannelId,
         text: String,
         pinning: MessagePinning?,
+        isSilent: Bool,
         command: String?,
         arguments: String?,
         attachments: [AnyAttachmentPayload],
@@ -190,6 +193,7 @@ class ChannelUpdaterMock<ExtraData: ExtraDataTypes>: ChannelUpdater<ExtraData> {
     ) {
         createNewMessage_cid = cid
         createNewMessage_text = text
+        createNewMessage_isSilent = isSilent
         createNewMessage_command = command
         createNewMessage_arguments = arguments
         createNewMessage_attachments = attachments

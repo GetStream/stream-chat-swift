@@ -80,6 +80,7 @@ extension DatabaseSessionMock {
         attachments: [AnyAttachmentPayload],
         mentionedUserIds: [UserId],
         showReplyInChannel: Bool,
+        isSilent: Bool,
         quotedMessageId: MessageId?,
         extraData: ExtraData
     ) throws -> MessageDTO where ExtraData: MessageExtraData {
@@ -95,6 +96,7 @@ extension DatabaseSessionMock {
             attachments: attachments,
             mentionedUserIds: mentionedUserIds,
             showReplyInChannel: showReplyInChannel,
+            isSilent: isSilent,
             quotedMessageId: quotedMessageId,
             extraData: extraData
         )
