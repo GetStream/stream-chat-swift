@@ -27,6 +27,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Fix image/file/link/giphy actions not being handled in `ChatThreadVC` [#1207](https://github.com/GetStream/stream-chat-swift/pull/1207)
 - Fix `ChatMessageLinkPreviewView` not being taken from `Components` [#1207](https://github.com/GetStream/stream-chat-swift/pull/1207)
 - Subviews of `ChatMessageDefaultReactionsBubbleView` are now public [#1209](https://github.com/GetStream/stream-chat-swift/pull/1209)
+- Fix an issue where composer textView's caret jumps to the end of input [#1117](https://github.com/GetStream/stream-chat-swift/issues/1117)
 
 
 # [4.0.0-beta.3](https://github.com/GetStream/stream-chat-swift/releases/tag/4.0.0-beta.3)
