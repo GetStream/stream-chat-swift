@@ -529,14 +529,18 @@ extension _ChatClient: ConnectionStateDelegate {
         connectionId: String?,
         shouldNotifyWaiters: Bool
     ) {
+        var connectionIdWaiters: [(String?) -> Void]!
         _connectionId.mutate { mutableConnectionId in
-            _connectionIdWaiters.mutate { connectionIdWaiters in
-                mutableConnectionId = connectionId
+            mutableConnectionId = connectionId
+            _connectionIdWaiters.mutate { _connectionIdWaiters in
+                connectionIdWaiters = _connectionIdWaiters
                 if shouldNotifyWaiters {
-                    connectionIdWaiters.forEach { $0(connectionId) }
-                    connectionIdWaiters.removeAll()
+                    _connectionIdWaiters.removeAll()
                 }
             }
+        }
+        if shouldNotifyWaiters {
+            connectionIdWaiters.forEach { $0(connectionId) }
         }
     }
 }
