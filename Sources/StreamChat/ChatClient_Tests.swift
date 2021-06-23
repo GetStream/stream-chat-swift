@@ -431,6 +431,44 @@ class ChatClient_Tests: StressTestCase {
         XCTAssertNil(client.connectionId)
     }
     
+    func test_clientProvidesConnectionId_afterUnlockingResources() {
+        // IMPORTANT: This test hangs (freezes) if there's simulatenous
+        // access to `connectionId`, so freeze = failure for this test
+        // Create a new chat client
+        let client = ChatClient(
+            config: inMemoryStorageConfig,
+            tokenProvider: .anonymous,
+            workerBuilders: workerBuilders,
+            eventWorkerBuilders: [],
+            environment: testEnv.environment
+        )
+        
+        // Simulate access to `webSocketClient` so it is initialized
+        _ = client.webSocketClient
+        
+        // Set a connection Id waiter and set `providedConnectionId` to nil value
+        var providedConnectionId: ConnectionId?
+        client.provideConnectionId { _ in
+            // Set another connectionId waiter inside the first one
+            // This is to simulate the case where 2 entities call this func
+            // Like, calling `synchronize` in a delegate callback
+            client.provideConnectionId {
+                providedConnectionId = $0
+            }
+        }
+        XCTAssertNil(providedConnectionId)
+        
+        // Simulate providing connection id
+        testEnv.webSocketClient?.connectionStateDelegate?
+            .webSocketClient(testEnv.webSocketClient!, didUpdateConectionState: .connecting)
+        let connectionId: ConnectionId = .unique
+        testEnv.webSocketClient?.connectionStateDelegate?
+            .webSocketClient(testEnv.webSocketClient!, didUpdateConectionState: .connected(connectionId: connectionId))
+        
+        // Assert that our waiter received the new connectionId
+        AssertAsync.willBeEqual(providedConnectionId, connectionId)
+    }
+    
     // MARK: - APIClient tests
     
     func test_apiClientConfiguration() throws {
