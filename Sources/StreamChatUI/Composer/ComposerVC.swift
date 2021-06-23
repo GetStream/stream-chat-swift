@@ -262,7 +262,10 @@ open class _ComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
     override open func updateContent() {
         super.updateContent()
 
-        composerView.inputMessageView.textView.text = content.text
+        if composerView.inputMessageView.textView.text != content.text {
+            // Updating the text unnecessarily makes the caret jump to the end of input
+            composerView.inputMessageView.textView.text = content.text
+        }
 
         if !content.isEmpty && channelConfig?.typingEventsEnabled == true {
             channelController?.sendKeystrokeEvent()
