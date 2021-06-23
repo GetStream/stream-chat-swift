@@ -15,6 +15,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### ✅ Added
 - `mentionText(for:)` function added to `ComposerVC` for customizing the text displayed for mentions [#1188](https://github.com/GetStream/stream-chat-swift/issues/1188) [#1000](https://github.com/GetStream/stream-chat-swift/issues/1000)
 - `score` to `ChatMessageReactionData` so a slack-like reaction view is achievable. This would be used as content in `ChatMessageReactionsView` [#1200](https://github.com/GetStream/stream-chat-swift/issues/1200)
+- Ability to send silent messages. Silent messages are normal messages with an additional `isSilent` value set to `true`. Silent messages don’t trigger push notification for the recipient.[#1211](https://github.com/GetStream/stream-chat-swift/pull/1211)
 
 ### 🔄 Changed
 - `scrollToLatestMessageButton` is now visible every time the last message is not visible. Not only when there is unread message. [#1208](https://github.com/GetStream/stream-chat-swift/pull/1208) 
