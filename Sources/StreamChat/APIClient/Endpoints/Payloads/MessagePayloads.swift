@@ -183,6 +183,7 @@ struct MessageRequestBody<ExtraData: ExtraDataTypes>: Encodable {
     let args: String?
     let parentId: String?
     let showReplyInChannel: Bool
+    let isSilent: Bool
     let quotedMessageId: String?
     let attachments: [MessageAttachmentPayload]
     let mentionedUserIds: [UserId]
@@ -198,6 +199,7 @@ struct MessageRequestBody<ExtraData: ExtraDataTypes>: Encodable {
         args: String? = nil,
         parentId: String? = nil,
         showReplyInChannel: Bool = false,
+        isSilent: Bool = false,
         quotedMessageId: String? = nil,
         attachments: [MessageAttachmentPayload] = [],
         mentionedUserIds: [UserId] = [],
@@ -212,6 +214,7 @@ struct MessageRequestBody<ExtraData: ExtraDataTypes>: Encodable {
         self.args = args
         self.parentId = parentId
         self.showReplyInChannel = showReplyInChannel
+        self.isSilent = isSilent
         self.quotedMessageId = quotedMessageId
         self.attachments = attachments
         self.mentionedUserIds = mentionedUserIds
@@ -231,6 +234,7 @@ struct MessageRequestBody<ExtraData: ExtraDataTypes>: Encodable {
         try container.encodeIfPresent(quotedMessageId, forKey: .quotedMessageId)
         try container.encode(pinned, forKey: .pinned)
         try container.encodeIfPresent(pinExpires, forKey: .pinExpires)
+        try container.encode(isSilent, forKey: .isSilent)
 
         if !attachments.isEmpty {
             try container.encode(attachments, forKey: .attachments)

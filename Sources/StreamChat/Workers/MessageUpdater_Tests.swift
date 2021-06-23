@@ -393,6 +393,7 @@ final class MessageUpdater_Tests: StressTestCase {
         let text: String = .unique
         let parentMessageId: MessageId = .unique
         let showReplyInChannel = true
+        let isSilent = false
         let command: String = .unique
         let arguments: String = .unique
         let extraData: NoExtraData = .defaultValue
@@ -419,6 +420,7 @@ final class MessageUpdater_Tests: StressTestCase {
                 attachments: attachmentEnvelopes,
                 mentionedUserIds: mentionedUserIds,
                 showReplyInChannel: showReplyInChannel,
+                isSilent: isSilent,
                 quotedMessageId: nil,
                 extraData: extraData
             ) { result in
@@ -451,6 +453,7 @@ final class MessageUpdater_Tests: StressTestCase {
         XCTAssertEqual(message.extraData, extraData)
         XCTAssertEqual(message.localState, .pendingSend)
         XCTAssertTrue(message.isPinned)
+        XCTAssertEqual(message.isSilent, isSilent)
         XCTAssertEqual(message.mentionedUsers.map(\.id), mentionedUserIds)
     }
     
@@ -477,6 +480,7 @@ final class MessageUpdater_Tests: StressTestCase {
                 attachments: [],
                 mentionedUserIds: [.unique],
                 showReplyInChannel: false,
+                isSilent: false,
                 quotedMessageId: nil,
                 extraData: .defaultValue
             ) { completion($0) }

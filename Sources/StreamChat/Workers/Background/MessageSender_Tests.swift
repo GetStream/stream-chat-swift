@@ -60,6 +60,7 @@ class MessageSender_Tests: StressTestCase {
                 text: "Message pending send without attachments",
                 pinning: nil,
                 quotedMessageId: nil,
+                isSilent: false,
                 extraData: ExtraData.Message.defaultValue
             )
             message1.localMessageState = .pendingSend
@@ -70,6 +71,7 @@ class MessageSender_Tests: StressTestCase {
                 text: "Message pending send with attachments",
                 pinning: nil,
                 quotedMessageId: nil,
+                isSilent: false,
                 attachments: [
                     .mockFile,
                     .mockImage,
@@ -85,6 +87,7 @@ class MessageSender_Tests: StressTestCase {
                 text: "Message without local state",
                 pinning: nil,
                 quotedMessageId: nil,
+                isSilent: false,
                 attachments: [],
                 extraData: ExtraData.Message.defaultValue
             )
@@ -150,6 +153,7 @@ class MessageSender_Tests: StressTestCase {
                 text: "Message pending send",
                 pinning: nil,
                 quotedMessageId: nil,
+                isSilent: false,
                 attachments: [
                     .init(payload: TestAttachmentPayload.unique),
                     .init(payload: TestAttachmentPayload.unique)
@@ -178,6 +182,7 @@ class MessageSender_Tests: StressTestCase {
                 text: "Message pending send",
                 pinning: nil,
                 quotedMessageId: nil,
+                isSilent: false,
                 attachments: [
                     .mockImage,
                     .init(payload: TestAttachmentPayload.unique)
@@ -218,6 +223,7 @@ class MessageSender_Tests: StressTestCase {
                 text: "Message pending send",
                 pinning: nil,
                 quotedMessageId: nil,
+                isSilent: false,
                 extraData: ExtraData.Message.defaultValue
             )
             message1.localMessageState = .pendingSend
@@ -248,6 +254,7 @@ class MessageSender_Tests: StressTestCase {
                 text: "Message pending send",
                 pinning: nil,
                 quotedMessageId: nil,
+                isSilent: false,
                 extraData: ExtraData.Message.defaultValue
             )
             message1.localMessageState = .pendingSend
@@ -277,6 +284,7 @@ class MessageSender_Tests: StressTestCase {
                 text: "Message pending send 1",
                 pinning: nil,
                 quotedMessageId: nil,
+                isSilent: false,
                 extraData: ExtraData.Message.defaultValue
             )
             message1.localMessageState = .pendingSend
@@ -287,6 +295,7 @@ class MessageSender_Tests: StressTestCase {
                 text: "Message pending send 2",
                 pinning: nil,
                 quotedMessageId: nil,
+                isSilent: false,
                 extraData: ExtraData.Message.defaultValue
             )
             message2.localMessageState = .pendingSend
@@ -297,6 +306,7 @@ class MessageSender_Tests: StressTestCase {
                 text: "Message pending send 3",
                 pinning: nil,
                 quotedMessageId: nil,
+                isSilent: false,
                 extraData: ExtraData.Message.defaultValue
             )
             message3.localMessageState = .pendingSend
@@ -364,6 +374,7 @@ class MessageSender_Tests: StressTestCase {
                 text: "Channel A message 1",
                 pinning: nil,
                 quotedMessageId: nil,
+                isSilent: false,
                 extraData: ExtraData.Message.defaultValue
             )
             messageA1.localMessageState = .pendingSend
@@ -374,6 +385,7 @@ class MessageSender_Tests: StressTestCase {
                 text: "Channel A message 2",
                 pinning: nil,
                 quotedMessageId: nil,
+                isSilent: false,
                 extraData: ExtraData.Message.defaultValue
             )
             messageA2.localMessageState = .pendingSend
@@ -384,6 +396,7 @@ class MessageSender_Tests: StressTestCase {
                 text: "Channel B message 1",
                 pinning: nil,
                 quotedMessageId: nil,
+                isSilent: false,
                 extraData: ExtraData.Message.defaultValue
             )
             messageB1.localMessageState = .pendingSend
@@ -394,6 +407,7 @@ class MessageSender_Tests: StressTestCase {
                 text: "Channel B message 2",
                 pinning: nil,
                 quotedMessageId: nil,
+                isSilent: false,
                 extraData: ExtraData.Message.defaultValue
             )
             messageB2.localMessageState = .pendingSend
@@ -457,6 +471,7 @@ class MessageSender_Tests: StressTestCase {
                 text: "Message pending send",
                 pinning: nil,
                 quotedMessageId: nil,
+                isSilent: false,
                 extraData: ExtraData.Message.defaultValue
             )
             message.localMessageState = .pendingSend

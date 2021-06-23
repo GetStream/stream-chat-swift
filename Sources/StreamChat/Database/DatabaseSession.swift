@@ -64,6 +64,7 @@ protocol MessageDatabaseSession {
         attachments: [AnyAttachmentPayload],
         mentionedUserIds: [UserId],
         showReplyInChannel: Bool,
+        isSilent: Bool,
         quotedMessageId: MessageId?,
         extraData: ExtraData
     ) throws -> MessageDTO
@@ -117,6 +118,7 @@ extension MessageDatabaseSession {
         text: String,
         pinning: MessagePinning?,
         quotedMessageId: MessageId?,
+        isSilent: Bool = false,
         attachments: [AnyAttachmentPayload] = [],
         mentionedUserIds: [UserId] = [],
         extraData: ExtraData = .defaultValue
@@ -131,6 +133,7 @@ extension MessageDatabaseSession {
             attachments: attachments,
             mentionedUserIds: mentionedUserIds,
             showReplyInChannel: false,
+            isSilent: isSilent,
             quotedMessageId: quotedMessageId,
             extraData: extraData
         )

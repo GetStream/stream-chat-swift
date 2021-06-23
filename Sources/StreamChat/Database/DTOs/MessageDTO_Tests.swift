@@ -504,6 +504,7 @@ class MessageDTO_Tests: XCTestCase {
         ]
         let mentionedUserIds: [UserId] = [currentUserId]
         let messageShowReplyInChannel = true
+        let messageIsSilent = true
         let messageExtraData: NoExtraData = .defaultValue
 
         // Create message with attachments in the database.
@@ -517,7 +518,8 @@ class MessageDTO_Tests: XCTestCase {
                 parentMessageId: parentMessageId,
                 attachments: attachments,
                 mentionedUserIds: mentionedUserIds,
-                showReplyInChannel: true,
+                showReplyInChannel: messageShowReplyInChannel,
+                isSilent: messageIsSilent,
                 quotedMessageId: nil,
                 extraData: messageExtraData
             ).id
@@ -536,6 +538,7 @@ class MessageDTO_Tests: XCTestCase {
         XCTAssertEqual(requestBody.args, messageArguments)
         XCTAssertEqual(requestBody.parentId, parentMessageId)
         XCTAssertEqual(requestBody.showReplyInChannel, messageShowReplyInChannel)
+        XCTAssertEqual(requestBody.isSilent, messageIsSilent)
         XCTAssertEqual(requestBody.extraData, messageExtraData)
         XCTAssertEqual(requestBody.pinned, true)
         XCTAssertEqual(requestBody.pinExpires, messagePinning!.expirationDate)
@@ -623,6 +626,7 @@ class MessageDTO_Tests: XCTestCase {
                     attachments: [],
                     mentionedUserIds: [],
                     showReplyInChannel: false,
+                    isSilent: false,
                     quotedMessageId: nil,
                     extraData: NoExtraData.defaultValue
                 )
@@ -640,6 +644,7 @@ class MessageDTO_Tests: XCTestCase {
                     attachments: [],
                     mentionedUserIds: [],
                     showReplyInChannel: false,
+                    isSilent: false,
                     quotedMessageId: nil,
                     extraData: NoExtraData.defaultValue
                 )
@@ -738,6 +743,7 @@ class MessageDTO_Tests: XCTestCase {
                     attachments: newMessageAttachments,
                     mentionedUserIds: newMentionedUserIds,
                     showReplyInChannel: true,
+                    isSilent: false,
                     quotedMessageId: nil,
                     extraData: NoExtraData.defaultValue
                 )
@@ -781,6 +787,7 @@ class MessageDTO_Tests: XCTestCase {
                     attachments: [],
                     mentionedUserIds: [.unique],
                     showReplyInChannel: true,
+                    isSilent: false,
                     quotedMessageId: nil,
                     extraData: NoExtraData.defaultValue
                 )
@@ -817,6 +824,7 @@ class MessageDTO_Tests: XCTestCase {
                     attachments: [],
                     mentionedUserIds: [.unique],
                     showReplyInChannel: true,
+                    isSilent: false,
                     quotedMessageId: nil,
                     extraData: NoExtraData.defaultValue
                 )
@@ -853,6 +861,7 @@ class MessageDTO_Tests: XCTestCase {
                 text: newMessageText,
                 pinning: MessagePinning(expirationDate: .unique),
                 quotedMessageId: nil,
+                isSilent: false,
                 extraData: NoExtraData.defaultValue
             )
             newMessageId = messageDTO.id
@@ -891,6 +900,7 @@ class MessageDTO_Tests: XCTestCase {
                 attachments: [],
                 mentionedUserIds: [],
                 showReplyInChannel: false,
+                isSilent: false,
                 quotedMessageId: nil,
                 extraData: NoExtraData.defaultValue
             )

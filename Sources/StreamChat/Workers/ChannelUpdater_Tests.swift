@@ -153,6 +153,7 @@ class ChannelUpdater_Tests: StressTestCase {
                 in: cid,
                 text: text,
                 pinning: MessagePinning(expirationDate: .unique),
+                isSilent: false,
                 command: command,
                 arguments: arguments,
                 attachments: attachmentEnvelopes,
@@ -190,6 +191,7 @@ class ChannelUpdater_Tests: StressTestCase {
         XCTAssertEqual(message.extraData, extraData)
         XCTAssertEqual(message.localState, .pendingSend)
         XCTAssertEqual(message.isPinned, true)
+        XCTAssertEqual(message.isSilent, false)
         XCTAssertEqual(message.mentionedUsers.map(\.id), [currentUserId])
     }
     
@@ -221,6 +223,7 @@ class ChannelUpdater_Tests: StressTestCase {
             channelUpdater.createNewMessage(
                 in: .unique,
                 text: .unique,
+                isSilent: false,
                 command: .unique,
                 arguments: .unique,
                 mentionedUserIds: [.unique],
