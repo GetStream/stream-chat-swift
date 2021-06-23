@@ -151,6 +151,7 @@ extension _ChatMessage {
     static var unique: ChatMessage {
         .init(
             id: .unique,
+            cid: .unique,
             text: "",
             type: .regular,
             command: nil,

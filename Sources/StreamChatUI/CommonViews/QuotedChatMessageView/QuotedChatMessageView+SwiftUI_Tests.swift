@@ -41,6 +41,7 @@ class QuotedChatMessageView_SwiftUI_Tests: XCTestCase {
         view.content = _QuotedChatMessageView<NoExtraData>.Content(
             message: .mock(
                 id: .unique,
+                cid: .unique,
                 text: "Hello World!",
                 author: .mock(id: .unique, imageURL: .localYodaImage)
             ),

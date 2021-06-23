@@ -36,6 +36,7 @@ final class ChatMessagePopupVC_Tests: XCTestCase {
 
         message = .mock(
             id: .unique,
+            cid: .unique,
             text: "Message",
             author: .mock(id: .unique)
         )
@@ -62,7 +63,7 @@ final class ChatMessagePopupVC_Tests: XCTestCase {
         
         let chatMessageController = ChatMessageController_Mock<NoExtraData>.mock()
         chatMessageController.simulateInitial(
-            message: ChatMessage.mock(id: .unique, text: "", author: ChatUser.mock(id: .unique)),
+            message: ChatMessage.mock(id: .unique, cid: .unique, text: "", author: ChatUser.mock(id: .unique)),
             replies: [],
             state: .remoteDataFetched
         )
@@ -87,6 +88,7 @@ final class ChatMessagePopupVC_Tests: XCTestCase {
     func test_defaultAppearance_when_largeLongMessage() {
         vc.messageContentView.content = .mock(
             id: .unique,
+            cid: .unique,
             text: repeatElement("Message text", count: 8).joined(separator: "\n"),
             author: .mock(id: .unique)
         )

@@ -191,7 +191,12 @@ class QuotedChatMessageView_Tests: XCTestCase {
 
         let view = CustomView(
             content: .init(
-                message: .mock(id: .unique, text: "Hello world!", author: .mock(id: .unique, imageURL: TestImages.yoda.url)),
+                message: .mock(
+                    id: .unique,
+                    cid: .unique,
+                    text: "Hello world!",
+                    author: .mock(id: .unique, imageURL: TestImages.yoda.url)
+                ),
                 avatarAlignment: .leading
             )
         )
@@ -220,6 +225,7 @@ extension QuotedChatMessageView_Tests {
     ) -> QuotedChatMessageView.Content {
         let message = ChatMessage.mock(
             id: .unique,
+            cid: .unique,
             text: text,
             author: .mock(id: .unique),
             attachments: attachments,

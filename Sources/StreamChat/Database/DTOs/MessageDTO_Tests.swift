@@ -393,6 +393,7 @@ class MessageDTO_Tests: XCTestCase {
             ownReactions: (0..<2).map { _ in
                 .dummy(messageId: messageId, user: .dummy(userId: messageAuthorId))
             },
+            channel: .dummy(cid: channelId),
             pinned: true,
             pinnedByUserId: .unique,
             pinnedAt: .unique,
@@ -425,6 +426,7 @@ class MessageDTO_Tests: XCTestCase {
         )
 
         XCTAssertEqual(loadedMessage.id, messagePayload.id)
+        XCTAssertEqual(loadedMessage.cid, messagePayload.channel?.cid)
         XCTAssertEqual(loadedMessage.type, messagePayload.type)
         XCTAssertEqual(loadedMessage.author.id, messagePayload.user.id)
         XCTAssertEqual(loadedMessage.createdAt, messagePayload.createdAt)

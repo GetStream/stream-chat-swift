@@ -30,6 +30,7 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
         // Create a message sent NOT by the current user
         let messageSentByCurrentUser: ChatMessage = .mock(
             id: .unique,
+            cid: .unique,
             text: .unique,
             author: .mock(id: .unique),
             isSentByCurrentUser: true
@@ -50,6 +51,7 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
         // Create a message sent by another current user
         let messageSentNotByCurrentUser: ChatMessage = .mock(
             id: .unique,
+            cid: .unique,
             text: .unique,
             author: .mock(id: .unique),
             isSentByCurrentUser: false
@@ -93,6 +95,7 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
             // Create message
             let message: ChatMessage = .mock(
                 id: .unique,
+                cid: .unique,
                 text: .unique,
                 author: .mock(id: .unique),
                 isSentByCurrentUser: isSentByCurrentUser
@@ -118,6 +121,7 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
             // Create a message
             let message1: ChatMessage = .mock(
                 id: .unique,
+                cid: .unique,
                 text: .unique,
                 author: user,
                 createdAt: Date(),
@@ -127,6 +131,7 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
             // Create a previous message sent by the same user within `minTimeIntervalBetweenMessagesInGroup` timeframe
             let message2: ChatMessage = .mock(
                 id: .unique,
+                cid: .unique,
                 text: .unique,
                 author: user,
                 createdAt: message1.createdAt.addingTimeInterval(
@@ -151,17 +156,19 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
         // Create non-deleted thread root message
         let messageThreadRoot: ChatMessage = .mock(
             id: .unique,
+            cid: .unique,
             text: .unique,
             author: .mock(id: .unique),
             replyCount: 10,
             latestReplies: [
-                .mock(id: .unique, text: .unique, author: .mock(id: .unique))
+                .mock(id: .unique, cid: .unique, text: .unique, author: .mock(id: .unique))
             ]
         )
 
         // Create non-deleted thread part message
         let messageThreadPart: ChatMessage = .mock(
             id: .unique,
+            cid: .unique,
             text: .unique,
             author: .mock(id: .unique),
             parentMessageId: messageThreadRoot.id
@@ -186,6 +193,7 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
         // Create non-deleted message sent by current user
         let messageSentByCurrentUser: ChatMessage = .mock(
             id: .unique,
+            cid: .unique,
             text: .unique,
             author: .mock(id: .unique),
             isSentByCurrentUser: true
@@ -209,6 +217,7 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
         // Create last message from another user
         let messageFromAnotherUser1: ChatMessage = .mock(
             id: .unique,
+            cid: .unique,
             text: .unique,
             author: anotherUser,
             createdAt: Date(),
@@ -218,6 +227,7 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
         // Create message from another user sent within `minTimeIntervalBetweenMessagesInGroup` timeframe
         let messageFromAnotherUser2: ChatMessage = .mock(
             id: .unique,
+            cid: .unique,
             text: .unique,
             author: anotherUser,
             createdAt: messageFromAnotherUser1.createdAt.addingTimeInterval(
@@ -241,6 +251,7 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
         // Create ephemeral message sent by another user
         let messageSentByAnotherUser: ChatMessage = .mock(
             id: .unique,
+            cid: .unique,
             text: .unique,
             author: .mock(id: .unique),
             isSentByCurrentUser: false
@@ -264,6 +275,7 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
             // Create message
             let message: ChatMessage = .mock(
                 id: .unique,
+                cid: .unique,
                 text: .unique,
                 author: .mock(id: .unique),
                 isSentByCurrentUser: isSentByCurrentUser
@@ -289,6 +301,7 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
             // Create a message
             let message1: ChatMessage = .mock(
                 id: .unique,
+                cid: .unique,
                 text: .unique,
                 author: user,
                 createdAt: Date(),
@@ -298,6 +311,7 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
             // Create a previous message sent by the same user within `minTimeIntervalBetweenMessagesInGroup` timeframe
             let message2: ChatMessage = .mock(
                 id: .unique,
+                cid: .unique,
                 text: .unique,
                 author: user,
                 createdAt: message1.createdAt.addingTimeInterval(
@@ -324,6 +338,7 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
         // Create ephemeral message sent by another user
         let messageSentByAnotherUser: ChatMessage = .mock(
             id: .unique,
+            cid: .unique,
             text: .unique,
             author: .mock(id: .unique),
             isSentByCurrentUser: false
@@ -344,6 +359,7 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
         // Create ephemeral message sent by current user
         let ephemeralMessageSentByCurrentUser: ChatMessage = .mock(
             id: .unique,
+            cid: .unique,
             text: .unique,
             type: .ephemeral,
             author: .mock(id: .unique),
@@ -365,6 +381,7 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
         // Create ephemeral message sent by current user
         let deletedMessageSentByCurrentUser: ChatMessage = .mock(
             id: .unique,
+            cid: .unique,
             text: .unique,
             author: .mock(id: .unique),
             deletedAt: .unique,
@@ -388,6 +405,7 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
         // Create ephemeral message
         let ephemeralMessage: ChatMessage = .mock(
             id: .unique,
+            cid: .unique,
             text: .unique,
             type: .ephemeral,
             author: .mock(id: .unique)
@@ -408,6 +426,7 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
         // Create deleted message
         let deletedMessage: ChatMessage = .mock(
             id: .unique,
+            cid: .unique,
             text: .unique,
             author: .mock(id: .unique),
             deletedAt: .unique
@@ -428,6 +447,7 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
         // Create non-ephemeral non-deleted message with text
         let message: ChatMessage = .mock(
             id: .unique,
+            cid: .unique,
             text: .unique,
             author: .mock(id: .unique)
         )
@@ -449,6 +469,7 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
         // Create deleted message last in sequence by another user
         let deletedMessage: ChatMessage = .mock(
             id: .unique,
+            cid: .unique,
             text: .unique,
             author: .mock(id: .unique),
             deletedAt: .unique,
@@ -470,6 +491,7 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
         // Create non-deleted message sent by current user that ends the sequence
         let messageSentByCurrentUser: ChatMessage = .mock(
             id: .unique,
+            cid: .unique,
             text: .unique,
             author: .mock(id: .unique),
             isSentByCurrentUser: true
@@ -493,6 +515,7 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
         // Create last message from current user
         let messageFromAnotherUser1: ChatMessage = .mock(
             id: .unique,
+            cid: .unique,
             text: .unique,
             author: anotherUser,
             createdAt: Date(),
@@ -502,6 +525,7 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
         // Create message from current user sent within `minTimeIntervalBetweenMessagesInGroup` timeframe
         let messageFromAnotherUser2: ChatMessage = .mock(
             id: .unique,
+            cid: .unique,
             text: .unique,
             author: anotherUser,
             createdAt: messageFromAnotherUser1.createdAt.addingTimeInterval(
@@ -528,6 +552,7 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
         // Create last message from current user
         let messageFromAnotherUser1: ChatMessage = .mock(
             id: .unique,
+            cid: .unique,
             text: .unique,
             author: anotherUser,
             createdAt: Date(),
@@ -537,6 +562,7 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
         // Create message from current user sent within `minTimeIntervalBetweenMessagesInGroup` timeframe
         let messageFromAnotherUser2: ChatMessage = .mock(
             id: .unique,
+            cid: .unique,
             text: .unique,
             author: anotherUser,
             createdAt: messageFromAnotherUser1.createdAt.addingTimeInterval(
@@ -562,6 +588,7 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
         // Create deleted message
         let deletedMessage: ChatMessage = .mock(
             id: .unique,
+            cid: .unique,
             text: .unique,
             author: .mock(id: .unique),
             deletedAt: .unique
@@ -587,6 +614,7 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
         // Create non-deleted message sent by current user
         let messageSentByCurrentUser: ChatMessage = .mock(
             id: .unique,
+            cid: .unique,
             text: .unique,
             author: .mock(id: .unique),
             isSentByCurrentUser: true
@@ -615,6 +643,7 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
         // Create last message from current user
         let messageFromAnotherUser1: ChatMessage = .mock(
             id: .unique,
+            cid: .unique,
             text: .unique,
             author: anotherUser,
             createdAt: Date(),
@@ -624,6 +653,7 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
         // Create message from current user sent within `minTimeIntervalBetweenMessagesInGroup` timeframe
         let messageFromAnotherUser2: ChatMessage = .mock(
             id: .unique,
+            cid: .unique,
             text: .unique,
             author: anotherUser,
             createdAt: messageFromAnotherUser1.createdAt.addingTimeInterval(
@@ -652,6 +682,7 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
         // Create last message from current user
         let messageFromAnotherUser: ChatMessage = .mock(
             id: .unique,
+            cid: .unique,
             text: .unique,
             author: .mock(id: .unique),
             isSentByCurrentUser: false
@@ -675,6 +706,7 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
         // Create last message from current user
         let messageFromAnotherUser: ChatMessage = .mock(
             id: .unique,
+            cid: .unique,
             text: .unique,
             author: .mock(id: .unique),
             isSentByCurrentUser: false
@@ -702,10 +734,12 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
         // Create non-deleted message with quoted message
         let messageWithQuotedMessage: ChatMessage = .mock(
             id: .unique,
+            cid: .unique,
             text: .unique,
             author: .mock(id: .unique),
             quotedMessage: .mock(
                 id: .unique,
+                cid: .unique,
                 text: .unique,
                 author: .mock(id: .unique)
             )
@@ -726,11 +760,13 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
         // Create deleted message with quoted message
         let deletedMessageWithQuotedMessage: ChatMessage = .mock(
             id: .unique,
+            cid: .unique,
             text: .unique,
             author: .mock(id: .unique),
             deletedAt: .unique,
             quotedMessage: .mock(
                 id: .unique,
+                cid: .unique,
                 text: .unique,
                 author: .mock(id: .unique)
             )
@@ -753,17 +789,19 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
         // Create non-deleted thread root message
         let messageThreadRoot: ChatMessage = .mock(
             id: .unique,
+            cid: .unique,
             text: .unique,
             author: .mock(id: .unique),
             replyCount: 10,
             latestReplies: [
-                .mock(id: .unique, text: .unique, author: .mock(id: .unique))
+                .mock(id: .unique, cid: .unique, text: .unique, author: .mock(id: .unique))
             ]
         )
 
         // Create non-deleted thread part message
         let messageThreadPart: ChatMessage = .mock(
             id: .unique,
+            cid: .unique,
             text: .unique,
             author: .mock(id: .unique),
             parentMessageId: messageThreadRoot.id
@@ -786,18 +824,20 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
         // Create deleted thread root message
         let messageThreadRoot: ChatMessage = .mock(
             id: .unique,
+            cid: .unique,
             text: .unique,
             author: .mock(id: .unique),
             deletedAt: .unique,
             replyCount: 10,
             latestReplies: [
-                .mock(id: .unique, text: .unique, author: .mock(id: .unique))
+                .mock(id: .unique, cid: .unique, text: .unique, author: .mock(id: .unique))
             ]
         )
 
         // Create deleted thread part message
         let messageThreadPart: ChatMessage = .mock(
             id: .unique,
+            cid: .unique,
             text: .unique,
             author: .mock(id: .unique),
             deletedAt: .unique,
@@ -823,6 +863,7 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
         // Create deleted message with reactions
         let deletedMessageWithReactions: ChatMessage = .mock(
             id: .unique,
+            cid: .unique,
             text: .unique,
             author: .mock(id: .unique),
             deletedAt: .unique,
@@ -860,6 +901,7 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
         // Create non-deleted message with reactions
         let messageWithReactions: ChatMessage = .mock(
             id: .unique,
+            cid: .unique,
             text: .unique,
             author: .mock(id: .unique),
             reactionScores: ["like": 1],
@@ -896,6 +938,7 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
         // Create non-deleted message with reactions
         let messageWithReactions: ChatMessage = .mock(
             id: .unique,
+            cid: .unique,
             text: .unique,
             author: .mock(id: .unique),
             reactionScores: ["like": 1],
@@ -932,6 +975,7 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
         // Create non-deleted message without reactions
         let messageWithoutReactions: ChatMessage = .mock(
             id: .unique,
+            cid: .unique,
             text: .unique,
             author: .mock(id: .unique),
             reactionScores: [:],
@@ -962,6 +1006,7 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
             // Create non-deleted message with failed local state
             let messageWithFailedState: ChatMessage = .mock(
                 id: .unique,
+                cid: .unique,
                 text: .unique,
                 author: .mock(id: .unique),
                 deletedAt: nil,
@@ -985,6 +1030,7 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
         // Create deleted message
         let deletedMessage: ChatMessage = .mock(
             id: .unique,
+            cid: .unique,
             text: .unique,
             author: .mock(id: .unique),
             deletedAt: .unique
@@ -1035,6 +1081,7 @@ private extension Array where Element == (ChatMessage, Bool) {
         // Create last message from current user with last action failed
         let message0WithLastActionFailed: ChatMessage = .mock(
             id: .unique,
+            cid: .unique,
             text: .unique,
             author: currentUser,
             createdAt: Date(),
@@ -1045,6 +1092,7 @@ private extension Array where Element == (ChatMessage, Bool) {
         // Create previous message from current user within `minTimeIntervalBetweenMessagesInGroup` timeframe
         let message1: ChatMessage = .mock(
             id: .unique,
+            cid: .unique,
             text: .unique,
             author: currentUser,
             createdAt: message0WithLastActionFailed.createdAt.addingTimeInterval(-(minTimeIntervalBetweenMessagesInGroup - 1)),
@@ -1054,6 +1102,7 @@ private extension Array where Element == (ChatMessage, Bool) {
         // Create previous message from current user sent within `minTimeIntervalBetweenMessagesInGroup` timeframe
         let message2WithoutText: ChatMessage = .mock(
             id: .unique,
+            cid: .unique,
             text: "",
             author: currentUser,
             createdAt: message1.createdAt.addingTimeInterval(-(minTimeIntervalBetweenMessagesInGroup - 1)),
@@ -1063,6 +1112,7 @@ private extension Array where Element == (ChatMessage, Bool) {
         // Create previous message from current user sent outside `minTimeIntervalBetweenMessagesInGroup` timeframe
         let message3: ChatMessage = .mock(
             id: .unique,
+            cid: .unique,
             text: .unique,
             author: currentUser,
             createdAt: message2WithoutText.createdAt.addingTimeInterval(-(minTimeIntervalBetweenMessagesInGroup + 1)),
@@ -1072,6 +1122,7 @@ private extension Array where Element == (ChatMessage, Bool) {
         // Create previous message from another user within `minTimeIntervalBetweenMessagesInGroup` timeframe
         let message4: ChatMessage = .mock(
             id: .unique,
+            cid: .unique,
             text: .unique,
             author: anotherUser,
             createdAt: message3.createdAt.addingTimeInterval(-(minTimeIntervalBetweenMessagesInGroup - 1))
@@ -1080,6 +1131,7 @@ private extension Array where Element == (ChatMessage, Bool) {
         // Create previous message from another user with reactions within `minTimeIntervalBetweenMessagesInGroup` timeframe
         let message5WithReactions: ChatMessage = .mock(
             id: .unique,
+            cid: .unique,
             text: .unique,
             author: anotherUser,
             createdAt: message4.createdAt.addingTimeInterval(-(minTimeIntervalBetweenMessagesInGroup - 1)),
@@ -1099,11 +1151,13 @@ private extension Array where Element == (ChatMessage, Bool) {
         // Create previous message from another user with quoted message outside `minTimeIntervalBetweenMessagesInGroup` timeframe
         let message6WithQuote: ChatMessage = .mock(
             id: .unique,
+            cid: .unique,
             text: .unique,
             author: anotherUser,
             createdAt: message5WithReactions.createdAt.addingTimeInterval(-(minTimeIntervalBetweenMessagesInGroup + 1)),
             quotedMessage: .mock(
                 id: .unique,
+                cid: .unique,
                 text: .unique,
                 author: currentUser
             )
@@ -1112,6 +1166,7 @@ private extension Array where Element == (ChatMessage, Bool) {
         // Create previous message from current user which was deleted
         let message7Deleted: ChatMessage = .mock(
             id: .unique,
+            cid: .unique,
             text: .unique,
             author: currentUser,
             createdAt: message6WithQuote.createdAt.addingTimeInterval(-minTimeIntervalBetweenMessagesInGroup),
@@ -1122,12 +1177,13 @@ private extension Array where Element == (ChatMessage, Bool) {
         // Create previous thread root message from current
         let message8ThreadRoot: ChatMessage = .mock(
             id: .unique,
+            cid: .unique,
             text: .unique,
             author: currentUser,
             createdAt: message7Deleted.createdAt.addingTimeInterval(-minTimeIntervalBetweenMessagesInGroup),
             replyCount: 10,
             latestReplies: [
-                .mock(id: .unique, text: .unique, author: anotherUser)
+                .mock(id: .unique, cid: .unique, text: .unique, author: anotherUser)
             ],
             isSentByCurrentUser: true
         )
@@ -1135,6 +1191,7 @@ private extension Array where Element == (ChatMessage, Bool) {
         // Create previous thread reply message from another user not shown in channel
         let message9ThreadReply: ChatMessage = .mock(
             id: .unique,
+            cid: .unique,
             text: .unique,
             author: anotherUser,
             createdAt: message8ThreadRoot.createdAt.addingTimeInterval(-minTimeIntervalBetweenMessagesInGroup),
@@ -1145,6 +1202,7 @@ private extension Array where Element == (ChatMessage, Bool) {
         // Create previous thread reply message from another user shown in channel
         let message10ThreadReplyShownInChannel: ChatMessage = .mock(
             id: .unique,
+            cid: .unique,
             text: .unique,
             author: anotherUser,
             createdAt: message9ThreadReply.createdAt.addingTimeInterval(-(minTimeIntervalBetweenMessagesInGroup - 1)),
