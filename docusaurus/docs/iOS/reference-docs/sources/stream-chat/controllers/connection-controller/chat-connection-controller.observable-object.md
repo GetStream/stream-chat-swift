@@ -10,7 +10,7 @@ public class ObservableObject: SwiftUI.ObservableObject
 
 ## Inheritance
 
-`SwiftUI.ObservableObject`, [`_ChatConnectionControllerDelegate`](chat-connection-controller-delegate)
+`SwiftUI.ObservableObject`, [`_ChatConnectionControllerDelegate`](../chat-connection-controller-delegate)
 
 ## Properties
 

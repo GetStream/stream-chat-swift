@@ -8,7 +8,7 @@ public struct NotificationMutesUpdatedEvent<ExtraData: ExtraDataTypes>: CurrentU
 
 ## Inheritance
 
-[`CurrentUserEvent`](current-user-event)
+[`CurrentUserEvent`](../current-user-event)
 
 ## Properties
 

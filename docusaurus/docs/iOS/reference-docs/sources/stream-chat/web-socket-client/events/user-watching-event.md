@@ -8,7 +8,7 @@ public struct UserWatchingEvent: UserSpecificEvent, ChannelSpecificEvent
 
 ## Inheritance
 
-[`UserSpecificEvent`](user-specific-event), [`ChannelSpecificEvent`](channel-specific-event)
+[`UserSpecificEvent`](../user-specific-event), [`ChannelSpecificEvent`](../channel-specific-event)
 
 ## Properties
 

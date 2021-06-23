@@ -10,7 +10,7 @@ open class _SwipeableView<ExtraData: ExtraDataTypes>: _View, ComponentsProvider,
 
 ## Inheritance
 
-[`_View`](../common-views/_view), [`ComponentsProvider`](../utils/components-provider), `UIGestureRecognizerDelegate`
+[`_View`](../../common-views/_view), [`ComponentsProvider`](../../utils/components-provider), `UIGestureRecognizerDelegate`
 
 ## Properties
 

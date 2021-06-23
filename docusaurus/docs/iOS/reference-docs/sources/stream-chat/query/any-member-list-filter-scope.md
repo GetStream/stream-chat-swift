@@ -11,4 +11,4 @@ public protocol AnyMemberListFilterScope: AnyUserListFilterScope
 
 ## Inheritance
 
-[`AnyUserListFilterScope`](any-user-list-filter-scope)
+[`AnyUserListFilterScope`](../any-user-list-filter-scope)

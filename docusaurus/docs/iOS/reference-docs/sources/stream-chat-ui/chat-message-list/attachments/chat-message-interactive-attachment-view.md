@@ -8,7 +8,7 @@ open class _ChatMessageInteractiveAttachmentView<ExtraData: ExtraDataTypes>: _Vi
 
 ## Inheritance
 
-[`_View`](../../common-views/_view), [`ThemeProvider`](../../utils/theme-provider)
+[`_View`](../../../common-views/_view), [`ThemeProvider`](../../../utils/theme-provider)
 
 ## Properties
 

@@ -14,4 +14,4 @@ Learn more about using custom extra data in our [cheat sheet](https://github.com
 
 ## Inheritance
 
-[`AnyChannelListFilterScope`](any-channel-list-filter-scope), [`FilterScope`](filter-scope)
+[`AnyChannelListFilterScope`](../any-channel-list-filter-scope), [`FilterScope`](../filter-scope)

@@ -12,6 +12,24 @@ open class _ChatMessageDefaultReactionsBubbleView<ExtraData: ExtraDataTypes>: _C
 
 ## Properties
 
+### `contentViewBackground`
+
+``` swift
+public let contentViewBackground = UIView().withoutAutoresizingMaskConstraints
+```
+
+### `tailBehind`
+
+``` swift
+public let tailBehind = UIImageView().withoutAutoresizingMaskConstraints
+```
+
+### `tailInFront`
+
+``` swift
+public let tailInFront = UIImageView().withoutAutoresizingMaskConstraints
+```
+
 ### `tailLeadingAnchor`
 
 ``` swift

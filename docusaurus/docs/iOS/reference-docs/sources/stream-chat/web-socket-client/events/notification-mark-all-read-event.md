@@ -8,7 +8,7 @@ public struct NotificationMarkAllReadEvent: UserSpecificEvent
 
 ## Inheritance
 
-[`UserSpecificEvent`](user-specific-event)
+[`UserSpecificEvent`](../user-specific-event)
 
 ## Properties
 

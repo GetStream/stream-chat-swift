@@ -13,4 +13,4 @@ Learn more about using custom extra data in our [cheat sheet](https://github.com
 
 ## Inheritance
 
-[`ExtraData`](extra-data)
+[`ExtraData`](../extra-data)

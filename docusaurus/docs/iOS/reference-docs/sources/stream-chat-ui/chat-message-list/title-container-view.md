@@ -11,7 +11,7 @@ open class TitleContainerView: _View, AppearanceProvider, SwiftUIRepresentable
 
 ## Inheritance
 
-[`_View`](../common-views/_view), [`SwiftUIRepresentable`](../common-views/swift-ui-representable), [`AppearanceProvider`](../utils/appearance-provider)
+[`_View`](../../common-views/_view), [`SwiftUIRepresentable`](../../common-views/swift-ui-representable), [`AppearanceProvider`](../../utils/appearance-provider)
 
 ## Properties
 

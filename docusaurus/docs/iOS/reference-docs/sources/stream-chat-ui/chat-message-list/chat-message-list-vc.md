@@ -22,7 +22,7 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
 
 ## Inheritance
 
-[`_ViewController`](../common-views/_view-controller), [`FileActionContentViewDelegate`](attachments/file-action-content-view-delegate), [`GalleryContentViewDelegate`](attachments/gallery-content-view-delegate), [`GiphyActionContentViewDelegate`](attachments/giphy-action-content-view-delegate), [`LinkPreviewViewDelegate`](attachments/link-preview-view-delegate), [`ChatMessageContentViewDelegate`](chat-message/chat-message-content-view-delegate), [`ChatMessageListCollectionViewDataSource`](chat-message-list-collection-view-data-source), [`SwiftUIRepresentable`](../common-views/swift-ui-representable), [`ComposerVCDelegate`](../composer/composer-vc-delegate), `UICollectionViewDelegate`, `_ChatChannelControllerDelegate`, [`_ChatMessageActionsVCDelegate`](../message-actions-popup/chat-message-actions-vc-delegate), [`ThemeProvider`](../utils/theme-provider)
+[`_ViewController`](../../common-views/_view-controller), [`FileActionContentViewDelegate`](../attachments/file-action-content-view-delegate), [`GalleryContentViewDelegate`](../attachments/gallery-content-view-delegate), [`GiphyActionContentViewDelegate`](../attachments/giphy-action-content-view-delegate), [`LinkPreviewViewDelegate`](../attachments/link-preview-view-delegate), [`ChatMessageContentViewDelegate`](../chat-message/chat-message-content-view-delegate), [`ChatMessageListCollectionViewDataSource`](../chat-message-list-collection-view-data-source), [`SwiftUIRepresentable`](../../common-views/swift-ui-representable), [`ComposerVCDelegate`](../../composer/composer-vc-delegate), `_ChatChannelControllerDelegate`, [`_ChatMessageActionsVCDelegate`](../../message-actions-popup/chat-message-actions-vc-delegate), [`ThemeProvider`](../../utils/theme-provider), `UICollectionViewDelegate`
 
 ## Properties
 
@@ -117,7 +117,7 @@ open private(set) lazy var typingIndicatorView: _TypingIndicatorView<ExtraData> 
 A button to scroll the collection view to the bottom.
 
 ``` swift
-open private(set) lazy var scrollToLatestMessageButton: UIButton = components
+open private(set) lazy var scrollToLatestMessageButton: _ScrollToLatestMessageButton<ExtraData> = components
         .scrollToLatestMessageButton
         .init()
         .withoutAutoresizingMaskConstraints
@@ -266,7 +266,7 @@ open func scrollToMostRecentMessage(animated: Bool = true)
 
 ### `updateScrollToLatestMessageButton()`
 
-Update the visibility of `scrollToLatestMessageButton` based on unread messages and visible messages.
+Update the `scrollToLatestMessageButton` based on unread messages.
 
 ``` swift
 open func updateScrollToLatestMessageButton() 
@@ -342,10 +342,10 @@ open func restartUploading(for attachmentId: AttachmentId)
 ### `didTapOnImageAttachment(_:previews:at:)`
 
 ``` swift
-public func didTapOnImageAttachment(
+open func didTapOnImageAttachment(
         _ attachment: ChatMessageImageAttachment,
         previews: [ImagePreviewable],
-        at indexPath: IndexPath
+        at indexPath: IndexPath?
     ) 
 ```
 
@@ -354,14 +354,17 @@ public func didTapOnImageAttachment(
 ``` swift
 open func didTapOnLinkAttachment(
         _ attachment: ChatMessageLinkAttachment,
-        at indexPath: IndexPath
+        at indexPath: IndexPath?
     ) 
 ```
 
 ### `didTapOnAttachment(_:at:)`
 
 ``` swift
-public func didTapOnAttachment(_ attachment: ChatMessageFileAttachment, at indexPath: IndexPath) 
+open func didTapOnAttachment(
+        _ attachment: ChatMessageFileAttachment,
+        at indexPath: IndexPath?
+    ) 
 ```
 
 ### `didTapOnAttachmentAction(_:at:)`

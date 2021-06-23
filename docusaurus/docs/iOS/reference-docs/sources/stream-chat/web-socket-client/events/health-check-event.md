@@ -8,7 +8,7 @@ public struct HealthCheckEvent: ConnectionEvent, EventWithPayload
 
 ## Inheritance
 
-[`ConnectionEvent`](connection-event), [`EventWithPayload`](event-with-payload)
+[`ConnectionEvent`](../connection-event), [`EventWithPayload`](../event-with-payload)
 
 ## Properties
 

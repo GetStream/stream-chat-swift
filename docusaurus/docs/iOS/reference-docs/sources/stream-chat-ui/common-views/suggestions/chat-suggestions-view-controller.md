@@ -12,7 +12,7 @@ open class _ChatSuggestionsViewController<ExtraData: ExtraDataTypes>: _ViewContr
 
 ## Inheritance
 
-[`_ViewController`](../_view-controller), [`ThemeProvider`](../../utils/theme-provider), `UICollectionViewDelegate`
+[`_ViewController`](../../_view-controller), [`ThemeProvider`](../../../utils/theme-provider), `UICollectionViewDelegate`
 
 ## Properties
 

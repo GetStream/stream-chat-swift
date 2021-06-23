@@ -400,6 +400,15 @@ public var imageGalleryView: _ChatMessageImageGallery<ExtraData>.Type =
         _ChatMessageImageGallery<ExtraData>.self
 ```
 
+### `linkPreviewView`
+
+The view that shows a link preview in message cell.
+
+``` swift
+public var linkPreviewView: _ChatMessageLinkPreviewView<ExtraData>.Type =
+        _ChatMessageLinkPreviewView<ExtraData>.self
+```
+
 ### `imageUploadingOverlay`
 
 The view that shows an overlay with uploading progress for image attachment that is being uploaded.
@@ -449,7 +458,17 @@ public var giphyBadgeView: _ChatMessageGiphyView<ExtraData>.GiphyBadge.Type = _C
 The button that indicates unread messages at the bottom of the message list and scroll to the latest message on tap.
 
 ``` swift
-public var scrollToLatestMessageButton: UIButton.Type = ScrollToLatestMessageButton.self
+public var scrollToLatestMessageButton: _ScrollToLatestMessageButton<ExtraData>.Type =
+        _ScrollToLatestMessageButton<ExtraData>.self
+```
+
+### `messageListUnreadCountView`
+
+The view that shows a number of unread messages on the Scroll-To-Latest-Message button in the Message List.
+
+``` swift
+public var messageListUnreadCountView: _ChatMessageListUnreadCountView<ExtraData>.Type =
+        _ChatMessageListUnreadCountView<ExtraData>.self
 ```
 
 ### `channelNamer`

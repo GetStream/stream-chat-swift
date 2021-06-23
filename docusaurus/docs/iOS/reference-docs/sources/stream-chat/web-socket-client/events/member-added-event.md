@@ -8,7 +8,7 @@ public struct MemberAddedEvent: MemberEvent, ChannelSpecificEvent, EventWithPayl
 
 ## Inheritance
 
-[`EventWithPayload`](event-with-payload), [`ChannelSpecificEvent`](channel-specific-event), [`MemberEvent`](member-event)
+[`EventWithPayload`](../event-with-payload), [`ChannelSpecificEvent`](../channel-specific-event), [`MemberEvent`](../member-event)
 
 ## Properties
 

@@ -8,7 +8,7 @@ open class _ChatMessageGiphyView<ExtraData: ExtraDataTypes>: _View, ComponentsPr
 
 ## Inheritance
 
-[`_View`](../../common-views/_view), [`ComponentsProvider`](../../utils/components-provider)
+[`_View`](../../../common-views/_view), [`ComponentsProvider`](../../../utils/components-provider)
 
 ## Properties
 

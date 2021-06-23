@@ -8,7 +8,7 @@ public struct ChannelUpdatedEvent: ChannelSpecificEvent
 
 ## Inheritance
 
-[`ChannelSpecificEvent`](channel-specific-event)
+[`ChannelSpecificEvent`](../channel-specific-event)
 
 ## Properties
 

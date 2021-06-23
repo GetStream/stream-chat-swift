@@ -13,7 +13,7 @@ named `ChatChannelMemberControllerDelegate`, which hides the generic types, and 
 
 ## Inheritance
 
-[`DataControllerStateDelegate`](../data-controller-state-delegate)
+[`DataControllerStateDelegate`](../../data-controller-state-delegate)
 
 ## Default Implementations
 

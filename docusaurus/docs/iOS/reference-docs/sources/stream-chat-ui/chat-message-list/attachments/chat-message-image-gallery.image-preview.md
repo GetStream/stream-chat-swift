@@ -8,7 +8,7 @@ open class ImagePreview: _View, ThemeProvider, ImagePreviewable
 
 ## Inheritance
 
-[`_View`](../../common-views/_view), [`ImagePreviewable`](image-previewable), [`ThemeProvider`](../../utils/theme-provider)
+[`_View`](../../../common-views/_view), [`ImagePreviewable`](../image-previewable), [`ThemeProvider`](../../../utils/theme-provider)
 
 ## Properties
 

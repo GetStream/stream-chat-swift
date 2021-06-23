@@ -16,7 +16,7 @@ Learn more about using custom extra data in our [cheat sheet](https://github.com
 
 ## Inheritance
 
-[`DataController`](../data-controller), [`DelegateCallable`](../delegate-callable), [`DataStoreProvider`](../../database/data-store-provider)
+[`DataController`](../../data-controller), [`DelegateCallable`](../../delegate-callable), [`DataStoreProvider`](../../../database/data-store-provider)
 
 ## Properties
 
@@ -141,7 +141,7 @@ func deleteMessage(completion: ((Error?) -> Void)? = nil)
 
   - completion: The completion. Will be called on a **callbackQueue** when the network request is finished. If request fails, the completion will be called with an error.
 
-### `createNewReply(text:pinning:attachments:mentionedUserIds:showReplyInChannel:quotedMessageId:extraData:completion:)`
+### `createNewReply(text:pinning:attachments:mentionedUserIds:showReplyInChannel:isSilent:quotedMessageId:extraData:completion:)`
 
 Creates a new reply message locally and schedules it for send.
 
@@ -154,6 +154,7 @@ func createNewReply(
         attachments: [AnyAttachmentPayload] = [],
         mentionedUserIds: [UserId] = [],
         showReplyInChannel: Bool = false,
+        isSilent: Bool = false,
         quotedMessageId: MessageId? = nil,
         extraData: ExtraData.Message = .defaultValue,
         completion: ((Result<MessageId, Error>) -> Void)? = nil

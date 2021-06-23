@@ -11,7 +11,7 @@ open class _ChatChannelListCollectionViewCell<ExtraData: ExtraDataTypes>: _Colle
 
 ## Inheritance
 
-[`_CollectionViewCell`](../common-views/_collection-view-cell), [`ThemeProvider`](../utils/theme-provider)
+[`_CollectionViewCell`](../../common-views/_collection-view-cell), [`ThemeProvider`](../../utils/theme-provider)
 
 ## Properties
 

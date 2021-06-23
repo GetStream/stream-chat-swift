@@ -8,7 +8,7 @@ open class _ChatMessageLinkPreviewView<ExtraData: ExtraDataTypes>: _Control, The
 
 ## Inheritance
 
-[`_Control`](../../common-views/_control), [`ThemeProvider`](../../utils/theme-provider)
+[`_Control`](../../../common-views/_control), [`ThemeProvider`](../../../utils/theme-provider)
 
 ## Properties
 

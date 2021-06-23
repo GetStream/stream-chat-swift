@@ -17,7 +17,10 @@ open class _LinkAttachmentViewInjector<ExtraData: ExtraDataTypes>: _AttachmentVi
 ### `linkPreviewView`
 
 ``` swift
-open private(set) lazy var linkPreviewView = _ChatMessageLinkPreviewView<ExtraData>()
+open private(set) lazy var linkPreviewView = contentView
+        .components
+        .linkPreviewView
+        .init()
         .withoutAutoresizingMaskConstraints
 ```
 

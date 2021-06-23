@@ -10,7 +10,7 @@ public struct ResendActionItem: ChatMessageActionItem
 
 ## Inheritance
 
-[`ChatMessageActionItem`](chat-message-action-item)
+[`ChatMessageActionItem`](../chat-message-action-item)
 
 ## Initializers
 

@@ -10,7 +10,7 @@ open class _InputChatMessageView<ExtraData: ExtraDataTypes>: _View, ComponentsPr
 
 ## Inheritance
 
-[`_View`](../_view), [`AppearanceProvider`](../../utils/appearance-provider), [`ComponentsProvider`](../../utils/components-provider)
+[`_View`](../../_view), [`AppearanceProvider`](../../../utils/appearance-provider), [`ComponentsProvider`](../../../utils/components-provider)
 
 ## Properties
 

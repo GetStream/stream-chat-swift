@@ -8,7 +8,7 @@ open class ItemView: _View, ThemeProvider
 
 ## Inheritance
 
-[`_View`](../../common-views/_view), [`ThemeProvider`](../../utils/theme-provider)
+[`_View`](../../../common-views/_view), [`ThemeProvider`](../../../utils/theme-provider)
 
 ## Properties
 

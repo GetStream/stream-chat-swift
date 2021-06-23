@@ -10,7 +10,7 @@ public protocol GalleryContentViewDelegate: ChatMessageContentViewDelegate
 
 ## Inheritance
 
-[`ChatMessageContentViewDelegate`](../chat-message/chat-message-content-view-delegate)
+[`ChatMessageContentViewDelegate`](../../chat-message/chat-message-content-view-delegate)
 
 ## Requirements
 
@@ -22,6 +22,6 @@ Called when the user taps on one of the image attachments.
 func didTapOnImageAttachment(
         _ attachment: ChatMessageImageAttachment,
         previews: [ImagePreviewable],
-        at indexPath: IndexPath
+        at indexPath: IndexPath?
     )
 ```

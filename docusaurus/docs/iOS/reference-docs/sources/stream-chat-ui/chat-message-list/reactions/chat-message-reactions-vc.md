@@ -8,7 +8,7 @@ open class _ChatMessageReactionsVC<ExtraData: ExtraDataTypes>: _ViewController, 
 
 ## Inheritance
 
-[`_ViewController`](../../common-views/_view-controller), [`ThemeProvider`](../../utils/theme-provider), `_ChatMessageControllerDelegate`
+[`_ViewController`](../../../common-views/_view-controller), [`ThemeProvider`](../../../utils/theme-provider), `_ChatMessageControllerDelegate`
 
 ## Properties
 

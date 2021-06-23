@@ -14,4 +14,4 @@ Learn more about using custom extra data in our [cheat sheet](https://github.com
 
 ## Inheritance
 
-[`AnyMemberListFilterScope`](any-member-list-filter-scope), `_UserListFilterScope<ExtraData>`
+[`AnyMemberListFilterScope`](../any-member-list-filter-scope), `_UserListFilterScope<ExtraData>`

@@ -10,7 +10,7 @@ open class ChatSuggestionsHeaderView: _View, AppearanceProvider
 
 ## Inheritance
 
-[`_View`](../_view), [`AppearanceProvider`](../../utils/appearance-provider)
+[`_View`](../../_view), [`AppearanceProvider`](../../../utils/appearance-provider)
 
 ## Properties
 

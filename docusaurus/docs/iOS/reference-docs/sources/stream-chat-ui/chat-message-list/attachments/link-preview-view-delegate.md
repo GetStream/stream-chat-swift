@@ -10,7 +10,7 @@ public protocol LinkPreviewViewDelegate: ChatMessageContentViewDelegate
 
 ## Inheritance
 
-[`ChatMessageContentViewDelegate`](../chat-message/chat-message-content-view-delegate)
+[`ChatMessageContentViewDelegate`](../../chat-message/chat-message-content-view-delegate)
 
 ## Requirements
 
@@ -21,6 +21,6 @@ Called when the user taps the link preview.
 ``` swift
 func didTapOnLinkAttachment(
         _ attachment: ChatMessageLinkAttachment,
-        at indexPath: IndexPath
+        at indexPath: IndexPath?
     )
 ```

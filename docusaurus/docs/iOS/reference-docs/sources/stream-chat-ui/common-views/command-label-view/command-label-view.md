@@ -11,7 +11,7 @@ open class CommandLabelView: _View, AppearanceProvider, SwiftUIRepresentable
 
 ## Inheritance
 
-[`_View`](../_view), [`SwiftUIRepresentable`](../swift-ui-representable), [`AppearanceProvider`](../../utils/appearance-provider)
+[`_View`](../../_view), [`SwiftUIRepresentable`](../../swift-ui-representable), [`AppearanceProvider`](../../../utils/appearance-provider)
 
 ## Properties
 

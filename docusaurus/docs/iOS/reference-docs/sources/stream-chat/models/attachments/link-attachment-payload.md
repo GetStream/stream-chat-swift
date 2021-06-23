@@ -10,7 +10,7 @@ public struct LinkAttachmentPayload: AttachmentPayload
 
 ## Inheritance
 
-[`AttachmentPayload`](attachment-payload), `Decodable`, `Encodable`
+[`AttachmentPayload`](../attachment-payload), `Decodable`, `Encodable`
 
 ## Initializers
 

@@ -10,7 +10,7 @@ open class _ChatMessageFileAttachmentListView<ExtraData: ExtraDataTypes>: _View,
 
 ## Inheritance
 
-[`_View`](../../common-views/_view), [`ComponentsProvider`](../../utils/components-provider)
+[`_View`](../../../common-views/_view), [`ComponentsProvider`](../../../utils/components-provider)
 
 ## Properties
 

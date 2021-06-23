@@ -10,7 +10,7 @@ open class TypingAnimationView: _View, AppearanceProvider
 
 ## Inheritance
 
-[`_View`](../common-views/_view), [`AppearanceProvider`](../utils/appearance-provider)
+[`_View`](../../common-views/_view), [`AppearanceProvider`](../../utils/appearance-provider)
 
 ## Properties
 

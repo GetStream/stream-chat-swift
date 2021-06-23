@@ -8,7 +8,7 @@ open class _ViewController: UIViewController, Customizable
 
 ## Inheritance
 
-[`Customizable`](customizable), `UIViewController`
+[`Customizable`](../customizable), `UIViewController`
 
 ## Methods
 
