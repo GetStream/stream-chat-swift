@@ -2,12 +2,8 @@
   "docs": [
     {
       "Basics": [
-        "basics/introduction",
-        "basics/integration",
+        "basics/overview",
         "basics/getting-started",
-        "basics/migrating-from-3-to-4",
-        "basics/migrating-from-1.x-and-2.x",
-        "basics/faq",
         "basics/glossary"
       ]
     },
@@ -38,6 +34,9 @@
         "guides/connection-status",
         "guides/moderation",
         "guides/multi-tenancy",
+        "guides/debugging",
+        "guides/migrating-from-3-to-4",
+        "guides/migrating-from-1.x-and-2.x",
         "guides/debugging"
       ]
     },
