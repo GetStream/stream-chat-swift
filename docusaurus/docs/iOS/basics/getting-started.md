@@ -2,7 +2,7 @@
 title: Getting Started
 ---
 
-To get started with StreamChat, we suggest you register and acquire an API token [on our website](getstream.io). Please enable developer tokens for your app before moving on with the guide, since we'll use them for prototyping.
+To get started with StreamChat, we suggest you register and acquire an API token [on our website](https://getstream.io/). Please enable developer tokens for your app before moving on with the guide, since we'll use them for prototyping.
 
 On the [Dashboard](https://getstream.io/dashboard/):
 
