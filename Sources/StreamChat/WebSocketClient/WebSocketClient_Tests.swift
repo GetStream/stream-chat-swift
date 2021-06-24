@@ -463,15 +463,28 @@ class WebSocketClient_Tests: StressTestCase {
         // Simulate connection state changes
         let connectionStates: [WebSocketConnectionState] = [
             .connecting,
+            .connecting, // duplicate state should be ignored
             .waitingForConnectionId,
+            .waitingForConnectionId, // duplicate state should be ignored
             .connected(connectionId: connectionId),
+            .connected(connectionId: connectionId), // duplicate state should be ignored
             .disconnecting(source: .userInitiated),
-            .disconnected()
+            .disconnecting(source: .userInitiated), // duplicate state should be ignored
+            .disconnected(),
+            .disconnected() // duplicate state should be ignored
         ]
         
         connectionStates.forEach { webSocketClient.simulateConnectionStatus($0) }
         
-        let expectedEvents = connectionStates.map { ConnectionStatusUpdated(webSocketConnectionState: $0).asEquatable }
+        let expectedEvents = [
+            WebSocketConnectionState.connecting, // states 0...3
+            .connected(connectionId: connectionId), // states 4...5
+            .disconnecting(source: .userInitiated), // states 6...7
+            .disconnected() // states 8...9
+        ].map {
+            ConnectionStatusUpdated(webSocketConnectionState: $0).asEquatable
+        }
+
         AssertAsync.willBeEqual(eventLogger.equatableEvents, expectedEvents)
     }
     
