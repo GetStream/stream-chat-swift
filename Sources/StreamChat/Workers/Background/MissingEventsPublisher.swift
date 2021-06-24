@@ -8,7 +8,7 @@ import Foundation
 /// The type is designed to obtain missing events that happened in watched channels while user
 /// was not connected to the web-socket.
 ///
-/// The object listenes for `ConnectionStatusUpdated` events
+/// The object listens for `ConnectionStatusUpdated` events
 /// and remembers the `CurrentUserDTO.lastReceivedEventDate` when status becomes `connecting`.
 ///
 /// When the status becomes `connected` the `/sync` endpoint is called
@@ -100,11 +100,11 @@ class MissingEventsPublisher<ExtraData: ExtraDataTypes>: EventWorker {
             self?.apiClient.request(endpoint: endpoint) {
                 switch $0 {
                 case let .success(payload):
-                    // The sync call was successfull.
+                    // The sync call was successful.
                     // We schedule all events for existing channels for processing...
                     self?.eventNotificationCenter.process(payload.eventPayloads)
 
-                    // ... and refetch the existing quries to see if there are some new channels
+                    // ... and refetch the existing queries to see if there are some new channels
                     self?.databaseCleanupUpdater.refetchExistingChannelListQueries()
 
                 case let .failure(error):

@@ -12,10 +12,10 @@ class WebSocketClient {
     @Atomic private(set) var connectionState: WebSocketConnectionState = .disconnected() {
         didSet {
             log.info("Web socket connection state changed: \(connectionState)")
-            connectionStateDelegate?.webSocketClient(self, didUpdateConectionState: connectionState)
+            connectionStateDelegate?.webSocketClient(self, didUpdateConnectionState: connectionState)
             
             if connectionState.isConnected {
-                reconnectionStrategy.sucessfullyConnected()
+                reconnectionStrategy.successfullyConnected()
             }
             
             pingController.connectionStateDidChange(connectionState)
@@ -143,7 +143,7 @@ class WebSocketClient {
 }
 
 protocol ConnectionStateDelegate: AnyObject {
-    func webSocketClient(_ client: WebSocketClient, didUpdateConectionState state: WebSocketConnectionState)
+    func webSocketClient(_ client: WebSocketClient, didUpdateConnectionState state: WebSocketConnectionState)
 }
 
 extension WebSocketClient {
