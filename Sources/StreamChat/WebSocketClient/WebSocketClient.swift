@@ -19,10 +19,14 @@ class WebSocketClient {
             }
             
             pingController.connectionStateDidChange(connectionState)
-            
-            // Publish Connection event with the new state
+
+            let previousStatus = ConnectionStatus(webSocketConnectionState: oldValue)
             let event = ConnectionStatusUpdated(webSocketConnectionState: connectionState)
-            eventNotificationCenter.process(event)
+
+            if event.connectionStatus != previousStatus {
+                // Publish Connection event with the new state
+                eventNotificationCenter.process(event)
+            }
         }
     }
     
