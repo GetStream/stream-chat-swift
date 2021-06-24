@@ -66,7 +66,7 @@ controller.createNewMessage(
 )
 ```
 
-More info on [Pinning](pinned-messages) and [Attachments](working-with-attachments) can be found in corresponding guides.
+More info on [Pinning](./pinned-messages.md) and [Attachments](./working-with-attachments.md) can be found in corresponding guides.
 
 More on [Quoted](#reply-a-message)  messages could be found in this guide below.
 

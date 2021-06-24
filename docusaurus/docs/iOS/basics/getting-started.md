@@ -44,9 +44,9 @@ In the snippet above, we've:
 
 User Tokens are JWT tokens containing a User ID and used to authenticate a user. In this guide, we use development tokens, since they're the easiest to start with, and are great for prototyping an application before implementing a backend handling for tokens.
 
-For more information regarding user tokens, please check [Working with User guide](../../guides/working-with-user#user-ids--tokens).
+For more information regarding user tokens, please check [Working with User guide](../guides/working-with-user.md#user-ids--tokens).
 
-### [`ChatClientConfig`](../../reference-docs/sources/stream-chat/config/chat-client-config)
+### [`ChatClientConfig`](../reference-docs/sources/stream-chat/config/chat-client-config.md)
 
 The `ChatClientConfig` object holds properties that the chat client will use to determine certain behaviors. For example, the `apiKey`, which tells the chat client which chat server to communicate with. It also has the `baseURL` property which tells the chat client which region of the world your server is at, which can be useful to reduce overall latency.
 
@@ -64,14 +64,14 @@ let chatClient = ChatClient(config: config, tokenProvider: tokenProvider)
 ```
 
 For more information regarding available regions, please check [Multi-region Support](https://getstream.io/chat/docs/ios-swift/multi_region/?language=swift)
-For more information regarding the configuration options, please check [ChatClientConfig Reference doc](../../reference-docs/sources/stream-chat/config/chat-client-config).
+For more information regarding the configuration options, please check [ChatClientConfig Reference doc](../reference-docs/sources/stream-chat/config/chat-client-config.md).
 
-### [`ChatClient`](../../reference-docs/sources/stream-chat/config/chat-client)
+### [`ChatClient`](../reference-docs/sources/stream-chat/config/chat-client.md)
 
 `ChatClient` is the main interaction point with our SDK. From it, you ask a certain Controller and use the controller to interact with StreamChat platform.
 
-For the list of possible controllers you can get from `ChatClient`, please check [Controllers Overview](../../controllers/controllers-overview)
+For the list of possible controllers you can get from `ChatClient`, please check [Controllers Overview](../controllers/controllers-overview.md)
 
-### [`ChatChannelListVC`](../../reference-docs/sources/stream-chat-ui/chat-channel-list/chat-channel-list-vc)
+### [`ChatChannelListVC`](../reference-docs/sources/stream-chat-ui/chat-channel-list/chat-channel-list-vc.md)
 
 This `UIViewController` subclass is the UI component to display a list of Channels. You can configure its behaviour by subclassing and overriding functions.

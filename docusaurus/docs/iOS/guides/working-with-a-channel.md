@@ -248,7 +248,7 @@ struct ChannelListView: View {
 ```swift
 channelController.channel?.cachedMembers
 ```
-Since a Channel can have many members, the local database might not have all the members cached. For this reason, we have `MemberListController`, documented [here](working-with-members).
+Since a Channel can have many members, the local database might not have all the members cached. For this reason, we have `MemberListController`, documented [here](./working-with-members.md).
 
 `ChannelController` receives `MemberAdded`, `MemberUpdated` and `MemberRemoved` events, and reports the updated Member object via its delegate method:
 ```swift
@@ -280,7 +280,7 @@ func channelController(
 }
 ```
 Usually, you use `ChannelListController` to observe changes to unread counts, since it's displayed in the Channel List next to channel name. 
-For info about handling Channel List, see [here](working-with-channel-list).
+For info about handling Channel List, see [here](./working-with-channel-list.md).
 
 ## Getting a Model Directly from ChannelController
 

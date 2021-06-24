@@ -30,7 +30,7 @@ If you're actively using one of these features, please hold off upgrading until 
 
 # StreamChat v1.x / v2.x -> StreamChatUI v3
 
-None of the UI SDK components we had in v1.x / v2.x were carried over to StreamChatUI and it was written from the ground up. The new UI SDK is much more component-focused and each component can be used separately. Please check [UI Customization Guide](../guides/ui-customization) to get familiar on how to use it and convert your screens.
+None of the UI SDK components we had in v1.x / v2.x were carried over to StreamChatUI and it was written from the ground up. The new UI SDK is much more component-focused and each component can be used separately. Please check [UI Customization Guide](../guides/ui-customization.md) to get familiar on how to use it and convert your screens.
 
 # StreamChatCore v1.x / v2.x and StreamChatClient v2.x -> StreamChat v3
 

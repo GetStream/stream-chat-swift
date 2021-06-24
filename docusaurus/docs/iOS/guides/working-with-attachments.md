@@ -40,7 +40,7 @@ You can implement `MyCustomAttachmentViewInjector` as a subclass of `FilesAttach
 In both cases you will implement at least these two methods: `contentViewDidLayout(options: ChatMessageLayoutOptions)` and `contentViewDidUpdateContent`. 
 
 To keep this easy to read we are going to create two classes: `MyCustomAttachmentViewInjector` and `MyCustomAttachmentView`. The latter can be a simple View class
-or you can also use StreamChatUI's [_View](../ui-components/CommonViews/_View) class which is what we recommended.
+or you can also use StreamChatUI's [_View](../ui-components/CommonViews/_View)<!-- TODO page doesnt exist --> class which is what we recommended.
 
 ```swift
 import StreamChat
@@ -228,7 +228,7 @@ open class WorkoutAttachmentViewInjector: AttachmentViewInjector {
 }
 ```
 
-The `WorkoutAttachmentView` class is where all layout and content logic happens, as you can see we are using [_View](../ui-components/CommonViews/_View) and [ContainerStackView](../ui-components/CommonViews/ContainerStackView)` from StreamChatUI instead of their UIKit counterpart. 
+The `WorkoutAttachmentView` class is where all layout and content logic happens, as you can see we are using [_View](../ui-components/CommonViews/_View)<!-- TODO page doesnt exist --> and [ContainerStackView](../ui-components/CommonViews/ContainerStackView)`<!-- TODO page doesnt exist --> from StreamChatUI instead of their UIKit counterpart. 
 More information about this is available on their doc pages.
 
 In `contentViewDidLayout` we add `WorkoutAttachmentView` as a subview of `bubbleContentContainer` using `insertArrangedSubview`, more information about layout customizations is available here. The last interesting bit happens in `contentViewDidUpdateContent`, there we use the `attachments` method to retrieve all attachments for this messages with type `WorkoutAttachmentPayload` and then pick the first one. This allows us to have the type we defined earlier as the content to render in our custom view.

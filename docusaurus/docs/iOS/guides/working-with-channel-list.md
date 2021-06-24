@@ -53,9 +53,9 @@ let filter = Filter<ChannelListFilterScope>.autocomplete(.name, text: "Group")
 let filter = Filter<ChannelListFilterScope>.and([.equal(.team, to: "read"),
                                                  .containMembers(userIds: [client.currentUserId!])])
 ```
-For more information about `team`, please refer to our [Multi-Tenancy Guide](multi-tenancy).
+For more information about `team`, please refer to our [Multi-Tenancy Guide](./multi-tenancy.md).
 
-For more information about filters, please refer to our [Filter & Query Guide](filter-query-guide).
+For more information about filters, please refer to our [Filter & Query Guide](./filter-query-guide.md).
 
 ### Sorting
 

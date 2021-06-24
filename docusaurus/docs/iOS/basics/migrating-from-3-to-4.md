@@ -135,7 +135,7 @@ let attachments: [AnyAttachmentPayload] = [
 ### Get attachments
 
 In both `v4.x` and `v3.2` the sequence of steps is the same:
-- **[1]** get a `ChatMessage` model ([Working with messages](working-with-messages))
+- **[1]** get a `ChatMessage` model ([Working with messages](../guides/working-with-messages.md))
 - **[2]** get all attachments of the required type
 - **[3]** access attachment fields
 
