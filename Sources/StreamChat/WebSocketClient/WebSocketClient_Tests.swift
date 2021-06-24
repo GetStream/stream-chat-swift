@@ -553,7 +553,7 @@ private class MockReconnectionStrategy: WebSocketClientReconnectionStrategy {
     
     var reconnectionDelay: TimeInterval?
     
-    func sucessfullyConnected() {
+    func successfullyConnected() {
         sucessfullyConnected_calledCount += 1
     }
     

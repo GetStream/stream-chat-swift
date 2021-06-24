@@ -32,10 +32,10 @@ extension _ChatClient {
 
     func simulateProvidedConnectionId(connectionId: ConnectionId?) {
         guard let connectionId = connectionId else {
-            webSocketClient(mockWebSocketClient, didUpdateConectionState: .disconnected(error: nil))
+            webSocketClient(mockWebSocketClient, didUpdateConnectionState: .disconnected(error: nil))
             return
         }
-        webSocketClient(mockWebSocketClient, didUpdateConectionState: .connected(connectionId: connectionId))
+        webSocketClient(mockWebSocketClient, didUpdateConnectionState: .connected(connectionId: connectionId))
     }
 }
 

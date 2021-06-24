@@ -487,7 +487,7 @@ extension ClientError {
 /// `APIClient` listens for `WebSocketClient` connection updates so it can forward the current connection id to
 /// its `RequestEncoder`.
 extension _ChatClient: ConnectionStateDelegate {
-    func webSocketClient(_ client: WebSocketClient, didUpdateConectionState state: WebSocketConnectionState) {
+    func webSocketClient(_ client: WebSocketClient, didUpdateConnectionState state: WebSocketConnectionState) {
         connectionStatus = .init(webSocketConnectionState: state)
         
         // We should notify waiters if connectionId was obtained (i.e. state is .connected)
