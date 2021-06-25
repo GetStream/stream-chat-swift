@@ -179,7 +179,7 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
             channelAvatarView.widthAnchor.pin(equalTo: channelAvatarView.heightAnchor),
             channelAvatarView.heightAnchor.pin(equalToConstant: 32)
         ])
-        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: channelAvatarView)        
+        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: channelAvatarView)
     }
 
     override open func setUpAppearance() {
@@ -239,35 +239,12 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
         )
     }
 
-    open func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        channelController.messages.count
-    }
-    
-//    open func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-//        let message = channelController.messages[indexPath.item]
-//
-//        let cell: _ChatMessageCollectionViewCell<ExtraData> = self.collectionView.dequeueReusableCell(
-//            contentViewClass: cellContentClassForMessage(at: indexPath),
-//            attachmentViewInjectorType: attachmentViewInjectorClassForMessage(at: indexPath),
-//            layoutOptions: cellLayoutOptionsForMessage(at: indexPath),
-//            for: indexPath
-//        )
-//        cell.messageContentView?.delegate = self
-//        cell.messageContentView?.content = message
-//
-//        return cell
-//    }
-
-    open func collectionView(
-        _ collectionView: UICollectionView,
-        willDisplay cell: UICollectionViewCell,
-        forItemAt indexPath: IndexPath
-    ) {
-        if indexPath.row + 1 >= collectionView.numberOfItems(inSection: 0) {
+    public func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        if channelController.state == .remoteDataFetched && indexPath.row + 1 >= tableView.numberOfRows(inSection: 0) - 5 {
             channelController.loadPreviousMessages()
         }
     }
-    
+
     open func collectionView(
         _ collectionView: UICollectionView,
         scrollOverlayTextForItemAt indexPath: IndexPath
@@ -360,8 +337,25 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
 
     /// Updates the collection view data with given `changes`.
     open func updateMessages(with changes: [ListChange<_ChatMessage<ExtraData>>], completion: ((Bool) -> Void)? = nil) {
-//        collectionView.updateMessages(with: changes, completion: completion)
-        tableView.reloadData()
+        tableView.beginUpdates()
+
+        changes.forEach {
+            switch $0 {
+            case let .insert(_, index: index):
+                tableView.insertRows(at: [index], with: .none)
+
+            case let .move(_, fromIndex: fromIndex, toIndex: toIndex):
+                tableView.moveRow(at: fromIndex, to: toIndex)
+
+            case let .update(_, index: index):
+                tableView.reloadRows(at: [index], with: .none)
+
+            case let .remove(_, index: index):
+                tableView.deleteRows(at: [index], with: .none)
+            }
+        }
+
+        tableView.endUpdates()
     }
     
     open func messageForIndexPath(_ indexPath: IndexPath) -> _ChatMessage<ExtraData> {
@@ -369,39 +363,39 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
     }
     
     open func didSelectMessageCell(at indexPath: IndexPath) {
-//        guard
-//            let cell = collectionView.cellForItem(at: indexPath) as? _ChatMessageCollectionViewCell<ExtraData>,
-//            let messageContentView = cell.messageContentView,
-//            let message = messageContentView.content,
-//            message.isInteractionEnabled == true
-//        else { return }
-//
-//        let messageController = channelController.client.messageController(
-//            cid: channelController.cid!,
-//            messageId: message.id
-//        )
-//
-//        let actionsController = components.messageActionsVC.init()
-//        actionsController.messageController = messageController
-//        actionsController.channelConfig = channelController.channel?.config
-//        actionsController.delegate = .init(delegate: self)
-//
-//        let reactionsController: _ChatMessageReactionsVC<ExtraData>? = {
-//            guard message.localState == nil else { return nil }
-//            guard channelController.channel?.config.reactionsEnabled == true else {
-//                return nil
-//            }
-//
-//            let controller = components.messageReactionsVC.init()
-//            controller.messageController = messageController
-//            return controller
-//        }()
-//
-//        router.showMessageActionsPopUp(
-//            messageContentView: messageContentView,
-//            messageActionsController: actionsController,
-//            messageReactionsController: reactionsController
-//        )
+        guard
+            let cell = tableView.cellForRow(at: indexPath) as? _ChatMessageTableViewCell<ExtraData>,
+            let messageContentView = cell.messageContentView,
+            let message = messageContentView.content,
+            message.isInteractionEnabled == true
+        else { return }
+
+        let messageController = channelController.client.messageController(
+            cid: channelController.cid!,
+            messageId: message.id
+        )
+
+        let actionsController = components.messageActionsVC.init()
+        actionsController.messageController = messageController
+        actionsController.channelConfig = channelController.channel?.config
+        actionsController.delegate = .init(delegate: self)
+
+        let reactionsController: _ChatMessageReactionsVC<ExtraData>? = {
+            guard message.localState == nil else { return nil }
+            guard channelController.channel?.config.reactionsEnabled == true else {
+                return nil
+            }
+
+            let controller = components.messageReactionsVC.init()
+            controller.messageController = messageController
+            return controller
+        }()
+
+        router.showMessageActionsPopUp(
+            messageContentView: messageContentView,
+            messageActionsController: actionsController,
+            messageReactionsController: reactionsController
+        )
     }
 
     /// Restarts upload of given `attachment` in case of failure
@@ -621,6 +615,7 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
         cell.messageContentView?.content = message
 
         cell.transform = CGAffineTransform(rotationAngle: .pi)
+        cell.selectionStyle = .none
 
         return cell
     }
