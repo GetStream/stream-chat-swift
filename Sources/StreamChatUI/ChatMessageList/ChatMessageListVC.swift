@@ -235,18 +235,18 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
     }
 
     open func scrollViewDidScroll(_ scrollView: UIScrollView) {
-//        if collectionView.isLastCellFullyVisible, channelController.channel?.isUnread == true {
-//            channelController.markRead()
-//
-//            // Hide the badge immediately. Temporary solution until CIS-881 is implemented.
-//            scrollToLatestMessageButton.content = .noUnread
-//        }
-//        setScrollToLatestMessageButton(visible: !collectionView.isLastCellFullyVisible)
+        if tableView.isLastCellFullyVisible, channelController.channel?.isUnread == true {
+            channelController.markRead()
+
+            // Hide the badge immediately. Temporary solution until CIS-881 is implemented.
+            scrollToLatestMessageButton.content = .noUnread
+        }
+        setScrollToLatestMessageButton(visible: !tableView.isLastCellFullyVisible)
     }
     
     /// Scrolls to most recent message
     open func scrollToMostRecentMessage(animated: Bool = true) {
-//        collectionView.scrollToMostRecentMessage(animated: animated)
+        tableView.scrollToMostRecentMessage(animated: animated)
     }
     
     /// Update the `scrollToLatestMessageButton` based on unread messages.

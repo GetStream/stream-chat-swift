@@ -461,6 +461,25 @@ open class ChatMessageListTableView<ExtraData: ExtraDataTypes>: UITableView, Cus
             scrollOverlayView.alpha = alpha
         }
     }
+    
+    /// Scrolls to most recent message
+    open func scrollToMostRecentMessage(animated: Bool = true) {
+        // our collection is flipped, so (0; 0) item is most recent one
+        scrollToRow(at: .init(row: 0, section: 0), at: .top, animated: animated)
+    }
+    
+    /// A Boolean that returns true if the bottom cell is fully visible.
+    /// Which is also means that the collection view is fully scrolled to the boom.
+    open var isLastCellFullyVisible: Bool {
+        if numberOfRows(inSection: 0) == 0 { return true }
+        return contentOffset.y == 0
+    }
+
+    /// A Boolean that returns true if the last cell is visible, but can be just partially visible.
+    open var isLastCellVisible: Bool {
+        let lastIndexPath = IndexPath(item: 0, section: 0)
+        return indexPathsForVisibleRows?.contains(lastIndexPath) ?? false
+    }
 }
 
 private extension CGAffineTransform {
