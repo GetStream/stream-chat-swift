@@ -21,8 +21,8 @@ open class _ChatThreadVC<ExtraData: ExtraDataTypes>:
     GiphyActionContentViewDelegate,
     LinkPreviewViewDelegate,
     FileActionContentViewDelegate,
-    UICollectionViewDelegate,
-    UICollectionViewDataSource {
+    UITableViewDataSource,
+    UITableViewDelegate {
     /// Controller for observing data changes within the channel
     open var channelController: _ChatChannelController<ExtraData>!
 
@@ -46,22 +46,13 @@ open class _ChatThreadVC<ExtraData: ExtraDataTypes>:
         .init()
 
     /// View used to display the messages
-    open private(set) lazy var collectionView: ChatMessageListCollectionView<ExtraData> = {
-        let collection = components
-            .messageListCollectionView
-            .init(layout: messageListLayout)
-            .withoutAutoresizingMaskConstraints
-        
-        collection.isPrefetchingEnabled = false
-        collection.showsHorizontalScrollIndicator = false
-        collection.alwaysBounceVertical = true
-        collection.keyboardDismissMode = .onDrag
-        collection.dataSource = self
-        collection.delegate = self
-
-        return collection.withoutAutoresizingMaskConstraints
+    open private(set) lazy var tableView: ChatMessageListTableView<ExtraData> = {
+        let tableView = ChatMessageListTableView<ExtraData>().withoutAutoresizingMaskConstraints
+        tableView.delegate = self
+        tableView.dataSource = self
+        return tableView
     }()
-
+    
     /// Controller that handles the composer view
     open private(set) lazy var messageComposerVC = components
         .messageComposerVC
@@ -88,7 +79,7 @@ open class _ChatThreadVC<ExtraData: ExtraDataTypes>:
 
         let longPress = UILongPressGestureRecognizer(target: self, action: #selector(handleLongPress))
         longPress.minimumPressDuration = 0.33
-        collectionView.addGestureRecognizer(longPress)
+        tableView.addGestureRecognizer(longPress)
 
         messageComposerVC.setDelegate(self)
         messageComposerVC.channelController = channelController
@@ -112,15 +103,14 @@ open class _ChatThreadVC<ExtraData: ExtraDataTypes>:
     override open func setUpLayout() {
         super.setUpLayout()
 
-        view.addSubview(collectionView)
-        collectionView.pin(anchors: [.top, .leading, .trailing], to: view.safeAreaLayoutGuide)
+        view.addSubview(tableView)
+        tableView.pin(anchors: [.top, .leading, .trailing], to: view.safeAreaLayoutGuide)
+        tableView.contentInset.top += max(tableView.layoutMargins.right, tableView.layoutMargins.left)
 
         messageComposerVC.view.translatesAutoresizingMaskIntoConstraints = false
         addChildViewController(messageComposerVC, targetView: view)
-
-        addThreadRootMessageHeader()
-
-        messageComposerVC.view.topAnchor.pin(equalTo: collectionView.bottomAnchor).isActive = true
+        
+        messageComposerVC.view.topAnchor.pin(equalTo: tableView.bottomAnchor).isActive = true
         messageComposerBottomConstraint = messageComposerVC.view.bottomAnchor.pin(equalTo: view.bottomAnchor)
         messageComposerBottomConstraint?.isActive = true
         messageComposerVC.view.leadingAnchor.pin(equalTo: view.leadingAnchor).isActive = true
@@ -132,8 +122,7 @@ open class _ChatThreadVC<ExtraData: ExtraDataTypes>:
 
         view.backgroundColor = appearance.colorPalette.background
 
-        collectionView.backgroundColor = appearance.colorPalette.background
-        collectionView.contentInset.top += max(collectionView.layoutMargins.right, collectionView.layoutMargins.left)
+        tableView.backgroundColor = .clear
         
         navigationItem.titleView = titleView
     }
@@ -148,12 +137,6 @@ open class _ChatThreadVC<ExtraData: ExtraDataTypes>:
         super.viewDidAppear(animated)
 
         keyboardObserver.register()
-
-        // Scroll to newest message when there are no replies
-        // breaks the `contentOffset` set by parent message
-        if !messageController.replies.isEmpty {
-            scrollToMostRecentMessage()
-        }
     }
 
     override open func viewDidDisappear(_ animated: Bool) {
@@ -189,7 +172,7 @@ open class _ChatThreadVC<ExtraData: ExtraDataTypes>:
     open func cellLayoutOptionsForMessage(at indexPath: IndexPath) -> ChatMessageLayoutOptions {
         cellLayoutOptionsForMessage(
             at: indexPath,
-            messages: AnyRandomAccessCollection(messageController.replies)
+            messages: AnyRandomAccessCollection(messages)
         )
     }
 
@@ -205,39 +188,44 @@ open class _ChatThreadVC<ExtraData: ExtraDataTypes>:
         layoutOptions.remove(.threadInfo)
         return layoutOptions
     }
-
-    open func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        messageController.replies.count
+    
+    public var messages: [_ChatMessage<ExtraData>] {
+        messageController.replies + [messageController.message!]
+    }
+    
+    open func numberOfSections(in tableView: UITableView) -> Int {
+        1
     }
 
-    open func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let message = messageForIndexPath(indexPath)
+    open func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        messages.count
+    }
 
-        let cell: _ChatMessageCollectionViewCell<ExtraData> = self.collectionView.dequeueReusableCell(
+    open func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let message = messages[indexPath.row]
+
+        let cell: _ChatMessageTableViewCell<ExtraData> = self.tableView.dequeueReusableCell(
             contentViewClass: cellContentClassForMessage(at: indexPath),
             attachmentViewInjectorType: attachmentViewInjectorClassForMessage(at: indexPath),
             layoutOptions: cellLayoutOptionsForMessage(at: indexPath),
             for: indexPath
         )
+
         cell.messageContentView?.delegate = self
         cell.messageContentView?.content = message
-
+        
         return cell
     }
-
-    open func collectionView(
-        _ collectionView: UICollectionView,
-        willDisplay cell: UICollectionViewCell,
-        forItemAt indexPath: IndexPath
-    ) {
-        if indexPath.row + 1 >= collectionView.numberOfItems(inSection: 0) {
+    
+    open func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        if messageController.state == .remoteDataFetched && indexPath.row + 1 >= tableView.numberOfRows(inSection: 0) - 5 {
             messageController.loadPreviousReplies()
         }
     }
 
     /// Scrolls to most recent message
     open func scrollToMostRecentMessage(animated: Bool = true) {
-        collectionView.scrollToMostRecentMessage(animated: animated)
+        tableView.scrollToMostRecentMessage(animated: animated)
     }
 
     /// Updates the status data in `titleView`.
@@ -249,81 +237,32 @@ open class _ChatThreadVC<ExtraData: ExtraDataTypes>:
             subtitle: channelController.channel?.name.map { L10n.Message.Threads.replyWith($0) }
         )
     }
-
-    /// Adds thread parent message on top of collection view.
-    open func addThreadRootMessageHeader() {
-        if let message = messageController.message {
-            let messageView = threadRootMessageContentClass.init().withoutAutoresizingMaskConstraints
-            messageView.setUpLayoutIfNeeded(
-                options: threadRootMessageLayoutOptions,
-                attachmentViewInjectorType: threadRootMessageAttachmentViewInjectorClass
-            )
-            collectionView.addSubview(messageView)
-            messageView.content = message
-            messageView.delegate = self
-
-            let messageViewSize = messageView.systemLayoutSizeFitting(
-                CGSize(
-                    width: UIScreen.main.bounds.size.width,
-                    height: UIView.layoutFittingCompressedSize.height
-                ),
-                withHorizontalFittingPriority: .required,
-                verticalFittingPriority: .defaultLow
-            )
-            let topInset = messageViewSize.height + messageListLayout.spacing
-            collectionView.contentInset = UIEdgeInsets(top: topInset, left: 0, bottom: 0, right: 0)
-
-            messageView.topAnchor.pin(equalTo: collectionView.topAnchor, constant: -topInset).isActive = true
-            messageView.pin(anchors: [.leading, .trailing], to: collectionView.safeAreaLayoutGuide)
-        }
-    }
-
-    /// Returns the layout options for thread root message header.
-    open var threadRootMessageLayoutOptions: ChatMessageLayoutOptions {
-        guard let threadRootMessage = messageController.message else { return [] }
-
-        return cellLayoutOptionsForMessage(
-            at: .init(item: 0, section: 0),
-            messages: AnyRandomAccessCollection([threadRootMessage])
-        )
-    }
-
-    /// Returns the attachment view injector class for thread root message header.
-    open var threadRootMessageAttachmentViewInjectorClass: _AttachmentViewInjector<ExtraData>.Type? {
-        guard let threadRootMessage = messageController.message else { return nil }
-
-        return attachmentViewInjectorClass(for: threadRootMessage)
-    }
-
-    /// Returns the content view class for thread root message header.
-    open var threadRootMessageContentClass: _ChatMessageContentView<ExtraData>.Type {
-        components.messageContentView
-    }
-
+    
     /// Handles long press action on collection view.
     ///
     /// Default implementation will convert the gesture location to collection view's `indexPath`
     /// and then call selection action on the selected cell.
     @objc open func handleLongPress(_ gesture: UILongPressGestureRecognizer) {
-        let location = gesture.location(in: collectionView)
+        let location = gesture.location(in: tableView)
 
         guard
             gesture.state == .began,
-            let ip = collectionView.indexPathForItem(at: location)
+            let ip = tableView.indexPathForRow(at: location),
+            messageForIndexPath(ip).id != messageController.messageId
         else { return }
 
         didSelectMessageCell(at: ip)
     }
 
     /// Updates the collection view data with given `changes`.
-    open func updateMessages(with changes: [ListChange<_ChatMessage<ExtraData>>], completion: ((Bool) -> Void)? = nil) {
-        collectionView.updateMessages(with: changes, completion: completion)
+    open func updateMessages(with changes: [ListChange<_ChatMessage<ExtraData>>], completion: (() -> Void)? = nil) {
+        tableView.updateMessages(with: changes, completion: completion)
     }
 
     /// Presents custom actions controller with all possible actions with the selected message.
     open func didSelectMessageCell(at indexPath: IndexPath) {
         guard
-            let cell = collectionView.cellForItem(at: indexPath) as? _ChatMessageCollectionViewCell<ExtraData>,
+            let cell = tableView.cellForRow(at: indexPath) as? _ChatMessageTableViewCell<ExtraData>,
             let messageContentView = cell.messageContentView,
             let message = messageContentView.content,
             message.isInteractionEnabled == true
@@ -375,7 +314,7 @@ open class _ChatThreadVC<ExtraData: ExtraDataTypes>:
         channelController.client
             .messageController(
                 cid: channelController.cid!,
-                messageId: messageController.replies[indexPath.item].id
+                messageId: messages[indexPath.item].id
             )
             .dispatchEphemeralMessageAction(action)
     }
@@ -467,16 +406,7 @@ open class _ChatThreadVC<ExtraData: ExtraDataTypes>:
     }
 
     open func messageContentViewDidTapOnThread(_ indexPath: IndexPath?) {
-        guard let indexPath = indexPath else { return log.error("IndexPath is not available") }
-        guard let channel = channelController.channel else { return }
-
-        let controller = _ChatThreadVC<ExtraData>()
-        controller.channelController = channelController
-        controller.messageController = channelController.client.messageController(
-            cid: channel.cid,
-            messageId: messageController.replies[indexPath.item].id
-        )
-        navigationController?.show(controller, sender: self)
+        log.error("Nestead threads are not supported")
     }
 
     open func messageContentViewDidTapOnQuotedMessage(_ indexPath: IndexPath?) {
@@ -485,7 +415,7 @@ open class _ChatThreadVC<ExtraData: ExtraDataTypes>:
     }
 
     open func messageForIndexPath(_ indexPath: IndexPath) -> _ChatMessage<ExtraData> {
-        messageController.replies[indexPath.item]
+        messages[indexPath.item]
     }
 }
 

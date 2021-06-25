@@ -221,7 +221,7 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
         )
     }
 
-    public func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+    open func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         if channelController.state == .remoteDataFetched && indexPath.row + 1 >= tableView.numberOfRows(inSection: 0) - 5 {
             channelController.loadPreviousMessages()
         }
@@ -318,26 +318,8 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
     }
 
     /// Updates the collection view data with given `changes`.
-    open func updateMessages(with changes: [ListChange<_ChatMessage<ExtraData>>], completion: ((Bool) -> Void)? = nil) {
-        tableView.beginUpdates()
-
-        changes.forEach {
-            switch $0 {
-            case let .insert(_, index: index):
-                tableView.insertRows(at: [index], with: .none)
-
-            case let .move(_, fromIndex: fromIndex, toIndex: toIndex):
-                tableView.moveRow(at: fromIndex, to: toIndex)
-
-            case let .update(_, index: index):
-                tableView.reloadRows(at: [index], with: .none)
-
-            case let .remove(_, index: index):
-                tableView.deleteRows(at: [index], with: .none)
-            }
-        }
-
-        tableView.endUpdates()
+    open func updateMessages(with changes: [ListChange<_ChatMessage<ExtraData>>], completion: (() -> Void)? = nil) {
+        tableView.updateMessages(with: changes, completion: completion)
     }
     
     open func messageForIndexPath(_ indexPath: IndexPath) -> _ChatMessage<ExtraData> {
@@ -575,15 +557,15 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
 
     // ======
 
-    public func numberOfSections(in tableView: UITableView) -> Int {
+    open func numberOfSections(in tableView: UITableView) -> Int {
         1
     }
 
-    public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    open func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         channelController.messages.count
     }
 
-    public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+    open func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let message = channelController.messages[indexPath.row]
 
         let cell: _ChatMessageTableViewCell<ExtraData> = self.tableView.dequeueReusableCell(

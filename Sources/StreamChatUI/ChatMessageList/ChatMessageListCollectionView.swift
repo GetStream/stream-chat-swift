@@ -322,6 +322,25 @@ open class ChatMessageListTableView<ExtraData: ExtraDataTypes>: UITableView, Cus
         dataSource as? ChatMessageListTableViewDataSource
     }
     
+    // In some cases updates coming one by one might require scrolling to bottom.
+    //
+    // Scheduling the action and canceling the previous one ensures the scroll to bottom
+    // is done only once.
+    //
+    // Having a delay gives layout a chance to calculate the correct size for bottom cells
+    // so they are fully visible when scroll to bottom happens.
+    private var scrollToBottomAction: DispatchWorkItem? {
+        didSet {
+            oldValue?.cancel()
+            if let action = scrollToBottomAction {
+                DispatchQueue.main.asyncAfter(
+                    deadline: .now() + .milliseconds(200),
+                    execute: action
+                )
+            }
+        }
+    }
+    
     /// View used to display date of currently displayed messages
     open lazy var scrollOverlayView: ChatMessageListScrollOverlayView = {
         let scrollOverlayView = components.messageListScrollOverlayView.init()
@@ -479,6 +498,79 @@ open class ChatMessageListTableView<ExtraData: ExtraDataTypes>: UITableView, Cus
     open var isLastCellVisible: Bool {
         let lastIndexPath = IndexPath(item: 0, section: 0)
         return indexPathsForVisibleRows?.contains(lastIndexPath) ?? false
+    }
+    
+    /// Updates the collection view data with given `changes`.
+    open func updateMessages(
+        with changes: [ListChange<_ChatMessage<ExtraData>>],
+        completion: (() -> Void)? = nil
+    ) {
+        
+        // Before committing the changes, we need to check if were scrolled
+        // to the bottom, if yes, we should stay scrolled to the bottom
+        var shouldScrollToBottom = isLastCellFullyVisible
+        
+        beginUpdates()
+
+        changes.forEach {
+            switch $0 {
+            case let .insert(message, index: index):
+                if message.isSentByCurrentUser, index == IndexPath(item: 0, section: 0) {
+                    // When the message from current user comes we should scroll to bottom
+                    shouldScrollToBottom = true
+                }
+                insertRows(at: [index], with: .none)
+
+            case let .move(_, fromIndex: fromIndex, toIndex: toIndex):
+                moveRow(at: fromIndex, to: toIndex)
+
+            case let .update(_, index: index):
+                reloadRows(at: [index], with: .none)
+
+            case let .remove(_, index: index):
+                deleteRows(at: [index], with: .none)
+            }
+        }
+
+        endUpdates()
+       
+        // If a new message was inserted or deleted, reload the previous message
+        // to give it chance to update its appearance in case it's now end of a group.
+        let indexPaths = self.indexPathsToReloadAfterBatchUpdates(with: changes)
+        if indexPaths.isEmpty == false {
+            reloadRows(at: indexPaths, with: .none)
+        }
+
+        if shouldScrollToBottom {
+            self.scrollToBottomAction = .init { [weak self] in
+                self?.scrollToMostRecentMessage()
+            }
+        }
+
+        completion?()
+    }
+    
+    private func indexPathsToReloadAfterBatchUpdates(
+        with changes: [ListChange<_ChatMessage<ExtraData>>]
+    ) -> [IndexPath] {
+        changes.compactMap {
+            switch $0 {
+            // Check if the latest message was inserted
+            case .insert(_, IndexPath(row: 0, section: 0)):
+                guard numberOfRows(inSection: 0) > 1 else { return nil }
+                
+                // Reload the second-to latests message
+                return .init(item: 1, section: 0)
+            // Check if the message was deleted
+            case let .remove(_, indexPath):
+                guard numberOfRows(inSection: 0) > indexPath.item else { return nil }
+                
+                // Reload the previous message which is now at deleted message positon
+                return indexPath
+            default:
+                return nil
+            }
+        }
     }
 }
 
