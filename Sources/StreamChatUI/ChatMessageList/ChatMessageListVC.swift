@@ -21,7 +21,8 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
     GalleryContentViewDelegate,
     GiphyActionContentViewDelegate,
     LinkPreviewViewDelegate,
-    FileActionContentViewDelegate {
+    FileActionContentViewDelegate,
+    ChatMessageListTableViewDataSource {
     /// Controller for observing data changes within the channel
     open var channelController: _ChatChannelController<ExtraData>!
     
@@ -226,8 +227,8 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
         }
     }
 
-    open func collectionView(
-        _ collectionView: UICollectionView,
+    open func tableView(
+        _ tableView: UITableView,
         scrollOverlayTextForItemAt indexPath: IndexPath
     ) -> String? {
         overlayDateFormatter.string(from: channelController.messages[indexPath.item].createdAt)

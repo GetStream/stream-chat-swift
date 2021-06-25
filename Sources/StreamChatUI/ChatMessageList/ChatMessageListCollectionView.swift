@@ -309,9 +309,25 @@ open class ChatMessageListCollectionView<ExtraData: ExtraDataTypes>: UICollectio
 
 // ======
 
-open class ChatMessageListTableView<ExtraData: ExtraDataTypes>: UITableView {
+public protocol ChatMessageListTableViewDataSource: UITableViewDataSource {
+    func tableView(_ tableView: UITableView, scrollOverlayTextForItemAt indexPath: IndexPath) -> String?
+}
+
+open class ChatMessageListTableView<ExtraData: ExtraDataTypes>: UITableView, Customizable, ComponentsProvider {
     private var identifiers: Set<String> = .init()
     private var isInitialized: Bool = false
+    private var contentOffsetObservation: NSKeyValueObservation?
+    
+    private var chatDataSource: ChatMessageListTableViewDataSource? {
+        dataSource as? ChatMessageListTableViewDataSource
+    }
+    
+    /// View used to display date of currently displayed messages
+    open lazy var scrollOverlayView: ChatMessageListScrollOverlayView = {
+        let scrollOverlayView = components.messageListScrollOverlayView.init()
+        scrollOverlayView.isHidden = true
+        return scrollOverlayView.withoutAutoresizingMaskConstraints
+    }()
 
     override open func didMoveToSuperview() {
         super.didMoveToSuperview()
@@ -330,11 +346,52 @@ open class ChatMessageListTableView<ExtraData: ExtraDataTypes>: UITableView {
         rowHeight = UITableView.automaticDimension
         estimatedRowHeight = 150
         separatorStyle = .none
-        transform = .init(scaleX: 1, y: -1)
+        transform = .mirrorY
+        scrollOverlayView.transform = .mirrorY
+            
+        // Setup `contentOffset` observation so `delegate` is free for anyone that wants to use it
+        contentOffsetObservation = observe(\.contentOffset) { tb, _ in
+            /// To display correct date we use bottom edge of `dateView` (we use `cv.layoutMargins.top` for both vertical offsets of `dateView`
+            let dateViewRefPoint = CGPoint(
+                x: tb.scrollOverlayView.center.x,
+                y: tb.scrollOverlayView.frame.minY
+            )
+            
+            // If we cannot find any indexPath for `cell` we try to use max visible indexPath (we have bottom to top) layout
+            guard let indexPath = tb.indexPathForRow(at: dateViewRefPoint) ?? tb.indexPathsForVisibleRows?.max() else { return }
+            
+            let overlayText = tb.chatDataSource?.tableView(tb, scrollOverlayTextForItemAt: indexPath)
+            
+            // As cells can overlay our `dateView` we need to keep it above them
+            tb.bringSubviewToFront(tb.scrollOverlayView)
+            
+            // If we have no date we have no reason to display `dateView`
+            tb.scrollOverlayView.isHidden = (overlayText ?? "").isEmpty
+            tb.scrollOverlayView.content = overlayText
+            
+            // Apple's naming is quite weird as actually this property should rather be named `isScrolling`
+            // as it stays true when user stops dragging and scrollView is decelerating and becomes false
+            // when scrollView stops decelerating
+            //
+            // But this case doesn't cover situation when user drags scrollView to a certain `contentOffset`
+            // leaves the finger there for a while and then just lifts it, it doesn't change `contentOffset`
+            // so this handler is not called, this is handled by `scrollStateChanged`
+            // that reacts on `panGestureRecognizer` states and can handle this case properly
+            if !tb.isDragging {
+                tb.setOverlayViewAlpha(0)
+            }
+        }
+        
+        panGestureRecognizer.addTarget(self, action: #selector(scrollStateChanged))
     }
     
     open func setUpAppearance() { /* default empty implementation */ }
-    open func setUpLayout() { /* default empty implementation */ }
+    open func setUpLayout() {
+        addSubview(scrollOverlayView)
+        scrollOverlayView.pin(anchors: [.bottom, .centerX], to: layoutMarginsGuide)
+    }
+    
+    open func updateContent() { /* default empty implementation */ }
 
     /// Dequeues the message cell. Registers the cell for received combination of `contentViewClass + layoutOptions`
     /// if needed.
@@ -378,8 +435,34 @@ open class ChatMessageListTableView<ExtraData: ExtraDataTypes>: UITableView {
             return self?.indexPath(for: cell)
         }
         
-        cell.contentView.transform = .init(scaleX: 1, y: -1)
+        cell.contentView.transform = .mirrorY
 
         return cell
     }
+    
+    @objc
+    open func scrollStateChanged(_ sender: UIPanGestureRecognizer) {
+        switch sender.state {
+        case .began:
+            setOverlayViewAlpha(1)
+        case .ended, .cancelled, .failed:
+            // This case handles situation when user pans to certain `contentOffset`, leaves the finger there
+            // and then lifts it without `contentOffset` change, so `scrollView` will not decelerate, if it does,
+            // it is handled by `contentOffset` observation
+            if !isDecelerating {
+                setOverlayViewAlpha(0)
+            }
+        default: break
+        }
+    }
+    
+    open func setOverlayViewAlpha(_ alpha: CGFloat, animated: Bool = true) {
+        Animate(isAnimated: animated) { [scrollOverlayView] in
+            scrollOverlayView.alpha = alpha
+        }
+    }
+}
+
+private extension CGAffineTransform {
+    static let mirrorY = Self(scaleX: 1, y: -1)
 }
