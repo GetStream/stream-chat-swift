@@ -26,12 +26,11 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
     open var channelController: _ChatChannelController<ExtraData>!
     
     /// Observer responsible for setting the correct offset when keyboard frame is changed
-//    open lazy var keyboardObserver = ChatMessageListKeyboardObserver(
-//        containerView: view,
-//        collectionView: collectionView,
-//        composerBottomConstraint: messageComposerBottomConstraint,
-//        viewController: self
-//    )
+    open lazy var keyboardObserver = ChatMessageListKeyboardObserver(
+        containerView: view,
+        composerBottomConstraint: messageComposerBottomConstraint,
+        viewController: self
+    )
 
     /// User search controller passed directly to the composer
     open lazy var userSuggestionSearchController: _ChatUserSearchController<ExtraData> =
@@ -180,9 +179,7 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
             channelAvatarView.widthAnchor.pin(equalTo: channelAvatarView.heightAnchor),
             channelAvatarView.heightAnchor.pin(equalToConstant: 32)
         ])
-        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: channelAvatarView)
-        
-        tableView.contentInset.top += max(tableView.layoutMargins.right, tableView.layoutMargins.left)
+        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: channelAvatarView)        
     }
 
     override open func setUpAppearance() {
@@ -204,7 +201,7 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
     override open func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
-//        keyboardObserver.register()
+        keyboardObserver.register()
     }
 
     override open func viewDidDisappear(_ animated: Bool) {
@@ -212,7 +209,7 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
         
         resignFirstResponder()
         
-//        keyboardObserver.unregister()
+        keyboardObserver.unregister()
     }
     
     /// Returns layout options for the message on given `indexPath`.

@@ -7,23 +7,20 @@ import UIKit
 
 open class ChatMessageListKeyboardObserver {
     public weak var containerView: UIView!
-    public weak var collectionView: UICollectionView!
     public weak var composerBottomConstraint: NSLayoutConstraint?
     public weak var viewController: UIViewController?
 
     public init(
         containerView: UIView,
-        collectionView: UICollectionView,
         composerBottomConstraint: NSLayoutConstraint?,
-        viewController: UIViewController?
+        viewController: UIViewController
     ) {
         self.containerView = containerView
-        self.collectionView = collectionView
         self.composerBottomConstraint = composerBottomConstraint
         self.viewController = viewController
     }
     
-    public func register() {
+    open func register() {
         NotificationCenter.default.addObserver(
             self,
             selector: #selector(keyboardWillChangeFrame),
@@ -32,44 +29,31 @@ open class ChatMessageListKeyboardObserver {
         )
     }
     
-    public func unregister() {
+    open func unregister() {
         NotificationCenter.default.removeObserver(self)
     }
     
     @objc
-    private func keyboardWillChangeFrame(_ notification: Notification) {
+    open func keyboardWillChangeFrame(_ notification: Notification) {
         guard
             viewController?.presentedViewController == nil,
-            let userInfo = notification.userInfo,
-            let keyboardFrame = userInfo[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect,
-            let keyboardAnimationDuration = userInfo[UIResponder.keyboardAnimationDurationUserInfoKey] as? TimeInterval,
-            let keyboardAnimationCurve = userInfo[UIResponder.keyboardAnimationCurveUserInfoKey] as? UInt
+            let frame = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue,
+            let duration = notification.userInfo?[UIResponder.keyboardAnimationDurationUserInfoKey] as? Double,
+            let curve = notification.userInfo?[UIResponder.keyboardAnimationCurveUserInfoKey] as? UInt
         else { return }
 
-        let convertedKeyboardFrame = containerView.convert(keyboardFrame, from: UIScreen.main.coordinateSpace)
-        let intersectedKeyboardHeight = containerView.frame.intersection(convertedKeyboardFrame).height
+        let keyboardFrameWithinContainer = containerView.convert(frame, from: nil)
 
-        composerBottomConstraint?.constant = -intersectedKeyboardHeight
+        let overlap = containerView.frame.height - keyboardFrameWithinContainer.minY
 
-        let indexPathNearestToKeyboard = collectionView.indexPathsForVisibleItems.sorted().first
+        composerBottomConstraint?.constant = -overlap
 
         UIView.animate(
-            withDuration: keyboardAnimationDuration,
-            delay: 0.0,
-            options: UIView.AnimationOptions(rawValue: keyboardAnimationCurve),
-            animations: { [weak self] in
-                
-                UIView.performWithoutAnimation {
-                    self?.collectionView.layoutIfNeeded()
-                }
-                
-                self?.containerView.layoutIfNeeded()
-
-                let isKeyboardShowing = intersectedKeyboardHeight > 0
-                if let indexPathNearestToKeyboard = indexPathNearestToKeyboard, isKeyboardShowing {
-                    self?.collectionView.scrollToItem(at: indexPathNearestToKeyboard, at: .bottom, animated: false)
-                }
-            }
-        )
+            withDuration: duration,
+            delay: 0,
+            options: UIView.AnimationOptions(rawValue: curve << 16)
+        ) {
+            self.containerView.layoutIfNeeded()
+        }
     }
 }
