@@ -9,6 +9,7 @@ final class ChatMessage_Tests: XCTestCase {
     func test_isPinnedShouldReturnTrue() {
         let message = ChatMessage.mock(
             id: .anonymous,
+            cid: .unique,
             text: "Text",
             author: ChatUser.mock(id: .anonymous),
             pinDetails: _MessagePinDetails(
@@ -24,6 +25,7 @@ final class ChatMessage_Tests: XCTestCase {
     func test_isPinnedShouldReturnFalse() {
         let message = ChatMessage.mock(
             id: .anonymous,
+            cid: .unique,
             text: "Text",
             author: ChatUser.mock(id: .anonymous),
             pinDetails: nil

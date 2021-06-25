@@ -17,6 +17,10 @@ open class _ChatThreadVC<ExtraData: ExtraDataTypes>:
     _ChatMessageControllerDelegate,
     _ChatMessageActionsVCDelegate,
     ChatMessageContentViewDelegate,
+    GalleryContentViewDelegate,
+    GiphyActionContentViewDelegate,
+    LinkPreviewViewDelegate,
+    FileActionContentViewDelegate,
     UICollectionViewDelegate,
     UICollectionViewDataSource {
     /// Controller for observing data changes within the channel
@@ -257,6 +261,7 @@ open class _ChatThreadVC<ExtraData: ExtraDataTypes>:
             )
             collectionView.addSubview(messageView)
             messageView.content = message
+            messageView.delegate = self
 
             let messageViewSize = messageView.systemLayoutSizeFitting(
                 CGSize(
@@ -374,6 +379,36 @@ open class _ChatThreadVC<ExtraData: ExtraDataTypes>:
                 messageId: messageController.replies[indexPath.item].id
             )
             .dispatchEphemeralMessageAction(action)
+    }
+    
+    open func didTapOnImageAttachment(
+        _ attachment: ChatMessageImageAttachment,
+        previews: [ImagePreviewable],
+        at indexPath: IndexPath?
+    ) {
+        guard let message = indexPath.map(messageForIndexPath) ?? messageController.message else {
+            return log.error("Failed to get the message")
+        }
+        
+        router.showImageGallery(
+            message: message,
+            initialAttachment: attachment,
+            previews: previews
+        )
+    }
+    
+    open func didTapOnLinkAttachment(
+        _ attachment: ChatMessageLinkAttachment,
+        at indexPath: IndexPath?
+    ) {
+        router.showLinkPreview(link: attachment.originalURL)
+    }
+
+    open func didTapOnAttachment(
+        _ attachment: ChatMessageFileAttachment,
+        at indexPath: IndexPath?
+    ) {
+        router.showFilePreview(fileURL: attachment.assetURL)
     }
 
     // MARK: - _ComposerVCDelegate

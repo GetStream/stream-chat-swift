@@ -108,6 +108,7 @@ class ChannelController_Tests: StressTestCase {
             text: "Message",
             pinning: nil,
             quotedMessageId: nil,
+            isSilent: false,
             attachments: [
                 .mockImage,
                 .mockFile,

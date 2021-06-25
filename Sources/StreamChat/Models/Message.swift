@@ -29,6 +29,9 @@ public struct _ChatMessage<ExtraData: ExtraDataTypes> {
     /// A unique identifier of the message.
     public let id: MessageId
     
+    /// The ChannelId this message belongs to.
+    public let cid: ChannelId
+    
     /// The text of the message.
     public let text: String
     
@@ -155,6 +158,7 @@ public struct _ChatMessage<ExtraData: ExtraDataTypes> {
     
     internal init(
         id: MessageId,
+        cid: ChannelId,
         text: String,
         type: MessageType,
         command: String?,
@@ -185,6 +189,7 @@ public struct _ChatMessage<ExtraData: ExtraDataTypes> {
         underlyingContext: NSManagedObjectContext?
     ) {
         self.id = id
+        self.cid = cid
         self.text = text
         self.type = type
         self.command = command

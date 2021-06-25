@@ -155,6 +155,10 @@ public struct _Components<ExtraData: ExtraDataTypes> {
     /// The view that shows message's image attachments.
     public var imageGalleryView: _ChatMessageImageGallery<ExtraData>.Type =
         _ChatMessageImageGallery<ExtraData>.self
+    
+    /// The view that shows a link preview in message cell.
+    public var linkPreviewView: _ChatMessageLinkPreviewView<ExtraData>.Type =
+        _ChatMessageLinkPreviewView<ExtraData>.self
 
     /// The view that shows an overlay with uploading progress for image attachment that is being uploaded.
     public var imageUploadingOverlay: _ChatMessageImageGallery<ExtraData>.UploadingOverlay.Type =
@@ -176,8 +180,13 @@ public struct _Components<ExtraData: ExtraDataTypes> {
     public var giphyBadgeView: _ChatMessageGiphyView<ExtraData>.GiphyBadge.Type = _ChatMessageGiphyView<ExtraData>.GiphyBadge.self
     
     /// The button that indicates unread messages at the bottom of the message list and scroll to the latest message on tap.
-    public var scrollToLatestMessageButton: UIButton.Type = ScrollToLatestMessageButton.self
+    public var scrollToLatestMessageButton: _ScrollToLatestMessageButton<ExtraData>.Type =
+        _ScrollToLatestMessageButton<ExtraData>.self
 
+    /// The view that shows a number of unread messages on the Scroll-To-Latest-Message button in the Message List.
+    public var messageListUnreadCountView: _ChatMessageListUnreadCountView<ExtraData>.Type =
+        _ChatMessageListUnreadCountView<ExtraData>.self
+    
     // MARK: - Channel list components
 
     /// The logic to generate a name for the given channel.

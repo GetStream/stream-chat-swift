@@ -114,6 +114,7 @@ class MessageRequestBody_Tests: XCTestCase {
             args: .unique,
             parentId: .unique,
             showReplyInChannel: true,
+            isSilent: true,
             quotedMessageId: "quoted-message-id",
             mentionedUserIds: [.unique],
             pinned: true,
@@ -127,6 +128,44 @@ class MessageRequestBody_Tests: XCTestCase {
             "text": payload.text,
             "parent_id": payload.parentId!,
             "show_in_channel": true,
+            "silent": true,
+            "args": payload.args!,
+            "quoted_message_id": "quoted-message-id",
+            "mentioned_users": payload.mentionedUserIds,
+            "secret_note": "Anakin is Vader ;-)",
+            "command": payload.command!,
+            "pinned": true,
+            "pin_expires": "2021-05-15T06:43:08.776Z"
+        ]
+        let expectedJSON = try JSONSerialization.data(withJSONObject: expected, options: [])
+        
+        AssertJSONEqual(serializedJSON, expectedJSON)
+    }
+    
+    /// Check whether the message body is serialized when `isSilent` is not provided in `init`
+    func test_isSerializedWithoutSilent() throws {
+        let payload: MessageRequestBody<CustomData> = .init(
+            id: .unique,
+            user: .dummy(userId: .unique),
+            text: .unique,
+            command: .unique,
+            args: .unique,
+            parentId: .unique,
+            showReplyInChannel: true,
+            quotedMessageId: "quoted-message-id",
+            mentionedUserIds: [.unique],
+            pinned: true,
+            pinExpires: "2021-05-15T06:43:08.776Z".toDate(),
+            extraData: .init(secretNote: "Anakin is Vader ;-)")
+        )
+        
+        let serializedJSON = try JSONEncoder.stream.encode(payload)
+        let expected: [String: Any] = [
+            "id": payload.id,
+            "text": payload.text,
+            "parent_id": payload.parentId!,
+            "show_in_channel": true,
+            "silent": false,
             "args": payload.args!,
             "quoted_message_id": "quoted-message-id",
             "mentioned_users": payload.mentionedUserIds,

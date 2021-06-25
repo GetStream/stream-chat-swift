@@ -214,7 +214,7 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, ThemeProvi
             let bubbleView = createBubbleView()
             bubbleView.embed(bubbleContentContainer)
 
-            if options.contains(.continuousBubble) {
+            if options.contains(.continuousBubble) && !options.contains(.threadInfo) {
                 mainContainer.layoutMargins.bottom = 0
             }
 
@@ -298,7 +298,7 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, ThemeProvi
         // Quoted message
         if options.contains(.quotedMessage) {
             let quotedMessageView = createQuotedMessageView()
-            bubbleContentContainer.addArrangedSubview(quotedMessageView, respectsLayoutMargins: true)
+            bubbleContentContainer.addArrangedSubview(quotedMessageView)
         }
 
         // Text
@@ -545,7 +545,6 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, ThemeProvi
             textView?.adjustsFontForContentSizeCategory = true
             textView?.textContainerInset = .init(top: 0, left: 8, bottom: 0, right: 8)
             textView?.textContainer.lineFragmentPadding = 0
-            textView?.translatesAutoresizingMaskIntoConstraints = false
             textView?.font = appearance.fonts.body
         }
         return textView!
@@ -746,9 +745,8 @@ private extension _ChatMessage {
     var reactions: [ChatMessageReactionData] {
         let userReactionIDs = Set(currentUserReactions.map(\.type))
         return reactionScores
-            .keys
-            .sorted { $0.rawValue < $1.rawValue }
-            .map { .init(type: $0, isChosenByCurrentUser: userReactionIDs.contains($0)) }
+            .sorted { $0.key.rawValue < $1.key.rawValue }
+            .map { .init(type: $0.key, score: $0.value, isChosenByCurrentUser: userReactionIDs.contains($0.key)) }
     }
 }
 

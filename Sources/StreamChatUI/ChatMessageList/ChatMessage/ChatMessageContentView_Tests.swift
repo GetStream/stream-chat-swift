@@ -42,6 +42,7 @@ final class ChatMessageContentView_Tests: XCTestCase {
         // Create message for which error indicator is shown.
         let failedMessage: ChatMessage = .mock(
             id: .unique,
+            cid: .unique,
             text: "Message text content",
             author: me,
             createdAt: createdAt,
@@ -69,6 +70,7 @@ final class ChatMessageContentView_Tests: XCTestCase {
         // Create message for which error indicator is shown.
         let failedMessage: ChatMessage = .mock(
             id: .unique,
+            cid: .unique,
             text: "Message text content",
             author: me,
             createdAt: createdAt,
@@ -108,6 +110,7 @@ private extension ChatMessageContentView_Tests {
     var testMessages: [ChatMessage] {
         let quotedMessage: ChatMessage = .mock(
             id: .unique,
+            cid: .unique,
             text: "Thought to be quoted.",
             author: myFriend,
             isSentByCurrentUser: true
@@ -115,6 +118,7 @@ private extension ChatMessageContentView_Tests {
 
         let reply: ChatMessage = .mock(
             id: .unique,
+            cid: .unique,
             text: "Some text reply.",
             author: myFriend,
             isSentByCurrentUser: false
@@ -124,6 +128,7 @@ private extension ChatMessageContentView_Tests {
             // [.text] content
             .mock(
                 id: .unique,
+                cid: .unique,
                 text: "Some long text goes here.",
                 author: me,
                 createdAt: createdAt,
@@ -132,6 +137,7 @@ private extension ChatMessageContentView_Tests {
             // [.text, .reactions]
             .mock(
                 id: .unique,
+                cid: .unique,
                 text: "Some long text goes here.",
                 author: me,
                 createdAt: createdAt,
@@ -144,6 +150,7 @@ private extension ChatMessageContentView_Tests {
             // [.text, .quotedMessage]
             .mock(
                 id: .unique,
+                cid: .unique,
                 text: "Some long text goes here.",
                 author: me,
                 createdAt: createdAt,
@@ -153,6 +160,7 @@ private extension ChatMessageContentView_Tests {
             // [.text, .reactions, .quotedMessage]
             .mock(
                 id: .unique,
+                cid: .unique,
                 text: "Some long text goes here.",
                 author: me,
                 createdAt: createdAt,
@@ -166,6 +174,7 @@ private extension ChatMessageContentView_Tests {
             // [.text, .reactions, .quotedMessage, .replies]
             .mock(
                 id: .unique,
+                cid: .unique,
                 text: "Some long text goes here.",
                 author: me,
                 createdAt: createdAt,
@@ -183,6 +192,7 @@ private extension ChatMessageContentView_Tests {
             // [.text, .reactions, .quotedMessage, .replies, .error]
             .mock(
                 id: .unique,
+                cid: .unique,
                 text: "Some long text goes here.",
                 author: me,
                 createdAt: createdAt,
@@ -204,6 +214,7 @@ private extension ChatMessageContentView_Tests {
             // [.text]
             .mock(
                 id: .unique,
+                cid: .unique,
                 text: "Some long text goes here.",
                 author: myFriend,
                 createdAt: createdAt
@@ -211,6 +222,7 @@ private extension ChatMessageContentView_Tests {
             // [.text, .reactions]
             .mock(
                 id: .unique,
+                cid: .unique,
                 text: "Some long text goes here.",
                 author: myFriend,
                 createdAt: createdAt,
@@ -222,6 +234,7 @@ private extension ChatMessageContentView_Tests {
             // [.text, .quotedMessage]
             .mock(
                 id: .unique,
+                cid: .unique,
                 text: "Some long text goes here.",
                 author: myFriend,
                 createdAt: createdAt,
@@ -230,6 +243,7 @@ private extension ChatMessageContentView_Tests {
             // [.text, .reactions, .quotedMessage]
             .mock(
                 id: .unique,
+                cid: .unique,
                 text: "Some long text goes here.",
                 author: myFriend,
                 createdAt: createdAt,
@@ -242,6 +256,7 @@ private extension ChatMessageContentView_Tests {
             // [.text, .reactions, .quotedMessage, .replies]
             .mock(
                 id: .unique,
+                cid: .unique,
                 text: "Some long text goes here.",
                 author: myFriend,
                 createdAt: createdAt,

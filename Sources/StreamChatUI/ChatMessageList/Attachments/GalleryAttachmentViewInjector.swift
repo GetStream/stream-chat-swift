@@ -11,7 +11,7 @@ public protocol GalleryContentViewDelegate: ChatMessageContentViewDelegate {
     func didTapOnImageAttachment(
         _ attachment: ChatMessageImageAttachment,
         previews: [ImagePreviewable],
-        at indexPath: IndexPath
+        at indexPath: IndexPath?
     )
 }
 
@@ -41,13 +41,10 @@ open class _GalleryAttachmentViewInjector<ExtraData: ExtraDataTypes>: _Attachmen
     }
 
     open func handleTapOnAttachment(_ attachment: ChatMessageImageAttachment) {
-        guard
-            let indexPath = contentView.indexPath?()
-        else { return }
         (contentView.delegate as? GalleryContentViewDelegate)?.didTapOnImageAttachment(
             attachment,
             previews: galleryView.previews,
-            at: indexPath
+            at: contentView.indexPath?()
         )
     }
 }

@@ -6,7 +6,7 @@ import Foundation
 
 protocol WebSocketClientReconnectionStrategy {
     /// Called when the web socket connection is successfully established.
-    mutating func sucessfullyConnected()
+    mutating func successfullyConnected()
     
     /// Called when the web socket connection is disconnected or fails to connect.
     ///
@@ -20,7 +20,7 @@ class DefaultReconnectionStrategy: WebSocketClientReconnectionStrategy {
     
     private var consecutiveFailures = 0
     
-    func sucessfullyConnected() {
+    func successfullyConnected() {
         consecutiveFailures = 0
     }
     

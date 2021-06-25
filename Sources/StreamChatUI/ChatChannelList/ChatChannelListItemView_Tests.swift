@@ -197,6 +197,7 @@ class ChatChannelListItemView_Tests: XCTestCase {
             latestMessages: [
                 .mock(
                     id: .unique,
+                    cid: .unique,
                     text: "Message text",
                     author: .mock(
                         id: .unique,
@@ -221,6 +222,7 @@ class ChatChannelListItemView_Tests: XCTestCase {
             latestMessages: [
                 .mock(
                     id: .unique,
+                    cid: .unique,
                     text: "Message text",
                     author: .mock(
                         id: "author-id",

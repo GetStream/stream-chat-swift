@@ -20,7 +20,7 @@ class ChatMessageActionsVC_Tests: XCTestCase {
         vc.channelConfig = .mock()
 
         chatMessageController.simulateInitial(
-            message: ChatMessage.mock(id: .unique, text: "", author: ChatUser.mock(id: .unique)),
+            message: ChatMessage.mock(id: .unique, cid: .unique, text: "", author: ChatUser.mock(id: .unique)),
             replies: [],
             state: .remoteDataFetched
         )

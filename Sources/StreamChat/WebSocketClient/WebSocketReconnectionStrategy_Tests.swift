@@ -34,7 +34,7 @@ class DefaultReconnectionStrategy_Tests: XCTestCase {
             delays.append(delay!)
         }
         
-        strategy.sucessfullyConnected()
+        strategy.successfullyConnected()
         
         // Ask for a new delay after a successful connection and check it's small again
         let newDelay = try XCTUnwrap(strategy.reconnectionDelay(forConnectionError: nil))

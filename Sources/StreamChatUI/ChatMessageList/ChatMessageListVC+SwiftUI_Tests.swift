@@ -23,9 +23,9 @@ class ChatMessageListView_Tests: iOS13TestCase {
         mockedChannelController.simulateInitial(
             channel: .mock(cid: .unique),
             messages: [
-                .mock(id: .unique, text: "One", author: .mock(id: .unique)),
-                .mock(id: .unique, text: "Two", author: .mock(id: .unique)),
-                .mock(id: .unique, text: "Three", author: .mock(id: .unique))
+                .mock(id: .unique, cid: .unique, text: "One", author: .mock(id: .unique)),
+                .mock(id: .unique, cid: .unique, text: "Two", author: .mock(id: .unique)),
+                .mock(id: .unique, cid: .unique, text: "Three", author: .mock(id: .unique))
             ],
             state: .localDataFetched
         )
@@ -45,8 +45,8 @@ class ChatMessageListView_Tests: iOS13TestCase {
                 mockedChannelController.simulateInitial(
                     channel: .mock(cid: .unique),
                     messages: [
-                        .mock(id: .unique, text: "One", author: .mock(id: .unique)),
-                        .mock(id: .unique, text: "Two", author: .mock(id: .unique))
+                        .mock(id: .unique, cid: .unique, text: "One", author: .mock(id: .unique)),
+                        .mock(id: .unique, cid: .unique, text: "Two", author: .mock(id: .unique))
                     ],
                     state: .localDataFetched
                 )

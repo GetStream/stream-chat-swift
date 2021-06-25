@@ -26,7 +26,7 @@ extension Array where Element == ChatChannel {
             unreadCount: .mock(messages: 4),
             latestMessages: [
                 ChatMessage.mock(
-                    id: "1", text: "This is a long message. How the UI will adjust?", author: .mock(id: "Vader2")
+                    id: "1", cid: .unique, text: "This is a long message. How the UI will adjust?", author: .mock(id: "Vader2")
                 )
             ]
         )
@@ -36,8 +36,8 @@ extension Array where Element == ChatChannel {
             imageURL: XCTestCase.TestImages.vader.url,
             lastMessageAt: .init(timeIntervalSince1970: 1_611_951_529_000),
             latestMessages: [
-                ChatMessage.mock(id: "2", text: "Hello", author: .mock(id: "Vader")),
-                ChatMessage.mock(id: "1", text: "Hello2", author: .mock(id: "Vader2"))
+                ChatMessage.mock(id: "2", cid: .unique, text: "Hello", author: .mock(id: "Vader")),
+                ChatMessage.mock(id: "1", cid: .unique, text: "Hello2", author: .mock(id: "Vader2"))
             ]
         )
 

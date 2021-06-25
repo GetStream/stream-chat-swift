@@ -17,7 +17,7 @@
             "guides/working-with-members",
             "guides/working-with-watchers",
             "guides/filter-query-guide"
-         ]
+          ]
         },
         {
           "Working with MessageList": [
@@ -26,7 +26,7 @@
             "guides/pinned-messages",
             "guides/working-with-attachments",
             "guides/working-with-reactions"
-         ]
+          ]
         },
         "guides/working-with-user",
         "guides/push-notifications",
@@ -36,7 +36,7 @@
         "guides/multi-tenancy",
         "guides/debugging",
         "guides/migrating-from-3-to-4",
-        "guides/migrating-from-1.x-and-2.x"
+        "guides/migrating-from-1.x-and-2.x",
         "guides/debugging"
       ]
     },
@@ -45,124 +45,124 @@
         "controllers/controllers-overview",
         {
           "ChannelController": [
-            "ReferenceDocs/Sources/StreamChat/Controllers/ChannelController/chatchannelcontroller",
-            "ReferenceDocs/Sources/StreamChat/Controllers/ChannelController/chatchannelcontrollerdelegate",
-            "ReferenceDocs/Sources/StreamChat/Controllers/ChannelController/chatchannelcontroller.observableobject",
-            "ReferenceDocs/Sources/StreamChat/Controllers/ChannelController/listordering"
+            "reference-docs/sources/stream-chat/controllers/channel-controller/chat-channel-controller-delegate",
+            "reference-docs/sources/stream-chat/controllers/channel-controller/chat-channel-controller",
+            "reference-docs/sources/stream-chat/controllers/channel-controller/chat-channel-controller.observable-object",
+            "reference-docs/sources/stream-chat/controllers/channel-controller/list-ordering"
           ]
         },
         {
           "ChannelListController": [
-            "ReferenceDocs/Sources/StreamChat/Controllers/ChannelListController/chatchannellistcontroller",
-            "ReferenceDocs/Sources/StreamChat/Controllers/ChannelListController/chatchannellistcontrollerdelegate",
-            "ReferenceDocs/Sources/StreamChat/Controllers/ChannelListController/chatchannellistcontroller.observableobject",
-            "ReferenceDocs/Sources/StreamChat/Controllers/ChannelListController/clienterror.fetchfailed"
+            "reference-docs/sources/stream-chat/controllers/channel-list-controller/chat-channel-list-controller-delegate",
+            "reference-docs/sources/stream-chat/controllers/channel-list-controller/chat-channel-list-controller",
+            "reference-docs/sources/stream-chat/controllers/channel-list-controller/chat-channel-list-controller.observable-object",
+            "reference-docs/sources/stream-chat/controllers/channel-list-controller/client-error.fetch-failed"
           ]
         },
         {
           "ChannelWatcherListController": [
-            "ReferenceDocs/Sources/StreamChat/Controllers/ChannelWatcherListController/chatchannelwatcherlistcontroller",
-            "ReferenceDocs/Sources/StreamChat/Controllers/ChannelWatcherListController/chatchannelwatcherlistcontrollerdelegate",
-            "ReferenceDocs/Sources/StreamChat/Controllers/ChannelWatcherListController/chatchannelwatcherlistcontroller.observableobject"
+            "reference-docs/sources/stream-chat/controllers/channel-watcher-list-controller/chat-channel-watcher-list-controller-delegate",
+            "reference-docs/sources/stream-chat/controllers/channel-watcher-list-controller/chat-channel-watcher-list-controller",
+            "reference-docs/sources/stream-chat/controllers/channel-watcher-list-controller/chat-channel-watcher-list-controller.observable-object"
           ]
         },
         {
           "ConnectionController": [
-            "ReferenceDocs/Sources/StreamChat/Controllers/ConnectionController/chatconnectioncontroller",
-            "ReferenceDocs/Sources/StreamChat/Controllers/ConnectionController/chatconnectioncontrollerdelegate",
-            "ReferenceDocs/Sources/StreamChat/Controllers/ConnectionController/chatconnectioncontroller.observableobject"
+            "reference-docs/sources/stream-chat/controllers/connection-controller/chat-connection-controller-delegate",
+            "reference-docs/sources/stream-chat/controllers/connection-controller/chat-connection-controller",
+            "reference-docs/sources/stream-chat/controllers/connection-controller/chat-connection-controller.observable-object"
           ]
         },
         {
           "CurrentUserController": [
-            "ReferenceDocs/Sources/StreamChat/Controllers/CurrentUserController/currentchatusercontroller",
-            "ReferenceDocs/Sources/StreamChat/Controllers/CurrentUserController/currentchatusercontrollerdelegate",
-            "ReferenceDocs/Sources/StreamChat/Controllers/CurrentUserController/currentchatusercontroller.observableobject"
+            "reference-docs/sources/stream-chat/controllers/current-user-controller/current-chat-user-controller-delegate",
+            "reference-docs/sources/stream-chat/controllers/current-user-controller/current-chat-user-controller",
+            "reference-docs/sources/stream-chat/controllers/current-user-controller/current-chat-user-controller.observable-object"
           ]
         },
         {
           "MemberController": [
-            "ReferenceDocs/Sources/StreamChat/Controllers/MemberController/chatchannelmembercontroller",
-            "ReferenceDocs/Sources/StreamChat/Controllers/MemberController/chatchannelmembercontrollerdelegate",
-            "ReferenceDocs/Sources/StreamChat/Controllers/MemberController/chatchannelmembercontroller.observableobject"
+            "reference-docs/sources/stream-chat/controllers/member-controller/chat-channel-member-controller-delegate",
+            "reference-docs/sources/stream-chat/controllers/member-controller/chat-channel-member-controller",
+            "reference-docs/sources/stream-chat/controllers/member-controller/chat-channel-member-controller.observable-object"
           ]
         },
         {
           "MemberListController": [
-            "ReferenceDocs/Sources/StreamChat/Controllers/MemberListController/chatchannelmemberlistcontroller",
-            "ReferenceDocs/Sources/StreamChat/Controllers/MemberListController/chatchannelmemberlistcontrollerdelegate",
-            "ReferenceDocs/Sources/StreamChat/Controllers/MemberListController/chatchannelmemberlistcontroller.observableobject"
+            "reference-docs/sources/stream-chat/controllers/member-list-controller/chat-channel-member-list-controller-delegate",
+            "reference-docs/sources/stream-chat/controllers/member-list-controller/chat-channel-member-list-controller",
+            "reference-docs/sources/stream-chat/controllers/member-list-controller/chat-channel-member-list-controller.observable-object"
           ]
         },
         {
           "MessageController": [
-            "ReferenceDocs/Sources/StreamChat/Controllers/MessageController/chatmessagecontroller",
-            "ReferenceDocs/Sources/StreamChat/Controllers/MessageController/chatmessagecontrollerdelegate",
-            "ReferenceDocs/Sources/StreamChat/Controllers/MessageController/chatmessagecontroller.observableobject"
+            "reference-docs/sources/stream-chat/controllers/message-controller/chat-message-controller-delegate",
+            "reference-docs/sources/stream-chat/controllers/message-controller/chat-message-controller",
+            "reference-docs/sources/stream-chat/controllers/message-controller/chat-message-controller.observable-object"
           ]
         },
         {
           "SearchControllers": [
-            "ReferenceDocs/Sources/StreamChat/Controllers/SearchControllers/chatusersearchcontroller",
-            "ReferenceDocs/Sources/StreamChat/Controllers/SearchControllers/chatusersearchcontrollerdelegate"
+            "reference-docs/sources/stream-chat/controllers/search-controllers/chat-user-search-controller-delegate",
+            "reference-docs/sources/stream-chat/controllers/search-controllers/chat-user-search-controller"
           ]
         },
         {
           "UserController": [
-            "ReferenceDocs/Sources/StreamChat/Controllers/UserController/chatusercontroller",
-            "ReferenceDocs/Sources/StreamChat/Controllers/UserController/chatusercontrollerdelegate",
-            "ReferenceDocs/Sources/StreamChat/Controllers/UserController/chatusercontroller.observableobject"
+            "reference-docs/sources/stream-chat/controllers/user-controller/chat-user-controller-delegate",
+            "reference-docs/sources/stream-chat/controllers/user-controller/chat-user-controller",
+            "reference-docs/sources/stream-chat/controllers/user-controller/chat-user-controller.observable-object"
           ]
         },
         {
           "UserListController": [
-            "ReferenceDocs/Sources/StreamChat/Controllers/UserListController/chatuserlistcontroller",
-            "ReferenceDocs/Sources/StreamChat/Controllers/UserListController/chatuserlistcontrollerdelegate",
-            "ReferenceDocs/Sources/StreamChat/Controllers/UserListController/chatuserlistcontroller.observableobject"
+            "reference-docs/sources/stream-chat/controllers/user-list-controller/chat-user-list-controller-delegate",
+            "reference-docs/sources/stream-chat/controllers/user-list-controller/chat-user-list-controller",
+            "reference-docs/sources/stream-chat/controllers/user-list-controller/chat-user-list-controller.observable-object"
           ]
         },
         {
           "DataController": [
-            "ReferenceDocs/Sources/StreamChat/Controllers/datacontroller",
-            "ReferenceDocs/Sources/StreamChat/Controllers/datacontroller.state",
-            "ReferenceDocs/Sources/StreamChat/Controllers/datacontrollerstatedelegate"
+            "reference-docs/sources/stream-chat/controllers/data-controller",
+            "reference-docs/sources/stream-chat/controllers/data-controller.state",
+            "reference-docs/sources/stream-chat/controllers/data-controller-state-delegate"
           ]
         },
-        "ReferenceDocs/Sources/StreamChat/Controllers/controller",
-        "ReferenceDocs/Sources/StreamChat/Controllers/entitychange",
-        "ReferenceDocs/Sources/StreamChat/Controllers/listchange"
+        "reference-docs/sources/stream-chat/controllers/controller",
+        "reference-docs/sources/stream-chat/controllers/entity-change",
+        "reference-docs/sources/stream-chat/controllers/list-change"
       ]
     },
     {
       "UI Components": [
-        "ReferenceDocs/Sources/StreamChatUI/components",
+        "reference-docs/sources/stream-chat-ui/components",
         {
           "ChatChannelList": [
-            "ReferenceDocs/Sources/StreamChatUI/ChatChannelList/chatchannellistvc",
+            "reference-docs/sources/stream-chat-ui/chat-channel-list/chat-channel-list-vc",
+            "reference-docs/sources/stream-chat-ui/chat-channel-list/chat-channel-list",
             {
               "ChatChannelListCollectionViewCell": [
-                "ReferenceDocs/Sources/StreamChatUI/ChatChannelList/chatchannellistcollectionviewcell",
-                "ReferenceDocs/Sources/StreamChatUI/ChatChannelList/chatchannellistcollectionviewdelegate",
-                "ReferenceDocs/Sources/StreamChatUI/ChatChannelList/chatchannellistitemview",
-                "ReferenceDocs/Sources/StreamChatUI/ChatChannelList/chatchannellistitemviewswiftuiview",
-                "ReferenceDocs/Sources/StreamChatUI/ChatChannelList/chatchannellistitemview.swiftuiwrapper",
-                "ReferenceDocs/Sources/StreamChatUI/ChatChannelList/chatchannellistitemview.content",
-                "ReferenceDocs/Sources/StreamChatUI/ChatChannelList/swipeableview",
-                "ReferenceDocs/Sources/StreamChatUI/ChatChannelList/swipeableviewdelegate",
-                "ReferenceDocs/Sources/StreamChatUI/ChatChannelList/cellactionview"
+                "reference-docs/sources/stream-chat-ui/chat-channel-list/chat-channel-list-collection-view-cell",
+                "reference-docs/sources/stream-chat-ui/chat-channel-list/chat-channel-list-collection-view-delegate",
+                "reference-docs/sources/stream-chat-ui/chat-channel-list/chat-channel-list-item-view",
+                "reference-docs/sources/stream-chat-ui/chat-channel-list/chat-channel-list-item-view-swift-ui-view",
+                "reference-docs/sources/stream-chat-ui/chat-channel-list/chat-channel-list-item-view.swift-ui-wrapper",
+                "reference-docs/sources/stream-chat-ui/chat-channel-list/chat-channel-list-item-view.content",
+                "reference-docs/sources/stream-chat-ui/chat-channel-list/swipeable-view-delegate",
+                "reference-docs/sources/stream-chat-ui/chat-channel-list/swipeable-view"
               ]
             },
             {
               "ChatChannelReadStatus": [
-                "ReferenceDocs/Sources/StreamChatUI/ChatChannelList/chatchannelreadstatuscheckmarkview",
-                "ReferenceDocs/Sources/StreamChatUI/ChatChannelList/chatchannelreadstatuscheckmarkview.status"
+                "reference-docs/sources/stream-chat-ui/chat-channel-list/chat-channel-read-status-checkmark-view",
+                "reference-docs/sources/stream-chat-ui/chat-channel-list/chat-channel-read-status-checkmark-view.status"
               ]
             },
             {
               "ChatChannelUnreadCountView": [
-                "ReferenceDocs/Sources/StreamChatUI/ChatChannelList/chatchannelunreadcountview",
-                "ReferenceDocs/Sources/StreamChatUI/ChatChannelList/chatchannelunreadcountview.swiftuiwrapper",
-                "ReferenceDocs/Sources/StreamChatUI/ChatChannelList/chatchannelunreadcountviewswiftuiview"
+                "reference-docs/sources/stream-chat-ui/chat-channel-list/chat-channel-unread-count-view-swift-ui-view",
+                "reference-docs/sources/stream-chat-ui/chat-channel-list/chat-channel-unread-count-view",
+                "reference-docs/sources/stream-chat-ui/chat-channel-list/chat-channel-unread-count-view.swift-ui-wrapper"
               ]
             }
           ]
@@ -171,262 +171,263 @@
           "ChatMessageList": [
             {
               "Attachments": [
-                "ReferenceDocs/Sources/StreamChatUI/ChatMessageList/Attachments/attachmentviewinjector",
-                "ReferenceDocs/Sources/StreamChatUI/ChatMessageList/Attachments/chatmessageattachmentpreviewvc",
+                "reference-docs/sources/stream-chat-ui/chat-message-list/attachments/attachment-view-catalog",
+                "reference-docs/sources/stream-chat-ui/chat-message-list/attachments/attachment-view-injector",
+                "reference-docs/sources/stream-chat-ui/chat-message-list/attachments/chat-message-attachment-preview-vc",
                 {
                   "Interactive Attachments": [
-                    "ReferenceDocs/Sources/StreamChatUI/ChatMessageList/Attachments/chatmessageinteractiveattachmentview.actionbutton.content",
-                    "ReferenceDocs/Sources/StreamChatUI/ChatMessageList/Attachments/chatmessageinteractiveattachmentview.actionbutton",
-                    "ReferenceDocs/Sources/StreamChatUI/ChatMessageList/Attachments/chatmessageinteractiveattachmentview",
-                    "ReferenceDocs/Sources/StreamChatUI/ChatMessageList/Attachments/chatmessagegiphyview.giphybadge",
-                    "ReferenceDocs/Sources/StreamChatUI/ChatMessageList/Attachments/chatmessagegiphyview",
-                    "ReferenceDocs/Sources/StreamChatUI/ChatMessageList/Attachments/giphyactioncontentviewdelegate",
-                    "ReferenceDocs/Sources/StreamChatUI/ChatMessageList/Attachments/giphyattachmentviewinjector"
+                    "reference-docs/sources/stream-chat-ui/chat-message-list/attachments/chat-message-interactive-attachment-view.action-button.content",
+                    "reference-docs/sources/stream-chat-ui/chat-message-list/attachments/chat-message-interactive-attachment-view.action-button",
+                    "reference-docs/sources/stream-chat-ui/chat-message-list/attachments/chat-message-interactive-attachment-view",
+                    "reference-docs/sources/stream-chat-ui/chat-message-list/attachments/chat-message-giphy-view.giphy-badge",
+                    "reference-docs/sources/stream-chat-ui/chat-message-list/attachments/chat-message-giphy-view",
+                    "reference-docs/sources/stream-chat-ui/chat-message-list/attachments/giphy-action-content-view-delegate",
+                    "reference-docs/sources/stream-chat-ui/chat-message-list/attachments/giphy-attachment-view-injector"
                   ]
                 },
                 {
                   "ImageGallery Attachments": [
-                    "ReferenceDocs/Sources/StreamChatUI/ChatMessageList/Attachments/imagepreviewable",
-                    "ReferenceDocs/Sources/StreamChatUI/ChatMessageList/Attachments/chatmessageimagegallery.imagepreview",
-                    "ReferenceDocs/Sources/StreamChatUI/ChatMessageList/Attachments/chatmessageimagegallery.uploadingoverlay",
-                    "ReferenceDocs/Sources/StreamChatUI/ChatMessageList/Attachments/chatmessageimagegallery",
-                    "ReferenceDocs/Sources/StreamChatUI/ChatMessageList/Attachments/galleryattachmentviewinjector",
-                    "ReferenceDocs/Sources/StreamChatUI/ChatMessageList/Attachments/gallerycontentviewdelegate"
+                    "reference-docs/sources/stream-chat-ui/chat-message-list/attachments/image-previewable",
+                    "reference-docs/sources/stream-chat-ui/chat-message-list/attachments/chat-message-image-gallery.image-preview",
+                    "reference-docs/sources/stream-chat-ui/chat-message-list/attachments/chat-message-image-gallery.uploading-overlay",
+                    "reference-docs/sources/stream-chat-ui/chat-message-list/attachments/chat-message-image-gallery",
+                    "reference-docs/sources/stream-chat-ui/chat-message-list/attachments/gallery-attachment-view-injector",
+                    "reference-docs/sources/stream-chat-ui/chat-message-list/attachments/gallery-content-view-delegate"
                   ]
                 },
                 {
                   "File Attachments": [
-                    "ReferenceDocs/Sources/StreamChatUI/ChatMessageList/Attachments/chatmessagefileattachmentlistview.itemview",
-                    "ReferenceDocs/Sources/StreamChatUI/ChatMessageList/Attachments/chatmessagefileattachmentlistview",
-                    "ReferenceDocs/Sources/StreamChatUI/ChatMessageList/Attachments/fileactioncontentviewdelegate",
-                    "ReferenceDocs/Sources/StreamChatUI/ChatMessageList/Attachments/filesattachmentviewinjector"
+                    "reference-docs/sources/stream-chat-ui/chat-message-list/attachments/chat-message-file-attachment-list-view.item-view",
+                    "reference-docs/sources/stream-chat-ui/chat-message-list/attachments/chat-message-file-attachment-list-view",
+                    "reference-docs/sources/stream-chat-ui/chat-message-list/attachments/file-action-content-view-delegate",
+                    "reference-docs/sources/stream-chat-ui/chat-message-list/attachments/files-attachment-view-injector"
                   ]
                 },
                 {
                   "Link Attachments": [
-                    "ReferenceDocs/Sources/StreamChatUI/ChatMessageList/Attachments/chatmessagelinkpreviewview",
-                    "ReferenceDocs/Sources/StreamChatUI/ChatMessageList/Attachments/linkattachmentviewinjector",
-                    "ReferenceDocs/Sources/StreamChatUI/ChatMessageList/Attachments/linkpreviewviewdelegate"
+                    "reference-docs/sources/stream-chat-ui/chat-message-list/attachments/chat-message-link-preview-view",
+                    "reference-docs/sources/stream-chat-ui/chat-message-list/attachments/link-attachment-view-injector",
+                    "reference-docs/sources/stream-chat-ui/chat-message-list/attachments/link-preview-view-delegate"
                   ]
                 }
               ]
             },
             {
               "ChatMessage": [
-                "ReferenceDocs/Sources/StreamChatUI/ChatMessageList/ChatMessage/chatmessagebubbleview.content",
-                "ReferenceDocs/Sources/StreamChatUI/ChatMessageList/ChatMessage/chatmessagebubbleview",
-                "ReferenceDocs/Sources/StreamChatUI/ChatMessageList/ChatMessage/chatmessagecollectionviewcell",
-                "ReferenceDocs/Sources/StreamChatUI/ChatMessageList/ChatMessage/chatmessagecontentview.swiftuiwrapper",
-                "ReferenceDocs/Sources/StreamChatUI/ChatMessageList/ChatMessage/chatmessagecontentview",
-                "ReferenceDocs/Sources/StreamChatUI/ChatMessageList/ChatMessage/chatmessagecontentviewdelegate",
-                "ReferenceDocs/Sources/StreamChatUI/ChatMessageList/ChatMessage/chatmessagecontentviewswiftuiview",
-                "ReferenceDocs/Sources/StreamChatUI/ChatMessageList/ChatMessage/chatmessageerrorindicator",
-                "ReferenceDocs/Sources/StreamChatUI/ChatMessageList/ChatMessage/chatmessagelayoutoptions",
-                "ReferenceDocs/Sources/StreamChatUI/ChatMessageList/ChatMessage/chatmessagelayoutoptionsresolver",
-                "ReferenceDocs/Sources/StreamChatUI/ChatMessageList/ChatMessage/chatreactionsbubbleview",
-                "ReferenceDocs/Sources/StreamChatUI/ChatMessageList/ChatMessage/chatthreadarrowview.direction",
-                "ReferenceDocs/Sources/StreamChatUI/ChatMessageList/ChatMessage/chatthreadarrowview",
+                "reference-docs/sources/stream-chat-ui/chat-message-list/chat-message/chat-message-bubble-view.content",
+                "reference-docs/sources/stream-chat-ui/chat-message-list/chat-message/chat-message-bubble-view",
+                "reference-docs/sources/stream-chat-ui/chat-message-list/chat-message/chat-message-collection-view-cell",
+                "reference-docs/sources/stream-chat-ui/chat-message-list/chat-message/chat-message-content-view-delegate",
+                "reference-docs/sources/stream-chat-ui/chat-message-list/chat-message/chat-message-content-view-swift-ui-view",
+                "reference-docs/sources/stream-chat-ui/chat-message-list/chat-message/chat-message-content-view",
+                "reference-docs/sources/stream-chat-ui/chat-message-list/chat-message/chat-message-content-view.swift-ui-wrapper",
+                "reference-docs/sources/stream-chat-ui/chat-message-list/chat-message/chat-message-error-indicator",
+                "reference-docs/sources/stream-chat-ui/chat-message-list/chat-message/chat-message-layout-options-resolver",
+                "reference-docs/sources/stream-chat-ui/chat-message-list/chat-message/chat-message-layout-options",
+                "reference-docs/sources/stream-chat-ui/chat-message-list/chat-message/chat-reactions-bubble-view",
+                "reference-docs/sources/stream-chat-ui/chat-message-list/chat-message/chat-thread-arrow-view.direction",
+                "reference-docs/sources/stream-chat-ui/chat-message-list/chat-message/chat-thread-arrow-view",
                 {
                   "Reactions": [
-                    "ReferenceDocs/Sources/StreamChatUI/ChatMessageList/Reactions/chatmessagedefaultreactionsbubbleview",
-                    "ReferenceDocs/Sources/StreamChatUI/ChatMessageList/Reactions/chatmessagereactionappearance",
-                    "ReferenceDocs/Sources/StreamChatUI/ChatMessageList/Reactions/chatmessagereactionappearancetype",
-                    "ReferenceDocs/Sources/StreamChatUI/ChatMessageList/Reactions/chatmessagereactiondata",
-                    "ReferenceDocs/Sources/StreamChatUI/ChatMessageList/Reactions/chatmessagereactionsbubblestyle",
-                    "ReferenceDocs/Sources/StreamChatUI/ChatMessageList/Reactions/chatmessagereactionsbubbleview.content",
-                    "ReferenceDocs/Sources/StreamChatUI/ChatMessageList/Reactions/chatmessagereactionsbubbleview",
-                    "ReferenceDocs/Sources/StreamChatUI/ChatMessageList/Reactions/chatmessagereactionsvc",
-                    "ReferenceDocs/Sources/StreamChatUI/ChatMessageList/Reactions/chatmessagereactionsview.content",
-                    "ReferenceDocs/Sources/StreamChatUI/ChatMessageList/Reactions/chatmessagereactionsview.itemview.content",
-                    "ReferenceDocs/Sources/StreamChatUI/ChatMessageList/Reactions/chatmessagereactionsview.itemview",
-                    "ReferenceDocs/Sources/StreamChatUI/ChatMessageList/Reactions/chatmessagereactionsview"
+                    "reference-docs/sources/stream-chat-ui/chat-message-list/reactions/chat-message-default-reactions-bubble-view",
+                    "reference-docs/sources/stream-chat-ui/chat-message-list/reactions/chat-message-reaction-appearance-type",
+                    "reference-docs/sources/stream-chat-ui/chat-message-list/reactions/chat-message-reaction-appearance",
+                    "reference-docs/sources/stream-chat-ui/chat-message-list/reactions/chat-message-reaction-data",
+                    "reference-docs/sources/stream-chat-ui/chat-message-list/reactions/chat-message-reactions-bubble-style",
+                    "reference-docs/sources/stream-chat-ui/chat-message-list/reactions/chat-message-reactions-bubble-view.content",
+                    "reference-docs/sources/stream-chat-ui/chat-message-list/reactions/chat-message-reactions-bubble-view",
+                    "reference-docs/sources/stream-chat-ui/chat-message-list/reactions/chat-message-reactions-vc",
+                    "reference-docs/sources/stream-chat-ui/chat-message-list/reactions/chat-message-reactions-view.content",
+                    "reference-docs/sources/stream-chat-ui/chat-message-list/reactions/chat-message-reactions-view.item-view.content",
+                    "reference-docs/sources/stream-chat-ui/chat-message-list/reactions/chat-message-reactions-view.item-view",
+                    "reference-docs/sources/stream-chat-ui/chat-message-list/reactions/chat-message-reactions-view"
                   ]
                 }
               ]
             },
             {
               "MessageActionsPopup": [
-                "ReferenceDocs/Sources/StreamChatUI/MessageActionsPopup/blockuseractionitem",
-                "ReferenceDocs/Sources/StreamChatUI/MessageActionsPopup/chatmessageactioncontrol",
-                "ReferenceDocs/Sources/StreamChatUI/MessageActionsPopup/chatmessageactionitem",
-                "ReferenceDocs/Sources/StreamChatUI/MessageActionsPopup/chatmessageactionsvc.delegate",
-                "ReferenceDocs/Sources/StreamChatUI/MessageActionsPopup/chatmessageactionsvc",
-                "ReferenceDocs/Sources/StreamChatUI/MessageActionsPopup/chatmessageactionsvcdelegate",
-                "ReferenceDocs/Sources/StreamChatUI/MessageActionsPopup/chatmessagepopupvc",
-                "ReferenceDocs/Sources/StreamChatUI/MessageActionsPopup/copyactionitem",
-                "ReferenceDocs/Sources/StreamChatUI/MessageActionsPopup/deleteactionitem",
-                "ReferenceDocs/Sources/StreamChatUI/MessageActionsPopup/editactionitem",
-                "ReferenceDocs/Sources/StreamChatUI/MessageActionsPopup/inlinereplyactionitem",
-                "ReferenceDocs/Sources/StreamChatUI/MessageActionsPopup/messageactionstransitioncontroller",
-                "ReferenceDocs/Sources/StreamChatUI/MessageActionsPopup/muteuseractionitem",
-                "ReferenceDocs/Sources/StreamChatUI/MessageActionsPopup/resendactionitem",
-                "ReferenceDocs/Sources/StreamChatUI/MessageActionsPopup/threadreplyactionitem",
-                "ReferenceDocs/Sources/StreamChatUI/MessageActionsPopup/unblockuseractionitem",
-                "ReferenceDocs/Sources/StreamChatUI/MessageActionsPopup/unmuteuseractionitem"
+                "reference-docs/sources/stream-chat-ui/message-actions-popup/block-user-action-item",
+                "reference-docs/sources/stream-chat-ui/message-actions-popup/chat-message-action-control",
+                "reference-docs/sources/stream-chat-ui/message-actions-popup/chat-message-action-item",
+                "reference-docs/sources/stream-chat-ui/message-actions-popup/chat-message-actions-vc-delegate",
+                "reference-docs/sources/stream-chat-ui/message-actions-popup/chat-message-actions-vc.delegate",
+                "reference-docs/sources/stream-chat-ui/message-actions-popup/chat-message-actions-vc",
+                "reference-docs/sources/stream-chat-ui/message-actions-popup/chat-message-popup-vc",
+                "reference-docs/sources/stream-chat-ui/message-actions-popup/copy-action-item",
+                "reference-docs/sources/stream-chat-ui/message-actions-popup/delete-action-item",
+                "reference-docs/sources/stream-chat-ui/message-actions-popup/edit-action-item",
+                "reference-docs/sources/stream-chat-ui/message-actions-popup/inline-reply-action-item",
+                "reference-docs/sources/stream-chat-ui/message-actions-popup/message-actions-transition-controller",
+                "reference-docs/sources/stream-chat-ui/message-actions-popup/mute-user-action-item",
+                "reference-docs/sources/stream-chat-ui/message-actions-popup/resend-action-item",
+                "reference-docs/sources/stream-chat-ui/message-actions-popup/thread-reply-action-item",
+                "reference-docs/sources/stream-chat-ui/message-actions-popup/unblock-user-action-item",
+                "reference-docs/sources/stream-chat-ui/message-actions-popup/unmute-user-action-item"
               ]
             },
-            "ReferenceDocs/Sources/StreamChatUI/ChatMessageList/chatmessagelistcollectionview",
-            "ReferenceDocs/Sources/StreamChatUI/ChatMessageList/chatmessagelistcollectionviewdatasource",
-            "ReferenceDocs/Sources/StreamChatUI/ChatMessageList/chatmessagelistcollectionviewlayout.layoutitem",
-            "ReferenceDocs/Sources/StreamChatUI/ChatMessageList/chatmessagelistcollectionviewlayout",
-            "ReferenceDocs/Sources/StreamChatUI/ChatMessageList/chatmessagelistkeyboardobserver",
-            "ReferenceDocs/Sources/StreamChatUI/ChatMessageList/chatmessagelistscrolloverlayview",
-            "ReferenceDocs/Sources/StreamChatUI/ChatMessageList/chatmessagelistvc",
-            "ReferenceDocs/Sources/StreamChatUI/ChatMessageList/chatthreadvc",
-            "ReferenceDocs/Sources/StreamChatUI/ChatMessageList/scrolltolatestmessagebutton",
-            "ReferenceDocs/Sources/StreamChatUI/ChatMessageList/titlecontainerview",
-            "ReferenceDocs/Sources/StreamChatUI/ChatMessageList/typinganimationview",
-            "ReferenceDocs/Sources/StreamChatUI/ChatMessageList/typingindicatorview"
+            "reference-docs/sources/stream-chat-ui/chat-message-list/chat-message-list-collection-view",
+            "reference-docs/sources/stream-chat-ui/chat-message-list/chat-message-list-collection-view-data-source",
+            "reference-docs/sources/stream-chat-ui/chat-message-list/chat-message-list-collection-view-layout.layout-item",
+            "reference-docs/sources/stream-chat-ui/chat-message-list/chat-message-list-collection-view-layout",
+            "reference-docs/sources/stream-chat-ui/chat-message-list/chat-message-list-keyboard-observer",
+            "reference-docs/sources/stream-chat-ui/chat-message-list/chat-message-list-scroll-overlay-view",
+            "reference-docs/sources/stream-chat-ui/chat-message-list/chat-message-list-vc",
+            "reference-docs/sources/stream-chat-ui/chat-message-list/chat-thread-vc",
+            "reference-docs/sources/stream-chat-ui/chat-message-list/scroll-to-latest-message-button",
+            "reference-docs/sources/stream-chat-ui/chat-message-list/title-container-view",
+            "reference-docs/sources/stream-chat-ui/chat-message-list/typing-animation-view",
+            "reference-docs/sources/stream-chat-ui/chat-message-list/typing-indicator-view"
           ]
         },
         {
           "Composer": [
-            "ReferenceDocs/Sources/StreamChatUI/Composer/composerstate",
-            "ReferenceDocs/Sources/StreamChatUI/Composer/composervc.content",
-            "ReferenceDocs/Sources/StreamChatUI/Composer/composervc",
-            "ReferenceDocs/Sources/StreamChatUI/Composer/composervcdelegate",
-            "ReferenceDocs/Sources/StreamChatUI/Composer/composerview"
+            "reference-docs/sources/stream-chat-ui/composer/composer-state",
+            "reference-docs/sources/stream-chat-ui/composer/composer-vc-delegate",
+            "reference-docs/sources/stream-chat-ui/composer/composer-vc.content",
+            "reference-docs/sources/stream-chat-ui/composer/composer-vc",
+            "reference-docs/sources/stream-chat-ui/composer/composer-view"
           ]
         },
         {
           "ImageGallery": [
-            "ReferenceDocs/Sources/StreamChatUI/ImageGallery/imagecollectionviewcell",
-            "ReferenceDocs/Sources/StreamChatUI/ImageGallery/imagegalleryvc",
-            "ReferenceDocs/Sources/StreamChatUI/ImageGallery/zoomanimator",
-            "ReferenceDocs/Sources/StreamChatUI/ImageGallery/zoomdismissalinteractioncontroller",
-            "ReferenceDocs/Sources/StreamChatUI/ImageGallery/zoomtransitioncontroller"
+            "reference-docs/sources/stream-chat-ui/image-gallery/image-collection-view-cell",
+            "reference-docs/sources/stream-chat-ui/image-gallery/image-gallery-vc",
+            "reference-docs/sources/stream-chat-ui/image-gallery/zoom-animator",
+            "reference-docs/sources/stream-chat-ui/image-gallery/zoom-dismissal-interaction-controller",
+            "reference-docs/sources/stream-chat-ui/image-gallery/zoom-transition-controller"
           ]
         },
         {
           "Navigation": [
-            "ReferenceDocs/Sources/StreamChatUI/Navigation/alertsrouter",
-            "ReferenceDocs/Sources/StreamChatUI/Navigation/chatchannellistrouter",
-            "ReferenceDocs/Sources/StreamChatUI/Navigation/chatmessagelistrouter",
-            "ReferenceDocs/Sources/StreamChatUI/Navigation/navigationrouter"
+            "reference-docs/sources/stream-chat-ui/navigation/alerts-router",
+            "reference-docs/sources/stream-chat-ui/navigation/chat-channel-list-router",
+            "reference-docs/sources/stream-chat-ui/navigation/chat-message-list-router",
+            "reference-docs/sources/stream-chat-ui/navigation/navigation-router"
           ]
         },
         {
           "CommonViews": [
-            "ReferenceDocs/Sources/StreamChatUI/CommonViews/customizable",
-            "ReferenceDocs/Sources/StreamChatUI/CommonViews/chatloadingindicator",
-            "ReferenceDocs/Sources/StreamChatUI/CommonViews/chatnavigationbar",
-            "ReferenceDocs/Sources/StreamChatUI/CommonViews/CheckboxControl/checkboxcontrol",
-            "ReferenceDocs/Sources/StreamChatUI/CommonViews/CircularCloseButton/circularclosebutton",
-            "ReferenceDocs/Sources/StreamChatUI/CommonViews/CommandButton/commandbutton",
-            "ReferenceDocs/Sources/StreamChatUI/CommonViews/CommandLabelView/commandlabelview",
-            "ReferenceDocs/Sources/StreamChatUI/CommonViews/ConfirmButton/confirmbutton",
-            "ReferenceDocs/Sources/StreamChatUI/CommonViews/closebutton",
-            "ReferenceDocs/Sources/StreamChatUI/CommonViews/CreateChatChannelButton/createchatchannelbutton",
-            "ReferenceDocs/Sources/StreamChatUI/CommonViews/InputTextView/inputtextview",
-            "ReferenceDocs/Sources/StreamChatUI/CommonViews/SendButton/sendbutton",
-            "ReferenceDocs/Sources/StreamChatUI/CommonViews/sharebutton",
-            "ReferenceDocs/Sources/StreamChatUI/CommonViews/ShrinkInputButton/shrinkinputbutton",
+            "reference-docs/sources/stream-chat-ui/common-views/customizable",
+            "reference-docs/sources/stream-chat-ui/common-views/chat-loading-indicator",
+            "reference-docs/sources/stream-chat-ui/common-views/chat-navigation-bar",
+            "reference-docs/sources/stream-chat-ui/common-views/checkbox-control/checkbox-control",
+            "reference-docs/sources/stream-chat-ui/common-views/circular-close-button/circular-close-button",
+            "reference-docs/sources/stream-chat-ui/common-views/command-button/command-button",
+            "reference-docs/sources/stream-chat-ui/common-views/command-label-view/command-label-view",
+            "reference-docs/sources/stream-chat-ui/common-views/confirm-button/confirm-button",
+            "reference-docs/sources/stream-chat-ui/common-views/close-button",
+            "reference-docs/sources/stream-chat-ui/common-views/create-chat-channel-button/create-chat-channel-button",
+            "reference-docs/sources/stream-chat-ui/common-views/input-text-view/input-text-view",
+            "reference-docs/sources/stream-chat-ui/common-views/send-button/send-button",
+            "reference-docs/sources/stream-chat-ui/common-views/share-button",
+            "reference-docs/sources/stream-chat-ui/common-views/shrink-input-button/shrink-input-button",
             {
               "Attachments": [
-                "ReferenceDocs/Sources/StreamChatUI/CommonViews/Attachments/attachmentspreviewvc",
-                "ReferenceDocs/Sources/StreamChatUI/CommonViews/Attachments/attachmentplaceholderview",
-                "ReferenceDocs/Sources/StreamChatUI/CommonViews/Attachments/attachmentpreviewcontainer",
-                "ReferenceDocs/Sources/StreamChatUI/CommonViews/Attachments/attachmentpreviewprovider",
-                "ReferenceDocs/Sources/StreamChatUI/CommonViews/Attachments/defaultattachmentpreviewprovider",
-                "ReferenceDocs/Sources/StreamChatUI/CommonViews/Attachments/fileattachmentpayload",
-                "ReferenceDocs/Sources/StreamChatUI/CommonViews/Attachments/imageattachmentpayload",
-                "ReferenceDocs/Sources/StreamChatUI/CommonViews/AttachmentButton/attachmentbutton",
+                "reference-docs/sources/stream-chat-ui/common-views/attachments/attachments-preview-vc",
+                "reference-docs/sources/stream-chat-ui/common-views/attachments/attachment-placeholder-view",
+                "reference-docs/sources/stream-chat-ui/common-views/attachments/attachment-preview-container",
+                "reference-docs/sources/stream-chat-ui/common-views/attachments/attachment-preview-provider",
+                "reference-docs/sources/stream-chat-ui/common-views/attachments/default-attachment-preview-provider",
+                "reference-docs/sources/stream-chat-ui/common-views/attachments/file-attachment-payload",
+                "reference-docs/sources/stream-chat-ui/common-views/attachments/image-attachment-payload",
+                "reference-docs/sources/stream-chat-ui/common-views/attachment-button/attachment-button",
                 {
                   "AttachmentViews": [
-                    "ReferenceDocs/Sources/StreamChatUI/CommonViews/Attachments/AttachmentViews/fileattachmentview.content",
-                    "ReferenceDocs/Sources/StreamChatUI/CommonViews/Attachments/AttachmentViews/fileattachmentview",
-                    "ReferenceDocs/Sources/StreamChatUI/CommonViews/Attachments/AttachmentViews/imageattachmentview"
+                    "reference-docs/sources/stream-chat-ui/common-views/attachments/attachment-views/file-attachment-view.content",
+                    "reference-docs/sources/stream-chat-ui/common-views/attachments/attachment-views/file-attachment-view",
+                    "reference-docs/sources/stream-chat-ui/common-views/attachments/attachment-views/image-attachment-view"
                   ]
                 }
               ]
             },
             {
               "AvatarView": [
-                "ReferenceDocs/Sources/StreamChatUI/CommonViews/AvatarView/chatavatarview",
-                "ReferenceDocs/Sources/StreamChatUI/CommonViews/AvatarView/chatchannelavatarview.swiftuiwrapper",
-                "ReferenceDocs/Sources/StreamChatUI/CommonViews/AvatarView/chatchannelavatarview",
-                "ReferenceDocs/Sources/StreamChatUI/CommonViews/AvatarView/chatchannelavatarviewswiftuiview",
+                "reference-docs/sources/stream-chat-ui/common-views/avatar-view/chat-avatar-view",
+                "reference-docs/sources/stream-chat-ui/common-views/avatar-view/chat-channel-avatar-view.swift-ui-wrapper",
+                "reference-docs/sources/stream-chat-ui/common-views/avatar-view/chat-channel-avatar-view",
+                "reference-docs/sources/stream-chat-ui/common-views/avatar-view/chat-channel-avatar-view-swift-ui-view",
                 {
                   "ChatPresenceAvatarView": [
-                    "ReferenceDocs/Sources/StreamChatUI/CommonViews/AvatarView/ChatPresenceAvatarView/onlineindicatorview",
-                    "ReferenceDocs/Sources/StreamChatUI/CommonViews/AvatarView/ChatPresenceAvatarView/chatpresenceavatarview",
-                    "ReferenceDocs/Sources/StreamChatUI/CommonViews/AvatarView/ChatPresenceAvatarView/maskproviding"
+                    "reference-docs/sources/stream-chat-ui/common-views/avatar-view/chat-presence-avatar-view/online-indicator-view",
+                    "reference-docs/sources/stream-chat-ui/common-views/avatar-view/chat-presence-avatar-view/chat-presence-avatar-view",
+                    "reference-docs/sources/stream-chat-ui/common-views/avatar-view/chat-presence-avatar-view/mask-providing"
                   ]
                 },
-                "ReferenceDocs/Sources/StreamChatUI/CommonViews/AvatarView/chatuseravatarview",
-                "ReferenceDocs/Sources/StreamChatUI/CommonViews/AvatarView/currentchatuseravatarview"
+                "reference-docs/sources/stream-chat-ui/common-views/avatar-view/chat-user-avatar-view",
+                "reference-docs/sources/stream-chat-ui/common-views/avatar-view/current-chat-user-avatar-view"
               ]
             },
             {
-              "containerstackview": [
-                "ReferenceDocs/Sources/StreamChatUI/CommonViews/containerstackview.alignment",
-                "ReferenceDocs/Sources/StreamChatUI/CommonViews/containerstackview.distribution",
-                "ReferenceDocs/Sources/StreamChatUI/CommonViews/containerstackview.spacing",
-                "ReferenceDocs/Sources/StreamChatUI/CommonViews/containerstackview"
+              "ContainerStackView": [
+                "reference-docs/sources/stream-chat-ui/common-views/container-stack-view.alignment",
+                "reference-docs/sources/stream-chat-ui/common-views/container-stack-view.distribution",
+                "reference-docs/sources/stream-chat-ui/common-views/container-stack-view.spacing",
+                "reference-docs/sources/stream-chat-ui/common-views/container-stack-view"
               ]
             },
             {
               "InputChatMessageView": [
-                "ReferenceDocs/Sources/StreamChatUI/CommonViews/InputChatMessageView/inputchatmessageview.content",
-                "ReferenceDocs/Sources/StreamChatUI/CommonViews/InputChatMessageView/inputchatmessageview"
+                "reference-docs/sources/stream-chat-ui/common-views/input-chat-message-view/input-chat-message-view.content",
+                "reference-docs/sources/stream-chat-ui/common-views/input-chat-message-view/input-chat-message-view"
               ]
             },
             {
               "ListCollectionViewLayout": [
-                "ReferenceDocs/Sources/StreamChatUI/CommonViews/ListCollectionViewLayout/cellseparatorreusableview",
-                "ReferenceDocs/Sources/StreamChatUI/CommonViews/ListCollectionViewLayout/listcollectionviewlayout",
-                "ReferenceDocs/Sources/StreamChatUI/CommonViews/ListCollectionViewLayout/listcollectionviewlayoutdelegate"
+                "reference-docs/sources/stream-chat-ui/common-views/list-collection-view-layout/cell-separator-reusable-view",
+                "reference-docs/sources/stream-chat-ui/common-views/list-collection-view-layout/list-collection-view-layout",
+                "reference-docs/sources/stream-chat-ui/common-views/list-collection-view-layout/list-collection-view-layout-delegate"
               ]
             },
             {
               "QuotedChatMessageView": [
-                "ReferenceDocs/Sources/StreamChatUI/CommonViews/QuotedChatMessageView/quotedavataralignment",
-                "ReferenceDocs/Sources/StreamChatUI/CommonViews/QuotedChatMessageView/quotedchatmessageview.content",
-                "ReferenceDocs/Sources/StreamChatUI/CommonViews/QuotedChatMessageView/quotedchatmessageview.swiftuiwrapper",
-                "ReferenceDocs/Sources/StreamChatUI/CommonViews/QuotedChatMessageView/quotedchatmessageview",
-                "ReferenceDocs/Sources/StreamChatUI/CommonViews/QuotedChatMessageView/quotedchatmessageviewswiftuiview"
+                "reference-docs/sources/stream-chat-ui/common-views/quoted-chat-message-view/quoted-avatar-alignment",
+                "reference-docs/sources/stream-chat-ui/common-views/quoted-chat-message-view/quoted-chat-message-view.content",
+                "reference-docs/sources/stream-chat-ui/common-views/quoted-chat-message-view/quoted-chat-message-view.swift-ui-wrapper",
+                "reference-docs/sources/stream-chat-ui/common-views/quoted-chat-message-view/quoted-chat-message-view",
+                "reference-docs/sources/stream-chat-ui/common-views/quoted-chat-message-view/quoted-chat-message-view-swift-ui-view"
               ]
             },
             {
               "Suggestions": [
                 {
                   "ChatCommandSuggestionView": [
-                    "ReferenceDocs/Sources/StreamChatUI/CommonViews/Suggestions/ChatCommandSuggestionView/chatcommandsuggestioncollectionviewcell",
-                    "ReferenceDocs/Sources/StreamChatUI/CommonViews/Suggestions/ChatCommandSuggestionView/chatcommandsuggestionview"
+                    "reference-docs/sources/stream-chat-ui/common-views/suggestions/chat-command-suggestion-view/chat-command-suggestion-collection-view-cell",
+                    "reference-docs/sources/stream-chat-ui/common-views/suggestions/chat-command-suggestion-view/chat-command-suggestion-view"
                   ]
                 },
                 {
                   "ChatMentionSuggestionView": [
-                    "ReferenceDocs/Sources/StreamChatUI/CommonViews/Suggestions/ChatMentionSuggestionView/chatmentionsuggestioncollectionviewcell",
-                    "ReferenceDocs/Sources/StreamChatUI/CommonViews/Suggestions/ChatMentionSuggestionView/chatmentionsuggestionview"
+                    "reference-docs/sources/stream-chat-ui/common-views/suggestions/chat-mention-suggestion-view/chat-mention-suggestion-collection-view-cell",
+                    "reference-docs/sources/stream-chat-ui/common-views/suggestions/chat-mention-suggestion-view/chat-mention-suggestion-view"
                   ]
                 },
-                "ReferenceDocs/Sources/StreamChatUI/CommonViews/Suggestions/chatmessagecomposersuggestionscommanddatasource",
-                "ReferenceDocs/Sources/StreamChatUI/CommonViews/Suggestions/chatmessagecomposersuggestionsmentiondatasource",
-                "ReferenceDocs/Sources/StreamChatUI/CommonViews/Suggestions/chatsuggestionscollectionreusableview",
-                "ReferenceDocs/Sources/StreamChatUI/CommonViews/Suggestions/chatsuggestionscollectionview",
-                "ReferenceDocs/Sources/StreamChatUI/CommonViews/Suggestions/chatsuggestionscollectionviewlayout",
-                "ReferenceDocs/Sources/StreamChatUI/CommonViews/Suggestions/chatsuggestionsheaderview",
-                "ReferenceDocs/Sources/StreamChatUI/CommonViews/Suggestions/chatsuggestionsviewcontroller"
+                "reference-docs/sources/stream-chat-ui/common-views/suggestions/chat-message-composer-suggestions-command-data-source",
+                "reference-docs/sources/stream-chat-ui/common-views/suggestions/chat-message-composer-suggestions-mention-data-source",
+                "reference-docs/sources/stream-chat-ui/common-views/suggestions/chat-suggestions-collection-reusable-view",
+                "reference-docs/sources/stream-chat-ui/common-views/suggestions/chat-suggestions-collection-view",
+                "reference-docs/sources/stream-chat-ui/common-views/suggestions/chat-suggestions-collection-view-layout",
+                "reference-docs/sources/stream-chat-ui/common-views/suggestions/chat-suggestions-header-view",
+                "reference-docs/sources/stream-chat-ui/common-views/suggestions/chat-suggestions-view-controller"
               ]
             }
           ]
         },
         {
           "Utils": [
-            "ReferenceDocs/Sources/StreamChatUI/Utils/appearanceprovider",
-            "ReferenceDocs/Sources/StreamChatUI/Utils/cgsize",
-            "ReferenceDocs/Sources/StreamChatUI/Utils/chatchannelnamer",
-            "ReferenceDocs/Sources/StreamChatUI/Utils/chatmessage",
-            "ReferenceDocs/Sources/StreamChatUI/Utils/componentsprovider",
-          
-            "ReferenceDocs/Sources/StreamChatUI/Utils/genericcomponentsprovider",
-            "ReferenceDocs/Sources/StreamChatUI/Utils/imagecdn",
-            "ReferenceDocs/Sources/StreamChatUI/Utils/imageprocessors.lateresize",
-            
-            "ReferenceDocs/Sources/StreamChatUI/Utils/navigationvc",
-            "ReferenceDocs/Sources/StreamChatUI/Utils/streamimagecdn",
-            "ReferenceDocs/Sources/StreamChatUI/Utils/themeprovider"
+            "reference-docs/sources/stream-chat-ui/utils/appearance-provider",
+            "reference-docs/sources/stream-chat-ui/utils/cg-size",
+            "reference-docs/sources/stream-chat-ui/utils/chat-channel-namer",
+            "reference-docs/sources/stream-chat-ui/utils/chat-message",
+            "reference-docs/sources/stream-chat-ui/utils/components-provider",
+            "reference-docs/sources/stream-chat-ui/utils/default-chat-channel-namer-max-member-names-separator",
+            "reference-docs/sources/stream-chat-ui/utils/generic-components-provider",
+            "reference-docs/sources/stream-chat-ui/utils/image-cdn",
+            "reference-docs/sources/stream-chat-ui/utils/image-processors.late-resize",
+            "reference-docs/sources/stream-chat-ui/utils/image-processors",
+            "reference-docs/sources/stream-chat-ui/utils/navigation-vc",
+            "reference-docs/sources/stream-chat-ui/utils/stream-image-cdn",
+            "reference-docs/sources/stream-chat-ui/utils/theme-provider"
           ]
         }
       ]

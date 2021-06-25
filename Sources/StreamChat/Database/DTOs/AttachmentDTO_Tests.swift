@@ -289,6 +289,7 @@ class AttachmentDTO_Tests: XCTestCase {
                 text: "Message pending send",
                 pinning: nil,
                 quotedMessageId: nil,
+                isSilent: false,
                 attachments: [.init(payload: TestAttachmentPayload.unique)],
                 extraData: NoExtraData.Message.defaultValue
             )

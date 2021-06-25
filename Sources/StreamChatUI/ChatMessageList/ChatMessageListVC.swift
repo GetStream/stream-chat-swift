@@ -89,7 +89,7 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
     /// A button to scroll the collection view to the bottom.
     ///
     /// Visible when there is unread message and the collection view is not at the bottom already.
-    open private(set) lazy var scrollToLatestMessageButton: UIButton = components
+    open private(set) lazy var scrollToLatestMessageButton: _ScrollToLatestMessageButton<ExtraData> = components
         .scrollToLatestMessageButton
         .init()
         .withoutAutoresizingMaskConstraints
@@ -271,10 +271,11 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
     open func scrollViewDidScroll(_ scrollView: UIScrollView) {
         if collectionView.isLastCellFullyVisible, channelController.channel?.isUnread == true {
             channelController.markRead()
-            
-            // Hide the button immediately. Temporary solution until CIS-881 is implemented.
-            setScrollToLatestMessageButton(visible: false)
+
+            // Hide the badge immediately. Temporary solution until CIS-881 is implemented.
+            scrollToLatestMessageButton.content = .noUnread
         }
+        setScrollToLatestMessageButton(visible: !collectionView.isLastCellFullyVisible)
     }
     
     /// Scrolls to most recent message
@@ -282,10 +283,9 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
         collectionView.scrollToMostRecentMessage(animated: animated)
     }
     
-    /// Update the visibility of `scrollToLatestMessageButton` based on unread messages and visible messages.
+    /// Update the `scrollToLatestMessageButton` based on unread messages.
     open func updateScrollToLatestMessageButton() {
-        let visible = channelController.channel?.isUnread == true && !collectionView.isLastCellFullyVisible
-        setScrollToLatestMessageButton(visible: visible)
+        scrollToLatestMessageButton.content = channelController.channel?.unreadCount ?? .noUnread
     }
     
     /// Set the visibility of `scrollToLatestMessageButton`.
@@ -404,18 +404,16 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
     }
 
     // MARK: - Cell action handlers
-
-    public func didTapOnImageAttachment(
+    
+    open func didTapOnImageAttachment(
         _ attachment: ChatMessageImageAttachment,
         previews: [ImagePreviewable],
-        at indexPath: IndexPath
+        at indexPath: IndexPath?
     ) {
-        guard
-            let cell = collectionView.cellForItem(at: indexPath) as? _ChatMessageCollectionViewCell<ExtraData>,
-            let message = cell.messageContentView?.content
-        else { return }
+        guard let indexPath = indexPath else { return log.error("IndexPath is not available") }
+        
         router.showImageGallery(
-            message: message,
+            message: messageForIndexPath(indexPath),
             initialAttachment: attachment,
             previews: previews
         )
@@ -423,13 +421,16 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
     
     open func didTapOnLinkAttachment(
         _ attachment: ChatMessageLinkAttachment,
-        at indexPath: IndexPath
+        at indexPath: IndexPath?
     ) {
         router.showLinkPreview(link: attachment.originalURL)
     }
 
-    public func didTapOnAttachment(_ attachment: ChatMessageFileAttachment, at indexPath: IndexPath) {
-        router.showFilePreview(fileURL: attachment.payload.assetURL)
+    open func didTapOnAttachment(
+        _ attachment: ChatMessageFileAttachment,
+        at indexPath: IndexPath?
+    ) {
+        router.showFilePreview(fileURL: attachment.assetURL)
     }
     
     /// Executes the provided action on the message
@@ -481,6 +482,8 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
         _ channelController: _ChatChannelController<ExtraData>,
         didChangeTypingMembers typingMembers: Set<_ChatChannelMember<ExtraData.User>>
     ) {
+        guard channelController.areTypingEventsEnabled else { return }
+        
         let typingMembersWithoutCurrentUser = typingMembers
             .sorted { $0.id < $1.id }
             .filter { $0.id != self.channelController.client.currentUserId }

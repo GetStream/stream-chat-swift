@@ -332,23 +332,23 @@ class ChatClient_Tests: StressTestCase {
         
         // Simulate WebSocketConnection change
         testEnv.webSocketClient?.connectionStateDelegate?
-            .webSocketClient(testEnv.webSocketClient!, didUpdateConectionState: .connecting)
+            .webSocketClient(testEnv.webSocketClient!, didUpdateConnectionState: .connecting)
         
         AssertAsync.staysTrue(providedConnectionId == nil)
         
         // Simulate WebSocket connected and connection id is provided
         testEnv.webSocketClient?.connectionStateDelegate?
-            .webSocketClient(testEnv.webSocketClient!, didUpdateConectionState: .connecting)
+            .webSocketClient(testEnv.webSocketClient!, didUpdateConnectionState: .connecting)
         let connectionId: ConnectionId = .unique
         testEnv.webSocketClient?.connectionStateDelegate?
-            .webSocketClient(testEnv.webSocketClient!, didUpdateConectionState: .connected(connectionId: connectionId))
+            .webSocketClient(testEnv.webSocketClient!, didUpdateConnectionState: .connected(connectionId: connectionId))
         
         AssertAsync.willBeEqual(providedConnectionId, connectionId)
         XCTAssertEqual(try waitFor { client.provideConnectionId(completion: $0) }, connectionId)
         
         // Simulate WebSocketConnection disconnecting and assert connectionId is reset
         testEnv.webSocketClient?.connectionStateDelegate?
-            .webSocketClient(testEnv.webSocketClient!, didUpdateConectionState: .connecting)
+            .webSocketClient(testEnv.webSocketClient!, didUpdateConnectionState: .connecting)
         
         providedConnectionId = nil
         client.provideConnectionId {
@@ -380,14 +380,14 @@ class ChatClient_Tests: StressTestCase {
         // Simulate WebSocketConnection change to "disconnected"
         let error = ClientError(with: TestError())
         testEnv.webSocketClient?.connectionStateDelegate?
-            .webSocketClient(testEnv.webSocketClient!, didUpdateConectionState: .disconnected(error: error))
+            .webSocketClient(testEnv.webSocketClient!, didUpdateConnectionState: .disconnected(error: error))
         
         // Assert the provided connection id is `nil`
         XCTAssertNil(providedConnectionId)
         
         // Simulate WebSocketConnection change to "connected" and assert `providedConnectionId` is still `nil`
         testEnv.webSocketClient?.connectionStateDelegate?
-            .webSocketClient(testEnv.webSocketClient!, didUpdateConectionState: .connected(connectionId: .unique))
+            .webSocketClient(testEnv.webSocketClient!, didUpdateConnectionState: .connected(connectionId: .unique))
 
         XCTAssertNil(providedConnectionId)
     }
@@ -408,7 +408,7 @@ class ChatClient_Tests: StressTestCase {
         // Simulate .connected state to obtain connection id
         let connectionId: ConnectionId = .unique
         testEnv.webSocketClient?.connectionStateDelegate?
-            .webSocketClient(testEnv.webSocketClient!, didUpdateConectionState: .connected(connectionId: connectionId))
+            .webSocketClient(testEnv.webSocketClient!, didUpdateConnectionState: .connected(connectionId: connectionId))
         
         XCTAssertEqual(client.connectionId, connectionId)
         
@@ -421,7 +421,7 @@ class ChatClient_Tests: StressTestCase {
             .connectionStateDelegate?
             .webSocketClient(
                 testEnv.webSocketClient!,
-                didUpdateConectionState: .disconnected(error: error)
+                didUpdateConnectionState: .disconnected(error: error)
             )
         
         // Was called one more time on receiving token expired error
@@ -429,6 +429,44 @@ class ChatClient_Tests: StressTestCase {
         
         // We set connectionId to nil after token expiration disconnect
         XCTAssertNil(client.connectionId)
+    }
+    
+    func test_clientProvidesConnectionId_afterUnlockingResources() {
+        // IMPORTANT: This test hangs (freezes) if there's simulatenous
+        // access to `connectionId`, so freeze = failure for this test
+        // Create a new chat client
+        let client = ChatClient(
+            config: inMemoryStorageConfig,
+            tokenProvider: .anonymous,
+            workerBuilders: workerBuilders,
+            eventWorkerBuilders: [],
+            environment: testEnv.environment
+        )
+        
+        // Simulate access to `webSocketClient` so it is initialized
+        _ = client.webSocketClient
+        
+        // Set a connection Id waiter and set `providedConnectionId` to nil value
+        var providedConnectionId: ConnectionId?
+        client.provideConnectionId { _ in
+            // Set another connectionId waiter inside the first one
+            // This is to simulate the case where 2 entities call this func
+            // Like, calling `synchronize` in a delegate callback
+            client.provideConnectionId {
+                providedConnectionId = $0
+            }
+        }
+        XCTAssertNil(providedConnectionId)
+        
+        // Simulate providing connection id
+        testEnv.webSocketClient?.connectionStateDelegate?
+            .webSocketClient(testEnv.webSocketClient!, didUpdateConnectionState: .connecting)
+        let connectionId: ConnectionId = .unique
+        testEnv.webSocketClient?.connectionStateDelegate?
+            .webSocketClient(testEnv.webSocketClient!, didUpdateConnectionState: .connected(connectionId: connectionId))
+        
+        // Assert that our waiter received the new connectionId
+        AssertAsync.willBeEqual(providedConnectionId, connectionId)
     }
     
     // MARK: - APIClient tests
@@ -651,7 +689,7 @@ class ChatClient_Tests: StressTestCase {
         // Simulate .connected state to obtain connection id
         let connectionId: ConnectionId = .unique
         testEnv.webSocketClient?.connectionStateDelegate?
-            .webSocketClient(testEnv.webSocketClient!, didUpdateConectionState: .connected(connectionId: connectionId))
+            .webSocketClient(testEnv.webSocketClient!, didUpdateConnectionState: .connected(connectionId: connectionId))
         
         XCTAssertEqual(client.connectionId, connectionId)
         
@@ -680,7 +718,7 @@ class ChatClient_Tests: StressTestCase {
         // Simulate .connected state to obtain connection id
         let connectionId: ConnectionId = .unique
         testEnv.webSocketClient?.connectionStateDelegate?
-            .webSocketClient(testEnv.webSocketClient!, didUpdateConectionState: .connected(connectionId: connectionId))
+            .webSocketClient(testEnv.webSocketClient!, didUpdateConnectionState: .connected(connectionId: connectionId))
         
         XCTAssertEqual(client.connectionId, connectionId)
         
@@ -709,7 +747,7 @@ class ChatClient_Tests: StressTestCase {
         // Simulate .connected state to obtain connection id
         let connectionId: ConnectionId = .unique
         testEnv.webSocketClient?.connectionStateDelegate?
-            .webSocketClient(testEnv.webSocketClient!, didUpdateConectionState: .connected(connectionId: connectionId))
+            .webSocketClient(testEnv.webSocketClient!, didUpdateConnectionState: .connected(connectionId: connectionId))
         
         XCTAssertEqual(client.connectionId, connectionId)
         
@@ -738,7 +776,7 @@ class ChatClient_Tests: StressTestCase {
         
         // Simulate .disconnected state
         testEnv.webSocketClient?.connectionStateDelegate?
-            .webSocketClient(testEnv.webSocketClient!, didUpdateConectionState: .disconnected(error: nil))
+            .webSocketClient(testEnv.webSocketClient!, didUpdateConnectionState: .disconnected(error: nil))
         
         // Simulate going into background
         testEnv.backgroundTaskScheduler?.startListeningForAppStateUpdates_onBackground?()
@@ -763,7 +801,7 @@ class ChatClient_Tests: StressTestCase {
         // Simulate .connected state to obtain connection id
         let connectionId: ConnectionId = .unique
         testEnv.webSocketClient?.connectionStateDelegate?
-            .webSocketClient(testEnv.webSocketClient!, didUpdateConectionState: .connected(connectionId: connectionId))
+            .webSocketClient(testEnv.webSocketClient!, didUpdateConnectionState: .connected(connectionId: connectionId))
         
         XCTAssertEqual(client.connectionId, connectionId)
         
@@ -793,7 +831,7 @@ class ChatClient_Tests: StressTestCase {
         // Simulate .connected state to obtain connection id
         let connectionId: ConnectionId = .unique
         testEnv.webSocketClient?.connectionStateDelegate?
-            .webSocketClient(testEnv.webSocketClient!, didUpdateConectionState: .connected(connectionId: connectionId))
+            .webSocketClient(testEnv.webSocketClient!, didUpdateConnectionState: .connected(connectionId: connectionId))
         
         XCTAssertEqual(client.connectionId, connectionId)
         
@@ -829,7 +867,7 @@ class ChatClient_Tests: StressTestCase {
         // Simulate .connected state to obtain connection id
         let connectionId: ConnectionId = .unique
         testEnv.webSocketClient?.connectionStateDelegate?
-            .webSocketClient(testEnv.webSocketClient!, didUpdateConectionState: .connected(connectionId: connectionId))
+            .webSocketClient(testEnv.webSocketClient!, didUpdateConnectionState: .connected(connectionId: connectionId))
         
         XCTAssertEqual(client.connectionId, connectionId)
         

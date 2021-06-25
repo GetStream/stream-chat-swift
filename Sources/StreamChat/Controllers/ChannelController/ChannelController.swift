@@ -756,6 +756,7 @@ public extension _ChatChannelController {
     /// - Parameters:
     ///   - text: Text of the message.
     ///   - pinning: Pins the new message. `nil` if should not be pinned.
+    ///   - isSilent: A flag indicating whether the message is a silent message. Silent messages are special messages that don't increase the unread messages count nor mark a channel as unread.
     ///   - attachments: An array of the attachments for the message.
     ///     `Note`: can be built-in types, custom attachment types conforming to `AttachmentEnvelope` protocol
     ///     and `ChatMessageAttachmentSeed`s.
@@ -768,6 +769,7 @@ public extension _ChatChannelController {
         pinning: MessagePinning? = nil,
 //        command: String? = nil,
 //        arguments: String? = nil,
+        isSilent: Bool = false,
         attachments: [AnyAttachmentPayload] = [],
         mentionedUserIds: [UserId] = [],
         quotedMessageId: MessageId? = nil,
@@ -789,6 +791,7 @@ public extension _ChatChannelController {
             in: cid,
             text: text,
             pinning: pinning,
+            isSilent: isSilent,
             command: nil,
             arguments: nil,
             attachments: attachments,

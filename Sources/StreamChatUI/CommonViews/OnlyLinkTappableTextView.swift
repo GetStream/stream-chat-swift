@@ -4,7 +4,7 @@
 
 import UIKit
 
-/// Text View that ignore all user interactions except touches on links
+/// Text View that ignores all user interactions except touches on links
 class OnlyLinkTappableTextView: UITextView {
     override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
         if let range = characterRange(at: point),
