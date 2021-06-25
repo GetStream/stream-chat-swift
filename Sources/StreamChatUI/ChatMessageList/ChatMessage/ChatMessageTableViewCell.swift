@@ -23,6 +23,13 @@ public final class _ChatMessageTableViewCell<ExtraData: ExtraDataTypes>: _TableV
         
         selectionStyle = .none
     }
+    
+    public override func setUpAppearance() {
+        super.setUpAppearance()
+        
+        backgroundColor = .clear
+        backgroundView = nil
+    }
 
     override public func prepareForReuse() {
         super.prepareForReuse()
