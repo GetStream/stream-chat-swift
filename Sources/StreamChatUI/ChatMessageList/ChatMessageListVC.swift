@@ -48,28 +48,9 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
     
     /// View used to display the messages
     open private(set) lazy var tableView: ChatMessageListTableView<ExtraData> = {
-//        let collection = components
-//            .messageListCollectionView
-//            .init(layout: messageListLayout)
-//            .withoutAutoresizingMaskConstraints
-//
-//        collection.isPrefetchingEnabled = false
-//        collection.showsHorizontalScrollIndicator = false
-//        collection.alwaysBounceVertical = true
-//        collection.keyboardDismissMode = .onDrag
-//        collection.dataSource = self
-//        collection.delegate = self
-//
         let tableView = ChatMessageListTableView<ExtraData>().withoutAutoresizingMaskConstraints
         tableView.delegate = self
         tableView.dataSource = self
-
-        tableView.rowHeight = UITableView.automaticDimension
-        tableView.estimatedRowHeight = 150
-        tableView.separatorStyle = .none
-
-        tableView.transform = CGAffineTransform(rotationAngle: .pi)
-
         return tableView
     }()
     
@@ -613,10 +594,7 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
 
         cell.messageContentView?.delegate = self
         cell.messageContentView?.content = message
-
-        cell.transform = CGAffineTransform(rotationAngle: .pi)
-        cell.selectionStyle = .none
-
+        
         return cell
     }
 }

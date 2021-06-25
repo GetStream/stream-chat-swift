@@ -311,6 +311,30 @@ open class ChatMessageListCollectionView<ExtraData: ExtraDataTypes>: UICollectio
 
 open class ChatMessageListTableView<ExtraData: ExtraDataTypes>: UITableView {
     private var identifiers: Set<String> = .init()
+    private var isInitialized: Bool = false
+
+    override open func didMoveToSuperview() {
+        super.didMoveToSuperview()
+        
+        guard !isInitialized, superview != nil else { return }
+
+        isInitialized = true
+
+        setUp()
+        setUpLayout()
+        setUpAppearance()
+    }
+    
+    open func setUp() {
+        keyboardDismissMode = .onDrag
+        rowHeight = UITableView.automaticDimension
+        estimatedRowHeight = 150
+        separatorStyle = .none
+        transform = .init(scaleX: 1, y: -1)
+    }
+    
+    open func setUpAppearance() { /* default empty implementation */ }
+    open func setUpLayout() { /* default empty implementation */ }
 
     /// Dequeues the message cell. Registers the cell for received combination of `contentViewClass + layoutOptions`
     /// if needed.
@@ -353,6 +377,8 @@ open class ChatMessageListTableView<ExtraData: ExtraDataTypes>: UITableView {
             guard let cell = cell else { return nil }
             return self?.indexPath(for: cell)
         }
+        
+        cell.contentView.transform = .init(scaleX: 1, y: -1)
 
         return cell
     }

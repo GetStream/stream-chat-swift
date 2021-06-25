@@ -17,6 +17,12 @@ public final class _ChatMessageTableViewCell<ExtraData: ExtraDataTypes>: _TableV
     public static var reuseId: String { "\(self)" }
 
     public private(set) var messageContentView: _ChatMessageContentView<ExtraData>?
+    
+    override public func setUp() {
+        super.setUp()
+        
+        selectionStyle = .none
+    }
 
     override public func prepareForReuse() {
         super.prepareForReuse()
