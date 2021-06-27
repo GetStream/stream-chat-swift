@@ -8,6 +8,31 @@
       ]
     },
     {
+      "Customization": [
+        "customization/theming",
+        "customization/components"
+      ]
+    },
+    {
+      "Core Components": [
+        "components/channel-list",
+        "components/message-list",
+        "components/message",
+        "components/message-thread",
+        "components/message-composer"
+      ]
+    },
+    {
+      "Navigation Components": [
+        "components/chat-channel-list-router",
+        "components/chat-message-list-router",
+        "components/alerts-router"
+      ]
+    },
+    {
+      "UI Components": []
+    },
+    {
       "Guides": [
         "guides/ui-customization",
         {
@@ -38,99 +63,6 @@
         "guides/migrating-from-3-to-4",
         "guides/migrating-from-1.x-and-2.x",
         "guides/debugging"
-      ]
-    },
-    {
-      "Controllers": [
-        "controllers/controllers-overview",
-        {
-          "ChannelController": [
-            "reference-docs/sources/stream-chat/controllers/channel-controller/chat-channel-controller-delegate",
-            "reference-docs/sources/stream-chat/controllers/channel-controller/chat-channel-controller",
-            "reference-docs/sources/stream-chat/controllers/channel-controller/chat-channel-controller.observable-object",
-            "reference-docs/sources/stream-chat/controllers/channel-controller/list-ordering"
-          ]
-        },
-        {
-          "ChannelListController": [
-            "reference-docs/sources/stream-chat/controllers/channel-list-controller/chat-channel-list-controller-delegate",
-            "reference-docs/sources/stream-chat/controllers/channel-list-controller/chat-channel-list-controller",
-            "reference-docs/sources/stream-chat/controllers/channel-list-controller/chat-channel-list-controller.observable-object",
-            "reference-docs/sources/stream-chat/controllers/channel-list-controller/client-error.fetch-failed"
-          ]
-        },
-        {
-          "ChannelWatcherListController": [
-            "reference-docs/sources/stream-chat/controllers/channel-watcher-list-controller/chat-channel-watcher-list-controller-delegate",
-            "reference-docs/sources/stream-chat/controllers/channel-watcher-list-controller/chat-channel-watcher-list-controller",
-            "reference-docs/sources/stream-chat/controllers/channel-watcher-list-controller/chat-channel-watcher-list-controller.observable-object"
-          ]
-        },
-        {
-          "ConnectionController": [
-            "reference-docs/sources/stream-chat/controllers/connection-controller/chat-connection-controller-delegate",
-            "reference-docs/sources/stream-chat/controllers/connection-controller/chat-connection-controller",
-            "reference-docs/sources/stream-chat/controllers/connection-controller/chat-connection-controller.observable-object"
-          ]
-        },
-        {
-          "CurrentUserController": [
-            "reference-docs/sources/stream-chat/controllers/current-user-controller/current-chat-user-controller-delegate",
-            "reference-docs/sources/stream-chat/controllers/current-user-controller/current-chat-user-controller",
-            "reference-docs/sources/stream-chat/controllers/current-user-controller/current-chat-user-controller.observable-object"
-          ]
-        },
-        {
-          "MemberController": [
-            "reference-docs/sources/stream-chat/controllers/member-controller/chat-channel-member-controller-delegate",
-            "reference-docs/sources/stream-chat/controllers/member-controller/chat-channel-member-controller",
-            "reference-docs/sources/stream-chat/controllers/member-controller/chat-channel-member-controller.observable-object"
-          ]
-        },
-        {
-          "MemberListController": [
-            "reference-docs/sources/stream-chat/controllers/member-list-controller/chat-channel-member-list-controller-delegate",
-            "reference-docs/sources/stream-chat/controllers/member-list-controller/chat-channel-member-list-controller",
-            "reference-docs/sources/stream-chat/controllers/member-list-controller/chat-channel-member-list-controller.observable-object"
-          ]
-        },
-        {
-          "MessageController": [
-            "reference-docs/sources/stream-chat/controllers/message-controller/chat-message-controller-delegate",
-            "reference-docs/sources/stream-chat/controllers/message-controller/chat-message-controller",
-            "reference-docs/sources/stream-chat/controllers/message-controller/chat-message-controller.observable-object"
-          ]
-        },
-        {
-          "SearchControllers": [
-            "reference-docs/sources/stream-chat/controllers/search-controllers/chat-user-search-controller-delegate",
-            "reference-docs/sources/stream-chat/controllers/search-controllers/chat-user-search-controller"
-          ]
-        },
-        {
-          "UserController": [
-            "reference-docs/sources/stream-chat/controllers/user-controller/chat-user-controller-delegate",
-            "reference-docs/sources/stream-chat/controllers/user-controller/chat-user-controller",
-            "reference-docs/sources/stream-chat/controllers/user-controller/chat-user-controller.observable-object"
-          ]
-        },
-        {
-          "UserListController": [
-            "reference-docs/sources/stream-chat/controllers/user-list-controller/chat-user-list-controller-delegate",
-            "reference-docs/sources/stream-chat/controllers/user-list-controller/chat-user-list-controller",
-            "reference-docs/sources/stream-chat/controllers/user-list-controller/chat-user-list-controller.observable-object"
-          ]
-        },
-        {
-          "DataController": [
-            "reference-docs/sources/stream-chat/controllers/data-controller",
-            "reference-docs/sources/stream-chat/controllers/data-controller.state",
-            "reference-docs/sources/stream-chat/controllers/data-controller-state-delegate"
-          ]
-        },
-        "reference-docs/sources/stream-chat/controllers/controller",
-        "reference-docs/sources/stream-chat/controllers/entity-change",
-        "reference-docs/sources/stream-chat/controllers/list-change"
       ]
     },
     {
@@ -430,99 +362,6 @@
             "reference-docs/sources/stream-chat-ui/utils/theme-provider"
           ]
         }
-      ]
-    },
-    {
-      "Controllers": [
-        "controllers/controllers-overview",
-        {
-          "ChannelController": [
-            "ReferenceDocs/Sources/StreamChat/Controllers/ChannelController/ChatChannelController",
-            "ReferenceDocs/Sources/StreamChat/Controllers/ChannelController/ChatChannelControllerDelegate",
-            "ReferenceDocs/Sources/StreamChat/Controllers/ChannelController/ChatChannelController.ObservableObject",
-            "ReferenceDocs/Sources/StreamChat/Controllers/ChannelController/ListOrdering"
-          ]
-        },
-        {
-          "ChannelListController": [
-            "ReferenceDocs/Sources/StreamChat/Controllers/ChannelListController/ChatChannelListController",
-            "ReferenceDocs/Sources/StreamChat/Controllers/ChannelListController/ChatChannelListControllerDelegate",
-            "ReferenceDocs/Sources/StreamChat/Controllers/ChannelListController/ChatChannelListController.ObservableObject",
-            "ReferenceDocs/Sources/StreamChat/Controllers/ChannelListController/ClientError.FetchFailed"
-          ]
-        },
-        {
-          "ChannelWatcherListController": [
-            "ReferenceDocs/Sources/StreamChat/Controllers/ChannelWatcherListController/ChatChannelWatcherListController",
-            "ReferenceDocs/Sources/StreamChat/Controllers/ChannelWatcherListController/ChatChannelWatcherListControllerDelegate",
-            "ReferenceDocs/Sources/StreamChat/Controllers/ChannelWatcherListController/ChatChannelWatcherListController.ObservableObject"
-          ]
-        },
-        {
-          "ConnectionController": [
-            "ReferenceDocs/Sources/StreamChat/Controllers/ConnectionController/ChatConnectionController",
-            "ReferenceDocs/Sources/StreamChat/Controllers/ConnectionController/ChatConnectionControllerDelegate",
-            "ReferenceDocs/Sources/StreamChat/Controllers/ConnectionController/ChatConnectionController.ObservableObject"
-          ]
-        },
-        {
-          "CurrentUserController": [
-            "ReferenceDocs/Sources/StreamChat/Controllers/CurrentUserController/CurrentChatUserController",
-            "ReferenceDocs/Sources/StreamChat/Controllers/CurrentUserController/CurrentChatUserControllerDelegate",
-            "ReferenceDocs/Sources/StreamChat/Controllers/CurrentUserController/CurrentChatUserController.ObservableObject"
-          ]
-        },
-        {
-          "MemberController": [
-            "ReferenceDocs/Sources/StreamChat/Controllers/MemberController/ChatChannelMemberController",
-            "ReferenceDocs/Sources/StreamChat/Controllers/MemberController/ChatChannelMemberControllerDelegate",
-            "ReferenceDocs/Sources/StreamChat/Controllers/MemberController/ChatChannelMemberController.ObservableObject"
-          ]
-        },
-        {
-          "MemberListController": [
-            "ReferenceDocs/Sources/StreamChat/Controllers/MemberListController/ChatChannelMemberListController",
-            "ReferenceDocs/Sources/StreamChat/Controllers/MemberListController/ChatChannelMemberListControllerDelegate",
-            "ReferenceDocs/Sources/StreamChat/Controllers/MemberListController/ChatChannelMemberListController.ObservableObject"
-          ]
-        },
-        {
-          "MessageController": [
-            "ReferenceDocs/Sources/StreamChat/Controllers/MessageController/ChatMessageController",
-            "ReferenceDocs/Sources/StreamChat/Controllers/MessageController/ChatMessageControllerDelegate",
-            "ReferenceDocs/Sources/StreamChat/Controllers/MessageController/ChatMessageController.ObservableObject"
-          ]
-        },
-        {
-          "SearchControllers": [
-            "ReferenceDocs/Sources/StreamChat/Controllers/SearchControllers/ChatUserSearchController",
-            "ReferenceDocs/Sources/StreamChat/Controllers/SearchControllers/ChatUserSearchControllerDelegate"
-          ]
-        },
-        {
-          "UserController": [
-            "ReferenceDocs/Sources/StreamChat/Controllers/UserController/ChatUserController",
-            "ReferenceDocs/Sources/StreamChat/Controllers/UserController/ChatUserControllerDelegate",
-            "ReferenceDocs/Sources/StreamChat/Controllers/UserController/ChatUserController.ObservableObject"
-          ]
-        },
-        {
-          "UserListController": [
-            "ReferenceDocs/Sources/StreamChat/Controllers/UserListController/ChatUserListController",
-            "ReferenceDocs/Sources/StreamChat/Controllers/UserListController/ChatUserListControllerDelegate",
-            "ReferenceDocs/Sources/StreamChat/Controllers/UserListController/ChatUserListController.ObservableObject"
-          ]
-        },
-        {
-          "DataController": [
-            "ReferenceDocs/Sources/StreamChat/Controllers/DataController",
-            "ReferenceDocs/Sources/StreamChat/Controllers/DataController.State",
-            "ReferenceDocs/Sources/StreamChat/Controllers/DataControllerStateDelegate"
-          ]
-        },
-        "ReferenceDocs/Sources/StreamChat/Controllers/Controller",
-        "ReferenceDocs/Sources/StreamChat/Controllers/EntityChange",
-        "ReferenceDocs/Sources/StreamChat/Controllers/ListChange"
       ]
     }
   ]

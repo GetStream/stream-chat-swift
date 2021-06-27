@@ -2,71 +2,83 @@
 title: Getting Started
 ---
 
-This section provides a high level overview of the library setup, core components, and how they fit together. It's a great starting point and you can follow along in your code editor. For a complete, step-by-step guide in terms setting up a React project or instructions on creating specific files, see our [iOS Chat tutorial](/tutorials/ios-chat/).
+This section provides a high level overview of the library setup, core components, and how they fit together. It's a great starting point and you can follow along in your code editor. For a complete, step-by-step guide in terms setting up a Swift project or instructions on creating specific files, see our [iOS Chat tutorial](/tutorials/ios-chat/).
 
-## Your First App with Stream Chat React
+## Your First App with Stream Chat
 
 Before starting, make sure you have installed `StreamChatUI`, as explained in the [Installation](../#installation) section.
 
-The below example is all the code you need to launch a fully functioning chat experience. The Chat and Channel components are React context providers that pass a variety of values to their children, including UI components, stateful data, and action handler functions.
+### Chat setup and users
 
-Getting up & running with our SDK is a couple of lines:
-
-```swift
-// Create a token
-let userId = "first-user"
-let token = Token.development(userId: userId)
-
-// Create client
-let config = ChatClientConfig(apiKey: <# Your API Key Here #>)
-let chatClient = ChatClient(config: config, tokenProvider: .static(token))
-
-// Channels with the current user
-let controller = chatClient.channelListController(query: .init(filter: .containMembers(userIds: [userId])))
-let channelListVC = ChatChannelListVC()
-channelListVC.controller = controller
-
-// Present the ChatListViewController
-present(channelListVC, animated: true)
-```
-
-In the snippet above, we've:
-* created our `ChatClient` instance that we'll use to interact with the SDK,
-* created `ChatChannelListController` instance that'll allow us to get the list of Channels for a given query,
-* created `ChatChannelListVC` instance that'll use the controller to display the list of Channels
-
-### User Tokens
-
-User Tokens are JWT tokens containing a User ID and used to authenticate a user. In this guide, we use development tokens, since they're the easiest to start with, and are great for prototyping an application before implementing a backend handling for tokens.
-
-For more information regarding user tokens, please check [Working with User guide](../../guides/working-with-user#user-ids--tokens).
-
-### [`ChatClientConfig`](../../reference-docs/sources/stream-chat/config/chat-client-config)
-
-The `ChatClientConfig` object holds properties that the chat client will use to determine certain behaviors. For example, the `apiKey`, which tells the chat client which chat server to communicate with. It also has the `baseURL` property which tells the chat client which region of the world your server is at, which can be useful to reduce overall latency.
+The first step to use the library is to create an instance of `ChatClient` and to connect with the current user. You want to do this as early as possible in your application, it is important that the same
+instance of `ChatClient` is re-used across your application. For this you can either use a singleton or dependency injection.
 
 ```swift
-/// 1: Create a `ChatClientConfig` instance with the API key.
-let config = ChatClientConfig(apiKeyString: "YOUR_API_KEY")
-
-/// 2: Set the baseURL.
-/// This is important, since using a different baseURL 
-/// than in your dashboard config will increase latency.
-config.baseURL = .usEast
-
-/// 3: Create a `ChatClient` instance with the config and the tokenProvider.
-let chatClient = ChatClient(config: config, tokenProvider: tokenProvider)
+/// for sake of simplicity we are extending ChatClient and add a static var `shared`
+extension ChatClient {
+    static var shared: ChatClient!
+}
 ```
 
-For more information regarding available regions, please check [Multi-region Support](https://getstream.io/chat/docs/ios-swift/multi_region/?language=swift)
-For more information regarding the configuration options, please check [ChatClientConfig Reference doc](../../reference-docs/sources/stream-chat/config/chat-client-config).
+You should place this code in your `SceneDelegate.scene(_:willConnectTo:options:)` method:
 
-### [`ChatClient`](../../reference-docs/sources/stream-chat/config/chat-client)
+```swift
+/// you can grab your API Key from https://getstream.io/dashboard/
+let config = ChatClientConfig(apiKey: .init("<# Your API Key Here #>"))
 
-`ChatClient` is the main interaction point with our SDK. From it, you ask a certain Controller and use the controller to interact with StreamChat platform.
+/// you can generate the token for this user from https://getstream.io/chat/docs/ios-swift/token_generator/?language=swift
+/// make sure to use the `leia_organa` as user id and the correct API Key Secret 
+let token = "<# Your User Token Here#>"
 
-For the list of possible controllers you can get from `ChatClient`, please check [Controllers Overview](../../controllers/controllers-overview)
+/// create an instance of ChatClient and share it using the singleton
+ChatClient.shared = ChatClient(config: config, tokenProvider: .closure {client, completion in
+    guard let userId = client.currentUserId else {
+        return
+    }
+    /// on a real application you would request the chat token from your backend API
+    /// Auth.getChatToken(userID: userId, { token in
+    ///     completion(.success(token))
+    /// })
+    completion(.success(token))
+})
 
-### [`ChatChannelListVC`](../../reference-docs/sources/stream-chat-ui/chat-channel-list/chat-channel-list-vc)
+/// connect the user using a closure function
+ChatClient.shared.connect { completion in
+    /// on a real application you would request the chat token from your backend API
+    /// Auth.login({ result in
+    ///     completion(.success(result.user, result.userToken))
+    /// })
+    completion(.success(ChatUser(id: "leia_organa", name:"Leia Organa", imageURL: "https://cutt.ly/SmeFRfC")), token)
+}
+```
 
-This `UIViewController` subclass is the UI component to display a list of Channels. You can configure its behaviour by subclassing and overriding functions.
+- You can grab your API Key and API Secret from the [dashboard](https://getstream.io/dashboard/)
+- You can use the token generator [here](you can generate the token for this user from https://getstream.io/chat/docs/ios-swift/token_generator/?language=swift)
+
+This example has the user and its token hard-coded, this is done to keep things simple. Normally your app would fetch the user and generate a valid chat token on your backend infrastructure. Because retrieving a user and generating a token are asynchronous the `ChatClient` accepts a closure and handles all the synchronization for you.
+
+The next step is to add channel list and channel screens to the app. If this it is a new application, make sure to embed your view controller in a navigation controller.
+
+```swift
+import UIKit
+import StreamChat
+import StreamChatUI
+
+
+class ViewController: ChatChannelListVC {
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+
+        /// the query used to retrieve channels
+        let query = ChannelListQuery.init(filter: .containMembers(userIds: [ChatClient.shared.currentUserId!]))
+        
+        /// create a controller and assign it to this view controller
+        self.controller = ChatClient.shared.channelListController(query: query)
+    }
+}
+```
+
+In the snippet above we changed the parent class of `ViewController` to `ChatChannelListVC` and connected it with a `channelListController`. The channel list controller is responsible for retriving channels and to keep it in sync.
+
+The list of channels to retrieve is defined by the `ChannelListQuery`, in this case we want to get the list of channels where the current user is a member.
