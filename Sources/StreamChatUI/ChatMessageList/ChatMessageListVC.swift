@@ -241,7 +241,7 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
             // Hide the badge immediately. Temporary solution until CIS-881 is implemented.
             scrollToLatestMessageButton.content = .noUnread
         }
-        setScrollToLatestMessageButton(visible: !tableView.isLastCellFullyVisible)
+        setScrollToLatestMessageButton(visible: shouldShowScrollToBottomButton)
     }
     
     /// Scrolls to most recent message
@@ -579,5 +579,10 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
         cell.messageContentView?.content = message
         
         return cell
+    }
+    
+    open var shouldShowScrollToBottomButton: Bool {
+        let isMoreContentThanOnePage = tableView.contentSize.height > tableView.bounds.height
+        return !tableView.isLastCellFullyVisible && isMoreContentThanOnePage
     }
 }

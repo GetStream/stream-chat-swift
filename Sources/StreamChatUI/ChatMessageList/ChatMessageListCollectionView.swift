@@ -490,8 +490,11 @@ open class ChatMessageListTableView<ExtraData: ExtraDataTypes>: UITableView, Cus
     /// A Boolean that returns true if the bottom cell is fully visible.
     /// Which is also means that the collection view is fully scrolled to the boom.
     open var isLastCellFullyVisible: Bool {
-        if numberOfRows(inSection: 0) == 0 { return true }
-        return contentOffset.y == 0
+        guard numberOfRows(inSection: 0) > 0 else { return false }
+        
+        let cellRect = rectForRow(at: .init(row: 0, section: 0))
+        
+        return cellRect.minY >= contentOffset.y
     }
 
     /// A Boolean that returns true if the last cell is visible, but can be just partially visible.
@@ -505,7 +508,6 @@ open class ChatMessageListTableView<ExtraData: ExtraDataTypes>: UITableView, Cus
         with changes: [ListChange<_ChatMessage<ExtraData>>],
         completion: (() -> Void)? = nil
     ) {
-        
         // Before committing the changes, we need to check if were scrolled
         // to the bottom, if yes, we should stay scrolled to the bottom
         var shouldScrollToBottom = isLastCellFullyVisible
@@ -536,13 +538,13 @@ open class ChatMessageListTableView<ExtraData: ExtraDataTypes>: UITableView, Cus
        
         // If a new message was inserted or deleted, reload the previous message
         // to give it chance to update its appearance in case it's now end of a group.
-        let indexPaths = self.indexPathsToReloadAfterBatchUpdates(with: changes)
+        let indexPaths = indexPathsToReloadAfterBatchUpdates(with: changes)
         if indexPaths.isEmpty == false {
             reloadRows(at: indexPaths, with: .none)
         }
 
         if shouldScrollToBottom {
-            self.scrollToBottomAction = .init { [weak self] in
+            scrollToBottomAction = .init { [weak self] in
                 self?.scrollToMostRecentMessage()
             }
         }
