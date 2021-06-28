@@ -87,7 +87,7 @@
 		790882DF25486B6800896F03 /* ChatChannelListVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 790882BF25486ADB00896F03 /* ChatChannelListVC.swift */; };
 		790882F725486B8000896F03 /* ChatChannelListCollectionViewDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 790882F625486B8000896F03 /* ChatChannelListCollectionViewDelegate.swift */; };
 		790882FD25486BFD00896F03 /* ChatChannelListCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 790882FC25486BFD00896F03 /* ChatChannelListCollectionViewCell.swift */; };
-		79088339254876F200896F03 /* ChatMessageListTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79088331254876C100896F03 /* ChatMessageListTableView.swift */; };
+		79088339254876F200896F03 /* ChatMessageListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79088331254876C100896F03 /* ChatMessageListView.swift */; };
 		790A4C42252DD377001F4A23 /* DeviceEndpoints.swift in Sources */ = {isa = PBXBuildFile; fileRef = 790A4C41252DD36A001F4A23 /* DeviceEndpoints.swift */; };
 		790A4C45252DD4F1001F4A23 /* DevicePayloads.swift in Sources */ = {isa = PBXBuildFile; fileRef = 790A4C44252DD4F1001F4A23 /* DevicePayloads.swift */; };
 		790A4C4A252DDD50001F4A23 /* DeviceEndpoints_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 790A4C47252DDD1A001F4A23 /* DeviceEndpoints_Tests.swift */; };
@@ -489,7 +489,7 @@
 		80C6026F2514281000A6B714 /* UITableViewController+Cells.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80C6026E2514281000A6B714 /* UITableViewController+Cells.swift */; };
 		80C6027B25157E4D00A6B714 /* View+AlertTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80C6027A25157E4D00A6B714 /* View+AlertTextField.swift */; };
 		80D880432546553500908B7B /* ChatScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80D880422546553500908B7B /* ChatScrollView.swift */; };
-		847F3CEA2689FDEB00D240E0 /* ChatMessageTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 847F3CE92689FDEB00D240E0 /* ChatMessageTableViewCell.swift */; };
+		847F3CEA2689FDEB00D240E0 /* ChatMessageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 847F3CE92689FDEB00D240E0 /* ChatMessageCell.swift */; };
 		8800A26F258A04D5006D64C4 /* ChatMessageAttachmentPreviewVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8800A26E258A04D5006D64C4 /* ChatMessageAttachmentPreviewVC.swift */; };
 		8800A28C258A1924006D64C4 /* ChatMessageFileAttachmentListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8800A28B258A1924006D64C4 /* ChatMessageFileAttachmentListView.swift */; };
 		8802F9BD25AF1DE200475159 /* WebSocketClient_Mock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8802F9BC25AF1DE200475159 /* WebSocketClient_Mock.swift */; };
@@ -1330,7 +1330,7 @@
 		790882BF25486ADB00896F03 /* ChatChannelListVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatChannelListVC.swift; sourceTree = "<group>"; };
 		790882F625486B8000896F03 /* ChatChannelListCollectionViewDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatChannelListCollectionViewDelegate.swift; sourceTree = "<group>"; };
 		790882FC25486BFD00896F03 /* ChatChannelListCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatChannelListCollectionViewCell.swift; sourceTree = "<group>"; };
-		79088331254876C100896F03 /* ChatMessageListTableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageListTableView.swift; sourceTree = "<group>"; };
+		79088331254876C100896F03 /* ChatMessageListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageListView.swift; sourceTree = "<group>"; };
 		790A4C41252DD36A001F4A23 /* DeviceEndpoints.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceEndpoints.swift; sourceTree = "<group>"; };
 		790A4C44252DD4F1001F4A23 /* DevicePayloads.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DevicePayloads.swift; sourceTree = "<group>"; };
 		790A4C47252DDD1A001F4A23 /* DeviceEndpoints_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceEndpoints_Tests.swift; sourceTree = "<group>"; };
@@ -1728,7 +1728,7 @@
 		80C6026E2514281000A6B714 /* UITableViewController+Cells.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UITableViewController+Cells.swift"; sourceTree = "<group>"; };
 		80C6027A25157E4D00A6B714 /* View+AlertTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View+AlertTextField.swift"; sourceTree = "<group>"; };
 		80D880422546553500908B7B /* ChatScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatScrollView.swift; sourceTree = "<group>"; };
-		847F3CE92689FDEB00D240E0 /* ChatMessageTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageTableViewCell.swift; sourceTree = "<group>"; };
+		847F3CE92689FDEB00D240E0 /* ChatMessageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageCell.swift; sourceTree = "<group>"; };
 		8800A26E258A04D5006D64C4 /* ChatMessageAttachmentPreviewVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageAttachmentPreviewVC.swift; sourceTree = "<group>"; };
 		8800A28B258A1924006D64C4 /* ChatMessageFileAttachmentListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageFileAttachmentListView.swift; sourceTree = "<group>"; };
 		8802F9BC25AF1DE200475159 /* WebSocketClient_Mock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebSocketClient_Mock.swift; sourceTree = "<group>"; };
@@ -2522,7 +2522,7 @@
 				64B059E12670EFFE0024CE90 /* ChatMessageListVC+SwiftUI.swift */,
 				64B059EC267116B40024CE90 /* ChatMessageListVC+SwiftUI_Tests.swift */,
 				64B8AC16266F86020092D5F6 /* ChatMessageListVC_Tests.swift */,
-				79088331254876C100896F03 /* ChatMessageListTableView.swift */,
+				79088331254876C100896F03 /* ChatMessageListView.swift */,
 				A35757C62613081B00DC914C /* ChatMessageListKeyboardObserver.swift */,
 				E768AA882625C18D00328E6E /* TypingIndicatorView.swift */,
 				BD69F5D42669392E00E9E3FA /* ScrollToLatestMessageButton.swift */,
@@ -4498,7 +4498,7 @@
 				883051C72630579D0069D731 /* ChatThreadArrowView.swift */,
 				88A11B2F2590CC860000AC24 /* ChatMessageErrorIndicator.swift */,
 				8893FF15265FC60B00DD62BE /* ChatMessageErrorIndicator_Tests.swift */,
-				847F3CE92689FDEB00D240E0 /* ChatMessageTableViewCell.swift */,
+				847F3CE92689FDEB00D240E0 /* ChatMessageCell.swift */,
 			);
 			path = ChatMessage;
 			sourceTree = "<group>";
@@ -5439,11 +5439,11 @@
 				E73A8B2B2578EB2B00FBDC56 /* ComposerVC.swift in Sources */,
 				8800A26F258A04D5006D64C4 /* ChatMessageAttachmentPreviewVC.swift in Sources */,
 				AD43F90926153BAD00F2D4BB /* QuotedChatMessageView.swift in Sources */,
-				847F3CEA2689FDEB00D240E0 /* ChatMessageTableViewCell.swift in Sources */,
+				847F3CEA2689FDEB00D240E0 /* ChatMessageCell.swift in Sources */,
 				885B3D7725642B3D003E6BDF /* CurrentChatUserAvatarView.swift in Sources */,
 				224FF6912562F58F00725DD1 /* UIColor+Extensions.swift in Sources */,
 				22C2359A259CA87B00DC805A /* Animation.swift in Sources */,
-				79088339254876F200896F03 /* ChatMessageListTableView.swift in Sources */,
+				79088339254876F200896F03 /* ChatMessageListView.swift in Sources */,
 				AD447398263ABD530030E583 /* ChatCommandSuggestionCollectionViewCell.swift in Sources */,
 				88CABC8E25936E440061BB67 /* ChatMessageReactionsBubbleTail.swift in Sources */,
 				AD87D0AB263C7A7E008B466C /* ShrinkInputButton.swift in Sources */,

@@ -81,8 +81,8 @@ public struct _Components<ExtraData: ExtraDataTypes> {
     /// The View Controller used to display content of the message, i.e. in the channel detail message list.
     public var messageListVC: _ChatMessageListVC<ExtraData>.Type = _ChatMessageListVC<ExtraData>.self
 
-    /// The table view that shows the message list.
-    public var messageListTableView: _ChatMessageListTableView<ExtraData>.Type = _ChatMessageListTableView<ExtraData>
+    /// The view that shows the message list.
+    public var messageListView: _ChatMessageListView<ExtraData>.Type = _ChatMessageListView<ExtraData>
         .self
 
     /// The view that shows the date for currently visible messages on top of message list.

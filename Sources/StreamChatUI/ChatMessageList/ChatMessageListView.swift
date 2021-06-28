@@ -5,26 +5,26 @@
 import StreamChat
 import UIKit
 
-/// A protocol for `ChatMessageListTableView` delegate.
-public protocol ChatMessageListTableViewDataSource: UITableViewDataSource {
+/// A protocol for `ChatMessageListView` delegate.
+public protocol ChatMessageListViewDataSource: UITableViewDataSource {
     /// Get date for item at given index path
     /// - Parameters:
-    ///   - tableView: A table view requesting date
+    ///   - listView: A view requesting date
     ///   - indexPath: An index path that should be used to get the date
-    func tableView(_ tableView: UITableView, scrollOverlayTextForItemAt indexPath: IndexPath) -> String?
+    func messageListView(_ listView: UITableView, scrollOverlayTextForItemAt indexPath: IndexPath) -> String?
 }
 
-/// Custom table view type used for the message list.
-public typealias ChatMessageListTableView = _ChatMessageListTableView<NoExtraData>
+/// Custom view type used to show the message list.
+public typealias ChatMessageListView = _ChatMessageListView<NoExtraData>
 
-/// Custom table view type used for the message list.
-open class _ChatMessageListTableView<ExtraData: ExtraDataTypes>: UITableView, Customizable, ComponentsProvider {
+/// Custom view type used to show the message list.
+open class _ChatMessageListView<ExtraData: ExtraDataTypes>: UITableView, Customizable, ComponentsProvider {
     private var identifiers: Set<String> = .init()
     private var isInitialized: Bool = false
     private var contentOffsetObservation: NSKeyValueObservation?
     
-    private var chatDataSource: ChatMessageListTableViewDataSource? {
-        dataSource as? ChatMessageListTableViewDataSource
+    private var chatDataSource: ChatMessageListViewDataSource? {
+        dataSource as? ChatMessageListViewDataSource
     }
     
     // In some cases updates coming one by one might require scrolling to bottom.
@@ -84,7 +84,7 @@ open class _ChatMessageListTableView<ExtraData: ExtraDataTypes>: UITableView, Cu
             // If we cannot find any indexPath for `cell` we try to use max visible indexPath (we have bottom to top) layout
             guard let indexPath = tb.indexPathForRow(at: dateViewRefPoint) ?? tb.indexPathsForVisibleRows?.max() else { return }
             
-            let overlayText = tb.chatDataSource?.tableView(tb, scrollOverlayTextForItemAt: indexPath)
+            let overlayText = tb.chatDataSource?.messageListView(tb, scrollOverlayTextForItemAt: indexPath)
             
             // As cells can overlay our `dateView` we need to keep it above them
             tb.bringSubviewToFront(tb.scrollOverlayView)
@@ -130,9 +130,9 @@ open class _ChatMessageListTableView<ExtraData: ExtraDataTypes>: UITableView, Cu
         attachmentViewInjectorType: _AttachmentViewInjector<ExtraData>.Type?,
         layoutOptions: ChatMessageLayoutOptions,
         for indexPath: IndexPath
-    ) -> _ChatMessageTableViewCell<ExtraData> {
+    ) -> _ChatMessageCell<ExtraData> {
         let reuseIdentifier =
-            "\(_ChatMessageTableViewCell<ExtraData>.reuseId)_" + "\(layoutOptions.rawValue)_" +
+            "\(_ChatMessageCell<ExtraData>.reuseId)_" + "\(layoutOptions.rawValue)_" +
             "\(contentViewClass)_" + String(describing: attachmentViewInjectorType)
 
         // There is no public API to find out
@@ -140,13 +140,13 @@ open class _ChatMessageListTableView<ExtraData: ExtraDataTypes>: UITableView, Cu
         if !identifiers.contains(reuseIdentifier) {
             identifiers.insert(reuseIdentifier)
 
-            register(_ChatMessageTableViewCell<ExtraData>.self, forCellReuseIdentifier: reuseIdentifier)
+            register(_ChatMessageCell<ExtraData>.self, forCellReuseIdentifier: reuseIdentifier)
         }
 
         let cell = dequeueReusableCell(
             withIdentifier: reuseIdentifier,
             for: indexPath
-        ) as! _ChatMessageTableViewCell<ExtraData>
+        ) as! _ChatMessageCell<ExtraData>
 
         cell.setMessageContentIfNeeded(
             contentViewClass: contentViewClass,

@@ -22,7 +22,7 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
     GiphyActionContentViewDelegate,
     LinkPreviewViewDelegate,
     FileActionContentViewDelegate,
-    ChatMessageListTableViewDataSource {
+    ChatMessageListViewDataSource {
     /// Controller for observing data changes within the channel
     open var channelController: _ChatChannelController<ExtraData>!
     
@@ -43,11 +43,11 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
     }
     
     /// View used to display the messages
-    open private(set) lazy var tableView: _ChatMessageListTableView<ExtraData> = {
-        let tableView = components.messageListTableView.init().withoutAutoresizingMaskConstraints
-        tableView.delegate = self
-        tableView.dataSource = self
-        return tableView
+    open private(set) lazy var listView: _ChatMessageListView<ExtraData> = {
+        let listView = components.messageListView.init().withoutAutoresizingMaskConstraints
+        listView.delegate = self
+        listView.dataSource = self
+        return listView
     }()
     
     /// Controller that handles the composer view
@@ -100,7 +100,7 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
         
         let longPress = UILongPressGestureRecognizer(target: self, action: #selector(handleLongPress))
         longPress.minimumPressDuration = 0.33
-        tableView.addGestureRecognizer(longPress)
+        listView.addGestureRecognizer(longPress)
         
         messageComposerVC.setDelegate(self)
         messageComposerVC.channelController = channelController
@@ -125,13 +125,14 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
     override open func setUpLayout() {
         super.setUpLayout()
         
-        view.addSubview(tableView)
-        tableView.pin(anchors: [.top, .leading, .trailing], to: view.safeAreaLayoutGuide)
+        view.addSubview(listView)
+        listView.pin(anchors: [.top, .leading, .trailing], to: view.safeAreaLayoutGuide)
+        listView.contentInset.bottom += max(listView.layoutMargins.right, listView.layoutMargins.left)
         
         messageComposerVC.view.translatesAutoresizingMaskIntoConstraints = false
         addChildViewController(messageComposerVC, targetView: view)
 
-        messageComposerVC.view.topAnchor.pin(equalTo: tableView.bottomAnchor).isActive = true
+        messageComposerVC.view.topAnchor.pin(equalTo: listView.bottomAnchor).isActive = true
         messageComposerVC.view.leadingAnchor.pin(equalTo: view.leadingAnchor).isActive = true
         messageComposerVC.view.trailingAnchor.pin(equalTo: view.trailingAnchor).isActive = true
         messageComposerBottomConstraint = messageComposerVC.view.bottomAnchor.pin(equalTo: view.bottomAnchor)
@@ -146,7 +147,7 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
         }
         
         view.addSubview(scrollToLatestMessageButton)
-        tableView.bottomAnchor.pin(equalToSystemSpacingBelow: scrollToLatestMessageButton.bottomAnchor).isActive = true
+        listView.bottomAnchor.pin(equalToSystemSpacingBelow: scrollToLatestMessageButton.bottomAnchor).isActive = true
         scrollToLatestMessageButton.trailingAnchor.pin(equalTo: view.layoutMarginsGuide.trailingAnchor).isActive = true
         scrollToLatestMessageButton.widthAnchor.pin(equalTo: scrollToLatestMessageButton.heightAnchor).isActive = true
         scrollToLatestMessageButton.heightAnchor.pin(equalToConstant: 40).isActive = true
@@ -164,7 +165,7 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
         
         view.backgroundColor = appearance.colorPalette.background
         
-        tableView.backgroundColor = appearance.colorPalette.background
+        listView.backgroundColor = appearance.colorPalette.background
 
         navigationItem.titleView = titleView
     }
@@ -222,7 +223,7 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
         }
     }
 
-    open func tableView(
+    open func messageListView(
         _ tableView: UITableView,
         scrollOverlayTextForItemAt indexPath: IndexPath
     ) -> String? {
@@ -230,7 +231,7 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
     }
 
     open func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        if tableView.isLastCellFullyVisible, channelController.channel?.isUnread == true {
+        if listView.isLastCellFullyVisible, channelController.channel?.isUnread == true {
             channelController.markRead()
 
             // Hide the badge immediately. Temporary solution until CIS-881 is implemented.
@@ -241,7 +242,7 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
     
     /// Scrolls to most recent message
     open func scrollToMostRecentMessage(animated: Bool = true) {
-        tableView.scrollToMostRecentMessage(animated: animated)
+        listView.scrollToMostRecentMessage(animated: animated)
     }
     
     /// Update the `scrollToLatestMessageButton` based on unread messages.
@@ -302,11 +303,11 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
     /// Default implementation will convert the gesture location to collection view's `indexPath`
     /// and then call selection action on the selected cell.
     @objc open func handleLongPress(_ gesture: UILongPressGestureRecognizer) {
-        let location = gesture.location(in: tableView)
+        let location = gesture.location(in: listView)
 
         guard
             gesture.state == .began,
-            let ip = tableView.indexPathForRow(at: location)
+            let ip = listView.indexPathForRow(at: location)
         else { return }
         
         didSelectMessageCell(at: ip)
@@ -314,7 +315,7 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
 
     /// Updates the collection view data with given `changes`.
     open func updateMessages(with changes: [ListChange<_ChatMessage<ExtraData>>], completion: (() -> Void)? = nil) {
-        tableView.updateMessages(with: changes, completion: completion)
+        listView.updateMessages(with: changes, completion: completion)
     }
     
     open func messageForIndexPath(_ indexPath: IndexPath) -> _ChatMessage<ExtraData> {
@@ -323,7 +324,7 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
     
     open func didSelectMessageCell(at indexPath: IndexPath) {
         guard
-            let cell = tableView.cellForRow(at: indexPath) as? _ChatMessageTableViewCell<ExtraData>,
+            let cell = listView.cellForRow(at: indexPath) as? _ChatMessageCell<ExtraData>,
             let messageContentView = cell.messageContentView,
             let message = messageContentView.content,
             message.isInteractionEnabled == true
@@ -461,11 +462,11 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
     open func showTypingIndicator(typingMembers: [_ChatChannelMember<ExtraData.User>]) {
         if typingIndicatorView.isHidden {
             Animate {
-                self.tableView.contentInset.top += self.typingIndicatorViewHeight
-                self.tableView.scrollIndicatorInsets.top += self.typingIndicatorViewHeight
+                self.listView.contentInset.top += self.typingIndicatorViewHeight
+                self.listView.scrollIndicatorInsets.top += self.typingIndicatorViewHeight
             }
 
-            if tableView.isLastCellVisible {
+            if listView.isLastCellVisible {
                 scrollToMostRecentMessage()
             }
         }
@@ -489,8 +490,8 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
         typingIndicatorView.isHidden = true
 
         Animate {
-            self.tableView.contentInset.top -= self.typingIndicatorViewHeight
-            self.tableView.scrollIndicatorInsets.top -= self.typingIndicatorViewHeight
+            self.listView.contentInset.top -= self.typingIndicatorViewHeight
+            self.listView.scrollIndicatorInsets.top -= self.typingIndicatorViewHeight
         }
     }
     
@@ -563,7 +564,7 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
     open func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let message = channelController.messages[indexPath.row]
 
-        let cell: _ChatMessageTableViewCell<ExtraData> = self.tableView.dequeueReusableCell(
+        let cell: _ChatMessageCell<ExtraData> = listView.dequeueReusableCell(
             contentViewClass: cellContentClassForMessage(at: indexPath),
             attachmentViewInjectorType: attachmentViewInjectorClassForMessage(at: indexPath),
             layoutOptions: cellLayoutOptionsForMessage(at: indexPath),
@@ -577,7 +578,7 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
     }
     
     open var shouldShowScrollToBottomButton: Bool {
-        let isMoreContentThanOnePage = tableView.contentSize.height > tableView.bounds.height
-        return !tableView.isLastCellFullyVisible && isMoreContentThanOnePage
+        let isMoreContentThanOnePage = listView.contentSize.height > listView.bounds.height
+        return !listView.isLastCellFullyVisible && isMoreContentThanOnePage
     }
 }

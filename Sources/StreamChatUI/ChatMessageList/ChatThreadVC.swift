@@ -41,11 +41,11 @@ open class _ChatThreadVC<ExtraData: ExtraDataTypes>:
         channelController.client.userSearchController()
 
     /// View used to display the messages
-    open private(set) lazy var tableView: _ChatMessageListTableView<ExtraData> = {
-        let tableView = components.messageListTableView.init().withoutAutoresizingMaskConstraints
-        tableView.delegate = self
-        tableView.dataSource = self
-        return tableView
+    open private(set) lazy var listView: _ChatMessageListView<ExtraData> = {
+        let listView = components.messageListView.init().withoutAutoresizingMaskConstraints
+        listView.delegate = self
+        listView.dataSource = self
+        return listView
     }()
     
     /// Controller that handles the composer view
@@ -74,7 +74,7 @@ open class _ChatThreadVC<ExtraData: ExtraDataTypes>:
 
         let longPress = UILongPressGestureRecognizer(target: self, action: #selector(handleLongPress))
         longPress.minimumPressDuration = 0.33
-        tableView.addGestureRecognizer(longPress)
+        listView.addGestureRecognizer(longPress)
 
         messageComposerVC.setDelegate(self)
         messageComposerVC.channelController = channelController
@@ -98,14 +98,14 @@ open class _ChatThreadVC<ExtraData: ExtraDataTypes>:
     override open func setUpLayout() {
         super.setUpLayout()
 
-        view.addSubview(tableView)
-        tableView.pin(anchors: [.top, .leading, .trailing], to: view.safeAreaLayoutGuide)
-        tableView.contentInset.top += max(tableView.layoutMargins.right, tableView.layoutMargins.left)
+        view.addSubview(listView)
+        listView.pin(anchors: [.top, .leading, .trailing], to: view.safeAreaLayoutGuide)
+        listView.contentInset.top += max(listView.layoutMargins.right, listView.layoutMargins.left)
 
         messageComposerVC.view.translatesAutoresizingMaskIntoConstraints = false
         addChildViewController(messageComposerVC, targetView: view)
         
-        messageComposerVC.view.topAnchor.pin(equalTo: tableView.bottomAnchor).isActive = true
+        messageComposerVC.view.topAnchor.pin(equalTo: listView.bottomAnchor).isActive = true
         messageComposerBottomConstraint = messageComposerVC.view.bottomAnchor.pin(equalTo: view.bottomAnchor)
         messageComposerBottomConstraint?.isActive = true
         messageComposerVC.view.leadingAnchor.pin(equalTo: view.leadingAnchor).isActive = true
@@ -117,7 +117,7 @@ open class _ChatThreadVC<ExtraData: ExtraDataTypes>:
 
         view.backgroundColor = appearance.colorPalette.background
 
-        tableView.backgroundColor = .clear
+        listView.backgroundColor = .clear
         
         navigationItem.titleView = titleView
     }
@@ -199,7 +199,7 @@ open class _ChatThreadVC<ExtraData: ExtraDataTypes>:
     open func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let message = messages[indexPath.row]
 
-        let cell: _ChatMessageTableViewCell<ExtraData> = self.tableView.dequeueReusableCell(
+        let cell: _ChatMessageCell<ExtraData> = listView.dequeueReusableCell(
             contentViewClass: cellContentClassForMessage(at: indexPath),
             attachmentViewInjectorType: attachmentViewInjectorClassForMessage(at: indexPath),
             layoutOptions: cellLayoutOptionsForMessage(at: indexPath),
@@ -220,7 +220,7 @@ open class _ChatThreadVC<ExtraData: ExtraDataTypes>:
 
     /// Scrolls to most recent message
     open func scrollToMostRecentMessage(animated: Bool = true) {
-        tableView.scrollToMostRecentMessage(animated: animated)
+        listView.scrollToMostRecentMessage(animated: animated)
     }
 
     /// Updates the status data in `titleView`.
@@ -238,11 +238,11 @@ open class _ChatThreadVC<ExtraData: ExtraDataTypes>:
     /// Default implementation will convert the gesture location to collection view's `indexPath`
     /// and then call selection action on the selected cell.
     @objc open func handleLongPress(_ gesture: UILongPressGestureRecognizer) {
-        let location = gesture.location(in: tableView)
+        let location = gesture.location(in: listView)
 
         guard
             gesture.state == .began,
-            let ip = tableView.indexPathForRow(at: location),
+            let ip = listView.indexPathForRow(at: location),
             messageForIndexPath(ip).id != messageController.messageId
         else { return }
 
@@ -251,13 +251,13 @@ open class _ChatThreadVC<ExtraData: ExtraDataTypes>:
 
     /// Updates the collection view data with given `changes`.
     open func updateMessages(with changes: [ListChange<_ChatMessage<ExtraData>>], completion: (() -> Void)? = nil) {
-        tableView.updateMessages(with: changes, completion: completion)
+        listView.updateMessages(with: changes, completion: completion)
     }
 
     /// Presents custom actions controller with all possible actions with the selected message.
     open func didSelectMessageCell(at indexPath: IndexPath) {
         guard
-            let cell = tableView.cellForRow(at: indexPath) as? _ChatMessageTableViewCell<ExtraData>,
+            let cell = listView.cellForRow(at: indexPath) as? _ChatMessageCell<ExtraData>,
             let messageContentView = cell.messageContentView,
             let message = messageContentView.content,
             message.isInteractionEnabled == true
