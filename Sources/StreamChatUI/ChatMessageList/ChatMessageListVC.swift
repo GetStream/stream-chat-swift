@@ -465,14 +465,14 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
     /// - Parameter typingMembers: typing members gotten from `channelController`
     open func showTypingIndicator(typingMembers: [_ChatChannelMember<ExtraData.User>]) {
         if typingIndicatorView.isHidden {
-//            Animate {
-//                self.collectionView.contentInset.bottom += self.typingIndicatorViewHeight
-//                self.collectionView.scrollIndicatorInsets.bottom += self.typingIndicatorViewHeight
-//            }
-//
-//            if collectionView.isLastCellVisible {
-//                scrollToMostRecentMessage()
-//            }
+            Animate {
+                self.tableView.contentInset.top += self.typingIndicatorViewHeight
+                self.tableView.scrollIndicatorInsets.top += self.typingIndicatorViewHeight
+            }
+
+            if tableView.isLastCellVisible {
+                scrollToMostRecentMessage()
+            }
         }
 
         // If we somehow cannot fetch any member name, we simply show that `Someone is typing`
@@ -494,8 +494,8 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
         typingIndicatorView.isHidden = true
 
         Animate {
-//            self.collectionView.contentInset.bottom -= self.typingIndicatorViewHeight
-//            self.collectionView.scrollIndicatorInsets.bottom -= self.typingIndicatorViewHeight
+            self.tableView.contentInset.top -= self.typingIndicatorViewHeight
+            self.tableView.scrollIndicatorInsets.top -= self.typingIndicatorViewHeight
         }
     }
     
