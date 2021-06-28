@@ -15,7 +15,8 @@ public typealias ChatMessageTableViewCell = _ChatMessageTableViewCell<NoExtraDat
 /// the same content and layout the cell has already been configured with.
 public final class _ChatMessageTableViewCell<ExtraData: ExtraDataTypes>: _TableViewCell {
     public static var reuseId: String { "\(self)" }
-
+    
+    /// The message content view the cell is showing.
     public private(set) var messageContentView: _ChatMessageContentView<ExtraData>?
     
     override public func setUp() {
@@ -24,7 +25,7 @@ public final class _ChatMessageTableViewCell<ExtraData: ExtraDataTypes>: _TableV
         selectionStyle = .none
     }
     
-    public override func setUpAppearance() {
+    override public func setUpAppearance() {
         super.setUpAppearance()
         
         backgroundColor = .clear
@@ -37,6 +38,11 @@ public final class _ChatMessageTableViewCell<ExtraData: ExtraDataTypes>: _TableV
         messageContentView?.prepareForReuse()
     }
 
+    /// Creates a message content view
+    /// - Parameters:
+    ///   - contentViewClass: The type of message content view.
+    ///   - attachmentViewInjectorType: The type of attachment injector.
+    ///   - options: The layout options describing the message content view layout.
     public func setMessageContentIfNeeded(
         contentViewClass: _ChatMessageContentView<ExtraData>.Type,
         attachmentViewInjectorType: _AttachmentViewInjector<ExtraData>.Type?,
@@ -44,8 +50,7 @@ public final class _ChatMessageTableViewCell<ExtraData: ExtraDataTypes>: _TableV
     ) {
         guard messageContentView == nil else {
             log.assert(type(of: messageContentView!) == contentViewClass, """
-            Attempt to setup different content class: ("\(contentViewClass)").
-            `СhatMessageCollectionViewCell` is supposed to be configured only once.
+            Attempt to setup different content class: ("\(contentViewClass)")
             """)
             return
         }

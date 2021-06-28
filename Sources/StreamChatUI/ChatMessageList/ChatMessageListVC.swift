@@ -37,19 +37,14 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
     open lazy var userSuggestionSearchController: _ChatUserSearchController<ExtraData> =
         channelController.client.userSearchController()
     
-    /// Layout used by the collection view.
-    open lazy var messageListLayout: ChatMessageListCollectionViewLayout = components
-        .messageListLayout
-        .init()
-    
     override open func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
         view.layoutIfNeeded()
     }
     
     /// View used to display the messages
-    open private(set) lazy var tableView: ChatMessageListTableView<ExtraData> = {
-        let tableView = ChatMessageListTableView<ExtraData>().withoutAutoresizingMaskConstraints
+    open private(set) lazy var tableView: _ChatMessageListTableView<ExtraData> = {
+        let tableView = components.messageListTableView.init().withoutAutoresizingMaskConstraints
         tableView.delegate = self
         tableView.dataSource = self
         return tableView
