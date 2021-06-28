@@ -66,7 +66,7 @@ open class _InputChatMessageView<ExtraData: ExtraDataTypes>: _View, ComponentsPr
         clearButton.setImage(closeTransparentImage, for: .normal)
 
         container.clipsToBounds = true
-        container.layer.cornerRadius = 18
+        container.layer.cornerRadius = 19
         container.layer.borderWidth = 1
         container.layer.borderColor = appearance.colorPalette.border.cgColor
     }
@@ -77,7 +77,7 @@ open class _InputChatMessageView<ExtraData: ExtraDataTypes>: _View, ComponentsPr
         directionalLayoutMargins = .zero
 
         container.isLayoutMarginsRelativeArrangement = true
-        container.directionalLayoutMargins = .init(top: 0, leading: 4, bottom: 0, trailing: 4)
+        container.directionalLayoutMargins = .zero
         container.axis = .vertical
         container.alignment = .fill
         container.distribution = .natural
