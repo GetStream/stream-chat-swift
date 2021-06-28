@@ -1,5 +1,5 @@
 #!/bin/bash
-
+set -e
 TARGET=$1
 
 # Move to project root directory
