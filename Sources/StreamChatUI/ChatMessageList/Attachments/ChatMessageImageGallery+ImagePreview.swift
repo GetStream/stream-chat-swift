@@ -69,10 +69,11 @@ extension _ChatMessageImageGallery {
         }
 
         override open func updateContent() {
+            super.updateContent()
+
             let attachment = content
 
             loadingIndicator.isVisible = true
-            imageView.layoutIfNeeded()
             imageTask = imageView
                 .loadImage(
                     from: attachment?.payload.imagePreviewURL,

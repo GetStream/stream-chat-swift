@@ -229,7 +229,6 @@ var streamChatSourcesExcluded: [String] { [
 var streamChatUIFilesExcluded: [String] { [
     "ChatMessageList/TypingIndicatorView_Tests.swift",
     "ChatMessageList/ChatMessageListVC_Tests.swift",
-    "ChatMessageList/ChatMessageListCollectionViewLayout_Tests.swift",
     "ChatMessageList/ChatMessage/ChatMessageErrorIndicator_Tests.swift",
     "ChatMessageList/ChatMessage/ChatMessageBubbleView_Tests.swift",
     "ChatMessageList/ChatMessage/ChatMessageLayoutOptionsResolver_Tests.swift",
@@ -329,7 +328,6 @@ var streamChatUIFilesExcluded: [String] { [
     "ChatMessageList/__Snapshots__/ChatMessageListVC+SwiftUI_Tests/test_customNavigationViewValues_arePopulated.rightToLeftLayout-default.png",
     "ChatMessageList/__Snapshots__/ChatMessageListVC+SwiftUI_Tests/test_customNavigationViewValues_arePopulated.extraExtraExtraLarge-light.png",
     "ChatMessageList/__Snapshots__/ChatMessageListVC+SwiftUI_Tests/test_customNavigationViewValues_arePopulated.default-light.png",
-    "ChatMessageList/__Snapshots__/ChatMessageListVC+SwiftUI_Tests/test_chatChannelList_isPopulated.default-light.png",
     "ChatMessageList/__Snapshots__/ChatMessageListVC+SwiftUI_Tests/test_chatMessageList_isPopulated.default-light.png",
     "ChatMessageList/__Snapshots__/TitleContainerView_Tests/test_appearanceCustomization_usingSubclassing.small-dark.png",
     "ChatMessageList/__Snapshots__/TitleContainerView_Tests/test_defaultAppearance.default-light-empty.png",

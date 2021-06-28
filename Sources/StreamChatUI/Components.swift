@@ -81,12 +81,9 @@ public struct _Components<ExtraData: ExtraDataTypes> {
     /// The View Controller used to display content of the message, i.e. in the channel detail message list.
     public var messageListVC: _ChatMessageListVC<ExtraData>.Type = _ChatMessageListVC<ExtraData>.self
 
-    /// The collection view that shows the message list.
-    public var messageListCollectionView: ChatMessageListCollectionView<ExtraData>.Type = ChatMessageListCollectionView<ExtraData>
+    /// The view that shows the message list.
+    public var messageListView: _ChatMessageListView<ExtraData>.Type = _ChatMessageListView<ExtraData>
         .self
-
-    /// The collection view layout used in `messageListCollectionView`.
-    public var messageListLayout: ChatMessageListCollectionViewLayout.Type = ChatMessageListCollectionViewLayout.self
 
     /// The view that shows the date for currently visible messages on top of message list.
     public var messageListScrollOverlayView: ChatMessageListScrollOverlayView.Type = ChatMessageListScrollOverlayView.self
