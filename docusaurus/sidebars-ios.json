@@ -12,8 +12,13 @@
       ]
     },
     {
+      "Customization": [
+        "customization/theming",
+        "customization/custom-components"
+      ]
+    },
+    {
       "Guides": [
-        "guides/ui-customization",
         {
           "Working with ChannelList": [
             "guides/working-with-channel-list",

@@ -23,7 +23,7 @@ Appearance.default.images.openAttachments = UIImage(systemName: "plus")
 
 :::note Note
 
-If you are not yet familar on how the `Appearance` config works you should read the [Theming](../guides/ui-customization) page.
+If you are not yet familar on how the `Appearance` config works you should read the [Theming](../customization/theming) page.
 
 :::
 
@@ -54,7 +54,7 @@ Components.default.messageComposerVC = CustomComposerVC.self
 
 :::note Note
 
-If you are not yet familiar on how the `Components` config works you should read the [Custom Components](../guides/ui-customization) page.
+If you are not yet familiar on how the `Components` config works you should read the [Custom Components](../customization/custom-components) page.
 
 :::
 
@@ -246,7 +246,7 @@ class ContactAttachmentView: _View, AppearanceProvider {
     }
 }
 ```
-The `ContactAttachmentView` must subclass from `_View` and implement the required lifecycle functions as described in the [Custom Components](../guides/ui-customization) page. The contact attachment view is a pretty simple one with just a vertical stack displaying the name of the contact at the top, and the number at the bottom. But in order for the composer to use this new attachment view we still need to let the composer know that the `ContactAttachmentPayload` is rendered by `ContactAttachmentView`. To do that we need to make `ContactAttachmentPayload` conform to `AttachmentPreviewProvider` protocol:
+The `ContactAttachmentView` must subclass from `_View` and implement the required lifecycle functions as described in the [Custom Components](../customization/custom-components) page. The contact attachment view is a pretty simple one with just a vertical stack displaying the name of the contact at the top, and the number at the bottom. But in order for the composer to use this new attachment view we still need to let the composer know that the `ContactAttachmentPayload` is rendered by `ContactAttachmentView`. To do that we need to make `ContactAttachmentPayload` conform to `AttachmentPreviewProvider` protocol:
 ```swift
 extension ContactAttachmentPayload: AttachmentPreviewProvider {
     static let preferredAxis: NSLayoutConstraint.Axis = .vertical
