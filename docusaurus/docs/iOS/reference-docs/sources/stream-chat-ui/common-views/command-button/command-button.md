@@ -11,7 +11,7 @@ open class CommandButton: _Button, AppearanceProvider
 
 ## Inheritance
 
-[`_Button`](../../_button), [`AppearanceProvider`](../../../utils/appearance-provider)
+[`_Button`](../_button.md), [`AppearanceProvider`](../../utils/appearance-provider.md)
 
 ## Methods
 

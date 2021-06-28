@@ -16,7 +16,7 @@ open class _ImageGalleryVC<ExtraData: ExtraDataTypes>:
 
 ## Inheritance
 
-[`_ViewController`](../../common-views/_view-controller), [`AppearanceProvider`](../../utils/appearance-provider), `UICollectionViewDataSource`, `UICollectionViewDelegate`, `UICollectionViewDelegateFlowLayout`, `UIGestureRecognizerDelegate`
+[`_ViewController`](../common-views/_view-controller.md), [`AppearanceProvider`](../utils/appearance-provider.md), `UICollectionViewDataSource`, `UICollectionViewDelegate`, `UICollectionViewDelegateFlowLayout`, `UIGestureRecognizerDelegate`
 
 ## Properties
 

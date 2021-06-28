@@ -8,7 +8,7 @@ public struct NotificationChannelMutesUpdatedEvent: UserSpecificEvent
 
 ## Inheritance
 
-[`UserSpecificEvent`](../user-specific-event)
+[`UserSpecificEvent`](user-specific-event.md)
 
 ## Properties
 

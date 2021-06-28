@@ -8,4 +8,4 @@ public struct UserGloballyBannedEvent: UserSpecificEvent
 
 ## Inheritance
 
-[`UserSpecificEvent`](../user-specific-event)
+[`UserSpecificEvent`](user-specific-event.md)

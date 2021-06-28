@@ -38,6 +38,14 @@ A unique identifier of the message.
 public let id: MessageId
 ```
 
+### `cid`
+
+The ChannelId this message belongs to.
+
+``` swift
+public let cid: ChannelId
+```
+
 ### `text`
 
 The text of the message.

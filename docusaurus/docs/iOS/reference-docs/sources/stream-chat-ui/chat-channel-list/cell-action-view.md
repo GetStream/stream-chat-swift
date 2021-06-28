@@ -10,7 +10,7 @@ public class CellActionView: _View
 
 ## Inheritance
 
-[`_View`](../../common-views/_view)
+[`_View`](../common-views/_view.md)
 
 ## Properties
 

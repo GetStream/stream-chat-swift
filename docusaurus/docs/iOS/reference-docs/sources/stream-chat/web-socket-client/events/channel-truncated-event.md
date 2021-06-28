@@ -8,7 +8,7 @@ public struct ChannelTruncatedEvent: ChannelSpecificEvent
 
 ## Inheritance
 
-[`ChannelSpecificEvent`](../channel-specific-event)
+[`ChannelSpecificEvent`](channel-specific-event.md)
 
 ## Properties
 

@@ -10,7 +10,7 @@ public struct ImageAttachmentPayload: AttachmentPayload
 
 ## Inheritance
 
-[`AttachmentPayload`](../attachment-payload), `Decodable`, `Encodable`
+[`AttachmentPayload`](attachment-payload.md), `Decodable`, `Encodable`
 
 ## Initializers
 

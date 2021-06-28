@@ -12,7 +12,7 @@ public struct CleanUpTypingEvent: Event
 
 ## Inheritance
 
-`Equatable`, [`Event`](../event)
+`Equatable`, [`Event`](event.md)
 
 ## Properties
 

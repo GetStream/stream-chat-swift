@@ -8,7 +8,7 @@ open class _ChatMessageReactionsBubbleView<ExtraData: ExtraDataTypes>: _View, Th
 
 ## Inheritance
 
-[`_View`](../../../common-views/_view), [`ThemeProvider`](../../../utils/theme-provider)
+[`_View`](../../common-views/_view.md), [`ThemeProvider`](../../utils/theme-provider.md)
 
 ## Properties
 

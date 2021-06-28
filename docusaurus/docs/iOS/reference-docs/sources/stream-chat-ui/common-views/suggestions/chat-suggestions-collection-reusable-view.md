@@ -11,7 +11,7 @@ open class _ChatSuggestionsCollectionReusableView<ExtraData: ExtraDataTypes>: UI
 
 ## Inheritance
 
-[`ComponentsProvider`](../../../utils/components-provider), `UICollectionReusableView`
+[`ComponentsProvider`](../../utils/components-provider.md), `UICollectionReusableView`
 
 ## Properties
 

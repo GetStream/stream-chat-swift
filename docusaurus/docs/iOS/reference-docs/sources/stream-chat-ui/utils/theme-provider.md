@@ -8,7 +8,7 @@ public protocol ThemeProvider: ComponentsProvider, AppearanceProvider
 
 ## Inheritance
 
-[`AppearanceProvider`](../appearance-provider), [`ComponentsProvider`](../components-provider)
+[`AppearanceProvider`](appearance-provider.md), [`ComponentsProvider`](components-provider.md)
 
 ## Default Implementations
 

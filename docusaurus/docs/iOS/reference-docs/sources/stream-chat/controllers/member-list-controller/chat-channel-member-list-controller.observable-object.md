@@ -11,7 +11,7 @@ public class ObservableObject: SwiftUI.ObservableObject
 
 ## Inheritance
 
-`SwiftUI.ObservableObject`, [`_ChatChannelMemberListControllerDelegate`](../chat-channel-member-list-controller-delegate)
+`SwiftUI.ObservableObject`, [`_ChatChannelMemberListControllerDelegate`](chat-channel-member-list-controller-delegate.md)
 
 ## Properties
 

@@ -11,7 +11,7 @@ open class _Control: UIControl, Customizable
 
 ## Inheritance
 
-[`Customizable`](../customizable), `UIControl`
+[`Customizable`](customizable.md), `UIControl`
 
 ## Methods
 

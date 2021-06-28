@@ -10,7 +10,7 @@ open class _ChatMessageBubbleView<ExtraData: ExtraDataTypes>: _View, AppearanceP
 
 ## Inheritance
 
-[`_View`](../../../common-views/_view), [`SwiftUIRepresentable`](../../../common-views/swift-ui-representable), [`AppearanceProvider`](../../../utils/appearance-provider)
+[`_View`](../../common-views/_view.md), [`SwiftUIRepresentable`](../../common-views/swift-ui-representable.md), [`AppearanceProvider`](../../utils/appearance-provider.md)
 
 ## Properties
 

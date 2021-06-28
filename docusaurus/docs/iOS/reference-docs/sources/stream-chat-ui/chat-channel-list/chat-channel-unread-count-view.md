@@ -10,7 +10,7 @@ open class _ChatChannelUnreadCountView<ExtraData: ExtraDataTypes>: _View, ThemeP
 
 ## Inheritance
 
-[`_View`](../../common-views/_view), [`SwiftUIRepresentable`](../../common-views/swift-ui-representable), [`ThemeProvider`](../../utils/theme-provider)
+[`_View`](../common-views/_view.md), [`SwiftUIRepresentable`](../common-views/swift-ui-representable.md), [`ThemeProvider`](../utils/theme-provider.md)
 
 ## Nested Type Aliases
 

@@ -12,7 +12,7 @@ open class _ChatSuggestionsCollectionView<ExtraData: ExtraDataTypes>: UICollecti
 
 ## Inheritance
 
-[`Customizable`](../../customizable), [`ThemeProvider`](../../../utils/theme-provider), `UICollectionView`
+[`Customizable`](../customizable.md), [`ThemeProvider`](../../utils/theme-provider.md), `UICollectionView`
 
 ## Initializers
 

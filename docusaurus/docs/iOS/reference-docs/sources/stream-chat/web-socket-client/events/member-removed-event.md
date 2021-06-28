@@ -8,7 +8,7 @@ public struct MemberRemovedEvent: MemberEvent, ChannelSpecificEvent, EventWithPa
 
 ## Inheritance
 
-[`EventWithPayload`](../event-with-payload), [`ChannelSpecificEvent`](../channel-specific-event), [`MemberEvent`](../member-event)
+[`EventWithPayload`](event-with-payload.md), [`ChannelSpecificEvent`](channel-specific-event.md), [`MemberEvent`](member-event.md)
 
 ## Properties
 

@@ -8,7 +8,7 @@ public struct MessageNewEvent: MessageSpecificEvent
 
 ## Inheritance
 
-[`MessageSpecificEvent`](../message-specific-event)
+[`MessageSpecificEvent`](message-specific-event.md)
 
 ## Properties
 

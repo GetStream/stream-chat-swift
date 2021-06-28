@@ -11,7 +11,7 @@ open class AttachmentPlaceholderView: _View, AppearanceProvider
 
 ## Inheritance
 
-[`_View`](../../_view), [`AppearanceProvider`](../../../utils/appearance-provider)
+[`_View`](../_view.md), [`AppearanceProvider`](../../utils/appearance-provider.md)
 
 ## Properties
 

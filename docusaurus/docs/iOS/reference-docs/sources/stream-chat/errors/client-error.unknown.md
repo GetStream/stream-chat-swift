@@ -10,4 +10,4 @@ public class Unknown: ClientError
 
 ## Inheritance
 
-[`ClientError`](../client-error)
+[`ClientError`](client-error.md)

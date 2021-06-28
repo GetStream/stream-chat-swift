@@ -8,4 +8,4 @@ public class InvalidToken: ClientError
 
 ## Inheritance
 
-[`ClientError`](../../errors/client-error)
+[`ClientError`](../errors/client-error.md)

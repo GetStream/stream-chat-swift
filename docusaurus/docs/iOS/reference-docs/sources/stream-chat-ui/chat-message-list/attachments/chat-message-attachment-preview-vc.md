@@ -8,7 +8,7 @@ open class ChatMessageAttachmentPreviewVC: _ViewController, WKNavigationDelegate
 
 ## Inheritance
 
-[`_ViewController`](../../../common-views/_view-controller), [`AppearanceProvider`](../../../utils/appearance-provider), `WKNavigationDelegate`
+[`_ViewController`](../../common-views/_view-controller.md), [`AppearanceProvider`](../../utils/appearance-provider.md), `WKNavigationDelegate`
 
 ## Properties
 

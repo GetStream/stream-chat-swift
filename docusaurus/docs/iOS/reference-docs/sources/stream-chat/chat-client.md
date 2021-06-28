@@ -15,7 +15,7 @@ case requires it (i.e. more than one window with different workspaces in a Slack
 
 ## Inheritance
 
-[`ConnectionDetailsProviderDelegate`](../api-client/connection-details-provider-delegate), [`ConnectionStateDelegate`](../web-socket-client/connection-state-delegate)
+[`ConnectionDetailsProviderDelegate`](api-client/connection-details-provider-delegate.md), [`ConnectionStateDelegate`](web-socket-client/connection-state-delegate.md)
 
 ## Initializers
 

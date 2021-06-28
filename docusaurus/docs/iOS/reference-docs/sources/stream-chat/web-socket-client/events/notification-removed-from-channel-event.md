@@ -8,7 +8,7 @@ public struct NotificationRemovedFromChannelEvent: CurrentUserEvent, ChannelSpec
 
 ## Inheritance
 
-[`ChannelSpecificEvent`](../channel-specific-event), [`CurrentUserEvent`](../current-user-event)
+[`ChannelSpecificEvent`](channel-specific-event.md), [`CurrentUserEvent`](current-user-event.md)
 
 ## Properties
 
