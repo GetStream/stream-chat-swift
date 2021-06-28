@@ -13,7 +13,7 @@ on the currently logged-in user.
 
 ## Inheritance
 
-[`_Control`](../../_control), [`ThemeProvider`](../../../utils/theme-provider), `_CurrentChatUserControllerDelegate`
+[`_Control`](../_control.md), [`ThemeProvider`](../../utils/theme-provider.md), `_CurrentChatUserControllerDelegate`
 
 ## Properties
 

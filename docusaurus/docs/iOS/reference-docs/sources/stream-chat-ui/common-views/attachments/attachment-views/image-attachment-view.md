@@ -10,7 +10,7 @@ open class _ImageAttachmentView<ExtraData: ExtraDataTypes>: _View, ThemeProvider
 
 ## Inheritance
 
-[`_View`](../../../_view), [`ThemeProvider`](../../../../utils/theme-provider)
+[`_View`](../../_view.md), [`ThemeProvider`](../../../utils/theme-provider.md)
 
 ## Properties
 

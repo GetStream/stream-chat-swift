@@ -11,7 +11,7 @@ open class _View: UIView, Customizable
 
 ## Inheritance
 
-[`Customizable`](../customizable), `UIView`
+[`Customizable`](customizable.md), `UIView`
 
 ## Methods
 

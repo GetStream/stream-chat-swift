@@ -11,7 +11,7 @@ open class OnlineIndicatorView: _View, AppearanceProvider, MaskProviding
 
 ## Inheritance
 
-[`_View`](../../../_view), [`MaskProviding`](../mask-providing), [`AppearanceProvider`](../../../../utils/appearance-provider)
+[`_View`](../../_view.md), [`MaskProviding`](mask-providing.md), [`AppearanceProvider`](../../../utils/appearance-provider.md)
 
 ## Properties
 

@@ -11,7 +11,7 @@ open class ChatMessageListCollectionView<ExtraData: ExtraDataTypes>: UICollectio
 
 ## Inheritance
 
-[`Customizable`](../../common-views/customizable), [`ComponentsProvider`](../../utils/components-provider), `UICollectionView`
+[`Customizable`](../common-views/customizable.md), [`ComponentsProvider`](../utils/components-provider.md), `UICollectionView`
 
 ## Initializers
 

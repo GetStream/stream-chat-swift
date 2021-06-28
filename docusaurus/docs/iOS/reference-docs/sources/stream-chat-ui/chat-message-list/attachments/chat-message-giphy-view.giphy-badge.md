@@ -8,7 +8,7 @@ open class GiphyBadge: _View, AppearanceProvider
 
 ## Inheritance
 
-[`_View`](../../../common-views/_view), [`AppearanceProvider`](../../../utils/appearance-provider)
+[`_View`](../../common-views/_view.md), [`AppearanceProvider`](../../utils/appearance-provider.md)
 
 ## Properties
 

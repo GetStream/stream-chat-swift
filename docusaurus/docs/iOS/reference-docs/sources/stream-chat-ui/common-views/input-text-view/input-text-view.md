@@ -11,7 +11,7 @@ open class InputTextView: UITextView, AppearanceProvider
 
 ## Inheritance
 
-[`AppearanceProvider`](../../../utils/appearance-provider), `UITextView`
+[`AppearanceProvider`](../../utils/appearance-provider.md), `UITextView`
 
 ## Properties
 

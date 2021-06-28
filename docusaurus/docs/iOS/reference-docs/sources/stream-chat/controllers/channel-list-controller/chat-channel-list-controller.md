@@ -16,7 +16,7 @@ Learn more about using custom extra data in our [cheat sheet](https://github.com
 
 ## Inheritance
 
-[`DataController`](../../data-controller), [`DelegateCallable`](../../delegate-callable), [`DataStoreProvider`](../../../database/data-store-provider)
+[`DataController`](../data-controller.md), [`DelegateCallable`](../delegate-callable.md), [`DataStoreProvider`](../../database/data-store-provider.md)
 
 ## Properties
 

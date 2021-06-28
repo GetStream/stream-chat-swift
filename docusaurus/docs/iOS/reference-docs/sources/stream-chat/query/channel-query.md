@@ -14,7 +14,7 @@ Learn more about using custom extra data in our [cheat sheet](https://github.com
 
 ## Inheritance
 
-[`APIPathConvertible`](../../api-client/api-path-convertible), `Encodable`
+[`APIPathConvertible`](../api-client/api-path-convertible.md), `Encodable`
 
 ## Initializers
 

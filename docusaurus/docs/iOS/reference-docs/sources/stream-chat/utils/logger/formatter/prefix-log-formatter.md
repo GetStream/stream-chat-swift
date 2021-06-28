@@ -12,7 +12,7 @@ public class PrefixLogFormatter: LogFormatter
 
 ## Inheritance
 
-[`LogFormatter`](../log-formatter)
+[`LogFormatter`](log-formatter.md)
 
 ## Initializers
 

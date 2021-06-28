@@ -8,7 +8,7 @@ public struct ChannelHiddenEvent: ChannelSpecificEvent
 
 ## Inheritance
 
-[`ChannelSpecificEvent`](../channel-specific-event)
+[`ChannelSpecificEvent`](channel-specific-event.md)
 
 ## Properties
 

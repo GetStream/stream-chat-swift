@@ -10,7 +10,7 @@ open class CellSeparatorReusableView: _CollectionReusableView, AppearanceProvide
 
 ## Inheritance
 
-[`_CollectionReusableView`](../../_collection-reusable-view), [`AppearanceProvider`](../../../utils/appearance-provider)
+[`_CollectionReusableView`](../_collection-reusable-view.md), [`AppearanceProvider`](../../utils/appearance-provider.md)
 
 ## Properties
 

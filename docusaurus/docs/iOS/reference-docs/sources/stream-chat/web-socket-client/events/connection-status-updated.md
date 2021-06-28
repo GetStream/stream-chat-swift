@@ -11,7 +11,7 @@ public struct ConnectionStatusUpdated: Event
 
 ## Inheritance
 
-[`Event`](../event)
+[`Event`](event.md)
 
 ## Properties
 

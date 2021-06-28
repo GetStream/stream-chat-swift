@@ -10,7 +10,7 @@ open class _ScrollToLatestMessageButton<ExtraData: ExtraDataTypes>: _Button, The
 
 ## Inheritance
 
-[`_Button`](../../common-views/_button), [`ThemeProvider`](../../utils/theme-provider)
+[`_Button`](../common-views/_button.md), [`ThemeProvider`](../utils/theme-provider.md)
 
 ## Properties
 

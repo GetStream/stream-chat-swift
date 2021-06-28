@@ -23,7 +23,7 @@ open class _ChatThreadVC<ExtraData: ExtraDataTypes>:
 
 ## Inheritance
 
-[`_ViewController`](../../common-views/_view-controller), [`FileActionContentViewDelegate`](../attachments/file-action-content-view-delegate), [`GalleryContentViewDelegate`](../attachments/gallery-content-view-delegate), [`GiphyActionContentViewDelegate`](../attachments/giphy-action-content-view-delegate), [`LinkPreviewViewDelegate`](../attachments/link-preview-view-delegate), [`ChatMessageContentViewDelegate`](../chat-message/chat-message-content-view-delegate), [`ComposerVCDelegate`](../../composer/composer-vc-delegate), [`ThemeProvider`](../../utils/theme-provider), `UICollectionViewDataSource`, `UICollectionViewDelegate`, `_ChatChannelControllerDelegate`, [`_ChatMessageActionsVCDelegate`](../../message-actions-popup/chat-message-actions-vc-delegate), `_ChatMessageControllerDelegate`
+[`_ViewController`](../common-views/_view-controller.md), [`FileActionContentViewDelegate`](attachments/file-action-content-view-delegate.md), [`GalleryContentViewDelegate`](attachments/gallery-content-view-delegate.md), [`GiphyActionContentViewDelegate`](attachments/giphy-action-content-view-delegate.md), [`LinkPreviewViewDelegate`](attachments/link-preview-view-delegate.md), [`ChatMessageContentViewDelegate`](chat-message/chat-message-content-view-delegate.md), [`ComposerVCDelegate`](../composer/composer-vc-delegate.md), `UICollectionViewDataSource`, `UICollectionViewDelegate`, `_ChatChannelControllerDelegate`, [`_ChatMessageActionsVCDelegate`](../message-actions-popup/chat-message-actions-vc-delegate.md), [`ThemeProvider`](../utils/theme-provider.md), `_ChatMessageControllerDelegate`
 
 ## Properties
 

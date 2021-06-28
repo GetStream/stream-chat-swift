@@ -10,7 +10,7 @@ public protocol FileActionContentViewDelegate: ChatMessageContentViewDelegate
 
 ## Inheritance
 
-[`ChatMessageContentViewDelegate`](../../chat-message/chat-message-content-view-delegate)
+[`ChatMessageContentViewDelegate`](../chat-message/chat-message-content-view-delegate.md)
 
 ## Requirements
 

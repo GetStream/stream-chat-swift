@@ -17,13 +17,13 @@ public enum Status
 case read, unread, empty
 ```
 
-### `unread`
+### `empty`
 
 ``` swift
 case read, unread, empty
 ```
 
-### `empty`
+### `unread`
 
 ``` swift
 case read, unread, empty

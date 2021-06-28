@@ -10,7 +10,7 @@ open class _ChatMessageActionsVC<ExtraData: ExtraDataTypes>: _ViewController, Th
 
 ## Inheritance
 
-[`_ViewController`](../../common-views/_view-controller), [`ThemeProvider`](../../utils/theme-provider)
+[`_ViewController`](../common-views/_view-controller.md), [`ThemeProvider`](../utils/theme-provider.md)
 
 ## Properties
 

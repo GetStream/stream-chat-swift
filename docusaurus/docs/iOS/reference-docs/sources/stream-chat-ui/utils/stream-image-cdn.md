@@ -8,7 +8,7 @@ public struct StreamImageCDN: ImageCDN
 
 ## Inheritance
 
-[`ImageCDN`](../image-cdn)
+[`ImageCDN`](image-cdn.md)
 
 ## Properties
 

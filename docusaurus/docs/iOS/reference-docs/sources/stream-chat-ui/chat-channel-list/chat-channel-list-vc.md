@@ -16,7 +16,7 @@ open class _ChatChannelListVC<ExtraData: ExtraDataTypes>: _ViewController,
 
 ## Inheritance
 
-[`_ViewController`](../../common-views/_view-controller), `DataControllerStateDelegate`, [`SwipeableViewDelegate`](../swipeable-view-delegate), [`SwiftUIRepresentable`](../../common-views/swift-ui-representable), [`ThemeProvider`](../../utils/theme-provider), `UICollectionViewDataSource`, `UICollectionViewDelegate`, `_ChatChannelListControllerDelegate`
+[`_ViewController`](../common-views/_view-controller.md), `DataControllerStateDelegate`, [`SwipeableViewDelegate`](swipeable-view-delegate.md), [`SwiftUIRepresentable`](../common-views/swift-ui-representable.md), [`ThemeProvider`](../utils/theme-provider.md), `UICollectionViewDataSource`, `UICollectionViewDelegate`, `_ChatChannelListControllerDelegate`
 
 ## Properties
 

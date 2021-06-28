@@ -10,7 +10,7 @@ public protocol MemberEvent: Event
 
 ## Inheritance
 
-[`Event`](../event)
+[`Event`](event.md)
 
 ## Requirements
 

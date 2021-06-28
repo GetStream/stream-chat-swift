@@ -8,7 +8,7 @@ public class UnsupportedEventType: ClientError
 
 ## Inheritance
 
-[`ClientError`](../../../errors/client-error)
+[`ClientError`](../../errors/client-error.md)
 
 ## Properties
 

@@ -11,7 +11,7 @@ open class _CollectionReusableView: UICollectionReusableView, Customizable
 
 ## Inheritance
 
-[`Customizable`](../customizable), `UICollectionReusableView`
+[`Customizable`](customizable.md), `UICollectionReusableView`
 
 ## Methods
 

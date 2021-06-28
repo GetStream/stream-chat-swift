@@ -15,7 +15,7 @@ open class _ChatMessageListRouter<ExtraData: ExtraDataTypes>:
 
 ## Inheritance
 
-`// We use UIViewController here because the router is used for both // the channel and thread message lists. NavigationRouter<UIViewController>`, [`ComponentsProvider`](../../utils/components-provider), `UIViewControllerTransitioningDelegate`
+`// We use UIViewController here because the router is used for both // the channel and thread message lists. NavigationRouter<UIViewController>`, [`ComponentsProvider`](../utils/components-provider.md), `UIViewControllerTransitioningDelegate`
 
 ## Properties
 

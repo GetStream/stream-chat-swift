@@ -11,7 +11,7 @@ open class BaseLogDestination: LogDestination
 
 ## Inheritance
 
-[`LogDestination`](../log-destination)
+[`LogDestination`](log-destination.md)
 
 ## Initializers
 

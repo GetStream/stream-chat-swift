@@ -10,7 +10,7 @@ public struct MuteUserActionItem: ChatMessageActionItem
 
 ## Inheritance
 
-[`ChatMessageActionItem`](../chat-message-action-item)
+[`ChatMessageActionItem`](chat-message-action-item.md)
 
 ## Initializers
 
