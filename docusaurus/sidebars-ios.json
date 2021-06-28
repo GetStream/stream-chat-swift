@@ -36,7 +36,6 @@
     },
     {
       "Guides": [
-        "guides/ui-customization",
         {
           "Working with ChannelList": [
             "guides/working-with-channel-list",
@@ -52,6 +51,7 @@
             "guides/working-with-messagelist-layout",
             "guides/pinned-messages",
             "guides/working-with-attachments",
+            "guides/working-with-custom-attachments",
             "guides/working-with-reactions"
           ]
         },
