@@ -88,9 +88,10 @@ open class _InputChatMessageView<ExtraData: ExtraDataTypes>: _View, ComponentsPr
         quotedMessageView.isHidden = true
         attachmentsViewContainer.isHidden = true
 
-        inputTextContainer.preservesSuperviewLayoutMargins = true
+        inputTextContainer.isLayoutMarginsRelativeArrangement = true
         inputTextContainer.alignment = .center
         inputTextContainer.spacing = 4
+        inputTextContainer.directionalLayoutMargins = .init(top: 0, leading: 6, bottom: 0, trailing: 6)
         inputTextContainer.addArrangedSubview(commandLabelView)
         inputTextContainer.addArrangedSubview(textView)
         inputTextContainer.addArrangedSubview(clearButton)
