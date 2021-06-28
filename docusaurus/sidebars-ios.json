@@ -30,7 +30,9 @@
       ]
     },
     {
-      "UI Components": []
+      "UI Components": [
+        "components/channel-list-item-view"
+      ]
     },
     {
       "Guides": [
