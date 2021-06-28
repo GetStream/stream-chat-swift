@@ -511,68 +511,44 @@ open class ChatMessageListTableView<ExtraData: ExtraDataTypes>: UITableView, Cus
         // Before committing the changes, we need to check if were scrolled
         // to the bottom, if yes, we should stay scrolled to the bottom
         var shouldScrollToBottom = isLastCellFullyVisible
-        
-        beginUpdates()
+                
+        performBatchUpdates({
+            changes.forEach {
+                switch $0 {
+                case let .insert(message, index: index):
+                    if message.isSentByCurrentUser, index == IndexPath(item: 0, section: 0) {
+                        // When the message from current user comes we should scroll to bottom
+                        shouldScrollToBottom = true
+                    }
+                    if index.row < self.numberOfRows(inSection: 0) {
+                        // Reload previous cell if exists
+                        self.reloadRows(at: [index], with: .automatic)
+                    }
+                    self.insertRows(at: [index], with: .none)
+                case let .move(_, fromIndex: fromIndex, toIndex: toIndex):
+                    self.moveRow(at: fromIndex, to: toIndex)
 
-        changes.forEach {
-            switch $0 {
-            case let .insert(message, index: index):
-                if message.isSentByCurrentUser, index == IndexPath(item: 0, section: 0) {
-                    // When the message from current user comes we should scroll to bottom
-                    shouldScrollToBottom = true
+                case let .update(_, index: index):
+                    self.reloadRows(at: [index], with: .automatic)
+
+                case let .remove(_, index: index):
+                    let indexPathToReload = IndexPath(row: index.row + 1, section: index.section)
+                    if self.numberOfRows(inSection: 0) > indexPathToReload.row {
+                        // Reload previous cell if exists
+                        self.reloadRows(at: [indexPathToReload], with: .automatic)
+                    }
+                    self.deleteRows(at: [index], with: .fade)
                 }
-                insertRows(at: [index], with: .none)
-
-            case let .move(_, fromIndex: fromIndex, toIndex: toIndex):
-                moveRow(at: fromIndex, to: toIndex)
-
-            case let .update(_, index: index):
-                reloadRows(at: [index], with: .none)
-
-            case let .remove(_, index: index):
-                deleteRows(at: [index], with: .none)
             }
-        }
-
-        endUpdates()
-       
-        // If a new message was inserted or deleted, reload the previous message
-        // to give it chance to update its appearance in case it's now end of a group.
-        let indexPaths = indexPathsToReloadAfterBatchUpdates(with: changes)
-        if indexPaths.isEmpty == false {
-            reloadRows(at: indexPaths, with: .none)
-        }
-
-        if shouldScrollToBottom {
-            scrollToBottomAction = .init { [weak self] in
-                self?.scrollToMostRecentMessage()
+        }, completion: { _ in
+            if shouldScrollToBottom {
+                self.scrollToBottomAction = .init { [weak self] in
+                    self?.scrollToMostRecentMessage()
+                }
             }
-        }
-
-        completion?()
-    }
-    
-    private func indexPathsToReloadAfterBatchUpdates(
-        with changes: [ListChange<_ChatMessage<ExtraData>>]
-    ) -> [IndexPath] {
-        changes.compactMap {
-            switch $0 {
-            // Check if the latest message was inserted
-            case .insert(_, IndexPath(row: 0, section: 0)):
-                guard numberOfRows(inSection: 0) > 1 else { return nil }
-                
-                // Reload the second-to latests message
-                return .init(item: 1, section: 0)
-            // Check if the message was deleted
-            case let .remove(_, indexPath):
-                guard numberOfRows(inSection: 0) > indexPath.item else { return nil }
-                
-                // Reload the previous message which is now at deleted message positon
-                return indexPath
-            default:
-                return nil
-            }
-        }
+            
+            completion?()
+        })
     }
 }
 
