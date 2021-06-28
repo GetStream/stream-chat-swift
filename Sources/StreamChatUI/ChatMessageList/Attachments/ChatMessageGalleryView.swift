@@ -68,9 +68,11 @@ open class _ChatMessageGalleryView<ExtraData: ExtraDataTypes>: _View, ThemeProvi
     
     /// Left container for previews.
     public private(set) lazy var leftPreviewsContainerView = ContainerStackView()
+        .withoutAutoresizingMaskConstraints
     
     /// Right container for previews.
     public private(set) lazy var rightPreviewsContainerView = ContainerStackView()
+        .withoutAutoresizingMaskConstraints
 
     // MARK: - Overrides
 
@@ -80,10 +82,12 @@ open class _ChatMessageGalleryView<ExtraData: ExtraDataTypes>: _View, ThemeProvi
         previewsContainerView.axis = .horizontal
         previewsContainerView.distribution = .equal
         previewsContainerView.alignment = .fill
-        previewsContainerView.spacing = 0
+        previewsContainerView.spacing = 2
+        previewsContainerView.isLayoutMarginsRelativeArrangement = true
+        previewsContainerView.directionalLayoutMargins = .init(top: 2, leading: 2, bottom: 2, trailing: 2)
         embed(previewsContainerView)
         
-        leftPreviewsContainerView.spacing = 0
+        leftPreviewsContainerView.spacing = 2
         leftPreviewsContainerView.axis = .vertical
         leftPreviewsContainerView.distribution = .equal
         leftPreviewsContainerView.alignment = .fill
@@ -92,7 +96,7 @@ open class _ChatMessageGalleryView<ExtraData: ExtraDataTypes>: _View, ThemeProvi
         leftPreviewsContainerView.addArrangedSubview(itemSpots[0])
         leftPreviewsContainerView.addArrangedSubview(itemSpots[2])
         
-        rightPreviewsContainerView.spacing = 0
+        rightPreviewsContainerView.spacing = 2
         rightPreviewsContainerView.axis = .vertical
         rightPreviewsContainerView.distribution = .equal
         rightPreviewsContainerView.alignment = .fill
@@ -123,10 +127,19 @@ open class _ChatMessageGalleryView<ExtraData: ExtraDataTypes>: _View, ThemeProvi
             .flatMap(\.subviews)
             .forEach { $0.removeFromSuperview() }
         
+        // Prevents layout issue. Can be removed when CIS-981 is fixed.
+        guard !content.isEmpty else {
+            previewsContainerView.isHidden = true
+            return
+        }
+        
         // Add previews to the spots
-        for (preview, spot) in zip(content, itemSpots) {
-            spot.addSubview(preview)
-            preview.pin(to: spot)
+        if content.count == 3 {
+            itemSpots[0].embed(content[0])
+            itemSpots[1].embed(content[1])
+            itemSpots[3].embed(content[2])
+        } else {
+            zip(itemSpots, content).forEach { $0.embed($1) }
         }
         
         // Show taken spots, hide empty ones
