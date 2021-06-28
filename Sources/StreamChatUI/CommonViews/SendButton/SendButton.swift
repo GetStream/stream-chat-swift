@@ -24,7 +24,7 @@ open class SendButton: _Button, AppearanceProvider {
         let normalStateImage = appearance.images.sendArrow
         setImage(normalStateImage, for: .normal)
 
-        let buttonColor: UIColor = appearance.colorPalette.inactiveTint
+        let buttonColor: UIColor = appearance.colorPalette.alternativeInactiveTint
         let disabledStateImage = appearance.images.sendArrow.tinted(with: buttonColor)
         setImage(disabledStateImage, for: .disabled)
     }

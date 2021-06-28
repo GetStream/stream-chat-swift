@@ -54,6 +54,7 @@ public extension Appearance {
         public var alert: UIColor = .streamAccentRed
         public var alternativeActiveTint: UIColor = .streamAccentGreen
         public var inactiveTint: UIColor = .streamGray
+        public var alternativeInactiveTint: UIColor = .streamGrayGainsboro
     }
 }
 
