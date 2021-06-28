@@ -18,6 +18,7 @@ _June 23, 2021_
 - `FileActionContentViewDelegate` methods updated to have optional index path
 - `LinkPreviewViewDelegate` methods updated to have optional index path
 - `scrollToLatestMessageButton` type changed from `UIButton` to `_ScrollToLatestMessageButton<ExtraData>`
+- `UITableView` is now used instead of `UICollectionView` to display the message list [#1219](https://github.com/GetStream/stream-chat-swift/pull/1219) 
 
 ### ✅ Added
 - `mentionText(for:)` function added to `ComposerVC` for customizing the text displayed for mentions [#1188](https://github.com/GetStream/stream-chat-swift/issues/1188) [#1000](https://github.com/GetStream/stream-chat-swift/issues/1000)
