@@ -2,7 +2,8 @@
 title: ChatChannelListItemView
 ---
 
-import Properties from '../reference-docs/sources/stream-chat-ui/appearance.color-palette-properties.md'
+import Properties from '../reference-docs/sources/stream-chat-ui/chat-channel-list/chat-channel-list-item-view-properties.md'
+import ComponentsNote from '../common-content/components-note.md'
 
 The `ChatChannelListItemView` component is used to display a channel in the [Channel List](channel-list.md) component. 
 
@@ -16,11 +17,9 @@ You can swap the built-in component with your own by setting `Components.default
 Components.default.channelContentView = MyChannelListItemView.self
 ```
 
-### Properties
+<ComponentsNote />
 
-<Properties />
-
-### Example: Custom Unread Count Indicator
+### Example: Custom Unread Indicator
 
 As an example of how to use these methods in practice, let's try to change the channel unread count indicator to look like the one in iMessage:
 
@@ -72,3 +71,7 @@ Finally, we have to tell the SDK to use our custom subclass instead of the defau
 ```swift
 Components.default.channelContentView = iMessageChannelListItemView.self
 ```
+
+## Properties
+
+<Properties />
