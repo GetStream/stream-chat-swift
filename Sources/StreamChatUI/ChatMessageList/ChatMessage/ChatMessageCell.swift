@@ -19,6 +19,9 @@ public final class _ChatMessageCell<ExtraData: ExtraDataTypes>: _TableViewCell {
     /// The message content view the cell is showing.
     public private(set) var messageContentView: _ChatMessageContentView<ExtraData>?
     
+    /// The minimum spacing below the cell.
+    public var minimumSpacingBelow: CGFloat = 2
+    
     override public func setUp() {
         super.setUp()
         
@@ -60,7 +63,11 @@ public final class _ChatMessageCell<ExtraData: ExtraDataTypes>: _TableViewCell {
         // (where the subviews are instantiated and configured) to use `components` and `appearance`
         // taken from the responder chain.
         contentView.addSubview(messageContentView!)
-        messageContentView?.pin(anchors: [.leading, .top, .trailing, .bottom], to: contentView)
+        messageContentView!.pin(anchors: [.leading, .top, .trailing, .bottom], to: contentView)
         messageContentView!.setUpLayoutIfNeeded(options: options, attachmentViewInjectorType: attachmentViewInjectorType)
+        messageContentView!.mainContainer.layoutMargins.bottom = max(
+            messageContentView!.mainContainer.layoutMargins.bottom,
+            minimumSpacingBelow
+        )
     }
 }
