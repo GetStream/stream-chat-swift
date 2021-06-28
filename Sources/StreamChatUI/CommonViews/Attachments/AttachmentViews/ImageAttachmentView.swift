@@ -27,7 +27,7 @@ open class _ImageAttachmentView<ExtraData: ExtraDataTypes>: _View, ThemeProvider
         super.setUpAppearance()
 
         layer.masksToBounds = true
-        layer.cornerRadius = 16
+        layer.cornerRadius = 11
 
         imageView.contentMode = .scaleAspectFill
     }
