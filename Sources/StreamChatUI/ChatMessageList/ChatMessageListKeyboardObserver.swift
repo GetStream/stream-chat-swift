@@ -6,7 +6,7 @@ import StreamChat
 import UIKit
 
 open class ChatMessageListKeyboardObserver {
-    public weak var containerView: UIView!
+    public weak var containerView: UIView?
     public weak var composerBottomConstraint: NSLayoutConstraint?
     public weak var viewController: UIViewController?
 
@@ -39,7 +39,8 @@ open class ChatMessageListKeyboardObserver {
             viewController?.presentedViewController == nil,
             let frame = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue,
             let duration = notification.userInfo?[UIResponder.keyboardAnimationDurationUserInfoKey] as? Double,
-            let curve = notification.userInfo?[UIResponder.keyboardAnimationCurveUserInfoKey] as? UInt
+            let curve = notification.userInfo?[UIResponder.keyboardAnimationCurveUserInfoKey] as? UInt,
+            let containerView = containerView
         else { return }
 
         let keyboardFrameWithinContainer = containerView.convert(frame, from: nil)
@@ -53,7 +54,7 @@ open class ChatMessageListKeyboardObserver {
             delay: 0,
             options: UIView.AnimationOptions(rawValue: curve << 16)
         ) {
-            self.containerView.layoutIfNeeded()
+            containerView.layoutIfNeeded()
         }
     }
 }

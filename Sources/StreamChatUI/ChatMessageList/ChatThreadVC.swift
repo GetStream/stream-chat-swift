@@ -100,7 +100,7 @@ open class _ChatThreadVC<ExtraData: ExtraDataTypes>:
 
         view.addSubview(listView)
         listView.pin(anchors: [.top, .leading, .trailing], to: view.safeAreaLayoutGuide)
-        listView.contentInset.top += max(listView.layoutMargins.right, listView.layoutMargins.left)
+        listView.contentInset.bottom += max(listView.layoutMargins.right, listView.layoutMargins.left)
 
         messageComposerVC.view.translatesAutoresizingMaskIntoConstraints = false
         addChildViewController(messageComposerVC, targetView: view)
