@@ -37,10 +37,20 @@ open class _GalleryAttachmentViewInjector<ExtraData: ExtraDataTypes>: _Attachmen
         
         contentView.bubbleView?.clipsToBounds = true
         contentView.bubbleContentContainer.insertArrangedSubview(galleryView, at: 0, respectsLayoutMargins: false)
+        
+        // We need to apply corners to the left and right containers because the previewsContainerView
+        // is applying extra layout margins and the rounded corners wouldn't match the margins.
+        let leftCorners: CACornerMask = [.layerMinXMaxYCorner, .layerMinXMinYCorner]
+        galleryView.leftPreviewsContainerView.layer.maskedCorners = options.roundedCorners.intersection(leftCorners)
+        galleryView.leftPreviewsContainerView.layer.cornerRadius = 16
+        galleryView.leftPreviewsContainerView.layer.masksToBounds = true
 
-        NSLayoutConstraint.activate([
-            galleryView.widthAnchor.pin(equalTo: galleryView.heightAnchor)
-        ])
+        let rightCorners: CACornerMask = [.layerMaxXMaxYCorner, .layerMaxXMinYCorner]
+        galleryView.rightPreviewsContainerView.layer.maskedCorners = options.roundedCorners.intersection(rightCorners)
+        galleryView.rightPreviewsContainerView.layer.cornerRadius = 16
+        galleryView.rightPreviewsContainerView.layer.masksToBounds = true
+
+        galleryView.widthAnchor.pin(equalTo: galleryView.heightAnchor, multiplier: 1.32).isActive = true
     }
     
     override open func contentViewDidUpdateContent() {

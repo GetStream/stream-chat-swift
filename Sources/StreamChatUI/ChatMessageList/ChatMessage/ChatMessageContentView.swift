@@ -437,19 +437,9 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, ThemeProvi
                 }
             }
             
-            var roundedCorners: CACornerMask {
-                if layoutOptions?.contains(.continuousBubble) == true {
-                    return .all
-                } else if layoutOptions?.contains(.flipped) == true {
-                    return CACornerMask.all.subtracting(.layerMaxXMaxYCorner)
-                } else {
-                    return CACornerMask.all.subtracting(.layerMinXMaxYCorner)
-                }
-            }
-            
             return .init(
                 backgroundColor: backgroundColor,
-                roundedCorners: roundedCorners
+                roundedCorners: layoutOptions?.roundedCorners ?? .all
             )
         }
 
@@ -759,5 +749,17 @@ private extension ChatMessageLayoutOptions {
     
     var hasMetadata: Bool {
         !intersection(.metadata).isEmpty
+    }
+}
+
+extension ChatMessageLayoutOptions {
+    var roundedCorners: CACornerMask {
+        if contains(.continuousBubble) {
+            return .all
+        } else if contains(.flipped) {
+            return CACornerMask.all.subtracting(.layerMaxXMaxYCorner)
+        } else {
+            return CACornerMask.all.subtracting(.layerMinXMaxYCorner)
+        }
     }
 }
