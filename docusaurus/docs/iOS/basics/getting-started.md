@@ -59,6 +59,10 @@ This example has the user and its token hard-coded, this is done to keep things 
 
 The next step is to add channel list and channel screens to the app. If this it is a new application, make sure to embed your view controller in a navigation controller.
 
+:::note
+You can load test data for your application using the test data generator [here](https://getstream.io/). //TODO
+:::
+
 ```swift
 import UIKit
 import StreamChat
@@ -81,4 +85,4 @@ class ViewController: ChatChannelListVC {
 
 In the snippet above we changed the parent class of `ViewController` to `ChatChannelListVC` and connected it with a `channelListController`. The channel list controller is responsible for retriving channels and to keep it in sync.
 
-The list of channels to retrieve is defined by the `ChannelListQuery`, in this case we want to get the list of channels where the current user is a member.
+The list of channels to retrieve is defined by the `ChannelListQuery`, in this case we want to get the list of channels where the current user is a member. By default tapping on one channel from the list will navigate to `ChatMessageListVC`.
