@@ -306,3 +306,54 @@ open class ChatMessageListCollectionView<ExtraData: ExtraDataTypes>: UICollectio
         return indexPathsForVisibleItems.contains(lastIndexPath)
     }
 }
+
+// ======
+
+open class ChatMessageListTableView<ExtraData: ExtraDataTypes>: UITableView {
+    private var identifiers: Set<String> = .init()
+
+    /// Dequeues the message cell. Registers the cell for received combination of `contentViewClass + layoutOptions`
+    /// if needed.
+    /// - Parameters:
+    ///   - contentViewClass: The type of content view the cell will be displaying.
+    ///   - layoutOptions: The option set describing content view layout.
+    ///   - indexPath: The cell index path.
+    /// - Returns: The instance of `_ChatMessageCollectionViewCell<ExtraData>` set up with the
+    /// provided `contentViewClass` and `layoutOptions`
+    open func dequeueReusableCell(
+        contentViewClass: _ChatMessageContentView<ExtraData>.Type,
+        attachmentViewInjectorType: _AttachmentViewInjector<ExtraData>.Type?,
+        layoutOptions: ChatMessageLayoutOptions,
+        for indexPath: IndexPath
+    ) -> _ChatMessageTableViewCell<ExtraData> {
+        let reuseIdentifier =
+            "\(_ChatMessageTableViewCell<ExtraData>.reuseId)_" + "\(layoutOptions.rawValue)_" +
+            "\(contentViewClass)_" + String(describing: attachmentViewInjectorType)
+
+        // There is no public API to find out
+        // if the given `identifier` is registered.
+        if !identifiers.contains(reuseIdentifier) {
+            identifiers.insert(reuseIdentifier)
+
+            register(_ChatMessageTableViewCell<ExtraData>.self, forCellReuseIdentifier: reuseIdentifier)
+        }
+
+        let cell = dequeueReusableCell(
+            withIdentifier: reuseIdentifier,
+            for: indexPath
+        ) as! _ChatMessageTableViewCell<ExtraData>
+
+        cell.setMessageContentIfNeeded(
+            contentViewClass: contentViewClass,
+            attachmentViewInjectorType: attachmentViewInjectorType,
+            options: layoutOptions
+        )
+        
+        cell.messageContentView?.indexPath = { [weak cell, weak self] in
+            guard let cell = cell else { return nil }
+            return self?.indexPath(for: cell)
+        }
+
+        return cell
+    }
+}
