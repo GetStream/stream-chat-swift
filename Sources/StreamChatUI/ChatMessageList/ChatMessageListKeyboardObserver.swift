@@ -43,11 +43,11 @@ open class ChatMessageListKeyboardObserver {
             let containerView = containerView
         else { return }
 
-        let keyboardFrameWithinContainer = containerView.convert(frame, from: nil)
-
-        let overlap = containerView.frame.height - keyboardFrameWithinContainer.minY
-
-        composerBottomConstraint?.constant = -overlap
+        let convertedKeyboardFrame = containerView.convert(frame, from: UIScreen.main.coordinateSpace)
+        
+        let intersectedKeyboardHeight = containerView.frame.intersection(convertedKeyboardFrame).height
+        
+        composerBottomConstraint?.constant = -intersectedKeyboardHeight
 
         UIView.animate(
             withDuration: duration,
