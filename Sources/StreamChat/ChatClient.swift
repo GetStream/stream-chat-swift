@@ -351,8 +351,6 @@ public class _ChatClient<ExtraData: ExtraDataTypes> {
     }
     
     private func handleAppDidEnterBackground() {
-        // If user wants to manage connection manaully, we don't handle
-        guard config.shouldConnectAutomatically else { return }
         // We can't disconnect if we're not connected
         guard connectionStatus == .connected else { return }
         
@@ -377,9 +375,7 @@ public class _ChatClient<ExtraData: ExtraDataTypes> {
     
     private func handleAppDidBecomeActive() {
         cancelBackgroundTaskIfNeeded()
-        
-        // If user wants to manage connection manaully, we don't handle reconnection
-        guard config.shouldConnectAutomatically else { return }
+
         guard connectionStatus != .connected && connectionStatus != .connecting else {
             // We are connected or connecting anyway
             return

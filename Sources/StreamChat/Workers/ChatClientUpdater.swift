@@ -80,15 +80,11 @@ class ChatClientUpdater<ExtraData: ExtraDataTypes> {
                         self.client.connectionStatus = .disconnected(error: nil)
                     }
 
-                    // Establish web-socket connection automatically if it is required
-                    // by the config. If `shouldConnectAutomatically` is set to `false` it means the
-                    // end-user wants to manually control web-socket connection
-                    // by calling `connect/disconnect` when it makes sense.
-                    if self.client.config.shouldConnectAutomatically {
-                        self.connect(completion: completion)
-                    } else {
-                        completion?(nil)
-                    }
+                    self.connect(
+                        name: name,
+                        imageURL: imageURL,
+                        completion: completion
+                    )
                 } catch {
                     completion?(error)
                 }
