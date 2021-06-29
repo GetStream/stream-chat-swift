@@ -18,7 +18,7 @@ extension ImageAttachmentPayload: AttachmentPreviewProvider {
 
     /// The view representing the attachment.
     public func previewView<ExtraData: ExtraDataTypes>(components: _Components<ExtraData>) -> UIView {
-        let view = components.messageComposerImageAttachmentView.init()
+        let view = components.imageAttachmentComposerPreview.init()
         view.content = imagePreviewURL
         return view
     }
@@ -36,5 +36,16 @@ extension FileAttachmentPayload: AttachmentPreviewProvider {
             iconName: assetURL.pathExtension
         )
         return view
+    }
+}
+
+extension VideoAttachmentPayload: AttachmentPreviewProvider {
+    public static var preferredAxis: NSLayoutConstraint.Axis { .horizontal }
+
+    /// The view representing the video attachment.
+    public func previewView<ExtraData: ExtraDataTypes>(components: _Components<ExtraData>) -> UIView {
+        let preview = components.videoAttachmentComposerPreview.init()
+        preview.content = videoURL
+        return preview
     }
 }

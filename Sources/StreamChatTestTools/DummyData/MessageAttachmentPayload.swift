@@ -48,6 +48,11 @@ extension MessageAttachmentPayload {
         let data = try! JSONEncoder.stream.encode(payload)
         return try? JSONDecoder.stream.decode(LinkAttachmentPayload.self, from: data)
     }
+    
+    var decodedVideoPayload: VideoAttachmentPayload? {
+        let data = try! JSONEncoder.stream.encode(payload)
+        return try? JSONDecoder.stream.decode(VideoAttachmentPayload.self, from: data)
+    }
 
     static func image(
         title: String = .unique,
@@ -117,6 +122,22 @@ extension MessageAttachmentPayload {
                 "image_url": .string(imageURL.absoluteString),
                 "thumb_url": .string(previewURL.absoluteString),
                 "title_link": .string(titleURL.absoluteString)
+            ])
+        )
+    }
+    
+    static func video(
+        title: String = .unique,
+        videoURL: URL = URL(string: "https://getstream.io/video.mov")!,
+        file: AttachmentFile = .init(type: .mov, size: 1024, mimeType: "video/mov")
+    ) -> Self {
+        .init(
+            type: .video,
+            payload: .dictionary([
+                "title": .string(title),
+                "asset_url": .string(videoURL.absoluteString),
+                "mime_type": .string(file.mimeType!),
+                "file_size": .string("\(file.size)")
             ])
         )
     }

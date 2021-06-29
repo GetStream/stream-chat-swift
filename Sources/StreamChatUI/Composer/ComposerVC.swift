@@ -204,10 +204,10 @@ open class _ComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
         .init()
 
     /// The view controller for selecting image attachments.
-    open private(set) lazy var imagePickerVC: UIViewController = {
+    open private(set) lazy var mediaPickerVC: UIViewController = {
         let picker = UIImagePickerController()
-        picker.mediaTypes = ["public.image"]
-        picker.sourceType = .photoLibrary
+        picker.mediaTypes = UIImagePickerController.availableMediaTypes(for: .savedPhotosAlbum) ?? ["public.image"]
+        picker.sourceType = .savedPhotosAlbum
         picker.delegate = self
         return picker
     }()
@@ -220,8 +220,6 @@ open class _ComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
         return picker
     }()
     
-    open var selectedAttachmentType: AttachmentType?
-
     public func setDelegate(_ delegate: ComposerVCDelegate) {
         self.delegate = delegate
     }
@@ -382,59 +380,56 @@ open class _ComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
         content.clear()
     }
     
+    /// Shows a photo/media picker.
+    open func showMediaPicker() {
+        present(mediaPickerVC, animated: true)
+    }
+    
+    /// Shows a document picker.
+    open func showFilePicker() {
+        present(filePickerVC, animated: true)
+    }
+    
+    /// Returns actions for attachments picker.
+    open var attachmentsPickerActions: [UIAlertAction] {
+        let showFilePickerAction = UIAlertAction(
+            title: L10n.Composer.Picker.file,
+            style: .default,
+            handler: { [weak self] _ in self?.showFilePicker() }
+        )
+        
+        let showMediaPickerAction = UIAlertAction(
+            title: L10n.Composer.Picker.media,
+            style: .default,
+            handler: { [weak self] _ in self?.showMediaPicker() }
+        )
+        
+        let cancelAction = UIAlertAction(
+            title: L10n.Composer.Picker.cancel,
+            style: .cancel
+        )
+        
+        return [showMediaPickerAction, showFilePickerAction, cancelAction]
+    }
+    
+    /// Action that handles tap on attachments button in composer.
     @objc open func showAttachmentsPicker(sender: UIButton) {
-        var actionSheet: UIAlertController {
-            let actionSheet: UIAlertController = UIAlertController(
+        // The UI doesn't support mix of image and file attachments so we are limiting this option.
+        // Files in the message composer are scrolling vertically and images horizontally.
+        // There is no techical limitation for multiple attachment types.
+        if content.attachments.isEmpty {
+            let actionSheet = UIAlertController(
                 title: nil,
                 message: L10n.Composer.Picker.title,
                 preferredStyle: .actionSheet
             )
             actionSheet.popoverPresentationController?.sourceView = sender
-
-            let showFilePickerAction = UIAlertAction(
-                title: L10n.Composer.Picker.file,
-                style: .default,
-                handler: { [weak self] _ in
-                    guard let self = self else { return }
-                    self.selectedAttachmentType = .file
-                    self.present(self.filePickerVC, animated: true, completion: nil)
-                }
-            )
-            let showImagePickerAction = UIAlertAction(
-                title: L10n.Composer.Picker.image,
-                style: .default,
-                handler: { [weak self] _ in
-                    guard let self = self else { return }
-                    self.selectedAttachmentType = .image
-                    self.present(self.imagePickerVC, animated: true, completion: nil)
-                }
-            )
-            let cancelAction = UIAlertAction(title: L10n.Composer.Picker.cancel, style: .cancel)
-
-            [showFilePickerAction, showImagePickerAction, cancelAction].forEach {
-                actionSheet.addAction($0)
-            }
-
-            return actionSheet
-        }
-        
-        // The UI doesn't support mix of image and file attachments so we are limiting this option.
-        // Files in the message composer are scrolling vertically and images horizontally.
-        // There is no techical limitation for multiple attachment types.
-        if content.attachments.isEmpty {
-            selectedAttachmentType = nil
-            present(actionSheet, animated: true, completion: nil)
-        } else if let attachmentType = selectedAttachmentType {
-            switch attachmentType {
-            case .image:
-                present(imagePickerVC, animated: true, completion: nil)
-            case .file:
-                present(filePickerVC, animated: true, completion: nil)
-            default:
-                log.error("Error in handling `selectedAttachmentType`. Unexpected attachment type.")
-            }
-        } else {
-            log.error("Error in handling `selectedAttachmentType`. Missing attachment type.")
+            attachmentsPickerActions.forEach(actionSheet.addAction)
+            present(actionSheet, animated: true)
+        } else if content.attachments.contains(where: { $0.type == .file }) {
+            showFilePicker()
+        } else if content.attachments.contains(where: { $0.type == .image || $0.type == .video }) {
+            showMediaPicker()
         }
     }
     
@@ -716,15 +711,34 @@ open class _ComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
         _ picker: UIImagePickerController,
         didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]
     ) {
-        guard let url = info[UIImagePickerController.InfoKey.imageURL] as? URL else { return }
+        var completion: (() -> Void)?
+        defer {
+            picker.dismiss(animated: true, completion: completion)
+        }
+        
+        let urlAndType: (URL, AttachmentType)
+        if let imageURL = info[.imageURL] as? URL {
+            urlAndType = (imageURL, .image)
+        } else if let videoURL = info[.mediaURL] as? URL {
+            urlAndType = (videoURL, .video)
+        } else {
+            log.error("Unexpected item selected in image picker")
+            return
+        }
         
         do {
-            let attachment = try AnyAttachmentPayload(localFileURL: url, attachmentType: .image)
-            content.attachments.append(attachment)
+            let fileSize = try AttachmentFile(url: urlAndType.0).size
+            let maxFileSize = channelController?.client.config.maxAttachmentSize ?? 0
+            
+            if fileSize < maxFileSize {
+                let attachment = try AnyAttachmentPayload(localFileURL: urlAndType.0, attachmentType: urlAndType.1)
+                content.attachments.append(attachment)
+            } else {
+                completion = showAttachmentExceedsMaxSizeAlert
+            }
         } catch {
             log.assertionFailure(error.localizedDescription)
         }
-        picker.dismiss(animated: true, completion: nil)
     }
     
     // MARK: - UIDocumentPickerViewControllerDelegate
@@ -738,5 +752,11 @@ open class _ComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
                 return nil
             }
         })
+    }
+    
+    open func showAttachmentExceedsMaxSizeAlert() {
+        let alert = UIAlertController(title: nil, message: L10n.Attachment.maxSizeExceeded, preferredStyle: .alert)
+        alert.addAction(.init(title: L10n.Alert.Actions.ok, style: .default, handler: { _ in }))
+        present(alert, animated: true)
     }
 }

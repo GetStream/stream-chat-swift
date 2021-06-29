@@ -91,6 +91,17 @@ public struct ChatClientConfig {
     /// Allows to inject a custom API client for uploading attachments, if not specified `StreamCDNClient` is used
     public var customCDNClient: CDNClient?
     
+    /// Returns max possible attachment size in bytes.
+    /// The value is taken from custom `maxAttachmentSize` type custom `CDNClient` type.
+    /// The default value is 20 MiB.
+    public var maxAttachmentSize: Int64 {
+        if let customCDNClient = customCDNClient {
+            return type(of: customCDNClient).maxAttachmentSize
+        } else {
+            return StreamCDNClient.maxAttachmentSize
+        }
+    }
+    
     public init(apiKey: APIKey) {
         self.apiKey = apiKey
         isClientInActiveMode = !Bundle.main.isAppExtension

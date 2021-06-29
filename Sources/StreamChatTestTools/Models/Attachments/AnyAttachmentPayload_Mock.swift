@@ -8,6 +8,7 @@ import Foundation
 public extension AnyAttachmentPayload {
     static let mockFile = try! Self(localFileURL: .localYodaQuote, attachmentType: .file)
     static let mockImage = try! Self(localFileURL: .localYodaImage, attachmentType: .image)
+    static let mockVideo = try! Self(localFileURL: .localYodaQuote, attachmentType: .video)
 }
 
 public extension URL {
