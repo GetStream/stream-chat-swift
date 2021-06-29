@@ -61,6 +61,8 @@
 		64C80615262EDA9600B1F7AD /* ChatMessage_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64C80614262EDA9600B1F7AD /* ChatMessage_Tests.swift */; };
 		64DA56BB26412EED00DCBF82 /* DatabaseCleanupUpdater.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64DA56BA26412EED00DCBF82 /* DatabaseCleanupUpdater.swift */; };
 		64DA56BD2641587D00DCBF82 /* DatabaseCleanupUpdater_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64DA56BC2641587D00DCBF82 /* DatabaseCleanupUpdater_Tests.swift */; };
+		64ECF6BC2672272D008B9D47 /* ChatThreadVC+SwiftUI_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64ECF6BB2672272D008B9D47 /* ChatThreadVC+SwiftUI_Tests.swift */; };
+		64ECF6D826722733008B9D47 /* ChatThreadVC_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64ECF6A52672271C008B9D47 /* ChatThreadVC_Tests.swift */; };
 		64F70D4B26257FD400C9F979 /* Error+InternetNotAvailable_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64F70D4A26257FD400C9F979 /* Error+InternetNotAvailable_Tests.swift */; };
 		6971257E260CA503003C7B47 /* NSManagedObjectContext+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6971256C260CA4CB003C7B47 /* NSManagedObjectContext+Extensions.swift */; };
 		69736BF226413E5D00090B67 /* ChatMessageListScrollOverlayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69736BF126413E5D00090B67 /* ChatMessageListScrollOverlayView.swift */; };
@@ -1299,6 +1301,8 @@
 		64C80614262EDA9600B1F7AD /* ChatMessage_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessage_Tests.swift; sourceTree = "<group>"; };
 		64DA56BA26412EED00DCBF82 /* DatabaseCleanupUpdater.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseCleanupUpdater.swift; sourceTree = "<group>"; };
 		64DA56BC2641587D00DCBF82 /* DatabaseCleanupUpdater_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseCleanupUpdater_Tests.swift; sourceTree = "<group>"; };
+		64ECF6A52672271C008B9D47 /* ChatThreadVC_Tests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatThreadVC_Tests.swift; sourceTree = "<group>"; };
+		64ECF6BB2672272D008B9D47 /* ChatThreadVC+SwiftUI_Tests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ChatThreadVC+SwiftUI_Tests.swift"; sourceTree = "<group>"; };
 		64F70D4A26257FD400C9F979 /* Error+InternetNotAvailable_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Error+InternetNotAvailable_Tests.swift"; sourceTree = "<group>"; };
 		69712522260BC9B4003C7B47 /* Deprecations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Deprecations.swift; sourceTree = "<group>"; };
 		6971256C260CA4CB003C7B47 /* NSManagedObjectContext+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSManagedObjectContext+Extensions.swift"; sourceTree = "<group>"; };
@@ -2530,6 +2534,8 @@
 				E74DB0102655473300508D22 /* TypingIndicatorView_Tests.swift */,
 				E768AAFA2627691600328E6E /* TypingAnimationView.swift */,
 				DBC8A563258113F700B20A82 /* ChatThreadVC.swift */,
+				64ECF6A52672271C008B9D47 /* ChatThreadVC_Tests.swift */,
+				64ECF6BB2672272D008B9D47 /* ChatThreadVC+SwiftUI_Tests.swift */,
 				69736BF126413E5D00090B67 /* ChatMessageListScrollOverlayView.swift */,
 				A30DEC98260B47DE0066E8CE /* TitleContainerView.swift */,
 				A396B752260CCE7400D8D15B /* TitleContainerView_Tests.swift */,
@@ -5502,7 +5508,9 @@
 				ADAA377125E43C3700C31528 /* ChatSuggestionsViewController_Tests.swift in Sources */,
 				64B059ED267116B40024CE90 /* ChatMessageListVC+SwiftUI_Tests.swift in Sources */,
 				E73262E025ED64AB008CB152 /* ChatChannelNamer_Tests.swift in Sources */,
+				64ECF6D826722733008B9D47 /* ChatThreadVC_Tests.swift in Sources */,
 				8803E9F026399333002B2A7B /* ChatMessageContentView_Tests.swift in Sources */,
+				64ECF6BC2672272D008B9D47 /* ChatThreadVC+SwiftUI_Tests.swift in Sources */,
 				AD050BA8265D600B006649A5 /* QuotedChatMessageView+SwiftUI_Tests.swift in Sources */,
 				79158D5B25F15CF900186102 /* AssertAsync.swift in Sources */,
 				AD540AE2260CECA10082D802 /* QuotedChatMessageView_Tests.swift in Sources */,

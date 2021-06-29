@@ -141,6 +141,11 @@ open class _ChatThreadVC<ExtraData: ExtraDataTypes>:
 
         keyboardObserver.unregister()
     }
+    
+    override open func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+        view.layoutIfNeeded()
+    }
 
     /// Returns the content view class for the message at given `indexPath`
     open func cellContentClassForMessage(at indexPath: IndexPath) -> _ChatMessageContentView<ExtraData>.Type {
