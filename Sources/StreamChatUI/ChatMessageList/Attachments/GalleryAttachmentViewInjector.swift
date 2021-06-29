@@ -99,7 +99,7 @@ private extension _GalleryAttachmentViewInjector {
     func preview(for imageAttachment: ChatMessageImageAttachment) -> UIView {
         let preview = contentView
             .components
-            .imageAttachmentCellView
+            .imageAttachmentGalleryPreview
             .init()
             .withoutAutoresizingMaskConstraints
         

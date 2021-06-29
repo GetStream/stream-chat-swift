@@ -154,8 +154,8 @@ open class _GalleryVC<ExtraData: ExtraDataTypes>:
         attachmentsFlowLayout.minimumLineSpacing = 0
                 
         attachmentsCollectionView.register(
-            _ImageCollectionViewCell<ExtraData>.self,
-            forCellWithReuseIdentifier: _ImageCollectionViewCell<ExtraData>.reuseId
+            _ImageAttachmentGalleryCell<ExtraData>.self,
+            forCellWithReuseIdentifier: _ImageAttachmentGalleryCell<ExtraData>.reuseId
         )
         attachmentsCollectionView.register(
             _VideoAttachmentGalleryCell<ExtraData>.self,
@@ -414,7 +414,7 @@ open class _GalleryVC<ExtraData: ExtraDataTypes>:
         
         switch item.type {
         case .image:
-            return _ImageCollectionViewCell<ExtraData>.reuseId
+            return _ImageAttachmentGalleryCell<ExtraData>.reuseId
         case .video:
             return _VideoAttachmentGalleryCell<ExtraData>.reuseId
         default:
@@ -444,7 +444,7 @@ open class _GalleryVC<ExtraData: ExtraDataTypes>:
         switch items[indexPath.item].type {
         case .image:
             let cell = attachmentsCollectionView
-                .cellForItem(at: indexPath) as? _ImageCollectionViewCell<ExtraData>
+                .cellForItem(at: indexPath) as? _ImageAttachmentGalleryCell<ExtraData>
             return cell?.imageView
         case .video:
             let cell = attachmentsCollectionView

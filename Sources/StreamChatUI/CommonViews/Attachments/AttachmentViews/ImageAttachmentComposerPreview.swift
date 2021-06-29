@@ -5,10 +5,11 @@
 import StreamChat
 import UIKit
 
-public typealias ImageAttachmentView = _ImageAttachmentView<NoExtraData>
+/// A view that displays image attachment preview in composer.
+public typealias ImageAttachmentComposerPreview = _ImageAttachmentComposerPreview<NoExtraData>
 
-/// A view that displays the image attachment.
-open class _ImageAttachmentView<ExtraData: ExtraDataTypes>: _View, ThemeProvider {
+/// A view that displays image attachment preview in composer.
+open class _ImageAttachmentComposerPreview<ExtraData: ExtraDataTypes>: _View, ThemeProvider {
     open var width: CGFloat = 100
     open var height: CGFloat = 100
     

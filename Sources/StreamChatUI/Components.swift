@@ -176,8 +176,8 @@ public struct _Components<ExtraData: ExtraDataTypes> {
     public var galleryView: _ChatMessageGalleryView<ExtraData>.Type =
         _ChatMessageGalleryView<ExtraData>.self
     
-    /// The view that shows an image attachment inside message cell.
-    public var imageAttachmentCellView: _ChatMessageGalleryView<ExtraData>.ImagePreview.Type =
+    /// The view that shows an image attachment preview inside message cell.
+    public var imageAttachmentGalleryPreview: _ChatMessageGalleryView<ExtraData>.ImagePreview.Type =
         _ChatMessageGalleryView<ExtraData>.ImagePreview.self
     
     /// The view that shows a video attachment in full-screen gallery.
@@ -267,8 +267,9 @@ public struct _Components<ExtraData: ExtraDataTypes> {
     /// A view that displays the document attachment.
     public var messageComposerFileAttachmentView: FileAttachmentView.Type = FileAttachmentView.self
 
-    /// A view that displays the image attachment.
-    public var messageComposerImageAttachmentView: _ImageAttachmentView<ExtraData>.Type = _ImageAttachmentView<ExtraData>.self
+    /// A view that displays image attachment preview in composer.
+    public var imageAttachmentComposerPreview: _ImageAttachmentComposerPreview<ExtraData>
+        .Type = _ImageAttachmentComposerPreview<ExtraData>.self
     
     /// A view that displays the video attachment preview in composer.
     public var videoAttachmentComposerPreview: _VideoAttachmentComposerPreview<ExtraData>
