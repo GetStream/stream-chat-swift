@@ -23,33 +23,18 @@
       ]
     },
     {
-      "Navigation Components": [
-        "components/chat-channel-list-router",
-        "components/chat-message-list-router",
-        "components/alerts-router"
-      ]
-    },
-    {
       "UI Components": [
         "components/channel-list-item-view"
       ]
     },
     {
-      "Guides": [
-        {
-          "Working with ChannelList": [
-            "guides/working-with-channel-list",
-            "guides/working-with-a-channel",
-            "guides/working-with-members",
-            "guides/working-with-watchers",
-            "guides/filter-query-guide"
-          ]
-        },
+      "Guides": [        
+        "guides/working-with-a-channel",
+        "guides/working-with-members",
         {
           "Working with MessageList": [
             "guides/working-with-messages",
             "guides/working-with-messagelist-layout",
-            "guides/pinned-messages",
             "guides/working-with-attachments",
             "guides/working-with-custom-attachments",
             "guides/working-with-reactions"
