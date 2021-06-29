@@ -158,8 +158,8 @@ open class _GalleryVC<ExtraData: ExtraDataTypes>:
             forCellWithReuseIdentifier: _ImageCollectionViewCell<ExtraData>.reuseId
         )
         attachmentsCollectionView.register(
-            _VideoCollectionViewCell<ExtraData>.self,
-            forCellWithReuseIdentifier: _VideoCollectionViewCell<ExtraData>.reuseId
+            _VideoAttachmentGalleryCell<ExtraData>.self,
+            forCellWithReuseIdentifier: _VideoAttachmentGalleryCell<ExtraData>.reuseId
         )
         attachmentsCollectionView.contentInsetAdjustmentBehavior = .never
         attachmentsCollectionView.isPagingEnabled = true
@@ -276,7 +276,7 @@ open class _GalleryVC<ExtraData: ExtraDataTypes>:
         
         let videoCell = attachmentsCollectionView.cellForItem(
             at: currentItemIndexPath
-        ) as? _VideoCollectionViewCell<ExtraData>
+        ) as? _VideoAttachmentGalleryCell<ExtraData>
         
         videoPlaybackBar.player = videoCell?.player
         videoPlaybackBar.isHidden = videoPlaybackBar.player == nil
@@ -416,7 +416,7 @@ open class _GalleryVC<ExtraData: ExtraDataTypes>:
         case .image:
             return _ImageCollectionViewCell<ExtraData>.reuseId
         case .video:
-            return _VideoCollectionViewCell<ExtraData>.reuseId
+            return _VideoAttachmentGalleryCell<ExtraData>.reuseId
         default:
             return nil
         }
@@ -448,7 +448,7 @@ open class _GalleryVC<ExtraData: ExtraDataTypes>:
             return cell?.imageView
         case .video:
             let cell = attachmentsCollectionView
-                .cellForItem(at: indexPath) as? _VideoCollectionViewCell<ExtraData>
+                .cellForItem(at: indexPath) as? _VideoAttachmentGalleryCell<ExtraData>
             return cell?.animationPlaceholderImageView
         default:
             return nil

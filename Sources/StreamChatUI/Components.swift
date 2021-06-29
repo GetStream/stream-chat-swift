@@ -180,9 +180,13 @@ public struct _Components<ExtraData: ExtraDataTypes> {
     public var imageAttachmentCellView: _ChatMessageGalleryView<ExtraData>.ImagePreview.Type =
         _ChatMessageGalleryView<ExtraData>.ImagePreview.self
     
-    /// The view that shows a video attachment inside message cell.
-    public var videoAttachmentCellView: _VideoAttachmentCellView<ExtraData>.Type =
-        _VideoAttachmentCellView<ExtraData>.self
+    /// The view that shows a video attachment in full-screen gallery.
+    public var videoAttachmentGalleryCell: _VideoAttachmentGalleryCell<ExtraData>.Type =
+        _VideoAttachmentGalleryCell<ExtraData>.self
+    
+    /// The view that shows a video attachment preview inside a message.
+    public var videoAttachmentGalleryPreview: _VideoAttachmentGalleryPreview<ExtraData>.Type =
+        _VideoAttachmentGalleryPreview<ExtraData>.self
     
     /// The view that shows an overlay with uploading progress for image attachment that is being uploaded.
     public var imageUploadingOverlay: _ChatMessageGalleryView<ExtraData>.UploadingOverlay.Type =
