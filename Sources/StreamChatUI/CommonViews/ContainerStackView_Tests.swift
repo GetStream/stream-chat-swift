@@ -102,6 +102,38 @@ class ContainerStackView_Tests: XCTestCase {
         AssertSnapshot(containerH, variants: [.defaultLight])
     }
     
+    func testAppearance_withDoubleHiddenImageView() {
+        let yodaImageView = UIImageView(
+            image: TestImages.yoda.image
+        )
+        let vaderImageView = UIImageView(
+            image: TestImages.vader.image
+        )
+        
+        let containerV = ContainerStackView(
+            axis: .vertical,
+            arrangedSubviews: [
+                yodaImageView,
+                vaderImageView
+            ]
+        )
+        .withoutAutoresizingMaskConstraints
+        containerV.spacing = 10
+        containerV.alignment = .fill
+        containerV.distribution = .equal
+        
+        yodaImageView.isHidden = true
+        vaderImageView.isHidden = true
+        
+        yodaImageView.isHidden = true
+        vaderImageView.isHidden = true
+        
+        yodaImageView.isHidden = false
+        vaderImageView.isHidden = false
+        
+        AssertSnapshot(containerV, variants: [.defaultLight])
+    }
+    
     func testAppearance_withTwoContainerStackViews() {
         let leftContainer = ContainerStackView(
             axis: .vertical,
