@@ -641,6 +641,7 @@ var streamChatUIFilesExcluded: [String] { [
     "CommonViews/__Snapshots__/ContainerStackView_Tests/testAppearance.default-light-horizontal-axisTrailing-equal-inf.png",
     "CommonViews/__Snapshots__/ContainerStackView_Tests/testAppearance.default-light-vertical-axisLeading-natural-0-0.png",
     "CommonViews/__Snapshots__/ContainerStackView_Tests/testAppearance.default-light-vertical-axisLeading-natural-inf.png",
+    "CommonViews/__Snapshots__/ContainerStackView_Tests/testAppearance_withDoubleHiddenImageView.default-light.png",
     "CommonViews/__Snapshots__/ContainerStackView_Tests/testAppearance.default-light-horizontal-axisLeading-natural-0-0.png",
     "CommonViews/__Snapshots__/ContainerStackView_Tests/testAppearance.default-light-horizontal-axisLeading-natural-inf.png",
     "CommonViews/__Snapshots__/ContainerStackView_Tests/testAppearance.default-light-vertical-fill-natural-32-0.png",
