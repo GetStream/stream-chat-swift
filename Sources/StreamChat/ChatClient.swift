@@ -228,7 +228,7 @@ public class _ChatClient<ExtraData: ExtraDataTypes> {
     /// The token of the current user. If the current user is anonymous, the token is `nil`.
     @Atomic var currentToken: Token?
 
-    public var tokenProvider: _TokenProvider<ExtraData>
+    public var tokenProvider: _TokenProvider<ExtraData>?
     
     /// Creates a new instance of `ChatClient`.
     /// - Parameters:
@@ -238,7 +238,7 @@ public class _ChatClient<ExtraData: ExtraDataTypes> {
     ///   - completion: The completion that will be called once the **first** user session for the given token is setup.
     public convenience init(
         config: ChatClientConfig,
-        tokenProvider: _TokenProvider<ExtraData>,
+        tokenProvider: _TokenProvider<ExtraData>? = nil,
         completion: ((Error?) -> Void)? = nil
     ) {
         let workerBuilders: [WorkerBuilder]
@@ -286,7 +286,7 @@ public class _ChatClient<ExtraData: ExtraDataTypes> {
     ///
     init(
         config: ChatClientConfig,
-        tokenProvider: _TokenProvider<ExtraData>,
+        tokenProvider: _TokenProvider<ExtraData>? = nil,
         workerBuilders: [WorkerBuilder],
         eventWorkerBuilders: [EventWorkerBuilder],
         environment: Environment,
@@ -299,8 +299,10 @@ public class _ChatClient<ExtraData: ExtraDataTypes> {
         self.eventWorkerBuilders = eventWorkerBuilders
 
         currentUserId = fetchCurrentUserIdFromDatabase()
-
-        clientUpdater.reloadUserIfNeeded(completion: completion)
+        // Backward compatiability
+        if let tokenProvider = tokenProvider {
+            setConnectionInfoAndConnect(tokenProvider: tokenProvider, completion: completion)
+        }
         
         backgroundTaskScheduler?.startListeningForAppStateUpdates(
             onEnteringBackground: { [weak self] in self?.handleAppDidEnterBackground() },

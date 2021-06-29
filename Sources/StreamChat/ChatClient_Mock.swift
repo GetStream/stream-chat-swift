@@ -41,7 +41,7 @@ extension _ChatClient {
 
 class ChatClientMock<ExtraData: ExtraDataTypes>: _ChatClient<ExtraData> {
     @Atomic var init_config: ChatClientConfig
-    @Atomic var init_tokenProvider: _TokenProvider<ExtraData>
+    @Atomic var init_tokenProvider: _TokenProvider<ExtraData>?
     @Atomic var init_workerBuilders: [WorkerBuilder]
     @Atomic var init_eventWorkerBuilders: [EventWorkerBuilder]
     @Atomic var init_environment: Environment
@@ -61,7 +61,7 @@ class ChatClientMock<ExtraData: ExtraDataTypes>: _ChatClient<ExtraData> {
 
     override init(
         config: ChatClientConfig,
-        tokenProvider: _TokenProvider<ExtraData>,
+        tokenProvider: _TokenProvider<ExtraData>? = nil,
         workerBuilders: [WorkerBuilder] = [],
         eventWorkerBuilders: [EventWorkerBuilder] = [],
         environment: Environment = .mock,
