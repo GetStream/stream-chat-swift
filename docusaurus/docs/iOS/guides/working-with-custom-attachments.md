@@ -3,6 +3,7 @@ title: Working with Attachments in Composer
 ---
 
 import ComponentsNote from '../common-content/components-note.md'
+import ThemingNote from '../common-content/theming-note.md'
 
 The `ComposerVC` can be customized in order to change the built-in attachments or can be extended to support your own custom attachments. By default the composer handles images, videos, giphy's and files, but you can create your own custom attachments. Some examples of common custom attachments are: location sharing, contact details, workouts and voice memos. You can read more about how attachments work in the [Working with Attachments](../guides/working-with-attachments) guide.
 
@@ -23,7 +24,7 @@ Appearance.default.images.openAttachments = UIImage(systemName: "plus")
 | ------------- | ------------- |
 | <img src={require("../assets/composer-custom-attachment-clip.png").default} width="100%"/> | <img src={require("../assets/composer-custom-attachment-plus.png").default} width="100%"/> |
 
-<ComponentsNote />
+<ThemingNote />
 
 ### Change the button styling
 
