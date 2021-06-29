@@ -496,6 +496,7 @@ extension UILayoutPriority {
 
 extension NSLayoutConstraint {
     func setTemporaryConstant(_ value: CGFloat) {
+        guard originalConstant == nil else { return }
         originalConstant = constant
         constant = value
     }
@@ -503,6 +504,7 @@ extension NSLayoutConstraint {
     func resetTemporaryConstant() {
         if let original = originalConstant {
             constant = original
+            originalConstant = nil
         }
     }
 
