@@ -2,7 +2,7 @@
 title: ChatChannelListItemView
 ---
 
-import Properties from '../reference-docs/sources/stream-chat-ui/chat-channel-list/chat-channel-list-item-view-properties.md'
+import Properties from '../common-content/reference-docs/stream-chat-ui/chat-channel-list/chat-channel-list-item-view-properties.md'
 import ComponentsNote from '../common-content/components-note.md'
 
 The `ChatChannelListItemView` component is used to display a channel in the [Channel List](channel-list.md) component. 

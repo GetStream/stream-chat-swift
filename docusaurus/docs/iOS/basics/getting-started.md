@@ -48,7 +48,7 @@ ChatClient.shared.connect { completion in
     /// Auth.login({ result in
     ///     completion(.success(result.user, result.userToken))
     /// })
-    completion(.success(ChatUser(id: "leia_organa", name:"Leia Organa", imageURL: "https://cutt.ly/SmeFRfC")), token)
+    completion(.success(userInfo(id: "leia_organa", name:"Leia Organa", imageURL: "https://cutt.ly/SmeFRfC")), token)
 }
 ```
 

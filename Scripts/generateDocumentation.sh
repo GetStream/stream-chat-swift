@@ -15,7 +15,7 @@ else
     exit 1
 fi
 
-OUTPUT_DIRECTORY="docusaurus/docs/iOS/ReferenceDocs"
+OUTPUT_DIRECTORY="docusaurus/docs/iOS/CommonContent"
 
 swift-doc generate $TARGET_DIRECTORY  -n $TARGET -o "$OUTPUT_DIRECTORY/$TARGET_DIRECTORY"
 
@@ -47,7 +47,7 @@ pushd docusaurus/docs/iOS/
 # slug: lowecased path
 # --- 
 # sed is cool and everything but having it on macOS hurts
-find ReferenceDocs -type f > /tmp/allFiles.txt  
+find CommonContent -type f > /tmp/allFiles.txt  
 
 while read FILEPATH; do
  FILENAME=`basename $FILEPATH`

@@ -10,7 +10,7 @@ title: Components
 1. Make changes to layout, styling, behavior as needed
 1. Configure the SDK to use your custom component 
 
-To make customizations as easy as possible all view components conform to the [Customizable](components#customizable-protocol) protocol and are subclasses of the `_View` base class. When building your own custom
+To make customizations as easy as possible all view components conform to the [Customizable](components#the-components-object) protocol and are subclasses of the `_View` base class. When building your own custom
 component in most cases you only need to override or implement the methods from the `Customizable` protocol. 
 
 :::note
@@ -44,7 +44,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 }
 ```
 
-The full list of customizations exposed by `Components` is available [here](../reference-docs/sources/stream-chat-ui/components.md#properties)
+The full list of customizations exposed by `Components` is available [here](../common-content/reference-docs/stream-chat-ui/components.md#properties)
 
 ## Components Lifecycle Methods
 
