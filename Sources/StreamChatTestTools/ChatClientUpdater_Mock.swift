@@ -31,7 +31,11 @@ class ChatClientUpdaterMock<ExtraData: ExtraDataTypes>: ChatClientUpdater<ExtraD
         prepareEnvironment_newToken = newToken
     }
 
-    override func reloadUserIfNeeded(completion: ((Error?) -> Void)?) {
+    override func reloadUserIfNeeded(
+        name: String? = nil,
+        imageURL: URL? = nil,
+        completion: ((Error?) -> Void)?
+    ) {
         reloadUserIfNeeded_called = true
         reloadUserIfNeeded_completion = completion
         reloadUserIfNeeded_callSuper = {
@@ -39,7 +43,11 @@ class ChatClientUpdaterMock<ExtraData: ExtraDataTypes>: ChatClientUpdater<ExtraD
         }
     }
 
-    override func connect(completion: ((Error?) -> Void)? = nil) {
+    override func connect(
+        name: String? = nil,
+        imageURL: URL? = nil,
+        completion: ((Error?) -> Void)? = nil
+    ) {
         connect_called = true
         connect_completion = completion
     }
