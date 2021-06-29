@@ -314,6 +314,96 @@ public class _ChatClient<ExtraData: ExtraDataTypes> {
         completeConnectionIdWaiters(connectionId: nil)
         completeTokenWaiters(token: nil)
     }
+    
+    public func connectUser(
+        name: String? = nil,
+        imageURL: URL? = nil,
+        extraData: ExtraData.User = .defaultValue,
+        token: Token,
+        completion: ((Error?) -> Void)? = nil
+    ) {
+        setConnectionInfoAndConnect(
+            name: name,
+            imageURL: imageURL,
+            tokenProvider: .static(token),
+            completion: completion
+        )
+    }
+    
+    public func connectUser(
+        connectionInfo: UserConnectionInfo<ExtraData>? = nil,
+        token: Token,
+        completion: ((Error?) -> Void)? = nil
+    ) {
+        connectUser(
+            name: connectionInfo?.name,
+            imageURL: connectionInfo?.imageURL,
+            extraData: connectionInfo?.extraData ?? .defaultValue,
+            token: token,
+            completion: completion
+        )
+    }
+    
+    public func connectUser(
+        connectionInfoProvider: ((Result<(UserConnectionInfo<ExtraData>, Token), Error>) -> Void) -> Void,
+        completion: ((Error?) -> Void)? = nil
+    ) {
+        connectionInfoProvider { userInfo in
+            switch userInfo {
+            case let .success((info, token)):
+                connectUser(connectionInfo: info, token: token)
+            case let .failure(error):
+                completion?(error)
+            }
+        }
+    }
+    
+    public func connectUser(
+        tokenProvider: ((Result<Token, Error>) -> Void) -> Void,
+        completion: ((Error?) -> Void)? = nil
+    ) {
+        tokenProvider { token in
+            switch token {
+            case let .success(token):
+                setConnectionInfoAndConnect(tokenProvider: .static(token), completion: completion)
+            case let .failure(error):
+                completion?(error)
+            }
+        }
+    }
+
+    public func connectGuestUser(
+        userId: String,
+        name: String? = nil,
+        imageURL: URL? = nil,
+        extraData: ExtraData.User = .defaultValue,
+        completion: ((Error?) -> Void)? = nil
+    ) {
+        setConnectionInfoAndConnect(
+            name: name,
+            imageURL: imageURL,
+            tokenProvider: .guest(userId: userId, name: name, imageURL: imageURL, extraData: extraData),
+            completion: completion
+        )
+    }
+    
+    public func connectGuestUser(
+        userId: String,
+        connectionInfo: UserConnectionInfo<ExtraData>? = nil,
+        completion: ((Error?) -> Void)? = nil
+    ) {
+        connectGuestUser(
+            userId: userId,
+            name: connectionInfo?.name,
+            imageURL: connectionInfo?.imageURL,
+            extraData: connectionInfo?.extraData ?? .defaultValue,
+            completion: completion
+        )
+    }
+    
+    public func connectAnonymousUser(completion: ((Error?) -> Void)? = nil) {
+        setConnectionInfoAndConnect(tokenProvider: .anonymous)
+    }
 
     func fetchCurrentUserIdFromDatabase() -> UserId? {
         var currentUserId: UserId?
@@ -350,6 +440,17 @@ public class _ChatClient<ExtraData: ExtraDataTypes> {
             waiters.forEach { $0(token) }
             waiters.removeAll()
         }
+    }
+    
+    private func setConnectionInfoAndConnect(
+        name: String? = nil,
+        imageURL: URL? = nil,
+        extraData: ExtraData.User = .defaultValue,
+        tokenProvider: _TokenProvider<ExtraData>,
+        completion: ((Error?) -> Void)? = nil
+    ) {
+        self.tokenProvider = tokenProvider
+        clientUpdater.reloadUserIfNeeded(name: name, imageURL: imageURL, completion: completion)
     }
     
     private func handleAppDidEnterBackground() {
@@ -477,6 +578,15 @@ extension ClientError {
             """
                 ChatClient is in connectionless mode, it cannot connect to websocket.
                 Please check `ChatClientConfig.isClientInActiveMode` for additional info.
+            """
+        }
+    }
+    
+    public class ConnectionWasNotInitiated: ClientError {
+        override public var localizedDescription: String {
+            """
+                Before performing any other actions on chat client it's required to connect by using
+                one of the available `connectUser` overloads.
             """
         }
     }

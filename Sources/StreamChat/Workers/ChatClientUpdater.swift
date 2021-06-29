@@ -66,8 +66,17 @@ class ChatClientUpdater<ExtraData: ExtraDataTypes> {
         try client.databaseContainer.removeAllData(force: true)
     }
 
-    func reloadUserIfNeeded(completion: ((Error?) -> Void)? = nil) {
-        client.tokenProvider.getToken(client) {
+    func reloadUserIfNeeded(
+        name: String? = nil,
+        imageURL: URL? = nil,
+        completion: ((Error?) -> Void)? = nil
+    ) {
+        guard let tokenProvider = client.tokenProvider else {
+            completion?(ClientError.ConnectionWasNotInitiated())
+            return
+        }
+        
+        tokenProvider.getToken(client) {
             switch $0 {
             case let .success(newToken):
                 do {
@@ -101,7 +110,11 @@ class ChatClientUpdater<ExtraData: ExtraDataTypes> {
     /// - Parameter completion: Called when the connection is established. If the connection fails, the completion is
     /// called with an error.
     ///
-    func connect(completion: ((Error?) -> Void)? = nil) {
+    func connect(
+        name: String? = nil,
+        imageURL: URL? = nil,
+        completion: ((Error?) -> Void)? = nil
+    ) {
         // Connecting is not possible in connectionless mode (duh)
         guard client.config.isClientInActiveMode else {
             completion?(ClientError.ClientIsNotInActiveMode())
