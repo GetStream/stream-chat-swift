@@ -25,15 +25,16 @@ class ChatThreadView_Tests: iOS13TestCase {
             state: .remoteDataFetched
         )
         messageControllerMock.simulateInitial(
-            message: .mock(id: .unique, text: "First message", author: .mock(id: .unique)),
+            message: .mock(id: .unique, cid: .unique, text: "First message", author: .mock(id: .unique)),
             replies: [
                 .mock(
                     id: .unique,
+                    cid: .unique,
                     text: "First reply",
                     author: .mock(id: .unique, name: "Author author")
                 ),
-                .mock(id: .unique, text: "Second reply", author: .mock(id: .unique)),
-                .mock(id: .unique, text: "Third reply", author: .mock(id: .unique))
+                .mock(id: .unique, cid: .unique, text: "Second reply", author: .mock(id: .unique)),
+                .mock(id: .unique, cid: .unique, text: "Third reply", author: .mock(id: .unique))
             ],
             state: .localDataFetched
         )
@@ -65,11 +66,11 @@ class ChatThreadView_Tests: iOS13TestCase {
                     state: .localDataFetched
                 )
                 messageControllerMock.simulateInitial(
-                    message: .mock(id: .unique, text: "First message", author: .mock(id: .unique)),
+                    message: .mock(id: .unique, cid: .unique, text: "First message", author: .mock(id: .unique)),
                     replies: [
-                        .mock(id: .unique, text: "First reply", author: .mock(id: .unique)),
-                        .mock(id: .unique, text: "Second reply", author: .mock(id: .unique)),
-                        .mock(id: .unique, text: "Third reply", author: .mock(id: .unique))
+                        .mock(id: .unique, cid: .unique, text: "First reply", author: .mock(id: .unique)),
+                        .mock(id: .unique, cid: .unique, text: "Second reply", author: .mock(id: .unique)),
+                        .mock(id: .unique, cid: .unique, text: "Third reply", author: .mock(id: .unique))
                     ],
                     state: .localDataFetched
                 )
