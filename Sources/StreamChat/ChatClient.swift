@@ -586,7 +586,7 @@ extension ClientError {
         override public var localizedDescription: String {
             """
                 Before performing any other actions on chat client it's required to connect by using
-                one of the available `connectUser` overloads.
+                one of the available `connect` methods e.g. `connectUser`.
             """
         }
     }
