@@ -2,13 +2,7 @@
 ### `containerView`
 
 ``` swift
-public weak var containerView: UIView!
-```
-
-### `collectionView`
-
-``` swift
-public weak var collectionView: UICollectionView!
+public weak var containerView: UIView?
 ```
 
 ### `composerBottomConstraint`
@@ -28,10 +22,17 @@ public weak var viewController: UIViewController?
 ### `register()`
 
 ``` swift
-public func register() 
+open func register() 
 ```
 
 ### `unregister()`
 
 ``` swift
-public func unregister() 
+open func unregister() 
+```
+
+### `keyboardWillChangeFrame(_:)`
+
+``` swift
+@objc
+    open func keyboardWillChangeFrame(_ notification: Notification) 

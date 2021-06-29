@@ -66,7 +66,7 @@ open class _InputChatMessageView<ExtraData: ExtraDataTypes>: _View, ComponentsPr
         clearButton.setImage(closeTransparentImage, for: .normal)
 
         container.clipsToBounds = true
-        container.layer.cornerRadius = 18
+        container.layer.cornerRadius = 19
         container.layer.borderWidth = 1
         container.layer.borderColor = appearance.colorPalette.border.cgColor
     }
@@ -77,7 +77,7 @@ open class _InputChatMessageView<ExtraData: ExtraDataTypes>: _View, ComponentsPr
         directionalLayoutMargins = .zero
 
         container.isLayoutMarginsRelativeArrangement = true
-        container.directionalLayoutMargins = .init(top: 0, leading: 4, bottom: 0, trailing: 4)
+        container.directionalLayoutMargins = .zero
         container.axis = .vertical
         container.alignment = .fill
         container.distribution = .natural
@@ -88,9 +88,10 @@ open class _InputChatMessageView<ExtraData: ExtraDataTypes>: _View, ComponentsPr
         quotedMessageView.isHidden = true
         attachmentsViewContainer.isHidden = true
 
-        inputTextContainer.preservesSuperviewLayoutMargins = true
+        inputTextContainer.isLayoutMarginsRelativeArrangement = true
         inputTextContainer.alignment = .center
         inputTextContainer.spacing = 4
+        inputTextContainer.directionalLayoutMargins = .init(top: 0, leading: 6, bottom: 0, trailing: 6)
         inputTextContainer.addArrangedSubview(commandLabelView)
         inputTextContainer.addArrangedSubview(textView)
         inputTextContainer.addArrangedSubview(clearButton)

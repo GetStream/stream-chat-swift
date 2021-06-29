@@ -16,7 +16,7 @@ public struct NoExtraData: Codable,
 
 ## Inheritance
 
-[`ChannelExtraData`](../channel-extra-data), `Codable`, [`ExtraDataTypes`](../../extra-data-types), `Hashable`, [`MessageExtraData`](../message-extra-data), [`MessageReactionExtraData`](../message-reaction-extra-data), [`UserExtraData`](../user-extra-data)
+[`ExtraDataTypes`](../../extra-data-types), [`ChannelExtraData`](../channel-extra-data), `Codable`, `Hashable`, [`MessageExtraData`](../message-extra-data), [`MessageReactionExtraData`](../message-reaction-extra-data), [`UserExtraData`](../user-extra-data)
 
 ## Properties
 

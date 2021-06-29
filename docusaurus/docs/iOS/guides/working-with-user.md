@@ -124,7 +124,7 @@ chatClient.connectionController().disconnect()
 ```
 
 :::note
-For more information regarding connection & disconnection, please check [Connection Status guide](connection-status).
+For more information regarding connection & disconnection, please check [Connection Status guide](./connection-status.md).
 :::
 
 If you're using static tokens for developing quick prototypes and want to test login/logout, you can assign a new `tokenProvider` to the `ChatClient` and then call `reloadUserIfNeeded` to "login" using the new token:

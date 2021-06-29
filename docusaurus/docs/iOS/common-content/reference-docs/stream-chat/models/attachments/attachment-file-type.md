@@ -48,7 +48,55 @@ A file attachment type.
 case generic, csv, doc, pdf, ppt, tar, xls, zip, mp3, mp4, mov, jpeg, png, gif
 ```
 
-### `doc`
+### `xls`
+
+A file attachment type.
+
+``` swift
+case generic, csv, doc, pdf, ppt, tar, xls, zip, mp3, mp4, mov, jpeg, png, gif
+```
+
+### `generic`
+
+A file attachment type.
+
+``` swift
+case generic, csv, doc, pdf, ppt, tar, xls, zip, mp3, mp4, mov, jpeg, png, gif
+```
+
+### `ppt`
+
+A file attachment type.
+
+``` swift
+case generic, csv, doc, pdf, ppt, tar, xls, zip, mp3, mp4, mov, jpeg, png, gif
+```
+
+### `zip`
+
+A file attachment type.
+
+``` swift
+case generic, csv, doc, pdf, ppt, tar, xls, zip, mp3, mp4, mov, jpeg, png, gif
+```
+
+### `csv`
+
+A file attachment type.
+
+``` swift
+case generic, csv, doc, pdf, ppt, tar, xls, zip, mp3, mp4, mov, jpeg, png, gif
+```
+
+### `gif`
+
+A file attachment type.
+
+``` swift
+case generic, csv, doc, pdf, ppt, tar, xls, zip, mp3, mp4, mov, jpeg, png, gif
+```
+
+### `pdf`
 
 A file attachment type.
 
@@ -57,6 +105,22 @@ case generic, csv, doc, pdf, ppt, tar, xls, zip, mp3, mp4, mov, jpeg, png, gif
 ```
 
 ### `mov`
+
+A file attachment type.
+
+``` swift
+case generic, csv, doc, pdf, ppt, tar, xls, zip, mp3, mp4, mov, jpeg, png, gif
+```
+
+### `mp3`
+
+A file attachment type.
+
+``` swift
+case generic, csv, doc, pdf, ppt, tar, xls, zip, mp3, mp4, mov, jpeg, png, gif
+```
+
+### `tar`
 
 A file attachment type.
 
@@ -80,71 +144,7 @@ A file attachment type.
 case generic, csv, doc, pdf, ppt, tar, xls, zip, mp3, mp4, mov, jpeg, png, gif
 ```
 
-### `generic`
-
-A file attachment type.
-
-``` swift
-case generic, csv, doc, pdf, ppt, tar, xls, zip, mp3, mp4, mov, jpeg, png, gif
-```
-
-### `zip`
-
-A file attachment type.
-
-``` swift
-case generic, csv, doc, pdf, ppt, tar, xls, zip, mp3, mp4, mov, jpeg, png, gif
-```
-
-### `gif`
-
-A file attachment type.
-
-``` swift
-case generic, csv, doc, pdf, ppt, tar, xls, zip, mp3, mp4, mov, jpeg, png, gif
-```
-
-### `csv`
-
-A file attachment type.
-
-``` swift
-case generic, csv, doc, pdf, ppt, tar, xls, zip, mp3, mp4, mov, jpeg, png, gif
-```
-
-### `mp3`
-
-A file attachment type.
-
-``` swift
-case generic, csv, doc, pdf, ppt, tar, xls, zip, mp3, mp4, mov, jpeg, png, gif
-```
-
-### `xls`
-
-A file attachment type.
-
-``` swift
-case generic, csv, doc, pdf, ppt, tar, xls, zip, mp3, mp4, mov, jpeg, png, gif
-```
-
-### `tar`
-
-A file attachment type.
-
-``` swift
-case generic, csv, doc, pdf, ppt, tar, xls, zip, mp3, mp4, mov, jpeg, png, gif
-```
-
-### `pdf`
-
-A file attachment type.
-
-``` swift
-case generic, csv, doc, pdf, ppt, tar, xls, zip, mp3, mp4, mov, jpeg, png, gif
-```
-
-### `ppt`
+### `doc`
 
 A file attachment type.
 

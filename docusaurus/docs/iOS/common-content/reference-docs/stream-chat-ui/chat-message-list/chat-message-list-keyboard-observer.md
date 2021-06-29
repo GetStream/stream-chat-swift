@@ -8,14 +8,13 @@ open class ChatMessageListKeyboardObserver
 
 ## Initializers
 
-### `init(containerView:collectionView:composerBottomConstraint:viewController:)`
+### `init(containerView:composerBottomConstraint:viewController:)`
 
 ``` swift
 public init(
         containerView: UIView,
-        collectionView: UICollectionView,
         composerBottomConstraint: NSLayoutConstraint?,
-        viewController: UIViewController?
+        viewController: UIViewController
     ) 
 ```
 
@@ -24,13 +23,7 @@ public init(
 ### `containerView`
 
 ``` swift
-public weak var containerView: UIView!
-```
-
-### `collectionView`
-
-``` swift
-public weak var collectionView: UICollectionView!
+public weak var containerView: UIView?
 ```
 
 ### `composerBottomConstraint`
@@ -50,11 +43,18 @@ public weak var viewController: UIViewController?
 ### `register()`
 
 ``` swift
-public func register() 
+open func register() 
 ```
 
 ### `unregister()`
 
 ``` swift
-public func unregister() 
+open func unregister() 
+```
+
+### `keyboardWillChangeFrame(_:)`
+
+``` swift
+@objc
+    open func keyboardWillChangeFrame(_ notification: Notification) 
 ```

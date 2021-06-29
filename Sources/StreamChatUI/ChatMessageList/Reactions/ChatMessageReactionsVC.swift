@@ -56,11 +56,15 @@ open class _ChatMessageReactionsVC<ExtraData: ExtraDataTypes>: _ViewController, 
 
     public func toggleReaction(_ reaction: MessageReactionType) {
         guard let message = messageController.message else { return }
+        
+        let completion: (Error?) -> Void = { [weak self] _ in
+            self?.dismiss(animated: true)
+        }
 
         let shouldRemove = message.currentUserReactions.contains { $0.type == reaction }
         shouldRemove
-            ? messageController.deleteReaction(reaction)
-            : messageController.addReaction(reaction)
+            ? messageController.deleteReaction(reaction, completion: completion)
+            : messageController.addReaction(reaction, completion: completion)
     }
 }
 

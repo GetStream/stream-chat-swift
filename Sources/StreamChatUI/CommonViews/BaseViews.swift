@@ -99,9 +99,9 @@ open class _View: UIView, Customizable {
     }
     
     open func setUp() { /* default empty implementation */ }
-    open func setUpAppearance() { /* default empty implementation */ }
-    open func setUpLayout() { /* default empty implementation */ }
-    open func updateContent() { /* default empty implementation */ }
+    open func setUpAppearance() { setNeedsLayout() }
+    open func setUpLayout() { setNeedsLayout() }
+    open func updateContent() { setNeedsLayout() }
 
     override open func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
@@ -140,9 +140,9 @@ open class _CollectionViewCell: UICollectionViewCell, Customizable {
     }
     
     open func setUp() { /* default empty implementation */ }
-    open func setUpAppearance() { /* default empty implementation */ }
-    open func setUpLayout() { /* default empty implementation */ }
-    open func updateContent() { /* default empty implementation */ }
+    open func setUpAppearance() { setNeedsLayout() }
+    open func setUpLayout() { setNeedsLayout() }
+    open func updateContent() { setNeedsLayout() }
 
     override open func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
@@ -181,9 +181,9 @@ open class _CollectionReusableView: UICollectionReusableView, Customizable {
     }
 
     open func setUp() { /* default empty implementation */ }
-    open func setUpAppearance() { /* default empty implementation */ }
-    open func setUpLayout() { /* default empty implementation */ }
-    open func updateContent() { /* default empty implementation */ }
+    open func setUpAppearance() { setNeedsLayout() }
+    open func setUpLayout() { setNeedsLayout() }
+    open func updateContent() { setNeedsLayout() }
 
     override open func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
@@ -222,9 +222,9 @@ open class _Control: UIControl, Customizable {
     }
     
     open func setUp() { /* default empty implementation */ }
-    open func setUpAppearance() { /* default empty implementation */ }
-    open func setUpLayout() { /* default empty implementation */ }
-    open func updateContent() { /* default empty implementation */ }
+    open func setUpAppearance() { setNeedsLayout() }
+    open func setUpLayout() { setNeedsLayout() }
+    open func updateContent() { setNeedsLayout() }
 
     override open func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
@@ -263,9 +263,9 @@ open class _Button: UIButton, Customizable {
     }
     
     open func setUp() { /* default empty implementation */ }
-    open func setUpAppearance() { /* default empty implementation */ }
-    open func setUpLayout() { /* default empty implementation */ }
-    open func updateContent() { /* default empty implementation */ }
+    open func setUpAppearance() { setNeedsLayout() }
+    open func setUpLayout() { setNeedsLayout() }
+    open func updateContent() { setNeedsLayout() }
 
     override open func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
@@ -304,9 +304,9 @@ open class _NavigationBar: UINavigationBar, Customizable {
     }
     
     open func setUp() { /* default empty implementation */ }
-    open func setUpAppearance() { /* default empty implementation */ }
-    open func setUpLayout() { /* default empty implementation */ }
-    open func updateContent() { /* default empty implementation */ }
+    open func setUpAppearance() { setNeedsLayout() }
+    open func setUpLayout() { setNeedsLayout() }
+    open func updateContent() { setNeedsLayout() }
 
     override open func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
@@ -337,9 +337,9 @@ open class _ViewController: UIViewController, Customizable {
     }
     
     open func setUp() { /* default empty implementation */ }
-    open func setUpAppearance() { /* default empty implementation */ }
-    open func setUpLayout() { /* default empty implementation */ }
-    open func updateContent() { /* default empty implementation */ }
+    open func setUpAppearance() { view.setNeedsLayout() }
+    open func setUpLayout() { view.setNeedsLayout() }
+    open func updateContent() { view.setNeedsLayout() }
 
     override open func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
@@ -372,5 +372,46 @@ private enum TraitCollectionReloadStack {
 
     static func push(_ closure: @escaping () -> Void) {
         stack.append(closure)
+    }
+}
+
+/// Base class for overridable views StreamChatUI provides.
+/// All conformers will have StreamChatUI appearance settings by default.
+open class _TableViewCell: UITableViewCell, Customizable {
+    // Flag for preventing multiple lifecycle methods calls.
+    private var isInitialized: Bool = false
+
+    override open func didMoveToSuperview() {
+        super.didMoveToSuperview()
+        guard !isInitialized, superview != nil else { return }
+
+        isInitialized = true
+
+        setUp()
+        setUpLayout()
+        setUpAppearance()
+        updateContent()
+    }
+
+    open func setUp() { /* default empty implementation */ }
+    open func setUpAppearance() { /* default empty implementation */ }
+    open func setUpLayout() { /* default empty implementation */ }
+    open func updateContent() { /* default empty implementation */ }
+
+    override open func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+
+        guard #available(iOS 12, *) else { return }
+        guard previousTraitCollection?.userInterfaceStyle != traitCollection.userInterfaceStyle else { return }
+
+        TraitCollectionReloadStack.push {
+            self.setUpAppearance()
+            self.updateContent()
+        }
+    }
+
+    override open func layoutSubviews() {
+        TraitCollectionReloadStack.executePendingUpdates()
+        super.layoutSubviews()
     }
 }

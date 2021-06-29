@@ -16,19 +16,19 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
     _ChatChannelControllerDelegate,
     _ChatMessageActionsVCDelegate,
     ChatMessageContentViewDelegate,
-    UICollectionViewDelegate,
-    ChatMessageListCollectionViewDataSource,
+    UITableViewDelegate,
+    UITableViewDataSource,
     GalleryContentViewDelegate,
     GiphyActionContentViewDelegate,
     LinkPreviewViewDelegate,
-    FileActionContentViewDelegate {
+    FileActionContentViewDelegate,
+    ChatMessageListViewDataSource {
     /// Controller for observing data changes within the channel
     open var channelController: _ChatChannelController<ExtraData>!
     
     /// Observer responsible for setting the correct offset when keyboard frame is changed
     open lazy var keyboardObserver = ChatMessageListKeyboardObserver(
         containerView: view,
-        collectionView: collectionView,
         composerBottomConstraint: messageComposerBottomConstraint,
         viewController: self
     )
@@ -37,31 +37,17 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
     open lazy var userSuggestionSearchController: _ChatUserSearchController<ExtraData> =
         channelController.client.userSearchController()
     
-    /// Layout used by the collection view.
-    open lazy var messageListLayout: ChatMessageListCollectionViewLayout = components
-        .messageListLayout
-        .init()
-    
     override open func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
         view.layoutIfNeeded()
     }
     
     /// View used to display the messages
-    open private(set) lazy var collectionView: ChatMessageListCollectionView<ExtraData> = {
-        let collection = components
-            .messageListCollectionView
-            .init(layout: messageListLayout)
-            .withoutAutoresizingMaskConstraints
-
-        collection.isPrefetchingEnabled = false
-        collection.showsHorizontalScrollIndicator = false
-        collection.alwaysBounceVertical = true
-        collection.keyboardDismissMode = .onDrag
-        collection.dataSource = self
-        collection.delegate = self
-
-        return collection
+    open private(set) lazy var listView: _ChatMessageListView<ExtraData> = {
+        let listView = components.messageListView.init().withoutAutoresizingMaskConstraints
+        listView.delegate = self
+        listView.dataSource = self
+        return listView
     }()
     
     /// Controller that handles the composer view
@@ -114,7 +100,7 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
         
         let longPress = UILongPressGestureRecognizer(target: self, action: #selector(handleLongPress))
         longPress.minimumPressDuration = 0.33
-        collectionView.addGestureRecognizer(longPress)
+        listView.addGestureRecognizer(longPress)
         
         messageComposerVC.setDelegate(self)
         messageComposerVC.channelController = channelController
@@ -139,13 +125,14 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
     override open func setUpLayout() {
         super.setUpLayout()
         
-        view.addSubview(collectionView)
-        collectionView.pin(anchors: [.top, .leading, .trailing], to: view.safeAreaLayoutGuide)
+        view.addSubview(listView)
+        listView.pin(anchors: [.top, .leading, .trailing], to: view.safeAreaLayoutGuide)
+        listView.contentInset.bottom += max(listView.layoutMargins.right, listView.layoutMargins.left)
         
         messageComposerVC.view.translatesAutoresizingMaskIntoConstraints = false
         addChildViewController(messageComposerVC, targetView: view)
 
-        messageComposerVC.view.topAnchor.pin(equalTo: collectionView.bottomAnchor).isActive = true
+        messageComposerVC.view.topAnchor.pin(equalTo: listView.bottomAnchor).isActive = true
         messageComposerVC.view.leadingAnchor.pin(equalTo: view.leadingAnchor).isActive = true
         messageComposerVC.view.trailingAnchor.pin(equalTo: view.trailingAnchor).isActive = true
         messageComposerBottomConstraint = messageComposerVC.view.bottomAnchor.pin(equalTo: view.bottomAnchor)
@@ -160,7 +147,7 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
         }
         
         view.addSubview(scrollToLatestMessageButton)
-        collectionView.bottomAnchor.pin(equalToSystemSpacingBelow: scrollToLatestMessageButton.bottomAnchor).isActive = true
+        listView.bottomAnchor.pin(equalToSystemSpacingBelow: scrollToLatestMessageButton.bottomAnchor).isActive = true
         scrollToLatestMessageButton.trailingAnchor.pin(equalTo: view.layoutMarginsGuide.trailingAnchor).isActive = true
         scrollToLatestMessageButton.widthAnchor.pin(equalTo: scrollToLatestMessageButton.heightAnchor).isActive = true
         scrollToLatestMessageButton.heightAnchor.pin(equalToConstant: 40).isActive = true
@@ -171,8 +158,6 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
             channelAvatarView.heightAnchor.pin(equalToConstant: 32)
         ])
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: channelAvatarView)
-        
-        collectionView.contentInset.top += max(collectionView.layoutMargins.right, collectionView.layoutMargins.left)
     }
 
     override open func setUpAppearance() {
@@ -180,7 +165,7 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
         
         view.backgroundColor = appearance.colorPalette.background
         
-        collectionView.backgroundColor = appearance.colorPalette.background
+        listView.backgroundColor = appearance.colorPalette.background
 
         navigationItem.titleView = titleView
     }
@@ -232,55 +217,32 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
         )
     }
 
-    open func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        channelController.messages.count
-    }
-    
-    open func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let message = channelController.messages[indexPath.item]
-        
-        let cell: _ChatMessageCollectionViewCell<ExtraData> = self.collectionView.dequeueReusableCell(
-            contentViewClass: cellContentClassForMessage(at: indexPath),
-            attachmentViewInjectorType: attachmentViewInjectorClassForMessage(at: indexPath),
-            layoutOptions: cellLayoutOptionsForMessage(at: indexPath),
-            for: indexPath
-        )
-        cell.messageContentView?.delegate = self
-        cell.messageContentView?.content = message
-        
-        return cell
-    }
-
-    open func collectionView(
-        _ collectionView: UICollectionView,
-        willDisplay cell: UICollectionViewCell,
-        forItemAt indexPath: IndexPath
-    ) {
-        if indexPath.row + 1 >= collectionView.numberOfItems(inSection: 0) {
+    open func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        if channelController.state == .remoteDataFetched && indexPath.row + 1 >= tableView.numberOfRows(inSection: 0) - 5 {
             channelController.loadPreviousMessages()
         }
     }
-    
-    open func collectionView(
-        _ collectionView: UICollectionView,
+
+    open func messageListView(
+        _ tableView: UITableView,
         scrollOverlayTextForItemAt indexPath: IndexPath
     ) -> String? {
         overlayDateFormatter.string(from: channelController.messages[indexPath.item].createdAt)
     }
 
     open func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        if collectionView.isLastCellFullyVisible, channelController.channel?.isUnread == true {
+        if listView.isLastCellFullyVisible, channelController.channel?.isUnread == true {
             channelController.markRead()
 
             // Hide the badge immediately. Temporary solution until CIS-881 is implemented.
             scrollToLatestMessageButton.content = .noUnread
         }
-        setScrollToLatestMessageButton(visible: !collectionView.isLastCellFullyVisible)
+        setScrollToLatestMessageButton(visible: isScrollToBottomButtonVisible)
     }
     
     /// Scrolls to most recent message
     open func scrollToMostRecentMessage(animated: Bool = true) {
-        collectionView.scrollToMostRecentMessage(animated: animated)
+        listView.scrollToMostRecentMessage(animated: animated)
     }
     
     /// Update the `scrollToLatestMessageButton` based on unread messages.
@@ -341,19 +303,19 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
     /// Default implementation will convert the gesture location to collection view's `indexPath`
     /// and then call selection action on the selected cell.
     @objc open func handleLongPress(_ gesture: UILongPressGestureRecognizer) {
-        let location = gesture.location(in: collectionView)
+        let location = gesture.location(in: listView)
 
         guard
             gesture.state == .began,
-            let ip = collectionView.indexPathForItem(at: location)
+            let ip = listView.indexPathForRow(at: location)
         else { return }
         
         didSelectMessageCell(at: ip)
     }
 
     /// Updates the collection view data with given `changes`.
-    open func updateMessages(with changes: [ListChange<_ChatMessage<ExtraData>>], completion: ((Bool) -> Void)? = nil) {
-        collectionView.updateMessages(with: changes, completion: completion)
+    open func updateMessages(with changes: [ListChange<_ChatMessage<ExtraData>>], completion: (() -> Void)? = nil) {
+        listView.updateMessages(with: changes, completion: completion)
     }
     
     open func messageForIndexPath(_ indexPath: IndexPath) -> _ChatMessage<ExtraData> {
@@ -362,17 +324,17 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
     
     open func didSelectMessageCell(at indexPath: IndexPath) {
         guard
-            let cell = collectionView.cellForItem(at: indexPath) as? _ChatMessageCollectionViewCell<ExtraData>,
+            let cell = listView.cellForRow(at: indexPath) as? _ChatMessageCell<ExtraData>,
             let messageContentView = cell.messageContentView,
             let message = messageContentView.content,
             message.isInteractionEnabled == true
         else { return }
-        
+
         let messageController = channelController.client.messageController(
             cid: channelController.cid!,
             messageId: message.id
         )
-        
+
         let actionsController = components.messageActionsVC.init()
         actionsController.messageController = messageController
         actionsController.channelConfig = channelController.channel?.config
@@ -500,11 +462,11 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
     open func showTypingIndicator(typingMembers: [_ChatChannelMember<ExtraData.User>]) {
         if typingIndicatorView.isHidden {
             Animate {
-                self.collectionView.contentInset.bottom += self.typingIndicatorViewHeight
-                self.collectionView.scrollIndicatorInsets.bottom += self.typingIndicatorViewHeight
+                self.listView.contentInset.top += self.typingIndicatorViewHeight
+                self.listView.scrollIndicatorInsets.top += self.typingIndicatorViewHeight
             }
 
-            if collectionView.isLastCellVisible {
+            if listView.isLastCellVisible {
                 scrollToMostRecentMessage()
             }
         }
@@ -528,8 +490,8 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
         typingIndicatorView.isHidden = true
 
         Animate {
-            self.collectionView.contentInset.bottom -= self.typingIndicatorViewHeight
-            self.collectionView.scrollIndicatorInsets.bottom -= self.typingIndicatorViewHeight
+            self.listView.contentInset.top -= self.typingIndicatorViewHeight
+            self.listView.scrollIndicatorInsets.top -= self.typingIndicatorViewHeight
         }
     }
     
@@ -588,4 +550,34 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
         df.locale = .autoupdatingCurrent
         return df
     }()
+    
+    open func numberOfSections(in tableView: UITableView) -> Int {
+        1
+    }
+
+    open func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        channelController.messages.count
+    }
+
+    open func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let message = channelController.messages[indexPath.row]
+
+        let cell: _ChatMessageCell<ExtraData> = listView.dequeueReusableCell(
+            contentViewClass: cellContentClassForMessage(at: indexPath),
+            attachmentViewInjectorType: attachmentViewInjectorClassForMessage(at: indexPath),
+            layoutOptions: cellLayoutOptionsForMessage(at: indexPath),
+            for: indexPath
+        )
+
+        cell.messageContentView?.delegate = self
+        cell.messageContentView?.content = message
+        
+        return cell
+    }
+    
+    open var isScrollToBottomButtonVisible: Bool {
+        let isMoreContentThanOnePage = listView.contentSize.height > listView.bounds.height
+        
+        return !listView.isLastCellFullyVisible && isMoreContentThanOnePage
+    }
 }

@@ -191,21 +191,13 @@ The View Controller used to display content of the message, i.e. in the channel 
 public var messageListVC: _ChatMessageListVC<ExtraData>.Type = _ChatMessageListVC<ExtraData>.self
 ```
 
-### `messageListCollectionView`
+### `messageListView`
 
-The collection view that shows the message list.
+The view that shows the message list.
 
 ``` swift
-public var messageListCollectionView: ChatMessageListCollectionView<ExtraData>.Type = ChatMessageListCollectionView<ExtraData>
+public var messageListView: _ChatMessageListView<ExtraData>.Type = _ChatMessageListView<ExtraData>
         .self
-```
-
-### `messageListLayout`
-
-The collection view layout used in `messageListCollectionView`.
-
-``` swift
-public var messageListLayout: ChatMessageListCollectionViewLayout.Type = ChatMessageListCollectionViewLayout.self
 ```
 
 ### `messageListScrollOverlayView`

@@ -31,20 +31,12 @@ User search controller passed directly to the composer
 open lazy var userSuggestionSearchController: _ChatUserSearchController<ExtraData> 
 ```
 
-### `messageListLayout`
-
-Layout used by the collection view.
-
-``` swift
-open lazy var messageListLayout: ChatMessageListCollectionViewLayout 
-```
-
-### `collectionView`
+### `listView`
 
 View used to display the messages
 
 ``` swift
-open private(set) lazy var collectionView: ChatMessageListCollectionView<ExtraData> 
+open private(set) lazy var listView: _ChatMessageListView<ExtraData> 
 ```
 
 ### `messageComposerVC`
@@ -75,28 +67,10 @@ Handles navigation actions from messages
 open lazy var router 
 ```
 
-### `threadRootMessageLayoutOptions`
-
-Returns the layout options for thread root message header.
+### `messages`
 
 ``` swift
-open var threadRootMessageLayoutOptions: ChatMessageLayoutOptions 
-```
-
-### `threadRootMessageAttachmentViewInjectorClass`
-
-Returns the attachment view injector class for thread root message header.
-
-``` swift
-open var threadRootMessageAttachmentViewInjectorClass: _AttachmentViewInjector<ExtraData>.Type? 
-```
-
-### `threadRootMessageContentClass`
-
-Returns the content view class for thread root message header.
-
-``` swift
-open var threadRootMessageContentClass: _ChatMessageContentView<ExtraData>.Type 
+public var messages: [_ChatMessage<ExtraData>] 
 ```
 
 ## Methods
@@ -184,26 +158,28 @@ open func cellLayoutOptionsForMessage(
     ) -> ChatMessageLayoutOptions 
 ```
 
-### `collectionView(_:numberOfItemsInSection:)`
+### `numberOfSections(in:)`
 
 ``` swift
-open func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int 
+open func numberOfSections(in tableView: UITableView) -> Int 
 ```
 
-### `collectionView(_:cellForItemAt:)`
+### `tableView(_:numberOfRowsInSection:)`
 
 ``` swift
-open func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell 
+open func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int 
 ```
 
-### `collectionView(_:willDisplay:forItemAt:)`
+### `tableView(_:cellForRowAt:)`
 
 ``` swift
-open func collectionView(
-        _ collectionView: UICollectionView,
-        willDisplay cell: UICollectionViewCell,
-        forItemAt indexPath: IndexPath
-    ) 
+open func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell 
+```
+
+### `tableView(_:willDisplay:forRowAt:)`
+
+``` swift
+open func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) 
 ```
 
 ### `scrollToMostRecentMessage(animated:)`
@@ -224,14 +200,6 @@ open func updateNavigationTitle()
 
 For group chat is called every-time the channel changes.
 
-### `addThreadRootMessageHeader()`
-
-Adds thread parent message on top of collection view.
-
-``` swift
-open func addThreadRootMessageHeader() 
-```
-
 ### `handleLongPress(_:)`
 
 Handles long press action on collection view.
@@ -248,7 +216,7 @@ and then call selection action on the selected cell.
 Updates the collection view data with given `changes`.
 
 ``` swift
-open func updateMessages(with changes: [ListChange<_ChatMessage<ExtraData>>], completion: ((Bool) -> Void)? = nil) 
+open func updateMessages(with changes: [ListChange<_ChatMessage<ExtraData>>], completion: (() -> Void)? = nil) 
 ```
 
 ### `didSelectMessageCell(at:)`

@@ -172,3 +172,9 @@ public var alternativeActiveTint: UIColor = .streamAccentGreen
 
 ``` swift
 public var inactiveTint: UIColor = .streamGray
+```
+
+### `alternativeInactiveTint`
+
+``` swift
+public var alternativeInactiveTint: UIColor = .streamGrayGainsboro

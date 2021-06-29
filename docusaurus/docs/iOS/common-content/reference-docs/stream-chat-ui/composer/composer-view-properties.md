@@ -145,6 +145,19 @@ public private(set) lazy var checkboxControl: CheckboxControl = components
         .withoutAutoresizingMaskConstraints
 ```
 
+### `sideContainersBottomMargin`
+
+Bottom margin for leadingContainer and trailingContainer.
+
+``` swift
+open var sideContainersBottomMargin: CGFloat = 9
+```
+
+We want the side containers to be centered to the inputMessageView in default state but stay at the bottom when expanded.
+The inputMessageView default height is 38pt,
+all the buttons in side containers (leadingContainer and trailingContainer) are 20pt.
+We want the buttons centered in the default state. (38-20)/2 = 9pt margin
+
 ## Methods
 
 ### `setUpAppearance()`

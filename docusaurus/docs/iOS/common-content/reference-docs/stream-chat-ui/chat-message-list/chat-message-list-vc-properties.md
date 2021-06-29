@@ -29,20 +29,12 @@ User search controller passed directly to the composer
 open lazy var userSuggestionSearchController: _ChatUserSearchController<ExtraData> 
 ```
 
-### `messageListLayout`
-
-Layout used by the collection view.
-
-``` swift
-open lazy var messageListLayout: ChatMessageListCollectionViewLayout 
-```
-
-### `collectionView`
+### `listView`
 
 View used to display the messages
 
 ``` swift
-open private(set) lazy var collectionView: ChatMessageListCollectionView<ExtraData> 
+open private(set) lazy var listView: _ChatMessageListView<ExtraData> 
 ```
 
 ### `messageComposerVC`
@@ -122,6 +114,12 @@ Formatter that is used to format date for scrolling overlay that should display 
 open var overlayDateFormatter: DateFormatter 
 ```
 
+### `isScrollToBottomButtonVisible`
+
+``` swift
+open var isScrollToBottomButtonVisible: Bool 
+```
+
 ## Methods
 
 ### `traitCollectionDidChange(_:)`
@@ -192,33 +190,17 @@ open func cellContentClassForMessage(at indexPath: IndexPath) -> _ChatMessageCon
 open func attachmentViewInjectorClassForMessage(at indexPath: IndexPath) -> _AttachmentViewInjector<ExtraData>.Type? 
 ```
 
-### `collectionView(_:numberOfItemsInSection:)`
+### `tableView(_:willDisplay:forRowAt:)`
 
 ``` swift
-open func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int 
+open func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) 
 ```
 
-### `collectionView(_:cellForItemAt:)`
+### `messageListView(_:scrollOverlayTextForItemAt:)`
 
 ``` swift
-open func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell 
-```
-
-### `collectionView(_:willDisplay:forItemAt:)`
-
-``` swift
-open func collectionView(
-        _ collectionView: UICollectionView,
-        willDisplay cell: UICollectionViewCell,
-        forItemAt indexPath: IndexPath
-    ) 
-```
-
-### `collectionView(_:scrollOverlayTextForItemAt:)`
-
-``` swift
-open func collectionView(
-        _ collectionView: UICollectionView,
+open func messageListView(
+        _ tableView: UITableView,
         scrollOverlayTextForItemAt indexPath: IndexPath
     ) -> String? 
 ```
@@ -289,7 +271,7 @@ and then call selection action on the selected cell.
 Updates the collection view data with given `changes`.
 
 ``` swift
-open func updateMessages(with changes: [ListChange<_ChatMessage<ExtraData>>], completion: ((Bool) -> Void)? = nil) 
+open func updateMessages(with changes: [ListChange<_ChatMessage<ExtraData>>], completion: (() -> Void)? = nil) 
 ```
 
 ### `messageForIndexPath(_:)`
@@ -448,3 +430,21 @@ open func messageContentViewDidTapOnThread(_ indexPath: IndexPath?)
 
 ``` swift
 open func messageContentViewDidTapOnQuotedMessage(_ indexPath: IndexPath?) 
+```
+
+### `numberOfSections(in:)`
+
+``` swift
+open func numberOfSections(in tableView: UITableView) -> Int 
+```
+
+### `tableView(_:numberOfRowsInSection:)`
+
+``` swift
+open func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int 
+```
+
+### `tableView(_:cellForRowAt:)`
+
+``` swift
+open func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell 

@@ -38,23 +38,16 @@ override open func didMoveToSuperview()
 open func setUp() 
 ```
 
-### `scrollStateChanged(_:)`
+### `setUpAppearance()`
 
 ``` swift
-@objc
-    open func scrollStateChanged(_ sender: UIPanGestureRecognizer) 
+open func setUpAppearance() 
 ```
 
 ### `setUpLayout()`
 
 ``` swift
 open func setUpLayout() 
-```
-
-### `setUpAppearance()`
-
-``` swift
-open func setUpAppearance() 
 ```
 
 ### `updateContent()`
@@ -74,7 +67,7 @@ open func dequeueReusableCell(
         attachmentViewInjectorType: _AttachmentViewInjector<ExtraData>.Type?,
         layoutOptions: ChatMessageLayoutOptions,
         for indexPath: IndexPath
-    ) -> _ChatMessageCollectionViewCell<ExtraData> 
+    ) -> _ChatMessageCell<ExtraData> 
 ```
 
 #### Parameters
@@ -87,15 +80,21 @@ open func dequeueReusableCell(
 
 The instance of `_ChatMessageCollectionViewCell<ExtraData>` set up with the provided `contentViewClass` and `layoutOptions`
 
-### `updateMessages(with:completion:)`
+### `scrollStateChanged(_:)`
 
-Updates the collection view data with given `changes`.
+Is invoked when a pan gesture state is changed.
 
 ``` swift
-open func updateMessages(
-        with changes: [ListChange<_ChatMessage<ExtraData>>],
-        completion: ((Bool) -> Void)? = nil
-    ) 
+@objc
+    open func scrollStateChanged(_ sender: UIPanGestureRecognizer) 
+```
+
+### `setOverlayViewAlpha(_:animated:)`
+
+Updates the alpha of the overlay.
+
+``` swift
+open func setOverlayViewAlpha(_ alpha: CGFloat, animated: Bool = true) 
 ```
 
 ### `scrollToMostRecentMessage(animated:)`
@@ -106,13 +105,12 @@ Scrolls to most recent message
 open func scrollToMostRecentMessage(animated: Bool = true) 
 ```
 
-### `traitCollectionDidChange(_:)`
+### `updateMessages(with:completion:)`
+
+Updates the table view data with given `changes`.
 
 ``` swift
-override open func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) 
-```
-
-### `setOverlayViewAlpha(_:animated:)`
-
-``` swift
-open func setOverlayViewAlpha(_ alpha: CGFloat, animated: Bool = true) 
+open func updateMessages(
+        with changes: [ListChange<_ChatMessage<ExtraData>>],
+        completion: (() -> Void)? = nil
+    ) 
