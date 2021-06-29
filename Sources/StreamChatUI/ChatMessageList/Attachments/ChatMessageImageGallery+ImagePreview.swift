@@ -6,22 +6,28 @@ import Nuke
 import StreamChat
 import UIKit
 
-/// Properties necessary for image to be previewed.
-public protocol ImagePreviewable {
-    /// Content containing image attachment.
-    var content: ChatMessageImageAttachment? { get }
-    /// `UIImageView` that is displayed the image preview.
+/// The type preview should conform to in order the gallery can be shown from it.
+public protocol GalleryItemPreview {
+    /// Attachment identifier.
+    var attachmentId: AttachmentId? { get }
+    
+    /// `UIImageView` that is displayed the attachment preview.
     var imageView: UIImageView { get }
 }
 
-extension _ChatMessageImageGallery {
-    open class ImagePreview: _View, ThemeProvider, ImagePreviewable {
+extension _ChatMessageGalleryView {
+    open class ImagePreview: _View, ThemeProvider, GalleryItemPreview {
         public var content: ChatMessageImageAttachment? {
             didSet { updateContentIfNeeded() }
         }
+        
+        public var attachmentId: AttachmentId? {
+            content?.id
+        }
 
         public var didTapOnAttachment: ((ChatMessageImageAttachment) -> Void)?
-        
+        public var didTapOnUploadingActionButton: ((ChatMessageImageAttachment) -> Void)?
+
         private var imageTask: ImageTask? {
             didSet { oldValue?.cancel() }
         }
@@ -57,6 +63,12 @@ extension _ChatMessageImageGallery {
             
             let tapRecognizer = UITapGestureRecognizer(target: self, action: #selector(didTapOnAttachment(_:)))
             addGestureRecognizer(tapRecognizer)
+            
+            uploadingOverlay.didTapActionButton = { [weak self] in
+                guard let self = self, let attachment = self.content else { return }
+                
+                self.didTapOnUploadingActionButton?(attachment)
+            }
         }
 
         override open func setUpLayout() {
@@ -84,7 +96,7 @@ extension _ChatMessageImageGallery {
                     self?.imageTask = nil
                 }
 
-            uploadingOverlay.content = content
+            uploadingOverlay.content = content?.uploadingState
             uploadingOverlay.isVisible = attachment?.uploadingState != nil
         }
 

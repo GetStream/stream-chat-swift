@@ -17,7 +17,14 @@ internal enum L10n {
       internal static let cancel = L10n.tr("Localizable", "alert.actions.cancel")
       /// Delete
       internal static let delete = L10n.tr("Localizable", "alert.actions.delete")
+      /// Ok
+      internal static let ok = L10n.tr("Localizable", "alert.actions.ok")
     }
+  }
+
+  internal enum Attachment {
+    /// Attachment size exceed the limit.
+    internal static let maxSizeExceeded = L10n.tr("Localizable", "attachment.max-size-exceeded")
   }
 
   internal enum Channel {
@@ -53,8 +60,8 @@ internal enum L10n {
       internal static let cancel = L10n.tr("Localizable", "composer.picker.cancel")
       /// File
       internal static let file = L10n.tr("Localizable", "composer.picker.file")
-      /// Photo
-      internal static let image = L10n.tr("Localizable", "composer.picker.image")
+      /// Photo or Video
+      internal static let media = L10n.tr("Localizable", "composer.picker.media")
       /// Choose attachment type: 
       internal static let title = L10n.tr("Localizable", "composer.picker.title")
     }

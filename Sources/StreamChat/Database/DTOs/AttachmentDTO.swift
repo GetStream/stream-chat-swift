@@ -196,6 +196,8 @@ extension AttachmentDTO {
             attachment = asModel(payloadType: ImageAttachmentPayload.self)?.asAnyAttachment
         case .file:
             attachment = asModel(payloadType: FileAttachmentPayload.self)?.asAnyAttachment
+        case .video:
+            attachment = asModel(payloadType: VideoAttachmentPayload.self)?.asAnyAttachment
         case .giphy:
             attachment = asModel(payloadType: GiphyAttachmentPayload.self)?.asAnyAttachment
         case .linkPreview:
@@ -244,7 +246,16 @@ extension AttachmentDTO {
             }
             image.imageURL = uploadedFileURL
             data = try? JSONEncoder.stream.encode(image)
-        case .file:
+        case .video:
+            guard var video: VideoAttachmentPayload = payload() else {
+                log.assertionFailure(
+                    "Video payload must be decoded to provide the `videoURL` before sending"
+                )
+                return
+            }
+            video.videoURL = uploadedFileURL
+            data = try? JSONEncoder.stream.encode(video)
+        default:
             guard var file: FileAttachmentPayload = payload() else {
                 log.assertionFailure(
                     "File payload must be decoded to provide the `assetURL` before sending"
@@ -253,8 +264,6 @@ extension AttachmentDTO {
             }
             file.assetURL = uploadedFileURL
             data = try? JSONEncoder.stream.encode(file)
-        default:
-            break
         }
     }
 }

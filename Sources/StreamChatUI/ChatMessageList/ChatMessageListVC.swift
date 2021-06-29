@@ -358,27 +358,42 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
         )
     }
 
-    /// Restarts upload of given `attachment` in case of failure
-    open func restartUploading(for attachmentId: AttachmentId) {
-        channelController.client
-            .messageController(cid: attachmentId.cid, messageId: attachmentId.messageId)
-            .restartFailedAttachmentUploading(with: attachmentId)
-    }
-
     // MARK: - Cell action handlers
     
-    open func didTapOnImageAttachment(
-        _ attachment: ChatMessageImageAttachment,
-        previews: [ImagePreviewable],
-        at indexPath: IndexPath?
+    open func galleryMessageContentView(
+        at indexPath: IndexPath?,
+        didTapAttachmentPreview attachmentId: AttachmentId,
+        previews: [GalleryItemPreview]
     ) {
         guard let indexPath = indexPath else { return log.error("IndexPath is not available") }
         
-        router.showImageGallery(
+        router.showGallery(
             message: messageForIndexPath(indexPath),
-            initialAttachment: attachment,
+            initialAttachmentId: attachmentId,
             previews: previews
         )
+    }
+    
+    open func galleryMessageContentView(
+        at indexPath: IndexPath?,
+        didTakeActionOnUploadingAttachment attachmentId: AttachmentId
+    ) {
+        guard let indexPath = indexPath else { return log.error("IndexPath is not available") }
+        
+        let message = messageForIndexPath(indexPath)
+         
+        guard let localState = message.attachment(with: attachmentId)?.uploadingState else {
+            return log.error("Failed to take an action on attachment with \(attachmentId)")
+        }
+        
+        switch localState.state {
+        case .uploadingFailed:
+            channelController.client
+                .messageController(cid: attachmentId.cid, messageId: attachmentId.messageId)
+                .restartFailedAttachmentUploading(with: attachmentId)
+        default:
+            break
+        }
     }
     
     open func didTapOnLinkAttachment(

@@ -204,6 +204,10 @@ class StreamCDNClient_Tests: StressTestCase {
             body: multipartFormData.getMultipartFormData()
         )
     }
+    
+    func test_maxAttachmentSize() {
+        XCTAssertEqual(StreamCDNClient.maxAttachmentSize, 20 * 1024 * 1024)
+    }
 }
 
 private class Builder {

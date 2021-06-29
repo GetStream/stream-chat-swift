@@ -19,8 +19,8 @@ open class _AttachmentViewCatalog<ExtraData: ExtraDataTypes> {
         components: _Components<ExtraData>
     ) -> _AttachmentViewInjector<ExtraData>.Type? {
         let attachmentCounts = message.attachmentCounts
-
-        if attachmentCounts.keys.contains(.image) {
+        
+        if attachmentCounts.keys.contains(.image) || attachmentCounts.keys.contains(.video) {
             return components.galleryAttachmentInjector
         } else if attachmentCounts.keys.contains(.giphy) {
             return components.giphyAttachmentInjector

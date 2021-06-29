@@ -99,7 +99,7 @@ open class _ChatMessageListRouter<ExtraData: ExtraDataTypes>:
         rootNavigationController?.show(threadVC, sender: self)
     }
 
-    /// Shows the image gallery VC for the selected photo attachment.
+    /// Shows the gallery VC for the given message starting on specific attachment.
     ///
     /// - Parameters:
     ///   - message: The id of the message the attachment belongs to.
@@ -107,33 +107,35 @@ open class _ChatMessageListRouter<ExtraData: ExtraDataTypes>:
     ///   - previews: All previewable attachments of the message. This is used for swiping right-left when a single
     ///   message has multiple previewable attachments.
     ///
-    open func showImageGallery(
+    open func showGallery(
         message: _ChatMessage<ExtraData>,
-        initialAttachment: ChatMessageImageAttachment,
-        previews: [ImagePreviewable]
+        initialAttachmentId: AttachmentId,
+        previews: [GalleryItemPreview]
     ) {
         guard
-            let preview = previews.first(where: { $0.content?.id == initialAttachment.id })
+            let preview = previews.first(where: { $0.attachmentId == initialAttachmentId })
         else { return }
-        let imageGalleryVC = components.imagePreviewVC.init()
-        imageGalleryVC.modalPresentationStyle = .overFullScreen
-        imageGalleryVC.transitioningDelegate = self
-        imageGalleryVC.content = message
-        imageGalleryVC.initialAttachment = initialAttachment
-        imageGalleryVC.transitionController = zoomTransitionController
         
-        zoomTransitionController.presentedVCImageView = {
-            let cell = imageGalleryVC.attachmentsCollectionView.cellForItem(
-                at: IndexPath(item: imageGalleryVC.currentPage, section: 0)
-            ) as? _ImageCollectionViewCell<ExtraData>
-            return cell?.imageView
+        let galleryVC = components.galleryVC.init()
+        galleryVC.modalPresentationStyle = .overFullScreen
+        galleryVC.transitioningDelegate = self
+        galleryVC.content = .init(
+            message: message,
+            currentPage: (message.videoAttachments.map(\.id) + message.imageAttachments.map(\.id))
+                .firstIndex(of: initialAttachmentId) ?? 0
+        )
+        galleryVC.transitionController = zoomTransitionController
+        
+        zoomTransitionController.presentedVCImageView = { [weak galleryVC] in
+            galleryVC?.imageViewToAnimateWhenDismissing
         }
         zoomTransitionController.presentingImageView = {
-            let attachment = imageGalleryVC.images[imageGalleryVC.currentPage]
-            return previews.first(where: { $0.content?.id == attachment.id })?.imageView ?? previews.last?.imageView
+            let id = galleryVC.items[galleryVC.content.currentPage].id
+            
+            return previews.first(where: { $0.attachmentId == id })?.imageView ?? previews.last?.imageView
         }
         zoomTransitionController.fromImageView = preview.imageView
-        rootViewController.present(imageGalleryVC, animated: true)
+        rootViewController.present(galleryVC, animated: true)
     }
 
     // MARK: - UIViewControllerTransitioningDelegate

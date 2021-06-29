@@ -63,6 +63,9 @@ public struct _Components<ExtraData: ExtraDataTypes> {
 
     /// A button for closing, dismissing or clearing information.
     public var closeButton: UIButton.Type = CloseButton.self
+    
+    /// A button for sharing an information.
+    public var shareButton: UIButton.Type = ShareButton.self
 
     /// A view to check/uncheck an option.
     public var checkmarkControl: CheckboxControl.Type = CheckboxControl.self
@@ -76,6 +79,15 @@ public struct _Components<ExtraData: ExtraDataTypes> {
     /// Object with set of function for handling images from CDN
     public var imageCDN: ImageCDN = StreamImageCDN()
 
+    /// The object that loads previews for video attachments.
+    public var videoPreviewLoader: VideoPreviewLoader = DefaultVideoPreviewLoader()
+    
+    /// The view that shows a gradient.
+    public var gradientView: GradientView.Type = GradientView.self
+    
+    /// The view that shows a playing video.
+    public var playerView: PlayerView.Type = PlayerView.self
+    
     // MARK: - Message list components
 
     /// The View Controller used to display content of the message, i.e. in the channel detail message list.
@@ -103,9 +115,13 @@ public struct _Components<ExtraData: ExtraDataTypes> {
     /// The View Controller used for showing detail of a file message attachment.
     public var filePreviewVC: ChatMessageAttachmentPreviewVC.Type = ChatMessageAttachmentPreviewVC.self
 
-    /// The View Controller used for showing detail of an image message attachment.
-    public var imagePreviewVC: _ImageGalleryVC<ExtraData>.Type = _ImageGalleryVC<ExtraData>.self
-
+    /// The View Controller used for show image and video attachments.
+    public var galleryVC: _GalleryVC<ExtraData>.Type = _GalleryVC<ExtraData>.self
+    
+    /// The view used to control the player for currently visible vide attachment.
+    public var videoPlaybackControlView: _VideoPlaybackControlView<ExtraData>.Type =
+        _VideoPlaybackControlView<ExtraData>.self
+    
     /// The view used to display content of the message, i.e. in the channel detail message list.
     public var messageContentView: _ChatMessageContentView<ExtraData>.Type = _ChatMessageContentView<ExtraData>.self
 
@@ -130,6 +146,9 @@ public struct _Components<ExtraData: ExtraDataTypes> {
     /// The view that shows reactions bubble.
     public var reactionsBubbleView: _ChatMessageReactionsBubbleView<ExtraData>.Type =
         _ChatMessageDefaultReactionsBubbleView<ExtraData>.self
+    
+    /// The button for taking an action on attachment being uploaded.
+    public var attachmentActionButton: AttachmentActionButton.Type = AttachmentActionButton.self
 
     /// The view that shows reactions list in a bubble.
     public var reactionsView: _ChatMessageReactionsView<ExtraData>.Type = _ChatMessageReactionsView<ExtraData>.self
@@ -148,18 +167,30 @@ public struct _Components<ExtraData: ExtraDataTypes> {
     /// The view that shows a single file attachment.
     public var fileAttachmentView: _ChatMessageFileAttachmentListView<ExtraData>.ItemView.Type =
         _ChatMessageFileAttachmentListView<ExtraData>.ItemView.self
-
-    /// The view that shows message's image attachments.
-    public var imageGalleryView: _ChatMessageImageGallery<ExtraData>.Type =
-        _ChatMessageImageGallery<ExtraData>.self
     
     /// The view that shows a link preview in message cell.
     public var linkPreviewView: _ChatMessageLinkPreviewView<ExtraData>.Type =
         _ChatMessageLinkPreviewView<ExtraData>.self
-
+    
+    /// The view that shows message's image and video attachments.
+    public var galleryView: _ChatMessageGalleryView<ExtraData>.Type =
+        _ChatMessageGalleryView<ExtraData>.self
+    
+    /// The view that shows an image attachment preview inside message cell.
+    public var imageAttachmentGalleryPreview: _ChatMessageGalleryView<ExtraData>.ImagePreview.Type =
+        _ChatMessageGalleryView<ExtraData>.ImagePreview.self
+    
+    /// The view that shows a video attachment in full-screen gallery.
+    public var videoAttachmentGalleryCell: _VideoAttachmentGalleryCell<ExtraData>.Type =
+        _VideoAttachmentGalleryCell<ExtraData>.self
+    
+    /// The view that shows a video attachment preview inside a message.
+    public var videoAttachmentGalleryPreview: _VideoAttachmentGalleryPreview<ExtraData>.Type =
+        _VideoAttachmentGalleryPreview<ExtraData>.self
+    
     /// The view that shows an overlay with uploading progress for image attachment that is being uploaded.
-    public var imageUploadingOverlay: _ChatMessageImageGallery<ExtraData>.UploadingOverlay.Type =
-        _ChatMessageImageGallery<ExtraData>.UploadingOverlay.self
+    public var imageUploadingOverlay: _ChatMessageGalleryView<ExtraData>.UploadingOverlay.Type =
+        _ChatMessageGalleryView<ExtraData>.UploadingOverlay.self
 
     /// The view that shows giphy attachment with actions.
     public var giphyAttachmentView: _ChatMessageInteractiveAttachmentView<ExtraData>.Type =
@@ -236,9 +267,14 @@ public struct _Components<ExtraData: ExtraDataTypes> {
     /// A view that displays the document attachment.
     public var messageComposerFileAttachmentView: FileAttachmentView.Type = FileAttachmentView.self
 
-    /// A view that displays the image attachment.
-    public var messageComposerImageAttachmentView: _ImageAttachmentView<ExtraData>.Type = _ImageAttachmentView<ExtraData>.self
-
+    /// A view that displays image attachment preview in composer.
+    public var imageAttachmentComposerPreview: _ImageAttachmentComposerPreview<ExtraData>
+        .Type = _ImageAttachmentComposerPreview<ExtraData>.self
+    
+    /// A view that displays the video attachment preview in composer.
+    public var videoAttachmentComposerPreview: _VideoAttachmentComposerPreview<ExtraData>
+        .Type = _VideoAttachmentComposerPreview<ExtraData>.self
+    
     /// A view controller that shows suggestions of commands or mentions.
     public var suggestionsVC: _ChatSuggestionsViewController<ExtraData>.Type =
         _ChatSuggestionsViewController<ExtraData>.self

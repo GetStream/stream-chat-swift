@@ -6,6 +6,9 @@ import Foundation
 
 /// API client that handles working with content (e.g. uploading attachments)
 public protocol CDNClient {
+    /// Specifies maximum attachment size in bytes.
+    static var maxAttachmentSize: Int64 { get }
+
     /// - Parameters:
     ///   - attachment: An attachment to upload
     ///   - progress: A closure that broadcasts upload progress
@@ -19,6 +22,8 @@ public protocol CDNClient {
 
 /// Default implementation of CDNClient that uses Stream CDN
 class StreamCDNClient: CDNClient {
+    static var maxAttachmentSize: Int64 { 20 * 1024 * 1024 }
+
     private let decoder: RequestDecoder
     private let encoder: RequestEncoder
     private let session: URLSession

@@ -29,6 +29,7 @@
 
 "alert.actions.cancel" = "Cancel";
 "alert.actions.delete" = "Delete";
+"alert.actions.ok" = "Ok";
 
 "message.only-visible-to-you" = "Only visible to you";
 "message.deleted-message-placeholder" = "Message deleted";
@@ -41,7 +42,7 @@
 "composer.checkmark.channel-reply" = "Also send in channel";
 "composer.picker.title" = "Choose attachment type: ";
 "composer.picker.file" = "File";
-"composer.picker.image" = "Photo";
+"composer.picker.media" = "Photo or Video";
 "composer.picker.cancel" = "Cancel";
 
 "composer.suggestions.commands.header" = "Instant Commands";
@@ -53,3 +54,5 @@
 "message.title.group" = "%d members, %d online";
 
 "current-selection" = "%d of %d";
+
+"attachment.max-size-exceeded" = "Attachment size exceed the limit.";

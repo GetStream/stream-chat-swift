@@ -44,8 +44,9 @@ public extension AnyAttachmentPayload {
     /// Creates an instance of `AnyAttachmentPayload` with the URL referencing to a local file.
     ///
     /// The resulting attachment will have `ImageAttachmentPayload` if `attachmentType == .image`.
-    /// If the type is different from `.image` the attachment will have payload of `FileAttachmentPayload`
-    /// type.
+    /// The resulting attachment will have `VideoAttachmentPayload` if `attachmentType == .video`.
+    /// The resulting attachment will have `FileAttachmentPayload` if `attachmentType == .file`.
+    /// If the type is different than `.image`/`.video`/`.file` the `ClientError.UnsupportedUploadableAttachmentType` error will be thrown.
     ///
     /// If attached to the new message the attachment with the given payload will be immediately
     /// available on `ChatMessage` with the `uploadingState` reflecting the file uploading progress.
@@ -67,12 +68,20 @@ public extension AnyAttachmentPayload {
                 imageURL: localFileURL,
                 imagePreviewURL: localFileURL
             )
-        default:
+        case .video:
+            payload = VideoAttachmentPayload(
+                title: localFileURL.lastPathComponent,
+                videoURL: localFileURL,
+                file: file
+            )
+        case .file:
             payload = FileAttachmentPayload(
                 title: localFileURL.lastPathComponent,
                 assetURL: localFileURL,
                 file: file
             )
+        default:
+            throw ClientError.UnsupportedUploadableAttachmentType(attachmentType)
         }
 
         self.init(
@@ -80,5 +89,15 @@ public extension AnyAttachmentPayload {
             payload: payload,
             localFileURL: localFileURL
         )
+    }
+}
+
+extension ClientError {
+    public class UnsupportedUploadableAttachmentType: ClientError {
+        init(_ type: AttachmentType) {
+            super.init(
+                "For uploadable attachments only .image/.file/.video types are supported."
+            )
+        }
     }
 }
