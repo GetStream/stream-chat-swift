@@ -12,6 +12,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - `search(query:)` function to `UserSearchController` to make a custom search with a query [#1206](https://github.com/GetStream/stream-chat-swift/issues/1206)
 - `queryForMentionSuggestionsSearch(typingMention:)` function to `ComposerVC`, users can override this function to customize mention search behavior [#1206](https://github.com/GetStream/stream-chat-swift/issues/1206)
 - `.contains` added to `Filter` to be able to filter for `teams` [#1206](https://github.com/GetStream/stream-chat-swift/issues/1206)
+- New methods for establishing connection for `ChatClient`:
+  -  `connectUser`
+  -  `connectGuestUser`
+  -  `connectAnonymousUser`
+
+### 🔄 Changed
+- `shouldConnectAutomatically` setting in `ChatConfig`, it now has no effect and all logic that used it now behaves like it was set to `true`.
+- It's now required to call one of the available `connect` methods on `ChatClient` after `ChatClient`'s instance is created in order to establish connection.
 
 ### 🐞 Fixed 
 - `ConnectionController` fires its `controllerDidChangeConnectionStatus` method only when the connection status actually changes [#1207](https://github.com/GetStream/stream-chat-swift/issues/1207)
