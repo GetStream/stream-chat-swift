@@ -64,6 +64,7 @@ public struct ChatClientConfig {
     /// but has to be initiated manually by calling `connect`.
     ///
     /// Is `true` by default.
+    @available(*, deprecated, message: "Has no effect anymore. It now always behaves like it was set to `true`.")
     public var shouldConnectAutomatically = true
     
     /// If set to `true`, the `ChatClient` will try to stay connected while app is backgrounded.
