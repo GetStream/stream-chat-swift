@@ -280,7 +280,6 @@ func channelController(
 }
 ```
 Usually, you use `ChannelListController` to observe changes to unread counts, since it's displayed in the Channel List next to channel name. 
-For info about handling Channel List, see [here](./working-with-channel-list.md).
 
 ## Getting a Model Directly from ChannelController
 

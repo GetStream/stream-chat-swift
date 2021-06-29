@@ -721,6 +721,12 @@ open class _ComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
             urlAndType = (imageURL, .image)
         } else if let videoURL = info[.mediaURL] as? URL {
             urlAndType = (videoURL, .video)
+        } else if let editedImage = info[.editedImage] as? UIImage,
+                  let editedImageURL = try? editedImage.temporaryLocalFileUrl() {
+            urlAndType = (editedImageURL, .image)
+        } else if let originalImage = info[.originalImage] as? UIImage,
+                  let originalImageURL = try? originalImage.temporaryLocalFileUrl() {
+            urlAndType = (originalImageURL, .image)
         } else {
             log.error("Unexpected item selected in image picker")
             return

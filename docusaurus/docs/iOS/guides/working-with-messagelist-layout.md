@@ -4,11 +4,11 @@ title: Working with MessageList Layout
 
 ## `ChatMessageLayoutOptionsResolver`
 
-You can change the layout and appearance settings of message cells by subclassing [`ChatMessageLayoutOptionsResolver`](../reference-docs/sources/stream-chat-ui/chat-message-list/chat-message/chat-message-layout-options-resolver.md). 
-`ChatMessageLayoutOptionsResolver` uses function `optionsForMessage(at indexPath:,in channel:, with messages:)` which returns [ChatMessageLayoutOptions](../reference-docs/sources/stream-chat-ui/chat-message-list/chat-message/chat-message-layout-options.md) ) for the given cell to setup it's layout and options.
+You can change the layout and appearance settings of message cells by subclassing [`ChatMessageLayoutOptionsResolver`](../common-content/reference-docs/stream-chat-ui/chat-message-list/chat-message/chat-message-layout-options-resolver.md). 
+`ChatMessageLayoutOptionsResolver` uses function `optionsForMessage(at indexPath:,in channel:, with messages:)` which returns [ChatMessageLayoutOptions](../common-content/reference-docs/stream-chat-ui/chat-message-list/chat-message/chat-message-layout-options.md) ) for the given cell to setup it's layout and options.
 If the desired customization can't be achieved via `ChatMessageLayoutOptions`, you'll need to subclass `ChatMessageContentView`, which we show [below](#moving-components-of-messages-in-the-layout).
 
-For more information about `ChatMessageLayoutOptions` please see  [`ChatMessageLayoutOptions` reference docs](../reference-docs/sources/stream-chat-ui/chat-message-list/chat-message/chat-message-layout-options.md) 
+For more information about `ChatMessageLayoutOptions` please see  [`ChatMessageLayoutOptions` reference docs](../common-content/reference-docs/stream-chat-ui/chat-message-list/chat-message/chat-message-layout-options.md) 
 
 ## Left-aligning all messages
  To left-align all messages inside MessageList, start by creating your custom left-aligned `MessageLayoutOptionsResolver` like this:
@@ -121,7 +121,7 @@ Components.default.avatarView = SquareAvatarView.self
  
 ## Moving components of Messages in the layout
 
-Creating subclasses of [`ChatMessageContentView`](../reference-docs/sources/stream-chat-ui/chat-message-list/chat-message/chat-message-content-view.md) let's you alter views, create custom ones, and create complex layouts for your app.
+Creating subclasses of [`ChatMessageContentView`](../common-content/reference-docs/stream-chat-ui/chat-message-list/chat-message/chat-message-content-view.md) let's you alter views, create custom ones, and create complex layouts for your app.
 
 
 ###  Custom layout 
@@ -213,6 +213,6 @@ Components.default.messageContentView = CustomChatMessageContentView.self // Mak
 
 :::tip Learn more about custom messagelist layout in the reference docs
 
-Please take a look at our reference documentation for [`ChatMessageLayoutOptionsResolver`](../reference-docs/sources/stream-chat-ui/chat-message-list/chat-message/chat-message-layout-options-resolver.md),  [`ChatMessageLayoutOptions`](../reference-docs/sources/stream-chat-ui/chat-message-list/chat-message/chat-message-layout-options.md) and [`ChatMessageContentView`](../reference-docs/sources/stream-chat-ui/chat-message-list/chat-message/chat-message-content-view.md) to find out more about how custom message layout works.
+Please take a look at our reference documentation for [`ChatMessageLayoutOptionsResolver`](../common-content/reference-docs/stream-chat-ui/chat-message-list/chat-message/chat-message-layout-options-resolver.md),  [`ChatMessageLayoutOptions`](../common-content/reference-docs/stream-chat-ui/chat-message-list/chat-message/chat-message-layout-options.md) and [`ChatMessageContentView`](../common-content/reference-docs/stream-chat-ui/chat-message-list/chat-message/chat-message-content-view.md) to find out more about how custom message layout works.
 :::
 

@@ -137,11 +137,11 @@ chatClient.currentUserController().reloadUserIfNeeded()
 
 You can get 2 types of controllers from `ChatClient`: `CurrentUserController` vs `UserController`
 
-### [`CurrentUserController`](../reference-docs/sources/stream-chat/controllers/current-user-controller/current-chat-user-controller.md)
+### [`CurrentUserController`](../../common-content/reference-docs/stream-chat/controllers/current-user-controller/current-chat-user-controller)
 
 `CurrentUser` is a wrapper for the currently logged-in user's `User` object. `CurrentUser` includes information about the logged-in user, such as registered devices, muted users, flagged users, and unread count. You interact with your current user via `CurrentUserController`
 
-For all functions available on this controller, please check [CurrentUserController docs](../reference-docs/sources/stream-chat/controllers/current-user-controller/current-chat-user-controller.md).
+For all functions available on this controller, please check [CurrentUserController docs](.../../common-content/reference-docs/stream-chat/controllers/current-user-controller/current-chat-user-controller).
 
 #### Observing Unread Count for Current User
 
@@ -178,8 +178,8 @@ currentUserController
     .store(in: &cancellables)
 ```
 
-### [`UserController`](../reference-docs/sources/stream-chat/controllers/user-controller/chat-user-controller.md)
+### [`UserController`](../../common-content/reference-docs/stream-chat/controllers/user-controller/chat-user-controller)
 
 For any user other than your current user in the platform, you use `UserController` to interact.
 
-To see available functions on UserController, please check [UserController guide](../reference-docs/sources/stream-chat/controllers/user-controller/chat-user-controller.md).
+To see available functions on UserController, please check [UserController guide](../../common-content/reference-docs/stream-chat/controllers/user-controller/chat-user-controller).
