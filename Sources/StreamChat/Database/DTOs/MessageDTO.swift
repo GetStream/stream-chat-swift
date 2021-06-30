@@ -90,18 +90,9 @@ class MessageDTO: NSManagedObject {
         return request
     }
     
-    /// Returns predicate with channel messages and replies that should be shown in channel.
-    static func channelMessagesPredicate(for cid: String) -> NSCompoundPredicate {
-        let channelMessage = NSPredicate(
-            format: "channel.cid == %@", cid
-        )
-
-        let messageTypePredicate = NSCompoundPredicate(orPredicateWithSubpredicates: [
-            .init(format: "type != %@", MessageType.reply.rawValue),
-            .init(format: "type == %@ AND showReplyInChannel == 1", MessageType.reply.rawValue)
-        ])
-
-        let deletedMessagePredicate = NSCompoundPredicate(orPredicateWithSubpredicates: [
+    /// Returns predicate for deleted messages which should be displayed or not.
+    private static func deletedMessagesPredicate() -> NSCompoundPredicate {
+        .init(orPredicateWithSubpredicates: [
             // Non-deleted messages.
             .init(format: "deletedAt == nil"),
             // Deleted messages sent by current user excluding ephemeral ones.
@@ -111,10 +102,25 @@ class MessageDTO: NSManagedObject {
                 .init(format: "type != %@", MessageType.ephemeral.rawValue)
             ])
         ])
-
-        let nonTruncatedMessagePredicate = NSCompoundPredicate(orPredicateWithSubpredicates: [
+    }
+    
+    /// Returns predicate for displaying messages after the channel truncation date.
+    private static func nonTruncatedMessagesPredicate() -> NSCompoundPredicate {
+        .init(orPredicateWithSubpredicates: [
             .init(format: "channel.truncatedAt == nil"),
             .init(format: "createdAt > channel.truncatedAt")
+        ])
+    }
+    
+    /// Returns predicate with channel messages and replies that should be shown in channel.
+    static func channelMessagesPredicate(for cid: String) -> NSCompoundPredicate {
+        let channelMessage = NSPredicate(
+            format: "channel.cid == %@", cid
+        )
+
+        let messageTypePredicate = NSCompoundPredicate(orPredicateWithSubpredicates: [
+            .init(format: "type != %@", MessageType.reply.rawValue),
+            .init(format: "type == %@ AND showReplyInChannel == 1", MessageType.reply.rawValue)
         ])
         
         // Some pinned messages might be in the local database, but should not be fetched
@@ -127,9 +133,20 @@ class MessageDTO: NSManagedObject {
         return .init(andPredicateWithSubpredicates: [
             channelMessage,
             messageTypePredicate,
-            deletedMessagePredicate,
-            nonTruncatedMessagePredicate,
+            deletedMessagesPredicate(),
+            nonTruncatedMessagesPredicate(),
             ignoreOlderMessagesPredicate
+        ])
+    }
+    
+    /// Returns predicate with thread messages that should be shown in the thread.
+    static func threadRepliesPredicate(for messageId: MessageId) -> NSCompoundPredicate {
+        let replyMessage = NSPredicate(format: "parentMessageId == %@", messageId)
+        
+        return .init(andPredicateWithSubpredicates: [
+            replyMessage,
+            deletedMessagesPredicate(),
+            nonTruncatedMessagesPredicate()
         ])
     }
     
@@ -145,7 +162,7 @@ class MessageDTO: NSManagedObject {
     static func repliesFetchRequest(for messageId: MessageId, sortAscending: Bool = false) -> NSFetchRequest<MessageDTO> {
         let request = NSFetchRequest<MessageDTO>(entityName: MessageDTO.entityName)
         request.sortDescriptors = [NSSortDescriptor(keyPath: \MessageDTO.defaultSortingKey, ascending: sortAscending)]
-        request.predicate = NSPredicate(format: "parentMessageId == %@", messageId)
+        request.predicate = threadRepliesPredicate(for: messageId)
         return request
     }
     
