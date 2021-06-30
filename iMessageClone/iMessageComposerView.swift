@@ -10,22 +10,24 @@ final class iMessageComposerView: ComposerView {
     override func setUpLayout() {
         super.setUpLayout()
 
+        // Remove the commands button, iMessage doesn't have it
         leadingContainer.removeArrangedSubview(commandsButton)
+
+        // Move the send button from the trailing container to input container
         trailingContainer.removeArrangedSubview(sendButton)
         inputMessageView.inputTextContainer.addArrangedSubview(sendButton)
+
+        // Remove spacing in leading container for bigger attachment button
+        leadingContainer.spacing = 0
+
+        // Make send button inside input container aligned to bottom
+        inputMessageView.inputTextContainer.alignment = .bottom
     }
     
     override func setUpAppearance() {
         super.setUpAppearance()
 
-        inputMessageView.layer.cornerRadius = 16
-        inputMessageView.textView.font = .systemFont(ofSize: 15)
-        
-        attachmentButton.setImage(
-            UIImage(systemName: "camera.fill"),
-            for: .normal
-        )
-        attachmentButton.widthAnchor.constraint(equalToConstant: 30).isActive = true
-        attachmentButton.heightAnchor.constraint(equalToConstant: 30).isActive = true
+        // Adjust the input corner radius since width is now bigger
+        inputMessageView.container.layer.cornerRadius = 18
     }
 }
