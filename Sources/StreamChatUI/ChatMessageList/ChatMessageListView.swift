@@ -209,9 +209,7 @@ open class _ChatMessageListView<ExtraData: ExtraDataTypes>: UITableView, Customi
         with changes: [ListChange<_ChatMessage<ExtraData>>],
         completion: (() -> Void)? = nil
     ) {
-        // Before committing the changes, we need to check if were scrolled
-        // to the bottom, if yes, we should stay scrolled to the bottom
-        var shouldScrollToBottom = isLastCellFullyVisible
+        var shouldScrollToBottom = false
                 
         performBatchUpdates({
             changes.forEach {
