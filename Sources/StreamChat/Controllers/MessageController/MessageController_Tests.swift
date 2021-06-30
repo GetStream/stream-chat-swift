@@ -166,7 +166,7 @@ final class MessageController_Tests: StressTestCase {
     
     /// This test simulates a bug where the `message` and `replies` fields were not updated if they weren't
     /// touched before calling synchronize.
-    func test_channelsAreFetched_afterCallingSynchronize() throws {
+    func test_messagesAreFetched_afterCallingSynchronize() throws {
         // Simulate `synchronize` call
         controller.synchronize()
         
@@ -227,6 +227,67 @@ final class MessageController_Tests: StressTestCase {
         // Check the order of replies is correct
         let bottomToTopIds = [reply1, reply2].sorted { $0.createdAt < $1.createdAt }.map(\.id)
         XCTAssertEqual(controller.replies.map(\.id), bottomToTopIds)
+    }
+    
+    /// This test was added because we forgot to exclude deleted messages when fetching replies.
+    /// Valid message for a thread is defined as:
+    /// - `parentId` correctly set,
+    /// - is not deleted, or current user owned non-ephemeral deleted,
+    /// - newer than channel's truncation date (if channel is truncated)
+    func test_replies_onlyIncludeValidMessages() throws {
+        // Create dummy channel
+        let cid = ChannelId.unique
+        let channel = dummyPayload(with: cid)
+        let truncatedDate = Date.unique
+        
+        // Save channel
+        try client.databaseContainer.writeSynchronously {
+            let dto = try $0.saveChannel(payload: channel)
+            dto.truncatedAt = truncatedDate
+        }
+        
+        // Insert parent message
+        try client.databaseContainer.createMessage(id: messageId, authorId: .unique, cid: cid, text: "Parent")
+        
+        // Insert replies for parent message
+        let reply1: MessagePayload<NoExtraData> = .dummy(
+            messageId: .unique,
+            parentId: messageId,
+            showReplyInChannel: false,
+            authorUserId: .unique,
+            createdAt: .unique(after: truncatedDate)
+        )
+        
+        // Insert the 2nd reply as deleted
+        let createdAt = Date.unique(after: truncatedDate)
+        let reply2: MessagePayload<NoExtraData> = .dummy(
+            messageId: .unique,
+            parentId: messageId,
+            showReplyInChannel: false,
+            authorUserId: .unique,
+            createdAt: createdAt,
+            deletedAt: .unique(after: createdAt)
+        )
+        
+        // Insert 3rd reply before truncation date
+        let reply3: MessagePayload<NoExtraData> = .dummy(
+            messageId: .unique,
+            parentId: messageId,
+            showReplyInChannel: false,
+            authorUserId: .unique,
+            createdAt: .unique(before: truncatedDate)
+        )
+        
+        // Save messages
+        try client.databaseContainer.writeSynchronously {
+            try $0.saveMessage(payload: reply1, for: cid)
+            try $0.saveMessage(payload: reply2, for: cid)
+            try $0.saveMessage(payload: reply3, for: cid)
+        }
+        
+        // Check if the replies are correct
+        let ids = [reply1].map(\.id)
+        XCTAssertEqual(controller.replies.map(\.id), ids)
     }
 
     // MARK: - Delegate
