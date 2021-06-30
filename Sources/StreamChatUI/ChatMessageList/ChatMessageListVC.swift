@@ -22,7 +22,7 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
     GiphyActionContentViewDelegate,
     LinkPreviewViewDelegate,
     FileActionContentViewDelegate,
-    ChatMessageListViewDataSource {
+    ChatMessageListScrollOverlayDataSource {
     /// Controller for observing data changes within the channel
     open var channelController: _ChatChannelController<ExtraData>!
     
@@ -48,6 +48,16 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
         listView.delegate = self
         listView.dataSource = self
         return listView
+    }()
+    
+    /// View used to display date of currently displayed messages
+    open private(set) lazy var dateOverlayView: ChatMessageListScrollOverlayView = {
+        let overlay = components
+            .messageListScrollOverlayView.init()
+            .withoutAutoresizingMaskConstraints
+        overlay.listView = listView
+        overlay.dataSource = self
+        return overlay
     }()
     
     /// Controller that handles the composer view
@@ -158,6 +168,13 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
             channelAvatarView.heightAnchor.pin(equalToConstant: 32)
         ])
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: channelAvatarView)
+        
+        view.addSubview(dateOverlayView)
+        NSLayoutConstraint.activate([
+            dateOverlayView.centerXAnchor.pin(equalTo: view.safeAreaLayoutGuide.centerXAnchor),
+            dateOverlayView.topAnchor.pin(equalToSystemSpacingBelow: view.safeAreaLayoutGuide.topAnchor)
+        ])
+        dateOverlayView.isHidden = true
     }
 
     override open func setUpAppearance() {
@@ -222,10 +239,10 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
             channelController.loadPreviousMessages()
         }
     }
-
-    open func messageListView(
-        _ tableView: UITableView,
-        scrollOverlayTextForItemAt indexPath: IndexPath
+    
+    open func scrollOverlay(
+        _ overlay: ChatMessageListScrollOverlayView,
+        textForItemAt indexPath: IndexPath
     ) -> String? {
         overlayDateFormatter.string(from: channelController.messages[indexPath.item].createdAt)
     }

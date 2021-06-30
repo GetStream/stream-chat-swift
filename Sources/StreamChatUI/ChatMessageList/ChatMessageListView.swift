@@ -5,15 +5,6 @@
 import StreamChat
 import UIKit
 
-/// A protocol for `ChatMessageListView` delegate.
-public protocol ChatMessageListViewDataSource: UITableViewDataSource {
-    /// Get date for item at given index path
-    /// - Parameters:
-    ///   - listView: A view requesting date
-    ///   - indexPath: An index path that should be used to get the date
-    func messageListView(_ listView: UITableView, scrollOverlayTextForItemAt indexPath: IndexPath) -> String?
-}
-
 /// Custom view type used to show the message list.
 public typealias ChatMessageListView = _ChatMessageListView<NoExtraData>
 
@@ -21,11 +12,6 @@ public typealias ChatMessageListView = _ChatMessageListView<NoExtraData>
 open class _ChatMessageListView<ExtraData: ExtraDataTypes>: UITableView, Customizable, ComponentsProvider {
     private var identifiers: Set<String> = .init()
     private var isInitialized: Bool = false
-    private var contentOffsetObservation: NSKeyValueObservation?
-    
-    private var chatDataSource: ChatMessageListViewDataSource? {
-        dataSource as? ChatMessageListViewDataSource
-    }
     
     // In some cases updates coming one by one might require scrolling to bottom.
     //
@@ -45,13 +31,6 @@ open class _ChatMessageListView<ExtraData: ExtraDataTypes>: UITableView, Customi
             }
         }
     }
-    
-    /// View used to display date of currently displayed messages
-    open lazy var scrollOverlayView: ChatMessageListScrollOverlayView = {
-        let scrollOverlayView = components.messageListScrollOverlayView.init()
-        scrollOverlayView.isHidden = true
-        return scrollOverlayView.withoutAutoresizingMaskConstraints
-    }()
 
     override open func didMoveToSuperview() {
         super.didMoveToSuperview()
@@ -71,50 +50,10 @@ open class _ChatMessageListView<ExtraData: ExtraDataTypes>: UITableView, Customi
         estimatedRowHeight = 150
         separatorStyle = .none
         transform = .mirrorY
-        scrollOverlayView.transform = .mirrorY
-            
-        // Setup `contentOffset` observation so `delegate` is free for anyone that wants to use it
-        contentOffsetObservation = observe(\.contentOffset) { tb, _ in
-            /// To display correct date we use bottom edge of `dateView` (we use `cv.layoutMargins.top` for both vertical offsets of `dateView`
-            let dateViewRefPoint = CGPoint(
-                x: tb.scrollOverlayView.center.x,
-                y: tb.scrollOverlayView.frame.minY
-            )
-            
-            // If we cannot find any indexPath for `cell` we try to use max visible indexPath (we have bottom to top) layout
-            guard let indexPath = tb.indexPathForRow(at: dateViewRefPoint) ?? tb.indexPathsForVisibleRows?.max() else { return }
-            
-            let overlayText = tb.chatDataSource?.messageListView(tb, scrollOverlayTextForItemAt: indexPath)
-            
-            // As cells can overlay our `dateView` we need to keep it above them
-            tb.bringSubviewToFront(tb.scrollOverlayView)
-            
-            // If we have no date we have no reason to display `dateView`
-            tb.scrollOverlayView.isHidden = (overlayText ?? "").isEmpty
-            tb.scrollOverlayView.content = overlayText
-            
-            // Apple's naming is quite weird as actually this property should rather be named `isScrolling`
-            // as it stays true when user stops dragging and scrollView is decelerating and becomes false
-            // when scrollView stops decelerating
-            //
-            // But this case doesn't cover situation when user drags scrollView to a certain `contentOffset`
-            // leaves the finger there for a while and then just lifts it, it doesn't change `contentOffset`
-            // so this handler is not called, this is handled by `scrollStateChanged`
-            // that reacts on `panGestureRecognizer` states and can handle this case properly
-            if !tb.isDragging {
-                tb.setOverlayViewAlpha(0)
-            }
-        }
-        
-        panGestureRecognizer.addTarget(self, action: #selector(scrollStateChanged))
     }
     
     open func setUpAppearance() { /* default empty implementation */ }
-    open func setUpLayout() {
-        addSubview(scrollOverlayView)
-        scrollOverlayView.pin(anchors: [.bottom, .centerX], to: layoutMarginsGuide)
-    }
-    
+    open func setUpLayout() { /* default empty implementation */ }
     open func updateContent() { /* default empty implementation */ }
 
     /// Dequeues the message cell. Registers the cell for received combination of `contentViewClass + layoutOptions`
@@ -162,30 +101,6 @@ open class _ChatMessageListView<ExtraData: ExtraDataTypes>: UITableView, Customi
         cell.contentView.transform = .mirrorY
 
         return cell
-    }
-    
-    /// Is invoked when a pan gesture state is changed.
-    @objc
-    open func scrollStateChanged(_ sender: UIPanGestureRecognizer) {
-        switch sender.state {
-        case .began:
-            setOverlayViewAlpha(1)
-        case .ended, .cancelled, .failed:
-            // This case handles situation when user pans to certain `contentOffset`, leaves the finger there
-            // and then lifts it without `contentOffset` change, so `scrollView` will not decelerate, if it does,
-            // it is handled by `contentOffset` observation
-            if !isDecelerating {
-                setOverlayViewAlpha(0)
-            }
-        default: break
-        }
-    }
-    
-    /// Updates the alpha of the overlay.
-    open func setOverlayViewAlpha(_ alpha: CGFloat, animated: Bool = true) {
-        Animate(isAnimated: animated) { [scrollOverlayView] in
-            scrollOverlayView.alpha = alpha
-        }
     }
     
     /// Scrolls to most recent message
