@@ -46,7 +46,7 @@ open class _ChatMessageLinkPreviewView<ExtraData: ExtraDataTypes>: _Control, The
         imagePreview.layer.cornerRadius = 8
         imagePreview.clipsToBounds = true
         
-        authorBackground.layer.cornerRadius = 16
+        authorBackground.layer.cornerRadius = 15
         authorBackground.layer.maskedCorners = [.layerMaxXMinYCorner]
         authorBackground.clipsToBounds = true
         authorBackground.backgroundColor = appearance.colorPalette.highlightedAccentBackground1
@@ -84,41 +84,24 @@ open class _ChatMessageLinkPreviewView<ExtraData: ExtraDataTypes>: _Control, The
         addSubview(authorBackground)
         addSubview(textStack)
         
-        var constraints: [NSLayoutConstraint] = []
-
-        imagePreview.pin(anchors: [.leading, .top, .trailing], to: layoutMarginsGuide)
-        constraints.append(
-            imagePreview.widthAnchor.pin(equalTo: imagePreview.heightAnchor)
-        )
-
-        textStack.addArrangedSubviews([
-            authorLabel,
-            titleLabel,
-            bodyTextView
-        ])
+        imagePreview.pin(anchors: [.leading, .top, .trailing], to: self)
+        imagePreview.widthAnchor.pin(equalTo: imagePreview.heightAnchor, multiplier: 2).isActive = true
+        
+        textStack.addArrangedSubviews([titleLabel, bodyTextView])
         textStack.axis = .vertical
         textStack.alignment = .leading
         textStack.spacing = 3
+        textStack.topAnchor.pin(equalToSystemSpacingBelow: imagePreview.bottomAnchor).isActive = true
         textStack.pin(anchors: [.leading, .bottom, .trailing], to: layoutMarginsGuide)
-        
-        bodyTextView.setContentHuggingPriority(.streamLow, for: .horizontal)
 
-        constraints += [
-            authorBackground.leadingAnchor.pin(equalTo: layoutMarginsGuide.leadingAnchor),
-            authorBackground.bottomAnchor.pin(equalTo: authorLabel.bottomAnchor),
-            authorBackground.layoutMarginsGuide.topAnchor.pin(equalTo: authorLabel.topAnchor),
-            authorBackground.layoutMarginsGuide.trailingAnchor.pin(equalTo: authorLabel.trailingAnchor)
-        ]
-
-        titleLabel.setContentCompressionResistancePriority(.streamRequire, for: .vertical)
+        authorBackground.leadingAnchor.pin(equalTo: imagePreview.leadingAnchor).isActive = true
+        authorBackground.bottomAnchor.pin(equalTo: imagePreview.bottomAnchor).isActive = true
+        imagePreview.trailingAnchor.pin(greaterThanOrEqualToSystemSpacingAfter: authorBackground.trailingAnchor).isActive = true
+        authorBackground.embed(authorLabel, insets: NSDirectionalEdgeInsets(top: 8, leading: 8, bottom: 4, trailing: 12))
+    
         authorLabel.setContentCompressionResistancePriority(.streamRequire, for: .vertical)
-        constraints.append(
-            titleLabel.topAnchor.pin(equalToSystemSpacingBelow: imagePreview.bottomAnchor)
-                .almostRequired
-        )
-        authorOnImageConstraint = authorLabel.firstBaselineAnchor.pin(equalTo: imagePreview.bottomAnchor)
-        
-        NSLayoutConstraint.activate(constraints)
+        titleLabel.setContentCompressionResistancePriority(.streamRequire, for: .vertical)
+        bodyTextView.setContentHuggingPriority(.streamLow, for: .horizontal)
     }
 
     override open func updateContent() {
