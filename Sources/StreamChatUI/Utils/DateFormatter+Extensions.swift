@@ -12,6 +12,15 @@ extension DateFormatter {
         formatter.locale = Locale.autoupdatingCurrent
         return formatter
     }
+    
+    /// Formatter that is used to format date for scrolling overlay that should display
+    /// day when message below was sent
+    public static let messageListDateOverlay: DateFormatter = {
+        let df = DateFormatter()
+        df.setLocalizedDateFormatFromTemplate("MMMdd")
+        df.locale = .autoupdatingCurrent
+        return df
+    }()
 }
 
 extension DateComponentsFormatter {

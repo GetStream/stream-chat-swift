@@ -244,7 +244,9 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
         _ overlay: ChatMessageListScrollOverlayView,
         textForItemAt indexPath: IndexPath
     ) -> String? {
-        overlayDateFormatter.string(from: channelController.messages[indexPath.item].createdAt)
+        DateFormatter
+            .messageListDateOverlay
+            .string(from: channelController.messages[indexPath.item].createdAt)
     }
 
     open func scrollViewDidScroll(_ scrollView: UIScrollView) {
@@ -573,14 +575,6 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
         guard let indexPath = indexPath else { return log.error("IndexPath is not available") }
         print(#function, indexPath)
     }
-    
-    /// Formatter that is used to format date for scrolling overlay that should display day when message below were sent
-    open var overlayDateFormatter: DateFormatter = {
-        let df = DateFormatter()
-        df.setLocalizedDateFormatFromTemplate("MMMdd")
-        df.locale = .autoupdatingCurrent
-        return df
-    }()
     
     open func numberOfSections(in tableView: UITableView) -> Int {
         1
