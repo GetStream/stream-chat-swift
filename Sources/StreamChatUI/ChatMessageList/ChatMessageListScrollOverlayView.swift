@@ -19,8 +19,7 @@ open class ChatMessageListScrollOverlayView: _View, AppearanceProvider {
     override open func setUpLayout() {
         super.setUpLayout()
         
-        addSubview(textLabel)
-        textLabel.pin(to: layoutMarginsGuide)
+        embed(textLabel, insets: NSDirectionalEdgeInsets(top: 3, leading: 9, bottom: 3, trailing: 9))
     }
     
     override open func setUpAppearance() {
