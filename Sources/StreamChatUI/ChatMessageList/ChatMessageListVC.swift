@@ -481,7 +481,7 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
                 self.listView.scrollIndicatorInsets.top += self.typingIndicatorViewHeight
             }
 
-            if listView.isLastCellVisible {
+            if listView.isLastCellFullyVisible {
                 scrollToMostRecentMessage()
             }
         }
