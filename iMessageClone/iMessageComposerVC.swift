@@ -6,7 +6,7 @@ import StreamChat
 import StreamChatUI
 import UIKit
 
-final class iMessageChatComposerViewController: ComposerVC {
+final class iMessageComposerVC: ComposerVC {
     override func typingMention(in textView: UITextView) -> (String, NSRange)? {
         // Don't show suggestions
         nil

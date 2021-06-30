@@ -6,7 +6,7 @@ import StreamChat
 import StreamChatUI
 import UIKit
 
-final class iMessageChatMessageComposerView: ComposerView {
+final class iMessageComposerView: ComposerView {
     override func setUpLayout() {
         super.setUpLayout()
 
