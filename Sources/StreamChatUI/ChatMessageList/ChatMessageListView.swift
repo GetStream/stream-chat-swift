@@ -203,12 +203,6 @@ open class _ChatMessageListView<ExtraData: ExtraDataTypes>: UITableView, Customi
         
         return cellRect.minY >= contentOffset.y
     }
-
-    /// A Boolean that returns true if the last cell is visible, but can be just partially visible.
-    open var isLastCellVisible: Bool {
-        let lastIndexPath = IndexPath(item: 0, section: 0)
-        return indexPathsForVisibleRows?.contains(lastIndexPath) ?? false
-    }
     
     /// Updates the table view data with given `changes`.
     open func updateMessages(
