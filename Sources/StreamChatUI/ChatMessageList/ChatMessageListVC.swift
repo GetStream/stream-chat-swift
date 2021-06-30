@@ -560,8 +560,7 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
     /// Formatter that is used to format date for scrolling overlay that should display day when message below were sent
     open var overlayDateFormatter: DateFormatter = {
         let df = DateFormatter()
-        df.dateStyle = .short
-        df.timeStyle = .none
+        df.setLocalizedDateFormatFromTemplate("MMMdd")
         df.locale = .autoupdatingCurrent
         return df
     }()
