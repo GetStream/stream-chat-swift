@@ -151,10 +151,10 @@ extension Endpoint {
     static func enableSlowMode(cid: ChannelId, cooldownDuration: Int) -> Endpoint<EmptyResponse> {
         .init(
             path: "channels/" + cid.apiPath,
-            method: .post,
+            method: .patch,
             queryItems: nil,
             requiresConnectionId: false,
-            body: ["cooldown": cooldownDuration]
+            body: ["set": ["cooldown": cooldownDuration]]
         )
     }
     

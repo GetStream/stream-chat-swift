@@ -314,10 +314,10 @@ final class ChannelEndpoints_Tests: XCTestCase {
         
         let expectedEndpoint = Endpoint<EmptyResponse>(
             path: "channels/\(cid.type.rawValue)/\(cid.id)",
-            method: .post,
+            method: .patch,
             queryItems: nil,
             requiresConnectionId: false,
-            body: ["cooldown": cooldownDuration]
+            body: ["set": ["cooldown": cooldownDuration]]
         )
         
         let endpoint = Endpoint<EmptyResponse>.enableSlowMode(cid: cid, cooldownDuration: cooldownDuration)
