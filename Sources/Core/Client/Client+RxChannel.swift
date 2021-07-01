@@ -134,7 +134,7 @@ public extension Reactive where Base == Client {
     
     // MARK: - Message
     
-    /// Send a new message or update with a given `message.id`.
+    /// Send a new message with a given `message.id`.
     /// - Parameters:
     ///   - message: a message.
     ///   - channel: a channel.
@@ -142,6 +142,17 @@ public extension Reactive where Base == Client {
     func send(message: Message, to channel: Channel, parseMentionedUsers: Bool = true) -> Observable<MessageResponse> {
         connected(request({ [unowned base] completion in
             base.send(message: message, to: channel, parseMentionedUsers: parseMentionedUsers, completion)
+        }))
+    }
+    
+    /// Update a message with a given `message.id`.
+    /// - Parameters:
+    ///   - message: a message.
+    ///   - channel: a channel.
+    ///   - parseMentionedUsers: whether to automatically parse mentions into the `message.mentionedUsers` property. Defaults to `true`.
+    func edit(message: Message, to channel: Channel, parseMentionedUsers: Bool = true) -> Observable<MessageResponse> {
+        connected(request({ [unowned base] completion in
+            base.edit(message: message, to: channel, parseMentionedUsers: parseMentionedUsers, completion)
         }))
     }
     

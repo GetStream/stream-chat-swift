@@ -60,6 +60,8 @@ public enum Endpoint {
     case unmuteChannel(Channel)
     /// Send a message to a channel.
     case sendMessage(Message, Channel)
+    /// Edit a message in the channel.
+    case editMessage(Message, Channel)
     /// Upload an image to a channel.
     case sendImage(Data, _ fileName: String, _ mimeType: String, Channel)
     /// Upload a file to a channel.
@@ -183,14 +185,10 @@ extension Endpoint {
             return path(to: channel)
         case .replies(let message, _):
             return path(to: message.id, "replies")
-            
-        case let .sendMessage(message, channel):
-            if message.id.isEmpty {
-                return path(to: channel, "message")
-            }
-            
+        case let .sendMessage(_, channel):
+            return path(to: channel, "message")
+        case let .editMessage(message, _):
             return path(to: message.id)
-            
         case .sendMessageAction(let messageAction):
             return path(to: messageAction.message.id, "action")
         case .deleteMessage(let message):
@@ -325,6 +323,9 @@ extension Endpoint {
         case .sendMessage(let message, _):
             return ["message": message]
             
+        case .editMessage(let message, _):
+            return ["message": message]
+            
         case .sendMessageAction(let messageAction):
             return messageAction
             
@@ -421,6 +422,7 @@ extension Endpoint {
              .showChannel,
              .hideChannel,
              .sendMessage,
+             .editMessage,
              .sendMessageAction,
              .markRead,
              .addReaction,

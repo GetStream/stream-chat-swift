@@ -197,6 +197,10 @@ public struct Message: Codable {
         if !mentionedUsers.isEmpty {
             try container.encode(mentionedUsers.map({ $0.id }), forKey: .mentionedUsers)
         }
+        
+        if !id.isEmpty {
+            try container.encode(id, forKey: .id)
+        }
     }
     
     public init(from decoder: Decoder) throws {

@@ -127,13 +127,22 @@ public extension Channel {
     
     // MARK: - Message
     
-    /// Send a new message or update with a given `message.id`.
+    /// Send a new message with a given `message.id`.
     /// - Parameters:
     ///   - message: a message.
     ///   - completion: a completion block with `MessageResponse`.
     @discardableResult
     func send(message: Message, _ completion: @escaping Client.Completion<MessageResponse>) -> Cancellable {
         Client.shared.send(message: message, to: self, completion)
+    }
+    
+    /// Update a message with a given `message.id`.
+    /// - Parameters:
+    ///   - message: a message.
+    ///   - completion: a completion block with `MessageResponse`.
+    @discardableResult
+    func edit(message: Message, _ completion: @escaping Client.Completion<MessageResponse>) -> Cancellable {
+        Client.shared.edit(message: message, to: self, completion)
     }
     
     /// Send a message action for a given ephemeral message.

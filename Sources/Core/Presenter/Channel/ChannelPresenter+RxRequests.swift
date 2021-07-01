@@ -112,10 +112,17 @@ public extension Reactive where Base == ChannelPresenter {
     ///   - parseMentionedUsers: whether to automatically parse mentions into the `message.mentionedUsers` property. Defaults to `true`.
     /// - Returns: an observable `MessageResponse`.
     func send(text: String, showReplyInChannel: Bool = false, parseMentionedUsers: Bool = true) -> Observable<MessageResponse> {
+        let isEdit = base.editMessage != nil
         let message = base.createMessage(with: text, showReplyInChannel: showReplyInChannel)
-        return base.channel.rx.send(message: message, parseMentionedUsers: parseMentionedUsers)
-            .do(onNext: { [weak base] in base?.updateEphemeralMessage($0.message) })
-            .observeOn(MainScheduler.instance)
+        if isEdit {
+            return base.channel.rx.edit(message: message, parseMentionedUsers: parseMentionedUsers)
+                .do(onNext: { [weak base] in base?.updateEphemeralMessage($0.message) })
+                .observeOn(MainScheduler.instance)
+        } else {
+            return base.channel.rx.send(message: message, parseMentionedUsers: parseMentionedUsers)
+                .do(onNext: { [weak base] in base?.updateEphemeralMessage($0.message) })
+                .observeOn(MainScheduler.instance)
+        }
     }
     
     /// Send Read event if the app is active.
