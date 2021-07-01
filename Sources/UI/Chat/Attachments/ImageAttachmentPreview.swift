@@ -257,7 +257,8 @@ final class ImageAttachmentPreview: UIView, AttachmentPreview {
         ImagePipeline.Configuration.isAnimatedImageDataEnabled = true
         let targetSize = CGSize(width: UIScreen.main.scale * maxWidth, height: UIScreen.main.scale * .attachmentPreviewHeight)
         let processors = [ImageProcessor.Resize(size: targetSize)]
-        let imageRequest = ImageRequest(url: imageURL, processors: processors)
+        let urlRequest = Client.config.attachmentImageURLRequestPrepare(imageURL)
+        let imageRequest = ImageRequest(urlRequest: urlRequest, processors: processors)
         
         if let imageResponse = Nuke.ImageCache.shared.cachedResponse(for: imageRequest) {
             imageView.contentMode = .scaleAspectFit

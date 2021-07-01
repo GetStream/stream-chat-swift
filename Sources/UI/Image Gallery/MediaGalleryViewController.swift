@@ -10,6 +10,7 @@ import UIKit
 import SnapKit
 import SwiftyGif
 import Nuke
+import StreamChatClient
 
 /// A media gallery to show images or gifs.
 public class MediaGalleryViewController: UIViewController {
@@ -314,7 +315,9 @@ fileprivate final class MediaGalleryCollectionViewCell: UICollectionViewCell, UI
         let modes = ImageLoadingOptions.ContentModes(success: .scaleAspectFit, failure: .center, placeholder: .center)
         let options = ImageLoadingOptions(failureImage: UIImage.Icons.close, contentModes: modes)
         
-        imageTask = Nuke.loadImage(with: url, options: options, into: imageView) { [weak self] result in
+        let urlRequest = Client.config.attachmentImageURLRequestPrepare(url)
+        let imageRequest = ImageRequest(urlRequest: urlRequest)
+        imageTask = Nuke.loadImage(with: imageRequest, options: options, into: imageView) { [weak self] result in
             if let self = self {
                 if self.imageView.frame.width > 0, self.imageView.frame.height > 0 {
                     self.parse(result, completion: completion)

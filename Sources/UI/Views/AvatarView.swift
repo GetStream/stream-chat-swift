@@ -9,6 +9,7 @@
 import UIKit
 import SnapKit
 import Nuke
+import StreamChatClient
 
 /// A view with a user avatar or user name intials.
 public final class AvatarView: EscapeBridgingImageView<Void>, Reusable {
@@ -87,7 +88,8 @@ public final class AvatarView: EscapeBridgingImageView<Void>, Reusable {
         isHidden = false
         let imageSize = 2 * layer.cornerRadius * UIScreen.main.scale
         let processors = [ImageProcessor.Resize(size: CGSize(width: imageSize, height: imageSize))]
-        let imageRequest = ImageRequest(url: url, processors: processors)
+        let urlRequest = Client.config.avatarImageURLRequestPrepare(url)
+        let imageRequest = ImageRequest(urlRequest: urlRequest, processors: processors)
         
         imageTask = ImagePipeline.shared.loadImage(with: imageRequest) { [weak self] result in
             do {

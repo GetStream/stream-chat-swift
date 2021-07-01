@@ -44,6 +44,14 @@ extension Client {
         public var logOptions: ClientLogger.Options = []
         /// WebSocket provider type to be used in Client. Defaults to `.starscream`
         public var webSocketProviderType: WebSocketProviderType = .starscream
+        /// Hook for providing `URLRequest` from `URL` for attachments.
+        public var attachmentImageURLRequestPrepare: (URL) -> URLRequest = { url in
+            URLRequest(url: url)
+        }
+        /// Hook for providing `URLRequest` from `URL` for avatar images.
+        public var avatarImageURLRequestPrepare: (URL) -> URLRequest = { url in
+            URLRequest(url: url)
+        }
 
         /// Creates a new config object.
         ///
