@@ -69,14 +69,16 @@ class ChatClientUpdater<ExtraData: ExtraDataTypes> {
     func reloadUserIfNeeded(
         name: String? = nil,
         imageURL: URL? = nil,
+        extraData: ExtraData.User = .defaultValue,
+        userConnectionProvider: _UserConnectionProvider<ExtraData>?,
         completion: ((Error?) -> Void)? = nil
     ) {
-        guard let tokenProvider = client.tokenProvider else {
+        guard let userConnectionProvider = userConnectionProvider else {
             completion?(ClientError.ConnectionWasNotInitiated())
             return
         }
         
-        tokenProvider.getToken(client) {
+        userConnectionProvider.getToken(client) {
             switch $0 {
             case let .success(newToken):
                 do {
@@ -92,6 +94,7 @@ class ChatClientUpdater<ExtraData: ExtraDataTypes> {
                     self.connect(
                         name: name,
                         imageURL: imageURL,
+                        extraData: extraData,
                         completion: completion
                     )
                 } catch {
@@ -113,6 +116,7 @@ class ChatClientUpdater<ExtraData: ExtraDataTypes> {
     func connect(
         name: String? = nil,
         imageURL: URL? = nil,
+        extraData: ExtraData.User = .defaultValue,
         completion: ((Error?) -> Void)? = nil
     ) {
         // Connecting is not possible in connectionless mode (duh)

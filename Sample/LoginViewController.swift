@@ -20,15 +20,9 @@ class LoginViewController: UITableViewController {
         config.isLocalStorageEnabled = Configuration.isLocalStorageEnabled
         config.shouldFlushLocalStorageOnStart = Configuration.shouldFlushLocalStorageOnStart
         config.baseURL = Configuration.baseURL
-
-        let tokenProvider: TokenProvider = Configuration.token.map { .static($0) } ?? .guest(
-            userId: Configuration.userId,
-            name: Configuration.userName
-        )
         
         let chatClient = ChatClient(
             config: config,
-            tokenProvider: tokenProvider,
             completion: {
                 guard let error = $0 else { return }
                 DispatchQueue.main.async {
@@ -39,6 +33,15 @@ class LoginViewController: UITableViewController {
                 }
             }
         )
+        
+        if let token = Configuration.token {
+            chatClient.connectUser(token: token)
+        } else {
+            chatClient.connectGuestUser(
+                userId: Configuration.userId,
+                name: Configuration.userName
+            )
+        }
         
         return chatClient
     }

@@ -196,6 +196,8 @@ public class _ChatClient<ExtraData: ExtraDataTypes> {
     
     private(set) lazy var internetConnection = environment.internetConnection()
     private(set) lazy var clientUpdater = environment.clientUpdaterBuilder(self)
+    private(set) var userConnectionProvider: _UserConnectionProvider<ExtraData>?
+    
     /// Used for starting and ending background tasks. Hides platform specific logic.
     private lazy var backgroundTaskScheduler = environment.backgroundTaskSchedulerBuilder()
     
@@ -228,18 +230,16 @@ public class _ChatClient<ExtraData: ExtraDataTypes> {
     /// The token of the current user. If the current user is anonymous, the token is `nil`.
     @Atomic var currentToken: Token?
 
-    public var tokenProvider: _TokenProvider<ExtraData>?
-    
+    /// In case of token expiration this property is used to obtain a new token
+    public var tokenProvider: TokenProvider?
+        
     /// Creates a new instance of `ChatClient`.
     /// - Parameters:
     ///   - config: The config object for the `Client`. See `ChatClientConfig` for all configuration options.
-    ///   - tokenProvider: The `_TokenProvider<ExtraData>` instance that incapsulates the logic of obtaining a JWT
-    ///   token used to communicate with REST-API.
-    ///   - completion: The completion that will be called once the **first** user session for the given token is setup.
+    ///   - tokenProvider: In case of token expiration this closure is used to obtain a new token
     public convenience init(
         config: ChatClientConfig,
-        tokenProvider: _TokenProvider<ExtraData>? = nil,
-        completion: ((Error?) -> Void)? = nil
+        tokenProvider: TokenProvider? = nil
     ) {
         let workerBuilders: [WorkerBuilder]
         let eventWorkerBuilders: [EventWorkerBuilder]
@@ -271,8 +271,7 @@ public class _ChatClient<ExtraData: ExtraDataTypes> {
             tokenProvider: tokenProvider,
             workerBuilders: workerBuilders,
             eventWorkerBuilders: eventWorkerBuilders,
-            environment: environment,
-            completion: completion
+            environment: environment
         )
     }
     
@@ -286,11 +285,10 @@ public class _ChatClient<ExtraData: ExtraDataTypes> {
     ///
     init(
         config: ChatClientConfig,
-        tokenProvider: _TokenProvider<ExtraData>? = nil,
+        tokenProvider: TokenProvider? = nil,
         workerBuilders: [WorkerBuilder],
         eventWorkerBuilders: [EventWorkerBuilder],
-        environment: Environment,
-        completion: ((Error?) -> Void)? = nil
+        environment: Environment
     ) {
         self.config = config
         self.tokenProvider = tokenProvider
@@ -299,10 +297,6 @@ public class _ChatClient<ExtraData: ExtraDataTypes> {
         self.eventWorkerBuilders = eventWorkerBuilders
 
         currentUserId = fetchCurrentUserIdFromDatabase()
-        // Backward compatiability
-        if let tokenProvider = tokenProvider {
-            setConnectionInfoAndConnect(tokenProvider: tokenProvider, completion: completion)
-        }
         
         backgroundTaskScheduler?.startListeningForAppStateUpdates(
             onEnteringBackground: { [weak self] in self?.handleAppDidEnterBackground() },
@@ -315,6 +309,13 @@ public class _ChatClient<ExtraData: ExtraDataTypes> {
         completeTokenWaiters(token: nil)
     }
     
+    /// Connects authorized user
+    /// - Parameters:
+    ///   - name: The name that is passed to the `connect` endpoint for user creation.
+    ///   - imageURL: URL for user image that is passed to the `connect` endpoint for user creation.
+    ///   - extraData: Extra data for user that is passed to the `connect` endpoint for user creation.
+    ///   - token: Authorization token for the user.
+    ///   - completion: The completion that will be called once the **first** user session for the given token is setup.
     public func connectUser(
         name: String? = nil,
         imageURL: URL? = nil,
@@ -325,53 +326,57 @@ public class _ChatClient<ExtraData: ExtraDataTypes> {
         setConnectionInfoAndConnect(
             name: name,
             imageURL: imageURL,
-            tokenProvider: .static(token),
+            extraData: extraData,
+            userConnectionProvider: .static(token),
             completion: completion
         )
     }
     
+    /// Connects authorized user
+    /// - Parameters:
+    ///   - connectionInfo: User info that is passed to the `connect` endpoint for user creation
+    ///   - token: Authorization token for the user.
+    ///   - completion: The completion that will be called once the **first** user session for the given token is setup.
     public func connectUser(
-        connectionInfo: UserConnectionInfo<ExtraData>? = nil,
+        userInfo: UserInfo<ExtraData>? = nil,
         token: Token,
         completion: ((Error?) -> Void)? = nil
     ) {
         connectUser(
-            name: connectionInfo?.name,
-            imageURL: connectionInfo?.imageURL,
-            extraData: connectionInfo?.extraData ?? .defaultValue,
+            name: userInfo?.name,
+            imageURL: userInfo?.imageURL,
+            extraData: userInfo?.extraData ?? .defaultValue,
             token: token,
             completion: completion
         )
     }
     
+    /// Connects authorized user
+    /// - Parameters:
+    ///   - connectionInfo: User info that is passed to the `connect` endpoint for user creation
+    ///   - token: Authorization token for the user.
+    ///   - completion: The completion that will be called once the **first** user session for the given token is setup.
     public func connectUser(
-        connectionInfoProvider: ((Result<(UserConnectionInfo<ExtraData>, Token), Error>) -> Void) -> Void,
+        connectionInfoProvider: ((Result<(UserInfo<ExtraData>, Token), Error>) -> Void) -> Void,
         completion: ((Error?) -> Void)? = nil
     ) {
         connectionInfoProvider { userInfo in
             switch userInfo {
             case let .success((info, token)):
-                connectUser(connectionInfo: info, token: token)
-            case let .failure(error):
-                completion?(error)
-            }
-        }
-    }
-    
-    public func connectUser(
-        tokenProvider: ((Result<Token, Error>) -> Void) -> Void,
-        completion: ((Error?) -> Void)? = nil
-    ) {
-        tokenProvider { token in
-            switch token {
-            case let .success(token):
-                setConnectionInfoAndConnect(tokenProvider: .static(token), completion: completion)
+                connectUser(userInfo: info, token: token)
             case let .failure(error):
                 completion?(error)
             }
         }
     }
 
+    /// Connects a guest user
+    /// - Parameters:
+    ///   - userId: Guest user ID
+    ///   - name: The name that is passed to the `connect` endpoint for user creation.
+    ///   - imageURL: URL for user image that is passed to the `connect` endpoint for user creation.
+    ///   - extraData: Extra data for user that is passed to the `connect` endpoint for user creation.
+    ///   - completion: The completion that will be called once the **first** user session for the given token is setup.
     public func connectGuestUser(
         userId: String,
         name: String? = nil,
@@ -382,14 +387,24 @@ public class _ChatClient<ExtraData: ExtraDataTypes> {
         setConnectionInfoAndConnect(
             name: name,
             imageURL: imageURL,
-            tokenProvider: .guest(userId: userId, name: name, imageURL: imageURL, extraData: extraData),
+            userConnectionProvider: .guest(
+                userId: userId,
+                name: name,
+                imageURL: imageURL,
+                extraData: extraData
+            ),
             completion: completion
         )
     }
     
+    /// Connects a guest user
+    /// - Parameters:
+    ///   - userId: Guest user ID
+    ///   - connectionInfo: User info that is passed to the `connect` endpoint for user creation
+    ///   - completion: The completion that will be called once the **first** user session for the given token is setup.
     public func connectGuestUser(
         userId: String,
-        connectionInfo: UserConnectionInfo<ExtraData>? = nil,
+        connectionInfo: UserInfo<ExtraData>? = nil,
         completion: ((Error?) -> Void)? = nil
     ) {
         connectGuestUser(
@@ -401,8 +416,19 @@ public class _ChatClient<ExtraData: ExtraDataTypes> {
         )
     }
     
+    /// Connects anonymous user
+    /// - Parameter completion: The completion that will be called once the **first** user session for the given token is setup.
     public func connectAnonymousUser(completion: ((Error?) -> Void)? = nil) {
-        setConnectionInfoAndConnect(tokenProvider: .anonymous)
+        setConnectionInfoAndConnect(
+            userConnectionProvider: .anonymous,
+            completion: completion
+        )
+    }
+    
+    /// Disconnects the chat client the controller represents from the chat servers. No further updates from the servers
+    /// are received.
+    public func disconnect() {
+        clientUpdater.disconnect()
     }
 
     func fetchCurrentUserIdFromDatabase() -> UserId? {
@@ -446,11 +472,17 @@ public class _ChatClient<ExtraData: ExtraDataTypes> {
         name: String? = nil,
         imageURL: URL? = nil,
         extraData: ExtraData.User = .defaultValue,
-        tokenProvider: _TokenProvider<ExtraData>,
+        userConnectionProvider: _UserConnectionProvider<ExtraData>,
         completion: ((Error?) -> Void)? = nil
     ) {
-        self.tokenProvider = tokenProvider
-        clientUpdater.reloadUserIfNeeded(name: name, imageURL: imageURL, completion: completion)
+        self.userConnectionProvider = userConnectionProvider
+        clientUpdater.reloadUserIfNeeded(
+            name: name,
+            imageURL: imageURL,
+            extraData: extraData,
+            userConnectionProvider: userConnectionProvider,
+            completion: completion
+        )
     }
     
     private func handleAppDidEnterBackground() {
@@ -585,7 +617,7 @@ extension ClientError {
     public class ConnectionWasNotInitiated: ClientError {
         override public var localizedDescription: String {
             """
-                Before performing any other actions on chat client it's required to connect by using
+                Before performing any other actions on chat client it's required to connect by using \
                 one of the available `connect` methods e.g. `connectUser`.
             """
         }
@@ -609,7 +641,15 @@ extension _ChatClient: ConnectionStateDelegate {
         case let .disconnected(error: error):
             if let error = error,
                error.isTokenExpiredError {
-                clientUpdater.reloadUserIfNeeded()
+                if let tokenProvider = tokenProvider {
+                    clientUpdater.reloadUserIfNeeded(
+                        userConnectionProvider: .closure { _, completion in
+                            tokenProvider() { result in
+                                completion(result)
+                            }
+                        }
+                    )
+                }
                 shouldNotifyConnectionIdWaiters = false
             } else {
                 shouldNotifyConnectionIdWaiters = true
