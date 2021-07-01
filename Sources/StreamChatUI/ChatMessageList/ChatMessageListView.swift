@@ -55,6 +55,43 @@ open class _ChatMessageListView<ExtraData: ExtraDataTypes>: UITableView, Customi
     open func setUpAppearance() { /* default empty implementation */ }
     open func setUpLayout() { /* default empty implementation */ }
     open func updateContent() { /* default empty implementation */ }
+    
+    /// Calculates the cell reuse identifier for the given options.
+    /// - Parameters:
+    ///   - contentViewClass: The type of message content view.
+    ///   - attachmentViewInjectorType: The type of attachment injector.
+    ///   - layoutOptions: The message content view layout options.
+    /// - Returns: The cell reuse identifier.
+    open func reuseIdentifier(
+        contentViewClass: _ChatMessageContentView<ExtraData>.Type,
+        attachmentViewInjectorType: _AttachmentViewInjector<ExtraData>.Type?,
+        layoutOptions: ChatMessageLayoutOptions
+    ) -> String {
+        let components = [
+            _ChatMessageCell<ExtraData>.reuseId,
+            String(layoutOptions.rawValue),
+            String(describing: contentViewClass),
+            String(describing: attachmentViewInjectorType)
+        ]
+        return components.joined(separator: "_")
+    }
+    
+    /// Returns the reuse identifier of the given cell.
+    /// - Parameter cell: The cell to calculate reuse identifier for.
+    /// - Returns: The reuse identifier.
+    open func reuseIdentifier(for cell: _ChatMessageCell<ExtraData>?) -> String? {
+        guard
+            let cell = cell,
+            let messageContentView = cell.messageContentView,
+            let layoutOptions = messageContentView.layoutOptions
+        else { return nil }
+        
+        return reuseIdentifier(
+            contentViewClass: type(of: messageContentView),
+            attachmentViewInjectorType: messageContentView.attachmentViewInjector.map { type(of: $0) },
+            layoutOptions: layoutOptions
+        )
+    }
 
     /// Dequeues the message cell. Registers the cell for received combination of `contentViewClass + layoutOptions`
     /// if needed.
@@ -70,10 +107,12 @@ open class _ChatMessageListView<ExtraData: ExtraDataTypes>: UITableView, Customi
         layoutOptions: ChatMessageLayoutOptions,
         for indexPath: IndexPath
     ) -> _ChatMessageCell<ExtraData> {
-        let reuseIdentifier =
-            "\(_ChatMessageCell<ExtraData>.reuseId)_" + "\(layoutOptions.rawValue)_" +
-            "\(contentViewClass)_" + String(describing: attachmentViewInjectorType)
-
+        let reuseIdentifier = self.reuseIdentifier(
+            contentViewClass: contentViewClass,
+            attachmentViewInjectorType: attachmentViewInjectorType,
+            layoutOptions: layoutOptions
+        )
+        
         // There is no public API to find out
         // if the given `identifier` is registered.
         if !identifiers.contains(reuseIdentifier) {
@@ -169,6 +208,50 @@ open class _ChatMessageListView<ExtraData: ExtraDataTypes>: UITableView, Customi
             
             completion?()
         })
+    }
+    
+    override open func reloadRows(at indexPaths: [IndexPath], with animation: UITableView.RowAnimation) {
+        let visibleCells = getVisibleCells()
+        
+        var indexPathToReload: [IndexPath] = []
+        
+        indexPaths.forEach { indexPath in
+            // Get currently shown cell at index path
+            let cellBeforeUpdate = visibleCells[indexPath]
+            let cellBeforeUpdateReuseIdentifier = reuseIdentifier(for: cellBeforeUpdate)
+            let cellBeforeUpdateMessage = cellBeforeUpdate?.messageContentView?.content
+            
+            // Get the cell that will be shown if reload happens
+            let cellAfterUpdate = dataSource?.tableView(self, cellForRowAt: indexPath) as? _ChatMessageCell<ExtraData>
+            let cellAfterUpdateReuseIdentifier = reuseIdentifier(for: cellAfterUpdate)
+            let cellAfterUpdateMessage = cellAfterUpdate?.messageContentView?.content
+            
+            if
+                cellBeforeUpdateReuseIdentifier == cellAfterUpdateReuseIdentifier,
+                cellBeforeUpdateMessage?.id == cellAfterUpdateMessage?.id {
+                // If identifiers and messages match we can simply update the current cell with new content
+                cellBeforeUpdate?.messageContentView?.content = cellAfterUpdateMessage
+            } else {
+                // If identifiers does not match we do a reload to let the table view dequeue another cell
+                // with the layout fitting the updated message.
+                indexPathToReload.append(indexPath)
+            }
+        }
+        
+        if !indexPathToReload.isEmpty {
+            super.reloadRows(at: indexPathToReload, with: animation)
+        }
+    }
+
+    private func getVisibleCells() -> [IndexPath: _ChatMessageCell<ExtraData>] {
+        visibleCells.reduce(into: [:]) { result, cell in
+            guard
+                let cell = cell as? _ChatMessageCell<ExtraData>,
+                let indexPath = cell.messageContentView?.indexPath?()
+            else { return }
+            
+            result[indexPath] = cell
+        }
     }
 }
 
