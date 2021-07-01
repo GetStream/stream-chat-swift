@@ -28,7 +28,7 @@ extension Reactive where Base: ChatViewController {
                 var alsoSendToChannelButtonHeight: CGFloat = 0
                 
                 if chatViewController.composerView.alsoSendToChannelButton.superview != nil,
-                    let replyInChannelViewStyle = chatViewController.composerView.style?.replyInChannelViewStyle {
+                   let replyInChannelViewStyle = chatViewController.composerView.style?.replyInChannelViewStyle {
                     chatViewController.composerView.alsoSendToChannelButton.isHidden = false
                     
                     alsoSendToChannelButtonHeight = replyInChannelViewStyle.height
@@ -57,9 +57,9 @@ extension Reactive where Base: ChatViewController {
                 let tableHeight = chatViewController.tableView.bounds.height - keyboardNotification.height
                 
                 if keyboardNotification.animation != nil,
-                    keyboardNotification.isVisible,
-                    !chatViewController.keyboardIsVisible,
-                    tableHeight < contentHeight {
+                   keyboardNotification.isVisible,
+                   !chatViewController.keyboardIsVisible,
+                   tableHeight < contentHeight {
                     contentOffset = chatViewController.tableView.contentOffset
                     contentOffset.y += min(bottom, contentHeight - tableHeight)
                 }
@@ -342,26 +342,26 @@ extension ChatViewController {
             switch type {
             case .photo:
                 if UIImagePickerController.hasPermissionDescription(for: .savedPhotosAlbum),
-                    UIImagePickerController.isSourceTypeAvailable(.savedPhotosAlbum) {
+                   UIImagePickerController.isSourceTypeAvailable(.savedPhotosAlbum) {
                     addButtonToAddFileView(container,
                                            icon: UIImage.Icons.images,
                                            title: "Upload a photo or video",
                                            sourceType: .photo(.savedPhotosAlbum)) { [weak self] in
-                                            self?.showImagePicker(composerAddFileViewSourceType: $0)
+                        self?.showImagePicker(composerAddFileViewSourceType: $0)
                     }
                     
                     composerView.imagesAddAction = { [weak self] _ in
-                        self?.showImagePicker(composerAddFileViewSourceType: .photo(.savedPhotosAlbum))
+                        self?.showImagePicker(composerAddFileViewSourceType: .photo(.photoLibrary))
                     }
                 }
             case .camera:
                 if UIImagePickerController.hasPermissionDescription(for: .camera),
-                    UIImagePickerController.isSourceTypeAvailable(.camera) {
+                   UIImagePickerController.isSourceTypeAvailable(.camera) {
                     addButtonToAddFileView(container,
                                            icon: UIImage.Icons.camera,
                                            title: "Upload from camera",
                                            sourceType: .photo(.camera)) { [weak self] in
-                                            self?.showImagePicker(composerAddFileViewSourceType: $0)
+                        self?.showImagePicker(composerAddFileViewSourceType: $0)
                     }
                 }
             case .file:
@@ -369,7 +369,7 @@ extension ChatViewController {
                                        icon: UIImage.Icons.file,
                                        title: "Upload a file",
                                        sourceType: .file) { [weak self] _ in
-                                        self?.showDocumentPicker()
+                    self?.showDocumentPicker()
                 }
             case let .custom(icon, title, sourceType, action):
                 addButtonToAddFileView(container,
@@ -395,27 +395,16 @@ extension ChatViewController {
     
     private func showAddFileView() {
         guard let composerAddFileContainerView = composerAddFileContainerView,
-            !composerAddFileContainerView.containerView.arrangedSubviews.isEmpty else {
-                return
+              !composerAddFileContainerView.containerView.arrangedSubviews.isEmpty,
+              let uploadManager = composerView.uploadManager else {
+            return
         }
         
         showCommands(show: false)
         
-        composerAddFileContainerView.containerView.arrangedSubviews.forEach { subview in
-            if let addFileView = subview as? ComposerAddFileView, let uploadManager = composerView.uploadManager {
-                if case .file = addFileView.sourceType {
-                    addFileView.isHidden = !uploadManager.images.isEmpty
-                } else {
-                    addFileView.isHidden = !uploadManager.files.isEmpty
-                }
-            }
-        }
-        
-        let subviews = composerAddFileContainerView.containerView.arrangedSubviews.filter { $0.isHidden == false }
-        
-        if subviews.count == 1, let first = subviews.first as? ComposerAddFileView {
-            first.tap()
-        } else {
+        switch (uploadManager.images.isEmpty, uploadManager.files.isEmpty) {
+        case (true, true):
+            // We show all available attachment types
             if composerView.textView.frame.height > (.composerMaxHeight / 2)
                 || (UIDevice.isPhone && UIDevice.current.orientation.isLandscape) {
                 composerView.textView.resignFirstResponder()
@@ -426,6 +415,17 @@ extension ChatViewController {
             if composerEditingContainerView.isHidden == false {
                 composerEditingContainerView.moveContainerViewPosition(aboveView: composerAddFileContainerView)
             }
+        case (true, false):
+            // User already added a file
+            // We only show the file dialog
+            showDocumentPicker()
+        case (false, false):
+            // This is not possible
+            // In case it is, we show image picker
+            showImagePicker(composerAddFileViewSourceType: .photo(.photoLibrary))
+        case (false, true):
+            // User uploaded images. We keep showing the image picker
+            showImagePicker(composerAddFileViewSourceType: .photo(.photoLibrary))
         }
     }
     
@@ -530,8 +530,8 @@ extension ChatViewController {
         let buttonText = button.title(for: .normal)
         
         guard let attachment = message.attachments.first,
-            let action = attachment.actions.first(where: { $0.text == buttonText }) else {
-                return
+              let action = attachment.actions.first(where: { $0.text == buttonText }) else {
+            return
         }
         
         presenter?.rx.dispatchEphemeralMessageAction(action, message: message)
