@@ -34,18 +34,27 @@ class ChatClientUpdaterMock<ExtraData: ExtraDataTypes>: ChatClientUpdater<ExtraD
     override func reloadUserIfNeeded(
         name: String? = nil,
         imageURL: URL? = nil,
+        extraData: ExtraData.User = .defaultValue,
+        userConnectionProvider: _UserConnectionProvider<ExtraData>?,
         completion: ((Error?) -> Void)?
     ) {
         reloadUserIfNeeded_called = true
         reloadUserIfNeeded_completion = completion
         reloadUserIfNeeded_callSuper = {
-            super.reloadUserIfNeeded(completion: completion)
+            super.reloadUserIfNeeded(
+                name: name,
+                imageURL: imageURL,
+                extraData: extraData,
+                userConnectionProvider: userConnectionProvider,
+                completion: completion
+            )
         }
     }
 
     override func connect(
         name: String? = nil,
         imageURL: URL? = nil,
+        extraData: ExtraData.User = .defaultValue,
         completion: ((Error?) -> Void)? = nil
     ) {
         connect_called = true

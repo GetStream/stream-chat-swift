@@ -446,10 +446,7 @@ class ChannelController_Tests: StressTestCase {
             Assert.canBeReleased(&env)
         }
         
-        let clientWithoutCurrentUser = ChatClient(
-            config: .init(apiKeyString: .unique),
-            tokenProvider: .invalid()
-        )
+        let clientWithoutCurrentUser = ChatClient(config: .init(apiKeyString: .unique))
 
         for isCurrentUserMember in [true, false] {
             // Try to create `ChannelController` while current user is missing
@@ -553,10 +550,7 @@ class ChannelController_Tests: StressTestCase {
             Assert.canBeReleased(&env)
         }
         
-        let client = ChatClient(
-            config: .init(apiKeyString: .unique),
-            tokenProvider: .invalid()
-        )
+        let client = ChatClient(config: .init(apiKeyString: .unique))
 
         for isCurrentUserMember in [true, false] {
             // Try to create `ChannelController` with non-empty members while current user is missing
@@ -3259,7 +3253,7 @@ private class TestDelegateGeneric<ExtraData: ExtraDataTypes>: QueueAwareDelegate
     }
 }
 
-extension _TokenProvider {
+extension _UserConnectionProvider {
     static func invalid(_ error: Error = TestError()) -> Self {
         .closure {
             $1(.failure(error))

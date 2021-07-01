@@ -223,6 +223,8 @@ final class ChatClientUpdater_Tests_Tests: StressTestCase {
     func test_reloadUserIfNeeded_currentUser_sameToken_happyPath() throws {
         // Create an active client with user session.
         let client = mockClientWithUserSession()
+        let token = Token.unique(userId: .unique)
+        client.connectUser(token: token)
 
         // Create an updater.
         let updater = ChatClientUpdater<ExtraData>(client: client)
@@ -233,7 +235,10 @@ final class ChatClientUpdater_Tests_Tests: StressTestCase {
         // Call `reloadUserIfNeeded` without changing a token provider
         // and synchronously get the result since no job should be done.
         let error = try waitFor { completion in
-            updater.reloadUserIfNeeded(completion: completion)
+            updater.reloadUserIfNeeded(
+                userConnectionProvider: .static(token),
+                completion: completion
+            )
         }
 
         // Assert error is nil.
@@ -277,9 +282,6 @@ final class ChatClientUpdater_Tests_Tests: StressTestCase {
             // Create an active client with user session.
             let client = mockClientWithUserSession(token: options.initialToken)
 
-            // Update the token provider to return the updated token.
-            client.tokenProvider = .static(options.updatedToken)
-
             // Create an updater.
             let updater = ChatClientUpdater<ExtraData>(client: client)
 
@@ -289,7 +291,9 @@ final class ChatClientUpdater_Tests_Tests: StressTestCase {
             // Simulate `reloadUserIfNeeded` call.
             var reloadUserIfNeededCompletionCalled = false
             var reloadUserIfNeededCompletionError: Error?
-            updater.reloadUserIfNeeded {
+            updater.reloadUserIfNeeded(
+                userConnectionProvider: .static(options.updatedToken)
+            ) {
                 reloadUserIfNeededCompletionCalled = true
                 reloadUserIfNeededCompletionError = $0
             }
@@ -348,30 +352,6 @@ final class ChatClientUpdater_Tests_Tests: StressTestCase {
             }
         }
     }
-    
-    func test_reloadUserIfNeeded_propagatesTokenProviderError() throws {
-        // Create a token provider returning the error.
-        let tokenProviderError = TestError()
-
-        // Create a client with token provider returning the error.
-        let client = ChatClientMock<ExtraData>(
-            config: .init(apiKeyString: .unique),
-            tokenProvider: .closure {
-                $1(.failure(tokenProviderError))
-            }
-        )
-
-        // Create updater referencing to `active` client.
-        let updater = ChatClientUpdater<ExtraData>(client: client)
-
-        // Simulate `reloadUserIfNeeded` call and catch the result.
-        let error = try waitFor { completion in
-            updater.reloadUserIfNeeded(completion: completion)
-        }
-
-        // Assert error from token provider is propagated.
-        XCTAssertEqual(error as? TestError, tokenProviderError)
-    }
 
     func test_reloadUserIfNeeded_newUser_propagatesClientIsPassiveError() throws {
         // Create config for `passive` client.
@@ -379,20 +359,14 @@ final class ChatClientUpdater_Tests_Tests: StressTestCase {
         config.isClientInActiveMode = false
 
         // Create `passive` client.
-        let client = ChatClientMock<ExtraData>(
-            config: config,
-            tokenProvider: .anonymous
-        )
-
-        // Update token provider to return token for another user.
-        client.tokenProvider = .static(.unique())
+        let client = ChatClientMock<ExtraData>(config: config)
 
         // Create `ChatClientUpdater` instance.
         let updater = ChatClientUpdater<ExtraData>(client: client)
 
         // Simulate `reloadUserIfNeeded` call and catch the result.
         let error = try waitFor { completion in
-            updater.reloadUserIfNeeded(completion: completion)
+            updater.reloadUserIfNeeded(userConnectionProvider: .static(.unique()), completion: completion)
         }
 
         // Assert `ClientError.ClientIsNotInActiveMode` is propagated.
@@ -401,13 +375,7 @@ final class ChatClientUpdater_Tests_Tests: StressTestCase {
 
     func test_reloadUserIfNeeded_newUser_propagatesDatabaseFlushError() throws {
         // Create `active` client.
-        let client = ChatClientMock<ExtraData>(
-            config: .init(apiKeyString: .unique),
-            tokenProvider: .anonymous
-        )
-
-        // Update token provider to return token for another user.
-        client.tokenProvider = .static(.unique())
+        let client = ChatClientMock<ExtraData>(config: .init(apiKeyString: .unique))
 
         // Create `ChatClientUpdater` instance.
         let updater = ChatClientUpdater<ExtraData>(client: client)
@@ -418,7 +386,10 @@ final class ChatClientUpdater_Tests_Tests: StressTestCase {
 
         // Simulate `reloadUserIfNeeded` call and catch the result.
         let error = try waitFor { completion in
-            updater.reloadUserIfNeeded(completion: completion)
+            updater.reloadUserIfNeeded(
+                userConnectionProvider: .static(.unique()),
+                completion: completion
+            )
         }
 
         // Assert database error is propagated.
@@ -427,13 +398,7 @@ final class ChatClientUpdater_Tests_Tests: StressTestCase {
 
     func test_reloadUserIfNeeded_newUser_propagatesWebSocketClientError_whenAutomaticallyConnects() {
         // Create `active` client.
-        let client = ChatClientMock<ExtraData>(
-            config: .init(apiKeyString: .unique),
-            tokenProvider: .anonymous
-        )
-
-        // Update token provider to return token for another user.
-        client.tokenProvider = .static(.unique())
+        let client = ChatClientMock<ExtraData>(config: .init(apiKeyString: .unique))
 
         // Create `ChatClientUpdater` instance.
         let updater = ChatClientUpdater<ExtraData>(client: client)
@@ -441,7 +406,9 @@ final class ChatClientUpdater_Tests_Tests: StressTestCase {
         // Simulate `reloadUserIfNeeded` call.
         var reloadUserIfNeededCompletionCalled = false
         var reloadUserIfNeededCompletionError: Error?
-        updater.reloadUserIfNeeded {
+        updater.reloadUserIfNeeded(
+            userConnectionProvider: .static(.unique())
+        ) {
             reloadUserIfNeededCompletionCalled = true
             reloadUserIfNeededCompletionError = $0
         }
@@ -461,15 +428,16 @@ final class ChatClientUpdater_Tests_Tests: StressTestCase {
 
         // Change the token provider and save the completion.
         var tokenProviderCompletion: ((Result<Token, Error>) -> Void)?
-        client.tokenProvider = .closure {
-            tokenProviderCompletion = $1
-        }
 
         // Create an updater.
         var updater: ChatClientUpdater<ExtraData>? = .init(client: client)
-
+        
         // Simulate `reloadUserIfNeeded` call.
-        updater?.reloadUserIfNeeded()
+        updater?.reloadUserIfNeeded(
+            userConnectionProvider: .closure {
+                tokenProviderCompletion = $1
+            }
+        )
 
         // Create weak ref and drop a strong one.
         weak var weakUpdater = updater
@@ -499,10 +467,10 @@ final class ChatClientUpdater_Tests_Tests: StressTestCase {
         // Create a client.
         let client = ChatClientMock<ExtraData>(
             config: config,
-            tokenProvider: .static(token),
             workerBuilders: [TestWorker.init],
             eventWorkerBuilders: [TestEventWorker.init]
         )
+        client.connectUser(token: token)
 
         client.currentUserId = token.userId
         client.currentToken = token

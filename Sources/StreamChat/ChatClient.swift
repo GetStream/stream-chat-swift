@@ -357,10 +357,10 @@ public class _ChatClient<ExtraData: ExtraDataTypes> {
     ///   - token: Authorization token for the user.
     ///   - completion: The completion that will be called once the **first** user session for the given token is setup.
     public func connectUser(
-        connectionInfoProvider: ((Result<(UserInfo<ExtraData>, Token), Error>) -> Void) -> Void,
+        userInfoProvider: ((Result<(UserInfo<ExtraData>, Token), Error>) -> Void) -> Void,
         completion: ((Error?) -> Void)? = nil
     ) {
-        connectionInfoProvider { userInfo in
+        userInfoProvider { userInfo in
             switch userInfo {
             case let .success((info, token)):
                 connectUser(userInfo: info, token: token)
@@ -648,6 +648,10 @@ extension _ChatClient: ConnectionStateDelegate {
                                 completion(result)
                             }
                         }
+                    )
+                } else {
+                    log.assertionFailure(
+                        "In case if token expiration is enabled on backend you need to provide a way to reobtain it via `tokenProvider` on ChatClient"
                     )
                 }
                 shouldNotifyConnectionIdWaiters = false

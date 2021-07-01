@@ -82,7 +82,6 @@ class ChatClient_Tests: StressTestCase {
         // Create a `Client` and assert that a DB file is created on the provided URL + APIKey path
         _ = ChatClient(
             config: config,
-            tokenProvider: .anonymous,
             workerBuilders: [Worker.init],
             eventWorkerBuilders: [],
             environment: env
@@ -115,7 +114,6 @@ class ChatClient_Tests: StressTestCase {
         // Create a `Client` and assert the correct DB kind is used
         _ = ChatClient(
             config: config,
-            tokenProvider: .anonymous,
             workerBuilders: [Worker.init],
             eventWorkerBuilders: [],
             environment: env
@@ -157,7 +155,6 @@ class ChatClient_Tests: StressTestCase {
         // to the in-memory option.
         _ = ChatClient(
             config: config,
-            tokenProvider: .anonymous,
             workerBuilders: [Worker.init],
             eventWorkerBuilders: [],
             environment: env
@@ -206,7 +203,6 @@ class ChatClient_Tests: StressTestCase {
         // Create a new chat client, which in turn creates a webSocketClient
         let client = ChatClient(
             config: inMemoryStorageConfig,
-            tokenProvider: .anonymous,
             workerBuilders: workerBuilders,
             eventWorkerBuilders: [],
             environment: testEnv.environment
@@ -267,14 +263,13 @@ class ChatClient_Tests: StressTestCase {
             config: config,
             workerBuilders: [],
             eventWorkerBuilders: [],
-            environment: env,
-            completion: { error in
-                XCTAssertNil(error)
-                initCompletionCalled = true
-            }
+            environment: env
         )
         
-        client.connectAnonymousUser()
+        client.connectAnonymousUser { error in
+            XCTAssertNil(error)
+            initCompletionCalled = true
+        }
 
         XCTAssertFalse(initCompletionCalled)
         // Assert connection status is `.initialized`
@@ -312,7 +307,6 @@ class ChatClient_Tests: StressTestCase {
         // Create a new chat client
         let client = ChatClient(
             config: inMemoryStorageConfig,
-            tokenProvider: .anonymous,
             workerBuilders: workerBuilders,
             eventWorkerBuilders: [],
             environment: testEnv.environment
@@ -395,11 +389,13 @@ class ChatClient_Tests: StressTestCase {
         // Create a new chat client
         let client = ChatClient(
             config: inMemoryStorageConfig,
-            tokenProvider: .anonymous,
             workerBuilders: workerBuilders,
             eventWorkerBuilders: [],
             environment: testEnv.environment
         )
+        
+        client.connectAnonymousUser()
+        client.tokenProvider = { $0(.success(.unique())) }
 
         // Simulate access to `webSocketClient` so it is initialized
         _ = client.webSocketClient
@@ -436,7 +432,6 @@ class ChatClient_Tests: StressTestCase {
         // Create a new chat client
         let client = ChatClient(
             config: inMemoryStorageConfig,
-            tokenProvider: .anonymous,
             workerBuilders: workerBuilders,
             eventWorkerBuilders: [],
             environment: testEnv.environment
@@ -474,7 +469,6 @@ class ChatClient_Tests: StressTestCase {
         // Create a new chat client
         let client = ChatClient(
             config: inMemoryStorageConfig,
-            tokenProvider: .anonymous,
             workerBuilders: workerBuilders,
             eventWorkerBuilders: [],
             environment: testEnv.environment
@@ -517,7 +511,6 @@ class ChatClient_Tests: StressTestCase {
         // Create a Client instance and check the workers are initialized properly
         let client = _ChatClient(
             config: config,
-            tokenProvider: .anonymous,
             workerBuilders: [TestWorker.init],
             eventWorkerBuilders: [TestEventWorker.init],
             environment: testEnv.environment
@@ -560,10 +553,8 @@ class ChatClient_Tests: StressTestCase {
                 queue.async {
                     // Create a `ChatClient` instance with the same config
                     // to access the storage with exited current user.
-                    let chatClient = ChatClient(
-                        config: config,
-                        tokenProvider: .static(.unique(userId: currentUserId))
-                    )
+                    let chatClient = ChatClient(config: config)
+                    chatClient.connectUser(token: .unique(userId: currentUserId))
 
                     let expectedWebSocketEndpoint = AnyEndpoint(.webSocketConnect(userId: currentUserId))
 
@@ -588,17 +579,16 @@ class ChatClient_Tests: StressTestCase {
             var clientInitCompletionError: Error?
 
             // Create a client, provide the completion and catch the result.
-            _ = ChatClient(
+            let client = ChatClient(
                 config: inMemoryStorageConfig,
-                tokenProvider: .anonymous,
                 workerBuilders: [],
                 eventWorkerBuilders: [],
-                environment: testEnv.environment,
-                completion: { error in
-                    clientInitCompletionCalled = true
-                    clientInitCompletionError = error
-                }
+                environment: testEnv.environment
             )
+            client.connectAnonymousUser { error in
+                clientInitCompletionCalled = true
+                clientInitCompletionError = error
+            }
 
             // Assert `reloadUserIfNeeded` is called on `clientUpdater`.
             XCTAssertTrue(testEnv.clientUpdater!.reloadUserIfNeeded_called)
@@ -621,8 +611,7 @@ class ChatClient_Tests: StressTestCase {
             environment: testEnv.environment
         )
         
-        // `reloadUserIfNeeded` is not called on `clientUpdater` hence it wasn't lazily initialised
-        XCTAssertNil(testEnv.clientUpdater)
+        XCTAssert(testEnv.clientUpdater?.reloadUserIfNeeded_called != true)
     }
     
     func test_connectUser_setsTokenProvider_andInitiatesConnection() {
@@ -633,8 +622,8 @@ class ChatClient_Tests: StressTestCase {
             environment: testEnv.environment
         )
         let token = Token.unique()
-        // `reloadUserIfNeeded` is not called on `clientUpdater` hence it wasn't lazily initialised
-        XCTAssertNil(testEnv.clientUpdater)
+        XCTAssert(testEnv.clientUpdater?.reloadUserIfNeeded_called != true)
+
         client.connectUser(
             name: "John Doe",
             imageURL: .unique(),
@@ -643,7 +632,7 @@ class ChatClient_Tests: StressTestCase {
         XCTAssertTrue(testEnv.clientUpdater!.reloadUserIfNeeded_called)
         
         var providedToken: Token?
-        client.tokenProvider?.getToken(client) { providedToken = try! $0.get() }
+        client.userConnectionProvider?.getToken(client) { providedToken = try! $0.get() }
         AssertAsync.willBeEqual(token, providedToken)
     }
     
@@ -655,16 +644,16 @@ class ChatClient_Tests: StressTestCase {
             environment: testEnv.environment
         )
         let token = Token.unique()
-        // `reloadUserIfNeeded` is not called on `clientUpdater` hence it wasn't lazily initialised
-        XCTAssertNil(testEnv.clientUpdater)
+        XCTAssert(testEnv.clientUpdater?.reloadUserIfNeeded_called != true)
+
         client.connectUser(
-            connectionInfo: .init(name: nil, imageURL: nil, extraData: nil),
+            userInfo: .init(name: nil, imageURL: nil, extraData: nil),
             token: token
         )
         XCTAssertTrue(testEnv.clientUpdater!.reloadUserIfNeeded_called)
         
         var providedToken: Token?
-        client.tokenProvider?.getToken(client) { providedToken = try! $0.get() }
+        client.userConnectionProvider?.getToken(client) { providedToken = try! $0.get() }
         AssertAsync.willBeEqual(token, providedToken)
     }
     
@@ -676,14 +665,13 @@ class ChatClient_Tests: StressTestCase {
             environment: testEnv.environment
         )
         let token = Token.unique()
-        // `reloadUserIfNeeded` is not called on `clientUpdater` hence it wasn't lazily initialised
-        XCTAssertNil(testEnv.clientUpdater)
-        
-        let provider: ((Result<(UserConnectionInfo<NoExtraData>, Token), Error>) -> Void) -> Void = { completion in
+        XCTAssert(testEnv.clientUpdater?.reloadUserIfNeeded_called != true)
+
+        let provider: ((Result<(UserInfo<NoExtraData>, Token), Error>) -> Void) -> Void = { completion in
             completion(
                 .success(
                     (
-                        UserConnectionInfo(name: nil, imageURL: nil, extraData: nil),
+                        UserInfo(name: nil, imageURL: nil, extraData: nil),
                         token
                     )
                 )
@@ -696,30 +684,7 @@ class ChatClient_Tests: StressTestCase {
         XCTAssertTrue(testEnv.clientUpdater!.reloadUserIfNeeded_called)
         
         var providedToken: Token?
-        client.tokenProvider?.getToken(client) { providedToken = try! $0.get() }
-        AssertAsync.willBeEqual(token, providedToken)
-    }
-    
-    func test_connectUserWithTokenProviderOverload_setsTokenProvider_andInitiatesConnection() {
-        let client = ChatClient(
-            config: inMemoryStorageConfig,
-            workerBuilders: [],
-            eventWorkerBuilders: [],
-            environment: testEnv.environment
-        )
-        let token = Token.unique()
-        // `reloadUserIfNeeded` is not called on `clientUpdater` hence it wasn't lazily initialised
-        XCTAssertNil(testEnv.clientUpdater)
-        
-        let provider: ((Result<Token, Error>) -> Void) -> Void = { $0(.success((token))) }
-        
-        client.connectUser(
-            tokenProvider: provider
-        )
-        XCTAssertTrue(testEnv.clientUpdater!.reloadUserIfNeeded_called)
-        
-        var providedToken: Token?
-        client.tokenProvider?.getToken(client) { providedToken = try! $0.get() }
+        client.userConnectionProvider?.getToken(client) { providedToken = try! $0.get() }
         AssertAsync.willBeEqual(token, providedToken)
     }
     
@@ -731,9 +696,8 @@ class ChatClient_Tests: StressTestCase {
             environment: testEnv.environment
         )
         let token = Token.unique()
-        // `reloadUserIfNeeded` is not called on `clientUpdater` hence it wasn't lazily initialised
-        XCTAssertNil(testEnv.clientUpdater)
-        
+        XCTAssert(testEnv.clientUpdater?.reloadUserIfNeeded_called != true)
+
         let userId = UserId.unique
         let name = "John Doe"
         client.connectGuestUser(
@@ -746,7 +710,7 @@ class ChatClient_Tests: StressTestCase {
         XCTAssertTrue(testEnv.clientUpdater!.reloadUserIfNeeded_called)
         
         var providedToken: Token?
-        client.tokenProvider?.getToken(client) { providedToken = try! $0.get() }
+        client.userConnectionProvider?.getToken(client) { providedToken = try! $0.get() }
         
         let expectedEndpoint: Endpoint<GuestUserTokenPayload<NoExtraData>> = .guestUserToken(
             userId: userId,
@@ -772,9 +736,8 @@ class ChatClient_Tests: StressTestCase {
             environment: testEnv.environment
         )
         let token = Token.unique()
-        // `reloadUserIfNeeded` is not called on `clientUpdater` hence it wasn't lazily initialised
-        XCTAssertNil(testEnv.clientUpdater)
-        
+        XCTAssert(testEnv.clientUpdater?.reloadUserIfNeeded_called != true)
+
         let userId = UserId.unique
         let name = "John Doe"
         client.connectGuestUser(
@@ -785,7 +748,7 @@ class ChatClient_Tests: StressTestCase {
         XCTAssertTrue(testEnv.clientUpdater!.reloadUserIfNeeded_called)
         
         var providedToken: Token?
-        client.tokenProvider?.getToken(client) { providedToken = try! $0.get() }
+        client.userConnectionProvider?.getToken(client) { providedToken = try! $0.get() }
         
         let expectedEndpoint: Endpoint<GuestUserTokenPayload<NoExtraData>> = .guestUserToken(
             userId: userId,
@@ -810,13 +773,13 @@ class ChatClient_Tests: StressTestCase {
             eventWorkerBuilders: [],
             environment: testEnv.environment
         )
-        // `reloadUserIfNeeded` is not called on `clientUpdater` hence it wasn't lazily initialised
-        XCTAssertNil(testEnv.clientUpdater)
+        XCTAssert(testEnv.clientUpdater?.reloadUserIfNeeded_called != true)
+
         client.connectAnonymousUser()
         XCTAssertTrue(testEnv.clientUpdater!.reloadUserIfNeeded_called)
         
         var providedToken: Token?
-        client.tokenProvider?.getToken(client) { providedToken = try! $0.get() }
+        client.userConnectionProvider?.getToken(client) { providedToken = try! $0.get() }
         AssertAsync.willBeTrue(providedToken != nil)
     }
 
@@ -824,10 +787,7 @@ class ChatClient_Tests: StressTestCase {
     
     func test_passiveClient_doesNotHaveWorkers() {
         // Create Client with inactive flag set
-        let client = ChatClient(
-            config: inactiveInMemoryStorageConfig,
-            tokenProvider: .anonymous
-        )
+        let client = ChatClient(config: inactiveInMemoryStorageConfig)
 
         // Simulate `createBackgroundWorkers`.
         client.createBackgroundWorkers()
@@ -838,10 +798,7 @@ class ChatClient_Tests: StressTestCase {
     
     func test_passiveClient_doesNotHaveWSClient() {
         // Create Client with inactive flag set
-        let client = ChatClient(
-            config: inactiveInMemoryStorageConfig,
-            tokenProvider: .anonymous
-        )
+        let client = ChatClient(config: inactiveInMemoryStorageConfig)
         
         // Assert the wsClient is not initialized
         XCTAssertNil(client.webSocketClient)
@@ -849,10 +806,7 @@ class ChatClient_Tests: StressTestCase {
     
     func test_passiveClient_provideConnectionId_returnsImmediately() {
         // Create Client with inactive flag set
-        let client = ChatClient(
-            config: inactiveInMemoryStorageConfig,
-            tokenProvider: .anonymous
-        )
+        let client = ChatClient(config: inactiveInMemoryStorageConfig)
         
         // Set a connection Id waiter
         var providedConnectionId: ConnectionId? = .unique
@@ -875,7 +829,6 @@ class ChatClient_Tests: StressTestCase {
         // Create a new chat client
         let client = ChatClient(
             config: inMemoryStorageConfig,
-            tokenProvider: .anonymous,
             workerBuilders: workerBuilders,
             eventWorkerBuilders: [],
             environment: testEnv.environment
@@ -907,7 +860,6 @@ class ChatClient_Tests: StressTestCase {
         config.staysConnectedInBackground = false
         let client = ChatClient(
             config: config,
-            tokenProvider: .anonymous,
             workerBuilders: workerBuilders,
             eventWorkerBuilders: [],
             environment: testEnv.environment
@@ -937,7 +889,6 @@ class ChatClient_Tests: StressTestCase {
         // Create a new chat client
         let client = ChatClient(
             config: inMemoryStorageConfig,
-            tokenProvider: .anonymous,
             workerBuilders: workerBuilders,
             eventWorkerBuilders: [],
             environment: testEnv.environment
@@ -961,7 +912,6 @@ class ChatClient_Tests: StressTestCase {
         // Create a new chat client
         let client = ChatClient(
             config: inMemoryStorageConfig,
-            tokenProvider: .anonymous,
             workerBuilders: workerBuilders,
             eventWorkerBuilders: [],
             environment: testEnv.environment
@@ -991,7 +941,6 @@ class ChatClient_Tests: StressTestCase {
         // Create a new chat client
         let client = ChatClient(
             config: inMemoryStorageConfig,
-            tokenProvider: .anonymous,
             workerBuilders: workerBuilders,
             eventWorkerBuilders: [],
             environment: testEnv.environment
@@ -1027,11 +976,11 @@ class ChatClient_Tests: StressTestCase {
         // Create a new chat client
         let client = ChatClient(
             config: inMemoryStorageConfig,
-            tokenProvider: .anonymous,
             workerBuilders: workerBuilders,
             eventWorkerBuilders: [],
             environment: testEnv.environment
         )
+        client.connectAnonymousUser()
         
         // Simulate access to `webSocketClient` so it is initialized
         _ = client.webSocketClient
@@ -1066,11 +1015,11 @@ class ChatClient_Tests: StressTestCase {
         // Create a new chat client
         let client = ChatClient(
             config: inMemoryStorageConfig,
-            tokenProvider: .anonymous,
             workerBuilders: workerBuilders,
             eventWorkerBuilders: [],
             environment: testEnv.environment
         )
+        client.connectAnonymousUser()
         
         // Simulate access to `webSocketClient` so it is initialized
         _ = client.webSocketClient
