@@ -8,7 +8,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### 🐞 Fixed 
 - `ConnectionController` fires its `controllerDidChangeConnectionStatus` method only when the connection status actually changes [#1207](https://github.com/GetStream/stream-chat-swift/issues/1207)
 - Fix cancelled ephemeral (giphy) messages and deleted messages are visible in threads [#1238](https://github.com/GetStream/stream-chat-swift/issues/1238)
-
+- Fix long-tap on message with long text not showing action menu [#1160](https://github.com/GetStream/stream-chat-swift/issues/1128)
 
 # [4.0.0-beta.4](https://github.com/GetStream/stream-chat-swift/releases/tag/4.0.0-beta.4)
 _June 23, 2021_
