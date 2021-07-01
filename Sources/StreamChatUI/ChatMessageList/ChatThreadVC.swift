@@ -22,7 +22,8 @@ open class _ChatThreadVC<ExtraData: ExtraDataTypes>:
     LinkPreviewViewDelegate,
     FileActionContentViewDelegate,
     UITableViewDataSource,
-    UITableViewDelegate {
+    UITableViewDelegate,
+    ChatMessageListScrollOverlayDataSource {
     /// Controller for observing data changes within the channel
     open var channelController: _ChatChannelController<ExtraData>!
 
@@ -46,6 +47,16 @@ open class _ChatThreadVC<ExtraData: ExtraDataTypes>:
         listView.delegate = self
         listView.dataSource = self
         return listView
+    }()
+    
+    /// View used to display date of currently displayed messages
+    open private(set) lazy var dateOverlayView: ChatMessageListScrollOverlayView = {
+        let overlay = components
+            .messageListScrollOverlayView.init()
+            .withoutAutoresizingMaskConstraints
+        overlay.listView = listView
+        overlay.dataSource = self
+        return overlay
     }()
     
     /// Controller that handles the composer view
@@ -110,6 +121,13 @@ open class _ChatThreadVC<ExtraData: ExtraDataTypes>:
         messageComposerBottomConstraint?.isActive = true
         messageComposerVC.view.leadingAnchor.pin(equalTo: view.leadingAnchor).isActive = true
         messageComposerVC.view.trailingAnchor.pin(equalTo: view.trailingAnchor).isActive = true
+        
+        view.addSubview(dateOverlayView)
+        NSLayoutConstraint.activate([
+            dateOverlayView.centerXAnchor.pin(equalTo: view.safeAreaLayoutGuide.centerXAnchor),
+            dateOverlayView.topAnchor.pin(equalToSystemSpacingBelow: view.safeAreaLayoutGuide.topAnchor)
+        ])
+        dateOverlayView.isHidden = true
     }
 
     override open func setUpAppearance() {
@@ -436,6 +454,15 @@ open class _ChatThreadVC<ExtraData: ExtraDataTypes>:
 
     open func messageForIndexPath(_ indexPath: IndexPath) -> _ChatMessage<ExtraData> {
         messages[indexPath.item]
+    }
+    
+    open func scrollOverlay(
+        _ overlay: ChatMessageListScrollOverlayView,
+        textForItemAt indexPath: IndexPath
+    ) -> String? {
+        DateFormatter
+            .messageListDateOverlay
+            .string(from: messageForIndexPath(indexPath).createdAt)
     }
 }
 

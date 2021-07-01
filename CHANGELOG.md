@@ -41,10 +41,13 @@ _June 23, 2021_
 - Ability to send silent messages. Silent messages are normal messages with an additional `isSilent` value set to `true`. Silent messages don’t trigger push notification for the recipient.[#1211](https://github.com/GetStream/stream-chat-swift/pull/1211)
 - Expose `cid` on `Message` [#1215](https://github.com/GetStream/stream-chat-swift/issues/1215)
 - `showMediaPicker`/`showFilePicker`/`attachmentsPickerActions` functions added to `ComposerVC` so it's possible to customize media/document pickers and add extend action sheet with actions for custom attachment types [#1194](https://github.com/GetStream/stream-chat-swift/pull/1194)
+- Make `ChatThreadVC` show overlay with timestamp of currently visible messages when scrolling [#1235](https://github.com/GetStream/stream-chat-swift/pull/1235)
 
 ### 🔄 Changed
 - `scrollToLatestMessageButton` is now visible every time the last message is not visible. Not only when there is unread message. [#1208](https://github.com/GetStream/stream-chat-swift/pull/1208) 
 - `mediaPickerVC` in `ComposerVC` updated to show both photos and videos [#1194](https://github.com/GetStream/stream-chat-swift/pull/1194)
+- `ChatMessageListScrollOverlayView` moved outside the `ChatMessageListView`. Now it's managed by `ChatMessageListVC` and `ChatThreadVC` explicitly [#1235](https://github.com/GetStream/stream-chat-swift/pull/1235)
+- Date formatter for scroll overlay used in `ChatMessageListVC` is now exposed as `DateFormatter.messageListDateOverlay` [#1235](https://github.com/GetStream/stream-chat-swift/pull/1235)
 
 ### 🐞 Fixed 
 - Fix sorting Member List by `createdAt` causing an issue [#1185](https://github.com/GetStream/stream-chat-swift/issues/1185)
@@ -59,6 +62,7 @@ _June 23, 2021_
 - Fix deadlock in Controllers when `synchronize` is called in a delegate callback [#1214](https://github.com/GetStream/stream-chat-swift/issues/1214)
 - Fix restart uploading action not being propagated [#1194](https://github.com/GetStream/stream-chat-swift/pull/1194)
 - Fix uploading progress not visible on image uploading overlay [#1194](https://github.com/GetStream/stream-chat-swift/pull/1194)
+- Fix timestamp overlay jumping when more messages are loaded [#1235](https://github.com/GetStream/stream-chat-swift/pull/1235)
 
 # [4.0.0-beta.3](https://github.com/GetStream/stream-chat-swift/releases/tag/4.0.0-beta.3)
 _June 11, 2021_
