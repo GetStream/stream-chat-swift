@@ -27,7 +27,7 @@ class MessageDTO: NSManagedObject {
     @NSManaged var user: UserDTO
     @NSManaged var mentionedUsers: Set<UserDTO>
     @NSManaged var threadParticipants: Set<UserDTO>
-    @NSManaged var channel: ChannelDTO
+    @NSManaged var channel: ChannelDTO?
     @NSManaged var replies: Set<MessageDTO>
     @NSManaged var flaggedBy: CurrentUserDTO?
     @NSManaged var reactions: Set<MessageReactionDTO>
@@ -514,7 +514,7 @@ private extension _ChatMessage {
         let context = dto.managedObjectContext!
         
         id = dto.id
-        cid = try! ChannelId(cid: dto.channel.cid)
+        cid = dto.channel.map { try! ChannelId(cid: $0.cid) }
         text = dto.text
         type = MessageType(rawValue: dto.type) ?? .regular
         command = dto.command
