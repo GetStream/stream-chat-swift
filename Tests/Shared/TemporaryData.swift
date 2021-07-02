@@ -63,8 +63,8 @@ extension Date {
     static var unique: Date { Date(timeIntervalSince1970: .random(in: 1_000_000...1_500_000_000)) }
 
     /// Returns a new random date before the provided date
-    static func unique(before date: Date) -> Date {
-        Date(timeIntervalSince1970: .random(in: Date.distantPast.timeIntervalSince1970..<date.timeIntervalSince1970 - 1))
+    static func unique(before date: Date, after: Date = Date.distantPast) -> Date {
+        Date(timeIntervalSince1970: .random(in: after.timeIntervalSince1970..<date.timeIntervalSince1970 - 1))
     }
 
     /// Returns a new random date after the provided date

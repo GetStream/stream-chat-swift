@@ -529,6 +529,7 @@ class MessageDTO_Tests: XCTestCase {
                 showReplyInChannel: messageShowReplyInChannel,
                 isSilent: messageIsSilent,
                 quotedMessageId: nil,
+                createdAt: nil,
                 extraData: messageExtraData
             ).id
         }
@@ -636,6 +637,7 @@ class MessageDTO_Tests: XCTestCase {
                     showReplyInChannel: false,
                     isSilent: false,
                     quotedMessageId: nil,
+                    createdAt: nil,
                     extraData: NoExtraData.defaultValue
                 )
                 message1Id = message1DTO.id
@@ -654,29 +656,24 @@ class MessageDTO_Tests: XCTestCase {
                     showReplyInChannel: false,
                     isSilent: false,
                     quotedMessageId: nil,
+                    createdAt: nil,
                     extraData: NoExtraData.defaultValue
                 )
+                // Reset the `locallyCreateAt` value of the second message to simulate the message was sent
+                message2DTO.locallyCreatedAt = nil
                 message2Id = message2DTO.id
             }, completion: completion)
         }
         
-        var message1: MessageDTO? {
-            database.viewContext.message(id: message1Id)
-        }
-        
-        var message2: MessageDTO? {
-            database.viewContext.message(id: message2Id)
-        }
-        
+        let message1: MessageDTO = try XCTUnwrap(database.viewContext.message(id: message1Id))
+        let message2: MessageDTO = try XCTUnwrap(database.viewContext.message(id: message2Id))
+
         AssertAsync {
-            Assert.willBeTrue(message1 != nil)
-            Assert.willBeTrue(message2 != nil)
-            
             // Message 1 should have `locallyCreatedAt` as `defaultSortingKey`
-            Assert.willBeEqual(message1?.defaultSortingKey, message1?.locallyCreatedAt)
+            Assert.willBeEqual(message1.defaultSortingKey, message1.locallyCreatedAt)
             
             // Message 2 should have `createdAt` as `defaultSortingKey`
-            Assert.willBeEqual(message2?.defaultSortingKey, message2?.createdAt)
+            Assert.willBeEqual(message2.defaultSortingKey, message2.createdAt)
         }
     }
 
@@ -753,6 +750,7 @@ class MessageDTO_Tests: XCTestCase {
                     showReplyInChannel: true,
                     isSilent: false,
                     quotedMessageId: nil,
+                    createdAt: nil,
                     extraData: NoExtraData.defaultValue
                 )
                 newMessageId = messageDTO.id
@@ -797,6 +795,7 @@ class MessageDTO_Tests: XCTestCase {
                     showReplyInChannel: true,
                     isSilent: false,
                     quotedMessageId: nil,
+                    createdAt: nil,
                     extraData: NoExtraData.defaultValue
                 )
             }, completion: completion)
@@ -834,6 +833,7 @@ class MessageDTO_Tests: XCTestCase {
                     showReplyInChannel: true,
                     isSilent: false,
                     quotedMessageId: nil,
+                    createdAt: nil,
                     extraData: NoExtraData.defaultValue
                 )
             }, completion: completion)
@@ -910,6 +910,7 @@ class MessageDTO_Tests: XCTestCase {
                 showReplyInChannel: false,
                 isSilent: false,
                 quotedMessageId: nil,
+                createdAt: nil,
                 extraData: NoExtraData.defaultValue
             )
             // Get reply messageId

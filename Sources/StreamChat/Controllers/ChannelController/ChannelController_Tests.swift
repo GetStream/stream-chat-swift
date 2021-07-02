@@ -400,6 +400,77 @@ class ChannelController_Tests: StressTestCase {
         // Completion should be called with the error
         AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
     }
+    
+    func test_failedMessageKeepsOrdering_whenLocalTimeIsNotSynced() throws {
+        let userId: UserId = .unique
+        let channelId: ChannelId = .unique
+        
+        // Create current user
+        try client.databaseContainer.createCurrentUser(id: userId)
+        
+        // Setup controller
+        setupControllerForNewMessageChannel(cid: channelId)
+        
+        // Save channel with some messages
+        let channelPayload: ChannelPayload<NoExtraData> = dummyPayload(with: channelId, numberOfMessages: 5)
+        let originalLastMessageAt: Date = channelPayload.channel.lastMessageAt ?? channelPayload.channel.createdAt
+        try client.databaseContainer.writeSynchronously {
+            try $0.saveChannel(payload: channelPayload)
+        }
+        
+        // Get sorted messages (we'll use their createdAt later)
+        let sortedMessages = channelPayload.messages.sorted(by: { $0.createdAt > $1.createdAt })
+        
+        // Create a new message payload that's older than `channel.lastMessageAt`
+        // but newer than 2nd to last message
+        let oldMessageCreatedAt = Date.unique(
+            before: sortedMessages[0].createdAt,
+            after: sortedMessages[1].createdAt
+        )
+        var oldMessageId: MessageId?
+        // Save the message payload and check `channel.lastMessageAt` is not updated by older message
+        try client.databaseContainer.writeSynchronously {
+            let dto = try $0.createNewMessage(
+                in: channelId,
+                text: .unique,
+                pinning: nil,
+                command: nil,
+                arguments: nil,
+                parentMessageId: nil,
+                attachments: [],
+                mentionedUserIds: [],
+                showReplyInChannel: false,
+                isSilent: false,
+                quotedMessageId: nil,
+                createdAt: oldMessageCreatedAt,
+                extraData: NoExtraData.defaultValue
+            )
+            // Simulate sending failed for this message
+            dto.localMessageState = .sendingFailed
+            oldMessageId = dto.id
+        }
+        var channel = try XCTUnwrap(client.databaseContainer.viewContext.channel(cid: channelId))
+        XCTAssertEqual(channel.lastMessageAt, originalLastMessageAt)
+        
+        // Create a new message payload that's newer than `channel.lastMessageAt`
+        let newerMessagePayload: MessagePayload<NoExtraData> = .dummy(
+            messageId: .unique,
+            authorUserId: userId,
+            createdAt: .unique(after: channelPayload.channel.lastMessageAt!)
+        )
+        // Save the message payload and check `channel.lastMessageAt` is updated
+        try client.databaseContainer.writeSynchronously {
+            try $0.saveMessage(payload: newerMessagePayload, for: channelId)
+        }
+        channel = try XCTUnwrap(client.databaseContainer.viewContext.channel(cid: channelId))
+        XCTAssertEqual(channel.lastMessageAt, newerMessagePayload.createdAt)
+        
+        // Check if the message ordering is correct
+        // First message should be the newest message
+        XCTAssertEqual(controller.messages[0].id, newerMessagePayload.id)
+        // Third message is the failed one
+        XCTAssertEqual(controller.messages[2].id, oldMessageId)
+    }
 
     // MARK: - Creating `ChannelController` tests
 
