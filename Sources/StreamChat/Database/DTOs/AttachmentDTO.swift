@@ -35,7 +35,7 @@ class AttachmentDTO: NSManagedObject {
     /// An attachment local url.
     @NSManaged var localURL: URL?
     /// An attachment raw `Data`.
-    @NSManaged var data: Data?
+    @NSManaged var data: Data
     
     // MARK: - Relationships
     
@@ -125,7 +125,7 @@ extension NSManagedObjectContext: AttachmentDatabaseSession {
         dto.localURL = attachment.localFileURL
         dto.localState = attachment.localFileURL == nil ? .uploaded : .pendingUpload
 
-        dto.data = try JSONEncoder.stream.encode(attachment.payload?.asAnyEncodable)
+        dto.data = try JSONEncoder.stream.encode(attachment.payload.asAnyEncodable)
         dto.channel = channelDTO
         dto.message = messageDTO
         
@@ -171,8 +171,6 @@ private extension AttachmentDTO {
     /// Helper decoding method that logs error only if object exists.
     /// Returns `nil` if `Data` for decoding is `nil`.
     func payload<T: Decodable>(ofType type: T.Type = T.self) -> T? {
-        guard let data = data else { return nil }
-
         do {
             return try JSONDecoder.default.decode(type, from: data)
         } catch {
@@ -203,14 +201,12 @@ extension AttachmentDTO {
         case .linkPreview:
             attachment = asModel(payloadType: LinkAttachmentPayload.self)?.asAnyAttachment
         default:
-            attachment = data.map {
-                .init(
-                    id: attachmentID,
-                    type: attachmentType,
-                    payload: $0 as Any,
-                    uploadingState: uploadingState
-                )
-            }
+            attachment = .init(
+                id: attachmentID,
+                type: attachmentType,
+                payload: data,
+                uploadingState: uploadingState
+            )
         }
 
         if attachment == nil {
@@ -225,7 +221,6 @@ extension AttachmentDTO {
     /// That is why `RawJSON` object is used for sending it to backend because SDK doesn't know the structure of custom attachment.
     func asRequestPayload() -> MessageAttachmentPayload? {
         guard
-            let data = data,
             let payload = try? JSONDecoder.default.decode(RawJSON.self, from: data)
         else {
             log.error("Internal error. Unable to decode attachment `data` for sending to backend.")
@@ -236,6 +231,7 @@ extension AttachmentDTO {
     }
 
     func update(uploadedFileURL: URL) {
+        let updatedPayload: AnyEncodable
         switch attachmentType {
         case .image:
             guard var image: ImageAttachmentPayload = payload() else {
@@ -245,7 +241,7 @@ extension AttachmentDTO {
                 return
             }
             image.imageURL = uploadedFileURL
-            data = try? JSONEncoder.stream.encode(image)
+            updatedPayload = image.asAnyEncodable
         case .video:
             guard var video: VideoAttachmentPayload = payload() else {
                 log.assertionFailure(
@@ -254,7 +250,7 @@ extension AttachmentDTO {
                 return
             }
             video.videoURL = uploadedFileURL
-            data = try? JSONEncoder.stream.encode(video)
+            updatedPayload = video.asAnyEncodable
         default:
             guard var file: FileAttachmentPayload = payload() else {
                 log.assertionFailure(
@@ -263,7 +259,13 @@ extension AttachmentDTO {
                 return
             }
             file.assetURL = uploadedFileURL
-            data = try? JSONEncoder.stream.encode(file)
+            updatedPayload = file.asAnyEncodable
+        }
+        
+        do {
+            data = try JSONEncoder.stream.encode(updatedPayload)
+        } catch {
+            log.assertionFailure("Failed to encode updated payload.")
         }
     }
 }

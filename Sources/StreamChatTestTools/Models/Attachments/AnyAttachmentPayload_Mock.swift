@@ -42,8 +42,8 @@ public extension AnyAttachmentPayload {
 
 extension AnyAttachmentPayload: Equatable {
     public static func == (lhs: Self, rhs: Self) -> Bool {
-        let lhsData = try? JSONEncoder.default.encode(lhs.payload?.asAnyEncodable)
-        let rhsData = try? JSONEncoder.default.encode(rhs.payload?.asAnyEncodable)
+        let lhsData = try? JSONEncoder.default.encode(lhs.payload.asAnyEncodable)
+        let rhsData = try? JSONEncoder.default.encode(rhs.payload.asAnyEncodable)
 
         return lhs.type == rhs.type &&
             lhs.localFileURL == rhs.localFileURL &&

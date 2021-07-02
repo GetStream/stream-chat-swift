@@ -19,7 +19,7 @@ public struct AnyAttachmentPayload {
     public let type: AttachmentType
 
     /// A payload that will exposed on attachment when the message is sent.
-    public let payload: Encodable?
+    public let payload: Encodable
 
     /// A URL referencing to the local file that should be uploaded.
     public let localFileURL: URL?

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="17709" systemVersion="20C69" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
     <entity name="AttachmentDTO" representedClassName="AttachmentDTO" syncable="YES">
-        <attribute name="data" optional="YES" attributeType="Binary"/>
+        <attribute name="data" attributeType="Binary"/>
         <attribute name="id" attributeType="String"/>
         <attribute name="localProgress" optional="YES" attributeType="Double" minValueString="0" maxValueString="1" defaultValueString="0.0" usesScalarValueType="YES"/>
         <attribute name="localStateRaw" optional="YES" attributeType="String" defaultValueString=""/>
