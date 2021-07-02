@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+### ⚠️ Breaking Changes from `4.0-beta.4`
+- The `CreateChatChannelButton` component was removed. The component acted only as a placeholder and the functionality should be always provided by the hosting app. For an example implementation see the [Demo app](https://github.com/GetStream/stream-chat-swift/blob/main/DemoApp/ChatPresenter.swift).
+
 ### ✅ Added
 - `search(query:)` function to `UserSearchController` to make a custom search with a query [#1206](https://github.com/GetStream/stream-chat-swift/issues/1206)
 - `queryForMentionSuggestionsSearch(typingMention:)` function to `ComposerVC`, users can override this function to customize mention search behavior [#1206](https://github.com/GetStream/stream-chat-swift/issues/1206)
