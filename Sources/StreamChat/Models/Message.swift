@@ -29,8 +29,9 @@ public struct _ChatMessage<ExtraData: ExtraDataTypes> {
     /// A unique identifier of the message.
     public let id: MessageId
     
-    /// The ChannelId this message belongs to.
-    public let cid: ChannelId
+    /// The ChannelId this message belongs to. This value can be temporarily `nil` for messages that are being removed from
+    /// the local cache, or when the local cache is in the process of invalidating.
+    public let cid: ChannelId?
     
     /// The text of the message.
     public let text: String

@@ -879,8 +879,8 @@ class MessageDTO_Tests: XCTestCase {
             database.viewContext.message(id: newMessageId)
         )
         
-        XCTAssertEqual(loadedMessage.channel.lastMessageAt, loadedMessage.createdAt)
-        XCTAssertEqual(loadedMessage.channel.defaultSortingAt, loadedMessage.createdAt)
+        XCTAssertEqual(loadedMessage.channel!.lastMessageAt, loadedMessage.createdAt)
+        XCTAssertEqual(loadedMessage.channel!.defaultSortingAt, loadedMessage.createdAt)
     }
     
     func test_replies_linkedToParentMessage_onCreatingNewMessage() throws {

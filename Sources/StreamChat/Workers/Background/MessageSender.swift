@@ -66,7 +66,10 @@ class MessageSender<ExtraData: ExtraDataTypes>: Worker {
         changes.forEach { change in
             switch change {
             case .insert(let dto, index: _), .update(let dto, index: _):
-                let cid = try! ChannelId(cid: dto.channel.cid)
+                guard let cid = dto.channel.map({ try! ChannelId(cid: $0.cid) }) else {
+                    log.error("Skipping sending of the message \(dto.id) because the channel info is missing.")
+                    return
+                }
                 // Create the array if it didn't exist
                 newRequests[cid] = newRequests[cid] ?? []
                 newRequests[cid]!.append(.init(messageId: dto.id, createdLocallyAt: dto.locallyCreatedAt ?? dto.createdAt))
@@ -148,7 +151,12 @@ private class MessageSendingQueue<ExtraData: ExtraDataTypes> {
                     return
                 }
                 
-                let cid = try! ChannelId(cid: dto.channel.cid)
+                guard let cid = dto.channel.map({ try! ChannelId(cid: $0.cid) }) else {
+                    log.info("Skipping sending message with id \(dto.id) because it doesn't have a valid channel.")
+                    self?.removeRequestAndContinue(request)
+                    return
+                }
+
                 let requestBody = dto.asRequestBody() as MessageRequestBody<ExtraData>
                 
                 // Change the message state to `.sending` and the proceed with the actual sending
