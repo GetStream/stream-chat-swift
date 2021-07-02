@@ -56,36 +56,23 @@ extension LinkAttachmentPayload: Decodable {
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: AttachmentCodingKeys.self)
 
-        guard
-            let originalURL = try container
-            .decode(String.self, forKey: .ogURL)
-            .attachmentFixedURL,
-            let assetURL = (
-                try container.decodeIfPresent(String.self, forKey: .imageURL) ??
-                    container.decodeIfPresent(String.self, forKey: .image) ??
-                    container.decodeIfPresent(String.self, forKey: .assetURL)
-            )?.attachmentFixedURL
-        else {
-            throw ClientError.AttachmentDecoding("Link attachment must contain `originalURL` and `assetURL`")
-        }
+        let assetURL = try
+            container.decodeIfPresent(URL.self, forKey: .imageURL) ??
+            container.decodeIfPresent(URL.self, forKey: .image) ??
+            container.decode(URL.self, forKey: .assetURL)
 
         self.init(
-            originalURL: originalURL,
+            originalURL: try container.decode(URL.self, forKey: .ogURL),
             title: try container
                 .decodeIfPresent(String.self, forKey: .title)?
                 .trimmingCharacters(in: .whitespacesAndNewlines),
             text: try container
                 .decodeIfPresent(String.self, forKey: .text)?
                 .trimmingCharacters(in: .whitespacesAndNewlines),
-            author: try container
-                .decodeIfPresent(String.self, forKey: .author),
-            titleLink: try container
-                .decodeIfPresent(String.self, forKey: .titleLink)?
-                .attachmentFixedURL,
+            author: try container.decodeIfPresent(String.self, forKey: .author),
+            titleLink: try container.decodeIfPresent(URL.self, forKey: .titleLink),
             assetURL: assetURL,
-            previewURL: try container
-                .decodeIfPresent(String.self, forKey: .thumbURL)?
-                .attachmentFixedURL ?? assetURL
+            previewURL: try container.decodeIfPresent(URL.self, forKey: .thumbURL) ?? assetURL
         )
     }
 }

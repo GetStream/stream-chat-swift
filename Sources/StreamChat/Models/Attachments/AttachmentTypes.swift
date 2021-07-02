@@ -233,26 +233,6 @@ public enum AttachmentFileType: String, Codable, Equatable, CaseIterable {
     }
 }
 
-extension String {
-    var attachmentFixedURL: URL? {
-        if let url = URL(string: self), url.isFileURL {
-            return url
-        }
-
-        var urlString = self
-        
-        if urlString.hasPrefix("//") {
-            urlString = "https:\(urlString)"
-        }
-        
-        if !urlString.lowercased().hasPrefix("http") {
-            urlString = "https://\(urlString)"
-        }
-        
-        return URL(string: urlString)
-    }
-}
-
 extension ClientError {
     class InvalidAttachmentFileURL: ClientError {
         init(_ url: URL) {

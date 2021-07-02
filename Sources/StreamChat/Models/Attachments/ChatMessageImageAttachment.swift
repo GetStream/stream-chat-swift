@@ -43,18 +43,11 @@ extension ImageAttachmentPayload: Decodable {
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: AttachmentCodingKeys.self)
 
-        guard
-            let imageURL = (
-                try container.decodeIfPresent(String.self, forKey: .image)
-                    ?? container.decodeIfPresent(String.self, forKey: .imageURL)
-                    ?? container.decodeIfPresent(String.self, forKey: .assetURL)
-            )?.attachmentFixedURL
-        else { throw ClientError.AttachmentDecoding() }
+        let imageURL = try
+            container.decodeIfPresent(URL.self, forKey: .image) ??
+            container.decodeIfPresent(URL.self, forKey: .imageURL) ??
+            container.decode(URL.self, forKey: .assetURL)
         
-        let imagePreviewURL = try container
-            .decodeIfPresent(String.self, forKey: .thumbURL)?
-            .attachmentFixedURL
-
         let title = (
             try container.decodeIfPresent(String.self, forKey: .title) ??
                 container.decodeIfPresent(String.self, forKey: .fallback) ??
@@ -64,7 +57,7 @@ extension ImageAttachmentPayload: Decodable {
         self.init(
             title: title,
             imageURL: imageURL,
-            imagePreviewURL: imagePreviewURL ?? imageURL
+            imagePreviewURL: try container.decodeIfPresent(URL.self, forKey: .thumbURL) ?? imageURL
         )
     }
 }

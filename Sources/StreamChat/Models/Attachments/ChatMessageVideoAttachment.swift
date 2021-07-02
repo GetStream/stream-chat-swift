@@ -43,18 +43,10 @@ extension VideoAttachmentPayload: Encodable {
 extension VideoAttachmentPayload: Decodable {
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: AttachmentCodingKeys.self)
-
-        guard
-            let assetURL = try container
-            .decodeIfPresent(String.self, forKey: .assetURL)?
-            .attachmentFixedURL
-        else {
-            throw ClientError.AttachmentDecoding("Video attachment must contain `assetURL`")
-        }
-
+        
         self.init(
             title: try container.decodeIfPresent(String.self, forKey: .title),
-            videoURL: assetURL,
+            videoURL: try container.decode(URL.self, forKey: .assetURL),
             file: try AttachmentFile(from: decoder)
         )
     }
