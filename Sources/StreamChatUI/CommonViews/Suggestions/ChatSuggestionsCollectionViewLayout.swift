@@ -23,6 +23,7 @@ open class ChatSuggestionsCollectionViewLayout: UICollectionViewFlowLayout {
 
     override open func prepare() {
         super.prepare()
+
         estimatedItemSize = .init(width: collectionView?.bounds.width ?? 0, height: 60)
     }
 }
