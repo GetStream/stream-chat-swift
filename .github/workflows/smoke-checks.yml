@@ -93,7 +93,8 @@ jobs:
       with:
         status: ${{ job.status }}
         text: "You shall not pass!"
-        fields: message,commit,author,action,eventName,workflow,job,took
+        job_name: "Test LLC + UI (Debug)"
+        fields: message,commit,author,action,workflow,job,took
       env:
         SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
         MATRIX_CONTEXT: ${{ toJson(matrix) }}
@@ -135,7 +136,8 @@ jobs:
       with:
         status: ${{ job.status }}
         text: "You shall not pass!"
-        fields: message,commit,author,action,eventName,workflow,job,took
+        job_name: "Build Sample + Demo Apps"
+        fields: message,commit,author,action,workflow,job,took
       env:
         SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
         MATRIX_CONTEXT: ${{ toJson(matrix) }}
@@ -161,7 +163,8 @@ jobs:
   #     with:
   #       status: ${{ job.status }}
   #       text: "You shall not pass!"
-  #       fields: message,commit,author,action,eventName,workflow,job,took
+  #       job_name: "Build Docs Snippets"
+  #       fields: message,commit,author,action,workflow,job,took
   #     env:
   #       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
   #       MATRIX_CONTEXT: ${{ toJson(matrix) }}
@@ -195,7 +198,8 @@ jobs:
       with:
         status: ${{ job.status }}
         text: "You shall not pass!"
-        fields: message,commit,author,action,eventName,workflow,job,took
+        job_name: "Test Integration (SPM)"
+        fields: message,commit,author,action,workflow,job,took
       env:
         SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
         MATRIX_CONTEXT: ${{ toJson(matrix) }}
@@ -229,7 +233,8 @@ jobs:
       with:
         status: ${{ job.status }}
         text: "You shall not pass!"
-        fields: message,commit,author,action,eventName,workflow,job,took
+        job_name: "Test Integration (CocoaPods)"
+        fields: message,commit,author,action,workflow,job,took
       env:
         SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
         MATRIX_CONTEXT: ${{ toJson(matrix) }}

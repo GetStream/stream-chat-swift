@@ -38,6 +38,7 @@ jobs:
       with:
         status: ${{ job.status }}
         text: "You shall not pass!"
+        job_name: "Test LLC + UI (Release)"
         fields: message,commit,author,action,eventName,workflow,job,took
       env:
         SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
@@ -158,6 +159,7 @@ jobs:
       with:
         status: ${{ job.status }}
         text: "You shall not pass!"
+        job_name: "Build Sample App - iOS 13.5"
         fields: message,commit,author,action,eventName,workflow,job,took
       env:
         SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
@@ -196,6 +198,7 @@ jobs:
       with:
         status: ${{ job.status }}
         text: "You shall not pass!"
+        job_name: "Build Sample App - iOS 12.4"
         fields: message,commit,author,action,eventName,workflow,job,took
       env:
         SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
