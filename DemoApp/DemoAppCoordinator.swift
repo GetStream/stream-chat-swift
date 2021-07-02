@@ -36,7 +36,7 @@ final class DemoAppCoordinator {
         
         // Channels with the current user
         let controller = client.channelListController(query: .init(filter: .containMembers(userIds: [userCredentials.id])))
-        let chatList = ChatChannelListVC()
+        let chatList = DemoChannelListVC()
         chatList.controller = controller
         
         connectionController = client.connectionController()
