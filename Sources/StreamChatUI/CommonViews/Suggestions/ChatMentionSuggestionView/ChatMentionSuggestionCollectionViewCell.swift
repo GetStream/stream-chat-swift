@@ -15,7 +15,7 @@ open class _ChatMentionSuggestionCollectionViewCell<ExtraData: ExtraDataTypes>: 
 
     /// Instance of `ChatMessageComposerMentionCellView` which shows information about the mentioned user.
     open lazy var mentionView: _ChatMentionSuggestionView<ExtraData> = components
-        .suggestionsMentionCellView.init()
+        .suggestionsMentionView.init()
         .withoutAutoresizingMaskConstraints
 
     override open func setUpLayout() {

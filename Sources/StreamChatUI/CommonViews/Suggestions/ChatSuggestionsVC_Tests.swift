@@ -177,7 +177,7 @@ class ChatSuggestionsVC_Tests: XCTestCase {
         }
         
         var components = self.components
-        components.suggestionsMentionCellView = TestView.self
+        components.suggestionsMentionView = TestView.self
 
         vc.components = components
         let searchController = ChatUserSearchController_Mock<NoExtraData>.mock()

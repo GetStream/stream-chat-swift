@@ -289,11 +289,11 @@ public struct _Components<ExtraData: ExtraDataTypes> {
         _ChatCommandSuggestionCollectionViewCell<ExtraData>.self
 
     /// A type for view embed in cell while tagging users with @ symbol in composer.
-    public var suggestionsMentionCellView: _ChatMentionSuggestionView<ExtraData>.Type =
+    public var suggestionsMentionView: _ChatMentionSuggestionView<ExtraData>.Type =
         _ChatMentionSuggestionView<ExtraData>.self
 
     /// A view that displays the command name, image and arguments.
-    public var suggestionsCommandCellView: ChatCommandSuggestionView.Type =
+    public var suggestionsCommandView: ChatCommandSuggestionView.Type =
         ChatCommandSuggestionView.self
 
     /// The collection view layout of the suggestions collection view.
