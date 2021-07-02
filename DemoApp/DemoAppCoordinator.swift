@@ -33,6 +33,7 @@ final class DemoAppCoordinator {
         
         // Config
         Components.default.channelListRouter = DemoChatChannelListRouter.self
+        Components.default.messageListVC = CustomMessageListVC.self
         
         // Channels with the current user
         let controller = client.channelListController(query: .init(filter: .containMembers(userIds: [userCredentials.id])))
@@ -57,6 +58,26 @@ final class DemoAppCoordinator {
             loginViewController.didRequestChatPresentation = { [weak self] in
                 self?.presentChat(userCredentials: $0)
             }
+        }
+    }
+}
+
+class CustomMessageListVC: ChatMessageListVC {
+    override func viewDidLoad() {
+        super.viewDidLoad()
+    
+        let debugButton = UIBarButtonItem(
+            image: UIImage(systemName: "ladybug.fill")!,
+            style: .plain,
+            target: self,
+            action: #selector(debugTap)
+        )
+        navigationItem.rightBarButtonItems?.append(debugButton)
+    }
+    
+    @objc func debugTap() {
+        if let cid = channelController.cid {
+            (navigationController?.viewControllers.first as? ChatChannelListVC)?.router.didTapMoreButton(for: cid)
         }
     }
 }
