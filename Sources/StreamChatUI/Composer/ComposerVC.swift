@@ -188,6 +188,9 @@ open class _ComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
         channelController?.channel?.config
     }
 
+    /// A component that helps checking for typing suggestions. Ex: commands, mentions, etc..
+    public var typingSuggestionChecker = TypingSuggestionChecker()
+
     /// The view of the composer.
     open private(set) lazy var composerView: _ComposerView<ExtraData> = components
         .messageComposerView.init()
@@ -524,53 +527,31 @@ open class _ComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
     /// - Parameter textView: The text view of the message input view where the user is typing.
     /// - Returns: A tuple with the potential user mention and the position of the mention so it can be autocompleted.
     open func typingMention(in textView: UITextView) -> (String, NSRange)? {
-        let text = textView.text as NSString
-        let caretLocation = textView.selectedRange.location
-        let firstMentionSymbolBeforeCaret = text.rangeOfCharacter(
-            from: CharacterSet(charactersIn: mentionSymbol),
-            options: .backwards,
-            range: NSRange(location: 0, length: caretLocation)
+        let suggestionOptions = TypingSuggestionOptions(
+            symbol: mentionSymbol
         )
-        guard firstMentionSymbolBeforeCaret.location != NSNotFound else {
+
+        guard let typingSuggestion = typingSuggestionChecker(
+            in: textView,
+            options: suggestionOptions
+        ) else {
             return nil
         }
 
-        let charIndexBeforeMentionSymbol = firstMentionSymbolBeforeCaret.lowerBound - 1
-        let charRangeBeforeMentionSymbol = NSRange(location: charIndexBeforeMentionSymbol, length: 1)
-        if charIndexBeforeMentionSymbol >= 0, text.substring(with: charRangeBeforeMentionSymbol) != " " {
-            return nil
-        }
-        
-        let mentionStart = firstMentionSymbolBeforeCaret.upperBound
-        let mentionEnd = caretLocation
-        guard mentionEnd >= mentionStart else {
-            return nil
-        }
-
-        let mentionRange = NSRange(location: mentionStart, length: mentionEnd - mentionStart)
-        let mention = text.substring(with: mentionRange)
-        guard !mention.contains(" ") else {
-            return nil
-        }
-
-        return (mention, mentionRange)
+        return (typingSuggestion.text, typingSuggestion.location)
     }
 
     /// Returns a potential command in case the user is currently typing a command.
     /// - Parameter textView: The text view of the message input view where the user is typing.
     /// - Returns: A string of the corresponding potential command.
     open func typingCommand(in textView: UITextView) -> String? {
-        guard let text = textView.text else { return nil }
+        let suggestionOptions = TypingSuggestionOptions(
+            symbol: commandSymbol,
+            shouldTriggerOnlyAtStart: true
+        )
 
-        let trimmedText = text.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard trimmedText.first == Character(commandSymbol) else { return nil }
-
-        let trimmedTextWithoutSymbol = trimmedText.dropFirst()
-        guard let potentialCommand = trimmedTextWithoutSymbol.split(separator: " ").first else {
-            return String(trimmedTextWithoutSymbol)
-        }
-
-        return String(potentialCommand)
+        let typingSuggestion = typingSuggestionChecker(in: textView, options: suggestionOptions)
+        return typingSuggestion?.text
     }
 
     /// Shows the command suggestions for the potential command the current user is typing.
