@@ -204,6 +204,7 @@ private class MessageSendingQueue<ExtraData: ExtraDataTypes> {
             let messageDTO = try $0.saveMessage(payload: message, for: cid)
             if messageDTO.localMessageState == .sending {
                 messageDTO.localMessageState = nil
+                messageDTO.locallyCreatedAt = nil
             }
         }, completion: {
             if let error = $0 {
@@ -221,7 +222,7 @@ private class MessageSendingQueue<ExtraData: ExtraDataTypes> {
             }
         }, completion: {
             if let error = $0 {
-                log.error("Error changin localMessageState message with id \(id) to `sendingFailed`: \(error)")
+                log.error("Error changing localMessageState message with id \(id) to `sendingFailed`: \(error)")
             }
             completion()
         })

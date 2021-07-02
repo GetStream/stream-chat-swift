@@ -236,12 +236,15 @@ class MessageSender_Tests: StressTestCase {
         // Wait for the API call to be initiated
         AssertAsync.willBeTrue(apiClient.request_endpoint != nil)
         
-        // Simulate successfull API response
+        // Simulate successful API response
         let callback = apiClient.request_completion as! (Result<MessagePayload<ExtraData>.Boxed, Error>) -> Void
         callback(.success(.init(message: .dummy(messageId: message1Id, authorUserId: .anonymous))))
         
-        // Check the state is eventually changed to `nil`
-        AssertAsync.willBeEqual(database.viewContext.message(id: message1Id)?.localMessageState, nil)
+        // Check the temporary state is erased
+        AssertAsync {
+            Assert.willBeEqual(self.database.viewContext.message(id: message1Id)?.localMessageState, nil)
+            Assert.willBeEqual(self.database.viewContext.message(id: message1Id)?.locallyCreatedAt, nil)
+        }
     }
     
     func test_sender_changesMessageStates_whenSendingFails() throws {
@@ -268,8 +271,11 @@ class MessageSender_Tests: StressTestCase {
         let callback = apiClient.request_completion as! (Result<MessagePayload<ExtraData>.Boxed, Error>) -> Void
         callback(.failure(TestError()))
         
-        // Check the state is eventually changed to `sendingFailed`
-        AssertAsync.willBeEqual(database.viewContext.message(id: message1Id)?.localMessageState, .sendingFailed)
+        // Check the state is eventually changed to `sendingFailed` but keeps the `locallyCreatedAt` value
+        AssertAsync {
+            Assert.willBeEqual(self.database.viewContext.message(id: message1Id)?.localMessageState, .sendingFailed)
+            Assert.willNotBeNil(self.database.viewContext.message(id: message1Id)?.locallyCreatedAt)
+        }
     }
     
     func test_senderSendsMessage_inTheOrderTheyWereCreatedLocally() throws {
