@@ -66,6 +66,7 @@ protocol MessageDatabaseSession {
         showReplyInChannel: Bool,
         isSilent: Bool,
         quotedMessageId: MessageId?,
+        createdAt: Date?,
         extraData: ExtraData
     ) throws -> MessageDTO
     
@@ -135,6 +136,7 @@ extension MessageDatabaseSession {
             showReplyInChannel: false,
             isSilent: isSilent,
             quotedMessageId: quotedMessageId,
+            createdAt: nil,
             extraData: extraData
         )
     }

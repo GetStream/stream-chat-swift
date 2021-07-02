@@ -151,6 +151,7 @@ class MessageUpdater<ExtraData: ExtraDataTypes>: Worker {
                 showReplyInChannel: showReplyInChannel,
                 isSilent: isSilent,
                 quotedMessageId: quotedMessageId,
+                createdAt: nil,
                 extraData: extraData
             )
             

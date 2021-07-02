@@ -82,6 +82,7 @@ extension DatabaseSessionMock {
         showReplyInChannel: Bool,
         isSilent: Bool,
         quotedMessageId: MessageId?,
+        createdAt: Date?,
         extraData: ExtraData
     ) throws -> MessageDTO where ExtraData: MessageExtraData {
         try throwErrorIfNeeded()
@@ -98,6 +99,7 @@ extension DatabaseSessionMock {
             showReplyInChannel: showReplyInChannel,
             isSilent: isSilent,
             quotedMessageId: quotedMessageId,
+            createdAt: createdAt,
             extraData: extraData
         )
     }

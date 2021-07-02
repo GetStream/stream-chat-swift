@@ -51,7 +51,7 @@ class MessageDTO: NSManagedObject {
         
         prepareDefaultSortKeyIfNeeded()
     }
-    
+
     /// Makes sure the `defaultSortingKey` value is computed and set.
     fileprivate func prepareDefaultSortKeyIfNeeded() {
         let newSortingKey = locallyCreatedAt ?? createdAt
@@ -279,6 +279,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         showReplyInChannel: Bool,
         isSilent: Bool,
         quotedMessageId: MessageId?,
+        createdAt: Date?,
         extraData: ExtraData
     ) throws -> MessageDTO {
         guard let currentUserDTO = currentUser else {
@@ -291,10 +292,16 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         
         let message = MessageDTO.loadOrCreate(id: .newUniqueId, context: self)
         
-        let createdDate = Date()
-        message.createdAt = createdDate
-        message.locallyCreatedAt = createdDate
-        message.updatedAt = createdDate
+        // We make `createdDate` 0.1 second bigger than Channel's most recent message
+        // so if the local time is not in sync, the message will still appear in the correct position
+        // even if the sending fails
+        let createdAt = createdAt ?? (max(channelDTO.lastMessageAt?.addingTimeInterval(0.1) ?? Date(), Date()))
+        message.locallyCreatedAt = createdAt
+        // It's fine that we're saving an incorrect value for `createdAt` and `updatedAt`
+        // When message is successfully sent, backend sends the actual dates
+        // and these are set correctly in `saveMessage`
+        message.createdAt = createdAt
+        message.updatedAt = createdAt
 
         if let pinning = pinning {
             try pin(message: message, pinning: pinning)
@@ -330,8 +337,9 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         message.user = currentUserDTO.user
         message.channel = channelDTO
         
-        channelDTO.lastMessageAt = createdDate
-        channelDTO.defaultSortingAt = createdDate
+        let newLastMessageAt = max(channelDTO.lastMessageAt ?? createdAt, createdAt)
+        channelDTO.lastMessageAt = newLastMessageAt
+        channelDTO.defaultSortingAt = newLastMessageAt
         
         if let parentMessageId = parentMessageId,
            let parentMessageDTO = MessageDTO.load(id: parentMessageId, context: self) {
@@ -389,7 +397,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
             return user
         })
 
-        // If user participated in thread, but deleted message later, we needs to get rid of it if backends does
+        // If user participated in thread, but deleted message later, we need to get rid of it if backends does
         dto.threadParticipants = try Set(
             payload.threadParticipants.map { try saveUser(payload: $0) }
         )

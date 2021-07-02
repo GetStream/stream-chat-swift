@@ -135,6 +135,7 @@ class ChannelUpdater<ExtraData: ExtraDataTypes>: Worker {
                 showReplyInChannel: false,
                 isSilent: isSilent,
                 quotedMessageId: quotedMessageId,
+                createdAt: nil,
                 extraData: extraData
             )
             
