@@ -39,7 +39,24 @@ final class iMessageChatChannelListViewController: ChatChannelListVC {
         
         view.directionalLayoutMargins.leading = 24
     }
-    
+
+    lazy var createChannelButton: UIButton = {
+        let button = UIButton()
+        button.setImage(UIImage(named: "square.and.pencil")!, for: .normal)
+        return button
+    }()
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+
+        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: createChannelButton)
+        createChannelButton.addTarget(self, action: #selector(didTapCreateNewChannel), for: .touchUpInside)
+    }
+
+    @objc func didTapCreateNewChannel(_ sender: Any) {
+        // TODO: Implement
+    }
+
     @available(*, unavailable)
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")

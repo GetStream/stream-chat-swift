@@ -9,8 +9,8 @@ import SwiftUI
 struct MessengerChatChannelList: View {
     var body: some View {
         NavigationView {
-            ChatChannelList(
-                controller: ChatClient
+            ChatChannelListVC.asView(
+                ChatClient
                     .shared
                     .channelListController(
                         query: ChannelListQuery(

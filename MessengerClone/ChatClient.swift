@@ -14,7 +14,6 @@ extension ChatClient {
         var components = Components()
         
         components.messageListVC = MessengerChatChannelViewController.self
-        appearance.images.newChannel = UIImage(systemName: "square.and.pencil")!
         
         components.channelContentView = ChatChannelListItemView.SwiftUIWrapper<MessengerChatChannelListItem>.self
                 

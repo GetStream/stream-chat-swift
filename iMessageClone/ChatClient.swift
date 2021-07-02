@@ -16,7 +16,6 @@ extension ChatClient {
         components.channelContentView = iMessageChatChannelListItemView.self
         components.channelCellSeparator = iMessageCellSeparatorView.self
 
-        appearance.images.newChannel = UIImage(systemName: "square.and.pencil")!
         components.messageListVC = iMessageChatChannelViewController.self
         components.messageComposerVC = iMessageChatComposerViewController.self
         components.messageComposerView = iMessageChatMessageComposerView.self
