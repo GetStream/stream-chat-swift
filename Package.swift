@@ -602,7 +602,6 @@ var streamChatUIFilesExcluded: [String] { [
     "CommonViews/Attachments/ImageAttachments/__Snapshots__/ChatImageAttachmentsCollectionView_Tests/test_defaultAppearance.default-dark.png",
     "CommonViews/Attachments/ImageAttachments/__Snapshots__/ChatImageAttachmentsCollectionView_Tests/test_appearanceCustomization_usingComponents.default-light.png",
     "CommonViews/Attachments/ImageAttachments/__Snapshots__/ChatImageAttachmentsCollectionView_Tests/test_appearanceCustomization_usingSubclassing.default-light.png",
-    "CommonViews/CreateChatChannelButton/CreateChatChannelButton_Tests.swift",
     "CommonViews/CreateChatChannelButton/__Snapshots__/CreateChatChannelButton_Tests/test_isDisabled.default-light.png",
     "CommonViews/CreateChatChannelButton/__Snapshots__/CreateChatChannelButton_Tests/test_defaultAppearance.default-light.png",
     "CommonViews/CreateChatChannelButton/__Snapshots__/CreateChatChannelButton_Tests/test_isDisabled.default-dark.png",

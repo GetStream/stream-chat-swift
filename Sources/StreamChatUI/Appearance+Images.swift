@@ -42,7 +42,6 @@ public extension Appearance {
         public var readByAll: UIImage = UIImage(named: "checkmark_double", in: .streamChatUI)!
         public var confirmCheckmark: UIImage = UIImage(named: "checkmark_confirm", in: .streamChatUI)!
         public var bigConfirmCheckmark: UIImage = UIImage(named: "checkmark_confirm_big", in: .streamChatUI)!
-        public var newChannel: UIImage = UIImage(named: "pencil", in: .streamChatUI)!
         public var folder: UIImage = UIImage(named: "folder", in: .streamChatUI)!
         public var restart: UIImage = UIImage(named: "restart", in: .streamChatUI)!
         public var download: UIImage = {

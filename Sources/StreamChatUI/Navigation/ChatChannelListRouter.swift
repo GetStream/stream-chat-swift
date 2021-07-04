@@ -39,16 +39,6 @@ open class _ChatChannelListRouter<ExtraData: ExtraDataTypes>:
         navController.show(vc, sender: self)
     }
 
-    /// Presents the user with the new channel creation flow.
-    open func showCreateNewChannelFlow() {
-        log.error(
-            """
-            Showing the new channel flow is not handled. Subclass `ChatChannelListRouter` and provide your \
-            implementation of the `\(#function)` method.
-            """
-        )
-    }
-    
     /// Called when a user tapped `More` swipe action on a channel
     ///
     /// - Parameter cid: `ChannelId` of a channel swipe acton was used on

@@ -41,11 +41,6 @@ open class _ChatChannelListVC<ExtraData: ExtraDataTypes>: _ViewController,
         UICollectionView(frame: .zero, collectionViewLayout: collectionViewLayout)
             .withoutAutoresizingMaskConstraints
     
-    /// The `UIButton` instance used for navigating to new channel screen creation,
-    open private(set) lazy var createChannelButton: UIButton = components
-        .createChannelButton.init()
-        .withoutAutoresizingMaskConstraints
-    
     /// The `CurrentChatUserAvatarView` instance used for displaying avatar of the current user.
     open private(set) lazy var userAvatarView: _CurrentChatUserAvatarView<ExtraData> = components
         .currentUserAvatarView.init()
@@ -82,8 +77,6 @@ open class _ChatChannelListVC<ExtraData: ExtraDataTypes>: _ViewController,
         
         userAvatarView.controller = controller.client.currentUserController()
         userAvatarView.addTarget(self, action: #selector(didTapOnCurrentUserAvatar), for: .touchUpInside)
-        
-        createChannelButton.addTarget(self, action: #selector(didTapCreateNewChannel), for: .touchUpInside)
     }
     
     override open func setUpLayout() {
@@ -99,8 +92,7 @@ open class _ChatChannelListVC<ExtraData: ExtraDataTypes>: _ViewController,
         
         navigationItem.backButtonTitle = ""
         navigationItem.leftBarButtonItem = UIBarButtonItem(customView: userAvatarView)
-        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: createChannelButton)
-        
+
         collectionView.backgroundColor = appearance.colorPalette.background
 
         if let flowLayout = collectionViewLayout as? ListCollectionViewLayout {
@@ -167,10 +159,6 @@ open class _ChatChannelListVC<ExtraData: ExtraDataTypes>: _ViewController,
         router.showCurrentUserProfile()
     }
     
-    @objc open func didTapCreateNewChannel(_ sender: Any) {
-        router.showCreateNewChannelFlow()
-    }
-
     override open func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
         collectionViewLayout.invalidateLayout()

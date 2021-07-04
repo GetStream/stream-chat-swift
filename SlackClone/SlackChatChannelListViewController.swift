@@ -6,6 +6,14 @@ import StreamChat
 import StreamChatUI
 import UIKit
 
+class CustomActionsVC: ChatMessageActionsVC {
+    override var messageActions: [ChatMessageActionItem] {
+        var actions = super.messageActions
+        actions.removeAll { $0 is ThreadReplyActionItem }
+        return actions
+    }
+}
+
 final class SlackChatChannelListViewController: ChatChannelListVC {
     init() {
         super.init(nibName: nil, bundle: nil)
@@ -25,13 +33,14 @@ final class SlackChatChannelListViewController: ChatChannelListVC {
     override var preferredStatusBarStyle: UIStatusBarStyle {
         .lightContent
     }
-    
-    override func setUp() {
-        super.setUp()
-        
-        createChannelButton.addTarget(self, action: #selector(didTapCreateNewChannel), for: .touchUpInside)
-    }
-    
+
+    /// The `UIButton` instance used for navigating to new channel screen creation,
+    lazy var createChannelButton: UIButton = {
+        let button = UIButton()
+        button.setImage(UIImage(named: "new_message")!, for: .normal)
+        return button
+    }()
+
     override func setUpAppearance() {
         super.setUpAppearance()
         

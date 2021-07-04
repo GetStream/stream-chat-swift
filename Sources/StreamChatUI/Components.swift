@@ -13,9 +13,6 @@ public struct _Components<ExtraData: ExtraDataTypes> {
     /// The view used as a navigation bar title view for some view controllers.
     public var navigationTitleView: TitleContainerView.Type = TitleContainerView.self
 
-    /// A button used for creating new channels.
-    public var createChannelButton: UIButton.Type = CreateChatChannelButton.self
-
     /// A view used as an online activity indicator (online/offline).
     public var onlineIndicatorView: (UIView & MaskProviding).Type = OnlineIndicatorView.self
 
