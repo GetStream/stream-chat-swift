@@ -585,7 +585,7 @@ private extension _ChatMessage {
         $_author = ({ dto.user.asModel() }, dto.managedObjectContext)
         $_attachments = ({
             dto.attachments
-                .compactMap { $0.asAnyModel() }
+                .map { $0.asAnyModel() }
                 .sorted { $0.id.index < $1.id.index }
         }, dto.managedObjectContext)
         

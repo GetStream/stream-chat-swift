@@ -55,7 +55,7 @@ class QuotedChatMessageView_Tests: XCTestCase {
             id: .unique,
             title: "Data.csv",
             assetURL: .unique(),
-            file: AttachmentFile(type: .csv, size: 0, mimeType: nil),
+            file: AttachmentFile(type: .csv, size: 0, mimeType: "text/csv"),
             localState: nil
         )
 

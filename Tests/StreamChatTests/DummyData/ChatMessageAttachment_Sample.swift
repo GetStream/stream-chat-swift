@@ -10,7 +10,7 @@ extension AnyChatMessageAttachment {
     static func sample(
         id: AttachmentId = .unique,
         type: AttachmentType = .image,
-        payload: Any = "payload",
+        payload: Data = "payload".data(using: .utf8)!,
         uploadingState: AttachmentUploadingState? = nil
     ) -> AnyChatMessageAttachment {
         AnyChatMessageAttachment(

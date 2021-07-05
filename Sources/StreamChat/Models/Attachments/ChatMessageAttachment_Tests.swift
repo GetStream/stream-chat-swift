@@ -29,7 +29,11 @@ final class ChatMessageAttachment_Tests: XCTestCase {
         // Assert type-erased attachment has correct values.
         XCTAssertEqual(typeErasedAttachment.id, fileAttachment.id)
         XCTAssertEqual(typeErasedAttachment.type, fileAttachment.type)
-        XCTAssertEqual(typeErasedAttachment.payload as! FileAttachmentPayload, fileAttachment.payload)
+        XCTAssertEqual(
+            try JSONDecoder.stream
+                .decode(FileAttachmentPayload.self, from: typeErasedAttachment.payload),
+            fileAttachment.payload
+        )
         XCTAssertEqual(typeErasedAttachment.uploadingState, fileAttachment.uploadingState)
     }
 
@@ -55,7 +59,7 @@ final class ChatMessageAttachment_Tests: XCTestCase {
         let fileAttachmentPayload = FileAttachmentPayload(
             title: .unique,
             assetURL: .unique(),
-            file: .init(type: .csv, size: 256, mimeType: .unique)
+            file: .init(type: .csv, size: 256, mimeType: "text/csv")
         )
 
         // Create attachment with file payload but `unknown` type.
@@ -86,12 +90,12 @@ final class ChatMessageAttachment_Tests: XCTestCase {
         let joke = Joke(joke: .unique)
 
         // Create attachment with raw joke data and `unknown` type.
-        let typeErasedAttachment = _ChatMessageAttachment(
+        let typeErasedAttachment = AnyChatMessageAttachment(
             id: .unique,
             type: .unknown,
             payload: try JSONEncoder().encode(joke),
             uploadingState: try .mock()
-        ).asAnyAttachment
+        )
 
         // Assert we are able to decode joke attachment in the given conditions.
         let jokeAttachment: _ChatMessageAttachment<Joke> = .init(

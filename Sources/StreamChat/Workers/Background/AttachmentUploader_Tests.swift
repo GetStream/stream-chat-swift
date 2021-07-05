@@ -89,7 +89,7 @@ final class AttachmentUploader_Tests: StressTestCase {
             switch envelope.type {
             case .image:
                 var imageModel: ChatMessageImageAttachment? {
-                    attachment.asAnyModel()?.attachment(payloadType: ImageAttachmentPayload.self)
+                    attachment.asAnyModel().attachment(payloadType: ImageAttachmentPayload.self)
                 }
                 AssertAsync {
                     // Assert attachment state eventually becomes `.uploaded`.
@@ -99,7 +99,7 @@ final class AttachmentUploader_Tests: StressTestCase {
                 }
             case .file:
                 var fileModel: ChatMessageFileAttachment? {
-                    attachment.asAnyModel()?.attachment(payloadType: FileAttachmentPayload.self)
+                    attachment.asAnyModel().attachment(payloadType: FileAttachmentPayload.self)
                 }
                 AssertAsync {
                     // Assert attachment state eventually becomes `.uploaded`.
@@ -109,7 +109,7 @@ final class AttachmentUploader_Tests: StressTestCase {
                 }
             case .video:
                 var videoModel: ChatMessageVideoAttachment? {
-                    attachment.asAnyModel()?.attachment(payloadType: VideoAttachmentPayload.self)
+                    attachment.asAnyModel().attachment(payloadType: VideoAttachmentPayload.self)
                 }
                 AssertAsync {
                     // Assert attachment state eventually becomes `.uploaded`.
