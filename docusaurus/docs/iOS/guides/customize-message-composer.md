@@ -170,9 +170,6 @@ class iMessageComposerVC: ComposerVC {
 }
 ```
 
-### Adding a new suggestion type
-TODO: Give an example of adding an emoji suggestion?
-
 ### Changing the suggestions UI
 The UI SDK provides a `ChatSuggestionsVC` component responsible for showing user suggestions and commands suggestions.
 
