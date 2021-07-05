@@ -61,7 +61,8 @@ final class AnyAttachmentPayload_Tests: XCTestCase {
             .init(
                 title: url.lastPathComponent,
                 assetURL: url,
-                file: try AttachmentFile(url: url)
+                file: try AttachmentFile(url: url),
+                extraData: [:]
             )
         )
     }

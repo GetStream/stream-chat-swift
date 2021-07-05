@@ -145,6 +145,7 @@ var streamChatSourcesExcluded: [String] { [
     "Models/Attachments/AttachmentTypes_Tests.swift",
     "Models/Attachments/AttachmentId_Tests.swift",
     "Models/Attachments/AnyAttachmentPayload_Tests.swift",
+    "Models/Attachments/FileAttachmentPayload_Tests.swift",
     "Models/Attachments/VideoAttachmentPayload_Tests.swift",
     "Models/Attachments/ChatMessageAttachment_Tests.swift",
     "Models/Attachments/ImageAttachmentPayload_Tests.swift",

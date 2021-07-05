@@ -59,7 +59,8 @@ final class ChatMessageAttachment_Tests: XCTestCase {
         let fileAttachmentPayload = FileAttachmentPayload(
             title: .unique,
             assetURL: .unique(),
-            file: .init(type: .csv, size: 256, mimeType: "text/csv")
+            file: .init(type: .csv, size: 256, mimeType: "text/csv"),
+            extraData: nil
         )
 
         // Create attachment with file payload but `unknown` type.
