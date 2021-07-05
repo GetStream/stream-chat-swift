@@ -18,8 +18,4 @@ class ChatChannelListRouter_Mock<ExtraData: ExtraDataTypes>: _ChatChannelListRou
     override open func showMessageList(for cid: ChannelId) {
         openChat_channelId = cid
     }
-        
-    override open func showCreateNewChannelFlow() {
-        openCreateNewChannelCalled = true
-    }
 }
