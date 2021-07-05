@@ -679,7 +679,7 @@ class ChatClient_Tests: StressTestCase {
         }
         
         client.connectUser(
-            connectionInfoProvider: provider
+            userInfoProvider: provider
         )
         XCTAssertTrue(testEnv.clientUpdater!.reloadUserIfNeeded_called)
         

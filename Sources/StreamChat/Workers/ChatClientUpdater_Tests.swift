@@ -218,41 +218,6 @@ final class ChatClientUpdater_Tests_Tests: StressTestCase {
         }
     }
 
-    // MARK: Reload User
-
-    func test_reloadUserIfNeeded_currentUser_sameToken_happyPath() throws {
-        // Create an active client with user session.
-        let client = mockClientWithUserSession()
-        let token = Token.unique(userId: .unique)
-        client.connectUser(token: token)
-
-        // Create an updater.
-        let updater = ChatClientUpdater<ExtraData>(client: client)
-
-        // Save current background worker ids.
-        let oldWorkderIDs = client.testBackgroundWorkerIDs
-
-        // Call `reloadUserIfNeeded` without changing a token provider
-        // and synchronously get the result since no job should be done.
-        let error = try waitFor { completion in
-            updater.reloadUserIfNeeded(
-                userConnectionProvider: .static(token),
-                completion: completion
-            )
-        }
-
-        // Assert error is nil.
-        XCTAssertNil(error)
-        // Assert `disconnect` was not called.
-        XCTAssertEqual(client.mockWebSocketClient.disconnect_calledCounter, 0)
-        // Assert `completeTokenWaiters` was not called since token is not changed.
-        XCTAssertFalse(client.completeTokenWaiters_called)
-        // Assert background workers stay the same.
-        XCTAssertEqual(client.testBackgroundWorkerIDs, oldWorkderIDs)
-        // Assert database is not flushed.
-        XCTAssertFalse(client.mockDatabaseContainer.removeAllData_called)
-    }
-
     func test_reloadUserIfNeeded_happyPaths() throws {
         struct Options {
             let initialToken: Token
