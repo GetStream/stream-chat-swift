@@ -112,7 +112,7 @@ public extension AttachmentType {
 
 /// An attachment file description.
 public struct AttachmentFile: Codable, Hashable {
-    private enum CodingKeys: String, CodingKey {
+    enum CodingKeys: String, CodingKey, CaseIterable {
         case mimeType = "mime_type"
         case size = "file_size"
     }
