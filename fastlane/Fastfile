@@ -110,6 +110,7 @@ lane :match_me do |options|
         "io.getstream.iOS.iMessageClone",
         "io.getstream.iOS.SlackClone",
         "io.getstream.iOS.MessengerClone",
+        "io.getstream.iOS.YouTubeClone",
       ],
       readonly: readonly,
       force_for_new_devices: !is_ci
@@ -211,6 +212,7 @@ lane :testflight_build do
         "io.getstream.iOS.iMessageClone",
         "io.getstream.iOS.SlackClone",
         "io.getstream.iOS.MessengerClone",
+        "io.getstream.iOS.YouTubeClone",
       ],
       readonly: true
     )
@@ -446,6 +448,11 @@ end
 desc "Builds MessengerClone app"
 lane :build_messenger_clone do |options|
   build_example_app("MessengerClone", options)
+end
+
+desc "Builds YouTubeClone app"
+lane :build_youtube_clone do |options|
+  build_example_app("YouTubeClone", options)
 end
 
 def build_example_app(scheme, options)
