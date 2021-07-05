@@ -7,6 +7,10 @@ import StreamChatUI
 import UIKit
 
 final class iMessageComposerVC: ComposerVC {
+    override var isCommandsEnabled: Bool {
+        false
+    }
+
     var iMessageComposerView: iMessageComposerView {
         composerView as! iMessageComposerView
     }

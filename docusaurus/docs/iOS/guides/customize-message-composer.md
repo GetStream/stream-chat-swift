@@ -8,16 +8,19 @@ import ComponentsNote from '../common-content/components-note.md'
 The `ComposerVC` is the component responsible to create new messages or change existing messages. The composer belongs to the `ChatVC` component that integrates the message list and the composer in one view. But if you are not using our `ChatVC` you can use the composer component in isolation with your own chat view as well. The `ComposerVC` manages all the logic and actions of the `ComposerView`, where the latter is only responsible for the composer's layout.
 
 ## How to change the composer layout
-Since the `ComposerView` is responsible for the composer's layout, if you want to change the styling, the position of the views, removing views or adding new ones, you need to override the `ComposerView`. Let's go through an example of customizing the composer to look like the iMessage app:
+Since the `ComposerView` is responsible for the composer's layout, if you want to change the styling, the position of the views, removing views or adding new ones, you need to override the `ComposerView`. Let's go through an example of customizing the composer to look like the iMessage app. The iMessage's composer is quite different than the composer that comes with the SDK: there is only one button to add pictures/videos and the send button is inside the input text container.
+
+| Before  | After |
+| ------------- | ------------- |
+| <img src={require("../assets/composer-imessage-ui-before.png").default}/> | <img src={require("../assets/composer-imessage-ui-after.png").default}/> |
+
+After changing the layout through the following steps you should have the result of the picture above.
 
 First thing we need to do is to subclass the `ComposerView`:
 ```swift
 class iMessageComposerView: ComposerView {
     override func setUpLayout() {
         super.setUpLayout()
-
-        // Remove the commands button, iMessage doesn't have it
-        leadingContainer.removeArrangedSubview(commandsButton)
 
         // Move the send button from the trailing container to input container
         trailingContainer.removeArrangedSubview(sendButton)
@@ -42,24 +45,30 @@ class iMessageComposerView: ComposerView {
     }
 }
 ```
+The Composer is built with multiple `ContainerStackView`'s, which you can read more about them [here](../customization/custom-components#setuplayout). This makes it very easy to change the Composer layout since it is just a question moving/remove/adding views from different containers. Here we move the `sendButton` from the `trailingContainer` to the `inputMessageView.inputTextContainer` so that it stays inside the input view.
 
-Then, we need to replace the default composer with our custom subclass:
+To remove the commands button, we disable the commands feature by subclassing `ComposerVC` and overriding `isCommandsEnabled` property, which can also be disabled by the Stream's Dashboard.
+```swift
+class iMessageComposerVC: ComposerVC {
+
+    override var isCommandsEnabled: Bool {
+        false
+    }
+}
+```
+
+Then, we need to replace the default components with our custom ones:
 ```swift
 Components.default.messageComposerView = iMessageComposerView.self
+Components.default.messageComposerVC = iMessageComposerVC.self
 ```
 <ComponentsNote/>
 
-Finally, we change the attachments button icon:
+Finally, we replace the default attachments button icon with a camera icon:
 ```swift
 appearance.images.openAttachments = UIImage(systemName: "camera.fill")!.withTintColor(.systemBlue)
 ```
 <ThemingNote/>
-
-| Before  | After |
-| ------------- | ------------- |
-| <img src={require("../assets/composer-imessage-ui-before.png").default}/> | <img src={require("../assets/composer-imessage-ui-after.png").default}/> |
-
-The Composer is built with multiple `ContainerStackView`'s, which you can read more about them [here](../customization/custom-components#setuplayout). This makes it very easy to change the Composer layout since it is just a question moving/remove/adding views from different containers. In this example, we remove the `commandsButton` since the iMessage doesn't have it at all, and then we move the `sendButton` from the `trailingContainer` to the `inputTextContainer`. As a last touch, we replace the attachments button icon from a clip to a camera, to make it look more iMessage-like.
 
 ## How to add a new composer action
 All the actions triggered by the Composer buttons are wired in the `ComposerVC.setUp()` lifecycle. When adding new buttons it is possible to add new actions by overriding this function. Let's pick the iMessage example and add an emoji button to the composer to open an Emoji picker.

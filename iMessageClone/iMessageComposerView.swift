@@ -17,9 +17,6 @@ final class iMessageComposerView: ComposerView {
     override func setUpLayout() {
         super.setUpLayout()
 
-        // Remove the commands button, iMessage doesn't have it
-        leadingContainer.removeArrangedSubview(commandsButton)
-
         // Move the send button from the trailing container to input container
         trailingContainer.removeArrangedSubview(sendButton)
         inputMessageView.inputTextContainer.addArrangedSubview(sendButton)

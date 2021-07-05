@@ -177,6 +177,16 @@ open class _ComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
     /// A symbol that is used to recognise when the user is typing a command.
     open var commandSymbol = "/"
 
+    /// A Boolean value indicating whether the commands are enabled.
+    open var isCommandsEnabled: Bool {
+        channelConfig?.commands.isEmpty == false
+    }
+
+    /// A Boolean value indicating whether the attachments are enabled.
+    open var isAttachmentsEnabled: Bool {
+        channelConfig?.uploadsEnabled == true
+    }
+
     /// A controller to search users and that is used to populate the mention suggestions.
     open var userSearchController: _ChatUserSearchController<ExtraData>!
 
@@ -299,9 +309,7 @@ open class _ComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
         composerView.sendButton.isEnabled = !content.isEmpty
         composerView.confirmButton.isEnabled = !content.isEmpty
 
-        let isAttachmentsEnabled = channelConfig?.uploadsEnabled == true
         let isAttachmentButtonHidden = !content.isEmpty || !isAttachmentsEnabled
-        let isCommandsEnabled = channelConfig?.commands.isEmpty == false
         let isCommandsButtonHidden = !content.isEmpty || !isCommandsEnabled
         let isShrinkInputButtonHidden = content.isEmpty || (!isCommandsEnabled && !isAttachmentsEnabled)
         
