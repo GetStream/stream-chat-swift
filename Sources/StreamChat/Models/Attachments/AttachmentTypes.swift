@@ -4,7 +4,7 @@
 
 import Foundation
 
-enum AttachmentCodingKeys: String, CodingKey {
+enum AttachmentCodingKeys: String, CodingKey, CaseIterable {
     case title
     case type
     case image
