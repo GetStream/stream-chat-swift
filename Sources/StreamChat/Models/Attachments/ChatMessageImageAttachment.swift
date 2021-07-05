@@ -22,6 +22,17 @@ public struct ImageAttachmentPayload: AttachmentPayload {
     public internal(set) var imageURL: URL
     /// A link to the image preview.
     public let imagePreviewURL: URL
+    /// An extra data.
+    let extraData: [String: RawJSON]?
+    
+    /// Decodes extra data as an instance of the given type.
+    /// - Parameter ofType: The type an extra data should be decoded as.
+    /// - Returns: Extra data of the given type or `nil` if decoding fails.
+    public func extraData<T: Decodable>(ofType: T.Type = T.self) -> T? {
+        extraData
+            .flatMap { try? JSONEncoder.stream.encode($0) }
+            .flatMap { try? JSONDecoder.stream.decode(T.self, from: $0) }
+    }
 }
 
 extension ImageAttachmentPayload: Equatable {}
@@ -30,10 +41,10 @@ extension ImageAttachmentPayload: Equatable {}
 
 extension ImageAttachmentPayload: Encodable {
     public func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: AttachmentCodingKeys.self)
-
-        try container.encodeIfPresent(title, forKey: .fallback)
-        try container.encodeIfPresent(imageURL, forKey: .imageURL)
+        var values = extraData ?? [:]
+        values[AttachmentCodingKeys.title.rawValue] = title.map { .string($0) }
+        values[AttachmentCodingKeys.imageURL.rawValue] = .string(imageURL.absoluteString)
+        try values.encode(to: encoder)
     }
 }
 
@@ -42,7 +53,7 @@ extension ImageAttachmentPayload: Encodable {
 extension ImageAttachmentPayload: Decodable {
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: AttachmentCodingKeys.self)
-
+        
         let imageURL = try
             container.decodeIfPresent(URL.self, forKey: .image) ??
             container.decodeIfPresent(URL.self, forKey: .imageURL) ??
@@ -57,7 +68,9 @@ extension ImageAttachmentPayload: Decodable {
         self.init(
             title: title,
             imageURL: imageURL,
-            imagePreviewURL: try container.decodeIfPresent(URL.self, forKey: .thumbURL) ?? imageURL
+            imagePreviewURL: try container
+                .decodeIfPresent(URL.self, forKey: .thumbURL) ?? imageURL,
+            extraData: try Self.decodeExtraData(from: decoder)
         )
     }
 }

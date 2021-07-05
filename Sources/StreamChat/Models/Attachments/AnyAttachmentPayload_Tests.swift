@@ -21,7 +21,8 @@ final class AnyAttachmentPayload_Tests: XCTestCase {
             .init(
                 title: url.lastPathComponent,
                 imageURL: url,
-                imagePreviewURL: url
+                imagePreviewURL: url,
+                extraData: [:]
             )
         )
     }
