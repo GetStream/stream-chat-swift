@@ -636,58 +636,6 @@ class ChatClient_Tests: StressTestCase {
         AssertAsync.willBeEqual(token, providedToken)
     }
     
-    func test_connectUserWithUserInfoOverload_setsTokenProvider_andInitiatesConnection() {
-        let client = ChatClient(
-            config: inMemoryStorageConfig,
-            workerBuilders: [],
-            eventWorkerBuilders: [],
-            environment: testEnv.environment
-        )
-        let token = Token.unique()
-        XCTAssert(testEnv.clientUpdater?.reloadUserIfNeeded_called != true)
-
-        client.connectUser(
-            userInfo: .init(name: nil, imageURL: nil, extraData: nil),
-            token: token
-        )
-        XCTAssertTrue(testEnv.clientUpdater!.reloadUserIfNeeded_called)
-        
-        var providedToken: Token?
-        client.userConnectionProvider?.getToken(client) { providedToken = try! $0.get() }
-        AssertAsync.willBeEqual(token, providedToken)
-    }
-    
-    func test_connectUserWithConnectionInfoProviderOverload_setsTokenProvider_andInitiatesConnection() {
-        let client = ChatClient(
-            config: inMemoryStorageConfig,
-            workerBuilders: [],
-            eventWorkerBuilders: [],
-            environment: testEnv.environment
-        )
-        let token = Token.unique()
-        XCTAssert(testEnv.clientUpdater?.reloadUserIfNeeded_called != true)
-
-        let provider: ((Result<(UserInfo<NoExtraData>, Token), Error>) -> Void) -> Void = { completion in
-            completion(
-                .success(
-                    (
-                        UserInfo(name: nil, imageURL: nil, extraData: nil),
-                        token
-                    )
-                )
-            )
-        }
-        
-        client.connectUser(
-            userInfoProvider: provider
-        )
-        XCTAssertTrue(testEnv.clientUpdater!.reloadUserIfNeeded_called)
-        
-        var providedToken: Token?
-        client.userConnectionProvider?.getToken(client) { providedToken = try! $0.get() }
-        AssertAsync.willBeEqual(token, providedToken)
-    }
-    
     func test_connectGuestUser_setsTokenProvider_andInitiatesConnection() {
         let client = ChatClient(
             config: inMemoryStorageConfig,
@@ -705,44 +653,6 @@ class ChatClient_Tests: StressTestCase {
             name: "John Doe",
             imageURL: .localYodaImage,
             extraData: .defaultValue
-        )
-        
-        XCTAssertTrue(testEnv.clientUpdater!.reloadUserIfNeeded_called)
-        
-        var providedToken: Token?
-        client.userConnectionProvider?.getToken(client) { providedToken = try! $0.get() }
-        
-        let expectedEndpoint: Endpoint<GuestUserTokenPayload<NoExtraData>> = .guestUserToken(
-            userId: userId,
-            name: name,
-            imageURL: .localYodaImage,
-            extraData: .defaultValue
-        )
-        AssertAsync.willBeEqual(AnyEndpoint(expectedEndpoint), client.mockAPIClient.request_endpoint)
-        
-        let tokenResult: Result<GuestUserTokenPayload<NoExtraData>, Error> = .success(
-            .init(user: .dummy(userId: userId, role: .guest), token: token)
-        )
-        client.mockAPIClient.test_simulateResponse(tokenResult)
-
-        AssertAsync.willBeEqual(token, providedToken)
-    }
-    
-    func test_connectGuestUserConnectionInfoOverload_setsTokenProvider_andInitiatesConnection() {
-        let client = ChatClient(
-            config: inMemoryStorageConfig,
-            workerBuilders: [],
-            eventWorkerBuilders: [],
-            environment: testEnv.environment
-        )
-        let token = Token.unique()
-        XCTAssert(testEnv.clientUpdater?.reloadUserIfNeeded_called != true)
-
-        let userId = UserId.unique
-        let name = "John Doe"
-        client.connectGuestUser(
-            userId: userId,
-            connectionInfo: .init(name: name, imageURL: .localYodaImage, extraData: nil)
         )
         
         XCTAssertTrue(testEnv.clientUpdater!.reloadUserIfNeeded_called)

@@ -331,44 +331,6 @@ public class _ChatClient<ExtraData: ExtraDataTypes> {
             completion: completion
         )
     }
-    
-    /// Connects authorized user
-    /// - Parameters:
-    ///   - connectionInfo: User info that is passed to the `connect` endpoint for user creation
-    ///   - token: Authorization token for the user.
-    ///   - completion: The completion that will be called once the **first** user session for the given token is setup.
-    public func connectUser(
-        userInfo: UserInfo<ExtraData>? = nil,
-        token: Token,
-        completion: ((Error?) -> Void)? = nil
-    ) {
-        connectUser(
-            name: userInfo?.name,
-            imageURL: userInfo?.imageURL,
-            extraData: userInfo?.extraData ?? .defaultValue,
-            token: token,
-            completion: completion
-        )
-    }
-    
-    /// Connects authorized user
-    /// - Parameters:
-    ///   - connectionInfo: User info that is passed to the `connect` endpoint for user creation
-    ///   - token: Authorization token for the user.
-    ///   - completion: The completion that will be called once the **first** user session for the given token is setup.
-    public func connectUser(
-        userInfoProvider: ((Result<(UserInfo<ExtraData>, Token), Error>) -> Void) -> Void,
-        completion: ((Error?) -> Void)? = nil
-    ) {
-        userInfoProvider { userInfo in
-            switch userInfo {
-            case let .success((info, token)):
-                connectUser(userInfo: info, token: token)
-            case let .failure(error):
-                completion?(error)
-            }
-        }
-    }
 
     /// Connects a guest user
     /// - Parameters:
@@ -397,25 +359,6 @@ public class _ChatClient<ExtraData: ExtraDataTypes> {
         )
     }
     
-    /// Connects a guest user
-    /// - Parameters:
-    ///   - userId: Guest user ID
-    ///   - connectionInfo: User info that is passed to the `connect` endpoint for user creation
-    ///   - completion: The completion that will be called once the **first** user session for the given token is setup.
-    public func connectGuestUser(
-        userId: String,
-        connectionInfo: UserInfo<ExtraData>? = nil,
-        completion: ((Error?) -> Void)? = nil
-    ) {
-        connectGuestUser(
-            userId: userId,
-            name: connectionInfo?.name,
-            imageURL: connectionInfo?.imageURL,
-            extraData: connectionInfo?.extraData ?? .defaultValue,
-            completion: completion
-        )
-    }
-    
     /// Connects anonymous user
     /// - Parameter completion: The completion that will be called once the **first** user session for the given token is setup.
     public func connectAnonymousUser(completion: ((Error?) -> Void)? = nil) {
@@ -425,7 +368,7 @@ public class _ChatClient<ExtraData: ExtraDataTypes> {
         )
     }
     
-    /// Disconnects the chat client the controller represents from the chat servers. No further updates from the servers
+    /// Disconnects the chat client from the chat servers. No further updates from the servers
     /// are received.
     public func disconnect() {
         clientUpdater.disconnect()
