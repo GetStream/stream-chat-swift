@@ -21,6 +21,69 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - `shouldConnectAutomatically` setting in `ChatConfig`, it now has no effect and all logic that used it now behaves like it was set to `true`.
 - It's now required to call one of the available `connect` methods on `ChatClient` after `ChatClient`'s instance is created in order to establish connection.
 
+  Migration tips:
+  ---
+  If you were doing:
+  ```
+  let client = ChatClient(config: config, tokenProvider: .static(token))
+  ```
+  Now you should do:
+  ```
+  let client = ChatClient(config: config)
+  client.connectUser(userInfo: .init(id: userId), token: token)
+  ```
+  ---
+  Guest users before:
+  ```
+  let client = ChatClient(
+    config: config,
+    tokenProvider: .guest(
+      userId: userId,
+      name: userName
+    )
+  )
+  ```
+  Now you should do:
+  ```
+  let client = ChatClient(config: config)
+  client.connectGuestUser(userInfo: .init(id: userId))
+  ```
+  ---
+  Anonymous users before:
+  ```
+  let client = ChatClient(config: config, tokenProvider: .anonymous)
+  ```
+  Now you should do:
+  ```
+  let client = ChatClient(config: config)
+  client.connectAnonymousUser()
+  ```
+  ---
+  If you use tokens that expire you probably do something like this:
+  ```
+  let client = ChatClient(
+    config: config,
+    tokenProvider: .closure { client, completion in
+      service.fetchToken { token in
+        completion(token)
+      }
+    }
+  )
+  ```
+  Now you should do:
+  ```
+  let client = ChatClient(config: config)
+  service.fetchToken { token in
+    client.connectUser(userInfo: .init(id: userId), token: token)
+  }
+  // `tokenProvider` property is used to reobtain a new token in case if the current one is expired
+  client.tokenProvider = { completion in
+    service.fetchToken { token in
+      completion(token)
+    }
+  }
+  ```
+
 ### 🐞 Fixed 
 - `ConnectionController` fires its `controllerDidChangeConnectionStatus` method only when the connection status actually changes [#1207](https://github.com/GetStream/stream-chat-swift/issues/1207)
 - Fix cancelled ephemeral (giphy) messages and deleted messages are visible in threads [#1238](https://github.com/GetStream/stream-chat-swift/issues/1238)
