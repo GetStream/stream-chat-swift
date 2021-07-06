@@ -5,7 +5,7 @@ title: Customize Message Composer
 import ThemingNote from '../common-content/theming-note.md'
 import ComponentsNote from '../common-content/components-note.md'
 
-The `ComposerVC` is the component responsible to create new messages or change existing messages. The composer belongs to the `ChatVC` component that integrates the message list and the composer in one view. But if you are not using our `ChatVC` you can use the composer component in isolation with your own chat view as well. The `ComposerVC` manages all the logic and actions of the `ComposerView`, where the latter is only responsible for the composer's layout.
+The `ComposerVC` is the component responsible to create new messages or change existing messages. The composer belongs to the `ChatMessageListVC` component that integrates the message list and the composer in one view. But if you are not using our `ChatMessageListVC` you can use the composer component in isolation with your own chat view as well. The `ComposerVC` manages all the logic and actions of the `ComposerView`, where the latter is only responsible for the composer's layout.
 
 ## How to change the composer layout
 Since the `ComposerView` is responsible for the composer's layout, if you want to change the styling, the position of the views, removing views or adding new ones, you need to override the `ComposerView`. Let's go through an example of customizing the composer to look like the iMessage app. The iMessage's composer is quite different than the composer that comes with the SDK: there is only one button to add pictures/videos and the send button is inside the input text container.
@@ -16,7 +16,7 @@ Since the `ComposerView` is responsible for the composer's layout, if you want t
 
 After changing the layout through the following steps you should have the result of the picture above.
 
-First thing we need to do is to subclass the `ComposerView`:
+First thing we need to do is to subclass the `ComposerView` and change it's layout. To have a better understand of how the `ComposerView`'s layout is structured it is recommended to read this page first, [here](../components/message-composer#composer-view).
 ```swift
 class iMessageComposerView: ComposerView {
     override func setUpLayout() {
