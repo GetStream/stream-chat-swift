@@ -59,7 +59,7 @@ open class _ComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
             text.isEmpty && attachments.isEmpty
         }
 
-        /// A boolean that check if the composer is replying in a thread
+        /// A boolean that checks if the composer is replying in a thread
         public var isInsideThread: Bool { threadMessage != nil }
         /// A boolean that checks if the composer recognised already a command.
         public var hasCommand: Bool { command != nil }
