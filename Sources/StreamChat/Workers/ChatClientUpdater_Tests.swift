@@ -272,7 +272,11 @@ final class ChatClientUpdater_Tests_Tests: StressTestCase {
             // Assert web-socket endpoint is valid.
             XCTAssertEqual(
                 client.webSocketClient?.connectEndpoint.map(AnyEndpoint.init),
-                AnyEndpoint(.webSocketConnect(userId: options.updatedToken.userId))
+                AnyEndpoint(
+                    .webSocketConnect(
+                        userInfo: UserInfo<NoExtraData>(id: options.updatedToken.userId)
+                    )
+                )
             )
             // Assert `completeTokenWaiters` was called.
             XCTAssertTrue(client.completeTokenWaiters_called)
@@ -442,7 +446,9 @@ final class ChatClientUpdater_Tests_Tests: StressTestCase {
 
         client.connectionId = .unique
         client.connectionStatus = .connected
-        client.webSocketClient?.connectEndpoint = .webSocketConnect(userId: token.userId)
+        client.webSocketClient?.connectEndpoint = .webSocketConnect(
+            userInfo: UserInfo<NoExtraData>(id: token.userId)
+        )
 
         client.createBackgroundWorkers()
 

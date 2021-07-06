@@ -4,7 +4,7 @@
 
 import Foundation
 
-struct WebSocketConnectPayload: Encodable {
+struct WebSocketConnectPayload<ExtraData: ExtraDataTypes>: Encodable {
     private enum CodingKeys: String, CodingKey {
         case userId = "user_id"
         case userDetails = "user_details"
@@ -12,16 +12,26 @@ struct WebSocketConnectPayload: Encodable {
     }
     
     let userId: UserId
-    let userDetails: UserWebSocketPayload
+    let userDetails: UserWebSocketPayload<ExtraData>
     let serverDeterminesConnectionId: Bool
 
-    init(userId: UserId) {
-        self.userId = userId
-        userDetails = UserWebSocketPayload(id: userId)
+    init(userInfo: UserInfo<ExtraData>) {
+        userId = userInfo.id
+        userDetails = UserWebSocketPayload<ExtraData>(userInfo: userInfo)
         serverDeterminesConnectionId = true
     }
 }
 
-struct UserWebSocketPayload: Encodable {
+struct UserWebSocketPayload<ExtraData: ExtraDataTypes>: Encodable {
     let id: String
+    let name: String?
+    let imageURL: URL?
+    let extraData: ExtraData.User
+    
+    init(userInfo: UserInfo<ExtraData>) {
+        id = userInfo.id
+        name = userInfo.name
+        imageURL = userInfo.imageURL
+        extraData = userInfo.extraData
+    }
 }

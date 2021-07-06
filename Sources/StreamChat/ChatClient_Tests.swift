@@ -556,7 +556,9 @@ class ChatClient_Tests: StressTestCase {
                     let chatClient = ChatClient(config: config)
                     chatClient.connectUser(token: .unique(userId: currentUserId))
 
-                    let expectedWebSocketEndpoint = AnyEndpoint(.webSocketConnect(userId: currentUserId))
+                    let expectedWebSocketEndpoint = AnyEndpoint(
+                        .webSocketConnect(userInfo: UserInfo<NoExtraData>(id: currentUserId))
+                    )
 
                     // 1. Check `currentUserId` is fetched synchronously
                     // 2. `webSocket` has correct connect endpoint
@@ -625,8 +627,7 @@ class ChatClient_Tests: StressTestCase {
         XCTAssert(testEnv.clientUpdater?.reloadUserIfNeeded_called != true)
 
         client.connectUser(
-            name: "John Doe",
-            imageURL: .unique(),
+            userInfo: .init(id: .unique, name: "John Doe", imageURL: .unique(), extraData: .defaultValue),
             token: token
         )
         XCTAssertTrue(testEnv.clientUpdater!.reloadUserIfNeeded_called)
@@ -650,9 +651,12 @@ class ChatClient_Tests: StressTestCase {
         let name = "John Doe"
         client.connectGuestUser(
             userId: userId,
-            name: "John Doe",
-            imageURL: .localYodaImage,
-            extraData: .defaultValue
+            userInfo: .init(
+                id: userId,
+                name: "John Doe",
+                imageURL: .localYodaImage,
+                extraData: .defaultValue
+            )
         )
         
         XCTAssertTrue(testEnv.clientUpdater!.reloadUserIfNeeded_called)

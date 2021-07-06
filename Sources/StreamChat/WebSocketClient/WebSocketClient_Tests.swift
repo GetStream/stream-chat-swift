@@ -40,7 +40,7 @@ class WebSocketClient_Tests: StressTestCase {
         VirtualTimeTimer.time = time
         
         endpoint = .webSocketConnect(
-            userId: .unique
+            userInfo: UserInfo<NoExtraData>(id: .unique)
         )
         
         decoder = EventDecoderMock()

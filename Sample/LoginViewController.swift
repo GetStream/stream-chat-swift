@@ -38,7 +38,10 @@ class LoginViewController: UITableViewController {
         } else {
             chatClient.connectGuestUser(
                 userId: Configuration.userId,
-                name: Configuration.userName,
+                userInfo: UserInfo<NoExtraData>(
+                    id: Configuration.userId,
+                    name: Configuration.userName
+                ),
                 completion: completion
             )
         }

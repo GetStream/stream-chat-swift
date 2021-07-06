@@ -143,7 +143,9 @@ public class _ChatClient<ExtraData: ExtraDataTypes> {
         )
 
         if let currentUserId = currentUserId {
-            webSocketClient?.connectEndpoint = .webSocketConnect(userId: currentUserId)
+            webSocketClient?.connectEndpoint = Endpoint<EmptyResponse>.webSocketConnect(
+                userInfo: UserInfo<ExtraData>(id: currentUserId)
+            )
         }
         
         webSocketClient?.connectionStateDelegate = self
@@ -311,22 +313,16 @@ public class _ChatClient<ExtraData: ExtraDataTypes> {
     
     /// Connects authorized user
     /// - Parameters:
-    ///   - name: The name that is passed to the `connect` endpoint for user creation.
-    ///   - imageURL: URL for user image that is passed to the `connect` endpoint for user creation.
-    ///   - extraData: Extra data for user that is passed to the `connect` endpoint for user creation.
+    ///   - connectionInfo: User info that is passed to the `connect` endpoint for user creation
     ///   - token: Authorization token for the user.
     ///   - completion: The completion that will be called once the **first** user session for the given token is setup.
     public func connectUser(
-        name: String? = nil,
-        imageURL: URL? = nil,
-        extraData: ExtraData.User = .defaultValue,
+        userInfo: UserInfo<ExtraData>? = nil,
         token: Token,
         completion: ((Error?) -> Void)? = nil
     ) {
         setConnectionInfoAndConnect(
-            name: name,
-            imageURL: imageURL,
-            extraData: extraData,
+            userInfo: userInfo,
             userConnectionProvider: .static(token),
             completion: completion
         )
@@ -341,19 +337,16 @@ public class _ChatClient<ExtraData: ExtraDataTypes> {
     ///   - completion: The completion that will be called once the **first** user session for the given token is setup.
     public func connectGuestUser(
         userId: String,
-        name: String? = nil,
-        imageURL: URL? = nil,
-        extraData: ExtraData.User = .defaultValue,
+        userInfo: UserInfo<ExtraData>,
         completion: ((Error?) -> Void)? = nil
     ) {
         setConnectionInfoAndConnect(
-            name: name,
-            imageURL: imageURL,
+            userInfo: userInfo,
             userConnectionProvider: .guest(
                 userId: userId,
-                name: name,
-                imageURL: imageURL,
-                extraData: extraData
+                name: userInfo.name,
+                imageURL: userInfo.imageURL,
+                extraData: userInfo.extraData
             ),
             completion: completion
         )
@@ -363,6 +356,7 @@ public class _ChatClient<ExtraData: ExtraDataTypes> {
     /// - Parameter completion: The completion that will be called once the **first** user session for the given token is setup.
     public func connectAnonymousUser(completion: ((Error?) -> Void)? = nil) {
         setConnectionInfoAndConnect(
+            userInfo: nil,
             userConnectionProvider: .anonymous,
             completion: completion
         )
@@ -412,17 +406,13 @@ public class _ChatClient<ExtraData: ExtraDataTypes> {
     }
     
     private func setConnectionInfoAndConnect(
-        name: String? = nil,
-        imageURL: URL? = nil,
-        extraData: ExtraData.User = .defaultValue,
+        userInfo: UserInfo<ExtraData>?,
         userConnectionProvider: _UserConnectionProvider<ExtraData>,
         completion: ((Error?) -> Void)? = nil
     ) {
         self.userConnectionProvider = userConnectionProvider
         clientUpdater.reloadUserIfNeeded(
-            name: name,
-            imageURL: imageURL,
-            extraData: extraData,
+            userInfo: userInfo,
             userConnectionProvider: userConnectionProvider,
             completion: completion
         )

@@ -27,14 +27,15 @@ class ChatClientUpdaterMock<ExtraData: ExtraDataTypes>: ChatClientUpdater<ExtraD
 
     // MARK: - Overrides
 
-    override func prepareEnvironment(newToken: Token) throws {
+    override func prepareEnvironment(
+        userInfo: UserInfo<ExtraData>?,
+        newToken: Token
+    ) throws {
         prepareEnvironment_newToken = newToken
     }
 
     override func reloadUserIfNeeded(
-        name: String? = nil,
-        imageURL: URL? = nil,
-        extraData: ExtraData.User = .defaultValue,
+        userInfo: UserInfo<ExtraData>?,
         userConnectionProvider: _UserConnectionProvider<ExtraData>?,
         completion: ((Error?) -> Void)?
     ) {
@@ -42,9 +43,7 @@ class ChatClientUpdaterMock<ExtraData: ExtraDataTypes>: ChatClientUpdater<ExtraD
         reloadUserIfNeeded_completion = completion
         reloadUserIfNeeded_callSuper = {
             super.reloadUserIfNeeded(
-                name: name,
-                imageURL: imageURL,
-                extraData: extraData,
+                userInfo: userInfo,
                 userConnectionProvider: userConnectionProvider,
                 completion: completion
             )
@@ -52,9 +51,7 @@ class ChatClientUpdaterMock<ExtraData: ExtraDataTypes>: ChatClientUpdater<ExtraD
     }
 
     override func connect(
-        name: String? = nil,
-        imageURL: URL? = nil,
-        extraData: ExtraData.User = .defaultValue,
+        userInfo: UserInfo<ExtraData>?,
         completion: ((Error?) -> Void)? = nil
     ) {
         connect_called = true
