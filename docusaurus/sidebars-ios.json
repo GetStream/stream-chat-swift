@@ -29,7 +29,8 @@
     },
     {
       "Guides": [  
-        "guides/customize-message-composer",      
+        "guides/customize-message-composer",
+        "guides/message-composer-custom-attachments",
         "guides/working-with-a-channel",
         "guides/working-with-members",
         {
@@ -37,7 +38,6 @@
             "guides/working-with-messages",
             "guides/working-with-messagelist-layout",
             "guides/working-with-attachments",
-            "guides/working-with-custom-attachments",
             "guides/working-with-reactions"
           ]
         },

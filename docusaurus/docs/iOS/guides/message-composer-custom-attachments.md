@@ -1,5 +1,5 @@
 ---
-title: Working with Attachments in Composer
+title: Message Composer Custom Attachments
 ---
 
 import ComponentsNote from '../common-content/components-note.md'
