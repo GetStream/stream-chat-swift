@@ -22,6 +22,17 @@ public struct VideoAttachmentPayload: AttachmentPayload {
     public internal(set) var videoURL: URL
     /// The video itself.
     public let file: AttachmentFile
+    /// An extra data.
+    let extraData: [String: RawJSON]?
+    
+    /// Decodes extra data as an instance of the given type.
+    /// - Parameter ofType: The type an extra data should be decoded as.
+    /// - Returns: Extra data of the given type or `nil` if decoding fails.
+    public func extraData<T: Decodable>(ofType: T.Type = T.self) -> T? {
+        extraData
+            .flatMap { try? JSONEncoder.stream.encode($0) }
+            .flatMap { try? JSONDecoder.stream.decode(T.self, from: $0) }
+    }
 }
 
 extension VideoAttachmentPayload: Equatable {}
@@ -30,11 +41,12 @@ extension VideoAttachmentPayload: Equatable {}
 
 extension VideoAttachmentPayload: Encodable {
     public func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: AttachmentCodingKeys.self)
-
-        try container.encode(title, forKey: .title)
-        try container.encode(videoURL, forKey: .assetURL)
-        try file.encode(to: encoder)
+        var values = extraData ?? [:]
+        values[AttachmentCodingKeys.title.rawValue] = title.map { .string($0) }
+        values[AttachmentCodingKeys.assetURL.rawValue] = .string(videoURL.absoluteString)
+        values[AttachmentFile.CodingKeys.size.rawValue] = .integer(Int(file.size))
+        values[AttachmentFile.CodingKeys.mimeType.rawValue] = file.mimeType.map { .string($0) }
+        try values.encode(to: encoder)
     }
 }
 
@@ -43,19 +55,12 @@ extension VideoAttachmentPayload: Encodable {
 extension VideoAttachmentPayload: Decodable {
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: AttachmentCodingKeys.self)
-
-        guard
-            let assetURL = try container
-            .decodeIfPresent(String.self, forKey: .assetURL)?
-            .attachmentFixedURL
-        else {
-            throw ClientError.AttachmentDecoding("Video attachment must contain `assetURL`")
-        }
-
+        
         self.init(
             title: try container.decodeIfPresent(String.self, forKey: .title),
-            videoURL: assetURL,
-            file: try AttachmentFile(from: decoder)
+            videoURL: try container.decode(URL.self, forKey: .assetURL),
+            file: try AttachmentFile(from: decoder),
+            extraData: try Self.decodeExtraData(from: decoder)
         )
     }
 }

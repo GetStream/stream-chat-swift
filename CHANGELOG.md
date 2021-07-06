@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### ⚠️ Breaking Changes from `4.0-beta.4`
 - The `CreateChatChannelButton` component was removed. The component acted only as a placeholder and the functionality should be always provided by the hosting app. For an example implementation see the [Demo app](https://github.com/GetStream/stream-chat-swift/blob/main/DemoApp/ChatPresenter.swift).
+- The payload of `AnyChatMessageAttachment` changed from `Any` to `Data` [#1248](https://github.com/GetStream/stream-chat-swift/pull/1248).
 
 ### ✅ Added
 - `search(query:)` function to `UserSearchController` to make a custom search with a query [#1206](https://github.com/GetStream/stream-chat-swift/issues/1206)
@@ -16,6 +17,25 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   -  `connectUser`
   -  `connectGuestUser`
   -  `connectAnonymousUser`
+- Extra data support for `.image/.video/.file` attachments [#1248](https://github.com/GetStream/stream-chat-swift/pull/1248):
+1. Declare custom extra data type conforming to `Codable`:
+```swift
+struct CommentPayload: Codable {
+    let comment: String
+}
+```
+2. Create an instance of extra data and provide it to an envelope for `.image/.video/.file` attachment:
+```swift
+let commentPayload = CommentPayload(comment: "Happy birthday! 🎉")
+let envelope = try AnyAttachmentEnvelope(localFileURL: *url*, attachmentType: .image, extraData: commentPayload)
+channelController.createNewMessage(..., attachments: [envelope])
+```
+3. Receive extra data back from attachment:
+```swift
+if let commentPayload = message.imageAttachments.first?.extraData(ofType: CommentPayload.self) {
+    print(commentPayload.comment") // Happy birthday! 🎉
+}
+```
 
 ### 🔄 Changed
 - `shouldConnectAutomatically` setting in `ChatConfig`, it now has no effect and all logic that used it now behaves like it was set to `true`.

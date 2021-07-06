@@ -4,7 +4,7 @@
 
 import Foundation
 
-enum AttachmentCodingKeys: String, CodingKey {
+enum AttachmentCodingKeys: String, CodingKey, CaseIterable {
     case title
     case type
     case image
@@ -112,7 +112,7 @@ public extension AttachmentType {
 
 /// An attachment file description.
 public struct AttachmentFile: Codable, Hashable {
-    private enum CodingKeys: String, CodingKey {
+    enum CodingKeys: String, CodingKey, CaseIterable {
         case mimeType = "mime_type"
         case size = "file_size"
     }
@@ -230,26 +230,6 @@ public enum AttachmentFileType: String, Codable, Equatable, CaseIterable {
         }
         
         return AttachmentFileType.mimeTypes.first(where: { $1 == self })?.key ?? "application/octet-stream"
-    }
-}
-
-extension String {
-    var attachmentFixedURL: URL? {
-        if let url = URL(string: self), url.isFileURL {
-            return url
-        }
-
-        var urlString = self
-        
-        if urlString.hasPrefix("//") {
-            urlString = "https:\(urlString)"
-        }
-        
-        if !urlString.lowercased().hasPrefix("http") {
-            urlString = "https://\(urlString)"
-        }
-        
-        return URL(string: urlString)
     }
 }
 

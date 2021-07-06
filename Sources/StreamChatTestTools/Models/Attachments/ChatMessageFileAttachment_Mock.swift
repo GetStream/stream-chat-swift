@@ -10,8 +10,9 @@ public extension ChatMessageFileAttachment {
         id: AttachmentId,
         title: String = "Sample.pdf",
         assetURL: URL = URL(string: "http://asset.url")!,
-        file: AttachmentFile = AttachmentFile(type: .pdf, size: 120, mimeType: "pdf"),
-        localState: LocalAttachmentState? = .uploaded
+        file: AttachmentFile = AttachmentFile(type: .pdf, size: 120, mimeType: "application/pdf"),
+        localState: LocalAttachmentState? = .uploaded,
+        extraData: [String: RawJSON]? = nil
     ) -> Self {
         .init(
             id: id,
@@ -19,7 +20,8 @@ public extension ChatMessageFileAttachment {
             payload: .init(
                 title: title,
                 assetURL: assetURL,
-                file: file
+                file: file,
+                extraData: extraData
             ),
             uploadingState: localState.map {
                 .init(

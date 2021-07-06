@@ -42,16 +42,10 @@ extension GiphyAttachmentPayload: Encodable {
 extension GiphyAttachmentPayload: Decodable {
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: AttachmentCodingKeys.self)
-
-        guard
-            let previewURL = try container
-            .decodeIfPresent(String.self, forKey: .thumbURL)?
-            .attachmentFixedURL
-        else { throw ClientError.AttachmentDecoding() }
-
+        
         self.init(
             title: try container.decode(String.self, forKey: .title),
-            previewURL: previewURL,
+            previewURL: try container.decode(URL.self, forKey: .thumbURL),
             actions: try container.decodeIfPresent([AttachmentAction].self, forKey: .actions) ?? []
         )
     }

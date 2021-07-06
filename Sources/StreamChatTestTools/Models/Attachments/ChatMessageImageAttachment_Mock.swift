@@ -10,7 +10,8 @@ extension ChatMessageImageAttachment {
         id: AttachmentId,
         imageURL: URL = .localYodaImage,
         title: String = URL.localYodaImage.lastPathComponent,
-        localState: LocalAttachmentState? = nil
+        localState: LocalAttachmentState? = nil,
+        extraData: [String: RawJSON]? = nil
     ) -> Self {
         .init(
             id: id,
@@ -18,7 +19,8 @@ extension ChatMessageImageAttachment {
             payload: .init(
                 title: title,
                 imageURL: imageURL,
-                imagePreviewURL: imageURL
+                imagePreviewURL: imageURL,
+                extraData: extraData
             ),
             uploadingState: localState.map {
                 .init(

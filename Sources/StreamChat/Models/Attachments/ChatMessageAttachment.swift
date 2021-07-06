@@ -52,7 +52,7 @@ public struct AttachmentUploadingState: Equatable {
 
 // MARK: - Type erasure/recovery
 
-public typealias AnyChatMessageAttachment = _ChatMessageAttachment<Any>
+public typealias AnyChatMessageAttachment = _ChatMessageAttachment<Data>
 
 public extension AnyChatMessageAttachment {
     /// Converts type-erased attachment to the attachment with the concrete payload.
@@ -65,22 +65,11 @@ public extension AnyChatMessageAttachment {
     func attachment<Payload: AttachmentPayload>(
         payloadType: Payload.Type
     ) -> _ChatMessageAttachment<Payload>? {
-        guard Payload.type == type || type == .unknown else { return nil }
-
-        let concretePayload: Payload
-        switch payload {
-        case let payload as Payload:
-            concretePayload = payload
-        case let data as Data:
-            guard
-                let decodedPayload = try? JSONDecoder.stream.decode(Payload.self, from: data)
-            else { return nil }
-
-            concretePayload = decodedPayload
-        default:
-            return nil
-        }
-
+        guard
+            Payload.type == type || type == .unknown,
+            let concretePayload = try? JSONDecoder.stream.decode(Payload.self, from: payload)
+        else { return nil }
+        
         return .init(
             id: id,
             type: type,
@@ -90,13 +79,13 @@ public extension AnyChatMessageAttachment {
     }
 }
 
-public extension _ChatMessageAttachment {
+public extension _ChatMessageAttachment where Payload: AttachmentPayload {
     /// Returns an attachment matching `self` but payload casted to `Any`.
     var asAnyAttachment: AnyChatMessageAttachment {
-        .init(
+        AnyChatMessageAttachment(
             id: id,
             type: type,
-            payload: payload as Any,
+            payload: try! JSONEncoder.stream.encode(payload),
             uploadingState: uploadingState
         )
     }

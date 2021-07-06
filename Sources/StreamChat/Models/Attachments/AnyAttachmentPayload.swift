@@ -19,7 +19,7 @@ public struct AnyAttachmentPayload {
     public let type: AttachmentType
 
     /// A payload that will exposed on attachment when the message is sent.
-    public let payload: Encodable?
+    public let payload: Encodable
 
     /// A URL referencing to the local file that should be uploaded.
     public let localFileURL: URL?
@@ -52,13 +52,23 @@ public extension AnyAttachmentPayload {
     /// available on `ChatMessage` with the `uploadingState` reflecting the file uploading progress.
     ///
     /// - Important: Until the message is sent all URLs on exposed attachment will be equal to the given `localFileURL`.
+    /// - Important: A given extra data must have dictionary representation.
     ///
     /// - Parameters:
     ///   - localFileURL: The local URL referencing to the file.
     ///   - attachmentType: The type of resulting attachment exposed on the message.
-    /// - Throws: The error if `localFileURL` is not the file URL.
-    init(localFileURL: URL, attachmentType: AttachmentType) throws {
+    ///   - extraData: An extra data that should be added to attachment.
+    /// - Throws: The error if `localFileURL` is not the file URL or if `extraData` can not be represented as
+    /// a dictionary.
+    init(
+        localFileURL: URL,
+        attachmentType: AttachmentType,
+        extraData: Encodable? = nil
+    ) throws {
         let file = try AttachmentFile(url: localFileURL)
+        let extraData = try extraData
+            .flatMap { try JSONEncoder.stream.encode($0.asAnyEncodable) }
+            .flatMap { try JSONDecoder.stream.decode([String: RawJSON].self, from: $0) }
 
         let payload: AttachmentPayload
         switch attachmentType {
@@ -66,19 +76,22 @@ public extension AnyAttachmentPayload {
             payload = ImageAttachmentPayload(
                 title: localFileURL.lastPathComponent,
                 imageURL: localFileURL,
-                imagePreviewURL: localFileURL
+                imagePreviewURL: localFileURL,
+                extraData: extraData
             )
         case .video:
             payload = VideoAttachmentPayload(
                 title: localFileURL.lastPathComponent,
                 videoURL: localFileURL,
-                file: file
+                file: file,
+                extraData: extraData
             )
         case .file:
             payload = FileAttachmentPayload(
                 title: localFileURL.lastPathComponent,
                 assetURL: localFileURL,
-                file: file
+                file: file,
+                extraData: extraData
             )
         default:
             throw ClientError.UnsupportedUploadableAttachmentType(attachmentType)
@@ -99,5 +112,21 @@ extension ClientError {
                 "For uploadable attachments only .image/.file/.video types are supported."
             )
         }
+    }
+}
+
+extension AttachmentPayload {
+    static func decodeExtraData(from decoder: Decoder) throws -> [String: RawJSON]? {
+        guard case let .dictionary(payload) = try RawJSON(from: decoder) else {
+            throw ClientError.AttachmentDecoding("Failed to decode extra data.")
+        }
+        
+        let customPayload = payload.removingValues(
+            forKeys:
+            AttachmentCodingKeys.allCases.map(\.rawValue) +
+                AttachmentFile.CodingKeys.allCases.map(\.rawValue)
+        )
+        
+        return customPayload.isEmpty ? nil : customPayload
     }
 }
