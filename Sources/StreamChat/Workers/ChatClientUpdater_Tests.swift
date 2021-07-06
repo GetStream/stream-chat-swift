@@ -439,7 +439,7 @@ final class ChatClientUpdater_Tests_Tests: StressTestCase {
             workerBuilders: [TestWorker.init],
             eventWorkerBuilders: [TestEventWorker.init]
         )
-        client.connectUser(token: token)
+        client.connectUser(userInfo: .init(id: token.userId), token: token)
 
         client.currentUserId = token.userId
         client.currentToken = token

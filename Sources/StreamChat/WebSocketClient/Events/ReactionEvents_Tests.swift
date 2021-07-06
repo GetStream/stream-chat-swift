@@ -71,7 +71,7 @@ class ReactionEventsIntegration_Tests: XCTestCase {
         client = ChatClient(config: config)
         try! client.databaseContainer.createCurrentUser(id: currentUserId)
         client.eventNotificationCenter.eventBatchPeriod = 0
-        client.connectUser(token: .development(userId: currentUserId))
+        client.connectUser(userInfo: .init(id: currentUserId), token: .development(userId: currentUserId))
     }
 
     func test_ReactionNewEventPayload_isHandled() throws {

@@ -539,7 +539,7 @@ class ChatClient_Tests: StressTestCase {
         let config = ChatClientConfig(apiKeyString: .unique)
         // Create an active client to save the current user to the database.
         var chatClient: ChatClient! = ChatClient(config: config)
-        chatClient.connectUser(token: .unique(userId: currentUserId))
+        chatClient.connectUser(userInfo: .init(id: currentUserId), token: .unique(userId: currentUserId))
         
         // Create current user in the database.
         try chatClient.databaseContainer.createCurrentUser(id: currentUserId)
@@ -554,7 +554,7 @@ class ChatClient_Tests: StressTestCase {
                     // Create a `ChatClient` instance with the same config
                     // to access the storage with exited current user.
                     let chatClient = ChatClient(config: config)
-                    chatClient.connectUser(token: .unique(userId: currentUserId))
+                    chatClient.connectUser(userInfo: .init(id: currentUserId), token: .unique(userId: currentUserId))
 
                     let expectedWebSocketEndpoint = AnyEndpoint(
                         .webSocketConnect(userInfo: UserInfo<NoExtraData>(id: currentUserId))
