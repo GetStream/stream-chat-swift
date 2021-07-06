@@ -317,7 +317,7 @@ public class _ChatClient<ExtraData: ExtraDataTypes> {
     ///   - token: Authorization token for the user.
     ///   - completion: The completion that will be called once the **first** user session for the given token is setup.
     public func connectUser(
-        userInfo: UserInfo<ExtraData>? = nil,
+        userInfo: UserInfo<ExtraData>,
         token: Token,
         completion: ((Error?) -> Void)? = nil
     ) {

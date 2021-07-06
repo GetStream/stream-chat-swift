@@ -13,7 +13,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         _ application: UIApplication,
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
     ) -> Bool {
-        _ = ChatClient(config: .init(apiKeyString: "key"), tokenProvider: .anonymous)
+        let client = ChatClient(config: .init(apiKeyString: "key"))
+        client.connectAnonymousUser()
         return true
     }
 
