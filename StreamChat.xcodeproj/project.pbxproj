@@ -728,6 +728,22 @@
 		A39A8AE7263825F4003453D9 /* ChatMessageLayoutOptionsResolver.swift in Sources */ = {isa = PBXBuildFile; fileRef = A39A8AE6263825F4003453D9 /* ChatMessageLayoutOptionsResolver.swift */; };
 		A3BB3FFF261DA74D00365496 /* ContainerStackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3BB3FFE261DA74D00365496 /* ContainerStackView.swift */; };
 		A3C0D774261CA25700A8A1A2 /* ContainerStackView_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3C0D773261CA25700A8A1A2 /* ContainerStackView_Tests.swift */; };
+		AC908384268B115F00ACFB8E /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC908383268B115F00ACFB8E /* AppDelegate.swift */; };
+		AC90838D268B116000ACFB8E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AC90838C268B116000ACFB8E /* Assets.xcassets */; };
+		AC908390268B116000ACFB8E /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AC90838E268B116000ACFB8E /* LaunchScreen.storyboard */; };
+		AC908397268B11A300ACFB8E /* ChatClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC908396268B11A300ACFB8E /* ChatClient.swift */; };
+		AC908398268B120300ACFB8E /* StreamChatUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 790881FD25432B7200896F03 /* StreamChatUI.framework */; };
+		AC90839D268B120900ACFB8E /* StreamChat.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 799C941B247D2F80001F1104 /* StreamChat.framework */; };
+		AC9083A3268B12C300ACFB8E /* YTChatMessageContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC9083A2268B12C300ACFB8E /* YTChatMessageContentView.swift */; };
+		AC9083A5268B130800ACFB8E /* YTChatMessageComposerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC9083A4268B130800ACFB8E /* YTChatMessageComposerView.swift */; };
+		AC9083A7268B14B000ACFB8E /* YTLiveChatViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC9083A6268B14B000ACFB8E /* YTLiveChatViewController.swift */; };
+		AC9083A9268B167B00ACFB8E /* YTChatComposerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC9083A8268B167B00ACFB8E /* YTChatComposerViewController.swift */; };
+		ACBEF4E5268B439A00FE7557 /* YTLiveVideoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACBEF4E3268B439A00FE7557 /* YTLiveVideoViewController.swift */; };
+		ACBEF4E6268B439A00FE7557 /* YTLiveVideoViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = ACBEF4E4268B439A00FE7557 /* YTLiveVideoViewController.xib */; };
+		ACE6E060268D92F200396310 /* YTScrollToLatestMessageButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACE6E05F268D92F200396310 /* YTScrollToLatestMessageButton.swift */; };
+		ACE6E063268D965100396310 /* YTSendButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACE6E062268D965100396310 /* YTSendButton.swift */; };
+		ACE6E066268D9E9B00396310 /* YTMessageLayoutOptionsResolver.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACE6E065268D9E9B00396310 /* YTMessageLayoutOptionsResolver.swift */; };
+		ACE6E069268DB8AC00396310 /* YTInputChatMessageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACE6E068268DB8AC00396310 /* YTInputChatMessageView.swift */; };
 		AD0169CB25CAEDC0009EBAD2 /* yoda.jpg in Resources */ = {isa = PBXBuildFile; fileRef = AD0169CA25CAEDC0009EBAD2 /* yoda.jpg */; };
 		AD0169E625CAF235009EBAD2 /* CurrentChatUserController_Mock.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD0169D825CAF212009EBAD2 /* CurrentChatUserController_Mock.swift */; };
 		AD0169F425CAF689009EBAD2 /* vader.jpg in Resources */ = {isa = PBXBuildFile; fileRef = AD0169F325CAF689009EBAD2 /* vader.jpg */; };
@@ -1126,6 +1142,20 @@
 			remoteInfo = StreamChatUI;
 		};
 		8082786A25D1BB50008039DD /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8AD5EC8622E9A3E8005CFAC9 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 799C941A247D2F80001F1104;
+			remoteInfo = StreamChat;
+		};
+		AC90839A268B120300ACFB8E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8AD5EC8622E9A3E8005CFAC9 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 790881FC25432B7200896F03;
+			remoteInfo = StreamChatUI;
+		};
+		AC90839F268B120900ACFB8E /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 8AD5EC8622E9A3E8005CFAC9 /* Project object */;
 			proxyType = 1;
@@ -1998,6 +2028,22 @@
 		A39A8AE6263825F4003453D9 /* ChatMessageLayoutOptionsResolver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageLayoutOptionsResolver.swift; sourceTree = "<group>"; };
 		A3BB3FFE261DA74D00365496 /* ContainerStackView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContainerStackView.swift; sourceTree = "<group>"; };
 		A3C0D773261CA25700A8A1A2 /* ContainerStackView_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContainerStackView_Tests.swift; sourceTree = "<group>"; };
+		AC908381268B115F00ACFB8E /* YouTubeClone.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = YouTubeClone.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		AC908383268B115F00ACFB8E /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		AC90838C268B116000ACFB8E /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		AC90838F268B116000ACFB8E /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		AC908391268B116000ACFB8E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		AC908396268B11A300ACFB8E /* ChatClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatClient.swift; sourceTree = "<group>"; };
+		AC9083A2268B12C300ACFB8E /* YTChatMessageContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YTChatMessageContentView.swift; sourceTree = "<group>"; };
+		AC9083A4268B130800ACFB8E /* YTChatMessageComposerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YTChatMessageComposerView.swift; sourceTree = "<group>"; };
+		AC9083A6268B14B000ACFB8E /* YTLiveChatViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YTLiveChatViewController.swift; sourceTree = "<group>"; };
+		AC9083A8268B167B00ACFB8E /* YTChatComposerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YTChatComposerViewController.swift; sourceTree = "<group>"; };
+		ACBEF4E3268B439A00FE7557 /* YTLiveVideoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YTLiveVideoViewController.swift; sourceTree = "<group>"; };
+		ACBEF4E4268B439A00FE7557 /* YTLiveVideoViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = YTLiveVideoViewController.xib; sourceTree = "<group>"; };
+		ACE6E05F268D92F200396310 /* YTScrollToLatestMessageButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YTScrollToLatestMessageButton.swift; sourceTree = "<group>"; };
+		ACE6E062268D965100396310 /* YTSendButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YTSendButton.swift; sourceTree = "<group>"; };
+		ACE6E065268D9E9B00396310 /* YTMessageLayoutOptionsResolver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YTMessageLayoutOptionsResolver.swift; sourceTree = "<group>"; };
+		ACE6E068268DB8AC00396310 /* YTInputChatMessageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YTInputChatMessageView.swift; sourceTree = "<group>"; };
 		AD0169CA25CAEDC0009EBAD2 /* yoda.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = yoda.jpg; sourceTree = "<group>"; };
 		AD0169D825CAF212009EBAD2 /* CurrentChatUserController_Mock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentChatUserController_Mock.swift; sourceTree = "<group>"; };
 		AD0169F325CAF689009EBAD2 /* vader.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = vader.jpg; sourceTree = "<group>"; };
@@ -2366,6 +2412,15 @@
 			files = (
 				80750A5025D1D5810027F951 /* StreamChatUI.framework in Frameworks */,
 				8082786C25D1BB56008039DD /* StreamChat.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		AC90837E268B115F00ACFB8E /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AC90839D268B120900ACFB8E /* StreamChat.framework in Frameworks */,
+				AC908398268B120300ACFB8E /* StreamChatUI.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4142,6 +4197,7 @@
 				F86C87B325F906630000BCA9 /* MessengerClone */,
 				F8933B9325FF55E30054BBFF /* SlackClone */,
 				F89C23A725E508DE0082CA5B /* iMessageClone */,
+				AC908382268B115F00ACFB8E /* YouTubeClone */,
 				8AD5EC9022E9A3E8005CFAC9 /* Products */,
 				8AD5ECA722E9B3C4005CFAC9 /* Frameworks */,
 				F8933CBB25FFA22F0054BBFF /* Recovered References */,
@@ -4166,6 +4222,7 @@
 				F8933B9225FF55E30054BBFF /* SlackClone.app */,
 				F89C23A625E508DE0082CA5B /* iMessageClone.app */,
 				E74DB0D32656631700508D22 /* UISDKDocumentation.xctest */,
+				AC908381268B115F00ACFB8E /* YouTubeClone.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -4203,6 +4260,68 @@
 				64F70D4A26257FD400C9F979 /* Error+InternetNotAvailable_Tests.swift */,
 			);
 			path = InternetConnection;
+			sourceTree = "<group>";
+		};
+		AC26A73A268C770800F1A895 /* Composer */ = {
+			isa = PBXGroup;
+			children = (
+				AC9083A4268B130800ACFB8E /* YTChatMessageComposerView.swift */,
+				AC9083A8268B167B00ACFB8E /* YTChatComposerViewController.swift */,
+			);
+			path = Composer;
+			sourceTree = "<group>";
+		};
+		AC908382268B115F00ACFB8E /* YouTubeClone */ = {
+			isa = PBXGroup;
+			children = (
+				ACE6E067268DB89F00396310 /* ChatMessageView */,
+				ACE6E064268D9E7800396310 /* MessageOptionsResolver */,
+				ACE6E061268D957A00396310 /* SendButton */,
+				ACE6E05E268D92D200396310 /* ScrollToLatestMessageButton */,
+				AC26A73A268C770800F1A895 /* Composer */,
+				AC908383268B115F00ACFB8E /* AppDelegate.swift */,
+				AC90838C268B116000ACFB8E /* Assets.xcassets */,
+				AC90838E268B116000ACFB8E /* LaunchScreen.storyboard */,
+				AC908391268B116000ACFB8E /* Info.plist */,
+				AC908396268B11A300ACFB8E /* ChatClient.swift */,
+				AC9083A2268B12C300ACFB8E /* YTChatMessageContentView.swift */,
+				AC9083A6268B14B000ACFB8E /* YTLiveChatViewController.swift */,
+				ACBEF4E3268B439A00FE7557 /* YTLiveVideoViewController.swift */,
+				ACBEF4E4268B439A00FE7557 /* YTLiveVideoViewController.xib */,
+			);
+			path = YouTubeClone;
+			sourceTree = "<group>";
+		};
+		ACE6E05E268D92D200396310 /* ScrollToLatestMessageButton */ = {
+			isa = PBXGroup;
+			children = (
+				ACE6E05F268D92F200396310 /* YTScrollToLatestMessageButton.swift */,
+			);
+			path = ScrollToLatestMessageButton;
+			sourceTree = "<group>";
+		};
+		ACE6E061268D957A00396310 /* SendButton */ = {
+			isa = PBXGroup;
+			children = (
+				ACE6E062268D965100396310 /* YTSendButton.swift */,
+			);
+			path = SendButton;
+			sourceTree = "<group>";
+		};
+		ACE6E064268D9E7800396310 /* MessageOptionsResolver */ = {
+			isa = PBXGroup;
+			children = (
+				ACE6E065268D9E9B00396310 /* YTMessageLayoutOptionsResolver.swift */,
+			);
+			path = MessageOptionsResolver;
+			sourceTree = "<group>";
+		};
+		ACE6E067268DB89F00396310 /* ChatMessageView */ = {
+			isa = PBXGroup;
+			children = (
+				ACE6E068268DB8AC00396310 /* YTInputChatMessageView.swift */,
+			);
+			path = ChatMessageView;
 			sourceTree = "<group>";
 		};
 		AD4473DD263AC2B80030E583 /* ChatCommandSuggestionView */ = {
@@ -4972,6 +5091,25 @@
 			productReference = 8082785125D1BAD1008039DD /* DocsSnippets.framework */;
 			productType = "com.apple.product-type.framework";
 		};
+		AC908380268B115F00ACFB8E /* YouTubeClone */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = AC908395268B116000ACFB8E /* Build configuration list for PBXNativeTarget "YouTubeClone" */;
+			buildPhases = (
+				AC90837D268B115F00ACFB8E /* Sources */,
+				AC90837E268B115F00ACFB8E /* Frameworks */,
+				AC90837F268B115F00ACFB8E /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				AC90839B268B120300ACFB8E /* PBXTargetDependency */,
+				AC9083A0268B120900ACFB8E /* PBXTargetDependency */,
+			);
+			name = YouTubeClone;
+			productName = YouTubeClone;
+			productReference = AC908381268B115F00ACFB8E /* YouTubeClone.app */;
+			productType = "com.apple.product-type.application";
+		};
 		E74DB08A2656631700508D22 /* UISDKDocumentation */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = E74DB0CF2656631700508D22 /* Build configuration list for PBXNativeTarget "UISDKDocumentation" */;
@@ -5059,7 +5197,7 @@
 		8AD5EC8622E9A3E8005CFAC9 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastSwiftUpdateCheck = 1230;
+				LastSwiftUpdateCheck = 1250;
 				LastUpgradeCheck = 1240;
 				ORGANIZATIONNAME = "Stream.io Inc";
 				TargetAttributes = {
@@ -5093,6 +5231,9 @@
 					8082785025D1BAD1008039DD = {
 						CreatedOnToolsVersion = 12.4;
 						LastSwiftMigration = 1240;
+					};
+					AC908380268B115F00ACFB8E = {
+						CreatedOnToolsVersion = 12.5;
 					};
 					F86C87B125F906630000BCA9 = {
 						CreatedOnToolsVersion = 12.3;
@@ -5137,6 +5278,7 @@
 				F8933B9125FF55E30054BBFF /* SlackClone */,
 				F89C23A525E508DE0082CA5B /* iMessageClone */,
 				E74DB08A2656631700508D22 /* UISDKDocumentation */,
+				AC908380268B115F00ACFB8E /* YouTubeClone */,
 			);
 		};
 /* End PBXProject section */
@@ -5297,6 +5439,16 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		AC90837F268B115F00ACFB8E /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AC908390268B116000ACFB8E /* LaunchScreen.storyboard in Resources */,
+				AC90838D268B116000ACFB8E /* Assets.xcassets in Resources */,
+				ACBEF4E6268B439A00FE7557 /* YTLiveVideoViewController.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6274,6 +6426,24 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		AC90837D268B115F00ACFB8E /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AC9083A5268B130800ACFB8E /* YTChatMessageComposerView.swift in Sources */,
+				ACE6E066268D9E9B00396310 /* YTMessageLayoutOptionsResolver.swift in Sources */,
+				ACE6E063268D965100396310 /* YTSendButton.swift in Sources */,
+				AC908384268B115F00ACFB8E /* AppDelegate.swift in Sources */,
+				AC9083A7268B14B000ACFB8E /* YTLiveChatViewController.swift in Sources */,
+				ACE6E060268D92F200396310 /* YTScrollToLatestMessageButton.swift in Sources */,
+				ACBEF4E5268B439A00FE7557 /* YTLiveVideoViewController.swift in Sources */,
+				AC9083A3268B12C300ACFB8E /* YTChatMessageContentView.swift in Sources */,
+				ACE6E069268DB8AC00396310 /* YTInputChatMessageView.swift in Sources */,
+				AC9083A9268B167B00ACFB8E /* YTChatComposerViewController.swift in Sources */,
+				AC908397268B11A300ACFB8E /* ChatClient.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		E74DB0912656631700508D22 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -6417,6 +6587,16 @@
 			target = 799C941A247D2F80001F1104 /* StreamChat */;
 			targetProxy = 8082786A25D1BB50008039DD /* PBXContainerItemProxy */;
 		};
+		AC90839B268B120300ACFB8E /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 790881FC25432B7200896F03 /* StreamChatUI */;
+			targetProxy = AC90839A268B120300ACFB8E /* PBXContainerItemProxy */;
+		};
+		AC9083A0268B120900ACFB8E /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 799C941A247D2F80001F1104 /* StreamChat */;
+			targetProxy = AC90839F268B120900ACFB8E /* PBXContainerItemProxy */;
+		};
 		E74DB08B2656631700508D22 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 793060E525778896005CF846 /* StreamChatTestTools */;
@@ -6508,6 +6688,14 @@
 				882AE0F0257A652A004095B3 /* en */,
 			);
 			name = Localizable.strings;
+			sourceTree = "<group>";
+		};
+		AC90838E268B116000ACFB8E /* LaunchScreen.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				AC90838F268B116000ACFB8E /* Base */,
+			);
+			name = LaunchScreen.storyboard;
 			sourceTree = "<group>";
 		};
 		DBC8A4BD257E5BFB00B20A82 /* Localizable.stringsdict */ = {
@@ -7537,6 +7725,70 @@
 			};
 			name = ReleaseTests;
 		};
+		AC908392268B116000ACFB8E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Manual;
+				DEVELOPMENT_TEAM = EHV7XZLAHA;
+				INFOPLIST_FILE = YouTubeClone/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.3;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = io.getstream.iOS.YouTubeClone;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "match Development io.getstream.iOS.YouTubeClone";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		AC908393268B116000ACFB8E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Manual;
+				DEVELOPMENT_TEAM = EHV7XZLAHA;
+				INFOPLIST_FILE = YouTubeClone/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.3;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = io.getstream.iOS.YouTubeClone;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "match AdHoc io.getstream.iOS.YouTubeClone";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		AC908394268B116000ACFB8E /* ReleaseTests */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Manual;
+				DEVELOPMENT_TEAM = EHV7XZLAHA;
+				INFOPLIST_FILE = YouTubeClone/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.3;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = io.getstream.iOS.YouTubeClone;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "match AdHoc io.getstream.iOS.YouTubeClone";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = ReleaseTests;
+		};
 		E74DB0D02656631700508D22 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -7904,6 +8156,16 @@
 				8AD5EC9522E9A3E8005CFAC9 /* Debug */,
 				8AD5EC9622E9A3E8005CFAC9 /* Release */,
 				A57E5C6D24C6FA3900187DC2 /* ReleaseTests */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		AC908395268B116000ACFB8E /* Build configuration list for PBXNativeTarget "YouTubeClone" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				AC908392268B116000ACFB8E /* Debug */,
+				AC908393268B116000ACFB8E /* Release */,
+				AC908394268B116000ACFB8E /* ReleaseTests */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
