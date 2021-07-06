@@ -34,7 +34,11 @@ class LoginViewController: UITableViewController {
         }
         
         if let token = Configuration.token {
-            chatClient.connectUser(token: token, completion: completion)
+            chatClient.connectUser(
+                userInfo: .init(id: Configuration.userId),
+                token: token,
+                completion: completion
+            )
         } else {
             chatClient.connectGuestUser(
                 userId: Configuration.userId,
