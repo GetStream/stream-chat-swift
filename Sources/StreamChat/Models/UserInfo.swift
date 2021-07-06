@@ -4,6 +4,7 @@
 
 import Foundation
 
+/// A model containing user info that's used to connect to chat's backend
 public struct UserInfo<ExtraData: ExtraDataTypes> {
     public let id: UserId
     public let name: String?

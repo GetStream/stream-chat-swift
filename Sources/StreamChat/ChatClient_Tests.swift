@@ -650,7 +650,6 @@ class ChatClient_Tests: StressTestCase {
         let userId = UserId.unique
         let name = "John Doe"
         client.connectGuestUser(
-            userId: userId,
             userInfo: .init(
                 id: userId,
                 name: "John Doe",

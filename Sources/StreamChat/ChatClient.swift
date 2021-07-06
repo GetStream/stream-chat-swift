@@ -313,7 +313,7 @@ public class _ChatClient<ExtraData: ExtraDataTypes> {
     
     /// Connects authorized user
     /// - Parameters:
-    ///   - connectionInfo: User info that is passed to the `connect` endpoint for user creation
+    ///   - userInfo: User info that is passed to the `connect` endpoint for user creation
     ///   - token: Authorization token for the user.
     ///   - completion: The completion that will be called once the **first** user session for the given token is setup.
     public func connectUser(
@@ -330,20 +330,17 @@ public class _ChatClient<ExtraData: ExtraDataTypes> {
 
     /// Connects a guest user
     /// - Parameters:
-    ///   - userId: Guest user ID
-    ///   - name: The name that is passed to the `connect` endpoint for user creation.
-    ///   - imageURL: URL for user image that is passed to the `connect` endpoint for user creation.
+    ///   - userInfo: User info that is passed to the `connect` endpoint for user creation
     ///   - extraData: Extra data for user that is passed to the `connect` endpoint for user creation.
     ///   - completion: The completion that will be called once the **first** user session for the given token is setup.
     public func connectGuestUser(
-        userId: String,
         userInfo: UserInfo<ExtraData>,
         completion: ((Error?) -> Void)? = nil
     ) {
         setConnectionInfoAndConnect(
             userInfo: userInfo,
             userConnectionProvider: .guest(
-                userId: userId,
+                userId: userInfo.id,
                 name: userInfo.name,
                 imageURL: userInfo.imageURL,
                 extraData: userInfo.extraData
