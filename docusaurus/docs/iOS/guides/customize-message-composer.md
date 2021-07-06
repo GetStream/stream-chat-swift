@@ -45,7 +45,6 @@ class iMessageComposerView: ComposerView {
     }
 }
 ```
-The Composer is built with multiple `ContainerStackView`'s, which you can read more about them [here](../customization/custom-components#setuplayout). This makes it very easy to change the Composer layout since it is just a question moving/remove/adding views from different containers. Here we move the `sendButton` from the `trailingContainer` to the `inputMessageView.inputTextContainer` so that it stays inside the input view.
 
 To remove the commands button, we disable the commands feature by subclassing `ComposerVC` and overriding `isCommandsEnabled` property, which can also be disabled by the Stream's Dashboard.
 ```swift
