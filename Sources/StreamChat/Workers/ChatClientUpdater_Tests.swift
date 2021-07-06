@@ -74,7 +74,9 @@ final class ChatClientUpdater_Tests_Tests: StressTestCase {
         let updater = ChatClientUpdater<ExtraData>(client: client)
 
         // Simulate `connect` call.
-        let error = try waitFor(updater.connect)
+        let error = try waitFor { completion in
+            updater.connect(completion: completion)
+        }
 
         // Assert `ClientError.ClientIsNotInActiveMode` is propagated
         XCTAssertTrue(error is ClientError.ClientIsNotInActiveMode)
@@ -88,7 +90,9 @@ final class ChatClientUpdater_Tests_Tests: StressTestCase {
         let updater = ChatClientUpdater<ExtraData>(client: client)
 
         // Simulate `connect` call.
-        let error = try waitFor(updater.connect)
+        let error = try waitFor { completion in
+            updater.connect(completion: completion)
+        }
 
         // Assert `connect` completion is called without any error.
         XCTAssertNil(error)
@@ -214,39 +218,10 @@ final class ChatClientUpdater_Tests_Tests: StressTestCase {
         }
     }
 
-    // MARK: Reload User
-
-    func test_reloadUserIfNeeded_currentUser_sameToken_happyPath() throws {
-        // Create an active client with user session.
-        let client = mockClientWithUserSession()
-
-        // Create an updater.
-        let updater = ChatClientUpdater<ExtraData>(client: client)
-
-        // Save current background worker ids.
-        let oldWorkderIDs = client.testBackgroundWorkerIDs
-
-        // Call `reloadUserIfNeeded` without changing a token provider
-        // and synchronously get the result since no job should be done.
-        let error = try waitFor(updater.reloadUserIfNeeded)
-
-        // Assert error is nil.
-        XCTAssertNil(error)
-        // Assert `disconnect` was not called.
-        XCTAssertEqual(client.mockWebSocketClient.disconnect_calledCounter, 0)
-        // Assert `completeTokenWaiters` was not called since token is not changed.
-        XCTAssertFalse(client.completeTokenWaiters_called)
-        // Assert background workers stay the same.
-        XCTAssertEqual(client.testBackgroundWorkerIDs, oldWorkderIDs)
-        // Assert database is not flushed.
-        XCTAssertFalse(client.mockDatabaseContainer.removeAllData_called)
-    }
-
     func test_reloadUserIfNeeded_happyPaths() throws {
         struct Options {
             let initialToken: Token
             let updatedToken: Token
-            let shouldConnectAutomatically: Bool
         }
 
         // Create current user id.
@@ -259,38 +234,18 @@ final class ChatClientUpdater_Tests_Tests: StressTestCase {
             // Updated token for current user with automatic connect.
             .init(
                 initialToken: .unique(userId: currentUserId),
-                updatedToken: .unique(userId: currentUserId),
-                shouldConnectAutomatically: true
-            ),
-            // Updated token for current user without automatic connect.
-            .init(
-                initialToken: .unique(userId: currentUserId),
-                updatedToken: .unique(userId: currentUserId),
-                shouldConnectAutomatically: false
+                updatedToken: .unique(userId: currentUserId)
             ),
             // Token for new user with automatic connect.
             .init(
                 initialToken: .unique(userId: currentUserId),
-                updatedToken: .unique(userId: newUserId),
-                shouldConnectAutomatically: true
-            ),
-            // Token for new user without automatic connect.
-            .init(
-                initialToken: .unique(userId: currentUserId),
-                updatedToken: .unique(userId: newUserId),
-                shouldConnectAutomatically: false
+                updatedToken: .unique(userId: newUserId)
             )
         ]
 
         for options in testCases {
             // Create an active client with user session.
-            let client = mockClientWithUserSession(
-                shouldConnectAutomatically: options.shouldConnectAutomatically,
-                token: options.initialToken
-            )
-
-            // Update the token provider to return the updated token.
-            client.tokenProvider = .static(options.updatedToken)
+            let client = mockClientWithUserSession(token: options.initialToken)
 
             // Create an updater.
             let updater = ChatClientUpdater<ExtraData>(client: client)
@@ -301,7 +256,9 @@ final class ChatClientUpdater_Tests_Tests: StressTestCase {
             // Simulate `reloadUserIfNeeded` call.
             var reloadUserIfNeededCompletionCalled = false
             var reloadUserIfNeededCompletionError: Error?
-            updater.reloadUserIfNeeded {
+            updater.reloadUserIfNeeded(
+                userConnectionProvider: .static(options.updatedToken)
+            ) {
                 reloadUserIfNeededCompletionCalled = true
                 reloadUserIfNeededCompletionError = $0
             }
@@ -315,7 +272,11 @@ final class ChatClientUpdater_Tests_Tests: StressTestCase {
             // Assert web-socket endpoint is valid.
             XCTAssertEqual(
                 client.webSocketClient?.connectEndpoint.map(AnyEndpoint.init),
-                AnyEndpoint(.webSocketConnect(userId: options.updatedToken.userId))
+                AnyEndpoint(
+                    .webSocketConnect(
+                        userInfo: UserInfo<NoExtraData>(id: options.updatedToken.userId)
+                    )
+                )
             )
             // Assert `completeTokenWaiters` was called.
             XCTAssertTrue(client.completeTokenWaiters_called)
@@ -337,60 +298,28 @@ final class ChatClientUpdater_Tests_Tests: StressTestCase {
                 // Assert database was flushed.
                 XCTAssertTrue(client.mockDatabaseContainer.removeAllData_called)
             }
-
-            // Assert web-socket `connect` is called if `shouldConnectAutomatically == true`.
-            XCTAssertEqual(
-                client.mockWebSocketClient.connect_calledCounter,
-                options.shouldConnectAutomatically ? 1 : 0
-            )
-
-            if options.shouldConnectAutomatically {
-                // Assert completion hasn't been called yet.
-                XCTAssertFalse(reloadUserIfNeededCompletionCalled)
-
-                // Simulate established connection and provide `connectionId` to waiters.
-                let connectionId: String = .unique
-                client.mockWebSocketClient.simulateConnectionStatus(.connected(connectionId: connectionId))
-
-                AssertAsync {
-                    // Assert completion is called.
-                    Assert.willBeTrue(reloadUserIfNeededCompletionCalled)
-                    // Assert completion is called without any error.
-                    Assert.staysTrue(reloadUserIfNeededCompletionError == nil)
-                    // Assert connection id is set.
-                    Assert.willBeEqual(client.connectionId, connectionId)
-                    // Assert connection status is updated.
-                    Assert.willBeEqual(client.connectionStatus, .connected)
-                }
-            } else {
+            
+            // Assert web-socket `connect` is called.
+            XCTAssertEqual(client.mockWebSocketClient.connect_calledCounter, 1)
+            
+            // Assert completion hasn't been called yet.
+            XCTAssertFalse(reloadUserIfNeededCompletionCalled)
+            
+            // Simulate established connection and provide `connectionId` to waiters.
+            let connectionId: String = .unique
+            client.mockWebSocketClient.simulateConnectionStatus(.connected(connectionId: connectionId))
+            
+            AssertAsync {
                 // Assert completion is called.
-                XCTAssertTrue(reloadUserIfNeededCompletionCalled)
+                Assert.willBeTrue(reloadUserIfNeededCompletionCalled)
                 // Assert completion is called without any error.
-                XCTAssertNil(reloadUserIfNeededCompletionError)
+                Assert.staysTrue(reloadUserIfNeededCompletionError == nil)
+                // Assert connection id is set.
+                Assert.willBeEqual(client.connectionId, connectionId)
+                // Assert connection status is updated.
+                Assert.willBeEqual(client.connectionStatus, .connected)
             }
         }
-    }
-
-    func test_reloadUserIfNeeded_propagatesTokenProviderError() throws {
-        // Create a token provider returning the error.
-        let tokenProviderError = TestError()
-
-        // Create a client with token provider returning the error.
-        let client = ChatClientMock<ExtraData>(
-            config: .init(apiKeyString: .unique),
-            tokenProvider: .closure {
-                $1(.failure(tokenProviderError))
-            }
-        )
-
-        // Create updater referencing to `active` client.
-        let updater = ChatClientUpdater<ExtraData>(client: client)
-
-        // Simulate `reloadUserIfNeeded` call and catch the result.
-        let error = try waitFor(updater.reloadUserIfNeeded)
-
-        // Assert error from token provider is propagated.
-        XCTAssertEqual(error as? TestError, tokenProviderError)
     }
 
     func test_reloadUserIfNeeded_newUser_propagatesClientIsPassiveError() throws {
@@ -399,19 +328,15 @@ final class ChatClientUpdater_Tests_Tests: StressTestCase {
         config.isClientInActiveMode = false
 
         // Create `passive` client.
-        let client = ChatClientMock<ExtraData>(
-            config: config,
-            tokenProvider: .anonymous
-        )
-
-        // Update token provider to return token for another user.
-        client.tokenProvider = .static(.unique())
+        let client = ChatClientMock<ExtraData>(config: config)
 
         // Create `ChatClientUpdater` instance.
         let updater = ChatClientUpdater<ExtraData>(client: client)
 
         // Simulate `reloadUserIfNeeded` call and catch the result.
-        let error = try waitFor(updater.reloadUserIfNeeded)
+        let error = try waitFor { completion in
+            updater.reloadUserIfNeeded(userConnectionProvider: .static(.unique()), completion: completion)
+        }
 
         // Assert `ClientError.ClientIsNotInActiveMode` is propagated.
         XCTAssertTrue(error is ClientError.ClientIsNotInActiveMode)
@@ -419,13 +344,7 @@ final class ChatClientUpdater_Tests_Tests: StressTestCase {
 
     func test_reloadUserIfNeeded_newUser_propagatesDatabaseFlushError() throws {
         // Create `active` client.
-        let client = ChatClientMock<ExtraData>(
-            config: .init(apiKeyString: .unique),
-            tokenProvider: .anonymous
-        )
-
-        // Update token provider to return token for another user.
-        client.tokenProvider = .static(.unique())
+        let client = ChatClientMock<ExtraData>(config: .init(apiKeyString: .unique))
 
         // Create `ChatClientUpdater` instance.
         let updater = ChatClientUpdater<ExtraData>(client: client)
@@ -435,7 +354,12 @@ final class ChatClientUpdater_Tests_Tests: StressTestCase {
         client.mockDatabaseContainer.removeAllData_errorResponse = databaseFlushError
 
         // Simulate `reloadUserIfNeeded` call and catch the result.
-        let error = try waitFor(updater.reloadUserIfNeeded)
+        let error = try waitFor { completion in
+            updater.reloadUserIfNeeded(
+                userConnectionProvider: .static(.unique()),
+                completion: completion
+            )
+        }
 
         // Assert database error is propagated.
         XCTAssertEqual(error as? TestError, databaseFlushError)
@@ -443,13 +367,7 @@ final class ChatClientUpdater_Tests_Tests: StressTestCase {
 
     func test_reloadUserIfNeeded_newUser_propagatesWebSocketClientError_whenAutomaticallyConnects() {
         // Create `active` client.
-        let client = ChatClientMock<ExtraData>(
-            config: .init(apiKeyString: .unique),
-            tokenProvider: .anonymous
-        )
-
-        // Update token provider to return token for another user.
-        client.tokenProvider = .static(.unique())
+        let client = ChatClientMock<ExtraData>(config: .init(apiKeyString: .unique))
 
         // Create `ChatClientUpdater` instance.
         let updater = ChatClientUpdater<ExtraData>(client: client)
@@ -457,7 +375,9 @@ final class ChatClientUpdater_Tests_Tests: StressTestCase {
         // Simulate `reloadUserIfNeeded` call.
         var reloadUserIfNeededCompletionCalled = false
         var reloadUserIfNeededCompletionError: Error?
-        updater.reloadUserIfNeeded {
+        updater.reloadUserIfNeeded(
+            userConnectionProvider: .static(.unique())
+        ) {
             reloadUserIfNeededCompletionCalled = true
             reloadUserIfNeededCompletionError = $0
         }
@@ -473,21 +393,20 @@ final class ChatClientUpdater_Tests_Tests: StressTestCase {
 
     func test_reloadUserIfNeeded_keepsUpdaterAlive() {
         // Create an active client with user session.
-        let client = mockClientWithUserSession(
-            shouldConnectAutomatically: false
-        )
+        let client = mockClientWithUserSession()
 
         // Change the token provider and save the completion.
         var tokenProviderCompletion: ((Result<Token, Error>) -> Void)?
-        client.tokenProvider = .closure {
-            tokenProviderCompletion = $1
-        }
 
         // Create an updater.
         var updater: ChatClientUpdater<ExtraData>? = .init(client: client)
-
+        
         // Simulate `reloadUserIfNeeded` call.
-        updater?.reloadUserIfNeeded()
+        updater?.reloadUserIfNeeded(
+            userConnectionProvider: .closure {
+                tokenProviderCompletion = $1
+            }
+        )
 
         // Create weak ref and drop a strong one.
         weak var weakUpdater = updater
@@ -508,28 +427,28 @@ final class ChatClientUpdater_Tests_Tests: StressTestCase {
 
     private func mockClientWithUserSession(
         isActive: Bool = true,
-        shouldConnectAutomatically: Bool = true,
         token: Token = .unique(userId: .unique)
     ) -> ChatClientMock<ExtraData> {
         // Create a config.
         var config = ChatClientConfig(apiKeyString: .unique)
         config.isClientInActiveMode = isActive
-        config.shouldConnectAutomatically = shouldConnectAutomatically
 
         // Create a client.
         let client = ChatClientMock<ExtraData>(
             config: config,
-            tokenProvider: .static(token),
             workerBuilders: [TestWorker.init],
             eventWorkerBuilders: [TestEventWorker.init]
         )
+        client.connectUser(userInfo: .init(id: token.userId), token: token)
 
         client.currentUserId = token.userId
         client.currentToken = token
 
         client.connectionId = .unique
         client.connectionStatus = .connected
-        client.webSocketClient?.connectEndpoint = .webSocketConnect(userId: token.userId)
+        client.webSocketClient?.connectEndpoint = .webSocketConnect(
+            userInfo: UserInfo<NoExtraData>(id: token.userId)
+        )
 
         client.createBackgroundWorkers()
 

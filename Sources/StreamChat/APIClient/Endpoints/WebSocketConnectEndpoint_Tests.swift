@@ -7,18 +7,23 @@ import XCTest
 
 final class WebSocketConnectEndpoint_Tests: XCTestCase {
     func test_webSocketConnect_buildsCorrectly() {
-        let userId: UserId = .unique
+        let userInfo = UserInfo<NoExtraData>(
+            id: .unique,
+            name: .unique,
+            imageURL: .unique(),
+            extraData: .defaultValue
+        )
         
         let expectedEndpoint = Endpoint<EmptyResponse>(
             path: "connect",
             method: .get,
             queryItems: nil,
             requiresConnectionId: false,
-            body: ["json": WebSocketConnectPayload(userId: userId)]
+            body: ["json": WebSocketConnectPayload(userInfo: userInfo)]
         )
         
         // Build endpoint
-        let endpoint: Endpoint<EmptyResponse> = .webSocketConnect(userId: userId)
+        let endpoint: Endpoint<EmptyResponse> = .webSocketConnect(userInfo: userInfo)
         
         // Assert endpoint is built correctly
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))

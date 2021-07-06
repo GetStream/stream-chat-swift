@@ -7,13 +7,11 @@ import StreamChatUI
 import UIKit
 
 extension ChatClient {
-    
     /// The channel name that we want to use for the livestream chat
     static let livestreamChannelName = "ytlivestream"
     
     /// The singleton instance of `ChatClient`
     static let shared: ChatClient = {
-        
         var components = Components()
 
         components.messageListVC = YTLiveChatViewController.self
@@ -29,19 +27,22 @@ extension ChatClient {
 
         let config = ChatClientConfig(apiKey: APIKey("bmrrcjf5bhzt"))
         
-        let chatClient = ChatClient(
-            config: config,
-            tokenProvider: .development(userId: "sagar"))
-        return chatClient
+        let client = ChatClient(config: config)
+        client.connectUser(
+            userInfo: .init(id: "sagar"),
+            token: .development(userId: "sagar")
+        )
+        return client
     }()
 }
 
 extension ChatChannelController {
     static var liveStreamChannelController: ChatChannelController {
-        return ChatClient.shared.channelController(
+        ChatClient.shared.channelController(
             for: ChannelId(
                 type: .livestream,
                 id: ChatClient.livestreamChannelName
-            ))
+            )
+        )
     }
 }

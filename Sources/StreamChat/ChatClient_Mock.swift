@@ -11,7 +11,6 @@ extension _ChatClient {
     static var mock: _ChatClient {
         .init(
             config: .init(apiKey: .init(.unique)),
-            tokenProvider: .anonymous,
             workerBuilders: [],
             eventWorkerBuilders: [],
             environment: .mock
@@ -41,7 +40,7 @@ extension _ChatClient {
 
 class ChatClientMock<ExtraData: ExtraDataTypes>: _ChatClient<ExtraData> {
     @Atomic var init_config: ChatClientConfig
-    @Atomic var init_tokenProvider: _TokenProvider<ExtraData>
+    @Atomic var init_tokenProvider: TokenProvider?
     @Atomic var init_workerBuilders: [WorkerBuilder]
     @Atomic var init_eventWorkerBuilders: [EventWorkerBuilder]
     @Atomic var init_environment: Environment
@@ -61,26 +60,23 @@ class ChatClientMock<ExtraData: ExtraDataTypes>: _ChatClient<ExtraData> {
 
     override init(
         config: ChatClientConfig,
-        tokenProvider: _TokenProvider<ExtraData>,
+        tokenProvider: TokenProvider? = nil,
         workerBuilders: [WorkerBuilder] = [],
         eventWorkerBuilders: [EventWorkerBuilder] = [],
-        environment: Environment = .mock,
-        completion: ((Error?) -> Void)? = nil
+        environment: Environment = .mock
     ) {
         init_config = config
         init_tokenProvider = tokenProvider
         init_workerBuilders = workerBuilders
         init_eventWorkerBuilders = eventWorkerBuilders
         init_environment = environment
-        init_completion = completion
 
         super.init(
             config: config,
             tokenProvider: tokenProvider,
             workerBuilders: workerBuilders,
             eventWorkerBuilders: eventWorkerBuilders,
-            environment: environment,
-            completion: completion
+            environment: environment
         )
     }
 

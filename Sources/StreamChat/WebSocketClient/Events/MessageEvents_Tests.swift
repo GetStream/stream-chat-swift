@@ -83,9 +83,10 @@ class MessageEventsIntegration_Tests: XCTestCase {
         config.isClientInActiveMode = false
         
         currentUserId = .unique
-        client = ChatClient(config: config, tokenProvider: .development(userId: currentUserId))
+        client = ChatClient(config: config)
         try! client.databaseContainer.createCurrentUser(id: currentUserId)
         client.eventNotificationCenter.eventBatchPeriod = 0
+        client.connectUser(userInfo: .init(id: currentUserId), token: .development(userId: currentUserId))
     }
 
     func test_MessageNewEventPayload_isHandled() throws {

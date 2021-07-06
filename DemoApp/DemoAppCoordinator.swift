@@ -29,7 +29,8 @@ final class DemoAppCoordinator {
         
         // Create client
         let config = ChatClientConfig(apiKey: .init(userCredentials.apiKey))
-        let client = ChatClient(config: config, tokenProvider: .static(token))
+        let client = ChatClient(config: config)
+        client.connectUser(userInfo: .init(id: userCredentials.id), token: token)
         
         // Config
         Components.default.channelListRouter = DemoChatChannelListRouter.self

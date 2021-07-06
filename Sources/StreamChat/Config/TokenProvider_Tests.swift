@@ -9,7 +9,7 @@ import XCTest
 final class TokenProvider_Tests: StressTestCase {
     func test_anonymousProvider_propagatesToken() throws {
         // Get token from `anonymous` provider.
-        let token = try waitFor { TokenProvider.anonymous.getToken(.mock, $0) }.get()
+        let token = try waitFor { UserConnectionProvider.anonymous.getToken(.mock, $0) }.get()
 
         // Assert token is correct.
         XCTAssertEqual(token.rawValue, "")
@@ -22,7 +22,7 @@ final class TokenProvider_Tests: StressTestCase {
 
         // Get a token from `development` token provider.
         let token = try waitFor {
-            TokenProvider.development(userId: userId).getToken(.mock, $0)
+            UserConnectionProvider.development(userId: userId).getToken(.mock, $0)
         }.get()
 
         // Assert token is correct.
@@ -38,7 +38,7 @@ final class TokenProvider_Tests: StressTestCase {
 
         // Get a token from `static` token provider.
         let receivedToken = try waitFor {
-            TokenProvider.static(token).getToken(.mock, $0)
+            UserConnectionProvider.static(token).getToken(.mock, $0)
         }.get()
 
         // Assert token is propagated.
@@ -51,7 +51,7 @@ final class TokenProvider_Tests: StressTestCase {
 
         // Get a token from `closure` token provider.
         let receivedToken = try waitFor {
-            TokenProvider
+            UserConnectionProvider
                 .closure { $1(.success(token)) }
                 .getToken(.mock, $0)
         }.get()
@@ -66,7 +66,7 @@ final class TokenProvider_Tests: StressTestCase {
 
         // Get a token from `closure` token provider.
         let receivedError = try waitFor {
-            TokenProvider
+            UserConnectionProvider
                 .closure { $1(.failure(error)) }
                 .getToken(.mock, $0)
         }.error
@@ -86,7 +86,7 @@ final class TokenProvider_Tests: StressTestCase {
         let client = ChatClient.mock
 
         // Create a `guest` token provider.
-        let tokenProvider = TokenProvider.guest(
+        let tokenProvider = UserConnectionProvider.guest(
             userId: userId,
             name: userName,
             imageURL: imageURL,
@@ -134,7 +134,7 @@ final class TokenProvider_Tests: StressTestCase {
         let client = ChatClient.mock
 
         // Create a `guest` token provider.
-        let tokenProvider = TokenProvider.guest(
+        let tokenProvider = UserConnectionProvider.guest(
             userId: userId,
             name: userName,
             imageURL: imageURL,

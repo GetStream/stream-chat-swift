@@ -27,19 +27,33 @@ class ChatClientUpdaterMock<ExtraData: ExtraDataTypes>: ChatClientUpdater<ExtraD
 
     // MARK: - Overrides
 
-    override func prepareEnvironment(newToken: Token) throws {
+    override func prepareEnvironment(
+        userInfo: UserInfo<ExtraData>?,
+        newToken: Token
+    ) throws {
         prepareEnvironment_newToken = newToken
     }
 
-    override func reloadUserIfNeeded(completion: ((Error?) -> Void)?) {
+    override func reloadUserIfNeeded(
+        userInfo: UserInfo<ExtraData>?,
+        userConnectionProvider: _UserConnectionProvider<ExtraData>?,
+        completion: ((Error?) -> Void)?
+    ) {
         reloadUserIfNeeded_called = true
         reloadUserIfNeeded_completion = completion
         reloadUserIfNeeded_callSuper = {
-            super.reloadUserIfNeeded(completion: completion)
+            super.reloadUserIfNeeded(
+                userInfo: userInfo,
+                userConnectionProvider: userConnectionProvider,
+                completion: completion
+            )
         }
     }
 
-    override func connect(completion: ((Error?) -> Void)? = nil) {
+    override func connect(
+        userInfo: UserInfo<ExtraData>?,
+        completion: ((Error?) -> Void)? = nil
+    ) {
         connect_called = true
         connect_completion = completion
     }

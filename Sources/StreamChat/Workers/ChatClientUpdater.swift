@@ -11,7 +11,10 @@ class ChatClientUpdater<ExtraData: ExtraDataTypes> {
         self.client = client
     }
 
-    func prepareEnvironment(newToken: Token) throws {
+    func prepareEnvironment(
+        userInfo: UserInfo<ExtraData>?,
+        newToken: Token
+    ) throws {
         // Check token is for different user.
         guard newToken.userId != client.currentUserId else {
             // Check the token has changed.
@@ -55,9 +58,11 @@ class ChatClientUpdater<ExtraData: ExtraDataTypes> {
 
         // Disconnect from web-socket.
         disconnect()
-
+        
         // Update web-socket endpoint.
-        client.webSocketClient?.connectEndpoint = .webSocketConnect(userId: newToken.userId)
+        client.webSocketClient?.connectEndpoint = .webSocketConnect(
+            userInfo: userInfo ?? .init(id: newToken.userId)
+        )
 
         // Re-create backgroundWorker's since they are related to the previous user.
         client.createBackgroundWorkers()
@@ -66,12 +71,24 @@ class ChatClientUpdater<ExtraData: ExtraDataTypes> {
         try client.databaseContainer.removeAllData(force: true)
     }
 
-    func reloadUserIfNeeded(completion: ((Error?) -> Void)? = nil) {
-        client.tokenProvider.getToken(client) {
+    func reloadUserIfNeeded(
+        userInfo: UserInfo<ExtraData>? = nil,
+        userConnectionProvider: _UserConnectionProvider<ExtraData>?,
+        completion: ((Error?) -> Void)? = nil
+    ) {
+        guard let userConnectionProvider = userConnectionProvider else {
+            completion?(ClientError.ConnectionWasNotInitiated())
+            return
+        }
+        
+        userConnectionProvider.getToken(client) {
             switch $0 {
             case let .success(newToken):
                 do {
-                    try self.prepareEnvironment(newToken: newToken)
+                    try self.prepareEnvironment(
+                        userInfo: userInfo,
+                        newToken: newToken
+                    )
 
                     // We manually change the `connectionStatus` for passive client
                     // to `disconnected` when environment was prepared correctly
@@ -80,15 +97,10 @@ class ChatClientUpdater<ExtraData: ExtraDataTypes> {
                         self.client.connectionStatus = .disconnected(error: nil)
                     }
 
-                    // Establish web-socket connection automatically if it is required
-                    // by the config. If `shouldConnectAutomatically` is set to `false` it means the
-                    // end-user wants to manually control web-socket connection
-                    // by calling `connect/disconnect` when it makes sense.
-                    if self.client.config.shouldConnectAutomatically {
-                        self.connect(completion: completion)
-                    } else {
-                        completion?(nil)
-                    }
+                    self.connect(
+                        userInfo: userInfo,
+                        completion: completion
+                    )
                 } catch {
                     completion?(error)
                 }
@@ -105,7 +117,10 @@ class ChatClientUpdater<ExtraData: ExtraDataTypes> {
     /// - Parameter completion: Called when the connection is established. If the connection fails, the completion is
     /// called with an error.
     ///
-    func connect(completion: ((Error?) -> Void)? = nil) {
+    func connect(
+        userInfo: UserInfo<ExtraData>? = nil,
+        completion: ((Error?) -> Void)? = nil
+    ) {
         // Connecting is not possible in connectionless mode (duh)
         guard client.config.isClientInActiveMode else {
             completion?(ClientError.ClientIsNotInActiveMode())

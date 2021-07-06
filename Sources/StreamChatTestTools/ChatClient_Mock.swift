@@ -13,7 +13,6 @@ public extension _ChatClient {
         
         return .init(
             config: config,
-            tokenProvider: .anonymous,
             workerBuilders: [],
             eventWorkerBuilders: [],
             environment: .init(

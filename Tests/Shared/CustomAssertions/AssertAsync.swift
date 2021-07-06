@@ -395,7 +395,7 @@ extension AssertAsync {
     static func willBeFalse(
         _ expression: @autoclosure () -> Bool?,
         timeout: TimeInterval = defaultTimeout,
-        message: @autoclosure () -> String = "Failed to become `TRUE`",
+        message: @autoclosure () -> String = "Failed to become `FALSE`",
         file: StaticString = #file,
         line: UInt = #line
     ) {
