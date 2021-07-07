@@ -59,7 +59,7 @@ final class CombineSimpleChatViewController: UITableViewController, UITextViewDe
         
         ///
         /// This subscription updates the view controller's `title` and its `navigationItem.prompt` to display the count of channel
-        /// members and the count of online members or typing members if any.
+        /// members and the count of online members or typing users if any.
         /// When the channel is deleted, this view controller is dismissed.
         ///
         let updatedChannel = channelController
@@ -123,7 +123,7 @@ final class CombineSimpleChatViewController: UITableViewController, UITextViewDe
             .store(in: &cancellables)
         
         ///
-        /// This subscription updates UI with typing members after receiving changes from `typingUsersPublisher`.
+        /// This subscription updates UI with typing users after receiving changes from `typingUsersPublisher`.
         ///
         channelController
             .typingUsersPublisher

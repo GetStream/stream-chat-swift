@@ -980,8 +980,8 @@
 		F6C0020A26414E4D0055D110 /* AnyAttachmentPayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6C0020926414E4D0055D110 /* AnyAttachmentPayload.swift */; };
 		F6C56D1424F7B89D0012BB1F /* EventMiddleware_Mock.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6C56D1324F7B89D0012BB1F /* EventMiddleware_Mock.swift */; };
 		F6CA70932513A1450024ED5D /* Channel+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6CA70912513A1400024ED5D /* Channel+Extensions.swift */; };
-		F6CCA24D251235F7004C1859 /* ChannelMemberTypingStateUpdaterMiddleware.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6CCA24C251235F7004C1859 /* ChannelMemberTypingStateUpdaterMiddleware.swift */; };
-		F6CCA24F2512491B004C1859 /* ChannelMemberTypingStateUpdaterMiddleware_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6CCA24E2512491B004C1859 /* ChannelMemberTypingStateUpdaterMiddleware_Tests.swift */; };
+		F6CCA24D251235F7004C1859 /* UserTypingStateUpdaterMiddleware.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6CCA24C251235F7004C1859 /* UserTypingStateUpdaterMiddleware.swift */; };
+		F6CCA24F2512491B004C1859 /* UserTypingStateUpdaterMiddleware_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6CCA24E2512491B004C1859 /* UserTypingStateUpdaterMiddleware_Tests.swift */; };
 		F6D61D9B2510B3FC00EB0624 /* NSManagedObject+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6D61D9A2510B3FC00EB0624 /* NSManagedObject+Extensions.swift */; };
 		F6D61D9D2510B57F00EB0624 /* NSManagedObject_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6D61D9C2510B57F00EB0624 /* NSManagedObject_Tests.swift */; };
 		F6E5E3472627A372007FA51F /* CGRect+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E5E3462627A372007FA51F /* CGRect+Extensions.swift */; };
@@ -2264,8 +2264,8 @@
 		F6C0020926414E4D0055D110 /* AnyAttachmentPayload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnyAttachmentPayload.swift; sourceTree = "<group>"; };
 		F6C56D1324F7B89D0012BB1F /* EventMiddleware_Mock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventMiddleware_Mock.swift; sourceTree = "<group>"; };
 		F6CA70912513A1400024ED5D /* Channel+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Channel+Extensions.swift"; sourceTree = "<group>"; };
-		F6CCA24C251235F7004C1859 /* ChannelMemberTypingStateUpdaterMiddleware.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelMemberTypingStateUpdaterMiddleware.swift; sourceTree = "<group>"; };
-		F6CCA24E2512491B004C1859 /* ChannelMemberTypingStateUpdaterMiddleware_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelMemberTypingStateUpdaterMiddleware_Tests.swift; sourceTree = "<group>"; };
+		F6CCA24C251235F7004C1859 /* UserTypingStateUpdaterMiddleware.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserTypingStateUpdaterMiddleware.swift; sourceTree = "<group>"; };
+		F6CCA24E2512491B004C1859 /* UserTypingStateUpdaterMiddleware_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserTypingStateUpdaterMiddleware_Tests.swift; sourceTree = "<group>"; };
 		F6CCA25025124BA9004C1859 /* MemberPayload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemberPayload.swift; sourceTree = "<group>"; };
 		F6D61D9A2510B3FC00EB0624 /* NSManagedObject+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSManagedObject+Extensions.swift"; sourceTree = "<group>"; };
 		F6D61D9C2510B57F00EB0624 /* NSManagedObject_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NSManagedObject_Tests.swift; sourceTree = "<group>"; };
@@ -2989,8 +2989,8 @@
 				792FCB4624A33CC2000290C7 /* EventDataProcessorMiddleware_Tests.swift */,
 				79896D63250A62EE00BA8F1C /* ChannelReadUpdaterMiddleware.swift */,
 				79896D65250A6D1500BA8F1C /* ChannelReadUpdaterMiddleware_Tests.swift */,
-				F6CCA24C251235F7004C1859 /* ChannelMemberTypingStateUpdaterMiddleware.swift */,
-				F6CCA24E2512491B004C1859 /* ChannelMemberTypingStateUpdaterMiddleware_Tests.swift */,
+				F6CCA24C251235F7004C1859 /* UserTypingStateUpdaterMiddleware.swift */,
+				F6CCA24E2512491B004C1859 /* UserTypingStateUpdaterMiddleware_Tests.swift */,
 				79158CF325F133FB00186102 /* ChannelTruncatedEventMiddleware.swift */,
 				79158CEA25F0EADF00186102 /* ChannelTruncatedEventMiddleware_Tests.swift */,
 				8899BC56254337C7003CB98B /* MessageReactionsMiddleware.swift */,
@@ -6083,7 +6083,7 @@
 				79A0E9BE2498C33100E9BD50 /* TypingEvent.swift in Sources */,
 				79896D5C2506593E00BA8F1C /* ChannelReadDTO.swift in Sources */,
 				8819DFD52525F49D00FD1A50 /* UserController.swift in Sources */,
-				F6CCA24D251235F7004C1859 /* ChannelMemberTypingStateUpdaterMiddleware.swift in Sources */,
+				F6CCA24D251235F7004C1859 /* UserTypingStateUpdaterMiddleware.swift in Sources */,
 				8A618E4524D19D510003D83C /* WebSocketPingController.swift in Sources */,
 				8A62704E24B8660A0040BFD6 /* EventType.swift in Sources */,
 				F65D9091250A5989000B8CEB /* WebSocketConnectEndpoint.swift in Sources */,
@@ -6133,7 +6133,7 @@
 				8AE335AA24FCF99E002B6677 /* InternetConnection_Tests.swift in Sources */,
 				790A4C4E252E092E001F4A23 /* DevicePayloads_Tests.swift in Sources */,
 				79D6CE9D25F7D73300BE2EEC /* ChatChannelWatcherListController+SwiftUI_Tests.swift in Sources */,
-				F6CCA24F2512491B004C1859 /* ChannelMemberTypingStateUpdaterMiddleware_Tests.swift in Sources */,
+				F6CCA24F2512491B004C1859 /* UserTypingStateUpdaterMiddleware_Tests.swift in Sources */,
 				DA8407332526003D005A0F62 /* UserListUpdater_Tests.swift in Sources */,
 				F69E7F7D24ED7562000F5252 /* CurrentUserController_Tests.swift in Sources */,
 				7922F30A24DAE3B600C364BC /* EntityDatabaseObserver_Tests.swift in Sources */,

@@ -93,14 +93,14 @@ class TypingEventsIntegration_Tests: XCTestCase {
         try client.databaseContainer.createMember(userId: "luke_skywalker", role: .member, cid: channelId)
         
         let channel = try XCTUnwrap(client.databaseContainer.viewContext.channel(cid: channelId))
-        XCTAssertTrue(channel.currentlyTypingMembers.isEmpty)
+        XCTAssertTrue(channel.currentlyTypingUsers.isEmpty)
         
         let unwrappedEvent = try XCTUnwrap(event)
         client.eventNotificationCenter.process(unwrappedEvent)
 
         AssertAsync {
             Assert.willBeFalse(
-                self.client.databaseContainer.viewContext.channel(cid: channelId)?.currentlyTypingMembers.isEmpty ?? true
+                self.client.databaseContainer.viewContext.channel(cid: channelId)?.currentlyTypingUsers.isEmpty ?? true
             )
         }
     }
@@ -116,24 +116,24 @@ class TypingEventsIntegration_Tests: XCTestCase {
             withQuery: false
         )
 
-        try client.databaseContainer.createMember(userId: "luke_skywalker", role: .member, cid: channelId)
+        try client.databaseContainer.createUser(id: "luke_skywalker")
         
         // Insert synchronously typing member into channel:
         try client.databaseContainer.writeSynchronously { session in
             let channel = try XCTUnwrap(session.channel(cid: channelId))
-            let member = try XCTUnwrap(session.member(userId: "luke_skywalker", cid: channelId))
-            channel.currentlyTypingMembers.insert(member)
+            let user = try XCTUnwrap(session.user(id: "luke_skywalker"))
+            channel.currentlyTypingUsers.insert(user)
         }
         
         let channel = try XCTUnwrap(client.databaseContainer.viewContext.channel(cid: channelId))
-        XCTAssertFalse(channel.currentlyTypingMembers.isEmpty)
+        XCTAssertFalse(channel.currentlyTypingUsers.isEmpty)
         
         let unwrappedEvent = try XCTUnwrap(event)
         client.eventNotificationCenter.process(unwrappedEvent)
 
         AssertAsync {
             Assert.willBeTrue(
-                self.client.databaseContainer.viewContext.channel(cid: channelId)?.currentlyTypingMembers.isEmpty ?? false
+                self.client.databaseContainer.viewContext.channel(cid: channelId)?.currentlyTypingUsers.isEmpty ?? false
             )
         }
     }

@@ -14,9 +14,9 @@ func createMemberInfoString(for channel: ChatChannel) -> String {
 /// Creates formatted string for currently typing users from `currentlyTypingUsers` property of `ChatChannel` if any.
 ///
 /// Example result: ` "Nick is typing..."` or`"Nick, Maria are typing..."`
-func createTypingUsersString(for channel: ChatChannel?) -> String? {
+func createTypingUserString(for channel: ChatChannel?) -> String? {
     guard let users = channel?.currentlyTypingUsers, !users.isEmpty else { return nil }
-    let names = members.map { $0.name ?? $0.id }.sorted()
+    let names = users.map { $0.name ?? $0.id }.sorted()
     return names.joined(separator: ", ") + " \(names.count == 1 ? "is" : "are") typing..."
 }
 

@@ -49,7 +49,7 @@ open class _ChatChannelListItemView<ExtraData: ExtraDataTypes>: _View, ThemeProv
         .withAdjustingFontForContentSizeCategory
         .withBidirectionalLanguagesSupport
     
-    /// The `UILabel` instance showing the last message or typing members if any.
+    /// The `UILabel` instance showing the last message or typing users if any.
     open private(set) lazy var subtitleLabel: UILabel = UILabel()
         .withoutAutoresizingMaskConstraints
         .withAdjustingFontForContentSizeCategory

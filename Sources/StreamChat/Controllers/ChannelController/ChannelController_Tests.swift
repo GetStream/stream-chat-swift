@@ -998,11 +998,11 @@ class ChannelController_Tests: StressTestCase {
     }
     
     func test_channelTypingEvents_areForwardedToDelegate() throws {
-        let memberId: UserId = .unique
+        let userId: UserId = .unique
         // Create channel in the database
         try client.databaseContainer.createChannel(cid: channelId)
-        // Create member in the database
-        try client.databaseContainer.createMember(userId: memberId, cid: channelId)
+        // Create user in the database
+        try client.databaseContainer.createUser(id: userId)
         
         // Set the queue for delegate calls
         let delegate = TestDelegate(expectedQueueId: controllerCallbackQueueID)
@@ -1011,28 +1011,28 @@ class ChannelController_Tests: StressTestCase {
         // Simulate `synchronize()` call
         controller.synchronize()
 
-        // Save member as a typing member
+        // Save user as a typing member
         try client.databaseContainer.writeSynchronously { session in
             let channel = try XCTUnwrap(session.channel(cid: self.channelId))
-            let member = try XCTUnwrap(session.member(userId: memberId, cid: self.channelId))
-            channel.currentlyTypingMembers.insert(member)
+            let user = try XCTUnwrap(session.user(id: userId))
+            channel.currentlyTypingUsers.insert(user)
         }
         
-        // Load the channel member
-        var typingMember: ChatChannelMember {
-            client.databaseContainer.viewContext.member(userId: memberId, cid: channelId)!.asModel()
+        // Load the user
+        var typingUser: ChatUser {
+            client.databaseContainer.viewContext.user(id: userId)!.asModel()
         }
         
-        // Assert the delegate receives typing memeber
-        AssertAsync.willBeEqual(delegate.didChangeTypingMembers_typingMembers, [typingMember])
+        // Assert the delegate receives typing user
+        AssertAsync.willBeEqual(delegate.didChangeTypingUsers_typingUsers, [typingUser])
     }
     
     func test_channelTypingEvents_areForwardedToGenericDelegate() throws {
-        let memberId: UserId = .unique
+        let userId: UserId = .unique
         // Create channel in the database
         try client.databaseContainer.createChannel(cid: channelId)
-        // Create member in the database
-        try client.databaseContainer.createMember(userId: memberId, cid: channelId)
+        // Create user in the database
+        try client.databaseContainer.createUser(id: userId)
         
         // Set the queue for delegate calls
         let delegate = TestDelegateGeneric<NoExtraData>(expectedQueueId: controllerCallbackQueueID)
@@ -1041,20 +1041,20 @@ class ChannelController_Tests: StressTestCase {
         // Simulate `synchronize()` call
         controller.synchronize()
 
-        // Set created member as a typing member
+        // Set created user as a typing user
         try client.databaseContainer.writeSynchronously { session in
             let channel = try XCTUnwrap(session.channel(cid: self.channelId))
-            let member = try XCTUnwrap(session.member(userId: memberId, cid: self.channelId))
-            channel.currentlyTypingMembers.insert(member)
+            let user = try XCTUnwrap(session.user(id: userId))
+            channel.currentlyTypingUsers.insert(user)
         }
         
-        // Load the channel member
-        var typingMember: ChatChannelMember {
-            client.databaseContainer.viewContext.member(userId: memberId, cid: channelId)!.asModel()
+        // Load the channel user
+        var typingUser: ChatUser {
+            client.databaseContainer.viewContext.user(id: userId)!.asModel()
         }
         
-        // Assert the delegate receives typing member
-        AssertAsync.willBeEqual(delegate.didChangeTypingMembers_typingMembers, [typingMember])
+        // Assert the delegate receives typing user
+        AssertAsync.willBeEqual(delegate.didChangeTypingUsers_typingUsers, [typingUser])
     }
     
     func test_delegateMethodsAreCalled() throws {
@@ -3240,7 +3240,7 @@ private class TestDelegate: QueueAwareDelegate, ChatChannelControllerDelegate {
     @Atomic var didUpdateChannel_channel: EntityChange<ChatChannel>?
     @Atomic var didUpdateMessages_messages: [ListChange<ChatMessage>]?
     @Atomic var didReceiveMemberEvent_event: MemberEvent?
-    @Atomic var didChangeTypingMembers_typingMembers: Set<ChatChannelMember>?
+    @Atomic var didChangeTypingUsers_typingUsers: Set<ChatUser>?
     
     func controller(_ controller: DataController, didChangeState state: DataController.State) {
         self.state = state
@@ -3274,9 +3274,9 @@ private class TestDelegate: QueueAwareDelegate, ChatChannelControllerDelegate {
     
     func channelController(
         _ channelController: ChatChannelController,
-        didChangeTypingMembers typingMembers: Set<ChatChannelMember>
+        didChangeTypingUsers typingUsers: Set<ChatUser>
     ) {
-        didChangeTypingMembers_typingMembers = typingMembers
+        didChangeTypingUsers_typingUsers = typingUsers
         validateQueue()
     }
 }
@@ -3287,7 +3287,7 @@ private class TestDelegateGeneric<ExtraData: ExtraDataTypes>: QueueAwareDelegate
     @Atomic var didUpdateChannel_channel: EntityChange<_ChatChannel<ExtraData>>?
     @Atomic var didUpdateMessages_messages: [ListChange<_ChatMessage<ExtraData>>]?
     @Atomic var didReceiveMemberEvent_event: MemberEvent?
-    @Atomic var didChangeTypingMembers_typingMembers: Set<_ChatChannelMember<ExtraData.User>>?
+    @Atomic var didChangeTypingUsers_typingUsers: Set<_ChatUser<ExtraData.User>>?
     
     func controller(_ controller: DataController, didChangeState state: DataController.State) {
         self.state = state
@@ -3317,9 +3317,9 @@ private class TestDelegateGeneric<ExtraData: ExtraDataTypes>: QueueAwareDelegate
     
     func channelController(
         _ channelController: _ChatChannelController<ExtraData>,
-        didChangeTypingMembers typingMembers: Set<_ChatChannelMember<ExtraData.User>>
+        didChangeTypingUsers typingUsers: Set<_ChatUser<ExtraData.User>>
     ) {
-        didChangeTypingMembers_typingMembers = typingMembers
+        didChangeTypingUsers_typingUsers = typingUsers
         validateQueue()
     }
 }

@@ -27,7 +27,7 @@ extension _ChatChannelController {
         basePublishers.memberEvent.keepAlive(self)
     }
     
-    /// A publisher emitting a new value every time typing members change.
+    /// A publisher emitting a new value every time typing users change.
     public var typingUsersPublisher: AnyPublisher<Set<_ChatUser<ExtraData.User>>, Never> {
         basePublishers.typingUsers.keepAlive(self)
     }
