@@ -292,9 +292,9 @@ public class _ChatChannelController<ExtraData: ExtraDataTypes>: DataController, 
             ).onChange { change in
                 self.delegateCallback { $0.channelController(self, didUpdateChannel: change) }
             }
-            .onFieldChange(\.currentlyTypingMembers) { change in
+            .onFieldChange(\.currentlyTypingUsers) { change in
                 self.delegateCallback {
-                    $0.channelController(self, didChangeTypingMembers: change.item)
+                    $0.channelController(self, didChangeTypingUsers: change.item)
                 }
             }
 
@@ -1105,8 +1105,8 @@ public protocol ChatChannelControllerDelegate: DataControllerStateDelegate {
     /// The controller received a `MemberEvent` related to the channel it observes.
     func channelController(_ channelController: ChatChannelController, didReceiveMemberEvent: MemberEvent)
     
-    /// The controller received a change related to members typing in the channel it observes.
-    func channelController(_ channelController: ChatChannelController, didChangeTypingMembers typingMembers: Set<ChatChannelMember>)
+    /// The controller received a change related to users typing in the channel it observes.
+    func channelController(_ channelController: ChatChannelController, didChangeTypingUsers typingUsers: Set<ChatUser>)
 }
 
 public extension ChatChannelControllerDelegate {
@@ -1124,7 +1124,7 @@ public extension ChatChannelControllerDelegate {
     
     func channelController(
         _ channelController: ChatChannelController,
-        didChangeTypingMembers typingMembers: Set<ChatChannelMember>
+        didChangeTypingUsers typingUsers: Set<ChatUser>
     ) {}
 }
 
@@ -1153,10 +1153,10 @@ public protocol _ChatChannelControllerDelegate: DataControllerStateDelegate {
     /// The controller received a `MemberEvent` related to the channel it observes.
     func channelController(_ channelController: _ChatChannelController<ExtraData>, didReceiveMemberEvent: MemberEvent)
     
-    /// The controller received a change related to members typing in the channel it observes.
+    /// The controller received a change related to users typing in the channel it observes.
     func channelController(
         _ channelController: _ChatChannelController<ExtraData>,
-        didChangeTypingMembers typingMembers: Set<_ChatChannelMember<ExtraData.User>>
+        didChangeTypingUsers typingUsers: Set<_ChatUser<ExtraData.User>>
     )
 }
 
@@ -1175,7 +1175,7 @@ public extension _ChatChannelControllerDelegate {
     
     func channelController(
         _ channelController: _ChatChannelController<ExtraData>,
-        didChangeTypingMembers: Set<_ChatChannelMember<ExtraData.User>>
+        didChangeTypingUsers: Set<_ChatUser<ExtraData.User>>
     ) {}
 }
 
@@ -1199,9 +1199,9 @@ class AnyChannelControllerDelegate<ExtraData: ExtraDataTypes>: _ChatChannelContr
         MemberEvent
     ) -> Void
     
-    private var _controllerDidChangeTypingMembers: (
+    private var _controllerDidChangeTypingUsers: (
         _ChatChannelController<ExtraData>,
-        Set<_ChatChannelMember<ExtraData.User>>
+        Set<_ChatUser<ExtraData.User>>
     ) -> Void
 
     weak var wrappedDelegate: AnyObject?
@@ -1221,9 +1221,9 @@ class AnyChannelControllerDelegate<ExtraData: ExtraDataTypes>: _ChatChannelContr
             _ChatChannelController<ExtraData>,
             MemberEvent
         ) -> Void,
-        controllerDidChangeTypingMembers: @escaping (
+        controllerDidChangeTypingUsers: @escaping (
             _ChatChannelController<ExtraData>,
-            Set<_ChatChannelMember<ExtraData.User>>
+            Set<_ChatUser<ExtraData.User>>
         ) -> Void
     ) {
         self.wrappedDelegate = wrappedDelegate
@@ -1231,7 +1231,7 @@ class AnyChannelControllerDelegate<ExtraData: ExtraDataTypes>: _ChatChannelContr
         _controllerDidUpdateChannel = controllerDidUpdateChannel
         _controllerdidUpdateMessages = controllerdidUpdateMessages
         _controllerDidReceiveMemberEvent = controllerDidReceiveMemberEvent
-        _controllerDidChangeTypingMembers = controllerDidChangeTypingMembers
+        _controllerDidChangeTypingUsers = controllerDidChangeTypingUsers
     }
     
     func controller(_ controller: DataController, didChangeState state: DataController.State) {
@@ -1261,9 +1261,9 @@ class AnyChannelControllerDelegate<ExtraData: ExtraDataTypes>: _ChatChannelContr
     
     func channelController(
         _ channelController: _ChatChannelController<ExtraData>,
-        didChangeTypingMembers typingMembers: Set<_ChatChannelMember<ExtraData.User>>
+        didChangeTypingUsers typingUsers: Set<_ChatUser<ExtraData.User>>
     ) {
-        _controllerDidChangeTypingMembers(channelController, typingMembers)
+        _controllerDidChangeTypingUsers(channelController, typingUsers)
     }
 }
 
@@ -1277,8 +1277,8 @@ extension AnyChannelControllerDelegate {
             controllerDidReceiveMemberEvent: { [weak delegate] in
                 delegate?.channelController($0, didReceiveMemberEvent: $1)
             },
-            controllerDidChangeTypingMembers: { [weak delegate] in
-                delegate?.channelController($0, didChangeTypingMembers: $1)
+            controllerDidChangeTypingUsers: { [weak delegate] in
+                delegate?.channelController($0, didChangeTypingUsers: $1)
             }
         )
     }
@@ -1294,8 +1294,8 @@ extension AnyChannelControllerDelegate where ExtraData == NoExtraData {
             controllerDidReceiveMemberEvent: { [weak delegate] in
                 delegate?.channelController($0, didReceiveMemberEvent: $1)
             },
-            controllerDidChangeTypingMembers: { [weak delegate] in
-                delegate?.channelController($0, didChangeTypingMembers: $1)
+            controllerDidChangeTypingUsers: { [weak delegate] in
+                delegate?.channelController($0, didChangeTypingUsers: $1)
             }
         )
     }

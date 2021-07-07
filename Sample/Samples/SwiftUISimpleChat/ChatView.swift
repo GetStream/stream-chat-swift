@@ -32,7 +32,7 @@ struct ChatView: View {
         /// Set title to channel's name.
         .navigationBarTitle(
             Text(
-                createTypingMemberString(for: channel.channel) ??
+                createTypingUserString(for: channel.channel) ??
                     createChannelTitle(for: channel.channel, channel.controller.client.currentUserId)
             ),
             displayMode: .inline

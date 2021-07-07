@@ -81,11 +81,11 @@ open class _ChatChannelListItemView<ExtraData: ExtraDataTypes>: _View, ThemeProv
         }
     }
 
-    /// Text of `subtitleLabel` which contains current typing member or the last message in the channel.
+    /// Text of `subtitleLabel` which contains current typing user or the last message in the channel.
     open var subtitleText: String? {
         guard let content = content else { return nil }
-        if let typingMembersInfo = typingMemberString {
-            return typingMembersInfo
+        if let typingUsersInfo = typingUserString {
+            return typingUsersInfo
         } else if let latestMessage = content.channel.latestMessages.first {
             return "\(latestMessage.author.name ?? latestMessage.author.id): \(latestMessage.text)"
         } else {
@@ -177,12 +177,12 @@ open class _ChatChannelListItemView<ExtraData: ExtraDataTypes>: _View, ThemeProv
 
 extension _ChatChannelListItemView {
     /// The formatted string containing the typing member.
-    var typingMemberString: String? {
-        guard let members = content?.channel.currentlyTypingMembers.filter({ $0.id != content?.currentUserId }),
-              !members.isEmpty
+    var typingUserString: String? {
+        guard let users = content?.channel.currentlyTypingUsers.filter({ $0.id != content?.currentUserId }),
+              !users.isEmpty
         else { return nil }
 
-        let names = members
+        let names = users
             .compactMap(\.name)
             .sorted()
             .joined(separator: ", ")
@@ -190,6 +190,6 @@ extension _ChatChannelListItemView {
         let typingSingularText = L10n.Channel.Item.typingSingular
         let typingPluralText = L10n.Channel.Item.typingPlural
 
-        return names + " \(members.count == 1 ? typingSingularText : typingPluralText)"
+        return names + " \(users.count == 1 ? typingSingularText : typingPluralText)"
     }
 }

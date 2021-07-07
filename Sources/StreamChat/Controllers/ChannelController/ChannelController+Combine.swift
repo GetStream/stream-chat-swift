@@ -28,8 +28,8 @@ extension _ChatChannelController {
     }
     
     /// A publisher emitting a new value every time typing members change.
-    public var typingMembersPublisher: AnyPublisher<Set<_ChatChannelMember<ExtraData.User>>, Never> {
-        basePublishers.typingMembers.keepAlive(self)
+    public var typingUsersPublisher: AnyPublisher<Set<_ChatUser<ExtraData.User>>, Never> {
+        basePublishers.typingUsers.keepAlive(self)
     }
 
     /// An internal backing object for all publicly available Combine publishers. We use it to simplify the way we expose
@@ -51,8 +51,8 @@ extension _ChatChannelController {
         /// A backing subject for `memberEventPublisher`.
         let memberEvent: PassthroughSubject<MemberEvent, Never> = .init()
         
-        /// A backing subject for `typingMembersPublisher`.
-        let typingMembers: PassthroughSubject<Set<_ChatChannelMember<ExtraData.User>>, Never> = .init()
+        /// A backing subject for `typingUsersPublisher`.
+        let typingUsers: PassthroughSubject<Set<_ChatUser<ExtraData.User>>, Never> = .init()
                 
         init(controller: _ChatChannelController<ExtraData>) {
             self.controller = controller
@@ -89,8 +89,8 @@ extension _ChatChannelController.BasePublishers: _ChatChannelControllerDelegate 
     
     func channelController(
         _ channelController: _ChatChannelController<ExtraData>,
-        didChangeTypingMembers typingMembers: Set<_ChatChannelMember<ExtraData.User>>
+        didChangeTypingUsers typingUsers: Set<_ChatUser<ExtraData.User>>
     ) {
-        self.typingMembers.send(typingMembers)
+        self.typingUsers.send(typingUsers)
     }
 }

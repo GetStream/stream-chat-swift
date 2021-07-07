@@ -190,8 +190,8 @@ struct ChannelListView: View {
     private func channelDetails(for index: Int) -> Text {
         let channel = self.channel(index)
         
-        if let typingMembersInfo = createTypingMemberString(for: channel) {
-            return Text(typingMembersInfo)
+        if let typingUsersInfo = createTypingUserString(for: channel) {
+            return Text(typingUsersInfo)
         } else if let latestMessage = channel.latestMessages.first {
             let author = latestMessage.author.name ?? latestMessage.author.id.description
             return Text("\(author): \(latestMessage.text)")

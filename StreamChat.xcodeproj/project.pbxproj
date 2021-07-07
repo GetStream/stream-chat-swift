@@ -293,7 +293,7 @@
 		799C9438247D2FB9001F1104 /* ChatClientConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799C9428247D2FB9001F1104 /* ChatClientConfig.swift */; };
 		799C9439247D2FB9001F1104 /* ChannelDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799C942A247D2FB9001F1104 /* ChannelDTO.swift */; };
 		799C943B247D2FB9001F1104 /* MessageDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799C942D247D2FB9001F1104 /* MessageDTO.swift */; };
-		799C943E247D2FB9001F1104 /* Message.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799C9431247D2FB9001F1104 /* Message.swift */; };
+		799C943E247D2FB9001F1104 /* ChatMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799C9431247D2FB9001F1104 /* ChatMessage.swift */; };
 		799C9443247D3DA7001F1104 /* APIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799C9442247D3DA7001F1104 /* APIClient.swift */; };
 		799C9445247D3DD2001F1104 /* WebSocketClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799C9444247D3DD2001F1104 /* WebSocketClient.swift */; };
 		799C9447247D50F3001F1104 /* Worker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799C9446247D50F3001F1104 /* Worker.swift */; };
@@ -1585,7 +1585,7 @@
 		799C942A247D2FB9001F1104 /* ChannelDTO.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChannelDTO.swift; sourceTree = "<group>"; };
 		799C942D247D2FB9001F1104 /* MessageDTO.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageDTO.swift; sourceTree = "<group>"; };
 		799C942F247D2FB9001F1104 /* ChatClient_Tests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatClient_Tests.swift; sourceTree = "<group>"; };
-		799C9431247D2FB9001F1104 /* Message.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Message.swift; sourceTree = "<group>"; };
+		799C9431247D2FB9001F1104 /* ChatMessage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatMessage.swift; sourceTree = "<group>"; };
 		799C9442247D3DA7001F1104 /* APIClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIClient.swift; sourceTree = "<group>"; };
 		799C9444247D3DD2001F1104 /* WebSocketClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebSocketClient.swift; sourceTree = "<group>"; };
 		799C9446247D50F3001F1104 /* Worker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Worker.swift; sourceTree = "<group>"; };
@@ -3231,7 +3231,7 @@
 				796CBC6425FBAD12003299B0 /* Member_Tests.swift */,
 				79877A012498E4BB00015F8B /* User.swift */,
 				64C8C86D26934C6100329F82 /* UserInfo.swift */,
-				799C9431247D2FB9001F1104 /* Message.swift */,
+				799C9431247D2FB9001F1104 /* ChatMessage.swift */,
 				64C80614262EDA9600B1F7AD /* ChatMessage_Tests.swift */,
 				AD7AC98B260A94C6004AADA5 /* MessagePinning.swift */,
 				794927EC249E0BE2009D7EB7 /* ExtraData.swift */,
@@ -6102,7 +6102,7 @@
 				E7DD8EC125E4083B0059A322 /* OptionalDecodable.swift in Sources */,
 				F6FF1DAA24FD23D300151735 /* MessageEndpoints.swift in Sources */,
 				DA8407002524F778005A0F62 /* UserListController.swift in Sources */,
-				799C943E247D2FB9001F1104 /* Message.swift in Sources */,
+				799C943E247D2FB9001F1104 /* ChatMessage.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

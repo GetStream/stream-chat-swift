@@ -484,27 +484,27 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
         updateNavigationBarContent()
         updateScrollToLatestMessageButton()
     }
-
+    
     open func channelController(
         _ channelController: _ChatChannelController<ExtraData>,
-        didChangeTypingMembers typingMembers: Set<_ChatChannelMember<ExtraData.User>>
+        didChangeTypingUsers typingUsers: Set<_ChatUser<ExtraData.User>>
     ) {
         guard channelController.areTypingEventsEnabled else { return }
         
-        let typingMembersWithoutCurrentUser = typingMembers
+        let typingUsersWithoutCurrentUser = typingUsers
             .sorted { $0.id < $1.id }
             .filter { $0.id != self.channelController.client.currentUserId }
         
-        if typingMembersWithoutCurrentUser.isEmpty {
+        if typingUsersWithoutCurrentUser.isEmpty {
             hideTypingIndicator()
         } else {
-            showTypingIndicator(typingMembers: typingMembersWithoutCurrentUser)
+            showTypingIndicator(typingUsers: typingUsersWithoutCurrentUser)
         }
     }
     
     /// Shows typing Indicator
-    /// - Parameter typingMembers: typing members gotten from `channelController`
-    open func showTypingIndicator(typingMembers: [_ChatChannelMember<ExtraData.User>]) {
+    /// - Parameter typingUsers: typing users gotten from `channelController`
+    open func showTypingIndicator(typingUsers: [_ChatUser<ExtraData.User>]) {
         if typingIndicatorView.isHidden {
             Animate {
                 self.listView.contentInset.top += self.typingIndicatorViewHeight
@@ -516,19 +516,18 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
             }
         }
 
-        // If we somehow cannot fetch any member name, we simply show that `Someone is typing`
-        guard let member = typingMembers.first(where: { user in user.name != nil }), let name = member.name else {
+        // If we somehow cannot fetch any user name, we simply show that `Someone is typing`
+        guard let user = typingUsers.first(where: { user in user.name != nil }), let name = user.name else {
             typingIndicatorView.content = L10n.MessageList.TypingIndicator.typingUnknown
             typingIndicatorView.isHidden = false
             return
         }
         
-        typingIndicatorView.content = L10n.MessageList.TypingIndicator.users(name, typingMembers.count - 1)
+        typingIndicatorView.content = L10n.MessageList.TypingIndicator.users(name, typingUsers.count - 1)
         typingIndicatorView.isHidden = false
     }
     
     /// Hides typing Indicator
-    /// - Parameter typingMembers: typing members gotten from `channelController`
     open func hideTypingIndicator() {
         guard typingIndicatorView.isVisible else { return }
 

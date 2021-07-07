@@ -87,7 +87,7 @@ private extension ChannelDTO {
         // We should not set `needsRefreshQueries` to `true` because in that case NewChannelQueryUpdater
         // triggers, which leads to `Too many requests for user` backend error
         needsRefreshQueries = false
-        currentlyTypingMembers = []
+        currentlyTypingUsers = []
         reads = []
         queries = []
     }

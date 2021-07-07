@@ -24,8 +24,8 @@ extension _ChatChannelController {
         /// The current state of the Controller.
         @Published public private(set) var state: DataController.State
         
-        /// The typing members related to the channel.
-        @Published public private(set) var typingMembers: Set<_ChatChannelMember<ExtraData.User>> = []
+        /// The typing users related to the channel.
+        @Published public private(set) var typingUsers: Set<_ChatUser<ExtraData.User>> = []
         
         /// Creates a new `ObservableObject` wrapper with the provided controller instance.
         init(controller: _ChatChannelController<ExtraData>) {
@@ -36,7 +36,7 @@ extension _ChatChannelController {
             
             channel = controller.channel
             messages = controller.messages
-            typingMembers = controller.channel?.currentlyTypingMembers ?? []
+            typingUsers = controller.channel?.currentlyTypingUsers ?? []
         }
     }
 }
@@ -63,8 +63,8 @@ extension _ChatChannelController.ObservableObject: _ChatChannelControllerDelegat
     
     public func channelController(
         _ channelController: _ChatChannelController<ExtraData>,
-        didChangeTypingMembers typingMembers: Set<_ChatChannelMember<ExtraData.User>>
+        didChangeTypingUsers typingUsers: Set<_ChatUser<ExtraData.User>>
     ) {
-        self.typingMembers = typingMembers
+        self.typingUsers = typingUsers
     }
 }
