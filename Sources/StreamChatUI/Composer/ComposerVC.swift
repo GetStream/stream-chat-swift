@@ -46,7 +46,7 @@ open class _ComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
         /// The quoting message if the composer is currently quoting a message.
         public let quotingMessage: _ChatMessage<ExtraData>?
         /// The thread parent message if the composer is currently replying in a thread.
-        public let threadMessage: _ChatMessage<ExtraData>?
+        public var threadMessage: _ChatMessage<ExtraData>?
         /// The attachments of the message.
         public var attachments: [AnyAttachmentPayload]
         /// The mentioned users in the message.
@@ -138,22 +138,6 @@ open class _ComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
                 editingMessage: nil,
                 quotingMessage: message,
                 threadMessage: threadMessage,
-                attachments: attachments,
-                mentionedUsers: mentionedUsers,
-                command: command
-            )
-        }
-
-        /// Sets the content state to replying to a thread message.
-        ///
-        /// - Parameter message: The message that belongs to the thread.
-        public mutating func threadMessage(_ message: _ChatMessage<ExtraData>) {
-            self = .init(
-                text: text,
-                state: state,
-                editingMessage: editingMessage,
-                quotingMessage: quotingMessage,
-                threadMessage: message,
                 attachments: attachments,
                 mentionedUsers: mentionedUsers,
                 command: command
