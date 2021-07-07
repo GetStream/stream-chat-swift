@@ -135,7 +135,7 @@ Complete list of all the subviews that make the `ComposerView`.
 
 The `ComposerVC.Content` is a struct that contains all the data that will be part of the composed message. It contains the current `text` of the message, the `attachments`, the `threadMessage` in case you are inside a Thread, the `command` if you are sending for example a Giphy, and the `state` of the composer to determine whether you are creating, editing or quoting a message.
 
-Some of the composer's content properties are mutable (`var`), like the `attachments`, `threadMessage`, `text` and `command` properties. They can be directly changed since they represent data that do not depend on the state of the composer. On the other hand, there are properties that are immutable (`let`), and only can be changed through mutating functions on the `ComposerVC.Contnet`. This is to protect against bad states, for example, having the `editingMessage` property to `nil` but the `state = .edit`.
+Some of the composer's content properties are mutable, like the `attachments`, `threadMessage`, `text` and `command` properties. They can be directly changed since they represent data that do not depend on the state of the composer. On the other hand, there are properties that are immutable, and only can be changed through mutating functions on the `ComposerVC.Content`. This is to protect against bad states, for example, having the `editingMessage` property to `nil` but the `state = .edit`.
 
 ### State
 The composer has three different states, `.new`, `.edit` and `.quote`. The `.new` state is when the composer is creating a new message, the `.edit` state is when we are editing an existing message and changing it's content, and finally, the `.quote` state is when we are replying a message inline (not in a thread). In the table below we can see the composer in all the three different states:
@@ -144,13 +144,23 @@ The composer has three different states, `.new`, `.edit` and `.quote`. The `.new
 | ------------- | ------------- | ------------- |
 | <img src={require("../assets/composer-ui-state-new.png").default} width="100%"/> | <img src={require("../assets/composer-ui-state-edit.png").default} width="100%"/> | <img src={require("../assets/composer-ui-state-quote.png").default} width="100%"/> |
 
-Initially, the composer state is set to `.new` and it is created by the `initial()` static function of `ComposerVC.Content`. You can change the state of the composer through the `ComposerVC.Content`'s mutating functions:
-- `content.editMessage(message:)`: Set's the `state = .edit` and populates the `editingMessage` with the provided message.
-- `content.quoteMessage(message:)`: Set's the `state = .quote` and populates the `quotingMessage` with the provided message.
-- `content.clear()`: Set`s the `state = .new` and clears all the composer's content data but the `threadMessage`, since the latter is dependent if you are or not in `ChatThreadVC`.
+The `.new` state is the composer's default state, and it is initialised by the `initial()` static function of `ComposerVC.Content`:
+```swift
+/// The content of the composer. Property of `ComposerVC`.
+public var content: Content = .initial() {
+    didSet {
+        updateContentIfNeeded()
+    }
+}
+```
+
+ You can change the state of the composer through the `ComposerVC.Content`'s mutating functions:
+- `content.editMessage(message:)`: Set's the state to `.edit` and populates the `editingMessage` with the provided message.
+- `content.quoteMessage(message:)`: Set's the state to `.quote` and populates the `quotingMessage`.
+- `content.clear()`: Set's the state to `.new` and clears all the composer's content data.
 
 ### Properties
 
-Complete list of all the `ComposerVC.Content` data.
+Complete list of all the `ComposerVC.Content` data and functions.
 
 <ComposerContentProperties/>
