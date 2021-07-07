@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="17709" systemVersion="20C69" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="18154" systemVersion="20F71" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
     <entity name="AttachmentDTO" representedClassName="AttachmentDTO" syncable="YES">
         <attribute name="data" attributeType="Binary"/>
         <attribute name="id" attributeType="String"/>
@@ -191,6 +191,9 @@
         <fetchIndex name="id">
             <fetchIndexElement property="id" type="Binary" order="ascending"/>
         </fetchIndex>
+        <fetchIndex name="defaultSortingAt">
+            <fetchIndexElement property="defaultSortingKey" type="Binary" order="ascending"/>
+        </fetchIndex>
         <uniquenessConstraints>
             <uniquenessConstraint>
                 <constraint value="id"/>
@@ -276,18 +279,18 @@
     </entity>
     <elements>
         <element name="AttachmentDTO" positionX="9" positionY="153" width="128" height="164"/>
-        <element name="CurrentUserDTO" positionX="0" positionY="0" width="128" height="148"/>
-        <element name="DeviceDTO" positionX="9" positionY="153" width="128" height="88"/>
         <element name="ChannelDTO" positionX="0" positionY="0" width="128" height="493"/>
         <element name="ChannelListQueryDTO" positionX="0" positionY="0" width="128" height="88"/>
         <element name="ChannelMemberListQueryDTO" positionX="9" positionY="153" width="128" height="88"/>
+        <element name="ChannelMuteDTO" positionX="9" positionY="162" width="128" height="89"/>
         <element name="ChannelReadDTO" positionX="9" positionY="153" width="128" height="103"/>
+        <element name="CurrentUserDTO" positionX="0" positionY="0" width="128" height="148"/>
+        <element name="DeviceDTO" positionX="9" positionY="153" width="128" height="88"/>
         <element name="MemberDTO" positionX="0" positionY="0" width="128" height="254"/>
         <element name="MessageDTO" positionX="0" positionY="0" width="128" height="539"/>
         <element name="MessageReactionDTO" positionX="9" positionY="153" width="128" height="163"/>
         <element name="TeamDTO" positionX="0" positionY="0" width="128" height="88"/>
         <element name="UserDTO" positionX="0" positionY="0" width="128" height="389"/>
         <element name="UserListQueryDTO" positionX="9" positionY="153" width="128" height="103"/>
-        <element name="ChannelMuteDTO" positionX="9" positionY="162" width="128" height="89"/>
     </elements>
 </model>
