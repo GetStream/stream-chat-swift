@@ -4,7 +4,7 @@
 
 import Foundation
 
-public typealias TokenProvider = ((Result<Token, Error>) -> Void) -> Void
+public typealias TokenProvider = (@escaping (Result<Token, Error>) -> Void) -> Void
 
 typealias UserConnectionProvider = _UserConnectionProvider<NoExtraData>
 
