@@ -18,6 +18,7 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
     ChatMessageContentViewDelegate,
     UITableViewDelegate,
     UITableViewDataSource,
+    UIGestureRecognizerDelegate,
     GalleryContentViewDelegate,
     GiphyActionContentViewDelegate,
     LinkPreviewViewDelegate,
@@ -111,6 +112,11 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
         let longPress = UILongPressGestureRecognizer(target: self, action: #selector(handleLongPress))
         longPress.minimumPressDuration = 0.33
         listView.addGestureRecognizer(longPress)
+        
+        let tapOnList = UITapGestureRecognizer(target: self, action: #selector(handleTap(_:)))
+        tapOnList.cancelsTouchesInView = false
+        tapOnList.delegate = self
+        listView.addGestureRecognizer(tapOnList)
         
         messageComposerVC.setDelegate(self)
         messageComposerVC.channelController = channelController
@@ -328,6 +334,13 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
         else { return }
         
         didSelectMessageCell(at: ip)
+    }
+    
+    /// Handles tap action on the table view.
+    ///
+    /// Default implementation will dismiss the keyboard if it is open
+    @objc open func handleTap(_ gesture: UITapGestureRecognizer) {
+        view.endEditing(true)
     }
 
     /// Updates the collection view data with given `changes`.
@@ -602,5 +615,12 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
         let isMoreContentThanOnePage = listView.contentSize.height > listView.bounds.height
         
         return !listView.isLastCellFullyVisible && isMoreContentThanOnePage
+    }
+    
+    // MARK: - UIGestureRecognizerDelegate
+    
+    open func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
+        // To prevent the gesture recognizer consuming up the events from UIControls, we receive touch only when the view isn't a UIControl.
+        !(touch.view is UIControl)
     }
 }
