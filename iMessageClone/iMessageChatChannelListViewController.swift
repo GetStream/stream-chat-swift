@@ -42,7 +42,7 @@ final class iMessageChatChannelListViewController: ChatChannelListVC {
 
     lazy var createChannelButton: UIButton = {
         let button = UIButton()
-        button.setImage(UIImage(named: "square.and.pencil")!, for: .normal)
+        button.setImage(UIImage(systemName: "square.and.pencil")!, for: .normal)
         return button
     }()
 

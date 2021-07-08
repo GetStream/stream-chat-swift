@@ -13,7 +13,6 @@ extension ChatClient {
         var appearance = Appearance()
         var components = Components()
 
-        appearance.images.newChannel = UIImage(systemName: "square.and.pencil")!
         appearance.images.openAttachments = UIImage(systemName: "camera.fill")!
             .withTintColor(.systemBlue)
 
