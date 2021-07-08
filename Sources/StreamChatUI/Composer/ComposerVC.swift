@@ -182,8 +182,20 @@ open class _ComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
         channelController?.channel?.config
     }
 
-    /// A component that helps checking for typing suggestions. Ex: commands, mentions, etc..
-    public var typingSuggestionChecker = TypingSuggestionChecker()
+    /// The component responsible for mention suggestions.
+    open lazy var mentionSuggester = TypingSuggester(
+        options: TypingSuggestionOptions(
+            symbol: mentionSymbol
+        )
+    )
+
+    /// The component responsible for autocomplete command suggestions.
+    open lazy var commandSuggester = TypingSuggester(
+        options: TypingSuggestionOptions(
+            symbol: commandSymbol,
+            shouldTriggerOnlyAtStart: true
+        )
+    )
 
     /// The view of the composer.
     open private(set) lazy var composerView: _ComposerView<ExtraData> = components
@@ -519,30 +531,18 @@ open class _ComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
     /// - Parameter textView: The text view of the message input view where the user is typing.
     /// - Returns: A tuple with the potential user mention and the position of the mention so it can be autocompleted.
     open func typingMention(in textView: UITextView) -> (String, NSRange)? {
-        let suggestionOptions = TypingSuggestionOptions(
-            symbol: mentionSymbol
-        )
-
-        guard let typingSuggestion = typingSuggestionChecker(
-            in: textView,
-            options: suggestionOptions
-        ) else {
+        guard let typingSuggestion = mentionSuggester.typingSuggestion(in: textView) else {
             return nil
         }
 
-        return (typingSuggestion.text, typingSuggestion.location)
+        return (typingSuggestion.text, typingSuggestion.locationRange)
     }
 
     /// Returns a potential command in case the user is currently typing a command.
     /// - Parameter textView: The text view of the message input view where the user is typing.
     /// - Returns: A string of the corresponding potential command.
     open func typingCommand(in textView: UITextView) -> String? {
-        let suggestionOptions = TypingSuggestionOptions(
-            symbol: commandSymbol,
-            shouldTriggerOnlyAtStart: true
-        )
-
-        let typingSuggestion = typingSuggestionChecker(in: textView, options: suggestionOptions)
+        let typingSuggestion = commandSuggester.typingSuggestion(in: textView)
         return typingSuggestion?.text
     }
 

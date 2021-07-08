@@ -7,7 +7,16 @@ import StreamChat
 import StreamChatUI
 import UIKit
 
+/// WIP Implementation of a custom typing suggestion.
 class SlackComposerVC: ComposerVC {
+    var emojiSuggester = TypingSuggester(
+        options: TypingSuggestionOptions(
+            symbol: ":",
+            shouldTriggerOnlyAtStart: false,
+            minimumRequiredCharacters: 2
+        )
+    )
+
     override func updateContent() {
         super.updateContent()
 
@@ -18,12 +27,7 @@ class SlackComposerVC: ComposerVC {
     }
 
     func typingEmoji(in textView: UITextView) -> TypingSuggestion? {
-        let suggestionOptions = TypingSuggestionOptions(
-            symbol: ":",
-            minimumRequiredCharacters: 2
-        )
-
-        let typingSuggestion = typingSuggestionChecker(in: textView, options: suggestionOptions)
+        let typingSuggestion = emojiSuggester.typingSuggestion(in: textView)
         return typingSuggestion
     }
 
@@ -38,7 +42,7 @@ class SlackComposerVC: ComposerVC {
             let textView = self.composerView.inputMessageView.textView
             let text = textView.text as NSString
 
-            var typingSuggestionLocation = typingSuggestion.location
+            var typingSuggestionLocation = typingSuggestion.locationRange
             typingSuggestionLocation.location -= 1
             typingSuggestionLocation.length += 1
 
@@ -68,9 +72,7 @@ open class ComposerEmojiSuggestionsDataSource: NSObject, UICollectionViewDataSou
         ("😅", ":sweat_smile:")
     ]
 
-    init(
-        collectionView: _ChatSuggestionsCollectionView<NoExtraData>
-    ) {
+    init(collectionView: _ChatSuggestionsCollectionView<NoExtraData>) {
         self.collectionView = collectionView
 
         super.init()

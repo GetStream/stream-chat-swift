@@ -783,7 +783,7 @@
 		AD87D0A1263C7823008B466C /* AttachmentButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD87D0A0263C7823008B466C /* AttachmentButton.swift */; };
 		AD87D0AB263C7A7E008B466C /* ShrinkInputButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD87D0AA263C7A7E008B466C /* ShrinkInputButton.swift */; };
 		AD87D0BD263C7C09008B466C /* CircularCloseButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD87D0BC263C7C09008B466C /* CircularCloseButton.swift */; };
-		AD8D1809268F7290004E3A5C /* TypingSuggestionChecker.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD8D1808268F7290004E3A5C /* TypingSuggestionChecker.swift */; };
+		AD8D1809268F7290004E3A5C /* TypingSuggester.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD8D1808268F7290004E3A5C /* TypingSuggester.swift */; };
 		AD8D180B268F8ED4004E3A5C /* SlackComposerVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD8D180A268F8ED4004E3A5C /* SlackComposerVC.swift */; };
 		AD90D18525D56196001D03BB /* CurrentUserUpdater_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD90D18425D56196001D03BB /* CurrentUserUpdater_Tests.swift */; };
 		AD90D18D25D5619C001D03BB /* CurrentUserUpdater_Mock.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD90D18C25D5619C001D03BB /* CurrentUserUpdater_Mock.swift */; };
@@ -2086,7 +2086,7 @@
 		AD87D0A0263C7823008B466C /* AttachmentButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttachmentButton.swift; sourceTree = "<group>"; };
 		AD87D0AA263C7A7E008B466C /* ShrinkInputButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShrinkInputButton.swift; sourceTree = "<group>"; };
 		AD87D0BC263C7C09008B466C /* CircularCloseButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CircularCloseButton.swift; sourceTree = "<group>"; };
-		AD8D1808268F7290004E3A5C /* TypingSuggestionChecker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TypingSuggestionChecker.swift; sourceTree = "<group>"; };
+		AD8D1808268F7290004E3A5C /* TypingSuggester.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TypingSuggester.swift; sourceTree = "<group>"; };
 		AD8D180A268F8ED4004E3A5C /* SlackComposerVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlackComposerVC.swift; sourceTree = "<group>"; };
 		AD90D18425D56196001D03BB /* CurrentUserUpdater_Tests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CurrentUserUpdater_Tests.swift; sourceTree = "<group>"; };
 		AD90D18C25D5619C001D03BB /* CurrentUserUpdater_Mock.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CurrentUserUpdater_Mock.swift; sourceTree = "<group>"; };
@@ -4420,7 +4420,7 @@
 			children = (
 				E73A8B2A2578EB2B00FBDC56 /* ComposerVC.swift */,
 				22ADD681256C40410098EFEB /* ComposerView.swift */,
-				AD8D1808268F7290004E3A5C /* TypingSuggestionChecker.swift */,
+				AD8D1808268F7290004E3A5C /* TypingSuggester.swift */,
 			);
 			path = Composer;
 			sourceTree = "<group>";
@@ -5666,7 +5666,7 @@
 				F838F6A92636D3C30025E1F5 /* ZoomTransitionController.swift in Sources */,
 				AD81AF0D25ED141A00F17F8F /* ListCollectionViewLayout.swift in Sources */,
 				8850B92A255C286B003AED69 /* Components.swift in Sources */,
-				AD8D1809268F7290004E3A5C /* TypingSuggestionChecker.swift in Sources */,
+				AD8D1809268F7290004E3A5C /* TypingSuggester.swift in Sources */,
 				F880DEA32628528B0025AD64 /* GalleryVC.swift in Sources */,
 				78C8473825FA0EF000A5D1D0 /* ChatChannelUnreadCountView+SwiftUI.swift in Sources */,
 				DB3CCF3F258CF7ED009D5E99 /* ChatMessageLinkPreviewView.swift in Sources */,

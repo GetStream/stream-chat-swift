@@ -5,12 +5,22 @@
 import Foundation
 import UIKit
 
-/// <#Description#>
+/// The options to configure the `TypingSuggester`.
 public struct TypingSuggestionOptions {
+    /// The symbol that typing suggester will use to recognise a suggestion.
     public var symbol: String
+    /// Wether the suggester should only be recognising at the start of the input.
     public var shouldTriggerOnlyAtStart: Bool
+    /// The minimum required characters for the suggester to start recognising a suggestion.
     public var minimumRequiredCharacters: Int
 
+    /// The options to configure the `TypingSuggester`.
+    /// - Parameters:
+    ///   - symbol: A String describing the symbol that typing suggester will use to recognise a suggestion.
+    ///   - shouldTriggerOnlyAtStart: A Boolean value to determine if suggester should only be recognising at
+    ///   the start of the input. By default it is `false`.
+    ///   - minimumRequiredCharacters: The minimum required characters for the suggester to start
+    ///   recognising a suggestion. By default it is `0`, so the suggester will recognise once the symbol is typed.
     public init(
         symbol: String,
         shouldTriggerOnlyAtStart: Bool = false,
@@ -22,21 +32,37 @@ public struct TypingSuggestionOptions {
     }
 }
 
+/// A structure that contains the information of the typing suggestion.
 public struct TypingSuggestion {
+    /// A String representing the currently typing text.
     public let text: String
-    public let location: NSRange
+    /// A NSRange that stores the location of the typing suggestion in relation with the whole input.
+    public let locationRange: NSRange
 
-    public init(text: String, location: NSRange) {
+    /// The typing suggestion info.
+    /// - Parameters:
+    ///   - text: A String representing the currently typing text.
+    ///   - locationRange: A NSRange that stores the location of the typing suggestion
+    ///   in relation with the whole input.
+    public init(text: String, locationRange: NSRange) {
         self.text = text
-        self.location = location
+        self.locationRange = locationRange
     }
 }
 
-public struct TypingSuggestionChecker {
-    public func callAsFunction(
-        in textView: UITextView,
-        options: TypingSuggestionOptions
-    ) -> TypingSuggestion? {
+/// A component responsible for finding typing suggestions in a `UITextView`.
+public struct TypingSuggester {
+    /// The structure that contains the suggestion configuration.
+    public let options: TypingSuggestionOptions
+
+    public init(options: TypingSuggestionOptions) {
+        self.options = options
+    }
+
+    /// Checks if the user typed the recognising symbol and returns the typing suggestion.
+    /// - Parameter textView: The `UITextView` the user is currently typing.
+    /// - Returns: The typing suggestion if it was recognised, `nil` otherwise.
+    public func typingSuggestion(in textView: UITextView) -> TypingSuggestion? {
         let text = textView.text as NSString
         let caretLocation = textView.selectedRange.location
 
@@ -75,8 +101,8 @@ public struct TypingSuggestionChecker {
         }
 
         // Fetch the suggestion text. The suggestions can't have spaces.
-        // valid example: "@luke_skywalker"
-        // invalid example: "@luke skywalker"
+        // valid example: "@luke_skywa..."
+        // invalid example: "@luke skywa..."
         let suggestionLocation = NSRange(location: suggestionStart, length: suggestionEnd - suggestionStart)
         let suggestionText = text.substring(with: suggestionLocation)
         guard !suggestionText.contains(" ") else {
@@ -89,6 +115,6 @@ public struct TypingSuggestionChecker {
             return nil
         }
 
-        return TypingSuggestion(text: suggestionText, location: suggestionLocation)
+        return TypingSuggestion(text: suggestionText, locationRange: suggestionLocation)
     }
 }
