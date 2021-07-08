@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+### ⚠️ Breaking Changes from `4.0-beta.5`
+- Changed Channel from  `currentlyTypingMembers: Set<ChatChannelMember>` to `currentlyTypingUsers: Set<ChatUser>` to show all typing users (not only channel members; eg: watching users) [#1254](https://github.com/GetStream/stream-chat-swift/pull/1254)  
+
 ### 🔄 Changed
 
 # [4.0.0-beta.5](https://github.com/GetStream/stream-chat-swift/releases/tag/4.0.0-beta.5)
