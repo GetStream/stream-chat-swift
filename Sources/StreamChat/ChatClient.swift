@@ -299,11 +299,6 @@ public class _ChatClient<ExtraData: ExtraDataTypes> {
         self.eventWorkerBuilders = eventWorkerBuilders
 
         currentUserId = fetchCurrentUserIdFromDatabase()
-        
-        backgroundTaskScheduler?.startListeningForAppStateUpdates(
-            onEnteringBackground: { [weak self] in self?.handleAppDidEnterBackground() },
-            onEnteringForeground: { [weak self] in self?.handleAppDidBecomeActive() }
-        )
     }
     
     deinit {
@@ -363,6 +358,11 @@ public class _ChatClient<ExtraData: ExtraDataTypes> {
     /// are received.
     public func disconnect() {
         clientUpdater.disconnect()
+        
+        backgroundTaskScheduler?.startListeningForAppStateUpdates(
+            onEnteringBackground: {},
+            onEnteringForeground: {}
+        )
     }
 
     func fetchCurrentUserIdFromDatabase() -> UserId? {
@@ -413,6 +413,11 @@ public class _ChatClient<ExtraData: ExtraDataTypes> {
             userConnectionProvider: userConnectionProvider,
             completion: completion
         )
+        
+        backgroundTaskScheduler?.startListeningForAppStateUpdates(
+            onEnteringBackground: { [weak self] in self?.handleAppDidEnterBackground() },
+            onEnteringForeground: { [weak self] in self?.handleAppDidBecomeActive() }
+        )
     }
     
     private func handleAppDidEnterBackground() {
@@ -441,6 +446,11 @@ public class _ChatClient<ExtraData: ExtraDataTypes> {
     private func handleAppDidBecomeActive() {
         cancelBackgroundTaskIfNeeded()
 
+        guard userConnectionProvider != nil else {
+            // The client has not been connected yet during this session
+            return
+        }
+        
         guard connectionStatus != .connected && connectionStatus != .connecting else {
             // We are connected or connecting anyway
             return

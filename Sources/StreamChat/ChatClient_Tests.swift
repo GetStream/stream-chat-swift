@@ -746,6 +746,7 @@ class ChatClient_Tests: StressTestCase {
             eventWorkerBuilders: [],
             environment: testEnv.environment
         )
+        client.connectAnonymousUser()
         
         // Assert that config allows background task
         assert(client.config.staysConnectedInBackground)
@@ -777,6 +778,7 @@ class ChatClient_Tests: StressTestCase {
             eventWorkerBuilders: [],
             environment: testEnv.environment
         )
+        client.connectAnonymousUser()
         
         // Simulate access to `webSocketClient` so it is initialized
         _ = client.webSocketClient
@@ -806,6 +808,7 @@ class ChatClient_Tests: StressTestCase {
             eventWorkerBuilders: [],
             environment: testEnv.environment
         )
+        client.connectAnonymousUser()
         
         // Simulate access to `webSocketClient` so it is initialized
         _ = client.webSocketClient
@@ -829,6 +832,7 @@ class ChatClient_Tests: StressTestCase {
             eventWorkerBuilders: [],
             environment: testEnv.environment
         )
+        client.connectAnonymousUser()
         
         // Simulate access to `webSocketClient` so it is initialized
         _ = client.webSocketClient
@@ -858,6 +862,7 @@ class ChatClient_Tests: StressTestCase {
             eventWorkerBuilders: [],
             environment: testEnv.environment
         )
+        client.connectAnonymousUser()
         
         // Simulate access to `webSocketClient` so it is initialized
         _ = client.webSocketClient
@@ -924,7 +929,7 @@ class ChatClient_Tests: StressTestCase {
     
     // App wakes from background
     
-    func test_onOpenFromBackground_connectCalled_ifConfigAllows() {
+    func test_didBecomeActiveNotification_connectUserWasCalled_callsConnect() {
         // Create a new chat client
         let client = ChatClient(
             config: inMemoryStorageConfig,
@@ -944,6 +949,77 @@ class ChatClient_Tests: StressTestCase {
         testEnv.backgroundTaskScheduler?.startListeningForAppStateUpdates_onForeground?()
         
         // Assert that `connect` is called
+        XCTAssertEqual(testEnv.clientUpdater?.connect_called, true)
+    }
+    
+    func test_didBecomeActiveNotification_connectUserWasNotCalled_doesNotCallConnect() {
+        // Create a new chat client
+        let client = ChatClient(
+            config: inMemoryStorageConfig,
+            workerBuilders: workerBuilders,
+            eventWorkerBuilders: [],
+            environment: testEnv.environment
+        )
+        
+        // Simulate access to `webSocketClient` so it is initialized
+        _ = client.webSocketClient
+        _ = client.clientUpdater
+        
+        // Assert that `connect` is not called yet
+        XCTAssertEqual(testEnv.clientUpdater?.connect_called, false)
+        
+        // Simulate waking from background
+        testEnv.backgroundTaskScheduler?.startListeningForAppStateUpdates_onForeground?()
+        
+        // Assert that `connect` is called
+        XCTAssertEqual(testEnv.clientUpdater?.connect_called, false)
+    }
+    
+    func test_didBecomeActiveNotification_connectedAndDiconnectedUser_shouldNotConnect() {
+        // Create a new chat client
+        let client = ChatClient(
+            config: inMemoryStorageConfig,
+            workerBuilders: workerBuilders,
+            eventWorkerBuilders: [],
+            environment: testEnv.environment
+        )
+        client.connectAnonymousUser()
+        client.disconnect()
+        
+        // Simulate access to `webSocketClient` so it is initialized
+        _ = client.webSocketClient
+        
+        // Assert that `connect` is not called yet
+        XCTAssertEqual(testEnv.clientUpdater?.connect_called, false)
+        
+        // Simulate waking from background
+        testEnv.backgroundTaskScheduler?.startListeningForAppStateUpdates_onForeground?()
+        
+        // Assert that `connect` is called
+        XCTAssertEqual(testEnv.clientUpdater?.connect_called, false)
+    }
+    
+    func test_didBecomeActiveNotification_connectedUserDiconnectedAndConnectedBack_shouldConnect() {
+        // Create a new chat client
+        let client = ChatClient(
+            config: inMemoryStorageConfig,
+            workerBuilders: workerBuilders,
+            eventWorkerBuilders: [],
+            environment: testEnv.environment
+        )
+        client.connectAnonymousUser()
+        
+        // Simulate access to `webSocketClient` so it is initialized
+        _ = client.webSocketClient
+        
+        XCTAssertEqual(testEnv.clientUpdater?.connect_called, false)
+
+        client.disconnect()
+        testEnv.backgroundTaskScheduler?.startListeningForAppStateUpdates_onForeground?()
+        XCTAssertEqual(testEnv.clientUpdater?.connect_called, false)
+
+        client.connectAnonymousUser()
+        testEnv.backgroundTaskScheduler?.startListeningForAppStateUpdates_onForeground?()
         XCTAssertEqual(testEnv.clientUpdater?.connect_called, true)
     }
 }
