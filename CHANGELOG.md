@@ -7,6 +7,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### 🔄 Changed
 
+### 🐞 Fixed
+- Fix issue where badge with unread count could remain visible with 0 value [#1259](https://github.com/GetStream/stream-chat-swift/pull/1259)
+
 # [4.0.0-beta.5](https://github.com/GetStream/stream-chat-swift/releases/tag/4.0.0-beta.5)
 _July 07, 2021_
 
