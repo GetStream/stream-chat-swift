@@ -14,9 +14,10 @@ The `ComposerVC` is the view controller that manages all the functionality and i
 
 ### Usage
 
-The `ComposerVC` is a child view controller of the `ChatMessageListVC` which is the view controller that manages the messages of a channel. If you have already the message list component on your application, you are already using the Message Composer. But, in case you want to use the Message Composer in isolation, you can too by adding the `ComposerVC` as a child view controller of your own message list. Although, the recommended way is to use our own message list component since you get a lot of complexity for free, like managing the keyboard.
+The `ComposerVC` is used by default by the [Message List](message-list.md) component, this component is automatically placed as a subview.
 
-Here is an example of how you can add the composer as child view controller of your own message list:
+You can also add the `ComposerVC` in your own View Controller as a child view if needed. Please keep in mind that if you do so you will need to manage the keyboard yourself. Here is an example of how you can add the composer as child view controller:
+
 ```swift
 class CustomMessageListVC: UIViewController {
 
@@ -93,6 +94,7 @@ Complete list of all the components of `ComposerVC`.
 <ComposerProperties/>
 
 ## Composer View
+
 The `ComposerView` class which holds all the composer subviews and implements the composer layout. The composer layout is built with multiple `ContainerStackView`'s, which are very similar how  `UIStackView`'s work, you can read more about them [here](../customization/custom-components#setuplayout). This makes it very customizable since to change the layout you only need to move/remove/add views from different containers.
 
 In the picture below you can see all the containers and main views of the composer:
