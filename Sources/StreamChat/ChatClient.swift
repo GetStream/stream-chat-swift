@@ -358,11 +358,8 @@ public class _ChatClient<ExtraData: ExtraDataTypes> {
     /// are received.
     public func disconnect() {
         clientUpdater.disconnect()
-        
-        backgroundTaskScheduler?.startListeningForAppStateUpdates(
-            onEnteringBackground: {},
-            onEnteringForeground: {}
-        )
+        userConnectionProvider = nil
+        backgroundTaskScheduler?.stopListeningForAppStateUpdates()
     }
 
     func fetchCurrentUserIdFromDatabase() -> UserId? {

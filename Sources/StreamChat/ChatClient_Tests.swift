@@ -986,6 +986,8 @@ class ChatClient_Tests: StressTestCase {
         client.connectAnonymousUser()
         client.disconnect()
         
+        XCTAssertEqual(testEnv.backgroundTaskScheduler?.stopListeningForAppStateUpdates_called, true)
+
         // Simulate access to `webSocketClient` so it is initialized
         _ = client.webSocketClient
         
@@ -1013,8 +1015,11 @@ class ChatClient_Tests: StressTestCase {
         _ = client.webSocketClient
         
         XCTAssertEqual(testEnv.clientUpdater?.connect_called, false)
-
+        XCTAssertEqual(testEnv.backgroundTaskScheduler?.stopListeningForAppStateUpdates_called, false)
+        
         client.disconnect()
+        XCTAssertEqual(testEnv.backgroundTaskScheduler?.stopListeningForAppStateUpdates_called, true)
+        
         testEnv.backgroundTaskScheduler?.startListeningForAppStateUpdates_onForeground?()
         XCTAssertEqual(testEnv.clientUpdater?.connect_called, false)
 
