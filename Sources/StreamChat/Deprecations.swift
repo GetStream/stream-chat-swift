@@ -21,6 +21,10 @@ public extension _ChatChannel {
     /// - Note: This property will contain no more than 25 watchers
     @available(*, renamed: "lastActiveWatchers")
     var watchers: Set<_ChatUser<ExtraData.User>> { Set(lastActiveWatchers) }
+    
+    /// A list of currently typing users.
+    @available(*, renamed: "currentlyTypingUsers")
+    var currentlyTypingMembers: Set<_ChatChannelMember<ExtraData.User>> { [] }
 }
 
 public extension _ChatMessage {
