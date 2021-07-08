@@ -8,6 +8,7 @@ import StreamChatUI
 import UIKit
 
 /// WIP Implementation of a custom typing suggestion.
+/// This is a proof of concept and it not yet finalised.
 class SlackComposerVC: ComposerVC {
     var emojiSuggester = TypingSuggester(
         options: TypingSuggestionOptions(
