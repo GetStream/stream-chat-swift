@@ -97,7 +97,7 @@ open class _ChatThreadVC<ExtraData: ExtraDataTypes>:
         messageComposerVC.channelController = channelController
         messageComposerVC.userSearchController = userSuggestionSearchController
         if let message = messageController.message {
-            messageComposerVC.content.threadMessage(message)
+            messageComposerVC.content.threadMessage = message
         }
 
         userSuggestionSearchController.search(term: nil)

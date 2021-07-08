@@ -118,14 +118,6 @@ open class _ComposerView<ExtraData: ExtraDataTypes>: _View, ThemeProvider {
         titleLabel.adjustsFontForContentSizeCategory = true
     }
     
-    /// Bottom margin for leadingContainer and trailingContainer.
-    ///
-    /// We want the side containers to be centered to the inputMessageView in default state but stay at the bottom when expanded.
-    /// The inputMessageView default height is 38pt,
-    /// all the buttons in side containers (leadingContainer and trailingContainer) are 20pt.
-    /// We want the buttons centered in the default state. (38-20)/2 = 9pt margin
-    open var sideContainersBottomMargin: CGFloat = 9
-    
     override open func setUpLayout() {
         super.setUpLayout()
         embed(container)
@@ -152,8 +144,9 @@ open class _ComposerView<ExtraData: ExtraDataTypes>: _View, ThemeProvider {
         
         trailingContainer.alignment = .center
         trailingContainer.spacing = .auto
+        trailingContainer.distribution = .equal
         trailingContainer.isLayoutMarginsRelativeArrangement = true
-        trailingContainer.directionalLayoutMargins = .init(top: 0, leading: 0, bottom: sideContainersBottomMargin, trailing: 0)
+        trailingContainer.directionalLayoutMargins = .zero
         trailingContainer.addArrangedSubview(sendButton)
         trailingContainer.addArrangedSubview(confirmButton)
         confirmButton.isHidden = true
@@ -161,8 +154,9 @@ open class _ComposerView<ExtraData: ExtraDataTypes>: _View, ThemeProvider {
         leadingContainer.axis = .horizontal
         leadingContainer.alignment = .center
         leadingContainer.spacing = .auto
+        leadingContainer.distribution = .equal
         leadingContainer.isLayoutMarginsRelativeArrangement = true
-        leadingContainer.directionalLayoutMargins = .init(top: 0, leading: 0, bottom: sideContainersBottomMargin, trailing: 0)
+        leadingContainer.directionalLayoutMargins = .zero
         leadingContainer.addArrangedSubview(attachmentButton)
         leadingContainer.addArrangedSubview(commandsButton)
         leadingContainer.addArrangedSubview(shrinkInputButton)
@@ -173,11 +167,11 @@ open class _ComposerView<ExtraData: ExtraDataTypes>: _View, ThemeProvider {
         dismissButton.trailingAnchor.pin(equalTo: trailingContainer.trailingAnchor).isActive = true
         titleLabel.centerXAnchor.pin(equalTo: centerXAnchor).isActive = true
         titleLabel.pin(anchors: [.top, .bottom], to: headerView)
-        
+
         [shrinkInputButton, attachmentButton, commandsButton, sendButton, confirmButton]
             .forEach { button in
                 button.pin(anchors: [.width], to: 20)
-                button.pin(anchors: [.height], to: 20)
+                button.pin(anchors: [.height], to: 38)
             }
     }
 }

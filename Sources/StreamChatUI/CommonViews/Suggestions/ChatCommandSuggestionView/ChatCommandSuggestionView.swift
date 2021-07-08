@@ -31,7 +31,7 @@ open class ChatCommandSuggestionView: _View, AppearanceProvider {
         .withBidirectionalLanguagesSupport
     
     /// A view container that holds the name and subtitle labels.
-    open private(set) lazy var textStackView: UIStackView = UIStackView()
+    open private(set) lazy var textContainer = ContainerStackView()
         .withoutAutoresizingMaskConstraints
 
     override open func setUpAppearance() {
@@ -49,7 +49,7 @@ open class ChatCommandSuggestionView: _View, AppearanceProvider {
         addSubview(commandImageView)
         setupLeftImageViewConstraints()
 
-        addSubview(textStackView)
+        addSubview(textContainer)
         setupStack()
         commandNameSubtitleLabel.setContentCompressionResistancePriority(.streamLow, for: .horizontal)
     }
@@ -73,18 +73,16 @@ open class ChatCommandSuggestionView: _View, AppearanceProvider {
     }
 
     private func setupStack() {
-        textStackView.axis = .horizontal
-        textStackView.distribution = .equalSpacing
-        textStackView.alignment = .leading
-        textStackView.spacing = UIStackView.spacingUseSystem
+        textContainer.axis = .horizontal
+        textContainer.alignment = .leading
 
-        textStackView.addArrangedSubview(commandNameLabel)
-        textStackView.addArrangedSubview(commandNameSubtitleLabel)
-        textStackView.leadingAnchor.pin(
+        textContainer.addArrangedSubview(commandNameLabel)
+        textContainer.addArrangedSubview(commandNameSubtitleLabel)
+        textContainer.leadingAnchor.pin(
             equalToSystemSpacingAfter: commandImageView.trailingAnchor,
             multiplier: 1
         ).isActive = true
-        textStackView.trailingAnchor.pin(lessThanOrEqualTo: layoutMarginsGuide.trailingAnchor).isActive = true
-        textStackView.centerYAnchor.pin(equalTo: commandImageView.centerYAnchor).isActive = true
+        textContainer.trailingAnchor.pin(lessThanOrEqualTo: layoutMarginsGuide.trailingAnchor).isActive = true
+        textContainer.centerYAnchor.pin(equalTo: commandImageView.centerYAnchor).isActive = true
     }
 }

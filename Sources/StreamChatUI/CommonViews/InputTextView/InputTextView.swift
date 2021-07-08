@@ -33,8 +33,6 @@ open class InputTextView: UITextView, AppearanceProvider {
         setUpLayout()
         setUpAppearance()
     }
-    
-    // MARK: Public
         
     open func setUp() {
         NotificationCenter.default.addObserver(
@@ -72,12 +70,25 @@ open class InputTextView: UITextView, AppearanceProvider {
         isScrollEnabled = false
     }
 
-    func textDidChangeProgrammatically() {
+    /// Sets the given text in the current caret position.
+    /// In case the caret is selecting a range of text, it replaces that text.
+    ///
+    /// - Parameter text: A string to replace the text in the caret position.
+    open func replaceSelectedText(_ text: String) {
+        guard let selectedRange = selectedTextRange else {
+            self.text.append(text)
+            return
+        }
+
+        replace(selectedRange, withText: text)
+    }
+
+    open func textDidChangeProgrammatically() {
         delegate?.textViewDidChange?(self)
         handleTextChange()
     }
         
-    @objc func handleTextChange() {
+    @objc open func handleTextChange() {
         placeholderLabel.isHidden = !text.isEmpty
     }
 }
