@@ -87,7 +87,7 @@ _July 07, 2021_
 - `shouldConnectAutomatically` setting in `ChatConfig`, it now has no effect and all logic that used it now behaves like it was set to `true`.
 
 ### 🐞 Fixed 
-- Fixed the issue when `ChatClientUpdater.connect` was triggered before the connection was established due to firing `.didBecomeActive` notification
+- Fixed the issue when `ChatClientUpdater.connect` was triggered before the connection was established due to firing `.didBecomeActive` notification [#1256](https://github.com/GetStream/stream-chat-swift/pull/1256)
 - `ConnectionController` fires its `controllerDidChangeConnectionStatus` method only when the connection status actually changes [#1207](https://github.com/GetStream/stream-chat-swift/issues/1207)
 - Fix cancelled ephemeral (giphy) messages and deleted messages are visible in threads [#1238](https://github.com/GetStream/stream-chat-swift/issues/1238)
 - Fix crash on missing `cid` value of `Message` during local cache invalidation [#1245](https://github.com/GetStream/stream-chat-swift/issues/1245)
