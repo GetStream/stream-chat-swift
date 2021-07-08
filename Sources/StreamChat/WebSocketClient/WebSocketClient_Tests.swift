@@ -608,6 +608,11 @@ class MockBackgroundTaskScheduler: BackgroundTaskScheduler {
         startListeningForAppStateUpdates_onBackground = onEnteringBackground
         startListeningForAppStateUpdates_onForeground = onEnteringForeground
     }
+    
+    var stopListeningForAppStateUpdates_called: Bool = false
+    func stopListeningForAppStateUpdates() {
+        stopListeningForAppStateUpdates_called = true
+    }
 }
 
 class WebSocketPingControllerMock: WebSocketPingController {

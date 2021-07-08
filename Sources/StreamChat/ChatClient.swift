@@ -299,11 +299,6 @@ public class _ChatClient<ExtraData: ExtraDataTypes> {
         self.eventWorkerBuilders = eventWorkerBuilders
 
         currentUserId = fetchCurrentUserIdFromDatabase()
-        
-        backgroundTaskScheduler?.startListeningForAppStateUpdates(
-            onEnteringBackground: { [weak self] in self?.handleAppDidEnterBackground() },
-            onEnteringForeground: { [weak self] in self?.handleAppDidBecomeActive() }
-        )
     }
     
     deinit {
@@ -363,6 +358,8 @@ public class _ChatClient<ExtraData: ExtraDataTypes> {
     /// are received.
     public func disconnect() {
         clientUpdater.disconnect()
+        userConnectionProvider = nil
+        backgroundTaskScheduler?.stopListeningForAppStateUpdates()
     }
 
     func fetchCurrentUserIdFromDatabase() -> UserId? {
@@ -410,9 +407,16 @@ public class _ChatClient<ExtraData: ExtraDataTypes> {
         self.userConnectionProvider = userConnectionProvider
         clientUpdater.reloadUserIfNeeded(
             userInfo: userInfo,
-            userConnectionProvider: userConnectionProvider,
-            completion: completion
-        )
+            userConnectionProvider: userConnectionProvider
+        ) { [backgroundTaskScheduler, weak self] error in
+            if error == nil {
+                backgroundTaskScheduler?.startListeningForAppStateUpdates(
+                    onEnteringBackground: { self?.handleAppDidEnterBackground() },
+                    onEnteringForeground: { self?.handleAppDidBecomeActive() }
+                )
+            }
+            completion?(error)
+        }
     }
     
     private func handleAppDidEnterBackground() {
@@ -441,6 +445,11 @@ public class _ChatClient<ExtraData: ExtraDataTypes> {
     private func handleAppDidBecomeActive() {
         cancelBackgroundTaskIfNeeded()
 
+        guard userConnectionProvider != nil else {
+            // The client has not been connected yet during this session
+            return
+        }
+        
         guard connectionStatus != .connected && connectionStatus != .connecting else {
             // We are connected or connecting anyway
             return
