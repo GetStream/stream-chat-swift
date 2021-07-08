@@ -65,7 +65,7 @@ Components.default.messageComposerVC = iMessageComposerVC.self
 
 Finally, we replace the default attachments button icon with a camera icon:
 ```swift
-appearance.images.openAttachments = UIImage(systemName: "camera.fill")!.withTintColor(.systemBlue)
+Appearance.default.images.openAttachments = UIImage(systemName: "camera.fill")!.withTintColor(.systemBlue)
 ```
 <ThemingNote/>
 
@@ -151,7 +151,9 @@ class iMessageComposerVC: ComposerVC {
     }
 }
 ```
-Finally, don't forget to configure the custom components:
+
+Finally, replace the custom component:
+
 ```swift
 Components.default.messageComposerVC = iMessageComposerVC.self
 Components.default.messageComposerView = iMessageComposerView.self
@@ -189,14 +191,19 @@ class CustomChatSuggestionsVC: ChatSuggestionsVC {
         super.setUpAppearance()
 
         collectionView.layer.borderWidth = 1
-        collectionView.layer.borderColor = appearance.colorPalette.border.cgColor
+        collectionView.layer.borderColor = Appearance.default.colorPalette.border.cgColor
         collectionView.layer.cornerRadius = 10
         view.layer.shadowOpacity = 0.0
     }
 }
-
-components.suggestionsVC = CustomChatSuggestionsVC.self
 ```
+
+Then, replace the custom component:
+
+```swift
+Components.default.suggestionsVC = CustomChatSuggestionsVC.self
+```
+
 Here we simply remove the shadow and customize the border style of the suggestions component.
 
 | Before  | After |
