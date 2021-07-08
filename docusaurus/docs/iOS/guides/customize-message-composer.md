@@ -191,7 +191,7 @@ class CustomChatSuggestionsVC: ChatSuggestionsVC {
         super.setUpAppearance()
 
         collectionView.layer.borderWidth = 1
-        collectionView.layer.borderColor = Appearance.default.colorPalette.border.cgColor
+        collectionView.layer.borderColor = appearance.colorPalette.border.cgColor
         collectionView.layer.cornerRadius = 10
         view.layer.shadowOpacity = 0.0
     }
