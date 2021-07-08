@@ -18,6 +18,7 @@ _July 08, 2021_
 _July 07, 2021_
 
 ### ⚠️ Breaking Changes from `4.0-beta.4`
+- The `ChatSuggestionsViewController` was renamed to `ChatSuggestionsVC` to follow the rest of the code base. [#1195](https://github.com/GetStream/stream-chat-swift/pull/1195)
 - The `CreateChatChannelButton` component was removed. The component acted only as a placeholder and the functionality should be always provided by the hosting app. For an example implementation see the [Demo app](https://github.com/GetStream/stream-chat-swift/blob/main/DemoApp/ChatPresenter.swift).
 - The payload of `AnyChatMessageAttachment` changed from `Any` to `Data` [#1248](https://github.com/GetStream/stream-chat-swift/pull/1248).
 - The user setting API was updated. It's now required to call one of the available `connect` methods on `ChatClient` after `ChatClient`'s instance is created in order to establish connection and set the current user.
