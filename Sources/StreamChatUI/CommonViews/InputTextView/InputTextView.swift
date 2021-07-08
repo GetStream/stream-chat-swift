@@ -2,12 +2,28 @@
 // Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
+import MobileCoreServices
 import StreamChat
 import UIKit
+
+/// The delegate of the `InputTextView` that notifies when an `UIImage` is pasted.
+public protocol InputTextViewImagePasteDelegate: AnyObject {
+    /// Notifies that an `UIImage` has been pasted into the text view
+    /// - Parameters:
+    ///   - inputTextView: The `InputTextView` in which the image was pasted
+    ///   - image: The `UIImage`
+    func inputTextView(_ inputTextView: InputTextView, didPasteImage image: UIImage)
+}
 
 /// A view for inputting text with placeholder support. Since it is a subclass
 /// of `UITextView`, the `UITextViewDelegate` can be used to observe text changes.
 open class InputTextView: UITextView, AppearanceProvider {
+    /// The delegate which gets notified when an image is pasted into the text view
+    open weak var imagePasteDelegate: InputTextViewImagePasteDelegate?
+    
+    /// Whether this text view should allow images to be pasted
+    open var allowsPastingImages: Bool = true
+    
     /// Label used as placeholder for textView when it's empty.
     open private(set) lazy var placeholderLabel: UILabel = UILabel()
         .withoutAutoresizingMaskConstraints
@@ -90,5 +106,24 @@ open class InputTextView: UITextView, AppearanceProvider {
         
     @objc open func handleTextChange() {
         placeholderLabel.isHidden = !text.isEmpty
+    }
+    
+    // MARK: - Actions on the UITextView
+    
+    override open func canPerformAction(_ action: Selector, withSender sender: Any?) -> Bool {
+        // If action is paste and the pasteboard has an image, we allow it
+        if action == #selector(paste(_:)) && allowsPastingImages && UIPasteboard.general.hasImages {
+            return true
+        }
+
+        return super.canPerformAction(action, withSender: sender)
+    }
+
+    override open func paste(_ sender: Any?) {
+        if let pasteboardImage = UIPasteboard.general.image {
+            imagePasteDelegate?.inputTextView(self, didPasteImage: pasteboardImage)
+        } else {
+            super.paste(sender)
+        }
     }
 }

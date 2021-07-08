@@ -34,7 +34,8 @@ open class _ComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
     UITextViewDelegate,
     UIImagePickerControllerDelegate,
     UIDocumentPickerDelegate,
-    UINavigationControllerDelegate {
+    UINavigationControllerDelegate,
+    InputTextViewImagePasteDelegate {
     /// The content of the composer.
     public struct Content {
         /// The text of the input text view.
@@ -237,6 +238,9 @@ open class _ComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
         super.setUp()
 
         composerView.inputMessageView.textView.delegate = self
+        
+        // Set the delegate for handling the pasting of UIImages in the text view
+        composerView.inputMessageView.textView.imagePasteDelegate = self
 
         composerView.attachmentButton.addTarget(self, action: #selector(showAttachmentsPicker), for: .touchUpInside)
         composerView.sendButton.addTarget(self, action: #selector(publishMessage), for: .touchUpInside)
@@ -353,6 +357,11 @@ open class _ComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
             showMentionSuggestions(for: typingMention, mentionRange: mentionRange)
             return
         }
+        
+        // If we have files in attachments, do not allow images to be pasted in the text view.
+        // This is due to the limitation of UI(files and images cannot be shown together)
+        let filesExistInAttachments = content.attachments.contains(where: { $0.type == .file })
+        composerView.inputMessageView.textView.allowsPastingImages = !filesExistInAttachments
 
         dismissSuggestions()
     }
@@ -676,6 +685,26 @@ open class _ComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
         suggestionsVC.removeFromParent()
         suggestionsVC.view.removeFromSuperview()
     }
+    
+    /// Creates and adds an attachment from the given URL to the `content`. Shows an alert if the file size exceeds the max file size.
+    /// - Parameters:
+    ///   - url: The URL of the attachment
+    ///   - type: The type of the attachment
+    open func addAttachmentToContent(from url: URL, type: AttachmentType) {
+        do {
+            let fileSize = try AttachmentFile(url: url).size
+            let maxFileSize = channelController?.client.config.maxAttachmentSize ?? 0
+            
+            if fileSize < maxFileSize {
+                let attachment = try AnyAttachmentPayload(localFileURL: url, attachmentType: type)
+                content.attachments.append(attachment)
+            } else {
+                showAttachmentExceedsMaxSizeAlert()
+            }
+        } catch {
+            log.assertionFailure(error.localizedDescription)
+        }
+    }
 
     // MARK: - UITextViewDelegate
 
@@ -704,39 +733,24 @@ open class _ComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
         _ picker: UIImagePickerController,
         didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]
     ) {
-        var completion: (() -> Void)?
-        defer {
-            picker.dismiss(animated: true, completion: completion)
-        }
-        
-        let urlAndType: (URL, AttachmentType)
-        if let imageURL = info[.imageURL] as? URL {
-            urlAndType = (imageURL, .image)
-        } else if let videoURL = info[.mediaURL] as? URL {
-            urlAndType = (videoURL, .video)
-        } else if let editedImage = info[.editedImage] as? UIImage,
-                  let editedImageURL = try? editedImage.temporaryLocalFileUrl() {
-            urlAndType = (editedImageURL, .image)
-        } else if let originalImage = info[.originalImage] as? UIImage,
-                  let originalImageURL = try? originalImage.temporaryLocalFileUrl() {
-            urlAndType = (originalImageURL, .image)
-        } else {
-            log.error("Unexpected item selected in image picker")
-            return
-        }
-        
-        do {
-            let fileSize = try AttachmentFile(url: urlAndType.0).size
-            let maxFileSize = channelController?.client.config.maxAttachmentSize ?? 0
-            
-            if fileSize < maxFileSize {
-                let attachment = try AnyAttachmentPayload(localFileURL: urlAndType.0, attachmentType: urlAndType.1)
-                content.attachments.append(attachment)
+        picker.dismiss(animated: true) { [weak self] in
+            let urlAndType: (URL, AttachmentType)
+            if let imageURL = info[.imageURL] as? URL {
+                urlAndType = (imageURL, .image)
+            } else if let videoURL = info[.mediaURL] as? URL {
+                urlAndType = (videoURL, .video)
+            } else if let editedImage = info[.editedImage] as? UIImage,
+                      let editedImageURL = try? editedImage.temporaryLocalFileUrl() {
+                urlAndType = (editedImageURL, .image)
+            } else if let originalImage = info[.originalImage] as? UIImage,
+                      let originalImageURL = try? originalImage.temporaryLocalFileUrl() {
+                urlAndType = (originalImageURL, .image)
             } else {
-                completion = showAttachmentExceedsMaxSizeAlert
+                log.error("Unexpected item selected in image picker")
+                return
             }
-        } catch {
-            log.assertionFailure(error.localizedDescription)
+            
+            self?.addAttachmentToContent(from: urlAndType.0, type: urlAndType.1)
         }
     }
     
@@ -757,5 +771,20 @@ open class _ComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
         let alert = UIAlertController(title: nil, message: L10n.Attachment.maxSizeExceeded, preferredStyle: .alert)
         alert.addAction(.init(title: L10n.Alert.Actions.ok, style: .default, handler: { _ in }))
         present(alert, animated: true)
+    }
+    
+    // MARK: - InputTextViewImagePasteDelegate
+    
+    open func inputTextView(_ inputTextView: InputTextView, didPasteImage image: UIImage) {
+        do {
+            guard let imageUrl = try image.temporaryLocalFileUrl() else {
+                log.error("Could not create temporary local file from image")
+                return
+            }
+            
+            addAttachmentToContent(from: imageUrl, type: .image)
+        } catch {
+            log.assertionFailure(error.localizedDescription)
+        }
     }
 }
