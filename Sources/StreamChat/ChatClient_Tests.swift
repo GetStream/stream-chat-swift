@@ -747,6 +747,7 @@ class ChatClient_Tests: StressTestCase {
             environment: testEnv.environment
         )
         client.connectAnonymousUser()
+        testEnv.clientUpdater?.reloadUserIfNeeded_completion?(nil)
         
         // Assert that config allows background task
         assert(client.config.staysConnectedInBackground)
@@ -779,6 +780,7 @@ class ChatClient_Tests: StressTestCase {
             environment: testEnv.environment
         )
         client.connectAnonymousUser()
+        testEnv.clientUpdater?.reloadUserIfNeeded_completion?(nil)
         
         // Simulate access to `webSocketClient` so it is initialized
         _ = client.webSocketClient
@@ -833,6 +835,7 @@ class ChatClient_Tests: StressTestCase {
             environment: testEnv.environment
         )
         client.connectAnonymousUser()
+        testEnv.clientUpdater?.reloadUserIfNeeded_completion?(nil)
         
         // Simulate access to `webSocketClient` so it is initialized
         _ = client.webSocketClient
@@ -863,6 +866,7 @@ class ChatClient_Tests: StressTestCase {
             environment: testEnv.environment
         )
         client.connectAnonymousUser()
+        testEnv.clientUpdater?.reloadUserIfNeeded_completion?(nil)
         
         // Simulate access to `webSocketClient` so it is initialized
         _ = client.webSocketClient
@@ -899,6 +903,7 @@ class ChatClient_Tests: StressTestCase {
             environment: testEnv.environment
         )
         client.connectAnonymousUser()
+        testEnv.clientUpdater?.reloadUserIfNeeded_completion?(nil)
         
         // Simulate access to `webSocketClient` so it is initialized
         _ = client.webSocketClient
@@ -938,6 +943,7 @@ class ChatClient_Tests: StressTestCase {
             environment: testEnv.environment
         )
         client.connectAnonymousUser()
+        testEnv.clientUpdater?.reloadUserIfNeeded_completion?(nil)
         
         // Simulate access to `webSocketClient` so it is initialized
         _ = client.webSocketClient
@@ -1010,6 +1016,7 @@ class ChatClient_Tests: StressTestCase {
             environment: testEnv.environment
         )
         client.connectAnonymousUser()
+        testEnv.clientUpdater?.reloadUserIfNeeded_completion?(nil)
         
         // Simulate access to `webSocketClient` so it is initialized
         _ = client.webSocketClient

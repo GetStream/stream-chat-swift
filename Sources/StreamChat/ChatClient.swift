@@ -407,14 +407,16 @@ public class _ChatClient<ExtraData: ExtraDataTypes> {
         self.userConnectionProvider = userConnectionProvider
         clientUpdater.reloadUserIfNeeded(
             userInfo: userInfo,
-            userConnectionProvider: userConnectionProvider,
-            completion: completion
-        )
-        
-        backgroundTaskScheduler?.startListeningForAppStateUpdates(
-            onEnteringBackground: { [weak self] in self?.handleAppDidEnterBackground() },
-            onEnteringForeground: { [weak self] in self?.handleAppDidBecomeActive() }
-        )
+            userConnectionProvider: userConnectionProvider
+        ) { [backgroundTaskScheduler, weak self] error in
+            if error == nil {
+                backgroundTaskScheduler?.startListeningForAppStateUpdates(
+                    onEnteringBackground: { self?.handleAppDidEnterBackground() },
+                    onEnteringForeground: { self?.handleAppDidBecomeActive() }
+                )
+            }
+            completion?(error)
+        }
     }
     
     private func handleAppDidEnterBackground() {
