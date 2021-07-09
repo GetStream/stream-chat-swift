@@ -4,28 +4,30 @@
 
 import CoreData
 
-/// A middleware which updates `currentlyTypingMembers` for a specific channel based on received `TypingEvent`.
-struct ChannelMemberTypingStateUpdaterMiddleware<ExtraData: ExtraDataTypes>: EventMiddleware {
+/// A middleware which updates `currentlyTypingUsers` for a specific channel based on received `TypingEvent`.
+struct UserTypingStateUpdaterMiddleware<ExtraData: ExtraDataTypes>: EventMiddleware {
     func handle(event: Event, session: DatabaseSession) -> Event? {
         switch event {
         case let event as TypingEvent:
             guard
                 let channelDTO = session.channel(cid: event.cid),
-                let memberDTO = session.member(userId: event.userId, cid: event.cid)
+                let userDTO = session.user(id: event.userId)
             else { break }
             
             if event.isTyping {
-                channelDTO.currentlyTypingMembers.insert(memberDTO)
+                channelDTO.currentlyTypingUsers.insert(userDTO)
             } else {
-                channelDTO.currentlyTypingMembers.remove(memberDTO)
+                channelDTO.currentlyTypingUsers.remove(userDTO)
             }
+            
         case let event as CleanUpTypingEvent:
             guard
                 let channelDTO = session.channel(cid: event.cid),
-                let memberDTO = session.member(userId: event.userId, cid: event.cid)
+                let userDTO = session.user(id: event.userId)
             else { break }
             
-            channelDTO.currentlyTypingMembers.remove(memberDTO)
+            channelDTO.currentlyTypingUsers.remove(userDTO)
+            
         default:
             break
         }

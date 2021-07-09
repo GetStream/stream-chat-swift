@@ -59,7 +59,7 @@ final class CombineSimpleChatViewController: UITableViewController, UITextViewDe
         
         ///
         /// This subscription updates the view controller's `title` and its `navigationItem.prompt` to display the count of channel
-        /// members and the count of online members or typing members if any.
+        /// members and the count of online members or typing users if any.
         /// When the channel is deleted, this view controller is dismissed.
         ///
         let updatedChannel = channelController
@@ -88,7 +88,7 @@ final class CombineSimpleChatViewController: UITableViewController, UITextViewDe
             .store(in: &cancellables)
         
         updatedChannel
-            .map { createTypingMemberString(for: $0) ?? createMemberInfoString(for: $0) }
+            .map { createTypingUserString(for: $0) ?? createMemberInfoString(for: $0) }
             .assign(to: \.navigationItem.prompt, on: self)
             .store(in: &cancellables)
         
@@ -123,15 +123,15 @@ final class CombineSimpleChatViewController: UITableViewController, UITextViewDe
             .store(in: &cancellables)
         
         ///
-        /// This subscription updates UI with typing members after receiving changes from `typingMembersPublisher`.
+        /// This subscription updates UI with typing users after receiving changes from `typingUsersPublisher`.
         ///
         channelController
-            .typingMembersPublisher
+            .typingUsersPublisher
             .sink { [weak self] _ in
                 self?.title = self?.channelController.channel
                     .flatMap { createChannelTitle(for: $0, self?.channelController.client.currentUserId) }
                 self?.navigationItem.prompt = self?.channelController.channel.flatMap {
-                    createTypingMemberString(for: $0) ?? createMemberInfoString(for: $0)
+                    createTypingUserString(for: $0) ?? createMemberInfoString(for: $0)
                 }
             }
             .store(in: &cancellables)

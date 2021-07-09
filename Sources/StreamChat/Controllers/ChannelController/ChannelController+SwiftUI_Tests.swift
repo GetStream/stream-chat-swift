@@ -80,10 +80,10 @@ class ChannelController_SwiftUI_Tests: iOS13TestCase {
         AssertAsync.willBeEqual(observableObject.state, newState)
     }
     
-    func test_observableObject_reactsToDelegateTypingMembersChangeCallback() {
+    func test_observableObject_reactsToDelegateTypingUsersChangeCallback() {
         let observableObject = channelController.observableObject
         
-        let typingMember = ChatChannelMember(
+        let typingUser = ChatUser(
             id: .unique,
             name: .unique,
             imageURL: .unique(),
@@ -91,31 +91,22 @@ class ChannelController_SwiftUI_Tests: iOS13TestCase {
             isBanned: false,
             isFlaggedByCurrentUser: false,
             userRole: .user,
-            userCreatedAt: .unique,
-            userUpdatedAt: .unique,
+            createdAt: .unique,
+            updatedAt: .unique,
             lastActiveAt: .unique,
             teams: [],
-            extraData: .defaultValue,
-            memberRole: .member,
-            memberCreatedAt: .unique,
-            memberUpdatedAt: .unique,
-            isInvited: false,
-            inviteAcceptedAt: nil,
-            inviteRejectedAt: nil,
-            isBannedFromChannel: true,
-            banExpiresAt: .unique,
-            isShadowBannedFromChannel: true
+            extraData: .defaultValue
         )
         
-        // Simulate typing members change
+        // Simulate typing users change
         channelController.delegateCallback {
             $0.channelController(
                 self.channelController,
-                didChangeTypingMembers: [typingMember]
+                didChangeTypingUsers: [typingUser]
             )
         }
         
-        AssertAsync.willBeEqual(observableObject.typingMembers, [typingMember])
+        AssertAsync.willBeEqual(observableObject.typingUsers, [typingUser])
     }
 }
 

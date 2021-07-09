@@ -147,10 +147,10 @@ class ChatChannelListItemView_Tests: XCTestCase {
         XCTAssertNil(itemView.subtitleText)
     }
     
-    func test_subtitleText_whenOneMemberIsTyping() {
+    func test_subtitleText_whenOneUserIsTyping() {
         let channel: ChatChannel = .mock(
             cid: .unique,
-            currentlyTypingMembers: [
+            currentlyTypingUsers: [
                 .mock(
                     id: .unique,
                     name: "Member"
@@ -167,10 +167,10 @@ class ChatChannelListItemView_Tests: XCTestCase {
         )
     }
     
-    func test_subtitleText_whenTwoMembersAreTyping() {
+    func test_subtitleText_whenTwoUsersAreTyping() {
         let channel: ChatChannel = .mock(
             cid: .unique,
-            currentlyTypingMembers: [
+            currentlyTypingUsers: [
                 .mock(
                     id: .unique,
                     name: "MemberOne"

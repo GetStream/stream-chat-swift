@@ -112,13 +112,13 @@ class ChannelController_Combine_Tests: iOS13TestCase {
         XCTAssertEqual(recording.output as! [TestMemberEvent], [memberEvent])
     }
     
-    func test_typingMembersPublisher() {
+    func test_typingUsersPublisher() {
         // Setup Recording publishers
-        var recording = Record<Set<ChatChannelMember>, Never>.Recording()
+        var recording = Record<Set<ChatUser>, Never>.Recording()
         
         // Setup the chain
         channelController
-            .typingMembersPublisher
+            .typingUsersPublisher
             .sink(receiveValue: { recording.receive($0) })
             .store(in: &cancellables)
         
@@ -126,7 +126,7 @@ class ChannelController_Combine_Tests: iOS13TestCase {
         weak var controller: ChannelControllerMock? = channelController
         channelController = nil
 
-        let typingMember = ChatChannelMember(
+        let typingUser = ChatUser(
             id: .unique,
             name: .unique,
             imageURL: .unique(),
@@ -134,26 +134,17 @@ class ChannelController_Combine_Tests: iOS13TestCase {
             isBanned: false,
             isFlaggedByCurrentUser: false,
             userRole: .user,
-            userCreatedAt: .unique,
-            userUpdatedAt: .unique,
+            createdAt: .unique,
+            updatedAt: .unique,
             lastActiveAt: .unique,
             teams: [],
-            extraData: .defaultValue,
-            memberRole: .member,
-            memberCreatedAt: .unique,
-            memberUpdatedAt: .unique,
-            isInvited: false,
-            inviteAcceptedAt: nil,
-            inviteRejectedAt: nil,
-            isBannedFromChannel: true,
-            banExpiresAt: .unique,
-            isShadowBannedFromChannel: true
+            extraData: .defaultValue
         )
         
         controller?.delegateCallback {
-            $0.channelController(controller!, didChangeTypingMembers: [typingMember])
+            $0.channelController(controller!, didChangeTypingUsers: [typingUser])
         }
         
-        XCTAssertEqual(recording.output, [[typingMember]])
+        XCTAssertEqual(recording.output, [[typingUser]])
     }
 }

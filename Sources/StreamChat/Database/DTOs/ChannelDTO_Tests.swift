@@ -598,19 +598,19 @@ class ChannelDTO_Tests: XCTestCase {
         }
     }
     
-    func test_typingMembers_areCleared_onResetEphemeralValues() throws {
+    func test_typingUsers_areCleared_onResetEphemeralValues() throws {
         let cid: ChannelId = .unique
-        let memberId: UserId = .unique
+        let userId: UserId = .unique
         
         // Create channel in the database
         try database.createChannel(cid: cid)
-        // Create member in the database
-        try database.createMember(userId: memberId, cid: cid)
-        // Set created member as a typing member
+        // Create user in the database
+        try database.createUser(id: userId)
+        // Set created user as a typing user
         try database.writeSynchronously { session in
             let channel = try XCTUnwrap(session.channel(cid: cid))
-            let member = try XCTUnwrap(session.member(userId: memberId, cid: cid))
-            channel.currentlyTypingMembers.insert(member)
+            let user = try XCTUnwrap(session.user(id: userId))
+            channel.currentlyTypingUsers.insert(user)
         }
         
         // Load the channel
@@ -618,14 +618,14 @@ class ChannelDTO_Tests: XCTestCase {
             database.viewContext.channel(cid: cid)!.asModel()
         }
         
-        // Assert channel's currentlyTypingMembers are not empty
-        XCTAssertFalse(channel.currentlyTypingMembers.isEmpty)
+        // Assert channel's currentlyTypingUsers are not empty
+        XCTAssertFalse(channel.currentlyTypingUsers.isEmpty)
         
         // Simulate `resetEphemeralValues`
         database.resetEphemeralValues()
         
-        // Assert channel's currentlyTypingMembers are cleared
-        AssertAsync.willBeTrue(channel.currentlyTypingMembers.isEmpty)
+        // Assert channel's currentlyTypingUsers are cleared
+        AssertAsync.willBeTrue(channel.currentlyTypingUsers.isEmpty)
     }
     
     func test_watchers_areCleared_onResetEphemeralValues() throws {

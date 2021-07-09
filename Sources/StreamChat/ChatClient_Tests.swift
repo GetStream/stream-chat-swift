@@ -223,7 +223,7 @@ class ChatClient_Tests: StressTestCase {
         XCTAssert(middlewares.contains(where: { $0 is ChannelReadUpdaterMiddleware<NoExtraData> }))
         // Assert `ChannelMemberTypingStateUpdaterMiddleware` exists
         let typingStateUpdaterMiddlewareIndex = middlewares
-            .firstIndex { $0 is ChannelMemberTypingStateUpdaterMiddleware<NoExtraData> }
+            .firstIndex { $0 is UserTypingStateUpdaterMiddleware<NoExtraData> }
         XCTAssertNotNil(typingStateUpdaterMiddlewareIndex)
         // Assert `ChannelMemberTypingStateUpdaterMiddleware` goes after `TypingStartCleanupMiddleware`
         XCTAssertTrue(typingStateUpdaterMiddlewareIndex! > typingStartCleanupMiddlewareIndex!)

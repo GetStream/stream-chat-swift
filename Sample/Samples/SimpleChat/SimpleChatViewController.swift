@@ -98,13 +98,13 @@ final class SimpleChatViewController: UITableViewController, ChatChannelControll
     }
     
     ///
-    /// # didChangeTypingMembers
+    /// # didChangeTypingUsers
     ///
-    /// The method below receives a set of `Member` that are currently typing.
+    /// The method below receives a set of `User` that are currently typing.
     ///
     func channelController(
         _ channelController: ChatChannelController,
-        didChangeTypingMembers typingMembers: Set<ChatChannelMember>
+        didChangeTypingUsers typingUsers: Set<ChatUser>
     ) {
         updateNavigationTitleAndPrompt()
     }
@@ -507,7 +507,7 @@ extension SimpleChatViewController {
     func updateNavigationTitleAndPrompt() {
         title = channelController.channel.flatMap { createChannelTitle(for: $0, channelController.client.currentUserId) }
         navigationItem.prompt = channelController.channel.flatMap {
-            createTypingMemberString(for: $0) ?? createMemberInfoString(for: $0)
+            createTypingUserString(for: $0) ?? createMemberInfoString(for: $0)
         }
     }
     

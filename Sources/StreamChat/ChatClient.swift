@@ -94,7 +94,7 @@ public class _ChatClient<ExtraData: ExtraDataTypes> {
                 emitEvent: { [weak center] in center?.process($0) }
             ),
             ChannelReadUpdaterMiddleware<ExtraData>(),
-            ChannelMemberTypingStateUpdaterMiddleware<ExtraData>(),
+            UserTypingStateUpdaterMiddleware<ExtraData>(),
             MessageReactionsMiddleware<ExtraData>(),
             ChannelTruncatedEventMiddleware<ExtraData>(),
             MemberEventMiddleware<ExtraData>(),

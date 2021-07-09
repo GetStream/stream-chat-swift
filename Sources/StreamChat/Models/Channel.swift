@@ -71,9 +71,10 @@ public struct _ChatChannel<ExtraData: ExtraDataTypes> {
     public var lastActiveMembers: [_ChatChannelMember<ExtraData.User>] { _lastActiveMembers }
     @CoreDataLazy private var _lastActiveMembers: [_ChatChannelMember<ExtraData.User>]
     
-    /// A list of currently typing channel members.
-    public let currentlyTypingMembers: Set<_ChatChannelMember<ExtraData.User>>
-
+    /// A list of currently typing users.
+    public var currentlyTypingUsers: Set<_ChatUser<ExtraData.User>> { _currentlyTypingUsers }
+    @CoreDataLazy private var _currentlyTypingUsers: Set<_ChatUser<ExtraData.User>>
+    
     /// If the current user is a member of the channel, this variable contains the details about the membership.
     public let membership: _ChatChannelMember<ExtraData.User>?
     
@@ -175,7 +176,7 @@ public struct _ChatChannel<ExtraData: ExtraDataTypes> {
         isFrozen: Bool = false,
         lastActiveMembers: @escaping (() -> [_ChatChannelMember<ExtraData.User>]) = { [] },
         membership: _ChatChannelMember<ExtraData.User>? = nil,
-        currentlyTypingMembers: Set<_ChatChannelMember<ExtraData.User>> = [],
+        currentlyTypingUsers: @escaping () -> Set<_ChatUser<ExtraData.User>> = { [] },
         lastActiveWatchers: @escaping (() -> [_ChatUser<ExtraData.User>]) = { [] },
         team: TeamId? = nil,
         unreadCount: @escaping () -> ChannelUnreadCount = { .noUnread },
@@ -202,7 +203,6 @@ public struct _ChatChannel<ExtraData: ExtraDataTypes> {
         self.config = config
         self.isFrozen = isFrozen
         self.membership = membership
-        self.currentlyTypingMembers = currentlyTypingMembers
         self.team = team
         self.watcherCount = watcherCount
         self.memberCount = memberCount
@@ -215,6 +215,7 @@ public struct _ChatChannel<ExtraData: ExtraDataTypes> {
         $_unreadCount = (unreadCount, underlyingContext)
         $_latestMessages = (latestMessages, underlyingContext)
         $_lastActiveMembers = (lastActiveMembers, underlyingContext)
+        $_currentlyTypingUsers = (currentlyTypingUsers, underlyingContext)
         $_lastActiveWatchers = (lastActiveWatchers, underlyingContext)
         $_pinnedMessages = (pinnedMessages, underlyingContext)
         $_muteDetails = (muteDetails, underlyingContext)

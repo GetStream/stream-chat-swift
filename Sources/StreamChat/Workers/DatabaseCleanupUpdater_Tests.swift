@@ -105,7 +105,7 @@ extension _ChannelListQuery: Equatable {
 extension ChannelDTO {
     var isClearedOutProperly: Bool {
         messages.isEmpty &&
-            currentlyTypingMembers.isEmpty &&
+            currentlyTypingUsers.isEmpty &&
             watchers.isEmpty &&
             members.isEmpty &&
             attachments.isEmpty &&

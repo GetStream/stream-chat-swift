@@ -61,7 +61,7 @@ class ChannelDTO: NSManagedObject {
 
     /// If the current user is a member of the channel, this is their MemberDTO
     @NSManaged var membership: MemberDTO?
-    @NSManaged var currentlyTypingMembers: Set<MemberDTO>
+    @NSManaged var currentlyTypingUsers: Set<UserDTO>
     @NSManaged var messages: Set<MessageDTO>
     @NSManaged var pinnedMessages: Set<MessageDTO>
     @NSManaged var reads: Set<ChannelReadDTO>
@@ -125,7 +125,7 @@ class ChannelDTO: NSManagedObject {
 
 extension ChannelDTO: EphemeralValuesContainer {
     func resetEphemeralValues() {
-        currentlyTypingMembers.removeAll()
+        currentlyTypingUsers.removeAll()
         watchers.removeAll()
         watcherCount = 0
     }
@@ -277,8 +277,6 @@ extension ChannelDTO {
 extension _ChatChannel {
     /// Create a ChannelModel struct from its DTO
     fileprivate static func create(fromDTO dto: ChannelDTO) -> _ChatChannel {
-        let typingMembers: [_ChatChannelMember<ExtraData.User>] = dto.currentlyTypingMembers.map { $0.asModel() }
-
         let extraData: ExtraData.Channel
         do {
             extraData = try JSONDecoder.default.decode(ExtraData.Channel.self, from: dto.extraData)
@@ -370,7 +368,7 @@ extension _ChatChannel {
             isFrozen: dto.isFrozen,
             lastActiveMembers: { fetchMembers() },
             membership: dto.membership.map { $0.asModel() },
-            currentlyTypingMembers: Set(typingMembers),
+            currentlyTypingUsers: { Set(dto.currentlyTypingUsers.map { $0.asModel() }) },
             lastActiveWatchers: { fetchWatchers() },
             team: dto.team?.id,
             unreadCount: { unreadCount() },
