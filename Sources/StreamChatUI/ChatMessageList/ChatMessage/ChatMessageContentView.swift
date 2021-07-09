@@ -207,7 +207,9 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, ThemeProvi
         }
 
         // Bubble - Thread - Metadata
-        bubbleThreadMetaContainer.alignment = options.contains(.flipped) ? .trailing : .leading
+        bubbleThreadMetaContainer.alignment = attachmentViewInjector?.fillAllAvailableWidth == true
+            ? .fill
+            : options.contains(.flipped) ? .trailing : .leading
 
         // Bubble view
         if options.contains(.bubble) {
@@ -232,11 +234,15 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, ThemeProvi
             let threadAvatarView = createThreadAvatarView()
             let threadReplyCountButton = createThreadReplyCountButton()
 
-            let arrangedSubviews = [
+            var arrangedSubviews = [
                 arrowView,
                 threadAvatarView,
                 threadReplyCountButton
             ]
+            
+            if attachmentViewInjector?.fillAllAvailableWidth == true {
+                arrangedSubviews.append(.spacer(axis: .horizontal))
+            }
 
             if options.contains(.flipped) {
                 arrowView.direction = .toLeading
@@ -270,6 +276,9 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, ThemeProvi
                 onlyVisibleForYouContainer!.addArrangedSubview(createOnlyVisibleForYouIconImageView())
                 onlyVisibleForYouContainer!.addArrangedSubview(createOnlyVisibleForYouLabel())
                 metadataSubviews.append(onlyVisibleForYouContainer!)
+            }
+            if attachmentViewInjector?.fillAllAvailableWidth == true {
+                metadataSubviews.append(.spacer(axis: .horizontal))
             }
 
             metadataContainer = ContainerStackView(
@@ -381,10 +390,15 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, ThemeProvi
 
         constraintsToActivate += [
             mainContainer.bottomAnchor.pin(equalTo: bottomAnchor),
-            mainContainer.widthAnchor.pin(
-                lessThanOrEqualTo: widthAnchor,
-                multiplier: maxContentWidthMultiplier
-            )
+            attachmentViewInjector?.fillAllAvailableWidth == true
+                ? mainContainer.widthAnchor.pin(
+                    equalTo: widthAnchor,
+                    multiplier: maxContentWidthMultiplier
+                )
+                : mainContainer.widthAnchor.pin(
+                    lessThanOrEqualTo: widthAnchor,
+                    multiplier: maxContentWidthMultiplier
+                )
         ]
 
         NSLayoutConstraint.activate(constraintsToActivate)

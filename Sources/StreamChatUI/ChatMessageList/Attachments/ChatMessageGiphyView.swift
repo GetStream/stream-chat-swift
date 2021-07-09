@@ -18,8 +18,6 @@ open class _ChatMessageGiphyView<ExtraData: ExtraDataTypes>: _View, ComponentsPr
         }
     }
     
-    override open var intrinsicContentSize: CGSize { .init(width: .max, height: .max) }
-
     private var imageTask: ImageTask? {
         didSet { oldValue?.cancel() }
     }

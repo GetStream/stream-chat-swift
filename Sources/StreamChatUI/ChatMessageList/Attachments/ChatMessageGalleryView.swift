@@ -15,8 +15,6 @@ open class _ChatMessageGalleryView<ExtraData: ExtraDataTypes>: _View, ThemeProvi
         didSet { updateContentIfNeeded() }
     }
     
-    override open var intrinsicContentSize: CGSize { .init(width: .max, height: .max) }
-
     // Previews indices locations:
     // When one item available:
     // -------
