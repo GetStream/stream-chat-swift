@@ -14,6 +14,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Fix crash when scrolling to bottom after sending the first message [#1262](https://github.com/GetStream/stream-chat-swift/pull/1262)
 - Fix crash when thread root message is not loaded when thread is opened [#1263](https://github.com/GetStream/stream-chat-swift/pull/1263)
 - Fix issue when messages were changing their sizes when channel is opened [#1260](https://github.com/GetStream/stream-chat-swift/pull/1260)
+- Fix over fetching previous messages [#1110](https://github.com/GetStream/stream-chat-swift/pull/1110)
 
 ### 🔄 Changed
 - The way attachment view stretches the message cell to fill all available width. Now it's done via `fillAllAvailableWidth` exposed on base attachment injector (set to `true` by default) [#1260](https://github.com/GetStream/stream-chat-swift/pull/1260)
