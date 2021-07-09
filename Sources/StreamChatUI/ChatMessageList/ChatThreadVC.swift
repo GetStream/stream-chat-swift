@@ -214,7 +214,26 @@ open class _ChatThreadVC<ExtraData: ExtraDataTypes>:
     }
     
     public var messages: [_ChatMessage<ExtraData>] {
-        messageController.replies + [messageController.message!]
+        /*
+         Thread replies are evaluated from DTOs when converting `messageController.replies` to an array.
+         Adding thread root message into replies would require `insert/append` API on lazy map which should
+         update both source collection and a cache to not break the indexing and keep 1-1 match with evaluated
+         and non-evaluated elements.
+         
+         We have evaluated thread root message in `messageController.message` but to get keep lazy map
+         working after an insert we also need an underlaying DTO to be added to source collection and it's getting
+         hard since the information about source collection `Element` type is available only during lazy map
+         initialization and does not get stored for later use.
+
+         It could be addressed on LLC side by tweaking an observer to fetch thread root message along with replies.
+         */
+        let replies = Array(messageController.replies)
+        
+        if let threadRootMessage = messageController.message {
+            return replies + [threadRootMessage]
+        } else {
+            return replies
+        }
     }
     
     open func numberOfSections(in tableView: UITableView) -> Int {
@@ -378,6 +397,25 @@ open class _ChatThreadVC<ExtraData: ExtraDataTypes>:
     }
 
     // MARK: - _ChatMessageControllerDelegate
+    
+    public func messageController(
+        _ controller: _ChatMessageController<ExtraData>,
+        didChangeMessage change: EntityChange<_ChatMessage<ExtraData>>
+    ) {
+        let indexPath = IndexPath(row: messageController.replies.count, section: 0)
+        
+        let listChange: ListChange<_ChatMessage<ExtraData>>
+        switch change {
+        case let .create(item):
+            listChange = .insert(item, index: indexPath)
+        case let .update(item):
+            listChange = .update(item, index: indexPath)
+        case let .remove(item):
+            listChange = .remove(item, index: indexPath)
+        }
+        
+        updateMessages(with: [listChange])
+    }
 
     open func messageController(
         _ controller: _ChatMessageController<ExtraData>,
