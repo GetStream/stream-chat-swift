@@ -61,6 +61,7 @@ public struct Annotation {
 /// - Returns: A UIView instance which contains all annotations and possibly description of properties outside the annotated view.
 func generateDocs(
     for view: UIView,
+    parentView: UIView? = nil,
     annotations: [Annotation],
     name: String,
     variants: [SnapshotVariant],
@@ -85,7 +86,7 @@ func generateDocs(
             createLineAndLabelWithPropertyName(
                 for: [annotation.view: position],
                 in: container,
-                parentView: view,
+                parentView: parentView ?? view,
                 lineColor: annotation.lineColor,
                 textColor: annotation.textColor
             )

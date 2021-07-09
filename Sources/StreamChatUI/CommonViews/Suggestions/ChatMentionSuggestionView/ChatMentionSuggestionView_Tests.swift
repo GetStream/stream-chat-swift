@@ -17,6 +17,7 @@ class ChatMentionSuggestionView_Tests: XCTestCase {
 
     override func setUp() {
         super.setUp()
+
         chatUserOffline = .mock(
             id: "darkside37",
             name: "Mr Vader",
@@ -114,13 +115,13 @@ class ChatMentionSuggestionView_Tests: XCTestCase {
                     mentionSymbolImageView.leadingAnchor.constraint(equalToSystemSpacingAfter: leadingAnchor, multiplier: 1),
                     mentionSymbolImageView.heightAnchor.constraint(equalTo: mentionSymbolImageView.widthAnchor),
                     mentionSymbolImageView.widthAnchor.constraint(equalToConstant: 30),
-                    textStackView.leadingAnchor.constraint(
+                    textContainer.leadingAnchor.constraint(
                         equalToSystemSpacingAfter: mentionSymbolImageView.trailingAnchor,
                         multiplier: 1
                     ),
                     avatarView.widthAnchor.constraint(equalToConstant: 30),
                     avatarView.heightAnchor.constraint(equalTo: avatarView.widthAnchor),
-                    avatarView.leadingAnchor.constraint(equalTo: textStackView.trailingAnchor),
+                    avatarView.leadingAnchor.constraint(equalTo: textContainer.trailingAnchor),
                     avatarView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -10)
                 ])
             }

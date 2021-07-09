@@ -40,13 +40,13 @@ open class _ComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
         /// The text of the input text view.
         public var text: String
         /// The state of the composer.
-        public var state: ComposerState
+        public let state: ComposerState
         /// The editing message if the composer is currently editing a message.
         public let editingMessage: _ChatMessage<ExtraData>?
         /// The quoting message if the composer is currently quoting a message.
         public let quotingMessage: _ChatMessage<ExtraData>?
         /// The thread parent message if the composer is currently replying in a thread.
-        public let threadMessage: _ChatMessage<ExtraData>?
+        public var threadMessage: _ChatMessage<ExtraData>?
         /// The attachments of the message.
         public var attachments: [AnyAttachmentPayload]
         /// The mentioned users in the message.
@@ -59,7 +59,7 @@ open class _ComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
             text.isEmpty && attachments.isEmpty
         }
 
-        /// A boolean that check if the composer is replying in a thread
+        /// A boolean that checks if the composer is replying in a thread
         public var isInsideThread: Bool { threadMessage != nil }
         /// A boolean that checks if the composer recognised already a command.
         public var hasCommand: Bool { command != nil }
@@ -143,22 +143,6 @@ open class _ComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
                 command: command
             )
         }
-
-        /// Sets the content state to replying to a thread message.
-        ///
-        /// - Parameter message: The message that belongs to the thread.
-        public mutating func threadMessage(_ message: _ChatMessage<ExtraData>) {
-            self = .init(
-                text: text,
-                state: state,
-                editingMessage: editingMessage,
-                quotingMessage: quotingMessage,
-                threadMessage: message,
-                attachments: attachments,
-                mentionedUsers: mentionedUsers,
-                command: command
-            )
-        }
     }
 
     /// The content of the composer.
@@ -177,6 +161,16 @@ open class _ComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
     /// A symbol that is used to recognise when the user is typing a command.
     open var commandSymbol = "/"
 
+    /// A Boolean value indicating whether the commands are enabled.
+    open var isCommandsEnabled: Bool {
+        channelConfig?.commands.isEmpty == false
+    }
+
+    /// A Boolean value indicating whether the attachments are enabled.
+    open var isAttachmentsEnabled: Bool {
+        channelConfig?.uploadsEnabled == true
+    }
+
     /// A controller to search users and that is used to populate the mention suggestions.
     open var userSearchController: _ChatUserSearchController<ExtraData>!
 
@@ -188,13 +182,28 @@ open class _ComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
         channelController?.channel?.config
     }
 
+    /// The component responsible for mention suggestions.
+    open lazy var mentionSuggester = TypingSuggester(
+        options: TypingSuggestionOptions(
+            symbol: mentionSymbol
+        )
+    )
+
+    /// The component responsible for autocomplete command suggestions.
+    open lazy var commandSuggester = TypingSuggester(
+        options: TypingSuggestionOptions(
+            symbol: commandSymbol,
+            shouldTriggerOnlyAtStart: true
+        )
+    )
+
     /// The view of the composer.
     open private(set) lazy var composerView: _ComposerView<ExtraData> = components
         .messageComposerView.init()
         .withoutAutoresizingMaskConstraints
 
     /// The view controller that shows the suggestions when the user is typing.
-    open private(set) lazy var suggestionsVC: _ChatSuggestionsViewController<ExtraData> = components
+    open private(set) lazy var suggestionsVC: _ChatSuggestionsVC<ExtraData> = components
         .suggestionsVC
         .init()
     
@@ -296,9 +305,7 @@ open class _ComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
         composerView.sendButton.isEnabled = !content.isEmpty
         composerView.confirmButton.isEnabled = !content.isEmpty
 
-        let isAttachmentsEnabled = channelConfig?.uploadsEnabled == true
         let isAttachmentButtonHidden = !content.isEmpty || !isAttachmentsEnabled
-        let isCommandsEnabled = channelConfig?.commands.isEmpty == false
         let isCommandsButtonHidden = !content.isEmpty || !isCommandsEnabled
         let isShrinkInputButtonHidden = content.isEmpty || (!isCommandsEnabled && !isAttachmentsEnabled)
         
@@ -524,53 +531,19 @@ open class _ComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
     /// - Parameter textView: The text view of the message input view where the user is typing.
     /// - Returns: A tuple with the potential user mention and the position of the mention so it can be autocompleted.
     open func typingMention(in textView: UITextView) -> (String, NSRange)? {
-        let text = textView.text as NSString
-        let caretLocation = textView.selectedRange.location
-        let firstMentionSymbolBeforeCaret = text.rangeOfCharacter(
-            from: CharacterSet(charactersIn: mentionSymbol),
-            options: .backwards,
-            range: NSRange(location: 0, length: caretLocation)
-        )
-        guard firstMentionSymbolBeforeCaret.location != NSNotFound else {
+        guard let typingSuggestion = mentionSuggester.typingSuggestion(in: textView) else {
             return nil
         }
 
-        let charIndexBeforeMentionSymbol = firstMentionSymbolBeforeCaret.lowerBound - 1
-        let charRangeBeforeMentionSymbol = NSRange(location: charIndexBeforeMentionSymbol, length: 1)
-        if charIndexBeforeMentionSymbol >= 0, text.substring(with: charRangeBeforeMentionSymbol) != " " {
-            return nil
-        }
-        
-        let mentionStart = firstMentionSymbolBeforeCaret.upperBound
-        let mentionEnd = caretLocation
-        guard mentionEnd >= mentionStart else {
-            return nil
-        }
-
-        let mentionRange = NSRange(location: mentionStart, length: mentionEnd - mentionStart)
-        let mention = text.substring(with: mentionRange)
-        guard !mention.contains(" ") else {
-            return nil
-        }
-
-        return (mention, mentionRange)
+        return (typingSuggestion.text, typingSuggestion.locationRange)
     }
 
     /// Returns a potential command in case the user is currently typing a command.
     /// - Parameter textView: The text view of the message input view where the user is typing.
     /// - Returns: A string of the corresponding potential command.
     open func typingCommand(in textView: UITextView) -> String? {
-        guard let text = textView.text else { return nil }
-
-        let trimmedText = text.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard trimmedText.first == Character(commandSymbol) else { return nil }
-
-        let trimmedTextWithoutSymbol = trimmedText.dropFirst()
-        guard let potentialCommand = trimmedTextWithoutSymbol.split(separator: " ").first else {
-            return String(trimmedTextWithoutSymbol)
-        }
-
-        return String(potentialCommand)
+        let typingSuggestion = commandSuggester.typingSuggestion(in: textView)
+        return typingSuggestion?.text
     }
 
     /// Shows the command suggestions for the potential command the current user is typing.

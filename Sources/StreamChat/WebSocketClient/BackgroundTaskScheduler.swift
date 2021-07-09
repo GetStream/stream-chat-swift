@@ -15,6 +15,7 @@ protocol BackgroundTaskScheduler {
         onEnteringBackground: @escaping () -> Void,
         onEnteringForeground: @escaping () -> Void
     )
+    func stopListeningForAppStateUpdates()
 }
 
 #if os(iOS)
@@ -65,6 +66,23 @@ class IOSBackgroundTaskScheduler: BackgroundTaskScheduler {
         NotificationCenter.default.addObserver(
             self,
             selector: #selector(handleAppDidBecomeActive),
+            name: UIApplication.didBecomeActiveNotification,
+            object: nil
+        )
+    }
+    
+    func stopListeningForAppStateUpdates() {
+        onEnteringForeground = {}
+        onEnteringBackground = {}
+        
+        NotificationCenter.default.removeObserver(
+            self,
+            name: UIApplication.didEnterBackgroundNotification,
+            object: nil
+        )
+        
+        NotificationCenter.default.removeObserver(
+            self,
             name: UIApplication.didBecomeActiveNotification,
             object: nil
         )

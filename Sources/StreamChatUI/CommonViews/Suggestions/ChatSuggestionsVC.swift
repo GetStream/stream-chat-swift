@@ -6,10 +6,10 @@ import StreamChat
 import UIKit
 
 /// A view controller that shows suggestions of commands or mentions.
-public typealias ChatSuggestionsViewController = _ChatSuggestionsViewController<NoExtraData>
+public typealias ChatSuggestionsVC = _ChatSuggestionsVC<NoExtraData>
 
 /// A view controller that shows suggestions of commands or mentions.
-open class _ChatSuggestionsViewController<ExtraData: ExtraDataTypes>: _ViewController,
+open class _ChatSuggestionsVC<ExtraData: ExtraDataTypes>: _ViewController,
     ThemeProvider,
     UICollectionViewDelegate {
     /// The data provider of the collection view. A custom `UICollectionViewDataSource` can be provided,

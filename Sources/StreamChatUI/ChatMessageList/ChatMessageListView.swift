@@ -144,14 +144,19 @@ open class _ChatMessageListView<ExtraData: ExtraDataTypes>: UITableView, Customi
     
     /// Scrolls to most recent message
     open func scrollToMostRecentMessage(animated: Bool = true) {
+        let rowsRange = 0..<numberOfRows(inSection: 0)
         let lastMessageIndexPath = IndexPath(row: 0, section: 0)
         let prevMessageIndexPath = IndexPath(row: 1, section: 0)
 
-        if rectForRow(at: prevMessageIndexPath).minY < contentOffset.y {
+        if
+            rectForRow(at: prevMessageIndexPath).minY < contentOffset.y,
+            rowsRange.contains(prevMessageIndexPath.row) {
             scrollToRow(at: prevMessageIndexPath, at: .top, animated: false)
         }
         
-        scrollToRow(at: lastMessageIndexPath, at: .top, animated: animated)
+        if rowsRange.contains(lastMessageIndexPath.row) {
+            scrollToRow(at: lastMessageIndexPath, at: .top, animated: animated)
+        }
     }
     
     /// A Boolean that returns true if the bottom cell is fully visible.

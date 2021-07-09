@@ -13,12 +13,15 @@ extension ChatClient {
         var appearance = Appearance()
         var components = Components()
 
+        appearance.images.openAttachments = UIImage(systemName: "camera.fill")!
+            .withTintColor(.systemBlue)
+
         components.channelContentView = iMessageChatChannelListItemView.self
         components.channelCellSeparator = iMessageCellSeparatorView.self
 
         components.messageListVC = iMessageChatChannelViewController.self
-        components.messageComposerVC = iMessageChatComposerViewController.self
-        components.messageComposerView = iMessageChatMessageComposerView.self
+        components.messageComposerVC = iMessageComposerVC.self
+        components.messageComposerView = iMessageComposerView.self
         components.messageLayoutOptionsResolver = iMessageChatMessageLayoutOptionsResolver()
 
         Appearance.default = appearance

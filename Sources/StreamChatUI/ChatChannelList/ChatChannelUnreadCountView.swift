@@ -48,7 +48,7 @@ open class _ChatChannelUnreadCountView<ExtraData: ExtraDataTypes>: _View, ThemeP
     }
     
     override open func updateContent() {
-        isHidden = content.mentionedMessages == 0 && content.messages == 0
+        isHidden = content.messages == 0
         unreadCountLabel.text = String(content.messages)
     }
 }

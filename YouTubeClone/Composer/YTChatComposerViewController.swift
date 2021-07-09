@@ -56,16 +56,12 @@ final class YTChatComposerViewController: ComposerVC {
             preferredStyle: .actionSheet
         )
         ["😃", "😇", "😅", "😂"].forEach { emoji in
+
             let action = UIAlertAction(title: emoji, style: .default) { _ in
                 let inputTextView = self.composerView.inputMessageView.textView
-                // Populate the emoji in the input view where is the caret position
-                guard let selectedRange = inputTextView.selectedTextRange else {
-                    inputTextView.text.append(emoji)
-                    return
-                }
-                
-                inputTextView.replace(selectedRange, withText: emoji)
+                inputTextView.replaceSelectedText(emoji)
             }
+
             sheetAlertController.addAction(action)
         }
         
