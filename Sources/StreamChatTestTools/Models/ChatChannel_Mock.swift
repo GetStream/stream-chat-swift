@@ -120,7 +120,7 @@ public extension _ChatChannel {
         config: ChannelConfig = .mock(),
         isFrozen: Bool = false,
         lastActiveMembers: [_ChatChannelMember<ExtraData.User>] = [],
-        currentlyTypingUsers: Set<_ChatChannelMember<ExtraData.User>> = [],
+        currentlyTypingUsers: Set<_ChatUser<ExtraData.User>> = [],
         lastActiveWatchers: [_ChatUser<ExtraData.User>] = [],
         unreadCount: ChannelUnreadCount = .noUnread,
         watcherCount: Int = 0,
