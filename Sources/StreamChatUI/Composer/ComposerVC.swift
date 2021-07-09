@@ -35,7 +35,7 @@ open class _ComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
     UIImagePickerControllerDelegate,
     UIDocumentPickerDelegate,
     UINavigationControllerDelegate,
-    InputTextViewImagePasteDelegate {
+    InputTextViewClipboardAttachmentDelegate {
     /// The content of the composer.
     public struct Content {
         /// The text of the input text view.
@@ -240,7 +240,7 @@ open class _ComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
         composerView.inputMessageView.textView.delegate = self
         
         // Set the delegate for handling the pasting of UIImages in the text view
-        composerView.inputMessageView.textView.imagePasteDelegate = self
+        composerView.inputMessageView.textView.clipboardAttachmentDelegate = self
 
         composerView.attachmentButton.addTarget(self, action: #selector(showAttachmentsPicker), for: .touchUpInside)
         composerView.sendButton.addTarget(self, action: #selector(publishMessage), for: .touchUpInside)
@@ -773,7 +773,7 @@ open class _ComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
         present(alert, animated: true)
     }
     
-    // MARK: - InputTextViewImagePasteDelegate
+    // MARK: - InputTextViewClipboardAttachmentDelegate
     
     open func inputTextView(_ inputTextView: InputTextView, didPasteImage image: UIImage) {
         do {

@@ -2,12 +2,11 @@
 // Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
-import MobileCoreServices
 import StreamChat
 import UIKit
 
-/// The delegate of the `InputTextView` that notifies when an `UIImage` is pasted.
-public protocol InputTextViewImagePasteDelegate: AnyObject {
+/// The delegate of the `InputTextView` that notifies when an attachment is pasted in the text view.
+public protocol InputTextViewClipboardAttachmentDelegate: AnyObject {
     /// Notifies that an `UIImage` has been pasted into the text view
     /// - Parameters:
     ///   - inputTextView: The `InputTextView` in which the image was pasted
@@ -18,8 +17,8 @@ public protocol InputTextViewImagePasteDelegate: AnyObject {
 /// A view for inputting text with placeholder support. Since it is a subclass
 /// of `UITextView`, the `UITextViewDelegate` can be used to observe text changes.
 open class InputTextView: UITextView, AppearanceProvider {
-    /// The delegate which gets notified when an image is pasted into the text view
-    open weak var imagePasteDelegate: InputTextViewImagePasteDelegate?
+    /// The delegate which gets notified when an attachment is pasted into the text view
+    open var clipboardAttachmentDelegate: InputTextViewClipboardAttachmentDelegate?
     
     /// Whether this text view should allow images to be pasted
     open var allowsPastingImages: Bool = true
@@ -121,7 +120,7 @@ open class InputTextView: UITextView, AppearanceProvider {
 
     override open func paste(_ sender: Any?) {
         if let pasteboardImage = UIPasteboard.general.image {
-            imagePasteDelegate?.inputTextView(self, didPasteImage: pasteboardImage)
+            clipboardAttachmentDelegate?.inputTextView(self, didPasteImage: pasteboardImage)
         } else {
             super.paste(sender)
         }
