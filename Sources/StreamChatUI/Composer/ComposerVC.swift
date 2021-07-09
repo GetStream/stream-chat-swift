@@ -5,6 +5,12 @@
 import StreamChat
 import UIKit
 
+/// The possible errors that can occur in attachment validation
+public enum AttachmentValidationError: Error {
+    /// The size of the attachment exceeds the max file size
+    case maxFileSizeExceeded
+}
+
 /// The delegate of the ComposerVC that notifies composer events.
 public protocol ComposerVCDelegate: AnyObject {
     func composerDidCreateNewMessage()
@@ -361,7 +367,7 @@ open class _ComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
         // If we have files in attachments, do not allow images to be pasted in the text view.
         // This is due to the limitation of UI(files and images cannot be shown together)
         let filesExistInAttachments = content.attachments.contains(where: { $0.type == .file })
-        composerView.inputMessageView.textView.allowsPastingImages = !filesExistInAttachments
+        composerView.inputMessageView.textView.isPastingImagesEnabled = !filesExistInAttachments
 
         dismissSuggestions()
     }
@@ -686,23 +692,19 @@ open class _ComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
         suggestionsVC.view.removeFromSuperview()
     }
     
-    /// Creates and adds an attachment from the given URL to the `content`. Shows an alert if the file size exceeds the max file size.
+    /// Creates and adds an attachment from the given URL to the `content`
     /// - Parameters:
     ///   - url: The URL of the attachment
     ///   - type: The type of the attachment
-    open func addAttachmentToContent(from url: URL, type: AttachmentType) {
-        do {
-            let fileSize = try AttachmentFile(url: url).size
-            let maxFileSize = channelController?.client.config.maxAttachmentSize ?? 0
-            
-            if fileSize < maxFileSize {
-                let attachment = try AnyAttachmentPayload(localFileURL: url, attachmentType: type)
-                content.attachments.append(attachment)
-            } else {
-                showAttachmentExceedsMaxSizeAlert()
-            }
-        } catch {
-            log.assertionFailure(error.localizedDescription)
+    open func addAttachmentToContent(from url: URL, type: AttachmentType) throws {
+        let fileSize = try AttachmentFile(url: url).size
+        let maxFileSize = channelController?.client.config.maxAttachmentSize ?? 0
+        
+        if fileSize < maxFileSize {
+            let attachment = try AnyAttachmentPayload(localFileURL: url, attachmentType: type)
+            content.attachments.append(attachment)
+        } else {
+            throw AttachmentValidationError.maxFileSizeExceeded
         }
     }
 
@@ -750,7 +752,13 @@ open class _ComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
                 return
             }
             
-            self?.addAttachmentToContent(from: urlAndType.0, type: urlAndType.1)
+            do {
+                try self?.addAttachmentToContent(from: urlAndType.0, type: urlAndType.1)
+            } catch AttachmentValidationError.maxFileSizeExceeded {
+                self?.showAttachmentExceedsMaxSizeAlert()
+            } catch {
+                log.assertionFailure(error.localizedDescription)
+            }
         }
     }
     
@@ -782,7 +790,9 @@ open class _ComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
                 return
             }
             
-            addAttachmentToContent(from: imageUrl, type: .image)
+            try addAttachmentToContent(from: imageUrl, type: .image)
+        } catch AttachmentValidationError.maxFileSizeExceeded {
+            showAttachmentExceedsMaxSizeAlert()
         } catch {
             log.assertionFailure(error.localizedDescription)
         }

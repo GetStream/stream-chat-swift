@@ -18,10 +18,10 @@ public protocol InputTextViewClipboardAttachmentDelegate: AnyObject {
 /// of `UITextView`, the `UITextViewDelegate` can be used to observe text changes.
 open class InputTextView: UITextView, AppearanceProvider {
     /// The delegate which gets notified when an attachment is pasted into the text view
-    open var clipboardAttachmentDelegate: InputTextViewClipboardAttachmentDelegate?
+    open weak var clipboardAttachmentDelegate: InputTextViewClipboardAttachmentDelegate?
     
     /// Whether this text view should allow images to be pasted
-    open var allowsPastingImages: Bool = true
+    open var isPastingImagesEnabled: Bool = true
     
     /// Label used as placeholder for textView when it's empty.
     open private(set) lazy var placeholderLabel: UILabel = UILabel()
@@ -111,7 +111,7 @@ open class InputTextView: UITextView, AppearanceProvider {
     
     override open func canPerformAction(_ action: Selector, withSender sender: Any?) -> Bool {
         // If action is paste and the pasteboard has an image, we allow it
-        if action == #selector(paste(_:)) && allowsPastingImages && UIPasteboard.general.hasImages {
+        if action == #selector(paste(_:)) && isPastingImagesEnabled && UIPasteboard.general.hasImages {
             return true
         }
 
