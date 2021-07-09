@@ -244,7 +244,7 @@ class ChannelController_Tests: StressTestCase {
         controller.synchronize()
         
         // Simulate successful network call.
-        env.channelUpdater?.update_completion?(nil)
+        env.channelUpdater?.update_completion?(.success(dummyPayload(with: .unique)))
         
         // Check if state changed after successful network call.
         XCTAssertEqual(controller.state, .remoteDataFetched)
@@ -259,7 +259,7 @@ class ChannelController_Tests: StressTestCase {
 
         // Simulate failed network call.
         let error = TestError()
-        env.channelUpdater?.update_completion?(error)
+        env.channelUpdater?.update_completion?(.failure(error))
         
         // Check if state changed after failed network call.
         XCTAssertEqual(controller.state, .remoteDataFetchFailed(ClientError(with: error)))
@@ -287,7 +287,7 @@ class ChannelController_Tests: StressTestCase {
         XCTAssertFalse(completionCalled)
         
         // Simulate successful update
-        env.channelUpdater!.update_completion?(nil)
+        env.channelUpdater!.update_completion?(.success(dummyPayload(with: .unique)))
         // Release reference of completion so we can deallocate stuff
         env.channelUpdater!.update_completion = nil
         
@@ -310,7 +310,7 @@ class ChannelController_Tests: StressTestCase {
         try client.databaseContainer.writeSynchronously {
             try $0.saveChannel(payload: payload, query: nil)
         }
-        env.channelUpdater?.update_completion?(nil)
+        env.channelUpdater?.update_completion?(.success(dummyPayload(with: .unique)))
         
         XCTAssertEqual(controller.channel?.cid, channelId)
         XCTAssertEqual(controller.messages.count, payload.messages.count)
@@ -332,7 +332,7 @@ class ChannelController_Tests: StressTestCase {
             try $0.saveChannel(payload: payload, query: nil)
         }
         env.channelUpdater?.update_channelCreatedCallback?(channelId)
-        env.channelUpdater?.update_completion?(nil)
+        env.channelUpdater?.update_completion?(.success(dummyPayload(with: .unique)))
         
         XCTAssertEqual(controller.channel?.cid, channelId)
         XCTAssertEqual(controller.messages.count, payload.messages.count)
@@ -354,7 +354,7 @@ class ChannelController_Tests: StressTestCase {
             try $0.saveChannel(payload: payload, query: nil)
         }
         env.channelUpdater?.update_channelCreatedCallback?(channelId)
-        env.channelUpdater?.update_completion?(nil)
+        env.channelUpdater?.update_completion?(.success(dummyPayload(with: .unique)))
         
         XCTAssertEqual(controller.channel?.cid, channelId)
         XCTAssertEqual(controller.messages.count, payload.messages.count)
@@ -379,7 +379,7 @@ class ChannelController_Tests: StressTestCase {
             try $0.saveChannel(payload: payload, query: nil)
         }
         env.channelUpdater?.update_channelCreatedCallback?(channelId)
-        env.channelUpdater?.update_completion?(nil)
+        env.channelUpdater?.update_completion?(.success(dummyPayload(with: .unique)))
         
         XCTAssertEqual(controller.channel?.cid, channelId)
         XCTAssertEqual(controller.messages.count, payload.messages.count)
@@ -395,7 +395,7 @@ class ChannelController_Tests: StressTestCase {
         
         // Simulate failed update
         let testError = TestError()
-        env.channelUpdater!.update_completion?(testError)
+        env.channelUpdater!.update_completion?(.failure(testError))
         
         // Completion should be called with the error
         AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
@@ -880,7 +880,7 @@ class ChannelController_Tests: StressTestCase {
         controller.synchronize()
             
         // Simulate network call response
-        env.channelUpdater?.update_completion?(nil)
+        env.channelUpdater?.update_completion?(.success(dummyPayload(with: .unique)))
         
         // Assert delegate is notified about state changes
         AssertAsync.willBeEqual(delegate.state, .remoteDataFetched)
@@ -898,7 +898,7 @@ class ChannelController_Tests: StressTestCase {
         controller.synchronize()
         
         // Simulate network call response
-        env.channelUpdater?.update_completion?(nil)
+        env.channelUpdater?.update_completion?(.success(dummyPayload(with: .unique)))
         //   env.messageUpdater.getMessage_completion?(nil)
         
         // Assert delegate is notified about state changes
@@ -1302,7 +1302,7 @@ class ChannelController_Tests: StressTestCase {
         }
         
         // Simulate successful network call
-        env.channelUpdater!.update_completion?(nil)
+        env.channelUpdater!.update_completion?(.success(dummyPayload(with: .unique)))
         
         // Assert that initial reported values are correct
         XCTAssertEqual(controller.channel?.cid, dummyChannel.channel.cid)
@@ -1344,7 +1344,7 @@ class ChannelController_Tests: StressTestCase {
         env.channelUpdater!.update_channelCreatedCallback?(dummyChannel.channel.cid)
         
         // Simulate successful network call.
-        env.channelUpdater!.update_completion?(nil)
+        env.channelUpdater!.update_completion?(.success(dummyPayload(with: .unique)))
         
         // Since initially the controller doesn't know it's final `cid`, it can't report correct initial values.
         // That's why we simulate delegate callbacks for initial values.
@@ -1380,7 +1380,7 @@ class ChannelController_Tests: StressTestCase {
         }
         
         // Simulate successful network call
-        env.channelUpdater!.update_completion?(nil)
+        env.channelUpdater!.update_completion?(.success(dummyPayload(with: .unique)))
         
         // Assert that initial reported values are correct
         XCTAssertEqual(controller.channel?.cid, dummyChannel.channel.cid)
@@ -1995,7 +1995,11 @@ class ChannelController_Tests: StressTestCase {
         )
         
         // Simulate successful update
-        env.channelUpdater?.update_completion?(nil)
+        env.channelUpdater?
+            .update_completion?(.success(dummyPayload(
+                with: .unique,
+                messages: [.dummy(messageId: .unique, authorUserId: .unique)]
+            )))
         // Release reference of completion so we can deallocate stuff
         env.channelUpdater!.update_completion = nil
         
@@ -2003,6 +2007,149 @@ class ChannelController_Tests: StressTestCase {
         AssertAsync.willBeTrue(completionCalled)
         // `weakController` should be deallocated too
         AssertAsync.canBeReleased(&weakController)
+    }
+
+    func test_loadPreviousMessages_whenHasLoadedAllPreviousMessages_dontCallChannelUpdater() throws {
+        var error: Error?
+        var messageId: MessageId?
+
+        // Create new channel with message in DB
+        error = try waitFor {
+            client.databaseContainer.write({ session in
+                messageId = try self.setupChannelWithMessage(session)
+            }, completion: $0)
+        }
+
+        XCTAssertNil(error)
+
+        // By loading less messages than the limit, it means
+        // we loaded all messages, and there's no more pages
+        let pageSize = 25
+        let numberOfMessagesFetched = 20
+
+        // Load all the previous message
+        var firstLoadCompletionCalled = false
+        controller.loadPreviousMessages(before: messageId, limit: pageSize) { [callbackQueueID] error in
+            AssertTestQueue(withId: callbackQueueID)
+            XCTAssertNil(error)
+            firstLoadCompletionCalled = true
+        }
+
+        // Completion shouldn't be called yet
+        XCTAssertFalse(firstLoadCompletionCalled)
+
+        // Assert correct `MessagesPagination` is created
+        XCTAssertEqual(
+            env!.channelUpdater?.update_channelQuery?.pagination,
+            MessagesPagination(pageSize: pageSize, parameter: .lessThan(messageId!))
+        )
+
+        // Simulate channel update response with messages less than the limit
+        // Which should switch the flag of all messages loaded to true
+        env.channelUpdater?
+            .update_completion?(.success(dummyPayload(
+                with: .unique,
+                numberOfMessages: numberOfMessagesFetched
+            )))
+
+        // Since the messages have been all loaded already, the second call
+        // to load the previous message should not make any request
+        var secondLoadCompletionCalled = false
+        controller.loadPreviousMessages(before: messageId, limit: pageSize) { error in
+            XCTAssertNil(error)
+            secondLoadCompletionCalled = true
+        }
+
+        // Wait for the first load to be completed
+        AssertAsync.willBeTrue(firstLoadCompletionCalled)
+        // Wait for the second load to be completed
+        AssertAsync.willBeTrue(secondLoadCompletionCalled)
+        // Make sure the channel updater is only called the first time
+        AssertAsync.willBeEqual(env.channelUpdater?.update_callCount, 1)
+    }
+
+    func test_loadPreviousMessages_whenLoadedMessagesLessThanLimit_dontFetchMoreMessages() throws {
+        var error: Error?
+        var messageId: MessageId?
+
+        // Create new channel with message in DB
+        error = try waitFor {
+            client.databaseContainer.write({ session in
+                messageId = try self.setupChannelWithMessage(session)
+            }, completion: $0)
+        }
+
+        XCTAssertNil(error)
+
+        // By loading less messages than the limit, it means
+        // we loaded all messages, and there's no more pages
+        let pageSize = 25
+        let numberOfMessagesFetched = 20
+
+        // Load all the previous message
+        var loadCompletionCalled = false
+        controller.loadPreviousMessages(before: messageId, limit: pageSize) { [callbackQueueID] error in
+            AssertTestQueue(withId: callbackQueueID)
+            XCTAssertNil(error)
+            loadCompletionCalled = true
+        }
+
+        // Completion shouldn't be called yet
+        XCTAssertFalse(loadCompletionCalled)
+
+        // Simulate channel update response
+        env.channelUpdater?
+            .update_completion?(.success(dummyPayload(
+                with: .unique,
+                numberOfMessages: numberOfMessagesFetched
+            )))
+
+        // Wait for the load to be completed
+        AssertAsync.willBeTrue(loadCompletionCalled)
+        // Assert that no more messages will be loaded
+        AssertAsync.willBeEqual(controller.hasLoadedAllPreviousMessages, true)
+    }
+
+    func test_loadPreviousMessages_whenLoadedMessagesEqualToLimit_fetchMoreMessages() throws {
+        var error: Error?
+        var messageId: MessageId?
+
+        // Create new channel with message in DB
+        error = try waitFor {
+            client.databaseContainer.write({ session in
+                messageId = try self.setupChannelWithMessage(session)
+            }, completion: $0)
+        }
+
+        XCTAssertNil(error)
+
+        // The number of messages loaded == pageSize,
+        // then we should load more messages
+        let pageSize = 25
+        let numberOfMessagesFetched = 25
+
+        // Load all the previous message
+        var loadCompletionCalled = false
+        controller.loadPreviousMessages(before: messageId, limit: pageSize) { [callbackQueueID] error in
+            AssertTestQueue(withId: callbackQueueID)
+            XCTAssertNil(error)
+            loadCompletionCalled = true
+        }
+
+        // Completion shouldn't be called yet
+        XCTAssertFalse(loadCompletionCalled)
+
+        // Simulate channel update response
+        env.channelUpdater?
+            .update_completion?(.success(dummyPayload(
+                with: .unique,
+                numberOfMessages: numberOfMessagesFetched
+            )))
+
+        // Wait for the load to be completed
+        AssertAsync.willBeTrue(loadCompletionCalled)
+        // Assert that more messages will be loaded
+        AssertAsync.willBeEqual(controller.hasLoadedAllPreviousMessages, false)
     }
     
     func test_loadPreviousMessages_throwsError_on_emptyMessages() throws {
@@ -2038,7 +2185,7 @@ class ChannelController_Tests: StressTestCase {
         
         // Simulate failed update
         let testError = TestError()
-        env.channelUpdater!.update_completion?(testError)
+        env.channelUpdater!.update_completion?(.failure(testError))
         
         // Completion should be called with the error
         AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
@@ -2082,7 +2229,7 @@ class ChannelController_Tests: StressTestCase {
         )
         
         // Simulate successful update
-        env.channelUpdater?.update_completion?(nil)
+        env.channelUpdater?.update_completion?(.success(dummyPayload(with: .unique)))
         // Release reference of completion so we can deallocate stuff
         env.channelUpdater!.update_completion = nil
         
@@ -2125,7 +2272,7 @@ class ChannelController_Tests: StressTestCase {
         
         // Simulate failed update
         let testError = TestError()
-        env.channelUpdater!.update_completion?(testError)
+        env.channelUpdater!.update_completion?(.failure(testError))
         
         // Completion should be called with the error
         AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
