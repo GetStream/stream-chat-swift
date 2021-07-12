@@ -91,21 +91,24 @@ open class _ChatMessageListHeaderView<ExtraData: ExtraDataTypes>: _View, ThemePr
         _ channelController: _ChatChannelController<ExtraData>,
         didChangeTypingUsers typingUsers: Set<_ChatUser<ExtraData.User>>
     ) {
-        // No-op
+        // By default the header view is not interested in typing events
+        // but this can be overridden by subclassing this component.
     }
 
     open func channelController(
         _ channelController: _ChatChannelController<ExtraData>,
         didReceiveMemberEvent: MemberEvent
     ) {
-        // No-op
+        // By default the header view is not interested in member events
+        // but this can be overridden by subclassing this component.
     }
 
     open func channelController(
         _ channelController: _ChatChannelController<ExtraData>,
         didUpdateMessages changes: [ListChange<_ChatMessage<ExtraData>>]
     ) {
-        // No-op
+        // By default the header view is not interested in message events
+        // but this can be overridden by subclassing this component.
     }
 
     deinit {
