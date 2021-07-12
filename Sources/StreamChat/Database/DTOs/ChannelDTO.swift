@@ -305,7 +305,10 @@ extension _ChatChannel {
             // (this is not 100% accurate but it's the best we have)
             let metionedUnreadMessagesRequest = NSFetchRequest<MessageDTO>(entityName: MessageDTO.entityName)
             metionedUnreadMessagesRequest.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
-                MessageDTO.channelMessagesPredicate(for: dto.cid),
+                MessageDTO.channelMessagesPredicate(
+                    for: dto.cid,
+                    deletedMessagesVisibility: context.deletedMessagesVisibility ?? .visibleForCurrentUser
+                ),
                 NSPredicate(format: "createdAt > %@", currentUserRead?.lastReadAt as NSDate? ?? NSDate(timeIntervalSince1970: 0)),
                 NSPredicate(format: "%@ IN mentionedUsers", currentUser.user)
             ])

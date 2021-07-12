@@ -90,8 +90,8 @@ class MessageDTO: NSManagedObject {
         return request
     }
     
-    /// Returns predicate for deleted messages which should be displayed or not.
-    private static func deletedMessagesPredicate() -> NSCompoundPredicate {
+    /// Returns a predicate that filters out deleted message by other than the current user
+    private static func onlyOwnDeletedMessagesPredicate() -> NSCompoundPredicate {
         .init(orPredicateWithSubpredicates: [
             // Non-deleted messages.
             .init(format: "deletedAt == nil"),
@@ -103,7 +103,27 @@ class MessageDTO: NSManagedObject {
             ])
         ])
     }
-    
+
+    private static func deletedMessagesPredicate(
+        deletedMessagesVisibility: ChatClientConfig.DeletedMessageVisibility
+    ) -> NSPredicate {
+        let deletedMessagesPredicate: NSPredicate
+        switch deletedMessagesVisibility {
+        case .alwaysHidden:
+            deletedMessagesPredicate = nonDeletedMessagesPredicate()
+        case .visibleForCurrentUser:
+            deletedMessagesPredicate = onlyOwnDeletedMessagesPredicate()
+        case .alwaysVisible:
+            deletedMessagesPredicate = NSPredicate(value: true) // an empty predicate to avoid optionals
+        }
+        return deletedMessagesPredicate
+    }
+
+    /// Returns a predicate that filters out all deleted messages
+    private static func nonDeletedMessagesPredicate() -> NSCompoundPredicate {
+        .init(format: "deletedAt == nil")
+    }
+
     /// Returns predicate for displaying messages after the channel truncation date.
     private static func nonTruncatedMessagesPredicate() -> NSCompoundPredicate {
         .init(orPredicateWithSubpredicates: [
@@ -113,7 +133,10 @@ class MessageDTO: NSManagedObject {
     }
     
     /// Returns predicate with channel messages and replies that should be shown in channel.
-    static func channelMessagesPredicate(for cid: String) -> NSCompoundPredicate {
+    static func channelMessagesPredicate(
+        for cid: String,
+        deletedMessagesVisibility: ChatClientConfig.DeletedMessageVisibility
+    ) -> NSCompoundPredicate {
         let channelMessage = NSPredicate(
             format: "channel.cid == %@", cid
         )
@@ -133,36 +156,47 @@ class MessageDTO: NSManagedObject {
         return .init(andPredicateWithSubpredicates: [
             channelMessage,
             messageTypePredicate,
-            deletedMessagesPredicate(),
             nonTruncatedMessagesPredicate(),
-            ignoreOlderMessagesPredicate
+            ignoreOlderMessagesPredicate,
+            deletedMessagesPredicate(deletedMessagesVisibility: deletedMessagesVisibility)
         ])
     }
     
     /// Returns predicate with thread messages that should be shown in the thread.
-    static func threadRepliesPredicate(for messageId: MessageId) -> NSCompoundPredicate {
+    static func threadRepliesPredicate(
+        for messageId: MessageId,
+        deletedMessagesVisibility: ChatClientConfig.DeletedMessageVisibility
+    ) -> NSCompoundPredicate {
         let replyMessage = NSPredicate(format: "parentMessageId == %@", messageId)
         
         return .init(andPredicateWithSubpredicates: [
             replyMessage,
-            deletedMessagesPredicate(),
+            deletedMessagesPredicate(deletedMessagesVisibility: deletedMessagesVisibility),
             nonTruncatedMessagesPredicate()
         ])
     }
     
     /// Returns a fetch request for messages from the channel with the provided `cid`.
-    static func messagesFetchRequest(for cid: ChannelId, sortAscending: Bool = false) -> NSFetchRequest<MessageDTO> {
+    static func messagesFetchRequest(
+        for cid: ChannelId,
+        sortAscending: Bool = false,
+        deletedMessagesVisibility: ChatClientConfig.DeletedMessageVisibility
+    ) -> NSFetchRequest<MessageDTO> {
         let request = NSFetchRequest<MessageDTO>(entityName: MessageDTO.entityName)
         request.sortDescriptors = [NSSortDescriptor(keyPath: \MessageDTO.defaultSortingKey, ascending: sortAscending)]
-        request.predicate = channelMessagesPredicate(for: cid.rawValue)
+        request.predicate = channelMessagesPredicate(for: cid.rawValue, deletedMessagesVisibility: deletedMessagesVisibility)
         return request
     }
     
     /// Returns a fetch request for replies for the specified `parentMessageId`.
-    static func repliesFetchRequest(for messageId: MessageId, sortAscending: Bool = false) -> NSFetchRequest<MessageDTO> {
+    static func repliesFetchRequest(
+        for messageId: MessageId,
+        sortAscending: Bool = false,
+        deletedMessagesVisibility: ChatClientConfig.DeletedMessageVisibility
+    ) -> NSFetchRequest<MessageDTO> {
         let request = NSFetchRequest<MessageDTO>(entityName: MessageDTO.entityName)
         request.sortDescriptors = [NSSortDescriptor(keyPath: \MessageDTO.defaultSortingKey, ascending: sortAscending)]
-        request.predicate = threadRepliesPredicate(for: messageId)
+        request.predicate = threadRepliesPredicate(for: messageId, deletedMessagesVisibility: deletedMessagesVisibility)
         return request
     }
     
@@ -176,7 +210,10 @@ class MessageDTO: NSManagedObject {
     
     static func load(for cid: String, limit: Int, offset: Int = 0, context: NSManagedObjectContext) -> [MessageDTO] {
         let request = NSFetchRequest<MessageDTO>(entityName: entityName)
-        request.predicate = channelMessagesPredicate(for: cid)
+        request.predicate = channelMessagesPredicate(
+            for: cid,
+            deletedMessagesVisibility: context.deletedMessagesVisibility ?? .visibleForCurrentUser
+        )
         request.sortDescriptors = [NSSortDescriptor(keyPath: \MessageDTO.createdAt, ascending: false)]
         request.fetchLimit = limit
         request.fetchOffset = offset
