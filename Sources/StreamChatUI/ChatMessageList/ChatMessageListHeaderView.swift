@@ -56,13 +56,18 @@ open class _ChatMessageListHeaderView<ExtraData: ExtraDataTypes>: _View, ThemePr
     }
 
     open var subtitleText: String? {
-        let channel = content?.channel
-        if channel?.isDirectMessageChannel == true {
-            guard let member = channel?.lastActiveMembers.first else { return nil }
+        guard let channel = content?.channel else { return nil }
+        guard let currentUserId = content?.currentUserId else { return nil }
+
+        if channel.isDirectMessageChannel {
+            guard let member = channel
+                .lastActiveMembers
+                .first(where: { $0.id != currentUserId })
+            else {
+                return nil
+            }
 
             if member.isOnline {
-                // ReallyNotATODO: Missing API GroupA.m1
-                // need to specify how long user have been online
                 return L10n.Message.Title.online
             } else if let minutes = member.lastActiveAt
                 .flatMap({ DateComponentsFormatter.minutes.string(from: $0, to: Date()) }) {
@@ -72,7 +77,7 @@ open class _ChatMessageListHeaderView<ExtraData: ExtraDataTypes>: _View, ThemePr
             }
         }
 
-        return channel.map { L10n.Message.Title.group($0.memberCount, $0.watcherCount) }
+        return L10n.Message.Title.group(channel.memberCount, channel.watcherCount)
     }
 
     open func channelController(
