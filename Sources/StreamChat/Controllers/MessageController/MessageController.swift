@@ -469,9 +469,16 @@ private extension _ChatMessageController {
     func setRepliesObserver() {
         _repliesObserver.computeValue = { [unowned self] in
             let sortAscending = self.listOrdering == .topToBottom ? false : true
+            let deletedMessageVisibility = self.client.databaseContainer.viewContext
+                .deletedMessagesVisibility ?? .visibleForCurrentUser
+
             let observer = ListDatabaseObserver(
                 context: self.client.databaseContainer.viewContext,
-                fetchRequest: MessageDTO.repliesFetchRequest(for: self.messageId, sortAscending: sortAscending),
+                fetchRequest: MessageDTO.repliesFetchRequest(
+                    for: self.messageId,
+                    sortAscending: sortAscending,
+                    deletedMessagesVisibility: deletedMessageVisibility
+                ),
                 itemCreator: { $0.asModel() as _ChatMessage<ExtraData> }
             )
             observer.onChange = { changes in

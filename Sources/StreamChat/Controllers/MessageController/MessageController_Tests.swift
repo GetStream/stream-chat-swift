@@ -290,6 +290,153 @@ final class MessageController_Tests: StressTestCase {
         XCTAssertEqual(controller.replies.map(\.id), ids)
     }
 
+    func test_replies_withVisibleForCurrentUser_messageVisibility() throws {
+        // Create dummy channel
+        let cid = ChannelId.unique
+        let channel = dummyPayload(with: cid)
+        let truncatedDate = Date.unique
+
+        try client.databaseContainer.createCurrentUser(id: currentUserId)
+        client.databaseContainer.viewContext.deletedMessagesVisibility = .visibleForCurrentUser
+
+        // Save channel
+        try client.databaseContainer.writeSynchronously {
+            let dto = try $0.saveChannel(payload: channel)
+            dto.truncatedAt = truncatedDate
+        }
+
+        // Insert parent message
+        try client.databaseContainer.createMessage(id: messageId, authorId: .unique, cid: cid, text: "Parent")
+
+        // Insert own deleted reply
+        let ownReply: MessagePayload<NoExtraData> = .dummy(
+            messageId: .unique,
+            parentId: messageId,
+            showReplyInChannel: false,
+            authorUserId: currentUserId,
+            createdAt: .unique(after: truncatedDate),
+            deletedAt: .unique(after: truncatedDate)
+        )
+
+        // Insert deleted reply by another user
+        let createdAt = Date.unique(after: truncatedDate)
+        let otherReply: MessagePayload<NoExtraData> = .dummy(
+            messageId: .unique,
+            parentId: messageId,
+            showReplyInChannel: false,
+            authorUserId: .unique,
+            createdAt: createdAt,
+            deletedAt: .unique(after: createdAt)
+        )
+
+        // Save messages
+        try client.databaseContainer.writeSynchronously {
+            try $0.saveMessage(payload: ownReply, for: cid)
+            try $0.saveMessage(payload: otherReply, for: cid)
+        }
+
+        // Only own reply shoudl be visible
+        XCTAssertEqual(controller.replies.map(\.id), [ownReply.id])
+    }
+
+    func test_replies_withAlwaysHidden_messageVisibility() throws {
+        // Create dummy channel
+        let cid = ChannelId.unique
+        let channel = dummyPayload(with: cid)
+        let truncatedDate = Date.unique
+
+        try client.databaseContainer.createCurrentUser(id: currentUserId)
+        client.databaseContainer.viewContext.deletedMessagesVisibility = .alwaysHidden
+
+        // Save channel
+        try client.databaseContainer.writeSynchronously {
+            let dto = try $0.saveChannel(payload: channel)
+            dto.truncatedAt = truncatedDate
+        }
+
+        // Insert parent message
+        try client.databaseContainer.createMessage(id: messageId, authorId: .unique, cid: cid, text: "Parent")
+
+        // Insert own deleted reply
+        let ownReply: MessagePayload<NoExtraData> = .dummy(
+            messageId: .unique,
+            parentId: messageId,
+            showReplyInChannel: false,
+            authorUserId: currentUserId,
+            createdAt: .unique(after: truncatedDate),
+            deletedAt: .unique(after: truncatedDate)
+        )
+
+        // Insert deleted reply by another user
+        let createdAt = Date.unique(after: truncatedDate)
+        let otherReply: MessagePayload<NoExtraData> = .dummy(
+            messageId: .unique,
+            parentId: messageId,
+            showReplyInChannel: false,
+            authorUserId: .unique,
+            createdAt: createdAt,
+            deletedAt: .unique(after: createdAt)
+        )
+
+        // Save messages
+        try client.databaseContainer.writeSynchronously {
+            try $0.saveMessage(payload: ownReply, for: cid)
+            try $0.saveMessage(payload: otherReply, for: cid)
+        }
+
+        // both deleted replies should be hidden
+        XCTAssertTrue(controller.replies.isEmpty)
+    }
+
+    func test_replies_withAlwaysVisible_messageVisibility() throws {
+        // Create dummy channel
+        let cid = ChannelId.unique
+        let channel = dummyPayload(with: cid)
+        let truncatedDate = Date.unique
+
+        try client.databaseContainer.createCurrentUser(id: currentUserId)
+        client.databaseContainer.viewContext.deletedMessagesVisibility = .alwaysVisible
+
+        // Save channel
+        try client.databaseContainer.writeSynchronously {
+            let dto = try $0.saveChannel(payload: channel)
+            dto.truncatedAt = truncatedDate
+        }
+
+        // Insert parent message
+        try client.databaseContainer.createMessage(id: messageId, authorId: .unique, cid: cid, text: "Parent")
+
+        // Insert own deleted reply
+        let ownReply: MessagePayload<NoExtraData> = .dummy(
+            messageId: .unique,
+            parentId: messageId,
+            showReplyInChannel: false,
+            authorUserId: currentUserId,
+            createdAt: .unique(after: truncatedDate),
+            deletedAt: .unique(after: truncatedDate)
+        )
+
+        // Insert deleted reply by another user
+        let createdAt = Date.unique(after: truncatedDate)
+        let otherReply: MessagePayload<NoExtraData> = .dummy(
+            messageId: .unique,
+            parentId: messageId,
+            showReplyInChannel: false,
+            authorUserId: .unique,
+            createdAt: createdAt,
+            deletedAt: .unique(after: createdAt)
+        )
+
+        // Save messages
+        try client.databaseContainer.writeSynchronously {
+            try $0.saveMessage(payload: ownReply, for: cid)
+            try $0.saveMessage(payload: otherReply, for: cid)
+        }
+
+        // both deleted replies should be visible
+        XCTAssertEqual(Set(controller.replies.map(\.id)), Set([ownReply.id, otherReply.id]))
+    }
+
     // MARK: - Delegate
 
     func test_delegate_isAssignedCorrectly() {
