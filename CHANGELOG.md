@@ -15,6 +15,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### ✅ Added
 - Support for pasting images into the composer [#1258](https://github.com/GetStream/stream-chat-swift/pull/1258)
+- The visibility of deleted messages is now configurable using `ChatClientConfig.deletedMessagesVisibility`. You can choose from the following options [#1269](https://github.com/GetStream/stream-chat-swift/pull/1269):
+```swift
+/// All deleted messages are always hidden.
+case alwaysHidden
+
+/// Deleted message by current user are visible, other deleted messages are hidden.
+case visibleForCurrentUser
+
+/// Deleted messages are always visible.
+case alwaysVisible
+``` 
 
 ### 🐞 Fixed
 - Fix crash when scrolling to bottom after sending the first message [#1262](https://github.com/GetStream/stream-chat-swift/pull/1262)
