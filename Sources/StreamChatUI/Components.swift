@@ -95,7 +95,12 @@ public struct _Components<ExtraData: ExtraDataTypes> {
         .self
 
     /// The view that shows the date for currently visible messages on top of message list.
-    public var messageListScrollOverlayView: ChatMessageListScrollOverlayView.Type = ChatMessageListScrollOverlayView.self
+    public var messageListScrollOverlayView: ChatMessageListScrollOverlayView.Type =
+        ChatMessageListScrollOverlayView.self
+
+    /// The header view of the message list that by default is the titleView of the navigation bar.
+    public var messageListHeaderView: _ChatMessageListHeaderView<ExtraData>.Type =
+        _ChatMessageListHeaderView<ExtraData>.self
     
     /// The View Controller used to display the detail of a message thread.
     public var threadVC: _ChatThreadVC<ExtraData>.Type = _ChatThreadVC<ExtraData>.self

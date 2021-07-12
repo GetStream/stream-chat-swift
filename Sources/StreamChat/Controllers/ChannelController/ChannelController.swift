@@ -441,6 +441,11 @@ public class _ChatChannelController<ExtraData: ExtraDataTypes>: DataController, 
         where Delegate.ExtraData == ExtraData {
         multicastDelegate.mainDelegate = AnyChannelControllerDelegate(delegate)
     }
+
+    public func addDelegate<Delegate: _ChatChannelControllerDelegate>(_ delegate: Delegate)
+        where Delegate.ExtraData == ExtraData {
+        multicastDelegate.additionalDelegates.append(AnyChannelControllerDelegate(delegate))
+    }
 }
 
 // MARK: - Channel features
