@@ -5,9 +5,24 @@
 import StreamChat
 import UIKit
 
+/// The delegate of the `InputTextView` that notifies when an attachment is pasted in the text view.
+public protocol InputTextViewClipboardAttachmentDelegate: AnyObject {
+    /// Notifies that an `UIImage` has been pasted into the text view
+    /// - Parameters:
+    ///   - inputTextView: The `InputTextView` in which the image was pasted
+    ///   - image: The `UIImage`
+    func inputTextView(_ inputTextView: InputTextView, didPasteImage image: UIImage)
+}
+
 /// A view for inputting text with placeholder support. Since it is a subclass
 /// of `UITextView`, the `UITextViewDelegate` can be used to observe text changes.
 open class InputTextView: UITextView, AppearanceProvider {
+    /// The delegate which gets notified when an attachment is pasted into the text view
+    open weak var clipboardAttachmentDelegate: InputTextViewClipboardAttachmentDelegate?
+    
+    /// Whether this text view should allow images to be pasted
+    open var isPastingImagesEnabled: Bool = true
+    
     /// Label used as placeholder for textView when it's empty.
     open private(set) lazy var placeholderLabel: UILabel = UILabel()
         .withoutAutoresizingMaskConstraints
@@ -90,5 +105,24 @@ open class InputTextView: UITextView, AppearanceProvider {
         
     @objc open func handleTextChange() {
         placeholderLabel.isHidden = !text.isEmpty
+    }
+    
+    // MARK: - Actions on the UITextView
+    
+    override open func canPerformAction(_ action: Selector, withSender sender: Any?) -> Bool {
+        // If action is paste and the pasteboard has an image, we allow it
+        if action == #selector(paste(_:)) && isPastingImagesEnabled && UIPasteboard.general.hasImages {
+            return true
+        }
+
+        return super.canPerformAction(action, withSender: sender)
+    }
+
+    override open func paste(_ sender: Any?) {
+        if let pasteboardImage = UIPasteboard.general.image {
+            clipboardAttachmentDelegate?.inputTextView(self, didPasteImage: pasteboardImage)
+        } else {
+            super.paste(sender)
+        }
     }
 }
