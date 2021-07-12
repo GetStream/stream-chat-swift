@@ -6,9 +6,9 @@ import StreamChat
 @testable import StreamChatUI
 import XCTest
 
-final class TitleContainerView_Tests: XCTestCase {
+final class HeaderTitleView_Tests: XCTestCase {
     func test_defaultAppearance() {
-        let view = TitleContainerView().withoutAutoresizingMaskConstraints
+        let view = HeaderTitleView().withoutAutoresizingMaskConstraints
         view.addSizeConstraints()
         
         view.content = (nil, nil)
@@ -29,7 +29,7 @@ final class TitleContainerView_Tests: XCTestCase {
         appearance.fonts.headlineBold = .italicSystemFont(ofSize: 20)
         appearance.colorPalette.subtitleText = .cyan
         
-        let view = TitleContainerView().withoutAutoresizingMaskConstraints
+        let view = HeaderTitleView().withoutAutoresizingMaskConstraints
         view.appearance = appearance
         view.content = ("Red", "Blue")
         view.addSizeConstraints()
@@ -38,7 +38,7 @@ final class TitleContainerView_Tests: XCTestCase {
     }
     
     func test_appearanceCustomization_usingSubclassing() {
-        class CustomTitleView: TitleContainerView {
+        class CustomTitleView: HeaderTitleView {
             lazy var customLabel = UILabel()
                 .withoutAutoresizingMaskConstraints
             
@@ -67,12 +67,12 @@ final class TitleContainerView_Tests: XCTestCase {
 @available(iOS 13, *)
 final class TitleContainerView_Swift_Tests: iOS13TestCase {
     func test_swiftUIWrapper() {
-        let view = TitleContainerView.asView((title: "Luke Skywalker", subtitle: "Last seen a long time ago..."))
+        let view = HeaderTitleView.asView((title: "Luke Skywalker", subtitle: "Last seen a long time ago..."))
         AssertSnapshot(view.frame(width: 320, height: 44))
     }
 }
 
-extension TitleContainerView {
+extension HeaderTitleView {
     func addSizeConstraints() {
         NSLayoutConstraint.activate([
             widthAnchor.constraint(equalToConstant: 320),

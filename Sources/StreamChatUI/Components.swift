@@ -10,8 +10,8 @@ public typealias Components = _Components<NoExtraData>
 
 /// An object containing types of UI Components that are used through the UI SDK.
 public struct _Components<ExtraData: ExtraDataTypes> {
-    /// The view used as a navigation bar title view for some view controllers.
-    public var navigationTitleView: TitleContainerView.Type = TitleContainerView.self
+    /// A view used as part of view controller headers.
+    public var headerTitleView: HeaderTitleView.Type = HeaderTitleView.self
 
     /// A view used as an online activity indicator (online/offline).
     public var onlineIndicatorView: (UIView & MaskProviding).Type = OnlineIndicatorView.self
