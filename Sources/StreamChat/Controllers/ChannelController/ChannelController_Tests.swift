@@ -801,7 +801,10 @@ class ChannelController_Tests: StressTestCase {
         XCTAssertEqual(controller.messages.map(\.id), messagesWithReply)
     }
 
-    func test_deletedMessages_areShownCorrectly() throws {
+    func test_deletedMessages_withVisibleForCurrentUser_messageVisibility() throws {
+        // Simulate the config setting
+        client.databaseContainer.viewContext.deletedMessagesVisibility = .visibleForCurrentUser
+
         let currentUserID: UserId = .unique
 
         // Create current user
@@ -831,6 +834,76 @@ class ChannelController_Tests: StressTestCase {
 
         // Only outgoing deleted messages are returned by controller
         XCTAssertEqual(controller.messages.map(\.id), [outgoingDeletedMessage.id])
+    }
+
+    func test_deletedMessages_withAlwaysHidden_messageVisibility() throws {
+        // Simulate the config setting
+        client.databaseContainer.viewContext.deletedMessagesVisibility = .alwaysHidden
+
+        let currentUserID: UserId = .unique
+
+        // Create current user
+        try client.databaseContainer.createCurrentUser(id: currentUserID)
+
+        // Create a channel
+        try client.databaseContainer.createChannel(cid: channelId, withMessages: false)
+
+        // Create incoming deleted message
+        let incomingDeletedMessage: MessagePayload<NoExtraData> = .dummy(
+            messageId: .unique,
+            authorUserId: .unique,
+            deletedAt: .unique
+        )
+
+        // Create outgoing deleted message
+        let outgoingDeletedMessage: MessagePayload<NoExtraData> = .dummy(
+            messageId: .unique,
+            authorUserId: currentUserID,
+            deletedAt: .unique
+        )
+
+        try client.databaseContainer.writeSynchronously {
+            try $0.saveMessage(payload: incomingDeletedMessage, for: self.channelId)
+            try $0.saveMessage(payload: outgoingDeletedMessage, for: self.channelId)
+        }
+
+        // Both outgoing and incoming messages should NOT be visible
+        XCTAssertTrue(controller.messages.isEmpty)
+    }
+
+    func test_deletedMessages_withAlwaysVisible_messageVisibility() throws {
+        // Simulate the config setting
+        client.databaseContainer.viewContext.deletedMessagesVisibility = .alwaysVisible
+
+        let currentUserID: UserId = .unique
+
+        // Create current user
+        try client.databaseContainer.createCurrentUser(id: currentUserID)
+
+        // Create a channel
+        try client.databaseContainer.createChannel(cid: channelId, withMessages: false)
+
+        // Create incoming deleted message
+        let incomingDeletedMessage: MessagePayload<NoExtraData> = .dummy(
+            messageId: .unique,
+            authorUserId: .unique,
+            deletedAt: .unique
+        )
+
+        // Create outgoing deleted message
+        let outgoingDeletedMessage: MessagePayload<NoExtraData> = .dummy(
+            messageId: .unique,
+            authorUserId: currentUserID,
+            deletedAt: .unique
+        )
+
+        try client.databaseContainer.writeSynchronously {
+            try $0.saveMessage(payload: incomingDeletedMessage, for: self.channelId)
+            try $0.saveMessage(payload: outgoingDeletedMessage, for: self.channelId)
+        }
+
+        // Both outgoing and incoming messages should be visible
+        XCTAssertEqual(Set(controller.messages.map(\.id)), Set([outgoingDeletedMessage.id, incomingDeletedMessage.id]))
     }
 
     func test_truncatedMessages_areNotVisible() throws {
