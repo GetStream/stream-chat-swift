@@ -66,14 +66,15 @@ class MessageSender<ExtraData: ExtraDataTypes>: Worker {
         changes.forEach { change in
             switch change {
             case .insert(let dto, index: _), .update(let dto, index: _):
-                guard let cid = dto.channel.map({ try! ChannelId(cid: $0.cid) }) else {
-                    log.error("Skipping sending of the message \(dto.id) because the channel info is missing.")
-                    return
+                database.backgroundReadOnlyContext.performAndWait {
+                    guard let cid = dto.channel.map({ try! ChannelId(cid: $0.cid) }) else {
+                        log.error("Skipping sending of the message \(dto.id) because the channel info is missing.")
+                        return
+                    }
+                    // Create the array if it didn't exist
+                    newRequests[cid] = newRequests[cid] ?? []
+                    newRequests[cid]!.append(.init(messageId: dto.id, createdLocallyAt: dto.locallyCreatedAt ?? dto.createdAt))
                 }
-                // Create the array if it didn't exist
-                newRequests[cid] = newRequests[cid] ?? []
-                newRequests[cid]!.append(.init(messageId: dto.id, createdLocallyAt: dto.locallyCreatedAt ?? dto.createdAt))
-                
             case .move, .remove:
                 break
             }
