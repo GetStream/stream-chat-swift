@@ -18,7 +18,7 @@ class DatabaseContainer: NSPersistentContainer {
 
     /// A notification with this name is posted by every `NSManagedObjectContext` before all its data is flushed.
     ///
-    /// This is needed because flushing all data is done by resetting the persisten store, and it's not reflected in the contexts.
+    /// This is needed because flushing all data is done by resetting the persistent store, and it's not reflected in the contexts.
     /// All observers of the context should listen to this notification, and generate a deletion callback when the notification
     /// is received.
     ///
@@ -27,8 +27,8 @@ class DatabaseContainer: NSPersistentContainer {
 
     /// A notification with this name is posted by every `NSManagedObjectContext` after all its data is flushed.
     ///
-    /// This is needed because flushing all data is done by resetting the persisten store, and it's not reflected in the contexts.
-    /// All observers of the context should listen to this notification, and reset all NSFetchedResultControllers ofserving
+    /// This is needed because flushing all data is done by resetting the persistent store, and it's not reflected in the contexts.
+    /// All observers of the context should listen to this notification, and reset all NSFetchedResultControllers observing
     /// the contexts.
     ///
     static let DidRemoveAllDataNotification =
@@ -41,8 +41,9 @@ class DatabaseContainer: NSPersistentContainer {
         let context = newBackgroundContext()
         context.automaticallyMergesChangesFromParent = true
         context.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
-        context.perform { [localCachingSettings] in
+        context.perform { [localCachingSettings, deletedMessageVisibility] in
             context.localCachingSettings = localCachingSettings
+            context.deletedMessagesVisibility = deletedMessageVisibility
         }
         return context
     }()
@@ -59,14 +60,16 @@ class DatabaseContainer: NSPersistentContainer {
         let context = newBackgroundContext()
         context.automaticallyMergesChangesFromParent = true
         context.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
-        context.perform { [localCachingSettings] in
+        context.perform { [localCachingSettings, deletedMessageVisibility] in
             context.localCachingSettings = localCachingSettings
+            context.deletedMessagesVisibility = deletedMessageVisibility
         }
         return context
     }()
     
     private var loggerNotificationObserver: NSObjectProtocol?
     private let localCachingSettings: ChatClientConfig.LocalCaching?
+    private let deletedMessageVisibility: ChatClientConfig.DeletedMessageVisibility?
     
     /// All `NSManagedObjectContext`s this container owns.
     private lazy var allContext: [NSManagedObjectContext] = [viewContext, backgroundReadOnlyContext, writableContext]
@@ -89,7 +92,8 @@ class DatabaseContainer: NSPersistentContainer {
         shouldResetEphemeralValuesOnStart: Bool = true,
         modelName: String = "StreamChatModel",
         bundle: Bundle? = .streamChat,
-        localCachingSettings: ChatClientConfig.LocalCaching? = nil
+        localCachingSettings: ChatClientConfig.LocalCaching? = nil,
+        deletedMessagesVisibility: ChatClientConfig.DeletedMessageVisibility? = nil
     ) throws {
         // It's safe to unwrap the following values because this is not settable by users and it's always a programmer error.
         let bundle = bundle ?? Bundle(for: DatabaseContainer.self)
@@ -97,7 +101,8 @@ class DatabaseContainer: NSPersistentContainer {
         let model = NSManagedObjectModel(contentsOf: modelURL)!
         
         self.localCachingSettings = localCachingSettings
-        
+        deletedMessageVisibility = deletedMessagesVisibility
+
         super.init(name: modelName, managedObjectModel: model)
         
         let description = NSPersistentStoreDescription()
@@ -129,9 +134,11 @@ class DatabaseContainer: NSPersistentContainer {
         viewContext.automaticallyMergesChangesFromParent = true
         if Thread.current.isMainThread {
             viewContext.localCachingSettings = localCachingSettings
+            viewContext.deletedMessagesVisibility = deletedMessagesVisibility
         } else {
-            viewContext.perform { [viewContext, localCachingSettings] in
+            viewContext.perform { [viewContext, localCachingSettings, deletedMessagesVisibility] in
                 viewContext.localCachingSettings = localCachingSettings
+                viewContext.deletedMessagesVisibility = deletedMessagesVisibility
             }
         }
         
