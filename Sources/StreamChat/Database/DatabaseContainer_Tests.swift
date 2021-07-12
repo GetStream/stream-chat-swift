@@ -229,6 +229,22 @@ class DatabaseContainer_Tests: StressTestCase {
             XCTAssertEqual(database.backgroundReadOnlyContext.localCachingSettings, cachingSettings)
         }
     }
+
+    func test_deletedMessagesVisibility_isStoredInAllContexts() throws {
+        let visibility = ChatClientConfig.DeletedMessageVisibility.alwaysVisible
+
+        let database = try DatabaseContainerMock(kind: .inMemory, deletedMessagesVisibility: visibility)
+
+        XCTAssertEqual(database.viewContext.deletedMessagesVisibility, visibility)
+
+        database.writableContext.performAndWait {
+            XCTAssertEqual(database.writableContext.deletedMessagesVisibility, visibility)
+        }
+
+        database.backgroundReadOnlyContext.performAndWait {
+            XCTAssertEqual(database.backgroundReadOnlyContext.deletedMessagesVisibility, visibility)
+        }
+    }
 }
 
 extension TestManagedObject: EphemeralValuesContainer {
