@@ -65,11 +65,9 @@ open class _ChatThreadVC<ExtraData: ExtraDataTypes>:
         .messageComposerVC
         .init()
 
-    /// View displaying status of the channel.
-    ///
-    /// The status differs based on the fact if the channel is direct or not.
-    open lazy var titleView: HeaderTitleView = components
-        .headerTitleView.init()
+    /// A view that displays a title label and subtitle in a container stack view.
+    open lazy var titleView: TitleContainerView = components
+        .titleContainerView.init()
         .withoutAutoresizingMaskConstraints
 
     /// Handles navigation actions from messages
