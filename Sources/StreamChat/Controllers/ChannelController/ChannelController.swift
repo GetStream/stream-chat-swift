@@ -577,6 +577,48 @@ public extension _ChatChannelController {
             }
         }
     }
+
+    /// Hide the channel this controller manages from queryChannels for the user until a message is added.
+    ///
+    /// - Parameters:
+    ///   - clearHistory: Flag to remove channel history (**false** by default)
+    ///   - completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
+    ///                 If request fails, the completion will be called with an error.
+    ///
+    func acceptInvite(acceptInvite: Bool = false, completion: ((Error?) -> Void)? = nil) {
+        /// Perform action only if channel is already created on backend side and have a valid `cid`.
+        guard let cid = cid, isChannelAlreadyCreated else {
+            channelModificationFailed(completion)
+            return
+        }
+
+        updater.acceptInvite(cid: cid, acceptInvite: acceptInvite) { error in
+            self.callback {
+                completion?(error)
+            }
+        }
+    }
+
+    /// Hide the channel this controller manages from queryChannels for the user until a message is added.
+    ///
+    /// - Parameters:
+    ///   - clearHistory: Flag to remove channel history (**false** by default)
+    ///   - completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
+    ///                 If request fails, the completion will be called with an error.
+    ///
+    func rejectInvite(rejectInvite: Bool = false, completion: ((Error?) -> Void)? = nil) {
+        /// Perform action only if channel is already created on backend side and have a valid `cid`.
+        guard let cid = cid, isChannelAlreadyCreated else {
+            channelModificationFailed(completion)
+            return
+        }
+
+        updater.rejectInvite(cid: cid, rejectInvite: rejectInvite) { error in
+            self.callback {
+                completion?(error)
+            }
+        }
+    }
     
     /// Hide the channel this controller manages from queryChannels for the user until a message is added.
     ///
