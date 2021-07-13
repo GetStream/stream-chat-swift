@@ -578,13 +578,12 @@ public extension _ChatChannelController {
         }
     }
 
-    /// Hide the channel this controller manages from queryChannels for the user until a message is added.
-    ///
+    /// Accept Request
     /// - Parameters:
-    ///   - acceptInvite: Flag to accept invite (**false** by default)
-    ///   - completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
-    ///                 If request fails, the completion will be called with an error.
-    ///
+    ///   - cid: The channel identifier.
+    ///   - userId: userId
+    ///   - message: message
+    ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
     func acceptInvite(message: String?, completion: ((Error?) -> Void)? = nil) {
         /// Perform action only if channel is already created on backend side and have a valid `cid`.
         guard let cid = cid, isChannelAlreadyCreated else {
@@ -600,13 +599,10 @@ public extension _ChatChannelController {
         }
     }
 
-    /// Hide the channel this controller manages from queryChannels for the user until a message is added.
-    ///
+    /// Reject Request
     /// - Parameters:
-    ///   - clearHistory: Flag to remove channel history (**false** by default)
-    ///   - completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
-    ///                 If request fails, the completion will be called with an error.
-    ///
+    ///   - cid: The channel identifier.
+    ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
     func rejectInvite(completion: ((Error?) -> Void)? = nil) {
         /// Perform action only if channel is already created on backend side and have a valid `cid`.
         guard let cid = cid, isChannelAlreadyCreated else {
