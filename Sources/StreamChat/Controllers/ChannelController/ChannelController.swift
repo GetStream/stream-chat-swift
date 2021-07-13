@@ -196,7 +196,7 @@ public class _ChatChannelController<ExtraData: ExtraDataTypes>: DataController, 
     /// the `listOrdering` value to reflect the changes. Further updates to the messages will be delivered using the delegate
     /// methods, as usual.
     ///
-    public var listOrdering: ListOrdering = .topToBottom {
+    public var listOrdering: ListOrdering = .bottomToTop {
         didSet {
             if state != .initialized {
                 setLocalStateBasedOnError(startMessagesObserver())

@@ -72,7 +72,7 @@ public class _ChatMessageController<ExtraData: ExtraDataTypes>: DataController, 
     /// the `listOrdering` value to reflect the changes. Further updates to the replies will be delivered using the delegate
     /// methods, as usual.
     ///
-    public var listOrdering: ListOrdering = .bottomToTop {
+    public var listOrdering: ListOrdering = .topToBottom {
         didSet {
             if state != .initialized {
                 _repliesObserver.reset()
