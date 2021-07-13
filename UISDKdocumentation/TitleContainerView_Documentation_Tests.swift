@@ -13,7 +13,7 @@ class TitleContainerView_Documentation_Tests: XCTestCase {
     
     func test_generateDocsSnapshot() {
         // Create a view to annotate and create documentation for.
-        let view = HeaderTitleView().withoutAutoresizingMaskConstraints
+        let view = TitleContainerView().withoutAutoresizingMaskConstraints
         view.content = (title: "Luke Skywalker", subtitle: "Last seen a long time ago...")
         
         NSLayoutConstraint.activate([

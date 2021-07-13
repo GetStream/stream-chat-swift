@@ -5,8 +5,8 @@
 import StreamChat
 import UIKit
 
-/// A view that is used as a wrapper for status data in navigationItem's titleView.
-open class HeaderTitleView: _View, AppearanceProvider, SwiftUIRepresentable {
+/// A view that displays a title label and subtitle in a container stack view.
+open class TitleContainerView: _View, AppearanceProvider, SwiftUIRepresentable {
     /// Content of the view that contains title (first line) and subtitle (second nil)
     open var content: (title: String?, subtitle: String?) = (nil, nil) {
         didSet {
