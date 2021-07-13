@@ -26,6 +26,10 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
     ChatMessageListScrollOverlayDataSource {
     /// Controller for observing data changes within the channel
     open var channelController: _ChatChannelController<ExtraData>!
+
+    public var client: _ChatClient<ExtraData> {
+        channelController.client
+    }
     
     /// Observer responsible for setting the correct offset when keyboard frame is changed
     open lazy var keyboardObserver = ChatMessageListKeyboardObserver(
@@ -36,7 +40,7 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
 
     /// User search controller passed directly to the composer
     open lazy var userSuggestionSearchController: _ChatUserSearchController<ExtraData> =
-        channelController.client.userSearchController()
+        client.userSearchController()
     
     override open func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
@@ -46,7 +50,6 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
     /// The header view of the message list that by default is the titleView of the navigation bar.
     open private(set) lazy var headerView: _ChatMessageListHeaderView<ExtraData> = components
         .messageListHeaderView.init()
-        .withoutAutoresizingMaskConstraints
     
     /// View used to display the messages
     open private(set) lazy var listView: _ChatMessageListView<ExtraData> = {
@@ -125,12 +128,13 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
         
         scrollToLatestMessageButton.addTarget(self, action: #selector(scrollToLatestMessage), for: .touchUpInside)
 
-        let channel = channelController.channel
-        let currentUserId = channelController.client.currentUserId
-        headerView.content = .init(channel: channel, currentUserId: currentUserId)
-        channelAvatarView.content = (channel, currentUserId)
+        channelAvatarView.content = (channelController.channel, client.currentUserId)
 
-        channelController.addDelegate(headerView)
+        if let cid = channelController.cid {
+            headerView.channelController = client.channelController(for: cid)
+        }
+        
+        navigationItem.titleView = headerView
     }
     
     override open func setUpLayout() {
@@ -184,8 +188,6 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
         view.backgroundColor = appearance.colorPalette.background
         
         listView.backgroundColor = appearance.colorPalette.background
-
-        navigationItem.titleView = headerView
     }
 
     override open func viewDidLoad() {
@@ -383,7 +385,7 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
         
         switch localState.state {
         case .uploadingFailed:
-            channelController.client
+            client
                 .messageController(cid: attachmentId.cid, messageId: attachmentId.messageId)
                 .restartFailedAttachmentUploading(with: attachmentId)
         default:
@@ -411,7 +413,7 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
         at indexPath: IndexPath
     ) {
         // Can we have a helper on `ChannelController` returning a `messageController` for the provided message id?
-        channelController.client
+        client
             .messageController(
                 cid: channelController.cid!,
                 messageId: channelController.messages[indexPath.row].id
@@ -425,7 +427,7 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
         router.showThread(
             messageId: messageId,
             cid: cid,
-            client: channelController.client
+            client: client
         )
     }
 
@@ -446,7 +448,7 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
         _ channelController: _ChatChannelController<ExtraData>,
         didUpdateChannel channel: EntityChange<_ChatChannel<ExtraData>>
     ) {
-        channelAvatarView.content = (channelController.channel, channelController.client.currentUserId)
+        channelAvatarView.content = (channelController.channel, client.currentUserId)
         updateScrollToLatestMessageButton()
     }
     
@@ -458,7 +460,7 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
         
         let typingUsersWithoutCurrentUser = typingUsers
             .sorted { $0.id < $1.id }
-            .filter { $0.id != self.channelController.client.currentUserId }
+            .filter { $0.id != self.client.currentUserId }
         
         if typingUsersWithoutCurrentUser.isEmpty {
             hideTypingIndicator()

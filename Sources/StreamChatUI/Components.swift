@@ -98,7 +98,7 @@ public struct _Components<ExtraData: ExtraDataTypes> {
     public var messageListScrollOverlayView: ChatMessageListScrollOverlayView.Type =
         ChatMessageListScrollOverlayView.self
 
-    /// The header view of the message list that by default is the titleView of the navigation bar.
+    /// The view that displays channel information on the message list header.
     public var messageListHeaderView: _ChatMessageListHeaderView<ExtraData>.Type =
         _ChatMessageListHeaderView<ExtraData>.self
     
