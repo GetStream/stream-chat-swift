@@ -5,59 +5,68 @@
 import StreamChat
 import UIKit
 
-typealias ChatMessageListHeaderView = _ChatMessageListHeaderView<NoExtraData>
+/// The view that displays channel information on the message list header
+public typealias ChatMessageListHeaderView = _ChatMessageListHeaderView<NoExtraData>
 
-open class _ChatMessageListHeaderView<ExtraData: ExtraDataTypes>: _View, ThemeProvider, _ChatChannelControllerDelegate {
-    /// Content of the view
-    public struct Content {
-        var channel: _ChatChannel<ExtraData>?
-        var currentUserId: UserId?
+/// The view that displays channel information on the message list header
+open class _ChatMessageListHeaderView<ExtraData: ExtraDataTypes>:
+    _View,
+    ThemeProvider,
+    _ChatChannelControllerDelegate {
+    /// Controller for observing data changes within the channel.
+    open var channelController: _ChatChannelController<ExtraData>?
+
+    /// The chat client instance provided by the channel controller.
+    open var client: _ChatClient<ExtraData>? {
+        channelController?.client
     }
 
-    /// Content of the view
-    open var content: Content? {
-        didSet {
-            updateContentIfNeeded()
-        }
-    }
-
-    /// Timer used to update the online status of member in the chat channel
+    /// Timer used to update the online status of member in the chat channel.
     open var timer: Timer?
 
-    open private(set) lazy var headerTitleView: HeaderTitleView = components
-        .headerTitleView.init()
+    /// A view that displays a title label and subtitle in a container stack view.
+    open private(set) lazy var titleContainerView: TitleContainerView = components
+        .titleContainerView.init()
         .withoutAutoresizingMaskConstraints
+
+    override open func setUp() {
+        super.setUp()
+
+        channelController?.setDelegate(self)
+    }
 
     override open func setUpLayout() {
         super.setUpLayout()
 
-        embed(headerTitleView)
+        embed(titleContainerView)
     }
 
     override open func updateContent() {
         super.updateContent()
 
-        headerTitleView.content = (titleText, subtitleText)
+        titleContainerView.content = (titleText, subtitleText)
 
         /// If the channel is direct between two people, call update content
         /// repeatedly every minute to update the online status of the members.
-        if timer == nil, content?.channel?.isDirectMessageChannel == true {
+        if timer == nil, channelController?.channel?.isDirectMessageChannel == true {
             timer = Timer.scheduledTimer(withTimeInterval: 60, repeats: true) { [weak self] _ in
-                self?.updateContent()
+                self?.updateContentIfNeeded()
             }
         } else {
             timer = nil
         }
     }
 
+    /// The title text used to render the title label
     open var titleText: String? {
-        guard let channel = content?.channel else { return nil }
-        return components.channelNamer(channel, content?.currentUserId)
+        guard let channel = channelController?.channel else { return nil }
+        return components.channelNamer(channel, client?.currentUserId)
     }
 
+    /// The subtitle text used to render subtitle label
     open var subtitleText: String? {
-        guard let channel = content?.channel else { return nil }
-        guard let currentUserId = content?.currentUserId else { return nil }
+        guard let channel = channelController?.channel else { return nil }
+        guard let currentUserId = client?.currentUserId else { return nil }
 
         if channel.isDirectMessageChannel {
             guard let member = channel
@@ -80,13 +89,15 @@ open class _ChatMessageListHeaderView<ExtraData: ExtraDataTypes>: _View, ThemePr
         return L10n.Message.Title.group(channel.memberCount, channel.watcherCount)
     }
 
+    // MARK: - _ChatChannelControllerDelegate Implementation
+
     open func channelController(
         _ channelController: _ChatChannelController<ExtraData>,
         didUpdateChannel channel: EntityChange<_ChatChannel<ExtraData>>
     ) {
         switch channel {
-        case let .update(item):
-            content?.channel = item
+        case .update:
+            updateContentIfNeeded()
         default:
             break
         }
