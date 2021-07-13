@@ -49,4 +49,51 @@ final class ChatMessageListVC_Tests: XCTestCase {
             variants: [.defaultLight]
         )
     }
+    
+    func test_deletedMessagesWithAttachmentsAppearance() {
+        let imageAttachment = ChatMessageImageAttachment.mock(
+            id: .unique,
+            imageURL: TestImages.yoda.url
+        ).asAnyAttachment
+        
+        let linkAttachment = ChatMessageLinkAttachment.mock(
+            id: .unique,
+            originalURL: URL(string: "https://www.yoda.com")!,
+            assetURL: .unique(),
+            previewURL: TestImages.yoda.url
+        ).asAnyAttachment
+        
+        channelControllerMock.simulateInitial(
+            channel: .mock(cid: .unique),
+            messages: [
+                .mock(id: .unique, cid: .unique, text: "One", author: .mock(id: .unique)),
+                .mock(
+                    id: .unique,
+                    cid: .unique,
+                    text: "Two",
+                    author: .mock(id: .unique),
+                    deletedAt: Date(timeIntervalSince1970: 800),
+                    attachments: [imageAttachment],
+                    isSentByCurrentUser: true,
+                    attachmentCounts: [.image: 1]
+                ),
+                .mock(
+                    id: .unique,
+                    cid: .unique,
+                    text: "Three",
+                    author: .mock(id: .unique),
+                    deletedAt: Date(timeIntervalSince1970: 1800),
+                    attachments: [linkAttachment],
+                    isSentByCurrentUser: true,
+                    attachmentCounts: [.linkPreview: 1]
+                )
+            ],
+            state: .localDataFetched
+        )
+        AssertSnapshot(
+            vc,
+            isEmbeddedInNavigationController: true,
+            variants: [.defaultLight]
+        )
+    }
 }

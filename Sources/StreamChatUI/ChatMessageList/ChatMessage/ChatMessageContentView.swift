@@ -424,6 +424,9 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, ThemeProvi
         // Text
         textView?.text = content?.textContent
 
+        let textColor = content?.isDeleted == true ? appearance.colorPalette.textDisabled : appearance.colorPalette.text
+        textView?.textColor = textColor
+        
         // Avatar
         let placeholder = appearance.images.userAvatarPlaceholder1
         if let imageURL = content?.author.imageURL {
