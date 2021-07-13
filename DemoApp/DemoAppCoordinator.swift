@@ -35,6 +35,7 @@ final class DemoAppCoordinator {
         // Config
         Components.default.channelListRouter = DemoChatChannelListRouter.self
         Components.default.messageListVC = CustomMessageListVC.self
+        Components.default.messageListHeaderView = WhatsAppMessageListHeaderView.self
         
         // Channels with the current user
         let controller = client.channelListController(query: .init(filter: .containMembers(userIds: [userCredentials.id])))
@@ -80,5 +81,40 @@ class CustomMessageListVC: ChatMessageListVC {
         if let cid = channelController.cid {
             (navigationController?.viewControllers.first as? ChatChannelListVC)?.router.didTapMoreButton(for: cid)
         }
+    }
+}
+
+class WhatsAppMessageListHeaderView: ChatMessageListHeaderView {
+    open private(set) lazy var dateFormatter: DateComponentsFormatter = {
+        let df = DateComponentsFormatter()
+        df.allowedUnits = [.minute]
+        df.unitsStyle = .full
+        return df
+    }()
+
+    var typingUsers: Set<_ChatUser<NoExtraData>> = .init()
+
+    override var subtitleText: String? {
+        if !typingUsers.isEmpty {
+            return "typing..."
+        }
+
+        let lastActiveWatchers = channelController?.channel?.lastActiveWatchers
+
+        guard let lastActiveAt = lastActiveWatchers?.first?.lastActiveAt,
+              let lastActiveAtString = dateFormatter.string(from: lastActiveAt, to: Date())
+        else {
+            return "tap for channel info"
+        }
+
+        return "active \(lastActiveAtString) ago"
+    }
+
+    override func channelController(
+        _ channelController: _ChatChannelController<NoExtraData>,
+        didChangeTypingUsers typingUsers: Set<_ChatUser<NoExtraData>>
+    ) {
+        self.typingUsers = typingUsers
+        updateContentIfNeeded()
     }
 }
