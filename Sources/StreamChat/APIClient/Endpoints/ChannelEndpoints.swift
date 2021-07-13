@@ -67,23 +67,23 @@ extension Endpoint {
         )
     }
 
-    static func acceptInvite(cid: ChannelId, acceptInvite: Bool) -> Endpoint<EmptyResponse> {
-        .init(
+    static func acceptInvite(cid: ChannelId, userId: String, message: String?) -> Endpoint<EmptyResponse> {
+        return .init(
             path: "channels/" + cid.apiPath,
             method: .post,
             queryItems: nil,
             requiresConnectionId: false,
-            body: ["accept_invite": acceptInvite]
+            body: AcceptInviteRequest(user: .init(id: userId), message: .init(message: message), acceptInvite: true)
         )
     }
 
-    static func rejectInvite(cid: ChannelId, rejectInvite: Bool) -> Endpoint<EmptyResponse> {
+    static func rejectInvite(cid: ChannelId) -> Endpoint<EmptyResponse> {
         .init(
             path: "channels/" + cid.apiPath,
             method: .post,
             queryItems: nil,
             requiresConnectionId: false,
-            body: ["reject_invite": rejectInvite]
+            body: ["reject_invite": true]
         )
     }
 

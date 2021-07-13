@@ -581,20 +581,21 @@ public extension _ChatChannelController {
     /// Hide the channel this controller manages from queryChannels for the user until a message is added.
     ///
     /// - Parameters:
-    ///   - clearHistory: Flag to remove channel history (**false** by default)
+    ///   - acceptInvite: Flag to accept invite (**false** by default)
     ///   - completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
     ///                 If request fails, the completion will be called with an error.
     ///
-    func acceptInvite(acceptInvite: Bool = false, completion: ((Error?) -> Void)? = nil) {
+    func acceptInvite(message: String?, completion: ((Error?) -> Void)? = nil) {
         /// Perform action only if channel is already created on backend side and have a valid `cid`.
         guard let cid = cid, isChannelAlreadyCreated else {
             channelModificationFailed(completion)
             return
         }
-
-        updater.acceptInvite(cid: cid, acceptInvite: acceptInvite) { error in
-            self.callback {
-                completion?(error)
+        if let userId = client.currentUserId {
+            updater.acceptInvite(cid: cid, userId: userId, message: message) { error in
+                self.callback {
+                    completion?(error)
+                }
             }
         }
     }
@@ -606,14 +607,14 @@ public extension _ChatChannelController {
     ///   - completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
     ///                 If request fails, the completion will be called with an error.
     ///
-    func rejectInvite(rejectInvite: Bool = false, completion: ((Error?) -> Void)? = nil) {
+    func rejectInvite(completion: ((Error?) -> Void)? = nil) {
         /// Perform action only if channel is already created on backend side and have a valid `cid`.
         guard let cid = cid, isChannelAlreadyCreated else {
             channelModificationFailed(completion)
             return
         }
 
-        updater.rejectInvite(cid: cid, rejectInvite: rejectInvite) { error in
+        updater.rejectInvite(cid: cid) { error in
             self.callback {
                 completion?(error)
             }
