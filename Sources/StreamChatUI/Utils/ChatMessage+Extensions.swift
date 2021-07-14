@@ -9,7 +9,7 @@ public extension _ChatMessage {
     /// A boolean value that checks if actions are available on the message (e.g. `edit`, `delete`, `resend`, etc.).
     var isInteractionEnabled: Bool {
         guard
-            type != .ephemeral,
+            type != .ephemeral, type != .system,
             isDeleted == false
         else { return false }
 

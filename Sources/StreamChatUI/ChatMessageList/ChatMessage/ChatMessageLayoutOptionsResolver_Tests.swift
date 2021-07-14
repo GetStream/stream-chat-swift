@@ -1046,6 +1046,27 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
         // Assert `.errorIndicator` is not included
         XCTAssertFalse(layoutOptions.contains(.errorIndicator))
     }
+    
+    func test_optionsForMessage_whenMessageIsSystem() {
+        let systemMessage: ChatMessage = .mock(
+            id: .unique,
+            cid: .unique,
+            text: .unique,
+            type: .system,
+            author: .mock(id: .unique),
+            deletedAt: .unique
+        )
+
+        // Calculate layout options for the message
+        let layoutOptions = optionsResolver.optionsForMessage(
+            at: .init(item: 0, section: 0),
+            in: .mock(cid: .unique),
+            with: .init([systemMessage])
+        )
+
+        // Assert only `.text` AND `.centered` is included in the options
+        XCTAssertTrue(layoutOptions == [.text, .centered])
+    }
 
     // MARK: - Is message
 
