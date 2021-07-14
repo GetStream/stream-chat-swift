@@ -177,6 +177,47 @@ class ChannelUpdater<ExtraData: ExtraDataTypes>: Worker {
         }
     }
     
+    func inviteMembers(
+        cid: ChannelId,
+        userIds: Set<UserId>,
+        completion: ((Error?) -> Void)? = nil
+    ) {
+        apiClient.request(endpoint: .inviteMembers(cid: cid, userIds: userIds)) {
+            completion?($0.error)
+        }
+    }
+    
+    /// Accept Request
+    /// - Parameters:
+    ///   - cid: The channel identifier.
+    ///   - userId: userId
+    ///   - message: message
+    ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
+    func acceptInvite(
+        cid: ChannelId,
+        message: String?,
+        completion: ((Error?) -> Void)? = nil
+    ) {
+        apiClient.request(
+            endpoint: .acceptInvite(cid: cid, message: message)
+        ) {
+            completion?($0.error)
+        }
+    }
+
+    /// Reject Request
+    /// - Parameters:
+    ///   - cid: The channel identifier.
+    ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
+    func rejectInvite(
+        cid: ChannelId,
+        completion: ((Error?) -> Void)? = nil
+    ) {
+        apiClient.request(endpoint: .rejectInvite(cid: cid)) {
+            completion?($0.error)
+        }
+    }
+    
     /// Marks a channel as read
     /// - Parameters:
     ///   - cid: Channel id of the channel to be marked as read

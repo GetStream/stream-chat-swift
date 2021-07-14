@@ -118,6 +118,52 @@ extension Endpoint {
         )
     }
     
+    static func inviteMembers(
+        cid: ChannelId,
+        userIds: Set<UserId>
+    ) -> Endpoint<EmptyResponse> {
+        .init(
+            path: "channels/" + cid.apiPath,
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: false,
+            body: ["invites": userIds]
+        )
+    }
+    
+    static func acceptInvite(
+        cid: ChannelId,
+        message: String?
+    ) -> Endpoint<EmptyResponse> {
+        .init(
+            path: "channels/" + cid.apiPath,
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: false,
+            body: ChannelInvitePayload(
+                channelId: cid,
+                accept: true,
+                reject: false,
+                message: .init(message: message)
+            )
+        )
+    }
+    
+    static func rejectInvite(cid: ChannelId) -> Endpoint<EmptyResponse> {
+        .init(
+            path: "channels/" + cid.apiPath,
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: false,
+            body: ChannelInvitePayload(
+                channelId: cid,
+                accept: false,
+                reject: true,
+                message: nil
+            )
+        )
+    }
+    
     static func markRead(cid: ChannelId) -> Endpoint<EmptyResponse> {
         .init(
             path: "channels/" + cid.apiPath + "/read",

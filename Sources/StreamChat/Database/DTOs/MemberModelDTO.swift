@@ -19,9 +19,9 @@ class MemberDTO: NSManagedObject {
     @NSManaged var isBanned: Bool
     @NSManaged var isShadowBanned: Bool
     
-    //  @NSManaged var invitedAcceptedAt: Date?
-    //  @NSManaged var invitedRejectedAt: Date?
-    //  @NSManaged var isInvited: Bool
+    @NSManaged var inviteAcceptedAt: Date?
+    @NSManaged var inviteRejectedAt: Date?
+    @NSManaged var isInvited: Bool
     
     // MARK: - Relationships
     
@@ -107,6 +107,9 @@ extension NSManagedObjectContext {
         dto.isBanned = payload.isBanned ?? false
         dto.isShadowBanned = payload.isShadowBanned ?? false
         dto.banExpiresAt = payload.banExpiresAt
+        dto.isInvited = payload.isInvited ?? false
+        dto.inviteAcceptedAt = payload.inviteAcceptedAt
+        dto.inviteRejectedAt = payload.inviteRejectedAt
         
         if let query = query {
             let queryDTO = try saveQuery(query)
@@ -160,9 +163,9 @@ extension _ChatChannelMember {
             memberRole: role,
             memberCreatedAt: dto.memberCreatedAt,
             memberUpdatedAt: dto.memberUpdatedAt,
-            isInvited: false,
-            inviteAcceptedAt: nil,
-            inviteRejectedAt: nil,
+            isInvited: dto.isInvited,
+            inviteAcceptedAt: dto.inviteAcceptedAt,
+            inviteRejectedAt: dto.inviteRejectedAt,
             isBannedFromChannel: dto.isBanned,
             banExpiresAt: dto.banExpiresAt,
             isShadowBannedFromChannel: dto.isShadowBanned
