@@ -48,6 +48,19 @@ internal enum L10n {
     }
   }
 
+  internal enum Channellist {
+    internal enum LoadingIndicator {
+      internal enum Empty {
+        /// Start a chat
+        internal static let button = L10n.tr("Localizable", "channellist.loading-indicator.empty.button")
+        /// How about sending your first message to a friend?
+        internal static let subtitle = L10n.tr("Localizable", "channellist.loading-indicator.empty.subtitle")
+        /// Let's start chatting!
+        internal static let title = L10n.tr("Localizable", "channellist.loading-indicator.empty.title")
+      }
+    }
+  }
+
   internal enum Composer {
     internal enum Checkmark {
       /// Also send in channel

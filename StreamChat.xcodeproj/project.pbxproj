@@ -946,6 +946,7 @@
 		E7AD954F25D536AA00076DC3 /* SystemEnvironment+Version.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7AD954E25D536AA00076DC3 /* SystemEnvironment+Version.swift */; };
 		E7B20C8B26331AA400A80502 /* NotificationChannelMutesUpdatedWithNoMutedChannels.json in Resources */ = {isa = PBXBuildFile; fileRef = E7B20C4F2633112000A80502 /* NotificationChannelMutesUpdatedWithNoMutedChannels.json */; };
 		E7B20C9426331AA900A80502 /* NotificationChannelMutesUpdatedWithSomeMutedChannels.json in Resources */ = {isa = PBXBuildFile; fileRef = E7B20C502633112000A80502 /* NotificationChannelMutesUpdatedWithSomeMutedChannels.json */; };
+		E7D9A3B8269F0AE9000F6652 /* ChatChannelListEmptyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7D9A3A2269F0AA0000F6652 /* ChatChannelListEmptyView.swift */; };
 		E7DB9F2E26329F440090D9C7 /* HealthCheck.json in Resources */ = {isa = PBXBuildFile; fileRef = E7DB9F2426329C060090D9C7 /* HealthCheck.json */; };
 		E7DB9F402632B6C40090D9C7 /* ChannelVisible.json in Resources */ = {isa = PBXBuildFile; fileRef = E7DB9F372632B6500090D9C7 /* ChannelVisible.json */; };
 		E7DD8EA825E3F7F50059A322 /* MessageWithBrokenAttachments.json in Resources */ = {isa = PBXBuildFile; fileRef = E7DD8EA725E3F7F50059A322 /* MessageWithBrokenAttachments.json */; };
@@ -2232,6 +2233,7 @@
 		E7AD958825D7510900076DC3 /* ChatMentionSuggestionView_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMentionSuggestionView_Tests.swift; sourceTree = "<group>"; };
 		E7B20C4F2633112000A80502 /* NotificationChannelMutesUpdatedWithNoMutedChannels.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = NotificationChannelMutesUpdatedWithNoMutedChannels.json; sourceTree = "<group>"; };
 		E7B20C502633112000A80502 /* NotificationChannelMutesUpdatedWithSomeMutedChannels.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = NotificationChannelMutesUpdatedWithSomeMutedChannels.json; sourceTree = "<group>"; };
+		E7D9A3A2269F0AA0000F6652 /* ChatChannelListEmptyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatChannelListEmptyView.swift; sourceTree = "<group>"; };
 		E7DB9F2426329C060090D9C7 /* HealthCheck.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = HealthCheck.json; sourceTree = "<group>"; };
 		E7DB9F372632B6500090D9C7 /* ChannelVisible.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = ChannelVisible.json; sourceTree = "<group>"; };
 		E7DD8EA725E3F7F50059A322 /* MessageWithBrokenAttachments.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = MessageWithBrokenAttachments.json; sourceTree = "<group>"; };
@@ -2589,6 +2591,7 @@
 			isa = PBXGroup;
 			children = (
 				790882BF25486ADB00896F03 /* ChatChannelListVC.swift */,
+				E7D9A3A2269F0AA0000F6652 /* ChatChannelListEmptyView.swift */,
 				AD46C4DA25C431C500B405F8 /* ChatChannelListVC_Tests.swift */,
 				780DFCFB25EF7DA500A39A6E /* ChatChannelListVC+SwiftUI.swift */,
 				780DFD0B25EF80AB00A39A6E /* ChatChannelListVC+SwiftUI_Tests.swift */,
@@ -5693,6 +5696,7 @@
 				AD7112F325F12AA800932AEE /* ChatUserAvatarView.swift in Sources */,
 				882AE124257A7FFE004095B3 /* UIViewController+Extensions.swift in Sources */,
 				E768AA892625C18D00328E6E /* TypingIndicatorView.swift in Sources */,
+				E7D9A3B8269F0AE9000F6652 /* ChatChannelListEmptyView.swift in Sources */,
 				224FF6972562F5AE00725DD1 /* Bundle+Extensions.swift in Sources */,
 				88A11B302590CC860000AC24 /* ChatMessageErrorIndicator.swift in Sources */,
 				22ADD67C256BF1550098EFEB /* InputChatMessageView.swift in Sources */,

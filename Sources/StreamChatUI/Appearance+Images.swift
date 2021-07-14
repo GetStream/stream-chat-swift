@@ -31,6 +31,7 @@ public extension Appearance {
             }
         }()
 
+        public var message: UIImage = UIImage(named: "message", in: .streamChatUI)!
         public var commands: UIImage = UIImage(named: "bolt", in: .streamChatUI)!
         public var smallBolt: UIImage = UIImage(named: "bolt_small", in: .streamChatUI)!
         public var openAttachments: UIImage = UIImage(named: "clip", in: .streamChatUI)!
