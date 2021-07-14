@@ -118,23 +118,28 @@ extension _ChannelQuery: APIPathConvertible {
     var apiPath: String { cid?.apiPath ?? type.rawValue }
 }
 
-///// An answer for an invite to a channel.
-// public struct ChannelInviteAnswer: Encodable {
-//    private enum CodingKeys: String, CodingKey {
-//        case accept = "accept_invite"
-//        case reject = "reject_invite"
-//        case message
-//    }
-//
-//    /// A channel.
-//    let channel: Channel
-//    /// Accept the invite.
-//    let accept: Bool?
-//    /// Reject the invite.
-//    let reject: Bool?
-//    /// Additional message.
-//    let message: Message?
-// }
+/// An answer for an invite to a channel.
+public struct ChannelInvitePayload: Encodable {
+    public struct Message: Encodable {
+        let message: String?
+    }
+    
+    private enum CodingKeys: String, CodingKey {
+        case accept = "accept_invite"
+        case reject = "reject_invite"
+        case message
+    }
+
+    /// A channel id
+    let channelId: ChannelId
+    /// Accept the invite.
+    let accept: Bool?
+    /// Reject the invite.
+    let reject: Bool?
+    /// Additional message.
+    let message: Message?
+}
+
 //
 ///// An answer for an invite to a channel.
 // public struct ChannelInviteResponse: Decodable {
