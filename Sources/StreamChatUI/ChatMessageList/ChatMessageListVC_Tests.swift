@@ -96,4 +96,26 @@ final class ChatMessageListVC_Tests: XCTestCase {
             variants: [.defaultLight]
         )
     }
+
+    func test_setUp_whenChannelControllerSynchronizeCompletes_shouldUpdateComposer() {
+        class ComposerVC_Mock: ComposerVC {
+            var updateContentCallCount = 0
+
+            override func updateContent() {
+                updateContentCallCount += 1
+            }
+        }
+
+        var components = Components()
+        components.messageComposerVC = ComposerVC_Mock.self
+        vc.components = components
+
+        vc.setUp()
+
+        // When channel controller synchronize completes
+        channelControllerMock.synchronize_completion?(nil)
+
+        let composer = vc.messageComposerVC as! ComposerVC_Mock
+        XCTAssertEqual(composer.updateContentCallCount, 1)
+    }
 }
