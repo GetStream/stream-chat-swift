@@ -93,6 +93,30 @@ final class ChatMessageContentView_Tests: XCTestCase {
         // Assert message content view is rendered correctly.
         AssertSnapshot(view)
     }
+    
+    func test_appearanceForSystemMessage() {
+        // Create a system message
+        let systemMessage: ChatMessage = .mock(
+            id: .unique,
+            cid: .unique,
+            text: "Some member was added",
+            type: .system,
+            author: myFriend,
+            createdAt: createdAt,
+            isSentByCurrentUser: false
+        )
+        
+        let appearance = Appearance.default
+
+        let view = contentView(
+            message: systemMessage,
+            layout: systemMessage.layout(isLastInGroup: true),
+            appearance: appearance
+        )
+
+        // Assert message content view is rendered correctly.
+        AssertSnapshot(view)
+    }
 }
 
 // MARK: - Helpers
@@ -293,6 +317,10 @@ private extension ChatMessageContentView_Tests {
 
 extension _ChatMessage {
     func layout(isLastInGroup: Bool) -> ChatMessageLayoutOptions {
+        guard type != .system else {
+            return [.centered, .text]
+        }
+        
         var options: ChatMessageLayoutOptions = [
             .bubble
         ]

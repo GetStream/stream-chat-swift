@@ -356,7 +356,15 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, ThemeProvi
             bubbleThreadMetaContainer
         ].compactMap { $0 }
 
-        if options.contains(.flipped) {
+        if options.contains(.centered) {
+            mainContainer.addArrangedSubviews([bubbleThreadMetaContainer])
+            
+            constraintsToActivate += [
+                mainContainer.centerXAnchor
+                    .pin(equalTo: centerXAnchor)
+                    .almostRequired
+            ]
+        } else if options.contains(.flipped) {
             mainContainer.addArrangedSubviews(mainContainerSubviews.reversed())
 
             if let errorIndicator = errorIndicatorView {
@@ -426,9 +434,12 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, ThemeProvi
         var textFont = appearance.fonts.body
         
         if content?.isDeleted == true {
-            textColor = appearance.colorPalette.textDisabled
+            textColor = appearance.colorPalette.textLowEmphasis
         } else if content?.shouldRenderAsJumbomoji == true {
             textFont = appearance.fonts.emoji
+        } else if content?.type == .system {
+            textFont = appearance.fonts.caption1.bold
+            textColor = appearance.colorPalette.textLowEmphasis
         }
         
         textView?.textColor = textColor
