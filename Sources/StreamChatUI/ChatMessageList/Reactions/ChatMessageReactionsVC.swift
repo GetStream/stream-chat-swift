@@ -5,8 +5,10 @@
 import StreamChat
 import UIKit
 
+/// Controller for the message reactions picker as a list of toggles
 public typealias ChatMessageReactionsVC = _ChatMessageReactionsVC<NoExtraData>
 
+/// Controller for the message reactions picker as a list of toggles
 open class _ChatMessageReactionsVC<ExtraData: ExtraDataTypes>: _ViewController, ThemeProvider {
     public var messageController: _ChatMessageController<ExtraData>!
 
