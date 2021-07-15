@@ -71,4 +71,14 @@ public extension _ChatMessage {
     var isDeleted: Bool {
         deletedAt != nil
     }
+    
+    /// A boolean value that determines whether the text message should be rendered as large emojis
+    ///
+    /// By default, any string which comprises of ONLY emojis of length 3 or less is displayed as large emoji
+    ///
+    /// Note that for messages sent with attachments, large emojis aren's rendered
+    var shouldRenderAsJumbomoji: Bool {
+        guard attachmentCounts.isEmpty, let textContent = textContent, !textContent.isEmpty else { return false }
+        return textContent.count <= 3 && textContent.containsOnlyEmoji
+    }
 }

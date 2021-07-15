@@ -422,10 +422,18 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, ThemeProvi
         }
 
         // Text
-        textView?.text = content?.textContent
-
-        let textColor = content?.isDeleted == true ? appearance.colorPalette.textDisabled : appearance.colorPalette.text
+        var textColor = appearance.colorPalette.text
+        var textFont = appearance.fonts.body
+        
+        if content?.isDeleted == true {
+            textColor = appearance.colorPalette.textDisabled
+        } else if content?.shouldRenderAsJumbomoji == true {
+            textFont = appearance.fonts.emoji
+        }
+        
         textView?.textColor = textColor
+        textView?.font = textFont
+        textView?.text = content?.textContent
         
         // Avatar
         let placeholder = appearance.images.userAvatarPlaceholder1

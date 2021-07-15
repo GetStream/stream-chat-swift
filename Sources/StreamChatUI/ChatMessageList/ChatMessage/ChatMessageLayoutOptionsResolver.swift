@@ -36,10 +36,13 @@ open class _ChatMessageLayoutOptionsResolver<ExtraData: ExtraDataTypes> {
             messageIndexPath: indexPath,
             messages: messages
         )
+        
+        var options: ChatMessageLayoutOptions = []
 
-        var options: ChatMessageLayoutOptions = [
-            .bubble
-        ]
+        // Do not show bubble if the message is to be rendered as large emoji
+        if !message.shouldRenderAsJumbomoji {
+            options.insert(.bubble)
+        }
 
         if message.isSentByCurrentUser {
             options.insert(.flipped)
