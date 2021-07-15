@@ -262,6 +262,13 @@ public extension _ChatMessage {
         attachments(payloadType: VideoAttachmentPayload.self)
     }
 
+    /// Returns the attachments of `.audio` type.
+    ///
+    /// - Important: The `audioAttachments` are loaded lazily and cached to maintain high performance.
+    var audioAttachments: [ChatMessageAudioAttachment] {
+        attachments(payloadType: AudioAttachmentPayload.self)
+    }
+
     /// Returns the attachments of `.giphy` type.
     ///
     /// - Important: The `giphyAttachments` are loaded lazily and cached to maintain high performance.
