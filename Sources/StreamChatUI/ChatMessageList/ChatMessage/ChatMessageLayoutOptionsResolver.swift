@@ -18,17 +18,27 @@ open class _ChatMessageLayoutOptionsResolver<ExtraData: ExtraDataTypes> {
         self.minTimeIntervalBetweenMessagesInGroup = minTimeIntervalBetweenMessagesInGroup
     }
 
+    @available(*, deprecated, message: "Use the same method with the appearance parameter instead")
+    open func optionsForMessage(
+        at indexPath: IndexPath,
+        in channel: _ChatChannel<ExtraData>,
+        with messages: AnyRandomAccessCollection<_ChatMessage<ExtraData>>
+    ) -> ChatMessageLayoutOptions {
+        optionsForMessage(at: indexPath, in: channel, with: messages, appearance: Appearance.default)
+    }
+
     /// Calculates layout options for the message.
     /// - Parameters:
     ///   - indexPath: The index path of the cell displaying the message.
     ///   - channel: The channel message is related to.
     ///   - messages: The list of messages in the channel.
+    ///   - appearance: The appearance theme in use.
     /// - Returns: The layout options describing the components and layout of message content view.
     open func optionsForMessage(
         at indexPath: IndexPath,
         in channel: _ChatChannel<ExtraData>,
         with messages: AnyRandomAccessCollection<_ChatMessage<ExtraData>>,
-        appearance: Appearance = Appearance.default
+        appearance: Appearance
     ) -> ChatMessageLayoutOptions {
         let messageIndex = messages.index(messages.startIndex, offsetBy: indexPath.item)
         let message = messages[messageIndex]
