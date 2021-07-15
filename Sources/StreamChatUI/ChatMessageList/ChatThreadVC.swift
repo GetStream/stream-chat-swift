@@ -208,7 +208,7 @@ open class _ChatThreadVC<ExtraData: ExtraDataTypes>:
 
         var layoutOptions = components
             .messageLayoutOptionsResolver
-            .optionsForMessage(at: indexPath, in: channel, with: messages)
+            .optionsForMessage(at: indexPath, in: channel, with: messages, appearance: appearance)
         layoutOptions.remove(.threadInfo)
         return layoutOptions
     }

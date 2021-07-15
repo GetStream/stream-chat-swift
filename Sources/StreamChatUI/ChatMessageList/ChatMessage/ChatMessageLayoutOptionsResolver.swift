@@ -27,7 +27,8 @@ open class _ChatMessageLayoutOptionsResolver<ExtraData: ExtraDataTypes> {
     open func optionsForMessage(
         at indexPath: IndexPath,
         in channel: _ChatChannel<ExtraData>,
-        with messages: AnyRandomAccessCollection<_ChatMessage<ExtraData>>
+        with messages: AnyRandomAccessCollection<_ChatMessage<ExtraData>>,
+        appearance: Appearance = Appearance.default
     ) -> ChatMessageLayoutOptions {
         let messageIndex = messages.index(messages.startIndex, offsetBy: indexPath.item)
         let message = messages[messageIndex]
@@ -70,7 +71,7 @@ open class _ChatMessageLayoutOptionsResolver<ExtraData: ExtraDataTypes> {
         if isLastInSequence && !message.isSentByCurrentUser && !channel.isDirectMessageChannel {
             options.insert(.authorName)
         }
-        if message.quotedMessage?.id != nil {
+        if isQuoted(message) {
             options.insert(.quotedMessage)
         }
         if message.isRootOfThread || message.isPartOfThread {
@@ -78,7 +79,7 @@ open class _ChatMessageLayoutOptionsResolver<ExtraData: ExtraDataTypes> {
             // The bubbles with thread look like continuous bubbles
             options.insert(.continuousBubble)
         }
-        if !message.reactionScores.isEmpty && channel.config.reactionsEnabled {
+        if hasReactions(channel, message, appearance) {
             options.insert(.reactions)
         }
         if message.isLastActionFailed {
@@ -86,6 +87,29 @@ open class _ChatMessageLayoutOptionsResolver<ExtraData: ExtraDataTypes> {
         }
 
         return options
+    }
+
+    func isQuoted(_ message: _ChatMessage<ExtraData>) -> Bool {
+        message.quotedMessage?.id != nil
+    }
+
+    func hasReactions(_ channel: _ChatChannel<ExtraData>, _ message: _ChatMessage<ExtraData>, _ appareance: Appearance) -> Bool {
+        if !channel.config.reactionsEnabled {
+            return false
+        }
+
+        if message.reactionScores.isEmpty {
+            return false
+        }
+
+        let unhandledReactionTypes = message.latestReactions.filter { appareance.images.availableReactions[$0.type] == nil }
+            .map(\.type)
+
+        if !unhandledReactionTypes.isEmpty {
+            log.warning("message contains unhandled reaction types \(unhandledReactionTypes)")
+        }
+
+        return !message.latestReactions.filter { appareance.images.availableReactions[$0.type] != nil }.isEmpty
     }
 
     /// Says whether the message at given `indexPath` is the last one in a sequence of messages

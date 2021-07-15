@@ -222,7 +222,8 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
         return components.messageLayoutOptionsResolver.optionsForMessage(
             at: indexPath,
             in: channel,
-            with: AnyRandomAccessCollection(channelController.messages)
+            with: AnyRandomAccessCollection(channelController.messages),
+            appearance: appearance
         )
     }
 
