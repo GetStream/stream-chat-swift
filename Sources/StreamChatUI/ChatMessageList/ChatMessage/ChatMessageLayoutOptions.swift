@@ -53,6 +53,12 @@ public extension ChatMessageLayoutOptions {
 
     /// If set the indicator saying that the message is visible for current user only will be shown.
     static let onlyVisibleForYouIndicator = Self(rawValue: 1 << 12)
+    
+    /// If set all the content will have centered alignment. By default, the system messages are centered.
+    ///
+    /// `flipped` and `centered` are mutually exclusive. Only one of these two should be used at a time.
+    /// If both are specified in the options, `centered` is prioritized
+    static let centered = Self(rawValue: 1 << 13)
 }
 
 extension ChatMessageLayoutOptions: CustomStringConvertible {
@@ -76,7 +82,8 @@ extension ChatMessageLayoutOptions: CustomStringConvertible {
         .threadInfo,
         .errorIndicator,
         .reactions,
-        .onlyVisibleForYouIndicator
+        .onlyVisibleForYouIndicator,
+        .centered
     ]
 
     var optionName: String? {
@@ -107,6 +114,8 @@ extension ChatMessageLayoutOptions: CustomStringConvertible {
             return "reactions"
         case .onlyVisibleForYouIndicator:
             return "onlyVisibleForYouIndicator"
+        case .centered:
+            return "centered"
         default:
             return nil
         }

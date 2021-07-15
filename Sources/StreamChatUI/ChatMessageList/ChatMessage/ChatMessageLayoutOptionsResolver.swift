@@ -39,6 +39,11 @@ open class _ChatMessageLayoutOptionsResolver<ExtraData: ExtraDataTypes> {
         
         var options: ChatMessageLayoutOptions = []
 
+        // The text should be centered without a bubble for system messages
+        guard message.type != .system else {
+            return [.text, .centered]
+        }
+
         // Do not show bubble if the message is to be rendered as large emoji
         if !message.shouldRenderAsJumbomoji {
             options.insert(.bubble)
