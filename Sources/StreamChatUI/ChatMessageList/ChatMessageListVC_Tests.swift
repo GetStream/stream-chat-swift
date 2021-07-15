@@ -96,4 +96,57 @@ final class ChatMessageListVC_Tests: XCTestCase {
             variants: [.defaultLight]
         )
     }
+
+    func test_setUp_whenChannelControllerSynchronizeCompletes_shouldUpdateComposer() {
+        class ComposerVC_Mock: ComposerVC {
+            var updateContentCallCount = 0
+
+            override func updateContent() {
+                updateContentCallCount += 1
+            }
+        }
+
+        var components = Components()
+        components.messageComposerVC = ComposerVC_Mock.self
+        vc.components = components
+
+        vc.setUp()
+
+        // When channel controller synchronize completes
+        channelControllerMock.synchronize_completion?(nil)
+
+        let composer = vc.messageComposerVC as! ComposerVC_Mock
+        XCTAssertEqual(composer.updateContentCallCount, 1)
+    }
+
+    func test_onlyEmojiMessageAppearance() {
+        let imageAttachment = ChatMessageImageAttachment.mock(
+            id: .unique,
+            imageURL: TestImages.yoda.url
+        ).asAnyAttachment
+        
+        channelControllerMock.simulateInitial(
+            channel: .mock(cid: .unique),
+            messages: [
+                .mock(id: .unique, cid: .unique, text: "😍", author: .mock(id: .unique)),
+                .mock(id: .unique, cid: .unique, text: "👍🏻💯", author: .mock(id: .unique)),
+                .mock(id: .unique, cid: .unique, text: "Simple text", author: .mock(id: .unique), isSentByCurrentUser: true),
+                .mock(
+                    id: .unique,
+                    cid: .unique,
+                    text: "🚀",
+                    author: .mock(id: .unique),
+                    attachments: [imageAttachment],
+                    isSentByCurrentUser: false,
+                    attachmentCounts: [.image: 1]
+                )
+            ],
+            state: .localDataFetched
+        )
+        AssertSnapshot(
+            vc,
+            isEmbeddedInNavigationController: true,
+            variants: [.defaultLight]
+        )
+    }
 }

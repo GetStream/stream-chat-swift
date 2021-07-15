@@ -123,7 +123,9 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
         messageComposerVC.userSearchController = userSuggestionSearchController
         
         channelController.setDelegate(self)
-        channelController.synchronize()
+        channelController.synchronize { [weak self] _ in
+            self?.messageComposerVC.updateContent()
+        }
         
         if channelController.channel?.isDirectMessageChannel == true {
             timer = Timer.scheduledTimer(withTimeInterval: 60, repeats: true) { [weak self] _ in
