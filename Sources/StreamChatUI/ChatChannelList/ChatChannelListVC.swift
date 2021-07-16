@@ -315,7 +315,7 @@ open class _ChatChannelListVC<ExtraData: ExtraDataTypes>: _ViewController,
 // MARK: - Helpers for temporary list changes conflicts.
 
 // Temporary struct for list changes protection against conflicts.
-private struct IndexPathMove: Hashable, CustomStringConvertible {
+struct IndexPathMove: Hashable, CustomStringConvertible {
     var fromIndex: IndexPath
     var toIndex: IndexPath
 
@@ -329,7 +329,7 @@ private struct IndexPathMove: Hashable, CustomStringConvertible {
     }
 }
 
-private func logConflicts(
+func logConflicts(
     moves: Set<IndexPathMove>,
     inserts: Set<IndexPath>,
     updates: Set<IndexPath>,
