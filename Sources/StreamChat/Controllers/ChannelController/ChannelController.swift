@@ -888,6 +888,10 @@ public extension _ChatChannelController {
         }
     }
     
+    /// Invite members to a channel. They can then accept or decline the invitation
+    /// - Parameters:
+    ///   - userIds: Set of ids of users to be invited to the channel
+    ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
     func inviteMembers(userIds: Set<UserId>, completion: ((Error?) -> Void)? = nil) {
         /// Perform action only if channel is already created on backend side and have a valid `cid`.
         guard let cid = cid, isChannelAlreadyCreated else {
@@ -908,7 +912,7 @@ public extension _ChatChannelController {
     ///   - userId: userId
     ///   - message: message
     ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
-    func acceptInvite(message: String?, completion: ((Error?) -> Void)? = nil) {
+    func acceptInvite(message: String? = nil, completion: ((Error?) -> Void)? = nil) {
         /// Perform action only if channel is already created on backend side and have a valid `cid`.
         guard let cid = cid, isChannelAlreadyCreated else {
             channelModificationFailed(completion)

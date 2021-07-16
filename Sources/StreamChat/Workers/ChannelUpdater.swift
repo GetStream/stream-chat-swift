@@ -177,6 +177,11 @@ class ChannelUpdater<ExtraData: ExtraDataTypes>: Worker {
         }
     }
     
+    /// Invite members to a channel. They can then accept or decline the invitation
+    /// - Parameters:
+    ///   - cid: The channel identifier
+    ///   - userIds: Set of ids of users to be invited to the channel
+    ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
     func inviteMembers(
         cid: ChannelId,
         userIds: Set<UserId>,
@@ -198,9 +203,7 @@ class ChannelUpdater<ExtraData: ExtraDataTypes>: Worker {
         message: String?,
         completion: ((Error?) -> Void)? = nil
     ) {
-        apiClient.request(
-            endpoint: .acceptInvite(cid: cid, message: message)
-        ) {
+        apiClient.request(endpoint: .acceptInvite(cid: cid, message: message)) {
             completion?($0.error)
         }
     }

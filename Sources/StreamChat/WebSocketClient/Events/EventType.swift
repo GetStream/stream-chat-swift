@@ -78,8 +78,18 @@ enum EventType: String, Codable {
     /// When someone else from channel has muted someone.
     case notificationChannelMutesUpdated = "notification.channel_mutes_updated"
     
-    /// When the user accepts an invite.
+    /// When a user is added to a channel.
     case notificationAddedToChannel = "notification.added_to_channel"
+    
+    /// When a user is invited to a channel
+    case notificationInvited = "notification.invited"
+    
+    /// When a user accepted a channel invitation
+    case notificationInviteAccepted = "notification.invite_accepted"
+    
+    /// When a user rejected a channel invitation
+    case notificationInviteRejected = "notification.invite_rejected"
+
     /// When a user was removed from a channel.
     case notificationRemovedFromChannel = "notification.removed_from_channel"
         
@@ -124,6 +134,12 @@ enum EventType: String, Codable {
         case .notificationAddedToChannel: return try NotificationAddedToChannelEvent(from: response)
         case .notificationRemovedFromChannel: return try NotificationRemovedFromChannelEvent(from: response)
         case .notificationChannelMutesUpdated: return try NotificationChannelMutesUpdatedEvent(from: response)
+        case .notificationInvited:
+            return try NotificationInvitedEvent(from: response)
+        case .notificationInviteAccepted:
+            return try NotificationInviteAccepted(from: response)
+        case .notificationInviteRejected:
+            return try NotificationInviteRejected(from: response)
         }
     }
 }

@@ -119,8 +119,8 @@ extension _ChannelQuery: APIPathConvertible {
 }
 
 /// An answer for an invite to a channel.
-public struct ChannelInvitePayload: Encodable {
-    public struct Message: Encodable {
+struct ChannelInvitePayload: Encodable {
+    struct Message: Encodable {
         let message: String?
     }
     
