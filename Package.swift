@@ -749,6 +749,7 @@ var streamChatUIFilesExcluded: [String] { [
     "MessageActionsPopup/__Snapshots__/ChatMessageActionsVC_Tests/test_appearanceCustomization_usingSubclassing.default-light.png",
     "MessageActionsPopup/__Snapshots__/ChatMessageActionsVC_Tests/test_emptyAppearance.small-dark.png",
     "Navigation/ChatChannelListRouter_Mock.swift",
+    "Utils/CollectionUpdatesMapper_Tests.swift",
     "Utils/String+Extensions_Tests.swift",
     "Utils/UIViewController+Extensions_Tests.swift",
     "Utils/ChatChannelNamer_Tests.swift",
