@@ -673,7 +673,6 @@ open class _ComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
     open func showSuggestions() {
         if !suggestionsVC.isPresented, let parent = parent {
             parent.addChildViewController(suggestionsVC, targetView: parent.view)
-            suggestionsVC.bottomAnchorView = composerView
             
             let suggestionsView = suggestionsVC.view!
             suggestionsView.translatesAutoresizingMaskIntoConstraints = false
