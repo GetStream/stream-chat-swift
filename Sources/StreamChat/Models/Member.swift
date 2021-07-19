@@ -109,21 +109,34 @@ public class _ChatChannelMember<ExtraData: UserExtraData>: _ChatUser<ExtraData> 
     }
 }
 
-/// An enum describing possible roles of a member in a channel.
-public enum MemberRole: String, Codable, Hashable {
+/// A  `struct` describing roles of a member in a channel.
+/// There are some predefined types but any type can be introduced and sent by the backend.
+public struct MemberRole: RawRepresentable, Codable, Hashable, ExpressibleByStringLiteral {
+    public let rawValue: String
+    
+    public init(rawValue: String) {
+        self.rawValue = rawValue
+    }
+    
+    public init(stringLiteral value: String) {
+        self.init(rawValue: value)
+    }
+}
+
+public extension MemberRole {
     /// This is the default role assigned to any member.
-    case member
-    
+    static let member = Self(rawValue: "member")
+
     /// Allows the member to perform moderation, e.g. ban users, add/remove users, etc.
-    case moderator
-    
+    static let moderator = Self(rawValue: "moderator")
+
     /// This role allows the member to perform more advanced actions. This role should be granted only to staff users.
-    case admin
+    static let admin = Self(rawValue: "admin")
 
-    /// This rele allows the member to perform destructive actions on the channel.
-    case owner
+    /// This role allows the member to perform destructive actions on the channel.
+    static let owner = Self(rawValue: "owner")
 
-    public init(from decoder: Decoder) throws {
+    init(from decoder: Decoder) throws {
         let container = try decoder.singleValueContainer()
         let value = try container.decode(String.self)
         switch value {
@@ -136,10 +149,7 @@ public enum MemberRole: String, Codable, Hashable {
         case "owner":
             self = .owner
         default:
-            throw DecodingError.dataCorruptedError(
-                in: container,
-                debugDescription: "MemberRole string value `\(value)` doesn't match any of the known roles"
-            )
+            self = MemberRole(rawValue: value)
         }
     }
 }
