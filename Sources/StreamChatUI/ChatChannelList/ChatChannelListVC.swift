@@ -55,6 +55,9 @@ open class _ChatChannelListVC<ExtraData: ExtraDataTypes>: _ViewController,
     /// We use private property for channels count so we can update it inside `performBatchUpdates` as [documented](https://developer.apple.com/documentation/uikit/uicollectionview/1618045-performbatchupdates#discussion)
     private var channelsCount = 0
 
+    /// Used for mapping `ListChanges` to sets of `IndexPath` and verifying possible conflicts
+    private let collectionUpdatesMapper = CollectionUpdatesMapper()
+
     override open func setUp() {
         super.setUp()
         controller.setDelegate(self)
@@ -228,61 +231,20 @@ open class _ChatChannelListVC<ExtraData: ExtraDataTypes>: _ViewController,
         _ controller: _ChatChannelListController<ExtraData>,
         didChangeChannels changes: [ListChange<_ChatChannel<ExtraData>>]
     ) {
-        var allIndexes = Set<IndexPath>()
-        var moveIndexes = Set<IndexPathMove>()
-        var insertIndexes = Set<IndexPath>()
-        var removeIndexes = Set<IndexPath>()
-        var updateIndexes = Set<IndexPath>()
-        
-        // The verification of conflicts is just a temporary solution
-        // until the root cause of the conflicts has been solved.
-        var hasConflicts = false
-        let verifyConflict = { (indexPath: IndexPath) in
-            let (inserted, _) = allIndexes.insert(indexPath)
-            hasConflicts = !inserted || hasConflicts
-        }
-        
-        for change in changes {
-            if hasConflicts {
-                break
+        guard let indices = collectionUpdatesMapper.mapToSetsOfIndexPaths(
+            changes: changes,
+            onConflict: {
+                channelsCount = controller.channels.count
+                collectionView.reloadData()
             }
-            
-            switch change {
-            case let .insert(_, index):
-                verifyConflict(index)
-                insertIndexes.insert(index)
-            case let .move(_, fromIndex, toIndex):
-                verifyConflict(fromIndex)
-                verifyConflict(toIndex)
-                moveIndexes.insert(IndexPathMove(fromIndex, toIndex))
-            case let .remove(_, index):
-                verifyConflict(index)
-                removeIndexes.insert(index)
-            case let .update(_, index):
-                verifyConflict(index)
-                updateIndexes.insert(index)
-            }
-        }
-        
-        if hasConflicts {
-            channelsCount = controller.channels.count
-            collectionView.reloadData()
-            
-            logConflicts(
-                moves: moveIndexes,
-                inserts: insertIndexes,
-                updates: updateIndexes,
-                removes: removeIndexes
-            )
-            return
-        }
-        
+        ) else { return }
+
         collectionView.performBatchUpdates(
             {
-                collectionView.deleteItems(at: Array(removeIndexes))
-                collectionView.insertItems(at: Array(insertIndexes))
-                collectionView.reloadItems(at: Array(updateIndexes))
-                moveIndexes.forEach {
+                collectionView.deleteItems(at: Array(indices.remove))
+                collectionView.insertItems(at: Array(indices.insert))
+                collectionView.reloadItems(at: Array(indices.update))
+                indices.move.forEach {
                     collectionView.moveItem(at: $0.fromIndex, to: $0.toIndex)
                 }
                 
@@ -291,7 +253,7 @@ open class _ChatChannelListVC<ExtraData: ExtraDataTypes>: _ViewController,
             completion: { _ in
                 // Move changes from NSFetchController also can mean an update of the content.
                 // Since a `moveItem` in collections do not update the content of the cell, we need to reload those cells.
-                self.collectionView.reloadItems(at: Array(moveIndexes.map(\.toIndex)))
+                self.collectionView.reloadItems(at: Array(indices.move.map(\.toIndex)))
             }
         )
     }
@@ -310,40 +272,4 @@ open class _ChatChannelListVC<ExtraData: ExtraDataTypes>: _ViewController,
             loadingIndicator.stopAnimating()
         }
     }
-}
-
-// MARK: - Helpers for temporary list changes conflicts.
-
-// Temporary struct for list changes protection against conflicts.
-struct IndexPathMove: Hashable, CustomStringConvertible {
-    var fromIndex: IndexPath
-    var toIndex: IndexPath
-
-    init(_ from: IndexPath, _ to: IndexPath) {
-        fromIndex = from
-        toIndex = to
-    }
-
-    var description: String {
-        "(from: \(fromIndex), to: \(toIndex))"
-    }
-}
-
-func logConflicts(
-    moves: Set<IndexPathMove>,
-    inserts: Set<IndexPath>,
-    updates: Set<IndexPath>,
-    removes: Set<IndexPath>
-) {
-    log.error("""
-
-    ⚠️ Inconsistent updates from ChatChannelListController.
-    🙏 Please copy the following log and open an issue at: https://github.com/GetStream/stream-chat-swift/issues
-
-    Moves: \(moves)
-    Inserts: \(inserts)
-    updates: \(updates)
-    removes: \(removes)
-
-    """)
 }

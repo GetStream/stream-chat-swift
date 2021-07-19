@@ -12,6 +12,8 @@ public typealias ChatMessageListView = _ChatMessageListView<NoExtraData>
 open class _ChatMessageListView<ExtraData: ExtraDataTypes>: UITableView, Customizable, ComponentsProvider {
     private var identifiers: Set<String> = .init()
     private var isInitialized: Bool = false
+    /// Used for mapping `ListChanges` to sets of `IndexPath` and verifying possible conflicts
+    private let collectionUpdatesMapper = CollectionUpdatesMapper()
     
     // In some cases updates coming one by one might require scrolling to bottom.
     //
@@ -176,53 +178,12 @@ open class _ChatMessageListView<ExtraData: ExtraDataTypes>: UITableView, Customi
     ) {
         var shouldScrollToBottom = false
         
-        // The verification of conflicts is just a temporary solution
-        // until the root cause of the conflicts has been solved.
-        var allIndexes = Set<IndexPath>()
-        var moveIndexes = Set<IndexPathMove>()
-        var insertIndexes = Set<IndexPath>()
-        var removeIndexes = Set<IndexPath>()
-        var updateIndexes = Set<IndexPath>()
-        
-        var hasConflicts = false
-        let verifyConflict = { (indexPath: IndexPath) in
-            let (inserted, _) = allIndexes.insert(indexPath)
-            hasConflicts = !inserted || hasConflicts
-        }
-        
-        for change in changes {
-            if hasConflicts {
-                break
+        guard let _ = collectionUpdatesMapper.mapToSetsOfIndexPaths(
+            changes: changes,
+            onConflict: {
+                reloadData()
             }
-            
-            switch change {
-            case let .insert(_, index):
-                verifyConflict(index)
-                insertIndexes.insert(index)
-            case let .move(_, fromIndex, toIndex):
-                verifyConflict(fromIndex)
-                verifyConflict(toIndex)
-                moveIndexes.insert(IndexPathMove(fromIndex, toIndex))
-            case let .remove(_, index):
-                verifyConflict(index)
-                removeIndexes.insert(index)
-            case let .update(_, index):
-                verifyConflict(index)
-                updateIndexes.insert(index)
-            }
-        }
-        
-        if hasConflicts {
-            reloadData()
-            
-            logConflicts(
-                moves: moveIndexes,
-                inserts: insertIndexes,
-                updates: updateIndexes,
-                removes: removeIndexes
-            )
-            return
-        }
+        ) else { return }
                 
         performBatchUpdates({
             changes.forEach {
