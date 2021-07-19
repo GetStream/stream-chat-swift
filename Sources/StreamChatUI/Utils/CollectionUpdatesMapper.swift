@@ -3,6 +3,7 @@
 //
 
 import StreamChat
+import UIKit
 
 /// The verification of conflicts is just a temporary solution
 /// until the root cause of the conflicts has been solved.
