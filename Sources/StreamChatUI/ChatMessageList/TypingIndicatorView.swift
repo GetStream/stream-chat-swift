@@ -11,7 +11,7 @@ public typealias TypingIndicatorView = _TypingIndicatorView<NoExtraData>
 /// An `UIView` subclass indicating that user or multiple users are currently typing.
 open class _TypingIndicatorView<ExtraData: ExtraDataTypes>: _View, ThemeProvider {
     /// The string which will be shown next to animated indication that user is typing.
-    var content: String? {
+    open var content: String? {
         didSet {
             updateContentIfNeeded()
         }
@@ -33,11 +33,14 @@ open class _TypingIndicatorView<ExtraData: ExtraDataTypes>: _View, ThemeProvider
     open private(set) lazy var componentContainerView: ContainerStackView = ContainerStackView().withoutAutoresizingMaskConstraints
 
     override open func setUp() {
+        super.setUp()
+        
         typingAnimationView.startAnimating()
     }
 
     override open func setUpLayout() {
         super.setUpLayout()
+        
         addSubview(componentContainerView)
         componentContainerView.pin(anchors: [.leading, .trailing], to: layoutMarginsGuide)
         componentContainerView.pin(anchors: [.top, .bottom], to: self)
@@ -53,12 +56,15 @@ open class _TypingIndicatorView<ExtraData: ExtraDataTypes>: _View, ThemeProvider
 
     override open func setUpAppearance() {
         super.setUpAppearance()
+        
         backgroundColor = appearance.colorPalette.overlayBackground
         informationLabel.textColor = appearance.colorPalette.subtitleText
         informationLabel.font = appearance.fonts.body
     }
 
     override open func updateContent() {
+        super.updateContent()
+        
         informationLabel.text = content
     }
 }
