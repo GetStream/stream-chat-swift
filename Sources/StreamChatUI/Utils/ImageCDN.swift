@@ -11,6 +11,10 @@ public protocol ImageCDN {
     /// - Returns: String to be used as an image cache key.
     func cachingKey(forImage url: URL) -> String
     
+    /// Prepare and return a `URLRequest` for the given image `URL`
+    /// This function can be used to inject custom headers for image loading request.
+    func urlRequest(forImage url: URL) -> URLRequest
+    
     /// Enhance image URL with size parameters to get thumbnail
     /// - Parameters:
     ///   - originalURL: URL of the image to get the thumbnail for.
@@ -20,10 +24,19 @@ public protocol ImageCDN {
     func thumbnailURL(originalURL: URL, preferredSize: CGSize) -> URL
 }
 
-public struct StreamImageCDN: ImageCDN {
+extension ImageCDN {
+    public func urlRequest(forImage url: URL) -> URLRequest {
+        URLRequest(url: url)
+    }
+}
+
+open class StreamImageCDN: ImageCDN {
     public static var streamCDNURL = "stream-io-cdn.com"
     
-    public func cachingKey(forImage url: URL) -> String {
+    // Initializer required for subclasses
+    public init() {}
+    
+    open func cachingKey(forImage url: URL) -> String {
         let key = url.absoluteString
         
         guard
@@ -40,7 +53,13 @@ public struct StreamImageCDN: ImageCDN {
         return components.string ?? key
     }
     
-    public func thumbnailURL(originalURL: URL, preferredSize: CGSize) -> URL {
+    // Although this is the same as the default impl, we still need it
+    // so subclasses can safely override it
+    open func urlRequest(forImage url: URL) -> URLRequest {
+        URLRequest(url: url)
+    }
+    
+    open func thumbnailURL(originalURL: URL, preferredSize: CGSize) -> URL {
         guard
             var components = URLComponents(url: originalURL, resolvingAgainstBaseURL: true),
             let host = components.host,
