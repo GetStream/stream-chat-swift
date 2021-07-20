@@ -16,6 +16,11 @@ open class _ChatMessageListHeaderView<ExtraData: ExtraDataTypes>:
     /// Controller for observing data changes within the channel.
     open var channelController: _ChatChannelController<ExtraData>?
 
+    /// The user id of the current logged in user.
+    open var currentUserId: UserId? {
+        client?.currentUserId
+    }
+
     /// The chat client instance provided by the channel controller.
     open var client: _ChatClient<ExtraData>? {
         channelController?.client
@@ -66,7 +71,7 @@ open class _ChatMessageListHeaderView<ExtraData: ExtraDataTypes>:
     /// The subtitle text used to render subtitle label
     open var subtitleText: String? {
         guard let channel = channelController?.channel else { return nil }
-        guard let currentUserId = client?.currentUserId else { return nil }
+        guard let currentUserId = self.currentUserId else { return nil }
 
         if channel.isDirectMessageChannel {
             guard let member = channel
