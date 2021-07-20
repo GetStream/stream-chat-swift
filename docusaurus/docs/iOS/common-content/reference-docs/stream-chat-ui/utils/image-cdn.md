@@ -8,6 +8,14 @@ ImageCDN is providing set of functions to improve handling of images from CDN.
 public protocol ImageCDN 
 ```
 
+## Default Implementations
+
+### `urlRequest(forImage:)`
+
+``` swift
+public func urlRequest(forImage url: URL) -> URLRequest 
+```
+
 ## Requirements
 
 ### cachingKey(forImage:​)
@@ -25,6 +33,15 @@ func cachingKey(forImage url: URL) -> String
 #### Returns
 
 String to be used as an image cache key.
+
+### urlRequest(forImage:​)
+
+Prepare and return a `URLRequest` for the given image `URL`
+This function can be used to inject custom headers for image loading request.
+
+``` swift
+func urlRequest(forImage url: URL) -> URLRequest
+```
 
 ### thumbnailURL(originalURL:​preferredSize:​)
 

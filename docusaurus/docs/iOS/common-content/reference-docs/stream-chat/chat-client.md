@@ -19,23 +19,21 @@ case requires it (i.e. more than one window with different workspaces in a Slack
 
 ## Initializers
 
-### `init(config:tokenProvider:completion:)`
+### `init(config:tokenProvider:)`
 
 Creates a new instance of `ChatClient`.
 
 ``` swift
 public convenience init(
         config: ChatClientConfig,
-        tokenProvider: _TokenProvider<ExtraData>,
-        completion: ((Error?) -> Void)? = nil
+        tokenProvider: TokenProvider? = nil
     ) 
 ```
 
 #### Parameters
 
   - config: The config object for the `Client`. See `ChatClientConfig` for all configuration options.
-  - tokenProvider: The `_TokenProvider<ExtraData>` instance that incapsulates the logic of obtaining a JWT token used to communicate with REST-API.
-  - completion: The completion that will be called once the **first** user session for the given token is setup.
+  - tokenProvider: In case of token expiration this closure is used to obtain a new token
 
 ## Properties
 
@@ -70,11 +68,69 @@ This value can't be mutated and can only be set when initializing a new `ChatCli
 
 ### `tokenProvider`
 
+In case of token expiration this property is used to obtain a new token
+
 ``` swift
-public var tokenProvider: _TokenProvider<ExtraData>
+public var tokenProvider: TokenProvider?
 ```
 
 ## Methods
+
+### `connectUser(userInfo:token:completion:)`
+
+Connects authorized user
+
+``` swift
+public func connectUser(
+        userInfo: UserInfo<ExtraData>,
+        token: Token,
+        completion: ((Error?) -> Void)? = nil
+    ) 
+```
+
+#### Parameters
+
+  - userInfo: User info that is passed to the `connect` endpoint for user creation
+  - token: Authorization token for the user.
+  - completion: The completion that will be called once the **first** user session for the given token is setup.
+
+### `connectGuestUser(userInfo:completion:)`
+
+Connects a guest user
+
+``` swift
+public func connectGuestUser(
+        userInfo: UserInfo<ExtraData>,
+        completion: ((Error?) -> Void)? = nil
+    ) 
+```
+
+#### Parameters
+
+  - userInfo: User info that is passed to the `connect` endpoint for user creation
+  - extraData: Extra data for user that is passed to the `connect` endpoint for user creation.
+  - completion: The completion that will be called once the **first** user session for the given token is setup.
+
+### `connectAnonymousUser(completion:)`
+
+Connects anonymous user
+
+``` swift
+public func connectAnonymousUser(completion: ((Error?) -> Void)? = nil) 
+```
+
+#### Parameters
+
+  - completion: The completion that will be called once the **first** user session for the given token is setup.
+
+### `disconnect()`
+
+Disconnects the chat client from the chat servers. No further updates from the servers
+are received.
+
+``` swift
+public func disconnect() 
+```
 
 ### `channelController(for:)`
 

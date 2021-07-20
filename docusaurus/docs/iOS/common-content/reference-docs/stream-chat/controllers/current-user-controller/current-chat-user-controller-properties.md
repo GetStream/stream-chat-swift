@@ -77,13 +77,6 @@ func reloadUserIfNeeded(completion: ((Error?) -> Void)? = nil)
 If the a token obtained from `tokenProvider` is for another user the
 database will be flushed.
 
-If `config.shouldConnectAutomatically` is set to `true` it also
-tries to establish a web-socket connection.
-
-If `config.shouldConnectAutomatically` is set to `false` the
-establishing a web-socket connection has to be done manually via `connect/disconnect`
-methods in `ChatConnectionController`.
-
 #### Parameters
 
   - completion: The completion to be called when the operation is completed.

@@ -1,7 +1,6 @@
 ---
 title: ShrinkInputButton
 ---
-![ShrinkInputButton](../../../../../assets/ShrinkInputButton_documentation.default-light.png)
 
 Button for shrinking the input view to allow more space for other actions.
 

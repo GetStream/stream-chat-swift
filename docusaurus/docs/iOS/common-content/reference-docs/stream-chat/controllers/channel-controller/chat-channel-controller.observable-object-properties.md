@@ -31,12 +31,12 @@ The current state of the Controller.
 @Published public private(set) var state: DataController.State
 ```
 
-### `typingMembers`
+### `typingUsers`
 
-The typing members related to the channel.
+The typing users related to the channel.
 
 ``` swift
-@Published public private(set) var typingMembers: Set<_ChatChannelMember<ExtraData.User>> = []
+@Published public private(set) var typingUsers: Set<_ChatUser<ExtraData.User>> = []
 ```
 
 ## Methods
@@ -65,10 +65,10 @@ public func channelController(
 public func controller(_ controller: DataController, didChangeState state: DataController.State) 
 ```
 
-### `channelController(_:didChangeTypingMembers:)`
+### `channelController(_:didChangeTypingUsers:)`
 
 ``` swift
 public func channelController(
         _ channelController: _ChatChannelController<ExtraData>,
-        didChangeTypingMembers typingMembers: Set<_ChatChannelMember<ExtraData.User>>
+        didChangeTypingUsers typingUsers: Set<_ChatUser<ExtraData.User>>
     ) 

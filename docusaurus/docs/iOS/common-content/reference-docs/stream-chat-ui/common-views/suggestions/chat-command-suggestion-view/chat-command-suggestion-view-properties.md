@@ -38,12 +38,12 @@ open private(set) lazy var commandNameSubtitleLabel: UILabel = UILabel()
         .withBidirectionalLanguagesSupport
 ```
 
-### `textStackView`
+### `textContainer`
 
 A view container that holds the name and subtitle labels.
 
 ``` swift
-open private(set) lazy var textStackView: UIStackView = UIStackView()
+open private(set) lazy var textContainer = ContainerStackView()
         .withoutAutoresizingMaskConstraints
 ```
 

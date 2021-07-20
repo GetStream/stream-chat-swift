@@ -10,6 +10,14 @@ public protocol CDNClient
 
 ## Requirements
 
+### maxAttachmentSize
+
+Specifies maximum attachment size in bytes.
+
+``` swift
+static var maxAttachmentSize: Int64 
+```
+
 ### uploadAttachment(\_:​progress:​completion:​)
 
 ``` swift

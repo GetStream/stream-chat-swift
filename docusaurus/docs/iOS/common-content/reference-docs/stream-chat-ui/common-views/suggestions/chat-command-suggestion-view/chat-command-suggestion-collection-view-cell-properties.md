@@ -9,7 +9,7 @@ open class var reuseId: String
 
 ``` swift
 public private(set) lazy var commandView = components
-        .suggestionsCommandCellView.init()
+        .suggestionsCommandView.init()
         .withoutAutoresizingMaskConstraints
 ```
 

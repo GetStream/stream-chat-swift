@@ -43,6 +43,15 @@ A list of channel members currently online actively watching the channel.
 
 > 
 
+### `currentlyTypingMembers`
+
+A list of currently typing users.
+
+``` swift
+@available(*, renamed: "currentlyTypingUsers")
+    var currentlyTypingMembers: Set<_ChatChannelMember<ExtraData.User>> 
+```
+
 ### `cid`
 
 The `ChannelId` of the channel.
@@ -147,12 +156,12 @@ Array is sorted and the most recently active members will be first.
 
 > 
 
-### `currentlyTypingMembers`
+### `currentlyTypingUsers`
 
-A list of currently typing channel members.
+A list of currently typing users.
 
 ``` swift
-public let currentlyTypingMembers: Set<_ChatChannelMember<ExtraData.User>>
+public var currentlyTypingUsers: Set<_ChatUser<ExtraData.User>> 
 ```
 
 ### `membership`
