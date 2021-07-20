@@ -63,7 +63,7 @@ open class _ComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
 
         /// A boolean that checks if the message contains any content.
         public var isEmpty: Bool {
-            text.isEmpty && attachments.isEmpty
+            text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty && attachments.isEmpty
         }
 
         /// A boolean that checks if the composer is replying in a thread
@@ -386,7 +386,7 @@ open class _ComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
         if let command = content.command {
             text = "/\(command.name) " + content.text
         } else {
-            text = content.text
+            text = content.text.trimmingCharacters(in: .whitespacesAndNewlines)
         }
 
         if let editingMessage = content.editingMessage {
