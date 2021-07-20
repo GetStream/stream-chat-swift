@@ -24,7 +24,8 @@
     },
     {
       "UI Components": [
-        "components/channel-list-item-view"
+        "components/channel-list-item-view",
+        "components/message-list-header-view"
       ]
     },
     {
