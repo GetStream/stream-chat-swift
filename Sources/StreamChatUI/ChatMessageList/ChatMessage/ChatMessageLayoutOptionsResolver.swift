@@ -84,7 +84,7 @@ open class _ChatMessageLayoutOptionsResolver<ExtraData: ExtraDataTypes> {
         if isLastInSequence && !message.isSentByCurrentUser && !channel.isDirectMessageChannel {
             options.insert(.authorName)
         }
-        if isQuoted(message) {
+        if hasQuotedMessage(message) {
             options.insert(.quotedMessage)
         }
         if message.isRootOfThread || message.isPartOfThread {
@@ -102,7 +102,7 @@ open class _ChatMessageLayoutOptionsResolver<ExtraData: ExtraDataTypes> {
         return options
     }
 
-    func isQuoted(_ message: _ChatMessage<ExtraData>) -> Bool {
+    func hasQuotedMessage(_ message: _ChatMessage<ExtraData>) -> Bool {
         message.quotedMessage?.id != nil
     }
 
