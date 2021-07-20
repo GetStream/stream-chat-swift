@@ -91,6 +91,22 @@ final class DatabaseCleanupUpdater_Tests: StressTestCase {
             [query1, query2]
         )
     }
+        
+    func test_refetchExistingChannelListQueries_whenDatabaseCleanupUpdaterIsDeallocated_doesNotUpdateQueries() throws {
+        // Create a channel list query to be refetched.
+        try database.createChannelListQuery(filter: .query(.cid, text: .unique))
+    
+        // Initiate channel list queries refetch.
+        databaseCleanupUpdater?.refetchExistingChannelListQueries()
+        
+        // Simulate database-cleanup-updater deallocation.
+        databaseCleanupUpdater = nil
+        
+        // Assert the `channelListUpdater` was not asked to update queries.
+        AssertAsync.staysTrue(
+            channelListUpdater.update_queries.isEmpty
+        )
+    }
 }
 
 extension _ChannelListQuery: Equatable {

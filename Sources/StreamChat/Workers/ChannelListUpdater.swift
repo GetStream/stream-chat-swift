@@ -14,10 +14,13 @@ class ChannelListUpdater<ExtraData: ExtraDataTypes>: Worker {
     ///
     func update(channelListQuery: _ChannelListQuery<ExtraData.Channel>, completion: ((Error?) -> Void)? = nil) {
         apiClient
-            .request(endpoint: .channels(query: channelListQuery)) { (result: Result<ChannelListPayload<ExtraData>, Error>) in
+            .request(endpoint: .channels(query: channelListQuery)) { [weak self] (result: Result<
+                ChannelListPayload<ExtraData>,
+                Error
+            >) in
                 switch result {
                 case let .success(channelListPayload):
-                    self.database.write { session in
+                    self?.database.write { session in
                         try channelListPayload.channels.forEach {
                             try session.saveChannel(payload: $0, query: channelListQuery)
                         }
