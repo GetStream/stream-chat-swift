@@ -36,6 +36,13 @@ open class _ChatMessageReactionsView<ExtraData: ExtraDataTypes>: _View, ThemePro
         guard let content = content else { return }
 
         content.reactions.forEach { reaction in
+            if appearance.images.availableReactions[reaction.type] == nil {
+                log
+                    .warning(
+                        "reaction with type \(reaction.type) is not registered in appearance.images.availableReactions, skipping"
+                    )
+                return
+            }
             let itemView = components.reactionItemView.init()
             itemView.content = .init(
                 useBigIcon: content.useBigIcons,

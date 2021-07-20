@@ -9,6 +9,7 @@ import XCTest
 
 final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
     private var optionsResolver: ChatMessageLayoutOptionsResolver!
+    private var appearance: Appearance = Appearance()
 
     // MARK: - Setup
 
@@ -40,7 +41,8 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
         let layoutOptions = optionsResolver.optionsForMessage(
             at: .init(item: 0, section: 0),
             in: .mock(cid: .unique),
-            with: .init([messageSentByCurrentUser])
+            with: .init([messageSentByCurrentUser]),
+            appearance: appearance
         )
 
         // Assert `.flipped` is included
@@ -61,7 +63,8 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
         let layoutOptions = optionsResolver.optionsForMessage(
             at: .init(item: 0, section: 0),
             in: .mock(cid: .unique),
-            with: .init([messageSentNotByCurrentUser])
+            with: .init([messageSentNotByCurrentUser]),
+            appearance: appearance
         )
 
         // Assert `.flipped` is not included
@@ -80,7 +83,8 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
             let layoutOptions = optionsResolver.optionsForMessage(
                 at: .init(item: 0, section: 0),
                 in: .mock(cid: .unique),
-                with: .init([message])
+                with: .init([message]),
+                appearance: appearance
             )
 
             // Assert `.bubble` is included
@@ -105,7 +109,8 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
             let layoutOptions = optionsResolver.optionsForMessage(
                 at: .init(item: 0, section: 0),
                 in: .mock(cid: .unique),
-                with: .init([message])
+                with: .init([message]),
+                appearance: appearance
             )
 
             // Assert `.continuousBubble` is not included
@@ -144,7 +149,8 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
             let layoutOptions = optionsResolver.optionsForMessage(
                 at: .init(item: 1, section: 0),
                 in: .mock(cid: .unique),
-                with: .init([message1, message2])
+                with: .init([message1, message2]),
+                appearance: appearance
             )
 
             // Assert `.continuousBubble` is included
@@ -179,7 +185,8 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
             let layoutOptions = optionsResolver.optionsForMessage(
                 at: .init(item: 0, section: 0),
                 in: .mock(cid: .unique),
-                with: .init([threadMessage])
+                with: .init([threadMessage]),
+                appearance: appearance
             )
 
             // Assert `.continuousBubble` is included
@@ -203,7 +210,8 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
         let layoutOptions = optionsResolver.optionsForMessage(
             at: .init(item: 0, section: 0),
             in: .mock(cid: .unique),
-            with: .init([messageSentByCurrentUser])
+            with: .init([messageSentByCurrentUser]),
+            appearance: appearance
         )
 
         // Assert `.avatarSizePadding` is not included since the message is sent by current user
@@ -240,7 +248,8 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
         let layoutOptions = optionsResolver.optionsForMessage(
             at: .init(item: 1, section: 0),
             in: .mock(cid: .unique),
-            with: .init([messageFromAnotherUser1, messageFromAnotherUser2])
+            with: .init([messageFromAnotherUser1, messageFromAnotherUser2]),
+            appearance: appearance
         )
 
         // Assert `.avatarSizePadding` is included
@@ -261,7 +270,8 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
         let layoutOptions = optionsResolver.optionsForMessage(
             at: .init(item: 0, section: 0),
             in: .mock(cid: .unique),
-            with: .init([messageSentByAnotherUser])
+            with: .init([messageSentByAnotherUser]),
+            appearance: appearance
         )
 
         // Assert `.avatarSizePadding` is not included since for the last message the avatar is shown
@@ -285,7 +295,8 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
             let layoutOptions = optionsResolver.optionsForMessage(
                 at: .init(item: 0, section: 0),
                 in: .mock(cid: .unique),
-                with: .init([message])
+                with: .init([message]),
+                appearance: appearance
             )
 
             // Assert `.timestamp` is included
@@ -324,7 +335,8 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
             let layoutOptions = optionsResolver.optionsForMessage(
                 at: .init(item: 1, section: 0),
                 in: .mock(cid: .unique),
-                with: .init([message1, message2])
+                with: .init([message1, message2]),
+                appearance: appearance
             )
 
             // Assert `.timestamp` is not included since the message is not the last in sequence
@@ -348,7 +360,8 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
         let layoutOptions = optionsResolver.optionsForMessage(
             at: .init(item: 0, section: 0),
             in: .mock(cid: .unique),
-            with: .init([messageSentByAnotherUser])
+            with: .init([messageSentByAnotherUser]),
+            appearance: appearance
         )
 
         // Assert `.onlyVisibleForYouIndicator` is included
@@ -370,7 +383,8 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
         let layoutOptions = optionsResolver.optionsForMessage(
             at: .init(item: 0, section: 0),
             in: .mock(cid: .unique),
-            with: .init([ephemeralMessageSentByCurrentUser])
+            with: .init([ephemeralMessageSentByCurrentUser]),
+            appearance: appearance
         )
 
         // Assert `.onlyVisibleForYouIndicator` is included
@@ -392,7 +406,8 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
         let layoutOptions = optionsResolver.optionsForMessage(
             at: .init(item: 0, section: 0),
             in: .mock(cid: .unique),
-            with: .init([deletedMessageSentByCurrentUser])
+            with: .init([deletedMessageSentByCurrentUser]),
+            appearance: appearance
         )
 
         // Assert `.onlyVisibleForYouIndicator` is included
@@ -415,7 +430,8 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
         let layoutOptions = optionsResolver.optionsForMessage(
             at: .init(item: 0, section: 0),
             in: .mock(cid: .unique),
-            with: .init([ephemeralMessage])
+            with: .init([ephemeralMessage]),
+            appearance: appearance
         )
 
         // Assert `.text` is not included
@@ -436,7 +452,8 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
         let layoutOptions = optionsResolver.optionsForMessage(
             at: .init(item: 0, section: 0),
             in: .mock(cid: .unique),
-            with: .init([deletedMessage])
+            with: .init([deletedMessage]),
+            appearance: appearance
         )
 
         // Assert `.text` is included
@@ -456,7 +473,8 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
         let layoutOptions = optionsResolver.optionsForMessage(
             at: .init(item: 0, section: 0),
             in: .mock(cid: .unique),
-            with: .init([message])
+            with: .init([message]),
+            appearance: appearance
         )
 
         // Assert `.text` is included
@@ -480,7 +498,8 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
         let layoutOptions = optionsResolver.optionsForMessage(
             at: .init(item: 0, section: 0),
             in: .mock(cid: .unique),
-            with: .init([deletedMessage])
+            with: .init([deletedMessage]),
+            appearance: appearance
         )
 
         // Assert `.avatar` is not included since the message is deleted
@@ -501,7 +520,8 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
         let layoutOptions = optionsResolver.optionsForMessage(
             at: .init(item: 0, section: 0),
             in: .mock(cid: .unique),
-            with: .init([messageSentByCurrentUser])
+            with: .init([messageSentByCurrentUser]),
+            appearance: appearance
         )
 
         // Assert `.avatar` is not included since the message is sent by current user
@@ -538,7 +558,8 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
         let layoutOptions = optionsResolver.optionsForMessage(
             at: .init(item: 1, section: 0),
             in: .mock(cid: .unique),
-            with: .init([messageFromAnotherUser1, messageFromAnotherUser2])
+            with: .init([messageFromAnotherUser1, messageFromAnotherUser2]),
+            appearance: appearance
         )
 
         // Assert `.avatar` is not included since the message is not the sequence end
@@ -575,7 +596,8 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
         let layoutOptions = optionsResolver.optionsForMessage(
             at: .init(item: 0, section: 0),
             in: .mock(cid: .unique),
-            with: .init([messageFromAnotherUser1, messageFromAnotherUser2])
+            with: .init([messageFromAnotherUser1, messageFromAnotherUser2]),
+            appearance: appearance
         )
 
         // Assert `.avatar` is included
@@ -603,7 +625,8 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
         let layoutOptions = optionsResolver.optionsForMessage(
             at: .init(item: 0, section: 0),
             in: notDMChannel,
-            with: .init([deletedMessage])
+            with: .init([deletedMessage]),
+            appearance: appearance
         )
 
         // Assert `.authorName` is not included since the message is deleted
@@ -629,7 +652,8 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
         let layoutOptions = optionsResolver.optionsForMessage(
             at: .init(item: 0, section: 0),
             in: notDMChannel,
-            with: .init([messageSentByCurrentUser])
+            with: .init([messageSentByCurrentUser]),
+            appearance: appearance
         )
 
         // Assert `.authorName` is not included since the message is sent by current user
@@ -671,7 +695,8 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
         let layoutOptions = optionsResolver.optionsForMessage(
             at: .init(item: 1, section: 0),
             in: notDMChannel,
-            with: .init([messageFromAnotherUser1, messageFromAnotherUser2])
+            with: .init([messageFromAnotherUser1, messageFromAnotherUser2]),
+            appearance: appearance
         )
 
         // Assert `.authorName` is not included since the message is not the sequence end
@@ -695,7 +720,8 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
         let layoutOptions = optionsResolver.optionsForMessage(
             at: .init(item: 0, section: 0),
             in: directMessagesChannel,
-            with: .init([messageFromAnotherUser])
+            with: .init([messageFromAnotherUser]),
+            appearance: appearance
         )
 
         // Assert `.authorName` is not included since the channel is DM
@@ -721,7 +747,8 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
         let layoutOptions = optionsResolver.optionsForMessage(
             at: .init(item: 0, section: 0),
             in: notDMChannel,
-            with: .init([messageFromAnotherUser])
+            with: .init([messageFromAnotherUser]),
+            appearance: appearance
         )
 
         // Assert `.authorName` is included
@@ -749,7 +776,8 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
         let layoutOptions = optionsResolver.optionsForMessage(
             at: .init(item: 0, section: 0),
             in: .mock(cid: .unique),
-            with: .init([messageWithQuotedMessage])
+            with: .init([messageWithQuotedMessage]),
+            appearance: appearance
         )
 
         // Assert `.quotedMessage` is included
@@ -776,7 +804,8 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
         let layoutOptions = optionsResolver.optionsForMessage(
             at: .init(item: 0, section: 0),
             in: .mock(cid: .unique),
-            with: .init([deletedMessageWithQuotedMessage])
+            with: .init([deletedMessageWithQuotedMessage]),
+            appearance: appearance
         )
 
         // Assert `.quotedMessage` is not included because message is deleted
@@ -812,7 +841,8 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
             let layoutOptions = optionsResolver.optionsForMessage(
                 at: .init(item: 0, section: 0),
                 in: .mock(cid: .unique),
-                with: .init([threadMessage])
+                with: .init([threadMessage]),
+                appearance: appearance
             )
 
             // Assert `.threadInfo` is included
@@ -849,7 +879,8 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
             let layoutOptions = optionsResolver.optionsForMessage(
                 at: .init(item: 0, section: 0),
                 in: .mock(cid: .unique),
-                with: .init([threadMessage])
+                with: .init([threadMessage]),
+                appearance: appearance
             )
 
             // Assert `.threadInfo` is not included since message is deleted
@@ -890,10 +921,49 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
         let layoutOptions = optionsResolver.optionsForMessage(
             at: .init(item: 0, section: 0),
             in: channelWithReactionsEnabled,
-            with: .init([deletedMessageWithReactions])
+            with: .init([deletedMessageWithReactions]),
+            appearance: appearance
         )
 
         // Assert `.reactions` is not included since message is deleted
+        XCTAssertFalse(layoutOptions.contains(.reactions))
+    }
+
+    func test_optionsForMessage_whenMessageHasUnhandledReactionsAndChannelEnablesReactions_doesNotIncludeReactions() {
+        // Create non-deleted message with reactions
+        let messageWithReactions: ChatMessage = .mock(
+            id: .unique,
+            cid: .unique,
+            text: .unique,
+            author: .mock(id: .unique),
+            reactionScores: ["like": 1],
+            latestReactions: [
+                .init(
+                    type: "surfing",
+                    score: 1,
+                    createdAt: .unique,
+                    updatedAt: .unique,
+                    extraData: .defaultValue,
+                    author: .mock(id: .unique)
+                )
+            ]
+        )
+
+        // Create channel with enabled reactions
+        let channelWithReactionsEnabled: ChatChannel = .mock(
+            cid: .unique,
+            config: .mock(reactionsEnabled: true)
+        )
+
+        // Calculate layout options for the message
+        let layoutOptions = optionsResolver.optionsForMessage(
+            at: .init(item: 0, section: 0),
+            in: channelWithReactionsEnabled,
+            with: .init([messageWithReactions]),
+            appearance: appearance
+        )
+
+        // Assert `.reactions` is not included
         XCTAssertFalse(layoutOptions.contains(.reactions))
     }
 
@@ -927,7 +997,8 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
         let layoutOptions = optionsResolver.optionsForMessage(
             at: .init(item: 0, section: 0),
             in: channelWithReactionsEnabled,
-            with: .init([messageWithReactions])
+            with: .init([messageWithReactions]),
+            appearance: appearance
         )
 
         // Assert `.reactions` is included
@@ -964,7 +1035,8 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
         let layoutOptions = optionsResolver.optionsForMessage(
             at: .init(item: 0, section: 0),
             in: channelWithReactionsDisabled,
-            with: .init([messageWithReactions])
+            with: .init([messageWithReactions]),
+            appearance: appearance
         )
 
         // Assert `.reactions` is not included
@@ -992,7 +1064,8 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
         let layoutOptions = optionsResolver.optionsForMessage(
             at: .init(item: 0, section: 0),
             in: channelWithReactionsEnabled,
-            with: .init([messageWithoutReactions])
+            with: .init([messageWithoutReactions]),
+            appearance: appearance
         )
 
         // Assert `.reactions` is not included
@@ -1018,7 +1091,8 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
             let layoutOptions = optionsResolver.optionsForMessage(
                 at: .init(item: 0, section: 0),
                 in: .mock(cid: .unique),
-                with: .init([messageWithFailedState])
+                with: .init([messageWithFailedState]),
+                appearance: appearance
             )
 
             // Assert `.errorIndicator` is included
@@ -1040,7 +1114,8 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
         let layoutOptions = optionsResolver.optionsForMessage(
             at: .init(item: 0, section: 0),
             in: .mock(cid: .unique),
-            with: .init([deletedMessage])
+            with: .init([deletedMessage]),
+            appearance: appearance
         )
 
         // Assert `.errorIndicator` is not included
