@@ -11,12 +11,6 @@ public enum Status
 
 ## Enumeration Cases
 
-### `read`
-
-``` swift
-case read, unread, empty
-```
-
 ### `unread`
 
 ``` swift
@@ -24,6 +18,12 @@ case read, unread, empty
 ```
 
 ### `empty`
+
+``` swift
+case read, unread, empty
+```
+
+### `read`
 
 ``` swift
 case read, unread, empty
