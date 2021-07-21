@@ -6,7 +6,7 @@ import StreamChat
 import StreamChatUI
 import UIKit
 
-class SlackChatChannelHeaderView: ChatMessageListHeaderView {
+class SlackChatChannelHeaderView: ChatChannelHeaderView {
     lazy var onlineIndicator = UIView()
 
     override func setUpAppearance() {

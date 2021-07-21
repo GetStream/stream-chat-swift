@@ -14,7 +14,7 @@ final class ChatMessageListVC_Tests: XCTestCase {
     override func setUp() {
         super.setUp()
         var components = Components()
-        components.messageListHeaderView = ChatMessageListHeaderView_Mock.self
+        components.channelHeaderView = ChatMessageListHeaderView_Mock.self
         vc = ChatMessageListVC()
         vc.components = components
         channelControllerMock = ChatChannelController_Mock.mock()
@@ -154,7 +154,7 @@ final class ChatMessageListVC_Tests: XCTestCase {
     }
 }
 
-private class ChatMessageListHeaderView_Mock: ChatMessageListHeaderView {
+private class ChatMessageListHeaderView_Mock: ChatChannelHeaderView {
     override var currentUserId: UserId? {
         .unique
     }

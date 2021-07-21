@@ -6,7 +6,7 @@ import StreamChat
 import StreamChatUI
 import UIKit
 
-class iMessageChatChannelHeaderView: ChatMessageListHeaderView {
+class iMessageChatChannelHeaderView: ChatChannelHeaderView {
     lazy var avatarView = ChatChannelAvatarView()
 
     override func setUpAppearance() {

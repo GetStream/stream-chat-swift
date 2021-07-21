@@ -20,7 +20,7 @@ extension ChatClient {
         components.channelCellSeparator = iMessageCellSeparatorView.self
 
         components.messageListVC = iMessageChatChannelViewController.self
-        components.messageListHeaderView = iMessageChatChannelHeaderView.self
+        components.channelHeaderView = iMessageChatChannelHeaderView.self
         components.messageComposerVC = iMessageComposerVC.self
         components.messageComposerView = iMessageComposerView.self
         components.messageLayoutOptionsResolver = iMessageChatMessageLayoutOptionsResolver()

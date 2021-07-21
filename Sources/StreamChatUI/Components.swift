@@ -84,8 +84,6 @@ public struct _Components<ExtraData: ExtraDataTypes> {
     
     /// The view that shows a playing video.
     public var playerView: PlayerView.Type = PlayerView.self
-    
-    // MARK: - Message list components
 
     /// The View Controller used to display content of the message, i.e. in the channel detail message list.
     public var messageListVC: _ChatMessageListVC<ExtraData>.Type = _ChatMessageListVC<ExtraData>.self
@@ -97,10 +95,6 @@ public struct _Components<ExtraData: ExtraDataTypes> {
     /// The view that shows the date for currently visible messages on top of message list.
     public var messageListScrollOverlayView: ChatMessageListScrollOverlayView.Type =
         ChatMessageListScrollOverlayView.self
-
-    /// The view that displays channel information on the message list header.
-    public var messageListHeaderView: _ChatMessageListHeaderView<ExtraData>.Type =
-        _ChatMessageListHeaderView<ExtraData>.self
     
     /// The View Controller used to display the detail of a message thread.
     public var threadVC: _ChatThreadVC<ExtraData>.Type = _ChatThreadVC<ExtraData>.self
@@ -218,6 +212,10 @@ public struct _Components<ExtraData: ExtraDataTypes> {
         _ChatMessageListUnreadCountView<ExtraData>.self
     
     // MARK: - Channel list components
+
+    /// The view that displays channel information on the channel header.
+    public var channelHeaderView: _ChatChannelHeaderView<ExtraData>.Type =
+        _ChatChannelHeaderView<ExtraData>.self
 
     /// The logic to generate a name for the given channel.
     public var channelNamer: ChatChannelNamer<ExtraData> = DefaultChatChannelNamer()

@@ -48,8 +48,8 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
     }
 
     /// The header view of the message list that by default is the titleView of the navigation bar.
-    open private(set) lazy var headerView: _ChatMessageListHeaderView<ExtraData> = components
-        .messageListHeaderView.init()
+    open private(set) lazy var headerView: _ChatChannelHeaderView<ExtraData> = components
+        .channelHeaderView.init()
         .withoutAutoresizingMaskConstraints
     
     /// View used to display the messages
