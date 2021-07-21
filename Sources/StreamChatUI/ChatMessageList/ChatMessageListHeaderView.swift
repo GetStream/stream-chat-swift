@@ -18,15 +18,10 @@ open class _ChatMessageListHeaderView<ExtraData: ExtraDataTypes>:
 
     /// The user id of the current logged in user.
     open var currentUserId: UserId? {
-        client?.currentUserId
+        channelController?.client.currentUserId
     }
 
-    /// The chat client instance provided by the channel controller.
-    open var client: _ChatClient<ExtraData>? {
-        channelController?.client
-    }
-
-    /// Timer used to update the online status of member in the chat channel.
+    /// Timer used to update the online status of member in the channel.
     open var timer: Timer?
 
     /// A view that displays a title label and subtitle in a container stack view.
@@ -51,24 +46,16 @@ open class _ChatMessageListHeaderView<ExtraData: ExtraDataTypes>:
 
         titleContainerView.content = (titleText, subtitleText)
 
-        /// If the channel is direct between two people, call update content
-        /// repeatedly every minute to update the online status of the members.
-        if timer == nil, channelController?.channel?.isDirectMessageChannel == true {
-            timer = Timer.scheduledTimer(withTimeInterval: 60, repeats: true) { [weak self] _ in
-                self?.updateContentIfNeeded()
-            }
-        } else {
-            timer = nil
-        }
+        makeTimer()
     }
 
-    /// The title text used to render the title label
+    /// The title text used to render the title label. By default it is the channel name.
     open var titleText: String? {
         guard let channel = channelController?.channel else { return nil }
-        return components.channelNamer(channel, client?.currentUserId)
+        return components.channelNamer(channel, currentUserId)
     }
 
-    /// The subtitle text used to render subtitle label
+    /// The subtitle text used in the subtitle label. By default it shows member online status.
     open var subtitleText: String? {
         guard let channel = channelController?.channel else { return nil }
         guard let currentUserId = self.currentUserId else { return nil }
@@ -92,6 +79,18 @@ open class _ChatMessageListHeaderView<ExtraData: ExtraDataTypes>:
         }
 
         return L10n.Message.Title.group(channel.memberCount, channel.watcherCount)
+    }
+
+    /// Create a timer if the channel is direct between two people. Will call update content
+    /// repeatedly every minute to update the online status of the members.
+    open func makeTimer() {
+        if timer == nil, channelController?.channel?.isDirectMessageChannel == true {
+            timer = Timer.scheduledTimer(withTimeInterval: 60, repeats: true) { [weak self] _ in
+                self?.updateContentIfNeeded()
+            }
+        } else {
+            timer = nil
+        }
     }
 
     // MARK: - _ChatChannelControllerDelegate Implementation

@@ -759,6 +759,7 @@
 		AD050B9E265D5E12006649A5 /* QuotedChatMessageView+SwiftUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD050B8C265D5E09006649A5 /* QuotedChatMessageView+SwiftUI.swift */; };
 		AD050BA8265D600B006649A5 /* QuotedChatMessageView+SwiftUI_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD050BA7265D600B006649A5 /* QuotedChatMessageView+SwiftUI_Tests.swift */; };
 		AD154C6D25DC3BA000850925 /* ChatCommandSuggestionView_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD154C6C25DC3BA000850925 /* ChatCommandSuggestionView_Tests.swift */; };
+		AD3D0CC026A8727800A6D813 /* SlackChatChannelHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD3D0CBF26A8727800A6D813 /* SlackChatChannelHeaderView.swift */; };
 		AD43F90926153BAD00F2D4BB /* QuotedChatMessageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD43F90826153BAD00F2D4BB /* QuotedChatMessageView.swift */; };
 		AD447398263ABD530030E583 /* ChatCommandSuggestionCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD447376263ABC5C0030E583 /* ChatCommandSuggestionCollectionViewCell.swift */; };
 		AD4473B3263ABFA20030E583 /* ChatSuggestionsCollectionReusableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD4473A9263ABFA00030E583 /* ChatSuggestionsCollectionReusableView.swift */; };
@@ -2071,6 +2072,7 @@
 		AD050B8C265D5E09006649A5 /* QuotedChatMessageView+SwiftUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "QuotedChatMessageView+SwiftUI.swift"; sourceTree = "<group>"; };
 		AD050BA7265D600B006649A5 /* QuotedChatMessageView+SwiftUI_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "QuotedChatMessageView+SwiftUI_Tests.swift"; sourceTree = "<group>"; };
 		AD154C6C25DC3BA000850925 /* ChatCommandSuggestionView_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatCommandSuggestionView_Tests.swift; sourceTree = "<group>"; };
+		AD3D0CBF26A8727800A6D813 /* SlackChatChannelHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlackChatChannelHeaderView.swift; sourceTree = "<group>"; };
 		AD43F90826153BAD00F2D4BB /* QuotedChatMessageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuotedChatMessageView.swift; sourceTree = "<group>"; };
 		AD447376263ABC5C0030E583 /* ChatCommandSuggestionCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatCommandSuggestionCollectionViewCell.swift; sourceTree = "<group>"; };
 		AD4473A9263ABFA00030E583 /* ChatSuggestionsCollectionReusableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatSuggestionsCollectionReusableView.swift; sourceTree = "<group>"; };
@@ -2633,8 +2635,8 @@
 				64B059EC267116B40024CE90 /* ChatMessageListVC+SwiftUI_Tests.swift */,
 				64B8AC16266F86020092D5F6 /* ChatMessageListVC_Tests.swift */,
 				79088331254876C100896F03 /* ChatMessageListView.swift */,
-				A35757C62613081B00DC914C /* ChatMessageListKeyboardObserver.swift */,
 				ADA3572D269C562A004AD8E9 /* ChatMessageListHeaderView.swift */,
+				A35757C62613081B00DC914C /* ChatMessageListKeyboardObserver.swift */,
 				E768AA882625C18D00328E6E /* TypingIndicatorView.swift */,
 				BD69F5D42669392E00E9E3FA /* ScrollToLatestMessageButton.swift */,
 				BDEB9416268211EC00928AF1 /* ChatMessageListUnreadCountView.swift */,
@@ -4872,6 +4874,7 @@
 				F87A471F26089DFE001653A8 /* JumpView.swift */,
 				F8933BB725FF563E0054BBFF /* SlackChatChannelUnreadCountView.swift */,
 				F8933BB925FF563F0054BBFF /* SlackChatChannelViewController.swift */,
+				AD3D0CBF26A8727800A6D813 /* SlackChatChannelHeaderView.swift */,
 				F8933DF3260209100054BBFF /* SlackChatMessageContentView.swift */,
 				F8FC489726038BDA00A27DC5 /* SlackChatMessageGalleryView.swift */,
 				8803EA792639B1D8002B2A7B /* SlackMessageOptionsResolver.swift */,
@@ -6553,6 +6556,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				AD3D0CC026A8727800A6D813 /* SlackChatChannelHeaderView.swift in Sources */,
 				F8933DFD26020A650054BBFF /* ChatClient.swift in Sources */,
 				F8933BC425FF56460054BBFF /* Colors.swift in Sources */,
 				F8933BBF25FF56400054BBFF /* SlackChatChannelViewController.swift in Sources */,
