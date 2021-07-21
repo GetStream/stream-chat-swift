@@ -51,6 +51,84 @@ class ChatChannelListItemView_Tests: XCTestCase {
         
         AssertSnapshot(view)
     }
+    
+    func test_markdownBold() {
+        var appearance = Appearance()
+        appearance.isMarkdownEnabled = true
+        
+        let view = ChatChannelListItemView().withoutAutoresizingMaskConstraints
+        
+        view.appearance = appearance
+        view.addSizeConstraints()
+        view.content = .init(
+            channel: .mock(
+                cid: .unique,
+                latestMessages: [
+                    .mock(
+                        id: .unique,
+                        cid: .unique,
+                        text: "normal **bold**",
+                        author: .mock(id: .unique, name: "C3-PO")
+                    )
+                ]
+            ),
+            currentUserId: nil
+        )
+        
+        AssertSnapshot(view)
+    }
+
+    func test_markdownItalic() {
+        var appearance = Appearance()
+        appearance.isMarkdownEnabled = true
+        
+        let view = ChatChannelListItemView().withoutAutoresizingMaskConstraints
+        
+        view.appearance = appearance
+        view.addSizeConstraints()
+        view.content = .init(
+            channel: .mock(
+                cid: .unique,
+                latestMessages: [
+                    .mock(
+                        id: .unique,
+                        cid: .unique,
+                        text: "normal *italic*",
+                        author: .mock(id: .unique, name: "C3-PO")
+                    )
+                ]
+            ),
+            currentUserId: nil
+        )
+        
+        AssertSnapshot(view)
+    }
+
+    func test_markdownMono() {
+        var appearance = Appearance()
+        appearance.isMarkdownEnabled = true
+        
+        let view = ChatChannelListItemView().withoutAutoresizingMaskConstraints
+        
+        view.appearance = appearance
+        view.addSizeConstraints()
+        view.content = .init(
+            channel: .mock(
+                cid: .unique,
+                latestMessages: [
+                    .mock(
+                        id: .unique,
+                        cid: .unique,
+                        text: "normal `view.appearance = appearance`",
+                        author: .mock(id: .unique, name: "C3-PO")
+                    )
+                ]
+            ),
+            currentUserId: nil
+        )
+        
+        AssertSnapshot(view)
+    }
         
     func test_appearanceCustomization_usingSubclassing() {
         class TestView: ChatChannelListItemView {

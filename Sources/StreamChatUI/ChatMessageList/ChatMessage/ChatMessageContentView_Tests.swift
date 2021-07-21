@@ -117,6 +117,168 @@ final class ChatMessageContentView_Tests: XCTestCase {
         // Assert message content view is rendered correctly.
         AssertSnapshot(view)
     }
+    
+    func test_markdownBold() {
+        // Create message for which error indicator is shown.
+        let message: ChatMessage = .mock(
+            id: .unique,
+            cid: .unique,
+            text: "not bold **bold**",
+            author: me,
+            createdAt: createdAt,
+            isSentByCurrentUser: true
+        )
+
+        // Create custom Appearance.
+        var appearance = Appearance.default
+        // Inject custom `alert` colour.
+        appearance.isMarkdownEnabled = true
+
+        // Create message content view with the provided `message`, `layout`, and `config`
+        let view = contentView(
+            message: message,
+            layout: message.layout(isLastInGroup: true),
+            appearance: appearance
+        )
+
+        // Assert message content view is rendered correctly.
+        AssertSnapshot(view)
+    }
+    
+    func test_markdownItalic() {
+        // Create message for which error indicator is shown.
+        let message: ChatMessage = .mock(
+            id: .unique,
+            cid: .unique,
+            text: "not italic *italic*",
+            author: me,
+            createdAt: createdAt,
+            isSentByCurrentUser: true
+        )
+
+        // Create custom Appearance.
+        var appearance = Appearance.default
+        // Inject custom `alert` colour.
+        appearance.isMarkdownEnabled = true
+
+        // Create message content view with the provided `message`, `layout`, and `config`
+        let view = contentView(
+            message: message,
+            layout: message.layout(isLastInGroup: true),
+            appearance: appearance
+        )
+
+        // Assert message content view is rendered correctly.
+        AssertSnapshot(view)
+    }
+    
+    func test_markdownMono() {
+        // Create message for which error indicator is shown.
+        let message: ChatMessage = .mock(
+            id: .unique,
+            cid: .unique,
+            text: "`let message = ChatMessage.mock()`",
+            author: me,
+            createdAt: createdAt,
+            isSentByCurrentUser: true
+        )
+
+        // Create custom Appearance.
+        var appearance = Appearance.default
+        // Inject custom `alert` colour.
+        appearance.isMarkdownEnabled = true
+
+        // Create message content view with the provided `message`, `layout`, and `config`
+        let view = contentView(
+            message: message,
+            layout: message.layout(isLastInGroup: true),
+            appearance: appearance
+        )
+
+        // Assert message content view is rendered correctly.
+        AssertSnapshot(view)
+    }
+    
+    func test_markdownHeader() {
+        // Create message for which error indicator is shown.
+        let message: ChatMessage = .mock(
+            id: .unique,
+            cid: .unique,
+            text: "# Header 1",
+            author: me,
+            createdAt: createdAt,
+            isSentByCurrentUser: true
+        )
+
+        // Create custom Appearance.
+        var appearance = Appearance.default
+        // Inject custom `alert` colour.
+        appearance.isMarkdownEnabled = true
+
+        // Create message content view with the provided `message`, `layout`, and `config`
+        let view = contentView(
+            message: message,
+            layout: message.layout(isLastInGroup: true),
+            appearance: appearance
+        )
+
+        // Assert message content view is rendered correctly.
+        AssertSnapshot(view)
+    }
+    
+    func test_markdownUnorderedList() {
+        // Create message for which error indicator is shown.
+        let message: ChatMessage = .mock(
+            id: .unique,
+            cid: .unique,
+            text: "* one\n* two\n* three",
+            author: me,
+            createdAt: createdAt,
+            isSentByCurrentUser: true
+        )
+
+        // Create custom Appearance.
+        var appearance = Appearance.default
+        // Inject custom `alert` colour.
+        appearance.isMarkdownEnabled = true
+
+        // Create message content view with the provided `message`, `layout`, and `config`
+        let view = contentView(
+            message: message,
+            layout: message.layout(isLastInGroup: true),
+            appearance: appearance
+        )
+
+        // Assert message content view is rendered correctly.
+        AssertSnapshot(view)
+    }
+    
+    func test_markdownOrderedList() {
+        // Create message for which error indicator is shown.
+        let message: ChatMessage = .mock(
+            id: .unique,
+            cid: .unique,
+            text: "1. one\n1. two\n1. three",
+            author: me,
+            createdAt: createdAt,
+            isSentByCurrentUser: true
+        )
+
+        // Create custom Appearance.
+        var appearance = Appearance.default
+        // Inject custom `alert` colour.
+        appearance.isMarkdownEnabled = true
+
+        // Create message content view with the provided `message`, `layout`, and `config`
+        let view = contentView(
+            message: message,
+            layout: message.layout(isLastInGroup: true),
+            appearance: appearance
+        )
+
+        // Assert message content view is rendered correctly.
+        AssertSnapshot(view)
+    }
 }
 
 // MARK: - Helpers
