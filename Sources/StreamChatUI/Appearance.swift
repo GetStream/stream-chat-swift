@@ -21,6 +21,9 @@ public struct Appearance {
     /// By providing different object or changing individal images, you can change the look of the views.
     public var images = Images()
     
+    /// Setting this property to true enables support for most common markdown features for messages and last message previews
+    var isMarkdownEnabled = false
+    
     public init() {}
 }
 

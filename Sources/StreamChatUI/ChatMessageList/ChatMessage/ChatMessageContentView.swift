@@ -409,6 +409,12 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, ThemeProvi
 
         NSLayoutConstraint.activate(constraintsToActivate)
     }
+    
+    override open func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+        updateContentIfNeeded()
+        layoutIfNeeded()
+    }
 
     // When the content is updated, we want to make sure there
     // are no unwanted animations caused by the ContainerStackView.
@@ -438,12 +444,23 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, ThemeProvi
         } else if content?.type == .system {
             textFont = appearance.fonts.caption1.bold
             textColor = appearance.colorPalette.textLowEmphasis
+        } else {
+            textFont = appearance.fonts.body
         }
         
         textView?.textColor = textColor
         textView?.font = textFont
-        textView?.text = content?.textContent
         
+        if let text = content?.textContent {
+            if appearance.isMarkdownEnabled,
+               let markdown = MarkdownParser.makeMarkdownText(from: text) {
+                markdown.applyForegroundColor(textColor)
+                textView?.attributedText = textView?.font.map { markdown.with(font: $0) }
+            } else {
+                textView?.text = text
+            }
+        }
+
         // Avatar
         let placeholder = appearance.images.userAvatarPlaceholder1
         if let imageURL = content?.author.imageURL {

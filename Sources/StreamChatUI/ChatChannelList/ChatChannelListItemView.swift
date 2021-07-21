@@ -164,8 +164,17 @@ open class _ChatChannelListItemView<ExtraData: ExtraDataTypes>: _View, ThemeProv
     }
     
     override open func updateContent() {
+        if let subtitleText = subtitleText {
+            if appearance.isMarkdownEnabled,
+               let markdown = MarkdownParser.makeMarkdownText(from: subtitleText) {
+                markdown.applyForegroundColor(appearance.colorPalette.subtitleText)
+                subtitleLabel.attributedText = markdown.with(font: appearance.fonts.footnote)
+            } else {
+                subtitleLabel.text = subtitleText
+            }
+        }
+
         titleLabel.text = titleText
-        subtitleLabel.text = subtitleText
         timestampLabel.text = timestampText
 
         avatarView.content = (content?.channel, content?.currentUserId)
