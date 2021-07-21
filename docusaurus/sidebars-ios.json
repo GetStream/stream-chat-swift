@@ -35,17 +35,10 @@
         "guides/message-composer-custom-attachments",
         "guides/working-with-a-channel",
         "guides/working-with-members",
-        {
-          "Working with MessageList": [
-            "guides/working-with-messages",
-            "guides/working-with-messagelist-layout",
-            "guides/working-with-attachments",
-            "guides/working-with-reactions"
-          ]
-        },
+        "guides/working-with-attachments",
+        "guides/working-with-reactions",
         "guides/working-with-user",
         "guides/push-notifications",
-        "guides/debugging",
         "guides/migrating-from-3-to-4",
         "guides/migrating-from-1.x-and-2.x",
         "guides/debugging"

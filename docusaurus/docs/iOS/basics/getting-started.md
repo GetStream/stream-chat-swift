@@ -28,7 +28,7 @@ let config = ChatClientConfig(apiKey: .init("<# Your API Key Here #>"))
 
 /// you can generate the token for this user from https://getstream.io/chat/docs/ios-swift/token_generator/?language=swift
 /// make sure to use the `leia_organa` as user id and the correct API Key Secret 
-let token = "<# Your User Token Here#>"
+let token = Token(stringLiteral: "<# Your User Token Here#>")
 
 /// create an instance of ChatClient and share it using the singleton
 ChatClient.shared = ChatClient(config: config, tokenProvider: .closure {client, completion in
@@ -42,25 +42,26 @@ ChatClient.shared = ChatClient(config: config, tokenProvider: .closure {client, 
     completion(.success(token))
 })
 
-/// connect the user using a closure function
-ChatClient.shared.connect { completion in
-    /// on a real application you would request the chat token from your backend API
-    /// Auth.login({ result in
-    ///     completion(.success(result.user, result.userToken))
-    /// })
-    completion(.success(userInfo(id: "leia_organa", name:"Leia Organa", imageURL: "https://cutt.ly/SmeFRfC")), token)
-}
+/// connect to chat
+ChatClient.shared.connectUser(
+    userInfo: UserInfo(
+        id: "leia_organa",
+        name: "Leia Organa",
+        imageURL: URL(string: "https://cutt.ly/SmeFRfC")
+    ),
+    token: token
+)
 ```
 
 - You can grab your API Key and API Secret from the [dashboard](https://getstream.io/dashboard/)
-- You can use the token generator [here](you can generate the token for this user from https://getstream.io/chat/docs/ios-swift/token_generator/?language=swift)
+- You can use the token generator [here](https://getstream.io/chat/docs/ios-swift/token_generator/?language=swift)
 
 This example has the user and its token hard-coded, this is done to keep things simple. Normally your app would fetch the user and generate a valid chat token on your backend infrastructure. Because retrieving a user and generating a token are asynchronous the `ChatClient` accepts a closure and handles all the synchronization for you.
 
 The next step is to add channel list and channel screens to the app. If this it is a new application, make sure to embed your view controller in a navigation controller.
 
 :::note
-You can load test data for your application using the test data generator [here](https://getstream.io/). //TODO
+You can load test data for your application using the test data generator [here](https://generator.getstream.io/).
 :::
 
 ```swift
