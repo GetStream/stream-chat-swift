@@ -36,6 +36,17 @@ class ChannelUpdaterMock<ExtraData: ExtraDataTypes>: ChannelUpdater<ExtraData> {
     @Atomic var addMembers_userIds: Set<UserId>?
     @Atomic var addMembers_completion: ((Error?) -> Void)?
     
+    @Atomic var inviteMembers_cid: ChannelId?
+    @Atomic var inviteMembers_userIds: Set<UserId>?
+    @Atomic var inviteMembers_completion: ((Error?) -> Void)?
+    
+    @Atomic var acceptInvite_cid: ChannelId?
+    @Atomic var acceptInvite_message: String?
+    @Atomic var acceptInvite_completion: ((Error?) -> Void)?
+    
+    @Atomic var rejectInvite_cid: ChannelId?
+    @Atomic var rejectInvite_completion: ((Error?) -> Void)?
+    
     @Atomic var removeMembers_cid: ChannelId?
     @Atomic var removeMembers_userIds: Set<UserId>?
     @Atomic var removeMembers_completion: ((Error?) -> Void)?
@@ -101,6 +112,17 @@ class ChannelUpdaterMock<ExtraData: ExtraDataTypes>: ChannelUpdater<ExtraData> {
         addMembers_cid = nil
         addMembers_userIds = nil
         addMembers_completion = nil
+        
+        inviteMembers_cid = nil
+        inviteMembers_userIds = nil
+        inviteMembers_completion = nil
+        
+        acceptInvite_cid = nil
+        acceptInvite_message = nil
+        acceptInvite_completion = nil
+        
+        rejectInvite_cid = nil
+        rejectInvite_completion = nil
         
         removeMembers_cid = nil
         removeMembers_userIds = nil
@@ -210,6 +232,34 @@ class ChannelUpdaterMock<ExtraData: ExtraDataTypes>: ChannelUpdater<ExtraData> {
         addMembers_cid = cid
         addMembers_userIds = userIds
         addMembers_completion = completion
+    }
+    
+    override func inviteMembers(
+        cid: ChannelId,
+        userIds: Set<UserId>,
+        completion: ((Error?) -> Void)? = nil
+    ) {
+        inviteMembers_cid = cid
+        inviteMembers_userIds = userIds
+        inviteMembers_completion = completion
+    }
+    
+    override func acceptInvite(
+        cid: ChannelId,
+        message: String? = nil,
+        completion: ((Error?) -> Void)? = nil
+    ) {
+        acceptInvite_cid = cid
+        acceptInvite_message = message
+        acceptInvite_completion = completion
+    }
+    
+    override func rejectInvite(
+        cid: ChannelId,
+        completion: ((Error?) -> Void)? = nil
+    ) {
+        rejectInvite_cid = cid
+        rejectInvite_completion = completion
     }
     
     override func removeMembers(cid: ChannelId, userIds: Set<UserId>, completion: ((Error?) -> Void)? = nil) {

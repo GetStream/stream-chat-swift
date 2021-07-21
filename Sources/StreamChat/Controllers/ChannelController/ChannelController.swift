@@ -888,6 +888,61 @@ public extension _ChatChannelController {
         }
     }
     
+    /// Invite members to a channel. They can then accept or decline the invitation
+    /// - Parameters:
+    ///   - userIds: Set of ids of users to be invited to the channel
+    ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
+    func inviteMembers(userIds: Set<UserId>, completion: ((Error?) -> Void)? = nil) {
+        /// Perform action only if channel is already created on backend side and have a valid `cid`.
+        guard let cid = cid, isChannelAlreadyCreated else {
+            channelModificationFailed(completion)
+            return
+        }
+        
+        updater.inviteMembers(cid: cid, userIds: userIds) { error in
+            self.callback {
+                completion?(error)
+            }
+        }
+    }
+    
+    /// Accept Request
+    /// - Parameters:
+    ///   - cid: The channel identifier.
+    ///   - userId: userId
+    ///   - message: message
+    ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
+    func acceptInvite(message: String? = nil, completion: ((Error?) -> Void)? = nil) {
+        /// Perform action only if channel is already created on backend side and have a valid `cid`.
+        guard let cid = cid, isChannelAlreadyCreated else {
+            channelModificationFailed(completion)
+            return
+        }
+        updater.acceptInvite(cid: cid, message: message) { error in
+            self.callback {
+                completion?(error)
+            }
+        }
+    }
+    
+    /// Reject Request
+    /// - Parameters:
+    ///   - cid: The channel identifier.
+    ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
+    func rejectInvite(completion: ((Error?) -> Void)? = nil) {
+        /// Perform action only if channel is already created on backend side and have a valid `cid`.
+        guard let cid = cid, isChannelAlreadyCreated else {
+            channelModificationFailed(completion)
+            return
+        }
+        
+        updater.rejectInvite(cid: cid) { error in
+            self.callback {
+                completion?(error)
+            }
+        }
+    }
+    
     /// Marks the channel as read.
     ///
     /// - Parameter completion: The completion. Will be called on a **callbackQueue** when the network request is finished.

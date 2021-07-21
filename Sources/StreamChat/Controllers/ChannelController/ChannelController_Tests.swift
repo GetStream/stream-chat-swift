@@ -2704,6 +2704,163 @@ class ChannelController_Tests: StressTestCase {
         AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
     }
     
+    // MARK: - Inviting members
+    
+    func test_inviteMembers_callsChannelUpdater() {
+        let members: Set<UserId> = [.unique, .unique]
+        
+        // Simulate `inviteMembers` call and catch the completion
+        var completionCalled = false
+        controller.inviteMembers(userIds: members) { [callbackQueueID] error in
+            AssertTestQueue(withId: callbackQueueID)
+            XCTAssertNil(error)
+            completionCalled = true
+        }
+        
+        // Keep a weak ref so we can check if it's actually deallocated
+        weak var weakController = controller
+        
+        // (Try to) deallocate the controller
+        // by not keeping any references to it
+        controller = nil
+        
+        // Assert cid and members state are passed to `channelUpdater`, completion is not called yet
+        XCTAssertEqual(env.channelUpdater!.inviteMembers_cid, channelId)
+        XCTAssertEqual(env.channelUpdater!.inviteMembers_userIds, members)
+        XCTAssertFalse(completionCalled)
+        
+        // Simulate successful update
+        env.channelUpdater!.inviteMembers_completion?(nil)
+        // Release reference of completion so we can deallocate stuff
+        env.channelUpdater!.inviteMembers_completion = nil
+        
+        // Assert completion is called
+        AssertAsync.willBeTrue(completionCalled)
+        // `weakController` should be deallocated too
+        AssertAsync.canBeReleased(&weakController)
+    }
+    
+    func test_inviteMembers_propagatesErrorFromUpdater() {
+        let members: Set<UserId> = [.unique, .unique]
+        
+        // Simulate `inviteMembers` call and catch the completion
+        var completionCalledError: Error?
+        controller.inviteMembers(userIds: members) { [callbackQueueID] in
+            AssertTestQueue(withId: callbackQueueID)
+            completionCalledError = $0
+        }
+        
+        // Simulate failed update
+        let testError = TestError()
+        env.channelUpdater!.inviteMembers_completion?(testError)
+        
+        // Completion should be called with the error
+        AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
+        controller = nil
+    }
+    
+    // MARK: - Accepting invites
+    
+    func test_acceptInvite_callsChannelUpdater() {
+        // Simulate `acceptInvite` call and catch the completion
+        var completionCalled = false
+        let message = "Hooray"
+        controller.acceptInvite(message: message) { [callbackQueueID] error in
+            AssertTestQueue(withId: callbackQueueID)
+            XCTAssertNil(error)
+            completionCalled = true
+        }
+        
+        // Keep a weak ref so we can check if it's actually deallocated
+        weak var weakController = controller
+        
+        // (Try to) deallocate the controller
+        // by not keeping any references to it
+        controller = nil
+        
+        // Assert cid and members state are passed to `channelUpdater`, completion is not called yet
+        XCTAssertEqual(env.channelUpdater!.acceptInvite_cid, channelId)
+        XCTAssertEqual(env.channelUpdater!.acceptInvite_message, message)
+        XCTAssertFalse(completionCalled)
+        
+        // Simulate successful update
+        env.channelUpdater!.acceptInvite_completion?(nil)
+        // Release reference of completion so we can deallocate stuff
+        env.channelUpdater!.acceptInvite_completion = nil
+        
+        // Assert completion is called
+        AssertAsync.willBeTrue(completionCalled)
+        // `weakController` should be deallocated too
+        AssertAsync.canBeReleased(&weakController)
+    }
+    
+    func test_acceptInvite_propagatesErrorFromUpdater() {
+        // Simulate `inviteMembers` call and catch the completion
+        var completionCalledError: Error?
+        controller.acceptInvite(message: "Hooray") { [callbackQueueID] in
+            AssertTestQueue(withId: callbackQueueID)
+            completionCalledError = $0
+        }
+        
+        // Simulate failed update
+        let testError = TestError()
+        env.channelUpdater!.acceptInvite_completion?(testError)
+        
+        // Completion should be called with the error
+        AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
+        controller = nil
+    }
+    
+    // MARK: - Accepting invites
+    
+    func test_rejectInvite_callsChannelUpdater() {
+        // Simulate `acceptInvite` call and catch the completion
+        var completionCalled = false
+        controller.rejectInvite { [callbackQueueID] error in
+            AssertTestQueue(withId: callbackQueueID)
+            XCTAssertNil(error)
+            completionCalled = true
+        }
+        
+        // Keep a weak ref so we can check if it's actually deallocated
+        weak var weakController = controller
+        
+        // (Try to) deallocate the controller
+        // by not keeping any references to it
+        controller = nil
+        
+        // Assert cid and members state are passed to `channelUpdater`, completion is not called yet
+        XCTAssertEqual(env.channelUpdater!.rejectInvite_cid, channelId)
+        XCTAssertFalse(completionCalled)
+        
+        // Simulate successful update
+        env.channelUpdater!.rejectInvite_completion?(nil)
+        // Release reference of completion so we can deallocate stuff
+        env.channelUpdater!.rejectInvite_completion = nil
+        
+        // Assert completion is called
+        AssertAsync.willBeTrue(completionCalled)
+        // `weakController` should be deallocated too
+        AssertAsync.canBeReleased(&weakController)
+    }
+    
+    func test_rejectInvite_propagatesErrorFromUpdater() {
+        // Simulate `inviteMembers` call and catch the completion
+        var completionCalledError: Error?
+        controller.rejectInvite { [callbackQueueID] in
+            AssertTestQueue(withId: callbackQueueID)
+            completionCalledError = $0
+        }
+        
+        // Simulate failed update
+        let testError = TestError()
+        env.channelUpdater!.rejectInvite_completion?(testError)
+        
+        // Completion should be called with the error
+        AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
+        controller = nil
+    }
+    
     // MARK: - Removing members
     
     func test_removeMembers_failsForNewChannels() throws {

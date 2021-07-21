@@ -552,6 +552,151 @@ class ChannelUpdater_Tests: StressTestCase {
         AssertAsync.willBeEqual(completionCalledError as? TestError, error)
     }
     
+    // MARK: - Invite members
+
+    func test_inviteMembers_makesCorrectAPICall() {
+        let channelID = ChannelId.unique
+        let userIds: Set<UserId> = Set([UserId.unique])
+
+        // Simulate `inviteMembers(cid:, mute:, userIds:)` call
+        channelUpdater.inviteMembers(cid: channelID, userIds: userIds)
+
+        // Assert correct endpoint is called
+        let referenceEndpoint: Endpoint<EmptyResponse> = .inviteMembers(cid: channelID, userIds: userIds)
+        XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
+    }
+
+    func test_inviteMembers_successfulResponse_isPropagatedToCompletion() {
+        let channelID = ChannelId.unique
+        let userIds: Set<UserId> = Set([UserId.unique])
+        
+        // Simulate `inviteMembers(cid:, mute:, userIds:)` call
+        var completionCalled = false
+        channelUpdater.inviteMembers(cid: channelID, userIds: userIds) { error in
+            XCTAssertNil(error)
+            completionCalled = true
+        }
+
+        // Assert completion is not called yet
+        XCTAssertFalse(completionCalled)
+
+        // Simulate API response with success
+        apiClient.test_simulateResponse(Result<EmptyResponse, Error>.success(.init()))
+
+        // Assert completion is called
+        AssertAsync.willBeTrue(completionCalled)
+    }
+
+    func test_inviteMembers_errorResponse_isPropagatedToCompletion() {
+        let channelID = ChannelId.unique
+        let userIds: Set<UserId> = Set([UserId.unique])
+        
+        // Simulate `muteChannel(cid:, mute:, completion:)` call
+        var completionCalledError: Error?
+        channelUpdater.inviteMembers(cid: channelID, userIds: userIds) { completionCalledError = $0 }
+
+        // Simulate API response with failure
+        let error = TestError()
+        apiClient.test_simulateResponse(Result<EmptyResponse, Error>.failure(error))
+
+        // Assert the completion is called with the error
+        AssertAsync.willBeEqual(completionCalledError as? TestError, error)
+    }
+    
+    // MARK: - Accept invite
+
+    func test_acceptInvite_makesCorrectAPICall() {
+        let channelID = ChannelId.unique
+        let message = "Hooray"
+
+        channelUpdater.acceptInvite(cid: channelID, message: message)
+
+        // Assert correct endpoint is called
+        let referenceEndpoint: Endpoint<EmptyResponse> = .acceptInvite(cid: channelID, message: message)
+        XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
+    }
+
+    func test_acceptInvite_successfulResponse_isPropagatedToCompletion() {
+        let channelID = ChannelId.unique
+        let message = "Hooray"
+
+        // Simulate `acceptInvite(cid:, mute:, userIds:)` call
+        var completionCalled = false
+        channelUpdater.acceptInvite(cid: channelID, message: message) { error in
+            XCTAssertNil(error)
+            completionCalled = true
+        }
+
+        // Assert completion is not called yet
+        XCTAssertFalse(completionCalled)
+
+        // Simulate API response with success
+        apiClient.test_simulateResponse(Result<EmptyResponse, Error>.success(.init()))
+
+        // Assert completion is called
+        AssertAsync.willBeTrue(completionCalled)
+    }
+
+    func test_acceptInvite_errorResponse_isPropagatedToCompletion() {
+        let channelID = ChannelId.unique
+        
+        var completionCalledError: Error?
+        channelUpdater.acceptInvite(cid: channelID, message: "Hooray") { completionCalledError = $0 }
+
+        // Simulate API response with failure
+        let error = TestError()
+        apiClient.test_simulateResponse(Result<EmptyResponse, Error>.failure(error))
+
+        // Assert the completion is called with the error
+        AssertAsync.willBeEqual(completionCalledError as? TestError, error)
+    }
+    
+    // MARK: - Reject invite
+
+    func test_rejectInvite_makesCorrectAPICall() {
+        let channelID = ChannelId.unique
+
+        channelUpdater.rejectInvite(cid: channelID)
+
+        // Assert correct endpoint is called
+        let referenceEndpoint: Endpoint<EmptyResponse> = .rejectInvite(cid: channelID)
+        XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
+    }
+
+    func test_rejectInvite_successfulResponse_isPropagatedToCompletion() {
+        let channelID = ChannelId.unique
+
+        // Simulate `rejectInvite(cid:, mute:, userIds:)` call
+        var completionCalled = false
+        channelUpdater.rejectInvite(cid: channelID) { error in
+            XCTAssertNil(error)
+            completionCalled = true
+        }
+
+        // Assert completion is not called yet
+        XCTAssertFalse(completionCalled)
+
+        // Simulate API response with success
+        apiClient.test_simulateResponse(Result<EmptyResponse, Error>.success(.init()))
+
+        // Assert completion is called
+        AssertAsync.willBeTrue(completionCalled)
+    }
+
+    func test_rejectInvite_errorResponse_isPropagatedToCompletion() {
+        let channelID = ChannelId.unique
+        
+        var completionCalledError: Error?
+        channelUpdater.rejectInvite(cid: channelID) { completionCalledError = $0 }
+
+        // Simulate API response with failure
+        let error = TestError()
+        apiClient.test_simulateResponse(Result<EmptyResponse, Error>.failure(error))
+
+        // Assert the completion is called with the error
+        AssertAsync.willBeEqual(completionCalledError as? TestError, error)
+    }
+    
     // MARK: - Remove members
 
     func test_removeMembers_makesCorrectAPICall() {
