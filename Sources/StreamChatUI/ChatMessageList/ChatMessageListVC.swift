@@ -251,7 +251,14 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
         _ overlay: ChatMessageListScrollOverlayView,
         textForItemAt indexPath: IndexPath
     ) -> String? {
-        DateFormatter
+        // When a message from a channel is deleted,
+        // and the visibility of deleted messages is set to `alwaysHidden`,
+        // the messages list won't contain the message and hence it would crash
+        guard channelController.messages.indices.contains(indexPath.item) else {
+            return nil
+        }
+        
+        return DateFormatter
             .messageListDateOverlay
             .string(from: channelController.messages[indexPath.item].createdAt)
     }
