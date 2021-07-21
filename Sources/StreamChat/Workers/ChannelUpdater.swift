@@ -192,11 +192,10 @@ class ChannelUpdater<ExtraData: ExtraDataTypes>: Worker {
         }
     }
     
-    /// Accept Request
+    /// Accept invitation to a channel
     /// - Parameters:
-    ///   - cid: The channel identifier.
-    ///   - userId: userId
-    ///   - message: message
+    ///   - cid: A channel identifier of a channel a user was invited to.
+    ///   - message: A message for invitation acceptance
     ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
     func acceptInvite(
         cid: ChannelId,
@@ -208,9 +207,9 @@ class ChannelUpdater<ExtraData: ExtraDataTypes>: Worker {
         }
     }
 
-    /// Reject Request
+    /// Reject invitation to a channel
     /// - Parameters:
-    ///   - cid: The channel identifier.
+    ///   - cid: A channel identifier of a channel a user was invited to.
     ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
     func rejectInvite(
         cid: ChannelId,

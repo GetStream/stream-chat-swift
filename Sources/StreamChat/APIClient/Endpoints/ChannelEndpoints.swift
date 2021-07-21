@@ -141,7 +141,6 @@ extension Endpoint {
             queryItems: nil,
             requiresConnectionId: false,
             body: ChannelInvitePayload(
-                channelId: cid,
                 accept: true,
                 reject: false,
                 message: .init(message: message)
@@ -156,7 +155,6 @@ extension Endpoint {
             queryItems: nil,
             requiresConnectionId: false,
             body: ChannelInvitePayload(
-                channelId: cid,
                 accept: false,
                 reject: true,
                 message: nil

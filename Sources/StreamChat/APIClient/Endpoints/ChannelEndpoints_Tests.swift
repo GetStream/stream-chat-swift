@@ -287,7 +287,6 @@ final class ChannelEndpoints_Tests: XCTestCase {
             queryItems: nil,
             requiresConnectionId: false,
             body: ChannelInvitePayload(
-                channelId: cid,
                 accept: true,
                 reject: false,
                 message: .init(message: message)
@@ -307,7 +306,6 @@ final class ChannelEndpoints_Tests: XCTestCase {
             queryItems: nil,
             requiresConnectionId: false,
             body: ChannelInvitePayload(
-                channelId: cid,
                 accept: false,
                 reject: true,
                 message: nil

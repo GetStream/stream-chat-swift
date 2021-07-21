@@ -130,8 +130,6 @@ struct ChannelInvitePayload: Encodable {
         case message
     }
 
-    /// A channel id
-    let channelId: ChannelId
     /// Accept the invite.
     let accept: Bool?
     /// Reject the invite.
