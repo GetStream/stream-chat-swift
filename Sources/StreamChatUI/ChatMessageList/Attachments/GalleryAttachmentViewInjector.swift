@@ -31,6 +31,14 @@ open class _GalleryAttachmentViewInjector<ExtraData: ExtraDataTypes>: _Attachmen
         .components
         .galleryView.init()
         .withoutAutoresizingMaskConstraints
+    
+    /// A gallery view width * height ratio.
+    ///
+    /// If `nil` is returned, aspect ratio will not be applied and gallery view will
+    /// aspect ratio will depend on internal constraints.
+    ///
+    /// Returns `1.32` by default.
+    open var galleryViewAspectRatio: CGFloat? { 1.32 }
 
     override open func contentViewDidLayout(options: ChatMessageLayoutOptions) {
         super.contentViewDidLayout(options: options)
@@ -50,7 +58,12 @@ open class _GalleryAttachmentViewInjector<ExtraData: ExtraDataTypes>: _Attachmen
         galleryView.rightPreviewsContainerView.layer.cornerRadius = 16
         galleryView.rightPreviewsContainerView.layer.masksToBounds = true
 
-        galleryView.widthAnchor.pin(equalTo: galleryView.heightAnchor, multiplier: 1.32).isActive = true
+        if let ratio = galleryViewAspectRatio {
+            galleryView
+                .widthAnchor
+                .pin(equalTo: galleryView.heightAnchor, multiplier: ratio)
+                .isActive = true
+        }
     }
     
     override open func contentViewDidUpdateContent() {
