@@ -2,7 +2,7 @@
 title: Message
 ---
 
-The `ChatMessageListVC` component renders the list of messages using UIKit TableView. Messages rendering is delegated to different classes, each have their own responsibility and are configurable and swappable.
+The `ChatMessageListVC` component renders the list of messages using UIKit TableView. Messages rendering is delegated to different classes that can be customized or swapped with a custom class.
 
 Here is a diagram that shows the classes that are involved in rendering a message in the channel list:
 
@@ -31,14 +31,14 @@ import ChatMessageBubbleViewContentProperties from '../common-content/reference-
 
 1. [`ChatMessageLayoutOptionsResolver`](message-layout-options-resolver) is called for each message and create an instance `ChatMessageLayoutOptions`. This object contains all information needed by the view about the message (ie. does the message contains reactions, is it coming from the same user, should this message be rendered as part of a group of messages, ...)
 1. [`ChatMessageContentView`](#chatmessagecontentview) holds the entire message view and all its sub-views
-1. [`ChatMessageBubbleView`](#chatmessagebubbleview) wraps the message content inside a bubble, depending on the layout options the bubble will have different borders and colors and will show or not the user profile and name
+1. [`ChatMessageBubbleView`](#chatmessagebubbleview) wraps the message content inside a bubble. Depending on the layout options, the bubble will have different borders and colors and will show or not the user profile and name
 1. `ChatReactionsBubbleView` is a wrapper for `ChatMessageReactionsView` 
 1. `ChatMessageReactionsView` is responsible for rendering all reactions attached to the message
-1. `ChatMessageReactionsView.ItemView` renders a single reaction as a toggle with state (reactions from current users are rendered highlighted)
+1. `ChatMessageReactionsView.ItemView` renders a single reaction as a stateful toggle 
 
 ## Customizing Layout Options
 
-Messages are rendered differently depending on their content, layout options are flags that the `ChatMessageLayoutOptionsResolver` adds to each message. You can customize how messages are grouped and displayed by using your own `ChatMessageLayoutOptionsResolver` class.
+Messages are rendered differently depending on their content. Layout options are flags that the `ChatMessageLayoutOptionsResolver` injects in each message view. You can customize how messages are grouped and displayed by using your own `ChatMessageLayoutOptionsResolver` class.
 
 ```swift
 import StreamChat
@@ -77,7 +77,7 @@ final class YTMessageLayoutOptionsResolver: ChatMessageLayoutOptionsResolver {
 
 ## ChatMessageContentView
 
-This is the container class for a message, internally this class uses subviews such as the message bubble, reactions, attachments and user avatars.
+ChatMessageContentView is the container class for a message. Internally this class uses subviews such as the message bubble, reactions, attachments, and user avatars.
 
 ## Customizing Messages
 
@@ -95,7 +95,7 @@ Creating subclasses of `ChatMessageContentView` let's you alter views, create cu
 
 ![ChatMessageContentView detailed components](../assets/messagelist-layout-detail-components-annotation.png)
 
-- `mainContainer` is the whole view. It's a horizontal container that holds all top-hierarchy views inside the `ChatMessageContentView` - This includes the `AvatarView`, `Spacer` and `BubbleThreadMetaContainer`.
+- `mainContainer` is a horizontal container that holds all top-hierarchy views inside the `ChatMessageContentView` - This includes the `AvatarView`, `Spacer` and `BubbleThreadMetaContainer`.
 - `bubbleThreadMetaContainer` is a vertical container that holds `bubbleView` at the top and `metadataContainer` at the bottom by default. You can switch the positions for those elements or even add your own according to your needs.
 - `metadataContainer` is a horizontal container that holds  `authorNameLabel` , `timestampLabel` and `onlyVisibleForYouLabel`. 
 - `bubbleView`  is a view that embeds inside `bubbleContentContainer` and is responsible for displaying `quotedMessageView` and `textView`
@@ -111,7 +111,8 @@ Creating subclasses of `ChatMessageContentView` let's you alter views, create cu
 
 As we detailed in the previous section, we can adjust the layout by subclassing `ChatMessageContentView` and switching the `metadataContainer` with `bubbleView`/`bubbleThreadContainer`.  
 
-First we need to delete the bubble from `layoutOptionsResolver`
+First, we need to delete the bubble from `layoutOptionsResolver`
+
 ```swift
 
 final class CustomMessageOptionsResolver: ChatMessageLayoutOptionsResolver {
@@ -178,7 +179,7 @@ Components.default.messageContentView = CustomChatMessageContentView.self
 
 ## ChatMessageBubbleView
 
-Messages' content is wrapped by a bubble view. By default the borders of the blue are determined by the layout options for each message. This allows you to nicely group messages from the same user.
+ChatMessageBubbleView wraps the message content with a bubble. 
 
 ### Customizing Bubble View
 
