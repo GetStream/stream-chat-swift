@@ -10,9 +10,10 @@ final class SlackMessageOptionsResolver: ChatMessageLayoutOptionsResolver {
     override func optionsForMessage(
         at indexPath: IndexPath,
         in channel: ChatChannel,
-        with messages: AnyRandomAccessCollection<ChatMessage>
+        with messages: AnyRandomAccessCollection<ChatMessage>,
+        appearance: Appearance
     ) -> ChatMessageLayoutOptions {
-        var options = super.optionsForMessage(at: indexPath, in: channel, with: messages)
+        var options = super.optionsForMessage(at: indexPath, in: channel, with: messages, appearance: appearance)
         options.remove([.flipped, .bubble, .timestamp, .avatar, .avatarSizePadding, .authorName, .threadInfo, .reactions])
 
         let isFirstInGroup: Bool = {

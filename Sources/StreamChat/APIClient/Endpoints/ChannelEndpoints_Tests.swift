@@ -261,6 +261,61 @@ final class ChannelEndpoints_Tests: XCTestCase {
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
     }
     
+    func test_inviteMembers_buildsCorrectly() {
+        let cid = ChannelId.unique
+        let userIds: Set<UserId> = Set([UserId.unique, UserId.unique])
+        
+        let expectedEndpoint = Endpoint<EmptyResponse>(
+            path: "channels/" + cid.apiPath,
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: false,
+            body: ["invites": userIds]
+        )
+        
+        let endpoint: Endpoint<EmptyResponse> = .inviteMembers(cid: cid, userIds: userIds)
+        XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
+    }
+    
+    func test_acceptInvite_buildsCorrectly() {
+        let cid = ChannelId.unique
+        let message = "Welcome"
+        
+        let expectedEndpoint = Endpoint<EmptyResponse>(
+            path: "channels/" + cid.apiPath,
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: false,
+            body: ChannelInvitePayload(
+                accept: true,
+                reject: false,
+                message: .init(message: message)
+            )
+        )
+        
+        let endpoint: Endpoint<EmptyResponse> = .acceptInvite(cid: cid, message: message)
+        XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
+    }
+    
+    func test_rejectInvite_buildsCorrectly() {
+        let cid = ChannelId.unique
+        
+        let expectedEndpoint = Endpoint<EmptyResponse>(
+            path: "channels/" + cid.apiPath,
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: false,
+            body: ChannelInvitePayload(
+                accept: false,
+                reject: true,
+                message: nil
+            )
+        )
+        
+        let endpoint: Endpoint<EmptyResponse> = .rejectInvite(cid: cid)
+        XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
+    }
+    
     func test_markRead_buildsCorrectly() {
         let cid = ChannelId.unique
         
