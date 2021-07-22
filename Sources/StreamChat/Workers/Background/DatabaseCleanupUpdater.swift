@@ -48,7 +48,7 @@ class DatabaseCleanupUpdater<ExtraData: ExtraDataTypes>: Worker {
     /// Finds the existing channel list queries in the database and refetches them.
     func refetchExistingChannelListQueries() {
         let context = database.backgroundReadOnlyContext
-        context.perform {
+        context.perform { [weak self] in
             do {
                 let queriesDTOs = try context.fetch(
                     NSFetchRequest<ChannelListQueryDTO>(
@@ -60,7 +60,7 @@ class DatabaseCleanupUpdater<ExtraData: ExtraDataTypes>: Worker {
                 }
                 
                 queries.forEach {
-                    self.channelListUpdater.update(channelListQuery: $0) { error in
+                    self?.channelListUpdater.update(channelListQuery: $0) { error in
                         if let error = error {
                             log.error("Internal error. Failed to update ChannelListQueries for the new channel: \(error)")
                         }

@@ -116,6 +116,11 @@ Builds SlackClone app
 fastlane build_messenger_clone
 ```
 Builds MessengerClone app
+### build_youtube_clone
+```
+fastlane build_youtube_clone
+```
+Builds YouTubeClone app
 ### build_docs_snippets
 ```
 fastlane build_docs_snippets

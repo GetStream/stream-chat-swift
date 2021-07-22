@@ -27,9 +27,9 @@ public struct LinkAttachmentPayload: AttachmentPayload {
     /// Can be different from the original link, depends on the enriching rules.
     public let titleLink: URL?
     /// An image.
-    public let assetURL: URL
+    public let assetURL: URL?
     /// A preview image URL.
-    public let previewURL: URL
+    public let previewURL: URL?
 }
 
 extension LinkAttachmentPayload: Equatable {}
@@ -45,8 +45,8 @@ extension LinkAttachmentPayload: Encodable {
         try container.encodeIfPresent(text, forKey: .text)
         try container.encodeIfPresent(author, forKey: .author)
         try container.encodeIfPresent(titleLink, forKey: .titleLink)
-        try container.encode(assetURL, forKey: .assetURL)
-        try container.encode(previewURL, forKey: .thumbURL)
+        try container.encodeIfPresent(assetURL, forKey: .assetURL)
+        try container.encodeIfPresent(previewURL, forKey: .thumbURL)
     }
 }
 
@@ -59,7 +59,7 @@ extension LinkAttachmentPayload: Decodable {
         let assetURL = try
             container.decodeIfPresent(URL.self, forKey: .imageURL) ??
             container.decodeIfPresent(URL.self, forKey: .image) ??
-            container.decode(URL.self, forKey: .assetURL)
+            container.decodeIfPresent(URL.self, forKey: .assetURL)
 
         self.init(
             originalURL: try container.decode(URL.self, forKey: .ogURL),

@@ -83,6 +83,14 @@ class ChannelListUpdater_Tests: StressTestCase {
         AssertAsync.willBeEqual(completionCalledError as? TestError, error)
     }
     
+    func test_update_doesNotRetainSelf() {
+        // Simulate `update` call
+        listUpdater.update(channelListQuery: .init(filter: .in(.members, values: [.unique])))
+        
+        // Assert updater can be deallocated without waiting for the API response.
+        AssertAsync.canBeReleased(&listUpdater)
+    }
+    
     // MARK: - Mark all read
     
     func test_markAllRead_makesCorrectAPICall() {

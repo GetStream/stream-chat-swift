@@ -6,7 +6,7 @@ import Foundation
 
 struct MemberContainerPayload<ExtraData: UserExtraData>: Decodable {
     let member: MemberPayload<ExtraData>?
-    let invite: MemberInivePayload?
+    let invite: MemberInvitePayload?
     let memberRole: MemberRolePayload?
     
     init(from decoder: Decoder) throws {
@@ -17,7 +17,7 @@ struct MemberContainerPayload<ExtraData: UserExtraData>: Decodable {
     
     init(
         member: MemberPayload<ExtraData>?,
-        invite: MemberInivePayload?,
+        invite: MemberInvitePayload?,
         memberRole: MemberRolePayload?
     ) {
         self.member = member
@@ -86,7 +86,7 @@ struct MemberPayload<ExtraData: UserExtraData>: Decodable {
     }
 }
 
-struct MemberInivePayload: Decodable {
+struct MemberInvitePayload: Decodable {
     private enum CodingKeys: String, CodingKey {
         case role
         case isInvited = "invited"

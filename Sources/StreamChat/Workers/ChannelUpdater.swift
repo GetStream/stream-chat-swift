@@ -177,6 +177,49 @@ class ChannelUpdater<ExtraData: ExtraDataTypes>: Worker {
         }
     }
     
+    /// Invite members to a channel. They can then accept or decline the invitation
+    /// - Parameters:
+    ///   - cid: The channel identifier
+    ///   - userIds: Set of ids of users to be invited to the channel
+    ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
+    func inviteMembers(
+        cid: ChannelId,
+        userIds: Set<UserId>,
+        completion: ((Error?) -> Void)? = nil
+    ) {
+        apiClient.request(endpoint: .inviteMembers(cid: cid, userIds: userIds)) {
+            completion?($0.error)
+        }
+    }
+    
+    /// Accept invitation to a channel
+    /// - Parameters:
+    ///   - cid: A channel identifier of a channel a user was invited to.
+    ///   - message: A message for invitation acceptance
+    ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
+    func acceptInvite(
+        cid: ChannelId,
+        message: String?,
+        completion: ((Error?) -> Void)? = nil
+    ) {
+        apiClient.request(endpoint: .acceptInvite(cid: cid, message: message)) {
+            completion?($0.error)
+        }
+    }
+
+    /// Reject invitation to a channel
+    /// - Parameters:
+    ///   - cid: A channel identifier of a channel a user was invited to.
+    ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
+    func rejectInvite(
+        cid: ChannelId,
+        completion: ((Error?) -> Void)? = nil
+    ) {
+        apiClient.request(endpoint: .rejectInvite(cid: cid)) {
+            completion?($0.error)
+        }
+    }
+    
     /// Marks a channel as read
     /// - Parameters:
     ///   - cid: Channel id of the channel to be marked as read
