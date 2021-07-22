@@ -14,6 +14,7 @@ _July 21, 2021_
 - `urlRequest(forImage url:)` added to `ImageCDN` protocol, this can be used to inject custom HTTP headers into image loading requests [#1291](https://github.com/GetStream/stream-chat-swift/issues/1291)
 - Functionality that allows [inviting](https://getstream.io/chat/docs/react/channel_invites/?language=swift) users to channels with subsequent acceptance or rejection on their part [#1276](https://github.com/GetStream/stream-chat-swift/pull/1276)
 - `EventsController` which exposes event observing API [#1266](https://github.com/GetStream/stream-chat-swift/pull/1266)
+- A back off mechanism for cases when a token expires and the new reobtained one is also expired, so there is no endless loop. [#1305](https://github.com/GetStream/stream-chat-swift/pull/1305)
 
 ### 🐞 Fixed
 - Fix an issue where member role sent from backend was not recognized by the SDK [#1288](https://github.com/GetStream/stream-chat-swift/pull/1288)
