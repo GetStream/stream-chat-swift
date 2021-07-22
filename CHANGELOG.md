@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+### ⚠️ Breaking Changes from `4.0-beta.8`
+- `ChatMessageLayoutOptionsResolver.optionsForMessage` has a new parameter: `appearance`. Please add this new param to your overrides. [#1304](https://github.com/GetStream/stream-chat-swift/issues/1304)
+
 ### 🔄 Changed
 
 # [4.0.0-beta.8](https://github.com/GetStream/stream-chat-swift/releases/tag/4.0.0-beta.8)

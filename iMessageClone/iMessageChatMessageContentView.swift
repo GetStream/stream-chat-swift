@@ -49,7 +49,7 @@ final class iMessageChatMessageLayoutOptionsResolver: ChatMessageLayoutOptionsRe
         with messages: AnyRandomAccessCollection<_ChatMessage<NoExtraData>>,
         appearance: Appearance
     ) -> ChatMessageLayoutOptions {
-        var options = super.optionsForMessage(at: indexPath, in: channel, with: messages)
+        var options = super.optionsForMessage(at: indexPath, in: channel, with: messages, appearance: appearance)
         options.remove(.authorName)
         return options
     }
