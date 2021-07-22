@@ -24,6 +24,10 @@ open class _ChatChannelHeaderView<ExtraData: ExtraDataTypes>:
     /// Timer used to update the online status of member in the channel.
     open var timer: Timer?
 
+    /// The amount of time it updates the online status of the members.
+    /// By default it is 60 seconds.
+    open var statusUpdateInterval: TimeInterval { 60 }
+
     /// A view that displays a title label and subtitle in a container stack view.
     open private(set) lazy var titleContainerView: TitleContainerView = components
         .titleContainerView.init()
@@ -81,15 +85,18 @@ open class _ChatChannelHeaderView<ExtraData: ExtraDataTypes>:
         return L10n.Message.Title.group(channel.memberCount, channel.watcherCount)
     }
 
-    /// Create a timer if the channel is direct between two people. Will call update content
-    /// repeatedly every minute to update the online status of the members.
+    /// Create the timer to repeatedly update the online status of the members.
     open func makeTimer() {
-        if timer == nil, channelController?.channel?.isDirectMessageChannel == true {
-            timer = Timer.scheduledTimer(withTimeInterval: 60, repeats: true) { [weak self] _ in
-                self?.updateContentIfNeeded()
-            }
-        } else {
-            timer = nil
+        // Only create the timer if is not created yet and if the interval is not zero.
+        guard timer == nil, statusUpdateInterval > 0 else {
+            return
+        }
+
+        timer = Timer.scheduledTimer(
+            withTimeInterval: statusUpdateInterval,
+            repeats: true
+        ) { [weak self] _ in
+            self?.updateContentIfNeeded()
         }
     }
 
