@@ -28,7 +28,7 @@ let config = ChatClientConfig(apiKey: .init("<# Your API Key Here #>"))
 
 /// you can generate the token for this user from https://getstream.io/chat/docs/ios-swift/token_generator/?language=swift
 /// make sure to use the `leia_organa` as user id and the correct API Key Secret
-let token = Token(stringLiteral: "<# Your User Token Here#>")
+let token: Token = "Your User Token Here"
 
 /// create an instance of ChatClient and share it using the singleton
 ChatClient.shared = ChatClient(config: config, tokenProvider: .closure { client, completion in
