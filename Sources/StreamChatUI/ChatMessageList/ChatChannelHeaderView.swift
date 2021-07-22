@@ -100,7 +100,7 @@ open class _ChatChannelHeaderView<ExtraData: ExtraDataTypes>:
         }
     }
 
-    // MARK: - _ChatChannelControllerDelegate Implementation
+    // MARK: - ChatChannelControllerDelegate Implementation
 
     open func channelController(
         _ channelController: _ChatChannelController<ExtraData>,

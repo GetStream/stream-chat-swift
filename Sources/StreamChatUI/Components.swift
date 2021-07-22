@@ -99,6 +99,10 @@ public struct _Components<ExtraData: ExtraDataTypes> {
     /// The View Controller used to display the detail of a message thread.
     public var threadVC: _ChatThreadVC<ExtraData>.Type = _ChatThreadVC<ExtraData>.self
 
+    /// The view that displays channel information on the thread header.
+    public var threadHeaderView: _ChatThreadHeaderView<ExtraData>.Type =
+        _ChatThreadHeaderView<ExtraData>.self
+
     /// The View Controller by default used to display message actions after long-pressing on the message.
     public var messageActionsVC: _ChatMessageActionsVC<ExtraData>.Type = _ChatMessageActionsVC<ExtraData>.self
 
