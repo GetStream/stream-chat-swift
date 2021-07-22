@@ -1,0 +1,7 @@
+---
+title: ChatChannelController
+---
+
+
+## ChatChannelControllerDelegate
+

@@ -14,6 +14,21 @@
       ]
     },
     {
+      "Controllers and Delegates": [
+        "controllers/controllers-overview",
+        "controllers/current_chat_user_controller",
+        "controllers/chat_connection_controller",
+        "controllers/chat_user_controller",
+        "controllers/chat_user_list_controller",
+        "controllers/chat_channel_list_controller",
+        "controllers/chat_channel_controller",
+        "controllers/chat_channel_member_controller",
+        "controllers/chat_channel_member_list_controller",
+        "controllers/chat_message_controller",
+        "controllers/chat_user_search_controller"
+      ]
+    },
+    {
       "Core Components": [
         "components/channel-list",
         "components/message-list",
