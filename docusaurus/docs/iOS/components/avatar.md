@@ -24,8 +24,8 @@ First, create a subclass of `ChatAvatarView` and set it according to your needs.
 
 ```swift
 final class SquareAvatarView: ChatAvatarView {
-    override func layoutSubviews() {
-        super.layoutSubviews()
+    override func setUpAppearance() {
+        super.setUpAppearance()
         imageView.layer.cornerRadius = 3
     }
 }
