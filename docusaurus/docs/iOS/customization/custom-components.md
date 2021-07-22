@@ -12,8 +12,8 @@ These are the steps that you need to follow to use a custom component:
 1. Make changes to layout, styling, behavior as needed.
 1. Configure the SDK to use your custom component.
 
-To make customizations as easy as possible all view components conform to the [Customizable](components#the-components-object) protocol and are subclasses of the `_View` base class. When building your own custom
-component in most cases you only need to override or implement the methods from the `Customizable` protocol.
+To make customizations as easy as possible all view components share the same lifecycle and expose common properties such as `content`, `components` and `appearance`. When building your own custom
+component in most cases you only need to override methods from the `Customizable` protocol such as `updateContent()`, `setUpAppearance()` or `setUpLayout()`.
 
 :::note
 Most UI components are stateless view classes. Components like `MessageList`, `ChannelList` and `MessageComposer` are stateful and are view controllers. Customization for these components are described in detail in their own doc pages.
