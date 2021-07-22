@@ -24,9 +24,10 @@ final class YTMessageLayoutOptionsResolver: ChatMessageLayoutOptionsResolver {
     override func optionsForMessage(
         at indexPath: IndexPath,
         in channel: ChatChannel,
-        with messages: AnyRandomAccessCollection<ChatMessage>
+        with messages: AnyRandomAccessCollection<ChatMessage>,
+        appearance: Appearance
     ) -> ChatMessageLayoutOptions {
-        var options = super.optionsForMessage(at: indexPath, in: channel, with: messages)
+        var options = super.optionsForMessage(at: indexPath, in: channel, with: messages, appearance: appearance)
         
         // Remove the message options that are not needed in our case
         options.remove([
@@ -74,9 +75,9 @@ By default Stream Chat aligns messages from other users on the left and messages
  
  ```swift
  class LeftAlignedMessageLayoutOptionsResolver: ChatMessageLayoutOptionsResolver {
-     override func optionsForMessage(at indexPath: IndexPath, in channel: _ChatChannel<NoExtraData>, with messages: AnyRandomAccessCollection<_ChatMessage<NoExtraData>>) -> ChatMessageLayoutOptions {
+     override func optionsForMessage(at indexPath: IndexPath, in channel: _ChatChannel<NoExtraData>, with messages: AnyRandomAccessCollection<_ChatMessage<NoExtraData>>, appearance: Appearance) -> ChatMessageLayoutOptions {
          // Get options for the message at given indexpath to change it. 
-         var options = super.optionsForMessage(at: indexPath, in: channel, with: messages)
+         var options = super.optionsForMessage(at: indexPath, in: channel, with: messages, appearance: appearance)
          // First it's needed to disable the flipping of sides when messages is sent from current user
          options.remove(.flipped)
          // After that we need to ensure that for current user there will be avatar included in the message.
@@ -102,9 +103,9 @@ If you need to hide the bubbles, consider implementing a custom subclass of `Mes
 
 ```swift
 class NoBubblesMessageLayoutOptionsResolver: ChatMessageLayoutOptionsResolver {
-    override func optionsForMessage(at indexPath: IndexPath, in channel: _ChatChannel<NoExtraData>, with messages: AnyRandomAccessCollection<_ChatMessage<NoExtraData>>) -> ChatMessageLayoutOptions {
+    override func optionsForMessage(at indexPath: IndexPath, in channel: _ChatChannel<NoExtraData>, with messages: AnyRandomAccessCollection<_ChatMessage<NoExtraData>>, appearance: Appearance) -> ChatMessageLayoutOptions {
         // Get options for the message at given indexPath to change it.
-        var options = super.optionsForMessage(at: indexPath, in: channel, with: messages)
+        var options = super.optionsForMessage(at: indexPath, in: channel, with: messages, appearance: appearance)
         options.remove(.bubble)
         return options
     }
@@ -127,9 +128,9 @@ The `isLastInSequence` property enables this operation when grouping messages.
 ```swift
 
 class NotGroupedMessageLayoutOptionsResolver: ChatMessageLayoutOptionsResolver {
-    override func optionsForMessage(at indexPath: IndexPath, in channel: _ChatChannel<NoExtraData>, with messages: AnyRandomAccessCollection<_ChatMessage<NoExtraData>>) -> ChatMessageLayoutOptions {
+    override func optionsForMessage(at indexPath: IndexPath, in channel: _ChatChannel<NoExtraData>, with messages: AnyRandomAccessCollection<_ChatMessage<NoExtraData>>, appearance: Appearance) -> ChatMessageLayoutOptions {
         // Get options for the message at given indexPath to change it.
-        var options = super.optionsForMessage(at: indexPath, in: channel, with: messages)
+        var options = super.optionsForMessage(at: indexPath, in: channel, with: messages, appearance: appearance)
 
         options.insert(.continuousBubble)
         options.insert(.timestamp)

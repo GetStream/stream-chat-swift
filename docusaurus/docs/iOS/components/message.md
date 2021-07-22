@@ -49,9 +49,10 @@ final class YTMessageLayoutOptionsResolver: ChatMessageLayoutOptionsResolver {
     override func optionsForMessage(
         at indexPath: IndexPath,
         in channel: ChatChannel,
-        with messages: AnyRandomAccessCollection<ChatMessage>
+        with messages: AnyRandomAccessCollection<ChatMessage>,
+        appearance: Appearance
     ) -> ChatMessageLayoutOptions {
-        var options = super.optionsForMessage(at: indexPath, in: channel, with: messages)
+        var options = super.optionsForMessage(at: indexPath, in: channel, with: messages, appearance: appearance)
         
         // Remove the message options that are not needed in our case
         options.remove([
@@ -119,10 +120,11 @@ final class CustomMessageOptionsResolver: ChatMessageLayoutOptionsResolver {
     override func optionsForMessage(
         at indexPath: IndexPath,
         in channel: ChatChannel,
-        with messages: AnyRandomAccessCollection<ChatMessage>
+        with messages: AnyRandomAccessCollection<ChatMessage>,
+        appearance: Appearance
     ) -> ChatMessageLayoutOptions {
         // First let's get the default options for the message and clean them up.
-        var options = super.optionsForMessage(at: indexPath, in: channel, with: messages)
+        var options = super.optionsForMessage(at: indexPath, in: channel, with: messages, appearance: appearance)
         options.remove([.flipped, .bubble, .timestamp, .avatar, .avatarSizePadding, .authorName, .threadInfo, .reactions])
 
         options.insert([.avatar, .timestamp, .authorName])
