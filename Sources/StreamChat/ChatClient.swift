@@ -593,7 +593,16 @@ extension _ChatClient: ConnectionStateDelegate {
                     clientUpdater.reloadUserIfNeeded(
                         userConnectionProvider: .closure { _, completion in
                             tokenProvider() { result in
-                                completion(result)
+                                switch result {
+                                case let .success(token):
+                                    if token.isExpired {
+                                        completion(.failure(ClientError.ExpiredToken()))
+                                    } else {
+                                        completion(.success(token))
+                                    }
+                                case let .failure(error):
+                                    completion(.failure(error))
+                                }
                             }
                         }
                     )

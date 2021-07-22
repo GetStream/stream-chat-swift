@@ -433,6 +433,66 @@ class ChatClient_Tests: StressTestCase {
         XCTAssertNil(client.connectionId)
     }
     
+    // A token expires, we refetch a new token, it's also expired. In this case we need to
+    // back off, otherwise this causes endless token reobtaining cycle
+    func test_webSocketIsDisconnected_becauseTokenExpired_newTokenIsExpiredToo() throws {
+        // Create a new chat client
+        let client = ChatClient(
+            config: inMemoryStorageConfig,
+            workerBuilders: workerBuilders,
+            eventWorkerBuilders: [],
+            environment: testEnv.environment
+        )
+        
+        client.connectAnonymousUser()
+        client.tokenProvider = {
+            $0(
+                .success(
+                    try! .init(
+                        // an expired token
+                        rawValue: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoibHVrZV9za3l3YWxrZXIiLCJleHAiOjE2MjY5NTA3Mjd9.RsRV1gi1uP_EGLGvQ2QCSdpuqAIoVhHy1XNdpCUsUxg"
+                    )
+                )
+            )
+        }
+
+        // Simulate access to `webSocketClient` so it is initialized
+        _ = client.webSocketClient
+        
+        // Simulate .connected state to obtain connection id
+        let connectionId: ConnectionId = .unique
+        testEnv.webSocketClient?.connectionStateDelegate?
+            .webSocketClient(testEnv.webSocketClient!, didUpdateConnectionState: .connected(connectionId: connectionId))
+        
+        XCTAssertEqual(client.connectionId, connectionId)
+        
+        // Was called on ChatClient init
+        XCTAssertEqual(testEnv.clientUpdater!.reloadUserIfNeeded_callsCount, 1)
+
+        // Simulate WebSocketConnection change to "disconnected"
+        let error = ClientError(with: ErrorPayload(code: 40, message: "", statusCode: 200))
+        testEnv.webSocketClient?
+            .connectionStateDelegate?
+            .webSocketClient(
+                testEnv.webSocketClient!,
+                didUpdateConnectionState: .disconnected(error: error)
+            )
+        
+        XCTAssertEqual(testEnv.clientUpdater!.reloadUserIfNeeded_callsCount, 2)
+        
+        var tokenExpiredError: ClientError?
+        testEnv.clientUpdater?
+            .reloadUserIfNeeded_userConnectionProvider?
+            .getToken(client) { result in
+                if case let .failure(error) = result {
+                    tokenExpiredError = error as? ClientError
+                }
+            }
+        
+        XCTAssertEqual(tokenExpiredError, ClientError.ExpiredToken())
+        XCTAssertEqual(client.connectionStatus, .disconnected(error: error))
+    }
+    
     func test_clientProvidesConnectionId_afterUnlockingResources() {
         // IMPORTANT: This test hangs (freezes) if there's simulatenous
         // access to `connectionId`, so freeze = failure for this test

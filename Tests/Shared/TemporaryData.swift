@@ -34,7 +34,7 @@ extension String {
 extension Token {
     /// Returns a new `Token` with the provided `user_id` but not in JWT format.
     static func unique(userId: UserId = .unique) -> Self {
-        .init(rawValue: .unique, userId: userId)
+        .init(rawValue: .unique, userId: userId, expiration: nil)
     }
 }
 
