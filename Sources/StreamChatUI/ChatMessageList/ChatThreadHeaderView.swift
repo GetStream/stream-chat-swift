@@ -16,6 +16,11 @@ open class _ChatThreadHeaderView<ExtraData: ExtraDataTypes>:
     /// Controller for observing data changes within the channel.
     open var channelController: _ChatChannelController<ExtraData>?
 
+    /// The user id of the current logged in user.
+    open var currentUserId: UserId? {
+        channelController?.client.currentUserId
+    }
+
     /// A view that displays a title label and subtitle in a container stack view.
     open private(set) lazy var titleContainerView: TitleContainerView = components
         .titleContainerView.init()
@@ -37,9 +42,21 @@ open class _ChatThreadHeaderView<ExtraData: ExtraDataTypes>:
         super.updateContent()
 
         titleContainerView.content = (
-            L10n.Message.Threads.reply,
-            channelController?.channel?.name.map { L10n.Message.Threads.replyWith($0) }
+            titleText,
+            subtitleText
         )
+    }
+
+    /// The title text used to render the title label. By default it is "Thread Reply" label.
+    open var titleText: String? {
+        L10n.Message.Threads.reply
+    }
+
+    /// The subtitle text used in the subtitle label. By default it is the channel name.
+    open var subtitleText: String? {
+        guard let channel = channelController?.channel else { return nil }
+        let channelName = components.channelNamer(channel, currentUserId)
+        return channelName.map { L10n.Message.Threads.replyWith($0) }
     }
 
     // MARK: - ChatChannelControllerDelegate Implementation

@@ -25,7 +25,8 @@
     {
       "UI Components": [
         "components/channel-list-item-view",
-        "components/channel-header-view"
+        "components/channel-header-view",
+        "components/thread-header-view"
       ]
     },
     {
