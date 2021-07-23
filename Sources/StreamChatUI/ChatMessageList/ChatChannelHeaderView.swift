@@ -14,7 +14,11 @@ open class _ChatChannelHeaderView<ExtraData: ExtraDataTypes>:
     ThemeProvider,
     _ChatChannelControllerDelegate {
     /// Controller for observing data changes within the channel.
-    open var channelController: _ChatChannelController<ExtraData>?
+    open var channelController: _ChatChannelController<ExtraData>? {
+        didSet {
+            channelController?.setDelegate(self)
+        }
+    }
 
     /// The user id of the current logged in user.
     open var currentUserId: UserId? {
@@ -22,7 +26,11 @@ open class _ChatChannelHeaderView<ExtraData: ExtraDataTypes>:
     }
 
     /// Timer used to update the online status of member in the channel.
-    open var timer: Timer?
+    open var timer: Timer? {
+        didSet {
+            oldValue?.invalidate()
+        }
+    }
 
     /// The amount of time it updates the online status of the members.
     /// By default it is 60 seconds.
@@ -36,7 +44,7 @@ open class _ChatChannelHeaderView<ExtraData: ExtraDataTypes>:
     override open func setUp() {
         super.setUp()
 
-        channelController?.setDelegate(self)
+        makeTimer()
     }
 
     override open func setUpLayout() {
@@ -49,8 +57,6 @@ open class _ChatChannelHeaderView<ExtraData: ExtraDataTypes>:
         super.updateContent()
 
         titleContainerView.content = (titleText, subtitleText)
-
-        makeTimer()
     }
 
     /// The title text used to render the title label. By default it is the channel name.
