@@ -511,10 +511,12 @@
 		847E946E269C687300E31D0C /* EventsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 847E946D269C687300E31D0C /* EventsController.swift */; };
 		847F3CEA2689FDEB00D240E0 /* ChatMessageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 847F3CE92689FDEB00D240E0 /* ChatMessageCell.swift */; };
 		84A1D2EE26AAFDEE00014712 /* TestCustomEventPayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84A1D2ED26AAFDEE00014712 /* TestCustomEventPayload.swift */; };
+		84A1D2E626AACDBE00014712 /* ChannelEventsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84A1D2E526AACDBE00014712 /* ChannelEventsController.swift */; };
 		84A1D2E826AAEA3300014712 /* CustomEventRequestBody_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84A1D2E726AAEA3300014712 /* CustomEventRequestBody_Tests.swift */; };
 		84A1D2EA26AAFB1D00014712 /* EventSender_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84A1D2E926AAFB1D00014712 /* EventSender_Tests.swift */; };
 		84A1D2EC26AAFB8E00014712 /* EventSender_Mock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84A1D2EB26AAFB8E00014712 /* EventSender_Mock.swift */; };
 		84A1D2F026AB10DB00014712 /* EventDecoder_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84A1D2EF26AB10DB00014712 /* EventDecoder_Tests.swift */; };
+		84A1D2F426AB221E00014712 /* ChannelEventsController_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84A1D2F326AB221E00014712 /* ChannelEventsController_Tests.swift */; };
 		84A1D2F626AB357900014712 /* UnknownEvent_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84A1D2F526AB357900014712 /* UnknownEvent_Tests.swift */; };
 		84A43CAF26A9A25000302763 /* UnknownEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84A43CAE26A9A25000302763 /* UnknownEvent.swift */; };
 		84A43CB326A9A54700302763 /* EventSender.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84A43CB226A9A54700302763 /* EventSender.swift */; };
@@ -1824,10 +1826,12 @@
 		847E946D269C687300E31D0C /* EventsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventsController.swift; sourceTree = "<group>"; };
 		847F3CE92689FDEB00D240E0 /* ChatMessageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageCell.swift; sourceTree = "<group>"; };
 		84A1D2ED26AAFDEE00014712 /* TestCustomEventPayload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestCustomEventPayload.swift; sourceTree = "<group>"; };
+		84A1D2E526AACDBE00014712 /* ChannelEventsController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChannelEventsController.swift; sourceTree = "<group>"; };
 		84A1D2E726AAEA3300014712 /* CustomEventRequestBody_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomEventRequestBody_Tests.swift; sourceTree = "<group>"; };
 		84A1D2E926AAFB1D00014712 /* EventSender_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventSender_Tests.swift; sourceTree = "<group>"; };
 		84A1D2EB26AAFB8E00014712 /* EventSender_Mock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventSender_Mock.swift; sourceTree = "<group>"; };
 		84A1D2EF26AB10DB00014712 /* EventDecoder_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventDecoder_Tests.swift; sourceTree = "<group>"; };
+		84A1D2F326AB221E00014712 /* ChannelEventsController_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelEventsController_Tests.swift; sourceTree = "<group>"; };
 		84A1D2F526AB357900014712 /* UnknownEvent_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnknownEvent_Tests.swift; sourceTree = "<group>"; };
 		84A43CAE26A9A25000302763 /* UnknownEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnknownEvent.swift; sourceTree = "<group>"; };
 		84A43CB226A9A54700302763 /* EventSender.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventSender.swift; sourceTree = "<group>"; };
@@ -3931,6 +3935,8 @@
 				84DCB850269F4D31006CDF32 /* EventsController+Combine_Tests.swift */,
 				84DCB852269F569A006CDF32 /* EventsController+SwiftUI.swift */,
 				84DCB854269F56A7006CDF32 /* EventsController+SwiftUI_Tests.swift */,
+				84A1D2E526AACDBE00014712 /* ChannelEventsController.swift */,
+				84A1D2F326AB221E00014712 /* ChannelEventsController_Tests.swift */,
 			);
 			path = EventsController;
 			sourceTree = "<group>";
@@ -6050,6 +6056,7 @@
 				799C9438247D2FB9001F1104 /* ChatClientConfig.swift in Sources */,
 				7964F3B6249A314D002A09EC /* PrefixLogFormatter.swift in Sources */,
 				8862922925AC720F00D9AE78 /* TokenProvider.swift in Sources */,
+				84A1D2E626AACDBE00014712 /* ChannelEventsController.swift in Sources */,
 				88BDCA8A2642B02D0099AD74 /* ChatMessageAttachment.swift in Sources */,
 				88E26D6E2580F34B00F55AB5 /* AttachmentUploader.swift in Sources */,
 				88A00DD02525F08000259AB4 /* ModerationEndpoints.swift in Sources */,
@@ -6250,6 +6257,7 @@
 				DA84074025260CA3005A0F62 /* UserListController_Tests.swift in Sources */,
 				84A1D2EE26AAFDEE00014712 /* TestCustomEventPayload.swift in Sources */,
 				882C5763252C7F6500E60C44 /* ChannelMemberListUpdater_Mock.swift in Sources */,
+				84A1D2F426AB221E00014712 /* ChannelEventsController_Tests.swift in Sources */,
 				8A62705E24BE2CD70040BFD6 /* XCTestCase+MockJSON.swift in Sources */,
 				DA84074B2526417B005A0F62 /* JSONEncoder+Extensions.swift in Sources */,
 				88381E6E258259310047A6A3 /* FileUploadPayload_Tests.swift in Sources */,
