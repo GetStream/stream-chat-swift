@@ -26,7 +26,8 @@ public extension _ChatClient {
                         internetConnection: $4
                     )
                 }
-            )
+            ),
+            tokenExpirationRetryStrategy: DefaultReconnectionStrategy()
         )
     }
 }

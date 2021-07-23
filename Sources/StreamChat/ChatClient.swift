@@ -208,6 +208,12 @@ public class _ChatClient<ExtraData: ExtraDataTypes> {
     /// The environment object containing all dependencies of this `Client` instance.
     private let environment: Environment
     
+    /// Retry timing strategy for refreshing an expiried token
+    private var tokenExpirationRetryStrategy: WebSocketClientReconnectionStrategy
+    
+    /// A timer that runs token refreshing job
+    private var tokenRetryTimer: TimerControl?
+    
     /// The default configuration of URLSession to be used for both the `APIClient` and `WebSocketClient`. It contains all
     /// required header auth parameters to make a successful request.
     private var urlSessionConfiguration: URLSessionConfiguration {
@@ -292,13 +298,15 @@ public class _ChatClient<ExtraData: ExtraDataTypes> {
         tokenProvider: TokenProvider? = nil,
         workerBuilders: [WorkerBuilder],
         eventWorkerBuilders: [EventWorkerBuilder],
-        environment: Environment
+        environment: Environment,
+        tokenExpirationRetryStrategy: WebSocketClientReconnectionStrategy = DefaultReconnectionStrategy()
     ) {
         self.config = config
         self.tokenProvider = tokenProvider
         self.environment = environment
         self.workerBuilders = workerBuilders
         self.eventWorkerBuilders = eventWorkerBuilders
+        self.tokenExpirationRetryStrategy = tokenExpirationRetryStrategy
 
         currentUserId = fetchCurrentUserIdFromDatabase()
     }
@@ -537,6 +545,8 @@ extension _ChatClient {
                 #endif
             }
         }
+        
+        var timerType: Timer.Type = DefaultTimer.self
     }
 }
 
@@ -589,28 +599,7 @@ extension _ChatClient: ConnectionStateDelegate {
         case let .disconnected(error: error):
             if let error = error,
                error.isTokenExpiredError {
-                if let tokenProvider = tokenProvider {
-                    clientUpdater.reloadUserIfNeeded(
-                        userConnectionProvider: .closure { _, completion in
-                            tokenProvider() { result in
-                                switch result {
-                                case let .success(token):
-                                    if token.isExpired {
-                                        completion(.failure(ClientError.ExpiredToken()))
-                                    } else {
-                                        completion(.success(token))
-                                    }
-                                case let .failure(error):
-                                    completion(.failure(error))
-                                }
-                            }
-                        }
-                    )
-                } else {
-                    log.assertionFailure(
-                        "In case if token expiration is enabled on backend you need to provide a way to reobtain it via `tokenProvider` on ChatClient"
-                    )
-                }
+                refreshToken(error: error)
                 shouldNotifyConnectionIdWaiters = false
             } else {
                 shouldNotifyConnectionIdWaiters = true
@@ -628,6 +617,37 @@ extension _ChatClient: ConnectionStateDelegate {
             connectionId: connectionId,
             shouldNotifyWaiters: shouldNotifyConnectionIdWaiters
         )
+    }
+    
+    private func refreshToken(error: ClientError) {
+        guard let tokenProvider = tokenProvider else {
+            return log.assertionFailure(
+                "In case if token expiration is enabled on backend you need to provide a way to reobtain it via `tokenProvider` on ChatClient"
+            )
+        }
+        
+        guard let reconnectionDelay = tokenExpirationRetryStrategy.reconnectionDelay(
+            forConnectionError: error
+        ) else { return }
+        tokenRetryTimer = environment
+            .timerType
+            .schedule(
+                timeInterval: reconnectionDelay,
+                queue: .main
+            ) { [clientUpdater] in
+                clientUpdater.reloadUserIfNeeded(
+                    userConnectionProvider: .closure { _, completion in
+                        tokenProvider() { result in
+                            if case let .success(token) = result,
+                               !token.isExpired {
+                                self.tokenExpirationRetryStrategy.successfullyConnected()
+                            }
+                            
+                            completion(result)
+                        }
+                    }
+                )
+            }
     }
     
     /// Update connectionId and notify waiters if needed

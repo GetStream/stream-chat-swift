@@ -10,6 +10,7 @@ import XCTest
 class ChatClient_Tests: StressTestCase {
     var userId: UserId!
     private var testEnv: TestEnvironment<NoExtraData>!
+    private var time: VirtualTime!
     
     // A helper providing ChatClientConfig with in-memory DB option
     var inMemoryStorageConfig: ChatClientConfig {
@@ -31,6 +32,8 @@ class ChatClient_Tests: StressTestCase {
         super.setUp()
         userId = .unique
         testEnv = .init()
+        time = VirtualTime()
+        VirtualTimeTimer.time = time
     }
     
     override func tearDown() {
@@ -392,7 +395,7 @@ class ChatClient_Tests: StressTestCase {
         XCTAssertNil(providedConnectionId)
     }
     
-    func test_client_webSocketIsDisconnected_becauseTokenExpired_callsReloadUserIfNeeded() throws {
+    func test_webSocketIsDisconnected_becauseTokenExpired_newTokenIsExpiredToo() throws {
         // Create a new chat client
         let client = ChatClient(
             config: inMemoryStorageConfig,
@@ -426,51 +429,11 @@ class ChatClient_Tests: StressTestCase {
                 didUpdateConnectionState: .disconnected(error: error)
             )
         
+        time.run(numberOfSeconds: 0.6)
         // Was called one more time on receiving token expired error
-        XCTAssertEqual(testEnv.clientUpdater!.reloadUserIfNeeded_callsCount, 2)
+        AssertAsync.willBeEqual(testEnv.clientUpdater!.reloadUserIfNeeded_callsCount, 2)
         
-        // We set connectionId to nil after token expiration disconnect
-        XCTAssertNil(client.connectionId)
-    }
-    
-    // A token expires, we refetch a new token, it's also expired. In this case we need to
-    // back off, otherwise this causes endless token reobtaining cycle
-    func test_webSocketIsDisconnected_becauseTokenExpired_newTokenIsExpiredToo() throws {
-        // Create a new chat client
-        let client = ChatClient(
-            config: inMemoryStorageConfig,
-            workerBuilders: workerBuilders,
-            eventWorkerBuilders: [],
-            environment: testEnv.environment
-        )
-        
-        client.connectAnonymousUser()
-        client.tokenProvider = {
-            $0(
-                .success(
-                    try! .init(
-                        // an expired token
-                        rawValue: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoibHVrZV9za3l3YWxrZXIiLCJleHAiOjE2MjY5NTA3Mjd9.RsRV1gi1uP_EGLGvQ2QCSdpuqAIoVhHy1XNdpCUsUxg"
-                    )
-                )
-            )
-        }
-
-        // Simulate access to `webSocketClient` so it is initialized
-        _ = client.webSocketClient
-        
-        // Simulate .connected state to obtain connection id
-        let connectionId: ConnectionId = .unique
-        testEnv.webSocketClient?.connectionStateDelegate?
-            .webSocketClient(testEnv.webSocketClient!, didUpdateConnectionState: .connected(connectionId: connectionId))
-        
-        XCTAssertEqual(client.connectionId, connectionId)
-        
-        // Was called on ChatClient init
-        XCTAssertEqual(testEnv.clientUpdater!.reloadUserIfNeeded_callsCount, 1)
-
-        // Simulate WebSocketConnection change to "disconnected"
-        let error = ClientError(with: ErrorPayload(code: 40, message: "", statusCode: 200))
+        // Token is expired again
         testEnv.webSocketClient?
             .connectionStateDelegate?
             .webSocketClient(
@@ -478,19 +441,19 @@ class ChatClient_Tests: StressTestCase {
                 didUpdateConnectionState: .disconnected(error: error)
             )
         
+        // Does not call secondary token refresh right away
         XCTAssertEqual(testEnv.clientUpdater!.reloadUserIfNeeded_callsCount, 2)
         
-        var tokenExpiredError: ClientError?
-        testEnv.clientUpdater?
-            .reloadUserIfNeeded_userConnectionProvider?
-            .getToken(client) { result in
-                if case let .failure(error) = result {
-                    tokenExpiredError = error as? ClientError
-                }
-            }
+        // Does not call secondary token refresh when not enough time has passed
+        time.run(numberOfSeconds: 0.1)
+        XCTAssertEqual(testEnv.clientUpdater!.reloadUserIfNeeded_callsCount, 2)
         
-        XCTAssertEqual(tokenExpiredError, ClientError.ExpiredToken())
-        XCTAssertEqual(client.connectionStatus, .disconnected(error: error))
+        // Calls secondary token refresh when enough time has passed
+        time.run(numberOfSeconds: 3)
+        AssertAsync.willBeEqual(testEnv.clientUpdater!.reloadUserIfNeeded_callsCount, 3)
+
+        // We set connectionId to nil after token expiration disconnect
+        XCTAssertNil(client.connectionId)
     }
     
     func test_clientProvidesConnectionId_afterUnlockingResources() {
@@ -1207,7 +1170,8 @@ private class TestEnvironment<ExtraData: ExtraDataTypes> {
             backgroundTaskSchedulerBuilder: {
                 self.backgroundTaskScheduler = MockBackgroundTaskScheduler()
                 return self.backgroundTaskScheduler!
-            }
+            },
+            timerType: VirtualTimeTimer.self
         )
     }()
 }
