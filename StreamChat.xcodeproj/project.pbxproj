@@ -514,6 +514,7 @@
 		84A1D2E826AAEA3300014712 /* CustomEventRequestBody_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84A1D2E726AAEA3300014712 /* CustomEventRequestBody_Tests.swift */; };
 		84A1D2EA26AAFB1D00014712 /* EventSender_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84A1D2E926AAFB1D00014712 /* EventSender_Tests.swift */; };
 		84A1D2EC26AAFB8E00014712 /* EventSender_Mock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84A1D2EB26AAFB8E00014712 /* EventSender_Mock.swift */; };
+		84A1D2F026AB10DB00014712 /* EventDecoder_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84A1D2EF26AB10DB00014712 /* EventDecoder_Tests.swift */; };
 		84A1D2F626AB357900014712 /* UnknownEvent_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84A1D2F526AB357900014712 /* UnknownEvent_Tests.swift */; };
 		84A43CAF26A9A25000302763 /* UnknownEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84A43CAE26A9A25000302763 /* UnknownEvent.swift */; };
 		84A43CB326A9A54700302763 /* EventSender.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84A43CB226A9A54700302763 /* EventSender.swift */; };
@@ -1826,6 +1827,7 @@
 		84A1D2E726AAEA3300014712 /* CustomEventRequestBody_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomEventRequestBody_Tests.swift; sourceTree = "<group>"; };
 		84A1D2E926AAFB1D00014712 /* EventSender_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventSender_Tests.swift; sourceTree = "<group>"; };
 		84A1D2EB26AAFB8E00014712 /* EventSender_Mock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventSender_Mock.swift; sourceTree = "<group>"; };
+		84A1D2EF26AB10DB00014712 /* EventDecoder_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventDecoder_Tests.swift; sourceTree = "<group>"; };
 		84A1D2F526AB357900014712 /* UnknownEvent_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnknownEvent_Tests.swift; sourceTree = "<group>"; };
 		84A43CAE26A9A25000302763 /* UnknownEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnknownEvent.swift; sourceTree = "<group>"; };
 		84A43CB226A9A54700302763 /* EventSender.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventSender.swift; sourceTree = "<group>"; };
@@ -2717,6 +2719,7 @@
 				8A62704F24B867190040BFD6 /* EventPayload.swift */,
 				794927F0249E3DE6009D7EB7 /* EventPayload_Tests.swift */,
 				79280F48248520B300CDEB89 /* EventDecoder.swift */,
+				84A1D2EF26AB10DB00014712 /* EventDecoder_Tests.swift */,
 				79280F4A248523C000CDEB89 /* ConnectionEvents.swift */,
 				8A0C3BBB24C0947400CAFD19 /* UserEvents.swift */,
 				8A0C3BC824C0BBAB00CAFD19 /* UserEvents_Tests.swift */,
@@ -6444,6 +6447,7 @@
 				790A4C4A252DDD50001F4A23 /* DeviceEndpoints_Tests.swift in Sources */,
 				649968D7264E693E000515AB /* StreamCDNClient_Tests.swift in Sources */,
 				884C612A2594A7DB008B70DC /* AttachmentActionRequestBody_Tests.swift in Sources */,
+				84A1D2F026AB10DB00014712 /* EventDecoder_Tests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
