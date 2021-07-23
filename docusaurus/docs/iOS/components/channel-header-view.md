@@ -18,60 +18,18 @@ Components.default.channelHeaderView = MyChannelHeaderView.self
 <ComponentsNote />
 
 ### Example
-As an example of how to customize the `ChatChannelHeaderView`, let's change it to display the avatar of the channel/user at the top, and the channel name at the bottom. If some one is typing in the channel, we replace the name with a "typing..." label.
+As an example of how to customize the `ChatChannelHeaderView`, let's change it to display "typing..." in the bottom label of the header if someone is currently typing in the channel.
+
 
 | Default Style  | Custom Style |
 | -------------- | ----------------------- |
-| <img src={require("../assets/chat-channel-header-default.png").default}/>  | <img src={require("../assets/chat-channel-header-imessage.png").default}/>  |
+| <img src={require("../assets/chat-channel-header-view-default.png").default}/>  | <img src={require("../assets/chat-channel-header-view-typing.png").default}/>  |
 
-First, we need to remove the avatar view from the `rightBarButtonItem` in the message list's navigation item. For this, we need to subclass the message list:
-```swift
-class CustomChatMessageListVC: ChatMessageListVC {
-    override func setUpLayout() {
-        super.setUpLayout()
+We need to subclass the `ChatChannelHeaderView` and override the `subtitleText` to change how the subtitle label is displayed. The header by default subscribes to channel events since it conforms to `ChatChannelControllerDelegate`, so we need to observe the typing events and override the subtitle when someone is typing.
 
-        navigationItem.rightBarButtonItem = nil
-    }
-}
-```
-
-Then we subclass the `ChatChannelHeaderView` to add the `ChatChannelAvatarView` above the title label and remove the subtitle label since we don't need it. The header by default subscribes to channel events, so we need to observe the typing events and override the title when someone is typing.
 ```swift
 class CustomChatChannelHeaderView: ChatChannelHeaderView {
-    lazy var avatarView = ChatChannelAvatarView()
-
     var typingUsers = Set<ChatUser>()
-
-    override func setUpAppearance() {
-        super.setUpAppearance()
-
-        // Make the title label smaller to accommodate the avatar view
-        titleContainerView.titleLabel.font = .systemFont(ofSize: 10)
-    }
-
-    override func setUpLayout() {
-        super.setUpLayout()
-
-        // Remove the subtitle label that shows the member's status
-        titleContainerView.subtitleLabel.removeFromSuperview()
-
-        // Add the avatar view above the title label
-        titleContainerView.containerView.insertArrangedSubview(avatarView, at: 0)
-
-        // Set the avatar view size
-        avatarView.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            avatarView.heightAnchor.constraint(equalToConstant: 25),
-            avatarView.widthAnchor.constraint(equalTo: avatarView.heightAnchor)
-        ])
-    }
-
-    override func updateContent() {
-        super.updateContent()
-
-        // Set the content of the avatar view
-        avatarView.content = (channel: channelController?.channel, currentUserId: currentUserId)
-    }
 
     // Handle typing events
     override func channelController(
@@ -84,22 +42,20 @@ class CustomChatChannelHeaderView: ChatChannelHeaderView {
         updateContentIfNeeded()
     }
 
-    // The titleText is responsible to render the title.
-    // You can override it to customize it.
-    override var titleText: String? {
+    // The subtitleText is responsible to render the status of the members.
+    override var subtitleText: String? {
         if !typingUsers.isEmpty {
             return "typing..."
         }
 
-        return super.titleText
+        return super.subtitleText
     }
 }
 ```
 
-Finally, we have to tell the SDK to use our custom components instead of the default ones:
+Finally, we have to tell the SDK to use our custom component instead of the default one:
 ```swift
 Components.default.channelHeaderView = CustomChatChannelHeaderView.self
-Components.default.messageListVC = CustomChatMessageListVC.self
 ```
 
 ## Properties

@@ -4,7 +4,7 @@ title: ChatThreadHeaderView
 
 import ComponentsNote from '../common-content/components-note.md'
 
-This component is responsible to display the information in the header of a thread. By default it is rendered in the `navigationItem.titleView` of the `ChatThreadVC`.
+This component is responsible to display the information in the header of a thread. By default, it is rendered in the `navigationItem.titleView` of the `ChatThreadVC`.
 
 ### Customization
 
@@ -60,5 +60,5 @@ Finally, we have to tell the SDK to use our custom component instead of the defa
 ```swift
 Components.default.threadHeaderView = CustomChatThreadHeaderView.self
 ```
-
+-->
 ## Properties
