@@ -4,7 +4,7 @@
 
 import Foundation
 
-enum UserPayloadsCodingKeys: String, CodingKey {
+enum UserPayloadsCodingKeys: String, CodingKey, CaseIterable {
     case id
     case name
     case imageURL = "image"
@@ -40,7 +40,8 @@ class UserPayload<ExtraData: UserExtraData>: Decodable {
     let isBanned: Bool
     let teams: [TeamId]
     let extraData: ExtraData
-    
+    let extraPayload: [String: RawJSON]
+
     init(
         id: String,
         name: String?,
@@ -53,7 +54,8 @@ class UserPayload<ExtraData: UserExtraData>: Decodable {
         isInvisible: Bool,
         isBanned: Bool,
         teams: [TeamId] = [],
-        extraData: ExtraData
+        extraData: ExtraData,
+        extraPayload: [String: RawJSON]
     ) {
         self.id = id
         self.name = name
@@ -67,8 +69,9 @@ class UserPayload<ExtraData: UserExtraData>: Decodable {
         self.isBanned = isBanned
         self.teams = teams
         self.extraData = extraData
+        self.extraPayload = extraPayload
     }
-    
+
     required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: UserPayloadsCodingKeys.self)
         id = try container.decode(String.self, forKey: .id)
@@ -85,6 +88,12 @@ class UserPayload<ExtraData: UserExtraData>: Decodable {
         isBanned = try container.decodeIfPresent(Bool.self, forKey: .isBanned) ?? false
         teams = try container.decodeIfPresent([String].self, forKey: .teams) ?? []
         extraData = try ExtraData(from: decoder)
+        if var payload = try? [String: RawJSON](from: decoder) {
+            payload.removeValues(forKeys: UserPayloadsCodingKeys.allCases.map { $0.rawValue })
+            extraPayload = payload
+        } else {
+            extraPayload = [:]
+        }
     }
 }
 

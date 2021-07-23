@@ -28,6 +28,7 @@ class CurrentUserPayload<ExtraData: ExtraDataTypes>: UserPayload<ExtraData.User>
         isBanned: Bool,
         teams: [TeamId] = [],
         extraData: ExtraData.User,
+        extraPayload: [String: RawJSON],
         devices: [DevicePayload] = [],
         mutedUsers: [MutedUserPayload<ExtraData.User>] = [],
         mutedChannels: [MutedChannelPayload<ExtraData>] = [],
@@ -50,7 +51,8 @@ class CurrentUserPayload<ExtraData: ExtraDataTypes>: UserPayload<ExtraData.User>
             isInvisible: isInvisible,
             isBanned: isBanned,
             teams: teams,
-            extraData: extraData
+            extraData: extraData,
+            extraPayload: extraPayload
         )
     }
     

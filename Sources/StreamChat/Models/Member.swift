@@ -72,6 +72,7 @@ public class _ChatChannelMember<ExtraData: UserExtraData>: _ChatUser<ExtraData> 
         lastActiveAt: Date?,
         teams: Set<TeamId>,
         extraData: ExtraData,
+        extraPayload: [String: Any],
         memberRole: MemberRole,
         memberCreatedAt: Date,
         memberUpdatedAt: Date,
@@ -104,7 +105,8 @@ public class _ChatChannelMember<ExtraData: UserExtraData>: _ChatUser<ExtraData> 
             updatedAt: userUpdatedAt,
             lastActiveAt: lastActiveAt,
             teams: teams,
-            extraData: extraData
+            extraData: extraData,
+            extraPayload: extraPayload
         )
     }
 }

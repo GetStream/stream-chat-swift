@@ -166,6 +166,17 @@ extension _CurrentChatUser {
             )
             extraData = .defaultValue
         }
+
+        let extraPayload: [String: Any]
+        do {
+            extraPayload = try JSONSerialization.jsonObject(with: dto.user.extraData, options: []) as? [String: Any] ?? [:]
+        } catch {
+            log.error(
+                "Failed to decode extra data for user with id: <\(dto.user.id)>, using default value instead. "
+                    + "Error: \(error)"
+            )
+            extraPayload = [:]
+        }
         
         let mutedUsers: [_ChatUser<ExtraData.User>] = dto.mutedUsers.map { $0.asModel() }
         let flaggedUsers: [_ChatUser<ExtraData.User>] = dto.flaggedUsers.map { $0.asModel() }
@@ -191,6 +202,7 @@ extension _CurrentChatUser {
             lastActiveAt: user.lastActivityAt,
             teams: Set(user.teams?.map(\.id) ?? []),
             extraData: extraData,
+            extraPayload: extraPayload,
             devices: dto.devices.map { $0.asModel() },
             currentDevice: nil,
             mutedUsers: Set(mutedUsers),

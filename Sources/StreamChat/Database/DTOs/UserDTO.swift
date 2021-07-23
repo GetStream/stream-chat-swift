@@ -119,8 +119,19 @@ extension NSManagedObjectContext: UserDatabaseSession {
         dto.userRoleRaw = payload.role.rawValue
         dto.userUpdatedAt = payload.updatedAt
 
-        dto.extraData = try JSONEncoder.default.encode(payload.extraData)
-
+        do {
+            if payload.extraData is NoExtraData {
+                dto.extraData = try JSONEncoder.default.encode(payload.extraPayload)
+            } else {
+                dto.extraData = try JSONEncoder.default.encode(payload.extraData)
+            }
+        } catch {
+            log.error(
+                "Failed to decode extra payload for User with id: <\(payload.id)>, using default value instead. "
+                    + "Error: \(error)"
+            )
+            dto.extraData = Data()
+        }
         let teams = try payload.teams.map { try saveTeam(teamId: $0) }
         dto.teams = Set(teams)
 
@@ -192,6 +203,18 @@ extension _ChatUser {
             log.error("Failed to decode extra data for User with id: <\(dto.id)>, using default value instead. Error: \(error)")
             extraData = .defaultValue
         }
+
+        let extraPayload: [String: Any]
+        do {
+            extraPayload = try JSONSerialization.jsonObject(with: dto.extraData, options: []) as? [String: Any] ?? [:]
+        } catch {
+            log.error(
+                "Failed to decode extra data for user with id: <\(dto.id)>, using default value instead. "
+                    + "Error: \(error)"
+            )
+            extraPayload = [:]
+        }
+
         
         return _ChatUser(
             id: dto.id,
@@ -205,7 +228,8 @@ extension _ChatUser {
             updatedAt: dto.userUpdatedAt,
             lastActiveAt: dto.lastActivityAt,
             teams: Set(dto.teams?.map(\.id) ?? []),
-            extraData: extraData
+            extraData: extraData,
+            extraPayload: extraPayload
         )
     }
 }

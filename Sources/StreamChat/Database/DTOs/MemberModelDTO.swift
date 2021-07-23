@@ -144,6 +144,17 @@ extension _ChatChannelMember {
             )
             extraData = .defaultValue
         }
+
+        let extraPayload: [String: Any]
+        do {
+            extraPayload = try JSONSerialization.jsonObject(with: dto.user.extraData, options: []) as? [String: Any] ?? [:]
+        } catch {
+            log.error(
+                "Failed to decode extra data for user with id: <\(dto.user.id)>, using default value instead. "
+                    + "Error: \(error)"
+            )
+            extraPayload = [:]
+        }
         
         let role = dto.channelRoleRaw.flatMap { MemberRole(rawValue: $0) } ?? .member
         return _ChatChannelMember(
@@ -159,6 +170,7 @@ extension _ChatChannelMember {
             lastActiveAt: dto.user.lastActivityAt,
             teams: Set(dto.user.teams?.map(\.id) ?? []),
             extraData: extraData,
+            extraPayload: extraPayload,
             memberRole: role,
             memberCreatedAt: dto.memberCreatedAt,
             memberUpdatedAt: dto.memberUpdatedAt,
