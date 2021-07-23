@@ -67,26 +67,6 @@ extension Endpoint {
         )
     }
 
-    static func acceptInvite(cid: ChannelId, userId: String, message: String?) -> Endpoint<EmptyResponse> {
-        return .init(
-            path: "channels/" + cid.apiPath,
-            method: .post,
-            queryItems: nil,
-            requiresConnectionId: false,
-            body: AcceptInviteRequest(user: .init(id: userId), message: .init(message: message), acceptInvite: true)
-        )
-    }
-
-    static func rejectInvite(cid: ChannelId) -> Endpoint<EmptyResponse> {
-        .init(
-            path: "channels/" + cid.apiPath,
-            method: .post,
-            queryItems: nil,
-            requiresConnectionId: false,
-            body: ["reject_invite": true]
-        )
-    }
-
     static func hideChannel(cid: ChannelId, clearHistory: Bool) -> Endpoint<EmptyResponse> {
         .init(
             path: "channels/" + cid.apiPath + "/hide",

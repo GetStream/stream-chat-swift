@@ -79,28 +79,6 @@ class ChannelUpdater<ExtraData: ExtraDataTypes>: Worker {
         }
     }
 
-    /// Accept Request
-    /// - Parameters:
-    ///   - cid: The channel identifier.
-    ///   - userId: userId
-    ///   - message: message
-    ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
-    func acceptInvite(cid: ChannelId, userId: String, message: String?, completion: ((Error?) -> Void)? = nil) {
-        apiClient.request(endpoint: .acceptInvite(cid: cid, userId: userId, message: message)) {
-            completion?($0.error)
-        }
-    }
-
-    /// Reject Request
-    /// - Parameters:
-    ///   - cid: The channel identifier.
-    ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
-    func rejectInvite(cid: ChannelId, completion: ((Error?) -> Void)? = nil) {
-        apiClient.request(endpoint: .rejectInvite(cid: cid)) {
-            completion?($0.error)
-        }
-    }
-
     /// Hides the channel from queryChannels for the user until a message is added.
     /// - Parameters:
     ///   - cid: The channel identifier.
