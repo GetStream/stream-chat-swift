@@ -295,7 +295,6 @@ var streamChatUIFilesExcluded: [String] { [
     "ChatMessageList/ChatMessage/__Snapshots__/ChatMessageContentView_Tests/test_appearanceCustomization_usingUIConfig.rightToLeftLayout-default.png",
     "ChatMessageList/ChatMessage/__Snapshots__/ChatMessageContentView_Tests/test_appearance.default-light-bubble-continuousBubble-avatarSizePadding-text-quotedMessage-threadInfo-reactions.png",
     "ChatMessageList/ChatMessage/__Snapshots__/ChatMessageContentView_Tests/test_appearanceCustomization_usingSubclassing.default-light.png",
-    "ChatMessageList/ChatThreadVC_Tests.swift",
     "ChatMessageList/ChatMessageListVC+SwiftUI_Tests.swift",
     "ChatMessageList/Attachments/ChatMessageFileAttachmentListView_Tests.swift",
     "ChatMessageList/Attachments/ChatMessageGalleryView_Tests.swift",
@@ -348,7 +347,6 @@ var streamChatUIFilesExcluded: [String] { [
     "ChatMessageList/Attachments/__Snapshots__/ChatMessageFileAttachmentListView_Tests/test_appearance_two_attachments.default-light.png",
     "ChatMessageList/Attachments/__Snapshots__/ChatMessageFileAttachmentListView_Tests/test_appearance_five_attachments.default-light.png",
     "ChatMessageList/Attachments/__Snapshots__/ChatMessageFileAttachmentListView_Tests/test_appearanceCustomization_usingSubclassing.default-light.png",
-    "ChatMessageList/ChatThreadVC+SwiftUI_Tests.swift",
     "ChatMessageList/__Snapshots__/ChatThreadVC+SwiftUI_Tests/test_customNavigationViewValues_arePopulated.small-dark.png",
     "ChatMessageList/__Snapshots__/ChatThreadVC+SwiftUI_Tests/test_customNavigationViewValues_arePopulated.rightToLeftLayout-default.png",
     "ChatMessageList/__Snapshots__/ChatThreadVC+SwiftUI_Tests/test_customNavigationViewValues_arePopulated.extraExtraExtraLarge-light.png",
@@ -865,5 +863,7 @@ var streamChatUIFilesExcluded: [String] { [
     "ChatChannelList/__Snapshots__/ChatChannelUnreadCountView+SwiftUI_Tests/test_injectedSwiftUIView.rightToLeftLayout-default.png",
     "ChatChannelList/__Snapshots__/ChatChannelUnreadCountView+SwiftUI_Tests/test_injectedSwiftUIView.small-dark.png",
     "Components+SwiftUI_Tests.swift",
-    "Appearance+SwiftUI_Tests.swift"
+    "Appearance+SwiftUI_Tests.swift",
+    "ChatThread/ChatThreadVC_Tests.swift",
+    "ChatThread/ChatThreadVC+SwiftUI_Tests.swift"
 ] }

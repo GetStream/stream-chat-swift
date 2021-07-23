@@ -790,6 +790,7 @@
 		AD050B9E265D5E12006649A5 /* QuotedChatMessageView+SwiftUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD050B8C265D5E09006649A5 /* QuotedChatMessageView+SwiftUI.swift */; };
 		AD050BA8265D600B006649A5 /* QuotedChatMessageView+SwiftUI_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD050BA7265D600B006649A5 /* QuotedChatMessageView+SwiftUI_Tests.swift */; };
 		AD154C6D25DC3BA000850925 /* ChatCommandSuggestionView_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD154C6C25DC3BA000850925 /* ChatCommandSuggestionView_Tests.swift */; };
+		AD1D7A8526A2131D00494CA5 /* ChatChannelVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD1D7A8326A212D000494CA5 /* ChatChannelVC.swift */; };
 		AD3D0CC026A8727800A6D813 /* SlackChatChannelHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD3D0CBF26A8727800A6D813 /* SlackChatChannelHeaderView.swift */; };
 		AD3D0CC226A88E5100A6D813 /* MessengerChatChannelHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD3D0CC126A88E5100A6D813 /* MessengerChatChannelHeaderView.swift */; };
 		AD3D0CC426A89E6300A6D813 /* iMessageChatChannelHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD3D0CC326A89E6300A6D813 /* iMessageChatChannelHeaderView.swift */; };
@@ -2139,6 +2140,7 @@
 		AD050B8C265D5E09006649A5 /* QuotedChatMessageView+SwiftUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "QuotedChatMessageView+SwiftUI.swift"; sourceTree = "<group>"; };
 		AD050BA7265D600B006649A5 /* QuotedChatMessageView+SwiftUI_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "QuotedChatMessageView+SwiftUI_Tests.swift"; sourceTree = "<group>"; };
 		AD154C6C25DC3BA000850925 /* ChatCommandSuggestionView_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatCommandSuggestionView_Tests.swift; sourceTree = "<group>"; };
+		AD1D7A8326A212D000494CA5 /* ChatChannelVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatChannelVC.swift; sourceTree = "<group>"; };
 		AD3D0CBF26A8727800A6D813 /* SlackChatChannelHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlackChatChannelHeaderView.swift; sourceTree = "<group>"; };
 		AD3D0CC126A88E5100A6D813 /* MessengerChatChannelHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessengerChatChannelHeaderView.swift; sourceTree = "<group>"; };
 		AD3D0CC326A89E6300A6D813 /* iMessageChatChannelHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iMessageChatChannelHeaderView.swift; sourceTree = "<group>"; };
@@ -5770,6 +5772,7 @@
 				79CCB66E259CBC4F0082F172 /* ChatChannelNamer.swift in Sources */,
 				43EB3AE22671718200954323 /* AttachmentViewCatalog.swift in Sources */,
 				79F691B22604C10A000AE89B /* SystemEnvironment.swift in Sources */,
+				AD1D7A8526A2131D00494CA5 /* ChatChannelVC.swift in Sources */,
 				88AD1D5E2588B87C00ECED5B /* ChatFileAttachmentListView+ItemView.swift in Sources */,
 				88F836612578D1A80039AEC8 /* ChatMessageActionItem.swift in Sources */,
 				F87E8F5D264CFFA300D0F6AA /* LinkAttachmentViewInjector.swift in Sources */,
