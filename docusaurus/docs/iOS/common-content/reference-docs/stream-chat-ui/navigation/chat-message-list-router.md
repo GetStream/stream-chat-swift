@@ -105,15 +105,15 @@ open func showThread(
   - cid: The `cid` of the channel the message belongs to.
   - client: The current `ChatClient` instance.
 
-### `showImageGallery(message:initialAttachment:previews:)`
+### `showGallery(message:initialAttachmentId:previews:)`
 
-Shows the image gallery VC for the selected photo attachment.
+Shows the gallery VC for the given message starting on specific attachment.
 
 ``` swift
-open func showImageGallery(
+open func showGallery(
         message: _ChatMessage<ExtraData>,
-        initialAttachment: ChatMessageImageAttachment,
-        previews: [ImagePreviewable]
+        initialAttachmentId: AttachmentId,
+        previews: [GalleryItemPreview]
     ) 
 ```
 

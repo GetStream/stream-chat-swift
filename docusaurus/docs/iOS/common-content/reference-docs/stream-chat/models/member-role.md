@@ -2,32 +2,51 @@
 title: MemberRole
 ---
 
-An enum describing possible roles of a member in a channel.
+A  `struct` describing roles of a member in a channel.
+There are some predefined types but any type can be introduced and sent by the backend.
 
 ``` swift
-public enum MemberRole: String, Codable, Hashable 
+public struct MemberRole: RawRepresentable, Codable, Hashable, ExpressibleByStringLiteral 
 ```
 
 ## Inheritance
 
-`Codable`, `Hashable`, `String`
+`Codable`, `ExpressibleByStringLiteral`, `Hashable`, `RawRepresentable`
 
 ## Initializers
+
+### `init(rawValue:)`
+
+``` swift
+public init(rawValue: String) 
+```
+
+### `init(stringLiteral:)`
+
+``` swift
+public init(stringLiteral value: String) 
+```
 
 ### `init(from:)`
 
 ``` swift
-public init(from decoder: Decoder) throws 
+init(from decoder: Decoder) throws 
 ```
 
-## Enumeration Cases
+## Properties
+
+### `rawValue`
+
+``` swift
+public let rawValue: String
+```
 
 ### `member`
 
 This is the default role assigned to any member.
 
 ``` swift
-case member
+static let member 
 ```
 
 ### `moderator`
@@ -35,7 +54,7 @@ case member
 Allows the member to perform moderation, e.g. ban users, add/remove users, etc.
 
 ``` swift
-case moderator
+static let moderator 
 ```
 
 ### `admin`
@@ -43,13 +62,13 @@ case moderator
 This role allows the member to perform more advanced actions. This role should be granted only to staff users.
 
 ``` swift
-case admin
+static let admin 
 ```
 
 ### `owner`
 
-This rele allows the member to perform destructive actions on the channel.
+This role allows the member to perform destructive actions on the channel.
 
 ``` swift
-case owner
+static let owner 
 ```

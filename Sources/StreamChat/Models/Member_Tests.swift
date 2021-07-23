@@ -34,5 +34,9 @@ class MemberRole_Tests: XCTestCase {
 
         json = try embed("owner")
         XCTAssertEqual((try? decoder.decode(RoleContainer.self, from: json))?.role, .owner)
+
+        // Try with some role which isn't pre-defined
+        json = try embed("some_unknown_role")
+        XCTAssertEqual((try? decoder.decode(RoleContainer.self, from: json))?.role, "some_unknown_role")
     }
 }

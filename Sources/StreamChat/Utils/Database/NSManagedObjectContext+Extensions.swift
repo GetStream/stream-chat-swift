@@ -12,4 +12,12 @@ extension NSManagedObjectContext {
         get { userInfo[Self.localCachingKey] as? ChatClientConfig.LocalCaching }
         set { userInfo[Self.localCachingKey] = newValue }
     }
+
+    private static let deletedMessagesVisibilityKey = "io.getStream.StreamChat.deletedMessagesVisibility_key"
+
+    /// Provides the info about deleted messages behavior
+    var deletedMessagesVisibility: ChatClientConfig.DeletedMessageVisibility? {
+        get { userInfo[Self.deletedMessagesVisibilityKey] as? ChatClientConfig.DeletedMessageVisibility }
+        set { userInfo[Self.deletedMessagesVisibilityKey] = newValue }
+    }
 }

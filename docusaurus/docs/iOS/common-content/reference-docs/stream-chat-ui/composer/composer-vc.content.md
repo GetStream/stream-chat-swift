@@ -40,7 +40,7 @@ public var text: String
 The state of the composer.
 
 ``` swift
-public var state: ComposerState
+public let state: ComposerState
 ```
 
 ### `editingMessage`
@@ -64,7 +64,7 @@ public let quotingMessage: _ChatMessage<ExtraData>?
 The thread parent message if the composer is currently replying in a thread.
 
 ``` swift
-public let threadMessage: _ChatMessage<ExtraData>?
+public var threadMessage: _ChatMessage<ExtraData>?
 ```
 
 ### `attachments`
@@ -101,7 +101,7 @@ public var isEmpty: Bool
 
 ### `isInsideThread`
 
-A boolean that check if the composer is replying in a thread
+A boolean that checks if the composer is replying in a thread
 
 ``` swift
 public var isInsideThread: Bool 
@@ -148,15 +148,3 @@ public mutating func quoteMessage(_ message: _ChatMessage<ExtraData>)
 #### Parameters
 
   - message: The message that the composer will quote.
-
-### `threadMessage(_:)`
-
-Sets the content state to replying to a thread message.
-
-``` swift
-public mutating func threadMessage(_ message: _ChatMessage<ExtraData>) 
-```
-
-#### Parameters
-
-  - message: The message that belongs to the thread.

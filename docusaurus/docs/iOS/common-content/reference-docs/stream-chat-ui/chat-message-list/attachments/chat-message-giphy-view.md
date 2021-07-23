@@ -18,12 +18,6 @@ open class _ChatMessageGiphyView<ExtraData: ExtraDataTypes>: _View, ComponentsPr
 public var content: ChatMessageGiphyAttachment? 
 ```
 
-### `intrinsicContentSize`
-
-``` swift
-override open var intrinsicContentSize: CGSize 
-```
-
 ### `imageView`
 
 ``` swift

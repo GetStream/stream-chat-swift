@@ -65,11 +65,9 @@ open class _ChatThreadVC<ExtraData: ExtraDataTypes>:
         .messageComposerVC
         .init()
 
-    /// View displaying status of the channel.
-    ///
-    /// The status differs based on the fact if the channel is direct or not.
-    open lazy var titleView: TitleContainerView = components
-        .navigationTitleView.init()
+    /// The header view of the thread that by default is the titleView of the navigation bar.
+    open lazy var headerView: _ChatThreadHeaderView<ExtraData> = components
+        .threadHeaderView.init()
         .withoutAutoresizingMaskConstraints
 
     /// Handles navigation actions from messages
@@ -109,7 +107,9 @@ open class _ChatThreadVC<ExtraData: ExtraDataTypes>:
         messageController.synchronize()
         messageController.loadPreviousReplies()
 
-        updateNavigationTitle()
+        if let cid = channelController.cid {
+            headerView.channelController = channelController.client.channelController(for: cid)
+        }
     }
 
     override open func setUpLayout() {
@@ -134,6 +134,8 @@ open class _ChatThreadVC<ExtraData: ExtraDataTypes>:
             dateOverlayView.topAnchor.pin(equalToSystemSpacingBelow: view.safeAreaLayoutGuide.topAnchor)
         ])
         dateOverlayView.isHidden = true
+
+        navigationItem.titleView = headerView
     }
 
     override open func setUpAppearance() {
@@ -142,12 +144,6 @@ open class _ChatThreadVC<ExtraData: ExtraDataTypes>:
         view.backgroundColor = appearance.colorPalette.background
 
         listView.backgroundColor = .clear
-        
-        navigationItem.titleView = titleView
-    }
-
-    override open func viewDidLoad() {
-        super.viewDidLoad()
 
         navigationItem.largeTitleDisplayMode = .never
     }
@@ -208,7 +204,7 @@ open class _ChatThreadVC<ExtraData: ExtraDataTypes>:
 
         var layoutOptions = components
             .messageLayoutOptionsResolver
-            .optionsForMessage(at: indexPath, in: channel, with: messages)
+            .optionsForMessage(at: indexPath, in: channel, with: messages, appearance: appearance)
         layoutOptions.remove(.threadInfo)
         return layoutOptions
     }
@@ -269,16 +265,6 @@ open class _ChatThreadVC<ExtraData: ExtraDataTypes>:
     /// Scrolls to most recent message
     open func scrollToMostRecentMessage(animated: Bool = true) {
         listView.scrollToMostRecentMessage(animated: animated)
-    }
-
-    /// Updates the status data in `titleView`.
-    ///
-    /// For group chat is called every-time the channel changes.
-    open func updateNavigationTitle() {
-        titleView.content = (
-            title: L10n.Message.Threads.reply,
-            subtitle: channelController.channel?.name.map { L10n.Message.Threads.replyWith($0) }
-        )
     }
     
     /// Handles long press action on collection view.
@@ -386,15 +372,6 @@ open class _ChatThreadVC<ExtraData: ExtraDataTypes>:
     // MARK: - _ComposerVCDelegate
 
     open func composerDidCreateNewMessage() {}
-
-    // MARK: - _ChatChannelControllerDelegate
-
-    open func channelController(
-        _ channelController: _ChatChannelController<ExtraData>,
-        didUpdateChannel channel: EntityChange<_ChatChannel<ExtraData>>
-    ) {
-        updateNavigationTitle()
-    }
 
     // MARK: - _ChatMessageControllerDelegate
     
@@ -511,7 +488,14 @@ open class _ChatThreadVC<ExtraData: ExtraDataTypes>:
         _ overlay: ChatMessageListScrollOverlayView,
         textForItemAt indexPath: IndexPath
     ) -> String? {
-        DateFormatter
+        // When a message from a channel is deleted,
+        // and the visibility of deleted messages is set to `alwaysHidden`,
+        // the messages list won't contain the message and hence it would crash
+        guard channelController.messages.indices.contains(indexPath.item) else {
+            return nil
+        }
+        
+        return DateFormatter
             .messageListDateOverlay
             .string(from: messageForIndexPath(indexPath).createdAt)
     }

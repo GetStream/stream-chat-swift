@@ -92,3 +92,42 @@ public struct NotificationChannelMutesUpdatedEvent: UserSpecificEvent {
         payload = response
     }
 }
+
+public struct NotificationInvitedEvent: MemberEvent {
+    public let memberUserId: UserId
+    public let cid: ChannelId
+    
+    let payload: Any
+    
+    init<ExtraData: ExtraDataTypes>(from response: EventPayload<ExtraData>) throws {
+        cid = try response.value(at: \.cid)
+        memberUserId = try response.value(at: \.user?.id)
+        payload = response
+    }
+}
+
+public struct NotificationInviteAccepted: MemberEvent {
+    public let memberUserId: UserId
+    public let cid: ChannelId
+    
+    let payload: Any
+    
+    init<ExtraData: ExtraDataTypes>(from response: EventPayload<ExtraData>) throws {
+        cid = try response.value(at: \.cid)
+        memberUserId = try response.value(at: \.user?.id)
+        payload = response
+    }
+}
+
+public struct NotificationInviteRejected: MemberEvent {
+    public let memberUserId: UserId
+    public let cid: ChannelId
+    
+    let payload: Any
+    
+    init<ExtraData: ExtraDataTypes>(from response: EventPayload<ExtraData>) throws {
+        cid = try response.value(at: \.cid)
+        memberUserId = try response.value(at: \.user?.id)
+        payload = response
+    }
+}

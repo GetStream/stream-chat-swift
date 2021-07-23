@@ -69,30 +69,6 @@ For complete pricing details visit our [Chat Pricing Page](https://getstream.io/
 
 --- 
 
-
-## 👉 Migrating from 1.x/2.x
-
-Please check [our wiki page for migration](https://github.com/GetStream/stream-chat-swift/wiki/Migrating-from-1.x-and-2.x).
-
----
-
-## Roadmap
-
-- [x] Open UI components for subclassing and customization (`4.0-beta`)
-- [x] Pinned messages (released in `3.1.4`)
-- [x] Multi-tenancy, teams (released in `3.1.4`)
-- [x] Better photo gallery experience (`4.0-beta`)
-- [x] Expiring tokens (`4.0-beta`)
-- [ ] SwiftUI wrappers for UI components (expected in the next release)
-- [ ] Silent messages (expected in the next release)
-- [ ] Local notification support (6/2021) _delayed from 4/2021_
-- [ ] Channel invites (6/2021) _delayed from 4/2021_
-- [ ] Paginating reactions (6/2021) _delayed from 4/2021_
-- [ ] Message search (6/2021)
-- [ ] RxSwift wrappers (tbd)
-
----
-
 ## We are hiring
 We've recently closed a [\$38 million Series B funding round](https://techcrunch.com/2021/03/04/stream-raises-38m-as-its-chat-and-activity-feed-apis-power-communications-for-1b-users/) and we keep actively growing.
 Our APIs are used by more than a billion end-users, and you'll have a chance to make a huge impact on the product within a team of the strongest engineers all over the world.

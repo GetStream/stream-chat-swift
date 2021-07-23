@@ -63,7 +63,7 @@ open class _ComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
 
         /// A boolean that checks if the message contains any content.
         public var isEmpty: Bool {
-            text.isEmpty && attachments.isEmpty
+            text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty && attachments.isEmpty
         }
 
         /// A boolean that checks if the composer is replying in a thread
@@ -386,7 +386,7 @@ open class _ComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
         if let command = content.command {
             text = "/\(command.name) " + content.text
         } else {
-            text = content.text
+            text = content.text.trimmingCharacters(in: .whitespacesAndNewlines)
         }
 
         if let editingMessage = content.editingMessage {
@@ -671,17 +671,15 @@ open class _ComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
 
     /// Shows the suggestions view
     open func showSuggestions() {
-        if !suggestionsVC.isPresented, let parent = parent {
-            parent.addChildViewController(suggestionsVC, targetView: parent.view)
-            suggestionsVC.bottomAnchorView = composerView
+        if !suggestionsVC.isPresented {
+            addChildViewController(suggestionsVC, targetView: view)
             
             let suggestionsView = suggestionsVC.view!
             suggestionsView.translatesAutoresizingMaskIntoConstraints = false
             NSLayoutConstraint.activate([
-                suggestionsView.leadingAnchor.pin(equalTo: parent.view.leadingAnchor),
-                suggestionsView.trailingAnchor.pin(equalTo: parent.view.trailingAnchor),
-                composerView.topAnchor.pin(equalToSystemSpacingBelow: suggestionsView.bottomAnchor),
-                suggestionsView.topAnchor.pin(greaterThanOrEqualTo: parent.view.safeAreaLayoutGuide.topAnchor)
+                suggestionsView.leadingAnchor.pin(equalTo: view.leadingAnchor),
+                suggestionsView.trailingAnchor.pin(equalTo: view.trailingAnchor),
+                composerView.topAnchor.pin(equalToSystemSpacingBelow: suggestionsView.bottomAnchor)
             ])
         }
     }

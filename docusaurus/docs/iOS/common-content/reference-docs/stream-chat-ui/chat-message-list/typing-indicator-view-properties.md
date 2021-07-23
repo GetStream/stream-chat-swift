@@ -1,4 +1,12 @@
 
+### `content`
+
+The string which will be shown next to animated indication that user is typing.
+
+``` swift
+open var content: String? 
+```
+
 ### `typingAnimationView`
 
 The animated view with three dots indicating that someone is typing.

@@ -3,12 +3,20 @@ title: StreamImageCDN
 ---
 
 ``` swift
-public struct StreamImageCDN: ImageCDN 
+open class StreamImageCDN: ImageCDN 
 ```
 
 ## Inheritance
 
 [`ImageCDN`](../image-cdn)
+
+## Initializers
+
+### `init()`
+
+``` swift
+public init() 
+```
 
 ## Properties
 
@@ -23,11 +31,17 @@ public static var streamCDNURL = "stream-io-cdn.com"
 ### `cachingKey(forImage:)`
 
 ``` swift
-public func cachingKey(forImage url: URL) -> String 
+open func cachingKey(forImage url: URL) -> String 
+```
+
+### `urlRequest(forImage:)`
+
+``` swift
+open func urlRequest(forImage url: URL) -> URLRequest 
 ```
 
 ### `thumbnailURL(originalURL:preferredSize:)`
 
 ``` swift
-public func thumbnailURL(originalURL: URL, preferredSize: CGSize) -> URL 
+open func thumbnailURL(originalURL: URL, preferredSize: CGSize) -> URL 
 ```

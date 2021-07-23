@@ -31,12 +31,12 @@ A publisher emitting a new value every time member event received.
 public var memberEventPublisher: AnyPublisher<MemberEvent, Never> 
 ```
 
-### `typingMembersPublisher`
+### `typingUsersPublisher`
 
-A publisher emitting a new value every time typing members change.
+A publisher emitting a new value every time typing users change.
 
 ``` swift
-public var typingMembersPublisher: AnyPublisher<Set<_ChatChannelMember<ExtraData.User>>, Never> 
+public var typingUsersPublisher: AnyPublisher<Set<_ChatUser<ExtraData.User>>, Never> 
 ```
 
 ### `observableObject`
@@ -53,6 +53,14 @@ The ChannelQuery this controller observes.
 
 ``` swift
 @Atomic public private(set) var channelQuery: _ChannelQuery<ExtraData>
+```
+
+### `hasLoadedAllPreviousMessages`
+
+A Boolean value that returns wether the previous messages have all been loaded or not.
+
+``` swift
+public private(set) var hasLoadedAllPreviousMessages: Bool = false
 ```
 
 ### `cid`

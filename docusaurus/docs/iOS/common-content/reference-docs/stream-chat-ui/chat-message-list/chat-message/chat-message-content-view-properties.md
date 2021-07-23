@@ -1,4 +1,14 @@
 
+### `layoutOptions`
+
+The current layout options of the view.
+When this value is set the subviews are instantiated and laid out just once based on
+the received options.
+
+``` swift
+public var layoutOptions: ChatMessageLayoutOptions?
+```
+
 ### `indexPath`
 
 The provider of cell index path which displays the current content view.

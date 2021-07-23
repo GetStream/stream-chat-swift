@@ -7,6 +7,18 @@ General textColor, should be something that contrasts great with your `backgroun
 public var text: UIColor = .streamBlack
 ```
 
+### `textInverted`
+
+``` swift
+public var textInverted: UIColor = .streamWhite
+```
+
+### `textLowEmphasis`
+
+``` swift
+public var textLowEmphasis: UIColor = .streamGrayDisabledText
+```
+
 ### `staticColorText`
 
 Static color which should stay the same in dark and light mode, because it's only used as text on small UI Elements

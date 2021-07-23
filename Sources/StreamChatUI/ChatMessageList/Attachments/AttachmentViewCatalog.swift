@@ -18,6 +18,9 @@ open class _AttachmentViewCatalog<ExtraData: ExtraDataTypes> {
         message: _ChatMessage<ExtraData>,
         components: _Components<ExtraData>
     ) -> _AttachmentViewInjector<ExtraData>.Type? {
+        // Do not show attachments for deleted messages
+        guard !message.isDeleted else { return nil }
+        
         let attachmentCounts = message.attachmentCounts
         
         if attachmentCounts.keys.contains(.image) || attachmentCounts.keys.contains(.video) {

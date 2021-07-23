@@ -12,6 +12,8 @@ public typealias ChatMessageListView = _ChatMessageListView<NoExtraData>
 open class _ChatMessageListView<ExtraData: ExtraDataTypes>: UITableView, Customizable, ComponentsProvider {
     private var identifiers: Set<String> = .init()
     private var isInitialized: Bool = false
+    /// Used for mapping `ListChanges` to sets of `IndexPath` and verifying possible conflicts
+    private let collectionUpdatesMapper = CollectionUpdatesMapper()
     
     // In some cases updates coming one by one might require scrolling to bottom.
     //
@@ -175,6 +177,13 @@ open class _ChatMessageListView<ExtraData: ExtraDataTypes>: UITableView, Customi
         completion: (() -> Void)? = nil
     ) {
         var shouldScrollToBottom = false
+        
+        guard let _ = collectionUpdatesMapper.mapToSetsOfIndexPaths(
+            changes: changes,
+            onConflict: {
+                reloadData()
+            }
+        ) else { return }
                 
         performBatchUpdates({
             changes.forEach {

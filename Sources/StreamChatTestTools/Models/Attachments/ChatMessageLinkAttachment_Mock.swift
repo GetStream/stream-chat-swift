@@ -13,8 +13,8 @@ extension ChatMessageLinkAttachment {
         text: String? = nil,
         author: String? = nil,
         titleLink: URL? = nil,
-        assetURL: URL,
-        previewURL: URL
+        assetURL: URL?,
+        previewURL: URL?
     ) -> Self {
         Self(
             id: id,

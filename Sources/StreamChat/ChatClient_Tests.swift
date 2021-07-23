@@ -62,22 +62,28 @@ class ChatClient_Tests: StressTestCase {
         
         config.localCaching.chatChannel.lastActiveMembersLimit = .unique
         config.localCaching.chatChannel.lastActiveWatchersLimit = .unique
-        
+
+        config.deletedMessagesVisibility = .alwaysVisible
+
         var usedDatabaseKind: DatabaseContainer.Kind?
         var shouldFlushDBOnStart: Bool?
         var shouldResetEphemeralValues: Bool?
         var localCachingSettings: ChatClientConfig.LocalCaching?
+        var deleteMessagesVisibility: ChatClientConfig.DeletedMessageVisibility?
         
         // Create env object with custom database builder
         var env = ChatClient.Environment()
         env.clientUpdaterBuilder = ChatClientUpdaterMock.init
-        env.databaseContainerBuilder = { kind, shouldFlushOnStart, shouldResetEphemeralValuesOnStart, cachingSettings in
-            usedDatabaseKind = kind
-            shouldFlushDBOnStart = shouldFlushOnStart
-            shouldResetEphemeralValues = shouldResetEphemeralValuesOnStart
-            localCachingSettings = cachingSettings
-            return DatabaseContainerMock()
-        }
+        env
+            .databaseContainerBuilder =
+            { kind, shouldFlushOnStart, shouldResetEphemeralValuesOnStart, cachingSettings, messageVisibility in
+                usedDatabaseKind = kind
+                shouldFlushDBOnStart = shouldFlushOnStart
+                shouldResetEphemeralValues = shouldResetEphemeralValuesOnStart
+                localCachingSettings = cachingSettings
+                deleteMessagesVisibility = messageVisibility
+                return DatabaseContainerMock()
+            }
         
         // Create a `Client` and assert that a DB file is created on the provided URL + APIKey path
         _ = ChatClient(
@@ -94,6 +100,7 @@ class ChatClient_Tests: StressTestCase {
         XCTAssertEqual(shouldFlushDBOnStart, config.shouldFlushLocalStorageOnStart)
         XCTAssertEqual(shouldResetEphemeralValues, config.isClientInActiveMode)
         XCTAssertEqual(localCachingSettings, config.localCaching)
+        XCTAssertEqual(deleteMessagesVisibility, config.deletedMessagesVisibility)
     }
     
     func test_clientDatabaseStackInitialization_whenLocalStorageDisabled() {
@@ -106,7 +113,7 @@ class ChatClient_Tests: StressTestCase {
         // Create env object with custom database builder
         var env = ChatClient.Environment()
         env.clientUpdaterBuilder = ChatClientUpdaterMock.init
-        env.databaseContainerBuilder = { kind, _, _, _ in
+        env.databaseContainerBuilder = { kind, _, _, _, _ in
             usedDatabaseKind = kind
             return DatabaseContainerMock()
         }
@@ -141,7 +148,7 @@ class ChatClient_Tests: StressTestCase {
         // Create env object and store all `kinds it's called with.
         var env = ChatClient.Environment()
         env.clientUpdaterBuilder = ChatClientUpdaterMock.init
-        env.databaseContainerBuilder = { kind, _, _, _ in
+        env.databaseContainerBuilder = { kind, _, _, _, _ in
             usedDatabaseKinds.append(kind)
             // Return error for the first time
             if let error = errorsToReturn.pop() {
@@ -1109,7 +1116,8 @@ private class TestEnvironment<ExtraData: ExtraDataTypes> {
                     kind: $0,
                     shouldFlushOnStart: $1,
                     shouldResetEphemeralValuesOnStart: $2,
-                    localCachingSettings: $3
+                    localCachingSettings: $3,
+                    deletedMessagesVisibility: $4
                 )
                 return self.databaseContainer!
             },

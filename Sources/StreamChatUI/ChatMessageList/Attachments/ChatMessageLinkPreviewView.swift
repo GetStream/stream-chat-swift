@@ -38,6 +38,9 @@ open class _ChatMessageLinkPreviewView<ExtraData: ExtraDataTypes>: _Control, The
 
     /// Constraint for `authorLabel`.
     open var authorOnImageConstraint: NSLayoutConstraint?
+    
+    /// Constraint for `imagePreview`'s height.
+    open var imagePreviewHeightConstraint: NSLayoutConstraint?
 
     override open func setUpAppearance() {
         super.setUpAppearance()
@@ -85,7 +88,8 @@ open class _ChatMessageLinkPreviewView<ExtraData: ExtraDataTypes>: _Control, The
         addSubview(textStack)
         
         imagePreview.pin(anchors: [.leading, .top, .trailing], to: self)
-        imagePreview.widthAnchor.pin(equalTo: imagePreview.heightAnchor, multiplier: 2).isActive = true
+        imagePreviewHeightConstraint = imagePreview.heightAnchor.pin(equalTo: imagePreview.widthAnchor, multiplier: 0.5)
+        imagePreviewHeightConstraint?.isActive = true
         
         textStack.addArrangedSubviews([titleLabel, bodyTextView])
         textStack.axis = .vertical
@@ -128,6 +132,7 @@ open class _ChatMessageLinkPreviewView<ExtraData: ExtraDataTypes>: _Control, The
         bodyTextView.isHidden = payload?.text == nil
 
         authorOnImageConstraint?.isActive = !isImageHidden && !isAuthorHidden
+        imagePreviewHeightConstraint?.isActive = !isImageHidden
     }
 
     override open func tintColorDidChange() {

@@ -1120,6 +1120,96 @@ class MessageDTO_Tests: XCTestCase {
         // The third message also quotes the first message
         XCTAssertEqual(loadedMessages[2].quotedMessage?.id, createdMessages[0].id)
     }
+    
+    func test_saveMessagesWithNestedQuotedMessages() throws {
+        // We check whether we can successfully nest quoted messages
+        // i.e. A, B-quotes-A, C-quotes-B
+        // Here, secondMessage and thirdMessage quote the firstMessage
+        
+        let firstMessageId: MessageId = .unique
+        let secondMessageId: MessageId = .unique
+        let thirdMessageId: MessageId = .unique
+        let currentUserId: UserId = .unique
+        let messageAuthorId: UserId = .unique
+        let channelId: ChannelId = .unique
+        
+        try database.createCurrentUser(id: currentUserId)
+        try database.createChannel(cid: channelId, withMessages: false)
+        
+        var createdMessages: [MessagePayload<NoExtraData>] = []
+        
+        let firstMessage: MessagePayload<NoExtraData> = .dummy(
+            messageId: firstMessageId,
+            quotedMessage: nil,
+            attachments: [],
+            authorUserId: messageAuthorId,
+            latestReactions: [],
+            ownReactions: [],
+            channel: .dummy(cid: channelId),
+            pinned: true,
+            pinnedByUserId: .unique,
+            pinnedAt: .unique,
+            pinExpires: .unique
+        )
+        createdMessages.append(firstMessage)
+        
+        let secondMessage: MessagePayload<NoExtraData> = .dummy(
+            messageId: secondMessageId,
+            quotedMessage: firstMessage,
+            attachments: [],
+            authorUserId: messageAuthorId,
+            latestReactions: [],
+            ownReactions: [],
+            channel: .dummy(cid: channelId),
+            pinned: true,
+            pinnedByUserId: .unique,
+            pinnedAt: .unique,
+            pinExpires: .unique
+        )
+        createdMessages.append(secondMessage)
+        
+        // Note that the third message contains a quotedMessageId instead of a quotedMessage
+        let thirdMessage: MessagePayload<NoExtraData> = .dummy(
+            messageId: thirdMessageId,
+            quotedMessageId: secondMessageId,
+            quotedMessage: nil,
+            attachments: [],
+            authorUserId: messageAuthorId,
+            latestReactions: [],
+            ownReactions: [],
+            channel: .dummy(cid: channelId),
+            pinned: true,
+            pinnedByUserId: .unique,
+            pinnedAt: .unique,
+            pinExpires: .unique
+        )
+        createdMessages.append(thirdMessage)
+
+        try createdMessages.forEach { messagePayload in
+            try database.writeSynchronously { session in
+                // Save the message
+                try session.saveMessage(payload: messagePayload, for: channelId)
+            }
+        }
+
+        var loadedMessages: [ChatMessage] = []
+        try [firstMessageId, secondMessageId, thirdMessageId].forEach { messageId in
+            // Load the messages one by one from the db and save them
+            let loadedMessage: ChatMessage = try XCTUnwrap(
+                database.viewContext.message(id: messageId)?.asModel()
+            )
+            loadedMessages.append(loadedMessage)
+        }
+        
+        XCTAssertEqual(createdMessages.count, loadedMessages.count)
+        
+        // The very first message doesn't quote any message
+        XCTAssertEqual(loadedMessages.first?.quotedMessage, nil)
+        // The second message quotes the first message
+        XCTAssertEqual(loadedMessages[1].quotedMessage?.id, createdMessages[0].id)
+        // The third message also quotes the first message
+        XCTAssertEqual(loadedMessages[2].quotedMessage?.id, createdMessages[1].id)
+    }
 }
 
 private extension RawJSON {

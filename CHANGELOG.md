@@ -5,13 +5,61 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
-- Changed Channel from  `currentlyTypingMembers: Set<ChatChannelMember>` to `currentlyTypingUsers: Set<ChatUser>` to show all typing users (not only channel members; eg: watching users) [#1254](https://github.com/GetStream/stream-chat-swift/pull/1254)  
+### ⚠️ Breaking Changes from `4.0-beta.8`
+Renamed `Components.navigationTitleView` -> `Components.titleContainerView` [#1294](https://github.com/GetStream/stream-chat-swift/pull/1294)
+
+### ✅ Added
+- Added `ChatChannelHeaderView` UI Component [#1294](https://github.com/GetStream/stream-chat-swift/pull/1294)
+- Added `ChatThreadHeaderView` UI Component [#1294](https://github.com/GetStream/stream-chat-swift/pull/1294)
+
+### 🐞 Fixed
+- Fix message list header displaying incorrectly the online status for the current user instead of the other one [#1294](https://github.com/GetStream/stream-chat-swift/pull/1294)
+
+### 🔄 Changed
+
+# [4.0.0-beta.8](https://github.com/GetStream/stream-chat-swift/releases/tag/4.0.0-beta.8)
+_July 21, 2021_
+
+### ✅ Added
+- `urlRequest(forImage url:)` added to `ImageCDN` protocol, this can be used to inject custom HTTP headers into image loading requests [#1291](https://github.com/GetStream/stream-chat-swift/issues/1291)
+- Functionality that allows [inviting](https://getstream.io/chat/docs/react/channel_invites/?language=swift) users to channels with subsequent acceptance or rejection on their part [#1276](https://github.com/GetStream/stream-chat-swift/pull/1276)
+- `EventsController` which exposes event observing API [#1266](https://github.com/GetStream/stream-chat-swift/pull/1266)
+
+### 🐞 Fixed
+- Fix an issue where member role sent from backend was not recognized by the SDK [#1288](https://github.com/GetStream/stream-chat-swift/pull/1288)
+- Fix crash in `ChannelListUpdater` caused by the lifetime not aligned with `ChatClient` [#1289](https://github.com/GetStream/stream-chat-swift/pull/1289)
+- Fix composer allowing sending whitespace only messages [#1293](https://github.com/GetStream/stream-chat-swift/issues/1293)
+- Fix a crash that would occur on deleting a message [#1298](https://github.com/GetStream/stream-chat-swift/pull/1298)
+
+# [4.0.0-beta.7](https://github.com/GetStream/stream-chat-swift/releases/tag/4.0.0-beta.7)
+_July 19, 2021_
 
 ### ⚠️ Breaking Changes from `4.0-beta.6`
 - The `ChatSuggestionsViewController` was renamed to `ChatSuggestionsVC` to follow the same pattern across the codebase. [#1195](https://github.com/GetStream/stream-chat-swift/pull/1195)
 
+### 🔄 Changed
+- Changed Channel from  `currentlyTypingMembers: Set<ChatChannelMember>` to `currentlyTypingUsers: Set<ChatUser>` to show all typing users (not only channel members; eg: watching users) [#1254](https://github.com/GetStream/stream-chat-swift/pull/1254)  
+
+### 🐞 Fixed
+- Fix deleted messages appearance [#1267](https://github.com/GetStream/stream-chat-swift/pull/1267)
+- Fix composer commands and attachment buttons not shown in first render when channel is not in cache [#1277](https://github.com/GetStream/stream-chat-swift/pull/1277)
+- Fix appearance of only-emoji messages [#1272](https://github.com/GetStream/stream-chat-swift/pull/1272)
+- Fix the appearance of system messages [#1281](https://github.com/GetStream/stream-chat-swift/pull/1281)
+- Fix a crash happening during MessageList updates [#1286](https://github.com/GetStream/stream-chat-swift/pull/1286)
+
 ### ✅ Added
 - Support for pasting images into the composer [#1258](https://github.com/GetStream/stream-chat-swift/pull/1258)
+- The visibility of deleted messages is now configurable using `ChatClientConfig.deletedMessagesVisibility`. You can choose from the following options [#1269](https://github.com/GetStream/stream-chat-swift/pull/1269):
+```swift
+/// All deleted messages are always hidden.
+case alwaysHidden
+
+/// Deleted message by current user are visible, other deleted messages are hidden.
+case visibleForCurrentUser
+
+/// Deleted messages are always visible.
+case alwaysVisible
+``` 
 
 ### 🐞 Fixed
 - Fix crash when scrolling to bottom after sending the first message [#1262](https://github.com/GetStream/stream-chat-swift/pull/1262)

@@ -11,6 +11,7 @@ public extension Appearance {
         /// General textColor, should be something that contrasts great with your `background` Color
         public var text: UIColor = .streamBlack
         public var textInverted: UIColor = .streamWhite
+        public var textLowEmphasis: UIColor = .streamGrayDisabledText
 
         /// Static color which should stay the same in dark and light mode, because it's only used as text on small UI Elements
         /// such as `ChatUnreadCountView`, `GiphyBadge` or Commands icon.
@@ -78,6 +79,7 @@ private extension UIColor {
     static let streamAccentBlue = mode(0x005fff, 0x005fff)
     static let streamAccentRed = mode(0xff3742, 0xff3742)
     static let streamAccentGreen = mode(0x20e070, 0x20e070)
+    static let streamGrayDisabledText = mode(0x72767e, 0x72767e)
     
     // Currently we are not using the correct shadow color from figma's color palette. This is to avoid
     // an issue with snapshots inconsistency between Intel vs M1. We can't use shadows with transparency.

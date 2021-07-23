@@ -1,7 +1,6 @@
 ---
 title: CommandLabelView
 ---
-![CommandLabelView](../../../../../assets/CommandLabelView_documentation.default-light.png)
 
 A view that display the command name and icon.
 

@@ -67,3 +67,15 @@ A boolean value that says if the message is deleted.
 ``` swift
 var isDeleted: Bool 
 ```
+
+### `shouldRenderAsJumbomoji`
+
+A boolean value that determines whether the text message should be rendered as large emojis
+
+``` swift
+var shouldRenderAsJumbomoji: Bool 
+```
+
+By default, any string which comprises of ONLY emojis of length 3 or less is displayed as large emoji
+
+Note that for messages sent with attachments, large emojis aren's rendered

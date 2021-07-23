@@ -18,6 +18,18 @@ final class MessageAttachmentPayload_Tests: XCTestCase {
         XCTAssertEqual(payload.payload, expectedRawJSON)
     }
     
+    func test_json_isDeserialized_forLinkAttachmentTypeWithoutImagePreview() throws {
+        let json = XCTestCase.mockData(fromFile: "AttachmentPayloadLinkWithoutImagePreview", extension: "json")
+        let payload = try JSONDecoder.default.decode(MessageAttachmentPayload.self, from: json)
+                
+        let expectedRawJSON = try JSONDecoder.default.decode(RawJSON.self, from: json)
+            .dictionary(with: nil, forKey: "type")
+        
+        // Assert `MessageAttachmentPayload` is deserialized correctly.
+        XCTAssertEqual(payload.type, .linkPreview)
+        XCTAssertEqual(payload.payload, expectedRawJSON)
+    }
+    
     func test_json_isDeserialized_forImageAttachmentType() throws {
         let json = XCTestCase.mockData(fromFile: "AttachmentPayloadImage", extension: "json")
         let payload = try JSONDecoder.default.decode(MessageAttachmentPayload.self, from: json)

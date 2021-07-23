@@ -125,3 +125,11 @@ Matches none of the values specified in an array.
 ``` swift
 case nor = "$nor"
 ```
+
+### `contains`
+
+Matches if the key array contains the given value.
+
+``` swift
+case contains = "$contains"
+```

@@ -7,20 +7,12 @@ Used to initialize `_Components` as `ObservableObject`.
 public var asObservableObject: ObservableObject 
 ```
 
-### `navigationTitleView`
+### `titleContainerView`
 
-The view used as a navigation bar title view for some view controllers.
-
-``` swift
-public var navigationTitleView: TitleContainerView.Type = TitleContainerView.self
-```
-
-### `createChannelButton`
-
-A button used for creating new channels.
+A view that displays a title label and subtitle in a container stack view.
 
 ``` swift
-public var createChannelButton: UIButton.Type = CreateChatChannelButton.self
+public var titleContainerView: TitleContainerView.Type = TitleContainerView.self
 ```
 
 ### `onlineIndicatorView`
@@ -151,6 +143,14 @@ A button for closing, dismissing or clearing information.
 public var closeButton: UIButton.Type = CloseButton.self
 ```
 
+### `shareButton`
+
+A button for sharing an information.
+
+``` swift
+public var shareButton: UIButton.Type = ShareButton.self
+```
+
 ### `checkmarkControl`
 
 A view to check/uncheck an option.
@@ -183,6 +183,30 @@ Object with set of function for handling images from CDN
 public var imageCDN: ImageCDN 
 ```
 
+### `videoPreviewLoader`
+
+The object that loads previews for video attachments.
+
+``` swift
+public var videoPreviewLoader: VideoPreviewLoader 
+```
+
+### `gradientView`
+
+The view that shows a gradient.
+
+``` swift
+public var gradientView: GradientView.Type = GradientView.self
+```
+
+### `playerView`
+
+The view that shows a playing video.
+
+``` swift
+public var playerView: PlayerView.Type = PlayerView.self
+```
+
 ### `messageListVC`
 
 The View Controller used to display content of the message, i.e. in the channel detail message list.
@@ -205,7 +229,17 @@ public var messageListView: _ChatMessageListView<ExtraData>.Type = _ChatMessageL
 The view that shows the date for currently visible messages on top of message list.
 
 ``` swift
-public var messageListScrollOverlayView: ChatMessageListScrollOverlayView.Type = ChatMessageListScrollOverlayView.self
+public var messageListScrollOverlayView: ChatMessageListScrollOverlayView.Type =
+        ChatMessageListScrollOverlayView.self
+```
+
+### `messageListHeaderView`
+
+The view that displays channel information on the message list header.
+
+``` swift
+public var messageListHeaderView: _ChatMessageListHeaderView<ExtraData>.Type =
+        _ChatMessageListHeaderView<ExtraData>.self
 ```
 
 ### `threadVC`
@@ -248,12 +282,21 @@ The View Controller used for showing detail of a file message attachment.
 public var filePreviewVC: ChatMessageAttachmentPreviewVC.Type = ChatMessageAttachmentPreviewVC.self
 ```
 
-### `imagePreviewVC`
+### `galleryVC`
 
-The View Controller used for showing detail of an image message attachment.
+The View Controller used for show image and video attachments.
 
 ``` swift
-public var imagePreviewVC: _ImageGalleryVC<ExtraData>.Type = _ImageGalleryVC<ExtraData>.self
+public var galleryVC: _GalleryVC<ExtraData>.Type = _GalleryVC<ExtraData>.self
+```
+
+### `videoPlaybackControlView`
+
+The view used to control the player for currently visible vide attachment.
+
+``` swift
+public var videoPlaybackControlView: _VideoPlaybackControlView<ExtraData>.Type =
+        _VideoPlaybackControlView<ExtraData>.self
 ```
 
 ### `messageContentView`
@@ -321,6 +364,14 @@ public var reactionsBubbleView: _ChatMessageReactionsBubbleView<ExtraData>.Type 
         _ChatMessageDefaultReactionsBubbleView<ExtraData>.self
 ```
 
+### `attachmentActionButton`
+
+The button for taking an action on attachment being uploaded.
+
+``` swift
+public var attachmentActionButton: AttachmentActionButton.Type = AttachmentActionButton.self
+```
+
 ### `reactionsView`
 
 The view that shows reactions list in a bubble.
@@ -364,15 +415,6 @@ public var fileAttachmentView: _ChatMessageFileAttachmentListView<ExtraData>.Ite
         _ChatMessageFileAttachmentListView<ExtraData>.ItemView.self
 ```
 
-### `imageGalleryView`
-
-The view that shows message's image attachments.
-
-``` swift
-public var imageGalleryView: _ChatMessageImageGallery<ExtraData>.Type =
-        _ChatMessageImageGallery<ExtraData>.self
-```
-
 ### `linkPreviewView`
 
 The view that shows a link preview in message cell.
@@ -382,13 +424,49 @@ public var linkPreviewView: _ChatMessageLinkPreviewView<ExtraData>.Type =
         _ChatMessageLinkPreviewView<ExtraData>.self
 ```
 
+### `galleryView`
+
+The view that shows message's image and video attachments.
+
+``` swift
+public var galleryView: _ChatMessageGalleryView<ExtraData>.Type =
+        _ChatMessageGalleryView<ExtraData>.self
+```
+
+### `imageAttachmentGalleryPreview`
+
+The view that shows an image attachment preview inside message cell.
+
+``` swift
+public var imageAttachmentGalleryPreview: _ChatMessageGalleryView<ExtraData>.ImagePreview.Type =
+        _ChatMessageGalleryView<ExtraData>.ImagePreview.self
+```
+
+### `videoAttachmentGalleryCell`
+
+The view that shows a video attachment in full-screen gallery.
+
+``` swift
+public var videoAttachmentGalleryCell: _VideoAttachmentGalleryCell<ExtraData>.Type =
+        _VideoAttachmentGalleryCell<ExtraData>.self
+```
+
+### `videoAttachmentGalleryPreview`
+
+The view that shows a video attachment preview inside a message.
+
+``` swift
+public var videoAttachmentGalleryPreview: _VideoAttachmentGalleryPreview<ExtraData>.Type =
+        _VideoAttachmentGalleryPreview<ExtraData>.self
+```
+
 ### `imageUploadingOverlay`
 
 The view that shows an overlay with uploading progress for image attachment that is being uploaded.
 
 ``` swift
-public var imageUploadingOverlay: _ChatMessageImageGallery<ExtraData>.UploadingOverlay.Type =
-        _ChatMessageImageGallery<ExtraData>.UploadingOverlay.self
+public var imageUploadingOverlay: _ChatMessageGalleryView<ExtraData>.UploadingOverlay.Type =
+        _ChatMessageGalleryView<ExtraData>.UploadingOverlay.self
 ```
 
 ### `giphyAttachmentView`
@@ -562,12 +640,22 @@ A view that displays the document attachment.
 public var messageComposerFileAttachmentView: FileAttachmentView.Type = FileAttachmentView.self
 ```
 
-### `messageComposerImageAttachmentView`
+### `imageAttachmentComposerPreview`
 
-A view that displays the image attachment.
+A view that displays image attachment preview in composer.
 
 ``` swift
-public var messageComposerImageAttachmentView: _ImageAttachmentView<ExtraData>.Type = _ImageAttachmentView<ExtraData>.self
+public var imageAttachmentComposerPreview: _ImageAttachmentComposerPreview<ExtraData>
+        .Type = _ImageAttachmentComposerPreview<ExtraData>.self
+```
+
+### `videoAttachmentComposerPreview`
+
+A view that displays the video attachment preview in composer.
+
+``` swift
+public var videoAttachmentComposerPreview: _VideoAttachmentComposerPreview<ExtraData>
+        .Type = _VideoAttachmentComposerPreview<ExtraData>.self
 ```
 
 ### `suggestionsVC`
@@ -575,8 +663,8 @@ public var messageComposerImageAttachmentView: _ImageAttachmentView<ExtraData>.T
 A view controller that shows suggestions of commands or mentions.
 
 ``` swift
-public var suggestionsVC: _ChatSuggestionsViewController<ExtraData>.Type =
-        _ChatSuggestionsViewController<ExtraData>.self
+public var suggestionsVC: _ChatSuggestionsVC<ExtraData>.Type =
+        _ChatSuggestionsVC<ExtraData>.self
 ```
 
 ### `suggestionsCollectionView`
@@ -606,21 +694,21 @@ public var suggestionsCommandCollectionViewCell: _ChatCommandSuggestionCollectio
         _ChatCommandSuggestionCollectionViewCell<ExtraData>.self
 ```
 
-### `suggestionsMentionCellView`
+### `suggestionsMentionView`
 
 A type for view embed in cell while tagging users with @ symbol in composer.
 
 ``` swift
-public var suggestionsMentionCellView: _ChatMentionSuggestionView<ExtraData>.Type =
+public var suggestionsMentionView: _ChatMentionSuggestionView<ExtraData>.Type =
         _ChatMentionSuggestionView<ExtraData>.self
 ```
 
-### `suggestionsCommandCellView`
+### `suggestionsCommandView`
 
 A view that displays the command name, image and arguments.
 
 ``` swift
-public var suggestionsCommandCellView: ChatCommandSuggestionView.Type =
+public var suggestionsCommandView: ChatCommandSuggestionView.Type =
         ChatCommandSuggestionView.self
 ```
 
