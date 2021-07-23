@@ -366,10 +366,6 @@ open class ChatThreadVC:
         router.showFilePreview(fileURL: attachment.assetURL)
     }
 
-    // MARK: - _ComposerVCDelegate
-
-    open func composerDidCreateNewMessage() {}
-
     // MARK: - _ChatMessageControllerDelegate
     
     public func messageController(

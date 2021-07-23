@@ -329,10 +329,6 @@ open class ChatMessageListVC:
             .dispatchEphemeralMessageAction(action)
     }
 
-    // MARK: - _ComposerVCDelegate
-
-    open func composerDidCreateNewMessage() {}
-
     // MARK: - _ChatChannelControllerDelegate
 
     open func channelController(
