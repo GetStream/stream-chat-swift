@@ -89,7 +89,6 @@ open class ChatThreadVC:
         tapOnList.delegate = self
         listView.addGestureRecognizer(tapOnList)
         
-        messageComposerVC.setDelegate(self)
         messageComposerVC.channelController = channelController
         messageComposerVC.userSearchController = userSuggestionSearchController
         if let message = messageController.message {

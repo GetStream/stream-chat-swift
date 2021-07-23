@@ -2616,7 +2616,6 @@
 		7908823025432C6400896F03 /* StreamChatUI */ = {
 			isa = PBXGroup;
 			children = (
-				F833D64326393E4800651D14 /* Gallery */,
 				BDDD1EA22632C50200BA007B /* Appearance.swift */,
 				8850B929255C286B003AED69 /* Components.swift */,
 				E7166CB125BED22B00B03B07 /* Appearance+ColorPalette.swift */,
@@ -2629,9 +2628,12 @@
 				BD4016352638411D00F09774 /* Deprecations.swift */,
 				888123D0255D42F000070D5A /* Utils */,
 				888123E5255D51BD00070D5A /* CommonViews */,
-				AD4EA229264ADE0100DF8EE2 /* Composer */,
-				7908830C2548707B00896F03 /* ChatMessageList */,
+				F833D64326393E4800651D14 /* Gallery */,
 				790882BE25486AB000896F03 /* ChatChannelList */,
+				ADECE08926AAEC63001AE411 /* ChatChannel */,
+				ADECE08A26AAED3B001AE411 /* ChatThread */,
+				7908830C2548707B00896F03 /* ChatMessageList */,
+				AD4EA229264ADE0100DF8EE2 /* Composer */,
 				88F8364E2578D1590039AEC8 /* MessageActionsPopup */,
 				7973CE48265413B4004C7CE5 /* Navigation */,
 				88F0D6ED257E446800F4B050 /* Resources */,
@@ -2721,11 +2723,6 @@
 				E768AA882625C18D00328E6E /* TypingIndicatorView.swift */,
 				E74DB0102655473300508D22 /* TypingIndicatorView_Tests.swift */,
 				E768AAFA2627691600328E6E /* TypingAnimationView.swift */,
-				ADA3572D269C562A004AD8E9 /* ChatChannelHeaderView.swift */,
-				ADFA09C726A99C71002A6EFA /* ChatThreadHeaderView.swift */,
-				DBC8A563258113F700B20A82 /* ChatThreadVC.swift */,
-				64ECF6A52672271C008B9D47 /* ChatThreadVC_Tests.swift */,
-				64ECF6BB2672272D008B9D47 /* ChatThreadVC+SwiftUI_Tests.swift */,
 			);
 			path = ChatMessageList;
 			sourceTree = "<group>";
@@ -4667,6 +4664,26 @@
 				AD7D633225AF577E0051219B /* UserUpdateResponse+MissingUser.json */,
 			);
 			path = UserUpdate;
+			sourceTree = "<group>";
+		};
+		ADECE08926AAEC63001AE411 /* ChatChannel */ = {
+			isa = PBXGroup;
+			children = (
+				AD1D7A8326A212D000494CA5 /* ChatChannelVC.swift */,
+				ADA3572D269C562A004AD8E9 /* ChatChannelHeaderView.swift */,
+			);
+			path = ChatChannel;
+			sourceTree = "<group>";
+		};
+		ADECE08A26AAED3B001AE411 /* ChatThread */ = {
+			isa = PBXGroup;
+			children = (
+				DBC8A563258113F700B20A82 /* ChatThreadVC.swift */,
+				64ECF6A52672271C008B9D47 /* ChatThreadVC_Tests.swift */,
+				64ECF6BB2672272D008B9D47 /* ChatThreadVC+SwiftUI_Tests.swift */,
+				ADFA09C726A99C71002A6EFA /* ChatThreadHeaderView.swift */,
+			);
+			path = ChatThread;
 			sourceTree = "<group>";
 		};
 		ADED4BBF26431CA500F4E2C8 /* InputTextView */ = {
