@@ -15,6 +15,7 @@ Components.default.threadHeaderView = MyChatThreadHeaderView.self
 ```
 <ComponentsNote />
 
+<!-- Uncomment this when we have typing events for threads
 ### Example
 
 Let's change the default `ChatThreadHeaderView` and put the channel name in the title and in the subtitle we only show it if some user is typing.

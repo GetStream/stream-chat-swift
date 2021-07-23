@@ -20,7 +20,7 @@ Components.default.channelHeaderView = MyChannelHeaderView.self
 ### Example
 As an example of how to customize the `ChatChannelHeaderView`, let's change it to display the avatar of the channel/user at the top, and the channel name at the bottom. If some one is typing in the channel, we replace the name with a "typing..." label.
 
-| Default style  | Custom Style |
+| Default Style  | Custom Style |
 | -------------- | ----------------------- |
 | <img src={require("../assets/chat-channel-header-default.png").default}/>  | <img src={require("../assets/chat-channel-header-imessage.png").default}/>  |
 
