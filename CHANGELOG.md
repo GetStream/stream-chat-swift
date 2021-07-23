@@ -11,6 +11,7 @@ Renamed `Components.navigationTitleView` -> `Components.titleContainerView` [#12
 ### ✅ Added
 - Added `ChatChannelHeaderView` UI Component [#1294](https://github.com/GetStream/stream-chat-swift/pull/1294)
 - Added `ChatThreadHeaderView` UI Component [#1294](https://github.com/GetStream/stream-chat-swift/pull/1294)
+- Added custom channel events support [#1309](https://github.com/GetStream/stream-chat-swift/pull/1309)
 
 ### 🐞 Fixed
 - Fix message list header displaying incorrectly the online status for the current user instead of the other one [#1294](https://github.com/GetStream/stream-chat-swift/pull/1294)
