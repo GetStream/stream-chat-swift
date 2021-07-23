@@ -113,7 +113,7 @@ open class _ChatChannelHeaderView<ExtraData: ExtraDataTypes>:
         didUpdateChannel channel: EntityChange<_ChatChannel<ExtraData>>
     ) {
         switch channel {
-        case .update:
+        case .update, .create:
             updateContentIfNeeded()
         default:
             break
