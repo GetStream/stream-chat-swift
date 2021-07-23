@@ -15,7 +15,7 @@ class ChatChannelListRouter_Mock: ChatChannelListRouter {
         openCurrentUserProfileCalled = true
     }
 
-    override open func showMessageList(for cid: ChannelId) {
+    override open func showChannel(for cid: ChannelId) {
         openChat_channelId = cid
     }
 }
