@@ -133,6 +133,17 @@ If set the indicator saying that the message is visible for current user only wi
 static let onlyVisibleForYouIndicator 
 ```
 
+### `centered`
+
+If set all the content will have centered alignment. By default, the system messages are centered.
+
+``` swift
+static let centered 
+```
+
+`flipped` and `centered` are mutually exclusive. Only one of these two should be used at a time.
+If both are specified in the options, `centered` is prioritized
+
 ### `description`
 
 Returns all options the current option set consists of separated by `-` character.

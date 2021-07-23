@@ -28,7 +28,7 @@ Instance of `ChatMessageComposerMentionCellView` which shows information about t
 
 ``` swift
 open lazy var mentionView: _ChatMentionSuggestionView<ExtraData> = components
-        .suggestionsMentionCellView.init()
+        .suggestionsMentionView.init()
         .withoutAutoresizingMaskConstraints
 ```
 

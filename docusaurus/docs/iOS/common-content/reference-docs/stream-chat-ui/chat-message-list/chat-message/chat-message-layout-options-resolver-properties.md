@@ -11,13 +11,25 @@ public let minTimeIntervalBetweenMessagesInGroup: TimeInterval
 
 ### `optionsForMessage(at:in:with:)`
 
+``` swift
+@available(*, deprecated, message: "Use the same method with the appearance parameter instead")
+    open func optionsForMessage(
+        at indexPath: IndexPath,
+        in channel: _ChatChannel<ExtraData>,
+        with messages: AnyRandomAccessCollection<_ChatMessage<ExtraData>>
+    ) -> ChatMessageLayoutOptions 
+```
+
+### `optionsForMessage(at:in:with:appearance:)`
+
 Calculates layout options for the message.
 
 ``` swift
 open func optionsForMessage(
         at indexPath: IndexPath,
         in channel: _ChatChannel<ExtraData>,
-        with messages: AnyRandomAccessCollection<_ChatMessage<ExtraData>>
+        with messages: AnyRandomAccessCollection<_ChatMessage<ExtraData>>,
+        appearance: Appearance
     ) -> ChatMessageLayoutOptions 
 ```
 
@@ -26,6 +38,7 @@ open func optionsForMessage(
   - indexPath: The index path of the cell displaying the message.
   - channel: The channel message is related to.
   - messages: The list of messages in the channel.
+  - appearance: The appearance theme in use.
 
 #### Returns
 

@@ -12,7 +12,7 @@ public let type: AttachmentType
 A payload that will exposed on attachment when the message is sent.
 
 ``` swift
-public let payload: Encodable?
+public let payload: Encodable
 ```
 
 ### `localFileURL`

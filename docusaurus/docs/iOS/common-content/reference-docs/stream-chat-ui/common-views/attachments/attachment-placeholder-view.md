@@ -1,7 +1,6 @@
 ---
 title: AttachmentPlaceholderView
 ---
-![AttachmentPlaceholderView](../../../../../assets/AttachmentPlaceholderView_documentation.default-light.png)
 
 Default attachment view to be used as a placeholder when attachment preview is not implemented for custom attachments.
 

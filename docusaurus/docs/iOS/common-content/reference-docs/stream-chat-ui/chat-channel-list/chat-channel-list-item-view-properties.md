@@ -55,7 +55,7 @@ open private(set) lazy var titleLabel: UILabel = UILabel()
 
 ### `subtitleLabel`
 
-The `UILabel` instance showing the last message or typing members if any.
+The `UILabel` instance showing the last message or typing users if any.
 
 ``` swift
 open private(set) lazy var subtitleLabel: UILabel = UILabel()
@@ -106,7 +106,7 @@ open var titleText: String?
 
 ### `subtitleText`
 
-Text of `subtitleLabel` which contains current typing member or the last message in the channel.
+Text of `subtitleLabel` which contains current typing user or the last message in the channel.
 
 ``` swift
 open var subtitleText: String? 

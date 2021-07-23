@@ -14,14 +14,25 @@ public protocol GalleryContentViewDelegate: ChatMessageContentViewDelegate
 
 ## Requirements
 
-### didTapOnImageAttachment(\_:​previews:​at:​)
+### galleryMessageContentView(at:​didTapAttachmentPreview:​previews:​)
 
-Called when the user taps on one of the image attachments.
+Called when the user taps on one of the attachment previews.
 
 ``` swift
-func didTapOnImageAttachment(
-        _ attachment: ChatMessageImageAttachment,
-        previews: [ImagePreviewable],
-        at indexPath: IndexPath?
+func galleryMessageContentView(
+        at indexPath: IndexPath?,
+        didTapAttachmentPreview attachmentId: AttachmentId,
+        previews: [GalleryItemPreview]
+    )
+```
+
+### galleryMessageContentView(at:​didTakeActionOnUploadingAttachment:​)
+
+Called when action button is clicked for uploading attachment.
+
+``` swift
+func galleryMessageContentView(
+        at indexPath: IndexPath?,
+        didTakeActionOnUploadingAttachment attachmentId: AttachmentId
     )
 ```

@@ -63,3 +63,9 @@ public var headlineBold = UIFont.preferredFont(forTextStyle: .headline).bold
 
 ``` swift
 public var title 
+```
+
+### `emoji`
+
+``` swift
+public var emoji 
