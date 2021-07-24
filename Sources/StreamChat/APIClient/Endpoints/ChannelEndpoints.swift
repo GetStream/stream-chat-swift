@@ -192,6 +192,16 @@ extension Endpoint {
         )
     }
     
+    static func sendEvent<Payload: CustomEventPayload>(_ payload: Payload, cid: ChannelId) -> Endpoint<EmptyResponse> {
+        .init(
+            path: "channels/" + cid.apiPath + "/event",
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: false,
+            body: ["event": CustomEventRequestBody(payload: payload)]
+        )
+    }
+    
     static func enableSlowMode(cid: ChannelId, cooldownDuration: Int) -> Endpoint<EmptyResponse> {
         .init(
             path: "channels/" + cid.apiPath,
