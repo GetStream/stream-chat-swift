@@ -430,6 +430,23 @@ final class ChannelEndpoints_Tests: XCTestCase {
         
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
     }
+    
+    func test_sendCustomEvent_buildsCorrectly() {
+        let cid = ChannelId.unique
+        let ideaPayload = IdeaEventPayload(idea: .unique)
+        
+        let expectedEndpoint = Endpoint<EmptyResponse>(
+            path: "channels/" + cid.apiPath + "/event",
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: false,
+            body: ["event": CustomEventRequestBody(payload: ideaPayload)]
+        )
+        
+        let endpoint: Endpoint<EmptyResponse> = .sendEvent(ideaPayload, cid: cid)
+        
+        XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
+    }
 }
 
 extension ChannelEditDetailPayload where ExtraData == NoExtraData {

@@ -3,6 +3,7 @@
 //
 
 @testable import StreamChat
+import StreamChatTestTools
 import XCTest
 
 final class EventsController_Tests: StressTestCase {
@@ -60,35 +61,58 @@ final class EventsController_Tests: StressTestCase {
     
     // MARK: - Event propagation
     
-    func test_whenEventsNotificationIsObserved_eventIsForwardedToDelegate() {
-        class Delegate_Mock: QueueAwareDelegate, EventsControllerDelegate {
-            @Atomic var events: [Event] = []
-            
-            func eventsController(_ controller: EventsController, didReceiveEvent event: Event) {
-                events.append(event)
-                validateQueue()
+    func test_whenEventsNotificationIsObserved_onlyEventsThatShouldBeProcessed_areForwardedToDelegate() {
+        class EventsControllerMock: EventsController {
+            lazy var shouldProcessEventMockFunc = MockFunc.mock(for: shouldProcessEvent)
+
+            override func shouldProcessEvent(_ event: Event) -> Bool {
+                shouldProcessEventMockFunc.callAndReturn(event)
             }
         }
 
+        // Create mock controller.
+        let controller = EventsControllerMock(notificationCenter: client.eventNotificationCenter)
+        controller.callbackQueue = .testQueue(withId: callbackQueueID)
+        
         // Create and set the delegate.
-        let delegate = Delegate_Mock(expectedQueueId: callbackQueueID)
+        let delegate = EventsControllerDelegateMock(expectedQueueId: callbackQueueID)
         controller.delegate = delegate
         
-        let events = [
-            TestMemberEvent.unique,
-            TestMemberEvent.unique,
-            TestMemberEvent.unique
+        // Create `event -> should be processed` mapping.
+        let events: [TestMemberEvent: Bool] = [
+            TestMemberEvent.unique: true,
+            TestMemberEvent.unique: false,
+            TestMemberEvent.unique: true,
+            TestMemberEvent.unique: false
         ]
         
-        // Simulate incoming events.
-        for event in events {
+        for (event, shouldBeProcessed) in events {
+            // Change the value returned by `shouldProcessEvent` func.
+            controller.shouldProcessEventMockFunc.returns(shouldBeProcessed)
+            
+            // Simulate incoming event.
             let notification = Notification(newEventReceived: event, sender: self)
             client.eventNotificationCenter.post(notification)
         }
         
-        // Assert the events are received.
-        AssertAsync.willBeEqual(
-            delegate.events.compactMap { $0 as? TestMemberEvent }, events
-        )
+        AssertAsync {
+            // Assert `shouldProcessEvent` is invoked for each incoming event.
+            Assert.willBeEqual(controller.shouldProcessEventMockFunc.count, events.count)
+            
+            // Assert delegate received only events which have passed the filter
+            Assert.willBeEqual(
+                delegate.events.compactMap { $0 as? TestMemberEvent },
+                events.compactMap { event, shouldProcess in shouldProcess ? event : nil }
+            )
+        }
+    }
+}
+
+class EventsControllerDelegateMock: QueueAwareDelegate, EventsControllerDelegate {
+    @Atomic var events: [Event] = []
+    
+    func eventsController(_ controller: EventsController, didReceiveEvent event: Event) {
+        events.append(event)
+        validateQueue()
     }
 }
