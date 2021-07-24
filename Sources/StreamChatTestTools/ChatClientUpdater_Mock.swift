@@ -18,6 +18,7 @@ class ChatClientUpdaterMock<ExtraData: ExtraDataTypes>: ChatClientUpdater<ExtraD
     var reloadUserIfNeeded_callsCount = 0
     @Atomic var reloadUserIfNeeded_completion: ((Error?) -> Void)?
     @Atomic var reloadUserIfNeeded_callSuper: (() -> Void)?
+    @Atomic var reloadUserIfNeeded_userConnectionProvider: _UserConnectionProvider<ExtraData>?
 
     @Atomic var connect_called = false
     @Atomic var connect_completion: ((Error?) -> Void)?
@@ -41,6 +42,7 @@ class ChatClientUpdaterMock<ExtraData: ExtraDataTypes>: ChatClientUpdater<ExtraD
     ) {
         reloadUserIfNeeded_called = true
         reloadUserIfNeeded_completion = completion
+        reloadUserIfNeeded_userConnectionProvider = userConnectionProvider
         reloadUserIfNeeded_callSuper = {
             super.reloadUserIfNeeded(
                 userInfo: userInfo,
