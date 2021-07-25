@@ -2,6 +2,15 @@
 title: ChatChannelListController
 ---
 
-Used to get a list of all channels in the app matching the provided `ChannelListQuery`. Supports pagination.
+`ChatChannelListController` allows you to observe a list of chat channels based on the provided query and to paginate channels.
 
-*Typical usage:* Show a list of channels (the main page of most chat apps)
+## ChatChannelListControllerDelegate
+
+Classes that conform to this protocol will receive changes to the queried list of channels.
+
+```swift
+func controller(
+    _ controller: ChatChannelListController,
+    didChangeChannels changes: [ListChange<ChatChannel>]
+)
+```
