@@ -73,6 +73,30 @@ class ChatChannelListVC_Tests: XCTestCase {
         )
         AssertSnapshot(vc, isEmbeddedInNavigationController: true)
     }
+    
+    func test_LastMessageDeletedAppearance() {
+        let channelWithLastMessageDeleted = ChatChannel.mock(
+            cid: .init(type: .messaging, id: "test_channel5"),
+            name: "Channel 5",
+            imageURL: XCTestCase.TestImages.vader.url,
+            lastMessageAt: .init(timeIntervalSince1970: 1_611_951_530_000),
+            latestMessages: [
+                ChatMessage.mock(
+                    id: "2",
+                    cid: .unique,
+                    text: "Hello",
+                    author: .mock(id: "Vader"),
+                    deletedAt: .init(timeIntervalSince1970: 1_611_951_532_000)
+                ),
+                ChatMessage.mock(id: "1", cid: .unique, text: "Hello2", author: .mock(id: "Vader2"))
+            ]
+        )
+        mockedChannelListController.simulate(
+            channels: [channelWithLastMessageDeleted],
+            changes: []
+        )
+        AssertSnapshot(vc, isEmbeddedInNavigationController: true)
+    }
 
     func test_appearanceCustomization_usingComponents() {
         class TestView: CellSeparatorReusableView {

@@ -87,7 +87,7 @@ open class _ChatChannelListItemView<ExtraData: ExtraDataTypes>: _View, ThemeProv
         if let typingUsersInfo = typingUserString {
             return typingUsersInfo
         } else if let latestMessage = content.channel.latestMessages.first {
-            return "\(latestMessage.author.name ?? latestMessage.author.id): \(latestMessage.text)"
+            return "\(latestMessage.author.name ?? latestMessage.author.id): \(latestMessage.textContent ?? latestMessage.text)"
         } else {
             return L10n.Channel.Item.emptyMessages
         }
