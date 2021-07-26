@@ -26,6 +26,10 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
     ChatMessageListScrollOverlayDataSource {
     /// Controller for observing data changes within the channel
     open var channelController: _ChatChannelController<ExtraData>!
+
+    public var client: _ChatClient<ExtraData> {
+        channelController.client
+    }
     
     /// Observer responsible for setting the correct offset when keyboard frame is changed
     open lazy var keyboardObserver = ChatMessageListKeyboardObserver(
@@ -36,12 +40,17 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
 
     /// User search controller passed directly to the composer
     open lazy var userSuggestionSearchController: _ChatUserSearchController<ExtraData> =
-        channelController.client.userSearchController()
+        client.userSearchController()
     
     override open func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
         view.layoutIfNeeded()
     }
+
+    /// The header view of the message list that by default is the titleView of the navigation bar.
+    open private(set) lazy var headerView: _ChatChannelHeaderView<ExtraData> = components
+        .channelHeaderView.init()
+        .withoutAutoresizingMaskConstraints
     
     /// View used to display the messages
     open private(set) lazy var listView: _ChatMessageListView<ExtraData> = {
@@ -65,12 +74,6 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
     open private(set) lazy var messageComposerVC = components
         .messageComposerVC
         .init()
-    
-    /// View displaying status of the channel.
-    ///
-    /// The status differs based on the fact if the channel is direct or not.
-    open private(set) lazy var titleView: TitleContainerView = components.navigationTitleView.init()
-        .withoutAutoresizingMaskConstraints
     
     /// View for displaying the channel image in the navigation bar.
     open private(set) lazy var channelAvatarView = components
@@ -103,9 +106,6 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
     /// It's used to change the message list's height based on the keyboard visibility.
     private var messageComposerBottomConstraint: NSLayoutConstraint?
     
-    /// Timer used to update the online status of member in the chat channel
-    private var timer: Timer?
-    
     override open func setUp() {
         super.setUp()
         
@@ -127,15 +127,14 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
             self?.messageComposerVC.updateContent()
         }
         
-        if channelController.channel?.isDirectMessageChannel == true {
-            timer = Timer.scheduledTimer(withTimeInterval: 60, repeats: true) { [weak self] _ in
-                self?.updateNavigationBarContent()
-            }
-        }
-        
         scrollToLatestMessageButton.addTarget(self, action: #selector(scrollToLatestMessage), for: .touchUpInside)
-        
-        updateNavigationBarContent()
+
+        channelAvatarView.content = (channelController.channel, client.currentUserId)
+
+        if let cid = channelController.cid {
+            headerView.channelController = client.channelController(for: cid)
+        }
+        navigationItem.titleView = headerView
     }
     
     override open func setUpLayout() {
@@ -189,8 +188,6 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
         view.backgroundColor = appearance.colorPalette.background
         
         listView.backgroundColor = appearance.colorPalette.background
-
-        navigationItem.titleView = titleView
     }
 
     override open func viewDidLoad() {
@@ -297,39 +294,6 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
     @objc open func scrollToLatestMessage() {
         scrollToMostRecentMessage()
     }
-    
-    /// Updates the status data in `titleView`.
-    ///
-    /// If the channel is direct between two people this method is called repeatedly every minute
-    /// to update the online status of the members.
-    /// For group chat is called every-time the channel changes.
-    open func updateNavigationBarContent() {
-        let title = channelController.channel
-            .flatMap { components.channelNamer($0, channelController.client.currentUserId) }
-        
-        let subtitle: String? = {
-            if channelController.channel?.isDirectMessageChannel == true {
-                guard let member = channelController.channel?.lastActiveMembers.first else { return nil }
-                
-                if member.isOnline {
-                    // ReallyNotATODO: Missing API GroupA.m1
-                    // need to specify how long user have been online
-                    return L10n.Message.Title.online
-                } else if let minutes = member.lastActiveAt
-                    .flatMap({ DateComponentsFormatter.minutes.string(from: $0, to: Date()) }) {
-                    return L10n.Message.Title.seeMinutesAgo(minutes)
-                } else {
-                    return L10n.Message.Title.offline
-                }
-            } else {
-                return channelController.channel.map { L10n.Message.Title.group($0.memberCount, $0.watcherCount) }
-            }
-        }()
-
-        titleView.content = (title: title, subtitle: subtitle)
-        
-        channelAvatarView.content = (channelController.channel, channelController.client.currentUserId)
-    }
 
     /// Handles long press action on collection view.
     ///
@@ -428,7 +392,7 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
         
         switch localState.state {
         case .uploadingFailed:
-            channelController.client
+            client
                 .messageController(cid: attachmentId.cid, messageId: attachmentId.messageId)
                 .restartFailedAttachmentUploading(with: attachmentId)
         default:
@@ -456,7 +420,7 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
         at indexPath: IndexPath
     ) {
         // Can we have a helper on `ChannelController` returning a `messageController` for the provided message id?
-        channelController.client
+        client
             .messageController(
                 cid: channelController.cid!,
                 messageId: channelController.messages[indexPath.row].id
@@ -470,7 +434,7 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
         router.showThread(
             messageId: messageId,
             cid: cid,
-            client: channelController.client
+            client: client
         )
     }
 
@@ -491,7 +455,7 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
         _ channelController: _ChatChannelController<ExtraData>,
         didUpdateChannel channel: EntityChange<_ChatChannel<ExtraData>>
     ) {
-        updateNavigationBarContent()
+        channelAvatarView.content = (channelController.channel, client.currentUserId)
         updateScrollToLatestMessageButton()
     }
     
@@ -503,7 +467,7 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
         
         let typingUsersWithoutCurrentUser = typingUsers
             .sorted { $0.id < $1.id }
-            .filter { $0.id != self.channelController.client.currentUserId }
+            .filter { $0.id != self.client.currentUserId }
         
         if typingUsersWithoutCurrentUser.isEmpty {
             hideTypingIndicator()

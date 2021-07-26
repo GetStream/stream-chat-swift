@@ -18,12 +18,14 @@ open class _ChatThreadVC<ExtraData: ExtraDataTypes>:
     LinkPreviewViewDelegate,
     FileActionContentViewDelegate,
     UITableViewDataSource,
-    UITableViewDelegate 
+    UITableViewDelegate,
+    UIGestureRecognizerDelegate,
+    ChatMessageListScrollOverlayDataSource 
 ```
 
 ## Inheritance
 
-[`_ViewController`](../../common-views/_view-controller), [`FileActionContentViewDelegate`](../attachments/file-action-content-view-delegate), [`GalleryContentViewDelegate`](../attachments/gallery-content-view-delegate), [`GiphyActionContentViewDelegate`](../attachments/giphy-action-content-view-delegate), [`LinkPreviewViewDelegate`](../attachments/link-preview-view-delegate), [`ChatMessageContentViewDelegate`](../chat-message/chat-message-content-view-delegate), [`ComposerVCDelegate`](../../composer/composer-vc-delegate), [`ThemeProvider`](../../utils/theme-provider), `UITableViewDataSource`, `UITableViewDelegate`, `_ChatChannelControllerDelegate`, [`_ChatMessageActionsVCDelegate`](../../message-actions-popup/chat-message-actions-vc-delegate), `_ChatMessageControllerDelegate`
+[`_ViewController`](../../common-views/_view-controller), [`FileActionContentViewDelegate`](../attachments/file-action-content-view-delegate), [`GalleryContentViewDelegate`](../attachments/gallery-content-view-delegate), [`GiphyActionContentViewDelegate`](../attachments/giphy-action-content-view-delegate), [`LinkPreviewViewDelegate`](../attachments/link-preview-view-delegate), [`ChatMessageContentViewDelegate`](../chat-message/chat-message-content-view-delegate), [`ChatMessageListScrollOverlayDataSource`](../chat-message-list-scroll-overlay-data-source), [`ComposerVCDelegate`](../../composer/composer-vc-delegate), [`ThemeProvider`](../../utils/theme-provider), `UIGestureRecognizerDelegate`, `UITableViewDataSource`, `UITableViewDelegate`, `_ChatChannelControllerDelegate`, [`_ChatMessageActionsVCDelegate`](../../message-actions-popup/chat-message-actions-vc-delegate), `_ChatMessageControllerDelegate`
 
 ## Properties
 
@@ -67,6 +69,14 @@ View used to display the messages
 open private(set) lazy var listView: _ChatMessageListView<ExtraData> 
 ```
 
+### `dateOverlayView`
+
+View used to display date of currently displayed messages
+
+``` swift
+open private(set) lazy var dateOverlayView: ChatMessageListScrollOverlayView 
+```
+
 ### `messageComposerVC`
 
 Controller that handles the composer view
@@ -77,15 +87,13 @@ open private(set) lazy var messageComposerVC
 
 ### `titleView`
 
-View displaying status of the channel.
+A view that displays a title label and subtitle in a container stack view.
 
 ``` swift
 open lazy var titleView: TitleContainerView = components
-        .navigationTitleView.init()
+        .titleContainerView.init()
         .withoutAutoresizingMaskConstraints
 ```
-
-The status differs based on the fact if the channel is direct or not.
 
 ### `router`
 
@@ -137,6 +145,12 @@ override open func viewDidAppear(_ animated: Bool)
 
 ``` swift
 override open func viewDidDisappear(_ animated: Bool) 
+```
+
+### `traitCollectionDidChange(_:)`
+
+``` swift
+override open func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) 
 ```
 
 ### `cellContentClassForMessage(at:)`
@@ -239,6 +253,16 @@ Handles long press action on collection view.
 Default implementation will convert the gesture location to collection view's `indexPath`
 and then call selection action on the selected cell.
 
+### `handleTap(_:)`
+
+Handles tap action on the table view.
+
+``` swift
+@objc open func handleTap(_ gesture: UITapGestureRecognizer) 
+```
+
+Default implementation will dismiss the keyboard if it is open
+
 ### `updateMessages(with:completion:)`
 
 Updates the collection view data with given `changes`.
@@ -274,16 +298,6 @@ open func didTapOnAttachmentAction(
     ) 
 ```
 
-### `didTapOnImageAttachment(_:previews:at:)`
-
-``` swift
-open func didTapOnImageAttachment(
-        _ attachment: ChatMessageImageAttachment,
-        previews: [ImagePreviewable],
-        at indexPath: IndexPath?
-    ) 
-```
-
 ### `didTapOnLinkAttachment(_:at:)`
 
 ``` swift
@@ -314,6 +328,15 @@ open func composerDidCreateNewMessage()
 open func channelController(
         _ channelController: _ChatChannelController<ExtraData>,
         didUpdateChannel channel: EntityChange<_ChatChannel<ExtraData>>
+    ) 
+```
+
+### `messageController(_:didChangeMessage:)`
+
+``` swift
+public func messageController(
+        _ controller: _ChatMessageController<ExtraData>,
+        didChangeMessage change: EntityChange<_ChatMessage<ExtraData>>
     ) 
 ```
 
@@ -362,8 +385,42 @@ open func messageContentViewDidTapOnThread(_ indexPath: IndexPath?)
 open func messageContentViewDidTapOnQuotedMessage(_ indexPath: IndexPath?) 
 ```
 
+### `galleryMessageContentView(at:didTapAttachmentPreview:previews:)`
+
+``` swift
+open func galleryMessageContentView(
+        at indexPath: IndexPath?,
+        didTapAttachmentPreview attachmentId: AttachmentId,
+        previews: [GalleryItemPreview]
+    ) 
+```
+
+### `galleryMessageContentView(at:didTakeActionOnUploadingAttachment:)`
+
+``` swift
+open func galleryMessageContentView(
+        at indexPath: IndexPath?,
+        didTakeActionOnUploadingAttachment attachmentId: AttachmentId
+    ) 
+```
+
 ### `messageForIndexPath(_:)`
 
 ``` swift
 open func messageForIndexPath(_ indexPath: IndexPath) -> _ChatMessage<ExtraData> 
+```
+
+### `scrollOverlay(_:textForItemAt:)`
+
+``` swift
+open func scrollOverlay(
+        _ overlay: ChatMessageListScrollOverlayView,
+        textForItemAt indexPath: IndexPath
+    ) -> String? 
+```
+
+### `gestureRecognizer(_:shouldReceive:)`
+
+``` swift
+open func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool 
 ```

@@ -53,6 +53,24 @@ The delegate function `didChangeUsers` will also be called.
   - term: Search term. If empty string or `nil`, all users are fetched.
   - completion: Called when the controller has finished fetching remote data. If the data fetching fails, the error variable contains more details about the problem.
 
+### `search(query:completion:)`
+
+Searches users for the given query.
+
+``` swift
+public func search(query: _UserListQuery<ExtraData.User>, completion: ((_ error: Error?) -> Void)? = nil) 
+```
+
+When this function is called, `users` property of this controller will refresh with new users matching the term.
+The delegate function `didChangeUsers` will also be called.
+
+> 
+
+#### Parameters
+
+  - query: Search query.
+  - completion: Called when the controller has finished fetching remote data. If the data fetching fails, the error variable contains more details about the problem.
+
 ### `loadNextUsers(limit:completion:)`
 
 Loads next users from backend.

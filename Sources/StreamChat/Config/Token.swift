@@ -8,6 +8,11 @@ import Foundation
 public struct Token: Decodable, Equatable, ExpressibleByStringLiteral {
     public let rawValue: String
     public let userId: UserId
+    public let expiration: Date?
+    
+    public var isExpired: Bool {
+        expiration.map { $0 < Date() } ?? false
+    }
 
     /// Created a new `Token` instance.
     /// - Parameter value: The JWT string value. It must be in valid format and contain `user_id` in payload.
@@ -26,13 +31,16 @@ public struct Token: Decodable, Equatable, ExpressibleByStringLiteral {
         guard let userId = rawValue.jwtPayload?["user_id"] as? String else {
             throw ClientError.InvalidToken("Provided token does not contain `user_id`")
         }
-
-        self.init(rawValue: rawValue, userId: userId)
+        let expiration = (rawValue.jwtPayload?["exp"] as? Int64).map {
+            Date(timeIntervalSince1970: TimeInterval($0))
+        }
+        self.init(rawValue: rawValue, userId: userId, expiration: expiration)
     }
 
-    init(rawValue: String, userId: UserId) {
+    init(rawValue: String, userId: UserId, expiration: Date?) {
         self.rawValue = rawValue
         self.userId = userId
+        self.expiration = expiration
     }
 
     public init(from decoder: Decoder) throws {
@@ -49,7 +57,7 @@ public extension Token {
     ///
     /// Is used by `anonymous` token provider.
     static var anonymous: Self {
-        .init(rawValue: "", userId: .anonymous)
+        .init(rawValue: "", userId: .anonymous, expiration: .distantFuture)
     }
 
     /// The token which can be used during the development.
@@ -64,7 +72,7 @@ public extension Token {
 
         let jwt = [header, payload, devSignature].joined(separator: ".")
             
-        return .init(rawValue: jwt, userId: userId)
+        return .init(rawValue: jwt, userId: userId, expiration: .distantFuture)
     }
 }
 

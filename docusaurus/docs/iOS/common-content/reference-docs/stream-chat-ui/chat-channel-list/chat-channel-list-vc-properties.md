@@ -45,16 +45,6 @@ open private(set) lazy var collectionView: UICollectionView =
             .withoutAutoresizingMaskConstraints
 ```
 
-### `createChannelButton`
-
-The `UIButton` instance used for navigating to new channel screen creation,
-
-``` swift
-open private(set) lazy var createChannelButton: UIButton = components
-        .createChannelButton.init()
-        .withoutAutoresizingMaskConstraints
-```
-
 ### `userAvatarView`
 
 The `CurrentChatUserAvatarView` instance used for displaying avatar of the current user.
@@ -142,12 +132,6 @@ open func scrollViewDidEndDecelerating(_ scrollView: UIScrollView)
 
 ``` swift
 @objc open func didTapOnCurrentUserAvatar(_ sender: Any) 
-```
-
-### `didTapCreateNewChannel(_:)`
-
-``` swift
-@objc open func didTapCreateNewChannel(_ sender: Any) 
 ```
 
 ### `traitCollectionDidChange(_:)`

@@ -13,6 +13,12 @@ Controller for observing data changes within the channel
 open var channelController: _ChatChannelController<ExtraData>!
 ```
 
+### `client`
+
+``` swift
+public var client: _ChatClient<ExtraData> 
+```
+
 ### `keyboardObserver`
 
 Observer responsible for setting the correct offset when keyboard frame is changed
@@ -29,12 +35,30 @@ User search controller passed directly to the composer
 open lazy var userSuggestionSearchController: _ChatUserSearchController<ExtraData> 
 ```
 
+### `headerView`
+
+The header view of the message list that by default is the titleView of the navigation bar.
+
+``` swift
+open private(set) lazy var headerView: _ChatMessageListHeaderView<ExtraData> = components
+        .messageListHeaderView.init()
+        .withoutAutoresizingMaskConstraints
+```
+
 ### `listView`
 
 View used to display the messages
 
 ``` swift
 open private(set) lazy var listView: _ChatMessageListView<ExtraData> 
+```
+
+### `dateOverlayView`
+
+View used to display date of currently displayed messages
+
+``` swift
+open private(set) lazy var dateOverlayView: ChatMessageListScrollOverlayView 
 ```
 
 ### `messageComposerVC`
@@ -44,17 +68,6 @@ Controller that handles the composer view
 ``` swift
 open private(set) lazy var messageComposerVC 
 ```
-
-### `titleView`
-
-View displaying status of the channel.
-
-``` swift
-open private(set) lazy var titleView: TitleContainerView = components.navigationTitleView.init()
-        .withoutAutoresizingMaskConstraints
-```
-
-The status differs based on the fact if the channel is direct or not.
 
 ### `channelAvatarView`
 
@@ -104,14 +117,6 @@ The height of the typing indicator view
 
 ``` swift
 open private(set) var typingIndicatorViewHeight: CGFloat = 22
-```
-
-### `overlayDateFormatter`
-
-Formatter that is used to format date for scrolling overlay that should display day when message below were sent
-
-``` swift
-open var overlayDateFormatter: DateFormatter 
 ```
 
 ### `isScrollToBottomButtonVisible`
@@ -196,12 +201,12 @@ open func attachmentViewInjectorClassForMessage(at indexPath: IndexPath) -> _Att
 open func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) 
 ```
 
-### `messageListView(_:scrollOverlayTextForItemAt:)`
+### `scrollOverlay(_:textForItemAt:)`
 
 ``` swift
-open func messageListView(
-        _ tableView: UITableView,
-        scrollOverlayTextForItemAt indexPath: IndexPath
+open func scrollOverlay(
+        _ overlay: ChatMessageListScrollOverlayView,
+        textForItemAt indexPath: IndexPath
     ) -> String? 
 ```
 
@@ -243,18 +248,6 @@ Action for `scrollToLatestMessageButton` that scroll to most recent message.
 @objc open func scrollToLatestMessage() 
 ```
 
-### `updateNavigationBarContent()`
-
-Updates the status data in `titleView`.
-
-``` swift
-open func updateNavigationBarContent() 
-```
-
-If the channel is direct between two people this method is called repeatedly every minute
-to update the online status of the members.
-For group chat is called every-time the channel changes.
-
 ### `handleLongPress(_:)`
 
 Handles long press action on collection view.
@@ -265,6 +258,16 @@ Handles long press action on collection view.
 
 Default implementation will convert the gesture location to collection view's `indexPath`
 and then call selection action on the selected cell.
+
+### `handleTap(_:)`
+
+Handles tap action on the table view.
+
+``` swift
+@objc open func handleTap(_ gesture: UITapGestureRecognizer) 
+```
+
+Default implementation will dismiss the keyboard if it is open
 
 ### `updateMessages(with:completion:)`
 
@@ -286,21 +289,22 @@ open func messageForIndexPath(_ indexPath: IndexPath) -> _ChatMessage<ExtraData>
 open func didSelectMessageCell(at indexPath: IndexPath) 
 ```
 
-### `restartUploading(for:)`
-
-Restarts upload of given `attachment` in case of failure
+### `galleryMessageContentView(at:didTapAttachmentPreview:previews:)`
 
 ``` swift
-open func restartUploading(for attachmentId: AttachmentId) 
+open func galleryMessageContentView(
+        at indexPath: IndexPath?,
+        didTapAttachmentPreview attachmentId: AttachmentId,
+        previews: [GalleryItemPreview]
+    ) 
 ```
 
-### `didTapOnImageAttachment(_:previews:at:)`
+### `galleryMessageContentView(at:didTakeActionOnUploadingAttachment:)`
 
 ``` swift
-open func didTapOnImageAttachment(
-        _ attachment: ChatMessageImageAttachment,
-        previews: [ImagePreviewable],
-        at indexPath: IndexPath?
+open func galleryMessageContentView(
+        at indexPath: IndexPath?,
+        didTakeActionOnUploadingAttachment attachmentId: AttachmentId
     ) 
 ```
 
@@ -365,26 +369,26 @@ open func channelController(
     ) 
 ```
 
-### `channelController(_:didChangeTypingMembers:)`
+### `channelController(_:didChangeTypingUsers:)`
 
 ``` swift
 open func channelController(
         _ channelController: _ChatChannelController<ExtraData>,
-        didChangeTypingMembers typingMembers: Set<_ChatChannelMember<ExtraData.User>>
+        didChangeTypingUsers typingUsers: Set<_ChatUser<ExtraData.User>>
     ) 
 ```
 
-### `showTypingIndicator(typingMembers:)`
+### `showTypingIndicator(typingUsers:)`
 
 Shows typing Indicator
 
 ``` swift
-open func showTypingIndicator(typingMembers: [_ChatChannelMember<ExtraData.User>]) 
+open func showTypingIndicator(typingUsers: [_ChatUser<ExtraData.User>]) 
 ```
 
 #### Parameters
 
-  - typingMembers: typing members gotten from `channelController`
+  - typingUsers: typing users gotten from `channelController`
 
 ### `hideTypingIndicator()`
 
@@ -393,10 +397,6 @@ Hides typing Indicator
 ``` swift
 open func hideTypingIndicator() 
 ```
-
-#### Parameters
-
-  - typingMembers: typing members gotten from `channelController`
 
 ### `chatMessageActionsVC(_:message:didTapOnActionItem:)`
 
@@ -448,3 +448,9 @@ open func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int
 
 ``` swift
 open func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell 
+```
+
+### `gestureRecognizer(_:shouldReceive:)`
+
+``` swift
+open func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool 

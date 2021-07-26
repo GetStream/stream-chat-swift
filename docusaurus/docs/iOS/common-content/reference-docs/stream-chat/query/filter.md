@@ -191,6 +191,14 @@ static func exists<Value: Encodable>(_ key: FilterKey<Scope, Value>, exists: Boo
 
   - exists: `true`(default value) if the filter matches values that exist. `false` if the filter should match values that don't exist.
 
+### `contains(_:value:)`
+
+Matches if the key contains the given value.
+
+``` swift
+static func contains<Value: Encodable>(_ key: FilterKey<Scope, Value>, value: String) -> Filter 
+```
+
 ### `encode(to:)`
 
 ``` swift
