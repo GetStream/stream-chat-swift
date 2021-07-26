@@ -15,6 +15,7 @@ Renamed `Components.navigationTitleView` -> `Components.titleContainerView` [#12
 
 ### 🐞 Fixed
 - Fix message list header displaying incorrectly the online status for the current user instead of the other one [#1294](https://github.com/GetStream/stream-chat-swift/pull/1294)
+- Fix deleted last message's appearance on channels list [#1318](https://github.com/GetStream/stream-chat-swift/pull/1318)
 
 ### 🔄 Changed
 
