@@ -23,6 +23,12 @@
       ]
     },
     {
+      "Controllers with Combine" : [
+        "combine/combine-overview",
+        "combine/channels"
+      ]
+    },
+    {
       "Core Components": [
         "components/channel-list",
         "components/message-list",
