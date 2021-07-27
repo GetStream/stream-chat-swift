@@ -11,6 +11,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Added `ChatChannelHeaderView` UI Component [#1294](https://github.com/GetStream/stream-chat-swift/pull/1294)
 - Added `ChatThreadHeaderView` UI Component [#1294](https://github.com/GetStream/stream-chat-swift/pull/1294)
 - Added custom channel events support [#1309](https://github.com/GetStream/stream-chat-swift/pull/1309)
+- Added `ChatMessageAudioAttachment`, you can access them via `ChatMessage.audioAttachments`. There's no UI support as of now, it's in our Roadmap. [#1322](https://github.com/GetStream/stream-chat-swift/issues/1322)
 
 ### 🐞 Fixed
 - Fix message list header displaying incorrectly the online status for the current user instead of the other one [#1294](https://github.com/GetStream/stream-chat-swift/pull/1294)
