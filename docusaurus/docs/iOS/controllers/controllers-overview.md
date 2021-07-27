@@ -13,7 +13,7 @@ avoid side-effects from initialization and to make sure that the controller is r
 
 ie. a channel controller needs to watch a channel before it's delegate can receive calls.
 
-The `synchronize` can be used as a fire and forget method but it is recommended to pass a completion block to handle error cases as well.
+It's a best practice to pass synchronize a completion block to handle error cases. However, error handling is optional and you can use synchronize as a fire and forget method.
 
 ```swift
     /// ...
