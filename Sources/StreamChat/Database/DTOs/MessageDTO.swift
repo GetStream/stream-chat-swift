@@ -411,7 +411,21 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         dto.parentMessageId = payload.parentId
         dto.showReplyInChannel = payload.showReplyInChannel
         dto.replyCount = Int32(payload.replyCount)
-        dto.extraData = try JSONEncoder.default.encode(payload.extraData)
+
+        do {
+            if payload.extraData is NoExtraData {
+                dto.extraData = try JSONEncoder.default.encode(payload.extraDataMap)
+            } else {
+                dto.extraData = try JSONEncoder.default.encode(payload.extraData)
+            }
+        } catch {
+            log.error(
+                "Failed to decode extra payload for Message with id: <\(dto.id)>, using default value instead. "
+                    + "Error: \(error)"
+            )
+            dto.extraData = Data()
+        }
+        
         dto.isSilent = payload.isSilent
         dto.pinned = payload.pinned
         dto.pinExpires = payload.pinExpires
@@ -590,6 +604,16 @@ private extension _ChatMessage {
             extraData = .defaultValue
         }
         self.extraData = extraData
+
+        let extraDataMap: [String: Any]
+        do {
+            extraDataMap = try JSONSerialization.jsonObject(with: dto.extraData, options: []) as? [String: Any] ?? [:]
+        } catch {
+            log.error("Failed to decode extra data for Message with id: <\(dto.id)>, using default value instead. Error: \(error)")
+            extraDataMap = [:]
+        }
+        self.extraDataMap = extraDataMap
+
         localState = dto.localMessageState
         isFlaggedByCurrentUser = dto.flaggedBy != nil
         

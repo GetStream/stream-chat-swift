@@ -81,6 +81,7 @@ public class _CurrentChatUser<ExtraData: ExtraDataTypes>: _ChatUser<ExtraData.Us
         lastActiveAt: Date?,
         teams: Set<TeamId>,
         extraData: ExtraData.User,
+        extraDataMap: [String: Any],
         devices: [Device],
         currentDevice: Device?,
         mutedUsers: Set<_ChatUser<ExtraData.User>>,
@@ -109,7 +110,8 @@ public class _CurrentChatUser<ExtraData: ExtraDataTypes>: _ChatUser<ExtraData.Us
             updatedAt: updatedAt,
             lastActiveAt: lastActiveAt,
             teams: teams,
-            extraData: extraData
+            extraData: extraData,
+            extraDataMap: extraDataMap
         )
 
         $_mutedChannels = (mutedChannels, underlyingContext)

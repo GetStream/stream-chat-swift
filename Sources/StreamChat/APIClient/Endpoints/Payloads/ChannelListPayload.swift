@@ -80,7 +80,8 @@ struct ChannelDetailPayload<ExtraData: ExtraDataTypes>: Decodable {
     let imageURL: URL?
     
     let extraData: ExtraData.Channel
-    
+    let extraDataMap: [String: RawJSON]
+
     /// A channel type.
     public let typeRawValue: String
     
@@ -139,6 +140,13 @@ struct ChannelDetailPayload<ExtraData: ExtraDataTypes>: Decodable {
         cooldownDuration = try container.decodeIfPresent(Int.self, forKey: .cooldownDuration) ?? 0
         
         extraData = try ExtraData.Channel(from: decoder)
+        
+        if var payload = try? [String: RawJSON](from: decoder) {
+            payload.removeValues(forKeys: ChannelCodingKeys.allCases.map(\.rawValue))
+            extraDataMap = payload
+        } else {
+            extraDataMap = [:]
+        }
     }
     
     // MARK: - For testing
@@ -148,6 +156,7 @@ struct ChannelDetailPayload<ExtraData: ExtraDataTypes>: Decodable {
         name: String?,
         imageURL: URL?,
         extraData: ExtraData.Channel,
+        extraDataMap: [String: RawJSON],
         typeRawValue: String,
         lastMessageAt: Date?,
         createdAt: Date,
@@ -165,6 +174,7 @@ struct ChannelDetailPayload<ExtraData: ExtraDataTypes>: Decodable {
         self.name = name
         self.imageURL = imageURL
         self.extraData = extraData
+        self.extraDataMap = extraDataMap
         self.typeRawValue = typeRawValue
         self.lastMessageAt = lastMessageAt
         self.createdAt = createdAt

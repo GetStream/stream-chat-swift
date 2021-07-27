@@ -5,7 +5,7 @@
 import Foundation
 
 /// Coding keys for message-related JSON payloads
-enum MessagePayloadsCodingKeys: String, CodingKey {
+enum MessagePayloadsCodingKeys: String, CodingKey, CaseIterable {
     case id
     case type
     case user
@@ -62,7 +62,8 @@ class MessagePayload<ExtraData: ExtraDataTypes>: Decodable {
     let threadParticipants: [UserPayload<ExtraData.User>]
     let replyCount: Int
     let extraData: ExtraData.Message
-    
+    let extraDataMap: [String: RawJSON]
+
     let latestReactions: [MessageReactionPayload<ExtraData>]
     let ownReactions: [MessageReactionPayload<ExtraData>]
     let reactionScores: [MessageReactionType: Int]
@@ -108,6 +109,13 @@ class MessagePayload<ExtraData: ExtraDataTypes>: Decodable {
             .compactMap(\.base)
         extraData = try ExtraData.Message(from: decoder)
         
+        if var payload = try? [String: RawJSON](from: decoder) {
+            payload.removeValues(forKeys: MessagePayloadsCodingKeys.allCases.map(\.rawValue))
+            extraDataMap = payload
+        } else {
+            extraDataMap = [:]
+        }
+
         // Some endpoints return also channel payload data for convenience
         channel = try container.decodeIfPresent(ChannelDetailPayload<ExtraData>.self, forKey: .channel)
 
@@ -136,6 +144,7 @@ class MessagePayload<ExtraData: ExtraDataTypes>: Decodable {
         threadParticipants: [UserPayload<ExtraData.User>] = [],
         replyCount: Int,
         extraData: ExtraData.Message,
+        extraDataMap: [String: RawJSON],
         latestReactions: [MessageReactionPayload<ExtraData>] = [],
         ownReactions: [MessageReactionPayload<ExtraData>] = [],
         reactionScores: [MessageReactionType: Int],
@@ -163,6 +172,7 @@ class MessagePayload<ExtraData: ExtraDataTypes>: Decodable {
         self.threadParticipants = threadParticipants
         self.replyCount = replyCount
         self.extraData = extraData
+        self.extraDataMap = extraDataMap
         self.latestReactions = latestReactions
         self.ownReactions = ownReactions
         self.reactionScores = reactionScores

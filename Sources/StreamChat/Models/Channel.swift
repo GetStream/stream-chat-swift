@@ -154,7 +154,8 @@ public struct _ChatChannel<ExtraData: ExtraDataTypes> {
     /// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/Cheat-Sheet#working-with-extra-data).
     ///
     public let extraData: ExtraData.Channel
-    
+    public let extraDataMap: [String: Any]
+
     // MARK: - Internal
     
     /// A helper variable to cache the result of the filter for only banned members.
@@ -186,6 +187,7 @@ public struct _ChatChannel<ExtraData: ExtraDataTypes> {
         reads: [_ChatChannelRead<ExtraData>] = [],
         cooldownDuration: Int = 0,
         extraData: ExtraData.Channel,
+        extraDataMap: [String: Any],
 //        invitedMembers: Set<_ChatChannelMember<ExtraData.User>> = [],
         latestMessages: @escaping (() -> [_ChatMessage<ExtraData>]) = { [] },
         pinnedMessages: @escaping (() -> [_ChatMessage<ExtraData>]) = { [] },
@@ -210,6 +212,7 @@ public struct _ChatChannel<ExtraData: ExtraDataTypes> {
         self.reads = reads
         self.cooldownDuration = cooldownDuration
         self.extraData = extraData
+        self.extraDataMap = extraDataMap
 //        self.invitedMembers = invitedMembers
         
         $_unreadCount = (unreadCount, underlyingContext)

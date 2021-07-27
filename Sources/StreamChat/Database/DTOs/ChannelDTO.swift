@@ -142,6 +142,19 @@ extension NSManagedObjectContext {
 
         dto.name = payload.name
         dto.imageURL = payload.imageURL
+        do {
+            if payload.extraData is NoExtraData {
+                dto.extraData = try JSONEncoder.default.encode(payload.extraDataMap)
+            } else {
+                dto.extraData = try JSONEncoder.default.encode(payload.extraData)
+            }
+        } catch {
+            log.error(
+                "Failed to decode extra payload for Channel with cid: <\(dto.cid)>, using default value instead. "
+                    + "Error: \(error)"
+            )
+            dto.extraData = Data()
+        }
         dto.extraData = try JSONEncoder.default.encode(payload.extraData)
         dto.typeRawValue = payload.typeRawValue
         dto.config = try JSONEncoder().encode(payload.config)
@@ -288,6 +301,17 @@ extension _ChatChannel {
             extraData = .defaultValue
         }
         
+        let extraDataMap: [String: Any]
+        do {
+            extraDataMap = try JSONSerialization.jsonObject(with: dto.extraData, options: []) as? [String: Any] ?? [:]
+        } catch {
+            log.error(
+                "Failed to decode extra data for Channel with cid: <\(dto.cid)>, using default value instead. "
+                    + "Error: \(error)"
+            )
+            extraDataMap = [:]
+        }
+
         let cid = try! ChannelId(cid: dto.cid)
         
         let context = dto.managedObjectContext!
@@ -381,6 +405,7 @@ extension _ChatChannel {
             reads: reads,
             cooldownDuration: Int(dto.cooldownDuration),
             extraData: extraData,
+            extraDataMap: extraDataMap,
             //            invitedMembers: [],
             latestMessages: { fetchMessages() },
             pinnedMessages: { dto.pinnedMessages.map { $0.asModel() } },

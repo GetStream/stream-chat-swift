@@ -73,6 +73,8 @@ public struct _ChatMessage<ExtraData: ExtraDataTypes> {
     ///
     public let extraData: ExtraData.Message
     
+    public let extraDataMap: [String: Any]
+
     /// Quoted message.
     ///
     /// If message is inline reply this property will contain the message quoted by this reply.
@@ -172,6 +174,7 @@ public struct _ChatMessage<ExtraData: ExtraDataTypes> {
         showReplyInChannel: Bool,
         replyCount: Int,
         extraData: ExtraData.Message,
+        extraDataMap: [String: Any],
         quotedMessage: @escaping () -> _ChatMessage<ExtraData>?,
         isSilent: Bool,
         reactionScores: [MessageReactionType: Int],
@@ -203,6 +206,7 @@ public struct _ChatMessage<ExtraData: ExtraDataTypes> {
         self.showReplyInChannel = showReplyInChannel
         self.replyCount = replyCount
         self.extraData = extraData
+        self.extraDataMap = extraDataMap
         self.isSilent = isSilent
         self.reactionScores = reactionScores
         self.localState = localState
