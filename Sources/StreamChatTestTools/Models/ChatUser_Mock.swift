@@ -19,7 +19,8 @@ public extension _ChatUser {
         updatedAt: Date = .init(),
         lastActiveAt: Date? = nil,
         teams: Set<TeamId> = [],
-        extraData: ExtraData = .defaultValue
+        extraData: ExtraData = .defaultValue,
+        extraDataMap: [String: Any] = [:]
     ) -> _ChatUser {
         .init(
             id: id,
@@ -33,7 +34,8 @@ public extension _ChatUser {
             updatedAt: updatedAt,
             lastActiveAt: lastActiveAt,
             teams: teams,
-            extraData: extraData
+            extraData: extraData,
+            extraDataMap: extraDataMap
         )
     }
 }

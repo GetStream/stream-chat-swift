@@ -79,6 +79,7 @@ public extension _ChatChannel {
         memberCount: Int = 0,
         reads: [_ChatChannelRead<ExtraData>] = [],
         extraData: ExtraData.Channel = .defaultValue,
+        extraDataMap: [String: Any] = [:],
         latestMessages: [_ChatMessage<ExtraData>] = [],
         muteDetails: MuteDetails? = nil
     ) -> Self {
@@ -102,6 +103,7 @@ public extension _ChatChannel {
             memberCount: memberCount,
             reads: reads,
             extraData: extraData,
+            extraDataMap: extraDataMap,
             latestMessages: { latestMessages },
             muteDetails: { muteDetails },
             underlyingContext: nil
@@ -127,6 +129,7 @@ public extension _ChatChannel {
         memberCount: Int = 0,
         reads: [_ChatChannelRead<ExtraData>] = [],
         extraData: ExtraData.Channel = .defaultValue,
+        extraDataMap: [String: Any] = [:],
         latestMessages: [_ChatMessage<ExtraData>] = [],
         muteDetails: MuteDetails? = nil
     ) -> Self {
@@ -149,6 +152,7 @@ public extension _ChatChannel {
             memberCount: memberCount,
             reads: reads,
             extraData: extraData,
+            extraDataMap: extraDataMap,
             latestMessages: { latestMessages },
             muteDetails: { muteDetails },
             underlyingContext: nil

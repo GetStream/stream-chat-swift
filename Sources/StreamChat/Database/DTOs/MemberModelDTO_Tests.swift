@@ -35,7 +35,8 @@ class MemberModelDTO_Tests: XCTestCase {
             isInvisible: true,
             isBanned: true,
             teams: ["RED", "GREEN"],
-            extraData: .defaultValue
+            extraData: .defaultValue,
+            extraDataMap: [:]
         )
         
         let payload: MemberPayload<NoExtraData> = .init(
@@ -93,7 +94,8 @@ class MemberModelDTO_Tests: XCTestCase {
             isOnline: true,
             isInvisible: true,
             isBanned: true,
-            extraData: .init()
+            extraData: .init(),
+            extraDataMap: [:]
         )
         
         let payload: MemberPayload<NoExtraData> = .init(

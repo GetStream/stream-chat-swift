@@ -62,7 +62,8 @@ class UserDTO_Tests: XCTestCase {
             isInvisible: true,
             isBanned: true,
             teams: [],
-            extraData: .defaultValue
+            extraData: .defaultValue,
+            extraDataMap: [:]
         )
         
         try database.writeSynchronously { session in

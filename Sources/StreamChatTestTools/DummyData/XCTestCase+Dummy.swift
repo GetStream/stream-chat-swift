@@ -22,7 +22,8 @@ extension XCTestCase {
             isOnline: true,
             isInvisible: false,
             isBanned: false,
-            extraData: .defaultValue
+            extraData: .defaultValue,
+            extraDataMap: [:]
         )
     }
     
@@ -43,7 +44,8 @@ extension XCTestCase {
             isInvisible: true,
             isBanned: true,
             teams: [],
-            extraData: .defaultValue
+            extraData: .defaultValue,
+            extraDataMap: [:]
         )
     }
     
@@ -65,6 +67,7 @@ extension XCTestCase {
             mentionedUsers: [dummyCurrentUser],
             replyCount: 0,
             extraData: .defaultValue,
+            extraDataMap: [:],
             reactionScores: ["like": 1],
             isSilent: false,
             attachments: []
@@ -90,6 +93,7 @@ extension XCTestCase {
             mentionedUsers: [dummyCurrentUser],
             replyCount: 0,
             extraData: .defaultValue,
+            extraDataMap: [:],
             reactionScores: ["like": 1],
             isSilent: false,
             attachments: [],
@@ -154,6 +158,7 @@ extension XCTestCase {
                     name: .unique,
                     imageURL: .unique(),
                     extraData: .defaultValue,
+                    extraDataMap: [:],
                     typeRawValue: channelId.type.rawValue,
                     lastMessageAt: lastMessageAt,
                     createdAt: XCTestCase.channelCreatedDate,
@@ -204,6 +209,7 @@ extension XCTestCase {
             mentionedUsers: [],
             replyCount: 0,
             extraData: NoExtraData(),
+            extraDataMap: [:],
             reactionScores: [:],
             isSilent: false,
             attachments: []
@@ -229,7 +235,8 @@ extension XCTestCase {
                     isInvisible: true,
                     isBanned: true,
                     teams: [],
-                    extraData: .init()
+                    extraData: .init(),
+                    extraDataMap: [:]
                 ),
                 role: .member,
                 createdAt: .unique,
@@ -243,6 +250,7 @@ extension XCTestCase {
                     name: .unique,
                     imageURL: .unique(),
                     extraData: .init(),
+                    extraDataMap: [:],
                     typeRawValue: channelId.type.rawValue,
                     lastMessageAt: .unique,
                     createdAt: .unique,
@@ -310,7 +318,8 @@ private extension MemberPayload where ExtraData == NoExtraData {
                 isInvisible: true,
                 isBanned: true,
                 teams: [],
-                extraData: .defaultValue
+                extraData: .defaultValue,
+                extraDataMap: [:]
             ),
             role: .moderator,
             createdAt: .unique,
@@ -333,7 +342,8 @@ private extension UserPayload where ExtraData == NoExtraData {
             isInvisible: true,
             isBanned: true,
             teams: [],
-            extraData: .defaultValue
+            extraData: .defaultValue,
+            extraDataMap: [:]
         )
     }
 }

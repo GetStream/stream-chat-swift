@@ -340,6 +340,7 @@ class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
             name: .unique,
             imageURL: .unique(),
             extraData: .defaultValue,
+            extraDataMap: [:],
             typeRawValue: "",
             lastMessageAt: nil,
             createdAt: .unique,

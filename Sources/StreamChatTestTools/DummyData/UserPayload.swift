@@ -12,6 +12,7 @@ extension UserPayload where ExtraData == NoExtraData {
         name: String = .unique,
         imageUrl: URL? = .unique(),
         extraData: NoExtraData = .defaultValue,
+        extraDataMap: [String: RawJSON] = [:],
         teams: [TeamId] = [.unique, .unique, .unique],
         isBanned: Bool = false,
         updatedAt: Date = .unique
@@ -28,7 +29,8 @@ extension UserPayload where ExtraData == NoExtraData {
             isInvisible: true,
             isBanned: isBanned,
             teams: teams,
-            extraData: extraData
+            extraData: extraData,
+            extraDataMap: extraDataMap
         )
     }
 }

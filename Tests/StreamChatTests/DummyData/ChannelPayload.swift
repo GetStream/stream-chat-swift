@@ -24,7 +24,8 @@ extension ChannelDetailPayload where ExtraData == NoExtraData {
                     isInvisible: true,
                     isBanned: true,
                     teams: [],
-                    extraData: .defaultValue
+                    extraData: .defaultValue,
+                    extraDataMap: [:]
                 ),
                 role: .moderator,
                 createdAt: .unique,
@@ -39,6 +40,7 @@ extension ChannelDetailPayload where ExtraData == NoExtraData {
             name: .unique,
             imageURL: .unique(),
             extraData: .defaultValue,
+            extraDataMap: [:],
             typeRawValue: cid.type.rawValue,
             lastMessageAt: lastMessageAt,
             createdAt: channelCreatedDate,

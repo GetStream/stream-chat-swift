@@ -138,7 +138,8 @@ class ChannelController_Combine_Tests: iOS13TestCase {
             updatedAt: .unique,
             lastActiveAt: .unique,
             teams: [],
-            extraData: .defaultValue
+            extraData: .defaultValue,
+            extraDataMap: [:]
         )
         
         controller?.delegateCallback {

@@ -95,7 +95,8 @@ class ChannelController_SwiftUI_Tests: iOS13TestCase {
             updatedAt: .unique,
             lastActiveAt: .unique,
             teams: [],
-            extraData: .defaultValue
+            extraData: .defaultValue,
+            extraDataMap: [:]
         )
         
         // Simulate typing users change
@@ -155,6 +156,7 @@ extension _ChatMessage {
             showReplyInChannel: true,
             replyCount: 2,
             extraData: .init(),
+            extraDataMap: [:],
             quotedMessage: { nil },
             isSilent: false,
             reactionScores: ["": 1],
