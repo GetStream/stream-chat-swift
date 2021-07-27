@@ -332,8 +332,9 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, ThemeProvi
                 bubbleToReactionsConstraint,
                 reactionsBubbleView.centerXAnchor.pin(
                     equalTo: options.contains(.flipped) ?
-                        mainContainer.leadingAnchor :
-                        mainContainer.trailingAnchor
+                        (bubbleView ?? bubbleContentContainer).leadingAnchor :
+                        (bubbleView ?? bubbleContentContainer).trailingAnchor,
+                    constant: options.contains(.flipped) ? -8 : 8
                 )
             ]
             .compactMap { $0 }
