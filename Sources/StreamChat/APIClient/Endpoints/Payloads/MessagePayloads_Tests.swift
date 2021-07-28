@@ -122,7 +122,7 @@ class MessageRequestBody_Tests: XCTestCase {
             mentionedUserIds: [.unique],
             pinned: true,
             pinExpires: "2021-05-15T06:43:08.776Z".toDate(),
-            extraData: ["secretNote": .string("Anakin is Vader ;-)")]
+            extraData: ["secret_note": .string("Anakin is Vader ;-)")]
         )
         
         let serializedJSON = try JSONEncoder.stream.encode(payload)
@@ -141,7 +141,6 @@ class MessageRequestBody_Tests: XCTestCase {
             "pin_expires": "2021-05-15T06:43:08.776Z"
         ]
         let expectedJSON = try JSONSerialization.data(withJSONObject: expected, options: [])
-        
         AssertJSONEqual(serializedJSON, expectedJSON)
     }
     
