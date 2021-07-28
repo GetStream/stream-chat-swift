@@ -122,7 +122,7 @@ class ChannelUpdater<ExtraData: ExtraDataTypes>: Worker {
         attachments: [AnyAttachmentPayload] = [],
         mentionedUserIds: [UserId],
         quotedMessageId: MessageId?,
-        extraData: ExtraData.Message,
+        extraData: CustomData,
         completion: ((Result<MessageId, Error>) -> Void)? = nil
     ) {
         var newMessageId: MessageId?
@@ -257,7 +257,7 @@ class ChannelUpdater<ExtraData: ExtraDataTypes>: Worker {
     /// - Parameter cid: Channel id of the channel to be watched
     /// - Parameter completion: Called when the API call is finished. Called with `Error` if the remote update fails.
     func startWatching(cid: ChannelId, completion: ((Error?) -> Void)? = nil) {
-        var query = _ChannelQuery<ExtraData>(cid: cid)
+        var query = ChannelQuery(cid: cid)
         query.options = .all
         apiClient.request(endpoint: .channel(query: query)) {
             completion?($0.error)

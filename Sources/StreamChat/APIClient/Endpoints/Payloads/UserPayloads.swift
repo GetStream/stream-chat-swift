@@ -40,7 +40,7 @@ class UserPayload<ExtraData: UserExtraData>: Decodable {
     let isBanned: Bool
     let teams: [TeamId]
     let extraData: ExtraData
-    let extraDataMap: [String: RawJSON]
+    let extraDataMap: CustomData
 
     init(
         id: String,
@@ -55,7 +55,7 @@ class UserPayload<ExtraData: UserExtraData>: Decodable {
         isBanned: Bool,
         teams: [TeamId] = [],
         extraData: ExtraData,
-        extraDataMap: [String: RawJSON]
+        extraDataMap: CustomData
     ) {
         self.id = id
         self.name = name
@@ -88,7 +88,7 @@ class UserPayload<ExtraData: UserExtraData>: Decodable {
         isBanned = try container.decodeIfPresent(Bool.self, forKey: .isBanned) ?? false
         teams = try container.decodeIfPresent([String].self, forKey: .teams) ?? []
         extraData = try ExtraData(from: decoder)
-        if var payload = try? [String: RawJSON](from: decoder) {
+        if var payload = try? CustomData(from: decoder) {
             payload.removeValues(forKeys: UserPayloadsCodingKeys.allCases.map(\.rawValue))
             extraDataMap = payload
         } else {
@@ -98,13 +98,13 @@ class UserPayload<ExtraData: UserExtraData>: Decodable {
 }
 
 /// An object describing the outgoing user JSON payload.
-class UserRequestBody<ExtraData: UserExtraData>: Encodable {
+class UserRequestBody: Encodable {
     let id: String
     let name: String?
     let imageURL: URL?
-    let extraData: ExtraData
-    
-    init(id: String, name: String?, imageURL: URL?, extraData: ExtraData) {
+    let extraData: CustomData
+
+    init(id: String, name: String?, imageURL: URL?, extraData: CustomData) {
         self.id = id
         self.name = name
         self.imageURL = imageURL

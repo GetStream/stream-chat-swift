@@ -24,7 +24,7 @@ public extension _ChatMessage {
         showReplyInChannel: Bool = false,
         replyCount: Int = 0,
         extraData: ExtraData.Message = .defaultValue,
-        extraDataMap: [String: Any] = [:],
+        extraDataMap: CustomData = [:],
         isSilent: Bool = false,
         reactionScores: [MessageReactionType: Int] = [:],
         mentionedUsers: Set<_ChatUser<ExtraData.User>> = [],

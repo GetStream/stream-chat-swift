@@ -10,16 +10,27 @@ public struct UserInfo<ExtraData: ExtraDataTypes> {
     public let name: String?
     public let imageURL: URL?
     public let extraData: ExtraData.User
-    
+    public let extraDataMap: CustomData
+
+    /// customData is a convenience method around extraData and extraDataMap
+    public var customData: CustomData {
+        if !extraDataMap.isEmpty {
+            return extraDataMap
+        }
+        return CustomDataFromExtraData(extraData)
+    }
+
     public init(
         id: UserId,
         name: String? = nil,
         imageURL: URL? = nil,
-        extraData: ExtraData.User = .defaultValue
+        extraData: ExtraData.User = .defaultValue,
+        extraDataMap: CustomData = .defaultValue
     ) {
         self.id = id
         self.name = name
         self.imageURL = imageURL
         self.extraData = extraData
+        self.extraDataMap = extraDataMap
     }
 }

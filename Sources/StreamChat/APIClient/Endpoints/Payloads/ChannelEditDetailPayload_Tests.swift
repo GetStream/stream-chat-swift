@@ -13,7 +13,6 @@ class ChannelEditDetailPayload_Tests: XCTestCase {
         let imageURL: URL = .unique()
         let team: String = .unique
         let invite: UserId = .unique
-        let extraData: NoExtraData = .defaultValue
         
         // Create ChannelEditDetailPayload
         let payload = ChannelEditDetailPayload<NoExtraData>(
@@ -23,7 +22,7 @@ class ChannelEditDetailPayload_Tests: XCTestCase {
             team: team,
             members: [invite],
             invites: [invite],
-            extraData: extraData
+            extraData: .defaultValue
         )
 
         let expectedData: [String: Any] = [

@@ -73,7 +73,15 @@ public struct _ChatMessage<ExtraData: ExtraDataTypes> {
     ///
     public let extraData: ExtraData.Message
     
-    public let extraDataMap: [String: Any]
+    public let extraDataMap: [String: RawJSON]
+
+    /// customData is a convenience method around extraData and extraDataMap
+    public var customData: CustomData {
+        if !self.extraDataMap.isEmpty {
+            return self.extraDataMap
+        }
+        return CustomDataFromExtraData(extraData)
+    }
 
     /// Quoted message.
     ///
@@ -174,7 +182,7 @@ public struct _ChatMessage<ExtraData: ExtraDataTypes> {
         showReplyInChannel: Bool,
         replyCount: Int,
         extraData: ExtraData.Message,
-        extraDataMap: [String: Any],
+        extraDataMap: CustomData,
         quotedMessage: @escaping () -> _ChatMessage<ExtraData>?,
         isSilent: Bool,
         reactionScores: [MessageReactionType: Int],

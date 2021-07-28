@@ -205,7 +205,7 @@ final class ChannelEndpoints_Tests: XCTestCase {
             args: .unique,
             parentId: .unique,
             showReplyInChannel: true,
-            extraData: .defaultValue
+            extraData: [:]
         )
         
         let expectedEndpoint = Endpoint<MessagePayload<NoExtraData>.Boxed>(

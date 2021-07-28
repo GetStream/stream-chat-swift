@@ -70,7 +70,7 @@ class UserPayload_Tests: XCTestCase {
 
 class UserRequestBody_Tests: XCTestCase {
     func test_isSerialized() throws {
-        let payload: UserRequestBody<NoExtraData> = .init(
+        let payload: UserRequestBody = .init(
             id: .unique,
             name: .unique,
             imageURL: .unique(),

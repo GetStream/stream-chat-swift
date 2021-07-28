@@ -154,7 +154,15 @@ public struct _ChatChannel<ExtraData: ExtraDataTypes> {
     /// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/Cheat-Sheet#working-with-extra-data).
     ///
     public let extraData: ExtraData.Channel
-    public let extraDataMap: [String: Any]
+    public let extraDataMap: CustomData
+
+    /// customData is a convenience method around extraData and extraDataMap
+    public var customData: CustomData {
+        if !self.extraDataMap.isEmpty {
+            return self.extraDataMap
+        }
+        return CustomDataFromExtraData(extraData)
+    }
 
     // MARK: - Internal
     
@@ -187,7 +195,7 @@ public struct _ChatChannel<ExtraData: ExtraDataTypes> {
         reads: [_ChatChannelRead<ExtraData>] = [],
         cooldownDuration: Int = 0,
         extraData: ExtraData.Channel,
-        extraDataMap: [String: Any],
+        extraDataMap: CustomData,
 //        invitedMembers: Set<_ChatChannelMember<ExtraData.User>> = [],
         latestMessages: @escaping (() -> [_ChatMessage<ExtraData>]) = { [] },
         pinnedMessages: @escaping (() -> [_ChatMessage<ExtraData>]) = { [] },

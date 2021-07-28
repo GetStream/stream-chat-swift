@@ -70,7 +70,7 @@ extension DatabaseSessionMock {
     
     var currentUser: CurrentUserDTO? { underlyingSession.currentUser }
     
-    func createNewMessage<ExtraData>(
+    func createNewMessage(
         in cid: ChannelId,
         text: String,
         pinning: MessagePinning?,
@@ -83,8 +83,8 @@ extension DatabaseSessionMock {
         isSilent: Bool,
         quotedMessageId: MessageId?,
         createdAt: Date?,
-        extraData: ExtraData
-    ) throws -> MessageDTO where ExtraData: MessageExtraData {
+        extraData: [String: RawJSON]
+    ) throws -> MessageDTO {
         try throwErrorIfNeeded()
 
         return try underlyingSession.createNewMessage(

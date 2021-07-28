@@ -135,7 +135,7 @@ class ChannelUpdater_Tests: StressTestCase {
         let text: String = .unique
         let command: String = .unique
         let arguments: String = .unique
-        let extraData: NoExtraData = .defaultValue
+        let extraData = CustomData.defaultValue
 
         let imageAttachmentEnvelope = AnyAttachmentPayload.mockImage
         let fileAttachmentEnvelope = AnyAttachmentPayload.mockFile
@@ -188,7 +188,8 @@ class ChannelUpdater_Tests: StressTestCase {
             message.attachments(payloadType: TestAttachmentPayload.self),
             [customAttachmentEnvelope.attachment(id: id(for: customAttachmentEnvelope))]
         )
-        XCTAssertEqual(message.extraData, extraData)
+        
+        XCTAssertEqual(message.extraData, .defaultValue)
         XCTAssertEqual(message.localState, .pendingSend)
         XCTAssertEqual(message.isPinned, true)
         XCTAssertEqual(message.isSilent, false)
@@ -228,7 +229,7 @@ class ChannelUpdater_Tests: StressTestCase {
                 arguments: .unique,
                 mentionedUserIds: [.unique],
                 quotedMessageId: nil,
-                extraData: .defaultValue
+                extraData: [:]
             ) { completion($0) }
         }
         

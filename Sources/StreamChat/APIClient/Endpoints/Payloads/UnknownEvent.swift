@@ -20,7 +20,7 @@ public struct UnknownEvent: Event, Hashable {
     public let createdAt: Date
     
     /// A dictionary with custom fields.
-    let payload: [String: RawJSON]
+    let payload: CustomData
 }
 
 // MARK: - Decodable
@@ -36,7 +36,7 @@ extension UnknownEvent: Decodable {
             createdAt: try container.decode(Date.self, forKey: .createdAt),
             payload: try decoder
                 .singleValueContainer()
-                .decode([String: RawJSON].self)
+                .decode(CustomData.self)
                 .removingValues(forKeys: EventPayload<NoExtraData>.CodingKeys.allCases.map(\.rawValue))
         )
     }

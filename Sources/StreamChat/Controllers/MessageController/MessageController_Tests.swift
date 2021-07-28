@@ -848,11 +848,9 @@ final class MessageController_Tests: StressTestCase {
         
         // New message values
         let text: String = .unique
-//        let command: String = .unique
-//        let arguments: String = .unique
         let showReplyInChannel = true
         let quotedMessageId: MessageId = .unique
-        let extraData: NoExtraData = .defaultValue
+        let extraData: CustomData = [:]
         let attachments: [AnyAttachmentPayload] = [.mockFile, .mockImage, .init(payload: TestAttachmentPayload.unique)]
         let pin = MessagePinning(expirationDate: .unique)
 
@@ -861,8 +859,6 @@ final class MessageController_Tests: StressTestCase {
         controller.createNewReply(
             text: text,
             pinning: pin,
-//            command: command,
-//            arguments: arguments,
             attachments: attachments,
             showReplyInChannel: showReplyInChannel,
             quotedMessageId: quotedMessageId,

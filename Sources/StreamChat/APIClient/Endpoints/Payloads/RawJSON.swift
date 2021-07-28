@@ -4,10 +4,36 @@
 
 import Foundation
 
+public typealias CustomData = [String: RawJSON]
+
+public extension CustomData {
+    static var defaultValue: Self { .init() }
+}
+
+public func CustomDataFromExtraData<T: ExtraData>(_ extraData: T) -> CustomData {
+    // TODO: replace this with something more efficient!
+
+    let data: Data
+    do {
+        data = try JSONEncoder.default.encode(extraData)
+    } catch {
+        return .defaultValue
+    }
+
+    let extraDataMap: CustomData
+    do {
+        extraDataMap = try JSONSerialization.jsonObject(with: data, options: []) as? CustomData ?? [:]
+    } catch {
+        return .defaultValue
+    }
+
+    return extraDataMap
+}
+
 /// A `RawJSON` type.
 /// Used to store and operate objects of unknown structure that's not possible to decode.
 /// https://forums.swift.org/t/new-unevaluated-type-for-decoder-to-allow-later-re-encoding-of-data-with-unknown-structure/11117
-indirect enum RawJSON: Codable, Hashable {
+public indirect enum RawJSON: Codable, Hashable {
     case double(Double)
     case string(String)
     case integer(Int)
@@ -16,7 +42,7 @@ indirect enum RawJSON: Codable, Hashable {
     case array([RawJSON])
     case `nil`
 
-    init(from decoder: Decoder) throws {
+    public init(from decoder: Decoder) throws {
         let singleValueContainer = try decoder.singleValueContainer()
         if let value = try? singleValueContainer.decode(Bool.self) {
             self = .bool(value)
@@ -47,7 +73,7 @@ indirect enum RawJSON: Codable, Hashable {
             )
     }
     
-    func encode(to encoder: Encoder) throws {
+    public func encode(to encoder: Encoder) throws {
         var container = encoder.singleValueContainer()
         
         switch self {
@@ -62,7 +88,7 @@ indirect enum RawJSON: Codable, Hashable {
     }
 }
 
-extension RawJSON {
+public extension RawJSON {
     func dictionary(with value: RawJSON?, forKey key: String) -> RawJSON? {
         guard case var .dictionary(content) = self else { return nil }
         content[key] = value

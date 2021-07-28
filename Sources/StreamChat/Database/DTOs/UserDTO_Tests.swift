@@ -116,13 +116,13 @@ class UserDTO_Tests: XCTestCase {
         }
         
         // Load the user from the db and check the fields are correct
-        var loadedUserPayload: UserRequestBody<NoExtraData>? {
+        var loadedUserPayload: UserRequestBody? {
             database.viewContext.user(id: userId)?.asRequestBody()
         }
         
         AssertAsync {
             Assert.willBeEqual(payload.id, loadedUserPayload?.id)
-            Assert.willBeEqual(payload.extraData, loadedUserPayload?.extraData)
+            Assert.willBeEqual(payload.extraDataMap, loadedUserPayload?.extraData)
         }
     }
     

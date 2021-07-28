@@ -20,7 +20,7 @@ public extension _ChatUser {
         lastActiveAt: Date? = nil,
         teams: Set<TeamId> = [],
         extraData: ExtraData = .defaultValue,
-        extraDataMap: [String: Any] = [:]
+        extraDataMap: CustomData = .defaultValue
     ) -> _ChatUser {
         .init(
             id: id,

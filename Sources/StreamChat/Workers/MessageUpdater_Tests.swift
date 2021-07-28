@@ -396,7 +396,7 @@ final class MessageUpdater_Tests: StressTestCase {
         let isSilent = false
         let command: String = .unique
         let arguments: String = .unique
-        let extraData: NoExtraData = .defaultValue
+        let extraData: [String: RawJSON] = [:]
 
         let imageAttachmentEnvelope = AnyAttachmentPayload.mockImage
         let fileAttachmentEnvelope = AnyAttachmentPayload.mockFile
@@ -450,7 +450,8 @@ final class MessageUpdater_Tests: StressTestCase {
             message.attachments(payloadType: TestAttachmentPayload.self),
             [customAttachmentEnvelope.attachment(id: id(for: customAttachmentEnvelope))]
         )
-        XCTAssertEqual(message.extraData, extraData)
+        XCTAssertEqual(message.extraData, .defaultValue)
+        XCTAssertEqual(message.extraDataMap, [:])
         XCTAssertEqual(message.localState, .pendingSend)
         XCTAssertTrue(message.isPinned)
         XCTAssertEqual(message.isSilent, isSilent)
@@ -482,7 +483,7 @@ final class MessageUpdater_Tests: StressTestCase {
                 showReplyInChannel: false,
                 isSilent: false,
                 quotedMessageId: nil,
-                extraData: .defaultValue
+                extraData: [:]
             ) { completion($0) }
         }
         

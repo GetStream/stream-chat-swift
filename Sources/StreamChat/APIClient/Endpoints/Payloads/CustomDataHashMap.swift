@@ -6,6 +6,15 @@
 import XCTest
 
 class CustomDataHashMap: XCTestCase {
+    func test_UserWebSocketPayloadEncodeWithCustomMap() throws {
+        let extraDataMap: CustomData = ["how-many-roads": .integer(42)]
+        let userInfo = UserInfo<NoExtraData>.init(id: "42", name: "tommaso", imageURL: nil, extraDataMap: extraDataMap)
+        let payload = UserWebSocketPayload<NoExtraData>.init(userInfo: userInfo)
+        let encoded = try! JSONEncoder.default.encode(payload)
+        let jsonStr = String(data: encoded, encoding: .utf8)
+        XCTAssertEqual(jsonStr, "{\"id\":\"42\",\"image_url\":\"42\",\"name\":\"42\",\"how-many-roads\":42}")
+    }
+
     func test_messageJSONDecodeWithoutAnyCustomData() throws {
         let currentUserJSON = XCTestCase.mockData(fromFile: "MessagePayload")
         let payload = try JSONDecoder.default.decode(MessagePayload<NoExtraData>.self, from: currentUserJSON)
@@ -37,5 +46,10 @@ class CustomDataHashMap: XCTestCase {
                 ])
             ]
         ))
+    }
+    
+    func test_messagePayloadToMessage() throws {
+        let currentUserJSON = XCTestCase.mockData(fromFile: "MessagePayloadWithCustom")
+        let payload = try JSONDecoder.default.decode(MessagePayload<NoExtraData>.self, from: currentUserJSON)
     }
 }

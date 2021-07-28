@@ -81,7 +81,7 @@ public class _CurrentChatUser<ExtraData: ExtraDataTypes>: _ChatUser<ExtraData.Us
         lastActiveAt: Date?,
         teams: Set<TeamId>,
         extraData: ExtraData.User,
-        extraDataMap: [String: Any],
+        extraDataMap: CustomData,
         devices: [Device],
         currentDevice: Device?,
         mutedUsers: Set<_ChatUser<ExtraData.User>>,

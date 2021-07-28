@@ -301,9 +301,9 @@ extension _ChatChannel {
             extraData = .defaultValue
         }
         
-        let extraDataMap: [String: Any]
+        let extraDataMap: CustomData
         do {
-            extraDataMap = try JSONSerialization.jsonObject(with: dto.extraData, options: []) as? [String: Any] ?? [:]
+            extraDataMap = try JSONSerialization.jsonObject(with: dto.extraData, options: []) as? CustomData ?? [:]
         } catch {
             log.error(
                 "Failed to decode extra data for Channel with cid: <\(dto.cid)>, using default value instead. "

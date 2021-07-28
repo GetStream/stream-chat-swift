@@ -114,7 +114,7 @@ class ChannelController_Tests: StressTestCase {
                 .mockFile,
                 .init(payload: TestAttachmentPayload.unique)
             ],
-            extraData: NoExtraData.defaultValue
+            extraData: [:]
         )
         return message.id
     }
@@ -443,7 +443,7 @@ class ChannelController_Tests: StressTestCase {
                 isSilent: false,
                 quotedMessageId: nil,
                 createdAt: oldMessageCreatedAt,
-                extraData: NoExtraData.defaultValue
+                extraData: [:]
             )
             // Simulate sending failed for this message
             dto.localMessageState = .sendingFailed
@@ -483,7 +483,6 @@ class ChannelController_Tests: StressTestCase {
         let team: String = .unique
         let members: Set<UserId> = [.unique]
         let invites: Set<UserId> = [.unique]
-        let extraData: NoExtraData = .defaultValue
 
         // Create a new `ChannelController`
         for isCurrentUserMember in [true, false] {
@@ -495,7 +494,7 @@ class ChannelController_Tests: StressTestCase {
                 members: members,
                 isCurrentUserMember: isCurrentUserMember,
                 invites: invites,
-                extraData: extraData
+                extraData: .defaultValue
             )
 
             // Assert `ChannelQuery` created correctly
@@ -506,7 +505,7 @@ class ChannelController_Tests: StressTestCase {
                 controller.channelQuery.channelPayload?.members
             )
             XCTAssertEqual(invites, controller.channelQuery.channelPayload?.invites)
-            XCTAssertEqual(extraData, controller.channelQuery.channelPayload?.extraData)
+            XCTAssertEqual(CustomData.defaultValue, controller.channelQuery.channelPayload?.extraData)
         }
     }
 
@@ -568,7 +567,6 @@ class ChannelController_Tests: StressTestCase {
         for isCurrentUserMember in [true, false] {
             let team: String = .unique
             let members: Set<UserId> = [.unique]
-            let extraData: NoExtraData = .defaultValue
             let channelType: ChannelType = .custom(.unique)
 
             // Create a new `ChannelController`
@@ -579,7 +577,7 @@ class ChannelController_Tests: StressTestCase {
                 name: .unique,
                 imageURL: .unique(),
                 team: team,
-                extraData: extraData
+                extraData: .defaultValue
             )
 
             // Assert `ChannelQuery` created correctly
@@ -589,7 +587,7 @@ class ChannelController_Tests: StressTestCase {
                 members.union(isCurrentUserMember ? [currentUserId] : []),
                 controller.channelQuery.channelPayload?.members
             )
-            XCTAssertEqual(controller.channelQuery.channelPayload?.extraData, extraData)
+            XCTAssertEqual(controller.channelQuery.channelPayload?.extraData, CustomData.defaultValue)
         }
     }
 
@@ -2543,7 +2541,7 @@ class ChannelController_Tests: StressTestCase {
         let text: String = .unique
 //        let command: String = .unique
 //        let arguments: String = .unique
-        let extraData: NoExtraData = .defaultValue
+        let extraData = CustomData.defaultValue
         let attachments: [AnyAttachmentPayload] = [
             .init(payload: TestAttachmentPayload.unique),
             .mockImage,
@@ -2608,7 +2606,7 @@ class ChannelController_Tests: StressTestCase {
                 text: .unique,
 //                command: .unique,
 //                arguments: .unique,
-                extraData: .defaultValue
+                extraData: [:]
             ) { result in
                 AssertTestQueue(withId: callbackQueueID)
                 completion(result)

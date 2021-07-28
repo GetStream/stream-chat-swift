@@ -221,14 +221,12 @@ public extension _ChatMessageController {
     func createNewReply(
         text: String,
         pinning: MessagePinning? = nil,
-//        command: String? = nil,
-//        arguments: String? = nil,
         attachments: [AnyAttachmentPayload] = [],
         mentionedUserIds: [UserId] = [],
         showReplyInChannel: Bool = false,
         isSilent: Bool = false,
         quotedMessageId: MessageId? = nil,
-        extraData: ExtraData.Message = .defaultValue,
+        extraData: CustomData = .defaultValue,
         completion: ((Result<MessageId, Error>) -> Void)? = nil
     ) {
         messageUpdater.createNewReply(

@@ -54,7 +54,7 @@ extension CurrentUserDatabaseSession {
 protocol MessageDatabaseSession {
     /// Creates a new `MessageDTO` object in the database. Throws an error if the message fails to be created.
     @discardableResult
-    func createNewMessage<ExtraData: MessageExtraData>(
+    func createNewMessage(
         in cid: ChannelId,
         text: String,
         pinning: MessagePinning?,
@@ -67,7 +67,7 @@ protocol MessageDatabaseSession {
         isSilent: Bool,
         quotedMessageId: MessageId?,
         createdAt: Date?,
-        extraData: ExtraData
+        extraData: [String: RawJSON]
     ) throws -> MessageDTO
     
     /// Saves the provided message payload to the DB. Return's the matching `MessageDTO` if the save was successful.
@@ -114,7 +114,7 @@ protocol MessageDatabaseSession {
 extension MessageDatabaseSession {
     /// Creates a new `MessageDTO` object in the database. Throws an error if the message fails to be created.
     @discardableResult
-    func createNewMessage<ExtraData: MessageExtraData>(
+    func createNewMessage(
         in cid: ChannelId,
         text: String,
         pinning: MessagePinning?,
@@ -122,7 +122,7 @@ extension MessageDatabaseSession {
         isSilent: Bool = false,
         attachments: [AnyAttachmentPayload] = [],
         mentionedUserIds: [UserId] = [],
-        extraData: ExtraData = .defaultValue
+        extraData: [String: RawJSON] = [:]
     ) throws -> MessageDTO {
         try createNewMessage(
             in: cid,

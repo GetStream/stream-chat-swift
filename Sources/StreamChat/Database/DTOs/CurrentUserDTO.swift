@@ -167,9 +167,9 @@ extension _CurrentChatUser {
             extraData = .defaultValue
         }
         
-        let extraDataMap: [String: Any]
+        let extraDataMap: CustomData
         do {
-            extraDataMap = try JSONSerialization.jsonObject(with: dto.user.extraData, options: []) as? [String: Any] ?? [:]
+            extraDataMap = try JSONSerialization.jsonObject(with: dto.user.extraData, options: []) as? CustomData ?? [:]
         } catch {
             log.error(
                 "Failed to decode extra data for user with id: <\(dto.user.id)>, using default value instead. "

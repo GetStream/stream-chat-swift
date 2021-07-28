@@ -304,7 +304,7 @@ extension MessageDTO {
 }
 
 extension NSManagedObjectContext: MessageDatabaseSession {
-    func createNewMessage<ExtraData: MessageExtraData>(
+    func createNewMessage(
         in cid: ChannelId,
         text: String,
         pinning: MessagePinning?,
@@ -317,7 +317,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         isSilent: Bool,
         quotedMessageId: MessageId?,
         createdAt: Date?,
-        extraData: ExtraData
+        extraData: [String: RawJSON]
     ) throws -> MessageDTO {
         guard let currentUserDTO = currentUser else {
             throw ClientError.CurrentUserDoesNotExist()
@@ -545,14 +545,15 @@ extension MessageDTO {
     
     /// Snapshots the current state of `MessageDTO` and returns its representation for the use in API calls.
     func asRequestBody<ExtraData: ExtraDataTypes>() -> MessageRequestBody<ExtraData> {
-        var extraData: ExtraData.Message?
+        var extraData: CustomData
         do {
-            extraData = try JSONDecoder.default.decode(ExtraData.Message.self, from: self.extraData)
+            extraData = try JSONSerialization.jsonObject(with: self.extraData, options: []) as? CustomData ?? .defaultValue
         } catch {
             log.assertionFailure(
                 "Failed decoding saved extra data with error: \(error). This should never happen because"
                     + "the extra data must be a valid JSON to be saved."
             )
+            extraData = .defaultValue
         }
         
         return .init(
@@ -571,7 +572,7 @@ extension MessageDTO {
             mentionedUserIds: mentionedUsers.map(\.id),
             pinned: pinned,
             pinExpires: pinExpires,
-            extraData: extraData ?? .defaultValue
+            extraData: extraData
         )
     }
 }
@@ -605,9 +606,9 @@ private extension _ChatMessage {
         }
         self.extraData = extraData
 
-        let extraDataMap: [String: Any]
+        let extraDataMap: [String: RawJSON]
         do {
-            extraDataMap = try JSONSerialization.jsonObject(with: dto.extraData, options: []) as? [String: Any] ?? [:]
+            extraDataMap = try JSONSerialization.jsonObject(with: dto.extraData, options: []) as? [String: RawJSON] ?? [:]
         } catch {
             log.error("Failed to decode extra data for Message with id: <\(dto.id)>, using default value instead. Error: \(error)")
             extraDataMap = [:]

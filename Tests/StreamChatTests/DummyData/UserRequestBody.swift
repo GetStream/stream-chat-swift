@@ -7,7 +7,7 @@ import Foundation
 
 extension UserRequestBody {
     /// Returns a dummy user payload with the given UserId
-    static func dummy<T: UserExtraData>(userId: UserId, extraData: T = .defaultValue) -> UserRequestBody<T> {
+    static func dummy(userId: UserId, extraData: CustomData = .defaultValue) -> UserRequestBody {
         .init(id: userId, name: .unique, imageURL: .unique(), extraData: extraData)
     }
 }

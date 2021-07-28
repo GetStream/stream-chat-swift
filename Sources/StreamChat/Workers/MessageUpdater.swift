@@ -134,7 +134,7 @@ class MessageUpdater<ExtraData: ExtraDataTypes>: Worker {
         showReplyInChannel: Bool,
         isSilent: Bool,
         quotedMessageId: MessageId?,
-        extraData: ExtraData.Message,
+        extraData: CustomData,
         completion: ((Result<MessageId, Error>) -> Void)? = nil
     ) {
         var newMessageId: MessageId?

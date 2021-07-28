@@ -60,7 +60,7 @@ class ChannelUpdaterMock<ExtraData: ExtraDataTypes>: ChannelUpdater<ExtraData> {
     @Atomic var createNewMessage_mentionedUserIds: [UserId]?
     @Atomic var createNewMessage_quotedMessageId: MessageId?
     @Atomic var createNewMessage_pinning: MessagePinning?
-    @Atomic var createNewMessage_extraData: ExtraData.Message?
+    @Atomic var createNewMessage_extraData: [String: RawJSON]?
     @Atomic var createNewMessage_completion: ((Result<MessageId, Error>) -> Void)?
     
     @Atomic var markRead_cid: ChannelId?
@@ -212,7 +212,7 @@ class ChannelUpdaterMock<ExtraData: ExtraDataTypes>: ChannelUpdater<ExtraData> {
         attachments: [AnyAttachmentPayload],
         mentionedUserIds: [UserId],
         quotedMessageId: MessageId?,
-        extraData: ExtraData.Message,
+        extraData: [String: RawJSON] = [:],
         completion: ((Result<MessageId, Error>) -> Void)? = nil
     ) {
         createNewMessage_cid = cid

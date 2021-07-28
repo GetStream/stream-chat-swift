@@ -72,7 +72,7 @@ public class _ChatChannelMember<ExtraData: UserExtraData>: _ChatUser<ExtraData> 
         lastActiveAt: Date?,
         teams: Set<TeamId>,
         extraData: ExtraData,
-        extraDataMap: [String: Any],
+        extraDataMap: CustomData,
         memberRole: MemberRole,
         memberCreatedAt: Date,
         memberUpdatedAt: Date,

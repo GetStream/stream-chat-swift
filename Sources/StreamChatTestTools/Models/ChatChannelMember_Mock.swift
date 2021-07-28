@@ -20,7 +20,7 @@ public extension _ChatChannelMember {
         lastActiveAt: Date? = nil,
         teams: Set<TeamId> = ["RED", "GREEN"],
         extraData: ExtraData = .defaultValue,
-        extraDataMap: [String: Any] = [:],
+        extraDataMap: CustomData = .defaultValue,
         memberRole: MemberRole = .member,
         memberCreatedAt: Date = .distantPast,
         memberUpdatedAt: Date = .distantPast,

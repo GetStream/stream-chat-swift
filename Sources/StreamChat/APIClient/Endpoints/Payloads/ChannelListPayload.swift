@@ -80,7 +80,7 @@ struct ChannelDetailPayload<ExtraData: ExtraDataTypes>: Decodable {
     let imageURL: URL?
     
     let extraData: ExtraData.Channel
-    let extraDataMap: [String: RawJSON]
+    let extraDataMap: CustomData
 
     /// A channel type.
     public let typeRawValue: String
@@ -141,7 +141,7 @@ struct ChannelDetailPayload<ExtraData: ExtraDataTypes>: Decodable {
         
         extraData = try ExtraData.Channel(from: decoder)
         
-        if var payload = try? [String: RawJSON](from: decoder) {
+        if var payload = try? CustomData(from: decoder) {
             payload.removeValues(forKeys: ChannelCodingKeys.allCases.map(\.rawValue))
             extraDataMap = payload
         } else {
@@ -156,7 +156,7 @@ struct ChannelDetailPayload<ExtraData: ExtraDataTypes>: Decodable {
         name: String?,
         imageURL: URL?,
         extraData: ExtraData.Channel,
-        extraDataMap: [String: RawJSON],
+        extraDataMap: CustomData,
         typeRawValue: String,
         lastMessageAt: Date?,
         createdAt: Date,

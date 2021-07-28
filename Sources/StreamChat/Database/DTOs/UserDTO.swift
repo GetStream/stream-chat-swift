@@ -149,18 +149,19 @@ extension UserDTO {
     func asModel<ExtraData: UserExtraData>() -> _ChatUser<ExtraData> { .create(fromDTO: self) }
     
     /// Snapshots the current state of `UserDTO` and returns its representation for used in API calls.
-    func asRequestBody<ExtraData: UserExtraData>() -> UserRequestBody<ExtraData> {
-        var extraData: ExtraData?
+    func asRequestBody() -> UserRequestBody {
+        let extraData: CustomData
         do {
-            extraData = try JSONDecoder.default.decode(ExtraData.self, from: self.extraData)
+            extraData = try JSONSerialization.jsonObject(with: self.extraData, options: []) as? CustomData ?? [:]
         } catch {
             log.assertionFailure(
                 "Failed decoding saved extra data with error: \(error). This should never happen because"
                     + "the extra data must be a valid JSON to be saved."
             )
+            extraData = .defaultValue
         }
         
-        return .init(id: id, name: name, imageURL: imageURL, extraData: extraData ?? .defaultValue)
+        return .init(id: id, name: name, imageURL: imageURL, extraData: extraData)
     }
 }
 
@@ -205,9 +206,9 @@ extension _ChatUser {
             extraData = .defaultValue
         }
         
-        let extraDataMap: [String: Any]
+        let extraDataMap: CustomData
         do {
-            extraDataMap = try JSONSerialization.jsonObject(with: dto.extraData, options: []) as? [String: Any] ?? [:]
+            extraDataMap = try JSONSerialization.jsonObject(with: dto.extraData, options: []) as? CustomData ?? [:]
         } catch {
             log.error(
                 "Failed to decode extra data for user with id: <\(dto.id)>, using default value instead. "

@@ -29,7 +29,7 @@ final class MessageUpdaterMock<ExtraData: ExtraDataTypes>: MessageUpdater<ExtraD
     @Atomic var createNewReply_isSilent: Bool?
     @Atomic var createNewReply_quotedMessageId: MessageId?
     @Atomic var createNewReply_pinning: MessagePinning?
-    @Atomic var createNewReply_extraData: ExtraData.Message?
+    @Atomic var createNewReply_extraData: [String: RawJSON]?
     @Atomic var createNewReply_completion: ((Result<MessageId, Error>) -> Void)?
     
     @Atomic var loadReplies_cid: ChannelId?
@@ -169,7 +169,7 @@ final class MessageUpdaterMock<ExtraData: ExtraDataTypes>: MessageUpdater<ExtraD
         showReplyInChannel: Bool,
         isSilent: Bool,
         quotedMessageId: MessageId?,
-        extraData: ExtraData.Message,
+        extraData: [String: RawJSON],
         completion: ((Result<MessageId, Error>) -> Void)? = nil
     ) {
         createNewReply_cid = cid

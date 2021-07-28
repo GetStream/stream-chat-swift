@@ -67,7 +67,7 @@ class MessagePayload<ExtraData: ExtraDataTypes>: Decodable {
     let threadParticipants: [UserPayload<ExtraData.User>]
     let replyCount: Int
     let extraData: ExtraData.Message
-    let extraDataMap: [String: RawJSON]
+    let extraDataMap: CustomData
 
     let latestReactions: [MessageReactionPayload<ExtraData>]
     let ownReactions: [MessageReactionPayload<ExtraData>]
@@ -114,7 +114,7 @@ class MessagePayload<ExtraData: ExtraDataTypes>: Decodable {
             .compactMap(\.base)
         extraData = try ExtraData.Message(from: decoder)
         
-        if var payload = try? [String: RawJSON](from: decoder) {
+        if var payload = try? CustomData(from: decoder) {
             payload.removeValues(forKeys: MessagePayloadsCodingKeys.allCases.map(\.rawValue))
             extraDataMap = payload
         } else {
@@ -149,7 +149,7 @@ class MessagePayload<ExtraData: ExtraDataTypes>: Decodable {
         threadParticipants: [UserPayload<ExtraData.User>] = [],
         replyCount: Int,
         extraData: ExtraData.Message,
-        extraDataMap: [String: RawJSON],
+        extraDataMap: CustomData,
         latestReactions: [MessageReactionPayload<ExtraData>] = [],
         ownReactions: [MessageReactionPayload<ExtraData>] = [],
         reactionScores: [MessageReactionType: Int],
@@ -195,7 +195,7 @@ class MessagePayload<ExtraData: ExtraDataTypes>: Decodable {
 /// An object describing the outgoing message JSON payload.
 struct MessageRequestBody<ExtraData: ExtraDataTypes>: Encodable {
     let id: String
-    let user: UserRequestBody<ExtraData.User>
+    let user: UserRequestBody
     let text: String
     let command: String?
     let args: String?
@@ -207,11 +207,11 @@ struct MessageRequestBody<ExtraData: ExtraDataTypes>: Encodable {
     let mentionedUserIds: [UserId]
     var pinned: Bool
     var pinExpires: Date?
-    let extraData: ExtraData.Message
-    
+    let extraData: CustomData
+
     init(
         id: String,
-        user: UserRequestBody<ExtraData.User>,
+        user: UserRequestBody,
         text: String,
         command: String? = nil,
         args: String? = nil,
@@ -223,7 +223,7 @@ struct MessageRequestBody<ExtraData: ExtraDataTypes>: Encodable {
         mentionedUserIds: [UserId] = [],
         pinned: Bool = false,
         pinExpires: Date? = nil,
-        extraData: ExtraData.Message
+        extraData: CustomData
     ) {
         self.id = id
         self.user = user

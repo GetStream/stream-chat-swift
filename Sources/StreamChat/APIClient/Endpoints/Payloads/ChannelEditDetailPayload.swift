@@ -12,7 +12,7 @@ struct ChannelEditDetailPayload<ExtraData: ExtraDataTypes>: Encodable {
     let team: String?
     let members: Set<UserId>
     let invites: Set<UserId>
-    let extraData: ExtraData.Channel
+    let extraData: CustomData
 
     init(
         cid: ChannelId,
@@ -21,7 +21,7 @@ struct ChannelEditDetailPayload<ExtraData: ExtraDataTypes>: Encodable {
         team: String?,
         members: Set<UserId>,
         invites: Set<UserId>,
-        extraData: ExtraData.Channel
+        extraData: CustomData
     ) {
         id = cid.id
         self.name = name
@@ -40,7 +40,7 @@ struct ChannelEditDetailPayload<ExtraData: ExtraDataTypes>: Encodable {
         team: String?,
         members: Set<UserId>,
         invites: Set<UserId>,
-        extraData: ExtraData.Channel
+        extraData: CustomData
     ) {
         id = nil
         self.name = name

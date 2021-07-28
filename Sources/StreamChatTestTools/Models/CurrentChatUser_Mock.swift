@@ -19,7 +19,7 @@ public extension _CurrentChatUser {
         lastActiveAt: Date? = nil,
         teams: Set<TeamId> = [],
         extraData: ExtraData.User = .defaultValue,
-        extraDataMap: [String: Any] = [:],
+        extraDataMap: CustomData = .defaultValue,
         devices: [Device] = [],
         currentDevice: Device? = nil,
         mutedUsers: Set<_ChatUser<ExtraData.User>> = [],

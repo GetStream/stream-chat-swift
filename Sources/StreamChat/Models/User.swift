@@ -72,8 +72,15 @@ public class _ChatUser<ExtraData: UserExtraData> {
     /// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/Cheat-Sheet#working-with-extra-data).
     ///
     public let extraData: ExtraData
+    public let extraDataMap: CustomData
 
-    public let extraDataMap: [String: Any]
+    /// customData is a convenience method around extraData and extraDataMap
+    public var customData: CustomData {
+        if !self.extraDataMap.isEmpty {
+            return self.extraDataMap
+        }
+        return CustomDataFromExtraData(extraData)
+    }
 
     init(
         id: UserId,
@@ -88,7 +95,7 @@ public class _ChatUser<ExtraData: UserExtraData> {
         lastActiveAt: Date?,
         teams: Set<TeamId>,
         extraData: ExtraData,
-        extraDataMap: [String: Any]
+        extraDataMap: CustomData
     ) {
         self.id = id
         self.name = name

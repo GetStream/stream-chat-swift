@@ -47,7 +47,7 @@ final class MessageEndpoints_Tests: XCTestCase {
             id: .unique,
             user: .init(id: .unique, name: .unique, imageURL: .unique(), extraData: .init()),
             text: .unique,
-            extraData: .init()
+            extraData: [:]
         )
         
         let expectedEndpoint = Endpoint<EmptyResponse>(

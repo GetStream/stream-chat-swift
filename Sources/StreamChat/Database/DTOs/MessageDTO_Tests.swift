@@ -513,7 +513,7 @@ class MessageDTO_Tests: XCTestCase {
         let mentionedUserIds: [UserId] = [currentUserId]
         let messageShowReplyInChannel = true
         let messageIsSilent = true
-        let messageExtraData: NoExtraData = .defaultValue
+        let messageExtraData: [String: RawJSON] = [:]
 
         // Create message with attachments in the database.
         try database.writeSynchronously { session in
@@ -548,7 +548,7 @@ class MessageDTO_Tests: XCTestCase {
         XCTAssertEqual(requestBody.parentId, parentMessageId)
         XCTAssertEqual(requestBody.showReplyInChannel, messageShowReplyInChannel)
         XCTAssertEqual(requestBody.isSilent, messageIsSilent)
-        XCTAssertEqual(requestBody.extraData, messageExtraData)
+        XCTAssertEqual(requestBody.extraData, [:])
         XCTAssertEqual(requestBody.pinned, true)
         XCTAssertEqual(requestBody.pinExpires, messagePinning!.expirationDate)
         XCTAssertEqual(requestBody.attachments.map(\.type), attachments.map(\.type))
@@ -638,7 +638,7 @@ class MessageDTO_Tests: XCTestCase {
                     isSilent: false,
                     quotedMessageId: nil,
                     createdAt: nil,
-                    extraData: NoExtraData.defaultValue
+                    extraData: [:]
                 )
                 message1Id = message1DTO.id
                 // Assign locallyCreatedAt data do message 1
@@ -657,7 +657,7 @@ class MessageDTO_Tests: XCTestCase {
                     isSilent: false,
                     quotedMessageId: nil,
                     createdAt: nil,
-                    extraData: NoExtraData.defaultValue
+                    extraData: [:]
                 )
                 // Reset the `locallyCreateAt` value of the second message to simulate the message was sent
                 message2DTO.locallyCreatedAt = nil
@@ -751,7 +751,7 @@ class MessageDTO_Tests: XCTestCase {
                     isSilent: false,
                     quotedMessageId: nil,
                     createdAt: nil,
-                    extraData: NoExtraData.defaultValue
+                    extraData: [:]
                 )
                 newMessageId = messageDTO.id
             }, completion: completion)
@@ -796,7 +796,7 @@ class MessageDTO_Tests: XCTestCase {
                     isSilent: false,
                     quotedMessageId: nil,
                     createdAt: nil,
-                    extraData: NoExtraData.defaultValue
+                    extraData: [:]
                 )
             }, completion: completion)
         }
@@ -834,7 +834,7 @@ class MessageDTO_Tests: XCTestCase {
                     isSilent: false,
                     quotedMessageId: nil,
                     createdAt: nil,
-                    extraData: NoExtraData.defaultValue
+                    extraData: [:]
                 )
             }, completion: completion)
         }
@@ -870,7 +870,7 @@ class MessageDTO_Tests: XCTestCase {
                 pinning: MessagePinning(expirationDate: .unique),
                 quotedMessageId: nil,
                 isSilent: false,
-                extraData: NoExtraData.defaultValue
+                extraData: [:]
             )
             newMessageId = messageDTO.id
         }
@@ -911,7 +911,7 @@ class MessageDTO_Tests: XCTestCase {
                 isSilent: false,
                 quotedMessageId: nil,
                 createdAt: nil,
-                extraData: NoExtraData.defaultValue
+                extraData: [:]
             )
             // Get reply messageId
             replyMessageId = replyDTO.id

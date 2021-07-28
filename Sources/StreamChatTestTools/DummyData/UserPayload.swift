@@ -12,7 +12,7 @@ extension UserPayload where ExtraData == NoExtraData {
         name: String = .unique,
         imageUrl: URL? = .unique(),
         extraData: NoExtraData = .defaultValue,
-        extraDataMap: [String: RawJSON] = [:],
+        extraDataMap: CustomData = .defaultValue,
         teams: [TeamId] = [.unique, .unique, .unique],
         isBanned: Bool = false,
         updatedAt: Date = .unique
