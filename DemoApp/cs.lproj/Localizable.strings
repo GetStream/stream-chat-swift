@@ -1,0 +1,58 @@
+//
+// Copyright © 2020 Stream.io Inc. All rights reserved.
+//
+
+"channel.name.and" = "a";
+"channel.name.andXMore" = "a %@ více";
+"channel.name.missing" = "Bez názvu";
+"channel.item.empty-messages" = "Žádné zprávy";
+"channel.item.typing-singular" = "Píše ...";
+"channel.item.typing-plural" = "Píšou ...";
+
+"message.actions.inline-reply" = "Odpovědět";
+"message.actions.thread-reply" = "Odpovědět ve vláknu";
+"message.actions.edit" = "Upravit zprávu";
+"message.actions.copy" = "Kopírovat zprávu";
+"message.actions.delete" = "Smazat zprávu";
+"message.actions.delete.confirmation-title" = "Smazat zprávu";
+"message.actions.delete.confirmation-message" = "Opravdu chcete permanently smazat tuto zprávu?";
+"message.actions.user-unblock" = "Odblokovat uživatele";
+"message.actions.user-block" = "Blokovat uživatele";
+"message.actions.user-unmute" = "Zrušit ztišení uživatale";
+"message.actions.user-mute" = "Ztišit uživatele";
+"message.actions.resend" = "Odeslat znovu";
+
+"messageList.typingIndicator.typing-unknown" = "Někdo píše";
+
+"message.threads.reply" = "Odpovědi ve vláknu";
+"message.threads.replyWith" = "Uvnitř %@";
+
+"alert.actions.cancel" = "Zrušit";
+"alert.actions.delete" = "Smazat";
+"alert.actions.ok" = "OK";
+
+"message.only-visible-to-you" = "Toto vidíte pouze Vy";
+"message.deleted-message-placeholder" = "Zpráva smazána";
+
+"composer.title.edit" = "Upravit zprávu";
+"composer.title.reply" = "Odpovědět na zprávu";
+"composer.placeholder.message" = "Poslat zprávu";
+"composer.placeholder.giphy" = "Prohledat GIFy";
+"composer.checkmark.direct-message-reply" = "Poslat také jako soukromou zprávu";
+"composer.checkmark.channel-reply" = "Poslat také do konverzace";
+"composer.picker.title" = "Zvolte si typ přílohy:";
+"composer.picker.file" = "Soubor";
+"composer.picker.media" = "Fotografie nebo Video";
+"composer.picker.cancel" = "Zrušit";
+
+"composer.suggestions.commands.header" = "Instantní příkazy";
+"message.sending.attachment-uploading-failed" = "NAHRÁVÁNÍ SOUBORU SELHALO";
+
+"message.title.online" = "Online";
+"message.title.see-minutes-ago" = "Viděno před %@";
+"message.title.offline" = "Offline";
+"message.title.group" = "%d členů, %d online";
+
+"current-selection" = "%d z %d";
+
+"attachment.max-size-exceeded" = "Velikost přílohy překročila limit.";
