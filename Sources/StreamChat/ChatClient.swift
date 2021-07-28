@@ -222,8 +222,14 @@ public class ChatClient {
             
             // All production event workers
             eventWorkerBuilders = [
-                ChannelWatchStateUpdater.init,
-                MissingEventsPublisher.init
+                {
+                    MissingEventsPublisher(
+                        database: $0,
+                        eventNotificationCenter: $1,
+                        apiClient: $2,
+                        isLocalStorageEnabled: config.isLocalStorageEnabled
+                    )
+                }
             ]
         } else {
             workerBuilders = []

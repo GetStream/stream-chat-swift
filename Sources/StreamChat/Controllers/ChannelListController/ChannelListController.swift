@@ -41,6 +41,8 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
             client.databaseContainer,
             client.apiClient
         )
+    
+    private var connectionObserver: EventObserver?
 
     /// A type-erased delegate.
     var multicastDelegate: MulticastDelegate<AnyChannelListControllerDelegate> = .init() {
@@ -99,7 +101,32 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
     
     override public func synchronize(_ completion: ((_ error: Error?) -> Void)? = nil) {
         startChannelListObserverIfNeeded()
-        
+        setupEventObserversIfNeeded(completion: completion)
+    }
+    
+    private func setupEventObserversIfNeeded(completion: ((_ error: Error?) -> Void)? = nil) {
+        guard !client.config.isLocalStorageEnabled else {
+            return updateChannels(completion)
+        }
+        connectionObserver = nil
+        // We can't setup event observers in connectionless mode
+        guard let webSocketClient = client.webSocketClient else { return }
+        let center = webSocketClient.eventNotificationCenter
+        connectionObserver = EventObserver(
+            notificationCenter: center,
+            transform: { $0 as? ConnectionStatusUpdated },
+            callback: { [unowned self] in
+                switch $0.webSocketConnectionState {
+                case .connected:
+                    self.updateChannels()
+                default:
+                    break
+                }
+            }
+        )
+    }
+    
+    private func updateChannels(_ completion: ((_ error: Error?) -> Void)? = nil) {
         worker.update(channelListQuery: query) { error in
             self.state = error == nil ? .remoteDataFetched : .remoteDataFetchFailed(ClientError(with: error))
             self.callback { completion?(error) }

@@ -23,6 +23,7 @@ class MissingEventsPublisher: EventWorker {
     private var connectionObserver: EventObserver?
     private let databaseCleanupUpdater: DatabaseCleanupUpdater
     @Atomic private var lastSyncedAt: Date?
+    private let isLocalStorageEnabled: Bool
     
     // MARK: - Init
 
@@ -31,6 +32,7 @@ class MissingEventsPublisher: EventWorker {
         eventNotificationCenter: EventNotificationCenter,
         apiClient: APIClient
     ) {
+        isLocalStorageEnabled = false
         databaseCleanupUpdater = DatabaseCleanupUpdater(database: database, apiClient: apiClient)
         super.init(
             database: database,
@@ -44,9 +46,27 @@ class MissingEventsPublisher: EventWorker {
         database: DatabaseContainer,
         eventNotificationCenter: EventNotificationCenter,
         apiClient: APIClient,
-        databaseCleanupUpdater: DatabaseCleanupUpdater
+        isLocalStorageEnabled: Bool
+    ) {
+        databaseCleanupUpdater = DatabaseCleanupUpdater(database: database, apiClient: apiClient)
+        self.isLocalStorageEnabled = isLocalStorageEnabled
+        super.init(
+            database: database,
+            eventNotificationCenter: eventNotificationCenter,
+            apiClient: apiClient
+        )
+        startObserving()
+    }
+    
+    init(
+        database: DatabaseContainer,
+        eventNotificationCenter: EventNotificationCenter,
+        apiClient: APIClient,
+        databaseCleanupUpdater: DatabaseCleanupUpdater,
+        isLocalStorageEnabled: Bool
     ) {
         self.databaseCleanupUpdater = databaseCleanupUpdater
+        self.isLocalStorageEnabled = isLocalStorageEnabled
         super.init(
             database: database,
             eventNotificationCenter: eventNotificationCenter,
@@ -66,7 +86,9 @@ class MissingEventsPublisher: EventWorker {
                 case .connecting:
                     self.obtainLastSyncDate()
                 case .connected:
-                    self.fetchAndReplayMissingEvents()
+                    if isLocalStorageEnabled {
+                        self.fetchAndReplayMissingEvents()
+                    }
                 default:
                     break
                 }
