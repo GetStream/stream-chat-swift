@@ -20,6 +20,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Fix hiding already hidden channels not working [#1327](https://github.com/GetStream/stream-chat-swift/issues/1327)
 
 ### 🔄 Changed
+- `ContainerStackView` doesn't `assert` when trying to remove a subview, these operations are now no-op [#1328](https://github.com/GetStream/stream-chat-swift/issues/1328)
 
 # [4.0.0-beta.8](https://github.com/GetStream/stream-chat-swift/releases/tag/4.0.0-beta.8)
 _July 21, 2021_
