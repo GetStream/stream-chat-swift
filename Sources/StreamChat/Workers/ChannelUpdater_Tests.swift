@@ -135,7 +135,7 @@ class ChannelUpdater_Tests: StressTestCase {
         let text: String = .unique
         let command: String = .unique
         let arguments: String = .unique
-        let extraData = CustomData.defaultValue
+        let extraData: CustomData = .defaultValue
 
         let imageAttachmentEnvelope = AnyAttachmentPayload.mockImage
         let fileAttachmentEnvelope = AnyAttachmentPayload.mockFile
@@ -229,7 +229,7 @@ class ChannelUpdater_Tests: StressTestCase {
                 arguments: .unique,
                 mentionedUserIds: [.unique],
                 quotedMessageId: nil,
-                extraData: [:]
+                extraData: .defaultValue
             ) { completion($0) }
         }
         
