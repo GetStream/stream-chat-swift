@@ -26,13 +26,18 @@ enum MessagePayloadsCodingKeys: String, CodingKey, CaseIterable {
     case latestReactions = "latest_reactions"
     case ownReactions = "own_reactions"
     case reactionScores = "reaction_scores"
+    case reactionCounts = "reaction_counts"
     case isSilent = "silent"
     case channel
     case pinned
     case pinnedBy = "pinned_by"
     case pinnedAt = "pinned_at"
     case pinExpires = "pin_expires"
-    //        case i18n
+    case html
+    case i18n
+    case mml
+    case imageLabels = "image_labels"
+    case shadowed
 }
 
 extension MessagePayload {
