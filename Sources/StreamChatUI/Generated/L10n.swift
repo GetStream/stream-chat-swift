@@ -166,8 +166,8 @@ internal enum L10n {
 
 extension L10n {
   private static func tr(_ table: String, _ key: String, _ args: CVarArg...) -> String {
-    let format = BundleToken.bundle.localizedString(forKey: key, value: nil, table: table)
-    return String(format: format, locale: Locale.current, arguments: args)
+     let format = Appearance.default.localizationProvider(key, table)
+     return String(format: format, locale: Locale.current, arguments: args)
   }
 }
 
