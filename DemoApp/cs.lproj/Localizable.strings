@@ -2,6 +2,8 @@
 // Copyright © 2020 Stream.io Inc. All rights reserved.
 //
 
+// MARK: -  StreamChatUI Strings
+
 "channel.name.and" = "a";
 "channel.name.andXMore" = "a %@ více";
 "channel.name.missing" = "Bez názvu";
@@ -24,7 +26,7 @@
 
 "messageList.typingIndicator.typing-unknown" = "Někdo píše";
 
-"message.threads.reply" = "Odpovědi ve vláknu";
+"message.threads.reply" = "Odpovědi ve vlákně";
 "message.threads.replyWith" = "Uvnitř %@";
 
 "alert.actions.cancel" = "Zrušit";
@@ -56,3 +58,6 @@
 "current-selection" = "%d z %d";
 
 "attachment.max-size-exceeded" = "Velikost přílohy překročila limit.";
+
+// MARK: -  DemoApp Strings
+
