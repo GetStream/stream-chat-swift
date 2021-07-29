@@ -21,7 +21,7 @@ class CurrentUserUpdater<ExtraData: ExtraDataTypes>: Worker {
         currentUserId: UserId,
         name: String? = nil,
         imageURL: URL? = nil,
-        userExtraData: ExtraData.User? = nil,
+        userExtraData: CustomData = .defaultValue,
         completion: ((Error?) -> Void)? = nil
     ) {
         let params: [Any?] = [name, imageURL, userExtraData]
@@ -31,7 +31,7 @@ class CurrentUserUpdater<ExtraData: ExtraDataTypes>: Worker {
             return
         }
         
-        let payload = UserUpdateRequestBody(
+        let payload = UserUpdateRequestBody<ExtraData.User>(
             name: name,
             imageURL: imageURL,
             extraData: userExtraData

@@ -172,7 +172,7 @@ public extension _CurrentChatUserController {
     func updateUserData(
         name: String? = nil,
         imageURL: URL? = nil,
-        userExtraData: ExtraData.User? = nil,
+        userExtraData: CustomData = .defaultValue,
         completion: ((Error?) -> Void)? = nil
     ) {
         guard let currentUserId = currentUser?.id else {
@@ -185,6 +185,39 @@ public extension _CurrentChatUserController {
             name: name,
             imageURL: imageURL,
             userExtraData: userExtraData
+        ) { error in
+            self.callback {
+                completion?(error)
+            }
+        }
+    }
+
+    /// Updates the current user data.
+    ///
+    /// By default all data is `nil`, and it won't be updated unless a value is provided.
+    ///
+    /// - Parameters:
+    ///   - name: Optionally provide a new name to be updated.
+    ///   - imageURL: Optionally provide a new image to be updated.
+    ///   - userExtraData: Optionally provide new user extra data to be updated.
+    ///   - completion: Called when user is successfuly updated, or with error.
+    @available(*, deprecated, message: "pass userExtraData as CustomData (ie. user.customData)")
+    func updateUserData(
+        name: String? = nil,
+        imageURL: URL? = nil,
+        userExtraData: ExtraData.User = .defaultValue,
+        completion: ((Error?) -> Void)? = nil
+    ) {
+        guard let currentUserId = currentUser?.id else {
+            completion?(ClientError.CurrentUserDoesNotExist())
+            return
+        }
+        
+        currentUserUpdater.updateUserData(
+            currentUserId: currentUserId,
+            name: name,
+            imageURL: imageURL,
+            userExtraData: CustomDataFromExtraData(userExtraData)
         ) { error in
             self.callback {
                 completion?(error)
