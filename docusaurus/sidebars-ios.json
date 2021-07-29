@@ -54,8 +54,7 @@
     {
       "Using SwiftUI": [
         "swiftui/using-existing-uicomponents",
-        "swiftui/observable-controllers",
-        "swiftui/creating-custom-swiftui-views"
+        "swiftui/observable-controllers"
       ]
     },
     {
