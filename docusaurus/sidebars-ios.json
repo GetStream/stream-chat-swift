@@ -53,7 +53,8 @@
     },
     {
       "Using SwiftUI": [
-        "swiftui/using-existing-uicomponents"
+        "swiftui/using-existing-uicomponents",
+        "swiftui/creating-custom-swiftui-views"
       ]
     },
     {
