@@ -52,6 +52,11 @@
       ]
     },
     {
+      "Using SwiftUI": [
+        "swiftui/using-existing-uicomponents"
+      ]
+    },
+    {
       "Guides": [  
         "guides/customize-message-composer",
         "guides/message-composer-custom-attachments",
