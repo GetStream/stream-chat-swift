@@ -1,8 +1,10 @@
 ---
-title: Observable Controllers
+title: Using Observable Controllers
 ---
 
-In this section, we will see how can we use the `ObservableObject`s of the controllers in the SDK. We will use these observable objects to create some sample SwiftUI views
+The SDK provides extensions of the controller components which expose `ObservableObject`s and can be used in your own SwiftUI views. You can obtain an `ObservableObject` version of any controller by using the `observableObject` property on it.
+
+In this section, we will see how to use the `ObservableObject`s of the controllers in the SDK. We will use these observable objects to create some simple SwiftUI views
 
 ## ChatConnectionController
 
@@ -146,7 +148,30 @@ struct TypingUserView: View {
         return "\(typingUser.name ?? typingUser.id) is typing ..."
     }
 }
+```
 
+### Example: Messages List
+
+Let's build a simple list of messages of a particular channel
+
+```swift
+struct MessagesView: View {
+    @ObservedObject var channelController = ChatClient.shared.channelController(
+        for: ChannelId(
+            type: .messaging,
+            id: "general"
+        )
+    ).observableObject
+    
+    var body: some View {
+        List(channelController.messages, id: \.self) { message in
+            Text(message.text) // Just show the text of the message
+        }.onAppear {
+            // call `synchronize()` to update the locally cached data.
+            channelController.controller.synchronize()
+        }
+    }
+}
 ```
 
 ## ChannelMemberListController
