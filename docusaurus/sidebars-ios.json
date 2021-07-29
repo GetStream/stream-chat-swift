@@ -25,8 +25,9 @@
     {
       "Controllers with Combine" : [
         "combine/combine-overview",
+        "combine/connection",
         "combine/channels",
-        "combine/connection"
+        "combine/users"
       ]
     },
     {
