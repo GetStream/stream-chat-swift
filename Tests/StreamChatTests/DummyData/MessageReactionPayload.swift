@@ -10,7 +10,8 @@ extension MessageReactionPayload {
         type: MessageReactionType = .init(rawValue: .unique),
         messageId: String,
         user: UserPayload<T.User>,
-        extraData: T.MessageReaction = .defaultValue
+        extraData: T.MessageReaction = .defaultValue,
+        extraDataMap: CustomData = .defaultValue
     ) -> MessageReactionPayload<T> {
         .init(
             type: type,
@@ -19,7 +20,8 @@ extension MessageReactionPayload {
             createdAt: .unique,
             updatedAt: .unique,
             user: user,
-            extraData: extraData
+            extraData: extraData,
+            extraDataMap: extraDataMap
         )
     }
 }

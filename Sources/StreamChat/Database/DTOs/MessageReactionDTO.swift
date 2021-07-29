@@ -130,12 +130,21 @@ extension MessageReactionDTO {
             extraData = .defaultValue
         }
         
+        let extraDataMap: CustomData
+        do {
+            extraDataMap = try JSONSerialization.jsonObject(with: self.extraData, options: []) as? CustomData ?? [:]
+        } catch {
+            log.error("Failed decoding saved extra data with error: \(error)")
+            extraDataMap = .defaultValue
+        }
+
         return .init(
             type: .init(rawValue: type),
             score: Int(score),
             createdAt: createdAt,
             updatedAt: updatedAt,
             extraData: extraData,
+            extraDataMap: extraDataMap,
             author: user.asModel()
         )
     }

@@ -40,7 +40,8 @@ final class MessageReactionDTO_Tests: XCTestCase {
         let payload: MessageReactionPayload<CustomExtraData> = .dummy(
             messageId: .unique,
             user: dummyUser,
-            extraData: Mood(mood: .unique)
+            extraData: Mood(mood: .unique),
+            extraDataMap: ["mood": .string(.unique)]
         )
         
         // Assert message reaction is saved and loaded correctly.
@@ -95,7 +96,7 @@ final class MessageReactionDTO_Tests: XCTestCase {
         XCTAssertEqual(model.updatedAt, payload.updatedAt)
         XCTAssertEqual(model.type, payload.type)
         XCTAssertEqual(model.score, payload.score)
-        XCTAssertEqual(model.extraData, payload.extraData)
+        XCTAssertEqual(model.extraDataMap, payload.extraDataMap)
         XCTAssertEqual(model.author.id, payload.user.id)
     }
     

@@ -37,9 +37,20 @@ public struct _ChatMessageReaction<ExtraData: ExtraDataTypes>: Hashable {
     /// The date the reaction was last updated.
     public let updatedAt: Date
     
-    /// The reaction's extra data.
+    /// Custom data stored using the ExtraData generics infrastructure
     public let extraData: ExtraData.MessageReaction
     
+    /// Custom data stored as a hash-map object
+    public let extraDataMap: CustomData
+
+    /// customData is a convenience method around extraData and extraDataMap
+    public var customData: CustomData {
+        if !self.extraDataMap.isEmpty {
+            return self.extraDataMap
+        }
+        return CustomDataFromExtraData(extraData)
+    }
+
     /// The author.
     public let author: _ChatUser<ExtraData.User>
 }

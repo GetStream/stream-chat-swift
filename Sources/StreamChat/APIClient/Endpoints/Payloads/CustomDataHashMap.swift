@@ -5,6 +5,14 @@
 @testable import StreamChat
 import XCTest
 
+protocol DecodableEntity: Decodable {
+    var extraDataMap: CustomData { get }
+}
+
+extension MessagePayload: DecodableEntity {}
+extension MessageReactionPayload: DecodableEntity {}
+extension UserPayload: DecodableEntity {}
+
 class CustomDataHashMap: XCTestCase {
     func test_UserWebSocketPayloadEncodeWithCustomMap() throws {
         let extraDataMap: CustomData = ["how-many-roads": .integer(42)]
@@ -15,27 +23,19 @@ class CustomDataHashMap: XCTestCase {
         XCTAssertEqual(jsonStr, "{\"id\":\"42\",\"image_url\":\"42\",\"name\":\"42\",\"how-many-roads\":42}")
     }
 
-    func test_messageJSONDecodeWithoutAnyCustomData() throws {
-        let currentUserJSON = XCTestCase.mockData(fromFile: "MessagePayload")
-        let payload = try JSONDecoder.default.decode(MessagePayload<NoExtraData>.self, from: currentUserJSON)
-        
-        print(payload.extraDataMap)
-        XCTAssertEqual(payload.extraDataMap.count, 0)
+    func assertEmptyCustomData<T>(_ entity: T.Type, _ fileName: String) throws where T: DecodableEntity {
+        let jsonData = XCTestCase.mockData(fromFile: fileName)
+        let payload = try JSONDecoder.default.decode(entity.self, from: jsonData)
+        XCTAssertEqual(payload.extraDataMap, .defaultValue)
     }
-    
-    func test_messageJSONDecodeWithCustomData() throws {
-        let currentUserJSON = XCTestCase.mockData(fromFile: "MessagePayloadWithCustom")
-        let payload = try JSONDecoder.default.decode(MessagePayload<NoExtraData>.self, from: currentUserJSON)
+
+    func assertCustomData<T>(_ entity: T.Type, _ fileName: String) throws where T: DecodableEntity {
+        let jsonData = XCTestCase.mockData(fromFile: fileName)
+        let payload = try JSONDecoder.default.decode(entity.self, from: jsonData)
         
         XCTAssertEqual(payload.extraDataMap["secret_note"], .string("Anakin is Vader!"))
         XCTAssertEqual(payload.extraDataMap["good_movies_count"], .integer(3))
         XCTAssertEqual(payload.extraDataMap["awesome"], .bool(true))
-    }
-    
-    func test_messageJSONDecodeWithNestedCustomData() throws {
-        let currentUserJSON = XCTestCase.mockData(fromFile: "MessagePayloadWithCustom")
-        let payload = try JSONDecoder.default.decode(MessagePayload<NoExtraData>.self, from: currentUserJSON)
-        
         XCTAssertEqual(payload.extraDataMap["nested_stuff"], .dictionary(
             [
                 "how_many_times": .integer(42), "small": .double(0.001),
@@ -48,8 +48,35 @@ class CustomDataHashMap: XCTestCase {
         ))
     }
     
-    func test_messagePayloadToMessage() throws {
-        let currentUserJSON = XCTestCase.mockData(fromFile: "MessagePayloadWithCustom")
-        let payload = try JSONDecoder.default.decode(MessagePayload<NoExtraData>.self, from: currentUserJSON)
+    func test_messageJSONDecodeWithoutAnyCustomData() throws {
+        try! assertEmptyCustomData(MessagePayload<NoExtraData>.self, "MessagePayload")
+    }
+    
+    func test_messageJSONDecodeWithCustomData() throws {
+        try! assertCustomData(MessagePayload<NoExtraData>.self, "MessagePayloadWithCustom")
+    }
+    
+    func test_messageReactionJSONDecodeWithoutAnyCustomData() throws {
+        try! assertEmptyCustomData(MessageReactionPayload<NoExtraData>.self, "MessageReactionPayload")
+    }
+    
+    func test_messageReactionJSONDecodeWithCustomData() throws {
+        try! assertCustomData(MessageReactionPayload<NoExtraData>.self, "MessageReactionPayloadWithCustom")
+    }
+
+    func test_userJSONDecodeWithoutAnyCustomData() throws {
+        try! assertEmptyCustomData(UserPayload<NoExtraData>.self, "UserPayload")
+    }
+    
+    func test_userJSONDecodeWithCustomData() throws {
+        try! assertCustomData(UserPayload<NoExtraData>.self, "UserPayloadWithCustom")
+    }
+    
+    func test_currentUserJSONDecodeWithoutAnyCustomData() throws {
+        try! assertEmptyCustomData(CurrentUserPayload<NoExtraData>.self, "CurrentUserPayload")
+    }
+    
+    func test_currentUserJSONDecodeWithCustomData() throws {
+        try! assertCustomData(CurrentUserPayload<NoExtraData>.self, "CurrentUserPayloadWithCustom")
     }
 }

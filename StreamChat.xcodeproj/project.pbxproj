@@ -45,6 +45,12 @@
 		430156DC26B1862C0006E7EA /* CustomDataHashMap.swift in Sources */ = {isa = PBXBuildFile; fileRef = 430156DB26B1862C0006E7EA /* CustomDataHashMap.swift */; };
 		430156DE26B188A70006E7EA /* MessagePayload.json in Resources */ = {isa = PBXBuildFile; fileRef = 430156DD26B188A70006E7EA /* MessagePayload.json */; };
 		430156E026B1891E0006E7EA /* MessagePayloadWithCustom.json in Resources */ = {isa = PBXBuildFile; fileRef = 430156DF26B1891E0006E7EA /* MessagePayloadWithCustom.json */; };
+		430156E226B2A2AE0006E7EA /* MessageReactionPayload.json in Resources */ = {isa = PBXBuildFile; fileRef = 430156E126B2A2AE0006E7EA /* MessageReactionPayload.json */; };
+		430156E426B2A2CC0006E7EA /* MessageReactionPayloadWithCustom.json in Resources */ = {isa = PBXBuildFile; fileRef = 430156E326B2A2CC0006E7EA /* MessageReactionPayloadWithCustom.json */; };
+		430156E626B2B3870006E7EA /* UserPayload.json in Resources */ = {isa = PBXBuildFile; fileRef = 430156E526B2B3870006E7EA /* UserPayload.json */; };
+		430156E826B2B3B40006E7EA /* UserPayloadWithCustom.json in Resources */ = {isa = PBXBuildFile; fileRef = 430156E726B2B3B40006E7EA /* UserPayloadWithCustom.json */; };
+		430156EA26B2B3E50006E7EA /* CurrentUserPayload.json in Resources */ = {isa = PBXBuildFile; fileRef = 430156E926B2B3E50006E7EA /* CurrentUserPayload.json */; };
+		430156EC26B2B3FB0006E7EA /* CurrentUserPayloadWithCustom.json in Resources */ = {isa = PBXBuildFile; fileRef = 430156EB26B2B3FB0006E7EA /* CurrentUserPayloadWithCustom.json */; };
 		43BAAD492664F59600323D8E /* UserStopTypingThread.json in Resources */ = {isa = PBXBuildFile; fileRef = 43BAAD472664F59600323D8E /* UserStopTypingThread.json */; };
 		43BAAD4A2664F59600323D8E /* UserStartTypingThread.json in Resources */ = {isa = PBXBuildFile; fileRef = 43BAAD482664F59600323D8E /* UserStartTypingThread.json */; };
 		43EB3AE22671718200954323 /* AttachmentViewCatalog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43EB3AE12671718200954323 /* AttachmentViewCatalog.swift */; };
@@ -1362,6 +1368,12 @@
 		430156DB26B1862C0006E7EA /* CustomDataHashMap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomDataHashMap.swift; sourceTree = "<group>"; };
 		430156DD26B188A70006E7EA /* MessagePayload.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = MessagePayload.json; sourceTree = "<group>"; };
 		430156DF26B1891E0006E7EA /* MessagePayloadWithCustom.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = MessagePayloadWithCustom.json; sourceTree = "<group>"; };
+		430156E126B2A2AE0006E7EA /* MessageReactionPayload.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = MessageReactionPayload.json; sourceTree = "<group>"; };
+		430156E326B2A2CC0006E7EA /* MessageReactionPayloadWithCustom.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = MessageReactionPayloadWithCustom.json; sourceTree = "<group>"; };
+		430156E526B2B3870006E7EA /* UserPayload.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = UserPayload.json; sourceTree = "<group>"; };
+		430156E726B2B3B40006E7EA /* UserPayloadWithCustom.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = UserPayloadWithCustom.json; sourceTree = "<group>"; };
+		430156E926B2B3E50006E7EA /* CurrentUserPayload.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = CurrentUserPayload.json; sourceTree = "<group>"; };
+		430156EB26B2B3FB0006E7EA /* CurrentUserPayloadWithCustom.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = CurrentUserPayloadWithCustom.json; sourceTree = "<group>"; };
 		43BAAD472664F59600323D8E /* UserStopTypingThread.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = UserStopTypingThread.json; sourceTree = "<group>"; };
 		43BAAD482664F59600323D8E /* UserStartTypingThread.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = UserStartTypingThread.json; sourceTree = "<group>"; };
 		43EB3AE12671718200954323 /* AttachmentViewCatalog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttachmentViewCatalog.swift; sourceTree = "<group>"; };
@@ -3161,6 +3173,12 @@
 				8A62705F24BE31B20040BFD6 /* Events */,
 				430156DD26B188A70006E7EA /* MessagePayload.json */,
 				430156DF26B1891E0006E7EA /* MessagePayloadWithCustom.json */,
+				430156E126B2A2AE0006E7EA /* MessageReactionPayload.json */,
+				430156E926B2B3E50006E7EA /* CurrentUserPayload.json */,
+				430156E326B2A2CC0006E7EA /* MessageReactionPayloadWithCustom.json */,
+				430156E526B2B3870006E7EA /* UserPayload.json */,
+				430156EB26B2B3FB0006E7EA /* CurrentUserPayloadWithCustom.json */,
+				430156E726B2B3B40006E7EA /* UserPayloadWithCustom.json */,
 			);
 			path = MockEnpointResponses;
 			sourceTree = "<group>";
@@ -5501,8 +5519,10 @@
 				ADCDDCC525AE1293004E15FB /* UserUpdateResponse.json in Resources */,
 				798779FB2498E47700015F8B /* Member.json in Resources */,
 				8A0CC9F824C608C500705CF9 /* ReactionDeleted.json in Resources */,
+				430156E626B2B3870006E7EA /* UserPayload.json in Resources */,
 				8AC9CBE124C74DD0006E236C /* NotificationInviteAccepted.json in Resources */,
 				883EB93925B070AB001858FD /* GuestUser+InvalidToken.json in Resources */,
+				430156E226B2A2AE0006E7EA /* MessageReactionPayload.json in Resources */,
 				8A0C3BCC24C1CA9900CAFD19 /* ChannelUpdated.json in Resources */,
 				798779FD2498E47700015F8B /* OtherUser.json in Resources */,
 				E732A922263B1F13003BD781 /* UserUpdated.json in Resources */,
@@ -5512,6 +5532,7 @@
 				8A0C3BE024C1F18700CAFD19 /* NotificationMarkRead.json in Resources */,
 				8A0CC9EF24C604E000705CF9 /* MemberUpdated.json in Resources */,
 				8A0C3BCE24C1CB0500CAFD19 /* ChannelDeleted.json in Resources */,
+				430156EC26B2B3FB0006E7EA /* CurrentUserPayloadWithCustom.json in Resources */,
 				798779FE2498E47700015F8B /* CurrentUser.json in Resources */,
 				430156E026B1891E0006E7EA /* MessagePayloadWithCustom.json in Resources */,
 				8AC9CBE624C7500E006E236C /* NotificationMarkAllRead.json in Resources */,
@@ -5525,6 +5546,8 @@
 				224116B2258BACF90034184D /* Message.json in Resources */,
 				798779FF2498E47700015F8B /* ChannelsQuery.json in Resources */,
 				8A0C3BC024C0ACAB00CAFD19 /* UserUnbanned.json in Resources */,
+				430156EA26B2B3E50006E7EA /* CurrentUserPayload.json in Resources */,
+				430156E426B2A2CC0006E7EA /* MessageReactionPayloadWithCustom.json in Resources */,
 				8A0C3BDC24C1F18700CAFD19 /* MessageNew.json in Resources */,
 				2289852A25CC0332007F2C26 /* AttachmentPayloadImage.json in Resources */,
 				8A62706224BE35E40040BFD6 /* UserStartTyping.json in Resources */,
@@ -5534,6 +5557,7 @@
 				7908824B25432CC600896F03 /* StreamChatTestPlan.xctestplan in Resources */,
 				2289852925CC0332007F2C26 /* AttachmentPayloadCustom.json in Resources */,
 				88381E77258259C70047A6A3 /* FileUploadPayload.json in Resources */,
+				430156E826B2B3B40006E7EA /* UserPayloadWithCustom.json in Resources */,
 				8A0C3BDE24C1F18700CAFD19 /* MessageDeleted.json in Resources */,
 				88EA9B0F2547271B007EE76B /* MessageReactionPayload+NoExtraData.json in Resources */,
 				882C5752252C770900E60C44 /* ChannelMembersQuery.json in Resources */,

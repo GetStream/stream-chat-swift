@@ -73,7 +73,7 @@ public struct _ChatMessage<ExtraData: ExtraDataTypes> {
     ///
     public let extraData: ExtraData.Message
     
-    public let extraDataMap: [String: RawJSON]
+    public let extraDataMap: CustomData
 
     /// customData is a convenience method around extraData and extraDataMap
     public var customData: CustomData {

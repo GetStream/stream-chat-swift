@@ -62,7 +62,7 @@ class CurrentUserPayload<ExtraData: ExtraDataTypes>: UserPayload<ExtraData.User>
         mutedUsers = try container.decodeIfPresent([MutedUserPayload<ExtraData.User>].self, forKey: .mutedUsers) ?? []
         mutedChannels = try container.decodeIfPresent([MutedChannelPayload<ExtraData>].self, forKey: .mutedChannels) ?? []
         unreadCount = try? UnreadCount(from: decoder)
-        
+
         try super.init(from: decoder)
     }
 }

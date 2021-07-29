@@ -32,6 +32,7 @@ final class MessageReactionPayload_Tests: XCTestCase {
         XCTAssertEqual(payload.createdAt, "2020-08-17T13:15:39.892884Z".toDate())
         XCTAssertEqual(payload.updatedAt, "2020-08-17T13:15:39.892884Z".toDate())
         XCTAssertEqual(payload.extraData, .init(mood: "good one"))
+        XCTAssertEqual(payload.extraDataMap, ["mood": .string("good one")])
         XCTAssertEqual(payload.user.id, "broken-waterfall-5")
         XCTAssertEqual(payload.user.name, "John Doe")
         XCTAssertEqual(payload.user.imageURL, URL(string: "https://s3.amazonaws.com/100no-pic.png"))

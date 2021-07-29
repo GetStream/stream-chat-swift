@@ -606,12 +606,12 @@ private extension _ChatMessage {
         }
         self.extraData = extraData
 
-        let extraDataMap: [String: RawJSON]
+        let extraDataMap: CustomData
         do {
-            extraDataMap = try JSONSerialization.jsonObject(with: dto.extraData, options: []) as? [String: RawJSON] ?? [:]
+            extraDataMap = try JSONSerialization.jsonObject(with: dto.extraData, options: []) as? CustomData ?? [:]
         } catch {
             log.error("Failed to decode extra data for Message with id: <\(dto.id)>, using default value instead. Error: \(error)")
-            extraDataMap = [:]
+            extraDataMap = .defaultValue
         }
         self.extraDataMap = extraDataMap
 

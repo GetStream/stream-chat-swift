@@ -22,6 +22,7 @@ enum UserPayloadsCodingKeys: String, CodingKey, CaseIterable {
     case mutedChannels = "channel_mutes"
     case isAnonymous = "anon"
     case devices
+    case unreadCount = "unread_count"
 }
 
 // MARK: - GET users
@@ -71,7 +72,7 @@ class UserPayload<ExtraData: UserExtraData>: Decodable {
         self.extraData = extraData
         self.extraDataMap = extraDataMap
     }
-    
+
     required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: UserPayloadsCodingKeys.self)
         id = try container.decode(String.self, forKey: .id)
@@ -92,7 +93,7 @@ class UserPayload<ExtraData: UserExtraData>: Decodable {
             payload.removeValues(forKeys: UserPayloadsCodingKeys.allCases.map(\.rawValue))
             extraDataMap = payload
         } else {
-            extraDataMap = [:]
+            extraDataMap = .defaultValue
         }
     }
 }
