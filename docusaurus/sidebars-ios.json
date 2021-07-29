@@ -25,7 +25,8 @@
     {
       "Controllers with Combine" : [
         "combine/combine-overview",
-        "combine/channels"
+        "combine/channels",
+        "combine/connection"
       ]
     },
     {
