@@ -202,3 +202,40 @@ struct MembersView: View {
 | Property  | Description |
 | -------------- | ----------------------- |
 | `member`  |  The member for this controller |
+
+## CurrentUserController
+
+`CurrentChatUserController` allows you to observe and mutate the current user. You can obtain an `ObservableObject` version of this controller by using the `observableObject` property.
+
+```swift
+
+```
+
+### Published properties in `CurrentUserController`
+
+| Property  | Description |
+| -------------- | ----------------------- |
+| `currentUser`  |  The current user |
+| `unreadCount`  |  The unread messages and channels count for the current user |
+
+
+### Example: Unread Count View
+
+Let's build a simple `SwiftUI` view that shows the current unread count for the current user.
+
+```swift
+struct UnreadCountIndicatorView: View {
+    @ObservedObject var currentUserController = ChatClient.shared
+        .currentUserController()
+        .observableObject
+    
+    var body: some View {
+        VStack {
+            Text("Unread channels: \(currentUserController.unreadCount.channels)")
+            Text("Unread Messages: \(currentUserController.unreadCount.messages)")
+        }.onAppear(perform: {
+            currentUserController.controller.synchronize()
+        })
+    }
+}
+```
