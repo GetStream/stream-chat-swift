@@ -66,6 +66,28 @@ final class ChannelVisibilityEventMiddleware_Tests: XCTestCase {
         // Assert `ChannelTruncatedEvent` is forwarded even though database error happened.
         XCTAssertTrue(forwardedEvent is ChannelVisibleEvent)
     }
+    
+    func test_middlewareCanSeePendingEntities() throws {
+        let cid = ChannelId.unique
+        
+        // Create the event
+        let event = try ChannelHiddenEvent(from: .init(
+            eventType: .channelHidden,
+            cid: cid,
+            createdAt: .unique,
+            isChannelHistoryCleared: false
+        ) as EventPayload<NoExtraData>)
+        
+        // Open a database session to simulate EventNotificationCenter
+        try database.writeSynchronously {
+            try $0.saveChannel(payload: .dummy(cid: cid), query: nil)
+            // Handle the event
+            _ = self.middleware.handle(event: event, session: $0)
+        }
+        
+        // Check if the channel was found and marked as hidden
+        XCTAssertEqual(database.viewContext.channel(cid: cid)?.hiddenAt, event.hiddenAt)
+    }
 
     func test_channelHiddenEvent_updateChannelHiddenAtValue() throws {
         let cid: ChannelId = .unique
