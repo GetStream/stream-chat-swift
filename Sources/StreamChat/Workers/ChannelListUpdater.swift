@@ -12,7 +12,11 @@ class ChannelListUpdater: Worker {
     ///   - channelListQuery: The channels query used in the request
     ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
     ///
-    func update(channelListQuery: ChannelListQuery, completion: ((Error?) -> Void)? = nil) {
+    func update(
+        channelListQuery: _ChannelListQuery,
+        trumpExistingChannels: Bool = false,
+        completion: ((Error?) -> Void)? = nil
+    ) {
         apiClient
             .request(endpoint: .channels(query: channelListQuery)) { [weak self] (result: Result<
                 ChannelListPayload,
@@ -21,6 +25,11 @@ class ChannelListUpdater: Worker {
                 switch result {
                 case let .success(channelListPayload):
                     self?.database.write { session in
+                        
+                        if trumpExistingChannels {
+                            try session.deleteChannels(query: channelListQuery)
+                        }
+                        
                         try channelListPayload.channels.forEach {
                             try session.saveChannel(payload: $0, query: channelListQuery)
                         }
