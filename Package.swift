@@ -92,6 +92,7 @@ var streamChatSourcesExcluded: [String] { [
     "WebSocketClient/WebSocketPingController_Tests.swift",
     "APIClient/HTTPHeader_Tests.swift",
     "APIClient/Endpoints/GuestEndpoints_Tests.swift",
+    "APIClient/Endpoints/Payloads/CustomDataHashMap_Tests.swift",
     "APIClient/Endpoints/Payloads/DevicePayloads_Tests.swift",
     "APIClient/Endpoints/Payloads/MessageAttachmentPayload_Tests.swift",
     "APIClient/Endpoints/Payloads/MutedChannelPayload_Tests.swift",

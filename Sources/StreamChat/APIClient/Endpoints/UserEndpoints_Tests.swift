@@ -30,7 +30,7 @@ final class UserEndpoints_Tests: XCTestCase {
     func test_updateCurrentUser_buildsCorrectly() {
         let userId = UserId.unique
         let payload: UserUpdateRequestBody<TestExtraData> = .init(
-            name: .unique, imageURL: .unique(), extraData: TestExtraData(company: .unique)
+            name: .unique, imageURL: .unique(), extraData: CustomDataFromExtraData(TestExtraData(company: .unique))
         )
         
         let users: [String: AnyEncodable] = [

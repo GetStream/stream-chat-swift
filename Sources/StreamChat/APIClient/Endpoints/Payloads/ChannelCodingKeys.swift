@@ -6,6 +6,8 @@ import Foundation
 
 /// Coding keys channel related payloads.
 public enum ChannelCodingKeys: String, CodingKey, CaseIterable {
+    /// The id of the channel
+    case id
     /// A combination of channel id and type.
     case cid
     /// Name for the channel.

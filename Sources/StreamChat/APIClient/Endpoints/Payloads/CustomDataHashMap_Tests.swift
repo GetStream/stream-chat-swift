@@ -12,6 +12,7 @@ protocol DecodableEntity: Decodable {
 extension MessagePayload: DecodableEntity {}
 extension MessageReactionPayload: DecodableEntity {}
 extension UserPayload: DecodableEntity {}
+extension ChannelDetailPayload: DecodableEntity {}
 
 class CustomDataHashMap: XCTestCase {
     func test_UserWebSocketPayloadEncodeWithCustomMap() throws {
@@ -48,6 +49,14 @@ class CustomDataHashMap: XCTestCase {
         ))
     }
     
+    func test_channelDetailJSONDecodeWithoutAnyCustomData() throws {
+        try! assertEmptyCustomData(ChannelDetailPayload<NoExtraData>.self, "ChannelPayload")
+    }
+    
+    func test_channelDetailJSONDecodeWithCustomData() throws {
+        try! assertCustomData(ChannelDetailPayload<NoExtraData>.self, "ChannelPayloadWithCustom")
+    }
+
     func test_messageJSONDecodeWithoutAnyCustomData() throws {
         try! assertEmptyCustomData(MessagePayload<NoExtraData>.self, "MessagePayload")
     }

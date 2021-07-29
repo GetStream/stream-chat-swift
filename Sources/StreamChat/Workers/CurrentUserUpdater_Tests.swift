@@ -59,7 +59,6 @@ final class CurrentUserUpdater_Tests: StressTestCase {
             currentUserId: expectedId,
             name: expectedName,
             imageURL: expectedImageUrl,
-            userExtraData: nil,
             completion: { error in
                 XCTAssertNil(error)
             }
@@ -78,7 +77,7 @@ final class CurrentUserUpdater_Tests: StressTestCase {
         // Assert that request is made to the correct endpoint
         let expectedEndpoint: Endpoint<UserUpdateResponse<NoExtraData>> = .updateUser(
             id: expectedId,
-            payload: .init(name: expectedName, imageURL: expectedImageUrl, extraData: nil)
+            payload: .init(name: expectedName, imageURL: expectedImageUrl)
         )
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
     }
@@ -101,7 +100,6 @@ final class CurrentUserUpdater_Tests: StressTestCase {
             currentUserId: expectedId,
             name: expectedName,
             imageURL: expectedImageUrl,
-            userExtraData: nil,
             completion: { _ in
                 completionCalled = true
             }
@@ -143,7 +141,6 @@ final class CurrentUserUpdater_Tests: StressTestCase {
             currentUserId: userPayload.id,
             name: .unique,
             imageURL: nil,
-            userExtraData: nil,
             completion: { error in
                 completionError = error
             }
@@ -174,7 +171,6 @@ final class CurrentUserUpdater_Tests: StressTestCase {
                 currentUserId: .unique,
                 name: nil,
                 imageURL: nil,
-                userExtraData: nil,
                 completion: $0
             )
         }
@@ -200,7 +196,6 @@ final class CurrentUserUpdater_Tests: StressTestCase {
             currentUserId: .unique,
             name: .unique,
             imageURL: nil,
-            userExtraData: nil,
             completion: { error in
                 completionError = error
             }

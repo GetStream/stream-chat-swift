@@ -10,7 +10,7 @@ final class CurrentUserUpdaterMock<ExtraData: ExtraDataTypes>: CurrentUserUpdate
     @Atomic var updateUserData_currentUserId: UserId?
     @Atomic var updateUserData_name: String?
     @Atomic var updateUserData_imageURL: URL?
-    @Atomic var updateUserData_userExtraData: ExtraData.User?
+    @Atomic var updateUserData_userExtraData: CustomData = .defaultValue
     @Atomic var updateUserData_completion: ((Error?) -> Void)?
     
     @Atomic var addDevice_token: Data?
@@ -28,7 +28,7 @@ final class CurrentUserUpdaterMock<ExtraData: ExtraDataTypes>: CurrentUserUpdate
         currentUserId: UserId,
         name: String? = nil,
         imageURL: URL? = nil,
-        userExtraData: ExtraData.User? = nil,
+        userExtraData: CustomData = .defaultValue,
         completion: ((Error?) -> Void)? = nil
     ) {
         updateUserData_currentUserId = currentUserId
@@ -68,7 +68,7 @@ final class CurrentUserUpdaterMock<ExtraData: ExtraDataTypes>: CurrentUserUpdate
         updateUserData_currentUserId = nil
         updateUserData_name = nil
         updateUserData_imageURL = nil
-        updateUserData_userExtraData = nil
+        updateUserData_userExtraData = .defaultValue
         updateUserData_completion = nil
         
         addDevice_token = nil

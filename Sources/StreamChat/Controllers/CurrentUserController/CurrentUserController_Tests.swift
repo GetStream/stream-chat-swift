@@ -295,7 +295,7 @@ final class CurrentUserController_Tests: StressTestCase {
         controller.updateUserData(
             name: expectedName,
             imageURL: expectedImageUrl,
-            userExtraData: nil
+            userExtraData: CustomData.defaultValue
         )
         
         // Assert udpater is called with correct data
@@ -309,7 +309,7 @@ final class CurrentUserController_Tests: StressTestCase {
         env.currentUserObserverItem = .mock(id: .unique)
         
         var completionError: Error?
-        controller.updateUserData(name: .unique, imageURL: .unique(), userExtraData: nil) { [callbackQueueID] in
+        controller.updateUserData(name: .unique, imageURL: .unique(), userExtraData: CustomData.defaultValue) { [callbackQueueID] in
             AssertTestQueue(withId: callbackQueueID)
             completionError = $0
         }
@@ -327,13 +327,14 @@ final class CurrentUserController_Tests: StressTestCase {
         env.currentUserObserverItem = .mock(id: .unique)
         
         var completionIsCalled = false
-        controller.updateUserData(name: .unique, imageURL: .unique(), userExtraData: nil) { [callbackQueueID] error in
-            // Assert callback queue is correct.
-            AssertTestQueue(withId: callbackQueueID)
-            // Assert there is no error.
-            XCTAssertNil(error)
-            completionIsCalled = true
-        }
+        controller
+            .updateUserData(name: .unique, imageURL: .unique(), userExtraData: CustomData.defaultValue) { [callbackQueueID] error in
+                // Assert callback queue is correct.
+                AssertTestQueue(withId: callbackQueueID)
+                // Assert there is no error.
+                XCTAssertNil(error)
+                completionIsCalled = true
+            }
         
         // Keep a weak ref so we can check if it's actually deallocated
         weak var weakController = controller
@@ -358,7 +359,7 @@ final class CurrentUserController_Tests: StressTestCase {
             controller.updateUserData(
                 name: .unique,
                 imageURL: nil,
-                userExtraData: nil,
+                userExtraData: CustomData.defaultValue,
                 completion: $0
             )
         }

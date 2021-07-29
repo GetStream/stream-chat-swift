@@ -90,16 +90,18 @@ class UserRequestBody_Tests: XCTestCase {
 
 class UserUpdateRequestBody_Tests: XCTestCase {
     func test_isSerialized() throws {
+        let value = String.unique
+
         let payload: UserUpdateRequestBody<TestExtraData> = .init(
             name: .unique,
             imageURL: .unique(),
-            extraData: TestExtraData(secretNote: .unique)
+            extraData: CustomDataFromExtraData(TestExtraData(secretNote: value))
         )
         
         let expected: [String: Any] = [
             "name": payload.name!,
             "image": payload.imageURL!.absoluteString,
-            "secret_note": payload.extraData!.secretNote!
+            "secret_note": value
         ]
         
         let encodedJSON = try JSONEncoder.default.encode(payload)
