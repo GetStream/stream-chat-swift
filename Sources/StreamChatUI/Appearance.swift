@@ -21,6 +21,7 @@ public struct Appearance {
     /// By providing different object or changing individal images, you can change the look of the views.
     public var images = Images()
     
+    /// Provider for custom localization which is dependent on App Bundle.
     public var localizationProvider: (_ key: String, _ table: String) -> String = { key, table in
         Bundle.streamChatUI.localizedString(forKey: key, value: nil, table: table)
     }
