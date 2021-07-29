@@ -2,6 +2,56 @@
 title: Observable Controllers
 ---
 
+In this section, we will see how can we use the `ObservableObject`s of the controllers in the SDK. We will use these observable objects to create some sample SwiftUI views
+
+## ChatConnectionController
+
+`ChatConnectionController` allows you to connect/disconnect the `ChatClient` and observe connection events. You can obtain an `ObservableObject` version of this controller by using the `observableObject` property.
+
+```swift
+ @ObservedObject var connectionController = ChatClient.shared
+        .connectionController()
+        .observableObject
+```
+
+### Published properties in `ChatConnectionController`
+
+| Property  | Description |
+| -------------- | ----------------------- |
+| `connectionStatus`  | The connection status (i.e. online, offline, connecting) |
+
+Let's build a simple `SwiftUI` view that shows the current connection status.
+
+```swift
+struct ConnectionStatusView: View {
+    @ObservedObject var connectionController = ChatClient.shared
+        .connectionController()
+        .observableObject
+    
+    var body: some View {
+        Text("Current connection status: \(getConnectionStatusString())")
+    }
+    
+    func getConnectionStatusString() -> String {
+        var string = ""
+        switch connectionController.connectionStatus {
+        case .initialized:
+            string = "Initialized"
+        case .connecting:
+            string = "Connecting..."
+        case .connected:
+            string = "Connected!"
+        case .disconnecting:
+            string = "Disconnecting"
+        case let .disconnected(error):
+            string = "Disconnected, error: \(error?.localizedDescription ?? "")"
+        }
+        
+        return string
+    }
+}
+```
+
 ## ChatChannelListController
 
 `ChatChannelListController` allows you to observe a list of chat channels based on the provided query and to paginate channels. You can obtain an `ObservableObject` version of this controller by using the `observableObject` property.
