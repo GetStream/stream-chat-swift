@@ -23,7 +23,7 @@
       ]
     },
     {
-      "Controllers with Combine" : [
+      "Combine" : [
         "combine/combine-overview",
         "combine/connection",
         "combine/channels",

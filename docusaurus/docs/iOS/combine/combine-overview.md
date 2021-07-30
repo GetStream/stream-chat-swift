@@ -2,8 +2,8 @@
 title: Overview
 ---
 
-The `StreamChat` framework ships with controllers that are fully compatible with `Combine`.
-You can use these combine-compatible controllers to observe the changes to the controllers, and build your own views to consume the data.
+The `StreamChat` framework ships with `Combine` publishers out of the box.
+`Combine` publishers are exposed by `StreamChat` controller classes, these publishers allow you to observe data and to build your own views.
 
 Each controller exposes publishers based on the kind of data they control and allow you to observe changes. You can find examples on how to build your own views using these publishers here.
 
