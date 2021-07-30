@@ -23,7 +23,7 @@ final class GuestUserTokenRequestPayload_Tests: XCTestCase {
             userId: .unique,
             name: .unique,
             imageURL: .unique(),
-            extraData: [company: .string(company)]
+            extraData: ["company": .string(company)]
         )
         
         try verify(

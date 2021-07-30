@@ -33,7 +33,7 @@ final class FlagUserPayload_Tests: XCTestCase {
         // Assert current user payload is deserialized correctly.
         let currentUser = payload.currentUser
         XCTAssertEqual(currentUser.id, "broken-waterfall-5")
-        XCTAssertEqual(currentUser.extraData, ["secret_note": .string("broken-waterfall-5 is Vader ;-)")])
+        XCTAssertEqual(currentUser.extraData, ["secret_note": .string("broken-waterfall-5 is Vader ;-)"), "team": .integer(1)])
         // Assert flagged user payload is deserialized correctly.
         let flaggedUser = payload.flaggedUser
         XCTAssertEqual(flaggedUser.id, "steep-moon-9")
