@@ -23,10 +23,7 @@ public protocol SwipeableViewDelegate: AnyObject {
 }
 
 /// A view with swipe functionality that is used as action buttons view for channel list item view.
-public typealias SwipeableView = _SwipeableView<NoExtraData>
-
-/// A view with swipe functionality that is used as action buttons view for channel list item view.
-open class _SwipeableView: _View, ComponentsProvider, UIGestureRecognizerDelegate {
+open class SwipeableView: _View, ComponentsProvider, UIGestureRecognizerDelegate {
     /// Gesture recognizer which is needed to be added on the owning view which will be recognizing the swipes.
     open private(set) lazy var panGestureRecognizer: UIPanGestureRecognizer = UIPanGestureRecognizer(
         target: self,

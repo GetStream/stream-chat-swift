@@ -9,56 +9,37 @@ import UIKit
 
 public protocol ThemeProvider: ComponentsProvider, AppearanceProvider {}
 
-public protocol ComponentsProvider: GenericComponentsProvider {
+public protocol ComponentsProvider: AnyObject {
     /// Appearance object to change components and component types from which the default SDK views are build
     /// or to use the default components in custom views.
-    var components: _Components<ExtraData> { get set }
+    var components: Components { get set }
+    func register(components: Components)
+    func componentsDidRegister()
 }
 
 // MARK: - Protocol extensions for UIView
 
 public extension ComponentsProvider where Self: UIResponder {
-    var components: _Components<ExtraData> {
-        get { components(ExtraData.self) }
-        set { register(components: newValue) }
-    }
-}
-
-// MARK: - Generic protocol
-
-public protocol GenericComponentsProvider: AnyObject {
-    func register<T: ExtraDataTypes>(components: _Components<T>)
-    func components<T: ExtraDataTypes>(_ extraDataType: T.Type) -> _Components<T>
-    func componentsDidRegister()
-}
-
-public extension ComponentsProvider where Self: UIResponder {
     func componentsDidRegister() {}
-    
-    func register<T: ExtraDataTypes>(components: _Components<T>) {
+    func register(components: Components) {
         anyComponents = components
         componentsDidRegister()
     }
-    
-    func components<T: ExtraDataTypes>(_ type: T.Type = T.self) -> _Components<T> {
-        // If we have a components registered, return it
-        if let components = anyComponents as? _Components<T> {
-            return components
-        }
-        
-        // Walk up the superview chain until we find a components provider
-        // Skip non-providers
-        var _next = next
-        while _next != nil {
-            if let _next = _next as? GenericComponentsProvider {
-                return _next.components(type)
-            } else {
-                _next = _next?.next
+
+    var components: Components {
+        get {
+            if let components = anyComponents as? Components {
+                return components
             }
+            let _next = next
+            while _next != nil {
+                if let _next = _next as? ComponentsProvider {
+                    return _next.components
+                }
+            }
+            return .default
         }
-        
-        // No parent provider found, return default components
-        return .default
+        set { register(components: newValue) }
     }
 }
 

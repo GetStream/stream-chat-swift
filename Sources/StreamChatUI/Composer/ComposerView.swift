@@ -17,21 +17,7 @@ import UIKit
 /// |                     bottomContainer                     |
 /// |---------------------------------------------------------|
 /// ```
-public typealias ComposerView = _ComposerView<NoExtraData>
-
-/// /// The composer view that layouts all the components to create a new message.
-///
-/// High level overview of the composer layout:
-/// ```
-/// |---------------------------------------------------------|
-/// |                       headerView                        |
-/// |---------------------------------------------------------|--|
-/// | leadingContainer | inputMessageView | trailingContainer |  | = centerContainer
-/// |---------------------------------------------------------|--|
-/// |                     bottomContainer                     |
-/// |---------------------------------------------------------|
-/// ```
-open class _ComposerView: _View, ThemeProvider {
+open class ComposerView: _View, ThemeProvider {
     /// The main container of the composer that layouts all the other containers around the message input view.
     public private(set) lazy var container = ContainerStackView()
         .withoutAutoresizingMaskConstraints

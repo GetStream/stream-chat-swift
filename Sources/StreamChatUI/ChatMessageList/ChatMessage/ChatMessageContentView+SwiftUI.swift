@@ -8,7 +8,7 @@ import SwiftUI
 @available(iOS 13.0, *)
 /// Protocol of `_ChatMessageContentView` wrapper for use in SwiftUI.
 public protocol _ChatMessageContentViewSwiftUIView: View {
-    init(dataSource: _ChatMessageContentView<ExtraData>.ObservedObject<Self>)
+    init(dataSource: ChatMessageContentView.ObservedObject<Self>)
 }
 
 @available(iOS 13.0, *)
@@ -21,7 +21,7 @@ extension _ChatMessageContentView {
 
     /// SwiftUI wrapper of `_ChatMessageContentView`.
     /// Servers to wrap custom SwiftUI view as a UIKit view so it can be easily injected into `_Components`.
-    public class SwiftUIWrapper<Content: SwiftUIView>: _ChatMessageContentView<ExtraData>, ObservableObject
+    public class SwiftUIWrapper<Content: SwiftUIView>: ChatMessageContentView, ObservableObject
         where Content.ExtraData == ExtraData
     {
         var hostingController: UIViewController?

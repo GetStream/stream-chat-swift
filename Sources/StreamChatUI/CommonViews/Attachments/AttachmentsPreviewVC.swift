@@ -5,10 +5,7 @@
 import StreamChat
 import UIKit
 
-/// A view controller that displays a collection of attachments
-public typealias AttachmentsPreviewVC = _AttachmentsPreviewVC<NoExtraData>
-
-open class _AttachmentsPreviewVC: _ViewController, ComponentsProvider {
+open class AttachmentsPreviewVC: _ViewController, ComponentsProvider {
     open var content: [AttachmentPreviewProvider] = [] {
         didSet {
             updateContentIfNeeded()

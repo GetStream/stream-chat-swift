@@ -5,9 +5,7 @@
 import StreamChat
 import UIKit
 
-public typealias ChatMessageInteractiveAttachmentView = _ChatMessageInteractiveAttachmentView<NoExtraData>
-
-open class _ChatMessageInteractiveAttachmentView: _View, ThemeProvider {
+open class ChatMessageInteractiveAttachmentView: _View, ThemeProvider {
     public var content: ChatMessageGiphyAttachment? {
         didSet { updateContentIfNeeded() }
     }

@@ -5,9 +5,7 @@
 import StreamChat
 import UIKit
 
-public typealias ChatMessageReactionsBubbleView = _ChatMessageReactionsBubbleView<NoExtraData>
-
-open class _ChatMessageReactionsBubbleView: _View, ThemeProvider {
+open class ChatMessageReactionsBubbleView: _View, ThemeProvider {
     public var content: Content? {
         didSet { updateContentIfNeeded() }
     }
@@ -54,7 +52,7 @@ open class _ChatMessageReactionsBubbleView: _View, ThemeProvider {
 
 // MARK: - Content
 
-extension _ChatMessageReactionsBubbleView {
+extension ChatMessageReactionsBubbleView {
     public struct Content {
         public let style: ChatMessageReactionsBubbleStyle
         public let reactions: [ChatMessageReactionData]

@@ -8,12 +8,7 @@ import UIKit
 /// `_ChatMessagePopupVC` is shown when user long-presses a message.
 /// By default, it has a blurred background, reactions, and actions which are shown for a given message
 /// and with which user can interact.
-public typealias ChatMessagePopupVC = _ChatMessagePopupVC<NoExtraData>
-
-/// `_ChatMessagePopupVC` is shown when user long-presses a message.
-/// By default, it has a blurred background, reactions, and actions which are shown for a given message
-/// and with which user can interact.
-open class _ChatMessagePopupVC: _ViewController, ComponentsProvider {
+open class ChatMessagePopupVC: _ViewController, ComponentsProvider {
     /// `ContainerStackView` encapsulating underlying views `reactionsController`, `actionsController` and `messageContentView`.
     open private(set) lazy var messageContainerStackView = ContainerStackView()
         .withoutAutoresizingMaskConstraints
@@ -36,7 +31,7 @@ open class _ChatMessagePopupVC: _ViewController, ComponentsProvider {
     /// Insets for `messageContentView`'s bubble view.
     public var messageBubbleViewInsets: UIEdgeInsets = .zero
     /// `messageContentView` being displayed.
-    public var messageContentView: _ChatMessageContentView<ExtraData>!
+    public var messageContentView: ChatMessageContentView!
     /// Message data that is shown.
     public var message: _ChatMessage { messageContentView.content! }
     /// Initial frame of a message.

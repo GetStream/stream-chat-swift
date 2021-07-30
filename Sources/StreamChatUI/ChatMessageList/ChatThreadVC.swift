@@ -6,15 +6,12 @@ import StreamChat
 import UIKit
 
 /// Controller responsible for displaying message thread.
-public typealias ChatThreadVC = _ChatThreadVC<NoExtraData>
-
-/// Controller responsible for displaying message thread.
-open class _ChatThreadVC:
+open class ChatThreadVC:
     _ViewController,
     ThemeProvider,
     ComposerVCDelegate,
-    _ChatChannelControllerDelegate,
-    _ChatMessageControllerDelegate,
+    ChatChannelControllerDelegate,
+    ChatMessageControllerDelegate,
     _ChatMessageActionsVCDelegate,
     ChatMessageContentViewDelegate,
     GalleryContentViewDelegate,
@@ -39,11 +36,11 @@ open class _ChatThreadVC:
     )
 
     /// User search controller passed directly to the composer
-    open lazy var userSuggestionSearchController: _ChatUserSearchController<ExtraData> =
+    open lazy var userSuggestionSearchController: ChatUserSearchController =
         channelController.client.userSearchController()
 
     /// View used to display the messages
-    open private(set) lazy var listView: _ChatMessageListView<ExtraData> = {
+    open private(set) lazy var listView: ChatMessageListView = {
         let listView = components.messageListView.init().withoutAutoresizingMaskConstraints
         listView.delegate = self
         listView.dataSource = self
@@ -168,19 +165,19 @@ open class _ChatThreadVC:
     }
 
     /// Returns the content view class for the message at given `indexPath`
-    open func cellContentClassForMessage(at indexPath: IndexPath) -> _ChatMessageContentView<ExtraData>.Type {
+    open func cellContentClassForMessage(at indexPath: IndexPath) -> ChatMessageContentView.Type {
         components.messageContentView
     }
 
     /// Returns the attachment view injector class for the message at given `indexPath`
     open func attachmentViewInjectorClassForMessage(
         at indexPath: IndexPath
-    ) -> _AttachmentViewInjector<ExtraData>.Type? {
+    ) -> AttachmentViewInjector.Type? {
         attachmentViewInjectorClass(for: messageForIndexPath(indexPath))
     }
 
     /// Returns the attachment view injector class for the message at given `ChatMessage`
-    open func attachmentViewInjectorClass(for message: _ChatMessage) -> _AttachmentViewInjector<ExtraData>.Type? {
+    open func attachmentViewInjectorClass(for message: _ChatMessage) -> AttachmentViewInjector.Type? {
         components.attachmentViewCatalog.attachmentViewInjectorClassFor(message: message, components: components)
     }
 
@@ -243,7 +240,7 @@ open class _ChatThreadVC:
     open func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let message = messages[indexPath.row]
 
-        let cell: _ChatMessageCell<ExtraData> = listView.dequeueReusableCell(
+        let cell: ChatMessageCell = listView.dequeueReusableCell(
             contentViewClass: cellContentClassForMessage(at: indexPath),
             attachmentViewInjectorType: attachmentViewInjectorClassForMessage(at: indexPath),
             layoutOptions: cellLayoutOptionsForMessage(at: indexPath),
@@ -298,7 +295,7 @@ open class _ChatThreadVC:
     /// Presents custom actions controller with all possible actions with the selected message.
     open func didSelectMessageCell(at indexPath: IndexPath) {
         guard
-            let cell = listView.cellForRow(at: indexPath) as? _ChatMessageCell<ExtraData>,
+            let cell = listView.cellForRow(at: indexPath) as? ChatMessageCell,
             let messageContentView = cell.messageContentView,
             let message = messageContentView.content,
             message.isInteractionEnabled == true

@@ -18,7 +18,7 @@ public protocol LinkPreviewViewDelegate: ChatMessageContentViewDelegate {
 public typealias LinkAttachmentViewInjector = _LinkAttachmentViewInjector<NoExtraData>
 
 /// View injector for showing link attachments.
-open class _LinkAttachmentViewInjector: _AttachmentViewInjector<ExtraData> {
+open class _LinkAttachmentViewInjector: AttachmentViewInjector {
     open private(set) lazy var linkPreviewView = contentView
         .components
         .linkPreviewView

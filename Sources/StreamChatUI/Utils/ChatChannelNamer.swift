@@ -8,12 +8,7 @@ import StreamChat
 /// Typealias for closure taking `ChatChannel` and `UserId` which returns
 /// the current name of the channel. Use this type when you create closure for naming a channel.
 /// For example usage, see `DefaultChatChannelNamer`
-public typealias ChatChannelNamer = _ChatChannelNamer
-
-/// Typealias for closure taking `ChatChannel` and `UserId` which returns
-/// the current name of the channel. Use this type when you create closure for naming a channel.
-/// For example usage, see `DefaultChatChannelNamer`
-public typealias _ChatChannelNamer =
+public typealias ChatChannelNamer =
     (_ channel: ChatChannel, _ currentUserId: UserId?) -> String?
 
 /// Generates a name for the given channel, given the current user's id.

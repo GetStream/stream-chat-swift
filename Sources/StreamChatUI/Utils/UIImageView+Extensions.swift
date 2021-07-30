@@ -22,7 +22,7 @@ extension UIImageView {
         placeholder: UIImage? = nil,
         resize: Bool = true,
         preferredSize: CGSize? = nil,
-        components: _Components<ExtraData>,
+        components: Components,
         completion: ((_ result: Result<ImageResponse, ImagePipeline.Error>) -> Void)? = nil
     ) -> ImageTask? {
         guard !SystemEnvironment.isTests else {

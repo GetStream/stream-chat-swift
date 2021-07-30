@@ -6,13 +6,10 @@ import StreamChat
 import UIKit
 
 /// The view that displays channel information on the message list header
-public typealias ChatChannelHeaderView = _ChatChannelHeaderView<NoExtraData>
-
-/// The view that displays channel information on the message list header
-open class _ChatChannelHeaderView:
+open class ChatChannelHeaderView:
     _View,
     ThemeProvider,
-    _ChatChannelControllerDelegate {
+    ChatChannelControllerDelegate {
     /// Controller for observing data changes within the channel.
     open var channelController: ChatChannelController? {
         didSet {

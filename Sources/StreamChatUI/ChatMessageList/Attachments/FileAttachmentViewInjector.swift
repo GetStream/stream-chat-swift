@@ -11,10 +11,8 @@ public protocol FileActionContentViewDelegate: ChatMessageContentViewDelegate {
     func didTapOnAttachment(_ attachment: ChatMessageFileAttachment, at indexPath: IndexPath?)
 }
 
-public typealias FilesAttachmentViewInjector = _FilesAttachmentViewInjector<NoExtraData>
-
-public class _FilesAttachmentViewInjector: _AttachmentViewInjector<ExtraData> {
-    open lazy var fileAttachmentView: _ChatMessageFileAttachmentListView<ExtraData> = {
+public class FilesAttachmentViewInjector: AttachmentViewInjector {
+    open lazy var fileAttachmentView: ChatMessageFileAttachmentListView = {
         let attachmentListView = contentView
             .components
             .fileAttachmentListView
@@ -39,7 +37,7 @@ public class _FilesAttachmentViewInjector: _AttachmentViewInjector<ExtraData> {
     }
 }
 
-private extension _FilesAttachmentViewInjector {
+private extension FilesAttachmentViewInjector {
     var fileAttachments: [ChatMessageFileAttachment] {
         contentView.content?.fileAttachments ?? []
     }

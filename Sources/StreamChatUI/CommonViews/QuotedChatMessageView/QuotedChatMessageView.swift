@@ -21,19 +21,16 @@ public struct QuotedAvatarAlignment: RawRepresentable, Equatable {
 }
 
 /// A view that displays a quoted message.
-public typealias QuotedChatMessageView = _QuotedChatMessageView<NoExtraData>
-
-/// A view that displays a quoted message.
-open class _QuotedChatMessageView: _View, ThemeProvider, SwiftUIRepresentable {
+open class QuotedChatMessageView: _View, ThemeProvider, SwiftUIRepresentable {
     /// The content of the view.
     public struct Content {
         /// The quoted message.
-        public let message: _ChatMessage
+        public let message: ChatMessage
         /// The avatar position in relation with the text message.
         public let avatarAlignment: QuotedAvatarAlignment
 
         public init(
-            message: _ChatMessage,
+            message: ChatMessage,
             avatarAlignment: QuotedAvatarAlignment
         ) {
             self.message = message

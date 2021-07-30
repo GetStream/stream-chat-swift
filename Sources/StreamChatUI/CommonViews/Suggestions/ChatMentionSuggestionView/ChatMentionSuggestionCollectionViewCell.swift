@@ -6,10 +6,7 @@ import StreamChat
 import UIKit
 
 /// `UICollectionView` subclass which embeds inside `ChatMessageComposerMentionCellView`
-public typealias ChatMentionSuggestionCollectionViewCell = _ChatMentionSuggestionCollectionViewCell<NoExtraData>
-
-/// `UICollectionView` subclass which embeds inside `ChatMessageComposerMentionCellView`
-open class _ChatMentionSuggestionCollectionViewCell: _CollectionViewCell, ComponentsProvider {
+open class ChatMentionSuggestionCollectionViewCell: _CollectionViewCell, ComponentsProvider {
     /// Reuse identifier for the cell used in `collectionView(cellForItem:)`
     open class var reuseId: String { String(describing: self) }
 

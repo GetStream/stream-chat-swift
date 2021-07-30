@@ -6,10 +6,7 @@ import StreamChat
 import UIKit
 
 /// Custom view type used to show the message list.
-public typealias ChatMessageListView = _ChatMessageListView<NoExtraData>
-
-/// Custom view type used to show the message list.
-open class _ChatMessageListView: UITableView, Customizable, ComponentsProvider {
+open class ChatMessageListView: UITableView, Customizable, ComponentsProvider {
     private var identifiers: Set<String> = .init()
     private var isInitialized: Bool = false
     /// Used for mapping `ListChanges` to sets of `IndexPath` and verifying possible conflicts
@@ -65,12 +62,12 @@ open class _ChatMessageListView: UITableView, Customizable, ComponentsProvider {
     ///   - layoutOptions: The message content view layout options.
     /// - Returns: The cell reuse identifier.
     open func reuseIdentifier(
-        contentViewClass: _ChatMessageContentView<ExtraData>.Type,
-        attachmentViewInjectorType: _AttachmentViewInjector<ExtraData>.Type?,
+        contentViewClass: ChatMessageContentView.Type,
+        attachmentViewInjectorType: AttachmentViewInjector.Type?,
         layoutOptions: ChatMessageLayoutOptions
     ) -> String {
         let components = [
-            _ChatMessageCell<ExtraData>.reuseId,
+            ChatMessageCell.reuseId,
             String(layoutOptions.rawValue),
             String(describing: contentViewClass),
             String(describing: attachmentViewInjectorType)
@@ -81,7 +78,7 @@ open class _ChatMessageListView: UITableView, Customizable, ComponentsProvider {
     /// Returns the reuse identifier of the given cell.
     /// - Parameter cell: The cell to calculate reuse identifier for.
     /// - Returns: The reuse identifier.
-    open func reuseIdentifier(for cell: _ChatMessageCell<ExtraData>?) -> String? {
+    open func reuseIdentifier(for cell: ChatMessageCell?) -> String? {
         guard
             let cell = cell,
             let messageContentView = cell.messageContentView,
@@ -104,11 +101,11 @@ open class _ChatMessageListView: UITableView, Customizable, ComponentsProvider {
     /// - Returns: The instance of `_ChatMessageCollectionViewCell<ExtraData>` set up with the
     /// provided `contentViewClass` and `layoutOptions`
     open func dequeueReusableCell(
-        contentViewClass: _ChatMessageContentView<ExtraData>.Type,
-        attachmentViewInjectorType: _AttachmentViewInjector<ExtraData>.Type?,
+        contentViewClass: ChatMessageContentView.Type,
+        attachmentViewInjectorType: AttachmentViewInjector.Type?,
         layoutOptions: ChatMessageLayoutOptions,
         for indexPath: IndexPath
-    ) -> _ChatMessageCell<ExtraData> {
+    ) -> ChatMessageCell {
         let reuseIdentifier = self.reuseIdentifier(
             contentViewClass: contentViewClass,
             attachmentViewInjectorType: attachmentViewInjectorType,
@@ -120,13 +117,13 @@ open class _ChatMessageListView: UITableView, Customizable, ComponentsProvider {
         if !identifiers.contains(reuseIdentifier) {
             identifiers.insert(reuseIdentifier)
 
-            register(_ChatMessageCell<ExtraData>.self, forCellReuseIdentifier: reuseIdentifier)
+            register(ChatMessageCell.self, forCellReuseIdentifier: reuseIdentifier)
         }
 
         let cell = dequeueReusableCell(
             withIdentifier: reuseIdentifier,
             for: indexPath
-        ) as! _ChatMessageCell<ExtraData>
+        ) as! ChatMessageCell
 
         cell.setMessageContentIfNeeded(
             contentViewClass: contentViewClass,
@@ -236,7 +233,7 @@ open class _ChatMessageListView: UITableView, Customizable, ComponentsProvider {
             let cellBeforeUpdateMessage = cellBeforeUpdate?.messageContentView?.content
             
             // Get the cell that will be shown if reload happens
-            let cellAfterUpdate = dataSource?.tableView(self, cellForRowAt: indexPath) as? _ChatMessageCell<ExtraData>
+            let cellAfterUpdate = dataSource?.tableView(self, cellForRowAt: indexPath) as? ChatMessageCell
             let cellAfterUpdateReuseIdentifier = reuseIdentifier(for: cellAfterUpdate)
             let cellAfterUpdateMessage = cellAfterUpdate?.messageContentView?.content
             
@@ -257,10 +254,10 @@ open class _ChatMessageListView: UITableView, Customizable, ComponentsProvider {
         }
     }
 
-    private func getVisibleCells() -> [IndexPath: _ChatMessageCell<ExtraData>] {
+    private func getVisibleCells() -> [IndexPath: ChatMessageCell] {
         visibleCells.reduce(into: [:]) { result, cell in
             guard
-                let cell = cell as? _ChatMessageCell<ExtraData>,
+                let cell = cell as? ChatMessageCell,
                 let indexPath = cell.messageContentView?.indexPath?()
             else { return }
             

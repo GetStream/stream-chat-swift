@@ -6,13 +6,9 @@ import Foundation
 import StreamChat
 import UIKit
 
-/// A view controller to showcase and slide through multiple attachments
-/// (images and videos by default).
-public typealias GalleryVC = _GalleryVC<NoExtraData>
-
 /// A viewcontroller to showcase and slide through multiple attachments
 /// (images and videos by default).
-open class _GalleryVC:
+open class GalleryVC:
     _ViewController,
     UIGestureRecognizerDelegate,
     AppearanceProvider,

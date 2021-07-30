@@ -32,10 +32,7 @@ public struct ComposerState: RawRepresentable, Equatable {
 }
 
 /// A view controller that manages the composer view.
-public typealias ComposerVC = _ComposerVC<NoExtraData>
-
-/// A view controller that manages the composer view.
-open class _ComposerVC: _ViewController,
+open class ComposerVC: _ViewController,
     ThemeProvider,
     UITextViewDelegate,
     UIImagePickerControllerDelegate,

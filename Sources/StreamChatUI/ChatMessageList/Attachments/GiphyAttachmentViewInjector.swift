@@ -13,7 +13,7 @@ public protocol GiphyActionContentViewDelegate: ChatMessageContentViewDelegate {
 
 public typealias GiphyAttachmentViewInjector = _GalleryAttachmentViewInjector<NoExtraData>
 
-public class _GiphyAttachmentViewInjector: _AttachmentViewInjector<ExtraData> {
+public class _GiphyAttachmentViewInjector: AttachmentViewInjector {
     open lazy var giphyImageView: _ChatMessageInteractiveAttachmentView<ExtraData> = {
         let giphyView = contentView
             .components

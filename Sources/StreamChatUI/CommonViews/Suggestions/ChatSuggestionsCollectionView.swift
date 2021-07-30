@@ -6,10 +6,7 @@ import StreamChat
 import UIKit
 
 /// The collection view of the suggestions view controller.
-public typealias ChatSuggestionsCollectionView = _ChatSuggestionsCollectionView<NoExtraData>
-
-/// The collection view of the suggestions view controller.
-open class _ChatSuggestionsCollectionView: UICollectionView,
+open class ChatSuggestionsCollectionView: UICollectionView,
     ThemeProvider,
     Customizable {
     override open func didMoveToSuperview() {

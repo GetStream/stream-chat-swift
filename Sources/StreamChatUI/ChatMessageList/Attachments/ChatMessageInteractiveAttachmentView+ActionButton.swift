@@ -5,7 +5,7 @@
 import StreamChat
 import UIKit
 
-extension _ChatMessageInteractiveAttachmentView {
+extension ChatMessageInteractiveAttachmentView {
     open class ActionButton: _Button, AppearanceProvider {
         public var content: AttachmentAction? {
             didSet { updateContentIfNeeded() }
@@ -64,7 +64,7 @@ extension _ChatMessageInteractiveAttachmentView {
 
 // MARK: - Content
 
-extension _ChatMessageInteractiveAttachmentView.ActionButton {
+extension ChatMessageInteractiveAttachmentView.ActionButton {
     public struct Content {
         public let action: AttachmentAction
         public let didTap: () -> Void

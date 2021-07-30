@@ -27,10 +27,7 @@ public protocol ChatMessageContentViewDelegate: AnyObject {
 }
 
 /// A view that displays the message content.
-public typealias ChatMessageContentView = _ChatMessageContentView<NoExtraData>
-
-/// A view that displays the message content.
-open class _ChatMessageContentView: _View, ThemeProvider {
+open class ChatMessageContentView: _View, ThemeProvider {
     /// The current layout options of the view.
     /// When this value is set the subviews are instantiated and laid out just once based on
     /// the received options.
@@ -125,7 +122,7 @@ open class _ChatMessageContentView: _View, ThemeProvider {
     public private(set) var threadArrowView: ChatThreadArrowView?
 
     /// An object responsible for injecting the views needed to display the attachments content.
-    public private(set) var attachmentViewInjector: _AttachmentViewInjector<ExtraData>?
+    public private(set) var attachmentViewInjector: AttachmentViewInjector?
 
     // MARK: - Containers
 
@@ -164,7 +161,7 @@ open class _ChatMessageContentView: _View, ThemeProvider {
     /// - Parameter options: The options describing the layout of the content view.
     open func setUpLayoutIfNeeded(
         options: ChatMessageLayoutOptions,
-        attachmentViewInjectorType: _AttachmentViewInjector<ExtraData>.Type?
+        attachmentViewInjectorType: AttachmentViewInjector.Type?
     ) {
         guard layoutOptions == nil else {
             log.assert(layoutOptions == options, """

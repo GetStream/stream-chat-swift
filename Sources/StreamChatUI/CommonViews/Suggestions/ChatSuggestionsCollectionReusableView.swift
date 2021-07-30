@@ -6,8 +6,7 @@ import StreamChat
 import UIKit
 
 /// The header reusable view of the suggestion collection view.
-public typealias ChatSuggestionsCollectionReusableView =
-    _ChatSuggestionsCollectionReusableView<NoExtraData>
+public typealias ChatSuggestionsCollectionReusableView = ChatSuggestionsCollectionReusableView
 
 /// The header reusable view of the suggestion collection view.
 open class _ChatSuggestionsCollectionReusableView: UICollectionReusableView,

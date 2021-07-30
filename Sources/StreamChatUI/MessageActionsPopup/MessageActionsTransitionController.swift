@@ -18,7 +18,7 @@ open class MessageActionsTransitionController: NSObject, UIViewControllerTransit
     /// Constraints to be deactivated after dismissal.
     open var messageContentViewDeactivateConstraints: [NSLayoutConstraint] = []
     /// `messageContentView` instance that is animated.
-    open weak var messageContentView: _ChatMessageContentView<ExtraData>!
+    open weak var messageContentView: ChatMessageContentView!
     /// `messageContentView`'s initial superview.
     open weak var messageContentViewSuperview: UIView!
     /// Top anchor for main container.

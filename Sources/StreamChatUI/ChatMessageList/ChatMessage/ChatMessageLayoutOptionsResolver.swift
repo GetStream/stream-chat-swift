@@ -6,10 +6,7 @@ import Foundation
 import StreamChat
 
 /// Resolves layout options for the message at given `indexPath`.
-public typealias ChatMessageLayoutOptionsResolver = _ChatMessageLayoutOptionsResolver<NoExtraData>
-
-/// Resolves layout options for the message at given `indexPath`.
-open class _ChatMessageLayoutOptionsResolver {
+open class ChatMessageLayoutOptionsResolver {
     /// The minimum time interval between messages to treat them as a single message group.
     public let minTimeIntervalBetweenMessagesInGroup: TimeInterval
 
@@ -98,11 +95,11 @@ open class _ChatMessageLayoutOptionsResolver {
         return options
     }
 
-    func hasQuotedMessage(_ message: _ChatMessage) -> Bool {
+    func hasQuotedMessage(_ message: ChatMessage) -> Bool {
         message.quotedMessage?.id != nil
     }
 
-    func hasReactions(_ channel: ChatChannel, _ message: _ChatMessage, _ appareance: Appearance) -> Bool {
+    func hasReactions(_ channel: ChatChannel, _ message: ChatMessage, _ appareance: Appearance) -> Bool {
         if !channel.config.reactionsEnabled {
             return false
         }

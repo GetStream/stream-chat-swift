@@ -6,14 +6,11 @@ import StreamChat
 import UIKit
 
 /// Controller that shows list of messages and composer together in the selected channel.
-public typealias ChatMessageListVC = _ChatMessageListVC<NoExtraData>
-
-/// Controller that shows list of messages and composer together in the selected channel.
-open class _ChatMessageListVC:
+open class ChatMessageListVC:
     _ViewController,
     ThemeProvider,
     ComposerVCDelegate,
-    _ChatChannelControllerDelegate,
+    ChatChannelControllerDelegate,
     _ChatMessageActionsVCDelegate,
     ChatMessageContentViewDelegate,
     UITableViewDelegate,
@@ -39,7 +36,7 @@ open class _ChatMessageListVC:
     )
 
     /// User search controller passed directly to the composer
-    open lazy var userSuggestionSearchController: _ChatUserSearchController<ExtraData> =
+    open lazy var userSuggestionSearchController: ChatUserSearchController =
         client.userSearchController()
     
     override open func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
@@ -48,12 +45,12 @@ open class _ChatMessageListVC:
     }
 
     /// The header view of the message list that by default is the titleView of the navigation bar.
-    open private(set) lazy var headerView: _ChatChannelHeaderView<ExtraData> = components
+    open private(set) lazy var headerView: ChatChannelHeaderView = components
         .channelHeaderView.init()
         .withoutAutoresizingMaskConstraints
     
     /// View used to display the messages
-    open private(set) lazy var listView: _ChatMessageListView<ExtraData> = {
+    open private(set) lazy var listView: ChatMessageListView = {
         let listView = components.messageListView.init().withoutAutoresizingMaskConstraints
         listView.delegate = self
         listView.dataSource = self
@@ -81,7 +78,7 @@ open class _ChatMessageListVC:
         .withoutAutoresizingMaskConstraints
     
     /// View which displays information about current users who are typing.
-    open private(set) lazy var typingIndicatorView: _TypingIndicatorView<ExtraData> = components
+    open private(set) lazy var typingIndicatorView: TypingIndicatorView = components
         .typingIndicatorView
         .init()
         .withoutAutoresizingMaskConstraints
@@ -89,7 +86,7 @@ open class _ChatMessageListVC:
     /// A button to scroll the collection view to the bottom.
     ///
     /// Visible when there is unread message and the collection view is not at the bottom already.
-    open private(set) lazy var scrollToLatestMessageButton: _ScrollToLatestMessageButton<ExtraData> = components
+    open private(set) lazy var scrollToLatestMessageButton: ScrollToLatestMessageButton = components
         .scrollToLatestMessageButton
         .init()
         .withoutAutoresizingMaskConstraints
@@ -227,11 +224,11 @@ open class _ChatMessageListVC:
     }
 
     /// Returns the content view class for the message at given `indexPath`
-    open func cellContentClassForMessage(at indexPath: IndexPath) -> _ChatMessageContentView<ExtraData>.Type {
+    open func cellContentClassForMessage(at indexPath: IndexPath) -> ChatMessageContentView.Type {
         components.messageContentView
     }
 
-    open func attachmentViewInjectorClassForMessage(at indexPath: IndexPath) -> _AttachmentViewInjector<ExtraData>.Type? {
+    open func attachmentViewInjectorClassForMessage(at indexPath: IndexPath) -> AttachmentViewInjector.Type? {
         components.attachmentViewCatalog.attachmentViewInjectorClassFor(
             message: messageForIndexPath(indexPath),
             components: components
@@ -328,7 +325,7 @@ open class _ChatMessageListVC:
     
     open func didSelectMessageCell(at indexPath: IndexPath) {
         guard
-            let cell = listView.cellForRow(at: indexPath) as? _ChatMessageCell<ExtraData>,
+            let cell = listView.cellForRow(at: indexPath) as? ChatMessageCell,
             let messageContentView = cell.messageContentView,
             let message = messageContentView.content,
             message.isInteractionEnabled == true
@@ -571,7 +568,7 @@ open class _ChatMessageListVC:
     open func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let message = channelController.messages[indexPath.row]
 
-        let cell: _ChatMessageCell<ExtraData> = listView.dequeueReusableCell(
+        let cell: ChatMessageCell = listView.dequeueReusableCell(
             contentViewClass: cellContentClassForMessage(at: indexPath),
             attachmentViewInjectorType: attachmentViewInjectorClassForMessage(at: indexPath),
             layoutOptions: cellLayoutOptionsForMessage(at: indexPath),

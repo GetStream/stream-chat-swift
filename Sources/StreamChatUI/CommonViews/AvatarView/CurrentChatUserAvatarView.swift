@@ -10,14 +10,7 @@ import UIKit
 /// It uses `CurrentChatUserController` for its input data and is able to update the avatar automatically based
 /// on the currently logged-in user.
 ///
-public typealias CurrentChatUserAvatarView = _CurrentChatUserAvatarView<NoExtraData>
-
-/// A UIControl subclass that is designed to show the avatar of the currently logged in user.
-///
-/// It uses `CurrentChatUserController` for its input data and is able to update the avatar automatically based
-/// on the currently logged-in user.
-///
-open class _CurrentChatUserAvatarView: _Control, ThemeProvider {
+open class CurrentChatUserAvatarView: _Control, ThemeProvider {
     /// `StreamChat`'s controller that observe the currently logged-in user.
     open var controller: CurrentChatUserController? {
         didSet {
@@ -85,7 +78,7 @@ open class _CurrentChatUserAvatarView: _Control, ThemeProvider {
 
 // MARK: - CurrentChatUserControllerDelegate
 
-extension _CurrentChatUserAvatarView: _CurrentChatUserControllerDelegate {
+extension CurrentChatUserAvatarView: CurrentChatUserControllerDelegate {
     public func currentUserController(
         _ controller: CurrentChatUserController,
         didChangeCurrentUser: EntityChange<CurrentChatUser>

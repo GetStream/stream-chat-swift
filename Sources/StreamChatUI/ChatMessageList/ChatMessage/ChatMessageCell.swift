@@ -8,16 +8,11 @@ import UIKit
 /// The cell that displays the message content of a dynamic type and layout.
 /// Once the cell is set up it is expected to be dequeued for messages with
 /// the same content and layout the cell has already been configured with.
-public typealias ChatMessageCell = _ChatMessageCell<NoExtraData>
-
-/// The cell that displays the message content of a dynamic type and layout.
-/// Once the cell is set up it is expected to be dequeued for messages with
-/// the same content and layout the cell has already been configured with.
-public final class _ChatMessageCell: _TableViewCell {
+public final class ChatMessageCell: _TableViewCell {
     public static var reuseId: String { "\(self)" }
     
     /// The message content view the cell is showing.
-    public private(set) var messageContentView: _ChatMessageContentView<ExtraData>?
+    public private(set) var messageContentView: ChatMessageContentView?
     
     /// The minimum spacing below the cell.
     public var minimumSpacingBelow: CGFloat = 2 {
@@ -49,8 +44,8 @@ public final class _ChatMessageCell: _TableViewCell {
     ///   - attachmentViewInjectorType: The type of attachment injector.
     ///   - options: The layout options describing the message content view layout.
     public func setMessageContentIfNeeded(
-        contentViewClass: _ChatMessageContentView<ExtraData>.Type,
-        attachmentViewInjectorType: _AttachmentViewInjector<ExtraData>.Type?,
+        contentViewClass: ChatMessageContentView.Type,
+        attachmentViewInjectorType: AttachmentViewInjector.Type?,
         options: ChatMessageLayoutOptions
     ) {
         guard messageContentView == nil else {

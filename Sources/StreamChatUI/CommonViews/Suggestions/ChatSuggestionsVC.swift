@@ -6,10 +6,7 @@ import StreamChat
 import UIKit
 
 /// A view controller that shows suggestions of commands or mentions.
-public typealias ChatSuggestionsVC = _ChatSuggestionsVC<NoExtraData>
-
-/// A view controller that shows suggestions of commands or mentions.
-open class _ChatSuggestionsVC: _ViewController,
+open class ChatSuggestionsVC: _ViewController,
     ThemeProvider,
     UICollectionViewDelegate {
     /// The data provider of the collection view. A custom `UICollectionViewDataSource` can be provided,
@@ -118,7 +115,7 @@ open class _ChatMessageComposerSuggestionsCommandDataSource: NSObject, UICollect
     open var commands: [Command]
     
     /// The current types to override ui components.
-    open var components: _Components<ExtraData> {
+    open var components: Components {
         collectionView.components
     }
     
@@ -203,7 +200,7 @@ open class _ChatMessageComposerSuggestionsMentionDataSource: NSObject,
     open var searchController: _ChatUserSearchController<ExtraData>
     
     /// The types to override ui components.
-    var components: _Components<ExtraData> {
+    var components: Components {
         collectionView.components
     }
     

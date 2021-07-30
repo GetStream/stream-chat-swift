@@ -6,10 +6,7 @@ import StreamChat
 import UIKit
 
 /// A `NavigationRouter` subclass used for navigating from message-list-based view controllers.
-public typealias ChatMessageListRouter = _ChatMessageListRouter<NoExtraData>
-
-/// A `NavigationRouter` subclass used for navigating from message-list-based view controllers.
-open class _ChatMessageListRouter:
+open class ChatMessageListRouter:
     // We use UIViewController here because the router is used for both
     // the channel and thread message lists.
     NavigationRouter<UIViewController>,
@@ -34,7 +31,7 @@ open class _ChatMessageListRouter:
     ///   - messageReactionsController: The `ChatMessageReactionsVC` object which will presented as a part of the pop up.
     ///
     open func showMessageActionsPopUp(
-        messageContentView: _ChatMessageContentView<ExtraData>,
+        messageContentView: ChatMessageContentView,
         messageActionsController: _ChatMessageActionsVC<ExtraData>,
         messageReactionsController: _ChatMessageReactionsVC<ExtraData>?
     ) {
