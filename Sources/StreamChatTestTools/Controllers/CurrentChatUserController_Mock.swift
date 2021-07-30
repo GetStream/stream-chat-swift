@@ -10,8 +10,8 @@ public class CurrentChatUserController_Mock<ExtraData: ExtraDataTypes>: _Current
         .init(client: .mock())
     }
     
-    public var currentUser_mock: _CurrentChatUser<ExtraData>?
-    override public var currentUser: _CurrentChatUser<ExtraData>? {
+    public var currentUser_mock: CurrentChatUser?
+    override public var currentUser: CurrentChatUser? {
         currentUser_mock
     }
 }

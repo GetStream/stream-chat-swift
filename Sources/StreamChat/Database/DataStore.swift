@@ -6,21 +6,20 @@ import Foundation
 
 /// Types conforming to this protocol automatically exposes public `dataStore` variable.
 public protocol DataStoreProvider {
-    associatedtype ExtraData: ExtraDataTypes
-    var client: _ChatClient<ExtraData> { get }
+    var client: ChatClient { get }
 }
 
 extension DataStoreProvider {
     /// `DataStore` provide access to all locally available model objects based on their id.
-    public var dataStore: DataStore<ExtraData> { .init(client: client) }
+    public var dataStore: DataStore { .init(client: client) }
 }
 
 /// `DataStore` provide access to all locally available model objects based on their id.
-public struct DataStore<ExtraData: ExtraDataTypes> {
+public struct DataStore {
     let database: DatabaseContainer
     
     // Technically, we need only `database` but we use a `Client` instance to get the extra data types from it.
-    init(client: _ChatClient<ExtraData>) {
+    init(client: ChatClient) {
         database = client.databaseContainer
     }
     
@@ -34,7 +33,7 @@ public struct DataStore<ExtraData: ExtraDataTypes> {
     /// **Warning**: Should be called on the `main` thread only.
     ///
     /// - Parameter id: An id of a user.
-    public func user(id: UserId) -> _ChatUser<ExtraData.User>? {
+    public func user(id: UserId) -> ChatUser? {
         database.viewContext.user(id: id)?.asModel()
     }
     
@@ -46,7 +45,7 @@ public struct DataStore<ExtraData: ExtraDataTypes> {
     ///
     /// - Returns: If there's a current user object in the locally cached data, returns the matching
     /// model object. If a user object doesn't exist locally, returns `nil`.
-    public func currentUser() -> _CurrentChatUser<ExtraData>? {
+    public func currentUser() -> CurrentChatUser? {
         database.viewContext.currentUser?.asModel()
     }
 
@@ -60,7 +59,7 @@ public struct DataStore<ExtraData: ExtraDataTypes> {
     /// model object. If a channel object doesn't exist locally, returns `nil`.
     ///
     /// - Parameter cid: An cid of a channel.
-    public func channel(cid: ChannelId) -> _ChatChannel<ExtraData>? {
+    public func channel(cid: ChannelId) -> ChatChannel? {
         database.viewContext.channel(cid: cid)?.asModel()
     }
     
@@ -74,7 +73,7 @@ public struct DataStore<ExtraData: ExtraDataTypes> {
     /// model object. If a user object doesn't exist locally, returns `nil`.
     ///
     /// - Parameter id: An id of a message.
-    public func message(id: MessageId) -> _ChatMessage<ExtraData>? {
+    public func message(id: MessageId) -> _ChatMessage? {
         database.viewContext.message(id: id)?.asModel()
     }
 }

@@ -16,7 +16,7 @@ open class _ChatUserAvatarView<ExtraData: ExtraDataTypes>: _View, ThemeProvider 
         .withoutAutoresizingMaskConstraints
 
     /// The data this view component shows.
-    open var content: _ChatUser<ExtraData.User>? {
+    open var content: ChatUser? {
         didSet { updateContentIfNeeded() }
     }
 

@@ -11,7 +11,7 @@ struct MemberEventMiddleware<ExtraData: ExtraDataTypes>: EventMiddleware {
             switch event {
             case is MemberAddedEvent, is MemberUpdatedEvent:
                 guard let eventWithMemberPayload = event as? EventWithPayload,
-                      let eventPayload = eventWithMemberPayload.payload as? EventPayload<ExtraData>,
+                      let eventPayload = eventWithMemberPayload.payload as? EventPayload,
                       let memberPayload = eventPayload.memberContainer?.member
                 else {
                     break

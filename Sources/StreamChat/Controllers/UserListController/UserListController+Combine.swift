@@ -13,7 +13,7 @@ extension _ChatUserListController {
     }
     
     /// A publisher emitting a new value every time the list of the users matching the query changes.
-    public var usersChangesPublisher: AnyPublisher<[ListChange<_ChatUser<ExtraData.User>>], Never> {
+    public var usersChangesPublisher: AnyPublisher<[ListChange<ChatUser>], Never> {
         basePublishers.usersChanges.keepAlive(self)
     }
 
@@ -28,7 +28,7 @@ extension _ChatUserListController {
         let state: CurrentValueSubject<DataController.State, Never>
         
         /// A backing subject for `usersChangesPublisher`.
-        let usersChanges: PassthroughSubject<[ListChange<_ChatUser<ExtraData.User>>], Never> = .init()
+        let usersChanges: PassthroughSubject<[ListChange<ChatUser>], Never> = .init()
                 
         init(controller: _ChatUserListController<ExtraData>) {
             self.controller = controller
@@ -47,7 +47,7 @@ extension _ChatUserListController.BasePublishers: _ChatUserListControllerDelegat
     
     func controller(
         _ controller: _ChatUserListController<ExtraData>,
-        didChangeUsers changes: [ListChange<_ChatUser<ExtraData.User>>]
+        didChangeUsers changes: [ListChange<ChatUser>]
     ) {
         usersChanges.send(changes)
     }

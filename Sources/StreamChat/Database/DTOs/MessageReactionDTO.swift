@@ -122,20 +122,12 @@ extension NSManagedObjectContext {
 extension MessageReactionDTO {
     /// Snapshots the current state of `MessageReactionDTO` and returns an immutable model object from it.
     func asModel<ExtraData: ExtraDataTypes>() -> _ChatMessageReaction<ExtraData> {
-        let extraData: ExtraData.MessageReaction
+        let extraData: CustomData
         do {
-            extraData = try JSONDecoder.default.decode(ExtraData.MessageReaction.self, from: self.extraData)
+            extraData = try JSONSerialization.jsonObject(with: self.extraData, options: []) as? CustomData ?? [:]
         } catch {
             log.error("Failed decoding saved extra data with error: \(error)")
             extraData = .defaultValue
-        }
-        
-        let extraDataMap: CustomData
-        do {
-            extraDataMap = try JSONSerialization.jsonObject(with: self.extraData, options: []) as? CustomData ?? [:]
-        } catch {
-            log.error("Failed decoding saved extra data with error: \(error)")
-            extraDataMap = .defaultValue
         }
 
         return .init(
@@ -144,7 +136,6 @@ extension MessageReactionDTO {
             createdAt: createdAt,
             updatedAt: updatedAt,
             extraData: extraData,
-            extraDataMap: extraDataMap,
             author: user.asModel()
         )
     }

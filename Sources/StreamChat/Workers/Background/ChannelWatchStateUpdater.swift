@@ -57,14 +57,14 @@ final class ChannelWatchStateUpdater<ExtraData: ExtraDataTypes>: EventWorker {
             
             guard !channelIds.isEmpty else { return }
             
-            let channelListQuery = _ChannelListQuery<ExtraData.Channel>(
+            let channelListQuery = ChannelListQuery(
                 filter: .in(.cid, values: channelIds),
                 pageSize: 1
             )
             
             self?.apiClient.request(
                 endpoint: .channels(query: channelListQuery),
-                completion: { (result: Result<ChannelListPayload<ExtraData>, Error>) in
+                completion: { (result: Result<ChannelListPayload, Error>) in
                     guard case let .failure(error) = result else { return }
                     log.error("Internal error: failed to update watching state of existing channels: \(error)")
                 }

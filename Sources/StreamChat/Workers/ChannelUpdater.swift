@@ -5,7 +5,7 @@
 import Foundation
 
 /// Makes a channel query call to the backend and updates the local storage with the results.
-class ChannelUpdater<ExtraData: ExtraDataTypes>: Worker {
+class ChannelUpdater: Worker {
     /// Makes a channel query call to the backend and updates the local storage with the results.
     ///
     /// - Parameters:
@@ -15,9 +15,9 @@ class ChannelUpdater<ExtraData: ExtraDataTypes>: Worker {
     ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
     ///
     func update(
-        channelQuery: _ChannelQuery<ExtraData>,
+        channelQuery: ChannelQuery,
         channelCreatedCallback: ((ChannelId) -> Void)? = nil,
-        completion: ((Result<ChannelPayload<ExtraData>, Error>) -> Void)? = nil
+        completion: ((Result<ChannelPayload, Error>) -> Void)? = nil
     ) {
         apiClient.request(endpoint: .channel(query: channelQuery)) { (result) in
             do {
@@ -42,7 +42,7 @@ class ChannelUpdater<ExtraData: ExtraDataTypes>: Worker {
     /// - Parameters:
     ///   - channelPayload: New channel data..
     ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
-    func updateChannel(channelPayload: ChannelEditDetailPayload<ExtraData>, completion: ((Error?) -> Void)? = nil) {
+    func updateChannel(channelPayload: ChannelEditDetailPayload, completion: ((Error?) -> Void)? = nil) {
         apiClient.request(endpoint: .updateChannel(channelPayload: channelPayload)) {
             completion?($0.error)
         }
@@ -285,7 +285,7 @@ class ChannelUpdater<ExtraData: ExtraDataTypes>: Worker {
     ///   - query: Query object for watchers. See `ChannelWatcherListQuery`
     ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
     func channelWatchers(query: ChannelWatcherListQuery, completion: ((Error?) -> Void)? = nil) {
-        apiClient.request(endpoint: .channelWatchers(query: query)) { (result: Result<ChannelPayload<ExtraData>, Error>) in
+        apiClient.request(endpoint: .channelWatchers(query: query)) { (result: Result<ChannelPayload, Error>) in
             do {
                 let payload = try result.get()
                 self.database.write { (session) in

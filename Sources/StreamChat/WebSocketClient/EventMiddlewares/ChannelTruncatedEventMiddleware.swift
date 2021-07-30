@@ -9,7 +9,7 @@ struct ChannelTruncatedEventMiddleware<ExtraData: ExtraDataTypes>: EventMiddlewa
     func handle(event: Event, session: DatabaseSession) -> Event? {
         guard
             let truncatedEvent = event as? ChannelTruncatedEvent,
-            let payload = truncatedEvent.payload as? EventPayload<ExtraData>
+            let payload = truncatedEvent.payload as? EventPayload
         else {
             return event
         }

@@ -13,7 +13,7 @@ public protocol _ChatChannelAvatarViewSwiftUIView: View {
 }
 
 @available(iOS 13.0, *)
-extension _ChatChannelAvatarView {
+extension ChatChannelAvatarView {
     /// Data source of `_ChatChannelAvatarView` represented as `ObservedObject`.
     public typealias ObservedObject<Content: SwiftUIView> = SwiftUIWrapper<Content> where Content.ExtraData == ExtraData
 

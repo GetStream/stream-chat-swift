@@ -5,7 +5,7 @@
 import Foundation
 
 extension Endpoint {
-    static func getMessage<ExtraData: ExtraDataTypes>(messageId: MessageId) -> Endpoint<MessagePayload<ExtraData>.Boxed> {
+    static func getMessage(messageId: MessageId) -> Endpoint<MessagePayload.Boxed> {
         .init(
             path: messageId.path,
             method: .get,
@@ -25,7 +25,7 @@ extension Endpoint {
         )
     }
     
-    static func editMessage<ExtraData: ExtraDataTypes>(payload: MessageRequestBody<ExtraData>)
+    static func editMessage(payload: MessageRequestBody)
         -> Endpoint<EmptyResponse> {
         .init(
             path: payload.id.path,
@@ -36,8 +36,8 @@ extension Endpoint {
         )
     }
     
-    static func loadReplies<ExtraData: ExtraDataTypes>(messageId: MessageId, pagination: MessagesPagination)
-        -> Endpoint<MessageRepliesPayload<ExtraData>> {
+    static func loadReplies(messageId: MessageId, pagination: MessagesPagination)
+        -> Endpoint<MessageRepliesPayload> {
         .init(
             path: messageId.repliesPath,
             method: .get,
@@ -47,11 +47,11 @@ extension Endpoint {
         )
     }
     
-    static func addReaction<ExtraData: MessageReactionExtraData>(
+    static func addReaction(
         _ type: MessageReactionType,
         score: Int,
         enforceUnique: Bool,
-        extraData: ExtraData,
+        extraData: CustomData,
         messageId: MessageId
     ) -> Endpoint<EmptyResponse> {
         .init(
@@ -80,11 +80,11 @@ extension Endpoint {
         )
     }
 
-    static func dispatchEphemeralMessageAction<ExtraData: ExtraDataTypes>(
+    static func dispatchEphemeralMessageAction(
         cid: ChannelId,
         messageId: MessageId,
         action: AttachmentAction
-    ) -> Endpoint<MessagePayload<ExtraData>.Boxed> {
+    ) -> Endpoint<MessagePayload.Boxed> {
         .init(
             path: messageId.actionPath,
             method: .post,

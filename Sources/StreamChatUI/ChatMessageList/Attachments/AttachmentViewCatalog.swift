@@ -15,7 +15,7 @@ public typealias AttachmentViewCatalog = _AttachmentViewCatalog<NoExtraData>
 /// method so that the correct AttachmentViewInjector is used.
 open class _AttachmentViewCatalog<ExtraData: ExtraDataTypes> {
     open class func attachmentViewInjectorClassFor(
-        message: _ChatMessage<ExtraData>,
+        message: _ChatMessage,
         components: _Components<ExtraData>
     ) -> _AttachmentViewInjector<ExtraData>.Type? {
         // Do not show attachments for deleted messages

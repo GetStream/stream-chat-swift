@@ -72,7 +72,7 @@ class MessageEditor<ExtraData: ExtraDataTypes>: Worker {
                 return
             }
             
-            let requestBody = dto.asRequestBody() as MessageRequestBody<ExtraData>
+            let requestBody = dto.asRequestBody() as MessageRequestBody
             self?.markMessage(withID: messageId, as: .syncing) {
                 self?.apiClient.request(endpoint: .editMessage(payload: requestBody)) {
                     let newMessageState: LocalMessageState? = $0.error == nil ? nil : .syncingFailed

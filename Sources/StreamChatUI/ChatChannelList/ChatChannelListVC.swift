@@ -229,7 +229,7 @@ open class _ChatChannelListVC<ExtraData: ExtraDataTypes>: _ViewController,
     
     open func controller(
         _ controller: _ChatChannelListController<ExtraData>,
-        didChangeChannels changes: [ListChange<_ChatChannel<ExtraData>>]
+        didChangeChannels changes: [ListChange<ChatChannel>]
     ) {
         guard let indices = collectionUpdatesMapper.mapToSetsOfIndexPaths(
             changes: changes,

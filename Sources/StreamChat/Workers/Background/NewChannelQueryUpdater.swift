@@ -90,7 +90,7 @@ final class NewChannelQueryUpdater<ExtraData: ExtraDataTypes>: Worker {
         database.backgroundReadOnlyContext.perform { [weak self] in
             guard let queries = self?.queries else { return }
             
-            var updatedQueries: [_ChannelListQuery<ExtraData.Channel>] = []
+            var updatedQueries: [ChannelListQuery] = []
             
             do {
                 updatedQueries = try queries.map {
@@ -127,7 +127,7 @@ extension NewChannelQueryUpdater {
 private extension ChannelListQueryDTO {
     func asChannelListQueryWithUpdatedFilter<ExtraData: ChannelExtraData>(
         filterToAdd filter: Filter<_ChannelListFilterScope<ExtraData>>
-    ) throws -> _ChannelListQuery<ExtraData> {
+    ) throws -> ChannelListQuery {
         let encodedFilter = try JSONDecoder.default
             .decode(Filter<_ChannelListFilterScope<ExtraData>>.self, from: filterJSONData)
         

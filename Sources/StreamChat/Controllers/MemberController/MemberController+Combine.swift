@@ -6,14 +6,14 @@ import Combine
 import Foundation
 
 @available(iOS 13, *)
-extension _ChatChannelMemberController {
+extension ChatChannelMemberController {
     /// A publisher emitting a new value every time the state of the controller changes.
     public var statePublisher: AnyPublisher<DataController.State, Never> {
         basePublishers.state.keepAlive(self)
     }
     
     /// A publisher emitting a new value every time the member changes.
-    public var memberChangePublisher: AnyPublisher<EntityChange<_ChatChannelMember<ExtraData.User>>, Never> {
+    public var memberChangePublisher: AnyPublisher<EntityChange<ChatChannelMember>, Never> {
         basePublishers.memberChange.keepAlive(self)
     }
     
@@ -22,15 +22,15 @@ extension _ChatChannelMemberController {
     /// and expose the published values by mapping them to a read-only `AnyPublisher` type.
     class BasePublishers {
         /// The wrapped controller.
-        unowned let controller: _ChatChannelMemberController
+        unowned let controller: ChatChannelMemberController
         
         /// A backing subject for `statePublisher`.
         let state: CurrentValueSubject<DataController.State, Never>
         
         /// A backing subject for `memberChangePublisher`.
-        let memberChange: PassthroughSubject<EntityChange<_ChatChannelMember<ExtraData.User>>, Never> = .init()
+        let memberChange: PassthroughSubject<EntityChange<ChatChannelMember>, Never> = .init()
         
-        init(controller: _ChatChannelMemberController<ExtraData>) {
+        init(controller: ChatChannelMemberController) {
             self.controller = controller
             state = .init(controller.state)
             
@@ -40,14 +40,14 @@ extension _ChatChannelMemberController {
 }
 
 @available(iOS 13, *)
-extension _ChatChannelMemberController.BasePublishers: _ChatChannelMemberControllerDelegate {
+extension ChatChannelMemberController.BasePublishers: ChatChannelMemberControllerDelegate {
     func controller(_ controller: DataController, didChangeState state: DataController.State) {
         self.state.send(state)
     }
     
     func memberController(
-        _ controller: _ChatChannelMemberController<ExtraData>,
-        didUpdateMember change: EntityChange<_ChatChannelMember<ExtraData.User>>
+        _ controller: ChatChannelMemberController,
+        didUpdateMember change: EntityChange<ChatChannelMember>
     ) {
         memberChange.send(change)
     }

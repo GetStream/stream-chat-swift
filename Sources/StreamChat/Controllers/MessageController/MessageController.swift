@@ -5,7 +5,7 @@
 import CoreData
 import Foundation
 
-public extension _ChatClient {
+public extension ChatClient {
     /// Creates a new `MessageController` for the message with the provided id.
     /// - Parameter cid: The channel identifier the message relates to.
     /// - Parameter messageId: The message identifier.
@@ -38,7 +38,7 @@ public typealias ChatMessageController = _ChatMessageController<NoExtraData>
 ///
 public class _ChatMessageController<ExtraData: ExtraDataTypes>: DataController, DelegateCallable, DataStoreProvider {
     /// The `ChatClient` instance this controller belongs to.
-    public let client: _ChatClient<ExtraData>
+    public let client: ChatClient
     
     /// The identified of the channel the message belongs to.
     public let cid: ChannelId
@@ -51,7 +51,7 @@ public class _ChatMessageController<ExtraData: ExtraDataTypes>: DataController, 
     /// To observe changes of the message, set your class as a delegate of this controller or use the provided
     /// `Combine` publishers.
     ///
-    public var message: _ChatMessage<ExtraData>? {
+    public var message: _ChatMessage? {
         startObserversIfNeeded()
         return messageObserver.item
     }
@@ -61,7 +61,7 @@ public class _ChatMessageController<ExtraData: ExtraDataTypes>: DataController, 
     /// To observe changes of the replies, set your class as a delegate of this controller or use the provided
     /// `Combine` publishers.
     ///
-    public var replies: LazyCachedMapCollection<_ChatMessage<ExtraData>> {
+    public var replies: LazyCachedMapCollection<ChatMessage> {
         startObserversIfNeeded()
         return repliesObserver?.items ?? []
     }
@@ -119,7 +119,7 @@ public class _ChatMessageController<ExtraData: ExtraDataTypes>: DataController, 
     
     /// The observer used to listen replies updates.
     /// It will be reset on `listOrdering` changes.
-    @Cached private var repliesObserver: ListDatabaseObserver<_ChatMessage<ExtraData>, MessageDTO>?
+    @Cached private var repliesObserver: ListDatabaseObserver<ChatMessage, MessageDTO>?
     
     /// The worker used to fetch the remote data and communicate with servers.
     private lazy var messageUpdater: MessageUpdater<ExtraData> = environment.messageUpdaterBuilder(
@@ -133,7 +133,7 @@ public class _ChatMessageController<ExtraData: ExtraDataTypes>: DataController, 
     ///   - cid: The channel identifier the message belongs to.
     ///   - messageId: The message identifier.
     ///   - environment: The source of internal dependencies.
-    init(client: _ChatClient<ExtraData>, cid: ChannelId, messageId: MessageId, environment: Environment = .init()) {
+    init(client: ChatClient, cid: ChannelId, messageId: MessageId, environment: Environment = .init()) {
         self.client = client
         self.cid = cid
         self.messageId = messageId
@@ -337,7 +337,7 @@ public extension _ChatMessageController {
         _ type: MessageReactionType,
         score: Int = 1,
         enforceUnique: Bool = false,
-        extraData: ExtraData.MessageReaction = .defaultValue,
+        extraData: CustomData = .defaultValue,
         completion: ((Error?) -> Void)? = nil
     ) {
         messageUpdater.addReaction(
@@ -439,9 +439,9 @@ extension _ChatMessageController {
         var messageObserverBuilder: (
             _ context: NSManagedObjectContext,
             _ fetchRequest: NSFetchRequest<MessageDTO>,
-            _ itemCreator: @escaping (MessageDTO) -> _ChatMessage<ExtraData>,
+            _ itemCreator: @escaping (MessageDTO) -> _ChatMessage,
             _ fetchedResultsControllerType: NSFetchedResultsController<MessageDTO>.Type
-        ) -> EntityDatabaseObserver<_ChatMessage<ExtraData>, MessageDTO> = EntityDatabaseObserver.init
+        ) -> EntityDatabaseObserver<ChatMessage, MessageDTO> = EntityDatabaseObserver.init
         
         var messageUpdaterBuilder: (
             _ database: DatabaseContainer,
@@ -453,7 +453,7 @@ extension _ChatMessageController {
 // MARK: - Private
 
 private extension _ChatMessageController {
-    func createMessageObserver() -> EntityDatabaseObserver<_ChatMessage<ExtraData>, MessageDTO> {
+    func createMessageObserver() -> EntityDatabaseObserver<ChatMessage, MessageDTO> {
         let observer = environment.messageObserverBuilder(
             client.databaseContainer.viewContext,
             MessageDTO.message(withID: messageId),
@@ -477,7 +477,7 @@ private extension _ChatMessageController {
                     sortAscending: sortAscending,
                     deletedMessagesVisibility: deletedMessageVisibility
                 ),
-                itemCreator: { $0.asModel() as _ChatMessage<ExtraData> }
+                itemCreator: { $0.asModel() as _ChatMessage }
             )
             observer.onChange = { changes in
                 self.delegateCallback {
@@ -522,42 +522,42 @@ public protocol _ChatMessageControllerDelegate: DataControllerStateDelegate {
     /// The controller observed a change in the `ChatMessage` its observes.
     func messageController(
         _ controller: _ChatMessageController<ExtraData>,
-        didChangeMessage change: EntityChange<_ChatMessage<ExtraData>>
+        didChangeMessage change: EntityChange<ChatMessage>
     )
     
     /// The controller observed changes in the replies of the observed `ChatMessage`.
     func messageController(
         _ controller: _ChatMessageController<ExtraData>,
-        didChangeReplies changes: [ListChange<_ChatMessage<ExtraData>>]
+        didChangeReplies changes: [ListChange<ChatMessage>]
     )
 }
 
 public extension _ChatMessageControllerDelegate {
     func messageController(
         _ controller: _ChatMessageController<ExtraData>,
-        didChangeMessage change: EntityChange<_ChatMessage<ExtraData>>
+        didChangeMessage change: EntityChange<ChatMessage>
     ) {}
     
     func messageController(
         _ controller: _ChatMessageController<ExtraData>,
-        didChangeReplies changes: [ListChange<_ChatMessage<ExtraData>>]
+        didChangeReplies changes: [ListChange<ChatMessage>]
     ) {}
 }
 
 final class AnyChatMessageControllerDelegate<ExtraData: ExtraDataTypes>: _ChatMessageControllerDelegate {
     weak var wrappedDelegate: AnyObject?
     private var _controllerDidChangeState: (DataController, DataController.State) -> Void
-    private var _messageControllerDidChangeMessage: (_ChatMessageController<ExtraData>, EntityChange<_ChatMessage<ExtraData>>)
+    private var _messageControllerDidChangeMessage: (_ChatMessageController<ExtraData>, EntityChange<ChatMessage>)
         -> Void
-    private var _messageControllerDidChangeReplies: (_ChatMessageController<ExtraData>, [ListChange<_ChatMessage<ExtraData>>])
+    private var _messageControllerDidChangeReplies: (_ChatMessageController<ExtraData>, [ListChange<ChatMessage>])
         -> Void
     
     init(
         wrappedDelegate: AnyObject?,
         controllerDidChangeState: @escaping (DataController, DataController.State) -> Void,
-        messageControllerDidChangeMessage: @escaping (_ChatMessageController<ExtraData>, EntityChange<_ChatMessage<ExtraData>>)
+        messageControllerDidChangeMessage: @escaping (_ChatMessageController<ExtraData>, EntityChange<ChatMessage>)
             -> Void,
-        messageControllerDidChangeReplies: @escaping (_ChatMessageController<ExtraData>, [ListChange<_ChatMessage<ExtraData>>])
+        messageControllerDidChangeReplies: @escaping (_ChatMessageController<ExtraData>, [ListChange<ChatMessage>])
             -> Void
     ) {
         self.wrappedDelegate = wrappedDelegate
@@ -572,14 +572,14 @@ final class AnyChatMessageControllerDelegate<ExtraData: ExtraDataTypes>: _ChatMe
 
     func messageController(
         _ controller: _ChatMessageController<ExtraData>,
-        didChangeMessage change: EntityChange<_ChatMessage<ExtraData>>
+        didChangeMessage change: EntityChange<ChatMessage>
     ) {
         _messageControllerDidChangeMessage(controller, change)
     }
     
     func messageController(
         _ controller: _ChatMessageController<ExtraData>,
-        didChangeReplies changes: [ListChange<_ChatMessage<ExtraData>>]
+        didChangeReplies changes: [ListChange<ChatMessage>]
     ) {
         _messageControllerDidChangeReplies(controller, changes)
     }

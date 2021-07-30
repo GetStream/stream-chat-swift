@@ -5,49 +5,49 @@
 import CoreData
 import Foundation
 
-extension _ChatClient {
-    /// Creates a new `_ChatChannelMemberListController` with the provided query.
+extension ChatClient {
+    /// Creates a new `ChatChannelMemberListController` with the provided query.
     /// - Parameter query: The query specify the filter and sorting options for members the controller should fetch.
-    /// - Returns: A new instance of `_ChatChannelMemberListController`.
+    /// - Returns: A new instance of `ChatChannelMemberListController`.
     public func memberListController(
-        query: _ChannelMemberListQuery<ExtraData.User>
-    ) -> _ChatChannelMemberListController<ExtraData> {
+        query: ChannelMemberListQuery
+    ) -> ChatChannelMemberListController<ExtraData> {
         .init(query: query, client: self)
     }
 }
 
-/// `_ChatChannelMemberListController` is a controller class which allows observing a list of
+/// `ChatChannelMemberListController` is a controller class which allows observing a list of
 /// channel members based on the provided query.
 ///
-/// Learn more about `_ChatChannelMemberListController` and its usage in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/StreamChat-SDK-Cheat-Sheet#user-list).
+/// Learn more about `ChatChannelMemberListController` and its usage in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/StreamChat-SDK-Cheat-Sheet#user-list).
 ///
-/// - Note: `ChatChannelMemberListController` is a typealias of `_ChatChannelMemberListController` with default extra data.
-/// If you're using custom extra data, create your own typealias of `_ChatChannelMemberListController`.
+/// - Note: `ChatChannelMemberListController` is a typealias of `ChatChannelMemberListController` with default extra data.
+/// If you're using custom extra data, create your own typealias of `ChatChannelMemberListController`.
 ///
 /// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/Cheat-Sheet#working-with-extra-data).
-public typealias ChatChannelMemberListController = _ChatChannelMemberListController<NoExtraData>
+public typealias ChatChannelMemberListController = ChatChannelMemberListController<NoExtraData>
 
-/// `_ChatChannelMemberListController` is a controller class which allows observing
+/// `ChatChannelMemberListController` is a controller class which allows observing
 /// a list of chat users based on the provided query.
 ///
-/// Learn more about `_ChatChannelMemberListController` and its usage in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/StreamChat-SDK-Cheat-Sheet#user-list).
+/// Learn more about `ChatChannelMemberListController` and its usage in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/StreamChat-SDK-Cheat-Sheet#user-list).
 ///
-/// - Note: `_ChatChannelMemberListController` type is not meant to be used directly. If you're using default extra data, use
+/// - Note: `ChatChannelMemberListController` type is not meant to be used directly. If you're using default extra data, use
 /// `ChatChannelMemberListController` typealias instead. If you're using custom extra data, create your own typealias
-/// of `_ChatChannelMemberListController`.
+/// of `ChatChannelMemberListController`.
 ///
 /// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/Cheat-Sheet#working-with-extra-data).
-public class _ChatChannelMemberListController<ExtraData: ExtraDataTypes>: DataController, DelegateCallable, DataStoreProvider {
+public class ChatChannelMemberListController<ExtraData: ExtraDataTypes>: DataController, DelegateCallable, DataStoreProvider {
     /// The query specifying sorting and filtering for the list of channel members.
-    @Atomic public private(set) var query: _ChannelMemberListQuery<ExtraData.User>
+    @Atomic public private(set) var query: ChannelMemberListQuery
     
     /// The `ChatClient` instance this controller belongs to.
-    public let client: _ChatClient<ExtraData>
+    public let client: ChatClient
     
     /// The channel members matching the query.
     /// To observe the member list changes, set your class as a delegate of this controller or use the provided
     /// `Combine` publishers.
-    public var members: LazyCachedMapCollection<_ChatChannelMember<ExtraData.User>> {
+    public var members: LazyCachedMapCollection<ChatChannelMember> {
         startObservingIfNeeded()
         return memberListObserver.items
     }
@@ -75,12 +75,12 @@ public class _ChatChannelMemberListController<ExtraData: ExtraDataTypes>: DataCo
     
     private let environment: Environment
     
-    /// Creates a new `_ChatChannelMemberListController`
+    /// Creates a new `ChatChannelMemberListController`
     /// - Parameters:
     ///   - query: The query used for filtering and sorting the channel members.
     ///   - client: The `Client` this controller belongs to.
     ///   - environment: Environment for this controller.
-    init(query: _ChannelMemberListQuery<ExtraData.User>, client: _ChatClient<ExtraData>, environment: Environment = .init()) {
+    init(query: ChannelMemberListQuery, client: ChatClient, environment: Environment = .init()) {
         self.client = client
         self.query = query
         self.environment = environment
@@ -109,19 +109,19 @@ public class _ChatChannelMemberListController<ExtraData: ExtraDataTypes>: DataCo
     /// - Parameter delegate: The object used as a delegate. It's referenced weakly, so you need to keep the object
     /// alive if you want keep receiving updates.
     ///
-    public func setDelegate<Delegate: _ChatChannelMemberListControllerDelegate>(_ delegate: Delegate)
+    public func setDelegate<Delegate: ChatChannelMemberListControllerDelegate>(_ delegate: Delegate)
         where Delegate.ExtraData == ExtraData {
         multicastDelegate.mainDelegate = AnyChatChannelMemberListControllerDelegate(delegate)
     }
     
-    private func createMemberListUpdater() -> ChannelMemberListUpdater<ExtraData> {
+    private func createMemberListUpdater() -> ChannelMemberListUpdater {
         environment.memberListUpdaterBuilder(
             client.databaseContainer,
             client.apiClient
         )
     }
     
-    private func createMemberListObserver() -> ListDatabaseObserver<_ChatChannelMember<ExtraData.User>, MemberDTO> {
+    private func createMemberListObserver() -> ListDatabaseObserver<ChatChannelMember, MemberDTO> {
         let observer = environment.memberListObserverBuilder(
             client.databaseContainer.viewContext,
             MemberDTO.members(matching: query),
@@ -153,7 +153,7 @@ public class _ChatChannelMemberListController<ExtraData: ExtraDataTypes>: DataCo
 
 // MARK: - Actions
 
-public extension _ChatChannelMemberListController {
+public extension ChatChannelMemberListController {
     /// Loads next members from backend.
     /// - Parameters:
     ///   - limit: The page size.
@@ -174,23 +174,23 @@ public extension _ChatChannelMemberListController {
     }
 }
 
-extension _ChatChannelMemberListController {
+extension ChatChannelMemberListController {
     struct Environment {
         var memberListUpdaterBuilder: (
             _ database: DatabaseContainer,
             _ apiClient: APIClient
-        ) -> ChannelMemberListUpdater<ExtraData> = ChannelMemberListUpdater.init
+        ) -> ChannelMemberListUpdater = ChannelMemberListUpdater.init
 
         var memberListObserverBuilder: (
             _ context: NSManagedObjectContext,
             _ fetchRequest: NSFetchRequest<MemberDTO>,
-            _ itemCreator: @escaping (MemberDTO) -> _ChatChannelMember<ExtraData.User>,
+            _ itemCreator: @escaping (MemberDTO) -> ChatChannelMember,
             _ controllerType: NSFetchedResultsController<MemberDTO>.Type
-        ) -> ListDatabaseObserver<_ChatChannelMember<ExtraData.User>, MemberDTO> = ListDatabaseObserver.init
+        ) -> ListDatabaseObserver<ChatChannelMember, MemberDTO> = ListDatabaseObserver.init
     }
 }
 
-extension _ChatChannelMemberListController where ExtraData == NoExtraData {
+extension ChatChannelMemberListController where ExtraData == NoExtraData {
     /// Set the delegate of `ChatChannelMemberListController` to observe the changes in the system.
     ///
     /// - Note: The delegate can be set directly only if you're **not** using custom extra data types. Due to the current
@@ -205,7 +205,7 @@ extension _ChatChannelMemberListController where ExtraData == NoExtraData {
 /// `ChatChannelMemberListController` uses this protocol to communicate changes to its delegate.
 ///
 /// This protocol can be used only when no custom extra data are specified. If you're using custom extra data types,
-/// please use `_ChatChannelMemberListControllerDelegate` instead.
+/// please use `ChatChannelMemberListControllerDelegate` instead.
 public protocol ChatChannelMemberListControllerDelegate: DataControllerStateDelegate {
     /// Controller observed a change in the channel member list.
     func memberListController(
@@ -221,36 +221,36 @@ public extension ChatUserListControllerDelegate {
     ) {}
 }
 
-/// `_ChatChannelMemberListController` uses this protocol to communicate changes to its delegate.
+/// `ChatChannelMemberListController` uses this protocol to communicate changes to its delegate.
 ///
 /// If you're **not** using custom extra data types, you can use a convenience version of this protocol
 /// named `ChatChannelMemberListControllerDelegate`, which hides the generic types, and make the usage easier.
 ///
-public protocol _ChatChannelMemberListControllerDelegate: DataControllerStateDelegate {
+public protocol ChatChannelMemberListControllerDelegate: DataControllerStateDelegate {
     associatedtype ExtraData: ExtraDataTypes
     
     /// Controller observed a change in the channel member list.
     func memberListController(
-        _ controller: _ChatChannelMemberListController<ExtraData>,
-        didChangeMembers changes: [ListChange<_ChatChannelMember<ExtraData.User>>]
+        _ controller: ChatChannelMemberListController<ExtraData>,
+        didChangeMembers changes: [ListChange<ChatChannelMember>]
     )
 }
 
-public extension _ChatChannelMemberListControllerDelegate {
+public extension ChatChannelMemberListControllerDelegate {
     func memberListController(
-        _ controller: _ChatChannelMemberListController<ExtraData>,
-        didChangeMembers changes: [ListChange<_ChatChannelMember<ExtraData.User>>]
+        _ controller: ChatChannelMemberListController<ExtraData>,
+        didChangeMembers changes: [ListChange<ChatChannelMember>]
     ) {}
 }
 
 // MARK: - Delegate type eraser
 
-final class AnyChatChannelMemberListControllerDelegate<ExtraData: ExtraDataTypes>: _ChatChannelMemberListControllerDelegate {
+final class AnyChatChannelMemberListControllerDelegate<ExtraData: ExtraDataTypes>: ChatChannelMemberListControllerDelegate {
     private let _controllerDidChangeState: (DataController, DataController.State) -> Void
     
     private let _controllerDidChangeMembers: (
-        _ChatChannelMemberListController<ExtraData>,
-        [ListChange<_ChatChannelMember<ExtraData.User>>]
+        ChatChannelMemberListController<ExtraData>,
+        [ListChange<ChatChannelMember>]
     ) -> Void
     
     weak var wrappedDelegate: AnyObject?
@@ -259,8 +259,8 @@ final class AnyChatChannelMemberListControllerDelegate<ExtraData: ExtraDataTypes
         wrappedDelegate: AnyObject?,
         controllerDidChangeState: @escaping (DataController, DataController.State) -> Void,
         controllerDidChangeMembers: @escaping (
-            _ChatChannelMemberListController<ExtraData>,
-            [ListChange<_ChatChannelMember<ExtraData.User>>]
+            ChatChannelMemberListController<ExtraData>,
+            [ListChange<ChatChannelMember>]
         ) -> Void
     ) {
         self.wrappedDelegate = wrappedDelegate
@@ -273,15 +273,15 @@ final class AnyChatChannelMemberListControllerDelegate<ExtraData: ExtraDataTypes
     }
 
     func memberListController(
-        _ controller: _ChatChannelMemberListController<ExtraData>,
-        didChangeMembers changes: [ListChange<_ChatChannelMember<ExtraData.User>>]
+        _ controller: ChatChannelMemberListController<ExtraData>,
+        didChangeMembers changes: [ListChange<ChatChannelMember>]
     ) {
         _controllerDidChangeMembers(controller, changes)
     }
 }
 
 extension AnyChatChannelMemberListControllerDelegate {
-    convenience init<Delegate: _ChatChannelMemberListControllerDelegate>(_ delegate: Delegate)
+    convenience init<Delegate: ChatChannelMemberListControllerDelegate>(_ delegate: Delegate)
         where Delegate.ExtraData == ExtraData {
         self.init(
             wrappedDelegate: delegate,

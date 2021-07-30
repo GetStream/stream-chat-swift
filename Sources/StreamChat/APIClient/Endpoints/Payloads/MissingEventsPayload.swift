@@ -10,5 +10,5 @@ struct MissingEventsPayload<ExtraData: ExtraDataTypes>: Decodable {
         case eventPayloads = "events"
     }
     
-    let eventPayloads: [EventPayload<ExtraData>]
+    let eventPayloads: [EventPayload]
 }

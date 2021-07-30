@@ -13,11 +13,11 @@ open class _ChatChannelListItemView<ExtraData: ExtraDataTypes>: _View, ThemeProv
     /// The content of this view.
     public struct Content {
         /// Channel for the current Item.
-        public let channel: _ChatChannel<ExtraData>
+        public let channel: ChatChannel
         /// Current user ID needed to filter out when showing typing indicator.
         public let currentUserId: UserId?
         
-        public init(channel: _ChatChannel<ExtraData>, currentUserId: UserId?) {
+        public init(channel: ChatChannel, currentUserId: UserId?) {
             self.channel = channel
             self.currentUserId = currentUserId
         }
@@ -175,7 +175,7 @@ open class _ChatChannelListItemView<ExtraData: ExtraDataTypes>: _View, ThemeProv
     }
 }
 
-extension _ChatChannelListItemView {
+extension ChatChannelListItemView {
     /// The formatted string containing the typing member.
     var typingUserString: String? {
         guard let users = content?.channel.currentlyTypingUsers.filter({ $0.id != content?.currentUserId }),

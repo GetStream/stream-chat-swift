@@ -6,13 +6,13 @@
 import XCTest
 
 /// Mock implementation of ChannelUpdater
-class ChannelUpdaterMock<ExtraData: ExtraDataTypes>: ChannelUpdater<ExtraData> {
-    @Atomic var update_channelQuery: _ChannelQuery<ExtraData>?
+class ChannelUpdaterMock<ExtraData: ExtraDataTypes>: ChannelUpdater {
+    @Atomic var update_channelQuery: ChannelQuery?
     @Atomic var update_channelCreatedCallback: ((ChannelId) -> Void)?
-    @Atomic var update_completion: ((Result<ChannelPayload<ExtraData>, Error>) -> Void)?
+    @Atomic var update_completion: ((Result<ChannelPayload, Error>) -> Void)?
     @Atomic var update_callCount = 0
 
-    @Atomic var updateChannel_payload: ChannelEditDetailPayload<ExtraData>?
+    @Atomic var updateChannel_payload: ChannelEditDetailPayload?
     @Atomic var updateChannel_completion: ((Error?) -> Void)?
 
     @Atomic var muteChannel_cid: ChannelId?
@@ -160,9 +160,9 @@ class ChannelUpdaterMock<ExtraData: ExtraDataTypes>: ChannelUpdater<ExtraData> {
     }
     
     override func update(
-        channelQuery: _ChannelQuery<ExtraData>,
+        channelQuery: ChannelQuery,
         channelCreatedCallback: ((ChannelId) -> Void)?,
-        completion: ((Result<ChannelPayload<ExtraData>, Error>) -> Void)?
+        completion: ((Result<ChannelPayload, Error>) -> Void)?
     ) {
         update_channelQuery = channelQuery
         update_channelCreatedCallback = channelCreatedCallback
@@ -170,7 +170,7 @@ class ChannelUpdaterMock<ExtraData: ExtraDataTypes>: ChannelUpdater<ExtraData> {
         update_callCount += 1
     }
 
-    override func updateChannel(channelPayload: ChannelEditDetailPayload<ExtraData>, completion: ((Error?) -> Void)? = nil) {
+    override func updateChannel(channelPayload: ChannelEditDetailPayload, completion: ((Error?) -> Void)? = nil) {
         updateChannel_payload = channelPayload
         updateChannel_completion = completion
     }

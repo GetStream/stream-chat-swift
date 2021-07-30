@@ -5,7 +5,7 @@
 import CoreData
 import Foundation
 
-public extension _ChatClient {
+public extension ChatClient {
     /// Creates a new `ChatConnectionController` instance.
     ///
     /// - Returns: A new instance of `ChatConnectionController`.
@@ -42,7 +42,7 @@ public class _ChatConnectionController<ExtraData: ExtraDataTypes>: Controller, D
     public var callbackQueue: DispatchQueue = .main
     
     /// The `ChatClient` instance this controller belongs to.
-    public let client: _ChatClient<ExtraData>
+    public let client: ChatClient
     
     private let environment: Environment
     
@@ -75,7 +75,7 @@ public class _ChatConnectionController<ExtraData: ExtraDataTypes>: Controller, D
     ///   - client: The `Client` instance this controller belongs to.
     ///   - environment: The source of internal dependencies
     ///
-    init(client: _ChatClient<ExtraData>, environment: Environment = .init()) {
+    init(client: ChatClient, environment: Environment = .init()) {
         self.client = client
         self.environment = environment
         connectionEventObserver = setupObserver()

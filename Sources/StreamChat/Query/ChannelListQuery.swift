@@ -81,25 +81,7 @@ public extension FilterKey where Scope: AnyChannelListFilterScope {
 
 /// A query is used for querying specific channels from backend.
 /// You can specify filter, sorting, pagination, limit for fetched messages in channel and other options.
-///
-/// - Note: `ChannelListQuery` is a typealias of `_ChannelListQuery` with the default extra data types.
-/// If you want to use your custom extra data types, you should create your own `ChannelListQuery` typealias
-/// for `_ChannelListQuery`.
-///
-/// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/Cheat-Sheet#working-with-extra-data).
-///
-public typealias ChannelListQuery = _ChannelListQuery<NoExtraData>
-
-/// A query is used for querying specific channels from backend.
-/// You can specify filter, sorting, pagination, limit for fetched messages in channel and other options.
-///
-/// - Note: `_ChannelListQuery` type is not meant to be used directly.
-/// If you don't use custom extra data types, use `ChannelListQuery` typealias instead.
-/// When using custom extra data types, you should create your own `ChannelListQuery` typealias for `_ChannelListQuery`.
-///
-/// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/Cheat-Sheet#working-with-extra-data).
-///
-public struct _ChannelListQuery<ExtraData: ChannelExtraData>: Encodable {
+public struct ChannelListQuery: Encodable {
     private enum CodingKeys: String, CodingKey {
         case filter = "filter_conditions"
         case sort

@@ -8,7 +8,7 @@ import Foundation
 @available(iOS 13, *)
 extension _CurrentChatUserController {
     /// A publisher emitting a new value every time the current user changes.
-    public var currentUserChangePublisher: AnyPublisher<EntityChange<_CurrentChatUser<ExtraData>>, Never> {
+    public var currentUserChangePublisher: AnyPublisher<EntityChange<CurrentChatUser>, Never> {
         basePublishers.currentUserChange.keepAlive(self)
     }
     
@@ -25,7 +25,7 @@ extension _CurrentChatUserController {
         unowned let controller: _CurrentChatUserController
         
         /// A backing subject for `currentUserChangePublisher`.
-        let currentUserChange: PassthroughSubject<EntityChange<_CurrentChatUser<ExtraData>>, Never> = .init()
+        let currentUserChange: PassthroughSubject<EntityChange<CurrentChatUser>, Never> = .init()
         
         /// A backing subject for `unreadCountPublisher`.
         let unreadCount: CurrentValueSubject<UnreadCount, Never>
@@ -50,7 +50,7 @@ extension _CurrentChatUserController.BasePublishers: _CurrentChatUserControllerD
     
     func currentUserController(
         _ controller: _CurrentChatUserController<ExtraData>,
-        didChangeCurrentUser currentUser: EntityChange<_CurrentChatUser<ExtraData>>
+        didChangeCurrentUser currentUser: EntityChange<CurrentChatUser>
     ) {
         currentUserChange.send(currentUser)
     }

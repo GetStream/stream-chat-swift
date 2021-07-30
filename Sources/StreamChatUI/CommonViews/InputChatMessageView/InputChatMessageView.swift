@@ -13,7 +13,7 @@ open class _InputChatMessageView<ExtraData: ExtraDataTypes>: _View, ComponentsPr
     /// The content of the view
     public struct Content {
         /// The message that is being quoted.
-        var quotingMessage: _ChatMessage<ExtraData>?
+        var quotingMessage: _ChatMessage?
         /// The command that the message produces.
         var command: Command?
     }

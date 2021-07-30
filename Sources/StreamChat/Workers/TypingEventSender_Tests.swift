@@ -13,7 +13,7 @@ class TypingEventsSender_Tests: StressTestCase {
     var apiClient: APIClientMock!
     var database: DatabaseContainerMock!
     var time: VirtualTime!
-    var eventSender: TypingEventsSender<ExtraData>!
+    var eventSender: TypingEventsSender!
     
     override func setUp() {
         super.setUp()

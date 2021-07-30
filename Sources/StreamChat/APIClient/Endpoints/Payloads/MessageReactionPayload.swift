@@ -5,7 +5,7 @@
 import Foundation
 
 /// The type describes the incoming message-reaction JSON.
-struct MessageReactionPayload<ExtraData: ExtraDataTypes>: Decodable {
+struct MessageReactionPayload: Decodable {
     private enum CodingKeys: String, CodingKey, CaseIterable {
         case type
         case score
@@ -21,9 +21,8 @@ struct MessageReactionPayload<ExtraData: ExtraDataTypes>: Decodable {
     let messageId: String
     let createdAt: Date
     let updatedAt: Date
-    let user: UserPayload<ExtraData.User>
-    let extraData: ExtraData.MessageReaction
-    let extraDataMap: CustomData
+    let user: UserPayload
+    let extraData: CustomData
 
     init(
         type: MessageReactionType,
@@ -31,9 +30,8 @@ struct MessageReactionPayload<ExtraData: ExtraDataTypes>: Decodable {
         messageId: String,
         createdAt: Date,
         updatedAt: Date,
-        user: UserPayload<ExtraData.User>,
-        extraData: ExtraData.MessageReaction,
-        extraDataMap: CustomData
+        user: UserPayload,
+        extraData: CustomData
     ) {
         self.type = type
         self.score = score
@@ -42,7 +40,6 @@ struct MessageReactionPayload<ExtraData: ExtraDataTypes>: Decodable {
         self.updatedAt = updatedAt
         self.user = user
         self.extraData = extraData
-        self.extraDataMap = extraDataMap
     }
     
     init(from decoder: Decoder) throws {
@@ -62,9 +59,8 @@ struct MessageReactionPayload<ExtraData: ExtraDataTypes>: Decodable {
             messageId: try container.decode(MessageId.self, forKey: .messageId),
             createdAt: try container.decode(Date.self, forKey: .createdAt),
             updatedAt: try container.decode(Date.self, forKey: .updatedAt),
-            user: try container.decode(UserPayload<ExtraData.User>.self, forKey: .user),
-            extraData: try .init(from: decoder),
-            extraDataMap: extraDataMap
+            user: try container.decode(UserPayload.self, forKey: .user),
+            extraData: extraDataMap
         )
     }
 }

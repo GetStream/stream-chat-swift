@@ -3597,7 +3597,7 @@ private class TestEnvironment<ExtraData: ExtraDataTypes> {
     var channelUpdater: ChannelUpdaterMock<ExtraData>?
     var eventSender: TypingEventsSenderMock<ExtraData>?
     
-    lazy var environment: _ChatChannelController<ExtraData>.Environment = .init(
+    lazy var environment: ChatChannelController.Environment = .init(
         channelUpdaterBuilder: { [unowned self] in
             self.channelUpdater = ChannelUpdaterMock(database: $0, apiClient: $1)
             return self.channelUpdater!
@@ -3661,10 +3661,10 @@ private class TestDelegate: QueueAwareDelegate, ChatChannelControllerDelegate {
 /// A concrete `ChannelControllerDelegateGeneric` implementation allowing capturing the delegate calls.
 private class TestDelegateGeneric<ExtraData: ExtraDataTypes>: QueueAwareDelegate, _ChatChannelControllerDelegate {
     @Atomic var state: DataController.State?
-    @Atomic var didUpdateChannel_channel: EntityChange<_ChatChannel<ExtraData>>?
-    @Atomic var didUpdateMessages_messages: [ListChange<_ChatMessage<ExtraData>>]?
+    @Atomic var didUpdateChannel_channel: EntityChange<ChatChannel>?
+    @Atomic var didUpdateMessages_messages: [ListChange<ChatMessage>]?
     @Atomic var didReceiveMemberEvent_event: MemberEvent?
-    @Atomic var didChangeTypingUsers_typingUsers: Set<_ChatUser<ExtraData.User>>?
+    @Atomic var didChangeTypingUsers_typingUsers: Set<ChatUser>?
     
     func controller(_ controller: DataController, didChangeState state: DataController.State) {
         self.state = state
@@ -3672,29 +3672,29 @@ private class TestDelegateGeneric<ExtraData: ExtraDataTypes>: QueueAwareDelegate
     }
     
     func channelController(
-        _ channelController: _ChatChannelController<ExtraData>,
-        didUpdateMessages changes: [ListChange<_ChatMessage<ExtraData>>]
+        _ channelController: ChatChannelController,
+        didUpdateMessages changes: [ListChange<ChatMessage>]
     ) {
         didUpdateMessages_messages = changes
         validateQueue()
     }
     
     func channelController(
-        _ channelController: _ChatChannelController<ExtraData>,
-        didUpdateChannel channel: EntityChange<_ChatChannel<ExtraData>>
+        _ channelController: ChatChannelController,
+        didUpdateChannel channel: EntityChange<ChatChannel>
     ) {
         didUpdateChannel_channel = channel
         validateQueue()
     }
     
-    func channelController(_ channelController: _ChatChannelController<ExtraData>, didReceiveMemberEvent event: MemberEvent) {
+    func channelController(_ channelController: ChatChannelController, didReceiveMemberEvent event: MemberEvent) {
         didReceiveMemberEvent_event = event
         validateQueue()
     }
     
     func channelController(
-        _ channelController: _ChatChannelController<ExtraData>,
-        didChangeTypingUsers typingUsers: Set<_ChatUser<ExtraData.User>>
+        _ channelController: ChatChannelController,
+        didChangeTypingUsers typingUsers: Set<ChatUser>
     ) {
         didChangeTypingUsers_typingUsers = typingUsers
         validateQueue()

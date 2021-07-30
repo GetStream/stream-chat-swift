@@ -44,7 +44,7 @@ extension MemberDTO {
     }
     
     /// Returns a fetch request for the DTOs matching the provided `query`.
-    static func members<ExtraData: UserExtraData>(matching query: _ChannelMemberListQuery<ExtraData>) -> NSFetchRequest<MemberDTO> {
+    static func members(matching query: ChannelMemberListQuery) -> NSFetchRequest<MemberDTO> {
         let request = NSFetchRequest<MemberDTO>(entityName: MemberDTO.entityName)
         request.predicate = NSPredicate(format: "ANY queries.queryHash == %@", query.queryHash)
         request.sortDescriptors = query.sortDescriptors
@@ -87,10 +87,10 @@ extension MemberDTO {
 }
 
 extension NSManagedObjectContext {
-    func saveMember<ExtraData: UserExtraData>(
-        payload: MemberPayload<ExtraData>,
+    func saveMember(
+        payload: MemberPayload,
         channelId: ChannelId,
-        query: _ChannelMemberListQuery<ExtraData>?
+        query: ChannelMemberListQuery?
     ) throws -> MemberDTO {
         let dto = MemberDTO.loadOrCreate(id: payload.user.id, channelId: channelId, context: self)
         
@@ -129,25 +129,14 @@ extension NSManagedObjectContext {
 }
 
 extension MemberDTO {
-    func asModel<ExtraData: UserExtraData>() -> _ChatChannelMember<ExtraData> { .create(fromDTO: self) }
+    func asModel() -> ChatChannelMember { .create(fromDTO: self) }
 }
 
-extension _ChatChannelMember {
-    fileprivate static func create(fromDTO dto: MemberDTO) -> _ChatChannelMember {
-        let extraData: ExtraData
+extension ChatChannelMember {
+    fileprivate static func create(fromDTO dto: MemberDTO) -> ChatChannelMember {
+        let extraData: CustomData
         do {
-            extraData = try JSONDecoder.default.decode(ExtraData.self, from: dto.user.extraData)
-        } catch {
-            log.error(
-                "Failed to decode extra data for Member with id: <\(dto.user.id)>, using default value instead. "
-                    + "Error: \(error)"
-            )
-            extraData = .defaultValue
-        }
-        
-        let extraDataMap: CustomData
-        do {
-            extraDataMap = try JSONSerialization.jsonObject(with: dto.user.extraData, options: []) as? CustomData ?? [:]
+            extraData = try JSONSerialization.jsonObject(with: dto.user.extraData, options: []) as? CustomData ?? [:]
         } catch {
             log.error(
                 "Failed to decode extra data for user with id: <\(dto.user.id)>, using default value instead. "
@@ -158,7 +147,7 @@ extension _ChatChannelMember {
 
         let role = dto.channelRoleRaw.flatMap { MemberRole(rawValue: $0) } ?? .member
         
-        return _ChatChannelMember(
+        return ChatChannelMember(
             id: dto.user.id,
             name: dto.user.name,
             imageURL: dto.user.imageURL,
@@ -171,7 +160,6 @@ extension _ChatChannelMember {
             lastActiveAt: dto.user.lastActivityAt,
             teams: Set(dto.user.teams?.map(\.id) ?? []),
             extraData: extraData,
-            extraDataMap: extraDataMap,
             memberRole: role,
             memberCreatedAt: dto.memberCreatedAt,
             memberUpdatedAt: dto.memberUpdatedAt,
@@ -185,7 +173,7 @@ extension _ChatChannelMember {
     }
 }
 
-private extension _ChannelMemberListQuery {
+private extension ChannelMemberListQuery {
     var sortDescriptors: [NSSortDescriptor] {
         let sortDescriptors = sort.compactMap { $0.key.sortDescriptor(isAscending: $0.isAscending) }
         return sortDescriptors.isEmpty ? [ChannelMemberListSortingKey.defaultSortDescriptor] : sortDescriptors

@@ -5,10 +5,10 @@
 import CoreData
 import Foundation
 
-extension _ChatClient {
+extension ChatClient {
     /// Creates a new `_ChatChannelWatcherListController` with the provided query.
     /// - Parameter query: The query specifying the pagination options for watchers the controller should fetch.
-    /// - Returns: A new instance of `_ChatChannelMemberListController`.
+    /// - Returns: A new instance of `ChatChannelMemberListController`.
     public func watcherListController(query: ChannelWatcherListQuery) -> _ChatChannelWatcherListController<ExtraData> {
         .init(query: query, client: self)
     }
@@ -40,12 +40,12 @@ public class _ChatChannelWatcherListController<ExtraData: ExtraDataTypes>: DataC
     @Atomic public private(set) var query: ChannelWatcherListQuery
     
     /// The `ChatClient` instance this controller belongs to.
-    public let client: _ChatClient<ExtraData>
+    public let client: ChatClient
     
     /// The channel watchers matching the query.
     /// To observe the watcher list changes, set your class as a delegate of this controller or use the provided
     /// `Combine` publishers.
-    public var watchers: LazyCachedMapCollection<_ChatUser<ExtraData.User>> {
+    public var watchers: LazyCachedMapCollection<ChatUser> {
         startObservingIfNeeded()
         return watchersObserver.items
     }
@@ -66,10 +66,10 @@ public class _ChatChannelWatcherListController<ExtraData: ExtraDataTypes>: DataC
     }
     
     /// The observer used to observe the changes in the database.
-    private lazy var watchersObserver: ListDatabaseObserver<_ChatUser<ExtraData.User>, UserDTO> = createWatchersObserver()
+    private lazy var watchersObserver: ListDatabaseObserver<ChatUser, UserDTO> = createWatchersObserver()
     
     /// The worker used to fetch the remote data and communicate with servers.
-    private lazy var updater: ChannelUpdater<ExtraData> = self.environment.channelUpdaterBuilder(
+    private lazy var updater: ChannelUpdater = self.environment.channelUpdaterBuilder(
         client.databaseContainer,
         client.apiClient
     )
@@ -81,7 +81,7 @@ public class _ChatChannelWatcherListController<ExtraData: ExtraDataTypes>: DataC
     ///   - query: The query used for filtering and sorting the channel watchers.
     ///   - client: The `Client` this controller belongs to.
     ///   - environment: Environment for this controller.
-    init(query: ChannelWatcherListQuery, client: _ChatClient<ExtraData>, environment: Environment = .init()) {
+    init(query: ChannelWatcherListQuery, client: ChatClient, environment: Environment = .init()) {
         self.client = client
         self.query = query
         self.environment = environment
@@ -118,11 +118,11 @@ public class _ChatChannelWatcherListController<ExtraData: ExtraDataTypes>: DataC
         multicastDelegate.mainDelegate = AnyChatChannelWatcherListControllerDelegate(delegate)
     }
     
-    private func createWatchersObserver() -> ListDatabaseObserver<_ChatUser<ExtraData.User>, UserDTO> {
+    private func createWatchersObserver() -> ListDatabaseObserver<ChatUser, UserDTO> {
         let observer = environment.watcherListObserverBuilder(
             client.databaseContainer.viewContext,
             UserDTO.watcherFetchRequest(cid: query.cid),
-            { $0.asModel() as _ChatUser<ExtraData.User> },
+            { $0.asModel() as ChatUser },
             NSFetchedResultsController<UserDTO>.self
         )
         
@@ -148,23 +148,23 @@ public class _ChatChannelWatcherListController<ExtraData: ExtraDataTypes>: DataC
     }
 }
 
-extension _ChatChannelWatcherListController {
+extension ChatChannelWatcherListController {
     struct Environment {
         var channelUpdaterBuilder: (
             _ database: DatabaseContainer,
             _ apiClient: APIClient
-        ) -> ChannelUpdater<ExtraData> = ChannelUpdater.init
+        ) -> ChannelUpdater = ChannelUpdater.init
         
         var watcherListObserverBuilder: (
             _ context: NSManagedObjectContext,
             _ fetchRequest: NSFetchRequest<UserDTO>,
-            _ itemCreator: @escaping (UserDTO) -> _ChatUser<ExtraData.User>,
+            _ itemCreator: @escaping (UserDTO) -> ChatUser,
             _ controllerType: NSFetchedResultsController<UserDTO>.Type
-        ) -> ListDatabaseObserver<_ChatUser<ExtraData.User>, UserDTO> = ListDatabaseObserver.init
+        ) -> ListDatabaseObserver<ChatUser, UserDTO> = ListDatabaseObserver.init
     }
 }
 
-extension _ChatChannelWatcherListController where ExtraData == NoExtraData {
+extension ChatChannelWatcherListController where ExtraData == NoExtraData {
     /// Set the delegate of `ChatChannelWatcherListController` to observe the changes in the system.
     ///
     /// - Note: The delegate can be set directly only if you're **not** using custom extra data types. Due to the current
@@ -176,7 +176,7 @@ extension _ChatChannelWatcherListController where ExtraData == NoExtraData {
     }
 }
 
-public extension _ChatChannelWatcherListController {
+public extension ChatChannelWatcherListController {
     /// Load next set of watchers from backend.
     ///
     /// - Parameters:
@@ -214,7 +214,7 @@ public protocol _ChatChannelWatcherListControllerDelegate: DataControllerStateDe
     /// The controller observed a change in the channel watcher list.
     func channelWatcherListController(
         _ controller: _ChatChannelWatcherListController<ExtraData>,
-        didChangeWatchers changes: [ListChange<_ChatUser<ExtraData.User>>]
+        didChangeWatchers changes: [ListChange<ChatUser>]
     )
 }
 
@@ -225,7 +225,7 @@ final class AnyChatChannelWatcherListControllerDelegate<ExtraData: ExtraDataType
     
     private let _controllerDidChangeWatchers: (
         _ChatChannelWatcherListController<ExtraData>,
-        [ListChange<_ChatUser<ExtraData.User>>]
+        [ListChange<ChatUser>]
     ) -> Void
     
     weak var wrappedDelegate: AnyObject?
@@ -235,7 +235,7 @@ final class AnyChatChannelWatcherListControllerDelegate<ExtraData: ExtraDataType
         controllerDidChangeState: @escaping (DataController, DataController.State) -> Void,
         controllerDidChangeWatchers: @escaping (
             _ChatChannelWatcherListController<ExtraData>,
-            [ListChange<_ChatUser<ExtraData.User>>]
+            [ListChange<ChatUser>]
         ) -> Void
     ) {
         self.wrappedDelegate = wrappedDelegate
@@ -249,7 +249,7 @@ final class AnyChatChannelWatcherListControllerDelegate<ExtraData: ExtraDataType
     
     func channelWatcherListController(
         _ controller: _ChatChannelWatcherListController<ExtraData>,
-        didChangeWatchers changes: [ListChange<_ChatUser<ExtraData.User>>]
+        didChangeWatchers changes: [ListChange<ChatUser>]
     ) {
         _controllerDidChangeWatchers(controller, changes)
     }

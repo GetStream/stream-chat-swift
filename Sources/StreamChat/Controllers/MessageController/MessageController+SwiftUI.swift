@@ -16,10 +16,10 @@ extension _ChatMessageController {
         public let controller: _ChatMessageController
         
         /// The message that current controller observes.
-        @Published public private(set) var message: _ChatMessage<ExtraData>?
+        @Published public private(set) var message: _ChatMessage?
         
         /// The replies to the message controller observes.
-        @Published public private(set) var replies: LazyCachedMapCollection<_ChatMessage<ExtraData>> = []
+        @Published public private(set) var replies: LazyCachedMapCollection<ChatMessage> = []
         
         /// The current state of the Controller.
         @Published public private(set) var state: DataController.State
@@ -41,14 +41,14 @@ extension _ChatMessageController {
 extension _ChatMessageController.ObservableObject: _ChatMessageControllerDelegate {
     public func messageController(
         _ controller: _ChatMessageController<ExtraData>,
-        didChangeMessage change: EntityChange<_ChatMessage<ExtraData>>
+        didChangeMessage change: EntityChange<ChatMessage>
     ) {
         message = controller.message
     }
     
     public func messageController(
         _ controller: _ChatMessageController<ExtraData>,
-        didChangeReplies changes: [ListChange<_ChatMessage<ExtraData>>]
+        didChangeReplies changes: [ListChange<ChatMessage>]
     ) {
         replies = controller.replies
     }

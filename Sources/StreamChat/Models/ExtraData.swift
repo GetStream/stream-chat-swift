@@ -13,10 +13,8 @@ public protocol ExtraData: Codable & Hashable {
 /// A type representing no extra data for the given model object.
 public struct NoExtraData: Codable,
     Hashable,
-    UserExtraData,
     ChannelExtraData,
     MessageExtraData,
-    MessageReactionExtraData,
     ExtraDataTypes {
     /// Returns a concrete `NoExtraData` instance.
     public static var defaultValue: Self { .init() }

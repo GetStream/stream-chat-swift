@@ -196,7 +196,7 @@ extension DatabaseContainer {
         }
     }
     
-    func createMemberListQuery<ExtraData: UserExtraData>(query: _ChannelMemberListQuery<ExtraData>) throws {
+    func createMemberListQuery<ExtraData: UserExtraData>(query: ChannelMemberListQuery) throws {
         try writeSynchronously { session in
             try session.saveQuery(query)
         }

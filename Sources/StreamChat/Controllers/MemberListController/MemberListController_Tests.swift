@@ -519,8 +519,8 @@ private class TestDelegate: QueueAwareDelegate, ChatChannelMemberListControllerD
     }
 }
 
-// A concrete `_ChatChannelMemberListControllerDelegate` implementation allowing capturing the delegate calls.
-private class TestDelegateGeneric: QueueAwareDelegate, _ChatChannelMemberListControllerDelegate {
+// A concrete `ChatChannelMemberListControllerDelegate` implementation allowing capturing the delegate calls.
+private class TestDelegateGeneric: QueueAwareDelegate, ChatChannelMemberListControllerDelegate {
     @Atomic var state: DataController.State?
     @Atomic var didUpdateMembers_changes: [ListChange<ChatChannelMember>]?
     

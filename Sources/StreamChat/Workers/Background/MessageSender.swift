@@ -158,7 +158,7 @@ private class MessageSendingQueue<ExtraData: ExtraDataTypes> {
                     return
                 }
 
-                let requestBody = dto.asRequestBody() as MessageRequestBody<ExtraData>
+                let requestBody = dto.asRequestBody() as MessageRequestBody
                 
                 // Change the message state to `.sending` and the proceed with the actual sending
                 self?.database.write({
@@ -175,7 +175,7 @@ private class MessageSendingQueue<ExtraData: ExtraDataTypes> {
                         return
                     }
                     
-                    let endpoint: Endpoint<MessagePayload<ExtraData>.Boxed> = .sendMessage(cid: cid, messagePayload: requestBody)
+                    let endpoint: Endpoint<MessagePayload.Boxed> = .sendMessage(cid: cid, messagePayload: requestBody)
                     self?.apiClient.request(endpoint: endpoint) {
                         switch $0 {
                         case let .success(payload):
@@ -200,7 +200,7 @@ private class MessageSendingQueue<ExtraData: ExtraDataTypes> {
         sendNextMessage()
     }
     
-    private func saveSuccessfullySentMessage(cid: ChannelId, message: MessagePayload<ExtraData>, completion: @escaping () -> Void) {
+    private func saveSuccessfullySentMessage(cid: ChannelId, message: MessagePayload, completion: @escaping () -> Void) {
         database.write({
             let messageDTO = try $0.saveMessage(payload: message, for: cid)
             if messageDTO.localMessageState == .sending {

@@ -4,27 +4,27 @@
 
 import Foundation
 
-struct ChannelListPayload<ExtraData: ExtraDataTypes>: Decodable {
+struct ChannelListPayload: Decodable {
     /// A list of channels response (see `ChannelQuery`).
-    let channels: [ChannelPayload<ExtraData>]
+    let channels: [ChannelPayload]
 }
 
-struct ChannelPayload<ExtraData: ExtraDataTypes>: Decodable {
-    let channel: ChannelDetailPayload<ExtraData>
+struct ChannelPayload: Decodable {
+    let channel: ChannelDetailPayload
     
     let watcherCount: Int?
     
-    let watchers: [UserPayload<ExtraData.User>]?
+    let watchers: [UserPayload]?
     
-    let members: [MemberPayload<ExtraData.User>]
+    let members: [MemberPayload]
 
-    let membership: MemberPayload<ExtraData.User>?
+    let membership: MemberPayload?
 
-    let messages: [MessagePayload<ExtraData>]
+    let messages: [MessagePayload]
 
-    let pinnedMessages: [MessagePayload<ExtraData>]
+    let pinnedMessages: [MessagePayload]
     
-    let channelReads: [ChannelReadPayload<ExtraData>]
+    let channelReads: [ChannelReadPayload]
 
     private enum CodingKeys: String, CodingKey {
         case channel
@@ -39,27 +39,27 @@ struct ChannelPayload<ExtraData: ExtraDataTypes>: Decodable {
     
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        channel = try container.decode(ChannelDetailPayload<ExtraData>.self, forKey: .channel)
+        channel = try container.decode(ChannelDetailPayload.self, forKey: .channel)
         watchers = try container.decodeIfPresent([UserPayload<ExtraData.User>].self, forKey: .watchers)
         watcherCount = try container.decodeIfPresent(Int.self, forKey: .watcherCount)
         members = try container.decode([MemberPayload<ExtraData.User>].self, forKey: .members)
         membership = try container.decodeIfPresent(MemberPayload<ExtraData.User>.self, forKey: .membership)
-        messages = try container.decode([MessagePayload<ExtraData>].self, forKey: .messages)
-        pinnedMessages = try container.decode([MessagePayload<ExtraData>].self, forKey: .pinnedMessages)
-        channelReads = try container.decodeIfPresent([ChannelReadPayload<ExtraData>].self, forKey: .channelReads) ?? []
+        messages = try container.decode([MessagePayload].self, forKey: .messages)
+        pinnedMessages = try container.decode([MessagePayload].self, forKey: .pinnedMessages)
+        channelReads = try container.decodeIfPresent([ChannelReadPayload].self, forKey: .channelReads) ?? []
     }
     
     // MARK: - For testing
     
     init(
-        channel: ChannelDetailPayload<ExtraData>,
+        channel: ChannelDetailPayload,
         watcherCount: Int,
         watchers: [UserPayload<ExtraData.User>]?,
         members: [MemberPayload<ExtraData.User>],
         membership: MemberPayload<ExtraData.User>?,
-        messages: [MessagePayload<ExtraData>],
-        pinnedMessages: [MessagePayload<ExtraData>],
-        channelReads: [ChannelReadPayload<ExtraData>]
+        messages: [MessagePayload],
+        pinnedMessages: [MessagePayload],
+        channelReads: [ChannelReadPayload]
     ) {
         self.channel = channel
         self.watcherCount = watcherCount
@@ -72,7 +72,7 @@ struct ChannelPayload<ExtraData: ExtraDataTypes>: Decodable {
     }
 }
 
-struct ChannelDetailPayload<ExtraData: ExtraDataTypes>: Decodable {
+struct ChannelDetailPayload: Decodable {
     let cid: ChannelId
     
     let name: String?
@@ -95,18 +95,18 @@ struct ChannelDetailPayload<ExtraData: ExtraDataTypes>: Decodable {
     public let updatedAt: Date
     
     /// A creator of the channel.
-    public let createdBy: UserPayload<ExtraData.User>?
+    public let createdBy: UserPayload?
     /// A config.
     public let config: ChannelConfig
     /// Checks if the channel is frozen.
     public let isFrozen: Bool
     
-    let members: [MemberPayload<ExtraData.User>]?
+    let members: [MemberPayload]?
     
     let memberCount: Int
     
     /// A list of users to invite in the channel.
-    let invitedMembers: [MemberPayload<ExtraData.User>] = [] // TODO?
+    let invitedMembers: [MemberPayload] = [] // TODO?
     
     /// The team the channel belongs to. You need to enable multi-tenancy if you want to use this, else it'll be nil.
     /// Refer to [docs](https://getstream.io/chat/docs/multi_tenant_chat/?language=swift) for more info.
@@ -129,23 +129,21 @@ struct ChannelDetailPayload<ExtraData: ExtraDataTypes>: Decodable {
         createdAt = try container.decode(Date.self, forKey: .createdAt)
         updatedAt = try container.decode(Date.self, forKey: .updatedAt)
         deletedAt = try container.decodeIfPresent(Date.self, forKey: .deletedAt)
-        createdBy = try container.decodeIfPresent(UserPayload<ExtraData.User>.self, forKey: .createdBy)
+        createdBy = try container.decodeIfPresent(UserPayload.self, forKey: .createdBy)
         lastMessageAt = try container.decodeIfPresent(Date.self, forKey: .lastMessageAt)
         isFrozen = try container.decode(Bool.self, forKey: .frozen)
         team = try container.decodeIfPresent(String.self, forKey: .team)
         memberCount = try container.decodeIfPresent(Int.self, forKey: .memberCount) ?? 0
         
-        members = try container.decodeIfPresent([MemberPayload<ExtraData.User>].self, forKey: .members)
+        members = try container.decodeIfPresent([MemberPayload].self, forKey: .members)
         
         cooldownDuration = try container.decodeIfPresent(Int.self, forKey: .cooldownDuration) ?? 0
         
-        extraData = try ExtraData.Channel(from: decoder)
-        
         if var payload = try? CustomData(from: decoder) {
             payload.removeValues(forKeys: ChannelCodingKeys.allCases.map(\.rawValue))
-            extraDataMap = payload
+            extraData = payload
         } else {
-            extraDataMap = [:]
+            extraData = [:]
         }
     }
     
@@ -155,26 +153,24 @@ struct ChannelDetailPayload<ExtraData: ExtraDataTypes>: Decodable {
         cid: ChannelId,
         name: String?,
         imageURL: URL?,
-        extraData: ExtraData.Channel,
-        extraDataMap: CustomData,
+        extraData: CustomData,
         typeRawValue: String,
         lastMessageAt: Date?,
         createdAt: Date,
         deletedAt: Date?,
         updatedAt: Date,
-        createdBy: UserPayload<ExtraData.User>?,
+        createdBy: UserPayload?,
         config: ChannelConfig,
         isFrozen: Bool,
         memberCount: Int,
         team: String?,
-        members: [MemberPayload<ExtraData.User>]?,
+        members: [MemberPayload]?,
         cooldownDuration: Int
     ) {
         self.cid = cid
         self.name = name
         self.imageURL = imageURL
         self.extraData = extraData
-        self.extraDataMap = extraDataMap
         self.typeRawValue = typeRawValue
         self.lastMessageAt = lastMessageAt
         self.createdAt = createdAt
@@ -190,7 +186,7 @@ struct ChannelDetailPayload<ExtraData: ExtraDataTypes>: Decodable {
     }
 }
 
-struct ChannelReadPayload<ExtraData: ExtraDataTypes>: Decodable {
+struct ChannelReadPayload: Decodable {
     private enum CodingKeys: String, CodingKey {
         case user
         case lastReadAt = "last_read"
@@ -198,23 +194,11 @@ struct ChannelReadPayload<ExtraData: ExtraDataTypes>: Decodable {
     }
     
     /// A user (see `User`).
-    let user: UserPayload<ExtraData.User>
+    let user: UserPayload
     /// A last read date by the user.
     public let lastReadAt: Date
     /// Unread message count for the user.
     public let unreadMessagesCount: Int
-    
-//    /// Init a message read.
-//    ///
-//    /// - Parameters:
-//    ///   - user: a user.
-//    ///   - lastReadDate: the last read date.
-//    ///   - unreadMessages: Unread message count
-//    init(user: UserPayload<ExtraData.User>, lastReadDate: Date, unreadMessagesCount: Int) {
-//        self.user = user
-//        self.lastReadDate = lastReadDate
-//        self.unreadMessagesCount = unreadMessagesCount
-//    }
 }
 
 /// A channel config.

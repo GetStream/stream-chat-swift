@@ -13,7 +13,7 @@ public protocol _ChatChannelListItemViewSwiftUIView: View {
 }
 
 @available(iOS 13.0, *)
-extension _ChatChannelListItemView {
+extension ChatChannelListItemView {
     /// Data source of `_ChatChannelListItemView` represented as `ObservedObject`.
     public typealias ObservedObject<Content: SwiftUIView> = SwiftUIWrapper<Content> where Content.ExtraData == ExtraData
 

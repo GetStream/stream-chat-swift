@@ -28,12 +28,12 @@ open class _QuotedChatMessageView<ExtraData: ExtraDataTypes>: _View, ThemeProvid
     /// The content of the view.
     public struct Content {
         /// The quoted message.
-        public let message: _ChatMessage<ExtraData>
+        public let message: _ChatMessage
         /// The avatar position in relation with the text message.
         public let avatarAlignment: QuotedAvatarAlignment
 
         public init(
-            message: _ChatMessage<ExtraData>,
+            message: _ChatMessage,
             avatarAlignment: QuotedAvatarAlignment
         ) {
             self.message = message
@@ -210,7 +210,7 @@ open class _QuotedChatMessageView<ExtraData: ExtraDataTypes>: _View, ThemeProvid
     /// Override this function if you want to provide custom logic to present
     /// the attachments preview of the message, or if you want to support your custom attachment.
     /// - Parameter message: The message that contains all the attachments.
-    open func setAttachmentPreview(for message: _ChatMessage<ExtraData>) {
+    open func setAttachmentPreview(for message: _ChatMessage) {
         if let filePayload = message.fileAttachments.first?.payload {
             attachmentPreviewView.contentMode = .scaleAspectFit
             attachmentPreviewView.image = appearance.images.fileIcons[filePayload.file.type] ?? appearance.images.fileFallback

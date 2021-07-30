@@ -173,7 +173,7 @@ open class _ChatMessageListView<ExtraData: ExtraDataTypes>: UITableView, Customi
     
     /// Updates the table view data with given `changes`.
     open func updateMessages(
-        with changes: [ListChange<_ChatMessage<ExtraData>>],
+        with changes: [ListChange<ChatMessage>],
         completion: (() -> Void)? = nil
     ) {
         var shouldScrollToBottom = false

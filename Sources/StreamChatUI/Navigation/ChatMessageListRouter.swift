@@ -88,7 +88,7 @@ open class _ChatMessageListRouter<ExtraData: ExtraDataTypes>:
     open func showThread(
         messageId: MessageId,
         cid: ChannelId,
-        client: _ChatClient<ExtraData>
+        client: ChatClient
     ) {
         let threadVC = components.threadVC.init()
         threadVC.channelController = client.channelController(for: cid)
@@ -108,7 +108,7 @@ open class _ChatMessageListRouter<ExtraData: ExtraDataTypes>:
     ///   message has multiple previewable attachments.
     ///
     open func showGallery(
-        message: _ChatMessage<ExtraData>,
+        message: _ChatMessage,
         initialAttachmentId: AttachmentId,
         previews: [GalleryItemPreview]
     ) {

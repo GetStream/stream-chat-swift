@@ -326,7 +326,7 @@ final class UserUpdater_Tests: StressTestCase {
         
         // Simulate API response with failure.
         let error = TestError()
-        apiClient.test_simulateResponse(Result<FlagUserPayload<ExtraData.User>, Error>.failure(error))
+        apiClient.test_simulateResponse(Result<FlagUserPayload, Error>.failure(error))
         
         // Assert the completion is called with the error
         AssertAsync.willBeEqual(completionCalledError as? TestError, error)

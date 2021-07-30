@@ -10,7 +10,7 @@ typealias UserConnectionProvider = _UserConnectionProvider<NoExtraData>
 
 /// The type designed to provider a `Token` to the `ChatClient` when it asks for it.
 struct _UserConnectionProvider<ExtraData: ExtraDataTypes> {
-    let getToken: (_ client: _ChatClient<ExtraData>, _ completion: @escaping (Result<Token, Error>) -> Void) -> Void
+    let getToken: (_ client: ChatClient, _ completion: @escaping (Result<Token, Error>) -> Void) -> Void
 }
 
 extension _UserConnectionProvider {
@@ -72,7 +72,7 @@ extension _UserConnectionProvider {
     /// - Parameter handler: The closure which should get the token and pass it to the `completion`.
     /// - Returns: The new `TokenProvider` instance.
     static func closure(
-        _ handler: @escaping (_ client: _ChatClient<ExtraData>, _ completion: @escaping (Result<Token, Error>) -> Void) -> Void
+        _ handler: @escaping (_ client: ChatClient, _ completion: @escaping (Result<Token, Error>) -> Void) -> Void
     ) -> Self {
         .init(getToken: handler)
     }

@@ -16,7 +16,7 @@ open class _ChatChannelAvatarView<ExtraData: ExtraDataTypes>: _View, ThemeProvid
         .withoutAutoresizingMaskConstraints
 
     /// The data this view component shows.
-    open var content: (channel: _ChatChannel<ExtraData>?, currentUserId: UserId?) {
+    open var content: (channel: ChatChannel?, currentUserId: UserId?) {
         didSet { updateContentIfNeeded() }
     }
 

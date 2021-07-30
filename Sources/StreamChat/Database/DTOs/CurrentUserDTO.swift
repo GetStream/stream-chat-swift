@@ -61,7 +61,7 @@ extension CurrentUserDTO {
 }
 
 extension NSManagedObjectContext: CurrentUserDatabaseSession {
-    func saveCurrentUser<ExtraData: ExtraDataTypes>(payload: CurrentUserPayload<ExtraData>) throws -> CurrentUserDTO {
+    func saveCurrentUser<ExtraData: ExtraDataTypes>(payload: CurrentUserPayload) throws -> CurrentUserDTO {
         let dto = CurrentUserDTO.loadOrCreate(context: self)
         dto.user = try saveUser(payload: payload)
 
@@ -147,7 +147,7 @@ extension NSManagedObjectContext: CurrentUserDatabaseSession {
 
 extension CurrentUserDTO {
     /// Snapshots the current state of `CurrentUserDTO` and returns an immutable model object from it.
-    func asModel<ExtraData: ExtraDataTypes>() -> _CurrentChatUser<ExtraData> { .create(fromDTO: self) }
+    func asModel<ExtraData: ExtraDataTypes>() -> CurrentChatUser { .create(fromDTO: self) }
 }
 
 extension _CurrentChatUser {
@@ -178,11 +178,11 @@ extension _CurrentChatUser {
             extraDataMap = [:]
         }
 
-        let mutedUsers: [_ChatUser<ExtraData.User>] = dto.mutedUsers.map { $0.asModel() }
-        let flaggedUsers: [_ChatUser<ExtraData.User>] = dto.flaggedUsers.map { $0.asModel() }
+        let mutedUsers: [ChatUser] = dto.mutedUsers.map { $0.asModel() }
+        let flaggedUsers: [ChatUser] = dto.flaggedUsers.map { $0.asModel() }
         let flaggedMessagesIDs: [MessageId] = dto.flaggedMessages.map(\.id)
 
-        let fetchMutedChannels: () -> Set<_ChatChannel<ExtraData>> = {
+        let fetchMutedChannels: () -> Set<ChatChannel> = {
             Set(
                 ChannelMuteDTO
                     .load(userId: user.id, context: context)

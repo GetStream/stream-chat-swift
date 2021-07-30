@@ -13,7 +13,7 @@ extension _ChatUserController {
     }
     
     /// A publisher emitting a new value every time the user changes.
-    public var userChangePublisher: AnyPublisher<EntityChange<_ChatUser<ExtraData.User>>, Never> {
+    public var userChangePublisher: AnyPublisher<EntityChange<ChatUser>, Never> {
         basePublishers.userChange.keepAlive(self)
     }
     
@@ -28,7 +28,7 @@ extension _ChatUserController {
         let state: CurrentValueSubject<DataController.State, Never>
         
         /// A backing subject for `userChangePublisher`.
-        let userChange: PassthroughSubject<EntityChange<_ChatUser<ExtraData.User>>, Never> = .init()
+        let userChange: PassthroughSubject<EntityChange<ChatUser>, Never> = .init()
         
         init(controller: _ChatUserController<ExtraData>) {
             self.controller = controller
@@ -47,7 +47,7 @@ extension _ChatUserController.BasePublishers: _ChatUserControllerDelegate {
 
     func userController(
         _ controller: _ChatUserController<ExtraData>,
-        didUpdateUser change: EntityChange<_ChatUser<ExtraData.User>>
+        didUpdateUser change: EntityChange<ChatUser>
     ) {
         userChange.send(change)
     }

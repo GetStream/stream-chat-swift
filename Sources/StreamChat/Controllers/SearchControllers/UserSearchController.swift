@@ -5,7 +5,7 @@
 import CoreData
 import Foundation
 
-extension _ChatClient {
+extension ChatClient {
     /// Creates a new `_ChatUserSearchController` with the provided user query.
     ///
     /// - Parameter query: The query specify the filter and sorting of the users the controller should fetch.
@@ -38,7 +38,7 @@ public typealias ChatUserSearchController = _ChatUserSearchController<NoExtraDat
 ///
 public class _ChatUserSearchController<ExtraData: ExtraDataTypes>: DataController, DelegateCallable, DataStoreProvider {
     /// The `ChatClient` instance this controller belongs to.
-    public let client: _ChatClient<ExtraData>
+    public let client: ChatClient
     
     /// Filter hash this controller observes.
     let explicitFilterHash = UUID().uuidString
@@ -63,7 +63,7 @@ public class _ChatUserSearchController<ExtraData: ExtraDataTypes>: DataControlle
     /// To observe changes of the users, set your class as a delegate of this controller or use the provided
     /// `Combine` publishers.
     ///
-    public var users: LazyCachedMapCollection<_ChatUser<ExtraData.User>> {
+    public var users: LazyCachedMapCollection<ChatUser> {
         startUserListObserverIfNeeded()
         return userListObserver.items
     }
@@ -75,7 +75,7 @@ public class _ChatUserSearchController<ExtraData: ExtraDataTypes>: DataControlle
         )
     
     /// Used for observing the database for changes.
-    lazy var userListObserver: ListDatabaseObserver<_ChatUser<ExtraData.User>, UserDTO> = {
+    lazy var userListObserver: ListDatabaseObserver<ChatUser, UserDTO> = {
         let request = UserDTO.userListFetchRequest(query: query)
         
         let observer = self.environment.createUserListDatabaseObserver(
@@ -106,7 +106,7 @@ public class _ChatUserSearchController<ExtraData: ExtraDataTypes>: DataControlle
     
     private let environment: Environment
     
-    init(client: _ChatClient<ExtraData>, environment: Environment = .init()) {
+    init(client: ChatClient, environment: Environment = .init()) {
         self.client = client
         self.environment = environment
     }
@@ -245,9 +245,9 @@ extension _ChatUserSearchController {
         var createUserListDatabaseObserver: (
             _ context: NSManagedObjectContext,
             _ fetchRequest: NSFetchRequest<UserDTO>,
-            _ itemCreator: @escaping (UserDTO) -> _ChatUser<ExtraData.User>
+            _ itemCreator: @escaping (UserDTO) -> ChatUser
         )
-            -> ListDatabaseObserver<_ChatUser<ExtraData.User>, UserDTO> = {
+            -> ListDatabaseObserver<ChatUser, UserDTO> = {
                 ListDatabaseObserver(context: $0, fetchRequest: $1, itemCreator: $2)
             }
     }
@@ -281,14 +281,14 @@ public protocol _ChatUserSearchControllerDelegate: DataControllerStateDelegate {
     ///
     func controller(
         _ controller: _ChatUserSearchController<ExtraData>,
-        didChangeUsers changes: [ListChange<_ChatUser<ExtraData.User>>]
+        didChangeUsers changes: [ListChange<ChatUser>]
     )
 }
 
 public extension _ChatUserSearchControllerDelegate {
     func controller(
         _ controller: _ChatUserSearchController<ExtraData>,
-        didChangeUsers changes: [ListChange<_ChatUser<ExtraData.User>>]
+        didChangeUsers changes: [ListChange<ChatUser>]
     ) {}
 }
 
@@ -320,7 +320,7 @@ public extension ChatUserSearchControllerDelegate {
 // MARK: - Delegate type eraser
 
 class AnyUserSearchControllerDelegate<ExtraData: ExtraDataTypes>: _ChatUserSearchControllerDelegate {
-    private var _controllerDidChangeUsers: (_ChatUserSearchController<ExtraData>, [ListChange<_ChatUser<ExtraData.User>>])
+    private var _controllerDidChangeUsers: (_ChatUserSearchController<ExtraData>, [ListChange<ChatUser>])
         -> Void
     private var _controllerDidChangeState: (DataController, DataController.State) -> Void
     
@@ -329,7 +329,7 @@ class AnyUserSearchControllerDelegate<ExtraData: ExtraDataTypes>: _ChatUserSearc
     init(
         wrappedDelegate: AnyObject?,
         controllerDidChangeState: @escaping (DataController, DataController.State) -> Void,
-        controllerDidChangeUsers: @escaping (_ChatUserSearchController<ExtraData>, [ListChange<_ChatUser<ExtraData.User>>])
+        controllerDidChangeUsers: @escaping (_ChatUserSearchController<ExtraData>, [ListChange<ChatUser>])
             -> Void
     ) {
         self.wrappedDelegate = wrappedDelegate
@@ -343,7 +343,7 @@ class AnyUserSearchControllerDelegate<ExtraData: ExtraDataTypes>: _ChatUserSearc
     
     func controller(
         _ controller: _ChatUserSearchController<ExtraData>,
-        didChangeUsers changes: [ListChange<_ChatUser<ExtraData.User>>]
+        didChangeUsers changes: [ListChange<ChatUser>]
     ) {
         _controllerDidChangeUsers(controller, changes)
     }

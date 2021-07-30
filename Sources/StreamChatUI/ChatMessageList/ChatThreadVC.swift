@@ -26,7 +26,7 @@ open class _ChatThreadVC<ExtraData: ExtraDataTypes>:
     UIGestureRecognizerDelegate,
     ChatMessageListScrollOverlayDataSource {
     /// Controller for observing data changes within the channel
-    open var channelController: _ChatChannelController<ExtraData>!
+    open var channelController: ChatChannelController!
 
     /// Controller for observing data changes within the parent thread message.
     open var messageController: _ChatMessageController<ExtraData>!
@@ -180,7 +180,7 @@ open class _ChatThreadVC<ExtraData: ExtraDataTypes>:
     }
 
     /// Returns the attachment view injector class for the message at given `ChatMessage`
-    open func attachmentViewInjectorClass(for message: _ChatMessage<ExtraData>) -> _AttachmentViewInjector<ExtraData>.Type? {
+    open func attachmentViewInjectorClass(for message: _ChatMessage) -> _AttachmentViewInjector<ExtraData>.Type? {
         components.attachmentViewCatalog.attachmentViewInjectorClassFor(message: message, components: components)
     }
 
@@ -198,7 +198,7 @@ open class _ChatThreadVC<ExtraData: ExtraDataTypes>:
 
     open func cellLayoutOptionsForMessage(
         at indexPath: IndexPath,
-        messages: AnyRandomAccessCollection<_ChatMessage<ExtraData>>
+        messages: AnyRandomAccessCollection<ChatMessage>
     ) -> ChatMessageLayoutOptions {
         guard let channel = channelController.channel else { return [] }
 
@@ -209,7 +209,7 @@ open class _ChatThreadVC<ExtraData: ExtraDataTypes>:
         return layoutOptions
     }
     
-    public var messages: [_ChatMessage<ExtraData>] {
+    public var messages: [_ChatMessage] {
         /*
          Thread replies are evaluated from DTOs when converting `messageController.replies` to an array.
          Adding thread root message into replies would require `insert/append` API on lazy map which should
@@ -291,7 +291,7 @@ open class _ChatThreadVC<ExtraData: ExtraDataTypes>:
     }
 
     /// Updates the collection view data with given `changes`.
-    open func updateMessages(with changes: [ListChange<_ChatMessage<ExtraData>>], completion: (() -> Void)? = nil) {
+    open func updateMessages(with changes: [ListChange<ChatMessage>], completion: (() -> Void)? = nil) {
         listView.updateMessages(with: changes, completion: completion)
     }
 
@@ -377,11 +377,11 @@ open class _ChatThreadVC<ExtraData: ExtraDataTypes>:
     
     public func messageController(
         _ controller: _ChatMessageController<ExtraData>,
-        didChangeMessage change: EntityChange<_ChatMessage<ExtraData>>
+        didChangeMessage change: EntityChange<ChatMessage>
     ) {
         let indexPath = IndexPath(row: messageController.replies.count, section: 0)
         
-        let listChange: ListChange<_ChatMessage<ExtraData>>
+        let listChange: ListChange<ChatMessage>
         switch change {
         case let .create(item):
             listChange = .insert(item, index: indexPath)
@@ -396,7 +396,7 @@ open class _ChatThreadVC<ExtraData: ExtraDataTypes>:
 
     open func messageController(
         _ controller: _ChatMessageController<ExtraData>,
-        didChangeReplies changes: [ListChange<_ChatMessage<ExtraData>>]
+        didChangeReplies changes: [ListChange<ChatMessage>]
     ) {
         updateMessages(with: changes)
     }
@@ -405,7 +405,7 @@ open class _ChatThreadVC<ExtraData: ExtraDataTypes>:
 
     open func chatMessageActionsVC(
         _ vc: _ChatMessageActionsVC<ExtraData>,
-        message: _ChatMessage<ExtraData>,
+        message: _ChatMessage,
         didTapOnActionItem actionItem: ChatMessageActionItem
     ) {
         switch actionItem {
@@ -480,7 +480,7 @@ open class _ChatThreadVC<ExtraData: ExtraDataTypes>:
         }
     }
 
-    open func messageForIndexPath(_ indexPath: IndexPath) -> _ChatMessage<ExtraData> {
+    open func messageForIndexPath(_ indexPath: IndexPath) -> _ChatMessage {
         messages[indexPath.item]
     }
     
@@ -510,7 +510,7 @@ open class _ChatThreadVC<ExtraData: ExtraDataTypes>:
 
 extension ChatThreadVC: SwiftUIRepresentable {
     public var content: (
-        channelController: _ChatChannelController<ExtraData>,
+        channelController: ChatChannelController,
         messageController: _ChatMessageController<ExtraData>
     ) {
         get {

@@ -5,56 +5,38 @@
 import CoreData
 import Foundation
 
-public extension _ChatClient {
+public extension ChatClient {
     /// Creates a new `_ChatUserController` for the user with the provided `userId`.
     ///
     /// - Parameter userId: The user identifier.
     /// - Returns: A new instance of `_ChatUserController`.
-    func userController(userId: UserId) -> _ChatUserController<ExtraData> {
+    func userController(userId: UserId) -> ChatUserController {
         .init(userId: userId, client: self)
     }
 }
-
-/// `ChatUserController` is a controller class which allows mutating and observing changes of a specific chat user.
-///
-/// `ChatUserController` objects are lightweight, and they can be used for both, continuous data change observations,
-/// and for quick user actions (like mute/unmute).
-///
-/// - Note: `ChatUserController` is a typealias of `_ChatUserController` with default extra data. If you're using custom
-/// extra data, create your own typealias of `_ChatUserController`.
-///
-/// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/Cheat-Sheet#working-with-extra-data).
-///
-public typealias ChatUserController = _ChatUserController<NoExtraData>
 
 /// `_ChatUserController` is a controller class which allows mutating and observing changes of a specific chat user.
 ///
 /// `_ChatUserController` objects are lightweight, and they can be used for both, continuous data change observations,
 /// and for quick user actions (like mute/unmute).
-///
-/// - Note: `ChatUserController` is a typealias of `_ChatUserController` with default extra data. If you're using custom
-/// extra data, create your own typealias of `_ChatUserController`.
-///
-/// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/Cheat-Sheet#working-with-extra-data).
-///
-public class _ChatUserController<ExtraData: ExtraDataTypes>: DataController, DelegateCallable, DataStoreProvider {
+public class ChatUserController: DataController, DelegateCallable, DataStoreProvider {
     /// The identifier of tge user this controller observes.
     public let userId: UserId
     
     /// The `ChatClient` instance this controller belongs to.
-    public let client: _ChatClient<ExtraData>
+    public let client: ChatClient
     
     /// The user the controller represents.
     ///
     /// To observe changes of the user, set your class as a delegate of this controller or use the provided
     /// `Combine` publishers.
-    public var user: _ChatUser<ExtraData.User>? {
+    public var user: ChatUser? {
         startObservingIfNeeded()
         return userObserver.item
     }
     
     /// A type-erased delegate.
-    var multicastDelegate: MulticastDelegate<AnyChatUserControllerDelegate<ExtraData>> = .init() {
+    var multicastDelegate: MulticastDelegate<AnyChatUserControllerDelegate> = .init() {
         didSet {
             stateMulticastDelegate.mainDelegate = multicastDelegate.mainDelegate
             stateMulticastDelegate.additionalDelegates = multicastDelegate.additionalDelegates
@@ -88,7 +70,7 @@ public class _ChatUserController<ExtraData: ExtraDataTypes>: DataController, Del
     ///   - environment: Environment for this controller.
     init(
         userId: UserId,
-        client: _ChatClient<ExtraData>,
+        client: ChatClient,
         environment: Environment = .init()
     ) {
         self.userId = userId
@@ -119,8 +101,8 @@ public class _ChatUserController<ExtraData: ExtraDataTypes>: DataController, Del
     /// - Parameter delegate: The object used as a delegate. It's referenced weakly, so you need to keep the object
     /// alive if you want keep receiving updates.
     ///
-    public func setDelegate<Delegate: _ChatUserControllerDelegate>(_ delegate: Delegate)
-        where Delegate.ExtraData == ExtraData {
+    public func setDelegate<Delegate: ChatUserControllerDelegate>(_ delegate: Delegate)
+        where Delegate == ExtraData {
         multicastDelegate.mainDelegate = AnyChatUserControllerDelegate(delegate)
     }
     
@@ -133,7 +115,7 @@ public class _ChatUserController<ExtraData: ExtraDataTypes>: DataController, Del
         )
     }
     
-    private func createUserObserver() -> EntityDatabaseObserver<_ChatUser<ExtraData.User>, UserDTO> {
+    private func createUserObserver() -> EntityDatabaseObserver<ChatUser, UserDTO> {
         environment.userObserverBuilder(
             client.databaseContainer.viewContext,
             UserDTO.user(withID: userId),
@@ -157,7 +139,7 @@ public class _ChatUserController<ExtraData: ExtraDataTypes>: DataController, Del
 
 // MARK: - User actions
 
-public extension _ChatUserController {
+public extension ChatUserController {
     /// Mutes the user this controller manages.
     /// - Parameter completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
     ///                         If request fails, the completion will be called with an error.
@@ -203,7 +185,7 @@ public extension _ChatUserController {
     }
 }
 
-extension _ChatUserController {
+extension ChatUserController {
     struct Environment {
         var userUpdaterBuilder: (
             _ database: DatabaseContainer,
@@ -213,9 +195,9 @@ extension _ChatUserController {
         var userObserverBuilder: (
             _ context: NSManagedObjectContext,
             _ fetchRequest: NSFetchRequest<UserDTO>,
-            _ itemCreator: @escaping (UserDTO) -> _ChatUser<ExtraData.User>,
+            _ itemCreator: @escaping (UserDTO) -> ChatUser,
             _ fetchedResultsControllerType: NSFetchedResultsController<UserDTO>.Type
-        ) -> EntityDatabaseObserver<_ChatUser<ExtraData.User>, UserDTO> = EntityDatabaseObserver.init
+        ) -> EntityDatabaseObserver<ChatUser, UserDTO> = EntityDatabaseObserver.init
     }
 }
 
@@ -253,38 +235,14 @@ public extension ChatChannelControllerDelegate {
     ) {}
 }
 
-// MARK: Generic Delegates
-
-/// `ChatChannelController` uses this protocol to communicate changes to its delegate.
-///
-/// If you're **not** using custom extra data types, you can use a convenience version of this protocol
-/// named `ChatChannelControllerDelegate`, which hides the generic types, and make the usage easier.
-///
-public protocol _ChatUserControllerDelegate: DataControllerStateDelegate {
-    associatedtype ExtraData: ExtraDataTypes
-    
-    /// The controller observed a change in the `_ChatUser<ExtraData.User>` entity.
-    func userController(
-        _ controller: _ChatUserController<ExtraData>,
-        didUpdateUser change: EntityChange<_ChatUser<ExtraData.User>>
-    )
-}
-
-public extension _ChatChannelControllerDelegate {
-    func userController(
-        _ controller: _ChatUserController<ExtraData>,
-        didUpdateUser change: EntityChange<_ChatUser<ExtraData.User>>
-    ) {}
-}
-
 // MARK: Type erased Delegate
 
-class AnyChatUserControllerDelegate<ExtraData: ExtraDataTypes>: _ChatChannelControllerDelegate {
+class AnyChatUserControllerDelegate: ChatChannelControllerDelegate {
     private var _controllerDidChangeState: (DataController, DataController.State) -> Void
     
     private var _controllerDidUpdateUser: (
         _ChatUserController<ExtraData>,
-        EntityChange<_ChatUser<ExtraData.User>>
+        EntityChange<ChatUser>
     ) -> Void
     
     weak var wrappedDelegate: AnyObject?
@@ -294,7 +252,7 @@ class AnyChatUserControllerDelegate<ExtraData: ExtraDataTypes>: _ChatChannelCont
         controllerDidChangeState: @escaping (DataController, DataController.State) -> Void,
         controllerDidUpdateUser: @escaping (
             _ChatUserController<ExtraData>,
-            EntityChange<_ChatUser<ExtraData.User>>
+            EntityChange<ChatUser>
         ) -> Void
     ) {
         self.wrappedDelegate = wrappedDelegate
@@ -308,7 +266,7 @@ class AnyChatUserControllerDelegate<ExtraData: ExtraDataTypes>: _ChatChannelCont
     
     func userController(
         _ controller: _ChatUserController<ExtraData>,
-        didUpdateUser change: EntityChange<_ChatUser<ExtraData.User>>
+        didUpdateUser change: EntityChange<ChatUser>
     ) {
         _controllerDidUpdateUser(controller, change)
     }

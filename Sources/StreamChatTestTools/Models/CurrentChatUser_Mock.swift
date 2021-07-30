@@ -22,11 +22,11 @@ public extension _CurrentChatUser {
         extraDataMap: CustomData = .defaultValue,
         devices: [Device] = [],
         currentDevice: Device? = nil,
-        mutedUsers: Set<_ChatUser<ExtraData.User>> = [],
-        flaggedUsers: Set<_ChatUser<ExtraData.User>> = [],
+        mutedUsers: Set<ChatUser> = [],
+        flaggedUsers: Set<ChatUser> = [],
         flaggedMessageIDs: Set<MessageId> = [],
         unreadCount: UnreadCount = .noUnread,
-        mutedChannels: Set<_ChatChannel<ExtraData>> = []
+        mutedChannels: Set<ChatChannel> = []
     ) -> _CurrentChatUser {
         .init(
             id: id,

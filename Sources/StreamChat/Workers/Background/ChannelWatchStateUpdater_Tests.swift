@@ -80,7 +80,7 @@ class ChannelWatchStateUpdater_Tests: StressTestCase {
             pageSize: 1
         )
         
-        let endpoint: Endpoint<ChannelListPayload<ExtraData>> = .channels(query: query)
+        let endpoint: Endpoint<ChannelListPayload> = .channels(query: query)
         
         // Assert APIClient is called with the correct endpoint
         AssertAsync.willBeEqual(apiClient.request_endpoint, AnyEndpoint(endpoint))

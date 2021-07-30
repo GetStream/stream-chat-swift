@@ -6,19 +6,19 @@ import Combine
 import Foundation
 
 @available(iOS 13, *)
-extension _ChatChannelController {
+extension ChatChannelController {
     /// A publisher emitting a new value every time the state of the controller changes.
     public var statePublisher: AnyPublisher<DataController.State, Never> {
         basePublishers.state.keepAlive(self)
     }
     
     /// A publisher emitting a new value every time the channel changes.
-    public var channelChangePublisher: AnyPublisher<EntityChange<_ChatChannel<ExtraData>>, Never> {
+    public var channelChangePublisher: AnyPublisher<EntityChange<ChatChannel>, Never> {
         basePublishers.channelChange.keepAlive(self)
     }
     
     /// A publisher emitting a new value every time the list of the messages matching the query changes.
-    public var messagesChangesPublisher: AnyPublisher<[ListChange<_ChatMessage<ExtraData>>], Never> {
+    public var messagesChangesPublisher: AnyPublisher<[ListChange<ChatMessage>], Never> {
         basePublishers.messagesChanges.keepAlive(self)
     }
     
@@ -28,7 +28,7 @@ extension _ChatChannelController {
     }
     
     /// A publisher emitting a new value every time typing users change.
-    public var typingUsersPublisher: AnyPublisher<Set<_ChatUser<ExtraData.User>>, Never> {
+    public var typingUsersPublisher: AnyPublisher<Set<ChatUser>, Never> {
         basePublishers.typingUsers.keepAlive(self)
     }
 
@@ -43,18 +43,18 @@ extension _ChatChannelController {
         let state: CurrentValueSubject<DataController.State, Never>
         
         /// A backing subject for `channelChangePublisher`.
-        let channelChange: PassthroughSubject<EntityChange<_ChatChannel<ExtraData>>, Never> = .init()
+        let channelChange: PassthroughSubject<EntityChange<ChatChannel>, Never> = .init()
         
         /// A backing subject for `messagesChangesPublisher`.
-        let messagesChanges: PassthroughSubject<[ListChange<_ChatMessage<ExtraData>>], Never> = .init()
+        let messagesChanges: PassthroughSubject<[ListChange<ChatMessage>], Never> = .init()
         
         /// A backing subject for `memberEventPublisher`.
         let memberEvent: PassthroughSubject<MemberEvent, Never> = .init()
         
         /// A backing subject for `typingUsersPublisher`.
-        let typingUsers: PassthroughSubject<Set<_ChatUser<ExtraData.User>>, Never> = .init()
+        let typingUsers: PassthroughSubject<Set<ChatUser>, Never> = .init()
                 
-        init(controller: _ChatChannelController<ExtraData>) {
+        init(controller: ChatChannelController) {
             self.controller = controller
             state = .init(controller.state)
             
@@ -64,32 +64,32 @@ extension _ChatChannelController {
 }
 
 @available(iOS 13, *)
-extension _ChatChannelController.BasePublishers: _ChatChannelControllerDelegate {
+extension ChatChannelController.BasePublishers: _ChatChannelControllerDelegate {
     func controller(_ controller: DataController, didChangeState state: DataController.State) {
         self.state.send(state)
     }
 
     func channelController(
-        _ channelController: _ChatChannelController<ExtraData>,
-        didUpdateChannel channel: EntityChange<_ChatChannel<ExtraData>>
+        _ channelController: ChatChannelController,
+        didUpdateChannel channel: EntityChange<ChatChannel>
     ) {
         channelChange.send(channel)
     }
 
     func channelController(
-        _ channelController: _ChatChannelController<ExtraData>,
-        didUpdateMessages changes: [ListChange<_ChatMessage<ExtraData>>]
+        _ channelController: ChatChannelController,
+        didUpdateMessages changes: [ListChange<ChatMessage>]
     ) {
         messagesChanges.send(changes)
     }
 
-    func channelController(_ channelController: _ChatChannelController<ExtraData>, didReceiveMemberEvent event: MemberEvent) {
+    func channelController(_ channelController: ChatChannelController, didReceiveMemberEvent event: MemberEvent) {
         memberEvent.send(event)
     }
     
     func channelController(
-        _ channelController: _ChatChannelController<ExtraData>,
-        didChangeTypingUsers typingUsers: Set<_ChatUser<ExtraData.User>>
+        _ channelController: ChatChannelController,
+        didChangeTypingUsers typingUsers: Set<ChatUser>
     ) {
         self.typingUsers.send(typingUsers)
     }

@@ -13,7 +13,7 @@ public struct HealthCheckEvent: ConnectionEvent, EventWithPayload {
     
     var payload: Any
     
-    init<ExtraData: ExtraDataTypes>(from eventResponse: EventPayload<ExtraData>) throws {
+    init<ExtraData: ExtraDataTypes>(from eventResponse: EventPayload) throws {
         guard let connectionId = eventResponse.connectionId else {
             throw ClientError.EventDecoding(missingValue: "connectionId", for: Self.self)
         }

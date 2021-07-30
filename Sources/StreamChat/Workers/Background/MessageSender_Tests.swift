@@ -94,15 +94,15 @@ class MessageSender_Tests: StressTestCase {
             message3Id = message3.id
         }
         
-        let message1Payload: MessageRequestBody<ExtraData> = try XCTUnwrap(
+        let message1Payload: MessageRequestBody = try XCTUnwrap(
             database.viewContext.message(id: message1Id)?
                 .asRequestBody()
         )
-        let message2Payload: MessageRequestBody<ExtraData> = try XCTUnwrap(
+        let message2Payload: MessageRequestBody = try XCTUnwrap(
             database.viewContext.message(id: message2Id)?
                 .asRequestBody()
         )
-        let message3Payload: MessageRequestBody<ExtraData> = try XCTUnwrap(
+        let message3Payload: MessageRequestBody = try XCTUnwrap(
             database.viewContext.message(id: message3Id)?
                 .asRequestBody()
         )
@@ -121,7 +121,7 @@ class MessageSender_Tests: StressTestCase {
         }
 
         // Simulate successful response for message1.
-        let dummyPayload: MessagePayload<ExtraData>.Boxed = .init(
+        let dummyPayload: MessagePayload.Boxed = .init(
             message: .dummy(messageId: message1Id, authorUserId: .anonymous)
         )
         
@@ -164,7 +164,7 @@ class MessageSender_Tests: StressTestCase {
             messageId = message.id
         }
         
-        let messagePayload: MessageRequestBody<ExtraData> = try XCTUnwrap(
+        let messagePayload: MessageRequestBody = try XCTUnwrap(
             database.viewContext.message(id: messageId)?.asRequestBody()
         )
     
@@ -193,7 +193,7 @@ class MessageSender_Tests: StressTestCase {
             messageId = message.id
         }
         
-        let messagePayload: MessageRequestBody<ExtraData> = try XCTUnwrap(
+        let messagePayload: MessageRequestBody = try XCTUnwrap(
             database.viewContext.message(id: messageId)?.asRequestBody()
         )
         
@@ -237,7 +237,7 @@ class MessageSender_Tests: StressTestCase {
         AssertAsync.willBeTrue(apiClient.request_endpoint != nil)
         
         // Simulate successful API response
-        let callback = apiClient.request_completion as! (Result<MessagePayload<ExtraData>.Boxed, Error>) -> Void
+        let callback = apiClient.request_completion as! (Result<MessagePayload.Boxed, Error>) -> Void
         callback(.success(.init(message: .dummy(messageId: message1Id, authorUserId: .anonymous))))
         
         // Check the temporary state is erased
@@ -268,7 +268,7 @@ class MessageSender_Tests: StressTestCase {
         AssertAsync.willBeTrue(apiClient.request_endpoint != nil)
         
         // Simulate error API response
-        let callback = apiClient.request_completion as! (Result<MessagePayload<ExtraData>.Boxed, Error>) -> Void
+        let callback = apiClient.request_completion as! (Result<MessagePayload.Boxed, Error>) -> Void
         callback(.failure(TestError()))
         
         // Check the state is eventually changed to `sendingFailed` but keeps the `locallyCreatedAt` value
@@ -320,7 +320,7 @@ class MessageSender_Tests: StressTestCase {
         }
         
         // Check the 1st API call
-        let message1Payload: MessageRequestBody<ExtraData> = try XCTUnwrap(
+        let message1Payload: MessageRequestBody = try XCTUnwrap(
             database.viewContext.message(id: message1Id)?
                 .asRequestBody()
         )
@@ -330,13 +330,13 @@ class MessageSender_Tests: StressTestCase {
         )
         
         // Simulate the first call response
-        var callback: ((Result<MessagePayload<ExtraData>.Boxed, Error>) -> Void) {
-            apiClient.request_completion as! (Result<MessagePayload<ExtraData>.Boxed, Error>) -> Void
+        var callback: ((Result<MessagePayload.Boxed, Error>) -> Void) {
+            apiClient.request_completion as! (Result<MessagePayload.Boxed, Error>) -> Void
         }
         callback(.success(.init(message: .dummy(messageId: message1Id, authorUserId: .anonymous))))
         
         // Check the 2nd API call
-        let message2Payload: MessageRequestBody<ExtraData> = try XCTUnwrap(
+        let message2Payload: MessageRequestBody = try XCTUnwrap(
             database.viewContext.message(id: message2Id)?
                 .asRequestBody()
         )
@@ -349,7 +349,7 @@ class MessageSender_Tests: StressTestCase {
         callback(.success(.init(message: .dummy(messageId: message1Id, authorUserId: .anonymous))))
 
         // Check the 3rd API call
-        let message3Payload: MessageRequestBody<ExtraData> = try XCTUnwrap(
+        let message3Payload: MessageRequestBody = try XCTUnwrap(
             database.viewContext.message(id: message3Id)?
                 .asRequestBody()
         )
@@ -424,11 +424,11 @@ class MessageSender_Tests: StressTestCase {
         AssertAsync.willBeEqual(apiClient.request_allRecordedCalls.count, 2)
         
         // Check the API calls are for the first messages from both channels
-        let channelA_message1Payload: MessageRequestBody<ExtraData> = try XCTUnwrap(
+        let channelA_message1Payload: MessageRequestBody = try XCTUnwrap(
             database.viewContext
                 .message(id: channelA_message1)?.asRequestBody()
         )
-        let channelB_message1Payload: MessageRequestBody<ExtraData> = try XCTUnwrap(
+        let channelB_message1Payload: MessageRequestBody = try XCTUnwrap(
             database.viewContext
                 .message(id: channelB_message1)?.asRequestBody()
         )
@@ -442,7 +442,7 @@ class MessageSender_Tests: StressTestCase {
 
         // Simulate successfull responses for both API calls
         apiClient.request_allRecordedCalls.forEach {
-            let callback = $0.completion as! (Result<MessagePayload<ExtraData>.Boxed, Error>) -> Void
+            let callback = $0.completion as! (Result<MessagePayload.Boxed, Error>) -> Void
             callback(.success(.init(message: .dummy(messageId: .unique, authorUserId: .anonymous))))
         }
                 
@@ -450,11 +450,11 @@ class MessageSender_Tests: StressTestCase {
         AssertAsync.willBeEqual(apiClient.request_allRecordedCalls.count, 2 + 2)
         
         // Check the API calls are for the second messages from both channels
-        let channelA_message2Payload: MessageRequestBody<ExtraData> = try XCTUnwrap(
+        let channelA_message2Payload: MessageRequestBody = try XCTUnwrap(
             database.viewContext
                 .message(id: channelA_message2)?.asRequestBody()
         )
-        let channelB_message2Payload: MessageRequestBody<ExtraData> = try XCTUnwrap(
+        let channelB_message2Payload: MessageRequestBody = try XCTUnwrap(
             database.viewContext
                 .message(id: channelB_message2)?.asRequestBody()
         )
@@ -488,9 +488,9 @@ class MessageSender_Tests: StressTestCase {
         AssertAsync.willBeTrue(apiClient.request_endpoint != nil)
         
         // Simulate successful API response with assigned attachment
-        let callback = apiClient.request_completion as! (Result<MessagePayload<ExtraData>.Boxed, Error>) -> Void
+        let callback = apiClient.request_completion as! (Result<MessagePayload.Boxed, Error>) -> Void
         let attachment: MessageAttachmentPayload = .dummy(type: .giphy, title: .unique)
-        let messagePayload: MessagePayload<ExtraData> = .dummy(
+        let messagePayload: MessagePayload = .dummy(
             messageId: messageId,
             attachments: [attachment],
             authorUserId: .unique
@@ -498,7 +498,7 @@ class MessageSender_Tests: StressTestCase {
         
         callback(.success(.init(message: messagePayload)))
 
-        var message: _ChatMessage<ExtraData>? {
+        var message: _ChatMessage? {
             database.viewContext.message(id: messageId)?.asModel()
         }
 

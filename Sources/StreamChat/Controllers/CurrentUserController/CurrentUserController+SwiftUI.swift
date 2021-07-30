@@ -16,7 +16,7 @@ extension _CurrentChatUserController {
         public let controller: _CurrentChatUserController
         
         /// The currently logged-in user.
-        @Published public private(set) var currentUser: _CurrentChatUser<ExtraData>?
+        @Published public private(set) var currentUser: CurrentChatUser?
         
         /// The unread messages and channels count for the current user.
         @Published public private(set) var unreadCount: UnreadCount = .noUnread
@@ -44,7 +44,7 @@ extension _CurrentChatUserController.ObservableObject: _CurrentChatUserControlle
     
     public func currentUserController(
         _ controller: _CurrentChatUserController<ExtraData>,
-        didChangeCurrentUser currentUser: EntityChange<_CurrentChatUser<ExtraData>>
+        didChangeCurrentUser currentUser: EntityChange<CurrentChatUser>
     ) {
         self.currentUser = controller.currentUser
     }

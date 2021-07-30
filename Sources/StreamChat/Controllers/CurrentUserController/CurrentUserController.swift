@@ -5,7 +5,7 @@
 import CoreData
 import Foundation
 
-public extension _ChatClient {
+public extension ChatClient {
     /// Creates a new `CurrentUserController` instance.
     ///
     /// - Returns: A new instance of `CurrentChatUserController`.
@@ -40,7 +40,7 @@ public typealias CurrentChatUserController = _CurrentChatUserController<NoExtraD
 ///
 public class _CurrentChatUserController<ExtraData: ExtraDataTypes>: DataController, DelegateCallable, DataStoreProvider {
     /// The `ChatClient` instance this controller belongs to.
-    public let client: _ChatClient<ExtraData>
+    public let client: ChatClient
     
     private let environment: Environment
     
@@ -68,7 +68,7 @@ public class _CurrentChatUserController<ExtraData: ExtraDataTypes>: DataControll
     
     /// The currently logged-in user. `nil` if the connection hasn't been fully established yet, or the connection
     /// wasn't successful.
-    public var currentUser: _CurrentChatUser<ExtraData>? {
+    public var currentUser: CurrentChatUser? {
         startObservingIfNeeded()
         return currentUserObserver.item
     }
@@ -95,7 +95,7 @@ public class _CurrentChatUserController<ExtraData: ExtraDataTypes>: DataControll
     ///   - client: The `Client` instance this controller belongs to.
     ///   - environment: The source of internal dependencies
     ///
-    init(client: _ChatClient<ExtraData>, environment: Environment = .init()) {
+    init(client: ChatClient, environment: Environment = .init()) {
         self.client = client
         self.environment = environment
     }
@@ -283,9 +283,9 @@ extension _CurrentChatUserController {
         var currentUserObserverBuilder: (
             _ context: NSManagedObjectContext,
             _ fetchRequest: NSFetchRequest<CurrentUserDTO>,
-            _ itemCreator: @escaping (CurrentUserDTO) -> _CurrentChatUser<ExtraData>,
+            _ itemCreator: @escaping (CurrentUserDTO) -> CurrentChatUser,
             _ fetchedResultsControllerType: NSFetchedResultsController<CurrentUserDTO>.Type
-        ) -> EntityDatabaseObserver<_CurrentChatUser<ExtraData>, CurrentUserDTO> = EntityDatabaseObserver.init
+        ) -> EntityDatabaseObserver<CurrentChatUser, CurrentUserDTO> = EntityDatabaseObserver.init
         
         var currentUserUpdaterBuilder = CurrentUserUpdater<ExtraData>.init
 
@@ -309,7 +309,7 @@ private extension EntityChange where Item == UnreadCount {
 }
 
 private extension _CurrentChatUserController {
-    func createUserObserver() -> EntityDatabaseObserver<_CurrentChatUser<ExtraData>, CurrentUserDTO> {
+    func createUserObserver() -> EntityDatabaseObserver<CurrentChatUser, CurrentUserDTO> {
         environment.currentUserObserverBuilder(
             client.databaseContainer.viewContext,
             CurrentUserDTO.defaultFetchRequest,
@@ -354,7 +354,7 @@ public protocol _CurrentChatUserControllerDelegate: AnyObject {
     /// The controller observed a change in the `CurrentUser` entity.
     func currentUserController(
         _ controller: _CurrentChatUserController<ExtraData>,
-        didChangeCurrentUser: EntityChange<_CurrentChatUser<ExtraData>>
+        didChangeCurrentUser: EntityChange<CurrentChatUser>
     )
 }
 
@@ -366,7 +366,7 @@ public extension _CurrentChatUserControllerDelegate {
     
     func currentUserController(
         _ controller: _CurrentChatUserController<ExtraData>,
-        didChangeCurrentUser: EntityChange<_CurrentChatUser<ExtraData>>
+        didChangeCurrentUser: EntityChange<CurrentChatUser>
     ) {}
 }
 
@@ -380,7 +380,7 @@ final class AnyCurrentUserControllerDelegate<ExtraData: ExtraDataTypes>: _Curren
     
     private var _controllerDidChangeCurrentUser: (
         _CurrentChatUserController<ExtraData>,
-        EntityChange<_CurrentChatUser<ExtraData>>
+        EntityChange<CurrentChatUser>
     ) -> Void
     
     init(
@@ -391,7 +391,7 @@ final class AnyCurrentUserControllerDelegate<ExtraData: ExtraDataTypes>: _Curren
         ) -> Void,
         controllerDidChangeCurrentUser: @escaping (
             _CurrentChatUserController<ExtraData>,
-            EntityChange<_CurrentChatUser<ExtraData>>
+            EntityChange<CurrentChatUser>
         ) -> Void
     ) {
         self.wrappedDelegate = wrappedDelegate
@@ -408,7 +408,7 @@ final class AnyCurrentUserControllerDelegate<ExtraData: ExtraDataTypes>: _Curren
     
     func currentUserController(
         _ controller: _CurrentChatUserController<ExtraData>,
-        didChangeCurrentUser user: EntityChange<_CurrentChatUser<ExtraData>>
+        didChangeCurrentUser user: EntityChange<CurrentChatUser>
     ) {
         _controllerDidChangeCurrentUser(controller, user)
     }

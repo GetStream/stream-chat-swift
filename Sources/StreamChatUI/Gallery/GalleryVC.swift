@@ -23,12 +23,12 @@ open class _GalleryVC<ExtraData: ExtraDataTypes>:
     /// The content of gallery view controller.
     public struct Content {
         /// The message which attachments are displayed by the gallery.
-        public var message: _ChatMessage<ExtraData>
+        public var message: _ChatMessage
         /// The index of currently visible gallery item.
         public var currentPage: Int
         
         public init(
-            message: _ChatMessage<ExtraData>,
+            message: _ChatMessage,
             currentPage: Int = 0
         ) {
             self.message = message

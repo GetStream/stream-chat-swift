@@ -57,8 +57,8 @@ public extension _ChatMessage {
     }
 
     /// Returns last active thread participant.
-    var lastActiveThreadParticipant: _ChatUser<ExtraData.User>? {
-        func sortingCriteriaDate(_ user: _ChatUser<ExtraData.User>) -> Date {
+    var lastActiveThreadParticipant: ChatUser? {
+        func sortingCriteriaDate(_ user: ChatUser) -> Date {
             user.lastActiveAt ?? user.userUpdatedAt
         }
 

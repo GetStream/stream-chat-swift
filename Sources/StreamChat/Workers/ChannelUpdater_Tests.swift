@@ -13,7 +13,7 @@ class ChannelUpdater_Tests: StressTestCase {
     var apiClient: APIClientMock!
     var database: DatabaseContainerMock!
     
-    var channelUpdater: ChannelUpdater<ExtraData>!
+    var channelUpdater: ChannelUpdater!
     
     override func setUp() {
         super.setUp()
@@ -36,16 +36,16 @@ class ChannelUpdater_Tests: StressTestCase {
     
     func test_updateChannelQuery_makesCorrectAPICall() {
         // Simulate `update(channelQuery:)` call
-        let query = _ChannelQuery<ExtraData>(cid: .unique)
+        let query = ChannelQuery(cid: .unique)
         channelUpdater.update(channelQuery: query)
         
-        let referenceEndpoint: Endpoint<ChannelPayload<ExtraData>> = .channel(query: query)
+        let referenceEndpoint: Endpoint<ChannelPayload> = .channel(query: query)
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
     }
     
     func test_updateChannelQuery_successfulResponseData_areSavedToDB() {
         // Simulate `update(channelQuery:)` call
-        let query = _ChannelQuery<ExtraData>(cid: .unique)
+        let query = ChannelQuery(cid: .unique)
         var completionCalled = false
         channelUpdater.update(channelQuery: query, completion: { result in
             XCTAssertNil(result.error)
@@ -69,13 +69,13 @@ class ChannelUpdater_Tests: StressTestCase {
     
     func test_updateChannelQuery_errorResponse_isPropagatedToCompletion() {
         // Simulate `update(channelQuery:)` call
-        let query = _ChannelQuery<ExtraData>(cid: .unique)
+        let query = ChannelQuery(cid: .unique)
         var completionCalledError: Error?
         channelUpdater.update(channelQuery: query, completion: { completionCalledError = $0.error })
         
         // Simulate API response with failure
         let error = TestError()
-        apiClient.test_simulateResponse(Result<ChannelPayload<ExtraData>, Error>.failure(error))
+        apiClient.test_simulateResponse(Result<ChannelPayload, Error>.failure(error))
         
         // Assert the completion is called with the error
         AssertAsync.willBeEqual(completionCalledError as? TestError, error)
@@ -827,9 +827,9 @@ class ChannelUpdater_Tests: StressTestCase {
         
         channelUpdater.startWatching(cid: cid)
         
-        var query = _ChannelQuery<ExtraData>(cid: cid)
+        var query = ChannelQuery(cid: cid)
         query.options = .all
-        let referenceEndpoint: Endpoint<ChannelPayload<ExtraData>> = .channel(query: query)
+        let referenceEndpoint: Endpoint<ChannelPayload> = .channel(query: query)
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
     }
     

@@ -55,7 +55,7 @@ class MemberModelDTO_Tests: XCTestCase {
         }
         
         // Load the member from the db and check it's the same member
-        var loadedMember: _ChatChannelMember<NoExtraData>? {
+        var loadedMember: ChatChannelMember<NoExtraData>? {
             database.viewContext.member(userId: userId, cid: channelId)?.asModel()
         }
 

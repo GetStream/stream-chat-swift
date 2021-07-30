@@ -5,9 +5,9 @@
 import Foundation
 
 class ChatClientUpdater<ExtraData: ExtraDataTypes> {
-    unowned var client: _ChatClient<ExtraData>
+    unowned var client: ChatClient
 
-    init(client: _ChatClient<ExtraData>) {
+    init(client: ChatClient) {
         self.client = client
     }
 

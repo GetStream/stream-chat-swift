@@ -6,7 +6,7 @@ import Foundation
 import SwiftUI
 
 @available(iOS 13, *)
-extension _ChatChannelWatcherListController {
+extension ChatChannelWatcherListController {
     /// A wrapper object that exposes the controller variables in the form of `ObservableObject` to be used in SwiftUI.
     public var observableObject: ObservableObject { .init(controller: self) }
     
@@ -17,7 +17,7 @@ extension _ChatChannelWatcherListController {
         public let controller: _ChatChannelWatcherListController
         
         /// The channel members.
-        @Published public private(set) var watchers: LazyCachedMapCollection<_ChatUser<ExtraData.User>> = []
+        @Published public private(set) var watchers: LazyCachedMapCollection<ChatUser> = []
         
         /// The current state of the controller.
         @Published public private(set) var state: DataController.State
@@ -35,10 +35,10 @@ extension _ChatChannelWatcherListController {
 }
 
 @available(iOS 13, *)
-extension _ChatChannelWatcherListController.ObservableObject: _ChatChannelWatcherListControllerDelegate {
+extension ChatChannelWatcherListController.ObservableObject: _ChatChannelWatcherListControllerDelegate {
     public func channelWatcherListController(
         _ controller: _ChatChannelWatcherListController<ExtraData>,
-        didChangeWatchers changes: [ListChange<_ChatUser<ExtraData.User>>]
+        didChangeWatchers changes: [ListChange<ChatUser>]
     ) {
         watchers = controller.watchers
     }

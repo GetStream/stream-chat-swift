@@ -21,7 +21,7 @@ public extension SwiftUIViewControllerRepresentable where ViewController: _ChatC
 }
 
 @available(iOS 13.0, *)
-extension _ChatChannelListVC {
+extension ChatChannelListVC {
     /// A SwiftUI View that wraps `_ChatChannelListVC` and shows list of messages.
     @available(*, deprecated, renamed: "asView")
     static func View(controller: _ChatChannelListController<ExtraData>) -> some View {
@@ -29,7 +29,7 @@ extension _ChatChannelListVC {
     }
 }
 
-extension _ChatChannelListVC: SwiftUIRepresentable {
+extension ChatChannelListVC: SwiftUIRepresentable {
     public var content: _ChatChannelListController<ExtraData> {
         get {
             controller

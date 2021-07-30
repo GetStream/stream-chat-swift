@@ -6,7 +6,7 @@ import Foundation
 import SwiftUI
 
 @available(iOS 13, *)
-extension _ChatChannelListController {
+extension ChatChannelListController {
     /// A wrapper object that exposes the controller variables in the form of `ObservableObject` to be used in SwiftUI.
     public var observableObject: ObservableObject { .init(controller: self) }
     
@@ -16,7 +16,7 @@ extension _ChatChannelListController {
         public let controller: _ChatChannelListController
         
         /// The channels matching the query.
-        @Published public private(set) var channels: LazyCachedMapCollection<_ChatChannel<ExtraData>> = []
+        @Published public private(set) var channels: LazyCachedMapCollection<ChatChannel> = []
         
         /// The current state of the Controller.
         @Published public private(set) var state: DataController.State
@@ -33,10 +33,10 @@ extension _ChatChannelListController {
 }
 
 @available(iOS 13, *)
-extension _ChatChannelListController.ObservableObject: _ChatChannelListControllerDelegate {
+extension ChatChannelListController.ObservableObject: _ChatChannelListControllerDelegate {
     public func controller(
         _ controller: _ChatChannelListController<ExtraData>,
-        didChangeChannels changes: [ListChange<_ChatChannel<ExtraData>>]
+        didChangeChannels changes: [ListChange<ChatChannel>]
     ) {
         // We don't care about detailed changes. We just need to update the `channels` property and keep SwiftUI
         // deal with the rest.

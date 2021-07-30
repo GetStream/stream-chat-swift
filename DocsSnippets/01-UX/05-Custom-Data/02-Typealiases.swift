@@ -14,7 +14,7 @@ func snippet_ux_custom_data_typealiases() {
     typealias CurrentChatUser = _CurrentChatUser<CustomExtraDataTypes.User>
     typealias ChatChannel = _ChatChannel<CustomExtraDataTypes>
     typealias ChatChannelRead = _ChatChannelRead<CustomExtraDataTypes>
-    typealias ChatChannelMember = _ChatChannelMember<CustomExtraDataTypes.User>
+    typealias ChatChannelMember = ChatChannelMember<CustomExtraDataTypes.User>
     typealias ChatMessage = _ChatMessage<CustomExtraDataTypes>
 
     typealias CurrentChatUserController = _CurrentChatUserController<CustomExtraDataTypes>

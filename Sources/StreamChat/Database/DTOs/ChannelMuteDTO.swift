@@ -59,7 +59,7 @@ final class ChannelMuteDTO: NSManagedObject {
 
 extension NSManagedObjectContext {
     @discardableResult
-    func saveChannelMute<ExtraData: ExtraDataTypes>(payload: MutedChannelPayload<ExtraData>) throws -> ChannelMuteDTO {
+    func saveChannelMute<ExtraData: ExtraDataTypes>(payload: MutedChannelPayload) throws -> ChannelMuteDTO {
         let dto = ChannelMuteDTO.loadOrCreate(cid: payload.mutedChannel.cid, userId: payload.user.id, context: self)
 
         dto.user = try saveUser(payload: payload.user)

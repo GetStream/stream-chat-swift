@@ -11,13 +11,13 @@ public class ChatMessageController_Mock<ExtraData: ExtraDataTypes>: _ChatMessage
         .init(client: .mock(), cid: try! .init(cid: "mock:channel"), messageId: "MockMessage")
     }
     
-    public private(set) var message_mock: _ChatMessage<ExtraData>?
-    override public var message: _ChatMessage<ExtraData>? {
+    public private(set) var message_mock: _ChatMessage?
+    override public var message: _ChatMessage? {
         message_mock ?? super.message
     }
 
-    public private(set) var replies_mock: [_ChatMessage<ExtraData>]?
-    override public var replies: LazyCachedMapCollection<_ChatMessage<ExtraData>> {
+    public private(set) var replies_mock: [_ChatMessage]?
+    override public var replies: LazyCachedMapCollection<ChatMessage> {
         replies_mock.map { $0.lazyCachedMap { $0 } } ?? super.replies
     }
 
@@ -30,7 +30,7 @@ public class ChatMessageController_Mock<ExtraData: ExtraDataTypes>: _ChatMessage
 
 public extension ChatMessageController_Mock {
     /// Simulates the initial conditions. Setting these values doesn't trigger any observer callback.
-    func simulateInitial(message: _ChatMessage<ExtraData>, replies: [_ChatMessage<ExtraData>], state: DataController.State) {
+    func simulateInitial(message: _ChatMessage, replies: [_ChatMessage], state: DataController.State) {
         message_mock = message
         replies_mock = replies
         state_mock = state
@@ -39,7 +39,7 @@ public extension ChatMessageController_Mock {
     }
     
     /// Simulates a change of the `message` value. Observers are notified with the provided `change` value.
-    func simulate(message: _ChatMessage<ExtraData>?, change: EntityChange<_ChatMessage<ExtraData>>) {
+    func simulate(message: _ChatMessage?, change: EntityChange<ChatMessage>) {
         message_mock = message
         delegateCallback {
             $0.messageController(self, didChangeMessage: change)
@@ -47,7 +47,7 @@ public extension ChatMessageController_Mock {
     }
     
     /// Simulates changes in the `replies` array. Observers are notified with the provided `changes` value.
-    func simulate(replies: [_ChatMessage<ExtraData>], changes: [ListChange<_ChatMessage<ExtraData>>]) {
+    func simulate(replies: [_ChatMessage], changes: [ListChange<ChatMessage>]) {
         replies_mock = replies
         delegateCallback {
             $0.messageController(self, didChangeReplies: changes)

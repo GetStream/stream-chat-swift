@@ -6,7 +6,7 @@ import Foundation
 @testable import StreamChat
 
 /// Mock implementation of ChannelUpdater
-class TypingEventsSenderMock<ExtraData: ExtraDataTypes>: TypingEventsSender<ExtraData> {
+class TypingEventsSenderMock<ExtraData: ExtraDataTypes>: TypingEventsSender {
     @Atomic var keystroke_cid: ChannelId?
     @Atomic var keystroke_completion: ((Error?) -> Void)?
 

@@ -28,7 +28,7 @@ enum UserPayloadsCodingKeys: String, CodingKey, CaseIterable {
 // MARK: - GET users
 
 /// An object describing the incoming user JSON payload.
-class UserPayload<ExtraData: UserExtraData>: Decodable {
+class UserPayload: Decodable {
     let id: String
     let name: String?
     let imageURL: URL?
@@ -40,8 +40,7 @@ class UserPayload<ExtraData: UserExtraData>: Decodable {
     let isInvisible: Bool
     let isBanned: Bool
     let teams: [TeamId]
-    let extraData: ExtraData
-    let extraDataMap: CustomData
+    let extraData: CustomData
 
     init(
         id: String,
@@ -55,8 +54,7 @@ class UserPayload<ExtraData: UserExtraData>: Decodable {
         isInvisible: Bool,
         isBanned: Bool,
         teams: [TeamId] = [],
-        extraData: ExtraData,
-        extraDataMap: CustomData
+        extraData: CustomData
     ) {
         self.id = id
         self.name = name
@@ -70,7 +68,6 @@ class UserPayload<ExtraData: UserExtraData>: Decodable {
         self.isBanned = isBanned
         self.teams = teams
         self.extraData = extraData
-        self.extraDataMap = extraDataMap
     }
 
     required init(from decoder: Decoder) throws {
@@ -88,12 +85,12 @@ class UserPayload<ExtraData: UserExtraData>: Decodable {
         isInvisible = try container.decodeIfPresent(Bool.self, forKey: .isInvisible) ?? false
         isBanned = try container.decodeIfPresent(Bool.self, forKey: .isBanned) ?? false
         teams = try container.decodeIfPresent([String].self, forKey: .teams) ?? []
-        extraData = try ExtraData(from: decoder)
+
         if var payload = try? CustomData(from: decoder) {
             payload.removeValues(forKeys: UserPayloadsCodingKeys.allCases.map(\.rawValue))
-            extraDataMap = payload
+            extraData = payload
         } else {
-            extraDataMap = .defaultValue
+            extraData = .defaultValue
         }
     }
 }
@@ -124,8 +121,8 @@ class UserRequestBody: Encodable {
 // MARK: - PATCH users
 
 /// An object describing the incoming user JSON payload.
-struct UserUpdateResponse<ExtraData: UserExtraData>: Decodable {
-    let user: UserPayload<ExtraData>
+struct UserUpdateResponse: Decodable {
+    let user: UserPayload
     
     enum CodingKeys: String, CodingKey {
         case users
@@ -133,7 +130,7 @@ struct UserUpdateResponse<ExtraData: UserExtraData>: Decodable {
     
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        let users = try container.decode([String: UserPayload<ExtraData>].self, forKey: .users)
+        let users = try container.decode([String: UserPayload].self, forKey: .users)
         guard let user = users.first?.value else {
             throw DecodingError.dataCorrupted(
                 .init(codingPath: [CodingKeys.users], debugDescription: "Missing updated user.")
@@ -142,13 +139,13 @@ struct UserUpdateResponse<ExtraData: UserExtraData>: Decodable {
         self.user = user
     }
     
-    init(user: UserPayload<ExtraData>) {
+    init(user: UserPayload) {
         self.user = user
     }
 }
 
 /// An object describing the outgoing user JSON payload.
-struct UserUpdateRequestBody<ExtraData: UserExtraData>: Encodable {
+struct UserUpdateRequestBody: Encodable {
     let name: String?
     let imageURL: URL?
     let extraData: CustomData

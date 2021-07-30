@@ -5,40 +5,20 @@
 import CoreData
 import Foundation
 
-public extension _ChatClient {
-    /// Creates a new `_ChatChannelMemberController` for the user with the provided `userId` and `cid`.
+public extension ChatClient {
+    /// Creates a new `ChatChannelMemberController` for the user with the provided `userId` and `cid`.
     /// - Parameters:
     ///   - userId: The user identifier.
     ///   - cid: The channel identifier.
-    /// - Returns: A new instance of `_ChatChannelMemberController`.
-    func memberController(userId: UserId, in cid: ChannelId) -> _ChatChannelMemberController<ExtraData> {
+    /// - Returns: A new instance of `ChatChannelMemberController`.
+    func memberController(userId: UserId, in cid: ChannelId) -> ChatChannelMemberController {
         .init(userId: userId, cid: cid, client: self)
     }
 }
 
 /// `ChatChannelMemberController` is a controller class which allows mutating and observing changes of a specific chat member.
 ///
-/// `ChatChannelMemberController` objects are lightweight, and they can be used for both, continuous data change observations,
-/// and for quick user actions (like ban/unban).
-///
-/// - Note: `ChatChannelMemberController` is a typealias of `_ChatChannelMemberController` with default extra data.
-/// If you're using custom extra data, create your own typealias of `_ChatChannelMemberController`.
-///
-/// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/Cheat-Sheet#working-with-extra-data).
-///
-public typealias ChatChannelMemberController = _ChatChannelMemberController<NoExtraData>
-
-/// `_ChatChannelMemberController` is a controller class which allows mutating and observing changes of a specific chat member.
-///
-/// `_ChatChannelMemberController` objects are lightweight, and they can be used for both, continuous data change observations,
-/// and for quick user actions (like mute/unmute).
-///
-/// - Note: `ChatChannelMemberController` is a typealias of `_ChatChannelMemberController` with default extra data.
-/// If you're using custom extra data, create your own typealias of `_ChatChannelMemberController`.
-///
-/// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/Cheat-Sheet#working-with-extra-data).
-///
-public class _ChatChannelMemberController<ExtraData: ExtraDataTypes>: DataController, DelegateCallable, DataStoreProvider {
+public class ChatChannelMemberController: DataController, DelegateCallable, DataStoreProvider {
     /// The identifier of the user this controller observes.
     public let userId: UserId
     
@@ -46,13 +26,13 @@ public class _ChatChannelMemberController<ExtraData: ExtraDataTypes>: DataContro
     public let cid: ChannelId
     
     /// The `ChatClient` instance this controller belongs to.
-    public let client: _ChatClient<ExtraData>
+    public let client: ChatClient
     
     /// The user the controller represents.
     ///
     /// To observe changes of the chat member, set your class as a delegate of this controller or use the provided
     /// `Combine` publishers.
-    public var member: _ChatChannelMember<ExtraData.User>? {
+    public var member: ChatChannelMember? {
         startObservingIfNeeded()
         return memberObserver.item
     }
@@ -64,7 +44,7 @@ public class _ChatChannelMemberController<ExtraData: ExtraDataTypes>: DataContro
     lazy var basePublishers: BasePublishers = .init(controller: self)
     
     /// A type-erased delegate.
-    var multicastDelegate: MulticastDelegate<AnyChatChannelMemberControllerDelegate<ExtraData>> = .init() {
+    var multicastDelegate: MulticastDelegate<AnyChatChannelMemberControllerDelegate> = .init() {
         didSet {
             stateMulticastDelegate.mainDelegate = multicastDelegate.mainDelegate
             stateMulticastDelegate.additionalDelegates = multicastDelegate.additionalDelegates
@@ -88,7 +68,7 @@ public class _ChatChannelMemberController<ExtraData: ExtraDataTypes>: DataContro
     
     private let environment: Environment
 
-    /// Creates a new `_ChatChannelMemberController`
+    /// Creates a new `ChatChannelMemberController`
     /// - Parameters:
     ///   - userId: The user identifier.
     ///   - cid: The channel identifier the user is member of.
@@ -97,7 +77,7 @@ public class _ChatChannelMemberController<ExtraData: ExtraDataTypes>: DataContro
     init(
         userId: UserId,
         cid: ChannelId,
-        client: _ChatClient<ExtraData>,
+        client: ChatClient,
         environment: Environment = .init()
     ) {
         self.userId = userId
@@ -129,7 +109,7 @@ public class _ChatChannelMemberController<ExtraData: ExtraDataTypes>: DataContro
     /// - Parameter delegate: The object used as a delegate. It's referenced weakly, so you need to keep the object
     /// alive if you want keep receiving updates.
     ///
-    public func setDelegate<Delegate: _ChatChannelMemberControllerDelegate>(_ delegate: Delegate)
+    public func setDelegate<Delegate: ChatChannelMemberControllerDelegate>(_ delegate: Delegate)
         where Delegate.ExtraData == ExtraData {
         multicastDelegate.mainDelegate = AnyChatChannelMemberControllerDelegate(delegate)
     }
@@ -143,14 +123,14 @@ public class _ChatChannelMemberController<ExtraData: ExtraDataTypes>: DataContro
         )
     }
     
-    private func createMemberListUpdater() -> ChannelMemberListUpdater<ExtraData> {
+    private func createMemberListUpdater() -> ChannelMemberListUpdater {
         environment.memberListUpdaterBuilder(
             client.databaseContainer,
             client.apiClient
         )
     }
     
-    private func createMemberObserver() -> EntityDatabaseObserver<_ChatChannelMember<ExtraData.User>, MemberDTO> {
+    private func createMemberObserver() -> EntityDatabaseObserver<ChatChannelMember, MemberDTO> {
         environment.memberObserverBuilder(
             client.databaseContainer.viewContext,
             MemberDTO.member(userId, in: cid),
@@ -174,7 +154,7 @@ public class _ChatChannelMemberController<ExtraData: ExtraDataTypes>: DataContro
 
 // MARK: - Actions
 
-public extension _ChatChannelMemberController {
+public extension ChatChannelMemberController {
     /// Bans the channel member for a specific # of minutes.
     /// - Parameters:
     ///   - timeoutInMinutes: The # of minutes the user should be banned for.
@@ -205,7 +185,7 @@ public extension _ChatChannelMemberController {
     }
 }
 
-extension _ChatChannelMemberController {
+extension ChatChannelMemberController {
     struct Environment {
         var memberUpdaterBuilder: (
             _ database: DatabaseContainer,
@@ -215,18 +195,18 @@ extension _ChatChannelMemberController {
         var memberListUpdaterBuilder: (
             _ database: DatabaseContainer,
             _ apiClient: APIClient
-        ) -> ChannelMemberListUpdater<ExtraData> = ChannelMemberListUpdater.init
+        ) -> ChannelMemberListUpdater = ChannelMemberListUpdater.init
         
         var memberObserverBuilder: (
             _ context: NSManagedObjectContext,
             _ fetchRequest: NSFetchRequest<MemberDTO>,
-            _ itemCreator: @escaping (MemberDTO) -> _ChatChannelMember<ExtraData.User>,
+            _ itemCreator: @escaping (MemberDTO) -> ChatChannelMember,
             _ fetchedResultsControllerType: NSFetchedResultsController<MemberDTO>.Type
-        ) -> EntityDatabaseObserver<_ChatChannelMember<ExtraData.User>, MemberDTO> = EntityDatabaseObserver.init
+        ) -> EntityDatabaseObserver<ChatChannelMember, MemberDTO> = EntityDatabaseObserver.init
     }
 }
 
-public extension _ChatChannelMemberController where ExtraData == NoExtraData {
+public extension ChatChannelMemberController {
     /// Set the delegate of `ChatMemberController` to observe the changes in the system.
     ///
     /// - Note: The delegate can be set directly only if you're **not** using custom extra data types. Due to the current
@@ -243,7 +223,7 @@ public extension _ChatChannelMemberController where ExtraData == NoExtraData {
 /// `ChatChannelMemberControllerDelegate` uses this protocol to communicate changes to its delegate.
 ///
 /// This protocol can be used only when no custom extra data are specified. If you're using custom extra data types,
-/// please use `_ChatChannelMemberControllerDelegate` instead.
+/// please use `ChatChannelMemberControllerDelegate` instead.
 ///
 public protocol ChatChannelMemberControllerDelegate: DataControllerStateDelegate {
     /// The controller observed a change in the `ChatChannelMember` entity.
@@ -262,36 +242,36 @@ public extension ChatChannelMemberControllerDelegate {
 
 // MARK: Generic Delegates
 
-/// `_ChatChannelMemberController` uses this protocol to communicate changes to its delegate.
+/// `ChatChannelMemberController` uses this protocol to communicate changes to its delegate.
 ///
 /// If you're **not** using custom extra data types, you can use a convenience version of this protocol
 /// named `ChatChannelMemberControllerDelegate`, which hides the generic types, and make the usage easier.
 ///
-public protocol _ChatChannelMemberControllerDelegate: DataControllerStateDelegate {
+public protocol ChatChannelMemberControllerDelegate: DataControllerStateDelegate {
     associatedtype ExtraData: ExtraDataTypes
     
-    /// The controller observed a change in the `_ChatChannelMember<ExtraData.User>` entity.
+    /// The controller observed a change in the `ChatChannelMember` entity.
     func memberController(
-        _ controller: _ChatChannelMemberController<ExtraData>,
-        didUpdateMember change: EntityChange<_ChatChannelMember<ExtraData.User>>
+        _ controller: ChatChannelMemberController,
+        didUpdateMember change: EntityChange<ChatChannelMember>
     )
 }
 
-public extension _ChatChannelMemberControllerDelegate {
+public extension ChatChannelMemberControllerDelegate {
     func memberController(
-        _ controller: _ChatChannelMemberController<ExtraData>,
-        didUpdateMember change: EntityChange<_ChatChannelMember<ExtraData.User>>
+        _ controller: ChatChannelMemberController,
+        didUpdateMember change: EntityChange<ChatChannelMember>
     ) {}
 }
 
 // MARK: Type erased Delegate
 
-class AnyChatChannelMemberControllerDelegate<ExtraData: ExtraDataTypes>: _ChatChannelMemberControllerDelegate {
+class AnyChatChannelMemberControllerDelegate: ChatChannelMemberControllerDelegate {
     private var _controllerDidChangeState: (DataController, DataController.State) -> Void
     
     private var _controllerDidUpdateMember: (
-        _ChatChannelMemberController<ExtraData>,
-        EntityChange<_ChatChannelMember<ExtraData.User>>
+        ChatChannelMemberController,
+        EntityChange<ChatChannelMember>
     ) -> Void
     
     weak var wrappedDelegate: AnyObject?
@@ -300,8 +280,8 @@ class AnyChatChannelMemberControllerDelegate<ExtraData: ExtraDataTypes>: _ChatCh
         wrappedDelegate: AnyObject?,
         controllerDidChangeState: @escaping (DataController, DataController.State) -> Void,
         controllerDidUpdateMember: @escaping (
-            _ChatChannelMemberController<ExtraData>,
-            EntityChange<_ChatChannelMember<ExtraData.User>>
+            ChatChannelMemberController,
+            EntityChange<ChatChannelMember>
         ) -> Void
     ) {
         self.wrappedDelegate = wrappedDelegate
@@ -314,15 +294,15 @@ class AnyChatChannelMemberControllerDelegate<ExtraData: ExtraDataTypes>: _ChatCh
     }
     
     func memberController(
-        _ controller: _ChatChannelMemberController<ExtraData>,
-        didUpdateMember change: EntityChange<_ChatChannelMember<ExtraData.User>>
+        _ controller: ChatChannelMemberController,
+        didUpdateMember change: EntityChange<ChatChannelMember>
     ) {
         _controllerDidUpdateMember(controller, change)
     }
 }
 
 extension AnyChatChannelMemberControllerDelegate {
-    convenience init<Delegate: _ChatChannelMemberControllerDelegate>(_ delegate: Delegate) where Delegate.ExtraData == ExtraData {
+    convenience init<Delegate: ChatChannelMemberControllerDelegate>(_ delegate: Delegate) {
         self.init(
             wrappedDelegate: delegate,
             controllerDidChangeState: { [weak delegate] in delegate?.controller($0, didChangeState: $1) },
@@ -331,7 +311,7 @@ extension AnyChatChannelMemberControllerDelegate {
     }
 }
 
-extension AnyChatChannelMemberControllerDelegate where ExtraData == NoExtraData {
+extension AnyChatChannelMemberControllerDelegate {
     convenience init(_ delegate: ChatChannelMemberControllerDelegate?) {
         self.init(
             wrappedDelegate: delegate,

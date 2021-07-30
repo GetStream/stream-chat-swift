@@ -21,40 +21,18 @@ import Foundation
 /// ```
 ///
 public protocol ExtraDataTypes {
-    /// An extra data type for `ChatUser`.
-    associatedtype User: UserExtraData = NoExtraData
-    
     /// An extra data type for `ChatMessage`.
     associatedtype Message: MessageExtraData = NoExtraData
     
     /// An extra data type for `ChatChannel`.
     associatedtype Channel: ChannelExtraData = NoExtraData
-    
-    /// An extra data type for `ChatMessageReaction`.
-    associatedtype MessageReaction: MessageReactionExtraData = NoExtraData
 }
 
 /// The root object representing a Stream Chat.
 ///
 /// Typically, an app contains just one instance of `ChatClient`. However, it's possible to have multiple instances if your use
 /// case requires it (i.e. more than one window with different workspaces in a Slack-like app).
-///
-/// - Note: `ChatClient` is a typealias of `_ChatClient` with the default extra data types. If you want to use your custom extra
-/// data types, you should create your own `ChatClient` typealias for `_ChatClient`. Learn more about using custom extra data in our
-/// [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/Cheat-Sheet#working-with-extra-data).
-///
-public typealias ChatClient = _ChatClient<NoExtraData>
-
-/// The root object representing a Stream Chat.
-///
-/// Typically, an app contains just one instance of `ChatClient`. However, it's possible to have multiple instances if your use
-/// case requires it (i.e. more than one window with different workspaces in a Slack-like app).
-///
-/// - Note: `_ChatClient` type is not meant to be used directly. If you don't use custom extra data types, use `ChatClient`
-/// typealias instead. When using custom extra data types, you should create your own `ChatClient` typealias for `_ChatClient`.
-/// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/Cheat-Sheet#working-with-extra-data).
-///
-public class _ChatClient<ExtraData: ExtraDataTypes> {
+public class ChatClient {
     /// The `UserId` of the currently logged in user.
     @Atomic public internal(set) var currentUserId: UserId?
 
@@ -472,7 +450,7 @@ public class _ChatClient<ExtraData: ExtraDataTypes> {
     }
 }
 
-extension _ChatClient {
+extension ChatClient {
     /// An object containing all dependencies of `Client`
     struct Environment {
         var apiClientBuilder: (
@@ -584,7 +562,7 @@ extension ClientError {
 
 /// `APIClient` listens for `WebSocketClient` connection updates so it can forward the current connection id to
 /// its `RequestEncoder`.
-extension _ChatClient: ConnectionStateDelegate {
+extension ChatClient: ConnectionStateDelegate {
     func webSocketClient(_ client: WebSocketClient, didUpdateConnectionState state: WebSocketConnectionState) {
         connectionStatus = .init(webSocketConnectionState: state)
         
@@ -685,7 +663,7 @@ private extension ClientError {
 }
 
 /// `Client` provides connection details for the `RequestEncoder`s it creates.
-extension _ChatClient: ConnectionDetailsProviderDelegate {
+extension ChatClient: ConnectionDetailsProviderDelegate {
     func provideToken(completion: @escaping (_ token: Token?) -> Void) {
         if let token = currentToken {
             completion(token)

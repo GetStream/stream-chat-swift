@@ -12,7 +12,7 @@ public struct NotificationMessageNewEvent: MessageSpecificEvent {
     public let unreadCount: UnreadCount?
     let payload: Any
     
-    init<ExtraData: ExtraDataTypes>(from response: EventPayload<ExtraData>) throws {
+    init(from response: EventPayload) throws {
         userId = try response.value(at: \.message?.user.id)
         cid = try response.value(at: \.channel?.cid)
         messageId = try response.value(at: \.message?.id)
@@ -27,7 +27,7 @@ public struct NotificationMarkAllReadEvent: UserSpecificEvent {
     public let readAt: Date
     let payload: Any
     
-    init<ExtraData: ExtraDataTypes>(from response: EventPayload<ExtraData>) throws {
+    init(from response: EventPayload) throws {
         userId = try response.value(at: \.user?.id)
         readAt = try response.value(at: \.createdAt)
         payload = response
@@ -41,7 +41,7 @@ public struct NotificationMarkReadEvent: UserSpecificEvent, ChannelSpecificEvent
     public let unreadCount: UnreadCount
     let payload: Any
     
-    init<ExtraData: ExtraDataTypes>(from response: EventPayload<ExtraData>) throws {
+    init(from response: EventPayload) throws {
         userId = try response.value(at: \.user?.id)
         cid = try response.value(at: \.channel?.cid)
         readAt = try response.value(at: \.createdAt)
@@ -54,7 +54,7 @@ public struct NotificationMutesUpdatedEvent<ExtraData: ExtraDataTypes>: CurrentU
     public let currentUserId: UserId
     let payload: Any
     
-    init(from response: EventPayload<ExtraData>) throws {
+    init(from response: EventPayload) throws {
         currentUserId = try response.value(at: \.currentUser?.id)
         payload = response
     }
@@ -64,7 +64,7 @@ public struct NotificationAddedToChannelEvent: ChannelSpecificEvent {
     public let cid: ChannelId
     let payload: Any
     
-    init<ExtraData: ExtraDataTypes>(from response: EventPayload<ExtraData>) throws {
+    init(from response: EventPayload) throws {
         cid = try response.value(at: \.cid)
         payload = response
     }
@@ -76,7 +76,7 @@ public struct NotificationRemovedFromChannelEvent: CurrentUserEvent, ChannelSpec
 
     let payload: Any
     
-    init<ExtraData: ExtraDataTypes>(from response: EventPayload<ExtraData>) throws {
+    init(from response: EventPayload) throws {
         cid = try response.value(at: \.cid)
         currentUserId = try response.value(at: \.user?.id)
         payload = response
@@ -87,7 +87,7 @@ public struct NotificationChannelMutesUpdatedEvent: UserSpecificEvent {
     public let userId: UserId
     let payload: Any
     
-    init<ExtraData: ExtraDataTypes>(from response: EventPayload<ExtraData>) throws {
+    init(from response: EventPayload) throws {
         userId = try response.value(at: \.currentUser?.id)
         payload = response
     }
@@ -99,7 +99,7 @@ public struct NotificationInvitedEvent: MemberEvent {
     
     let payload: Any
     
-    init<ExtraData: ExtraDataTypes>(from response: EventPayload<ExtraData>) throws {
+    init(from response: EventPayload) throws {
         cid = try response.value(at: \.cid)
         memberUserId = try response.value(at: \.user?.id)
         payload = response
@@ -112,7 +112,7 @@ public struct NotificationInviteAccepted: MemberEvent {
     
     let payload: Any
     
-    init<ExtraData: ExtraDataTypes>(from response: EventPayload<ExtraData>) throws {
+    init(from response: EventPayload) throws {
         cid = try response.value(at: \.cid)
         memberUserId = try response.value(at: \.user?.id)
         payload = response
@@ -125,7 +125,7 @@ public struct NotificationInviteRejected: MemberEvent {
     
     let payload: Any
     
-    init<ExtraData: ExtraDataTypes>(from response: EventPayload<ExtraData>) throws {
+    init(from response: EventPayload) throws {
         cid = try response.value(at: \.cid)
         memberUserId = try response.value(at: \.user?.id)
         payload = response

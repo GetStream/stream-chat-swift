@@ -49,10 +49,10 @@ extension MessagePayload {
 }
 
 /// An object describing the incoming message JSON payload.
-class MessagePayload<ExtraData: ExtraDataTypes>: Decodable {
+class MessagePayload: Decodable {
     let id: String
     let type: MessageType
-    let user: UserPayload<ExtraData.User>
+    let user: UserPayload
     let createdAt: Date
     let updatedAt: Date
     let deletedAt: Date?
@@ -61,34 +61,34 @@ class MessagePayload<ExtraData: ExtraDataTypes>: Decodable {
     let args: String?
     let parentId: String?
     let showReplyInChannel: Bool
-    let quotedMessage: MessagePayload<ExtraData>?
+    let quotedMessage: MessagePayload?
     let quotedMessageId: MessageId?
-    let mentionedUsers: [UserPayload<ExtraData.User>]
-    let threadParticipants: [UserPayload<ExtraData.User>]
+    let mentionedUsers: [UserPayload]
+    let threadParticipants: [UserPayload]
     let replyCount: Int
     let extraData: ExtraData.Message
     let extraDataMap: CustomData
 
-    let latestReactions: [MessageReactionPayload<ExtraData>]
-    let ownReactions: [MessageReactionPayload<ExtraData>]
+    let latestReactions: [MessageReactionPayload]
+    let ownReactions: [MessageReactionPayload]
     let reactionScores: [MessageReactionType: Int]
     let attachments: [MessageAttachmentPayload]
     let isSilent: Bool
 
     var pinned: Bool
-    var pinnedBy: UserPayload<ExtraData.User>?
+    var pinnedBy: UserPayload?
     var pinnedAt: Date?
     var pinExpires: Date?
 
     /// Only message payload from `getMessage` endpoint contains channel data. It's a convenience workaround for having to
     /// make an extra call do get channel details.
-    let channel: ChannelDetailPayload<ExtraData>?
+    let channel: ChannelDetailPayload?
     
     required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: MessagePayloadsCodingKeys.self)
         id = try container.decode(String.self, forKey: .id)
         type = try container.decode(MessageType.self, forKey: .type)
-        user = try container.decode(UserPayload<ExtraData.User>.self, forKey: .user)
+        user = try container.decode(UserPayload.self, forKey: .user)
         createdAt = try container.decode(Date.self, forKey: .createdAt)
         updatedAt = try container.decode(Date.self, forKey: .updatedAt)
         deletedAt = try container.decodeIfPresent(Date.self, forKey: .deletedAt)
@@ -98,34 +98,32 @@ class MessagePayload<ExtraData: ExtraDataTypes>: Decodable {
         args = try container.decodeIfPresent(String.self, forKey: .args)
         parentId = try container.decodeIfPresent(String.self, forKey: .parentId)
         showReplyInChannel = try container.decodeIfPresent(Bool.self, forKey: .showReplyInChannel) ?? false
-        quotedMessage = try container.decodeIfPresent(MessagePayload<ExtraData>.self, forKey: .quotedMessage)
-        mentionedUsers = try container.decode([UserPayload<ExtraData.User>].self, forKey: .mentionedUsers)
+        quotedMessage = try container.decodeIfPresent(MessagePayload.self, forKey: .quotedMessage)
+        mentionedUsers = try container.decode([UserPayload].self, forKey: .mentionedUsers)
         // backend returns `thread_participants` only if message is a thread, we are fine with to have it on all messages
-        threadParticipants = try container.decodeIfPresent([UserPayload<ExtraData.User>].self, forKey: .threadParticipants) ?? []
+        threadParticipants = try container.decodeIfPresent([UserPayload].self, forKey: .threadParticipants) ?? []
         replyCount = try container.decode(Int.self, forKey: .replyCount)
-        latestReactions = try container.decode([MessageReactionPayload<ExtraData>].self, forKey: .latestReactions)
-        ownReactions = try container.decode([MessageReactionPayload<ExtraData>].self, forKey: .ownReactions)
+        latestReactions = try container.decode([MessageReactionPayload].self, forKey: .latestReactions)
+        ownReactions = try container.decode([MessageReactionPayload].self, forKey: .ownReactions)
         reactionScores = try container
             .decodeIfPresent([String: Int].self, forKey: .reactionScores)?
             .mapKeys { MessageReactionType(rawValue: $0) } ?? [:]
         // Because attachment objects can be malformed, we wrap those into `OptionalDecodable`
         // and if decoding of those fail, it assignes `nil` instead of throwing whole MessagePayload away.
-        attachments = try container.decode([OptionalDecodable<MessageAttachmentPayload>].self, forKey: .attachments)
+        attachments = try container.decode([OptionalDecodable].self, forKey: .attachments)
             .compactMap(\.base)
-        extraData = try ExtraData.Message(from: decoder)
-        
+
         if var payload = try? CustomData(from: decoder) {
             payload.removeValues(forKeys: MessagePayloadsCodingKeys.allCases.map(\.rawValue))
-            extraDataMap = payload
+            extraData = payload
         } else {
-            extraDataMap = [:]
+            extraData = [:]
         }
 
         // Some endpoints return also channel payload data for convenience
-        channel = try container.decodeIfPresent(ChannelDetailPayload<ExtraData>.self, forKey: .channel)
-
+        channel = try container.decodeIfPresent(ChannelDetailPayload.self, forKey: .channel)
         pinned = try container.decodeIfPresent(Bool.self, forKey: .pinned) ?? false
-        pinnedBy = try container.decodeIfPresent(UserPayload<ExtraData.User>.self, forKey: .pinnedBy)
+        pinnedBy = try container.decodeIfPresent(UserPayload.self, forKey: .pinnedBy)
         pinnedAt = try container.decodeIfPresent(Date.self, forKey: .pinnedAt)
         pinExpires = try container.decodeIfPresent(Date.self, forKey: .pinExpires)
         quotedMessageId = try container.decodeIfPresent(MessageId.self, forKey: .quotedMessageId)
@@ -134,7 +132,7 @@ class MessagePayload<ExtraData: ExtraDataTypes>: Decodable {
     init(
         id: String,
         type: MessageType,
-        user: UserPayload<ExtraData.User>,
+        user: UserPayload,
         createdAt: Date,
         updatedAt: Date,
         deletedAt: Date? = nil,
@@ -144,20 +142,19 @@ class MessagePayload<ExtraData: ExtraDataTypes>: Decodable {
         parentId: String? = nil,
         showReplyInChannel: Bool,
         quotedMessageId: String? = nil,
-        quotedMessage: MessagePayload<ExtraData>? = nil,
-        mentionedUsers: [UserPayload<ExtraData.User>],
-        threadParticipants: [UserPayload<ExtraData.User>] = [],
+        quotedMessage: MessagePayload? = nil,
+        mentionedUsers: [UserPayload],
+        threadParticipants: [UserPayload] = [],
         replyCount: Int,
-        extraData: ExtraData.Message,
-        extraDataMap: CustomData,
-        latestReactions: [MessageReactionPayload<ExtraData>] = [],
-        ownReactions: [MessageReactionPayload<ExtraData>] = [],
+        extraData: CustomData,
+        latestReactions: [MessageReactionPayload] = [],
+        ownReactions: [MessageReactionPayload] = [],
         reactionScores: [MessageReactionType: Int],
         isSilent: Bool,
         attachments: [MessageAttachmentPayload],
-        channel: ChannelDetailPayload<ExtraData>? = nil,
+        channel: ChannelDetailPayload? = nil,
         pinned: Bool = false,
-        pinnedBy: UserPayload<ExtraData.User>? = nil,
+        pinnedBy: UserPayload? = nil,
         pinnedAt: Date? = nil,
         pinExpires: Date? = nil
     ) {
@@ -177,7 +174,6 @@ class MessagePayload<ExtraData: ExtraDataTypes>: Decodable {
         self.threadParticipants = threadParticipants
         self.replyCount = replyCount
         self.extraData = extraData
-        self.extraDataMap = extraDataMap
         self.latestReactions = latestReactions
         self.ownReactions = ownReactions
         self.reactionScores = reactionScores
@@ -193,7 +189,7 @@ class MessagePayload<ExtraData: ExtraDataTypes>: Decodable {
 }
 
 /// An object describing the outgoing message JSON payload.
-struct MessageRequestBody<ExtraData: ExtraDataTypes>: Encodable {
+struct MessageRequestBody: Encodable {
     let id: String
     let user: UserRequestBody
     let text: String
@@ -267,8 +263,8 @@ struct MessageRequestBody<ExtraData: ExtraDataTypes>: Encodable {
 }
 
 /// An object describing the message replies JSON payload.
-struct MessageRepliesPayload<ExtraData: ExtraDataTypes>: Decodable {
-    let messages: [MessagePayload<ExtraData>]
+struct MessageRepliesPayload: Decodable {
+    let messages: [MessagePayload]
 }
 
 // TODO: Command???

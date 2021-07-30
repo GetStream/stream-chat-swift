@@ -224,7 +224,7 @@ extension String {
     }
 }
 
-public extension _ChatChannel {
+public extension ChatChannel {
     /// Creates a new `_ChatChannel` object from the provided data.
     static func documentationMock(
         cid: ChannelId,
@@ -234,19 +234,19 @@ public extension _ChatChannel {
         createdAt: Date = .init(timeIntervalSince1970: 1_168_332_060),
         updatedAt: Date = .init(timeIntervalSince1970: 1_168_332_060),
         deletedAt: Date? = nil,
-        createdBy: _ChatUser<ExtraData.User>? = nil,
+        createdBy: ChatUser? = nil,
         config: ChannelConfig = .mock(),
         isFrozen: Bool = false,
-        lastActiveMembers: [_ChatChannelMember<ExtraData.User>] = [],
-        membership: _ChatChannelMember<ExtraData.User>? = nil,
-        currentlyTypingUsers: Set<_ChatUser<ExtraData.User>> = [],
-        lastActiveWatchers: [_ChatUser<ExtraData.User>] = [],
+        lastActiveMembers: [ChatChannelMember] = [],
+        membership: ChatChannelMember? = nil,
+        currentlyTypingUsers: Set<ChatUser> = [],
+        lastActiveWatchers: [ChatUser] = [],
         unreadCount: ChannelUnreadCount = .noUnread,
         watcherCount: Int = 0,
         memberCount: Int = 2,
-        reads: [_ChatChannelRead<ExtraData>] = [],
+        reads: [ChatChannelRead] = [],
         extraData: ExtraData.Channel = .defaultValue,
-        latestMessages: [_ChatMessage<ExtraData>] = [],
+        latestMessages: [_ChatMessage] = [],
         muteDetails: MuteDetails? = nil
     ) -> Self {
         self.init(

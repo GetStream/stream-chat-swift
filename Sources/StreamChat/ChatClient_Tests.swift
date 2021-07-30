@@ -1113,7 +1113,7 @@ private class TestEnvironment<ExtraData: ExtraDataTypes> {
     
     @Atomic var backgroundTaskScheduler: MockBackgroundTaskScheduler?
     
-    lazy var environment: _ChatClient<ExtraData>.Environment = { [unowned self] in
+    lazy var environment: ChatClient.Environment = { [unowned self] in
         .init(
             apiClientBuilder: {
                 self.apiClient = APIClientMock(

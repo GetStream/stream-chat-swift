@@ -13,8 +13,8 @@ public class ChatChannelListController_Mock<ExtraData: ExtraDataTypes>: _ChatCha
         .init(query: .init(filter: .equal(.memberCount, to: 0)), client: .mock())
     }
     
-    public private(set) var channels_mock: [_ChatChannel<ExtraData>]?
-    override public var channels: LazyCachedMapCollection<_ChatChannel<ExtraData>> {
+    public private(set) var channels_mock: [ChatChannel]?
+    override public var channels: LazyCachedMapCollection<ChatChannel> {
         channels_mock.map { $0.lazyCachedMap { $0 } } ?? super.channels
     }
     
@@ -31,13 +31,13 @@ public class ChatChannelListController_Mock<ExtraData: ExtraDataTypes>: _ChatCha
 
 public extension ChatChannelListController_Mock {
     /// Simulates the initial conditions. Setting these values doesn't trigger any observer callback.
-    func simulateInitial(channels: [_ChatChannel<ExtraData>], state: DataController.State) {
+    func simulateInitial(channels: [ChatChannel], state: DataController.State) {
         channels_mock = channels
         state_mock = state
     }
     
     /// Simulates changes in the channels array. Observers are notified with the provided `changes` value.
-    func simulate(channels: [_ChatChannel<ExtraData>], changes: [ListChange<_ChatChannel<ExtraData>>]) {
+    func simulate(channels: [ChatChannel], changes: [ListChange<ChatChannel>]) {
         channels_mock = channels
         delegateCallback {
             $0.controller(self, didChangeChannels: changes)

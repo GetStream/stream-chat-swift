@@ -149,7 +149,7 @@ private extension EventNotificationCenter {
     /// that was successfully decoded.
     ///
     /// - Parameter payloads: The event payloads
-    func process<ExtraData: ExtraDataTypes>(_ payloads: [EventPayload<ExtraData>]) {
+    func process<ExtraData: ExtraDataTypes>(_ payloads: [EventPayload]) {
         payloads.forEach {
             do {
                 process(try $0.event())

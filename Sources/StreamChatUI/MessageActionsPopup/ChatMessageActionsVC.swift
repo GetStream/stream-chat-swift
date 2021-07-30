@@ -10,7 +10,7 @@ public protocol _ChatMessageActionsVCDelegate: AnyObject {
 
     func chatMessageActionsVC(
         _ vc: _ChatMessageActionsVC<ExtraData>,
-        message: _ChatMessage<ExtraData>,
+        message: _ChatMessage,
         didTapOnActionItem actionItem: ChatMessageActionItem
     )
     func chatMessageActionsVCDidFinish(_ vc: _ChatMessageActionsVC<ExtraData>)
@@ -30,7 +30,7 @@ open class _ChatMessageActionsVC<ExtraData: ExtraDataTypes>: _ViewController, Th
     public var channelConfig: ChannelConfig!
 
     /// Message that should be shown in this view controller.
-    open var message: _ChatMessage<ExtraData>? {
+    open var message: _ChatMessage? {
         messageController.message
     }
     
@@ -236,13 +236,13 @@ public extension _ChatMessageActionsVC {
     struct Delegate {
         /// Triggered when action item was tapped.
         /// You can decide what to do with message based on which instance of `ChatMessageActionItem` you received.
-        public var didTapOnActionItem: (_ChatMessageActionsVC, _ChatMessage<ExtraData>, ChatMessageActionItem) -> Void
+        public var didTapOnActionItem: (_ChatMessageActionsVC, _ChatMessage, ChatMessageActionItem) -> Void
         /// Triggered when `_ChatMessageActionsVC` should be dismissed.
         public var didFinish: (_ChatMessageActionsVC) -> Void
 
         /// Init of `_ChatMessageActionsVC.Delegate`.
         public init(
-            didTapOnActionItem: @escaping (_ChatMessageActionsVC, _ChatMessage<ExtraData>, ChatMessageActionItem)
+            didTapOnActionItem: @escaping (_ChatMessageActionsVC, _ChatMessage, ChatMessageActionItem)
                 -> Void = { _, _, _ in },
             didFinish: @escaping (_ChatMessageActionsVC) -> Void = { _ in }
         ) {

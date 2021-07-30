@@ -5,14 +5,14 @@
 import CoreData
 import Foundation
 
-extension _ChatClient {
+extension ChatClient {
     /// Creates a new `ChannelListController` with the provided channel query.
     ///
     /// - Parameter query: The query specify the filter and sorting of the channels the controller should fetch.
     ///
     /// - Returns: A new instance of `ChannelController`.
     ///
-    public func channelListController(query: _ChannelListQuery<ExtraData.Channel>) -> _ChatChannelListController<ExtraData> {
+    public func channelListController(query: ChannelListQuery) -> _ChatChannelListController<ExtraData> {
         .init(query: query, client: self)
     }
 }
@@ -40,17 +40,17 @@ public typealias ChatChannelListController = _ChatChannelListController<NoExtraD
 ///
 public class _ChatChannelListController<ExtraData: ExtraDataTypes>: DataController, DelegateCallable, DataStoreProvider {
     /// The query specifying and filtering the list of channels.
-    public let query: _ChannelListQuery<ExtraData.Channel>
+    public let query: ChannelListQuery
     
     /// The `ChatClient` instance this controller belongs to.
-    public let client: _ChatClient<ExtraData>
+    public let client: ChatClient
     
     /// The channels matching the query of this controller.
     ///
     /// To observe changes of the channels, set your class as a delegate of this controller or use the provided
     /// `Combine` publishers.
     ///
-    public var channels: LazyCachedMapCollection<_ChatChannel<ExtraData>> {
+    public var channels: LazyCachedMapCollection<ChatChannel> {
         startChannelListObserverIfNeeded()
         return channelListObserver.items
     }
@@ -74,7 +74,7 @@ public class _ChatChannelListController<ExtraData: ExtraDataTypes>: DataControll
     }
     
     /// Used for observing the database for changes.
-    private(set) lazy var channelListObserver: ListDatabaseObserver<_ChatChannel<ExtraData>, ChannelDTO> = {
+    private(set) lazy var channelListObserver: ListDatabaseObserver<ChatChannel, ChannelDTO> = {
         let request = ChannelDTO.channelListFetchRequest(query: self.query)
         
         let observer = self.environment.createChannelListDabaseObserver(
@@ -111,7 +111,7 @@ public class _ChatChannelListController<ExtraData: ExtraDataTypes>: DataControll
     /// - Parameters:
     ///   - query: The query used for filtering the channels.
     ///   - client: The `Client` instance this controller belongs to.
-    init(query: _ChannelListQuery<ExtraData.Channel>, client: _ChatClient<ExtraData>, environment: Environment = .init()) {
+    init(query: ChannelListQuery, client: ChatClient, environment: Environment = .init()) {
         self.client = client
         self.query = query
         self.environment = environment
@@ -190,7 +190,7 @@ public class _ChatChannelListController<ExtraData: ExtraDataTypes>: DataControll
     }
 }
 
-extension _ChatChannelListController {
+extension ChatChannelListController {
     struct Environment {
         var channelQueryUpdaterBuilder: (
             _ database: DatabaseContainer,
@@ -200,15 +200,15 @@ extension _ChatChannelListController {
         var createChannelListDabaseObserver: (
             _ context: NSManagedObjectContext,
             _ fetchRequest: NSFetchRequest<ChannelDTO>,
-            _ itemCreator: @escaping (ChannelDTO) -> _ChatChannel<ExtraData>
+            _ itemCreator: @escaping (ChannelDTO) -> ChatChannel
         )
-            -> ListDatabaseObserver<_ChatChannel<ExtraData>, ChannelDTO> = {
+            -> ListDatabaseObserver<ChatChannel, ChannelDTO> = {
                 ListDatabaseObserver(context: $0, fetchRequest: $1, itemCreator: $2)
             }
     }
 }
 
-extension _ChatChannelListController where ExtraData == NoExtraData {
+extension ChatChannelListController where ExtraData == NoExtraData {
     /// Set the delegate of `ChannelListController` to observe the changes in the system.
     ///
     /// - Note: The delegate can be set directly only if you're **not** using custom extra data types. Due to the current
@@ -275,16 +275,16 @@ public protocol _ChatChannelListControllerDelegate: DataControllerStateDelegate 
     ///
     func controller(
         _ controller: _ChatChannelListController<ExtraData>,
-        didChangeChannels changes: [ListChange<_ChatChannel<ExtraData>>]
+        didChangeChannels changes: [ListChange<ChatChannel>]
     )
 }
 
-public extension _ChatChannelListControllerDelegate {
+public extension ChatChannelListControllerDelegate {
     func controllerWillChangeChannels(_ controller: _ChatChannelListController<ExtraData>) {}
 
     func controller(
         _ controller: _ChatChannelListController<ExtraData>,
-        didChangeChannels changes: [ListChange<_ChatChannel<ExtraData>>]
+        didChangeChannels changes: [ListChange<ChatChannel>]
     ) {}
 }
 
@@ -298,7 +298,7 @@ extension ClientError {
 
 class AnyChannelListControllerDelegate<ExtraData: ExtraDataTypes>: _ChatChannelListControllerDelegate {
     private var _controllerWillChangeChannels: (_ChatChannelListController<ExtraData>) -> Void
-    private var _controllerDidChangeChannels: (_ChatChannelListController<ExtraData>, [ListChange<_ChatChannel<ExtraData>>])
+    private var _controllerDidChangeChannels: (_ChatChannelListController<ExtraData>, [ListChange<ChatChannel>])
         -> Void
     private var _controllerDidChangeState: (DataController, DataController.State) -> Void
     
@@ -308,7 +308,7 @@ class AnyChannelListControllerDelegate<ExtraData: ExtraDataTypes>: _ChatChannelL
         wrappedDelegate: AnyObject?,
         controllerDidChangeState: @escaping (DataController, DataController.State) -> Void,
         controllerWillChangeChannels: @escaping (_ChatChannelListController<ExtraData>) -> Void,
-        controllerDidChangeChannels: @escaping (_ChatChannelListController<ExtraData>, [ListChange<_ChatChannel<ExtraData>>])
+        controllerDidChangeChannels: @escaping (_ChatChannelListController<ExtraData>, [ListChange<ChatChannel>])
             -> Void
     ) {
         self.wrappedDelegate = wrappedDelegate
@@ -327,7 +327,7 @@ class AnyChannelListControllerDelegate<ExtraData: ExtraDataTypes>: _ChatChannelL
 
     func controller(
         _ controller: _ChatChannelListController<ExtraData>,
-        didChangeChannels changes: [ListChange<_ChatChannel<ExtraData>>]
+        didChangeChannels changes: [ListChange<ChatChannel>]
     ) {
         _controllerDidChangeChannels(controller, changes)
     }

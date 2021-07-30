@@ -75,7 +75,7 @@ open class _ChatMessageReactionsVC<ExtraData: ExtraDataTypes>: _ViewController, 
 extension _ChatMessageReactionsVC: _ChatMessageControllerDelegate {
     public func messageController(
         _ controller: _ChatMessageController<ExtraData>,
-        didChangeMessage change: EntityChange<_ChatMessage<ExtraData>>
+        didChangeMessage change: EntityChange<ChatMessage>
     ) {
         switch change {
         case .create, .remove: break

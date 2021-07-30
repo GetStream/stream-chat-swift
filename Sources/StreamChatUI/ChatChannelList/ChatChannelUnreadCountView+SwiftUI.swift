@@ -13,7 +13,7 @@ public protocol _ChatChannelUnreadCountViewSwiftUIView: View {
 }
 
 @available(iOS 13.0, *)
-extension _ChatChannelUnreadCountView {
+extension ChatChannelUnreadCountView {
     /// Data source of `_ChatChannelUnreadCountView` represented as `ObservedObject`.
     public typealias ObservedObject<Content: SwiftUIView> = SwiftUIWrapper<Content> where Content.ExtraData == ExtraData
 

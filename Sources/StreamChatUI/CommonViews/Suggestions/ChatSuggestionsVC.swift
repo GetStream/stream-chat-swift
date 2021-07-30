@@ -259,7 +259,7 @@ open class _ChatMessageComposerSuggestionsMentionDataSource<ExtraData: ExtraData
 
     public func controller(
         _ controller: _ChatUserSearchController<ExtraData>,
-        didChangeUsers changes: [ListChange<_ChatUser<ExtraData.User>>]
+        didChangeUsers changes: [ListChange<ChatUser>]
     ) {
         collectionView.reloadData()
     }

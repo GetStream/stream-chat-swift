@@ -17,7 +17,7 @@ extension String.StringInterpolation {
         appendLiteral(prettyPrintedString)
     }
     
-    mutating func appendInterpolation<T>(_ value: EventPayload<T>) {
+    mutating func appendInterpolation(_ value: EventPayload) {
         var description = "\n-----\(type(of: value))-----\n"
         let mirror = Mirror(reflecting: value)
         for child in mirror.children {

@@ -4,7 +4,7 @@
 
 import Foundation
 
-public extension _ChatClient {
+public extension ChatClient {
     /// Creates a new `EventsController` that can be used for event listening.
     ///
     /// - Returns: A new instance of `EventsController`.

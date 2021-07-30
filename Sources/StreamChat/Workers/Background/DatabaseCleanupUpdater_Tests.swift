@@ -77,11 +77,11 @@ final class DatabaseCleanupUpdater_Tests: StressTestCase {
     
     func test_refetchExistingChannelListQueries_updateQueries() throws {
         let filter1 = Filter<_ChannelListFilterScope<ExtraData>>.query(.cid, text: .unique)
-        let query1 = _ChannelListQuery<ExtraData>(filter: filter1)
+        let query1 = ChannelListQuery(filter: filter1)
         try database.createChannelListQuery(filter: filter1)
         
         let filter2 = Filter<_ChannelListFilterScope<ExtraData>>.query(.cid, text: .unique)
-        let query2 = _ChannelListQuery<ExtraData>(filter: filter2)
+        let query2 = ChannelListQuery(filter: filter2)
         try database.createChannelListQuery(filter: filter2)
         
         databaseCleanupUpdater?.refetchExistingChannelListQueries()
@@ -110,7 +110,7 @@ final class DatabaseCleanupUpdater_Tests: StressTestCase {
 }
 
 extension _ChannelListQuery: Equatable {
-    public static func == (lhs: _ChannelListQuery<ExtraData>, rhs: _ChannelListQuery<ExtraData>) -> Bool {
+    public static func == (lhs: ChannelListQuery, rhs: ChannelListQuery) -> Bool {
         lhs.filter == rhs.filter &&
             lhs.messagesLimit == rhs.messagesLimit &&
             lhs.options == rhs.options &&

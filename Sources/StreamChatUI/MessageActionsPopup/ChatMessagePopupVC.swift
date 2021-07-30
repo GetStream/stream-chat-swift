@@ -38,7 +38,7 @@ open class _ChatMessagePopupVC<ExtraData: ExtraDataTypes>: _ViewController, Comp
     /// `messageContentView` being displayed.
     public var messageContentView: _ChatMessageContentView<ExtraData>!
     /// Message data that is shown.
-    public var message: _ChatMessage<ExtraData> { messageContentView.content! }
+    public var message: _ChatMessage { messageContentView.content! }
     /// Initial frame of a message.
     public var messageViewFrame: CGRect!
     /// `_ChatMessageActionsVC` instance for showing actions.

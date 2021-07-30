@@ -45,7 +45,7 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, ThemeProvi
     public weak var delegate: ChatMessageContentViewDelegate?
 
     /// The message this view displays.
-    open var content: _ChatMessage<ExtraData>? {
+    open var content: _ChatMessage? {
         didSet { updateContentIfNeeded() }
     }
 

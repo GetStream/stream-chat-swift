@@ -49,15 +49,15 @@ open class _ComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
         /// The state of the composer.
         public let state: ComposerState
         /// The editing message if the composer is currently editing a message.
-        public let editingMessage: _ChatMessage<ExtraData>?
+        public let editingMessage: _ChatMessage?
         /// The quoting message if the composer is currently quoting a message.
-        public let quotingMessage: _ChatMessage<ExtraData>?
+        public let quotingMessage: _ChatMessage?
         /// The thread parent message if the composer is currently replying in a thread.
-        public var threadMessage: _ChatMessage<ExtraData>?
+        public var threadMessage: _ChatMessage?
         /// The attachments of the message.
         public var attachments: [AnyAttachmentPayload]
         /// The mentioned users in the message.
-        public var mentionedUsers: Set<_ChatUser<ExtraData.User>>
+        public var mentionedUsers: Set<ChatUser>
         /// The command of the message.
         public var command: Command?
 
@@ -74,11 +74,11 @@ open class _ComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
         public init(
             text: String,
             state: ComposerState,
-            editingMessage: _ChatMessage<ExtraData>?,
-            quotingMessage: _ChatMessage<ExtraData>?,
-            threadMessage: _ChatMessage<ExtraData>?,
+            editingMessage: _ChatMessage?,
+            quotingMessage: _ChatMessage?,
+            threadMessage: _ChatMessage?,
             attachments: [AnyAttachmentPayload],
-            mentionedUsers: Set<_ChatUser<ExtraData.User>>,
+            mentionedUsers: Set<ChatUser>,
             command: Command?
         ) {
             self.text = text
@@ -122,7 +122,7 @@ open class _ComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
         /// Sets the content state to editing a message.
         ///
         /// - Parameter message: The message that the composer will edit.
-        public mutating func editMessage(_ message: _ChatMessage<ExtraData>) {
+        public mutating func editMessage(_ message: _ChatMessage) {
             self = .init(
                 text: message.text,
                 state: .edit,
@@ -138,7 +138,7 @@ open class _ComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
         /// Sets the content state to quoting a message.
         ///
         /// - Parameter message: The message that the composer will quote.
-        public mutating func quoteMessage(_ message: _ChatMessage<ExtraData>) {
+        public mutating func quoteMessage(_ message: _ChatMessage) {
             self = .init(
                 text: text,
                 state: .quote,
@@ -182,7 +182,7 @@ open class _ComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
     open var userSearchController: _ChatUserSearchController<ExtraData>!
 
     /// A controller that manages the channel that the composer is creating content for.
-    open var channelController: _ChatChannelController<ExtraData>?
+    open var channelController: ChatChannelController?
 
     /// The channel config. If it's a new channel, an empty config should be created. (Not yet supported right now)
     public var channelConfig: ChannelConfig? {
@@ -661,7 +661,7 @@ open class _ComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
     }
     
     /// Provides the mention text for composer text field, when the user selects a mention suggestion.
-    open func mentionText(for user: _ChatUser<ExtraData.User>) -> String {
+    open func mentionText(for user: ChatUser) -> String {
         if let name = user.name, !name.isEmpty {
             return name.lowercased()
         } else {

@@ -14,7 +14,7 @@ public struct ReactionNewEvent: ReactionEvent {
     
     let payload: Any
     
-    init<ExtraData: ExtraDataTypes>(from response: EventPayload<ExtraData>) throws {
+    init<ExtraData: ExtraDataTypes>(from response: EventPayload) throws {
         userId = try response.value(at: \.reaction?.user.id)
         cid = try response.value(at: \.cid)
         messageId = try response.value(at: \.reaction?.messageId)
@@ -35,7 +35,7 @@ public struct ReactionUpdatedEvent: ReactionEvent {
     
     let payload: Any
     
-    init<ExtraData: ExtraDataTypes>(from response: EventPayload<ExtraData>) throws {
+    init<ExtraData: ExtraDataTypes>(from response: EventPayload) throws {
         userId = try response.value(at: \.reaction?.user.id)
         cid = try response.value(at: \.cid)
         messageId = try response.value(at: \.reaction?.messageId)
@@ -55,7 +55,7 @@ public struct ReactionDeletedEvent: ReactionEvent {
     
     let payload: Any
     
-    init<ExtraData: ExtraDataTypes>(from response: EventPayload<ExtraData>) throws {
+    init<ExtraData: ExtraDataTypes>(from response: EventPayload) throws {
         userId = try response.value(at: \.reaction?.user.id)
         cid = try response.value(at: \.cid)
         messageId = try response.value(at: \.reaction?.messageId)

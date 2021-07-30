@@ -7,7 +7,7 @@ import Foundation
 // MARK: - Temporary
 
 /// The DTO object mirroring the JSON representation of an event.
-struct EventPayload<ExtraData: ExtraDataTypes>: Decodable {
+struct EventPayload: Decodable {
     enum CodingKeys: String, CodingKey, CaseIterable {
         case eventType = "type"
         case connectionId = "connection_id"
@@ -32,13 +32,13 @@ struct EventPayload<ExtraData: ExtraDataTypes>: Decodable {
     let eventType: EventType
     let connectionId: String?
     let cid: ChannelId?
-    let currentUser: CurrentUserPayload<ExtraData>?
-    let user: UserPayload<ExtraData.User>?
-    let createdBy: UserPayload<ExtraData.User>?
-    let memberContainer: MemberContainerPayload<ExtraData.User>?
-    let channel: ChannelDetailPayload<ExtraData>?
-    let message: MessagePayload<ExtraData>?
-    let reaction: MessageReactionPayload<ExtraData>?
+    let currentUser: CurrentUserPayload?
+    let user: UserPayload?
+    let createdBy: UserPayload?
+    let memberContainer: MemberContainerPayload?
+    let channel: ChannelDetailPayload?
+    let message: MessagePayload?
+    let reaction: MessageReactionPayload?
     let watcherCount: Int?
     let unreadCount: UnreadCount?
     let createdAt: Date?
@@ -51,13 +51,13 @@ struct EventPayload<ExtraData: ExtraDataTypes>: Decodable {
         eventType: EventType,
         connectionId: String? = nil,
         cid: ChannelId? = nil,
-        currentUser: CurrentUserPayload<ExtraData>? = nil,
-        user: UserPayload<ExtraData.User>? = nil,
-        createdBy: UserPayload<ExtraData.User>? = nil,
-        memberContainer: MemberContainerPayload<ExtraData.User>? = nil,
-        channel: ChannelDetailPayload<ExtraData>? = nil,
-        message: MessagePayload<ExtraData>? = nil,
-        reaction: MessageReactionPayload<ExtraData>? = nil,
+        currentUser: CurrentUserPayload? = nil,
+        user: UserPayload? = nil,
+        createdBy: UserPayload? = nil,
+        memberContainer: MemberContainerPayload? = nil,
+        channel: ChannelDetailPayload? = nil,
+        message: MessagePayload? = nil,
+        reaction: MessageReactionPayload? = nil,
         watcherCount: Int? = nil,
         unreadCount: UnreadCount? = nil,
         createdAt: Date? = nil,
@@ -92,13 +92,13 @@ struct EventPayload<ExtraData: ExtraDataTypes>: Decodable {
         // In healthCheck event we can receive invalid id containing "*".
         // We don't need to throw error in that case and can treat it like missing cid.
         cid = try? container.decodeIfPresent(ChannelId.self, forKey: .cid)
-        currentUser = try container.decodeIfPresent(CurrentUserPayload<ExtraData>.self, forKey: .currentUser)
-        user = try container.decodeIfPresent(UserPayload<ExtraData.User>.self, forKey: .user)
-        createdBy = try container.decodeIfPresent(UserPayload<ExtraData.User>.self, forKey: .createdBy)
-        memberContainer = try container.decodeIfPresent(MemberContainerPayload<ExtraData.User>.self, forKey: .memberContainer)
-        channel = try container.decodeIfPresent(ChannelDetailPayload<ExtraData>.self, forKey: .channel)
-        message = try container.decodeIfPresent(MessagePayload<ExtraData>.self, forKey: .message)
-        reaction = try container.decodeIfPresent(MessageReactionPayload<ExtraData>.self, forKey: .reaction)
+        currentUser = try container.decodeIfPresent(CurrentUserPayload.self, forKey: .currentUser)
+        user = try container.decodeIfPresent(UserPayload.self, forKey: .user)
+        createdBy = try container.decodeIfPresent(UserPayload.self, forKey: .createdBy)
+        memberContainer = try container.decodeIfPresent(MemberContainerPayload.self, forKey: .memberContainer)
+        channel = try container.decodeIfPresent(ChannelDetailPayload.self, forKey: .channel)
+        message = try container.decodeIfPresent(MessagePayload.self, forKey: .message)
+        reaction = try container.decodeIfPresent(MessageReactionPayload.self, forKey: .reaction)
         watcherCount = try container.decodeIfPresent(Int.self, forKey: .watcherCount)
         unreadCount = try? UnreadCount(from: decoder)
         createdAt = try container.decodeIfPresent(Date.self, forKey: .createdAt)
@@ -115,7 +115,7 @@ struct EventPayload<ExtraData: ExtraDataTypes>: Decodable {
 
 extension EventPayload {
     /// Get an unwrapped value from the payload or throw an error.
-    func value<Value>(at keyPath: KeyPath<EventPayload<ExtraData>, Value?>) throws -> Value {
+    func value<Value>(at keyPath: KeyPath<EventPayload, Value?>) throws -> Value {
         guard let value = self[keyPath: keyPath] else {
             throw ClientError.EventDecoding(missingValue: String(describing: keyPath), for: Self.self)
         }

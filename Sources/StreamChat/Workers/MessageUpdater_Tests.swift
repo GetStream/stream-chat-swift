@@ -304,7 +304,7 @@ final class MessageUpdater_Tests: StressTestCase {
         messageUpdater.getMessage(cid: cid, messageId: messageId)
                 
         // Assert correct endpoint is called
-        let expectedEndpoint: Endpoint<MessagePayload<ExtraData>.Boxed> = .getMessage(messageId: messageId)
+        let expectedEndpoint: Endpoint<MessagePayload.Boxed> = .getMessage(messageId: messageId)
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
     }
     
@@ -317,14 +317,14 @@ final class MessageUpdater_Tests: StressTestCase {
         
         // Simulate API response with failure
         let error = TestError()
-        apiClient.test_simulateResponse(Result<MessagePayload<ExtraData>.Boxed, Error>.failure(error))
+        apiClient.test_simulateResponse(Result<MessagePayload.Boxed, Error>.failure(error))
                 
         // Assert the completion is called with the error
         AssertAsync.willBeEqual(completionCalledError as? TestError, error)
     }
     
     func test_getMessage_propogatesDatabaseError() throws {
-        let messagePayload: MessagePayload<ExtraData>.Boxed = .init(
+        let messagePayload: MessagePayload.Boxed = .init(
             message: .dummy(messageId: .unique, authorUserId: .unique)
         )
         let channelId = ChannelId.unique
@@ -343,7 +343,7 @@ final class MessageUpdater_Tests: StressTestCase {
         }
         
         // Simulate API response with success
-        apiClient.test_simulateResponse(Result<MessagePayload<ExtraData>.Boxed, Error>.success(messagePayload))
+        apiClient.test_simulateResponse(Result<MessagePayload.Boxed, Error>.success(messagePayload))
                 
         // Assert database error is propogated
         AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
@@ -367,10 +367,10 @@ final class MessageUpdater_Tests: StressTestCase {
         }
         
         // Simulate API response with success
-        let messagePayload: MessagePayload<ExtraData>.Boxed = .init(
+        let messagePayload: MessagePayload.Boxed = .init(
             message: .dummy(messageId: messageId, authorUserId: currentUserId)
         )
-        apiClient.test_simulateResponse(Result<MessagePayload<ExtraData>.Boxed, Error>.success(messagePayload))
+        apiClient.test_simulateResponse(Result<MessagePayload.Boxed, Error>.success(messagePayload))
         
         // Assert completion is called
         AssertAsync.willBeTrue(completionCalled)
@@ -500,7 +500,7 @@ final class MessageUpdater_Tests: StressTestCase {
         messageUpdater.loadReplies(cid: .unique, messageId: messageId, pagination: pagination)
         
         // Assert correct endpoint is called
-        let expectedEndpoint: Endpoint<MessageRepliesPayload<ExtraData>> = .loadReplies(
+        let expectedEndpoint: Endpoint<MessageRepliesPayload> = .loadReplies(
             messageId: messageId,
             pagination: pagination
         )
@@ -516,14 +516,14 @@ final class MessageUpdater_Tests: StressTestCase {
         
         // Simulate API response with failure
         let error = TestError()
-        apiClient.test_simulateResponse(Result<MessageRepliesPayload<ExtraData>, Error>.failure(error))
+        apiClient.test_simulateResponse(Result<MessageRepliesPayload, Error>.failure(error))
         
         // Assert the completion is called with the error
         AssertAsync.willBeEqual(completionCalledError as? TestError, error)
     }
     
     func test_loadReplies_propagatesDatabaseError() throws {
-        let repliesPayload: MessageRepliesPayload<ExtraData> = .init(messages: [.dummy(messageId: .unique, authorUserId: .unique)])
+        let repliesPayload: MessageRepliesPayload = .init(messages: [.dummy(messageId: .unique, authorUserId: .unique)])
         let cid = ChannelId.unique
 
         // Create channel in the database
@@ -540,7 +540,7 @@ final class MessageUpdater_Tests: StressTestCase {
         }
         
         // Simulate API response with success
-        apiClient.test_simulateResponse(Result<MessageRepliesPayload<ExtraData>, Error>.success(repliesPayload))
+        apiClient.test_simulateResponse(Result<MessageRepliesPayload, Error>.success(repliesPayload))
         
         // Assert database error is propagated
         AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
@@ -564,10 +564,10 @@ final class MessageUpdater_Tests: StressTestCase {
         }
         
         // Simulate API response with success
-        let repliesPayload: MessageRepliesPayload<ExtraData> = .init(
+        let repliesPayload: MessageRepliesPayload = .init(
             messages: [.dummy(messageId: messageId, authorUserId: .unique)]
         )
-        apiClient.test_simulateResponse(Result<MessageRepliesPayload<ExtraData>, Error>.success(repliesPayload))
+        apiClient.test_simulateResponse(Result<MessageRepliesPayload, Error>.success(repliesPayload))
         
         // Assert completion is called
         AssertAsync.willBeTrue(completionCalled)
@@ -600,11 +600,11 @@ final class MessageUpdater_Tests: StressTestCase {
         }
         
         // Assert message endpoint is called.
-        let messageEndpoint: Endpoint<MessagePayload<ExtraData>.Boxed> = .getMessage(messageId: messageId)
+        let messageEndpoint: Endpoint<MessagePayload.Boxed> = .getMessage(messageId: messageId)
         AssertAsync.willBeEqual(apiClient.request_endpoint, AnyEndpoint(messageEndpoint))
         
         // Simulate message response with success.
-        let messagePayload: MessagePayload<ExtraData>.Boxed = .init(
+        let messagePayload: MessagePayload.Boxed = .init(
             message: .dummy(messageId: messageId, authorUserId: currentUserId)
         )
         apiClient.test_simulateResponse(.success(messagePayload))
@@ -669,12 +669,12 @@ final class MessageUpdater_Tests: StressTestCase {
         }
         
         // Assert message endpoint is called.
-        let messageEndpoint: Endpoint<MessagePayload<ExtraData>.Boxed> = .getMessage(messageId: messageId)
+        let messageEndpoint: Endpoint<MessagePayload.Boxed> = .getMessage(messageId: messageId)
         AssertAsync.willBeEqual(apiClient.request_endpoint, AnyEndpoint(messageEndpoint))
         
         // Simulate message response with failure.
         let networkError = TestError()
-        apiClient.test_simulateResponse(Result<MessagePayload<ExtraData>.Boxed, Error>.failure(networkError))
+        apiClient.test_simulateResponse(Result<MessagePayload.Boxed, Error>.failure(networkError))
         
         // Assert the message network error is propogated.
         AssertAsync.willBeEqual(completionCalledError as? TestError, networkError)
@@ -699,11 +699,11 @@ final class MessageUpdater_Tests: StressTestCase {
         }
         
         // Assert message endpoint is called.
-        let messageEndpoint: Endpoint<MessagePayload<ExtraData>.Boxed> = .getMessage(messageId: messageId)
+        let messageEndpoint: Endpoint<MessagePayload.Boxed> = .getMessage(messageId: messageId)
         AssertAsync.willBeEqual(apiClient.request_endpoint, AnyEndpoint(messageEndpoint))
         
         // Simulate message response with success.
-        let messagePayload: MessagePayload<ExtraData>.Boxed = .init(
+        let messagePayload: MessagePayload.Boxed = .init(
             message: .dummy(messageId: messageId, authorUserId: currentUserId)
         )
         apiClient.test_simulateResponse(.success(messagePayload))
@@ -1404,7 +1404,7 @@ final class MessageUpdater_Tests: StressTestCase {
         }
 
         // Assert endpoint is called.
-        let endpoint: Endpoint<MessagePayload<ExtraData>.Boxed> = .dispatchEphemeralMessageAction(
+        let endpoint: Endpoint<MessagePayload.Boxed> = .dispatchEphemeralMessageAction(
             cid: cid,
             messageId: messageId,
             action: action
@@ -1412,7 +1412,7 @@ final class MessageUpdater_Tests: StressTestCase {
         AssertAsync.willBeEqual(apiClient.request_endpoint, AnyEndpoint(endpoint))
 
         // Simulate message response.
-        let messagePayload: MessagePayload<ExtraData>.Boxed = .init(
+        let messagePayload: MessagePayload.Boxed = .init(
             message: .dummy(
                 messageId: messageId,
                 authorUserId: currentUserId
@@ -1466,7 +1466,7 @@ final class MessageUpdater_Tests: StressTestCase {
         }
 
         // Assert endpoint is called.
-        let endpoint: Endpoint<MessagePayload<ExtraData>.Boxed> = .dispatchEphemeralMessageAction(
+        let endpoint: Endpoint<MessagePayload.Boxed> = .dispatchEphemeralMessageAction(
             cid: cid,
             messageId: messageId,
             action: action
@@ -1475,7 +1475,7 @@ final class MessageUpdater_Tests: StressTestCase {
 
         // Simulate error response.
         let networkError = TestError()
-        let result: Result<MessagePayload<ExtraData>.Boxed, Error> = .failure(networkError)
+        let result: Result<MessagePayload.Boxed, Error> = .failure(networkError)
         apiClient.test_simulateResponse(result)
 
         AssertAsync {
@@ -1608,7 +1608,7 @@ final class MessageUpdater_Tests: StressTestCase {
         }
 
         // Assert endpoint is called.
-        let endpoint: Endpoint<MessagePayload<ExtraData>.Boxed> = .dispatchEphemeralMessageAction(
+        let endpoint: Endpoint<MessagePayload.Boxed> = .dispatchEphemeralMessageAction(
             cid: cid,
             messageId: messageId,
             action: action
@@ -1620,7 +1620,7 @@ final class MessageUpdater_Tests: StressTestCase {
         database.write_errorResponse = databaseError
 
         // Simulate message response.
-        let messagePayload: MessagePayload<ExtraData>.Boxed = .init(
+        let messagePayload: MessagePayload.Boxed = .init(
             message: .dummy(
                 messageId: messageId,
                 authorUserId: currentUserId

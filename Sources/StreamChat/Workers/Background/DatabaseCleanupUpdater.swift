@@ -55,7 +55,7 @@ class DatabaseCleanupUpdater<ExtraData: ExtraDataTypes>: Worker {
                         entityName: ChannelListQueryDTO.entityName
                     )
                 )
-                let queries: [_ChannelListQuery<ExtraData.Channel>] = try queriesDTOs.map {
+                let queries: [ChannelListQuery] = try queriesDTOs.map {
                     try $0.asChannelListQuery()
                 }
                 
@@ -97,7 +97,7 @@ private extension ChannelListQueryDTO {
     /// Converts ChannelListQueryDTO to _ChannelListQuery
     /// - Throws: Decoding error
     /// - Returns: Domain model for _ChannelListQuery
-    func asChannelListQuery<ExtraData: ChannelExtraData>() throws -> _ChannelListQuery<ExtraData> {
+    func asChannelListQuery<ExtraData: ChannelExtraData>() throws -> ChannelListQuery {
         let encodedFilter = try JSONDecoder.default
             .decode(Filter<_ChannelListFilterScope<ExtraData>>.self, from: filterJSONData)
         var updatedFilter: Filter<_ChannelListFilterScope> = encodedFilter

@@ -386,7 +386,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         return message
     }
     
-    func saveMessage<ExtraData: ExtraDataTypes>(payload: MessagePayload<ExtraData>, for cid: ChannelId?) throws -> MessageDTO {
+    func saveMessage<ExtraData: ExtraDataTypes>(payload: MessagePayload, for cid: ChannelId?) throws -> MessageDTO {
         guard payload.channel != nil || cid != nil else {
             throw ClientError.MessagePayloadSavingFailure("""
             Either `payload.channel` or `cid` must be provided to sucessfuly save the message payload.
@@ -541,10 +541,10 @@ extension NSManagedObjectContext: MessageDatabaseSession {
 
 extension MessageDTO {
     /// Snapshots the current state of `MessageDTO` and returns an immutable model object from it.
-    func asModel<ExtraData: ExtraDataTypes>() -> _ChatMessage<ExtraData> { .init(fromDTO: self) }
+    func asModel<ExtraData: ExtraDataTypes>() -> _ChatMessage { .init(fromDTO: self) }
     
     /// Snapshots the current state of `MessageDTO` and returns its representation for the use in API calls.
-    func asRequestBody<ExtraData: ExtraDataTypes>() -> MessageRequestBody<ExtraData> {
+    func asRequestBody<ExtraData: ExtraDataTypes>() -> MessageRequestBody {
         var extraData: CustomData
         do {
             extraData = try JSONSerialization.jsonObject(with: self.extraData, options: []) as? CustomData ?? .defaultValue

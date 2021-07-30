@@ -25,9 +25,9 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
     FileActionContentViewDelegate,
     ChatMessageListScrollOverlayDataSource {
     /// Controller for observing data changes within the channel
-    open var channelController: _ChatChannelController<ExtraData>!
+    open var channelController: ChatChannelController!
 
-    public var client: _ChatClient<ExtraData> {
+    public var client: ChatClient {
         channelController.client
     }
     
@@ -318,11 +318,11 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
     }
 
     /// Updates the collection view data with given `changes`.
-    open func updateMessages(with changes: [ListChange<_ChatMessage<ExtraData>>], completion: (() -> Void)? = nil) {
+    open func updateMessages(with changes: [ListChange<ChatMessage>], completion: (() -> Void)? = nil) {
         listView.updateMessages(with: changes, completion: completion)
     }
     
-    open func messageForIndexPath(_ indexPath: IndexPath) -> _ChatMessage<ExtraData> {
+    open func messageForIndexPath(_ indexPath: IndexPath) -> _ChatMessage {
         channelController.messages[indexPath.item]
     }
     
@@ -445,23 +445,23 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
     // MARK: - _ChatChannelControllerDelegate
 
     open func channelController(
-        _ channelController: _ChatChannelController<ExtraData>,
-        didUpdateMessages changes: [ListChange<_ChatMessage<ExtraData>>]
+        _ channelController: ChatChannelController,
+        didUpdateMessages changes: [ListChange<ChatMessage>]
     ) {
         updateMessages(with: changes)
     }
     
     open func channelController(
-        _ channelController: _ChatChannelController<ExtraData>,
-        didUpdateChannel channel: EntityChange<_ChatChannel<ExtraData>>
+        _ channelController: ChatChannelController,
+        didUpdateChannel channel: EntityChange<ChatChannel>
     ) {
         channelAvatarView.content = (channelController.channel, client.currentUserId)
         updateScrollToLatestMessageButton()
     }
     
     open func channelController(
-        _ channelController: _ChatChannelController<ExtraData>,
-        didChangeTypingUsers typingUsers: Set<_ChatUser<ExtraData.User>>
+        _ channelController: ChatChannelController,
+        didChangeTypingUsers typingUsers: Set<ChatUser>
     ) {
         guard channelController.areTypingEventsEnabled else { return }
         
@@ -478,7 +478,7 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
     
     /// Shows typing Indicator
     /// - Parameter typingUsers: typing users gotten from `channelController`
-    open func showTypingIndicator(typingUsers: [_ChatUser<ExtraData.User>]) {
+    open func showTypingIndicator(typingUsers: [ChatUser]) {
         if typingIndicatorView.isHidden {
             Animate {
                 self.listView.contentInset.top += self.typingIndicatorViewHeight
@@ -517,7 +517,7 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
 
     open func chatMessageActionsVC(
         _ vc: _ChatMessageActionsVC<ExtraData>,
-        message: _ChatMessage<ExtraData>,
+        message: _ChatMessage,
         didTapOnActionItem actionItem: ChatMessageActionItem
     ) {
         switch actionItem {

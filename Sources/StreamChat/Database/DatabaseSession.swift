@@ -10,25 +10,25 @@ protocol UserDatabaseSession {
     /// Saves the provided payload to the DB. Return's the matching `UserDTO` if the save was successful. Throws an error
     /// if the save fails.
     @discardableResult
-    func saveUser<ExtraData: UserExtraData>(payload: UserPayload<ExtraData>, query: _UserListQuery<ExtraData>?) throws -> UserDTO
+    func saveUser(payload: UserPayload, query: UserListQuery?) throws -> UserDTO
     
     /// Saves the provided query to the DB. Return's the matching `UserListQueryDTO` if the save was successful. Throws an error
     /// if the save fails.
     @discardableResult
-    func saveQuery<ExtraData: UserExtraData>(query: _UserListQuery<ExtraData>) throws -> UserListQueryDTO?
+    func saveQuery(query: UserListQuery) throws -> UserListQueryDTO?
     
     /// Fetches `UserDTO` with the given `id` from the DB. Returns `nil` if no `UserDTO` matching the `id` exists.
     func user(id: UserId) -> UserDTO?
     
     /// Removes the specified query from DB.
-    func deleteQuery<ExtraData: UserExtraData>(_ query: _UserListQuery<ExtraData>)
+    func deleteQuery(_ query: UserListQuery)
 }
 
 protocol CurrentUserDatabaseSession {
     /// Saves the provided payload to the DB. Return's a `CurrentUserDTO` if the save was successful. Throws an error
     /// if the save fails.
     @discardableResult
-    func saveCurrentUser<ExtraData: ExtraDataTypes>(payload: CurrentUserPayload<ExtraData>) throws -> CurrentUserDTO
+    func saveCurrentUser(payload: CurrentUserPayload) throws -> CurrentUserDTO
 
     /// Updates the `CurrentUserDTO` with the provided unread.
     /// If there is no current user, the error will be thrown.
@@ -75,8 +75,8 @@ protocol MessageDatabaseSession {
     ///
     /// You must either provide `cid` or `payload.channel` value must not be `nil`.
     @discardableResult
-    func saveMessage<ExtraData: ExtraDataTypes>(
-        payload: MessagePayload<ExtraData>,
+    func saveMessage(
+        payload: MessagePayload,
         for cid: ChannelId?
     ) throws -> MessageDTO
 
@@ -104,7 +104,7 @@ protocol MessageDatabaseSession {
     /// Saves the provided reaction payload to the DB. Throws an error if the save fails
     /// else returns saved `MessageReactionDTO` entity.
     @discardableResult
-    func saveReaction<ExtraData: ExtraDataTypes>(payload: MessageReactionPayload<ExtraData>) throws -> MessageReactionDTO
+    func saveReaction(payload: MessageReactionPayload) throws -> MessageReactionDTO
     
     /// Deletes the provided dto from a database
     /// - Parameter reaction: The DTO to be deleted
@@ -145,16 +145,16 @@ extension MessageDatabaseSession {
 protocol ChannelDatabaseSession {
     /// Creates a new `ChannelDTO` object in the database with the given `payload` and `query`.
     @discardableResult
-    func saveChannel<ExtraData: ExtraDataTypes>(
-        payload: ChannelPayload<ExtraData>,
-        query: _ChannelListQuery<ExtraData.Channel>?
+    func saveChannel(
+        payload: ChannelPayload,
+        query: ChannelListQuery?
     ) throws -> ChannelDTO
     
     /// Creates a new `ChannelDTO` object in the database with the given `payload` and `query`.
     @discardableResult
-    func saveChannel<ExtraData: ExtraDataTypes>(
-        payload: ChannelDetailPayload<ExtraData>,
-        query: _ChannelListQuery<ExtraData.Channel>?
+    func saveChannel(
+        payload: ChannelDetailPayload,
+        query: ChannelListQuery?
     ) throws -> ChannelDTO
     
     /// Fetches `ChannelDTO` with the given `cid` from the database.
@@ -164,8 +164,8 @@ protocol ChannelDatabaseSession {
 protocol ChannelReadDatabaseSession {
     /// Creates a new `ChannelReadDTO` object in the database. Throws an error if the ChannelRead fails to be created.
     @discardableResult
-    func saveChannelRead<ExtraData: ExtraDataTypes>(
-        payload: ChannelReadPayload<ExtraData>,
+    func saveChannelRead(
+        payload: ChannelReadPayload,
         for cid: ChannelId
     ) throws -> ChannelReadDTO
     
@@ -188,7 +188,7 @@ protocol ChannelReadDatabaseSession {
 protocol ChannelMuteDatabaseSession {
     /// Creates a new `ChannelMuteDTO` object in the database. Throws an error if the `ChannelMuteDTO` fails to be created.
     @discardableResult
-    func saveChannelMute<ExtraData: ExtraDataTypes>(payload: MutedChannelPayload<ExtraData>) throws -> ChannelMuteDTO
+    func saveChannelMute(payload: MutedChannelPayload) throws -> ChannelMuteDTO
 
     /// Fetches `ChannelMuteDTO` with the given `cid` and `userId` from the DB.
     /// Returns `nil` if no `ChannelMuteDTO` matching the `cid` and `userId`  exists.
@@ -204,10 +204,10 @@ protocol ChannelMuteDatabaseSession {
 protocol MemberDatabaseSession {
     /// Creates a new `MemberDTO` object in the database with the given `payload` in the channel with `channelId`.
     @discardableResult
-    func saveMember<ExtraData: UserExtraData>(
-        payload: MemberPayload<ExtraData>,
+    func saveMember(
+        payload: MemberPayload,
         channelId: ChannelId,
-        query: _ChannelMemberListQuery<ExtraData>?
+        query: ChannelMemberListQuery?
     ) throws -> MemberDTO
     
     /// Fetches `MemberDTO`entity for the given `userId` and `cid`.
@@ -220,7 +220,7 @@ protocol MemberListQueryDatabaseSession {
     
     /// Creates a new `MemberListQueryDatabaseSession` object in the database based in the given `ChannelMemberListQuery`.
     @discardableResult
-    func saveQuery<ExtraData: UserExtraData>(_ query: _ChannelMemberListQuery<ExtraData>) throws -> ChannelMemberListQueryDTO
+    func saveQuery(_ query: ChannelMemberListQuery) throws -> ChannelMemberListQueryDTO
 }
 
 protocol AttachmentDatabaseSession {
@@ -256,18 +256,18 @@ protocol DatabaseSession: UserDatabaseSession,
 
 extension DatabaseSession {
     @discardableResult
-    func saveChannel<ExtraData: ExtraDataTypes>(payload: ChannelPayload<ExtraData>) throws -> ChannelDTO {
+    func saveChannel(payload: ChannelPayload) throws -> ChannelDTO {
         try saveChannel(payload: payload, query: nil)
     }
     
     @discardableResult
-    func saveUser<ExtraData: UserExtraData>(payload: UserPayload<ExtraData>) throws -> UserDTO {
+    func saveUser(payload: UserPayload) throws -> UserDTO {
         try saveUser(payload: payload, query: nil)
     }
     
     @discardableResult
-    func saveMember<ExtraData: UserExtraData>(
-        payload: MemberPayload<ExtraData>,
+    func saveMember(
+        payload: MemberPayload,
         channelId: ChannelId
     ) throws -> MemberDTO {
         try saveMember(payload: payload, channelId: channelId, query: nil)
@@ -275,7 +275,7 @@ extension DatabaseSession {
     
     // MARK: - Event
     
-    func saveEvent<ExtraData: ExtraDataTypes>(payload: EventPayload<ExtraData>) throws {
+    func saveEvent(payload: EventPayload) throws {
         // Save a user data.
         if let userPayload = payload.user {
             try saveUser(payload: userPayload)

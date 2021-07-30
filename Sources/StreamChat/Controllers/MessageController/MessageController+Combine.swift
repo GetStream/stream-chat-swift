@@ -13,12 +13,12 @@ extension _ChatMessageController {
     }
     
     /// A publisher emitting a new value every time the message changes.
-    public var messageChangePublisher: AnyPublisher<EntityChange<_ChatMessage<ExtraData>>, Never> {
+    public var messageChangePublisher: AnyPublisher<EntityChange<ChatMessage>, Never> {
         basePublishers.messageChange.keepAlive(self)
     }
     
     /// A publisher emitting a new value every time the list of the replies of the message has changes.
-    public var repliesChangesPublisher: AnyPublisher<[ListChange<_ChatMessage<ExtraData>>], Never> {
+    public var repliesChangesPublisher: AnyPublisher<[ListChange<ChatMessage>], Never> {
         basePublishers.repliesChanges.keepAlive(self)
     }
     
@@ -33,10 +33,10 @@ extension _ChatMessageController {
         let state: CurrentValueSubject<DataController.State, Never>
         
         /// A backing subject for `messageChangePublisher`.
-        let messageChange: PassthroughSubject<EntityChange<_ChatMessage<ExtraData>>, Never> = .init()
+        let messageChange: PassthroughSubject<EntityChange<ChatMessage>, Never> = .init()
         
         /// A backing subject for `repliesChangesPublisher`.
-        let repliesChanges: PassthroughSubject<[ListChange<_ChatMessage<ExtraData>>], Never> = .init()
+        let repliesChanges: PassthroughSubject<[ListChange<ChatMessage>], Never> = .init()
         
         init(controller: _ChatMessageController<ExtraData>) {
             self.controller = controller
@@ -55,14 +55,14 @@ extension _ChatMessageController.BasePublishers: _ChatMessageControllerDelegate 
     
     func messageController(
         _ controller: _ChatMessageController<ExtraData>,
-        didChangeMessage change: EntityChange<_ChatMessage<ExtraData>>
+        didChangeMessage change: EntityChange<ChatMessage>
     ) {
         messageChange.send(change)
     }
     
     func messageController(
         _ controller: _ChatMessageController<ExtraData>,
-        didChangeReplies changes: [ListChange<_ChatMessage<ExtraData>>]
+        didChangeReplies changes: [ListChange<ChatMessage>]
     ) {
         repliesChanges.send(changes)
     }

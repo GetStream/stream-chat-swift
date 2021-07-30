@@ -16,7 +16,7 @@ extension _ChatUserController {
         public let controller: _ChatUserController
         
         /// The user matching the `userId`.
-        @Published public private(set) var user: _ChatUser<ExtraData.User>?
+        @Published public private(set) var user: ChatUser?
         
         /// The current state of the controller.
         @Published public private(set) var state: DataController.State
@@ -37,7 +37,7 @@ extension _ChatUserController {
 extension _ChatUserController.ObservableObject: _ChatUserControllerDelegate {
     public func userController(
         _ controller: _ChatUserController<ExtraData>,
-        didUpdateUser change: EntityChange<_ChatUser<ExtraData.User>>
+        didUpdateUser change: EntityChange<ChatUser>
     ) {
         user = change.item
     }

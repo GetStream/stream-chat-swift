@@ -458,7 +458,7 @@ final class ChatClientUpdater_Tests_Tests: StressTestCase {
 
 // MARK: - Private
 
-private extension _ChatClient {
+private extension ChatClient {
     var testBackgroundWorkerIDs: Set<UUID> {
         .init(
             backgroundWorkers.compactMap {

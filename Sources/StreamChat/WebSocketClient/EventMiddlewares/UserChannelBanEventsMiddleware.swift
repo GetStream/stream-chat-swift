@@ -10,7 +10,7 @@ struct UserChannelBanEventsMiddleware<ExtraData: ExtraDataTypes>: EventMiddlewar
         // Check if we have `cid` first. If `cid` is not presented the ban events are global bans and
         // they are already handled by `EventDataProcessorMiddleware`
         guard
-            let eventPayload = (event as? EventWithPayload)?.payload as? EventPayload<ExtraData>,
+            let eventPayload = (event as? EventWithPayload)?.payload as? EventPayload,
             let cid = eventPayload.cid
         else {
             return event

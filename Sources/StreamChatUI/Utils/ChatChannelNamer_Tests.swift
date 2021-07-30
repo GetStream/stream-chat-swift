@@ -98,7 +98,7 @@ class ChatChannelNamer_Tests: XCTestCase {
 
     func test_defaultChannelNamer_directChannel_whenChannelHasNoName_whenChannelHasOnlyCurrentMember_showsCurrentMemberName() {
         // Create channel and currentUserId
-        let currentUser: _ChatChannelMember<NoExtraData> = .mock(id: .unique, name: "Luke Skywalker")
+        let currentUser: ChatChannelMember<NoExtraData> = .mock(id: .unique, name: "Luke Skywalker")
 
         let channel = ChatChannel.mockDMChannel(
             name: nil,

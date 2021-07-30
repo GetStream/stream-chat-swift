@@ -27,8 +27,8 @@ open class _ChatMessageLayoutOptionsResolver<ExtraData: ExtraDataTypes> {
     /// - Returns: The layout options describing the components and layout of message content view.
     open func optionsForMessage(
         at indexPath: IndexPath,
-        in channel: _ChatChannel<ExtraData>,
-        with messages: AnyRandomAccessCollection<_ChatMessage<ExtraData>>,
+        in channel: ChatChannel,
+        with messages: AnyRandomAccessCollection<ChatMessage>,
         appearance: Appearance
     ) -> ChatMessageLayoutOptions {
         let messageIndex = messages.index(messages.startIndex, offsetBy: indexPath.item)
@@ -98,11 +98,11 @@ open class _ChatMessageLayoutOptionsResolver<ExtraData: ExtraDataTypes> {
         return options
     }
 
-    func hasQuotedMessage(_ message: _ChatMessage<ExtraData>) -> Bool {
+    func hasQuotedMessage(_ message: _ChatMessage) -> Bool {
         message.quotedMessage?.id != nil
     }
 
-    func hasReactions(_ channel: _ChatChannel<ExtraData>, _ message: _ChatMessage<ExtraData>, _ appareance: Appearance) -> Bool {
+    func hasReactions(_ channel: ChatChannel, _ message: _ChatMessage, _ appareance: Appearance) -> Bool {
         if !channel.config.reactionsEnabled {
             return false
         }
@@ -137,7 +137,7 @@ open class _ChatMessageLayoutOptionsResolver<ExtraData: ExtraDataTypes> {
     /// - Returns: Returns `true` if the message ends the sequence of messages from a single author.
     open func isMessageLastInSequence(
         messageIndexPath: IndexPath,
-        messages: AnyRandomAccessCollection<_ChatMessage<ExtraData>>
+        messages: AnyRandomAccessCollection<ChatMessage>
     ) -> Bool {
         let messageIndex = messages.index(messages.startIndex, offsetBy: messageIndexPath.item)
         let message = messages[messageIndex]

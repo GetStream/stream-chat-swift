@@ -104,9 +104,9 @@ extension NSManagedObjectContext: UserDatabaseSession {
         UserDTO.load(id: id, context: self)
     }
     
-    func saveUser<ExtraData: UserExtraData>(
-        payload: UserPayload<ExtraData>,
-        query: _UserListQuery<ExtraData>?
+    func saveUser(
+        payload: UserPayload,
+        query: UserListQuery?
     ) throws -> UserDTO {
         let dto = UserDTO.loadOrCreate(id: payload.id, context: self)
 
@@ -146,7 +146,7 @@ extension NSManagedObjectContext: UserDatabaseSession {
 
 extension UserDTO {
     /// Snapshots the current state of `UserDTO` and returns an immutable model object from it.
-    func asModel<ExtraData: UserExtraData>() -> _ChatUser<ExtraData> { .create(fromDTO: self) }
+    func asModel() -> ChatUser { .create(fromDTO: self) }
     
     /// Snapshots the current state of `UserDTO` and returns its representation for used in API calls.
     func asRequestBody() -> UserRequestBody {
@@ -166,7 +166,7 @@ extension UserDTO {
 }
 
 extension UserDTO {
-    static func userListFetchRequest<ExtraData: UserExtraData>(query: _UserListQuery<ExtraData>) -> NSFetchRequest<UserDTO> {
+    static func userListFetchRequest<ExtraData: UserExtraData>(query: UserListQuery) -> NSFetchRequest<UserDTO> {
         let request = NSFetchRequest<UserDTO>(entityName: UserDTO.entityName)
         
         // Fetch results controller requires at least one sorting descriptor.
@@ -196,28 +196,20 @@ extension UserDTO {
     }
 }
 
-extension _ChatUser {
-    fileprivate static func create(fromDTO dto: UserDTO) -> _ChatUser {
-        let extraData: ExtraData
+extension ChatUser {
+    fileprivate static func create(fromDTO dto: UserDTO) -> ChatUser {
+        let extraData: CustomData
         do {
-            extraData = try JSONDecoder.default.decode(ExtraData.self, from: dto.extraData)
-        } catch {
-            log.error("Failed to decode extra data for User with id: <\(dto.id)>, using default value instead. Error: \(error)")
-            extraData = .defaultValue
-        }
-        
-        let extraDataMap: CustomData
-        do {
-            extraDataMap = try JSONSerialization.jsonObject(with: dto.extraData, options: []) as? CustomData ?? [:]
+            extraData = try JSONSerialization.jsonObject(with: dto.extraData, options: []) as? CustomData ?? [:]
         } catch {
             log.error(
                 "Failed to decode extra data for user with id: <\(dto.id)>, using default value instead. "
                     + "Error: \(error)"
             )
-            extraDataMap = [:]
+            extraData = [:]
         }
 
-        return _ChatUser(
+        return ChatUser(
             id: dto.id,
             name: dto.name,
             imageURL: dto.imageURL,
@@ -230,7 +222,6 @@ extension _ChatUser {
             lastActiveAt: dto.lastActivityAt,
             teams: Set(dto.teams?.map(\.id) ?? []),
             extraData: extraData,
-            extraDataMap: extraDataMap
         )
     }
 }

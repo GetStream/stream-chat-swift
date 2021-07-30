@@ -23,7 +23,6 @@ public typealias ChatMessageReaction = _ChatMessageReaction<NoExtraData>
 ///
 /// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/Cheat-Sheet#working-with-extra-data).
 ///
-@dynamicMemberLookup
 public struct _ChatMessageReaction<ExtraData: ExtraDataTypes>: Hashable {
     /// The reaction type.
     public let type: MessageReactionType
@@ -37,33 +36,9 @@ public struct _ChatMessageReaction<ExtraData: ExtraDataTypes>: Hashable {
     /// The date the reaction was last updated.
     public let updatedAt: Date
     
-    /// Custom data stored using the ExtraData generics infrastructure
-    public let extraData: ExtraData.MessageReaction
+    /// Custom data
+    public let extraData: CustomData
     
-    /// Custom data stored as a hash-map object
-    public let extraDataMap: CustomData
-
-    /// customData is a convenience method around extraData and extraDataMap
-    public var customData: CustomData {
-        if !self.extraDataMap.isEmpty {
-            return self.extraDataMap
-        }
-        return CustomDataFromExtraData(extraData)
-    }
-
     /// The author.
-    public let author: _ChatUser<ExtraData.User>
+    public let author: ChatUser
 }
-
-extension _ChatMessageReaction {
-    public subscript<T>(dynamicMember keyPath: KeyPath<ExtraData.MessageReaction, T>) -> T {
-        extraData[keyPath: keyPath]
-    }
-}
-
-/// You need to make your custom type conforming to this protocol if you want to use it for extending `ChatMessageReaction` entity
-/// with your custom additional data.
-///
-/// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/Cheat-Sheet#working-with-extra-data).
-///
-public protocol MessageReactionExtraData: ExtraData {}

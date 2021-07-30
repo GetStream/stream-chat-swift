@@ -14,7 +14,7 @@ open class _ChatThreadHeaderView<ExtraData: ExtraDataTypes>:
     ThemeProvider,
     _ChatChannelControllerDelegate {
     /// Controller for observing data changes within the channel.
-    open var channelController: _ChatChannelController<ExtraData>?
+    open var channelController: ChatChannelController?
 
     /// The user id of the current logged in user.
     open var currentUserId: UserId? {
@@ -62,8 +62,8 @@ open class _ChatThreadHeaderView<ExtraData: ExtraDataTypes>:
     // MARK: - ChatChannelControllerDelegate Implementation
 
     open func channelController(
-        _ channelController: _ChatChannelController<ExtraData>,
-        didUpdateChannel channel: EntityChange<_ChatChannel<ExtraData>>
+        _ channelController: ChatChannelController,
+        didUpdateChannel channel: EntityChange<ChatChannel>
     ) {
         switch channel {
         case .update:
@@ -74,15 +74,15 @@ open class _ChatThreadHeaderView<ExtraData: ExtraDataTypes>:
     }
 
     open func channelController(
-        _ channelController: _ChatChannelController<ExtraData>,
-        didChangeTypingUsers typingUsers: Set<_ChatUser<ExtraData.User>>
+        _ channelController: ChatChannelController,
+        didChangeTypingUsers typingUsers: Set<ChatUser>
     ) {
         // By default the header view is not interested in typing events
         // but this can be overridden by subclassing this component.
     }
 
     open func channelController(
-        _ channelController: _ChatChannelController<ExtraData>,
+        _ channelController: ChatChannelController,
         didReceiveMemberEvent: MemberEvent
     ) {
         // By default the header view is not interested in member events
@@ -90,8 +90,8 @@ open class _ChatThreadHeaderView<ExtraData: ExtraDataTypes>:
     }
 
     open func channelController(
-        _ channelController: _ChatChannelController<ExtraData>,
-        didUpdateMessages changes: [ListChange<_ChatMessage<ExtraData>>]
+        _ channelController: ChatChannelController,
+        didUpdateMessages changes: [ListChange<ChatMessage>]
     ) {
         // By default the header view is not interested in message events
         // but this can be overridden by subclassing this component.

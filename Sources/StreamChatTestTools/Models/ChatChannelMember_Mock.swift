@@ -5,8 +5,8 @@
 import Foundation
 @testable import StreamChat
 
-public extension _ChatChannelMember {
-    /// Creates a new `_ChatChannelMember` object from the provided data.
+public extension ChatChannelMember {
+    /// Creates a new `ChatChannelMember` object from the provided data.
     static func mock(
         id: String,
         name: String? = nil,
@@ -30,7 +30,7 @@ public extension _ChatChannelMember {
         isBannedFromChannel: Bool = false,
         banExpiresAt: Date? = nil,
         isShadowBannedFromChannel: Bool = false
-    ) -> _ChatChannelMember {
+    ) -> ChatChannelMember {
         .init(
             id: id,
             name: name,

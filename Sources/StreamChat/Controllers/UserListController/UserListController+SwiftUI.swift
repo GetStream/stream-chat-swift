@@ -16,7 +16,7 @@ extension _ChatUserListController {
         public let controller: _ChatUserListController
         
         /// The users matching the query.
-        @Published public private(set) var users: LazyCachedMapCollection<_ChatUser<ExtraData.User>> = []
+        @Published public private(set) var users: LazyCachedMapCollection<ChatUser> = []
         
         /// The current state of the Controller.
         @Published public private(set) var state: DataController.State
@@ -36,7 +36,7 @@ extension _ChatUserListController {
 extension _ChatUserListController.ObservableObject: _ChatUserListControllerDelegate {
     public func controller(
         _ controller: _ChatUserListController<ExtraData>,
-        didChangeUsers changes: [ListChange<_ChatUser<ExtraData.User>>]
+        didChangeUsers changes: [ListChange<ChatUser>]
     ) {
         // We don't care about detailed changes. We just need to update the `users` property and keep SwiftUI
         // deal with the rest.
