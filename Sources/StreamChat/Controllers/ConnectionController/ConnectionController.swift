@@ -10,35 +10,14 @@ public extension ChatClient {
     ///
     /// - Returns: A new instance of `ChatConnectionController`.
     ///
-    func connectionController() -> _ChatConnectionController<ExtraData> {
+    func connectionController() -> ChatConnectionController {
         .init(client: self)
     }
 }
 
 /// `ChatConnectionController` is a controller class which allows to explicitly
 /// connect/disconnect the `ChatClient` and observe connection events.
-///
-/// Learn more about `ChatConnectionController` and its usage in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/Cheat-Sheet#connection).
-///
-/// - Note: `ChatConnectionController` is a typealias of `_ChatConnectionController` with default extra data. If you're using
-/// custom extra data, create your own typealias of `_ChatConnectionController`.
-///
-/// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/Cheat-Sheet#working-with-extra-data).
-///
-public typealias ChatConnectionController = _ChatConnectionController<NoExtraData>
-
-/// `ChatConnectionController` is a controller class which allows to explicitly
-/// connect/disconnect the `ChatClient` and observe connection events.
-///
-/// Learn more about `ChatConnectionController` and its usage in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/Cheat-Sheet#connection).
-///
-/// - Note: `_ChatConnectionController` type is not meant to be used directly. If you're using default extra data, use
-/// `ChatConnectionController` typealias instead. If you're using custom extra data, create your own typealias
-/// of `_ChatConnectionController`.
-///
-/// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/Cheat-Sheet#working-with-extra-data).
-///
-public class _ChatConnectionController<ExtraData: ExtraDataTypes>: Controller, DelegateCallable, DataStoreProvider {
+public class ChatConnectionController: Controller, DelegateCallable, DataStoreProvider {
     public var callbackQueue: DispatchQueue = .main
     
     /// The `ChatClient` instance this controller belongs to.
@@ -65,7 +44,7 @@ public class _ChatConnectionController<ExtraData: ExtraDataTypes>: Controller, D
     private var connectionEventObserver: ConnectionEventObserver?
 
     /// A type-erased delegate.
-    var multicastDelegate: MulticastDelegate<AnyChatConnectionControllerDelegate<ExtraData>> = .init()
+    var multicastDelegate: MulticastDelegate<AnyChatConnectionControllerDelegate> = .init()
 
     private lazy var chatClientUpdater = environment.chatClientUpdaterBuilder(client)
 
@@ -94,7 +73,7 @@ public class _ChatConnectionController<ExtraData: ExtraDataTypes>: Controller, D
     }
 }
 
-public extension _ChatConnectionController {
+public extension ChatConnectionController {
     /// Connects the chat client the controller represents to the chat servers.
     ///
     /// When the connection is established, `ChatClient` starts receiving chat updates.
@@ -119,9 +98,9 @@ public extension _ChatConnectionController {
 
 // MARK: - Environment
 
-extension _ChatConnectionController {
+extension ChatConnectionController {
     struct Environment {
-        var chatClientUpdaterBuilder = ChatClientUpdater<ExtraData>.init
+        var chatClientUpdaterBuilder = ChatClientUpdater.init
     }
 }
 
@@ -141,40 +120,18 @@ public extension ChatConnectionControllerDelegate {
     func connectionController(_ controller: ChatConnectionController, didUpdateConnectionStatus status: ConnectionStatus) {}
 }
 
-/// `ChatConnectionController` uses this protocol to communicate changes to its delegate.
-///
-/// If you're **not** using custom extra data types, you can use a convenience version of this protocol
-/// named `ChatConnectionControllerDelegate`, which hides the generic types, and make the usage easier.
-///
-public protocol _ChatConnectionControllerDelegate: AnyObject {
-    associatedtype ExtraData: ExtraDataTypes
-    
-    /// The controller observed a change in connection status.
-    func connectionController(
-        _ controller: _ChatConnectionController<ExtraData>,
-        didUpdateConnectionStatus status: ConnectionStatus
-    )
-}
-
-public extension _ChatConnectionControllerDelegate {
-    func connectionController(
-        _ controller: _ChatConnectionController<ExtraData>,
-        didUpdateConnectionStatus status: ConnectionStatus
-    ) {}
-}
-
-final class AnyChatConnectionControllerDelegate<ExtraData: ExtraDataTypes>: _ChatConnectionControllerDelegate {
+final class AnyChatConnectionControllerDelegate: ChatConnectionControllerDelegate {
     weak var wrappedDelegate: AnyObject?
     
     private var _controllerDidChangeConnectionStatus: (
-        _ChatConnectionController<ExtraData>,
+        ChatConnectionController,
         ConnectionStatus
     ) -> Void
     
     init(
         wrappedDelegate: AnyObject?,
         controllerDidChangeConnectionStatus: @escaping (
-            _ChatConnectionController<ExtraData>,
+            ChatConnectionController,
             ConnectionStatus
         ) -> Void
     ) {
@@ -183,7 +140,7 @@ final class AnyChatConnectionControllerDelegate<ExtraData: ExtraDataTypes>: _Cha
     }
     
     func connectionController(
-        _ controller: _ChatConnectionController<ExtraData>,
+        _ controller: ChatConnectionController,
         didUpdateConnectionStatus status: ConnectionStatus
     ) {
         _controllerDidChangeConnectionStatus(controller, status)
@@ -191,7 +148,7 @@ final class AnyChatConnectionControllerDelegate<ExtraData: ExtraDataTypes>: _Cha
 }
 
 extension AnyChatConnectionControllerDelegate {
-    convenience init<Delegate: _ChatConnectionControllerDelegate>(_ delegate: Delegate) where Delegate.ExtraData == ExtraData {
+    convenience init<Delegate: ChatConnectionControllerDelegate>(_ delegate: Delegate) {
         self.init(
             wrappedDelegate: delegate,
             controllerDidChangeConnectionStatus: { [weak delegate] in
@@ -201,7 +158,7 @@ extension AnyChatConnectionControllerDelegate {
     }
 }
 
-extension AnyChatConnectionControllerDelegate where ExtraData == NoExtraData {
+extension AnyChatConnectionControllerDelegate {
     convenience init(_ delegate: ChatConnectionControllerDelegate?) {
         self.init(
             wrappedDelegate: delegate,
@@ -212,7 +169,7 @@ extension AnyChatConnectionControllerDelegate where ExtraData == NoExtraData {
     }
 }
  
-public extension _ChatConnectionController {
+public extension ChatConnectionController {
     /// Sets the provided object as a delegate of this controller.
     ///
     /// - Note: If you don't use custom extra data types, you can set the delegate directly using `controller.delegate = self`.
@@ -221,7 +178,7 @@ public extension _ChatConnectionController {
     ///
     /// - Parameter delegate: The object used as a delegate. It's referenced weakly, so you need to keep the object
     /// alive if you want keep receiving updates.
-    func setDelegate<Delegate: _ChatConnectionControllerDelegate>(_ delegate: Delegate?) where Delegate.ExtraData == ExtraData {
+    func setDelegate<Delegate: ChatConnectionControllerDelegate>(_ delegate: Delegate?) {
         multicastDelegate.mainDelegate = delegate.flatMap(AnyChatConnectionControllerDelegate.init)
     }
 }

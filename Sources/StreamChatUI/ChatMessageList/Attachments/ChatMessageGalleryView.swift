@@ -9,7 +9,7 @@ import UIKit
 public typealias ChatMessageGalleryView = _ChatMessageGalleryView<NoExtraData>
 
 /// Gallery view that displays images and video previews.
-open class _ChatMessageGalleryView<ExtraData: ExtraDataTypes>: _View, ThemeProvider {
+open class _ChatMessageGalleryView: _View, ThemeProvider {
     /// Content the gallery should display.
     public var content: [UIView] = [] {
         didSet { updateContentIfNeeded() }

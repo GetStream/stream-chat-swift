@@ -9,7 +9,7 @@ import UIKit
 public typealias ChatChannelAvatarView = _ChatChannelAvatarView<NoExtraData>
 
 /// A view that shows a channel avatar including an online indicator if any user is online.
-open class _ChatChannelAvatarView<ExtraData: ExtraDataTypes>: _View, ThemeProvider, SwiftUIRepresentable {
+open class _ChatChannelAvatarView: _View, ThemeProvider, SwiftUIRepresentable {
     /// A view that shows the avatar image
     open private(set) lazy var presenceAvatarView: _ChatPresenceAvatarView<ExtraData> = components
         .presenceAvatarView.init()

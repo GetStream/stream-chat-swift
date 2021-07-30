@@ -25,7 +25,7 @@ public protocol GalleryContentViewDelegate: ChatMessageContentViewDelegate {
 public typealias GalleryAttachmentViewInjector = _GalleryAttachmentViewInjector<NoExtraData>
 
 /// The type used to show an media gallery in `ChatMessageContentView`.
-open class _GalleryAttachmentViewInjector<ExtraData: ExtraDataTypes>: _AttachmentViewInjector<ExtraData> {
+open class _GalleryAttachmentViewInjector: _AttachmentViewInjector<ExtraData> {
     /// A gallery which shows attachment previews.
     open private(set) lazy var galleryView: _ChatMessageGalleryView<ExtraData> = contentView
         .components

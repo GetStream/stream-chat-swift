@@ -17,7 +17,7 @@ extension UIImageView {
     ///   - completion: Image request completion block.
     /// - Returns: Active image download task.
     @discardableResult
-    func loadImage<ExtraData: ExtraDataTypes>(
+    func loadImage(
         from url: URL?,
         placeholder: UIImage? = nil,
         resize: Bool = true,

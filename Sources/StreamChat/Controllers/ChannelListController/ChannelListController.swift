@@ -12,33 +12,13 @@ extension ChatClient {
     ///
     /// - Returns: A new instance of `ChannelController`.
     ///
-    public func channelListController(query: ChannelListQuery) -> _ChatChannelListController<ExtraData> {
+    public func channelListController(query: ChannelListQuery) -> ChatChannelListController {
         .init(query: query, client: self)
     }
 }
 
 /// `_ChatChannelListController` is a controller class which allows observing a list of chat channels based on the provided query.
-///
-/// Learn more about `_ChatChannelListController` and its usage in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/StreamChat-SDK-Cheat-Sheet#channel-list).
-///
-/// - Note: `ChatChannelListController` is a typealias of `_ChatChannelListController` with default extra data. If you're using
-/// custom extra data, create your own typealias of `_ChatChannelListController`.
-///
-/// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/Cheat-Sheet#working-with-extra-data).
-///
-public typealias ChatChannelListController = _ChatChannelListController<NoExtraData>
-
-/// `_ChatChannelListController` is a controller class which allows observing a list of chat channels based on the provided query.
-///
-/// Learn more about `_ChatChannelListController` and its usage in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/StreamChat-SDK-Cheat-Sheet#channel-list).
-///
-/// - Note: `_ChatChannelListController` type is not meant to be used directly. If you're using default extra data, use
-/// `ChatChannelController` typealias instead. If you're using custom extra data, create your own typealias
-/// of `_ChatChannelListController`.
-///
-/// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/Cheat-Sheet#working-with-extra-data).
-///
-public class _ChatChannelListController<ExtraData: ExtraDataTypes>: DataController, DelegateCallable, DataStoreProvider {
+public class ChatChannelListController: DataController, DelegateCallable, DataStoreProvider {
     /// The query specifying and filtering the list of channels.
     public let query: ChannelListQuery
     
@@ -56,14 +36,14 @@ public class _ChatChannelListController<ExtraData: ExtraDataTypes>: DataControll
     }
     
     /// The worker used to fetch the remote data and communicate with servers.
-    private lazy var worker: ChannelListUpdater<ExtraData> = self.environment
+    private lazy var worker: ChannelListUpdater = self.environment
         .channelQueryUpdaterBuilder(
             client.databaseContainer,
             client.apiClient
         )
 
     /// A type-erased delegate.
-    var multicastDelegate: MulticastDelegate<AnyChannelListControllerDelegate<ExtraData>> = .init() {
+    var multicastDelegate: MulticastDelegate<AnyChannelListControllerDelegate> = .init() {
         didSet {
             stateMulticastDelegate.mainDelegate = multicastDelegate.mainDelegate
             stateMulticastDelegate.additionalDelegates = multicastDelegate.additionalDelegates
@@ -152,8 +132,7 @@ public class _ChatChannelListController<ExtraData: ExtraDataTypes>: DataControll
     /// - Parameter delegate: The object used as a delegate. It's referenced weakly, so you need to keep the object
     /// alive if you want keep receiving updates.
     ///
-    public func setDelegate<Delegate: _ChatChannelListControllerDelegate>(_ delegate: Delegate)
-        where Delegate.ExtraData == ExtraData {
+    public func setDelegate<Delegate: ChatChannelListControllerDelegate>(_ delegate: Delegate) {
         multicastDelegate.mainDelegate = AnyChannelListControllerDelegate(delegate)
     }
 
@@ -195,7 +174,7 @@ extension ChatChannelListController {
         var channelQueryUpdaterBuilder: (
             _ database: DatabaseContainer,
             _ apiClient: APIClient
-        ) -> ChannelListUpdater<ExtraData> = ChannelListUpdater.init
+        ) -> ChannelListUpdater = ChannelListUpdater.init
 
         var createChannelListDabaseObserver: (
             _ context: NSManagedObjectContext,
@@ -208,7 +187,7 @@ extension ChatChannelListController {
     }
 }
 
-extension ChatChannelListController where ExtraData == NoExtraData {
+extension ChatChannelListController {
     /// Set the delegate of `ChannelListController` to observe the changes in the system.
     ///
     /// - Note: The delegate can be set directly only if you're **not** using custom extra data types. Due to the current
@@ -221,10 +200,6 @@ extension ChatChannelListController where ExtraData == NoExtraData {
 }
 
 /// `ChatChannelListController` uses this protocol to communicate changes to its delegate.
-///
-/// This protocol can be used only when no custom extra data are specified. If you're using custom extra data types,
-/// please use `_ChatChannelListControllerDelegate` instead.
-///
 public protocol ChatChannelListControllerDelegate: DataControllerStateDelegate {
     /// The controller will update the list of observed channels.
     ///
@@ -248,42 +223,7 @@ public extension ChatChannelListControllerDelegate {
     func controllerWillChangeChannels(_ controller: ChatChannelListController) {}
 
     func controller(
-        _ controller: _ChatChannelListController<NoExtraData>,
-        didChangeChannels changes: [ListChange<ChatChannel>]
-    ) {}
-}
-
-/// `ChatChannelListController` uses this protocol to communicate changes to its delegate.
-///
-/// If you're **not** using custom extra data types, you can use a convenience version of this protocol
-/// named `ChatChannelListControllerDelegate`, which hides the generic types, and make the usage easier.
-///
-public protocol _ChatChannelListControllerDelegate: DataControllerStateDelegate {
-    associatedtype ExtraData: ExtraDataTypes
-
-    /// The controller will update the list of observed channels.
-    ///
-    /// - Parameter controller: The controller emitting the change callback.
-    ///
-    func controllerWillChangeChannels(_ controller: _ChatChannelListController<ExtraData>)
-
-    /// The controller changed the list of observed channels.
-    ///
-    /// - Parameters:
-    ///   - controller: The controller emitting the change callback.
-    ///   - changes: The change to the list of channels.\
-    ///
-    func controller(
-        _ controller: _ChatChannelListController<ExtraData>,
-        didChangeChannels changes: [ListChange<ChatChannel>]
-    )
-}
-
-public extension ChatChannelListControllerDelegate {
-    func controllerWillChangeChannels(_ controller: _ChatChannelListController<ExtraData>) {}
-
-    func controller(
-        _ controller: _ChatChannelListController<ExtraData>,
+        _ controller: ChatChannelListController,
         didChangeChannels changes: [ListChange<ChatChannel>]
     ) {}
 }
@@ -296,9 +236,9 @@ extension ClientError {
 
 // MARK: - Delegate type eraser
 
-class AnyChannelListControllerDelegate<ExtraData: ExtraDataTypes>: _ChatChannelListControllerDelegate {
-    private var _controllerWillChangeChannels: (_ChatChannelListController<ExtraData>) -> Void
-    private var _controllerDidChangeChannels: (_ChatChannelListController<ExtraData>, [ListChange<ChatChannel>])
+class AnyChannelListControllerDelegate: ChatChannelListControllerDelegate {
+    private var _controllerWillChangeChannels: (ChatChannelListController) -> Void
+    private var _controllerDidChangeChannels: (ChatChannelListController, [ListChange<ChatChannel>])
         -> Void
     private var _controllerDidChangeState: (DataController, DataController.State) -> Void
     
@@ -307,8 +247,8 @@ class AnyChannelListControllerDelegate<ExtraData: ExtraDataTypes>: _ChatChannelL
     init(
         wrappedDelegate: AnyObject?,
         controllerDidChangeState: @escaping (DataController, DataController.State) -> Void,
-        controllerWillChangeChannels: @escaping (_ChatChannelListController<ExtraData>) -> Void,
-        controllerDidChangeChannels: @escaping (_ChatChannelListController<ExtraData>, [ListChange<ChatChannel>])
+        controllerWillChangeChannels: @escaping (ChatChannelListController) -> Void,
+        controllerDidChangeChannels: @escaping (ChatChannelListController, [ListChange<ChatChannel>])
             -> Void
     ) {
         self.wrappedDelegate = wrappedDelegate
@@ -321,12 +261,12 @@ class AnyChannelListControllerDelegate<ExtraData: ExtraDataTypes>: _ChatChannelL
         _controllerDidChangeState(controller, state)
     }
 
-    func controllerWillChangeChannels(_ controller: _ChatChannelListController<ExtraData>) {
+    func controllerWillChangeChannels(_ controller: ChatChannelListController) {
         _controllerWillChangeChannels(controller)
     }
 
     func controller(
-        _ controller: _ChatChannelListController<ExtraData>,
+        _ controller: ChatChannelListController,
         didChangeChannels changes: [ListChange<ChatChannel>]
     ) {
         _controllerDidChangeChannels(controller, changes)
@@ -334,7 +274,7 @@ class AnyChannelListControllerDelegate<ExtraData: ExtraDataTypes>: _ChatChannelL
 }
 
 extension AnyChannelListControllerDelegate {
-    convenience init<Delegate: _ChatChannelListControllerDelegate>(_ delegate: Delegate) where Delegate.ExtraData == ExtraData {
+    convenience init<Delegate: ChatChannelListControllerDelegate>(_ delegate: Delegate) {
         self.init(
             wrappedDelegate: delegate,
             controllerDidChangeState: { [weak delegate] in delegate?.controller($0, didChangeState: $1) },
@@ -344,7 +284,7 @@ extension AnyChannelListControllerDelegate {
     }
 }
 
-extension AnyChannelListControllerDelegate where ExtraData == NoExtraData {
+extension AnyChannelListControllerDelegate {
     convenience init(_ delegate: ChatChannelListControllerDelegate?) {
         self.init(
             wrappedDelegate: delegate,

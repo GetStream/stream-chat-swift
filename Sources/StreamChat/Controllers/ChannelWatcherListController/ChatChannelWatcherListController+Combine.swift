@@ -22,7 +22,7 @@ extension ChatChannelWatcherListController {
     /// and expose the published values by mapping them to a read-only `AnyPublisher` type.
     class BasePublishers {
         /// The wrapped controller.
-        unowned let controller: _ChatChannelWatcherListController
+        unowned let controller: ChatChannelWatcherListController
         
         /// A backing subject for `statePublisher`.
         let state: CurrentValueSubject<DataController.State, Never>
@@ -30,7 +30,7 @@ extension ChatChannelWatcherListController {
         /// A backing subject for `membersChangesPublisher`.
         let watchersChanges: PassthroughSubject<[ListChange<ChatUser>], Never> = .init()
         
-        init(controller: _ChatChannelWatcherListController<ExtraData>) {
+        init(controller: ChatChannelWatcherListController) {
             self.controller = controller
             state = .init(controller.state)
             
@@ -40,13 +40,13 @@ extension ChatChannelWatcherListController {
 }
 
 @available(iOS 13, *)
-extension ChatChannelWatcherListController.BasePublishers: _ChatChannelWatcherListControllerDelegate {
+extension ChatChannelWatcherListController.BasePublishers: ChatChannelWatcherListControllerDelegate {
     func controller(_ controller: DataController, didChangeState state: DataController.State) {
         self.state.send(state)
     }
     
     func channelWatcherListController(
-        _ controller: _ChatChannelWatcherListController<ExtraData>,
+        _ controller: ChatChannelWatcherListController,
         didChangeWatchers changes: [ListChange<ChatUser>]
     ) {
         watchersChanges.send(changes)

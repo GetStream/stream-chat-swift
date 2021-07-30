@@ -98,8 +98,8 @@ public struct ChatChannel {
     /// and using a `ChatChannelController` for this channel id.
     ///
     /// - Important: The `latestMessages` property is loaded and evaluated lazily to maintain high performance.
-    public var latestMessages: [_ChatMessage] { _latestMessages }
-    @CoreDataLazy private var _latestMessages: [_ChatMessage]
+    public var latestMessages: [ChatMessage] { _latestMessages }
+    @CoreDataLazy private var _latestMessages: [ChatMessage]
     
     /// Pinned messages present on the channel.
     ///
@@ -107,8 +107,8 @@ public struct ChatChannel {
     /// and using a `ChatChannelController` for this channel id.
     ///
     /// - Important: The `pinnedMessages` property is loaded and evaluated lazily to maintain high performance.
-    public var pinnedMessages: [_ChatMessage] { _pinnedMessages }
-    @CoreDataLazy private var _pinnedMessages: [_ChatMessage]
+    public var pinnedMessages: [ChatMessage] { _pinnedMessages }
+    @CoreDataLazy private var _pinnedMessages: [ChatMessage]
     
     /// Read states of the users for this channel.
     ///
@@ -138,16 +138,7 @@ public struct ChatChannel {
     ///
     /// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/Cheat-Sheet#working-with-extra-data).
     ///
-    public let extraData: ExtraData.Channel
-    public let extraDataMap: CustomData
-
-    /// customData is a convenience method around extraData and extraDataMap
-    public var customData: CustomData {
-        if !extraDataMap.isEmpty {
-            return extraDataMap
-        }
-        return CustomDataFromExtraData(extraData)
-    }
+    public let extraData: CustomData
 
     // MARK: - Internal
     
@@ -176,14 +167,11 @@ public struct ChatChannel {
         unreadCount: @escaping () -> ChannelUnreadCount = { .noUnread },
         watcherCount: Int = 0,
         memberCount: Int = 0,
-//        banEnabling: BanEnabling = .disabled,
         reads: [ChatChannelRead] = [],
         cooldownDuration: Int = 0,
-        extraData: ExtraData.Channel,
-        extraDataMap: CustomData,
-//        invitedMembers: Set<ChatChannelMember> = [],
-        latestMessages: @escaping (() -> [_ChatMessage]) = { [] },
-        pinnedMessages: @escaping (() -> [_ChatMessage]) = { [] },
+        extraData: CustomData,
+        latestMessages: @escaping (() -> [ChatMessage]) = { [] },
+        pinnedMessages: @escaping (() -> [ChatMessage]) = { [] },
         muteDetails: @escaping () -> MuteDetails?,
         underlyingContext: NSManagedObjectContext?
     ) {
@@ -201,12 +189,9 @@ public struct ChatChannel {
         self.team = team
         self.watcherCount = watcherCount
         self.memberCount = memberCount
-//        self.banEnabling = banEnabling
         self.reads = reads
         self.cooldownDuration = cooldownDuration
         self.extraData = extraData
-        self.extraDataMap = extraDataMap
-//        self.invitedMembers = invitedMembers
         
         $_unreadCount = (unreadCount, underlyingContext)
         $_latestMessages = (latestMessages, underlyingContext)
@@ -239,12 +224,6 @@ extension ChatChannel {
 
 /// Additional data fields `ChannelModel` can be extended with. You can use it to store your custom data related to a channel.
 public protocol ChannelExtraData: ExtraData {}
-
-extension ChatChannel {
-    public subscript<T>(dynamicMember keyPath: KeyPath<ExtraData.Channel, T>) -> T {
-        extraData[keyPath: keyPath]
-    }
-}
 
 /// A type-erased version of `ChannelModel<CustomData>`. Not intended to be used directly.
 public protocol AnyChannel {}

@@ -11,33 +11,14 @@ extension ChatClient {
     /// - Returns: A new instance of `ChatChannelMemberListController`.
     public func memberListController(
         query: ChannelMemberListQuery
-    ) -> ChatChannelMemberListController<ExtraData> {
+    ) -> ChatChannelMemberListController {
         .init(query: query, client: self)
     }
 }
 
-/// `ChatChannelMemberListController` is a controller class which allows observing a list of
-/// channel members based on the provided query.
-///
-/// Learn more about `ChatChannelMemberListController` and its usage in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/StreamChat-SDK-Cheat-Sheet#user-list).
-///
-/// - Note: `ChatChannelMemberListController` is a typealias of `ChatChannelMemberListController` with default extra data.
-/// If you're using custom extra data, create your own typealias of `ChatChannelMemberListController`.
-///
-/// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/Cheat-Sheet#working-with-extra-data).
-public typealias ChatChannelMemberListController = ChatChannelMemberListController<NoExtraData>
-
 /// `ChatChannelMemberListController` is a controller class which allows observing
 /// a list of chat users based on the provided query.
-///
-/// Learn more about `ChatChannelMemberListController` and its usage in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/StreamChat-SDK-Cheat-Sheet#user-list).
-///
-/// - Note: `ChatChannelMemberListController` type is not meant to be used directly. If you're using default extra data, use
-/// `ChatChannelMemberListController` typealias instead. If you're using custom extra data, create your own typealias
-/// of `ChatChannelMemberListController`.
-///
-/// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/Cheat-Sheet#working-with-extra-data).
-public class ChatChannelMemberListController<ExtraData: ExtraDataTypes>: DataController, DelegateCallable, DataStoreProvider {
+public class ChatChannelMemberListController: DataController, DelegateCallable, DataStoreProvider {
     /// The query specifying sorting and filtering for the list of channel members.
     @Atomic public private(set) var query: ChannelMemberListQuery
     
@@ -59,7 +40,7 @@ public class ChatChannelMemberListController<ExtraData: ExtraDataTypes>: DataCon
     private lazy var memberListObserver = createMemberListObserver()
     
     /// The type-erased delegate.
-    var multicastDelegate: MulticastDelegate<AnyChatChannelMemberListControllerDelegate<ExtraData>> = .init() {
+    var multicastDelegate: MulticastDelegate<AnyChatChannelMemberListControllerDelegate> = .init() {
         didSet {
             stateMulticastDelegate.mainDelegate = multicastDelegate.mainDelegate
             stateMulticastDelegate.additionalDelegates = multicastDelegate.additionalDelegates
@@ -109,8 +90,7 @@ public class ChatChannelMemberListController<ExtraData: ExtraDataTypes>: DataCon
     /// - Parameter delegate: The object used as a delegate. It's referenced weakly, so you need to keep the object
     /// alive if you want keep receiving updates.
     ///
-    public func setDelegate<Delegate: ChatChannelMemberListControllerDelegate>(_ delegate: Delegate)
-        where Delegate.ExtraData == ExtraData {
+    public func setDelegate<Delegate: ChatChannelMemberListControllerDelegate>(_ delegate: Delegate) {
         multicastDelegate.mainDelegate = AnyChatChannelMemberListControllerDelegate(delegate)
     }
     
@@ -190,7 +170,7 @@ extension ChatChannelMemberListController {
     }
 }
 
-extension ChatChannelMemberListController where ExtraData == NoExtraData {
+extension ChatChannelMemberListController {
     /// Set the delegate of `ChatChannelMemberListController` to observe the changes in the system.
     ///
     /// - Note: The delegate can be set directly only if you're **not** using custom extra data types. Due to the current
@@ -221,35 +201,20 @@ public extension ChatUserListControllerDelegate {
     ) {}
 }
 
-/// `ChatChannelMemberListController` uses this protocol to communicate changes to its delegate.
-///
-/// If you're **not** using custom extra data types, you can use a convenience version of this protocol
-/// named `ChatChannelMemberListControllerDelegate`, which hides the generic types, and make the usage easier.
-///
-public protocol ChatChannelMemberListControllerDelegate: DataControllerStateDelegate {
-    associatedtype ExtraData: ExtraDataTypes
-    
-    /// Controller observed a change in the channel member list.
-    func memberListController(
-        _ controller: ChatChannelMemberListController<ExtraData>,
-        didChangeMembers changes: [ListChange<ChatChannelMember>]
-    )
-}
-
 public extension ChatChannelMemberListControllerDelegate {
     func memberListController(
-        _ controller: ChatChannelMemberListController<ExtraData>,
+        _ controller: ChatChannelMemberListController,
         didChangeMembers changes: [ListChange<ChatChannelMember>]
     ) {}
 }
 
 // MARK: - Delegate type eraser
 
-final class AnyChatChannelMemberListControllerDelegate<ExtraData: ExtraDataTypes>: ChatChannelMemberListControllerDelegate {
+final class AnyChatChannelMemberListControllerDelegate: ChatChannelMemberListControllerDelegate {
     private let _controllerDidChangeState: (DataController, DataController.State) -> Void
     
     private let _controllerDidChangeMembers: (
-        ChatChannelMemberListController<ExtraData>,
+        ChatChannelMemberListController,
         [ListChange<ChatChannelMember>]
     ) -> Void
     
@@ -259,7 +224,7 @@ final class AnyChatChannelMemberListControllerDelegate<ExtraData: ExtraDataTypes
         wrappedDelegate: AnyObject?,
         controllerDidChangeState: @escaping (DataController, DataController.State) -> Void,
         controllerDidChangeMembers: @escaping (
-            ChatChannelMemberListController<ExtraData>,
+            ChatChannelMemberListController,
             [ListChange<ChatChannelMember>]
         ) -> Void
     ) {
@@ -273,7 +238,7 @@ final class AnyChatChannelMemberListControllerDelegate<ExtraData: ExtraDataTypes
     }
 
     func memberListController(
-        _ controller: ChatChannelMemberListController<ExtraData>,
+        _ controller: ChatChannelMemberListController,
         didChangeMembers changes: [ListChange<ChatChannelMember>]
     ) {
         _controllerDidChangeMembers(controller, changes)
@@ -281,8 +246,7 @@ final class AnyChatChannelMemberListControllerDelegate<ExtraData: ExtraDataTypes
 }
 
 extension AnyChatChannelMemberListControllerDelegate {
-    convenience init<Delegate: ChatChannelMemberListControllerDelegate>(_ delegate: Delegate)
-        where Delegate.ExtraData == ExtraData {
+    convenience init<Delegate: ChatChannelMemberListControllerDelegate>(_ delegate: Delegate) {
         self.init(
             wrappedDelegate: delegate,
             controllerDidChangeState: { [weak delegate] in
@@ -295,7 +259,7 @@ extension AnyChatChannelMemberListControllerDelegate {
     }
 }
 
-extension AnyChatChannelMemberListControllerDelegate where ExtraData == NoExtraData {
+extension AnyChatChannelMemberListControllerDelegate {
     convenience init(_ delegate: ChatChannelMemberListControllerDelegate?) {
         self.init(
             wrappedDelegate: delegate,

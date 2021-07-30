@@ -8,7 +8,7 @@ import UIKit
 /// Default provider that is used when AttachmentPreviewProvider is not implemented for custom attachment payload. This
 /// provider always returns a new instance of `AttachmentPlaceholderView`.
 public struct DefaultAttachmentPreviewProvider: AttachmentPreviewProvider {
-    public func previewView<ExtraData: ExtraDataTypes>(components: _Components<ExtraData>) -> UIView {
+    public func previewView(components: _Components<ExtraData>) -> UIView {
         components.attachmentPreviewViewPlaceholder.init()
     }
 

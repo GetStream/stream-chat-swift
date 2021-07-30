@@ -7,7 +7,7 @@ import UIKit
 
 public typealias ChatMessageReactionsView = _ChatMessageReactionsView<NoExtraData>
 
-open class _ChatMessageReactionsView<ExtraData: ExtraDataTypes>: _View, ThemeProvider {
+open class _ChatMessageReactionsView: _View, ThemeProvider {
     public var content: Content? {
         didSet { updateContentIfNeeded() }
     }

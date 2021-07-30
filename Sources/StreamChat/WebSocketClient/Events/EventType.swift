@@ -104,7 +104,7 @@ extension EventType {
     /// When a user was removed from a channel.
     static let notificationRemovedFromChannel: Self = "notification.removed_from_channel"
     
-    func event<ExtraData: ExtraDataTypes>(from response: EventPayload) throws -> Event {
+    func event(from response: EventPayload) throws -> Event {
         switch self {
         case .healthCheck: return try HealthCheckEvent(from: response)
             

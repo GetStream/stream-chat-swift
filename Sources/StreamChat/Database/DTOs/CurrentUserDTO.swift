@@ -61,7 +61,7 @@ extension CurrentUserDTO {
 }
 
 extension NSManagedObjectContext: CurrentUserDatabaseSession {
-    func saveCurrentUser<ExtraData: ExtraDataTypes>(payload: CurrentUserPayload) throws -> CurrentUserDTO {
+    func saveCurrentUser(payload: CurrentUserPayload) throws -> CurrentUserDTO {
         let dto = CurrentUserDTO.loadOrCreate(context: self)
         dto.user = try saveUser(payload: payload)
 
@@ -147,35 +147,24 @@ extension NSManagedObjectContext: CurrentUserDatabaseSession {
 
 extension CurrentUserDTO {
     /// Snapshots the current state of `CurrentUserDTO` and returns an immutable model object from it.
-    func asModel<ExtraData: ExtraDataTypes>() -> CurrentChatUser { .create(fromDTO: self) }
+    func asModel() -> CurrentChatUser { .create(fromDTO: self) }
 }
 
-extension _CurrentChatUser {
-    fileprivate static func create(fromDTO dto: CurrentUserDTO) -> _CurrentChatUser {
+extension CurrentChatUser {
+    fileprivate static func create(fromDTO dto: CurrentUserDTO) -> CurrentChatUser {
         let context = dto.managedObjectContext!
 
         let user = dto.user
-        
-        let extraData: ExtraData.User
+
+        let extraData: CustomData
         do {
-            extraData = try JSONDecoder.default.decode(ExtraData.User.self, from: user.extraData)
-        } catch {
-            log.error(
-                "Failed to decode extra data for CurrentUser with id: <\(dto.user.id)>, using default value instead. "
-                    + " Error: \(error)"
-            )
-            extraData = .defaultValue
-        }
-        
-        let extraDataMap: CustomData
-        do {
-            extraDataMap = try JSONSerialization.jsonObject(with: dto.user.extraData, options: []) as? CustomData ?? [:]
+            extraData = try JSONSerialization.jsonObject(with: dto.user.extraData, options: []) as? CustomData ?? [:]
         } catch {
             log.error(
                 "Failed to decode extra data for user with id: <\(dto.user.id)>, using default value instead. "
                     + "Error: \(error)"
             )
-            extraDataMap = [:]
+            extraData = [:]
         }
 
         let mutedUsers: [ChatUser] = dto.mutedUsers.map { $0.asModel() }
@@ -190,7 +179,7 @@ extension _CurrentChatUser {
             )
         }
 
-        return _CurrentChatUser(
+        return CurrentChatUser(
             id: user.id,
             name: user.name,
             imageURL: user.imageURL,
@@ -202,7 +191,6 @@ extension _CurrentChatUser {
             lastActiveAt: user.lastActivityAt,
             teams: Set(user.teams?.map(\.id) ?? []),
             extraData: extraData,
-            extraDataMap: extraDataMap,
             devices: dto.devices.map { $0.asModel() },
             currentDevice: nil,
             mutedUsers: Set(mutedUsers),

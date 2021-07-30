@@ -9,7 +9,7 @@ import UIKit
 public typealias ChatMessageBubbleView = _ChatMessageBubbleView<NoExtraData>
 
 /// A view that displays a bubble around a message.
-open class _ChatMessageBubbleView<ExtraData: ExtraDataTypes>: _View, AppearanceProvider, SwiftUIRepresentable {
+open class _ChatMessageBubbleView: _View, AppearanceProvider, SwiftUIRepresentable {
     /// A type describing the content of this view.
     public struct Content {
         /// The background color of the bubble.

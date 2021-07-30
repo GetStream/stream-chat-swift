@@ -9,7 +9,7 @@ import UIKit
 public typealias ChatSuggestionsCollectionView = _ChatSuggestionsCollectionView<NoExtraData>
 
 /// The collection view of the suggestions view controller.
-open class _ChatSuggestionsCollectionView<ExtraData: ExtraDataTypes>: UICollectionView,
+open class _ChatSuggestionsCollectionView: UICollectionView,
     ThemeProvider,
     Customizable {
     override open func didMoveToSuperview() {

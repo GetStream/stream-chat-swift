@@ -10,7 +10,7 @@ public typealias ChatSuggestionsCollectionReusableView =
     _ChatSuggestionsCollectionReusableView<NoExtraData>
 
 /// The header reusable view of the suggestion collection view.
-open class _ChatSuggestionsCollectionReusableView<ExtraData: ExtraDataTypes>: UICollectionReusableView,
+open class _ChatSuggestionsCollectionReusableView: UICollectionReusableView,
     ComponentsProvider {
     /// The reuse identifier of the reusable header view.
     open class var reuseId: String { String(describing: self) }

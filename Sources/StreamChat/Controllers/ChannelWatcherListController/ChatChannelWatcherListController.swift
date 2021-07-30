@@ -9,33 +9,15 @@ extension ChatClient {
     /// Creates a new `_ChatChannelWatcherListController` with the provided query.
     /// - Parameter query: The query specifying the pagination options for watchers the controller should fetch.
     /// - Returns: A new instance of `ChatChannelMemberListController`.
-    public func watcherListController(query: ChannelWatcherListQuery) -> _ChatChannelWatcherListController<ExtraData> {
+    public func watcherListController(query: ChannelWatcherListQuery) -> ChatChannelWatcherListController {
         .init(query: query, client: self)
     }
 }
 
-/// `_ChatChannelWatcherListController` is a controller class which allows observing a list of
-/// channel watchers based on the provided query.
-///
-/// Learn more about `_ChatChannelWatcherListController` and its usage in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/StreamChat-SDK-Cheat-Sheet#user-list).
-///
-/// - Note: `ChatChannelWatcherListController` is a typealias of `_ChatChannelWatcherListController` with default extra data.
-/// If you're using custom extra data, create your own typealias of `_ChatChannelWatcherListController`.
-///
-/// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/Cheat-Sheet#working-with-extra-data).
-public typealias ChatChannelWatcherListController = _ChatChannelWatcherListController<NoExtraData>
-
 /// `_ChatChannelWatcherListController` is a controller class which allows observing
 /// a list of chat watchers based on the provided query.
 ///
-/// Learn more about `_ChatChannelWatcherListController` and its usage in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/StreamChat-SDK-Cheat-Sheet#user-list).
-///
-/// - Note: `_ChatChannelWatcherListController` type is not meant to be used directly. If you're using default extra data, use
-/// `ChatChannelWatcherListController` typealias instead. If you're using custom extra data, create your own typealias
-/// of `_ChatChannelWatcherListController`.
-///
-/// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/Cheat-Sheet#working-with-extra-data).
-public class _ChatChannelWatcherListController<ExtraData: ExtraDataTypes>: DataController, DelegateCallable, DataStoreProvider {
+public class ChatChannelWatcherListController: DataController, DelegateCallable, DataStoreProvider {
     /// The query specifying sorting and filtering for the list of channel watchers.
     @Atomic public private(set) var query: ChannelWatcherListQuery
     
@@ -57,7 +39,7 @@ public class _ChatChannelWatcherListController<ExtraData: ExtraDataTypes>: DataC
     lazy var basePublishers: BasePublishers = .init(controller: self)
     
     /// The type-erased delegate.
-    var multicastDelegate: MulticastDelegate<AnyChatChannelWatcherListControllerDelegate<ExtraData>> = .init() {
+    var multicastDelegate: MulticastDelegate<AnyChatChannelWatcherListControllerDelegate> = .init() {
         didSet {
             stateMulticastDelegate.mainDelegate = multicastDelegate.mainDelegate
             stateMulticastDelegate.additionalDelegates = multicastDelegate.additionalDelegates
@@ -113,8 +95,7 @@ public class _ChatChannelWatcherListController<ExtraData: ExtraDataTypes>: DataC
     /// - Parameter delegate: The object used as a delegate. It's referenced weakly, so you need to keep the object
     /// alive if you want keep receiving updates.
     ///
-    public func setDelegate<Delegate: _ChatChannelWatcherListControllerDelegate>(_ delegate: Delegate)
-        where Delegate.ExtraData == ExtraData {
+    public func setDelegate<Delegate: ChatChannelWatcherListControllerDelegate>(_ delegate: Delegate) {
         multicastDelegate.mainDelegate = AnyChatChannelWatcherListControllerDelegate(delegate)
     }
     
@@ -164,12 +145,9 @@ extension ChatChannelWatcherListController {
     }
 }
 
-extension ChatChannelWatcherListController where ExtraData == NoExtraData {
+extension ChatChannelWatcherListController {
     /// Set the delegate of `ChatChannelWatcherListController` to observe the changes in the system.
-    ///
-    /// - Note: The delegate can be set directly only if you're **not** using custom extra data types. Due to the current
-    /// limits of Swift and the way it handles protocols with associated types, it's required to use `setDelegate` method
-    /// instead to set the delegate, if you're using custom extra data types.
+
     public var delegate: ChatChannelWatcherListControllerDelegate? {
         get { multicastDelegate.mainDelegate?.wrappedDelegate as? ChatChannelWatcherListControllerDelegate }
         set { multicastDelegate.mainDelegate = AnyChatChannelWatcherListControllerDelegate(newValue) }
@@ -208,23 +186,13 @@ public protocol ChatChannelWatcherListControllerDelegate: DataControllerStateDel
     )
 }
 
-public protocol _ChatChannelWatcherListControllerDelegate: DataControllerStateDelegate {
-    associatedtype ExtraData: ExtraDataTypes
-    
-    /// The controller observed a change in the channel watcher list.
-    func channelWatcherListController(
-        _ controller: _ChatChannelWatcherListController<ExtraData>,
-        didChangeWatchers changes: [ListChange<ChatUser>]
-    )
-}
-
 // MARK: - Delegate type eraser
 
-final class AnyChatChannelWatcherListControllerDelegate<ExtraData: ExtraDataTypes>: _ChatChannelWatcherListControllerDelegate {
+final class AnyChatChannelWatcherListControllerDelegate: ChatChannelWatcherListControllerDelegate {
     private let _controllerDidChangeState: (DataController, DataController.State) -> Void
     
     private let _controllerDidChangeWatchers: (
-        _ChatChannelWatcherListController<ExtraData>,
+        ChatChannelWatcherListController,
         [ListChange<ChatUser>]
     ) -> Void
     
@@ -234,7 +202,7 @@ final class AnyChatChannelWatcherListControllerDelegate<ExtraData: ExtraDataType
         wrappedDelegate: AnyObject?,
         controllerDidChangeState: @escaping (DataController, DataController.State) -> Void,
         controllerDidChangeWatchers: @escaping (
-            _ChatChannelWatcherListController<ExtraData>,
+            ChatChannelWatcherListController,
             [ListChange<ChatUser>]
         ) -> Void
     ) {
@@ -248,7 +216,7 @@ final class AnyChatChannelWatcherListControllerDelegate<ExtraData: ExtraDataType
     }
     
     func channelWatcherListController(
-        _ controller: _ChatChannelWatcherListController<ExtraData>,
+        _ controller: ChatChannelWatcherListController,
         didChangeWatchers changes: [ListChange<ChatUser>]
     ) {
         _controllerDidChangeWatchers(controller, changes)
@@ -256,8 +224,7 @@ final class AnyChatChannelWatcherListControllerDelegate<ExtraData: ExtraDataType
 }
 
 extension AnyChatChannelWatcherListControllerDelegate {
-    convenience init<Delegate: _ChatChannelWatcherListControllerDelegate>(_ delegate: Delegate)
-        where Delegate.ExtraData == ExtraData {
+    convenience init<Delegate: ChatChannelWatcherListControllerDelegate>(_ delegate: Delegate) {
         self.init(
             wrappedDelegate: delegate,
             controllerDidChangeState: { [weak delegate] in
@@ -270,7 +237,7 @@ extension AnyChatChannelWatcherListControllerDelegate {
     }
 }
 
-extension AnyChatChannelWatcherListControllerDelegate where ExtraData == NoExtraData {
+extension AnyChatChannelWatcherListControllerDelegate {
     convenience init(_ delegate: ChatChannelWatcherListControllerDelegate?) {
         self.init(
             wrappedDelegate: delegate,

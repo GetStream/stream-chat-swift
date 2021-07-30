@@ -85,7 +85,7 @@ extension MutedUserPayload: Equatable {
 }
 
 /// A muted users response.
-struct MutedUsersResponse<ExtraData: ExtraDataTypes>: Decodable {
+struct MutedUsersResponse: Decodable {
     private enum CodingKeys: String, CodingKey {
         case mutedUser = "mute"
         case currentUser = "own_user"

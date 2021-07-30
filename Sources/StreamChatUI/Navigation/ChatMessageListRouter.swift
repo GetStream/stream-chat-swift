@@ -9,7 +9,7 @@ import UIKit
 public typealias ChatMessageListRouter = _ChatMessageListRouter<NoExtraData>
 
 /// A `NavigationRouter` subclass used for navigating from message-list-based view controllers.
-open class _ChatMessageListRouter<ExtraData: ExtraDataTypes>:
+open class _ChatMessageListRouter:
     // We use UIViewController here because the router is used for both
     // the channel and thread message lists.
     NavigationRouter<UIViewController>,

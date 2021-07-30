@@ -9,7 +9,7 @@ import UIKit
 public typealias Components = _Components<NoExtraData>
 
 /// An object containing types of UI Components that are used through the UI SDK.
-public struct _Components<ExtraData: ExtraDataTypes> {
+public struct _Components {
     /// A view that displays a title label and subtitle in a container stack view.
     public var titleContainerView: TitleContainerView.Type = TitleContainerView.self
 

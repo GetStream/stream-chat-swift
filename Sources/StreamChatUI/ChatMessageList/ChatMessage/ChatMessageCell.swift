@@ -13,7 +13,7 @@ public typealias ChatMessageCell = _ChatMessageCell<NoExtraData>
 /// The cell that displays the message content of a dynamic type and layout.
 /// Once the cell is set up it is expected to be dequeued for messages with
 /// the same content and layout the cell has already been configured with.
-public final class _ChatMessageCell<ExtraData: ExtraDataTypes>: _TableViewCell {
+public final class _ChatMessageCell: _TableViewCell {
     public static var reuseId: String { "\(self)" }
     
     /// The message content view the cell is showing.

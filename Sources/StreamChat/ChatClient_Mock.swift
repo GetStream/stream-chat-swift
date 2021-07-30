@@ -39,7 +39,7 @@ extension ChatClient {
     }
 }
 
-class ChatClientMock<ExtraData: ExtraDataTypes>: ChatClient {
+class ChatClientMock: ChatClient {
     @Atomic var init_config: ChatClientConfig
     @Atomic var init_tokenProvider: TokenProvider?
     @Atomic var init_workerBuilders: [WorkerBuilder]

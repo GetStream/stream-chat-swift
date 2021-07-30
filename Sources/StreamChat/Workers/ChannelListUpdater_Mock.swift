@@ -6,7 +6,7 @@
 import XCTest
 
 /// Mock implementation of ChannelListUpdater
-class ChannelListUpdaterMock<ExtraData: ExtraDataTypes>: ChannelListUpdater<ExtraData> {
+class ChannelListUpdaterMock: ChannelListUpdater {
     @Atomic var update_queries: [ChannelListQuery] = []
     @Atomic var update_completion: ((Error?) -> Void)?
     

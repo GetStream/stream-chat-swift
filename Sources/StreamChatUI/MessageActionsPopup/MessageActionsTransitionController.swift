@@ -7,7 +7,7 @@ import StreamChat
 import UIKit
 
 /// Transitions controller for `ChatMessagePopupVC`.
-open class MessageActionsTransitionController<ExtraData: ExtraDataTypes>: NSObject, UIViewControllerTransitioningDelegate,
+open class MessageActionsTransitionController: NSObject, UIViewControllerTransitioningDelegate,
     UIViewControllerAnimatedTransitioning {
     /// Indicates if the transition is for presenting or dismissing.
     open var isPresenting: Bool = false

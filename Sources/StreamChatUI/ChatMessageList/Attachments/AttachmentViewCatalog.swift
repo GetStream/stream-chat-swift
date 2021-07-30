@@ -13,7 +13,7 @@ public typealias AttachmentViewCatalog = _AttachmentViewCatalog<NoExtraData>
 /// A class that is used to determine the AttachmentViewInjector to use for rendering one message's attachments.
 /// If your application uses custom attachment types, you will need to create a subclass and override the attachmentViewInjectorClassFor
 /// method so that the correct AttachmentViewInjector is used.
-open class _AttachmentViewCatalog<ExtraData: ExtraDataTypes> {
+open class _AttachmentViewCatalog {
     open class func attachmentViewInjectorClassFor(
         message: _ChatMessage,
         components: _Components<ExtraData>

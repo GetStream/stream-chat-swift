@@ -30,7 +30,7 @@ extension ChatChannelMemberListController {
         /// A backing subject for `membersChangesPublisher`.
         let membersChanges: PassthroughSubject<[ListChange<ChatChannelMember>], Never> = .init()
         
-        init(controller: ChatChannelMemberListController<ExtraData>) {
+        init(controller: ChatChannelMemberListController) {
             self.controller = controller
             state = .init(controller.state)
             
@@ -46,7 +46,7 @@ extension ChatChannelMemberListController.BasePublishers: ChatChannelMemberListC
     }
     
     func memberListController(
-        _ controller: ChatChannelMemberListController<ExtraData>,
+        _ controller: ChatChannelMemberListController,
         didChangeMembers changes: [ListChange<ChatChannelMember>]
     ) {
         membersChanges.send(changes)

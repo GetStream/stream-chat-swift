@@ -9,7 +9,7 @@ import UIKit
 public typealias ChatUserAvatarView = _ChatUserAvatarView<NoExtraData>
 
 /// A view that shows a user avatar including an indicator of the user presence (online/offline).
-open class _ChatUserAvatarView<ExtraData: ExtraDataTypes>: _View, ThemeProvider {
+open class _ChatUserAvatarView: _View, ThemeProvider {
     /// A view that shows the avatar image and online presence indicator.
     open private(set) lazy var presenceAvatarView: _ChatPresenceAvatarView<ExtraData> = components
         .presenceAvatarView.init()

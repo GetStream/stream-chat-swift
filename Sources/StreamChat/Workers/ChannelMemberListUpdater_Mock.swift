@@ -6,7 +6,7 @@
 import XCTest
 
 /// Mock implementation of `ChannelMemberListUpdater`
-final class ChannelMemberListUpdaterMock<ExtraData: ExtraDataTypes>: ChannelMemberListUpdater {
+final class ChannelMemberListUpdaterMock: ChannelMemberListUpdater {
     @Atomic var load_query: ChannelMemberListQuery?
     @Atomic var load_completion: ((Error?) -> Void)?
     

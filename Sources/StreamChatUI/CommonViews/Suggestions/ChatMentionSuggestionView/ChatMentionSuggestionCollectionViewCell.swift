@@ -9,7 +9,7 @@ import UIKit
 public typealias ChatMentionSuggestionCollectionViewCell = _ChatMentionSuggestionCollectionViewCell<NoExtraData>
 
 /// `UICollectionView` subclass which embeds inside `ChatMessageComposerMentionCellView`
-open class _ChatMentionSuggestionCollectionViewCell<ExtraData: ExtraDataTypes>: _CollectionViewCell, ComponentsProvider {
+open class _ChatMentionSuggestionCollectionViewCell: _CollectionViewCell, ComponentsProvider {
     /// Reuse identifier for the cell used in `collectionView(cellForItem:)`
     open class var reuseId: String { String(describing: self) }
 

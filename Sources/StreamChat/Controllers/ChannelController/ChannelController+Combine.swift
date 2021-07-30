@@ -37,7 +37,7 @@ extension ChatChannelController {
     /// and expose the published values by mapping them to a read-only `AnyPublisher` type.
     class BasePublishers {
         /// The wrapper controller
-        unowned let controller: _ChatChannelController
+        unowned let controller: ChatChannelController
         
         /// A backing subject for `statePublisher`.
         let state: CurrentValueSubject<DataController.State, Never>
@@ -64,7 +64,7 @@ extension ChatChannelController {
 }
 
 @available(iOS 13, *)
-extension ChatChannelController.BasePublishers: _ChatChannelControllerDelegate {
+extension ChatChannelController.BasePublishers: ChatChannelControllerDelegate {
     func controller(_ controller: DataController, didChangeState state: DataController.State) {
         self.state.send(state)
     }

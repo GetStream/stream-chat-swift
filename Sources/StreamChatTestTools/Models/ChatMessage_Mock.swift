@@ -5,7 +5,7 @@
 import Foundation
 @testable import StreamChat
 
-public extension _ChatMessage {
+public extension ChatMessage {
     /// Creates a new `_ChatMessage` object from the provided data.
     static func mock(
         id: MessageId,
@@ -30,11 +30,11 @@ public extension _ChatMessage {
         mentionedUsers: Set<ChatUser> = [],
         threadParticipants: Set<ChatUser> = [],
         attachments: [AnyChatMessageAttachment] = [],
-        latestReplies: [_ChatMessage] = [],
+        latestReplies: [ChatMessage] = [],
         localState: LocalMessageState? = nil,
         isFlaggedByCurrentUser: Bool = false,
-        latestReactions: Set<_ChatMessageReaction<ExtraData>> = [],
-        currentUserReactions: Set<_ChatMessageReaction<ExtraData>> = [],
+        latestReactions: Set<ChatMessageReaction> = [],
+        currentUserReactions: Set<ChatMessageReaction> = [],
         isSentByCurrentUser: Bool = false,
         pinDetails: _MessagePinDetails<ExtraData>? = nil,
         attachmentCounts: [AttachmentType: Int] = [:]

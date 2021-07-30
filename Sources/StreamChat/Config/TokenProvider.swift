@@ -6,14 +6,12 @@ import Foundation
 
 public typealias TokenProvider = (@escaping (Result<Token, Error>) -> Void) -> Void
 
-typealias UserConnectionProvider = _UserConnectionProvider<NoExtraData>
-
 /// The type designed to provider a `Token` to the `ChatClient` when it asks for it.
-struct _UserConnectionProvider<ExtraData: ExtraDataTypes> {
+struct UserConnectionProvider {
     let getToken: (_ client: ChatClient, _ completion: @escaping (Result<Token, Error>) -> Void) -> Void
 }
 
-extension _UserConnectionProvider {
+extension UserConnectionProvider {
     /// The provider that can be used when user is unknown.
     static var anonymous: Self {
         .static(.anonymous)
@@ -46,10 +44,10 @@ extension _UserConnectionProvider {
         userId: UserId,
         name: String? = nil,
         imageURL: URL? = nil,
-        extraData: ExtraData.User = .defaultValue
+        extraData: CustomData = .defaultValue
     ) -> Self {
         .init { client, completion in
-            let endpoint: Endpoint<GuestUserTokenPayload<ExtraData>> = .guestUserToken(
+            let endpoint: Endpoint<GuestUserTokenPayload> = .guestUserToken(
                 userId: userId,
                 name: name,
                 imageURL: imageURL,

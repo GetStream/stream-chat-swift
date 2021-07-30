@@ -7,7 +7,7 @@ import UIKit
 
 public typealias ChatMessageLinkPreviewView = _ChatMessageLinkPreviewView<NoExtraData>
 
-open class _ChatMessageLinkPreviewView<ExtraData: ExtraDataTypes>: _Control, ThemeProvider {
+open class _ChatMessageLinkPreviewView: _Control, ThemeProvider {
     public var content: ChatMessageLinkAttachment? { didSet { updateContentIfNeeded() } }
 
     /// Image view showing link's preview image.

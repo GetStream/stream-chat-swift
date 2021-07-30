@@ -9,7 +9,7 @@ import UIKit
 public typealias ChatChannelListVC = _ChatChannelListVC<NoExtraData>
 
 /// A `UIViewController` subclass  that shows list of channels.
-open class _ChatChannelListVC<ExtraData: ExtraDataTypes>: _ViewController,
+open class _ChatChannelListVC: _ViewController,
     UICollectionViewDataSource,
     UICollectionViewDelegate,
     _ChatChannelListControllerDelegate,
@@ -17,7 +17,7 @@ open class _ChatChannelListVC<ExtraData: ExtraDataTypes>: _ViewController,
     ThemeProvider,
     SwipeableViewDelegate {
     /// The `ChatChannelListController` instance that provides channels data.
-    public var controller: _ChatChannelListController<ExtraData>!
+    public var controller: ChatChannelListController!
 
     open private(set) lazy var loadingIndicator: UIActivityIndicatorView = {
         if #available(iOS 13.0, *) {
@@ -222,13 +222,13 @@ open class _ChatChannelListVC<ExtraData: ExtraDataTypes>: _ViewController,
     
     // MARK: - ChatChannelListControllerDelegate
     
-    open func controllerWillChangeChannels(_ controller: _ChatChannelListController<ExtraData>) {
+    open func controllerWillChangeChannels(_ controller: ChatChannelListController) {
         channelsCount = controller.channels.count
         collectionView.layoutIfNeeded()
     }
     
     open func controller(
-        _ controller: _ChatChannelListController<ExtraData>,
+        _ controller: ChatChannelListController,
         didChangeChannels changes: [ListChange<ChatChannel>]
     ) {
         guard let indices = collectionUpdatesMapper.mapToSetsOfIndexPaths(

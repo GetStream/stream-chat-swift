@@ -9,7 +9,7 @@ import UIKit
 
 public typealias ChatMessageGiphyView = _ChatMessageGiphyView<NoExtraData>
 
-open class _ChatMessageGiphyView<ExtraData: ExtraDataTypes>: _View, ComponentsProvider {
+open class _ChatMessageGiphyView: _View, ComponentsProvider {
     public var content: ChatMessageGiphyAttachment? {
         didSet {
             let isDifferentImage = oldValue?.previewURL != content?.previewURL

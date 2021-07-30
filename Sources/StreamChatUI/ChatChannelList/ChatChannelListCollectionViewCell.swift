@@ -10,7 +10,7 @@ import UIKit
 public typealias ChatChannelListCollectionViewCell = _ChatChannelListCollectionViewCell<NoExtraData>
 
 /// A `UICollectionViewCell` subclass that shows channel information.
-open class _ChatChannelListCollectionViewCell<ExtraData: ExtraDataTypes>: _CollectionViewCell,
+open class _ChatChannelListCollectionViewCell: _CollectionViewCell,
     ThemeProvider {
     /// The `ChatChannelListItemView` instance used as content view.
     open private(set) lazy var itemView: _ChatChannelListItemView<ExtraData> = components

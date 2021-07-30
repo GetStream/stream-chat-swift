@@ -19,10 +19,10 @@ import Foundation
 /// - Message send retry
 /// - Start sending messages when connection status changes (offline -> online)
 ///
-class MessageSender<ExtraData: ExtraDataTypes>: Worker {
+class MessageSender: Worker {
     /// Because we need to be sure messages for every channel are sent in the correct order, we create a sending queue for
     /// every cid. These queues can send messages in parallel.
-    @Atomic private var sendingQueueByCid: [ChannelId: MessageSendingQueue<ExtraData>] = [:]
+    @Atomic private var sendingQueueByCid: [ChannelId: MessageSendingQueue] = [:]
 
     private lazy var observer = ListDatabaseObserver<MessageDTO, MessageDTO>(
         context: self.database.backgroundReadOnlyContext,
@@ -62,7 +62,7 @@ class MessageSender<ExtraData: ExtraDataTypes>: Worker {
     
     func handleChanges(changes: [ListChange<MessageDTO>]) {
         // Convert changes to a dictionary of requests by their cid
-        var newRequests: [ChannelId: [MessageSendingQueue<ExtraData>.SendRequest]] = [:]
+        var newRequests: [ChannelId: [MessageSendingQueue.SendRequest]] = [:]
         changes.forEach { change in
             switch change {
             case .insert(let dto, index: _), .update(let dto, index: _):
@@ -100,7 +100,7 @@ class MessageSender<ExtraData: ExtraDataTypes>: Worker {
 }
 
 /// This objects takes care of sending messages to the server in the order they have been enqueued.
-private class MessageSendingQueue<ExtraData: ExtraDataTypes> {
+private class MessageSendingQueue {
     unowned var apiClient: APIClient
     unowned var database: DatabaseContainer
     let dispatchQueue: DispatchQueue

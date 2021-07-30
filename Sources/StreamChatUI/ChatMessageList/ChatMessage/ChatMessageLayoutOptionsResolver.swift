@@ -9,7 +9,7 @@ import StreamChat
 public typealias ChatMessageLayoutOptionsResolver = _ChatMessageLayoutOptionsResolver<NoExtraData>
 
 /// Resolves layout options for the message at given `indexPath`.
-open class _ChatMessageLayoutOptionsResolver<ExtraData: ExtraDataTypes> {
+open class _ChatMessageLayoutOptionsResolver {
     /// The minimum time interval between messages to treat them as a single message group.
     public let minTimeIntervalBetweenMessagesInGroup: TimeInterval
 

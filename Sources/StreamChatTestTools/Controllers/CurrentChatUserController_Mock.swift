@@ -5,7 +5,7 @@
 import Foundation
 @testable import StreamChat
 
-public class CurrentChatUserController_Mock<ExtraData: ExtraDataTypes>: _CurrentChatUserController<ExtraData> {
+public class CurrentChatUserController_Mock: CurrentChatUserController {
     public static func mock() -> CurrentChatUserController_Mock<ExtraData> {
         .init(client: .mock())
     }

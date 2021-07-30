@@ -9,7 +9,7 @@ import UIKit
 public typealias ChatSuggestionsVC = _ChatSuggestionsVC<NoExtraData>
 
 /// A view controller that shows suggestions of commands or mentions.
-open class _ChatSuggestionsVC<ExtraData: ExtraDataTypes>: _ViewController,
+open class _ChatSuggestionsVC: _ViewController,
     ThemeProvider,
     UICollectionViewDelegate {
     /// The data provider of the collection view. A custom `UICollectionViewDataSource` can be provided,
@@ -111,7 +111,7 @@ open class _ChatSuggestionsVC<ExtraData: ExtraDataTypes>: _ViewController,
 
 public typealias ChatMessageComposerSuggestionsCommandDataSource = _ChatMessageComposerSuggestionsCommandDataSource<NoExtraData>
 
-open class _ChatMessageComposerSuggestionsCommandDataSource<ExtraData: ExtraDataTypes>: NSObject, UICollectionViewDataSource {
+open class _ChatMessageComposerSuggestionsCommandDataSource: NSObject, UICollectionViewDataSource {
     open var collectionView: _ChatSuggestionsCollectionView<ExtraData>
     
     /// The list of commands.
@@ -193,7 +193,7 @@ open class _ChatMessageComposerSuggestionsCommandDataSource<ExtraData: ExtraData
 
 public typealias ChatMessageComposerSuggestionsMentionDataSource = _ChatMessageComposerSuggestionsMentionDataSource<NoExtraData>
 
-open class _ChatMessageComposerSuggestionsMentionDataSource<ExtraData: ExtraDataTypes>: NSObject,
+open class _ChatMessageComposerSuggestionsMentionDataSource: NSObject,
     UICollectionViewDataSource,
     _ChatUserSearchControllerDelegate {
     /// The collection view of the mentions.

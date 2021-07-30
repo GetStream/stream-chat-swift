@@ -9,7 +9,7 @@ import UIKit
 public typealias ImageAttachmentGalleryCell = _ImageAttachmentGalleryCell<NoExtraData>
 
 /// `UICollectionViewCell` for an image item.
-open class _ImageAttachmentGalleryCell<ExtraData: ExtraDataTypes>: _GalleryCollectionViewCell<ExtraData> {
+open class _ImageAttachmentGalleryCell: _GalleryCollectionViewCell<ExtraData> {
     open class var reuseId: String { String(describing: self) }
     
     /// A view that displays an image.

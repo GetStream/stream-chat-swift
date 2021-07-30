@@ -1097,7 +1097,7 @@ class TestEventWorker: EventWorker {
 }
 
 /// A helper class which provides mock environment for Client.
-private class TestEnvironment<ExtraData: ExtraDataTypes> {
+private class TestEnvironment {
     @Atomic var apiClient: APIClientMock?
     @Atomic var webSocketClient: WebSocketClientMock?
     @Atomic var databaseContainer: DatabaseContainerMock?

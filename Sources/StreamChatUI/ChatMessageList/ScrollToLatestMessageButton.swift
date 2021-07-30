@@ -9,7 +9,7 @@ import UIKit
 public typealias ScrollToLatestMessageButton = _ScrollToLatestMessageButton<NoExtraData>
 
 /// A Button that is used to indicate unread messages in the Message list.
-open class _ScrollToLatestMessageButton<ExtraData: ExtraDataTypes>: _Button, ThemeProvider {
+open class _ScrollToLatestMessageButton: _Button, ThemeProvider {
     /// The unread count that will be shown on the button as a badge icon.
     var content: ChannelUnreadCount = .noUnread {
         didSet {

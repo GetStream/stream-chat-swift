@@ -31,7 +31,7 @@ public typealias ComposerView = _ComposerView<NoExtraData>
 /// |                     bottomContainer                     |
 /// |---------------------------------------------------------|
 /// ```
-open class _ComposerView<ExtraData: ExtraDataTypes>: _View, ThemeProvider {
+open class _ComposerView: _View, ThemeProvider {
     /// The main container of the composer that layouts all the other containers around the message input view.
     public private(set) lazy var container = ContainerStackView()
         .withoutAutoresizingMaskConstraints

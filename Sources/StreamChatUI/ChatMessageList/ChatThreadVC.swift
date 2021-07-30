@@ -9,7 +9,7 @@ import UIKit
 public typealias ChatThreadVC = _ChatThreadVC<NoExtraData>
 
 /// Controller responsible for displaying message thread.
-open class _ChatThreadVC<ExtraData: ExtraDataTypes>:
+open class _ChatThreadVC:
     _ViewController,
     ThemeProvider,
     ComposerVCDelegate,
@@ -29,7 +29,7 @@ open class _ChatThreadVC<ExtraData: ExtraDataTypes>:
     open var channelController: ChatChannelController!
 
     /// Controller for observing data changes within the parent thread message.
-    open var messageController: _ChatMessageController<ExtraData>!
+    open var messageController: ChatMessageController!
 
     /// Observer responsible for setting the correct offset when keyboard frame is changed
     open lazy var keyboardObserver = ChatMessageListKeyboardObserver(
@@ -209,7 +209,7 @@ open class _ChatThreadVC<ExtraData: ExtraDataTypes>:
         return layoutOptions
     }
     
-    public var messages: [_ChatMessage] {
+    public var messages: [ChatMessage] {
         /*
          Thread replies are evaluated from DTOs when converting `messageController.replies` to an array.
          Adding thread root message into replies would require `insert/append` API on lazy map which should
@@ -376,7 +376,7 @@ open class _ChatThreadVC<ExtraData: ExtraDataTypes>:
     // MARK: - _ChatMessageControllerDelegate
     
     public func messageController(
-        _ controller: _ChatMessageController<ExtraData>,
+        _ controller: ChatMessageController,
         didChangeMessage change: EntityChange<ChatMessage>
     ) {
         let indexPath = IndexPath(row: messageController.replies.count, section: 0)
@@ -395,7 +395,7 @@ open class _ChatThreadVC<ExtraData: ExtraDataTypes>:
     }
 
     open func messageController(
-        _ controller: _ChatMessageController<ExtraData>,
+        _ controller: ChatMessageController,
         didChangeReplies changes: [ListChange<ChatMessage>]
     ) {
         updateMessages(with: changes)
@@ -511,7 +511,7 @@ open class _ChatThreadVC<ExtraData: ExtraDataTypes>:
 extension ChatThreadVC: SwiftUIRepresentable {
     public var content: (
         channelController: ChatChannelController,
-        messageController: _ChatMessageController<ExtraData>
+        messageController: ChatMessageController
     ) {
         get {
             (channelController, messageController)

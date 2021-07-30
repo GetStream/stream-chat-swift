@@ -13,7 +13,7 @@ public typealias ChatChannelNamer = _ChatChannelNamer
 /// Typealias for closure taking `ChatChannel` and `UserId` which returns
 /// the current name of the channel. Use this type when you create closure for naming a channel.
 /// For example usage, see `DefaultChatChannelNamer`
-public typealias _ChatChannelNamer<ExtraData: ExtraDataTypes> =
+public typealias _ChatChannelNamer =
     (_ channel: ChatChannel, _ currentUserId: UserId?) -> String?
 
 /// Generates a name for the given channel, given the current user's id.
@@ -39,7 +39,7 @@ public typealias _ChatChannelNamer<ExtraData: ExtraDataTypes> =
 ///   - separator: Separator of the members, defaults to `y`
 /// - Returns: A closure with 2 parameters carrying `channel` used for name generation and `currentUserId` to decide
 /// which members' names are going to be displayed
-public func DefaultChatChannelNamer<ExtraData: ExtraDataTypes>(
+public func DefaultChatChannelNamer(
     maxMemberNames: Int = 2,
     separator: String = ","
 ) -> _ChatChannelNamer<ExtraData> {

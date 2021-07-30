@@ -13,7 +13,7 @@ extension ChatChannelListController {
     /// A wrapper object for `ChannelListController` type which makes it possible to use the controller comfortably in SwiftUI.
     public class ObservableObject: SwiftUI.ObservableObject {
         /// The underlying controller. You can still access it and call methods on it.
-        public let controller: _ChatChannelListController
+        public let controller: ChatChannelListController
         
         /// The channels matching the query.
         @Published public private(set) var channels: LazyCachedMapCollection<ChatChannel> = []
@@ -22,7 +22,7 @@ extension ChatChannelListController {
         @Published public private(set) var state: DataController.State
         
         /// Creates a new `ObservableObject` wrapper with the provided controller instance.
-        init(controller: _ChatChannelListController<ExtraData>) {
+        init(controller: ChatChannelListController) {
             self.controller = controller
             state = controller.state
             
@@ -33,9 +33,9 @@ extension ChatChannelListController {
 }
 
 @available(iOS 13, *)
-extension ChatChannelListController.ObservableObject: _ChatChannelListControllerDelegate {
+extension ChatChannelListController.ObservableObject: ChatChannelListControllerDelegate {
     public func controller(
-        _ controller: _ChatChannelListController<ExtraData>,
+        _ controller: ChatChannelListController,
         didChangeChannels changes: [ListChange<ChatChannel>]
     ) {
         // We don't care about detailed changes. We just need to update the `channels` property and keep SwiftUI

@@ -5,7 +5,7 @@
 import Foundation
 
 /// The middleware listens for `ChannelHidden/Visible` events and updates `ChannelDTO` accordingly.
-struct ChannelVisibilityEventMiddleware<ExtraData: ExtraDataTypes>: EventMiddleware {
+struct ChannelVisibilityEventMiddleware: EventMiddleware {
     func handle(event: Event, session: DatabaseSession) -> Event? {
         guard event is ChannelVisibleEvent || event is ChannelHiddenEvent else { return event }
 

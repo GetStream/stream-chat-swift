@@ -18,7 +18,7 @@ import Foundation
 /// - Message edit retry
 /// - Start editing messages when connection status changes (offline -> online)
 ///
-class MessageEditor<ExtraData: ExtraDataTypes>: Worker {
+class MessageEditor: Worker {
     @Atomic private var pendingMessageIDs: Set<MessageId> = []
     
     private let observer: ListDatabaseObserver<MessageDTO, MessageDTO>

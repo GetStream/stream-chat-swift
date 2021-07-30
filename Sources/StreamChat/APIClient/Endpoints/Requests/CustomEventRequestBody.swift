@@ -5,7 +5,7 @@
 import Foundation
 
 /// A type used to send custom event payload to backend.
-struct CustomEventRequestBody: Encodable {
+struct CustomEventRequestBody<Payload: CustomEventPayload>: Encodable {
     let payload: Payload
     
     func encode(to encoder: Encoder) throws {

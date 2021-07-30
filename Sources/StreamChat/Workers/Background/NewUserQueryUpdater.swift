@@ -83,7 +83,7 @@ final class NewUserQueryUpdater: Worker {
             guard let queries = self?.queries else { return }
 
             // Existing queries with modified filter parameter
-            var updatedQueries: [_UserListQuery] = []
+            var updatedQueries: [UserListQuery] = []
             
             do {
                 updatedQueries = try queries.map {
@@ -113,20 +113,20 @@ extension NewUserQueryUpdater {
         var createUserListUpdater: (
             _ database: DatabaseContainer,
             _ apiClient: APIClient
-        ) -> UserListUpdater<ExtraData> = UserListUpdater.init
+        ) -> UserListUpdater = UserListUpdater.init
     }
 }
 
 private extension UserListQueryDTO {
     func asUserListQueryWithUpdatedFilter(
-        filterToAdd filter: Filter<_UserListFilterScope>
+        filterToAdd filter: Filter<UserListFilterScope>
     ) throws -> UserListQuery {
-        let encodedFilter = try JSONDecoder.default.decode(Filter<_UserListFilterScope>.self, from: filterJSONData)
+        let encodedFilter = try JSONDecoder.default.decode(Filter<UserListFilterScope>.self, from: filterJSONData)
         
         // We need to pass original `filterHash` so user will be linked to original query, not the modified one
-        var updatedFilter: Filter<_UserListFilterScope> = .and([encodedFilter, filter])
+        var updatedFilter: Filter<UserListFilterScope> = .and([encodedFilter, filter])
         updatedFilter.explicitHash = filterHash
         
-        return _UserListQuery(filter: updatedFilter)
+        return UserListQuery(filter: updatedFilter)
     }
 }

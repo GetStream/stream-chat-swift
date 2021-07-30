@@ -5,7 +5,7 @@
 import Foundation
 
 /// A middleware which updates a channel's read events as websocket events arrive.
-struct ChannelReadUpdaterMiddleware<ExtraData: ExtraDataTypes>: EventMiddleware {
+struct ChannelReadUpdaterMiddleware: EventMiddleware {
     func handle(event: Event, session: DatabaseSession) -> Event? {
         switch event {
         case let event as MessageNewEvent:

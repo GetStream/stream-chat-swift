@@ -93,7 +93,7 @@ public class CurrentChatUser: ChatUser {
             updatedAt: updatedAt,
             lastActiveAt: lastActiveAt,
             teams: teams,
-            extraData: extraData,
+            extraData: extraData
         )
 
         $_mutedChannels = (mutedChannels, underlyingContext)

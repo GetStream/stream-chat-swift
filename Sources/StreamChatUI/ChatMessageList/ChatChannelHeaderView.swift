@@ -9,7 +9,7 @@ import UIKit
 public typealias ChatChannelHeaderView = _ChatChannelHeaderView<NoExtraData>
 
 /// The view that displays channel information on the message list header
-open class _ChatChannelHeaderView<ExtraData: ExtraDataTypes>:
+open class _ChatChannelHeaderView:
     _View,
     ThemeProvider,
     _ChatChannelControllerDelegate {

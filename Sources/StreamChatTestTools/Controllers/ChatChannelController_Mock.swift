@@ -5,7 +5,7 @@
 import Foundation
 @testable import StreamChat
 
-public class ChatChannelController_Mock<ExtraData: ExtraDataTypes>: ChatChannelController {
+public class ChatChannelController_Mock: ChatChannelController {
     /// Creates a new mock instance of `ChatChannelController`.
     public static func mock() -> ChatChannelController_Mock<ExtraData> {
         .init(channelQuery: .init(cid: try! .init(cid: "mock:channel")), client: .mock())
@@ -16,7 +16,7 @@ public class ChatChannelController_Mock<ExtraData: ExtraDataTypes>: ChatChannelC
         channel_mock ?? super.channel
     }
     
-    public private(set) var messages_mock: [_ChatMessage]?
+    public private(set) var messages_mock: [ChatMessage]?
     override public var messages: LazyCachedMapCollection<ChatMessage> {
         messages_mock.map { $0.lazyCachedMap { $0 } } ?? super.messages
     }
@@ -35,7 +35,7 @@ public class ChatChannelController_Mock<ExtraData: ExtraDataTypes>: ChatChannelC
 
 public extension ChatChannelController_Mock {
     /// Simulates the initial conditions. Setting these values doesn't trigger any observer callback.
-    func simulateInitial(channel: ChatChannel, messages: [_ChatMessage], state: DataController.State) {
+    func simulateInitial(channel: ChatChannel, messages: [ChatMessage], state: DataController.State) {
         channel_mock = channel
         messages_mock = messages
         state_mock = state
@@ -58,7 +58,7 @@ public extension ChatChannelController_Mock {
     }
     
     /// Simulates changes in the `messages` array. Observers are notified with the provided `changes` value.
-    func simulate(messages: [_ChatMessage], changes: [ListChange<ChatMessage>]) {
+    func simulate(messages: [ChatMessage], changes: [ListChange<ChatMessage>]) {
         messages_mock = messages
         delegateCallback {
             $0.channelController(self, didUpdateMessages: changes)

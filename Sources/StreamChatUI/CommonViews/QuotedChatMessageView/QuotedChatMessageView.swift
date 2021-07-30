@@ -24,7 +24,7 @@ public struct QuotedAvatarAlignment: RawRepresentable, Equatable {
 public typealias QuotedChatMessageView = _QuotedChatMessageView<NoExtraData>
 
 /// A view that displays a quoted message.
-open class _QuotedChatMessageView<ExtraData: ExtraDataTypes>: _View, ThemeProvider, SwiftUIRepresentable {
+open class _QuotedChatMessageView: _View, ThemeProvider, SwiftUIRepresentable {
     /// The content of the view.
     public struct Content {
         /// The quoted message.

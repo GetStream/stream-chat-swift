@@ -34,7 +34,7 @@ final class GuestUserTokenRequestPayload_Tests: XCTestCase {
     
     // MARK: - Private
     
-    private func verify<ExtraData: ExtraDataTypes>(
+    private func verify(
         _ payload: GuestUserTokenRequestPayload<ExtraData>,
         isEncodedAs expected: [String: Any]
     ) throws {

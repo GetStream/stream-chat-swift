@@ -10,7 +10,7 @@ import UIKit
 public typealias VideoAttachmentGalleryCell = _VideoAttachmentGalleryCell<NoExtraData>
 
 /// `UICollectionViewCell` for video gallery item.
-open class _VideoAttachmentGalleryCell<ExtraData: ExtraDataTypes>: _GalleryCollectionViewCell<ExtraData> {
+open class _VideoAttachmentGalleryCell: _GalleryCollectionViewCell<ExtraData> {
     /// A cell reuse identifier.
     open class var reuseId: String { String(describing: self) }
     

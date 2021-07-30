@@ -17,7 +17,7 @@ public typealias AttachmentViewInjector = _AttachmentViewInjector<NoExtraData>
 ///
 /// - Important: This is an abstract superclass meant to be subclassed.
 ///
-open class _AttachmentViewInjector<ExtraData: ExtraDataTypes> {
+open class _AttachmentViewInjector {
     /// Says whether a message content should start filling all available width.
     /// Is `true` by default.
     open var fillAllAvailableWidth: Bool = true

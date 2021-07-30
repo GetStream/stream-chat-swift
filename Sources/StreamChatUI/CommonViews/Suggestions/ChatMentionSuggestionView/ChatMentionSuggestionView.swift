@@ -9,7 +9,7 @@ import UIKit
 public typealias ChatMentionSuggestionView = _ChatMentionSuggestionView<NoExtraData>
 
 /// A View that is embed inside `UICollectionViewCell`  which shows information about user which we want to tag in suggestions
-open class _ChatMentionSuggestionView<ExtraData: ExtraDataTypes>: _View, ThemeProvider {
+open class _ChatMentionSuggestionView: _View, ThemeProvider {
     /// Content of the cell - `ChatUser` instance from which we take all information.
     open var content: ChatUser? {
         didSet {

@@ -9,7 +9,7 @@ import UIKit
 public typealias ChatMessageFileAttachmentListView = _ChatMessageFileAttachmentListView<NoExtraData>
 
 /// View which holds one or more file attachment views in a message or composer attachment view
-open class _ChatMessageFileAttachmentListView<ExtraData: ExtraDataTypes>: _View, ComponentsProvider {
+open class _ChatMessageFileAttachmentListView: _View, ComponentsProvider {
     /// Content of the attachment llist - Array of `ChatMessageFileAttachment`
     open var content: [ChatMessageFileAttachment] = [] {
         didSet { updateContentIfNeeded() }

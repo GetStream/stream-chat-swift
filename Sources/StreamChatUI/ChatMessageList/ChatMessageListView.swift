@@ -9,7 +9,7 @@ import UIKit
 public typealias ChatMessageListView = _ChatMessageListView<NoExtraData>
 
 /// Custom view type used to show the message list.
-open class _ChatMessageListView<ExtraData: ExtraDataTypes>: UITableView, Customizable, ComponentsProvider {
+open class _ChatMessageListView: UITableView, Customizable, ComponentsProvider {
     private var identifiers: Set<String> = .init()
     private var isInitialized: Bool = false
     /// Used for mapping `ListChanges` to sets of `IndexPath` and verifying possible conflicts

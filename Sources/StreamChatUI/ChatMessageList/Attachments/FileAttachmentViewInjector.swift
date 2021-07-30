@@ -13,7 +13,7 @@ public protocol FileActionContentViewDelegate: ChatMessageContentViewDelegate {
 
 public typealias FilesAttachmentViewInjector = _FilesAttachmentViewInjector<NoExtraData>
 
-public class _FilesAttachmentViewInjector<ExtraData: ExtraDataTypes>: _AttachmentViewInjector<ExtraData> {
+public class _FilesAttachmentViewInjector: _AttachmentViewInjector<ExtraData> {
     open lazy var fileAttachmentView: _ChatMessageFileAttachmentListView<ExtraData> = {
         let attachmentListView = contentView
             .components

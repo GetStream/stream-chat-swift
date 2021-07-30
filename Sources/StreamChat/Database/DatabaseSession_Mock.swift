@@ -26,21 +26,20 @@ extension DatabaseSessionMock {
         try underlyingSession.saveCurrentUserDevices(devices, clearExisting: clearExisting)
     }
     
-    func saveChannel<ExtraData>(
+    func saveChannel(
         payload: ChannelDetailPayload,
         query: ChannelListQuery?
-    ) throws -> ChannelDTO where ExtraData: ExtraDataTypes {
+    ) throws -> ChannelDTO {
         try throwErrorIfNeeded()
         return try underlyingSession.saveChannel(payload: payload, query: query)
     }
     
-    func saveUser<ExtraData>(payload: UserPayload, query: UserListQuery?) throws -> UserDTO
-        where ExtraData: UserExtraData {
+    func saveUser(payload: UserPayload, query: UserListQuery?) throws -> UserDTO {
         try throwErrorIfNeeded()
         return try underlyingSession.saveUser(payload: payload, query: query)
     }
     
-    func saveQuery<ExtraData>(query: UserListQuery) throws -> UserListQueryDTO? {
+    func saveQuery(query: UserListQuery) throws -> UserListQueryDTO? {
         try throwErrorIfNeeded()
         return try underlyingSession.saveQuery(query: query)
     }
@@ -49,11 +48,11 @@ extension DatabaseSessionMock {
         underlyingSession.user(id: id)
     }
     
-    func deleteQuery<ExtraData>(_ query: UserListQuery) {
+    func deleteQuery(_ query: UserListQuery) {
         underlyingSession.deleteQuery(query)
     }
     
-    func saveCurrentUser<ExtraData>(payload: CurrentUserPayload) throws -> CurrentUserDTO
+    func saveCurrentUser(payload: CurrentUserPayload) throws -> CurrentUserDTO
         where ExtraData: ExtraDataTypes {
         try throwErrorIfNeeded()
         return try saveCurrentUser(payload: payload)
@@ -173,7 +172,7 @@ extension DatabaseSessionMock {
     func saveChannel<ExtraData>(
         payload: ChannelPayload,
         query: ChannelListQuery?
-    ) throws -> ChannelDTO where ExtraData: ExtraDataTypes {
+    ) throws -> ChannelDTO {
         try throwErrorIfNeeded()
         return try underlyingSession.saveChannel(payload: payload, query: query)
     }
@@ -182,11 +181,11 @@ extension DatabaseSessionMock {
         underlyingSession.channel(cid: cid)
     }
     
-    func saveMember<ExtraData>(
+    func saveMember(
         payload: MemberPayload,
         channelId: ChannelId,
         query: ChannelMemberListQuery?
-    ) throws -> MemberDTO where ExtraData: UserExtraData {
+    ) throws -> MemberDTO {
         try throwErrorIfNeeded()
         return try underlyingSession.saveMember(payload: payload, channelId: channelId, query: query)
     }
@@ -218,9 +217,9 @@ extension DatabaseSessionMock {
         return try underlyingSession.createNewAttachment(attachment: attachment, id: id)
     }
 
-    func saveChannelMute<ExtraData>(
+    func saveChannelMute(
         payload: MutedChannelPayload
-    ) throws -> ChannelMuteDTO where ExtraData: ExtraDataTypes {
+    ) throws -> ChannelMuteDTO {
         try throwErrorIfNeeded()
         return try underlyingSession.saveChannelMute(payload: payload)
     }

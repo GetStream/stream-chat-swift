@@ -89,8 +89,8 @@ extension NSManagedObjectContext {
     }
     
     @discardableResult
-    func saveReaction<ExtraData: ExtraDataTypes>(
-        payload: MessageReactionPayload<ExtraData>
+    func saveReaction(
+        payload: MessageReactionPayload
     ) throws -> MessageReactionDTO {
         guard let messageDTO = MessageDTO.load(id: payload.messageId, context: self) else {
             throw ClientError.MessageDoesNotExist(messageId: payload.messageId)
@@ -121,7 +121,7 @@ extension NSManagedObjectContext {
 
 extension MessageReactionDTO {
     /// Snapshots the current state of `MessageReactionDTO` and returns an immutable model object from it.
-    func asModel<ExtraData: ExtraDataTypes>() -> _ChatMessageReaction<ExtraData> {
+    func asModel() -> ChatMessageReaction {
         let extraData: CustomData
         do {
             extraData = try JSONSerialization.jsonObject(with: self.extraData, options: []) as? CustomData ?? [:]

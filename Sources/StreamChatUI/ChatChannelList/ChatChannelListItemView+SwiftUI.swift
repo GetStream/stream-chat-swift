@@ -8,7 +8,6 @@ import SwiftUI
 @available(iOS 13.0, *)
 /// Protocol of `_ChatChannelListItemView` wrapper for use in SwiftUI.
 public protocol _ChatChannelListItemViewSwiftUIView: View {
-    associatedtype ExtraData: ExtraDataTypes
     init(dataSource: _ChatChannelListItemView<ExtraData>.ObservedObject<Self>)
 }
 

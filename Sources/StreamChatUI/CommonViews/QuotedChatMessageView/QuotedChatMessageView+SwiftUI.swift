@@ -8,7 +8,6 @@ import SwiftUI
 @available(iOS 13.0, *)
 /// Protocol of `QuotedChatMessageView` wrapper for use in SwiftUI.
 public protocol _QuotedChatMessageViewSwiftUIView: View {
-    associatedtype ExtraData: ExtraDataTypes
     init(dataSource: _QuotedChatMessageView<ExtraData>.ObservedObject<Self>)
 }
 

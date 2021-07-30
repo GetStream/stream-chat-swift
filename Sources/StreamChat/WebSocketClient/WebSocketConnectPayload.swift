@@ -4,7 +4,7 @@
 
 import Foundation
 
-class WebSocketConnectPayload<ExtraData: ExtraDataTypes>: Encodable {
+class WebSocketConnectPayload: Encodable {
     private enum CodingKeys: String, CodingKey {
         case userId = "user_id"
         case userDetails = "user_details"
@@ -15,14 +15,14 @@ class WebSocketConnectPayload<ExtraData: ExtraDataTypes>: Encodable {
     let userDetails: UserWebSocketPayload<ExtraData>
     let serverDeterminesConnectionId: Bool
 
-    init(userInfo: UserInfo<ExtraData>) {
+    init(userInfo: UserInfo) {
         userId = userInfo.id
-        userDetails = UserWebSocketPayload<ExtraData>(userInfo: userInfo)
+        userDetails = UserWebSocketPayload(userInfo: userInfo)
         serverDeterminesConnectionId = true
     }
 }
 
-struct UserWebSocketPayload<ExtraData: ExtraDataTypes>: Encodable {
+struct UserWebSocketPayload: Encodable {
     private enum CodingKeys: String, CodingKey, CaseIterable {
         case id
         case name
@@ -32,15 +32,13 @@ struct UserWebSocketPayload<ExtraData: ExtraDataTypes>: Encodable {
     let id: String
     let name: String?
     let imageURL: URL?
-    let extraData: ExtraData.User
-    let extraDataMap: CustomData
+    let extraData: CustomData
 
-    init(userInfo: UserInfo<ExtraData>) {
+    init(userInfo: UserInfo) {
         id = userInfo.id
         name = userInfo.name
         imageURL = userInfo.imageURL
         extraData = userInfo.extraData
-        extraDataMap = userInfo.extraDataMap
     }
 
     func encode(to encoder: Encoder) throws {
@@ -50,6 +48,5 @@ struct UserWebSocketPayload<ExtraData: ExtraDataTypes>: Encodable {
         try container.encode(id, forKey: .imageURL)
 
         try extraData.encode(to: encoder)
-        try extraDataMap.encode(to: encoder)
     }
 }

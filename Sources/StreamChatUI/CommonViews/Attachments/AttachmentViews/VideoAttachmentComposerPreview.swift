@@ -10,7 +10,7 @@ import UIKit
 public typealias VideoAttachmentComposerPreview = _VideoAttachmentComposerPreview<NoExtraData>
 
 /// A view that displays the video attachment preview in composer.
-open class _VideoAttachmentComposerPreview<ExtraData: ExtraDataTypes>: _View, ThemeProvider {
+open class _VideoAttachmentComposerPreview: _View, ThemeProvider {
     open var width: CGFloat = 100
     open var height: CGFloat = 100
     

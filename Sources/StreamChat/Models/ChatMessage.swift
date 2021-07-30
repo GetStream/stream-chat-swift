@@ -55,25 +55,15 @@ public struct ChatMessage {
     ///
     /// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/Cheat-Sheet#working-with-extra-data).
     ///
-    public let extraData: ExtraData.Message
-    
-    public let extraDataMap: CustomData
-
-    /// customData is a convenience method around extraData and extraDataMap
-    public var customData: CustomData {
-        if !extraDataMap.isEmpty {
-            return extraDataMap
-        }
-        return CustomDataFromExtraData(extraData)
-    }
+    public let extraData: CustomData
 
     /// Quoted message.
     ///
     /// If message is inline reply this property will contain the message quoted by this reply.
     ///
-    public var quotedMessage: _ChatMessage? { _quotedMessage }
+    public var quotedMessage: ChatMessage? { _quotedMessage }
 
-    @CoreDataLazy internal var _quotedMessage: _ChatMessage?
+    @CoreDataLazy internal var _quotedMessage: ChatMessage?
     
     /// A flag indicating whether the message is a silent message.
     ///
@@ -113,9 +103,9 @@ public struct ChatMessage {
     /// A list of latest 25 replies to this message.
     ///
     /// - Important: The `latestReplies` property is loaded and evaluated lazily to maintain high performance.
-    public var latestReplies: [_ChatMessage] { _latestReplies }
+    public var latestReplies: [ChatMessage] { _latestReplies }
     
-    @CoreDataLazy internal var _latestReplies: [_ChatMessage]
+    @CoreDataLazy internal var _latestReplies: [ChatMessage]
     
     /// A possible additional local state of the message. Applies only for the messages of the current user.
     ///
@@ -134,22 +124,22 @@ public struct ChatMessage {
     ///
     /// - Note: There can be `10` reactions at max.
     /// - Important: The `latestReactions` property is loaded and evaluated lazily to maintain high performance.
-    public var latestReactions: Set<_ChatMessageReaction<ExtraData>> { _latestReactions }
+    public var latestReactions: Set<ChatMessageReaction> { _latestReactions }
     
-    @CoreDataLazy internal var _latestReactions: Set<_ChatMessageReaction<ExtraData>>
+    @CoreDataLazy internal var _latestReactions: Set<ChatMessageReaction>
     
     /// The entire list of reactions to the message left by the current user.
     ///
     /// - Important: The `currentUserReactions` property is loaded and evaluated lazily to maintain high performance.
-    public var currentUserReactions: Set<_ChatMessageReaction<ExtraData>> { _currentUserReactions }
+    public var currentUserReactions: Set<ChatMessageReaction> { _currentUserReactions }
     
-    @CoreDataLazy internal var _currentUserReactions: Set<_ChatMessageReaction<ExtraData>>
+    @CoreDataLazy internal var _currentUserReactions: Set<ChatMessageReaction>
     
     /// `true` if the author of the message is the currently logged-in user.
     public let isSentByCurrentUser: Bool
 
     /// The message pinning information. Is `nil` if the message is not pinned.
-    public let pinDetails: _MessagePinDetails<ExtraData>?
+    public let pinDetails: MessagePinDetails?
     
     internal init(
         id: MessageId,
@@ -165,22 +155,21 @@ public struct ChatMessage {
         parentMessageId: MessageId?,
         showReplyInChannel: Bool,
         replyCount: Int,
-        extraData: ExtraData.Message,
-        extraDataMap: CustomData,
-        quotedMessage: @escaping () -> _ChatMessage?,
+        extraData: CustomData,
+        quotedMessage: @escaping () -> ChatMessage?,
         isSilent: Bool,
         reactionScores: [MessageReactionType: Int],
         author: @escaping () -> ChatUser,
         mentionedUsers: @escaping () -> Set<ChatUser>,
         threadParticipants: @escaping () -> Set<ChatUser>,
         attachments: @escaping () -> [AnyChatMessageAttachment],
-        latestReplies: @escaping () -> [_ChatMessage],
+        latestReplies: @escaping () -> [ChatMessage],
         localState: LocalMessageState?,
         isFlaggedByCurrentUser: Bool,
-        latestReactions: @escaping () -> Set<_ChatMessageReaction<ExtraData>>,
-        currentUserReactions: @escaping () -> Set<_ChatMessageReaction<ExtraData>>,
+        latestReactions: @escaping () -> Set<ChatMessageReaction>,
+        currentUserReactions: @escaping () -> Set<ChatMessageReaction>,
         isSentByCurrentUser: Bool,
-        pinDetails: _MessagePinDetails<ExtraData>?,
+        pinDetails: MessagePinDetails?,
         attachmentCounts: @escaping () -> [AttachmentType: Int],
         underlyingContext: NSManagedObjectContext?
     ) {
@@ -198,7 +187,6 @@ public struct ChatMessage {
         self.showReplyInChannel = showReplyInChannel
         self.replyCount = replyCount
         self.extraData = extraData
-        self.extraDataMap = extraDataMap
         self.isSilent = isSilent
         self.reactionScores = reactionScores
         self.localState = localState
@@ -218,14 +206,14 @@ public struct ChatMessage {
     }
 }
 
-extension _ChatMessage {
+extension ChatMessage {
     /// Indicates whether the message is pinned or not.
     public var isPinned: Bool {
         pinDetails != nil
     }
 }
 
-public extension _ChatMessage {
+public extension ChatMessage {
     /// Returns all the attachments with the payload of the provided type.
     ///
     /// - Important: Attachments are loaded lazily and cached to maintain high performance.
@@ -280,19 +268,13 @@ public extension _ChatMessage {
     }
 }
 
-extension _ChatMessage: Hashable {
+extension ChatMessage: Hashable {
     public static func == (lhs: Self, rhs: Self) -> Bool {
         lhs.id == rhs.id
     }
     
     public func hash(into hasher: inout Hasher) {
         hasher.combine(id)
-    }
-}
-
-public extension _ChatMessage {
-    subscript<T>(dynamicMember keyPath: KeyPath<ExtraData.Message, T>) -> T {
-        extraData[keyPath: keyPath]
     }
 }
 
@@ -321,7 +303,7 @@ public enum MessageType: String, Codable {
 }
 
 // The pinning information of a message.
-public struct _MessagePinDetails<ExtraData: ExtraDataTypes> {
+public struct MessagePinDetails {
     /// Date when the message got pinned
     public let pinnedAt: Date
 

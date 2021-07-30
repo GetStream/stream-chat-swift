@@ -13,7 +13,7 @@ public struct TypingEvent: UserSpecificEvent, ChannelSpecificEvent {
 
     let payload: Any
     
-    init<ExtraData: ExtraDataTypes>(from response: EventPayload) throws {
+    init(from response: EventPayload) throws {
         cid = try response.value(at: \.cid)
         userId = try response.value(at: \.user?.id)
         isTyping = response.eventType == .userStartTyping

@@ -139,7 +139,7 @@ class ChannelControllerMock: ChatChannelController {
     }
 }
 
-extension _ChatMessage {
+extension ChatMessage {
     static var unique: ChatMessage {
         .init(
             id: .unique,

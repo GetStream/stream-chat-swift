@@ -109,8 +109,7 @@ public class ChatChannelMemberController: DataController, DelegateCallable, Data
     /// - Parameter delegate: The object used as a delegate. It's referenced weakly, so you need to keep the object
     /// alive if you want keep receiving updates.
     ///
-    public func setDelegate<Delegate: ChatChannelMemberControllerDelegate>(_ delegate: Delegate)
-        where Delegate.ExtraData == ExtraData {
+    public func setDelegate<Delegate: ChatChannelMemberControllerDelegate>(_ delegate: Delegate) {
         multicastDelegate.mainDelegate = AnyChatChannelMemberControllerDelegate(delegate)
     }
     
@@ -226,30 +225,6 @@ public extension ChatChannelMemberController {
 /// please use `ChatChannelMemberControllerDelegate` instead.
 ///
 public protocol ChatChannelMemberControllerDelegate: DataControllerStateDelegate {
-    /// The controller observed a change in the `ChatChannelMember` entity.
-    func memberController(
-        _ controller: ChatChannelMemberController,
-        didUpdateMember change: EntityChange<ChatChannelMember>
-    )
-}
-
-public extension ChatChannelMemberControllerDelegate {
-    func memberController(
-        _ controller: ChatChannelMemberController,
-        didUpdateMember change: EntityChange<ChatChannelMember>
-    ) {}
-}
-
-// MARK: Generic Delegates
-
-/// `ChatChannelMemberController` uses this protocol to communicate changes to its delegate.
-///
-/// If you're **not** using custom extra data types, you can use a convenience version of this protocol
-/// named `ChatChannelMemberControllerDelegate`, which hides the generic types, and make the usage easier.
-///
-public protocol ChatChannelMemberControllerDelegate: DataControllerStateDelegate {
-    associatedtype ExtraData: ExtraDataTypes
-    
     /// The controller observed a change in the `ChatChannelMember` entity.
     func memberController(
         _ controller: ChatChannelMemberController,

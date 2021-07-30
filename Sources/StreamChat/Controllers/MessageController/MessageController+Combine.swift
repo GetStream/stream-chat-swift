@@ -6,7 +6,7 @@ import Combine
 import Foundation
 
 @available(iOS 13, *)
-extension _ChatMessageController {
+extension ChatMessageController {
     /// A publisher emitting a new value every time the state of the controller changes.
     public var statePublisher: AnyPublisher<DataController.State, Never> {
         basePublishers.state.keepAlive(self)
@@ -27,7 +27,7 @@ extension _ChatMessageController {
     /// and expose the published values by mapping them to a read-only `AnyPublisher` type.
     class BasePublishers {
         /// The wrapper controller
-        unowned let controller: _ChatMessageController
+        unowned let controller: ChatMessageController
         
         /// A backing subject for `statePublisher`.
         let state: CurrentValueSubject<DataController.State, Never>
@@ -38,7 +38,7 @@ extension _ChatMessageController {
         /// A backing subject for `repliesChangesPublisher`.
         let repliesChanges: PassthroughSubject<[ListChange<ChatMessage>], Never> = .init()
         
-        init(controller: _ChatMessageController<ExtraData>) {
+        init(controller: ChatMessageController) {
             self.controller = controller
             state = .init(controller.state)
             
@@ -48,20 +48,20 @@ extension _ChatMessageController {
 }
 
 @available(iOS 13, *)
-extension _ChatMessageController.BasePublishers: _ChatMessageControllerDelegate {
+extension ChatMessageController.BasePublishers: ChatMessageControllerDelegate {
     func controller(_ controller: DataController, didChangeState state: DataController.State) {
         self.state.send(state)
     }
     
     func messageController(
-        _ controller: _ChatMessageController<ExtraData>,
+        _ controller: ChatMessageController,
         didChangeMessage change: EntityChange<ChatMessage>
     ) {
         messageChange.send(change)
     }
     
     func messageController(
-        _ controller: _ChatMessageController<ExtraData>,
+        _ controller: ChatMessageController,
         didChangeReplies changes: [ListChange<ChatMessage>]
     ) {
         repliesChanges.send(changes)

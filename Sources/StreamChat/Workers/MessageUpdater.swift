@@ -6,7 +6,7 @@ import CoreData
 import Foundation
 
 /// The type provides the API for getting/editing/deleting a message
-class MessageUpdater<ExtraData: ExtraDataTypes>: Worker {
+class MessageUpdater: Worker {
     /// Fetches the message from the backend and saves it into the database
     /// - Parameters:
     ///   - cid: The channel identifier the message relates to.

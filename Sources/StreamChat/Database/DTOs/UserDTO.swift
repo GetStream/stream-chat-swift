@@ -120,11 +120,7 @@ extension NSManagedObjectContext: UserDatabaseSession {
         dto.userUpdatedAt = payload.updatedAt
 
         do {
-            if payload.extraData is NoExtraData {
-                dto.extraData = try JSONEncoder.default.encode(payload.extraDataMap)
-            } else {
-                dto.extraData = try JSONEncoder.default.encode(payload.extraData)
-            }
+            dto.extraData = try JSONEncoder.default.encode(payload.extraData)
         } catch {
             log.error(
                 "Failed to decode extra payload for User with id: <\(payload.id)>, using default value instead. "
@@ -166,7 +162,7 @@ extension UserDTO {
 }
 
 extension UserDTO {
-    static func userListFetchRequest<ExtraData: UserExtraData>(query: UserListQuery) -> NSFetchRequest<UserDTO> {
+    static func userListFetchRequest(query: UserListQuery) -> NSFetchRequest<UserDTO> {
         let request = NSFetchRequest<UserDTO>(entityName: UserDTO.entityName)
         
         // Fetch results controller requires at least one sorting descriptor.
@@ -221,7 +217,7 @@ extension ChatUser {
             updatedAt: dto.userUpdatedAt,
             lastActiveAt: dto.lastActivityAt,
             teams: Set(dto.teams?.map(\.id) ?? []),
-            extraData: extraData,
+            extraData: extraData
         )
     }
 }

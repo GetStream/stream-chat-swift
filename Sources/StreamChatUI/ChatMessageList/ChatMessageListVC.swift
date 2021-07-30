@@ -9,7 +9,7 @@ import UIKit
 public typealias ChatMessageListVC = _ChatMessageListVC<NoExtraData>
 
 /// Controller that shows list of messages and composer together in the selected channel.
-open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
+open class _ChatMessageListVC:
     _ViewController,
     ThemeProvider,
     ComposerVCDelegate,

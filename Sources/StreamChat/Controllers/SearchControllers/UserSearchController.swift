@@ -12,40 +12,22 @@ extension ChatClient {
     ///
     /// - Returns: A new instance of `_ChatUserSearchController`.
     ///
-    public func userSearchController() -> _ChatUserSearchController<ExtraData> {
+    public func userSearchController() -> ChatUserSearchController {
         .init(client: self)
     }
 }
 
-/// `ChatUserSearchController` is a controller class which allows observing a list of chat users based on the provided query.
-///
-/// - Note: `ChatUserSearchController` is a typealias of `_ChatUserSearchController` with the default extra data types.
-/// If you want to use your custom extra data types, you should create your own `ChatUserSearchController`
-/// typealias for `_ChatUserSearchController`.
-///
-/// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/Cheat-Sheet#working-with-extra-data).
-///
-public typealias ChatUserSearchController = _ChatUserSearchController<NoExtraData>
-
 /// `_ChatUserSearchController` is a controller class which allows observing a list of chat users based on the provided query.
-///
-/// - Note: `_ChatUserSearchController` type is not meant to be used directly.
-/// If you don't use custom extra data types, use `ChatUserSearchController` typealias instead.
-/// When using custom extra data types, you should create your own `ChatUserSearchController` typealias
-/// for `_ChatUserSearchController`.
-///
-/// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/Cheat-Sheet#working-with-extra-data).
-///
-public class _ChatUserSearchController<ExtraData: ExtraDataTypes>: DataController, DelegateCallable, DataStoreProvider {
+public class ChatUserSearchController: DataController, DelegateCallable, DataStoreProvider {
     /// The `ChatClient` instance this controller belongs to.
     public let client: ChatClient
     
     /// Filter hash this controller observes.
     let explicitFilterHash = UUID().uuidString
     
-    lazy var query: _UserListQuery<ExtraData.User> = {
+    lazy var query: UserListQuery = {
         // Filter is just a mock, explicit hash will override it
-        var query = _UserListQuery<ExtraData.User>(filter: .exists(.id), sort: [.init(key: .name, isAscending: true)])
+        var query = UserListQuery(filter: .exists(.id), sort: [.init(key: .name, isAscending: true)])
         // Setting `shouldBeObserved` to false prevents NewUserQueryUpdater to pick this query up
         query.shouldBeUpdatedInBackground = false
         // The initial DB fetch will return 0 users and this is expected
@@ -56,7 +38,7 @@ public class _ChatUserSearchController<ExtraData: ExtraDataTypes>: DataControlle
     }()
     
     /// Copy of last search query made, used for getting next page.
-    var lastQuery: _UserListQuery<ExtraData.User>?
+    var lastQuery: UserListQuery?
     
     /// The users matching the query of this controller.
     ///
@@ -94,7 +76,7 @@ public class _ChatUserSearchController<ExtraData: ExtraDataTypes>: DataControlle
     }()
     
     /// A type-erased delegate.
-    var multicastDelegate: MulticastDelegate<AnyUserSearchControllerDelegate<ExtraData>> = .init() {
+    var multicastDelegate: MulticastDelegate<AnyUserSearchControllerDelegate> = .init() {
         didSet {
             stateMulticastDelegate.mainDelegate = multicastDelegate.mainDelegate
             stateMulticastDelegate.additionalDelegates = multicastDelegate.additionalDelegates
@@ -144,8 +126,7 @@ public class _ChatUserSearchController<ExtraData: ExtraDataTypes>: DataControlle
     /// - Parameter delegate: The object used as a delegate. It's referenced weakly, so you need to keep the object
     /// alive if you want keep receiving updates.
     ///
-    public func setDelegate<Delegate: _ChatUserSearchControllerDelegate>(_ delegate: Delegate)
-        where Delegate.ExtraData == ExtraData {
+    public func setDelegate<Delegate: ChatUserSearchControllerDelegate>(_ delegate: Delegate) {
         multicastDelegate.mainDelegate = AnyUserSearchControllerDelegate(delegate)
     }
     
@@ -163,7 +144,7 @@ public class _ChatUserSearchController<ExtraData: ExtraDataTypes>: DataControlle
     public func search(term: String?, completion: ((_ error: Error?) -> Void)? = nil) {
         startUserListObserverIfNeeded()
         
-        var query = _UserListQuery<ExtraData.User>(sort: [.init(key: .name, isAscending: true)])
+        var query = UserListQuery(sort: [.init(key: .name, isAscending: true)])
         if let term = term, !term.isEmpty {
             query.filter = .or([
                 .autocomplete(.name, text: term),
@@ -196,7 +177,7 @@ public class _ChatUserSearchController<ExtraData: ExtraDataTypes>: DataControlle
     ///   - query: Search query.
     ///   - completion: Called when the controller has finished fetching remote data.
     ///   If the data fetching fails, the error variable contains more details about the problem.
-    public func search(query: _UserListQuery<ExtraData.User>, completion: ((_ error: Error?) -> Void)? = nil) {
+    public func search(query: UserListQuery, completion: ((_ error: Error?) -> Void)? = nil) {
         startUserListObserverIfNeeded()
         
         var query = query
@@ -235,12 +216,12 @@ public class _ChatUserSearchController<ExtraData: ExtraDataTypes>: DataControlle
     }
 }
 
-extension _ChatUserSearchController {
+extension ChatUserSearchController {
     struct Environment {
         var userQueryUpdaterBuilder: (
             _ database: DatabaseContainer,
             _ apiClient: APIClient
-        ) -> UserListUpdater<ExtraData.User> = UserListUpdater.init
+        ) -> UserListUpdater = UserListUpdater.init
         
         var createUserListDatabaseObserver: (
             _ context: NSManagedObjectContext,
@@ -253,7 +234,7 @@ extension _ChatUserSearchController {
     }
 }
 
-extension _ChatUserSearchController where ExtraData == NoExtraData {
+extension ChatUserSearchController {
     /// Set the delegate of `UserListController` to observe the changes in the system.
     ///
     /// - Note: The delegate can be set directly only if you're **not** using custom extra data types. Due to the current
@@ -269,33 +250,6 @@ extension _ChatUserSearchController where ExtraData == NoExtraData {
 ///
 /// If you're **not** using custom extra data types, you can use a convenience version of this protocol
 /// named `ChatUserSearchControllerDelegate`, which hides the generic types, and make the usage easier.
-///
-public protocol _ChatUserSearchControllerDelegate: DataControllerStateDelegate {
-    associatedtype ExtraData: ExtraDataTypes
-    
-    /// The controller changed the list of observed users.
-    ///
-    /// - Parameters:
-    ///   - controller: The controller emitting the change callback.
-    ///   - changes: The change to the list of users.
-    ///
-    func controller(
-        _ controller: _ChatUserSearchController<ExtraData>,
-        didChangeUsers changes: [ListChange<ChatUser>]
-    )
-}
-
-public extension _ChatUserSearchControllerDelegate {
-    func controller(
-        _ controller: _ChatUserSearchController<ExtraData>,
-        didChangeUsers changes: [ListChange<ChatUser>]
-    ) {}
-}
-
-/// `ChatUserSearchController` uses this protocol to communicate changes to its delegate.
-///
-/// This protocol can be used only when no custom extra data are specified. If you're using custom extra data types,
-/// please use `_ChatUserSearchControllerDelegate` instead.
 ///
 public protocol ChatUserSearchControllerDelegate: DataControllerStateDelegate {
     /// The controller changed the list of observed users.
@@ -319,8 +273,8 @@ public extension ChatUserSearchControllerDelegate {
 
 // MARK: - Delegate type eraser
 
-class AnyUserSearchControllerDelegate<ExtraData: ExtraDataTypes>: _ChatUserSearchControllerDelegate {
-    private var _controllerDidChangeUsers: (_ChatUserSearchController<ExtraData>, [ListChange<ChatUser>])
+class AnyUserSearchControllerDelegate: ChatUserSearchControllerDelegate {
+    private var _controllerDidChangeUsers: (ChatUserSearchController, [ListChange<ChatUser>])
         -> Void
     private var _controllerDidChangeState: (DataController, DataController.State) -> Void
     
@@ -329,7 +283,7 @@ class AnyUserSearchControllerDelegate<ExtraData: ExtraDataTypes>: _ChatUserSearc
     init(
         wrappedDelegate: AnyObject?,
         controllerDidChangeState: @escaping (DataController, DataController.State) -> Void,
-        controllerDidChangeUsers: @escaping (_ChatUserSearchController<ExtraData>, [ListChange<ChatUser>])
+        controllerDidChangeUsers: @escaping (ChatUserSearchController, [ListChange<ChatUser>])
             -> Void
     ) {
         self.wrappedDelegate = wrappedDelegate
@@ -342,7 +296,7 @@ class AnyUserSearchControllerDelegate<ExtraData: ExtraDataTypes>: _ChatUserSearc
     }
     
     func controller(
-        _ controller: _ChatUserSearchController<ExtraData>,
+        _ controller: ChatUserSearchController,
         didChangeUsers changes: [ListChange<ChatUser>]
     ) {
         _controllerDidChangeUsers(controller, changes)
@@ -350,7 +304,7 @@ class AnyUserSearchControllerDelegate<ExtraData: ExtraDataTypes>: _ChatUserSearc
 }
 
 extension AnyUserSearchControllerDelegate {
-    convenience init<Delegate: _ChatUserSearchControllerDelegate>(_ delegate: Delegate) where Delegate.ExtraData == ExtraData {
+    convenience init<Delegate: ChatUserSearchControllerDelegate>(_ delegate: Delegate) {
         self.init(
             wrappedDelegate: delegate,
             controllerDidChangeState: { [weak delegate] in delegate?.controller($0, didChangeState: $1) },
@@ -359,7 +313,7 @@ extension AnyUserSearchControllerDelegate {
     }
 }
 
-extension AnyUserSearchControllerDelegate where ExtraData == NoExtraData {
+extension AnyUserSearchControllerDelegate {
     convenience init(_ delegate: ChatUserSearchControllerDelegate?) {
         self.init(
             wrappedDelegate: delegate,

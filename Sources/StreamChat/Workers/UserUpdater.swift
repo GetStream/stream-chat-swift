@@ -5,7 +5,7 @@
 import Foundation
 
 /// Makes user-related calls to the backend and updates the local storage with the results.
-class UserUpdater<ExtraData: ExtraDataTypes>: Worker {
+class UserUpdater: Worker {
     /// Mutes the user with the provided `userId`.
     /// - Parameters:
     ///   - userId: The user identifier.
@@ -36,7 +36,7 @@ class UserUpdater<ExtraData: ExtraDataTypes>: Worker {
     ///
     func loadUser(_ userId: UserId, completion: ((Error?) -> Void)? = nil) {
         apiClient
-            .request(endpoint: .users(query: .user(withID: userId))) { (result: Result<UserListPayload<ExtraData.User>, Error>) in
+            .request(endpoint: .users(query: .user(withID: userId))) { (result: Result<UserListPayload, Error>) in
                 switch result {
                 case let .success(payload):
                     guard payload.users.count <= 1 else {

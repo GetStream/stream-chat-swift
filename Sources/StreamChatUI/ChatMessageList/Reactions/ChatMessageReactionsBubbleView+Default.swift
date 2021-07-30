@@ -7,7 +7,7 @@ import UIKit
 
 public typealias ChatMessageDefaultReactionsBubbleView = _ChatMessageDefaultReactionsBubbleView<NoExtraData>
 
-open class _ChatMessageDefaultReactionsBubbleView<ExtraData: ExtraDataTypes>: _ChatMessageReactionsBubbleView<ExtraData> {
+open class _ChatMessageDefaultReactionsBubbleView: _ChatMessageReactionsBubbleView<ExtraData> {
     // MARK: - Subviews
 
     public let contentViewBackground = UIView().withoutAutoresizingMaskConstraints

@@ -17,9 +17,9 @@ public typealias CurrentChatUserAvatarView = _CurrentChatUserAvatarView<NoExtraD
 /// It uses `CurrentChatUserController` for its input data and is able to update the avatar automatically based
 /// on the currently logged-in user.
 ///
-open class _CurrentChatUserAvatarView<ExtraData: ExtraDataTypes>: _Control, ThemeProvider {
+open class _CurrentChatUserAvatarView: _Control, ThemeProvider {
     /// `StreamChat`'s controller that observe the currently logged-in user.
-    open var controller: _CurrentChatUserController<ExtraData>? {
+    open var controller: CurrentChatUserController? {
         didSet {
             controller?.setDelegate(self)
             controller?.synchronize()
@@ -87,7 +87,7 @@ open class _CurrentChatUserAvatarView<ExtraData: ExtraDataTypes>: _Control, Them
 
 extension _CurrentChatUserAvatarView: _CurrentChatUserControllerDelegate {
     public func currentUserController(
-        _ controller: _CurrentChatUserController<ExtraData>,
+        _ controller: CurrentChatUserController,
         didChangeCurrentUser: EntityChange<CurrentChatUser>
     ) {
         updateContentIfNeeded()

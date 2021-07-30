@@ -10,7 +10,7 @@ import UIKit
 public typealias VideoPlaybackControlView = _VideoPlaybackControlView<NoExtraData>
 
 /// A view that shows playback controls and timeline for the given player.
-open class _VideoPlaybackControlView<ExtraData: ExtraDataTypes>: _View, ThemeProvider {
+open class _VideoPlaybackControlView: _View, ThemeProvider {
     /// The type describing the content of the view.
     public struct Content {
         /// The type describing the current video state.

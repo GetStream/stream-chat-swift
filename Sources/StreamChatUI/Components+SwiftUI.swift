@@ -27,7 +27,7 @@ extension _Components {
 
 @available(iOS 13.0, *)
 /// Modifier for setting `Components` environment object.
-private struct SwiftUIComponents<ExtraData: ExtraDataTypes>: ViewModifier {
+private struct SwiftUIComponents: ViewModifier {
     /// Custom `ObservableObject` of `components`
     private let components: _Components<ExtraData>
 
@@ -43,7 +43,7 @@ private struct SwiftUIComponents<ExtraData: ExtraDataTypes>: ViewModifier {
 @available(iOS 13.0, *)
 public extension View {
     /// Sets up custom `Components`.
-    func setUpStreamChatComponents<ExtraData: ExtraDataTypes>(
+    func setUpStreamChatComponents(
         _ components: _Components<ExtraData> = .default
     ) -> some View {
         modifier(SwiftUIComponents<ExtraData>(components))

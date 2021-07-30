@@ -97,9 +97,9 @@ class ComponentsProvider_Tests: XCTestCase {
     }
 }
 
-private class TestViewWithExtraData<ExtraData: ExtraDataTypes>: UIView, ComponentsProvider {}
+private class TestViewWithExtraData: UIView, ComponentsProvider {}
 
-private class TestViewWithExtraDataController<ExtraData: ExtraDataTypes>: UIViewController, ComponentsProvider {
+private class TestViewWithExtraDataController: UIViewController, ComponentsProvider {
     let subView = TestViewWithExtraData<ExtraData>()
     lazy var TestCreateChannelButton = components.galleryView.init()
     

@@ -12,7 +12,7 @@ public typealias GalleryVC = _GalleryVC<NoExtraData>
 
 /// A viewcontroller to showcase and slide through multiple attachments
 /// (images and videos by default).
-open class _GalleryVC<ExtraData: ExtraDataTypes>:
+open class _GalleryVC:
     _ViewController,
     UIGestureRecognizerDelegate,
     AppearanceProvider,

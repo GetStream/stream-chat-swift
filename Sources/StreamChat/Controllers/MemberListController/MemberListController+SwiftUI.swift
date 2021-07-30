@@ -23,7 +23,7 @@ extension ChatChannelMemberListController {
         @Published public private(set) var state: DataController.State
         
         /// Creates a new `ObservableObject` wrapper with the provided controller instance.
-        init(controller: ChatChannelMemberListController<ExtraData>) {
+        init(controller: ChatChannelMemberListController) {
             self.controller = controller
             state = controller.state
             
@@ -37,7 +37,7 @@ extension ChatChannelMemberListController {
 @available(iOS 13, *)
 extension ChatChannelMemberListController.ObservableObject: ChatChannelMemberListControllerDelegate {
     public func memberListController(
-        _ controller: ChatChannelMemberListController<ExtraData>,
+        _ controller: ChatChannelMemberListController,
         didChangeMembers changes: [ListChange<ChatChannelMember>]
     ) {
         members = controller.members

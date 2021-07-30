@@ -5,7 +5,7 @@
 import Foundation
 import StreamChat
 
-public extension _ChatMessage {
+public extension ChatMessage {
     /// A boolean value that checks if actions are available on the message (e.g. `edit`, `delete`, `resend`, etc.).
     var isInteractionEnabled: Bool {
         guard

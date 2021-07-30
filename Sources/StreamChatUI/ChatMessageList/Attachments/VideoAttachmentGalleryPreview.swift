@@ -10,7 +10,7 @@ import UIKit
 public typealias VideoAttachmentGalleryPreview = _VideoAttachmentGalleryPreview<NoExtraData>
 
 /// A view used to display video attachment preview in a gallery inside a message cell
-open class _VideoAttachmentGalleryPreview<ExtraData: ExtraDataTypes>: _View, ThemeProvider {
+open class _VideoAttachmentGalleryPreview: _View, ThemeProvider {
     /// A video attachment the view displays
     open var content: ChatMessageVideoAttachment? {
         didSet { updateContentIfNeeded() }

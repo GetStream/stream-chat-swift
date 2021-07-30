@@ -4,7 +4,7 @@
 
 import Foundation
 
-class ChatClientUpdater<ExtraData: ExtraDataTypes> {
+class ChatClientUpdater {
     unowned var client: ChatClient
 
     init(client: ChatClient) {
@@ -12,7 +12,7 @@ class ChatClientUpdater<ExtraData: ExtraDataTypes> {
     }
 
     func prepareEnvironment(
-        userInfo: UserInfo<ExtraData>?,
+        userInfo: UserInfo?,
         newToken: Token
     ) throws {
         // Check token is for different user.
@@ -72,8 +72,8 @@ class ChatClientUpdater<ExtraData: ExtraDataTypes> {
     }
 
     func reloadUserIfNeeded(
-        userInfo: UserInfo<ExtraData>? = nil,
-        userConnectionProvider: _UserConnectionProvider<ExtraData>?,
+        userInfo: UserInfo? = nil,
+        userConnectionProvider: UserConnectionProvider?,
         completion: ((Error?) -> Void)? = nil
     ) {
         guard let userConnectionProvider = userConnectionProvider else {
@@ -118,7 +118,7 @@ class ChatClientUpdater<ExtraData: ExtraDataTypes> {
     /// called with an error.
     ///
     func connect(
-        userInfo: UserInfo<ExtraData>? = nil,
+        userInfo: UserInfo? = nil,
         completion: ((Error?) -> Void)? = nil
     ) {
         // Connecting is not possible in connectionless mode (duh)

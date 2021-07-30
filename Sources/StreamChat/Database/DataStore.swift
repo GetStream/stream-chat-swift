@@ -73,7 +73,7 @@ public struct DataStore {
     /// model object. If a user object doesn't exist locally, returns `nil`.
     ///
     /// - Parameter id: An id of a message.
-    public func message(id: MessageId) -> _ChatMessage? {
+    public func message(id: MessageId) -> ChatMessage? {
         database.viewContext.message(id: id)?.asModel()
     }
 }

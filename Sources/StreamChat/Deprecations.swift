@@ -27,7 +27,7 @@ public extension ChatChannel {
     var currentlyTypingMembers: Set<ChatChannelMember> { [] }
 }
 
-public extension _ChatMessage {
+public extension ChatMessage {
     /// Quoted message id.
     ///
     /// If message is inline reply this property will contain id of the message quoted by this reply.

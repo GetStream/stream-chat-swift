@@ -9,7 +9,7 @@ import UIKit
 public typealias TypingIndicatorView = _TypingIndicatorView<NoExtraData>
 
 /// An `UIView` subclass indicating that user or multiple users are currently typing.
-open class _TypingIndicatorView<ExtraData: ExtraDataTypes>: _View, ThemeProvider {
+open class _TypingIndicatorView: _View, ThemeProvider {
     /// The string which will be shown next to animated indication that user is typing.
     open var content: String? {
         didSet {

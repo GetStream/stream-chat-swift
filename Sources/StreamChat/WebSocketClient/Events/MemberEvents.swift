@@ -10,7 +10,7 @@ public struct MemberAddedEvent: MemberEvent, ChannelSpecificEvent, EventWithPayl
     
     let payload: Any
     
-    init<ExtraData: ExtraDataTypes>(from response: EventPayload) throws {
+    init(from response: EventPayload) throws {
         memberUserId = try response.value(at: \.memberContainer?.member?.user.id)
         cid = try response.value(at: \.cid)
         payload = response
@@ -23,7 +23,7 @@ public struct MemberUpdatedEvent: MemberEvent, ChannelSpecificEvent, EventWithPa
     
     let payload: Any
     
-    init<ExtraData: ExtraDataTypes>(from response: EventPayload) throws {
+    init(from response: EventPayload) throws {
         memberUserId = try response.value(at: \.memberContainer?.member?.user.id)
         cid = try response.value(at: \.cid)
         payload = response
@@ -36,7 +36,7 @@ public struct MemberRemovedEvent: MemberEvent, ChannelSpecificEvent, EventWithPa
     
     let payload: Any
     
-    init<ExtraData: ExtraDataTypes>(from response: EventPayload) throws {
+    init(from response: EventPayload) throws {
         memberUserId = try response.value(at: \.user?.id)
         cid = try response.value(at: \.cid)
         payload = response

@@ -5,8 +5,8 @@
 import CoreData
 
 /// Cleans up local data for all the existing channels and refetches it from backend
-class DatabaseCleanupUpdater<ExtraData: ExtraDataTypes>: Worker {
-    private let channelListUpdater: ChannelListUpdater<ExtraData>
+class DatabaseCleanupUpdater: Worker {
+    private let channelListUpdater: ChannelListUpdater
     
     override init(
         database: DatabaseContainer,
@@ -22,7 +22,7 @@ class DatabaseCleanupUpdater<ExtraData: ExtraDataTypes>: Worker {
     init(
         database: DatabaseContainer,
         apiClient: APIClient,
-        channelListUpdater: ChannelListUpdater<ExtraData>
+        channelListUpdater: ChannelListUpdater
     ) {
         self.channelListUpdater = channelListUpdater
         super.init(
@@ -97,11 +97,11 @@ private extension ChannelListQueryDTO {
     /// Converts ChannelListQueryDTO to _ChannelListQuery
     /// - Throws: Decoding error
     /// - Returns: Domain model for _ChannelListQuery
-    func asChannelListQuery<ExtraData: ChannelExtraData>() throws -> ChannelListQuery {
+    func asChannelListQuery() throws -> ChannelListQuery {
         let encodedFilter = try JSONDecoder.default
-            .decode(Filter<_ChannelListFilterScope<ExtraData>>.self, from: filterJSONData)
-        var updatedFilter: Filter<_ChannelListFilterScope> = encodedFilter
+            .decode(Filter<ChannelListFilterScope>.self, from: filterJSONData)
+        var updatedFilter: Filter<ChannelListFilterScope> = encodedFilter
         updatedFilter.explicitHash = filterHash
-        return _ChannelListQuery(filter: updatedFilter)
+        return ChannelListQuery(filter: updatedFilter)
     }
 }

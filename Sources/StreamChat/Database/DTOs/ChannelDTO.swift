@@ -143,11 +143,7 @@ extension NSManagedObjectContext {
         dto.name = payload.name
         dto.imageURL = payload.imageURL
         do {
-            if payload.extraData is NoExtraData {
-                dto.extraData = try JSONEncoder.default.encode(payload.extraDataMap)
-            } else {
-                dto.extraData = try JSONEncoder.default.encode(payload.extraData)
-            }
+            dto.extraData = try JSONEncoder.default.encode(payload.extraData)
         } catch {
             log.error(
                 "Failed to decode extra payload for Channel with cid: <\(dto.cid)>, using default value instead. "

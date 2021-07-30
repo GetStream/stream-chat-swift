@@ -9,7 +9,7 @@ import UIKit
 public typealias GalleryCollectionViewCell = _GalleryCollectionViewCell<NoExtraData>
 
 /// `UICollectionViewCell` for a gallery item.
-open class _GalleryCollectionViewCell<ExtraData: ExtraDataTypes>: _CollectionViewCell, UIScrollViewDelegate, ComponentsProvider {
+open class _GalleryCollectionViewCell: _CollectionViewCell, UIScrollViewDelegate, ComponentsProvider {
     /// Triggered when the scroll view is single tapped.
     open var didTapOnce: (() -> Void)?
     

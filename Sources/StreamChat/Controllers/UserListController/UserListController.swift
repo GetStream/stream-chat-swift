@@ -12,35 +12,15 @@ extension ChatClient {
     ///
     /// - Returns: A new instance of `_ChatUserListController`.
     ///
-    public func userListController(query: _UserListQuery<ExtraData.User> = .init()) -> _ChatUserListController<ExtraData> {
+    public func userListController(query: UserListQuery = .init()) -> ChatUserListController {
         .init(query: query, client: self)
     }
 }
 
 /// `_ChatUserListController` is a controller class which allows observing a list of chat users based on the provided query.
-///
-/// Learn more about `_ChatUserListController` and its usage in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/StreamChat-SDK-Cheat-Sheet#user-list).
-///
-/// - Note: `ChatUserListController` is a typealias of `_ChatUserListController` with default extra data. If you're using
-/// custom extra data, create your own typealias of `_ChatUserListController`.
-///
-/// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/Cheat-Sheet#working-with-extra-data).
-///
-public typealias ChatUserListController = _ChatUserListController<NoExtraData>
-
-/// `_ChatUserListController` is a controller class which allows observing a list of chat users based on the provided query.
-///
-/// Learn more about `_ChatUserListController` and its usage in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/StreamChat-SDK-Cheat-Sheet#user-list).
-///
-/// - Note: `_ChatUserListController` type is not meant to be used directly. If you're using default extra data, use
-/// `ChatUserController` typealias instead. If you're using custom extra data, create your own typealias
-/// of `_ChatUserListController`.
-///
-/// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/Cheat-Sheet#working-with-extra-data).
-///
-public class _ChatUserListController<ExtraData: ExtraDataTypes>: DataController, DelegateCallable, DataStoreProvider {
+public class ChatUserListController: DataController, DelegateCallable, DataStoreProvider {
     /// The query specifying and filtering the list of users.
-    public let query: _UserListQuery<ExtraData.User>
+    public let query: UserListQuery
     
     /// The `ChatClient` instance this controller belongs to.
     public let client: ChatClient
@@ -56,14 +36,14 @@ public class _ChatUserListController<ExtraData: ExtraDataTypes>: DataController,
     }
     
     /// The worker used to fetch the remote data and communicate with servers.
-    private lazy var worker: UserListUpdater<ExtraData.User> = self.environment
+    private lazy var worker: UserListUpdater = self.environment
         .userQueryUpdaterBuilder(
             client.databaseContainer,
             client.apiClient
         )
 
     /// A type-erased delegate.
-    var multicastDelegate: MulticastDelegate<AnyUserListControllerDelegate<ExtraData>> = .init() {
+    var multicastDelegate: MulticastDelegate<AnyUserListControllerDelegate> = .init() {
         didSet {
             stateMulticastDelegate.mainDelegate = multicastDelegate.mainDelegate
             stateMulticastDelegate.additionalDelegates = multicastDelegate.additionalDelegates
@@ -105,7 +85,7 @@ public class _ChatUserListController<ExtraData: ExtraDataTypes>: DataController,
     /// - Parameters:
     ///   - query: The query used for filtering the users.
     ///   - client: The `Client` instance this controller belongs to.
-    init(query: _UserListQuery<ExtraData.User>, client: ChatClient, environment: Environment = .init()) {
+    init(query: UserListQuery, client: ChatClient, environment: Environment = .init()) {
         self.client = client
         self.query = query
         self.environment = environment
@@ -146,15 +126,14 @@ public class _ChatUserListController<ExtraData: ExtraDataTypes>: DataController,
     /// - Parameter delegate: The object used as a delegate. It's referenced weakly, so you need to keep the object
     /// alive if you want keep receiving updates.
     ///
-    public func setDelegate<Delegate: _ChatUserListControllerDelegate>(_ delegate: Delegate)
-        where Delegate.ExtraData == ExtraData {
+    public func setDelegate<Delegate: ChatUserListControllerDelegate>(_ delegate: Delegate) {
         multicastDelegate.mainDelegate = AnyUserListControllerDelegate(delegate)
     }
 }
 
 // MARK: - Actions
 
-public extension _ChatUserListController {
+public extension ChatUserListController {
     /// Loads next users from backend.
     ///
     /// - Parameters:
@@ -174,12 +153,12 @@ public extension _ChatUserListController {
     }
 }
 
-extension _ChatUserListController {
+extension ChatUserListController {
     struct Environment {
         var userQueryUpdaterBuilder: (
             _ database: DatabaseContainer,
             _ apiClient: APIClient
-        ) -> UserListUpdater<ExtraData.User> = UserListUpdater.init
+        ) -> UserListUpdater = UserListUpdater.init
 
         var createUserListDabaseObserver: (
             _ context: NSManagedObjectContext,
@@ -192,7 +171,7 @@ extension _ChatUserListController {
     }
 }
 
-extension _ChatUserListController where ExtraData == NoExtraData {
+extension ChatUserListController {
     /// Set the delegate of `UserListController` to observe the changes in the system.
     ///
     /// - Note: The delegate can be set directly only if you're **not** using custom extra data types. Due to the current
@@ -224,42 +203,15 @@ public protocol ChatUserListControllerDelegate: DataControllerStateDelegate {
 
 public extension ChatUserListControllerDelegate {
     func controller(
-        _ controller: _ChatUserListController<NoExtraData>,
-        didChangeUsers changes: [ListChange<ChatUser>]
-    ) {}
-}
-
-/// `ChatUserListController` uses this protocol to communicate changes to its delegate.
-///
-/// If you're **not** using custom extra data types, you can use a convenience version of this protocol
-/// named `ChatUserListControllerDelegate`, which hides the generic types, and make the usage easier.
-///
-public protocol _ChatUserListControllerDelegate: DataControllerStateDelegate {
-    associatedtype ExtraData: ExtraDataTypes
-    
-    /// The controller changed the list of observed users.
-    ///
-    /// - Parameters:
-    ///   - controller: The controller emitting the change callback.
-    ///   - changes: The change to the list of users.
-    ///
-    func controller(
-        _ controller: _ChatUserListController<ExtraData>,
-        didChangeUsers changes: [ListChange<ChatUser>]
-    )
-}
-
-public extension _ChatUserListControllerDelegate {
-    func controller(
-        _ controller: _ChatUserListController<ExtraData>,
+        _ controller: ChatUserListController,
         didChangeUsers changes: [ListChange<ChatUser>]
     ) {}
 }
 
 // MARK: - Delegate type eraser
 
-class AnyUserListControllerDelegate<ExtraData: ExtraDataTypes>: _ChatUserListControllerDelegate {
-    private var _controllerDidChangeUsers: (_ChatUserListController<ExtraData>, [ListChange<ChatUser>])
+class AnyUserListControllerDelegate: ChatUserListControllerDelegate {
+    private var _controllerDidChangeUsers: (ChatUserListController, [ListChange<ChatUser>])
         -> Void
     private var _controllerDidChangeState: (DataController, DataController.State) -> Void
     
@@ -268,7 +220,7 @@ class AnyUserListControllerDelegate<ExtraData: ExtraDataTypes>: _ChatUserListCon
     init(
         wrappedDelegate: AnyObject?,
         controllerDidChangeState: @escaping (DataController, DataController.State) -> Void,
-        controllerDidChangeUsers: @escaping (_ChatUserListController<ExtraData>, [ListChange<ChatUser>])
+        controllerDidChangeUsers: @escaping (ChatUserListController, [ListChange<ChatUser>])
             -> Void
     ) {
         self.wrappedDelegate = wrappedDelegate
@@ -281,7 +233,7 @@ class AnyUserListControllerDelegate<ExtraData: ExtraDataTypes>: _ChatUserListCon
     }
 
     func controller(
-        _ controller: _ChatUserListController<ExtraData>,
+        _ controller: ChatUserListController,
         didChangeUsers changes: [ListChange<ChatUser>]
     ) {
         _controllerDidChangeUsers(controller, changes)
@@ -289,7 +241,7 @@ class AnyUserListControllerDelegate<ExtraData: ExtraDataTypes>: _ChatUserListCon
 }
 
 extension AnyUserListControllerDelegate {
-    convenience init<Delegate: _ChatUserListControllerDelegate>(_ delegate: Delegate) where Delegate.ExtraData == ExtraData {
+    convenience init<Delegate: ChatUserListControllerDelegate>(_ delegate: Delegate) {
         self.init(
             wrappedDelegate: delegate,
             controllerDidChangeState: { [weak delegate] in delegate?.controller($0, didChangeState: $1) },
@@ -298,7 +250,7 @@ extension AnyUserListControllerDelegate {
     }
 }
 
-extension AnyUserListControllerDelegate where ExtraData == NoExtraData {
+extension AnyUserListControllerDelegate {
     convenience init(_ delegate: ChatUserListControllerDelegate?) {
         self.init(
             wrappedDelegate: delegate,

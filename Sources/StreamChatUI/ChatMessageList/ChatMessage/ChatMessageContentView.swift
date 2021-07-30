@@ -30,7 +30,7 @@ public protocol ChatMessageContentViewDelegate: AnyObject {
 public typealias ChatMessageContentView = _ChatMessageContentView<NoExtraData>
 
 /// A view that displays the message content.
-open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, ThemeProvider {
+open class _ChatMessageContentView: _View, ThemeProvider {
     /// The current layout options of the view.
     /// When this value is set the subviews are instantiated and laid out just once based on
     /// the received options.
@@ -766,7 +766,7 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, ThemeProvi
     }
 }
 
-private extension _ChatMessage {
+private extension ChatMessage {
     var reactions: [ChatMessageReactionData] {
         let userReactionIDs = Set(currentUserReactions.map(\.type))
         return reactionScores

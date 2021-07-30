@@ -8,7 +8,6 @@ import SwiftUI
 @available(iOS 13.0, *)
 /// Protocol of `_ChatChannelUnreadCountView` wrapper for use in SwiftUI.
 public protocol _ChatChannelUnreadCountViewSwiftUIView: View {
-    associatedtype ExtraData: ExtraDataTypes
     init(dataSource: _ChatChannelUnreadCountView<ExtraData>.ObservedObject<Self>)
 }
 

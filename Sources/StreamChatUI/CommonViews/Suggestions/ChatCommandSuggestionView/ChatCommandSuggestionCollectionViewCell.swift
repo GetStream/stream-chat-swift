@@ -9,7 +9,7 @@ import UIKit
 public typealias ChatCommandSuggestionCollectionViewCell = _ChatCommandSuggestionCollectionViewCell<NoExtraData>
 
 /// A view cell that displays a command.
-open class _ChatCommandSuggestionCollectionViewCell<ExtraData: ExtraDataTypes>: _CollectionViewCell, ComponentsProvider {
+open class _ChatCommandSuggestionCollectionViewCell: _CollectionViewCell, ComponentsProvider {
     open class var reuseId: String { String(describing: self) }
 
     public private(set) lazy var commandView = components

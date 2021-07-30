@@ -5,7 +5,7 @@
 import Foundation
 @testable import StreamChat
 
-public class ChatChannelListController_Mock<ExtraData: ExtraDataTypes>: _ChatChannelListController<ExtraData> {
+public class ChatChannelListController_Mock: ChatChannelListController {
     public var loadNextChannelsIsCalled = false
 
     /// Creates a new mock instance of `ChatChannelListController`.

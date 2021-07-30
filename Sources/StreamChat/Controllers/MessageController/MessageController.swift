@@ -10,33 +10,14 @@ public extension ChatClient {
     /// - Parameter cid: The channel identifier the message relates to.
     /// - Parameter messageId: The message identifier.
     /// - Returns: A new instance of `MessageController`.
-    func messageController(cid: ChannelId, messageId: MessageId) -> _ChatMessageController<ExtraData> {
+    func messageController(cid: ChannelId, messageId: MessageId) -> ChatMessageController {
         .init(client: self, cid: cid, messageId: messageId)
     }
 }
 
 /// `ChatMessageController` is a controller class which allows observing and mutating a chat message entity.
 ///
-/// Learn more about `ChatMessageController` and its usage in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/StreamChat-SDK-Cheat-Sheet#messages).
-///
-/// - Note: `ChatMessageController` is a typealias of `_ChatMessageController` with default extra data. If you're using
-/// custom extra data, create your own typealias of `_ChatMessageController`.
-///
-/// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/Cheat-Sheet#working-with-extra-data).
-///
-public typealias ChatMessageController = _ChatMessageController<NoExtraData>
-
-/// `ChatMessageController` is a controller class which allows observing and mutating a chat message entity.
-///
-/// Learn more about `ChatMessageController` and its usage in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/StreamChat-SDK-Cheat-Sheet#messages).
-///
-/// - Note: `_ChatMessageController` type is not meant to be used directly. If you're using default extra data, use
-/// `ChatMessageController` typealias instead. If you're using custom extra data, create your own typealias
-/// of `_ChatMessageController`.
-///
-/// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/Cheat-Sheet#working-with-extra-data).
-///
-public class _ChatMessageController<ExtraData: ExtraDataTypes>: DataController, DelegateCallable, DataStoreProvider {
+public class ChatMessageController: DataController, DelegateCallable, DataStoreProvider {
     /// The `ChatClient` instance this controller belongs to.
     public let client: ChatClient
     
@@ -51,7 +32,7 @@ public class _ChatMessageController<ExtraData: ExtraDataTypes>: DataController, 
     /// To observe changes of the message, set your class as a delegate of this controller or use the provided
     /// `Combine` publishers.
     ///
-    public var message: _ChatMessage? {
+    public var message: ChatMessage? {
         startObserversIfNeeded()
         return messageObserver.item
     }
@@ -101,7 +82,7 @@ public class _ChatMessageController<ExtraData: ExtraDataTypes>: DataController, 
     lazy var basePublishers: BasePublishers = .init(controller: self)
     
     /// A type-erased multicast delegate.
-    var multicastDelegate: MulticastDelegate<AnyChatMessageControllerDelegate<ExtraData>> = .init() {
+    var multicastDelegate: MulticastDelegate<AnyChatMessageControllerDelegate> = .init() {
         didSet {
             stateMulticastDelegate.mainDelegate = multicastDelegate.mainDelegate
             stateMulticastDelegate.additionalDelegates = multicastDelegate.additionalDelegates
@@ -122,7 +103,7 @@ public class _ChatMessageController<ExtraData: ExtraDataTypes>: DataController, 
     @Cached private var repliesObserver: ListDatabaseObserver<ChatMessage, MessageDTO>?
     
     /// The worker used to fetch the remote data and communicate with servers.
-    private lazy var messageUpdater: MessageUpdater<ExtraData> = environment.messageUpdaterBuilder(
+    private lazy var messageUpdater: MessageUpdater = environment.messageUpdaterBuilder(
         client.databaseContainer,
         client.apiClient
     )
@@ -174,7 +155,7 @@ public class _ChatMessageController<ExtraData: ExtraDataTypes>: DataController, 
 
 // MARK: - Actions
 
-public extension _ChatMessageController {
+public extension ChatMessageController {
     /// Edits the message this controller manages with the provided values.
     ///
     /// - Parameters:
@@ -434,25 +415,25 @@ public extension _ChatMessageController {
 
 // MARK: - Environment
 
-extension _ChatMessageController {
+extension ChatMessageController {
     struct Environment {
         var messageObserverBuilder: (
             _ context: NSManagedObjectContext,
             _ fetchRequest: NSFetchRequest<MessageDTO>,
-            _ itemCreator: @escaping (MessageDTO) -> _ChatMessage,
+            _ itemCreator: @escaping (MessageDTO) -> ChatMessage,
             _ fetchedResultsControllerType: NSFetchedResultsController<MessageDTO>.Type
         ) -> EntityDatabaseObserver<ChatMessage, MessageDTO> = EntityDatabaseObserver.init
         
         var messageUpdaterBuilder: (
             _ database: DatabaseContainer,
             _ apiClient: APIClient
-        ) -> MessageUpdater<ExtraData> = MessageUpdater.init
+        ) -> MessageUpdater = MessageUpdater.init
     }
 }
 
 // MARK: - Private
 
-private extension _ChatMessageController {
+private extension ChatMessageController {
     func createMessageObserver() -> EntityDatabaseObserver<ChatMessage, MessageDTO> {
         let observer = environment.messageObserverBuilder(
             client.databaseContainer.viewContext,
@@ -477,7 +458,7 @@ private extension _ChatMessageController {
                     sortAscending: sortAscending,
                     deletedMessagesVisibility: deletedMessageVisibility
                 ),
-                itemCreator: { $0.asModel() as _ChatMessage }
+                itemCreator: { $0.asModel() as ChatMessage }
             )
             observer.onChange = { changes in
                 self.delegateCallback {
@@ -517,47 +498,45 @@ public extension ChatMessageControllerDelegate {
 /// named `ChatMessageControllerDelegate`, which hides the generic types, and make the usage easier.
 ///
 public protocol _ChatMessageControllerDelegate: DataControllerStateDelegate {
-    associatedtype ExtraData: ExtraDataTypes
-    
     /// The controller observed a change in the `ChatMessage` its observes.
     func messageController(
-        _ controller: _ChatMessageController<ExtraData>,
+        _ controller: ChatMessageController,
         didChangeMessage change: EntityChange<ChatMessage>
     )
     
     /// The controller observed changes in the replies of the observed `ChatMessage`.
     func messageController(
-        _ controller: _ChatMessageController<ExtraData>,
+        _ controller: ChatMessageController,
         didChangeReplies changes: [ListChange<ChatMessage>]
     )
 }
 
 public extension _ChatMessageControllerDelegate {
     func messageController(
-        _ controller: _ChatMessageController<ExtraData>,
+        _ controller: ChatMessageController,
         didChangeMessage change: EntityChange<ChatMessage>
     ) {}
     
     func messageController(
-        _ controller: _ChatMessageController<ExtraData>,
+        _ controller: ChatMessageController,
         didChangeReplies changes: [ListChange<ChatMessage>]
     ) {}
 }
 
-final class AnyChatMessageControllerDelegate<ExtraData: ExtraDataTypes>: _ChatMessageControllerDelegate {
+final class AnyChatMessageControllerDelegate: ChatMessageControllerDelegate {
     weak var wrappedDelegate: AnyObject?
     private var _controllerDidChangeState: (DataController, DataController.State) -> Void
-    private var _messageControllerDidChangeMessage: (_ChatMessageController<ExtraData>, EntityChange<ChatMessage>)
+    private var _messageControllerDidChangeMessage: (ChatMessageController, EntityChange<ChatMessage>)
         -> Void
-    private var _messageControllerDidChangeReplies: (_ChatMessageController<ExtraData>, [ListChange<ChatMessage>])
+    private var _messageControllerDidChangeReplies: (ChatMessageController, [ListChange<ChatMessage>])
         -> Void
     
     init(
         wrappedDelegate: AnyObject?,
         controllerDidChangeState: @escaping (DataController, DataController.State) -> Void,
-        messageControllerDidChangeMessage: @escaping (_ChatMessageController<ExtraData>, EntityChange<ChatMessage>)
+        messageControllerDidChangeMessage: @escaping (ChatMessageController, EntityChange<ChatMessage>)
             -> Void,
-        messageControllerDidChangeReplies: @escaping (_ChatMessageController<ExtraData>, [ListChange<ChatMessage>])
+        messageControllerDidChangeReplies: @escaping (ChatMessageController, [ListChange<ChatMessage>])
             -> Void
     ) {
         self.wrappedDelegate = wrappedDelegate
@@ -571,14 +550,14 @@ final class AnyChatMessageControllerDelegate<ExtraData: ExtraDataTypes>: _ChatMe
     }
 
     func messageController(
-        _ controller: _ChatMessageController<ExtraData>,
+        _ controller: ChatMessageController,
         didChangeMessage change: EntityChange<ChatMessage>
     ) {
         _messageControllerDidChangeMessage(controller, change)
     }
     
     func messageController(
-        _ controller: _ChatMessageController<ExtraData>,
+        _ controller: ChatMessageController,
         didChangeReplies changes: [ListChange<ChatMessage>]
     ) {
         _messageControllerDidChangeReplies(controller, changes)
@@ -586,17 +565,6 @@ final class AnyChatMessageControllerDelegate<ExtraData: ExtraDataTypes>: _ChatMe
 }
 
 extension AnyChatMessageControllerDelegate {
-    convenience init<Delegate: _ChatMessageControllerDelegate>(_ delegate: Delegate) where Delegate.ExtraData == ExtraData {
-        self.init(
-            wrappedDelegate: delegate,
-            controllerDidChangeState: { [weak delegate] in delegate?.controller($0, didChangeState: $1) },
-            messageControllerDidChangeMessage: { [weak delegate] in delegate?.messageController($0, didChangeMessage: $1) },
-            messageControllerDidChangeReplies: { [weak delegate] in delegate?.messageController($0, didChangeReplies: $1) }
-        )
-    }
-}
-
-extension AnyChatMessageControllerDelegate where ExtraData == NoExtraData {
     convenience init(_ delegate: ChatMessageControllerDelegate?) {
         self.init(
             wrappedDelegate: delegate,
@@ -607,20 +575,6 @@ extension AnyChatMessageControllerDelegate where ExtraData == NoExtraData {
     }
 }
  
-public extension _ChatMessageController {
-    /// Sets the provided object as a delegate of this controller.
-    ///
-    /// - Note: If you don't use custom extra data types, you can set the delegate directly using `controller.delegate = self`.
-    /// Due to the current limits of Swift and the way it handles protocols with associated types, it's required to use this
-    /// method to set the delegate, if you're using custom extra data types.
-    ///
-    /// - Parameter delegate: The object used as a delegate. It's referenced weakly, so you need to keep the object
-    /// alive if you want keep receiving updates.
-    func setDelegate<Delegate: _ChatMessageControllerDelegate>(_ delegate: Delegate?) where Delegate.ExtraData == ExtraData {
-        multicastDelegate.mainDelegate = delegate.flatMap(AnyChatMessageControllerDelegate.init)
-    }
-}
-
 public extension ChatMessageController {
     /// Set the delegate of `ChatMessageController` to observe the changes in the system.
     ///

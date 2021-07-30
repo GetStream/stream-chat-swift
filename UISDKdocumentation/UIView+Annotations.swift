@@ -246,7 +246,7 @@ public extension ChatChannel {
         memberCount: Int = 2,
         reads: [ChatChannelRead] = [],
         extraData: ExtraData.Channel = .defaultValue,
-        latestMessages: [_ChatMessage] = [],
+        latestMessages: [ChatMessage] = [],
         muteDetails: MuteDetails? = nil
     ) -> Self {
         self.init(

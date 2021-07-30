@@ -13,7 +13,7 @@ final class DatabaseCleanupUpdater_Tests: StressTestCase {
     var webSocketClient: WebSocketClientMock!
     var apiClient: APIClientMock!
     
-    var databaseCleanupUpdater: DatabaseCleanupUpdater<ExtraData>?
+    var databaseCleanupUpdater: DatabaseCleanupUpdater?
     var channelListUpdater: ChannelListUpdaterMock<NoExtraData>!
     
     override func setUp() {
@@ -24,7 +24,7 @@ final class DatabaseCleanupUpdater_Tests: StressTestCase {
         apiClient = APIClientMock()
         channelListUpdater = ChannelListUpdaterMock(database: database, apiClient: apiClient)
         
-        databaseCleanupUpdater = DatabaseCleanupUpdater<ExtraData>(
+        databaseCleanupUpdater = DatabaseCleanupUpdater(
             database: database,
             apiClient: apiClient,
             channelListUpdater: channelListUpdater

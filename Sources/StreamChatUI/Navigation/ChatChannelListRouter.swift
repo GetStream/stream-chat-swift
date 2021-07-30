@@ -9,7 +9,7 @@ import UIKit
 public typealias ChatChannelListRouter = _ChatChannelListRouter<NoExtraData>
 
 /// A `NavigationRouter` subclass that handles navigation actions of `ChatChannelListVC`.
-open class _ChatChannelListRouter<ExtraData: ExtraDataTypes>:
+open class _ChatChannelListRouter:
     NavigationRouter<_ChatChannelListVC<ExtraData>>,
     ComponentsProvider
 {

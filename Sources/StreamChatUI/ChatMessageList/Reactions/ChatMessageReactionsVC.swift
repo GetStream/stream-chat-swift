@@ -9,8 +9,8 @@ import UIKit
 public typealias ChatMessageReactionsVC = _ChatMessageReactionsVC<NoExtraData>
 
 /// Controller for the message reactions picker as a list of toggles
-open class _ChatMessageReactionsVC<ExtraData: ExtraDataTypes>: _ViewController, ThemeProvider {
-    public var messageController: _ChatMessageController<ExtraData>!
+open class _ChatMessageReactionsVC: _ViewController, ThemeProvider {
+    public var messageController: ChatMessageController!
 
     // MARK: - Subviews
 
@@ -74,7 +74,7 @@ open class _ChatMessageReactionsVC<ExtraData: ExtraDataTypes>: _ViewController, 
 
 extension _ChatMessageReactionsVC: _ChatMessageControllerDelegate {
     public func messageController(
-        _ controller: _ChatMessageController<ExtraData>,
+        _ controller: ChatMessageController,
         didChangeMessage change: EntityChange<ChatMessage>
     ) {
         switch change {

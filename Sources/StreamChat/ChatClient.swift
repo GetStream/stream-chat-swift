@@ -66,19 +66,19 @@ public class ChatClient {
         let center = environment.notificationCenterBuilder(databaseContainer)
 
         let middlewares: [EventMiddleware] = [
-            EventDataProcessorMiddleware<ExtraData>(),
-            TypingStartCleanupMiddleware<ExtraData>(
+            EventDataProcessorMiddleware(),
+            TypingStartCleanupMiddleware(
                 excludedUserIds: { [weak self] in Set([self?.currentUserId].compactMap { $0 }) },
                 emitEvent: { [weak center] in center?.process($0) }
             ),
-            ChannelReadUpdaterMiddleware<ExtraData>(),
-            UserTypingStateUpdaterMiddleware<ExtraData>(),
-            MessageReactionsMiddleware<ExtraData>(),
-            ChannelTruncatedEventMiddleware<ExtraData>(),
-            MemberEventMiddleware<ExtraData>(),
-            UserChannelBanEventsMiddleware<ExtraData>(),
-            UserWatchingEventMiddleware<ExtraData>(),
-            ChannelVisibilityEventMiddleware<ExtraData>()
+            ChannelReadUpdaterMiddleware(),
+            UserTypingStateUpdaterMiddleware(),
+            MessageReactionsMiddleware(),
+            ChannelTruncatedEventMiddleware(),
+            MemberEventMiddleware(),
+            UserChannelBanEventsMiddleware(),
+            UserWatchingEventMiddleware(),
+            ChannelVisibilityEventMiddleware()
         ]
 
         center.add(middlewares: middlewares)
@@ -115,14 +115,14 @@ public class ChatClient {
         let webSocketClient = environment.webSocketClientBuilder?(
             urlSessionConfiguration,
             encoder,
-            EventDecoder<ExtraData>(),
+            EventDecoder(),
             eventNotificationCenter,
             internetConnection
         )
 
         if let currentUserId = currentUserId {
             webSocketClient?.connectEndpoint = Endpoint<EmptyResponse>.webSocketConnect(
-                userInfo: UserInfo<ExtraData>(id: currentUserId)
+                userInfo: UserInfo(id: currentUserId)
             )
         }
         
@@ -178,7 +178,7 @@ public class ChatClient {
     
     private(set) lazy var internetConnection = environment.internetConnection()
     private(set) lazy var clientUpdater = environment.clientUpdaterBuilder(self)
-    private(set) var userConnectionProvider: _UserConnectionProvider<ExtraData>?
+    private(set) var userConnectionProvider: UserConnectionProvider?
     
     /// Used for starting and ending background tasks. Hides platform specific logic.
     private lazy var backgroundTaskScheduler = environment.backgroundTaskSchedulerBuilder()
@@ -236,17 +236,17 @@ public class ChatClient {
         if config.isClientInActiveMode {
             // All production workers
             workerBuilders = [
-                MessageSender<ExtraData>.init,
-                NewChannelQueryUpdater<ExtraData>.init,
-                NewUserQueryUpdater<ExtraData.User>.init,
-                MessageEditor<ExtraData>.init,
+                MessageSender.init,
+                NewChannelQueryUpdater.init,
+                NewUserQueryUpdater.init,
+                MessageEditor.init,
                 AttachmentUploader.init
             ]
             
             // All production event workers
             eventWorkerBuilders = [
-                ChannelWatchStateUpdater<ExtraData>.init,
-                MissingEventsPublisher<ExtraData>.init
+                ChannelWatchStateUpdater.init,
+                MissingEventsPublisher.init
             ]
         } else {
             workerBuilders = []
@@ -300,7 +300,7 @@ public class ChatClient {
     ///   - token: Authorization token for the user.
     ///   - completion: The completion that will be called once the **first** user session for the given token is setup.
     public func connectUser(
-        userInfo: UserInfo<ExtraData>,
+        userInfo: UserInfo,
         token: Token,
         completion: ((Error?) -> Void)? = nil
     ) {
@@ -317,7 +317,7 @@ public class ChatClient {
     ///   - extraData: Extra data for user that is passed to the `connect` endpoint for user creation.
     ///   - completion: The completion that will be called once the **first** user session for the given token is setup.
     public func connectGuestUser(
-        userInfo: UserInfo<ExtraData>,
+        userInfo: UserInfo,
         completion: ((Error?) -> Void)? = nil
     ) {
         setConnectionInfoAndConnect(
@@ -388,8 +388,8 @@ public class ChatClient {
     }
     
     private func setConnectionInfoAndConnect(
-        userInfo: UserInfo<ExtraData>?,
-        userConnectionProvider: _UserConnectionProvider<ExtraData>,
+        userInfo: UserInfo?,
+        userConnectionProvider: UserConnectionProvider,
         completion: ((Error?) -> Void)? = nil
     ) {
         self.userConnectionProvider = userConnectionProvider
@@ -502,13 +502,13 @@ extension ChatClient {
         var requestEncoderBuilder: (_ baseURL: URL, _ apiKey: APIKey) -> RequestEncoder = DefaultRequestEncoder.init
         var requestDecoderBuilder: () -> RequestDecoder = DefaultRequestDecoder.init
         
-        var eventDecoderBuilder: () -> EventDecoder<ExtraData> = EventDecoder<ExtraData>.init
+        var eventDecoderBuilder: () -> EventDecoder = EventDecoder.init
         
         var notificationCenterBuilder = EventNotificationCenter.init
         
         var internetConnection: () -> InternetConnection = { InternetConnection() }
 
-        var clientUpdaterBuilder = ChatClientUpdater<ExtraData>.init
+        var clientUpdaterBuilder = ChatClientUpdater.init
         
         var backgroundTaskSchedulerBuilder: () -> BackgroundTaskScheduler? = {
             if Bundle.main.isAppExtension {

@@ -10,8 +10,6 @@ import UIKit
 public protocol ThemeProvider: ComponentsProvider, AppearanceProvider {}
 
 public protocol ComponentsProvider: GenericComponentsProvider {
-    associatedtype ExtraData: ExtraDataTypes
-
     /// Appearance object to change components and component types from which the default SDK views are build
     /// or to use the default components in custom views.
     var components: _Components<ExtraData> { get set }

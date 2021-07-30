@@ -13,7 +13,7 @@ final class MessageUpdater_Tests: StressTestCase {
     var webSocketClient: WebSocketClientMock!
     var apiClient: APIClientMock!
     var database: DatabaseContainerMock!
-    var messageUpdater: MessageUpdater<ExtraData>!
+    var messageUpdater: MessageUpdater!
     
     // MARK: Setup
     

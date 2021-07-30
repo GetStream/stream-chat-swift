@@ -3593,7 +3593,7 @@ class ChannelController_Tests: StressTestCase {
     }
 }
 
-private class TestEnvironment<ExtraData: ExtraDataTypes> {
+private class TestEnvironment {
     var channelUpdater: ChannelUpdaterMock<ExtraData>?
     var eventSender: TypingEventsSenderMock<ExtraData>?
     
@@ -3659,7 +3659,7 @@ private class TestDelegate: QueueAwareDelegate, ChatChannelControllerDelegate {
 }
 
 /// A concrete `ChannelControllerDelegateGeneric` implementation allowing capturing the delegate calls.
-private class TestDelegateGeneric<ExtraData: ExtraDataTypes>: QueueAwareDelegate, _ChatChannelControllerDelegate {
+private class TestDelegateGeneric: QueueAwareDelegate, _ChatChannelControllerDelegate {
     @Atomic var state: DataController.State?
     @Atomic var didUpdateChannel_channel: EntityChange<ChatChannel>?
     @Atomic var didUpdateMessages_messages: [ListChange<ChatMessage>]?

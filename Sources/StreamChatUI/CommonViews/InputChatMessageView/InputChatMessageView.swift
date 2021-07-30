@@ -9,7 +9,7 @@ import UIKit
 public typealias InputChatMessageView = _InputChatMessageView<NoExtraData>
 
 /// A view to input content of a message.
-open class _InputChatMessageView<ExtraData: ExtraDataTypes>: _View, ComponentsProvider, AppearanceProvider {
+open class _InputChatMessageView: _View, ComponentsProvider, AppearanceProvider {
     /// The content of the view
     public struct Content {
         /// The message that is being quoted.

@@ -9,7 +9,7 @@ import UIKit
 public typealias ImageAttachmentComposerPreview = _ImageAttachmentComposerPreview<NoExtraData>
 
 /// A view that displays image attachment preview in composer.
-open class _ImageAttachmentComposerPreview<ExtraData: ExtraDataTypes>: _View, ThemeProvider {
+open class _ImageAttachmentComposerPreview: _View, ThemeProvider {
     open var width: CGFloat = 100
     open var height: CGFloat = 100
     

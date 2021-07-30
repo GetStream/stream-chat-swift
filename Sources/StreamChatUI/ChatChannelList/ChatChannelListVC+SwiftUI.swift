@@ -24,13 +24,13 @@ public extension SwiftUIViewControllerRepresentable where ViewController: _ChatC
 extension ChatChannelListVC {
     /// A SwiftUI View that wraps `_ChatChannelListVC` and shows list of messages.
     @available(*, deprecated, renamed: "asView")
-    static func View(controller: _ChatChannelListController<ExtraData>) -> some View {
+    static func View(controller: ChatChannelListController) -> some View {
         asView(controller)
     }
 }
 
 extension ChatChannelListVC: SwiftUIRepresentable {
-    public var content: _ChatChannelListController<ExtraData> {
+    public var content: ChatChannelListController {
         get {
             controller
         }

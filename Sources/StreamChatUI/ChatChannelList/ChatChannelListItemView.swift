@@ -9,7 +9,7 @@ import UIKit
 public typealias ChatChannelListItemView = _ChatChannelListItemView<NoExtraData>
 
 /// An `UIView` subclass that shows summary and preview information about a given channel.
-open class _ChatChannelListItemView<ExtraData: ExtraDataTypes>: _View, ThemeProvider, SwiftUIRepresentable {
+open class _ChatChannelListItemView: _View, ThemeProvider, SwiftUIRepresentable {
     /// The content of this view.
     public struct Content {
         /// Channel for the current Item.

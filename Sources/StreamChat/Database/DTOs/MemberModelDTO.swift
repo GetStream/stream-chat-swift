@@ -142,7 +142,7 @@ extension ChatChannelMember {
                 "Failed to decode extra data for user with id: <\(dto.user.id)>, using default value instead. "
                     + "Error: \(error)"
             )
-            extraDataMap = [:]
+            extraData = [:]
         }
 
         let role = dto.channelRoleRaw.flatMap { MemberRole(rawValue: $0) } ?? .member

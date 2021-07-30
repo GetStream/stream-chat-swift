@@ -386,7 +386,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         return message
     }
     
-    func saveMessage<ExtraData: ExtraDataTypes>(payload: MessagePayload, for cid: ChannelId?) throws -> MessageDTO {
+    func saveMessage(payload: MessagePayload, for cid: ChannelId?) throws -> MessageDTO {
         guard payload.channel != nil || cid != nil else {
             throw ClientError.MessagePayloadSavingFailure("""
             Either `payload.channel` or `cid` must be provided to sucessfuly save the message payload.
@@ -413,11 +413,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         dto.replyCount = Int32(payload.replyCount)
 
         do {
-            if payload.extraData is NoExtraData {
-                dto.extraData = try JSONEncoder.default.encode(payload.extraDataMap)
-            } else {
-                dto.extraData = try JSONEncoder.default.encode(payload.extraData)
-            }
+            dto.extraData = try JSONEncoder.default.encode(payload.extraData)
         } catch {
             log.error(
                 "Failed to decode extra payload for Message with id: <\(dto.id)>, using default value instead. "
@@ -541,10 +537,10 @@ extension NSManagedObjectContext: MessageDatabaseSession {
 
 extension MessageDTO {
     /// Snapshots the current state of `MessageDTO` and returns an immutable model object from it.
-    func asModel<ExtraData: ExtraDataTypes>() -> _ChatMessage { .init(fromDTO: self) }
+    func asModel() -> ChatMessage { .init(fromDTO: self) }
     
     /// Snapshots the current state of `MessageDTO` and returns its representation for the use in API calls.
-    func asRequestBody<ExtraData: ExtraDataTypes>() -> MessageRequestBody {
+    func asRequestBody() -> MessageRequestBody {
         var extraData: CustomData
         do {
             extraData = try JSONSerialization.jsonObject(with: self.extraData, options: []) as? CustomData ?? .defaultValue
@@ -577,7 +573,7 @@ extension MessageDTO {
     }
 }
 
-private extension _ChatMessage {
+private extension ChatMessage {
     init(fromDTO dto: MessageDTO) {
         let context = dto.managedObjectContext!
         
@@ -597,23 +593,12 @@ private extension _ChatMessage {
         isSilent = dto.isSilent
         reactionScores = dto.reactionScores.mapKeys { MessageReactionType(rawValue: $0) }
         
-        let extraData: ExtraData.Message
         do {
-            extraData = try JSONDecoder.default.decode(ExtraData.Message.self, from: dto.extraData)
+            extraData = try JSONSerialization.jsonObject(with: dto.extraData, options: []) as? CustomData ?? [:]
         } catch {
             log.error("Failed to decode extra data for Message with id: <\(dto.id)>, using default value instead. Error: \(error)")
             extraData = .defaultValue
         }
-        self.extraData = extraData
-
-        let extraDataMap: CustomData
-        do {
-            extraDataMap = try JSONSerialization.jsonObject(with: dto.extraData, options: []) as? CustomData ?? [:]
-        } catch {
-            log.error("Failed to decode extra data for Message with id: <\(dto.id)>, using default value instead. Error: \(error)")
-            extraDataMap = .defaultValue
-        }
-        self.extraDataMap = extraDataMap
 
         localState = dto.localMessageState
         isFlaggedByCurrentUser = dto.flaggedBy != nil
@@ -673,7 +658,7 @@ private extension _ChatMessage {
             $_latestReplies = ({
                 MessageDTO
                     .loadReplies(for: dto.id, limit: 5, context: context)
-                    .map(_ChatMessage.init)
+                    .map(ChatMessage.init)
             }, dto.managedObjectContext)
         }
         

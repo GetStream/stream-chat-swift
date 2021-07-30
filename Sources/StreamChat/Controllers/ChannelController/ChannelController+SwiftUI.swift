@@ -42,7 +42,7 @@ extension ChatChannelController {
 }
 
 @available(iOS 13, *)
-extension ChatChannelController.ObservableObject: _ChatChannelControllerDelegate {
+extension ChatChannelController.ObservableObject: ChatChannelControllerDelegate {
     public func channelController(
         _ channelController: ChatChannelController,
         didUpdateChannel channel: EntityChange<ChatChannel>

@@ -6,8 +6,6 @@ import StreamChat
 import UIKit
 
 public protocol _ChatMessageActionsVCDelegate: AnyObject {
-    associatedtype ExtraData: ExtraDataTypes
-
     func chatMessageActionsVC(
         _ vc: _ChatMessageActionsVC<ExtraData>,
         message: _ChatMessage,
@@ -19,12 +17,12 @@ public protocol _ChatMessageActionsVCDelegate: AnyObject {
 public typealias ChatMessageActionsVC = _ChatMessageActionsVC<NoExtraData>
 
 /// View controller to show message actions.
-open class _ChatMessageActionsVC<ExtraData: ExtraDataTypes>: _ViewController, ThemeProvider {
+open class _ChatMessageActionsVC: _ViewController, ThemeProvider {
     /// `_ChatMessageActionsVC.Delegate` instance.
     public var delegate: Delegate?
 
     /// `_ChatMessageController` instance used to obtain the message data.
-    public var messageController: _ChatMessageController<ExtraData>!
+    public var messageController: ChatMessageController!
 
     /// `ChannelConfig` that contains the feature flags of the channel.
     public var channelConfig: ChannelConfig!

@@ -10,35 +10,14 @@ public extension ChatClient {
     ///
     /// - Returns: A new instance of `CurrentChatUserController`.
     ///
-    func currentUserController() -> _CurrentChatUserController<ExtraData> {
+    func currentUserController() -> CurrentChatUserController {
         .init(client: self)
     }
 }
 
 /// `CurrentChatUserController` is a controller class which allows observing and mutating the currently logged-in
 /// user of `ChatClient`.
-///
-/// Learn more about `CurrentChatUserController` and its usage in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/Cheat-Sheet#user).
-///
-/// - Note: `CurrentChatUserController` is a typealias of `_CurrentChatUserController` with default extra data. If you're using
-/// custom extra data, create your own typealias of `_CurrentChatUserController`.
-///
-/// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/Cheat-Sheet#working-with-extra-data).
-///
-public typealias CurrentChatUserController = _CurrentChatUserController<NoExtraData>
-
-/// `CurrentChatUserController` is a controller class which allows observing and mutating the currently logged-in
-/// user of `ChatClient`.
-///
-/// Learn more about `CurrentChatUserController` and its usage in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/Cheat-Sheet#user).
-///
-/// - Note: `_CurrentChatUserController` type is not meant to be used directly. If you're using default extra data, use
-/// `CurrentChatUserController` typealias instead. If you're using custom extra data, create your own typealias
-/// of `_CurrentChatUserController`.
-///
-/// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/Cheat-Sheet#working-with-extra-data).
-///
-public class _CurrentChatUserController<ExtraData: ExtraDataTypes>: DataController, DelegateCallable, DataStoreProvider {
+public class CurrentChatUserController: DataController, DelegateCallable, DataStoreProvider {
     /// The `ChatClient` instance this controller belongs to.
     public let client: ChatClient
     
@@ -64,7 +43,7 @@ public class _CurrentChatUserController<ExtraData: ExtraDataTypes>: DataControll
         }
 
     /// A type-erased delegate.
-    var multicastDelegate: MulticastDelegate<AnyCurrentUserControllerDelegate<ExtraData>> = .init()
+    var multicastDelegate: MulticastDelegate<AnyCurrentUserControllerDelegate> = .init()
     
     /// The currently logged-in user. `nil` if the connection hasn't been fully established yet, or the connection
     /// wasn't successful.
@@ -142,7 +121,7 @@ public class _CurrentChatUserController<ExtraData: ExtraDataTypes>: DataControll
     }
 }
 
-public extension _CurrentChatUserController {
+public extension CurrentChatUserController {
     /// Fetches the token from `tokenProvider` and prepares the current `ChatClient` variables
     /// for the new user.
     ///
@@ -185,39 +164,6 @@ public extension _CurrentChatUserController {
             name: name,
             imageURL: imageURL,
             userExtraData: userExtraData
-        ) { error in
-            self.callback {
-                completion?(error)
-            }
-        }
-    }
-
-    /// Updates the current user data.
-    ///
-    /// By default all data is `nil`, and it won't be updated unless a value is provided.
-    ///
-    /// - Parameters:
-    ///   - name: Optionally provide a new name to be updated.
-    ///   - imageURL: Optionally provide a new image to be updated.
-    ///   - userExtraData: Optionally provide new user extra data to be updated.
-    ///   - completion: Called when user is successfuly updated, or with error.
-    @available(*, deprecated, message: "pass userExtraData as CustomData (ie. user.customData)")
-    func updateUserData(
-        name: String? = nil,
-        imageURL: URL? = nil,
-        userExtraData: ExtraData.User = .defaultValue,
-        completion: ((Error?) -> Void)? = nil
-    ) {
-        guard let currentUserId = currentUser?.id else {
-            completion?(ClientError.CurrentUserDoesNotExist())
-            return
-        }
-        
-        currentUserUpdater.updateUserData(
-            currentUserId: currentUserId,
-            name: name,
-            imageURL: imageURL,
-            userExtraData: CustomDataFromExtraData(userExtraData)
         ) { error in
             self.callback {
                 completion?(error)
@@ -278,7 +224,7 @@ public extension _CurrentChatUserController {
 
 // MARK: - Environment
 
-extension _CurrentChatUserController {
+extension CurrentChatUserController {
     struct Environment {
         var currentUserObserverBuilder: (
             _ context: NSManagedObjectContext,
@@ -287,9 +233,9 @@ extension _CurrentChatUserController {
             _ fetchedResultsControllerType: NSFetchedResultsController<CurrentUserDTO>.Type
         ) -> EntityDatabaseObserver<CurrentChatUser, CurrentUserDTO> = EntityDatabaseObserver.init
         
-        var currentUserUpdaterBuilder = CurrentUserUpdater<ExtraData>.init
+        var currentUserUpdaterBuilder = CurrentUserUpdater.init
 
-        var chatClientUpdaterBuilder = ChatClientUpdater<ExtraData>.init
+        var chatClientUpdaterBuilder = ChatClientUpdater.init
     }
 }
 
@@ -308,7 +254,7 @@ private extension EntityChange where Item == UnreadCount {
     }
 }
 
-private extension _CurrentChatUserController {
+private extension CurrentChatUserController {
     func createUserObserver() -> EntityDatabaseObserver<CurrentChatUser, CurrentUserDTO> {
         environment.currentUserObserverBuilder(
             client.databaseContainer.viewContext,
@@ -340,57 +286,27 @@ public extension CurrentChatUserControllerDelegate {
     func currentUserController(_ controller: CurrentChatUserController, didChangeCurrentUser: EntityChange<CurrentChatUser>) {}
 }
 
-/// `CurrentChatUserController` uses this protocol to communicate changes to its delegate.
-///
-/// If you're **not** using custom extra data types, you can use a convenience version of this protocol
-/// named `CurrentChatUserControllerDelegate`, which hides the generic types, and make the usage easier.
-///
-public protocol _CurrentChatUserControllerDelegate: AnyObject {
-    associatedtype ExtraData: ExtraDataTypes
-    
-    /// The controller observed a change in the `UnreadCount`.
-    func currentUserController(_ controller: _CurrentChatUserController<ExtraData>, didChangeCurrentUserUnreadCount: UnreadCount)
-    
-    /// The controller observed a change in the `CurrentUser` entity.
-    func currentUserController(
-        _ controller: _CurrentChatUserController<ExtraData>,
-        didChangeCurrentUser: EntityChange<CurrentChatUser>
-    )
-}
-
-public extension _CurrentChatUserControllerDelegate {
-    func currentUserController(
-        _ controller: _CurrentChatUserController<ExtraData>,
-        didChangeCurrentUserUnreadCount: UnreadCount
-    ) {}
-    
-    func currentUserController(
-        _ controller: _CurrentChatUserController<ExtraData>,
-        didChangeCurrentUser: EntityChange<CurrentChatUser>
-    ) {}
-}
-
-final class AnyCurrentUserControllerDelegate<ExtraData: ExtraDataTypes>: _CurrentChatUserControllerDelegate {
+final class AnyCurrentUserControllerDelegate: CurrentChatUserControllerDelegate {
     weak var wrappedDelegate: AnyObject?
     
     private var _controllerDidChangeCurrentUserUnreadCount: (
-        _CurrentChatUserController<ExtraData>,
+        CurrentChatUserController,
         UnreadCount
     ) -> Void
     
     private var _controllerDidChangeCurrentUser: (
-        _CurrentChatUserController<ExtraData>,
+        CurrentChatUserController,
         EntityChange<CurrentChatUser>
     ) -> Void
     
     init(
         wrappedDelegate: AnyObject?,
         controllerDidChangeCurrentUserUnreadCount: @escaping (
-            _CurrentChatUserController<ExtraData>,
+            CurrentChatUserController,
             UnreadCount
         ) -> Void,
         controllerDidChangeCurrentUser: @escaping (
-            _CurrentChatUserController<ExtraData>,
+            CurrentChatUserController,
             EntityChange<CurrentChatUser>
         ) -> Void
     ) {
@@ -400,14 +316,14 @@ final class AnyCurrentUserControllerDelegate<ExtraData: ExtraDataTypes>: _Curren
     }
     
     func currentUserController(
-        _ controller: _CurrentChatUserController<ExtraData>,
+        _ controller: CurrentChatUserController,
         didChangeCurrentUserUnreadCount unreadCount: UnreadCount
     ) {
         _controllerDidChangeCurrentUserUnreadCount(controller, unreadCount)
     }
     
     func currentUserController(
-        _ controller: _CurrentChatUserController<ExtraData>,
+        _ controller: CurrentChatUserController,
         didChangeCurrentUser user: EntityChange<CurrentChatUser>
     ) {
         _controllerDidChangeCurrentUser(controller, user)
@@ -415,7 +331,7 @@ final class AnyCurrentUserControllerDelegate<ExtraData: ExtraDataTypes>: _Curren
 }
 
 extension AnyCurrentUserControllerDelegate {
-    convenience init<Delegate: _CurrentChatUserControllerDelegate>(_ delegate: Delegate) where Delegate.ExtraData == ExtraData {
+    convenience init<Delegate: CurrentChatUserControllerDelegate>(_ delegate: Delegate) {
         self.init(
             wrappedDelegate: delegate,
             controllerDidChangeCurrentUserUnreadCount: { [weak delegate] in
@@ -428,7 +344,7 @@ extension AnyCurrentUserControllerDelegate {
     }
 }
 
-extension AnyCurrentUserControllerDelegate where ExtraData == NoExtraData {
+extension AnyCurrentUserControllerDelegate {
     convenience init(_ delegate: CurrentChatUserControllerDelegate?) {
         self.init(
             wrappedDelegate: delegate,
@@ -442,7 +358,7 @@ extension AnyCurrentUserControllerDelegate where ExtraData == NoExtraData {
     }
 }
  
-public extension _CurrentChatUserController {
+public extension CurrentChatUserController {
     /// Sets the provided object as a delegate of this controller.
     ///
     /// - Note: If you don't use custom extra data types, you can set the delegate directly using `controller.delegate = self`.
@@ -451,7 +367,7 @@ public extension _CurrentChatUserController {
     ///
     /// - Parameter delegate: The object used as a delegate. It's referenced weakly, so you need to keep the object
     /// alive if you want keep receiving updates.
-    func setDelegate<Delegate: _CurrentChatUserControllerDelegate>(_ delegate: Delegate?) where Delegate.ExtraData == ExtraData {
+    func setDelegate<Delegate: CurrentChatUserControllerDelegate>(_ delegate: Delegate?) {
         multicastDelegate.mainDelegate = delegate.flatMap(AnyCurrentUserControllerDelegate.init)
     }
 }

@@ -50,7 +50,7 @@ public struct NotificationMarkReadEvent: UserSpecificEvent, ChannelSpecificEvent
     }
 }
 
-public struct NotificationMutesUpdatedEvent<ExtraData: ExtraDataTypes>: CurrentUserEvent {
+public struct NotificationMutesUpdatedEvent: CurrentUserEvent {
     public let currentUserId: UserId
     let payload: Any
     

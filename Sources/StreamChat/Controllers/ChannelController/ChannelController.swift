@@ -297,7 +297,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
                     sortAscending: sortAscending,
                     deletedMessagesVisibility: deletedMessageVisibility
                 ),
-                itemCreator: { $0.asModel() as _ChatMessage }
+                itemCreator: { $0.asModel() as ChatMessage }
             )
             observer.onChange = { changes in
                 self.delegateCallback {
@@ -340,7 +340,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     private func set(cid: ChannelId) -> Error? {
         guard self.cid != cid else { return nil }
         
-        channelQuery = _ChannelQuery(cid: cid, channelQuery: channelQuery)
+        channelQuery = ChannelQuery(cid: cid, channelQuery: channelQuery)
         setupEventObservers(for: cid)
         
         let error = startDatabaseObservers()
@@ -415,8 +415,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     /// - Parameter delegate: The object used as a delegate. It's referenced weakly, so you need to keep the object
     /// alive if you want keep receiving updates.
     ///
-    public func setDelegate<Delegate: _ChatChannelControllerDelegate>(_ delegate: Delegate)
-        where Delegate.ExtraData == ExtraData {
+    public func setDelegate<Delegate: ChatChannelControllerDelegate>(_ delegate: Delegate) {
         multicastDelegate.mainDelegate = AnyChannelControllerDelegate(delegate)
     }
 }
@@ -1139,55 +1138,11 @@ public enum ListOrdering {
 // MARK: - Delegates
 
 /// `ChatChannelController` uses this protocol to communicate changes to its delegate.
-public protocol ChatChannelControllerDelegate: DataControllerStateDelegate {
-    /// The controller observed a change in the `Channel` entity.
-    func channelController(
-        _ channelController: ChatChannelController,
-        didUpdateChannel channel: EntityChange<ChatChannel>
-    )
-    
-    /// The controller observed changes in the `Messages` of the observed channel.
-    func channelController(
-        _ channelController: ChatChannelController,
-        didUpdateMessages changes: [ListChange<ChatMessage>]
-    )
-
-    /// The controller received a `MemberEvent` related to the channel it observes.
-    func channelController(_ channelController: ChatChannelController, didReceiveMemberEvent: MemberEvent)
-    
-    /// The controller received a change related to users typing in the channel it observes.
-    func channelController(_ channelController: ChatChannelController, didChangeTypingUsers typingUsers: Set<ChatUser>)
-}
-
-public extension ChatChannelControllerDelegate {
-    func channelController(
-        _ channelController: ChatChannelController,
-        didUpdateChannel channel: EntityChange<ChatChannel>
-    ) {}
-    
-    func channelController(
-        _ channelController: ChatChannelController,
-        didUpdateMessages changes: [ListChange<ChatMessage>]
-    ) {}
-
-    func channelController(_ channelController: ChatChannelController, didReceiveMemberEvent: MemberEvent) {}
-    
-    func channelController(
-        _ channelController: ChatChannelController,
-        didChangeTypingUsers typingUsers: Set<ChatUser>
-    ) {}
-}
-
-// MARK: Generic Delegates
-
-/// `ChatChannelController` uses this protocol to communicate changes to its delegate.
 ///
 /// If you're **not** using custom extra data types, you can use a convenience version of this protocol
 /// named `ChatChannelControllerDelegate`, which hides the generic types, and make the usage easier.
 ///
 public protocol ChatChannelControllerDelegate: DataControllerStateDelegate {
-    associatedtype ExtraData: ExtraDataTypes
-    
     /// The controller observed a change in the `Channel` entity.
     func channelController(
         _ channelController: ChatChannelController,

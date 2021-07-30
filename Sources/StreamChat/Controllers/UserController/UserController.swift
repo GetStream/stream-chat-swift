@@ -101,14 +101,13 @@ public class ChatUserController: DataController, DelegateCallable, DataStoreProv
     /// - Parameter delegate: The object used as a delegate. It's referenced weakly, so you need to keep the object
     /// alive if you want keep receiving updates.
     ///
-    public func setDelegate<Delegate: ChatUserControllerDelegate>(_ delegate: Delegate)
-        where Delegate == ExtraData {
+    public func setDelegate<Delegate: ChatUserControllerDelegate>(_ delegate: Delegate) {
         multicastDelegate.mainDelegate = AnyChatUserControllerDelegate(delegate)
     }
     
     // MARK: - Private
     
-    private func createUserUpdater() -> UserUpdater<ExtraData> {
+    private func createUserUpdater() -> UserUpdater {
         environment.userUpdaterBuilder(
             client.databaseContainer,
             client.apiClient
@@ -190,7 +189,7 @@ extension ChatUserController {
         var userUpdaterBuilder: (
             _ database: DatabaseContainer,
             _ apiClient: APIClient
-        ) -> UserUpdater<ExtraData> = UserUpdater.init
+        ) -> UserUpdater = UserUpdater.init
         
         var userObserverBuilder: (
             _ context: NSManagedObjectContext,
@@ -201,7 +200,7 @@ extension ChatUserController {
     }
 }
 
-public extension _ChatUserController where ExtraData == NoExtraData {
+public extension ChatUserController {
     /// Set the delegate of `ChatUserController` to observe the changes in the system.
     ///
     /// - Note: The delegate can be set directly only if you're **not** using custom extra data types. Due to the current
@@ -241,7 +240,7 @@ class AnyChatUserControllerDelegate: ChatChannelControllerDelegate {
     private var _controllerDidChangeState: (DataController, DataController.State) -> Void
     
     private var _controllerDidUpdateUser: (
-        _ChatUserController<ExtraData>,
+        ChatUserController,
         EntityChange<ChatUser>
     ) -> Void
     
@@ -251,7 +250,7 @@ class AnyChatUserControllerDelegate: ChatChannelControllerDelegate {
         wrappedDelegate: AnyObject?,
         controllerDidChangeState: @escaping (DataController, DataController.State) -> Void,
         controllerDidUpdateUser: @escaping (
-            _ChatUserController<ExtraData>,
+            ChatUserController,
             EntityChange<ChatUser>
         ) -> Void
     ) {
@@ -265,7 +264,7 @@ class AnyChatUserControllerDelegate: ChatChannelControllerDelegate {
     }
     
     func userController(
-        _ controller: _ChatUserController<ExtraData>,
+        _ controller: ChatUserController,
         didUpdateUser change: EntityChange<ChatUser>
     ) {
         _controllerDidUpdateUser(controller, change)
@@ -273,7 +272,7 @@ class AnyChatUserControllerDelegate: ChatChannelControllerDelegate {
 }
 
 extension AnyChatUserControllerDelegate {
-    convenience init<Delegate: _ChatUserControllerDelegate>(_ delegate: Delegate) where Delegate.ExtraData == ExtraData {
+    convenience init<Delegate: ChatUserControllerDelegate>(_ delegate: Delegate) {
         self.init(
             wrappedDelegate: delegate,
             controllerDidChangeState: { [weak delegate] in delegate?.controller($0, didChangeState: $1) },
@@ -282,7 +281,7 @@ extension AnyChatUserControllerDelegate {
     }
 }
 
-extension AnyChatUserControllerDelegate where ExtraData == NoExtraData {
+extension AnyChatUserControllerDelegate {
     convenience init(_ delegate: ChatUserControllerDelegate?) {
         self.init(
             wrappedDelegate: delegate,

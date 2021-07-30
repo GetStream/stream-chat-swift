@@ -9,7 +9,7 @@ import UIKit
 public typealias ChatThreadHeaderView = _ChatThreadHeaderView<NoExtraData>
 
 /// The view that displays channel information on the thread header
-open class _ChatThreadHeaderView<ExtraData: ExtraDataTypes>:
+open class _ChatThreadHeaderView:
     _View,
     ThemeProvider,
     _ChatChannelControllerDelegate {
