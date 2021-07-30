@@ -53,6 +53,7 @@
 		430156EC26B2B3FB0006E7EA /* CurrentUserPayloadWithCustom.json in Resources */ = {isa = PBXBuildFile; fileRef = 430156EB26B2B3FB0006E7EA /* CurrentUserPayloadWithCustom.json */; };
 		430156EE26B2E20B0006E7EA /* ChannelPayloadWithCustom.json in Resources */ = {isa = PBXBuildFile; fileRef = 430156ED26B2E20B0006E7EA /* ChannelPayloadWithCustom.json */; };
 		430156F026B2E2170006E7EA /* ChannelPayload.json in Resources */ = {isa = PBXBuildFile; fileRef = 430156EF26B2E2170006E7EA /* ChannelPayload.json */; };
+		430156F226B4523A0006E7EA /* WebSocketConnectPayload_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 430156F126B4523A0006E7EA /* WebSocketConnectPayload_Tests.swift */; };
 		43BAAD492664F59600323D8E /* UserStopTypingThread.json in Resources */ = {isa = PBXBuildFile; fileRef = 43BAAD472664F59600323D8E /* UserStopTypingThread.json */; };
 		43BAAD4A2664F59600323D8E /* UserStartTypingThread.json in Resources */ = {isa = PBXBuildFile; fileRef = 43BAAD482664F59600323D8E /* UserStartTypingThread.json */; };
 		43EB3AE22671718200954323 /* AttachmentViewCatalog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43EB3AE12671718200954323 /* AttachmentViewCatalog.swift */; };
@@ -1378,6 +1379,7 @@
 		430156EB26B2B3FB0006E7EA /* CurrentUserPayloadWithCustom.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = CurrentUserPayloadWithCustom.json; sourceTree = "<group>"; };
 		430156ED26B2E20B0006E7EA /* ChannelPayloadWithCustom.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = ChannelPayloadWithCustom.json; sourceTree = "<group>"; };
 		430156EF26B2E2170006E7EA /* ChannelPayload.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = ChannelPayload.json; sourceTree = "<group>"; };
+		430156F126B4523A0006E7EA /* WebSocketConnectPayload_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebSocketConnectPayload_Tests.swift; sourceTree = "<group>"; };
 		43BAAD472664F59600323D8E /* UserStopTypingThread.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = UserStopTypingThread.json; sourceTree = "<group>"; };
 		43BAAD482664F59600323D8E /* UserStartTypingThread.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = UserStartTypingThread.json; sourceTree = "<group>"; };
 		43EB3AE12671718200954323 /* AttachmentViewCatalog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttachmentViewCatalog.swift; sourceTree = "<group>"; };
@@ -3248,6 +3250,7 @@
 				799BE2E9248A8C9D00DAC8A0 /* WebSocketReconnectionStrategy.swift */,
 				799BE2EB248A8CB300DAC8A0 /* WebSocketReconnectionStrategy_Tests.swift */,
 				797A756324814E7A003CF16D /* WebSocketConnectPayload.swift */,
+				430156F126B4523A0006E7EA /* WebSocketConnectPayload_Tests.swift */,
 				79C750BD2490D0130023F0B7 /* ConnectionStatus.swift */,
 				797EEA4924FFC37600C81203 /* ConnectionStatus_Tests.swift */,
 			);
@@ -6428,6 +6431,7 @@
 				DAEAF4B824DC026C0015FB28 /* ChannelEndpoints_Tests.swift in Sources */,
 				843C53AB269370A900C7D8EA /* ImageAttachmentPayload_Tests.swift in Sources */,
 				792FCB4D24A3D56D000290C7 /* DatabaseSession_Tests.swift in Sources */,
+				430156F226B4523A0006E7EA /* WebSocketConnectPayload_Tests.swift in Sources */,
 				84A1D2F626AB357900014712 /* UnknownEvent_Tests.swift in Sources */,
 				F62BE7852506309B00D13B86 /* MissingEventsPayload_Tests.swift in Sources */,
 				7922F30824DACF1F00C364BC /* TestManagedObject.swift in Sources */,

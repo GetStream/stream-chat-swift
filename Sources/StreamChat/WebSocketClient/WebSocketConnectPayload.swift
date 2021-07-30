@@ -44,9 +44,8 @@ struct UserWebSocketPayload: Encodable {
     func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: Self.CodingKeys)
         try container.encode(id, forKey: .id)
-        try container.encode(id, forKey: .name)
-        try container.encode(id, forKey: .imageURL)
-
+        try container.encodeIfPresent(name, forKey: .name)
+        try container.encodeIfPresent(imageURL, forKey: .imageURL)
         try extraData.encode(to: encoder)
     }
 }
