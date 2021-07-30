@@ -40,10 +40,10 @@ struct ChannelPayload: Decodable {
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         channel = try container.decode(ChannelDetailPayload.self, forKey: .channel)
-        watchers = try container.decodeIfPresent([UserPayload<ExtraData.User>].self, forKey: .watchers)
+        watchers = try container.decodeIfPresent([UserPayload].self, forKey: .watchers)
         watcherCount = try container.decodeIfPresent(Int.self, forKey: .watcherCount)
-        members = try container.decode([MemberPayload<ExtraData.User>].self, forKey: .members)
-        membership = try container.decodeIfPresent(MemberPayload<ExtraData.User>.self, forKey: .membership)
+        members = try container.decode([MemberPayload].self, forKey: .members)
+        membership = try container.decodeIfPresent(MemberPayload.self, forKey: .membership)
         messages = try container.decode([MessagePayload].self, forKey: .messages)
         pinnedMessages = try container.decode([MessagePayload].self, forKey: .pinnedMessages)
         channelReads = try container.decodeIfPresent([ChannelReadPayload].self, forKey: .channelReads) ?? []
@@ -54,9 +54,9 @@ struct ChannelPayload: Decodable {
     init(
         channel: ChannelDetailPayload,
         watcherCount: Int,
-        watchers: [UserPayload<ExtraData.User>]?,
-        members: [MemberPayload<ExtraData.User>],
-        membership: MemberPayload<ExtraData.User>?,
+        watchers: [UserPayload]?,
+        members: [MemberPayload],
+        membership: MemberPayload?,
         messages: [MessagePayload],
         pinnedMessages: [MessagePayload],
         channelReads: [ChannelReadPayload]
@@ -79,8 +79,7 @@ struct ChannelDetailPayload: Decodable {
     
     let imageURL: URL?
     
-    let extraData: ExtraData.Channel
-    let extraDataMap: CustomData
+    let extraData: CustomData
 
     /// A channel type.
     public let typeRawValue: String

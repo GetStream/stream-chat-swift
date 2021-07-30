@@ -260,7 +260,7 @@ final class UserUpdater_Tests: StressTestCase {
             userUpdater.flagUser(flag, with: userId)
             
             // Assert correct endpoint is called.
-            let expectedEndpoint: Endpoint<FlagUserPayload<ExtraData.User>> = .flagUser(flag, with: userId)
+            let expectedEndpoint: Endpoint<FlagUserPayload> = .flagUser(flag, with: userId)
             XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
         }
     }

@@ -66,8 +66,7 @@ class MessagePayload: Decodable {
     let mentionedUsers: [UserPayload]
     let threadParticipants: [UserPayload]
     let replyCount: Int
-    let extraData: ExtraData.Message
-    let extraDataMap: CustomData
+    let extraData: CustomData
 
     let latestReactions: [MessageReactionPayload]
     let ownReactions: [MessageReactionPayload]

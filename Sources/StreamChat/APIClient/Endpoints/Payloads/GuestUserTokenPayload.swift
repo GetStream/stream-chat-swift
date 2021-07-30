@@ -4,7 +4,7 @@
 
 import Foundation
 
-struct GuestUserTokenPayload<ExtraData: ExtraDataTypes>: Decodable {
+struct GuestUserTokenPayload: Decodable {
     private enum CodingKeys: String, CodingKey {
         case user
         case token = "access_token"

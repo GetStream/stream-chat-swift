@@ -27,13 +27,13 @@ class CurrentUserPayload: UserPayload {
         isInvisible: Bool,
         isBanned: Bool,
         teams: [TeamId] = [],
-        extraData: CustomData devices: [DevicePayload] = [],
-        
+        extraData: CustomData,
+        devices: [DevicePayload] = [],
         mutedUsers: [MutedUserPayload] = [],
         mutedChannels: [MutedChannelPayload] = [],
         unreadCount: UnreadCount? = nil
     ) {
-        devices = devices
+        self.devices = devices
         self.mutedUsers = mutedUsers
         self.mutedChannels = mutedChannels
         self.unreadCount = unreadCount
