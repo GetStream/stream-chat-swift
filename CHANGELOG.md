@@ -8,6 +8,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### 🔄 Changed
 
+# [2.6.9](https://github.com/GetStream/stream-chat-swift/releases/tag/2.6.9)
+_July 30, 2021_
+
+### 🔄 Changed
+
 # [2.6.8](https://github.com/GetStream/stream-chat-swift/releases/tag/2.6.8)
 _July 01, 2021_
 
