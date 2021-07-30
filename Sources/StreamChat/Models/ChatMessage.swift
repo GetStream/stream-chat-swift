@@ -260,6 +260,13 @@ public extension ChatMessage {
         attachments(payloadType: LinkAttachmentPayload.self)
     }
     
+    /// Returns the attachments of `.audio` type.
+    ///
+    /// - Important: The `audioAttachments` are loaded lazily and cached to maintain high performance.
+    var audioAttachments: [ChatMessageAudioAttachment] {
+        attachments(payloadType: AudioAttachmentPayload.self)
+    }
+    
     /// Returns attachment for the given identifier.
     /// - Parameter id: Attachment identifier.
     /// - Returns: A type-erased attachment.

@@ -424,6 +424,60 @@ class ChannelUpdater_Tests: StressTestCase {
         let referenceEndpoint: Endpoint<EmptyResponse> = .hideChannel(cid: channelID, clearHistory: clearHistory)
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
     }
+    
+    func test_hideChannel_hidesChannel_onSuccessfulAPIResponse() throws {
+        // This test is for the case where the channel is already hidden on backend
+        // But SDK is not aware of this (so channel.hiddenAt is not set)
+        // Consecutive `hideChannel` calls won't generate `channel.hidden` events
+        // and SDK has no way to learn channel was hidden
+        // So, ChannelUpdater marks the Channel as hidden on successful API response
+        
+        // Create a channel in DB
+        let cid = ChannelId.unique
+        
+        try database.writeSynchronously {
+            try $0.saveChannel(payload: self.dummyPayload(with: cid))
+        }
+        
+        var channel: ChannelDTO? {
+            database.viewContext.channel(cid: cid)
+        }
+        
+        // Assert that channel is not hidden
+        XCTAssertNil(channel?.hiddenAt)
+        
+        // Call hideChannel
+        var completionCalled = false
+        channelUpdater.hideChannel(cid: cid, clearHistory: false) { error in
+            XCTAssertNotNil(error)
+            completionCalled = true
+        }
+        
+        // Simulate API response with failure
+        apiClient.test_simulateResponse(Result<EmptyResponse, Error>.failure(TestError()))
+        
+        // Assert completion is called
+        AssertAsync.willBeTrue(completionCalled)
+        
+        // Ensure channel is not marked as hidden
+        XCTAssertNil(channel?.hiddenAt)
+        
+        // Call hideChannel
+        completionCalled = false
+        channelUpdater.hideChannel(cid: cid, clearHistory: false) { error in
+            XCTAssertNil(error)
+            completionCalled = true
+        }
+        
+        // Simulate API response with failure
+        apiClient.test_simulateResponse(Result<EmptyResponse, Error>.success(.init()))
+        
+        // Assert completion is called
+        AssertAsync.willBeTrue(completionCalled)
+        
+        // Ensure channel is marked as hidden
+        XCTAssertNotNil(channel?.hiddenAt)
+    }
 
     func test_hideChannel_successfulResponse_isPropagatedToCompletion() {
         // Simulate `hideChannel(cid:, clearHistory:, completion:)` call

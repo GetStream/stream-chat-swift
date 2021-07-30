@@ -2,6 +2,7 @@
 // Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
+import StreamChat
 import UIKit
 
 extension ContainerStackView {
@@ -216,7 +217,14 @@ public class ContainerStackView: UIView {
     /// Removes an arranged subview from the container.
     /// - Parameter subview: The subview to be removed.
     public func removeArrangedSubview(_ subview: UIView) {
-        assert(subviews.contains(subview))
+        guard subviews.contains(subview) else {
+            log.warning(
+                "Trying to remove subview \(subview) from ContainerStackView \(self)"
+                    + " but it wasn't added as a subview."
+            )
+            return
+        }
+        
         subview.removeFromSuperview()
 
         // Reset hiding state from the removed view. This important especially if the view
@@ -240,7 +248,14 @@ public class ContainerStackView: UIView {
     ///   - spacing: The value of the spacing.
     ///   - subview: The subview that the spacing will be applied (after this subview).
     func setCustomSpacing(_ spacing: Spacing, after subview: UIView) {
-        assert(subviews.contains(subview))
+        guard subviews.contains(subview) else {
+            log.warning(
+                "Trying to set custom spacing after subview \(subview) in ContainerStackView \(self)"
+                    + " but it wasn't added as a subview."
+            )
+            return
+        }
+        
         customSpacingByView[subview] = spacing.rawValue
         invalidateConstraints()
     }

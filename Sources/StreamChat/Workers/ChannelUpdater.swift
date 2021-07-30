@@ -85,8 +85,25 @@ class ChannelUpdater: Worker {
     ///   - clearHistory: Flag to remove channel history.
     ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
     func hideChannel(cid: ChannelId, clearHistory: Bool, completion: ((Error?) -> Void)? = nil) {
-        apiClient.request(endpoint: .hideChannel(cid: cid, clearHistory: clearHistory)) {
-            completion?($0.error)
+        apiClient.request(endpoint: .hideChannel(cid: cid, clearHistory: clearHistory)) { [weak self] result in
+            if result.error == nil {
+                // If the API call is a success, we mark the channel as hidden
+                // We do this because if the channel was already hidden, but the SDK
+                // is not aware of this, we won't get `channel.hidden` event and we won't
+                // hide the channel
+                self?.database.write {
+                    if let channel = $0.channel(cid: cid) {
+                        channel.hiddenAt = Date()
+                        if clearHistory {
+                            channel.truncatedAt = Date()
+                        }
+                    }
+                } completion: {
+                    completion?($0)
+                }
+            } else {
+                completion?(result.error)
+            }
         }
     }
     
