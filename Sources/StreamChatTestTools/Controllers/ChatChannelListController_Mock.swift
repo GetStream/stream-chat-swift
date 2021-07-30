@@ -9,7 +9,7 @@ public class ChatChannelListController_Mock: ChatChannelListController {
     public var loadNextChannelsIsCalled = false
 
     /// Creates a new mock instance of `ChatChannelListController`.
-    public static func mock() -> ChatChannelListController_Mock<ExtraData> {
+    public static func mock() -> ChatChannelListController_Mock {
         .init(query: .init(filter: .equal(.memberCount, to: 0)), client: .mock())
     }
     

@@ -22,7 +22,7 @@ class UserDTO_Tests: XCTestCase {
     func test_userPayload_isStoredAndLoadedFromDB() throws {
         let userId = UUID().uuidString
         
-        let payload: UserPayload<NoExtraData> = .dummy(userId: userId)
+        let payload: UserPayload = .dummy(userId: userId)
         
         // Asynchronously save the payload to the db
         try database.writeSynchronously { session in
@@ -43,14 +43,14 @@ class UserDTO_Tests: XCTestCase {
             Assert.willBeEqual(payload.updatedAt, loadedUserDTO.userUpdatedAt)
             Assert.willBeEqual(payload.lastActiveAt, loadedUserDTO.lastActivityAt)
             Assert.willBeEqual(payload.teams.sorted(), loadedUserDTO.teams?.map(\.id).sorted())
-            Assert.willBeEqual(payload.extraData, try? JSONDecoder.default.decode(NoExtraData.self, from: loadedUserDTO.extraData))
+            Assert.willBeEqual(payload.extraData, try? JSONDecoder.default.decode(CustomData.self, from: loadedUserDTO.extraData))
         }
     }
 
     func test_defaultExtraDataIsUsed_whenExtraDataDecodingFails() throws {
         let userId: UserId = .unique
         
-        let payload: UserPayload<NoExtraData> = .init(
+        let payload: UserPayload = .init(
             id: userId,
             name: .unique,
             imageURL: .unique(),
@@ -62,8 +62,7 @@ class UserDTO_Tests: XCTestCase {
             isInvisible: true,
             isBanned: true,
             teams: [],
-            extraData: .defaultValue,
-            extraDataMap: [:]
+            extraData: .defaultValue
         )
         
         try database.writeSynchronously { session in
@@ -80,7 +79,7 @@ class UserDTO_Tests: XCTestCase {
     func test_DTO_asModel() throws {
         let userId = UUID().uuidString
         
-        let payload: UserPayload<NoExtraData> = .dummy(userId: userId)
+        let payload: UserPayload = .dummy(userId: userId)
         
         // Asynchronously save the payload to the db
         try database.writeSynchronously { session in
@@ -108,7 +107,7 @@ class UserDTO_Tests: XCTestCase {
     func test_DTO_asPayload() {
         let userId = UUID().uuidString
         
-        let payload: UserPayload<NoExtraData> = .dummy(userId: userId)
+        let payload: UserPayload = .dummy(userId: userId)
         
         // Asynchronously save the payload to the db
         database.write { session in
@@ -122,7 +121,7 @@ class UserDTO_Tests: XCTestCase {
         
         AssertAsync {
             Assert.willBeEqual(payload.id, loadedUserPayload?.id)
-            Assert.willBeEqual(payload.extraDataMap, loadedUserPayload?.extraData)
+            Assert.willBeEqual(payload.extraData, loadedUserPayload?.extraData)
         }
     }
     
@@ -146,7 +145,7 @@ class UserDTO_Tests: XCTestCase {
     func test_DTO_updateFromSamePayload_doNotProduceChanges() throws {
         // Arrange: Store random user payload to db
         let userId = UUID().uuidString
-        let payload: UserPayload<NoExtraData> = .dummy(userId: userId)
+        let payload: UserPayload = .dummy(userId: userId)
         try database.writeSynchronously { session in
             try session.saveUser(payload: payload)
         }
@@ -204,8 +203,8 @@ class UserDTO_Tests: XCTestCase {
     func test_userListQuery_withSorting() {
         // Create two user queries with different sortings.
         let filter = Filter<UserListFilterScope>.query(.name, text: "a")
-        let queryWithLastActiveAtSorting = _UserListQuery(filter: filter, sort: [.init(key: .lastActivityAt, isAscending: false)])
-        let queryWithIdSorting = _UserListQuery(filter: filter, sort: [.init(key: .id, isAscending: false)])
+        let queryWithLastActiveAtSorting = UserListQuery(filter: filter, sort: [.init(key: .lastActivityAt, isAscending: false)])
+        let queryWithIdSorting = UserListQuery(filter: filter, sort: [.init(key: .id, isAscending: false)])
 
         // Create dummy users payloads.
         let payload1 = dummyUser
@@ -284,9 +283,9 @@ class UserDTO_Tests: XCTestCase {
         let userId: UserId = .unique
         let channelId: ChannelId = .unique
 
-        let userPayload: UserPayload<NoExtraData> = .dummy(userId: userId)
+        let userPayload: UserPayload = .dummy(userId: userId)
 
-        let payload: MemberPayload<NoExtraData> = .init(
+        let payload: MemberPayload = .init(
             user: userPayload,
             role: .moderator,
             createdAt: .init(timeIntervalSince1970: 4000),
@@ -322,7 +321,7 @@ class UserDTO_Tests: XCTestCase {
         // Arrange: Store current user in database
         let userId: UserId = .unique
 
-        let payload: CurrentUserPayload<NoExtraData> = .dummy(
+        let payload: CurrentUserPayload = .dummy(
             userId: userId,
             role: .admin,
             extraData: .defaultValue,

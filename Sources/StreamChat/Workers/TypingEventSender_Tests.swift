@@ -7,8 +7,6 @@
 import XCTest
 
 class TypingEventsSender_Tests: StressTestCase {
-    typealias ExtraData = NoExtraData
-    
     var webSocketClient: WebSocketClientMock!
     var apiClient: APIClientMock!
     var database: DatabaseContainerMock!

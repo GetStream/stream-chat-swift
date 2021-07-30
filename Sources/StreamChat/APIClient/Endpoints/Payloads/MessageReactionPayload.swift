@@ -44,13 +44,13 @@ struct MessageReactionPayload: Decodable {
     
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        let extraDataMap: CustomData
+        let extraData: CustomData
 
         if var payload = try? CustomData(from: decoder) {
             payload.removeValues(forKeys: MessageReactionPayload.CodingKeys.allCases.map(\.rawValue))
-            extraDataMap = payload
+            extraData = payload
         } else {
-            extraDataMap = .defaultValue
+            extraData = .defaultValue
         }
         
         self.init(
@@ -60,7 +60,7 @@ struct MessageReactionPayload: Decodable {
             createdAt: try container.decode(Date.self, forKey: .createdAt),
             updatedAt: try container.decode(Date.self, forKey: .updatedAt),
             user: try container.decode(UserPayload.self, forKey: .user),
-            extraData: extraDataMap
+            extraData: extraData
         )
     }
 }

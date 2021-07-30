@@ -335,10 +335,3 @@ public enum LocalMessageState: String {
     /// Deleting of the message failed after multiple of tries. The system is not trying to delete this message anymore.
     case deletingFailed
 }
-
-/// You need to make your custom type conforming to this protocol if you want to use it for extending `ChatMessage` entity with
-/// your custom additional data.
-///
-/// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/Cheat-Sheet#working-with-extra-data).
-///
-public protocol MessageExtraData: ExtraData {}

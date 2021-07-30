@@ -22,7 +22,7 @@ final class MemberController_Tests: StressTestCase {
         super.setUp()
 
         env = TestEnvironment()
-        client = _ChatClient.mock
+        client = ChatClient.mock
         userId = .unique
         cid = .unique
         controller = ChatChannelMemberController(userId: userId, cid: cid, client: client, environment: env.environment)
@@ -454,7 +454,7 @@ final class MemberController_Tests: StressTestCase {
 
 private class TestEnvironment {
     @Atomic var memberUpdater: ChannelMemberUpdaterMock?
-    @Atomic var memberListUpdater: ChannelMemberListUpdaterMock<NoExtraData>?
+    @Atomic var memberListUpdater: ChannelMemberListUpdaterMock?
     @Atomic var memberObserver: EntityDatabaseObserverMock<ChatChannelMember, MemberDTO>?
     @Atomic var memberObserverSynchronizeError: Error?
 

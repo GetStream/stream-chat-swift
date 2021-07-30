@@ -7,13 +7,11 @@
 import XCTest
 
 class MessageSender_Tests: StressTestCase {
-    typealias ExtraData = NoExtraData
-    
     var webSocketClient: WebSocketClientMock!
     var apiClient: APIClientMock!
     var database: DatabaseContainerMock!
     
-    var sender: MessageSender<ExtraData>!
+    var sender: MessageSender!
     
     var cid: ChannelId!
     

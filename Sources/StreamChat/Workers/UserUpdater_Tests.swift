@@ -7,13 +7,11 @@
 import XCTest
 
 final class UserUpdater_Tests: StressTestCase {
-    typealias ExtraData = NoExtraData
-    
     var webSocketClient: WebSocketClientMock!
     var apiClient: APIClientMock!
     var database: DatabaseContainerMock!
     
-    var userUpdater: UserUpdater<ExtraData>!
+    var userUpdater: UserUpdater!
     
     // MARK: Setup
     
@@ -139,7 +137,7 @@ final class UserUpdater_Tests: StressTestCase {
         userUpdater.loadUser(userId)
 
         // Assert correct endpoint is called.
-        let expectedEndpoint: Endpoint<UserListPayload<ExtraData.User>> = .users(query: .user(withID: userId))
+        let expectedEndpoint: Endpoint<UserListPayload> = .users(query: .user(withID: userId))
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
     }
     
@@ -152,7 +150,7 @@ final class UserUpdater_Tests: StressTestCase {
         
         // Simulate API response with failure
         let error = TestError()
-        apiClient.test_simulateResponse(Result<UserListPayload<ExtraData.User>, Error>.failure(error))
+        apiClient.test_simulateResponse(Result<UserListPayload, Error>.failure(error))
         
         // Assert the completion is called with the error
         AssertAsync.willBeEqual(completionError as? TestError, error)
@@ -166,7 +164,7 @@ final class UserUpdater_Tests: StressTestCase {
         }
         
         // Simulate API response with empty users list
-        let response = Result<UserListPayload<ExtraData.User>, Error>.success(.init(users: []))
+        let response = Result<UserListPayload, Error>.success(.init(users: []))
         apiClient.test_simulateResponse(response)
         
         // Assert the `UserDoesNotExist` is received
@@ -183,7 +181,7 @@ final class UserUpdater_Tests: StressTestCase {
         }
         
         // Simulate API response with multiple users
-        let response = Result<UserListPayload<ExtraData.User>, Error>.success(.init(users: [
+        let response = Result<UserListPayload, Error>.success(.init(users: [
             .dummy(userId: userId),
             .dummy(userId: userId),
             .dummy(userId: userId)
@@ -215,7 +213,7 @@ final class UserUpdater_Tests: StressTestCase {
         
         // Simulate API response with one user
         let userPayload = UserPayload.dummy(userId: .unique)
-        let response = Result<UserListPayload<ExtraData.User>, Error>.success(.init(users: [userPayload]))
+        let response = Result<UserListPayload, Error>.success(.init(users: [userPayload]))
         apiClient.test_simulateResponse(response)
         
         // Assert the database error is propogated
@@ -231,7 +229,7 @@ final class UserUpdater_Tests: StressTestCase {
         
         // Simulate API response with empty users list
         let userPayload = UserPayload.dummy(userId: .unique)
-        let response = Result<UserListPayload<ExtraData.User>, Error>.success(.init(users: [userPayload]))
+        let response = Result<UserListPayload, Error>.success(.init(users: [userPayload]))
         apiClient.test_simulateResponse(response)
         
         // Load the user
@@ -280,7 +278,7 @@ final class UserUpdater_Tests: StressTestCase {
         }
         
         // Simulate `flagUser` API response with success.
-        let payload = FlagUserPayload<NoExtraData>(
+        let payload = FlagUserPayload(
             currentUser: .dummy(userId: currentUserId, role: .user),
             flaggedUser: .dummy(userId: flaggedUserId)
         )
@@ -344,7 +342,7 @@ final class UserUpdater_Tests: StressTestCase {
         }
         
         // Simulate API response with success.
-        let payload = FlagUserPayload<NoExtraData>(
+        let payload = FlagUserPayload(
             currentUser: .dummy(userId: .unique, role: .user),
             flaggedUser: .dummy(userId: .unique)
         )

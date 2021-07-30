@@ -10,26 +10,6 @@ public extension CustomData {
     static var defaultValue: Self { .init() }
 }
 
-public func CustomDataFromExtraData<T: ExtraData>(_ extraData: T) -> CustomData {
-    // TODO: replace this with something more efficient!
-
-    let data: Data
-    do {
-        data = try JSONEncoder.default.encode(extraData)
-    } catch {
-        return .defaultValue
-    }
-
-    let extraDataMap: CustomData
-    do {
-        extraDataMap = try JSONSerialization.jsonObject(with: data, options: []) as? CustomData ?? [:]
-    } catch {
-        return .defaultValue
-    }
-
-    return extraDataMap
-}
-
 /// A `RawJSON` type.
 /// Used to store and operate objects of unknown structure that's not possible to decode.
 /// https://forums.swift.org/t/new-unevaluated-type-for-decoder-to-allow-later-re-encoding-of-data-with-unknown-structure/11117

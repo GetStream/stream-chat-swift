@@ -95,8 +95,7 @@ class ChannelController_SwiftUI_Tests: iOS13TestCase {
             updatedAt: .unique,
             lastActiveAt: .unique,
             teams: [],
-            extraData: .defaultValue,
-            extraDataMap: [:]
+            extraData: .defaultValue
         )
         
         // Simulate typing users change
@@ -114,13 +113,13 @@ class ChannelController_SwiftUI_Tests: iOS13TestCase {
 class ChannelControllerMock: ChatChannelController {
     @Atomic var synchronize_called = false
     
-    var channel_simulated: _ChatChannel<NoExtraData>?
-    override var channel: _ChatChannel<NoExtraData>? {
+    var channel_simulated: ChatChannel?
+    override var channel: ChatChannel? {
         channel_simulated
     }
     
-    var messages_simulated: [_ChatMessage<NoExtraData>]?
-    override var messages: LazyCachedMapCollection<_ChatMessage<NoExtraData>> {
+    var messages_simulated: [ChatMessage]?
+    override var messages: LazyCachedMapCollection<ChatMessage> {
         messages_simulated.map { $0.lazyCachedMap { $0 } } ?? super.messages
     }
 
@@ -155,8 +154,7 @@ extension ChatMessage {
             parentMessageId: nil,
             showReplyInChannel: true,
             replyCount: 2,
-            extraData: .init(),
-            extraDataMap: [:],
+            extraData: .defaultValue,
             quotedMessage: { nil },
             isSilent: false,
             reactionScores: ["": 1],

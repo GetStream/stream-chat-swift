@@ -15,7 +15,7 @@ class ChannelEditDetailPayload_Tests: XCTestCase {
         let invite: UserId = .unique
         
         // Create ChannelEditDetailPayload
-        let payload = ChannelEditDetailPayload<NoExtraData>(
+        let payload = ChannelEditDetailPayload(
             cid: cid,
             name: name,
             imageURL: imageURL,
@@ -42,7 +42,7 @@ class ChannelEditDetailPayload_Tests: XCTestCase {
     
     func test_apiPath() {
         // Create payload without id specified
-        let payload1: ChannelEditDetailPayload<NoExtraData> = .init(
+        let payload1: ChannelEditDetailPayload = .init(
             type: .messaging,
             name: .unique,
             imageURL: .unique(),
@@ -57,7 +57,7 @@ class ChannelEditDetailPayload_Tests: XCTestCase {
         
         // Create payload with id and type specified
         let cid: ChannelId = .unique
-        let payload2: ChannelEditDetailPayload<NoExtraData> = .init(
+        let payload2: ChannelEditDetailPayload = .init(
             cid: cid,
             name: .unique,
             imageURL: .unique(),

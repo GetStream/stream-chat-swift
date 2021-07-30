@@ -7,7 +7,7 @@ import Foundation
 
 extension CurrentUserPayload {
     /// Returns a dummy current user payload with the given UserId and extra data
-    static func dummy<T: ExtraDataTypes>(
+    static func dummy(
         userId: UserId,
         name: String = .unique,
         imageURL: URL? = nil,
@@ -19,13 +19,12 @@ extension CurrentUserPayload {
         isBanned: Bool = true,
         role: UserRole,
         unreadCount: UnreadCount? = .dummy,
-        extraData: T.User = .defaultValue,
-        extraDataMap: [String: RawJSON] = [:],
+        extraData: CustomData = .defaultValue,
         devices: [DevicePayload] = [],
-        mutedUsers: [MutedUserPayload<T.User>] = [],
+        mutedUsers: [MutedUserPayload] = [],
         teams: [TeamId] = [],
-        mutedChannels: [MutedChannelPayload<T>] = []
-    ) -> CurrentUserPayload<T> {
+        mutedChannels: [MutedChannelPayload] = []
+    ) -> CurrentUserPayload {
         .init(
             id: userId,
             name: name,
@@ -39,7 +38,6 @@ extension CurrentUserPayload {
             isBanned: isBanned,
             teams: teams,
             extraData: extraData,
-            extraDataMap: extraDataMap,
             devices: devices,
             mutedUsers: mutedUsers,
             mutedChannels: mutedChannels,
@@ -48,13 +46,13 @@ extension CurrentUserPayload {
     }
 
     /// Returns a dummy current user payload with the given user payload
-    static func dummy<T: ExtraDataTypes>(
-        userPayload: UserPayload<T.User>,
+    static func dummy(
+        userPayload: UserPayload,
         unreadCount: UnreadCount? = .dummy,
         devices: [DevicePayload] = [],
-        mutedUsers: [MutedUserPayload<T.User>] = [],
-        mutedChannels: [MutedChannelPayload<T>] = []
-    ) -> CurrentUserPayload<T> {
+        mutedUsers: [MutedUserPayload] = [],
+        mutedChannels: [MutedChannelPayload] = []
+    ) -> CurrentUserPayload {
         .init(
             id: userPayload.id,
             name: userPayload.name,
@@ -68,7 +66,6 @@ extension CurrentUserPayload {
             isBanned: userPayload.isBanned,
             teams: userPayload.teams,
             extraData: userPayload.extraData,
-            extraDataMap: userPayload.extraDataMap,
             devices: devices,
             mutedUsers: mutedUsers,
             mutedChannels: mutedChannels,

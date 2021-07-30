@@ -5,7 +5,7 @@
 @testable import StreamChat
 
 /// Mock implementation of `ChatClientUpdater`
-class ChatClientUpdaterMock: ChatClientUpdater<ExtraData> {
+class ChatClientUpdaterMock: ChatClientUpdater {
     @Atomic var prepareEnvironment_newToken: Token?
     var prepareEnvironment_called: Bool { prepareEnvironment_newToken != nil }
 
@@ -18,7 +18,7 @@ class ChatClientUpdaterMock: ChatClientUpdater<ExtraData> {
     var reloadUserIfNeeded_callsCount = 0
     @Atomic var reloadUserIfNeeded_completion: ((Error?) -> Void)?
     @Atomic var reloadUserIfNeeded_callSuper: (() -> Void)?
-    @Atomic var reloadUserIfNeeded_userConnectionProvider: _UserConnectionProvider<ExtraData>?
+    @Atomic var reloadUserIfNeeded_userConnectionProvider: UserConnectionProvider?
 
     @Atomic var connect_called = false
     @Atomic var connect_completion: ((Error?) -> Void)?
@@ -37,7 +37,7 @@ class ChatClientUpdaterMock: ChatClientUpdater<ExtraData> {
 
     override func reloadUserIfNeeded(
         userInfo: UserInfo?,
-        userConnectionProvider: _UserConnectionProvider<ExtraData>?,
+        userConnectionProvider: UserConnectionProvider?,
         completion: ((Error?) -> Void)?
     ) {
         reloadUserIfNeeded_called = true

@@ -9,8 +9,7 @@ extension MutedUserPayload {
     /// Returns a muted user with the given `userId` and `extraData`
     static func dummy(
         userId: UserId,
-        extraData: ExtraData = .defaultValue,
-        extraDataMap: CustomData = [:]
+        extraData: CustomData = .defaultValue
     ) -> Self {
         .init(
             mutedUser: .init(
@@ -25,8 +24,7 @@ extension MutedUserPayload {
                 isInvisible: true,
                 isBanned: true,
                 teams: [],
-                extraData: extraData,
-                extraDataMap: extraDataMap
+                extraData: extraData
             ),
             created: .unique,
             updated: .unique

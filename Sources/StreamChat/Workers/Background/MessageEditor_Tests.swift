@@ -7,12 +7,10 @@
 import XCTest
 
 final class MessageEditor_Tests: StressTestCase {
-    typealias ExtraData = NoExtraData
-    
     var webSocketClient: WebSocketClientMock!
     var apiClient: APIClientMock!
     var database: DatabaseContainerMock!
-    var editor: MessageEditor<ExtraData>!
+    var editor: MessageEditor!
     
     // MARK: - Setup
     

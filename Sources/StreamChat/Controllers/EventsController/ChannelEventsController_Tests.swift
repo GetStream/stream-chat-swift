@@ -233,7 +233,7 @@ final class ChannelEventsController_Tests: StressTestCase {
         
         // Simulate incoming events.
         let currentChannelEvent = try ChannelUpdatedEvent(
-            from: EventPayload<NoExtraData>(
+            from: EventPayload(
                 eventType: .channelUpdated,
                 cid: cid
             )

@@ -37,7 +37,7 @@ class DatabaseSession_Tests: StressTestCase {
         }
         
         // Try to load the saved channel from DB
-        var loadedChannel: _ChatChannel<NoExtraData>? {
+        var loadedChannel: ChatChannel? {
             database.viewContext.channel(cid: channelId)?.asModel()
         }
         
@@ -45,7 +45,7 @@ class DatabaseSession_Tests: StressTestCase {
         
         // Try to load a saved channel owner from DB
         if let userId = channelPayload.channel.createdBy?.id {
-            var loadedUser: _ChatUser<NoExtraData>? {
+            var loadedUser: ChatUser? {
                 database.viewContext.user(id: userId)?.asModel()
             }
             
@@ -54,7 +54,7 @@ class DatabaseSession_Tests: StressTestCase {
         
         // Try to load the saved member from DB
         if let member = channelPayload.channel.members?.first {
-            var loadedMember: _ChatUser<NoExtraData>? {
+            var loadedMember: ChatUser? {
                 database.viewContext.member(userId: member.user.id, cid: channelId)?.asModel()
             }
             
@@ -67,9 +67,9 @@ class DatabaseSession_Tests: StressTestCase {
         let channelId: ChannelId = .unique
         let messageId: MessageId = .unique
         
-        let channelPayload: ChannelDetailPayload<NoExtraData> = dummyPayload(with: channelId).channel
+        let channelPayload: ChannelDetailPayload = dummyPayload(with: channelId).channel
         
-        let userPayload: UserPayload<NoExtraData> = .init(
+        let userPayload: UserPayload = .init(
             id: .unique,
             name: .unique,
             imageURL: .unique(),
@@ -80,11 +80,10 @@ class DatabaseSession_Tests: StressTestCase {
             isOnline: true,
             isInvisible: true,
             isBanned: true,
-            extraData: .defaultValue,
-            extraDataMap: [:]
+            extraData: .defaultValue
         )
         
-        let messagePayload = MessagePayload<NoExtraData>(
+        let messagePayload = MessagePayload(
             id: messageId,
             type: .regular,
             user: userPayload,
@@ -94,14 +93,13 @@ class DatabaseSession_Tests: StressTestCase {
             showReplyInChannel: false,
             mentionedUsers: [],
             replyCount: 0,
-            extraData: .init(),
-            extraDataMap: [:],
+            extraData: .defaultValue,
             reactionScores: [:],
             isSilent: false,
             attachments: []
         )
         
-        let eventPayload: EventPayload<NoExtraData> = .init(
+        let eventPayload: EventPayload = .init(
             eventType: .messageNew,
             connectionId: .unique,
             cid: channelId,
@@ -126,13 +124,13 @@ class DatabaseSession_Tests: StressTestCase {
         }
         
         // Try to load the saved message from DB
-        var loadedMessage: _ChatMessage<NoExtraData>? {
+        var loadedMessage: ChatMessage? {
             database.viewContext.message(id: messageId)?.asModel()
         }
         AssertAsync.willBeTrue(loadedMessage != nil)
         
         // Verify the channel has the message
-        let loadedChannel: _ChatChannel<NoExtraData> = try XCTUnwrap(database.viewContext.channel(cid: channelId)?.asModel())
+        let loadedChannel: ChatChannel = try XCTUnwrap(database.viewContext.channel(cid: channelId)?.asModel())
         let message = try XCTUnwrap(loadedMessage)
         XCTAssert(loadedChannel.latestMessages.contains(message))
     }
@@ -238,7 +236,7 @@ class DatabaseSession_Tests: StressTestCase {
     }
     
     func test_saveEvent_unreadCountFromEventPayloadIsApplied() throws {
-        let eventPayload = EventPayload<NoExtraData>(
+        let eventPayload = EventPayload(
             eventType: .messageNew,
             connectionId: .unique,
             cid: .unique,
@@ -276,7 +274,7 @@ class DatabaseSession_Tests: StressTestCase {
     
     func test_saveEvent_resetsLastReceivedEventDate_withEventCreatedAtValue() throws {
         // Create event payload with specific `createdAt` date
-        let eventPayload = EventPayload<NoExtraData>(
+        let eventPayload = EventPayload(
             eventType: .messageNew,
             connectionId: .unique,
             cid: .unique,
@@ -303,7 +301,7 @@ class DatabaseSession_Tests: StressTestCase {
     
     func test_saveEvent_doesntResetLastReceivedEventDate_whenEventCreatedAtValueIsNil() throws {
         // Create event payload with missing `createdAt`
-        let eventPayload = EventPayload<NoExtraData>(
+        let eventPayload = EventPayload(
             eventType: .messageNew,
             connectionId: .unique,
             cid: .unique,

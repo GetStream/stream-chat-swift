@@ -8,7 +8,7 @@ import XCTest
 
 final class UserWatchingEventMiddleware_Tests: XCTestCase {
     var database: DatabaseContainerMock!
-    var middleware: UserWatchingEventMiddleware<NoExtraData>!
+    var middleware: UserWatchingEventMiddleware!
     
     // MARK: - Set up
     
@@ -39,7 +39,7 @@ final class UserWatchingEventMiddleware_Tests: XCTestCase {
     }
     
     func tests_middleware_forwardsTheEvent_ifDatabaseWriteGeneratesError() throws {
-        let eventPayload: EventPayload<NoExtraData> = .init(
+        let eventPayload: EventPayload = .init(
             eventType: .userStartWatching,
             cid: .unique,
             user: .dummy(userId: .unique),
@@ -65,7 +65,7 @@ final class UserWatchingEventMiddleware_Tests: XCTestCase {
         let userId = UserId.unique
         let watcherCount = Int.random(in: 100...200)
         // Create userStartWatching event
-        let eventPayload: EventPayload<NoExtraData> = .init(
+        let eventPayload: EventPayload = .init(
             eventType: .userStartWatching,
             cid: cid,
             user: .dummy(userId: userId),
@@ -103,7 +103,7 @@ final class UserWatchingEventMiddleware_Tests: XCTestCase {
         let watchingUserId = database.viewContext.channel(cid: cid)!.watchers.first!.id
         let watcherCount = Int.random(in: 100...200)
         // Create userStopWatching event
-        let eventPayload: EventPayload<NoExtraData> = .init(
+        let eventPayload: EventPayload = .init(
             eventType: .userStopWatching,
             cid: cid,
             user: .dummy(userId: watchingUserId),

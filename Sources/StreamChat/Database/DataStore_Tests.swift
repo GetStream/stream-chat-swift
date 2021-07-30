@@ -8,11 +8,11 @@ import XCTest
 
 class DataStore_Tests: StressTestCase {
     // We use `_` because `Client<ExtraData>!` doesn't conform to `DataStoreProvider`
-    var _client: _ChatClient<NoExtraData>!
+    var _client: ChatClient!
     
     override func setUp() {
         super.setUp()
-        _client = _ChatClient.mock
+        _client = ChatClient.mock
     }
     
     override func tearDown() {
@@ -50,5 +50,5 @@ class DataStore_Tests: StressTestCase {
 
 // Make `DataStore_Tests` to test is the same way we will use it.
 extension DataStore_Tests: DataStoreProvider {
-    var client: _ChatClient<NoExtraData> { _client }
+    var client: ChatClient { _client }
 }

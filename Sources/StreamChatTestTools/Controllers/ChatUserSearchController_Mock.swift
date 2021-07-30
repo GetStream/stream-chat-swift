@@ -6,7 +6,7 @@ import Foundation
 @testable import StreamChat
 
 public class ChatUserSearchController_Mock: ChatUserSearchController {
-    public static func mock() -> ChatUserSearchController_Mock<ExtraData> {
+    public static func mock() -> ChatUserSearchController_Mock {
         .init(client: .mock())
     }
     

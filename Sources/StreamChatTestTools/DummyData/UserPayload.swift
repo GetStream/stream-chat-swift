@@ -5,14 +5,13 @@
 import Foundation
 @testable import StreamChat
 
-extension UserPayload where ExtraData == NoExtraData {
+extension UserPayload {
     /// Returns a dummy user payload with the given `id` and `extraData`
     static func dummy(
         userId: UserId,
         name: String = .unique,
         imageUrl: URL? = .unique(),
-        extraData: NoExtraData = .defaultValue,
-        extraDataMap: CustomData = .defaultValue,
+        extraData: CustomData = .defaultValue,
         teams: [TeamId] = [.unique, .unique, .unique],
         isBanned: Bool = false,
         updatedAt: Date = .unique
@@ -29,8 +28,7 @@ extension UserPayload where ExtraData == NoExtraData {
             isInvisible: true,
             isBanned: isBanned,
             teams: teams,
-            extraData: extraData,
-            extraDataMap: extraDataMap
+            extraData: extraData
         )
     }
 }

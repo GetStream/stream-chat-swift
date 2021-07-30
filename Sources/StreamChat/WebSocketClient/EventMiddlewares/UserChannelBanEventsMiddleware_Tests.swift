@@ -8,7 +8,7 @@ import XCTest
 
 final class UserChannelBanEventsMiddleware_Tests: XCTestCase {
     var database: DatabaseContainerMock!
-    var middleware: UserChannelBanEventsMiddleware<NoExtraData>!
+    var middleware: UserChannelBanEventsMiddleware!
 
     // MARK: - Set up
 
@@ -39,7 +39,7 @@ final class UserChannelBanEventsMiddleware_Tests: XCTestCase {
     }
 
     func tests_middleware_forwardsBanEvent_ifDatabaseWriteGeneratesError() throws {
-        let eventPayload: EventPayload<NoExtraData> = .init(
+        let eventPayload: EventPayload = .init(
             eventType: .userBanned,
             cid: .unique,
             user: .dummy(userId: .unique, name: "Luke", imageUrl: nil, extraData: .defaultValue),
@@ -60,7 +60,7 @@ final class UserChannelBanEventsMiddleware_Tests: XCTestCase {
     }
 
     func tests_middleware_forwardsUnbanEvent_ifDatabaseWriteGeneratesError() throws {
-        let eventPayload: EventPayload<NoExtraData> = .init(
+        let eventPayload: EventPayload = .init(
             eventType: .userUnbanned,
             cid: .unique,
             user: .dummy(userId: .unique, name: "Luke", imageUrl: nil, extraData: .defaultValue)
@@ -80,7 +80,7 @@ final class UserChannelBanEventsMiddleware_Tests: XCTestCase {
 
     func tests_middleware_handlesUserBannedEventCorrectly() throws {
         // Create event payload
-        let eventPayload: EventPayload<NoExtraData> = .init(
+        let eventPayload: EventPayload = .init(
             eventType: .userBanned,
             cid: .unique,
             user: .dummy(userId: .unique, name: "Luke", imageUrl: nil, extraData: .defaultValue),
@@ -111,7 +111,7 @@ final class UserChannelBanEventsMiddleware_Tests: XCTestCase {
 
     func tests_middleware_handlesUserUnbannedEventCorrectly() throws {
         // Create event payload
-        let eventPayload: EventPayload<NoExtraData> = .init(
+        let eventPayload: EventPayload = .init(
             eventType: .userUnbanned,
             cid: .unique,
             user: .dummy(userId: .unique, name: "Luke", imageUrl: nil, extraData: .defaultValue),

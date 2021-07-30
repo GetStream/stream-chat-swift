@@ -23,7 +23,7 @@ class ChannelListController_Tests: StressTestCase {
         super.setUp()
         
         env = TestEnvironment()
-        client = _ChatClient.mock
+        client = ChatClient.mock
         query = .init(filter: .in(.members, values: [.unique]))
         controller = ChatChannelListController(query: query, client: client, environment: env.environment)
         controllerCallbackQueueID = UUID()
@@ -458,7 +458,7 @@ class ChannelListController_Tests: StressTestCase {
 }
 
 private class TestEnvironment {
-    @Atomic var channelListUpdater: ChannelListUpdaterMock<NoExtraData>?
+    @Atomic var channelListUpdater: ChannelListUpdaterMock?
     
     lazy var environment: ChatChannelListController.Environment =
         .init(channelQueryUpdaterBuilder: { [unowned self] in
@@ -487,7 +487,7 @@ private class TestDelegate: QueueAwareDelegate, ChatChannelListControllerDelegat
     }
 
     func controller(
-        _ controller: _ChatChannelListController<NoExtraData>,
+        _ controller: ChatChannelListController,
         didChangeChannels changes: [ListChange<ChatChannel>]
     ) {
         didChangeChannels_changes = changes
@@ -496,7 +496,7 @@ private class TestDelegate: QueueAwareDelegate, ChatChannelListControllerDelegat
 }
 
 // A concrete `_ChatChannelListControllerDelegate` implementation allowing capturing the delegate calls.
-private class TestDelegateGeneric: QueueAwareDelegate, _ChatChannelListControllerDelegate {
+private class TestDelegateGeneric: QueueAwareDelegate, ChatChannelListControllerDelegate {
     @Atomic var state: DataController.State?
     @Atomic var willChangeChannels_called = false
     @Atomic var didChangeChannels_changes: [ListChange<ChatChannel>]?
@@ -506,13 +506,13 @@ private class TestDelegateGeneric: QueueAwareDelegate, _ChatChannelListControlle
         validateQueue()
     }
 
-    func controllerWillChangeChannels(_ controller: _ChatChannelListController<NoExtraData>) {
+    func controllerWillChangeChannels(_ controller: ChatChannelListController) {
         willChangeChannels_called = true
         validateQueue()
     }
 
     func controller(
-        _ controller: _ChatChannelListController<NoExtraData>,
+        _ controller: ChatChannelListController,
         didChangeChannels changes: [ListChange<ChatChannel>]
     ) {
         didChangeChannels_changes = changes

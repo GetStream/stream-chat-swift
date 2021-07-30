@@ -5,29 +5,6 @@
 import CoreData
 import Foundation
 
-/// A protocol defining extra data types used by `ChatClient`.
-///
-/// You can add additional (extra) data to entities in the chat system. For now, you can add extra data to `ChatUser`,
-/// `ChatChannel`, and `ChatMessage`.
-///
-/// Example usage:
-/// ```
-///   enum CustomDataTypes: ExtraDataTypes {
-///     typealias Channel = MyCustomChannelExtraData
-///     typealias Message = MyCustomMessageExtraData
-///   }
-///
-///   let client = Client<CustomDataTypes>(currentUser: user, config: config)
-/// ```
-///
-public protocol ExtraDataTypes {
-    /// An extra data type for `ChatMessage`.
-    associatedtype Message: MessageExtraData = NoExtraData
-    
-    /// An extra data type for `ChatChannel`.
-    associatedtype Channel: ChannelExtraData = NoExtraData
-}
-
 /// The root object representing a Stream Chat.
 ///
 /// Typically, an app contains just one instance of `ChatClient`. However, it's possible to have multiple instances if your use

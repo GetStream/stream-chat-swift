@@ -69,7 +69,7 @@ class MessageController_Combine_Tests: iOS13TestCase {
     
     func test_repliesChangesPublisher() {
         // Setup Recording publishers
-        var recording = Record<[ListChange<_ChatMessage<NoExtraData>>], Never>.Recording()
+        var recording = Record<[ListChange<ChatMessage>], Never>.Recording()
         
         // Setup the chain
         messageController

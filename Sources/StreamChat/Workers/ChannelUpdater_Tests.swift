@@ -7,8 +7,6 @@
 import XCTest
 
 class ChannelUpdater_Tests: StressTestCase {
-    typealias ExtraData = NoExtraData
-    
     var webSocketClient: WebSocketClientMock!
     var apiClient: APIClientMock!
     var database: DatabaseContainerMock!
@@ -83,7 +81,7 @@ class ChannelUpdater_Tests: StressTestCase {
 
     func test_updateChannelQuery_completionForCreatedChannelCalled() {
         // Simulate `update(channelQuery:)` call
-        let query = _ChannelQuery(channelPayload: .unique)
+        let query = ChannelQuery(channelPayload: .unique)
         var cid: ChannelId = .unique
 
         var channel: ChatChannel? {
@@ -118,10 +116,10 @@ class ChannelUpdater_Tests: StressTestCase {
         
         _ = try waitFor { completion in
             database.write({ (session) in
-                let currentUserPayload: CurrentUserPayload<NoExtraData> = .dummy(
+                let currentUserPayload: CurrentUserPayload = .dummy(
                     userId: currentUserId,
                     role: .admin,
-                    extraData: NoExtraData.defaultValue
+                    extraData: .defaultValue
                 )
 
                 try session.saveCurrentUser(payload: currentUserPayload)
@@ -203,10 +201,10 @@ class ChannelUpdater_Tests: StressTestCase {
         
         _ = try waitFor { completion in
             database.write({ (session) in
-                let currentUserPayload: CurrentUserPayload<NoExtraData> = .dummy(
+                let currentUserPayload: CurrentUserPayload = .dummy(
                     userId: currentUserId,
                     role: .admin,
-                    extraData: NoExtraData.defaultValue
+                    extraData: .defaultValue
                 )
 
                 try session.saveCurrentUser(payload: currentUserPayload)
@@ -239,7 +237,7 @@ class ChannelUpdater_Tests: StressTestCase {
     // MARK: - Update channel
 
     func test_updateChannel_makesCorrectAPICall() {
-        let channelPayload: ChannelEditDetailPayload<NoExtraData> = .unique
+        let channelPayload: ChannelEditDetailPayload = .unique
 
         // Simulate `updateChannel(channelPayload:, completion:)` call
         channelUpdater.updateChannel(channelPayload: channelPayload)
@@ -855,7 +853,7 @@ class ChannelUpdater_Tests: StressTestCase {
         channelUpdater.startWatching(cid: .unique) { completionCalledError = $0 }
         
         let error = TestError()
-        apiClient.test_simulateResponse(Result<ChannelPayload<NoExtraData>, Error>.failure(error))
+        apiClient.test_simulateResponse(Result<ChannelPayload, Error>.failure(error))
         
         AssertAsync.willBeEqual(completionCalledError as? TestError, error)
     }
@@ -905,7 +903,7 @@ class ChannelUpdater_Tests: StressTestCase {
         
         channelUpdater.channelWatchers(query: query)
         
-        let referenceEndpoint: Endpoint<ChannelPayload<NoExtraData>> = .channelWatchers(query: query)
+        let referenceEndpoint: Endpoint<ChannelPayload> = .channelWatchers(query: query)
         
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
     }
@@ -922,7 +920,7 @@ class ChannelUpdater_Tests: StressTestCase {
         XCTAssertFalse(completionCalled)
         
         apiClient.test_simulateResponse(
-            Result<ChannelPayload<NoExtraData>, Error>.success(dummyPayload(with: cid))
+            Result<ChannelPayload, Error>.success(dummyPayload(with: cid))
         )
         
         AssertAsync.willBeTrue(completionCalled)
@@ -934,7 +932,7 @@ class ChannelUpdater_Tests: StressTestCase {
         channelUpdater.channelWatchers(query: query) { completionCalledError = $0 }
         
         let error = TestError()
-        apiClient.test_simulateResponse(Result<ChannelPayload<NoExtraData>, Error>.failure(error))
+        apiClient.test_simulateResponse(Result<ChannelPayload, Error>.failure(error))
         
         AssertAsync.willBeEqual(completionCalledError as? TestError, error)
     }
@@ -961,7 +959,7 @@ class ChannelUpdater_Tests: StressTestCase {
         
         // Simulate successful response
         apiClient.test_simulateResponse(
-            Result<ChannelPayload<NoExtraData>, Error>.success(dummyPayload(with: cid, watchers: []))
+            Result<ChannelPayload, Error>.success(dummyPayload(with: cid, watchers: []))
         )
         
         // Assert that the old watcher is replaced

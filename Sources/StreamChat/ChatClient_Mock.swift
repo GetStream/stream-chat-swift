@@ -8,7 +8,7 @@ import Foundation
 import XCTest
 
 extension ChatClient {
-    static var mock: _ChatClient {
+    static var mock: ChatClient {
         .init(
             config: .init(apiKey: .init(.unique)),
             workerBuilders: [],
@@ -127,7 +127,7 @@ class ChatClientMock: ChatClient {
 }
 
 extension ChatClient.Environment {
-    static var mock: _ChatClient.Environment {
+    static var mock: ChatClient.Environment {
         .init(
             apiClientBuilder: APIClientMock.init,
             webSocketClientBuilder: {
@@ -157,7 +157,7 @@ extension ChatClient.Environment {
             requestDecoderBuilder: DefaultRequestDecoder.init,
             eventDecoderBuilder: EventDecoder.init,
             notificationCenterBuilder: EventNotificationCenter.init,
-            clientUpdaterBuilder: ChatClientUpdaterMock<ExtraData>.init
+            clientUpdaterBuilder: ChatClientUpdaterMock.init
         )
     }
 }

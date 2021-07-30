@@ -20,7 +20,7 @@ final class CurrentUserController_Tests: StressTestCase {
         super.setUp()
         
         env = TestEnvironment()
-        client = _ChatClient.mock
+        client = ChatClient.mock
         controller = CurrentChatUserController(client: client, environment: env.currentUserControllerEnvironment)
         controllerCallbackQueueID = UUID()
         controller.callbackQueue = .testQueue(withId: controllerCallbackQueueID)
@@ -196,8 +196,8 @@ final class CurrentUserController_Tests: StressTestCase {
         // Call synchronize to get updates from DB
         controller.synchronize()
         
-        let extraData = NoExtraData.defaultValue
-        let currentUserPayload: CurrentUserPayload<NoExtraData> = .dummy(
+        let extraData: CustomData = .defaultValue
+        let currentUserPayload: CurrentUserPayload = .dummy(
             userId: .unique,
             role: .user,
             extraData: extraData
@@ -223,8 +223,8 @@ final class CurrentUserController_Tests: StressTestCase {
         // Call synchronize to get updates from DB
         controller.synchronize()
         
-        var extraData = NoExtraData.defaultValue
-        var currentUserPayload: CurrentUserPayload<NoExtraData> = .dummy(
+        var extraData: CustomData = .defaultValue
+        var currentUserPayload: CurrentUserPayload = .dummy(
             userId: .unique,
             role: .user,
             extraData: extraData
@@ -240,7 +240,7 @@ final class CurrentUserController_Tests: StressTestCase {
         }
         
         // Update current user data
-        extraData = NoExtraData.defaultValue
+        extraData = .defaultValue
         currentUserPayload = .dummy(
             userId: currentUserPayload.id,
             role: currentUserPayload.role,
@@ -271,7 +271,7 @@ final class CurrentUserController_Tests: StressTestCase {
 
         // Simulate saving current user to a database
         try client.databaseContainer.writeSynchronously {
-            let currentUserPayload: CurrentUserPayload<NoExtraData> = .dummy(
+            let currentUserPayload: CurrentUserPayload = .dummy(
                 userId: .unique,
                 role: .user,
                 unreadCount: unreadCount
@@ -615,7 +615,7 @@ private class TestDelegate: QueueAwareDelegate, CurrentChatUserControllerDelegat
     }
 }
 
-private class TestDelegateGeneric: QueueAwareDelegate, _CurrentChatUserControllerDelegate {
+private class TestDelegateGeneric: QueueAwareDelegate, CurrentChatUserControllerDelegate {
     @Atomic var state: DataController.State?
     @Atomic var didChangeCurrentUser_change: EntityChange<CurrentChatUser>?
     @Atomic var didChangeCurrentUserUnreadCount_count: UnreadCount?
@@ -644,8 +644,8 @@ private class TestEnvironment {
     var currentUserObserverItem: CurrentChatUser?
     var currentUserObserverStartUpdatingError: Error?
 
-    var chatClientUpdater: ChatClientUpdaterMock<NoExtraData>!
-    var currentUserUpdater: CurrentUserUpdaterMock<NoExtraData>!
+    var chatClientUpdater: ChatClientUpdaterMock!
+    var currentUserUpdater: CurrentUserUpdaterMock!
 
     lazy var currentUserControllerEnvironment: CurrentChatUserController
         .Environment = .init(currentUserObserverBuilder: { [unowned self] in
@@ -654,7 +654,7 @@ private class TestEnvironment {
             self.currentUserObserver.item_mock = self.currentUserObserverItem
             return self.currentUserObserver!
         }, currentUserUpdaterBuilder: { [unowned self] db, client in
-            self.currentUserUpdater = CurrentUserUpdaterMock<NoExtraData>(database: db, apiClient: client)
+            self.currentUserUpdater = CurrentUserUpdaterMock(database: db, apiClient: client)
             return self.currentUserUpdater!
         }, chatClientUpdaterBuilder: { [unowned self] in
             self.chatClientUpdater = ChatClientUpdaterMock(client: $0)

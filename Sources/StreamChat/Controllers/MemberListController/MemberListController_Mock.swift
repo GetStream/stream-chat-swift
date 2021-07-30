@@ -7,8 +7,8 @@ import XCTest
 
 /// A mock for `ChatChannelMemberListController`.
 final class ChatChannelMemberListControllerMock: ChatChannelMemberListController {
-    @Atomic var members_simulated: [ChatChannelMember<NoExtraData>]?
-    override var members: LazyCachedMapCollection<ChatChannelMember<NoExtraData>> {
+    @Atomic var members_simulated: [ChatChannelMember]?
+    override var members: LazyCachedMapCollection<ChatChannelMember> {
         members_simulated.map { $0.lazyCachedMap { $0 } } ?? super.members
     }
     

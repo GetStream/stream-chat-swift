@@ -6,7 +6,7 @@
 import XCTest
 
 /// Mock implementation of `UserUpdater`
-final class CurrentUserUpdaterMock: CurrentUserUpdater<ExtraData> {
+final class CurrentUserUpdaterMock: CurrentUserUpdater {
     @Atomic var updateUserData_currentUserId: UserId?
     @Atomic var updateUserData_name: String?
     @Atomic var updateUserData_imageURL: URL?

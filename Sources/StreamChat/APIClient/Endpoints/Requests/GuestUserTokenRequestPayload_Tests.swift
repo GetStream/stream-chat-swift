@@ -7,7 +7,7 @@ import XCTest
 
 final class GuestUserTokenRequestPayload_Tests: XCTestCase {
     func test_guestUserTokenRequestPayload_isEncodedCorrectly_withDefaultExtraData() throws {
-        let payload = GuestUserTokenRequestPayload<NoExtraData>(
+        let payload = GuestUserTokenRequestPayload(
             userId: .unique,
             name: .unique,
             imageURL: .unique(),
@@ -19,11 +19,11 @@ final class GuestUserTokenRequestPayload_Tests: XCTestCase {
     
     func test_guestUserTokenRequestPayload_isEncodedCorrectly_withCustomExtraData() throws {
         let company = "getstream.io"
-        let payload = GuestUserTokenRequestPayload<TestExtraData>(
+        let payload = GuestUserTokenRequestPayload(
             userId: .unique,
             name: .unique,
             imageURL: .unique(),
-            extraData: TestExtraData.User(company: company)
+            extraData: [company: .string(company)]
         )
         
         try verify(
@@ -35,7 +35,7 @@ final class GuestUserTokenRequestPayload_Tests: XCTestCase {
     // MARK: - Private
     
     private func verify(
-        _ payload: GuestUserTokenRequestPayload<ExtraData>,
+        _ payload: GuestUserTokenRequestPayload,
         isEncodedAs expected: [String: Any]
     ) throws {
         // Encode the user
@@ -44,12 +44,5 @@ final class GuestUserTokenRequestPayload_Tests: XCTestCase {
         
         // Assert encoding is correct
         AssertJSONEqual(json, expected)
-    }
-}
-
-private struct TestExtraData: ExtraDataTypes {
-    struct User: UserExtraData {
-        static var defaultValue = Self(company: "Stream")
-        let company: String
     }
 }

@@ -7,13 +7,11 @@
 import XCTest
 
 class ChannelWatchStateUpdater_Tests: StressTestCase {
-    typealias ExtraData = NoExtraData
-    
     var database: DatabaseContainerMock!
     var webSocketClient: WebSocketClientMock!
     var apiClient: APIClientMock!
     
-    var channelWatchStateUpdater: ChannelWatchStateUpdater<ExtraData>?
+    var channelWatchStateUpdater: ChannelWatchStateUpdater?
     
     override func setUp() {
         super.setUp()

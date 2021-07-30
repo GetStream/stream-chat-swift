@@ -20,7 +20,7 @@ final class ChatConnectionController_Tests: StressTestCase {
         super.setUp()
         
         env = TestEnvironment()
-        client = _ChatClient.mock
+        client = ChatClient.mock
         controller = ChatConnectionController(client: client, environment: env.connectionControllerEnvironment)
         controllerCallbackQueueID = UUID()
         controller.callbackQueue = .testQueue(withId: controllerCallbackQueueID)
@@ -80,7 +80,7 @@ final class ChatConnectionController_Tests: StressTestCase {
         var delegate: TestDelegateGeneric? = .init(expectedQueueId: callbackQueueID)
         
         // Set the delegate
-        controller.setDelegate(delegate)
+        controller.delegate = delegate
         
         // Stop keeping a delegate alive
         delegate = nil
@@ -159,7 +159,7 @@ private class TestDelegate: QueueAwareDelegate, ChatConnectionControllerDelegate
     }
 }
 
-private class TestDelegateGeneric: QueueAwareDelegate, _ChatConnectionControllerDelegate {
+private class TestDelegateGeneric: QueueAwareDelegate, ChatConnectionControllerDelegate {
     @Atomic var state: DataController.State?
     @Atomic var didUpdateConnectionStatus_statuses = [ConnectionStatus]()
     
@@ -175,7 +175,7 @@ private class TestDelegateGeneric: QueueAwareDelegate, _ChatConnectionController
 }
 
 private class TestEnvironment {
-    var chatClientUpdater: ChatClientUpdaterMock<NoExtraData>!
+    var chatClientUpdater: ChatClientUpdaterMock!
 
     lazy var connectionControllerEnvironment: ChatConnectionController
         .Environment = .init(chatClientUpdaterBuilder: { [unowned self] in

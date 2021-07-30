@@ -52,8 +52,7 @@ extension DatabaseSessionMock {
         underlyingSession.deleteQuery(query)
     }
     
-    func saveCurrentUser(payload: CurrentUserPayload) throws -> CurrentUserDTO
-        where ExtraData: ExtraDataTypes {
+    func saveCurrentUser(payload: CurrentUserPayload) throws -> CurrentUserDTO {
         try throwErrorIfNeeded()
         return try saveCurrentUser(payload: payload)
     }
@@ -103,8 +102,7 @@ extension DatabaseSessionMock {
         )
     }
     
-    func saveMessage<ExtraData>(payload: MessagePayload, for cid: ChannelId?) throws -> MessageDTO
-        where ExtraData: ExtraDataTypes {
+    func saveMessage(payload: MessagePayload, for cid: ChannelId?) throws -> MessageDTO {
         try throwErrorIfNeeded()
         return try underlyingSession.saveMessage(payload: payload, for: cid)
     }
@@ -130,8 +128,7 @@ extension DatabaseSessionMock {
         underlyingSession.reaction(messageId: messageId, userId: userId, type: type)
     }
     
-    func saveReaction<ExtraData>(payload: MessageReactionPayload<ExtraData>) throws -> MessageReactionDTO
-        where ExtraData: ExtraDataTypes {
+    func saveReaction(payload: MessageReactionPayload) throws -> MessageReactionDTO {
         try throwErrorIfNeeded()
         return try underlyingSession.saveReaction(payload: payload)
     }
@@ -140,8 +137,7 @@ extension DatabaseSessionMock {
         underlyingSession.delete(reaction: reaction)
     }
     
-    func saveChannelRead<ExtraData>(payload: ChannelReadPayload, for cid: ChannelId) throws -> ChannelReadDTO
-        where ExtraData: ExtraDataTypes {
+    func saveChannelRead(payload: ChannelReadPayload, for cid: ChannelId) throws -> ChannelReadDTO {
         try throwErrorIfNeeded()
         return try underlyingSession.saveChannelRead(payload: payload, for: cid)
     }
@@ -169,7 +165,7 @@ extension DatabaseSessionMock {
         underlyingSession.loadChannelReads(for: userId)
     }
     
-    func saveChannel<ExtraData>(
+    func saveChannel(
         payload: ChannelPayload,
         query: ChannelListQuery?
     ) throws -> ChannelDTO {

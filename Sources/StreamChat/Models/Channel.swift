@@ -222,9 +222,6 @@ extension ChatChannel {
     public var isUnread: Bool { unreadCount.messages > 0 }
 }
 
-/// Additional data fields `ChannelModel` can be extended with. You can use it to store your custom data related to a channel.
-public protocol ChannelExtraData: ExtraData {}
-
 /// A type-erased version of `ChannelModel<CustomData>`. Not intended to be used directly.
 public protocol AnyChannel {}
 extension ChatChannel: AnyChannel {}

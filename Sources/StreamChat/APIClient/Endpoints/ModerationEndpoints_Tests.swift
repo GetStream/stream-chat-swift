@@ -96,7 +96,7 @@ final class ModerationEndpoints_Tests: XCTestCase {
         for (flag, path) in testCases {
             let userId: UserId = .unique
             
-            let expectedEndpoint = Endpoint<FlagUserPayload<NoExtraData>>(
+            let expectedEndpoint = Endpoint<FlagUserPayload>(
                 path: path,
                 method: .post,
                 queryItems: nil,
@@ -105,7 +105,7 @@ final class ModerationEndpoints_Tests: XCTestCase {
             )
             
             // Build endpoint.
-            let endpoint: Endpoint<FlagUserPayload<NoExtraData>> = .flagUser(flag, with: userId)
+            let endpoint: Endpoint<FlagUserPayload> = .flagUser(flag, with: userId)
             
             // Assert endpoint is built correctly.
             XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
@@ -121,7 +121,7 @@ final class ModerationEndpoints_Tests: XCTestCase {
         for (flag, path) in testCases {
             let messageId: MessageId = .unique
             
-            let expectedEndpoint = Endpoint<FlagMessagePayload<NoExtraData>>(
+            let expectedEndpoint = Endpoint<FlagMessagePayload>(
                 path: path,
                 method: .post,
                 queryItems: nil,
@@ -130,7 +130,7 @@ final class ModerationEndpoints_Tests: XCTestCase {
             )
             
             // Build endpoint.
-            let endpoint: Endpoint<FlagMessagePayload<NoExtraData>> = .flagMessage(flag, with: messageId)
+            let endpoint: Endpoint<FlagMessagePayload> = .flagMessage(flag, with: messageId)
             
             // Assert endpoint is built correctly.
             XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))

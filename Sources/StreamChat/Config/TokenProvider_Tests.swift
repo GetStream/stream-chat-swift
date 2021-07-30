@@ -80,7 +80,7 @@ final class TokenProvider_Tests: StressTestCase {
         let userId: UserId = .unique
         let userName: String = .unique
         let imageURL: URL = .unique()
-        let extraData: NoExtraData = .defaultValue
+        let extraData: CustomData = .defaultValue
 
         // Create a client.
         let client = ChatClient.mock
@@ -100,7 +100,7 @@ final class TokenProvider_Tests: StressTestCase {
         }
 
         // Wait for the API call to guest endpoint.
-        let expectedEndpoint: Endpoint<GuestUserTokenPayload<NoExtraData>> = .guestUserToken(
+        let expectedEndpoint: Endpoint<GuestUserTokenPayload> = .guestUserToken(
             userId: userId,
             name: userName,
             imageURL: imageURL,
@@ -110,7 +110,7 @@ final class TokenProvider_Tests: StressTestCase {
 
         // Simulate successful response with a token.
         let token = Token.unique(userId: userId)
-        let tokenResult: Result<GuestUserTokenPayload<NoExtraData>, Error> = .success(
+        let tokenResult: Result<GuestUserTokenPayload, Error> = .success(
             .init(user: .dummy(userId: userId, role: .guest), token: token)
         )
         client.mockAPIClient.test_simulateResponse(tokenResult)
@@ -128,7 +128,7 @@ final class TokenProvider_Tests: StressTestCase {
         let userId: UserId = .unique
         let userName: String = .unique
         let imageURL: URL = .unique()
-        let extraData: NoExtraData = .defaultValue
+        let extraData: CustomData = .defaultValue
 
         // Create a client.
         let client = ChatClient.mock
@@ -148,7 +148,7 @@ final class TokenProvider_Tests: StressTestCase {
         }
 
         // Wait for the API call to guest endpoint.
-        let expectedEndpoint: Endpoint<GuestUserTokenPayload<NoExtraData>> = .guestUserToken(
+        let expectedEndpoint: Endpoint<GuestUserTokenPayload> = .guestUserToken(
             userId: userId,
             name: userName,
             imageURL: imageURL,
@@ -158,7 +158,7 @@ final class TokenProvider_Tests: StressTestCase {
 
         // Simulate error.
         let error = TestError()
-        let tokenResult: Result<GuestUserTokenPayload<NoExtraData>, Error> = .failure(error)
+        let tokenResult: Result<GuestUserTokenPayload, Error> = .failure(error)
         client.mockAPIClient.test_simulateResponse(tokenResult)
 
         // Wait the result is received.

@@ -6,13 +6,12 @@ import Foundation
 @testable import StreamChat
 
 extension MessageReactionPayload {
-    static func dummy<T: ExtraDataTypes>(
+    static func dummy(
         type: MessageReactionType = .init(rawValue: .unique),
         messageId: String,
-        user: UserPayload<T.User>,
-        extraData: T.MessageReaction = .defaultValue,
-        extraDataMap: CustomData = .defaultValue
-    ) -> MessageReactionPayload<T> {
+        user: UserPayload,
+        extraData: CustomData = .defaultValue
+    ) -> MessageReactionPayload {
         .init(
             type: type,
             score: .random(in: 0...10),
@@ -20,8 +19,7 @@ extension MessageReactionPayload {
             createdAt: .unique,
             updatedAt: .unique,
             user: user,
-            extraData: extraData,
-            extraDataMap: extraDataMap
+            extraData: extraData
         )
     }
 }

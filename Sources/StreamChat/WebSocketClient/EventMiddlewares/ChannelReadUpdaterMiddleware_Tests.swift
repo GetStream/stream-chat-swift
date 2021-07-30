@@ -7,7 +7,7 @@
 import XCTest
 
 class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
-    var middleware: ChannelReadUpdaterMiddleware<NoExtraData>!
+    var middleware: ChannelReadUpdaterMiddleware!
     fileprivate var database: DatabaseContainerMock!
     
     override func setUp() {
@@ -34,7 +34,7 @@ class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         }
         
         // Load the channel from the db and check the initial values
-        var loadedChannel: _ChatChannel<NoExtraData>? {
+        var loadedChannel: ChatChannel? {
             database.viewContext.channel(cid: channelId)?.asModel()
         }
 
@@ -52,7 +52,7 @@ class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         ].forEach { (user, expectedCount) in
 
             // Create a MessageNewEvent with a `createdAt` date before `oldReadDate`
-            let eldEventPayload = EventPayload<NoExtraData>(
+            let eldEventPayload = EventPayload(
                 eventType: .messageNew,
                 cid: channelId,
                 user: user,
@@ -74,7 +74,7 @@ class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
             XCTAssertEqual(loadedChannel?.reads.first?.unreadMessagesCount, 10)
 
             // Create a MessageNewEvent with a `createdAt` date later than `oldReadDate`
-            let eventPayload = EventPayload<NoExtraData>(
+            let eventPayload = EventPayload(
                 eventType: .messageNew,
                 cid: channelId,
                 user: user,
@@ -108,7 +108,7 @@ class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         }
         
         // Load the channel from the db and check the initial values
-        var loadedChannel: _ChatChannel<NoExtraData>? {
+        var loadedChannel: ChatChannel? {
             database.viewContext.channel(cid: channelId)?.asModel()
         }
 
@@ -126,7 +126,7 @@ class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         ].forEach { (user, expectedCount) in
 
             // Create a MessageNewEvent with a `createdAt` date before `oldReadDate`
-            let eldEventPayload = EventPayload<NoExtraData>(
+            let eldEventPayload = EventPayload(
                 eventType: .notificationMessageNew,
                 cid: channelId,
                 user: user,
@@ -149,7 +149,7 @@ class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
             XCTAssertEqual(loadedChannel?.reads.first?.unreadMessagesCount, 10)
 
             // Create a MessageNewEvent with a `createdAt` date later than `oldReadDate`
-            let eventPayload = EventPayload<NoExtraData>(
+            let eventPayload = EventPayload(
                 eventType: .notificationMessageNew,
                 cid: channelId,
                 user: user,
@@ -184,7 +184,7 @@ class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         }
         
         // Load the channel from the db and check the initial values
-        var loadedChannel: _ChatChannel<NoExtraData>? {
+        var loadedChannel: ChatChannel? {
             database.viewContext.channel(cid: channelId)?.asModel()
         }
 
@@ -194,7 +194,7 @@ class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         XCTAssertEqual(oldReadDate, Date(timeIntervalSince1970: 1))
         
         // Create a MessageNewEvent with a `createdAt` date later than `oldReadDate`
-        let eventPayload = EventPayload<NoExtraData>(
+        let eventPayload = EventPayload(
             eventType: .messageNew,
             cid: channelId,
             user: dummyUser(id: .unique),
@@ -229,7 +229,7 @@ class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         }
         
         // Load the channel from the db and check the if fields are correct
-        var loadedChannel: _ChatChannel<NoExtraData>? {
+        var loadedChannel: ChatChannel? {
             database.viewContext.channel(cid: channelId)?.asModel()
         }
         
@@ -240,7 +240,7 @@ class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         // with a read date later than original read
         let newReadDate = Date(timeIntervalSince1970: 2)
         // Create EventPayload for MessageReadEvent
-        let eventPayload = EventPayload<NoExtraData>(
+        let eventPayload = EventPayload(
             eventType: .messageRead,
             cid: channelId,
             user: dummyCurrentUser,
@@ -275,7 +275,7 @@ class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         }
         
         // Load the channel from the db and check the if fields are correct
-        var loadedChannel: _ChatChannel<NoExtraData>? {
+        var loadedChannel: ChatChannel? {
             database.viewContext.channel(cid: channelId)?.asModel()
         }
         
@@ -289,7 +289,7 @@ class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         // Create a MessageReadEvent from a channel member (but not currentUser)
         let newReadDate = Date(timeIntervalSince1970: 2)
         // Create EventPayload for MessageReadEvent
-        let eventPayload = EventPayload<NoExtraData>(
+        let eventPayload = EventPayload(
             eventType: .messageRead,
             cid: channelId,
             user: dummyUser(id: memberId),
@@ -324,7 +324,7 @@ class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         }
 
         // Load the channel from the db and check the if fields are correct
-        var loadedChannel: _ChatChannel<NoExtraData>? {
+        var loadedChannel: ChatChannel? {
             database.viewContext.channel(cid: channelId)?.asModel()
         }
         
@@ -335,12 +335,11 @@ class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         // with a read date later than original read
         let newReadDate = Date(timeIntervalSince1970: 2)
         // Unfortunately, ChannelDetailPayload is needed for NotificationMarkReadEvent...
-        let channelDetailPayload = ChannelDetailPayload<NoExtraData>(
+        let channelDetailPayload = ChannelDetailPayload(
             cid: channelId,
             name: .unique,
             imageURL: .unique(),
             extraData: .defaultValue,
-            extraDataMap: [:],
             typeRawValue: "",
             lastMessageAt: nil,
             createdAt: .unique,
@@ -355,7 +354,7 @@ class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
             cooldownDuration: .random(in: 0...120)
         )
         // Create EventPayload for NotificationMarkReadEvent
-        let eventPayload = EventPayload<NoExtraData>(
+        let eventPayload = EventPayload(
             eventType: .notificationMarkRead,
             user: dummyCurrentUser,
             channel: channelDetailPayload,
@@ -389,7 +388,7 @@ class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         }
         
         // Load the channel from the db and check the if fields are correct
-        var loadedChannel: _ChatChannel<NoExtraData>? {
+        var loadedChannel: ChatChannel? {
             database.viewContext.channel(cid: channelId)?.asModel()
         }
         
@@ -403,7 +402,7 @@ class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         // Create a NotificationMarkReadEvent from a channel member (but not currentUser)
         let newReadDate = Date(timeIntervalSince1970: 2)
         // Create EventPayload for NotificationMarkReadEvent
-        let eventPayload = EventPayload<NoExtraData>(
+        let eventPayload = EventPayload(
             eventType: .notificationMarkRead,
             user: dummyUser(id: memberId),
             channel: payload.channel,
@@ -438,7 +437,7 @@ class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         }
         
         // Load the channel from the db and check the if fields are correct
-        var loadedChannel: _ChatChannel<NoExtraData>? {
+        var loadedChannel: ChatChannel? {
             database.viewContext.channel(cid: channelId)?.asModel()
         }
         
@@ -450,7 +449,7 @@ class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         // with a read date later than original read
         let newReadDate = Date(timeIntervalSince1970: 2)
         // Create EventPayload for NotificationMarkAllReadEvent
-        let eventPayload = EventPayload<NoExtraData>(
+        let eventPayload = EventPayload(
             eventType: .notificationMarkRead,
             user: dummyCurrentUser,
             createdAt: newReadDate

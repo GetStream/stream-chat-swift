@@ -7,14 +7,12 @@
 import XCTest
 
 final class DatabaseCleanupUpdater_Tests: StressTestCase {
-    typealias ExtraData = NoExtraData
-        
     var database: DatabaseContainerMock!
     var webSocketClient: WebSocketClientMock!
     var apiClient: APIClientMock!
     
     var databaseCleanupUpdater: DatabaseCleanupUpdater?
-    var channelListUpdater: ChannelListUpdaterMock<NoExtraData>!
+    var channelListUpdater: ChannelListUpdaterMock!
     
     override func setUp() {
         super.setUp()
@@ -76,11 +74,11 @@ final class DatabaseCleanupUpdater_Tests: StressTestCase {
     }
     
     func test_refetchExistingChannelListQueries_updateQueries() throws {
-        let filter1 = Filter<_ChannelListFilterScope<ExtraData>>.query(.cid, text: .unique)
+        let filter1 = Filter<ChannelListFilterScope>.query(.cid, text: .unique)
         let query1 = ChannelListQuery(filter: filter1)
         try database.createChannelListQuery(filter: filter1)
         
-        let filter2 = Filter<_ChannelListFilterScope<ExtraData>>.query(.cid, text: .unique)
+        let filter2 = Filter<ChannelListFilterScope>.query(.cid, text: .unique)
         let query2 = ChannelListQuery(filter: filter2)
         try database.createChannelListQuery(filter: filter2)
         

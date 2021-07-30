@@ -8,13 +8,11 @@ import CoreData
 import XCTest
 
 final class MissingEventsPublisher_Tests: StressTestCase {
-    typealias ExtraData = NoExtraData
-    
     var database: DatabaseContainerMock!
     var webSocketClient: WebSocketClientMock!
     var apiClient: APIClientMock!
-    var publisher: MissingEventsPublisher<ExtraData>?
-    var channelDatabaseCleanupUpdater: DatabaseCleanupUpdater_Mock<ExtraData>!
+    var publisher: MissingEventsPublisher?
+    var channelDatabaseCleanupUpdater: DatabaseCleanupUpdater_Mock!
     
     // MARK: - Setup
     

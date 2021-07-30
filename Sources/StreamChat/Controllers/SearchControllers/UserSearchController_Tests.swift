@@ -22,7 +22,7 @@ class UserSearchController_Tests: StressTestCase {
         super.setUp()
         
         env = TestEnvironment()
-        client = _ChatClient.mock
+        client = ChatClient.mock
         query = .init(
             filter: .or([
                 .autocomplete(.name, text: "Luke"),
@@ -566,7 +566,7 @@ class UserSearchController_Tests: StressTestCase {
         // Since we'll generate a bigger id for next user's id and name
         // so that insertion will be [0,1] and not [0,0]
         let userId = "abc".randomElement()!.description
-        let dummyUser = UserPayload<NoExtraData>(
+        let dummyUser = UserPayload(
             id: userId,
             name: userId,
             imageURL: .unique(),
@@ -577,8 +577,7 @@ class UserSearchController_Tests: StressTestCase {
             isOnline: .random(),
             isInvisible: .random(),
             isBanned: .random(),
-            extraData: .defaultValue,
-            extraDataMap: [:]
+            extraData: .defaultValue
         )
         try client.databaseContainer.writeSynchronously { session in
             try session.saveUser(payload: dummyUser, query: self.controller.query)
@@ -597,7 +596,7 @@ class UserSearchController_Tests: StressTestCase {
         
         // Simulate DB update
         let newUserId = "def".randomElement()!.description
-        let newDummyUser = UserPayload<NoExtraData>(
+        let newDummyUser = UserPayload(
             id: newUserId,
             name: newUserId,
             imageURL: .unique(),
@@ -608,8 +607,7 @@ class UserSearchController_Tests: StressTestCase {
             isOnline: .random(),
             isInvisible: .random(),
             isBanned: .random(),
-            extraData: .defaultValue,
-            extraDataMap: [:]
+            extraData: .defaultValue
         )
         try client.databaseContainer.writeSynchronously { session in
             try session.saveUser(payload: newDummyUser, query: self.controller.query)
@@ -658,7 +656,7 @@ class UserSearchController_Tests: StressTestCase {
 }
 
 private class TestEnvironment {
-    @Atomic var userListUpdater: UserListUpdaterMock<NoExtraData>?
+    @Atomic var userListUpdater: UserListUpdaterMock?
     
     lazy var environment: ChatUserSearchController.Environment =
         .init(userQueryUpdaterBuilder: { [unowned self] in
@@ -681,7 +679,7 @@ private class TestDelegate: QueueAwareDelegate, ChatUserSearchControllerDelegate
     }
     
     func controller(
-        _ controller: _ChatUserSearchController<NoExtraData>,
+        _ controller: ChatUserSearchController,
         didChangeUsers changes: [ListChange<ChatUser>]
     ) {
         didChangeUsers_changes = changes
@@ -690,7 +688,7 @@ private class TestDelegate: QueueAwareDelegate, ChatUserSearchControllerDelegate
 }
 
 // A concrete `_ChatUserSearchControllerDelegate` implementation allowing capturing the delegate calls.
-private class TestDelegateGeneric: QueueAwareDelegate, _ChatUserSearchControllerDelegate {
+private class TestDelegateGeneric: QueueAwareDelegate, ChatUserSearchControllerDelegate {
     @Atomic var state: DataController.State?
     @Atomic var didChangeUsers_changes: [ListChange<ChatUser>]?
     
@@ -700,7 +698,7 @@ private class TestDelegateGeneric: QueueAwareDelegate, _ChatUserSearchController
     }
     
     func controller(
-        _ controller: _ChatUserSearchController<NoExtraData>,
+        _ controller: ChatUserSearchController,
         didChangeUsers changes: [ListChange<ChatUser>]
     ) {
         didChangeUsers_changes = changes

@@ -8,8 +8,6 @@ import CoreData
 import XCTest
 
 final class MessageUpdater_Tests: StressTestCase {
-    typealias ExtraData = NoExtraData
-    
     var webSocketClient: WebSocketClientMock!
     var apiClient: APIClientMock!
     var database: DatabaseContainerMock!
@@ -451,7 +449,6 @@ final class MessageUpdater_Tests: StressTestCase {
             [customAttachmentEnvelope.attachment(id: id(for: customAttachmentEnvelope))]
         )
         XCTAssertEqual(message.extraData, .defaultValue)
-        XCTAssertEqual(message.extraDataMap, [:])
         XCTAssertEqual(message.localState, .pendingSend)
         XCTAssertTrue(message.isPinned)
         XCTAssertEqual(message.isSilent, isSilent)
@@ -610,11 +607,11 @@ final class MessageUpdater_Tests: StressTestCase {
         apiClient.test_simulateResponse(.success(messagePayload))
         
         // Assert flag endpoint is called.
-        let flagEndpoint: Endpoint<FlagMessagePayload<ExtraData.User>> = .flagMessage(true, with: messageId)
+        let flagEndpoint: Endpoint<FlagMessagePayload> = .flagMessage(true, with: messageId)
         AssertAsync.willBeEqual(apiClient.request_endpoint, AnyEndpoint(flagEndpoint))
         
         // Simulate flag API response.
-        let flagMessagePayload = FlagMessagePayload<ExtraData.User>(
+        let flagMessagePayload = FlagMessagePayload(
             currentUser: .dummy(userId: currentUserId, role: .user),
             flaggedMessageId: messageId
         )
@@ -642,7 +639,7 @@ final class MessageUpdater_Tests: StressTestCase {
         }
         
         // Assert unflag endpoint is called.
-        let unflagEndpoint: Endpoint<FlagMessagePayload<ExtraData.User>> = .flagMessage(false, with: messageId)
+        let unflagEndpoint: Endpoint<FlagMessagePayload> = .flagMessage(false, with: messageId)
         AssertAsync.willBeEqual(apiClient.request_endpoint, AnyEndpoint(unflagEndpoint))
         
         // Simulate unflag API response.
@@ -726,12 +723,12 @@ final class MessageUpdater_Tests: StressTestCase {
         }
         
         // Assert flag endpoint is called.
-        let flagEndpoint: Endpoint<FlagMessagePayload<ExtraData.User>> = .flagMessage(true, with: messageId)
+        let flagEndpoint: Endpoint<FlagMessagePayload> = .flagMessage(true, with: messageId)
         AssertAsync.willBeEqual(apiClient.request_endpoint, AnyEndpoint(flagEndpoint))
         
         // Simulate flag API response with failure.
         let networkError = TestError()
-        apiClient.test_simulateResponse(Result<FlagMessagePayload<ExtraData.User>, Error>.failure(networkError))
+        apiClient.test_simulateResponse(Result<FlagMessagePayload, Error>.failure(networkError))
         
         // Assert the flag database error is propogated.
         AssertAsync.willBeEqual(completionCalledError as? TestError, networkError)
@@ -756,11 +753,11 @@ final class MessageUpdater_Tests: StressTestCase {
         }
         
         // Assert flag endpoint is called.
-        let flagEndpoint: Endpoint<FlagMessagePayload<ExtraData.User>> = .flagMessage(true, with: messageId)
+        let flagEndpoint: Endpoint<FlagMessagePayload> = .flagMessage(true, with: messageId)
         AssertAsync.willBeEqual(apiClient.request_endpoint, AnyEndpoint(flagEndpoint))
         
         // Simulate flag API response with success.
-        let payload = FlagMessagePayload<ExtraData.User>(
+        let payload = FlagMessagePayload(
             currentUser: .dummy(userId: currentUserId, role: .user),
             flaggedMessageId: messageId
         )
@@ -785,7 +782,7 @@ final class MessageUpdater_Tests: StressTestCase {
         }
         
         // Assert flag endpoint is called.
-        let flagEndpoint: Endpoint<FlagMessagePayload<ExtraData.User>> = .flagMessage(true, with: messageId)
+        let flagEndpoint: Endpoint<FlagMessagePayload> = .flagMessage(true, with: messageId)
         AssertAsync.willBeEqual(apiClient.request_endpoint, AnyEndpoint(flagEndpoint))
         
         // Delete the message from the database.
@@ -796,7 +793,7 @@ final class MessageUpdater_Tests: StressTestCase {
         }
         
         // Simulate flag API response with success.
-        let payload = FlagMessagePayload<ExtraData.User>(
+        let payload = FlagMessagePayload(
             currentUser: .dummy(userId: currentUserId, role: .user),
             flaggedMessageId: messageId
         )
@@ -811,7 +808,7 @@ final class MessageUpdater_Tests: StressTestCase {
     func test_addReaction_makesCorrectAPICall() {
         let reactionType: MessageReactionType = "like"
         let reactionScore = 1
-        let reactionExtraData: ExtraData.MessageReaction = .defaultValue
+        let reactionExtraData: CustomData = .defaultValue
         let messageId: MessageId = .unique
 
         // Simulate `addReaction` call.

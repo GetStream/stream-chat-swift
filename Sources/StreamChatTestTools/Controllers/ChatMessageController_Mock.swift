@@ -7,7 +7,7 @@ import Foundation
 
 public class ChatMessageController_Mock: ChatMessageController {
     /// Creates a new mock instance of `ChatMessageController`.
-    public static func mock() -> ChatMessageController_Mock<ExtraData> {
+    public static func mock() -> ChatMessageController_Mock {
         .init(client: .mock(), cid: try! .init(cid: "mock:channel"), messageId: "MockMessage")
     }
     
@@ -30,7 +30,7 @@ public class ChatMessageController_Mock: ChatMessageController {
 
 public extension ChatMessageController_Mock {
     /// Simulates the initial conditions. Setting these values doesn't trigger any observer callback.
-    func simulateInitial(message: _ChatMessage, replies: [ChatMessage], state: DataController.State) {
+    func simulateInitial(message: ChatMessage, replies: [ChatMessage], state: DataController.State) {
         message_mock = message
         replies_mock = replies
         state_mock = state

@@ -69,7 +69,7 @@ class ChannelController_Combine_Tests: iOS13TestCase {
     
     func test_messagesChangesPublisher() {
         // Setup Recording publishers
-        var recording = Record<[ListChange<_ChatMessage<NoExtraData>>], Never>.Recording()
+        var recording = Record<[ListChange<ChatMessage>], Never>.Recording()
         
         // Setup the chain
         channelController
@@ -138,8 +138,7 @@ class ChannelController_Combine_Tests: iOS13TestCase {
             updatedAt: .unique,
             lastActiveAt: .unique,
             teams: [],
-            extraData: .defaultValue,
-            extraDataMap: [:]
+            extraData: .defaultValue
         )
         
         controller?.delegateCallback {

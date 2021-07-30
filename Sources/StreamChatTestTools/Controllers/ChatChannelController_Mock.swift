@@ -7,7 +7,7 @@ import Foundation
 
 public class ChatChannelController_Mock: ChatChannelController {
     /// Creates a new mock instance of `ChatChannelController`.
-    public static func mock() -> ChatChannelController_Mock<ExtraData> {
+    public static func mock() -> ChatChannelController_Mock {
         .init(channelQuery: .init(cid: try! .init(cid: "mock:channel")), client: .mock())
     }
     

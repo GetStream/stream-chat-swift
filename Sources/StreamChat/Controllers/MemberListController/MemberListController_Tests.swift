@@ -20,7 +20,7 @@ final class MemberListController_Tests: StressTestCase {
         super.setUp()
         
         env = TestEnvironment()
-        client = _ChatClient.mock
+        client = ChatClient.mock
         query = .init(cid: .unique)
         controller = .init(query: query, client: client, environment: env.environment)
         controllerCallbackQueueID = UUID()
@@ -475,7 +475,7 @@ final class MemberListController_Tests: StressTestCase {
 }
 
 private class TestEnvironment {
-    @Atomic var memberListUpdater: ChannelMemberListUpdaterMock<NoExtraData>?
+    @Atomic var memberListUpdater: ChannelMemberListUpdaterMock?
     @Atomic var memberListObserver: ListDatabaseObserverMock<ChatChannelMember, MemberDTO>?
     @Atomic var memberListObserverSynchronizeError: Error?
     

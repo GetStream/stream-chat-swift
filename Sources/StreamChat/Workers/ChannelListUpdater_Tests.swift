@@ -11,7 +11,7 @@ class ChannelListUpdater_Tests: StressTestCase {
     var apiClient: APIClientMock!
     var database: DatabaseContainer!
     
-    var listUpdater: ChannelListUpdater<NoExtraData>!
+    var listUpdater: ChannelListUpdater!
     
     override func setUp() {
         super.setUp()
@@ -41,7 +41,7 @@ class ChannelListUpdater_Tests: StressTestCase {
         let query = ChannelListQuery(filter: .in(.members, values: [.unique]))
         listUpdater.update(channelListQuery: query)
         
-        let referenceEndpoint: Endpoint<ChannelListPayload<NoExtraData>> = .channels(query: query)
+        let referenceEndpoint: Endpoint<ChannelListPayload> = .channels(query: query)
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
     }
     
@@ -56,7 +56,7 @@ class ChannelListUpdater_Tests: StressTestCase {
         
         // Simulate API response with channel data
         let cid = ChannelId(type: .messaging, id: .unique)
-        let payload = ChannelListPayload<NoExtraData>(channels: [dummyPayload(with: cid)])
+        let payload = ChannelListPayload(channels: [dummyPayload(with: cid)])
         apiClient.test_simulateResponse(.success(payload))
         
         // Assert the data is stored in the DB
@@ -77,7 +77,7 @@ class ChannelListUpdater_Tests: StressTestCase {
         
         // Simulate API response with failure
         let error = TestError()
-        apiClient.test_simulateResponse(Result<ChannelListPayload<NoExtraData>, Error>.failure(error))
+        apiClient.test_simulateResponse(Result<ChannelListPayload, Error>.failure(error))
         
         // Assert the completion is called with the error
         AssertAsync.willBeEqual(completionCalledError as? TestError, error)

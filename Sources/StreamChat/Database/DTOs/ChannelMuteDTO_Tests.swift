@@ -22,12 +22,12 @@ final class ChannelMuteDTO_Tests: XCTestCase {
     }
 
     func test_channelMutePayload_isStoredAndLoadedFromDB() throws {
-        let currentUserPayload: CurrentUserPayload<NoExtraData> = .dummy(
+        let currentUserPayload: CurrentUserPayload = .dummy(
             userId: .unique,
             role: .user
         )
 
-        let mutePayload: MutedChannelPayload<NoExtraData> = .init(
+        let mutePayload: MutedChannelPayload = .init(
             mutedChannel: .dummy(cid: .unique),
             user: currentUserPayload,
             createdAt: .unique,
@@ -52,7 +52,7 @@ final class ChannelMuteDTO_Tests: XCTestCase {
         let userId: UserId = .unique
 
         // Create channel mutes all for current user.
-        let mutePayloads: [MutedChannelPayload<NoExtraData>] = [
+        let mutePayloads: [MutedChannelPayload] = [
             .init(
                 mutedChannel: .dummy(cid: .unique),
                 user: dummyUser(id: userId),
@@ -97,7 +97,7 @@ final class ChannelMuteDTO_Tests: XCTestCase {
         let cid: ChannelId = .unique
 
         // Create channel mutes all for the channel with `cid`.
-        let mutePayloads: [MutedChannelPayload<NoExtraData>] = [
+        let mutePayloads: [MutedChannelPayload] = [
             .init(
                 mutedChannel: .dummy(cid: cid),
                 user: dummyUser(id: .unique),
@@ -138,7 +138,7 @@ final class ChannelMuteDTO_Tests: XCTestCase {
     }
 
     func test_loadForUserAndChannel() throws {
-        let payload = MutedChannelPayload<NoExtraData>(
+        let payload = MutedChannelPayload(
             mutedChannel: .dummy(cid: .unique),
             user: dummyUser(id: .unique),
             createdAt: .unique,

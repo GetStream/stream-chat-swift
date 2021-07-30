@@ -23,8 +23,7 @@ public extension ChatMessage {
         quotedMessage: ChatMessage? = nil,
         showReplyInChannel: Bool = false,
         replyCount: Int = 0,
-        extraData: ExtraData.Message = .defaultValue,
-        extraDataMap: CustomData = [:],
+        extraData: CustomData = .defaultValue,
         isSilent: Bool = false,
         reactionScores: [MessageReactionType: Int] = [:],
         mentionedUsers: Set<ChatUser> = [],
@@ -36,7 +35,7 @@ public extension ChatMessage {
         latestReactions: Set<ChatMessageReaction> = [],
         currentUserReactions: Set<ChatMessageReaction> = [],
         isSentByCurrentUser: Bool = false,
-        pinDetails: _MessagePinDetails<ExtraData>? = nil,
+        pinDetails: MessagePinDetails? = nil,
         attachmentCounts: [AttachmentType: Int] = [:]
     ) -> Self {
         .init(
@@ -54,7 +53,6 @@ public extension ChatMessage {
             showReplyInChannel: showReplyInChannel,
             replyCount: replyCount,
             extraData: extraData,
-            extraDataMap: extraDataMap,
             quotedMessage: { quotedMessage },
             isSilent: isSilent,
             reactionScores: reactionScores,

@@ -194,7 +194,7 @@ class ChannelDTO_Tests: XCTestCase {
 
     func test_channelPayload_pinnedMessagesArePopulated() throws {
         let channelId: ChannelId = .unique
-        let pinnedMessages: [MessagePayload<NoExtraData>] = [
+        let pinnedMessages: [MessagePayload] = [
             .dummy(messageId: .unique, authorUserId: .unique, pinned: true),
             .dummy(messageId: .unique, authorUserId: .unique, pinned: true)
         ]
@@ -273,7 +273,7 @@ class ChannelDTO_Tests: XCTestCase {
 
     func test_channelPayload_pinnedMessagesOlderThanOldestMessageAtAreIgnored() throws {
         let channelId: ChannelId = .unique
-        let oldPinnedMessage: MessagePayload<NoExtraData> = MessagePayload(
+        let oldPinnedMessage: MessagePayload = MessagePayload(
             id: .unique,
             type: .regular,
             user: dummyUser,
@@ -288,7 +288,6 @@ class ChannelDTO_Tests: XCTestCase {
             mentionedUsers: [dummyCurrentUser],
             replyCount: 0,
             extraData: .defaultValue,
-            extraDataMap: [:],
             reactionScores: ["like": 1],
             isSilent: false,
             attachments: [],
@@ -306,7 +305,7 @@ class ChannelDTO_Tests: XCTestCase {
 
     func test_channelPayload_pinnedMessagesNewerThanOldestMessageAreFetched() throws {
         let channelId: ChannelId = .unique
-        let pinnedMessage: MessagePayload<NoExtraData> = MessagePayload(
+        let pinnedMessage: MessagePayload = MessagePayload(
             id: .unique,
             type: .regular,
             user: dummyUser,
@@ -321,7 +320,6 @@ class ChannelDTO_Tests: XCTestCase {
             mentionedUsers: [dummyCurrentUser],
             replyCount: 0,
             extraData: .defaultValue,
-            extraDataMap: [:],
             reactionScores: ["like": 1],
             isSilent: false,
             attachments: [],
@@ -357,9 +355,9 @@ class ChannelDTO_Tests: XCTestCase {
         database = DatabaseContainerMock(localCachingSettings: caching)
         
         // Create more entities than the limits
-        let allMembers: [MemberPayload<NoExtraData>] = (0..<memberLimit * 2).map { _ in .dummy() }
-        let allWatchers: [UserPayload<NoExtraData>] = (0..<watcherLimit * 2).map { _ in .dummy(userId: .unique) }
-        let allMessages: [MessagePayload<NoExtraData>] = (0..<messagesLimit * 2)
+        let allMembers: [MemberPayload] = (0..<memberLimit * 2).map { _ in .dummy() }
+        let allWatchers: [UserPayload] = (0..<watcherLimit * 2).map { _ in .dummy(userId: .unique) }
+        let allMessages: [MessagePayload] = (0..<messagesLimit * 2)
             .map { _ in .dummy(messageId: .unique, authorUserId: .unique) }
         let payload = dummyPayload(with: cid, members: allMembers, watchers: allWatchers, messages: allMessages)
                 
@@ -387,7 +385,7 @@ class ChannelDTO_Tests: XCTestCase {
     func test_DTO_updateFromSamePayload_doNotProduceChanges() throws {
         // Arrange: Store random channel payload to db
         let channelId: ChannelId = .unique
-        let payload = ChannelDetailPayload<NoExtraData>.dummy(cid: channelId)
+        let payload = ChannelDetailPayload.dummy(cid: channelId)
 
         try database.writeSynchronously { session in
             try session.saveChannel(payload: payload, query: nil)
@@ -448,8 +446,8 @@ class ChannelDTO_Tests: XCTestCase {
     func test_channelListQuery_withSorting() {
         // Create two channels queries with different sortings.
         let filter: Filter<ChannelListFilterScope> = .in(.members, values: [.unique])
-        let queryWithDefaultSorting = _ChannelListQuery(filter: filter)
-        let queryWithUpdatedAtSorting = _ChannelListQuery(filter: filter, sort: [.init(key: .updatedAt, isAscending: false)])
+        let queryWithDefaultSorting = ChannelListQuery(filter: filter)
+        let queryWithUpdatedAtSorting = ChannelListQuery(filter: filter, sort: [.init(key: .updatedAt, isAscending: false)])
 
         // Create dummy channels payloads with ids: a, b, c, d.
         let payload1 = dummyPayload(with: try! .init(cid: "a:a"), numberOfMessages: 0)
@@ -590,7 +588,7 @@ class ChannelDTO_Tests: XCTestCase {
         }
         
         // Load the channel from the db and check the if fields are correct
-        var loadedChannel: _ChatChannel<NoExtraData>? {
+        var loadedChannel: ChatChannel? {
             database.viewContext.channel(cid: channelId)?.asModel()
         }
         

@@ -9,7 +9,7 @@ final class MessageEndpoints_Tests: XCTestCase {
     func test_getMessage_buildsCorrectly() {
         let messageId: MessageId = .unique
         
-        let expectedEndpoint = Endpoint<MessagePayload<NoExtraData>.Boxed>(
+        let expectedEndpoint = Endpoint<MessagePayload.Boxed>(
             path: "messages/\(messageId)",
             method: .get,
             queryItems: nil,
@@ -18,7 +18,7 @@ final class MessageEndpoints_Tests: XCTestCase {
         )
         
         // Build endpoint
-        let endpoint: Endpoint<MessagePayload<NoExtraData>.Boxed> = .getMessage(messageId: messageId)
+        let endpoint: Endpoint<MessagePayload.Boxed> = .getMessage(messageId: messageId)
         
         // Assert endpoint is built correctly
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
@@ -43,7 +43,7 @@ final class MessageEndpoints_Tests: XCTestCase {
     }
     
     func test_editMessage_buildsCorrectly() {
-        let payload = MessageRequestBody<NoExtraData>(
+        let payload = MessageRequestBody(
             id: .unique,
             user: .init(id: .unique, name: .unique, imageURL: .unique(), extraData: .init()),
             text: .unique,
@@ -69,7 +69,7 @@ final class MessageEndpoints_Tests: XCTestCase {
         let messageId: MessageId = .unique
         let pagination: MessagesPagination = .init(pageSize: 10)
         
-        let expectedEndpoint = Endpoint<MessageRepliesPayload<NoExtraData>>(
+        let expectedEndpoint = Endpoint<MessageRepliesPayload>(
             path: "messages/\(messageId)/replies",
             method: .get,
             queryItems: nil,
@@ -78,7 +78,7 @@ final class MessageEndpoints_Tests: XCTestCase {
         )
         
         // Build endpoint
-        let endpoint: Endpoint<MessageRepliesPayload<NoExtraData>> = .loadReplies(messageId: messageId, pagination: pagination)
+        let endpoint: Endpoint<MessageRepliesPayload> = .loadReplies(messageId: messageId, pagination: pagination)
         
         // Assert endpoint is built correctly
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
@@ -88,7 +88,7 @@ final class MessageEndpoints_Tests: XCTestCase {
         let messageId: MessageId = .unique
         let reaction: MessageReactionType = .init(rawValue: "like")
         let score = 5
-        let extraData: NoExtraData = .defaultValue
+        let extraData: CustomData = .defaultValue
         
         let expectedEndpoint = Endpoint<EmptyResponse>(
             path: "messages/\(messageId)/reaction",
@@ -148,7 +148,7 @@ final class MessageEndpoints_Tests: XCTestCase {
             text: .unique
         )
 
-        let expectedEndpoint = Endpoint<MessagePayload<NoExtraData>.Boxed>(
+        let expectedEndpoint = Endpoint<MessagePayload.Boxed>(
             path: "messages/\(messageId)/action",
             method: .post,
             queryItems: nil,
@@ -161,7 +161,7 @@ final class MessageEndpoints_Tests: XCTestCase {
         )
 
         // Build endpoint.
-        let endpoint: Endpoint<MessagePayload<NoExtraData>.Boxed> = .dispatchEphemeralMessageAction(
+        let endpoint: Endpoint<MessagePayload.Boxed> = .dispatchEphemeralMessageAction(
             cid: cid,
             messageId: messageId,
             action: action

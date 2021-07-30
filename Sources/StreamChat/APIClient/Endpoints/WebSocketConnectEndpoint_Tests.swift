@@ -7,7 +7,7 @@ import XCTest
 
 final class WebSocketConnectEndpoint_Tests: XCTestCase {
     func test_webSocketConnect_buildsCorrectly() {
-        let userInfo = UserInfo<NoExtraData>(
+        let userInfo = UserInfo(
             id: .unique,
             name: .unique,
             imageURL: .unique(),

@@ -26,7 +26,7 @@ final class MessageReactionDTO_Tests: XCTestCase {
     
     func test_messageReactionPayload_withDefaultExtraData_isStoredAndLoadedFromDB() throws {
         // Create message reaction payload with `DefaultExtraData`.
-        let payload: MessageReactionPayload<NoExtraData> = .dummy(
+        let payload: MessageReactionPayload = .dummy(
             messageId: .unique,
             user: dummyUser
         )
@@ -37,11 +37,10 @@ final class MessageReactionDTO_Tests: XCTestCase {
     
     func test_messageReactionPayload_withCustomExtraData_isStoredAndLoadedFromDB() throws {
         // Create message reaction payload with `CustomExtraData`.
-        let payload: MessageReactionPayload<CustomExtraData> = .dummy(
+        let payload: MessageReactionPayload = .dummy(
             messageId: .unique,
             user: dummyUser,
-            extraData: Mood(mood: .unique),
-            extraDataMap: ["mood": .string(.unique)]
+            extraData: ["mood": .string(.unique)]
         )
         
         // Assert message reaction is saved and loaded correctly.
@@ -50,7 +49,7 @@ final class MessageReactionDTO_Tests: XCTestCase {
     
     func test_saveReaction_throwsMessageDoesNotExist_ifThereIsNoMessage() {
         // Create message reaction payload with `DefaultExtraData`.
-        let payload: MessageReactionPayload<NoExtraData> = .dummy(
+        let payload: MessageReactionPayload = .dummy(
             messageId: .unique,
             user: dummyUser
         )
@@ -69,7 +68,7 @@ final class MessageReactionDTO_Tests: XCTestCase {
     
     func test_asModel_buildsCorrectModel() throws {
         // Create message reaction payload with `DefaultExtraData`.
-        let payload: MessageReactionPayload<NoExtraData> = .dummy(
+        let payload: MessageReactionPayload = .dummy(
             messageId: .unique,
             user: dummyUser
         )
@@ -96,13 +95,13 @@ final class MessageReactionDTO_Tests: XCTestCase {
         XCTAssertEqual(model.updatedAt, payload.updatedAt)
         XCTAssertEqual(model.type, payload.type)
         XCTAssertEqual(model.score, payload.score)
-        XCTAssertEqual(model.extraDataMap, payload.extraDataMap)
+        XCTAssertEqual(model.extraData, payload.extraData)
         XCTAssertEqual(model.author.id, payload.user.id)
     }
     
     func test_asModel_defaultExtraDataIsUsed_whenExtraDataDecodingFails() throws {
         // Create message reaction payload with `DefaultExtraData`.
-        let payload: MessageReactionPayload<NoExtraData> = .dummy(
+        let payload: MessageReactionPayload = .dummy(
             messageId: .unique,
             user: dummyUser
         )
@@ -140,7 +139,7 @@ final class MessageReactionDTO_Tests: XCTestCase {
     
     func test_deleteReaction_worksCorrectly() throws {
         // Create message reaction payload with `DefaultExtraData`.
-        let payload: MessageReactionPayload<NoExtraData> = .dummy(
+        let payload: MessageReactionPayload = .dummy(
             messageId: .unique,
             user: dummyUser
         )
@@ -181,8 +180,8 @@ final class MessageReactionDTO_Tests: XCTestCase {
     
     // MARK: - Private
     
-    private func assert_messageReaction_isStoredAndLoadedFromDB<T: ExtraDataTypes>(
-        _ payload: MessageReactionPayload<T>,
+    private func assert_messageReaction_isStoredAndLoadedFromDB(
+        _ payload: MessageReactionPayload,
         createMessageInTheDatabase: Bool = true
     ) throws {
         // Save message to the database.
@@ -221,15 +220,4 @@ final class MessageReactionDTO_Tests: XCTestCase {
         XCTAssertEqual(dto.user.id, payload.user.id)
         XCTAssertEqual(dto.user.extraData, userExtraData)
     }
-}
-
-// MARK: - CustomExtraData
-
-private enum CustomExtraData: ExtraDataTypes {
-    typealias MessageReaction = Mood
-}
-
-private struct Mood: MessageReactionExtraData {
-    static var defaultValue: Self { .init(mood: "") }
-    let mood: String
 }

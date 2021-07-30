@@ -91,7 +91,6 @@ extension ChatChannelMember {
             lastActiveAt: .unique,
             teams: [],
             extraData: .defaultValue,
-            extraDataMap: [:],
             memberRole: .member,
             memberCreatedAt: .unique,
             memberUpdatedAt: .unique,

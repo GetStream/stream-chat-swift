@@ -6,8 +6,8 @@ import Foundation
 @testable import StreamChat
 
 public extension ChatClient {
-    /// Create a new instance of mock `_ChatClient`
-    static func mock() -> _ChatClient {
+    /// Create a new instance of mock `ChatClient`
+    static func mock() -> ChatClient {
         var config = ChatClientConfig(apiKey: .init("--== Mock ChatClient ==--"))
         config.isLocalStorageEnabled = false
         
