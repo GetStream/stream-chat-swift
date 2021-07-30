@@ -1,15 +1,11 @@
 //
-//  ChannelPresenter.swift
-//  StreamChatCore
-//
-//  Created by Alexey Bukhtin on 03/04/2019.
-//  Copyright © 2019 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
-import UIKit
-import StreamChatClient
-import RxSwift
 import RxCocoa
+import RxSwift
+import StreamChatClient
+import UIKit
 
 /// A channel presenter.
 public final class ChannelPresenter: Presenter {
@@ -45,6 +41,12 @@ public final class ChannelPresenter: Presenter {
         if oldChannel.cid != Channel.unused.cid {
             channel.namingStrategy = oldChannel.namingStrategy
             channel.banEnabling = oldChannel.banEnabling
+            if oldChannel.cid == channel.cid, channel.members.isEmpty {
+                // Sometimes, the event does not include the member info
+                // When that's the case, we can keep the old member info
+                channel.members = oldChannel.members
+                channel.membership = oldChannel.membership
+            }
         }
         self?.channelPublishSubject.onNext(channel)
     }
@@ -76,7 +78,10 @@ public final class ChannelPresenter: Presenter {
     
     var messageIdByMessageReadUser: [User: String] = [:]
     /// Check if the channel has unread messages.
-    public var isUnread: Bool { channel.isUnread }
+    public var isUnread: Bool {
+        if let lastMessage = lastMessage, lastMessage.isOwn { return false }
+        else { return channel.isUnread }
+    }
     
     let ephemeralSubject = BehaviorSubject<EphemeralType>(value: (nil, false))
     /// Check if the channel has ephemeral message, e.g. Giphy preview.
@@ -143,7 +148,6 @@ public final class ChannelPresenter: Presenter {
 // MARK: - Changes
 
 public extension ChannelPresenter {
-    
     /// Subscribes for `ViewChanges`.
     /// - Parameter onNext: a co    mpletion block with `ViewChanges`.
     /// - Returns: a subscription.
@@ -160,17 +164,18 @@ public extension ChannelPresenter {
 // MARK: - Send Message
 
 extension ChannelPresenter {
-    
     /// Create a message by sending a text.
     /// - Parameters:
     ///     - text: a message text
     ///     - showReplyInChannel: show a reply in the channel.
     ///     - parseMentionedUsers: whether to automatically parse mentions into the `message.mentionedUsers` property. Defaults to `true`.
     ///     - completion: a completion block with `MessageResponse`.
-    public func send(text: String,
-                     showReplyInChannel: Bool = false,
-                     parseMentionedUsers: Bool = true,
-                     _ completion: @escaping Client.Completion<MessageResponse>) {
+    public func send(
+        text: String,
+        showReplyInChannel: Bool = false,
+        parseMentionedUsers: Bool = true,
+        _ completion: @escaping Client.Completion<MessageResponse>
+    ) {
         rx.send(text: text, showReplyInChannel: showReplyInChannel, parseMentionedUsers: parseMentionedUsers)
             .bindOnce(to: completion)
     }
@@ -178,7 +183,7 @@ extension ChannelPresenter {
     func createMessage(with text: String, showReplyInChannel: Bool) -> Message {
         let messageId = editMessage?.id ?? ""
         
-        var attachments = uploadManager.files.compactMap({ $0.attachment }) + uploadManager.images.compactMap({ $0.attachment })
+        var attachments = uploadManager.files.compactMap(\.attachment) + uploadManager.images.compactMap(\.attachment)
         
         var extraData: Codable?
         
@@ -204,13 +209,15 @@ extension ChannelPresenter {
             }
         }
         
-        let message = Message(id: messageId,
-                              parentId: parentMessage?.id,
-                              text: text,
-                              attachments: attachments,
-                              mentionedUsers: mentionedUsers,
-                              extraData: extraData,
-                              showReplyInChannel: showReplyInChannel && isThread)
+        let message = Message(
+            id: messageId,
+            parentId: parentMessage?.id,
+            text: text,
+            attachments: attachments,
+            mentionedUsers: mentionedUsers,
+            extraData: extraData,
+            showReplyInChannel: showReplyInChannel && isThread
+        )
         
         return messagePreparationCallback?(message) ?? message
     }
@@ -219,15 +226,17 @@ extension ChannelPresenter {
 // MARK: - Unused Channel for Atomic
 
 extension Channel {
-    public static let unused = Channel(type: "",
-                                       id: "",
-                                       members: [],
-                                       invitedMembers: [],
-                                       extraData: nil,
-                                       created: .init(),
-                                       deleted: nil,
-                                       createdBy: nil,
-                                       lastMessageDate: nil,
-                                       frozen: true,
-                                       config: .init())
+    public static let unused = Channel(
+        type: "",
+        id: "",
+        members: [],
+        invitedMembers: [],
+        extraData: nil,
+        created: .init(),
+        deleted: nil,
+        createdBy: nil,
+        lastMessageDate: nil,
+        frozen: true,
+        config: .init()
+    )
 }

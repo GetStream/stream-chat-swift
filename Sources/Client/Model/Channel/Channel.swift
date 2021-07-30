@@ -1,9 +1,5 @@
 //
-//  Channel.swift
-//  StreamChatCore
-//
-//  Created by Alexey Bukhtin on 01/04/2019.
-//  Copyright © 2019 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -77,9 +73,9 @@ public final class Channel: Codable {
     /// Checks if the channel is frozen.
     public let frozen: Bool
     /// The current user is a member of the channel. If not, it will be nil.
-    public internal(set) var membership: Member?
+    public var membership: Member?
     /// A list of channel members.
-    public internal(set) var members = Set<Member>()
+    public var members = Set<Member>()
     
     /// A members count.
     public var memberCount: Int { memberCountAtomic.get() }
@@ -138,6 +134,7 @@ public final class Channel: Codable {
         // We don't have these info, so we use unreadCount
         return unreadCount.messages > 0
     }
+
     /// An option to enable ban users.
     public var banEnabling = BanEnabling.disabled
     var bannedUsers = [User]()
@@ -165,24 +162,26 @@ public final class Channel: Codable {
     /// Returns the current timestamp. Can be replaced in tests with mock time, if needed.
     var currentTime: () -> Date = { Date() }
     
-    public init(type: ChannelType,
-                id: String,
-                members: [User],
-                invitedMembers: [User],
-                extraData: ChannelExtraDataCodable?,
-                created: Date,
-                deleted: Date?,
-                createdBy: User?,
-                lastMessageDate: Date?,
-                frozen: Bool,
-                team: String = "",
-                namingStrategy: ChannelNamingStrategy? = DefaultNamingStrategy(maxUserNames: 1),
-                config: Config) {
+    public init(
+        type: ChannelType,
+        id: String,
+        members: [User],
+        invitedMembers: [User],
+        extraData: ChannelExtraDataCodable?,
+        created: Date,
+        deleted: Date?,
+        createdBy: User?,
+        lastMessageDate: Date?,
+        frozen: Bool,
+        team: String = "",
+        namingStrategy: ChannelNamingStrategy? = DefaultNamingStrategy(maxUserNames: 1),
+        config: Config
+    ) {
         self.type = type
         self.id = id
-        self.cid = ChannelId(type: type, id: id)
-        self.members = Set(members.map({ $0.asMember }))
-        self.invitedMembers = Set(invitedMembers.map({ $0.asMember }))
+        cid = ChannelId(type: type, id: id)
+        self.members = Set(members.map(\.asMember))
+        self.invitedMembers = Set(invitedMembers.map(\.asMember))
         self.extraData = extraData
         self.created = created
         self.deleted = deleted
@@ -232,8 +231,12 @@ public final class Channel: Codable {
             return extraData
             
         } catch {
-            ClientLogger.log("🐴❌", level: .error, "Channel extra data decoding error: \(error). "
-                + "Trying to recover by only decoding name and imageURL")
+            ClientLogger.log(
+                "🐴❌",
+                level: .error,
+                "Channel extra data decoding error: \(error). "
+                    + "Trying to recover by only decoding name and imageURL"
+            )
             
             guard let container = try? decoder.container(keyedBy: DecodingKeys.self) else {
                 return nil
@@ -285,7 +288,6 @@ public final class Channel: Codable {
 // MARK: - Equatable
 
 extension Channel: Equatable, CustomStringConvertible {
-    
     public static func == (lhs: Channel, rhs: Channel) -> Bool {
         lhs.cid == rhs.cid
     }
@@ -299,16 +301,20 @@ extension Channel: Equatable, CustomStringConvertible {
 // MARK: - Subscriptions
 
 extension Channel {
-    
-    public func subscribe(forEvents eventTypes: Set<EventType> = EventType.channelEventTypes,
-                          _ callback: @escaping Client.OnEvent) -> Cancellable {
+    public func subscribe(
+        forEvents eventTypes: Set<EventType> = EventType.channelEventTypes,
+        _ callback: @escaping Client.OnEvent
+    ) -> Cancellable {
         let validEvents = eventTypes.intersection(EventType.channelEventTypes)
         
         if validEvents.count != eventTypes.count, let logger = Client.shared.logger {
             let notValidEvents = eventTypes.subtracting(EventType.channelEventTypes)
-            logger.log("⚠️ The events \(notValidEvents) are not channel events "
-                + "and will never get handled by your completion handler. "
-                + "Please check the documentation on event for more information.", level: .error)
+            logger.log(
+                "⚠️ The events \(notValidEvents) are not channel events "
+                    + "and will never get handled by your completion handler. "
+                    + "Please check the documentation on event for more information.",
+                level: .error
+            )
         }
         
         guard !validEvents.isEmpty else {
@@ -336,14 +342,15 @@ extension Channel {
 // MARK: - Channel Extra Data Codable
 
 extension Channel {
-    
     /// A channel name.
     public var name: String? {
         get {
             if nameAndImageForCurrentUser.name == nil, let namingStrategy = namingStrategy {
                 // Save generated name to nameAndImageForCurrentUser since there isn't any
-                nameAndImageForCurrentUser.name = namingStrategy.name(for: User.current,
-                                                                      members: members.map(\.user))
+                nameAndImageForCurrentUser.name = namingStrategy.name(
+                    for: User.current,
+                    members: members.map(\.user)
+                )
             }
             return nameAndImageForCurrentUser.name
         }
@@ -360,8 +367,10 @@ extension Channel {
         get {
             if nameAndImageForCurrentUser.imageURL == nil, let namingStrategy = namingStrategy {
                 // Save generated imageURL to nameAndImageForCurrentUser since there isn't any
-                nameAndImageForCurrentUser.imageURL = namingStrategy.imageURL(for: User.current,
-                                                                              members: members.map(\.user))
+                nameAndImageForCurrentUser.imageURL = namingStrategy.imageURL(
+                    for: User.current,
+                    members: members.map(\.user)
+                )
             }
             return nameAndImageForCurrentUser.imageURL
         }
@@ -390,7 +399,7 @@ private extension Array where Element == Member {
             return (self[0].user.isCurrent ? self[1] : self[0]).user.name
         }
         
-        let notCurrentMembers = filter({ !$0.user.isCurrent })
+        let notCurrentMembers = filter { !$0.user.isCurrent }
         return "\(notCurrentMembers[0].user.name) and \(notCurrentMembers.count - 1) others"
     }
 }
@@ -454,6 +463,7 @@ public struct HiddenChannelResponse: Decodable, Equatable {
 }
 
 // MARK: - Hashable
+
 extension Channel: Hashable {
     public func hash(into hasher: inout Hasher) {
         hasher.combine(cid)
