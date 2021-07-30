@@ -7,7 +7,7 @@ import StreamChatTestTools
 @testable import StreamChatUI
 import XCTest
 
-extension _ChatMessagePopupVC: AppearanceProvider {}
+extension ChatMessagePopupVC: AppearanceProvider {}
 
 final class ChatMessagePopupVC_Tests: XCTestCase {
     private var vc: ChatMessagePopupVC!

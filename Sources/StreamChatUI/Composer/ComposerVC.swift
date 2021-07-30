@@ -46,11 +46,11 @@ open class ComposerVC: _ViewController,
         /// The state of the composer.
         public let state: ComposerState
         /// The editing message if the composer is currently editing a message.
-        public let editingMessage: _ChatMessage?
+        public let editingMessage: ChatMessage?
         /// The quoting message if the composer is currently quoting a message.
-        public let quotingMessage: _ChatMessage?
+        public let quotingMessage: ChatMessage?
         /// The thread parent message if the composer is currently replying in a thread.
-        public var threadMessage: _ChatMessage?
+        public var threadMessage: ChatMessage?
         /// The attachments of the message.
         public var attachments: [AnyAttachmentPayload]
         /// The mentioned users in the message.
@@ -71,9 +71,9 @@ open class ComposerVC: _ViewController,
         public init(
             text: String,
             state: ComposerState,
-            editingMessage: _ChatMessage?,
-            quotingMessage: _ChatMessage?,
-            threadMessage: _ChatMessage?,
+            editingMessage: ChatMessage?,
+            quotingMessage: ChatMessage?,
+            threadMessage: ChatMessage?,
             attachments: [AnyAttachmentPayload],
             mentionedUsers: Set<ChatUser>,
             command: Command?
@@ -119,7 +119,7 @@ open class ComposerVC: _ViewController,
         /// Sets the content state to editing a message.
         ///
         /// - Parameter message: The message that the composer will edit.
-        public mutating func editMessage(_ message: _ChatMessage) {
+        public mutating func editMessage(_ message: ChatMessage) {
             self = .init(
                 text: message.text,
                 state: .edit,
@@ -135,7 +135,7 @@ open class ComposerVC: _ViewController,
         /// Sets the content state to quoting a message.
         ///
         /// - Parameter message: The message that the composer will quote.
-        public mutating func quoteMessage(_ message: _ChatMessage) {
+        public mutating func quoteMessage(_ message: ChatMessage) {
             self = .init(
                 text: text,
                 state: .quote,
@@ -176,7 +176,7 @@ open class ComposerVC: _ViewController,
     }
 
     /// A controller to search users and that is used to populate the mention suggestions.
-    open var userSearchController: _ChatUserSearchController<ExtraData>!
+    open var userSearchController: ChatUserSearchController!
 
     /// A controller that manages the channel that the composer is creating content for.
     open var channelController: ChatChannelController?
@@ -202,17 +202,17 @@ open class ComposerVC: _ViewController,
     )
 
     /// The view of the composer.
-    open private(set) lazy var composerView: _ComposerView<ExtraData> = components
+    open private(set) lazy var composerView: ComposerView = components
         .messageComposerView.init()
         .withoutAutoresizingMaskConstraints
 
     /// The view controller that shows the suggestions when the user is typing.
-    open private(set) lazy var suggestionsVC: _ChatSuggestionsVC<ExtraData> = components
+    open private(set) lazy var suggestionsVC: ChatSuggestionsVC = components
         .suggestionsVC
         .init()
     
     /// The view controller that shows the suggestions when the user is typing.
-    open private(set) lazy var attachmentsVC: _AttachmentsPreviewVC<ExtraData> = components
+    open private(set) lazy var attachmentsVC: AttachmentsPreviewVC = components
         .messageComposerAttachmentsVC
         .init()
 
@@ -587,7 +587,7 @@ open class ComposerVC: _ViewController,
             return
         }
 
-        let dataSource = _ChatMessageComposerSuggestionsCommandDataSource<ExtraData>(
+        let dataSource = ChatMessageComposerSuggestionsCommandDataSource(
             with: commandHints,
             collectionView: suggestionsVC.collectionView
         )
@@ -612,8 +612,8 @@ open class ComposerVC: _ViewController,
     ///
     /// - Parameter typingMention: The potential user mention the current user is typing.
     /// - Returns: `_UserListQuery` instance that will be used for searching users.
-    open func queryForMentionSuggestionsSearch(typingMention term: String) -> _UserListQuery<ExtraData.User> {
-        _UserListQuery<ExtraData.User>(
+    open func queryForMentionSuggestionsSearch(typingMention term: String) -> UserListQuery {
+        UserListQuery(
             filter: .or([
                 .autocomplete(.name, text: term),
                 .autocomplete(.id, text: term)
@@ -630,7 +630,7 @@ open class ComposerVC: _ViewController,
         userSearchController.search(
             query: queryForMentionSuggestionsSearch(typingMention: typingMention)
         )
-        let dataSource = _ChatMessageComposerSuggestionsMentionDataSource(
+        let dataSource = ChatMessageComposerSuggestionsMentionDataSource(
             collectionView: suggestionsVC.collectionView,
             searchController: userSearchController
         )

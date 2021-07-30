@@ -283,8 +283,7 @@ public struct Components {
         ChatSuggestionsCollectionViewLayout.self
 
     /// The header reusable view of the suggestion collection view.
-    public var suggestionsHeaderReusableView: UICollectionReusableView.Type =
-        _ChatSuggestionsCollectionReusableView.self
+    public var suggestionsHeaderReusableView: UICollectionReusableView.Type = ChatSuggestionsCollectionReusableView.self
 
     /// The header view of the suggestion collection view.
     public var suggestionsHeaderView: ChatSuggestionsHeaderView.Type =

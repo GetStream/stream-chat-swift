@@ -20,8 +20,7 @@ open class ChatMessageReactionsVC: _ViewController, ThemeProvider {
 
     override open func setUp() {
         super.setUp()
-
-        messageController.setDelegate(self)
+        messageController.delegate = self
     }
 
     override open func setUpLayout() {
@@ -69,7 +68,7 @@ open class ChatMessageReactionsVC: _ViewController, ThemeProvider {
 
 // MARK: - _MessageControllerDelegate
 
-extension _ChatMessageReactionsVC: _ChatMessageControllerDelegate {
+extension ChatMessageReactionsVC: ChatMessageControllerDelegate {
     public func messageController(
         _ controller: ChatMessageController,
         didChangeMessage change: EntityChange<ChatMessage>

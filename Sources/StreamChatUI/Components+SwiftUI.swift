@@ -6,7 +6,7 @@ import StreamChat
 import SwiftUI
 
 @available(iOS 13.0, *)
-extension _Components {
+extension Components {
     /// Used to initialize `_Components` as `ObservableObject`.
     public var asObservableObject: ObservableObject { .init(self) }
 
@@ -46,10 +46,10 @@ public extension View {
     func setUpStreamChatComponents(
         _ components: Components = .default
     ) -> some View {
-        modifier(SwiftUIComponents<ExtraData>(components))
+        modifier(SwiftUIComponents(components))
     }
 
     func setUpStreamChatComponents() -> some View {
-        modifier(SwiftUIComponents<NoExtraData>(.default))
+        modifier(SwiftUIComponents(.default))
     }
 }

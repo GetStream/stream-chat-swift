@@ -12,7 +12,7 @@ class WebSocketConnectPayload: Encodable {
     }
     
     let userId: UserId
-    let userDetails: UserWebSocketPayload<ExtraData>
+    let userDetails: UserWebSocketPayload
     let serverDeterminesConnectionId: Bool
 
     init(userInfo: UserInfo) {

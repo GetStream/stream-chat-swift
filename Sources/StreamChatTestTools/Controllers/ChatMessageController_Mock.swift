@@ -11,8 +11,8 @@ public class ChatMessageController_Mock: ChatMessageController {
         .init(client: .mock(), cid: try! .init(cid: "mock:channel"), messageId: "MockMessage")
     }
     
-    public private(set) var message_mock: _ChatMessage?
-    override public var message: _ChatMessage? {
+    public private(set) var message_mock: ChatMessage?
+    override public var message: ChatMessage? {
         message_mock ?? super.message
     }
 
@@ -39,7 +39,7 @@ public extension ChatMessageController_Mock {
     }
     
     /// Simulates a change of the `message` value. Observers are notified with the provided `change` value.
-    func simulate(message: _ChatMessage?, change: EntityChange<ChatMessage>) {
+    func simulate(message: ChatMessage?, change: EntityChange<ChatMessage>) {
         message_mock = message
         delegateCallback {
             $0.messageController(self, didChangeMessage: change)

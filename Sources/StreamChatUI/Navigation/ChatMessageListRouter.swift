@@ -14,7 +14,7 @@ open class ChatMessageListRouter:
     ComponentsProvider
 {
     /// The transition controller used to animate `ChatMessagePopupVC` transition.
-    open private(set) lazy var messagePopUpTransitionController = MessageActionsTransitionController<ExtraData>()
+    open private(set) lazy var messagePopUpTransitionController = MessageActionsTransitionController()
 
     /// Feedback generator used when presenting actions controller on selected message
     open var impactFeedbackGenerator = UIImpactFeedbackGenerator(style: .medium)
@@ -32,8 +32,8 @@ open class ChatMessageListRouter:
     ///
     open func showMessageActionsPopUp(
         messageContentView: ChatMessageContentView,
-        messageActionsController: _ChatMessageActionsVC<ExtraData>,
-        messageReactionsController: _ChatMessageReactionsVC<ExtraData>?
+        messageActionsController: ChatMessageActionsVC,
+        messageReactionsController: ChatMessageReactionsVC?
     ) {
         let popup = components.messagePopupVC.init()
         popup.messageContentView = messageContentView
@@ -105,7 +105,7 @@ open class ChatMessageListRouter:
     ///   message has multiple previewable attachments.
     ///
     open func showGallery(
-        message: _ChatMessage,
+        message: ChatMessage,
         initialAttachmentId: AttachmentId,
         previews: [GalleryItemPreview]
     ) {

@@ -37,7 +37,7 @@ open class AttachmentViewInjector {
 
     public func attachments<Payload: AttachmentPayload>(
         payloadType: Payload.Type
-    ) -> [_ChatMessageAttachment<Payload>] {
+    ) -> [ChatMessageAttachment<Payload>] {
         contentView.content?.attachments(payloadType: payloadType) ?? []
     }
 

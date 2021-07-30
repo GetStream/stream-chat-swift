@@ -81,7 +81,7 @@ class MessageController_Combine_Tests: iOS13TestCase {
         weak var controller: MessageControllerMock? = messageController
         messageController = nil
 
-        let newReply: _ChatMessage = .unique
+        let newReply: ChatMessage = .unique
         controller?.replies_simulated = [newReply]
         controller?.delegateCallback {
             $0.messageController(controller!, didChangeReplies: [.insert(newReply, index: .init())])

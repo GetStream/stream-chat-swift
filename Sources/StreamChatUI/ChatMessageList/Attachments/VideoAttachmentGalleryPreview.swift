@@ -118,7 +118,7 @@ open class VideoAttachmentGalleryPreview: _View, ThemeProvider {
     }
 }
 
-extension _VideoAttachmentGalleryPreview: GalleryItemPreview {
+extension VideoAttachmentGalleryPreview: GalleryItemPreview {
     public var attachmentId: AttachmentId? {
         content?.id
     }

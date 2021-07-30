@@ -12,7 +12,7 @@ open class ChatThreadVC:
     ComposerVCDelegate,
     ChatChannelControllerDelegate,
     ChatMessageControllerDelegate,
-    _ChatMessageActionsVCDelegate,
+    ChatMessageActionsVCDelegate,
     ChatMessageContentViewDelegate,
     GalleryContentViewDelegate,
     GiphyActionContentViewDelegate,
@@ -63,7 +63,7 @@ open class ChatThreadVC:
         .init()
 
     /// The header view of the thread that by default is the titleView of the navigation bar.
-    open lazy var headerView: _ChatThreadHeaderView<ExtraData> = components
+    open lazy var headerView: ChatThreadHeaderView = components
         .threadHeaderView.init()
         .withoutAutoresizingMaskConstraints
 
@@ -100,7 +100,7 @@ open class ChatThreadVC:
         channelController.setDelegate(self)
         channelController.synchronize()
 
-        messageController.setDelegate(self)
+        messageController.delegate = self
         messageController.synchronize()
         messageController.loadPreviousReplies()
 
@@ -177,7 +177,7 @@ open class ChatThreadVC:
     }
 
     /// Returns the attachment view injector class for the message at given `ChatMessage`
-    open func attachmentViewInjectorClass(for message: _ChatMessage) -> AttachmentViewInjector.Type? {
+    open func attachmentViewInjectorClass(for message: ChatMessage) -> AttachmentViewInjector.Type? {
         components.attachmentViewCatalog.attachmentViewInjectorClassFor(message: message, components: components)
     }
 
@@ -311,7 +311,7 @@ open class ChatThreadVC:
         actionsController.channelConfig = channelController.channel?.config
         actionsController.delegate = .init(delegate: self)
 
-        let reactionsController: _ChatMessageReactionsVC<ExtraData>? = {
+        let reactionsController: ChatMessageReactionsVC? = {
             guard message.localState == nil else { return nil }
             guard channelController.channel?.config.reactionsEnabled == true else {
                 return nil
@@ -401,8 +401,8 @@ open class ChatThreadVC:
     // MARK: - _ChatMessageActionsVCDelegate
 
     open func chatMessageActionsVC(
-        _ vc: _ChatMessageActionsVC<ExtraData>,
-        message: _ChatMessage,
+        _ vc: ChatMessageActionsVC,
+        message: ChatMessage,
         didTapOnActionItem actionItem: ChatMessageActionItem
     ) {
         switch actionItem {
@@ -420,7 +420,7 @@ open class ChatThreadVC:
     }
 
     open func chatMessageActionsVCDidFinish(
-        _ vc: _ChatMessageActionsVC<ExtraData>
+        _ vc: ChatMessageActionsVC
     ) {
         dismiss(animated: true)
     }
@@ -477,7 +477,7 @@ open class ChatThreadVC:
         }
     }
 
-    open func messageForIndexPath(_ indexPath: IndexPath) -> _ChatMessage {
+    open func messageForIndexPath(_ indexPath: IndexPath) -> ChatMessage {
         messages[indexPath.item]
     }
     

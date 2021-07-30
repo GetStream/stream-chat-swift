@@ -6,10 +6,7 @@ import StreamChat
 import UIKit
 
 /// `UICollectionViewCell` for a gallery item.
-public typealias GalleryCollectionViewCell = _GalleryCollectionViewCell<NoExtraData>
-
-/// `UICollectionViewCell` for a gallery item.
-open class _GalleryCollectionViewCell: _CollectionViewCell, UIScrollViewDelegate, ComponentsProvider {
+open class GalleryCollectionViewCell: _CollectionViewCell, UIScrollViewDelegate, ComponentsProvider {
     /// Triggered when the scroll view is single tapped.
     open var didTapOnce: (() -> Void)?
     

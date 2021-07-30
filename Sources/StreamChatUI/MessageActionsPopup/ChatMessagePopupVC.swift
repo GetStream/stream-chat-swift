@@ -33,13 +33,13 @@ open class ChatMessagePopupVC: _ViewController, ComponentsProvider {
     /// `messageContentView` being displayed.
     public var messageContentView: ChatMessageContentView!
     /// Message data that is shown.
-    public var message: _ChatMessage { messageContentView.content! }
+    public var message: ChatMessage { messageContentView.content! }
     /// Initial frame of a message.
     public var messageViewFrame: CGRect!
     /// `_ChatMessageActionsVC` instance for showing actions.
-    public var actionsController: _ChatMessageActionsVC<ExtraData>!
+    public var actionsController: ChatMessageActionsVC!
     /// `_ChatMessageReactionsVC` instance for showing reactions.
-    public var reactionsController: _ChatMessageReactionsVC<ExtraData>?
+    public var reactionsController: ChatMessageReactionsVC?
 
     override open func setUp() {
         super.setUp()

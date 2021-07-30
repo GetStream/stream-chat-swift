@@ -511,18 +511,6 @@ public protocol _ChatMessageControllerDelegate: DataControllerStateDelegate {
     )
 }
 
-public extension _ChatMessageControllerDelegate {
-    func messageController(
-        _ controller: ChatMessageController,
-        didChangeMessage change: EntityChange<ChatMessage>
-    ) {}
-    
-    func messageController(
-        _ controller: ChatMessageController,
-        didChangeReplies changes: [ListChange<ChatMessage>]
-    ) {}
-}
-
 final class AnyChatMessageControllerDelegate: ChatMessageControllerDelegate {
     weak var wrappedDelegate: AnyObject?
     private var _controllerDidChangeState: (DataController, DataController.State) -> Void

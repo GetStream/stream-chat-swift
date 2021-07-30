@@ -3701,7 +3701,7 @@ private class TestDelegateGeneric: QueueAwareDelegate, _ChatChannelControllerDel
     }
 }
 
-extension _UserConnectionProvider {
+extension UserConnectionProvider {
     static func invalid(_ error: Error = TestError()) -> Self {
         .closure {
             $1(.failure(error))

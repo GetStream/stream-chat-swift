@@ -11,7 +11,7 @@ open class ChatMentionSuggestionCollectionViewCell: _CollectionViewCell, Compone
     open class var reuseId: String { String(describing: self) }
 
     /// Instance of `ChatMessageComposerMentionCellView` which shows information about the mentioned user.
-    open lazy var mentionView: _ChatMentionSuggestionView<ExtraData> = components
+    open lazy var mentionView: ChatMentionSuggestionView = components
         .suggestionsMentionView.init()
         .withoutAutoresizingMaskConstraints
 

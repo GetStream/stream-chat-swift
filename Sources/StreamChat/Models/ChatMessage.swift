@@ -219,7 +219,7 @@ public extension ChatMessage {
     /// - Important: Attachments are loaded lazily and cached to maintain high performance.
     func attachments<Payload: AttachmentPayload>(
         payloadType: Payload.Type
-    ) -> [_ChatMessageAttachment<Payload>] {
+    ) -> [ChatMessageAttachment<Payload>] {
         _attachments.compactMap {
             $0.attachment(payloadType: payloadType)
         }

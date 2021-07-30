@@ -6,13 +6,10 @@ import StreamChat
 import UIKit
 
 /// A `UIViewController` subclass  that shows list of channels.
-public typealias ChatChannelListVC = _ChatChannelListVC<NoExtraData>
-
-/// A `UIViewController` subclass  that shows list of channels.
-open class _ChatChannelListVC: _ViewController,
+open class ChatChannelListVC: _ViewController,
     UICollectionViewDataSource,
     UICollectionViewDelegate,
-    _ChatChannelListControllerDelegate,
+    ChatChannelListControllerDelegate,
     DataControllerStateDelegate,
     ThemeProvider,
     SwipeableViewDelegate {
@@ -28,7 +25,7 @@ open class _ChatChannelListVC: _ViewController,
     }()
     
     /// A router object responsible for handling navigation actions of this view controller.
-    open lazy var router: _ChatChannelListRouter<ExtraData> = components
+    open lazy var router: ChatChannelListRouter = components
         .channelListRouter
         .init(rootViewController: self)
     
@@ -42,7 +39,7 @@ open class _ChatChannelListVC: _ViewController,
             .withoutAutoresizingMaskConstraints
     
     /// The `CurrentChatUserAvatarView` instance used for displaying avatar of the current user.
-    open private(set) lazy var userAvatarView: _CurrentChatUserAvatarView<ExtraData> = components
+    open private(set) lazy var userAvatarView: CurrentChatUserAvatarView = components
         .currentUserAvatarView.init()
         .withoutAutoresizingMaskConstraints
     
@@ -118,7 +115,7 @@ open class _ChatChannelListVC: _ViewController,
         let cell = collectionView.dequeueReusableCell(
             withReuseIdentifier: collectionViewCellReuseIdentifier,
             for: indexPath
-        ) as! _ChatChannelListCollectionViewCell<ExtraData>
+        ) as! ChatChannelListCollectionViewCell
     
         cell.components = components
         cell.itemView.content = .init(
@@ -181,7 +178,7 @@ open class _ChatChannelListVC: _ViewController,
     open func swipeableViewWillShowActionViews(for indexPath: IndexPath) {
         // Close other open cells
         collectionView.visibleCells.forEach {
-            let cell = ($0 as? _ChatChannelListCollectionViewCell<ExtraData>)
+            let cell = ($0 as? ChatChannelListCollectionViewCell)
             cell?.swipeableView.close()
         }
 

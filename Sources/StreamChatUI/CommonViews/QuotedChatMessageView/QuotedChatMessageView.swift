@@ -207,7 +207,7 @@ open class QuotedChatMessageView: _View, ThemeProvider, SwiftUIRepresentable {
     /// Override this function if you want to provide custom logic to present
     /// the attachments preview of the message, or if you want to support your custom attachment.
     /// - Parameter message: The message that contains all the attachments.
-    open func setAttachmentPreview(for message: _ChatMessage) {
+    open func setAttachmentPreview(for message: ChatMessage) {
         if let filePayload = message.fileAttachments.first?.payload {
             attachmentPreviewView.contentMode = .scaleAspectFit
             attachmentPreviewView.image = appearance.images.fileIcons[filePayload.file.type] ?? appearance.images.fileFallback

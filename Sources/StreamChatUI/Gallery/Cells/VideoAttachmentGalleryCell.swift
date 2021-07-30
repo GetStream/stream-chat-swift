@@ -7,7 +7,7 @@ import StreamChat
 import UIKit
 
 /// `UICollectionViewCell` for video gallery item.
-open class VideoAttachmentGalleryCell: _GalleryCollectionViewCell<ExtraData> {
+open class VideoAttachmentGalleryCell: GalleryCollectionViewCell {
     /// A cell reuse identifier.
     open class var reuseId: String { String(describing: self) }
     

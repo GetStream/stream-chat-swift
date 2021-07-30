@@ -11,10 +11,8 @@ public protocol GiphyActionContentViewDelegate: ChatMessageContentViewDelegate {
     func didTapOnAttachmentAction(_ action: AttachmentAction, at indexPath: IndexPath)
 }
 
-public typealias GiphyAttachmentViewInjector = _GalleryAttachmentViewInjector<NoExtraData>
-
-public class _GiphyAttachmentViewInjector: AttachmentViewInjector {
-    open lazy var giphyImageView: _ChatMessageInteractiveAttachmentView<ExtraData> = {
+public class GiphyAttachmentViewInjector: AttachmentViewInjector {
+    open lazy var giphyImageView: ChatMessageInteractiveAttachmentView = {
         let giphyView = contentView
             .components
             .giphyAttachmentView.init()
@@ -43,7 +41,7 @@ public class _GiphyAttachmentViewInjector: AttachmentViewInjector {
     }
 }
 
-private extension _GiphyAttachmentViewInjector {
+private extension GiphyAttachmentViewInjector {
     var giphyAttachments: [ChatMessageGiphyAttachment] {
         contentView.content?.giphyAttachments ?? []
     }

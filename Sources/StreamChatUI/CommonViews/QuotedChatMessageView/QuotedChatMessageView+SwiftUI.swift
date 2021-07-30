@@ -7,22 +7,20 @@ import SwiftUI
 
 @available(iOS 13.0, *)
 /// Protocol of `QuotedChatMessageView` wrapper for use in SwiftUI.
-public protocol _QuotedChatMessageViewSwiftUIView: View {
-    init(dataSource: _QuotedChatMessageView<ExtraData>.ObservedObject<Self>)
+public protocol QuotedChatMessageViewSwiftUIView: View {
+    init(dataSource: QuotedChatMessageView.ObservedObject<Self>)
 }
 
 @available(iOS 13.0, *)
-extension _QuotedChatMessageView {
+extension QuotedChatMessageView {
     /// Data source of `QuotedChatMessageView` represented as `ObservedObject`.
-    public typealias ObservedObject<Content: SwiftUIView> = SwiftUIWrapper<Content> where Content.ExtraData == ExtraData
+    public typealias ObservedObject<Content: SwiftUIView> = SwiftUIWrapper<Content>
 
     /// `QuotedChatMessageView` represented in SwiftUI.
-    public typealias SwiftUIView = _QuotedChatMessageViewSwiftUIView
+    public typealias SwiftUIView = QuotedChatMessageViewSwiftUIView
 
     /// SwiftUI wrapper of `QuotedChatMessageView`.
-    public class SwiftUIWrapper<Content: SwiftUIView>: _QuotedChatMessageView<ExtraData>, ObservableObject
-        where Content.ExtraData == ExtraData
-    {
+    public class SwiftUIWrapper<Content: SwiftUIView>: QuotedChatMessageView, ObservableObject {
         var hostingController: UIViewController?
 
         override public var intrinsicContentSize: CGSize {

@@ -5,7 +5,7 @@
 import Foundation
 @testable import StreamChat
 
-public extension _CurrentChatUser {
+public extension CurrentChatUser {
     /// Creates a new `_CurrentChatUser` object from the provided data.
     static func mock(
         id: String,

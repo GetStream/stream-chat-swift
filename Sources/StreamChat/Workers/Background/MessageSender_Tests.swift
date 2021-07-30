@@ -498,7 +498,7 @@ class MessageSender_Tests: StressTestCase {
         
         callback(.success(.init(message: messagePayload)))
 
-        var message: _ChatMessage? {
+        var message: ChatMessage? {
             database.viewContext.message(id: messageId)?.asModel()
         }
 

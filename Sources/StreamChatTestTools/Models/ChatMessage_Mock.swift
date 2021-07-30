@@ -20,7 +20,7 @@ public extension ChatMessage {
         deletedAt: Date? = nil,
         arguments: String? = nil,
         parentMessageId: MessageId? = nil,
-        quotedMessage: _ChatMessage? = nil,
+        quotedMessage: ChatMessage? = nil,
         showReplyInChannel: Bool = false,
         replyCount: Int = 0,
         extraData: ExtraData.Message = .defaultValue,

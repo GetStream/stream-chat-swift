@@ -81,7 +81,7 @@ class ChannelController_Combine_Tests: iOS13TestCase {
         weak var controller: ChannelControllerMock? = channelController
         channelController = nil
 
-        let newMessage: _ChatMessage = .unique
+        let newMessage: ChatMessage = .unique
         controller?.messages_simulated = [newMessage]
         controller?.delegateCallback {
             $0.channelController(controller!, didUpdateMessages: [.insert(newMessage, index: .init())])

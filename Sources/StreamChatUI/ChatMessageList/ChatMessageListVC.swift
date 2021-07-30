@@ -11,7 +11,7 @@ open class ChatMessageListVC:
     ThemeProvider,
     ComposerVCDelegate,
     ChatChannelControllerDelegate,
-    _ChatMessageActionsVCDelegate,
+    ChatMessageActionsVCDelegate,
     ChatMessageContentViewDelegate,
     UITableViewDelegate,
     UITableViewDataSource,
@@ -319,7 +319,7 @@ open class ChatMessageListVC:
         listView.updateMessages(with: changes, completion: completion)
     }
     
-    open func messageForIndexPath(_ indexPath: IndexPath) -> _ChatMessage {
+    open func messageForIndexPath(_ indexPath: IndexPath) -> ChatMessage {
         channelController.messages[indexPath.item]
     }
     
@@ -341,7 +341,7 @@ open class ChatMessageListVC:
         actionsController.channelConfig = channelController.channel?.config
         actionsController.delegate = .init(delegate: self)
 
-        let reactionsController: _ChatMessageReactionsVC<ExtraData>? = {
+        let reactionsController: ChatMessageReactionsVC? = {
             guard message.localState == nil else { return nil }
             guard channelController.channel?.config.reactionsEnabled == true else {
                 return nil
@@ -513,8 +513,8 @@ open class ChatMessageListVC:
     // MARK: - _ChatMessageActionsVCDelegate
 
     open func chatMessageActionsVC(
-        _ vc: _ChatMessageActionsVC<ExtraData>,
-        message: _ChatMessage,
+        _ vc: ChatMessageActionsVC,
+        message: ChatMessage,
         didTapOnActionItem actionItem: ChatMessageActionItem
     ) {
         switch actionItem {
@@ -535,7 +535,7 @@ open class ChatMessageListVC:
         }
     }
 
-    open func chatMessageActionsVCDidFinish(_ vc: _ChatMessageActionsVC<ExtraData>) {
+    open func chatMessageActionsVCDidFinish(_ vc: ChatMessageActionsVC) {
         dismiss(animated: true)
     }
 

@@ -109,7 +109,7 @@ final class DatabaseCleanupUpdater_Tests: StressTestCase {
     }
 }
 
-extension _ChannelListQuery: Equatable {
+extension ChannelListQuery: Equatable {
     public static func == (lhs: ChannelListQuery, rhs: ChannelListQuery) -> Bool {
         lhs.filter == rhs.filter &&
             lhs.messagesLimit == rhs.messagesLimit &&

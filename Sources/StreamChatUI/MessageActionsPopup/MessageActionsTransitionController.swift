@@ -55,7 +55,7 @@ open class MessageActionsTransitionController: NSObject, UIViewControllerTransit
     /// Animates present transition.
     open func animatePresent(using transitionContext: UIViewControllerContextTransitioning) {
         guard
-            let toVC = transitionContext.viewController(forKey: .to) as? _ChatMessagePopupVC<ExtraData>,
+            let toVC = transitionContext.viewController(forKey: .to) as? ChatMessagePopupVC,
             let fromVC = transitionContext.viewController(forKey: .from)
         else { return }
 
@@ -199,7 +199,7 @@ open class MessageActionsTransitionController: NSObject, UIViewControllerTransit
     /// Animates dismissal transition.
     open func animateDismiss(using transitionContext: UIViewControllerContextTransitioning) {
         guard
-            let fromVC = transitionContext.viewController(forKey: .from) as? _ChatMessagePopupVC<ExtraData>,
+            let fromVC = transitionContext.viewController(forKey: .from) as? ChatMessagePopupVC,
             let toVC = transitionContext.viewController(forKey: .to)
         else { return }
         

@@ -70,7 +70,7 @@ final class UserController_SwiftUI_Tests: iOS13TestCase {
     }
 }
 
-extension _ChatUser {
+extension ChatUser {
     static var unique: _ChatUser {
         .mock(
             id: .unique,

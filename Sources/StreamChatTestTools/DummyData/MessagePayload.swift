@@ -8,7 +8,7 @@ import XCTest
 
 extension MessagePayload {
     /// Creates a dummy `MessagePayload` with the given `messageId` and `userId` of the author.
-    static func dummy<T: ExtraDataTypes>(
+    static func dummy(
         type: MessageType? = nil,
         messageId: MessageId,
         parentId: MessageId? = nil,
@@ -24,12 +24,12 @@ extension MessagePayload {
         text: String = .unique,
         extraData: T.Message = .defaultValue,
         extraDataMap: [String: RawJSON] = [:],
-        latestReactions: [MessageReactionPayload<T>] = [],
-        ownReactions: [MessageReactionPayload<T>] = [],
+        latestReactions: [MessageReactionPayload] = [],
+        ownReactions: [MessageReactionPayload] = [],
         createdAt: Date? = nil,
         deletedAt: Date? = nil,
         updatedAt: Date = .unique,
-        channel: ChannelDetailPayload<T>? = nil,
+        channel: ChannelDetailPayload? = nil,
         pinned: Bool = false,
         pinnedByUserId: UserId? = nil,
         pinnedAt: Date? = nil,

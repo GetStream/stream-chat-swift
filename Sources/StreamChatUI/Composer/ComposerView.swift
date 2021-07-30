@@ -43,7 +43,7 @@ open class ComposerView: _View, ThemeProvider {
         .withoutAutoresizingMaskConstraints
 
     /// A view to to input content of the new message.
-    public private(set) lazy var inputMessageView: _InputChatMessageView<ExtraData> = components
+    public private(set) lazy var inputMessageView: InputChatMessageView = components
         .inputMessageView.init()
         .withoutAutoresizingMaskConstraints
 

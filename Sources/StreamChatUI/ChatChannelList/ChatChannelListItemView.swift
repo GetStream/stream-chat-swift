@@ -59,7 +59,7 @@ open class ChatChannelListItemView: _View, ThemeProvider, SwiftUIRepresentable {
         .withBidirectionalLanguagesSupport
     
     /// The view used to show channels avatar.
-    open private(set) lazy var avatarView: _ChatChannelAvatarView<ExtraData> = components
+    open private(set) lazy var avatarView: ChatChannelAvatarView = components
         .channelAvatarView
         .init()
         .withoutAutoresizingMaskConstraints
