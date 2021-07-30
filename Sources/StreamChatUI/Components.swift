@@ -319,21 +319,19 @@ public struct Components {
 private var defaults: [String: Any] = [:]
 
 public extension Components {
-    static var `default`: Components!
-//    static var `default`: Self {
-//        get {
-//            let key = String(describing: ExtraData.self)
-//            if let existing = defaults[key] as? Self {
-//                return existing
-//            } else {
-//                let config = Self()
-//                defaults[key] = config
-//                return config
-//            }
-//        }
-//        set {
-//            let key = String(describing: ExtraData.self)
-//            defaults[key] = newValue
-//        }
-//    }
+    static let defaultKey = "_default"
+    static var `default`: Self {
+        get {
+            if let existing = defaults[defaultKey] as? Self {
+                return existing
+            } else {
+                let config = Self()
+                defaults[defaultKey] = config
+                return config
+            }
+        }
+        set {
+            defaults[defaultKey] = newValue
+        }
+    }
 }

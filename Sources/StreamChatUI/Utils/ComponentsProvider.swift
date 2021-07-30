@@ -31,10 +31,12 @@ public extension ComponentsProvider where Self: UIResponder {
             if let components = anyComponents as? Components {
                 return components
             }
-            let _next = next
+            var _next = next
             while _next != nil {
                 if let _next = _next as? ComponentsProvider {
                     return _next.components
+                } else {
+                    _next = _next?.next
                 }
             }
             return .default

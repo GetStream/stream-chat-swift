@@ -10,6 +10,7 @@ import Foundation
 /// - Note: `_ChatMessageAttachment` type is not meant to be used directly. For each specific attachment type
 /// there is a type alias which resolves the generic (`ChatMessageFileAttachment`, `ChatMessageImageAttachment`, etc.).
 /// If you have your own attachment with custom payload consider having a type alias.
+@dynamicMemberLookup
 public struct ChatMessageAttachment<Payload> {
     /// The attachment identifier.
     public let id: AttachmentId
@@ -27,6 +28,12 @@ public struct ChatMessageAttachment<Payload> {
     ///
     /// Becomes `nil` when the message with the current attachment is sent.
     public let uploadingState: AttachmentUploadingState?
+}
+
+public extension ChatMessageAttachment {
+    subscript<T>(dynamicMember keyPath: KeyPath<Payload, T>) -> T {
+        payload[keyPath: keyPath]
+    }
 }
 
 extension ChatMessageAttachment: Equatable where Payload: Equatable {}

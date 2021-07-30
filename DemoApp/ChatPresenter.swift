@@ -6,7 +6,7 @@ import StreamChat
 import StreamChatUI
 import UIKit
 
-class DemoChatChannelListRouter: _ChatChannelListRouter<NoExtraData> {
+class DemoChatChannelListRouter: ChatChannelListRouter {
     func showCreateNewChannelFlow() {
         let storyboard = UIStoryboard(name: "Main", bundle: .main)
         
@@ -53,7 +53,7 @@ class DemoChatChannelListRouter: _ChatChannelListRouter<NoExtraData> {
                         name: channelController.channel?.name,
                         imageURL: url,
                         team: channelController.channel?.team,
-                        extraData: channelController.channel?.customData ?? .defaultValue
+                        extraData: channelController.channel?.extraData ?? .defaultValue
                     ) { error in
                         if let error = error {
                             self.rootViewController.presentAlert(
