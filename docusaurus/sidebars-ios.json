@@ -28,7 +28,8 @@
         "combine/connection",
         "combine/channels",
         "combine/users",
-        "combine/messages"
+        "combine/messages",
+        "combine/events"
       ]
     },
     {
