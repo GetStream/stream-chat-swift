@@ -148,9 +148,9 @@ struct UserUpdateResponse: Decodable {
 struct UserUpdateRequestBody: Encodable {
     let name: String?
     let imageURL: URL?
-    let extraData: CustomData
+    let extraData: CustomData?
     
-    init(name: String? = nil, imageURL: URL? = nil, extraData: CustomData = .defaultValue) {
+    init(name: String? = nil, imageURL: URL? = nil, extraData: CustomData? = nil) {
         self.name = name
         self.imageURL = imageURL
         self.extraData = extraData
@@ -160,6 +160,6 @@ struct UserUpdateRequestBody: Encodable {
         var container = encoder.container(keyedBy: UserPayloadsCodingKeys.self)
         try container.encodeIfPresent(name, forKey: .name)
         try container.encodeIfPresent(imageURL, forKey: .imageURL)
-        try extraData.encode(to: encoder)
+        try extraData?.encode(to: encoder)
     }
 }
