@@ -8,7 +8,8 @@ import XCTest
 class MessagePayload_Tests: XCTestCase {
     let messageJSON = XCTestCase.mockData(fromFile: "Message")
     let messageJSONWithCorruptedAttachments = XCTestCase.mockData(fromFile: "MessageWithBrokenAttachments")
-    
+    let messageCustomData: CustomData = ["secret_note": .string("Anakin is Vader!")]
+
     func test_messagePayload_isSerialized_withDefaultExtraData() throws {
         let box = try JSONDecoder.default.decode(MessagePayload.Boxed.self, from: messageJSON)
         let payload = box.message
@@ -27,7 +28,7 @@ class MessagePayload_Tests: XCTestCase {
         XCTAssertEqual(payload.mentionedUsers.map(\.id), [])
         XCTAssertEqual(payload.threadParticipants.map(\.id), ["josh"])
         XCTAssertEqual(payload.replyCount, 0)
-        XCTAssertEqual(payload.extraData, .defaultValue)
+        XCTAssertEqual(payload.extraData, messageCustomData)
         XCTAssertEqual(payload.latestReactions.count, 1)
         XCTAssertEqual(payload.ownReactions.count, 1)
         XCTAssertEqual(payload.reactionScores, ["love": 1])
@@ -59,7 +60,7 @@ class MessagePayload_Tests: XCTestCase {
         XCTAssertEqual(payload.mentionedUsers.map(\.id), [])
         XCTAssertEqual(payload.threadParticipants.map(\.id), ["josh"])
         XCTAssertEqual(payload.replyCount, 0)
-        XCTAssertEqual(payload.extraData, .defaultValue)
+        XCTAssertEqual(payload.extraData, messageCustomData)
         XCTAssertEqual(payload.latestReactions.count, 1)
         XCTAssertEqual(payload.ownReactions.count, 1)
         XCTAssertEqual(payload.reactionScores, ["love": 1])
@@ -92,7 +93,7 @@ class MessagePayload_Tests: XCTestCase {
         XCTAssertEqual(payload.mentionedUsers.map(\.id), [])
         XCTAssertEqual(payload.threadParticipants.map(\.id), ["josh"])
         XCTAssertEqual(payload.replyCount, 0)
-        XCTAssertEqual(payload.extraData, ["secretNote": .string("Anakin is Vader!")])
+        XCTAssertEqual(payload.extraData, messageCustomData)
         XCTAssertEqual(payload.latestReactions.count, 1)
         XCTAssertEqual(payload.ownReactions.count, 1)
         XCTAssertEqual(payload.reactionScores, ["love": 1])
