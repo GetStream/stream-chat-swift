@@ -9,7 +9,7 @@ import Foundation
 /// The `ChatMessageAudioAttachment` attachment will be added to the message automatically
 /// if the message was sent with attached `AnyAttachmentPayload` created with
 /// local URL and `.audio` attachment type.
-public typealias ChatMessageAudioAttachment = _ChatMessageAttachment<AudioAttachmentPayload>
+public typealias ChatMessageAudioAttachment = ChatMessageAttachment<AudioAttachmentPayload>
 
 /// Represents a payload for attachments with `.media` type.
 public struct AudioAttachmentPayload: AttachmentPayload {
