@@ -15,7 +15,7 @@ public typealias ChatMessageAudioAttachment = _ChatMessageAttachment<AudioAttach
 public struct AudioAttachmentPayload: AttachmentPayload {
     /// An attachment type all `MediaAttachmentPayload` instances conform to. Is set to `.audio`.
     public static let type: AttachmentType = .audio
-
+    
     /// A title, usually the name of the audio.
     public let title: String?
     /// A link to the audio.
@@ -24,7 +24,7 @@ public struct AudioAttachmentPayload: AttachmentPayload {
     public let file: AttachmentFile
     /// An extra data.
     let extraData: [String: RawJSON]?
-
+    
     /// Decodes extra data as an instance of the given type.
     /// - Parameter ofType: The type an extra data should be decoded as.
     /// - Returns: Extra data of the given type or `nil` if decoding fails.
@@ -55,7 +55,7 @@ extension AudioAttachmentPayload: Encodable {
 extension AudioAttachmentPayload: Decodable {
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: AttachmentCodingKeys.self)
-
+        
         self.init(
             title: try container.decodeIfPresent(String.self, forKey: .title),
             audioURL: try container.decode(URL.self, forKey: .assetURL),
