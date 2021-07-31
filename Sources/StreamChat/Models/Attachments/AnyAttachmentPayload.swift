@@ -86,6 +86,13 @@ public extension AnyAttachmentPayload {
                 file: file,
                 extraData: extraData
             )
+        case .audio:
+            payload = AudioAttachmentPayload(
+                title: localFileURL.lastPathComponent,
+                audioURL: localFileURL,
+                file: file,
+                extraData: extraData
+            )
         case .file:
             payload = FileAttachmentPayload(
                 title: localFileURL.lastPathComponent,

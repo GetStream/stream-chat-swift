@@ -85,8 +85,25 @@ class ChannelUpdater<ExtraData: ExtraDataTypes>: Worker {
     ///   - clearHistory: Flag to remove channel history.
     ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
     func hideChannel(cid: ChannelId, clearHistory: Bool, completion: ((Error?) -> Void)? = nil) {
-        apiClient.request(endpoint: .hideChannel(cid: cid, clearHistory: clearHistory)) {
-            completion?($0.error)
+        apiClient.request(endpoint: .hideChannel(cid: cid, clearHistory: clearHistory)) { [weak self] result in
+            if result.error == nil {
+                // If the API call is a success, we mark the channel as hidden
+                // We do this because if the channel was already hidden, but the SDK
+                // is not aware of this, we won't get `channel.hidden` event and we won't
+                // hide the channel
+                self?.database.write {
+                    if let channel = $0.channel(cid: cid) {
+                        channel.hiddenAt = Date()
+                        if clearHistory {
+                            channel.truncatedAt = Date()
+                        }
+                    }
+                } completion: {
+                    completion?($0)
+                }
+            } else {
+                completion?(result.error)
+            }
         }
     }
     
@@ -173,6 +190,49 @@ class ChannelUpdater<ExtraData: ExtraDataTypes>: Worker {
     ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
     func removeMembers(cid: ChannelId, userIds: Set<UserId>, completion: ((Error?) -> Void)? = nil) {
         apiClient.request(endpoint: .removeMembers(cid: cid, userIds: userIds)) {
+            completion?($0.error)
+        }
+    }
+    
+    /// Invite members to a channel. They can then accept or decline the invitation
+    /// - Parameters:
+    ///   - cid: The channel identifier
+    ///   - userIds: Set of ids of users to be invited to the channel
+    ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
+    func inviteMembers(
+        cid: ChannelId,
+        userIds: Set<UserId>,
+        completion: ((Error?) -> Void)? = nil
+    ) {
+        apiClient.request(endpoint: .inviteMembers(cid: cid, userIds: userIds)) {
+            completion?($0.error)
+        }
+    }
+    
+    /// Accept invitation to a channel
+    /// - Parameters:
+    ///   - cid: A channel identifier of a channel a user was invited to.
+    ///   - message: A message for invitation acceptance
+    ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
+    func acceptInvite(
+        cid: ChannelId,
+        message: String?,
+        completion: ((Error?) -> Void)? = nil
+    ) {
+        apiClient.request(endpoint: .acceptInvite(cid: cid, message: message)) {
+            completion?($0.error)
+        }
+    }
+
+    /// Reject invitation to a channel
+    /// - Parameters:
+    ///   - cid: A channel identifier of a channel a user was invited to.
+    ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
+    func rejectInvite(
+        cid: ChannelId,
+        completion: ((Error?) -> Void)? = nil
+    ) {
+        apiClient.request(endpoint: .rejectInvite(cid: cid)) {
             completion?($0.error)
         }
     }

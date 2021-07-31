@@ -57,6 +57,7 @@ class MessagePayload<ExtraData: ExtraDataTypes>: Decodable {
     let parentId: String?
     let showReplyInChannel: Bool
     let quotedMessage: MessagePayload<ExtraData>?
+    let quotedMessageId: MessageId?
     let mentionedUsers: [UserPayload<ExtraData.User>]
     let threadParticipants: [UserPayload<ExtraData.User>]
     let replyCount: Int
@@ -114,6 +115,7 @@ class MessagePayload<ExtraData: ExtraDataTypes>: Decodable {
         pinnedBy = try container.decodeIfPresent(UserPayload<ExtraData.User>.self, forKey: .pinnedBy)
         pinnedAt = try container.decodeIfPresent(Date.self, forKey: .pinnedAt)
         pinExpires = try container.decodeIfPresent(Date.self, forKey: .pinExpires)
+        quotedMessageId = try container.decodeIfPresent(MessageId.self, forKey: .quotedMessageId)
     }
     
     init(
@@ -171,6 +173,7 @@ class MessagePayload<ExtraData: ExtraDataTypes>: Decodable {
         self.pinnedBy = pinnedBy
         self.pinnedAt = pinnedAt
         self.pinExpires = pinExpires
+        self.quotedMessageId = quotedMessageId
     }
 }
 

@@ -45,3 +45,9 @@ protocol ReactionEvent: MessageSpecificEvent {
 protocol CurrentUserEvent: EventWithPayload {
     var currentUserId: UserId { get }
 }
+
+/// A protocol custom event payload must conform to.
+public protocol CustomEventPayload: Codable, Hashable {
+    /// A type all events holding this payload have.
+    static var eventType: EventType { get }
+}

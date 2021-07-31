@@ -118,6 +118,50 @@ extension Endpoint {
         )
     }
     
+    static func inviteMembers(
+        cid: ChannelId,
+        userIds: Set<UserId>
+    ) -> Endpoint<EmptyResponse> {
+        .init(
+            path: "channels/" + cid.apiPath,
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: false,
+            body: ["invites": userIds]
+        )
+    }
+    
+    static func acceptInvite(
+        cid: ChannelId,
+        message: String?
+    ) -> Endpoint<EmptyResponse> {
+        .init(
+            path: "channels/" + cid.apiPath,
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: false,
+            body: ChannelInvitePayload(
+                accept: true,
+                reject: false,
+                message: .init(message: message)
+            )
+        )
+    }
+    
+    static func rejectInvite(cid: ChannelId) -> Endpoint<EmptyResponse> {
+        .init(
+            path: "channels/" + cid.apiPath,
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: false,
+            body: ChannelInvitePayload(
+                accept: false,
+                reject: true,
+                message: nil
+            )
+        )
+    }
+    
     static func markRead(cid: ChannelId) -> Endpoint<EmptyResponse> {
         .init(
             path: "channels/" + cid.apiPath + "/read",
@@ -145,6 +189,16 @@ extension Endpoint {
             queryItems: nil,
             requiresConnectionId: false,
             body: ["event": ["type": eventType]]
+        )
+    }
+    
+    static func sendEvent<Payload: CustomEventPayload>(_ payload: Payload, cid: ChannelId) -> Endpoint<EmptyResponse> {
+        .init(
+            path: "channels/" + cid.apiPath + "/event",
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: false,
+            body: ["event": CustomEventRequestBody(payload: payload)]
         )
     }
     

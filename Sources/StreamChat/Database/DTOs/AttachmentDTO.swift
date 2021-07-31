@@ -193,6 +193,10 @@ extension AttachmentDTO {
             var payload = video.payload
             payload.videoURL = uploadedFileURL
             updatedPayload = payload.asAnyEncodable
+        } else if let audio = attachment.attachment(payloadType: AudioAttachmentPayload.self) {
+            var payload = audio.payload
+            payload.audioURL = uploadedFileURL
+            updatedPayload = payload.asAnyEncodable
         } else if let file = attachment.attachment(payloadType: FileAttachmentPayload.self) {
             var payload = file.payload
             payload.assetURL = uploadedFileURL

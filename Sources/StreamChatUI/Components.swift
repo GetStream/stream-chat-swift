@@ -10,8 +10,8 @@ public typealias Components = _Components<NoExtraData>
 
 /// An object containing types of UI Components that are used through the UI SDK.
 public struct _Components<ExtraData: ExtraDataTypes> {
-    /// The view used as a navigation bar title view for some view controllers.
-    public var navigationTitleView: TitleContainerView.Type = TitleContainerView.self
+    /// A view that displays a title label and subtitle in a container stack view.
+    public var titleContainerView: TitleContainerView.Type = TitleContainerView.self
 
     /// A view used as an online activity indicator (online/offline).
     public var onlineIndicatorView: (UIView & MaskProviding).Type = OnlineIndicatorView.self
@@ -84,8 +84,6 @@ public struct _Components<ExtraData: ExtraDataTypes> {
     
     /// The view that shows a playing video.
     public var playerView: PlayerView.Type = PlayerView.self
-    
-    // MARK: - Message list components
 
     /// The View Controller used to display content of the message, i.e. in the channel detail message list.
     public var messageListVC: _ChatMessageListVC<ExtraData>.Type = _ChatMessageListVC<ExtraData>.self
@@ -95,10 +93,15 @@ public struct _Components<ExtraData: ExtraDataTypes> {
         .self
 
     /// The view that shows the date for currently visible messages on top of message list.
-    public var messageListScrollOverlayView: ChatMessageListScrollOverlayView.Type = ChatMessageListScrollOverlayView.self
+    public var messageListScrollOverlayView: ChatMessageListScrollOverlayView.Type =
+        ChatMessageListScrollOverlayView.self
     
     /// The View Controller used to display the detail of a message thread.
     public var threadVC: _ChatThreadVC<ExtraData>.Type = _ChatThreadVC<ExtraData>.self
+
+    /// The view that displays channel information on the thread header.
+    public var threadHeaderView: _ChatThreadHeaderView<ExtraData>.Type =
+        _ChatThreadHeaderView<ExtraData>.self
 
     /// The View Controller by default used to display message actions after long-pressing on the message.
     public var messageActionsVC: _ChatMessageActionsVC<ExtraData>.Type = _ChatMessageActionsVC<ExtraData>.self
@@ -213,6 +216,10 @@ public struct _Components<ExtraData: ExtraDataTypes> {
         _ChatMessageListUnreadCountView<ExtraData>.self
     
     // MARK: - Channel list components
+
+    /// The view that displays channel information on the channel header.
+    public var channelHeaderView: _ChatChannelHeaderView<ExtraData>.Type =
+        _ChatChannelHeaderView<ExtraData>.self
 
     /// The logic to generate a name for the given channel.
     public var channelNamer: ChatChannelNamer<ExtraData> = DefaultChatChannelNamer()

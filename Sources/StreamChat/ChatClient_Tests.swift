@@ -10,6 +10,7 @@ import XCTest
 class ChatClient_Tests: StressTestCase {
     var userId: UserId!
     private var testEnv: TestEnvironment<NoExtraData>!
+    private var time: VirtualTime!
     
     // A helper providing ChatClientConfig with in-memory DB option
     var inMemoryStorageConfig: ChatClientConfig {
@@ -31,6 +32,8 @@ class ChatClient_Tests: StressTestCase {
         super.setUp()
         userId = .unique
         testEnv = .init()
+        time = VirtualTime()
+        VirtualTimeTimer.time = time
     }
     
     override func tearDown() {
@@ -62,22 +65,28 @@ class ChatClient_Tests: StressTestCase {
         
         config.localCaching.chatChannel.lastActiveMembersLimit = .unique
         config.localCaching.chatChannel.lastActiveWatchersLimit = .unique
-        
+
+        config.deletedMessagesVisibility = .alwaysVisible
+
         var usedDatabaseKind: DatabaseContainer.Kind?
         var shouldFlushDBOnStart: Bool?
         var shouldResetEphemeralValues: Bool?
         var localCachingSettings: ChatClientConfig.LocalCaching?
+        var deleteMessagesVisibility: ChatClientConfig.DeletedMessageVisibility?
         
         // Create env object with custom database builder
         var env = ChatClient.Environment()
         env.clientUpdaterBuilder = ChatClientUpdaterMock.init
-        env.databaseContainerBuilder = { kind, shouldFlushOnStart, shouldResetEphemeralValuesOnStart, cachingSettings in
-            usedDatabaseKind = kind
-            shouldFlushDBOnStart = shouldFlushOnStart
-            shouldResetEphemeralValues = shouldResetEphemeralValuesOnStart
-            localCachingSettings = cachingSettings
-            return DatabaseContainerMock()
-        }
+        env
+            .databaseContainerBuilder =
+            { kind, shouldFlushOnStart, shouldResetEphemeralValuesOnStart, cachingSettings, messageVisibility in
+                usedDatabaseKind = kind
+                shouldFlushDBOnStart = shouldFlushOnStart
+                shouldResetEphemeralValues = shouldResetEphemeralValuesOnStart
+                localCachingSettings = cachingSettings
+                deleteMessagesVisibility = messageVisibility
+                return DatabaseContainerMock()
+            }
         
         // Create a `Client` and assert that a DB file is created on the provided URL + APIKey path
         _ = ChatClient(
@@ -94,6 +103,7 @@ class ChatClient_Tests: StressTestCase {
         XCTAssertEqual(shouldFlushDBOnStart, config.shouldFlushLocalStorageOnStart)
         XCTAssertEqual(shouldResetEphemeralValues, config.isClientInActiveMode)
         XCTAssertEqual(localCachingSettings, config.localCaching)
+        XCTAssertEqual(deleteMessagesVisibility, config.deletedMessagesVisibility)
     }
     
     func test_clientDatabaseStackInitialization_whenLocalStorageDisabled() {
@@ -106,7 +116,7 @@ class ChatClient_Tests: StressTestCase {
         // Create env object with custom database builder
         var env = ChatClient.Environment()
         env.clientUpdaterBuilder = ChatClientUpdaterMock.init
-        env.databaseContainerBuilder = { kind, _, _, _ in
+        env.databaseContainerBuilder = { kind, _, _, _, _ in
             usedDatabaseKind = kind
             return DatabaseContainerMock()
         }
@@ -141,7 +151,7 @@ class ChatClient_Tests: StressTestCase {
         // Create env object and store all `kinds it's called with.
         var env = ChatClient.Environment()
         env.clientUpdaterBuilder = ChatClientUpdaterMock.init
-        env.databaseContainerBuilder = { kind, _, _, _ in
+        env.databaseContainerBuilder = { kind, _, _, _, _ in
             usedDatabaseKinds.append(kind)
             // Return error for the first time
             if let error = errorsToReturn.pop() {
@@ -385,7 +395,7 @@ class ChatClient_Tests: StressTestCase {
         XCTAssertNil(providedConnectionId)
     }
     
-    func test_client_webSocketIsDisconnected_becauseTokenExpired_callsReloadUserIfNeeded() throws {
+    func test_webSocketIsDisconnected_becauseTokenExpired_newTokenIsExpiredToo() throws {
         // Create a new chat client
         let client = ChatClient(
             config: inMemoryStorageConfig,
@@ -419,9 +429,29 @@ class ChatClient_Tests: StressTestCase {
                 didUpdateConnectionState: .disconnected(error: error)
             )
         
+        time.run(numberOfSeconds: 0.6)
         // Was called one more time on receiving token expired error
+        AssertAsync.willBeEqual(testEnv.clientUpdater!.reloadUserIfNeeded_callsCount, 2)
+        
+        // Token is expired again
+        testEnv.webSocketClient?
+            .connectionStateDelegate?
+            .webSocketClient(
+                testEnv.webSocketClient!,
+                didUpdateConnectionState: .disconnected(error: error)
+            )
+        
+        // Does not call secondary token refresh right away
         XCTAssertEqual(testEnv.clientUpdater!.reloadUserIfNeeded_callsCount, 2)
         
+        // Does not call secondary token refresh when not enough time has passed
+        time.run(numberOfSeconds: 0.1)
+        XCTAssertEqual(testEnv.clientUpdater!.reloadUserIfNeeded_callsCount, 2)
+        
+        // Calls secondary token refresh when enough time has passed
+        time.run(numberOfSeconds: 3)
+        AssertAsync.willBeEqual(testEnv.clientUpdater!.reloadUserIfNeeded_callsCount, 3)
+
         // We set connectionId to nil after token expiration disconnect
         XCTAssertNil(client.connectionId)
     }
@@ -1109,7 +1139,8 @@ private class TestEnvironment<ExtraData: ExtraDataTypes> {
                     kind: $0,
                     shouldFlushOnStart: $1,
                     shouldResetEphemeralValuesOnStart: $2,
-                    localCachingSettings: $3
+                    localCachingSettings: $3,
+                    deletedMessagesVisibility: $4
                 )
                 return self.databaseContainer!
             },
@@ -1139,7 +1170,8 @@ private class TestEnvironment<ExtraData: ExtraDataTypes> {
             backgroundTaskSchedulerBuilder: {
                 self.backgroundTaskScheduler = MockBackgroundTaskScheduler()
                 return self.backgroundTaskScheduler!
-            }
+            },
+            timerType: VirtualTimeTimer.self
         )
     }()
 }

@@ -53,7 +53,7 @@ public let titleLink: URL?
 An image.
 
 ``` swift
-public let assetURL: URL
+public let assetURL: URL?
 ```
 
 ### `previewURL`
@@ -61,7 +61,7 @@ public let assetURL: URL
 A preview image URL.
 
 ``` swift
-public let previewURL: URL
+public let previewURL: URL?
 ```
 
 ## Methods

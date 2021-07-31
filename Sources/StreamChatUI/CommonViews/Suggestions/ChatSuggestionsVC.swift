@@ -23,13 +23,6 @@ open class _ChatSuggestionsVC<ExtraData: ExtraDataTypes>: _ViewController,
     
     /// The number of visible commands without scrolling.
     open var numberOfVisibleRows: CGFloat = 4
-
-    /// View to which the suggestions should be pinned.
-    /// This view should be assigned as soon as instance of this
-    /// class is instantiated, because we set observer to
-    /// the bottomAnchorView as soon as we compute the height of the
-    /// contentSize of the nested collectionView
-    public var bottomAnchorView: UIView?
     
     /// A closure to observer when an item is selected.
     public var didSelectItemAt: ((Int) -> Void)?

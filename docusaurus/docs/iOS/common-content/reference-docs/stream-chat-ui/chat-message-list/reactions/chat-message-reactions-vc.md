@@ -2,6 +2,8 @@
 title: ChatMessageReactionsVC
 ---
 
+Controller for the message reactions picker as a list of toggles
+
 ``` swift
 open class _ChatMessageReactionsVC<ExtraData: ExtraDataTypes>: _ViewController, ThemeProvider 
 ```

@@ -34,10 +34,10 @@ bash Scripts/deleteDuplicates.sh "$OUTPUT_DIRECTORY/$TARGET_DIRECTORY" "$TARGET_
 # Delete first lines in files
 find "$OUTPUT_DIRECTORY/$TARGET_DIRECTORY" -type f -exec sed -i '' '1d' {} +
 
-# Add snapshots to UI elements
-if [[ "$TARGET" = "StreamChatUI" ]]; then
-   bash Scripts/addImagesToDocumentation.sh "$OUTPUT_DIRECTORY/Sources/StreamChatUI"
-fi
+# Add snapshots to UI elements - Skipping this for now
+# if [[ "$TARGET" = "StreamChatUI" ]]; then
+#   bash Scripts/addImagesToDocumentation.sh "$OUTPUT_DIRECTORY/Sources/StreamChatUI"
+# fi
 
 pushd docusaurus/docs/iOS/
 # Let's go to output directory one more time and add MDX headers.

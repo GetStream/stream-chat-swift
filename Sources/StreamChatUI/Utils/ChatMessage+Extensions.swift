@@ -9,7 +9,7 @@ public extension _ChatMessage {
     /// A boolean value that checks if actions are available on the message (e.g. `edit`, `delete`, `resend`, etc.).
     var isInteractionEnabled: Bool {
         guard
-            type != .ephemeral,
+            type != .ephemeral, type != .system,
             isDeleted == false
         else { return false }
 
@@ -70,5 +70,15 @@ public extension _ChatMessage {
     /// A boolean value that says if the message is deleted.
     var isDeleted: Bool {
         deletedAt != nil
+    }
+    
+    /// A boolean value that determines whether the text message should be rendered as large emojis
+    ///
+    /// By default, any string which comprises of ONLY emojis of length 3 or less is displayed as large emoji
+    ///
+    /// Note that for messages sent with attachments, large emojis aren's rendered
+    var shouldRenderAsJumbomoji: Bool {
+        guard attachmentCounts.isEmpty, let textContent = textContent, !textContent.isEmpty else { return false }
+        return textContent.count <= 3 && textContent.containsOnlyEmoji
     }
 }

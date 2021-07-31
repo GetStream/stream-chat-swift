@@ -10,12 +10,13 @@ open class _ComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
     UITextViewDelegate,
     UIImagePickerControllerDelegate,
     UIDocumentPickerDelegate,
-    UINavigationControllerDelegate 
+    UINavigationControllerDelegate,
+    InputTextViewClipboardAttachmentDelegate 
 ```
 
 ## Inheritance
 
-[`_ViewController`](../../common-views/_view-controller), [`ThemeProvider`](../../utils/theme-provider), `UIDocumentPickerDelegate`, `UIImagePickerControllerDelegate`, `UINavigationControllerDelegate`, `UITextViewDelegate`
+[`_ViewController`](../../common-views/_view-controller), [`InputTextViewClipboardAttachmentDelegate`](../../common-views/input-text-view/input-text-view-clipboard-attachment-delegate), [`ThemeProvider`](../../utils/theme-provider), `UIDocumentPickerDelegate`, `UIImagePickerControllerDelegate`, `UINavigationControllerDelegate`, `UITextViewDelegate`
 
 ## Properties
 
@@ -51,6 +52,22 @@ A symbol that is used to recognise when the user is typing a command.
 open var commandSymbol = "/"
 ```
 
+### `isCommandsEnabled`
+
+A Boolean value indicating whether the commands are enabled.
+
+``` swift
+open var isCommandsEnabled: Bool 
+```
+
+### `isAttachmentsEnabled`
+
+A Boolean value indicating whether the attachments are enabled.
+
+``` swift
+open var isAttachmentsEnabled: Bool 
+```
+
 ### `userSearchController`
 
 A controller to search users and that is used to populate the mention suggestions.
@@ -75,6 +92,22 @@ The channel config. If it's a new channel, an empty config should be created. (N
 public var channelConfig: ChannelConfig? 
 ```
 
+### `mentionSuggester`
+
+The component responsible for mention suggestions.
+
+``` swift
+open lazy var mentionSuggester 
+```
+
+### `commandSuggester`
+
+The component responsible for autocomplete command suggestions.
+
+``` swift
+open lazy var commandSuggester 
+```
+
 ### `composerView`
 
 The view of the composer.
@@ -90,7 +123,7 @@ open private(set) lazy var composerView: _ComposerView<ExtraData> = components
 The view controller that shows the suggestions when the user is typing.
 
 ``` swift
-open private(set) lazy var suggestionsVC: _ChatSuggestionsViewController<ExtraData> 
+open private(set) lazy var suggestionsVC: _ChatSuggestionsVC<ExtraData> 
 ```
 
 ### `attachmentsVC`
@@ -101,12 +134,12 @@ The view controller that shows the suggestions when the user is typing.
 open private(set) lazy var attachmentsVC: _AttachmentsPreviewVC<ExtraData> 
 ```
 
-### `imagePickerVC`
+### `mediaPickerVC`
 
 The view controller for selecting image attachments.
 
 ``` swift
-open private(set) lazy var imagePickerVC: UIViewController 
+open private(set) lazy var mediaPickerVC: UIViewController 
 ```
 
 ### `filePickerVC`
@@ -117,10 +150,12 @@ The view controller for selecting file attachments.
 open private(set) lazy var filePickerVC: UIViewController 
 ```
 
-### `selectedAttachmentType`
+### `attachmentsPickerActions`
+
+Returns actions for attachments picker.
 
 ``` swift
-open var selectedAttachmentType: AttachmentType?
+open var attachmentsPickerActions: [UIAlertAction] 
 ```
 
 ## Methods
@@ -167,7 +202,25 @@ open func setupAttachmentsView()
 @objc open func publishMessage(sender: UIButton) 
 ```
 
+### `showMediaPicker()`
+
+Shows a photo/media picker.
+
+``` swift
+open func showMediaPicker() 
+```
+
+### `showFilePicker()`
+
+Shows a document picker.
+
+``` swift
+open func showFilePicker() 
+```
+
 ### `showAttachmentsPicker(sender:)`
+
+Action that handles tap on attachments button in composer.
 
 ``` swift
 @objc open func showAttachmentsPicker(sender: UIButton) 
@@ -260,6 +313,26 @@ open func showCommandSuggestions(for typingCommand: String)
 
   - typingCommand: The potential command that the current user is typing.
 
+### `queryForMentionSuggestionsSearch(typingMention:)`
+
+Returns the query to be used for searching users for the given typing mention.
+
+``` swift
+open func queryForMentionSuggestionsSearch(typingMention term: String) -> _UserListQuery<ExtraData.User> 
+```
+
+This function is called in `showMentionSuggestions` to retrieve the query
+that will be used to search the users. You should override this if you want to change the
+user searching logic.
+
+#### Parameters
+
+  - typingMention: The potential user mention the current user is typing.
+
+#### Returns
+
+`_UserListQuery` instance that will be used for searching users.
+
 ### `showMentionSuggestions(for:mentionRange:)`
 
 Shows the mention suggestions for the potential mention the current user is typing.
@@ -297,6 +370,19 @@ Dismisses the suggestions view.
 open func dismissSuggestions() 
 ```
 
+### `addAttachmentToContent(from:type:)`
+
+Creates and adds an attachment from the given URL to the `content`
+
+``` swift
+open func addAttachmentToContent(from url: URL, type: AttachmentType) throws 
+```
+
+#### Parameters
+
+  - url: The URL of the attachment
+  - type: The type of the attachment
+
 ### `textViewDidChange(_:)`
 
 ``` swift
@@ -326,4 +412,16 @@ open func imagePickerController(
 
 ``` swift
 open func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) 
+```
+
+### `showAttachmentExceedsMaxSizeAlert()`
+
+``` swift
+open func showAttachmentExceedsMaxSizeAlert() 
+```
+
+### `inputTextView(_:didPasteImage:)`
+
+``` swift
+open func inputTextView(_ inputTextView: InputTextView, didPasteImage image: UIImage) 
 ```

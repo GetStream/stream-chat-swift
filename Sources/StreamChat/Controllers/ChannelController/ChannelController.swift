@@ -309,9 +309,16 @@ public class _ChatChannelController<ExtraData: ExtraDataTypes>: DataController, 
         _messagesObserver.computeValue = { [unowned self] in
             guard let cid = self.cid else { return nil }
             let sortAscending = self.listOrdering == .topToBottom ? false : true
+            let deletedMessageVisibility = self.client.databaseContainer.viewContext
+                .deletedMessagesVisibility ?? .visibleForCurrentUser
+
             let observer = ListDatabaseObserver(
                 context: self.client.databaseContainer.viewContext,
-                fetchRequest: MessageDTO.messagesFetchRequest(for: cid, sortAscending: sortAscending),
+                fetchRequest: MessageDTO.messagesFetchRequest(
+                    for: cid,
+                    sortAscending: sortAscending,
+                    deletedMessagesVisibility: deletedMessageVisibility
+                ),
                 itemCreator: { $0.asModel() as _ChatMessage<ExtraData> }
             )
             observer.onChange = { changes in
@@ -875,6 +882,61 @@ public extension _ChatChannelController {
         }
         
         updater.removeMembers(cid: cid, userIds: userIds) { error in
+            self.callback {
+                completion?(error)
+            }
+        }
+    }
+    
+    /// Invite members to a channel. They can then accept or decline the invitation
+    /// - Parameters:
+    ///   - userIds: Set of ids of users to be invited to the channel
+    ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
+    func inviteMembers(userIds: Set<UserId>, completion: ((Error?) -> Void)? = nil) {
+        /// Perform action only if channel is already created on backend side and have a valid `cid`.
+        guard let cid = cid, isChannelAlreadyCreated else {
+            channelModificationFailed(completion)
+            return
+        }
+        
+        updater.inviteMembers(cid: cid, userIds: userIds) { error in
+            self.callback {
+                completion?(error)
+            }
+        }
+    }
+    
+    /// Accept Request
+    /// - Parameters:
+    ///   - cid: The channel identifier.
+    ///   - userId: userId
+    ///   - message: message
+    ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
+    func acceptInvite(message: String? = nil, completion: ((Error?) -> Void)? = nil) {
+        /// Perform action only if channel is already created on backend side and have a valid `cid`.
+        guard let cid = cid, isChannelAlreadyCreated else {
+            channelModificationFailed(completion)
+            return
+        }
+        updater.acceptInvite(cid: cid, message: message) { error in
+            self.callback {
+                completion?(error)
+            }
+        }
+    }
+    
+    /// Reject Request
+    /// - Parameters:
+    ///   - cid: The channel identifier.
+    ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
+    func rejectInvite(completion: ((Error?) -> Void)? = nil) {
+        /// Perform action only if channel is already created on backend side and have a valid `cid`.
+        guard let cid = cid, isChannelAlreadyCreated else {
+            channelModificationFailed(completion)
+            return
+        }
+        
+        updater.rejectInvite(cid: cid) { error in
             self.callback {
                 completion?(error)
             }

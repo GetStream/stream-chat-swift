@@ -13,7 +13,10 @@ final class ChatMessageListVC_Tests: XCTestCase {
     
     override func setUp() {
         super.setUp()
+        var components = Components()
+        components.channelHeaderView = ChatMessageListHeaderView_Mock.self
         vc = ChatMessageListVC()
+        vc.components = components
         channelControllerMock = ChatChannelController_Mock.mock()
         vc.channelController = channelControllerMock
     }
@@ -48,5 +51,119 @@ final class ChatMessageListVC_Tests: XCTestCase {
             isEmbeddedInNavigationController: true,
             variants: [.defaultLight]
         )
+    }
+    
+    func test_deletedMessagesWithAttachmentsAppearance() {
+        let imageAttachment = ChatMessageImageAttachment.mock(
+            id: .unique,
+            imageURL: TestImages.yoda.url
+        ).asAnyAttachment
+        
+        let linkAttachment = ChatMessageLinkAttachment.mock(
+            id: .unique,
+            originalURL: URL(string: "https://www.yoda.com")!,
+            assetURL: .unique(),
+            previewURL: TestImages.yoda.url
+        ).asAnyAttachment
+        
+        channelControllerMock.simulateInitial(
+            channel: .mock(cid: .unique),
+            messages: [
+                .mock(id: .unique, cid: .unique, text: "One", author: .mock(id: .unique)),
+                .mock(
+                    id: .unique,
+                    cid: .unique,
+                    text: "Two",
+                    author: .mock(id: .unique),
+                    deletedAt: Date(timeIntervalSince1970: 800),
+                    attachments: [imageAttachment],
+                    isSentByCurrentUser: true,
+                    attachmentCounts: [.image: 1]
+                ),
+                .mock(
+                    id: .unique,
+                    cid: .unique,
+                    text: "Three",
+                    author: .mock(id: .unique),
+                    deletedAt: Date(timeIntervalSince1970: 1800),
+                    attachments: [linkAttachment],
+                    isSentByCurrentUser: true,
+                    attachmentCounts: [.linkPreview: 1]
+                )
+            ],
+            state: .localDataFetched
+        )
+        AssertSnapshot(
+            vc,
+            isEmbeddedInNavigationController: true,
+            variants: [.defaultLight]
+        )
+    }
+
+    func test_setUp_whenChannelControllerSynchronizeCompletes_shouldUpdateComposer() {
+        class ComposerVC_Mock: ComposerVC {
+            var updateContentCallCount = 0
+
+            override func updateContent() {
+                updateContentCallCount += 1
+            }
+        }
+
+        var components = Components()
+        components.messageComposerVC = ComposerVC_Mock.self
+        vc.components = components
+
+        vc.setUp()
+
+        // When channel controller synchronize completes
+        channelControllerMock.synchronize_completion?(nil)
+
+        let composer = vc.messageComposerVC as! ComposerVC_Mock
+        XCTAssertEqual(composer.updateContentCallCount, 1)
+    }
+
+    func test_onlyEmojiMessageAppearance() {
+        let imageAttachment = ChatMessageImageAttachment.mock(
+            id: .unique,
+            imageURL: TestImages.yoda.url
+        ).asAnyAttachment
+        
+        channelControllerMock.simulateInitial(
+            channel: .mock(cid: .unique),
+            messages: [
+                .mock(id: .unique, cid: .unique, text: "😍", author: .mock(id: .unique)),
+                .mock(id: .unique, cid: .unique, text: "👍🏻💯", author: .mock(id: .unique)),
+                .mock(id: .unique, cid: .unique, text: "Simple text", author: .mock(id: .unique), isSentByCurrentUser: true),
+                .mock(
+                    id: .unique,
+                    cid: .unique,
+                    text: "🚀",
+                    author: .mock(id: .unique),
+                    attachments: [imageAttachment],
+                    isSentByCurrentUser: false,
+                    attachmentCounts: [.image: 1]
+                )
+            ],
+            state: .localDataFetched
+        )
+        AssertSnapshot(
+            vc,
+            isEmbeddedInNavigationController: true,
+            variants: [.defaultLight]
+        )
+    }
+}
+
+private class ChatMessageListHeaderView_Mock: ChatChannelHeaderView {
+    override var currentUserId: UserId? {
+        .unique
+    }
+    
+    override func setUp() {
+        super.setUp()
+
+        let mockedChannelController = ChatChannelController_Mock<ExtraData>.mock()
+        mockedChannelController.channel_mock = .mock(cid: .unique)
+        channelController = mockedChannelController
     }
 }

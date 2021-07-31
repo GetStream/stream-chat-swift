@@ -5,12 +5,6 @@
 public var content: ChatMessageGiphyAttachment? 
 ```
 
-### `intrinsicContentSize`
-
-``` swift
-override open var intrinsicContentSize: CGSize 
-```
-
 ### `imageView`
 
 ``` swift

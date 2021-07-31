@@ -1,11 +1,12 @@
 
 ### `galleryView`
 
+A gallery which shows attachment previews.
+
 ``` swift
-open private(set) lazy var galleryView = contentView
+open private(set) lazy var galleryView: _ChatMessageGalleryView<ExtraData> = contentView
         .components
-        .imageGalleryView
-        .init()
+        .galleryView.init()
         .withoutAutoresizingMaskConstraints
 ```
 
@@ -23,7 +24,25 @@ override open func contentViewDidLayout(options: ChatMessageLayoutOptions)
 override open func contentViewDidUpdateContent() 
 ```
 
-### `handleTapOnAttachment(_:)`
+### `handleTapOnAttachment(with:)`
+
+Is invoked when attachment preview is tapped.
 
 ``` swift
-open func handleTapOnAttachment(_ attachment: ChatMessageImageAttachment) 
+open func handleTapOnAttachment(with id: AttachmentId) 
+```
+
+#### Parameters
+
+  - id: Attachment identifier.
+
+### `handleUploadingAttachmentAction(_:)`
+
+Is invoked when action button on attachment uploading overlay is tapped.
+
+``` swift
+open func handleUploadingAttachmentAction(_ attachmentId: AttachmentId) 
+```
+
+#### Parameters
+

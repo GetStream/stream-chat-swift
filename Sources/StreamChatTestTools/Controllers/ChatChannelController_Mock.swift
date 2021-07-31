@@ -26,6 +26,11 @@ public class ChatChannelController_Mock<ExtraData: ExtraDataTypes>: _ChatChannel
         get { state_mock ?? super.state }
         set { super.state = newValue }
     }
+
+    public private(set) var synchronize_completion: ((Error?) -> Void)?
+    override public func synchronize(_ completion: ((Error?) -> Void)? = nil) {
+        synchronize_completion = completion
+    }
 }
 
 public extension ChatChannelController_Mock {

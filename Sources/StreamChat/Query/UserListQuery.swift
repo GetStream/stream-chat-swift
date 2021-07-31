@@ -80,7 +80,7 @@ public extension FilterKey where Scope: AnyUserListFilterScope {
 ///
 /// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/Cheat-Sheet#working-with-extra-data).
 ///
-typealias UserListQuery = _UserListQuery<NoExtraData>
+public typealias UserListQuery = _UserListQuery<NoExtraData>
 
 /// A query is used for querying specific users from backend.
 /// You can specify filter, sorting and pagination.

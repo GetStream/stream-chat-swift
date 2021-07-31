@@ -41,12 +41,12 @@ func channelController(
 func channelController(_ channelController: _ChatChannelController<ExtraData>, didReceiveMemberEvent: MemberEvent) 
 ```
 
-### `channelController(_:didChangeTypingMembers:)`
+### `channelController(_:didChangeTypingUsers:)`
 
 ``` swift
 func channelController(
         _ channelController: _ChatChannelController<ExtraData>,
-        didChangeTypingMembers: Set<_ChatChannelMember<ExtraData.User>>
+        didChangeTypingUsers: Set<_ChatUser<ExtraData.User>>
     ) 
 ```
 
@@ -97,13 +97,13 @@ The controller received a `MemberEvent` related to the channel it observes.
 func channelController(_ channelController: _ChatChannelController<ExtraData>, didReceiveMemberEvent: MemberEvent)
 ```
 
-### channelController(\_:​didChangeTypingMembers:​)
+### channelController(\_:​didChangeTypingUsers:​)
 
-The controller received a change related to members typing in the channel it observes.
+The controller received a change related to users typing in the channel it observes.
 
 ``` swift
 func channelController(
         _ channelController: _ChatChannelController<ExtraData>,
-        didChangeTypingMembers typingMembers: Set<_ChatChannelMember<ExtraData.User>>
+        didChangeTypingUsers typingUsers: Set<_ChatUser<ExtraData.User>>
     )
 ```

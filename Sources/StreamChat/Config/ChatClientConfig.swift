@@ -106,7 +106,20 @@ public struct ChatClientConfig {
             return StreamCDNClient.maxAttachmentSize
         }
     }
-    
+
+    /// Specifies the visibility of deleted messages.
+    public enum DeletedMessageVisibility {
+        /// All deleted messages are always hidden.
+        case alwaysHidden
+        /// Deleted message by current user are visible, other deleted messages are hidden.
+        case visibleForCurrentUser
+        /// Deleted messages are always visible.
+        case alwaysVisible
+    }
+
+    /// Specifies the visibility of deleted messages.
+    public var deletedMessagesVisibility: DeletedMessageVisibility = .visibleForCurrentUser
+
     public init(apiKey: APIKey) {
         self.apiKey = apiKey
         isClientInActiveMode = !Bundle.main.isAppExtension

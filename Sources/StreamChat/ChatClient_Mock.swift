@@ -13,7 +13,8 @@ extension _ChatClient {
             config: .init(apiKey: .init(.unique)),
             workerBuilders: [],
             eventWorkerBuilders: [],
-            environment: .mock
+            environment: .mock,
+            tokenExpirationRetryStrategy: DefaultReconnectionStrategy()
         )
     }
     
@@ -63,7 +64,8 @@ class ChatClientMock<ExtraData: ExtraDataTypes>: _ChatClient<ExtraData> {
         tokenProvider: TokenProvider? = nil,
         workerBuilders: [WorkerBuilder] = [],
         eventWorkerBuilders: [EventWorkerBuilder] = [],
-        environment: Environment = .mock
+        environment: Environment = .mock,
+        tokenExpirationRetryStrategy: WebSocketClientReconnectionStrategy = DefaultReconnectionStrategy()
     ) {
         init_config = config
         init_tokenProvider = tokenProvider
@@ -76,7 +78,8 @@ class ChatClientMock<ExtraData: ExtraDataTypes>: _ChatClient<ExtraData> {
             tokenProvider: tokenProvider,
             workerBuilders: workerBuilders,
             eventWorkerBuilders: eventWorkerBuilders,
-            environment: environment
+            environment: environment,
+            tokenExpirationRetryStrategy: tokenExpirationRetryStrategy
         )
     }
 
@@ -142,7 +145,8 @@ extension _ChatClient.Environment {
                         kind: .onDisk(databaseFileURL: .newTemporaryFileURL()),
                         shouldFlushOnStart: $1,
                         shouldResetEphemeralValuesOnStart: $2,
-                        localCachingSettings: $3
+                        localCachingSettings: $3,
+                        deletedMessagesVisibility: $4
                     )
                 } catch {
                     XCTFail("Unable to initialize DatabaseContainerMock \(error)")
