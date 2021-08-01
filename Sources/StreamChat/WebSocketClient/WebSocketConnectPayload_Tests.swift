@@ -11,12 +11,13 @@ class WebSocketConnectPayload_Tests: XCTestCase {
             "color": .string("blue")
         ]
 
+        let imageURL: URL? = URL(string: "https://path/to/image")
         let payload =
             WebSocketConnectPayload(
                 userInfo: .init(
                     id: "tommaso",
                     name: "tommaso",
-                    imageURL: .init(string: "https://path/to/image") ?? nil,
+                    imageURL: imageURL,
                     extraData: custom
                 )
             )
