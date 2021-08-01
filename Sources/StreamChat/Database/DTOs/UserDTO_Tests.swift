@@ -79,7 +79,7 @@ class UserDTO_Tests: XCTestCase {
     func test_DTO_asModel() throws {
         let userId = UUID().uuidString
         
-        let payload: UserPayload = .dummy(userId: userId)
+        let payload: UserPayload = .dummy(userId: userId, extraData: ["k": .string("v")])
         
         // Asynchronously save the payload to the db
         try database.writeSynchronously { session in
@@ -107,7 +107,7 @@ class UserDTO_Tests: XCTestCase {
     func test_DTO_asPayload() {
         let userId = UUID().uuidString
         
-        let payload: UserPayload = .dummy(userId: userId)
+        let payload: UserPayload = .dummy(userId: userId, extraData: ["k": .string("v")])
         
         // Asynchronously save the payload to the db
         database.write { session in

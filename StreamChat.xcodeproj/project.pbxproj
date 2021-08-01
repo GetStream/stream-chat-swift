@@ -54,6 +54,8 @@
 		430156EE26B2E20B0006E7EA /* ChannelPayloadWithCustom.json in Resources */ = {isa = PBXBuildFile; fileRef = 430156ED26B2E20B0006E7EA /* ChannelPayloadWithCustom.json */; };
 		430156F026B2E2170006E7EA /* ChannelPayload.json in Resources */ = {isa = PBXBuildFile; fileRef = 430156EF26B2E2170006E7EA /* ChannelPayload.json */; };
 		430156F226B4523A0006E7EA /* WebSocketConnectPayload_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 430156F126B4523A0006E7EA /* WebSocketConnectPayload_Tests.swift */; };
+		43016E1426B7189D0054E805 /* CustomMessageContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43016E1326B7189D0054E805 /* CustomMessageContentView.swift */; };
+		43016E1626B734410054E805 /* ChatUser+CustomFields.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43016E1526B734410054E805 /* ChatUser+CustomFields.swift */; };
 		43BAAD492664F59600323D8E /* UserStopTypingThread.json in Resources */ = {isa = PBXBuildFile; fileRef = 43BAAD472664F59600323D8E /* UserStopTypingThread.json */; };
 		43BAAD4A2664F59600323D8E /* UserStartTypingThread.json in Resources */ = {isa = PBXBuildFile; fileRef = 43BAAD482664F59600323D8E /* UserStartTypingThread.json */; };
 		43EB3AE22671718200954323 /* AttachmentViewCatalog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43EB3AE12671718200954323 /* AttachmentViewCatalog.swift */; };
@@ -1380,6 +1382,8 @@
 		430156ED26B2E20B0006E7EA /* ChannelPayloadWithCustom.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = ChannelPayloadWithCustom.json; sourceTree = "<group>"; };
 		430156EF26B2E2170006E7EA /* ChannelPayload.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = ChannelPayload.json; sourceTree = "<group>"; };
 		430156F126B4523A0006E7EA /* WebSocketConnectPayload_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebSocketConnectPayload_Tests.swift; sourceTree = "<group>"; };
+		43016E1326B7189D0054E805 /* CustomMessageContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomMessageContentView.swift; sourceTree = "<group>"; };
+		43016E1526B734410054E805 /* ChatUser+CustomFields.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChatUser+CustomFields.swift"; sourceTree = "<group>"; };
 		43BAAD472664F59600323D8E /* UserStopTypingThread.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = UserStopTypingThread.json; sourceTree = "<group>"; };
 		43BAAD482664F59600323D8E /* UserStartTypingThread.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = UserStartTypingThread.json; sourceTree = "<group>"; };
 		43EB3AE12671718200954323 /* AttachmentViewCatalog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttachmentViewCatalog.swift; sourceTree = "<group>"; };
@@ -2951,6 +2955,7 @@
 			isa = PBXGroup;
 			children = (
 				792DDA59256FB69E001DB91B /* AppDelegate.swift */,
+				43016E1326B7189D0054E805 /* CustomMessageContentView.swift */,
 				792DDA5B256FB69E001DB91B /* SceneDelegate.swift */,
 				792DDA5D256FB69E001DB91B /* LoginViewController.swift */,
 				7933064825712C8B00FBB586 /* DemoUsers.swift */,
@@ -2966,6 +2971,7 @@
 				792DDAA725753BEA001DB91B /* CreateGroupViewController.swift */,
 				794E20F42577DF4D00790DAB /* NameGroupViewController.swift */,
 				647F66D4261E22C200111B19 /* BannerView.swift */,
+				43016E1526B734410054E805 /* ChatUser+CustomFields.swift */,
 			);
 			path = DemoApp;
 			sourceTree = "<group>";
@@ -5968,6 +5974,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				6428DD5526201DCC0065DA1D /* BannerShowingConnectionDelegate.swift in Sources */,
+				43016E1426B7189D0054E805 /* CustomMessageContentView.swift in Sources */,
 				647F66D5261E22C200111B19 /* BannerView.swift in Sources */,
 				648EC576261EF9D400B8F05F /* DemoAppCoordinator.swift in Sources */,
 				792DDA5E256FB69E001DB91B /* LoginViewController.swift in Sources */,
@@ -5976,6 +5983,7 @@
 				792DDA5A256FB69E001DB91B /* AppDelegate.swift in Sources */,
 				792DDAA125711AF2001DB91B /* CreateChatViewController.swift in Sources */,
 				792DDA5C256FB69E001DB91B /* SceneDelegate.swift in Sources */,
+				43016E1626B734410054E805 /* ChatUser+CustomFields.swift in Sources */,
 				794E20F52577DF4D00790DAB /* NameGroupViewController.swift in Sources */,
 				7933060B256FF94800FBB586 /* ChatPresenter.swift in Sources */,
 				79330604256FEBE600FBB586 /* AdvancedOptionsViewController.swift in Sources */,

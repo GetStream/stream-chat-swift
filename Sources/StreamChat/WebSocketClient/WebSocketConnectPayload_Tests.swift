@@ -10,16 +10,17 @@ class WebSocketConnectPayload_Tests: XCTestCase {
         let custom: CustomData = [
             "color": .string("blue")
         ]
+
         let payload =
             WebSocketConnectPayload(
                 userInfo: .init(
                     id: "tommaso",
                     name: "tommaso",
-                    imageURL: .init(string: "https://path/to/image"),
+                    imageURL: .init(string: "https://path/to/image") ?? nil,
                     extraData: custom
                 )
             )
-        
+
         let serialized = try JSONEncoder.stream.encode(payload)
         let expected: [String: Any] = [
             "user_id": payload.userDetails.id,

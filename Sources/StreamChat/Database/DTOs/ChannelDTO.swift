@@ -288,13 +288,13 @@ extension ChatChannel {
     fileprivate static func create(fromDTO dto: ChannelDTO) -> ChatChannel {
         let extraData: CustomData
         do {
-            extraData = try JSONSerialization.jsonObject(with: dto.extraData, options: []) as? CustomData ?? [:]
+            extraData = try JSONDecoder.default.decode(CustomData.self, from: dto.extraData)
         } catch {
             log.error(
                 "Failed to decode extra data for Channel with cid: <\(dto.cid)>, using default value instead. "
                     + "Error: \(error)"
             )
-            extraData = [:]
+            extraData = .defaultValue
         }
 
         let cid = try! ChannelId(cid: dto.cid)

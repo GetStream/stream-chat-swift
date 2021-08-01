@@ -124,7 +124,7 @@ extension MessageReactionDTO {
     func asModel() -> ChatMessageReaction {
         let extraData: CustomData
         do {
-            extraData = try JSONSerialization.jsonObject(with: self.extraData, options: []) as? CustomData ?? [:]
+            extraData = try JSONDecoder.default.decode(CustomData.self, from: self.extraData)
         } catch {
             log.error("Failed decoding saved extra data with error: \(error)")
             extraData = .defaultValue

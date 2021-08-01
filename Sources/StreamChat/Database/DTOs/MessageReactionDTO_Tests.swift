@@ -70,7 +70,8 @@ final class MessageReactionDTO_Tests: XCTestCase {
         // Create message reaction payload with `DefaultExtraData`.
         let payload: MessageReactionPayload = .dummy(
             messageId: .unique,
-            user: dummyUser
+            user: dummyUser,
+            extraData: ["k": .string("v")]
         )
         
         // Save message to the database.

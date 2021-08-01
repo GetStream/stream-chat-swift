@@ -21,7 +21,7 @@ class CurrentUserModelDTO_Tests: XCTestCase {
     }
     
     func test_currentUserPayload_isStoredAndLoadedFromDB() throws {
-        let userPayload: UserPayload = .dummy(userId: .unique)
+        let userPayload: UserPayload = .dummy(userId: .unique, extraData: ["k": .string("v")])
         
         let payload: CurrentUserPayload = .dummy(
             userPayload: userPayload,

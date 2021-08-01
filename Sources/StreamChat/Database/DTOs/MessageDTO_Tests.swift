@@ -30,6 +30,7 @@ class MessageDTO_Tests: XCTestCase {
         let quotedMessagePayload: MessagePayload = .dummy(
             messageId: .unique,
             authorUserId: userId,
+            extraData: ["k1": .string("v1")],
             channel: channelPayload
         )
         
@@ -38,6 +39,7 @@ class MessageDTO_Tests: XCTestCase {
             quotedMessageId: quotedMessagePayload.id,
             quotedMessage: quotedMessagePayload,
             authorUserId: userId,
+            extraData: ["k2": .string("v2")],
             latestReactions: [
                 .dummy(messageId: messageId, user: UserPayload.dummy(userId: .unique))
             ],
@@ -78,7 +80,6 @@ class MessageDTO_Tests: XCTestCase {
         AssertAsync {
             // Channel details
             Assert.willBeEqual(channelId, loadedChannel?.cid)
-            
             Assert.willBeEqual(channelPayload.name, loadedChannel?.name)
             Assert.willBeEqual(channelPayload.imageURL, loadedChannel?.imageURL)
             Assert.willBeEqual(channelPayload.memberCount, loadedChannel?.memberCount)
@@ -379,6 +380,7 @@ class MessageDTO_Tests: XCTestCase {
                 videoAttachmentPayload
             ],
             authorUserId: messageAuthorId,
+            extraData: ["k": .string("v")],
             latestReactions: (0..<3).map { _ in
                 .dummy(messageId: messageId, user: .dummy(userId: .unique))
             },
@@ -503,7 +505,7 @@ class MessageDTO_Tests: XCTestCase {
         let mentionedUserIds: [UserId] = [currentUserId]
         let messageShowReplyInChannel = true
         let messageIsSilent = true
-        let messageExtraData: [String: RawJSON] = [:]
+        let messageExtraData: CustomData = ["k": .string("v")]
 
         // Create message with attachments in the database.
         try database.writeSynchronously { session in
@@ -538,7 +540,7 @@ class MessageDTO_Tests: XCTestCase {
         XCTAssertEqual(requestBody.parentId, parentMessageId)
         XCTAssertEqual(requestBody.showReplyInChannel, messageShowReplyInChannel)
         XCTAssertEqual(requestBody.isSilent, messageIsSilent)
-        XCTAssertEqual(requestBody.extraData, [:])
+        XCTAssertEqual(requestBody.extraData, ["k": .string("v")])
         XCTAssertEqual(requestBody.pinned, true)
         XCTAssertEqual(requestBody.pinExpires, messagePinning!.expirationDate)
         XCTAssertEqual(requestBody.attachments.map(\.type), attachments.map(\.type))

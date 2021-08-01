@@ -72,9 +72,9 @@ class UserPayload: Decodable {
 
     required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: UserPayloadsCodingKeys.self)
-        id = try container.decode(String.self, forKey: .id)
-        // Unfortunately, the built-in URL decoder fails, if the string is empty. We need to
-        // provide custom decoding to handle URL? as expected.
+        let userId = try container.decode(String.self, forKey: .id)
+
+        id = userId
         name = try container.decodeIfPresent(String.self, forKey: .name)
         imageURL = try container.decodeIfPresent(String.self, forKey: .imageURL).flatMap(URL.init(string:))
         role = try container.decode(UserRole.self, forKey: .role)
@@ -86,10 +86,15 @@ class UserPayload: Decodable {
         isBanned = try container.decodeIfPresent(Bool.self, forKey: .isBanned) ?? false
         teams = try container.decodeIfPresent([String].self, forKey: .teams) ?? []
 
-        if var payload = try? CustomData(from: decoder) {
+        do {
+            var payload = try CustomData(from: decoder)
             payload.removeValues(forKeys: UserPayloadsCodingKeys.allCases.map(\.rawValue))
             extraData = payload
-        } else {
+        } catch {
+            log.error(
+                "Failed to decode extra data for User with id: <\(userId)>, using default value instead. "
+                    + "Error: \(error)"
+            )
             extraData = .defaultValue
         }
     }

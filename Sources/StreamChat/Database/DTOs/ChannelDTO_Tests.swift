@@ -628,6 +628,17 @@ class ChannelDTO_Tests: XCTestCase {
         AssertAsync.willBeTrue(channel.currentlyTypingUsers.isEmpty)
     }
     
+    func test_createFromDTO_handlesExtraDataCorrectlyWhenPresent() throws {
+        let cid: ChannelId = .unique
+
+        let extraData: CustomData = ["k": .string("v")]
+        try database.createChannel(cid: cid, channelExtraData: extraData)
+        var channel: ChatChannel {
+            database.viewContext.channel(cid: cid)!.asModel()
+        }
+        XCTAssertEqual(channel.extraData, ["k": .string("v")])
+    }
+
     func test_watchers_areCleared_onResetEphemeralValues() throws {
         let cid: ChannelId = .unique
         let userId: UserId = .unique

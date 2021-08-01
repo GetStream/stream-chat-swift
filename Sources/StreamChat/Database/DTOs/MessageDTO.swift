@@ -543,7 +543,7 @@ extension MessageDTO {
     func asRequestBody() -> MessageRequestBody {
         var extraData: CustomData
         do {
-            extraData = try JSONSerialization.jsonObject(with: self.extraData, options: []) as? CustomData ?? .defaultValue
+            extraData = try JSONDecoder.default.decode(CustomData.self, from: self.extraData)
         } catch {
             log.assertionFailure(
                 "Failed decoding saved extra data with error: \(error). This should never happen because"
@@ -594,7 +594,7 @@ private extension ChatMessage {
         reactionScores = dto.reactionScores.mapKeys { MessageReactionType(rawValue: $0) }
         
         do {
-            extraData = try JSONSerialization.jsonObject(with: dto.extraData, options: []) as? CustomData ?? [:]
+            extraData = try JSONDecoder.default.decode(CustomData.self, from: dto.extraData)
         } catch {
             log.error("Failed to decode extra data for Message with id: <\(dto.id)>, using default value instead. Error: \(error)")
             extraData = .defaultValue

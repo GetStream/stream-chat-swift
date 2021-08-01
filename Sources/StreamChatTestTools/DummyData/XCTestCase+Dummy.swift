@@ -134,7 +134,8 @@ extension XCTestCase {
             ],
             createdAt: XCTestCase.channelCreatedDate,
             updatedAt: .unique
-        )
+        ),
+        channelExtraData: CustomData = .defaultValue
     ) -> ChannelPayload {
         var payloadMessages: [MessagePayload] = []
         if let messages = messages {
@@ -153,7 +154,7 @@ extension XCTestCase {
                     cid: channelId,
                     name: .unique,
                     imageURL: .unique(),
-                    extraData: .defaultValue,
+                    extraData: channelExtraData,
                     typeRawValue: channelId.type.rawValue,
                     lastMessageAt: lastMessageAt,
                     createdAt: XCTestCase.channelCreatedDate,

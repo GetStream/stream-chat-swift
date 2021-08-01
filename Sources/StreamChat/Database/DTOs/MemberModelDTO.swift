@@ -136,13 +136,13 @@ extension ChatChannelMember {
     fileprivate static func create(fromDTO dto: MemberDTO) -> ChatChannelMember {
         let extraData: CustomData
         do {
-            extraData = try JSONSerialization.jsonObject(with: dto.user.extraData, options: []) as? CustomData ?? [:]
+            extraData = try JSONDecoder.default.decode(CustomData.self, from: dto.user.extraData)
         } catch {
             log.error(
                 "Failed to decode extra data for user with id: <\(dto.user.id)>, using default value instead. "
                     + "Error: \(error)"
             )
-            extraData = [:]
+            extraData = .defaultValue
         }
 
         let role = dto.channelRoleRaw.flatMap { MemberRole(rawValue: $0) } ?? .member
