@@ -62,6 +62,7 @@ open class _ChatMessageListRouter<ExtraData: ExtraDataTypes>:
     ///
     /// - Parameter url: The URL of the link to preview.
     ///
+    @available(iOSApplicationExtension, unavailable)
     open func showLinkPreview(link: URL) {
         UIApplication.shared.open(link)
     }
@@ -85,6 +86,7 @@ open class _ChatMessageListRouter<ExtraData: ExtraDataTypes>:
     ///   - cid: The `cid` of the channel the message belongs to.
     ///   - client: The current `ChatClient` instance.
     ///
+    @available(iOSApplicationExtension, unavailable)
     open func showThread(
         messageId: MessageId,
         cid: ChannelId,

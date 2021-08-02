@@ -86,6 +86,7 @@ public struct _Components<ExtraData: ExtraDataTypes> {
     public var playerView: PlayerView.Type = PlayerView.self
 
     /// The View Controller used to display content of the message, i.e. in the channel detail message list.
+    @available(iOSApplicationExtension, unavailable)
     public var messageListVC: _ChatMessageListVC<ExtraData>.Type = _ChatMessageListVC<ExtraData>.self
 
     /// The view that shows the message list.
@@ -97,6 +98,7 @@ public struct _Components<ExtraData: ExtraDataTypes> {
         ChatMessageListScrollOverlayView.self
     
     /// The View Controller used to display the detail of a message thread.
+    @available(iOSApplicationExtension, unavailable)
     public var threadVC: _ChatThreadVC<ExtraData>.Type = _ChatThreadVC<ExtraData>.self
 
     /// The view that displays channel information on the thread header.
@@ -129,12 +131,14 @@ public struct _Components<ExtraData: ExtraDataTypes> {
     public var messageBubbleView: _ChatMessageBubbleView<ExtraData>.Type = _ChatMessageBubbleView<ExtraData>.self
 
     /// The class responsible for returning the correct attachment view injector from a message
+    @available(iOSApplicationExtension, unavailable)
     public var attachmentViewCatalog: _AttachmentViewCatalog<ExtraData>.Type = _AttachmentViewCatalog<ExtraData>.self
 
     /// The injector used to inject gallery attachment views.
     public var galleryAttachmentInjector: _AttachmentViewInjector<ExtraData>.Type = _GalleryAttachmentViewInjector<ExtraData>.self
 
     /// The injector used to inject link attachment views.
+    @available(iOSApplicationExtension, unavailable)
     public var linkAttachmentInjector: _AttachmentViewInjector<ExtraData>.Type = _LinkAttachmentViewInjector<ExtraData>.self
 
     /// The injector used for injecting giphy attachment views
@@ -330,6 +334,7 @@ public struct _Components<ExtraData: ExtraDataTypes> {
     public var navigationVC: NavigationVC.Type = NavigationVC.self
 
     /// The router responsible for navigation on channel list screen.
+    @available(iOSApplicationExtension, unavailable)
     public var channelListRouter: _ChatChannelListRouter<ExtraData>.Type = _ChatChannelListRouter<ExtraData>.self
 
     /// The router responsible for navigation on message list screen.
