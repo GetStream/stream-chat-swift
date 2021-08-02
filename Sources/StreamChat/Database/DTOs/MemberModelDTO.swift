@@ -26,6 +26,7 @@ class MemberDTO: NSManagedObject {
     // MARK: - Relationships
     
     @NSManaged var user: UserDTO
+    @NSManaged var queries: Set<ChannelMemberListQueryDTO>
     
     private static func createId(userId: String, channeldId: ChannelId) -> String {
         channeldId.rawValue + userId

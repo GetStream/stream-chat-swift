@@ -28,7 +28,12 @@ struct MemberEventMiddleware: EventMiddleware {
                     // No need to throw MemberNotFound error here
                     break
                 }
+                // We remove the member from the channel
                 channel.members.remove(member)
+                
+                // If there are any MemberListQueries observing this channel,
+                // we need to update them too
+                member.queries.removeAll()
 
             default:
                 break

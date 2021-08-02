@@ -83,6 +83,7 @@ public struct Components {
     public var playerView: PlayerView.Type = PlayerView.self
 
     /// The View Controller used to display content of the message, i.e. in the channel detail message list.
+    @available(iOSApplicationExtension, unavailable)
     public var messageListVC: ChatMessageListVC.Type = ChatMessageListVC.self
 
     /// The view that shows the message list.
@@ -94,6 +95,7 @@ public struct Components {
         ChatMessageListScrollOverlayView.self
     
     /// The View Controller used to display the detail of a message thread.
+    @available(iOSApplicationExtension, unavailable)
     public var threadVC: ChatThreadVC.Type = ChatThreadVC.self
 
     /// The view that displays channel information on the thread header.
@@ -125,12 +127,14 @@ public struct Components {
     public var messageBubbleView: ChatMessageBubbleView.Type = ChatMessageBubbleView.self
 
     /// The class responsible for returning the correct attachment view injector from a message
+    @available(iOSApplicationExtension, unavailable)
     public var attachmentViewCatalog: AttachmentViewCatalog.Type = AttachmentViewCatalog.self
 
     /// The injector used to inject gallery attachment views.
     public var galleryAttachmentInjector: AttachmentViewInjector.Type = GalleryAttachmentViewInjector.self
 
     /// The injector used to inject link attachment views.
+    @available(iOSApplicationExtension, unavailable)
     public var linkAttachmentInjector: AttachmentViewInjector.Type = LinkAttachmentViewInjector.self
 
     /// The injector used for injecting giphy attachment views
@@ -303,6 +307,7 @@ public struct Components {
     public var navigationVC: NavigationVC.Type = NavigationVC.self
 
     /// The router responsible for navigation on channel list screen.
+    @available(iOSApplicationExtension, unavailable)
     public var channelListRouter: ChatChannelListRouter.Type = ChatChannelListRouter.self
 
     /// The router responsible for navigation on message list screen.

@@ -6,6 +6,7 @@ import StreamChat
 import UIKit
 
 /// A `UIViewController` subclass  that shows list of channels.
+@available(iOSApplicationExtension, unavailable)
 open class ChatChannelListVC: _ViewController,
     UICollectionViewDataSource,
     UICollectionViewDelegate,

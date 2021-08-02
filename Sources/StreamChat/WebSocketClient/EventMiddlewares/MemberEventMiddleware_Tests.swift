@@ -128,6 +128,22 @@ final class MemberEventMiddleware_Tests: XCTestCase {
         // Save channel's member's id so we can remove it
         let memberId = channel.members.first!.user.id
         
+        // Create MemberListQuery for the channel
+        let query = ChannelMemberListQuery(cid: cid)
+        
+        // Link the member to a MemberListQuery
+        try database.writeSynchronously {
+            try $0.saveQuery(query)
+            try $0.saveMember(payload: .dummy(userId: memberId), channelId: cid, query: query)
+        }
+        
+        var queryDTO = try XCTUnwrap(
+            database.viewContext.channelMemberListQuery(queryHash: query.queryHash)
+        )
+        
+        // Assert that member is linked to the query
+        XCTAssertEqual(queryDTO.members.count, 1)
+        
         // Create MemberRemovedEvent payload
         let eventPayload: EventPayload = .init(
             eventType: .memberRemoved,
@@ -145,6 +161,14 @@ final class MemberEventMiddleware_Tests: XCTestCase {
         channel = try XCTUnwrap(
             database.viewContext.channel(cid: cid)
         )
+        
+        // Load the query again
+        queryDTO = try XCTUnwrap(
+            database.viewContext.channelMemberListQuery(queryHash: query.queryHash)
+        )
+        
+        // Assert that member is not linked to the query anymore
+        XCTAssertEqual(queryDTO.members.count, 0)
         
         // Assert event is forwarded.
         XCTAssertTrue(forwardedEvent is MemberRemovedEvent)

@@ -6,6 +6,7 @@ import StreamChat
 import UIKit
 
 /// Controller responsible for displaying message thread.
+@available(iOSApplicationExtension, unavailable)
 open class ChatThreadVC:
     _ViewController,
     ThemeProvider,
@@ -505,6 +506,7 @@ open class ChatThreadVC:
     }
 }
 
+@available(iOSApplicationExtension, unavailable)
 extension ChatThreadVC: SwiftUIRepresentable {
     public var content: (
         channelController: ChatChannelController,

@@ -6,6 +6,7 @@ import StreamChat
 import UIKit
 
 /// Controller that shows list of messages and composer together in the selected channel.
+@available(iOSApplicationExtension, unavailable)
 open class ChatMessageListVC:
     _ViewController,
     ThemeProvider,

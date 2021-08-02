@@ -10,6 +10,7 @@ import SwiftUI
 public typealias ChatChannelList = SwiftUIViewControllerRepresentable<ChatChannelListVC>
 
 @available(iOS 13.0, *)
+@available(iOSApplicationExtension, unavailable)
 public extension SwiftUIViewControllerRepresentable where ViewController: ChatChannelListVC {
     @available(*, deprecated, renamed: "asView")
     init(controller: ChatChannelListController) {
@@ -21,6 +22,7 @@ public extension SwiftUIViewControllerRepresentable where ViewController: ChatCh
 }
 
 @available(iOS 13.0, *)
+@available(iOSApplicationExtension, unavailable)
 extension ChatChannelListVC {
     /// A SwiftUI View that wraps `_ChatChannelListVC` and shows list of messages.
     @available(*, deprecated, renamed: "asView")
@@ -29,6 +31,7 @@ extension ChatChannelListVC {
     }
 }
 
+@available(iOSApplicationExtension, unavailable)
 extension ChatChannelListVC: SwiftUIRepresentable {
     public var content: ChatChannelListController {
         get {
