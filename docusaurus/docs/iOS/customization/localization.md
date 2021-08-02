@@ -2,18 +2,22 @@
 title: Adding Localization
 ---
 
-The SDK offers you in-house localization for all strings contained in UI components. For our internal localization, we provide `strings` file for each language that we translate. For advanced plural localization cases (typing indicator showing how many people are typing or how many responses are in thread), we use `stringsdict` with `NSStringPluralRuleType`. 
+If your application is going to have a userbase of people that speak more than one language, you will need to build localization (i10n)  and internationalization (i18n) into your application.
+The StreamChat SDK provides a built in way to handle localization by overriding the default strings in the UI components. The strings are stored in two files:
+
+- [`Localizable.strings`](https://github.com/GetStream/stream-chat-swift/blob/main/Sources/StreamChatUI/Resources/en.lproj/Localizable.strings) contains the strings for simple UI components.
+- [`Localizable.stringsdict`](https://github.com/GetStream/stream-chat-swift/blob/main/Sources/StreamChatUI/Resources/en.lproj/Localizable.stringsdict) contains the strings for advanced components like typing indicators or the number of responses in the thread. `stringsdict` uses the `NSStringPluralRuleType`. 
 
 ## Changing the device's language
 
-Stream Chat tries to use the same language as the device it is running on. If the device is set to a language that Stream Chat does not support, then Stream Chat will default to English.
+Stream Chat tries to use the same language as the device it's running on. If the device is set to a language that Stream Chat does not support, then Stream Chat will default to English.
 See [how to change device language](https://support.apple.com/en-us/HT204031).
 
-## Adding new language which is not present in StreamChat
+## Adding a new language or changing the default
 
-StreamChatUI uses `strings` and `stringsdict` files to handle localize the framework.
+StreamChatUI uses `strings` and `stringsdict` files to handle localization or even just overriding the default strings for the UI framework.
 `Appearance` structure contains closure `localizationProvider`, which is responsible for deriving `localizedString` from exact bundle. 
-By default, this bundle is the  `StreamChatUI` framework bundle, but you can customize it to anything you need in 3 steps:
+By default, this bundle is the  `StreamChatUI` framework bundle, but you can customize it to anything else with the following steps:
 
 1.If you don't have `strings` or `stringsdict` files in your project, add those new files to `Localizable.strings` and `Localizable.stringsdict`.
 2. Next [add new language to the project](https://developer.apple.com/documentation/xcode/adding-support-for-languages-and-regions).
@@ -29,7 +33,7 @@ Appearance.default.localizationProvider = { key, table in
 ```
 5. Now, you're ready to implement your strings and stringsdict files for different languages.
 
-This step is the same for overriding existing languages, because there is no user-friendly way to override just some keys from the `strings` file as the Localization is getting loaded as whole file.
+You can use the same steps to change the default strings for an existing language too.
 
 :::tip
 For easier implementation, it's advised to name your `strings` and `stringsdict` files as follows: `Localizable.strings`, `Localizable.stringsdict` . Also you need to name those 2 files the same. 
@@ -42,7 +46,7 @@ You should assign your custom `localizationProvider`  to `Appearance.default` on
 
 ## Resources
 
-To ease your work, you can just copy the following content of files and add it to your current Localization: 
+To make setting up localization easier, you can just copy the following content of files and add it to your current Localization: 
 
 - [`Localizable.strings`](https://github.com/GetStream/stream-chat-swift/blob/main/Sources/StreamChatUI/Resources/en.lproj/Localizable.strings)
 - [`Localizable.stringsdict`](https://github.com/GetStream/stream-chat-swift/blob/main/Sources/StreamChatUI/Resources/en.lproj/Localizable.stringsdict)
