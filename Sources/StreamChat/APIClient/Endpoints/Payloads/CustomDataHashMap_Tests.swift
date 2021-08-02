@@ -14,7 +14,7 @@ extension MessageReactionPayload: DecodableEntity {}
 extension UserPayload: DecodableEntity {}
 extension ChannelDetailPayload: DecodableEntity {}
 
-class CustomDataHashMap: XCTestCase {
+class CustomDataHashMap_Tests: XCTestCase {
     func test_UserWebSocketPayloadEncodeWithCustomMap() throws {
         let extraData: CustomData = ["how-many-roads": .integer(42)]
         let userInfo = UserInfo(id: "44", name: "tommaso", imageURL: nil, extraData: extraData)
