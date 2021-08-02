@@ -378,8 +378,17 @@ class ChannelController_Tests: StressTestCase {
         try client.databaseContainer.writeSynchronously {
             try $0.saveChannel(payload: payload, query: nil)
         }
-        env.channelUpdater?.update_channelCreatedCallback?(channelId)
-        env.channelUpdater?.update_completion?(.success(dummyPayload(with: .unique)))
+        
+        // We call these callbacks on a queue other than main queue
+        // to simulate the actual scenario where callbacks will be called
+        // from NSURLSession-delegate (serial) queue
+        let _: Bool = try waitFor { completion in
+            DispatchQueue.global().async {
+                self.env.channelUpdater?.update_channelCreatedCallback?(self.channelId)
+                self.env.channelUpdater?.update_completion?(.success(self.dummyPayload(with: .unique)))
+                completion(true)
+            }
+        }
         
         XCTAssertEqual(controller.channel?.cid, channelId)
         XCTAssertEqual(controller.messages.count, payload.messages.count)

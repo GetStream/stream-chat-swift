@@ -309,15 +309,17 @@ public class _ChatChannelController<ExtraData: ExtraDataTypes>: DataController, 
         _messagesObserver.computeValue = { [unowned self] in
             guard let cid = self.cid else { return nil }
             let sortAscending = self.listOrdering == .topToBottom ? false : true
-            let deletedMessageVisibility = self.client.databaseContainer.viewContext
-                .deletedMessagesVisibility ?? .visibleForCurrentUser
+            var deletedMessageVisibility: ChatClientConfig.DeletedMessageVisibility?
+            self.client.databaseContainer.viewContext.performAndWait {
+                deletedMessageVisibility = self.client.databaseContainer.viewContext.deletedMessagesVisibility
+            }
 
             let observer = ListDatabaseObserver(
                 context: self.client.databaseContainer.viewContext,
                 fetchRequest: MessageDTO.messagesFetchRequest(
                     for: cid,
                     sortAscending: sortAscending,
-                    deletedMessagesVisibility: deletedMessageVisibility
+                    deletedMessagesVisibility: deletedMessageVisibility ?? .visibleForCurrentUser
                 ),
                 itemCreator: { $0.asModel() as _ChatMessage<ExtraData> }
             )
