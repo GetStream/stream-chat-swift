@@ -17,11 +17,11 @@ extension ChannelDetailPayload: DecodableEntity {}
 class CustomDataHashMap: XCTestCase {
     func test_UserWebSocketPayloadEncodeWithCustomMap() throws {
         let extraData: CustomData = ["how-many-roads": .integer(42)]
-        let userInfo = UserInfo(id: "42", name: "tommaso", imageURL: nil, extraData: extraData)
+        let userInfo = UserInfo(id: "44", name: "tommaso", imageURL: nil, extraData: extraData)
         let payload = UserWebSocketPayload(userInfo: userInfo)
         let encoded = try! JSONEncoder.default.encode(payload)
         let jsonStr = String(data: encoded, encoding: .utf8)
-        XCTAssertEqual(jsonStr, "{\"id\":\"42\",\"image_url\":\"42\",\"name\":\"42\",\"how-many-roads\":42}")
+        XCTAssertEqual(jsonStr, "{\"id\":\"44\",\"name\":\"tommaso\",\"how-many-roads\":42}")
     }
 
     func assertEmptyCustomData<T>(_ entity: T.Type, _ fileName: String) throws where T: DecodableEntity {
