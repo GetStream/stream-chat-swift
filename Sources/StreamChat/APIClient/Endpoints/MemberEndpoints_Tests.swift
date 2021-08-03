@@ -13,7 +13,7 @@ final class MemberEndpoints_Tests: XCTestCase {
             sort: [.init(key: .createdAt)]
         )
         
-        let expectedEndpoint = Endpoint<ChannelMemberListPayload<NoExtraData>>(
+        let expectedEndpoint = Endpoint<ChannelMemberListPayload>(
             path: "members",
             method: .get,
             queryItems: nil,
@@ -22,7 +22,7 @@ final class MemberEndpoints_Tests: XCTestCase {
         )
         
         // Build endpoint.
-        let endpoint: Endpoint<ChannelMemberListPayload<NoExtraData>> = .channelMembers(query: query)
+        let endpoint: Endpoint<ChannelMemberListPayload> = .channelMembers(query: query)
         
         // Assert endpoint is built correctly.
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))

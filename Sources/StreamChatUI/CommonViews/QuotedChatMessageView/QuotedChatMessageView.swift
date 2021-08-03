@@ -21,19 +21,16 @@ public struct QuotedAvatarAlignment: RawRepresentable, Equatable {
 }
 
 /// A view that displays a quoted message.
-public typealias QuotedChatMessageView = _QuotedChatMessageView<NoExtraData>
-
-/// A view that displays a quoted message.
-open class _QuotedChatMessageView<ExtraData: ExtraDataTypes>: _View, ThemeProvider, SwiftUIRepresentable {
+open class QuotedChatMessageView: _View, ThemeProvider, SwiftUIRepresentable {
     /// The content of the view.
     public struct Content {
         /// The quoted message.
-        public let message: _ChatMessage<ExtraData>
+        public let message: ChatMessage
         /// The avatar position in relation with the text message.
         public let avatarAlignment: QuotedAvatarAlignment
 
         public init(
-            message: _ChatMessage<ExtraData>,
+            message: ChatMessage,
             avatarAlignment: QuotedAvatarAlignment
         ) {
             self.message = message
@@ -210,7 +207,7 @@ open class _QuotedChatMessageView<ExtraData: ExtraDataTypes>: _View, ThemeProvid
     /// Override this function if you want to provide custom logic to present
     /// the attachments preview of the message, or if you want to support your custom attachment.
     /// - Parameter message: The message that contains all the attachments.
-    open func setAttachmentPreview(for message: _ChatMessage<ExtraData>) {
+    open func setAttachmentPreview(for message: ChatMessage) {
         if let filePayload = message.fileAttachments.first?.payload {
             attachmentPreviewView.contentMode = .scaleAspectFit
             attachmentPreviewView.image = appearance.images.fileIcons[filePayload.file.type] ?? appearance.images.fileFallback

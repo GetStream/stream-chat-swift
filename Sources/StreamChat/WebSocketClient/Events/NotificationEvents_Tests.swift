@@ -7,7 +7,7 @@
 import XCTest
 
 class NotificationsEvents_Tests: XCTestCase {
-    let eventDecoder = EventDecoder<NoExtraData>()
+    let eventDecoder = EventDecoder()
     
     func test_messageNew() throws {
         let json = XCTestCase.mockData(fromFile: "NotificationMessageNew")
@@ -37,14 +37,14 @@ class NotificationsEvents_Tests: XCTestCase {
         let json = XCTestCase.mockData(fromFile: "NotificationChannelMutesUpdatedWithSomeMutedChannels")
         let event = try eventDecoder.decode(from: json) as? NotificationChannelMutesUpdatedEvent
         XCTAssertEqual(event?.userId, "luke_skywalker")
-        XCTAssertEqual((event?.payload as? EventPayload<NoExtraData>)?.currentUser?.mutedChannels.isEmpty, false)
+        XCTAssertEqual((event?.payload as? EventPayload)?.currentUser?.mutedChannels.isEmpty, false)
     }
     
     func test_channelNoMutedChannels() throws {
         let json = XCTestCase.mockData(fromFile: "NotificationChannelMutesUpdatedWithNoMutedChannels")
         let event = try eventDecoder.decode(from: json) as? NotificationChannelMutesUpdatedEvent
         XCTAssertEqual(event?.userId, "luke_skywalker")
-        XCTAssertEqual((event?.payload as? EventPayload<NoExtraData>)?.currentUser?.mutedChannels.isEmpty, true)
+        XCTAssertEqual((event?.payload as? EventPayload)?.currentUser?.mutedChannels.isEmpty, true)
     }
 
     func test_addToChannel() throws {
@@ -53,7 +53,7 @@ class NotificationsEvents_Tests: XCTestCase {
         XCTAssertEqual(event?.cid, ChannelId(type: .messaging, id: "new_channel_5905"))
         // Check if there is existing channel object in the payload.
         XCTAssertEqual(
-            (event?.payload as? EventPayload<NoExtraData>)?.channel?.cid,
+            (event?.payload as? EventPayload)?.channel?.cid,
             ChannelId(type: .messaging, id: "!members-hu_6SE2Rniuu3O709FqAEEtVcJxW3tWr97l_hV33a-E")
         )
     }

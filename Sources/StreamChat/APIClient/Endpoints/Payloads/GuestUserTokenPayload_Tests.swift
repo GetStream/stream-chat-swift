@@ -12,7 +12,7 @@ final class GuestUserTokenPayload_Tests: XCTestCase {
 
     func test_guestUserDefaultExtraData_isSerialized() throws {
         let payload = try JSONDecoder.default.decode(
-            GuestUserTokenPayload<NoExtraData>.self,
+            GuestUserTokenPayload.self,
             from: guestUserDefaultExtraDataJSON
         )
 
@@ -35,14 +35,7 @@ final class GuestUserTokenPayload_Tests: XCTestCase {
     }
     
     func test_guestUserCustomExtraData_isSerialized() throws {
-        struct TestExtraData: ExtraDataTypes {
-            struct User: UserExtraData {
-                static var defaultValue = Self(company: "Stream")
-                let company: String
-            }
-        }
-        
-        let payload = try JSONDecoder.default.decode(GuestUserTokenPayload<TestExtraData>.self, from: guestUserCustomExtraDataJSON)
+        let payload = try JSONDecoder.default.decode(GuestUserTokenPayload.self, from: guestUserCustomExtraDataJSON)
 
         XCTAssertEqual(
             payload.token,
@@ -53,14 +46,14 @@ final class GuestUserTokenPayload_Tests: XCTestCase {
         XCTAssertFalse(payload.user.isBanned)
         XCTAssertEqual(payload.user.createdAt, "2019-12-12T15:33:46.488935Z".toDate())
         XCTAssertEqual(payload.user.updatedAt, "2020-06-10T14:11:29.946106Z".toDate())
-        XCTAssertEqual(payload.user.extraData.company, "getstream.io")
+        XCTAssertEqual(payload.user.extraData, ["company": .string("getstream.io")])
         XCTAssertEqual(payload.user.role, .guest)
         XCTAssertTrue(payload.user.isOnline)
     }
 
     func test_guestUserWithInvalidToken_isFailedToBeSerialized() throws {
         XCTAssertThrowsError(
-            try JSONDecoder.default.decode(GuestUserTokenPayload<NoExtraData>.self, from: guestUserInvalidTokenJSON)
+            try JSONDecoder.default.decode(GuestUserTokenPayload.self, from: guestUserInvalidTokenJSON)
         ) { error in
             XCTAssertTrue(error is ClientError.InvalidToken)
         }

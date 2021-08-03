@@ -8,7 +8,7 @@ import CoreData
 import XCTest
 
 class ChannelController_Tests: StressTestCase {
-    fileprivate var env: TestEnvironment<NoExtraData>!
+    fileprivate var env: TestEnvironment!
     
     var client: ChatClient!
     
@@ -23,7 +23,7 @@ class ChannelController_Tests: StressTestCase {
         super.setUp()
         
         env = TestEnvironment()
-        client = _ChatClient.mock
+        client = ChatClient.mock
         channelId = ChannelId.unique
         controller = ChatChannelController(channelQuery: .init(cid: channelId), client: client, environment: env.environment)
         controllerCallbackQueueID = UUID()
@@ -48,14 +48,14 @@ class ChannelController_Tests: StressTestCase {
     // MARK: - Helpers
     
     func setupControllerForNewDirectMessageChannel(currentUserId: UserId, otherUserId: UserId) {
-        let payload = ChannelEditDetailPayload<NoExtraData>(
+        let payload = ChannelEditDetailPayload(
             type: .messaging,
             name: nil,
             imageURL: nil,
             team: nil,
             members: [currentUserId, otherUserId],
             invites: [],
-            extraData: .defaultValue
+            extraData: [:]
         )
         
         controller = ChatChannelController(
@@ -79,14 +79,14 @@ class ChannelController_Tests: StressTestCase {
     }
     
     func setupControllerForNewMessageChannel(cid: ChannelId) {
-        let payload = ChannelEditDetailPayload<NoExtraData>(
+        let payload = ChannelEditDetailPayload(
             cid: cid,
             name: nil,
             imageURL: nil,
             team: nil,
             members: [],
             invites: [],
-            extraData: .defaultValue
+            extraData: [:]
         )
         
         controller = ChatChannelController(
@@ -100,7 +100,7 @@ class ChannelController_Tests: StressTestCase {
     
     // Helper function that creates channel with message
     func setupChannelWithMessage(_ session: DatabaseSession) throws -> MessageId {
-        let dummyUserPayload: CurrentUserPayload<NoExtraData> = .dummy(userId: .unique, role: .user)
+        let dummyUserPayload: CurrentUserPayload = .dummy(userId: .unique, role: .user)
         try session.saveCurrentUser(payload: dummyUserPayload)
         try session.saveChannel(payload: dummyPayload(with: channelId))
         let message = try session.createNewMessage(
@@ -114,7 +114,7 @@ class ChannelController_Tests: StressTestCase {
                 .mockFile,
                 .init(payload: TestAttachmentPayload.unique)
             ],
-            extraData: NoExtraData.defaultValue
+            extraData: [:]
         )
         return message.id
     }
@@ -421,7 +421,7 @@ class ChannelController_Tests: StressTestCase {
         setupControllerForNewMessageChannel(cid: channelId)
         
         // Save channel with some messages
-        let channelPayload: ChannelPayload<NoExtraData> = dummyPayload(with: channelId, numberOfMessages: 5)
+        let channelPayload: ChannelPayload = dummyPayload(with: channelId, numberOfMessages: 5)
         let originalLastMessageAt: Date = channelPayload.channel.lastMessageAt ?? channelPayload.channel.createdAt
         try client.databaseContainer.writeSynchronously {
             try $0.saveChannel(payload: channelPayload)
@@ -452,7 +452,7 @@ class ChannelController_Tests: StressTestCase {
                 isSilent: false,
                 quotedMessageId: nil,
                 createdAt: oldMessageCreatedAt,
-                extraData: NoExtraData.defaultValue
+                extraData: [:]
             )
             // Simulate sending failed for this message
             dto.localMessageState = .sendingFailed
@@ -462,7 +462,7 @@ class ChannelController_Tests: StressTestCase {
         XCTAssertEqual(channel.lastMessageAt, originalLastMessageAt)
         
         // Create a new message payload that's newer than `channel.lastMessageAt`
-        let newerMessagePayload: MessagePayload<NoExtraData> = .dummy(
+        let newerMessagePayload: MessagePayload = .dummy(
             messageId: .unique,
             authorUserId: userId,
             createdAt: .unique(after: channelPayload.channel.lastMessageAt!)
@@ -492,7 +492,6 @@ class ChannelController_Tests: StressTestCase {
         let team: String = .unique
         let members: Set<UserId> = [.unique]
         let invites: Set<UserId> = [.unique]
-        let extraData: NoExtraData = .defaultValue
 
         // Create a new `ChannelController`
         for isCurrentUserMember in [true, false] {
@@ -504,7 +503,7 @@ class ChannelController_Tests: StressTestCase {
                 members: members,
                 isCurrentUserMember: isCurrentUserMember,
                 invites: invites,
-                extraData: extraData
+                extraData: [:]
             )
 
             // Assert `ChannelQuery` created correctly
@@ -515,7 +514,7 @@ class ChannelController_Tests: StressTestCase {
                 controller.channelQuery.channelPayload?.members
             )
             XCTAssertEqual(invites, controller.channelQuery.channelPayload?.invites)
-            XCTAssertEqual(extraData, controller.channelQuery.channelPayload?.extraData)
+            XCTAssertEqual([:], controller.channelQuery.channelPayload?.extraData)
         }
     }
 
@@ -539,7 +538,7 @@ class ChannelController_Tests: StressTestCase {
                     members: [.unique, .unique],
                     isCurrentUserMember: isCurrentUserMember,
                     invites: [.unique, .unique],
-                    extraData: .defaultValue
+                    extraData: [:]
                 )
             ) { error in
                 // Assert `ClientError.CurrentUserDoesNotExist` is thrown
@@ -563,7 +562,7 @@ class ChannelController_Tests: StressTestCase {
             imageURL: .unique(),
             team: .unique,
             members: members,
-            extraData: .defaultValue
+            extraData: [:]
         )
 
         XCTAssertEqual(controller.channelQuery.channelPayload?.members, members.union([currentUserId]))
@@ -577,7 +576,6 @@ class ChannelController_Tests: StressTestCase {
         for isCurrentUserMember in [true, false] {
             let team: String = .unique
             let members: Set<UserId> = [.unique]
-            let extraData: NoExtraData = .defaultValue
             let channelType: ChannelType = .custom(.unique)
 
             // Create a new `ChannelController`
@@ -588,7 +586,7 @@ class ChannelController_Tests: StressTestCase {
                 name: .unique,
                 imageURL: .unique(),
                 team: team,
-                extraData: extraData
+                extraData: [:]
             )
 
             // Assert `ChannelQuery` created correctly
@@ -598,7 +596,7 @@ class ChannelController_Tests: StressTestCase {
                 members.union(isCurrentUserMember ? [currentUserId] : []),
                 controller.channelQuery.channelPayload?.members
             )
-            XCTAssertEqual(controller.channelQuery.channelPayload?.extraData, extraData)
+            XCTAssertEqual(controller.channelQuery.channelPayload?.extraData, [:])
         }
     }
 
@@ -680,7 +678,7 @@ class ChannelController_Tests: StressTestCase {
             createDirectMessageChannelWith: [.unique],
             name: .unique,
             imageURL: .unique(),
-            extraData: .defaultValue
+            extraData: [:]
         )
         
         // Assert cid is nil
@@ -728,7 +726,7 @@ class ChannelController_Tests: StressTestCase {
         
         // Simulate an incoming message
         let newMessageId: MessageId = .unique
-        let newMessagePayload: MessagePayload<NoExtraData> = .dummy(
+        let newMessagePayload: MessagePayload = .dummy(
             messageId: newMessageId,
             authorUserId: .unique,
             createdAt: Date()
@@ -748,8 +746,8 @@ class ChannelController_Tests: StressTestCase {
         try client.databaseContainer.createChannel(cid: channelId, withMessages: false)
         
         // Insert two messages
-        let message1: MessagePayload<NoExtraData> = .dummy(messageId: .unique, authorUserId: .unique)
-        let message2: MessagePayload<NoExtraData> = .dummy(messageId: .unique, authorUserId: .unique)
+        let message1: MessagePayload = .dummy(messageId: .unique, authorUserId: .unique)
+        let message2: MessagePayload = .dummy(messageId: .unique, authorUserId: .unique)
         
         try client.databaseContainer.writeSynchronously {
             try $0.saveMessage(payload: message1, for: self.channelId)
@@ -776,11 +774,11 @@ class ChannelController_Tests: StressTestCase {
         try client.databaseContainer.createChannel(cid: channelId, withMessages: false)
         
         // Insert two messages
-        let message1: MessagePayload<NoExtraData> = .dummy(messageId: .unique, authorUserId: .unique)
-        let message2: MessagePayload<NoExtraData> = .dummy(messageId: .unique, authorUserId: .unique)
+        let message1: MessagePayload = .dummy(messageId: .unique, authorUserId: .unique)
+        let message2: MessagePayload = .dummy(messageId: .unique, authorUserId: .unique)
         
         // Insert reply that should be shown in channel.
-        let reply1: MessagePayload<NoExtraData> = .dummy(
+        let reply1: MessagePayload = .dummy(
             messageId: .unique,
             parentId: message2.id,
             showReplyInChannel: true,
@@ -788,7 +786,7 @@ class ChannelController_Tests: StressTestCase {
         )
         
         // Insert reply that should be visible only in thread.
-        let reply2: MessagePayload<NoExtraData> = .dummy(
+        let reply2: MessagePayload = .dummy(
             messageId: .unique,
             parentId: message2.id,
             showReplyInChannel: false,
@@ -823,14 +821,14 @@ class ChannelController_Tests: StressTestCase {
         try client.databaseContainer.createChannel(cid: channelId, withMessages: false)
 
         // Create incoming deleted message
-        let incomingDeletedMessage: MessagePayload<NoExtraData> = .dummy(
+        let incomingDeletedMessage: MessagePayload = .dummy(
             messageId: .unique,
             authorUserId: .unique,
             deletedAt: .unique
         )
 
         // Create outgoing deleted message
-        let outgoingDeletedMessage: MessagePayload<NoExtraData> = .dummy(
+        let outgoingDeletedMessage: MessagePayload = .dummy(
             messageId: .unique,
             authorUserId: currentUserID,
             deletedAt: .unique
@@ -858,14 +856,14 @@ class ChannelController_Tests: StressTestCase {
         try client.databaseContainer.createChannel(cid: channelId, withMessages: false)
 
         // Create incoming deleted message
-        let incomingDeletedMessage: MessagePayload<NoExtraData> = .dummy(
+        let incomingDeletedMessage: MessagePayload = .dummy(
             messageId: .unique,
             authorUserId: .unique,
             deletedAt: .unique
         )
 
         // Create outgoing deleted message
-        let outgoingDeletedMessage: MessagePayload<NoExtraData> = .dummy(
+        let outgoingDeletedMessage: MessagePayload = .dummy(
             messageId: .unique,
             authorUserId: currentUserID,
             deletedAt: .unique
@@ -893,14 +891,14 @@ class ChannelController_Tests: StressTestCase {
         try client.databaseContainer.createChannel(cid: channelId, withMessages: false)
 
         // Create incoming deleted message
-        let incomingDeletedMessage: MessagePayload<NoExtraData> = .dummy(
+        let incomingDeletedMessage: MessagePayload = .dummy(
             messageId: .unique,
             authorUserId: .unique,
             deletedAt: .unique
         )
 
         // Create outgoing deleted message
-        let outgoingDeletedMessage: MessagePayload<NoExtraData> = .dummy(
+        let outgoingDeletedMessage: MessagePayload = .dummy(
             messageId: .unique,
             authorUserId: currentUserID,
             deletedAt: .unique
@@ -970,8 +968,8 @@ class ChannelController_Tests: StressTestCase {
 
     func test_genericDelegate_isNotifiedAboutStateChanges() throws {
         // Set the generic delegate
-        let delegate = TestDelegateGeneric<NoExtraData>(expectedQueueId: controllerCallbackQueueID)
-        controller.setDelegate(delegate)
+        let delegate = TestDelegateGeneric(expectedQueueId: controllerCallbackQueueID)
+        controller.delegate = delegate
         
         // Assert delegate is notified about state changes
         AssertAsync.willBeEqual(delegate.state, .localDataFetched)
@@ -990,7 +988,7 @@ class ChannelController_Tests: StressTestCase {
     func test_delegateContinueToReceiveEvents_afterObserversReset() throws {
         // Assign `ChannelController` that creates new channel
         controller = ChatChannelController(
-            channelQuery: _ChannelQuery(cid: channelId),
+            channelQuery: ChannelQuery(cid: channelId),
             client: client,
             environment: env.environment,
             isChannelAlreadyCreated: false
@@ -1064,8 +1062,8 @@ class ChannelController_Tests: StressTestCase {
     }
     
     func test_channelMemberEvents_areForwardedToGenericDelegate() throws {
-        let delegate = TestDelegateGeneric<NoExtraData>(expectedQueueId: controllerCallbackQueueID)
-        controller.setDelegate(delegate)
+        let delegate = TestDelegateGeneric(expectedQueueId: controllerCallbackQueueID)
+        controller.delegate = delegate
         
         // Simulate `synchronize()` call
         controller.synchronize()
@@ -1117,8 +1115,8 @@ class ChannelController_Tests: StressTestCase {
         try client.databaseContainer.createUser(id: userId)
         
         // Set the queue for delegate calls
-        let delegate = TestDelegateGeneric<NoExtraData>(expectedQueueId: controllerCallbackQueueID)
-        controller.setDelegate(delegate)
+        let delegate = TestDelegateGeneric(expectedQueueId: controllerCallbackQueueID)
+        controller.delegate = delegate
         
         // Simulate `synchronize()` call
         controller.synchronize()
@@ -1168,22 +1166,10 @@ class ChannelController_Tests: StressTestCase {
     }
     
     func test_delegateMethodsAreCalled_onExtraDataUpdates() throws {
-        // Define custom ChannelExtraData
-        struct ColorExtraData: ChannelExtraData {
-            static var defaultValue: ColorExtraData = .init(color: "MISSING")
-            
-            let color: String
-        }
-        
-        // Define Custom ExtraDataTypes
-        struct CustomExtraData: ExtraDataTypes {
-            typealias Channel = ColorExtraData
-        }
-        
         // Create necessary properties with CustomExtraData
-        let env = TestEnvironment<CustomExtraData>()
-        let client: _ChatClient<CustomExtraData> = _ChatClient.mock()
-        let controller = _ChatChannelController<CustomExtraData>(
+        let env = TestEnvironment()
+        let client: ChatClient = ChatClient.mock()
+        let controller = ChatChannelController(
             channelQuery: .init(cid: channelId),
             client: client,
             environment: env.environment
@@ -1191,19 +1177,19 @@ class ChannelController_Tests: StressTestCase {
         controller.callbackQueue = .testQueue(withId: controllerCallbackQueueID)
         
         // Create and assign delegate
-        let delegate = TestDelegateGeneric<CustomExtraData>(expectedQueueId: controllerCallbackQueueID)
+        let delegate = TestDelegateGeneric(expectedQueueId: controllerCallbackQueueID)
         controller.setDelegate(delegate)
         
         // Simulate `synchronize()` call
         controller.synchronize()
         
         // Create the payload with CustomExtraData
-        let payload: ChannelPayload<CustomExtraData> = .init(
+        let payload: ChannelPayload = .init(
             channel: .init(
                 cid: channelId,
                 name: .unique,
                 imageURL: .unique(),
-                extraData: .defaultValue,
+                extraData: [:],
                 typeRawValue: .unique,
                 lastMessageAt: .unique,
                 createdAt: .unique,
@@ -1235,7 +1221,7 @@ class ChannelController_Tests: StressTestCase {
         XCTAssertNil(error)
         
         // Fetch channel from DB
-        var channel: _ChatChannel<CustomExtraData> { client.databaseContainer.viewContext.channel(cid: channelId)!.asModel() }
+        var channel: ChatChannel { client.databaseContainer.viewContext.channel(cid: channelId)!.asModel() }
         XCTAssertEqual(channel.cid, channelId)
         
         // Assert that `.create` callback is called
@@ -1245,12 +1231,12 @@ class ChannelController_Tests: StressTestCase {
         // except `extraData` is changed now
         error = try waitFor {
             client.databaseContainer.write({ session in
-                let newPayload: ChannelPayload<CustomExtraData> = .init(
+                let newPayload: ChannelPayload = .init(
                     channel: .init(
                         cid: self.channelId,
                         name: payload.channel.name,
                         imageURL: payload.channel.imageURL,
-                        extraData: .init(color: "NEW_VALUE"),
+                        extraData: ["color": .string("NEW_VALUE")],
                         typeRawValue: payload.channel.typeRawValue,
                         lastMessageAt: payload.channel.lastMessageAt,
                         createdAt: payload.channel.createdAt,
@@ -1282,8 +1268,8 @@ class ChannelController_Tests: StressTestCase {
     }
     
     func test_genericDelegateMethodsAreCalled() throws {
-        let delegate = TestDelegateGeneric<NoExtraData>(expectedQueueId: controllerCallbackQueueID)
-        controller.setDelegate(delegate)
+        let delegate = TestDelegateGeneric(expectedQueueId: controllerCallbackQueueID)
+        controller.delegate = delegate
         
         // Simulate `synchronize()` call
         controller.synchronize()
@@ -1317,7 +1303,7 @@ class ChannelController_Tests: StressTestCase {
             try $0.saveChannel(payload: self.dummyPayload(with: self.channelId), query: nil)
             // Create a read for the channel
             try $0.saveChannelRead(
-                payload: ChannelReadPayload<NoExtraData>(
+                payload: ChannelReadPayload(
                     user: self.dummyUser(id: userId),
                     lastReadAt: originalReadDate,
                     unreadMessagesCount: .unique // This value doesn't matter at all. It's not updated by events. We cam ignore it.
@@ -1496,7 +1482,7 @@ class ChannelController_Tests: StressTestCase {
     
     func test_updateChannel_failsForNewChannels() throws {
         //  Create `ChannelController` for new channel
-        let query = _ChannelQuery(channelPayload: .unique)
+        let query = ChannelQuery(channelPayload: .unique)
         setupControllerForNewChannel(query: query)
 
         // Simulate `updateChannel` call and assert the error is returned
@@ -1572,7 +1558,7 @@ class ChannelController_Tests: StressTestCase {
     
     func test_muteChannel_failsForNewChannels() throws {
         //  Create `ChannelController` for new channel
-        let query = _ChannelQuery(channelPayload: .unique)
+        let query = ChannelQuery(channelPayload: .unique)
         setupControllerForNewChannel(query: query)
 
         // Simulate `muteChannel` call and assert error is returned
@@ -1651,7 +1637,7 @@ class ChannelController_Tests: StressTestCase {
     
     func test_unmuteChannel_failsForNewChannels() throws {
         //  Create `ChannelController` for new channel
-        let query = _ChannelQuery(channelPayload: .unique)
+        let query = ChannelQuery(channelPayload: .unique)
         setupControllerForNewChannel(query: query)
 
         // Simulate `unmuteChannel` call and assert error is returned
@@ -1730,7 +1716,7 @@ class ChannelController_Tests: StressTestCase {
     
     func test_deleteChannel_failsForNewChannels() throws {
         //  Create `ChannelController` for new channel
-        let query = _ChannelQuery(channelPayload: .unique)
+        let query = ChannelQuery(channelPayload: .unique)
         setupControllerForNewChannel(query: query)
 
         // Simulate `deleteChannel` call and assert error is returned
@@ -1808,7 +1794,7 @@ class ChannelController_Tests: StressTestCase {
 
     func test_truncateChannel_failsForNewChannels() throws {
         //  Create `ChannelController` for new channel
-        let query = _ChannelQuery(channelPayload: .unique)
+        let query = ChannelQuery(channelPayload: .unique)
         setupControllerForNewChannel(query: query)
 
         // Simulate `truncateChannel` call and assert error is returned
@@ -1886,7 +1872,7 @@ class ChannelController_Tests: StressTestCase {
 
     func test_hideChannel_failsForNewChannels() throws {
         //  Create `ChannelController` for new channel
-        let query = _ChannelQuery(channelPayload: .unique)
+        let query = ChannelQuery(channelPayload: .unique)
         setupControllerForNewChannel(query: query)
 
         // Simulate `hideChannel` call and assert error is returned
@@ -1965,7 +1951,7 @@ class ChannelController_Tests: StressTestCase {
 
     func test_showChannel_failsForNewChannels() throws {
         //  Create `ChannelController` for new channel
-        let query = _ChannelQuery(channelPayload: .unique)
+        let query = ChannelQuery(channelPayload: .unique)
         setupControllerForNewChannel(query: query)
 
         // Simulate `showChannel` call and assert error is returned
@@ -2548,9 +2534,7 @@ class ChannelController_Tests: StressTestCase {
         
         // New message values
         let text: String = .unique
-//        let command: String = .unique
-//        let arguments: String = .unique
-        let extraData: NoExtraData = .defaultValue
+        let extraData: [String: RawJSON] = [:]
         let attachments: [AnyAttachmentPayload] = [
             .init(payload: TestAttachmentPayload.unique),
             .mockImage,
@@ -2564,8 +2548,6 @@ class ChannelController_Tests: StressTestCase {
         controller.createNewMessage(
             text: text,
             pinning: pin,
-//            command: command,
-//            arguments: arguments,
             attachments: attachments,
             quotedMessageId: quotedMessageId,
             extraData: extraData
@@ -2606,7 +2588,7 @@ class ChannelController_Tests: StressTestCase {
     
     func test_createNewMessage_failsForNewChannels() throws {
         //  Create `ChannelController` for new channel
-        let query = _ChannelQuery(channelPayload: .unique)
+        let query = ChannelQuery(channelPayload: .unique)
         setupControllerForNewChannel(query: query)
         
         // Simulate `createNewMessage` call and assert error is returned
@@ -2615,7 +2597,7 @@ class ChannelController_Tests: StressTestCase {
                 text: .unique,
 //                command: .unique,
 //                arguments: .unique,
-                extraData: .defaultValue
+                extraData: [:]
             ) { result in
                 AssertTestQueue(withId: callbackQueueID)
                 completion(result)
@@ -2633,7 +2615,7 @@ class ChannelController_Tests: StressTestCase {
     
     func test_addMembers_failsForNewChannels() throws {
         //  Create `ChannelController` for new channel
-        let query = _ChannelQuery(channelPayload: .unique)
+        let query = ChannelQuery(channelPayload: .unique)
         setupControllerForNewChannel(query: query)
         let members: Set<UserId> = [.unique]
 
@@ -2874,7 +2856,7 @@ class ChannelController_Tests: StressTestCase {
     
     func test_removeMembers_failsForNewChannels() throws {
         //  Create `ChannelController` for new channel
-        let query = _ChannelQuery(channelPayload: .unique)
+        let query = ChannelQuery(channelPayload: .unique)
         setupControllerForNewChannel(query: query)
         let members: Set<UserId> = [.unique]
 
@@ -2992,7 +2974,7 @@ class ChannelController_Tests: StressTestCase {
 
     func test_markRead_failsForNewChannels() throws {
         //  Create `ChannelController` for new channel
-        let query = _ChannelQuery(channelPayload: .unique)
+        let query = ChannelQuery(channelPayload: .unique)
         setupControllerForNewChannel(query: query)
         
         // Simulate `markRead` call and assert error is returned
@@ -3025,7 +3007,7 @@ class ChannelController_Tests: StressTestCase {
     func test_markRead_callsChannelUpdater() throws {
         // setup data for this test
         let payload = dummyPayload(with: channelId)
-        let dummyUserPayload: CurrentUserPayload<NoExtraData> = .dummy(userId: payload.channelReads.first!.user.id, role: .user)
+        let dummyUserPayload: CurrentUserPayload = .dummy(userId: payload.channelReads.first!.user.id, role: .user)
 
         // Save two channels to DB (only one matching the query) and wait for completion
         try client.databaseContainer.writeSynchronously { session in
@@ -3068,7 +3050,7 @@ class ChannelController_Tests: StressTestCase {
     
     func test_markRead_propagatesErrorFromUpdater() throws {
         let payload = dummyPayload(with: channelId)
-        let dummyUserPayload: CurrentUserPayload<NoExtraData> = .dummy(userId: payload.channelReads.first!.user.id, role: .user)
+        let dummyUserPayload: CurrentUserPayload = .dummy(userId: payload.channelReads.first!.user.id, role: .user)
         
         try client.databaseContainer.writeSynchronously { session in
             try session.saveCurrentUser(payload: dummyUserPayload)
@@ -3094,7 +3076,7 @@ class ChannelController_Tests: StressTestCase {
     
     func test_enableSlowMode_failsForNewChannels() throws {
         //  Create `ChannelController` for new channel
-        let query = _ChannelQuery(channelPayload: .unique)
+        let query = ChannelQuery(channelPayload: .unique)
         setupControllerForNewChannel(query: query)
         
         // Simulate `enableSlowMode` call and assert error is returned
@@ -3123,7 +3105,7 @@ class ChannelController_Tests: StressTestCase {
     
     func test_enableSlowMode_failsForInvalidCooldown() throws {
         //  Create `ChannelController` for new channel
-        let query = _ChannelQuery(channelPayload: .unique)
+        let query = ChannelQuery(channelPayload: .unique)
         setupControllerForNewChannel(query: query)
         
         // Simulate successful backend channel creation
@@ -3199,7 +3181,7 @@ class ChannelController_Tests: StressTestCase {
     
     func test_disableSlowMode_failsForNewChannels() throws {
         //  Create `ChannelController` for new channel
-        let query = _ChannelQuery(channelPayload: .unique)
+        let query = ChannelQuery(channelPayload: .unique)
         setupControllerForNewChannel(query: query)
         
         // Simulate `disableSlowMode` call and assert error is returned
@@ -3279,7 +3261,7 @@ class ChannelController_Tests: StressTestCase {
     
     func test_startWatching_failsForNewChannels() throws {
         //  Create `ChannelController` for new channel
-        let query = _ChannelQuery(channelPayload: .unique)
+        let query = ChannelQuery(channelPayload: .unique)
         setupControllerForNewChannel(query: query)
         
         // Simulate `startWatching` call and assert error is returned
@@ -3359,7 +3341,7 @@ class ChannelController_Tests: StressTestCase {
     
     func test_stopWatching_failsForNewChannels() throws {
         //  Create `ChannelController` for new channel
-        let query = _ChannelQuery(channelPayload: .unique)
+        let query = ChannelQuery(channelPayload: .unique)
         setupControllerForNewChannel(query: query)
         
         // Simulate `stopWatching` call and assert error is returned
@@ -3439,7 +3421,7 @@ class ChannelController_Tests: StressTestCase {
     
     func test_freezeChannel_failsForNewChannels() throws {
         //  Create `ChannelController` for new channel
-        let query = _ChannelQuery(channelPayload: .unique)
+        let query = ChannelQuery(channelPayload: .unique)
         setupControllerForNewChannel(query: query)
         
         // Simulate `freezeChannel` call and assert error is returned
@@ -3522,7 +3504,7 @@ class ChannelController_Tests: StressTestCase {
     
     func test_unfreezeChannel_failsForNewChannels() throws {
         //  Create `ChannelController` for new channel
-        let query = _ChannelQuery(channelPayload: .unique)
+        let query = ChannelQuery(channelPayload: .unique)
         setupControllerForNewChannel(query: query)
         
         // Simulate `unfreezeChannel` call and assert error is returned
@@ -3602,11 +3584,11 @@ class ChannelController_Tests: StressTestCase {
     }
 }
 
-private class TestEnvironment<ExtraData: ExtraDataTypes> {
-    var channelUpdater: ChannelUpdaterMock<ExtraData>?
-    var eventSender: TypingEventsSenderMock<ExtraData>?
+private class TestEnvironment {
+    var channelUpdater: ChannelUpdaterMock?
+    var eventSender: TypingEventsSenderMock?
     
-    lazy var environment: _ChatChannelController<ExtraData>.Environment = .init(
+    lazy var environment: ChatChannelController.Environment = .init(
         channelUpdaterBuilder: { [unowned self] in
             self.channelUpdater = ChannelUpdaterMock(database: $0, apiClient: $1)
             return self.channelUpdater!
@@ -3668,12 +3650,12 @@ private class TestDelegate: QueueAwareDelegate, ChatChannelControllerDelegate {
 }
 
 /// A concrete `ChannelControllerDelegateGeneric` implementation allowing capturing the delegate calls.
-private class TestDelegateGeneric<ExtraData: ExtraDataTypes>: QueueAwareDelegate, _ChatChannelControllerDelegate {
+private class TestDelegateGeneric: QueueAwareDelegate, ChatChannelControllerDelegate {
     @Atomic var state: DataController.State?
-    @Atomic var didUpdateChannel_channel: EntityChange<_ChatChannel<ExtraData>>?
-    @Atomic var didUpdateMessages_messages: [ListChange<_ChatMessage<ExtraData>>]?
+    @Atomic var didUpdateChannel_channel: EntityChange<ChatChannel>?
+    @Atomic var didUpdateMessages_messages: [ListChange<ChatMessage>]?
     @Atomic var didReceiveMemberEvent_event: MemberEvent?
-    @Atomic var didChangeTypingUsers_typingUsers: Set<_ChatUser<ExtraData.User>>?
+    @Atomic var didChangeTypingUsers_typingUsers: Set<ChatUser>?
     
     func controller(_ controller: DataController, didChangeState state: DataController.State) {
         self.state = state
@@ -3681,36 +3663,36 @@ private class TestDelegateGeneric<ExtraData: ExtraDataTypes>: QueueAwareDelegate
     }
     
     func channelController(
-        _ channelController: _ChatChannelController<ExtraData>,
-        didUpdateMessages changes: [ListChange<_ChatMessage<ExtraData>>]
+        _ channelController: ChatChannelController,
+        didUpdateMessages changes: [ListChange<ChatMessage>]
     ) {
         didUpdateMessages_messages = changes
         validateQueue()
     }
     
     func channelController(
-        _ channelController: _ChatChannelController<ExtraData>,
-        didUpdateChannel channel: EntityChange<_ChatChannel<ExtraData>>
+        _ channelController: ChatChannelController,
+        didUpdateChannel channel: EntityChange<ChatChannel>
     ) {
         didUpdateChannel_channel = channel
         validateQueue()
     }
     
-    func channelController(_ channelController: _ChatChannelController<ExtraData>, didReceiveMemberEvent event: MemberEvent) {
+    func channelController(_ channelController: ChatChannelController, didReceiveMemberEvent event: MemberEvent) {
         didReceiveMemberEvent_event = event
         validateQueue()
     }
     
     func channelController(
-        _ channelController: _ChatChannelController<ExtraData>,
-        didChangeTypingUsers typingUsers: Set<_ChatUser<ExtraData.User>>
+        _ channelController: ChatChannelController,
+        didChangeTypingUsers typingUsers: Set<ChatUser>
     ) {
         didChangeTypingUsers_typingUsers = typingUsers
         validateQueue()
     }
 }
 
-extension _UserConnectionProvider {
+extension UserConnectionProvider {
     static func invalid(_ error: Error = TestError()) -> Self {
         .closure {
             $1(.failure(error))

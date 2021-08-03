@@ -22,7 +22,7 @@ class ChannelListController_SwiftUI_Tests: iOS13TestCase {
     func test_controllerInitialValuesAreLoaded() {
         channelListController.state_simulated = .localDataFetched
         channelListController
-            .channels_simulated = [.mock(cid: .unique, name: .unique, imageURL: .unique(), extraData: .defaultValue)]
+            .channels_simulated = [.mock(cid: .unique, name: .unique, imageURL: .unique(), extraData: [:])]
         
         let observableObject = channelListController.observableObject
         
@@ -34,7 +34,7 @@ class ChannelListController_SwiftUI_Tests: iOS13TestCase {
         let observableObject = channelListController.observableObject
         
         // Simulate channel change
-        let newChannel: ChatChannel = .mock(cid: .unique, name: .unique, imageURL: .unique(), extraData: .defaultValue)
+        let newChannel: ChatChannel = .mock(cid: .unique, name: .unique, imageURL: .unique(), extraData: [:])
         channelListController.channels_simulated = [newChannel]
         channelListController.delegateCallback {
             $0.controller(
@@ -66,8 +66,8 @@ class ChannelListController_SwiftUI_Tests: iOS13TestCase {
 class ChannelListControllerMock: ChatChannelListController {
     @Atomic var synchronize_called = false
     
-    var channels_simulated: [_ChatChannel<NoExtraData>]?
-    override var channels: LazyCachedMapCollection<_ChatChannel<NoExtraData>> {
+    var channels_simulated: [ChatChannel]?
+    override var channels: LazyCachedMapCollection<ChatChannel> {
         channels_simulated.map { $0.lazyCachedMap { $0 } } ?? super.channels
     }
 

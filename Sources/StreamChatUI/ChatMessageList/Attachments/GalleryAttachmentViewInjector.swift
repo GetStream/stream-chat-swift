@@ -22,12 +22,9 @@ public protocol GalleryContentViewDelegate: ChatMessageContentViewDelegate {
 }
 
 /// The type used to show an media gallery in `ChatMessageContentView`.
-public typealias GalleryAttachmentViewInjector = _GalleryAttachmentViewInjector<NoExtraData>
-
-/// The type used to show an media gallery in `ChatMessageContentView`.
-open class _GalleryAttachmentViewInjector<ExtraData: ExtraDataTypes>: _AttachmentViewInjector<ExtraData> {
+open class GalleryAttachmentViewInjector: AttachmentViewInjector {
     /// A gallery which shows attachment previews.
-    open private(set) lazy var galleryView: _ChatMessageGalleryView<ExtraData> = contentView
+    open private(set) lazy var galleryView: ChatMessageGalleryView = contentView
         .components
         .galleryView.init()
         .withoutAutoresizingMaskConstraints
@@ -81,7 +78,7 @@ open class _GalleryAttachmentViewInjector<ExtraData: ExtraDataTypes>: _Attachmen
     }
 }
 
-private extension _GalleryAttachmentViewInjector {
+private extension GalleryAttachmentViewInjector {
     var delegate: GalleryContentViewDelegate? {
         contentView.delegate as? GalleryContentViewDelegate
     }

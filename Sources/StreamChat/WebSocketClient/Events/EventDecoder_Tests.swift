@@ -6,7 +6,7 @@
 import XCTest
 
 final class EventDecoder_Tests: XCTestCase {
-    let eventDecoder = EventDecoder<NoExtraData>()
+    let eventDecoder = EventDecoder()
     
     // MARK: System events
     

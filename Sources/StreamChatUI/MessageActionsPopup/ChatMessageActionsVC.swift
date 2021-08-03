@@ -5,32 +5,28 @@
 import StreamChat
 import UIKit
 
-public protocol _ChatMessageActionsVCDelegate: AnyObject {
-    associatedtype ExtraData: ExtraDataTypes
-
+public protocol ChatMessageActionsVCDelegate: AnyObject {
     func chatMessageActionsVC(
-        _ vc: _ChatMessageActionsVC<ExtraData>,
-        message: _ChatMessage<ExtraData>,
+        _ vc: ChatMessageActionsVC,
+        message: ChatMessage,
         didTapOnActionItem actionItem: ChatMessageActionItem
     )
-    func chatMessageActionsVCDidFinish(_ vc: _ChatMessageActionsVC<ExtraData>)
+    func chatMessageActionsVCDidFinish(_ vc: ChatMessageActionsVC)
 }
 
-public typealias ChatMessageActionsVC = _ChatMessageActionsVC<NoExtraData>
-
 /// View controller to show message actions.
-open class _ChatMessageActionsVC<ExtraData: ExtraDataTypes>: _ViewController, ThemeProvider {
+open class ChatMessageActionsVC: _ViewController, ThemeProvider {
     /// `_ChatMessageActionsVC.Delegate` instance.
     public var delegate: Delegate?
 
     /// `_ChatMessageController` instance used to obtain the message data.
-    public var messageController: _ChatMessageController<ExtraData>!
+    public var messageController: ChatMessageController!
 
     /// `ChannelConfig` that contains the feature flags of the channel.
     public var channelConfig: ChannelConfig!
 
     /// Message that should be shown in this view controller.
-    open var message: _ChatMessage<ExtraData>? {
+    open var message: ChatMessage? {
         messageController.message
     }
     
@@ -231,27 +227,27 @@ open class _ChatMessageActionsVC<ExtraData: ExtraDataTypes>: _ViewController, Th
 
 // MARK: - Delegate
 
-public extension _ChatMessageActionsVC {
+public extension ChatMessageActionsVC {
     /// Delegate instance for `_ChatMessageActionsVC`.
     struct Delegate {
         /// Triggered when action item was tapped.
         /// You can decide what to do with message based on which instance of `ChatMessageActionItem` you received.
-        public var didTapOnActionItem: (_ChatMessageActionsVC, _ChatMessage<ExtraData>, ChatMessageActionItem) -> Void
+        public var didTapOnActionItem: (ChatMessageActionsVC, ChatMessage, ChatMessageActionItem) -> Void
         /// Triggered when `_ChatMessageActionsVC` should be dismissed.
-        public var didFinish: (_ChatMessageActionsVC) -> Void
+        public var didFinish: (ChatMessageActionsVC) -> Void
 
         /// Init of `_ChatMessageActionsVC.Delegate`.
         public init(
-            didTapOnActionItem: @escaping (_ChatMessageActionsVC, _ChatMessage<ExtraData>, ChatMessageActionItem)
+            didTapOnActionItem: @escaping (ChatMessageActionsVC, ChatMessage, ChatMessageActionItem)
                 -> Void = { _, _, _ in },
-            didFinish: @escaping (_ChatMessageActionsVC) -> Void = { _ in }
+            didFinish: @escaping (ChatMessageActionsVC) -> Void = { _ in }
         ) {
             self.didTapOnActionItem = didTapOnActionItem
             self.didFinish = didFinish
         }
 
         /// Wraps `_ChatMessageActionsVCDelegate` into `_ChatMessageActionsVC.Delegate`.
-        public init<Delegate: _ChatMessageActionsVCDelegate>(delegate: Delegate) where Delegate.ExtraData == ExtraData {
+        public init<Delegate: ChatMessageActionsVCDelegate>(delegate: Delegate) {
             self.init(
                 didTapOnActionItem: { [weak delegate] in delegate?.chatMessageActionsVC($0, message: $1, didTapOnActionItem: $2) },
                 didFinish: { [weak delegate] in delegate?.chatMessageActionsVCDidFinish($0) }

@@ -14,7 +14,7 @@ public struct MessageNewEvent: MessageSpecificEvent {
     
     let payload: Any
     
-    init<ExtraData: ExtraDataTypes>(from response: EventPayload<ExtraData>) throws {
+    init(from response: EventPayload) throws {
         userId = try response.value(at: \.user?.id)
         cid = try response.value(at: \.cid)
         messageId = try response.value(at: \.message?.id)
@@ -33,7 +33,7 @@ public struct MessageUpdatedEvent: MessageSpecificEvent {
     
     let payload: Any
     
-    init<ExtraData: ExtraDataTypes>(from response: EventPayload<ExtraData>) throws {
+    init(from response: EventPayload) throws {
         userId = try response.value(at: \.user?.id)
         cid = try response.value(at: \.cid)
         messageId = try response.value(at: \.message?.id)
@@ -50,7 +50,7 @@ public struct MessageDeletedEvent: MessageSpecificEvent {
     
     let payload: Any
     
-    init<ExtraData: ExtraDataTypes>(from response: EventPayload<ExtraData>) throws {
+    init(from response: EventPayload) throws {
         userId = try response.value(at: \.user?.id)
         cid = try response.value(at: \.cid)
         messageId = try response.value(at: \.message?.id)
@@ -71,7 +71,7 @@ public struct MessageReadEvent: UserSpecificEvent, ChannelSpecificEvent {
     
     let payload: Any
     
-    init<ExtraData: ExtraDataTypes>(from response: EventPayload<ExtraData>) throws {
+    init(from response: EventPayload) throws {
         userId = try response.value(at: \.user?.id)
         cid = try response.value(at: \.cid)
         readAt = try response.value(at: \.createdAt)

@@ -7,7 +7,7 @@
 import XCTest
 
 class EventDataProcessorMiddleware_Tests: XCTestCase {
-    var middleware: EventDataProcessorMiddleware<NoExtraData>!
+    var middleware: EventDataProcessorMiddleware!
     fileprivate var database: DatabaseContainerMock!
     
     override func setUp() {
@@ -44,7 +44,7 @@ class EventDataProcessorMiddleware_Tests: XCTestCase {
         let outputEvent = middleware.handle(event: testEvent, session: database.viewContext)
         
         // Assert the channel data is saved and the event is forwarded
-        var loadedChannel: _ChatChannel<NoExtraData>? {
+        var loadedChannel: ChatChannel? {
             database.viewContext.channel(cid: channelId)!.asModel()
         }
         XCTAssertEqual(loadedChannel?.cid, channelId)
@@ -58,7 +58,7 @@ class EventDataProcessorMiddleware_Tests: XCTestCase {
         }
         
         // Create dummy event payload
-        let eventPayload = EventPayload<NoExtraData>(eventType: .userUpdated, user: .dummy(userId: .unique))
+        let eventPayload = EventPayload(eventType: .userUpdated, user: .dummy(userId: .unique))
         let testEvent = TestEvent(payload: eventPayload)
         
         // Simulate the DB fails to save the payload

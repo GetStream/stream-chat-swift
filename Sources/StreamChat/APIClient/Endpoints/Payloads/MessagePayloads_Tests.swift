@@ -8,9 +8,10 @@ import XCTest
 class MessagePayload_Tests: XCTestCase {
     let messageJSON = XCTestCase.mockData(fromFile: "Message")
     let messageJSONWithCorruptedAttachments = XCTestCase.mockData(fromFile: "MessageWithBrokenAttachments")
-    
+    let messageCustomData: [String: RawJSON] = ["secret_note": .string("Anakin is Vader!")]
+
     func test_messagePayload_isSerialized_withDefaultExtraData() throws {
-        let box = try JSONDecoder.default.decode(MessagePayload<NoExtraData>.Boxed.self, from: messageJSON)
+        let box = try JSONDecoder.default.decode(MessagePayload.Boxed.self, from: messageJSON)
         let payload = box.message
         
         XCTAssertEqual(payload.id, "7baa1533-3294-4c0c-9a62-c9d0928bf733")
@@ -27,7 +28,7 @@ class MessagePayload_Tests: XCTestCase {
         XCTAssertEqual(payload.mentionedUsers.map(\.id), [])
         XCTAssertEqual(payload.threadParticipants.map(\.id), ["josh"])
         XCTAssertEqual(payload.replyCount, 0)
-        XCTAssertEqual(payload.extraData, .defaultValue)
+        XCTAssertEqual(payload.extraData, messageCustomData)
         XCTAssertEqual(payload.latestReactions.count, 1)
         XCTAssertEqual(payload.ownReactions.count, 1)
         XCTAssertEqual(payload.reactionScores, ["love": 1])
@@ -42,7 +43,7 @@ class MessagePayload_Tests: XCTestCase {
     }
 
     func test_messagePayload_isSerialized_withDefaultExtraData_withBrokenAttachmentPayload() throws {
-        let box = try JSONDecoder.default.decode(MessagePayload<NoExtraData>.Boxed.self, from: messageJSONWithCorruptedAttachments)
+        let box = try JSONDecoder.default.decode(MessagePayload.Boxed.self, from: messageJSONWithCorruptedAttachments)
         let payload = box.message
 
         XCTAssertEqual(payload.id, "7baa1533-3294-4c0c-9a62-c9d0928bf733")
@@ -59,7 +60,7 @@ class MessagePayload_Tests: XCTestCase {
         XCTAssertEqual(payload.mentionedUsers.map(\.id), [])
         XCTAssertEqual(payload.threadParticipants.map(\.id), ["josh"])
         XCTAssertEqual(payload.replyCount, 0)
-        XCTAssertEqual(payload.extraData, .defaultValue)
+        XCTAssertEqual(payload.extraData, messageCustomData)
         XCTAssertEqual(payload.latestReactions.count, 1)
         XCTAssertEqual(payload.ownReactions.count, 1)
         XCTAssertEqual(payload.reactionScores, ["love": 1])
@@ -75,7 +76,7 @@ class MessagePayload_Tests: XCTestCase {
     }
     
     func test_messagePayload_isSerialized_withCustomExtraData() throws {
-        let box = try JSONDecoder.default.decode(MessagePayload<CustomData>.Boxed.self, from: messageJSON)
+        let box = try JSONDecoder.default.decode(MessagePayload.Boxed.self, from: messageJSON)
         let payload = box.message
         
         XCTAssertEqual(payload.id, "7baa1533-3294-4c0c-9a62-c9d0928bf733")
@@ -92,7 +93,7 @@ class MessagePayload_Tests: XCTestCase {
         XCTAssertEqual(payload.mentionedUsers.map(\.id), [])
         XCTAssertEqual(payload.threadParticipants.map(\.id), ["josh"])
         XCTAssertEqual(payload.replyCount, 0)
-        XCTAssertEqual(payload.extraData, TestExtraMessageData(secretNote: "Anakin is Vader!"))
+        XCTAssertEqual(payload.extraData, messageCustomData)
         XCTAssertEqual(payload.latestReactions.count, 1)
         XCTAssertEqual(payload.ownReactions.count, 1)
         XCTAssertEqual(payload.reactionScores, ["love": 1])
@@ -109,7 +110,7 @@ class MessagePayload_Tests: XCTestCase {
 
 class MessageRequestBody_Tests: XCTestCase {
     func test_isSerialized() throws {
-        let payload: MessageRequestBody<CustomData> = .init(
+        let payload: MessageRequestBody = .init(
             id: .unique,
             user: .dummy(userId: .unique),
             text: .unique,
@@ -122,7 +123,7 @@ class MessageRequestBody_Tests: XCTestCase {
             mentionedUserIds: [.unique],
             pinned: true,
             pinExpires: "2021-05-15T06:43:08.776Z".toDate(),
-            extraData: .init(secretNote: "Anakin is Vader ;-)")
+            extraData: ["secret_note": .string("Anakin is Vader ;-)")]
         )
         
         let serializedJSON = try JSONEncoder.stream.encode(payload)
@@ -141,13 +142,12 @@ class MessageRequestBody_Tests: XCTestCase {
             "pin_expires": "2021-05-15T06:43:08.776Z"
         ]
         let expectedJSON = try JSONSerialization.data(withJSONObject: expected, options: [])
-        
         AssertJSONEqual(serializedJSON, expectedJSON)
     }
     
     /// Check whether the message body is serialized when `isSilent` is not provided in `init`
     func test_isSerializedWithoutSilent() throws {
-        let payload: MessageRequestBody<CustomData> = .init(
+        let payload: MessageRequestBody = .init(
             id: .unique,
             user: .dummy(userId: .unique),
             text: .unique,
@@ -159,7 +159,7 @@ class MessageRequestBody_Tests: XCTestCase {
             mentionedUserIds: [.unique],
             pinned: true,
             pinExpires: "2021-05-15T06:43:08.776Z".toDate(),
-            extraData: .init(secretNote: "Anakin is Vader ;-)")
+            extraData: ["secret_note": .string("Anakin is Vader ;-)")]
         )
         
         let serializedJSON = try JSONEncoder.stream.encode(payload)
@@ -186,22 +186,9 @@ class MessageRequestBody_Tests: XCTestCase {
 class MessageRepliesPayload_Tests: XCTestCase {
     func test_isSerialized() throws {
         let mockJSON = XCTestCase.mockData(fromFile: "Messages")
-        let payload = try JSONDecoder.default.decode(MessageRepliesPayload<CustomData>.self, from: mockJSON)
+        let payload = try JSONDecoder.default.decode(MessageRepliesPayload.self, from: mockJSON)
         
         // Assert 2 messages successfully decoded.
         XCTAssertTrue(payload.messages.count == 2)
     }
-}
-
-private struct TestExtraMessageData: MessageExtraData {
-    static var defaultValue: Self = .init(secretNote: "no secrets")
-    
-    let secretNote: String
-    private enum CodingKeys: String, CodingKey {
-        case secretNote = "secret_note"
-    }
-}
-
-private enum CustomData: ExtraDataTypes {
-    typealias Message = TestExtraMessageData
 }

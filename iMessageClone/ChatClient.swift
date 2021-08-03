@@ -32,7 +32,7 @@ extension ChatClient {
         let client = ChatClient(config: config)
         
         client.connectUser(
-            userInfo: UserInfo<NoExtraData>(id: "user-1"),
+            userInfo: UserInfo(id: "user-1"),
             token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiY2lsdmlhIn0.jHi2vjKoF02P9lOog0kDVhsIrGFjuWJqZelX5capR30"
         )
         return client

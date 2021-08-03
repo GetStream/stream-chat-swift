@@ -12,8 +12,8 @@ import XCTest
 class ChatThreadView_Tests: iOS13TestCase {
     var chatThreadView: SwiftUIViewControllerRepresentable<ChatThreadVC>!
     
-    var channelControllerMock: ChatChannelController_Mock<NoExtraData>!
-    var messageControllerMock: ChatMessageController_Mock<NoExtraData>!
+    var channelControllerMock: ChatChannelController_Mock!
+    var messageControllerMock: ChatMessageController_Mock!
 
     override func setUp() {
         super.setUp()
@@ -56,8 +56,8 @@ class ChatThreadView_Tests: iOS13TestCase {
 
     func test_customNavigationViewValues_arePopulated() {
         struct CustomView: View {
-            let channelControllerMock = ChatChannelController_Mock<NoExtraData>.mock()
-            let messageControllerMock = ChatMessageController_Mock<NoExtraData>.mock()
+            let channelControllerMock = ChatChannelController_Mock.mock()
+            let messageControllerMock = ChatMessageController_Mock.mock()
 
             init() {
                 channelControllerMock.simulateInitial(

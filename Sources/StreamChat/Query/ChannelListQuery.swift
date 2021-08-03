@@ -7,25 +7,8 @@ import Foundation
 /// A namespace for the `FilterKey`s suitable to be used for `ChannelListQuery`. This scope is not aware of any extra data types.
 public protocol AnyChannelListFilterScope {}
 
-/// An extra-data-specific namespace for the `FilterKey`s suitable to be used for `ChannelListQuery`.
-///
-/// - Note: `ChannelListFilterScope` is a typealias of `_ChannelListFilterScope` with the default extra data types.
-/// If you want to use your custom extra data types, you should create your own `ChannelListFilterScope`
-/// typealias for `_ChannelListFilterScope`.
-///
-/// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/Cheat-Sheet#working-with-extra-data).
-///
-public typealias ChannelListFilterScope = _ChannelListFilterScope<NoExtraData>
-
 /// An extra-data-specific namespace for the `FilterKey`s suitable to be used for `_ChannelListQuery`.
-///
-/// - Note: `_ChannelListFilterScope` type is not meant to be used directly.
-/// If you don't use custom extra data types, use `ChannelListFilterScope` typealias instead.
-/// When using custom extra data types, you should create your own `ChannelListFilterScope` typealias for `_ChannelListFilterScope`.
-///
-/// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/Cheat-Sheet#working-with-extra-data).
-///
-public struct _ChannelListFilterScope<ExtraData: ChannelExtraData>: FilterScope, AnyChannelListFilterScope {}
+public struct ChannelListFilterScope: FilterScope, AnyChannelListFilterScope {}
 
 public extension Filter where Scope: AnyChannelListFilterScope {
     /// Filter to match channels containing members with specified user ids.
@@ -81,25 +64,7 @@ public extension FilterKey where Scope: AnyChannelListFilterScope {
 
 /// A query is used for querying specific channels from backend.
 /// You can specify filter, sorting, pagination, limit for fetched messages in channel and other options.
-///
-/// - Note: `ChannelListQuery` is a typealias of `_ChannelListQuery` with the default extra data types.
-/// If you want to use your custom extra data types, you should create your own `ChannelListQuery` typealias
-/// for `_ChannelListQuery`.
-///
-/// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/Cheat-Sheet#working-with-extra-data).
-///
-public typealias ChannelListQuery = _ChannelListQuery<NoExtraData>
-
-/// A query is used for querying specific channels from backend.
-/// You can specify filter, sorting, pagination, limit for fetched messages in channel and other options.
-///
-/// - Note: `_ChannelListQuery` type is not meant to be used directly.
-/// If you don't use custom extra data types, use `ChannelListQuery` typealias instead.
-/// When using custom extra data types, you should create your own `ChannelListQuery` typealias for `_ChannelListQuery`.
-///
-/// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/Cheat-Sheet#working-with-extra-data).
-///
-public struct _ChannelListQuery<ExtraData: ChannelExtraData>: Encodable {
+public struct ChannelListQuery: Encodable {
     private enum CodingKeys: String, CodingKey {
         case filter = "filter_conditions"
         case sort
@@ -112,7 +77,7 @@ public struct _ChannelListQuery<ExtraData: ChannelExtraData>: Encodable {
     }
     
     /// A filter for the query (see `Filter`).
-    public let filter: Filter<_ChannelListFilterScope<ExtraData>>
+    public let filter: Filter<ChannelListFilterScope>
     /// A sorting for the query (see `Sorting`).
     public let sort: [Sorting<ChannelListSortingKey>]
     /// A pagination.
@@ -129,7 +94,7 @@ public struct _ChannelListQuery<ExtraData: ChannelExtraData>: Encodable {
     ///   - pageSize: a page size for pagination.
     ///   - messagesLimit: a number of messages for the channel to be retrieved.
     public init(
-        filter: Filter<_ChannelListFilterScope<ExtraData>>,
+        filter: Filter<ChannelListFilterScope>,
         sort: [Sorting<ChannelListSortingKey>] = [],
         pageSize: Int = .channelsPageSize,
         messagesLimit: Int = .messagesPageSize

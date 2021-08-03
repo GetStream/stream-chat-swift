@@ -23,7 +23,7 @@ class UserListController_Tests: StressTestCase {
         super.setUp()
         
         env = TestEnvironment()
-        client = _ChatClient.mock
+        client = ChatClient.mock
         query = .init(filter: .query(.id, text: .unique))
         controller = ChatUserListController(query: query, client: client, environment: env.environment)
         controllerCallbackQueueID = UUID()
@@ -352,7 +352,7 @@ class UserListController_Tests: StressTestCase {
 }
 
 private class TestEnvironment {
-    @Atomic var userListUpdater: UserListUpdaterMock<NoExtraData>?
+    @Atomic var userListUpdater: UserListUpdaterMock?
     
     lazy var environment: ChatUserListController.Environment =
         .init(userQueryUpdaterBuilder: { [unowned self] in
@@ -375,7 +375,7 @@ private class TestDelegate: QueueAwareDelegate, ChatUserListControllerDelegate {
     }
     
     func controller(
-        _ controller: _ChatUserListController<NoExtraData>,
+        _ controller: ChatUserListController,
         didChangeUsers changes: [ListChange<ChatUser>]
     ) {
         didChangeUsers_changes = changes
@@ -384,7 +384,7 @@ private class TestDelegate: QueueAwareDelegate, ChatUserListControllerDelegate {
 }
 
 // A concrete `_ChatUserListControllerDelegate` implementation allowing capturing the delegate calls.
-private class TestDelegateGeneric: QueueAwareDelegate, _ChatUserListControllerDelegate {
+private class TestDelegateGeneric: QueueAwareDelegate, ChatUserListControllerDelegate {
     @Atomic var state: DataController.State?
     @Atomic var didChangeUsers_changes: [ListChange<ChatUser>]?
     
@@ -394,7 +394,7 @@ private class TestDelegateGeneric: QueueAwareDelegate, _ChatUserListControllerDe
     }
     
     func controller(
-        _ controller: _ChatUserListController<NoExtraData>,
+        _ controller: ChatUserListController,
         didChangeUsers changes: [ListChange<ChatUser>]
     ) {
         didChangeUsers_changes = changes

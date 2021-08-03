@@ -6,14 +6,14 @@ import Combine
 import Foundation
 
 @available(iOS 13, *)
-extension _ChatChannelListController {
+extension ChatChannelListController {
     /// A publisher emitting a new value every time the state of the controller changes.
     public var statePublisher: AnyPublisher<DataController.State, Never> {
         basePublishers.state.keepAlive(self)
     }
     
     /// A publisher emitting a new value every time the list of the channels matching the query changes.
-    public var channelsChangesPublisher: AnyPublisher<[ListChange<_ChatChannel<ExtraData>>], Never> {
+    public var channelsChangesPublisher: AnyPublisher<[ListChange<ChatChannel>], Never> {
         basePublishers.channelsChanges.keepAlive(self)
     }
 
@@ -22,15 +22,15 @@ extension _ChatChannelListController {
     /// and expose the published values by mapping them to a read-only `AnyPublisher` type.
     class BasePublishers {
         /// The wrapper controller
-        unowned let controller: _ChatChannelListController
+        unowned let controller: ChatChannelListController
         
         /// A backing subject for `statePublisher`.
         let state: CurrentValueSubject<DataController.State, Never>
         
         /// A backing subject for `channelsChangesPublisher`.
-        let channelsChanges: PassthroughSubject<[ListChange<_ChatChannel<ExtraData>>], Never> = .init()
+        let channelsChanges: PassthroughSubject<[ListChange<ChatChannel>], Never> = .init()
                 
-        init(controller: _ChatChannelListController<ExtraData>) {
+        init(controller: ChatChannelListController) {
             self.controller = controller
             state = .init(controller.state)
             
@@ -40,14 +40,14 @@ extension _ChatChannelListController {
 }
 
 @available(iOS 13, *)
-extension _ChatChannelListController.BasePublishers: _ChatChannelListControllerDelegate {
+extension ChatChannelListController.BasePublishers: ChatChannelListControllerDelegate {
     func controller(_ controller: DataController, didChangeState state: DataController.State) {
         self.state.send(state)
     }
     
     func controller(
-        _ controller: _ChatChannelListController<ExtraData>,
-        didChangeChannels changes: [ListChange<_ChatChannel<ExtraData>>]
+        _ controller: ChatChannelListController,
+        didChangeChannels changes: [ListChange<ChatChannel>]
     ) {
         channelsChanges.send(changes)
     }

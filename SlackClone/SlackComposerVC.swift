@@ -64,7 +64,7 @@ class SlackComposerVC: ComposerVC {
 
 open class ComposerEmojiSuggestionsDataSource: NSObject, UICollectionViewDataSource {
     /// The collection view of the mentions.
-    open var collectionView: _ChatSuggestionsCollectionView<NoExtraData>
+    open var collectionView: ChatSuggestionsCollectionView
 
     var emojis: [(symbol: String, code: String)] = [
         ("😃", ":happy:"),
@@ -73,7 +73,7 @@ open class ComposerEmojiSuggestionsDataSource: NSObject, UICollectionViewDataSou
         ("😅", ":sweat_smile:")
     ]
 
-    init(collectionView: _ChatSuggestionsCollectionView<NoExtraData>) {
+    init(collectionView: ChatSuggestionsCollectionView) {
         self.collectionView = collectionView
 
         super.init()

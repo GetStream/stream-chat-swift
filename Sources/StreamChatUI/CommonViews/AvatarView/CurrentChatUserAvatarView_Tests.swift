@@ -8,7 +8,7 @@ import StreamChatTestTools
 import XCTest
 
 class CurrentChatUserAvatarView_Tests: XCTestCase {
-    var currentUserController: CurrentChatUserController_Mock<NoExtraData>!
+    var currentUserController: CurrentChatUserController_Mock!
     
     override func setUp() {
         super.setUp()

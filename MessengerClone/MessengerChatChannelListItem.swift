@@ -9,11 +9,9 @@ import SwiftUI
 struct MessengerChatChannelListItem: ChatChannelListItemView.SwiftUIView {
     @EnvironmentObject var components: Components.ObservableObject
     @ObservedObject var dataSource: ChatChannelListItemView.ObservedObject<Self>
-    init(dataSource: _ChatChannelListItemView<NoExtraData>.ObservedObject<MessengerChatChannelListItem>) {
+    init(dataSource: ChatChannelListItemView.ObservedObject<MessengerChatChannelListItem>) {
         self.dataSource = dataSource
     }
-    
-    typealias ExtraData = NoExtraData
     
     var body: some View {
         HStack {

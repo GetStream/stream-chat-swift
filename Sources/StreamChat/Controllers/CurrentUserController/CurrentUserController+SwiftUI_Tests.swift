@@ -62,8 +62,8 @@ class CurrentUserController_SwiftUI_Tests: iOS13TestCase {
 }
 
 class CurrentUserControllerMock: CurrentChatUserController {
-    var currentUser_simulated: _CurrentChatUser<NoExtraData>?
-    override var currentUser: _CurrentChatUser<NoExtraData>? {
+    var currentUser_simulated: CurrentChatUser?
+    override var currentUser: CurrentChatUser? {
         currentUser_simulated ?? super.currentUser
     }
     

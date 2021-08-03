@@ -14,7 +14,7 @@ extension TimeInterval {
 }
 
 /// Sends events.
-class TypingEventsSender<ExtraData: ExtraDataTypes>: Worker {
+class TypingEventsSender: Worker {
     /// A timer type.
     var timer: Timer.Type = DefaultTimer.self
     /// ChannelId for channel that typing has occured in. Stored to stop typing when `TypingEventsSender` is dealocated

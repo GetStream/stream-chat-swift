@@ -6,14 +6,14 @@ import CoreData
 import Foundation
 
 /// The type provides the API for getting/editing/deleting a message
-class MessageUpdater<ExtraData: ExtraDataTypes>: Worker {
+class MessageUpdater: Worker {
     /// Fetches the message from the backend and saves it into the database
     /// - Parameters:
     ///   - cid: The channel identifier the message relates to.
     ///   - messageId: The message identifier.
     ///   - completion: The completion. Will be called with an error if smth goes wrong, otherwise - will be called with `nil`.
     func getMessage(cid: ChannelId, messageId: MessageId, completion: ((Error?) -> Void)? = nil) {
-        let endpoint: Endpoint<MessagePayload<ExtraData>.Boxed> = .getMessage(messageId: messageId)
+        let endpoint: Endpoint<MessagePayload.Boxed> = .getMessage(messageId: messageId)
         apiClient.request(endpoint: endpoint) {
             switch $0 {
             case let .success(boxed):
@@ -134,7 +134,7 @@ class MessageUpdater<ExtraData: ExtraDataTypes>: Worker {
         showReplyInChannel: Bool,
         isSilent: Bool,
         quotedMessageId: MessageId?,
-        extraData: ExtraData.Message,
+        extraData: [String: RawJSON],
         completion: ((Result<MessageId, Error>) -> Void)? = nil
     ) {
         var newMessageId: MessageId?
@@ -180,7 +180,7 @@ class MessageUpdater<ExtraData: ExtraDataTypes>: Worker {
         pagination: MessagesPagination,
         completion: ((Error?) -> Void)? = nil
     ) {
-        let endpoint: Endpoint<MessageRepliesPayload<ExtraData>> = .loadReplies(messageId: messageId, pagination: pagination)
+        let endpoint: Endpoint<MessageRepliesPayload> = .loadReplies(messageId: messageId, pagination: pagination)
         apiClient.request(endpoint: endpoint) {
             switch $0 {
             case let .success(payload):
@@ -210,7 +210,7 @@ class MessageUpdater<ExtraData: ExtraDataTypes>: Worker {
                 return
             }
             
-            let endpoint: Endpoint<FlagMessagePayload<ExtraData>> = .flagMessage(flag, with: messageId)
+            let endpoint: Endpoint<FlagMessagePayload> = .flagMessage(flag, with: messageId)
             self.apiClient.request(endpoint: endpoint) { result in
                 switch result {
                 case let .success(payload):
@@ -247,7 +247,7 @@ class MessageUpdater<ExtraData: ExtraDataTypes>: Worker {
         _ type: MessageReactionType,
         score: Int,
         enforceUnique: Bool,
-        extraData: ExtraData.MessageReaction,
+        extraData: [String: RawJSON],
         messageId: MessageId,
         completion: ((Error?) -> Void)? = nil
     ) {
@@ -406,7 +406,7 @@ class MessageUpdater<ExtraData: ExtraDataTypes>: Worker {
                 return
             }
 
-            let endpoint: Endpoint<MessagePayload<ExtraData>.Boxed> = .dispatchEphemeralMessageAction(
+            let endpoint: Endpoint<MessagePayload.Boxed> = .dispatchEphemeralMessageAction(
                 cid: cid,
                 messageId: messageId,
                 action: action

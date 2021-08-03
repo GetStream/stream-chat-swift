@@ -905,7 +905,7 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
                     score: 1,
                     createdAt: .unique,
                     updatedAt: .unique,
-                    extraData: .defaultValue,
+                    extraData: [:],
                     author: .mock(id: .unique)
                 )
             ]
@@ -943,7 +943,7 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
                     score: 1,
                     createdAt: .unique,
                     updatedAt: .unique,
-                    extraData: .defaultValue,
+                    extraData: [:],
                     author: .mock(id: .unique)
                 )
             ]
@@ -981,7 +981,7 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
                     score: 1,
                     createdAt: .unique,
                     updatedAt: .unique,
-                    extraData: .defaultValue,
+                    extraData: [:],
                     author: .mock(id: .unique)
                 )
             ]
@@ -1019,7 +1019,7 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
                     score: 1,
                     createdAt: .unique,
                     updatedAt: .unique,
-                    extraData: .defaultValue,
+                    extraData: [:],
                     author: .mock(id: .unique)
                 )
             ]
@@ -1239,7 +1239,7 @@ private extension Array where Element == (ChatMessage, Bool) {
                     score: 1,
                     createdAt: .unique,
                     updatedAt: .unique,
-                    extraData: .defaultValue,
+                    extraData: [:],
                     author: currentUser
                 )
             ]

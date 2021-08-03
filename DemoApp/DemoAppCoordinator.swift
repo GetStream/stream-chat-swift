@@ -30,12 +30,16 @@ final class DemoAppCoordinator {
         // Create client
         let config = ChatClientConfig(apiKey: .init(userCredentials.apiKey))
         let client = ChatClient(config: config)
-        client.connectUser(userInfo: .init(id: userCredentials.id), token: token)
+        client.connectUser(
+            userInfo: .init(id: userCredentials.id, extraData: [ChatUser.birthLandFieldName: .string(userCredentials.birthLand)]),
+            token: token
+        )
         
         // Config
         Components.default.channelListRouter = DemoChatChannelListRouter.self
         Components.default.messageListVC = CustomMessageListVC.self
-        
+        Components.default.messageContentView = CustomMessageContentView.self
+
         // Channels with the current user
         let controller = client.channelListController(query: .init(filter: .containMembers(userIds: [userCredentials.id])))
         let chatList = DemoChannelListVC()

@@ -16,7 +16,7 @@ final class EventsController_Tests: StressTestCase {
     override func setUp() {
         super.setUp()
         
-        client = _ChatClient.mock
+        client = ChatClient.mock
         callbackQueueID = UUID()
         controller = EventsController(notificationCenter: client.eventNotificationCenter)
         controller.callbackQueue = .testQueue(withId: callbackQueueID)

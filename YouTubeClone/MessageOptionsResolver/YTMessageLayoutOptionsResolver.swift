@@ -9,8 +9,8 @@ import UIKit
 final class YTMessageLayoutOptionsResolver: ChatMessageLayoutOptionsResolver {
     override func optionsForMessage(
         at indexPath: IndexPath,
-        in channel: _ChatChannel<NoExtraData>,
-        with messages: AnyRandomAccessCollection<_ChatMessage<NoExtraData>>,
+        in channel: ChatChannel,
+        with messages: AnyRandomAccessCollection<ChatMessage>,
         appearance: Appearance
     ) -> ChatMessageLayoutOptions {
         var options = super.optionsForMessage(at: indexPath, in: channel, with: messages, appearance: appearance)

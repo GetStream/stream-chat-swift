@@ -16,7 +16,7 @@ func snippet_channel_types_multi_tenant_teams() throws {
         name: "Channel Name",
         imageURL: nil,
         team: "red",
-        extraData: .defaultValue
+        extraData: [:]
     )
 
     /// 3: Call `ChatChannelController.synchronize` to create the channel.

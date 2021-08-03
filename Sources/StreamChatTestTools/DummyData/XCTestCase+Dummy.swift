@@ -10,7 +10,7 @@ extension XCTestCase {
 
     // MARK: - Dummy data with extra data
     
-    var dummyCurrentUser: CurrentUserPayload<NoExtraData> {
+    var dummyCurrentUser: CurrentUserPayload {
         CurrentUserPayload(
             id: "dummyCurrentUser",
             name: .unique,
@@ -22,15 +22,15 @@ extension XCTestCase {
             isOnline: true,
             isInvisible: false,
             isBanned: false,
-            extraData: .defaultValue
+            extraData: [:]
         )
     }
     
-    var dummyUser: UserPayload<NoExtraData> {
+    var dummyUser: UserPayload {
         dummyUser(id: .unique)
     }
     
-    func dummyUser(id: String) -> UserPayload<NoExtraData> {
+    func dummyUser(id: String) -> UserPayload {
         UserPayload(
             id: id,
             name: .unique,
@@ -43,13 +43,13 @@ extension XCTestCase {
             isInvisible: true,
             isBanned: true,
             teams: [],
-            extraData: .defaultValue
+            extraData: [:]
         )
     }
     
     func dummyMessagePayload(
         createdAt: Date = XCTestCase.channelCreatedDate.addingTimeInterval(.random(in: 60...900_000))
-    ) -> MessagePayload<NoExtraData> {
+    ) -> MessagePayload {
         MessagePayload(
             id: .unique,
             type: .regular,
@@ -64,7 +64,7 @@ extension XCTestCase {
             showReplyInChannel: false,
             mentionedUsers: [dummyCurrentUser],
             replyCount: 0,
-            extraData: .defaultValue,
+            extraData: [:],
             reactionScores: ["like": 1],
             isSilent: false,
             attachments: []
@@ -73,7 +73,7 @@ extension XCTestCase {
     
     func dummyPinnedMessagePayload(
         createdAt: Date = XCTestCase.channelCreatedDate.addingTimeInterval(.random(in: 50...99))
-    ) -> MessagePayload<NoExtraData> {
+    ) -> MessagePayload {
         MessagePayload(
             id: .unique,
             type: .regular,
@@ -89,7 +89,7 @@ extension XCTestCase {
             showReplyInChannel: false,
             mentionedUsers: [dummyCurrentUser],
             replyCount: 0,
-            extraData: .defaultValue,
+            extraData: [:],
             reactionScores: ["like": 1],
             isSilent: false,
             attachments: [],
@@ -100,18 +100,18 @@ extension XCTestCase {
         )
     }
     
-    var dummyChannelRead: ChannelReadPayload<NoExtraData> {
+    var dummyChannelRead: ChannelReadPayload {
         ChannelReadPayload(user: dummyCurrentUser, lastReadAt: Date(timeIntervalSince1970: 1), unreadMessagesCount: 10)
     }
     
     func dummyPayload(
         with channelId: ChannelId,
         numberOfMessages: Int = 1,
-        members: [MemberPayload<NoExtraData>] = [.unique],
-        watchers: [UserPayload<NoExtraData>]? = nil,
+        members: [MemberPayload] = [.unique],
+        watchers: [UserPayload]? = nil,
         includeMembership: Bool = true,
-        messages: [MessagePayload<NoExtraData>]? = nil,
-        pinnedMessages: [MessagePayload<NoExtraData>] = [],
+        messages: [MessagePayload]? = nil,
+        pinnedMessages: [MessagePayload] = [],
         channelConfig: ChannelConfig = .init(
             reactionsEnabled: true,
             typingEventsEnabled: true,
@@ -134,9 +134,10 @@ extension XCTestCase {
             ],
             createdAt: XCTestCase.channelCreatedDate,
             updatedAt: .unique
-        )
-    ) -> ChannelPayload<NoExtraData> {
-        var payloadMessages: [MessagePayload<NoExtraData>] = []
+        ),
+        channelExtraData: [String: RawJSON] = [:]
+    ) -> ChannelPayload {
+        var payloadMessages: [MessagePayload] = []
         if let messages = messages {
             payloadMessages = messages
         } else {
@@ -147,13 +148,13 @@ extension XCTestCase {
         
         let lastMessageAt: Date? = payloadMessages.map(\.createdAt).max()
         
-        let payload: ChannelPayload<NoExtraData> =
+        let payload: ChannelPayload =
             .init(
                 channel: .init(
                     cid: channelId,
                     name: .unique,
                     imageURL: .unique(),
-                    extraData: .defaultValue,
+                    extraData: channelExtraData,
                     typeRawValue: channelId.type.rawValue,
                     lastMessageAt: lastMessageAt,
                     createdAt: XCTestCase.channelCreatedDate,
@@ -179,16 +180,7 @@ extension XCTestCase {
         return payload
     }
     
-    // MARK: - Dummy data with no extra data
-    
-    enum NoExtraDataTypes: ExtraDataTypes {
-        typealias Channel = NoExtraData
-        typealias Message = NoExtraData
-        typealias User = NoExtraData
-        typealias Attachment = NoExtraData
-    }
-    
-    var dummyMessageWithNoExtraData: MessagePayload<NoExtraDataTypes> {
+    var dummyMessageWithNoExtraData: MessagePayload {
         MessagePayload(
             id: .unique,
             type: .regular,
@@ -203,19 +195,19 @@ extension XCTestCase {
             showReplyInChannel: false,
             mentionedUsers: [],
             replyCount: 0,
-            extraData: NoExtraData(),
+            extraData: [:],
             reactionScores: [:],
             isSilent: false,
             attachments: []
         )
     }
     
-    var dummyChannelReadWithNoExtraData: ChannelReadPayload<NoExtraDataTypes> {
+    var dummyChannelReadWithNoExtraData: ChannelReadPayload {
         ChannelReadPayload(user: dummyUser, lastReadAt: .unique, unreadMessagesCount: .random(in: 0...10))
     }
     
-    func dummyPayloadWithNoExtraData(with channelId: ChannelId) -> ChannelPayload<NoExtraDataTypes> {
-        let member: MemberPayload<NoExtraData> =
+    func dummyPayloadWithNoExtraData(with channelId: ChannelId) -> ChannelPayload {
+        let member: MemberPayload =
             .init(
                 user: .init(
                     id: .unique,
@@ -229,20 +221,20 @@ extension XCTestCase {
                     isInvisible: true,
                     isBanned: true,
                     teams: [],
-                    extraData: .init()
+                    extraData: [:]
                 ),
                 role: .member,
                 createdAt: .unique,
                 updatedAt: .unique
             )
         
-        let payload: ChannelPayload<NoExtraDataTypes> =
+        let payload: ChannelPayload =
             .init(
                 channel: .init(
                     cid: channelId,
                     name: .unique,
                     imageURL: .unique(),
-                    extraData: .init(),
+                    extraData: [:],
                     typeRawValue: channelId.type.rawValue,
                     lastMessageAt: .unique,
                     createdAt: .unique,
@@ -291,12 +283,12 @@ extension XCTestCase {
     }
 }
 
-private extension MemberPayload where ExtraData == NoExtraData {
-    static var unique: MemberPayload<NoExtraData> {
+private extension MemberPayload {
+    static var unique: MemberPayload {
         withLastActivity(at: .unique)
     }
     
-    static func withLastActivity(at date: Date) -> MemberPayload<NoExtraData> {
+    static func withLastActivity(at date: Date) -> MemberPayload {
         .init(
             user: .init(
                 id: .unique,
@@ -310,7 +302,7 @@ private extension MemberPayload where ExtraData == NoExtraData {
                 isInvisible: true,
                 isBanned: true,
                 teams: [],
-                extraData: .defaultValue
+                extraData: [:]
             ),
             role: .moderator,
             createdAt: .unique,
@@ -319,8 +311,8 @@ private extension MemberPayload where ExtraData == NoExtraData {
     }
 }
 
-private extension UserPayload where ExtraData == NoExtraData {
-    static func withLastActivity(at date: Date) -> UserPayload<NoExtraData> {
+private extension UserPayload {
+    static func withLastActivity(at date: Date) -> UserPayload {
         .init(
             id: .unique,
             name: .unique,
@@ -333,7 +325,7 @@ private extension UserPayload where ExtraData == NoExtraData {
             isInvisible: true,
             isBanned: true,
             teams: [],
-            extraData: .defaultValue
+            extraData: [:]
         )
     }
 }

@@ -15,7 +15,7 @@ public protocol GalleryItemPreview {
     var imageView: UIImageView { get }
 }
 
-extension _ChatMessageGalleryView {
+extension ChatMessageGalleryView {
     open class ImagePreview: _View, ThemeProvider, GalleryItemPreview {
         public var content: ChatMessageImageAttachment? {
             didSet { updateContentIfNeeded() }

@@ -5,11 +5,11 @@
 import Foundation
 
 /// A lightweight object for decoding incoming events.
-struct EventDecoder<ExtraData: ExtraDataTypes> {
+struct EventDecoder {
     func decode(from data: Data) throws -> Event {
         let decoder = JSONDecoder.default
         do {
-            let response = try decoder.decode(EventPayload<ExtraData>.self, from: data)
+            let response = try decoder.decode(EventPayload.self, from: data)
             return try response.event()
         } catch is ClientError.UnknownEvent {
             return try decoder.decode(UnknownEvent.self, from: data)

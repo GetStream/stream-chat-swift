@@ -18,11 +18,9 @@ struct MessengerChatMessageContentView: ChatMessageContentView.SwiftUIView {
         return df
     }()
     
-    init(dataSource: _ChatMessageContentView<NoExtraData>.ObservedObject<MessengerChatMessageContentView>) {
+    init(dataSource: ChatMessageContentView.ObservedObject<MessengerChatMessageContentView>) {
         self.dataSource = dataSource
     }
-    
-    typealias ExtraData = NoExtraData
     
     var body: some View {
         if let message = dataSource.content {

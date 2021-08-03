@@ -7,8 +7,8 @@ import Foundation
 @testable import StreamChatTestTools
 import XCTest
 
-extension _ChatClient {
-    static var mock: _ChatClient {
+extension ChatClient {
+    static var mock: ChatClient {
         .init(
             config: .init(apiKey: .init(.unique)),
             workerBuilders: [],
@@ -39,7 +39,7 @@ extension _ChatClient {
     }
 }
 
-class ChatClientMock<ExtraData: ExtraDataTypes>: _ChatClient<ExtraData> {
+class ChatClientMock: ChatClient {
     @Atomic var init_config: ChatClientConfig
     @Atomic var init_tokenProvider: TokenProvider?
     @Atomic var init_workerBuilders: [WorkerBuilder]
@@ -126,8 +126,8 @@ class ChatClientMock<ExtraData: ExtraDataTypes>: _ChatClient<ExtraData> {
     }
 }
 
-extension _ChatClient.Environment {
-    static var mock: _ChatClient.Environment {
+extension ChatClient.Environment {
+    static var mock: ChatClient.Environment {
         .init(
             apiClientBuilder: APIClientMock.init,
             webSocketClientBuilder: {
@@ -157,7 +157,7 @@ extension _ChatClient.Environment {
             requestDecoderBuilder: DefaultRequestDecoder.init,
             eventDecoderBuilder: EventDecoder.init,
             notificationCenterBuilder: EventNotificationCenter.init,
-            clientUpdaterBuilder: ChatClientUpdaterMock<ExtraData>.init
+            clientUpdaterBuilder: ChatClientUpdaterMock.init
         )
     }
 }

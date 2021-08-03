@@ -61,7 +61,7 @@ extension WebSocketClientMock {
         self.init(
             sessionConfiguration: .ephemeral,
             requestEncoder: DefaultRequestEncoder(baseURL: .unique(), apiKey: .init(.unique)),
-            eventDecoder: EventDecoder<NoExtraData>(),
+            eventDecoder: EventDecoder(),
             eventNotificationCenter: EventNotificationCenterMock(database: DatabaseContainerMock()),
             internetConnection: InternetConnection()
         )

@@ -6,14 +6,12 @@ import Foundation
 
 public typealias TokenProvider = (@escaping (Result<Token, Error>) -> Void) -> Void
 
-typealias UserConnectionProvider = _UserConnectionProvider<NoExtraData>
-
 /// The type designed to provider a `Token` to the `ChatClient` when it asks for it.
-struct _UserConnectionProvider<ExtraData: ExtraDataTypes> {
-    let getToken: (_ client: _ChatClient<ExtraData>, _ completion: @escaping (Result<Token, Error>) -> Void) -> Void
+struct UserConnectionProvider {
+    let getToken: (_ client: ChatClient, _ completion: @escaping (Result<Token, Error>) -> Void) -> Void
 }
 
-extension _UserConnectionProvider {
+extension UserConnectionProvider {
     /// The provider that can be used when user is unknown.
     static var anonymous: Self {
         .static(.anonymous)
@@ -46,10 +44,10 @@ extension _UserConnectionProvider {
         userId: UserId,
         name: String? = nil,
         imageURL: URL? = nil,
-        extraData: ExtraData.User = .defaultValue
+        extraData: [String: RawJSON] = [:]
     ) -> Self {
         .init { client, completion in
-            let endpoint: Endpoint<GuestUserTokenPayload<ExtraData>> = .guestUserToken(
+            let endpoint: Endpoint<GuestUserTokenPayload> = .guestUserToken(
                 userId: userId,
                 name: name,
                 imageURL: imageURL,
@@ -72,7 +70,7 @@ extension _UserConnectionProvider {
     /// - Parameter handler: The closure which should get the token and pass it to the `completion`.
     /// - Returns: The new `TokenProvider` instance.
     static func closure(
-        _ handler: @escaping (_ client: _ChatClient<ExtraData>, _ completion: @escaping (Result<Token, Error>) -> Void) -> Void
+        _ handler: @escaping (_ client: ChatClient, _ completion: @escaping (Result<Token, Error>) -> Void) -> Void
     ) -> Self {
         .init(getToken: handler)
     }

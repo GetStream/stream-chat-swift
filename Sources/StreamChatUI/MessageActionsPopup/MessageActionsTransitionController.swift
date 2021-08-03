@@ -7,7 +7,7 @@ import StreamChat
 import UIKit
 
 /// Transitions controller for `ChatMessagePopupVC`.
-open class MessageActionsTransitionController<ExtraData: ExtraDataTypes>: NSObject, UIViewControllerTransitioningDelegate,
+open class MessageActionsTransitionController: NSObject, UIViewControllerTransitioningDelegate,
     UIViewControllerAnimatedTransitioning {
     /// Indicates if the transition is for presenting or dismissing.
     open var isPresenting: Bool = false
@@ -18,7 +18,7 @@ open class MessageActionsTransitionController<ExtraData: ExtraDataTypes>: NSObje
     /// Constraints to be deactivated after dismissal.
     open var messageContentViewDeactivateConstraints: [NSLayoutConstraint] = []
     /// `messageContentView` instance that is animated.
-    open weak var messageContentView: _ChatMessageContentView<ExtraData>!
+    open weak var messageContentView: ChatMessageContentView!
     /// `messageContentView`'s initial superview.
     open weak var messageContentViewSuperview: UIView!
     /// Top anchor for main container.
@@ -55,7 +55,7 @@ open class MessageActionsTransitionController<ExtraData: ExtraDataTypes>: NSObje
     /// Animates present transition.
     open func animatePresent(using transitionContext: UIViewControllerContextTransitioning) {
         guard
-            let toVC = transitionContext.viewController(forKey: .to) as? _ChatMessagePopupVC<ExtraData>,
+            let toVC = transitionContext.viewController(forKey: .to) as? ChatMessagePopupVC,
             let fromVC = transitionContext.viewController(forKey: .from)
         else { return }
 
@@ -199,7 +199,7 @@ open class MessageActionsTransitionController<ExtraData: ExtraDataTypes>: NSObje
     /// Animates dismissal transition.
     open func animateDismiss(using transitionContext: UIViewControllerContextTransitioning) {
         guard
-            let fromVC = transitionContext.viewController(forKey: .from) as? _ChatMessagePopupVC<ExtraData>,
+            let fromVC = transitionContext.viewController(forKey: .from) as? ChatMessagePopupVC,
             let toVC = transitionContext.viewController(forKey: .to)
         else { return }
         

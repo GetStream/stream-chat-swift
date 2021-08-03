@@ -32,7 +32,7 @@ struct ChannelListView: View {
                     createChannelWithId: .init(type: .messaging, id: id),
                     name: name,
                     imageURL: nil,
-                    extraData: .defaultValue
+                    extraData: [:]
                 )
                 controller.synchronize()
             } catch {
