@@ -17,13 +17,13 @@ import Foundation
 /// We remember `lastReceivedEventDate` when state becomes `connecting` to catch the last event date
 /// before the `HealthCheck` override the `lastReceivedEventDate` with the recent date.
 ///
-class MissingEventsPublisher: EventWorker {
+class ConnectionRecoveryUpdater: EventWorker {
     // MARK: - Properties
     
     private var connectionObserver: EventObserver?
     private let databaseCleanupUpdater: DatabaseCleanupUpdater
     @Atomic private var lastSyncedAt: Date?
-    private let isLocalStorageEnabled: Bool
+    private let useSyncEndpoint: Bool
     
     // MARK: - Init
 
@@ -32,7 +32,7 @@ class MissingEventsPublisher: EventWorker {
         eventNotificationCenter: EventNotificationCenter,
         apiClient: APIClient
     ) {
-        isLocalStorageEnabled = false
+        useSyncEndpoint = false
         databaseCleanupUpdater = DatabaseCleanupUpdater(database: database, apiClient: apiClient)
         super.init(
             database: database,
@@ -46,10 +46,10 @@ class MissingEventsPublisher: EventWorker {
         database: DatabaseContainer,
         eventNotificationCenter: EventNotificationCenter,
         apiClient: APIClient,
-        isLocalStorageEnabled: Bool
+        useSyncEndpoint: Bool
     ) {
         databaseCleanupUpdater = DatabaseCleanupUpdater(database: database, apiClient: apiClient)
-        self.isLocalStorageEnabled = isLocalStorageEnabled
+        self.useSyncEndpoint = useSyncEndpoint
         super.init(
             database: database,
             eventNotificationCenter: eventNotificationCenter,
@@ -62,11 +62,16 @@ class MissingEventsPublisher: EventWorker {
         database: DatabaseContainer,
         eventNotificationCenter: EventNotificationCenter,
         apiClient: APIClient,
+<<<<<<< HEAD:Sources/StreamChat/Workers/Background/MissingEventsPublisher.swift
         databaseCleanupUpdater: DatabaseCleanupUpdater,
         isLocalStorageEnabled: Bool
+=======
+        databaseCleanupUpdater: DatabaseCleanupUpdater<ExtraData>,
+        useSyncEndpoint: Bool
+>>>>>>> Merge MissingEventsPublisher with ChannelWatchStateUpdater:Sources/StreamChat/Workers/Background/ConnectionRecoveryUpdater.swift
     ) {
         self.databaseCleanupUpdater = databaseCleanupUpdater
-        self.isLocalStorageEnabled = isLocalStorageEnabled
+        self.useSyncEndpoint = useSyncEndpoint
         super.init(
             database: database,
             eventNotificationCenter: eventNotificationCenter,
@@ -86,9 +91,7 @@ class MissingEventsPublisher: EventWorker {
                 case .connecting:
                     self.obtainLastSyncDate()
                 case .connected:
-                    if isLocalStorageEnabled {
-                        self.fetchAndReplayMissingEvents()
-                    }
+                    fetchAndReplayMissingEvents()
                 default:
                     break
                 }
@@ -103,17 +106,12 @@ class MissingEventsPublisher: EventWorker {
     }
     
     private func fetchAndReplayMissingEvents() {
-        database.backgroundReadOnlyContext.perform { [weak self] in
-            guard let lastSyncedAt = self?.lastSyncedAt,
-                  let allChannels = self?.allChannels else { return }
-            
-            let watchedChannelIDs = allChannels.map(\.cid).compactMap { try? ChannelId(cid: $0) }
-            
-            guard !watchedChannelIDs.isEmpty else {
-                log.info("Skipping `/sync` endpoint call as there are no channels to watch.")
-                return
+        database.backgroundReadOnlyContext.perform { [weak self, useSyncEndpoint] in
+            let refetchExistingQueries: () -> Void = {
+                self?.databaseCleanupUpdater.refetchExistingChannelListQueries()
             }
             
+<<<<<<< HEAD:Sources/StreamChat/Workers/Background/MissingEventsPublisher.swift
             let endpoint: Endpoint<MissingEventsPayload> = .missingEvents(
                 since: lastSyncedAt,
                 cids: watchedChannelIDs
@@ -131,23 +129,62 @@ class MissingEventsPublisher: EventWorker {
 
                 case let .failure(error):
                     log.info("""
+=======
+            if useSyncEndpoint {
+                self?.sync(completion: refetchExistingQueries)
+            } else {
+                refetchExistingQueries()
+            }
+        }
+    }
+    
+    private func sync(completion: @escaping () -> Void) {
+        guard let lastSyncedAt = lastSyncedAt else { return }
+        
+        let watchedChannelIDs = allChannels.map(\.cid).compactMap { try? ChannelId(cid: $0) }
+        
+        guard !watchedChannelIDs.isEmpty else {
+            log.info("Skipping `/sync` endpoint call as there are no channels to watch.")
+            return
+        }
+        
+        let endpoint: Endpoint<MissingEventsPayload<ExtraData>> = .missingEvents(
+            since: lastSyncedAt,
+            cids: watchedChannelIDs
+        )
+        
+        apiClient.request(endpoint: endpoint) { [weak self] in
+            guard let self = self else { return }
+            switch $0 {
+            case let .success(payload):
+                // The sync call was successful.
+                // We schedule all events for existing channels for processing...
+                self.eventNotificationCenter.process(payload.eventPayloads)
+                
+                // ... and refetch the existing queries to see if there are some new channels
+                completion()
+                
+            case let .failure(error):
+                log.info(
+                    """
+>>>>>>> Merge MissingEventsPublisher with ChannelWatchStateUpdater:Sources/StreamChat/Workers/Background/ConnectionRecoveryUpdater.swift
                     Backend couldn't handle replaying missing events - there was too many (>1000) events to replay. \
                     Cleaning local channels data and refetching it from scratch
-                    """)
-
-                    if error.isTooManyMissingEventsToSyncError {
-                        // The sync call failed...
-                        self?.database.write {
-                            // First we need to clean up existing data
-                            try self?.databaseCleanupUpdater.resetExistingChannelsData(session: $0)
-                        } completion: { error in
-                            if let error = error {
-                                log.error("Failed cleaning up channels data: \(error).")
-                                return
-                            }
-                            // Then we have to refetch existing channel list queries
-                            self?.databaseCleanupUpdater.refetchExistingChannelListQueries()
+                    """
+                )
+                
+                if error.isTooManyMissingEventsToSyncError {
+                    // The sync call failed...
+                    self.database.write {
+                        // First we need to clean up existing data
+                        try self.databaseCleanupUpdater.resetExistingChannelsData(session: $0)
+                    } completion: { error in
+                        if let error = error {
+                            log.error("Failed cleaning up channels data: \(error).")
+                            return
                         }
+                        // Then we have to refetch existing channel list queries
+                        completion()
                     }
                 }
             }

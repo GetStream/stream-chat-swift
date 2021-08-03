@@ -231,6 +231,12 @@ extension DatabaseSessionMock {
     func loadChannelMute(cid: ChannelId, userId: String) -> ChannelMuteDTO? {
         underlyingSession.loadChannelMute(cid: cid, userId: userId)
     }
+    
+    func deleteChannels<ExtraData>(
+        query: _ChannelListQuery<ExtraData>
+    ) throws where ExtraData: ChannelExtraData {
+        try underlyingSession.deleteChannels(query: query)
+    }
 }
 
 private extension DatabaseSessionMock {

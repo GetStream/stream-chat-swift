@@ -24,7 +24,7 @@ public class ChatChannelListController_Mock: ChatChannelListController {
         set { super.state = newValue }
     }
 
-    override public func loadNextChannels(limit: Int, completion: ((Error?) -> Void)?) {
+    override public func loadNextChannels(limit: Int?, completion: ((Error?) -> Void)?) {
         loadNextChannelsIsCalled = true
     }
 }

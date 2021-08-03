@@ -223,11 +223,11 @@ public class ChatClient {
             // All production event workers
             eventWorkerBuilders = [
                 {
-                    MissingEventsPublisher(
+                    ConnectionRecoveryUpdater(
                         database: $0,
                         eventNotificationCenter: $1,
                         apiClient: $2,
-                        isLocalStorageEnabled: config.isLocalStorageEnabled
+                        useSyncEndpoint: config.isLocalStorageEnabled
                     )
                 }
             ]
