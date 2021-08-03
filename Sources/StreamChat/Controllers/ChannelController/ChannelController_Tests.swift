@@ -757,14 +757,14 @@ class ChannelController_Tests: StressTestCase {
         }
         
         // Set top-to-bottom ordering
-        controller.listOrdering = .topToBottom
+        controller.messageOrdering = .topToBottom
         
         // Check the order of messages is correct
         let topToBottomIds = [message1, message2].sorted { $0.createdAt > $1.createdAt }.map(\.id)
         XCTAssertEqual(controller.messages.map(\.id), topToBottomIds)
 
         // Set bottom-to-top ordering
-        controller.listOrdering = .bottomToTop
+        controller.messageOrdering = .bottomToTop
         
         // Check the order of messages is correct
         let bottomToTopIds = [message1, message2].sorted { $0.createdAt < $1.createdAt }.map(\.id)
@@ -803,7 +803,7 @@ class ChannelController_Tests: StressTestCase {
         }
         
         // Set top-to-bottom ordering
-        controller.listOrdering = .topToBottom
+        controller.messageOrdering = .topToBottom
         
         // Check the relevant reply is shown in channel
         let messagesWithReply = [message1, message2, reply1].sorted { $0.createdAt > $1.createdAt }.map(\.id)

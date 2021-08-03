@@ -458,54 +458,54 @@ class ChannelListController_Tests: StressTestCase {
     
     // MARK: - List Ordering initial value
     
-    func test_inits_propagate_desiredListOrdering() {
+    func test_inits_propagate_desiredMessageOrdering() {
         XCTAssertEqual(
-            client.channelController(for: .unique).listOrdering,
+            client.channelController(for: .unique).messageOrdering,
             .topToBottom
         )
         XCTAssertEqual(
-            client.channelController(for: .unique, listOrdering: .bottomToTop).listOrdering,
+            client.channelController(for: .unique, messageOrdering: .bottomToTop).messageOrdering,
             .bottomToTop
         )
         
         XCTAssertEqual(
-            client.channelController(for: ChannelQuery(cid: .unique)).listOrdering,
+            client.channelController(for: ChannelQuery(cid: .unique)).messageOrdering,
             .topToBottom
         )
         XCTAssertEqual(
             client.channelController(
                 for: ChannelQuery(cid: .unique),
-                listOrdering: .bottomToTop
-            ).listOrdering,
+                messageOrdering: .bottomToTop
+            ).messageOrdering,
             .bottomToTop
         )
         
         client.currentUserId = .unique
         XCTAssertEqual(
-            (try! client.channelController(createChannelWithId: .unique)).listOrdering,
+            (try! client.channelController(createChannelWithId: .unique)).messageOrdering,
             .topToBottom
         )
         XCTAssertEqual(
             (
                 try! client.channelController(
                     createChannelWithId: .unique,
-                    listOrdering: .bottomToTop
+                    messageOrdering: .bottomToTop
                 )
-            ).listOrdering,
+            ).messageOrdering,
             .bottomToTop
         )
         
         XCTAssertEqual(
-            (try! client.channelController(createDirectMessageChannelWith: [.unique])).listOrdering,
+            (try! client.channelController(createDirectMessageChannelWith: [.unique])).messageOrdering,
             .topToBottom
         )
         XCTAssertEqual(
             (
                 try! client.channelController(
                     createDirectMessageChannelWith: [.unique],
-                    listOrdering: .bottomToTop
+                    messageOrdering: .bottomToTop
                 )
-            ).listOrdering,
+            ).messageOrdering,
             .bottomToTop
         )
     }

@@ -10,30 +10,30 @@ public extension _ChatClient {
     ///
     /// - Parameters:
     ///   - cid: The id of the channel this controller represents.
-    ///   -  listOrdering: Describes the ordering the messages are presented.
+    ///   - messageOrdering: Describes the ordering the messages are presented.
     ///
     /// - Returns: A new instance of `ChatChannelController`.
     ///
     func channelController(
         for cid: ChannelId,
-        listOrdering: ListOrdering = .topToBottom
+        messageOrdering: MessageOrdering = .topToBottom
     ) -> _ChatChannelController<ExtraData> {
-        .init(channelQuery: .init(cid: cid), client: self, listOrdering: listOrdering)
+        .init(channelQuery: .init(cid: cid), client: self, messageOrdering: messageOrdering)
     }
     
     /// Creates a new `ChatChannelController` for the channel with the provided channel query.
     ///
     /// - Parameters:
     ///   - channelQuery: The ChannelQuery this controller represents
-    ///   -  listOrdering: Describes the ordering the messages are presented.
+    ///   - messageOrdering: Describes the ordering the messages are presented.
     ///
     /// - Returns: A new instance of `ChatChannelController`.
     ///
     func channelController(
         for channelQuery: _ChannelQuery<ExtraData>,
-        listOrdering: ListOrdering = .topToBottom
+        messageOrdering: MessageOrdering = .topToBottom
     ) -> _ChatChannelController<ExtraData> {
-        .init(channelQuery: channelQuery, client: self, listOrdering: listOrdering)
+        .init(channelQuery: channelQuery, client: self, messageOrdering: messageOrdering)
     }
     
     /// Creates a `ChatChannelController` that will create a new channel, if the channel doesn't exist already.
@@ -48,7 +48,7 @@ public extension _ChatClient {
     ///   - team: Team for new channel.
     ///   - members: Ds for the new channel members.
     ///   - isCurrentUserMember: If set to `true` the current user will be included into the channel. Is `true` by default.
-    ///   -  listOrdering: Describes the ordering the messages are presented.
+    ///   - messageOrdering: Describes the ordering the messages are presented.
     ///   - invites: IDs for the new channel invitees.
     ///   - extraData: Extra data for the new channel.
     /// - Throws: `ClientError.CurrentUserDoesNotExist` if there is no currently logged-in user.
@@ -60,7 +60,7 @@ public extension _ChatClient {
         team: String? = nil,
         members: Set<UserId> = [],
         isCurrentUserMember: Bool = true,
-        listOrdering: ListOrdering = .topToBottom,
+        messageOrdering: MessageOrdering = .topToBottom,
         invites: Set<UserId> = [],
         extraData: ExtraData.Channel = .defaultValue
     ) throws -> _ChatChannelController<ExtraData> {
@@ -82,7 +82,7 @@ public extension _ChatClient {
             channelQuery: .init(channelPayload: payload),
             client: self,
             isChannelAlreadyCreated: false,
-            listOrdering: listOrdering
+            messageOrdering: messageOrdering
         )
     }
 
@@ -97,7 +97,7 @@ public extension _ChatClient {
     ///   - members: Members for the new channel. Must not be empty.
     ///   - type: The type of the channel.
     ///   - isCurrentUserMember: If set to `true` the current user will be included into the channel. Is `true` by default.
-    ///   -  listOrdering: Describes the ordering the messages are presented.
+    ///   - messageOrdering: Describes the ordering the messages are presented.
     ///   - name: The new channel name.
     ///   - imageURL: The new channel avatar URL.
     ///   - team: Team for the new channel.
@@ -110,7 +110,7 @@ public extension _ChatClient {
         createDirectMessageChannelWith members: Set<UserId>,
         type: ChannelType = .messaging,
         isCurrentUserMember: Bool = true,
-        listOrdering: ListOrdering = .topToBottom,
+        messageOrdering: MessageOrdering = .topToBottom,
         name: String? = nil,
         imageURL: URL? = nil,
         team: String? = nil,
@@ -132,7 +132,7 @@ public extension _ChatClient {
             channelQuery: .init(channelPayload: payload),
             client: self,
             isChannelAlreadyCreated: false,
-            listOrdering: listOrdering
+            messageOrdering: messageOrdering
         )
     }
 }
@@ -217,15 +217,15 @@ public class _ChatChannelController<ExtraData: ExtraDataTypes>: DataController, 
     /// Describes the ordering the messages are presented.
     ///
     /// - Important: ⚠️ Changing this value doesn't trigger delegate methods. You should reload your UI manually after changing
-    /// the `listOrdering` value to reflect the changes. Further updates to the messages will be delivered using the delegate
+    /// the `messageOrdering` value to reflect the changes. Further updates to the messages will be delivered using the delegate
     /// methods, as usual.
     ///
-    public var listOrdering: ListOrdering {
+    public var messageOrdering: MessageOrdering {
         didSet {
             if state != .initialized {
                 setLocalStateBasedOnError(startMessagesObserver())
                 log.warning(
-                    "Changing `listOrdering` will update data inside controller, but you have to update your UI manually "
+                    "Changing `messageOrdering` will update data inside controller, but you have to update your UI manually "
                         + "to see changes."
                 )
             }
@@ -298,13 +298,13 @@ public class _ChatChannelController<ExtraData: ExtraDataTypes>: DataController, 
         client: _ChatClient<ExtraData>,
         environment: Environment = .init(),
         isChannelAlreadyCreated: Bool = true,
-        listOrdering: ListOrdering = .topToBottom
+        messageOrdering: MessageOrdering = .topToBottom
     ) {
         self.channelQuery = channelQuery
         self.client = client
         self.environment = environment
         self.isChannelAlreadyCreated = isChannelAlreadyCreated
-        self.listOrdering = listOrdering
+        self.messageOrdering = messageOrdering
         super.init()
 
         setChannelObserver()
@@ -334,7 +334,7 @@ public class _ChatChannelController<ExtraData: ExtraDataTypes>: DataController, 
     private func setMessagesObserver() {
         _messagesObserver.computeValue = { [unowned self] in
             guard let cid = self.cid else { return nil }
-            let sortAscending = self.listOrdering == .topToBottom ? false : true
+            let sortAscending = self.messageOrdering == .topToBottom ? false : true
             var deletedMessageVisibility: ChatClientConfig.DeletedMessageVisibility?
             self.client.databaseContainer.viewContext.performAndWait {
                 deletedMessageVisibility = self.client.databaseContainer.viewContext.deletedMessagesVisibility
@@ -1177,12 +1177,12 @@ public extension _ChatChannelController where ExtraData == NoExtraData {
     }
 }
 
-/// Describes the flow of the items in the list
-public enum ListOrdering {
-    /// New items appear on the top of the list.
+/// Describes the flow of the messages in the list
+public enum MessageOrdering {
+    /// New messages appears on the top of the list.
     case topToBottom
     
-    /// New items appear on the bottom of the list.
+    /// New messages appear on the bottom of the list.
     case bottomToTop
 }
 
