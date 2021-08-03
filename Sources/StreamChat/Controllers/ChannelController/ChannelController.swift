@@ -215,22 +215,7 @@ public class _ChatChannelController<ExtraData: ExtraDataTypes>: DataController, 
     }
     
     /// Describes the ordering the messages are presented.
-    ///
-    /// - Important: ⚠️ Changing this value doesn't trigger delegate methods. You should reload your UI manually after changing
-    /// the `messageOrdering` value to reflect the changes. Further updates to the messages will be delivered using the delegate
-    /// methods, as usual.
-    ///
-    public var messageOrdering: MessageOrdering {
-        didSet {
-            if state != .initialized {
-                setLocalStateBasedOnError(startMessagesObserver())
-                log.warning(
-                    "Changing `messageOrdering` will update data inside controller, but you have to update your UI manually "
-                        + "to see changes."
-                )
-            }
-        }
-    }
+    public let messageOrdering: MessageOrdering
 
     /// The worker used to fetch the remote data and communicate with servers.
     private lazy var updater: ChannelUpdater<ExtraData> = self.environment.channelUpdaterBuilder(
