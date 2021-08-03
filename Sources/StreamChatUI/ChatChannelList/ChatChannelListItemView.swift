@@ -102,7 +102,7 @@ open class ChatChannelListItemView: _View, ThemeProvider, SwiftUIRepresentable {
     /*
          TODO: ReadStatusView, Missing LLC API
      /// The view showing indicator for read status of the last message in channel.
-     open private(set) lazy var readStatusView: _ChatChannelReadStatusCheckmarkView<ExtraData> = uiConfigSubviews
+     open private(set) lazy var readStatusView: ChatChannelReadStatusCheckmarkView = uiConfigSubviews
          .readStatusView.init()
          .withoutAutoresizingMaskConstraints
       */

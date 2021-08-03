@@ -98,7 +98,7 @@ open class ChatMessageListView: UITableView, Customizable, ComponentsProvider {
     ///   - contentViewClass: The type of content view the cell will be displaying.
     ///   - layoutOptions: The option set describing content view layout.
     ///   - indexPath: The cell index path.
-    /// - Returns: The instance of `_ChatMessageCollectionViewCell<ExtraData>` set up with the
+    /// - Returns: The instance of `ChatMessageCollectionViewCell` set up with the
     /// provided `contentViewClass` and `layoutOptions`
     open func dequeueReusableCell(
         contentViewClass: ChatMessageContentView.Type,

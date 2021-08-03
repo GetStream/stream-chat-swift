@@ -42,8 +42,6 @@ public struct ChatClientConfig {
     ///
     /// You should set `shouldFlushLocalStorageOnStart = true` every time the changes in your code makes the local cache invalid.
     ///
-    /// For example, when you change your custom `ExtraData` types, the cached data can't be decoded, and the cache has to be
-    /// flushed.
     ///
     public var shouldFlushLocalStorageOnStart: Bool = false
     

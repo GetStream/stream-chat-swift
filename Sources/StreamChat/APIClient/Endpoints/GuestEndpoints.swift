@@ -9,7 +9,7 @@ extension Endpoint {
     /// - Parameters:
     ///   - userId: The user's identifier
     ///   - extraData: The user's extra data
-    /// - Returns: The endpoint that expects **GuestUserTokenPayload<ExtraData>** payload in a response
+    /// - Returns: The endpoint that expects **GuestUserTokenPayload** payload in a response
     static func guestUserToken(
         userId: UserId,
         name: String?,

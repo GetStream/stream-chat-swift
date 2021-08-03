@@ -7,7 +7,6 @@
 import XCTest
 
 class DataStore_Tests: StressTestCase {
-    // We use `_` because `Client<ExtraData>!` doesn't conform to `DataStoreProvider`
     var _client: ChatClient!
     
     override func setUp() {

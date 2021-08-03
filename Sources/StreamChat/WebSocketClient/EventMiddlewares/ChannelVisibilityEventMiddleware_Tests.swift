@@ -76,7 +76,7 @@ final class ChannelVisibilityEventMiddleware_Tests: XCTestCase {
             cid: cid,
             createdAt: .unique,
             isChannelHistoryCleared: false
-        ) as EventPayload<NoExtraData>)
+        ) as EventPayload)
         
         // Open a database session to simulate EventNotificationCenter
         try database.writeSynchronously {
