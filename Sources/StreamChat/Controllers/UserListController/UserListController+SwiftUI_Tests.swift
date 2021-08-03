@@ -65,8 +65,8 @@ class UserListController_SwiftUI_Tests: iOS13TestCase {
 class UserListControllerMock: ChatUserListController {
     @Atomic var synchronize_called = false
     
-    var users_simulated: [_ChatUser<NoExtraData>]?
-    override var users: LazyCachedMapCollection<_ChatUser<NoExtraData>> {
+    var users_simulated: [ChatUser]?
+    override var users: LazyCachedMapCollection<ChatUser> {
         users_simulated.map { $0.lazyCachedMap { $0 } } ?? super.users
     }
 

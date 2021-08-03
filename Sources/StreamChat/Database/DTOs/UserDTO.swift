@@ -104,9 +104,9 @@ extension NSManagedObjectContext: UserDatabaseSession {
         UserDTO.load(id: id, context: self)
     }
     
-    func saveUser<ExtraData: UserExtraData>(
-        payload: UserPayload<ExtraData>,
-        query: _UserListQuery<ExtraData>?
+    func saveUser(
+        payload: UserPayload,
+        query: UserListQuery?
     ) throws -> UserDTO {
         let dto = UserDTO.loadOrCreate(id: payload.id, context: self)
 
@@ -119,7 +119,15 @@ extension NSManagedObjectContext: UserDatabaseSession {
         dto.userRoleRaw = payload.role.rawValue
         dto.userUpdatedAt = payload.updatedAt
 
-        dto.extraData = try JSONEncoder.default.encode(payload.extraData)
+        do {
+            dto.extraData = try JSONEncoder.default.encode(payload.extraData)
+        } catch {
+            log.error(
+                "Failed to decode extra payload for User with id: <\(payload.id)>, using default value instead. "
+                    + "Error: \(error)"
+            )
+            dto.extraData = Data()
+        }
 
         let teams = try payload.teams.map { try saveTeam(teamId: $0) }
         dto.teams = Set(teams)
@@ -134,26 +142,26 @@ extension NSManagedObjectContext: UserDatabaseSession {
 
 extension UserDTO {
     /// Snapshots the current state of `UserDTO` and returns an immutable model object from it.
-    func asModel<ExtraData: UserExtraData>() -> _ChatUser<ExtraData> { .create(fromDTO: self) }
+    func asModel() -> ChatUser { .create(fromDTO: self) }
     
     /// Snapshots the current state of `UserDTO` and returns its representation for used in API calls.
-    func asRequestBody<ExtraData: UserExtraData>() -> UserRequestBody<ExtraData> {
-        var extraData: ExtraData?
+    func asRequestBody() -> UserRequestBody {
+        let extraData: [String: RawJSON]
         do {
-            extraData = try JSONDecoder.default.decode(ExtraData.self, from: self.extraData)
+            extraData = try JSONDecoder.default.decode([String: RawJSON].self, from: self.extraData)
         } catch {
             log.assertionFailure(
                 "Failed decoding saved extra data with error: \(error). This should never happen because"
                     + "the extra data must be a valid JSON to be saved."
             )
+            extraData = [:]
         }
-        
-        return .init(id: id, name: name, imageURL: imageURL, extraData: extraData ?? .defaultValue)
+        return .init(id: id, name: name, imageURL: imageURL, extraData: extraData)
     }
 }
 
 extension UserDTO {
-    static func userListFetchRequest<ExtraData: UserExtraData>(query: _UserListQuery<ExtraData>) -> NSFetchRequest<UserDTO> {
+    static func userListFetchRequest(query: UserListQuery) -> NSFetchRequest<UserDTO> {
         let request = NSFetchRequest<UserDTO>(entityName: UserDTO.entityName)
         
         // Fetch results controller requires at least one sorting descriptor.
@@ -183,17 +191,20 @@ extension UserDTO {
     }
 }
 
-extension _ChatUser {
-    fileprivate static func create(fromDTO dto: UserDTO) -> _ChatUser {
-        let extraData: ExtraData
+extension ChatUser {
+    fileprivate static func create(fromDTO dto: UserDTO) -> ChatUser {
+        let extraData: [String: RawJSON]
         do {
-            extraData = try JSONDecoder.default.decode(ExtraData.self, from: dto.extraData)
+            extraData = try JSONDecoder.default.decode([String: RawJSON].self, from: dto.extraData)
         } catch {
-            log.error("Failed to decode extra data for User with id: <\(dto.id)>, using default value instead. Error: \(error)")
-            extraData = .defaultValue
+            log.error(
+                "Failed to decode extra data for user with id: <\(dto.id)>, using default value instead. "
+                    + "Error: \(error)"
+            )
+            extraData = [:]
         }
-        
-        return _ChatUser(
+
+        return ChatUser(
             id: dto.id,
             name: dto.name,
             imageURL: dto.imageURL,

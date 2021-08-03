@@ -5,7 +5,7 @@
 import Foundation
 
 /// An object describing the incoming muted-user JSON payload.
-struct MutedChannelPayload<ExtraData: ExtraDataTypes>: Decodable {
+struct MutedChannelPayload: Decodable {
     private enum CodingKeys: String, CodingKey {
         case mutedChannel = "channel"
         case user
@@ -13,14 +13,14 @@ struct MutedChannelPayload<ExtraData: ExtraDataTypes>: Decodable {
         case updatedAt = "updated_at"
     }
 
-    let mutedChannel: ChannelDetailPayload<ExtraData>
-    let user: UserPayload<ExtraData.User>
+    let mutedChannel: ChannelDetailPayload
+    let user: UserPayload
     let createdAt: Date
     let updatedAt: Date
     
     init(
-        mutedChannel: ChannelDetailPayload<ExtraData>,
-        user: UserPayload<ExtraData.User>,
+        mutedChannel: ChannelDetailPayload,
+        user: UserPayload,
         createdAt: Date,
         updatedAt: Date
     ) {
@@ -32,8 +32,8 @@ struct MutedChannelPayload<ExtraData: ExtraDataTypes>: Decodable {
     
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        mutedChannel = try container.decode(ChannelDetailPayload<ExtraData>.self, forKey: .mutedChannel)
-        user = try container.decode(UserPayload<ExtraData.User>.self, forKey: .user)
+        mutedChannel = try container.decode(ChannelDetailPayload.self, forKey: .mutedChannel)
+        user = try container.decode(UserPayload.self, forKey: .user)
         createdAt = try container.decode(Date.self, forKey: .createdAt)
         updatedAt = try container.decode(Date.self, forKey: .createdAt)
     }

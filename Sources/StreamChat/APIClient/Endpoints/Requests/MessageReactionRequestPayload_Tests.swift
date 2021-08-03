@@ -12,7 +12,7 @@ final class MessageReactionRequestPayload_Tests: XCTestCase {
             type: "like",
             score: 10,
             enforceUnique: false,
-            extraData: Mood(mood: "good one")
+            extraData: ["mood": .string("good one")]
         )
         
         // Encode the payload.
@@ -23,12 +23,7 @@ final class MessageReactionRequestPayload_Tests: XCTestCase {
             "type": payload.type.rawValue,
             "score": payload.score,
             "enforce_unique": payload.enforceUnique,
-            "mood": payload.extraData.mood
+            "mood": "good one"
         ])
     }
-}
-
-private struct Mood: MessageReactionExtraData {
-    static var defaultValue: Self { .init(mood: "") }
-    let mood: String
 }

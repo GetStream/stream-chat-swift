@@ -5,9 +5,9 @@
 import Foundation
 
 extension Endpoint {
-    static func channelMembers<ExtraData: UserExtraData>(
-        query: _ChannelMemberListQuery<ExtraData>
-    ) -> Endpoint<ChannelMemberListPayload<ExtraData>> {
+    static func channelMembers(
+        query: ChannelMemberListQuery
+    ) -> Endpoint<ChannelMemberListPayload> {
         .init(
             path: "members",
             method: .get,

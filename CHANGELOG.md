@@ -4,15 +4,77 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 # Upcoming
 
 ### ⚠️ Breaking Changes from `4.0-beta.8`
+- Extra data is now stored on a hashmap and not using the `ExtraData` generic system
 - `ChatMessageLayoutOptionsResolver.optionsForMessage` has a new parameter: `appearance` [#1304](https://github.com/GetStream/stream-chat-swift/issues/1304)
 - Renamed `Components.navigationTitleView` -> `Components.titleContainerView` [#1294](https://github.com/GetStream/stream-chat-swift/pull/1294)
+
+### New Extra Data Type
+
+The new `4.0` release changes how `extraData` is stored and uses a simpler hashmap-based solution. This approach does not require creating type aliases for all generic classes such as `ChatClient`.
+
+Example:
+
+```swift
+client.connectUser(
+    userInfo: .init(
+        id: userCredentials.id,
+        extraData: ["country": .string("NL")]
+    ),
+    token: token
+)
+```
+
+`Message`, `User`, `Channel`, `MessageReaction` models now store `extraData` in a `[String: RawJSON]` container. 
+
+```swift
+let extraData:[String: RawJSON] = .dictionary([
+    "name": .string(testPayload.name),
+    "number": .integer(testPayload.number)
+])
+```
+
+#### Upgrading from ExtraData
+
+If you are using `ExtraData` from `v3` or before `4.0-beta.8` the steps needed to upgrade are the following:
+
+- Remove all type aliases (`typealias ChatUser = _ChatUser<CustomExtraDataTypes.User>`)
+- Replace all generic types from `StreamChat` and `StreamChatUI` classes (`__CurrentChatUserController<T>` -> `CurrentChatUserController`) with the non-generic version
+- Remove the extra data structs and either use `extraData` directly or (recommended) extend the models 
+- Update your views to read your custom fields from the `extraData` field
+
+Before:
+
+```swift
+struct Birthland: UserExtraData {
+    static var defaultValue = Birthland(birthLand: "")
+    let birthLand: String
+}
+```
+
+After:
+
+```swift
+extension ChatUser {
+    static let birthLandFieldName = "birthLand"
+    var birthLand: String {
+        guard let v = extraData[ChatUser.birthLandFieldName] else {
+            return ""
+        }
+        guard case let .string(birthLand) = v else {
+            return ""
+        }
+        return birthLand
+    }
+}
+```
 
 ### ✅ Added
 - Added `ChatChannelHeaderView` UI Component [#1294](https://github.com/GetStream/stream-chat-swift/pull/1294)
 - Added `ChatThreadHeaderView` UI Component [#1294](https://github.com/GetStream/stream-chat-swift/pull/1294)
 - Added custom channel events support [#1309](https://github.com/GetStream/stream-chat-swift/pull/1309)
 - Added `ChatMessageAudioAttachment`, you can access them via `ChatMessage.audioAttachments`. There's no UI support as of now, it's in our Roadmap. [#1322](https://github.com/GetStream/stream-chat-swift/issues/1322)
-- It's now possible to specify a desired message ordering for a `ChannelController` by passing a corresponding value to one of its inits. If you use `ChatChannelListRouter` it can be done by overriding a `showMessageList` method on it. [#1338](https://github.com/GetStream/stream-chat-swift/pull/1338)
+- Added message ordering parameter to all `ChannelController` initializers. If you use `ChatChannelListRouter` it can be done by overriding a `showMessageList` method on it. [#1338](https://github.com/GetStream/stream-chat-swift/pull/1338)
+- Added support for custom localization of components in framework [#1330](https://github.com/GetStream/stream-chat-swift/pull/1330)
 
 ### 🐞 Fixed
 - Fix message list header displaying incorrectly the online status for the current user instead of the other one [#1294](https://github.com/GetStream/stream-chat-swift/pull/1294)

@@ -5,19 +5,19 @@
 import CoreData
 
 /// Makes a channel members query call to the backend and updates the local storage with the results.
-class ChannelMemberListUpdater<ExtraData: ExtraDataTypes>: Worker {
+class ChannelMemberListUpdater: Worker {
     /// Makes a channel members query call to the backend and updates the local storage with the results.
     /// - Parameters:
     ///   - query: The query used in the request.
     ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
-    func load(_ query: _ChannelMemberListQuery<ExtraData.User>, completion: ((Error?) -> Void)? = nil) {
+    func load(_ query: ChannelMemberListQuery, completion: ((Error?) -> Void)? = nil) {
         fetchAndSaveChannelIfNeeded(query.cid) { error in
             guard error == nil else {
                 completion?(error)
                 return
             }
             
-            let membersEndpoint: Endpoint<ChannelMemberListPayload<ExtraData.User>> = .channelMembers(query: query)
+            let membersEndpoint: Endpoint<ChannelMemberListPayload> = .channelMembers(query: query)
             self.apiClient.request(endpoint: membersEndpoint) { membersResult in
                 switch membersResult {
                 case let .success(memberListPayload):
@@ -53,7 +53,7 @@ private extension ChannelMemberListUpdater {
     }
     
     func fetchAndSaveChannel(with cid: ChannelId, completion: @escaping (Error?) -> Void) {
-        let query = _ChannelQuery<ExtraData>(cid: cid)
+        let query = ChannelQuery(cid: cid)
         apiClient.request(endpoint: .channel(query: query)) {
             switch $0 {
             case let .success(payload):

@@ -76,8 +76,8 @@ final class MemberController_Combine_Tests: iOS13TestCase {
     }
 }
 
-extension _ChatChannelMember {
-    static var dummy: _ChatChannelMember {
+extension ChatChannelMember {
+    static var dummy: ChatChannelMember {
         .init(
             id: .unique,
             name: .unique,
@@ -90,7 +90,7 @@ extension _ChatChannelMember {
             userUpdatedAt: .unique,
             lastActiveAt: .unique,
             teams: [],
-            extraData: .defaultValue,
+            extraData: [:],
             memberRole: .member,
             memberCreatedAt: .unique,
             memberUpdatedAt: .unique,

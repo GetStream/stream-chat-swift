@@ -40,7 +40,7 @@ class WebSocketClient_Tests: StressTestCase {
         VirtualTimeTimer.time = time
         
         endpoint = .webSocketConnect(
-            userInfo: UserInfo<NoExtraData>(id: .unique)
+            userInfo: UserInfo(id: .unique)
         )
         
         decoder = EventDecoderMock()
@@ -307,7 +307,7 @@ class WebSocketClient_Tests: StressTestCase {
         
         decoder.decodedEvent = .failure(
             DecodingError.keyNotFound(
-                EventPayload<NoExtraData>.CodingKeys.eventType,
+                EventPayload.CodingKeys.eventType,
                 .init(codingPath: [], debugDescription: "")
             )
         )
@@ -490,7 +490,7 @@ class WebSocketClient_Tests: StressTestCase {
     
     func test_currentUserDTOExists_whenStateIsConnected() throws {
         // Add `EventDataProcessorMiddleware` which is responsible for saving CurrentUser
-        let eventDataProcessorMiddleware = EventDataProcessorMiddleware<NoExtraData>()
+        let eventDataProcessorMiddleware = EventDataProcessorMiddleware()
         webSocketClient.eventNotificationCenter.add(middleware: eventDataProcessorMiddleware)
         
         // Simulate connection
@@ -520,7 +520,7 @@ class WebSocketClient_Tests: StressTestCase {
         
         // Simulate a health check event is received and the connection state is updated
         let payloadCurrentUser = dummyCurrentUser
-        let eventPayload = EventPayload<NoExtraData>(
+        let eventPayload = EventPayload(
             eventType: .healthCheck,
             connectionId: connectionId,
             cid: nil,

@@ -4,7 +4,7 @@
 
 import Foundation
 
-public extension _ChatClient {
+public extension ChatClient {
     /// Creates a new `ChannelEventsController` that can be used to listen to system events
     /// related to the channel with `cid` and to send custom events.
     ///
@@ -19,7 +19,7 @@ public extension _ChatClient {
     }
 }
 
-public extension _ChatChannelController {
+public extension ChatChannelController {
     /// Creates a new `ChannelEventsController` that can be used to listen to system events
     /// and for sending custom events into a channel the current controller manages.
     ///

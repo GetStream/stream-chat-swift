@@ -17,21 +17,7 @@ import UIKit
 /// |                     bottomContainer                     |
 /// |---------------------------------------------------------|
 /// ```
-public typealias ComposerView = _ComposerView<NoExtraData>
-
-/// /// The composer view that layouts all the components to create a new message.
-///
-/// High level overview of the composer layout:
-/// ```
-/// |---------------------------------------------------------|
-/// |                       headerView                        |
-/// |---------------------------------------------------------|--|
-/// | leadingContainer | inputMessageView | trailingContainer |  | = centerContainer
-/// |---------------------------------------------------------|--|
-/// |                     bottomContainer                     |
-/// |---------------------------------------------------------|
-/// ```
-open class _ComposerView<ExtraData: ExtraDataTypes>: _View, ThemeProvider {
+open class ComposerView: _View, ThemeProvider {
     /// The main container of the composer that layouts all the other containers around the message input view.
     public private(set) lazy var container = ContainerStackView()
         .withoutAutoresizingMaskConstraints
@@ -57,7 +43,7 @@ open class _ComposerView<ExtraData: ExtraDataTypes>: _View, ThemeProvider {
         .withoutAutoresizingMaskConstraints
 
     /// A view to to input content of the new message.
-    public private(set) lazy var inputMessageView: _InputChatMessageView<ExtraData> = components
+    public private(set) lazy var inputMessageView: InputChatMessageView = components
         .inputMessageView.init()
         .withoutAutoresizingMaskConstraints
 

@@ -38,7 +38,7 @@ class QuotedChatMessageView_SwiftUI_Tests: XCTestCase {
         }
 
         let view = QuotedChatMessageView.SwiftUIWrapper<CustomQuotedChatMessageView>()
-        view.content = _QuotedChatMessageView<NoExtraData>.Content(
+        view.content = _QuotedChatMessageView.Content(
             message: .mock(
                 id: .unique,
                 cid: .unique,

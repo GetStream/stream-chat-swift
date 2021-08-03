@@ -7,24 +7,21 @@ import SwiftUI
 
 @available(iOS 13.0, *)
 /// Protocol of `_ChatChannelListItemView` wrapper for use in SwiftUI.
-public protocol _ChatChannelListItemViewSwiftUIView: View {
-    associatedtype ExtraData: ExtraDataTypes
-    init(dataSource: _ChatChannelListItemView<ExtraData>.ObservedObject<Self>)
+public protocol ChatChannelListItemViewSwiftUIView: View {
+    init(dataSource: ChatChannelListItemView.ObservedObject<Self>)
 }
 
 @available(iOS 13.0, *)
-extension _ChatChannelListItemView {
+extension ChatChannelListItemView {
     /// Data source of `_ChatChannelListItemView` represented as `ObservedObject`.
-    public typealias ObservedObject<Content: SwiftUIView> = SwiftUIWrapper<Content> where Content.ExtraData == ExtraData
+    public typealias ObservedObject<Content: SwiftUIView> = SwiftUIWrapper<Content>
 
     /// `_ChatChannelListItemView` represented in SwiftUI.
-    public typealias SwiftUIView = _ChatChannelListItemViewSwiftUIView
+    public typealias SwiftUIView = ChatChannelListItemViewSwiftUIView
 
     /// SwiftUI wrapper of `_ChatChannelListItemView`.
     /// Servers to wrap custom SwiftUI view as a UIKit view so it can be easily injected into `_Components`.
-    public class SwiftUIWrapper<Content: SwiftUIView>: _ChatChannelListItemView<ExtraData>, ObservableObject
-        where Content.ExtraData == ExtraData
-    {
+    public class SwiftUIWrapper<Content: SwiftUIView>: ChatChannelListItemView, ObservableObject {
         var hostingController: UIViewController?
 
         override public var intrinsicContentSize: CGSize {

@@ -6,11 +6,8 @@ import AVFoundation
 import StreamChat
 import UIKit
 
-/// The view used to display video attachment preview in a gallery inside a message cell
-public typealias VideoAttachmentGalleryPreview = _VideoAttachmentGalleryPreview<NoExtraData>
-
 /// A view used to display video attachment preview in a gallery inside a message cell
-open class _VideoAttachmentGalleryPreview<ExtraData: ExtraDataTypes>: _View, ThemeProvider {
+open class VideoAttachmentGalleryPreview: _View, ThemeProvider {
     /// A video attachment the view displays
     open var content: ChatMessageVideoAttachment? {
         didSet { updateContentIfNeeded() }
@@ -121,7 +118,7 @@ open class _VideoAttachmentGalleryPreview<ExtraData: ExtraDataTypes>: _View, The
     }
 }
 
-extension _VideoAttachmentGalleryPreview: GalleryItemPreview {
+extension VideoAttachmentGalleryPreview: GalleryItemPreview {
     public var attachmentId: AttachmentId? {
         content?.id
     }

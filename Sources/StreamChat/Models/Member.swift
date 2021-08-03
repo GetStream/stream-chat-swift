@@ -4,24 +4,8 @@
 
 import Foundation
 
-/// A type representing a chat channel member. `ChatChannelMember` is an immutable snapshot of a chat channel member entity
-/// at the given time.
-///
-/// - Note: `ChatChannelMember` is a typealias of `_ChatChannelMember` with default extra data. If you're using custom extra data,
-/// create your own typealias of `ChatChannelMember`.
-///
-/// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/Cheat-Sheet#working-with-extra-data).
-///
-public typealias ChatChannelMember = _ChatChannelMember<NoExtraData>
-
-/// A type representing a chat channel member. `_ChatChannelMember` is an immutable snapshot of a channel entity at the given time.
-///
-/// - Note: `_ChatChannelMember` type is not meant to be used directly. If you're using default extra data, use `ChatChannelMember`
-/// typealias instead. If you're using custom extra data, create your own typealias of `_ChatChannelMember`.
-///
-/// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/Cheat-Sheet#working-with-extra-data).
-///
-public class _ChatChannelMember<ExtraData: UserExtraData>: _ChatUser<ExtraData> {
+/// A type representing a chat channel member. `ChatChannelMember` is an immutable snapshot of a channel entity at the given time.
+public class ChatChannelMember: ChatUser {
     /// The role of the user within the channel.
     public let memberRole: MemberRole
     
@@ -71,7 +55,7 @@ public class _ChatChannelMember<ExtraData: UserExtraData>: _ChatUser<ExtraData> 
         userUpdatedAt: Date,
         lastActiveAt: Date?,
         teams: Set<TeamId>,
-        extraData: ExtraData,
+        extraData: [String: RawJSON],
         memberRole: MemberRole,
         memberCreatedAt: Date,
         memberUpdatedAt: Date,

@@ -315,7 +315,7 @@ private extension ChatMessageContentView_Tests {
     }
 }
 
-extension _ChatMessage {
+extension ChatMessage {
     func layout(isLastInGroup: Bool) -> ChatMessageLayoutOptions {
         guard type != .system else {
             return [.centered, .text]

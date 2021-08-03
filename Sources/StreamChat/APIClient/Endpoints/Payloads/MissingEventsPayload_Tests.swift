@@ -8,7 +8,7 @@ import XCTest
 final class MissingEventsPayload_Tests: XCTestCase {
     func test_missingEventsPayload_isDeserialized() throws {
         let json = XCTestCase.mockData(fromFile: "MissingEventsPayload")
-        let payload = try JSONDecoder.default.decode(MissingEventsPayload<NoExtraData>.self, from: json)
+        let payload = try JSONDecoder.default.decode(MissingEventsPayload.self, from: json)
         XCTAssertEqual(payload.eventPayloads.count, 1)
         
         let expectedUser = UserPayload(
@@ -22,7 +22,7 @@ final class MissingEventsPayload_Tests: XCTestCase {
             isOnline: true,
             isInvisible: false,
             isBanned: false,
-            extraData: NoExtraData.defaultValue
+            extraData: [:]
         )
         
         let event = try XCTUnwrap(payload.eventPayloads.first)

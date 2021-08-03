@@ -5,7 +5,7 @@
 import Foundation
 @testable import StreamChat
 
-public extension _ChatUser {
+public extension ChatUser {
     /// Creates a new `_ChatUser` object from the provided data.
     static func mock(
         id: UserId,
@@ -19,8 +19,8 @@ public extension _ChatUser {
         updatedAt: Date = .init(),
         lastActiveAt: Date? = nil,
         teams: Set<TeamId> = [],
-        extraData: ExtraData = .defaultValue
-    ) -> _ChatUser {
+        extraData: [String: RawJSON] = [:]
+    ) -> ChatUser {
         .init(
             id: id,
             name: name,

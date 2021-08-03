@@ -10,6 +10,7 @@
     {
       "Customization": [
         "customization/theming",
+        "customization/localization",
         "customization/custom-components"
       ]
     },
@@ -20,6 +21,16 @@
         "controllers/channels",
         "controllers/users",
         "controllers/messages"
+      ]
+    },
+    {
+      "Combine" : [
+        "combine/combine-overview",
+        "combine/connection",
+        "combine/channels",
+        "combine/users",
+        "combine/messages",
+        "combine/events"
       ]
     },
     {

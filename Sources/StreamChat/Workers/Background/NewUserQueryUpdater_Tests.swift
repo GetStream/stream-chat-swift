@@ -7,15 +7,13 @@
 import XCTest
 
 class NewUserQueryUpdater_Tests: StressTestCase {
-    typealias ExtraData = NoExtraData
-    
     private var env: TestEnvironment!
     
     var database: DatabaseContainerMock!
     var webSocketClient: WebSocketClientMock!
     var apiClient: APIClientMock!
     
-    var newUserQueryUpdater: NewUserQueryUpdater<ExtraData>?
+    var newUserQueryUpdater: NewUserQueryUpdater?
     
     override func setUp() {
         super.setUp()
@@ -135,9 +133,9 @@ class NewUserQueryUpdater_Tests: StressTestCase {
 }
 
 private class TestEnvironment {
-    var userQueryUpdater: UserListUpdaterMock<NoExtraData>?
+    var userQueryUpdater: UserListUpdaterMock?
     
-    lazy var environment = NewUserQueryUpdater<NoExtraData>.Environment(createUserListUpdater: { [unowned self] in
+    lazy var environment = NewUserQueryUpdater.Environment(createUserListUpdater: { [unowned self] in
         self.userQueryUpdater = UserListUpdaterMock(
             database: $0,
             apiClient: $1

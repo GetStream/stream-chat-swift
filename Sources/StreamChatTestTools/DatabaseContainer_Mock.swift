@@ -117,7 +117,7 @@ extension DatabaseContainer {
     }
 
     /// Synchronously creates a new UserDTO in the DB with the given id.
-    func createUser(id: UserId = .unique, updatedAt: Date = .unique, extraData: NoExtraData = .defaultValue) throws {
+    func createUser(id: UserId = .unique, updatedAt: Date = .unique, extraData: [String: RawJSON] = [:]) throws {
         try writeSynchronously { session in
             try session.saveUser(payload: .dummy(userId: id, extraData: extraData, updatedAt: updatedAt))
         }
@@ -126,10 +126,10 @@ extension DatabaseContainer {
     /// Synchronously creates a new CurrentUserDTO in the DB with the given id.
     func createCurrentUser(id: UserId = .unique) throws {
         try writeSynchronously { session in
-            let payload: CurrentUserPayload<NoExtraData> = .dummy(
+            let payload: CurrentUserPayload = .dummy(
                 userId: id,
                 role: .admin,
-                extraData: NoExtraData.defaultValue
+                extraData: [:]
             )
             try session.saveCurrentUser(payload: payload)
         }
@@ -142,10 +142,11 @@ extension DatabaseContainer {
         withQuery: Bool = false,
         hiddenAt: Date? = nil,
         channelReads: Set<ChannelReadDTO> = [],
-        needsRefreshQueries: Bool = true
+        needsRefreshQueries: Bool = true,
+        channelExtraData: [String: RawJSON] = [:]
     ) throws {
         try writeSynchronously { session in
-            let dto = try session.saveChannel(payload: XCTestCase().dummyPayload(with: cid))
+            let dto = try session.saveChannel(payload: XCTestCase().dummyPayload(with: cid, channelExtraData: channelExtraData))
 
             dto.needsRefreshQueries = needsRefreshQueries
             dto.hiddenAt = hiddenAt
@@ -196,7 +197,7 @@ extension DatabaseContainer {
         }
     }
     
-    func createMemberListQuery<ExtraData: UserExtraData>(query: _ChannelMemberListQuery<ExtraData>) throws {
+    func createMemberListQuery(query: ChannelMemberListQuery) throws {
         try writeSynchronously { session in
             try session.saveQuery(query)
         }
@@ -213,8 +214,8 @@ extension DatabaseContainer {
         pinnedAt: Date? = nil,
         pinExpires: Date? = nil,
         updatedAt: Date = .unique,
-        latestReactions: [MessageReactionPayload<NoExtraData>] = [],
-        ownReactions: [MessageReactionPayload<NoExtraData>] = [],
+        latestReactions: [MessageReactionPayload] = [],
+        ownReactions: [MessageReactionPayload] = [],
         attachments: [MessageAttachmentPayload] = [],
         localState: LocalMessageState? = nil,
         type: MessageType? = nil,
@@ -223,7 +224,7 @@ extension DatabaseContainer {
         try writeSynchronously { session in
             try session.saveChannel(payload: XCTestCase().dummyPayload(with: cid))
             
-            let message: MessagePayload<NoExtraData> = .dummy(
+            let message: MessagePayload = .dummy(
                 type: type,
                 messageId: id,
                 attachments: attachments,
@@ -242,7 +243,7 @@ extension DatabaseContainer {
             messageDTO.localMessageState = localState
             
             for idx in 0..<numberOfReplies {
-                let reply: MessagePayload<NoExtraData> = .dummy(
+                let reply: MessagePayload = .dummy(
                     type: .reply,
                     messageId: .unique,
                     parentId: id,

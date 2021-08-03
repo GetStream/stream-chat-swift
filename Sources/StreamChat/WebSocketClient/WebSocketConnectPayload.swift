@@ -4,7 +4,7 @@
 
 import Foundation
 
-struct WebSocketConnectPayload<ExtraData: ExtraDataTypes>: Encodable {
+class WebSocketConnectPayload: Encodable {
     private enum CodingKeys: String, CodingKey {
         case userId = "user_id"
         case userDetails = "user_details"
@@ -12,26 +12,40 @@ struct WebSocketConnectPayload<ExtraData: ExtraDataTypes>: Encodable {
     }
     
     let userId: UserId
-    let userDetails: UserWebSocketPayload<ExtraData>
+    let userDetails: UserWebSocketPayload
     let serverDeterminesConnectionId: Bool
 
-    init(userInfo: UserInfo<ExtraData>) {
+    init(userInfo: UserInfo) {
         userId = userInfo.id
-        userDetails = UserWebSocketPayload<ExtraData>(userInfo: userInfo)
+        userDetails = UserWebSocketPayload(userInfo: userInfo)
         serverDeterminesConnectionId = true
     }
 }
 
-struct UserWebSocketPayload<ExtraData: ExtraDataTypes>: Encodable {
+struct UserWebSocketPayload: Encodable {
+    private enum CodingKeys: String, CodingKey, CaseIterable {
+        case id
+        case name
+        case imageURL = "image_url"
+    }
+
     let id: String
     let name: String?
     let imageURL: URL?
-    let extraData: ExtraData.User
-    
-    init(userInfo: UserInfo<ExtraData>) {
+    let extraData: [String: RawJSON]
+
+    init(userInfo: UserInfo) {
         id = userInfo.id
         name = userInfo.name
         imageURL = userInfo.imageURL
         extraData = userInfo.extraData
+    }
+
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: Self.CodingKeys)
+        try container.encode(id, forKey: .id)
+        try container.encodeIfPresent(name, forKey: .name)
+        try container.encodeIfPresent(imageURL, forKey: .imageURL)
+        try extraData.encode(to: encoder)
     }
 }

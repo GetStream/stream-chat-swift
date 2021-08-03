@@ -11,7 +11,7 @@ class UserListUpdater_Tests: StressTestCase {
     var apiClient: APIClientMock!
     var database: DatabaseContainer!
     
-    var listUpdater: UserListUpdater<NoExtraData>!
+    var listUpdater: UserListUpdater!
     
     override func setUp() {
         super.setUp()
@@ -41,7 +41,7 @@ class UserListUpdater_Tests: StressTestCase {
         let query = UserListQuery(filter: .equal(.id, to: "Luke"))
         listUpdater.update(userListQuery: query)
         
-        let referenceEndpoint: Endpoint<UserListPayload<NoExtraData>> = .users(query: query)
+        let referenceEndpoint: Endpoint<UserListPayload> = .users(query: query)
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
     }
     
@@ -57,7 +57,7 @@ class UserListUpdater_Tests: StressTestCase {
         // Simualte API response with user data
         let dummyUser1 = dummyUser
         let id = dummyUser1.id
-        let payload = UserListPayload<NoExtraData>(users: [dummyUser1])
+        let payload = UserListPayload(users: [dummyUser1])
         apiClient.test_simulateResponse(.success(payload))
         
         // Assert the data is stored in the DB
@@ -79,7 +79,7 @@ class UserListUpdater_Tests: StressTestCase {
         
         // Simualte API response with failure
         let error = TestError()
-        apiClient.test_simulateResponse(Result<UserListPayload<NoExtraData>, Error>.failure(error))
+        apiClient.test_simulateResponse(Result<UserListPayload, Error>.failure(error))
         
         // Assert the completion is called with the error
         AssertAsync.willBeEqual(completionCalledError as? TestError, error)
@@ -92,7 +92,7 @@ class UserListUpdater_Tests: StressTestCase {
         
         // Simulate API response with user data
         let userId = UserId.unique
-        let payload = UserListPayload<NoExtraData>(users: [.dummy(userId: userId)])
+        let payload = UserListPayload(users: [.dummy(userId: userId)])
         apiClient.test_simulateResponse(.success(payload))
         
         // Assert the data is stored in the DB
@@ -109,7 +109,7 @@ class UserListUpdater_Tests: StressTestCase {
         
         // Simulate API response with user data
         let newUserId = UserId.unique
-        let newPayload = UserListPayload<NoExtraData>(users: [.dummy(userId: newUserId)])
+        let newPayload = UserListPayload(users: [.dummy(userId: newUserId)])
         apiClient.test_simulateResponse(.success(newPayload))
         
         // Assert the data is stored in the DB
@@ -149,7 +149,7 @@ class UserListUpdater_Tests: StressTestCase {
         
         // Simulate API response with user data
         let userId = UserId.unique
-        let payload = UserListPayload<NoExtraData>(users: [.dummy(userId: userId)])
+        let payload = UserListPayload(users: [.dummy(userId: userId)])
         apiClient.test_simulateResponse(.success(payload))
         
         // Assert the data is stored in the DB
@@ -165,7 +165,7 @@ class UserListUpdater_Tests: StressTestCase {
         
         // Simulate API response with user data
         let newUserId = UserId.unique
-        let newPayload = UserListPayload<NoExtraData>(users: [.dummy(userId: newUserId)])
+        let newPayload = UserListPayload(users: [.dummy(userId: newUserId)])
         apiClient.test_simulateResponse(.success(newPayload))
         
         // Assert the data is stored in the DB
@@ -209,7 +209,7 @@ class UserListUpdater_Tests: StressTestCase {
         
         // Simulate API response with user data
         let user = dummyUser(id: dummyUserId)
-        let payload = UserListPayload<NoExtraData>(users: [user])
+        let payload = UserListPayload(users: [user])
         apiClient.test_simulateResponse(.success(payload))
         
         AssertAsync.willBeTrue(completionCalled)

@@ -6,20 +6,20 @@ import StreamChat
 import SwiftUI
 
 @available(iOS 13.0, *)
-extension _Components {
+extension Components {
     /// Used to initialize `_Components` as `ObservableObject`.
     public var asObservableObject: ObservableObject { .init(self) }
 
     @dynamicMemberLookup
     /// `_Components` represented as `ObservableObject` class for SwiftUI requirements.
     public class ObservableObject: SwiftUI.ObservableObject {
-        private let wrappedComponents: _Components<ExtraData>
+        private let wrappedComponents: Components
 
-        public subscript<T>(dynamicMember keyPath: KeyPath<_Components<ExtraData>, T>) -> T {
+        public subscript<T>(dynamicMember keyPath: KeyPath<Components, T>) -> T {
             wrappedComponents[keyPath: keyPath]
         }
 
-        fileprivate init(_ wrappedComponents: _Components<ExtraData>) {
+        fileprivate init(_ wrappedComponents: Components) {
             self.wrappedComponents = wrappedComponents
         }
     }
@@ -27,11 +27,11 @@ extension _Components {
 
 @available(iOS 13.0, *)
 /// Modifier for setting `Components` environment object.
-private struct SwiftUIComponents<ExtraData: ExtraDataTypes>: ViewModifier {
+private struct SwiftUIComponents: ViewModifier {
     /// Custom `ObservableObject` of `components`
-    private let components: _Components<ExtraData>
+    private let components: Components
 
-    public init(_ components: _Components<ExtraData>) {
+    public init(_ components: Components) {
         self.components = components
     }
 
@@ -43,13 +43,13 @@ private struct SwiftUIComponents<ExtraData: ExtraDataTypes>: ViewModifier {
 @available(iOS 13.0, *)
 public extension View {
     /// Sets up custom `Components`.
-    func setUpStreamChatComponents<ExtraData: ExtraDataTypes>(
-        _ components: _Components<ExtraData> = .default
+    func setUpStreamChatComponents(
+        _ components: Components = .default
     ) -> some View {
-        modifier(SwiftUIComponents<ExtraData>(components))
+        modifier(SwiftUIComponents(components))
     }
 
     func setUpStreamChatComponents() -> some View {
-        modifier(SwiftUIComponents<NoExtraData>(.default))
+        modifier(SwiftUIComponents(.default))
     }
 }

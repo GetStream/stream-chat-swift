@@ -5,11 +5,11 @@
 import Foundation
 
 /// The middleware listens for `EventWithReactionPayload` events and updates `MessageReactionDTO` accordingly.
-struct MessageReactionsMiddleware<ExtraData: ExtraDataTypes>: EventMiddleware {
+struct MessageReactionsMiddleware: EventMiddleware {
     func handle(event: Event, session: DatabaseSession) -> Event? {
         guard
             let reactionEvent = event as? ReactionEvent,
-            let payload = reactionEvent.payload as? EventPayload<ExtraData>,
+            let payload = reactionEvent.payload as? EventPayload,
             let reaction = payload.reaction
         else {
             return event

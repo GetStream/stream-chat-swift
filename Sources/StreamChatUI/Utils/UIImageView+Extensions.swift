@@ -17,12 +17,12 @@ extension UIImageView {
     ///   - completion: Image request completion block.
     /// - Returns: Active image download task.
     @discardableResult
-    func loadImage<ExtraData: ExtraDataTypes>(
+    func loadImage(
         from url: URL?,
         placeholder: UIImage? = nil,
         resize: Bool = true,
         preferredSize: CGSize? = nil,
-        components: _Components<ExtraData>,
+        components: Components,
         completion: ((_ result: Result<ImageResponse, ImagePipeline.Error>) -> Void)? = nil
     ) -> ImageTask? {
         guard !SystemEnvironment.isTests else {

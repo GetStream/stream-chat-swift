@@ -6,7 +6,7 @@ import Combine
 import Foundation
 
 @available(iOS 13, *)
-extension _ChatConnectionController {
+extension ChatConnectionController {
     /// A publisher emitting a new value every time the connection status changes.
     public var connectionStatusPublisher: AnyPublisher<ConnectionStatus, Never> {
         basePublishers.connectionStatus.keepAlive(self)
@@ -17,12 +17,12 @@ extension _ChatConnectionController {
     /// and expose the published values by mapping them to a read-only `AnyPublisher` type.
     class BasePublishers {
         /// The wrapper controller
-        unowned let controller: _ChatConnectionController
+        unowned let controller: ChatConnectionController
         
         /// A backing subject for `connectionStatusPublisher`.
         let connectionStatus: CurrentValueSubject<ConnectionStatus, Never>
                 
-        init(controller: _ChatConnectionController<ExtraData>) {
+        init(controller: ChatConnectionController) {
             self.controller = controller
             connectionStatus = .init(controller.connectionStatus)
             
@@ -32,9 +32,9 @@ extension _ChatConnectionController {
 }
 
 @available(iOS 13, *)
-extension _ChatConnectionController.BasePublishers: _ChatConnectionControllerDelegate {
+extension ChatConnectionController.BasePublishers: ChatConnectionControllerDelegate {
     func connectionController(
-        _ controller: _ChatConnectionController<ExtraData>,
+        _ controller: ChatConnectionController,
         didUpdateConnectionStatus status: ConnectionStatus
     ) {
         connectionStatus.send(status)

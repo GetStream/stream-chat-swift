@@ -87,8 +87,8 @@ class MessageControllerMock: ChatMessageController {
         message_simulated ?? super.message
     }
     
-    var replies_simulated: [_ChatMessage<NoExtraData>]?
-    override var replies: LazyCachedMapCollection<_ChatMessage<NoExtraData>> {
+    var replies_simulated: [ChatMessage]?
+    override var replies: LazyCachedMapCollection<ChatMessage> {
         replies_simulated.map { $0.lazyCachedMap { $0 } } ?? super.replies
     }
     

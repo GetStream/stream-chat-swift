@@ -5,7 +5,7 @@
 import Foundation
 import StreamChat
 
-public extension _ChatMessage {
+public extension ChatMessage {
     /// A boolean value that checks if actions are available on the message (e.g. `edit`, `delete`, `resend`, etc.).
     var isInteractionEnabled: Bool {
         guard
@@ -57,8 +57,8 @@ public extension _ChatMessage {
     }
 
     /// Returns last active thread participant.
-    var lastActiveThreadParticipant: _ChatUser<ExtraData.User>? {
-        func sortingCriteriaDate(_ user: _ChatUser<ExtraData.User>) -> Date {
+    var lastActiveThreadParticipant: ChatUser? {
+        func sortingCriteriaDate(_ user: ChatUser) -> Date {
             user.lastActiveAt ?? user.userUpdatedAt
         }
 

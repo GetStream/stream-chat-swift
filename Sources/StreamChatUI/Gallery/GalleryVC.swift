@@ -6,13 +6,9 @@ import Foundation
 import StreamChat
 import UIKit
 
-/// A view controller to showcase and slide through multiple attachments
-/// (images and videos by default).
-public typealias GalleryVC = _GalleryVC<NoExtraData>
-
 /// A viewcontroller to showcase and slide through multiple attachments
 /// (images and videos by default).
-open class _GalleryVC<ExtraData: ExtraDataTypes>:
+open class GalleryVC:
     _ViewController,
     UIGestureRecognizerDelegate,
     AppearanceProvider,
@@ -23,12 +19,12 @@ open class _GalleryVC<ExtraData: ExtraDataTypes>:
     /// The content of gallery view controller.
     public struct Content {
         /// The message which attachments are displayed by the gallery.
-        public var message: _ChatMessage<ExtraData>
+        public var message: ChatMessage
         /// The index of currently visible gallery item.
         public var currentPage: Int
         
         public init(
-            message: _ChatMessage<ExtraData>,
+            message: ChatMessage,
             currentPage: Int = 0
         ) {
             self.message = message
@@ -103,7 +99,7 @@ open class _GalleryVC<ExtraData: ExtraDataTypes>:
         .withoutAutoresizingMaskConstraints
     
     /// View that controls the video player of currently visible cell.
-    open private(set) lazy var videoPlaybackBar: _VideoPlaybackControlView<ExtraData> = components
+    open private(set) lazy var videoPlaybackBar: VideoPlaybackControlView = components
         .videoPlaybackControlView.init()
         .withoutAutoresizingMaskConstraints
     
@@ -154,12 +150,12 @@ open class _GalleryVC<ExtraData: ExtraDataTypes>:
         attachmentsFlowLayout.minimumLineSpacing = 0
                 
         attachmentsCollectionView.register(
-            _ImageAttachmentGalleryCell<ExtraData>.self,
-            forCellWithReuseIdentifier: _ImageAttachmentGalleryCell<ExtraData>.reuseId
+            ImageAttachmentGalleryCell.self,
+            forCellWithReuseIdentifier: ImageAttachmentGalleryCell.reuseId
         )
         attachmentsCollectionView.register(
-            _VideoAttachmentGalleryCell<ExtraData>.self,
-            forCellWithReuseIdentifier: _VideoAttachmentGalleryCell<ExtraData>.reuseId
+            VideoAttachmentGalleryCell.self,
+            forCellWithReuseIdentifier: VideoAttachmentGalleryCell.reuseId
         )
         attachmentsCollectionView.contentInsetAdjustmentBehavior = .never
         attachmentsCollectionView.isPagingEnabled = true
@@ -276,7 +272,7 @@ open class _GalleryVC<ExtraData: ExtraDataTypes>:
         
         let videoCell = attachmentsCollectionView.cellForItem(
             at: currentItemIndexPath
-        ) as? _VideoAttachmentGalleryCell<ExtraData>
+        ) as? VideoAttachmentGalleryCell
         
         videoPlaybackBar.player = videoCell?.player
         videoPlaybackBar.isHidden = videoPlaybackBar.player == nil
@@ -339,7 +335,7 @@ open class _GalleryVC<ExtraData: ExtraDataTypes>:
         let cell = collectionView.dequeueReusableCell(
             withReuseIdentifier: reuseIdentifier,
             for: indexPath
-        ) as! _GalleryCollectionViewCell<ExtraData>
+        ) as! GalleryCollectionViewCell
         
         cell.content = items[indexPath.item]
         
@@ -414,9 +410,9 @@ open class _GalleryVC<ExtraData: ExtraDataTypes>:
         
         switch item.type {
         case .image:
-            return _ImageAttachmentGalleryCell<ExtraData>.reuseId
+            return ImageAttachmentGalleryCell.reuseId
         case .video:
-            return _VideoAttachmentGalleryCell<ExtraData>.reuseId
+            return VideoAttachmentGalleryCell.reuseId
         default:
             return nil
         }
@@ -444,11 +440,11 @@ open class _GalleryVC<ExtraData: ExtraDataTypes>:
         switch items[indexPath.item].type {
         case .image:
             let cell = attachmentsCollectionView
-                .cellForItem(at: indexPath) as? _ImageAttachmentGalleryCell<ExtraData>
+                .cellForItem(at: indexPath) as? ImageAttachmentGalleryCell
             return cell?.imageView
         case .video:
             let cell = attachmentsCollectionView
-                .cellForItem(at: indexPath) as? _VideoAttachmentGalleryCell<ExtraData>
+                .cellForItem(at: indexPath) as? VideoAttachmentGalleryCell
             return cell?.animationPlaceholderImageView
         default:
             return nil

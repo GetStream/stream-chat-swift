@@ -7,20 +7,20 @@
 import XCTest
 
 class ChannelEvents_Tests: XCTestCase {
-    let eventDecoder = EventDecoder<NoExtraData>()
+    let eventDecoder = EventDecoder()
     
     func test_updated() throws {
         let json = XCTestCase.mockData(fromFile: "ChannelUpdated")
         let event = try eventDecoder.decode(from: json) as? ChannelUpdatedEvent
         XCTAssertEqual(event?.cid, ChannelId(type: .messaging, id: "new_channel_7070"))
-        XCTAssertEqual((event?.payload as? EventPayload<NoExtraData>)?.user?.id, "broken-waterfall-5")
+        XCTAssertEqual((event?.payload as? EventPayload)?.user?.id, "broken-waterfall-5")
     }
     
     func test_updated_usingServerSideAuth() throws {
         let json = XCTestCase.mockData(fromFile: "ChannelUpdated_ServerSide")
         let event = try eventDecoder.decode(from: json) as? ChannelUpdatedEvent
         XCTAssertEqual(event?.cid, ChannelId(type: .messaging, id: "new_channel_7070"))
-        XCTAssertNil((event?.payload as? EventPayload<NoExtraData>)?.user?.id)
+        XCTAssertNil((event?.payload as? EventPayload)?.user?.id)
     }
     
     func test_deleted() throws {
@@ -29,7 +29,7 @@ class ChannelEvents_Tests: XCTestCase {
         XCTAssertEqual(event?.cid, ChannelId(type: .messaging, id: "default-channel-1"))
         XCTAssertEqual(event?.deletedAt.description, "2021-04-23 09:38:47 +0000")
         XCTAssertEqual(
-            (event?.payload as! EventPayload<NoExtraData>).channel?.cid,
+            (event?.payload as! EventPayload).channel?.cid,
             ChannelId(type: .messaging, id: "default-channel-1")
         )
     }
@@ -67,8 +67,8 @@ class ChannelEvents_Tests: XCTestCase {
         let event = try eventDecoder.decode(from: mockData) as? ChannelTruncatedEvent
         XCTAssertEqual(event?.cid, ChannelId(type: .messaging, id: "new_channel_7011"))
 
-        let rawPayload = try JSONDecoder.stream.decode(EventPayload<NoExtraData>.self, from: mockData)
-        XCTAssertEqual((event?.payload as? EventPayload<NoExtraData>)?.createdAt, rawPayload.createdAt)
+        let rawPayload = try JSONDecoder.stream.decode(EventPayload.self, from: mockData)
+        XCTAssertEqual((event?.payload as? EventPayload)?.createdAt, rawPayload.createdAt)
     }
 }
 
@@ -76,7 +76,7 @@ class ChannelEventsIntegration_Tests: XCTestCase {
     var client: ChatClient!
     var currentUserId: UserId!
 
-    let eventDecoder = EventDecoder<NoExtraData>()
+    let eventDecoder = EventDecoder()
 
     override func setUp() {
         super.setUp()
@@ -235,7 +235,7 @@ class ChannelEventsIntegration_Tests: XCTestCase {
         try client.databaseContainer.createCurrentUser(id: "luke_skywalker")
         
         // Create mute payloads for current user so there are some muted Channels:
-        let mutePayloads: [MutedChannelPayload<NoExtraData>] = [
+        let mutePayloads: [MutedChannelPayload] = [
             .init(
                 mutedChannel: .dummy(cid: .unique),
                 user: dummyUser(id: "luke_skywalker"),
@@ -302,7 +302,7 @@ class ChannelEventsIntegration_Tests: XCTestCase {
         try client.databaseContainer.writeSynchronously { session in
             let read = try XCTUnwrap(
                 session.saveChannelRead(
-                    payload: ChannelReadPayload<NoExtraData>(
+                    payload: ChannelReadPayload(
                         user: self.dummyUser(id: "steep-moon-9"),
                         lastReadAt: .unique,
                         unreadMessagesCount: .unique

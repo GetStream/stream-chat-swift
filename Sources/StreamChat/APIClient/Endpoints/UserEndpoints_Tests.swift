@@ -12,7 +12,7 @@ final class UserEndpoints_Tests: XCTestCase {
             sort: [.init(key: .lastActivityAt)]
         )
         
-        let expectedEndpoint = Endpoint<UserListPayload<NoExtraData>>(
+        let expectedEndpoint = Endpoint<UserListPayload>(
             path: "users",
             method: .get,
             queryItems: nil,
@@ -21,7 +21,7 @@ final class UserEndpoints_Tests: XCTestCase {
         )
         
         // Build endpoint
-        let endpoint: Endpoint<UserListPayload<NoExtraData>> = .users(query: query)
+        let endpoint: Endpoint<UserListPayload> = .users(query: query)
         
         // Assert endpoint is built correctly
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
@@ -29,8 +29,8 @@ final class UserEndpoints_Tests: XCTestCase {
     
     func test_updateCurrentUser_buildsCorrectly() {
         let userId = UserId.unique
-        let payload: UserUpdateRequestBody<TestExtraData> = .init(
-            name: .unique, imageURL: .unique(), extraData: TestExtraData(company: .unique)
+        let payload: UserUpdateRequestBody = .init(
+            name: .unique, imageURL: .unique(), extraData: ["company": .string(.unique)]
         )
         
         let users: [String: AnyEncodable] = [
@@ -41,7 +41,7 @@ final class UserEndpoints_Tests: XCTestCase {
             "users": AnyEncodable([users])
         ]
         
-        let expectedEndpoint = Endpoint<UserUpdateResponse<TestExtraData>>(
+        let expectedEndpoint = Endpoint<UserUpdateResponse>(
             path: "users",
             method: .patch,
             queryItems: nil,
@@ -53,9 +53,4 @@ final class UserEndpoints_Tests: XCTestCase {
         
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
     }
-}
-
-private struct TestExtraData: UserExtraData {
-    static var defaultValue: TestExtraData = .init(company: nil)
-    let company: String?
 }

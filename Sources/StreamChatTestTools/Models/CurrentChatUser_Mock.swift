@@ -5,8 +5,8 @@
 import Foundation
 @testable import StreamChat
 
-public extension _CurrentChatUser {
-    /// Creates a new `_CurrentChatUser` object from the provided data.
+public extension CurrentChatUser {
+    /// Creates a new `CurrentChatUser` object from the provided data.
     static func mock(
         id: String,
         name: String? = nil,
@@ -18,15 +18,15 @@ public extension _CurrentChatUser {
         updatedAt: Date = .init(),
         lastActiveAt: Date? = nil,
         teams: Set<TeamId> = [],
-        extraData: ExtraData.User = .defaultValue,
+        extraData: [String: RawJSON] = [:],
         devices: [Device] = [],
         currentDevice: Device? = nil,
-        mutedUsers: Set<_ChatUser<ExtraData.User>> = [],
-        flaggedUsers: Set<_ChatUser<ExtraData.User>> = [],
+        mutedUsers: Set<ChatUser> = [],
+        flaggedUsers: Set<ChatUser> = [],
         flaggedMessageIDs: Set<MessageId> = [],
         unreadCount: UnreadCount = .noUnread,
-        mutedChannels: Set<_ChatChannel<ExtraData>> = []
-    ) -> _CurrentChatUser {
+        mutedChannels: Set<ChatChannel> = []
+    ) -> CurrentChatUser {
         .init(
             id: id,
             name: name,

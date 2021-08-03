@@ -5,12 +5,12 @@
 import Foundation
 
 /// The middleware listens for `UserChannelBanEventMiddleware` events and updates `MemberDTO` accordingly.
-struct UserChannelBanEventsMiddleware<ExtraData: ExtraDataTypes>: EventMiddleware {
+struct UserChannelBanEventsMiddleware: EventMiddleware {
     func handle(event: Event, session: DatabaseSession) -> Event? {
         // Check if we have `cid` first. If `cid` is not presented the ban events are global bans and
         // they are already handled by `EventDataProcessorMiddleware`
         guard
-            let eventPayload = (event as? EventWithPayload)?.payload as? EventPayload<ExtraData>,
+            let eventPayload = (event as? EventWithPayload)?.payload as? EventPayload,
             let cid = eventPayload.cid
         else {
             return event

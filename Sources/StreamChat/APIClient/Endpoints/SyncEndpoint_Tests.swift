@@ -10,7 +10,7 @@ final class SyncEndpoint_Tests: XCTestCase {
         let lastSyncedAt: Date = .unique
         let cids: [ChannelId] = [.unique, .unique, .unique]
 
-        let expectedEndpoint = Endpoint<MissingEventsPayload<NoExtraData>>(
+        let expectedEndpoint = Endpoint<MissingEventsPayload>(
             path: "sync",
             method: .post,
             queryItems: nil,
@@ -19,7 +19,7 @@ final class SyncEndpoint_Tests: XCTestCase {
         )
         
         // Build endpoint
-        let endpoint: Endpoint<MissingEventsPayload<NoExtraData>> = .missingEvents(since: lastSyncedAt, cids: cids)
+        let endpoint: Endpoint<MissingEventsPayload> = .missingEvents(since: lastSyncedAt, cids: cids)
         
         // Assert endpoint is built correctly
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))

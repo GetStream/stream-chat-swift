@@ -5,24 +5,7 @@
 import Foundation
 
 /// A channel query.
-///
-/// - Note: `ChannelQuery` is a typealias of `_ChannelQuery` with the default extra data types.
-/// If you want to use your custom extra data types, you should create your own `ChannelQuery`
-/// typealias for `_ChannelQuery`.
-///
-/// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/Cheat-Sheet#working-with-extra-data).
-///
-public typealias ChannelQuery = _ChannelQuery<NoExtraData>
-
-/// A channel query.
-///
-/// - Note: `_ChannelQuery` type is not meant to be used directly.
-/// If you don't use custom extra data types, use `ChannelQuery` typealias instead.
-/// When using custom extra data types, you should create your own `ChannelQuery` typealias for `_ChannelQuery`.
-///
-/// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/Cheat-Sheet#working-with-extra-data).
-///
-public struct _ChannelQuery<ExtraData: ExtraDataTypes>: Encodable {
+public struct ChannelQuery: Encodable {
     private enum CodingKeys: String, CodingKey {
         case data
         case messages
@@ -43,7 +26,7 @@ public struct _ChannelQuery<ExtraData: ExtraDataTypes>: Encodable {
     /// A query options.
     var options: QueryOptions = .all
     /// ChannelCreatePayload that is needed only when creating channel
-    let channelPayload: ChannelEditDetailPayload<ExtraData>?
+    let channelPayload: ChannelEditDetailPayload?
     
     /// `ChannelId` this query handles.
     /// If `id` part is missing then it's impossible to create valid `ChannelId`.
@@ -77,7 +60,7 @@ public struct _ChannelQuery<ExtraData: ExtraDataTypes>: Encodable {
     /// Init a channel query.
     /// - Parameters:
     ///   - channelPayload: a payload that has data needed for channel creation.
-    init(channelPayload: ChannelEditDetailPayload<ExtraData>) {
+    init(channelPayload: ChannelEditDetailPayload) {
         id = channelPayload.id
         type = channelPayload.type
         self.channelPayload = channelPayload
@@ -114,7 +97,7 @@ public struct _ChannelQuery<ExtraData: ExtraDataTypes>: Encodable {
     }
 }
 
-extension _ChannelQuery: APIPathConvertible {
+extension ChannelQuery: APIPathConvertible {
     var apiPath: String { cid?.apiPath ?? type.rawValue }
 }
 
@@ -137,33 +120,3 @@ struct ChannelInvitePayload: Encodable {
     /// Additional message.
     let message: Message?
 }
-
-//
-///// An answer for an invite to a channel.
-// public struct ChannelInviteResponse: Decodable {
-//    /// A channel.
-//    let channel: Channel
-//    /// Members.
-//    let members: [Member]
-//    /// Accept the invite.
-//    let message: Message?
-// }
-//
-// public struct ChannelUpdate: Encodable {
-//    struct ChannelData: Encodable {
-//        let channel: Channel
-//
-//        init(_ channel: Channel) {
-//            self.channel = channel
-//        }
-//
-//        func encode(to encoder: Encoder) throws {
-//            var container = encoder.container(keyedBy: Channel.EncodingKeys.self)
-//            try container.encode(channel.name, forKey: .name)
-//            try container.encodeIfPresent(channel.imageURL, forKey: .imageURL)
-//            channel.extraData?.encodeSafely(to: encoder, logMessage: "📦 when encoding a channel extra data")
-//        }
-//    }
-//
-//    let data: ChannelData
-// }

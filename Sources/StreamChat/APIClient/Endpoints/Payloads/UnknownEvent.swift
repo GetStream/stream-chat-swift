@@ -27,17 +27,17 @@ public struct UnknownEvent: Event, Hashable {
 
 extension UnknownEvent: Decodable {
     public init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: EventPayload<NoExtraData>.CodingKeys.self)
+        let container = try decoder.container(keyedBy: EventPayload.CodingKeys.self)
         
         self.init(
             type: try container.decode(EventType.self, forKey: .eventType),
             cid: try container.decode(ChannelId.self, forKey: .cid),
-            userId: try container.decode(UserPayload<NoExtraData>.self, forKey: .user).id,
+            userId: try container.decode(UserPayload.self, forKey: .user).id,
             createdAt: try container.decode(Date.self, forKey: .createdAt),
             payload: try decoder
                 .singleValueContainer()
                 .decode([String: RawJSON].self)
-                .removingValues(forKeys: EventPayload<NoExtraData>.CodingKeys.allCases.map(\.rawValue))
+                .removingValues(forKeys: EventPayload.CodingKeys.allCases.map(\.rawValue))
         )
     }
 }

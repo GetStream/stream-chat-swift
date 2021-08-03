@@ -5,7 +5,7 @@
 import CoreData
 
 /// Makes a users query call to the backend and updates the local storage with the results.
-class UserListUpdater<ExtraData: UserExtraData>: Worker {
+class UserListUpdater: Worker {
     /// Defines the update policy for this worker.
     enum UpdatePolicy {
         /// The resulting user set of the query will be merged with the existing user set.
@@ -21,9 +21,9 @@ class UserListUpdater<ExtraData: UserExtraData>: Worker {
     ///   - policy: The update policy for the resulting user set. See `UpdatePolicy`
     ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
     ///
-    func update(userListQuery: _UserListQuery<ExtraData>, policy: UpdatePolicy = .merge, completion: ((Error?) -> Void)? = nil) {
+    func update(userListQuery: UserListQuery, policy: UpdatePolicy = .merge, completion: ((Error?) -> Void)? = nil) {
         apiClient
-            .request(endpoint: .users(query: userListQuery)) { (result: Result<UserListPayload<ExtraData>, Error>) in
+            .request(endpoint: .users(query: userListQuery)) { (result: Result<UserListPayload, Error>) in
                 switch result {
                 case let .success(userListPayload):
                     self.database.write { session in

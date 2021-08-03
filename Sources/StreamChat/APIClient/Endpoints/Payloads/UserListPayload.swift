@@ -4,7 +4,7 @@
 
 import Foundation
 
-struct UserListPayload<ExtraData: UserExtraData>: Decodable {
+struct UserListPayload: Decodable {
     /// A list of users response (see `UserListQuery`).
-    let users: [UserPayload<ExtraData>]
+    let users: [UserPayload]
 }

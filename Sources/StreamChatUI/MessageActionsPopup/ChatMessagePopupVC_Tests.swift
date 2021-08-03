@@ -7,7 +7,7 @@ import StreamChatTestTools
 @testable import StreamChatUI
 import XCTest
 
-extension _ChatMessagePopupVC: AppearanceProvider {}
+extension ChatMessagePopupVC: AppearanceProvider {}
 
 final class ChatMessagePopupVC_Tests: XCTestCase {
     private var vc: ChatMessagePopupVC!
@@ -61,7 +61,7 @@ final class ChatMessagePopupVC_Tests: XCTestCase {
         messageContentView.translatesAutoresizingMaskIntoConstraints = false
         vc.messageContentContainerView.embed(messageContentView)
         
-        let chatMessageController = ChatMessageController_Mock<NoExtraData>.mock()
+        let chatMessageController = ChatMessageController_Mock.mock()
         chatMessageController.simulateInitial(
             message: ChatMessage.mock(id: .unique, cid: .unique, text: "", author: ChatUser.mock(id: .unique)),
             replies: [],

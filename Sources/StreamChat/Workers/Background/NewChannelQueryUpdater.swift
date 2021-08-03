@@ -12,10 +12,10 @@ import CoreData
 ///     in response for `update(channelListQuery` request new channel will be returned if it is part of the original query filter.
 ///     3. After sending `update(channelListQuery` for all queries `ChannelListUpdater` does the job of linking
 ///     corresponding queries to the channel.
-final class NewChannelQueryUpdater<ExtraData: ExtraDataTypes>: Worker {
+final class NewChannelQueryUpdater: Worker {
     private let environment: Environment
         
-    private lazy var channelListUpdater: ChannelListUpdater<ExtraData> = self.environment
+    private lazy var channelListUpdater: ChannelListUpdater = self.environment
         .createChannelListUpdater(
             database,
             apiClient
@@ -90,7 +90,7 @@ final class NewChannelQueryUpdater<ExtraData: ExtraDataTypes>: Worker {
         database.backgroundReadOnlyContext.perform { [weak self] in
             guard let queries = self?.queries else { return }
             
-            var updatedQueries: [_ChannelListQuery<ExtraData.Channel>] = []
+            var updatedQueries: [ChannelListQuery] = []
             
             do {
                 updatedQueries = try queries.map {
@@ -120,21 +120,21 @@ extension NewChannelQueryUpdater {
         var createChannelListUpdater: (
             _ database: DatabaseContainer,
             _ apiClient: APIClient
-        ) -> ChannelListUpdater<ExtraData> = ChannelListUpdater.init
+        ) -> ChannelListUpdater = ChannelListUpdater.init
     }
 }
 
 private extension ChannelListQueryDTO {
-    func asChannelListQueryWithUpdatedFilter<ExtraData: ChannelExtraData>(
-        filterToAdd filter: Filter<_ChannelListFilterScope<ExtraData>>
-    ) throws -> _ChannelListQuery<ExtraData> {
+    func asChannelListQueryWithUpdatedFilter(
+        filterToAdd filter: Filter<ChannelListFilterScope>
+    ) throws -> ChannelListQuery {
         let encodedFilter = try JSONDecoder.default
-            .decode(Filter<_ChannelListFilterScope<ExtraData>>.self, from: filterJSONData)
+            .decode(Filter<ChannelListFilterScope>.self, from: filterJSONData)
         
         // We need to pass original `filterHash` so channel will be linked to original query, not the modified one
-        var updatedFilter: Filter<_ChannelListFilterScope> = .and([encodedFilter, filter])
+        var updatedFilter: Filter<ChannelListFilterScope> = .and([encodedFilter, filter])
         updatedFilter.explicitHash = filterHash
         
-        return _ChannelListQuery(filter: updatedFilter)
+        return ChannelListQuery(filter: updatedFilter)
     }
 }

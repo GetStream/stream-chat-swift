@@ -4,7 +4,7 @@
 
 import Foundation
 
-struct ChannelEditDetailPayload<ExtraData: ExtraDataTypes>: Encodable {
+struct ChannelEditDetailPayload: Encodable {
     let id: String?
     let name: String?
     let imageURL: URL?
@@ -12,7 +12,7 @@ struct ChannelEditDetailPayload<ExtraData: ExtraDataTypes>: Encodable {
     let team: String?
     let members: Set<UserId>
     let invites: Set<UserId>
-    let extraData: ExtraData.Channel
+    let extraData: [String: RawJSON]
 
     init(
         cid: ChannelId,
@@ -21,7 +21,7 @@ struct ChannelEditDetailPayload<ExtraData: ExtraDataTypes>: Encodable {
         team: String?,
         members: Set<UserId>,
         invites: Set<UserId>,
-        extraData: ExtraData.Channel
+        extraData: [String: RawJSON]
     ) {
         id = cid.id
         self.name = name
@@ -40,7 +40,7 @@ struct ChannelEditDetailPayload<ExtraData: ExtraDataTypes>: Encodable {
         team: String?,
         members: Set<UserId>,
         invites: Set<UserId>,
-        extraData: ExtraData.Channel
+        extraData: [String: RawJSON]
     ) {
         id = nil
         self.name = name
