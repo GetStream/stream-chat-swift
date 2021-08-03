@@ -8,22 +8,32 @@ import Foundation
 public extension _ChatClient {
     /// Creates a new `ChatChannelController` for the channel with the provided id.
     ///
-    /// - Parameter cid: The id of the channel this controller represents.
+    /// - Parameters:
+    ///   - cid: The id of the channel this controller represents.
+    ///   -  listOrdering: Describes the ordering the messages are presented.
     ///
     /// - Returns: A new instance of `ChatChannelController`.
     ///
-    func channelController(for cid: ChannelId) -> _ChatChannelController<ExtraData> {
-        .init(channelQuery: .init(cid: cid), client: self)
+    func channelController(
+        for cid: ChannelId,
+        listOrdering: ListOrdering = .topToBottom
+    ) -> _ChatChannelController<ExtraData> {
+        .init(channelQuery: .init(cid: cid), client: self, listOrdering: listOrdering)
     }
     
     /// Creates a new `ChatChannelController` for the channel with the provided channel query.
     ///
-    /// - Parameter channelQuery: The ChannelQuery this controller represents
+    /// - Parameters:
+    ///   - channelQuery: The ChannelQuery this controller represents
+    ///   -  listOrdering: Describes the ordering the messages are presented.
     ///
     /// - Returns: A new instance of `ChatChannelController`.
     ///
-    func channelController(for channelQuery: _ChannelQuery<ExtraData>) -> _ChatChannelController<ExtraData> {
-        .init(channelQuery: channelQuery, client: self)
+    func channelController(
+        for channelQuery: _ChannelQuery<ExtraData>,
+        listOrdering: ListOrdering = .topToBottom
+    ) -> _ChatChannelController<ExtraData> {
+        .init(channelQuery: channelQuery, client: self, listOrdering: listOrdering)
     }
     
     /// Creates a `ChatChannelController` that will create a new channel, if the channel doesn't exist already.
@@ -38,6 +48,7 @@ public extension _ChatClient {
     ///   - team: Team for new channel.
     ///   - members: Ds for the new channel members.
     ///   - isCurrentUserMember: If set to `true` the current user will be included into the channel. Is `true` by default.
+    ///   -  listOrdering: Describes the ordering the messages are presented.
     ///   - invites: IDs for the new channel invitees.
     ///   - extraData: Extra data for the new channel.
     /// - Throws: `ClientError.CurrentUserDoesNotExist` if there is no currently logged-in user.
@@ -49,6 +60,7 @@ public extension _ChatClient {
         team: String? = nil,
         members: Set<UserId> = [],
         isCurrentUserMember: Bool = true,
+        listOrdering: ListOrdering = .topToBottom,
         invites: Set<UserId> = [],
         extraData: ExtraData.Channel = .defaultValue
     ) throws -> _ChatChannelController<ExtraData> {
@@ -66,7 +78,12 @@ public extension _ChatClient {
             extraData: extraData
         )
 
-        return .init(channelQuery: .init(channelPayload: payload), client: self, isChannelAlreadyCreated: false)
+        return .init(
+            channelQuery: .init(channelPayload: payload),
+            client: self,
+            isChannelAlreadyCreated: false,
+            listOrdering: listOrdering
+        )
     }
 
     /// Creates a `ChatChannelController` that will create a new channel with the provided members without having to specify
@@ -80,6 +97,7 @@ public extension _ChatClient {
     ///   - members: Members for the new channel. Must not be empty.
     ///   - type: The type of the channel.
     ///   - isCurrentUserMember: If set to `true` the current user will be included into the channel. Is `true` by default.
+    ///   -  listOrdering: Describes the ordering the messages are presented.
     ///   - name: The new channel name.
     ///   - imageURL: The new channel avatar URL.
     ///   - team: Team for the new channel.
@@ -92,6 +110,7 @@ public extension _ChatClient {
         createDirectMessageChannelWith members: Set<UserId>,
         type: ChannelType = .messaging,
         isCurrentUserMember: Bool = true,
+        listOrdering: ListOrdering = .topToBottom,
         name: String? = nil,
         imageURL: URL? = nil,
         team: String? = nil,
@@ -109,7 +128,12 @@ public extension _ChatClient {
             invites: [],
             extraData: extraData
         )
-        return .init(channelQuery: .init(channelPayload: payload), client: self, isChannelAlreadyCreated: false)
+        return .init(
+            channelQuery: .init(channelPayload: payload),
+            client: self,
+            isChannelAlreadyCreated: false,
+            listOrdering: listOrdering
+        )
     }
 }
 
@@ -196,7 +220,7 @@ public class _ChatChannelController<ExtraData: ExtraDataTypes>: DataController, 
     /// the `listOrdering` value to reflect the changes. Further updates to the messages will be delivered using the delegate
     /// methods, as usual.
     ///
-    public var listOrdering: ListOrdering = .topToBottom {
+    public var listOrdering: ListOrdering {
         didSet {
             if state != .initialized {
                 setLocalStateBasedOnError(startMessagesObserver())
@@ -273,12 +297,14 @@ public class _ChatChannelController<ExtraData: ExtraDataTypes>: DataController, 
         channelQuery: _ChannelQuery<ExtraData>,
         client: _ChatClient<ExtraData>,
         environment: Environment = .init(),
-        isChannelAlreadyCreated: Bool = true
+        isChannelAlreadyCreated: Bool = true,
+        listOrdering: ListOrdering = .topToBottom
     ) {
         self.channelQuery = channelQuery
         self.client = client
         self.environment = environment
         self.isChannelAlreadyCreated = isChannelAlreadyCreated
+        self.listOrdering = listOrdering
         super.init()
 
         setChannelObserver()

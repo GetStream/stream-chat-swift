@@ -455,6 +455,60 @@ class ChannelListController_Tests: StressTestCase {
         // Completion should be called with the error
         AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
     }
+    
+    // MARK: - List Ordering initial value
+    
+    func test_inits_propagate_desiredListOrdering() {
+        XCTAssertEqual(
+            client.channelController(for: .unique).listOrdering,
+            .topToBottom
+        )
+        XCTAssertEqual(
+            client.channelController(for: .unique, listOrdering: .bottomToTop).listOrdering,
+            .bottomToTop
+        )
+        
+        XCTAssertEqual(
+            client.channelController(for: ChannelQuery(cid: .unique)).listOrdering,
+            .topToBottom
+        )
+        XCTAssertEqual(
+            client.channelController(
+                for: ChannelQuery(cid: .unique),
+                listOrdering: .bottomToTop
+            ).listOrdering,
+            .bottomToTop
+        )
+        
+        client.currentUserId = .unique
+        XCTAssertEqual(
+            (try! client.channelController(createChannelWithId: .unique)).listOrdering,
+            .topToBottom
+        )
+        XCTAssertEqual(
+            (
+                try! client.channelController(
+                    createChannelWithId: .unique,
+                    listOrdering: .bottomToTop
+                )
+            ).listOrdering,
+            .bottomToTop
+        )
+        
+        XCTAssertEqual(
+            (try! client.channelController(createDirectMessageChannelWith: [.unique])).listOrdering,
+            .topToBottom
+        )
+        XCTAssertEqual(
+            (
+                try! client.channelController(
+                    createDirectMessageChannelWith: [.unique],
+                    listOrdering: .bottomToTop
+                )
+            ).listOrdering,
+            .bottomToTop
+        )
+    }
 }
 
 private class TestEnvironment {
