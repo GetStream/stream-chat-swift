@@ -13,7 +13,7 @@ func snippet_channels_creating_channel_member_list() throws {
         isCurrentUserMember: true,
         name: nil,
         imageURL: nil,
-        extraData: .defaultValue
+        extraData: [:]
     )
 
     /// 2: Call `ChatChannelController.synchronize` to create the channel.

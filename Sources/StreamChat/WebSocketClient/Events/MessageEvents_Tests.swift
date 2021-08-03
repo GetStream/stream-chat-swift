@@ -7,7 +7,7 @@
 import XCTest
 
 class MessageEvents_Tests: XCTestCase {
-    let eventDecoder = EventDecoder<NoExtraData>()
+    let eventDecoder = EventDecoder()
     let messageId: MessageId = "1ff9f6d0-df70-4703-aef0-379f95ad7366"
     
     func test_new() throws {
@@ -73,7 +73,7 @@ class MessageEventsIntegration_Tests: XCTestCase {
     var client: ChatClient!
     var currentUserId: UserId!
 
-    let eventDecoder = EventDecoder<NoExtraData>()
+    let eventDecoder = EventDecoder()
 
     override func setUp() {
         super.setUp()

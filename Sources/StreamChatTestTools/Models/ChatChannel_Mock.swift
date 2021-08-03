@@ -42,12 +42,12 @@ public extension ChannelConfig {
     }
 }
 
-public extension _ChatChannelRead {
+public extension ChatChannelRead {
     /// Creates a new `_ChatChannelRead` object from the provided data.
     static func mock(
         lastReadAt: Date,
         unreadMessagesCount: Int,
-        user: _ChatUser<ExtraData.User>
+        user: ChatUser
     ) -> Self {
         .init(
             lastReadAt: lastReadAt,
@@ -57,7 +57,7 @@ public extension _ChatChannelRead {
     }
 }
 
-public extension _ChatChannel {
+public extension ChatChannel {
     /// Creates a new `_ChatChannel` object from the provided data.
     static func mock(
         cid: ChannelId,
@@ -67,19 +67,19 @@ public extension _ChatChannel {
         createdAt: Date = .init(),
         updatedAt: Date = .init(),
         deletedAt: Date? = nil,
-        createdBy: _ChatUser<ExtraData.User>? = nil,
+        createdBy: ChatUser? = nil,
         config: ChannelConfig = .mock(),
         isFrozen: Bool = false,
-        lastActiveMembers: [_ChatChannelMember<ExtraData.User>] = [],
-        membership: _ChatChannelMember<ExtraData.User>? = nil,
-        currentlyTypingUsers: Set<_ChatUser<ExtraData.User>> = [],
-        lastActiveWatchers: [_ChatUser<ExtraData.User>] = [],
+        lastActiveMembers: [ChatChannelMember] = [],
+        membership: ChatChannelMember? = nil,
+        currentlyTypingUsers: Set<ChatUser> = [],
+        lastActiveWatchers: [ChatUser] = [],
         unreadCount: ChannelUnreadCount = .noUnread,
         watcherCount: Int = 0,
         memberCount: Int = 0,
-        reads: [_ChatChannelRead<ExtraData>] = [],
-        extraData: ExtraData.Channel = .defaultValue,
-        latestMessages: [_ChatMessage<ExtraData>] = [],
+        reads: [ChatChannelRead] = [],
+        extraData: [String: RawJSON] = [:],
+        latestMessages: [ChatMessage] = [],
         muteDetails: MuteDetails? = nil
     ) -> Self {
         self.init(
@@ -116,18 +116,18 @@ public extension _ChatChannel {
         createdAt: Date = .init(),
         updatedAt: Date = .init(),
         deletedAt: Date? = nil,
-        createdBy: _ChatUser<ExtraData.User>? = nil,
+        createdBy: ChatUser? = nil,
         config: ChannelConfig = .mock(),
         isFrozen: Bool = false,
-        lastActiveMembers: [_ChatChannelMember<ExtraData.User>] = [],
-        currentlyTypingUsers: Set<_ChatUser<ExtraData.User>> = [],
-        lastActiveWatchers: [_ChatUser<ExtraData.User>] = [],
+        lastActiveMembers: [ChatChannelMember] = [],
+        currentlyTypingUsers: Set<ChatUser> = [],
+        lastActiveWatchers: [ChatUser] = [],
         unreadCount: ChannelUnreadCount = .noUnread,
         watcherCount: Int = 0,
         memberCount: Int = 0,
-        reads: [_ChatChannelRead<ExtraData>] = [],
-        extraData: ExtraData.Channel = .defaultValue,
-        latestMessages: [_ChatMessage<ExtraData>] = [],
+        reads: [ChatChannelRead] = [],
+        extraData: [String: RawJSON] = [:],
+        latestMessages: [ChatMessage] = [],
         muteDetails: MuteDetails? = nil
     ) -> Self {
         self.init(

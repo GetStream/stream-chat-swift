@@ -41,7 +41,7 @@ class LoginViewController: UITableViewController {
             )
         } else {
             chatClient.connectGuestUser(
-                userInfo: UserInfo<NoExtraData>(
+                userInfo: UserInfo(
                     id: Configuration.userId,
                     name: Configuration.userName
                 ),
@@ -62,7 +62,7 @@ extension LoginViewController {
         let chatClient = logIn()
         
         let channelListController = chatClient.channelListController(
-            query: _ChannelListQuery(
+            query: ChannelListQuery(
                 filter: .containMembers(userIds: [chatClient.currentUserId!]),
                 pageSize: 25
             )

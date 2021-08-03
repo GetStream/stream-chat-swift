@@ -21,7 +21,7 @@ final class UserController_Tests: StressTestCase {
         super.setUp()
         
         env = TestEnvironment()
-        client = _ChatClient.mock
+        client = ChatClient.mock
         userId = .unique
         controller = ChatUserController(userId: userId, client: client, environment: env.environment)
         controllerCallbackQueueID = UUID()
@@ -170,7 +170,7 @@ final class UserController_Tests: StressTestCase {
         controller.synchronize()
         
         // Create a user in the DB
-        try client.databaseContainer.createUser(id: userId, extraData: .defaultValue)
+        try client.databaseContainer.createUser(id: userId, extraData: [:])
         
         // Simulate updater callback
         env.userUpdater?.loadUser_completion?(nil)
@@ -355,7 +355,7 @@ final class UserController_Tests: StressTestCase {
         controller.delegate = delegate
         
         // Create user in the database.
-        let initialExtraData: NoExtraData = .defaultValue
+        let initialExtraData: [String: RawJSON] = [:]
         try client.databaseContainer.createUser(id: userId, extraData: initialExtraData)
         
         // Assert `create` entity change is received by the delegate
@@ -581,7 +581,7 @@ final class UserController_Tests: StressTestCase {
 }
 
 private class TestEnvironment {
-    @Atomic var userUpdater: UserUpdaterMock<NoExtraData>?
+    @Atomic var userUpdater: UserUpdaterMock?
     @Atomic var userObserver: EntityDatabaseObserverMock<ChatUser, UserDTO>?
     @Atomic var userObserverSynchronizeError: Error?
 
@@ -623,7 +623,7 @@ private class TestDelegate: QueueAwareDelegate, ChatUserControllerDelegate {
 }
 
 // A concrete `_ChatUserControllerDelegate` implementation allowing capturing the delegate calls.
-private class TestDelegateGeneric: QueueAwareDelegate, _ChatUserControllerDelegate {
+private class TestDelegateGeneric: QueueAwareDelegate, ChatUserControllerDelegate {
     @Atomic var state: DataController.State?
     @Atomic var didUpdateUser_change: EntityChange<ChatUser>?
     

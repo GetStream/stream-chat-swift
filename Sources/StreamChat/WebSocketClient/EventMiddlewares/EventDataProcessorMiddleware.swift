@@ -5,15 +5,15 @@
 import Foundation
 
 /// A middleware which saves the incoming data from the Event to the database.
-struct EventDataProcessorMiddleware<ExtraData: ExtraDataTypes>: EventMiddleware {
+struct EventDataProcessorMiddleware: EventMiddleware {
     func handle(event: Event, session: DatabaseSession) -> Event? {
         guard let eventWithPayload = (event as? EventWithPayload) else {
             return event
         }
         
-        guard let payload = eventWithPayload.payload as? EventPayload<ExtraData> else {
+        guard let payload = eventWithPayload.payload as? EventPayload else {
             log.assertionFailure("""
-            Type mismatch between `EventPayload.ExtraData` and `EventDataProcessorMiddleware.ExtraData`."
+            Type mismatch between `EventPayload` and `EventDataProcessorMiddleware`."
                 EventPayload type: \(type(of: eventWithPayload.payload))
                 EventDataProcessorMiddleware type: \(type(of: self))
             """)

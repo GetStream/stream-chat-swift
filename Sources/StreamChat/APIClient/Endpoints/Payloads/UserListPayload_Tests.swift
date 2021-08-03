@@ -12,7 +12,7 @@ class UserListPayload_Tests: XCTestCase {
     }()
     
     func test_usersQueryJSON_isSerialized_withDefaultExtraData() throws {
-        let payload = try JSONDecoder.default.decode(UserListPayload<NoExtraData>.self, from: usersJSON)
+        let payload = try JSONDecoder.default.decode(UserListPayload.self, from: usersJSON)
         XCTAssertEqual(payload.users.count, 20)
     }
 }

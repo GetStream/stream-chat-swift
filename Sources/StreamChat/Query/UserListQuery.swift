@@ -9,23 +9,7 @@ public protocol AnyUserListFilterScope {}
 
 /// An extra-data-specific namespace for the `FilterKey`s suitable to be used for `_UserListQuery`.
 ///
-/// - Note: `UserListFilterScope` is a typealias of `_UserListFilterScope` with the default extra data types.
-/// If you want to use your custom extra data types, you should create your own `UserListFilterScope`
-/// typealias for `_UserListFilterScope`.
-///
-/// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/Cheat-Sheet#working-with-extra-data).
-///
-public typealias UserListFilterScope = _UserListFilterScope<NoExtraData>
-
-/// An extra-data-specific namespace for the `FilterKey`s suitable to be used for `_UserListQuery`.
-///
-/// - Note: `_UserListFilterScope` type is not meant to be used directly.
-/// If you don't use custom extra data types, use `UserListFilterScope` typealias instead.
-/// When using custom extra data types, you should create your own `UserListFilterScope` typealias for `_UserListFilterScope`.
-///
-/// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/Cheat-Sheet#working-with-extra-data).
-///
-public class _UserListFilterScope<ExtraData: UserExtraData>: FilterScope, AnyUserListFilterScope {}
+public class UserListFilterScope: FilterScope, AnyUserListFilterScope {}
 
 /// Non extra-data-specific filer keys for channel list.
 public extension FilterKey where Scope: AnyUserListFilterScope {
@@ -74,24 +58,7 @@ public extension FilterKey where Scope: AnyUserListFilterScope {
 
 /// A query is used for querying specific users from backend.
 /// You can specify filter, sorting and pagination.
-///
-/// - Note: `UserListQuery` is a typealias of `_UserListQuery` with the default extra data types.
-/// If you want to use your custom extra data types, you should create your own `UserListQuery` typealias for `_UserListQuery`.
-///
-/// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/Cheat-Sheet#working-with-extra-data).
-///
-public typealias UserListQuery = _UserListQuery<NoExtraData>
-
-/// A query is used for querying specific users from backend.
-/// You can specify filter, sorting and pagination.
-///
-/// - Note: `_UserListQuery` type is not meant to be used directly.
-/// If you don't use custom extra data types, use `UserListQuery` typealias instead.
-/// When using custom extra data types, you should create your own `UserListQuery` typealias for `_UserListQuery`.
-///
-/// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/Cheat-Sheet#working-with-extra-data).
-///
-public struct _UserListQuery<ExtraData: UserExtraData>: Encodable {
+public struct UserListQuery: Encodable {
     private enum CodingKeys: String, CodingKey {
         case filter = "filter_conditions"
         case sort
@@ -99,7 +66,7 @@ public struct _UserListQuery<ExtraData: UserExtraData>: Encodable {
     }
     
     /// A filter for the query (see `Filter`).
-    public var filter: Filter<_UserListFilterScope<ExtraData>>?
+    public var filter: Filter<UserListFilterScope>?
     
     /// A sorting for the query (see `Sorting`).
     public let sort: [Sorting<UserListSortingKey>]
@@ -120,7 +87,7 @@ public struct _UserListQuery<ExtraData: UserExtraData>: Encodable {
     ///   - sort: a sorting list for users.
     ///   - pageSize: a page size for pagination.
     public init(
-        filter: Filter<_UserListFilterScope<ExtraData>>? = nil,
+        filter: Filter<UserListFilterScope>? = nil,
         sort: [Sorting<UserListSortingKey>] = [],
         pageSize: Int = .usersPageSize
     ) {
@@ -147,7 +114,7 @@ public struct _UserListQuery<ExtraData: UserExtraData>: Encodable {
     }
 }
 
-extension _UserListQuery {
+extension UserListQuery {
     /// Builds `UserListQuery` for a user with the provided `userId`
     /// - Parameter userId: The user identifier
     /// - Returns: `UserListQuery` for a specific user

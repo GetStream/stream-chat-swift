@@ -134,14 +134,23 @@ extension ChannelDTO: EphemeralValuesContainer {
 // MARK: Saving and loading the data
 
 extension NSManagedObjectContext {
-    func saveChannel<ExtraData: ExtraDataTypes>(
-        payload: ChannelDetailPayload<ExtraData>,
-        query: _ChannelListQuery<ExtraData.Channel>?
+    func saveChannel(
+        payload: ChannelDetailPayload,
+        query: ChannelListQuery?
     ) throws -> ChannelDTO {
         let dto = ChannelDTO.loadOrCreate(cid: payload.cid, context: self)
 
         dto.name = payload.name
         dto.imageURL = payload.imageURL
+        do {
+            dto.extraData = try JSONEncoder.default.encode(payload.extraData)
+        } catch {
+            log.error(
+                "Failed to decode extra payload for Channel with cid: <\(dto.cid)>, using default value instead. "
+                    + "Error: \(error)"
+            )
+            dto.extraData = Data()
+        }
         dto.extraData = try JSONEncoder.default.encode(payload.extraData)
         dto.typeRawValue = payload.typeRawValue
         dto.config = try JSONEncoder().encode(payload.config)
@@ -175,9 +184,9 @@ extension NSManagedObjectContext {
         return dto
     }
     
-    func saveChannel<ExtraData: ExtraDataTypes>(
-        payload: ChannelPayload<ExtraData>,
-        query: _ChannelListQuery<ExtraData.Channel>?
+    func saveChannel(
+        payload: ChannelPayload,
+        query: ChannelListQuery?
     ) throws -> ChannelDTO {
         let dto = try saveChannel(payload: payload.channel, query: query)
         
@@ -229,8 +238,8 @@ extension NSManagedObjectContext {
 // To get the data from the DB
 
 extension ChannelDTO {
-    static func channelListFetchRequest<ExtraData: ChannelExtraData>(
-        query: _ChannelListQuery<ExtraData>
+    static func channelListFetchRequest(
+        query: ChannelListQuery
     ) -> NSFetchRequest<ChannelDTO> {
         let request = NSFetchRequest<ChannelDTO>(entityName: ChannelDTO.entityName)
         
@@ -271,28 +280,28 @@ extension ChannelDTO {
 
 extension ChannelDTO {
     /// Snapshots the current state of `ChannelDTO` and returns an immutable model object from it.
-    func asModel<ExtraData: ExtraDataTypes>() -> _ChatChannel<ExtraData> { .create(fromDTO: self) }
+    func asModel() -> ChatChannel { .create(fromDTO: self) }
 }
 
-extension _ChatChannel {
+extension ChatChannel {
     /// Create a ChannelModel struct from its DTO
-    fileprivate static func create(fromDTO dto: ChannelDTO) -> _ChatChannel {
-        let extraData: ExtraData.Channel
+    fileprivate static func create(fromDTO dto: ChannelDTO) -> ChatChannel {
+        let extraData: [String: RawJSON]
         do {
-            extraData = try JSONDecoder.default.decode(ExtraData.Channel.self, from: dto.extraData)
+            extraData = try JSONDecoder.default.decode([String: RawJSON].self, from: dto.extraData)
         } catch {
             log.error(
                 "Failed to decode extra data for Channel with cid: <\(dto.cid)>, using default value instead. "
                     + "Error: \(error)"
             )
-            extraData = .defaultValue
+            extraData = [:]
         }
-        
+
         let cid = try! ChannelId(cid: dto.cid)
         
         let context = dto.managedObjectContext!
         
-        let reads: [_ChatChannelRead<ExtraData>] = dto.reads.map { $0.asModel() }
+        let reads: [ChatChannelRead] = dto.reads.map { $0.asModel() }
         
         let unreadCount: () -> ChannelUnreadCount = {
             guard let currentUser = context.currentUser else { return .noUnread }
@@ -324,7 +333,7 @@ extension _ChatChannel {
             }
         }
         
-        let fetchMessages: () -> [_ChatMessage<ExtraData>] = {
+        let fetchMessages: () -> [ChatMessage] = {
             MessageDTO
                 .load(
                     for: dto.cid,
@@ -334,13 +343,13 @@ extension _ChatChannel {
                 .map { $0.asModel() }
         }
         
-        let fetchWatchers: () -> [_ChatUser<ExtraData.User>] = {
+        let fetchWatchers: () -> [ChatUser] = {
             UserDTO
                 .loadLastActiveWatchers(cid: cid, context: context)
                 .map { $0.asModel() }
         }
         
-        let fetchMembers: () -> [_ChatChannelMember<ExtraData.User>] = {
+        let fetchMembers: () -> [ChatChannelMember] = {
             MemberDTO
                 .loadLastActiveMembers(cid: cid, context: context)
                 .map { $0.asModel() }
@@ -358,7 +367,7 @@ extension _ChatChannel {
             )
         }
         
-        return _ChatChannel(
+        return ChatChannel(
             cid: cid,
             name: dto.name,
             imageURL: dto.imageURL,
@@ -395,7 +404,7 @@ private extension ChannelDTO {
     /// Updates the `oldestMessageAt` of the channel. It should only updates if the current `messages: [Message]`
     /// is older than the current `ChannelDTO.oldestMessageAt`, unless the current `ChannelDTO.oldestMessageAt`
     /// is the default one, which is by default a very old date, so are sure the first messages are always fetched.
-    func updateOldestMessageAt<ExtraData: ExtraDataTypes>(payload: ChannelPayload<ExtraData>) {
+    func updateOldestMessageAt(payload: ChannelPayload) {
         if let payloadOldestMessageAt = payload.messages.map(\.createdAt).min() {
             let isOlderThanCurrentOldestMessage = payloadOldestMessageAt < (oldestMessageAt ?? Date.distantFuture)
             if isOlderThanCurrentOldestMessage {

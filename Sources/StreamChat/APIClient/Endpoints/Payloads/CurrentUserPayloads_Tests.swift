@@ -10,7 +10,7 @@ class CurrentUserPayload_Tests: XCTestCase {
     let currentUserJSON = XCTestCase.mockData(fromFile: "CurrentUser")
     
     func test_currentUserJSON_isSerialized_withDefaultExtraData() throws {
-        let payload = try JSONDecoder.default.decode(CurrentUserPayload<NoExtraData>.self, from: currentUserJSON)
+        let payload = try JSONDecoder.default.decode(CurrentUserPayload.self, from: currentUserJSON)
         XCTAssertEqual(payload.id, "broken-waterfall-5")
         XCTAssertEqual(payload.isBanned, false)
         XCTAssertEqual(payload.createdAt, "2019-12-12T15:33:46.488935Z".toDate())
@@ -39,18 +39,7 @@ class CurrentUserPayload_Tests: XCTestCase {
     }
     
     func test_currentUserJSON_isSerialized_withCustomExtraData() throws {
-        struct TestExtraData: ExtraDataTypes {
-            struct User: UserExtraData {
-                static var defaultValue = Self(secretNote: nil)
-
-                let secretNote: String?
-                private enum CodingKeys: String, CodingKey {
-                    case secretNote = "secret_note"
-                }
-            }
-        }
-        
-        let payload = try JSONDecoder.default.decode(CurrentUserPayload<TestExtraData>.self, from: currentUserJSON)
+        let payload = try JSONDecoder.default.decode(CurrentUserPayload.self, from: currentUserJSON)
         XCTAssertEqual(payload.id, "broken-waterfall-5")
         XCTAssertEqual(payload.isBanned, false)
         XCTAssertEqual(payload.createdAt, "2019-12-12T15:33:46.488935Z".toDate())
@@ -67,11 +56,11 @@ class CurrentUserPayload_Tests: XCTestCase {
 
         XCTAssertEqual(payload.mutedUsers.map(\.mutedUser.id), ["dawn-grass-7"])
         
-        XCTAssertEqual(payload.extraData.secretNote, "Anaking is Vader!")
+        XCTAssertEqual(payload.extraData, ["secret_note": .string("Anaking is Vader!")])
 
         XCTAssertEqual(payload.mutedChannels.count, 1)
         XCTAssertEqual(payload.mutedChannels[0].user.id, "broken-waterfall-5")
-        XCTAssertEqual(payload.mutedChannels[0].user.extraData.secretNote, "Anaking is Vader!")
+        XCTAssertEqual(payload.mutedChannels[0].user.extraData, ["secret_note": .string("Anaking is Vader!")])
         XCTAssertEqual(payload.mutedChannels[0].mutedChannel.cid.rawValue, "messaging:B1DFF9C5-E6A6-4BFA-9375-DC5E8C6852FF")
         XCTAssertEqual(payload.mutedChannels[0].createdAt, "2021-03-22T10:23:52.516225Z".toDate())
         XCTAssertEqual(payload.mutedChannels[0].updatedAt, "2021-03-22T10:23:52.516225Z".toDate())

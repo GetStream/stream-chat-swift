@@ -33,7 +33,7 @@ class TypingStartCleanupMiddleware_Tests: XCTestCase {
     func test_stopTypingEvent_notSentForExcludedUsers() {
         // Create a middleware and store emitted events.
         var emittedEvents: [Event] = []
-        var middleware: TypingStartCleanupMiddleware<NoExtraData>! = .init(
+        var middleware: TypingStartCleanupMiddleware! = .init(
             excludedUserIds: { [self.currentUser.id] },
             emitEvent: { emittedEvents.append($0) }
         )
@@ -57,7 +57,7 @@ class TypingStartCleanupMiddleware_Tests: XCTestCase {
     func test_stopTypingEvent_sentAfterTimeout() {
         // Create a middleware and store emitted events.
         var emittedEvents: [Event] = []
-        var middleware: TypingStartCleanupMiddleware<NoExtraData>! = .init(
+        var middleware: TypingStartCleanupMiddleware! = .init(
             excludedUserIds: { [self.currentUser.id] },
             emitEvent: { emittedEvents.append($0) }
         )

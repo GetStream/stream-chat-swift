@@ -12,10 +12,10 @@ import CoreData
 ///     in response for `update(userListQuery` request new user will be returned if it is part of the original query filter.
 ///     3. After sending `update(userListQuery` for all queries `UserListUpdater` does the job of linking
 ///     corresponding queries to the user.
-final class NewUserQueryUpdater<ExtraData: UserExtraData>: Worker {
+final class NewUserQueryUpdater: Worker {
     private let environment: Environment
         
-    private lazy var userListUpdater: UserListUpdater<ExtraData> = self.environment
+    private lazy var userListUpdater: UserListUpdater = self.environment
         .createUserListUpdater(
             database,
             apiClient
@@ -83,7 +83,7 @@ final class NewUserQueryUpdater<ExtraData: UserExtraData>: Worker {
             guard let queries = self?.queries else { return }
 
             // Existing queries with modified filter parameter
-            var updatedQueries: [_UserListQuery<ExtraData>] = []
+            var updatedQueries: [UserListQuery] = []
             
             do {
                 updatedQueries = try queries.map {
@@ -113,20 +113,20 @@ extension NewUserQueryUpdater {
         var createUserListUpdater: (
             _ database: DatabaseContainer,
             _ apiClient: APIClient
-        ) -> UserListUpdater<ExtraData> = UserListUpdater.init
+        ) -> UserListUpdater = UserListUpdater.init
     }
 }
 
 private extension UserListQueryDTO {
-    func asUserListQueryWithUpdatedFilter<ExtraData: UserExtraData>(
-        filterToAdd filter: Filter<_UserListFilterScope<ExtraData>>
-    ) throws -> _UserListQuery<ExtraData> {
-        let encodedFilter = try JSONDecoder.default.decode(Filter<_UserListFilterScope<ExtraData>>.self, from: filterJSONData)
+    func asUserListQueryWithUpdatedFilter(
+        filterToAdd filter: Filter<UserListFilterScope>
+    ) throws -> UserListQuery {
+        let encodedFilter = try JSONDecoder.default.decode(Filter<UserListFilterScope>.self, from: filterJSONData)
         
         // We need to pass original `filterHash` so user will be linked to original query, not the modified one
-        var updatedFilter: Filter<_UserListFilterScope<ExtraData>> = .and([encodedFilter, filter])
+        var updatedFilter: Filter<UserListFilterScope> = .and([encodedFilter, filter])
         updatedFilter.explicitHash = filterHash
         
-        return _UserListQuery(filter: updatedFilter)
+        return UserListQuery(filter: updatedFilter)
     }
 }

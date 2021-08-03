@@ -5,8 +5,8 @@
 import Foundation
 
 extension Endpoint {
-    static func channels<ExtraData: ExtraDataTypes>(query: _ChannelListQuery<ExtraData.Channel>)
-        -> Endpoint<ChannelListPayload<ExtraData>> {
+    static func channels(query: ChannelListQuery)
+        -> Endpoint<ChannelListPayload> {
         .init(
             path: "channels",
             method: .get,
@@ -16,7 +16,7 @@ extension Endpoint {
         )
     }
     
-    static func channel<ExtraData: ExtraDataTypes>(query: _ChannelQuery<ExtraData>) -> Endpoint<ChannelPayload<ExtraData>> {
+    static func channel(query: ChannelQuery) -> Endpoint<ChannelPayload> {
         .init(
             path: "channels/" + query.apiPath + "/query",
             method: .post,
@@ -26,7 +26,7 @@ extension Endpoint {
         )
     }
     
-    static func updateChannel<ExtraData: ExtraDataTypes>(channelPayload: ChannelEditDetailPayload<ExtraData>)
+    static func updateChannel(channelPayload: ChannelEditDetailPayload)
         -> Endpoint<EmptyResponse> {
         .init(
             path: "channels/" + channelPayload.apiPath,
@@ -87,8 +87,8 @@ extension Endpoint {
         )
     }
     
-    static func sendMessage<ExtraData: ExtraDataTypes>(cid: ChannelId, messagePayload: MessageRequestBody<ExtraData>)
-        -> Endpoint<MessagePayload<ExtraData>.Boxed> {
+    static func sendMessage(cid: ChannelId, messagePayload: MessageRequestBody)
+        -> Endpoint<MessagePayload.Boxed> {
         .init(
             path: "channels/" + cid.apiPath + "/message",
             method: .post,
@@ -222,7 +222,7 @@ extension Endpoint {
         )
     }
     
-    static func channelWatchers<ExtraData: ExtraDataTypes>(query: ChannelWatcherListQuery) -> Endpoint<ChannelPayload<ExtraData>> {
+    static func channelWatchers(query: ChannelWatcherListQuery) -> Endpoint<ChannelPayload> {
         .init(
             path: "channels/" + query.cid.apiPath + "/query",
             method: .post,

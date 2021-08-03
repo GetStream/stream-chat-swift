@@ -5,7 +5,7 @@
 @testable
 import StreamChat
 
-final class DatabaseCleanupUpdater_Mock<ExtraData: ExtraDataTypes>: DatabaseCleanupUpdater<ExtraData> {
+final class DatabaseCleanupUpdater_Mock: DatabaseCleanupUpdater {
     var resetExistingChannelsData_body: (DatabaseSession) -> Void = { _ in }
     override func resetExistingChannelsData(session: DatabaseSession) {
         resetExistingChannelsData_body(session)

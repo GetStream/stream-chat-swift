@@ -6,7 +6,7 @@ import CoreData
 import Foundation
 
 /// Updates current user data to the backend and updates local storage.
-class CurrentUserUpdater<ExtraData: ExtraDataTypes>: Worker {
+class CurrentUserUpdater: Worker {
     /// Updates the current user data.
     ///
     /// By default all data is `nil`, and it won't be updated unless a value is provided.
@@ -21,7 +21,7 @@ class CurrentUserUpdater<ExtraData: ExtraDataTypes>: Worker {
         currentUserId: UserId,
         name: String? = nil,
         imageURL: URL? = nil,
-        userExtraData: ExtraData.User? = nil,
+        userExtraData: [String: RawJSON]? = nil,
         completion: ((Error?) -> Void)? = nil
     ) {
         let params: [Any?] = [name, imageURL, userExtraData]

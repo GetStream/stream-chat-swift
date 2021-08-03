@@ -5,56 +5,11 @@
 import CoreData
 import Foundation
 
-/// A protocol defining extra data types used by `ChatClient`.
-///
-/// You can add additional (extra) data to entities in the chat system. For now, you can add extra data to `ChatUser`,
-/// `ChatChannel`, and `ChatMessage`.
-///
-/// Example usage:
-/// ```
-///   enum CustomDataTypes: ExtraDataTypes {
-///     typealias Channel = MyCustomChannelExtraData
-///     typealias Message = MyCustomMessageExtraData
-///   }
-///
-///   let client = Client<CustomDataTypes>(currentUser: user, config: config)
-/// ```
-///
-public protocol ExtraDataTypes {
-    /// An extra data type for `ChatUser`.
-    associatedtype User: UserExtraData = NoExtraData
-    
-    /// An extra data type for `ChatMessage`.
-    associatedtype Message: MessageExtraData = NoExtraData
-    
-    /// An extra data type for `ChatChannel`.
-    associatedtype Channel: ChannelExtraData = NoExtraData
-    
-    /// An extra data type for `ChatMessageReaction`.
-    associatedtype MessageReaction: MessageReactionExtraData = NoExtraData
-}
-
 /// The root object representing a Stream Chat.
 ///
 /// Typically, an app contains just one instance of `ChatClient`. However, it's possible to have multiple instances if your use
 /// case requires it (i.e. more than one window with different workspaces in a Slack-like app).
-///
-/// - Note: `ChatClient` is a typealias of `_ChatClient` with the default extra data types. If you want to use your custom extra
-/// data types, you should create your own `ChatClient` typealias for `_ChatClient`. Learn more about using custom extra data in our
-/// [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/Cheat-Sheet#working-with-extra-data).
-///
-public typealias ChatClient = _ChatClient<NoExtraData>
-
-/// The root object representing a Stream Chat.
-///
-/// Typically, an app contains just one instance of `ChatClient`. However, it's possible to have multiple instances if your use
-/// case requires it (i.e. more than one window with different workspaces in a Slack-like app).
-///
-/// - Note: `_ChatClient` type is not meant to be used directly. If you don't use custom extra data types, use `ChatClient`
-/// typealias instead. When using custom extra data types, you should create your own `ChatClient` typealias for `_ChatClient`.
-/// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/Cheat-Sheet#working-with-extra-data).
-///
-public class _ChatClient<ExtraData: ExtraDataTypes> {
+public class ChatClient {
     /// The `UserId` of the currently logged in user.
     @Atomic public internal(set) var currentUserId: UserId?
 
@@ -88,19 +43,19 @@ public class _ChatClient<ExtraData: ExtraDataTypes> {
         let center = environment.notificationCenterBuilder(databaseContainer)
 
         let middlewares: [EventMiddleware] = [
-            EventDataProcessorMiddleware<ExtraData>(),
-            TypingStartCleanupMiddleware<ExtraData>(
+            EventDataProcessorMiddleware(),
+            TypingStartCleanupMiddleware(
                 excludedUserIds: { [weak self] in Set([self?.currentUserId].compactMap { $0 }) },
                 emitEvent: { [weak center] in center?.process($0) }
             ),
-            ChannelReadUpdaterMiddleware<ExtraData>(),
-            UserTypingStateUpdaterMiddleware<ExtraData>(),
-            MessageReactionsMiddleware<ExtraData>(),
-            ChannelTruncatedEventMiddleware<ExtraData>(),
-            MemberEventMiddleware<ExtraData>(),
-            UserChannelBanEventsMiddleware<ExtraData>(),
-            UserWatchingEventMiddleware<ExtraData>(),
-            ChannelVisibilityEventMiddleware<ExtraData>()
+            ChannelReadUpdaterMiddleware(),
+            UserTypingStateUpdaterMiddleware(),
+            MessageReactionsMiddleware(),
+            ChannelTruncatedEventMiddleware(),
+            MemberEventMiddleware(),
+            UserChannelBanEventsMiddleware(),
+            UserWatchingEventMiddleware(),
+            ChannelVisibilityEventMiddleware()
         ]
 
         center.add(middlewares: middlewares)
@@ -137,14 +92,14 @@ public class _ChatClient<ExtraData: ExtraDataTypes> {
         let webSocketClient = environment.webSocketClientBuilder?(
             urlSessionConfiguration,
             encoder,
-            EventDecoder<ExtraData>(),
+            EventDecoder(),
             eventNotificationCenter,
             internetConnection
         )
 
         if let currentUserId = currentUserId {
             webSocketClient?.connectEndpoint = Endpoint<EmptyResponse>.webSocketConnect(
-                userInfo: UserInfo<ExtraData>(id: currentUserId)
+                userInfo: UserInfo(id: currentUserId)
             )
         }
         
@@ -200,7 +155,7 @@ public class _ChatClient<ExtraData: ExtraDataTypes> {
     
     private(set) lazy var internetConnection = environment.internetConnection()
     private(set) lazy var clientUpdater = environment.clientUpdaterBuilder(self)
-    private(set) var userConnectionProvider: _UserConnectionProvider<ExtraData>?
+    private(set) var userConnectionProvider: UserConnectionProvider?
     
     /// Used for starting and ending background tasks. Hides platform specific logic.
     private lazy var backgroundTaskScheduler = environment.backgroundTaskSchedulerBuilder()
@@ -258,17 +213,17 @@ public class _ChatClient<ExtraData: ExtraDataTypes> {
         if config.isClientInActiveMode {
             // All production workers
             workerBuilders = [
-                MessageSender<ExtraData>.init,
-                NewChannelQueryUpdater<ExtraData>.init,
-                NewUserQueryUpdater<ExtraData.User>.init,
-                MessageEditor<ExtraData>.init,
+                MessageSender.init,
+                NewChannelQueryUpdater.init,
+                NewUserQueryUpdater.init,
+                MessageEditor.init,
                 AttachmentUploader.init
             ]
             
             // All production event workers
             eventWorkerBuilders = [
-                ChannelWatchStateUpdater<ExtraData>.init,
-                MissingEventsPublisher<ExtraData>.init
+                ChannelWatchStateUpdater.init,
+                MissingEventsPublisher.init
             ]
         } else {
             workerBuilders = []
@@ -322,7 +277,7 @@ public class _ChatClient<ExtraData: ExtraDataTypes> {
     ///   - token: Authorization token for the user.
     ///   - completion: The completion that will be called once the **first** user session for the given token is setup.
     public func connectUser(
-        userInfo: UserInfo<ExtraData>,
+        userInfo: UserInfo,
         token: Token,
         completion: ((Error?) -> Void)? = nil
     ) {
@@ -339,7 +294,7 @@ public class _ChatClient<ExtraData: ExtraDataTypes> {
     ///   - extraData: Extra data for user that is passed to the `connect` endpoint for user creation.
     ///   - completion: The completion that will be called once the **first** user session for the given token is setup.
     public func connectGuestUser(
-        userInfo: UserInfo<ExtraData>,
+        userInfo: UserInfo,
         completion: ((Error?) -> Void)? = nil
     ) {
         setConnectionInfoAndConnect(
@@ -410,8 +365,8 @@ public class _ChatClient<ExtraData: ExtraDataTypes> {
     }
     
     private func setConnectionInfoAndConnect(
-        userInfo: UserInfo<ExtraData>?,
-        userConnectionProvider: _UserConnectionProvider<ExtraData>,
+        userInfo: UserInfo?,
+        userConnectionProvider: UserConnectionProvider,
         completion: ((Error?) -> Void)? = nil
     ) {
         self.userConnectionProvider = userConnectionProvider
@@ -472,7 +427,7 @@ public class _ChatClient<ExtraData: ExtraDataTypes> {
     }
 }
 
-extension _ChatClient {
+extension ChatClient {
     /// An object containing all dependencies of `Client`
     struct Environment {
         var apiClientBuilder: (
@@ -524,13 +479,13 @@ extension _ChatClient {
         var requestEncoderBuilder: (_ baseURL: URL, _ apiKey: APIKey) -> RequestEncoder = DefaultRequestEncoder.init
         var requestDecoderBuilder: () -> RequestDecoder = DefaultRequestDecoder.init
         
-        var eventDecoderBuilder: () -> EventDecoder<ExtraData> = EventDecoder<ExtraData>.init
+        var eventDecoderBuilder: () -> EventDecoder = EventDecoder.init
         
         var notificationCenterBuilder = EventNotificationCenter.init
         
         var internetConnection: () -> InternetConnection = { InternetConnection() }
 
-        var clientUpdaterBuilder = ChatClientUpdater<ExtraData>.init
+        var clientUpdaterBuilder = ChatClientUpdater.init
         
         var backgroundTaskSchedulerBuilder: () -> BackgroundTaskScheduler? = {
             if Bundle.main.isAppExtension {
@@ -584,7 +539,7 @@ extension ClientError {
 
 /// `APIClient` listens for `WebSocketClient` connection updates so it can forward the current connection id to
 /// its `RequestEncoder`.
-extension _ChatClient: ConnectionStateDelegate {
+extension ChatClient: ConnectionStateDelegate {
     func webSocketClient(_ client: WebSocketClient, didUpdateConnectionState state: WebSocketConnectionState) {
         connectionStatus = .init(webSocketConnectionState: state)
         
@@ -685,7 +640,7 @@ private extension ClientError {
 }
 
 /// `Client` provides connection details for the `RequestEncoder`s it creates.
-extension _ChatClient: ConnectionDetailsProviderDelegate {
+extension ChatClient: ConnectionDetailsProviderDelegate {
     func provideToken(completion: @escaping (_ token: Token?) -> Void) {
         if let token = currentToken {
             completion(token)

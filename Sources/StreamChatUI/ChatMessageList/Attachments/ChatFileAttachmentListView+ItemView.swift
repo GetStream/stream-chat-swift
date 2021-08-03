@@ -5,7 +5,7 @@
 import StreamChat
 import UIKit
 
-extension _ChatMessageFileAttachmentListView {
+extension ChatMessageFileAttachmentListView {
     open class ItemView: _View, ThemeProvider {
         /// Content of the attachment `ChatMessageFileAttachment`
         public var content: ChatMessageFileAttachment? {

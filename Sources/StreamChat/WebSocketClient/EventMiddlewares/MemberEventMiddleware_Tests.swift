@@ -8,7 +8,7 @@ import XCTest
 
 final class MemberEventMiddleware_Tests: XCTestCase {
     var database: DatabaseContainerMock!
-    var middleware: MemberEventMiddleware<NoExtraData>!
+    var middleware: MemberEventMiddleware!
     
     // MARK: - Set up
     
@@ -42,7 +42,7 @@ final class MemberEventMiddleware_Tests: XCTestCase {
     
     func tests_middleware_forwardsMemberAddedEvent_ifDatabaseWriteGeneratesError() throws {
         // Create MemberAddedEvent payload
-        let eventPayload: EventPayload<NoExtraData> = .init(
+        let eventPayload: EventPayload = .init(
             eventType: .memberAdded,
             cid: .unique,
             memberContainer: .dummy(userId: .unique)
@@ -65,7 +65,7 @@ final class MemberEventMiddleware_Tests: XCTestCase {
         let memberId = UserId.unique
         
         // Create MemberAddedEvent payload
-        let eventPayload: EventPayload<NoExtraData> = .init(
+        let eventPayload: EventPayload = .init(
             eventType: .memberAdded,
             cid: cid,
             memberContainer: .dummy(userId: memberId)
@@ -95,7 +95,7 @@ final class MemberEventMiddleware_Tests: XCTestCase {
     
     func tests_middleware_forwardsMemberRemovedEvent_ifDatabaseWriteGeneratesError() throws {
         // Create MemberAddedEvent payload
-        let eventPayload: EventPayload<NoExtraData> = .init(
+        let eventPayload: EventPayload = .init(
             eventType: .memberRemoved,
             cid: .unique,
             user: .dummy(userId: .unique)
@@ -145,7 +145,7 @@ final class MemberEventMiddleware_Tests: XCTestCase {
         XCTAssertEqual(queryDTO.members.count, 1)
         
         // Create MemberRemovedEvent payload
-        let eventPayload: EventPayload<NoExtraData> = .init(
+        let eventPayload: EventPayload = .init(
             eventType: .memberRemoved,
             cid: cid,
             user: .dummy(userId: memberId)
@@ -180,7 +180,7 @@ final class MemberEventMiddleware_Tests: XCTestCase {
     
     func tests_middleware_forwardsMemberUpdatedEvent_ifDatabaseWriteGeneratesError() throws {
         // Create MemberAddedEvent payload
-        let eventPayload: EventPayload<NoExtraData> = .init(
+        let eventPayload: EventPayload = .init(
             eventType: .memberUpdated,
             cid: .unique,
             memberContainer: .dummy(userId: .unique)
@@ -214,7 +214,7 @@ final class MemberEventMiddleware_Tests: XCTestCase {
         let memberName = channel.members.first!.user.name
         
         // Create MemberUpdatedEvent payload
-        let eventPayload: EventPayload<NoExtraData> = .init(
+        let eventPayload: EventPayload = .init(
             eventType: .memberUpdated,
             cid: cid,
             memberContainer: .dummy(userId: memberId)
@@ -243,7 +243,7 @@ final class MemberEventMiddleware_Tests: XCTestCase {
         let cid = ChannelId.unique
 
         // Create MemberAddedEvent payload
-        let eventPayload: EventPayload<NoExtraData> = .init(
+        let eventPayload: EventPayload = .init(
             eventType: .notificationAddedToChannel,
             cid: cid
         )
@@ -271,7 +271,7 @@ final class MemberEventMiddleware_Tests: XCTestCase {
         let cid = ChannelId.unique
 
         // Create MemberAddedEvent payload
-        let eventPayload: EventPayload<NoExtraData> = .init(
+        let eventPayload: EventPayload = .init(
             eventType: .notificationRemovedFromChannel,
             cid: cid,
             user: .dummy(userId: .unique)
@@ -305,7 +305,7 @@ final class MemberEventMiddleware_Tests: XCTestCase {
         try database.createChannel(cid: cid, withQuery: true)
         
         // Create MemberAddedEvent payload with other than current user
-        var eventPayload: EventPayload<NoExtraData> = .init(
+        var eventPayload: EventPayload = .init(
             eventType: .memberAdded,
             cid: cid,
             memberContainer: .dummy(userId: .unique)
@@ -351,7 +351,7 @@ final class MemberEventMiddleware_Tests: XCTestCase {
         try database.createChannel(cid: cid, withQuery: true)
         
         // Create MemberAddedEvent payload with other than current user
-        var eventPayload: EventPayload<NoExtraData> = .init(
+        var eventPayload: EventPayload = .init(
             eventType: .memberRemoved,
             cid: cid,
             user: .dummy(userId: .unique)

@@ -6,19 +6,16 @@ import StreamChat
 import UIKit
 
 /// A View that is embed inside `UICollectionViewCell`  which shows information about user which we want to tag in suggestions
-public typealias ChatMentionSuggestionView = _ChatMentionSuggestionView<NoExtraData>
-
-/// A View that is embed inside `UICollectionViewCell`  which shows information about user which we want to tag in suggestions
-open class _ChatMentionSuggestionView<ExtraData: ExtraDataTypes>: _View, ThemeProvider {
+open class ChatMentionSuggestionView: _View, ThemeProvider {
     /// Content of the cell - `ChatUser` instance from which we take all information.
-    open var content: _ChatUser<ExtraData.User>? {
+    open var content: ChatUser? {
         didSet {
             updateContentIfNeeded()
         }
     }
 
     /// `_ChatChannelAvatarView` instance which holds photo of user for tagging.
-    open private(set) lazy var avatarView: _ChatUserAvatarView<ExtraData> = components
+    open private(set) lazy var avatarView: ChatUserAvatarView = components
         .mentionAvatarView
         .init()
         .withoutAutoresizingMaskConstraints

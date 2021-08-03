@@ -11,7 +11,7 @@ struct CustomEventRequestBody<Payload: CustomEventPayload>: Encodable {
     func encode(to encoder: Encoder) throws {
         let data = try JSONEncoder.default.encode(payload)
         var json = try JSONDecoder.default.decode([String: RawJSON].self, from: data)
-        json[EventPayload<NoExtraData>.CodingKeys.eventType.rawValue] = .string(type(of: payload).eventType.rawValue)
+        json[EventPayload.CodingKeys.eventType.rawValue] = .string(type(of: payload).eventType.rawValue)
         try json.encode(to: encoder)
     }
 }

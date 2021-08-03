@@ -9,7 +9,7 @@ class MemberPayload_Tests: XCTestCase {
     let memberJSON = XCTestCase.mockData(fromFile: "Member")
     
     func test_memberJSON_isSerialized() throws {
-        let payload = try JSONDecoder.default.decode(MemberPayload<NoExtraData>.self, from: memberJSON)
+        let payload = try JSONDecoder.default.decode(MemberPayload.self, from: memberJSON)
         
         XCTAssertEqual(payload.role, .owner)
         XCTAssertEqual(payload.createdAt, "2020-06-05T12:53:09.862721Z".toDate())

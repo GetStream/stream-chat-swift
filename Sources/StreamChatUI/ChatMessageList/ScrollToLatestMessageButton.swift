@@ -6,10 +6,7 @@ import StreamChat
 import UIKit
 
 /// A Button that is used to indicate unread messages in the Message list.
-public typealias ScrollToLatestMessageButton = _ScrollToLatestMessageButton<NoExtraData>
-
-/// A Button that is used to indicate unread messages in the Message list.
-open class _ScrollToLatestMessageButton<ExtraData: ExtraDataTypes>: _Button, ThemeProvider {
+open class ScrollToLatestMessageButton: _Button, ThemeProvider {
     /// The unread count that will be shown on the button as a badge icon.
     var content: ChannelUnreadCount = .noUnread {
         didSet {
@@ -18,7 +15,7 @@ open class _ScrollToLatestMessageButton<ExtraData: ExtraDataTypes>: _Button, The
     }
     
     /// The view showing number of unread messages in channel if any.
-    open private(set) lazy var unreadCountView: _ChatMessageListUnreadCountView<ExtraData> = components
+    open private(set) lazy var unreadCountView: ChatMessageListUnreadCountView = components
         .messageListUnreadCountView
         .init()
         .withoutAutoresizingMaskConstraints

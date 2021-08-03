@@ -8,7 +8,7 @@ import XCTest
 
 final class MessageReactionsMiddleware_Tests: XCTestCase {
     var database: DatabaseContainerMock!
-    var middleware: MessageReactionsMiddleware<NoExtraData>!
+    var middleware: MessageReactionsMiddleware!
     
     // MARK: - Set up
     
@@ -39,7 +39,7 @@ final class MessageReactionsMiddleware_Tests: XCTestCase {
     }
     
     func tests_middleware_forwardsReactionEvent_ifDatabaseWriteGeneratesError() throws {
-        let eventPayload: EventPayload<NoExtraData> = .init(
+        let eventPayload: EventPayload = .init(
             eventType: .reactionNew,
             cid: .unique,
             reaction: .dummy(
@@ -62,13 +62,13 @@ final class MessageReactionsMiddleware_Tests: XCTestCase {
     
     func tests_middleware_handlesReactionNewEventCorrectly() throws {
         // Create reaction payload.
-        let reactionPayload: MessageReactionPayload<NoExtraData> = .dummy(
+        let reactionPayload: MessageReactionPayload = .dummy(
             messageId: .unique,
             user: UserPayload.dummy(userId: .unique)
         )
         
         // Create event payload.
-        let eventPayload: EventPayload<NoExtraData> = .init(
+        let eventPayload: EventPayload = .init(
             eventType: .reactionNew,
             cid: .unique,
             reaction: reactionPayload
@@ -105,13 +105,13 @@ final class MessageReactionsMiddleware_Tests: XCTestCase {
     
     func tests_middleware_handlesReactionUpdatedEventCorrectly() throws {
         // Create reaction payload.
-        let reactionPayload: MessageReactionPayload<NoExtraData> = .dummy(
+        let reactionPayload: MessageReactionPayload = .dummy(
             messageId: .unique,
             user: UserPayload.dummy(userId: .unique)
         )
         
         // Create event payload.
-        let eventPayload: EventPayload<NoExtraData> = .init(
+        let eventPayload: EventPayload = .init(
             eventType: .reactionNew,
             cid: .unique,
             reaction: reactionPayload
@@ -148,13 +148,13 @@ final class MessageReactionsMiddleware_Tests: XCTestCase {
     
     func tests_middleware_handlesReactionDeletedEventCorrectly() throws {
         // Create reaction payload.
-        let reactionPayload: MessageReactionPayload<NoExtraData> = .dummy(
+        let reactionPayload: MessageReactionPayload = .dummy(
             messageId: .unique,
             user: UserPayload.dummy(userId: .unique)
         )
         
         // Create event payload.
-        let eventPayload: EventPayload<NoExtraData> = .init(
+        let eventPayload: EventPayload = .init(
             eventType: .reactionNew,
             cid: .unique,
             reaction: reactionPayload

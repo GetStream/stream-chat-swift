@@ -7,7 +7,7 @@
 import XCTest
 
 class MemberEvents_Tests: XCTestCase {
-    let eventDecoder = EventDecoder<NoExtraData>()
+    let eventDecoder = EventDecoder()
     
     func test_added() throws {
         let json = XCTestCase.mockData(fromFile: "MemberAdded")
@@ -35,7 +35,7 @@ class MemberEventsIntegration_Tests: XCTestCase {
     var client: ChatClient!
     var currentUserId: UserId!
     
-    let eventDecoder = EventDecoder<NoExtraData>()
+    let eventDecoder = EventDecoder()
     
     override func setUp() {
         super.setUp()

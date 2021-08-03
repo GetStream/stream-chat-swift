@@ -8,7 +8,7 @@ import Foundation
 ///
 /// The ephemeral message containing `ChatMessageGiphyAttachment` attachment will be created
 /// when `/giphy` command is used.
-public typealias ChatMessageGiphyAttachment = _ChatMessageAttachment<GiphyAttachmentPayload>
+public typealias ChatMessageGiphyAttachment = ChatMessageAttachment<GiphyAttachmentPayload>
 
 /// Represents a payload for attachments with `.giphy` type.
 public struct GiphyAttachmentPayload: AttachmentPayload {

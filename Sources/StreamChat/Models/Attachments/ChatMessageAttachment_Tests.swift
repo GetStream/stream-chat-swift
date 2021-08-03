@@ -99,7 +99,7 @@ final class ChatMessageAttachment_Tests: XCTestCase {
         )
 
         // Assert we are able to decode joke attachment in the given conditions.
-        let jokeAttachment: _ChatMessageAttachment<Joke> = .init(
+        let jokeAttachment: ChatMessageAttachment<Joke> = .init(
             id: typeErasedAttachment.id,
             type: typeErasedAttachment.type,
             payload: joke,

@@ -24,6 +24,16 @@
       ]
     },
     {
+      "Combine" : [
+        "combine/combine-overview",
+        "combine/connection",
+        "combine/channels",
+        "combine/users",
+        "combine/messages",
+        "combine/events"
+      ]
+    },
+    {
       "Core Components": [
         "components/channel-list",
         "components/message-list",

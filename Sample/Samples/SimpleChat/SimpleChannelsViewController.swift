@@ -206,7 +206,7 @@ class SimpleChannelsViewController: UITableViewController, ChatChannelListContro
                     createChannelWithId: .init(type: .messaging, id: id),
                     name: name,
                     imageURL: nil,
-                    extraData: .defaultValue
+                    extraData: [:]
                 )
                 controller.synchronize()
             } catch {
@@ -238,7 +238,7 @@ class SimpleChannelsViewController: UITableViewController, ChatChannelListContro
                     createDirectMessageChannelWith: [userIds],
                     name: nil,
                     imageURL: nil,
-                    extraData: .defaultValue
+                    extraData: [:]
                 )
                 chatVC.channelController = controller
                 self.navigationController?.pushViewController(chatVC, animated: true)
@@ -279,7 +279,7 @@ class SimpleChannelsViewController: UITableViewController, ChatChannelListContro
         let actions = [
             UIAlertAction(title: "Change name", style: .default) { _ in
                 self.alertTextField(title: "Change channel name", placeholder: "New name") { newName in
-                    channelController.updateChannel(name: newName, imageURL: nil, team: nil, extraData: .defaultValue)
+                    channelController.updateChannel(name: newName, imageURL: nil, team: nil, extraData: [:])
                 }
             },
             UIAlertAction(title: "Mute", style: .default) { _ in

@@ -7,15 +7,13 @@ import XCTest
 
 final class GuestEndpoints_Tests: XCTestCase {
     func test_token_buildsCorrectly_withDefaultExtraData() {
-        let extraData = NoExtraData.defaultValue
-
-        let payload = GuestUserTokenRequestPayload<NoExtraData>(
+        let payload = GuestUserTokenRequestPayload(
             userId: .unique,
             name: .unique,
             imageURL: .unique(),
-            extraData: extraData
+            extraData: [:]
         )
-        let expectedEndpoint = Endpoint<GuestUserTokenPayload<NoExtraData>>(
+        let expectedEndpoint = Endpoint<GuestUserTokenPayload>(
             path: "guest",
             method: .post,
             queryItems: nil,
@@ -23,11 +21,11 @@ final class GuestEndpoints_Tests: XCTestCase {
             body: ["user": payload]
         )
 
-        let actualEndpoint: Endpoint<GuestUserTokenPayload<NoExtraData>> = .guestUserToken(
+        let actualEndpoint: Endpoint<GuestUserTokenPayload> = .guestUserToken(
             userId: payload.userId,
             name: payload.name,
             imageURL: payload.imageURL,
-            extraData: extraData
+            extraData: [:]
         )
 
         // Assert endpoint is built correctly
@@ -38,15 +36,15 @@ final class GuestEndpoints_Tests: XCTestCase {
     }
     
     func test_token_buildsCorrectly_withCustomExtraData() {
-        let extraData = TestExtraData.User(company: "getstream.io")
+        let extraData: [String: RawJSON] = ["company": .string("getstream.io")]
 
-        let payload = GuestUserTokenRequestPayload<TestExtraData>(
+        let payload = GuestUserTokenRequestPayload(
             userId: .unique,
             name: .unique,
             imageURL: .unique(),
-            extraData: extraData
+            extraData: [:]
         )
-        let expectedEndpoint = Endpoint<GuestUserTokenPayload<TestExtraData>>(
+        let expectedEndpoint = Endpoint<GuestUserTokenPayload>(
             path: "guest",
             method: .post,
             queryItems: nil,
@@ -54,11 +52,11 @@ final class GuestEndpoints_Tests: XCTestCase {
             body: ["user": payload]
         )
 
-        let actualEndpoint: Endpoint<GuestUserTokenPayload<TestExtraData>> = .guestUserToken(
+        let actualEndpoint: Endpoint<GuestUserTokenPayload> = .guestUserToken(
             userId: payload.userId,
             name: payload.name,
             imageURL: payload.imageURL,
-            extraData: extraData
+            extraData: [:]
         )
 
         // Assert endpoint is built correctly
@@ -66,12 +64,5 @@ final class GuestEndpoints_Tests: XCTestCase {
             AnyEndpoint(expectedEndpoint),
             AnyEndpoint(actualEndpoint)
         )
-    }
-}
-
-private struct TestExtraData: ExtraDataTypes {
-    struct User: UserExtraData {
-        static var defaultValue = Self(company: "Stream")
-        let company: String
     }
 }

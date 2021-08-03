@@ -17,12 +17,12 @@ The **StreamChatUI SDK**  is the official iOS SDK for [Stream Chat](https://gets
 
 ## Which Version Should I Choose?
 
-- **4.x** is the next major version, about to be released in July '21. It's mostly compatible with **3.x**, while exposing many more customization options. Choose this one, should you start a project today.
+- **4.x** is the next major version. The final release is expected to be before 15 August 2021. It's mostly compatible with **3.x**, while exposing many more customization options. Beta versions are released on a weekly basis. We recommend using the latest beta for new projects.
 - **3.x** is the current production version. This version doesn't allow full customizability of the UI elements.
 - **2.x** is in maintenance mode. We strongly encourage you to plan an upgrade. 
 
 ### 4.x Beta Available
-[The upcoming v4 has a public beta available](https://github.com/GetStream/stream-chat-swift/releases/tag/4.0-beta.1). If your development timeline fits our release schedule, we strongly encourage you to give it a try and share your feedback with us by opening an issue.
+[The upcoming v4 has a public beta available](https://github.com/GetStream/stream-chat-swift/releases). If your development timeline fits our release schedule, we strongly encourage you to give it a try and share your feedback with us by opening an issue.
 
 ## Main Features
 

@@ -6,19 +6,19 @@ import Combine
 import Foundation
 
 @available(iOS 13, *)
-extension _ChatMessageController {
+extension ChatMessageController {
     /// A publisher emitting a new value every time the state of the controller changes.
     public var statePublisher: AnyPublisher<DataController.State, Never> {
         basePublishers.state.keepAlive(self)
     }
     
     /// A publisher emitting a new value every time the message changes.
-    public var messageChangePublisher: AnyPublisher<EntityChange<_ChatMessage<ExtraData>>, Never> {
+    public var messageChangePublisher: AnyPublisher<EntityChange<ChatMessage>, Never> {
         basePublishers.messageChange.keepAlive(self)
     }
     
     /// A publisher emitting a new value every time the list of the replies of the message has changes.
-    public var repliesChangesPublisher: AnyPublisher<[ListChange<_ChatMessage<ExtraData>>], Never> {
+    public var repliesChangesPublisher: AnyPublisher<[ListChange<ChatMessage>], Never> {
         basePublishers.repliesChanges.keepAlive(self)
     }
     
@@ -27,18 +27,18 @@ extension _ChatMessageController {
     /// and expose the published values by mapping them to a read-only `AnyPublisher` type.
     class BasePublishers {
         /// The wrapper controller
-        unowned let controller: _ChatMessageController
+        unowned let controller: ChatMessageController
         
         /// A backing subject for `statePublisher`.
         let state: CurrentValueSubject<DataController.State, Never>
         
         /// A backing subject for `messageChangePublisher`.
-        let messageChange: PassthroughSubject<EntityChange<_ChatMessage<ExtraData>>, Never> = .init()
+        let messageChange: PassthroughSubject<EntityChange<ChatMessage>, Never> = .init()
         
         /// A backing subject for `repliesChangesPublisher`.
-        let repliesChanges: PassthroughSubject<[ListChange<_ChatMessage<ExtraData>>], Never> = .init()
+        let repliesChanges: PassthroughSubject<[ListChange<ChatMessage>], Never> = .init()
         
-        init(controller: _ChatMessageController<ExtraData>) {
+        init(controller: ChatMessageController) {
             self.controller = controller
             state = .init(controller.state)
             
@@ -48,21 +48,21 @@ extension _ChatMessageController {
 }
 
 @available(iOS 13, *)
-extension _ChatMessageController.BasePublishers: _ChatMessageControllerDelegate {
+extension ChatMessageController.BasePublishers: ChatMessageControllerDelegate {
     func controller(_ controller: DataController, didChangeState state: DataController.State) {
         self.state.send(state)
     }
     
     func messageController(
-        _ controller: _ChatMessageController<ExtraData>,
-        didChangeMessage change: EntityChange<_ChatMessage<ExtraData>>
+        _ controller: ChatMessageController,
+        didChangeMessage change: EntityChange<ChatMessage>
     ) {
         messageChange.send(change)
     }
     
     func messageController(
-        _ controller: _ChatMessageController<ExtraData>,
-        didChangeReplies changes: [ListChange<_ChatMessage<ExtraData>>]
+        _ controller: ChatMessageController,
+        didChangeReplies changes: [ListChange<ChatMessage>]
     ) {
         repliesChanges.send(changes)
     }

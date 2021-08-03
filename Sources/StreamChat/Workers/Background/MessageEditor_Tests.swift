@@ -7,12 +7,10 @@
 import XCTest
 
 final class MessageEditor_Tests: StressTestCase {
-    typealias ExtraData = NoExtraData
-    
     var webSocketClient: WebSocketClientMock!
     var apiClient: APIClientMock!
     var database: DatabaseContainerMock!
-    var editor: MessageEditor<ExtraData>!
+    var editor: MessageEditor!
     
     // MARK: - Setup
     
@@ -52,11 +50,11 @@ final class MessageEditor_Tests: StressTestCase {
         try database.createMessage(id: message1Id, authorId: currentUserId, localState: .pendingSync)
         try database.createMessage(id: message2Id, authorId: currentUserId, localState: nil)
         
-        let message1Payload: MessageRequestBody<ExtraData> = try XCTUnwrap(
+        let message1Payload: MessageRequestBody = try XCTUnwrap(
             database.viewContext.message(id: message1Id)?
                 .asRequestBody()
         )
-        let message2Payload: MessageRequestBody<ExtraData> = try XCTUnwrap(
+        let message2Payload: MessageRequestBody = try XCTUnwrap(
             database.viewContext.message(id: message2Id)?
                 .asRequestBody()
         )

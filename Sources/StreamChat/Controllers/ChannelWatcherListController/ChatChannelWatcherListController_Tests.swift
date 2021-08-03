@@ -20,7 +20,7 @@ final class ChatChannelWatcherListController_Tests: StressTestCase {
         super.setUp()
 
         env = TestEnvironment()
-        client = _ChatClient.mock
+        client = ChatClient.mock
         query = .init(cid: .unique)
         controller = .init(query: query, client: client, environment: env.environment)
         controllerCallbackQueueID = UUID()
@@ -513,7 +513,7 @@ final class ChatChannelWatcherListController_Tests: StressTestCase {
 }
 
 private class TestEnvironment {
-    @Atomic var watcherListUpdater: ChannelUpdaterMock<NoExtraData>?
+    @Atomic var watcherListUpdater: ChannelUpdaterMock?
     @Atomic var watcherListObserver: ListDatabaseObserverMock<ChatUser, UserDTO>?
     @Atomic var watcherListObserverSynchronizeError: Error?
 
@@ -558,7 +558,7 @@ private class TestDelegate: QueueAwareDelegate, ChatChannelWatcherListController
 }
 
 // A concrete `_ChatChannelWatcherListControllerDelegate` implementation allowing capturing the delegate calls.
-private class TestDelegateGeneric: QueueAwareDelegate, _ChatChannelWatcherListControllerDelegate {
+private class TestDelegateGeneric: QueueAwareDelegate, ChatChannelWatcherListControllerDelegate {
     @Atomic var state: DataController.State?
     @Atomic var didUpdateWatchers_changes: [ListChange<ChatUser>]?
 

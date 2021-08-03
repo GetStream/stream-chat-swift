@@ -5,7 +5,7 @@
 import Foundation
 @testable import StreamChat
 
-extension MemberPayload where ExtraData == NoExtraData {
+extension MemberPayload {
     /// Returns a dummy member payload with the given `userId` and `role`
     static func dummy(
         userId: UserId = .unique,
@@ -25,7 +25,7 @@ extension MemberPayload where ExtraData == NoExtraData {
     }
 }
 
-extension MemberContainerPayload where ExtraData == NoExtraData {
+extension MemberContainerPayload {
     static func dummy(userId: UserId = .unique) -> MemberContainerPayload {
         .init(member: .dummy(userId: userId), invite: nil, memberRole: nil)
     }

@@ -4,14 +4,14 @@
 
 import Foundation
 
-public extension _ChatChannel {
+public extension ChatChannel {
     /// A list of locally cached members objects.
     ///
     /// - Important: This list doesn't have to contain all members of the channel. To access the full list of members, create
     /// a `ChatChannelController` for this channel and use it to query all channel members.
     ///
     @available(*, renamed: "lastActiveMembers")
-    var cachedMembers: Set<_ChatChannelMember<ExtraData.User>> { Set(lastActiveMembers) }
+    var cachedMembers: Set<ChatChannelMember> { Set(lastActiveMembers) }
     
     /// A list of channel members currently online actively watching the channel.
     ///
@@ -20,14 +20,14 @@ public extension _ChatChannel {
     ///
     /// - Note: This property will contain no more than 25 watchers
     @available(*, renamed: "lastActiveWatchers")
-    var watchers: Set<_ChatUser<ExtraData.User>> { Set(lastActiveWatchers) }
+    var watchers: Set<ChatUser> { Set(lastActiveWatchers) }
     
     /// A list of currently typing users.
     @available(*, renamed: "currentlyTypingUsers")
-    var currentlyTypingMembers: Set<_ChatChannelMember<ExtraData.User>> { [] }
+    var currentlyTypingMembers: Set<ChatChannelMember> { [] }
 }
 
-public extension _ChatMessage {
+public extension ChatMessage {
     /// Quoted message id.
     ///
     /// If message is inline reply this property will contain id of the message quoted by this reply.

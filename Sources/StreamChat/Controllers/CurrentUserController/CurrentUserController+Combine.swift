@@ -6,9 +6,9 @@ import Combine
 import Foundation
 
 @available(iOS 13, *)
-extension _CurrentChatUserController {
+extension CurrentChatUserController {
     /// A publisher emitting a new value every time the current user changes.
-    public var currentUserChangePublisher: AnyPublisher<EntityChange<_CurrentChatUser<ExtraData>>, Never> {
+    public var currentUserChangePublisher: AnyPublisher<EntityChange<CurrentChatUser>, Never> {
         basePublishers.currentUserChange.keepAlive(self)
     }
     
@@ -22,15 +22,15 @@ extension _CurrentChatUserController {
     /// and expose the published values by mapping them to a read-only `AnyPublisher` type.
     class BasePublishers {
         /// The wrapper controller
-        unowned let controller: _CurrentChatUserController
+        unowned let controller: CurrentChatUserController
         
         /// A backing subject for `currentUserChangePublisher`.
-        let currentUserChange: PassthroughSubject<EntityChange<_CurrentChatUser<ExtraData>>, Never> = .init()
+        let currentUserChange: PassthroughSubject<EntityChange<CurrentChatUser>, Never> = .init()
         
         /// A backing subject for `unreadCountPublisher`.
         let unreadCount: CurrentValueSubject<UnreadCount, Never>
                 
-        init(controller: _CurrentChatUserController<ExtraData>) {
+        init(controller: CurrentChatUserController) {
             self.controller = controller
             unreadCount = .init(.noUnread)
             
@@ -40,17 +40,17 @@ extension _CurrentChatUserController {
 }
 
 @available(iOS 13, *)
-extension _CurrentChatUserController.BasePublishers: _CurrentChatUserControllerDelegate {
+extension CurrentChatUserController.BasePublishers: CurrentChatUserControllerDelegate {
     func currentUserController(
-        _ controller: _CurrentChatUserController<ExtraData>,
+        _ controller: CurrentChatUserController,
         didChangeCurrentUserUnreadCount unreadCount: UnreadCount
     ) {
         self.unreadCount.send(unreadCount)
     }
     
     func currentUserController(
-        _ controller: _CurrentChatUserController<ExtraData>,
-        didChangeCurrentUser currentUser: EntityChange<_CurrentChatUser<ExtraData>>
+        _ controller: CurrentChatUserController,
+        didChangeCurrentUser currentUser: EntityChange<CurrentChatUser>
     ) {
         currentUserChange.send(currentUser)
     }

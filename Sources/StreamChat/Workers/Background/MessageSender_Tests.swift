@@ -7,13 +7,11 @@
 import XCTest
 
 class MessageSender_Tests: StressTestCase {
-    typealias ExtraData = NoExtraData
-    
     var webSocketClient: WebSocketClientMock!
     var apiClient: APIClientMock!
     var database: DatabaseContainerMock!
     
-    var sender: MessageSender<ExtraData>!
+    var sender: MessageSender!
     
     var cid: ChannelId!
     
@@ -61,7 +59,7 @@ class MessageSender_Tests: StressTestCase {
                 pinning: nil,
                 quotedMessageId: nil,
                 isSilent: false,
-                extraData: ExtraData.Message.defaultValue
+                extraData: [:]
             )
             message1.localMessageState = .pendingSend
             message1Id = message1.id
@@ -77,7 +75,7 @@ class MessageSender_Tests: StressTestCase {
                     .mockImage,
                     .mockFile
                 ],
-                extraData: ExtraData.Message.defaultValue
+                extraData: [:]
             )
             message2.localMessageState = .pendingSend
             message2Id = message2.id
@@ -89,20 +87,20 @@ class MessageSender_Tests: StressTestCase {
                 quotedMessageId: nil,
                 isSilent: false,
                 attachments: [],
-                extraData: ExtraData.Message.defaultValue
+                extraData: [:]
             )
             message3Id = message3.id
         }
         
-        let message1Payload: MessageRequestBody<ExtraData> = try XCTUnwrap(
+        let message1Payload: MessageRequestBody = try XCTUnwrap(
             database.viewContext.message(id: message1Id)?
                 .asRequestBody()
         )
-        let message2Payload: MessageRequestBody<ExtraData> = try XCTUnwrap(
+        let message2Payload: MessageRequestBody = try XCTUnwrap(
             database.viewContext.message(id: message2Id)?
                 .asRequestBody()
         )
-        let message3Payload: MessageRequestBody<ExtraData> = try XCTUnwrap(
+        let message3Payload: MessageRequestBody = try XCTUnwrap(
             database.viewContext.message(id: message3Id)?
                 .asRequestBody()
         )
@@ -121,7 +119,7 @@ class MessageSender_Tests: StressTestCase {
         }
 
         // Simulate successful response for message1.
-        let dummyPayload: MessagePayload<ExtraData>.Boxed = .init(
+        let dummyPayload: MessagePayload.Boxed = .init(
             message: .dummy(messageId: message1Id, authorUserId: .anonymous)
         )
         
@@ -158,13 +156,13 @@ class MessageSender_Tests: StressTestCase {
                     .init(payload: TestAttachmentPayload.unique),
                     .init(payload: TestAttachmentPayload.unique)
                 ],
-                extraData: ExtraData.Message.defaultValue
+                extraData: [:]
             )
             message.localMessageState = .pendingSend
             messageId = message.id
         }
         
-        let messagePayload: MessageRequestBody<ExtraData> = try XCTUnwrap(
+        let messagePayload: MessageRequestBody = try XCTUnwrap(
             database.viewContext.message(id: messageId)?.asRequestBody()
         )
     
@@ -187,13 +185,13 @@ class MessageSender_Tests: StressTestCase {
                     .mockImage,
                     .init(payload: TestAttachmentPayload.unique)
                 ],
-                extraData: ExtraData.Message.defaultValue
+                extraData: [:]
             )
             message.localMessageState = .pendingSend
             messageId = message.id
         }
         
-        let messagePayload: MessageRequestBody<ExtraData> = try XCTUnwrap(
+        let messagePayload: MessageRequestBody = try XCTUnwrap(
             database.viewContext.message(id: messageId)?.asRequestBody()
         )
         
@@ -224,7 +222,7 @@ class MessageSender_Tests: StressTestCase {
                 pinning: nil,
                 quotedMessageId: nil,
                 isSilent: false,
-                extraData: ExtraData.Message.defaultValue
+                extraData: [:]
             )
             message1.localMessageState = .pendingSend
             message1Id = message1.id
@@ -237,7 +235,7 @@ class MessageSender_Tests: StressTestCase {
         AssertAsync.willBeTrue(apiClient.request_endpoint != nil)
         
         // Simulate successful API response
-        let callback = apiClient.request_completion as! (Result<MessagePayload<ExtraData>.Boxed, Error>) -> Void
+        let callback = apiClient.request_completion as! (Result<MessagePayload.Boxed, Error>) -> Void
         callback(.success(.init(message: .dummy(messageId: message1Id, authorUserId: .anonymous))))
         
         // Check the temporary state is erased
@@ -258,7 +256,7 @@ class MessageSender_Tests: StressTestCase {
                 pinning: nil,
                 quotedMessageId: nil,
                 isSilent: false,
-                extraData: ExtraData.Message.defaultValue
+                extraData: [:]
             )
             message1.localMessageState = .pendingSend
             message1Id = message1.id
@@ -268,7 +266,7 @@ class MessageSender_Tests: StressTestCase {
         AssertAsync.willBeTrue(apiClient.request_endpoint != nil)
         
         // Simulate error API response
-        let callback = apiClient.request_completion as! (Result<MessagePayload<ExtraData>.Boxed, Error>) -> Void
+        let callback = apiClient.request_completion as! (Result<MessagePayload.Boxed, Error>) -> Void
         callback(.failure(TestError()))
         
         // Check the state is eventually changed to `sendingFailed` but keeps the `locallyCreatedAt` value
@@ -291,7 +289,7 @@ class MessageSender_Tests: StressTestCase {
                 pinning: nil,
                 quotedMessageId: nil,
                 isSilent: false,
-                extraData: ExtraData.Message.defaultValue
+                extraData: [:]
             )
             message1.localMessageState = .pendingSend
             message1Id = message1.id
@@ -302,7 +300,7 @@ class MessageSender_Tests: StressTestCase {
                 pinning: nil,
                 quotedMessageId: nil,
                 isSilent: false,
-                extraData: ExtraData.Message.defaultValue
+                extraData: [:]
             )
             message2.localMessageState = .pendingSend
             message2Id = message2.id
@@ -313,14 +311,14 @@ class MessageSender_Tests: StressTestCase {
                 pinning: nil,
                 quotedMessageId: nil,
                 isSilent: false,
-                extraData: ExtraData.Message.defaultValue
+                extraData: [:]
             )
             message3.localMessageState = .pendingSend
             message3Id = message3.id
         }
         
         // Check the 1st API call
-        let message1Payload: MessageRequestBody<ExtraData> = try XCTUnwrap(
+        let message1Payload: MessageRequestBody = try XCTUnwrap(
             database.viewContext.message(id: message1Id)?
                 .asRequestBody()
         )
@@ -330,13 +328,13 @@ class MessageSender_Tests: StressTestCase {
         )
         
         // Simulate the first call response
-        var callback: ((Result<MessagePayload<ExtraData>.Boxed, Error>) -> Void) {
-            apiClient.request_completion as! (Result<MessagePayload<ExtraData>.Boxed, Error>) -> Void
+        var callback: ((Result<MessagePayload.Boxed, Error>) -> Void) {
+            apiClient.request_completion as! (Result<MessagePayload.Boxed, Error>) -> Void
         }
         callback(.success(.init(message: .dummy(messageId: message1Id, authorUserId: .anonymous))))
         
         // Check the 2nd API call
-        let message2Payload: MessageRequestBody<ExtraData> = try XCTUnwrap(
+        let message2Payload: MessageRequestBody = try XCTUnwrap(
             database.viewContext.message(id: message2Id)?
                 .asRequestBody()
         )
@@ -349,7 +347,7 @@ class MessageSender_Tests: StressTestCase {
         callback(.success(.init(message: .dummy(messageId: message1Id, authorUserId: .anonymous))))
 
         // Check the 3rd API call
-        let message3Payload: MessageRequestBody<ExtraData> = try XCTUnwrap(
+        let message3Payload: MessageRequestBody = try XCTUnwrap(
             database.viewContext.message(id: message3Id)?
                 .asRequestBody()
         )
@@ -381,7 +379,7 @@ class MessageSender_Tests: StressTestCase {
                 pinning: nil,
                 quotedMessageId: nil,
                 isSilent: false,
-                extraData: ExtraData.Message.defaultValue
+                extraData: [:]
             )
             messageA1.localMessageState = .pendingSend
             channelA_message1 = messageA1.id
@@ -392,7 +390,7 @@ class MessageSender_Tests: StressTestCase {
                 pinning: nil,
                 quotedMessageId: nil,
                 isSilent: false,
-                extraData: ExtraData.Message.defaultValue
+                extraData: [:]
             )
             messageA2.localMessageState = .pendingSend
             channelA_message2 = messageA2.id
@@ -403,7 +401,7 @@ class MessageSender_Tests: StressTestCase {
                 pinning: nil,
                 quotedMessageId: nil,
                 isSilent: false,
-                extraData: ExtraData.Message.defaultValue
+                extraData: [:]
             )
             messageB1.localMessageState = .pendingSend
             channelB_message1 = messageB1.id
@@ -414,7 +412,7 @@ class MessageSender_Tests: StressTestCase {
                 pinning: nil,
                 quotedMessageId: nil,
                 isSilent: false,
-                extraData: ExtraData.Message.defaultValue
+                extraData: [:]
             )
             messageB2.localMessageState = .pendingSend
             channelB_message2 = messageB2.id
@@ -424,11 +422,11 @@ class MessageSender_Tests: StressTestCase {
         AssertAsync.willBeEqual(apiClient.request_allRecordedCalls.count, 2)
         
         // Check the API calls are for the first messages from both channels
-        let channelA_message1Payload: MessageRequestBody<ExtraData> = try XCTUnwrap(
+        let channelA_message1Payload: MessageRequestBody = try XCTUnwrap(
             database.viewContext
                 .message(id: channelA_message1)?.asRequestBody()
         )
-        let channelB_message1Payload: MessageRequestBody<ExtraData> = try XCTUnwrap(
+        let channelB_message1Payload: MessageRequestBody = try XCTUnwrap(
             database.viewContext
                 .message(id: channelB_message1)?.asRequestBody()
         )
@@ -442,7 +440,7 @@ class MessageSender_Tests: StressTestCase {
 
         // Simulate successfull responses for both API calls
         apiClient.request_allRecordedCalls.forEach {
-            let callback = $0.completion as! (Result<MessagePayload<ExtraData>.Boxed, Error>) -> Void
+            let callback = $0.completion as! (Result<MessagePayload.Boxed, Error>) -> Void
             callback(.success(.init(message: .dummy(messageId: .unique, authorUserId: .anonymous))))
         }
                 
@@ -450,11 +448,11 @@ class MessageSender_Tests: StressTestCase {
         AssertAsync.willBeEqual(apiClient.request_allRecordedCalls.count, 2 + 2)
         
         // Check the API calls are for the second messages from both channels
-        let channelA_message2Payload: MessageRequestBody<ExtraData> = try XCTUnwrap(
+        let channelA_message2Payload: MessageRequestBody = try XCTUnwrap(
             database.viewContext
                 .message(id: channelA_message2)?.asRequestBody()
         )
-        let channelB_message2Payload: MessageRequestBody<ExtraData> = try XCTUnwrap(
+        let channelB_message2Payload: MessageRequestBody = try XCTUnwrap(
             database.viewContext
                 .message(id: channelB_message2)?.asRequestBody()
         )
@@ -478,7 +476,7 @@ class MessageSender_Tests: StressTestCase {
                 pinning: nil,
                 quotedMessageId: nil,
                 isSilent: false,
-                extraData: ExtraData.Message.defaultValue
+                extraData: [:]
             )
             message.localMessageState = .pendingSend
             messageId = message.id
@@ -488,9 +486,9 @@ class MessageSender_Tests: StressTestCase {
         AssertAsync.willBeTrue(apiClient.request_endpoint != nil)
         
         // Simulate successful API response with assigned attachment
-        let callback = apiClient.request_completion as! (Result<MessagePayload<ExtraData>.Boxed, Error>) -> Void
+        let callback = apiClient.request_completion as! (Result<MessagePayload.Boxed, Error>) -> Void
         let attachment: MessageAttachmentPayload = .dummy(type: .giphy, title: .unique)
-        let messagePayload: MessagePayload<ExtraData> = .dummy(
+        let messagePayload: MessagePayload = .dummy(
             messageId: messageId,
             attachments: [attachment],
             authorUserId: .unique
@@ -498,7 +496,7 @@ class MessageSender_Tests: StressTestCase {
         
         callback(.success(.init(message: messagePayload)))
 
-        var message: _ChatMessage<ExtraData>? {
+        var message: ChatMessage? {
             database.viewContext.message(id: messageId)?.asModel()
         }
 

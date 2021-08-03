@@ -9,7 +9,7 @@ import Foundation
 /// The `ChatMessageFileAttachment` attachment will be added to the message automatically
 /// if the message was sent with attached `AnyAttachmentPayload` created with
 /// local URL and `.file` attachment type.
-public typealias ChatMessageFileAttachment = _ChatMessageAttachment<FileAttachmentPayload>
+public typealias ChatMessageFileAttachment = ChatMessageAttachment<FileAttachmentPayload>
 
 /// Represents a payload for attachments with `.file` type.
 public struct FileAttachmentPayload: AttachmentPayload {

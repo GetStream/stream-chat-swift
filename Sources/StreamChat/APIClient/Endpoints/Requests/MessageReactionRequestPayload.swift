@@ -5,7 +5,7 @@
 import Foundation
 
 /// The type describes the outgoing JSON to `message/[message_id]/reaction` endpoint
-struct MessageReactionRequestPayload<ExtraData: MessageReactionExtraData>: Encodable {
+struct MessageReactionRequestPayload: Encodable {
     private enum CodingKeys: String, CodingKey {
         case type
         case score
@@ -15,7 +15,7 @@ struct MessageReactionRequestPayload<ExtraData: MessageReactionExtraData>: Encod
     let type: MessageReactionType
     let score: Int
     let enforceUnique: Bool
-    let extraData: ExtraData
+    let extraData: [String: RawJSON]
     
     func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
