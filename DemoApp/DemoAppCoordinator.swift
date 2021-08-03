@@ -39,6 +39,9 @@ final class DemoAppCoordinator {
         Components.default.channelListRouter = DemoChatChannelListRouter.self
         Components.default.messageListVC = CustomMessageListVC.self
         Components.default.messageContentView = CustomMessageContentView.self
+        Appearance.default.localizationProvider = { key, table in
+            Bundle.main.localizedString(forKey: key, value: nil, table: table)
+        }
 
         // Channels with the current user
         let controller = client.channelListController(query: .init(filter: .containMembers(userIds: [userCredentials.id])))

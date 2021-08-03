@@ -1,0 +1,62 @@
+//
+// Copyright © 2020 Stream.io Inc. All rights reserved.
+//
+
+// MARK: -  StreamChatUI Strings
+
+"channel.name.and" = "and";
+"channel.name.andXMore" = "and %@ more";
+"channel.name.missing" = "NoChannel";
+"channel.item.empty-messages" = "No messages";
+"channel.item.typing-singular" = "is typing ...";
+"channel.item.typing-plural" = "are typing ...";
+
+"message.actions.inline-reply" = "Reply";
+"message.actions.thread-reply" = "Thread Reply";
+"message.actions.edit" = "Edit Message";
+"message.actions.copy" = "Copy Message";
+"message.actions.delete" = "Delete Message";
+"message.actions.delete.confirmation-title" = "Delete Message";
+"message.actions.delete.confirmation-message" = "Are you sure you want to permanently delete this message?";
+"message.actions.user-unblock" = "Unblock User";
+"message.actions.user-block" = "Block User";
+"message.actions.user-unmute" = "Unmute User";
+"message.actions.user-mute" = "Mute User";
+"message.actions.resend" = "Resend";
+
+"messageList.typingIndicator.typing-unknown" = "Someone is typing";
+
+"message.threads.reply" = "Thread Reply";
+"message.threads.replyWith" = "with %@";
+
+"alert.actions.cancel" = "Cancel";
+"alert.actions.delete" = "Delete";
+"alert.actions.ok" = "Ok";
+
+"message.only-visible-to-you" = "Only visible to you";
+"message.deleted-message-placeholder" = "Message deleted";
+
+"composer.title.edit" = "Edit Message";
+"composer.title.reply" = "Reply to Message";
+"composer.placeholder.message" = "Send a message";
+"composer.placeholder.giphy" = "Search GIFs";
+"composer.checkmark.direct-message-reply" = "Also send as direct message";
+"composer.checkmark.channel-reply" = "Also send in channel";
+"composer.picker.title" = "Choose attachment type: ";
+"composer.picker.file" = "File";
+"composer.picker.media" = "Photo or Video";
+"composer.picker.cancel" = "Cancel";
+
+"composer.suggestions.commands.header" = "Instant Commands";
+"message.sending.attachment-uploading-failed" = "UPLOADING FAILED";
+
+"message.title.online" = "Online";
+"message.title.see-minutes-ago" = "Seen %@ ago";
+"message.title.offline" = "Offline";
+"message.title.group" = "%d members, %d online";
+
+"current-selection" = "%d of %d";
+
+"attachment.max-size-exceeded" = "Attachment size exceed the limit.";
+
+// MARK: -  DemoApp Strings

@@ -14,113 +14,113 @@ internal enum L10n {
   internal enum Alert {
     internal enum Actions {
       /// Cancel
-      internal static let cancel = L10n.tr("Localizable", "alert.actions.cancel")
+      internal static var cancel: String { L10n.tr("Localizable", "alert.actions.cancel") }
       /// Delete
-      internal static let delete = L10n.tr("Localizable", "alert.actions.delete")
+      internal static var delete: String { L10n.tr("Localizable", "alert.actions.delete") }
       /// Ok
-      internal static let ok = L10n.tr("Localizable", "alert.actions.ok")
+      internal static var ok: String { L10n.tr("Localizable", "alert.actions.ok") }
     }
   }
 
   internal enum Attachment {
     /// Attachment size exceed the limit.
-    internal static let maxSizeExceeded = L10n.tr("Localizable", "attachment.max-size-exceeded")
+    internal static var maxSizeExceeded: String { L10n.tr("Localizable", "attachment.max-size-exceeded") }
   }
 
   internal enum Channel {
     internal enum Item {
       /// No messages
-      internal static let emptyMessages = L10n.tr("Localizable", "channel.item.empty-messages")
+      internal static var emptyMessages: String { L10n.tr("Localizable", "channel.item.empty-messages") }
       /// are typing ...
-      internal static let typingPlural = L10n.tr("Localizable", "channel.item.typing-plural")
+      internal static var typingPlural: String { L10n.tr("Localizable", "channel.item.typing-plural") }
       /// is typing ...
-      internal static let typingSingular = L10n.tr("Localizable", "channel.item.typing-singular")
+      internal static var typingSingular: String { L10n.tr("Localizable", "channel.item.typing-singular") }
     }
     internal enum Name {
       /// and
-      internal static let and = L10n.tr("Localizable", "channel.name.and")
+      internal static var and: String { L10n.tr("Localizable", "channel.name.and") }
       /// and %@ more
       internal static func andXMore(_ p1: Any) -> String {
         return L10n.tr("Localizable", "channel.name.andXMore", String(describing: p1))
       }
       /// NoChannel
-      internal static let missing = L10n.tr("Localizable", "channel.name.missing")
+      internal static var missing: String { L10n.tr("Localizable", "channel.name.missing") }
     }
   }
 
   internal enum Composer {
     internal enum Checkmark {
       /// Also send in channel
-      internal static let channelReply = L10n.tr("Localizable", "composer.checkmark.channel-reply")
+      internal static var channelReply: String { L10n.tr("Localizable", "composer.checkmark.channel-reply") }
       /// Also send as direct message
-      internal static let directMessageReply = L10n.tr("Localizable", "composer.checkmark.direct-message-reply")
+      internal static var directMessageReply: String { L10n.tr("Localizable", "composer.checkmark.direct-message-reply") }
     }
     internal enum Picker {
       /// Cancel
-      internal static let cancel = L10n.tr("Localizable", "composer.picker.cancel")
+      internal static var cancel: String { L10n.tr("Localizable", "composer.picker.cancel") }
       /// File
-      internal static let file = L10n.tr("Localizable", "composer.picker.file")
+      internal static var file: String { L10n.tr("Localizable", "composer.picker.file") }
       /// Photo or Video
-      internal static let media = L10n.tr("Localizable", "composer.picker.media")
+      internal static var media: String { L10n.tr("Localizable", "composer.picker.media") }
       /// Choose attachment type: 
-      internal static let title = L10n.tr("Localizable", "composer.picker.title")
+      internal static var title: String { L10n.tr("Localizable", "composer.picker.title") }
     }
     internal enum Placeholder {
       /// Search GIFs
-      internal static let giphy = L10n.tr("Localizable", "composer.placeholder.giphy")
+      internal static var giphy: String { L10n.tr("Localizable", "composer.placeholder.giphy") }
       /// Send a message
-      internal static let message = L10n.tr("Localizable", "composer.placeholder.message")
+      internal static var message: String { L10n.tr("Localizable", "composer.placeholder.message") }
     }
     internal enum Suggestions {
       internal enum Commands {
         /// Instant Commands
-        internal static let header = L10n.tr("Localizable", "composer.suggestions.commands.header")
+        internal static var header: String { L10n.tr("Localizable", "composer.suggestions.commands.header") }
       }
     }
     internal enum Title {
       /// Edit Message
-      internal static let edit = L10n.tr("Localizable", "composer.title.edit")
+      internal static var edit: String { L10n.tr("Localizable", "composer.title.edit") }
       /// Reply to Message
-      internal static let reply = L10n.tr("Localizable", "composer.title.reply")
+      internal static var reply: String { L10n.tr("Localizable", "composer.title.reply") }
     }
   }
 
   internal enum Message {
     /// Message deleted
-    internal static let deletedMessagePlaceholder = L10n.tr("Localizable", "message.deleted-message-placeholder")
+    internal static var deletedMessagePlaceholder: String { L10n.tr("Localizable", "message.deleted-message-placeholder") }
     /// Only visible to you
-    internal static let onlyVisibleToYou = L10n.tr("Localizable", "message.only-visible-to-you")
+    internal static var onlyVisibleToYou: String { L10n.tr("Localizable", "message.only-visible-to-you") }
     internal enum Actions {
       /// Copy Message
-      internal static let copy = L10n.tr("Localizable", "message.actions.copy")
+      internal static var copy: String { L10n.tr("Localizable", "message.actions.copy") }
       /// Delete Message
-      internal static let delete = L10n.tr("Localizable", "message.actions.delete")
+      internal static var delete: String { L10n.tr("Localizable", "message.actions.delete") }
       /// Edit Message
-      internal static let edit = L10n.tr("Localizable", "message.actions.edit")
+      internal static var edit: String { L10n.tr("Localizable", "message.actions.edit") }
       /// Reply
-      internal static let inlineReply = L10n.tr("Localizable", "message.actions.inline-reply")
+      internal static var inlineReply: String { L10n.tr("Localizable", "message.actions.inline-reply") }
       /// Resend
-      internal static let resend = L10n.tr("Localizable", "message.actions.resend")
+      internal static var resend: String { L10n.tr("Localizable", "message.actions.resend") }
       /// Thread Reply
-      internal static let threadReply = L10n.tr("Localizable", "message.actions.thread-reply")
+      internal static var threadReply: String { L10n.tr("Localizable", "message.actions.thread-reply") }
       /// Block User
-      internal static let userBlock = L10n.tr("Localizable", "message.actions.user-block")
+      internal static var userBlock: String { L10n.tr("Localizable", "message.actions.user-block") }
       /// Mute User
-      internal static let userMute = L10n.tr("Localizable", "message.actions.user-mute")
+      internal static var userMute: String { L10n.tr("Localizable", "message.actions.user-mute") }
       /// Unblock User
-      internal static let userUnblock = L10n.tr("Localizable", "message.actions.user-unblock")
+      internal static var userUnblock: String { L10n.tr("Localizable", "message.actions.user-unblock") }
       /// Unmute User
-      internal static let userUnmute = L10n.tr("Localizable", "message.actions.user-unmute")
+      internal static var userUnmute: String { L10n.tr("Localizable", "message.actions.user-unmute") }
       internal enum Delete {
         /// Are you sure you want to permanently delete this message?
-        internal static let confirmationMessage = L10n.tr("Localizable", "message.actions.delete.confirmation-message")
+        internal static var confirmationMessage: String { L10n.tr("Localizable", "message.actions.delete.confirmation-message") }
         /// Delete Message
-        internal static let confirmationTitle = L10n.tr("Localizable", "message.actions.delete.confirmation-title")
+        internal static var confirmationTitle: String { L10n.tr("Localizable", "message.actions.delete.confirmation-title") }
       }
     }
     internal enum Sending {
       /// UPLOADING FAILED
-      internal static let attachmentUploadingFailed = L10n.tr("Localizable", "message.sending.attachment-uploading-failed")
+      internal static var attachmentUploadingFailed: String { L10n.tr("Localizable", "message.sending.attachment-uploading-failed") }
     }
     internal enum Threads {
       /// Plural format key: "%#@replies@"
@@ -128,7 +128,7 @@ internal enum L10n {
         return L10n.tr("Localizable", "message.threads.count", p1)
       }
       /// Thread Reply
-      internal static let reply = L10n.tr("Localizable", "message.threads.reply")
+      internal static var reply: String { L10n.tr("Localizable", "message.threads.reply") }
       /// with %@
       internal static func replyWith(_ p1: Any) -> String {
         return L10n.tr("Localizable", "message.threads.replyWith", String(describing: p1))
@@ -140,9 +140,9 @@ internal enum L10n {
         return L10n.tr("Localizable", "message.title.group", p1, p2)
       }
       /// Offline
-      internal static let offline = L10n.tr("Localizable", "message.title.offline")
+      internal static var offline: String { L10n.tr("Localizable", "message.title.offline") }
       /// Online
-      internal static let online = L10n.tr("Localizable", "message.title.online")
+      internal static var online: String { L10n.tr("Localizable", "message.title.online") }
       /// Seen %@ ago
       internal static func seeMinutesAgo(_ p1: Any) -> String {
         return L10n.tr("Localizable", "message.title.see-minutes-ago", String(describing: p1))
@@ -153,7 +153,7 @@ internal enum L10n {
   internal enum MessageList {
     internal enum TypingIndicator {
       /// Someone is typing
-      internal static let typingUnknown = L10n.tr("Localizable", "messageList.typingIndicator.typing-unknown")
+      internal static var typingUnknown: String { L10n.tr("Localizable", "messageList.typingIndicator.typing-unknown") }
       /// Plural format key: "%1$@%2$#@typing@"
       internal static func users(_ p1: Any, _ p2: Int) -> String {
         return L10n.tr("Localizable", "messageList.typingIndicator.users", String(describing: p1), p2)
@@ -166,8 +166,9 @@ internal enum L10n {
 
 extension L10n {
   private static func tr(_ table: String, _ key: String, _ args: CVarArg...) -> String {
-    let format = BundleToken.bundle.localizedString(forKey: key, value: nil, table: table)
-    return String(format: format, locale: Locale.current, arguments: args)
+     // TODO: Using using Appearance.default prohibits using Appearance injection
+     let format = Appearance.default.localizationProvider(key, table)
+     return String(format: format, locale: Locale.current, arguments: args)
   }
 }
 
