@@ -22,7 +22,7 @@ extension MessagePayload {
         ],
         authorUserId: UserId,
         text: String = .unique,
-        extraData: CustomData = .defaultValue,
+        extraData: [String: RawJSON] = [:],
         latestReactions: [MessageReactionPayload] = [],
         ownReactions: [MessageReactionPayload] = [],
         createdAt: Date? = nil,

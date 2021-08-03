@@ -149,7 +149,7 @@ class MessageDTO_Tests: XCTestCase {
             )
             Assert.willBeEqual(Int32(messagePayload.replyCount), loadedMessage?.replyCount)
             Assert.willBeEqual(messagePayload.extraData, loadedMessage.map {
-                try? JSONDecoder.default.decode(CustomData.self, from: $0.extraData)
+                try? JSONDecoder.default.decode([String: RawJSON].self, from: $0.extraData)
             })
             Assert.willBeEqual(messagePayload.reactionScores, loadedMessage?.reactionScores.mapKeys(MessageReactionType.init))
             Assert.willBeEqual(loadedMessage?.reactions, loadedReactions)
@@ -231,7 +231,7 @@ class MessageDTO_Tests: XCTestCase {
             )
             Assert.willBeEqual(Int32(messagePayload.replyCount), loadedMessage?.replyCount)
             Assert.willBeEqual(messagePayload.extraData, loadedMessage.map {
-                try? JSONDecoder.default.decode(CustomData.self, from: $0.extraData)
+                try? JSONDecoder.default.decode([String: RawJSON].self, from: $0.extraData)
             })
             Assert.willBeEqual(messagePayload.reactionScores, loadedMessage?.reactionScores.mapKeys(MessageReactionType.init))
             Assert.willBeEqual(loadedMessage?.reactions, loadedReactions)
@@ -337,7 +337,7 @@ class MessageDTO_Tests: XCTestCase {
         }
         
         let loadedMessage: ChatMessage? = database.viewContext.message(id: messageId)?.asModel()
-        XCTAssertEqual(loadedMessage?.extraData, .defaultValue)
+        XCTAssertEqual(loadedMessage?.extraData, [:])
     }
     
     func test_messagePayload_asModel() throws {
@@ -505,7 +505,7 @@ class MessageDTO_Tests: XCTestCase {
         let mentionedUserIds: [UserId] = [currentUserId]
         let messageShowReplyInChannel = true
         let messageIsSilent = true
-        let messageExtraData: CustomData = ["k": .string("v")]
+        let messageExtraData: [String: RawJSON] = ["k": .string("v")]
 
         // Create message with attachments in the database.
         try database.writeSynchronously { session in
@@ -600,7 +600,7 @@ class MessageDTO_Tests: XCTestCase {
                 let currentUserPayload: CurrentUserPayload = .dummy(
                     userId: currentUserId,
                     role: .admin,
-                    extraData: .defaultValue
+                    extraData: [:]
                 )
 
                 try session.saveCurrentUser(payload: currentUserPayload)
@@ -703,7 +703,7 @@ class MessageDTO_Tests: XCTestCase {
                 let currentUserPayload: CurrentUserPayload = .dummy(
                     userId: currentUserId,
                     role: .admin,
-                    extraData: .defaultValue
+                    extraData: [:]
                 )
 
                 try session.saveCurrentUser(payload: currentUserPayload)
@@ -803,7 +803,7 @@ class MessageDTO_Tests: XCTestCase {
                 let currentUserPayload: CurrentUserPayload = .dummy(
                     userId: .unique,
                     role: .admin,
-                    extraData: .defaultValue
+                    extraData: [:]
                 )
 
                 try $0.saveCurrentUser(payload: currentUserPayload)
@@ -843,7 +843,7 @@ class MessageDTO_Tests: XCTestCase {
             let currentUserPayload: CurrentUserPayload = .dummy(
                 userId: currentUserId,
                 role: .admin,
-                extraData: .defaultValue
+                extraData: [:]
             )
 
             try session.saveCurrentUser(payload: currentUserPayload)
@@ -936,7 +936,7 @@ class MessageDTO_Tests: XCTestCase {
             showReplyInChannel: false,
             authorUserId: .unique,
             text: "Reply",
-            extraData: .defaultValue
+            extraData: [:]
         )
         
         // Save reply payload

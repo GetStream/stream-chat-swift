@@ -79,7 +79,7 @@ struct ChannelDetailPayload: Decodable {
     
     let imageURL: URL?
     
-    let extraData: CustomData
+    let extraData: [String: RawJSON]
 
     /// A channel type.
     public let typeRawValue: String
@@ -138,7 +138,7 @@ struct ChannelDetailPayload: Decodable {
         
         cooldownDuration = try container.decodeIfPresent(Int.self, forKey: .cooldownDuration) ?? 0
         
-        if var payload = try? CustomData(from: decoder) {
+        if var payload = try? [String: RawJSON](from: decoder) {
             payload.removeValues(forKeys: ChannelCodingKeys.allCases.map(\.rawValue))
             extraData = payload
         } else {
@@ -152,7 +152,7 @@ struct ChannelDetailPayload: Decodable {
         cid: ChannelId,
         name: String?,
         imageURL: URL?,
-        extraData: CustomData,
+        extraData: [String: RawJSON],
         typeRawValue: String,
         lastMessageAt: Date?,
         createdAt: Date,

@@ -22,7 +22,7 @@ final class MissingEventsPayload_Tests: XCTestCase {
             isOnline: true,
             isInvisible: false,
             isBanned: false,
-            extraData: .defaultValue
+            extraData: [:]
         )
         
         let event = try XCTUnwrap(payload.eventPayloads.first)

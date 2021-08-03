@@ -52,7 +52,7 @@ public class ChatUser {
     /// [docs](https://getstream.io/chat/docs/multi_tenant_chat/?language=swift) for more info.
     public let teams: Set<TeamId>
     
-    public let extraData: CustomData
+    public let extraData: [String: RawJSON]
 
     init(
         id: UserId,
@@ -66,7 +66,7 @@ public class ChatUser {
         updatedAt: Date,
         lastActiveAt: Date?,
         teams: Set<TeamId>,
-        extraData: CustomData
+        extraData: [String: RawJSON]
     ) {
         self.id = id
         self.name = name

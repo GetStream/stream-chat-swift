@@ -286,15 +286,15 @@ extension ChannelDTO {
 extension ChatChannel {
     /// Create a ChannelModel struct from its DTO
     fileprivate static func create(fromDTO dto: ChannelDTO) -> ChatChannel {
-        let extraData: CustomData
+        let extraData: [String: RawJSON]
         do {
-            extraData = try JSONDecoder.default.decode(CustomData.self, from: dto.extraData)
+            extraData = try JSONDecoder.default.decode([String: RawJSON].self, from: dto.extraData)
         } catch {
             log.error(
                 "Failed to decode extra data for Channel with cid: <\(dto.cid)>, using default value instead. "
                     + "Error: \(error)"
             )
-            extraData = .defaultValue
+            extraData = [:]
         }
 
         let cid = try! ChannelId(cid: dto.cid)

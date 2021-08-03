@@ -577,7 +577,7 @@ class UserSearchController_Tests: StressTestCase {
             isOnline: .random(),
             isInvisible: .random(),
             isBanned: .random(),
-            extraData: .defaultValue
+            extraData: [:]
         )
         try client.databaseContainer.writeSynchronously { session in
             try session.saveUser(payload: dummyUser, query: self.controller.query)
@@ -607,7 +607,7 @@ class UserSearchController_Tests: StressTestCase {
             isOnline: .random(),
             isInvisible: .random(),
             isBanned: .random(),
-            extraData: .defaultValue
+            extraData: [:]
         )
         try client.databaseContainer.writeSynchronously { session in
             try session.saveUser(payload: newDummyUser, query: self.controller.query)

@@ -10,7 +10,7 @@ extension MessageReactionPayload {
         type: MessageReactionType = .init(rawValue: .unique),
         messageId: String,
         user: UserPayload,
-        extraData: CustomData = .defaultValue
+        extraData: [String: RawJSON] = [:]
     ) -> MessageReactionPayload {
         .init(
             type: type,

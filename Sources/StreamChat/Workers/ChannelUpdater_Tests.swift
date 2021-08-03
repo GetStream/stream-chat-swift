@@ -119,7 +119,7 @@ class ChannelUpdater_Tests: StressTestCase {
                 let currentUserPayload: CurrentUserPayload = .dummy(
                     userId: currentUserId,
                     role: .admin,
-                    extraData: .defaultValue
+                    extraData: [:]
                 )
 
                 try session.saveCurrentUser(payload: currentUserPayload)
@@ -133,7 +133,7 @@ class ChannelUpdater_Tests: StressTestCase {
         let text: String = .unique
         let command: String = .unique
         let arguments: String = .unique
-        let extraData: CustomData = .defaultValue
+        let extraData: [String: RawJSON] = [:]
 
         let imageAttachmentEnvelope = AnyAttachmentPayload.mockImage
         let fileAttachmentEnvelope = AnyAttachmentPayload.mockFile
@@ -187,7 +187,7 @@ class ChannelUpdater_Tests: StressTestCase {
             [customAttachmentEnvelope.attachment(id: id(for: customAttachmentEnvelope))]
         )
         
-        XCTAssertEqual(message.extraData, .defaultValue)
+        XCTAssertEqual(message.extraData, [:])
         XCTAssertEqual(message.localState, .pendingSend)
         XCTAssertEqual(message.isPinned, true)
         XCTAssertEqual(message.isSilent, false)
@@ -204,7 +204,7 @@ class ChannelUpdater_Tests: StressTestCase {
                 let currentUserPayload: CurrentUserPayload = .dummy(
                     userId: currentUserId,
                     role: .admin,
-                    extraData: .defaultValue
+                    extraData: [:]
                 )
 
                 try session.saveCurrentUser(payload: currentUserPayload)
@@ -227,7 +227,7 @@ class ChannelUpdater_Tests: StressTestCase {
                 arguments: .unique,
                 mentionedUserIds: [.unique],
                 quotedMessageId: nil,
-                extraData: .defaultValue
+                extraData: [:]
             ) { completion($0) }
         }
         

@@ -53,7 +53,7 @@ class DemoChatChannelListRouter: ChatChannelListRouter {
                         name: channelController.channel?.name,
                         imageURL: url,
                         team: channelController.channel?.team,
-                        extraData: channelController.channel?.extraData ?? .defaultValue
+                        extraData: channelController.channel?.extraData ?? [:]
                     ) { error in
                         if let error = error {
                             self.rootViewController.presentAlert(

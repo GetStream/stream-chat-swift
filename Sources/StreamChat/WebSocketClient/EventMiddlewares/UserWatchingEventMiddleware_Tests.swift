@@ -76,7 +76,7 @@ final class UserWatchingEventMiddleware_Tests: XCTestCase {
         
         // Channel and user must exist for the middleware to work
         try database.createChannel(cid: cid, withMessages: false)
-        try database.createUser(id: userId, extraData: .defaultValue)
+        try database.createUser(id: userId, extraData: [:])
         
         // Simulate incoming event
         let forwardedEvent = middleware.handle(event: event, session: database.viewContext)

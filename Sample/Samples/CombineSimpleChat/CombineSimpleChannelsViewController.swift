@@ -237,7 +237,7 @@ class CombineSimpleChannelsViewController: UITableViewController {
                     createChannelWithId: .init(type: .messaging, id: id),
                     name: name,
                     imageURL: nil,
-                    extraData: .defaultValue
+                    extraData: [:]
                 )
                 controller.synchronize()
             } catch {
@@ -269,7 +269,7 @@ class CombineSimpleChannelsViewController: UITableViewController {
                     createDirectMessageChannelWith: [userId],
                     name: nil,
                     imageURL: nil,
-                    extraData: .defaultValue
+                    extraData: [:]
                 )
                 chatVC.channelController = controller
                 self.navigationController?.pushViewController(chatVC, animated: true)
@@ -313,7 +313,7 @@ class CombineSimpleChannelsViewController: UITableViewController {
                 let alert = UIAlertController(title: "Change channel name", message: "", preferredStyle: .alert)
                 alert.addAction(UIAlertAction(title: "Confirm", style: .default, handler: { _ in
                     guard let newName = alert.textFields?.first?.text else { return }
-                    channelController.updateChannel(name: newName, imageURL: nil, team: nil, extraData: .defaultValue)
+                    channelController.updateChannel(name: newName, imageURL: nil, team: nil, extraData: [:])
                 }))
                 alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
                 alert.addTextField(configurationHandler: nil)

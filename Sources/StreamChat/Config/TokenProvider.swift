@@ -44,7 +44,7 @@ extension UserConnectionProvider {
         userId: UserId,
         name: String? = nil,
         imageURL: URL? = nil,
-        extraData: CustomData = .defaultValue
+        extraData: [String: RawJSON] = [:]
     ) -> Self {
         .init { client, completion in
             let endpoint: Endpoint<GuestUserTokenPayload> = .guestUserToken(

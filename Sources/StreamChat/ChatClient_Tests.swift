@@ -657,7 +657,7 @@ class ChatClient_Tests: StressTestCase {
         XCTAssert(testEnv.clientUpdater?.reloadUserIfNeeded_called != true)
 
         client.connectUser(
-            userInfo: .init(id: .unique, name: "John Doe", imageURL: .unique(), extraData: .defaultValue),
+            userInfo: .init(id: .unique, name: "John Doe", imageURL: .unique(), extraData: [:]),
             token: token
         )
         XCTAssertTrue(testEnv.clientUpdater!.reloadUserIfNeeded_called)
@@ -684,7 +684,7 @@ class ChatClient_Tests: StressTestCase {
                 id: userId,
                 name: "John Doe",
                 imageURL: .localYodaImage,
-                extraData: .defaultValue
+                extraData: [:]
             )
         )
         
@@ -697,7 +697,7 @@ class ChatClient_Tests: StressTestCase {
             userId: userId,
             name: name,
             imageURL: .localYodaImage,
-            extraData: .defaultValue
+            extraData: [:]
         )
         AssertAsync.willBeEqual(AnyEndpoint(expectedEndpoint), client.mockAPIClient.request_endpoint)
         

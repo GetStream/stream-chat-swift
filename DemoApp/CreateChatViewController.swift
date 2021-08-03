@@ -348,7 +348,7 @@ extension CreateChatViewController: UITableViewDelegate, UITableViewDataSource {
                     createDirectMessageChannelWith: selectedUserIds,
                     name: nil,
                     imageURL: nil,
-                    extraData: .defaultValue
+                    extraData: [:]
                 )
         } catch {
             print(error.localizedDescription)

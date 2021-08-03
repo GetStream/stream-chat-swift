@@ -14,7 +14,7 @@ extension Endpoint {
         userId: UserId,
         name: String?,
         imageURL: URL?,
-        extraData: CustomData
+        extraData: [String: RawJSON]
     ) -> Endpoint<GuestUserTokenPayload> {
         .init(
             path: "guest",

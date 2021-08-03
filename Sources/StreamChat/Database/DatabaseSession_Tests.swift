@@ -80,7 +80,7 @@ class DatabaseSession_Tests: StressTestCase {
             isOnline: true,
             isInvisible: true,
             isBanned: true,
-            extraData: .defaultValue
+            extraData: [:]
         )
         
         let messagePayload = MessagePayload(
@@ -93,7 +93,7 @@ class DatabaseSession_Tests: StressTestCase {
             showReplyInChannel: false,
             mentionedUsers: [],
             replyCount: 0,
-            extraData: .defaultValue,
+            extraData: [:],
             reactionScores: [:],
             isSilent: false,
             attachments: []

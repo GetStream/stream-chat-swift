@@ -9,7 +9,7 @@ func snippet_channels_channel_updating_channel_full_update() {
 
     let controller = chatClient.channelController(for: .init(type: .messaging, id: "general"))
 
-    controller.updateChannel(name: "My special channel", imageURL: nil, team: nil, extraData: .defaultValue) { error in
+    controller.updateChannel(name: "My special channel", imageURL: nil, team: nil, extraData: [:]) { error in
         if let error = error {
             // handle errors
             print(error)

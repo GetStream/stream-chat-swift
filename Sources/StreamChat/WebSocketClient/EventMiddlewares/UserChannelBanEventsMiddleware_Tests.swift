@@ -42,8 +42,8 @@ final class UserChannelBanEventsMiddleware_Tests: XCTestCase {
         let eventPayload: EventPayload = .init(
             eventType: .userBanned,
             cid: .unique,
-            user: .dummy(userId: .unique, name: "Luke", imageUrl: nil, extraData: .defaultValue),
-            createdBy: .dummy(userId: .unique, name: "Leia", imageUrl: nil, extraData: .defaultValue),
+            user: .dummy(userId: .unique, name: "Luke", imageUrl: nil, extraData: [:]),
+            createdBy: .dummy(userId: .unique, name: "Leia", imageUrl: nil, extraData: [:]),
             banExpiredAt: .unique
         )
 
@@ -63,7 +63,7 @@ final class UserChannelBanEventsMiddleware_Tests: XCTestCase {
         let eventPayload: EventPayload = .init(
             eventType: .userUnbanned,
             cid: .unique,
-            user: .dummy(userId: .unique, name: "Luke", imageUrl: nil, extraData: .defaultValue)
+            user: .dummy(userId: .unique, name: "Luke", imageUrl: nil, extraData: [:])
         )
 
         // Set error to be thrown on write.
@@ -83,8 +83,8 @@ final class UserChannelBanEventsMiddleware_Tests: XCTestCase {
         let eventPayload: EventPayload = .init(
             eventType: .userBanned,
             cid: .unique,
-            user: .dummy(userId: .unique, name: "Luke", imageUrl: nil, extraData: .defaultValue),
-            createdBy: .dummy(userId: .unique, name: "Leia", imageUrl: nil, extraData: .defaultValue),
+            user: .dummy(userId: .unique, name: "Luke", imageUrl: nil, extraData: [:]),
+            createdBy: .dummy(userId: .unique, name: "Leia", imageUrl: nil, extraData: [:]),
             banExpiredAt: .unique
         )
 
@@ -114,8 +114,8 @@ final class UserChannelBanEventsMiddleware_Tests: XCTestCase {
         let eventPayload: EventPayload = .init(
             eventType: .userUnbanned,
             cid: .unique,
-            user: .dummy(userId: .unique, name: "Luke", imageUrl: nil, extraData: .defaultValue),
-            createdBy: .dummy(userId: .unique, name: "Leia", imageUrl: nil, extraData: .defaultValue)
+            user: .dummy(userId: .unique, name: "Luke", imageUrl: nil, extraData: [:]),
+            createdBy: .dummy(userId: .unique, name: "Leia", imageUrl: nil, extraData: [:])
         )
 
         // Create event with payload.

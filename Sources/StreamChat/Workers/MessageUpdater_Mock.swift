@@ -45,7 +45,7 @@ final class MessageUpdaterMock: MessageUpdater {
     @Atomic var addReaction_type: MessageReactionType?
     @Atomic var addReaction_score: Int?
     @Atomic var addReaction_enforceUnique: Bool?
-    @Atomic var addReaction_extraData: CustomData?
+    @Atomic var addReaction_extraData: [String: RawJSON]?
     @Atomic var addReaction_messageId: MessageId?
     @Atomic var addReaction_completion: ((Error?) -> Void)?
     
@@ -210,7 +210,7 @@ final class MessageUpdaterMock: MessageUpdater {
         _ type: MessageReactionType,
         score: Int,
         enforceUnique: Bool = false,
-        extraData: CustomData,
+        extraData: [String: RawJSON],
         messageId: MessageId,
         completion: ((Error?) -> Void)? = nil
     ) {

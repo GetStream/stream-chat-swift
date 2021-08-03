@@ -6,7 +6,7 @@
 import XCTest
 
 protocol DecodableEntity: Decodable {
-    var extraData: CustomData { get }
+    var extraData: [String: RawJSON] { get }
 }
 
 extension MessagePayload: DecodableEntity {}
@@ -16,7 +16,7 @@ extension ChannelDetailPayload: DecodableEntity {}
 
 class CustomDataHashMap_Tests: XCTestCase {
     func test_UserWebSocketPayloadEncodeWithCustomMap() throws {
-        let extraData: CustomData = ["how-many-roads": .integer(42)]
+        let extraData: [String: RawJSON] = ["how-many-roads": .integer(42)]
         let userInfo = UserInfo(id: "44", name: "tommaso", imageURL: nil, extraData: extraData)
         let payload = UserWebSocketPayload(userInfo: userInfo)
         let encoded = try! JSONEncoder.default.encode(payload)
@@ -27,7 +27,7 @@ class CustomDataHashMap_Tests: XCTestCase {
     func assertEmptyCustomData<T>(_ entity: T.Type, _ fileName: String) throws where T: DecodableEntity {
         let jsonData = XCTestCase.mockData(fromFile: fileName)
         let payload = try JSONDecoder.default.decode(entity.self, from: jsonData)
-        XCTAssertEqual(payload.extraData, .defaultValue)
+        XCTAssertEqual(payload.extraData, [:])
     }
 
     func assertCustomData<T>(_ entity: T.Type, _ fileName: String) throws where T: DecodableEntity {

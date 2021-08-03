@@ -50,7 +50,7 @@ public extension ChatClient {
         members: Set<UserId> = [],
         isCurrentUserMember: Bool = true,
         invites: Set<UserId> = [],
-        extraData: CustomData = .defaultValue
+        extraData: [String: RawJSON] = [:]
     ) throws -> ChatChannelController {
         guard let currentUserId = currentUserId else {
             throw ClientError.CurrentUserDoesNotExist()
@@ -95,7 +95,7 @@ public extension ChatClient {
         name: String? = nil,
         imageURL: URL? = nil,
         team: String? = nil,
-        extraData: CustomData
+        extraData: [String: RawJSON]
     ) throws -> ChatChannelController {
         guard let currentUserId = currentUserId else { throw ClientError.CurrentUserDoesNotExist() }
         guard !members.isEmpty else { throw ClientError.ChannelEmptyMembers() }
@@ -460,7 +460,7 @@ public extension ChatChannelController {
         team: String?,
         members: Set<UserId> = [],
         invites: Set<UserId> = [],
-        extraData: CustomData = .defaultValue,
+        extraData: [String: RawJSON] = [:],
         completion: ((Error?) -> Void)? = nil
     ) {
         /// Perform action only if channel is already created on backend side and have a valid `cid`.

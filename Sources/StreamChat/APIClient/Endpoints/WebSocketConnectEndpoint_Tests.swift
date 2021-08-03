@@ -11,7 +11,7 @@ final class WebSocketConnectEndpoint_Tests: XCTestCase {
             id: .unique,
             name: .unique,
             imageURL: .unique(),
-            extraData: .defaultValue
+            extraData: [:]
         )
         
         let expectedEndpoint = Endpoint<EmptyResponse>(

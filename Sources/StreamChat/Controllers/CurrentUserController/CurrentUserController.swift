@@ -151,7 +151,7 @@ public extension CurrentChatUserController {
     func updateUserData(
         name: String? = nil,
         imageURL: URL? = nil,
-        userExtraData: CustomData = .defaultValue,
+        userExtraData: [String: RawJSON] = [:],
         completion: ((Error?) -> Void)? = nil
     ) {
         guard let currentUserId = currentUser?.id else {

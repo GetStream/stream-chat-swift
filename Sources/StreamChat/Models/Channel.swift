@@ -138,7 +138,7 @@ public struct ChatChannel {
     ///
     /// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/Cheat-Sheet#working-with-extra-data).
     ///
-    public let extraData: CustomData
+    public let extraData: [String: RawJSON]
 
     // MARK: - Internal
     
@@ -169,7 +169,7 @@ public struct ChatChannel {
         memberCount: Int = 0,
         reads: [ChatChannelRead] = [],
         cooldownDuration: Int = 0,
-        extraData: CustomData,
+        extraData: [String: RawJSON],
         latestMessages: @escaping (() -> [ChatMessage]) = { [] },
         pinnedMessages: @escaping (() -> [ChatMessage]) = { [] },
         muteDetails: @escaping () -> MuteDetails?,

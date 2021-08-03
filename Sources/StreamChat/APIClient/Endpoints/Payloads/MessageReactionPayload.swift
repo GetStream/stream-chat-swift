@@ -22,7 +22,7 @@ struct MessageReactionPayload: Decodable {
     let createdAt: Date
     let updatedAt: Date
     let user: UserPayload
-    let extraData: CustomData
+    let extraData: [String: RawJSON]
 
     init(
         type: MessageReactionType,
@@ -31,7 +31,7 @@ struct MessageReactionPayload: Decodable {
         createdAt: Date,
         updatedAt: Date,
         user: UserPayload,
-        extraData: CustomData
+        extraData: [String: RawJSON]
     ) {
         self.type = type
         self.score = score
@@ -44,13 +44,13 @@ struct MessageReactionPayload: Decodable {
     
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        let extraData: CustomData
+        let extraData: [String: RawJSON]
 
-        if var payload = try? CustomData(from: decoder) {
+        if var payload = try? [String: RawJSON](from: decoder) {
             payload.removeValues(forKeys: MessageReactionPayload.CodingKeys.allCases.map(\.rawValue))
             extraData = payload
         } else {
-            extraData = .defaultValue
+            extraData = [:]
         }
         
         self.init(

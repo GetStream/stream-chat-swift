@@ -55,7 +55,7 @@ public struct ChatMessage {
     ///
     /// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/Cheat-Sheet#working-with-extra-data).
     ///
-    public let extraData: CustomData
+    public let extraData: [String: RawJSON]
 
     /// Quoted message.
     ///
@@ -155,7 +155,7 @@ public struct ChatMessage {
         parentMessageId: MessageId?,
         showReplyInChannel: Bool,
         replyCount: Int,
-        extraData: CustomData,
+        extraData: [String: RawJSON],
         quotedMessage: @escaping () -> ChatMessage?,
         isSilent: Bool,
         reactionScores: [MessageReactionType: Int],

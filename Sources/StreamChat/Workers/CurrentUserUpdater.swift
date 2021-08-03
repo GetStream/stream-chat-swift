@@ -21,7 +21,7 @@ class CurrentUserUpdater: Worker {
         currentUserId: UserId,
         name: String? = nil,
         imageURL: URL? = nil,
-        userExtraData: CustomData? = nil,
+        userExtraData: [String: RawJSON]? = nil,
         completion: ((Error?) -> Void)? = nil
     ) {
         let params: [Any?] = [name, imageURL, userExtraData]

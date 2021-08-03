@@ -24,7 +24,7 @@ extension ChannelDetailPayload {
                     isInvisible: true,
                     isBanned: true,
                     teams: [],
-                    extraData: .defaultValue
+                    extraData: [:]
                 ),
                 role: .moderator,
                 createdAt: .unique,
@@ -38,7 +38,7 @@ extension ChannelDetailPayload {
             cid: cid,
             name: .unique,
             imageURL: .unique(),
-            extraData: .defaultValue,
+            extraData: [:],
             typeRawValue: cid.type.rawValue,
             lastMessageAt: lastMessageAt,
             createdAt: channelCreatedDate,

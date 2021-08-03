@@ -88,7 +88,7 @@ final class MessageEndpoints_Tests: XCTestCase {
         let messageId: MessageId = .unique
         let reaction: MessageReactionType = .init(rawValue: "like")
         let score = 5
-        let extraData: CustomData = .defaultValue
+        let extraData: [String: RawJSON] = [:]
         
         let expectedEndpoint = Endpoint<EmptyResponse>(
             path: "messages/\(messageId)/reaction",

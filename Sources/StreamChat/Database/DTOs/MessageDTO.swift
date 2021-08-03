@@ -541,15 +541,15 @@ extension MessageDTO {
     
     /// Snapshots the current state of `MessageDTO` and returns its representation for the use in API calls.
     func asRequestBody() -> MessageRequestBody {
-        var extraData: CustomData
+        var extraData: [String: RawJSON]
         do {
-            extraData = try JSONDecoder.default.decode(CustomData.self, from: self.extraData)
+            extraData = try JSONDecoder.default.decode([String: RawJSON].self, from: self.extraData)
         } catch {
             log.assertionFailure(
                 "Failed decoding saved extra data with error: \(error). This should never happen because"
                     + "the extra data must be a valid JSON to be saved."
             )
-            extraData = .defaultValue
+            extraData = [:]
         }
         
         return .init(
@@ -594,10 +594,10 @@ private extension ChatMessage {
         reactionScores = dto.reactionScores.mapKeys { MessageReactionType(rawValue: $0) }
         
         do {
-            extraData = try JSONDecoder.default.decode(CustomData.self, from: dto.extraData)
+            extraData = try JSONDecoder.default.decode([String: RawJSON].self, from: dto.extraData)
         } catch {
             log.error("Failed to decode extra data for Message with id: <\(dto.id)>, using default value instead. Error: \(error)")
-            extraData = .defaultValue
+            extraData = [:]
         }
 
         localState = dto.localMessageState

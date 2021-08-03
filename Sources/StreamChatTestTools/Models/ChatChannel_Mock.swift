@@ -78,7 +78,7 @@ public extension ChatChannel {
         watcherCount: Int = 0,
         memberCount: Int = 0,
         reads: [ChatChannelRead] = [],
-        extraData: CustomData = .defaultValue,
+        extraData: [String: RawJSON] = [:],
         latestMessages: [ChatMessage] = [],
         muteDetails: MuteDetails? = nil
     ) -> Self {
@@ -126,7 +126,7 @@ public extension ChatChannel {
         watcherCount: Int = 0,
         memberCount: Int = 0,
         reads: [ChatChannelRead] = [],
-        extraData: CustomData = .defaultValue,
+        extraData: [String: RawJSON] = [:],
         latestMessages: [ChatMessage] = [],
         muteDetails: MuteDetails? = nil
     ) -> Self {

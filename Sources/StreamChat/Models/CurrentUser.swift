@@ -64,7 +64,7 @@ public class CurrentChatUser: ChatUser {
         updatedAt: Date,
         lastActiveAt: Date?,
         teams: Set<TeamId>,
-        extraData: CustomData,
+        extraData: [String: RawJSON],
         devices: [Device],
         currentDevice: Device?,
         mutedUsers: Set<ChatUser>,

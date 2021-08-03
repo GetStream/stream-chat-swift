@@ -132,7 +132,7 @@ class CurrentUserModelDTO_Tests: XCTestCase {
         }
         
         let loadedUser: CurrentChatUser? = database.viewContext.currentUser?.asModel()
-        XCTAssertEqual(loadedUser?.extraData, .defaultValue)
+        XCTAssertEqual(loadedUser?.extraData, [:])
     }
     
     func test_currentUser_isCached() throws {

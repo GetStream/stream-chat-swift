@@ -287,7 +287,7 @@ class ChannelDTO_Tests: XCTestCase {
             showReplyInChannel: false,
             mentionedUsers: [dummyCurrentUser],
             replyCount: 0,
-            extraData: .defaultValue,
+            extraData: [:],
             reactionScores: ["like": 1],
             isSilent: false,
             attachments: [],
@@ -319,7 +319,7 @@ class ChannelDTO_Tests: XCTestCase {
             showReplyInChannel: false,
             mentionedUsers: [dummyCurrentUser],
             replyCount: 0,
-            extraData: .defaultValue,
+            extraData: [:],
             reactionScores: ["like": 1],
             isSilent: false,
             attachments: [],
@@ -413,7 +413,7 @@ class ChannelDTO_Tests: XCTestCase {
         // Load the channel from the db and check the fields are correct
         let loadedChannel: ChatChannel? = database.viewContext.channel(cid: channelId)?.asModel()
         
-        XCTAssertEqual(loadedChannel?.extraData, .defaultValue)
+        XCTAssertEqual(loadedChannel?.extraData, [:])
     }
     
     func test_channelWithChannelListQuery_isSavedAndLoaded() {
@@ -631,7 +631,7 @@ class ChannelDTO_Tests: XCTestCase {
     func test_createFromDTO_handlesExtraDataCorrectlyWhenPresent() throws {
         let cid: ChannelId = .unique
 
-        let extraData: CustomData = ["k": .string("v")]
+        let extraData: [String: RawJSON] = ["k": .string("v")]
         try database.createChannel(cid: cid, channelExtraData: extraData)
         var channel: ChatChannel {
             database.viewContext.channel(cid: cid)!.asModel()
@@ -646,7 +646,7 @@ class ChannelDTO_Tests: XCTestCase {
         // Create channel in the database
         try database.createChannel(cid: cid)
         // Create user in the database
-        try database.createUser(id: userId, extraData: .defaultValue)
+        try database.createUser(id: userId, extraData: [:])
         // Set created user as a watcher
         try database.writeSynchronously { session in
             let channel = try XCTUnwrap(session.channel(cid: cid))

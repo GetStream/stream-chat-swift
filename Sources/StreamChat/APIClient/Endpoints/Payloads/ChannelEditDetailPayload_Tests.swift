@@ -22,7 +22,7 @@ class ChannelEditDetailPayload_Tests: XCTestCase {
             team: team,
             members: [invite],
             invites: [invite],
-            extraData: .defaultValue
+            extraData: [:]
         )
 
         let expectedData: [String: Any] = [
@@ -49,7 +49,7 @@ class ChannelEditDetailPayload_Tests: XCTestCase {
             team: nil,
             members: [.unique],
             invites: [],
-            extraData: .defaultValue
+            extraData: [:]
         )
         
         // Assert only type is part of path
@@ -64,7 +64,7 @@ class ChannelEditDetailPayload_Tests: XCTestCase {
             team: nil,
             members: [],
             invites: [],
-            extraData: .defaultValue
+            extraData: [:]
         )
         
         // Assert type and id are part of path

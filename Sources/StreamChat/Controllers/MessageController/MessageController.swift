@@ -207,7 +207,7 @@ public extension ChatMessageController {
         showReplyInChannel: Bool = false,
         isSilent: Bool = false,
         quotedMessageId: MessageId? = nil,
-        extraData: CustomData = .defaultValue,
+        extraData: [String: RawJSON] = [:],
         completion: ((Result<MessageId, Error>) -> Void)? = nil
     ) {
         messageUpdater.createNewReply(
@@ -318,7 +318,7 @@ public extension ChatMessageController {
         _ type: MessageReactionType,
         score: Int = 1,
         enforceUnique: Bool = false,
-        extraData: CustomData = .defaultValue,
+        extraData: [String: RawJSON] = [:],
         completion: ((Error?) -> Void)? = nil
     ) {
         messageUpdater.addReaction(

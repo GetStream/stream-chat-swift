@@ -90,7 +90,7 @@ extension ChatChannelMember {
             userUpdatedAt: .unique,
             lastActiveAt: .unique,
             teams: [],
-            extraData: .defaultValue,
+            extraData: [:],
             memberRole: .member,
             memberCreatedAt: .unique,
             memberUpdatedAt: .unique,

@@ -32,7 +32,7 @@ struct UserWebSocketPayload: Encodable {
     let id: String
     let name: String?
     let imageURL: URL?
-    let extraData: CustomData
+    let extraData: [String: RawJSON]
 
     init(userInfo: UserInfo) {
         id = userInfo.id

@@ -55,7 +55,7 @@ class ChannelController_Tests: StressTestCase {
             team: nil,
             members: [currentUserId, otherUserId],
             invites: [],
-            extraData: .defaultValue
+            extraData: [:]
         )
         
         controller = ChatChannelController(
@@ -86,7 +86,7 @@ class ChannelController_Tests: StressTestCase {
             team: nil,
             members: [],
             invites: [],
-            extraData: .defaultValue
+            extraData: [:]
         )
         
         controller = ChatChannelController(
@@ -503,7 +503,7 @@ class ChannelController_Tests: StressTestCase {
                 members: members,
                 isCurrentUserMember: isCurrentUserMember,
                 invites: invites,
-                extraData: .defaultValue
+                extraData: [:]
             )
 
             // Assert `ChannelQuery` created correctly
@@ -514,7 +514,7 @@ class ChannelController_Tests: StressTestCase {
                 controller.channelQuery.channelPayload?.members
             )
             XCTAssertEqual(invites, controller.channelQuery.channelPayload?.invites)
-            XCTAssertEqual(CustomData.defaultValue, controller.channelQuery.channelPayload?.extraData)
+            XCTAssertEqual([:], controller.channelQuery.channelPayload?.extraData)
         }
     }
 
@@ -538,7 +538,7 @@ class ChannelController_Tests: StressTestCase {
                     members: [.unique, .unique],
                     isCurrentUserMember: isCurrentUserMember,
                     invites: [.unique, .unique],
-                    extraData: .defaultValue
+                    extraData: [:]
                 )
             ) { error in
                 // Assert `ClientError.CurrentUserDoesNotExist` is thrown
@@ -562,7 +562,7 @@ class ChannelController_Tests: StressTestCase {
             imageURL: .unique(),
             team: .unique,
             members: members,
-            extraData: .defaultValue
+            extraData: [:]
         )
 
         XCTAssertEqual(controller.channelQuery.channelPayload?.members, members.union([currentUserId]))
@@ -586,7 +586,7 @@ class ChannelController_Tests: StressTestCase {
                 name: .unique,
                 imageURL: .unique(),
                 team: team,
-                extraData: .defaultValue
+                extraData: [:]
             )
 
             // Assert `ChannelQuery` created correctly
@@ -596,7 +596,7 @@ class ChannelController_Tests: StressTestCase {
                 members.union(isCurrentUserMember ? [currentUserId] : []),
                 controller.channelQuery.channelPayload?.members
             )
-            XCTAssertEqual(controller.channelQuery.channelPayload?.extraData, CustomData.defaultValue)
+            XCTAssertEqual(controller.channelQuery.channelPayload?.extraData, [:])
         }
     }
 
@@ -678,7 +678,7 @@ class ChannelController_Tests: StressTestCase {
             createDirectMessageChannelWith: [.unique],
             name: .unique,
             imageURL: .unique(),
-            extraData: .defaultValue
+            extraData: [:]
         )
         
         // Assert cid is nil
@@ -1189,7 +1189,7 @@ class ChannelController_Tests: StressTestCase {
                 cid: channelId,
                 name: .unique,
                 imageURL: .unique(),
-                extraData: .defaultValue,
+                extraData: [:],
                 typeRawValue: .unique,
                 lastMessageAt: .unique,
                 createdAt: .unique,
@@ -2534,9 +2534,7 @@ class ChannelController_Tests: StressTestCase {
         
         // New message values
         let text: String = .unique
-//        let command: String = .unique
-//        let arguments: String = .unique
-        let extraData = CustomData.defaultValue
+        let extraData: [String: RawJSON] = [:]
         let attachments: [AnyAttachmentPayload] = [
             .init(payload: TestAttachmentPayload.unique),
             .mockImage,
@@ -2550,8 +2548,6 @@ class ChannelController_Tests: StressTestCase {
         controller.createNewMessage(
             text: text,
             pinning: pin,
-//            command: command,
-//            arguments: arguments,
             attachments: attachments,
             quotedMessageId: quotedMessageId,
             extraData: extraData

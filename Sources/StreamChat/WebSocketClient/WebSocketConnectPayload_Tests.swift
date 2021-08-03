@@ -7,7 +7,7 @@ import XCTest
 
 class WebSocketConnectPayload_Tests: XCTestCase {
     func testEncodeWebSocketConnectPayload() throws {
-        let custom: CustomData = [
+        let custom: [String: RawJSON] = [
             "color": .string("blue")
         ]
 
@@ -37,7 +37,7 @@ class WebSocketConnectPayload_Tests: XCTestCase {
     }
     
     func testEncodeWebSocketConnectPayloadNoImage() throws {
-        let custom: CustomData = [
+        let custom: [String: RawJSON] = [
             "color": .string("blue")
         ]
         let payload = WebSocketConnectPayload(userInfo: .init(id: "tommaso", name: "tommaso", imageURL: nil, extraData: custom))

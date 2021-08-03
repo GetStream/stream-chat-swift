@@ -27,7 +27,7 @@ class CurrentUserPayload: UserPayload {
         isInvisible: Bool,
         isBanned: Bool,
         teams: [TeamId] = [],
-        extraData: CustomData,
+        extraData: [String: RawJSON],
         devices: [DevicePayload] = [],
         mutedUsers: [MutedUserPayload] = [],
         mutedChannels: [MutedChannelPayload] = [],

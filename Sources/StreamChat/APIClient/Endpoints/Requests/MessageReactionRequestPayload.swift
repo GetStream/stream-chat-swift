@@ -15,7 +15,7 @@ struct MessageReactionRequestPayload: Encodable {
     let type: MessageReactionType
     let score: Int
     let enforceUnique: Bool
-    let extraData: CustomData
+    let extraData: [String: RawJSON]
     
     func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)

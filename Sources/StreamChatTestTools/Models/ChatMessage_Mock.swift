@@ -23,7 +23,7 @@ public extension ChatMessage {
         quotedMessage: ChatMessage? = nil,
         showReplyInChannel: Bool = false,
         replyCount: Int = 0,
-        extraData: CustomData = .defaultValue,
+        extraData: [String: RawJSON] = [:],
         isSilent: Bool = false,
         reactionScores: [MessageReactionType: Int] = [:],
         mentionedUsers: Set<ChatUser> = [],

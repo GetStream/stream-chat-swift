@@ -134,7 +134,7 @@ class MessageUpdater: Worker {
         showReplyInChannel: Bool,
         isSilent: Bool,
         quotedMessageId: MessageId?,
-        extraData: CustomData,
+        extraData: [String: RawJSON],
         completion: ((Result<MessageId, Error>) -> Void)? = nil
     ) {
         var newMessageId: MessageId?
@@ -247,7 +247,7 @@ class MessageUpdater: Worker {
         _ type: MessageReactionType,
         score: Int,
         enforceUnique: Bool,
-        extraData: CustomData,
+        extraData: [String: RawJSON],
         messageId: MessageId,
         completion: ((Error?) -> Void)? = nil
     ) {

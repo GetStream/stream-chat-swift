@@ -127,7 +127,7 @@ final class MessageReactionDTO_Tests: XCTestCase {
         ).asModel()
         
         // Assert model is built up with default extra data.
-        XCTAssertEqual(model.extraData, .defaultValue)
+        XCTAssertEqual(model.extraData, [:])
         // Assert other fields have correct values.
         XCTAssertEqual(model.createdAt, payload.createdAt)
         XCTAssertEqual(model.updatedAt, payload.updatedAt)

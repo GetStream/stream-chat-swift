@@ -65,7 +65,7 @@ class UserRequestBody_Tests: XCTestCase {
             id: .unique,
             name: .unique,
             imageURL: .unique(),
-            extraData: .defaultValue
+            extraData: [:]
         )
         
         let serialized = try JSONEncoder.stream.encode(payload)

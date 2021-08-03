@@ -43,7 +43,10 @@ class UserDTO_Tests: XCTestCase {
             Assert.willBeEqual(payload.updatedAt, loadedUserDTO.userUpdatedAt)
             Assert.willBeEqual(payload.lastActiveAt, loadedUserDTO.lastActivityAt)
             Assert.willBeEqual(payload.teams.sorted(), loadedUserDTO.teams?.map(\.id).sorted())
-            Assert.willBeEqual(payload.extraData, try? JSONDecoder.default.decode(CustomData.self, from: loadedUserDTO.extraData))
+            Assert.willBeEqual(
+                payload.extraData,
+                try? JSONDecoder.default.decode([String: RawJSON].self, from: loadedUserDTO.extraData)
+            )
         }
     }
 
@@ -62,7 +65,7 @@ class UserDTO_Tests: XCTestCase {
             isInvisible: true,
             isBanned: true,
             teams: [],
-            extraData: .defaultValue
+            extraData: [:]
         )
         
         try database.writeSynchronously { session in
@@ -73,7 +76,7 @@ class UserDTO_Tests: XCTestCase {
         }
         
         let loadedUser: ChatUser? = database.viewContext.user(id: userId)?.asModel()
-        XCTAssertEqual(loadedUser?.extraData, .defaultValue)
+        XCTAssertEqual(loadedUser?.extraData, [:])
     }
     
     func test_DTO_asModel() throws {
@@ -324,7 +327,7 @@ class UserDTO_Tests: XCTestCase {
         let payload: CurrentUserPayload = .dummy(
             userId: userId,
             role: .admin,
-            extraData: .defaultValue,
+            extraData: [:],
             devices: [DevicePayload.dummy],
             mutedUsers: [
                 .dummy(userId: .unique)

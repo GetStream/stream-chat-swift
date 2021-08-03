@@ -146,15 +146,15 @@ extension UserDTO {
     
     /// Snapshots the current state of `UserDTO` and returns its representation for used in API calls.
     func asRequestBody() -> UserRequestBody {
-        let extraData: CustomData
+        let extraData: [String: RawJSON]
         do {
-            extraData = try JSONDecoder.default.decode(CustomData.self, from: self.extraData)
+            extraData = try JSONDecoder.default.decode([String: RawJSON].self, from: self.extraData)
         } catch {
             log.assertionFailure(
                 "Failed decoding saved extra data with error: \(error). This should never happen because"
                     + "the extra data must be a valid JSON to be saved."
             )
-            extraData = .defaultValue
+            extraData = [:]
         }
         return .init(id: id, name: name, imageURL: imageURL, extraData: extraData)
     }
@@ -193,15 +193,15 @@ extension UserDTO {
 
 extension ChatUser {
     fileprivate static func create(fromDTO dto: UserDTO) -> ChatUser {
-        let extraData: CustomData
+        let extraData: [String: RawJSON]
         do {
-            extraData = try JSONDecoder.default.decode(CustomData.self, from: dto.extraData)
+            extraData = try JSONDecoder.default.decode([String: RawJSON].self, from: dto.extraData)
         } catch {
             log.error(
                 "Failed to decode extra data for user with id: <\(dto.id)>, using default value instead. "
                     + "Error: \(error)"
             )
-            extraData = .defaultValue
+            extraData = [:]
         }
 
         return ChatUser(

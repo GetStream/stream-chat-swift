@@ -18,7 +18,7 @@ public extension CurrentChatUser {
         updatedAt: Date = .init(),
         lastActiveAt: Date? = nil,
         teams: Set<TeamId> = [],
-        extraData: CustomData = .defaultValue,
+        extraData: [String: RawJSON] = [:],
         devices: [Device] = [],
         currentDevice: Device? = nil,
         mutedUsers: Set<ChatUser> = [],

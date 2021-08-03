@@ -80,7 +80,7 @@ final class TokenProvider_Tests: StressTestCase {
         let userId: UserId = .unique
         let userName: String = .unique
         let imageURL: URL = .unique()
-        let extraData: CustomData = .defaultValue
+        let extraData: [String: RawJSON] = [:]
 
         // Create a client.
         let client = ChatClient.mock
@@ -128,7 +128,7 @@ final class TokenProvider_Tests: StressTestCase {
         let userId: UserId = .unique
         let userName: String = .unique
         let imageURL: URL = .unique()
-        let extraData: CustomData = .defaultValue
+        let extraData: [String: RawJSON] = [:]
 
         // Create a client.
         let client = ChatClient.mock

@@ -7,13 +7,11 @@ import XCTest
 
 final class GuestEndpoints_Tests: XCTestCase {
     func test_token_buildsCorrectly_withDefaultExtraData() {
-        let extraData = CustomData.defaultValue
-
         let payload = GuestUserTokenRequestPayload(
             userId: .unique,
             name: .unique,
             imageURL: .unique(),
-            extraData: extraData
+            extraData: [:]
         )
         let expectedEndpoint = Endpoint<GuestUserTokenPayload>(
             path: "guest",
@@ -27,7 +25,7 @@ final class GuestEndpoints_Tests: XCTestCase {
             userId: payload.userId,
             name: payload.name,
             imageURL: payload.imageURL,
-            extraData: extraData
+            extraData: [:]
         )
 
         // Assert endpoint is built correctly
@@ -38,13 +36,13 @@ final class GuestEndpoints_Tests: XCTestCase {
     }
     
     func test_token_buildsCorrectly_withCustomExtraData() {
-        let extraData: CustomData = ["company": .string("getstream.io")]
+        let extraData: [String: RawJSON] = ["company": .string("getstream.io")]
 
         let payload = GuestUserTokenRequestPayload(
             userId: .unique,
             name: .unique,
             imageURL: .unique(),
-            extraData: extraData
+            extraData: [:]
         )
         let expectedEndpoint = Endpoint<GuestUserTokenPayload>(
             path: "guest",
@@ -58,7 +56,7 @@ final class GuestEndpoints_Tests: XCTestCase {
             userId: payload.userId,
             name: payload.name,
             imageURL: payload.imageURL,
-            extraData: extraData
+            extraData: [:]
         )
 
         // Assert endpoint is built correctly

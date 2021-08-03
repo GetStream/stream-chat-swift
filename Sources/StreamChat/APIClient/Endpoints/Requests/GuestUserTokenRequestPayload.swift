@@ -14,7 +14,7 @@ struct GuestUserTokenRequestPayload: Encodable {
     let userId: UserId
     let name: String?
     let imageURL: URL?
-    let extraData: CustomData
+    let extraData: [String: RawJSON]
 
     func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)

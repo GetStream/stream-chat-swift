@@ -19,7 +19,7 @@ extension CurrentUserPayload {
         isBanned: Bool = true,
         role: UserRole,
         unreadCount: UnreadCount? = .dummy,
-        extraData: CustomData = .defaultValue,
+        extraData: [String: RawJSON] = [:],
         devices: [DevicePayload] = [],
         mutedUsers: [MutedUserPayload] = [],
         teams: [TeamId] = [],

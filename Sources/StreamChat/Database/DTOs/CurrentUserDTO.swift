@@ -156,15 +156,15 @@ extension CurrentChatUser {
 
         let user = dto.user
 
-        let extraData: CustomData
+        let extraData: [String: RawJSON]
         do {
-            extraData = try JSONDecoder.default.decode(CustomData.self, from: dto.user.extraData)
+            extraData = try JSONDecoder.default.decode([String: RawJSON].self, from: dto.user.extraData)
         } catch {
             log.error(
                 "Failed to decode extra data for user with id: <\(dto.user.id)>, using default value instead. "
                     + "Error: \(error)"
             )
-            extraData = .defaultValue
+            extraData = [:]
         }
 
         let mutedUsers: [ChatUser] = dto.mutedUsers.map { $0.asModel() }

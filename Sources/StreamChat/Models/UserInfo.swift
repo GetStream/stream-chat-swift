@@ -9,13 +9,13 @@ public struct UserInfo {
     public let id: UserId
     public let name: String?
     public let imageURL: URL?
-    public let extraData: CustomData
+    public let extraData: [String: RawJSON]
 
     public init(
         id: UserId,
         name: String? = nil,
         imageURL: URL? = nil,
-        extraData: CustomData = .defaultValue
+        extraData: [String: RawJSON] = [:]
     ) {
         self.id = id
         self.name = name

@@ -20,7 +20,7 @@ public struct ChatMessageReaction: Hashable {
     public let updatedAt: Date
     
     /// Custom data
-    public let extraData: CustomData
+    public let extraData: [String: RawJSON]
     
     /// The author.
     public let author: ChatUser

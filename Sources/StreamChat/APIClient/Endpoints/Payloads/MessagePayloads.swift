@@ -66,7 +66,7 @@ class MessagePayload: Decodable {
     let mentionedUsers: [UserPayload]
     let threadParticipants: [UserPayload]
     let replyCount: Int
-    let extraData: CustomData
+    let extraData: [String: RawJSON]
 
     let latestReactions: [MessageReactionPayload]
     let ownReactions: [MessageReactionPayload]
@@ -112,7 +112,7 @@ class MessagePayload: Decodable {
         attachments = try container.decode([OptionalDecodable].self, forKey: .attachments)
             .compactMap(\.base)
 
-        if var payload = try? CustomData(from: decoder) {
+        if var payload = try? [String: RawJSON](from: decoder) {
             payload.removeValues(forKeys: MessagePayloadsCodingKeys.allCases.map(\.rawValue))
             extraData = payload
         } else {
@@ -145,7 +145,7 @@ class MessagePayload: Decodable {
         mentionedUsers: [UserPayload],
         threadParticipants: [UserPayload] = [],
         replyCount: Int,
-        extraData: CustomData,
+        extraData: [String: RawJSON],
         latestReactions: [MessageReactionPayload] = [],
         ownReactions: [MessageReactionPayload] = [],
         reactionScores: [MessageReactionType: Int],
@@ -202,7 +202,7 @@ struct MessageRequestBody: Encodable {
     let mentionedUserIds: [UserId]
     var pinned: Bool
     var pinExpires: Date?
-    let extraData: CustomData
+    let extraData: [String: RawJSON]
 
     init(
         id: String,
@@ -218,7 +218,7 @@ struct MessageRequestBody: Encodable {
         mentionedUserIds: [UserId] = [],
         pinned: Bool = false,
         pinExpires: Date? = nil,
-        extraData: CustomData
+        extraData: [String: RawJSON]
     ) {
         self.id = id
         self.user = user

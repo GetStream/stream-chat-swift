@@ -11,7 +11,7 @@ extension UserPayload {
         userId: UserId,
         name: String = .unique,
         imageUrl: URL? = .unique(),
-        extraData: CustomData = .defaultValue,
+        extraData: [String: RawJSON] = [:],
         teams: [TeamId] = [.unique, .unique, .unique],
         isBanned: Bool = false,
         updatedAt: Date = .unique

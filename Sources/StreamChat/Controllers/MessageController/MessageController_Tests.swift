@@ -850,7 +850,7 @@ final class MessageController_Tests: StressTestCase {
         let text: String = .unique
         let showReplyInChannel = true
         let quotedMessageId: MessageId = .unique
-        let extraData: CustomData = [:]
+        let extraData: [String: RawJSON] = [:]
         let attachments: [AnyAttachmentPayload] = [.mockFile, .mockImage, .init(payload: TestAttachmentPayload.unique)]
         let pin = MessagePinning(expirationDate: .unique)
 
@@ -1074,7 +1074,7 @@ final class MessageController_Tests: StressTestCase {
         let type: MessageReactionType = "like"
         let score = 5
         let enforceUnique = true
-        let extraData: CustomData = .defaultValue
+        let extraData: [String: RawJSON] = [:]
         
         // Simulate `addReaction` call.
         controller.addReaction(type, score: score, enforceUnique: true, extraData: extraData)

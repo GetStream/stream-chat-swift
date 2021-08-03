@@ -9,7 +9,7 @@ extension MutedUserPayload {
     /// Returns a muted user with the given `userId` and `extraData`
     static func dummy(
         userId: UserId,
-        extraData: CustomData = .defaultValue
+        extraData: [String: RawJSON] = [:]
     ) -> Self {
         .init(
             mutedUser: .init(

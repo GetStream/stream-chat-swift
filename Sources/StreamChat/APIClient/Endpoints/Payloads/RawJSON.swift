@@ -4,12 +4,6 @@
 
 import Foundation
 
-public typealias CustomData = [String: RawJSON]
-
-public extension CustomData {
-    static var defaultValue: Self { .init() }
-}
-
 /// A `RawJSON` type.
 /// Used to store and operate objects of unknown structure that's not possible to decode.
 /// https://forums.swift.org/t/new-unevaluated-type-for-decoder-to-allow-later-re-encoding-of-data-with-unknown-structure/11117

@@ -11,7 +11,7 @@ final class GuestUserTokenRequestPayload_Tests: XCTestCase {
             userId: .unique,
             name: .unique,
             imageURL: .unique(),
-            extraData: .defaultValue
+            extraData: [:]
         )
         
         try verify(payload, isEncodedAs: ["id": payload.userId, "name": payload.name!, "image": payload.imageURL!])

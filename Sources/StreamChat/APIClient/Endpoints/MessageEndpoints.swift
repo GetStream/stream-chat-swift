@@ -51,7 +51,7 @@ extension Endpoint {
         _ type: MessageReactionType,
         score: Int,
         enforceUnique: Bool,
-        extraData: CustomData,
+        extraData: [String: RawJSON],
         messageId: MessageId
     ) -> Endpoint<EmptyResponse> {
         .init(

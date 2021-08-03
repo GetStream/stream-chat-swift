@@ -170,7 +170,7 @@ final class UserController_Tests: StressTestCase {
         controller.synchronize()
         
         // Create a user in the DB
-        try client.databaseContainer.createUser(id: userId, extraData: .defaultValue)
+        try client.databaseContainer.createUser(id: userId, extraData: [:])
         
         // Simulate updater callback
         env.userUpdater?.loadUser_completion?(nil)
@@ -355,7 +355,7 @@ final class UserController_Tests: StressTestCase {
         controller.delegate = delegate
         
         // Create user in the database.
-        let initialExtraData: CustomData = .defaultValue
+        let initialExtraData: [String: RawJSON] = [:]
         try client.databaseContainer.createUser(id: userId, extraData: initialExtraData)
         
         // Assert `create` entity change is received by the delegate

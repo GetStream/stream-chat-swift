@@ -111,7 +111,7 @@ class MemberModelDTO_Tests: XCTestCase {
         }
         
         let loadedMember: ChatChannelMember? = database.viewContext.member(userId: userId, cid: channelId)?.asModel()
-        XCTAssertEqual(loadedMember?.extraData, .defaultValue)
+        XCTAssertEqual(loadedMember?.extraData, [:])
     }
     
     func test_saveMember_savesQuery_and_linksMember_ifQueryIsProvided() throws {

@@ -196,7 +196,7 @@ final class CurrentUserController_Tests: StressTestCase {
         // Call synchronize to get updates from DB
         controller.synchronize()
         
-        let extraData: CustomData = .defaultValue
+        let extraData: [String: RawJSON] = [:]
         let currentUserPayload: CurrentUserPayload = .dummy(
             userId: .unique,
             role: .user,
@@ -223,7 +223,7 @@ final class CurrentUserController_Tests: StressTestCase {
         // Call synchronize to get updates from DB
         controller.synchronize()
         
-        var extraData: CustomData = .defaultValue
+        var extraData: [String: RawJSON] = [:]
         var currentUserPayload: CurrentUserPayload = .dummy(
             userId: .unique,
             role: .user,
@@ -240,7 +240,7 @@ final class CurrentUserController_Tests: StressTestCase {
         }
         
         // Update current user data
-        extraData = .defaultValue
+        extraData = [:]
         currentUserPayload = .dummy(
             userId: currentUserPayload.id,
             role: currentUserPayload.role,
@@ -295,7 +295,7 @@ final class CurrentUserController_Tests: StressTestCase {
         controller.updateUserData(
             name: expectedName,
             imageURL: expectedImageUrl,
-            userExtraData: CustomData.defaultValue
+            userExtraData: [:]
         )
         
         // Assert udpater is called with correct data
@@ -309,7 +309,7 @@ final class CurrentUserController_Tests: StressTestCase {
         env.currentUserObserverItem = .mock(id: .unique)
         
         var completionError: Error?
-        controller.updateUserData(name: .unique, imageURL: .unique(), userExtraData: CustomData.defaultValue) { [callbackQueueID] in
+        controller.updateUserData(name: .unique, imageURL: .unique(), userExtraData: [:]) { [callbackQueueID] in
             AssertTestQueue(withId: callbackQueueID)
             completionError = $0
         }
@@ -328,7 +328,7 @@ final class CurrentUserController_Tests: StressTestCase {
         
         var completionIsCalled = false
         controller
-            .updateUserData(name: .unique, imageURL: .unique(), userExtraData: CustomData.defaultValue) { [callbackQueueID] error in
+            .updateUserData(name: .unique, imageURL: .unique(), userExtraData: [:]) { [callbackQueueID] error in
                 // Assert callback queue is correct.
                 AssertTestQueue(withId: callbackQueueID)
                 // Assert there is no error.
@@ -359,7 +359,7 @@ final class CurrentUserController_Tests: StressTestCase {
             controller.updateUserData(
                 name: .unique,
                 imageURL: nil,
-                userExtraData: CustomData.defaultValue,
+                userExtraData: [:],
                 completion: $0
             )
         }

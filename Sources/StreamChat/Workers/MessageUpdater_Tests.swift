@@ -448,7 +448,7 @@ final class MessageUpdater_Tests: StressTestCase {
             message.attachments(payloadType: TestAttachmentPayload.self),
             [customAttachmentEnvelope.attachment(id: id(for: customAttachmentEnvelope))]
         )
-        XCTAssertEqual(message.extraData, .defaultValue)
+        XCTAssertEqual(message.extraData, [:])
         XCTAssertEqual(message.localState, .pendingSend)
         XCTAssertTrue(message.isPinned)
         XCTAssertEqual(message.isSilent, isSilent)
@@ -808,7 +808,7 @@ final class MessageUpdater_Tests: StressTestCase {
     func test_addReaction_makesCorrectAPICall() {
         let reactionType: MessageReactionType = "like"
         let reactionScore = 1
-        let reactionExtraData: CustomData = .defaultValue
+        let reactionExtraData: [String: RawJSON] = [:]
         let messageId: MessageId = .unique
 
         // Simulate `addReaction` call.
@@ -840,7 +840,7 @@ final class MessageUpdater_Tests: StressTestCase {
             .init(rawValue: .unique),
             score: 1,
             enforceUnique: false,
-            extraData: .defaultValue,
+            extraData: [:],
             messageId: .unique
         ) { error in
             XCTAssertNil(error)
@@ -864,7 +864,7 @@ final class MessageUpdater_Tests: StressTestCase {
             .init(rawValue: .unique),
             score: 1,
             enforceUnique: false,
-            extraData: .defaultValue,
+            extraData: [:],
             messageId: .unique
         ) {
             completionCalledError = $0

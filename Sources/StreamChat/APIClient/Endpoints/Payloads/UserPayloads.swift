@@ -40,7 +40,7 @@ class UserPayload: Decodable {
     let isInvisible: Bool
     let isBanned: Bool
     let teams: [TeamId]
-    let extraData: CustomData
+    let extraData: [String: RawJSON]
 
     init(
         id: String,
@@ -54,7 +54,7 @@ class UserPayload: Decodable {
         isInvisible: Bool,
         isBanned: Bool,
         teams: [TeamId] = [],
-        extraData: CustomData
+        extraData: [String: RawJSON]
     ) {
         self.id = id
         self.name = name
@@ -87,7 +87,7 @@ class UserPayload: Decodable {
         teams = try container.decodeIfPresent([String].self, forKey: .teams) ?? []
 
         do {
-            var payload = try CustomData(from: decoder)
+            var payload = try [String: RawJSON](from: decoder)
             payload.removeValues(forKeys: UserPayloadsCodingKeys.allCases.map(\.rawValue))
             extraData = payload
         } catch {
@@ -95,7 +95,7 @@ class UserPayload: Decodable {
                 "Failed to decode extra data for User with id: <\(userId)>, using default value instead. "
                     + "Error: \(error)"
             )
-            extraData = .defaultValue
+            extraData = [:]
         }
     }
 }
@@ -105,9 +105,9 @@ class UserRequestBody: Encodable {
     let id: String
     let name: String?
     let imageURL: URL?
-    let extraData: CustomData
+    let extraData: [String: RawJSON]
 
-    init(id: String, name: String?, imageURL: URL?, extraData: CustomData) {
+    init(id: String, name: String?, imageURL: URL?, extraData: [String: RawJSON]) {
         self.id = id
         self.name = name
         self.imageURL = imageURL
@@ -153,9 +153,9 @@ struct UserUpdateResponse: Decodable {
 struct UserUpdateRequestBody: Encodable {
     let name: String?
     let imageURL: URL?
-    let extraData: CustomData?
+    let extraData: [String: RawJSON]?
     
-    init(name: String? = nil, imageURL: URL? = nil, extraData: CustomData? = nil) {
+    init(name: String? = nil, imageURL: URL? = nil, extraData: [String: RawJSON]? = nil) {
         self.name = name
         self.imageURL = imageURL
         self.extraData = extraData

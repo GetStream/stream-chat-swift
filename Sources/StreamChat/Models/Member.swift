@@ -55,7 +55,7 @@ public class ChatChannelMember: ChatUser {
         userUpdatedAt: Date,
         lastActiveAt: Date?,
         teams: Set<TeamId>,
-        extraData: CustomData,
+        extraData: [String: RawJSON],
         memberRole: MemberRole,
         memberCreatedAt: Date,
         memberUpdatedAt: Date,

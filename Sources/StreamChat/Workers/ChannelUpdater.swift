@@ -139,7 +139,7 @@ class ChannelUpdater: Worker {
         attachments: [AnyAttachmentPayload] = [],
         mentionedUserIds: [UserId],
         quotedMessageId: MessageId?,
-        extraData: CustomData,
+        extraData: [String: RawJSON],
         completion: ((Result<MessageId, Error>) -> Void)? = nil
     ) {
         var newMessageId: MessageId?

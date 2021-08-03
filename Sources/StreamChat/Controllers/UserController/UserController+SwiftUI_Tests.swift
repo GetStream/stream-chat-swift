@@ -81,7 +81,7 @@ extension ChatUser {
             updatedAt: .unique,
             lastActiveAt: .unique,
             teams: [],
-            extraData: .defaultValue
+            extraData: [:]
         )
     }
 }

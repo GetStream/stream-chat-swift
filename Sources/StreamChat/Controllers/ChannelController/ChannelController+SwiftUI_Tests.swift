@@ -22,7 +22,7 @@ class ChannelController_SwiftUI_Tests: iOS13TestCase {
     
     func test_controllerInitialValuesAreLoaded() {
         channelController.state_simulated = .localDataFetched
-        channelController.channel_simulated = .mock(cid: .unique, name: .unique, imageURL: .unique(), extraData: .defaultValue)
+        channelController.channel_simulated = .mock(cid: .unique, name: .unique, imageURL: .unique(), extraData: [:])
         channelController.messages_simulated = [.unique]
         
         let observableObject = channelController.observableObject
@@ -36,7 +36,7 @@ class ChannelController_SwiftUI_Tests: iOS13TestCase {
         let observableObject = channelController.observableObject
         
         // Simulate channel change
-        let newChannel: ChatChannel = .mock(cid: .unique, name: .unique, imageURL: .unique(), extraData: .defaultValue)
+        let newChannel: ChatChannel = .mock(cid: .unique, name: .unique, imageURL: .unique(), extraData: [:])
         channelController.channel_simulated = newChannel
         channelController.delegateCallback {
             $0.channelController(
@@ -95,7 +95,7 @@ class ChannelController_SwiftUI_Tests: iOS13TestCase {
             updatedAt: .unique,
             lastActiveAt: .unique,
             teams: [],
-            extraData: .defaultValue
+            extraData: [:]
         )
         
         // Simulate typing users change
@@ -154,7 +154,7 @@ extension ChatMessage {
             parentMessageId: nil,
             showReplyInChannel: true,
             replyCount: 2,
-            extraData: .defaultValue,
+            extraData: [:],
             quotedMessage: { nil },
             isSilent: false,
             reactionScores: ["": 1],

@@ -8,7 +8,7 @@ import XCTest
 class MessagePayload_Tests: XCTestCase {
     let messageJSON = XCTestCase.mockData(fromFile: "Message")
     let messageJSONWithCorruptedAttachments = XCTestCase.mockData(fromFile: "MessageWithBrokenAttachments")
-    let messageCustomData: CustomData = ["secret_note": .string("Anakin is Vader!")]
+    let messageCustomData: [String: RawJSON] = ["secret_note": .string("Anakin is Vader!")]
 
     func test_messagePayload_isSerialized_withDefaultExtraData() throws {
         let box = try JSONDecoder.default.decode(MessagePayload.Boxed.self, from: messageJSON)
