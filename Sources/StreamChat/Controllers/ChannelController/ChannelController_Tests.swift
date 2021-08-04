@@ -780,8 +780,8 @@ class ChannelController_Tests: StressTestCase {
         )
         
         // Insert two messages
-        let message1: MessagePayload<NoExtraData> = .dummy(messageId: .unique, authorUserId: .unique)
-        let message2: MessagePayload<NoExtraData> = .dummy(messageId: .unique, authorUserId: .unique)
+        let message1: MessagePayload = .dummy(messageId: .unique, authorUserId: .unique)
+        let message2: MessagePayload = .dummy(messageId: .unique, authorUserId: .unique)
         
         try client.databaseContainer.writeSynchronously {
             try $0.saveMessage(payload: message1, for: self.channelId)

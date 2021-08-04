@@ -15,7 +15,7 @@ public extension ChatClient {
     /// - Returns: A new instance of `ChatChannelController`.
     ///
     func channelController(for cid: ChannelId, messageOrdering: MessageOrdering = .topToBottom) -> ChatChannelController {
-        .init(channelQuery: .init(cid: cid), client: self)
+        .init(channelQuery: .init(cid: cid), client: self, messageOrdering: messageOrdering)
     }
     
     /// Creates a new `ChatChannelController` for the channel with the provided channel query.
@@ -30,7 +30,7 @@ public extension ChatClient {
         for channelQuery: ChannelQuery,
         messageOrdering: MessageOrdering = .topToBottom
     ) -> ChatChannelController {
-        .init(channelQuery: channelQuery, client: self)
+        .init(channelQuery: channelQuery, client: self, messageOrdering: messageOrdering)
     }
     
     /// Creates a `ChatChannelController` that will create a new channel, if the channel doesn't exist already.

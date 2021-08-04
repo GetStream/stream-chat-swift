@@ -496,14 +496,20 @@ class ChannelListController_Tests: StressTestCase {
         )
         
         XCTAssertEqual(
-            (try! client.channelController(createDirectMessageChannelWith: [.unique])).messageOrdering,
+            (
+                try! client.channelController(
+                    createDirectMessageChannelWith: [.unique],
+                    extraData: [:]
+                )
+            ).messageOrdering,
             .topToBottom
         )
         XCTAssertEqual(
             (
                 try! client.channelController(
                     createDirectMessageChannelWith: [.unique],
-                    messageOrdering: .bottomToTop
+                    messageOrdering: .bottomToTop,
+                    extraData: [:]
                 )
             ).messageOrdering,
             .bottomToTop
