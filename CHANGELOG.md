@@ -73,6 +73,7 @@ extension ChatUser {
 - Added `ChatThreadHeaderView` UI Component [#1294](https://github.com/GetStream/stream-chat-swift/pull/1294)
 - Added custom channel events support [#1309](https://github.com/GetStream/stream-chat-swift/pull/1309)
 - Added `ChatMessageAudioAttachment`, you can access them via `ChatMessage.audioAttachments`. There's no UI support as of now, it's in our Roadmap. [#1322](https://github.com/GetStream/stream-chat-swift/issues/1322)
+- Added message ordering parameter to all `ChannelController` initializers. If you use `ChatChannelListRouter` it can be done by overriding a `showMessageList` method on it. [#1338](https://github.com/GetStream/stream-chat-swift/pull/1338)
 - Added support for custom localization of components in framework [#1330](https://github.com/GetStream/stream-chat-swift/pull/1330)
 
 ### 🐞 Fixed

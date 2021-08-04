@@ -455,6 +455,66 @@ class ChannelListController_Tests: StressTestCase {
         // Completion should be called with the error
         AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
     }
+    
+    // MARK: - List Ordering initial value
+    
+    func test_inits_propagate_desiredMessageOrdering() {
+        XCTAssertEqual(
+            client.channelController(for: .unique).messageOrdering,
+            .topToBottom
+        )
+        XCTAssertEqual(
+            client.channelController(for: .unique, messageOrdering: .bottomToTop).messageOrdering,
+            .bottomToTop
+        )
+        
+        XCTAssertEqual(
+            client.channelController(for: ChannelQuery(cid: .unique)).messageOrdering,
+            .topToBottom
+        )
+        XCTAssertEqual(
+            client.channelController(
+                for: ChannelQuery(cid: .unique),
+                messageOrdering: .bottomToTop
+            ).messageOrdering,
+            .bottomToTop
+        )
+        
+        client.currentUserId = .unique
+        XCTAssertEqual(
+            (try! client.channelController(createChannelWithId: .unique)).messageOrdering,
+            .topToBottom
+        )
+        XCTAssertEqual(
+            (
+                try! client.channelController(
+                    createChannelWithId: .unique,
+                    messageOrdering: .bottomToTop
+                )
+            ).messageOrdering,
+            .bottomToTop
+        )
+        
+        XCTAssertEqual(
+            (
+                try! client.channelController(
+                    createDirectMessageChannelWith: [.unique],
+                    extraData: [:]
+                )
+            ).messageOrdering,
+            .topToBottom
+        )
+        XCTAssertEqual(
+            (
+                try! client.channelController(
+                    createDirectMessageChannelWith: [.unique],
+                    messageOrdering: .bottomToTop,
+                    extraData: [:]
+                )
+            ).messageOrdering,
+            .bottomToTop
+        )
+    }
 }
 
 private class TestEnvironment {

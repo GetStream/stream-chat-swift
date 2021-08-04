@@ -223,10 +223,9 @@ struct ChannelListView: View {
     
     private func chatView(for index: Int) -> ChatView {
         let channelController = channelList.controller.client.channelController(
-            for: channelList.channels[index].cid
+            for: channelList.channels[index].cid,
+            messageOrdering: .bottomToTop
         )
-        
-        channelController.listOrdering = .bottomToTop
         
         return ChatView(channel: channelController.observableObject)
     }

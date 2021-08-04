@@ -741,9 +741,17 @@ class ChannelController_Tests: StressTestCase {
         AssertAsync.willBeTrue(controller.messages.contains { $0.id == newMessageId })
     }
 
-    func test_messagesHaveCorrectOrder() throws {
+    func test_messagesOrdering_topToBottom_HaveCorrectOrder() throws {
         // Create a channel
-        try client.databaseContainer.createChannel(cid: channelId, withMessages: false)
+        try client.databaseContainer.createChannel(
+            cid: channelId,
+            withMessages: false
+        )
+        
+        controller = client.channelController(
+            for: channelId,
+            messageOrdering: .topToBottom
+        )
         
         // Insert two messages
         let message1: MessagePayload = .dummy(messageId: .unique, authorUserId: .unique)
@@ -754,15 +762,31 @@ class ChannelController_Tests: StressTestCase {
             try $0.saveMessage(payload: message2, for: self.channelId)
         }
         
-        // Set top-to-bottom ordering
-        controller.listOrdering = .topToBottom
-        
         // Check the order of messages is correct
         let topToBottomIds = [message1, message2].sorted { $0.createdAt > $1.createdAt }.map(\.id)
         XCTAssertEqual(controller.messages.map(\.id), topToBottomIds)
-
-        // Set bottom-to-top ordering
-        controller.listOrdering = .bottomToTop
+    }
+    
+    func test_messagesOrdering_bottomToTop_HaveCorrectOrder() throws {
+        // Create a channel
+        try client.databaseContainer.createChannel(
+            cid: channelId,
+            withMessages: false
+        )
+        
+        controller = client.channelController(
+            for: channelId,
+            messageOrdering: .bottomToTop
+        )
+        
+        // Insert two messages
+        let message1: MessagePayload = .dummy(messageId: .unique, authorUserId: .unique)
+        let message2: MessagePayload = .dummy(messageId: .unique, authorUserId: .unique)
+        
+        try client.databaseContainer.writeSynchronously {
+            try $0.saveMessage(payload: message1, for: self.channelId)
+            try $0.saveMessage(payload: message2, for: self.channelId)
+        }
         
         // Check the order of messages is correct
         let bottomToTopIds = [message1, message2].sorted { $0.createdAt < $1.createdAt }.map(\.id)
@@ -772,6 +796,10 @@ class ChannelController_Tests: StressTestCase {
     func test_threadReplies_areNotShownInChannel() throws {
         // Create a channel
         try client.databaseContainer.createChannel(cid: channelId, withMessages: false)
+        controller = client.channelController(
+            for: channelId,
+            messageOrdering: .topToBottom
+        )
         
         // Insert two messages
         let message1: MessagePayload = .dummy(messageId: .unique, authorUserId: .unique)
@@ -799,9 +827,6 @@ class ChannelController_Tests: StressTestCase {
             try $0.saveMessage(payload: reply1, for: self.channelId)
             try $0.saveMessage(payload: reply2, for: self.channelId)
         }
-        
-        // Set top-to-bottom ordering
-        controller.listOrdering = .topToBottom
         
         // Check the relevant reply is shown in channel
         let messagesWithReply = [message1, message2, reply1].sorted { $0.createdAt > $1.createdAt }.map(\.id)
