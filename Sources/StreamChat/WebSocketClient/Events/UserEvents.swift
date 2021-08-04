@@ -8,6 +8,7 @@ public struct UserPresenceChangedEvent: UserSpecificEvent {
     public let userId: UserId
     public let createdAt: Date?
     
+    var savedData: SavedEventData?
     let payload: Any
     
     init(from response: EventPayload) throws {
@@ -21,6 +22,7 @@ public struct UserUpdatedEvent: UserSpecificEvent {
     public let userId: UserId
     public let createdAt: Date?
     
+    var savedData: SavedEventData?
     let payload: Any
     
     init(from response: EventPayload) throws {
@@ -39,6 +41,7 @@ public struct UserWatchingEvent: UserSpecificEvent, ChannelSpecificEvent {
     public let watcherCount: Int
     public let isStarted: Bool
     
+    var savedData: SavedEventData?
     let payload: Any
     
     init(from response: EventPayload) throws {
@@ -56,6 +59,8 @@ public struct UserWatchingEvent: UserSpecificEvent, ChannelSpecificEvent {
 public struct UserGloballyBannedEvent: UserSpecificEvent {
     var userId: UserId
     var createdAt: Date?
+    
+    var savedData: SavedEventData?
     var payload: Any
     
     init(from response: EventPayload) throws {
@@ -73,6 +78,7 @@ public struct UserBannedEvent: UserSpecificEvent, ChannelSpecificEvent {
     public let reason: String?
     public let expiredAt: Date?
     
+    var savedData: SavedEventData?
     let payload: Any
     
     init(from response: EventPayload) throws {
@@ -89,6 +95,8 @@ public struct UserBannedEvent: UserSpecificEvent, ChannelSpecificEvent {
 public struct UserGloballyUnbannedEvent: UserSpecificEvent {
     var userId: UserId
     var createdAt: Date?
+    
+    var savedData: SavedEventData?
     var payload: Any
     
     init(from response: EventPayload) throws {
@@ -103,6 +111,7 @@ public struct UserUnbannedEvent: UserSpecificEvent, ChannelSpecificEvent {
     public let userId: UserId
     public let createdAt: Date?
     
+    var savedData: SavedEventData?
     let payload: Any
     
     init(from response: EventPayload) throws {

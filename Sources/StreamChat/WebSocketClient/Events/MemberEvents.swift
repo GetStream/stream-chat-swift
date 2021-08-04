@@ -8,6 +8,7 @@ public struct MemberAddedEvent: MemberEvent {
     public let memberUserId: UserId
     public let cid: ChannelId
     
+    var savedData: SavedEventData?
     let payload: Any
     
     init(from response: EventPayload) throws {
@@ -21,6 +22,7 @@ public struct MemberUpdatedEvent: MemberEvent {
     public let memberUserId: UserId
     public let cid: ChannelId
     
+    var savedData: SavedEventData?
     let payload: Any
     
     init(from response: EventPayload) throws {
@@ -34,6 +36,7 @@ public struct MemberRemovedEvent: MemberEvent {
     public var memberUserId: UserId
     public let cid: ChannelId
     
+    var savedData: SavedEventData?
     let payload: Any
     
     init(from response: EventPayload) throws {

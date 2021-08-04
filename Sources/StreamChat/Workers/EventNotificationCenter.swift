@@ -34,6 +34,46 @@ class EventNotificationCenter: NotificationCenter {
     }
 
     func process(_ event: Event) {
+        var event = event
+        switch event {
+        case var messageSpecificEvent as MessageSpecificEvent:
+            messageSpecificEvent.savedData = SavedEventData(
+                user: { [weak database] in database?.viewContext.user(id: messageSpecificEvent.userId)?.asModel() },
+                channel: { [weak database] in database?.viewContext.channel(cid: messageSpecificEvent.cid)?.asModel() },
+                message: { [weak database] in database?.viewContext.message(id: messageSpecificEvent.messageId)?.asModel() },
+                underlyingContext: database.viewContext
+            )
+            event = messageSpecificEvent
+        case var memberEvent as MemberEvent:
+            memberEvent.savedData = SavedEventData(
+                member: { [weak database] in
+                    database?.viewContext.member(userId: memberEvent.memberUserId, cid: memberEvent.cid)?.asModel()
+                },
+                underlyingContext: database.viewContext
+            )
+            event = memberEvent
+        case var userSpecificEvent as UserSpecificEvent:
+            userSpecificEvent.savedData = SavedEventData(
+                user: { [weak database] in database?.viewContext.user(id: userSpecificEvent.userId)?.asModel() },
+                underlyingContext: database.viewContext
+            )
+            event = userSpecificEvent
+        case var channelSpecificEvent as ChannelSpecificEvent:
+            channelSpecificEvent.savedData = SavedEventData(
+                channel: { [weak database] in database?.viewContext.channel(cid: channelSpecificEvent.cid)?.asModel() },
+                underlyingContext: database.viewContext
+            )
+            event = channelSpecificEvent
+        case var currentUserEvent as CurrentUserEvent:
+            currentUserEvent.savedData = SavedEventData(
+                currentUser: { [weak database] in database?.viewContext.currentUser?.asModel() },
+                underlyingContext: database.viewContext
+            )
+            event = currentUserEvent
+        default:
+            break
+        }
+        
         var shouldScheduleProcessing = false
         _pendingEvents {
             shouldScheduleProcessing = $0.isEmpty
@@ -66,7 +106,9 @@ class EventNotificationCenter: NotificationCenter {
     private func scheduleProcessing() {
         DispatchQueue.main.asyncAfter(deadline: .now() + eventBatchPeriod) { [weak self] in
             guard let self = self else { return }
-
+            
+            var eventsToPublish = [Event]()
+            
             self.database.write { session in
                 var eventsToProcess: [Event] = []
                 self._pendingEvents {
@@ -74,13 +116,12 @@ class EventNotificationCenter: NotificationCenter {
                     $0.removeAll()
                 }
                 
-                eventsToProcess.forEach { event in
-                    guard
-                        let eventToPublish = self.middlewares.process(event: event, session: session)
-                    else { return }
-
-                    self.post(Notification(newEventReceived: eventToPublish, sender: self))
+                eventsToPublish = eventsToProcess.compactMap { self.middlewares.process(event: $0, session: session) }
+            } completion: { error in
+                if let error = error {
+                    log.error("Error when saving events: \(error)")
                 }
+                eventsToPublish.forEach { self.post(Notification(newEventReceived: $0, sender: self)) }
             }
         }
     }

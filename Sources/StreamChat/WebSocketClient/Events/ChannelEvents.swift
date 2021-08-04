@@ -7,6 +7,7 @@ import Foundation
 public struct ChannelUpdatedEvent: ChannelSpecificEvent {
     public let cid: ChannelId
 
+    var savedData: SavedEventData?
     let payload: Any
     
     init(from response: EventPayload) throws {
@@ -19,6 +20,7 @@ public struct ChannelDeletedEvent: ChannelSpecificEvent {
     public let cid: ChannelId
     public let deletedAt: Date
     
+    var savedData: SavedEventData?
     let payload: Any
     
     init(from response: EventPayload) throws {
@@ -30,6 +32,8 @@ public struct ChannelDeletedEvent: ChannelSpecificEvent {
 
 public struct ChannelTruncatedEvent: ChannelSpecificEvent {
     public let cid: ChannelId
+    
+    var savedData: SavedEventData?
     let payload: Any
     
     init(from response: EventPayload) throws {
@@ -40,6 +44,8 @@ public struct ChannelTruncatedEvent: ChannelSpecificEvent {
 
 public struct ChannelVisibleEvent: ChannelSpecificEvent {
     public let cid: ChannelId
+    
+    var savedData: SavedEventData?
     let payload: Any
 
     init(from response: EventPayload) throws {
@@ -52,6 +58,8 @@ public struct ChannelHiddenEvent: ChannelSpecificEvent {
     public let cid: ChannelId
     public let hiddenAt: Date
     public let isHistoryCleared: Bool
+    
+    var savedData: SavedEventData?
     let payload: Any
 
     init(from response: EventPayload) throws {

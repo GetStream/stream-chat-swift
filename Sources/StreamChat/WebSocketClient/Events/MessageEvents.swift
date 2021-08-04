@@ -12,6 +12,7 @@ public struct MessageNewEvent: MessageSpecificEvent {
     public let watcherCount: Int?
     public let unreadCount: UnreadCount?
     
+    var savedData: SavedEventData?
     let payload: Any
     
     init(from response: EventPayload) throws {
@@ -31,6 +32,7 @@ public struct MessageUpdatedEvent: MessageSpecificEvent {
     public let messageId: MessageId
     public let updatedAt: Date
     
+    var savedData: SavedEventData?
     let payload: Any
     
     init(from response: EventPayload) throws {
@@ -48,6 +50,7 @@ public struct MessageDeletedEvent: MessageSpecificEvent {
     public let messageId: MessageId
     public let deletedAt: Date
     
+    var savedData: SavedEventData?
     let payload: Any
     
     init(from response: EventPayload) throws {
@@ -69,6 +72,7 @@ public struct MessageReadEvent: UserSpecificEvent, ChannelSpecificEvent {
     public let readAt: Date
     public let unreadCount: UnreadCount?
     
+    var savedData: SavedEventData?
     let payload: Any
     
     init(from response: EventPayload) throws {

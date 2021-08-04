@@ -11,6 +11,7 @@ public struct TypingEvent: UserSpecificEvent, ChannelSpecificEvent {
     public let parentId: MessageId?
     public let isThread: Bool
 
+    var savedData: SavedEventData?
     let payload: Any
     
     init(from response: EventPayload) throws {

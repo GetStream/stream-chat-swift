@@ -10,6 +10,8 @@ public struct NotificationMessageNewEvent: MessageSpecificEvent {
     public let messageId: MessageId
     public let createdAt: Date
     public let unreadCount: UnreadCount?
+    
+    var savedData: SavedEventData?
     let payload: Any
     
     init(from response: EventPayload) throws {
@@ -25,6 +27,8 @@ public struct NotificationMessageNewEvent: MessageSpecificEvent {
 public struct NotificationMarkAllReadEvent: UserSpecificEvent {
     public let userId: UserId
     public let readAt: Date
+    
+    var savedData: SavedEventData?
     let payload: Any
     
     init(from response: EventPayload) throws {
@@ -39,6 +43,8 @@ public struct NotificationMarkReadEvent: UserSpecificEvent, ChannelSpecificEvent
     public let cid: ChannelId
     public let readAt: Date
     public let unreadCount: UnreadCount
+    
+    var savedData: SavedEventData?
     let payload: Any
     
     init(from response: EventPayload) throws {
@@ -52,6 +58,8 @@ public struct NotificationMarkReadEvent: UserSpecificEvent, ChannelSpecificEvent
 
 public struct NotificationMutesUpdatedEvent: CurrentUserEvent {
     public let currentUserId: UserId
+    
+    var savedData: SavedEventData?
     let payload: Any
     
     init(from response: EventPayload) throws {
@@ -62,6 +70,8 @@ public struct NotificationMutesUpdatedEvent: CurrentUserEvent {
 
 public struct NotificationAddedToChannelEvent: ChannelSpecificEvent {
     public let cid: ChannelId
+    
+    var savedData: SavedEventData?
     let payload: Any
     
     init(from response: EventPayload) throws {
@@ -74,6 +84,7 @@ public struct NotificationRemovedFromChannelEvent: CurrentUserEvent, ChannelSpec
     public let currentUserId: UserId
     public let cid: ChannelId
 
+    var savedData: SavedEventData?
     let payload: Any
     
     init(from response: EventPayload) throws {
@@ -85,6 +96,8 @@ public struct NotificationRemovedFromChannelEvent: CurrentUserEvent, ChannelSpec
 
 public struct NotificationChannelMutesUpdatedEvent: UserSpecificEvent {
     public let userId: UserId
+    
+    var savedData: SavedEventData?
     let payload: Any
     
     init(from response: EventPayload) throws {
@@ -97,6 +110,7 @@ public struct NotificationInvitedEvent: MemberEvent {
     public let memberUserId: UserId
     public let cid: ChannelId
     
+    var savedData: SavedEventData?
     let payload: Any
     
     init(from response: EventPayload) throws {
@@ -110,6 +124,7 @@ public struct NotificationInviteAccepted: MemberEvent {
     public let memberUserId: UserId
     public let cid: ChannelId
     
+    var savedData: SavedEventData?
     let payload: Any
     
     init(from response: EventPayload) throws {
@@ -123,6 +138,7 @@ public struct NotificationInviteRejected: MemberEvent {
     public let memberUserId: UserId
     public let cid: ChannelId
     
+    var savedData: SavedEventData?
     let payload: Any
     
     init(from response: EventPayload) throws {

@@ -12,6 +12,7 @@ public struct ReactionNewEvent: ReactionEvent {
     public let reactionScore: Int
     public let createdAt: Date
     
+    var savedData: SavedEventData?
     let payload: Any
     
     init(from response: EventPayload) throws {
@@ -33,6 +34,7 @@ public struct ReactionUpdatedEvent: ReactionEvent {
     public let reactionScore: Int
     public let updatedAt: Date
     
+    var savedData: SavedEventData?
     let payload: Any
     
     init(from response: EventPayload) throws {
@@ -53,6 +55,7 @@ public struct ReactionDeletedEvent: ReactionEvent {
     public let reactionType: MessageReactionType
     public let reactionScore: Int
     
+    var savedData: SavedEventData?
     let payload: Any
     
     init(from response: EventPayload) throws {

@@ -11,6 +11,7 @@ public protocol ConnectionEvent: Event {
 public struct HealthCheckEvent: ConnectionEvent, EventWithPayload {
     public let connectionId: String
     
+    var savedData: SavedEventData?
     var payload: Any
     
     init(from eventResponse: EventPayload) throws {
