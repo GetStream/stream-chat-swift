@@ -102,7 +102,7 @@ class ChatChannelAvatarView_Tests: XCTestCase {
     func test_wrappedChatChannelAvatarViewInSwiftUI() {
         struct CustomView: View {
             @EnvironmentObject var components: Components.ObservableObject
-            let content: (channel: _ChatChannel?, currentUserId: UserId?)
+            let content: (channel: ChatChannel?, currentUserId: UserId?)
             
             var body: some View {
                 components.channelAvatarView.asView(content)

@@ -11,8 +11,6 @@ import XCTest
 class ChatChannelListItemView_SwiftUI_Tests: XCTestCase {
     func test_injectedSwiftUIView() {
         struct CustomChannelListItemView: ChatChannelListItemView.SwiftUIView {
-            public typealias ExtraData = NoExtraData
-
             @ObservedObject var dataSource: ChatChannelListItemView.ObservedObject<Self>
             
             public init(dataSource: ChatChannelListItemView.ObservedObject<Self>) {
