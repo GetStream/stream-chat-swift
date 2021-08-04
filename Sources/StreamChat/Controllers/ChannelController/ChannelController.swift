@@ -1158,7 +1158,7 @@ public protocol ChatChannelControllerDelegate: DataControllerStateDelegate {
     )
 
     /// The controller received a `MemberEvent` related to the channel it observes.
-    func channelController(_ channelController: ChatChannelController, didReceiveMemberEvent: MemberEvent)
+    func channelController(_ channelController: ChatChannelController, didReceiveMemberEvent: Event)
     
     /// The controller received a change related to users typing in the channel it observes.
     func channelController(
@@ -1178,7 +1178,7 @@ public extension ChatChannelControllerDelegate {
         didUpdateMessages changes: [ListChange<ChatMessage>]
     ) {}
 
-    func channelController(_ channelController: ChatChannelController, didReceiveMemberEvent: MemberEvent) {}
+    func channelController(_ channelController: ChatChannelController, didReceiveMemberEvent: Event) {}
     
     func channelController(
         _ channelController: ChatChannelController,
@@ -1203,7 +1203,7 @@ class AnyChannelControllerDelegate: ChatChannelControllerDelegate {
     
     private var _controllerDidReceiveMemberEvent: (
         ChatChannelController,
-        MemberEvent
+        Event
     ) -> Void
     
     private var _controllerDidChangeTypingUsers: (
@@ -1226,7 +1226,7 @@ class AnyChannelControllerDelegate: ChatChannelControllerDelegate {
         ) -> Void,
         controllerDidReceiveMemberEvent: @escaping (
             ChatChannelController,
-            MemberEvent
+            Event
         ) -> Void,
         controllerDidChangeTypingUsers: @escaping (
             ChatChannelController,
@@ -1261,7 +1261,7 @@ class AnyChannelControllerDelegate: ChatChannelControllerDelegate {
     
     func channelController(
         _ controller: ChatChannelController,
-        didReceiveMemberEvent event: MemberEvent
+        didReceiveMemberEvent event: Event
     ) {
         _controllerDidReceiveMemberEvent(controller, event)
     }

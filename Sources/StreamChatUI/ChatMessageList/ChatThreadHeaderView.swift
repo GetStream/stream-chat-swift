@@ -80,7 +80,7 @@ open class ChatThreadHeaderView:
 
     open func channelController(
         _ channelController: ChatChannelController,
-        didReceiveMemberEvent: MemberEvent
+        didReceiveMemberEvent: Event
     ) {
         // By default the header view is not interested in member events
         // but this can be overridden by subclassing this component.

@@ -25,9 +25,8 @@ protocol ChannelSpecificEvent: EventWithPayload {
 }
 
 /// A protocol for any `MemberEvent` where it has a `member`, and `channel` payload.
-public protocol MemberEvent: Event {
+protocol MemberEvent: ChannelSpecificEvent {
     var memberUserId: UserId { get }
-    var cid: ChannelId { get }
 }
 
 /// A protocol for any `MessageEvent` where it has a `user`, `channel` and `message` payloads.

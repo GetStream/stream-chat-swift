@@ -4,7 +4,7 @@
 
 import Foundation
 
-public struct MemberAddedEvent: MemberEvent, ChannelSpecificEvent, EventWithPayload {
+public struct MemberAddedEvent: MemberEvent {
     public let memberUserId: UserId
     public let cid: ChannelId
     
@@ -17,7 +17,7 @@ public struct MemberAddedEvent: MemberEvent, ChannelSpecificEvent, EventWithPayl
     }
 }
 
-public struct MemberUpdatedEvent: MemberEvent, ChannelSpecificEvent, EventWithPayload {
+public struct MemberUpdatedEvent: MemberEvent {
     public let memberUserId: UserId
     public let cid: ChannelId
     
@@ -30,7 +30,7 @@ public struct MemberUpdatedEvent: MemberEvent, ChannelSpecificEvent, EventWithPa
     }
 }
 
-public struct MemberRemovedEvent: MemberEvent, ChannelSpecificEvent, EventWithPayload {
+public struct MemberRemovedEvent: MemberEvent {
     public var memberUserId: UserId
     public let cid: ChannelId
     

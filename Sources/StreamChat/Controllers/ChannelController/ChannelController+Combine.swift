@@ -23,7 +23,7 @@ extension ChatChannelController {
     }
     
     /// A publisher emitting a new value every time member event received.
-    public var memberEventPublisher: AnyPublisher<MemberEvent, Never> {
+    public var memberEventPublisher: AnyPublisher<Event, Never> {
         basePublishers.memberEvent.keepAlive(self)
     }
     
@@ -49,7 +49,7 @@ extension ChatChannelController {
         let messagesChanges: PassthroughSubject<[ListChange<ChatMessage>], Never> = .init()
         
         /// A backing subject for `memberEventPublisher`.
-        let memberEvent: PassthroughSubject<MemberEvent, Never> = .init()
+        let memberEvent: PassthroughSubject<Event, Never> = .init()
         
         /// A backing subject for `typingUsersPublisher`.
         let typingUsers: PassthroughSubject<Set<ChatUser>, Never> = .init()
@@ -83,7 +83,7 @@ extension ChatChannelController.BasePublishers: ChatChannelControllerDelegate {
         messagesChanges.send(changes)
     }
 
-    func channelController(_ channelController: ChatChannelController, didReceiveMemberEvent event: MemberEvent) {
+    func channelController(_ channelController: ChatChannelController, didReceiveMemberEvent event: Event) {
         memberEvent.send(event)
     }
     
