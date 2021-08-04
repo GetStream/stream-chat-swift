@@ -176,22 +176,48 @@ class DemoChatChannelListRouter: ChatChannelListRouter {
     }
 }
 
-class DemoChannelListVC: ChatChannelListVC {
+class DemoChannelListVC: ChatChannelListVC, EventsControllerDelegate {
     /// The `UIButton` instance used for navigating to new channel screen creation,
     lazy var createChannelButton: UIButton = {
         let button = UIButton()
         button.setImage(UIImage(named: "pencil")!, for: .normal)
         return button
     }()
+    
+    var eventsController: EventsController!
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: createChannelButton)
         createChannelButton.addTarget(self, action: #selector(didTapCreateNewChannel), for: .touchUpInside)
+        
+        eventsController = controller.client.eventsController()
+        eventsController.delegate = self
     }
 
     @objc open func didTapCreateNewChannel(_ sender: Any) {
         (router as! DemoChatChannelListRouter).showCreateNewChannelFlow()
+    }
+    
+    func eventsController(_ controller: EventsController, didReceiveEvent event: Event) {
+        switch event {
+        case let event as MessageNewEvent:
+            if let message = event.message(), let channel = event.channel() {
+                // Show local notification for the event
+                let content = UNMutableNotificationContent()
+                content.title = "\(message.author.name ?? message.author.id) @ \(channel.name ?? channel.cid.id)"
+                content.body = message.text
+                
+                let request = UNNotificationRequest(identifier: message.id, content: content, trigger: nil)
+                UNUserNotificationCenter.current().add(request) { error in
+                    if let error = error {
+                        log.error("Error when showing local notification: \(error)")
+                    }
+                }
+            }
+        default:
+            break
+        }
     }
 }

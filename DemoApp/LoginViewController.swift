@@ -60,6 +60,16 @@ class LoginViewController: UIViewController {
             tableView.deselectRow(at: selectedRow, animated: true)
         }
     }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { _, error in
+            if let error = error {
+                log.error("Error when enabling notifications: \(error)")
+            }
+        }
+    }
 }
 
 extension LoginViewController: UITableViewDelegate, UITableViewDataSource {
