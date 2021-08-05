@@ -27,6 +27,24 @@ open class ChatChannelListVC: _ViewController,
         }
     }()
     
+    /// View which will be shown when loaded channels are empty with action to start a new conversation
+    open private(set) lazy var channelListEmptyView: UIView = components
+        .channelListEmptyView
+        .init()
+        .withoutAutoresizingMaskConstraints
+    
+    /// Toast which will be shown when there was error thrown when fetching either local or remote channels with action to retry.
+    open private(set) lazy var errorOccurredNotificationView: UIView = components
+        .channelListErrorView
+        .init()
+        .withoutAutoresizingMaskConstraints
+    
+    /// Value of `errorOccurredNotificationView` height constraint  toast message to be animated.
+    var errorOccurredNotificationViewHeight: CGFloat { 70 }
+    
+    /// Constraint from bottom to `errorOccurredNotificationView`
+    var bottomAnimationConstraint: NSLayoutConstraint?
+    
     /// A router object responsible for handling navigation actions of this view controller.
     open lazy var router: ChatChannelListRouter = components
         .channelListRouter
@@ -101,8 +119,18 @@ open class ChatChannelListVC: _ViewController,
     override open func setUpLayout() {
         super.setUpLayout()
         view.embed(collectionView)
-        collectionView.addSubview(loadingIndicator)
-        loadingIndicator.pin(anchors: [.centerX, .centerY], to: view)
+        view.embed(loadingIndicator)
+        view.embed(channelListEmptyView)
+
+        view.addSubview(errorOccurredNotificationView)
+        
+        errorOccurredNotificationView.heightAnchor.pin(equalToConstant: errorOccurredNotificationViewHeight).isActive = true
+        errorOccurredNotificationView.pin(anchors: [.leading, .trailing], to: view)
+        bottomAnimationConstraint = errorOccurredNotificationView.topAnchor.pin(equalTo: view.bottomAnchor).with(priority: .lowest)
+        errorOccurredNotificationView.topAnchor.pin(equalTo: collectionView.bottomAnchor).isActive = true
+        errorOccurredNotificationView.bottomAnchor.pin(lessThanOrEqualTo: view.bottomAnchor).isActive = true
+        
+        bottomAnimationConstraint?.isActive = true
     }
     
     override open func setUpAppearance() {
@@ -120,6 +148,28 @@ open class ChatChannelListVC: _ViewController,
                 width: collectionView.bounds.width,
                 height: 64
             )
+        }
+    
+        (errorOccurredNotificationView as? ChatChannelListErrorView)?.buttonAction = { [weak self] in
+            self?.controller.synchronize()
+        }
+    }
+    
+    /// Shows Bottom notification notifying user there was error while fetching channels
+    open func showBottomErrorNotification() {
+        errorOccurredNotificationView.isHidden = false
+        UIView.animate(withDuration: 0.8) {
+            self.bottomAnimationConstraint?.constant = self.errorOccurredNotificationViewHeight
+            self.view.layoutIfNeeded()
+        }
+    }
+    
+    /// Shows Bottom notification notifying user there was error while fetching channels
+    open func hideBottomErrorNotification() {
+        errorOccurredNotificationView.isHidden = true
+        UIView.animate(withDuration: 0.8) {
+            self.bottomAnimationConstraint?.constant = 0
+            self.view.layoutIfNeeded()
         }
     }
 
@@ -282,15 +332,31 @@ open class ChatChannelListVC: _ViewController,
     // MARK: - DataControllerStateDelegate
     
     open func controller(_ controller: DataController, didChangeState state: DataController.State) {
+        // Reset bottom notification.
+        hideBottomErrorNotification()
+        
         switch state {
-        case .initialized, .localDataFetched:
+        case .initialized:
+            channelListEmptyView.isHidden = true
+            loadingIndicator.isHidden = false
+        case .localDataFetched:
             if self.controller.channels.isEmpty {
-                loadingIndicator.startAnimating()
+                channelListEmptyView.isHidden = true
+                loadingIndicator.isHidden = false
             } else {
-                loadingIndicator.stopAnimating()
+                channelListEmptyView.isHidden = true
+                loadingIndicator.isHidden = true
             }
-        default:
-            loadingIndicator.stopAnimating()
+        case .remoteDataFetched:
+            if self.controller.channels.isEmpty {
+                channelListEmptyView.isHidden = false
+                loadingIndicator.isHidden = true
+            } else {
+                channelListEmptyView.isHidden = true
+                loadingIndicator.isHidden = true
+            }
+        case .localDataFetchFailed, .remoteDataFetchFailed:
+            showBottomErrorNotification()
         }
     }
 }
