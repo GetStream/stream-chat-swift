@@ -68,6 +68,9 @@ _August 11, 2021_
 - Fixed an issue for `ChatThreadVC` opened from a deeplink when new replies are only added to the chat, but not to the replies thread [#1354](https://github.com/GetStream/stream-chat-swift/pull/1354)
 
 
+### ✅ Added 
+- Added Loading, Empty and Error states to ChannelList [#1310](https://github.com/GetStream/stream-chat-swift/pull/1310)
+
 # [4.0.0-beta.9](https://github.com/GetStream/stream-chat-swift/releases/tag/4.0.0-beta.9)
 _August 05, 2021_
 
