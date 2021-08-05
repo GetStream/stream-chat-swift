@@ -9,6 +9,12 @@
 "channel.item.typing-singular" = "is typing ...";
 "channel.item.typing-plural" = "are typing ...";
 
+"channellist.loading-indicator.empty.title" = "Let's start chatting!";
+"channellist.loading-indicator.empty.subtitle" = "How about sending your first message to a friend?";
+"channellist.loading-indicator.empty.button" = "Start a chat";
+
+"channellist.error-indicator.message" = "Error loading channels";
+
 "message.actions.inline-reply" = "Reply";
 "message.actions.thread-reply" = "Thread Reply";
 "message.actions.edit" = "Edit Message";

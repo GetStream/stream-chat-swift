@@ -48,6 +48,23 @@ internal enum L10n {
     }
   }
 
+  internal enum Channellist {
+    internal enum ErrorIndicator {
+      /// Error loading channels
+      internal static var message: String { L10n.tr("Localizable", "channellist.error-indicator.message") }
+    }
+    internal enum LoadingIndicator {
+      internal enum Empty {
+        /// Start a chat
+        internal static var button: String { L10n.tr("Localizable", "channellist.loading-indicator.empty.button") }
+        /// How about sending your first message to a friend?
+        internal static var subtitle: String { L10n.tr("Localizable", "channellist.loading-indicator.empty.subtitle") }
+        /// Let's start chatting!
+        internal static var title: String { L10n.tr("Localizable", "channellist.loading-indicator.empty.title") }
+      }
+    }
+  }
+
   internal enum Composer {
     internal enum Checkmark {
       /// Also send in channel
