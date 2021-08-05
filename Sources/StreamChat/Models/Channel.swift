@@ -145,7 +145,7 @@ public struct ChatChannel {
     /// A list of users to invite in the channel.
 //    let invitedMembers: Set<ChatChannelMember> // TODO: Why is this not public?
     
-    init(
+    public init(
         cid: ChannelId,
         name: String?,
         imageURL: URL?,
@@ -198,6 +198,8 @@ public struct ChatChannel {
         $_pinnedMessages = (pinnedMessages, underlyingContext)
         $_muteDetails = (muteDetails, underlyingContext)
     }
+    
+    
 }
 
 extension ChatChannel {

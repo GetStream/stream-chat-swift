@@ -270,7 +270,7 @@ public struct ChannelConfig: Codable {
         updatedAt = try container.decode(Date.self, forKey: .updatedAt)
     }
     
-    internal init(
+    public init(
         reactionsEnabled: Bool = false,
         typingEventsEnabled: Bool = false,
         readEventsEnabled: Bool = false,
