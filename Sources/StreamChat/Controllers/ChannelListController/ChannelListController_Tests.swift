@@ -23,7 +23,7 @@ class ChannelListController_Tests: StressTestCase {
         super.setUp()
         
         env = TestEnvironment()
-        client = ChatClient.mock
+        client = ChatClient.mock(isLocalStorageEnabled: true)
         query = .init(filter: .in(.members, values: [.unique]))
         controller = ChatChannelListController(query: query, client: client, environment: env.environment)
         controllerCallbackQueueID = UUID()

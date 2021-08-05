@@ -88,6 +88,8 @@ extension ChatUser {
 
 ### 🔄 Changed
 - `ContainerStackView` doesn't `assert` when trying to remove a subview, these operations are now no-op [#1328](https://github.com/GetStream/stream-chat-swift/issues/1328)
+- `ChatClientConfig`'s `isLocalStorageEnabled`'s default value is now `false`
+- `/sync` endpoint calls optimized for a setup when local caching is disabled i.e. `isLocalStorageEnabled` is set to false.
 
 # [4.0.0-beta.8](https://github.com/GetStream/stream-chat-swift/releases/tag/4.0.0-beta.8)
 _July 21, 2021_

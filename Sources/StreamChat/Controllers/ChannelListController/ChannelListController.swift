@@ -41,6 +41,9 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
             client.databaseContainer,
             client.apiClient
         )
+    
+    private var connectionObserver: EventObserver?
+    private let requestedChannelsLimit = 25
 
     /// A type-erased delegate.
     var multicastDelegate: MulticastDelegate<AnyChannelListControllerDelegate> = .init() {
@@ -99,8 +102,39 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
     
     override public func synchronize(_ completion: ((_ error: Error?) -> Void)? = nil) {
         startChannelListObserverIfNeeded()
-        
-        worker.update(channelListQuery: query) { error in
+        setupEventObserversIfNeeded(completion: completion)
+    }
+    
+    private func setupEventObserversIfNeeded(completion: ((_ error: Error?) -> Void)? = nil) {
+        guard !client.config.isLocalStorageEnabled else {
+            return updateChannels(trumpExistingChannels: false, completion)
+        }
+        connectionObserver = nil
+        // We can't setup event observers in connectionless mode
+        guard let webSocketClient = client.webSocketClient else { return }
+        let center = webSocketClient.eventNotificationCenter
+        connectionObserver = EventObserver(
+            notificationCenter: center,
+            transform: { $0 as? ConnectionStatusUpdated },
+            callback: { [unowned self] in
+                switch $0.webSocketConnectionState {
+                case .connected:
+                    self.updateChannels(trumpExistingChannels: channels.count > requestedChannelsLimit)
+                default:
+                    break
+                }
+            }
+        )
+    }
+    
+    private func updateChannels(
+        trumpExistingChannels: Bool,
+        _ completion: ((_ error: Error?) -> Void)? = nil
+    ) {
+        worker.update(
+            channelListQuery: query,
+            trumpExistingChannels: trumpExistingChannels
+        ) { error in
             self.state = error == nil ? .remoteDataFetched : .remoteDataFetchFailed(ClientError(with: error))
             self.callback { completion?(error) }
         }
@@ -146,9 +180,10 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
     ///                 If request fails, the completion will be called with an error.
     ///
     public func loadNextChannels(
-        limit: Int = 25,
+        limit: Int? = nil,
         completion: ((Error?) -> Void)? = nil
     ) {
+        let limit = limit ?? requestedChannelsLimit
         var updatedQuery = query
         updatedQuery.pagination = Pagination(pageSize: limit, offset: channels.count)
         worker.update(channelListQuery: updatedQuery) { error in

@@ -50,7 +50,14 @@ class ChatClient_Tests: StressTestCase {
     ]
     
     var eventWorkerBuilders: [EventWorkerBuilder] = [
-        ChannelWatchStateUpdater.init
+        {
+            ConnectionRecoveryUpdater(
+                database: $0,
+                eventNotificationCenter: $1,
+                apiClient: $2,
+                useSyncEndpoint: false
+            )
+        }
     ]
     
     // MARK: - Database stack tests
@@ -526,9 +533,8 @@ class ChatClient_Tests: StressTestCase {
         XCTAssert(client.backgroundWorkers.contains { $0 is MessageSender })
         XCTAssert(client.backgroundWorkers.contains { $0 is NewChannelQueryUpdater })
         XCTAssert(client.backgroundWorkers.contains { $0 is NewUserQueryUpdater })
-        XCTAssert(client.backgroundWorkers.contains { $0 is ChannelWatchStateUpdater })
         XCTAssert(client.backgroundWorkers.contains { $0 is MessageEditor })
-        XCTAssert(client.backgroundWorkers.contains { $0 is MissingEventsPublisher })
+        XCTAssert(client.backgroundWorkers.contains { $0 is ConnectionRecoveryUpdater })
         XCTAssert(client.backgroundWorkers.contains { $0 is AttachmentUploader })
         
         AssertAsync.canBeReleased(&client)
