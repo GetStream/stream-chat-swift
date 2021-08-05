@@ -20,7 +20,7 @@ class ChannelListUpdaterMock: ChannelListUpdater {
     }
     
     override func update(
-        channelListQuery: _ChannelListQuery,
+        channelListQuery: ChannelListQuery,
         trumpExistingChannels: Bool = false,
         completion: ((Error?) -> Void)? = nil
     ) {

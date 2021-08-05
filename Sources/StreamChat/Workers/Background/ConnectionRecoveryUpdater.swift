@@ -62,13 +62,8 @@ class ConnectionRecoveryUpdater: EventWorker {
         database: DatabaseContainer,
         eventNotificationCenter: EventNotificationCenter,
         apiClient: APIClient,
-<<<<<<< HEAD:Sources/StreamChat/Workers/Background/MissingEventsPublisher.swift
         databaseCleanupUpdater: DatabaseCleanupUpdater,
-        isLocalStorageEnabled: Bool
-=======
-        databaseCleanupUpdater: DatabaseCleanupUpdater<ExtraData>,
         useSyncEndpoint: Bool
->>>>>>> Merge MissingEventsPublisher with ChannelWatchStateUpdater:Sources/StreamChat/Workers/Background/ConnectionRecoveryUpdater.swift
     ) {
         self.databaseCleanupUpdater = databaseCleanupUpdater
         self.useSyncEndpoint = useSyncEndpoint
@@ -111,25 +106,6 @@ class ConnectionRecoveryUpdater: EventWorker {
                 self?.databaseCleanupUpdater.refetchExistingChannelListQueries()
             }
             
-<<<<<<< HEAD:Sources/StreamChat/Workers/Background/MissingEventsPublisher.swift
-            let endpoint: Endpoint<MissingEventsPayload> = .missingEvents(
-                since: lastSyncedAt,
-                cids: watchedChannelIDs
-            )
-            
-            self?.apiClient.request(endpoint: endpoint) {
-                switch $0 {
-                case let .success(payload):
-                    // The sync call was successful.
-                    // We schedule all events for existing channels for processing...
-                    self?.eventNotificationCenter.process(payload.eventPayloads)
-
-                    // ... and refetch the existing queries to see if there are some new channels
-                    self?.databaseCleanupUpdater.refetchExistingChannelListQueries()
-
-                case let .failure(error):
-                    log.info("""
-=======
             if useSyncEndpoint {
                 self?.sync(completion: refetchExistingQueries)
             } else {
@@ -148,7 +124,7 @@ class ConnectionRecoveryUpdater: EventWorker {
             return
         }
         
-        let endpoint: Endpoint<MissingEventsPayload<ExtraData>> = .missingEvents(
+        let endpoint: Endpoint<MissingEventsPayload> = .missingEvents(
             since: lastSyncedAt,
             cids: watchedChannelIDs
         )
@@ -167,7 +143,6 @@ class ConnectionRecoveryUpdater: EventWorker {
             case let .failure(error):
                 log.info(
                     """
->>>>>>> Merge MissingEventsPublisher with ChannelWatchStateUpdater:Sources/StreamChat/Workers/Background/ConnectionRecoveryUpdater.swift
                     Backend couldn't handle replaying missing events - there was too many (>1000) events to replay. \
                     Cleaning local channels data and refetching it from scratch
                     """

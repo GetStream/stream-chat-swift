@@ -232,9 +232,7 @@ extension DatabaseSessionMock {
         underlyingSession.loadChannelMute(cid: cid, userId: userId)
     }
     
-    func deleteChannels<ExtraData>(
-        query: _ChannelListQuery<ExtraData>
-    ) throws where ExtraData: ChannelExtraData {
+    func deleteChannels(query: ChannelListQuery) throws {
         try underlyingSession.deleteChannels(query: query)
     }
 }

@@ -43,7 +43,6 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
         )
     
     private var connectionObserver: EventObserver?
-
     private let requestedChannelsLimit = 25
 
     /// A type-erased delegate.

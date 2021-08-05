@@ -8,8 +8,6 @@ import CoreData
 import XCTest
 
 final class ConnectionRecoveryUpdater_Tests: StressTestCase {
-    typealias ExtraData = NoExtraData
-    
     var database: DatabaseContainerMock!
     var webSocketClient: WebSocketClientMock!
     var apiClient: APIClientMock!
@@ -320,7 +318,7 @@ final class ConnectionRecoveryUpdater_Tests: StressTestCase {
         AssertAsync.willBeTrue(apiClient.request_endpoint != nil)
         
         apiClient.test_simulateResponse(
-            Result<MissingEventsPayload<ExtraData>, Error>.success(
+            Result<MissingEventsPayload, Error>.success(
                 MissingEventsPayload(eventPayloads: [])
             )
         )

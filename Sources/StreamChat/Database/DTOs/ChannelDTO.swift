@@ -234,7 +234,7 @@ extension NSManagedObjectContext {
         ChannelDTO.load(cid: cid, context: self)
     }
     
-    func deleteChannels<ExtraData: ChannelExtraData>(query: _ChannelListQuery<ExtraData>) throws {
+    func deleteChannels(query: ChannelListQuery) throws {
         guard let fetchRequest = ChannelDTO.channelListFetchRequest(
             query: query
         ) as? NSFetchRequest<NSFetchRequestResult> else { return }

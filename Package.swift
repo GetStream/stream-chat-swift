@@ -160,6 +160,7 @@ var streamChatSourcesExcluded: [String] { [
     "Workers/Background/DatabaseCleanupUpdater_Mock.swift",
     "Workers/Background/NewUserQueryUpdater_Tests.swift",
     "Workers/Background/DatabaseCleanupUpdater_Tests.swift",
+    "Workers/Background/ChannelWatchStateUpdater_Tests.swift",
     "Workers/Background/MessageSender_Tests.swift",
     "Workers/Background/ConnectionRecoveryUpdater_Tests.swift",
     "Workers/Background/MessageEditor_Tests.swift",

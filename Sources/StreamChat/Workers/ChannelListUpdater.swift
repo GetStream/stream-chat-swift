@@ -13,7 +13,7 @@ class ChannelListUpdater: Worker {
     ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
     ///
     func update(
-        channelListQuery: _ChannelListQuery,
+        channelListQuery: ChannelListQuery,
         trumpExistingChannels: Bool = false,
         completion: ((Error?) -> Void)? = nil
     ) {
