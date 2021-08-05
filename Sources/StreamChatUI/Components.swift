@@ -73,6 +73,10 @@ public struct Components {
     /// Object with set of function for handling images from CDN
     public var imageCDN: ImageCDN = StreamImageCDN()
 
+    /// Object responsible for providing functionality of merging images.
+    /// Used when creating compound avatars from channel members individual avatars
+    public var imageMerger: ImageMerging = DefaultImageMerger()
+
     /// The object that loads previews for video attachments.
     public var videoPreviewLoader: VideoPreviewLoader = DefaultVideoPreviewLoader()
     
