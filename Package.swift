@@ -406,6 +406,8 @@ var streamChatUIFilesExcluded: [String] { [
     "CommonViews/AvatarView/__Snapshots__/ChatChannelAvatarView_Tests/test_appearanceCustomization_usingAppearanceAndComponents.default-dark.png",
     "CommonViews/AvatarView/__Snapshots__/ChatChannelAvatarView_Tests/test_defaultAppearance_withDirectMessageChannel.default-light.png",
     "CommonViews/AvatarView/__Snapshots__/ChatChannelAvatarView_Tests/test_wrappedChatChannelAvatarViewInSwiftUI.default-dark.png",
+    "CommonViews/AvatarView/__Snapshots__/ChatChannelAvatarView_Tests/test_defaultAppearance_withNonDMChannel.default-light.png",
+    "CommonViews/AvatarView/__Snapshots__/ChatChannelAvatarView_Tests/test_defaultAppearance_withNonDMChannel.default-dark.png",
     "CommonViews/AvatarView/__Snapshots__/ChatChannelAvatarView_Tests/test_defaultAppearance_withDirectMessageChannel.default-light-with-online-indicator.png",
     "CommonViews/AvatarView/__Snapshots__/ChatChannelAvatarView_Tests/test_emptyAppearance.default-light.png",
     "CommonViews/AvatarView/__Snapshots__/ChatChannelAvatarView_Tests/test_appearanceCustomization_usingSubclassing.default-dark.png",

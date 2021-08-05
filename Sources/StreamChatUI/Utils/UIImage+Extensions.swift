@@ -2,6 +2,7 @@
 // Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
+import Nuke
 import UIKit
 
 extension UIImage {
@@ -35,5 +36,43 @@ extension UIImage {
         let photoURL = URL(fileURLWithPath: localPath)
         try imageData.write(to: photoURL)
         return photoURL
+    }
+}
+
+// MARK: - UIImage extension related to size
+
+extension UIImage {
+    func scaled(to targetSize: CGSize) -> UIImage {
+        // Determine the scale factor that preserves aspect ratio
+        let widthRatio = targetSize.width / size.width
+        let heightRatio = targetSize.height / size.height
+        
+        let scaleFactor = min(widthRatio, heightRatio)
+        
+        // Compute the new image size that preserves aspect ratio
+        let scaledImageSize = CGSize(
+            width: size.width * scaleFactor,
+            height: size.height * scaleFactor
+        )
+        
+        // Draw and return the resized UIImage
+        let renderer = UIGraphicsImageRenderer(
+            size: scaledImageSize
+        )
+        
+        let scaledImage = renderer.image { _ in
+            self.draw(in: CGRect(
+                origin: .zero,
+                size: scaledImageSize
+            ))
+        }
+        
+        return scaledImage
+    }
+    
+    func cropped(to size: CGSize) -> UIImage? {
+        // Use Nuke Processor to crop the image
+        let imageProccessor = ImageProcessors.Resize(size: size, crop: true)
+        return imageProccessor.process(self)
     }
 }
