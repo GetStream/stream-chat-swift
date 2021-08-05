@@ -43,7 +43,7 @@ func AssertSnapshot(
     variantsToTest.forEach { variant in
         assertSnapshot(
             matching: viewController,
-            as: .image(size: screenSize, traits: variant.traits),
+            as: .image(precision: 0.99, size: screenSize, traits: variant.traits),
             named: variant.snapshotName + (suffix.map { "." + $0 } ?? ""),
             record: record,
             file: file,
@@ -82,7 +82,7 @@ func AssertSnapshot(
     variantsToTest.forEach { variant in
         assertSnapshot(
             matching: view,
-            as: size != nil ? .image(size: size!, traits: variant.traits) : .image(traits: variant.traits),
+            as: size != nil ? .image(precision: 0.99, size: size!, traits: variant.traits) : .image(precision: 0.99, traits: variant.traits),
             named: variant.snapshotName + (suffix.map { "." + $0 } ?? ""),
             record: record,
             file: file,
@@ -151,7 +151,7 @@ func AssertSnapshot<View: SwiftUI.View>(
     variantsToTest.forEach { variant in
         assertSnapshot(
             matching: view,
-            as: size != nil ? .image(layout: .sizeThatFits) : .image(layout: .device(config: device), traits: variant.traits),
+            as: size != nil ? .image(precision: 0.99, layout: .sizeThatFits) : .image(precision: 0.99, layout: .device(config: device), traits: variant.traits),
             named: variant.snapshotName + (suffix.map { "." + $0 } ?? ""),
             record: record,
             file: file,

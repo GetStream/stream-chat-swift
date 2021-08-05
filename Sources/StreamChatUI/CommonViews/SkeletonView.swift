@@ -6,7 +6,6 @@ import UIKit
 
 /// A view used to cover views with shimmer while they are loading.
 open class SkeletonView: UIView {
-    
     /// Superview used as mask to have animation consistent across whole parent view.
     public private(set) weak var maskingView: UIView?
     
@@ -41,14 +40,14 @@ open class SkeletonView: UIView {
         skeletonLayer.startPoint = CGPoint(x: 0.0, y: 1.0)
         skeletonLayer.endPoint = CGPoint(x: 1.0, y: 1.0)
         skeletonLayer.locations = [-1.0, -0.5, 0.0]
-
+        
         skeletonLayer.colors = [
             Appearance.default.colorPalette.background.cgColor,
             Appearance.default.colorPalette.overlayBackground.cgColor,
             Appearance.default.colorPalette.background.cgColor
         ]
     }
-        
+    
     // MARK: - Setup
     
     /// Sets up view which is needed to cover together with superview.

@@ -30,6 +30,8 @@ class ChatChannelListVC_Tests: XCTestCase {
     override func setUp() {
         super.setUp()
 
+        UIView.setAnimationsEnabled(false)
+        
         mockedChannelListController = ChatChannelListController_Mock.mock()
         mockedCurrentUserController = CurrentChatUserController_Mock.mock()
         mockedCurrentUserController.currentUser_mock = .mock(
@@ -122,10 +124,11 @@ class ChatChannelListVC_Tests: XCTestCase {
         components.channelCellSeparator = TestView.self
         vc.components = components
 
-        mockedChannelListController.simulateInitial(
+        mockedChannelListController.simulate(
             channels: channels,
-            state: .remoteDataFetched
+            changes: []
         )
+        
         AssertSnapshot(vc, isEmbeddedInNavigationController: true, variants: .onlyUserInterfaceStyles)
     }
 

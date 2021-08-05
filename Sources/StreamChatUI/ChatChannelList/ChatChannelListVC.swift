@@ -159,7 +159,7 @@ open class ChatChannelListVC: _ViewController,
     open func showBottomErrorNotification() {
         errorOccurredNotificationView.isHidden = false
         UIView.animate(withDuration: 0.8) {
-            self.bottomAnimationConstraint?.constant = self.errorOccurredNotificationViewHeight
+            self.bottomAnimationConstraint?.constant = -self.errorOccurredNotificationViewHeight
             self.view.layoutIfNeeded()
         }
     }

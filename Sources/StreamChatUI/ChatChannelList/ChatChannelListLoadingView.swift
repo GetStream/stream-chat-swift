@@ -18,9 +18,7 @@ open class ChatChannelListLoadingView: _View, ThemeProvider, UICollectionViewDel
             .withoutAutoresizingMaskConstraints
     
     /// An Estimated height for ChannelList cell.
-    open var estimatedCellHeight: CGFloat {
-        return 64
-    }
+    open var estimatedCellHeight: CGFloat { 64 }
     
     /// Reuse identifier of `collectionViewCell`
     open var collectionViewCellReuseIdentifier: String { "Cell" }

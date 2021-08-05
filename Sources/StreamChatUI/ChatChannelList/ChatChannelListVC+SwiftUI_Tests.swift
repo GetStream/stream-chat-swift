@@ -27,11 +27,7 @@ class ChatChannelListView_Tests: iOS13TestCase {
     }
 
     func test_chatChannelList_isPopulated() {
-        mockedChannelListController.simulateInitial(
-            channels: channels,
-            state: .localDataFetched
-        )
-
+        mockedChannelListController.simulate(channels: channels, changes: [])
         AssertSnapshot(chatChannelList, isEmbeddedInNavigationController: true)
     }
 
@@ -42,11 +38,7 @@ class ChatChannelListView_Tests: iOS13TestCase {
 
             init() {
                 mockedChannelListController = ChatChannelListController_Mock.mock()
-
-                mockedChannelListController.simulateInitial(
-                    channels: channels,
-                    state: .localDataFetched
-                )
+                mockedChannelListController.simulate(channels: channels, changes: [])
             }
 
             var body: some View {
@@ -60,8 +52,9 @@ class ChatChannelListView_Tests: iOS13TestCase {
                 }
             }
         }
-
-        let customView = CustomView()
-        AssertSnapshot(customView)
+        // UISnapshotTesting is taking snapshot too early before lifecycle methods occur.
+        // That's why the SwiftUI view needs to be embedded inside UIHostingController to finish all lifecycle methods 🤷‍♂️
+        let hostingView = UIHostingController(rootView: CustomView())
+        AssertSnapshot(hostingView)
     }
 }

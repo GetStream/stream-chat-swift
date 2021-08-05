@@ -198,8 +198,6 @@ public struct ChatChannel {
         $_pinnedMessages = (pinnedMessages, underlyingContext)
         $_muteDetails = (muteDetails, underlyingContext)
     }
-    
-    
 }
 
 extension ChatChannel {
