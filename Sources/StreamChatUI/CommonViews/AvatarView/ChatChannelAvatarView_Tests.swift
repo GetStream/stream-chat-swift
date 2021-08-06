@@ -43,9 +43,72 @@ class ChatChannelAvatarView_Tests: XCTestCase {
         view.content = (channel: channel, currentUserId: currentUserId)
         AssertSnapshot(view, variants: .onlyUserInterfaceStyles)
     }
-
-    func test_defaultAppearance_withNonDMChannel() {
-        // TODO: https://stream-io.atlassian.net/browse/CIS-652
+    
+    func test_defaultAppearanceWithNoMembersInChannel() {
+        let emptyChannel = ChatChannel.mockNonDMChannel(lastActiveMembers: [])
+        let view = ChatChannelAvatarView().withoutAutoresizingMaskConstraints
+        view.addSizeConstraints()
+        view.content = (channel: emptyChannel, currentUserId: currentUserId)
+        
+        AssertSnapshot(view, variants: .onlyUserInterfaceStyles)
+    }
+    
+    func test_defaultAppearanceWithSingleMemberInNonDMChannel() {
+        let singleMemberChannel = ChatChannel.mockNonDMChannel(lastActiveMembers: [
+            .mock(id: currentUserId, imageURL: TestImages.vader.url),
+            .mock(id: .unique, imageURL: TestImages.yoda.url, isOnline: true)
+        ])
+        
+        let view = ChatChannelAvatarView().withoutAutoresizingMaskConstraints
+        view.addSizeConstraints()
+        view.content = (channel: singleMemberChannel, currentUserId: currentUserId)
+        
+        AssertSnapshot(view, variants: .onlyUserInterfaceStyles)
+    }
+    
+    func test_defaultAppearanceWithTwoMembersInNonDMChannel() {
+        let twoMemberChannel = ChatChannel.mockNonDMChannel(lastActiveMembers: [
+            .mock(id: currentUserId, imageURL: TestImages.vader.url),
+            .mock(id: .unique, imageURL: TestImages.yoda.url, isOnline: true),
+            .mock(id: .unique, imageURL: TestImages.vader.url, isOnline: true)
+        ])
+        
+        let view = ChatChannelAvatarView().withoutAutoresizingMaskConstraints
+        view.addSizeConstraints()
+        view.content = (channel: twoMemberChannel, currentUserId: currentUserId)
+        
+        AssertSnapshot(view, variants: .onlyUserInterfaceStyles)
+    }
+    
+    func test_defaultAppearanceWithThreeMembersInNonDMChannel() {
+        let threeMemberChannel = ChatChannel.mockNonDMChannel(lastActiveMembers: [
+            .mock(id: currentUserId, imageURL: TestImages.vader.url),
+            .mock(id: .unique, imageURL: TestImages.yoda.url, isOnline: true),
+            .mock(id: .unique, imageURL: TestImages.vader.url, isOnline: true),
+            .mock(id: .unique, imageURL: TestImages.chewbacca.url, isOnline: true)
+        ])
+        
+        let view = ChatChannelAvatarView().withoutAutoresizingMaskConstraints
+        view.addSizeConstraints()
+        view.content = (channel: threeMemberChannel, currentUserId: currentUserId)
+        
+        AssertSnapshot(view, variants: .onlyUserInterfaceStyles)
+    }
+    
+    func test_defaultAppearanceWithFourMembersInNonDMChannel() {
+        let fourMemberChannel = ChatChannel.mockNonDMChannel(lastActiveMembers: [
+            .mock(id: currentUserId, imageURL: TestImages.vader.url),
+            .mock(id: .unique, imageURL: TestImages.yoda.url, isOnline: true),
+            .mock(id: .unique, imageURL: TestImages.vader.url, isOnline: true),
+            .mock(id: .unique, imageURL: TestImages.chewbacca.url, isOnline: true),
+            .mock(id: .unique, imageURL: TestImages.r2.url, isOnline: true)
+        ])
+        
+        let view = ChatChannelAvatarView().withoutAutoresizingMaskConstraints
+        view.addSizeConstraints()
+        view.content = (channel: fourMemberChannel, currentUserId: currentUserId)
+        
+        AssertSnapshot(view, variants: .onlyUserInterfaceStyles)
     }
 
     func test_appearanceCustomization_usingAppearanceAndComponents() {
