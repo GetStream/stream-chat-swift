@@ -27,8 +27,9 @@ class CreateChatViewController: UIViewController {
                 super.createNewMessage(text: text)
                 
                 // Present the new chat and controller
-                let vc = ChatMessageListVC()
+                let vc = ChatChannelVC()
                 vc.channelController = controller
+                vc.userSuggestionSearchController = controller.client.userSearchController()
                 
                 navController.setViewControllers([navController.viewControllers.first!, vc], animated: true)
             }
