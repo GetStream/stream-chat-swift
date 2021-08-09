@@ -35,7 +35,7 @@ open class ChatMessageListVC:
         channelController.client
     }
 
-    public var delegate: Delegate?
+    public weak var delegate: ChatMessageListVCDelegate?
 
     /// A router object that handles navigation to other view controllers.
     open var router: ChatMessageListRouter!
@@ -258,7 +258,7 @@ open class ChatMessageListVC:
             message.isInteractionEnabled == true
         else { return }
 
-        delegate?.didSelectMessage(self, message, messageContentView)
+        delegate?.chatMessageList(self, didSelectMessage: message, messageContentView: messageContentView)
     }
 
     // MARK: - Cell action handlers
@@ -460,30 +460,5 @@ open class ChatMessageListVC:
     open func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
         // To prevent the gesture recognizer consuming up the events from UIControls, we receive touch only when the view isn't a UIControl.
         !(touch.view is UIControl)
-    }
-}
-
-// MARK: - Delegate
-
-public extension ChatMessageListVC {
-    /// Delegate instance for `_ChatMessageActionsVC`.
-    struct Delegate {
-        public var didSelectMessage: (ChatMessageListVC, ChatMessage, ChatMessageContentView) -> Void
-
-        /// Init of `_ChatMessageActionsVC.Delegate`.
-        public init(
-            didSelectMessage: @escaping (ChatMessageListVC, ChatMessage, ChatMessageContentView) -> Void
-        ) {
-            self.didSelectMessage = didSelectMessage
-        }
-
-        /// Wraps `_ChatMessageActionsVCDelegate` into `_ChatMessageActionsVC.Delegate`.
-        public init<Delegate: ChatMessageListVCDelegate>(delegate: Delegate) {
-            self.init(
-                didSelectMessage: { [weak delegate] in
-                    delegate?.chatMessageList($0, didSelectMessage: $1, messageContentView: $2)
-                }
-            )
-        }
     }
 }

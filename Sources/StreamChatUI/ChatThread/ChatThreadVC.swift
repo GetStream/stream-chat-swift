@@ -308,7 +308,7 @@ open class ChatThreadVC:
         let actionsController = components.messageActionsVC.init()
         actionsController.messageController = messageController
         actionsController.channelConfig = channelController.channel?.config
-        actionsController.delegate = .init(delegate: self)
+        actionsController.delegate = self
 
         let reactionsController: ChatMessageReactionsVC? = {
             guard message.localState == nil else { return nil }

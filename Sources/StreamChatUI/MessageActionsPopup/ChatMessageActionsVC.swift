@@ -16,10 +16,9 @@ public protocol ChatMessageActionsVCDelegate: AnyObject {
 
 /// View controller to show message actions.
 open class ChatMessageActionsVC: _ViewController, ThemeProvider {
-    /// `_ChatMessageActionsVC.Delegate` instance.
-    public var delegate: Delegate?
+    public weak var delegate: ChatMessageActionsVCDelegate?
 
-    /// `_ChatMessageController` instance used to obtain the message data.
+    /// `ChatMessageController` instance used to obtain the message data.
     public var messageController: ChatMessageController!
 
     /// `ChannelConfig` that contains the feature flags of the channel.
@@ -134,7 +133,7 @@ open class ChatMessageActionsVC: _ViewController, ThemeProvider {
                     guard confirmed else { return }
 
                     self.messageController.deleteMessage { _ in
-                        self.delegate?.didFinish(self)
+                        self.delegate?.chatMessageActionsVCDidFinish(self)
                     }
                 }
             },
@@ -148,7 +147,7 @@ open class ChatMessageActionsVC: _ViewController, ThemeProvider {
             action: { [weak self] _ in
                 guard let self = self else { return }
                 self.messageController.resendMessage { _ in
-                    self.delegate?.didFinish(self)
+                    self.delegate?.chatMessageActionsVCDidFinish(self)
                 }
             },
             appearance: appearance
@@ -166,7 +165,7 @@ open class ChatMessageActionsVC: _ViewController, ThemeProvider {
 
                 self.messageController.client
                     .userController(userId: author.id)
-                    .mute { _ in self.delegate?.didFinish(self) }
+                    .mute { _ in self.delegate?.chatMessageActionsVCDidFinish(self) }
             },
             appearance: appearance
         )
@@ -183,7 +182,7 @@ open class ChatMessageActionsVC: _ViewController, ThemeProvider {
 
                 self.messageController.client
                     .userController(userId: author.id)
-                    .unmute { _ in self.delegate?.didFinish(self) }
+                    .unmute { _ in self.delegate?.chatMessageActionsVCDidFinish(self) }
             },
             appearance: appearance
         )
@@ -212,7 +211,7 @@ open class ChatMessageActionsVC: _ViewController, ThemeProvider {
                 guard let self = self else { return }
                 UIPasteboard.general.string = self.message?.text
 
-                self.delegate?.didFinish(self)
+                self.delegate?.chatMessageActionsVCDidFinish(self)
             },
             appearance: appearance
         )
@@ -221,37 +220,6 @@ open class ChatMessageActionsVC: _ViewController, ThemeProvider {
     /// Triggered for actions which should be handled by `delegate` and not in this view controller.
     open func handleAction(_ actionItem: ChatMessageActionItem) {
         guard let message = message else { return }
-        delegate?.didTapOnActionItem(self, message, actionItem)
-    }
-}
-
-// MARK: - Delegate
-
-public extension ChatMessageActionsVC {
-    /// Delegate instance for `_ChatMessageActionsVC`.
-    struct Delegate {
-        /// Triggered when action item was tapped.
-        /// You can decide what to do with message based on which instance of `ChatMessageActionItem` you received.
-        public var didTapOnActionItem: (ChatMessageActionsVC, ChatMessage, ChatMessageActionItem) -> Void
-        /// Triggered when `_ChatMessageActionsVC` should be dismissed.
-        public var didFinish: (ChatMessageActionsVC) -> Void
-
-        /// Init of `_ChatMessageActionsVC.Delegate`.
-        public init(
-            didTapOnActionItem: @escaping (ChatMessageActionsVC, ChatMessage, ChatMessageActionItem)
-                -> Void = { _, _, _ in },
-            didFinish: @escaping (ChatMessageActionsVC) -> Void = { _ in }
-        ) {
-            self.didTapOnActionItem = didTapOnActionItem
-            self.didFinish = didFinish
-        }
-
-        /// Wraps `_ChatMessageActionsVCDelegate` into `_ChatMessageActionsVC.Delegate`.
-        public init<Delegate: ChatMessageActionsVCDelegate>(delegate: Delegate) {
-            self.init(
-                didTapOnActionItem: { [weak delegate] in delegate?.chatMessageActionsVC($0, message: $1, didTapOnActionItem: $2) },
-                didFinish: { [weak delegate] in delegate?.chatMessageActionsVCDidFinish($0) }
-            )
-        }
+        delegate?.chatMessageActionsVC(self, message: message, didTapOnActionItem: actionItem)
     }
 }
