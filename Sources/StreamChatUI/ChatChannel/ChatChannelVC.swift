@@ -5,18 +5,18 @@
 import StreamChat
 import UIKit
 
-open class _ChatChannelVC<ExtraData: ExtraDataTypes>:
+open class ChatChannelVC:
     _ViewController,
     ThemeProvider,
-    _ChatMessageListVCDelegate,
-    _ChatMessageActionsVCDelegate {
+    ChatMessageListVCDelegate,
+    ChatMessageActionsVCDelegate {
     /// User search controller passed directly to the composer
-    open var userSuggestionSearchController: _ChatUserSearchController<ExtraData>!
+    open var userSuggestionSearchController: ChatUserSearchController!
 
     /// Controller for observing data changes within the channel
-    open var channelController: _ChatChannelController<ExtraData>!
+    open var channelController: ChatChannelController!
 
-    public var client: _ChatClient<ExtraData> {
+    public var client: ChatClient {
         channelController.client
     }
 
@@ -27,7 +27,7 @@ open class _ChatChannelVC<ExtraData: ExtraDataTypes>:
         viewController: self
     )
 
-    open lazy var messageListVC: _ChatMessageListVC<ExtraData> = components
+    open lazy var messageListVC: ChatMessageListVC = components
         .messageListVC
         .init()
 
@@ -44,7 +44,7 @@ open class _ChatChannelVC<ExtraData: ExtraDataTypes>:
     private var messageComposerBottomConstraint: NSLayoutConstraint?
 
     /// Header View
-    open private(set) lazy var headerView: _ChatChannelHeaderView<ExtraData> = components
+    open private(set) lazy var headerView: ChatChannelHeaderView = components
         .channelHeaderView.init()
         .withoutAutoresizingMaskConstraints
 
@@ -116,9 +116,9 @@ open class _ChatChannelVC<ExtraData: ExtraDataTypes>:
     // MARK: - _ChatMessageListVCDelegate
 
     public func chatMessageList(
-        _ vc: _ChatMessageListVC<ExtraData>,
-        didSelectMessage message: _ChatMessage<ExtraData>,
-        messageContentView: _ChatMessageContentView<ExtraData>
+        _ vc: ChatMessageListVC,
+        didSelectMessage message: ChatMessage,
+        messageContentView: ChatMessageContentView
     ) {
         let messageController = channelController.client.messageController(
             cid: channelController.cid!,
@@ -130,7 +130,7 @@ open class _ChatChannelVC<ExtraData: ExtraDataTypes>:
         actionsController.channelConfig = channelController.channel?.config
         actionsController.delegate = .init(delegate: self)
 
-        let reactionsController: _ChatMessageReactionsVC<ExtraData>? = {
+        let reactionsController: ChatMessageReactionsVC? = {
             guard message.localState == nil else { return nil }
             guard channelController.channel?.config.reactionsEnabled == true else {
                 return nil
@@ -151,8 +151,8 @@ open class _ChatChannelVC<ExtraData: ExtraDataTypes>:
     // MARK: - _ChatMessageActionsVCDelegate
 
     open func chatMessageActionsVC(
-        _ vc: _ChatMessageActionsVC<ExtraData>,
-        message: _ChatMessage<ExtraData>,
+        _ vc: ChatMessageActionsVC,
+        message: ChatMessage,
         didTapOnActionItem actionItem: ChatMessageActionItem
     ) {
         switch actionItem {
@@ -173,7 +173,7 @@ open class _ChatChannelVC<ExtraData: ExtraDataTypes>:
         }
     }
 
-    open func chatMessageActionsVCDidFinish(_ vc: _ChatMessageActionsVC<ExtraData>) {
+    open func chatMessageActionsVCDidFinish(_ vc: ChatMessageActionsVC) {
         dismiss(animated: true)
     }
 }

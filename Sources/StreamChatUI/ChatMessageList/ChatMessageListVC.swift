@@ -5,13 +5,11 @@
 import StreamChat
 import UIKit
 
-public protocol _ChatMessageListVCDelegate: AnyObject {
-    associatedtype ExtraData: ExtraDataTypes
-
+public protocol ChatMessageListVCDelegate: AnyObject {
     func chatMessageList(
-        _ vc: _ChatMessageListVC<ExtraData>,
-        didSelectMessage message: _ChatMessage<ExtraData>,
-        messageContentView: _ChatMessageContentView<ExtraData>
+        _ vc: ChatMessageListVC,
+        didSelectMessage message: ChatMessage,
+        messageContentView: ChatMessageContentView
     )
 }
 
@@ -40,7 +38,7 @@ open class ChatMessageListVC:
     public var delegate: Delegate?
 
     /// A router object that handles navigation to other view controllers.
-    open var router: _ChatMessageListRouter<ExtraData>!
+    open var router: ChatMessageListRouter!
     
     /// View used to display the messages
     open private(set) lazy var listView: ChatMessageListView = {
@@ -467,20 +465,20 @@ open class ChatMessageListVC:
 
 // MARK: - Delegate
 
-public extension _ChatMessageListVC {
+public extension ChatMessageListVC {
     /// Delegate instance for `_ChatMessageActionsVC`.
     struct Delegate {
-        public var didSelectMessage: (_ChatMessageListVC, _ChatMessage<ExtraData>, _ChatMessageContentView<ExtraData>) -> Void
+        public var didSelectMessage: (ChatMessageListVC, ChatMessage, ChatMessageContentView) -> Void
 
         /// Init of `_ChatMessageActionsVC.Delegate`.
         public init(
-            didSelectMessage: @escaping (_ChatMessageListVC, _ChatMessage<ExtraData>, _ChatMessageContentView<ExtraData>) -> Void
+            didSelectMessage: @escaping (ChatMessageListVC, ChatMessage, ChatMessageContentView) -> Void
         ) {
             self.didSelectMessage = didSelectMessage
         }
 
         /// Wraps `_ChatMessageActionsVCDelegate` into `_ChatMessageActionsVC.Delegate`.
-        public init<Delegate: _ChatMessageListVCDelegate>(delegate: Delegate) where Delegate.ExtraData == ExtraData {
+        public init<Delegate: ChatMessageListVCDelegate>(delegate: Delegate) {
             self.init(
                 didSelectMessage: { [weak delegate] in
                     delegate?.chatMessageList($0, didSelectMessage: $1, messageContentView: $2)

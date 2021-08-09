@@ -10,7 +10,6 @@ import UIKit
 open class ChatThreadVC:
     _ViewController,
     ThemeProvider,
-    ComposerVCDelegate,
     ChatChannelControllerDelegate,
     ChatMessageControllerDelegate,
     ChatMessageActionsVCDelegate,
