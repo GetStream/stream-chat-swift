@@ -6,16 +6,41 @@ import StreamChat
 import StreamChatUI
 import UIKit
 
+final class SlackGalleryAttachmentViewInjector: GalleryAttachmentViewInjector {
+    override var galleryViewAspectRatio: CGFloat? { nil }
+}
+
 final class SlackChatMessageGalleryView: ChatMessageGalleryView {
-    private lazy var stackView = UIStackView()
+    private lazy var stackView = ContainerStackView()
+    
+    override func setUpAppearance() {
+        super.setUpAppearance()
+        
+        (itemSpots + [moreItemsOverlay]).forEach {
+            $0.layer.cornerRadius = 10
+            $0.layer.masksToBounds = true
+        }
+    }
     
     override func setUpLayout() {
-        stackView.axis = .horizontal
-        stackView.distribution = .fillEqually
-        stackView.alignment = .fill
         stackView.spacing = 15
+        stackView.distribution = .equal
         stackView.translatesAutoresizingMaskIntoConstraints = false
         addSubview(stackView)
+        
+        itemSpots.forEach {
+            stackView.addArrangedSubview($0)
+            $0.heightAnchor.constraint(equalTo: $0.widthAnchor).isActive = true
+        }
+        
+        let lastSpot = itemSpots.last!
+        addSubview(moreItemsOverlay)
+        NSLayoutConstraint.activate([
+            moreItemsOverlay.leadingAnchor.constraint(equalTo: lastSpot.leadingAnchor),
+            moreItemsOverlay.trailingAnchor.constraint(equalTo: lastSpot.trailingAnchor),
+            moreItemsOverlay.topAnchor.constraint(equalTo: lastSpot.topAnchor),
+            moreItemsOverlay.bottomAnchor.constraint(equalTo: lastSpot.bottomAnchor)
+        ])
         
         NSLayoutConstraint.activate([
             stackView.leadingAnchor.constraint(equalTo: leadingAnchor),
@@ -23,21 +48,5 @@ final class SlackChatMessageGalleryView: ChatMessageGalleryView {
             stackView.topAnchor.constraint(equalTo: topAnchor),
             stackView.bottomAnchor.constraint(equalTo: bottomAnchor)
         ])
-
-        itemSpots.forEach {
-            stackView.addArrangedSubview($0)
-            NSLayoutConstraint.activate([
-                $0.heightAnchor.constraint(equalTo: $0.widthAnchor)
-            ])
-        }
-    }
-}
-
-final class SlackChatMessageImagePreview: ChatMessageGalleryView.ImagePreview {
-    override func setUpAppearance() {
-        super.setUpAppearance()
-        
-        imageView.clipsToBounds = true
-        imageView.layer.cornerRadius = 10
     }
 }
