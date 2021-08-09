@@ -3,7 +3,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+### ✅ Added
+- New `ChannelListSortingKey`s `unreadCount` and `hasUnread` [#1348](https://github.com/GetStream/stream-chat-swift/issues/1348)
+
 ### 🔄 Changed
+- `ChatMessageReactionsVC.toggleReaction` is now `open` [#1348](https://github.com/GetStream/stream-chat-swift/issues/1348)
 
 # [4.0.0-beta.9](https://github.com/GetStream/stream-chat-swift/releases/tag/4.0.0-beta.9)
 _August 05, 2021_

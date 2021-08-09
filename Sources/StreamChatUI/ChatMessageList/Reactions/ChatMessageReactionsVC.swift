@@ -6,7 +6,7 @@ import StreamChat
 import UIKit
 
 /// Controller for the message reactions picker as a list of toggles
-open class ChatMessageReactionsVC: _ViewController, ThemeProvider {
+open class ChatMessageReactionsVC: _ViewController, ThemeProvider, ChatMessageControllerDelegate {
     public var messageController: ChatMessageController!
 
     // MARK: - Subviews
@@ -52,7 +52,7 @@ open class ChatMessageReactionsVC: _ViewController, ThemeProvider {
 
     // MARK: - Actions
 
-    public func toggleReaction(_ reaction: MessageReactionType) {
+    open func toggleReaction(_ reaction: MessageReactionType) {
         guard let message = messageController.message else { return }
         
         let completion: (Error?) -> Void = { [weak self] _ in
@@ -64,12 +64,10 @@ open class ChatMessageReactionsVC: _ViewController, ThemeProvider {
             ? messageController.deleteReaction(reaction, completion: completion)
             : messageController.addReaction(reaction, completion: completion)
     }
-}
-
-// MARK: - _MessageControllerDelegate
-
-extension ChatMessageReactionsVC: ChatMessageControllerDelegate {
-    public func messageController(
+    
+    // MARK: - MessageControllerDelegate
+    
+    open func messageController(
         _ controller: ChatMessageController,
         didChangeMessage change: EntityChange<ChatMessage>
     ) {
