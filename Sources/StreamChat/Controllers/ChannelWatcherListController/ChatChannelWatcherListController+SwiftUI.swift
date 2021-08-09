@@ -6,7 +6,7 @@ import Foundation
 import SwiftUI
 
 @available(iOS 13, *)
-extension _ChatChannelWatcherListController {
+extension ChatChannelWatcherListController {
     /// A wrapper object that exposes the controller variables in the form of `ObservableObject` to be used in SwiftUI.
     public var observableObject: ObservableObject { .init(controller: self) }
     
@@ -14,16 +14,16 @@ extension _ChatChannelWatcherListController {
     /// comfortably in SwiftUI.
     public class ObservableObject: SwiftUI.ObservableObject {
         /// The underlying controller. You can still access it and call methods on it.
-        public let controller: _ChatChannelWatcherListController
+        public let controller: ChatChannelWatcherListController
         
         /// The channel members.
-        @Published public private(set) var watchers: LazyCachedMapCollection<_ChatUser<ExtraData.User>> = []
+        @Published public private(set) var watchers: LazyCachedMapCollection<ChatUser> = []
         
         /// The current state of the controller.
         @Published public private(set) var state: DataController.State
         
         /// Creates a new `ObservableObject` wrapper with the provided controller instance.
-        init(controller: _ChatChannelWatcherListController<ExtraData>) {
+        init(controller: ChatChannelWatcherListController) {
             self.controller = controller
             state = controller.state
             
@@ -35,10 +35,10 @@ extension _ChatChannelWatcherListController {
 }
 
 @available(iOS 13, *)
-extension _ChatChannelWatcherListController.ObservableObject: _ChatChannelWatcherListControllerDelegate {
+extension ChatChannelWatcherListController.ObservableObject: ChatChannelWatcherListControllerDelegate {
     public func channelWatcherListController(
-        _ controller: _ChatChannelWatcherListController<ExtraData>,
-        didChangeWatchers changes: [ListChange<_ChatUser<ExtraData.User>>]
+        _ controller: ChatChannelWatcherListController,
+        didChangeWatchers changes: [ListChange<ChatUser>]
     ) {
         watchers = controller.watchers
     }

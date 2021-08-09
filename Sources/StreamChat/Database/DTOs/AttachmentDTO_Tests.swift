@@ -291,7 +291,7 @@ class AttachmentDTO_Tests: XCTestCase {
                 quotedMessageId: nil,
                 isSilent: false,
                 attachments: [.init(payload: TestAttachmentPayload.unique)],
-                extraData: NoExtraData.Message.defaultValue
+                extraData: [:]
             )
             message.localMessageState = .pendingSend
             attachmentId = message.attachments.first!.attachmentID

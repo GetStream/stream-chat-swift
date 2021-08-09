@@ -8,16 +8,12 @@ import StreamChat
 /// A class that is used to determine the AttachmentViewInjector to use for rendering one message's attachments.
 /// If your application uses custom attachment types, you will need to create a subclass and override the attachmentViewInjectorClassFor
 /// method so that the correct AttachmentViewInjector is used.
-public typealias AttachmentViewCatalog = _AttachmentViewCatalog<NoExtraData>
-
-/// A class that is used to determine the AttachmentViewInjector to use for rendering one message's attachments.
-/// If your application uses custom attachment types, you will need to create a subclass and override the attachmentViewInjectorClassFor
-/// method so that the correct AttachmentViewInjector is used.
-open class _AttachmentViewCatalog<ExtraData: ExtraDataTypes> {
+@available(iOSApplicationExtension, unavailable)
+open class AttachmentViewCatalog {
     open class func attachmentViewInjectorClassFor(
-        message: _ChatMessage<ExtraData>,
-        components: _Components<ExtraData>
-    ) -> _AttachmentViewInjector<ExtraData>.Type? {
+        message: ChatMessage,
+        components: Components
+    ) -> AttachmentViewInjector.Type? {
         // Do not show attachments for deleted messages
         guard !message.isDeleted else { return nil }
         

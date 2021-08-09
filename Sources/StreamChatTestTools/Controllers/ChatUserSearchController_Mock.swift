@@ -5,13 +5,13 @@
 import Foundation
 @testable import StreamChat
 
-public class ChatUserSearchController_Mock<ExtraData: ExtraDataTypes>: _ChatUserSearchController<ExtraData> {
-    public static func mock() -> ChatUserSearchController_Mock<ExtraData> {
+public class ChatUserSearchController_Mock: ChatUserSearchController {
+    public static func mock() -> ChatUserSearchController_Mock {
         .init(client: .mock())
     }
     
-    public var users_mock: [_ChatUser<ExtraData.User>]?
-    override public var users: LazyCachedMapCollection<_ChatUser<ExtraData.User>> {
+    public var users_mock: [ChatUser]?
+    override public var users: LazyCachedMapCollection<ChatUser> {
         users_mock.map { $0.lazyCachedMap { $0 } } ?? super.users
     }
 }

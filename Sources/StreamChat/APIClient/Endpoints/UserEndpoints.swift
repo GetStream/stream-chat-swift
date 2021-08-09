@@ -5,8 +5,8 @@
 import Foundation
 
 extension Endpoint {
-    static func users<ExtraData: UserExtraData>(query: _UserListQuery<ExtraData>)
-        -> Endpoint<UserListPayload<ExtraData>> {
+    static func users(query: UserListQuery)
+        -> Endpoint<UserListPayload> {
         .init(
             path: "users",
             method: .get,
@@ -16,10 +16,10 @@ extension Endpoint {
         )
     }
     
-    static func updateUser<ExtraData: UserExtraData>(
+    static func updateUser(
         id: UserId,
-        payload: UserUpdateRequestBody<ExtraData>
-    ) -> Endpoint<UserUpdateResponse<ExtraData>> {
+        payload: UserUpdateRequestBody
+    ) -> Endpoint<UserUpdateResponse> {
         let users: [String: AnyEncodable] = [
             "id": AnyEncodable(id),
             "set": AnyEncodable(payload)
@@ -27,7 +27,7 @@ extension Endpoint {
         let body: [String: AnyEncodable] = [
             "users": AnyEncodable([users])
         ]
-        return Endpoint<UserUpdateResponse<ExtraData>>(
+        return Endpoint<UserUpdateResponse>(
             path: "users",
             method: .patch,
             queryItems: nil,

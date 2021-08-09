@@ -7,12 +7,13 @@ import SwiftUI
 
 @available(iOS 13.0, *)
 /// A `UIViewControllerRepresentable` subclass which wraps `ChatChannelListVC` and shows list of channels.
-public typealias ChatChannelList = SwiftUIViewControllerRepresentable<_ChatChannelListVC<NoExtraData>>
+public typealias ChatChannelList = SwiftUIViewControllerRepresentable<ChatChannelListVC>
 
 @available(iOS 13.0, *)
-public extension SwiftUIViewControllerRepresentable where ViewController: _ChatChannelListVC<NoExtraData> {
+@available(iOSApplicationExtension, unavailable)
+public extension SwiftUIViewControllerRepresentable where ViewController: ChatChannelListVC {
     @available(*, deprecated, renamed: "asView")
-    init(controller: _ChatChannelListController<NoExtraData>) {
+    init(controller: ChatChannelListController) {
         self.init(
             viewController: ViewController.self,
             content: controller
@@ -21,16 +22,18 @@ public extension SwiftUIViewControllerRepresentable where ViewController: _ChatC
 }
 
 @available(iOS 13.0, *)
-extension _ChatChannelListVC {
+@available(iOSApplicationExtension, unavailable)
+extension ChatChannelListVC {
     /// A SwiftUI View that wraps `_ChatChannelListVC` and shows list of messages.
     @available(*, deprecated, renamed: "asView")
-    static func View(controller: _ChatChannelListController<ExtraData>) -> some View {
+    static func View(controller: ChatChannelListController) -> some View {
         asView(controller)
     }
 }
 
-extension _ChatChannelListVC: SwiftUIRepresentable {
-    public var content: _ChatChannelListController<ExtraData> {
+@available(iOSApplicationExtension, unavailable)
+extension ChatChannelListVC: SwiftUIRepresentable {
+    public var content: ChatChannelListController {
         get {
             controller
         }

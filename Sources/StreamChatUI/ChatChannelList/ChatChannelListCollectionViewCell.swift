@@ -7,19 +7,16 @@ import StreamChat
 import UIKit
 
 /// A `UICollectionViewCell` subclass that shows channel information.
-public typealias ChatChannelListCollectionViewCell = _ChatChannelListCollectionViewCell<NoExtraData>
-
-/// A `UICollectionViewCell` subclass that shows channel information.
-open class _ChatChannelListCollectionViewCell<ExtraData: ExtraDataTypes>: _CollectionViewCell,
+open class ChatChannelListCollectionViewCell: _CollectionViewCell,
     ThemeProvider {
     /// The `ChatChannelListItemView` instance used as content view.
-    open private(set) lazy var itemView: _ChatChannelListItemView<ExtraData> = components
+    open private(set) lazy var itemView: ChatChannelListItemView = components
         .channelContentView
         .init()
         .withoutAutoresizingMaskConstraints
 
     /// The `SwipeableView` instance which is used for revealing buttons when cell is swiped.
-    open private(set) lazy var swipeableView: _SwipeableView<ExtraData> = components
+    open private(set) lazy var swipeableView: SwipeableView = components
         .channelActionsView.init()
         .withoutAutoresizingMaskConstraints
 

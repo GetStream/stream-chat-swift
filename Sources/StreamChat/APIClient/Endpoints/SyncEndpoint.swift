@@ -5,10 +5,10 @@
 import Foundation
 
 extension Endpoint {
-    static func missingEvents<ExtraData: ExtraDataTypes>(
+    static func missingEvents(
         since: Date,
         cids: [ChannelId]
-    ) -> Endpoint<MissingEventsPayload<ExtraData>> {
+    ) -> Endpoint<MissingEventsPayload> {
         .init(
             path: "sync",
             method: .post,

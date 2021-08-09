@@ -58,7 +58,7 @@ class ChannelController_Combine_Tests: iOS13TestCase {
         weak var controller: ChannelControllerMock? = channelController
         channelController = nil
 
-        let newChannel: ChatChannel = .mock(cid: .unique, name: .unique, imageURL: .unique(), extraData: .defaultValue)
+        let newChannel: ChatChannel = .mock(cid: .unique, name: .unique, imageURL: .unique(), extraData: [:])
         controller?.channel_simulated = newChannel
         controller?.delegateCallback {
             $0.channelController(controller!, didUpdateChannel: .create(newChannel))
@@ -69,7 +69,7 @@ class ChannelController_Combine_Tests: iOS13TestCase {
     
     func test_messagesChangesPublisher() {
         // Setup Recording publishers
-        var recording = Record<[ListChange<_ChatMessage<NoExtraData>>], Never>.Recording()
+        var recording = Record<[ListChange<ChatMessage>], Never>.Recording()
         
         // Setup the chain
         channelController
@@ -81,7 +81,7 @@ class ChannelController_Combine_Tests: iOS13TestCase {
         weak var controller: ChannelControllerMock? = channelController
         channelController = nil
 
-        let newMessage: _ChatMessage = .unique
+        let newMessage: ChatMessage = .unique
         controller?.messages_simulated = [newMessage]
         controller?.delegateCallback {
             $0.channelController(controller!, didUpdateMessages: [.insert(newMessage, index: .init())])
@@ -138,7 +138,7 @@ class ChannelController_Combine_Tests: iOS13TestCase {
             updatedAt: .unique,
             lastActiveAt: .unique,
             teams: [],
-            extraData: .defaultValue
+            extraData: [:]
         )
         
         controller?.delegateCallback {

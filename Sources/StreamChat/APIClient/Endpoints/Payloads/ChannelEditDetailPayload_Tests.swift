@@ -13,17 +13,16 @@ class ChannelEditDetailPayload_Tests: XCTestCase {
         let imageURL: URL = .unique()
         let team: String = .unique
         let invite: UserId = .unique
-        let extraData: NoExtraData = .defaultValue
         
         // Create ChannelEditDetailPayload
-        let payload = ChannelEditDetailPayload<NoExtraData>(
+        let payload = ChannelEditDetailPayload(
             cid: cid,
             name: name,
             imageURL: imageURL,
             team: team,
             members: [invite],
             invites: [invite],
-            extraData: extraData
+            extraData: [:]
         )
 
         let expectedData: [String: Any] = [
@@ -43,14 +42,14 @@ class ChannelEditDetailPayload_Tests: XCTestCase {
     
     func test_apiPath() {
         // Create payload without id specified
-        let payload1: ChannelEditDetailPayload<NoExtraData> = .init(
+        let payload1: ChannelEditDetailPayload = .init(
             type: .messaging,
             name: .unique,
             imageURL: .unique(),
             team: nil,
             members: [.unique],
             invites: [],
-            extraData: .defaultValue
+            extraData: [:]
         )
         
         // Assert only type is part of path
@@ -58,14 +57,14 @@ class ChannelEditDetailPayload_Tests: XCTestCase {
         
         // Create payload with id and type specified
         let cid: ChannelId = .unique
-        let payload2: ChannelEditDetailPayload<NoExtraData> = .init(
+        let payload2: ChannelEditDetailPayload = .init(
             cid: cid,
             name: .unique,
             imageURL: .unique(),
             team: nil,
             members: [],
             invites: [],
-            extraData: .defaultValue
+            extraData: [:]
         )
         
         // Assert type and id are part of path

@@ -12,7 +12,7 @@ final class ChatMessage_Tests: XCTestCase {
             cid: .unique,
             text: "Text",
             author: ChatUser.mock(id: .anonymous),
-            pinDetails: _MessagePinDetails(
+            pinDetails: MessagePinDetails(
                 pinnedAt: Date.distantPast,
                 pinnedBy: ChatUser.mock(id: .anonymous),
                 expiresAt: Date.distantFuture

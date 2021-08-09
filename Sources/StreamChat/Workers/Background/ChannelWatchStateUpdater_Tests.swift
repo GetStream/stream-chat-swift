@@ -7,13 +7,11 @@
 import XCTest
 
 class ChannelWatchStateUpdater_Tests: StressTestCase {
-    typealias ExtraData = NoExtraData
-    
     var database: DatabaseContainerMock!
     var webSocketClient: WebSocketClientMock!
     var apiClient: APIClientMock!
     
-    var channelWatchStateUpdater: ChannelWatchStateUpdater<ExtraData>?
+    var channelWatchStateUpdater: ChannelWatchStateUpdater?
     
     override func setUp() {
         super.setUp()
@@ -80,7 +78,7 @@ class ChannelWatchStateUpdater_Tests: StressTestCase {
             pageSize: 1
         )
         
-        let endpoint: Endpoint<ChannelListPayload<ExtraData>> = .channels(query: query)
+        let endpoint: Endpoint<ChannelListPayload> = .channels(query: query)
         
         // Assert APIClient is called with the correct endpoint
         AssertAsync.willBeEqual(apiClient.request_endpoint, AnyEndpoint(endpoint))

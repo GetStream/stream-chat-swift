@@ -1,0 +1,12 @@
+{
+  "banned" : true,
+  "online" : true,
+  "id" : "bitter-cloud-0",
+  "role" : "guest",
+  "created_at" : "2020-06-09T18:33:04.070518Z",
+  "image" : "https:\/\/getstream.io\/random_png\/?name=Bitter+cloud",
+  "updated_at" : "2020-06-09T18:33:04.078929Z",
+  "last_active" : "2020-06-09T18:33:04.075114Z",
+  "teams": ["RED", "GREEN", "BLUE"],
+  "name" : "Bitter cloud"
+}

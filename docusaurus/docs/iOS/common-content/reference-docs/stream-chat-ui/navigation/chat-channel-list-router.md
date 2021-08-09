@@ -36,14 +36,6 @@ open func showMessageList(for cid: ChannelId)
 
   - cid: `ChannelId` of the channel the should be presented.
 
-### `showCreateNewChannelFlow()`
-
-Presents the user with the new channel creation flow.
-
-``` swift
-open func showCreateNewChannelFlow() 
-```
-
 ### `didTapMoreButton(for:)`
 
 Called when a user tapped `More` swipe action on a channel

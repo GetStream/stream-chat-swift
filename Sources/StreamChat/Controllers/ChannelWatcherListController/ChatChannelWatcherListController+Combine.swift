@@ -6,14 +6,14 @@ import Combine
 import Foundation
 
 @available(iOS 13, *)
-extension _ChatChannelWatcherListController {
+extension ChatChannelWatcherListController {
     /// A publisher emitting a new value every time the state of the controller changes.
     public var statePublisher: AnyPublisher<DataController.State, Never> {
         basePublishers.state.keepAlive(self)
     }
     
     /// A publisher emitting a new value every time the channel members change.
-    public var watchersChangesPublisher: AnyPublisher<[ListChange<_ChatUser<ExtraData.User>>], Never> {
+    public var watchersChangesPublisher: AnyPublisher<[ListChange<ChatUser>], Never> {
         basePublishers.watchersChanges.keepAlive(self)
     }
     
@@ -22,15 +22,15 @@ extension _ChatChannelWatcherListController {
     /// and expose the published values by mapping them to a read-only `AnyPublisher` type.
     class BasePublishers {
         /// The wrapped controller.
-        unowned let controller: _ChatChannelWatcherListController
+        unowned let controller: ChatChannelWatcherListController
         
         /// A backing subject for `statePublisher`.
         let state: CurrentValueSubject<DataController.State, Never>
         
         /// A backing subject for `membersChangesPublisher`.
-        let watchersChanges: PassthroughSubject<[ListChange<_ChatUser<ExtraData.User>>], Never> = .init()
+        let watchersChanges: PassthroughSubject<[ListChange<ChatUser>], Never> = .init()
         
-        init(controller: _ChatChannelWatcherListController<ExtraData>) {
+        init(controller: ChatChannelWatcherListController) {
             self.controller = controller
             state = .init(controller.state)
             
@@ -40,14 +40,14 @@ extension _ChatChannelWatcherListController {
 }
 
 @available(iOS 13, *)
-extension _ChatChannelWatcherListController.BasePublishers: _ChatChannelWatcherListControllerDelegate {
+extension ChatChannelWatcherListController.BasePublishers: ChatChannelWatcherListControllerDelegate {
     func controller(_ controller: DataController, didChangeState state: DataController.State) {
         self.state.send(state)
     }
     
     func channelWatcherListController(
-        _ controller: _ChatChannelWatcherListController<ExtraData>,
-        didChangeWatchers changes: [ListChange<_ChatUser<ExtraData.User>>]
+        _ controller: ChatChannelWatcherListController,
+        didChangeWatchers changes: [ListChange<ChatUser>]
     ) {
         watchersChanges.send(changes)
     }

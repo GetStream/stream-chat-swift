@@ -8,13 +8,13 @@ import XCTest
 
 extension MessagePayload {
     /// Creates a dummy `MessagePayload` with the given `messageId` and `userId` of the author.
-    static func dummy<T: ExtraDataTypes>(
+    static func dummy(
         type: MessageType? = nil,
         messageId: MessageId,
         parentId: MessageId? = nil,
         showReplyInChannel: Bool = false,
         quotedMessageId: MessageId? = nil,
-        quotedMessage: MessagePayload<T>? = nil,
+        quotedMessage: MessagePayload? = nil,
         attachments: [MessageAttachmentPayload] = [
             .dummy(),
             .dummy(),
@@ -22,22 +22,22 @@ extension MessagePayload {
         ],
         authorUserId: UserId,
         text: String = .unique,
-        extraData: T.Message = .defaultValue,
-        latestReactions: [MessageReactionPayload<T>] = [],
-        ownReactions: [MessageReactionPayload<T>] = [],
+        extraData: [String: RawJSON] = [:],
+        latestReactions: [MessageReactionPayload] = [],
+        ownReactions: [MessageReactionPayload] = [],
         createdAt: Date? = nil,
         deletedAt: Date? = nil,
         updatedAt: Date = .unique,
-        channel: ChannelDetailPayload<T>? = nil,
+        channel: ChannelDetailPayload? = nil,
         pinned: Bool = false,
         pinnedByUserId: UserId? = nil,
         pinnedAt: Date? = nil,
         pinExpires: Date? = nil
-    ) -> MessagePayload<T> where T.User == NoExtraData {
+    ) -> MessagePayload {
         .init(
             id: messageId,
             type: type ?? (parentId == nil ? .regular : .reply),
-            user: UserPayload.dummy(userId: authorUserId) as UserPayload<T.User>,
+            user: UserPayload.dummy(userId: authorUserId) as UserPayload,
             createdAt: createdAt != nil ? createdAt! : XCTestCase.channelCreatedDate
                 .addingTimeInterval(TimeInterval.random(in: 100...900)),
             updatedAt: updatedAt,
@@ -59,7 +59,7 @@ extension MessagePayload {
             attachments: attachments,
             channel: channel,
             pinned: pinned,
-            pinnedBy: pinnedByUserId != nil ? UserPayload.dummy(userId: pinnedByUserId!) as UserPayload<T.User> : nil,
+            pinnedBy: pinnedByUserId != nil ? UserPayload.dummy(userId: pinnedByUserId!) as UserPayload : nil,
             pinnedAt: pinnedAt,
             pinExpires: pinExpires
         )

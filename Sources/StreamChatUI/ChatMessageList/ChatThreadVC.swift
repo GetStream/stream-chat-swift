@@ -6,16 +6,14 @@ import StreamChat
 import UIKit
 
 /// Controller responsible for displaying message thread.
-public typealias ChatThreadVC = _ChatThreadVC<NoExtraData>
-
-/// Controller responsible for displaying message thread.
-open class _ChatThreadVC<ExtraData: ExtraDataTypes>:
+@available(iOSApplicationExtension, unavailable)
+open class ChatThreadVC:
     _ViewController,
     ThemeProvider,
     ComposerVCDelegate,
-    _ChatChannelControllerDelegate,
-    _ChatMessageControllerDelegate,
-    _ChatMessageActionsVCDelegate,
+    ChatChannelControllerDelegate,
+    ChatMessageControllerDelegate,
+    ChatMessageActionsVCDelegate,
     ChatMessageContentViewDelegate,
     GalleryContentViewDelegate,
     GiphyActionContentViewDelegate,
@@ -26,10 +24,10 @@ open class _ChatThreadVC<ExtraData: ExtraDataTypes>:
     UIGestureRecognizerDelegate,
     ChatMessageListScrollOverlayDataSource {
     /// Controller for observing data changes within the channel
-    open var channelController: _ChatChannelController<ExtraData>!
+    open var channelController: ChatChannelController!
 
     /// Controller for observing data changes within the parent thread message.
-    open var messageController: _ChatMessageController<ExtraData>!
+    open var messageController: ChatMessageController!
 
     /// Observer responsible for setting the correct offset when keyboard frame is changed
     open lazy var keyboardObserver = ChatMessageListKeyboardObserver(
@@ -39,11 +37,11 @@ open class _ChatThreadVC<ExtraData: ExtraDataTypes>:
     )
 
     /// User search controller passed directly to the composer
-    open lazy var userSuggestionSearchController: _ChatUserSearchController<ExtraData> =
+    open lazy var userSuggestionSearchController: ChatUserSearchController =
         channelController.client.userSearchController()
 
     /// View used to display the messages
-    open private(set) lazy var listView: _ChatMessageListView<ExtraData> = {
+    open private(set) lazy var listView: ChatMessageListView = {
         let listView = components.messageListView.init().withoutAutoresizingMaskConstraints
         listView.delegate = self
         listView.dataSource = self
@@ -65,11 +63,9 @@ open class _ChatThreadVC<ExtraData: ExtraDataTypes>:
         .messageComposerVC
         .init()
 
-    /// View displaying status of the channel.
-    ///
-    /// The status differs based on the fact if the channel is direct or not.
-    open lazy var titleView: TitleContainerView = components
-        .navigationTitleView.init()
+    /// The header view of the thread that by default is the titleView of the navigation bar.
+    open lazy var headerView: ChatThreadHeaderView = components
+        .threadHeaderView.init()
         .withoutAutoresizingMaskConstraints
 
     /// Handles navigation actions from messages
@@ -105,11 +101,13 @@ open class _ChatThreadVC<ExtraData: ExtraDataTypes>:
         channelController.setDelegate(self)
         channelController.synchronize()
 
-        messageController.setDelegate(self)
+        messageController.delegate = self
         messageController.synchronize()
         messageController.loadPreviousReplies()
 
-        updateNavigationTitle()
+        if let cid = channelController.cid {
+            headerView.channelController = channelController.client.channelController(for: cid)
+        }
     }
 
     override open func setUpLayout() {
@@ -134,6 +132,8 @@ open class _ChatThreadVC<ExtraData: ExtraDataTypes>:
             dateOverlayView.topAnchor.pin(equalToSystemSpacingBelow: view.safeAreaLayoutGuide.topAnchor)
         ])
         dateOverlayView.isHidden = true
+
+        navigationItem.titleView = headerView
     }
 
     override open func setUpAppearance() {
@@ -142,12 +142,6 @@ open class _ChatThreadVC<ExtraData: ExtraDataTypes>:
         view.backgroundColor = appearance.colorPalette.background
 
         listView.backgroundColor = .clear
-        
-        navigationItem.titleView = titleView
-    }
-
-    override open func viewDidLoad() {
-        super.viewDidLoad()
 
         navigationItem.largeTitleDisplayMode = .never
     }
@@ -172,19 +166,19 @@ open class _ChatThreadVC<ExtraData: ExtraDataTypes>:
     }
 
     /// Returns the content view class for the message at given `indexPath`
-    open func cellContentClassForMessage(at indexPath: IndexPath) -> _ChatMessageContentView<ExtraData>.Type {
+    open func cellContentClassForMessage(at indexPath: IndexPath) -> ChatMessageContentView.Type {
         components.messageContentView
     }
 
     /// Returns the attachment view injector class for the message at given `indexPath`
     open func attachmentViewInjectorClassForMessage(
         at indexPath: IndexPath
-    ) -> _AttachmentViewInjector<ExtraData>.Type? {
+    ) -> AttachmentViewInjector.Type? {
         attachmentViewInjectorClass(for: messageForIndexPath(indexPath))
     }
 
     /// Returns the attachment view injector class for the message at given `ChatMessage`
-    open func attachmentViewInjectorClass(for message: _ChatMessage<ExtraData>) -> _AttachmentViewInjector<ExtraData>.Type? {
+    open func attachmentViewInjectorClass(for message: ChatMessage) -> AttachmentViewInjector.Type? {
         components.attachmentViewCatalog.attachmentViewInjectorClassFor(message: message, components: components)
     }
 
@@ -202,7 +196,7 @@ open class _ChatThreadVC<ExtraData: ExtraDataTypes>:
 
     open func cellLayoutOptionsForMessage(
         at indexPath: IndexPath,
-        messages: AnyRandomAccessCollection<_ChatMessage<ExtraData>>
+        messages: AnyRandomAccessCollection<ChatMessage>
     ) -> ChatMessageLayoutOptions {
         guard let channel = channelController.channel else { return [] }
 
@@ -213,7 +207,7 @@ open class _ChatThreadVC<ExtraData: ExtraDataTypes>:
         return layoutOptions
     }
     
-    public var messages: [_ChatMessage<ExtraData>] {
+    public var messages: [ChatMessage] {
         /*
          Thread replies are evaluated from DTOs when converting `messageController.replies` to an array.
          Adding thread root message into replies would require `insert/append` API on lazy map which should
@@ -247,7 +241,7 @@ open class _ChatThreadVC<ExtraData: ExtraDataTypes>:
     open func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let message = messages[indexPath.row]
 
-        let cell: _ChatMessageCell<ExtraData> = listView.dequeueReusableCell(
+        let cell: ChatMessageCell = listView.dequeueReusableCell(
             contentViewClass: cellContentClassForMessage(at: indexPath),
             attachmentViewInjectorType: attachmentViewInjectorClassForMessage(at: indexPath),
             layoutOptions: cellLayoutOptionsForMessage(at: indexPath),
@@ -269,16 +263,6 @@ open class _ChatThreadVC<ExtraData: ExtraDataTypes>:
     /// Scrolls to most recent message
     open func scrollToMostRecentMessage(animated: Bool = true) {
         listView.scrollToMostRecentMessage(animated: animated)
-    }
-
-    /// Updates the status data in `titleView`.
-    ///
-    /// For group chat is called every-time the channel changes.
-    open func updateNavigationTitle() {
-        titleView.content = (
-            title: L10n.Message.Threads.reply,
-            subtitle: channelController.channel?.name.map { L10n.Message.Threads.replyWith($0) }
-        )
     }
     
     /// Handles long press action on collection view.
@@ -305,14 +289,14 @@ open class _ChatThreadVC<ExtraData: ExtraDataTypes>:
     }
 
     /// Updates the collection view data with given `changes`.
-    open func updateMessages(with changes: [ListChange<_ChatMessage<ExtraData>>], completion: (() -> Void)? = nil) {
+    open func updateMessages(with changes: [ListChange<ChatMessage>], completion: (() -> Void)? = nil) {
         listView.updateMessages(with: changes, completion: completion)
     }
 
     /// Presents custom actions controller with all possible actions with the selected message.
     open func didSelectMessageCell(at indexPath: IndexPath) {
         guard
-            let cell = listView.cellForRow(at: indexPath) as? _ChatMessageCell<ExtraData>,
+            let cell = listView.cellForRow(at: indexPath) as? ChatMessageCell,
             let messageContentView = cell.messageContentView,
             let message = messageContentView.content,
             message.isInteractionEnabled == true
@@ -328,7 +312,7 @@ open class _ChatThreadVC<ExtraData: ExtraDataTypes>:
         actionsController.channelConfig = channelController.channel?.config
         actionsController.delegate = .init(delegate: self)
 
-        let reactionsController: _ChatMessageReactionsVC<ExtraData>? = {
+        let reactionsController: ChatMessageReactionsVC? = {
             guard message.localState == nil else { return nil }
             guard channelController.channel?.config.reactionsEnabled == true else {
                 return nil
@@ -387,24 +371,15 @@ open class _ChatThreadVC<ExtraData: ExtraDataTypes>:
 
     open func composerDidCreateNewMessage() {}
 
-    // MARK: - _ChatChannelControllerDelegate
-
-    open func channelController(
-        _ channelController: _ChatChannelController<ExtraData>,
-        didUpdateChannel channel: EntityChange<_ChatChannel<ExtraData>>
-    ) {
-        updateNavigationTitle()
-    }
-
     // MARK: - _ChatMessageControllerDelegate
     
     public func messageController(
-        _ controller: _ChatMessageController<ExtraData>,
-        didChangeMessage change: EntityChange<_ChatMessage<ExtraData>>
+        _ controller: ChatMessageController,
+        didChangeMessage change: EntityChange<ChatMessage>
     ) {
         let indexPath = IndexPath(row: messageController.replies.count, section: 0)
         
-        let listChange: ListChange<_ChatMessage<ExtraData>>
+        let listChange: ListChange<ChatMessage>
         switch change {
         case let .create(item):
             listChange = .insert(item, index: indexPath)
@@ -418,8 +393,8 @@ open class _ChatThreadVC<ExtraData: ExtraDataTypes>:
     }
 
     open func messageController(
-        _ controller: _ChatMessageController<ExtraData>,
-        didChangeReplies changes: [ListChange<_ChatMessage<ExtraData>>]
+        _ controller: ChatMessageController,
+        didChangeReplies changes: [ListChange<ChatMessage>]
     ) {
         updateMessages(with: changes)
     }
@@ -427,8 +402,8 @@ open class _ChatThreadVC<ExtraData: ExtraDataTypes>:
     // MARK: - _ChatMessageActionsVCDelegate
 
     open func chatMessageActionsVC(
-        _ vc: _ChatMessageActionsVC<ExtraData>,
-        message: _ChatMessage<ExtraData>,
+        _ vc: ChatMessageActionsVC,
+        message: ChatMessage,
         didTapOnActionItem actionItem: ChatMessageActionItem
     ) {
         switch actionItem {
@@ -446,7 +421,7 @@ open class _ChatThreadVC<ExtraData: ExtraDataTypes>:
     }
 
     open func chatMessageActionsVCDidFinish(
-        _ vc: _ChatMessageActionsVC<ExtraData>
+        _ vc: ChatMessageActionsVC
     ) {
         dismiss(animated: true)
     }
@@ -503,7 +478,7 @@ open class _ChatThreadVC<ExtraData: ExtraDataTypes>:
         }
     }
 
-    open func messageForIndexPath(_ indexPath: IndexPath) -> _ChatMessage<ExtraData> {
+    open func messageForIndexPath(_ indexPath: IndexPath) -> ChatMessage {
         messages[indexPath.item]
     }
     
@@ -531,10 +506,11 @@ open class _ChatThreadVC<ExtraData: ExtraDataTypes>:
     }
 }
 
+@available(iOSApplicationExtension, unavailable)
 extension ChatThreadVC: SwiftUIRepresentable {
     public var content: (
-        channelController: _ChatChannelController<ExtraData>,
-        messageController: _ChatMessageController<ExtraData>
+        channelController: ChatChannelController,
+        messageController: ChatMessageController
     ) {
         get {
             (channelController, messageController)

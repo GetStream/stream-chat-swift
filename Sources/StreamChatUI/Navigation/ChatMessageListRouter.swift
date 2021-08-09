@@ -6,10 +6,7 @@ import StreamChat
 import UIKit
 
 /// A `NavigationRouter` subclass used for navigating from message-list-based view controllers.
-public typealias ChatMessageListRouter = _ChatMessageListRouter<NoExtraData>
-
-/// A `NavigationRouter` subclass used for navigating from message-list-based view controllers.
-open class _ChatMessageListRouter<ExtraData: ExtraDataTypes>:
+open class ChatMessageListRouter:
     // We use UIViewController here because the router is used for both
     // the channel and thread message lists.
     NavigationRouter<UIViewController>,
@@ -17,7 +14,7 @@ open class _ChatMessageListRouter<ExtraData: ExtraDataTypes>:
     ComponentsProvider
 {
     /// The transition controller used to animate `ChatMessagePopupVC` transition.
-    open private(set) lazy var messagePopUpTransitionController = MessageActionsTransitionController<ExtraData>()
+    open private(set) lazy var messagePopUpTransitionController = MessageActionsTransitionController()
 
     /// Feedback generator used when presenting actions controller on selected message
     open var impactFeedbackGenerator = UIImpactFeedbackGenerator(style: .medium)
@@ -34,9 +31,9 @@ open class _ChatMessageListRouter<ExtraData: ExtraDataTypes>:
     ///   - messageReactionsController: The `ChatMessageReactionsVC` object which will presented as a part of the pop up.
     ///
     open func showMessageActionsPopUp(
-        messageContentView: _ChatMessageContentView<ExtraData>,
-        messageActionsController: _ChatMessageActionsVC<ExtraData>,
-        messageReactionsController: _ChatMessageReactionsVC<ExtraData>?
+        messageContentView: ChatMessageContentView,
+        messageActionsController: ChatMessageActionsVC,
+        messageReactionsController: ChatMessageReactionsVC?
     ) {
         let popup = components.messagePopupVC.init()
         popup.messageContentView = messageContentView
@@ -62,6 +59,7 @@ open class _ChatMessageListRouter<ExtraData: ExtraDataTypes>:
     ///
     /// - Parameter url: The URL of the link to preview.
     ///
+    @available(iOSApplicationExtension, unavailable)
     open func showLinkPreview(link: URL) {
         UIApplication.shared.open(link)
     }
@@ -85,10 +83,11 @@ open class _ChatMessageListRouter<ExtraData: ExtraDataTypes>:
     ///   - cid: The `cid` of the channel the message belongs to.
     ///   - client: The current `ChatClient` instance.
     ///
+    @available(iOSApplicationExtension, unavailable)
     open func showThread(
         messageId: MessageId,
         cid: ChannelId,
-        client: _ChatClient<ExtraData>
+        client: ChatClient
     ) {
         let threadVC = components.threadVC.init()
         threadVC.channelController = client.channelController(for: cid)
@@ -108,7 +107,7 @@ open class _ChatMessageListRouter<ExtraData: ExtraDataTypes>:
     ///   message has multiple previewable attachments.
     ///
     open func showGallery(
-        message: _ChatMessage<ExtraData>,
+        message: ChatMessage,
         initialAttachmentId: AttachmentId,
         previews: [GalleryItemPreview]
     ) {

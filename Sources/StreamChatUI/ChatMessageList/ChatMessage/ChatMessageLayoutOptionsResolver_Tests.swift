@@ -905,7 +905,7 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
                     score: 1,
                     createdAt: .unique,
                     updatedAt: .unique,
-                    extraData: .defaultValue,
+                    extraData: [:],
                     author: .mock(id: .unique)
                 )
             ]
@@ -943,7 +943,7 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
                     score: 1,
                     createdAt: .unique,
                     updatedAt: .unique,
-                    extraData: .defaultValue,
+                    extraData: [:],
                     author: .mock(id: .unique)
                 )
             ]
@@ -981,7 +981,7 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
                     score: 1,
                     createdAt: .unique,
                     updatedAt: .unique,
-                    extraData: .defaultValue,
+                    extraData: [:],
                     author: .mock(id: .unique)
                 )
             ]
@@ -1019,7 +1019,7 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
                     score: 1,
                     createdAt: .unique,
                     updatedAt: .unique,
-                    extraData: .defaultValue,
+                    extraData: [:],
                     author: .mock(id: .unique)
                 )
             ]
@@ -1136,7 +1136,8 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
         let layoutOptions = optionsResolver.optionsForMessage(
             at: .init(item: 0, section: 0),
             in: .mock(cid: .unique),
-            with: .init([systemMessage])
+            with: .init([systemMessage]),
+            appearance: appearance
         )
 
         // Assert only `.text` AND `.centered` is included in the options
@@ -1238,7 +1239,7 @@ private extension Array where Element == (ChatMessage, Bool) {
                     score: 1,
                     createdAt: .unique,
                     updatedAt: .unique,
-                    extraData: .defaultValue,
+                    extraData: [:],
                     author: currentUser
                 )
             ]

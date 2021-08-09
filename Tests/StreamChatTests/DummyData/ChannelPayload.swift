@@ -7,10 +7,10 @@ import Foundation
 @testable import StreamChatTestTools
 import XCTest
 
-extension ChannelDetailPayload where ExtraData == NoExtraData {
+extension ChannelDetailPayload {
     /// Returns a dummy channel detail payload with the given cid
     static func dummy(cid: ChannelId) -> ChannelDetailPayload {
-        let member: MemberPayload<NoExtraData> =
+        let member: MemberPayload =
             .init(
                 user: .init(
                     id: .unique,
@@ -24,7 +24,7 @@ extension ChannelDetailPayload where ExtraData == NoExtraData {
                     isInvisible: true,
                     isBanned: true,
                     teams: [],
-                    extraData: .defaultValue
+                    extraData: [:]
                 ),
                 role: .moderator,
                 createdAt: .unique,
@@ -38,7 +38,7 @@ extension ChannelDetailPayload where ExtraData == NoExtraData {
             cid: cid,
             name: .unique,
             imageURL: .unique(),
-            extraData: .defaultValue,
+            extraData: [:],
             typeRawValue: cid.type.rawValue,
             lastMessageAt: lastMessageAt,
             createdAt: channelCreatedDate,

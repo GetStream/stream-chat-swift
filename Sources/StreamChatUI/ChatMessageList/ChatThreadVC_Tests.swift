@@ -10,8 +10,8 @@ import XCTest
 
 final class ChatThreadVC_Tests: XCTestCase {
     var vc: ChatThreadVC!
-    var channelControllerMock: ChatChannelController_Mock<NoExtraData>!
-    var messageControllerMock: ChatMessageController_Mock<NoExtraData>!
+    var channelControllerMock: ChatChannelController_Mock!
+    var messageControllerMock: ChatMessageController_Mock!
     
     override func setUp() {
         super.setUp()

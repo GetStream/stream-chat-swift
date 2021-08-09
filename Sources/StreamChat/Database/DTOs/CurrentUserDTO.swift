@@ -61,7 +61,7 @@ extension CurrentUserDTO {
 }
 
 extension NSManagedObjectContext: CurrentUserDatabaseSession {
-    func saveCurrentUser<ExtraData: ExtraDataTypes>(payload: CurrentUserPayload<ExtraData>) throws -> CurrentUserDTO {
+    func saveCurrentUser(payload: CurrentUserPayload) throws -> CurrentUserDTO {
         let dto = CurrentUserDTO.loadOrCreate(context: self)
         dto.user = try saveUser(payload: payload)
 
@@ -147,31 +147,31 @@ extension NSManagedObjectContext: CurrentUserDatabaseSession {
 
 extension CurrentUserDTO {
     /// Snapshots the current state of `CurrentUserDTO` and returns an immutable model object from it.
-    func asModel<ExtraData: ExtraDataTypes>() -> _CurrentChatUser<ExtraData> { .create(fromDTO: self) }
+    func asModel() -> CurrentChatUser { .create(fromDTO: self) }
 }
 
-extension _CurrentChatUser {
-    fileprivate static func create(fromDTO dto: CurrentUserDTO) -> _CurrentChatUser {
+extension CurrentChatUser {
+    fileprivate static func create(fromDTO dto: CurrentUserDTO) -> CurrentChatUser {
         let context = dto.managedObjectContext!
 
         let user = dto.user
-        
-        let extraData: ExtraData.User
+
+        let extraData: [String: RawJSON]
         do {
-            extraData = try JSONDecoder.default.decode(ExtraData.User.self, from: user.extraData)
+            extraData = try JSONDecoder.default.decode([String: RawJSON].self, from: dto.user.extraData)
         } catch {
             log.error(
-                "Failed to decode extra data for CurrentUser with id: <\(dto.user.id)>, using default value instead. "
-                    + " Error: \(error)"
+                "Failed to decode extra data for user with id: <\(dto.user.id)>, using default value instead. "
+                    + "Error: \(error)"
             )
-            extraData = .defaultValue
+            extraData = [:]
         }
-        
-        let mutedUsers: [_ChatUser<ExtraData.User>] = dto.mutedUsers.map { $0.asModel() }
-        let flaggedUsers: [_ChatUser<ExtraData.User>] = dto.flaggedUsers.map { $0.asModel() }
+
+        let mutedUsers: [ChatUser] = dto.mutedUsers.map { $0.asModel() }
+        let flaggedUsers: [ChatUser] = dto.flaggedUsers.map { $0.asModel() }
         let flaggedMessagesIDs: [MessageId] = dto.flaggedMessages.map(\.id)
 
-        let fetchMutedChannels: () -> Set<_ChatChannel<ExtraData>> = {
+        let fetchMutedChannels: () -> Set<ChatChannel> = {
             Set(
                 ChannelMuteDTO
                     .load(userId: user.id, context: context)
@@ -179,7 +179,7 @@ extension _CurrentChatUser {
             )
         }
 
-        return _CurrentChatUser(
+        return CurrentChatUser(
             id: user.id,
             name: user.name,
             imageURL: user.imageURL,

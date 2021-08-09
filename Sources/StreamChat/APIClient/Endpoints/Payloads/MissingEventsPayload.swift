@@ -5,10 +5,10 @@
 import Foundation
 
 /// The type describes the incoming JSON from `/sync` endpoint
-struct MissingEventsPayload<ExtraData: ExtraDataTypes>: Decodable {
+struct MissingEventsPayload: Decodable {
     private enum CodingKeys: String, CodingKey {
         case eventPayloads = "events"
     }
     
-    let eventPayloads: [EventPayload<ExtraData>]
+    let eventPayloads: [EventPayload]
 }

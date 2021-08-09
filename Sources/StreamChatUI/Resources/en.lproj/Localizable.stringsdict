@@ -30,6 +30,8 @@
 			<string>NSStringPluralRuleType</string>
 			<key>NSStringFormatValueTypeKey</key>
 			<string>d</string>
+			<key>zero</key>
+			<string>No Thread Replies</string>
 			<key>one</key>
 			<string>%d Thread Reply</string>
 			<key>other</key>

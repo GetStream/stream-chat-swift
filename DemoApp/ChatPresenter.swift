@@ -6,7 +6,7 @@ import StreamChat
 import StreamChatUI
 import UIKit
 
-class DemoChatChannelListRouter: _ChatChannelListRouter<NoExtraData> {
+class DemoChatChannelListRouter: ChatChannelListRouter {
     func showCreateNewChannelFlow() {
         let storyboard = UIStoryboard(name: "Main", bundle: .main)
         
@@ -15,6 +15,25 @@ class DemoChatChannelListRouter: _ChatChannelListRouter<NoExtraData> {
         chatViewController.searchController = rootViewController.controller.client.userSearchController()
         
         rootNavigationController?.pushViewController(chatViewController, animated: true)
+    }
+    
+    override func showCurrentUserProfile() {
+        rootViewController.presentAlert(title: nil, actions: [
+            .init(title: "Logout", style: .destructive, handler: { _ in
+                let window = self.rootViewController.view.window!
+                guard let navigationController = UIStoryboard(name: "Main", bundle: Bundle.main)
+                    .instantiateInitialViewController() as? UINavigationController else {
+                    return
+                }
+                guard let sceneDelegate = window.windowScene?.delegate as? SceneDelegate else {
+                    return
+                }
+                sceneDelegate.coordinator = DemoAppCoordinator(navigationController: navigationController)
+                UIView.transition(with: window, duration: 0.3, options: .transitionFlipFromLeft, animations: {
+                    window.rootViewController = navigationController
+                })
+            })
+        ])
     }
     
     override func didTapMoreButton(for cid: ChannelId) {
@@ -29,8 +48,7 @@ class DemoChatChannelListRouter: _ChatChannelListRouter<NoExtraData> {
                     channelController.updateChannel(
                         name: name,
                         imageURL: channelController.channel?.imageURL,
-                        team: channelController.channel?.team,
-                        extraData: channelController.channel?.extraData ?? .defaultValue
+                        team: channelController.channel?.team
                     ) { error in
                         if let error = error {
                             self.rootViewController.presentAlert(
@@ -54,7 +72,7 @@ class DemoChatChannelListRouter: _ChatChannelListRouter<NoExtraData> {
                         name: channelController.channel?.name,
                         imageURL: url,
                         team: channelController.channel?.team,
-                        extraData: channelController.channel?.extraData ?? .defaultValue
+                        extraData: channelController.channel?.extraData ?? [:]
                     ) { error in
                         if let error = error {
                             self.rootViewController.presentAlert(

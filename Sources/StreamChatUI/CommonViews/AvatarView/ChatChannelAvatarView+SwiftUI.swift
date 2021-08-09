@@ -7,23 +7,20 @@ import SwiftUI
 
 @available(iOS 13.0, *)
 /// Protocol of `_ChatChannelAvatarView` wrapper for use in SwiftUI.
-public protocol _ChatChannelAvatarViewSwiftUIView: View {
-    associatedtype ExtraData: ExtraDataTypes
-    init(dataSource: _ChatChannelAvatarView<ExtraData>.ObservedObject<Self>)
+public protocol ChatChannelAvatarViewSwiftUIView: View {
+    init(dataSource: ChatChannelAvatarView.ObservedObject<Self>)
 }
 
 @available(iOS 13.0, *)
-extension _ChatChannelAvatarView {
+extension ChatChannelAvatarView {
     /// Data source of `_ChatChannelAvatarView` represented as `ObservedObject`.
-    public typealias ObservedObject<Content: SwiftUIView> = SwiftUIWrapper<Content> where Content.ExtraData == ExtraData
+    public typealias ObservedObject<Content: SwiftUIView> = SwiftUIWrapper<Content>
 
     /// `_ChatChannelAvatarView` represented in SwiftUI.
-    public typealias SwiftUIView = _ChatChannelAvatarViewSwiftUIView
+    public typealias SwiftUIView = ChatChannelAvatarViewSwiftUIView
 
     /// SwiftUI wrapper of `_ChatChannelAvatarView`.
-    public class SwiftUIWrapper<Content: SwiftUIView>: _ChatChannelAvatarView<ExtraData>, ObservableObject
-        where Content.ExtraData == ExtraData
-    {
+    public class SwiftUIWrapper<Content: SwiftUIView>: ChatChannelAvatarView, ObservableObject {
         var hostingController: UIViewController?
         
         override public var intrinsicContentSize: CGSize {

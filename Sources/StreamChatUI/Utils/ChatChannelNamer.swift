@@ -5,16 +5,11 @@
 import Foundation
 import StreamChat
 
-/// Typealias for closure taking `_ChatChannel<ExtraData>` and `UserId` which returns
+/// Typealias for closure taking `ChatChannel` and `UserId` which returns
 /// the current name of the channel. Use this type when you create closure for naming a channel.
 /// For example usage, see `DefaultChatChannelNamer`
-public typealias ChatChannelNamer = _ChatChannelNamer
-
-/// Typealias for closure taking `_ChatChannel<ExtraData>` and `UserId` which returns
-/// the current name of the channel. Use this type when you create closure for naming a channel.
-/// For example usage, see `DefaultChatChannelNamer`
-public typealias _ChatChannelNamer<ExtraData: ExtraDataTypes> =
-    (_ channel: _ChatChannel<ExtraData>, _ currentUserId: UserId?) -> String?
+public typealias ChatChannelNamer =
+    (_ channel: ChatChannel, _ currentUserId: UserId?) -> String?
 
 /// Generates a name for the given channel, given the current user's id.
 ///
@@ -39,10 +34,10 @@ public typealias _ChatChannelNamer<ExtraData: ExtraDataTypes> =
 ///   - separator: Separator of the members, defaults to `y`
 /// - Returns: A closure with 2 parameters carrying `channel` used for name generation and `currentUserId` to decide
 /// which members' names are going to be displayed
-public func DefaultChatChannelNamer<ExtraData: ExtraDataTypes>(
+public func DefaultChatChannelNamer(
     maxMemberNames: Int = 2,
     separator: String = ","
-) -> _ChatChannelNamer<ExtraData> {
+) -> ChatChannelNamer {
     { channel, currentUserId in
         if let channelName = channel.name, !channelName.isEmpty {
             // If there's an assigned name and it's not empty, we use it

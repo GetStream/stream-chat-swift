@@ -6,11 +6,8 @@ import StreamChat
 import UIKit
 
 /// Controller for the message reactions picker as a list of toggles
-public typealias ChatMessageReactionsVC = _ChatMessageReactionsVC<NoExtraData>
-
-/// Controller for the message reactions picker as a list of toggles
-open class _ChatMessageReactionsVC<ExtraData: ExtraDataTypes>: _ViewController, ThemeProvider {
-    public var messageController: _ChatMessageController<ExtraData>!
+open class ChatMessageReactionsVC: _ViewController, ThemeProvider {
+    public var messageController: ChatMessageController!
 
     // MARK: - Subviews
 
@@ -23,8 +20,7 @@ open class _ChatMessageReactionsVC<ExtraData: ExtraDataTypes>: _ViewController, 
 
     override open func setUp() {
         super.setUp()
-
-        messageController.setDelegate(self)
+        messageController.delegate = self
     }
 
     override open func setUpLayout() {
@@ -72,10 +68,10 @@ open class _ChatMessageReactionsVC<ExtraData: ExtraDataTypes>: _ViewController, 
 
 // MARK: - _MessageControllerDelegate
 
-extension _ChatMessageReactionsVC: _ChatMessageControllerDelegate {
+extension ChatMessageReactionsVC: ChatMessageControllerDelegate {
     public func messageController(
-        _ controller: _ChatMessageController<ExtraData>,
-        didChangeMessage change: EntityChange<_ChatMessage<ExtraData>>
+        _ controller: ChatMessageController,
+        didChangeMessage change: EntityChange<ChatMessage>
     ) {
         switch change {
         case .create, .remove: break

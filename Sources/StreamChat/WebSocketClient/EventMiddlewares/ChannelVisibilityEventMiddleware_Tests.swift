@@ -8,7 +8,7 @@ import XCTest
 
 final class ChannelVisibilityEventMiddleware_Tests: XCTestCase {
     var database: DatabaseContainerMock!
-    var middleware: ChannelVisibilityEventMiddleware<NoExtraData>!
+    var middleware: ChannelVisibilityEventMiddleware!
 
     // MARK: - Set up
 
@@ -49,7 +49,7 @@ final class ChannelVisibilityEventMiddleware_Tests: XCTestCase {
             cid: .unique,
             createdAt: .unique,
             isChannelHistoryCleared: false
-        ) as EventPayload<NoExtraDataTypes>)
+        ) as EventPayload)
         var forwardedEvent = middleware.handle(event: hiddenEvent, session: database.viewContext)
 
         // Assert `ChannelTruncatedEvent` is forwarded even though database error happened.
@@ -60,11 +60,33 @@ final class ChannelVisibilityEventMiddleware_Tests: XCTestCase {
             eventType: .channelVisible,
             cid: .unique,
             createdAt: .unique
-        ) as EventPayload<NoExtraDataTypes>)
+        ) as EventPayload)
         forwardedEvent = middleware.handle(event: visibleEvent, session: database.viewContext)
 
         // Assert `ChannelTruncatedEvent` is forwarded even though database error happened.
         XCTAssertTrue(forwardedEvent is ChannelVisibleEvent)
+    }
+    
+    func test_middlewareCanSeePendingEntities() throws {
+        let cid = ChannelId.unique
+        
+        // Create the event
+        let event = try ChannelHiddenEvent(from: .init(
+            eventType: .channelHidden,
+            cid: cid,
+            createdAt: .unique,
+            isChannelHistoryCleared: false
+        ) as EventPayload)
+        
+        // Open a database session to simulate EventNotificationCenter
+        try database.writeSynchronously {
+            try $0.saveChannel(payload: .dummy(cid: cid), query: nil)
+            // Handle the event
+            _ = self.middleware.handle(event: event, session: $0)
+        }
+        
+        // Check if the channel was found and marked as hidden
+        XCTAssertEqual(database.viewContext.channel(cid: cid)?.hiddenAt, event.hiddenAt)
     }
 
     func test_channelHiddenEvent_updateChannelHiddenAtValue() throws {
@@ -76,7 +98,7 @@ final class ChannelVisibilityEventMiddleware_Tests: XCTestCase {
             cid: cid,
             createdAt: .unique,
             isChannelHistoryCleared: false
-        ) as EventPayload<NoExtraDataTypes>)
+        ) as EventPayload)
 
         try database.createChannel(cid: cid, withMessages: true)
 
@@ -105,7 +127,7 @@ final class ChannelVisibilityEventMiddleware_Tests: XCTestCase {
             cid: cid,
             createdAt: .unique,
             isChannelHistoryCleared: true
-        ) as EventPayload<NoExtraDataTypes>)
+        ) as EventPayload)
 
         try database.createChannel(cid: cid, withMessages: true)
 
@@ -129,7 +151,7 @@ final class ChannelVisibilityEventMiddleware_Tests: XCTestCase {
             eventType: .channelVisible,
             cid: cid,
             createdAt: .unique
-        ) as EventPayload<NoExtraDataTypes>)
+        ) as EventPayload)
 
         // Create a channel in the DB with `hiddenAt` and `truncatedAt` values
         let originalHiddenAt = Date.unique

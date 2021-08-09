@@ -1,4 +1,13 @@
 
+### `fillAllAvailableWidth`
+
+Says whether a message content should start filling all available width.
+Is `true` by default.
+
+``` swift
+open var fillAllAvailableWidth: Bool = true
+```
+
 ### `contentView`
 
 The target view used for injecting the views of this injector.

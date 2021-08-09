@@ -1,8 +1,6 @@
 ---
 title: SendButton
 ---
-![SendButton](../../../../../assets/SendButton_documentation_disabled.default-light.png
-SendButton_documentation_enabled.default-light.png)
 
 Button used for sending a message, or any type of content.
 

@@ -6,18 +6,15 @@ import StreamChat
 import UIKit
 
 /// An `UIView` subclass that shows summary and preview information about a given channel.
-public typealias ChatChannelListItemView = _ChatChannelListItemView<NoExtraData>
-
-/// An `UIView` subclass that shows summary and preview information about a given channel.
-open class _ChatChannelListItemView<ExtraData: ExtraDataTypes>: _View, ThemeProvider, SwiftUIRepresentable {
+open class ChatChannelListItemView: _View, ThemeProvider, SwiftUIRepresentable {
     /// The content of this view.
     public struct Content {
         /// Channel for the current Item.
-        public let channel: _ChatChannel<ExtraData>
+        public let channel: ChatChannel
         /// Current user ID needed to filter out when showing typing indicator.
         public let currentUserId: UserId?
         
-        public init(channel: _ChatChannel<ExtraData>, currentUserId: UserId?) {
+        public init(channel: ChatChannel, currentUserId: UserId?) {
             self.channel = channel
             self.currentUserId = currentUserId
         }
@@ -62,7 +59,7 @@ open class _ChatChannelListItemView<ExtraData: ExtraDataTypes>: _View, ThemeProv
         .withBidirectionalLanguagesSupport
     
     /// The view used to show channels avatar.
-    open private(set) lazy var avatarView: _ChatChannelAvatarView<ExtraData> = components
+    open private(set) lazy var avatarView: ChatChannelAvatarView = components
         .channelAvatarView
         .init()
         .withoutAutoresizingMaskConstraints
@@ -87,7 +84,7 @@ open class _ChatChannelListItemView<ExtraData: ExtraDataTypes>: _View, ThemeProv
         if let typingUsersInfo = typingUserString {
             return typingUsersInfo
         } else if let latestMessage = content.channel.latestMessages.first {
-            return "\(latestMessage.author.name ?? latestMessage.author.id): \(latestMessage.text)"
+            return "\(latestMessage.author.name ?? latestMessage.author.id): \(latestMessage.textContent ?? latestMessage.text)"
         } else {
             return L10n.Channel.Item.emptyMessages
         }
@@ -105,7 +102,7 @@ open class _ChatChannelListItemView<ExtraData: ExtraDataTypes>: _View, ThemeProv
     /*
          TODO: ReadStatusView, Missing LLC API
      /// The view showing indicator for read status of the last message in channel.
-     open private(set) lazy var readStatusView: _ChatChannelReadStatusCheckmarkView<ExtraData> = uiConfigSubviews
+     open private(set) lazy var readStatusView: ChatChannelReadStatusCheckmarkView = uiConfigSubviews
          .readStatusView.init()
          .withoutAutoresizingMaskConstraints
       */
@@ -175,7 +172,7 @@ open class _ChatChannelListItemView<ExtraData: ExtraDataTypes>: _View, ThemeProv
     }
 }
 
-extension _ChatChannelListItemView {
+extension ChatChannelListItemView {
     /// The formatted string containing the typing member.
     var typingUserString: String? {
         guard let users = content?.channel.currentlyTypingUsers.filter({ $0.id != content?.currentUserId }),

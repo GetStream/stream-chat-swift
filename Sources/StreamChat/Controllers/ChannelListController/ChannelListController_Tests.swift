@@ -23,7 +23,7 @@ class ChannelListController_Tests: StressTestCase {
         super.setUp()
         
         env = TestEnvironment()
-        client = _ChatClient.mock
+        client = ChatClient.mock(isLocalStorageEnabled: true)
         query = .init(filter: .in(.members, values: [.unique]))
         controller = ChatChannelListController(query: query, client: client, environment: env.environment)
         controllerCallbackQueueID = UUID()
@@ -455,10 +455,70 @@ class ChannelListController_Tests: StressTestCase {
         // Completion should be called with the error
         AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
     }
+    
+    // MARK: - List Ordering initial value
+    
+    func test_inits_propagate_desiredMessageOrdering() {
+        XCTAssertEqual(
+            client.channelController(for: .unique).messageOrdering,
+            .topToBottom
+        )
+        XCTAssertEqual(
+            client.channelController(for: .unique, messageOrdering: .bottomToTop).messageOrdering,
+            .bottomToTop
+        )
+        
+        XCTAssertEqual(
+            client.channelController(for: ChannelQuery(cid: .unique)).messageOrdering,
+            .topToBottom
+        )
+        XCTAssertEqual(
+            client.channelController(
+                for: ChannelQuery(cid: .unique),
+                messageOrdering: .bottomToTop
+            ).messageOrdering,
+            .bottomToTop
+        )
+        
+        client.currentUserId = .unique
+        XCTAssertEqual(
+            (try! client.channelController(createChannelWithId: .unique)).messageOrdering,
+            .topToBottom
+        )
+        XCTAssertEqual(
+            (
+                try! client.channelController(
+                    createChannelWithId: .unique,
+                    messageOrdering: .bottomToTop
+                )
+            ).messageOrdering,
+            .bottomToTop
+        )
+        
+        XCTAssertEqual(
+            (
+                try! client.channelController(
+                    createDirectMessageChannelWith: [.unique],
+                    extraData: [:]
+                )
+            ).messageOrdering,
+            .topToBottom
+        )
+        XCTAssertEqual(
+            (
+                try! client.channelController(
+                    createDirectMessageChannelWith: [.unique],
+                    messageOrdering: .bottomToTop,
+                    extraData: [:]
+                )
+            ).messageOrdering,
+            .bottomToTop
+        )
+    }
 }
 
 private class TestEnvironment {
-    @Atomic var channelListUpdater: ChannelListUpdaterMock<NoExtraData>?
+    @Atomic var channelListUpdater: ChannelListUpdaterMock?
     
     lazy var environment: ChatChannelListController.Environment =
         .init(channelQueryUpdaterBuilder: { [unowned self] in
@@ -487,7 +547,7 @@ private class TestDelegate: QueueAwareDelegate, ChatChannelListControllerDelegat
     }
 
     func controller(
-        _ controller: _ChatChannelListController<NoExtraData>,
+        _ controller: ChatChannelListController,
         didChangeChannels changes: [ListChange<ChatChannel>]
     ) {
         didChangeChannels_changes = changes
@@ -496,7 +556,7 @@ private class TestDelegate: QueueAwareDelegate, ChatChannelListControllerDelegat
 }
 
 // A concrete `_ChatChannelListControllerDelegate` implementation allowing capturing the delegate calls.
-private class TestDelegateGeneric: QueueAwareDelegate, _ChatChannelListControllerDelegate {
+private class TestDelegateGeneric: QueueAwareDelegate, ChatChannelListControllerDelegate {
     @Atomic var state: DataController.State?
     @Atomic var willChangeChannels_called = false
     @Atomic var didChangeChannels_changes: [ListChange<ChatChannel>]?
@@ -506,13 +566,13 @@ private class TestDelegateGeneric: QueueAwareDelegate, _ChatChannelListControlle
         validateQueue()
     }
 
-    func controllerWillChangeChannels(_ controller: _ChatChannelListController<NoExtraData>) {
+    func controllerWillChangeChannels(_ controller: ChatChannelListController) {
         willChangeChannels_called = true
         validateQueue()
     }
 
     func controller(
-        _ controller: _ChatChannelListController<NoExtraData>,
+        _ controller: ChatChannelListController,
         didChangeChannels changes: [ListChange<ChatChannel>]
     ) {
         didChangeChannels_changes = changes

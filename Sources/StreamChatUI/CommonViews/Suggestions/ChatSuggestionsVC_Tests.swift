@@ -20,7 +20,7 @@ class ChatSuggestionsVC_Tests: XCTestCase {
         .init(name: "vaderfy", description: "", set: "", args: "[@username] [text]")
     ]
     
-    private let mentions: [_ChatUser<NoExtraData>] = [
+    private let mentions: [ChatUser] = [
         .mock(
             id: "vader",
             name: "Mr Vader",
@@ -135,7 +135,7 @@ class ChatSuggestionsVC_Tests: XCTestCase {
     // MARK: - Mentions Tests
     
     func test_mentions_emptyAppearance() {
-        let searchController = ChatUserSearchController_Mock<NoExtraData>.mock()
+        let searchController = ChatUserSearchController_Mock.mock()
         searchController.users_mock = []
         vc.dataSource = ChatMessageComposerSuggestionsMentionDataSource(
             collectionView: vc.collectionView,
@@ -146,7 +146,7 @@ class ChatSuggestionsVC_Tests: XCTestCase {
     }
 
     func test_mentions_defaultAppearance() {
-        let searchController = ChatUserSearchController_Mock<NoExtraData>.mock()
+        let searchController = ChatUserSearchController_Mock.mock()
         searchController.users_mock = mentions
         vc.dataSource = ChatMessageComposerSuggestionsMentionDataSource(
             collectionView: vc.collectionView,
@@ -180,7 +180,7 @@ class ChatSuggestionsVC_Tests: XCTestCase {
         components.suggestionsMentionView = TestView.self
 
         vc.components = components
-        let searchController = ChatUserSearchController_Mock<NoExtraData>.mock()
+        let searchController = ChatUserSearchController_Mock.mock()
         searchController.users_mock = mentions
         vc.dataSource = ChatMessageComposerSuggestionsMentionDataSource(
             collectionView: vc.collectionView,
@@ -206,7 +206,7 @@ class ChatSuggestionsVC_Tests: XCTestCase {
         }
         
         let vc = TestView()
-        let searchController = ChatUserSearchController_Mock<NoExtraData>.mock()
+        let searchController = ChatUserSearchController_Mock.mock()
         searchController.users_mock = mentions
         vc.dataSource = ChatMessageComposerSuggestionsMentionDataSource(
             collectionView: vc.collectionView,

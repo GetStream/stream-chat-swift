@@ -7,22 +7,7 @@ import Foundation
 
 /// A type representing a chat channel. `ChatChannel` is an immutable snapshot of a channel entity at the given time.
 ///
-/// - Note: `ChatChannel` is a typealias of `_ChatChannel` with default extra data. If you're using custom extra data, create
-/// your own typealias of `ChatChannel`.
-///
-/// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/Cheat-Sheet#working-with-extra-data).
-///
-public typealias ChatChannel = _ChatChannel<NoExtraData>
-
-/// A type representing a chat channel. `_ChatChannel` is an immutable snapshot of a channel entity at the given time.
-///
-/// - Note: `_ChatChannel` type is not meant to be used directly. If you're using default extra data, use `ChatChannel`
-/// typealias instead. If you're using custom extra data, create your own typealias of `ChatChannel`.
-///
-/// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/Cheat-Sheet#working-with-extra-data).
-///
-@dynamicMemberLookup
-public struct _ChatChannel<ExtraData: ExtraDataTypes> {
+public struct ChatChannel {
     /// The `ChannelId` of the channel.
     public let cid: ChannelId
     
@@ -45,7 +30,7 @@ public struct _ChatChannel<ExtraData: ExtraDataTypes> {
     public let deletedAt: Date?
     
     /// The user which created the channel.
-    public let createdBy: _ChatUser<ExtraData.User>?
+    public let createdBy: ChatUser?
     
     /// A configuration struct of the channel. It contains additional information about the channel settings.
     public let config: ChannelConfig
@@ -68,15 +53,15 @@ public struct _ChatChannel<ExtraData: ExtraDataTypes> {
     ///
     /// - Note: This property will contain no more than `ChatClientConfig.channel.lastActiveMembersLimit` members.
     ///
-    public var lastActiveMembers: [_ChatChannelMember<ExtraData.User>] { _lastActiveMembers }
-    @CoreDataLazy private var _lastActiveMembers: [_ChatChannelMember<ExtraData.User>]
+    public var lastActiveMembers: [ChatChannelMember] { _lastActiveMembers }
+    @CoreDataLazy private var _lastActiveMembers: [ChatChannelMember]
     
     /// A list of currently typing users.
-    public var currentlyTypingUsers: Set<_ChatUser<ExtraData.User>> { _currentlyTypingUsers }
-    @CoreDataLazy private var _currentlyTypingUsers: Set<_ChatUser<ExtraData.User>>
+    public var currentlyTypingUsers: Set<ChatUser> { _currentlyTypingUsers }
+    @CoreDataLazy private var _currentlyTypingUsers: Set<ChatUser>
     
     /// If the current user is a member of the channel, this variable contains the details about the membership.
-    public let membership: _ChatChannelMember<ExtraData.User>?
+    public let membership: ChatChannelMember?
     
     /// A list of users and/or channel members currently actively watching the channel.
     ///
@@ -87,8 +72,8 @@ public struct _ChatChannel<ExtraData: ExtraDataTypes> {
     ///
     /// - Note: This property will contain no more than `ChatClientConfig.channel.lastActiveWatchersLimit` members.
     ///
-    public var lastActiveWatchers: [_ChatUser<ExtraData.User>] { _lastActiveWatchers }
-    @CoreDataLazy private var _lastActiveWatchers: [_ChatUser<ExtraData.User>]
+    public var lastActiveWatchers: [ChatUser] { _lastActiveWatchers }
+    @CoreDataLazy private var _lastActiveWatchers: [ChatUser]
 
     /// The total number of online members watching this channel.
     public let watcherCount: Int
@@ -113,8 +98,8 @@ public struct _ChatChannel<ExtraData: ExtraDataTypes> {
     /// and using a `ChatChannelController` for this channel id.
     ///
     /// - Important: The `latestMessages` property is loaded and evaluated lazily to maintain high performance.
-    public var latestMessages: [_ChatMessage<ExtraData>] { _latestMessages }
-    @CoreDataLazy private var _latestMessages: [_ChatMessage<ExtraData>]
+    public var latestMessages: [ChatMessage] { _latestMessages }
+    @CoreDataLazy private var _latestMessages: [ChatMessage]
     
     /// Pinned messages present on the channel.
     ///
@@ -122,14 +107,14 @@ public struct _ChatChannel<ExtraData: ExtraDataTypes> {
     /// and using a `ChatChannelController` for this channel id.
     ///
     /// - Important: The `pinnedMessages` property is loaded and evaluated lazily to maintain high performance.
-    public var pinnedMessages: [_ChatMessage<ExtraData>] { _pinnedMessages }
-    @CoreDataLazy private var _pinnedMessages: [_ChatMessage<ExtraData>]
+    public var pinnedMessages: [ChatMessage] { _pinnedMessages }
+    @CoreDataLazy private var _pinnedMessages: [ChatMessage]
     
     /// Read states of the users for this channel.
     ///
     /// You can use this information to show to your users information about what messages were read by certain users.
     ///
-    public let reads: [_ChatChannelRead<ExtraData>]
+    public let reads: [ChatChannelRead]
 
     /// Channel mute details. If `nil` the channel is not muted by the current user.
     ///
@@ -153,15 +138,15 @@ public struct _ChatChannel<ExtraData: ExtraDataTypes> {
     ///
     /// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/Cheat-Sheet#working-with-extra-data).
     ///
-    public let extraData: ExtraData.Channel
-    
+    public let extraData: [String: RawJSON]
+
     // MARK: - Internal
     
     /// A helper variable to cache the result of the filter for only banned members.
-    //  lazy var bannedMembers: Set<_ChatChannelMember<ExtraData.User>> = Set(self.members.filter { $0.isBanned })
+    //  lazy var bannedMembers: Set<ChatChannelMember> = Set(self.members.filter { $0.isBanned })
     
     /// A list of users to invite in the channel.
-//    let invitedMembers: Set<_ChatChannelMember<ExtraData.User>> // TODO: Why is this not public?
+//    let invitedMembers: Set<ChatChannelMember> // TODO: Why is this not public?
     
     init(
         cid: ChannelId,
@@ -171,24 +156,22 @@ public struct _ChatChannel<ExtraData: ExtraDataTypes> {
         createdAt: Date = .init(),
         updatedAt: Date = .init(),
         deletedAt: Date? = nil,
-        createdBy: _ChatUser<ExtraData.User>? = nil,
+        createdBy: ChatUser? = nil,
         config: ChannelConfig = .init(),
         isFrozen: Bool = false,
-        lastActiveMembers: @escaping (() -> [_ChatChannelMember<ExtraData.User>]) = { [] },
-        membership: _ChatChannelMember<ExtraData.User>? = nil,
-        currentlyTypingUsers: @escaping () -> Set<_ChatUser<ExtraData.User>> = { [] },
-        lastActiveWatchers: @escaping (() -> [_ChatUser<ExtraData.User>]) = { [] },
+        lastActiveMembers: @escaping (() -> [ChatChannelMember]) = { [] },
+        membership: ChatChannelMember? = nil,
+        currentlyTypingUsers: @escaping () -> Set<ChatUser> = { [] },
+        lastActiveWatchers: @escaping (() -> [ChatUser]) = { [] },
         team: TeamId? = nil,
         unreadCount: @escaping () -> ChannelUnreadCount = { .noUnread },
         watcherCount: Int = 0,
         memberCount: Int = 0,
-//        banEnabling: BanEnabling = .disabled,
-        reads: [_ChatChannelRead<ExtraData>] = [],
+        reads: [ChatChannelRead] = [],
         cooldownDuration: Int = 0,
-        extraData: ExtraData.Channel,
-//        invitedMembers: Set<_ChatChannelMember<ExtraData.User>> = [],
-        latestMessages: @escaping (() -> [_ChatMessage<ExtraData>]) = { [] },
-        pinnedMessages: @escaping (() -> [_ChatMessage<ExtraData>]) = { [] },
+        extraData: [String: RawJSON],
+        latestMessages: @escaping (() -> [ChatMessage]) = { [] },
+        pinnedMessages: @escaping (() -> [ChatMessage]) = { [] },
         muteDetails: @escaping () -> MuteDetails?,
         underlyingContext: NSManagedObjectContext?
     ) {
@@ -206,11 +189,9 @@ public struct _ChatChannel<ExtraData: ExtraDataTypes> {
         self.team = team
         self.watcherCount = watcherCount
         self.memberCount = memberCount
-//        self.banEnabling = banEnabling
         self.reads = reads
         self.cooldownDuration = cooldownDuration
         self.extraData = extraData
-//        self.invitedMembers = invitedMembers
         
         $_unreadCount = (unreadCount, underlyingContext)
         $_latestMessages = (latestMessages, underlyingContext)
@@ -222,7 +203,7 @@ public struct _ChatChannel<ExtraData: ExtraDataTypes> {
     }
 }
 
-extension _ChatChannel {
+extension ChatChannel {
     /// The type of the channel.
     public var type: ChannelType { cid.type }
     
@@ -241,21 +222,12 @@ extension _ChatChannel {
     public var isUnread: Bool { unreadCount.messages > 0 }
 }
 
-/// Additional data fields `ChannelModel` can be extended with. You can use it to store your custom data related to a channel.
-public protocol ChannelExtraData: ExtraData {}
-
-extension _ChatChannel {
-    public subscript<T>(dynamicMember keyPath: KeyPath<ExtraData.Channel, T>) -> T {
-        extraData[keyPath: keyPath]
-    }
-}
-
 /// A type-erased version of `ChannelModel<CustomData>`. Not intended to be used directly.
 public protocol AnyChannel {}
-extension _ChatChannel: AnyChannel {}
+extension ChatChannel: AnyChannel {}
 
-extension _ChatChannel: Hashable {
-    public static func == (lhs: _ChatChannel<ExtraData>, rhs: _ChatChannel<ExtraData>) -> Bool {
+extension ChatChannel: Hashable {
+    public static func == (lhs: ChatChannel, rhs: ChatChannel) -> Bool {
         lhs.cid == rhs.cid
     }
     

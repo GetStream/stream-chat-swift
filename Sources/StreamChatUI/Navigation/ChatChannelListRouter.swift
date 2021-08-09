@@ -6,13 +6,8 @@ import StreamChat
 import UIKit
 
 /// A `NavigationRouter` subclass that handles navigation actions of `ChatChannelListVC`.
-public typealias ChatChannelListRouter = _ChatChannelListRouter<NoExtraData>
-
-/// A `NavigationRouter` subclass that handles navigation actions of `ChatChannelListVC`.
-open class _ChatChannelListRouter<ExtraData: ExtraDataTypes>:
-    NavigationRouter<_ChatChannelListVC<ExtraData>>,
-    ComponentsProvider
-{
+@available(iOSApplicationExtension, unavailable)
+open class ChatChannelListRouter: NavigationRouter<ChatChannelListVC>, ComponentsProvider {
     /// Shows the view controller with the profile of the current user.
     open func showCurrentUserProfile() {
         log.error(

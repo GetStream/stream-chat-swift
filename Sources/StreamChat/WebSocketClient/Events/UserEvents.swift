@@ -10,7 +10,7 @@ public struct UserPresenceChangedEvent: UserSpecificEvent {
     
     let payload: Any
     
-    init<ExtraData: ExtraDataTypes>(from response: EventPayload<ExtraData>) throws {
+    init(from response: EventPayload) throws {
         userId = try response.value(at: \.user?.id)
         createdAt = response.createdAt
         payload = response
@@ -23,7 +23,7 @@ public struct UserUpdatedEvent: UserSpecificEvent {
     
     let payload: Any
     
-    init<ExtraData: ExtraDataTypes>(from response: EventPayload<ExtraData>) throws {
+    init(from response: EventPayload) throws {
         userId = try response.value(at: \.user?.id)
         createdAt = response.createdAt
         payload = response
@@ -41,7 +41,7 @@ public struct UserWatchingEvent: UserSpecificEvent, ChannelSpecificEvent {
     
     let payload: Any
     
-    init<ExtraData: ExtraDataTypes>(from response: EventPayload<ExtraData>) throws {
+    init(from response: EventPayload) throws {
         cid = try response.value(at: \.cid)
         userId = try response.value(at: \.user?.id)
         createdAt = try response.value(at: \.createdAt)
@@ -58,7 +58,7 @@ public struct UserGloballyBannedEvent: UserSpecificEvent {
     var createdAt: Date?
     var payload: Any
     
-    init<ExtraData: ExtraDataTypes>(from response: EventPayload<ExtraData>) throws {
+    init(from response: EventPayload) throws {
         userId = try response.value(at: \.user?.id)
         createdAt = response.createdAt
         payload = response
@@ -75,7 +75,7 @@ public struct UserBannedEvent: UserSpecificEvent, ChannelSpecificEvent {
     
     let payload: Any
     
-    init<ExtraData: ExtraDataTypes>(from response: EventPayload<ExtraData>) throws {
+    init(from response: EventPayload) throws {
         cid = try response.value(at: \.cid)
         userId = try response.value(at: \.user?.id)
         ownerId = try response.value(at: \.createdBy?.id)
@@ -91,7 +91,7 @@ public struct UserGloballyUnbannedEvent: UserSpecificEvent {
     var createdAt: Date?
     var payload: Any
     
-    init<ExtraData: ExtraDataTypes>(from response: EventPayload<ExtraData>) throws {
+    init(from response: EventPayload) throws {
         userId = try response.value(at: \.user?.id)
         createdAt = response.createdAt
         payload = response
@@ -105,7 +105,7 @@ public struct UserUnbannedEvent: UserSpecificEvent, ChannelSpecificEvent {
     
     let payload: Any
     
-    init<ExtraData: ExtraDataTypes>(from response: EventPayload<ExtraData>) throws {
+    init(from response: EventPayload) throws {
         cid = try response.value(at: \.cid)
         userId = try response.value(at: \.user?.id)
         createdAt = response.createdAt

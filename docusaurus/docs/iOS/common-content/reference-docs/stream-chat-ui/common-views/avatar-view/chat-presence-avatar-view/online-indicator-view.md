@@ -1,7 +1,6 @@
 ---
 title: OnlineIndicatorView
 ---
-![OnlineIndicatorView](../../../../../../assets/OnlineIndicatorView_documentation.default-light.png)
 
 A view used to indicate the presence of a user.
 

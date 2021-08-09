@@ -73,7 +73,12 @@ If set to `true` the `ChatClient` will automatically establish a web-socket
 connection to listen to the updates when `reloadUserIfNeeded` is called.
 
 ``` swift
-public var shouldConnectAutomatically = true
+@available(
+        *,
+        deprecated,
+        message: "This flag has no effect anymore. The flow for setting and for connecting the user has been unified to the `connectUser` set of methods."
+    )
+    public var shouldConnectAutomatically = true
 ```
 
 If set to `false` the connection won't be established automatically
@@ -113,3 +118,21 @@ Allows to inject a custom API client for uploading attachments, if not specified
 
 #### Parameters
 
+  - apiKey: The API key of the chat app the `ChatClient` connects to.
+
+### `maxAttachmentSize`
+
+Returns max possible attachment size in bytes.
+The value is taken from custom `maxAttachmentSize` type custom `CDNClient` type.
+The default value is 20 MiB.
+
+``` swift
+public var maxAttachmentSize: Int64 
+```
+
+### `deletedMessagesVisibility`
+
+Specifies the visibility of deleted messages.
+
+``` swift
+public var deletedMessagesVisibility: DeletedMessageVisibility = .visibleForCurrentUser

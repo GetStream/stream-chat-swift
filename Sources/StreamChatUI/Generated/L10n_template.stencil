@@ -42,7 +42,7 @@ import Foundation
   {# custom localization function is mostly used for in-app lang selection, so we want the loc to be recomputed at each call for those (hence the computed var) #}
   {{accessModifier}} static var {{string.name|swiftIdentifier:"pretty"|lowerFirstWord|escapeReservedKeywords}}: String { return {{enumName}}.tr("{{table}}", "{{string.key}}") }
   {% else %}
-  {{accessModifier}} static let {{string.name|swiftIdentifier:"pretty"|lowerFirstWord|escapeReservedKeywords}} = {{enumName}}.tr("{{table}}", "{{string.key}}")
+  {{accessModifier}} static var {{string.name|swiftIdentifier:"pretty"|lowerFirstWord|escapeReservedKeywords}}: String { {{enumName}}.tr("{{table}}", "{{string.key}}") }
   {% endif %}
   {% endfor %}
   {% for child in item.children %}
@@ -69,12 +69,9 @@ import Foundation
 
 extension {{enumName}} {
   private static func tr(_ table: String, _ key: String, _ args: CVarArg...) -> String {
-    {% if param.lookupFunction %}
-    let format = {{ param.lookupFunction }}(key, table)
-    {% else %}
-    let format = {{param.bundle|default:"BundleToken.bundle"}}.localizedString(forKey: key, value: nil, table: table)
-    {% endif %}
-    return String(format: format, locale: Locale.current, arguments: args)
+     // TODO: Using using Appearance.default prohibits using Appearance injection
+     let format = Appearance.default.localizationProvider(key, table)
+     return String(format: format, locale: Locale.current, arguments: args)
   }
 }
 {% if not param.bundle and not param.lookupFunction %}

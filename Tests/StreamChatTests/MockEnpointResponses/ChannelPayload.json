@@ -1,0 +1,51 @@
+{
+   "id":"general",
+   "created_at":"2019-05-10T14:03:49.505006Z",
+   "created_by":{
+      "banned":false,
+      "online":false,
+      "id":"abcusenameinsteadplz",
+      "role":"admin",
+      "created_at":"2019-05-10T14:03:48.853034Z",
+      "image":"",
+      "updated_at":"2019-07-03T15:10:37.793155Z",
+      "last_active":"2019-07-03T15:10:37.767306Z",
+      "name":"abc"
+   },
+   "type":"messaging",
+   "cid":"messaging:general",
+   "frozen":true,
+   "cooldown":10,
+   "member_count":4,
+   "updated_at":"2019-05-10T14:03:49.505006Z",
+   "config":{
+      "automod_behavior":"flag",
+      "reactions":true,
+      "typing_events":true,
+      "mutes":true,
+      "max_message_length":5000,
+      "created_at":"2019-03-21T15:49:15.40182Z",
+      "automod":"AI",
+      "read_events":true,
+      "commands":[
+         {
+            "set":"fun_set",
+            "args":"[text]",
+            "name":"giphy",
+            "description":"Post a random gif to the channel"
+         }
+      ],
+      "connect_events":true,
+      "replies":true,
+      "updated_at":"2020-03-17T18:54:09.460881Z",
+      "url_enrichment":true,
+      "search":true,
+      "message_retention":"infinite",
+      "uploads":true,
+      "name":"messaging"
+   },
+   "image":"https:\/\/images.unsplash.com\/photo-1512138664757-360e0aad5132?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=2851&q=80",
+   "name":"The water cooler",
+   "last_message_at":"2020-06-10T05:59:48.054692Z",
+   "team":"GREEN"
+}

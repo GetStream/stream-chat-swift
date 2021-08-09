@@ -113,12 +113,6 @@ public var confirmCheckmark: UIImage = UIImage(named: "checkmark_confirm", in: .
 public var bigConfirmCheckmark: UIImage = UIImage(named: "checkmark_confirm_big", in: .streamChatUI)!
 ```
 
-### `newChannel`
-
-``` swift
-public var newChannel: UIImage = UIImage(named: "pencil", in: .streamChatUI)!
-```
-
 ### `folder`
 
 ``` swift
@@ -423,6 +417,30 @@ public var avatarPlaceholders: [UIImage]
 
 ``` swift
 public var fileAttachmentActionIcons: [LocalAttachmentState?: UIImage] 
+```
+
+### `camera`
+
+``` swift
+public var camera: UIImage = UIImage(named: "camera", in: .streamChatUI)!
+```
+
+### `bigPlay`
+
+``` swift
+public var bigPlay: UIImage = UIImage(named: "play_big", in: .streamChatUI)!
+```
+
+### `play`
+
+``` swift
+public var play: UIImage = UIImage(named: "play", in: .streamChatUI)!
+```
+
+### `pause`
+
+``` swift
+public var pause: UIImage = UIImage(named: "pause", in: .streamChatUI)!
 ```
 
 ### `commandBan`

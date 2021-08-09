@@ -23,7 +23,7 @@ class MemberModelDTO_Tests: XCTestCase {
         let userId = UUID().uuidString
         let channelId = ChannelId(type: .init(rawValue: "messsaging"), id: UUID().uuidString)
         
-        let userPayload: UserPayload<NoExtraData> = .init(
+        let userPayload: UserPayload = .init(
             id: userId,
             name: .unique,
             imageURL: .unique(),
@@ -35,10 +35,10 @@ class MemberModelDTO_Tests: XCTestCase {
             isInvisible: true,
             isBanned: true,
             teams: ["RED", "GREEN"],
-            extraData: .defaultValue
+            extraData: ["k": .string("v")]
         )
         
-        let payload: MemberPayload<NoExtraData> = .init(
+        let payload: MemberPayload = .init(
             user: userPayload,
             role: .moderator,
             createdAt: .unique,
@@ -54,7 +54,7 @@ class MemberModelDTO_Tests: XCTestCase {
         }
         
         // Load the member from the db and check it's the same member
-        var loadedMember: _ChatChannelMember<NoExtraData>? {
+        var loadedMember: ChatChannelMember? {
             database.viewContext.member(userId: userId, cid: channelId)?.asModel()
         }
 
@@ -82,7 +82,7 @@ class MemberModelDTO_Tests: XCTestCase {
         let userId: UserId = .unique
         let channelId: ChannelId = .unique
         
-        let userPayload: UserPayload<NoExtraData> = .init(
+        let userPayload: UserPayload = .init(
             id: userId,
             name: .unique,
             imageURL: .unique(),
@@ -96,7 +96,7 @@ class MemberModelDTO_Tests: XCTestCase {
             extraData: .init()
         )
         
-        let payload: MemberPayload<NoExtraData> = .init(
+        let payload: MemberPayload = .init(
             user: userPayload,
             role: .moderator,
             createdAt: .unique,
@@ -111,7 +111,7 @@ class MemberModelDTO_Tests: XCTestCase {
         }
         
         let loadedMember: ChatChannelMember? = database.viewContext.member(userId: userId, cid: channelId)?.asModel()
-        XCTAssertEqual(loadedMember?.extraData, .defaultValue)
+        XCTAssertEqual(loadedMember?.extraData, [:])
     }
     
     func test_saveMember_savesQuery_and_linksMember_ifQueryIsProvided() throws {
@@ -119,7 +119,7 @@ class MemberModelDTO_Tests: XCTestCase {
         let cid: ChannelId = .unique
 
         // Create member and query.
-        let member: MemberPayload<NoExtraData> = .dummy(userId: userId)
+        let member: MemberPayload = .dummy(userId: userId)
         let query = ChannelMemberListQuery(cid: cid, filter: .equal("id", to: userId))
 
         // Save channel, then member, and pass the query in.

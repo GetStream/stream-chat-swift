@@ -8,11 +8,9 @@ import StreamChat
 import XCTest
 
 class ComponentsProvider_Tests: XCTestCase {
-    typealias ExtraData = NoExtraData
-    
     func test_components_passedDownToSubview() {
-        let parentView = TestViewWithExtraData<ExtraData>()
-        let subView = TestViewWithExtraData<ExtraData>()
+        let parentView = TestViewWithExtraData()
+        let subView = TestViewWithExtraData()
         var components = Components()
         // Set some random subclass to check if the components are passed down
         components.galleryView = TestChatMessageGalleryView.self
@@ -28,9 +26,9 @@ class ComponentsProvider_Tests: XCTestCase {
     }
     
     func test_components_passedDown_ignoringNonProviders() {
-        let parentView = TestViewWithExtraData<ExtraData>()
+        let parentView = TestViewWithExtraData()
         let intermediateView = UIView()
-        let subView = TestViewWithExtraData<ExtraData>()
+        let subView = TestViewWithExtraData()
         var components = Components()
         // Set some random subclass to check if the components are passed down
         components.galleryView = TestChatMessageGalleryView.self
@@ -48,7 +46,7 @@ class ComponentsProvider_Tests: XCTestCase {
     
     func test_components_passedDown_withoutProviders() {
         let parentView = UIView()
-        let subView = TestViewWithExtraData<ExtraData>()
+        let subView = TestViewWithExtraData()
         let defaultComponents = Components.default
         
         parentView.addSubview(subView)
@@ -61,7 +59,7 @@ class ComponentsProvider_Tests: XCTestCase {
     }
     
     func test_components_passedDownToVCView() {
-        let vc = TestViewWithExtraDataController<ExtraData>()
+        let vc = TestViewWithExtraDataController()
         var components = Components()
         // Set some random subclass to check if the components are passed down
         components.galleryView = TestChatMessageGalleryView.self
@@ -79,7 +77,7 @@ class ComponentsProvider_Tests: XCTestCase {
     }
     
     func test_vcSubviews_initedFromConfig() {
-        let vc = TestViewWithExtraDataController<ExtraData>()
+        let vc = TestViewWithExtraDataController()
         var components = Components()
         // Set some random subclass to check if the components are passed down
         components.galleryView = TestChatMessageGalleryView.self
@@ -97,10 +95,10 @@ class ComponentsProvider_Tests: XCTestCase {
     }
 }
 
-private class TestViewWithExtraData<ExtraData: ExtraDataTypes>: UIView, ComponentsProvider {}
+private class TestViewWithExtraData: UIView, ComponentsProvider {}
 
-private class TestViewWithExtraDataController<ExtraData: ExtraDataTypes>: UIViewController, ComponentsProvider {
-    let subView = TestViewWithExtraData<ExtraData>()
+private class TestViewWithExtraDataController: UIViewController, ComponentsProvider {
+    let subView = TestViewWithExtraData()
     lazy var TestCreateChannelButton = components.galleryView.init()
     
     override func viewDidLoad() {

@@ -6,10 +6,7 @@ import StreamChat
 import UIKit
 
 /// A view that shows a user avatar including an indicator of the user presence (online/offline).
-public typealias ChatPresenceAvatarView = _ChatPresenceAvatarView<NoExtraData>
-
-/// A view that shows a user avatar including an indicator of the user presence (online/offline).
-open class _ChatPresenceAvatarView<ExtraData: ExtraDataTypes>: _View, ComponentsProvider {
+open class ChatPresenceAvatarView: _View, ComponentsProvider {
     /// A view that shows the avatar image
     open private(set) lazy var avatarView: ChatAvatarView = components
         .avatarView.init()

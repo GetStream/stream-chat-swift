@@ -9,11 +9,14 @@ import XCTest
 
 final class ChatMessageListVC_Tests: XCTestCase {
     var vc: ChatMessageListVC!
-    var channelControllerMock: ChatChannelController_Mock<NoExtraData>!
+    var channelControllerMock: ChatChannelController_Mock!
     
     override func setUp() {
         super.setUp()
+        var components = Components()
+        components.channelHeaderView = ChatMessageListHeaderView_Mock.self
         vc = ChatMessageListVC()
+        vc.components = components
         channelControllerMock = ChatChannelController_Mock.mock()
         vc.channelController = channelControllerMock
     }
@@ -148,5 +151,19 @@ final class ChatMessageListVC_Tests: XCTestCase {
             isEmbeddedInNavigationController: true,
             variants: [.defaultLight]
         )
+    }
+}
+
+private class ChatMessageListHeaderView_Mock: ChatChannelHeaderView {
+    override var currentUserId: UserId? {
+        .unique
+    }
+    
+    override func setUp() {
+        super.setUp()
+
+        let mockedChannelController = ChatChannelController_Mock.mock()
+        mockedChannelController.channel_mock = .mock(cid: .unique)
+        channelController = mockedChannelController
     }
 }

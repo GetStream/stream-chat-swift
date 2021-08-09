@@ -6,10 +6,7 @@ import StreamChat
 import UIKit
 
 /// A view that shows a number of unread messages on the Scroll-To-Latest-Message button in the Message List.
-public typealias ChatMessageListUnreadCountView = _ChatMessageListUnreadCountView<NoExtraData>
-
-/// A view that shows a number of unread messages on the Scroll-To-Latest-Message button in the Message List.
-open class _ChatMessageListUnreadCountView<ExtraData: ExtraDataTypes>: _ChatChannelUnreadCountView<ExtraData> {
+open class ChatMessageListUnreadCountView: ChatChannelUnreadCountView {
     override open func setUpAppearance() {
         super.setUpAppearance()
         

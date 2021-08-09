@@ -7,15 +7,13 @@
 import XCTest
 
 class NewChannelQueryUpdater_Tests: StressTestCase {
-    typealias ExtraData = NoExtraData
-    
     private var env: TestEnvironment!
     
     var database: DatabaseContainerMock!
     var webSocketClient: WebSocketClientMock!
     var apiClient: APIClientMock!
     
-    var newChannelQueryUpdater: NewChannelQueryUpdater<ExtraData>?
+    var newChannelQueryUpdater: NewChannelQueryUpdater?
     
     override func setUp() {
         super.setUp()
@@ -148,9 +146,9 @@ class NewChannelQueryUpdater_Tests: StressTestCase {
 }
 
 private class TestEnvironment {
-    var channelQueryUpdater: ChannelListUpdaterMock<NoExtraData>?
+    var channelQueryUpdater: ChannelListUpdaterMock?
     
-    lazy var environment = NewChannelQueryUpdater<NoExtraData>.Environment(createChannelListUpdater: { [unowned self] in
+    lazy var environment = NewChannelQueryUpdater.Environment(createChannelListUpdater: { [unowned self] in
         self.channelQueryUpdater = ChannelListUpdaterMock(
             database: $0,
             apiClient: $1

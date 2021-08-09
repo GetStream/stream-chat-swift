@@ -7,7 +7,7 @@
 import XCTest
 
 class UserEvents_Tests: XCTestCase {
-    let eventDecoder = EventDecoder<NoExtraData>()
+    let eventDecoder = EventDecoder()
     
     func test_userPresenceEvent() throws {
         let json = XCTestCase.mockData(fromFile: "UserPresence")
@@ -54,7 +54,7 @@ class UserEventsIntegration_Tests: XCTestCase {
     var client: ChatClient!
     var currentUserId: UserId!
 
-    let eventDecoder = EventDecoder<NoExtraData>()
+    let eventDecoder = EventDecoder()
 
     override func setUp() {
         super.setUp()

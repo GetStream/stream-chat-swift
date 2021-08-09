@@ -5,13 +5,13 @@
 import Foundation
 
 /// The middleware listens for `MemberEvent`s and updates `ChannelDTO`s accordingly.
-struct MemberEventMiddleware<ExtraData: ExtraDataTypes>: EventMiddleware {
+struct MemberEventMiddleware: EventMiddleware {
     func handle(event: Event, session: DatabaseSession) -> Event? {
         do {
             switch event {
             case is MemberAddedEvent, is MemberUpdatedEvent:
                 guard let eventWithMemberPayload = event as? EventWithPayload,
-                      let eventPayload = eventWithMemberPayload.payload as? EventPayload<ExtraData>,
+                      let eventPayload = eventWithMemberPayload.payload as? EventPayload,
                       let memberPayload = eventPayload.memberContainer?.member
                 else {
                     break
@@ -28,7 +28,12 @@ struct MemberEventMiddleware<ExtraData: ExtraDataTypes>: EventMiddleware {
                     // No need to throw MemberNotFound error here
                     break
                 }
+                // We remove the member from the channel
                 channel.members.remove(member)
+                
+                // If there are any MemberListQueries observing this channel,
+                // we need to update them too
+                member.queries.removeAll()
 
             default:
                 break

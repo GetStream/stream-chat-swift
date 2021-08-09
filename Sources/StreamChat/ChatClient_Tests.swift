@@ -9,7 +9,8 @@ import XCTest
 
 class ChatClient_Tests: StressTestCase {
     var userId: UserId!
-    private var testEnv: TestEnvironment<NoExtraData>!
+    private var testEnv: TestEnvironment!
+    private var time: VirtualTime!
     
     // A helper providing ChatClientConfig with in-memory DB option
     var inMemoryStorageConfig: ChatClientConfig {
@@ -31,6 +32,8 @@ class ChatClient_Tests: StressTestCase {
         super.setUp()
         userId = .unique
         testEnv = .init()
+        time = VirtualTime()
+        VirtualTimeTimer.time = time
     }
     
     override func tearDown() {
@@ -41,13 +44,20 @@ class ChatClient_Tests: StressTestCase {
     }
     
     var workerBuilders: [WorkerBuilder] = [
-        MessageSender<NoExtraData>.init,
-        NewChannelQueryUpdater<NoExtraData>.init,
-        NewUserQueryUpdater<NoExtraData>.init
+        MessageSender.init,
+        NewChannelQueryUpdater.init,
+        NewUserQueryUpdater.init
     ]
     
     var eventWorkerBuilders: [EventWorkerBuilder] = [
-        ChannelWatchStateUpdater<NoExtraData>.init
+        {
+            ConnectionRecoveryUpdater(
+                database: $0,
+                eventNotificationCenter: $1,
+                apiClient: $2,
+                useSyncEndpoint: false
+            )
+        }
     ]
     
     // MARK: - Database stack tests
@@ -199,7 +209,7 @@ class ChatClient_Tests: StressTestCase {
         XCTAssertNotNil(webSocket?.init_eventDecoder)
         
         // EventDataProcessorMiddleware must be always first
-        XCTAssert(webSocket?.init_eventNotificationCenter.middlewares[0] is EventDataProcessorMiddleware<NoExtraData>)
+        XCTAssert(webSocket?.init_eventNotificationCenter.middlewares[0] is EventDataProcessorMiddleware)
         
         // Assert Client sets itself as delegate for the request encoder
         XCTAssert(webSocket?.init_requestEncoder.connectionDetailsProviderDelegate === client)
@@ -222,43 +232,43 @@ class ChatClient_Tests: StressTestCase {
         let middlewares = try XCTUnwrap(testEnv.webSocketClient?.init_eventNotificationCenter.middlewares)
         
         // Assert `EventDataProcessorMiddleware` exists
-        XCTAssert(middlewares.contains(where: { $0 is EventDataProcessorMiddleware<NoExtraData> }))
+        XCTAssert(middlewares.contains(where: { $0 is EventDataProcessorMiddleware }))
         // Assert `TypingStartCleanupMiddleware` exists
-        let typingStartCleanupMiddlewareIndex = middlewares.firstIndex { $0 is TypingStartCleanupMiddleware<NoExtraData> }
+        let typingStartCleanupMiddlewareIndex = middlewares.firstIndex { $0 is TypingStartCleanupMiddleware }
         XCTAssertNotNil(typingStartCleanupMiddlewareIndex)
         // Assert `ChannelReadUpdaterMiddleware` exists
-        XCTAssert(middlewares.contains(where: { $0 is ChannelReadUpdaterMiddleware<NoExtraData> }))
+        XCTAssert(middlewares.contains(where: { $0 is ChannelReadUpdaterMiddleware }))
         // Assert `ChannelMemberTypingStateUpdaterMiddleware` exists
         let typingStateUpdaterMiddlewareIndex = middlewares
-            .firstIndex { $0 is UserTypingStateUpdaterMiddleware<NoExtraData> }
+            .firstIndex { $0 is UserTypingStateUpdaterMiddleware }
         XCTAssertNotNil(typingStateUpdaterMiddlewareIndex)
         // Assert `ChannelMemberTypingStateUpdaterMiddleware` goes after `TypingStartCleanupMiddleware`
         XCTAssertTrue(typingStateUpdaterMiddlewareIndex! > typingStartCleanupMiddlewareIndex!)
         // Assert `MessageReactionsMiddleware` exists
-        XCTAssert(middlewares.contains(where: { $0 is MessageReactionsMiddleware<NoExtraData> }))
+        XCTAssert(middlewares.contains(where: { $0 is MessageReactionsMiddleware }))
         // Assert `ChannelTruncatedEventMiddleware` exists
-        XCTAssert(middlewares.contains(where: { $0 is ChannelTruncatedEventMiddleware<NoExtraData> }))
+        XCTAssert(middlewares.contains(where: { $0 is ChannelTruncatedEventMiddleware }))
         // Assert `MemberEventMiddleware` exists
-        XCTAssert(middlewares.contains(where: { $0 is MemberEventMiddleware<NoExtraData> }))
+        XCTAssert(middlewares.contains(where: { $0 is MemberEventMiddleware }))
         // Assert `UserChannelBanEventsMiddleware` exists
-        XCTAssert(middlewares.contains(where: { $0 is UserChannelBanEventsMiddleware<NoExtraData> }))
+        XCTAssert(middlewares.contains(where: { $0 is UserChannelBanEventsMiddleware }))
         // Assert `UserWatchingEventMiddleware` exists
-        XCTAssert(middlewares.contains(where: { $0 is UserWatchingEventMiddleware<NoExtraData> }))
+        XCTAssert(middlewares.contains(where: { $0 is UserWatchingEventMiddleware }))
         // Assert `ChannelVisibilityEventMiddleware` exists
-        XCTAssert(middlewares.contains(where: { $0 is ChannelVisibilityEventMiddleware<NoExtraData> }))
+        XCTAssert(middlewares.contains(where: { $0 is ChannelVisibilityEventMiddleware }))
     }
     
     func test_connectionStatus_isExposed() {
         let config = inMemoryStorageConfig
 
         // Create an environment.
-        var clientUpdater: ChatClientUpdater<NoExtraData>?
+        var clientUpdater: ChatClientUpdater?
         var env = ChatClient.Environment()
         env.clientUpdaterBuilder = {
             if let updater = clientUpdater {
                 return updater
             } else {
-                let updater = ChatClientUpdater<NoExtraData>(client: $0)
+                let updater = ChatClientUpdater(client: $0)
                 clientUpdater = updater
                 return updater
             }
@@ -392,7 +402,7 @@ class ChatClient_Tests: StressTestCase {
         XCTAssertNil(providedConnectionId)
     }
     
-    func test_client_webSocketIsDisconnected_becauseTokenExpired_callsReloadUserIfNeeded() throws {
+    func test_webSocketIsDisconnected_becauseTokenExpired_newTokenIsExpiredToo() throws {
         // Create a new chat client
         let client = ChatClient(
             config: inMemoryStorageConfig,
@@ -426,9 +436,29 @@ class ChatClient_Tests: StressTestCase {
                 didUpdateConnectionState: .disconnected(error: error)
             )
         
+        time.run(numberOfSeconds: 0.6)
         // Was called one more time on receiving token expired error
+        AssertAsync.willBeEqual(testEnv.clientUpdater!.reloadUserIfNeeded_callsCount, 2)
+        
+        // Token is expired again
+        testEnv.webSocketClient?
+            .connectionStateDelegate?
+            .webSocketClient(
+                testEnv.webSocketClient!,
+                didUpdateConnectionState: .disconnected(error: error)
+            )
+        
+        // Does not call secondary token refresh right away
         XCTAssertEqual(testEnv.clientUpdater!.reloadUserIfNeeded_callsCount, 2)
         
+        // Does not call secondary token refresh when not enough time has passed
+        time.run(numberOfSeconds: 0.1)
+        XCTAssertEqual(testEnv.clientUpdater!.reloadUserIfNeeded_callsCount, 2)
+        
+        // Calls secondary token refresh when enough time has passed
+        time.run(numberOfSeconds: 3)
+        AssertAsync.willBeEqual(testEnv.clientUpdater!.reloadUserIfNeeded_callsCount, 3)
+
         // We set connectionId to nil after token expiration disconnect
         XCTAssertNil(client.connectionId)
     }
@@ -500,12 +530,11 @@ class ChatClient_Tests: StressTestCase {
         client.connectAnonymousUser()
         
         // Check all the mandatory background workers are initialized
-        XCTAssert(client.backgroundWorkers.contains { $0 is MessageSender<NoExtraData> })
-        XCTAssert(client.backgroundWorkers.contains { $0 is NewChannelQueryUpdater<NoExtraData> })
-        XCTAssert(client.backgroundWorkers.contains { $0 is NewUserQueryUpdater<NoExtraData> })
-        XCTAssert(client.backgroundWorkers.contains { $0 is ChannelWatchStateUpdater<NoExtraData> })
-        XCTAssert(client.backgroundWorkers.contains { $0 is MessageEditor<NoExtraData> })
-        XCTAssert(client.backgroundWorkers.contains { $0 is MissingEventsPublisher<NoExtraData> })
+        XCTAssert(client.backgroundWorkers.contains { $0 is MessageSender })
+        XCTAssert(client.backgroundWorkers.contains { $0 is NewChannelQueryUpdater })
+        XCTAssert(client.backgroundWorkers.contains { $0 is NewUserQueryUpdater })
+        XCTAssert(client.backgroundWorkers.contains { $0 is MessageEditor })
+        XCTAssert(client.backgroundWorkers.contains { $0 is ConnectionRecoveryUpdater })
         XCTAssert(client.backgroundWorkers.contains { $0 is AttachmentUploader })
         
         AssertAsync.canBeReleased(&client)
@@ -516,7 +545,7 @@ class ChatClient_Tests: StressTestCase {
         let config = ChatClientConfig(apiKey: .init(.unique))
         
         // Create a Client instance and check the workers are initialized properly
-        let client = _ChatClient(
+        let client = ChatClient(
             config: config,
             workerBuilders: [TestWorker.init],
             eventWorkerBuilders: [TestEventWorker.init],
@@ -564,7 +593,7 @@ class ChatClient_Tests: StressTestCase {
                     chatClient.connectUser(userInfo: .init(id: currentUserId), token: .unique(userId: currentUserId))
 
                     let expectedWebSocketEndpoint = AnyEndpoint(
-                        .webSocketConnect(userInfo: UserInfo<NoExtraData>(id: currentUserId))
+                        .webSocketConnect(userInfo: UserInfo(id: currentUserId))
                     )
 
                     // 1. Check `currentUserId` is fetched synchronously
@@ -634,7 +663,7 @@ class ChatClient_Tests: StressTestCase {
         XCTAssert(testEnv.clientUpdater?.reloadUserIfNeeded_called != true)
 
         client.connectUser(
-            userInfo: .init(id: .unique, name: "John Doe", imageURL: .unique(), extraData: .defaultValue),
+            userInfo: .init(id: .unique, name: "John Doe", imageURL: .unique(), extraData: [:]),
             token: token
         )
         XCTAssertTrue(testEnv.clientUpdater!.reloadUserIfNeeded_called)
@@ -661,7 +690,7 @@ class ChatClient_Tests: StressTestCase {
                 id: userId,
                 name: "John Doe",
                 imageURL: .localYodaImage,
-                extraData: .defaultValue
+                extraData: [:]
             )
         )
         
@@ -670,15 +699,15 @@ class ChatClient_Tests: StressTestCase {
         var providedToken: Token?
         client.userConnectionProvider?.getToken(client) { providedToken = try! $0.get() }
         
-        let expectedEndpoint: Endpoint<GuestUserTokenPayload<NoExtraData>> = .guestUserToken(
+        let expectedEndpoint: Endpoint<GuestUserTokenPayload> = .guestUserToken(
             userId: userId,
             name: name,
             imageURL: .localYodaImage,
-            extraData: .defaultValue
+            extraData: [:]
         )
         AssertAsync.willBeEqual(AnyEndpoint(expectedEndpoint), client.mockAPIClient.request_endpoint)
         
-        let tokenResult: Result<GuestUserTokenPayload<NoExtraData>, Error> = .success(
+        let tokenResult: Result<GuestUserTokenPayload, Error> = .success(
             .init(user: .dummy(userId: userId, role: .guest), token: token)
         )
         client.mockAPIClient.test_simulateResponse(tokenResult)
@@ -1074,7 +1103,7 @@ class TestEventWorker: EventWorker {
 }
 
 /// A helper class which provides mock environment for Client.
-private class TestEnvironment<ExtraData: ExtraDataTypes> {
+private class TestEnvironment {
     @Atomic var apiClient: APIClientMock?
     @Atomic var webSocketClient: WebSocketClientMock?
     @Atomic var databaseContainer: DatabaseContainerMock?
@@ -1082,15 +1111,15 @@ private class TestEnvironment<ExtraData: ExtraDataTypes> {
     @Atomic var requestEncoder: TestRequestEncoder?
     @Atomic var requestDecoder: TestRequestDecoder?
     
-    @Atomic var eventDecoder: EventDecoder<ExtraData>?
+    @Atomic var eventDecoder: EventDecoder?
     
     @Atomic var notificationCenter: EventNotificationCenter?
 
-    @Atomic var clientUpdater: ChatClientUpdaterMock<ExtraData>?
+    @Atomic var clientUpdater: ChatClientUpdaterMock?
     
     @Atomic var backgroundTaskScheduler: MockBackgroundTaskScheduler?
     
-    lazy var environment: _ChatClient<ExtraData>.Environment = { [unowned self] in
+    lazy var environment: ChatClient.Environment = { [unowned self] in
         .init(
             apiClientBuilder: {
                 self.apiClient = APIClientMock(
@@ -1133,7 +1162,7 @@ private class TestEnvironment<ExtraData: ExtraDataTypes> {
                 return self.requestDecoder!
             },
             eventDecoderBuilder: {
-                self.eventDecoder = EventDecoder<ExtraData>()
+                self.eventDecoder = EventDecoder()
                 return self.eventDecoder!
             },
             notificationCenterBuilder: {
@@ -1147,7 +1176,8 @@ private class TestEnvironment<ExtraData: ExtraDataTypes> {
             backgroundTaskSchedulerBuilder: {
                 self.backgroundTaskScheduler = MockBackgroundTaskScheduler()
                 return self.backgroundTaskScheduler!
-            }
+            },
+            timerType: VirtualTimeTimer.self
         )
     }()
 }

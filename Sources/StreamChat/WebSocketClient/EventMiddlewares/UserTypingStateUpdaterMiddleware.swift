@@ -5,7 +5,7 @@
 import CoreData
 
 /// A middleware which updates `currentlyTypingUsers` for a specific channel based on received `TypingEvent`.
-struct UserTypingStateUpdaterMiddleware<ExtraData: ExtraDataTypes>: EventMiddleware {
+struct UserTypingStateUpdaterMiddleware: EventMiddleware {
     func handle(event: Event, session: DatabaseSession) -> Event? {
         switch event {
         case let event as TypingEvent:

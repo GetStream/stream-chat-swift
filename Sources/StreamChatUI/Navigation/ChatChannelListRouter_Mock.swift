@@ -6,7 +6,7 @@ import StreamChat
 @testable import StreamChatUI
 import XCTest
 
-class ChatChannelListRouter_Mock<ExtraData: ExtraDataTypes>: _ChatChannelListRouter<ExtraData> {
+class ChatChannelListRouter_Mock: ChatChannelListRouter {
     var openCurrentUserProfileCalled: Bool = false
     var openChat_channelId: ChannelId?
     var openCreateNewChannelCalled: Bool = false

@@ -5,9 +5,7 @@
 import StreamChat
 import UIKit
 
-public typealias ChatMessageReactionsView = _ChatMessageReactionsView<NoExtraData>
-
-open class _ChatMessageReactionsView<ExtraData: ExtraDataTypes>: _View, ThemeProvider {
+open class ChatMessageReactionsView: _View, ThemeProvider {
     public var content: Content? {
         didSet { updateContentIfNeeded() }
     }
@@ -56,7 +54,7 @@ open class _ChatMessageReactionsView<ExtraData: ExtraDataTypes>: _View, ThemePro
 
 // MARK: - Content
 
-extension _ChatMessageReactionsView {
+extension ChatMessageReactionsView {
     public struct Content {
         public let useBigIcons: Bool
         public let reactions: [ChatMessageReactionData]

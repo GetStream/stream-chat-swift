@@ -5,16 +5,16 @@
 import Foundation
 @testable import StreamChat
 
-public class ChatChannelListController_Mock<ExtraData: ExtraDataTypes>: _ChatChannelListController<ExtraData> {
+public class ChatChannelListController_Mock: ChatChannelListController {
     public var loadNextChannelsIsCalled = false
 
     /// Creates a new mock instance of `ChatChannelListController`.
-    public static func mock() -> ChatChannelListController_Mock<ExtraData> {
+    public static func mock() -> ChatChannelListController_Mock {
         .init(query: .init(filter: .equal(.memberCount, to: 0)), client: .mock())
     }
     
-    public private(set) var channels_mock: [_ChatChannel<ExtraData>]?
-    override public var channels: LazyCachedMapCollection<_ChatChannel<ExtraData>> {
+    public private(set) var channels_mock: [ChatChannel]?
+    override public var channels: LazyCachedMapCollection<ChatChannel> {
         channels_mock.map { $0.lazyCachedMap { $0 } } ?? super.channels
     }
     
@@ -24,20 +24,20 @@ public class ChatChannelListController_Mock<ExtraData: ExtraDataTypes>: _ChatCha
         set { super.state = newValue }
     }
 
-    override public func loadNextChannels(limit: Int, completion: ((Error?) -> Void)?) {
+    override public func loadNextChannels(limit: Int?, completion: ((Error?) -> Void)?) {
         loadNextChannelsIsCalled = true
     }
 }
 
 public extension ChatChannelListController_Mock {
     /// Simulates the initial conditions. Setting these values doesn't trigger any observer callback.
-    func simulateInitial(channels: [_ChatChannel<ExtraData>], state: DataController.State) {
+    func simulateInitial(channels: [ChatChannel], state: DataController.State) {
         channels_mock = channels
         state_mock = state
     }
     
     /// Simulates changes in the channels array. Observers are notified with the provided `changes` value.
-    func simulate(channels: [_ChatChannel<ExtraData>], changes: [ListChange<_ChatChannel<ExtraData>>]) {
+    func simulate(channels: [ChatChannel], changes: [ListChange<ChatChannel>]) {
         channels_mock = channels
         delegateCallback {
             $0.controller(self, didChangeChannels: changes)

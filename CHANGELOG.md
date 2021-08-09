@@ -1,11 +1,102 @@
 # StreamChat iOS SDK CHANGELOG
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
----
-
 # Upcoming
 
 ### 🔄 Changed
+
+- Added `GalleryAttachmentViewInjector.galleryViewAspectRatio` to control the aspect ratio of a gallery inside a message cell [#1300](https://github.com/GetStream/stream-chat-swift/pull/1300)
+
+# [4.0.0-beta.9](https://github.com/GetStream/stream-chat-swift/releases/tag/4.0.0-beta.9)
+_August 05, 2021_
+
+### ⚠️ Breaking Changes from `4.0-beta.8`
+- Extra data is now stored on a hashmap and not using the `ExtraData` generic system
+- `ChatMessageLayoutOptionsResolver.optionsForMessage` has a new parameter: `appearance` [#1304](https://github.com/GetStream/stream-chat-swift/issues/1304)
+- Renamed `Components.navigationTitleView` -> `Components.titleContainerView` [#1294](https://github.com/GetStream/stream-chat-swift/pull/1294)
+
+#### New Extra Data Type
+
+The new `4.0` release changes how `extraData` is stored and uses a simpler hashmap-based solution. This approach does not require creating type aliases for all generic classes such as `ChatClient`.
+
+Example:
+
+```swift
+client.connectUser(
+    userInfo: .init(
+        id: userCredentials.id,
+        extraData: ["country": .string("NL")]
+    ),
+    token: token
+)
+```
+
+`Message`, `User`, `Channel`, `MessageReaction` models now store `extraData` in a `[String: RawJSON]` container. 
+
+```swift
+let extraData:[String: RawJSON] = .dictionary([
+    "name": .string(testPayload.name),
+    "number": .integer(testPayload.number)
+])
+```
+
+#### Upgrading from ExtraData
+
+If you are using `ExtraData` from `v3` or before `4.0-beta.8` the steps needed to upgrade are the following:
+
+- Remove all type aliases (`typealias ChatUser = _ChatUser<CustomExtraDataTypes.User>`)
+- Replace all generic types from `StreamChat` and `StreamChatUI` classes (`__CurrentChatUserController<T>` -> `CurrentChatUserController`) with the non-generic version
+- Remove the extra data structs and either use `extraData` directly or (recommended) extend the models 
+- Update your views to read your custom fields from the `extraData` field
+
+Before:
+
+```swift
+struct Birthland: UserExtraData {
+    static var defaultValue = Birthland(birthLand: "")
+    let birthLand: String
+}
+```
+
+After:
+
+```swift
+extension ChatUser {
+    static let birthLandFieldName = "birthLand"
+    var birthLand: String {
+        guard let v = extraData[ChatUser.birthLandFieldName] else {
+            return ""
+        }
+        guard case let .string(birthLand) = v else {
+            return ""
+        }
+        return birthLand
+    }
+}
+```
+
+### ✅ Added
+- Added `ChatChannelHeaderView` UI Component [#1294](https://github.com/GetStream/stream-chat-swift/pull/1294)
+- Added `ChatThreadHeaderView` UI Component [#1294](https://github.com/GetStream/stream-chat-swift/pull/1294)
+- Added custom channel events support [#1309](https://github.com/GetStream/stream-chat-swift/pull/1309)
+- Added `ChatMessageAudioAttachment`, you can access them via `ChatMessage.audioAttachments`. There's no UI support as of now, it's in our Roadmap. [#1322](https://github.com/GetStream/stream-chat-swift/issues/1322)
+- Added message ordering parameter to all `ChannelController` initializers. If you use `ChatChannelListRouter` it can be done by overriding a `showMessageList` method on it. [#1338](https://github.com/GetStream/stream-chat-swift/pull/1338)
+- Added support for custom localization of components in framework [#1330](https://github.com/GetStream/stream-chat-swift/pull/1330)
+
+### 🐞 Fixed
+- Fix message list header displaying incorrectly the online status for the current user instead of the other one [#1294](https://github.com/GetStream/stream-chat-swift/pull/1294)
+- Fix deleted last message's appearance on channels list [#1318](https://github.com/GetStream/stream-chat-swift/pull/1318)
+- Fix reaction bubbles sometimes not being aligned to bubble on short incoming message [#1320](https://github.com/GetStream/stream-chat-swift/pull/1320)
+- Fix hiding already hidden channels not working [#1327](https://github.com/GetStream/stream-chat-swift/issues/1327)
+- Fix compilation for Xcode 13 beta 3 where SDK could not compile because of unvailability of `UIApplication.shared` [#1333](https://github.com/GetStream/stream-chat-swift/pull/1333)
+- Fix member removed from a Channel is still present is MemberListController.members [#1323](https://github.com/GetStream/stream-chat-swift/issues/1323)
+- Fix composer input field height for long text [#1335](https://github.com/GetStream/stream-chat-swift/issues/1335)
+- Fix creating direct messaging channels creates CoreData misuse [#1337](https://github.com/GetStream/stream-chat-swift/issues/1337)
+
+### 🔄 Changed
+- `ContainerStackView` doesn't `assert` when trying to remove a subview, these operations are now no-op [#1328](https://github.com/GetStream/stream-chat-swift/issues/1328)
+- `ChatClientConfig`'s `isLocalStorageEnabled`'s default value is now `false`
+- `/sync` endpoint calls optimized for a setup when local caching is disabled i.e. `isLocalStorageEnabled` is set to false.
 
 # [4.0.0-beta.8](https://github.com/GetStream/stream-chat-swift/releases/tag/4.0.0-beta.8)
 _July 21, 2021_
@@ -14,7 +105,6 @@ _July 21, 2021_
 - `urlRequest(forImage url:)` added to `ImageCDN` protocol, this can be used to inject custom HTTP headers into image loading requests [#1291](https://github.com/GetStream/stream-chat-swift/issues/1291)
 - Functionality that allows [inviting](https://getstream.io/chat/docs/react/channel_invites/?language=swift) users to channels with subsequent acceptance or rejection on their part [#1276](https://github.com/GetStream/stream-chat-swift/pull/1276)
 - `EventsController` which exposes event observing API [#1266](https://github.com/GetStream/stream-chat-swift/pull/1266)
-- `galleryViewAspectRatio` added to `GalleryAttachmentViewInjector` allows to change aspect ratio of a gallery shown inside a message cell [#1300](https://github.com/GetStream/stream-chat-swift/pull/1300)
 
 ### 🐞 Fixed
 - Fix an issue where member role sent from backend was not recognized by the SDK [#1288](https://github.com/GetStream/stream-chat-swift/pull/1288)

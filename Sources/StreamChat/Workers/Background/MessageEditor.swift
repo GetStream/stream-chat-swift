@@ -18,7 +18,7 @@ import Foundation
 /// - Message edit retry
 /// - Start editing messages when connection status changes (offline -> online)
 ///
-class MessageEditor<ExtraData: ExtraDataTypes>: Worker {
+class MessageEditor: Worker {
     @Atomic private var pendingMessageIDs: Set<MessageId> = []
     
     private let observer: ListDatabaseObserver<MessageDTO, MessageDTO>
@@ -72,7 +72,7 @@ class MessageEditor<ExtraData: ExtraDataTypes>: Worker {
                 return
             }
             
-            let requestBody = dto.asRequestBody() as MessageRequestBody<ExtraData>
+            let requestBody = dto.asRequestBody() as MessageRequestBody
             self?.markMessage(withID: messageId, as: .syncing) {
                 self?.apiClient.request(endpoint: .editMessage(payload: requestBody)) {
                     let newMessageState: LocalMessageState? = $0.error == nil ? nil : .syncingFailed

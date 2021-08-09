@@ -4,7 +4,7 @@
 
 import Foundation
 
-public extension _ChatClient {
+public extension ChatClient {
     /// Creates a new `EventsController` that can be used for event listening.
     ///
     /// - Returns: A new instance of `EventsController`.
@@ -53,11 +53,21 @@ public class EventsController: Controller, DelegateCallable {
             notificationCenter: notificationCenter,
             transform: { $0 },
             callback: { [unowned self] event in
+                guard self.shouldProcessEvent(event) else { return }
+                
                 self.delegateCallback {
                     $0.eventsController(self, didReceiveEvent: event)
                 }
             }
         )
+    }
+    
+    /// A function that acts as a filter for incoming events.
+    ///
+    /// - Parameter event: An event to make a decision about.
+    /// - Returns: A result saying if the event should be processed.
+    func shouldProcessEvent(_ event: Event) -> Bool {
+        true
     }
 }
 

@@ -5,11 +5,11 @@
 import Foundation
 @testable import StreamChat
 
-public extension _ChatClient {
-    /// Create a new instance of mock `_ChatClient`
-    static func mock() -> _ChatClient {
+public extension ChatClient {
+    /// Create a new instance of mock `ChatClient`
+    static func mock(isLocalStorageEnabled: Bool = false) -> ChatClient {
         var config = ChatClientConfig(apiKey: .init("--== Mock ChatClient ==--"))
-        config.isLocalStorageEnabled = false
+        config.isLocalStorageEnabled = isLocalStorageEnabled
         
         return .init(
             config: config,
@@ -26,7 +26,8 @@ public extension _ChatClient {
                         internetConnection: $4
                     )
                 }
-            )
+            ),
+            tokenExpirationRetryStrategy: DefaultReconnectionStrategy()
         )
     }
 }

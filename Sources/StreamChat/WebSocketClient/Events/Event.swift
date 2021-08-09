@@ -10,7 +10,7 @@ public protocol Event {}
 /// An internal protocol marking the Events carrying the payload. This payload can be then used for additional work,
 /// i.e. for storing the data to the database.
 protocol EventWithPayload: Event {
-    /// Type-erased event payload. Cast it to `EventPayload<ExtraData>` when you need to use it.
+    /// Type-erased event payload. Cast it to `EventPayload` when you need to use it.
     var payload: Any { get }
 }
 
@@ -44,4 +44,10 @@ protocol ReactionEvent: MessageSpecificEvent {
 /// A protocol for `NotificationMutesUpdatedEvent` which contains `me` AKA `currentUser` payload.
 protocol CurrentUserEvent: EventWithPayload {
     var currentUserId: UserId { get }
+}
+
+/// A protocol custom event payload must conform to.
+public protocol CustomEventPayload: Codable, Hashable {
+    /// A type all events holding this payload have.
+    static var eventType: EventType { get }
 }

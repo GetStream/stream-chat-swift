@@ -8,7 +8,7 @@ import XCTest
 
 final class ChannelUserTypingStateUpdaterMiddleware_Tests: XCTestCase {
     var database: DatabaseContainerMock!
-    var middleware: UserTypingStateUpdaterMiddleware<NoExtraData>!
+    var middleware: UserTypingStateUpdaterMiddleware!
     
     // MARK: - Set up
     
@@ -156,14 +156,14 @@ private struct TestEvent: Event, Equatable {
 
 extension TypingEvent: Equatable {
     static var unique: Self = try!
-        .init(from: EventPayload<NoExtraData>(eventType: .userStartTyping, cid: .unique, user: .dummy(userId: .unique)))
+        .init(from: EventPayload(eventType: .userStartTyping, cid: .unique, user: .dummy(userId: .unique)))
     
     static func startTyping(cid: ChannelId = .unique, userId: UserId = .unique) -> TypingEvent {
-        try! .init(from: EventPayload<NoExtraData>(eventType: .userStartTyping, cid: cid, user: .dummy(userId: userId)))
+        try! .init(from: EventPayload(eventType: .userStartTyping, cid: cid, user: .dummy(userId: userId)))
     }
     
     static func stopTyping(cid: ChannelId = .unique, userId: UserId = .unique) -> TypingEvent {
-        try! .init(from: EventPayload<NoExtraData>(eventType: .userStopTyping, cid: cid, user: .dummy(userId: userId)))
+        try! .init(from: EventPayload(eventType: .userStopTyping, cid: cid, user: .dummy(userId: userId)))
     }
     
     public static func == (lhs: TypingEvent, rhs: TypingEvent) -> Bool {

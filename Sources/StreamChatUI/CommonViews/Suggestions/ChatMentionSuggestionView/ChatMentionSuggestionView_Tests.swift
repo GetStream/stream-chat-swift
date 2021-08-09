@@ -11,9 +11,9 @@ class ChatMentionSuggestionView_Tests: XCTestCase {
     /// Default reference width for the cell. Not related to any screen size.
     private static var defaultCellWidth: CGFloat = 300
 
-    private var chatUserOffline: _ChatUser<NoExtraData>!
-    private var chatUserOnline: _ChatUser<NoExtraData>!
-    private var chatUserNoName: _ChatUser<NoExtraData>!
+    private var chatUserOffline: ChatUser!
+    private var chatUserOnline: ChatUser!
+    private var chatUserNoName: ChatUser!
 
     override func setUp() {
         super.setUp()
@@ -73,7 +73,7 @@ class ChatMentionSuggestionView_Tests: XCTestCase {
             }
         }
 
-        class CustomAvatarView: _ChatUserAvatarView<NoExtraData> {
+        class CustomAvatarView: ChatUserAvatarView {
             override func didMoveToSuperview() {
                 super.didMoveToSuperview()
                 backgroundColor = .green

@@ -33,7 +33,7 @@ class UserListQuery_Tests: XCTestCase {
         let sort: [Sorting<UserListSortingKey>] = [.init(key: .lastActivityAt)]
 
         // Create UserListQuery
-        let query = _UserListQuery(
+        let query = UserListQuery(
             filter: filter,
             sort: sort,
             pageSize: 23

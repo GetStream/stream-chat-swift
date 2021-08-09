@@ -6,18 +6,16 @@ import StreamChat
 import UIKit
 
 /// A `UIViewController` subclass  that shows list of channels.
-public typealias ChatChannelListVC = _ChatChannelListVC<NoExtraData>
-
-/// A `UIViewController` subclass  that shows list of channels.
-open class _ChatChannelListVC<ExtraData: ExtraDataTypes>: _ViewController,
+@available(iOSApplicationExtension, unavailable)
+open class ChatChannelListVC: _ViewController,
     UICollectionViewDataSource,
     UICollectionViewDelegate,
-    _ChatChannelListControllerDelegate,
+    ChatChannelListControllerDelegate,
     DataControllerStateDelegate,
     ThemeProvider,
     SwipeableViewDelegate {
     /// The `ChatChannelListController` instance that provides channels data.
-    public var controller: _ChatChannelListController<ExtraData>!
+    public var controller: ChatChannelListController!
 
     open private(set) lazy var loadingIndicator: UIActivityIndicatorView = {
         if #available(iOS 13.0, *) {
@@ -28,7 +26,7 @@ open class _ChatChannelListVC<ExtraData: ExtraDataTypes>: _ViewController,
     }()
     
     /// A router object responsible for handling navigation actions of this view controller.
-    open lazy var router: _ChatChannelListRouter<ExtraData> = components
+    open lazy var router: ChatChannelListRouter = components
         .channelListRouter
         .init(rootViewController: self)
     
@@ -42,7 +40,7 @@ open class _ChatChannelListVC<ExtraData: ExtraDataTypes>: _ViewController,
             .withoutAutoresizingMaskConstraints
     
     /// The `CurrentChatUserAvatarView` instance used for displaying avatar of the current user.
-    open private(set) lazy var userAvatarView: _CurrentChatUserAvatarView<ExtraData> = components
+    open private(set) lazy var userAvatarView: CurrentChatUserAvatarView = components
         .currentUserAvatarView.init()
         .withoutAutoresizingMaskConstraints
     
@@ -118,7 +116,7 @@ open class _ChatChannelListVC<ExtraData: ExtraDataTypes>: _ViewController,
         let cell = collectionView.dequeueReusableCell(
             withReuseIdentifier: collectionViewCellReuseIdentifier,
             for: indexPath
-        ) as! _ChatChannelListCollectionViewCell<ExtraData>
+        ) as! ChatChannelListCollectionViewCell
     
         cell.components = components
         cell.itemView.content = .init(
@@ -181,7 +179,7 @@ open class _ChatChannelListVC<ExtraData: ExtraDataTypes>: _ViewController,
     open func swipeableViewWillShowActionViews(for indexPath: IndexPath) {
         // Close other open cells
         collectionView.visibleCells.forEach {
-            let cell = ($0 as? _ChatChannelListCollectionViewCell<ExtraData>)
+            let cell = ($0 as? ChatChannelListCollectionViewCell)
             cell?.swipeableView.close()
         }
 
@@ -222,14 +220,14 @@ open class _ChatChannelListVC<ExtraData: ExtraDataTypes>: _ViewController,
     
     // MARK: - ChatChannelListControllerDelegate
     
-    open func controllerWillChangeChannels(_ controller: _ChatChannelListController<ExtraData>) {
+    open func controllerWillChangeChannels(_ controller: ChatChannelListController) {
         channelsCount = controller.channels.count
         collectionView.layoutIfNeeded()
     }
     
     open func controller(
-        _ controller: _ChatChannelListController<ExtraData>,
-        didChangeChannels changes: [ListChange<_ChatChannel<ExtraData>>]
+        _ controller: ChatChannelListController,
+        didChangeChannels changes: [ListChange<ChatChannel>]
     ) {
         guard let indices = collectionUpdatesMapper.mapToSetsOfIndexPaths(
             changes: changes,

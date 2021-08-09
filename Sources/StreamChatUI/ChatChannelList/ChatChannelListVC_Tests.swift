@@ -10,15 +10,15 @@ import XCTest
 class ChatChannelListVC_Tests: XCTestCase {
     var view: ChatChannelListItemView!
     var vc: ChatChannelListVC!
-    var mockedChannelListController: ChatChannelListController_Mock<NoExtraData>!
-    var mockedCurrentUserController: CurrentChatUserController_Mock<NoExtraData>!
-    var mockedRouter: ChatChannelListRouter_Mock<NoExtraData> { vc.router as! ChatChannelListRouter_Mock<NoExtraData> }
+    var mockedChannelListController: ChatChannelListController_Mock!
+    var mockedCurrentUserController: CurrentChatUserController_Mock!
+    var mockedRouter: ChatChannelListRouter_Mock { vc.router as! ChatChannelListRouter_Mock }
 
     var channels: [ChatChannel] = []
     
     // Workaround for setting mockedCurrentUserController to userAvatarView.
     class TestChatChannelListVC: ChatChannelListVC {
-        var mockedCurrentUserController: CurrentChatUserController_Mock<NoExtraData>?
+        var mockedCurrentUserController: CurrentChatUserController_Mock?
         
         override func setUp() {
             super.setUp()
@@ -43,7 +43,7 @@ class ChatChannelListVC_Tests: XCTestCase {
         vc.controller = mockedChannelListController
         
         var components = Components()
-        components.channelListRouter = ChatChannelListRouter_Mock<NoExtraData>.self
+        components.channelListRouter = ChatChannelListRouter_Mock.self
         vc.components = components
 
         channels = .dummy()
@@ -69,6 +69,30 @@ class ChatChannelListVC_Tests: XCTestCase {
     func test_defaultAppearance() {
         mockedChannelListController.simulate(
             channels: channels,
+            changes: []
+        )
+        AssertSnapshot(vc, isEmbeddedInNavigationController: true)
+    }
+    
+    func test_LastMessageDeletedAppearance() {
+        let channelWithLastMessageDeleted = ChatChannel.mock(
+            cid: .init(type: .messaging, id: "test_channel5"),
+            name: "Channel 5",
+            imageURL: XCTestCase.TestImages.vader.url,
+            lastMessageAt: .init(timeIntervalSince1970: 1_611_951_530_000),
+            latestMessages: [
+                ChatMessage.mock(
+                    id: "2",
+                    cid: .unique,
+                    text: "Hello",
+                    author: .mock(id: "Vader"),
+                    deletedAt: .init(timeIntervalSince1970: 1_611_951_532_000)
+                ),
+                ChatMessage.mock(id: "1", cid: .unique, text: "Hello2", author: .mock(id: "Vader2"))
+            ]
+        )
+        mockedChannelListController.simulate(
+            channels: [channelWithLastMessageDeleted],
             changes: []
         )
         AssertSnapshot(vc, isEmbeddedInNavigationController: true)
@@ -189,7 +213,7 @@ extension ChatChannelListVC_Tests {
         let channelListVC = FakeChatChannelListVC()
         channelListVC.controller = mockedChannelListController
 
-        let noConflictChanges: [ListChange<_ChatChannel<NoExtraData>>] = [
+        let noConflictChanges: [ListChange<ChatChannel>] = [
             .update(.mock(cid: .unique), index: .init(row: 1, section: 0)),
             .update(.mock(cid: .unique), index: .init(row: 2, section: 0)),
             .insert(.mock(cid: .unique), index: .init(row: 3, section: 0)),
@@ -210,7 +234,7 @@ extension ChatChannelListVC_Tests {
         let channelListVC = FakeChatChannelListVC()
         channelListVC.controller = mockedChannelListController
 
-        let hasConflictChanges: [ListChange<_ChatChannel<NoExtraData>>] = [
+        let hasConflictChanges: [ListChange<ChatChannel>] = [
             .update(.mock(cid: .unique), index: .init(row: 1, section: 0)),
             .update(.mock(cid: .unique), index: .init(row: 2, section: 0)),
             .insert(.mock(cid: .unique), index: .init(row: 3, section: 0)),
@@ -231,7 +255,7 @@ extension ChatChannelListVC_Tests {
         let channelListVC = FakeChatChannelListVC()
         channelListVC.controller = mockedChannelListController
 
-        let hasConflictChanges: [ListChange<_ChatChannel<NoExtraData>>] = [
+        let hasConflictChanges: [ListChange<ChatChannel>] = [
             .update(.mock(cid: .unique), index: .init(row: 1, section: 0)),
             .update(.mock(cid: .unique), index: .init(row: 2, section: 0)),
             .insert(.mock(cid: .unique), index: .init(row: 3, section: 0)),
@@ -252,7 +276,7 @@ extension ChatChannelListVC_Tests {
         let channelListVC = FakeChatChannelListVC()
         channelListVC.controller = mockedChannelListController
 
-        let hasConflictChanges: [ListChange<_ChatChannel<NoExtraData>>] = [
+        let hasConflictChanges: [ListChange<ChatChannel>] = [
             .update(.mock(cid: .unique), index: .init(row: 1, section: 0)),
             .update(.mock(cid: .unique), index: .init(row: 2, section: 0)),
             .insert(.mock(cid: .unique), index: .init(row: 3, section: 0)),
@@ -273,7 +297,7 @@ extension ChatChannelListVC_Tests {
         let channelListVC = FakeChatChannelListVC()
         channelListVC.controller = mockedChannelListController
 
-        let hasConflictChanges: [ListChange<_ChatChannel<NoExtraData>>] = [
+        let hasConflictChanges: [ListChange<ChatChannel>] = [
             .update(.mock(cid: .unique), index: .init(row: 1, section: 0)),
             .update(.mock(cid: .unique), index: .init(row: 2, section: 0)),
             .insert(.mock(cid: .unique), index: .init(row: 3, section: 0)),

@@ -9,7 +9,7 @@ import Foundation
 /// The `ChatMessageVideoAttachment` attachment will be added to the message automatically
 /// if the message was sent with attached `AnyAttachmentPayload` created with
 /// local URL and `.video` attachment type.
-public typealias ChatMessageVideoAttachment = _ChatMessageAttachment<VideoAttachmentPayload>
+public typealias ChatMessageVideoAttachment = ChatMessageAttachment<VideoAttachmentPayload>
 
 /// Represents a payload for attachments with `.media` type.
 public struct VideoAttachmentPayload: AttachmentPayload {

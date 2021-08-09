@@ -5,7 +5,7 @@
 import Foundation
 
 /// Makes a channel query call to the backend and updates the local storage with the results.
-class ChannelUpdater<ExtraData: ExtraDataTypes>: Worker {
+class ChannelUpdater: Worker {
     /// Makes a channel query call to the backend and updates the local storage with the results.
     ///
     /// - Parameters:
@@ -15,9 +15,9 @@ class ChannelUpdater<ExtraData: ExtraDataTypes>: Worker {
     ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
     ///
     func update(
-        channelQuery: _ChannelQuery<ExtraData>,
+        channelQuery: ChannelQuery,
         channelCreatedCallback: ((ChannelId) -> Void)? = nil,
-        completion: ((Result<ChannelPayload<ExtraData>, Error>) -> Void)? = nil
+        completion: ((Result<ChannelPayload, Error>) -> Void)? = nil
     ) {
         apiClient.request(endpoint: .channel(query: channelQuery)) { (result) in
             do {
@@ -42,7 +42,7 @@ class ChannelUpdater<ExtraData: ExtraDataTypes>: Worker {
     /// - Parameters:
     ///   - channelPayload: New channel data..
     ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
-    func updateChannel(channelPayload: ChannelEditDetailPayload<ExtraData>, completion: ((Error?) -> Void)? = nil) {
+    func updateChannel(channelPayload: ChannelEditDetailPayload, completion: ((Error?) -> Void)? = nil) {
         apiClient.request(endpoint: .updateChannel(channelPayload: channelPayload)) {
             completion?($0.error)
         }
@@ -85,8 +85,25 @@ class ChannelUpdater<ExtraData: ExtraDataTypes>: Worker {
     ///   - clearHistory: Flag to remove channel history.
     ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
     func hideChannel(cid: ChannelId, clearHistory: Bool, completion: ((Error?) -> Void)? = nil) {
-        apiClient.request(endpoint: .hideChannel(cid: cid, clearHistory: clearHistory)) {
-            completion?($0.error)
+        apiClient.request(endpoint: .hideChannel(cid: cid, clearHistory: clearHistory)) { [weak self] result in
+            if result.error == nil {
+                // If the API call is a success, we mark the channel as hidden
+                // We do this because if the channel was already hidden, but the SDK
+                // is not aware of this, we won't get `channel.hidden` event and we won't
+                // hide the channel
+                self?.database.write {
+                    if let channel = $0.channel(cid: cid) {
+                        channel.hiddenAt = Date()
+                        if clearHistory {
+                            channel.truncatedAt = Date()
+                        }
+                    }
+                } completion: {
+                    completion?($0)
+                }
+            } else {
+                completion?(result.error)
+            }
         }
     }
     
@@ -122,7 +139,7 @@ class ChannelUpdater<ExtraData: ExtraDataTypes>: Worker {
         attachments: [AnyAttachmentPayload] = [],
         mentionedUserIds: [UserId],
         quotedMessageId: MessageId?,
-        extraData: ExtraData.Message,
+        extraData: [String: RawJSON],
         completion: ((Result<MessageId, Error>) -> Void)? = nil
     ) {
         var newMessageId: MessageId?
@@ -257,7 +274,7 @@ class ChannelUpdater<ExtraData: ExtraDataTypes>: Worker {
     /// - Parameter cid: Channel id of the channel to be watched
     /// - Parameter completion: Called when the API call is finished. Called with `Error` if the remote update fails.
     func startWatching(cid: ChannelId, completion: ((Error?) -> Void)? = nil) {
-        var query = _ChannelQuery<ExtraData>(cid: cid)
+        var query = ChannelQuery(cid: cid)
         query.options = .all
         apiClient.request(endpoint: .channel(query: query)) {
             completion?($0.error)
@@ -285,7 +302,7 @@ class ChannelUpdater<ExtraData: ExtraDataTypes>: Worker {
     ///   - query: Query object for watchers. See `ChannelWatcherListQuery`
     ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
     func channelWatchers(query: ChannelWatcherListQuery, completion: ((Error?) -> Void)? = nil) {
-        apiClient.request(endpoint: .channelWatchers(query: query)) { (result: Result<ChannelPayload<ExtraData>, Error>) in
+        apiClient.request(endpoint: .channelWatchers(query: query)) { (result: Result<ChannelPayload, Error>) in
             do {
                 let payload = try result.get()
                 self.database.write { (session) in

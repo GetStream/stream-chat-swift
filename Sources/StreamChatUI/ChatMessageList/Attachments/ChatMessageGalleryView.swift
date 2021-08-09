@@ -6,10 +6,7 @@ import StreamChat
 import UIKit
 
 /// Gallery view that displays images and video previews.
-public typealias ChatMessageGalleryView = _ChatMessageGalleryView<NoExtraData>
-
-/// Gallery view that displays images and video previews.
-open class _ChatMessageGalleryView<ExtraData: ExtraDataTypes>: _View, ThemeProvider {
+open class ChatMessageGalleryView: _View, ThemeProvider {
     /// Content the gallery should display.
     public var content: [UIView] = [] {
         didSet { updateContentIfNeeded() }

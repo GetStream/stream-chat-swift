@@ -1,7 +1,6 @@
 ---
 title: CommandButton
 ---
-![CommandButton](../../../../../assets/CommandButton_documentation.default-light.png)
 
 Button for opening commands.
 

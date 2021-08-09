@@ -6,7 +6,7 @@
 import XCTest
 
 /// Mock implementation of MessageUpdater
-final class MessageUpdaterMock<ExtraData: ExtraDataTypes>: MessageUpdater<ExtraData> {
+final class MessageUpdaterMock: MessageUpdater {
     @Atomic var getMessage_cid: ChannelId?
     @Atomic var getMessage_messageId: MessageId?
     @Atomic var getMessage_completion: ((Error?) -> Void)?
@@ -29,7 +29,7 @@ final class MessageUpdaterMock<ExtraData: ExtraDataTypes>: MessageUpdater<ExtraD
     @Atomic var createNewReply_isSilent: Bool?
     @Atomic var createNewReply_quotedMessageId: MessageId?
     @Atomic var createNewReply_pinning: MessagePinning?
-    @Atomic var createNewReply_extraData: ExtraData.Message?
+    @Atomic var createNewReply_extraData: [String: RawJSON]?
     @Atomic var createNewReply_completion: ((Result<MessageId, Error>) -> Void)?
     
     @Atomic var loadReplies_cid: ChannelId?
@@ -45,7 +45,7 @@ final class MessageUpdaterMock<ExtraData: ExtraDataTypes>: MessageUpdater<ExtraD
     @Atomic var addReaction_type: MessageReactionType?
     @Atomic var addReaction_score: Int?
     @Atomic var addReaction_enforceUnique: Bool?
-    @Atomic var addReaction_extraData: ExtraData.MessageReaction?
+    @Atomic var addReaction_extraData: [String: RawJSON]?
     @Atomic var addReaction_messageId: MessageId?
     @Atomic var addReaction_completion: ((Error?) -> Void)?
     
@@ -169,7 +169,7 @@ final class MessageUpdaterMock<ExtraData: ExtraDataTypes>: MessageUpdater<ExtraD
         showReplyInChannel: Bool,
         isSilent: Bool,
         quotedMessageId: MessageId?,
-        extraData: ExtraData.Message,
+        extraData: [String: RawJSON],
         completion: ((Result<MessageId, Error>) -> Void)? = nil
     ) {
         createNewReply_cid = cid
@@ -210,7 +210,7 @@ final class MessageUpdaterMock<ExtraData: ExtraDataTypes>: MessageUpdater<ExtraD
         _ type: MessageReactionType,
         score: Int,
         enforceUnique: Bool = false,
-        extraData: ExtraData.MessageReaction,
+        extraData: [String: RawJSON],
         messageId: MessageId,
         completion: ((Error?) -> Void)? = nil
     ) {

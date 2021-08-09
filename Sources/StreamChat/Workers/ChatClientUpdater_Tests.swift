@@ -7,8 +7,6 @@
 import XCTest
 
 final class ChatClientUpdater_Tests_Tests: StressTestCase {
-    typealias ExtraData = NoExtraData
-
     // MARK: Disconnect
 
     func test_disconnect_doesNothing_ifClientIsPassive() {
@@ -16,7 +14,7 @@ final class ChatClientUpdater_Tests_Tests: StressTestCase {
         let client = mockClientWithUserSession(isActive: false)
 
         // Create an updater.
-        let updater = ChatClientUpdater<ExtraData>(client: client)
+        let updater = ChatClientUpdater(client: client)
 
         // Simulate `disconnect` call.
         updater.disconnect()
@@ -30,7 +28,7 @@ final class ChatClientUpdater_Tests_Tests: StressTestCase {
         let client = mockClientWithUserSession()
 
         // Create an updater.
-        let updater = ChatClientUpdater<ExtraData>(client: client)
+        let updater = ChatClientUpdater(client: client)
 
         // Simulate `disconnect` call.
         updater.disconnect()
@@ -49,7 +47,7 @@ final class ChatClientUpdater_Tests_Tests: StressTestCase {
         let client = mockClientWithUserSession()
 
         // Create an updater.
-        let updater = ChatClientUpdater<ExtraData>(client: client)
+        let updater = ChatClientUpdater(client: client)
 
         // Simulate `disconnect` call.
         updater.disconnect()
@@ -71,7 +69,7 @@ final class ChatClientUpdater_Tests_Tests: StressTestCase {
         let client = mockClientWithUserSession(isActive: false)
 
         // Create an updater.
-        let updater = ChatClientUpdater<ExtraData>(client: client)
+        let updater = ChatClientUpdater(client: client)
 
         // Simulate `connect` call.
         let error = try waitFor { completion in
@@ -87,7 +85,7 @@ final class ChatClientUpdater_Tests_Tests: StressTestCase {
         let client = mockClientWithUserSession()
 
         // Create an updater.
-        let updater = ChatClientUpdater<ExtraData>(client: client)
+        let updater = ChatClientUpdater(client: client)
 
         // Simulate `connect` call.
         let error = try waitFor { completion in
@@ -107,7 +105,7 @@ final class ChatClientUpdater_Tests_Tests: StressTestCase {
         let client = mockClientWithUserSession()
 
         // Create an updater.
-        let updater = ChatClientUpdater<ExtraData>(client: client)
+        let updater = ChatClientUpdater(client: client)
 
         // Disconnect client from web-socket.
         updater.disconnect()
@@ -142,7 +140,7 @@ final class ChatClientUpdater_Tests_Tests: StressTestCase {
             let client = mockClientWithUserSession()
 
             // Create an updater.
-            let updater = ChatClientUpdater<ExtraData>(client: client)
+            let updater = ChatClientUpdater(client: client)
 
             // Disconnect client from web-socket.
             updater.disconnect()
@@ -188,7 +186,7 @@ final class ChatClientUpdater_Tests_Tests: StressTestCase {
             let client = mockClientWithUserSession()
 
             // Create an updater.
-            var updater: ChatClientUpdater<ExtraData>? = .init(client: client)
+            var updater: ChatClientUpdater? = .init(client: client)
 
             // Disconnect client from web-socket.
             updater?.disconnect()
@@ -248,7 +246,7 @@ final class ChatClientUpdater_Tests_Tests: StressTestCase {
             let client = mockClientWithUserSession(token: options.initialToken)
 
             // Create an updater.
-            let updater = ChatClientUpdater<ExtraData>(client: client)
+            let updater = ChatClientUpdater(client: client)
 
             // Save current background worker ids.
             let oldWorkerIDs = client.testBackgroundWorkerIDs
@@ -274,7 +272,7 @@ final class ChatClientUpdater_Tests_Tests: StressTestCase {
                 client.webSocketClient?.connectEndpoint.map(AnyEndpoint.init),
                 AnyEndpoint(
                     .webSocketConnect(
-                        userInfo: UserInfo<NoExtraData>(id: options.updatedToken.userId)
+                        userInfo: UserInfo(id: options.updatedToken.userId)
                     )
                 )
             )
@@ -328,10 +326,10 @@ final class ChatClientUpdater_Tests_Tests: StressTestCase {
         config.isClientInActiveMode = false
 
         // Create `passive` client.
-        let client = ChatClientMock<ExtraData>(config: config)
+        let client = ChatClientMock(config: config)
 
         // Create `ChatClientUpdater` instance.
-        let updater = ChatClientUpdater<ExtraData>(client: client)
+        let updater = ChatClientUpdater(client: client)
 
         // Simulate `reloadUserIfNeeded` call and catch the result.
         let error = try waitFor { completion in
@@ -344,10 +342,10 @@ final class ChatClientUpdater_Tests_Tests: StressTestCase {
 
     func test_reloadUserIfNeeded_newUser_propagatesDatabaseFlushError() throws {
         // Create `active` client.
-        let client = ChatClientMock<ExtraData>(config: .init(apiKeyString: .unique))
+        let client = ChatClientMock(config: .init(apiKeyString: .unique))
 
         // Create `ChatClientUpdater` instance.
-        let updater = ChatClientUpdater<ExtraData>(client: client)
+        let updater = ChatClientUpdater(client: client)
 
         // Update database to throw an error when flushed.
         let databaseFlushError = TestError()
@@ -367,10 +365,10 @@ final class ChatClientUpdater_Tests_Tests: StressTestCase {
 
     func test_reloadUserIfNeeded_newUser_propagatesWebSocketClientError_whenAutomaticallyConnects() {
         // Create `active` client.
-        let client = ChatClientMock<ExtraData>(config: .init(apiKeyString: .unique))
+        let client = ChatClientMock(config: .init(apiKeyString: .unique))
 
         // Create `ChatClientUpdater` instance.
-        let updater = ChatClientUpdater<ExtraData>(client: client)
+        let updater = ChatClientUpdater(client: client)
 
         // Simulate `reloadUserIfNeeded` call.
         var reloadUserIfNeededCompletionCalled = false
@@ -399,7 +397,7 @@ final class ChatClientUpdater_Tests_Tests: StressTestCase {
         var tokenProviderCompletion: ((Result<Token, Error>) -> Void)?
 
         // Create an updater.
-        var updater: ChatClientUpdater<ExtraData>? = .init(client: client)
+        var updater: ChatClientUpdater? = .init(client: client)
         
         // Simulate `reloadUserIfNeeded` call.
         updater?.reloadUserIfNeeded(
@@ -428,13 +426,13 @@ final class ChatClientUpdater_Tests_Tests: StressTestCase {
     private func mockClientWithUserSession(
         isActive: Bool = true,
         token: Token = .unique(userId: .unique)
-    ) -> ChatClientMock<ExtraData> {
+    ) -> ChatClientMock {
         // Create a config.
         var config = ChatClientConfig(apiKeyString: .unique)
         config.isClientInActiveMode = isActive
 
         // Create a client.
-        let client = ChatClientMock<ExtraData>(
+        let client = ChatClientMock(
             config: config,
             workerBuilders: [TestWorker.init],
             eventWorkerBuilders: [TestEventWorker.init]
@@ -447,7 +445,7 @@ final class ChatClientUpdater_Tests_Tests: StressTestCase {
         client.connectionId = .unique
         client.connectionStatus = .connected
         client.webSocketClient?.connectEndpoint = .webSocketConnect(
-            userInfo: UserInfo<NoExtraData>(id: token.userId)
+            userInfo: UserInfo(id: token.userId)
         )
 
         client.createBackgroundWorkers()
@@ -458,7 +456,7 @@ final class ChatClientUpdater_Tests_Tests: StressTestCase {
 
 // MARK: - Private
 
-private extension _ChatClient {
+private extension ChatClient {
     var testBackgroundWorkerIDs: Set<UUID> {
         .init(
             backgroundWorkers.compactMap {

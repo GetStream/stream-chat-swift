@@ -9,7 +9,7 @@ extension UIColor {
 }
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
-    private var coordinator: DemoAppCoordinator!
+    var coordinator: DemoAppCoordinator!
     var window: UIWindow?
     
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {

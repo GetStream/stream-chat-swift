@@ -8,7 +8,7 @@ import XCTest
 
 final class ChannelTruncatedEventMiddleware_Tests: XCTestCase {
     var database: DatabaseContainerMock!
-    var middleware: ChannelTruncatedEventMiddleware<NoExtraData>!
+    var middleware: ChannelTruncatedEventMiddleware!
 
     // MARK: - Set up
 
@@ -39,7 +39,7 @@ final class ChannelTruncatedEventMiddleware_Tests: XCTestCase {
     }
 
     func tests_middleware_forwardsTheEvent_ifDatabaseWriteGeneratesError() throws {
-        let eventPayload: EventPayload<NoExtraData> = .init(
+        let eventPayload: EventPayload = .init(
             eventType: .channelTruncated,
             cid: .unique,
             user: .dummy(userId: .unique)
@@ -60,7 +60,7 @@ final class ChannelTruncatedEventMiddleware_Tests: XCTestCase {
     func tests_middleware_handlesChannelTruncatedEventCorrectly() throws {
         let cid: ChannelId = .unique
         // Create channel truncate event
-        let eventPayload: EventPayload<NoExtraData> = .init(
+        let eventPayload: EventPayload = .init(
             eventType: .channelTruncated,
             cid: cid,
             user: .dummy(userId: .unique),

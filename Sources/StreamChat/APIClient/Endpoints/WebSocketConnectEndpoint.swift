@@ -5,8 +5,8 @@
 import Foundation
 
 extension Endpoint {
-    static func webSocketConnect<ExtraData: ExtraDataTypes>(
-        userInfo: UserInfo<ExtraData>
+    static func webSocketConnect(
+        userInfo: UserInfo
     ) -> Endpoint<EmptyResponse> {
         .init(
             path: "connect",
@@ -14,7 +14,7 @@ extension Endpoint {
             queryItems: nil,
             requiresConnectionId: false,
             body: [
-                "json": WebSocketConnectPayload<ExtraData>(userInfo: userInfo)
+                "json": WebSocketConnectPayload(userInfo: userInfo)
             ]
         )
     }

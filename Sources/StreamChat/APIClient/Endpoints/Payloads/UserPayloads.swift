@@ -4,7 +4,7 @@
 
 import Foundation
 
-enum UserPayloadsCodingKeys: String, CodingKey {
+enum UserPayloadsCodingKeys: String, CodingKey, CaseIterable {
     case id
     case name
     case imageURL = "image"
@@ -22,12 +22,13 @@ enum UserPayloadsCodingKeys: String, CodingKey {
     case mutedChannels = "channel_mutes"
     case isAnonymous = "anon"
     case devices
+    case unreadCount = "unread_count"
 }
 
 // MARK: - GET users
 
 /// An object describing the incoming user JSON payload.
-class UserPayload<ExtraData: UserExtraData>: Decodable {
+class UserPayload: Decodable {
     let id: String
     let name: String?
     let imageURL: URL?
@@ -39,8 +40,8 @@ class UserPayload<ExtraData: UserExtraData>: Decodable {
     let isInvisible: Bool
     let isBanned: Bool
     let teams: [TeamId]
-    let extraData: ExtraData
-    
+    let extraData: [String: RawJSON]
+
     init(
         id: String,
         name: String?,
@@ -53,7 +54,7 @@ class UserPayload<ExtraData: UserExtraData>: Decodable {
         isInvisible: Bool,
         isBanned: Bool,
         teams: [TeamId] = [],
-        extraData: ExtraData
+        extraData: [String: RawJSON]
     ) {
         self.id = id
         self.name = name
@@ -68,12 +69,12 @@ class UserPayload<ExtraData: UserExtraData>: Decodable {
         self.teams = teams
         self.extraData = extraData
     }
-    
+
     required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: UserPayloadsCodingKeys.self)
-        id = try container.decode(String.self, forKey: .id)
-        // Unfortunately, the built-in URL decoder fails, if the string is empty. We need to
-        // provide custom decoding to handle URL? as expected.
+        let userId = try container.decode(String.self, forKey: .id)
+
+        id = userId
         name = try container.decodeIfPresent(String.self, forKey: .name)
         imageURL = try container.decodeIfPresent(String.self, forKey: .imageURL).flatMap(URL.init(string:))
         role = try container.decode(UserRole.self, forKey: .role)
@@ -84,18 +85,29 @@ class UserPayload<ExtraData: UserExtraData>: Decodable {
         isInvisible = try container.decodeIfPresent(Bool.self, forKey: .isInvisible) ?? false
         isBanned = try container.decodeIfPresent(Bool.self, forKey: .isBanned) ?? false
         teams = try container.decodeIfPresent([String].self, forKey: .teams) ?? []
-        extraData = try ExtraData(from: decoder)
+
+        do {
+            var payload = try [String: RawJSON](from: decoder)
+            payload.removeValues(forKeys: UserPayloadsCodingKeys.allCases.map(\.rawValue))
+            extraData = payload
+        } catch {
+            log.error(
+                "Failed to decode extra data for User with id: <\(userId)>, using default value instead. "
+                    + "Error: \(error)"
+            )
+            extraData = [:]
+        }
     }
 }
 
 /// An object describing the outgoing user JSON payload.
-class UserRequestBody<ExtraData: UserExtraData>: Encodable {
+class UserRequestBody: Encodable {
     let id: String
     let name: String?
     let imageURL: URL?
-    let extraData: ExtraData
-    
-    init(id: String, name: String?, imageURL: URL?, extraData: ExtraData) {
+    let extraData: [String: RawJSON]
+
+    init(id: String, name: String?, imageURL: URL?, extraData: [String: RawJSON]) {
         self.id = id
         self.name = name
         self.imageURL = imageURL
@@ -114,8 +126,8 @@ class UserRequestBody<ExtraData: UserExtraData>: Encodable {
 // MARK: - PATCH users
 
 /// An object describing the incoming user JSON payload.
-struct UserUpdateResponse<ExtraData: UserExtraData>: Decodable {
-    let user: UserPayload<ExtraData>
+struct UserUpdateResponse: Decodable {
+    let user: UserPayload
     
     enum CodingKeys: String, CodingKey {
         case users
@@ -123,7 +135,7 @@ struct UserUpdateResponse<ExtraData: UserExtraData>: Decodable {
     
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        let users = try container.decode([String: UserPayload<ExtraData>].self, forKey: .users)
+        let users = try container.decode([String: UserPayload].self, forKey: .users)
         guard let user = users.first?.value else {
             throw DecodingError.dataCorrupted(
                 .init(codingPath: [CodingKeys.users], debugDescription: "Missing updated user.")
@@ -132,18 +144,18 @@ struct UserUpdateResponse<ExtraData: UserExtraData>: Decodable {
         self.user = user
     }
     
-    init(user: UserPayload<ExtraData>) {
+    init(user: UserPayload) {
         self.user = user
     }
 }
 
 /// An object describing the outgoing user JSON payload.
-struct UserUpdateRequestBody<ExtraData: UserExtraData>: Encodable {
+struct UserUpdateRequestBody: Encodable {
     let name: String?
     let imageURL: URL?
-    let extraData: ExtraData?
+    let extraData: [String: RawJSON]?
     
-    init(name: String? = nil, imageURL: URL? = nil, extraData: ExtraData? = nil) {
+    init(name: String? = nil, imageURL: URL? = nil, extraData: [String: RawJSON]? = nil) {
         self.name = name
         self.imageURL = imageURL
         self.extraData = extraData

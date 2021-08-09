@@ -69,6 +69,14 @@ Constraint for `authorLabel`.
 open var authorOnImageConstraint: NSLayoutConstraint?
 ```
 
+### `imagePreviewHeightConstraint`
+
+Constraint for `imagePreview`'s height.
+
+``` swift
+open var imagePreviewHeightConstraint: NSLayoutConstraint?
+```
+
 ## Methods
 
 ### `setUpAppearance()`

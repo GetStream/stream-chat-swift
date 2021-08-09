@@ -89,8 +89,8 @@ extension NSManagedObjectContext {
     }
     
     @discardableResult
-    func saveReaction<ExtraData: ExtraDataTypes>(
-        payload: MessageReactionPayload<ExtraData>
+    func saveReaction(
+        payload: MessageReactionPayload
     ) throws -> MessageReactionDTO {
         guard let messageDTO = MessageDTO.load(id: payload.messageId, context: self) else {
             throw ClientError.MessageDoesNotExist(messageId: payload.messageId)
@@ -121,15 +121,15 @@ extension NSManagedObjectContext {
 
 extension MessageReactionDTO {
     /// Snapshots the current state of `MessageReactionDTO` and returns an immutable model object from it.
-    func asModel<ExtraData: ExtraDataTypes>() -> _ChatMessageReaction<ExtraData> {
-        let extraData: ExtraData.MessageReaction
+    func asModel() -> ChatMessageReaction {
+        let extraData: [String: RawJSON]
         do {
-            extraData = try JSONDecoder.default.decode(ExtraData.MessageReaction.self, from: self.extraData)
+            extraData = try JSONDecoder.default.decode([String: RawJSON].self, from: self.extraData)
         } catch {
             log.error("Failed decoding saved extra data with error: \(error)")
-            extraData = .defaultValue
+            extraData = [:]
         }
-        
+
         return .init(
             type: .init(rawValue: type),
             score: Int(score),

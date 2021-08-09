@@ -22,7 +22,7 @@ public extension URL {
 }
 
 public extension AnyAttachmentPayload {
-    func attachment<T: AttachmentPayload>(id: AttachmentId) -> _ChatMessageAttachment<T>? {
+    func attachment<T: AttachmentPayload>(id: AttachmentId) -> ChatMessageAttachment<T>? {
         guard let payload = payload as? T else { return nil }
 
         return .init(

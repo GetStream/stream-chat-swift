@@ -7,24 +7,21 @@ import SwiftUI
 
 @available(iOS 13.0, *)
 /// Protocol of `_ChatChannelUnreadCountView` wrapper for use in SwiftUI.
-public protocol _ChatChannelUnreadCountViewSwiftUIView: View {
-    associatedtype ExtraData: ExtraDataTypes
-    init(dataSource: _ChatChannelUnreadCountView<ExtraData>.ObservedObject<Self>)
+public protocol ChatChannelUnreadCountViewSwiftUIView: View {
+    init(dataSource: ChatChannelUnreadCountView.ObservedObject<Self>)
 }
 
 @available(iOS 13.0, *)
-extension _ChatChannelUnreadCountView {
+extension ChatChannelUnreadCountView {
     /// Data source of `_ChatChannelUnreadCountView` represented as `ObservedObject`.
-    public typealias ObservedObject<Content: SwiftUIView> = SwiftUIWrapper<Content> where Content.ExtraData == ExtraData
+    public typealias ObservedObject<Content: SwiftUIView> = SwiftUIWrapper<Content>
 
     /// `_ChatChannelUnreadCountView` represented in SwiftUI.
-    public typealias SwiftUIView = _ChatChannelUnreadCountViewSwiftUIView
+    public typealias SwiftUIView = ChatChannelUnreadCountViewSwiftUIView
 
     /// SwiftUI wrapper of `_ChatChannelUnreadCountView`.
     /// Servers to wrap custom SwiftUI view as a UIKit view so it can be easily injected into `_Components`.
-    public class SwiftUIWrapper<Content: SwiftUIView>: _ChatChannelUnreadCountView<ExtraData>, ObservableObject
-        where Content.ExtraData == ExtraData
-    {
+    public class SwiftUIWrapper<Content: SwiftUIView>: ChatChannelUnreadCountView, ObservableObject {
         var hostingController: UIViewController?
 
         override public var intrinsicContentSize: CGSize {

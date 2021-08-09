@@ -6,24 +6,24 @@ import Foundation
 import SwiftUI
 
 @available(iOS 13, *)
-extension _ChatChannelMemberController {
+extension ChatChannelMemberController {
     /// A wrapper object that exposes the controller variables in the form of `ObservableObject` to be used in SwiftUI.
     public var observableObject: ObservableObject { .init(controller: self) }
     
-    /// A wrapper object for `_ChatChannelMemberController` type which makes it possible to use the controller
+    /// A wrapper object for `ChatChannelMemberController` type which makes it possible to use the controller
     /// comfortably in SwiftUI.
     public class ObservableObject: SwiftUI.ObservableObject {
         /// The underlying controller. You can still access it and call methods on it.
-        public let controller: _ChatChannelMemberController
+        public let controller: ChatChannelMemberController
         
         /// The channel member.
-        @Published public private(set) var member: _ChatChannelMember<ExtraData.User>?
+        @Published public private(set) var member: ChatChannelMember?
         
         /// The current state of the controller.
         @Published public private(set) var state: DataController.State
         
         /// Creates a new `ObservableObject` wrapper with the provided controller instance.
-        init(controller: _ChatChannelMemberController<ExtraData>) {
+        init(controller: ChatChannelMemberController) {
             self.controller = controller
             state = controller.state
             
@@ -35,10 +35,10 @@ extension _ChatChannelMemberController {
 }
 
 @available(iOS 13, *)
-extension _ChatChannelMemberController.ObservableObject: _ChatChannelMemberControllerDelegate {
+extension ChatChannelMemberController.ObservableObject: ChatChannelMemberControllerDelegate {
     public func memberController(
-        _ controller: _ChatChannelMemberController<ExtraData>,
-        didUpdateMember change: EntityChange<_ChatChannelMember<ExtraData.User>>
+        _ controller: ChatChannelMemberController,
+        didUpdateMember change: EntityChange<ChatChannelMember>
     ) {
         member = change.item
     }

@@ -40,10 +40,11 @@ public let id: MessageId
 
 ### `cid`
 
-The ChannelId this message belongs to.
+The ChannelId this message belongs to. This value can be temporarily `nil` for messages that are being removed from
+the local cache, or when the local cache is in the process of invalidating.
 
 ``` swift
-public let cid: ChannelId
+public let cid: ChannelId?
 ```
 
 ### `text`
@@ -306,6 +307,16 @@ var fileAttachments: [ChatMessageFileAttachment]
 
 > 
 
+### `videoAttachments`
+
+Returns the attachments of `.video` type.
+
+``` swift
+var videoAttachments: [ChatMessageVideoAttachment] 
+```
+
+> 
+
 ### `giphyAttachments`
 
 Returns the attachments of `.giphy` type.
@@ -339,6 +350,22 @@ func attachments<Payload: AttachmentPayload>(
 ```
 
 > 
+
+### `attachment(with:)`
+
+Returns attachment for the given identifier.
+
+``` swift
+func attachment(with id: AttachmentId) -> AnyChatMessageAttachment? 
+```
+
+#### Parameters
+
+  - id: Attachment identifier.
+
+#### Returns
+
+A type-erased attachment.
 
 ### `hash(into:)`
 

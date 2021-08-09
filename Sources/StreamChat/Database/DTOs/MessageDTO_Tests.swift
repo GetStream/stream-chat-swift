@@ -25,19 +25,21 @@ class MessageDTO_Tests: XCTestCase {
         let messageId: MessageId = .unique
         let channelId: ChannelId = .unique
         
-        let channelPayload: ChannelDetailPayload<NoExtraData> = .dummy(cid: channelId)
+        let channelPayload: ChannelDetailPayload = .dummy(cid: channelId)
         
-        let quotedMessagePayload: MessagePayload<NoExtraData> = .dummy(
+        let quotedMessagePayload: MessagePayload = .dummy(
             messageId: .unique,
             authorUserId: userId,
+            extraData: ["k1": .string("v1")],
             channel: channelPayload
         )
         
-        let messagePayload: MessagePayload<NoExtraData> = .dummy(
+        let messagePayload: MessagePayload = .dummy(
             messageId: messageId,
             quotedMessageId: quotedMessagePayload.id,
             quotedMessage: quotedMessagePayload,
             authorUserId: userId,
+            extraData: ["k2": .string("v2")],
             latestReactions: [
                 .dummy(messageId: messageId, user: UserPayload.dummy(userId: .unique))
             ],
@@ -58,7 +60,7 @@ class MessageDTO_Tests: XCTestCase {
         }
 
         // Load the channel from the db and check the fields are correct
-        var loadedChannel: _ChatChannel<NoExtraData>? {
+        var loadedChannel: ChatChannel? {
             database.viewContext.channel(cid: channelId)?.asModel()
         }
         
@@ -78,7 +80,6 @@ class MessageDTO_Tests: XCTestCase {
         AssertAsync {
             // Channel details
             Assert.willBeEqual(channelId, loadedChannel?.cid)
-            
             Assert.willBeEqual(channelPayload.name, loadedChannel?.name)
             Assert.willBeEqual(channelPayload.imageURL, loadedChannel?.imageURL)
             Assert.willBeEqual(channelPayload.memberCount, loadedChannel?.memberCount)
@@ -148,7 +149,7 @@ class MessageDTO_Tests: XCTestCase {
             )
             Assert.willBeEqual(Int32(messagePayload.replyCount), loadedMessage?.replyCount)
             Assert.willBeEqual(messagePayload.extraData, loadedMessage.map {
-                try? JSONDecoder.default.decode(NoExtraData.self, from: $0.extraData)
+                try? JSONDecoder.default.decode([String: RawJSON].self, from: $0.extraData)
             })
             Assert.willBeEqual(messagePayload.reactionScores, loadedMessage?.reactionScores.mapKeys(MessageReactionType.init))
             Assert.willBeEqual(loadedMessage?.reactions, loadedReactions)
@@ -161,26 +162,16 @@ class MessageDTO_Tests: XCTestCase {
     }
     
     func test_messagePayload_withExtraData_isStoredAndLoadedFromDB() {
-        struct DeathStarMetadata: MessageExtraData {
-            static var defaultValue: DeathStarMetadata = .init(isSecretDeathStarPlanIncluded: false)
-            
-            let isSecretDeathStarPlanIncluded: Bool
-        }
-        
-        enum SecretExtraData: ExtraDataTypes {
-            typealias Message = DeathStarMetadata
-        }
-        
         let userId: UserId = .unique
         let messageId: MessageId = .unique
         let channelId: ChannelId = .unique
         
-        let channelPayload: ChannelPayload<NoExtraData> = dummyPayload(with: channelId)
+        let channelPayload: ChannelPayload = dummyPayload(with: channelId)
         
-        let messagePayload: MessagePayload<SecretExtraData> = .dummy(
+        let messagePayload: MessagePayload = .dummy(
             messageId: messageId,
             authorUserId: userId,
-            extraData: DeathStarMetadata(isSecretDeathStarPlanIncluded: true),
+            extraData: ["isSecretDeathStarPlanIncluded": .bool(true)],
             latestReactions: [
                 .dummy(messageId: messageId, user: UserPayload.dummy(userId: .unique))
             ],
@@ -240,7 +231,7 @@ class MessageDTO_Tests: XCTestCase {
             )
             Assert.willBeEqual(Int32(messagePayload.replyCount), loadedMessage?.replyCount)
             Assert.willBeEqual(messagePayload.extraData, loadedMessage.map {
-                try? JSONDecoder.default.decode(DeathStarMetadata.self, from: $0.extraData)
+                try? JSONDecoder.default.decode([String: RawJSON].self, from: $0.extraData)
             })
             Assert.willBeEqual(messagePayload.reactionScores, loadedMessage?.reactionScores.mapKeys(MessageReactionType.init))
             Assert.willBeEqual(loadedMessage?.reactions, loadedReactions)
@@ -254,8 +245,8 @@ class MessageDTO_Tests: XCTestCase {
 
     func test_messagePayload_isPinned_addedToPinnedMessages() throws {
         let channelId: ChannelId = .unique
-        let channelPayload: ChannelPayload<NoExtraData> = dummyPayload(with: channelId)
-        let payload: MessagePayload<NoExtraData> = .dummy(
+        let channelPayload: ChannelPayload = dummyPayload(with: channelId)
+        let payload: MessagePayload = .dummy(
             messageId: .unique,
             authorUserId: .unique,
             createdAt: "2018-12-12T15:33:46.488935Z".toDate(),
@@ -286,8 +277,8 @@ class MessageDTO_Tests: XCTestCase {
 
     func test_messagePayload_isNotPinned_removedFromPinnedMessages() throws {
         let channelId: ChannelId = .unique
-        let channelPayload: ChannelPayload<NoExtraData> = dummyPayload(with: channelId)
-        let payload: MessagePayload<NoExtraData> = .dummy(
+        let channelPayload: ChannelPayload = dummyPayload(with: channelId)
+        let payload: MessagePayload = .dummy(
             messageId: .unique,
             authorUserId: .unique,
             createdAt: "2018-12-12T15:33:46.488935Z".toDate(),
@@ -314,7 +305,7 @@ class MessageDTO_Tests: XCTestCase {
     }
 
     func test_messagePayloadNotStored_withoutChannelInfo() throws {
-        let payload: MessagePayload<NoExtraData> = .dummy(messageId: .unique, authorUserId: .unique)
+        let payload: MessagePayload = .dummy(messageId: .unique, authorUserId: .unique)
         assert(payload.channel == nil, "Channel must be `nil`")
         
         XCTAssertThrowsError(
@@ -332,8 +323,8 @@ class MessageDTO_Tests: XCTestCase {
         let messageId: MessageId = .unique
         let channelId: ChannelId = .unique
         
-        let channelPayload: ChannelPayload<NoExtraData> = dummyPayload(with: channelId)
-        let messagePayload: MessagePayload<NoExtraData> = .dummy(messageId: messageId, authorUserId: userId)
+        let channelPayload: ChannelPayload = dummyPayload(with: channelId)
+        let messagePayload: MessagePayload = .dummy(messageId: messageId, authorUserId: userId)
         
         try database.writeSynchronously { session in
             // Create the channel first
@@ -346,7 +337,7 @@ class MessageDTO_Tests: XCTestCase {
         }
         
         let loadedMessage: ChatMessage? = database.viewContext.message(id: messageId)?.asModel()
-        XCTAssertEqual(loadedMessage?.extraData, .defaultValue)
+        XCTAssertEqual(loadedMessage?.extraData, [:])
     }
     
     func test_messagePayload_asModel() throws {
@@ -374,7 +365,7 @@ class MessageDTO_Tests: XCTestCase {
             ])
         )
 
-        let messagePayload: MessagePayload<NoExtraData> = .dummy(
+        let messagePayload: MessagePayload = .dummy(
             messageId: messageId,
             quotedMessage: .dummy(
                 messageId: quotedMessageId,
@@ -389,6 +380,7 @@ class MessageDTO_Tests: XCTestCase {
                 videoAttachmentPayload
             ],
             authorUserId: messageAuthorId,
+            extraData: ["k": .string("v")],
             latestReactions: (0..<3).map { _ in
                 .dummy(messageId: messageId, user: .dummy(userId: .unique))
             },
@@ -513,7 +505,7 @@ class MessageDTO_Tests: XCTestCase {
         let mentionedUserIds: [UserId] = [currentUserId]
         let messageShowReplyInChannel = true
         let messageIsSilent = true
-        let messageExtraData: NoExtraData = .defaultValue
+        let messageExtraData: [String: RawJSON] = ["k": .string("v")]
 
         // Create message with attachments in the database.
         try database.writeSynchronously { session in
@@ -535,7 +527,7 @@ class MessageDTO_Tests: XCTestCase {
         }
         
         // Load the message from the database and convert to request body.
-        let requestBody: MessageRequestBody<NoExtraData> = try XCTUnwrap(
+        let requestBody: MessageRequestBody = try XCTUnwrap(
             database.viewContext.message(id: messageId)?.asRequestBody()
         )
 
@@ -548,7 +540,7 @@ class MessageDTO_Tests: XCTestCase {
         XCTAssertEqual(requestBody.parentId, parentMessageId)
         XCTAssertEqual(requestBody.showReplyInChannel, messageShowReplyInChannel)
         XCTAssertEqual(requestBody.isSilent, messageIsSilent)
-        XCTAssertEqual(requestBody.extraData, messageExtraData)
+        XCTAssertEqual(requestBody.extraData, ["k": .string("v")])
         XCTAssertEqual(requestBody.pinned, true)
         XCTAssertEqual(requestBody.pinExpires, messagePinning!.expirationDate)
         XCTAssertEqual(requestBody.attachments.map(\.type), attachments.map(\.type))
@@ -560,8 +552,8 @@ class MessageDTO_Tests: XCTestCase {
         let messageId: MessageId = .unique
         let channelId: ChannelId = .unique
         
-        let channelPayload: ChannelPayload<NoExtraData> = dummyPayload(with: channelId)
-        let messagePayload: MessagePayload<NoExtraData> = .dummy(messageId: messageId, authorUserId: userId)
+        let channelPayload: ChannelPayload = dummyPayload(with: channelId)
+        let messagePayload: MessagePayload = .dummy(messageId: messageId, authorUserId: userId)
         
         // Asynchronously save the payload to the db
         database.write { session in
@@ -578,7 +570,7 @@ class MessageDTO_Tests: XCTestCase {
         }
         
         // Load the message from the db
-        var loadedMessage: _ChatMessage<NoExtraData>? {
+        var loadedMessage: ChatMessage? {
             database.viewContext.message(id: messageId)?.asModel()
         }
         
@@ -605,10 +597,10 @@ class MessageDTO_Tests: XCTestCase {
         
         _ = try waitFor { completion in
             database.write({ (session) in
-                let currentUserPayload: CurrentUserPayload<NoExtraData> = .dummy(
+                let currentUserPayload: CurrentUserPayload = .dummy(
                     userId: currentUserId,
                     role: .admin,
-                    extraData: NoExtraData.defaultValue
+                    extraData: [:]
                 )
 
                 try session.saveCurrentUser(payload: currentUserPayload)
@@ -638,7 +630,7 @@ class MessageDTO_Tests: XCTestCase {
                     isSilent: false,
                     quotedMessageId: nil,
                     createdAt: nil,
-                    extraData: NoExtraData.defaultValue
+                    extraData: [:]
                 )
                 message1Id = message1DTO.id
                 // Assign locallyCreatedAt data do message 1
@@ -657,7 +649,7 @@ class MessageDTO_Tests: XCTestCase {
                     isSilent: false,
                     quotedMessageId: nil,
                     createdAt: nil,
-                    extraData: NoExtraData.defaultValue
+                    extraData: [:]
                 )
                 // Reset the `locallyCreateAt` value of the second message to simulate the message was sent
                 message2DTO.locallyCreatedAt = nil
@@ -682,10 +674,10 @@ class MessageDTO_Tests: XCTestCase {
         let channelId: ChannelId = .unique
         try database.createCurrentUser(id: .unique)
         try database.createChannel(cid: channelId, withMessages: false)
-        let messagePayload: MessagePayload<NoExtraData> = .dummy(
+        let messagePayload: MessagePayload = .dummy(
             messageId: .unique,
             authorUserId: .unique,
-            channel: ChannelDetailPayload<NoExtraData>.dummy(cid: channelId)
+            channel: ChannelDetailPayload.dummy(cid: channelId)
         )
 
         try database.writeSynchronously { session in
@@ -708,10 +700,10 @@ class MessageDTO_Tests: XCTestCase {
         
         _ = try waitFor { completion in
             database.write({ (session) in
-                let currentUserPayload: CurrentUserPayload<NoExtraData> = .dummy(
+                let currentUserPayload: CurrentUserPayload = .dummy(
                     userId: currentUserId,
                     role: .admin,
-                    extraData: NoExtraData.defaultValue
+                    extraData: [:]
                 )
 
                 try session.saveCurrentUser(payload: currentUserPayload)
@@ -751,13 +743,13 @@ class MessageDTO_Tests: XCTestCase {
                     isSilent: false,
                     quotedMessageId: nil,
                     createdAt: nil,
-                    extraData: NoExtraData.defaultValue
+                    extraData: [:]
                 )
                 newMessageId = messageDTO.id
             }, completion: completion)
         }
         
-        let loadedMessage: _ChatMessage<NoExtraDataTypes> = try unwrapAsync(
+        let loadedMessage: ChatMessage = try unwrapAsync(
             database.viewContext.message(id: newMessageId)?
                 .asModel()
         )
@@ -796,7 +788,7 @@ class MessageDTO_Tests: XCTestCase {
                     isSilent: false,
                     quotedMessageId: nil,
                     createdAt: nil,
-                    extraData: NoExtraData.defaultValue
+                    extraData: [:]
                 )
             }, completion: completion)
         }
@@ -808,10 +800,10 @@ class MessageDTO_Tests: XCTestCase {
         // Save current user first
         _ = try waitFor {
             database.write({
-                let currentUserPayload: CurrentUserPayload<NoExtraData> = .dummy(
+                let currentUserPayload: CurrentUserPayload = .dummy(
                     userId: .unique,
                     role: .admin,
-                    extraData: NoExtraData.defaultValue
+                    extraData: [:]
                 )
 
                 try $0.saveCurrentUser(payload: currentUserPayload)
@@ -834,7 +826,7 @@ class MessageDTO_Tests: XCTestCase {
                     isSilent: false,
                     quotedMessageId: nil,
                     createdAt: nil,
-                    extraData: NoExtraData.defaultValue
+                    extraData: [:]
                 )
             }, completion: completion)
         }
@@ -848,10 +840,10 @@ class MessageDTO_Tests: XCTestCase {
         let currentUserId: UserId = .unique
         
         try database.writeSynchronously { session in
-            let currentUserPayload: CurrentUserPayload<NoExtraData> = .dummy(
+            let currentUserPayload: CurrentUserPayload = .dummy(
                 userId: currentUserId,
                 role: .admin,
-                extraData: .defaultValue
+                extraData: [:]
             )
 
             try session.saveCurrentUser(payload: currentUserPayload)
@@ -870,7 +862,7 @@ class MessageDTO_Tests: XCTestCase {
                 pinning: MessagePinning(expirationDate: .unique),
                 quotedMessageId: nil,
                 isSilent: false,
-                extraData: NoExtraData.defaultValue
+                extraData: [:]
             )
             newMessageId = messageDTO.id
         }
@@ -911,7 +903,7 @@ class MessageDTO_Tests: XCTestCase {
                 isSilent: false,
                 quotedMessageId: nil,
                 createdAt: nil,
-                extraData: NoExtraData.defaultValue
+                extraData: [:]
             )
             // Get reply messageId
             replyMessageId = replyDTO.id
@@ -938,13 +930,13 @@ class MessageDTO_Tests: XCTestCase {
         let replyMessageId: MessageId = .unique
         
         // Create payload for reply message
-        let payload: MessagePayload<NoExtraData> = .dummy(
+        let payload: MessagePayload = .dummy(
             messageId: replyMessageId,
             parentId: messageId,
             showReplyInChannel: false,
             authorUserId: .unique,
             text: "Reply",
-            extraData: NoExtraData.defaultValue
+            extraData: [:]
         )
         
         // Save reply payload
@@ -1004,14 +996,14 @@ class MessageDTO_Tests: XCTestCase {
         let messageId: MessageId = .unique
         let channelId: ChannelId = .unique
         // Save channel with some messages
-        let channelPayload: ChannelPayload<NoExtraData> = dummyPayload(with: channelId, numberOfMessages: 5)
+        let channelPayload: ChannelPayload = dummyPayload(with: channelId, numberOfMessages: 5)
         let originalLastMessageAt: Date = channelPayload.channel.lastMessageAt ?? channelPayload.channel.createdAt
         try database.writeSynchronously {
             try $0.saveChannel(payload: channelPayload)
         }
         
         // Create a new message payload that's older than `channel.lastMessageAt`
-        let olderMessagePayload: MessagePayload<NoExtraData> = .dummy(
+        let olderMessagePayload: MessagePayload = .dummy(
             messageId: messageId,
             authorUserId: userId,
             createdAt: .unique(before: channelPayload.channel.lastMessageAt!)
@@ -1025,7 +1017,7 @@ class MessageDTO_Tests: XCTestCase {
         XCTAssertEqual(channel.lastMessageAt, originalLastMessageAt)
         
         // Create a new message payload that's newer than `channel.lastMessageAt`
-        let newerMessagePayload: MessagePayload<NoExtraData> = .dummy(
+        let newerMessagePayload: MessagePayload = .dummy(
             messageId: messageId,
             authorUserId: userId,
             createdAt: .unique(after: channelPayload.channel.lastMessageAt!)
@@ -1053,14 +1045,14 @@ class MessageDTO_Tests: XCTestCase {
         try database.createCurrentUser(id: currentUserId)
         try database.createChannel(cid: channelId, withMessages: false)
         
-        var createdMessages: [MessagePayload<NoExtraData>] = []
+        var createdMessages: [MessagePayload] = []
         
         let messageIdToQuotedIdMapping = [
             secondMessageId: firstMessageId,
             thirdMessageId: firstMessageId
         ]
         
-        let messageToBeQuoted: MessagePayload<NoExtraData> = .dummy(
+        let messageToBeQuoted: MessagePayload = .dummy(
             messageId: firstMessageId,
             quotedMessage: nil,
             attachments: [],
@@ -1076,7 +1068,7 @@ class MessageDTO_Tests: XCTestCase {
         createdMessages.append(messageToBeQuoted)
         
         messageIdToQuotedIdMapping.forEach { (messageId, quotedMessageId) in
-            let message: MessagePayload<NoExtraData> = .dummy(
+            let message: MessagePayload = .dummy(
                 messageId: messageId,
                 quotedMessage: .dummy(
                     messageId: quotedMessageId,
@@ -1136,9 +1128,9 @@ class MessageDTO_Tests: XCTestCase {
         try database.createCurrentUser(id: currentUserId)
         try database.createChannel(cid: channelId, withMessages: false)
         
-        var createdMessages: [MessagePayload<NoExtraData>] = []
+        var createdMessages: [MessagePayload] = []
         
-        let firstMessage: MessagePayload<NoExtraData> = .dummy(
+        let firstMessage: MessagePayload = .dummy(
             messageId: firstMessageId,
             quotedMessage: nil,
             attachments: [],
@@ -1153,7 +1145,7 @@ class MessageDTO_Tests: XCTestCase {
         )
         createdMessages.append(firstMessage)
         
-        let secondMessage: MessagePayload<NoExtraData> = .dummy(
+        let secondMessage: MessagePayload = .dummy(
             messageId: secondMessageId,
             quotedMessage: firstMessage,
             attachments: [],
@@ -1169,7 +1161,7 @@ class MessageDTO_Tests: XCTestCase {
         createdMessages.append(secondMessage)
         
         // Note that the third message contains a quotedMessageId instead of a quotedMessage
-        let thirdMessage: MessagePayload<NoExtraData> = .dummy(
+        let thirdMessage: MessagePayload = .dummy(
             messageId: thirdMessageId,
             quotedMessageId: secondMessageId,
             quotedMessage: nil,

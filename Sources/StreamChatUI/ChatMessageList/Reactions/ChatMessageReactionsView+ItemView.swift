@@ -5,7 +5,7 @@
 import StreamChat
 import UIKit
 
-extension _ChatMessageReactionsView {
+extension ChatMessageReactionsView {
     open class ItemView: _Button, AppearanceProvider {
         public var content: Content? {
             didSet { updateContentIfNeeded() }
@@ -56,7 +56,7 @@ extension _ChatMessageReactionsView {
 
 // MARK: - Content
 
-extension _ChatMessageReactionsView.ItemView {
+extension ChatMessageReactionsView.ItemView {
     public struct Content {
         public let useBigIcon: Bool
         public let reaction: ChatMessageReactionData
@@ -76,7 +76,7 @@ extension _ChatMessageReactionsView.ItemView {
 
 // MARK: - Private
 
-private extension _ChatMessageReactionsView.ItemView {
+private extension ChatMessageReactionsView.ItemView {
     var reactionImage: UIImage? {
         guard let content = content else { return nil }
 

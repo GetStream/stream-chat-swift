@@ -46,7 +46,7 @@ class ChannelQuery_Tests: XCTestCase {
             team: nil,
             members: [.unique],
             invites: [],
-            extraData: .defaultValue
+            extraData: [:]
         ))
         
         // Assert only type is part of path
@@ -68,7 +68,7 @@ class ChannelQuery_Tests: XCTestCase {
             team: nil,
             members: [.unique],
             invites: [],
-            extraData: .defaultValue
+            extraData: [:]
         ))
         XCTAssertEqual(query.apiPath, "custom_type")
     }
@@ -81,7 +81,7 @@ class ChannelQuery_Tests: XCTestCase {
             team: nil,
             members: [.unique],
             invites: [],
-            extraData: .defaultValue
+            extraData: [:]
         ))
         XCTAssertEqual(query.apiPath, "custom_type/id")
     }

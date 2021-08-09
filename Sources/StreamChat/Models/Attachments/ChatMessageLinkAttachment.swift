@@ -8,7 +8,7 @@ import Foundation
 ///
 /// The `ChatMessageLinkAttachment` attachment will be added to the message automatically
 /// if the message is sent with the text containing the URL.
-public typealias ChatMessageLinkAttachment = _ChatMessageAttachment<LinkAttachmentPayload>
+public typealias ChatMessageLinkAttachment = ChatMessageAttachment<LinkAttachmentPayload>
 
 /// Represents a payload for attachments with `.linkPreview` type.
 public struct LinkAttachmentPayload: AttachmentPayload {

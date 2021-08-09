@@ -22,7 +22,7 @@ class ChannelController_SwiftUI_Tests: iOS13TestCase {
     
     func test_controllerInitialValuesAreLoaded() {
         channelController.state_simulated = .localDataFetched
-        channelController.channel_simulated = .mock(cid: .unique, name: .unique, imageURL: .unique(), extraData: .defaultValue)
+        channelController.channel_simulated = .mock(cid: .unique, name: .unique, imageURL: .unique(), extraData: [:])
         channelController.messages_simulated = [.unique]
         
         let observableObject = channelController.observableObject
@@ -36,7 +36,7 @@ class ChannelController_SwiftUI_Tests: iOS13TestCase {
         let observableObject = channelController.observableObject
         
         // Simulate channel change
-        let newChannel: ChatChannel = .mock(cid: .unique, name: .unique, imageURL: .unique(), extraData: .defaultValue)
+        let newChannel: ChatChannel = .mock(cid: .unique, name: .unique, imageURL: .unique(), extraData: [:])
         channelController.channel_simulated = newChannel
         channelController.delegateCallback {
             $0.channelController(
@@ -95,7 +95,7 @@ class ChannelController_SwiftUI_Tests: iOS13TestCase {
             updatedAt: .unique,
             lastActiveAt: .unique,
             teams: [],
-            extraData: .defaultValue
+            extraData: [:]
         )
         
         // Simulate typing users change
@@ -113,13 +113,13 @@ class ChannelController_SwiftUI_Tests: iOS13TestCase {
 class ChannelControllerMock: ChatChannelController {
     @Atomic var synchronize_called = false
     
-    var channel_simulated: _ChatChannel<NoExtraData>?
-    override var channel: _ChatChannel<NoExtraData>? {
+    var channel_simulated: ChatChannel?
+    override var channel: ChatChannel? {
         channel_simulated
     }
     
-    var messages_simulated: [_ChatMessage<NoExtraData>]?
-    override var messages: LazyCachedMapCollection<_ChatMessage<NoExtraData>> {
+    var messages_simulated: [ChatMessage]?
+    override var messages: LazyCachedMapCollection<ChatMessage> {
         messages_simulated.map { $0.lazyCachedMap { $0 } } ?? super.messages
     }
 
@@ -129,8 +129,8 @@ class ChannelControllerMock: ChatChannelController {
         set { super.state = newValue }
     }
     
-    init() {
-        super.init(channelQuery: .init(channelPayload: .unique), client: .mock)
+    init(channelQuery: ChannelQuery = .init(channelPayload: .unique)) {
+        super.init(channelQuery: channelQuery, client: .mock)
     }
     
     override func synchronize(_ completion: ((Error?) -> Void)? = nil) {
@@ -138,7 +138,7 @@ class ChannelControllerMock: ChatChannelController {
     }
 }
 
-extension _ChatMessage {
+extension ChatMessage {
     static var unique: ChatMessage {
         .init(
             id: .unique,
@@ -154,7 +154,7 @@ extension _ChatMessage {
             parentMessageId: nil,
             showReplyInChannel: true,
             replyCount: 2,
-            extraData: .init(),
+            extraData: [:],
             quotedMessage: { nil },
             isSilent: false,
             reactionScores: ["": 1],

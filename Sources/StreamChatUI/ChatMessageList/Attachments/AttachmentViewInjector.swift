@@ -10,14 +10,7 @@ import StreamChat
 ///
 /// - Important: This is an abstract superclass meant to be subclassed.
 ///
-public typealias AttachmentViewInjector = _AttachmentViewInjector<NoExtraData>
-
-/// An object used for injecting attachment views into `ChatMessageContentView`. The injector is also
-/// responsible for updating the content of the injected views.
-///
-/// - Important: This is an abstract superclass meant to be subclassed.
-///
-open class _AttachmentViewInjector<ExtraData: ExtraDataTypes> {
+open class AttachmentViewInjector {
     /// Says whether a message content should start filling all available width.
     /// Is `true` by default.
     open var fillAllAvailableWidth: Bool = true
@@ -32,19 +25,19 @@ open class _AttachmentViewInjector<ExtraData: ExtraDataTypes> {
     open func contentViewDidUpdateContent() {}
 
     /// The target view used for injecting the views of this injector.
-    public unowned let contentView: _ChatMessageContentView<ExtraData>
+    public unowned let contentView: ChatMessageContentView
 
     /// Creates a new instance of the injector.
     ///
     /// - Parameter contentView: The target view used for injecting the views of this injector.
     ///
-    public required init(_ contentView: _ChatMessageContentView<ExtraData>) {
+    public required init(_ contentView: ChatMessageContentView) {
         self.contentView = contentView
     }
 
     public func attachments<Payload: AttachmentPayload>(
         payloadType: Payload.Type
-    ) -> [_ChatMessageAttachment<Payload>] {
+    ) -> [ChatMessageAttachment<Payload>] {
         contentView.content?.attachments(payloadType: payloadType) ?? []
     }
 

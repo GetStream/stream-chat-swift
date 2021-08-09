@@ -6,24 +6,24 @@ import Foundation
 import SwiftUI
 
 @available(iOS 13, *)
-extension _ChatChannelMemberListController {
+extension ChatChannelMemberListController {
     /// A wrapper object that exposes the controller variables in the form of `ObservableObject` to be used in SwiftUI.
     public var observableObject: ObservableObject { .init(controller: self) }
     
-    /// A wrapper object for `_ChatChannelMemberListController` type which makes it possible to use the controller
+    /// A wrapper object for `ChatChannelMemberListController` type which makes it possible to use the controller
     /// comfortably in SwiftUI.
     public class ObservableObject: SwiftUI.ObservableObject {
         /// The underlying controller. You can still access it and call methods on it.
-        public let controller: _ChatChannelMemberListController
+        public let controller: ChatChannelMemberListController
         
         /// The channel members.
-        @Published public private(set) var members: LazyCachedMapCollection<_ChatChannelMember<ExtraData.User>> = []
+        @Published public private(set) var members: LazyCachedMapCollection<ChatChannelMember> = []
         
         /// The current state of the controller.
         @Published public private(set) var state: DataController.State
         
         /// Creates a new `ObservableObject` wrapper with the provided controller instance.
-        init(controller: _ChatChannelMemberListController<ExtraData>) {
+        init(controller: ChatChannelMemberListController) {
             self.controller = controller
             state = controller.state
             
@@ -35,10 +35,10 @@ extension _ChatChannelMemberListController {
 }
 
 @available(iOS 13, *)
-extension _ChatChannelMemberListController.ObservableObject: _ChatChannelMemberListControllerDelegate {
+extension ChatChannelMemberListController.ObservableObject: ChatChannelMemberListControllerDelegate {
     public func memberListController(
-        _ controller: _ChatChannelMemberListController<ExtraData>,
-        didChangeMembers changes: [ListChange<_ChatChannelMember<ExtraData.User>>]
+        _ controller: ChatChannelMemberListController,
+        didChangeMembers changes: [ListChange<ChatChannelMember>]
     ) {
         members = controller.members
     }

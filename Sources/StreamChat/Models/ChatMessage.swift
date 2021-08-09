@@ -9,23 +9,7 @@ import Foundation
 public typealias MessageId = String
 
 /// A type representing a chat message. `ChatMessage` is an immutable snapshot of a chat message entity at the given time.
-///
-/// - Note: `ChatMessage` is a typealias of `_ChatMessage` with default extra data. If you're using custom extra data,
-/// create your own typealias of `_ChatMessage`.
-///
-/// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/Cheat-Sheet#working-with-extra-data).
-///
-public typealias ChatMessage = _ChatMessage<NoExtraData>
-
-/// A type representing a chat message. `_ChatMessage` is an immutable snapshot of a chat message entity at the given time.
-///
-/// - Note: `_ChatMessage` type is not meant to be used directly. If you're using default extra data, use `ChatMessage`
-/// typealias instead. If you're using custom extra data, create your own typealias of `_ChatMessage`.
-///
-/// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/Cheat-Sheet#working-with-extra-data).
-///
-@dynamicMemberLookup
-public struct _ChatMessage<ExtraData: ExtraDataTypes> {
+public struct ChatMessage {
     /// A unique identifier of the message.
     public let id: MessageId
     
@@ -71,15 +55,15 @@ public struct _ChatMessage<ExtraData: ExtraDataTypes> {
     ///
     /// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/Cheat-Sheet#working-with-extra-data).
     ///
-    public let extraData: ExtraData.Message
-    
+    public let extraData: [String: RawJSON]
+
     /// Quoted message.
     ///
     /// If message is inline reply this property will contain the message quoted by this reply.
     ///
-    public var quotedMessage: _ChatMessage<ExtraData>? { _quotedMessage }
+    public var quotedMessage: ChatMessage? { _quotedMessage }
 
-    @CoreDataLazy internal var _quotedMessage: _ChatMessage<ExtraData>?
+    @CoreDataLazy internal var _quotedMessage: ChatMessage?
     
     /// A flag indicating whether the message is a silent message.
     ///
@@ -93,21 +77,21 @@ public struct _ChatMessage<ExtraData: ExtraDataTypes> {
     /// The user which is the author of the message.
     ///
     /// - Important: The `author` property is loaded and evaluated lazily to maintain high performance.
-    public var author: _ChatUser<ExtraData.User> { _author }
+    public var author: ChatUser { _author }
     
-    @CoreDataLazy internal var _author: _ChatUser<ExtraData.User>
+    @CoreDataLazy internal var _author: ChatUser
     
     /// A list of users that are mentioned in this message.
     ///
     /// - Important: The `mentionedUsers` property is loaded and evaluated lazily to maintain high performance.
-    public var mentionedUsers: Set<_ChatUser<ExtraData.User>> { _mentionedUsers }
+    public var mentionedUsers: Set<ChatUser> { _mentionedUsers }
     
-    @CoreDataLazy internal var _mentionedUsers: Set<_ChatUser<ExtraData.User>>
+    @CoreDataLazy internal var _mentionedUsers: Set<ChatUser>
 
     /// A list of users that participated in this message thread
-    public var threadParticipants: Set<_ChatUser<ExtraData.User>> { _threadParticipants }
+    public var threadParticipants: Set<ChatUser> { _threadParticipants }
     
-    @CoreDataLazy internal var _threadParticipants: Set<_ChatUser<ExtraData.User>>
+    @CoreDataLazy internal var _threadParticipants: Set<ChatUser>
 
     @CoreDataLazy internal var _attachments: [AnyChatMessageAttachment]
 
@@ -119,9 +103,9 @@ public struct _ChatMessage<ExtraData: ExtraDataTypes> {
     /// A list of latest 25 replies to this message.
     ///
     /// - Important: The `latestReplies` property is loaded and evaluated lazily to maintain high performance.
-    public var latestReplies: [_ChatMessage<ExtraData>] { _latestReplies }
+    public var latestReplies: [ChatMessage] { _latestReplies }
     
-    @CoreDataLazy internal var _latestReplies: [_ChatMessage<ExtraData>]
+    @CoreDataLazy internal var _latestReplies: [ChatMessage]
     
     /// A possible additional local state of the message. Applies only for the messages of the current user.
     ///
@@ -140,22 +124,22 @@ public struct _ChatMessage<ExtraData: ExtraDataTypes> {
     ///
     /// - Note: There can be `10` reactions at max.
     /// - Important: The `latestReactions` property is loaded and evaluated lazily to maintain high performance.
-    public var latestReactions: Set<_ChatMessageReaction<ExtraData>> { _latestReactions }
+    public var latestReactions: Set<ChatMessageReaction> { _latestReactions }
     
-    @CoreDataLazy internal var _latestReactions: Set<_ChatMessageReaction<ExtraData>>
+    @CoreDataLazy internal var _latestReactions: Set<ChatMessageReaction>
     
     /// The entire list of reactions to the message left by the current user.
     ///
     /// - Important: The `currentUserReactions` property is loaded and evaluated lazily to maintain high performance.
-    public var currentUserReactions: Set<_ChatMessageReaction<ExtraData>> { _currentUserReactions }
+    public var currentUserReactions: Set<ChatMessageReaction> { _currentUserReactions }
     
-    @CoreDataLazy internal var _currentUserReactions: Set<_ChatMessageReaction<ExtraData>>
+    @CoreDataLazy internal var _currentUserReactions: Set<ChatMessageReaction>
     
     /// `true` if the author of the message is the currently logged-in user.
     public let isSentByCurrentUser: Bool
 
     /// The message pinning information. Is `nil` if the message is not pinned.
-    public let pinDetails: _MessagePinDetails<ExtraData>?
+    public let pinDetails: MessagePinDetails?
     
     internal init(
         id: MessageId,
@@ -171,21 +155,21 @@ public struct _ChatMessage<ExtraData: ExtraDataTypes> {
         parentMessageId: MessageId?,
         showReplyInChannel: Bool,
         replyCount: Int,
-        extraData: ExtraData.Message,
-        quotedMessage: @escaping () -> _ChatMessage<ExtraData>?,
+        extraData: [String: RawJSON],
+        quotedMessage: @escaping () -> ChatMessage?,
         isSilent: Bool,
         reactionScores: [MessageReactionType: Int],
-        author: @escaping () -> _ChatUser<ExtraData.User>,
-        mentionedUsers: @escaping () -> Set<_ChatUser<ExtraData.User>>,
-        threadParticipants: @escaping () -> Set<_ChatUser<ExtraData.User>>,
+        author: @escaping () -> ChatUser,
+        mentionedUsers: @escaping () -> Set<ChatUser>,
+        threadParticipants: @escaping () -> Set<ChatUser>,
         attachments: @escaping () -> [AnyChatMessageAttachment],
-        latestReplies: @escaping () -> [_ChatMessage<ExtraData>],
+        latestReplies: @escaping () -> [ChatMessage],
         localState: LocalMessageState?,
         isFlaggedByCurrentUser: Bool,
-        latestReactions: @escaping () -> Set<_ChatMessageReaction<ExtraData>>,
-        currentUserReactions: @escaping () -> Set<_ChatMessageReaction<ExtraData>>,
+        latestReactions: @escaping () -> Set<ChatMessageReaction>,
+        currentUserReactions: @escaping () -> Set<ChatMessageReaction>,
         isSentByCurrentUser: Bool,
-        pinDetails: _MessagePinDetails<ExtraData>?,
+        pinDetails: MessagePinDetails?,
         attachmentCounts: @escaping () -> [AttachmentType: Int],
         underlyingContext: NSManagedObjectContext?
     ) {
@@ -210,32 +194,32 @@ public struct _ChatMessage<ExtraData: ExtraDataTypes> {
         self.isSentByCurrentUser = isSentByCurrentUser
         self.pinDetails = pinDetails
         
-        self.$_author = (author, underlyingContext)
-        self.$_mentionedUsers = (mentionedUsers, underlyingContext)
-        self.$_threadParticipants = (threadParticipants, underlyingContext)
-        self.$_attachments = (attachments, underlyingContext)
-        self.$_latestReplies = (latestReplies, underlyingContext)
-        self.$_latestReactions = (latestReactions, underlyingContext)
-        self.$_currentUserReactions = (currentUserReactions, underlyingContext)
-        self.$_quotedMessage = (quotedMessage, underlyingContext)
-        self.$_attachmentCounts = (attachmentCounts, underlyingContext)
+        $_author = (author, underlyingContext)
+        $_mentionedUsers = (mentionedUsers, underlyingContext)
+        $_threadParticipants = (threadParticipants, underlyingContext)
+        $_attachments = (attachments, underlyingContext)
+        $_latestReplies = (latestReplies, underlyingContext)
+        $_latestReactions = (latestReactions, underlyingContext)
+        $_currentUserReactions = (currentUserReactions, underlyingContext)
+        $_quotedMessage = (quotedMessage, underlyingContext)
+        $_attachmentCounts = (attachmentCounts, underlyingContext)
     }
 }
 
-extension _ChatMessage {
+extension ChatMessage {
     /// Indicates whether the message is pinned or not.
     public var isPinned: Bool {
         pinDetails != nil
     }
 }
 
-public extension _ChatMessage {
+public extension ChatMessage {
     /// Returns all the attachments with the payload of the provided type.
     ///
     /// - Important: Attachments are loaded lazily and cached to maintain high performance.
     func attachments<Payload: AttachmentPayload>(
         payloadType: Payload.Type
-    ) -> [_ChatMessageAttachment<Payload>] {
+    ) -> [ChatMessageAttachment<Payload>] {
         _attachments.compactMap {
             $0.attachment(payloadType: payloadType)
         }
@@ -276,6 +260,13 @@ public extension _ChatMessage {
         attachments(payloadType: LinkAttachmentPayload.self)
     }
     
+    /// Returns the attachments of `.audio` type.
+    ///
+    /// - Important: The `audioAttachments` are loaded lazily and cached to maintain high performance.
+    var audioAttachments: [ChatMessageAudioAttachment] {
+        attachments(payloadType: AudioAttachmentPayload.self)
+    }
+    
     /// Returns attachment for the given identifier.
     /// - Parameter id: Attachment identifier.
     /// - Returns: A type-erased attachment.
@@ -284,19 +275,13 @@ public extension _ChatMessage {
     }
 }
 
-extension _ChatMessage: Hashable {
+extension ChatMessage: Hashable {
     public static func == (lhs: Self, rhs: Self) -> Bool {
         lhs.id == rhs.id
     }
     
     public func hash(into hasher: inout Hasher) {
         hasher.combine(id)
-    }
-}
-
-public extension _ChatMessage {
-    subscript<T>(dynamicMember keyPath: KeyPath<ExtraData.Message, T>) -> T {
-        extraData[keyPath: keyPath]
     }
 }
 
@@ -325,12 +310,12 @@ public enum MessageType: String, Codable {
 }
 
 // The pinning information of a message.
-public struct _MessagePinDetails<ExtraData: ExtraDataTypes> {
+public struct MessagePinDetails {
     /// Date when the message got pinned
     public let pinnedAt: Date
 
     /// The user that pinned the message
-    public let pinnedBy: _ChatUser<ExtraData.User>
+    public let pinnedBy: ChatUser
 
     /// Date when the message pin expires. An nil value means that message does not expire
     public let expiresAt: Date
@@ -357,10 +342,3 @@ public enum LocalMessageState: String {
     /// Deleting of the message failed after multiple of tries. The system is not trying to delete this message anymore.
     case deletingFailed
 }
-
-/// You need to make your custom type conforming to this protocol if you want to use it for extending `ChatMessage` entity with
-/// your custom additional data.
-///
-/// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/Cheat-Sheet#working-with-extra-data).
-///
-public protocol MessageExtraData: ExtraData {}

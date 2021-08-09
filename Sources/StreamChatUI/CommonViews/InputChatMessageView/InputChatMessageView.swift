@@ -6,14 +6,11 @@ import StreamChat
 import UIKit
 
 /// A view to input content of a message.
-public typealias InputChatMessageView = _InputChatMessageView<NoExtraData>
-
-/// A view to input content of a message.
-open class _InputChatMessageView<ExtraData: ExtraDataTypes>: _View, ComponentsProvider, AppearanceProvider {
+open class InputChatMessageView: _View, ComponentsProvider, AppearanceProvider {
     /// The content of the view
     public struct Content {
         /// The message that is being quoted.
-        var quotingMessage: _ChatMessage<ExtraData>?
+        var quotingMessage: ChatMessage?
         /// The command that the message produces.
         var command: Command?
     }

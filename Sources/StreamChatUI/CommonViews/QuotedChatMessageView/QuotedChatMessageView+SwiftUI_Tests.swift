@@ -11,8 +11,6 @@ import XCTest
 class QuotedChatMessageView_SwiftUI_Tests: XCTestCase {
     func test_injectedSwiftUIView() {
         struct CustomQuotedChatMessageView: QuotedChatMessageView.SwiftUIView {
-            typealias ExtraData = NoExtraData
-
             @ObservedObject var dataSource: QuotedChatMessageView.ObservedObject<Self>
 
             init(dataSource: QuotedChatMessageView.ObservedObject<Self>) {
@@ -38,7 +36,7 @@ class QuotedChatMessageView_SwiftUI_Tests: XCTestCase {
         }
 
         let view = QuotedChatMessageView.SwiftUIWrapper<CustomQuotedChatMessageView>()
-        view.content = _QuotedChatMessageView<NoExtraData>.Content(
+        view.content = QuotedChatMessageView.Content(
             message: .mock(
                 id: .unique,
                 cid: .unique,

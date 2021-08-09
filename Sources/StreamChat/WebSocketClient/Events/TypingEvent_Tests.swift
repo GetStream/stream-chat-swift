@@ -7,13 +7,13 @@
 import XCTest
 
 class TypingEvent_Tests: XCTestCase {
-    var eventDecoder: EventDecoder<NoExtraData>!
+    var eventDecoder: EventDecoder!
     var cid: ChannelId = ChannelId(type: .messaging, id: "general")
     var userId = "luke_skywalker"
 
     override func setUp() {
         super.setUp()
-        eventDecoder = EventDecoder<NoExtraData>()
+        eventDecoder = EventDecoder()
     }
 
     func test_parseTypingStartEvent() throws {
@@ -68,7 +68,7 @@ class TypingEventsIntegration_Tests: XCTestCase {
     var client: ChatClient!
     var currentUserId: UserId!
 
-    let eventDecoder = EventDecoder<NoExtraData>()
+    let eventDecoder = EventDecoder()
 
     override func setUp() {
         super.setUp()

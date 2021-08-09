@@ -10,7 +10,7 @@ extension TimeInterval {
 }
 
 /// Automatically sends a `TypingStop` event if it hasn't come in a specified time after `TypingStart`.
-class TypingStartCleanupMiddleware<ExtraData: ExtraDataTypes>: EventMiddleware {
+class TypingStartCleanupMiddleware: EventMiddleware {
     /// A closure that will be invoked with `stop typing` event when the `incomingTypingStartEventTimeout` has passed
     /// after `start typing` event.
     let emitEvent: (Event) -> Void

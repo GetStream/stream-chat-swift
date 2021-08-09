@@ -6,6 +6,7 @@ import StreamChat
 import UIKit
 
 /// The delegate used in `LinkAttachmentViewInjector` to communicate user interactions.
+@available(iOSApplicationExtension, unavailable)
 public protocol LinkPreviewViewDelegate: ChatMessageContentViewDelegate {
     /// Called when the user taps the link preview.
     func didTapOnLinkAttachment(
@@ -15,10 +16,8 @@ public protocol LinkPreviewViewDelegate: ChatMessageContentViewDelegate {
 }
 
 /// View injector for showing link attachments.
-public typealias LinkAttachmentViewInjector = _LinkAttachmentViewInjector<NoExtraData>
-
-/// View injector for showing link attachments.
-open class _LinkAttachmentViewInjector<ExtraData: ExtraDataTypes>: _AttachmentViewInjector<ExtraData> {
+@available(iOSApplicationExtension, unavailable)
+open class LinkAttachmentViewInjector: AttachmentViewInjector {
     open private(set) lazy var linkPreviewView = contentView
         .components
         .linkPreviewView
