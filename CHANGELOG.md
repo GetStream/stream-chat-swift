@@ -3,12 +3,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+### 🔄 Changed
+
+# [4.0.0-beta.9](https://github.com/GetStream/stream-chat-swift/releases/tag/4.0.0-beta.9)
+_August 05, 2021_
+
 ### ⚠️ Breaking Changes from `4.0-beta.8`
 - Extra data is now stored on a hashmap and not using the `ExtraData` generic system
 - `ChatMessageLayoutOptionsResolver.optionsForMessage` has a new parameter: `appearance` [#1304](https://github.com/GetStream/stream-chat-swift/issues/1304)
 - Renamed `Components.navigationTitleView` -> `Components.titleContainerView` [#1294](https://github.com/GetStream/stream-chat-swift/pull/1294)
 
-### New Extra Data Type
+#### New Extra Data Type
 
 The new `4.0` release changes how `extraData` is stored and uses a simpler hashmap-based solution. This approach does not require creating type aliases for all generic classes such as `ChatClient`.
 
@@ -73,6 +78,7 @@ extension ChatUser {
 - Added `ChatThreadHeaderView` UI Component [#1294](https://github.com/GetStream/stream-chat-swift/pull/1294)
 - Added custom channel events support [#1309](https://github.com/GetStream/stream-chat-swift/pull/1309)
 - Added `ChatMessageAudioAttachment`, you can access them via `ChatMessage.audioAttachments`. There's no UI support as of now, it's in our Roadmap. [#1322](https://github.com/GetStream/stream-chat-swift/issues/1322)
+- Added message ordering parameter to all `ChannelController` initializers. If you use `ChatChannelListRouter` it can be done by overriding a `showMessageList` method on it. [#1338](https://github.com/GetStream/stream-chat-swift/pull/1338)
 - Added support for custom localization of components in framework [#1330](https://github.com/GetStream/stream-chat-swift/pull/1330)
 
 ### 🐞 Fixed
@@ -87,6 +93,8 @@ extension ChatUser {
 
 ### 🔄 Changed
 - `ContainerStackView` doesn't `assert` when trying to remove a subview, these operations are now no-op [#1328](https://github.com/GetStream/stream-chat-swift/issues/1328)
+- `ChatClientConfig`'s `isLocalStorageEnabled`'s default value is now `false`
+- `/sync` endpoint calls optimized for a setup when local caching is disabled i.e. `isLocalStorageEnabled` is set to false.
 
 # [4.0.0-beta.8](https://github.com/GetStream/stream-chat-swift/releases/tag/4.0.0-beta.8)
 _July 21, 2021_

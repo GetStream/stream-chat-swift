@@ -11,8 +11,6 @@ import XCTest
 class ChatChannelUnreadCountView_SwiftUI_Tests: XCTestCase {
     func test_injectedSwiftUIView() {
         struct CustomUnreadCountView: ChatChannelUnreadCountView.SwiftUIView {
-            public typealias ExtraData = NoExtraData
-
             @ObservedObject var dataSource: ChatChannelUnreadCountView.ObservedObject<Self>
 
             public init(dataSource: ChatChannelUnreadCountView.ObservedObject<Self>) {

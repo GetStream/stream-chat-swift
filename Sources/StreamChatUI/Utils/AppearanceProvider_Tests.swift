@@ -8,8 +8,6 @@ import StreamChat
 import XCTest
 
 class AppearanceProvider_Tests: XCTestCase {
-    typealias ExtraData = NoExtraData
-    
     func test_appearance_passedDownToSubview() {
         let parentView = TestAppearanceView()
         let subView = TestAppearanceView()

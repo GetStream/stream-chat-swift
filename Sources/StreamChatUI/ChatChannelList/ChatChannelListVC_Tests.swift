@@ -213,7 +213,7 @@ extension ChatChannelListVC_Tests {
         let channelListVC = FakeChatChannelListVC()
         channelListVC.controller = mockedChannelListController
 
-        let noConflictChanges: [ListChange<_ChatChannel>] = [
+        let noConflictChanges: [ListChange<ChatChannel>] = [
             .update(.mock(cid: .unique), index: .init(row: 1, section: 0)),
             .update(.mock(cid: .unique), index: .init(row: 2, section: 0)),
             .insert(.mock(cid: .unique), index: .init(row: 3, section: 0)),
@@ -234,7 +234,7 @@ extension ChatChannelListVC_Tests {
         let channelListVC = FakeChatChannelListVC()
         channelListVC.controller = mockedChannelListController
 
-        let hasConflictChanges: [ListChange<_ChatChannel>] = [
+        let hasConflictChanges: [ListChange<ChatChannel>] = [
             .update(.mock(cid: .unique), index: .init(row: 1, section: 0)),
             .update(.mock(cid: .unique), index: .init(row: 2, section: 0)),
             .insert(.mock(cid: .unique), index: .init(row: 3, section: 0)),
@@ -255,7 +255,7 @@ extension ChatChannelListVC_Tests {
         let channelListVC = FakeChatChannelListVC()
         channelListVC.controller = mockedChannelListController
 
-        let hasConflictChanges: [ListChange<_ChatChannel>] = [
+        let hasConflictChanges: [ListChange<ChatChannel>] = [
             .update(.mock(cid: .unique), index: .init(row: 1, section: 0)),
             .update(.mock(cid: .unique), index: .init(row: 2, section: 0)),
             .insert(.mock(cid: .unique), index: .init(row: 3, section: 0)),
@@ -276,7 +276,7 @@ extension ChatChannelListVC_Tests {
         let channelListVC = FakeChatChannelListVC()
         channelListVC.controller = mockedChannelListController
 
-        let hasConflictChanges: [ListChange<_ChatChannel>] = [
+        let hasConflictChanges: [ListChange<ChatChannel>] = [
             .update(.mock(cid: .unique), index: .init(row: 1, section: 0)),
             .update(.mock(cid: .unique), index: .init(row: 2, section: 0)),
             .insert(.mock(cid: .unique), index: .init(row: 3, section: 0)),
@@ -297,7 +297,7 @@ extension ChatChannelListVC_Tests {
         let channelListVC = FakeChatChannelListVC()
         channelListVC.controller = mockedChannelListController
 
-        let hasConflictChanges: [ListChange<_ChatChannel>] = [
+        let hasConflictChanges: [ListChange<ChatChannel>] = [
             .update(.mock(cid: .unique), index: .init(row: 1, section: 0)),
             .update(.mock(cid: .unique), index: .init(row: 2, section: 0)),
             .insert(.mock(cid: .unique), index: .init(row: 3, section: 0)),

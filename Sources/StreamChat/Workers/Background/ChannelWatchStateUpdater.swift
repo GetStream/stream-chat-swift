@@ -4,7 +4,7 @@
 
 import CoreData
 
-/// After WebSocket changes it's state to `connected` we need to start watching existing channels so we can receive updated on them.
+/// After WebSocket changes it's state to `connected` we need to start watching existing channels so we can receive updates on them.
 /// This background worker listens to `ConnectionStatusUpdated` event and on `connected` we are fetching all channels from DB and
 /// sending ChannelListQuery to the backend to start `watching` channels.
 final class ChannelWatchStateUpdater: EventWorker {

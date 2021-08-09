@@ -36,8 +36,6 @@ final class GuestEndpoints_Tests: XCTestCase {
     }
     
     func test_token_buildsCorrectly_withCustomExtraData() {
-        let extraData: [String: RawJSON] = ["company": .string("getstream.io")]
-
         let payload = GuestUserTokenRequestPayload(
             userId: .unique,
             name: .unique,

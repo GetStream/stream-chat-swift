@@ -11,8 +11,6 @@ import XCTest
 class ChatChannelAvatarView_SwiftUI_Tests: XCTestCase {
     func test_injectedSwiftUIView() {
         struct CustomChatChannelAvatarView: ChatChannelAvatarView.SwiftUIView {
-            typealias ExtraData = NoExtraData
-
             @ObservedObject var dataSource: ChatChannelAvatarView.ObservedObject<Self>
             
             init(dataSource: ChatChannelAvatarView.ObservedObject<Self>) {

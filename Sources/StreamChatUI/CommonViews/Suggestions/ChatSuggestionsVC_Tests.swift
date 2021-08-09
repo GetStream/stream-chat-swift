@@ -20,7 +20,7 @@ class ChatSuggestionsVC_Tests: XCTestCase {
         .init(name: "vaderfy", description: "", set: "", args: "[@username] [text]")
     ]
     
-    private let mentions: [_ChatUser] = [
+    private let mentions: [ChatUser] = [
         .mock(
             id: "vader",
             name: "Mr Vader",
