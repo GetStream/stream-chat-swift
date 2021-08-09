@@ -9,17 +9,19 @@ import SwiftUI
 import XCTest
 
 @available(iOS 13.0, *)
-class ChatMessageListView_Tests: iOS13TestCase {
-    var chatMessageList: SwiftUIViewControllerRepresentable<ChatMessageListVC>!
+class ChatChannelView_Tests: iOS13TestCase {
+    var chatChannel: SwiftUIViewControllerRepresentable<ChatChannelVC>!
     var mockedChannelController: ChatChannelController_Mock!
+    var mockedUserSearchController: ChatUserSearchController_Mock!
 
     override func setUp() {
         super.setUp()
         mockedChannelController = ChatChannelController_Mock.mock()
-        chatMessageList = ChatMessageListVC.asView(mockedChannelController)
+        mockedUserSearchController = ChatUserSearchController_Mock.mock()
+        chatChannel = ChatChannelVC.asView((mockedChannelController, mockedUserSearchController))
     }
 
-    func test_chatMessageList_isPopulated() {
+    func test_chatChannel_isPopulated() {
         mockedChannelController.simulateInitial(
             channel: .mock(cid: .unique),
             messages: [
@@ -31,7 +33,7 @@ class ChatMessageListView_Tests: iOS13TestCase {
         )
 
         AssertSnapshot(
-            chatMessageList,
+            chatChannel,
             isEmbeddedInNavigationController: true,
             variants: [.defaultLight]
         )
@@ -40,6 +42,7 @@ class ChatMessageListView_Tests: iOS13TestCase {
     func test_customNavigationViewValues_arePopulated() {
         struct CustomView: View {
             let mockedChannelController = ChatChannelController_Mock.mock()
+            let mockedUserSearchController = ChatUserSearchController_Mock.mock()
 
             init() {
                 mockedChannelController.simulateInitial(
@@ -54,7 +57,7 @@ class ChatMessageListView_Tests: iOS13TestCase {
 
             var body: some View {
                 NavigationView {
-                    ChatMessageListVC.asView(mockedChannelController)
+                    ChatChannelVC.asView((mockedChannelController, mockedUserSearchController))
                         .navigationBarTitle("Custom title", displayMode: .inline)
                         .navigationBarItems(
                             leading:
