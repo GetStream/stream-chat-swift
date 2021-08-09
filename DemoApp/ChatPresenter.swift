@@ -17,6 +17,25 @@ class DemoChatChannelListRouter: ChatChannelListRouter {
         rootNavigationController?.pushViewController(chatViewController, animated: true)
     }
     
+    override func showCurrentUserProfile() {
+        rootViewController.presentAlert(title: nil, actions: [
+            .init(title: "Logout", style: .destructive, handler: { _ in
+                let window = self.rootViewController.view.window!
+                guard let navigationController = UIStoryboard(name: "Main", bundle: Bundle.main)
+                    .instantiateInitialViewController() as? UINavigationController else {
+                    return
+                }
+                guard let sceneDelegate = window.windowScene?.delegate as? SceneDelegate else {
+                    return
+                }
+                sceneDelegate.coordinator = DemoAppCoordinator(navigationController: navigationController)
+                UIView.transition(with: window, duration: 0.3, options: .transitionFlipFromLeft, animations: {
+                    window.rootViewController = navigationController
+                })
+            })
+        ])
+    }
+    
     override func didTapMoreButton(for cid: ChannelId) {
         let channelController = rootViewController.controller.client.channelController(for: cid)
         rootViewController.presentAlert(title: "Select an action", actions: [

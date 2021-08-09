@@ -7,9 +7,9 @@ import StreamChatUI
 import UIKit
 
 final class DemoAppCoordinator {
-    private var connectionController: ChatConnectionController?
-    private let navigationController: UINavigationController
-    private let connectionDelegate: BannerShowingConnectionDelegate
+    var connectionController: ChatConnectionController?
+    let navigationController: UINavigationController
+    let connectionDelegate: BannerShowingConnectionDelegate
     
     init(navigationController: UINavigationController) {
         // Since log is first touched in `BannerShowingConnectionDelegate`,
