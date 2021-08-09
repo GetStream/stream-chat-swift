@@ -33,16 +33,17 @@ open class ChatChannelListVC: _ViewController,
         .init()
         .withoutAutoresizingMaskConstraints
     
-    /// Toast which will be shown when there was error thrown when fetching either local or remote channels with action to retry.
-    open private(set) lazy var errorOccurredNotificationView: UIView = components
+    /// View which will be shown at the bottom when an error occurs when fetching either local or remote channels.
+    /// This view has an action to retry the channel loading.
+    open private(set) lazy var channelListErrorView: UIView = components
         .channelListErrorView
         .init()
         .withoutAutoresizingMaskConstraints
     
-    /// Value of `errorOccurredNotificationView` height constraint  toast message to be animated.
-    var errorOccurredNotificationViewHeight: CGFloat { 70 }
+    /// Value of `channelListErrorView` height constraint.
+    var channelListErrorViewHeight: CGFloat { 70 }
     
-    /// Constraint from bottom to `errorOccurredNotificationView`
+    /// Constraint from bottom to of `channelListErrorView`
     var bottomAnimationConstraint: NSLayoutConstraint?
     
     /// A router object responsible for handling navigation actions of this view controller.
@@ -122,14 +123,13 @@ open class ChatChannelListVC: _ViewController,
         view.embed(loadingIndicator)
         view.embed(channelListEmptyView)
 
-        view.addSubview(errorOccurredNotificationView)
+        view.addSubview(channelListErrorView)
         
-        errorOccurredNotificationView.heightAnchor.pin(equalToConstant: errorOccurredNotificationViewHeight).isActive = true
-        errorOccurredNotificationView.pin(anchors: [.leading, .trailing], to: view)
-        bottomAnimationConstraint = errorOccurredNotificationView.topAnchor.pin(equalTo: view.bottomAnchor).with(priority: .lowest)
-        errorOccurredNotificationView.topAnchor.pin(equalTo: collectionView.bottomAnchor).isActive = true
-        errorOccurredNotificationView.bottomAnchor.pin(lessThanOrEqualTo: view.bottomAnchor).isActive = true
-        
+        channelListErrorView.heightAnchor.pin(equalToConstant: channelListErrorViewHeight).isActive = true
+        channelListErrorView.pin(anchors: [.leading, .trailing], to: view)
+        bottomAnimationConstraint = channelListErrorView.topAnchor.pin(equalTo: view.bottomAnchor).with(priority: .lowest)
+        channelListErrorView.topAnchor.pin(equalTo: collectionView.bottomAnchor).isActive = true
+        channelListErrorView.bottomAnchor.pin(lessThanOrEqualTo: view.bottomAnchor).isActive = true
         bottomAnimationConstraint?.isActive = true
     }
     
@@ -150,25 +150,19 @@ open class ChatChannelListVC: _ViewController,
             )
         }
     
-        (errorOccurredNotificationView as? ChatChannelListErrorView)?.buttonAction = { [weak self] in
+        (channelListErrorView as? ChatChannelListErrorView)?.buttonAction = { [weak self] in
             self?.controller.synchronize()
         }
     }
-    
-    /// Shows Bottom notification notifying user there was error while fetching channels
-    open func showBottomErrorNotification() {
-        errorOccurredNotificationView.isHidden = false
+
+    /// Shows / Hides the error view. This error view is displayed at the bottom by default
+    /// - Parameter show: A boolean which denotes whether to show or hide the error view
+    ///
+    /// The error view is shown when some error occurs while loading channels
+    open func showErrorView(_ show: Bool) {
+        channelListErrorView.isHidden = !show
         UIView.animate(withDuration: 0.8) {
-            self.bottomAnimationConstraint?.constant = -self.errorOccurredNotificationViewHeight
-            self.view.layoutIfNeeded()
-        }
-    }
-    
-    /// Shows Bottom notification notifying user there was error while fetching channels
-    open func hideBottomErrorNotification() {
-        errorOccurredNotificationView.isHidden = true
-        UIView.animate(withDuration: 0.8) {
-            self.bottomAnimationConstraint?.constant = 0
+            self.bottomAnimationConstraint?.constant = show ? -self.channelListErrorViewHeight : 0
             self.view.layoutIfNeeded()
         }
     }
@@ -333,7 +327,7 @@ open class ChatChannelListVC: _ViewController,
     
     open func controller(_ controller: DataController, didChangeState state: DataController.State) {
         // Reset bottom notification.
-        hideBottomErrorNotification()
+        showErrorView(false)
         
         switch state {
         case .initialized:
@@ -356,7 +350,7 @@ open class ChatChannelListVC: _ViewController,
                 loadingIndicator.isHidden = true
             }
         case .localDataFetchFailed, .remoteDataFetchFailed:
-            showBottomErrorNotification()
+            showErrorView(true)
         }
     }
 }
