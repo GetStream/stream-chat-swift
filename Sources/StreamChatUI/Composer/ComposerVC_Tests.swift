@@ -7,14 +7,6 @@ import SwiftUI
 import XCTest
 
 class ComposerVC_Tests: XCTestCase {
-    func testLevenshtein() throws {
-        XCTAssertEqual("".levenshtein(""), "".levenshtein(""))
-        XCTAssertEqual("".levenshtein(""), 0)
-        XCTAssertEqual("a".levenshtein(""), 1)
-        XCTAssertEqual("".levenshtein("a"), 1)
-        XCTAssertEqual("tommaso".levenshtein("ToMmAsO"), 4)
-    }
-
     func testSearchByIDOrName() throws {
         let user1 = ChatUser.mock(id: "searchingThis")
         let user2 = ChatUser.mock(id: "x", name: "searchingThis")
