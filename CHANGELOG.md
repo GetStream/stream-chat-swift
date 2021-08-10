@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - Fixed race condition on `ChatMessageListVC` and `ChatThreadVC` that caused `UITableView` crashes [#1347](https://github.com/GetStream/stream-chat-swift/pull/1347)
 - Added `GalleryAttachmentViewInjector.galleryViewAspectRatio` to control the aspect ratio of a gallery inside a message cell [#1300](https://github.com/GetStream/stream-chat-swift/pull/1300)
+- Fixed an issue for `ChatThreadVC` opened from a deeplink when new replies are only added to the chat, but not to the replies thread [#1354](https://github.com/GetStream/stream-chat-swift/pull/1354)
 
 # [4.0.0-beta.9](https://github.com/GetStream/stream-chat-swift/releases/tag/4.0.0-beta.9)
 _August 05, 2021_
