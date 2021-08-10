@@ -6,18 +6,18 @@ import CoreData
 import Foundation
 
 extension ChatClient {
-    /// Creates a new `ChatUserListController` with the provided user query.
+    /// Creates a new `_ChatUserListController` with the provided user query.
     ///
     /// - Parameter query: The query specify the filter and sorting of the users the controller should fetch.
     ///
-    /// - Returns: A new instance of `ChatUserListController`.
+    /// - Returns: A new instance of `_ChatUserListController`.
     ///
     public func userListController(query: UserListQuery = .init()) -> ChatUserListController {
         .init(query: query, client: self)
     }
 }
 
-/// `ChatUserListController` is a controller class which allows observing a list of chat users based on the provided query.
+/// `_ChatUserListController` is a controller class which allows observing a list of chat users based on the provided query.
 public class ChatUserListController: DataController, DelegateCallable, DataStoreProvider {
     /// The query specifying and filtering the list of users.
     public let query: UserListQuery
@@ -43,7 +43,7 @@ public class ChatUserListController: DataController, DelegateCallable, DataStore
         )
 
     /// A type-erased delegate.
-    var multicastDelegate: MulticastDelegate<ChatUserListControllerDelegate> = .init() {
+    var multicastDelegate: MulticastDelegate<AnyUserListControllerDelegate> = .init() {
         didSet {
             stateMulticastDelegate.mainDelegate = multicastDelegate.mainDelegate
             stateMulticastDelegate.additionalDelegates = multicastDelegate.additionalDelegates
@@ -119,11 +119,15 @@ public class ChatUserListController: DataController, DelegateCallable, DataStore
     
     /// Sets the provided object as a delegate of this controller.
     ///
+    /// - Note: If you don't use custom extra data types, you can set the delegate directly using `controller.delegate = self`.
+    /// Due to the current limits of Swift and the way it handles protocols with associated types, it's required to use this
+    /// method to set the delegate, if you're using custom extra data types.
+    ///
     /// - Parameter delegate: The object used as a delegate. It's referenced weakly, so you need to keep the object
     /// alive if you want keep receiving updates.
     ///
     public func setDelegate<Delegate: ChatUserListControllerDelegate>(_ delegate: Delegate) {
-        multicastDelegate.mainDelegate = delegate
+        multicastDelegate.mainDelegate = AnyUserListControllerDelegate(delegate)
     }
 }
 
@@ -169,13 +173,21 @@ extension ChatUserListController {
 
 extension ChatUserListController {
     /// Set the delegate of `UserListController` to observe the changes in the system.
+    ///
+    /// - Note: The delegate can be set directly only if you're **not** using custom extra data types. Due to the current
+    /// limits of Swift and the way it handles protocols with associated types, it's required to use `setDelegate` method
+    /// instead to set the delegate, if you're using custom extra data types.
     public weak var delegate: ChatUserListControllerDelegate? {
-        get { multicastDelegate.mainDelegate }
-        set { multicastDelegate.mainDelegate = newValue }
+        get { multicastDelegate.mainDelegate?.wrappedDelegate as? ChatUserListControllerDelegate }
+        set { multicastDelegate.mainDelegate = AnyUserListControllerDelegate(newValue) }
     }
 }
 
 /// `ChatUserListController` uses this protocol to communicate changes to its delegate.
+///
+/// This protocol can be used only when no custom extra data are specified. If you're using custom extra data types,
+/// please use `_ChatUserListControllerDelegate` instead.
+///
 public protocol ChatUserListControllerDelegate: DataControllerStateDelegate {
     /// The controller changed the list of observed users.
     ///
@@ -194,4 +206,56 @@ public extension ChatUserListControllerDelegate {
         _ controller: ChatUserListController,
         didChangeUsers changes: [ListChange<ChatUser>]
     ) {}
+}
+
+// MARK: - Delegate type eraser
+
+class AnyUserListControllerDelegate: ChatUserListControllerDelegate {
+    private var _controllerDidChangeUsers: (ChatUserListController, [ListChange<ChatUser>])
+        -> Void
+    private var _controllerDidChangeState: (DataController, DataController.State) -> Void
+    
+    weak var wrappedDelegate: AnyObject?
+    
+    init(
+        wrappedDelegate: AnyObject?,
+        controllerDidChangeState: @escaping (DataController, DataController.State) -> Void,
+        controllerDidChangeUsers: @escaping (ChatUserListController, [ListChange<ChatUser>])
+            -> Void
+    ) {
+        self.wrappedDelegate = wrappedDelegate
+        _controllerDidChangeState = controllerDidChangeState
+        _controllerDidChangeUsers = controllerDidChangeUsers
+    }
+
+    func controller(_ controller: DataController, didChangeState state: DataController.State) {
+        _controllerDidChangeState(controller, state)
+    }
+
+    func controller(
+        _ controller: ChatUserListController,
+        didChangeUsers changes: [ListChange<ChatUser>]
+    ) {
+        _controllerDidChangeUsers(controller, changes)
+    }
+}
+
+extension AnyUserListControllerDelegate {
+    convenience init<Delegate: ChatUserListControllerDelegate>(_ delegate: Delegate) {
+        self.init(
+            wrappedDelegate: delegate,
+            controllerDidChangeState: { [weak delegate] in delegate?.controller($0, didChangeState: $1) },
+            controllerDidChangeUsers: { [weak delegate] in delegate?.controller($0, didChangeUsers: $1) }
+        )
+    }
+}
+
+extension AnyUserListControllerDelegate {
+    convenience init(_ delegate: ChatUserListControllerDelegate?) {
+        self.init(
+            wrappedDelegate: delegate,
+            controllerDidChangeState: { [weak delegate] in delegate?.controller($0, didChangeState: $1) },
+            controllerDidChangeUsers: { [weak delegate] in delegate?.controller($0, didChangeUsers: $1) }
+        )
+    }
 }

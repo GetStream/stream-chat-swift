@@ -687,7 +687,7 @@ private class TestDelegate: QueueAwareDelegate, ChatUserSearchControllerDelegate
     }
 }
 
-// A concrete `ChatUserSearchControllerDelegate` implementation allowing capturing the delegate calls.
+// A concrete `_ChatUserSearchControllerDelegate` implementation allowing capturing the delegate calls.
 private class TestDelegateGeneric: QueueAwareDelegate, ChatUserSearchControllerDelegate {
     @Atomic var state: DataController.State?
     @Atomic var didChangeUsers_changes: [ListChange<ChatUser>]?
