@@ -6,18 +6,18 @@ import CoreData
 import Foundation
 
 extension ChatClient {
-    /// Creates a new `_ChatUserSearchController` with the provided user query.
+    /// Creates a new `ChatUserSearchController` with the provided user query.
     ///
     /// - Parameter query: The query specify the filter and sorting of the users the controller should fetch.
     ///
-    /// - Returns: A new instance of `_ChatUserSearchController`.
+    /// - Returns: A new instance of `ChatUserSearchController`.
     ///
     public func userSearchController() -> ChatUserSearchController {
         .init(client: self)
     }
 }
 
-/// `_ChatUserSearchController` is a controller class which allows observing a list of chat users based on the provided query.
+/// `ChatUserSearchController` is a controller class which allows observing a list of chat users based on the provided query.
 public class ChatUserSearchController: DataController, DelegateCallable, DataStoreProvider {
     /// The `ChatClient` instance this controller belongs to.
     public let client: ChatClient
@@ -76,7 +76,7 @@ public class ChatUserSearchController: DataController, DelegateCallable, DataSto
     }()
     
     /// A type-erased delegate.
-    var multicastDelegate: MulticastDelegate<AnyUserSearchControllerDelegate> = .init() {
+    var multicastDelegate: MulticastDelegate<ChatUserSearchControllerDelegate> = .init() {
         didSet {
             stateMulticastDelegate.mainDelegate = multicastDelegate.mainDelegate
             stateMulticastDelegate.additionalDelegates = multicastDelegate.additionalDelegates
@@ -119,15 +119,11 @@ public class ChatUserSearchController: DataController, DelegateCallable, DataSto
     
     /// Sets the provided object as a delegate of this controller.
     ///
-    /// - Note: If you don't use custom extra data types, you can set the delegate directly using `controller.delegate = self`.
-    /// Due to the current limits of Swift and the way it handles protocols with associated types, it's required to use this
-    /// method to set the delegate, if you're using custom extra data types.
-    ///
     /// - Parameter delegate: The object used as a delegate. It's referenced weakly, so you need to keep the object
     /// alive if you want keep receiving updates.
     ///
     public func setDelegate<Delegate: ChatUserSearchControllerDelegate>(_ delegate: Delegate) {
-        multicastDelegate.mainDelegate = AnyUserSearchControllerDelegate(delegate)
+        multicastDelegate.mainDelegate = delegate
     }
     
     /// Searches users for the given term.
@@ -236,21 +232,13 @@ extension ChatUserSearchController {
 
 extension ChatUserSearchController {
     /// Set the delegate of `UserListController` to observe the changes in the system.
-    ///
-    /// - Note: The delegate can be set directly only if you're **not** using custom extra data types. Due to the current
-    /// limits of Swift and the way it handles protocols with associated types, it's required to use `setDelegate` method
-    /// instead to set the delegate, if you're using custom extra data types.
     public weak var delegate: ChatUserSearchControllerDelegate? {
-        get { multicastDelegate.mainDelegate?.wrappedDelegate as? ChatUserSearchControllerDelegate }
-        set { multicastDelegate.mainDelegate = AnyUserSearchControllerDelegate(newValue) }
+        get { multicastDelegate.mainDelegate }
+        set { multicastDelegate.mainDelegate = newValue }
     }
 }
 
 /// `ChatUserSearchController` uses this protocol to communicate changes to its delegate.
-///
-/// If you're **not** using custom extra data types, you can use a convenience version of this protocol
-/// named `ChatUserSearchControllerDelegate`, which hides the generic types, and make the usage easier.
-///
 public protocol ChatUserSearchControllerDelegate: DataControllerStateDelegate {
     /// The controller changed the list of observed users.
     ///
@@ -269,56 +257,4 @@ public extension ChatUserSearchControllerDelegate {
         _ controller: ChatUserSearchController,
         didChangeUsers changes: [ListChange<ChatUser>]
     ) {}
-}
-
-// MARK: - Delegate type eraser
-
-class AnyUserSearchControllerDelegate: ChatUserSearchControllerDelegate {
-    private var _controllerDidChangeUsers: (ChatUserSearchController, [ListChange<ChatUser>])
-        -> Void
-    private var _controllerDidChangeState: (DataController, DataController.State) -> Void
-    
-    weak var wrappedDelegate: AnyObject?
-    
-    init(
-        wrappedDelegate: AnyObject?,
-        controllerDidChangeState: @escaping (DataController, DataController.State) -> Void,
-        controllerDidChangeUsers: @escaping (ChatUserSearchController, [ListChange<ChatUser>])
-            -> Void
-    ) {
-        self.wrappedDelegate = wrappedDelegate
-        _controllerDidChangeState = controllerDidChangeState
-        _controllerDidChangeUsers = controllerDidChangeUsers
-    }
-    
-    func controller(_ controller: DataController, didChangeState state: DataController.State) {
-        _controllerDidChangeState(controller, state)
-    }
-    
-    func controller(
-        _ controller: ChatUserSearchController,
-        didChangeUsers changes: [ListChange<ChatUser>]
-    ) {
-        _controllerDidChangeUsers(controller, changes)
-    }
-}
-
-extension AnyUserSearchControllerDelegate {
-    convenience init<Delegate: ChatUserSearchControllerDelegate>(_ delegate: Delegate) {
-        self.init(
-            wrappedDelegate: delegate,
-            controllerDidChangeState: { [weak delegate] in delegate?.controller($0, didChangeState: $1) },
-            controllerDidChangeUsers: { [weak delegate] in delegate?.controller($0, didChangeUsers: $1) }
-        )
-    }
-}
-
-extension AnyUserSearchControllerDelegate {
-    convenience init(_ delegate: ChatUserSearchControllerDelegate?) {
-        self.init(
-            wrappedDelegate: delegate,
-            controllerDidChangeState: { [weak delegate] in delegate?.controller($0, didChangeState: $1) },
-            controllerDidChangeUsers: { [weak delegate] in delegate?.controller($0, didChangeUsers: $1) }
-        )
-    }
 }
