@@ -28,6 +28,9 @@ open class ChatThreadVC:
 
     /// Controller for observing data changes within the parent thread message.
     open var messageController: ChatMessageController!
+    
+    /// We use private property for channels count so we can update it inside `performBatchUpdates` as [documented](https://developer.apple.com/documentation/uikit/uicollectionview/1618045-performbatchupdates#discussion)
+    private var numberOfMessages = 0
 
     /// Observer responsible for setting the correct offset when keyboard frame is changed
     open lazy var keyboardObserver = ChatMessageListKeyboardObserver(
@@ -79,6 +82,7 @@ open class ChatThreadVC:
 
     override open func setUp() {
         super.setUp()
+        updateNumberOfMessages()
 
         let longPress = UILongPressGestureRecognizer(target: self, action: #selector(handleLongPress))
         longPress.minimumPressDuration = 0.33
@@ -92,6 +96,11 @@ open class ChatThreadVC:
         messageComposerVC.setDelegate(self)
         messageComposerVC.channelController = channelController
         messageComposerVC.userSearchController = userSuggestionSearchController
+
+        messageController.delegate = self
+        messageController.synchronize()
+        messageController.loadPreviousReplies()
+
         if let message = messageController.message {
             messageComposerVC.content.threadMessage = message
         }
@@ -100,10 +109,6 @@ open class ChatThreadVC:
 
         channelController.setDelegate(self)
         channelController.synchronize()
-
-        messageController.delegate = self
-        messageController.synchronize()
-        messageController.loadPreviousReplies()
 
         if let cid = channelController.cid {
             headerView.channelController = channelController.client.channelController(for: cid)
@@ -235,7 +240,7 @@ open class ChatThreadVC:
     }
 
     open func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        messages.count
+        numberOfMessages
     }
 
     open func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -290,7 +295,11 @@ open class ChatThreadVC:
 
     /// Updates the collection view data with given `changes`.
     open func updateMessages(with changes: [ListChange<ChatMessage>], completion: (() -> Void)? = nil) {
-        listView.updateMessages(with: changes, completion: completion)
+        listView.updateMessages(
+            with: changes,
+            onMessagesCountUpdate: updateNumberOfMessages,
+            completion: completion
+        )
     }
 
     /// Presents custom actions controller with all possible actions with the selected message.
@@ -496,6 +505,10 @@ open class ChatThreadVC:
         return DateFormatter
             .messageListDateOverlay
             .string(from: messageForIndexPath(indexPath).createdAt)
+    }
+    
+    private func updateNumberOfMessages() {
+        numberOfMessages = messages.count
     }
     
     // MARK: - UIGestureRecognizerDelegate
