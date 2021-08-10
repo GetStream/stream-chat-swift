@@ -2,8 +2,8 @@
 // Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
-@testable import StreamChat
 @testable import StreamChatUI
+import SwiftUI
 import XCTest
 
 class ComposerVC_Tests: XCTestCase {
