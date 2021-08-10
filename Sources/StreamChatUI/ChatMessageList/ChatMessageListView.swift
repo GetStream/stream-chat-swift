@@ -48,7 +48,7 @@ open class ChatMessageListView: UITableView, Customizable, ComponentsProvider {
         rowHeight = UITableView.automaticDimension
         estimatedRowHeight = 150
         separatorStyle = .none
-        transform = .mirrorY
+        // transform = .mirrorY
     }
     
     open func setUpAppearance() { /* default empty implementation */ }
@@ -136,7 +136,7 @@ open class ChatMessageListView: UITableView, Customizable, ComponentsProvider {
             return self?.indexPath(for: cell)
         }
         
-        cell.contentView.transform = .mirrorY
+        // cell.contentView.transform = .mirrorY
 
         return cell
     }
