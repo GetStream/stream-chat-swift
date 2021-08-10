@@ -97,18 +97,26 @@ open class ChatThreadVC:
         messageComposerVC.channelController = channelController
         messageComposerVC.userSearchController = userSuggestionSearchController
 
-        messageController.delegate = self
-        messageController.synchronize()
-        messageController.loadPreviousReplies()
-
-        if let message = messageController.message {
-            messageComposerVC.content.threadMessage = message
+        let updateMessageControllerMessage: () -> Void = { [messageController, messageComposerVC] in
+            if messageComposerVC.content.threadMessage == nil,
+               let message = messageController?.message {
+                messageComposerVC.content.threadMessage = message
+            }
         }
+        
+        messageController.delegate = self
+        updateMessageControllerMessage()
 
         userSuggestionSearchController.search(term: nil)
 
         channelController.setDelegate(self)
-        channelController.synchronize()
+        
+        channelController.synchronize { [messageController] _ in
+            messageController?.synchronize { _ in
+                updateMessageControllerMessage()
+                messageController?.loadPreviousReplies()
+            }
+        }
 
         if let cid = channelController.cid {
             headerView.channelController = channelController.client.channelController(for: cid)
