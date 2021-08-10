@@ -189,6 +189,9 @@ open class ChatMessageComposerSuggestionsCommandDataSource: NSObject, UICollecti
 open class ChatMessageComposerSuggestionsMentionDataSource: NSObject,
     UICollectionViewDataSource,
     ChatUserSearchControllerDelegate {
+    /// internal cache for users
+    private(set) var usersCache: [ChatUser]
+    
     /// The collection view of the mentions.
     open var collectionView: ChatSuggestionsCollectionView
     
@@ -204,12 +207,15 @@ open class ChatMessageComposerSuggestionsMentionDataSource: NSObject,
     /// - Parameters:
     ///   - collectionView: The collection view of the mentions.
     ///   - searchController: The search controller to find mentions.
+    ///   - usersCache: The initial results
     init(
         collectionView: ChatSuggestionsCollectionView,
-        searchController: ChatUserSearchController
+        searchController: ChatUserSearchController,
+        usersCache: [ChatUser] = []
     ) {
         self.collectionView = collectionView
         self.searchController = searchController
+        self.usersCache = usersCache
         super.init()
         registerCollectionViewCell()
         (collectionView.collectionViewLayout as? UICollectionViewFlowLayout)?
@@ -233,7 +239,7 @@ open class ChatMessageComposerSuggestionsMentionDataSource: NSObject,
     }
 
     public func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        searchController.users.count
+        usersCache.count
     }
 
     public func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -242,7 +248,7 @@ open class ChatMessageComposerSuggestionsMentionDataSource: NSObject,
             for: indexPath
         ) as! ChatMentionSuggestionCollectionViewCell
 
-        let user = searchController.users[indexPath.row]
+        let user = usersCache[indexPath.row]
         // We need to make sure we set the components before accessing the mentionView,
         // so the mentionView is created with the most up-to-dated components.
         cell.components = components
@@ -254,6 +260,7 @@ open class ChatMessageComposerSuggestionsMentionDataSource: NSObject,
         _ controller: ChatUserSearchController,
         didChangeUsers changes: [ListChange<ChatUser>]
     ) {
+        usersCache = searchController.users.map { $0 }
         collectionView.reloadData()
     }
 }
