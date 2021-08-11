@@ -781,7 +781,8 @@
 		ACA3C98326CA239A00EB8B07 /* DateUtils_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACA3C98026CA236F00EB8B07 /* DateUtils_Tests.swift */; };
 		ACBEF4E5268B439A00FE7557 /* YTLiveVideoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACBEF4E3268B439A00FE7557 /* YTLiveVideoViewController.swift */; };
 		ACBEF4E6268B439A00FE7557 /* YTLiveVideoViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = ACBEF4E4268B439A00FE7557 /* YTLiveVideoViewController.xib */; };
-		ACD502A726BC06500029FB7D /* ImageLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACD502A626BC06500029FB7D /* ImageLoader.swift */; };
+		ACCA772A26C40C96007AE2ED /* ImageLoading.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACCA772926C40C96007AE2ED /* ImageLoading.swift */; };
+		ACCA772C26C40D43007AE2ED /* DefaultImageLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACCA772B26C40D43007AE2ED /* DefaultImageLoader.swift */; };
 		ACD502A926BC0C670029FB7D /* ImageMerger.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACD502A826BC0C670029FB7D /* ImageMerger.swift */; };
 		ACE6E060268D92F200396310 /* YTScrollToLatestMessageButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACE6E05F268D92F200396310 /* YTScrollToLatestMessageButton.swift */; };
 		ACE6E063268D965100396310 /* YTSendButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACE6E062268D965100396310 /* YTSendButton.swift */; };
@@ -2143,7 +2144,8 @@
 		ACA3C98026CA236F00EB8B07 /* DateUtils_Tests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DateUtils_Tests.swift; sourceTree = "<group>"; };
 		ACBEF4E3268B439A00FE7557 /* YTLiveVideoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YTLiveVideoViewController.swift; sourceTree = "<group>"; };
 		ACBEF4E4268B439A00FE7557 /* YTLiveVideoViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = YTLiveVideoViewController.xib; sourceTree = "<group>"; };
-		ACD502A626BC06500029FB7D /* ImageLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageLoader.swift; sourceTree = "<group>"; };
+		ACCA772926C40C96007AE2ED /* ImageLoading.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageLoading.swift; sourceTree = "<group>"; };
+		ACCA772B26C40D43007AE2ED /* DefaultImageLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultImageLoader.swift; sourceTree = "<group>"; };
 		ACD502A826BC0C670029FB7D /* ImageMerger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageMerger.swift; sourceTree = "<group>"; };
 		ACDB5412269C6F2A007CD465 /* String+Extensions_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Extensions_Tests.swift"; sourceTree = "<group>"; };
 		ACE6E05F268D92F200396310 /* YTScrollToLatestMessageButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YTScrollToLatestMessageButton.swift; sourceTree = "<group>"; };
@@ -4075,6 +4077,7 @@
 		888123D0255D42F000070D5A /* Utils */ = {
 			isa = PBXGroup;
 			children = (
+				ACCA772826C40C7A007AE2ED /* ImageLoading */,
 				BDDD1EA52632C6D600BA007B /* AppearanceProvider.swift */,
 				BDDD1EAB2632E32000BA007B /* AppearanceProvider_Tests.swift */,
 				792DD9FA256E67C6001DB91B /* ComponentsProvider.swift */,
@@ -4111,7 +4114,6 @@
 				ACDB5412269C6F2A007CD465 /* String+Extensions_Tests.swift */,
 				640FE0D426A568C3006CE703 /* CollectionUpdatesMapper.swift */,
 				640FE0F526A57903006CE703 /* CollectionUpdatesMapper_Tests.swift */,
-				ACD502A626BC06500029FB7D /* ImageLoader.swift */,
 				ACD502A826BC0C670029FB7D /* ImageMerger.swift */,
 				ACA3C98026CA236F00EB8B07 /* DateUtils_Tests.swift */,
 				ACA3C97F26CA236F00EB8B07 /* DateUtils.swift */,
@@ -4461,6 +4463,15 @@
 				ACBEF4E4268B439A00FE7557 /* YTLiveVideoViewController.xib */,
 			);
 			path = YouTubeClone;
+			sourceTree = "<group>";
+		};
+		ACCA772826C40C7A007AE2ED /* ImageLoading */ = {
+			isa = PBXGroup;
+			children = (
+				ACCA772926C40C96007AE2ED /* ImageLoading.swift */,
+				ACCA772B26C40D43007AE2ED /* DefaultImageLoader.swift */,
+			);
+			path = ImageLoading;
 			sourceTree = "<group>";
 		};
 		ACE6E05E268D92D200396310 /* ScrollToLatestMessageButton */ = {
@@ -5763,7 +5774,6 @@
 				22ADD682256C40410098EFEB /* ComposerView.swift in Sources */,
 				E7A37B8425ADA66E0055458F /* ChatSuggestionsHeaderView.swift in Sources */,
 				8850FE91256558B200C8D534 /* NavigationRouter.swift in Sources */,
-				ACD502A726BC06500029FB7D /* ImageLoader.swift in Sources */,
 				883051C82630579D0069D731 /* ChatThreadArrowView.swift in Sources */,
 				E798D6D325FF69120002C3B9 /* SwipeableView.swift in Sources */,
 				E701201E2583EBD50036DACD /* CALayer+Extensions.swift in Sources */,
@@ -5804,6 +5814,7 @@
 				BDDD1EAA2632CE3C00BA007B /* Appearance+SwiftUI.swift in Sources */,
 				8850FE87256558A200C8D534 /* ChatChannelListRouter.swift in Sources */,
 				888ABA072594FDE30015937E /* ChatMessageInteractiveAttachmentView.swift in Sources */,
+				ACCA772C26C40D43007AE2ED /* DefaultImageLoader.swift in Sources */,
 				88BD82B02549D18F00369074 /* ChatChannelListItemView.swift in Sources */,
 				A39A8AE7263825F4003453D9 /* ChatMessageLayoutOptionsResolver.swift in Sources */,
 				8825334C258CE82500B77352 /* ChatMessageActionsRouter.swift in Sources */,
@@ -5888,6 +5899,7 @@
 				AD8D1809268F7290004E3A5C /* TypingSuggester.swift in Sources */,
 				F880DEA32628528B0025AD64 /* GalleryVC.swift in Sources */,
 				78C8473825FA0EF000A5D1D0 /* ChatChannelUnreadCountView+SwiftUI.swift in Sources */,
+				ACCA772A26C40C96007AE2ED /* ImageLoading.swift in Sources */,
 				DB3CCF3F258CF7ED009D5E99 /* ChatMessageLinkPreviewView.swift in Sources */,
 				E7516B162642E11A00DE778C /* GiphyAttachmentViewInjector.swift in Sources */,
 				E79AC10D25831A1500C3CE5D /* ChatSuggestionsCollectionViewLayout.swift in Sources */,
