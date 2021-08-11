@@ -26,12 +26,9 @@ class AppModel: ObservableObject {
 
     init() {
         let config = ChatClientConfig(apiKey: APIKey(user.apiKeyString))
-        chatClient = ChatClient(config: config,
-            tokenProvider:
-            .static(
-                try! Token(rawValue: user.token)
-            )
-        )
+        chatClient = ChatClient(config: config)
+        chatClient.connectUser(userInfo: UserInfo(id: user.id),
+            token: try! Token(rawValue: user.token))
     }
 }
 

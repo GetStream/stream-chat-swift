@@ -1,37 +1,62 @@
 {
-  "configurations" : [
+  "configurations": [
     {
-      "id" : "5358EB81-7D4D-42F7-B281-016C02706988",
-      "name" : "Configuration 1",
-      "options" : {
-
+      "id": "5358EB81-7D4D-42F7-B281-016C02706988",
+      "name": "Configuration 1",
+      "options": {
       }
     }
   ],
-  "defaultOptions" : {
-    "codeCoverage" : {
-      "targets" : [
+  "defaultOptions": {
+    "codeCoverage": {
+      "targets": [
         {
-          "containerPath" : "container:StreamChat.xcodeproj",
-          "identifier" : "799C941A247D2F80001F1104",
-          "name" : "StreamChat"
+          "containerPath": "container:StreamChat.xcodeproj",
+          "identifier": "799C941A247D2F80001F1104",
+          "name": "StreamChat"
         }
       ]
     },
-    "commandLineArgumentEntries" : [
+    "commandLineArgumentEntries": [
       {
-        "argument" : "-com.apple.CoreData.ConcurrencyDebug 1"
+        "argument": "-com.apple.CoreData.ConcurrencyDebug 1"
+      }
+    ],
+    "environmentVariableEntries": [
+      {
+        "key": "CI",
+        "value": "TRUE"
+      },
+      {
+        "key": "CI",
+        "value": "TRUE"
+      },
+      {
+        "key": "CI",
+        "value": "TRUE"
+      },
+      {
+        "key": "CI",
+        "value": "TRUE"
+      },
+      {
+        "key": "CI",
+        "value": "TRUE"
+      },
+      {
+        "key": "CI",
+        "value": "TRUE"
       }
     ]
   },
-  "testTargets" : [
+  "testTargets": [
     {
-      "target" : {
-        "containerPath" : "container:StreamChat.xcodeproj",
-        "identifier" : "799C9450247D59B1001F1104",
-        "name" : "StreamChatTests"
+      "target": {
+        "containerPath": "container:StreamChat.xcodeproj",
+        "identifier": "799C9450247D59B1001F1104",
+        "name": "StreamChatTests"
       }
     }
   ],
-  "version" : 1
+  "version": 1
 }
