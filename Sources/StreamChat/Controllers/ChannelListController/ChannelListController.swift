@@ -107,27 +107,35 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
     
     private func setupEventObserversIfNeeded(completion: ((_ error: Error?) -> Void)? = nil) {
         guard !client.config.isLocalStorageEnabled else {
-            return updateChannels(trumpExistingChannels: false, completion)
+            return updateChannelList(trumpExistingChannels: false, completion)
         }
-        connectionObserver = nil
-        // We can't setup event observers in connectionless mode
-        guard let webSocketClient = client.webSocketClient else { return }
-        let center = webSocketClient.eventNotificationCenter
-        connectionObserver = EventObserver(
-            notificationCenter: center,
-            transform: { $0 as? ConnectionStatusUpdated },
-            callback: { [unowned self] in
-                switch $0.webSocketConnectionState {
-                case .connected:
-                    self.updateChannels(trumpExistingChannels: channels.count > requestedChannelsLimit)
-                default:
-                    break
+        
+        updateChannelList(trumpExistingChannels: channels.count > requestedChannelsLimit) { [weak self] error in
+            completion?(error)
+            
+            guard let self = self else { return }
+            self.connectionObserver = nil
+            // We can't setup event observers in connectionless mode
+            guard let webSocketClient = self.client.webSocketClient else { return }
+            let center = webSocketClient.eventNotificationCenter
+            // We setup a `Connected` Event observer so every time we're connected,
+            // we refresh the channel list
+            self.connectionObserver = EventObserver(
+                notificationCenter: center,
+                transform: { $0 as? ConnectionStatusUpdated },
+                callback: { [unowned self] in
+                    switch $0.webSocketConnectionState {
+                    case .connected:
+                        self.updateChannelList(trumpExistingChannels: self.channels.count > self.requestedChannelsLimit)
+                    default:
+                        break
+                    }
                 }
-            }
-        )
+            )
+        }
     }
     
-    private func updateChannels(
+    private func updateChannelList(
         trumpExistingChannels: Bool,
         _ completion: ((_ error: Error?) -> Void)? = nil
     ) {
