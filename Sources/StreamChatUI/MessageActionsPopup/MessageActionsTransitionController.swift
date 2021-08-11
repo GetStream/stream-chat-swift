@@ -101,16 +101,20 @@ open class MessageActionsTransitionController<ExtraData: ExtraDataTypes>: NSObje
         toVC.setUpLayout()
         
         transitionContext.containerView.addSubview(toVC.view)
-        
+
         let fromVCSnapshot = fromVC.view.snapshotView(afterScreenUpdates: true)
         if let fromVCSnapshot = fromVCSnapshot {
+            // Make sure the snapshot is added to the bottom of the container, in case the container
+            // is bigger than the snapshot (for the case the popup is being presented in a modal)
+            let newY = transitionContext.containerView.frame.size.height - fromVC.view.frame.size.height
             fromVCSnapshot.frame = fromVC.view.frame
+            fromVCSnapshot.frame.origin.y += newY
             fromVC.view.isHidden = true
         }
 
         let blurView = UIVisualEffectView()
         blurView.frame = toVC.view.frame
-        
+
         let reactionsSnapshot: UIView?
         if let reactionsController = toVC.reactionsController {
             reactionsSnapshot = reactionsController.view.snapshotView(afterScreenUpdates: true)
@@ -214,7 +218,11 @@ open class MessageActionsTransitionController<ExtraData: ExtraDataTypes>: NSObje
         let toVCSnapshot = toVC.view.snapshotView(afterScreenUpdates: true)
         if let toVCSnapshot = toVCSnapshot {
             transitionContext.containerView.addSubview(toVCSnapshot)
+            // Make sure the snapshot is added to the bottom of the container, in case the container
+            // is bigger than the snapshot (for the case the popup is being presented in a modal)
+            let newY = transitionContext.containerView.frame.size.height - toVC.view.frame.size.height
             toVCSnapshot.frame = toVC.view.frame
+            toVCSnapshot.frame.origin.y += newY
             toVC.view.isHidden = true
         }
 
