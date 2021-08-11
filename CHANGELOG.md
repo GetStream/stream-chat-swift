@@ -3,7 +3,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
-### 🔄 Changed
+### 🐞 Fixed
+- Fix jumps when presenting message popup actions in a modal [#1361](https://github.com/GetStream/stream-chat-swift/issues/1361)
 
 # [4.0.0-beta.10](https://github.com/GetStream/stream-chat-swift/releases/tag/4.0.0-beta.10)
 _August 11, 2021_
