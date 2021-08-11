@@ -24,6 +24,9 @@ open class ChatMessageListVC:
     ChatMessageListScrollOverlayDataSource {
     /// Controller for observing data changes within the channel
     open var channelController: ChatChannelController!
+    
+    /// We use private property for channels count so we can update it inside `performBatchUpdates` as [documented](https://developer.apple.com/documentation/uikit/uicollectionview/1618045-performbatchupdates#discussion)
+    private var numberOfMessages = 0
 
     public var client: ChatClient {
         channelController.client
@@ -106,6 +109,7 @@ open class ChatMessageListVC:
     
     override open func setUp() {
         super.setUp()
+        updateNumberOfMessages()
         
         let longPress = UILongPressGestureRecognizer(target: self, action: #selector(handleLongPress))
         longPress.minimumPressDuration = 0.33
@@ -317,7 +321,11 @@ open class ChatMessageListVC:
 
     /// Updates the collection view data with given `changes`.
     open func updateMessages(with changes: [ListChange<ChatMessage>], completion: (() -> Void)? = nil) {
-        listView.updateMessages(with: changes, completion: completion)
+        listView.updateMessages(
+            with: changes,
+            onMessagesCountUpdate: updateNumberOfMessages,
+            completion: completion
+        )
     }
     
     open func messageForIndexPath(_ indexPath: IndexPath) -> ChatMessage {
@@ -563,7 +571,7 @@ open class ChatMessageListVC:
     }
 
     open func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        channelController.messages.count
+        numberOfMessages
     }
 
     open func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -586,6 +594,10 @@ open class ChatMessageListVC:
         let isMoreContentThanOnePage = listView.contentSize.height > listView.bounds.height
         
         return !listView.isLastCellFullyVisible && isMoreContentThanOnePage
+    }
+    
+    private func updateNumberOfMessages() {
+        numberOfMessages = channelController.messages.count
     }
     
     // MARK: - UIGestureRecognizerDelegate

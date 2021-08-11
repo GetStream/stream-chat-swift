@@ -393,6 +393,7 @@ var streamChatUIFilesExcluded: [String] { [
     "Gallery/__Snapshots__/GalleryVC_Tests/test_appearanceCustomization_usingUIConfig.rightToLeftLayout-default.png",
     "Gallery/__Snapshots__/GalleryVC_Tests/test_defaultAppearance.extraExtraExtraLarge-light.png",
     "Gallery/__Snapshots__/GalleryVC_Tests/test_appearanceCustomization_usingSubclassing.default-light.png",
+    "Composer/ComposerVC_Tests.swift",
     "CommonViews/CommandLabelView/CommandLabelView_Tests.swift",
     "CommonViews/CommandLabelView/__Snapshots__/CommandLabelView_Tests/test_defaultAppearance_SwiftUI.extraExtraExtraLarge-light.png",
     "CommonViews/CommandLabelView/__Snapshots__/CommandLabelView_Tests/test_defaultAppearance.default-light.png",
