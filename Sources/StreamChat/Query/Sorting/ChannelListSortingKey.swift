@@ -19,6 +19,11 @@ public enum ChannelListSortingKey: String, SortingKey {
     /// Sort channels by `cid`.
     /// **Note**: This sorting option can extend your response waiting time if used as primary one.
     case cid
+    /// Sort channels by unread state. When using this sorting key, every unread channel weighs the same,
+    /// so they're sorted by `updatedAt`
+    case hasUnread
+    /// Sort channels by their unread count.
+    case unreadCount
     
     public func encode(to encoder: Encoder) throws {
         var container = encoder.singleValueContainer()
@@ -31,6 +36,8 @@ public enum ChannelListSortingKey: String, SortingKey {
         case .lastMessageAt: value = "last_message_at"
         case .memberCount: value = "member_count"
         case .cid: value = "cid"
+        case .hasUnread: value = "has_unread"
+        case .unreadCount: value = "unread_count"
         }
         
         try container.encode(value)
