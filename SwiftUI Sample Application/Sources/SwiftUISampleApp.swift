@@ -25,6 +25,10 @@ class AppModel: ObservableObject {
     let chatClient: ChatClient
 
     init() {
+        var components = Components()
+        components.channelListRouter = CustomRouter.self
+        Components.default = components
+
         let config = ChatClientConfig(apiKey: APIKey(user.apiKeyString))
         chatClient = ChatClient(config: config)
         chatClient.connectUser(userInfo: UserInfo(id: user.id),
@@ -39,13 +43,17 @@ struct SwiftUISampleApp: App {
     
     var body: some Scene {
         WindowGroup {
-            SDKChannelsView(channelListController:
-                model
-                    .chatClient
-                    .channelListController(query:
-                        ChannelListQuery(filter: .containMembers(userIds: [model.user.id]))
-                    )
-            )
+            NavigationView {
+                SDKChannelsView(channelListController:
+                    model
+                        .chatClient
+                        .channelListController(query:
+                             ChannelListQuery(filter: .containMembers(userIds: [model.user.id]))
+                        )
+                )
+                    .navigationBarTitle("SDK Chat List")
+
+            }
 
 //            ChannelListView(channelListController:
 //                model

@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		BCE48434CB2F280EE9C375C3 /* ChannelsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCE4854BF7F4319F040F43C7 /* ChannelsView.swift */; };
 		BCE48A2B026234EFA268CC2B /* View+AnyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCE48CE634D63E2E3A6DE88F /* View+AnyView.swift */; };
+		BCE48CDC409873C64C39EBB9 /* CustomRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCE48E6BD44585D9B100552D /* CustomRouter.swift */; };
 		BCE48EDE41BE7F4EBB8227FC /* SDKChannelsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCE483C8DE8210F872EB8B07 /* SDKChannelsView.swift */; };
 		FB6A422826C2797E00905562 /* SwiftUISampleTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB6A422726C2797E00905562 /* SwiftUISampleTests.swift */; };
 		FB6A423326C2797E00905562 /* SwiftUISampleUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB6A423226C2797E00905562 /* SwiftUISampleUITests.swift */; };
@@ -39,6 +40,7 @@
 		BCE483C8DE8210F872EB8B07 /* SDKChannelsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SDKChannelsView.swift; sourceTree = "<group>"; };
 		BCE4854BF7F4319F040F43C7 /* ChannelsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChannelsView.swift; sourceTree = "<group>"; };
 		BCE48CE634D63E2E3A6DE88F /* View+AnyView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "View+AnyView.swift"; sourceTree = "<group>"; };
+		BCE48E6BD44585D9B100552D /* CustomRouter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomRouter.swift; sourceTree = "<group>"; };
 		FB6A421226C2797B00905562 /* SwiftUISample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SwiftUISample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		FB6A422326C2797E00905562 /* SwiftUISampleTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SwiftUISampleTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		FB6A422726C2797E00905562 /* SwiftUISampleTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftUISampleTests.swift; sourceTree = "<group>"; };
@@ -148,6 +150,7 @@
 				BCE48D70F1DD0956C5FCAB81 /* Helpers */,
 				BCE48FB1D877C45F8C8C088D /* CustomComponents */,
 				BCE48DB751AC3CC80484AA37 /* UsingSDKComponents */,
+				BCE48E6BD44585D9B100552D /* CustomRouter.swift */,
 			);
 			path = Sources;
 			sourceTree = "<group>";
@@ -300,6 +303,7 @@
 				BCE48A2B026234EFA268CC2B /* View+AnyView.swift in Sources */,
 				BCE48434CB2F280EE9C375C3 /* ChannelsView.swift in Sources */,
 				BCE48EDE41BE7F4EBB8227FC /* SDKChannelsView.swift in Sources */,
+				BCE48CDC409873C64C39EBB9 /* CustomRouter.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
