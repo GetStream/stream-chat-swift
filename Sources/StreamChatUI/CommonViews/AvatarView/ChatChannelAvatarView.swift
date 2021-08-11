@@ -41,24 +41,42 @@ open class ChatChannelAvatarView: _View, ThemeProvider, SwiftUIRepresentable {
                 preferredSize: .avatarThumbnailSize,
                 components: components
             )
+            presenceAvatarView.isOnlineIndicatorVisible = false
             return
         }
 
         loadAvatar(for: channel)
     }
-        
+    
     open func loadAvatar(for channel: ChatChannel) {
         // If the channel has an avatar set, load that avatar
         if let channelAvatarUrl = channel.imageURL {
-            presenceAvatarView.avatarView.imageView.loadImage(
-                from: channelAvatarUrl,
-                placeholder: appearance.images.userAvatarPlaceholder4,
-                preferredSize: .avatarThumbnailSize,
-                components: components
-            )
+            loadChannelAvatar(from: channelAvatarUrl)
             return
         }
-        
+      
+        // Use the appropriate method to load avatar based on channel type
+        if channel.isDirectMessageChannel {
+            loadDirectMessageChannelAvatar(channel: channel)
+        } else {
+            loadMergedAvatars(channel: channel)
+        }
+    }
+    
+    /// Loads the avatar from the URL. This function is used when the channel has a non-nil `imageURL`
+    /// - Parameter url: The `imageURL` of the channel
+    open func loadChannelAvatar(from url: URL) {
+        presenceAvatarView.avatarView.imageView.loadImage(
+            from: url,
+            placeholder: appearance.images.userAvatarPlaceholder4,
+            preferredSize: .avatarThumbnailSize,
+            components: components
+        )
+    }
+    
+    /// Loads avatar for a directMessageChannel
+    /// - Parameter channel: The channel
+    open func loadDirectMessageChannelAvatar(channel: ChatChannel) {
         let lastActiveMembers = channel.lastActiveMembers
             .sorted { $0.memberCreatedAt < $1.memberCreatedAt }
             .filter { $0.id != content.currentUserId }
@@ -74,25 +92,39 @@ open class ChatChannelAvatarView: _View, ThemeProvider, SwiftUIRepresentable {
             return
         }
         
-        // If the channel is a direct message channel, load the other user's avatar
-        // and also set the online indicator visible
-        if channel.isDirectMessageChannel {
-            let otherMember = lastActiveMembers.first
-            let isOnlineIndicatorVisible = otherMember?.isOnline ?? false
-            
+        let otherMember = lastActiveMembers.first
+        let isOnlineIndicatorVisible = otherMember?.isOnline ?? false
+        
+        presenceAvatarView.avatarView.imageView.loadImage(
+            from: otherMember?.imageURL,
+            placeholder: appearance.images.userAvatarPlaceholder3,
+            preferredSize: .avatarThumbnailSize,
+            components: components
+        )
+        
+        presenceAvatarView.isOnlineIndicatorVisible = isOnlineIndicatorVisible
+    }
+    
+    /// Loads an avatar which is merged (tiled) version of the first four active members of the channel
+    /// - Parameter channel: The channel
+    open func loadMergedAvatars(channel: ChatChannel) {
+        // The channel is a non-DM channel, hide the online indicator
+        presenceAvatarView.isOnlineIndicatorVisible = false
+        
+        let lastActiveMembers = channel.lastActiveMembers
+            .sorted { $0.memberCreatedAt < $1.memberCreatedAt }
+            .filter { $0.id != content.currentUserId }
+        
+        // If there are no members other than the current user in the channel, load a placeholder
+        if lastActiveMembers.isEmpty {
             presenceAvatarView.avatarView.imageView.loadImage(
-                from: otherMember?.imageURL,
-                placeholder: appearance.images.userAvatarPlaceholder3,
+                from: nil,
+                placeholder: appearance.images.userAvatarPlaceholder4,
                 preferredSize: .avatarThumbnailSize,
                 components: components
             )
-            
-            presenceAvatarView.isOnlineIndicatorVisible = isOnlineIndicatorVisible
             return
         }
-        
-        // The channel is a non-DM channel, hide the online indicator
-        presenceAvatarView.isOnlineIndicatorVisible = false
         
         var urls = lastActiveMembers.map(\.imageURL)
         
@@ -113,7 +145,7 @@ open class ChatChannelAvatarView: _View, ThemeProvider, SwiftUIRepresentable {
             // When running tests, we load the images synchronously
             let images = urls.map { UIImage(data: try! Data(contentsOf: $0!))! }
            
-            let combinedImage = getCombinedAvatarImage(from: images) ?? appearance.images.userAvatarPlaceholder2
+            let combinedImage = createMergedAvatar(from: images) ?? appearance.images.userAvatarPlaceholder2
             
             presenceAvatarView.avatarView.imageView.loadImage(
                 from: nil,
@@ -127,7 +159,7 @@ open class ChatChannelAvatarView: _View, ThemeProvider, SwiftUIRepresentable {
         loadAvatarsFrom(urls: urls, channelId: channel.cid) { [weak self] avatars, channelId in
             guard let self = self, channelId == self.content.channel?.cid else { return }
             
-            let combinedImage = self.getCombinedAvatarImage(from: avatars) ?? self.appearance.images.userAvatarPlaceholder2
+            let combinedImage = self.createMergedAvatar(from: avatars) ?? self.appearance.images.userAvatarPlaceholder2
             
             self.presenceAvatarView.avatarView.imageView.loadImage(
                 from: nil,
@@ -138,6 +170,11 @@ open class ChatChannelAvatarView: _View, ThemeProvider, SwiftUIRepresentable {
         }
     }
     
+    /// Loads avatars for the given URLs
+    /// - Parameters:
+    ///   - urls: The avatar urls
+    ///   - channelId: The channelId of the channel
+    ///   - completion: Completion that gets called with an array of `UIImage`s when all the avatars are loaded
     open func loadAvatarsFrom(
         urls: [URL?],
         channelId: ChannelId,
@@ -196,7 +233,14 @@ open class ChatChannelAvatarView: _View, ThemeProvider, SwiftUIRepresentable {
         }
     }
     
-    open func getCombinedAvatarImage(from avatars: [UIImage]) -> UIImage? {
+    /// Creates a merged avatar from the given images
+    /// - Parameter avatars: The individual avatars
+    /// - Returns: The merged avatar
+    open func createMergedAvatar(from avatars: [UIImage]) -> UIImage? {
+        guard !avatars.isEmpty else {
+            return appearance.images.userAvatarPlaceholder1
+        }
+        
         var combinedImage: UIImage?
         
         let images = avatars.map { $0.scaled(to: .avatarThumbnailSize) }
