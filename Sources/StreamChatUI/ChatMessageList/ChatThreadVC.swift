@@ -456,7 +456,6 @@ open class ChatThreadVC:
 
     open func messageContentViewDidTapOnQuotedMessage(_ indexPath: IndexPath?) {
         guard let indexPath = indexPath else { return log.error("IndexPath is not available") }
-        print(#function, indexPath)
     }
     
     open func galleryMessageContentView(
