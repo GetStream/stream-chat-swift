@@ -846,9 +846,3 @@ func searchUsers(_ users: [ChatUser], by searchInput: String, excludingId: Strin
         distance($0) < distance($1)
     }
 }
-
-extension String {
-    subscript(index: Int) -> Character {
-        self[self.index(startIndex, offsetBy: index)]
-    }
-}

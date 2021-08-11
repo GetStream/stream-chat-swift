@@ -81,3 +81,9 @@ extension String {
         return mat[sCount][oCount]
     }
 }
+
+extension String {
+    subscript(index: Int) -> Character {
+        self[self.index(startIndex, offsetBy: index)]
+    }
+}
