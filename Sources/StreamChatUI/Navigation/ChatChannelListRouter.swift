@@ -36,7 +36,7 @@ open class _ChatChannelListRouter<ExtraData: ExtraDataTypes>:
             return
         }
         
-        navController.show(vc, sender: self)
+        navController.present(vc, animated: true, completion: nil)
     }
 
     /// Called when a user tapped `More` swipe action on a channel
