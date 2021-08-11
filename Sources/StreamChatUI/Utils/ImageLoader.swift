@@ -5,6 +5,13 @@
 import Nuke
 import UIKit
 
+/// Cancellable provides a set of functions that enable cancelling a task
+public protocol Cancellable {
+    func cancel()
+}
+
+extension ImageTask: Cancellable {}
+
 /// ImageLoading is providing set of functions for downloading of images from URLs.
 public protocol ImageLoading: AnyObject {
     /// Load an image from the given URL
@@ -20,7 +27,7 @@ public protocol ImageLoading: AnyObject {
         resize: Bool,
         preferredSize: CGSize?,
         completion: @escaping ((_ result: Result<UIImage, Error>) -> Void)
-    ) -> ImageTask?
+    ) -> Cancellable?
 }
 
 /// The class which is resposible for loading images from URLs.
@@ -39,7 +46,7 @@ open class DefaultImageLoader: ImageLoading {
         resize: Bool = true,
         preferredSize: CGSize? = .avatarThumbnailSize,
         completion: @escaping ((Result<UIImage, Error>) -> Void)
-    ) -> ImageTask? {
+    ) -> Cancellable? {
         guard !SystemEnvironment.isTests else {
             // When running tests, we load the images synchronously
             let image = UIImage(data: try! Data(contentsOf: url))!
