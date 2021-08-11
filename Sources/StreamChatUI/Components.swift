@@ -264,6 +264,9 @@ public struct Components {
     /// A view controller that shows suggestions of commands or mentions.
     public var suggestionsVC: ChatSuggestionsVC.Type = ChatSuggestionsVC.self
 
+    /// When true the suggestionsVC will search users from the entire application instead of limit search to the current channel.
+    public var mentionAllAppUsers: Bool = false
+
     /// The collection view of the suggestions view controller.
     public var suggestionsCollectionView: ChatSuggestionsCollectionView.Type = ChatSuggestionsCollectionView.self
 

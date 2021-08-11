@@ -2,6 +2,7 @@
 // Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
+import Foundation
 import StreamChat
 import UIKit
 
@@ -174,6 +175,9 @@ open class ComposerVC: _ViewController,
     open var isAttachmentsEnabled: Bool {
         channelConfig?.uploadsEnabled == true
     }
+
+    /// When enabled mentions search users across the entire app instead of searching
+    open private(set) lazy var mentionAllAppUsers: Bool = components.mentionAllAppUsers
 
     /// A controller to search users and that is used to populate the mention suggestions.
     open var userSearchController: ChatUserSearchController!
@@ -627,20 +631,41 @@ open class ComposerVC: _ViewController,
     ///   - typingMention: The potential user mention the current user is typing.
     ///   - mentionRange: The position where the current user is typing a mention to it can be replaced with the suggestion.
     open func showMentionSuggestions(for typingMention: String, mentionRange: NSRange) {
-        userSearchController.search(
-            query: queryForMentionSuggestionsSearch(typingMention: typingMention)
-        )
+        guard let channel = channelController?.channel else {
+            return
+        }
+        guard let currentUserId = channelController?.client.currentUserId else {
+            return
+        }
+        
+        var usersCache: [ChatUser] = []
+
+        if mentionAllAppUsers {
+            userSearchController.search(
+                query: queryForMentionSuggestionsSearch(typingMention: typingMention)
+            )
+        } else {
+            usersCache = searchUsers(
+                channel.watchers.map { $0 } + channel.cachedMembers.map { $0 },
+                by: typingMention,
+                excludingId: currentUserId
+            )
+        }
+
         let dataSource = ChatMessageComposerSuggestionsMentionDataSource(
             collectionView: suggestionsVC.collectionView,
-            searchController: userSearchController
+            searchController: userSearchController,
+            usersCache: usersCache
         )
         suggestionsVC.dataSource = dataSource
         suggestionsVC.didSelectItemAt = { [weak self] userIndex in
             guard let self = self else { return }
+            guard dataSource.usersCache.count >= userIndex else {
+                return
+            }
 
             let textView = self.composerView.inputMessageView.textView
-            let user = self.userSearchController.users[userIndex]
-
+            let user = dataSource.usersCache[userIndex]
             let text = textView.text as NSString
             let mentionText = self.mentionText(for: user)
             let newText = text.replacingCharacters(in: mentionRange, with: mentionText)
@@ -792,5 +817,32 @@ open class ComposerVC: _ViewController,
         } catch {
             log.assertionFailure(error.localizedDescription)
         }
+    }
+}
+
+/// searchUsers does an autocomplete search on a list of ChatUser and returns users with `id` or `name` containing the search string
+/// results are returned sorted by their edit distance from the searched string
+/// distance is calculated using the levenshtein algorithm
+/// both search and name strings are normalized (lowercased and by replacing diacritics)
+func searchUsers(_ users: [ChatUser], by searchInput: String, excludingId: String? = nil) -> [ChatUser] {
+    let normalize: (String) -> String = {
+        $0.lowercased().folding(options: .diacriticInsensitive, locale: .current)
+    }
+
+    let searchInput = normalize(searchInput)
+
+    let matchingUsers = users.filter { $0.id != excludingId }
+        .filter { $0.id.contains(searchInput) || (normalize($0.name ?? "").contains(searchInput)) }
+
+    let uniqueUsers = matchingUsers.reduce(into: [String: ChatUser]()) {
+        $0[$1.id] = $1
+    }
+
+    let distance: (ChatUser) -> Int = {
+        min($0.id.levenshtein(searchInput), $0.name?.levenshtein(searchInput) ?? 1000)
+    }
+
+    return uniqueUsers.values.map { $0 }.sorted {
+        distance($0) < distance($1)
     }
 }
