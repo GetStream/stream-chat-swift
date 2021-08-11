@@ -563,7 +563,10 @@ open class ChatMessageListVC:
     
     open func messageContentViewDidTapOnQuotedMessage(_ indexPath: IndexPath?) {
         guard let indexPath = indexPath else { return log.error("IndexPath is not available") }
-        print(#function, indexPath)
+        log
+            .info(
+                "Tapped a quoted message. To customize the behavior, override messageContentViewDidTapOnQuotedMessage. Path: \(indexPath)"
+            )
     }
     
     open func numberOfSections(in tableView: UITableView) -> Int {
