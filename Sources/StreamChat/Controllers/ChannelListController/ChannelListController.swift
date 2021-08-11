@@ -60,7 +60,7 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
     private(set) lazy var channelListObserver: ListDatabaseObserver<ChatChannel, ChannelDTO> = {
         let request = ChannelDTO.channelListFetchRequest(query: self.query)
         
-        let observer = self.environment.createChannelListDabaseObserver(
+        let observer = self.environment.createChannelListDatabaseObserver(
             client.databaseContainer.viewContext,
             request,
             { $0.asModel() }
@@ -219,7 +219,7 @@ extension ChatChannelListController {
             _ apiClient: APIClient
         ) -> ChannelListUpdater = ChannelListUpdater.init
 
-        var createChannelListDabaseObserver: (
+        var createChannelListDatabaseObserver: (
             _ context: NSManagedObjectContext,
             _ fetchRequest: NSFetchRequest<ChannelDTO>,
             _ itemCreator: @escaping (ChannelDTO) -> ChatChannel
