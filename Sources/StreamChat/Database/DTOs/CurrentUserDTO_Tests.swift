@@ -21,7 +21,7 @@ class CurrentUserModelDTO_Tests: XCTestCase {
     }
     
     func test_currentUserPayload_customRolesEncoding() throws {
-        let payload: CurrentUserPayload = .dummy(userPayload: .dummy(userId: .unique, role: .custom("banana-master")))
+        let payload: CurrentUserPayload = .dummy(userPayload: .dummy(userId: .unique, role: UserRole("banana-master")))
 
         // Asynchronously save the payload to the db
         try database.writeSynchronously { session in
@@ -33,7 +33,7 @@ class CurrentUserModelDTO_Tests: XCTestCase {
             database.viewContext.currentUser?.asModel()
         )
         
-        XCTAssertEqual(.custom("banana-master"), loadedCurrentUser.userRole)
+        XCTAssertEqual(UserRole("banana-master"), loadedCurrentUser.userRole)
     }
 
     func test_currentUserPayload_isStoredAndLoadedFromDB() throws {

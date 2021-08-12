@@ -12,7 +12,7 @@ class CurrentUserPayload_Tests: XCTestCase {
     func test_currentUserJSON_customRoleIsDecodedCorrectly() throws {
         let json = XCTestCase.mockData(fromFile: "CurrentUserCustomRole")
         let payload = try JSONDecoder.default.decode(CurrentUserPayload.self, from: json)
-        XCTAssertEqual(payload.role, .custom("banana-master"))
+        XCTAssertEqual(payload.role, UserRole("banana-master"))
     }
 
     func test_currentUserJSON_isDecodedCorrectly() throws {

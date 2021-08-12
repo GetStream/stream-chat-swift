@@ -103,10 +103,6 @@ public struct UserRole: RawRepresentable, Codable, Hashable, ExpressibleByString
     public init(stringLiteral value: String) {
         self.init(rawValue: value)
     }
-    
-    static func custom(_ rawValue: String) -> UserRole {
-        .init(rawValue: rawValue)
-    }
 }
 
 public extension UserRole {
