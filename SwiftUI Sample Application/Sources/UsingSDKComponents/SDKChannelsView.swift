@@ -11,7 +11,11 @@ struct SDKChannelsView: View {
     var channelListController: ChatChannelListController
 
     var body: some View {
-        ChatChannelList(controller: channelListController)
+        VStack {
+            Text("Some SwiftUI customer title")
+            ChatChannelList(controller: channelListController)
+            Text("Some  SwiftUI customer title in bottom")
+        }
     }
 }
 

@@ -8,24 +8,25 @@ import StreamChatUI
 
 class CustomRouter: ChatChannelListRouter {
 
-    var showCurrentUserProfileClosure: () -> Void = {}
-    var showMessageListClosure: (ChannelId) -> Void = {_ in }
-    var didTapMoreButtonClosure: (ChannelId) -> Void = {_ in }
-    var didTapDeleteButtonClosure: (ChannelId) -> Void = {_ in }
+    // TODO: this is a very bad spike/hack
+    static var showCurrentUserProfileClosure: () -> Void = {}
+    static var showMessageListClosure: (ChannelId) -> Void = {_ in }
+    static var didTapMoreButtonClosure: (ChannelId) -> Void = {_ in }
+    static var didTapDeleteButtonClosure: (ChannelId) -> Void = {_ in }
 
     override func showCurrentUserProfile() {
-        showCurrentUserProfileClosure()
+        CustomRouter.showCurrentUserProfileClosure()
     }
 
     override func showMessageList(for cid: ChannelId) {
-        showMessageListClosure(cid)
+        CustomRouter.showMessageListClosure(cid)
     }
 
     override func didTapMoreButton(for cid: ChannelId) {
-        didTapMoreButtonClosure(cid)
+        CustomRouter.didTapMoreButtonClosure(cid)
     }
 
     override func didTapDeleteButton(for cid: ChannelId) {
-        didTapDeleteButtonClosure(cid)
+        CustomRouter.didTapDeleteButtonClosure(cid)
     }
 }

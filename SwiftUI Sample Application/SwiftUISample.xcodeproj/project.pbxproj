@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		BCE48434CB2F280EE9C375C3 /* ChannelsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCE4854BF7F4319F040F43C7 /* ChannelsView.swift */; };
+		BCE4849BBD1F087A28933C70 /* SDKMessagesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCE48EFE7FB7A8250ECFB927 /* SDKMessagesView.swift */; };
 		BCE48A2B026234EFA268CC2B /* View+AnyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCE48CE634D63E2E3A6DE88F /* View+AnyView.swift */; };
 		BCE48CDC409873C64C39EBB9 /* CustomRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCE48E6BD44585D9B100552D /* CustomRouter.swift */; };
 		BCE48EDE41BE7F4EBB8227FC /* SDKChannelsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCE483C8DE8210F872EB8B07 /* SDKChannelsView.swift */; };
@@ -41,6 +42,7 @@
 		BCE4854BF7F4319F040F43C7 /* ChannelsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChannelsView.swift; sourceTree = "<group>"; };
 		BCE48CE634D63E2E3A6DE88F /* View+AnyView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "View+AnyView.swift"; sourceTree = "<group>"; };
 		BCE48E6BD44585D9B100552D /* CustomRouter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomRouter.swift; sourceTree = "<group>"; };
+		BCE48EFE7FB7A8250ECFB927 /* SDKMessagesView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SDKMessagesView.swift; sourceTree = "<group>"; };
 		FB6A421226C2797B00905562 /* SwiftUISample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SwiftUISample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		FB6A422326C2797E00905562 /* SwiftUISampleTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SwiftUISampleTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		FB6A422726C2797E00905562 /* SwiftUISampleTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftUISampleTests.swift; sourceTree = "<group>"; };
@@ -92,6 +94,7 @@
 			isa = PBXGroup;
 			children = (
 				BCE483C8DE8210F872EB8B07 /* SDKChannelsView.swift */,
+				BCE48EFE7FB7A8250ECFB927 /* SDKMessagesView.swift */,
 			);
 			path = UsingSDKComponents;
 			sourceTree = "<group>";
@@ -304,6 +307,7 @@
 				BCE48434CB2F280EE9C375C3 /* ChannelsView.swift in Sources */,
 				BCE48EDE41BE7F4EBB8227FC /* SDKChannelsView.swift in Sources */,
 				BCE48CDC409873C64C39EBB9 /* CustomRouter.swift in Sources */,
+				BCE4849BBD1F087A28933C70 /* SDKMessagesView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
