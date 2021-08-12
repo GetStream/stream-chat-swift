@@ -93,7 +93,49 @@ extension ChatUser: Hashable {
     }
 }
 
-public enum UserRole: String, Codable, Hashable {
+public enum UserRole: RawRepresentable, Codable, Hashable, CaseIterable {
+    public typealias RawValue = String
+
+    public static var allCases: [UserRole] = [
+        .admin, .anonymous, .guest, .user
+    ]
+
+    static var builtinRoles: [String: UserRole] = {
+        UserRole.allCases.reduce(into: [String: UserRole]()) {
+            $0[$1.rawValue] = $1
+        }
+    }()
+
+    public var rawValue: String {
+        switch self {
+        case .user: return "user"
+        case .admin: return "admin"
+        case .guest: return "guest"
+        case .anonymous: return "anonymous"
+        case let .custom(value):
+            return value
+        }
+    }
+
+    public init(rawValue: String) {
+        if let role = UserRole.builtinRoles[rawValue] {
+            self = role
+        } else {
+            self = .custom(rawValue)
+        }
+    }
+
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.singleValueContainer()
+        let value = try container.decode(String.self)
+        self.init(rawValue: value)
+    }
+
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.singleValueContainer()
+        try container.encode(rawValue)
+    }
+    
     /// This is the default role assigned to any user.
     case user
     
@@ -105,4 +147,7 @@ public enum UserRole: String, Codable, Hashable {
     
     /// A user that connected using anonymous authentication.
     case anonymous
+
+    /// A user with a custom role
+    case custom(String)
 }
