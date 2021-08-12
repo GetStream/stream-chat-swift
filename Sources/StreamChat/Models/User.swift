@@ -93,61 +93,49 @@ extension ChatUser: Hashable {
     }
 }
 
-public enum UserRole: RawRepresentable, Codable, Hashable, CaseIterable {
-    public typealias RawValue = String
-
-    public static var allCases: [UserRole] = [
-        .admin, .anonymous, .guest, .user
-    ]
-
-    static var builtinRoles: [String: UserRole] = {
-        UserRole.allCases.reduce(into: [String: UserRole]()) {
-            $0[$1.rawValue] = $1
-        }
-    }()
-
-    public var rawValue: String {
-        switch self {
-        case .user: return "user"
-        case .admin: return "admin"
-        case .guest: return "guest"
-        case .anonymous: return "anonymous"
-        case let .custom(value):
-            return value
-        }
-    }
-
+public struct UserRole: RawRepresentable, Codable, Hashable, ExpressibleByStringLiteral {
+    public let rawValue: String
+    
     public init(rawValue: String) {
-        if let role = UserRole.builtinRoles[rawValue] {
-            self = role
-        } else {
-            self = .custom(rawValue)
-        }
+        self.rawValue = rawValue
     }
-
-    public init(from decoder: Decoder) throws {
-        let container = try decoder.singleValueContainer()
-        let value = try container.decode(String.self)
+    
+    public init(stringLiteral value: String) {
         self.init(rawValue: value)
     }
-
-    public func encode(to encoder: Encoder) throws {
-        var container = encoder.singleValueContainer()
-        try container.encode(rawValue)
+    
+    static func custom(_ rawValue: String) -> UserRole {
+        .init(rawValue: rawValue)
     }
-    
-    /// This is the default role assigned to any user.
-    case user
-    
-    /// This role allows users to perform more advanced actions. This role should be granted only to staff users
-    case admin
-    
-    /// A user that connected using guest user authentication.
-    case guest
-    
-    /// A user that connected using anonymous authentication.
-    case anonymous
+}
 
-    /// A user with a custom role
-    case custom(String)
+public extension UserRole {
+    /// This is the default role assigned to any user.
+    static let user = Self(rawValue: "user")
+
+    /// This role allows users to perform more advanced actions. This role should be granted only to staff users
+    static let admin = Self(rawValue: "admin")
+
+    /// A user that connected using guest user authentication.
+    static let guest = Self(rawValue: "guest")
+
+    /// A user that connected using anonymous authentication.
+    static let anonymous = Self(rawValue: "anonymous")
+    
+    init(from decoder: Decoder) throws {
+        let container = try decoder.singleValueContainer()
+        let value = try container.decode(String.self)
+        switch value {
+        case "user":
+            self = .user
+        case "guest":
+            self = .guest
+        case "admin":
+            self = .admin
+        case "anonymous":
+            self = .anonymous
+        default:
+            self = .init(rawValue: value)
+        }
+    }
 }
