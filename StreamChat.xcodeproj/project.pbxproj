@@ -782,7 +782,7 @@
 		ACBEF4E5268B439A00FE7557 /* YTLiveVideoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACBEF4E3268B439A00FE7557 /* YTLiveVideoViewController.swift */; };
 		ACBEF4E6268B439A00FE7557 /* YTLiveVideoViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = ACBEF4E4268B439A00FE7557 /* YTLiveVideoViewController.xib */; };
 		ACCA772A26C40C96007AE2ED /* ImageLoading.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACCA772926C40C96007AE2ED /* ImageLoading.swift */; };
-		ACCA772C26C40D43007AE2ED /* DefaultImageLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACCA772B26C40D43007AE2ED /* DefaultImageLoader.swift */; };
+		ACCA772C26C40D43007AE2ED /* NukeImageLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACCA772B26C40D43007AE2ED /* NukeImageLoader.swift */; };
 		ACD502A926BC0C670029FB7D /* ImageMerger.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACD502A826BC0C670029FB7D /* ImageMerger.swift */; };
 		ACE6E060268D92F200396310 /* YTScrollToLatestMessageButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACE6E05F268D92F200396310 /* YTScrollToLatestMessageButton.swift */; };
 		ACE6E063268D965100396310 /* YTSendButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACE6E062268D965100396310 /* YTSendButton.swift */; };
@@ -2145,7 +2145,7 @@
 		ACBEF4E3268B439A00FE7557 /* YTLiveVideoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YTLiveVideoViewController.swift; sourceTree = "<group>"; };
 		ACBEF4E4268B439A00FE7557 /* YTLiveVideoViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = YTLiveVideoViewController.xib; sourceTree = "<group>"; };
 		ACCA772926C40C96007AE2ED /* ImageLoading.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageLoading.swift; sourceTree = "<group>"; };
-		ACCA772B26C40D43007AE2ED /* DefaultImageLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultImageLoader.swift; sourceTree = "<group>"; };
+		ACCA772B26C40D43007AE2ED /* NukeImageLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NukeImageLoader.swift; sourceTree = "<group>"; };
 		ACD502A826BC0C670029FB7D /* ImageMerger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageMerger.swift; sourceTree = "<group>"; };
 		ACDB5412269C6F2A007CD465 /* String+Extensions_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Extensions_Tests.swift"; sourceTree = "<group>"; };
 		ACE6E05F268D92F200396310 /* YTScrollToLatestMessageButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YTScrollToLatestMessageButton.swift; sourceTree = "<group>"; };
@@ -4469,7 +4469,7 @@
 			isa = PBXGroup;
 			children = (
 				ACCA772926C40C96007AE2ED /* ImageLoading.swift */,
-				ACCA772B26C40D43007AE2ED /* DefaultImageLoader.swift */,
+				ACCA772B26C40D43007AE2ED /* NukeImageLoader.swift */,
 			);
 			path = ImageLoading;
 			sourceTree = "<group>";
@@ -5814,7 +5814,7 @@
 				BDDD1EAA2632CE3C00BA007B /* Appearance+SwiftUI.swift in Sources */,
 				8850FE87256558A200C8D534 /* ChatChannelListRouter.swift in Sources */,
 				888ABA072594FDE30015937E /* ChatMessageInteractiveAttachmentView.swift in Sources */,
-				ACCA772C26C40D43007AE2ED /* DefaultImageLoader.swift in Sources */,
+				ACCA772C26C40D43007AE2ED /* NukeImageLoader.swift in Sources */,
 				88BD82B02549D18F00369074 /* ChatChannelListItemView.swift in Sources */,
 				A39A8AE7263825F4003453D9 /* ChatMessageLayoutOptionsResolver.swift in Sources */,
 				8825334C258CE82500B77352 /* ChatMessageActionsRouter.swift in Sources */,

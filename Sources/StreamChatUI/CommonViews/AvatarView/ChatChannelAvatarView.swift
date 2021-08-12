@@ -19,7 +19,7 @@ open class ChatChannelAvatarView: _View, ThemeProvider, SwiftUIRepresentable {
     
     /// Object responsible for loading images.
     open lazy var imageLoader: ImageLoading = {
-        DefaultImageLoader(imageCDN: components.imageCDN)
+        NukeImageLoader()
     }()
     
     /// Object responsible for providing functionality of merging images.
@@ -206,11 +206,12 @@ open class ChatChannelAvatarView: _View, ThemeProvider, SwiftUIRepresentable {
         for avatarUrl in avatarUrls {
             var placeholderIndex = 0
             group.enter()
-            imageLoader.loadImage(
-                from: avatarUrl,
-                resize: true,
-                preferredSize: .avatarThumbnailSize
-            ) { result in
+            
+            let thumbnailUrl = components.imageCDN.thumbnailURL(originalURL: avatarUrl, preferredSize: .avatarThumbnailSize)
+            let imageRequest = components.imageCDN.urlRequest(forImage: thumbnailUrl)
+            let cachingKey = components.imageCDN.cachingKey(forImage: avatarUrl)
+
+            imageLoader.loadImage(using: imageRequest, cachingKey: cachingKey) { result in
                 switch result {
                 case let .success(image):
                     images.append(image)
