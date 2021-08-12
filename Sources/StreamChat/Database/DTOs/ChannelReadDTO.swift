@@ -38,13 +38,11 @@ class ChannelReadDTO: NSManagedObject {
     }
     
     static func load(userId: String, context: NSManagedObjectContext) -> [ChannelReadDTO] {
-        let request = fetchRequest(userId: userId)
-        return try! context.fetch(request)
+        load(by: fetchRequest(userId: userId), context: context)
     }
     
     static func load(cid: ChannelId, userId: String, context: NSManagedObjectContext) -> ChannelReadDTO? {
-        let request = fetchRequest(for: cid, userId: userId)
-        return try! context.fetch(request).first
+        load(by: fetchRequest(for: cid, userId: userId), context: context).first
     }
     
     static func loadOrCreate(cid: ChannelId, userId: String, context: NSManagedObjectContext) -> ChannelReadDTO {

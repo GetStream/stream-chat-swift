@@ -217,13 +217,13 @@ class MessageDTO: NSManagedObject {
         request.sortDescriptors = [NSSortDescriptor(keyPath: \MessageDTO.createdAt, ascending: false)]
         request.fetchLimit = limit
         request.fetchOffset = offset
-        return try! context.fetch(request)
+        return load(by: request, context: context)
     }
     
     static func load(id: String, context: NSManagedObjectContext) -> MessageDTO? {
         let request = NSFetchRequest<MessageDTO>(entityName: entityName)
         request.predicate = NSPredicate(format: "id == %@", id)
-        return try! context.fetch(request).first
+        return load(by: request, context: context).first
     }
     
     static func loadOrCreate(id: String, context: NSManagedObjectContext) -> MessageDTO {
@@ -248,7 +248,7 @@ class MessageDTO: NSManagedObject {
         request.sortDescriptors = [NSSortDescriptor(keyPath: \MessageDTO.createdAt, ascending: false)]
         request.fetchLimit = limit
         request.fetchOffset = offset
-        return try! context.fetch(request)
+        return load(by: request, context: context)
     }
 
     static func loadAttachmentCounts(

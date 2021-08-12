@@ -95,7 +95,7 @@ extension UserDTO {
         request.sortDescriptors = [UserListSortingKey.lastActiveSortDescriptor]
         request.predicate = NSPredicate(format: "ANY watchedChannels.cid == %@", cid.rawValue)
         request.fetchLimit = context.localCachingSettings?.chatChannel.lastActiveWatchersLimit ?? 5
-        return try! context.fetch(request)
+        return load(by: request, context: context)
     }
 }
 

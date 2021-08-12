@@ -83,7 +83,7 @@ extension MemberDTO {
         request.predicate = NSPredicate(format: "channel.cid == %@", cid.rawValue)
         request.sortDescriptors = [ChannelMemberListSortingKey.lastActiveSortDescriptor]
         request.fetchLimit = context.localCachingSettings?.chatChannel.lastActiveMembersLimit ?? 5
-        return try! context.fetch(request)
+        return load(by: request, context: context)
     }
 }
 
