@@ -259,8 +259,8 @@ open class GalleryVC:
         } else {
             if
                 let lastActive = content.message.author.lastActiveAt,
-                let minutes = dateFormatter.string(from: lastActive, to: Date()) {
-                dateLabel.text = L10n.Message.Title.seeMinutesAgo(minutes)
+                let timeAgo = DateUtils.timeAgo(relativeTo: lastActive) {
+                dateLabel.text = timeAgo
             } else {
                 dateLabel.text = L10n.Message.Title.offline
             }

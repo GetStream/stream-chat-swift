@@ -51,12 +51,22 @@
 "message.sending.attachment-uploading-failed" = "UPLOADING FAILED";
 
 "message.title.online" = "Online";
-"message.title.see-minutes-ago" = "Seen %@ ago";
 "message.title.offline" = "Offline";
 "message.title.group" = "%d members, %d online";
 
 "current-selection" = "%d of %d";
 
 "attachment.max-size-exceeded" = "Attachment size exceed the limit.";
-
+"dates.time-ago-seconds-plural" = "%d seconds ago";
+"dates.time-ago-seconds-singular" = "just one second ago";
+"dates.time-ago-minutes-singular" = "one minute ago";
+"dates.time-ago-minutes-plural" = "%d minutes ago";
+"dates.time-ago-hours-singular" = "one hour ago";
+"dates.time-ago-hours-plural" = "%d hours ago";
+"dates.time-ago-days-singular" = "one day ago";
+"dates.time-ago-days-plural" = "%d days ago";
+"dates.time-ago-weeks-singular" = "one week ago";
+"dates.time-ago-weeks-plural" = "%d weeks ago";
+"dates.time-ago-months-singular" = "one month ago";
+"dates.time-ago-months-plural" = "%d months ago";
 // MARK: -  DemoApp Strings

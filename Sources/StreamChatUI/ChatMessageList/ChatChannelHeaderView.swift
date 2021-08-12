@@ -77,9 +77,8 @@ open class ChatChannelHeaderView:
 
             if member.isOnline {
                 return L10n.Message.Title.online
-            } else if let minutes = member.lastActiveAt
-                .flatMap({ DateComponentsFormatter.minutes.string(from: $0, to: Date()) }) {
-                return L10n.Message.Title.seeMinutesAgo(minutes)
+            } else if let lastActiveAt = member.lastActiveAt, let timeAgo = DateUtils.timeAgo(relativeTo: lastActiveAt) {
+                return timeAgo
             } else {
                 return L10n.Message.Title.offline
             }
