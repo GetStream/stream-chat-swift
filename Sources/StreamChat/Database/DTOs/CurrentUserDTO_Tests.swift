@@ -20,6 +20,22 @@ class CurrentUserModelDTO_Tests: XCTestCase {
         super.tearDown()
     }
     
+    func test_currentUserPayload_customRolesEncoding() throws {
+        let payload: CurrentUserPayload = .dummy(userPayload: .dummy(userId: .unique, role: UserRole("banana-master")))
+
+        // Asynchronously save the payload to the db
+        try database.writeSynchronously { session in
+            try session.saveCurrentUser(payload: payload)
+        }
+
+        // Load the user from the db and check the fields are correct
+        let loadedCurrentUser: CurrentChatUser = try XCTUnwrap(
+            database.viewContext.currentUser?.asModel()
+        )
+        
+        XCTAssertEqual(UserRole("banana-master"), loadedCurrentUser.userRole)
+    }
+
     func test_currentUserPayload_isStoredAndLoadedFromDB() throws {
         let userPayload: UserPayload = .dummy(userId: .unique, extraData: ["k": .string("v")])
         

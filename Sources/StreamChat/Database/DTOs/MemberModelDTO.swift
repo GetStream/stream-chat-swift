@@ -155,7 +155,7 @@ extension ChatChannelMember {
             isOnline: dto.user.isOnline,
             isBanned: dto.user.isBanned,
             isFlaggedByCurrentUser: dto.user.flaggedBy != nil,
-            userRole: UserRole(rawValue: dto.user.userRoleRaw)!,
+            userRole: UserRole(rawValue: dto.user.userRoleRaw),
             userCreatedAt: dto.user.userCreatedAt,
             userUpdatedAt: dto.user.userUpdatedAt,
             lastActiveAt: dto.user.lastActivityAt,
