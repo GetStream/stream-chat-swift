@@ -5,11 +5,11 @@
 import StreamChat
 import UIKit
 
+/// Controller responsible for displaying the channel messages.
+@available(iOSApplicationExtension, unavailable)
 open class ChatChannelVC:
     _ViewController,
-    ThemeProvider,
-    ChatMessageListVCDelegate,
-    ChatMessageActionsVCDelegate {
+    ThemeProvider {
     /// User search controller passed directly to the composer
     open var userSuggestionSearchController: ChatUserSearchController!
 
@@ -95,6 +95,7 @@ open class ChatChannelVC:
         if let cid = channelController.cid {
             headerView.channelController = client.channelController(for: cid)
         }
+        
         navigationItem.titleView = headerView
         navigationItem.largeTitleDisplayMode = .never
     }
@@ -112,48 +113,13 @@ open class ChatChannelVC:
 
         keyboardObserver.unregister()
     }
+}
 
-    // MARK: - _ChatMessageListVCDelegate
-
-    public func chatMessageList(
+extension ChatChannelVC: ChatMessageListVCDelegate {
+    public func chatMessageListVC(
         _ vc: ChatMessageListVC,
-        didSelectMessage message: ChatMessage,
-        messageContentView: ChatMessageContentView
-    ) {
-        let messageController = channelController.client.messageController(
-            cid: channelController.cid!,
-            messageId: message.id
-        )
-
-        let actionsController = components.messageActionsVC.init()
-        actionsController.messageController = messageController
-        actionsController.channelConfig = channelController.channel?.config
-        actionsController.delegate = self
-
-        let reactionsController: ChatMessageReactionsVC? = {
-            guard message.localState == nil else { return nil }
-            guard channelController.channel?.config.reactionsEnabled == true else {
-                return nil
-            }
-
-            let controller = components.messageReactionsVC.init()
-            controller.messageController = messageController
-            return controller
-        }()
-
-        router.showMessageActionsPopUp(
-            messageContentView: messageContentView,
-            messageActionsController: actionsController,
-            messageReactionsController: reactionsController
-        )
-    }
-
-    // MARK: - _ChatMessageActionsVCDelegate
-
-    open func chatMessageActionsVC(
-        _ vc: ChatMessageActionsVC,
-        message: ChatMessage,
-        didTapOnActionItem actionItem: ChatMessageActionItem
+        didTapOnAction actionItem: ChatMessageActionItem,
+        for message: ChatMessage
     ) {
         switch actionItem {
         case is EditActionItem:
@@ -171,9 +137,5 @@ open class ChatChannelVC:
         default:
             return
         }
-    }
-
-    open func chatMessageActionsVCDidFinish(_ vc: ChatMessageActionsVC) {
-        dismiss(animated: true)
     }
 }
