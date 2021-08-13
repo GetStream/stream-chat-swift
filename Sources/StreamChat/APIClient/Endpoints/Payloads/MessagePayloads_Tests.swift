@@ -11,7 +11,7 @@ class MessagePayload_Tests: XCTestCase {
     let messageCustomData: [String: RawJSON] = ["secret_note": .string("Anakin is Vader!")]
 
     func test_messagePayload_isSerialized_withDefaultExtraData() throws {
-        let box = try JSONDecoder.default.decode(MessagePayload.Boxed.self, from: messageJSON)
+        let box = try JSONDecoder.stream.decode(MessagePayload.Boxed.self, from: messageJSON)
         let payload = box.message
         
         XCTAssertEqual(payload.id, "7baa1533-3294-4c0c-9a62-c9d0928bf733")
@@ -45,6 +45,9 @@ class MessagePayload_Tests: XCTestCase {
     func test_messagePayload_isSerialized_withDefaultExtraData_withBrokenAttachmentPayload() throws {
         let box = try JSONDecoder.default.decode(MessagePayload.Boxed.self, from: messageJSONWithCorruptedAttachments)
         let payload = box.message
+
+        var messageCustomData = messageCustomData
+        messageCustomData["tau"] = .double(6.28)
 
         XCTAssertEqual(payload.id, "7baa1533-3294-4c0c-9a62-c9d0928bf733")
         XCTAssertEqual(payload.type.rawValue, "regular")
