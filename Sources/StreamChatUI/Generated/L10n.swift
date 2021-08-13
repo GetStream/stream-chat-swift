@@ -86,41 +86,41 @@ internal enum L10n {
   }
 
   internal enum Dates {
-    /// %d days ago
+    /// last seen %d days ago
     internal static func timeAgoDaysPlural(_ p1: Int) -> String {
       return L10n.tr("Localizable", "dates.time-ago-days-plural", p1)
     }
-    /// one day ago
+    /// last seen one day ago
     internal static var timeAgoDaysSingular: String { L10n.tr("Localizable", "dates.time-ago-days-singular") }
-    /// %d hours ago
+    /// last seen %d hours ago
     internal static func timeAgoHoursPlural(_ p1: Int) -> String {
       return L10n.tr("Localizable", "dates.time-ago-hours-plural", p1)
     }
-    /// one hour ago
+    /// last seen one hour ago
     internal static var timeAgoHoursSingular: String { L10n.tr("Localizable", "dates.time-ago-hours-singular") }
-    /// %d minutes ago
+    /// last seen %d minutes ago
     internal static func timeAgoMinutesPlural(_ p1: Int) -> String {
       return L10n.tr("Localizable", "dates.time-ago-minutes-plural", p1)
     }
-    /// one minute ago
+    /// last seen one minute ago
     internal static var timeAgoMinutesSingular: String { L10n.tr("Localizable", "dates.time-ago-minutes-singular") }
-    /// %d months ago
+    /// last seen %d months ago
     internal static func timeAgoMonthsPlural(_ p1: Int) -> String {
       return L10n.tr("Localizable", "dates.time-ago-months-plural", p1)
     }
-    /// one month ago
+    /// last seen one month ago
     internal static var timeAgoMonthsSingular: String { L10n.tr("Localizable", "dates.time-ago-months-singular") }
-    /// %d seconds ago
+    /// last seen %d seconds ago
     internal static func timeAgoSecondsPlural(_ p1: Int) -> String {
       return L10n.tr("Localizable", "dates.time-ago-seconds-plural", p1)
     }
-    /// just one second ago
+    /// last seen just one second ago
     internal static var timeAgoSecondsSingular: String { L10n.tr("Localizable", "dates.time-ago-seconds-singular") }
-    /// %d weeks ago
+    /// last seen %d weeks ago
     internal static func timeAgoWeeksPlural(_ p1: Int) -> String {
       return L10n.tr("Localizable", "dates.time-ago-weeks-plural", p1)
     }
-    /// one week ago
+    /// last seen one week ago
     internal static var timeAgoWeeksSingular: String { L10n.tr("Localizable", "dates.time-ago-weeks-singular") }
   }
 

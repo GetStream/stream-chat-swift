@@ -17,6 +17,9 @@ open class ChatChannelHeaderView:
         }
     }
 
+    /// Returns the date formater function used to represent when the user was last seen online
+    open var lastSeenDateFormatter: (Date) -> String? { DateUtils.timeAgo }
+
     /// The user id of the current logged in user.
     open var currentUserId: UserId? {
         channelController?.client.currentUserId
@@ -77,7 +80,7 @@ open class ChatChannelHeaderView:
 
             if member.isOnline {
                 return L10n.Message.Title.online
-            } else if let lastActiveAt = member.lastActiveAt, let timeAgo = DateUtils.timeAgo(relativeTo: lastActiveAt) {
+            } else if let lastActiveAt = member.lastActiveAt, let timeAgo = lastSeenDateFormatter(lastActiveAt) {
                 return timeAgo
             } else {
                 return L10n.Message.Title.offline

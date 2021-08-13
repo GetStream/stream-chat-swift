@@ -46,6 +46,9 @@ open class GalleryVC:
         return videos + images
     }
     
+    /// Returns the date formater function used to represent when the user was last seen online
+    open var lastSeenDateFormatter: (Date) -> String? { DateUtils.timeAgo }
+
     /// Controller for handling the transition for dismissal
     open var transitionController: ZoomTransitionController!
     
@@ -259,7 +262,7 @@ open class GalleryVC:
         } else {
             if
                 let lastActive = content.message.author.lastActiveAt,
-                let timeAgo = DateUtils.timeAgo(relativeTo: lastActive) {
+                let timeAgo = lastSeenDateFormatter(lastActive) {
                 dateLabel.text = timeAgo
             } else {
                 dateLabel.text = L10n.Message.Title.offline
