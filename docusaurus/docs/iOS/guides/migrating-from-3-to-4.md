@@ -4,21 +4,157 @@ title: Migrating from 3.x to 4.x
 
 The major version bump is due to the presence of several breaking changes. We believe they are easy to take care of in the upgrade process and improve the design of the library.
 
+---
+Please don't hesitate to contact us by sending an email to support@getstream.io or opening a ticket in our [github repo](https://github.com/GetStream/stream-chat-swift). We'll help you during your migration process and any issues you might face.
+
+---
+
 ## What's New in v4.x?
 
-- UI components have an open API and are fully customizable. Review [UI Customization Guide](../guides/ui-customization.md) to learn more about how to customize UI components.
+- UI components have an open API and are fully customizable. Review [UI Customization Guide](ui-customization.md) to learn more about how to customize UI components.
 - Messages can have custom attachments. See [Attachments v4.x Migration](#attachments-v4x-migration) below.
-
-### ⚠️ Breaking changes from 3.x:
-
-- Message attachments are exposed in a different way to make working with custom attachment types possible. See the [Attachments v4.x Migration](#attachments-v4x-migration) below.
-
-### ⚠️ Changes from 3.2-beta.x:
-
-- The inner structure of the UI components has been simplified.
+- ExtraData is now stored in a Dictionary, instead of using generics. See [ExtraData Changes](#extradata-changes) below.
+- `UIConfig` is split into `Appearance` and `Components` to improve clarity.
+-  The user setting API was updated. See [New User Setting API](#new-user-setting-api) below.
+- The inner structure of the UI components has been simplified. Many UI components were renamed.
 - `DefaultAppearance` API was removed due to its difficulty of usage.
 - The majority of the UI components use `ContainerStackView` (our custom `UIStackView` re-implementation) for its layout.
-- Read the [UI Customization Guide](../guides/ui-customization.md) to learn more about the possible customization of the UI components.
+
+
+For the list of all changes, please check out the [CHANGELOG](https://github.com/GetStream/stream-chat-swift/blob/main/CHANGELOG.md).
+## New User Setting API
+
+The user setting API was completely changed in v4. Here are the comparisons:
+
+### Static Tokens
+v3:
+```swift
+let client = ChatClient(config: config, tokenProvider: .static(token))
+```
+
+v4:
+```swift
+let client = ChatClient(config: config)
+client.connectUser(userInfo: .init(id: userId), token: token)
+```
+
+### Closure-based Tokens
+v3:
+```swift
+let client = ChatClient(
+  config: config,
+  tokenProvider: .closure { client, completion in
+    service.fetchToken { token in
+      completion(token)
+    }
+  }
+)
+```
+
+v4:
+```swift
+// `tokenProvider` property is used to reobtain a new token in case if the current one is expired
+let client = ChatClient(config: config, tokenProvider: { completion in
+  service.fetchToken { token in
+    completion(token)
+  }
+})
+service.fetchToken { token in
+  client.connectUser(userInfo: .init(id: userId), token: token)
+}
+```
+
+### Development Users
+v3:
+```swift
+let client = ChatClient(config: config, tokenProvider: .development(userId))
+```
+
+v4:
+```swift
+let client = ChatClient(config: config)
+client.connectUser(userInfo: .init(id: userId), token: .development(userId))
+```
+
+### Guest / Anonymous Users
+v3:
+```swift
+let client = ChatClient(
+  config: config,
+  tokenProvider: .guest(
+    userId: userId,
+    name: userName
+  )
+)
+// or
+let client = ChatClient(config: config, tokenProvider: .anonymous)
+```
+
+v4:
+```swift
+let client = ChatClient(config: config)
+client.connectGuestUser(userInfo: .init(id: userId))
+// or
+client.connectAnonymousUser()
+```
+
+## ExtraData Changes
+
+The new `4.0` release changes how `extraData` is stored and uses a simpler hashmap-based solution. This approach does not require creating type aliases for all generic classes such as `ChatClient`.
+
+Example:
+
+```swift
+client.connectUser(
+    userInfo: .init(
+        id: userCredentials.id,
+        extraData: ["country": .string("NL")]
+    ),
+    token: token
+)
+```
+
+`Message`, `User`, `Channel`, `MessageReaction` models now store `extraData` in a `[String: RawJSON]` container. 
+
+```swift
+let extraData:[String: RawJSON] = .dictionary([
+    "name": .string(testPayload.name),
+    "number": .integer(testPayload.number)
+])
+```
+
+### Upgrading from ExtraData
+
+If you are using `ExtraData` from `v3` or before `4.0-beta.8` the steps needed to upgrade are the following:
+
+- Remove all type aliases (`typealias ChatUser = _ChatUser<CustomExtraDataTypes.User>`)
+- Replace all generic types from `StreamChat` and `StreamChatUI` classes (`__CurrentChatUserController<T>` -> `CurrentChatUserController`) with the non-generic version
+- Remove the extra data structs and either use `extraData` directly or (recommended) extend the models 
+- Update your views to read your custom fields from the `extraData` field
+
+v3:
+```swift
+struct Birthland: UserExtraData {
+    static var defaultValue = Birthland(birthLand: "")
+    let birthLand: String
+}
+```
+
+v4:
+```swift
+extension ChatUser {
+    static let birthLandFieldName = "birthLand"
+    var birthLand: String {
+        guard let v = extraData[ChatUser.birthLandFieldName] else {
+            return ""
+        }
+        guard case let .string(birthLand) = v else {
+            return ""
+        }
+        return birthLand
+    }
+}
+```
 
 ## Attachments v4.x Migration
 
@@ -135,7 +271,7 @@ let attachments: [AnyAttachmentPayload] = [
 ### Get attachments
 
 In both `v4.x` and `v3.2` the sequence of steps is the same:
-- **[1]** get a `ChatMessage` model ([Working with messages](../guides/working-with-messages.md))
+- **[1]** get a `ChatMessage` model ([Working with messages](working-with-messages.md))
 - **[2]** get all attachments of the required type
 - **[3]** access attachment fields
 
