@@ -3,6 +3,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+### 🔄 Changed
+
+# [4.0.0-beta.11](https://github.com/GetStream/stream-chat-swift/releases/tag/4.0.0-beta.11)
+_August 13, 2021_
+
 ### 🐞 Fixed
 - Fix jumps when presenting message popup actions in a modal [#1361](https://github.com/GetStream/stream-chat-swift/issues/1361)
 - Fix custom Channel Types not allowing uppercase letters [#1361](https://github.com/GetStream/stream-chat-swift/issues/1361)
