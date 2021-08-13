@@ -84,7 +84,7 @@ class CustomMessageListVC: ChatMessageListVC {
     }
     
     @objc func debugTap() {
-        if let cid = channelController.cid {
+        if let cid = dataSource?.channel?.cid {
             (navigationController?.viewControllers.first as? ChatChannelListVC)?.router.didTapMoreButton(for: cid)
         }
     }

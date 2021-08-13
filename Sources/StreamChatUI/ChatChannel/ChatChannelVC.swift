@@ -31,11 +31,6 @@ open class ChatChannelVC:
         .messageListVC
         .init()
 
-    /// A router object that handles navigation to other view controllers.
-    open lazy var router = components
-        .messageListRouter
-        .init(rootViewController: self)
-
     /// Controller that handles the composer view
     open private(set) lazy var messageComposerVC = components
         .messageComposerVC
@@ -56,13 +51,14 @@ open class ChatChannelVC:
     override open func setUp() {
         super.setUp()
 
-        messageListVC.channelController = channelController
-        messageListVC.router = router
         messageListVC.delegate = self
+        messageListVC.dataSource = self
+        messageListVC.client = client
 
         messageComposerVC.channelController = channelController
         messageComposerVC.userSearchController = userSuggestionSearchController
 
+        channelController.setDelegate(self)
         channelController.synchronize { [weak self] _ in
             self?.messageComposerVC.updateContent()
         }
@@ -115,8 +111,41 @@ open class ChatChannelVC:
     }
 }
 
+extension ChatChannelVC: ChatMessageListVCDataSource {
+    open var messages: [ChatMessage] {
+        Array(channelController.messages)
+    }
+
+    open var channel: ChatChannel? {
+        channelController.channel
+    }
+
+    open func chatMessageListVC(
+        _ vc: ChatMessageListVC,
+        messageLayoutOptionsAt indexPath: IndexPath
+    ) -> ChatMessageLayoutOptions {
+        guard let channel = channelController.channel else { return [] }
+
+        return components.messageLayoutOptionsResolver.optionsForMessage(
+            at: indexPath,
+            in: channel,
+            with: AnyRandomAccessCollection(channelController.messages),
+            appearance: appearance
+        )
+    }
+}
+
 extension ChatChannelVC: ChatMessageListVCDelegate {
-    public func chatMessageListVC(
+    open func chatMessageListVC(
+        _ vc: ChatMessageListVC,
+        willDisplayMessageAt indexPath: IndexPath
+    ) {
+        if channelController.state == .remoteDataFetched && indexPath.row == channelController.messages.count - 5 {
+            channelController.loadPreviousMessages()
+        }
+    }
+
+    open func chatMessageListVC(
         _ vc: ChatMessageListVC,
         didTapOnAction actionItem: ChatMessageActionItem,
         for message: ChatMessage
@@ -136,6 +165,51 @@ extension ChatChannelVC: ChatMessageListVCDelegate {
             }
         default:
             return
+        }
+    }
+
+    open func chatMessageListVC(_ vc: ChatMessageListVC, scrollViewDidScroll scrollView: UIScrollView) {
+        if messageListVC.listView.isLastCellFullyVisible, channelController.channel?.isUnread == true {
+            channelController.markRead()
+
+            // Hide the badge immediately. Temporary solution until CIS-881 is implemented.
+            messageListVC.scrollToLatestMessageButton.content = .noUnread
+        }
+
+        messageListVC.setScrollToLatestMessageButton(visible: messageListVC.isScrollToBottomButtonVisible)
+    }
+}
+
+extension ChatChannelVC: ChatChannelControllerDelegate {
+    open func channelController(
+        _ channelController: ChatChannelController,
+        didUpdateMessages changes: [ListChange<ChatMessage>]
+    ) {
+        messageListVC.updateMessages(with: changes)
+    }
+
+    open func channelController(
+        _ channelController: ChatChannelController,
+        didUpdateChannel channel: EntityChange<ChatChannel>
+    ) {
+        let channelUnreadCount = channelController.channel?.unreadCount ?? .noUnread
+        messageListVC.scrollToLatestMessageButton.content = channelUnreadCount
+    }
+
+    open func channelController(
+        _ channelController: ChatChannelController,
+        didChangeTypingUsers typingUsers: Set<ChatUser>
+    ) {
+        guard channelController.areTypingEventsEnabled else { return }
+
+        let typingUsersWithoutCurrentUser = typingUsers
+            .sorted { $0.id < $1.id }
+            .filter { $0.id != self.client.currentUserId }
+
+        if typingUsersWithoutCurrentUser.isEmpty {
+            messageListVC.hideTypingIndicator()
+        } else {
+            messageListVC.showTypingIndicator(typingUsers: typingUsersWithoutCurrentUser)
         }
     }
 }

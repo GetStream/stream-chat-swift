@@ -6,10 +6,27 @@ import StreamChat
 import UIKit
 
 public protocol ChatMessageListVCDataSource: AnyObject {
-    var messages: [ChatMessage] { get set }
+    var messages: [ChatMessage] { get }
+
+    var channel: ChatChannel? { get }
+
+    func chatMessageListVC(
+        _ vc: ChatMessageListVC,
+        messageLayoutOptionsAt indexPath: IndexPath
+    ) -> ChatMessageLayoutOptions
 }
 
 public protocol ChatMessageListVCDelegate: AnyObject {
+    func chatMessageListVC(
+        _ vc: ChatMessageListVC,
+        willDisplayMessageAt indexPath: IndexPath
+    )
+
+    func chatMessageListVC(
+        _ vc: ChatMessageListVC,
+        scrollViewDidScroll scrollView: UIScrollView
+    )
+
     func chatMessageListVC(
         _ vc: ChatMessageListVC,
         didTapOnAction actionItem: ChatMessageActionItem,
@@ -26,17 +43,14 @@ open class ChatMessageListVC: _ViewController, ThemeProvider {
     /// The object that acts as the delegate of the message list.
     public weak var delegate: ChatMessageListVCDelegate?
 
-    /// The Controller for observing data changes within the channel.
-    open var channelController: ChatChannelController!
-
     /// The root object representing the Stream Chat.
-    public var client: ChatClient {
-        channelController.client
-    }
+    public var client: ChatClient!
 
     /// The router object that handles navigation to other view controllers.
-    open var router: ChatMessageListRouter!
-    
+    open lazy var router: ChatMessageListRouter = components
+        .messageListRouter
+        .init(rootViewController: self)
+
     /// A View used to display the messages
     open private(set) lazy var listView: ChatMessageListView = {
         let listView = components.messageListView.init().withoutAutoresizingMaskConstraints
@@ -94,8 +108,6 @@ open class ChatMessageListVC: _ViewController, ThemeProvider {
         tapOnList.delegate = self
         listView.addGestureRecognizer(tapOnList)
         
-        channelController.setDelegate(self)
-        
         scrollToLatestMessageButton.addTarget(self, action: #selector(scrollToLatestMessage), for: .touchUpInside)
     }
     
@@ -105,7 +117,7 @@ open class ChatMessageListVC: _ViewController, ThemeProvider {
         view.addSubview(listView)
         listView.pin(anchors: [.top, .leading, .trailing, .bottom], to: view)
         
-        if channelController.areTypingEventsEnabled {
+        if dataSource?.channel?.config.typingEventsEnabled == true {
             view.addSubview(typingIndicatorView)
             typingIndicatorView.heightAnchor.pin(equalToConstant: typingIndicatorViewHeight).isActive = true
             typingIndicatorView.pin(anchors: [.leading, .trailing], to: view)
@@ -142,14 +154,11 @@ open class ChatMessageListVC: _ViewController, ThemeProvider {
     /// By default there is one message with all possible layout and layout options
     /// determines which parts of the message are visible for the given message.
     open func cellLayoutOptionsForMessage(at indexPath: IndexPath) -> ChatMessageLayoutOptions {
-        guard let channel = channelController.channel else { return [] }
+        guard let dataSource = self.dataSource else {
+            return ChatMessageLayoutOptions()
+        }
 
-        return components.messageLayoutOptionsResolver.optionsForMessage(
-            at: indexPath,
-            in: channel,
-            with: AnyRandomAccessCollection(channelController.messages),
-            appearance: appearance
-        )
+        return dataSource.chatMessageListVC(self, messageLayoutOptionsAt: indexPath)
     }
 
     /// Returns the content view class for the message at given `indexPath`
@@ -159,15 +168,12 @@ open class ChatMessageListVC: _ViewController, ThemeProvider {
 
     /// Returns the attachment view injector for the message at given `indexPath`
     open func attachmentViewInjectorClassForMessage(at indexPath: IndexPath) -> AttachmentViewInjector.Type? {
-        components.attachmentViewCatalog.attachmentViewInjectorClassFor(
-            message: channelController.messages[indexPath.item],
+        guard let dataSource = self.dataSource else { return nil }
+
+        return components.attachmentViewCatalog.attachmentViewInjectorClassFor(
+            message: dataSource.messages[indexPath.item],
             components: components
         )
-    }
-    
-    /// Update the `scrollToLatestMessageButton` based on unread messages.
-    open func updateScrollToLatestMessageButton() {
-        scrollToLatestMessageButton.content = channelController.channel?.unreadCount ?? .noUnread
     }
     
     /// Set the visibility of `scrollToLatestMessageButton`.
@@ -211,10 +217,10 @@ open class ChatMessageListVC: _ViewController, ThemeProvider {
 
         guard
             gesture.state == .began,
-            let ip = listView.indexPathForRow(at: location)
+            let indexPath = listView.indexPathForRow(at: location)
         else { return }
 
-        didSelectMessageCell(at: ip)
+        didSelectMessageCell(at: indexPath)
     }
     
     open func didSelectMessageCell(at indexPath: IndexPath) {
@@ -222,22 +228,23 @@ open class ChatMessageListVC: _ViewController, ThemeProvider {
             let cell = listView.cellForRow(at: indexPath) as? ChatMessageCell,
             let messageContentView = cell.messageContentView,
             let message = messageContentView.content,
-            message.isInteractionEnabled == true
+            message.isInteractionEnabled == true,
+            let cid = message.cid
         else { return }
 
-        let messageController = channelController.client.messageController(
-            cid: channelController.cid!,
+        let messageController = client.messageController(
+            cid: cid,
             messageId: message.id
         )
 
         let actionsController = components.messageActionsVC.init()
         actionsController.messageController = messageController
-        actionsController.channelConfig = channelController.channel?.config
+        actionsController.channelConfig = dataSource?.channel?.config
         actionsController.delegate = self
 
         let reactionsController: ChatMessageReactionsVC? = {
             guard message.localState == nil else { return nil }
-            guard channelController.channel?.config.reactionsEnabled == true else {
+            guard dataSource?.channel?.config.reactionsEnabled == true else {
                 return nil
             }
 
@@ -253,11 +260,9 @@ open class ChatMessageListVC: _ViewController, ThemeProvider {
         )
     }
 
-    // MARK: - Routing
-
-    /// Opens thread detail for given `message`
+    /// Opens thread detail for given `MessageId`.
     open func showThread(messageId: MessageId) {
-        guard let cid = channelController.cid else { log.error("Channel is not available"); return }
+        guard let cid = dataSource?.channel?.cid else { log.error("Channel is not available"); return }
         router.showThread(
             messageId: messageId,
             cid: cid,
@@ -311,11 +316,11 @@ extension ChatMessageListVC: UITableViewDataSource, UITableViewDelegate {
     }
 
     open func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        channelController.messages.count
+        dataSource?.messages.count ?? 0
     }
 
     open func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let message = channelController.messages[indexPath.row]
+        let message = dataSource?.messages[indexPath.row]
 
         let cell: ChatMessageCell = listView.dequeueReusableCell(
             contentViewClass: cellContentClassForMessage(at: indexPath),
@@ -331,54 +336,11 @@ extension ChatMessageListVC: UITableViewDataSource, UITableViewDelegate {
     }
 
     open func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        if channelController.state == .remoteDataFetched && indexPath.row + 1 >= tableView.numberOfRows(inSection: 0) - 5 {
-            channelController.loadPreviousMessages()
-        }
+        delegate?.chatMessageListVC(self, willDisplayMessageAt: indexPath)
     }
 
     open func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        if listView.isLastCellFullyVisible, channelController.channel?.isUnread == true {
-            channelController.markRead()
-
-            // Hide the badge immediately. Temporary solution until CIS-881 is implemented.
-            scrollToLatestMessageButton.content = .noUnread
-        }
-        setScrollToLatestMessageButton(visible: isScrollToBottomButtonVisible)
-    }
-}
-
-// MARK: - ChatChannelControllerDelegate
-
-extension ChatMessageListVC: ChatChannelControllerDelegate {
-    open func channelController(
-        _ channelController: ChatChannelController,
-        didUpdateMessages changes: [ListChange<ChatMessage>]
-    ) {
-        updateMessages(with: changes)
-    }
-
-    open func channelController(
-        _ channelController: ChatChannelController,
-        didUpdateChannel channel: EntityChange<ChatChannel>
-    ) {
-        updateScrollToLatestMessageButton()
-    }
-
-    open func channelController(
-        _ channelController: ChatChannelController,
-        didChangeTypingUsers typingUsers: Set<ChatUser>
-    ) {
-        guard channelController.areTypingEventsEnabled else { return }
-
-        let typingUsersWithoutCurrentUser = typingUsers
-            .sorted { $0.id < $1.id }
-            .filter { $0.id != self.client.currentUserId }
-
-        if typingUsersWithoutCurrentUser.isEmpty {
-            hideTypingIndicator()
-        } else {
-            showTypingIndicator(typingUsers: typingUsersWithoutCurrentUser)
-        }
+        delegate?.chatMessageListVC(self, scrollViewDidScroll: scrollView)
     }
 }
 
@@ -389,16 +351,20 @@ extension ChatMessageListVC: ChatMessageListScrollOverlayDataSource {
         _ overlay: ChatMessageListScrollOverlayView,
         textForItemAt indexPath: IndexPath
     ) -> String? {
+        guard let messages = dataSource?.messages else {
+            return nil
+        }
+
         // When a message from a channel is deleted,
         // and the visibility of deleted messages is set to `alwaysHidden`,
         // the messages list won't contain the message and hence it would crash
-        guard channelController.messages.indices.contains(indexPath.item) else {
+        guard messages.indices.contains(indexPath.item) else {
             return nil
         }
 
         return DateFormatter
             .messageListDateOverlay
-            .string(from: channelController.messages[indexPath.item].createdAt)
+            .string(from: messages[indexPath.item].createdAt)
     }
 }
 
@@ -427,8 +393,15 @@ extension ChatMessageListVC: ChatMessageContentViewDelegate {
     }
 
     open func messageContentViewDidTapOnThread(_ indexPath: IndexPath?) {
-        guard let indexPath = indexPath else { return log.error("IndexPath is not available") }
-        let message = channelController.messages[indexPath.item]
+        guard let indexPath = indexPath else {
+            return log.error("IndexPath is not available")
+        }
+
+        guard let messages = dataSource?.messages else {
+            return log.error("DataSource not found for the message list.")
+        }
+
+        let message = messages[indexPath.item]
         showThread(messageId: message.parentMessageId ?? message.id)
     }
 
@@ -447,9 +420,10 @@ extension ChatMessageListVC: GalleryContentViewDelegate {
         previews: [GalleryItemPreview]
     ) {
         guard let indexPath = indexPath else { return log.error("IndexPath is not available") }
+        guard let messages = dataSource?.messages else { return }
 
         router.showGallery(
-            message: channelController.messages[indexPath.item],
+            message: messages[indexPath.item],
             initialAttachmentId: attachmentId,
             previews: previews
         )
@@ -461,9 +435,9 @@ extension ChatMessageListVC: GalleryContentViewDelegate {
     ) {
         guard let indexPath = indexPath else { return log.error("IndexPath is not available") }
 
-        let message = channelController.messages[indexPath.item]
+        let message = dataSource?.messages[indexPath.item]
 
-        guard let localState = message.attachment(with: attachmentId)?.uploadingState else {
+        guard let localState = message?.attachment(with: attachmentId)?.uploadingState else {
             return log.error("Failed to take an action on attachment with \(attachmentId)")
         }
 
@@ -503,11 +477,16 @@ extension ChatMessageListVC:
         _ action: AttachmentAction,
         at indexPath: IndexPath
     ) {
-        // Can we have a helper on `ChannelController` returning a `messageController` for the provided message id?
+        guard let message = dataSource?.messages[indexPath.item],
+              let cid = message.cid else {
+            log.error("Failed to take to tap on attachment at indexPath: \(indexPath)")
+            return
+        }
+
         client
             .messageController(
-                cid: channelController.cid!,
-                messageId: channelController.messages[indexPath.row].id
+                cid: cid,
+                messageId: message.id
             )
             .dispatchEphemeralMessageAction(action)
     }
