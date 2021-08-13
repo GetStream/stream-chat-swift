@@ -15,7 +15,7 @@ extension NSManagedObject {
         do {
             return try context.fetch(request)
         } catch {
-            log.error("Could not save \(error), \(error.localizedDescription)")
+            log.error("Could not load \(error), \(error.localizedDescription)")
             return []
         }
     }
