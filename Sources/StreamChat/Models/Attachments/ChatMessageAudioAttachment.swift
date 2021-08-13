@@ -44,7 +44,7 @@ extension AudioAttachmentPayload: Encodable {
         var values = extraData ?? [:]
         values[AttachmentCodingKeys.title.rawValue] = title.map { .string($0) }
         values[AttachmentCodingKeys.assetURL.rawValue] = .string(audioURL.absoluteString)
-        values[AttachmentFile.CodingKeys.size.rawValue] = .integer(Int(file.size))
+        values[AttachmentFile.CodingKeys.size.rawValue] = .number(Double(file.size))
         values[AttachmentFile.CodingKeys.mimeType.rawValue] = file.mimeType.map { .string($0) }
         try values.encode(to: encoder)
     }

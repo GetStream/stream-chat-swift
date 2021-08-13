@@ -15,8 +15,11 @@ final class RawJSON_Tests: XCTestCase {
         let tests = [
             test.init(value: .dictionary(["k": .bool(false)]), expected: "{\"k\": false}"),
             test.init(value: .dictionary(["k": .bool(true)]), expected: "{\"k\": true}"),
-            test.init(value: .dictionary(["k": .double(3.14)]), expected: "{\"k\": 3.14}"),
-            test.init(value: .dictionary(["k": .integer(3)]), expected: "{\"k\": 3}"),
+            test.init(value: .dictionary(["k": .number(3.14)]), expected: "{\"k\": 3.14}"),
+            test.init(value: .dictionary(["k": .number(3)]), expected: "{\"k\": 3}"),
+            test.init(value: .dictionary(["k": .number(-3)]), expected: "{\"k\": -3}"),
+            test.init(value: .dictionary(["k": .number(0)]), expected: "{\"k\": 0}"),
+            test.init(value: .dictionary(["k": .double(0.1)]), expected: "{\"k\": 0.1}"),
             test.init(value: .dictionary(["k": .string("asd")]), expected: "{\"k\": \"asd\"}")
         ]
         
@@ -35,8 +38,10 @@ final class RawJSON_Tests: XCTestCase {
         let tests = [
             test.init(value: "{\"k\": false}", expected: .dictionary(["k": .bool(false)])),
             test.init(value: "{\"k\": true}", expected: .dictionary(["k": .bool(true)])),
+            test.init(value: "{\"k\": 3}", expected: .dictionary(["k": .number(3)])),
+            test.init(value: "{\"k\": 3.14}", expected: .dictionary(["k": .number(3.14)])),
             test.init(value: "{\"k\": 3.14}", expected: .dictionary(["k": .double(3.14)])),
-            test.init(value: "{\"k\": 3}", expected: .dictionary(["k": .integer(3)])),
+            test.init(value: "{\"k\": 3}", expected: .dictionary(["k": .number(3)])),
             test.init(value: "{\"k\": \"asd\"}", expected: .dictionary(["k": .string("asd")]))
         ]
         
