@@ -105,7 +105,7 @@ open class ChatThreadVC: _ViewController, ThemeProvider {
 }
 
 extension ChatThreadVC: ChatMessageListVCDataSource {
-    open var messages: [ChatMessage] {
+    open var replies: [ChatMessage] {
         /*
          Thread replies are evaluated from DTOs when converting `messageController.replies` to an array.
          Adding thread root message into replies would require `insert/append` API on lazy map which should
@@ -128,22 +128,31 @@ extension ChatThreadVC: ChatMessageListVCDataSource {
         return replies
     }
 
-    open var channel: ChatChannel? {
+    open func channel(for vc: ChatMessageListVC) -> ChatChannel? {
         channelController.channel
+    }
+
+    open func numberOfMessages(in vc: ChatMessageListVC) -> Int {
+        replies.count
+    }
+
+    open func chatMessageListVC(_ vc: ChatMessageListVC, messageAt indexPath: IndexPath) -> ChatMessage? {
+        guard indexPath.item < replies.count else { return nil }
+        return replies[indexPath.item]
     }
 
     open func chatMessageListVC(
         _ vc: ChatMessageListVC,
         messageLayoutOptionsAt indexPath: IndexPath
     ) -> ChatMessageLayoutOptions {
-        guard let channel = channel else { return [] }
+        guard let channel = channelController.channel else { return [] }
 
         var layoutOptions = components
             .messageLayoutOptionsResolver
             .optionsForMessage(
                 at: indexPath,
                 in: channel,
-                with: AnyRandomAccessCollection(messages),
+                with: AnyRandomAccessCollection(replies),
                 appearance: appearance
             )
 
@@ -158,7 +167,7 @@ extension ChatThreadVC: ChatMessageListVCDelegate {
         _ vc: ChatMessageListVC,
         willDisplayMessageAt indexPath: IndexPath
     ) {
-        if messageController.state == .remoteDataFetched && indexPath.row == messages.count - 5 {
+        if messageController.state == .remoteDataFetched && indexPath.row == replies.count - 5 {
             messageController.loadPreviousReplies()
         }
     }
@@ -191,7 +200,7 @@ extension ChatThreadVC: ChatMessageListVCDelegate {
 }
 
 extension ChatThreadVC: ChatMessageControllerDelegate {
-    public func messageController(
+    open func messageController(
         _ controller: ChatMessageController,
         didChangeMessage change: EntityChange<ChatMessage>
     ) {

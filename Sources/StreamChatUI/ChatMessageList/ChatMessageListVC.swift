@@ -6,9 +6,14 @@ import StreamChat
 import UIKit
 
 public protocol ChatMessageListVCDataSource: AnyObject {
-    var messages: [ChatMessage] { get }
+    func channel(for vc: ChatMessageListVC) -> ChatChannel?
 
-    var channel: ChatChannel? { get }
+    func numberOfMessages(in vc: ChatMessageListVC) -> Int
+
+    func chatMessageListVC(
+        _ vc: ChatMessageListVC,
+        messageAt indexPath: IndexPath
+    ) -> ChatMessage?
 
     func chatMessageListVC(
         _ vc: ChatMessageListVC,
@@ -117,7 +122,7 @@ open class ChatMessageListVC: _ViewController, ThemeProvider {
         view.addSubview(listView)
         listView.pin(anchors: [.top, .leading, .trailing, .bottom], to: view)
         
-        if dataSource?.channel?.config.typingEventsEnabled == true {
+        if dataSource?.channel(for: self)?.config.typingEventsEnabled == true {
             view.addSubview(typingIndicatorView)
             typingIndicatorView.heightAnchor.pin(equalToConstant: typingIndicatorViewHeight).isActive = true
             typingIndicatorView.pin(anchors: [.leading, .trailing], to: view)
@@ -168,10 +173,12 @@ open class ChatMessageListVC: _ViewController, ThemeProvider {
 
     /// Returns the attachment view injector for the message at given `indexPath`
     open func attachmentViewInjectorClassForMessage(at indexPath: IndexPath) -> AttachmentViewInjector.Type? {
-        guard let dataSource = self.dataSource else { return nil }
+        guard let message = dataSource?.chatMessageListVC(self, messageAt: indexPath) else {
+            return nil
+        }
 
         return components.attachmentViewCatalog.attachmentViewInjectorClassFor(
-            message: dataSource.messages[indexPath.item],
+            message: message,
             components: components
         )
     }
@@ -239,12 +246,12 @@ open class ChatMessageListVC: _ViewController, ThemeProvider {
 
         let actionsController = components.messageActionsVC.init()
         actionsController.messageController = messageController
-        actionsController.channelConfig = dataSource?.channel?.config
+        actionsController.channelConfig = dataSource?.channel(for: self)?.config
         actionsController.delegate = self
 
         let reactionsController: ChatMessageReactionsVC? = {
             guard message.localState == nil else { return nil }
-            guard dataSource?.channel?.config.reactionsEnabled == true else {
+            guard dataSource?.channel(for: self)?.config.reactionsEnabled == true else {
                 return nil
             }
 
@@ -262,7 +269,7 @@ open class ChatMessageListVC: _ViewController, ThemeProvider {
 
     /// Opens thread detail for given `MessageId`.
     open func showThread(messageId: MessageId) {
-        guard let cid = dataSource?.channel?.cid else { log.error("Channel is not available"); return }
+        guard let cid = dataSource?.channel(for: self)?.cid else { log.error("Channel is not available"); return }
         router.showThread(
             messageId: messageId,
             cid: cid,
@@ -316,11 +323,11 @@ extension ChatMessageListVC: UITableViewDataSource, UITableViewDelegate {
     }
 
     open func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        dataSource?.messages.count ?? 0
+        dataSource?.numberOfMessages(in: self) ?? 0
     }
 
     open func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let message = dataSource?.messages[indexPath.row]
+        let message = dataSource?.chatMessageListVC(self, messageAt: indexPath)
 
         let cell: ChatMessageCell = listView.dequeueReusableCell(
             contentViewClass: cellContentClassForMessage(at: indexPath),
@@ -353,20 +360,15 @@ extension ChatMessageListVC: ChatMessageListScrollOverlayDataSource {
         _ overlay: ChatMessageListScrollOverlayView,
         textForItemAt indexPath: IndexPath
     ) -> String? {
-        guard let messages = dataSource?.messages else {
+        guard let message = dataSource?.chatMessageListVC(self, messageAt: indexPath) else {
             return nil
         }
 
-        // When a message from a channel is deleted,
-        // and the visibility of deleted messages is set to `alwaysHidden`,
-        // the messages list won't contain the message and hence it would crash
-        guard messages.indices.contains(indexPath.item) else {
-            return nil
-        }
+        // TODO: Indices check
 
         return DateFormatter
             .messageListDateOverlay
-            .string(from: messages[indexPath.item].createdAt)
+            .string(from: message.createdAt)
     }
 }
 
@@ -399,11 +401,10 @@ extension ChatMessageListVC: ChatMessageContentViewDelegate {
             return log.error("IndexPath is not available")
         }
 
-        guard let messages = dataSource?.messages else {
+        guard let message = dataSource?.chatMessageListVC(self, messageAt: indexPath) else {
             return log.error("DataSource not found for the message list.")
         }
 
-        let message = messages[indexPath.item]
         showThread(messageId: message.parentMessageId ?? message.id)
     }
 
@@ -422,10 +423,10 @@ extension ChatMessageListVC: GalleryContentViewDelegate {
         previews: [GalleryItemPreview]
     ) {
         guard let indexPath = indexPath else { return log.error("IndexPath is not available") }
-        guard let messages = dataSource?.messages else { return }
+        guard let message = dataSource?.chatMessageListVC(self, messageAt: indexPath) else { return }
 
         router.showGallery(
-            message: messages[indexPath.item],
+            message: message,
             initialAttachmentId: attachmentId,
             previews: previews
         )
@@ -437,7 +438,7 @@ extension ChatMessageListVC: GalleryContentViewDelegate {
     ) {
         guard let indexPath = indexPath else { return log.error("IndexPath is not available") }
 
-        let message = dataSource?.messages[indexPath.item]
+        let message = dataSource?.chatMessageListVC(self, messageAt: indexPath)
 
         guard let localState = message?.attachment(with: attachmentId)?.uploadingState else {
             return log.error("Failed to take an action on attachment with \(attachmentId)")
@@ -479,7 +480,7 @@ extension ChatMessageListVC:
         _ action: AttachmentAction,
         at indexPath: IndexPath
     ) {
-        guard let message = dataSource?.messages[indexPath.item],
+        guard let message = dataSource?.chatMessageListVC(self, messageAt: indexPath),
               let cid = message.cid else {
             log.error("Failed to take to tap on attachment at indexPath: \(indexPath)")
             return

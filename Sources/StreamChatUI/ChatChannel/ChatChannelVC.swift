@@ -110,12 +110,17 @@ open class ChatChannelVC: _ViewController, ThemeProvider {
 }
 
 extension ChatChannelVC: ChatMessageListVCDataSource {
-    open var messages: [ChatMessage] {
-        Array(channelController.messages)
+    open func channel(for vc: ChatMessageListVC) -> ChatChannel? {
+        channelController.channel
     }
 
-    open var channel: ChatChannel? {
-        channelController.channel
+    open func numberOfMessages(in vc: ChatMessageListVC) -> Int {
+        channelController.messages.count
+    }
+
+    open func chatMessageListVC(_ vc: ChatMessageListVC, messageAt indexPath: IndexPath) -> ChatMessage? {
+        guard indexPath.item < channelController.messages.count else { return nil }
+        return channelController.messages[indexPath.item]
     }
 
     open func chatMessageListVC(
@@ -138,7 +143,7 @@ extension ChatChannelVC: ChatMessageListVCDelegate {
         _ vc: ChatMessageListVC,
         willDisplayMessageAt indexPath: IndexPath
     ) {
-        if channelController.state == .remoteDataFetched && indexPath.row == messages.count - 5 {
+        if channelController.state == .remoteDataFetched && indexPath.row == channelController.messages.count - 5 {
             channelController.loadPreviousMessages()
         }
     }
@@ -167,7 +172,7 @@ extension ChatChannelVC: ChatMessageListVCDelegate {
     }
 
     open func chatMessageListVC(_ vc: ChatMessageListVC, scrollViewDidScroll scrollView: UIScrollView) {
-        if messageListVC.listView.isLastCellFullyVisible, channel?.isUnread == true {
+        if messageListVC.listView.isLastCellFullyVisible, channelController.channel?.isUnread == true {
             channelController.markRead()
 
             // Hide the badge immediately. Temporary solution until CIS-881 is implemented.
