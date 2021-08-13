@@ -88,10 +88,6 @@ public class ChatChannelWatcherListController: DataController, DelegateCallable,
     
     /// Sets the provided object as a delegate of this controller.
     ///
-    /// - Note: If you don't use custom extra data types, you can set the delegate directly using `controller.delegate = self`.
-    /// Due to the current limits of Swift and the way it handles protocols with associated types, it's required to use this
-    /// method to set the delegate, if you're using custom extra data types.
-    ///
     /// - Parameter delegate: The object used as a delegate. It's referenced weakly, so you need to keep the object
     /// alive if you want keep receiving updates.
     ///
@@ -174,10 +170,6 @@ public extension ChatChannelWatcherListController {
 // MARK: - Delegates
 
 /// `ChatChannelWatcherListController` uses this protocol to communicate changes to its delegate.
-///
-/// This protocol can be used only when no custom extra data are specified. If you're using custom extra data types,
-/// please use `_ChatChannelWatcherListControllerDelegate` instead.
-///
 public protocol ChatChannelWatcherListControllerDelegate: DataControllerStateDelegate {
     /// The controller observed a change in the channel watcher list.
     func channelWatcherListController(
