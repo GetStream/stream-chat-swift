@@ -108,6 +108,7 @@
             "last_message_at" : "2020-12-23T08:26:45.307447Z"
         },
         "secret_note": "Anakin is Vader!",
+        "tau": 6.28,
         "attachments" : [
             {
                 "type" : "image",
