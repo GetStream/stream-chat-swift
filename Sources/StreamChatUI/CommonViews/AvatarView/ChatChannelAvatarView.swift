@@ -27,6 +27,12 @@ open class ChatChannelAvatarView: _View, ThemeProvider, SwiftUIRepresentable {
     open lazy var imageMerger: ImageMerging = {
         DefaultImageMerger()
     }()
+    
+    /// Object responsible for providing functionality of merging images.
+    /// Used when creating compound avatars from channel members individual avatars
+    open lazy var imageProcessor: StreamImageProcessor = {
+        StreamImageProcessor()
+    }()
 
     override open func setUpLayout() {
         super.setUpLayout()
@@ -244,7 +250,9 @@ open class ChatChannelAvatarView: _View, ThemeProvider, SwiftUIRepresentable {
         
         var combinedImage: UIImage?
         
-        let images = avatars.map { $0.scaled(to: .avatarThumbnailSize) }
+        let images = avatars.map {
+            imageProcessor.scale(image: $0, to: .avatarThumbnailSize)
+        }
         
         // The half of the width of the avatar
         let halfContainerSize = CGSize(width: CGSize.avatarThumbnailSize.width / 2, height: CGSize.avatarThumbnailSize.height)
@@ -252,9 +260,9 @@ open class ChatChannelAvatarView: _View, ThemeProvider, SwiftUIRepresentable {
         if images.count == 1 {
             combinedImage = images[0]
         } else if images.count == 2 {
-            let leftImage = images[0].cropped(to: halfContainerSize)
+            let leftImage = imageProcessor.crop(image: images[0], to: halfContainerSize)
                 ?? appearance.images.userAvatarPlaceholder1
-            let rightImage = images[1].cropped(to: halfContainerSize)
+            let rightImage = imageProcessor.crop(image: images[1], to: halfContainerSize)
                 ?? appearance.images.userAvatarPlaceholder1
             combinedImage = imageMerger.merge(
                 images: [
@@ -264,18 +272,21 @@ open class ChatChannelAvatarView: _View, ThemeProvider, SwiftUIRepresentable {
                 orientation: .horizontal
             )
         } else if images.count == 3 {
-            let leftImage = images[0].cropped(to: halfContainerSize)
-            let rightImage = imageMerger.merge(
+            let leftImage = imageProcessor.crop(image: images[0], to: halfContainerSize)
+
+            let rightCollage = imageMerger.merge(
                 images: [
                     images[1],
                     images[2]
                 ],
                 orientation: .vertical
-            )?
-                .scaled(to: .avatarThumbnailSize)
-                .cropped(to: halfContainerSize)
-                ?? appearance.images.userAvatarPlaceholder3
-                .cropped(to: halfContainerSize)
+            )
+            
+            let rightImage = imageProcessor.crop(
+                image: imageProcessor
+                    .scale(image: rightCollage ?? appearance.images.userAvatarPlaceholder3, to: .avatarThumbnailSize),
+                to: halfContainerSize
+            )
             
             combinedImage = imageMerger.merge(
                 images:
@@ -286,30 +297,34 @@ open class ChatChannelAvatarView: _View, ThemeProvider, SwiftUIRepresentable {
                 orientation: .horizontal
             )
         } else if images.count == 4 {
-            let leftImage = imageMerger.merge(
+            let leftCollage = imageMerger.merge(
                 images: [
                     images[0],
                     images[2]
                 ],
                 orientation: .vertical
-            )?
-                .scaled(to: .avatarThumbnailSize)
-                .cropped(to: halfContainerSize)
-                ?? appearance.images.userAvatarPlaceholder1
-                .cropped(to: halfContainerSize)
+            )
             
-            let rightImage = imageMerger.merge(
+            let leftImage = imageProcessor.crop(
+                image: imageProcessor
+                    .scale(image: leftCollage ?? appearance.images.userAvatarPlaceholder1, to: .avatarThumbnailSize),
+                to: halfContainerSize
+            )
+            
+            let rightCollage = imageMerger.merge(
                 images: [
                     images[1],
                     images[3]
                 ],
                 orientation: .vertical
-            )?
-                .scaled(to: .avatarThumbnailSize)
-                .cropped(to: halfContainerSize)
-                ?? appearance.images.userAvatarPlaceholder2
-                .cropped(to: halfContainerSize)
+            )
             
+            let rightImage = imageProcessor.crop(
+                image: imageProcessor
+                    .scale(image: rightCollage ?? appearance.images.userAvatarPlaceholder2, to: .avatarThumbnailSize),
+                to: halfContainerSize
+            )
+         
             combinedImage = imageMerger.merge(
                 images: [
                     leftImage ?? appearance.images.userAvatarPlaceholder1,

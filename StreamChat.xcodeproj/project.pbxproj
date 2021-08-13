@@ -777,12 +777,13 @@
 		AC9083A5268B130800ACFB8E /* YTChatMessageComposerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC9083A4268B130800ACFB8E /* YTChatMessageComposerView.swift */; };
 		AC9083A7268B14B000ACFB8E /* YTLiveChatViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC9083A6268B14B000ACFB8E /* YTLiveChatViewController.swift */; };
 		AC9083A9268B167B00ACFB8E /* YTChatComposerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC9083A8268B167B00ACFB8E /* YTChatComposerViewController.swift */; };
-		ACA3C98126CA236F00EB8B07 /* DateUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACA3C97F26CA236F00EB8B07 /* DateUtils.swift */; };
-		ACA3C98326CA239A00EB8B07 /* DateUtils_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACA3C98026CA236F00EB8B07 /* DateUtils_Tests.swift */; };
+		ACA3C98726CA23F300EB8B07 /* DateUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACA3C98526CA23F300EB8B07 /* DateUtils.swift */; };
+		ACA3C98826CA23F900EB8B07 /* DateUtils_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACA3C98426CA23F300EB8B07 /* DateUtils_Tests.swift */; };
 		ACBEF4E5268B439A00FE7557 /* YTLiveVideoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACBEF4E3268B439A00FE7557 /* YTLiveVideoViewController.swift */; };
 		ACBEF4E6268B439A00FE7557 /* YTLiveVideoViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = ACBEF4E4268B439A00FE7557 /* YTLiveVideoViewController.xib */; };
 		ACCA772A26C40C96007AE2ED /* ImageLoading.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACCA772926C40C96007AE2ED /* ImageLoading.swift */; };
 		ACCA772C26C40D43007AE2ED /* NukeImageLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACCA772B26C40D43007AE2ED /* NukeImageLoader.swift */; };
+		ACCA772E26C568D8007AE2ED /* StreamImageProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACCA772D26C568D8007AE2ED /* StreamImageProcessor.swift */; };
 		ACD502A926BC0C670029FB7D /* ImageMerger.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACD502A826BC0C670029FB7D /* ImageMerger.swift */; };
 		ACE6E060268D92F200396310 /* YTScrollToLatestMessageButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACE6E05F268D92F200396310 /* YTScrollToLatestMessageButton.swift */; };
 		ACE6E063268D965100396310 /* YTSendButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACE6E062268D965100396310 /* YTSendButton.swift */; };
@@ -2140,12 +2141,13 @@
 		AC9083A4268B130800ACFB8E /* YTChatMessageComposerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YTChatMessageComposerView.swift; sourceTree = "<group>"; };
 		AC9083A6268B14B000ACFB8E /* YTLiveChatViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YTLiveChatViewController.swift; sourceTree = "<group>"; };
 		AC9083A8268B167B00ACFB8E /* YTChatComposerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YTChatComposerViewController.swift; sourceTree = "<group>"; };
-		ACA3C97F26CA236F00EB8B07 /* DateUtils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DateUtils.swift; sourceTree = "<group>"; };
-		ACA3C98026CA236F00EB8B07 /* DateUtils_Tests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DateUtils_Tests.swift; sourceTree = "<group>"; };
+		ACA3C98426CA23F300EB8B07 /* DateUtils_Tests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DateUtils_Tests.swift; sourceTree = "<group>"; };
+		ACA3C98526CA23F300EB8B07 /* DateUtils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DateUtils.swift; sourceTree = "<group>"; };
 		ACBEF4E3268B439A00FE7557 /* YTLiveVideoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YTLiveVideoViewController.swift; sourceTree = "<group>"; };
 		ACBEF4E4268B439A00FE7557 /* YTLiveVideoViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = YTLiveVideoViewController.xib; sourceTree = "<group>"; };
 		ACCA772926C40C96007AE2ED /* ImageLoading.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageLoading.swift; sourceTree = "<group>"; };
 		ACCA772B26C40D43007AE2ED /* NukeImageLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NukeImageLoader.swift; sourceTree = "<group>"; };
+		ACCA772D26C568D8007AE2ED /* StreamImageProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamImageProcessor.swift; sourceTree = "<group>"; };
 		ACD502A826BC0C670029FB7D /* ImageMerger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageMerger.swift; sourceTree = "<group>"; };
 		ACDB5412269C6F2A007CD465 /* String+Extensions_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Extensions_Tests.swift"; sourceTree = "<group>"; };
 		ACE6E05F268D92F200396310 /* YTScrollToLatestMessageButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YTScrollToLatestMessageButton.swift; sourceTree = "<group>"; };
@@ -4077,6 +4079,8 @@
 		888123D0255D42F000070D5A /* Utils */ = {
 			isa = PBXGroup;
 			children = (
+				ACA3C98426CA23F300EB8B07 /* DateUtils_Tests.swift */,
+				ACA3C98526CA23F300EB8B07 /* DateUtils.swift */,
 				ACCA772826C40C7A007AE2ED /* ImageLoading */,
 				BDDD1EA52632C6D600BA007B /* AppearanceProvider.swift */,
 				BDDD1EAB2632E32000BA007B /* AppearanceProvider_Tests.swift */,
@@ -4115,8 +4119,7 @@
 				640FE0D426A568C3006CE703 /* CollectionUpdatesMapper.swift */,
 				640FE0F526A57903006CE703 /* CollectionUpdatesMapper_Tests.swift */,
 				ACD502A826BC0C670029FB7D /* ImageMerger.swift */,
-				ACA3C98026CA236F00EB8B07 /* DateUtils_Tests.swift */,
-				ACA3C97F26CA236F00EB8B07 /* DateUtils.swift */,
+				ACCA772D26C568D8007AE2ED /* StreamImageProcessor.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -5801,6 +5804,7 @@
 				780DFCFC25EF7DA500A39A6E /* ChatChannelListVC+SwiftUI.swift in Sources */,
 				DBC8A5762581476E00B20A82 /* ChatMessageListVC.swift in Sources */,
 				8800A28C258A1924006D64C4 /* ChatMessageFileAttachmentListView.swift in Sources */,
+				ACCA772E26C568D8007AE2ED /* StreamImageProcessor.swift in Sources */,
 				88A8CF16256E7BDA004EA4C7 /* ChatMessageContentView.swift in Sources */,
 				BDEB9417268211EC00928AF1 /* ChatMessageListUnreadCountView.swift in Sources */,
 				226C438D25802AAD008B3648 /* InputTextView.swift in Sources */,
@@ -5810,6 +5814,7 @@
 				79FA4A84263BFD1100EC33DA /* GalleryAttachmentViewInjector.swift in Sources */,
 				88D88F86257F9AA700AFE2A2 /* NSLayoutConstraint+Extensions.swift in Sources */,
 				796CBD1C25FF9552003299B0 /* UIStackView+Extensions.swift in Sources */,
+				ACA3C98726CA23F300EB8B07 /* DateUtils.swift in Sources */,
 				AD87D0BD263C7C09008B466C /* CircularCloseButton.swift in Sources */,
 				BDDD1EAA2632CE3C00BA007B /* Appearance+SwiftUI.swift in Sources */,
 				8850FE87256558A200C8D534 /* ChatChannelListRouter.swift in Sources */,
@@ -5832,7 +5837,6 @@
 				F838F6B32636D42B0025E1F5 /* ZoomAnimator.swift in Sources */,
 				64B059E22670EFFE0024CE90 /* ChatChannelVC+SwiftUI.swift in Sources */,
 				BDDD1EA32632C50200BA007B /* Appearance.swift in Sources */,
-				ACA3C98126CA236F00EB8B07 /* DateUtils.swift in Sources */,
 				88CABC4425933EE70061BB67 /* ChatMessageReactionsBubbleView+Default.swift in Sources */,
 				79CCB66E259CBC4F0082F172 /* ChatChannelNamer.swift in Sources */,
 				43EB3AE22671718200954323 /* AttachmentViewCatalog.swift in Sources */,
@@ -5944,7 +5948,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				43ABF8B526C2CD900034BD62 /* ComposerVC_Tests.swift in Sources */,
-				ACA3C98326CA239A00EB8B07 /* DateUtils_Tests.swift in Sources */,
+				ACA3C98826CA23F900EB8B07 /* DateUtils_Tests.swift in Sources */,
 				7920578A264166C9002B145B /* ChatChannel.swift in Sources */,
 				AD158B6626C1876800C104CD /* ChatChannelVC+SwiftUI_Tests.swift in Sources */,
 				2208241625DEE8070033544B /* ChatChannelListCollectionViewCell_Tests.swift in Sources */,
