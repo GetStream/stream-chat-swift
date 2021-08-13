@@ -16,5 +16,6 @@ struct SDKMessagesView: View {
             ChatMessageListVC.asView(chatChannelController)
             Text("Some SwiftUI customer branding bottom")
         }
+            .navigationBarTitle("SDK Chat")
     }
 }
