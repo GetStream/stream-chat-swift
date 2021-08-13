@@ -171,7 +171,7 @@ open class ChatMessageListView: UITableView, Customizable, ComponentsProvider {
     /// Updates the table view data with given `changes`.
     open func updateMessages(
         with changes: [ListChange<ChatMessage>],
-        onMessagesCountUpdate: () -> Void = {},
+        onMessagesUpdate: () -> Void = {},
         completion: (() -> Void)? = nil
     ) {
         var shouldScrollToBottom = false

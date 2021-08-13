@@ -305,7 +305,7 @@ open class ChatThreadVC:
     open func updateMessages(with changes: [ListChange<ChatMessage>], completion: (() -> Void)? = nil) {
         listView.updateMessages(
             with: changes,
-            onMessagesCountUpdate: updateNumberOfMessages,
+            onMessagesUpdate: updateNumberOfMessages,
             completion: completion
         )
     }

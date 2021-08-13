@@ -323,7 +323,7 @@ open class ChatMessageListVC:
     open func updateMessages(with changes: [ListChange<ChatMessage>], completion: (() -> Void)? = nil) {
         listView.updateMessages(
             with: changes,
-            onMessagesCountUpdate: updateMessageCache,
+            onMessagesUpdate: updateMessageCache,
             completion: completion
         )
     }
