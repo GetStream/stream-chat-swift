@@ -5,40 +5,6 @@
 import StreamChat
 import UIKit
 
-public protocol ChatMessageListVCDataSource: AnyObject {
-    func channel(for vc: ChatMessageListVC) -> ChatChannel?
-
-    func numberOfMessages(in vc: ChatMessageListVC) -> Int
-
-    func chatMessageListVC(
-        _ vc: ChatMessageListVC,
-        messageAt indexPath: IndexPath
-    ) -> ChatMessage?
-
-    func chatMessageListVC(
-        _ vc: ChatMessageListVC,
-        messageLayoutOptionsAt indexPath: IndexPath
-    ) -> ChatMessageLayoutOptions
-}
-
-public protocol ChatMessageListVCDelegate: AnyObject {
-    func chatMessageListVC(
-        _ vc: ChatMessageListVC,
-        willDisplayMessageAt indexPath: IndexPath
-    )
-
-    func chatMessageListVC(
-        _ vc: ChatMessageListVC,
-        scrollViewDidScroll scrollView: UIScrollView
-    )
-
-    func chatMessageListVC(
-        _ vc: ChatMessageListVC,
-        didTapOnAction actionItem: ChatMessageActionItem,
-        for message: ChatMessage
-    )
-}
-
 /// Controller that shows list of messages and composer together in the selected channel.
 @available(iOSApplicationExtension, unavailable)
 open class ChatMessageListVC: _ViewController, ThemeProvider {
@@ -229,7 +195,9 @@ open class ChatMessageListVC: _ViewController, ThemeProvider {
 
         didSelectMessageCell(at: indexPath)
     }
-    
+
+    /// The message cell was select and should show the available message actions.
+    /// - Parameter indexPath: The index path that the message was selected.
     open func didSelectMessageCell(at indexPath: IndexPath) {
         guard
             let cell = listView.cellForRow(at: indexPath) as? ChatMessageCell,
@@ -276,10 +244,8 @@ open class ChatMessageListVC: _ViewController, ThemeProvider {
             client: client
         )
     }
-
-    // MARK: - Typing Indicator
     
-    /// Shows typing Indicator
+    /// Shows typing Indicator.
     /// - Parameter typingUsers: typing users gotten from `channelController`
     open func showTypingIndicator(typingUsers: [ChatUser]) {
         if typingIndicatorView.isHidden {
@@ -304,7 +270,7 @@ open class ChatMessageListVC: _ViewController, ThemeProvider {
         typingIndicatorView.isHidden = false
     }
     
-    /// Hides typing Indicator
+    /// Hides typing Indicator.
     open func hideTypingIndicator() {
         guard typingIndicatorView.isVisible else { return }
 
