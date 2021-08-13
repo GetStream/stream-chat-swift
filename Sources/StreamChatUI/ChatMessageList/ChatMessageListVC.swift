@@ -341,6 +341,8 @@ extension ChatMessageListVC: UITableViewDataSource, UITableViewDelegate {
 
     open func scrollViewDidScroll(_ scrollView: UIScrollView) {
         delegate?.chatMessageListVC(self, scrollViewDidScroll: scrollView)
+
+        setScrollToLatestMessageButton(visible: isScrollToBottomButtonVisible)
     }
 }
 
