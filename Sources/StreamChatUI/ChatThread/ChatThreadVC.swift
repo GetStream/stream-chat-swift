@@ -18,11 +18,10 @@ open class ChatThreadVC: _ViewController, ThemeProvider {
         channelController.client
     }
 
-    /// Observer responsible for setting the correct offset when keyboard frame is changed
-    open lazy var keyboardObserver = ChatMessageListKeyboardObserver(
-        containerView: view,
-        composerBottomConstraint: messageComposerBottomConstraint,
-        viewController: self
+    /// Component responsible for setting the correct offset when keyboard frame is changed
+    open lazy var keyboardHandler: KeyboardHandler = ComposerKeyboardHandler(
+        composerParentVC: self,
+        composerBottomConstraint: messageComposerBottomConstraint
     )
 
     /// User search controller passed directly to the composer
@@ -92,7 +91,7 @@ open class ChatThreadVC: _ViewController, ThemeProvider {
     override open func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
-        keyboardObserver.register()
+        keyboardHandler.start()
     }
 
     override open func viewDidDisappear(_ animated: Bool) {
@@ -100,7 +99,7 @@ open class ChatThreadVC: _ViewController, ThemeProvider {
 
         resignFirstResponder()
 
-        keyboardObserver.unregister()
+        keyboardHandler.stop()
     }
 }
 
