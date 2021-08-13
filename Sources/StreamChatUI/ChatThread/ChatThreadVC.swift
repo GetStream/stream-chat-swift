@@ -328,13 +328,6 @@ open class ChatThreadVC:
         )
     }
 
-    /// Restarts upload of given `attachment` in case of failure
-    open func restartUploading(for attachmentId: AttachmentId) {
-        channelController.client
-            .messageController(cid: attachmentId.cid, messageId: attachmentId.messageId)
-            .restartFailedAttachmentUploading(with: attachmentId)
-    }
-
     // MARK: - Cell action handlers
 
     /// Executes the provided action on the message
