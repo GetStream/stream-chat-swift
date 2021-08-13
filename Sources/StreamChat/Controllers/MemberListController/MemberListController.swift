@@ -83,10 +83,6 @@ public class ChatChannelMemberListController: DataController, DelegateCallable, 
     
     /// Sets the provided object as a delegate of this controller.
     ///
-    /// - Note: If you don't use custom extra data types, you can set the delegate directly using `controller.delegate = self`.
-    /// Due to the current limits of Swift and the way it handles protocols with associated types, it's required to use this
-    /// method to set the delegate, if you're using custom extra data types.
-    ///
     /// - Parameter delegate: The object used as a delegate. It's referenced weakly, so you need to keep the object
     /// alive if you want keep receiving updates.
     ///
@@ -172,10 +168,6 @@ extension ChatChannelMemberListController {
 
 extension ChatChannelMemberListController {
     /// Set the delegate of `ChatChannelMemberListController` to observe the changes in the system.
-    ///
-    /// - Note: The delegate can be set directly only if you're **not** using custom extra data types. Due to the current
-    /// limits of Swift and the way it handles protocols with associated types, it's required to use `setDelegate` method
-    /// instead to set the delegate, if you're using custom extra data types.
     public var delegate: ChatChannelMemberListControllerDelegate? {
         get { multicastDelegate.mainDelegate?.wrappedDelegate as? ChatChannelMemberListControllerDelegate }
         set { multicastDelegate.mainDelegate = AnyChatChannelMemberListControllerDelegate(newValue) }
@@ -183,9 +175,6 @@ extension ChatChannelMemberListController {
 }
 
 /// `ChatChannelMemberListController` uses this protocol to communicate changes to its delegate.
-///
-/// This protocol can be used only when no custom extra data are specified. If you're using custom extra data types,
-/// please use `ChatChannelMemberListControllerDelegate` instead.
 public protocol ChatChannelMemberListControllerDelegate: DataControllerStateDelegate {
     /// Controller observed a change in the channel member list.
     func memberListController(

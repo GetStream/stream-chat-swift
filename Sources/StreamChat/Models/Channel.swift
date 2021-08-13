@@ -135,9 +135,6 @@ public struct ChatChannel {
     public let cooldownDuration: Int
     
     /// Additional data associated with the channel.
-    ///
-    /// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/Cheat-Sheet#working-with-extra-data).
-    ///
     public let extraData: [String: RawJSON]
 
     // MARK: - Internal

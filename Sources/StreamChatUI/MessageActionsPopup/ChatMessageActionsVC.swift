@@ -16,10 +16,10 @@ public protocol ChatMessageActionsVCDelegate: AnyObject {
 
 /// View controller to show message actions.
 open class ChatMessageActionsVC: _ViewController, ThemeProvider {
-    /// `_ChatMessageActionsVC.Delegate` instance.
+    /// `ChatMessageActionsVC.Delegate` instance.
     public var delegate: Delegate?
 
-    /// `_ChatMessageController` instance used to obtain the message data.
+    /// `ChatMessageController` instance used to obtain the message data.
     public var messageController: ChatMessageController!
 
     /// `ChannelConfig` that contains the feature flags of the channel.
@@ -228,7 +228,7 @@ open class ChatMessageActionsVC: _ViewController, ThemeProvider {
 // MARK: - Delegate
 
 public extension ChatMessageActionsVC {
-    /// Delegate instance for `_ChatMessageActionsVC`.
+    /// Delegate instance for `ChatMessageActionsVC`.
     struct Delegate {
         /// Triggered when action item was tapped.
         /// You can decide what to do with message based on which instance of `ChatMessageActionItem` you received.
@@ -236,7 +236,7 @@ public extension ChatMessageActionsVC {
         /// Triggered when `_ChatMessageActionsVC` should be dismissed.
         public var didFinish: (ChatMessageActionsVC) -> Void
 
-        /// Init of `_ChatMessageActionsVC.Delegate`.
+        /// Init of `ChatMessageActionsVC.Delegate`.
         public init(
             didTapOnActionItem: @escaping (ChatMessageActionsVC, ChatMessage, ChatMessageActionItem)
                 -> Void = { _, _, _ in },
@@ -246,7 +246,7 @@ public extension ChatMessageActionsVC {
             self.didFinish = didFinish
         }
 
-        /// Wraps `_ChatMessageActionsVCDelegate` into `_ChatMessageActionsVC.Delegate`.
+        /// Wraps `ChatMessageActionsVCDelegate` into `_ChatMessageActionsVC.Delegate`.
         public init<Delegate: ChatMessageActionsVCDelegate>(delegate: Delegate) {
             self.init(
                 didTapOnActionItem: { [weak delegate] in delegate?.chatMessageActionsVC($0, message: $1, didTapOnActionItem: $2) },
