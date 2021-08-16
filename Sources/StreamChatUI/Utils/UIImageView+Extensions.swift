@@ -25,7 +25,7 @@ extension UIImageView {
         components: Components,
         completion: ((_ result: Result<ImageResponse, ImagePipeline.Error>) -> Void)? = nil
     ) -> ImageTask? {
-        guard !SystemEnvironment.isTests else {
+        if SystemEnvironment.isTests {
             // When running tests, we load the images synchronously
             if let url = url {
                 image = UIImage(data: try! Data(contentsOf: url))

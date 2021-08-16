@@ -27,7 +27,7 @@ open class ChatMessageListVC:
     open var channelController: ChatChannelController!
     
     /// We use private property for channels count so we can update it inside `performBatchUpdates` as [documented](https://developer.apple.com/documentation/uikit/uicollectionview/1618045-performbatchupdates#discussion)
-    private var numberOfMessages = 0
+    private var messageCache = LazyCachedMapCollection<ChatMessage>()
 
     public var client: ChatClient {
         channelController.client
@@ -110,7 +110,7 @@ open class ChatMessageListVC:
     
     override open func setUp() {
         super.setUp()
-        updateNumberOfMessages()
+        updateMessageCache()
         
         let longPress = UILongPressGestureRecognizer(target: self, action: #selector(handleLongPress))
         longPress.minimumPressDuration = 0.33
@@ -226,7 +226,7 @@ open class ChatMessageListVC:
         return components.messageLayoutOptionsResolver.optionsForMessage(
             at: indexPath,
             in: channel,
-            with: AnyRandomAccessCollection(channelController.messages),
+            with: AnyRandomAccessCollection(messageCache),
             appearance: appearance
         )
     }
@@ -255,14 +255,14 @@ open class ChatMessageListVC:
     ) -> String? {
         // When a message from a channel is deleted,
         // and the visibility of deleted messages is set to `alwaysHidden`,
-        // the messages list won't contain the message and hence it would crash
-        guard channelController.messages.indices.contains(indexPath.item) else {
+        // the messages list won't contain the message
+        guard messageCache.count <= indexPath.item else {
             return nil
         }
         
         return DateFormatter
             .messageListDateOverlay
-            .string(from: channelController.messages[indexPath.item].createdAt)
+            .string(from: messageCache[indexPath.item].createdAt)
     }
 
     open func scrollViewDidScroll(_ scrollView: UIScrollView) {
@@ -332,13 +332,13 @@ open class ChatMessageListVC:
     open func updateMessages(with changes: [ListChange<ChatMessage>], completion: (() -> Void)? = nil) {
         listView.updateMessages(
             with: changes,
-            onMessagesCountUpdate: updateNumberOfMessages,
+            onMessagesUpdate: updateMessageCache,
             completion: completion
         )
     }
     
     open func messageForIndexPath(_ indexPath: IndexPath) -> ChatMessage {
-        channelController.messages[indexPath.item]
+        messageCache[indexPath.item]
     }
     
     open func didSelectMessageCell(at indexPath: IndexPath) {
@@ -438,7 +438,7 @@ open class ChatMessageListVC:
         client
             .messageController(
                 cid: channelController.cid!,
-                messageId: channelController.messages[indexPath.row].id
+                messageId: messageCache[indexPath.row].id
             )
             .dispatchEphemeralMessageAction(action)
     }
@@ -566,7 +566,7 @@ open class ChatMessageListVC:
     
     open func messageContentViewDidTapOnThread(_ indexPath: IndexPath?) {
         guard let indexPath = indexPath else { return log.error("IndexPath is not available") }
-        let message = channelController.messages[indexPath.item]
+        let message = messageCache[indexPath.item]
         showThread(messageId: message.parentMessageId ?? message.id)
     }
     
@@ -583,12 +583,11 @@ open class ChatMessageListVC:
     }
 
     open func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        numberOfMessages
+        messageCache.count
     }
 
     open func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let message = channelController.messages[indexPath.row]
-
+        let message = messageCache[indexPath.row]
         let cell: ChatMessageCell = listView.dequeueReusableCell(
             contentViewClass: cellContentClassForMessage(at: indexPath),
             attachmentViewInjectorType: attachmentViewInjectorClassForMessage(at: indexPath),
@@ -608,8 +607,8 @@ open class ChatMessageListVC:
         return !listView.isLastCellFullyVisible && isMoreContentThanOnePage
     }
     
-    private func updateNumberOfMessages() {
-        numberOfMessages = channelController.messages.count
+    private func updateMessageCache() {
+        messageCache = channelController.messages
     }
     
     // MARK: - UIGestureRecognizerDelegate

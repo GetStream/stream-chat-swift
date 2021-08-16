@@ -29,9 +29,6 @@ open class ChatThreadVC:
     /// Controller for observing data changes within the parent thread message.
     open var messageController: ChatMessageController!
     
-    /// We use private property for channels count so we can update it inside `performBatchUpdates` as [documented](https://developer.apple.com/documentation/uikit/uicollectionview/1618045-performbatchupdates#discussion)
-    private var numberOfMessages = 0
-
     /// Observer responsible for setting the correct offset when keyboard frame is changed
     open lazy var keyboardObserver = ChatMessageListKeyboardObserver(
         containerView: view,
@@ -82,7 +79,7 @@ open class ChatThreadVC:
 
     override open func setUp() {
         super.setUp()
-        updateNumberOfMessages()
+        updateMessageCache()
 
         let longPress = UILongPressGestureRecognizer(target: self, action: #selector(handleLongPress))
         longPress.minimumPressDuration = 0.33
@@ -203,7 +200,7 @@ open class ChatThreadVC:
     open func cellLayoutOptionsForMessage(at indexPath: IndexPath) -> ChatMessageLayoutOptions {
         cellLayoutOptionsForMessage(
             at: indexPath,
-            messages: AnyRandomAccessCollection(messages)
+            messages: AnyRandomAccessCollection(messagesCache)
         )
     }
 
@@ -220,39 +217,19 @@ open class ChatThreadVC:
         return layoutOptions
     }
     
-    public var messages: [ChatMessage] {
-        /*
-         Thread replies are evaluated from DTOs when converting `messageController.replies` to an array.
-         Adding thread root message into replies would require `insert/append` API on lazy map which should
-         update both source collection and a cache to not break the indexing and keep 1-1 match with evaluated
-         and non-evaluated elements.
-         
-         We have evaluated thread root message in `messageController.message` but to get keep lazy map
-         working after an insert we also need an underlaying DTO to be added to source collection and it's getting
-         hard since the information about source collection `Element` type is available only during lazy map
-         initialization and does not get stored for later use.
-
-         It could be addressed on LLC side by tweaking an observer to fetch thread root message along with replies.
-         */
-        let replies = Array(messageController.replies)
-        
-        if let threadRootMessage = messageController.message {
-            return replies + [threadRootMessage]
-        } else {
-            return replies
-        }
-    }
+    /// We use private property and store a copy of the messages list so we can update it inside `performBatchUpdates` as [documented](https://developer.apple.com/documentation/uikit/uicollectionview/1618045-performbatchupdates#discussion)
+    public var messagesCache: [ChatMessage] = []
     
     open func numberOfSections(in tableView: UITableView) -> Int {
         1
     }
 
     open func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        numberOfMessages
+        messagesCache.count
     }
 
     open func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let message = messages[indexPath.row]
+        let message = messagesCache[indexPath.row]
 
         let cell: ChatMessageCell = listView.dequeueReusableCell(
             contentViewClass: cellContentClassForMessage(at: indexPath),
@@ -305,9 +282,19 @@ open class ChatThreadVC:
     open func updateMessages(with changes: [ListChange<ChatMessage>], completion: (() -> Void)? = nil) {
         listView.updateMessages(
             with: changes,
-            onMessagesCountUpdate: updateNumberOfMessages,
+            onMessagesUpdate: updateMessageCache,
             completion: completion
         )
+    }
+
+    private func updateMessageCache() {
+        let replies = Array(messageController.replies)
+
+        if let threadRootMessage = messageController.message {
+            messagesCache = replies + [threadRootMessage]
+        } else {
+            messagesCache = replies
+        }
     }
 
     /// Presents custom actions controller with all possible actions with the selected message.
@@ -365,7 +352,7 @@ open class ChatThreadVC:
         channelController.client
             .messageController(
                 cid: channelController.cid!,
-                messageId: messages[indexPath.item].id
+                messageId: messagesCache[indexPath.item].id
             )
             .dispatchEphemeralMessageAction(action)
     }
@@ -499,7 +486,7 @@ open class ChatThreadVC:
     }
 
     open func messageForIndexPath(_ indexPath: IndexPath) -> ChatMessage {
-        messages[indexPath.item]
+        messagesCache[indexPath.item]
     }
     
     open func scrollOverlay(
@@ -508,18 +495,14 @@ open class ChatThreadVC:
     ) -> String? {
         // When a message from a channel is deleted,
         // and the visibility of deleted messages is set to `alwaysHidden`,
-        // the messages list won't contain the message and hence it would crash
-        guard channelController.messages.indices.contains(indexPath.item) else {
+        // the messages list won't contain the message
+        guard messagesCache.count <= indexPath.item else {
             return nil
         }
         
         return DateFormatter
             .messageListDateOverlay
             .string(from: messageForIndexPath(indexPath).createdAt)
-    }
-    
-    private func updateNumberOfMessages() {
-        numberOfMessages = messages.count
     }
     
     // MARK: - UIGestureRecognizerDelegate
