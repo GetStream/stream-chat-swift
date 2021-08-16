@@ -56,6 +56,8 @@
 		430156F226B4523A0006E7EA /* WebSocketConnectPayload_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 430156F126B4523A0006E7EA /* WebSocketConnectPayload_Tests.swift */; };
 		43016E1426B7189D0054E805 /* CustomMessageContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43016E1326B7189D0054E805 /* CustomMessageContentView.swift */; };
 		43016E1626B734410054E805 /* ChatUser+CustomFields.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43016E1526B734410054E805 /* ChatUser+CustomFields.swift */; };
+		439AFF9826C563BA000A441E /* DateUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 439AFF9726C563BA000A441E /* DateUtils.swift */; };
+		439AFF9A26C568DD000A441E /* DateUtils_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 439AFF9926C568DD000A441E /* DateUtils_Tests.swift */; };
 		43ABF8B526C2CD900034BD62 /* ComposerVC_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43ABF8B326C2B7140034BD62 /* ComposerVC_Tests.swift */; };
 		43ABF8B726C513D20034BD62 /* CurrentUserCustomRole.json in Resources */ = {isa = PBXBuildFile; fileRef = 43ABF8B626C513D20034BD62 /* CurrentUserCustomRole.json */; };
 		43BAAD492664F59600323D8E /* UserStopTypingThread.json in Resources */ = {isa = PBXBuildFile; fileRef = 43BAAD472664F59600323D8E /* UserStopTypingThread.json */; };
@@ -1388,6 +1390,8 @@
 		430156F126B4523A0006E7EA /* WebSocketConnectPayload_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebSocketConnectPayload_Tests.swift; sourceTree = "<group>"; };
 		43016E1326B7189D0054E805 /* CustomMessageContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomMessageContentView.swift; sourceTree = "<group>"; };
 		43016E1526B734410054E805 /* ChatUser+CustomFields.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChatUser+CustomFields.swift"; sourceTree = "<group>"; };
+		439AFF9726C563BA000A441E /* DateUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateUtils.swift; sourceTree = "<group>"; };
+		439AFF9926C568DD000A441E /* DateUtils_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateUtils_Tests.swift; sourceTree = "<group>"; };
 		43ABF8B326C2B7140034BD62 /* ComposerVC_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComposerVC_Tests.swift; sourceTree = "<group>"; };
 		43ABF8B626C513D20034BD62 /* CurrentUserCustomRole.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = CurrentUserCustomRole.json; sourceTree = "<group>"; };
 		43BAAD472664F59600323D8E /* UserStopTypingThread.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = UserStopTypingThread.json; sourceTree = "<group>"; };
@@ -4096,6 +4100,8 @@
 				ACDB5412269C6F2A007CD465 /* String+Extensions_Tests.swift */,
 				640FE0D426A568C3006CE703 /* CollectionUpdatesMapper.swift */,
 				640FE0F526A57903006CE703 /* CollectionUpdatesMapper_Tests.swift */,
+				439AFF9726C563BA000A441E /* DateUtils.swift */,
+				439AFF9926C568DD000A441E /* DateUtils_Tests.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -5729,6 +5735,7 @@
 				228C7EE52583AF4800AAE9E3 /* UITextView+Extensions.swift in Sources */,
 				8803E9E726398F4E002B2A7B /* ChatMessageBubbleView.swift in Sources */,
 				22FF4365256E943F00133910 /* ChatSuggestionsVC.swift in Sources */,
+				439AFF9826C563BA000A441E /* DateUtils.swift in Sources */,
 				22A0921725682880001FE9F0 /* ChatNavigationBar.swift in Sources */,
 				AD87D0A1263C7823008B466C /* AttachmentButton.swift in Sources */,
 				22753599257C442300D1FDB6 /* SendButton.swift in Sources */,
@@ -5879,6 +5886,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				43ABF8B526C2CD900034BD62 /* ComposerVC_Tests.swift in Sources */,
+				439AFF9A26C568DD000A441E /* DateUtils_Tests.swift in Sources */,
 				7920578A264166C9002B145B /* ChatChannel.swift in Sources */,
 				2208241625DEE8070033544B /* ChatChannelListCollectionViewCell_Tests.swift in Sources */,
 				79B4F14325D3F0F70063FFB5 /* ChannelId.swift in Sources */,

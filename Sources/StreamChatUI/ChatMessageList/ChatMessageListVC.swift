@@ -17,6 +17,7 @@ open class ChatMessageListVC:
     UITableViewDelegate,
     UITableViewDataSource,
     UIGestureRecognizerDelegate,
+    UIAdaptivePresentationControllerDelegate,
     GalleryContentViewDelegate,
     GiphyActionContentViewDelegate,
     LinkPreviewViewDelegate,
@@ -119,6 +120,8 @@ open class ChatMessageListVC:
         tapOnList.cancelsTouchesInView = false
         tapOnList.delegate = self
         listView.addGestureRecognizer(tapOnList)
+
+        navigationController?.presentationController?.delegate = self
         
         messageComposerVC.setDelegate(self)
         messageComposerVC.channelController = channelController
@@ -270,6 +273,12 @@ open class ChatMessageListVC:
             scrollToLatestMessageButton.content = .noUnread
         }
         setScrollToLatestMessageButton(visible: isScrollToBottomButtonVisible)
+    }
+
+    public func presentationControllerShouldDismiss(_ presentationController: UIPresentationController) -> Bool {
+        // A workaround is required because we are using an inverted UITableView for the message list.
+        // More details on the issue: https://github.com/GetStream/stream-chat-swift/issues/1307
+        !listView.isDragging
     }
     
     /// Scrolls to most recent message
