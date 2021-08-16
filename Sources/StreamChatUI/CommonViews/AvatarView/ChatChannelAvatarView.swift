@@ -30,8 +30,8 @@ open class ChatChannelAvatarView: _View, ThemeProvider, SwiftUIRepresentable {
     
     /// Object responsible for providing functionality of merging images.
     /// Used when creating compound avatars from channel members individual avatars
-    open lazy var imageProcessor: StreamImageProcessor = {
-        StreamImageProcessor()
+    open lazy var imageProcessor: NukeImageProcessor = {
+        NukeImageProcessor()
     }()
 
     override open func setUpLayout() {

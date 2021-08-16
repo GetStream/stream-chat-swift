@@ -5,8 +5,8 @@
 import Nuke
 import UIKit
 
-/// This class provides resizing operations for `UIImage`
-open class StreamImageProcessor {
+/// This class provides resizing operations for `UIImage`. It internally uses `Nuke` porcessors to implement operations on images.
+open class NukeImageProcessor {
     /// Crop the image to a given size. The image is center-cropped
     /// - Parameters:
     ///   - image: The image to crop
