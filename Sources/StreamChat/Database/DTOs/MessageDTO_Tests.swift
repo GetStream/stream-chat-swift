@@ -361,7 +361,7 @@ class MessageDTO_Tests: XCTestCase {
             type: TestAttachmentPayload.type,
             payload: .dictionary([
                 "name": .string(testPayload.name),
-                "number": .integer(testPayload.number)
+                "number": .number(Double(testPayload.number))
             ])
         )
 
