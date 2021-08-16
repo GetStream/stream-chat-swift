@@ -298,7 +298,7 @@ extension ChatChannel {
         let extraData: [String: RawJSON]
 
         if dto.isDeleted {
-            log.warning("Cannot create an instance of ChatMessageReaction, the DTO was marked as deleted")
+            log.warning("Cannot create an instance of ChatChannel, the DTO was marked as deleted")
             return nil
         }
 
