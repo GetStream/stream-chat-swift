@@ -322,7 +322,7 @@ class ChannelListController_Tests: StressTestCase {
             try session.saveChannel(payload: self.dummyPayload(with: cid), query: self.query)
         }
 
-        let channel: ChatChannel = client.databaseContainer.viewContext.channel(cid: cid)!.asModel()
+        let channel: ChatChannel = client.databaseContainer.viewContext.channel(cid: cid)!.asModel()!
         
         AssertAsync {
             Assert.willBeTrue(delegate.willChangeChannels_called)
@@ -341,7 +341,7 @@ class ChannelListController_Tests: StressTestCase {
             try session.saveChannel(payload: self.dummyPayload(with: cid), query: self.query)
         }
         
-        let channel: ChatChannel = client.databaseContainer.viewContext.channel(cid: cid)!.asModel()
+        let channel: ChatChannel = client.databaseContainer.viewContext.channel(cid: cid)!.asModel()!
 
         AssertAsync {
             Assert.willBeTrue(delegate.willChangeChannels_called)

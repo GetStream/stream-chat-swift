@@ -29,7 +29,7 @@ extension TeamDTO {
     static func load(teamId: TeamId, context: NSManagedObjectContext) -> TeamDTO? {
         let request = NSFetchRequest<TeamDTO>(entityName: TeamDTO.entityName)
         request.predicate = NSPredicate(format: "id == %@", teamId)
-        return try? context.fetch(request).first
+        return load(by: request, context: context).first
     }
 
     /// If a Team with the given id exists in the context, fetches and returns it. Otherwise create a new

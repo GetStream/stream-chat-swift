@@ -89,7 +89,7 @@ final class MessageReactionDTO_Tests: XCTestCase {
                 userId: payload.user.id,
                 type: payload.type
             )
-        ).asModel()
+        ).asModel()!
 
         // Assert model is built up correctly.
         XCTAssertEqual(model.createdAt, payload.createdAt)
@@ -124,7 +124,7 @@ final class MessageReactionDTO_Tests: XCTestCase {
                 userId: payload.user.id,
                 type: payload.type
             )
-        ).asModel()
+        ).asModel()!
         
         // Assert model is built up with default extra data.
         XCTAssertEqual(model.extraData, [:])

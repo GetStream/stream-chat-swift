@@ -167,15 +167,15 @@ extension CurrentChatUser {
             extraData = [:]
         }
 
-        let mutedUsers: [ChatUser] = dto.mutedUsers.map { $0.asModel() }
-        let flaggedUsers: [ChatUser] = dto.flaggedUsers.map { $0.asModel() }
+        let mutedUsers: [ChatUser] = dto.mutedUsers.compactMap { $0.asModel() }
+        let flaggedUsers: [ChatUser] = dto.flaggedUsers.compactMap { $0.asModel() }
         let flaggedMessagesIDs: [MessageId] = dto.flaggedMessages.map(\.id)
 
         let fetchMutedChannels: () -> Set<ChatChannel> = {
             Set(
                 ChannelMuteDTO
                     .load(userId: user.id, context: context)
-                    .map { $0.channel.asModel() }
+                    .compactMap { $0.channel.asModel() }
             )
         }
 

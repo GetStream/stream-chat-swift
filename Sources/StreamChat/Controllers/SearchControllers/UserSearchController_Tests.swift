@@ -169,7 +169,7 @@ class UserSearchController_Tests: StressTestCase {
         // Simulate network call response
         env.userListUpdater?.update_completion?(nil)
         
-        let user: ChatUser = client.databaseContainer.viewContext.user(id: userId)!.asModel()
+        let user = client.databaseContainer.viewContext.user(id: userId)!.asModel()!
         
         AssertAsync.willBeEqual(controller.users.count, 1)
         // Check if delegate method is called
@@ -220,7 +220,7 @@ class UserSearchController_Tests: StressTestCase {
         // Simulate network call response
         env.userListUpdater?.update_completion?(nil)
         
-        let user: ChatUser = client.databaseContainer.viewContext.user(id: userId)!.asModel()
+        let user: ChatUser = client.databaseContainer.viewContext.user(id: userId)!.asModel()!
         
         // Check if delegate method is called
         AssertAsync.willBeEqual(delegate.didChangeUsers_changes, [.insert(user, index: [0, 0])])
@@ -249,7 +249,7 @@ class UserSearchController_Tests: StressTestCase {
         // Simulate update call response
         env.userListUpdater?.update_completion?(nil)
         
-        let user: ChatUser = client.databaseContainer.viewContext.user(id: userId)!.asModel()
+        let user: ChatUser = client.databaseContainer.viewContext.user(id: userId)!.asModel()!
         
         // Check if delegate method is called
         AssertAsync.willBeEqual(delegate.didChangeUsers_changes, [.insert(user, index: [0, 0])])
@@ -269,7 +269,7 @@ class UserSearchController_Tests: StressTestCase {
         // Simulate network call response
         env.userListUpdater?.update_completion?(nil)
         
-        let newUser: ChatUser = client.databaseContainer.viewContext.user(id: newUserId)!.asModel()
+        let newUser: ChatUser = client.databaseContainer.viewContext.user(id: newUserId)!.asModel()!
         
         // Check if the old user is still matching the new search query (shouldn't)
         XCTAssertEqual(controller.users.count, 1)
@@ -309,7 +309,7 @@ class UserSearchController_Tests: StressTestCase {
         // Simulate network call response
         env.userListUpdater?.update_completion?(nil)
         
-        let users: [ChatUser] = userIds.map { client.databaseContainer.viewContext.user(id: $0)!.asModel() }
+        let users: [ChatUser] = userIds.map { client.databaseContainer.viewContext.user(id: $0)!.asModel()! }
         
         AssertAsync.willBeEqual(controller.users.count, 10)
         // Check if delegate method is called
@@ -395,7 +395,7 @@ class UserSearchController_Tests: StressTestCase {
         // Simulate network call response
         env.userListUpdater?.update_completion?(nil)
         
-        let user: ChatUser = client.databaseContainer.viewContext.user(id: userId)!.asModel()
+        let user: ChatUser = client.databaseContainer.viewContext.user(id: userId)!.asModel()!
         
         AssertAsync.willBeEqual(controller.users.count, 1)
         // Check if delegate method is called
@@ -446,7 +446,7 @@ class UserSearchController_Tests: StressTestCase {
         // Simulate network call response
         env.userListUpdater?.update_completion?(nil)
         
-        let user: ChatUser = client.databaseContainer.viewContext.user(id: userId)!.asModel()
+        let user: ChatUser = client.databaseContainer.viewContext.user(id: userId)!.asModel()!
         
         // Check if delegate method is called
         AssertAsync.willBeEqual(delegate.didChangeUsers_changes, [.insert(user, index: [0, 0])])
@@ -475,7 +475,7 @@ class UserSearchController_Tests: StressTestCase {
         // Simulate update call response
         env.userListUpdater?.update_completion?(nil)
         
-        let user: ChatUser = client.databaseContainer.viewContext.user(id: userId)!.asModel()
+        let user: ChatUser = client.databaseContainer.viewContext.user(id: userId)!.asModel()!
         
         // Check if delegate method is called
         AssertAsync.willBeEqual(delegate.didChangeUsers_changes, [.insert(user, index: [0, 0])])
@@ -495,7 +495,7 @@ class UserSearchController_Tests: StressTestCase {
         // Simulate network call response
         env.userListUpdater?.update_completion?(nil)
         
-        let newUser: ChatUser = client.databaseContainer.viewContext.user(id: newUserId)!.asModel()
+        let newUser: ChatUser = client.databaseContainer.viewContext.user(id: newUserId)!.asModel()!
         
         // Check if the old user is still matching the new search query (shouldn't)
         XCTAssertEqual(controller.users.count, 1)
@@ -586,7 +586,7 @@ class UserSearchController_Tests: StressTestCase {
         // Simulate update call response
         env.userListUpdater?.update_completion?(nil)
         
-        let user: ChatUser = client.databaseContainer.viewContext.user(id: userId)!.asModel()
+        let user: ChatUser = client.databaseContainer.viewContext.user(id: userId)!.asModel()!
         
         // Check if delegate method is called
         AssertAsync.willBeEqual(delegate.didChangeUsers_changes, [.insert(user, index: [0, 0])])
@@ -616,7 +616,7 @@ class UserSearchController_Tests: StressTestCase {
         // Simulate network call response
         env.userListUpdater?.update_completion?(nil)
         
-        let newUser: ChatUser = client.databaseContainer.viewContext.user(id: newUserId)!.asModel()
+        let newUser: ChatUser = client.databaseContainer.viewContext.user(id: newUserId)!.asModel()!
         
         // Check if the old user is still matching the new search query (it should - since this is new page)
         XCTAssertEqual(controller.users.count, 2)
@@ -650,7 +650,7 @@ class UserSearchController_Tests: StressTestCase {
             try session.saveUser(payload: self.dummyUser(id: id), query: self.controller.query)
         }
         
-        let user: ChatUser = client.databaseContainer.viewContext.user(id: id)!.asModel()
+        let user: ChatUser = client.databaseContainer.viewContext.user(id: id)!.asModel()!
         AssertAsync.willBeEqual(delegate.didChangeUsers_changes, [.insert(user, index: [0, 0])])
     }
 }

@@ -409,14 +409,14 @@ class MessageDTO_Tests: XCTestCase {
         let latestReactions = Set<ChatMessageReaction>(
             MessageReactionDTO
                 .loadLatestReactions(for: messageId, limit: 10, context: database.viewContext)
-                .map { $0.asModel() }
+                .compactMap { $0.asModel() }
         )
 
         // Load message reactions left by the current user.
         let currentUserReactions = Set<ChatMessageReaction>(
             MessageReactionDTO
                 .loadReactions(for: messageId, authoredBy: currentUserId, context: database.viewContext)
-                .map { $0.asModel() }
+                .compactMap { $0.asModel() }
         )
 
         XCTAssertEqual(loadedMessage.id, messagePayload.id)

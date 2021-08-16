@@ -420,7 +420,7 @@ extension ChatMessageController {
         var messageObserverBuilder: (
             _ context: NSManagedObjectContext,
             _ fetchRequest: NSFetchRequest<MessageDTO>,
-            _ itemCreator: @escaping (MessageDTO) -> ChatMessage,
+            _ itemCreator: @escaping (MessageDTO) -> ChatMessage?,
             _ fetchedResultsControllerType: NSFetchedResultsController<MessageDTO>.Type
         ) -> EntityDatabaseObserver<ChatMessage, MessageDTO> = EntityDatabaseObserver.init
         
@@ -458,7 +458,7 @@ private extension ChatMessageController {
                     sortAscending: sortAscending,
                     deletedMessagesVisibility: deletedMessageVisibility
                 ),
-                itemCreator: { $0.asModel() as ChatMessage }
+                itemCreator: { $0.asModel() as ChatMessage? }
             )
             observer.onChange = { changes in
                 self.delegateCallback {

@@ -159,7 +159,7 @@ extension ChatUserListController {
         var createUserListDabaseObserver: (
             _ context: NSManagedObjectContext,
             _ fetchRequest: NSFetchRequest<UserDTO>,
-            _ itemCreator: @escaping (UserDTO) -> ChatUser
+            _ itemCreator: @escaping (UserDTO) -> ChatUser?
         )
             -> ListDatabaseObserver<ChatUser, UserDTO> = {
                 ListDatabaseObserver(context: $0, fetchRequest: $1, itemCreator: $2)

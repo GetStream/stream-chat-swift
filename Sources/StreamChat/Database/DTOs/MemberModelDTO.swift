@@ -130,11 +130,20 @@ extension NSManagedObjectContext {
 }
 
 extension MemberDTO {
-    func asModel() -> ChatChannelMember { .create(fromDTO: self) }
+    func asModel() -> ChatChannelMember? { .create(fromDTO: self) }
 }
 
 extension ChatChannelMember {
-    fileprivate static func create(fromDTO dto: MemberDTO) -> ChatChannelMember {
+    fileprivate static func create(fromDTO dto: MemberDTO) -> ChatChannelMember? {
+        if dto.isDeleted {
+            log.warning("Cannot create an instance of MemberDTO id: \(dto.id), the DTO was marked as deleted")
+            return nil
+        }
+
+        guard let user = dto.user.asModel() else {
+            return nil
+        }
+
         let extraData: [String: RawJSON]
         do {
             extraData = try JSONDecoder.default.decode([String: RawJSON].self, from: dto.user.extraData)
@@ -149,17 +158,17 @@ extension ChatChannelMember {
         let role = dto.channelRoleRaw.flatMap { MemberRole(rawValue: $0) } ?? .member
         
         return ChatChannelMember(
-            id: dto.user.id,
-            name: dto.user.name,
-            imageURL: dto.user.imageURL,
-            isOnline: dto.user.isOnline,
-            isBanned: dto.user.isBanned,
+            id: user.id,
+            name: user.name,
+            imageURL: user.imageURL,
+            isOnline: user.isOnline,
+            isBanned: user.isBanned,
             isFlaggedByCurrentUser: dto.user.flaggedBy != nil,
             userRole: UserRole(rawValue: dto.user.userRoleRaw),
-            userCreatedAt: dto.user.userCreatedAt,
-            userUpdatedAt: dto.user.userUpdatedAt,
+            userCreatedAt: user.userCreatedAt,
+            userUpdatedAt: user.userUpdatedAt,
             lastActiveAt: dto.user.lastActivityAt,
-            teams: Set(dto.user.teams?.map(\.id) ?? []),
+            teams: user.teams,
             extraData: extraData,
             memberRole: role,
             memberCreatedAt: dto.memberCreatedAt,

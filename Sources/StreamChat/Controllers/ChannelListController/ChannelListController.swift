@@ -218,7 +218,7 @@ extension ChatChannelListController {
         var createChannelListDatabaseObserver: (
             _ context: NSManagedObjectContext,
             _ fetchRequest: NSFetchRequest<ChannelDTO>,
-            _ itemCreator: @escaping (ChannelDTO) -> ChatChannel
+            _ itemCreator: @escaping (ChannelDTO) -> ChatChannel?
         )
             -> ListDatabaseObserver<ChatChannel, ChannelDTO> = {
                 ListDatabaseObserver(context: $0, fetchRequest: $1, itemCreator: $2)

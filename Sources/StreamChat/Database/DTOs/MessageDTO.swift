@@ -537,7 +537,12 @@ extension NSManagedObjectContext: MessageDatabaseSession {
 
 extension MessageDTO {
     /// Snapshots the current state of `MessageDTO` and returns an immutable model object from it.
-    func asModel() -> ChatMessage { .init(fromDTO: self) }
+    func asModel() -> ChatMessage? {
+        guard let message = try? ChatMessage(fromDTO: self) else {
+            return nil
+        }
+        return message
+    }
     
     /// Snapshots the current state of `MessageDTO` and returns its representation for the use in API calls.
     func asRequestBody() -> MessageRequestBody {
@@ -574,7 +579,9 @@ extension MessageDTO {
 }
 
 private extension ChatMessage {
-    init(fromDTO dto: MessageDTO) {
+    /// For `ChatMessage` we use a initializer function instead of a static function on the DTO like we do for other models
+    /// this is done to be able to set properties wrapped by the `CoreDataLazy` property wrapper
+    init(fromDTO dto: MessageDTO) throws {
         let context = dto.managedObjectContext!
         
         id = dto.id
@@ -605,11 +612,11 @@ private extension ChatMessage {
         
         if dto.pinned,
            let pinnedAt = dto.pinnedAt,
-           let pinnedBy = dto.pinnedBy,
+           let pinnedBy = dto.pinnedBy?.asModel(),
            let pinExpires = dto.pinExpires {
             pinDetails = .init(
                 pinnedAt: pinnedAt,
-                pinnedBy: pinnedBy.asModel(),
+                pinnedBy: pinnedBy,
                 expiresAt: pinExpires
             )
         } else {
@@ -626,7 +633,7 @@ private extension ChatMessage {
                     Set(
                         MessageReactionDTO
                             .loadReactions(for: dto.id, authoredBy: currentUser.user.id, context: context)
-                            .map { $0.asModel() }
+                            .compactMap { $0.asModel() }
                     )
                 }, dto.managedObjectContext)
             }
@@ -639,13 +646,18 @@ private extension ChatMessage {
             $_threadParticipants = ({ [] }, nil)
         } else {
             $_threadParticipants = (
-                { Set(dto.threadParticipants.map { $0.asModel() }) },
+                { Set(dto.threadParticipants.compactMap { $0.asModel() }) },
                 dto.managedObjectContext
             )
         }
         
-        $_mentionedUsers = ({ Set(dto.mentionedUsers.map { $0.asModel() }) }, dto.managedObjectContext)
-        $_author = ({ dto.user.asModel() }, dto.managedObjectContext)
+        $_mentionedUsers = ({ Set(dto.mentionedUsers.compactMap { $0.asModel() }) }, dto.managedObjectContext)
+        
+        guard let author = dto.user.asModel() else {
+            throw ClientError.OfflineDataLoadingError()
+        }
+        
+        $_author = ({ author }, dto.managedObjectContext)
         $_attachments = ({
             dto.attachments
                 .map { $0.asAnyModel() }
@@ -658,7 +670,7 @@ private extension ChatMessage {
             $_latestReplies = ({
                 MessageDTO
                     .loadReplies(for: dto.id, limit: 5, context: context)
-                    .map(ChatMessage.init)
+                    .compactMap { $0.asModel() }
             }, dto.managedObjectContext)
         }
         
@@ -669,7 +681,7 @@ private extension ChatMessage {
                 Set(
                     MessageReactionDTO
                         .loadLatestReactions(for: dto.id, limit: 5, context: context)
-                        .map { $0.asModel() }
+                        .compactMap { $0.asModel() }
                 )
             }, dto.managedObjectContext)
         }
@@ -683,6 +695,12 @@ private extension ChatMessage {
 }
 
 extension ClientError {
+    class OfflineDataLoadingError: ClientError {
+        override var localizedDescription: String {
+            "Data for this DTO could not be converted into a model"
+        }
+    }
+
     class CurrentUserDoesNotExist: ClientError {
         override var localizedDescription: String {
             "There is no `CurrentUserDTO` instance in the DB."

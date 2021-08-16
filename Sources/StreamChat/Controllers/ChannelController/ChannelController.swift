@@ -277,7 +277,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             let observer = EntityDatabaseObserver(
                 context: self.client.databaseContainer.viewContext,
                 fetchRequest: ChannelDTO.fetchRequest(for: cid),
-                itemCreator: { $0.asModel() as ChatChannel }
+                itemCreator: { $0.asModel() }
             ).onChange { change in
                 self.delegateCallback { $0.channelController(self, didUpdateChannel: change) }
             }
@@ -307,7 +307,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
                     sortAscending: sortAscending,
                     deletedMessagesVisibility: deletedMessageVisibility ?? .visibleForCurrentUser
                 ),
-                itemCreator: { $0.asModel() as ChatMessage }
+                itemCreator: { $0.asModel() }
             )
             observer.onChange = { changes in
                 self.delegateCallback {

@@ -190,7 +190,7 @@ extension ChatUserController {
         var userObserverBuilder: (
             _ context: NSManagedObjectContext,
             _ fetchRequest: NSFetchRequest<UserDTO>,
-            _ itemCreator: @escaping (UserDTO) -> ChatUser,
+            _ itemCreator: @escaping (UserDTO) -> ChatUser?,
             _ fetchedResultsControllerType: NSFetchedResultsController<UserDTO>.Type
         ) -> EntityDatabaseObserver<ChatUser, UserDTO> = EntityDatabaseObserver.init
     }

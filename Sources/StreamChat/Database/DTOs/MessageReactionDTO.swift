@@ -121,7 +121,16 @@ extension NSManagedObjectContext {
 
 extension MessageReactionDTO {
     /// Snapshots the current state of `MessageReactionDTO` and returns an immutable model object from it.
-    func asModel() -> ChatMessageReaction {
+    func asModel() -> ChatMessageReaction? {
+        if isDeleted {
+            log.warning("Cannot create an instance of ChatMessageReaction, the DTO was marked as deleted")
+            return nil
+        }
+
+        guard let author = user.asModel() else {
+            return nil
+        }
+
         let extraData: [String: RawJSON]
         do {
             extraData = try JSONDecoder.default.decode([String: RawJSON].self, from: self.extraData)
@@ -136,7 +145,7 @@ extension MessageReactionDTO {
             createdAt: createdAt,
             updatedAt: updatedAt,
             extraData: extraData,
-            author: user.asModel()
+            author: author
         )
     }
 }

@@ -70,7 +70,7 @@ extension UserDTO {
     static func load(id: String, context: NSManagedObjectContext) -> UserDTO? {
         let request = NSFetchRequest<UserDTO>(entityName: UserDTO.entityName)
         request.predicate = NSPredicate(format: "id == %@", id)
-        return try? context.fetch(request).first
+        return load(by: request, context: context).first
     }
     
     /// If a User with the given id exists in the context, fetches and returns it. Otherwise creates a new
@@ -142,7 +142,7 @@ extension NSManagedObjectContext: UserDatabaseSession {
 
 extension UserDTO {
     /// Snapshots the current state of `UserDTO` and returns an immutable model object from it.
-    func asModel() -> ChatUser { .create(fromDTO: self) }
+    func asModel() -> ChatUser? { .create(fromDTO: self) }
     
     /// Snapshots the current state of `UserDTO` and returns its representation for used in API calls.
     func asRequestBody() -> UserRequestBody {
@@ -172,7 +172,6 @@ extension UserDTO {
         if let filterHash = query.filter?.filterHash {
             request.predicate = NSPredicate(format: "ANY queries.filterHash == %@", filterHash)
         }
-        
         return request
     }
 
@@ -192,7 +191,12 @@ extension UserDTO {
 }
 
 extension ChatUser {
-    fileprivate static func create(fromDTO dto: UserDTO) -> ChatUser {
+    fileprivate static func create(fromDTO dto: UserDTO) -> ChatUser? {
+        if dto.isDeleted {
+            log.warning("Cannot create an instance of ChatUser id: \(dto.id), the DTO was marked as deleted")
+            return nil
+        }
+
         let extraData: [String: RawJSON]
         do {
             extraData = try JSONDecoder.default.decode([String: RawJSON].self, from: dto.extraData)

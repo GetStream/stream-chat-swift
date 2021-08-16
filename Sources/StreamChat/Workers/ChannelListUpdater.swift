@@ -25,10 +25,10 @@ class ChannelListUpdater: Worker {
                 switch result {
                 case let .success(channelListPayload):
                     self?.database.write { session in
-                        
-                        if trumpExistingChannels {
-                            try session.deleteChannels(query: channelListQuery)
-                        }
+                        // TODO: this is not working well, we need a better approach to remove channels that are not in-sync
+//                        if trumpExistingChannels {
+//                            try session.deleteChannels(query: channelListQuery)
+//                        }
                         
                         try channelListPayload.channels.forEach {
                             try session.saveChannel(payload: $0, query: channelListQuery)

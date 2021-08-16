@@ -615,7 +615,7 @@ class ChannelDTO_Tests: XCTestCase {
         
         // Load the channel
         var channel: ChatChannel {
-            database.viewContext.channel(cid: cid)!.asModel()
+            database.viewContext.channel(cid: cid)!.asModel()!
         }
         
         // Assert channel's currentlyTypingUsers are not empty
@@ -634,7 +634,7 @@ class ChannelDTO_Tests: XCTestCase {
         let extraData: [String: RawJSON] = ["k": .string("v")]
         try database.createChannel(cid: cid, channelExtraData: extraData)
         var channel: ChatChannel {
-            database.viewContext.channel(cid: cid)!.asModel()
+            database.viewContext.channel(cid: cid)!.asModel()!
         }
         XCTAssertEqual(channel.extraData, ["k": .string("v")])
     }
@@ -657,7 +657,7 @@ class ChannelDTO_Tests: XCTestCase {
         
         // Load the channel
         var channel: ChatChannel {
-            database.viewContext.channel(cid: cid)!.asModel()
+            database.viewContext.channel(cid: cid)!.asModel()!
         }
         
         // Assert channel's watchers are not empty, watcherCount not zero

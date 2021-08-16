@@ -27,6 +27,7 @@ final class DemoAppCoordinator {
         // Create a token
         let token = try! Token(rawValue: userCredentials.token)
         
+        LogConfig.level = LogLevel.warning
         // Create client
         let config = ChatClientConfig(apiKey: .init(userCredentials.apiKey))
         let client = ChatClient(config: config)

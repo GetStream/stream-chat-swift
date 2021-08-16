@@ -277,7 +277,7 @@ class UserListController_Tests: StressTestCase {
             try session.saveUser(payload: self.dummyUser(id: id), query: self.query)
         }
         
-        let user: ChatUser = client.databaseContainer.viewContext.user(id: id)!.asModel()
+        let user: ChatUser = client.databaseContainer.viewContext.user(id: id)!.asModel()!
         
         AssertAsync.willBeEqual(delegate.didChangeUsers_changes, [.insert(user, index: [0, 0])])
     }
@@ -293,7 +293,7 @@ class UserListController_Tests: StressTestCase {
             try session.saveUser(payload: self.dummyUser(id: id), query: self.query)
         }
         
-        let user: ChatUser = client.databaseContainer.viewContext.user(id: id)!.asModel()
+        let user: ChatUser = client.databaseContainer.viewContext.user(id: id)!.asModel()!
         AssertAsync.willBeEqual(delegate.didChangeUsers_changes, [.insert(user, index: [0, 0])])
     }
     

@@ -72,7 +72,7 @@ final class ChannelUserTypingStateUpdaterMiddleware_Tests: XCTestCase {
         
         // Load the channel
         var channel: ChatChannel {
-            database.viewContext.channel(cid: cid)!.asModel()
+            database.viewContext.channel(cid: cid)!.asModel()!
         }
         
         // Assert there is no typing users so far
@@ -106,7 +106,7 @@ final class ChannelUserTypingStateUpdaterMiddleware_Tests: XCTestCase {
         
         // Load the channel
         var channel: ChatChannel {
-            database.viewContext.channel(cid: cid)!.asModel()
+            database.viewContext.channel(cid: cid)!.asModel()!
         }
         
         // Simulate stop typing events
@@ -136,7 +136,7 @@ final class ChannelUserTypingStateUpdaterMiddleware_Tests: XCTestCase {
         
         // Load the channel
         var channel: ChatChannel {
-            database.viewContext.channel(cid: cid)!.asModel()
+            database.viewContext.channel(cid: cid)!.asModel()!
         }
         
         // Simulate CleanUpTypingEvent

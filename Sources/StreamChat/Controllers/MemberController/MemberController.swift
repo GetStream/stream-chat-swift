@@ -195,7 +195,7 @@ extension ChatChannelMemberController {
         var memberObserverBuilder: (
             _ context: NSManagedObjectContext,
             _ fetchRequest: NSFetchRequest<MemberDTO>,
-            _ itemCreator: @escaping (MemberDTO) -> ChatChannelMember,
+            _ itemCreator: @escaping (MemberDTO) -> ChatChannelMember?,
             _ fetchedResultsControllerType: NSFetchedResultsController<MemberDTO>.Type
         ) -> EntityDatabaseObserver<ChatChannelMember, MemberDTO> = EntityDatabaseObserver.init
     }

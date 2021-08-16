@@ -111,11 +111,11 @@ class ChannelDTO: NSManagedObject {
     }
     
     static func loadOrCreate(cid: ChannelId, context: NSManagedObjectContext) -> ChannelDTO {
-        if let existing = Self.load(cid: cid, context: context) {
+        if let existing = load(cid: cid, context: context) {
             return existing
         }
         
-        let new = NSEntityDescription.insertNewObject(forEntityName: Self.entityName, into: context) as! ChannelDTO
+        let new = NSEntityDescription.insertNewObject(forEntityName: entityName, into: context) as! ChannelDTO
         new.cid = cid.rawValue
         return new
     }
@@ -289,29 +289,26 @@ extension ChannelDTO {
 
 extension ChannelDTO {
     /// Snapshots the current state of `ChannelDTO` and returns an immutable model object from it.
-    func asModel() -> ChatChannel { .create(fromDTO: self) }
+    func asModel() -> ChatChannel? { .create(fromDTO: self) }
 }
 
 extension ChatChannel {
     /// Create a ChannelModel struct from its DTO
-    fileprivate static func create(fromDTO dto: ChannelDTO) -> ChatChannel {
+    fileprivate static func create(fromDTO dto: ChannelDTO) -> ChatChannel? {
         let extraData: [String: RawJSON]
-        do {
-            extraData = try JSONDecoder.default.decode([String: RawJSON].self, from: dto.extraData)
-        } catch {
-            log.error(
-                "Failed to decode extra data for Channel with cid: <\(dto.cid)>, using default value instead. "
-                    + "Error: \(error)"
-            )
-            extraData = [:]
+
+        if dto.isDeleted {
+            log.warning("Cannot create an instance of ChatMessageReaction, the DTO was marked as deleted")
+            return nil
         }
 
-        let cid = try! ChannelId(cid: dto.cid)
-        
+        guard let cid = try? ChannelId(cid: dto.cid) else {
+            log.error("cid: \"\(dto.cid)\" is not valid")
+            return nil
+        }
+
         let context = dto.managedObjectContext!
-        
-        let reads: [ChatChannelRead] = dto.reads.map { $0.asModel() }
-        
+        let reads: [ChatChannelRead] = dto.reads.compactMap { $0.asModel() }
         let unreadCount: () -> ChannelUnreadCount = {
             guard let currentUser = context.currentUser else { return .noUnread }
             
@@ -349,19 +346,19 @@ extension ChatChannel {
                     limit: dto.managedObjectContext?.localCachingSettings?.chatChannel.latestMessagesLimit ?? 25,
                     context: context
                 )
-                .map { $0.asModel() }
+                .compactMap { $0.asModel() }
         }
         
         let fetchWatchers: () -> [ChatUser] = {
             UserDTO
                 .loadLastActiveWatchers(cid: cid, context: context)
-                .map { $0.asModel() }
+                .compactMap { $0.asModel() }
         }
         
         let fetchMembers: () -> [ChatChannelMember] = {
             MemberDTO
                 .loadLastActiveMembers(cid: cid, context: context)
-                .map { $0.asModel() }
+                .compactMap { $0.asModel() }
         }
 
         let fetchMuteDetails: () -> MuteDetails? = {
@@ -376,6 +373,16 @@ extension ChatChannel {
             )
         }
         
+        do {
+            extraData = try JSONDecoder.default.decode([String: RawJSON].self, from: dto.extraData)
+        } catch {
+            log.error(
+                "Failed to decode extra data for Channel with cid: <\(dto.cid)>, using default value instead. "
+                    + "Error: \(error)"
+            )
+            extraData = [:]
+        }
+
         return ChatChannel(
             cid: cid,
             name: dto.name,
@@ -388,20 +395,18 @@ extension ChatChannel {
             config: try! JSONDecoder().decode(ChannelConfig.self, from: dto.config),
             isFrozen: dto.isFrozen,
             lastActiveMembers: { fetchMembers() },
-            membership: dto.membership.map { $0.asModel() },
-            currentlyTypingUsers: { Set(dto.currentlyTypingUsers.map { $0.asModel() }) },
+            membership: dto.membership?.asModel(),
+            currentlyTypingUsers: { Set(dto.currentlyTypingUsers.compactMap { $0.asModel() }) },
             lastActiveWatchers: { fetchWatchers() },
             team: dto.team?.id,
             unreadCount: { unreadCount() },
             watcherCount: Int(dto.watcherCount),
             memberCount: Int(dto.memberCount),
-            //            banEnabling: .disabled,
             reads: reads,
             cooldownDuration: Int(dto.cooldownDuration),
             extraData: extraData,
-            //            invitedMembers: [],
             latestMessages: { fetchMessages() },
-            pinnedMessages: { dto.pinnedMessages.map { $0.asModel() } },
+            pinnedMessages: { dto.pinnedMessages.compactMap { $0.asModel() } },
             muteDetails: fetchMuteDetails,
             underlyingContext: dto.managedObjectContext
         )

@@ -1037,7 +1037,7 @@ class ChannelController_Tests: StressTestCase {
             }, completion: $0)
         }
         XCTAssertNil(error)
-        let channel: ChatChannel = client.databaseContainer.viewContext.channel(cid: channelId)!.asModel()
+        let channel: ChatChannel = client.databaseContainer.viewContext.channel(cid: channelId)!.asModel()!
         XCTAssertEqual(channel.latestMessages.count, 1)
         let message: ChatMessage = try XCTUnwrap(channel.latestMessages.first)
 
@@ -1059,7 +1059,7 @@ class ChannelController_Tests: StressTestCase {
             }, completion: $0)
         }
         XCTAssertNil(error)
-        let newChannel: ChatChannel = client.databaseContainer.viewContext.channel(cid: newCid)!.asModel()
+        let newChannel: ChatChannel = client.databaseContainer.viewContext.channel(cid: newCid)!.asModel()!
         assert(channel.latestMessages.count == 1)
         let newMessage: ChatMessage = newChannel.latestMessages.first!
 
@@ -1125,7 +1125,7 @@ class ChannelController_Tests: StressTestCase {
         
         // Load the user
         var typingUser: ChatUser {
-            client.databaseContainer.viewContext.user(id: userId)!.asModel()
+            client.databaseContainer.viewContext.user(id: userId)!.asModel()!
         }
         
         // Assert the delegate receives typing user
@@ -1155,7 +1155,7 @@ class ChannelController_Tests: StressTestCase {
         
         // Load the channel user
         var typingUser: ChatUser {
-            client.databaseContainer.viewContext.user(id: userId)!.asModel()
+            client.databaseContainer.viewContext.user(id: userId)!.asModel()!
         }
         
         // Assert the delegate receives typing user
@@ -1180,7 +1180,7 @@ class ChannelController_Tests: StressTestCase {
             }, completion: $0)
         }
         XCTAssertNil(error)
-        let channel: ChatChannel = client.databaseContainer.viewContext.channel(cid: channelId)!.asModel()
+        let channel: ChatChannel = client.databaseContainer.viewContext.channel(cid: channelId)!.asModel()!
         XCTAssertEqual(channel.latestMessages.count, 1)
         let message: ChatMessage = try XCTUnwrap(channel.latestMessages.first)
         
@@ -1246,7 +1246,7 @@ class ChannelController_Tests: StressTestCase {
         XCTAssertNil(error)
         
         // Fetch channel from DB
-        var channel: ChatChannel { client.databaseContainer.viewContext.channel(cid: channelId)!.asModel() }
+        var channel: ChatChannel { client.databaseContainer.viewContext.channel(cid: channelId)!.asModel()! }
         XCTAssertEqual(channel.cid, channelId)
         
         // Assert that `.create` callback is called
@@ -1305,7 +1305,7 @@ class ChannelController_Tests: StressTestCase {
                 try session.saveChannel(payload: self.dummyPayload(with: self.channelId), query: nil)
             }, completion: $0)
         }
-        let channel: ChatChannel = client.databaseContainer.viewContext.channel(cid: channelId)!.asModel()
+        let channel: ChatChannel = client.databaseContainer.viewContext.channel(cid: channelId)!.asModel()!
         XCTAssertEqual(channel.latestMessages.count, 1)
         let message: ChatMessage = try XCTUnwrap(channel.latestMessages.first)
         

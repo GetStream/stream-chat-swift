@@ -112,7 +112,7 @@ class ListDatabaseObserver<Item, DTO: NSManagedObject> {
     /// Used for observing the changes in the DB.
     private(set) var frc: NSFetchedResultsController<DTO>!
     
-    let itemCreator: (DTO) -> Item
+    let itemCreator: (DTO) -> Item?
     let request: NSFetchRequest<DTO>
     let context: NSManagedObjectContext
     
@@ -124,7 +124,7 @@ class ListDatabaseObserver<Item, DTO: NSManagedObject> {
     /// Please note that no updates are reported until you call `startUpdating`.
     ///
     ///  - Important: ⚠️ Because the observer uses `NSFetchedResultsController` to observe the entity in the DB, it's required
-    /// that the provided `fetchRequest` has at lease one `NSSortDescriptor` specified.
+    /// that the provided `fetchRequest` has at least one `NSSortDescriptor` specified.
     ///
     /// - Parameters:
     ///   - context: The `NSManagedObjectContext` the observer observes.
@@ -135,7 +135,7 @@ class ListDatabaseObserver<Item, DTO: NSManagedObject> {
     init(
         context: NSManagedObjectContext,
         fetchRequest: NSFetchRequest<DTO>,
-        itemCreator: @escaping (DTO) -> Item,
+        itemCreator: @escaping (DTO) -> Item?,
         fetchedResultsControllerType: NSFetchedResultsController<DTO>.Type = NSFetchedResultsController<DTO>.self
     ) {
         self.context = context
@@ -150,14 +150,13 @@ class ListDatabaseObserver<Item, DTO: NSManagedObject> {
         
         _items.computeValue = { [weak frc] in
             var result = LazyCachedMapCollection<Item>()
-            result = (frc?.fetchedObjects ?? []).lazyCachedMap { dto in
-                // `itemCreator` returns non-optional value, so we can use implicitly uwrapped optional
-                var result: Item!
+            result = (frc?.fetchedObjects ?? []).compactMap { dto in
+                var result: Item?
                 context.performAndWait {
                     result = itemCreator(dto)
                 }
                 return result
-            }
+            }.lazyCachedMap { $0 }
             return result
         }
 
@@ -285,7 +284,12 @@ class ListChangeAggregator<DTO: NSManagedObject, Item>: NSObject, NSFetchedResul
         for type: NSFetchedResultsChangeType,
         newIndexPath: IndexPath?
     ) {
-        guard let dto = anObject as? DTO, let item = itemCreator(dto) else {
+        guard let dto = anObject as? DTO else {
+            log.warning("Skipping the update from DB because anObject can't be converted to DTO.")
+            return
+        }
+
+        guard let item = itemCreator(dto) else {
             log.warning("Skipping the update from DB because the DTO can't be converted to the model object.")
             return
         }
