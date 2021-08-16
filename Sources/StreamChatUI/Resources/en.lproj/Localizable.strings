@@ -49,10 +49,21 @@
 "message.sending.attachment-uploading-failed" = "UPLOADING FAILED";
 
 "message.title.online" = "Online";
-"message.title.see-minutes-ago" = "Seen %@ ago";
 "message.title.offline" = "Offline";
 "message.title.group" = "%d members, %d online";
 
 "current-selection" = "%d of %d";
 
 "attachment.max-size-exceeded" = "Attachment size exceed the limit.";
+"dates.time-ago-seconds-plural" = "last seen %d seconds ago";
+"dates.time-ago-seconds-singular" = "last seen just one second ago";
+"dates.time-ago-minutes-singular" = "last seen one minute ago";
+"dates.time-ago-minutes-plural" = "last seen %d minutes ago";
+"dates.time-ago-hours-singular" = "last seen one hour ago";
+"dates.time-ago-hours-plural" = "last seen %d hours ago";
+"dates.time-ago-days-singular" = "last seen one day ago";
+"dates.time-ago-days-plural" = "last seen %d days ago";
+"dates.time-ago-weeks-singular" = "last seen one week ago";
+"dates.time-ago-weeks-plural" = "last seen %d weeks ago";
+"dates.time-ago-months-singular" = "last seen one month ago";
+"dates.time-ago-months-plural" = "last seen %d months ago";

@@ -52,9 +52,6 @@ public struct ChatMessage {
     public let replyCount: Int
     
     /// Additional data associated with the message.
-    ///
-    /// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/Cheat-Sheet#working-with-extra-data).
-    ///
     public let extraData: [String: RawJSON]
 
     /// Quoted message.

@@ -102,10 +102,6 @@ public class ChatChannelMemberController: DataController, DelegateCallable, Data
     
     /// Sets the provided object as a delegate of this controller.
     ///
-    /// - Note: If you don't use custom extra data types, you can set the delegate directly using `controller.delegate = self`.
-    /// Due to the current limits of Swift and the way it handles protocols with associated types, it's required to use this
-    /// method to set the delegate, if you're using custom extra data types.
-    ///
     /// - Parameter delegate: The object used as a delegate. It's referenced weakly, so you need to keep the object
     /// alive if you want keep receiving updates.
     ///
@@ -207,10 +203,6 @@ extension ChatChannelMemberController {
 
 public extension ChatChannelMemberController {
     /// Set the delegate of `ChatMemberController` to observe the changes in the system.
-    ///
-    /// - Note: The delegate can be set directly only if you're **not** using custom extra data types. Due to the current
-    /// limits of Swift and the way it handles protocols with associated types, it's required to use `setDelegate` method
-    /// instead to set the delegate, if you're using custom extra data types.
     var delegate: ChatChannelMemberControllerDelegate? {
         get { multicastDelegate.mainDelegate?.wrappedDelegate as? ChatChannelMemberControllerDelegate }
         set { multicastDelegate.mainDelegate = AnyChatChannelMemberControllerDelegate(newValue) }
@@ -220,10 +212,6 @@ public extension ChatChannelMemberController {
 // MARK: - Delegates
 
 /// `ChatChannelMemberControllerDelegate` uses this protocol to communicate changes to its delegate.
-///
-/// This protocol can be used only when no custom extra data are specified. If you're using custom extra data types,
-/// please use `ChatChannelMemberControllerDelegate` instead.
-///
 public protocol ChatChannelMemberControllerDelegate: DataControllerStateDelegate {
     /// The controller observed a change in the `ChatChannelMember` entity.
     func memberController(

@@ -93,16 +93,45 @@ extension ChatUser: Hashable {
     }
 }
 
-public enum UserRole: String, Codable, Hashable {
+public struct UserRole: RawRepresentable, Codable, Hashable, ExpressibleByStringLiteral {
+    public let rawValue: String
+    
+    public init(rawValue: String) {
+        self.rawValue = rawValue
+    }
+    
+    public init(stringLiteral value: String) {
+        self.init(rawValue: value)
+    }
+}
+
+public extension UserRole {
     /// This is the default role assigned to any user.
-    case user
-    
+    static let user = Self(rawValue: "user")
+
     /// This role allows users to perform more advanced actions. This role should be granted only to staff users
-    case admin
-    
+    static let admin = Self(rawValue: "admin")
+
     /// A user that connected using guest user authentication.
-    case guest
-    
+    static let guest = Self(rawValue: "guest")
+
     /// A user that connected using anonymous authentication.
-    case anonymous
+    static let anonymous = Self(rawValue: "anonymous")
+    
+    init(from decoder: Decoder) throws {
+        let container = try decoder.singleValueContainer()
+        let value = try container.decode(String.self)
+        switch value {
+        case "user":
+            self = .user
+        case "guest":
+            self = .guest
+        case "admin":
+            self = .admin
+        case "anonymous":
+            self = .anonymous
+        default:
+            self = .init(rawValue: value)
+        }
+    }
 }

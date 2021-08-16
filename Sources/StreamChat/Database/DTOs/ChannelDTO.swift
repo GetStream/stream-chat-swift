@@ -107,7 +107,7 @@ class ChannelDTO: NSManagedObject {
     
     static func load(cid: ChannelId, context: NSManagedObjectContext) -> ChannelDTO? {
         let request = fetchRequest(for: cid)
-        return try! context.fetch(request).first
+        return load(by: request, context: context).first
     }
     
     static func loadOrCreate(cid: ChannelId, context: NSManagedObjectContext) -> ChannelDTO {

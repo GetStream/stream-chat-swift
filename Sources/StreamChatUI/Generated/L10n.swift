@@ -85,6 +85,45 @@ internal enum L10n {
     }
   }
 
+  internal enum Dates {
+    /// last seen %d days ago
+    internal static func timeAgoDaysPlural(_ p1: Int) -> String {
+      return L10n.tr("Localizable", "dates.time-ago-days-plural", p1)
+    }
+    /// last seen one day ago
+    internal static var timeAgoDaysSingular: String { L10n.tr("Localizable", "dates.time-ago-days-singular") }
+    /// last seen %d hours ago
+    internal static func timeAgoHoursPlural(_ p1: Int) -> String {
+      return L10n.tr("Localizable", "dates.time-ago-hours-plural", p1)
+    }
+    /// last seen one hour ago
+    internal static var timeAgoHoursSingular: String { L10n.tr("Localizable", "dates.time-ago-hours-singular") }
+    /// last seen %d minutes ago
+    internal static func timeAgoMinutesPlural(_ p1: Int) -> String {
+      return L10n.tr("Localizable", "dates.time-ago-minutes-plural", p1)
+    }
+    /// last seen one minute ago
+    internal static var timeAgoMinutesSingular: String { L10n.tr("Localizable", "dates.time-ago-minutes-singular") }
+    /// last seen %d months ago
+    internal static func timeAgoMonthsPlural(_ p1: Int) -> String {
+      return L10n.tr("Localizable", "dates.time-ago-months-plural", p1)
+    }
+    /// last seen one month ago
+    internal static var timeAgoMonthsSingular: String { L10n.tr("Localizable", "dates.time-ago-months-singular") }
+    /// last seen %d seconds ago
+    internal static func timeAgoSecondsPlural(_ p1: Int) -> String {
+      return L10n.tr("Localizable", "dates.time-ago-seconds-plural", p1)
+    }
+    /// last seen just one second ago
+    internal static var timeAgoSecondsSingular: String { L10n.tr("Localizable", "dates.time-ago-seconds-singular") }
+    /// last seen %d weeks ago
+    internal static func timeAgoWeeksPlural(_ p1: Int) -> String {
+      return L10n.tr("Localizable", "dates.time-ago-weeks-plural", p1)
+    }
+    /// last seen one week ago
+    internal static var timeAgoWeeksSingular: String { L10n.tr("Localizable", "dates.time-ago-weeks-singular") }
+  }
+
   internal enum Message {
     /// Message deleted
     internal static var deletedMessagePlaceholder: String { L10n.tr("Localizable", "message.deleted-message-placeholder") }
@@ -143,10 +182,6 @@ internal enum L10n {
       internal static var offline: String { L10n.tr("Localizable", "message.title.offline") }
       /// Online
       internal static var online: String { L10n.tr("Localizable", "message.title.online") }
-      /// Seen %@ ago
-      internal static func seeMinutesAgo(_ p1: Any) -> String {
-        return L10n.tr("Localizable", "message.title.see-minutes-ago", String(describing: p1))
-      }
     }
   }
 

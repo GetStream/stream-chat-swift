@@ -31,22 +31,19 @@ final class ChannelMuteDTO: NSManagedObject {
     }
 
     static func load(userId: String, context: NSManagedObjectContext) -> [ChannelMuteDTO] {
-        let request = fetchRequest(userId: userId)
-        return try! context.fetch(request)
+        load(by: fetchRequest(userId: userId), context: context)
     }
 
     static func load(cid: ChannelId, context: NSManagedObjectContext) -> [ChannelMuteDTO] {
-        let request = fetchRequest(for: cid)
-        return try! context.fetch(request)
+        load(by: fetchRequest(for: cid), context: context)
     }
 
     static func load(cid: ChannelId, userId: String, context: NSManagedObjectContext) -> ChannelMuteDTO? {
-        let request = fetchRequest(for: cid, userId: userId)
-        return try! context.fetch(request).first
+        load(by: fetchRequest(for: cid, userId: userId), context: context).first
     }
 
     static func loadOrCreate(cid: ChannelId, userId: String, context: NSManagedObjectContext) -> ChannelMuteDTO {
-        if let existing = Self.load(cid: cid, userId: userId, context: context) {
+        if let existing = load(cid: cid, userId: userId, context: context) {
             return existing
         }
 
