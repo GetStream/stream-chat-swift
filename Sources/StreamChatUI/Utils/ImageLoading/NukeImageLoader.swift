@@ -13,7 +13,7 @@ open class NukeImageLoader: ImageLoading {
     @discardableResult
     open func loadImage(
         using urlRequest: URLRequest,
-        cachingKey: String,
+        cachingKey: String?,
         completion: @escaping ((Result<UIImage, Error>) -> Void)
     ) -> Cancellable? {
         guard !SystemEnvironment.isTests else {

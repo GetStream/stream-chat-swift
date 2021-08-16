@@ -19,7 +19,7 @@ public protocol ImageLoading: AnyObject {
     @discardableResult
     func loadImage(
         using urlRequest: URLRequest,
-        cachingKey: String,
+        cachingKey: String?,
         completion: @escaping ((_ result: Result<UIImage, Error>) -> Void)
     ) -> Cancellable?
 }
