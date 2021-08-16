@@ -245,7 +245,7 @@ open class ChatThreadVC:
     }
     
     open func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        if messageController.state == .remoteDataFetched && indexPath.row + 1 >= tableView.numberOfRows(inSection: 0) - 5 {
+        if messageController.state == .remoteDataFetched && indexPath.row + 1 == tableView.numberOfRows(inSection: 0) - 5 {
             messageController.loadPreviousReplies()
         }
     }
