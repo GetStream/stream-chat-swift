@@ -179,7 +179,7 @@ open class ChatMessageListView: UITableView, Customizable, ComponentsProvider {
         guard let _ = collectionUpdatesMapper.mapToSetsOfIndexPaths(
             changes: changes,
             onConflict: {
-                onMessagesCountUpdate()
+                onMessagesUpdate()
                 reloadData()
             }
         ) else { return }
@@ -212,7 +212,7 @@ open class ChatMessageListView: UITableView, Customizable, ComponentsProvider {
                     self.deleteRows(at: [index], with: .fade)
                 }
             }
-            onMessagesCountUpdate()
+            onMessagesUpdate()
         }, completion: { _ in
             if shouldScrollToBottom {
                 self.scrollToBottomAction = .init { [weak self] in
