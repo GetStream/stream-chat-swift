@@ -8,11 +8,16 @@ import UIKit
 /// Controller responsible for displaying the channel messages.
 @available(iOSApplicationExtension, unavailable)
 open class ChatChannelVC: _ViewController, ThemeProvider {
-    /// User search controller passed directly to the composer
+    /// User search controller for suggestion users when typing in the composer.
     open var userSuggestionSearchController: ChatUserSearchController!
 
-    /// Controller for observing data changes within the channel
+    /// Controller for observing data changes within the channel.
     open var channelController: ChatChannelController!
+
+    /// The size of the channel avatar.
+    open var channelAvatarSize: CGSize {
+        CGSize(width: 32, height: 32)
+    }
 
     public var client: ChatClient {
         channelController.client
@@ -78,8 +83,8 @@ open class ChatChannelVC: _ViewController, ThemeProvider {
         messageComposerBottomConstraint?.isActive = true
 
         NSLayoutConstraint.activate([
-            channelAvatarView.widthAnchor.pin(equalTo: channelAvatarView.heightAnchor),
-            channelAvatarView.heightAnchor.pin(equalToConstant: 32)
+            channelAvatarView.widthAnchor.pin(equalToConstant: channelAvatarSize.width),
+            channelAvatarView.heightAnchor.pin(equalToConstant: channelAvatarSize.height)
         ])
 
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: channelAvatarView)
