@@ -194,7 +194,8 @@ extension ChatThreadVC: ChatMessageListVCDelegate {
         _ vc: ChatMessageListVC,
         scrollViewDidScroll scrollView: UIScrollView
     ) {
-        // No-op
+        // No-op. By default this component is not interest in scrollView events,
+        // but you as customer can override this function and provide an implementation.
     }
 }
 
