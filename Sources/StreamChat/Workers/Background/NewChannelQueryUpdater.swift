@@ -104,10 +104,9 @@ final class NewChannelQueryUpdater: Worker {
             
             // Send `update(channelListQuery:` requests so corresponding queries will be linked to the channel
             updatedQueries.forEach {
-                self?.channelListUpdater.update(channelListQuery: $0) { error in
-                    if let error = error {
-                        log
-                            .error("Internal error. Failed to update ChannelListQueries for the new channel: \(error)")
+                self?.channelListUpdater.update(channelListQuery: $0) { result in
+                    if case let .failure(error) = result {
+                        log.error("Internal error. Failed to update ChannelListQueries for the new channel: \(error)")
                     }
                 }
             }

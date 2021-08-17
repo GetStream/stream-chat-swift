@@ -17,6 +17,8 @@ open class ChatChannelListVC: _ViewController,
     /// The `ChatChannelListController` instance that provides channels data.
     public var controller: ChatChannelListController!
 
+    @Atomic private var loadingPreviousMessages: Bool = false
+
     open private(set) lazy var loadingIndicator: UIActivityIndicatorView = {
         if #available(iOS 13.0, *) {
             return UIActivityIndicatorView(style: .large).withoutAutoresizingMaskConstraints
@@ -80,6 +82,28 @@ open class ChatChannelListVC: _ViewController,
         userAvatarView.addTarget(self, action: #selector(didTapOnCurrentUserAvatar), for: .touchUpInside)
     }
     
+    private func loadMoreChannels() {
+        if _loadingPreviousMessages.compareAndSwap(old: false, new: true) {
+            controller.loadNextChannels(completion: { [weak self] _ in
+                guard let self = self else {
+                    return
+                }
+                self.loadingPreviousMessages = false
+            })
+        }
+    }
+
+    public func collectionView(
+        _ collectionView: UICollectionView,
+        didEndDisplaying cell: UICollectionViewCell,
+        forItemAt indexPath: IndexPath
+    ) {
+        if (indexPath.section < collectionView.numberOfSections - 10) {
+            return
+        }
+        loadMoreChannels()
+    }
+
     override open func setUpLayout() {
         super.setUpLayout()
         view.embed(collectionView)
@@ -153,7 +177,7 @@ open class ChatChannelListVC: _ViewController,
     open func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
         let bottomEdge = scrollView.contentOffset.y + scrollView.bounds.height
         guard bottomEdge >= scrollView.contentSize.height else { return }
-        controller.loadNextChannels()
+        loadMoreChannels()
     }
         
     @objc open func didTapOnCurrentUserAvatar(_ sender: Any) {

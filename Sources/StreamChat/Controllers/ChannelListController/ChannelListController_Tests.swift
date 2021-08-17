@@ -65,7 +65,7 @@ class ChannelListController_Tests: StressTestCase {
         controller.synchronize()
         
         // Simulate successful network call.
-        env.channelListUpdater?.update_completion?(nil)
+        env.channelListUpdater?.update_completion?(.success(ChannelListPayload(channels: [])))
         
         // Check if state changed after successful network call.
         XCTAssertEqual(controller.state, .remoteDataFetched)
@@ -91,7 +91,7 @@ class ChannelListController_Tests: StressTestCase {
         
         // Simulate failed network call.
         let error = TestError()
-        env.channelListUpdater?.update_completion?(error)
+        env.channelListUpdater?.update_completion?(.failure(error))
         
         // Check if state changed after failed network call.
         XCTAssertEqual(controller.state, .remoteDataFetchFailed(ClientError(with: error)))
@@ -154,7 +154,7 @@ class ChannelListController_Tests: StressTestCase {
         XCTAssertFalse(completionCalled)
         
         // Simulate successful update
-        env.channelListUpdater!.update_completion?(nil)
+        env.channelListUpdater!.update_completion?(.success(ChannelListPayload(channels: [])))
         // Release reference of completion so we can deallocate stuff
         env.channelListUpdater!.update_completion = nil
         
@@ -191,7 +191,7 @@ class ChannelListController_Tests: StressTestCase {
         XCTAssertFalse(completionCalled)
         
         // Simulate successful update
-        env.channelListUpdater!.update_completion?(nil)
+        env.channelListUpdater!.update_completion?(.success(ChannelListPayload(channels: [])))
         // Release reference of completion so we can deallocate stuff
         env.channelListUpdater!.update_completion = nil
         
@@ -213,7 +213,7 @@ class ChannelListController_Tests: StressTestCase {
         
         // Simulate failed udpate
         let testError = TestError()
-        env.channelListUpdater!.update_completion?(testError)
+        env.channelListUpdater!.update_completion?(.failure(testError))
         
         // Completion should be called with the error
         AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
@@ -232,7 +232,7 @@ class ChannelListController_Tests: StressTestCase {
         }
         
         // Simulate successful network call.
-        env.channelListUpdater?.update_completion?(nil)
+        env.channelListUpdater?.update_completion?(.success(ChannelListPayload(channels: [])))
 
         // Assert the channels are loaded
         XCTAssertEqual(controller.channels.map(\.cid), [channelId])
@@ -283,7 +283,7 @@ class ChannelListController_Tests: StressTestCase {
         controller.synchronize()
             
         // Simulate network call response
-        env.channelListUpdater?.update_completion?(nil)
+        env.channelListUpdater?.update_completion?(.success(ChannelListPayload(channels: [])))
         
         // Assert delegate is notified about state changes
         AssertAsync.willBeEqual(delegate.state, .remoteDataFetched)
@@ -301,7 +301,7 @@ class ChannelListController_Tests: StressTestCase {
         controller.synchronize()
         
         // Simulate network call response
-        env.channelListUpdater?.update_completion?(nil)
+        env.channelListUpdater?.update_completion?(.success(ChannelListPayload(channels: [])))
         
         // Assert delegate is notified about state changes
         AssertAsync.willBeEqual(delegate.state, .remoteDataFetched)
@@ -424,7 +424,7 @@ class ChannelListController_Tests: StressTestCase {
         controller = nil
         
         // Simulate successful update
-        env!.channelListUpdater?.update_completion?(nil)
+        env!.channelListUpdater?.update_completion?(.success(ChannelListPayload(channels: [])))
         // Release reference of completion so we can deallocate stuff
         env.channelListUpdater!.update_completion = nil
         
@@ -444,7 +444,7 @@ class ChannelListController_Tests: StressTestCase {
         
         // Simulate failed udpate
         let testError = TestError()
-        env.channelListUpdater!.update_completion?(testError)
+        env.channelListUpdater!.update_completion?(.failure(testError))
         
         // Completion should be called with the error
         AssertAsync.willBeEqual(completionCalledError as? TestError, testError)

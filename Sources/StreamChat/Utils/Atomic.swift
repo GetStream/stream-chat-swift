@@ -57,3 +57,18 @@ public class Atomic<T> {
         _wrappedValue = wrappedValue
     }
 }
+
+extension Atomic where T: Equatable {
+    public func compareAndSwap(old: T, new: T) -> Bool {
+        lock.lock()
+        defer {
+            lock.unlock()
+        }
+        
+        if _wrappedValue == old {
+            _wrappedValue = new
+            return true
+        }
+        return false
+    }
+}

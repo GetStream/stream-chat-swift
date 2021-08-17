@@ -23,6 +23,8 @@ open class ChatMessageListVC:
     LinkPreviewViewDelegate,
     FileActionContentViewDelegate,
     ChatMessageListScrollOverlayDataSource {
+    @Atomic private var loadingPreviousMessages: Bool = false
+    
     /// Controller for observing data changes within the channel
     open var channelController: ChatChannelController!
     
@@ -244,11 +246,24 @@ open class ChatMessageListVC:
     }
 
     open func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        if channelController.state == .remoteDataFetched && indexPath.row + 1 >= tableView.numberOfRows(inSection: 0) - 5 {
-            channelController.loadPreviousMessages()
+        if channelController.state != .remoteDataFetched {
+            return
+        }
+
+        if indexPath.row < tableView.numberOfRows(inSection: 0) - 10 {
+            return
+        }
+
+        if _loadingPreviousMessages.compareAndSwap(old: false, new: true) {
+            channelController.loadPreviousMessages(completion: { [weak self] _ in
+                guard let self = self else {
+                    return
+                }
+                self.loadingPreviousMessages = false
+            })
         }
     }
-    
+
     open func scrollOverlay(
         _ overlay: ChatMessageListScrollOverlayView,
         textForItemAt indexPath: IndexPath
