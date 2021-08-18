@@ -7,17 +7,17 @@ import UIKit
 /// Object for animating transition of an image.
 open class ZoomAnimator: NSObject, UIViewControllerAnimatedTransitioning {
     /// `UIImageView` for view controller initiating the transition.
-    public weak var fromImageView: UIImageView!
+    public weak var fromImageView: UIImageView?
     /// `UIImageView` for view controller being transitioned to.
-    public weak var toImageView: UIImageView!
+    public weak var toImageView: UIImageView?
     /// Snapshot for view controller being transitioned to.
-    public weak var toVCSnapshot: UIView!
+    public weak var toVCSnapshot: UIView?
     /// Snapshot for view controller initiating the transition.
-    public weak var fromVCSnapshot: UIView!
+    public weak var fromVCSnapshot: UIView?
     /// Container view for `transitionImageView`
-    public weak var containerTransitionImageView: UIView!
+    public weak var containerTransitionImageView: UIView?
     /// `UIImageView` to be animated between the view controllers.
-    public weak var transitionImageView: UIImageView!
+    public weak var transitionImageView: UIImageView?
     /// Indicates whether the current animation is for presenting or dismissing.
     public var isPresenting: Bool = true
     
@@ -37,7 +37,8 @@ open class ZoomAnimator: NSObject, UIViewControllerAnimatedTransitioning {
     open func animateZoomInTransition(using transitionContext: UIViewControllerContextTransitioning) {
         guard
             let toVC = transitionContext.viewController(forKey: .to),
-            let fromVC = transitionContext.viewController(forKey: .from)
+            let fromVC = transitionContext.viewController(forKey: .from),
+            let fromImageView = self.fromImageView
         else { return }
 
         transitionContext.containerView.addSubview(toVC.view)
@@ -82,7 +83,7 @@ open class ZoomAnimator: NSObject, UIViewControllerAnimatedTransitioning {
                 transitionImageView.animateAspectFit()
                 backgroundColorView.alpha = 1
             },
-            completion: { [self] _ in
+            completion: { _ in
                 toVC.view.isHidden = false
                 fromVC.view.isHidden = false
                 fromImageView.isHidden = false
@@ -106,22 +107,26 @@ open class ZoomAnimator: NSObject, UIViewControllerAnimatedTransitioning {
         UIView.animate(
             withDuration: duration,
             animations: { [self] in
-                containerTransitionImageView.transform = .identity
-                transitionImageView.transform = .identity
-                containerTransitionImageView.frame = toImageView.convert(toImageView.frame, to: toVC.view)
-                transitionImageView.frame.size = containerTransitionImageView.frame.size
-                transitionImageView.animateAspectFill()
-                fromVCSnapshot.alpha = 0
-                toVCSnapshot.alpha = 1
+                containerTransitionImageView?.transform = .identity
+                transitionImageView?.transform = .identity
+                if let toImageView = toImageView {
+                    containerTransitionImageView?.frame = toImageView.convert(toImageView.frame, to: toVC.view)
+                }
+                if let containerTransitionImageView = containerTransitionImageView {
+                    transitionImageView?.frame.size = containerTransitionImageView.frame.size
+                }
+                transitionImageView?.animateAspectFill()
+                fromVCSnapshot?.alpha = 0
+                toVCSnapshot?.alpha = 1
             },
             completion: { [self] _ in
-                toImageView.isHidden = false
+                toImageView?.isHidden = false
                 toVC.view.isHidden = false
                 fromVC.view.isHidden = false
-                transitionImageView.removeFromSuperview()
-                containerTransitionImageView.removeFromSuperview()
-                fromVCSnapshot.removeFromSuperview()
-                toVCSnapshot.removeFromSuperview()
+                transitionImageView?.removeFromSuperview()
+                containerTransitionImageView?.removeFromSuperview()
+                fromVCSnapshot?.removeFromSuperview()
+                toVCSnapshot?.removeFromSuperview()
 
                 transitionContext.completeTransition(!transitionContext.transitionWasCancelled)
             }
@@ -133,7 +138,8 @@ open class ZoomAnimator: NSObject, UIViewControllerAnimatedTransitioning {
     open func prepareZoomOutTransition(using transitionContext: UIViewControllerContextTransitioning) {
         guard
             let toVC = transitionContext.viewController(forKey: .to),
-            let fromVC = transitionContext.viewController(forKey: .from)
+            let fromVC = transitionContext.viewController(forKey: .from),
+            let fromImageView = self.fromImageView
         else { return }
         
         let containerTransitionImageView = UIView()
@@ -147,7 +153,7 @@ open class ZoomAnimator: NSObject, UIViewControllerAnimatedTransitioning {
         transitionImageView.clipsToBounds = true
         self.transitionImageView = transitionImageView
         
-        toImageView.isHidden = true
+        toImageView?.isHidden = true
         fromImageView.isHidden = true
         
         let toVCSnapshot = toVC.view.snapshotView(afterScreenUpdates: true)
