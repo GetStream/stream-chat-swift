@@ -12,9 +12,6 @@ public struct Components {
 
     /// A view used as an online activity indicator (online/offline).
     public var onlineIndicatorView: (UIView & MaskProviding).Type = OnlineIndicatorView.self
-    
-    /// A view used to cover views with shimmer while they are loading.
-    public var skeletonView: UIView.Type = SkeletonView.self
 
     /// A view that displays the avatar image. By default a circular image.
     public var avatarView: ChatAvatarView.Type = ChatAvatarView.self
