@@ -64,11 +64,7 @@ extension UIImageView {
         
         let imageKey = components.imageCDN.cachingKey(forImage: url)
         let urlRequest = components.imageCDN.urlRequest(forImage: url)
-        let request = ImageRequest(
-            urlRequest: urlRequest,
-            processors: preprocessors,
-            options: ImageRequestOptions(filteredURL: imageKey)
-        )
+        let request = ImageRequest(urlRequest: urlRequest, processors: preprocessors, userInfo: [.imageIdKey: imageKey])
         let options = ImageLoadingOptions(placeholder: placeholder)
 
         currentImageLoadingTask = Nuke.loadImage(with: request, options: options, into: self, completion: completion)
