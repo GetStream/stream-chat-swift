@@ -5,7 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### 🐞 Fixed
 - Fix incorrect RawJSON number handling, the `.integer` case is no longer supported and is replaced by `.number` [#1375](https://github.com/GetStream/stream-chat-swift/pull/1375)
-- Fix message list and thread index out of range issue on `tableView(_:cellForRowAt:)` [1373](https://github.com/GetStream/stream-chat-swift/pull/1373)
+- Fix message list and thread index out of range issue on `tableView(_:cellForRowAt:)` [#1373](https://github.com/GetStream/stream-chat-swift/pull/1373)
+- Fix crash when dismissing gallery images [#1383](https://github.com/GetStream/stream-chat-swift/pull/1383)
+- Improve pagination efficiency [#1381](https://github.com/GetStream/stream-chat-swift/pull/1381)
 
 ### 🔄 Changed
 
