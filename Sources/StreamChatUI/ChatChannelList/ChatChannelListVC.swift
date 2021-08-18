@@ -81,26 +81,20 @@ open class ChatChannelListVC: _ViewController,
         userAvatarView.controller = controller.client.currentUserController()
         userAvatarView.addTarget(self, action: #selector(didTapOnCurrentUserAvatar), for: .touchUpInside)
     }
-    
-    private func loadMoreChannels() {
-        if _loadingPreviousMessages.compareAndSwap(old: false, new: true) {
-            controller.loadNextChannels(completion: { [weak self] _ in
-                guard let self = self else {
-                    return
-                }
-                self.loadingPreviousMessages = false
-            })
-        }
-    }
 
-    public func collectionView(
+    open func collectionView(
         _ collectionView: UICollectionView,
-        didEndDisplaying cell: UICollectionViewCell,
+        willDisplay cell: UICollectionViewCell,
         forItemAt indexPath: IndexPath
     ) {
-        if (indexPath.section < collectionView.numberOfSections - 10) {
+        if controller.state != .remoteDataFetched {
             return
         }
+
+        if indexPath.row < collectionView.numberOfItems(inSection: 0) - 10 {
+            return
+        }
+
         loadMoreChannels()
     }
 
@@ -174,12 +168,6 @@ open class ChatChannelListVC: _ViewController,
         router.showMessageList(for: channel.cid)
     }
         
-    open func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
-        let bottomEdge = scrollView.contentOffset.y + scrollView.bounds.height
-        guard bottomEdge >= scrollView.contentSize.height else { return }
-        loadMoreChannels()
-    }
-        
     @objc open func didTapOnCurrentUserAvatar(_ sender: Any) {
         router.showCurrentUserProfile()
     }
@@ -197,6 +185,17 @@ open class ChatChannelListVC: _ViewController,
 
         if #available(iOS 13.0, *) {
             setupParentNavigation(parent: parent)
+        }
+    }
+
+    open func loadMoreChannels() {
+        if _loadingPreviousMessages.compareAndSwap(old: false, new: true) {
+            controller.loadNextChannels(completion: { [weak self] _ in
+                guard let self = self else {
+                    return
+                }
+                self.loadingPreviousMessages = false
+            })
         }
     }
 
