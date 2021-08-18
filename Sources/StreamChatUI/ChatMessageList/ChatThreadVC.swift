@@ -77,6 +77,8 @@ open class ChatThreadVC:
     /// It's used to change the message list's height based on the keyboard visibility.
     private var messageComposerBottomConstraint: NSLayoutConstraint?
 
+    @Atomic private var loadingPreviousMessages: Bool = false
+
     override open func setUp() {
         super.setUp()
         updateMessageCache()
@@ -245,8 +247,21 @@ open class ChatThreadVC:
     }
     
     open func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        if messageController.state == .remoteDataFetched && indexPath.row + 1 >= tableView.numberOfRows(inSection: 0) - 5 {
-            messageController.loadPreviousReplies()
+        if messageController.state != .remoteDataFetched {
+            return
+        }
+
+        if indexPath.row < tableView.numberOfRows(inSection: 0) - 10 {
+            return
+        }
+
+        if _loadingPreviousMessages.compareAndSwap(old: false, new: true) {
+            messageController.loadPreviousReplies(completion: { [weak self] _ in
+                guard let self = self else {
+                    return
+                }
+                self.loadingPreviousMessages = false
+            })
         }
     }
 

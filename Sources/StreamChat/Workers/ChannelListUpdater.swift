@@ -15,7 +15,7 @@ class ChannelListUpdater: Worker {
     func update(
         channelListQuery: ChannelListQuery,
         trumpExistingChannels: Bool = false,
-        completion: ((Error?) -> Void)? = nil
+        completion: ((Result<ChannelListPayload, Error>) -> Void)? = nil
     ) {
         apiClient
             .request(endpoint: .channels(query: channelListQuery)) { [weak self] (result: Result<
@@ -36,13 +36,13 @@ class ChannelListUpdater: Worker {
                     } completion: { error in
                         if let error = error {
                             log.error("Failed to save `ChannelListPayload` to the database. Error: \(error)")
-                            completion?(error)
+                            completion?(.failure(error))
                         } else {
-                            completion?(nil)
+                            completion?(.success(channelListPayload))
                         }
                     }
                 case let .failure(error):
-                    completion?(error)
+                    completion?(.failure(error))
                 }
             }
     }

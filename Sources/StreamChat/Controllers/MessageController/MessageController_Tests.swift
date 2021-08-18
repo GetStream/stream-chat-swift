@@ -914,7 +914,7 @@ final class MessageController_Tests: StressTestCase {
         
         // Simulate network response with the error
         let networkError = TestError()
-        env.messageUpdater.loadReplies_completion?(networkError)
+        env.messageUpdater.loadReplies_completion?(.failure(networkError))
         
         // Assert error is propagated
         AssertAsync.willBeEqual(completionError as? TestError, networkError)
@@ -937,7 +937,7 @@ final class MessageController_Tests: StressTestCase {
         controller = nil
         
         // Simulate successful network response
-        env.messageUpdater.loadReplies_completion?(nil)
+        env.messageUpdater.loadReplies_completion?(.success(MessageRepliesPayload(messages: [])))
         // Release reference of completion so we can deallocate stuff
         env.messageUpdater.loadReplies_completion = nil
         
@@ -979,7 +979,7 @@ final class MessageController_Tests: StressTestCase {
         
         // Simulate network response with the error
         let networkError = TestError()
-        env.messageUpdater.loadReplies_completion?(networkError)
+        env.messageUpdater.loadReplies_completion?(.failure(networkError))
         
         // Assert error is propagated
         AssertAsync.willBeEqual(completionError as? TestError, networkError)
@@ -1002,7 +1002,7 @@ final class MessageController_Tests: StressTestCase {
         controller = nil
         
         // Simulate successful network response
-        env.messageUpdater.loadReplies_completion?(nil)
+        env.messageUpdater.loadReplies_completion?(.success(MessageRepliesPayload(messages: [])))
         // Release reference of completion so we can deallocate stuff
         env.messageUpdater.loadReplies_completion = nil
         

@@ -35,7 +35,7 @@ final class MessageUpdaterMock: MessageUpdater {
     @Atomic var loadReplies_cid: ChannelId?
     @Atomic var loadReplies_messageId: MessageId?
     @Atomic var loadReplies_pagination: MessagesPagination?
-    @Atomic var loadReplies_completion: ((Error?) -> Void)?
+    @Atomic var loadReplies_completion: ((Result<MessageRepliesPayload, Error>) -> Void)? = nil
     
     @Atomic var flagMessage_flag: Bool?
     @Atomic var flagMessage_messageId: MessageId?
@@ -191,7 +191,7 @@ final class MessageUpdaterMock: MessageUpdater {
         cid: ChannelId,
         messageId: MessageId,
         pagination: MessagesPagination,
-        completion: ((Error?) -> Void)? = nil
+        completion: ((Result<MessageRepliesPayload, Error>) -> Void)? = nil
     ) {
         loadReplies_cid = cid
         loadReplies_messageId = messageId

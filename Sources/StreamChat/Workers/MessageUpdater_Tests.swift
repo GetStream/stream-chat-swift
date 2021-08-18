@@ -508,7 +508,7 @@ final class MessageUpdater_Tests: StressTestCase {
         // Simulate `loadReplies` call
         var completionCalledError: Error?
         messageUpdater.loadReplies(cid: .unique, messageId: .unique, pagination: .init(pageSize: 25)) {
-            completionCalledError = $0
+            completionCalledError = $0.error
         }
         
         // Simulate API response with failure
@@ -533,7 +533,7 @@ final class MessageUpdater_Tests: StressTestCase {
         // Simulate `loadReplies` call
         var completionCalledError: Error?
         messageUpdater.loadReplies(cid: cid, messageId: .unique, pagination: .init(pageSize: 25)) {
-            completionCalledError = $0
+            completionCalledError = $0.error
         }
         
         // Simulate API response with success
