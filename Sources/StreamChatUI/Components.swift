@@ -238,8 +238,12 @@ public struct Components {
     /// The view which is displayed when there is yet no channel for user in channelList.
     public var channelListEmptyView: UIView.Type = ChatChannelListEmptyView.self
     
-    /// The view to be displayed when remote data for channelList are being fetched.
-    public var channelListLoadingView: UIView.Type = ChatChannelListLoadingView.self
+    /// Whether channel list controller should show shimmering views during loading
+    public var shouldChannelListVCShowLoadingState = true
+    
+    /// The height to corner radius ratio for channel list loading shimmering views. 0 means zero corner radius, 0.5 means that the corner radius
+    /// is half of the height, i.e. a rectangular view will produce a circular shimmer.
+    public var channelListVCLoadingStateHeightToCornerRadiusRatio: CGFloat = 0.5
     
     /// View that shows that some error occurred on ChatChannelList.
     public var channelListErrorView: UIView.Type = ChatChannelListErrorView.self

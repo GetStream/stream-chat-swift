@@ -20,14 +20,6 @@ open class ChatChannelListItemView: _View, ThemeProvider, SwiftUIRepresentable {
         }
     }
     
-    /// Bool indicating whether the view is used as placeholder cell or not
-    public var isPlaceholder: Bool = false
-    
-    /// SkeletonView which
-    public var skeletons: [UIView] {
-        [timestampLabel, titleLabel, subtitleLabel, avatarView]
-    }
-    
     /// The data this view component shows.
     public var content: Content? {
         didSet { updateContentIfNeeded() }
@@ -177,14 +169,6 @@ open class ChatChannelListItemView: _View, ThemeProvider, SwiftUIRepresentable {
 
         unreadCountView.content = content?.channel.unreadCount ?? .noUnread
         unreadCountView.invalidateIntrinsicContentSize()
-        
-        if isPlaceholder {
-            skeletons.forEach {
-                let skeleton = SkeletonView().withoutAutoresizingMaskConstraints
-                $0.embed(skeleton)
-                skeleton.setup(with: $0, maskingView: self)
-            }
-        }
     }
 }
 
