@@ -185,6 +185,9 @@ open class ComposerVC: _ViewController,
     /// A controller that manages the channel that the composer is creating content for.
     open var channelController: ChatChannelController?
 
+    /// A controller that manages the members of the channel.
+    open var memberListController: ChatChannelMemberListController?
+
     /// The channel config. If it's a new channel, an empty config should be created. (Not yet supported right now)
     public var channelConfig: ChannelConfig? {
         channelController?.channel?.config
@@ -243,6 +246,12 @@ open class ComposerVC: _ViewController,
 
     override open func setUp() {
         super.setUp()
+
+        let client = channelController?.client
+        if let cid = channelController?.cid {
+            memberListController = client?.memberListController(query: .init(cid: cid))
+            memberListController?.synchronize()
+        }
 
         composerView.inputMessageView.textView.delegate = self
         
@@ -646,7 +655,7 @@ open class ComposerVC: _ViewController,
             )
         } else {
             usersCache = searchUsers(
-                channel.watchers.map { $0 } + channel.cachedMembers.map { $0 },
+                channel.watchers.map { $0 } + (memberListController?.members.compactMap { $0 } ?? []),
                 by: typingMention,
                 excludingId: currentUserId
             )
