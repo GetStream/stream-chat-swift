@@ -195,7 +195,7 @@ class DatabaseContainer: NSPersistentContainer {
                 completion(nil)
                 
             } catch {
-                log.error("Failed to save data to DB. Error: \(error)")
+                log.error("Failed to write changes to DB. Error: \(error)")
                 completion(error)
             }
         }

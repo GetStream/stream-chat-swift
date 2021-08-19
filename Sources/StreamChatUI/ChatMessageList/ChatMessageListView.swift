@@ -192,7 +192,7 @@ open class ChatMessageListView: UITableView, Customizable, ComponentsProvider {
                         // When the message from current user comes we should scroll to bottom
                         shouldScrollToBottom = true
                     }
-                    if index.row < self.numberOfRows(inSection: 0) {
+                    if index.row < self.numberOfRows(inSection: index.section) {
                         // Reload previous cell if exists
                         self.reloadRows(at: [index], with: .automatic)
                     }
