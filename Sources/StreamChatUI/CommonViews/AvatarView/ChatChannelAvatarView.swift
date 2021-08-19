@@ -18,21 +18,21 @@ open class ChatChannelAvatarView: _View, ThemeProvider, SwiftUIRepresentable {
     }
     
     /// Object responsible for loading images.
-    open lazy var imageLoader: ImageLoading = {
+    open var imageLoader: ImageLoading {
         NukeImageLoader()
-    }()
+    }
     
     /// Object responsible for providing functionality of merging images.
     /// Used when creating compound avatars from channel members individual avatars
-    open lazy var imageMerger: ImageMerging = {
+    open var imageMerger: ImageMerging {
         DefaultImageMerger()
-    }()
+    }
     
     /// Object responsible for providing functionality of merging images.
     /// Used when creating compound avatars from channel members individual avatars
-    open lazy var imageProcessor: NukeImageProcessor = {
+    open var imageProcessor: NukeImageProcessor {
         NukeImageProcessor()
-    }()
+    }
 
     override open func setUpLayout() {
         super.setUpLayout()
@@ -83,9 +83,7 @@ open class ChatChannelAvatarView: _View, ThemeProvider, SwiftUIRepresentable {
     /// Loads avatar for a directMessageChannel
     /// - Parameter channel: The channel
     open func loadDirectMessageChannelAvatar(channel: ChatChannel) {
-        let lastActiveMembers = channel.lastActiveMembers
-            .sorted { $0.memberCreatedAt < $1.memberCreatedAt }
-            .filter { $0.id != content.currentUserId }
+        let lastActiveMembers = lastActiveMembers()
         
         // If there are no members other than the current user in the channel, load a placeholder
         if lastActiveMembers.isEmpty {
@@ -117,9 +115,7 @@ open class ChatChannelAvatarView: _View, ThemeProvider, SwiftUIRepresentable {
         // The channel is a non-DM channel, hide the online indicator
         presenceAvatarView.isOnlineIndicatorVisible = false
         
-        let lastActiveMembers = channel.lastActiveMembers
-            .sorted { $0.memberCreatedAt < $1.memberCreatedAt }
-            .filter { $0.id != content.currentUserId }
+        let lastActiveMembers = lastActiveMembers()
         
         // If there are no members other than the current user in the channel, load a placeholder
         if lastActiveMembers.isEmpty {
@@ -335,5 +331,12 @@ open class ChatChannelAvatarView: _View, ThemeProvider, SwiftUIRepresentable {
         }
         
         return combinedImage
+    }
+
+    open func lastActiveMembers() -> [ChatChannelMember] {
+        guard let channel = content.channel else { return [] }
+        return channel.lastActiveMembers
+            .sorted { $0.memberCreatedAt < $1.memberCreatedAt }
+            .filter { $0.id != content.currentUserId }
     }
 }
