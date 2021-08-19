@@ -47,12 +47,12 @@ open class DefaultImageMerger: ImageMerging {
         var dimensions = CGSize(width: 0.0, height: 0.0)
         for image in images {
             dimensions.width = max(dimensions.width, image.size.width)
-            dimensions.height += max(dimensions.height, image.size.height)
+            dimensions.height += image.size.height
         }
 
         UIGraphicsBeginImageContext(dimensions)
 
-        var lastY = CGFloat(0.0)
+        var lastY: CGFloat = 0
         for image in images {
             image.draw(in: CGRect(x: 0, y: lastY, width: dimensions.width, height: image.size.height))
             lastY += image.size.height
@@ -77,7 +77,7 @@ open class DefaultImageMerger: ImageMerging {
 
         UIGraphicsBeginImageContext(dimensions)
 
-        var lastX = CGFloat(0.0)
+        var lastX: CGFloat = 0
         for image in images {
             image.draw(in: CGRect(x: lastX, y: 0, width: image.size.width, height: image.size.height))
             lastX += image.size.width
