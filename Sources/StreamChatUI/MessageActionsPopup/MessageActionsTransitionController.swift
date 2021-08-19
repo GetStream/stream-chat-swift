@@ -60,7 +60,9 @@ open class MessageActionsTransitionController: NSObject, UIViewControllerTransit
             let messageContentView = self.messageContentView,
             let messageContentViewSuperview = messageContentView.superview
         else { return }
-        
+
+        self.messageContentViewSuperview = messageContentViewSuperview
+
         let messageContentViewSnapshot = messageContentView.snapshotView(afterScreenUpdates: true)
         if let messageContentViewSnapshot = messageContentViewSnapshot {
             messageContentViewSnapshot.frame = messageContentViewSuperview.convert(messageContentView.frame, to: fromVC.view)
