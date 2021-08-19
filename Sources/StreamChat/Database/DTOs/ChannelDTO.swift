@@ -20,6 +20,8 @@ class ChannelDTO: NSManagedObject {
     @NSManaged var updatedAt: Date
     @NSManaged var lastMessageAt: Date?
 
+    @NSManaged var locallyDeletedAt: Date?
+
     // The oldest message of the channel we have locally coming from a regular channel query.
     // This property only lives locally, and it is useful to filter out older pinned messages
     // that do not belong to the regular channel query.
@@ -156,6 +158,16 @@ extension NSManagedObjectContext {
         dto.config = try JSONEncoder().encode(payload.config)
         dto.createdAt = payload.createdAt
         dto.deletedAt = payload.deletedAt
+        
+        if dto.deletedAt != nil {
+            /// we need to denormalize this locally to hide messages stored on the database
+            dto.locallyDeletedAt = dto.deletedAt
+            /// make sure that we delete messages
+            MessageDTO.load(for: dto.cid, limit: 999, context: self).forEach {
+                delete($0)
+            }
+        }
+        
         dto.updatedAt = payload.updatedAt
         dto.defaultSortingAt = payload.lastMessageAt ?? payload.createdAt
         dto.lastMessageAt = payload.lastMessageAt

@@ -478,7 +478,24 @@ open class ChatMessageListVC:
         _ channelController: ChatChannelController,
         didUpdateMessages changes: [ListChange<ChatMessage>]
     ) {
-        updateMessages(with: changes)
+        let inserted = changes.filter { if case .insert = $0 { return true } else { return false }}.count
+        let deleted = changes.filter { if case .remove = $0 { return true } else { return false }}.count
+
+        log
+            .debug(
+                "Updating messages current count: \(messageCache.count) new count: \(channelController.messages.count) inserts \(inserted)  deletes \(deleted)"
+            )
+
+        if messageCache.count + inserted - deleted != channelController.messages.count {
+            log
+                .warning(
+                    "The changes to the message list are not consistent to the final list, reloading cache now and calling reload to avoid TableView crashes. Something definetely went wrong here."
+                )
+            updateMessageCache()
+            listView.reloadData()
+        } else {
+            updateMessages(with: changes)
+        }
     }
     
     open func channelController(
