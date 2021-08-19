@@ -166,6 +166,8 @@ extension NSManagedObjectContext {
             MessageDTO.load(for: dto.cid, limit: 999, context: self).forEach {
                 delete($0)
             }
+            /// mark the channel as to be refreshed
+            dto.needsRefreshQueries = true
         }
         
         dto.updatedAt = payload.updatedAt
