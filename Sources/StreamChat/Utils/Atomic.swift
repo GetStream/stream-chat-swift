@@ -58,10 +58,10 @@ public class Atomic<T> {
     }
 }
 
-extension Atomic where T: Equatable {
+public extension Atomic where T: Equatable {
     /// Updates the value to `new` if the current value is `old`
     /// if the swap happens true is returned
-    public func compareAndSwap(old: T, new: T) -> Bool {
+    func compareAndSwap(old: T, new: T) -> Bool {
         lock.lock()
         defer {
             lock.unlock()
