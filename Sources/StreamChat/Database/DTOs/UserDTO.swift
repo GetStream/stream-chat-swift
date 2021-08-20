@@ -92,9 +92,12 @@ extension UserDTO {
     
     static func loadLastActiveWatchers(cid: ChannelId, context: NSManagedObjectContext) -> [UserDTO] {
         let request = NSFetchRequest<UserDTO>(entityName: UserDTO.entityName)
-        request.sortDescriptors = [UserListSortingKey.lastActiveSortDescriptor]
+        request.sortDescriptors = [
+            UserListSortingKey.lastActiveSortDescriptor,
+            UserListSortingKey.defaultSortDescriptor
+        ]
         request.predicate = NSPredicate(format: "ANY watchedChannels.cid == %@", cid.rawValue)
-        request.fetchLimit = context.localCachingSettings?.chatChannel.lastActiveWatchersLimit ?? 5
+        request.fetchLimit = context.localCachingSettings?.chatChannel.lastActiveWatchersLimit ?? 100
         return load(by: request, context: context)
     }
 }
