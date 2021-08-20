@@ -637,9 +637,7 @@ public extension ChatChannelController {
             completion?(nil)
             return
         }
-        
         channelQuery.pagination = MessagesPagination(pageSize: limit, parameter: .lessThan(messageId))
-    
         updater.update(channelQuery: channelQuery, completion: { result in
             switch result {
             case let .success(payload):

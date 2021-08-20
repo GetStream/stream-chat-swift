@@ -18,9 +18,9 @@ open class MessageActionsTransitionController: NSObject, UIViewControllerTransit
     /// Constraints to be deactivated after dismissal.
     open var messageContentViewDeactivateConstraints: [NSLayoutConstraint] = []
     /// `messageContentView` instance that is animated.
-    open weak var messageContentView: ChatMessageContentView!
+    open weak var messageContentView: ChatMessageContentView?
     /// `messageContentView`'s initial superview.
-    open weak var messageContentViewSuperview: UIView!
+    open weak var messageContentViewSuperview: UIView?
     /// Top anchor for main container.
     open var mainContainerTopAnchor: NSLayoutConstraint?
     /// Feedback generator.
@@ -56,11 +56,13 @@ open class MessageActionsTransitionController: NSObject, UIViewControllerTransit
     open func animatePresent(using transitionContext: UIViewControllerContextTransitioning) {
         guard
             let toVC = transitionContext.viewController(forKey: .to) as? ChatMessagePopupVC,
-            let fromVC = transitionContext.viewController(forKey: .from)
+            let fromVC = transitionContext.viewController(forKey: .from),
+            let messageContentView = self.messageContentView,
+            let messageContentViewSuperview = messageContentView.superview
         else { return }
 
-        messageContentViewSuperview = messageContentView.superview
-        
+        self.messageContentViewSuperview = messageContentViewSuperview
+
         let messageContentViewSnapshot = messageContentView.snapshotView(afterScreenUpdates: true)
         if let messageContentViewSnapshot = messageContentViewSnapshot {
             messageContentViewSnapshot.frame = messageContentViewSuperview.convert(messageContentView.frame, to: fromVC.view)
@@ -155,7 +157,7 @@ open class MessageActionsTransitionController: NSObject, UIViewControllerTransit
             withDuration: 0.2 * duration,
             delay: 0,
             options: [.curveEaseOut],
-            animations: { [self] in
+            animations: {
                 messageContentView.transform = CGAffineTransform(scaleX: 0.8, y: 0.8)
             },
             completion: { [self] _ in
@@ -168,7 +170,7 @@ open class MessageActionsTransitionController: NSObject, UIViewControllerTransit
             usingSpringWithDamping: 0.7,
             initialSpringVelocity: 4,
             options: [.curveEaseInOut],
-            animations: { [self] in
+            animations: {
                 actionsSnapshot?.transform = .identity
                 actionsSnapshot?.alpha = 1.0
                 reactionsSnapshot?.transform = .identity
@@ -183,7 +185,7 @@ open class MessageActionsTransitionController: NSObject, UIViewControllerTransit
                     blurView.effect = effect
                 }
             },
-            completion: { [self] _ in
+            completion: { _ in
                 toVC.view.isHidden = false
                 fromVC.view.isHidden = false
                 messageContentView.isHidden = false
@@ -204,7 +206,8 @@ open class MessageActionsTransitionController: NSObject, UIViewControllerTransit
     open func animateDismiss(using transitionContext: UIViewControllerContextTransitioning) {
         guard
             let fromVC = transitionContext.viewController(forKey: .from) as? ChatMessagePopupVC,
-            let toVC = transitionContext.viewController(forKey: .to)
+            let toVC = transitionContext.viewController(forKey: .to),
+            let messageContentView = self.messageContentView
         else { return }
         
         let messageContentViewSnapshot = messageContentView.snapshotView(afterScreenUpdates: true)
@@ -288,7 +291,7 @@ open class MessageActionsTransitionController: NSObject, UIViewControllerTransit
                     messageContentView.bubbleToReactionsConstraint?.isActive = true
                 }
                 messageContentView.removeFromSuperview()
-                messageContentViewSuperview.addSubview(messageContentView)
+                messageContentViewSuperview?.addSubview(messageContentView)
                 NSLayoutConstraint.activate(messageContentViewActivateConstraints)
                 NSLayoutConstraint.deactivate(messageContentViewDeactivateConstraints)
                 toVCSnapshot?.removeFromSuperview()

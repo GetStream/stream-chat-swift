@@ -73,6 +73,9 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
         }
     }
     
+    /// A Boolean value that returns wether pagination is finished
+    public private(set) var hasLoadedAllPreviousReplies: Bool = false
+
     private let environment: Environment
     
     /// An internal backing object for all publicly available Combine publishers. We use it to simplify the way we expose
@@ -244,14 +247,25 @@ public extension ChatMessageController {
         limit: Int = 25,
         completion: ((Error?) -> Void)? = nil
     ) {
+        if hasLoadedAllPreviousReplies {
+            completion?(nil)
+            return
+        }
+        
         let lastMessageId = messageId ?? replies.last?.id
     
         messageUpdater.loadReplies(
             cid: cid,
             messageId: self.messageId,
             pagination: MessagesPagination(pageSize: limit, parameter: lastMessageId.map { PaginationParameter.lessThan($0) })
-        ) { error in
-            self.callback { completion?(error) }
+        ) { result in
+            switch result {
+            case let .success(payload):
+                self.hasLoadedAllPreviousReplies = payload.messages.count < limit
+                self.callback { completion?(nil) }
+            case let .failure(error):
+                self.callback { completion?(error) }
+            }
         }
     }
     
@@ -278,8 +292,8 @@ public extension ChatMessageController {
             cid: cid,
             messageId: self.messageId,
             pagination: MessagesPagination(pageSize: limit, parameter: .greaterThan(messageId))
-        ) { error in
-            self.callback { completion?(error) }
+        ) { result in
+            self.callback { completion?(result.error) }
         }
     }
     

@@ -49,8 +49,8 @@ class ChannelListUpdater_Tests: StressTestCase {
         // Simulate `update` call
         let query = ChannelListQuery(filter: .in(.members, values: [.unique]))
         var completionCalled = false
-        listUpdater.update(channelListQuery: query, completion: { error in
-            XCTAssertNil(error)
+        listUpdater.update(channelListQuery: query, completion: { result in
+            XCTAssertNil(result.error)
             completionCalled = true
         })
         
@@ -73,7 +73,7 @@ class ChannelListUpdater_Tests: StressTestCase {
         // Simulate `update` call
         let query = ChannelListQuery(filter: .in(.members, values: [.unique]))
         var completionCalledError: Error?
-        listUpdater.update(channelListQuery: query, completion: { completionCalledError = $0 })
+        listUpdater.update(channelListQuery: query, completion: { completionCalledError = $0.error })
         
         // Simulate API response with failure
         let error = TestError()

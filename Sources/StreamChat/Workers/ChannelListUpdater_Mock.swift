@@ -8,7 +8,7 @@ import XCTest
 /// Mock implementation of ChannelListUpdater
 class ChannelListUpdaterMock: ChannelListUpdater {
     @Atomic var update_queries: [ChannelListQuery] = []
-    @Atomic var update_completion: ((Error?) -> Void)?
+    @Atomic var update_completion: ((Result<ChannelListPayload, Error>) -> Void)? = nil
     
     @Atomic var markAllRead_completion: ((Error?) -> Void)?
     
@@ -22,7 +22,7 @@ class ChannelListUpdaterMock: ChannelListUpdater {
     override func update(
         channelListQuery: ChannelListQuery,
         trumpExistingChannels: Bool = false,
-        completion: ((Error?) -> Void)? = nil
+        completion: ((Result<ChannelListPayload, Error>) -> Void)? = nil
     ) {
         _update_queries.mutate { $0.append(channelListQuery) }
         update_completion = completion

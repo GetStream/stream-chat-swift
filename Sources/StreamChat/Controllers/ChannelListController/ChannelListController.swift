@@ -45,6 +45,9 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
     private var connectionObserver: EventObserver?
     private let requestedChannelsLimit = 25
 
+    /// A Boolean value that returns wether pagination is finished
+    public private(set) var hasLoadedAllPreviousChannels: Bool = false
+
     /// A type-erased delegate.
     var multicastDelegate: MulticastDelegate<AnyChannelListControllerDelegate> = .init() {
         didSet {
@@ -142,9 +145,15 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
         worker.update(
             channelListQuery: query,
             trumpExistingChannels: trumpExistingChannels
-        ) { error in
-            self.state = error == nil ? .remoteDataFetched : .remoteDataFetchFailed(ClientError(with: error))
-            self.callback { completion?(error) }
+        ) { result in
+            switch result {
+            case let .success:
+                self.state = .remoteDataFetched
+                self.callback { completion?(nil) }
+            case let .failure(error):
+                self.state = .remoteDataFetchFailed(ClientError(with: error))
+                self.callback { completion?(error) }
+            }
         }
     }
     
@@ -187,11 +196,22 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
         limit: Int? = nil,
         completion: ((Error?) -> Void)? = nil
     ) {
+        if hasLoadedAllPreviousChannels {
+            completion?(nil)
+            return
+        }
+
         let limit = limit ?? requestedChannelsLimit
         var updatedQuery = query
         updatedQuery.pagination = Pagination(pageSize: limit, offset: channels.count)
-        worker.update(channelListQuery: updatedQuery) { error in
-            self.callback { completion?(error) }
+        worker.update(channelListQuery: updatedQuery) { result in
+            switch result {
+            case let .success(payload):
+                self.hasLoadedAllPreviousChannels = payload.channels.count < limit
+                self.callback { completion?(nil) }
+            case let .failure(error):
+                self.callback { completion?(error) }
+            }
         }
     }
 
