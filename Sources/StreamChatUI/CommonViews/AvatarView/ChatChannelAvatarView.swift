@@ -28,7 +28,7 @@ open class ChatChannelAvatarView: _View, ThemeProvider, SwiftUIRepresentable {
         DefaultImageMerger()
     }
     
-    /// Object responsible for providing functionality of merging images.
+    /// Object responsible for providing functionality of processing images.
     /// Used when creating compound avatars from channel members individual avatars
     open var imageProcessor: NukeImageProcessor {
         NukeImageProcessor()
@@ -241,7 +241,7 @@ open class ChatChannelAvatarView: _View, ThemeProvider, SwiftUIRepresentable {
     /// - Returns: The merged avatar
     open func createMergedAvatar(from avatars: [UIImage]) -> UIImage? {
         guard !avatars.isEmpty else {
-            return appearance.images.userAvatarPlaceholder1
+            return nil
         }
         
         var combinedImage: UIImage?

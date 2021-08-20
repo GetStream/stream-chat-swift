@@ -36,15 +36,10 @@ open class NukeImageProcessor {
         )
         
         // Draw and return the resized UIImage
-        let renderer = UIGraphicsImageRenderer(
-            size: scaledImageSize
-        )
+        let renderer = UIGraphicsImageRenderer(size: scaledImageSize)
         
         let scaledImage = renderer.image { _ in
-            image.draw(in: CGRect(
-                origin: .zero,
-                size: scaledImageSize
-            ))
+            image.draw(in: CGRect(origin: .zero, size: scaledImageSize))
         }
         
         return scaledImage

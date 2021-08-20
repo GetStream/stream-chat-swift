@@ -4,11 +4,6 @@
 
 import UIKit
 
-/// Cancellable provides a set of functions that enable cancelling a task
-public protocol Cancellable {
-    func cancel()
-}
-
 /// ImageLoading is providing set of functions for downloading of images from URLs.
 public protocol ImageLoading: AnyObject {
     /// Load an image from using the given URL request
