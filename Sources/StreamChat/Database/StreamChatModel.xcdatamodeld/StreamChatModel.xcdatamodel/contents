@@ -185,7 +185,7 @@
         <relationship name="quotedMessage" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="MessageDTO" inverseName="quotedBy" inverseEntity="MessageDTO"/>
         <relationship name="reactions" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="MessageReactionDTO" inverseName="message" inverseEntity="MessageReactionDTO"/>
         <relationship name="replies" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="MessageDTO" inverseName="parentMessage" inverseEntity="MessageDTO"/>
-        <relationship name="threadParticipants" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="UserDTO" inverseName="participatedThreads" inverseEntity="UserDTO"/>
+        <relationship name="threadParticipants" optional="YES" toMany="YES" deletionRule="Nullify" ordered="YES" destinationEntity="UserDTO" inverseName="participatedThreads" inverseEntity="UserDTO"/>
         <relationship name="user" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="UserDTO" inverseName="messages" inverseEntity="UserDTO"/>
         <fetchIndex name="id">
             <fetchIndexElement property="id" type="Binary" order="ascending"/>

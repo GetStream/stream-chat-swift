@@ -145,7 +145,7 @@ class MessageDTO_Tests: XCTestCase {
             )
             Assert.willBeEqual(
                 messagePayload.threadParticipants.map(\.id),
-                loadedMessage?.threadParticipants.map(\.id)
+                (loadedMessage?.threadParticipants.array as? [UserDTO])?.map(\.id)
             )
             Assert.willBeEqual(Int32(messagePayload.replyCount), loadedMessage?.replyCount)
             Assert.willBeEqual(messagePayload.extraData, loadedMessage.map {
@@ -227,7 +227,7 @@ class MessageDTO_Tests: XCTestCase {
             )
             Assert.willBeEqual(
                 messagePayload.threadParticipants.map(\.id),
-                loadedMessage?.threadParticipants.map(\.id)
+                (loadedMessage?.threadParticipants.array as? [UserDTO])?.map(\.id)
             )
             Assert.willBeEqual(Int32(messagePayload.replyCount), loadedMessage?.replyCount)
             Assert.willBeEqual(messagePayload.extraData, loadedMessage.map {
