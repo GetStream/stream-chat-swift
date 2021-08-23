@@ -33,6 +33,9 @@ open class ChatChannelAvatarView: _View, ThemeProvider, SwiftUIRepresentable {
     open var imageProcessor: NukeImageProcessor {
         NukeImageProcessor()
     }
+    
+    /// The maximum number of images that combine to form a single avatar
+    private let maxNumberOfImagesInCombinedAvatar = 4
 
     override open func setUpLayout() {
         super.setUpLayout()
@@ -141,7 +144,7 @@ open class ChatChannelAvatarView: _View, ThemeProvider, SwiftUIRepresentable {
         }
         
         // We show a combination of at max 4 images combined
-        urls = Array(urls.prefix(4))
+        urls = Array(urls.prefix(maxNumberOfImagesInCombinedAvatar))
         
         guard !SystemEnvironment.isTests else {
             // When running tests, we load the images synchronously
@@ -194,7 +197,7 @@ open class ChatChannelAvatarView: _View, ThemeProvider, SwiftUIRepresentable {
         
         var avatarUrls: [URL] = []
         
-        for url in urls.prefix(4) {
+        for url in urls.prefix(maxNumberOfImagesInCombinedAvatar) {
             if let avatarUrl = url {
                 avatarUrls.append(avatarUrl)
             } else {
