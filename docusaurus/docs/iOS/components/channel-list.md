@@ -73,7 +73,7 @@ It has 4 parameters in it's `init`:
 
 ```swift
 public init(
-        filter: Filter<_ChannelListFilterScope<ExtraData>>,
+        filter: Filter<ChannelListFilterScope>,
         sort: [Sorting<ChannelListSortingKey>] = [],
         pageSize: Int = .channelsPageSize,
         messagesLimit: Int = .messagesPageSize

@@ -30,10 +30,10 @@ This is the list of `Components`'s attributes used to map attachments to views
 
 |  Attribute                | Description                                     | Default View Class                              |
 |---------------------------|-------------------------------------------------|-------------------------------------------------|
-| galleryAttachmentInjector | Single or multiple images and video attachments | `_GalleryAttachmentViewInjector<ExtraData>.self`|
-| linkAttachmentInjector    | URL preview attachments                         | `_LinkAttachmentViewInjector<ExtraData> .self`  |
-| giphyAttachmentInjector   | Giphy attachments                               | `_GiphyAttachmentViewInjector<ExtraData> .self` |
-| filesAttachmentInjector   | File attachments                                | `_FilesAttachmentViewInjector<ExtraData> .self` |
+| galleryAttachmentInjector | Single or multiple images and video attachments | `GalleryAttachmentViewInjector.self`|
+| linkAttachmentInjector    | URL preview attachments                         | `LinkAttachmentViewInjector.self`  |
+| giphyAttachmentInjector   | Giphy attachments                               | `GiphyAttachmentViewInjector.self` |
+| filesAttachmentInjector   | File attachments                                | `FilesAttachmentViewInjector.self` |
 
 You can implement `MyCustomAttachmentViewInjector` as a subclass of `FilesAttachmentViewInjector` or as a subclass of `AttachmentViewInjector`.
 
