@@ -150,7 +150,7 @@ class MessageDTO: NSManagedObject {
         // if they do not belong to the regular channel query.
         let ignoreOlderMessagesPredicate = NSCompoundPredicate(orPredicateWithSubpredicates: [
             .init(format: "channel.oldestMessageAt == nil"),
-            .init(format: "createdAt >= channel.oldestMessageAt")
+            .init(format: "createdAt >= channel.oldestMessageAt"),
         ])
 
         return .init(andPredicateWithSubpredicates: [
