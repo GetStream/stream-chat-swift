@@ -46,7 +46,7 @@ class MessagePayload_Tests: XCTestCase {
         let box = try JSONDecoder.default.decode(MessagePayload.Boxed.self, from: messageJSONWithCorruptedAttachments)
         let payload = box.message
 
-        var messageCustomData = messageCustomData
+        var messageCustomData = self.messageCustomData
         messageCustomData["tau"] = .double(6.28)
 
         XCTAssertEqual(payload.id, "7baa1533-3294-4c0c-9a62-c9d0928bf733")
