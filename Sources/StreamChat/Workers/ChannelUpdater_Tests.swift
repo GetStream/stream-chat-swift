@@ -25,6 +25,7 @@ class ChannelUpdater_Tests: StressTestCase {
         apiClient.cleanUp()
         channelUpdater = nil
         AssertAsync.canBeReleased(&database)
+        database = nil
         
         super.tearDown()
     }
