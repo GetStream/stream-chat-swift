@@ -74,17 +74,6 @@ jobs:
         flags: llc-tests
         fail_ci_if_error: true # if codecov upload fails, should fail ci
         verbose: true
-    - uses: ./.github/actions/prepare-ios-simulator
-      with:
-        device: "iPhone 7"
-        ios: "12.4"
-        xcode: "10.3"
-    - uses: codecov/codecov-action@v1
-      with:
-        token: ${{ secrets.CODECOV_TOKEN }}
-        flags: llc-tests-ios12
-        fail_ci_if_error: true # if codecov upload fails, should fail ci
-        verbose: true
     - uses: 8398a7/action-slack@v3
       with:
         status: ${{ job.status }}
