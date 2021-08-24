@@ -45,7 +45,7 @@ jobs:
         run: ./Scripts/run-linter.sh
 
   build-and-test-debug:
-    name: Test LLC + UI (Debug)
+    name: Test LLC (Debug)
     runs-on: macos-latest
     steps:
     - uses: actions/checkout@v1
@@ -87,13 +87,46 @@ jobs:
         flags: llc-tests-ios12
         fail_ci_if_error: true # if codecov upload fails, should fail ci
         verbose: true
+    - uses: 8398a7/action-slack@v3
+      with:
+        status: ${{ job.status }}
+        text: "You shall not pass!"
+        job_name: "Test LLC (Debug)"
+        fields: message,commit,author,action,workflow,job,took
+      env:
+        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        MATRIX_CONTEXT: ${{ toJson(matrix) }}
+      if: ${{ github.event_name == 'push' && failure() }}
+
+  build-and-test-ui-debug:
+    name: Test UI (Debug)
+    runs-on: macos-latest
+    steps:
+    - uses: actions/checkout@v1
+    - name: Set build image var
+      run: echo "ImageVersion=$ImageVersion"  >> $GITHUB_ENV
+    - name: Cache RubyGems
+      uses: actions/cache@v2
+      id: rubygem-cache
+      with:
+        path: vendor/bundle
+        key: ${{ runner.os }}-${{ env.ImageVersion }}-gem-${{ hashFiles('**/Gemfile.lock') }}
+        restore-keys: ${{ runner.os }}-${{ env.ImageVersion }}-gem-
+    - name: Cache Mint
+      uses: actions/cache@v2
+      id: mint-cache
+      with:
+        path: /usr/local/lib/mint
+        key: ${{ runner.os }}-mint-${{ hashFiles('./Mintfile') }}
+        restore-keys: ${{ runner.os }}-mint-
+    - uses: ./.github/actions/bootstrap
     - name: Run UI Tests (Debug)
       run: bundle exec fastlane test_ui device:"iPhone 12"
     - uses: 8398a7/action-slack@v3
       with:
         status: ${{ job.status }}
         text: "You shall not pass!"
-        job_name: "Test LLC + UI (Debug)"
+        job_name: "Test UI (Debug)"
         fields: message,commit,author,action,workflow,job,took
       env:
         SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
