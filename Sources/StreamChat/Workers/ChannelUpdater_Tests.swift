@@ -444,20 +444,16 @@ class ChannelUpdater_Tests: StressTestCase {
         XCTAssertNil(channel?.hiddenAt)
         
         // Simulate `hideChannel(cid:, clearHistory:, completion:)` call
-        var completionCalled = false
+        let exp = expectation(description: "should hide channel")
         channelUpdater.hideChannel(cid: cid, clearHistory: true) { error in
             XCTAssertNil(error)
-            completionCalled = true
+            exp.fulfill()
         }
-
-        // Assert completion is not called yet
-        XCTAssertFalse(completionCalled)
 
         // Simulate API response with success
         apiClient.test_simulateResponse(Result<EmptyResponse, Error>.success(.init()))
 
-        // Assert completion is called
-        AssertAsync.willBeTrue(completionCalled)
+        wait(for: [exp], timeout: 1)
         
         // Ensure channel is marked as hidden
         XCTAssertNotNil(channel?.hiddenAt)
