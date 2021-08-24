@@ -15,6 +15,10 @@ extension MessagePayload {
         showReplyInChannel: Bool = false,
         quotedMessageId: MessageId? = nil,
         quotedMessage: MessagePayload? = nil,
+        threadParticipants: [UserPayload] = [
+            UserPayload.dummy(userId: .unique),
+            UserPayload.dummy(userId: .unique)
+        ],
         attachments: [MessageAttachmentPayload] = [
             .dummy(),
             .dummy(),
@@ -50,6 +54,7 @@ extension MessagePayload {
             quotedMessageId: quotedMessageId,
             quotedMessage: quotedMessage,
             mentionedUsers: [UserPayload.dummy(userId: .unique)],
+            threadParticipants: threadParticipants,
             replyCount: .random(in: 0...1000),
             extraData: extraData,
             latestReactions: latestReactions,

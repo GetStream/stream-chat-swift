@@ -85,10 +85,11 @@ public struct ChatMessage {
     
     @CoreDataLazy internal var _mentionedUsers: Set<ChatUser>
 
-    /// A list of users that participated in this message thread
-    public var threadParticipants: Set<ChatUser> { _threadParticipants }
+    /// A list of users that participated in this message thread.
+    /// The last user in the list is the author of the most recent reply.
+    public var threadParticipants: [ChatUser] { _threadParticipants }
     
-    @CoreDataLazy internal var _threadParticipants: Set<ChatUser>
+    @CoreDataLazy internal var _threadParticipants: [ChatUser]
 
     @CoreDataLazy internal var _attachments: [AnyChatMessageAttachment]
 
@@ -158,7 +159,7 @@ public struct ChatMessage {
         reactionScores: [MessageReactionType: Int],
         author: @escaping () -> ChatUser,
         mentionedUsers: @escaping () -> Set<ChatUser>,
-        threadParticipants: @escaping () -> Set<ChatUser>,
+        threadParticipants: @escaping () -> [ChatUser],
         attachments: @escaping () -> [AnyChatMessageAttachment],
         latestReplies: @escaping () -> [ChatMessage],
         localState: LocalMessageState?,

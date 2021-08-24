@@ -208,6 +208,7 @@ private extension ChatMessageContentView_Tests {
                     "like": 5,
                     "love": 2
                 ],
+                threadParticipants: [myFriend],
                 latestReplies: [
                     reply
                 ],
@@ -226,6 +227,7 @@ private extension ChatMessageContentView_Tests {
                     "like": 5,
                     "love": 2
                 ],
+                threadParticipants: [myFriend],
                 latestReplies: [
                     reply
                 ],
@@ -290,6 +292,7 @@ private extension ChatMessageContentView_Tests {
                     "like": 5,
                     "love": 2
                 ],
+                threadParticipants: [myFriend],
                 latestReplies: [
                     reply
                 ]
