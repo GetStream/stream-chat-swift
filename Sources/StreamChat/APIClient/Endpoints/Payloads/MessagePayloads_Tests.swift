@@ -61,7 +61,7 @@ class MessagePayload_Tests: XCTestCase {
         XCTAssertEqual(payload.parentId, "3294-4c0c-9a62-c9d0928bf733")
         XCTAssertEqual(payload.showReplyInChannel, true)
         XCTAssertEqual(payload.mentionedUsers.map(\.id), [])
-        XCTAssertEqual(payload.threadParticipants.map(\.id), ["josh", "vader"])
+        XCTAssertEqual(payload.threadParticipants.map(\.id), ["josh"])
         XCTAssertEqual(payload.replyCount, 0)
         XCTAssertEqual(payload.extraData, messageCustomData)
         XCTAssertEqual(payload.latestReactions.count, 1)
