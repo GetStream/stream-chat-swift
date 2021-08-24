@@ -20,6 +20,8 @@ class ChatChannelAvatarView_Tests: XCTestCase {
             .mock(id: currentUserId, imageURL: TestImages.vader.url),
             .mock(id: .unique, imageURL: TestImages.yoda.url, isOnline: true)
         ])
+        
+        Components.default.imageLoader = MockImageLoader()
     }
     
     func test_emptyAppearance() {
@@ -128,6 +130,7 @@ class ChatChannelAvatarView_Tests: XCTestCase {
         var components = Components()
         appearance.colorPalette.alternativeActiveTint = .brown
         components.onlineIndicatorView = RectIndicator.self
+        components.imageLoader = MockImageLoader()
 
         let view = ChatChannelAvatarView().withoutAutoresizingMaskConstraints
         view.addSizeConstraints()
@@ -199,5 +202,38 @@ private extension ChatChannelAvatarView {
             heightAnchor.constraint(equalToConstant: 50),
             widthAnchor.constraint(equalToConstant: 50)
         ])
+    }
+}
+
+/// A mock implementation of the image loader which loads images synchronusly
+class MockImageLoader: ImageLoading {
+    func loadImage(
+        using urlRequest: URLRequest,
+        cachingKey: String?,
+        completion: @escaping ((Result<UIImage, Error>) -> Void)
+    ) -> Cancellable? {
+        let image = UIImage(data: try! Data(contentsOf: urlRequest.url!))!
+        completion(.success(image))
+        return nil
+    }
+    
+    func loadImage(
+        into imageView: UIImageView,
+        url: URL?,
+        imageCDN: ImageCDN,
+        placeholder: UIImage?,
+        resize: Bool,
+        preferredSize: CGSize?,
+        completion: ((Result<UIImage, Error>) -> Void)?
+    ) -> Cancellable? {
+        if let url = url {
+            let image = UIImage(data: try! Data(contentsOf: url))!
+            imageView.image = image
+            completion?(.success(image))
+        } else {
+            imageView.image = placeholder
+        }
+        
+        return nil
     }
 }

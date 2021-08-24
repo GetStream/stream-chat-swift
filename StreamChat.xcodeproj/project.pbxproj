@@ -607,7 +607,6 @@
 		8862922925AC720F00D9AE78 /* TokenProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8862922825AC720F00D9AE78 /* TokenProvider.swift */; };
 		8875CF9B2587A89F00BBA6AC /* AttachmentId_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8875CF8D2587A7F200BBA6AC /* AttachmentId_Tests.swift */; };
 		888123D2255D430B00070D5A /* UIView+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 888123D1255D430B00070D5A /* UIView+Extensions.swift */; };
-		888123E0255D4D2100070D5A /* UIImageView+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 888123DF255D4D2100070D5A /* UIImageView+Extensions.swift */; };
 		888ABA072594FDE30015937E /* ChatMessageInteractiveAttachmentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 888ABA062594FDE30015937E /* ChatMessageInteractiveAttachmentView.swift */; };
 		888E8C36252B2AAF00195E03 /* UserController+SwiftUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 888E8C35252B2AAF00195E03 /* UserController+SwiftUI.swift */; };
 		888E8C39252B2ABB00195E03 /* UserController+Combine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 888E8C38252B2ABB00195E03 /* UserController+Combine.swift */; };
@@ -1956,7 +1955,6 @@
 		8862922825AC720F00D9AE78 /* TokenProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TokenProvider.swift; sourceTree = "<group>"; };
 		8875CF8D2587A7F200BBA6AC /* AttachmentId_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttachmentId_Tests.swift; sourceTree = "<group>"; };
 		888123D1255D430B00070D5A /* UIView+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+Extensions.swift"; sourceTree = "<group>"; };
-		888123DF255D4D2100070D5A /* UIImageView+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImageView+Extensions.swift"; sourceTree = "<group>"; };
 		888ABA062594FDE30015937E /* ChatMessageInteractiveAttachmentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageInteractiveAttachmentView.swift; sourceTree = "<group>"; };
 		888E8C35252B2AAF00195E03 /* UserController+SwiftUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UserController+SwiftUI.swift"; sourceTree = "<group>"; };
 		888E8C38252B2ABB00195E03 /* UserController+Combine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UserController+Combine.swift"; sourceTree = "<group>"; };
@@ -4091,7 +4089,6 @@
 				888123D1255D430B00070D5A /* UIView+Extensions.swift */,
 				E7073A6225DD67B3003896B9 /* UILabel+Extensions.swift */,
 				E70120152583EBC90036DACD /* CALayer+Extensions.swift */,
-				888123DF255D4D2100070D5A /* UIImageView+Extensions.swift */,
 				BDC80CB4265CF4B800F62CE2 /* ImageCDN.swift */,
 				BD40C1F4265FA80D004392CE /* ImageCDN_Tests.swift */,
 				224FF6902562F58F00725DD1 /* UIColor+Extensions.swift */,
@@ -5900,7 +5897,6 @@
 				E7073A6325DD67B3003896B9 /* UILabel+Extensions.swift in Sources */,
 				843F0BC526775D2D00B342CB /* VideoPreviewLoader.swift in Sources */,
 				88CABC4625933EE70061BB67 /* ChatMessageReactionsBubbleView.swift in Sources */,
-				888123E0255D4D2100070D5A /* UIImageView+Extensions.swift in Sources */,
 				F838F6A92636D3C30025E1F5 /* ZoomTransitionController.swift in Sources */,
 				AD81AF0D25ED141A00F17F8F /* ListCollectionViewLayout.swift in Sources */,
 				8850B92A255C286B003AED69 /* Components.swift in Sources */,

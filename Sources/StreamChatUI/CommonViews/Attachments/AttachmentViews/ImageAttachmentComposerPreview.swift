@@ -41,7 +41,10 @@ open class ImageAttachmentComposerPreview: _View, ThemeProvider {
     
     override open func updateContent() {
         super.updateContent()
-        
-        imageView.loadImage(from: content, components: components)
+        components.imageLoader.loadImage(
+            into: imageView,
+            url: content,
+            imageCDN: components.imageCDN
+        )
     }
 }

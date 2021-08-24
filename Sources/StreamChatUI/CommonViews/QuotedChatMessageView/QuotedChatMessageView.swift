@@ -170,11 +170,12 @@ open class QuotedChatMessageView: _View, ThemeProvider, SwiftUIRepresentable {
     /// - Parameter imageUrl: The url of the image.
     open func setAvatar(imageUrl: URL?) {
         let placeholder = appearance.images.userAvatarPlaceholder1
-        authorAvatarView.imageView.loadImage(
-            from: imageUrl,
+        components.imageLoader.loadImage(
+            into: authorAvatarView.imageView,
+            url: imageUrl,
+            imageCDN: components.imageCDN,
             placeholder: placeholder,
-            preferredSize: .avatarThumbnailSize,
-            components: components
+            preferredSize: .avatarThumbnailSize
         )
     }
 
@@ -214,17 +215,27 @@ open class QuotedChatMessageView: _View, ThemeProvider, SwiftUIRepresentable {
             textView.text = message.text.isEmpty ? filePayload.title : message.text
         } else if let imagePayload = message.imageAttachments.first?.payload {
             attachmentPreviewView.contentMode = .scaleAspectFill
-            attachmentPreviewView.loadImage(from: imagePayload.imageURL, components: components)
+            setAttachmentPreviewImage(url: imagePayload.imageURL)
             textView.text = message.text.isEmpty ? "Photo" : message.text
         } else if let linkPayload = message.linkAttachments.first?.payload {
             attachmentPreviewView.contentMode = .scaleAspectFill
-            attachmentPreviewView.loadImage(from: linkPayload.previewURL, components: components)
+            setAttachmentPreviewImage(url: linkPayload.previewURL)
             textView.text = linkPayload.originalURL.absoluteString
         } else if let giphyPayload = message.giphyAttachments.first?.payload {
             attachmentPreviewView.contentMode = .scaleAspectFill
-            attachmentPreviewView.loadImage(from: giphyPayload.previewURL, components: components)
+            setAttachmentPreviewImage(url: giphyPayload.previewURL)
             textView.text = message.text.isEmpty ? "Giphy" : message.text
         }
+    }
+    
+    /// Sets the image from the given URL into `attachmentPreviewView.image`
+    /// - Parameter url: The URL from which the image is to be loaded
+    open func setAttachmentPreviewImage(url: URL?) {
+        components.imageLoader.loadImage(
+            into: attachmentPreviewView,
+            url: url,
+            imageCDN: components.imageCDN
+        )
     }
 
     /// Show the attachment preview view.

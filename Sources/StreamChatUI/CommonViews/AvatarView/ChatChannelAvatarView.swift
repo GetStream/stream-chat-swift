@@ -17,23 +17,6 @@ open class ChatChannelAvatarView: _View, ThemeProvider, SwiftUIRepresentable {
         didSet { updateContentIfNeeded() }
     }
     
-    /// Object responsible for loading images.
-    open var imageLoader: ImageLoading {
-        NukeImageLoader()
-    }
-    
-    /// Object responsible for providing functionality of merging images.
-    /// Used when creating compound avatars from channel members individual avatars
-    open var imageMerger: ImageMerging {
-        DefaultImageMerger()
-    }
-    
-    /// Object responsible for providing functionality of processing images.
-    /// Used when creating compound avatars from channel members individual avatars
-    open var imageProcessor: NukeImageProcessor {
-        NukeImageProcessor()
-    }
-    
     /// The maximum number of images that combine to form a single avatar
     private let maxNumberOfImagesInCombinedAvatar = 4
 
@@ -44,12 +27,7 @@ open class ChatChannelAvatarView: _View, ThemeProvider, SwiftUIRepresentable {
 
     override open func updateContent() {
         guard let channel = content.channel else {
-            presenceAvatarView.avatarView.imageView.loadImage(
-                from: nil,
-                placeholder: appearance.images.userAvatarPlaceholder3,
-                preferredSize: .avatarThumbnailSize,
-                components: components
-            )
+            loadIntoAvatarImageView(from: nil, placeholder: appearance.images.userAvatarPlaceholder3)
             presenceAvatarView.isOnlineIndicatorVisible = false
             return
         }
@@ -75,12 +53,7 @@ open class ChatChannelAvatarView: _View, ThemeProvider, SwiftUIRepresentable {
     /// Loads the avatar from the URL. This function is used when the channel has a non-nil `imageURL`
     /// - Parameter url: The `imageURL` of the channel
     open func loadChannelAvatar(from url: URL) {
-        presenceAvatarView.avatarView.imageView.loadImage(
-            from: url,
-            placeholder: appearance.images.userAvatarPlaceholder4,
-            preferredSize: .avatarThumbnailSize,
-            components: components
-        )
+        loadIntoAvatarImageView(from: url, placeholder: appearance.images.userAvatarPlaceholder4)
     }
     
     /// Loads avatar for a directMessageChannel
@@ -89,27 +62,14 @@ open class ChatChannelAvatarView: _View, ThemeProvider, SwiftUIRepresentable {
         let lastActiveMembers = lastActiveMembers()
         
         // If there are no members other than the current user in the channel, load a placeholder
-        if lastActiveMembers.isEmpty {
-            presenceAvatarView.avatarView.imageView.loadImage(
-                from: nil,
-                placeholder: appearance.images.userAvatarPlaceholder4,
-                preferredSize: .avatarThumbnailSize,
-                components: components
-            )
+        guard !lastActiveMembers.isEmpty, let otherMember = lastActiveMembers.first else {
+            presenceAvatarView.isOnlineIndicatorVisible = false
+            loadIntoAvatarImageView(from: nil, placeholder: appearance.images.userAvatarPlaceholder4)
             return
         }
         
-        let otherMember = lastActiveMembers.first
-        let isOnlineIndicatorVisible = otherMember?.isOnline ?? false
-        
-        presenceAvatarView.avatarView.imageView.loadImage(
-            from: otherMember?.imageURL,
-            placeholder: appearance.images.userAvatarPlaceholder3,
-            preferredSize: .avatarThumbnailSize,
-            components: components
-        )
-        
-        presenceAvatarView.isOnlineIndicatorVisible = isOnlineIndicatorVisible
+        loadIntoAvatarImageView(from: otherMember.imageURL, placeholder: appearance.images.userAvatarPlaceholder3)
+        presenceAvatarView.isOnlineIndicatorVisible = otherMember.isOnline
     }
     
     /// Loads an avatar which is merged (tiled) version of the first four active members of the channel
@@ -121,25 +81,15 @@ open class ChatChannelAvatarView: _View, ThemeProvider, SwiftUIRepresentable {
         let lastActiveMembers = lastActiveMembers()
         
         // If there are no members other than the current user in the channel, load a placeholder
-        if lastActiveMembers.isEmpty {
-            presenceAvatarView.avatarView.imageView.loadImage(
-                from: nil,
-                placeholder: appearance.images.userAvatarPlaceholder4,
-                preferredSize: .avatarThumbnailSize,
-                components: components
-            )
+        guard !lastActiveMembers.isEmpty else {
+            loadIntoAvatarImageView(from: nil, placeholder: appearance.images.userAvatarPlaceholder4)
             return
         }
         
         var urls = lastActiveMembers.map(\.imageURL)
         
         if urls.isEmpty {
-            presenceAvatarView.avatarView.imageView.loadImage(
-                from: nil,
-                placeholder: appearance.images.userAvatarPlaceholder3,
-                preferredSize: .avatarThumbnailSize,
-                components: components
-            )
+            loadIntoAvatarImageView(from: nil, placeholder: appearance.images.userAvatarPlaceholder3)
             return
         }
         
@@ -151,13 +101,7 @@ open class ChatChannelAvatarView: _View, ThemeProvider, SwiftUIRepresentable {
             let images = urls.map { UIImage(data: try! Data(contentsOf: $0!))! }
            
             let combinedImage = createMergedAvatar(from: images) ?? appearance.images.userAvatarPlaceholder2
-            
-            presenceAvatarView.avatarView.imageView.loadImage(
-                from: nil,
-                placeholder: combinedImage,
-                preferredSize: .avatarThumbnailSize,
-                components: components
-            )
+            loadIntoAvatarImageView(from: nil, placeholder: combinedImage)
             return
         }
         
@@ -165,13 +109,7 @@ open class ChatChannelAvatarView: _View, ThemeProvider, SwiftUIRepresentable {
             guard let self = self, channelId == self.content.channel?.cid else { return }
             
             let combinedImage = self.createMergedAvatar(from: avatars) ?? self.appearance.images.userAvatarPlaceholder2
-            
-            self.presenceAvatarView.avatarView.imageView.loadImage(
-                from: nil,
-                placeholder: combinedImage,
-                preferredSize: .avatarThumbnailSize,
-                components: self.components
-            )
+            self.loadIntoAvatarImageView(from: nil, placeholder: combinedImage)
         }
     }
     
@@ -216,7 +154,7 @@ open class ChatChannelAvatarView: _View, ThemeProvider, SwiftUIRepresentable {
             let imageRequest = components.imageCDN.urlRequest(forImage: thumbnailUrl)
             let cachingKey = components.imageCDN.cachingKey(forImage: avatarUrl)
 
-            imageLoader.loadImage(using: imageRequest, cachingKey: cachingKey) { result in
+            components.imageLoader.loadImage(using: imageRequest, cachingKey: cachingKey) { result in
                 switch result {
                 case let .success(image):
                     images.append(image)
@@ -248,6 +186,9 @@ open class ChatChannelAvatarView: _View, ThemeProvider, SwiftUIRepresentable {
         }
         
         var combinedImage: UIImage?
+        
+        let imageProcessor = components.imageProcessor
+        let imageMerger = components.imageMerger
         
         let images = avatars.map {
             imageProcessor.scale(image: $0, to: .avatarThumbnailSize)
@@ -341,5 +282,15 @@ open class ChatChannelAvatarView: _View, ThemeProvider, SwiftUIRepresentable {
         return channel.lastActiveMembers
             .sorted { $0.memberCreatedAt < $1.memberCreatedAt }
             .filter { $0.id != content.currentUserId }
+    }
+    
+    open func loadIntoAvatarImageView(from url: URL?, placeholder: UIImage?) {
+        components.imageLoader.loadImage(
+            into: presenceAvatarView.avatarView.imageView,
+            url: url,
+            imageCDN: components.imageCDN,
+            placeholder: placeholder,
+            preferredSize: .avatarThumbnailSize
+        )
     }
 }
