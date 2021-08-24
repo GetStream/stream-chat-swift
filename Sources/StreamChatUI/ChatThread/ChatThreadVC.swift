@@ -66,8 +66,18 @@ open class ChatThreadVC:
         }
 
         messageController.delegate = self
-        messageController.synchronize()
-        messageController.loadPreviousReplies()
+        let updateMessageControllerMessage: () -> Void = { [messageController, messageComposerVC] in
+            if messageComposerVC.content.threadMessage == nil,
+               let message = messageController?.message {
+                messageComposerVC.content.threadMessage = message
+            }
+        }
+        channelController.synchronize { [messageController] _ in
+            messageController?.synchronize { _ in
+                updateMessageControllerMessage()
+                messageController?.loadPreviousReplies()
+            }
+        }
 
         userSuggestionSearchController.search(term: nil)
     }
