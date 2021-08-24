@@ -7,7 +7,12 @@ import UIKit
 
 /// Controller responsible for displaying message thread.
 @available(iOSApplicationExtension, unavailable)
-open class ChatThreadVC: _ViewController, ThemeProvider {
+open class ChatThreadVC:
+    _ViewController,
+    ThemeProvider,
+    ChatMessageListVCDataSource,
+    ChatMessageListVCDelegate,
+    ChatMessageControllerDelegate {
     /// Controller for observing data changes within the channel
     open var channelController: ChatChannelController!
 
@@ -102,9 +107,9 @@ open class ChatThreadVC: _ViewController, ThemeProvider {
 
         keyboardHandler.stop()
     }
-}
 
-extension ChatThreadVC: ChatMessageListVCDataSource {
+    // MARK: - ChatMessageListVCDataSource
+
     open var replies: [ChatMessage] {
         /*
          Thread replies are evaluated from DTOs when converting `messageController.replies` to an array.
@@ -160,9 +165,9 @@ extension ChatThreadVC: ChatMessageListVCDataSource {
 
         return layoutOptions
     }
-}
 
-extension ChatThreadVC: ChatMessageListVCDelegate {
+    // MARK: - ChatMessageListVCDelegate
+
     open func chatMessageListVC(
         _ vc: ChatMessageListVC,
         willDisplayMessageAt indexPath: IndexPath
@@ -198,9 +203,9 @@ extension ChatThreadVC: ChatMessageListVCDelegate {
         // No-op. By default this component is not interest in scrollView events,
         // but you as customer can override this function and provide an implementation.
     }
-}
 
-extension ChatThreadVC: ChatMessageControllerDelegate {
+    // MARK: -  ChatMessageControllerDelegate
+
     open func messageController(
         _ controller: ChatMessageController,
         didChangeMessage change: EntityChange<ChatMessage>

@@ -7,7 +7,12 @@ import UIKit
 
 /// Controller responsible for displaying the channel messages.
 @available(iOSApplicationExtension, unavailable)
-open class ChatChannelVC: _ViewController, ThemeProvider {
+open class ChatChannelVC:
+    _ViewController,
+    ThemeProvider,
+    ChatMessageListVCDataSource,
+    ChatMessageListVCDelegate,
+    ChatChannelControllerDelegate {
     /// User search controller for suggestion users when typing in the composer.
     open var userSuggestionSearchController: ChatUserSearchController!
 
@@ -112,9 +117,9 @@ open class ChatChannelVC: _ViewController, ThemeProvider {
 
         keyboardHandler.stop()
     }
-}
 
-extension ChatChannelVC: ChatMessageListVCDataSource {
+    // MARK: - ChatMessageListVCDataSource
+    
     open func channel(for vc: ChatMessageListVC) -> ChatChannel? {
         channelController.channel
     }
@@ -141,9 +146,9 @@ extension ChatChannelVC: ChatMessageListVCDataSource {
             appearance: appearance
         )
     }
-}
 
-extension ChatChannelVC: ChatMessageListVCDelegate {
+    // MARK: - ChatMessageListVCDelegate
+
     open func chatMessageListVC(
         _ vc: ChatMessageListVC,
         willDisplayMessageAt indexPath: IndexPath
@@ -184,9 +189,9 @@ extension ChatChannelVC: ChatMessageListVCDelegate {
             messageListVC.scrollToLatestMessageButton.content = .noUnread
         }
     }
-}
 
-extension ChatChannelVC: ChatChannelControllerDelegate {
+    // MARK: - ChatChannelControllerDelegate
+
     open func channelController(
         _ channelController: ChatChannelController,
         didUpdateMessages changes: [ListChange<ChatMessage>]
