@@ -7,7 +7,20 @@ import UIKit
 
 /// Controller that shows list of messages and composer together in the selected channel.
 @available(iOSApplicationExtension, unavailable)
-open class ChatMessageListVC: _ViewController, ThemeProvider {
+open class ChatMessageListVC:
+    _ViewController,
+    ThemeProvider,
+    ChatMessageListScrollOverlayDataSource,
+    ChatMessageActionsVCDelegate,
+    ChatMessageContentViewDelegate,
+    GalleryContentViewDelegate,
+    GiphyActionContentViewDelegate,
+    FileActionContentViewDelegate,
+    LinkPreviewViewDelegate,
+    UITableViewDataSource,
+    UITableViewDelegate,
+    UIGestureRecognizerDelegate,
+    UIAdaptivePresentationControllerDelegate {
     /// The object that acts as the data source of the message list.
     public weak var dataSource: ChatMessageListVCDataSource?
 
@@ -69,7 +82,6 @@ open class ChatMessageListVC: _ViewController, ThemeProvider {
     
     override open func setUp() {
         super.setUp()
-        updateMessageCache()
         
         let longPress = UILongPressGestureRecognizer(target: self, action: #selector(handleLongPress))
         longPress.minimumPressDuration = 0.33
@@ -284,9 +296,9 @@ open class ChatMessageListVC: _ViewController, ThemeProvider {
             self.listView.scrollIndicatorInsets.top -= self.typingIndicatorViewHeight
         }
     }
-}
 
-extension ChatMessageListVC: UITableViewDataSource, UITableViewDelegate {
+    // MARK: - UITableViewDataSource & UITableViewDelegate
+
     open func numberOfSections(in tableView: UITableView) -> Int {
         1
     }
@@ -320,11 +332,9 @@ extension ChatMessageListVC: UITableViewDataSource, UITableViewDelegate {
 
         setScrollToLatestMessageButton(visible: isScrollToBottomButtonVisible)
     }
-}
 
-// MARK: - ChatMessageListScrollOverlayDataSource
+    // MARK: - ChatMessageListScrollOverlayDataSource
 
-extension ChatMessageListVC: ChatMessageListScrollOverlayDataSource {
     open func scrollOverlay(
         _ overlay: ChatMessageListScrollOverlayView,
         textForItemAt indexPath: IndexPath
@@ -337,11 +347,9 @@ extension ChatMessageListVC: ChatMessageListScrollOverlayDataSource {
             .messageListDateOverlay
             .string(from: message.createdAt)
     }
-}
 
-// MARK: - ChatMessageActionsVCDelegate
+    // MARK: - ChatMessageActionsVCDelegate
 
-extension ChatMessageListVC: ChatMessageActionsVCDelegate {
     open func chatMessageActionsVC(
         _ vc: ChatMessageActionsVC,
         message: ChatMessage,
@@ -353,11 +361,9 @@ extension ChatMessageListVC: ChatMessageActionsVCDelegate {
     open func chatMessageActionsVCDidFinish(_ vc: ChatMessageActionsVC) {
         dismiss(animated: true)
     }
-}
 
-// MARK: - ChatMessageContentViewDelegate
+    // MARK: - ChatMessageContentViewDelegate
 
-extension ChatMessageListVC: ChatMessageContentViewDelegate {
     open func messageContentViewDidTapOnErrorIndicator(_ indexPath: IndexPath?) {
         guard let indexPath = indexPath else { return log.error("IndexPath is not available") }
         didSelectMessageCell(at: indexPath)
@@ -382,11 +388,9 @@ extension ChatMessageListVC: ChatMessageContentViewDelegate {
                 "Tapped a quoted message. To customize the behavior, override messageContentViewDidTapOnQuotedMessage. Path: \(indexPath)"
             )
     }
-}
 
-// MARK: - GalleryContentViewDelegate
+    // MARK: - GalleryContentViewDelegate
 
-extension ChatMessageListVC: GalleryContentViewDelegate {
     open func galleryMessageContentView(
         at indexPath: IndexPath?,
         didTapAttachmentPreview attachmentId: AttachmentId,
@@ -423,14 +427,9 @@ extension ChatMessageListVC: GalleryContentViewDelegate {
             break
         }
     }
-}
 
-// MARK: - Attachment Action Delegates
+    // MARK: - Attachment Action Delegates
 
-extension ChatMessageListVC:
-    GiphyActionContentViewDelegate,
-    FileActionContentViewDelegate,
-    LinkPreviewViewDelegate {
     open func didTapOnLinkAttachment(
         _ attachment: ChatMessageLinkAttachment,
         at indexPath: IndexPath?
@@ -463,11 +462,9 @@ extension ChatMessageListVC:
             )
             .dispatchEphemeralMessageAction(action)
     }
-}
 
-// MARK: - UIGestureRecognizerDelegate
+    // MARK: - UIGestureRecognizerDelegate
 
-extension ChatMessageListVC: UIGestureRecognizerDelegate {
     open func gestureRecognizer(
         _ gestureRecognizer: UIGestureRecognizer,
         shouldReceive touch: UITouch
