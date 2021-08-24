@@ -43,12 +43,14 @@ open class ChatThreadVC:
         .messageComposerVC
         .init()
 
-    private var messageComposerBottomConstraint: NSLayoutConstraint?
-
     /// The header view of the thread that by default is the titleView of the navigation bar.
     open lazy var headerView: ChatThreadHeaderView = components
         .threadHeaderView.init()
         .withoutAutoresizingMaskConstraints
+
+    private var messageComposerBottomConstraint: NSLayoutConstraint?
+
+    @Atomic private var loadingPreviousMessages: Bool = false
 
     override open func setUp() {
         super.setUp()
@@ -172,8 +174,21 @@ open class ChatThreadVC:
         _ vc: ChatMessageListVC,
         willDisplayMessageAt indexPath: IndexPath
     ) {
-        if messageController.state == .remoteDataFetched && indexPath.row == replies.count - 5 {
-            messageController.loadPreviousReplies()
+        if messageController.state != .remoteDataFetched {
+            return
+        }
+
+        if indexPath.row < replies.count - 10 {
+            return
+        }
+
+        if _loadingPreviousMessages.compareAndSwap(old: false, new: true) {
+            messageController.loadPreviousReplies(completion: { [weak self] _ in
+                guard let self = self else {
+                    return
+                }
+                self.loadingPreviousMessages = false
+            })
         }
     }
 
