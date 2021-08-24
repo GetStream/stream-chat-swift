@@ -76,7 +76,9 @@ public enum ChannelType: Codable, Hashable {
     
     /// Check that custom types have valid `rawValue`
     private static func assertCustomTypeValue(_ value: String) {
-        let allowedCharacters = CharacterSet.lowercaseLetters.union(CharacterSet(charactersIn: "0123456789_"))
+        let allowedCharacters = CharacterSet.lowercaseLetters
+            .union(CharacterSet.uppercaseLetters)
+            .union(CharacterSet(charactersIn: "0123456789_"))
         let valueCharacters = CharacterSet(charactersIn: value)
         log.assert(
             valueCharacters.isSubset(of: allowedCharacters),

@@ -5,11 +5,7 @@
 import Foundation
 
 /// A type representing a chat message attachment.
-/// `_ChatMessageAttachment<Payload>` is an immutable snapshot of message attachment at the given time.
-///
-/// - Note: `_ChatMessageAttachment` type is not meant to be used directly. For each specific attachment type
-/// there is a type alias which resolves the generic (`ChatMessageFileAttachment`, `ChatMessageImageAttachment`, etc.).
-/// If you have your own attachment with custom payload consider having a type alias.
+/// `ChatMessageAttachment<Payload>` is an immutable snapshot of message attachment at the given time.
 @dynamicMemberLookup
 public struct ChatMessageAttachment<Payload> {
     /// The attachment identifier.

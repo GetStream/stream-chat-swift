@@ -499,9 +499,11 @@ open class ChatMessageContentView: _View, ThemeProvider {
         } else {
             threadReplyCountButton?.setTitle(L10n.Message.Threads.reply, for: .normal)
         }
-        let latestReplyAuthorAvatar = content?.latestReplies.first?.author.imageURL
+
+        // The last thread participant is the author of the most recent reply.
+        let threadAvatarUrl = content?.threadParticipants.last?.imageURL
         threadAvatarView?.imageView.loadImage(
-            from: latestReplyAuthorAvatar,
+            from: threadAvatarUrl,
             placeholder: appearance.images.userAvatarPlaceholder4,
             preferredSize: .avatarThumbnailSize,
             components: components

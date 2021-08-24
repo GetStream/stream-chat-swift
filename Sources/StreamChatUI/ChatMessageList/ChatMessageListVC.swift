@@ -69,6 +69,7 @@ open class ChatMessageListVC: _ViewController, ThemeProvider {
     
     override open func setUp() {
         super.setUp()
+        updateMessageCache()
         
         let longPress = UILongPressGestureRecognizer(target: self, action: #selector(handleLongPress))
         longPress.minimumPressDuration = 0.33
@@ -78,6 +79,8 @@ open class ChatMessageListVC: _ViewController, ThemeProvider {
         tapOnList.cancelsTouchesInView = false
         tapOnList.delegate = self
         listView.addGestureRecognizer(tapOnList)
+
+        navigationController?.presentationController?.delegate = self
         
         scrollToLatestMessageButton.addTarget(self, action: #selector(scrollToLatestMessage), for: .touchUpInside)
     }
@@ -330,8 +333,6 @@ extension ChatMessageListVC: ChatMessageListScrollOverlayDataSource {
             return nil
         }
 
-        // TODO: Indices check
-
         return DateFormatter
             .messageListDateOverlay
             .string(from: message.createdAt)
@@ -376,7 +377,10 @@ extension ChatMessageListVC: ChatMessageContentViewDelegate {
 
     open func messageContentViewDidTapOnQuotedMessage(_ indexPath: IndexPath?) {
         guard let indexPath = indexPath else { return log.error("IndexPath is not available") }
-        print(#function, indexPath)
+        log
+            .info(
+                "Tapped a quoted message. To customize the behavior, override messageContentViewDidTapOnQuotedMessage. Path: \(indexPath)"
+            )
     }
 }
 

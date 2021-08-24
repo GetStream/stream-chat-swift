@@ -3,9 +3,45 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
-### 🔄 Changed
+### 🐞 Fixed
+- Fix incorrect RawJSON number handling, the `.integer` case is no longer supported and is replaced by `.number` [#1375](https://github.com/GetStream/stream-chat-swift/pull/1375)
+- Fix message list and thread index out of range issue on `tableView(_:cellForRowAt:)` [#1373](https://github.com/GetStream/stream-chat-swift/pull/1373)
+- Fix crash when dismissing gallery images [#1383](https://github.com/GetStream/stream-chat-swift/pull/1383)
+- Improve pagination efficiency [#1381](https://github.com/GetStream/stream-chat-swift/pull/1381)
+- Fix user mention suggestions not showing all members [#1390](https://github.com/GetStream/stream-chat-swift/pull/1381)
+- Fix thread avatar view not displaying latest reply author avatar [#1398](https://github.com/GetStream/stream-chat-swift/pull/1398)
 
+### 🔄 Changed
+- `ChatMessage.threadParticipants` is now an Array instead of Set [#1398](https://github.com/GetStream/stream-chat-swift/pull/1398)
+
+# [4.0.0-beta.11](https://github.com/GetStream/stream-chat-swift/releases/tag/4.0.0-beta.11)
+_August 13, 2021_
+
+### 🐞 Fixed
+- Fix jumps when presenting message popup actions in a modal [#1361](https://github.com/GetStream/stream-chat-swift/issues/1361)
+- Fix custom Channel Types not allowing uppercase letters [#1361](https://github.com/GetStream/stream-chat-swift/issues/1361)
+- Fix `ChatMessageGalleryView.ImagePreview` not compiling in Obj-c [#1363](https://github.com/GetStream/stream-chat-swift/pull/1363)
+- Fix force unwrap crashes on unknown user roles cases [#1365](https://github.com/GetStream/stream-chat-swift/pull/1365)
+- Fix "last seen at" representation to use other units other than minutes [#1368](https://github.com/GetStream/stream-chat-swift/pull/1368)
+- Fix message list dismissing on a modal when scrolling [#1364](https://github.com/GetStream/stream-chat-swift/pull/1364)
+
+# [4.0.0-beta.10](https://github.com/GetStream/stream-chat-swift/releases/tag/4.0.0-beta.10)
+_August 11, 2021_
+
+### ✅ Added
+- New `ChannelListSortingKey`s `unreadCount` and `hasUnread` [#1348](https://github.com/GetStream/stream-chat-swift/issues/1348)
 - Added `GalleryAttachmentViewInjector.galleryViewAspectRatio` to control the aspect ratio of a gallery inside a message cell [#1300](https://github.com/GetStream/stream-chat-swift/pull/1300)
+
+### 🔄 Changed
+- `ChatMessageReactionsVC.toggleReaction` is now `open` [#1348](https://github.com/GetStream/stream-chat-swift/issues/1348)
+- User mentions now fetch suggestions from current channel instead of doing a user search query. Set `Components.mentionAllAppUsers` to true if you want to perform user search instead [#1357](https://github.com/GetStream/stream-chat-swift/pull/1357)
+
+### 🐞 Fixed
+- Fix `ChannelListController.synchronize` completion closure not being called when the client is connected [#1353](https://github.com/GetStream/stream-chat-swift/issues/1353)
+- Selecting suggestions from Composer did not work correctly [#1352](https://github.com/GetStream/stream-chat-swift/pull/1352)
+- Fixed race condition on `ChatMessageListVC` and `ChatThreadVC` that caused `UITableView` crashes [#1347](https://github.com/GetStream/stream-chat-swift/pull/1347)
+- Fixed an issue for `ChatThreadVC` opened from a deeplink when new replies are only added to the chat, but not to the replies thread [#1354](https://github.com/GetStream/stream-chat-swift/pull/1354)
+
 
 # [4.0.0-beta.9](https://github.com/GetStream/stream-chat-swift/releases/tag/4.0.0-beta.9)
 _August 05, 2021_

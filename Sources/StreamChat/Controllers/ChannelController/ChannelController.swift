@@ -418,10 +418,6 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     
     /// Sets the provided object as a delegate of this controller.
     ///
-    /// - Note: If you don't use custom extra data types, you can set the delegate directly using `controller.delegate = self`.
-    /// Due to the current limits of Swift and the way it handles protocols with associated types, it's required to use this
-    /// method to set the delegate, if you're using custom extra data types.
-    ///
     /// - Parameter delegate: The object used as a delegate. It's referenced weakly, so you need to keep the object
     /// alive if you want keep receiving updates.
     ///
@@ -641,9 +637,7 @@ public extension ChatChannelController {
             completion?(nil)
             return
         }
-        
         channelQuery.pagination = MessagesPagination(pageSize: limit, parameter: .lessThan(messageId))
-    
         updater.update(channelQuery: channelQuery, completion: { result in
             switch result {
             case let .success(payload):
@@ -1126,10 +1120,6 @@ extension ChatChannelController {
 
 public extension ChatChannelController {
     /// Set the delegate of `ChannelController` to observe the changes in the system.
-    ///
-    /// - Note: The delegate can be set directly only if you're **not** using custom extra data types. Due to the current
-    /// limits of Swift and the way it handles protocols with associated types, it's required to use `setDelegate` method
-    /// instead to set the delegate, if you're using custom extra data types.
     var delegate: ChatChannelControllerDelegate? {
         get { multicastDelegate.mainDelegate?.wrappedDelegate as? ChatChannelControllerDelegate }
         set { multicastDelegate.mainDelegate = AnyChannelControllerDelegate(newValue) }
@@ -1148,10 +1138,6 @@ public enum MessageOrdering {
 // MARK: - Delegates
 
 /// `ChatChannelController` uses this protocol to communicate changes to its delegate.
-///
-/// If you're **not** using custom extra data types, you can use a convenience version of this protocol
-/// named `ChatChannelControllerDelegate`, which hides the generic types, and make the usage easier.
-///
 public protocol ChatChannelControllerDelegate: DataControllerStateDelegate {
     /// The controller observed a change in the `Channel` entity.
     func channelController(

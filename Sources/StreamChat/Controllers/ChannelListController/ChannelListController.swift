@@ -45,6 +45,9 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
     private var connectionObserver: EventObserver?
     private let requestedChannelsLimit = 25
 
+    /// A Boolean value that returns wether pagination is finished
+    public private(set) var hasLoadedAllPreviousChannels: Bool = false
+
     /// A type-erased delegate.
     var multicastDelegate: MulticastDelegate<AnyChannelListControllerDelegate> = .init() {
         didSet {
@@ -60,7 +63,7 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
     private(set) lazy var channelListObserver: ListDatabaseObserver<ChatChannel, ChannelDTO> = {
         let request = ChannelDTO.channelListFetchRequest(query: self.query)
         
-        let observer = self.environment.createChannelListDabaseObserver(
+        let observer = self.environment.createChannelListDatabaseObserver(
             client.databaseContainer.viewContext,
             request,
             { $0.asModel() }
@@ -107,36 +110,50 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
     
     private func setupEventObserversIfNeeded(completion: ((_ error: Error?) -> Void)? = nil) {
         guard !client.config.isLocalStorageEnabled else {
-            return updateChannels(trumpExistingChannels: false, completion)
+            return updateChannelList(trumpExistingChannels: false, completion)
         }
-        connectionObserver = nil
-        // We can't setup event observers in connectionless mode
-        guard let webSocketClient = client.webSocketClient else { return }
-        let center = webSocketClient.eventNotificationCenter
-        connectionObserver = EventObserver(
-            notificationCenter: center,
-            transform: { $0 as? ConnectionStatusUpdated },
-            callback: { [unowned self] in
-                switch $0.webSocketConnectionState {
-                case .connected:
-                    self.updateChannels(trumpExistingChannels: channels.count > requestedChannelsLimit)
-                default:
-                    break
+        
+        updateChannelList(trumpExistingChannels: channels.count > requestedChannelsLimit) { [weak self] error in
+            completion?(error)
+            
+            guard let self = self else { return }
+            self.connectionObserver = nil
+            // We can't setup event observers in connectionless mode
+            guard let webSocketClient = self.client.webSocketClient else { return }
+            let center = webSocketClient.eventNotificationCenter
+            // We setup a `Connected` Event observer so every time we're connected,
+            // we refresh the channel list
+            self.connectionObserver = EventObserver(
+                notificationCenter: center,
+                transform: { $0 as? ConnectionStatusUpdated },
+                callback: { [unowned self] in
+                    switch $0.webSocketConnectionState {
+                    case .connected:
+                        self.updateChannelList(trumpExistingChannels: self.channels.count > self.requestedChannelsLimit)
+                    default:
+                        break
+                    }
                 }
-            }
-        )
+            )
+        }
     }
     
-    private func updateChannels(
+    private func updateChannelList(
         trumpExistingChannels: Bool,
         _ completion: ((_ error: Error?) -> Void)? = nil
     ) {
         worker.update(
             channelListQuery: query,
             trumpExistingChannels: trumpExistingChannels
-        ) { error in
-            self.state = error == nil ? .remoteDataFetched : .remoteDataFetchFailed(ClientError(with: error))
-            self.callback { completion?(error) }
+        ) { result in
+            switch result {
+            case .success:
+                self.state = .remoteDataFetched
+                self.callback { completion?(nil) }
+            case let .failure(error):
+                self.state = .remoteDataFetchFailed(ClientError(with: error))
+                self.callback { completion?(error) }
+            }
         }
     }
     
@@ -159,10 +176,6 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
     
     /// Sets the provided object as a delegate of this controller.
     ///
-    /// - Note: If you don't use custom extra data types, you can set the delegate directly using `controller.delegate = self`.
-    /// Due to the current limits of Swift and the way it handles protocols with associated types, it's required to use this
-    /// method to set the delegate, if you're using custom extra data types.
-    ///
     /// - Parameter delegate: The object used as a delegate. It's referenced weakly, so you need to keep the object
     /// alive if you want keep receiving updates.
     ///
@@ -183,11 +196,22 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
         limit: Int? = nil,
         completion: ((Error?) -> Void)? = nil
     ) {
+        if hasLoadedAllPreviousChannels {
+            completion?(nil)
+            return
+        }
+
         let limit = limit ?? requestedChannelsLimit
         var updatedQuery = query
         updatedQuery.pagination = Pagination(pageSize: limit, offset: channels.count)
-        worker.update(channelListQuery: updatedQuery) { error in
-            self.callback { completion?(error) }
+        worker.update(channelListQuery: updatedQuery) { result in
+            switch result {
+            case let .success(payload):
+                self.hasLoadedAllPreviousChannels = payload.channels.count < limit
+                self.callback { completion?(nil) }
+            case let .failure(error):
+                self.callback { completion?(error) }
+            }
         }
     }
 
@@ -211,7 +235,7 @@ extension ChatChannelListController {
             _ apiClient: APIClient
         ) -> ChannelListUpdater = ChannelListUpdater.init
 
-        var createChannelListDabaseObserver: (
+        var createChannelListDatabaseObserver: (
             _ context: NSManagedObjectContext,
             _ fetchRequest: NSFetchRequest<ChannelDTO>,
             _ itemCreator: @escaping (ChannelDTO) -> ChatChannel
@@ -224,10 +248,6 @@ extension ChatChannelListController {
 
 extension ChatChannelListController {
     /// Set the delegate of `ChannelListController` to observe the changes in the system.
-    ///
-    /// - Note: The delegate can be set directly only if you're **not** using custom extra data types. Due to the current
-    /// limits of Swift and the way it handles protocols with associated types, it's required to use `setDelegate` method
-    /// instead to set the delegate, if you're using custom extra data types.
     public weak var delegate: ChatChannelListControllerDelegate? {
         get { multicastDelegate.mainDelegate?.wrappedDelegate as? ChatChannelListControllerDelegate }
         set { multicastDelegate.mainDelegate = AnyChannelListControllerDelegate(newValue) }

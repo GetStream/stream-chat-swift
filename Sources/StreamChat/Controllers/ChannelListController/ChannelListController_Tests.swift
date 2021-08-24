@@ -22,8 +22,12 @@ class ChannelListController_Tests: StressTestCase {
     override func setUp() {
         super.setUp()
         
+        setUp(isLocalStorageEnabled: true)
+    }
+    
+    private func setUp(isLocalStorageEnabled: Bool) {
         env = TestEnvironment()
-        client = ChatClient.mock(isLocalStorageEnabled: true)
+        client = ChatClient.mock(isLocalStorageEnabled: isLocalStorageEnabled)
         query = .init(filter: .in(.members, values: [.unique]))
         controller = ChatChannelListController(query: query, client: client, environment: env.environment)
         controllerCallbackQueueID = UUID()
@@ -61,7 +65,7 @@ class ChannelListController_Tests: StressTestCase {
         controller.synchronize()
         
         // Simulate successful network call.
-        env.channelListUpdater?.update_completion?(nil)
+        env.channelListUpdater?.update_completion?(.success(ChannelListPayload(channels: [])))
         
         // Check if state changed after successful network call.
         XCTAssertEqual(controller.state, .remoteDataFetched)
@@ -87,7 +91,7 @@ class ChannelListController_Tests: StressTestCase {
         
         // Simulate failed network call.
         let error = TestError()
-        env.channelListUpdater?.update_completion?(error)
+        env.channelListUpdater?.update_completion?(.failure(error))
         
         // Check if state changed after failed network call.
         XCTAssertEqual(controller.state, .remoteDataFetchFailed(ClientError(with: error)))
@@ -150,7 +154,44 @@ class ChannelListController_Tests: StressTestCase {
         XCTAssertFalse(completionCalled)
         
         // Simulate successful update
-        env.channelListUpdater!.update_completion?(nil)
+        env.channelListUpdater!.update_completion?(.success(ChannelListPayload(channels: [])))
+        // Release reference of completion so we can deallocate stuff
+        env.channelListUpdater!.update_completion = nil
+        
+        // Completion should be called
+        AssertAsync.willBeTrue(completionCalled)
+        // `weakController` should be deallocated too
+        AssertAsync.canBeReleased(&weakController)
+    }
+    
+    func test_synchronize_callsChannelQueryUpdater_inOfflineMode() {
+        setUp(isLocalStorageEnabled: false)
+        
+        let queueId = UUID()
+        controller.callbackQueue = .testQueue(withId: queueId)
+        
+        // Simulate `synchronize` calls and catch the completion
+        var completionCalled = false
+        controller.synchronize { error in
+            XCTAssertNil(error)
+            AssertTestQueue(withId: queueId)
+            completionCalled = true
+        }
+        
+        // Keep a weak ref so we can check if it's actually deallocated
+        weak var weakController = controller
+        
+        // (Try to) deallocate the controller
+        // by not keeping any references to it
+        controller = nil
+        
+        // Assert the updater is called with the query
+        XCTAssertEqual(env.channelListUpdater?.update_queries.first?.filter.filterHash, query.filter.filterHash)
+        // Completion shouldn't be called yet
+        XCTAssertFalse(completionCalled)
+        
+        // Simulate successful update
+        env.channelListUpdater!.update_completion?(.success(ChannelListPayload(channels: [])))
         // Release reference of completion so we can deallocate stuff
         env.channelListUpdater!.update_completion = nil
         
@@ -172,7 +213,7 @@ class ChannelListController_Tests: StressTestCase {
         
         // Simulate failed udpate
         let testError = TestError()
-        env.channelListUpdater!.update_completion?(testError)
+        env.channelListUpdater!.update_completion?(.failure(testError))
         
         // Completion should be called with the error
         AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
@@ -191,7 +232,7 @@ class ChannelListController_Tests: StressTestCase {
         }
         
         // Simulate successful network call.
-        env.channelListUpdater?.update_completion?(nil)
+        env.channelListUpdater?.update_completion?(.success(ChannelListPayload(channels: [])))
 
         // Assert the channels are loaded
         XCTAssertEqual(controller.channels.map(\.cid), [channelId])
@@ -242,7 +283,7 @@ class ChannelListController_Tests: StressTestCase {
         controller.synchronize()
             
         // Simulate network call response
-        env.channelListUpdater?.update_completion?(nil)
+        env.channelListUpdater?.update_completion?(.success(ChannelListPayload(channels: [])))
         
         // Assert delegate is notified about state changes
         AssertAsync.willBeEqual(delegate.state, .remoteDataFetched)
@@ -260,7 +301,7 @@ class ChannelListController_Tests: StressTestCase {
         controller.synchronize()
         
         // Simulate network call response
-        env.channelListUpdater?.update_completion?(nil)
+        env.channelListUpdater?.update_completion?(.success(ChannelListPayload(channels: [])))
         
         // Assert delegate is notified about state changes
         AssertAsync.willBeEqual(delegate.state, .remoteDataFetched)
@@ -383,7 +424,7 @@ class ChannelListController_Tests: StressTestCase {
         controller = nil
         
         // Simulate successful update
-        env!.channelListUpdater?.update_completion?(nil)
+        env!.channelListUpdater?.update_completion?(.success(ChannelListPayload(channels: [])))
         // Release reference of completion so we can deallocate stuff
         env.channelListUpdater!.update_completion = nil
         
@@ -403,7 +444,7 @@ class ChannelListController_Tests: StressTestCase {
         
         // Simulate failed udpate
         let testError = TestError()
-        env.channelListUpdater!.update_completion?(testError)
+        env.channelListUpdater!.update_completion?(.failure(testError))
         
         // Completion should be called with the error
         AssertAsync.willBeEqual(completionCalledError as? TestError, testError)

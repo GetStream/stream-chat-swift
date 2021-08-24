@@ -181,16 +181,6 @@ class ChatChannelListVC_Tests: XCTestCase {
         XCTAssertEqual(mockedRouter.openChat_channelId, vc.controller.channels.first?.cid)
     }
 
-    func test_channelList_loadsNextChannels_whenScrolledToBottom() {
-        let channelListVC = ChatChannelListVC()
-        channelListVC.controller = mockedChannelListController
-        // There are just 3 items mocked, so it's okay to add content offset of 1000,
-        // because the scrollView will definitely be scrolled most-down
-        channelListVC.collectionView.contentOffset = .init(x: 0, y: 1000)
-        channelListVC.scrollViewDidEndDecelerating(channelListVC.collectionView)
-        XCTAssertTrue(mockedChannelListController.loadNextChannelsIsCalled)
-    }
-
     func test_usesCorrectComponentsTypes_whenCustomTypesDefined() {
         // Create default ChatChannelListVC which has everything default from `Components`
         let channelListVC = ChatChannelListVC()

@@ -10,7 +10,7 @@ open class ZoomTransitionController: NSObject, UIViewControllerTransitioningDele
     public private(set) lazy var zoomAnimator = ZoomAnimator()
     
     /// `UIImageView` that is being presented.
-    public weak var fromImageView: UIImageView!
+    public weak var fromImageView: UIImageView?
 
     /// Closure for `UIImageView` in the presented view controller.
     public var presentedVCImageView: (() -> UIImageView?)?

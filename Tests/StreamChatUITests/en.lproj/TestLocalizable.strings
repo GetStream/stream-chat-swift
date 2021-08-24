@@ -49,7 +49,6 @@
 "message.sending.attachment-uploading-failed" = "UPLOADING FAILED";
 
 "message.title.online" = "Online";
-"message.title.see-minutes-ago" = "Seen %@ ago";
 "message.title.offline" = "Offline";
 "message.title.group" = "%d members, %d online";
 

@@ -16,7 +16,7 @@ extension ChannelDetailPayload: DecodableEntity {}
 
 class CustomDataHashMap_Tests: XCTestCase {
     func test_UserWebSocketPayloadEncodeWithCustomMap() throws {
-        let extraData: [String: RawJSON] = ["how-many-roads": .integer(42)]
+        let extraData: [String: RawJSON] = ["how-many-roads": .number(42)]
         let userInfo = UserInfo(id: "44", name: "tommaso", imageURL: nil, extraData: extraData)
         let payload = UserWebSocketPayload(userInfo: userInfo)
         let encoded = try! JSONEncoder.default.encode(payload)
@@ -35,15 +35,15 @@ class CustomDataHashMap_Tests: XCTestCase {
         let payload = try JSONDecoder.default.decode(entity.self, from: jsonData)
         
         XCTAssertEqual(payload.extraData["secret_note"], .string("Anakin is Vader!"))
-        XCTAssertEqual(payload.extraData["good_movies_count"], .integer(3))
+        XCTAssertEqual(payload.extraData["good_movies_count"], .number(3))
         XCTAssertEqual(payload.extraData["awesome"], .bool(true))
         XCTAssertEqual(payload.extraData["nested_stuff"], .dictionary(
             [
-                "how_many_times": .integer(42), "small": .double(0.001),
+                "how_many_times": .number(42), "small": .double(0.001),
                 "colors": .array([
                     .string("blue"),
                     .string("yellow"),
-                    .integer(42)
+                    .number(42)
                 ])
             ]
         ))

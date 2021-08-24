@@ -73,6 +73,9 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
         }
     }
     
+    /// A Boolean value that returns wether pagination is finished
+    public private(set) var hasLoadedAllPreviousReplies: Bool = false
+
     private let environment: Environment
     
     /// An internal backing object for all publicly available Combine publishers. We use it to simplify the way we expose
@@ -244,14 +247,25 @@ public extension ChatMessageController {
         limit: Int = 25,
         completion: ((Error?) -> Void)? = nil
     ) {
+        if hasLoadedAllPreviousReplies {
+            completion?(nil)
+            return
+        }
+        
         let lastMessageId = messageId ?? replies.last?.id
     
         messageUpdater.loadReplies(
             cid: cid,
             messageId: self.messageId,
             pagination: MessagesPagination(pageSize: limit, parameter: lastMessageId.map { PaginationParameter.lessThan($0) })
-        ) { error in
-            self.callback { completion?(error) }
+        ) { result in
+            switch result {
+            case let .success(payload):
+                self.hasLoadedAllPreviousReplies = payload.messages.count < limit
+                self.callback { completion?(nil) }
+            case let .failure(error):
+                self.callback { completion?(error) }
+            }
         }
     }
     
@@ -278,8 +292,8 @@ public extension ChatMessageController {
             cid: cid,
             messageId: self.messageId,
             pagination: MessagesPagination(pageSize: limit, parameter: .greaterThan(messageId))
-        ) { error in
-            self.callback { completion?(error) }
+        ) { result in
+            self.callback { completion?(result.error) }
         }
     }
     
@@ -474,10 +488,6 @@ private extension ChatMessageController {
 // MARK: - Delegate
 
 /// `ChatMessageController` uses this protocol to communicate changes to its delegate.
-///
-/// This protocol can be used only when no custom extra data are specified.
-/// If you're using custom extra data types, please use `_ChatMessageControllerDelegate` instead.
-///
 public protocol ChatMessageControllerDelegate: DataControllerStateDelegate {
     /// The controller observed a change in the `ChatMessage` its observes.
     func messageController(_ controller: ChatMessageController, didChangeMessage change: EntityChange<ChatMessage>)
@@ -492,11 +502,7 @@ public extension ChatMessageControllerDelegate {
     func messageController(_ controller: ChatMessageController, didChangeReplies changes: [ListChange<ChatMessage>]) {}
 }
 
-/// `_ChatMessageControllerDelegate` uses this protocol to communicate changes to its delegate.
-///
-/// If you're **not** using custom extra data types, you can use a convenience version of this protocol
-/// named `ChatMessageControllerDelegate`, which hides the generic types, and make the usage easier.
-///
+/// `ChatMessageControllerDelegate` uses this protocol to communicate changes to its delegate.
 public protocol _ChatMessageControllerDelegate: DataControllerStateDelegate {
     /// The controller observed a change in the `ChatMessage` its observes.
     func messageController(
@@ -565,10 +571,6 @@ extension AnyChatMessageControllerDelegate {
  
 public extension ChatMessageController {
     /// Set the delegate of `ChatMessageController` to observe the changes in the system.
-    ///
-    /// - Note: The delegate can be set directly only if you're **not** using custom extra data types. Due to the current
-    /// limits of Swift and the way it handles protocols with associated types, it's required to use `setDelegate` method
-    /// instead to set the delegate, if you're using custom extra data types.
     var delegate: ChatMessageControllerDelegate? {
         get { multicastDelegate.mainDelegate?.wrappedDelegate as? ChatMessageControllerDelegate }
         set { multicastDelegate.mainDelegate = AnyChatMessageControllerDelegate(newValue) }

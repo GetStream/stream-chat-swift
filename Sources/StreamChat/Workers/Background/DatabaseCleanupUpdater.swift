@@ -58,10 +58,9 @@ class DatabaseCleanupUpdater: Worker {
                 let queries: [ChannelListQuery] = try queriesDTOs.map {
                     try $0.asChannelListQuery()
                 }
-                
                 queries.forEach {
-                    self?.channelListUpdater.update(channelListQuery: $0) { error in
-                        if let error = error {
+                    self?.channelListUpdater.update(channelListQuery: $0) { result in
+                        if case let .failure(error) = result {
                             log.error("Internal error. Failed to update ChannelListQueries for the new channel: \(error)")
                         }
                     }

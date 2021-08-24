@@ -171,6 +171,7 @@ open class ChatMessageListView: UITableView, Customizable, ComponentsProvider {
     /// Updates the table view data with given `changes`.
     open func updateMessages(
         with changes: [ListChange<ChatMessage>],
+        onMessagesUpdate: () -> Void = {},
         completion: (() -> Void)? = nil
     ) {
         var shouldScrollToBottom = false
@@ -178,6 +179,7 @@ open class ChatMessageListView: UITableView, Customizable, ComponentsProvider {
         guard let _ = collectionUpdatesMapper.mapToSetsOfIndexPaths(
             changes: changes,
             onConflict: {
+                onMessagesUpdate()
                 reloadData()
             }
         ) else { return }
@@ -210,6 +212,7 @@ open class ChatMessageListView: UITableView, Customizable, ComponentsProvider {
                     self.deleteRows(at: [index], with: .fade)
                 }
             }
+            onMessagesUpdate()
         }, completion: { _ in
             if shouldScrollToBottom {
                 self.scrollToBottomAction = .init { [weak self] in
