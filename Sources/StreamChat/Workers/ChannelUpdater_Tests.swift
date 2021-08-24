@@ -7,7 +7,6 @@
 import XCTest
 
 class ChannelUpdater_Tests: StressTestCase {
-    var webSocketClient: WebSocketClientMock!
     var apiClient: APIClientMock!
     var database: DatabaseContainerMock!
     
@@ -15,8 +14,7 @@ class ChannelUpdater_Tests: StressTestCase {
     
     override func setUp() {
         super.setUp()
-        
-        webSocketClient = WebSocketClientMock()
+
         apiClient = APIClientMock()
         database = DatabaseContainerMock()
         
@@ -25,6 +23,7 @@ class ChannelUpdater_Tests: StressTestCase {
     
     override func tearDown() {
         apiClient.cleanUp()
+        channelUpdater = nil
         AssertAsync.canBeReleased(&database)
         
         super.tearDown()
@@ -431,6 +430,7 @@ class ChannelUpdater_Tests: StressTestCase {
         // Consecutive `hideChannel` calls won't generate `channel.hidden` events
         // and SDK has no way to learn channel was hidden
         // So, ChannelUpdater marks the Channel as hidden on successful API response
+
         // Create a channel in DB
         let cid = ChannelId.unique
         
@@ -453,7 +453,7 @@ class ChannelUpdater_Tests: StressTestCase {
         // Simulate API response with success
         apiClient.test_simulateResponse(Result<EmptyResponse, Error>.success(.init()))
 
-        wait(for: [exp], timeout: 1)
+        wait(for: [exp], timeout: 5)
         
         // Ensure channel is marked as hidden
         XCTAssertNotNil(channel?.hiddenAt)
