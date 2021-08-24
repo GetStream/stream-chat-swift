@@ -146,9 +146,9 @@ extension ChatClientConfig {
     /// `ChatChannel` specific local caching and model serialization settings.
     public struct ChatChannel: Equatable {
         /// Limit the max number of watchers included in `ChatChannel.lastActiveWatchers`.
-        public var lastActiveWatchersLimit = 5
+        public var lastActiveWatchersLimit = 100
         /// Limit the max number of members included in `ChatChannel.lastActiveMembers`.
-        public var lastActiveMembersLimit = 5
+        public var lastActiveMembersLimit = 100
         /// Limit the max number of messages included in `ChatChannel.latestMessages`.
         public var latestMessagesLimit = 5
     }
