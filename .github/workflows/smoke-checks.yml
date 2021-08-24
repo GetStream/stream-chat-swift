@@ -79,8 +79,6 @@ jobs:
         device: "iPhone 7"
         ios: "12.4"
         xcode: "10.3"
-    - name: Run LLC Tests (Debug - iOS < 13)
-      run: bundle exec fastlane test device:"iPhone 7 (12.4)"
     - uses: codecov/codecov-action@v1
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
