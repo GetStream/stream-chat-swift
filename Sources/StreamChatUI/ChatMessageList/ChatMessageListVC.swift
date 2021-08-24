@@ -472,4 +472,12 @@ open class ChatMessageListVC:
         // To prevent the gesture recognizer consuming up the events from UIControls, we receive touch only when the view isn't a UIControl.
         !(touch.view is UIControl)
     }
+
+    // MARK: - UIAdaptivePresentationControllerDelegate
+
+    public func presentationControllerShouldDismiss(_ presentationController: UIPresentationController) -> Bool {
+        // A workaround is required because we are using an inverted UITableView for the message list.
+        // More details on the issue: https://github.com/GetStream/stream-chat-swift/issues/1307
+        !listView.isDragging
+    }
 }
