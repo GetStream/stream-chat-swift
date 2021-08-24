@@ -28,6 +28,7 @@ open class ChatThreadVC: _ViewController, ThemeProvider {
     open lazy var userSuggestionSearchController: ChatUserSearchController =
         channelController.client.userSearchController()
 
+    /// The message list component responsible to render the messages.
     open lazy var messageListVC: ChatMessageListVC = components
         .messageListVC
         .init()

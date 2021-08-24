@@ -29,6 +29,7 @@ open class ChatChannelVC: _ViewController, ThemeProvider {
         composerBottomConstraint: messageComposerBottomConstraint
     )
 
+    /// The message list component responsible to render the messages.
     open lazy var messageListVC: ChatMessageListVC = components
         .messageListVC
         .init()
