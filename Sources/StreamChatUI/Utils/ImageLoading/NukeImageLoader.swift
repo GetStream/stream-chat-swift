@@ -38,6 +38,49 @@ open class NukeImageLoader: ImageLoading {
         return imageTask
     }
     
+    open func loadImages(
+        from urls: [URL],
+        placeholders: [UIImage],
+        loadThumbnails: Bool,
+        thumbnailSize: CGSize,
+        imageCDN: ImageCDN,
+        completion: @escaping (([UIImage]) -> Void)
+    ) {
+        let group = DispatchGroup()
+        var images: [UIImage] = []
+        
+        for avatarUrl in urls {
+            var placeholderIndex = 0
+            
+            let thumbnailUrl = imageCDN.thumbnailURL(originalURL: avatarUrl, preferredSize: .avatarThumbnailSize)
+            let imageRequest = imageCDN.urlRequest(forImage: thumbnailUrl)
+            let cachingKey = imageCDN.cachingKey(forImage: avatarUrl)
+
+            group.enter()
+
+            loadImage(using: imageRequest, cachingKey: cachingKey) { result in
+                switch result {
+                case let .success(image):
+                    images.append(image)
+                case .failure:
+                    if !placeholders.isEmpty {
+                        // Rotationally use the placeholders
+                        images.append(placeholders[placeholderIndex])
+                        placeholderIndex += 1
+                        if placeholderIndex == placeholders.count {
+                            placeholderIndex = 0
+                        }
+                    }
+                }
+                group.leave()
+            }
+        }
+        
+        group.notify(queue: .main) {
+            completion(images)
+        }
+    }
+    
     @discardableResult
     open func loadImage(
         into imageView: UIImageView,

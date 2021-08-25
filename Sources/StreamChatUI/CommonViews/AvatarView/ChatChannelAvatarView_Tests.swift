@@ -236,4 +236,14 @@ class MockImageLoader: ImageLoading {
         
         return nil
     }
+    
+    func loadImages(
+        from urls: [URL],
+        placeholders: [UIImage],
+        imageCDN: ImageCDN,
+        completion: @escaping (([UIImage]) -> Void)
+    ) {
+        let images = urls.map { UIImage(data: try! Data(contentsOf: $0))! }
+        completion(images)
+    }
 }

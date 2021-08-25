@@ -59,7 +59,7 @@ open class ChatChannelAvatarView: _View, ThemeProvider, SwiftUIRepresentable {
     /// Loads avatar for a directMessageChannel
     /// - Parameter channel: The channel
     open func loadDirectMessageChannelAvatar(channel: ChatChannel) {
-        let lastActiveMembers = lastActiveMembers()
+        let lastActiveMembers = self.lastActiveMembers()
         
         // If there are no members other than the current user in the channel, load a placeholder
         guard !lastActiveMembers.isEmpty, let otherMember = lastActiveMembers.first else {
@@ -78,7 +78,7 @@ open class ChatChannelAvatarView: _View, ThemeProvider, SwiftUIRepresentable {
         // The channel is a non-DM channel, hide the online indicator
         presenceAvatarView.isOnlineIndicatorVisible = false
         
-        let lastActiveMembers = lastActiveMembers()
+        let lastActiveMembers = self.lastActiveMembers()
         
         // If there are no members other than the current user in the channel, load a placeholder
         guard !lastActiveMembers.isEmpty else {
@@ -143,37 +143,12 @@ open class ChatChannelAvatarView: _View, ThemeProvider, SwiftUIRepresentable {
             }
         }
         
-        let group = DispatchGroup()
-        var images: [UIImage] = []
-        
-        for avatarUrl in avatarUrls {
-            var placeholderIndex = 0
-            group.enter()
-            
-            let thumbnailUrl = components.imageCDN.thumbnailURL(originalURL: avatarUrl, preferredSize: .avatarThumbnailSize)
-            let imageRequest = components.imageCDN.urlRequest(forImage: thumbnailUrl)
-            let cachingKey = components.imageCDN.cachingKey(forImage: avatarUrl)
-
-            components.imageLoader.loadImage(using: imageRequest, cachingKey: cachingKey) { result in
-                switch result {
-                case let .success(image):
-                    images.append(image)
-                case .failure:
-                    if !placeholderImages.isEmpty {
-                        // Rotationally use the placeholders
-                        images.append(placeholderImages[placeholderIndex])
-                        placeholderIndex += 1
-                        if placeholderIndex == placeholderImages.count {
-                            placeholderIndex = 0
-                        }
-                    }
-                }
-                group.leave()
-            }
-            
-            group.notify(queue: .main) {
-                completion(images, channelId)
-            }
+        components.imageLoader.loadImages(
+            from: avatarUrls,
+            placeholders: placeholderImages,
+            imageCDN: components.imageCDN
+        ) { images in
+            completion(images, channelId)
         }
     }
     

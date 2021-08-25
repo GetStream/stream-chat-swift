@@ -37,6 +37,23 @@ public protocol ImageLoading: AnyObject {
         preferredSize: CGSize?,
         completion: ((_ result: Result<UIImage, Error>) -> Void)?
     ) -> Cancellable?
+    
+    /// Load images from a given URLs
+    /// - Parameters:
+    ///   - urls: The URLs to load the images from
+    ///   - placeholders: The placeholder images. Placeholders are used when an image fails to load from a URL. The placeholders are used rotationally
+    ///   - loadThumbnails: Should load the images as thumbnails. If this is set to `true`, the thumbnail URL is derived from the `imageCDN` object
+    ///   - thumbnailSize: The size of the thumbnail. This parameter is used only if the `loadThumbnails` parameter is true
+    ///   - imageCDN: The imageCDN to be used
+    ///   - completion: Completion that gets called when all the images finish downloading
+    func loadImages(
+        from urls: [URL],
+        placeholders: [UIImage],
+        loadThumbnails: Bool,
+        thumbnailSize: CGSize,
+        imageCDN: ImageCDN,
+        completion: @escaping (([UIImage]) -> Void)
+    )
 }
 
 public extension ImageLoading {
@@ -57,6 +74,24 @@ public extension ImageLoading {
             placeholder: placeholder,
             resize: resize,
             preferredSize: preferredSize,
+            completion: completion
+        )
+    }
+    
+    func loadImages(
+        from urls: [URL],
+        placeholders: [UIImage],
+        loadThumbnails: Bool = true,
+        thumbnailSize: CGSize = .avatarThumbnailSize,
+        imageCDN: ImageCDN,
+        completion: @escaping (([UIImage]) -> Void)
+    ) {
+        loadImages(
+            from: urls,
+            placeholders: placeholders,
+            loadThumbnails: loadThumbnails,
+            thumbnailSize: thumbnailSize,
+            imageCDN: imageCDN,
             completion: completion
         )
     }
