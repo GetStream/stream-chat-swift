@@ -6,7 +6,7 @@
 @testable import StreamChatTestTools
 import XCTest
 
-class ChannelUpdater_Tests: StressTestCase {
+class ChannelUpdater_Tests: XCTestCase {
     var apiClient: APIClientMock!
     var database: DatabaseContainerMock!
     
