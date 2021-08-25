@@ -17,7 +17,7 @@ public struct EventType: RawRepresentable, Codable, Hashable, ExpressibleByStrin
     }
 }
 
-extension EventType {
+public extension EventType {
     static let healthCheck: Self = "health.check"
     
     // MARK: User Events
@@ -103,7 +103,9 @@ extension EventType {
 
     /// When a user was removed from a channel.
     static let notificationRemovedFromChannel: Self = "notification.removed_from_channel"
-    
+}
+
+extension EventType {
     func event(from response: EventPayload) throws -> Event {
         switch self {
         case .healthCheck: return try HealthCheckEvent(from: response)

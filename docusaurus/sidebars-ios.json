@@ -53,17 +53,12 @@
     },
     {
       "Guides": [  
+        "guides/push-notifications",
+        "guides/working-with-attachments",
         "guides/customize-message-composer",
         "guides/message-composer-custom-attachments",
-        "guides/working-with-a-channel",
-        "guides/working-with-members",
-        "guides/working-with-attachments",
-        "guides/working-with-reactions",
-        "guides/working-with-user",
-        "guides/push-notifications",
         "guides/migrating-from-3-to-4",
-        "guides/migrating-from-1.x-and-2.x",
-        "guides/debugging"
+        "guides/migrating-from-1.x-and-2.x"
       ]
     }
   ]

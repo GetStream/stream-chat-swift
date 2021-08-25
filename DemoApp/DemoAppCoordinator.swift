@@ -6,6 +6,10 @@ import StreamChat
 import StreamChatUI
 import UIKit
 
+extension ChatClient {
+    static var shared: ChatClient!
+}
+
 final class DemoAppCoordinator {
     var connectionController: ChatConnectionController?
     let navigationController: UINavigationController
@@ -29,11 +33,28 @@ final class DemoAppCoordinator {
         
         // Create client
         let config = ChatClientConfig(apiKey: .init(userCredentials.apiKey))
-        let client = ChatClient(config: config)
-        client.connectUser(
+        ChatClient.shared = ChatClient(config: config)
+        ChatClient.shared.connectUser(
             userInfo: .init(id: userCredentials.id, extraData: [ChatUser.birthLandFieldName: .string(userCredentials.birthLand)]),
             token: token
-        )
+        ) { error in
+            print("debugging: connectUser completion called")
+            if let error = error {
+                print("debugging: connectUser completion errored")
+                log.error("connecting the user failed \(error)")
+                return
+            }
+
+            UNUserNotificationCenter
+                .current()
+                .requestAuthorization(options: [.alert, .sound, .badge]) { granted, _ in
+                    if granted {
+                        DispatchQueue.main.async {
+                            UIApplication.shared.registerForRemoteNotifications()
+                        }
+                    }
+                }
+        }
         
         // Config
         Components.default.channelListRouter = DemoChatChannelListRouter.self
@@ -44,11 +65,12 @@ final class DemoAppCoordinator {
         }
 
         // Channels with the current user
-        let controller = client.channelListController(query: .init(filter: .containMembers(userIds: [userCredentials.id])))
+        let controller = ChatClient.shared
+            .channelListController(query: .init(filter: .containMembers(userIds: [userCredentials.id])))
         let chatList = DemoChannelListVC()
         chatList.controller = controller
         
-        connectionController = client.connectionController()
+        connectionController = ChatClient.shared.connectionController()
         connectionController?.delegate = connectionDelegate
         
         navigationController.viewControllers = [chatList]
