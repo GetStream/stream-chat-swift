@@ -26,7 +26,7 @@ class MessageDTO: NSManagedObject {
     
     @NSManaged var user: UserDTO
     @NSManaged var mentionedUsers: Set<UserDTO>
-    @NSManaged var threadParticipants: Set<UserDTO>
+    @NSManaged var threadParticipants: NSOrderedSet
     @NSManaged var channel: ChannelDTO?
     @NSManaged var replies: Set<MessageDTO>
     @NSManaged var flaggedBy: CurrentUserDTO?
@@ -453,8 +453,8 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         })
 
         // If user participated in thread, but deleted message later, we need to get rid of it if backends does
-        dto.threadParticipants = try Set(
-            payload.threadParticipants.map { try saveUser(payload: $0) }
+        dto.threadParticipants = try NSOrderedSet(
+            array: payload.threadParticipants.map { try saveUser(payload: $0) }
         )
 
         var channelDTO: ChannelDTO?
@@ -635,11 +635,14 @@ private extension ChatMessage {
             $_currentUserReactions = ({ [] }, nil)
         }
         
-        if dto.threadParticipants.isEmpty {
+        if dto.threadParticipants.array.isEmpty {
             $_threadParticipants = ({ [] }, nil)
         } else {
             $_threadParticipants = (
-                { Set(dto.threadParticipants.map { $0.asModel() }) },
+                {
+                    let threadParticipants = dto.threadParticipants.array as? [UserDTO] ?? []
+                    return threadParticipants.map { $0.asModel() }
+                },
                 dto.managedObjectContext
             )
         }

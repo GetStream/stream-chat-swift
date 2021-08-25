@@ -147,7 +147,7 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
             trumpExistingChannels: trumpExistingChannels
         ) { result in
             switch result {
-            case let .success:
+            case .success:
                 self.state = .remoteDataFetched
                 self.callback { completion?(nil) }
             case let .failure(error):

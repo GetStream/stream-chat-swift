@@ -10,7 +10,7 @@ env:
 
 jobs:
   build-and-test-release:
-    name: Test LLC + UI (Release)
+    name: Test LLC (Release)
     runs-on: macos-latest
     steps:
     - uses: actions/checkout@v1
@@ -32,18 +32,74 @@ jobs:
     - uses: ./.github/actions/bootstrap
     - name: Run LLC Tests (Release)
       run: bundle exec fastlane test_release
+    - uses: 8398a7/action-slack@v3
+      with:
+        status: ${{ job.status }}
+        text: "You shall not pass!"
+        job_name: "Test LLC (Release)"
+        fields: message,commit,author,action,eventName,workflow,job,took
+      env:
+        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        MATRIX_CONTEXT: ${{ toJson(matrix) }}
+      if: ${{ github.event_name == 'push' && failure() }}
+
+  build-and-test-ui-release:
+    name: Test UI (Release)
+    runs-on: macos-latest
+    steps:
+    - uses: actions/checkout@v1
+    - uses: ./.github/actions/set-build-image-var
+    - name: Cache RubyGems
+      uses: actions/cache@v2
+      id: rubygem-cache
+      with:
+        path: vendor/bundle
+        key: ${{ runner.os }}-${{ env.ImageVersion }}-gem-${{ hashFiles('**/Gemfile.lock') }}
+        restore-keys: ${{ runner.os }}-${{ env.ImageVersion }}-gem-
+    - name: Cache Mint
+      uses: actions/cache@v2
+      id: mint-cache
+      with:
+        path: /usr/local/lib/mint
+        key: ${{ runner.os }}-mint-${{ hashFiles('./Mintfile') }}
+        restore-keys: ${{ runner.os }}-mint-
+    - uses: ./.github/actions/bootstrap
     - name: Run UI Tests (Release)
       run: bundle exec fastlane test_ui_release device:"iPhone 12"
     - uses: 8398a7/action-slack@v3
       with:
         status: ${{ job.status }}
         text: "You shall not pass!"
-        job_name: "Test LLC + UI (Release)"
+        job_name: "Test UI (Release)"
         fields: message,commit,author,action,eventName,workflow,job,took
       env:
         SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
         MATRIX_CONTEXT: ${{ toJson(matrix) }}
       if: ${{ github.event_name == 'push' && failure() }}
+
+  stress-tests:
+    name: Stress Test LLC - Latest iOS (Release)
+    runs-on: macos-latest
+    steps:
+    - uses: actions/checkout@v1
+    - uses: ./.github/actions/set-build-image-var
+    - name: Cache RubyGems
+      uses: actions/cache@v2
+      id: rubygem-cache
+      with:
+        path: vendor/bundle
+        key: ${{ runner.os }}-${{ env.ImageVersion }}-gem-${{ hashFiles('**/Gemfile.lock') }}
+        restore-keys: ${{ runner.os }}-${{ env.ImageVersion }}-gem-
+    - name: Cache Mint
+      uses: actions/cache@v2
+      id: mint-cache
+      with:
+        path: /usr/local/lib/mint
+        key: ${{ runner.os }}-mint-${{ hashFiles('./Mintfile') }}
+        restore-keys: ${{ runner.os }}-mint-
+    - uses: ./.github/actions/bootstrap
+    - name: Run Stress Tests - Latest iOS (Release)
+      run: bundle exec fastlane stress_test_release device:"iPhone 12"
 
   stress-tests:
     name: Stress Test LLC - Latest iOS (Release)
