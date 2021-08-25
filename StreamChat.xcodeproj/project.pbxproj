@@ -56,13 +56,10 @@
 		430156F226B4523A0006E7EA /* WebSocketConnectPayload_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 430156F126B4523A0006E7EA /* WebSocketConnectPayload_Tests.swift */; };
 		43016E1426B7189D0054E805 /* CustomMessageContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43016E1326B7189D0054E805 /* CustomMessageContentView.swift */; };
 		43016E1626B734410054E805 /* ChatUser+CustomFields.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43016E1526B734410054E805 /* ChatUser+CustomFields.swift */; };
-		437FC9E926D630860000223C /* UserNotifications.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 437FC9E826D630860000223C /* UserNotifications.framework */; };
-		437FC9EB26D630860000223C /* UserNotificationsUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 437FC9EA26D630860000223C /* UserNotificationsUI.framework */; };
-		437FC9EE26D630860000223C /* NotificationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 437FC9ED26D630860000223C /* NotificationViewController.swift */; };
-		437FC9F126D630860000223C /* MainInterface.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 437FC9EF26D630860000223C /* MainInterface.storyboard */; };
-		437FC9F526D630860000223C /* ChatPush.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 437FC9E726D630860000223C /* ChatPush.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
-		437FC9FB26D650D20000223C /* StreamChat.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 799C941B247D2F80001F1104 /* StreamChat.framework */; };
-		437FC9FC26D650D20000223C /* StreamChat.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 799C941B247D2F80001F1104 /* StreamChat.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		437FCA0726D67BE40000223C /* NotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 437FCA0626D67BE40000223C /* NotificationService.swift */; };
+		437FCA0B26D67BE40000223C /* DemoAppPush.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 437FCA0426D67BE40000223C /* DemoAppPush.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		437FCA1026D67CB40000223C /* StreamChat.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 799C941B247D2F80001F1104 /* StreamChat.framework */; };
+		437FCA1126D67CB40000223C /* StreamChat.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 799C941B247D2F80001F1104 /* StreamChat.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		439AFF9826C563BA000A441E /* DateUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 439AFF9726C563BA000A441E /* DateUtils.swift */; };
 		439AFF9A26C568DD000A441E /* DateUtils_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 439AFF9926C568DD000A441E /* DateUtils_Tests.swift */; };
 		43ABF8B526C2CD900034BD62 /* ComposerVC_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43ABF8B326C2B7140034BD62 /* ComposerVC_Tests.swift */; };
@@ -1131,14 +1128,14 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		437FC9F326D630860000223C /* PBXContainerItemProxy */ = {
+		437FCA0926D67BE40000223C /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 8AD5EC8622E9A3E8005CFAC9 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 437FC9E626D630860000223C;
-			remoteInfo = ChatPush;
+			remoteGlobalIDString = 437FCA0326D67BE40000223C;
+			remoteInfo = DemoAppPush;
 		};
-		437FC9FD26D650D20000223C /* PBXContainerItemProxy */ = {
+		437FCA1226D67CB40000223C /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 8AD5EC8622E9A3E8005CFAC9 /* Project object */;
 			proxyType = 1;
@@ -1315,18 +1312,18 @@
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			files = (
-				437FC9F526D630860000223C /* ChatPush.appex in Embed App Extensions */,
+				437FCA0B26D67BE40000223C /* DemoAppPush.appex in Embed App Extensions */,
 			);
 			name = "Embed App Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		437FC9FF26D650D20000223C /* Embed Frameworks */ = {
+		437FCA1426D67CB40000223C /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				437FC9FC26D650D20000223C /* StreamChat.framework in Embed Frameworks */,
+				437FCA1126D67CB40000223C /* StreamChat.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1434,12 +1431,11 @@
 		43016E1326B7189D0054E805 /* CustomMessageContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomMessageContentView.swift; sourceTree = "<group>"; };
 		43016E1526B734410054E805 /* ChatUser+CustomFields.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChatUser+CustomFields.swift"; sourceTree = "<group>"; };
 		437FC9E226D53F140000223C /* ChatSample.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ChatSample.entitlements; sourceTree = "<group>"; };
-		437FC9E726D630860000223C /* ChatPush.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = ChatPush.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		437FC9E826D630860000223C /* UserNotifications.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UserNotifications.framework; path = System/Library/Frameworks/UserNotifications.framework; sourceTree = SDKROOT; };
 		437FC9EA26D630860000223C /* UserNotificationsUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UserNotificationsUI.framework; path = System/Library/Frameworks/UserNotificationsUI.framework; sourceTree = SDKROOT; };
-		437FC9ED26D630860000223C /* NotificationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationViewController.swift; sourceTree = "<group>"; };
-		437FC9F026D630860000223C /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/MainInterface.storyboard; sourceTree = "<group>"; };
-		437FC9F226D630860000223C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		437FCA0426D67BE40000223C /* DemoAppPush.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = DemoAppPush.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		437FCA0626D67BE40000223C /* NotificationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationService.swift; sourceTree = "<group>"; };
+		437FCA0826D67BE40000223C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		439AFF9726C563BA000A441E /* DateUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateUtils.swift; sourceTree = "<group>"; };
 		439AFF9926C568DD000A441E /* DateUtils_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateUtils_Tests.swift; sourceTree = "<group>"; };
 		43ABF8B326C2B7140034BD62 /* ComposerVC_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComposerVC_Tests.swift; sourceTree = "<group>"; };
@@ -2496,13 +2492,11 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		437FC9E426D630860000223C /* Frameworks */ = {
+		437FCA0126D67BE40000223C /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				437FC9EB26D630860000223C /* UserNotificationsUI.framework in Frameworks */,
-				437FC9FB26D650D20000223C /* StreamChat.framework in Frameworks */,
-				437FC9E926D630860000223C /* UserNotifications.framework in Frameworks */,
+				437FCA1026D67CB40000223C /* StreamChat.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2655,14 +2649,13 @@
 			path = Attachments;
 			sourceTree = "<group>";
 		};
-		437FC9EC26D630860000223C /* ChatPush */ = {
+		437FCA0526D67BE40000223C /* DemoAppPush */ = {
 			isa = PBXGroup;
 			children = (
-				437FC9ED26D630860000223C /* NotificationViewController.swift */,
-				437FC9EF26D630860000223C /* MainInterface.storyboard */,
-				437FC9F226D630860000223C /* Info.plist */,
+				437FCA0626D67BE40000223C /* NotificationService.swift */,
+				437FCA0826D67BE40000223C /* Info.plist */,
 			);
-			path = ChatPush;
+			path = DemoAppPush;
 			sourceTree = "<group>";
 		};
 		790881AB254327C800896F03 /* StreamChat */ = {
@@ -4427,7 +4420,7 @@
 				F8933B9325FF55E30054BBFF /* SlackClone */,
 				F89C23A725E508DE0082CA5B /* iMessageClone */,
 				AC908382268B115F00ACFB8E /* YouTubeClone */,
-				437FC9EC26D630860000223C /* ChatPush */,
+				437FCA0526D67BE40000223C /* DemoAppPush */,
 				8AD5EC9022E9A3E8005CFAC9 /* Products */,
 				8AD5ECA722E9B3C4005CFAC9 /* Frameworks */,
 				F8933CBB25FFA22F0054BBFF /* Recovered References */,
@@ -4453,7 +4446,7 @@
 				F89C23A625E508DE0082CA5B /* iMessageClone.app */,
 				E74DB0D32656631700508D22 /* UISDKDocumentation.xctest */,
 				AC908381268B115F00ACFB8E /* YouTubeClone.app */,
-				437FC9E726D630860000223C /* ChatPush.appex */,
+				437FCA0426D67BE40000223C /* DemoAppPush.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -5158,23 +5151,23 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		437FC9E626D630860000223C /* ChatPush */ = {
+		437FCA0326D67BE40000223C /* DemoAppPush */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 437FC9F626D630860000223C /* Build configuration list for PBXNativeTarget "ChatPush" */;
+			buildConfigurationList = 437FCA0F26D67BE40000223C /* Build configuration list for PBXNativeTarget "DemoAppPush" */;
 			buildPhases = (
-				437FC9E326D630860000223C /* Sources */,
-				437FC9E426D630860000223C /* Frameworks */,
-				437FC9E526D630860000223C /* Resources */,
-				437FC9FF26D650D20000223C /* Embed Frameworks */,
+				437FCA0026D67BE40000223C /* Sources */,
+				437FCA0126D67BE40000223C /* Frameworks */,
+				437FCA0226D67BE40000223C /* Resources */,
+				437FCA1426D67CB40000223C /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				437FC9FE26D650D20000223C /* PBXTargetDependency */,
+				437FCA1326D67CB40000223C /* PBXTargetDependency */,
 			);
-			name = ChatPush;
-			productName = ChatPush;
-			productReference = 437FC9E726D630860000223C /* ChatPush.appex */;
+			name = DemoAppPush;
+			productName = DemoAppPush;
+			productReference = 437FCA0426D67BE40000223C /* DemoAppPush.appex */;
 			productType = "com.apple.product-type.app-extension";
 		};
 		790881FC25432B7200896F03 /* StreamChatUI */ = {
@@ -5258,7 +5251,7 @@
 			dependencies = (
 				792DDA72256FB6AD001DB91B /* PBXTargetDependency */,
 				79940B8B258398A500791EAE /* PBXTargetDependency */,
-				437FC9F426D630860000223C /* PBXTargetDependency */,
+				437FCA0A26D67BE40000223C /* PBXTargetDependency */,
 			);
 			name = DemoApp;
 			packageProductDependencies = (
@@ -5474,7 +5467,7 @@
 				LastUpgradeCheck = 1240;
 				ORGANIZATIONNAME = "Stream.io Inc";
 				TargetAttributes = {
-					437FC9E626D630860000223C = {
+					437FCA0326D67BE40000223C = {
 						CreatedOnToolsVersion = 12.5;
 					};
 					790881FC25432B7200896F03 = {
@@ -5556,17 +5549,16 @@
 				F89C23A525E508DE0082CA5B /* iMessageClone */,
 				E74DB08A2656631700508D22 /* UISDKDocumentation */,
 				AC908380268B115F00ACFB8E /* YouTubeClone */,
-				437FC9E626D630860000223C /* ChatPush */,
+				437FCA0326D67BE40000223C /* DemoAppPush */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		437FC9E526D630860000223C /* Resources */ = {
+		437FCA0226D67BE40000223C /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				437FC9F126D630860000223C /* MainInterface.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5817,11 +5809,11 @@
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		437FC9E326D630860000223C /* Sources */ = {
+		437FCA0026D67BE40000223C /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				437FC9EE26D630860000223C /* NotificationViewController.swift in Sources */,
+				437FCA0726D67BE40000223C /* NotificationService.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6879,15 +6871,15 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		437FC9F426D630860000223C /* PBXTargetDependency */ = {
+		437FCA0A26D67BE40000223C /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 437FC9E626D630860000223C /* ChatPush */;
-			targetProxy = 437FC9F326D630860000223C /* PBXContainerItemProxy */;
+			target = 437FCA0326D67BE40000223C /* DemoAppPush */;
+			targetProxy = 437FCA0926D67BE40000223C /* PBXContainerItemProxy */;
 		};
-		437FC9FE26D650D20000223C /* PBXTargetDependency */ = {
+		437FCA1326D67CB40000223C /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 799C941A247D2F80001F1104 /* StreamChat */;
-			targetProxy = 437FC9FD26D650D20000223C /* PBXContainerItemProxy */;
+			targetProxy = 437FCA1226D67CB40000223C /* PBXContainerItemProxy */;
 		};
 		790881AF2543282200896F03 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -7007,14 +6999,6 @@
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
-		437FC9EF26D630860000223C /* MainInterface.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				437FC9F026D630860000223C /* Base */,
-			);
-			name = MainInterface.storyboard;
-			sourceTree = "<group>";
-		};
 		792A4F2C247FF01800EAF71D /* Main.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -7132,19 +7116,19 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
-		437FC9F726D630860000223C /* Debug */ = {
+		437FCA0C26D67BE40000223C /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = EHV7XZLAHA;
-				INFOPLIST_FILE = ChatPush/Info.plist;
+				INFOPLIST_FILE = DemoAppPush/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 14.5;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = io.getstream.iOS.ChatDemoApp.ChatPush;
+				PRODUCT_BUNDLE_IDENTIFIER = io.getstream.iOS.ChatDemoApp.DemoAppPush;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
@@ -7153,20 +7137,20 @@
 			};
 			name = Debug;
 		};
-		437FC9F826D630860000223C /* Release */ = {
+		437FCA0D26D67BE40000223C /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = EHV7XZLAHA;
-				INFOPLIST_FILE = ChatPush/Info.plist;
+				INFOPLIST_FILE = DemoAppPush/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 14.5;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = io.getstream.iOS.ChatDemoApp.ChatPush;
+				PRODUCT_BUNDLE_IDENTIFIER = io.getstream.iOS.ChatDemoApp.DemoAppPush;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 5.0;
@@ -7174,19 +7158,19 @@
 			};
 			name = Release;
 		};
-		437FC9F926D630860000223C /* ReleaseTests */ = {
+		437FCA0E26D67BE40000223C /* ReleaseTests */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = EHV7XZLAHA;
-				INFOPLIST_FILE = ChatPush/Info.plist;
+				INFOPLIST_FILE = DemoAppPush/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 14.5;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = io.getstream.iOS.ChatDemoApp.ChatPush;
+				PRODUCT_BUNDLE_IDENTIFIER = io.getstream.iOS.ChatDemoApp.DemoAppPush;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 5.0;
@@ -8522,12 +8506,12 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		437FC9F626D630860000223C /* Build configuration list for PBXNativeTarget "ChatPush" */ = {
+		437FCA0F26D67BE40000223C /* Build configuration list for PBXNativeTarget "DemoAppPush" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				437FC9F726D630860000223C /* Debug */,
-				437FC9F826D630860000223C /* Release */,
-				437FC9F926D630860000223C /* ReleaseTests */,
+				437FCA0C26D67BE40000223C /* Debug */,
+				437FCA0D26D67BE40000223C /* Release */,
+				437FCA0E26D67BE40000223C /* ReleaseTests */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

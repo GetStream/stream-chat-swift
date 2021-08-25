@@ -195,10 +195,10 @@ public extension CurrentChatUserController {
             return
         }
 
-//        if let devices = currentUser?.devices.filter({ $0.id == token.deviceToken }), devices.count > 0 {
-//            completion?(nil)
-//            return
-//        }
+        if let devices = currentUser?.devices.filter({ $0.id == token.deviceToken }), !devices.isEmpty {
+            completion?(nil)
+            return
+        }
 
         currentUserUpdater.addDevice(token: token, currentUserId: currentUserId) { error in
             self.callback {
