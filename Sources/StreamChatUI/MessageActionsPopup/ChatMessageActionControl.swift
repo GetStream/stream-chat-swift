@@ -83,7 +83,7 @@ open class ChatMessageActionControl: _Control, AppearanceProvider {
     
     /// Triggered when `_ChatMessageActionControl` is tapped.
     @objc open func touchUpInsideHandler(_ sender: Any) {
-        guard let content = content else { return assertionFailure("Content is unexpectedly nil") }
+        guard let content = content else { return log.assertionFailure("Content is unexpectedly nil") }
         content.action(content)
     }
 }
