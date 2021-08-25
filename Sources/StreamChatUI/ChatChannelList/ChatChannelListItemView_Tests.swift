@@ -36,6 +36,7 @@ class ChatChannelListItemView_Tests: XCTestCase {
         let view = ChatChannelListItemView().withoutAutoresizingMaskConstraints
         view.addSizeConstraints()
         view.content = content
+        view.components = .mock
         AssertSnapshot(view)
     }
     
@@ -93,6 +94,7 @@ class ChatChannelListItemView_Tests: XCTestCase {
         let view = TestView().withoutAutoresizingMaskConstraints
         
         view.addSizeConstraints()
+        view.components = .mock
         
         view.content = content
         AssertSnapshot(view)

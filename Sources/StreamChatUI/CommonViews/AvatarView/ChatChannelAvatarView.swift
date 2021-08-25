@@ -19,6 +19,12 @@ open class ChatChannelAvatarView: _View, ThemeProvider, SwiftUIRepresentable {
     
     /// The maximum number of images that combine to form a single avatar
     private let maxNumberOfImagesInCombinedAvatar = 4
+    
+    /// Object responsible for providing functionality of merging images.
+    /// Used when creating compound avatars from channel members individual avatars
+    open var imageMerger: ImageMerging = {
+        DefaultImageMerger()
+    }()
 
     override open func setUpLayout() {
         super.setUpLayout()
@@ -96,15 +102,6 @@ open class ChatChannelAvatarView: _View, ThemeProvider, SwiftUIRepresentable {
         // We show a combination of at max 4 images combined
         urls = Array(urls.prefix(maxNumberOfImagesInCombinedAvatar))
         
-        guard !SystemEnvironment.isTests else {
-            // When running tests, we load the images synchronously
-            let images = urls.map { UIImage(data: try! Data(contentsOf: $0!))! }
-           
-            let combinedImage = createMergedAvatar(from: images) ?? appearance.images.userAvatarPlaceholder2
-            loadIntoAvatarImageView(from: nil, placeholder: combinedImage)
-            return
-        }
-        
         loadAvatarsFrom(urls: urls, channelId: channel.cid) { [weak self] avatars, channelId in
             guard let self = self, channelId == self.content.channel?.cid else { return }
             
@@ -163,7 +160,6 @@ open class ChatChannelAvatarView: _View, ThemeProvider, SwiftUIRepresentable {
         var combinedImage: UIImage?
         
         let imageProcessor = components.imageProcessor
-        let imageMerger = components.imageMerger
         
         let images = avatars.map {
             imageProcessor.scale(image: $0, to: .avatarThumbnailSize)

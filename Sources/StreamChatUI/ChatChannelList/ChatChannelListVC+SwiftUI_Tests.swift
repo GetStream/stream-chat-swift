@@ -53,7 +53,7 @@ class ChatChannelListView_Tests: iOS13TestCase {
                         .navigationBarItems(
                             leading:
                             Button("Tap me!") {}
-                        )
+                        ).environmentObject(Components.mock.asObservableObject)
                 }
             }
         }

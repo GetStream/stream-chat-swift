@@ -18,17 +18,20 @@ class ChatUserAvatarView_Tests: XCTestCase {
     func test_emptyAppearance() {
         let view = ChatUserAvatarView().withoutAutoresizingMaskConstraints
         view.addSizeConstraints()
+        view.components = .mock
         AssertSnapshot(view, variants: .onlyUserInterfaceStyles)
     }
 
     func test_defaultAppearance() {
         let avatarViewOnline = ChatUserAvatarView().withoutAutoresizingMaskConstraints
         avatarViewOnline.addSizeConstraints()
+        avatarViewOnline.components = .mock
         avatarViewOnline.content = user
         AssertSnapshot(avatarViewOnline, variants: .onlyUserInterfaceStyles, suffix: "with online indicator")
 
         let avatarViewOffline = ChatUserAvatarView().withoutAutoresizingMaskConstraints
         avatarViewOffline.addSizeConstraints()
+        avatarViewOffline.components = .mock
         avatarViewOffline.content = .mock(id: .unique, imageURL: TestImages.yoda.url, isOnline: false)
         AssertSnapshot(avatarViewOffline, variants: .onlyUserInterfaceStyles, suffix: "without online indicator")
     }
@@ -47,7 +50,7 @@ class ChatUserAvatarView_Tests: XCTestCase {
         }
 
         var appearance = Appearance()
-        var components = Components()
+        var components = Components.mock
         appearance.colorPalette.alternativeActiveTint = .brown
         components.onlineIndicatorView = RectIndicator.self
 
@@ -79,6 +82,7 @@ class ChatUserAvatarView_Tests: XCTestCase {
 
         let view = TestView().withoutAutoresizingMaskConstraints
         view.addSizeConstraints()
+        view.components = .mock
         view.content = user
         AssertSnapshot(view, variants: .onlyUserInterfaceStyles)
     }

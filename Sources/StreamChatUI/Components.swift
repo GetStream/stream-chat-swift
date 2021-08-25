@@ -75,10 +75,6 @@ public struct Components {
     
     /// Object which is responsible for loading images
     public var imageLoader: ImageLoading = NukeImageLoader()
-
-    /// Object responsible for providing functionality of merging images.
-    /// Used when creating compound avatars from channel members individual avatars
-    public var imageMerger: ImageMerging = DefaultImageMerger()
     
     /// Object responsible for providing resizing operations for `UIImage`
     public var imageProcessor: ImageProcessor = NukeImageProcessor()

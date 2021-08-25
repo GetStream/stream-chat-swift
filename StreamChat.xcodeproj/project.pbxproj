@@ -778,6 +778,8 @@
 		AC9083A9268B167B00ACFB8E /* YTChatComposerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC9083A8268B167B00ACFB8E /* YTChatComposerViewController.swift */; };
 		ACA3C98726CA23F300EB8B07 /* DateUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACA3C98526CA23F300EB8B07 /* DateUtils.swift */; };
 		ACA3C98826CA23F900EB8B07 /* DateUtils_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACA3C98426CA23F300EB8B07 /* DateUtils_Tests.swift */; };
+		ACABFF8326D6587E0018F3DC /* Components+Mock.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACABFF8226D6587E0018F3DC /* Components+Mock.swift */; };
+		ACABFF8526D658B70018F3DC /* MockImageLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACABFF8426D658B70018F3DC /* MockImageLoader.swift */; };
 		ACBEF4E5268B439A00FE7557 /* YTLiveVideoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACBEF4E3268B439A00FE7557 /* YTLiveVideoViewController.swift */; };
 		ACBEF4E6268B439A00FE7557 /* YTLiveVideoViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = ACBEF4E4268B439A00FE7557 /* YTLiveVideoViewController.xib */; };
 		ACCA772A26C40C96007AE2ED /* ImageLoading.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACCA772926C40C96007AE2ED /* ImageLoading.swift */; };
@@ -2142,6 +2144,8 @@
 		AC9083A8268B167B00ACFB8E /* YTChatComposerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YTChatComposerViewController.swift; sourceTree = "<group>"; };
 		ACA3C98426CA23F300EB8B07 /* DateUtils_Tests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DateUtils_Tests.swift; sourceTree = "<group>"; };
 		ACA3C98526CA23F300EB8B07 /* DateUtils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DateUtils.swift; sourceTree = "<group>"; };
+		ACABFF8226D6587E0018F3DC /* Components+Mock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Components+Mock.swift"; sourceTree = "<group>"; };
+		ACABFF8426D658B70018F3DC /* MockImageLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockImageLoader.swift; sourceTree = "<group>"; };
 		ACBEF4E3268B439A00FE7557 /* YTLiveVideoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YTLiveVideoViewController.swift; sourceTree = "<group>"; };
 		ACBEF4E4268B439A00FE7557 /* YTLiveVideoViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = YTLiveVideoViewController.xib; sourceTree = "<group>"; };
 		ACCA772926C40C96007AE2ED /* ImageLoading.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageLoading.swift; sourceTree = "<group>"; };
@@ -2684,6 +2688,8 @@
 				E7D68C4C26B1AAB500FCF3B8 /* Localization_Tests.swift */,
 				E7D68C5726B1B37500FCF3B8 /* TestLocalizable.strings */,
 				780057F625F634FC00D21095 /* ChatChannel.swift */,
+				ACABFF8226D6587E0018F3DC /* Components+Mock.swift */,
+				ACABFF8426D658B70018F3DC /* MockImageLoader.swift */,
 			);
 			path = StreamChatUITests;
 			sourceTree = "<group>";
@@ -4081,6 +4087,7 @@
 			children = (
 				ACA3C98426CA23F300EB8B07 /* DateUtils_Tests.swift */,
 				ACA3C98526CA23F300EB8B07 /* DateUtils.swift */,
+				ACF73D7726CFE07900372DC0 /* Cancellable.swift */,
 				ACCA772826C40C7A007AE2ED /* ImageLoading */,
 				BDDD1EA52632C6D600BA007B /* AppearanceProvider.swift */,
 				BDDD1EAB2632E32000BA007B /* AppearanceProvider_Tests.swift */,
@@ -4472,7 +4479,6 @@
 			children = (
 				ACCA772926C40C96007AE2ED /* ImageLoading.swift */,
 				ACCA772B26C40D43007AE2ED /* NukeImageLoader.swift */,
-				ACF73D7726CFE07900372DC0 /* Cancellable.swift */,
 			);
 			path = ImageLoading;
 			sourceTree = "<group>";
@@ -5960,6 +5966,7 @@
 				7849AF6725F243C8007817D4 /* ChatChannelListItemView+SwiftUI_Tests.swift in Sources */,
 				F86C887725FA5C020000BCA9 /* ChatChannelAvatarView+SwiftUI_Tests.swift in Sources */,
 				BDDD1EAC2632E32000BA007B /* AppearanceProvider_Tests.swift in Sources */,
+				ACABFF8526D658B70018F3DC /* MockImageLoader.swift in Sources */,
 				E74DB0112655473300508D22 /* TypingIndicatorView_Tests.swift in Sources */,
 				ADEB2F8025CC0B8A00EAAEB6 /* XCTestCase+TestImages.swift in Sources */,
 				AD44758F263B46430030E583 /* ConfirmButton_Tests.swift in Sources */,
@@ -5970,6 +5977,7 @@
 				227299B325DBF52D005EAFCF /* ChatChannelUnreadCountView_Tests.swift in Sources */,
 				78C8474125FA0F2900A5D1D0 /* ChatChannelUnreadCountView+SwiftUI_Tests.swift in Sources */,
 				F86A11142616184300D9FE19 /* ChatMessagePopupVC_Tests.swift in Sources */,
+				ACABFF8326D6587E0018F3DC /* Components+Mock.swift in Sources */,
 				AC1E16FF269C70530040548B /* String+Extensions_Tests.swift in Sources */,
 				79567F35266F6F12007EADD3 /* CommandLabelView_Tests.swift in Sources */,
 				AD71131225F138D500932AEE /* ChatUserAvatarView_Tests.swift in Sources */,

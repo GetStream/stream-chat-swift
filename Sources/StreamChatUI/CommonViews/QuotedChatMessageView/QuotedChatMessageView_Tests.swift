@@ -15,6 +15,7 @@ class QuotedChatMessageView_Tests: XCTestCase {
         super.setUp()
         view = QuotedChatMessageView().withoutAutoresizingMaskConstraints
         view.addSizeConstraints()
+        view.components = .mock
         view.backgroundColor = .gray
     }
 
@@ -174,6 +175,7 @@ class QuotedChatMessageView_Tests: XCTestCase {
         )
         view.content = makeContent(text: "Hello Vader!", attachments: [attachment.asAnyAttachment])
         view.addSizeConstraints()
+        view.components = .mock
 
         AssertSnapshot(view, variants: [.defaultLight])
     }
@@ -200,7 +202,7 @@ class QuotedChatMessageView_Tests: XCTestCase {
                 avatarAlignment: .leading
             )
         )
-        .environmentObject(Components().asObservableObject)
+        .environmentObject(Components.mock.asObservableObject)
 
         AssertSnapshot(view, variants: [.defaultLight])
     }

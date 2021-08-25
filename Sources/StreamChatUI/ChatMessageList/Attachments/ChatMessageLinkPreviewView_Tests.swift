@@ -25,6 +25,7 @@ final class ChatMessageLinkPreviewView_Tests: XCTestCase {
             assetURL: TestImages.yoda.url,
             previewURL: TestImages.yoda.url
         )
+        linkPreviewView.components = .mock
     }
     
     override func tearDown() {
@@ -134,6 +135,7 @@ final class ChatMessageLinkPreviewView_Tests: XCTestCase {
             assetURL: TestImages.yoda.url,
             previewURL: TestImages.yoda.url
         )
+        linkPreviewView.components = .mock
 
         AssertSnapshot(linkPreviewView)
     }
