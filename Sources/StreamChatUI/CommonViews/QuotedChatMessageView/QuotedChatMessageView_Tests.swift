@@ -190,7 +190,9 @@ class QuotedChatMessageView_Tests: XCTestCase {
                 components.quotedMessageView.asView(content)
             }
         }
-
+        
+        // TODO: We have to replace default as the components are not injected in SwiftUI views.
+        Components.default = .mock
         let view = CustomView(
             content: .init(
                 message: .mock(

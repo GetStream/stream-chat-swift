@@ -191,8 +191,12 @@ class ChatChannelAvatarView_Tests: XCTestCase {
         
         let channel = ChatChannel.mock(cid: .unique)
         
-        var components = Components()
+        var components = Components.mock
         components.channelAvatarView = CustomAvatarView.self
+        
+        // TODO: We have to replace default as the components are not injected in SwiftUI views.
+        Components.default = components
+        
         let view = CustomView(content: (channel, .unique))
             .environmentObject(components.asObservableObject)
         

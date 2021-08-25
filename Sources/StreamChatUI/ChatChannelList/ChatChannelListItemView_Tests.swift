@@ -29,6 +29,7 @@ class ChatChannelListItemView_Tests: XCTestCase {
         view.content = content
         view.content = nil
         view.addSizeConstraints()
+        view.components = .mock
         AssertSnapshot(view)
     }
     
@@ -49,6 +50,7 @@ class ChatChannelListItemView_Tests: XCTestCase {
         
         view.appearance = appearance
         view.addSizeConstraints()
+        view.components = .mock
         
         AssertSnapshot(view)
     }
