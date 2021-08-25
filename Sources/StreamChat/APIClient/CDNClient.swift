@@ -21,8 +21,8 @@ public protocol CDNClient {
 }
 
 /// Default implementation of CDNClient that uses Stream CDN
-class StreamCDNClient: CDNClient {
-    static var maxAttachmentSize: Int64 { 20 * 1024 * 1024 }
+open class StreamCDNClient: CDNClient {
+    public static var maxAttachmentSize: Int64 { 20 * 1024 * 1024 }
 
     private let decoder: RequestDecoder
     private let encoder: RequestEncoder
@@ -45,7 +45,7 @@ class StreamCDNClient: CDNClient {
     ///   - attachment: An attachment to upload
     ///   - progress: A closure that broadcasts upload progress
     ///   - completion: Returns uploading result on upload completion or failure
-    func uploadAttachment(
+    open func uploadAttachment(
         _ attachment: AnyChatMessageAttachment,
         progress: ((Double) -> Void)? = nil,
         completion: @escaping (Result<URL, Error>) -> Void

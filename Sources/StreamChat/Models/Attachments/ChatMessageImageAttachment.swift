@@ -17,13 +17,13 @@ public struct ImageAttachmentPayload: AttachmentPayload {
     public static let type: AttachmentType = .image
 
     /// A title, usually the name of the image.
-    public let title: String?
+    public var title: String?
     /// A link to the image.
-    public internal(set) var imageURL: URL
+    public var imageURL: URL
     /// A link to the image preview.
-    public let imagePreviewURL: URL
+    public var imagePreviewURL: URL
     /// An extra data.
-    let extraData: [String: RawJSON]?
+    public var extraData: [String: RawJSON]?
     
     /// Decodes extra data as an instance of the given type.
     /// - Parameter ofType: The type an extra data should be decoded as.
