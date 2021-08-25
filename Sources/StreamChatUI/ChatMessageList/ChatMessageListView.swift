@@ -149,11 +149,11 @@ open class ChatMessageListView: UITableView, Customizable, ComponentsProvider {
 
         if rectForRow(at: prevMessageIndexPath).minY < contentOffset.y,
            rowsRange.contains(prevMessageIndexPath.row) {
-            scrollToRow(at: prevMessageIndexPath, at: .bottom, animated: animated)
+            scrollToRow(at: prevMessageIndexPath, at: .top, animated: animated)
         }
         
         if rowsRange.contains(lastMessageIndexPath.row) {
-            scrollToRow(at: lastMessageIndexPath, at: .bottom, animated: animated)
+            scrollToRow(at: lastMessageIndexPath, at: .top, animated: animated)
         }
     }
     
