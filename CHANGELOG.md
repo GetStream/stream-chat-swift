@@ -5,9 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### ⚠️ Breaking Changes from `4.0-beta.11`
 - `ChatMessage.threadParticipants` is now an Array instead of Set [#1398](https://github.com/GetStream/stream-chat-swift/pull/1398)
-- Introduces `ChatChannelVC` and removes responsibilties of `ChatMessageListVC`. The latter now is only responsible to render the message list layout, the data is provided by `ChatChannelVC` or `ChatThreadVC`. [#1314](https://github.com/GetStream/stream-chat-swift/pull/1314)
+- Introduces `ChatChannelVC` and removes responsibilities of `ChatMessageListVC`. The latter now is only responsible to render the message list layout, the data is provided by `ChatChannelVC` or `ChatThreadVC`. [#1314](https://github.com/GetStream/stream-chat-swift/pull/1314)
 - Replaces `ChatMessageActionsVC.Delegate` with `ChatMessageActionsVCDelegate` [#1314](https://github.com/GetStream/stream-chat-swift/pull/1314)
-- Renames`ChatChannelListRouter.showMessageList()` -> `showChannel()` [#1314](https://github.com/GetStream/stream-chat-swift/pull/1314)
+- Renames `ChatChannelListRouter.showMessageList()` -> `showChannel()` [#1314](https://github.com/GetStream/stream-chat-swift/pull/1314)
 - Removal of `ComposerVCDelegate` [#1314](https://github.com/GetStream/stream-chat-swift/pull/1314)
 - Replaces `ChatMessageListKeyboardObserver` with `ComposerKeyboardHandler` [#1314](https://github.com/GetStream/stream-chat-swift/pull/1314)
 
@@ -22,7 +22,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
     - `ChatMessageListVC`
     - `ComposerVC`
 
-A new `ChatChannelVC`is introduced that represents the old `ChatMessageListVC`, that it was responsible to display the messages from a channel. The `ChatThreadVC` remains the same and it is responsible for displaying the replies in a thread, but now instead of duplicating the implementation from the channel, both use the `ChatMessageListVC` and configure it for their needs. For this to be possible the `ChatMessageListVC` has now a `ChatMessageListVCDataSource` and `ChatMessageListVCDelegate`. Both `ChatChannelVC` and `ChatThreadVC` implement the `ChatMessageListVCDataSource` and `ChatMessageListVCDelegate`.
+A new `ChatChannelVC` is introduced that represents the old `ChatMessageListVC`, which was responsible to display the messages from a channel. The `ChatThreadVC` remains the same and it is responsible for displaying the replies in a thread, but now instead of duplicating the implementation from the channel, both use the `ChatMessageListVC` and configure it for their needs. For this to be possible the `ChatMessageListVC` has now a `ChatMessageListVCDataSource` and `ChatMessageListVCDelegate`. Both `ChatChannelVC` and `ChatThreadVC` implement the `ChatMessageListVCDataSource` and `ChatMessageListVCDelegate`.
 
 ### 🐞 Fixed
 - Fix incorrect RawJSON number handling, the `.integer` case is no longer supported and is replaced by `.number` [#1375](https://github.com/GetStream/stream-chat-swift/pull/1375)
