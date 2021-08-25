@@ -11,7 +11,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Removal of `ComposerVCDelegate` [#1314](https://github.com/GetStream/stream-chat-swift/pull/1314)
 - Replaces `ChatMessageListKeyboardObserver` with `ComposerKeyboardHandler` [#1314](https://github.com/GetStream/stream-chat-swift/pull/1314)
 
-#### Understading `ChatChannelVC` vs `ChatTheadVC` vs `ChatMessageListVC`
+#### Understanding `ChatChannelVC` vs `ChatTheadVC` vs `ChatMessageListVC`
 - `ChatChannelVC`:
     - `ChatChannelHeaderView`
     - `ChatMessageListVC`
