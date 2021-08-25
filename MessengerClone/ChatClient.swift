@@ -13,7 +13,7 @@ extension ChatClient {
         var appearance = Appearance()
         var components = Components()
         
-        components.messageListVC = MessengerChatChannelViewController.self
+        components.channelVC = MessengerChatChannelViewController.self
         components.channelHeaderView = MessengerChatChannelHeaderView.self
         
         components.channelContentView = ChatChannelListItemView.SwiftUIWrapper<MessengerChatChannelListItem>.self

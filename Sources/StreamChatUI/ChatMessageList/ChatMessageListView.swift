@@ -147,10 +147,9 @@ open class ChatMessageListView: UITableView, Customizable, ComponentsProvider {
         let lastMessageIndexPath = IndexPath(row: 0, section: 0)
         let prevMessageIndexPath = IndexPath(row: 1, section: 0)
 
-        if
-            rectForRow(at: prevMessageIndexPath).minY < contentOffset.y,
-            rowsRange.contains(prevMessageIndexPath.row) {
-            scrollToRow(at: prevMessageIndexPath, at: .top, animated: false)
+        if rectForRow(at: prevMessageIndexPath).minY < contentOffset.y,
+           rowsRange.contains(prevMessageIndexPath.row) {
+            scrollToRow(at: prevMessageIndexPath, at: .top, animated: animated)
         }
         
         if rowsRange.contains(lastMessageIndexPath.row) {
@@ -171,75 +170,58 @@ open class ChatMessageListView: UITableView, Customizable, ComponentsProvider {
     /// Updates the table view data with given `changes`.
     open func updateMessages(
         with changes: [ListChange<ChatMessage>],
-        onMessagesUpdate: () -> Void = {},
         completion: (() -> Void)? = nil
     ) {
-        var shouldScrollToBottom = false
-        
         guard let _ = collectionUpdatesMapper.mapToSetsOfIndexPaths(
             changes: changes,
             onConflict: {
-                onMessagesUpdate()
                 reloadData()
             }
         ) else { return }
-                
-        performBatchUpdates({
-            changes.forEach {
-                switch $0 {
-                case let .insert(message, index: index):
-                    if message.isSentByCurrentUser, index == IndexPath(item: 0, section: 0) {
-                        // When the message from current user comes we should scroll to bottom
-                        shouldScrollToBottom = true
-                    }
-                    if index.row < self.numberOfRows(inSection: 0) {
-                        // Reload previous cell if exists
-                        self.reloadRows(at: [index], with: .automatic)
-                    }
-                    self.insertRows(at: [index], with: .none)
-                case let .move(_, fromIndex: fromIndex, toIndex: toIndex):
-                    self.moveRow(at: fromIndex, to: toIndex)
 
-                case let .update(_, index: index):
-                    self.reloadRows(at: [index], with: .automatic)
+        if changes.count > 1 {
+            reloadData()
+            return
+        }
 
-                case let .remove(_, index: index):
-                    let indexPathToReload = IndexPath(row: index.row + 1, section: index.section)
-                    if self.numberOfRows(inSection: 0) > indexPathToReload.row {
-                        // Reload previous cell if exists
-                        self.reloadRows(at: [indexPathToReload], with: .automatic)
+        changes.forEach {
+            switch $0 {
+            case let .insert(message, index: index):
+                self.reloadData()
+                if message.isSentByCurrentUser, index == IndexPath(item: 0, section: 0) {
+                    self.scrollToBottomAction = .init { [weak self] in
+                        self?.scrollToMostRecentMessage()
                     }
-                    self.deleteRows(at: [index], with: .fade)
                 }
+
+            case let .move(_, fromIndex: fromIndex, toIndex: toIndex):
+                self.moveRow(at: fromIndex, to: toIndex)
+
+            case let .update(_, index: index):
+                self.reloadRows(at: [index], with: .automatic)
+
+            case .remove:
+                self.reloadData()
             }
-            onMessagesUpdate()
-        }, completion: { _ in
-            if shouldScrollToBottom {
-                self.scrollToBottomAction = .init { [weak self] in
-                    self?.scrollToMostRecentMessage()
-                }
-            }
-            
-            completion?()
-        })
+        }
     }
-    
+
     override open func reloadRows(at indexPaths: [IndexPath], with animation: UITableView.RowAnimation) {
         let visibleCells = getVisibleCells()
-        
+
         var indexPathToReload: [IndexPath] = []
-        
+
         indexPaths.forEach { indexPath in
             // Get currently shown cell at index path
             let cellBeforeUpdate = visibleCells[indexPath]
             let cellBeforeUpdateReuseIdentifier = reuseIdentifier(for: cellBeforeUpdate)
             let cellBeforeUpdateMessage = cellBeforeUpdate?.messageContentView?.content
-            
+
             // Get the cell that will be shown if reload happens
             let cellAfterUpdate = dataSource?.tableView(self, cellForRowAt: indexPath) as? ChatMessageCell
             let cellAfterUpdateReuseIdentifier = reuseIdentifier(for: cellAfterUpdate)
             let cellAfterUpdateMessage = cellAfterUpdate?.messageContentView?.content
-            
+
             if
                 cellBeforeUpdateReuseIdentifier == cellAfterUpdateReuseIdentifier,
                 cellBeforeUpdateMessage?.id == cellAfterUpdateMessage?.id {
@@ -251,7 +233,7 @@ open class ChatMessageListView: UITableView, Customizable, ComponentsProvider {
                 indexPathToReload.append(indexPath)
             }
         }
-        
+
         if !indexPathToReload.isEmpty {
             super.reloadRows(at: indexPathToReload, with: animation)
         }
@@ -263,7 +245,7 @@ open class ChatMessageListView: UITableView, Customizable, ComponentsProvider {
                 let cell = cell as? ChatMessageCell,
                 let indexPath = cell.messageContentView?.indexPath?()
             else { return }
-            
+
             result[indexPath] = cell
         }
     }

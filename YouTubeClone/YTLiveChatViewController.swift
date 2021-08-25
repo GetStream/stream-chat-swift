@@ -1,17 +1,12 @@
 //
-//  YTLiveChatViewController.swift
-//  YouTubeClone
-//
-//  Created by Sagar Dagdu on 29/06/21.
-//  Copyright © 2021 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
-import UIKit
 import StreamChat
 import StreamChatUI
+import UIKit
 
-final class YTLiveChatViewController: ChatMessageListVC {
-    
+final class YTLiveChatViewController: ChatChannelVC {
     override func setUp() {
         // The channel for live stream chat
         channelController = ChatChannelController.liveStreamChannelController
@@ -23,7 +18,9 @@ final class YTLiveChatViewController: ChatMessageListVC {
         
         navigationController?.isNavigationBarHidden = true
     }
+}
 
+final class YTLiveChatMessageListViewController: ChatMessageListVC {
     override func setUpLayout() {
         super.setUpLayout()
         NSLayoutConstraint.activate([
@@ -31,15 +28,13 @@ final class YTLiveChatViewController: ChatMessageListVC {
             scrollToLatestMessageButton.widthAnchor.constraint(equalToConstant: 30),
             scrollToLatestMessageButton.heightAnchor.constraint(equalToConstant: 30)
         ])
-        
+
         dateOverlayView.removeFromSuperview()
     }
-    
+
     override func cellContentClassForMessage(at indexPath: IndexPath) -> ChatMessageContentView.Type {
         YTChatMessageContentView.self
     }
-    
-    override func didSelectMessageCell(at indexPath: IndexPath) {
-        
-    }
+
+    override func didSelectMessageCell(at indexPath: IndexPath) {}
 }

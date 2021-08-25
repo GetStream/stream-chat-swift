@@ -82,6 +82,8 @@ public struct Components {
     /// The view that shows a playing video.
     public var playerView: PlayerView.Type = PlayerView.self
 
+    //  MARK: -  Message List components
+
     /// The View Controller used to display content of the message, i.e. in the channel detail message list.
     @available(iOSApplicationExtension, unavailable)
     public var messageListVC: ChatMessageListVC.Type = ChatMessageListVC.self
@@ -93,13 +95,6 @@ public struct Components {
     /// The view that shows the date for currently visible messages on top of message list.
     public var messageListScrollOverlayView: ChatMessageListScrollOverlayView.Type =
         ChatMessageListScrollOverlayView.self
-    
-    /// The View Controller used to display the detail of a message thread.
-    @available(iOSApplicationExtension, unavailable)
-    public var threadVC: ChatThreadVC.Type = ChatThreadVC.self
-
-    /// The view that displays channel information on the thread header.
-    public var threadHeaderView: ChatThreadHeaderView.Type = ChatThreadHeaderView.self
 
     /// The View Controller by default used to display message actions after long-pressing on the message.
     public var messageActionsVC: ChatMessageActionsVC.Type = ChatMessageActionsVC.self
@@ -202,9 +197,22 @@ public struct Components {
     public var scrollToLatestMessageButton: ScrollToLatestMessageButton.Type = ScrollToLatestMessageButton.self
 
     /// The view that shows a number of unread messages on the Scroll-To-Latest-Message button in the Message List.
-    public var messageListUnreadCountView: ChatMessageListUnreadCountView.Type = ChatMessageListUnreadCountView.self
-    
-    // MARK: - Channel list components
+    public var messageListUnreadCountView: ChatMessageListUnreadCountView.Type =
+        ChatMessageListUnreadCountView.self
+
+    // MARK: - Thread components
+
+    /// The View Controller used to display the detail of a message thread.
+    public var threadVC: ChatThreadVC.Type = ChatThreadVC.self
+
+    /// The view that displays channel information on the thread header.
+    public var threadHeaderView: ChatThreadHeaderView.Type =
+        ChatThreadHeaderView.self
+
+    // MARK: - Channel components
+
+    /// The view controller that contains the channel messages and represents the chat view.
+    public var channelVC: ChatChannelVC.Type = ChatChannelVC.self
 
     /// The view that displays channel information on the channel header.
     public var channelHeaderView: ChatChannelHeaderView.Type = ChatChannelHeaderView.self
@@ -237,7 +245,7 @@ public struct Components {
     public var channelReadStatusView: ChatChannelReadStatusCheckmarkView.Type =
         ChatChannelReadStatusCheckmarkView.self
 
-    // MARK: - Message composer components
+    // MARK: - Composer components
 
     /// The view controller used to compose a message.
     public var messageComposerVC: ComposerVC.Type = ComposerVC.self
@@ -259,7 +267,10 @@ public struct Components {
         .Type = ImageAttachmentComposerPreview.self
     
     /// A view that displays the video attachment preview in composer.
-    public var videoAttachmentComposerPreview: VideoAttachmentComposerPreview.Type = VideoAttachmentComposerPreview.self
+    public var videoAttachmentComposerPreview: VideoAttachmentComposerPreview
+        .Type = VideoAttachmentComposerPreview.self
+
+    // MARK: - Composer suggestion components
     
     /// A view controller that shows suggestions of commands or mentions.
     public var suggestionsVC: ChatSuggestionsVC.Type = ChatSuggestionsVC.self
