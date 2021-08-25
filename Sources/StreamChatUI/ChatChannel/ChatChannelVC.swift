@@ -13,11 +13,12 @@ open class ChatChannelVC:
     ChatMessageListVCDataSource,
     ChatMessageListVCDelegate,
     ChatChannelControllerDelegate {
-    /// User search controller for suggestion users when typing in the composer.
-    open var userSuggestionSearchController: ChatUserSearchController!
-
     /// Controller for observing data changes within the channel.
     open var channelController: ChatChannelController!
+
+    /// User search controller for suggestion users when typing in the composer.
+    open lazy var userSuggestionSearchController: ChatUserSearchController =
+        channelController.client.userSearchController()
 
     /// The size of the channel avatar.
     open var channelAvatarSize: CGSize {

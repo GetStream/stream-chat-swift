@@ -7,16 +7,12 @@ import SwiftUI
 
 @available(iOSApplicationExtension, unavailable)
 extension ChatChannelVC: SwiftUIRepresentable {
-    public var content: (
-        channelController: ChatChannelController,
-        userSearchController: ChatUserSearchController
-    ) {
+    public var content: ChatChannelController {
         get {
-            (channelController, userSuggestionSearchController)
+            channelController
         }
         set {
-            channelController = newValue.channelController
-            userSuggestionSearchController = newValue.userSearchController
+            channelController = newValue
         }
     }
 }

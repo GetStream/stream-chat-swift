@@ -6,7 +6,7 @@ import StreamChat
 import StreamChatUI
 import UIKit
 
-final class MessengerChatChannelViewController: ChatMessageListVC {
+final class MessengerChatChannelViewController: ChatChannelVC {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 

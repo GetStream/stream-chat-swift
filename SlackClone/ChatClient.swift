@@ -14,7 +14,8 @@ extension ChatClient {
         var components = Components()
 
         components.messageLayoutOptionsResolver = SlackMessageOptionsResolver()
-        components.messageListVC = SlackChatChannelViewController.self
+        components.messageListVC = SlackChatMessageListViewController.self
+        components.channelVC = SlackChatChannelViewController.self
         components.channelHeaderView = SlackChatChannelHeaderView.self
         components.messageComposerVC = SlackComposerVC.self
         components.avatarView = SlackChatAvatarView.self
