@@ -2,6 +2,7 @@
 // Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
+import Foundation
 import StreamChat
 
 /// The object that acts as the data source of the message list.
