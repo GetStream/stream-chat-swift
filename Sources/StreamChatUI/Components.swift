@@ -324,22 +324,6 @@ public struct Components {
 
 // MARK: - Components + Default
 
-private var defaults: [String: Any] = [:]
-
 public extension Components {
-    static let defaultKey = "_default"
-    static var `default`: Self {
-        get {
-            if let existing = defaults[defaultKey] as? Self {
-                return existing
-            } else {
-                let config = Self()
-                defaults[defaultKey] = config
-                return config
-            }
-        }
-        set {
-            defaults[defaultKey] = newValue
-        }
-    }
+    static var `default` = Self()
 }
