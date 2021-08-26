@@ -13,7 +13,8 @@ let package = Package(
     products: [
         .library(
             name: "StreamChat",
-            targets: ["StreamChat"]),
+            targets: ["StreamChat"]
+        ),
         .library(
             name: "StreamChatUI",
             targets: ["StreamChatUI"]
@@ -24,7 +25,7 @@ let package = Package(
         .package(url: "https://github.com/daltoniam/Starscream.git", from: "4.0.0"),
         
         // StreamChatUI
-        .package(url: "https://github.com/kean/Nuke.git", from: "9.0.0"),
+        .package(url: "https://github.com/kean/Nuke.git", from: "10.0.0"),
         .package(url: "https://github.com/kirualex/SwiftyGif.git", from: "5.3.0")
     ],
     targets: [
