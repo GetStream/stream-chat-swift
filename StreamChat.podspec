@@ -22,5 +22,5 @@ Pod::Spec.new do |spec|
   spec.dependency "Nuke", "~> 8.4"
   spec.dependency "SnapKit", "~> 5.0"
   spec.dependency "SwiftyGif", "~> 5.2.0"
-  spec.dependency "RxGesture", "~> 3.0"
+  spec.dependency "RxGesture", "~> 4.0.2"
 end

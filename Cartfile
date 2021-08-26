@@ -1,8 +1,8 @@
 github "daltoniam/Starscream" ~> 4.0
 
-github "ReactiveX/RxSwift" ~> 5.1
+github "ReactiveX/RxSwift" ~> 6.2.0
 
 github "kean/Nuke" ~> 8.4
 github "SnapKit/SnapKit" ~> 5.0
 github "kirualex/SwiftyGif" ~> 5.2.0
-github "RxSwiftCommunity/RxGesture" ~> 3.0
+github "RxSwiftCommunity/RxGesture" ~> 4.0.2

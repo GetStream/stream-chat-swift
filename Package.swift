@@ -24,9 +24,9 @@ let package = Package(
         .package(url: "https://github.com/kean/Nuke.git", from: "8.4.0"),
         .package(url: "https://github.com/SnapKit/SnapKit.git", from: "5.0.0"),
         .package(url: "https://github.com/kirualex/SwiftyGif.git", from: "5.2.0"),
-        .package(url: "https://github.com/RxSwiftCommunity/RxGesture.git", from: "3.0.0"),
+        .package(url: "https://github.com/RxSwiftCommunity/RxGesture.git", from: "4.0.2"),
         // Core
-        .package(url: "https://github.com/ReactiveX/RxSwift.git", from: "5.1.0"),
+        .package(url: "https://github.com/ReactiveX/RxSwift.git", from: "6.2.0"),
         // Client
         .package(url: "https://github.com/daltoniam/Starscream.git", from: "4.0.0"),
     ],

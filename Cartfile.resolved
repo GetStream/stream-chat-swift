@@ -1,5 +1,5 @@
-github "ReactiveX/RxSwift" "5.1.1"
-github "RxSwiftCommunity/RxGesture" "3.0.3"
+github "ReactiveX/RxSwift" "6.2.0"
+github "RxSwiftCommunity/RxGesture" "4.0.2"
 github "SnapKit/SnapKit" "5.0.1"
 github "daltoniam/Starscream" "4.0.4"
 github "kean/Nuke" "8.4.1"
