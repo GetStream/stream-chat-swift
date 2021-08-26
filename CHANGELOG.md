@@ -48,6 +48,7 @@ _August 13, 2021_
 - Fix force unwrap crashes on unknown user roles cases [#1365](https://github.com/GetStream/stream-chat-swift/pull/1365)
 - Fix "last seen at" representation to use other units other than minutes [#1368](https://github.com/GetStream/stream-chat-swift/pull/1368)
 - Fix message list dismissing on a modal when scrolling [#1364](https://github.com/GetStream/stream-chat-swift/pull/1364)
+- Fix crash on channel delete event [#1408](https://github.com/GetStream/stream-chat-swift/pull/1408)
 
 # [4.0.0-beta.10](https://github.com/GetStream/stream-chat-swift/releases/tag/4.0.0-beta.10)
 _August 11, 2021_
