@@ -27,6 +27,9 @@ A new `ChatChannelVC` is introduced that represents the old `ChatMessageListVC`,
 ### 🔄 Changed
 - Nuke dependency was updated to v10 [#1405](https://github.com/GetStream/stream-chat-swift/pull/1405)
 
+### ✅ Added
+- For non-DM channels, the avatar is now shown as a combination of the avatars of the last active members of the channel [#1344](https://github.com/GetStream/stream-chat-swift/pull/1344)
+
 ### 🐞 Fixed
 - Fix incorrect RawJSON number handling, the `.integer` case is no longer supported and is replaced by `.number` [#1375](https://github.com/GetStream/stream-chat-swift/pull/1375)
 - Fix message list and thread index out of range issue on `tableView(_:cellForRowAt:)` [#1373](https://github.com/GetStream/stream-chat-swift/pull/1373)

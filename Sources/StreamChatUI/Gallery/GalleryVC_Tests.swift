@@ -39,6 +39,7 @@ final class GalleryVC_Tests: XCTestCase {
         )
         
         vc = GalleryVC()
+        vc.components = .mock
         vc.content = content
         vc.attachmentsCollectionView.reloadData()
     }
@@ -73,6 +74,7 @@ final class GalleryVC_Tests: XCTestCase {
         }
 
         let vc = TestView()
+        vc.components = .mock
         vc.content = content
 
         AssertSnapshot(vc)

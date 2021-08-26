@@ -22,7 +22,7 @@ class ChatChannelListVC_Tests: XCTestCase {
         
         override func setUp() {
             super.setUp()
-            
+            userAvatarView.components = .mock
             userAvatarView.controller = mockedCurrentUserController
         }
     }
@@ -38,11 +38,12 @@ class ChatChannelListVC_Tests: XCTestCase {
         )
 
         let testVC = TestChatChannelListVC()
+        testVC.components = .mock
         testVC.mockedCurrentUserController = mockedCurrentUserController
         vc = testVC
         vc.controller = mockedChannelListController
         
-        var components = Components()
+        var components = Components.mock
         components.channelListRouter = ChatChannelListRouter_Mock.self
         vc.components = components
 
@@ -113,9 +114,8 @@ class ChatChannelListVC_Tests: XCTestCase {
             }
         }
 
-        var components = Components()
+        var components = Components.mock
         components.channelCellSeparator = TestView.self
-
         vc.components = components
 
         mockedChannelListController.simulateInitial(
@@ -145,7 +145,7 @@ class ChatChannelListVC_Tests: XCTestCase {
         let vc = TestView()
         vc.controller = mockedChannelListController
         
-        var components = Components()
+        var components = Components.mock
         components.channelCellSeparator = TestSeparatorView.self
         vc.components = components
 

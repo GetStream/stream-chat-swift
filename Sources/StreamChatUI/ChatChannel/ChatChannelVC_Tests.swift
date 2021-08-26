@@ -13,7 +13,7 @@ final class ChatChannelVC_Tests: XCTestCase {
     
     override func setUp() {
         super.setUp()
-        var components = Components()
+        var components = Components.mock
         components.channelHeaderView = ChatChannelHeaderView_Mock.self
         vc = ChatChannelVC()
         vc.components = components
@@ -109,7 +109,7 @@ final class ChatChannelVC_Tests: XCTestCase {
             }
         }
 
-        var components = Components()
+        var components = Components.mock
         components.messageComposerVC = ComposerVC_Mock.self
         vc.components = components
 

@@ -35,7 +35,7 @@ final class ChatFileAttachmentListViewItemView_Tests: XCTestCase {
         fileAttachmentView = ChatMessageFileAttachmentListView.ItemView()
             .withoutAutoresizingMaskConstraints
         fileAttachmentView.appearance = appearance
-
+        fileAttachmentView.components = .mock
         fileAttachmentView.content = .mock(id: .unique)
 
         AssertSnapshot(fileAttachmentView, variants: [.defaultLight])
