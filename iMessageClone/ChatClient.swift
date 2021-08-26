@@ -19,7 +19,8 @@ extension ChatClient {
         components.channelContentView = iMessageChatChannelListItemView.self
         components.channelCellSeparator = iMessageCellSeparatorView.self
 
-        components.messageListVC = iMessageChatChannelViewController.self
+        components.channelVC = iMessageChatChannelViewController.self
+        components.messageListVC = iMessageChatMessageListViewController.self
         components.channelHeaderView = iMessageChatChannelHeaderView.self
         components.messageComposerVC = iMessageComposerVC.self
         components.messageComposerView = iMessageComposerView.self

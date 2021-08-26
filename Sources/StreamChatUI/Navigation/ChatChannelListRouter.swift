@@ -22,8 +22,8 @@ open class ChatChannelListRouter: NavigationRouter<ChatChannelListVC>, Component
     ///
     /// - Parameter cid: `ChannelId` of the channel the should be presented.
     ///
-    open func showMessageList(for cid: ChannelId) {
-        let vc = components.messageListVC.init()
+    open func showChannel(for cid: ChannelId) {
+        let vc = components.channelVC.init()
         vc.channelController = rootViewController.controller.client.channelController(for: cid)
 
         guard let navController = rootNavigationController else {

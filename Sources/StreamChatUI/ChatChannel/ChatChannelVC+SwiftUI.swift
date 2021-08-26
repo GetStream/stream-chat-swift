@@ -6,7 +6,7 @@ import StreamChat
 import SwiftUI
 
 @available(iOSApplicationExtension, unavailable)
-extension ChatMessageListVC: SwiftUIRepresentable {
+extension ChatChannelVC: SwiftUIRepresentable {
     public var content: ChatChannelController {
         get {
             channelController

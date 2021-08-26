@@ -6,7 +6,7 @@ import StreamChat
 import StreamChatUI
 import UIKit
 
-final class SlackChatChannelViewController: ChatMessageListVC {
+final class SlackChatChannelViewController: ChatChannelVC {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         navigationController?.setNavigationBarHidden(false, animated: animated)
@@ -16,9 +16,5 @@ final class SlackChatChannelViewController: ChatMessageListVC {
         super.setUpLayout()
 
         navigationItem.rightBarButtonItem = nil
-    }
-    
-    override func cellContentClassForMessage(at indexPath: IndexPath) -> ChatMessageContentView.Type {
-        SlackChatMessageContentView.self
     }
 }

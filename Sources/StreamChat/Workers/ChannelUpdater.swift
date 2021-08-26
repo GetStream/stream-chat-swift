@@ -64,8 +64,22 @@ class ChannelUpdater: Worker {
     ///   - cid: The channel identifier.
     ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
     func deleteChannel(cid: ChannelId, completion: ((Error?) -> Void)? = nil) {
-        apiClient.request(endpoint: .deleteChannel(cid: cid)) {
-            completion?($0.error)
+        apiClient.request(endpoint: .deleteChannel(cid: cid)) { [weak self] result in
+            switch (result) {
+            case .success:
+                self?.database.write {
+                    if let channel = $0.channel(cid: cid) {
+                        channel.truncatedAt = channel.lastMessageAt ?? channel.createdAt
+                    }
+                } completion: { error in
+                    completion?(error)
+                }
+
+            case let .failure(error):
+                log.error("Delete Channel on request fail \(error)")
+                // Note: not removing local channel if not removed on backend
+                completion?(result.error)
+            }
         }
     }
 
