@@ -100,7 +100,7 @@ class DemoChatChannelListRouter: ChatChannelListRouter {
                 }
             }),
             .init(title: "Remove a member", style: .default, handler: { _ in
-                let actions = channelController.channel?.cachedMembers.map { member in
+                let actions = channelController.channel?.lastActiveMembers.map { member in
                     UIAlertAction(title: member.id, style: .default) { _ in
                         channelController.removeMembers(userIds: [member.id]) { error in
                             if let error = error {
