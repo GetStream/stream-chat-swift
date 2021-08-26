@@ -279,7 +279,7 @@ class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
             database.viewContext.channel(cid: channelId)?.asModel()
         }
         
-        let memberId = try XCTUnwrap(loadedChannel?.cachedMembers.first?.id)
+        let memberId = try XCTUnwrap(loadedChannel?.lastActiveMembers.first?.id)
         
         XCTAssertEqual(loadedChannel?.reads.first?.unreadMessagesCount, 10)
         XCTAssertEqual(loadedChannel?.reads.first?.lastReadAt, Date(timeIntervalSince1970: 1))
@@ -392,7 +392,7 @@ class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
             database.viewContext.channel(cid: channelId)?.asModel()
         }
         
-        let memberId = try XCTUnwrap(loadedChannel?.cachedMembers.first?.id)
+        let memberId = try XCTUnwrap(loadedChannel?.lastActiveMembers.first?.id)
         
         XCTAssertEqual(loadedChannel?.reads.first?.unreadMessagesCount, 10)
         XCTAssertEqual(loadedChannel?.reads.first?.lastReadAt, Date(timeIntervalSince1970: 1))

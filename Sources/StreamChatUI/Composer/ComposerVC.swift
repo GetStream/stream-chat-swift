@@ -630,7 +630,7 @@ open class ComposerVC: _ViewController,
             )
         } else {
             usersCache = searchUsers(
-                channel.watchers.map { $0 } + channel.cachedMembers.map { $0 },
+                channel.lastActiveWatchers.map { $0 } + channel.lastActiveMembers.map { $0 },
                 by: typingMention,
                 excludingId: currentUserId
             )
