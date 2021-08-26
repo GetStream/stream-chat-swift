@@ -33,8 +33,8 @@ class CustomChatChannelHeaderView: ChatChannelHeaderView {
 
     // Handle typing events
     override func channelController(
-        _ channelController: _ChatChannelController<NoExtraData>,
-        didChangeTypingUsers typingUsers: Set<_ChatUser<NoExtraData>>
+        _ channelController: ChatChannelController,
+        didChangeTypingUsers typingUsers: Set<ChatUser>
     ) {
         // Save the current typing users but the current user.
         // Then update the content.

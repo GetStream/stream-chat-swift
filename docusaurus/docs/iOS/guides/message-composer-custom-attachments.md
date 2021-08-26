@@ -246,7 +246,7 @@ The `ContactAttachmentView` must subclass from `_View` and implement the require
 extension ContactAttachmentPayload: AttachmentPreviewProvider {
     static let preferredAxis: NSLayoutConstraint.Axis = .vertical
 
-    func previewView<ExtraData: ExtraDataTypes>(components: _Components<ExtraData>) -> UIView {
+    func previewView(components: Components) -> UIView {
         let preview = ContactAttachmentView()
         preview.content = self
         return preview
