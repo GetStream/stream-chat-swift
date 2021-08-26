@@ -67,8 +67,9 @@ extension UIImageView {
         let request = ImageRequest(
             urlRequest: urlRequest,
             processors: preprocessors,
-            options: ImageRequestOptions(filteredURL: imageKey)
+            userInfo: [.imageIdKey: imageKey]
         )
+
         let options = ImageLoadingOptions(placeholder: placeholder)
 
         currentImageLoadingTask = Nuke.loadImage(with: request, options: options, into: self, completion: completion)

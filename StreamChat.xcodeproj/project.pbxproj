@@ -8518,7 +8518,7 @@
 			repositoryURL = "https://github.com/kean/Nuke";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 9.1.2;
+				minimumVersion = 10.0.0;
 			};
 		};
 		79A4AE0F2536EE5500C32A74 /* XCRemoteSwiftPackageReference "Starscream" */ = {
