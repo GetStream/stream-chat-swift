@@ -55,7 +55,7 @@ class ChannelDTO: NSManagedObject {
 
     // MARK: - Relationships
     
-    @NSManaged var createdBy: UserDTO
+    @NSManaged var createdBy: UserDTO?
     @NSManaged var team: TeamDTO?
     @NSManaged var members: Set<MemberDTO>
 
@@ -384,7 +384,7 @@ extension ChatChannel {
             createdAt: dto.createdAt,
             updatedAt: dto.updatedAt,
             deletedAt: dto.deletedAt,
-            createdBy: dto.createdBy.asModel(),
+            createdBy: dto.createdBy?.asModel(),
             config: try! JSONDecoder().decode(ChannelConfig.self, from: dto.config),
             isFrozen: dto.isFrozen,
             lastActiveMembers: { fetchMembers() },
