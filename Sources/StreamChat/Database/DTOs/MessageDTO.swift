@@ -535,7 +535,7 @@ private extension ChatMessage {
         let context = dto.managedObjectContext!
         
         id = dto.id
-        cid = dto.channel.map { try! ChannelId(cid: $0.cid) }
+        cid = dto.channel?.channelId
         text = dto.text
         type = MessageType(rawValue: dto.type) ?? .regular
         command = dto.command

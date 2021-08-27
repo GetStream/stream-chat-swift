@@ -117,7 +117,7 @@ class ConnectionRecoveryUpdater: EventWorker {
     private func sync(completion: @escaping () -> Void) {
         guard let lastSyncedAt = lastSyncedAt else { return }
         
-        let watchedChannelIDs = allChannels.map(\.cid).compactMap { try? ChannelId(cid: $0) }
+        let watchedChannelIDs = allChannels.map(\.channelId)
         
         guard !watchedChannelIDs.isEmpty else {
             log.info("Skipping `/sync` endpoint call as there are no channels to watch.")

@@ -440,7 +440,7 @@ class ChannelDTO_Tests: XCTestCase {
         }
         
         XCTAssertEqual(loadedChannels.count, 1)
-        XCTAssertEqual(loadedChannels.first?.cid, channel1Id.rawValue)
+        XCTAssertEqual(loadedChannels.first?.channelId, channel1Id)
     }
     
     func test_channelListQuery_withSorting() {
@@ -570,8 +570,8 @@ class ChannelDTO_Tests: XCTestCase {
         let loadedChannels: [ChannelDTO] = try database.viewContext.fetch(fetchRequest)
 
         XCTAssertEqual(loadedChannels.count, 2)
-        XCTAssertTrue(loadedChannels.contains { $0.cid == visibleCid1.rawValue })
-        XCTAssertTrue(loadedChannels.contains { $0.cid == visibleCid2.rawValue })
+        XCTAssertTrue(loadedChannels.contains { $0.channelId == visibleCid1 })
+        XCTAssertTrue(loadedChannels.contains { $0.channelId == visibleCid2 })
     }
     
     func test_channelUnreadCount_calculatedCorrectly() {

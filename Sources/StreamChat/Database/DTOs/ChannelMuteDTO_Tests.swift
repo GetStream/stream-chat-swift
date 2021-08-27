@@ -83,9 +83,9 @@ final class ChannelMuteDTO_Tests: XCTestCase {
 
             // Assert mutes match payloads.
             for mute in channelMutes {
-                let payload = try XCTUnwrap(mutePayloads.first(where: { $0.mutedChannel.cid.rawValue == mute.channel.cid }))
+                let payload = try XCTUnwrap(mutePayloads.first(where: { $0.mutedChannel.cid == mute.channel.channelId }))
                 XCTAssertEqual(mute.user.id, payload.user.id)
-                XCTAssertEqual(mute.channel.cid, payload.mutedChannel.cid.rawValue)
+                XCTAssertEqual(mute.channel.channelId, payload.mutedChannel.cid)
                 XCTAssertEqual(mute.createdAt, payload.createdAt)
                 XCTAssertEqual(mute.updatedAt, payload.updatedAt)
             }
@@ -130,7 +130,7 @@ final class ChannelMuteDTO_Tests: XCTestCase {
             for mute in channelMutes {
                 let payload = try XCTUnwrap(mutePayloads.first(where: { $0.user.id == mute.user.id }))
                 XCTAssertEqual(mute.user.id, payload.user.id)
-                XCTAssertEqual(mute.channel.cid, payload.mutedChannel.cid.rawValue)
+                XCTAssertEqual(mute.channel.channelId, payload.mutedChannel.cid)
                 XCTAssertEqual(mute.createdAt, payload.createdAt)
                 XCTAssertEqual(mute.updatedAt, payload.updatedAt)
             }
@@ -160,7 +160,7 @@ final class ChannelMuteDTO_Tests: XCTestCase {
             )
             // Assert correct mute is loaded.
             XCTAssertEqual(mute.user.id, payload.user.id)
-            XCTAssertEqual(mute.channel.cid, payload.mutedChannel.cid.rawValue)
+            XCTAssertEqual(mute.channel.channelId, payload.mutedChannel.cid)
             XCTAssertEqual(mute.createdAt, payload.createdAt)
             XCTAssertEqual(mute.updatedAt, payload.updatedAt)
         }

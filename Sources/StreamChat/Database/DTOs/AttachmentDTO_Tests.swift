@@ -40,7 +40,7 @@ class AttachmentDTO_Tests: XCTestCase {
         XCTAssertEqual(loadedAttachment.localState, nil)
         XCTAssertEqual(loadedAttachment.attachmentType, attachment.type)
         XCTAssertEqual(loadedAttachment.message.id, messageId)
-        XCTAssertEqual(loadedAttachment.channel.cid, cid.rawValue)
+        XCTAssertEqual(loadedAttachment.channel.channelId, cid)
 
         let imagePayload = attachment.decodedImagePayload
         let imageAttachmentModel = try XCTUnwrap(
@@ -75,7 +75,7 @@ class AttachmentDTO_Tests: XCTestCase {
         XCTAssertEqual(loadedAttachment.localState, nil)
         XCTAssertEqual(loadedAttachment.attachmentType, attachment.type)
         XCTAssertEqual(loadedAttachment.message.id, messageId)
-        XCTAssertEqual(loadedAttachment.channel.cid, cid.rawValue)
+        XCTAssertEqual(loadedAttachment.channel.channelId, cid)
 
         let giphyPayload = attachment.decodedGiphyPayload
         let giphyAttachmentWithActionsPayload = try XCTUnwrap(
@@ -110,7 +110,7 @@ class AttachmentDTO_Tests: XCTestCase {
         XCTAssertEqual(loadedAttachment.localState, nil)
         XCTAssertEqual(loadedAttachment.attachmentType, attachment.type)
         XCTAssertEqual(loadedAttachment.message.id, messageId)
-        XCTAssertEqual(loadedAttachment.channel.cid, cid.rawValue)
+        XCTAssertEqual(loadedAttachment.channel.channelId, cid)
 
         let giphyPayload = attachment.decodedGiphyPayload
         let giphyAttachmentWithoutActionsPayload = try XCTUnwrap(
@@ -146,7 +146,7 @@ class AttachmentDTO_Tests: XCTestCase {
         XCTAssertEqual(loadedAttachment.localState, .pendingUpload)
         XCTAssertEqual(loadedAttachment.attachmentType, attachmentEnvelope.type)
         XCTAssertEqual(loadedAttachment.message.id, messageId)
-        XCTAssertEqual(loadedAttachment.channel.cid, cid.rawValue)
+        XCTAssertEqual(loadedAttachment.channel.channelId, cid)
 
         let fileAttachment = try XCTUnwrap(
             loadedAttachment
@@ -185,7 +185,7 @@ class AttachmentDTO_Tests: XCTestCase {
         XCTAssertEqual(loadedAttachment.localState, .uploaded)
         XCTAssertEqual(loadedAttachment.attachmentType, attachmentEnvelope.type)
         XCTAssertEqual(loadedAttachment.message.id, messageId)
-        XCTAssertEqual(loadedAttachment.channel.cid, cid.rawValue)
+        XCTAssertEqual(loadedAttachment.channel.channelId, cid)
 
         let attachmentModel = try XCTUnwrap(
             loadedAttachment

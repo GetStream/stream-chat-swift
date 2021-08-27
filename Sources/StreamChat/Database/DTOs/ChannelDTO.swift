@@ -7,7 +7,11 @@ import Foundation
 
 @objc(ChannelDTO)
 class ChannelDTO: NSManagedObject {
-    @NSManaged var cid: String
+    @NSManaged private var cid: String
+    var channelId: ChannelId {
+        try! .init(cid: cid)
+    }
+    
     @NSManaged var name: String?
     @NSManaged var imageURL: URL?
     @NSManaged var typeRawValue: String
@@ -146,7 +150,7 @@ extension NSManagedObjectContext {
             dto.extraData = try JSONEncoder.default.encode(payload.extraData)
         } catch {
             log.error(
-                "Failed to decode extra payload for Channel with cid: <\(dto.cid)>, using default value instead. "
+                "Failed to decode extra payload for Channel with cid: <\(dto.channelId)>, using default value instead. "
                     + "Error: \(error)"
             )
             dto.extraData = Data()
@@ -300,13 +304,13 @@ extension ChatChannel {
             extraData = try JSONDecoder.default.decode([String: RawJSON].self, from: dto.extraData)
         } catch {
             log.error(
-                "Failed to decode extra data for Channel with cid: <\(dto.cid)>, using default value instead. "
+                "Failed to decode extra data for Channel with cid: <\(dto.channelId)>, using default value instead. "
                     + "Error: \(error)"
             )
             extraData = [:]
         }
 
-        let cid = try! ChannelId(cid: dto.cid)
+        let cid = dto.channelId
         
         let context = dto.managedObjectContext!
         
@@ -324,7 +328,7 @@ extension ChatChannel {
             let metionedUnreadMessagesRequest = NSFetchRequest<MessageDTO>(entityName: MessageDTO.entityName)
             metionedUnreadMessagesRequest.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
                 MessageDTO.channelMessagesPredicate(
-                    for: dto.cid,
+                    for: dto.channelId.rawValue,
                     deletedMessagesVisibility: context.deletedMessagesVisibility ?? .visibleForCurrentUser
                 ),
                 NSPredicate(format: "createdAt > %@", currentUserRead?.lastReadAt as NSDate? ?? NSDate(timeIntervalSince1970: 0)),
@@ -345,7 +349,7 @@ extension ChatChannel {
         let fetchMessages: () -> [ChatMessage] = {
             MessageDTO
                 .load(
-                    for: dto.cid,
+                    for: dto.channelId.rawValue,
                     limit: dto.managedObjectContext?.localCachingSettings?.chatChannel.latestMessagesLimit ?? 25,
                     context: context
                 )

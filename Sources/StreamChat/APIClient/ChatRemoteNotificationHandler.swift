@@ -127,7 +127,7 @@ public class ChatRemoteNotificationHandler {
                 return
             }
 
-            let cids = results.compactMap { try? ChannelId(cid: $0.cid) }
+            let cids = results.map { $0.channelId }
             guard !cids.isEmpty else {
                 completion()
                 return

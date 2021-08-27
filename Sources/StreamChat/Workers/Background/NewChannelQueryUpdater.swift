@@ -72,10 +72,10 @@ final class NewChannelQueryUpdater: Worker {
         changes.forEach { change in
             switch change {
             case let .insert(channelDTO, _):
-                let cid = channelDTO.cid
+                let cid = channelDTO.channelId
                 
                 database.write {
-                    let dto = $0.channel(cid: try! ChannelId(cid: cid))
+                    let dto = $0.channel(cid: cid)
                     dto?.needsRefreshQueries = false
                 } completion: { _ in
                     self.updateChannelListQuery(for: channelDTO)
@@ -95,7 +95,7 @@ final class NewChannelQueryUpdater: Worker {
             do {
                 updatedQueries = try queries.map {
                     // Modify original query filter
-                    try $0.asChannelListQueryWithUpdatedFilter(filterToAdd: .equal("cid", to: channelDTO.cid))
+                    try $0.asChannelListQueryWithUpdatedFilter(filterToAdd: .equal("cid", to: channelDTO.channelId.rawValue))
                 }
                 
             } catch {

@@ -67,7 +67,7 @@ class MessageSender: Worker {
             switch change {
             case .insert(let dto, index: _), .update(let dto, index: _):
                 database.backgroundReadOnlyContext.performAndWait {
-                    guard let cid = dto.channel.map({ try! ChannelId(cid: $0.cid) }) else {
+                    guard let cid = dto.channel?.channelId else {
                         log.error("Skipping sending of the message \(dto.id) because the channel info is missing.")
                         return
                     }
@@ -152,7 +152,7 @@ private class MessageSendingQueue {
                     return
                 }
                 
-                guard let cid = dto.channel.map({ try! ChannelId(cid: $0.cid) }) else {
+                guard let cid = dto.channel?.channelId else {
                     log.info("Skipping sending message with id \(dto.id) because it doesn't have a valid channel.")
                     self?.removeRequestAndContinue(request)
                     return

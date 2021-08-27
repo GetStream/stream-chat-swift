@@ -21,7 +21,7 @@ class ChannelReadDTO: NSManagedObject {
         // When the read is updated, we need to propagate this change up to holding channel
         if hasPersistentChangedValues, !channel.hasChanges {
             // this will not change object, but mark it as dirty, triggering updates
-            channel.cid = channel.cid
+            channel.name = channel.name
         }
     }
     
