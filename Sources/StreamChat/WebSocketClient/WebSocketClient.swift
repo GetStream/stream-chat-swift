@@ -25,7 +25,7 @@ class WebSocketClient {
 
             if event.connectionStatus != previousStatus {
                 // Publish Connection event with the new state
-                eventNotificationCenter.process(event)
+                eventNotificationCenter.post(event)
             }
         }
     }

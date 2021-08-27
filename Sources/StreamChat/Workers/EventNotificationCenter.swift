@@ -62,6 +62,10 @@ class EventNotificationCenter: NotificationCenter {
         }
     }
     
+    func post(_ eventToPublish: Event) {
+        post(Notification(newEventReceived: eventToPublish, sender: self))
+    }
+    
     /// Starts the timer and schedules the processing of events
     private func scheduleProcessing() {
         DispatchQueue.main.asyncAfter(deadline: .now() + eventBatchPeriod) { [weak self] in
@@ -79,7 +83,7 @@ class EventNotificationCenter: NotificationCenter {
                         let eventToPublish = self.middlewares.process(event: event, session: session)
                     else { return }
 
-                    self.post(Notification(newEventReceived: eventToPublish, sender: self))
+                    self.post(eventToPublish)
                 }
             }
         }
