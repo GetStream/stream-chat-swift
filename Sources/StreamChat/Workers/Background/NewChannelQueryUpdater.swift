@@ -23,19 +23,9 @@ final class NewChannelQueryUpdater: Worker {
     
     private lazy var channelsObserver: ListDatabaseObserver = .init(
         context: self.database.backgroundReadOnlyContext,
-        fetchRequest: ChannelDTO.channelWithoutQueryFetchRequest
+        fetchRequest: ChannelDTO.channelWithoutQueryFetchRequest,
+        itemCreator: { $0.asModel() }
     )
-    
-    private var queries: [ChannelListQueryDTO] {
-        do {
-            let queries = try database.backgroundReadOnlyContext
-                .fetch(NSFetchRequest<ChannelListQueryDTO>(entityName: ChannelListQueryDTO.entityName))
-            return queries
-        } catch {
-            log.error("Internal error: Failed to fetch [ChannelListQueryDTO]: \(error)")
-        }
-        return []
-    }
     
     init(database: DatabaseContainer, apiClient: APIClient, env: Environment) {
         environment = env
@@ -60,25 +50,26 @@ final class NewChannelQueryUpdater: Worker {
                     self?.handle(changes: changes)
                 }
                 try self?.channelsObserver.startObserving()
-                self?.channelsObserver.items.forEach { self?.updateChannelListQuery(for: $0) }
+                self?.channelsObserver.items.forEach {
+                    self?.linkChannelToExistedQueries($0.cid)
+                }
             } catch {
                 log.error("Error starting NewChannelQueryUpdater observer: \(error)")
             }
         }
     }
     
-    private func handle(changes: [ListChange<ChannelDTO>]) {
+    private func handle(changes: [ListChange<ChatChannel>]) {
         // Observe `ChannelDTO` insertions
         changes.forEach { change in
             switch change {
-            case let .insert(channelDTO, _):
-                let cid = channelDTO.channelId
-                
+            case let .insert(channel, _):
+                let cid = channel.cid
                 database.write {
                     let dto = $0.channel(cid: cid)
                     dto?.needsRefreshQueries = false
                 } completion: { _ in
-                    self.updateChannelListQuery(for: channelDTO)
+                    self.linkChannelToExistedQueries(cid)
                 }
 
             default: return
@@ -86,31 +77,54 @@ final class NewChannelQueryUpdater: Worker {
         }
     }
     
-    private func updateChannelListQuery(for channelDTO: ChannelDTO) {
-        database.backgroundReadOnlyContext.perform { [weak self] in
-            guard let queries = self?.queries else { return }
-            
-            var updatedQueries: [ChannelListQuery] = []
-            
-            do {
-                updatedQueries = try queries.map {
-                    // Modify original query filter
-                    try $0.asChannelListQueryWithUpdatedFilter(filterToAdd: .equal("cid", to: channelDTO.channelId.rawValue))
-                }
-                
-            } catch {
-                log.error("Internal error. Failed to update ChannelListQueries for the new channel: \(error)")
-            }
-            
-            // Send `update(channelListQuery:` requests so corresponding queries will be linked to the channel
-            updatedQueries.forEach {
-                self?.channelListUpdater.update(channelListQuery: $0) { result in
-                    if case let .failure(error) = result {
-                        log.error("Internal error. Failed to update ChannelListQueries for the new channel: \(error)")
-                    }
-                }
+    private func linkChannelToExistedQueries(_ cid: ChannelId) {
+        fetchExistedQueries { [weak self] queries in
+            for query in queries {
+                self?.linkChannelToQueryIfNeeded(cid, query: query)
             }
         }
+    }
+    
+    private func linkChannelToQueryIfNeeded(_ cid: ChannelId, query: ChannelListQuery) {
+        var queryWithNewChannel = ChannelListQuery(
+            filter: .and([query.filter, .equal(.cid, to: cid)]),
+            pageSize: 1
+        )
+        queryWithNewChannel.options = []
+        
+        channelListUpdater.fetch(queryWithNewChannel) { [weak self] in
+            switch $0 {
+            case let .success(payload):
+                guard let channel = payload.channels.first(where: { $0.channel.cid == cid }) else {
+                    return
+                }
+                
+                self?.save(channel, andLinkTo: query)
+            case let .failure(error):
+                log.error("Failed to check if query should include new channel: \(error)")
+            }
+        }
+    }
+    
+    private func fetchExistedQueries(_ completion: @escaping ([ChannelListQuery]) -> Void) {
+        let context = database.backgroundReadOnlyContext
+        context.perform {
+            let queries = context
+                .loadChannelListQueries()
+                .compactMap { $0.asModel() }
+            
+            completion(queries)
+        }
+    }
+    
+    private func save(_ channel: ChannelPayload, andLinkTo query: ChannelListQuery) {
+        database.write({ session in
+            _ = try session.saveChannel(payload: channel, query: query)
+        }, completion: { error in
+            if let error = error {
+                log.error("Failed to link new channel: \(channel.channel.cid) to query \(error)")
+            }
+        })
     }
 }
 
@@ -124,16 +138,16 @@ extension NewChannelQueryUpdater {
 }
 
 private extension ChannelListQueryDTO {
-    func asChannelListQueryWithUpdatedFilter(
-        filterToAdd filter: Filter<ChannelListFilterScope>
-    ) throws -> ChannelListQuery {
-        let encodedFilter = try JSONDecoder.default
-            .decode(Filter<ChannelListFilterScope>.self, from: filterJSONData)
-        
-        // We need to pass original `filterHash` so channel will be linked to original query, not the modified one
-        var updatedFilter: Filter<ChannelListFilterScope> = .and([encodedFilter, filter])
-        updatedFilter.explicitHash = filterHash
-        
-        return ChannelListQuery(filter: updatedFilter)
+    func asModel() -> ChannelListQuery? {
+        do {
+            let filter = try JSONDecoder
+                .default
+                .decode(Filter<ChannelListFilterScope>.self, from: filterJSONData)
+            
+            return .init(filter: filter)
+        } catch {
+            log.error("Internal error. Failed to decode channel list query filter: \(error)")
+            return nil
+        }
     }
 }

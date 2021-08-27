@@ -44,45 +44,54 @@ class NewChannelQueryUpdater_Tests: StressTestCase {
         super.tearDown()
     }
     
-    func test_update_called_forEachQuery() throws {
-        let filter1: Filter<ChannelListFilterScope> = .equal(.frozen, to: true)
-        let filter2: Filter<ChannelListFilterScope> = .equal(.cid, to: .unique)
+    func test_fetch_called_forEachQuery() throws {
+        // Save 2 queries to database
+        let query1 = ChannelListQuery(filter: .equal(.frozen, to: true))
+        let query2 = ChannelListQuery(filter: .equal(.cid, to: .unique))
         
-        try database.createChannelListQuery(filter: filter1)
-        try database.createChannelListQuery(filter: filter2)
-                
-        try database.createChannel()
+        try database.createChannelListQuery(query1)
+        try database.createChannelListQuery(query2)
         
-        // Assert `update(channelListQuery` called for each query in DB
+        // Save new channel to database
+        let cid: ChannelId = .unique
+        try database.createChannel(cid: cid)
+       
+        // Assert `fetch(channelListQuery)` is called for each query in DB
+        let updatedQuery1 = ChannelListQuery(filter: .and([query1.filter, .equal(.cid, to: cid)]))
+        let updatedQuery2 = ChannelListQuery(filter: .and([query2.filter, .equal(.cid, to: cid)]))
         AssertAsync.willBeEqual(
-            env!.channelQueryUpdater?.update_queries.map(\.filter.filterHash).sorted(),
-            [filter1, filter2].map(\.filterHash).sorted()
+            env!.channelQueryUpdater?.fetch_channelListQueries.map(\.queryHash).sorted(),
+            [updatedQuery1, updatedQuery2].map(\.queryHash).sorted()
         )
     }
 
-    func test_update_notCalled_whenNeedsRefreshQueries_isFalse() throws {
-        let filter: Filter<ChannelListFilterScope> = .equal(.frozen, to: true)
-        try database.createChannelListQuery(filter: filter)
+    func test_fetch_notCalled_whenNeedsRefreshQueries_isFalse() throws {
+        // Save a query to database
+        let query = ChannelListQuery(filter: .equal(.frozen, to: true))
+        try database.createChannelListQuery(query)
 
-        try database.writeSynchronously { session in
-            let dto = try session.saveChannel(payload: XCTestCase().dummyPayload(with: .unique))
-            dto.needsRefreshQueries = false
-        }
+        // Save a channel to database that we should not try to link to queries
+        let cid: ChannelId = .unique
+        try database.createChannel(cid: cid, needsRefreshQueries: false)
 
-        // Assert `update(channelListQuery:)` is not called
-        AssertAsync.staysTrue(env!.channelQueryUpdater?.update_queries.isEmpty == true)
+        // Assert `fetch(channelListQuery:)` is not called
+        AssertAsync.staysTrue(env!.channelQueryUpdater?.fetch_channelListQueries.isEmpty == true)
     }
 
-    func test_update_called_forExistingChannel() throws {
+    func test_fetch_called_forExistingChannel() throws {
         // Deinitialize newChannelQueryUpdater
         newChannelQueryUpdater = nil
         
-        let filter: Filter<ChannelListFilterScope> = .equal(.cid, to: .unique)
-        try database.createChannelListQuery(filter: filter)
-        try database.createChannel(cid: .unique)
+        // Save a query to database
+        let query = ChannelListQuery(filter: .equal(.frozen, to: true))
+        try database.createChannelListQuery(query)
         
-        // Assert `update(channelListQuery` is not called
-        AssertAsync.willBeTrue(env!.channelQueryUpdater?.update_queries.isEmpty)
+        // Save a channel to database
+        let cid: ChannelId = .unique
+        try database.createChannel(cid: cid)
+        
+        // Assert `fetch(channelListQuery)` is not called
+        AssertAsync.willBeTrue(env!.channelQueryUpdater?.fetch_channelListQueries.isEmpty)
         
         // Create `newChannelQueryUpdater`
         newChannelQueryUpdater = NewChannelQueryUpdater(
@@ -91,18 +100,22 @@ class NewChannelQueryUpdater_Tests: StressTestCase {
             env: env.environment
         )
         
-        // Assert `update(channelListQuery` called for channel that was in DB before observing started
-        AssertAsync.willBeEqual(env!.channelQueryUpdater?.update_queries.first?.filter.filterHash, filter.filterHash)
+        // Assert `fetch(channelListQuery)` called for channel that was in DB before observing started
+        let extectedQuery = ChannelListQuery(filter: .and([query.filter, .equal(.cid, to: cid)]))
+        AssertAsync.willBeEqual(
+            env!.channelQueryUpdater?.fetch_channelListQueries.first?.queryHash,
+            extectedQuery.queryHash
+        )
     }
 
     func test_updater_setsNeedsRefreshQueries_toFalse() throws {
-        let filter: Filter<ChannelListFilterScope> = .equal(.frozen, to: true)
-        try database.createChannelListQuery(filter: filter)
+        let query = ChannelListQuery(filter: .equal(.frozen, to: true))
+        try database.createChannelListQuery(query)
 
         let cid: ChannelId = .unique
         try database.createChannel(cid: cid)
 
-        AssertAsync.willBeEqual(env!.channelQueryUpdater?.update_queries.count, 1)
+        AssertAsync.willBeEqual(env!.channelQueryUpdater?.fetch_channelListQueries.count, 1)
 
         AssertAsync.willBeEqual(database.viewContext.channel(cid: cid)?.needsRefreshQueries, false)
 
@@ -112,33 +125,33 @@ class NewChannelQueryUpdater_Tests: StressTestCase {
             channelDTO?.needsRefreshQueries = true
         }
 
-        AssertAsync.willBeEqual(env!.channelQueryUpdater?.update_queries.count, 2)
+        AssertAsync.willBeEqual(env!.channelQueryUpdater?.fetch_channelListQueries.count, 2)
         AssertAsync.willBeEqual(database.viewContext.channel(cid: cid)?.needsRefreshQueries, false)
     }
 
     func test_filter_isModified() throws {
         let cid: ChannelId = .unique
-        let filter: Filter<ChannelListFilterScope> = .equal(.cid, to: .unique)
+        let query = ChannelListQuery(filter: .equal(.cid, to: .unique))
         
-        try database.createChannelListQuery(filter: filter)
+        try database.createChannelListQuery(query)
         try database.createChannel(cid: cid)
         
-        let expectedFilter: Filter = .and([filter, .equal("cid", to: cid)])
+        let expectedFilter: Filter = .and([query.filter, .equal(.cid, to: cid)])
         
-        // Assert `update(channelListQuery` called with modified query
+        // Assert `fetch(channelListQuery)` called with modified query
         AssertAsync {
-            Assert.willBeEqual(self.env!.channelQueryUpdater?.update_queries.first?.filter.filterHash, filter.filterHash)
-            Assert.willBeEqual(self.env!.channelQueryUpdater?.update_queries.first?.filter.description, expectedFilter.description)
+            Assert.willBeEqual(self.env!.channelQueryUpdater?.fetch_channelListQueries.first?.filter.filterHash, expectedFilter.filterHash)
+            Assert.willBeEqual(self.env!.channelQueryUpdater?.fetch_channelListQueries.first?.filter.description, expectedFilter.description)
         }
     }
     
     func test_newChannelQueryUpdater_doesNotRetainItself() throws {
-        let filter: Filter<ChannelListFilterScope> = .equal(.cid, to: .unique)
-        try database.createChannelListQuery(filter: filter)
+        let query = ChannelListQuery(filter: .equal(.cid, to: .unique))
+        try database.createChannelListQuery(query)
         try database.createChannel()
         
-        // Assert `update(channelListQuery` is called
-        AssertAsync.willBeEqual(env!.channelQueryUpdater?.update_queries.first?.filter.filterHash, filter.filterHash)
+        // Assert `fetch(channelListQuery)` is called
+        AssertAsync.willBeTrue(env!.channelQueryUpdater?.fetch_channelListQueries.isEmpty == false)
         
         // Assert `newChannelQueryUpdater` can be released even though network response hasn't come yet
         AssertAsync.canBeReleased(&newChannelQueryUpdater)
