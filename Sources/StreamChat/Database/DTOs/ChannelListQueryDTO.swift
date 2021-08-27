@@ -16,6 +16,10 @@ class ChannelListQueryDTO: NSManagedObject {
     
     @NSManaged var channels: Set<ChannelDTO>
     
+    static func allQueriesFetchRequest() -> NSFetchRequest<ChannelListQueryDTO> {
+        .init(entityName: ChannelListQueryDTO.entityName)
+    }
+    
     static func load(filterHash: String, context: NSManagedObjectContext) -> ChannelListQueryDTO? {
         let request = NSFetchRequest<ChannelListQueryDTO>(entityName: ChannelListQueryDTO.entityName)
         request.predicate = NSPredicate(format: "filterHash == %@", filterHash)
@@ -23,13 +27,24 @@ class ChannelListQueryDTO: NSManagedObject {
     }
 }
 
-extension NSManagedObjectContext {
+extension NSManagedObjectContext: ChannelListQueryDatabaseSession {
+    func delete(_ query: ChannelListQuery) {
+        guard
+            let queryDTO = ChannelListQueryDTO.load(
+                filterHash: query.filter.filterHash,
+                context: self
+            )
+        else { return }
+        
+        delete(queryDTO)
+    }
+    
     func channelListQuery(filterHash: String) -> ChannelListQueryDTO? {
         ChannelListQueryDTO.load(filterHash: filterHash, context: self)
     }
     
     func saveQuery(query: ChannelListQuery) -> ChannelListQueryDTO {
-        if let existingDTO = ChannelListQueryDTO.load(filterHash: query.filter.filterHash, context: self) {
+        if let existingDTO = channelListQuery(filterHash: query.filter.filterHash) {
             return existingDTO
         }
         
@@ -48,5 +63,15 @@ extension NSManagedObjectContext {
         newDTO.filterJSONData = jsonData
         
         return newDTO
+    }
+    
+    func loadChannelListQueries() -> [ChannelListQueryDTO] {
+        let request = ChannelListQueryDTO.allQueriesFetchRequest()
+        do {
+            return try fetch(request)
+        } catch {
+            log.assertionFailure("Failed to load channel list queries")
+            return []
+        }
     }
 }

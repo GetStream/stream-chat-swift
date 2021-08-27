@@ -159,8 +159,6 @@ protocol ChannelDatabaseSession {
     
     /// Fetches `ChannelDTO` with the given `cid` from the database.
     func channel(cid: ChannelId) -> ChannelDTO?
-    
-    func deleteChannels(query: ChannelListQuery) throws
 }
 
 protocol ChannelReadDatabaseSession {
@@ -225,6 +223,16 @@ protocol MemberListQueryDatabaseSession {
     func saveQuery(_ query: ChannelMemberListQuery) throws -> ChannelMemberListQueryDTO
 }
 
+protocol ChannelListQueryDatabaseSession {
+    func saveQuery(query: ChannelListQuery) -> ChannelListQueryDTO
+    
+    func channelListQuery(filterHash: String) -> ChannelListQueryDTO?
+
+    func loadChannelListQueries() -> [ChannelListQueryDTO]
+    
+    func delete(_ query: ChannelListQuery)
+}
+
 protocol AttachmentDatabaseSession {
     /// Fetches `AttachmentDTO`entity for the given `id`.
     func attachment(id: AttachmentId) -> AttachmentDTO?
@@ -254,7 +262,8 @@ protocol DatabaseSession: UserDatabaseSession,
     MemberDatabaseSession,
     MemberListQueryDatabaseSession,
     AttachmentDatabaseSession,
-    ChannelMuteDatabaseSession {}
+    ChannelMuteDatabaseSession,
+    ChannelListQueryDatabaseSession {}
 
 extension DatabaseSession {
     @discardableResult
