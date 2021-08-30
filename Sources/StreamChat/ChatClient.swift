@@ -198,6 +198,9 @@ public class ChatClient {
     /// In case of token expiration this property is used to obtain a new token
     public var tokenProvider: TokenProvider?
 
+    /// Sets the user token to the client, this method is only needed to perform API calls
+    /// without connecting as a user.
+    /// You should only use this in special cases like a notification service or other background process
     public func setToken(token: Token) {
         _currentToken.wrappedValue = token
         completeTokenWaiters(token: token)
