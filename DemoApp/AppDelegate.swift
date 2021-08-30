@@ -5,8 +5,6 @@
 import StreamChat
 import UIKit
 
-let currentUserIdRegisteredForPush = "currentUserIdRegisteredForPush"
-
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(

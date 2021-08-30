@@ -4,18 +4,19 @@
 
 import Foundation
 
-let apiKeyString = "8br4watad788"
+public let apiKeyString = "8br4watad788"
+public let applicationGroupIdentifier = "group.io.getstream.iOS.ChatDemoApp"
+public let currentUserIdRegisteredForPush = "currentUserIdRegisteredForPush"
 
-struct UserCredentials {
+public struct UserCredentials {
     let id: String
     let name: String
     let avatarURL: URL
     let token: String
-    let apiKey: String
     let birthLand: String
 }
 
-extension UserCredentials {
+public extension UserCredentials {
     static func builtInUsersByID(id: String) -> UserCredentials? {
         builtInUsers.filter { $0.id == id }.first
     }
@@ -135,6 +136,6 @@ extension UserCredentials {
         )
 
     ].map {
-        UserCredentials(id: $0.0, name: $0.1, avatarURL: URL(string: $0.2)!, token: $0.3, apiKey: apiKeyString, birthLand: $0.4)
+        UserCredentials(id: $0.0, name: $0.1, avatarURL: URL(string: $0.2)!, token: $0.3, birthLand: $0.4)
     }
 }

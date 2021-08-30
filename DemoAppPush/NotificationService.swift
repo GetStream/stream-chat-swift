@@ -71,21 +71,23 @@ class NotificationService: UNNotificationServiceExtension {
             return
         }
 
-        var config = ChatClientConfig(apiKey: .init("8br4watad788"))
-        config.isLocalStorageEnabled = true
-        config.applicationGroupIdentifier = "group.io.getstream.iOS.ChatDemoApp"
+        guard let userId = UserDefaults.standard.string(forKey: currentUserIdRegisteredForPush), let userCredentials = UserCredentials.builtInUsersByID(id: userId) else {
+            return
+        }
 
-        let token =
-            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiZ2VuZXJhbF9ncmlldm91cyJ9.FPRvRoeZdALErBA1bDybch4xY-c5CEinuc9qqEPzX4E"
+        var config = ChatClientConfig(apiKey: .init(apiKeyString))
+        config.isLocalStorageEnabled = true
+        config.applicationGroupIdentifier = applicationGroupIdentifier
+
         let client = ChatClient(config: config)
-        client.setToken(token: token)
+        client.setToken(token: Token(stringLiteral: userCredentials.token))
 
         let chatHandler = ChatRemoteNotificationHandler(client: client, content: content)
 
         let chatNotification = chatHandler.handleNotification { chatContent in
             switch chatContent {
             case let .message(messageNotification):
-                content.title = messageNotification.message.author.name ?? "somebody" + " on \(messageNotification.channel?.name ?? "a conversation with you")"
+                content.title = (messageNotification.message.author.name ?? "somebody") + (" on \(messageNotification.channel?.name ?? "a conversation with you")")
                 content.subtitle = ""
                 content.body = messageNotification.message.text
                 self.addMessageAttachments(message:messageNotification.message, content: content) {

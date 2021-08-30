@@ -63,7 +63,7 @@ public struct ChatPushNotificationInfo {
 public class ChatRemoteNotificationHandler {
     var client: ChatClient
     var content: UNNotificationContent
-    let chatCategoryIdentifier = "stream.chat"
+    let chatCategoryIdentifiers: Set<String> = ["stream.chat", "MESSAGE_NEW"]
     let syncCooldown: TimeInterval = 6.0
     let database: DatabaseContainer
 
@@ -155,7 +155,7 @@ public class ChatRemoteNotificationHandler {
                 return
             }
             self.syncChannel() {
-                let channel = ChannelDTO.load(cid: cid, context: self.database.backgroundReadOnlyContext)?.asModel()
+                let channel = ChannelDTO.load(cid: cid, context: self.database.viewContext)?.asModel()
                 completion(message, channel)
             }
         }
@@ -189,7 +189,7 @@ public class ChatRemoteNotificationHandler {
     }
 
     public func handleNotification(completion: @escaping (ChatPushNotificationContent) -> Void) -> Bool {
-        guard content.categoryIdentifier == chatCategoryIdentifier else {
+        guard chatCategoryIdentifiers.contains(content.categoryIdentifier) else {
             return false
         }
         

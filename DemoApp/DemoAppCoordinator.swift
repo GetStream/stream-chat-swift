@@ -73,18 +73,16 @@ final class DemoAppCoordinator: NSObject, UNUserNotificationCenterDelegate {
         let token = try! Token(rawValue: userCredentials.token)
         
         // Create client
-        var config = ChatClientConfig(apiKey: .init(userCredentials.apiKey))
+        var config = ChatClientConfig(apiKey: .init(apiKeyString))
         config.isLocalStorageEnabled = true
-        config.applicationGroupIdentifier = "group.io.getstream.iOS.ChatDemoApp"
+        config.applicationGroupIdentifier = applicationGroupIdentifier
 
         ChatClient.shared = ChatClient(config: config)
         ChatClient.shared.connectUser(
-            userInfo: .init(id: userCredentials.id, imageURL: userCredentials.avatarURL),
+            userInfo: .init(id: userCredentials.id, name: userCredentials.name, imageURL: userCredentials.avatarURL),
             token: token
         ) { error in
-            print("debugging: connectUser completion called")
             if let error = error {
-                print("debugging: connectUser completion errored")
                 log.error("connecting the user failed \(error)")
                 return
             }
@@ -115,7 +113,6 @@ final class DemoAppCoordinator: NSObject, UNUserNotificationCenterDelegate {
         if let cid = channelID {
             let channelVC = ChatMessageListVC()
             channelVC.channelController = ChatClient.shared.channelController(for: cid)
-//            self.navigationController.show(channelVC, sender: chatList)
             navigationController.viewControllers.append(channelVC)
         }
         
