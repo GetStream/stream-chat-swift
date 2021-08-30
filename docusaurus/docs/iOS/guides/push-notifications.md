@@ -8,7 +8,6 @@ Push notifications can be configured to receive updates when the application is 
 You can find more on setting up push [here](https://getstream.io/chat/docs/php/push_ios/?language=swift). Make sure you've taken care of authentication before proceeding to the next steps.
 :::
 
-
 ### Setup
 
 To receive push notifications from the Stream server the first step you need to do is register the device. To do this you need to call `UIApplication.shared.registerForRemoteNotifications()` and send the token from `application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data)`.
@@ -112,13 +111,13 @@ class SampleNotificationDelegate: NSObject, UNUserNotificationCenterDelegate {
         }
         
         /// initialize ChatClient and connect the user
-        let config = ChatClientConfig(apiKey: .init("8br4watad788"))
+        let config = ChatClientConfig(apiKey: .init("<# Api Key Here #>"))
         ChatClient.shared = ChatClient(config: config)
         
-        let token = try! Token(rawValue: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiZ2VuZXJhbF9ncmlldm91cyJ9.FPRvRoeZdALErBA1bDybch4xY-c5CEinuc9qqEPzX4E")
+        let token = Token(stringLiteral: "<# User Token Here #>")
         ChatClient.shared = ChatClient(config: config)
         ChatClient.shared.connectUser(
-            userInfo: .init(id: "general_grievous"),
+            userInfo: .init(id: "<# User ID Here #>"),
             token: token
         ) { error in
             print("debugging: connectUser completion called")
@@ -210,8 +209,8 @@ class NotificationService: UNNotificationServiceExtension {
         /// config.isLocalStorageEnabled = true
         /// config.applicationGroupIdentifier = "<# App Group ID Here #>"
 
-        let token = "<# User Token Here #>"
         let client = ChatClient(config: config)
+        let token = Token(stringLiteral: "<# User Token Here #>")
         client.setToken(token: token)
 
         let chatHandler = ChatRemoteNotificationHandler(client: client, content: content)
@@ -333,10 +332,11 @@ class NotificationService: UNNotificationServiceExtension {
 
         let chatNotification = chatHandler.handleNotification { chatContent in
             switch chatContent {
-            case let .message(message):
-                content.title = message.author.name ?? ""
-                content.subtitle = message.text
-                self.addMessageAttachments(message:message, content: content) {
+            case let .message(messageNotification):
+                content.title = (messageNotification.message.author.name ?? "somebody") + (" on \(messageNotification.channel?.name ?? "a conversation with you")")
+                content.subtitle = ""
+                content.body = messageNotification.message.text
+                self.addMessageAttachments(message: messageNotification.message, content: content) {
                     contentHandler($0)
                 }
             default:
@@ -380,4 +380,4 @@ let client = ChatClient(config: config)
 /// ...
 ```
 
-In order for this to work correctly, you need to do this in the service extension and in the application.
+Note: in order for this to work correctly, you need to do this in the service extension and in the application.
