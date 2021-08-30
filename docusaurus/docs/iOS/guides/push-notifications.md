@@ -60,13 +60,14 @@ ChatClient.shared.connectUser(
 ```
 
 :::note
-Push notifications can be tricky to setup correctly, make sure to check for errors and settings on the [Dashboard](https://getstream.io/dashboard/)
+Push notifications can be tricky to setup correctly. Make sure to set up [logging](https://getstream.io/chat/docs/ios-swift/push_logs/?language=swift) and check for errors and settings on the [Dashboard](https://getstream.io/dashboard/) and refer to our debugging tips for [common error scenarios](https://getstream.io/chat/docs/ios-swift/push_-_common_issues_and_faq/?language=swift).
+
 :::
 
 ### Removing devices
 
 ```swift
-guard let deviceId = ChatClient.shared.currentUserController().currentUser?.devices.last?.id else {
+guard let deviceId = ChatClient.shared.currentUserController().currentUser?.devices.last?.id else
     return
 }
 
