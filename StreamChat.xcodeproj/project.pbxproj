@@ -60,6 +60,8 @@
 		437FCA0B26D67BE40000223C /* DemoAppPush.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 437FCA0426D67BE40000223C /* DemoAppPush.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		437FCA1026D67CB40000223C /* StreamChat.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 799C941B247D2F80001F1104 /* StreamChat.framework */; };
 		437FCA1126D67CB40000223C /* StreamChat.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 799C941B247D2F80001F1104 /* StreamChat.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		437FCA1626D79A910000223C /* ChatRemoteNotificationHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 437FCA1526D79A910000223C /* ChatRemoteNotificationHandler.swift */; };
+		437FCA1926D906B20000223C /* ChatPushNotificationContent_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 437FCA1826D906B20000223C /* ChatPushNotificationContent_Tests.swift */; };
 		439AFF9826C563BA000A441E /* DateUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 439AFF9726C563BA000A441E /* DateUtils.swift */; };
 		439AFF9A26C568DD000A441E /* DateUtils_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 439AFF9926C568DD000A441E /* DateUtils_Tests.swift */; };
 		43ABF8B526C2CD900034BD62 /* ComposerVC_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43ABF8B326C2B7140034BD62 /* ComposerVC_Tests.swift */; };
@@ -1436,6 +1438,9 @@
 		437FCA0426D67BE40000223C /* DemoAppPush.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = DemoAppPush.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		437FCA0626D67BE40000223C /* NotificationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationService.swift; sourceTree = "<group>"; };
 		437FCA0826D67BE40000223C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		437FCA1526D79A910000223C /* ChatRemoteNotificationHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatRemoteNotificationHandler.swift; sourceTree = "<group>"; };
+		437FCA1726D7E60D0000223C /* DemoAppPush.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = DemoAppPush.entitlements; sourceTree = "<group>"; };
+		437FCA1826D906B20000223C /* ChatPushNotificationContent_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatPushNotificationContent_Tests.swift; sourceTree = "<group>"; };
 		439AFF9726C563BA000A441E /* DateUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateUtils.swift; sourceTree = "<group>"; };
 		439AFF9926C568DD000A441E /* DateUtils_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateUtils_Tests.swift; sourceTree = "<group>"; };
 		43ABF8B326C2B7140034BD62 /* ComposerVC_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComposerVC_Tests.swift; sourceTree = "<group>"; };
@@ -2652,6 +2657,7 @@
 		437FCA0526D67BE40000223C /* DemoAppPush */ = {
 			isa = PBXGroup;
 			children = (
+				437FCA1726D7E60D0000223C /* DemoAppPush.entitlements */,
 				437FCA0626D67BE40000223C /* NotificationService.swift */,
 				437FCA0826D67BE40000223C /* Info.plist */,
 			);
@@ -3450,6 +3456,8 @@
 				8802F9EE25AF3D4200475159 /* HTTPHeader.swift */,
 				88CD395E25B5844700399F8E /* HTTPHeader_Tests.swift */,
 				79877A122498E4EE00015F8B /* Endpoints */,
+				437FCA1526D79A910000223C /* ChatRemoteNotificationHandler.swift */,
+				437FCA1826D906B20000223C /* ChatPushNotificationContent_Tests.swift */,
 			);
 			path = APIClient;
 			sourceTree = "<group>";
@@ -6208,6 +6216,7 @@
 				7964F3B7249A314D002A09EC /* LogFormatter.swift in Sources */,
 				F63CC36F24E591840052844D /* EventObserver.swift in Sources */,
 				DA84070925250528005A0F62 /* UserEndpoints.swift in Sources */,
+				437FCA1626D79A910000223C /* ChatRemoteNotificationHandler.swift in Sources */,
 				8A0D649724E579A50017A3C0 /* GuestEndpoints.swift in Sources */,
 				8899BC47254305F8003CB98B /* MessageReactionRequestPayload.swift in Sources */,
 				8A62705024B867190040BFD6 /* EventPayload.swift in Sources */,
@@ -6423,6 +6432,7 @@
 				793C14DC24BF2A0800B8BFB7 /* ListDatabaseObserver_Tests.swift in Sources */,
 				79A0E9AF2498BFD800E9BD50 /* WebSocketClient_Tests.swift in Sources */,
 				DA8407232525E871005A0F62 /* UserListPayload_Tests.swift in Sources */,
+				437FCA1926D906B20000223C /* ChatPushNotificationContent_Tests.swift in Sources */,
 				799B5DC5253081C900C108FB /* DevicePayloads.swift in Sources */,
 				F61D7C3124FF9D1F00188A0E /* MessageEndpoints_Tests.swift in Sources */,
 				649968DB264E6E81000515AB /* ChatMessageAttachment_Sample.swift in Sources */,
@@ -7119,6 +7129,7 @@
 		437FCA0C26D67BE40000223C /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = DemoAppPush/DemoAppPush.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = EHV7XZLAHA;
 				INFOPLIST_FILE = DemoAppPush/Info.plist;
@@ -7140,6 +7151,7 @@
 		437FCA0D26D67BE40000223C /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = DemoAppPush/DemoAppPush.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = EHV7XZLAHA;
@@ -7161,6 +7173,7 @@
 		437FCA0E26D67BE40000223C /* ReleaseTests */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = DemoAppPush/DemoAppPush.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = EHV7XZLAHA;
 				INFOPLIST_FILE = DemoAppPush/Info.plist;

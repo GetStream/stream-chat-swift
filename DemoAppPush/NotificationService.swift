@@ -1,98 +1,113 @@
-//
-//  NotificationService.swift
-//  DemoAppPush
-//
-//  Created by tommaso barbugli on 25/08/2021.
-//  Copyright © 2021 Stream.io Inc. All rights reserved.
-//
-
-import UserNotifications
 import StreamChat
+import UserNotifications
 
-public enum ChatPushNotificationContent {
-    case message(ChatMessage)
-    case reaction(ChatMessageReaction)
-    case unknown(UNMutableNotificationContent)
-}
-
-/// 1 - get the payload and decide what kind of payload it is
-/// 2 - get the ChatClient
-/// 3 - if the payload is v2 then we need to fetch the full message
-/// 4 - if offline storage is enabled, we need to call sync
 class NotificationService: UNNotificationServiceExtension {
-
     var contentHandler: ((UNNotificationContent) -> Void)?
-    var bestAttemptContent: UNMutableNotificationContent?
+    var request: UNNotificationRequest?
 
-    func getContent(from content: UNMutableNotificationContent, completion: @escaping (ChatPushNotificationContent) -> Void) {
-        let client = getClient()
-
-        guard let payload = content.userInfo["stream"], let dict = payload as? [String: String] else {
-            return completion(.unknown(content))
-        }
-
-        guard let type = dict["type"] else {
-            return completion(.unknown(content))
-        }
-
-        switch EventType.init(rawValue: type) {
-            case .messageNew:
-                guard let cid = dict["cid"], let id = dict["id"], let cid = try? ChannelId.init(cid: cid) else {
-                    completion(.unknown(content))
-                    return
-                }
-                let controller  = client.messageController(cid: cid, messageId: id)
-                controller.synchronize { error in
-                    if let error = error {
-                        log.error(error)
-                        completion(.unknown(content))
-                    }
-                    guard let message = controller.message else {
-                        completion(.unknown(content))
-                        return
-                    }
-                    completion(.message(message))
-                }
-            case .reactionNew:
-                completion(.unknown(content))
-            default:
-                completion(.unknown(content))
-        }
-    }
-
-    func getClient() -> ChatClient {
-        let config = ChatClientConfig(apiKey: .init("api_key"))
-        let client = ChatClient(config: config) { completion in completion(.success("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiZ2VuZXJhbF9ncmlldm91cyJ9.FPRvRoeZdALErBA1bDybch4xY-c5CEinuc9qqEPzX4E")) }
-        return client
-    }
-
-    func rewrite(content: ChatPushNotificationContent, notification: UNMutableNotificationContent) {
-        notification.title = "\(content)"
-//        switch content {
-//        case .unknown:
-//            bestAttemptContent.title = "unknown"
-//
-//        }
-    }
-
-    override func didReceive(_ request: UNNotificationRequest, withContentHandler contentHandler: @escaping (UNNotificationContent) -> Void) {
-        self.contentHandler = contentHandler
-        bestAttemptContent = (request.content.mutableCopy() as? UNMutableNotificationContent)
-
-        if let bestAttemptContent = bestAttemptContent {
-            getContent(from: bestAttemptContent) { content in
-                self.rewrite(content: content, notification: bestAttemptContent)
-                contentHandler(bestAttemptContent)
+    func addAttachments(
+        url: URL,
+        content: UNMutableNotificationContent,
+        identifier: String = "image",
+        completion: @escaping (UNMutableNotificationContent) -> Void
+    ) {
+        let task = URLSession.shared.downloadTask(with: url) { (downloadedUrl, _, _) in
+            defer {
+                completion(content)
             }
+
+            guard let downloadedUrl = downloadedUrl else {
+                return
+            }
+          
+            guard let path = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true).first else {
+                return
+            }
+          
+            let localURL = URL(fileURLWithPath: path).appendingPathComponent(url.lastPathComponent)
+          
+            do {
+                try FileManager.default.moveItem(at: downloadedUrl, to: localURL)
+            } catch {
+                return
+            }
+
+            guard let attachment = try? UNNotificationAttachment(identifier: identifier, url: localURL, options: nil) else {
+                return
+            }
+
+            content.attachments = [attachment]
+        }
+        task.resume()
+    }
+
+    func addMessageAttachments(
+        message: ChatMessage,
+        content: UNMutableNotificationContent,
+        completion: @escaping (UNMutableNotificationContent) -> Void
+    ) {
+        if let imageURL = message.author.imageURL {
+            addAttachments(url: imageURL, content: content) {
+                completion($0)
+            }
+            return
+        }
+        if let attachment = message.imageAttachments.first {
+            addAttachments(url: attachment.imageURL, content: content) {
+                completion($0)
+            }
+            return
+        }
+    }
+
+    override func didReceive(
+        _ request: UNNotificationRequest,
+        withContentHandler contentHandler: @escaping (UNNotificationContent) -> Void
+    ) {
+        self.contentHandler = contentHandler
+        self.request = request
+
+        guard let content = request.content.mutableCopy() as? UNMutableNotificationContent else {
+            return
+        }
+
+        var config = ChatClientConfig(apiKey: .init("8br4watad788"))
+        config.isLocalStorageEnabled = true
+        config.applicationGroupIdentifier = "group.io.getstream.iOS.ChatDemoApp"
+
+        let token =
+            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiZ2VuZXJhbF9ncmlldm91cyJ9.FPRvRoeZdALErBA1bDybch4xY-c5CEinuc9qqEPzX4E"
+        let client = ChatClient(config: config)
+        client.setToken(token: token)
+
+        let chatHandler = ChatRemoteNotificationHandler(client: client, content: content)
+
+        let chatNotification = chatHandler.handleNotification { chatContent in
+            switch chatContent {
+            case let .message(messageNotification):
+                content.title = messageNotification.message.author.name ?? "somebody" + " on \(messageNotification.channel?.name ?? "a conversation with you")"
+                content.subtitle = ""
+                content.body = messageNotification.message.text
+                self.addMessageAttachments(message:messageNotification.message, content: content) {
+                    contentHandler($0)
+                }
+            default:
+                content.title = "You received an update to one conversation"
+                contentHandler(content)
+            }
+        }
+        
+        if !chatNotification {
+            /// this was not a notification from Stream Chat
+            /// perform any other transformation to the notification if needed
         }
     }
     
     override func serviceExtensionTimeWillExpire() {
         // Called just before the extension will be terminated by the system.
         // Use this as an opportunity to deliver your "best attempt" at modified content, otherwise the original push payload will be used.
-        if let contentHandler = contentHandler, let bestAttemptContent =  bestAttemptContent {
+        if let contentHandler = contentHandler, let bestAttemptContent = request?.content.mutableCopy() as? UNMutableNotificationContent {
             contentHandler(bestAttemptContent)
         }
     }
-
 }

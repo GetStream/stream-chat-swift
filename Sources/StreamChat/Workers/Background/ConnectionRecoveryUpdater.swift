@@ -94,7 +94,7 @@ class ConnectionRecoveryUpdater: EventWorker {
         )
     }
     
-    private func obtainLastSyncDate() {
+    internal func obtainLastSyncDate() {
         database.backgroundReadOnlyContext.perform { [weak self] in
             self?.lastSyncedAt = self?.database.backgroundReadOnlyContext.currentUser?.lastReceivedEventDate
         }
@@ -113,8 +113,8 @@ class ConnectionRecoveryUpdater: EventWorker {
             }
         }
     }
-    
-    private func sync(completion: @escaping () -> Void) {
+
+    internal func sync(completion: @escaping () -> Void) {
         guard let lastSyncedAt = lastSyncedAt else { return }
         
         let watchedChannelIDs = allChannels.map(\.cid).compactMap { try? ChannelId(cid: $0) }
@@ -168,7 +168,9 @@ class ConnectionRecoveryUpdater: EventWorker {
     
     private var allChannels: [ChannelDTO] {
         do {
-            return try database.backgroundReadOnlyContext.fetch(ChannelDTO.allChannelsFetchRequest)
+            let request = ChannelDTO.allChannelsFetchRequest
+            request.fetchLimit = 1000
+            return try database.backgroundReadOnlyContext.fetch(request)
         } catch {
             log.error("Internal error: Failed to fetch [ChannelDTO]: \(error)")
             return []
@@ -178,7 +180,7 @@ class ConnectionRecoveryUpdater: EventWorker {
 
 // MARK: - Extensions
 
-private extension EventNotificationCenter {
+extension EventNotificationCenter {
     /// The method is used to convert incoming event payloads into events and calls `process(_:)` for each event
     /// that was successfully decoded.
     ///

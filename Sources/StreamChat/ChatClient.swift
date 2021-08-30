@@ -197,7 +197,13 @@ public class ChatClient {
 
     /// In case of token expiration this property is used to obtain a new token
     public var tokenProvider: TokenProvider?
-        
+
+    public func setToken(token: String) {
+        let newToken = Token(stringLiteral: token)
+        _currentToken.wrappedValue = newToken
+        completeTokenWaiters(token: newToken)
+    }
+
     /// Creates a new instance of `ChatClient`.
     /// - Parameters:
     ///   - config: The config object for the `Client`. See `ChatClientConfig` for all configuration options.

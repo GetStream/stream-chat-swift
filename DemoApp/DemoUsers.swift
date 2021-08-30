@@ -16,6 +16,10 @@ struct UserCredentials {
 }
 
 extension UserCredentials {
+    static func builtInUsersByID(id: String) -> UserCredentials? {
+        builtInUsers.filter { $0.id == id }.first
+    }
+
     static let builtInUsers: [UserCredentials] = [
         (
             "luke_skywalker",

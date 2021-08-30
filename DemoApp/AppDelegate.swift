@@ -5,6 +5,8 @@
 import StreamChat
 import UIKit
 
+let currentUserIdRegisteredForPush = "currentUserIdRegisteredForPush"
+
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(
@@ -19,8 +21,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         _ application: UIApplication,
         didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data
     ) {
-        print("debugging: didRegisterForRemoteNotificationsWithDeviceToken called")
-        guard ChatClient.shared.currentUserId != nil else {
+        guard let currentUserId = ChatClient.shared.currentUserId else {
             log.warning("cannot add the device without connecting as user first, did you call connectUser")
             return
         }
@@ -28,7 +29,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         ChatClient.shared.currentUserController().addDevice(token: deviceToken) { error in
             if let error = error {
                 log.error("adding a device failed with an error \(error)")
+                return
             }
+            let defaults = UserDefaults.standard
+            defaults.set(currentUserId, forKey: currentUserIdRegisteredForPush)
         }
     }
 
