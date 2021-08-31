@@ -165,7 +165,7 @@ open class ChatChannelListVC: _ViewController,
         
     open func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let channel = controller.channels[indexPath.row]
-        router.showMessageList(for: channel.cid)
+        router.showChannel(for: channel.cid)
     }
         
     @objc open func didTapOnCurrentUserAvatar(_ sender: Any) {

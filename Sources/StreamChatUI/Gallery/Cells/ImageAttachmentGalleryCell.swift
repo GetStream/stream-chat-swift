@@ -33,10 +33,10 @@ open class ImageAttachmentGalleryCell: GalleryCollectionViewCell {
         let imageAttachment = content?.attachment(payloadType: ImageAttachmentPayload.self)
         
         if let url = imageAttachment?.imageURL {
-            imageView.loadImage(
-                from: url,
-                resize: false,
-                components: components
+            components.imageLoader.loadImage(
+                into: imageView,
+                url: url,
+                imageCDN: components.imageCDN
             )
         } else {
             imageView.image = nil

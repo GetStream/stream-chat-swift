@@ -229,6 +229,18 @@
                 "name" : "Joshua",
                 "value" : "josh",
                 "image" : "https:\/\/ca.slack-edge.com\/T02RM6X6B-U0JNN4BFE-52b2c5f7e1f6-512"
+            },
+            {
+                "id" : "vader",
+                "role" : "user",
+                "created_at" : "2020-04-15T06:43:08.776911Z",
+                "updated_at" : "2020-12-08T16:23:50.80847Z",
+                "last_active" : "2020-12-08T10:23:12.28392Z",
+                "banned" : false,
+                "online" : false,
+                "name" : "Vader",
+                "value" : "vader",
+                "image" : "https:\/\/ca.slack-edge.com\/T02RM6X6B-U0JNN4BFE-52b2c5f7e1f6-512"
             }
         ],
         "html" : "<p>Hi<\/p>\n",

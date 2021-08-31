@@ -14,7 +14,8 @@ extension ChatClient {
     static let shared: ChatClient = {
         var components = Components()
 
-        components.messageListVC = YTLiveChatViewController.self
+        components.channelVC = YTLiveChatViewController.self
+        components.messageListVC = YTLiveChatMessageListViewController.self
         components.messageComposerVC = YTChatComposerViewController.self
         components.messageComposerView = YTChatMessageComposerView.self
         components.scrollToLatestMessageButton = YTScrollToLatestMessageButton.self

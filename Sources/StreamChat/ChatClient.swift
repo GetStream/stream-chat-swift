@@ -411,8 +411,6 @@ public class ChatClient {
         
         let succeed = scheduler.beginTask { [weak self] in
             self?.clientUpdater.disconnect(source: .systemInitiated)
-            // We need to call `endBackgroundTask` else our app will be killed
-            self?.cancelBackgroundTaskIfNeeded()
         }
         
         if !succeed {

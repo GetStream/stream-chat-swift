@@ -15,6 +15,7 @@ class QuotedChatMessageView_Tests: XCTestCase {
         super.setUp()
         view = QuotedChatMessageView().withoutAutoresizingMaskConstraints
         view.addSizeConstraints()
+        view.components = .mock
         view.backgroundColor = .gray
     }
 
@@ -174,6 +175,7 @@ class QuotedChatMessageView_Tests: XCTestCase {
         )
         view.content = makeContent(text: "Hello Vader!", attachments: [attachment.asAnyAttachment])
         view.addSizeConstraints()
+        view.components = .mock
 
         AssertSnapshot(view, variants: [.defaultLight])
     }
@@ -188,7 +190,9 @@ class QuotedChatMessageView_Tests: XCTestCase {
                 components.quotedMessageView.asView(content)
             }
         }
-
+        
+        // TODO: We have to replace default as the components are not injected in SwiftUI views.
+        Components.default = .mock
         let view = CustomView(
             content: .init(
                 message: .mock(
@@ -200,7 +204,7 @@ class QuotedChatMessageView_Tests: XCTestCase {
                 avatarAlignment: .leading
             )
         )
-        .environmentObject(Components().asObservableObject)
+        .environmentObject(Components.mock.asObservableObject)
 
         AssertSnapshot(view, variants: [.defaultLight])
     }

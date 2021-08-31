@@ -111,7 +111,7 @@ final class DemoAppCoordinator: NSObject, UNUserNotificationCenterDelegate {
         
         // Init the channel VC and navigate there directly
         if let cid = channelID {
-            let channelVC = ChatMessageListVC()
+            let channelVC = ChatChannelVC()
             channelVC.channelController = ChatClient.shared.channelController(for: cid)
             navigationController.viewControllers.append(channelVC)
         }
@@ -146,7 +146,7 @@ class CustomMessageListVC: ChatMessageListVC {
     }
     
     @objc func debugTap() {
-        if let cid = channelController.cid {
+        if let cid = dataSource?.channel(for: self)?.cid {
             (navigationController?.viewControllers.first as? ChatChannelListVC)?.router.didTapMoreButton(for: cid)
         }
     }

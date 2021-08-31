@@ -18,10 +18,12 @@ final class ChatMessageContentView_Tests: XCTestCase {
     private let createdAt = DateFormatter.Stream.iso8601Date(from: "2019-12-12T15:33:46.488935Z")!
 
     func test_appearance() {
+        let components = Components.mock
+        
         // Iterate over messages and layouts.
         for (message, layout) in testMessagesAndLayouts {
             // Create message content view with the provided `message` and `layout`.
-            let view = contentView(message: message, layout: layout)
+            let view = contentView(message: message, layout: layout, components: components)
 
             // Assert message content view is rendered correctly.
             AssertSnapshot(view, variants: [.defaultLight], suffix: layout.description)
@@ -208,6 +210,7 @@ private extension ChatMessageContentView_Tests {
                     "like": 5,
                     "love": 2
                 ],
+                threadParticipants: [myFriend],
                 latestReplies: [
                     reply
                 ],
@@ -226,6 +229,7 @@ private extension ChatMessageContentView_Tests {
                     "like": 5,
                     "love": 2
                 ],
+                threadParticipants: [myFriend],
                 latestReplies: [
                     reply
                 ],
@@ -290,6 +294,7 @@ private extension ChatMessageContentView_Tests {
                     "like": 5,
                     "love": 2
                 ],
+                threadParticipants: [myFriend],
                 latestReplies: [
                     reply
                 ]

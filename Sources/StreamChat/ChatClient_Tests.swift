@@ -925,9 +925,6 @@ class ChatClient_Tests: StressTestCase {
         
         // Assert that `disconnect` is called
         XCTAssertEqual(testEnv.clientUpdater?.disconnect_called, true)
-        
-        // Assert that background task is cancelled
-        XCTAssertEqual(testEnv.backgroundTaskScheduler?.endBackgroundTask_called, true)
     }
     
     func test_backgroundTaskCancelled_whenAppIsForegrounded() {

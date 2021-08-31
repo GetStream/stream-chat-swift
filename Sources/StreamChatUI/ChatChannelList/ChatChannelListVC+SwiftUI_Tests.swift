@@ -17,6 +17,9 @@ class ChatChannelListView_Tests: iOS13TestCase {
 
     override func setUp() {
         super.setUp()
+        
+        // TODO: We have to replace default as the components are not injected in SwiftUI views.
+        Components.default = .mock
         mockedChannelListController = ChatChannelListController_Mock.mock()
         chatChannelList = ChatChannelListVC.asView(mockedChannelListController)
 
@@ -53,7 +56,7 @@ class ChatChannelListView_Tests: iOS13TestCase {
                         .navigationBarItems(
                             leading:
                             Button("Tap me!") {}
-                        )
+                        ).environmentObject(Components.mock.asObservableObject)
                 }
             }
         }

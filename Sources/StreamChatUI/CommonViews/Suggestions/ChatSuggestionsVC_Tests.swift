@@ -37,7 +37,7 @@ class ChatSuggestionsVC_Tests: XCTestCase {
     
     var vc: ChatSuggestionsVC!
     var appearance = Appearance()
-    var components = Components()
+    var components: Components = .mock
     
     override func setUp() {
         super.setUp()
@@ -150,8 +150,10 @@ class ChatSuggestionsVC_Tests: XCTestCase {
         searchController.users_mock = mentions
         vc.dataSource = ChatMessageComposerSuggestionsMentionDataSource(
             collectionView: vc.collectionView,
-            searchController: searchController
+            searchController: searchController,
+            usersCache: mentions
         )
+        vc.components = .mock
         
         AssertSnapshot(vc, screenSize: defaultSuggestionsSize)
     }
@@ -184,7 +186,8 @@ class ChatSuggestionsVC_Tests: XCTestCase {
         searchController.users_mock = mentions
         vc.dataSource = ChatMessageComposerSuggestionsMentionDataSource(
             collectionView: vc.collectionView,
-            searchController: searchController
+            searchController: searchController,
+            usersCache: mentions
         )
         
         AssertSnapshot(vc, variants: .onlyUserInterfaceStyles, screenSize: defaultSuggestionsSize)
@@ -208,9 +211,11 @@ class ChatSuggestionsVC_Tests: XCTestCase {
         let vc = TestView()
         let searchController = ChatUserSearchController_Mock.mock()
         searchController.users_mock = mentions
+        vc.components = .mock
         vc.dataSource = ChatMessageComposerSuggestionsMentionDataSource(
             collectionView: vc.collectionView,
-            searchController: searchController
+            searchController: searchController,
+            usersCache: mentions
         )
         
         AssertSnapshot(vc, variants: [.defaultLight], screenSize: defaultSuggestionsSize)

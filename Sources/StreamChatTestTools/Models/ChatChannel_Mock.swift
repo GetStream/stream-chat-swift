@@ -154,4 +154,51 @@ public extension ChatChannel {
             underlyingContext: nil
         )
     }
+    
+    /// Creates a new `_ChatChannel` object for  from the provided data.
+    static func mockNonDMChannel(
+        name: String? = nil,
+        imageURL: URL? = nil,
+        lastMessageAt: Date? = nil,
+        createdAt: Date = .init(),
+        updatedAt: Date = .init(),
+        deletedAt: Date? = nil,
+        createdBy: ChatUser? = nil,
+        config: ChannelConfig = .mock(),
+        isFrozen: Bool = false,
+        lastActiveMembers: [ChatChannelMember] = [],
+        currentlyTypingUsers: Set<ChatUser> = [],
+        lastActiveWatchers: [ChatUser] = [],
+        unreadCount: ChannelUnreadCount = .noUnread,
+        watcherCount: Int = 0,
+        memberCount: Int = 0,
+        reads: [ChatChannelRead] = [],
+        extraData: [String: RawJSON] = [:],
+        latestMessages: [ChatMessage] = [],
+        muteDetails: MuteDetails? = nil
+    ) -> Self {
+        self.init(
+            cid: .init(type: .messaging, id: .newUniqueId),
+            name: name,
+            imageURL: imageURL,
+            lastMessageAt: lastMessageAt,
+            createdAt: createdAt,
+            updatedAt: updatedAt,
+            deletedAt: deletedAt,
+            createdBy: createdBy,
+            config: config,
+            isFrozen: isFrozen,
+            lastActiveMembers: { lastActiveMembers },
+            currentlyTypingUsers: { currentlyTypingUsers },
+            lastActiveWatchers: { lastActiveWatchers },
+            unreadCount: { unreadCount },
+            watcherCount: watcherCount,
+            memberCount: memberCount,
+            reads: reads,
+            extraData: extraData,
+            latestMessages: { latestMessages },
+            muteDetails: { muteDetails },
+            underlyingContext: nil
+        )
+    }
 }

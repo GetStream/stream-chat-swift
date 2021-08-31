@@ -152,9 +152,7 @@ controller.removeMembers(userIds: ["current-user-id"])
 
 Set the delegate of `ChatChannelMemberListController` to observe the changes in the system.
 
-The delegate can be set directly only if you're **not** using custom extra data types. Due to the current limits of Swift and the way it handles protocols with associated types, it's required to use `setDelegate` method instead to set the delegate, if you're using custom extra data types.
-
-### Without extra data
+### Using delegate
 ```swift
 class Controller: ChatChannelMemberListControllerDelegate {
     let memberListController: ChatChannelMemberListController

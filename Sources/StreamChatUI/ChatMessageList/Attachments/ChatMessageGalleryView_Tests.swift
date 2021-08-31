@@ -15,6 +15,7 @@ final class ChatMessageGalleryView_Tests: XCTestCase {
         
         galleryView = ChatMessageGalleryView()
             .withoutAutoresizingMaskConstraints
+        galleryView.components = .mock
         galleryView.pin(anchors: [.width, .height], to: 200)
     }
     
@@ -90,6 +91,7 @@ final class ChatMessageGalleryView_Tests: XCTestCase {
         appearance.colorPalette.background5 = UIColor.purple.withAlphaComponent(0.5)
         galleryView = ChatMessageGalleryView()
             .withoutAutoresizingMaskConstraints
+        galleryView.components = .mock
         galleryView.appearance = appearance
         galleryView.pin(anchors: [.width, .height], to: 200)
         
@@ -119,6 +121,7 @@ final class ChatMessageGalleryView_Tests: XCTestCase {
         let galleryView = TestView()
             .withoutAutoresizingMaskConstraints
         galleryView.pin(anchors: [.width, .height], to: 200)
+        galleryView.components = .mock
         
         let attachments: [ChatMessageImageAttachment] = [
             .mock(id: .unique, imageURL: TestImages.yoda.url),

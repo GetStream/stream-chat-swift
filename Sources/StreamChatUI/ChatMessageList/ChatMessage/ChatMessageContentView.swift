@@ -444,12 +444,13 @@ open class ChatMessageContentView: _View, ThemeProvider {
         
         // Avatar
         let placeholder = appearance.images.userAvatarPlaceholder1
-        if let imageURL = content?.author.imageURL {
-            authorAvatarView?.imageView.loadImage(
-                from: imageURL,
+        if let imageURL = content?.author.imageURL, let imageView = authorAvatarView?.imageView {
+            components.imageLoader.loadImage(
+                into: imageView,
+                url: imageURL,
+                imageCDN: components.imageCDN,
                 placeholder: placeholder,
-                preferredSize: .avatarThumbnailSize,
-                components: components
+                preferredSize: .avatarThumbnailSize
             )
         } else {
             authorAvatarView?.imageView.image = placeholder
@@ -499,13 +500,19 @@ open class ChatMessageContentView: _View, ThemeProvider {
         } else {
             threadReplyCountButton?.setTitle(L10n.Message.Threads.reply, for: .normal)
         }
-        let latestReplyAuthorAvatar = content?.latestReplies.first?.author.imageURL
-        threadAvatarView?.imageView.loadImage(
-            from: latestReplyAuthorAvatar,
-            placeholder: appearance.images.userAvatarPlaceholder4,
-            preferredSize: .avatarThumbnailSize,
-            components: components
-        )
+
+        // The last thread participant is the author of the most recent reply.
+        let threadAvatarUrl = content?.threadParticipants.last?.imageURL
+
+        if let imageView = threadAvatarView?.imageView {
+            components.imageLoader.loadImage(
+                into: imageView,
+                url: threadAvatarUrl,
+                imageCDN: components.imageCDN,
+                placeholder: appearance.images.userAvatarPlaceholder4,
+                preferredSize: .avatarThumbnailSize
+            )
+        }
 
         // Reactions view
         reactionsBubbleView?.tailDirection = content
