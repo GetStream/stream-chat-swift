@@ -155,7 +155,7 @@ public class ChatRemoteNotificationHandler {
                 return
             }
             self.syncChannel() {
-                let channel = ChannelDTO.load(cid: cid, context: self.database.viewContext)?.asModel()
+                let channel = ChannelDTO.load(cid: cid, context: self.database.backgroundReadOnlyContext)?.asModel()
                 completion(message, channel)
             }
         }
