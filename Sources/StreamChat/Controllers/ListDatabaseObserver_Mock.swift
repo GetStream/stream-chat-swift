@@ -16,4 +16,9 @@ final class ListDatabaseObserverMock<Item, DTO: NSManagedObject>: ListDatabaseOb
             try super.startObserving()
         }
     }
+    
+    var items_mock: LazyCachedMapCollection<Item>?
+    override var items: LazyCachedMapCollection<Item> {
+        items_mock ?? super.items
+    }
 }
