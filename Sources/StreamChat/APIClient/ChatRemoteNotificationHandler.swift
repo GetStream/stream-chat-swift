@@ -90,7 +90,7 @@ public class ChatRemoteNotificationHandler {
         now.timeIntervalSince(since) > syncCooldown
     }
 
-    private func syncChannel(completion: @escaping () -> Void) {
+    private func syncChannels(completion: @escaping () -> Void) {
         guard client.config.isLocalStorageEnabled else {
             completion()
             return
