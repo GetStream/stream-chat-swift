@@ -348,7 +348,7 @@ open class ComposerVC: _ViewController,
             self.composerView.bottomContainer.isHidden = !self.content.isInsideThread
         }
 
-        if let typingCommand = typingCommand(in: composerView.inputMessageView.textView) {
+        if isCommandsEnabled, let typingCommand = typingCommand(in: composerView.inputMessageView.textView) {
             showCommandSuggestions(for: typingCommand)
             return
         }
