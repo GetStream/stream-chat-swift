@@ -18,21 +18,12 @@ extension JSONDecoder {
         decoder.dateDecodingStrategy = .custom { decoder throws -> Date in
             let container = try decoder.singleValueContainer()
             var dateString: String = try container.decode(String.self)
-            
-            if !dateString.contains(".") {
-                dateString.removeLast()
-                dateString.append(".0Z")
-            }
-            
-            if let date = DateFormatter.Stream.iso8601Date(from: dateString) {
+
+            if let date = DateFormatter.Stream.rfc3339Date(from: dateString) {
                 return date
             }
-            
-            if dateString.hasPrefix("1970-01-01T00:00:00") {
-                log.warning("⚠️ Invalid ISO8601 date: \(dateString)")
-                return Date()
-            }
-            
+
+            // Fail
             throw DecodingError.dataCorruptedError(in: container, debugDescription: "Invalid date: \(dateString)")
         }
         
@@ -80,7 +71,7 @@ extension JSONEncoder.DateEncodingStrategy {
     static var stream: JSONEncoder.DateEncodingStrategy {
         .custom { date, encoder throws in
             var container = encoder.singleValueContainer()
-            try container.encode(DateFormatter.Stream.iso8601DateString(from: date))
+            try container.encode(DateFormatter.Stream.rfc3339DateString(from: date))
         }
     }
 }
@@ -90,42 +81,68 @@ extension JSONEncoder.DateEncodingStrategy {
 extension DateFormatter {
     /// A Stream Chat date formatters.
     enum Stream {
-        /// Creates and returns a date object from the specified ISO 8601 formatted string representation.
+        // Creates and returns a date object from the specified RFC3339 formatted string representation.
         ///
-        /// - Parameter string: The ISO 8601 formatted string representation of a date.
+        /// - Parameter string: The RFC3339 formatted string representation of a date.
         /// - Returns: A date object, or nil if no valid date was found.
-        static func iso8601Date(from string: String) -> Date? {
-            if #available(iOS 11.2, macOS 10.13, *) {
-                return Stream.iso8601DateFormatter.date(from: string)
+        static func rfc3339Date(from string: String) -> Date? {
+            let RFC3339TimezoneWrapper = "Z"
+
+            // Formats according to samples
+            // 2000-12-19T16:39:57-0800
+            // 1934-01-01T12:00:27.87+0020
+            // 1989-01-01T12:00:27
+            let dateFormats = [
+                "yyyy'-'MM'-'dd'T'HH':'mm':'ssZZZ",
+                "yyyy'-'MM'-'dd'T'HH':'mm':'ss.SSSZZZ",
+                "yyyy'-'MM'-'dd'T'HH':'mm':'ss"
+            ]
+
+            let dateFormatter = Stream.gmtDateFormatter
+            let uppercaseString = string.uppercased()
+
+            let removedTimezoneWrapperString = uppercaseString.replacingOccurrences(of: RFC3339TimezoneWrapper, with: "-0000")
+
+            for format in dateFormats {
+                dateFormatter.dateFormat = format
+                if let date = dateFormatter.date(from: removedTimezoneWrapperString) {
+                    return date
+                }
             }
-            
-            return Stream.dateFormatter.date(from: string)
+
+            return nil
         }
         
-        /// Creates and returns an ISO 8601 formatted string representation of the specified date.
+        /// Creates and returns an RFC 3339 formatted string representation of the specified date.
         ///
         /// - Parameter date: The date to be represented.
         /// - Returns: A user-readable string representing the date.
-        static func iso8601DateString(from date: Date) -> String? {
-            if #available(iOS 11.2, macOS 10.13, *) {
-                return Stream.iso8601DateFormatter.string(from: date)
+        static func rfc3339DateString(from date: Date) -> String? {
+            let dateFormatWithoutFractional = "yyyy-MM-dd'T'HH:mm:ssZZZZZ"
+            let dateFormatWithFractional = "yyyy-MM-dd'T'HH:mm:ss.SSSXXXXX"
+            let nanosecondsInMillisecond = 1_000_000
+
+            gmtDateFormatter.dateFormat = dateFormatWithoutFractional
+
+            var gmtCalendar = Calendar(identifier: .iso8601)
+            if let zeroTimezone = TimeZone(secondsFromGMT: 0) {
+                gmtCalendar.timeZone = zeroTimezone
             }
-            
-            return Stream.dateFormatter.string(from: date)
+
+            let components = gmtCalendar.dateComponents([.nanosecond], from: date)
+            // If nanoseconds is more that 1 millisecond, use format with fractional seconds
+            if let nanoseconds = components.nanosecond,
+               nanoseconds >= nanosecondsInMillisecond {
+                gmtDateFormatter.dateFormat = dateFormatWithFractional
+            }
+
+            return gmtDateFormatter.string(from: date)
         }
-        
-        private static let iso8601DateFormatter: ISO8601DateFormatter = {
-            let formatter = ISO8601DateFormatter()
-            formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
-            return formatter
-        }()
-        
-        private static let dateFormatter: DateFormatter = {
+
+        private static let gmtDateFormatter: DateFormatter = {
             let formatter = DateFormatter()
-            formatter.calendar = Calendar(identifier: .iso8601)
             formatter.locale = Locale(identifier: "en_US_POSIX")
             formatter.timeZone = TimeZone(secondsFromGMT: 0)
-            formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSXXXXX"
             return formatter
         }()
     }

@@ -47,7 +47,7 @@ struct MessengerChatChannelListItem: ChatChannelListItemView.SwiftUIView {
         }
 
         let firstOtherMember = channel
-            .cachedMembers
+            .lastActiveMembers
             .sorted { $0.memberCreatedAt < $1.memberCreatedAt }
             .first { $0.id != channel.membership?.id }
 
