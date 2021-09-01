@@ -94,10 +94,12 @@ public struct ChatMessage {
     @CoreDataLazy internal var _attachments: [AnyChatMessageAttachment]
 
     /// The overall attachment count by attachment type.
-    public var attachmentCounts: [AttachmentType: Int] { _attachmentCounts }
+    public var attachmentCounts: [AttachmentType: Int] {
+        _attachments.reduce(into: [:]) { counts, attachment in
+            counts[attachment.type] = (counts[attachment.type] ?? 0) + 1
+        }
+    }
 
-    @CoreDataLazy internal var _attachmentCounts: [AttachmentType: Int]
-        
     /// A list of latest 25 replies to this message.
     ///
     /// - Important: The `latestReplies` property is loaded and evaluated lazily to maintain high performance.
@@ -168,7 +170,7 @@ public struct ChatMessage {
         currentUserReactions: @escaping () -> Set<ChatMessageReaction>,
         isSentByCurrentUser: Bool,
         pinDetails: MessagePinDetails?,
-        attachmentCounts: @escaping () -> [AttachmentType: Int],
+        attachmentCounts: [AttachmentType: Int],
         underlyingContext: NSManagedObjectContext?
     ) {
         self.id = id
@@ -200,7 +202,6 @@ public struct ChatMessage {
         $_latestReactions = (latestReactions, underlyingContext)
         $_currentUserReactions = (currentUserReactions, underlyingContext)
         $_quotedMessage = (quotedMessage, underlyingContext)
-        $_attachmentCounts = (attachmentCounts, underlyingContext)
     }
 }
 
