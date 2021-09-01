@@ -32,6 +32,8 @@ A new `ChatChannelVC` is introduced that represents the old `ChatMessageListVC`,
 - For non-DM channels, the avatar is now shown as a combination of the avatars of the last active members of the channel [#1344](https://github.com/GetStream/stream-chat-swift/pull/1344)
 - New DateFormatter methods `rfc3339Date` and `rfc3339DateString` [#1403](https://github.com/GetStream/stream-chat-swift/pull/1403)
 - Add a new `isMentionsEnabled` flag to make it easier to disable the user mentions in the ComposerVC [#1416](https://github.com/GetStream/stream-chat-swift/pull/1416)
+- Use remote config to disable mute actions [#1418](https://github.com/GetStream/stream-chat-swift/pull/1418)
+- Use remote config to disable thread info from message options [#1418](https://github.com/GetStream/stream-chat-swift/pull/1418)
 
 ### 🐞 Fixed
 - Fix incorrect RawJSON number handling, the `.integer` case is no longer supported and is replaced by `.number` [#1375](https://github.com/GetStream/stream-chat-swift/pull/1375)
