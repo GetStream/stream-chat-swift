@@ -163,6 +163,11 @@ open class ComposerVC: _ViewController,
         channelConfig?.commands.isEmpty == false
     }
 
+    /// A Boolean value indicating whether the user mentions are enabled.
+    open var isMentionsEnabled: Bool {
+        true
+    }
+
     /// A Boolean value indicating whether the attachments are enabled.
     open var isAttachmentsEnabled: Bool {
         channelConfig?.uploadsEnabled == true
@@ -348,7 +353,7 @@ open class ComposerVC: _ViewController,
             return
         }
 
-        if let (typingMention, mentionRange) = typingMention(in: composerView.inputMessageView.textView) {
+        if isMentionsEnabled, let (typingMention, mentionRange) = typingMention(in: composerView.inputMessageView.textView) {
             showMentionSuggestions(for: typingMention, mentionRange: mentionRange)
             return
         }
