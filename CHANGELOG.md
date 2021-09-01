@@ -4,6 +4,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 # Upcoming
 
 ### ⚠️ Breaking Changes from `4.0-beta.11`
+- JSON Encoding/Decoding for both Network and Database date formatting changed to RFC3339 formats [#1403](https://github.com/GetStream/stream-chat-swift/pull/1403)
 - `ChatMessage.threadParticipants` is now an Array instead of Set [#1398](https://github.com/GetStream/stream-chat-swift/pull/1398)
 - Introduces `ChatChannelVC` and removes responsibilities of `ChatMessageListVC`. The latter now is only responsible to render the message list layout, the data is provided by `ChatChannelVC` or `ChatThreadVC`. [#1314](https://github.com/GetStream/stream-chat-swift/pull/1314)
 - Replaces `ChatMessageActionsVC.Delegate` with `ChatMessageActionsVCDelegate` [#1314](https://github.com/GetStream/stream-chat-swift/pull/1314)
@@ -29,6 +30,7 @@ A new `ChatChannelVC` is introduced that represents the old `ChatMessageListVC`,
 
 ### ✅ Added
 - For non-DM channels, the avatar is now shown as a combination of the avatars of the last active members of the channel [#1344](https://github.com/GetStream/stream-chat-swift/pull/1344)
+- New DateFormatter methods `rfc3339Date` and `rfc3339DateString` [#1403](https://github.com/GetStream/stream-chat-swift/pull/1403)
 
 ### 🐞 Fixed
 - Fix incorrect RawJSON number handling, the `.integer` case is no longer supported and is replaced by `.number` [#1375](https://github.com/GetStream/stream-chat-swift/pull/1375)
@@ -37,6 +39,7 @@ A new `ChatChannelVC` is introduced that represents the old `ChatMessageListVC`,
 - Improve pagination efficiency [#1381](https://github.com/GetStream/stream-chat-swift/pull/1381)
 - Fix user mention suggestions not showing all members [#1390](https://github.com/GetStream/stream-chat-swift/pull/1381)
 - Fix thread avatar view not displaying latest reply author avatar [#1398](https://github.com/GetStream/stream-chat-swift/pull/1398)
+- Fix crash on incorrect date string parsing [#1403](https://github.com/GetStream/stream-chat-swift/pull/1403)
 - Fix threads not showing all the responses if there were responses that were also sent to the channel [#1413](https://github.com/GetStream/stream-chat-swift/pull/1413)
 
 # [4.0.0-beta.11](https://github.com/GetStream/stream-chat-swift/releases/tag/4.0.0-beta.11)

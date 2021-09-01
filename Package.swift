@@ -142,6 +142,8 @@ var streamChatSourcesExcluded: [String] { [
     "Utils/InternetConnection/Error+InternetNotAvailable_Tests.swift",
     "Utils/Atomic_Tests.swift",
     "Utils/CoreDataLazy_Tests.swift",
+    "Utils/JSONEncoder_Tests.swift",
+    "Utils/JSONDecoder_Tests.swift",
     "Utils/LazyCachedMapCollection_Tests.swift",
     "Utils/Dictionary_Tests.swift",
     "Utils/Cached_Tests.swift",
