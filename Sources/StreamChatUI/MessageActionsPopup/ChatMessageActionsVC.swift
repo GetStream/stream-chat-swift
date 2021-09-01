@@ -95,15 +95,8 @@ open class ChatMessageActionsVC: _ViewController, ThemeProvider {
                 actions += [editActionItem(), deleteActionItem()]
 
             } else if channelConfig.mutesEnabled {
-                if currentUser.mutedUsers.contains(message.author) {
-                    actions.append(
-                        unmuteActionItem()
-                    )
-                } else {
-                    actions.append(
-                        muteActionItem()
-                    )
-                }
+                let isMuted = currentUser.mutedUsers.contains(message.author)
+                actions.append(isMuted ? unmuteActionItem() : muteActionItem())
             }
 
             return actions
