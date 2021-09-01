@@ -80,7 +80,7 @@ open class ChatMessageLayoutOptionsResolver {
         if hasQuotedMessage(message) {
             options.insert(.quotedMessage)
         }
-        if message.isRootOfThread || message.isPartOfThread {
+        if channel.config.repliesEnabled && (message.isRootOfThread || message.isPartOfThread) {
             options.insert(.threadInfo)
             // The bubbles with thread look like continuous bubbles
             options.insert(.continuousBubble)

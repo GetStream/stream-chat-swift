@@ -888,6 +888,76 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
         }
     }
 
+    func test_optionsForMessage_whenRepliesEnabled_includesThreadInfo() {
+        // Create deleted thread root message
+        let messageThreadRoot: ChatMessage = .mock(
+            id: .unique,
+            cid: .unique,
+            text: .unique,
+            author: .mock(id: .unique),
+            replyCount: 10,
+            latestReplies: [
+                .mock(id: .unique, cid: .unique, text: .unique, author: .mock(id: .unique))
+            ]
+        )
+
+        // Create deleted thread part message
+        let messageThreadPart: ChatMessage = .mock(
+            id: .unique,
+            cid: .unique,
+            text: .unique,
+            author: .mock(id: .unique),
+            parentMessageId: messageThreadRoot.id
+        )
+
+        for threadMessage in [messageThreadRoot, messageThreadPart] {
+            // Calculate layout options for the message
+            let layoutOptions = optionsResolver.optionsForMessage(
+                at: .init(item: 0, section: 0),
+                in: .mock(cid: .unique, config: .mock(repliesEnabled: true)),
+                with: .init([threadMessage]),
+                appearance: appearance
+            )
+
+            XCTAssertTrue(layoutOptions.contains(.threadInfo))
+        }
+    }
+
+    func test_optionsForMessage_whenRepliesDisabled_doesNotIncludeThreadInfo() {
+        // Create deleted thread root message
+        let messageThreadRoot: ChatMessage = .mock(
+            id: .unique,
+            cid: .unique,
+            text: .unique,
+            author: .mock(id: .unique),
+            replyCount: 10,
+            latestReplies: [
+                .mock(id: .unique, cid: .unique, text: .unique, author: .mock(id: .unique))
+            ]
+        )
+
+        // Create deleted thread part message
+        let messageThreadPart: ChatMessage = .mock(
+            id: .unique,
+            cid: .unique,
+            text: .unique,
+            author: .mock(id: .unique),
+            parentMessageId: messageThreadRoot.id
+        )
+
+        for threadMessage in [messageThreadRoot, messageThreadPart] {
+            // Calculate layout options for the message
+            let layoutOptions = optionsResolver.optionsForMessage(
+                at: .init(item: 0, section: 0),
+                in: .mock(cid: .unique, config: .mock(repliesEnabled: false)),
+                with: .init([threadMessage]),
+                appearance: appearance
+            )
+
+            XCTAssertFalse(layoutOptions.contains(.threadInfo))
+        }
+    }
+
     // MARK: - Reactions
 
     func test_optionsForMessage_whenMessageIsDeleted_doesNotIncludeReactions() {
