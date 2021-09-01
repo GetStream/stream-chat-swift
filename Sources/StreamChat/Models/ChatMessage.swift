@@ -170,7 +170,6 @@ public struct ChatMessage {
         currentUserReactions: @escaping () -> Set<ChatMessageReaction>,
         isSentByCurrentUser: Bool,
         pinDetails: MessagePinDetails?,
-        attachmentCounts: [AttachmentType: Int],
         underlyingContext: NSManagedObjectContext?
     ) {
         self.id = id
