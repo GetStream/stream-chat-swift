@@ -12,7 +12,6 @@ class JSONEncoderTests: XCTestCase {
 
     lazy var dateFormatter: DateFormatter = {
         let dateFormatter = DateFormatter()
-        dateFormatter.locale = Locale(identifier: "en_US_POSIX") // set locale to reliable US_POSIX
         dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZ"
         return dateFormatter
     }()
@@ -33,11 +32,11 @@ class JSONEncoderTests: XCTestCase {
 
         let dic: [String: AnyEncodable] = ["created_at": date.asAnyEncodable]
         let encoder = JSONEncoder()
-        encoder.dateEncodingStrategy = .formatted(dateFormatter)
+        encoder.dateEncodingStrategy = .iso8601
 
         let jsonData = try encoder.encode(dic)
         let jsonString = String(data: jsonData, encoding: .utf8)
-        XCTAssertEqual(jsonString, "{\"created_at\":\"2020-04-14T11:10:00+0100\"}")
+        XCTAssertEqual(jsonString, "{\"created_at\":\"2020-04-14T10:10:00Z\"}")
     }
 
     func testEncodingDateToRFC3339DateWithMilliseconds() {
