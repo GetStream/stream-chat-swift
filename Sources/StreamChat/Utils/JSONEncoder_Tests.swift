@@ -10,6 +10,12 @@ import XCTest
 class JSONEncoderTests: XCTestCase {
     private var encoder: JSONEncoder!
 
+    lazy var dateFormatter: DateFormatter = {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZ"
+        return dateFormatter
+    }()
+
     override func setUp() {
         encoder = .default
         super.setUp()
@@ -18,6 +24,19 @@ class JSONEncoderTests: XCTestCase {
     override func tearDown() {
         encoder = nil
         super.tearDown()
+    }
+
+    func testAnyEncodablePreservesEncodingStrategies() throws {
+        let isoDate = "2020-04-14T10:10:00+0000"
+        let date = dateFormatter.date(from: isoDate)!
+
+        let dic: [String: AnyEncodable] = ["created_at": date.asAnyEncodable]
+        let encoder = JSONEncoder()
+        encoder.dateEncodingStrategy = .iso8601
+
+        let jsonData = try encoder.encode(dic)
+        let jsonString = String(data: jsonData, encoding: .utf8)
+        XCTAssertEqual(jsonString, "{\"created_at\":\"2020-04-14T10:10:00Z\"}")
     }
 
     func testEncodingDateToRFC3339DateWithMilliseconds() {
