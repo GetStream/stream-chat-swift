@@ -134,6 +134,6 @@ class UserUpdateResponse_Tests: XCTestCase {
 extension String {
     /// Converst a string to `Date`. Only for testing!
     func toDate() -> Date {
-        DateFormatter.Stream.iso8601Date(from: self)!
+        DateFormatter.Stream.rfc3339Date(from: self)!
     }
 }

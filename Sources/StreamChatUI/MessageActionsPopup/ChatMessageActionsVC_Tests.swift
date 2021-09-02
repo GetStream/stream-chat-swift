@@ -75,6 +75,18 @@ class ChatMessageActionsVC_Tests: XCTestCase {
 
         XCTAssert(vc.alertsRouter is TestAlertsRouter)
     }
+
+    func test_messageActions_whenMutesEnabled_containsMuteAction() {
+        vc.channelConfig = .mock(mutesEnabled: true)
+
+        XCTAssertTrue(vc.messageActions.contains(where: { $0 is MuteUserActionItem }))
+    }
+
+    func test_messageActions_whenMutesDisabled_doesNotContainMuteAction() {
+        vc.channelConfig = .mock(mutesEnabled: false)
+
+        XCTAssertFalse(vc.messageActions.contains(where: { $0 is MuteUserActionItem }))
+    }
 }
 
 private extension UIViewController {

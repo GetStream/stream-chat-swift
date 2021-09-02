@@ -16,7 +16,7 @@ final class MissingEventsRequestBody_Tests: XCTestCase {
         
         // Assert encoding is correct
         AssertJSONEqual(json, [
-            "last_sync_at": DateFormatter.Stream.iso8601DateString(from: lastSyncedAt)!,
+            "last_sync_at": DateFormatter.Stream.rfc3339DateString(from: lastSyncedAt)!,
             "channel_cids": cids as NSArray
         ])
     }
