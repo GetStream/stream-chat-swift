@@ -226,7 +226,7 @@ protocol MemberListQueryDatabaseSession {
 protocol ChannelListQueryDatabaseSession {
     func saveQuery(query: ChannelListQuery) -> ChannelListQueryDTO
     
-    func channelListQuery(filterHash: String) -> ChannelListQueryDTO?
+    func channelListQuery(queryHash: String) -> ChannelListQueryDTO?
 
     func loadChannelListQueries() -> [ChannelListQueryDTO]
     

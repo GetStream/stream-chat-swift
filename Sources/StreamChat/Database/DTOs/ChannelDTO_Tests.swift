@@ -465,12 +465,12 @@ class ChannelDTO_Tests: XCTestCase {
             .map(\.channel.updatedAt)
             .sorted(by: { $0 > $1 })
 
-        // Save the channels to DB. It doesn't matter which query we use because the filter for both of them is the same.
+        // Save the channels to DB and link to both queries.
         try! database.writeSynchronously { session in
-            try session.saveChannel(payload: payload1, query: queryWithDefaultSorting)
-            try session.saveChannel(payload: payload2, query: queryWithDefaultSorting)
-            try session.saveChannel(payload: payload3, query: queryWithDefaultSorting)
-            try session.saveChannel(payload: payload4, query: queryWithDefaultSorting)
+            for payload in [payload1, payload2, payload3, payload4] {
+                try session.saveChannel(payload: payload, query: queryWithDefaultSorting)
+                try session.saveChannel(payload: payload, query: queryWithUpdatedAtSorting)
+            }
         }
 
         // A fetch request with a default sorting.

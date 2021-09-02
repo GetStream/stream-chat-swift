@@ -7,10 +7,13 @@ import CoreData
 @objc(ChannelListQueryDTO)
 class ChannelListQueryDTO: NSManagedObject {
     /// Unique identifier of the query/
-    @NSManaged var filterHash: String
+    @NSManaged var queryHash: String
     
     /// Serialized `Filter` JSON which can be used in cases the query needs to be repeated, i.e. for newly created channels.
     @NSManaged var filterJSONData: Data
+    
+    /// Serialized `[Sorting<ChannelListSortingKey>]` JSON which can be used in cases the query needs to be repeated, i.e. when connection comes back.
+    @NSManaged var sortingJSONData: Data
     
     // MARK: - Relationships
     
@@ -20,9 +23,9 @@ class ChannelListQueryDTO: NSManagedObject {
         .init(entityName: ChannelListQueryDTO.entityName)
     }
     
-    static func load(filterHash: String, context: NSManagedObjectContext) -> ChannelListQueryDTO? {
+    static func load(queryHash: String, context: NSManagedObjectContext) -> ChannelListQueryDTO? {
         let request = NSFetchRequest<ChannelListQueryDTO>(entityName: ChannelListQueryDTO.entityName)
-        request.predicate = NSPredicate(format: "filterHash == %@", filterHash)
+        request.predicate = NSPredicate(format: "queryHash == %@", queryHash)
         return try? context.fetch(request).first
     }
 }
@@ -31,7 +34,7 @@ extension NSManagedObjectContext: ChannelListQueryDatabaseSession {
     func delete(_ query: ChannelListQuery) {
         guard
             let queryDTO = ChannelListQueryDTO.load(
-                filterHash: query.filter.filterHash,
+                queryHash: query.queryHash,
                 context: self
             )
         else { return }
@@ -39,28 +42,32 @@ extension NSManagedObjectContext: ChannelListQueryDatabaseSession {
         delete(queryDTO)
     }
     
-    func channelListQuery(filterHash: String) -> ChannelListQueryDTO? {
-        ChannelListQueryDTO.load(filterHash: filterHash, context: self)
+    func channelListQuery(queryHash: String) -> ChannelListQueryDTO? {
+        ChannelListQueryDTO.load(queryHash: queryHash, context: self)
     }
     
     func saveQuery(query: ChannelListQuery) -> ChannelListQueryDTO {
-        if let existingDTO = channelListQuery(filterHash: query.filter.filterHash) {
+        if let existingDTO = channelListQuery(queryHash: query.queryHash) {
             return existingDTO
         }
         
         let newDTO = NSEntityDescription
             .insertNewObject(forEntityName: ChannelListQueryDTO.entityName, into: self) as! ChannelListQueryDTO
-        newDTO.filterHash = query.filter.filterHash
+        newDTO.queryHash = query.queryHash
         
-        let jsonData: Data
         do {
-            jsonData = try JSONEncoder.default.encode(query.filter)
+            newDTO.sortingJSONData = try JSONEncoder.default.encode(query.sort)
         } catch {
-            log.error("Failed encoding query Filter data with error: \(error).")
-            jsonData = Data()
+            log.error("Failed encoding query sort data with error: \(error).")
+            newDTO.sortingJSONData = Data()
         }
         
-        newDTO.filterJSONData = jsonData
+        do {
+            newDTO.filterJSONData = try JSONEncoder.default.encode(query.filter)
+        } catch {
+            log.error("Failed encoding query Filter data with error: \(error).")
+            newDTO.filterJSONData = Data()
+        }
         
         return newDTO
     }
@@ -72,6 +79,28 @@ extension NSManagedObjectContext: ChannelListQueryDatabaseSession {
         } catch {
             log.assertionFailure("Failed to load channel list queries")
             return []
+        }
+    }
+}
+
+extension ChannelListQueryDTO {
+    func asModel() -> ChannelListQuery? {
+        do {
+            let decoder = JSONDecoder.default
+            
+            return .init(
+                filter: try decoder.decode(
+                    Filter<ChannelListFilterScope>.self,
+                    from: filterJSONData
+                ),
+                sort: try decoder.decode(
+                    [Sorting<ChannelListSortingKey>].self,
+                    from: sortingJSONData
+                )
+            )
+        } catch {
+            log.error("Internal error. Failed to decode channel list query: \(error)")
+            return nil
         }
     }
 }

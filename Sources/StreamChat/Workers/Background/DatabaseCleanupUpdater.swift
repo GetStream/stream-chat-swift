@@ -55,8 +55,8 @@ class DatabaseCleanupUpdater: Worker {
                         entityName: ChannelListQueryDTO.entityName
                     )
                 )
-                let queries: [ChannelListQuery] = try queriesDTOs.map {
-                    try $0.asChannelListQuery()
+                let queries: [ChannelListQuery] = queriesDTOs.compactMap {
+                    $0.asModel()
                 }
                 queries.forEach {
                     self?.channelListUpdater.update(channelListQuery: $0) { result in
@@ -89,18 +89,5 @@ private extension ChannelDTO {
         currentlyTypingUsers = []
         reads = []
         queries = []
-    }
-}
-
-private extension ChannelListQueryDTO {
-    /// Converts ChannelListQueryDTO to _ChannelListQuery
-    /// - Throws: Decoding error
-    /// - Returns: Domain model for _ChannelListQuery
-    func asChannelListQuery() throws -> ChannelListQuery {
-        let encodedFilter = try JSONDecoder.default
-            .decode(Filter<ChannelListFilterScope>.self, from: filterJSONData)
-        var updatedFilter: Filter<ChannelListFilterScope> = encodedFilter
-        updatedFilter.explicitHash = filterHash
-        return ChannelListQuery(filter: updatedFilter)
     }
 }

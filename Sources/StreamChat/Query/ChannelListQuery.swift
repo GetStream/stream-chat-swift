@@ -118,3 +118,13 @@ public struct ChannelListQuery: Encodable {
         try pagination.encode(to: encoder)
     }
 }
+
+extension ChannelListQuery {
+    var queryHash: String {
+        let components = [
+            filter.filterHash,
+            sort.map(\.description).joined()
+        ]
+        return components.joined(separator: "-")
+    }
+}

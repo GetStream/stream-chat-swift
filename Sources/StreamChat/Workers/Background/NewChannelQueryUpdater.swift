@@ -136,18 +136,3 @@ extension NewChannelQueryUpdater {
         ) -> ChannelListUpdater = ChannelListUpdater.init
     }
 }
-
-private extension ChannelListQueryDTO {
-    func asModel() -> ChannelListQuery? {
-        do {
-            let filter = try JSONDecoder
-                .default
-                .decode(Filter<ChannelListFilterScope>.self, from: filterJSONData)
-            
-            return .init(filter: filter)
-        } catch {
-            log.error("Internal error. Failed to decode channel list query filter: \(error)")
-            return nil
-        }
-    }
-}
