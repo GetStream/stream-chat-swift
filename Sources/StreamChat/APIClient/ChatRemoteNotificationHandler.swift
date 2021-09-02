@@ -82,6 +82,10 @@ public class ChatRemoteNotificationHandler {
     private func bumpLastSyncDate(lastReceivedEventDate: Date, completion: @escaping () -> Void) {
         database.write { session in
             session.currentUser?.lastReceivedEventDate = lastReceivedEventDate
+        } completion: { error in
+            if let error = error {
+                log.error(error)
+            }
             completion()
         }
     }
