@@ -20,17 +20,38 @@ public struct ChatClientConfig {
     ///
     public let apiKey: APIKey
     
+    /// The security application group ID to use for the local storage. This is needed if you want to share offline storage between
+    /// your chat application and extensions. More information is available [here](https://developer.apple.com/documentation/bundleresources/entitlements/com_apple_security_application-groups)
+    /// and [here](https://developer.apple.com/library/archive/documentation/Miscellaneous/Reference/EntitlementKeyReference/Chapters/EnablingAppSandbox.html#//apple_ref/doc/uid/TP40011195-CH4-SW19)
+    public var applicationGroupIdentifier: String? {
+        didSet {
+            localStorageFolderURL = Self.initLocalStorageFolderURL(groupIdentifier: applicationGroupIdentifier)
+        }
+    }
+
     /// The folder `ChatClient` uses to store its local cache files.
     public var localStorageFolderURL: URL? = {
+        Self.initLocalStorageFolderURL(groupIdentifier: nil)
+    }()
+
+    static func initLocalStorageFolderURL(groupIdentifier: String?) -> URL? {
         #if os(macOS)
         let urls = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)
         return urls.first.map { $0.appendingPathComponent("io.getstream.StreamChat") }
         #else
-        let urls = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
-        return urls.first
+        if let groupIdentifier = groupIdentifier {
+            if let url = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: groupIdentifier) {
+                return url
+            }
+            log
+                .error(
+                    "Chat is configured to use the App Group: \(groupIdentifier) but the target seems to be not configured correctly"
+                )
+        }
+        return FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first
         #endif
-    }()
-    
+    }
+
     /// The datacenter `ChatClient` uses for connecting.
     public var baseURL: BaseURL = .usEast
     

@@ -23,7 +23,7 @@ public struct ChannelId: Hashable, CustomStringConvertible {
         rawValue = type.rawValue + "\(Self.separator)" + id
     }
     
-    init(cid: String) throws {
+    public init(cid: String) throws {
         let channelPair = cid.split(separator: ChannelId.separator)
     
         guard

@@ -6,11 +6,15 @@ import StreamChat
 import StreamChatUI
 import UIKit
 
-final class DemoAppCoordinator {
+extension ChatClient {
+    static var shared: ChatClient!
+}
+
+final class DemoAppCoordinator: NSObject, UNUserNotificationCenterDelegate {
     var connectionController: ChatConnectionController?
     let navigationController: UINavigationController
     let connectionDelegate: BannerShowingConnectionDelegate
-    
+
     init(navigationController: UINavigationController) {
         // Since log is first touched in `BannerShowingConnectionDelegate`,
         // we need to set log level here
@@ -20,20 +24,70 @@ final class DemoAppCoordinator {
         connectionDelegate = BannerShowingConnectionDelegate(
             showUnder: navigationController.navigationBar
         )
+        super.init()
+
         injectActions()
     }
     
-    func presentChat(userCredentials: UserCredentials) {
+    func userNotificationCenter(
+        _ center: UNUserNotificationCenter,
+        didReceive response: UNNotificationResponse,
+        withCompletionHandler completionHandler: @escaping () -> Void
+    ) {
+        defer {
+            completionHandler()
+        }
+
+        guard let notificationInfo = try? ChatPushNotificationInfo(content: response.notification.request.content) else {
+            return
+        }
+
+        guard let cid = notificationInfo.cid else {
+            return
+        }
+
+        guard case UNNotificationDefaultActionIdentifier = response.actionIdentifier else {
+            return
+        }
+        
+        if let userId = UserDefaults.standard.string(forKey: currentUserIdRegisteredForPush),
+           let userCredentials = UserCredentials.builtInUsersByID(id: userId) {
+            presentChat(userCredentials: userCredentials, channelID: cid)
+        }
+    }
+
+    func setupRemoteNotifications() {
+        UNUserNotificationCenter
+            .current()
+            .requestAuthorization(options: [.alert, .sound, .badge]) { granted, _ in
+                if granted {
+                    DispatchQueue.main.async {
+                        UIApplication.shared.registerForRemoteNotifications()
+                    }
+                }
+            }
+    }
+
+    func presentChat(userCredentials: UserCredentials, channelID: ChannelId? = nil) {
         // Create a token
         let token = try! Token(rawValue: userCredentials.token)
         
         // Create client
-        let config = ChatClientConfig(apiKey: .init(userCredentials.apiKey))
-        let client = ChatClient(config: config)
-        client.connectUser(
-            userInfo: .init(id: userCredentials.id, extraData: [ChatUser.birthLandFieldName: .string(userCredentials.birthLand)]),
+        var config = ChatClientConfig(apiKey: .init(apiKeyString))
+        config.isLocalStorageEnabled = true
+        config.applicationGroupIdentifier = applicationGroupIdentifier
+
+        ChatClient.shared = ChatClient(config: config)
+        ChatClient.shared.connectUser(
+            userInfo: .init(id: userCredentials.id, name: userCredentials.name, imageURL: userCredentials.avatarURL),
             token: token
-        )
+        ) { error in
+            if let error = error {
+                log.error("connecting the user failed \(error)")
+                return
+            }
+            self.setupRemoteNotifications()
+        }
         
         // Config
         Components.default.channelListRouter = DemoChatChannelListRouter.self
@@ -44,20 +98,28 @@ final class DemoAppCoordinator {
         }
 
         // Channels with the current user
-        let controller = client.channelListController(query: .init(filter: .containMembers(userIds: [userCredentials.id])))
+        let controller = ChatClient.shared
+            .channelListController(query: .init(filter: .containMembers(userIds: [userCredentials.id])))
         let chatList = DemoChannelListVC()
         chatList.controller = controller
         
-        connectionController = client.connectionController()
+        connectionController = ChatClient.shared.connectionController()
         connectionController?.delegate = connectionDelegate
         
         navigationController.viewControllers = [chatList]
         navigationController.isNavigationBarHidden = false
         
-        let window = navigationController.view.window!
+        // Init the channel VC and navigate there directly
+        if let cid = channelID {
+            let channelVC = ChatChannelVC()
+            channelVC.channelController = ChatClient.shared.channelController(for: cid)
+            navigationController.viewControllers.append(channelVC)
+        }
         
+        let window = navigationController.view.window!
         UIView.transition(with: window, duration: 0.3, options: .transitionFlipFromRight, animations: {
             window.rootViewController = self.navigationController
+            
         })
     }
     

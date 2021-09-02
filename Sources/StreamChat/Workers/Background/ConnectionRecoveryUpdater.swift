@@ -113,7 +113,7 @@ class ConnectionRecoveryUpdater: EventWorker {
             }
         }
     }
-    
+
     private func sync(completion: @escaping () -> Void) {
         guard let lastSyncedAt = lastSyncedAt else { return }
         
@@ -168,7 +168,9 @@ class ConnectionRecoveryUpdater: EventWorker {
     
     private var allChannels: [ChannelDTO] {
         do {
-            return try database.backgroundReadOnlyContext.fetch(ChannelDTO.allChannelsFetchRequest)
+            let request = ChannelDTO.allChannelsFetchRequest
+            request.fetchLimit = 1000
+            return try database.backgroundReadOnlyContext.fetch(request)
         } catch {
             log.error("Internal error: Failed to fetch [ChannelDTO]: \(error)")
             return []
@@ -178,7 +180,7 @@ class ConnectionRecoveryUpdater: EventWorker {
 
 // MARK: - Extensions
 
-private extension EventNotificationCenter {
+extension EventNotificationCenter {
     /// The method is used to convert incoming event payloads into events and calls `process(_:)` for each event
     /// that was successfully decoded.
     ///
