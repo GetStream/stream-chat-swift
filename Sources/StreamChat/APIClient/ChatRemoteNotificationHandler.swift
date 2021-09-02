@@ -64,6 +64,7 @@ public class ChatRemoteNotificationHandler {
     var client: ChatClient
     var content: UNNotificationContent
     let chatCategoryIdentifiers: Set<String> = ["stream.chat", "MESSAGE_NEW"]
+    /// do not call the sync endpoint more than once every six seconds
     let syncCooldown: TimeInterval = 6.0
     let database: DatabaseContainer
 
@@ -73,10 +74,21 @@ public class ChatRemoteNotificationHandler {
         database = client.databaseContainer
     }
 
-    private func obtainLastSyncDate(completion: @escaping (Date?) -> Void) {
-        database.backgroundReadOnlyContext.perform {
-            completion(self.database.backgroundReadOnlyContext.currentUser?.lastReceivedEventDate)
+    public func handleNotification(completion: @escaping (ChatPushNotificationContent) -> Void) -> Bool {
+        guard chatCategoryIdentifiers.contains(content.categoryIdentifier) else {
+            return false
         }
+        
+        getContent(completion: completion)
+        return true
+    }
+
+    private func obtainLastSyncDate(completion: @escaping (Date?) -> Void) {
+        var lastReceivedEventDate: Date?
+        database.viewContext.performAndWait {
+            lastReceivedEventDate = self.database.viewContext.currentUser?.lastReceivedEventDate
+        }
+        completion(lastReceivedEventDate)
     }
 
     private func bumpLastSyncDate(lastReceivedEventDate: Date, completion: @escaping () -> Void) {
@@ -110,12 +122,12 @@ public class ChatRemoteNotificationHandler {
             request.fetchLimit = 1000
             request.propertiesToFetch = ["cid"]
 
-            guard let results = try? self.database.backgroundReadOnlyContext.fetch(request) else {
+            guard let results = try? self.database.viewContext.fetch(request) else {
                 completion()
                 return
             }
 
-            let cids = results.map(\.cid).compactMap { try? ChannelId(cid: $0) }
+            let cids = results.compactMap { try? ChannelId(cid: $0.cid) }
             guard !cids.isEmpty else {
                 completion()
                 return
@@ -137,7 +149,7 @@ public class ChatRemoteNotificationHandler {
                 }
 
                 if let lastReceivedEventDate = lastReceivedEventDate {
-                    self.bumpLastSyncData(lastReceivedEventDate: lastReceivedEventDate) {
+                    self.bumpLastSyncDate(lastReceivedEventDate: lastReceivedEventDate) {
                         completion()
                     }
                 } else {
@@ -158,8 +170,8 @@ public class ChatRemoteNotificationHandler {
                 completion(nil, nil)
                 return
             }
-            self.syncChannel() {
-                let channel = ChannelDTO.load(cid: cid, context: self.database.backgroundReadOnlyContext)?.asModel()
+            self.syncChannels() {
+                let channel = ChannelDTO.load(cid: cid, context: self.database.viewContext)?.asModel()
                 completion(message, channel)
             }
         }
@@ -190,14 +202,5 @@ public class ChatRemoteNotificationHandler {
         default:
             completion(.unknown(UnknownNotificationContent(content: content)))
         }
-    }
-
-    public func handleNotification(completion: @escaping (ChatPushNotificationContent) -> Void) -> Bool {
-        guard chatCategoryIdentifiers.contains(content.categoryIdentifier) else {
-            return false
-        }
-        
-        getContent(completion: completion)
-        return true
     }
 }
