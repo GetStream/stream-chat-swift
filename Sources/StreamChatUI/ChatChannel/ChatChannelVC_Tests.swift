@@ -77,8 +77,7 @@ final class ChatChannelVC_Tests: XCTestCase {
                     author: .mock(id: .unique),
                     deletedAt: Date(timeIntervalSince1970: 800),
                     attachments: [imageAttachment],
-                    isSentByCurrentUser: true,
-                    attachmentCounts: [.image: 1]
+                    isSentByCurrentUser: true
                 ),
                 .mock(
                     id: .unique,
@@ -87,8 +86,7 @@ final class ChatChannelVC_Tests: XCTestCase {
                     author: .mock(id: .unique),
                     deletedAt: Date(timeIntervalSince1970: 1800),
                     attachments: [linkAttachment],
-                    isSentByCurrentUser: true,
-                    attachmentCounts: [.linkPreview: 1]
+                    isSentByCurrentUser: true
                 )
             ],
             state: .localDataFetched
@@ -140,8 +138,7 @@ final class ChatChannelVC_Tests: XCTestCase {
                     text: "🚀",
                     author: .mock(id: .unique),
                     attachments: [imageAttachment],
-                    isSentByCurrentUser: false,
-                    attachmentCounts: [.image: 1]
+                    isSentByCurrentUser: false
                 )
             ],
             state: .localDataFetched
