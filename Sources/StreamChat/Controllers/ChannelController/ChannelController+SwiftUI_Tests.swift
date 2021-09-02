@@ -169,7 +169,6 @@ extension ChatMessage {
             currentUserReactions: { [] },
             isSentByCurrentUser: false,
             pinDetails: nil,
-            attachmentCounts: { [:] },
             underlyingContext: nil
         )
     }

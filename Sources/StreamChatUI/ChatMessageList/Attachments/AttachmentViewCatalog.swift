@@ -14,8 +14,7 @@ open class AttachmentViewCatalog {
         message: ChatMessage,
         components: Components
     ) -> AttachmentViewInjector.Type? {
-        // Do not show attachments for deleted messages
-        guard !message.isDeleted else { return nil }
+        if message.isDeleted { return nil }
         
         let attachmentCounts = message.attachmentCounts
         
