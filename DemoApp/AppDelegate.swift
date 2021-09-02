@@ -11,8 +11,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         _ application: UIApplication,
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
     ) -> Bool {
-        let notificationOption = launchOptions?[.remoteNotification]
-        return true
+        // Override point for customization after application launch.
+        true
     }
 
     func application(
