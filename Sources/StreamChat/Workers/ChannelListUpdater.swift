@@ -38,6 +38,7 @@ class ChannelListUpdater: Worker {
                 self?.database.write { session in
                     if trumpExistingChannels {
                         let query = session.channelListQuery(queryHash: channelListQuery.queryHash)
+                        query?.channels.forEach { $0.resetLocalData() }
                         query?.channels.removeAll()
                     }
                     
