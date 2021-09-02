@@ -4,6 +4,7 @@
 
 @testable import StreamChat
 @testable import StreamChatTestTools
+@testable import UserNotifications
 import XCTest
 
 class ChatPushNotificationContent_Tests: XCTestCase {
