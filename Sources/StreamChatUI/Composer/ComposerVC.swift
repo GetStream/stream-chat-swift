@@ -823,15 +823,11 @@ func searchUsers(_ users: [ChatUser], by searchInput: String, excludingId: Strin
     let matchingUsers = users.filter { $0.id != excludingId }
         .filter { searchInput == "" || $0.id.contains(searchInput) || (normalize($0.name ?? "").contains(searchInput)) }
 
-    let uniqueUsers = matchingUsers.reduce(into: [String: ChatUser]()) {
-        $0[$1.id] = $1
-    }
-
     let distance: (ChatUser) -> Int = {
         min($0.id.levenshtein(searchInput), $0.name?.levenshtein(searchInput) ?? 1000)
     }
 
-    return uniqueUsers.values.map { $0 }.sorted {
+    return Array(Set(matchingUsers)).sorted {
         /// a tie breaker is needed here to avoid results from flickering
         let dist = distance($0) - distance($1)
         if dist == 0 {
