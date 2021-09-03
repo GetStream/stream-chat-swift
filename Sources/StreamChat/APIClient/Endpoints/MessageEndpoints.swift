@@ -98,8 +98,8 @@ extension Endpoint {
         )
     }
     
-    static func search(query: MessageSearchQuery) -> Endpoint<[MessagePayload.Boxed]> {
-        .init(path: "/search", method: .get, queryItems: nil, requiresConnectionId: false, body: query)
+    static func search(query: MessageSearchQuery) -> Endpoint<MessageSearchResultsPayload> {
+        .init(path: "search", method: .get, queryItems: nil, requiresConnectionId: false, body: ["payload": query])
     }
 }
 

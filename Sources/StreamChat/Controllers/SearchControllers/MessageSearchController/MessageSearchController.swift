@@ -44,7 +44,7 @@ public class ChatMessageSearchController: DataController, DelegateCallable, Data
 
     lazy var query: MessageSearchQuery = {
         // Filter is just a mock, explicit hash will override it
-        var query = MessageSearchQuery(messageFilter: .queryText(""))
+        var query = MessageSearchQuery(channelFilter: .exists(.cid), messageFilter: .queryText(""))
         query.filterHash = explicitFilterHash
 
         return query
@@ -133,7 +133,14 @@ public class ChatMessageSearchController: DataController, DelegateCallable, Data
     ///   - completion: Called when the controller has finished fetching remote data.
     ///   If the data fetching fails, the error variable contains more details about the problem.
     public func search(text: String, completion: ((_ error: Error?) -> Void)? = nil) {
-        var query = MessageSearchQuery(messageFilter: .queryText(text))
+        guard let currentUserId = client.currentUserId else {
+            completion?(ClientError.CurrentUserDoesNotExist("For message search with text, a current user must be logged in"))
+            return
+        }
+        var query = MessageSearchQuery(
+            channelFilter: .containMembers(userIds: [currentUserId]),
+            messageFilter: .queryText(text)
+        )
         query.filterHash = explicitFilterHash
         lastQuery = query
         messageUpdater.search(query: query) { [weak self] error in

@@ -32,7 +32,7 @@ public struct MessageSearchQuery: Encodable {
         case sort
     }
     
-    public let channelFilter: Filter<ChannelListFilterScope>?
+    public let channelFilter: Filter<ChannelListFilterScope>
     
     public let messageFilter: Filter<MessageSearchFilterScope>
     
@@ -43,7 +43,7 @@ public struct MessageSearchQuery: Encodable {
     var filterHash: String
     
     public init(
-        channelFilter: Filter<ChannelListFilterScope>? = nil,
+        channelFilter: Filter<ChannelListFilterScope>,
         messageFilter: Filter<MessageSearchFilterScope>,
         sort: [Sorting<MessageSearchSortingKey>] = [],
         pageSize: Int = .messagesPageSize
@@ -52,7 +52,7 @@ public struct MessageSearchQuery: Encodable {
         self.messageFilter = messageFilter
         self.sort = sort
         pagination = Pagination(pageSize: pageSize)
-        filterHash = messageFilter.filterHash + (channelFilter?.filterHash ?? "")
+        filterHash = messageFilter.filterHash + channelFilter.filterHash
     }
     
     public func encode(to encoder: Encoder) throws {

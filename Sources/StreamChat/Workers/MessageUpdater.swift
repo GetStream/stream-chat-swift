@@ -436,10 +436,10 @@ class MessageUpdater: Worker {
     func search(query: MessageSearchQuery, completion: ((Error?) -> Void)? = nil) {
         apiClient.request(endpoint: .search(query: query)) { result in
             switch result {
-            case let .success(messages):
+            case let .success(payload):
                 self.database.write { session in
-                    for payload in messages {
-                        try session.saveMessage(payload: payload.message, for: query)
+                    for boxedMessage in payload.results {
+                        try session.saveMessage(payload: boxedMessage.message, for: query)
                     }
                 } completion: { error in
                     completion?(error)
