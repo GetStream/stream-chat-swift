@@ -233,7 +233,7 @@ public struct Components {
     public var channelCell: ChatChannelListCollectionViewCell.Type = ChatChannelListCollectionViewCell.self
         
     /// The view which is displayed when there is yet no channel for user in channelList.
-    public var channelListEmptyView: UIView.Type = ChatChannelListEmptyView.self
+    public var channelListEmptyView: ChatChannelListEmptyStateShowingView.Type = ChatChannelListEmptyView.self
     
     /// Whether channel list controller should show shimmering views during loading
     public var shouldChannelListVCShowLoadingState = true

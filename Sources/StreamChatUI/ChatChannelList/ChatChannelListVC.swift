@@ -28,10 +28,11 @@ open class ChatChannelListVC: _ViewController,
     }
     
     /// View which will be shown when loaded channels are empty with action to start a new conversation
-    open private(set) lazy var channelListEmptyView: UIView = components
-        .channelListEmptyView
-        .init()
-        .withoutAutoresizingMaskConstraints
+    open private(set) lazy var channelListEmptyView: ChatChannelListEmptyStateShowingView = {
+        let view = components.channelListEmptyView.init()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
     
     /// View which will be shown at the bottom when an error occurs when fetching either local or remote channels.
     /// This view has an action to retry the channel loading.

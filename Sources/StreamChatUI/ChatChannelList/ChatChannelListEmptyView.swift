@@ -5,7 +5,11 @@
 import StreamChat
 import UIKit
 
-open class ChatChannelListEmptyView: _View, ThemeProvider {
+public protocol ChatChannelListEmptyStateShowingView: UIView {
+    var buttonAction: (() -> Void)? { get set }
+}
+
+open class ChatChannelListEmptyView: _View, ThemeProvider, ChatChannelListEmptyStateShowingView {
     public var buttonAction: (() -> Void)?
     
     /// Main container which holds all elements except action button in this view.
