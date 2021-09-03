@@ -50,7 +50,7 @@ final class DemoAppCoordinator: NSObject, UNUserNotificationCenterDelegate {
             return
         }
         
-        if let userId = UserDefaults.standard.string(forKey: currentUserIdRegisteredForPush),
+        if let userId = UserDefaults(suiteName: applicationGroupIdentifier)?.string(forKey: currentUserIdRegisteredForPush),
            let userCredentials = UserCredentials.builtInUsersByID(id: userId) {
             presentChat(userCredentials: userCredentials, channelID: cid)
         }
@@ -74,7 +74,7 @@ final class DemoAppCoordinator: NSObject, UNUserNotificationCenterDelegate {
         
         // Create client
         var config = ChatClientConfig(apiKey: .init(apiKeyString))
-        config.isLocalStorageEnabled = true
+//        config.isLocalStorageEnabled = true
         config.applicationGroupIdentifier = applicationGroupIdentifier
 
         ChatClient.shared = ChatClient(config: config)

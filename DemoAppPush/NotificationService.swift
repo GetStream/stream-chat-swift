@@ -68,15 +68,17 @@ class NotificationService: UNNotificationServiceExtension {
         self.request = request
 
         guard let content = request.content.mutableCopy() as? UNMutableNotificationContent else {
+            contentHandler(request.content)
             return
         }
 
-        guard let userId = UserDefaults.standard.string(forKey: currentUserIdRegisteredForPush), let userCredentials = UserCredentials.builtInUsersByID(id: userId) else {
+        guard let userId = UserDefaults(suiteName: applicationGroupIdentifier)?.string(forKey: currentUserIdRegisteredForPush), let userCredentials = UserCredentials.builtInUsersByID(id: userId) else {
+            contentHandler(content)
             return
         }
 
         var config = ChatClientConfig(apiKey: .init(apiKeyString))
-        config.isLocalStorageEnabled = true
+//        config.isLocalStorageEnabled = true
         config.applicationGroupIdentifier = applicationGroupIdentifier
 
         let client = ChatClient(config: config)
@@ -102,6 +104,7 @@ class NotificationService: UNNotificationServiceExtension {
         if !chatNotification {
             /// this was not a notification from Stream Chat
             /// perform any other transformation to the notification if needed
+            contentHandler(content)
         }
     }
     
