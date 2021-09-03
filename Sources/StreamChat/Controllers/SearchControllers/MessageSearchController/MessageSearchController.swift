@@ -133,6 +133,8 @@ public class ChatMessageSearchController: DataController, DelegateCallable, Data
     ///   - completion: Called when the controller has finished fetching remote data.
     ///   If the data fetching fails, the error variable contains more details about the problem.
     public func search(text: String, completion: ((_ error: Error?) -> Void)? = nil) {
+        startObserversIfNeeded()
+        
         guard let currentUserId = client.currentUserId else {
             completion?(ClientError.CurrentUserDoesNotExist("For message search with text, a current user must be logged in"))
             return
@@ -143,9 +145,9 @@ public class ChatMessageSearchController: DataController, DelegateCallable, Data
         )
         query.filterHash = explicitFilterHash
         lastQuery = query
-        messageUpdater.search(query: query) { [weak self] error in
-            self?.state = error == nil ? .remoteDataFetched : .remoteDataFetchFailed(ClientError(with: error))
-            self?.callback { completion?(error) }
+        messageUpdater.search(query: query) { error in
+            self.state = error == nil ? .remoteDataFetched : .remoteDataFetchFailed(ClientError(with: error))
+            self.callback { completion?(error) }
         }
     }
 
