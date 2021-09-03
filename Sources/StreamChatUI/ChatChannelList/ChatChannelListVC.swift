@@ -17,6 +17,8 @@ open class ChatChannelListVC: _ViewController,
     /// The `ChatChannelListController` instance that provides channels data.
     public var controller: ChatChannelListController!
     
+    @Atomic private var loadingPreviousMessages: Bool = false
+
     open private(set) var isShowingLoadingState = false {
         didSet {
             guard components.shouldChannelListVCShowLoadingState,
@@ -33,10 +35,11 @@ open class ChatChannelListVC: _ViewController,
     
     /// View which will be shown at the bottom when an error occurs when fetching either local or remote channels.
     /// This view has an action to retry the channel loading.
-    open private(set) lazy var channelListErrorView: UIView = components
-        .channelListErrorView
-        .init()
-        .withoutAutoresizingMaskConstraints
+    open private(set) lazy var channelListErrorView: ChatChannelListErrorShowingView = {
+        let view = components.channelListErrorView.init()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
     
     /// Value of `channelListErrorView` height constraint.
     var channelListErrorViewHeight: CGFloat { 70 }
@@ -104,6 +107,10 @@ open class ChatChannelListVC: _ViewController,
         willDisplay cell: UICollectionViewCell,
         forItemAt indexPath: IndexPath
     ) {
+        if let cellView = (cell as? ChatChannelListCollectionViewCell)?.itemView {
+            cellView.isShowingLoadingState = isShowingLoadingState
+        }
+        
         if controller.state != .remoteDataFetched {
             return
         }
@@ -121,6 +128,7 @@ open class ChatChannelListVC: _ViewController,
         view.embed(channelListEmptyView)
 
         view.addSubview(channelListErrorView)
+        channelListEmptyView.isHidden = true
         
         channelListErrorView.heightAnchor.pin(equalToConstant: channelListErrorViewHeight).isActive = true
         channelListErrorView.pin(anchors: [.leading, .trailing], to: view)
@@ -147,7 +155,7 @@ open class ChatChannelListVC: _ViewController,
             )
         }
     
-        (channelListErrorView as? ChatChannelListErrorView)?.buttonAction = { [weak self] in
+        channelListErrorView.buttonAction = { [weak self] in
             self?.controller.synchronize()
         }
     }
@@ -180,15 +188,12 @@ open class ChatChannelListVC: _ViewController,
             withReuseIdentifier: collectionViewCellReuseIdentifier,
             for: indexPath
         ) as! ChatChannelListCollectionViewCell
-    
-        cell.components = components
+                
         if !isShowingLoadingState {
             cell.itemView.content = .init(
                 channel: controller.channels[indexPath.row],
                 currentUserId: controller.client.currentUserId
             )
-        } else {
-            cell.itemView.content = loadingPlaceholderChannelContent
         }
 
         cell.swipeableView.delegate = self
@@ -198,22 +203,6 @@ open class ChatChannelListVC: _ViewController,
         }
         
         return cell
-    }
-
-    public func collectionView(
-        _ collectionView: UICollectionView,
-        willDisplay cell: UICollectionViewCell,
-        forItemAt indexPath: IndexPath
-    ) {
-        guard let cellView = (cell as? ChatChannelListCollectionViewCell)?.itemView else { return }
-        if isShowingLoadingState {
-            ListLoader.addLoaderToViews(
-                [cellView],
-                heightToCornerRadiusRatio: components.channelListVCLoadingStateHeightToCornerRadiusRatio
-            )
-        } else {
-            ListLoader.removeLoaderFromViews([cellView])
-        }
     }
     
     open func collectionView(
@@ -350,33 +339,24 @@ open class ChatChannelListVC: _ViewController,
         // Reset bottom notification.
         showErrorView(false)
         let isLoading: Bool
+        let shouldHideEmptyView: Bool
         
         switch state {
         case .initialized:
-            channelListEmptyView.isHidden = true
-            isLoading = true
+            shouldHideEmptyView = true
+            isLoading = false
         case .localDataFetched:
-            channelListEmptyView.isHidden = !self.controller.channels.isEmpty
+            shouldHideEmptyView = true
             isLoading = self.controller.channels.isEmpty
         case .remoteDataFetched:
-            channelListEmptyView.isHidden = !self.controller.channels.isEmpty
+            shouldHideEmptyView = !self.controller.channels.isEmpty
             isLoading = false
         case .localDataFetchFailed, .remoteDataFetchFailed:
+            shouldHideEmptyView = channelListEmptyView.isHidden
             showErrorView(true)
             isLoading = false
         }
+        channelListEmptyView.isHidden = shouldHideEmptyView
         isShowingLoadingState = isLoading
     }
-    
-    private let loadingPlaceholderChannelContent: ChatChannelListItemView.Content = .init(
-        channel: .init(
-            cid: ChannelId(type: .team, id: "MockChannelID"),
-            name: "Sample channel",
-            imageURL: nil,
-            extraData: [:],
-            muteDetails: { nil },
-            underlyingContext: nil
-        ),
-        currentUserId: nil
-    )
 }

@@ -238,12 +238,8 @@ public struct Components {
     /// Whether channel list controller should show shimmering views during loading
     public var shouldChannelListVCShowLoadingState = true
     
-    /// The height to corner radius ratio for channel list loading shimmering views. 0 means zero corner radius, 0.5 means that the corner radius
-    /// is half of the height, i.e. a rectangular view will produce a circular shimmer.
-    public var channelListVCLoadingStateHeightToCornerRadiusRatio: CGFloat = 0.5
-    
     /// View that shows that some error occurred on ChatChannelList.
-    public var channelListErrorView: UIView.Type = ChatChannelListErrorView.self
+    public var channelListErrorView: ChatChannelListErrorShowingView.Type = ChatChannelListErrorView.self
     
     /// The channel cell separator in the channel list.
     public var channelCellSeparator: UICollectionReusableView.Type = CellSeparatorReusableView.self

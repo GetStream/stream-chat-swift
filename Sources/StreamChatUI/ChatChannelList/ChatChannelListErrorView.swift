@@ -5,7 +5,11 @@
 import StreamChat
 import UIKit
 
-open class ChatChannelListErrorView: _View, ThemeProvider {
+public protocol ChatChannelListErrorShowingView: UIView {
+    var buttonAction: (() -> Void)? { get set }
+}
+
+open class ChatChannelListErrorView: _View, ThemeProvider, ChatChannelListErrorShowingView {
     open var buttonAction: (() -> Void)?
     
     /// Label describing there has been an error.

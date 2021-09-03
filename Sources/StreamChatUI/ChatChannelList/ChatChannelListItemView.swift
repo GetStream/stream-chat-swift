@@ -68,6 +68,10 @@ open class ChatChannelListItemView: _View, ThemeProvider, SwiftUIRepresentable {
     open private(set) lazy var unreadCountView: ChatChannelUnreadCountView = components
         .channelUnreadCountView.init()
         .withoutAutoresizingMaskConstraints
+    
+    /// The height to corner radius ratio for channel list item loading shimmering views. 0 means zero corner radius, 0.5 means that the corner radius
+    /// is half of the height, i.e. a rectangular view will produce a circular shimmer.
+    open var loadingStateHeightToCornerRadiusRatio: CGFloat = 0.5
 
     /// Text of `titleLabel` which contains the channel name.
     open var titleText: String? {
@@ -96,6 +100,13 @@ open class ChatChannelListItemView: _View, ThemeProvider, SwiftUIRepresentable {
             return dateFormatter.string(from: lastMessageAt)
         } else {
             return nil
+        }
+    }
+    
+    public var isShowingLoadingState = false {
+        didSet {
+            guard isShowingLoadingState != oldValue else { return }
+            updateContent()
         }
     }
 
@@ -161,6 +172,13 @@ open class ChatChannelListItemView: _View, ThemeProvider, SwiftUIRepresentable {
     }
     
     override open func updateContent() {
+        defer {
+            updateLoader()
+        }
+        if isShowingLoadingState {
+            return showLoadingState()
+        }
+        
         titleLabel.text = titleText
         subtitleLabel.text = subtitleText
         timestampLabel.text = timestampText
@@ -169,6 +187,29 @@ open class ChatChannelListItemView: _View, ThemeProvider, SwiftUIRepresentable {
 
         unreadCountView.content = content?.channel.unreadCount ?? .noUnread
         unreadCountView.invalidateIntrinsicContentSize()
+    }
+    
+    open func updateLoader() {
+        if isShowingLoadingState {
+            ListLoader.addLoaderToViews(
+                [self],
+                heightToCornerRadiusRatio: loadingStateHeightToCornerRadiusRatio
+            )
+        } else {
+            ListLoader.removeLoaderFromViews([self])
+        }
+    }
+    
+    open func showLoadingState() {
+        let placeholder = "Text placeholder"
+        titleLabel.text = placeholder
+        subtitleLabel.text = placeholder
+        timestampLabel.text = placeholder
+
+        avatarView.loadIntoAvatarImageView(
+            from: nil,
+            placeholder: appearance.images.userAvatarPlaceholder3
+        )
     }
 }
 
