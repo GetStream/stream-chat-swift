@@ -15,6 +15,20 @@ class ComposerVC_Tests: XCTestCase {
         XCTAssertEqual(searchUsers([user2], by: "sear"), [user2])
     }
 
+    func testMatchConsistentTieBreaker() throws {
+        let tommaso = ChatUser.mock(id: "tommaso", name: "Tommaso")
+        let thierry = ChatUser.mock(id: "thierry", name: "Thierry")
+        let users = [tommaso, thierry]
+
+        XCTAssertEqual(searchUsers(users, by: ""), [thierry, tommaso])
+        XCTAssertEqual(searchUsers(users, by: ""), [thierry, tommaso])
+        XCTAssertEqual(searchUsers(users, by: ""), [thierry, tommaso])
+        XCTAssertEqual(searchUsers(users, by: ""), [thierry, tommaso])
+        XCTAssertEqual(searchUsers(users, by: ""), [thierry, tommaso])
+        XCTAssertEqual(searchUsers(users, by: ""), [thierry, tommaso])
+        XCTAssertEqual(searchUsers(users, by: ""), [thierry, tommaso])
+    }
+
     func testMatchHappy() throws {
         let tommaso = ChatUser.mock(id: "tommaso", name: "Tommaso")
         let thierry = ChatUser.mock(id: "thierry", name: "Thierry")
@@ -48,6 +62,34 @@ class ComposerVC_Tests: XCTestCase {
         let users = [tommaso, tomas]
 
         XCTAssertEqual(searchUsers(users, by: "tom"), [tomas, tommaso])
+    }
+
+    func testMatchHappySortedByDistancePrefix() throws {
+        let tommaso = ChatUser.mock(id: "tommaso", name: "tommaso")
+        let tommasi = ChatUser.mock(id: "tommasi", name: "tommasi")
+        let users = [tommaso, tommasi]
+
+        XCTAssertEqual(searchUsers(users, by: "t"), [tommasi, tommaso])
+        XCTAssertEqual(searchUsers(users, by: "to"), [tommasi, tommaso])
+        XCTAssertEqual(searchUsers(users, by: "tom"), [tommasi, tommaso])
+        XCTAssertEqual(searchUsers(users, by: "tomm"), [tommasi, tommaso])
+        XCTAssertEqual(searchUsers(users, by: "tomma"), [tommasi, tommaso])
+        XCTAssertEqual(searchUsers(users, by: "tommas"), [tommasi, tommaso])
+        XCTAssertEqual(searchUsers(users, by: "tommaso"), [tommaso])
+    }
+
+    func testMatchHappySortedByDistancePrefix2() throws {
+        let tommaso = ChatUser.mock(id: "tommaso", name: "tommaso")
+        let tommasi = ChatUser.mock(id: "tommasi", name: "tommasi")
+        let users = [tommasi, tommaso]
+
+        XCTAssertEqual(searchUsers(users, by: "t"), [tommasi, tommaso])
+        XCTAssertEqual(searchUsers(users, by: "to"), [tommasi, tommaso])
+        XCTAssertEqual(searchUsers(users, by: "tom"), [tommasi, tommaso])
+        XCTAssertEqual(searchUsers(users, by: "tomm"), [tommasi, tommaso])
+        XCTAssertEqual(searchUsers(users, by: "tomma"), [tommasi, tommaso])
+        XCTAssertEqual(searchUsers(users, by: "tommas"), [tommasi, tommaso])
+        XCTAssertEqual(searchUsers(users, by: "tommaso"), [tommaso])
     }
 
     func testMatchHappyCyrillic() throws {
