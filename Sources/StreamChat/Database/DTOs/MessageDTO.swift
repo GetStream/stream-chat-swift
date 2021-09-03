@@ -33,6 +33,7 @@ class MessageDTO: NSManagedObject {
     @NSManaged var reactions: Set<MessageReactionDTO>
     @NSManaged var attachments: Set<AttachmentDTO>
     @NSManaged var quotedMessage: MessageDTO?
+    @NSManaged var searches: Set<MessageSearchQueryDTO>
 
     @NSManaged var pinned: Bool
     @NSManaged var pinnedBy: UserDTO?
@@ -465,6 +466,12 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         }
         
         return dto
+    }
+    
+    func saveMessage(payload: MessagePayload, for query: MessageSearchQuery) throws -> MessageDTO {
+        let messageDTO = try saveMessage(payload: payload, for: nil)
+        messageDTO.searches.insert(saveQuery(query: query))
+        return messageDTO
     }
     
     func message(id: MessageId) -> MessageDTO? { .load(id: id, context: self) }

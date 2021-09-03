@@ -432,6 +432,23 @@ class MessageUpdater: Worker {
             completion?(error)
         })
     }
+    
+    func search(query: MessageSearchQuery, completion: ((Error?) -> Void)? = nil) {
+        apiClient.request(endpoint: .search(query: query)) { result in
+            switch result {
+            case let .success(messages):
+                self.database.write { session in
+                    for payload in messages {
+                        try session.saveMessage(payload: payload.message, for: query)
+                    }
+                } completion: { error in
+                    completion?(error)
+                }
+            case let .failure(error):
+                completion?(error)
+            }
+        }
+    }
 }
 
 // MARK: - Private

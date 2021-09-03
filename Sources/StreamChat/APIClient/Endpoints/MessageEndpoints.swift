@@ -97,6 +97,10 @@ extension Endpoint {
             )
         )
     }
+    
+    static func search(query: MessageSearchQuery) -> Endpoint<[MessagePayload.Boxed]> {
+        .init(path: "/search", method: .get, queryItems: nil, requiresConnectionId: false, body: query)
+    }
 }
 
 private extension MessageId {

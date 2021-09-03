@@ -79,6 +79,9 @@ protocol MessageDatabaseSession {
         payload: MessagePayload,
         for cid: ChannelId?
     ) throws -> MessageDTO
+    
+    @discardableResult
+    func saveMessage(payload: MessagePayload, for query: MessageSearchQuery) throws -> MessageDTO
 
     /// Pins the provided message
     /// - Parameters:
