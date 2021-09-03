@@ -1,9 +1,5 @@
 //
-//  MessageSearchQuery.swift
-//  StreamChat
-//
-//  Created by Bahadir Oncel on 02/09/2021.
-//  Copyright © 2021 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -36,17 +32,15 @@ public struct MessageSearchQuery: Encodable {
         case sort
     }
     
-    public var channelFilter: Filter<ChannelListFilterScope>?
+    public let channelFilter: Filter<ChannelListFilterScope>?
     
-    public var messageFilter: Filter<MessageSearchFilterScope>
+    public let messageFilter: Filter<MessageSearchFilterScope>
     
     public let sort: [Sorting<MessageSearchSortingKey>]
     
     public var pagination: Pagination?
     
-    var filterHash: String {
-        messageFilter.filterHash + (channelFilter?.filterHash ?? "")
-    }
+    var filterHash: String
     
     public init(
         channelFilter: Filter<ChannelListFilterScope>? = nil,
@@ -58,6 +52,7 @@ public struct MessageSearchQuery: Encodable {
         self.messageFilter = messageFilter
         self.sort = sort
         pagination = Pagination(pageSize: pageSize)
+        filterHash = messageFilter.filterHash + (channelFilter?.filterHash ?? "")
     }
     
     public func encode(to encoder: Encoder) throws {

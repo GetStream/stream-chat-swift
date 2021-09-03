@@ -26,6 +26,17 @@ public class ChatMessageSearchController: DataController, DelegateCallable, Data
     init(client: ChatClient, environment: Environment = .init()) {
         self.client = client
         self.environment = environment
+        
+        super.init()
+        
+        setMessagesObserver()
+    }
+    
+    deinit {
+        let query = self.query
+        client.databaseContainer.write { session in
+            session.deleteQuery(query)
+        }
     }
 
     /// Filter hash this controller observes.
@@ -33,10 +44,10 @@ public class ChatMessageSearchController: DataController, DelegateCallable, Data
 
     lazy var query: MessageSearchQuery = {
         // Filter is just a mock, explicit hash will override it
-        var messageFilter = Filter<MessageSearchFilterScope>.exists(.text)
-        messageFilter.explicitHash = explicitFilterHash
+        var query = MessageSearchQuery(messageFilter: .queryText(""))
+        query.filterHash = explicitFilterHash
 
-        return MessageSearchQuery(messageFilter: messageFilter)
+        return query
     }()
 
     /// Copy of last search query made, used for getting next page.
@@ -58,10 +69,7 @@ public class ChatMessageSearchController: DataController, DelegateCallable, Data
         )
     
     /// Used for observing the database for changes.
-    lazy var messagesObserver: ListDatabaseObserver<ChatMessage, MessageDTO>? = {
-        // TODO:
-        nil
-    }()
+    @Cached private var messagesObserver: ListDatabaseObserver<ChatMessage, MessageDTO>?
     
     private func startObserversIfNeeded() {
         guard state == .initialized else { return }
@@ -72,6 +80,25 @@ public class ChatMessageSearchController: DataController, DelegateCallable, Data
         } catch {
             log.error("Failed to perform fetch request with error: \(error). This is an internal error.")
             state = .localDataFetchFailed(ClientError(with: error))
+        }
+    }
+    
+    private func setMessagesObserver() {
+        _messagesObserver.computeValue = { [unowned self] in
+            let observer = ListDatabaseObserver(
+                context: self.client.databaseContainer.viewContext,
+                fetchRequest: MessageDTO.messagesFetchRequest(
+                    for: query
+                ),
+                itemCreator: { $0.asModel() as ChatMessage }
+            )
+            observer.onChange = { changes in
+                self.delegateCallback {
+                    $0.controller(self, didChangeMessages: changes)
+                }
+            }
+            
+            return observer
         }
     }
 
@@ -106,7 +133,8 @@ public class ChatMessageSearchController: DataController, DelegateCallable, Data
     ///   - completion: Called when the controller has finished fetching remote data.
     ///   If the data fetching fails, the error variable contains more details about the problem.
     public func search(text: String, completion: ((_ error: Error?) -> Void)? = nil) {
-        let query = MessageSearchQuery(messageFilter: .contains(.text, value: text))
+        var query = MessageSearchQuery(messageFilter: .queryText(text))
+        query.filterHash = explicitFilterHash
         lastQuery = query
         messageUpdater.search(query: query) { [weak self] error in
             self?.state = error == nil ? .remoteDataFetched : .remoteDataFetchFailed(ClientError(with: error))
@@ -128,7 +156,11 @@ public class ChatMessageSearchController: DataController, DelegateCallable, Data
     public func search(query: MessageSearchQuery, completion: ((_ error: Error?) -> Void)? = nil) {
         startObserversIfNeeded()
 
+        var query = query
+        query.filterHash = explicitFilterHash
+        
         lastQuery = query
+        
         messageUpdater.search(query: query) { error in
             self.state = error == nil ? .remoteDataFetched : .remoteDataFetchFailed(ClientError(with: error))
             self.callback { completion?(error) }

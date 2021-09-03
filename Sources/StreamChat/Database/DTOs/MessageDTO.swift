@@ -201,6 +201,13 @@ class MessageDTO: NSManagedObject {
         return request
     }
     
+    static func messagesFetchRequest(for query: MessageSearchQuery) -> NSFetchRequest<MessageDTO> {
+        let request = NSFetchRequest<MessageDTO>(entityName: MessageDTO.entityName)
+        request.predicate = NSPredicate(format: "ANY searches.filterHash == %@", query.filterHash)
+        request.sortDescriptors = [NSSortDescriptor(keyPath: \MessageDTO.defaultSortingKey, ascending: true)]
+        return request
+    }
+    
     /// Returns a fetch request for the dto with a specific `messageId`.
     static func message(withID messageId: MessageId) -> NSFetchRequest<MessageDTO> {
         let request = NSFetchRequest<MessageDTO>(entityName: MessageDTO.entityName)

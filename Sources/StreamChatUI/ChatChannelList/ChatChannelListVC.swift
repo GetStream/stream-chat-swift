@@ -58,7 +58,7 @@ open class ChatChannelListVC: _ViewController,
     /// Used for mapping `ListChanges` to sets of `IndexPath` and verifying possible conflicts
     private let collectionUpdatesMapper = CollectionUpdatesMapper()
 
-    var messageController: ChatMessageSearchController {
+    var messageSearchController: ChatMessageSearchController {
         controller.client.messageSearchController()
     }
 
@@ -85,9 +85,9 @@ open class ChatChannelListVC: _ViewController,
         userAvatarView.controller = controller.client.currentUserController()
         userAvatarView.addTarget(self, action: #selector(didTapOnCurrentUserAvatar), for: .touchUpInside)
 
-        debugPrint("messages.count:", messageController.messages.count)
-        messageController.search(text: "Hi") { _ in
-            debugPrint("messages.count:", self.messageController.messages.count)
+        debugPrint("messages.count:", messageSearchController.messages.count)
+        messageSearchController.search(text: "Hi") { _ in
+            debugPrint("messages.count:", self.messageSearchController.messages.count)
         }
     }
 
