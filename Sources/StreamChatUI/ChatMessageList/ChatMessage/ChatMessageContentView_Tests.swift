@@ -15,7 +15,7 @@ final class ChatMessageContentView_Tests: XCTestCase {
     /// Another user.
     private let myFriend: ChatUser = .mock(id: .unique, imageURL: TestImages.vader.url)
     /// The `createdAt` for all test messages
-    private let createdAt = DateFormatter.Stream.iso8601Date(from: "2019-12-12T15:33:46.488935Z")!
+    private let createdAt = DateFormatter.Stream.rfc3339Date(from: "2019-12-12T15:33:46.488935Z")!
 
     func test_appearance() {
         let components = Components.mock

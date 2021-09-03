@@ -250,49 +250,6 @@ class MessageDTO: NSManagedObject {
         request.fetchOffset = offset
         return load(by: request, context: context)
     }
-
-    static func loadAttachmentCounts(
-        for messageId: MessageId,
-        context: NSManagedObjectContext
-    ) -> [AttachmentType: Int] {
-        enum AttachmentScoreKey: String {
-            case type
-            case count
-        }
-
-        let count = NSExpressionDescription()
-        count.name = AttachmentScoreKey.count.rawValue
-        count.expressionResultType = .integer64AttributeType
-        count.expression = NSExpression(
-            forFunction: "count:",
-            arguments: [NSExpression(forKeyPath: AttachmentScoreKey.type.rawValue)]
-        )
-
-        let request = NSFetchRequest<NSDictionary>(entityName: AttachmentDTO.entityName)
-        request.propertiesToFetch = [AttachmentScoreKey.type.rawValue, count]
-        request.propertiesToGroupBy = [AttachmentScoreKey.type.rawValue]
-        request.resultType = .dictionaryResultType
-        request.predicate = NSPredicate(
-            format: "%K.%K == %@",
-            #keyPath(AttachmentDTO.message),
-            #keyPath(MessageDTO.id),
-            messageId
-        )
-
-        do {
-            return try context.fetch(request).reduce(into: [:]) { counts, entry in
-                guard
-                    let type = entry.value(forKey: AttachmentScoreKey.type.rawValue) as? String,
-                    let count = entry.value(forKey: AttachmentScoreKey.count.rawValue) as? Int
-                else { return }
-
-                counts[.init(rawValue: type)] = count
-            }
-        } catch {
-            log.error("Failed to fetch attachment counts for the message with id: \(messageId), error: \(error)")
-            return [:]
-        }
-    }
 }
 
 extension MessageDTO {
@@ -678,10 +635,6 @@ private extension ChatMessage {
         }
         
         $_quotedMessage = ({ dto.quotedMessage?.asModel() }, dto.managedObjectContext)
-
-        $_attachmentCounts = ({ [id] in
-            MessageDTO.loadAttachmentCounts(for: id, context: context)
-        }, context)
     }
 }
 
