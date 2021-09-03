@@ -9,6 +9,12 @@ public struct ChatMessageReactionData {
     public let type: MessageReactionType
     public let score: Int
     public let isChosenByCurrentUser: Bool
+
+    public init(type: MessageReactionType, score: Int, isChosenByCurrentUser: Bool) {
+        self.type = type
+        self.score = score
+        self.isChosenByCurrentUser = isChosenByCurrentUser
+    }
 }
 
 public enum ChatMessageReactionsBubbleStyle {
