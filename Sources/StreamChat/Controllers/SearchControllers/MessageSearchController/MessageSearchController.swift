@@ -6,7 +6,7 @@ import CoreData
 import Foundation
 
 public extension ChatClient {
-    /// Creates a new `MessageSearchController` with the provided user query.
+    /// Creates a new `MessageSearchController` with the provided message query.
     ///
     /// - Parameter query: The query specify the filter of the messages the controller should fetch.
     ///
@@ -102,6 +102,12 @@ public class ChatMessageSearchController: DataController, DelegateCallable, Data
         }
     }
 
+    /// An internal backing object for all publicly available Combine publishers. We use it to simplify the way we expose
+    /// publishers. Instead of creating custom `Publisher` types, we use `CurrentValueSubject` and `PassthroughSubject` internally,
+    /// and expose the published values by mapping them to a read-only `AnyPublisher` type.
+    @available(iOS 13, *)
+    lazy var basePublishers: BasePublishers = .init(controller: self)
+
     /// A type-erased delegate.
     var multicastDelegate: MulticastDelegate<AnyMessageSearchControllerDelegate> = .init() {
         didSet {
@@ -134,7 +140,7 @@ public class ChatMessageSearchController: DataController, DelegateCallable, Data
     ///   If the data fetching fails, the error variable contains more details about the problem.
     public func search(text: String, completion: ((_ error: Error?) -> Void)? = nil) {
         startObserversIfNeeded()
-        
+
         guard let currentUserId = client.currentUserId else {
             completion?(ClientError.CurrentUserDoesNotExist("For message search with text, a current user must be logged in"))
             return
@@ -151,9 +157,11 @@ public class ChatMessageSearchController: DataController, DelegateCallable, Data
         }
     }
 
-    /// Searches users for the given query.
+    /// Searches messages for the given query.
     ///
-    /// When this function is called, `messages` property of this controller will refresh with new users matching the term.
+    /// When this function is called, `messages` property of this
+    /// controller will refresh with new messages matching the text.
+    ///
     /// The delegate function `didChangeMessages` will also be called.
     ///
     /// - Note: Currently, no local data will be searched, only remote data will be queried.
