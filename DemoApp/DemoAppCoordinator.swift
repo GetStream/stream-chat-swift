@@ -74,7 +74,7 @@ final class DemoAppCoordinator: NSObject, UNUserNotificationCenterDelegate {
         
         // Create client
         var config = ChatClientConfig(apiKey: .init(apiKeyString))
-        config.isLocalStorageEnabled = true
+//        config.isLocalStorageEnabled = true
         config.applicationGroupIdentifier = applicationGroupIdentifier
 
         ChatClient.shared = ChatClient(config: config)
