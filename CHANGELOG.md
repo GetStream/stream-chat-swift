@@ -3,6 +3,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+### 🔄 Changed
+
+# [4.0.0-RC](https://github.com/GetStream/stream-chat-swift/releases/tag/4.0.0-RC)
+_September 03, 2021_
+
 ### ⚠️ Breaking Changes from `4.0-beta.11`
 - JSON Encoding/Decoding for both Network and Database date formatting changed to RFC3339 formats [#1403](https://github.com/GetStream/stream-chat-swift/pull/1403)
 - `ChatMessage.threadParticipants` is now an Array instead of Set [#1398](https://github.com/GetStream/stream-chat-swift/pull/1398)
