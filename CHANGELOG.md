@@ -35,6 +35,7 @@ A new `ChatChannelVC` is introduced that represents the old `ChatMessageListVC`,
 - Use remote config to disable mute actions [#1418](https://github.com/GetStream/stream-chat-swift/pull/1418)
 - Use remote config to disable thread info from message options [#1418](https://github.com/GetStream/stream-chat-swift/pull/1418)
 - Provide different Objc name for InputTextView [#1420](https://github.com/GetStream/stream-chat-swift/pull/1421)
+- Add message search support through `MessageSearchController` [#1426](https://github.com/GetStream/stream-chat-swift/pull/1426)
 
 ### 🐞 Fixed
 - Fix incorrect RawJSON number handling, the `.integer` case is no longer supported and is replaced by `.number` [#1375](https://github.com/GetStream/stream-chat-swift/pull/1375)
