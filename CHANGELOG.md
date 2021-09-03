@@ -46,6 +46,7 @@ A new `ChatChannelVC` is introduced that represents the old `ChatMessageListVC`,
 - Fix threads not showing all the responses if there were responses that were also sent to the channel [#1413](https://github.com/GetStream/stream-chat-swift/pull/1413)
 - Fix crash when accessing `ChatMessage.attachmentCounts` on <iOS13 with in-memory storage turned ON
 - Fix `isCommandsEnabled` not disabling the typing commands [#1416](https://github.com/GetStream/stream-chat-swift/pull/1416)
+- Fix mention suggester now supports `options.minimumRequiredCharacters` equal to 0 and sorts results with same score consistently
 
 # [4.0.0-beta.11](https://github.com/GetStream/stream-chat-swift/releases/tag/4.0.0-beta.11)
 _August 13, 2021_
