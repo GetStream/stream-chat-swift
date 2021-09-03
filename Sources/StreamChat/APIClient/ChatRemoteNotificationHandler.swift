@@ -188,11 +188,11 @@ public class ChatRemoteNotificationHandler {
 
         switch EventType(rawValue: type) {
         case .messageNew:
-            guard let cid = dict["cid"], let id = dict["id"], let cid = try? ChannelId(cid: cid) else {
+            guard let cid = dict["cid"], let id = dict["id"], let channelId = try? ChannelId(cid: cid) else {
                 completion(.unknown(UnknownNotificationContent(content: content)))
                 return
             }
-            getMessageAndSync(cid: cid, messageId: id) { (message, channel) in
+            getMessageAndSync(cid: channelId, messageId: id) { (message, channel) in
                 guard let message = message else {
                     completion(.unknown(UnknownNotificationContent(content: self.content)))
                     return

@@ -34,6 +34,7 @@ A new `ChatChannelVC` is introduced that represents the old `ChatMessageListVC`,
 - Add a new `isMentionsEnabled` flag to make it easier to disable the user mentions in the ComposerVC [#1416](https://github.com/GetStream/stream-chat-swift/pull/1416)
 - Use remote config to disable mute actions [#1418](https://github.com/GetStream/stream-chat-swift/pull/1418)
 - Use remote config to disable thread info from message options [#1418](https://github.com/GetStream/stream-chat-swift/pull/1418)
+- Provide different Objc name for InputTextView [#1420](https://github.com/GetStream/stream-chat-swift/pull/1421)
 
 ### 🐞 Fixed
 - Fix incorrect RawJSON number handling, the `.integer` case is no longer supported and is replaced by `.number` [#1375](https://github.com/GetStream/stream-chat-swift/pull/1375)
@@ -47,6 +48,7 @@ A new `ChatChannelVC` is introduced that represents the old `ChatMessageListVC`,
 - Fix crash when accessing `ChatMessage.attachmentCounts` on <iOS13 with in-memory storage turned ON
 - Fix `isCommandsEnabled` not disabling the typing commands [#1416](https://github.com/GetStream/stream-chat-swift/pull/1416)
 - Fix mention suggester now supports `options.minimumRequiredCharacters` equal to 0 and sorts results with same score consistently
+- Fix filters with wrong Date encoding strategy [#1420](https://github.com/GetStream/stream-chat-swift/pull/1420)
 
 # [4.0.0-beta.11](https://github.com/GetStream/stream-chat-swift/releases/tag/4.0.0-beta.11)
 _August 13, 2021_

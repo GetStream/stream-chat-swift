@@ -16,6 +16,7 @@ public protocol InputTextViewClipboardAttachmentDelegate: AnyObject {
 
 /// A view for inputting text with placeholder support. Since it is a subclass
 /// of `UITextView`, the `UITextViewDelegate` can be used to observe text changes.
+@objc(StreamInputTextView)
 open class InputTextView: UITextView, AppearanceProvider {
     /// The delegate which gets notified when an attachment is pasted into the text view
     open weak var clipboardAttachmentDelegate: InputTextViewClipboardAttachmentDelegate?
