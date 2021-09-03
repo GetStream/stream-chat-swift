@@ -8,7 +8,7 @@ import XCTest
 /// Mock implementation of ChannelListUpdater
 class ChannelListUpdaterMock: ChannelListUpdater {
     @Atomic var fetch_channelListQueries: [ChannelListQuery] = []
-    @Atomic var fetch_completion: ((Result<ChannelListPayload, Error>) -> Void)? = nil
+    @Atomic var fetch_completions: [(Result<ChannelListPayload, Error>) -> Void] = []
     
     @Atomic var update_queries: [ChannelListQuery] = []
     @Atomic var update_completion: ((Result<ChannelListPayload, Error>) -> Void)? = nil
@@ -17,7 +17,7 @@ class ChannelListUpdaterMock: ChannelListUpdater {
     
     func cleanUp() {
         fetch_channelListQueries.removeAll()
-        fetch_completion = nil
+        fetch_completions.removeAll()
         
         update_queries.removeAll()
         update_completion = nil
@@ -30,7 +30,7 @@ class ChannelListUpdaterMock: ChannelListUpdater {
         completion: @escaping (Result<ChannelListPayload, Error>) -> Void
     ) {
         _fetch_channelListQueries.mutate { $0.append(channelListQuery) }
-        fetch_completion = completion
+        _fetch_completions.mutate { $0.append(completion) }
     }
     
     override func update(

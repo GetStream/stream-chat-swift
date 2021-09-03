@@ -95,85 +95,59 @@ class ConnectionRecoveryUpdater: EventWorker {
     }
     
     private func obtainLastSyncDate() {
-        database.backgroundReadOnlyContext.perform { [weak self] in
-            self?.lastSyncedAt = self?.database.backgroundReadOnlyContext.currentUser?.lastReceivedEventDate
+        let context = database.backgroundReadOnlyContext
+        context.perform { [weak self] in
+            self?.lastSyncedAt = context.currentUser?.lastReceivedEventDate
         }
     }
     
     private func fetchAndReplayMissingEvents() {
-        database.backgroundReadOnlyContext.perform { [weak self, useSyncEndpoint] in
-            let refetchExistingQueries: () -> Void = {
-                self?.databaseCleanupUpdater.refetchExistingChannelListQueries()
-            }
+        let context = database.backgroundReadOnlyContext
+        context.perform { [weak self] in
+            guard let lastSyncedAt = self?.lastSyncedAt else { return }
             
-            if useSyncEndpoint {
-                self?.sync(completion: refetchExistingQueries)
-            } else {
-                refetchExistingQueries()
-            }
-        }
-    }
-
-    private func sync(completion: @escaping () -> Void) {
-        guard let lastSyncedAt = lastSyncedAt else { return }
-        
-        let watchedChannelIDs = allChannels.map(\.channelId)
-        
-        guard !watchedChannelIDs.isEmpty else {
-            log.info("Skipping `/sync` endpoint call as there are no channels to watch.")
-            return
-        }
-        
-        let endpoint: Endpoint<MissingEventsPayload> = .missingEvents(
-            since: lastSyncedAt,
-            cids: watchedChannelIDs
-        )
-        
-        apiClient.request(endpoint: endpoint) { [weak self] in
-            guard let self = self else { return }
-            switch $0 {
-            case let .success(payload):
-                // The sync call was successful.
-                // We schedule all events for existing channels for processing...
-                self.eventNotificationCenter.process(payload.eventPayloads)
-                
-                // ... and refetch the existing queries to see if there are some new channels
-                completion()
-                
-            case let .failure(error):
-                log.info(
-                    """
-                    Backend couldn't handle replaying missing events - there was too many (>1000) events to replay. \
-                    Cleaning local channels data and refetching it from scratch
-                    """
+            if self?.useSyncEndpoint == true {
+                let cids = Set(
+                    context
+                        .loadChannelListQueries()
+                        .flatMap(\.channels)
+                        .map(\.channelId)
+                        .prefix(1000)
                 )
                 
-                if error.isTooManyMissingEventsToSyncError {
-                    // The sync call failed...
-                    self.database.write {
-                        // First we need to clean up existing data
-                        try self.databaseCleanupUpdater.resetExistingChannelsData(session: $0)
-                    } completion: { error in
-                        if let error = error {
-                            log.error("Failed cleaning up channels data: \(error).")
-                            return
-                        }
-                        // Then we have to refetch existing channel list queries
-                        completion()
-                    }
+                self?.getMissingEvents(for: cids, since: lastSyncedAt) { error in
+                    self?.databaseCleanupUpdater.syncChannelListQueries(
+                        syncedChannelIDs: error == nil ? cids : []
+                    )
                 }
+            } else {
+                self?.databaseCleanupUpdater.syncChannelListQueries(syncedChannelIDs: [])
             }
         }
     }
     
-    private var allChannels: [ChannelDTO] {
-        do {
-            let request = ChannelDTO.allChannelsFetchRequest
-            request.fetchLimit = 1000
-            return try database.backgroundReadOnlyContext.fetch(request)
-        } catch {
-            log.error("Internal error: Failed to fetch [ChannelDTO]: \(error)")
-            return []
+    private func getMissingEvents(
+        for cids: Set<ChannelId>,
+        since lastSyncedAt: Date,
+        completion: @escaping (Error?) -> Void
+    ) {
+        log.debug("Will fetch missing events for \(cids) starting from \(lastSyncedAt)")
+        
+        apiClient.request(
+            endpoint: .missingEvents(since: lastSyncedAt, cids: .init(cids))
+        ) { [weak self] in
+            switch $0 {
+            case let .success(payload):
+                log.debug("Did receive \(payload.eventPayloads.count) missing events: \(payload.eventPayloads)")
+                
+                self?.eventNotificationCenter.process(payload.eventPayloads) {
+                    completion(nil)
+                }
+            case let .failure(error):
+                log.debug("Fail to get missing events: \(error)")
+                
+                completion(error)
+            }
         }
     }
 }
@@ -185,7 +159,7 @@ extension EventNotificationCenter {
     /// that was successfully decoded.
     ///
     /// - Parameter payloads: The event payloads
-    func process(_ payloads: [EventPayload]) {
+    func process(_ payloads: [EventPayload], completion: (() -> Void)? = nil) {
         payloads.forEach {
             do {
                 process(try $0.event())
@@ -193,6 +167,7 @@ extension EventNotificationCenter {
                 log.error("Failed to transform a payload into an event: \($0)")
             }
         }
+        completion?()
     }
 }
 
