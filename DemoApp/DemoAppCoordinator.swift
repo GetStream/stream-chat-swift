@@ -50,7 +50,7 @@ final class DemoAppCoordinator: NSObject, UNUserNotificationCenterDelegate {
             return
         }
         
-        if let userId = UserDefaults.standard.string(forKey: currentUserIdRegisteredForPush),
+        if let userId = UserDefaults(suiteName: applicationGroupIdentifier)?.string(forKey: currentUserIdRegisteredForPush),
            let userCredentials = UserCredentials.builtInUsersByID(id: userId) {
             presentChat(userCredentials: userCredentials, channelID: cid)
         }
