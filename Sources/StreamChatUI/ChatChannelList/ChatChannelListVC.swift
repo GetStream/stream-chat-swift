@@ -58,8 +58,6 @@ open class ChatChannelListVC: _ViewController,
     /// Used for mapping `ListChanges` to sets of `IndexPath` and verifying possible conflicts
     private let collectionUpdatesMapper = CollectionUpdatesMapper()
 
-    var messageSearchController: ChatMessageSearchController!
-
     override open func setUp() {
         super.setUp()
         controller.setDelegate(self)
@@ -82,13 +80,6 @@ open class ChatChannelListVC: _ViewController,
         
         userAvatarView.controller = controller.client.currentUserController()
         userAvatarView.addTarget(self, action: #selector(didTapOnCurrentUserAvatar), for: .touchUpInside)
-
-        messageSearchController = controller.client.messageSearchController()
-        messageSearchController.setDelegate(self)
-        debugPrint("messages.count:", messageSearchController.messages.count)
-        messageSearchController.search(text: "Hi") { _ in
-            debugPrint("messages.count:", self.messageSearchController.messages.count)
-        }
     }
 
     open func collectionView(
@@ -301,11 +292,5 @@ open class ChatChannelListVC: _ViewController,
         default:
             loadingIndicator.stopAnimating()
         }
-    }
-}
-
-extension ChatChannelListVC: ChatMessageSearchControllerDelegate {
-    public func controller(_ controller: ChatMessageSearchController, didChangeMessages changes: [ListChange<ChatMessage>]) {
-        debugPrint(changes)
     }
 }
