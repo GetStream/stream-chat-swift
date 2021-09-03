@@ -21,11 +21,7 @@ struct ChatView: View {
     /// Member list trigger.
     @State private var isShowingMemberList = false
     /// Search Messages trigger.
-    @State private var isShowingMessageSearch = false {
-        didSet {
-            print("what")
-        }
-    }
+    @State private var isShowingMessageSearch = false
 
     var body: some View {
         VStack {
