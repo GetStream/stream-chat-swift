@@ -50,6 +50,7 @@ A new `ChatChannelVC` is introduced that represents the old `ChatMessageListVC`,
 - Fix mention suggester now supports `options.minimumRequiredCharacters` equal to 0 and sorts results with same score consistently
 - Fix filters with wrong Date encoding strategy [#1420](https://github.com/GetStream/stream-chat-swift/pull/1420)
 - Fix message height is now calculated correctly when a message is updated [#1424](https://github.com/GetStream/stream-chat-swift/pull/1424)
+- Fix list of channels being broken after connection recovery [#1426](https://github.com/GetStream/stream-chat-swift/pull/1426)
 
 # [4.0.0-beta.11](https://github.com/GetStream/stream-chat-swift/releases/tag/4.0.0-beta.11)
 _August 13, 2021_
