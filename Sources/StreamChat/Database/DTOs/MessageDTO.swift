@@ -33,6 +33,7 @@ class MessageDTO: NSManagedObject {
     @NSManaged var reactions: Set<MessageReactionDTO>
     @NSManaged var attachments: Set<AttachmentDTO>
     @NSManaged var quotedMessage: MessageDTO?
+    @NSManaged var searches: Set<MessageSearchQueryDTO>
 
     @NSManaged var pinned: Bool
     @NSManaged var pinnedBy: UserDTO?
@@ -197,6 +198,13 @@ class MessageDTO: NSManagedObject {
         let request = NSFetchRequest<MessageDTO>(entityName: MessageDTO.entityName)
         request.sortDescriptors = [NSSortDescriptor(keyPath: \MessageDTO.defaultSortingKey, ascending: sortAscending)]
         request.predicate = threadRepliesPredicate(for: messageId, deletedMessagesVisibility: deletedMessagesVisibility)
+        return request
+    }
+    
+    static func messagesFetchRequest(for query: MessageSearchQuery) -> NSFetchRequest<MessageDTO> {
+        let request = NSFetchRequest<MessageDTO>(entityName: MessageDTO.entityName)
+        request.predicate = NSPredicate(format: "ANY searches.filterHash == %@", query.filterHash)
+        request.sortDescriptors = [NSSortDescriptor(keyPath: \MessageDTO.defaultSortingKey, ascending: true)]
         return request
     }
     
@@ -465,6 +473,12 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         }
         
         return dto
+    }
+    
+    func saveMessage(payload: MessagePayload, for query: MessageSearchQuery) throws -> MessageDTO {
+        let messageDTO = try saveMessage(payload: payload, for: nil)
+        messageDTO.searches.insert(saveQuery(query: query))
+        return messageDTO
     }
     
     func message(id: MessageId) -> MessageDTO? { .load(id: id, context: self) }

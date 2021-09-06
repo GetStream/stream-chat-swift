@@ -17,7 +17,7 @@ extension ChatClient {
     }
 }
 
-/// `_ChatUserSearchController` is a controller class which allows observing a list of chat users based on the provided query.
+/// `ChatUserSearchController` is a controller class which allows observing a list of chat users based on the provided query.
 public class ChatUserSearchController: DataController, DelegateCallable, DataStoreProvider {
     /// The `ChatClient` instance this controller belongs to.
     public let client: ChatClient

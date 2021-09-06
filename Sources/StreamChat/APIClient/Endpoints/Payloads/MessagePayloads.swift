@@ -48,6 +48,10 @@ extension MessagePayload {
     }
 }
 
+struct MessageSearchResultsPayload: Decodable {
+    let results: [MessagePayload.Boxed]
+}
+
 /// An object describing the incoming message JSON payload.
 class MessagePayload: Decodable {
     let id: String
