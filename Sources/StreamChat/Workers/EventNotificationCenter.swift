@@ -45,6 +45,19 @@ class EventNotificationCenter: NotificationCenter {
         }
     }
     
+    /// Appends the given events to the current batch and starts batch processing immidiately.
+    func addToCurrentBatchAndProcessImmediately(
+        _ events: [Event],
+        completion: @escaping () -> Void = {}
+    ) {
+        var eventsToProcess: [Event] = []
+        _pendingEvents {
+            eventsToProcess = $0 + events
+            $0.removeAll()
+        }
+        feedEventsToMiddlewares(eventsToProcess, completion: completion)
+    }
+    
     /// Custom overload for `HealthCheckEvent`
     ///
     /// When we receive this event, we first create the `CurrentUserDTO`
@@ -54,10 +67,7 @@ class EventNotificationCenter: NotificationCenter {
     /// does not exist in DB yet. Using this overload makes sure that
     /// we process the event fully before calling completion closures.
     func process(_ healthCheckEvent: HealthCheckEvent, completion: @escaping ((ConnectionId) -> Void)) {
-        database.write { session in
-            // We don't want to publish `HealthCheckEvent`, so we discard the output
-            _ = self.middlewares.process(event: healthCheckEvent, session: session)
-        } completion: { _ in
+        addToCurrentBatchAndProcessImmediately([healthCheckEvent]) {
             completion(healthCheckEvent.connectionId)
         }
     }
@@ -67,21 +77,37 @@ class EventNotificationCenter: NotificationCenter {
         DispatchQueue.main.asyncAfter(deadline: .now() + eventBatchPeriod) { [weak self] in
             guard let self = self else { return }
 
-            self.database.write { session in
-                var eventsToProcess: [Event] = []
-                self._pendingEvents {
-                    eventsToProcess = $0
-                    $0.removeAll()
-                }
-                
-                eventsToProcess.forEach { event in
-                    guard
-                        let eventToPublish = self.middlewares.process(event: event, session: session)
-                    else { return }
-
-                    self.post(Notification(newEventReceived: eventToPublish, sender: self))
-                }
+            var eventsToProcess: [Event] = []
+            self._pendingEvents {
+                eventsToProcess = $0
+                $0.removeAll()
             }
+            
+            self.feedEventsToMiddlewares(eventsToProcess)
         }
+    }
+    
+    /// Opens database session and feeds events to middlewares one by one respecting the order.
+    /// When an event is processed it is posted (except events of `HealthCheckEvent` type).
+    ///
+    /// - Parameters:
+    ///   - events: The list of events to be processed.
+    ///   - completion: The completion that will be invoked .
+    private func feedEventsToMiddlewares(
+        _ events: [Event],
+        completion: @escaping () -> Void = {}
+    ) {
+        database.write({ session in
+            for event in events {
+                guard
+                    let eventToPublish = self.middlewares.process(event: event, session: session),
+                    !(eventToPublish is HealthCheckEvent)
+                else { continue }
+                
+                self.post(Notification(newEventReceived: eventToPublish, sender: self))
+            }
+        }, completion: { _ in
+            completion()
+        })
     }
 }

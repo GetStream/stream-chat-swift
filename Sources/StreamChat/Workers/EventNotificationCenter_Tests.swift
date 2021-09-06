@@ -94,6 +94,21 @@ final class EventNotificationCenter_Tests: XCTestCase {
         AssertAsync.willBeEqual(eventLogger.events as? [TestEvent], [event])
     }
     
+    func test_healthCheckEventIsNotPublished() {
+        // Create a notification center without any middlewares
+        let center = EventNotificationCenter(database: database)
+        
+        // Create event logger to check published events
+        let eventLogger = EventLogger(center)
+        
+        // Simulate incoming `HealthCheckEvent` event
+        let event = HealthCheckEvent(connectionId: .unique)
+        center.process(event)
+        
+        // Assert `HealthCheckEvent` is not published
+        AssertAsync.staysTrue(eventLogger.events.isEmpty)
+    }
+    
     func test_eventsAreProcessed_fromWithinTheWriteClosure() {
         // Create a notification center without any middlewares
         let center = EventNotificationCenter(database: database)
@@ -166,6 +181,37 @@ final class EventNotificationCenter_Tests: XCTestCase {
         wait(0.3)
         XCTAssertEqual(database.writeSessionCounter, 2)
         XCTAssertEqual(eventLogger.events as! [TestEvent], testEvents)
+    }
+    
+    func test_addToCurrentBatchAndProcessImmediately() {
+        // Create a notification center with just a forwarding middleware
+        let center = EventNotificationCenter(database: database)
+        
+        // Create event logger to check published events
+        let eventLogger = EventLogger(center)
+        
+        // Schedule some events
+        let batchedEvents = [TestEvent(), TestEvent(), TestEvent(), TestEvent()]
+        for event in batchedEvents {
+            center.process(event)
+        }
+        
+        // Simulate event that should be processed immediately and catch the completion
+        let targetEvent = TestEvent()
+        var completionCalled = false
+        center.addToCurrentBatchAndProcessImmediately([targetEvent]) {
+            completionCalled = true
+        }
+        // Assert pending events are cleared immediately
+        XCTAssertTrue(center.pendingEvents.isEmpty)
+        // Assert database session opening is initiated.
+        XCTAssertTrue(database.write_called)
+
+        // Wait completion to be called
+        AssertAsync.willBeTrue(completionCalled)
+        
+        // Assert target event is included into the current batch and processing order is correct.
+        XCTAssertEqual(eventLogger.events as! [TestEvent], batchedEvents + [targetEvent])
     }
 }
 
