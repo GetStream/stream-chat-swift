@@ -702,9 +702,7 @@ open class ChatMessageContentView: _View, ThemeProvider {
     /// - Returns: The `reactionsBubbleView` subview.
     open func createReactionsBubbleView() -> ChatReactionsBubbleView {
         if reactionsBubbleView == nil {
-            // TODO: view type should be taken from `components` once `_ReactionsBubbleView` is audited
-            reactionsBubbleView = ChatReactionsBubbleView()
-                .withoutAutoresizingMaskConstraints
+            reactionsBubbleView = components.messageReactionsBubbleView.init().withoutAutoresizingMaskConstraints
         }
         return reactionsBubbleView!
     }
