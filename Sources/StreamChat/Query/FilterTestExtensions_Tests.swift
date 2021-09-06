@@ -26,7 +26,7 @@ extension Filter: Equatable {
 }
 
 extension Filter {
-    var serialized: String  {
+    var serialized: String {
         try! serializedThrows()
     }
 
@@ -66,7 +66,7 @@ struct FilterCodingTestPair {
         .notExists(),
         .containsAndEqual(),
         .greaterOrLess(),
-        .nonEqualNorEqual(),
+        .nonEqualNorEqual()
     ]
 }
 
@@ -201,7 +201,7 @@ extension FilterCodingTestPair {
         return FilterCodingTestPair(json: json, filter: filter)
     }
 
-    static private func existsFilter(exists: Bool) -> FilterCodingTestPair {
+    private static func existsFilter(exists: Bool) -> FilterCodingTestPair {
         let json = "{\"test_key_Int\":{\"$exists\":\(exists)}}"
         let filter: Filter<FilterTestScope> = .exists(.testKeyInt, exists: exists)
         return FilterCodingTestPair(json: json, filter: filter)
