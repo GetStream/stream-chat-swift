@@ -72,6 +72,7 @@ final class DemoAppCoordinator: NSObject, UNUserNotificationCenterDelegate {
         // Create a token
         let token = try! Token(rawValue: userCredentials.token)
         
+        LogConfig.level = .warning
         // Create client
         var config = ChatClientConfig(apiKey: .init(apiKeyString))
 //        config.isLocalStorageEnabled = true
