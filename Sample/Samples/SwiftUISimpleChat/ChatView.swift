@@ -20,12 +20,19 @@ struct ChatView: View {
     @State var editingMessage: ChatMessage?
     /// Member list trigger.
     @State private var isShowingMemberList = false
+    /// Search Messages trigger.
+    @State private var isShowingMessageSearch = false
 
     var body: some View {
         VStack {
             self.messageList().layoutPriority(1)
             self.composerView()
             NavigationLink(destination: memberList, isActive: $isShowingMemberList) { EmptyView() }
+            NavigationLink(destination: messageSearch, isActive: $isShowingMessageSearch) { EmptyView() }
+            // This fixes a weird SwiftUI bug on 14.5: https://developer.apple.com/forums/thread/677333
+            NavigationLink(destination: EmptyView()) {
+                EmptyView()
+            }
         }
         /// ActionSheet presenter.
         .actionSheet(isPresented: $actionSheetTrigger, content: self.actionSheet)
@@ -193,6 +200,11 @@ struct ChatView: View {
                     self.isShowingMemberList = true
                 }
             ),
+            .default(
+                Text("Search messages"), action: {
+                    self.isShowingMessageSearch = true
+                }
+            ),
             .cancel()
         ])
     }
@@ -202,6 +214,11 @@ struct ChatView: View {
         let controller = channel.controller.client.memberListController(query: .init(cid: channel.channel!.cid))
         return MemberListView(channel: channel, memberList: controller.observableObject)
     }
+
+    var messageSearch: some View {
+        let messageSearch = channel.controller.client.messageSearchController()
+        return SearchMessagesView(messagesSearch: messageSearch.observableObject)
+    }
     
     private func didKeystroke() {
         channel.controller.sendKeystrokeEvent()
@@ -209,6 +226,54 @@ struct ChatView: View {
     
     private func didStopTyping() {
         channel.controller.sendStopTypingEvent()
+    }
+}
+
+@available(iOS 14, *)
+struct SearchMessagesView: View {
+    @StateObject var messagesSearch: ChatMessageSearchController.ObservableObject
+
+    @State private var text: String = "" {
+        didSet {
+            messagesSearch.controller.search(text: text)
+        }
+    }
+
+    var body: some View {
+        VStack {
+            TextField("Search for messages...", text: $text)
+                .padding()
+                .background(Color.gray.opacity(0.2))
+                .onChange(of: text) { text in
+                    messagesSearch.controller.search(text: text)
+                }
+
+            ChatScrollView {
+                ScrollViewReader { _ in
+                    LazyVStack(alignment: .leading) {
+                        ForEach(messagesSearch.messages, id: \.self) { message in
+                            self.messageView(for: message)
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    func messageView(for message: ChatMessage) -> some View {
+        let username = message.author.name ?? message.author.id
+        let text: Text
+
+        switch message.type {
+        case .deleted:
+            text = Text("❌ the message was deleted")
+        case .error:
+            text = Text("⚠️ something wrong happened")
+        default:
+            text = (Text(username).bold().foregroundColor(.forUsername(username)) + Text(" \(message.text)"))
+        }
+
+        return text
     }
 }
 

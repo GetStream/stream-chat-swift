@@ -79,6 +79,9 @@ protocol MessageDatabaseSession {
         payload: MessagePayload,
         for cid: ChannelId?
     ) throws -> MessageDTO
+    
+    @discardableResult
+    func saveMessage(payload: MessagePayload, for query: MessageSearchQuery) throws -> MessageDTO
 
     /// Pins the provided message
     /// - Parameters:
@@ -109,6 +112,8 @@ protocol MessageDatabaseSession {
     /// Deletes the provided dto from a database
     /// - Parameter reaction: The DTO to be deleted
     func delete(reaction: MessageReactionDTO)
+    
+    func deleteQuery(_ query: MessageSearchQuery)
 }
 
 extension MessageDatabaseSession {

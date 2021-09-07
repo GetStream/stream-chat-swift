@@ -3,6 +3,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+### 🔄 Changed
+
+# [4.0.0-RC](https://github.com/GetStream/stream-chat-swift/releases/tag/4.0.0-RC)
+_September 03, 2021_
+
 ### ⚠️ Breaking Changes from `4.0-beta.11`
 - JSON Encoding/Decoding for both Network and Database date formatting changed to RFC3339 formats [#1403](https://github.com/GetStream/stream-chat-swift/pull/1403)
 - `ChatMessage.threadParticipants` is now an Array instead of Set [#1398](https://github.com/GetStream/stream-chat-swift/pull/1398)
@@ -35,6 +40,7 @@ A new `ChatChannelVC` is introduced that represents the old `ChatMessageListVC`,
 - Use remote config to disable mute actions [#1418](https://github.com/GetStream/stream-chat-swift/pull/1418)
 - Use remote config to disable thread info from message options [#1418](https://github.com/GetStream/stream-chat-swift/pull/1418)
 - Provide different Objc name for InputTextView [#1420](https://github.com/GetStream/stream-chat-swift/pull/1421)
+- Add message search support through `MessageSearchController` [#1426](https://github.com/GetStream/stream-chat-swift/pull/1426)
 
 ### 🐞 Fixed
 - Fix incorrect RawJSON number handling, the `.integer` case is no longer supported and is replaced by `.number` [#1375](https://github.com/GetStream/stream-chat-swift/pull/1375)
@@ -50,6 +56,7 @@ A new `ChatChannelVC` is introduced that represents the old `ChatMessageListVC`,
 - Fix mention suggester now supports `options.minimumRequiredCharacters` equal to 0 and sorts results with same score consistently
 - Fix filters with wrong Date encoding strategy [#1420](https://github.com/GetStream/stream-chat-swift/pull/1420)
 - Fix message height is now calculated correctly when a message is updated [#1424](https://github.com/GetStream/stream-chat-swift/pull/1424)
+- Fix `ChatMessageReactionData.init` not public [#1425](https://github.com/GetStream/stream-chat-swift/pull/1425)
 
 # [4.0.0-beta.11](https://github.com/GetStream/stream-chat-swift/releases/tag/4.0.0-beta.11)
 _August 13, 2021_
