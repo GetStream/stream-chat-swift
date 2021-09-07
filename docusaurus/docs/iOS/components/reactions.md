@@ -32,11 +32,11 @@ let reactionWaveSmall: UIImage = UIImage(named: "waveSmall")!
 let reactionWaveBig: UIImage = UIImage(named: "waveBig")!
 
 let customReactions: [MessageReactionType: ChatMessageReactionAppearanceType] = [
-    .init(stringLiteral: "fire"): ChatMessageReactionAppearance(
+    "fire": ChatMessageReactionAppearance(
         smallIcon: reactionFireSmall,
         largeIcon: reactionFireBig
     ),
-    .init(stringLiteral: "wave"): ChatMessageReactionAppearance(
+    "wave": ChatMessageReactionAppearance(
         smallIcon: reactionWaveSmall,
         largeIcon: reactionWaveBig
     )
