@@ -9,13 +9,13 @@ import Foundation
 /// was not connected to the web-socket.
 ///
 /// The object listens for `ConnectionStatusUpdated` events
-/// and remembers the `CurrentUserDTO.lastReceivedEventDate` when status becomes `connecting`.
+/// and remembers the `CurrentUserDTO.lastSyncedAt` when status becomes `connecting`.
 ///
 /// When the status becomes `connected` the `/sync` endpoint is called
-/// with `lastReceivedEventDate` and `cids` of watched channels.
+/// with `lastSyncedAt` and `cids` of watched channels.
 ///
-/// We remember `lastReceivedEventDate` when state becomes `connecting` to catch the last event date
-/// before the `HealthCheck` override the `lastReceivedEventDate` with the recent date.
+/// We remember `lastSyncedAt` when state becomes `connecting` to catch the last event date
+/// before the `HealthCheck` override the `lastSyncedAt` with the recent date.
 ///
 class ConnectionRecoveryUpdater: EventWorker {
     // MARK: - Properties
@@ -96,7 +96,7 @@ class ConnectionRecoveryUpdater: EventWorker {
     
     private func obtainLastSyncDate() {
         database.backgroundReadOnlyContext.perform { [weak self] in
-            self?.lastSyncedAt = self?.database.backgroundReadOnlyContext.currentUser?.lastReceivedEventDate
+            self?.lastSyncedAt = self?.database.backgroundReadOnlyContext.currentUser?.lastSyncedAt
         }
     }
     

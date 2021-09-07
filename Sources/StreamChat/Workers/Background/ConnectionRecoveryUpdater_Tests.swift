@@ -63,10 +63,10 @@ final class ConnectionRecoveryUpdater_Tests: StressTestCase {
         // Create current user in the database
         try database.createCurrentUser()
         
-        // Set `lastReceivedEventDate` field
+        // Set `lastSyncedAt` field
         try database.writeSynchronously {
             let dto = try XCTUnwrap($0.currentUser)
-            dto.lastReceivedEventDate = Date()
+            dto.lastSyncedAt = Date()
         }
         
         // Simulate `.connecting` connection state of a web-socket
@@ -94,12 +94,12 @@ final class ConnectionRecoveryUpdater_Tests: StressTestCase {
         try database.createCurrentUser()
         
         // Create channel in the database
-        try database.createChannel(cid: cid)
+        try database.createChannel(cid: cid, withQuery: true)
 
-        // Set `lastReceivedEventDate`
+        // Set `lastSyncedAt`
         try database.writeSynchronously { session in
             let currentUser = try XCTUnwrap(session.currentUser)
-            currentUser.lastReceivedEventDate = lastReceivedEventDate
+            currentUser.lastSyncedAt = lastReceivedEventDate
         }
         
         // Simulate `.connecting` connection state of a web-socket
@@ -131,12 +131,12 @@ final class ConnectionRecoveryUpdater_Tests: StressTestCase {
         try database.createCurrentUser()
         
         // Create channel in the database
-        try database.createChannel(cid: cid)
+        try database.createChannel(cid: cid, withQuery: true)
         
-        // Set `lastReceivedEventDate`
+        // Set `lastSyncedAt`
         try database.writeSynchronously { session in
             let currentUser = try XCTUnwrap(session.currentUser)
-            currentUser.lastReceivedEventDate = Date()
+            currentUser.lastSyncedAt = Date()
         }
         
         // Simulate `.connecting` connection state of a web-socket
@@ -174,7 +174,7 @@ final class ConnectionRecoveryUpdater_Tests: StressTestCase {
 
         try database.writeSynchronously { session in
             let currentUser = try XCTUnwrap(session.currentUser)
-            currentUser.lastReceivedEventDate = Date()
+            currentUser.lastSyncedAt = Date()
         }
         
         webSocketClient.simulateConnectionStatus(.connecting)
@@ -226,7 +226,7 @@ final class ConnectionRecoveryUpdater_Tests: StressTestCase {
         
         try database.writeSynchronously { session in
             let currentUser = try XCTUnwrap(session.currentUser)
-            currentUser.lastReceivedEventDate = .unique
+            currentUser.lastSyncedAt = .unique
         }
         
         webSocketClient.simulateConnectionStatus(.connecting)
@@ -263,7 +263,7 @@ final class ConnectionRecoveryUpdater_Tests: StressTestCase {
 
         try database.writeSynchronously { session in
             let currentUser = try XCTUnwrap(session.currentUser)
-            currentUser.lastReceivedEventDate = .unique
+            currentUser.lastSyncedAt = .unique
         }
 
         webSocketClient.simulateConnectionStatus(.connecting)
@@ -305,10 +305,10 @@ final class ConnectionRecoveryUpdater_Tests: StressTestCase {
         // Create channel in the database
         try database.createChannel()
         
-        // Set `lastReceivedEventDate`
+        // Set `lastSyncedAt`
         try database.writeSynchronously { session in
             let currentUser = try XCTUnwrap(session.currentUser)
-            currentUser.lastReceivedEventDate = Date()
+            currentUser.lastSyncedAt = Date()
         }
         
         // Simulate `.connecting` connection state of a web-socket

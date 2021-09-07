@@ -296,7 +296,7 @@ class DatabaseSession_Tests: StressTestCase {
         let currentUser = database.viewContext.currentUser
         
         // Assert `eventPayload.createdAt` is taked as last received event date
-        XCTAssertEqual(currentUser?.lastReceivedEventDate, eventPayload.createdAt)
+        XCTAssertEqual(currentUser?.lastSyncedAt, eventPayload.createdAt)
     }
     
     func test_saveEvent_doesntResetLastReceivedEventDate_whenEventCreatedAtValueIsNil() throws {
@@ -322,7 +322,7 @@ class DatabaseSession_Tests: StressTestCase {
         // Load current user
         let currentUser = database.viewContext.currentUser
         
-        // Assert `lastReceivedEventDate` is nil
-        XCTAssertNil(currentUser?.lastReceivedEventDate)
+        // Assert `lastSyncedAt` is nil
+        XCTAssertNil(currentUser?.lastSyncedAt)
     }
 }

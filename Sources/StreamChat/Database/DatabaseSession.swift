@@ -304,7 +304,7 @@ extension DatabaseSession {
         }
         
         if let currentUser = currentUser, let date = payload.createdAt {
-            currentUser.lastReceivedEventDate = date
+            currentUser.lastSyncedAt = date
         }
         
         // Save message data (must be always done after the channel data!)

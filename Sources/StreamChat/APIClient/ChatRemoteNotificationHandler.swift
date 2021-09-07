@@ -84,16 +84,15 @@ public class ChatRemoteNotificationHandler {
     }
 
     private func obtainLastSyncDate(completion: @escaping (Date?) -> Void) {
-        var lastReceivedEventDate: Date?
-        database.viewContext.performAndWait {
-            lastReceivedEventDate = self.database.viewContext.currentUser?.lastReceivedEventDate
+        let context = database.viewContext
+        context.perform {
+            completion(context.currentUser?.lastSyncedAt)
         }
-        completion(lastReceivedEventDate)
     }
 
-    private func bumpLastSyncDate(lastReceivedEventDate: Date, completion: @escaping () -> Void) {
+    private func bumpLastSyncDate(_ lastSyncedAt: Date, completion: @escaping () -> Void) {
         database.write { session in
-            session.currentUser?.lastReceivedEventDate = lastReceivedEventDate
+            session.currentUser?.lastSyncedAt = lastSyncedAt
         } completion: { error in
             if let error = error {
                 log.error(error)
@@ -146,7 +145,7 @@ public class ChatRemoteNotificationHandler {
                     ) {
                         let mostRecentEventDate = payload.eventPayloads.compactMap(\.createdAt).sorted().last
                         self.bumpLastSyncDate(
-                            lastReceivedEventDate: mostRecentEventDate ?? lastSyncAt,
+                            mostRecentEventDate ?? lastSyncAt,
                             completion: completion
                         )
                     }
