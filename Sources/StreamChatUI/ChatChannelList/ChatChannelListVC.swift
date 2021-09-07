@@ -19,10 +19,15 @@ open class ChatChannelListVC: _ViewController,
     
     @Atomic private var loadingPreviousMessages: Bool = false
 
-    open private(set) var isShowingLoadingState = false {
-        didSet {
+    private var _isShowingLoadingState: Bool = false
+    open private(set) var isShowingLoadingState: Bool {
+        get {
+            components.shouldChannelListVCShowLoadingState && _isShowingLoadingState
+        }
+        set {
             guard components.shouldChannelListVCShowLoadingState,
-                  isShowingLoadingState != oldValue else { return }
+                  isShowingLoadingState != newValue else { return }
+            _isShowingLoadingState = newValue
             collectionView.reloadData()
         }
     }
