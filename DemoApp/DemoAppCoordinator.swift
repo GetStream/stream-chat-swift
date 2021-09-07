@@ -16,10 +16,6 @@ final class DemoAppCoordinator: NSObject, UNUserNotificationCenterDelegate {
     let connectionDelegate: BannerShowingConnectionDelegate
 
     init(navigationController: UINavigationController) {
-        // Since log is first touched in `BannerShowingConnectionDelegate`,
-        // we need to set log level here
-        LogConfig.level = .warning
-        
         self.navigationController = navigationController
         connectionDelegate = BannerShowingConnectionDelegate(
             showUnder: navigationController.navigationBar
@@ -72,6 +68,7 @@ final class DemoAppCoordinator: NSObject, UNUserNotificationCenterDelegate {
         // Create a token
         let token = try! Token(rawValue: userCredentials.token)
         
+        LogConfig.level = .debug
         // Create client
         var config = ChatClientConfig(apiKey: .init(apiKeyString))
 //        config.isLocalStorageEnabled = true
