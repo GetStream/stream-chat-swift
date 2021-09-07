@@ -159,8 +159,10 @@ class ChatClientUpdater {
             return
         }
 
-        if client.connectionId == nil && source == .userInitiated {
-            log.warning("The client is already disconnected. Skipping the `disconnect` call.")
+        if client.connectionId == nil {
+            if source == .userInitiated {
+                log.warning("The client is already disconnected. Skipping the `disconnect` call.")
+            }
             return
         }
 
