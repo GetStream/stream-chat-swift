@@ -31,6 +31,11 @@ class DatabaseCleanupUpdater: Worker {
         )
     }
     
+    func syncChannelListQueries(
+        syncedChannelIDs: Set<ChannelId>,
+        completion: @escaping (Result<Void, Error>) -> Void
+    ) {}
+    
     /// Resets all existing channels data without removing the data from the database. This is used mainly to clean-up
     /// existing relations between the objects, and prepare the channels for full refetching.
     ///

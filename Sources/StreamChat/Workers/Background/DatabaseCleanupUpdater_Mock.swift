@@ -15,4 +15,14 @@ final class DatabaseCleanupUpdater_Mock: DatabaseCleanupUpdater {
     override func refetchExistingChannelListQueries() {
         refetchExistingChannelListQueries_body()
     }
+    
+    var syncChannelListQueries_syncedChannelIDs: Set<ChannelId>?
+    var syncChannelListQueries_completion: ((Result<Void, Error>) -> Void)?
+    override func syncChannelListQueries(
+        syncedChannelIDs: Set<ChannelId>,
+        completion: @escaping (Result<Void, Error>) -> Void
+    ) {
+        syncChannelListQueries_syncedChannelIDs = syncedChannelIDs
+        syncChannelListQueries_completion = completion
+    }
 }
