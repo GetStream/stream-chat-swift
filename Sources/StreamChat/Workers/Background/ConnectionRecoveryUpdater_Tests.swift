@@ -239,11 +239,14 @@ final class ConnectionRecoveryUpdater_Tests: StressTestCase {
         // Assert a network request is created
         AssertAsync.willBeEqual(apiClient.request_allRecordedCalls.count, 1)
         
+        // Create event logger to track posted events
+        let eventLogger = EventLogger(eventCenter)
+
         // Simulate successful response
         apiClient.test_simulateResponse(Result<MissingEventsPayload, Error>.success(payload))
         
         // Assert events from payload are published
-        AssertAsync.willBeEqual(eventCenter.process_loggedEvents.map(\.asEquatable), events.map(\.asEquatable))
+        AssertAsync.willBeEqual(eventLogger.equatableEvents, events.map(\.asEquatable))
     }
 
     func test_existingQueriesAreRefetched_ifSuccessfulResponseComes() throws {
