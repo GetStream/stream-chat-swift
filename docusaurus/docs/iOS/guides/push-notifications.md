@@ -201,6 +201,7 @@ class NotificationService: UNNotificationServiceExtension {
         self.request = request
 
         guard let content = request.content.mutableCopy() as? UNMutableNotificationContent else {
+            contentHandler(content)
             return
         }
 
@@ -223,8 +224,8 @@ class NotificationService: UNNotificationServiceExtension {
                 content.subtitle = message.text
             default:
                 content.title = "You received an update to one conversation"
-                contentHandler(content)
             }
+            contentHandler(content)
         }
     }
     
@@ -318,6 +319,7 @@ class NotificationService: UNNotificationServiceExtension {
         self.request = request
 
         guard let content = request.content.mutableCopy() as? UNMutableNotificationContent else {
+            contentHandler(content)
             return
         }
 
@@ -349,6 +351,7 @@ class NotificationService: UNNotificationServiceExtension {
         if !chatNotification {
             /// this was not a notification from Stream Chat
             /// perform any other transformation to the notification if needed
+            contentHandler(content)
         }
     }
     

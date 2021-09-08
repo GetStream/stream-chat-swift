@@ -27,7 +27,7 @@ class ChatClientUpdater {
 
             // Disconnect from web-socket since the connection was established
             // with previous token that can be expired.
-            disconnect()
+            disconnect(source: .systemInitiated)
 
             // Forward the new token to waiting requests.
             client.completeTokenWaiters(token: newToken)
@@ -57,7 +57,7 @@ class ChatClientUpdater {
         client.currentToken = newToken
 
         // Disconnect from web-socket.
-        disconnect()
+        disconnect(source: .systemInitiated)
         
         // Update web-socket endpoint.
         client.webSocketClient?.connectEndpoint = .webSocketConnect(
@@ -159,8 +159,10 @@ class ChatClientUpdater {
             return
         }
 
-        guard client.connectionId != nil else {
-            log.warning("The client is already disconnected. Skipping the `disconnect` call.")
+        if client.connectionId == nil {
+            if source == .userInitiated {
+                log.warning("The client is already disconnected. Skipping the `disconnect` call.")
+            }
             return
         }
 
