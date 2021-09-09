@@ -99,12 +99,7 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
     /// The observer used to listen to message updates
     private lazy var messageObserver = createMessageObserver()
         .onChange { [weak self] change in
-            guard let self = self else {
-                log.warning("Callback called while self is nil")
-                return
-            }
-
-            self.delegateCallback { [weak self] in
+            self?.delegateCallback { [weak self] in
                 guard let self = self else {
                     log.warning("Callback called while self is nil")
                     return
@@ -502,12 +497,7 @@ private extension ChatMessageController {
                 NSFetchedResultsController<MessageDTO>.self
             )
             observer.onChange = { [weak self] changes in
-                guard let self = self else {
-                    log.warning("Callback called while self is nil")
-                    return
-                }
-                
-                self.delegateCallback { [weak self] in
+                self?.delegateCallback { [weak self] in
                     guard let self = self else {
                         log.warning("Callback called while self is nil")
                         return

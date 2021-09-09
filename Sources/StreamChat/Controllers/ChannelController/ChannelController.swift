@@ -286,11 +286,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
                 fetchRequest: ChannelDTO.fetchRequest(for: cid),
                 itemCreator: { $0.asModel() as ChatChannel }
             ).onChange { [weak self] change in
-                guard let self = self else {
-                    log.warning("Callback called while self is nil")
-                    return
-                }
-                self.delegateCallback { [weak self] in
+                self?.delegateCallback { [weak self] in
                     guard let self = self else {
                         log.warning("Callback called while self is nil")
                         return
@@ -299,11 +295,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
                 }
             }
             .onFieldChange(\.currentlyTypingUsers) { [weak self] change in
-                guard let self = self else {
-                    log.warning("Callback called while self is nil")
-                    return
-                }
-                self.delegateCallback { [weak self] in
+                self?.delegateCallback { [weak self] in
                     guard let self = self else {
                         log.warning("Callback called while self is nil")
                         return
@@ -343,12 +335,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
                 itemCreator: { $0.asModel() as ChatMessage }
             )
             observer.onChange = { [weak self] changes in
-                guard let self = self else {
-                    log.warning("Callback called while self is nil")
-                    return
-                }
-                
-                self.delegateCallback { [weak self] in
+                self?.delegateCallback { [weak self] in
                     guard let self = self else {
                         log.warning("Callback called while self is nil")
                         return
@@ -451,11 +438,11 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
         let center = webSocketClient.eventNotificationCenter
         eventObservers = [
             MemberEventObserver(notificationCenter: center, cid: cid) { [weak self] event in
-                guard let self = self else {
-                    log.warning("Callback called while self is nil")
-                    return
-                }
-                self.delegateCallback {
+                self?.delegateCallback { [weak self] in
+                    guard let self = self else {
+                        log.warning("Callback called while self is nil")
+                        return
+                    }
                     $0.channelController(self, didReceiveMemberEvent: event)
                 }
             }
