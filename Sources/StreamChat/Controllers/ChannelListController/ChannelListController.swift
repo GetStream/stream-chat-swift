@@ -129,7 +129,7 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
                 callback: { [unowned self] in
                     switch $0.webSocketConnectionState {
                     case .connected:
-                        self.updateChannelList(trumpExistingChannels: self.channels.count > self.requestedChannelsLimit)
+                        self.updateChannelList(trumpExistingChannels: true)
                     default:
                         break
                     }
@@ -149,6 +149,7 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
             switch result {
             case .success:
                 self.state = .remoteDataFetched
+                self.hasLoadedAllPreviousChannels = false
                 self.callback { completion?(nil) }
             case let .failure(error):
                 self.state = .remoteDataFetchFailed(ClientError(with: error))

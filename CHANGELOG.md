@@ -3,7 +3,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
-### 🔄 Changed
+### 🐞 Fixed
+- Fix channel list showing outdated data, and channels not showing any messages after reconnection [#1435](https://github.com/GetStream/stream-chat-swift/issues/1435)
 
 # [4.0.0-RC](https://github.com/GetStream/stream-chat-swift/releases/tag/4.0.0-RC)
 _September 03, 2021_

@@ -72,7 +72,7 @@ class DatabaseCleanupUpdater: Worker {
     }
 }
 
-private extension ChannelDTO {
+extension ChannelDTO {
     /// Resets local channel data
     func resetLocalData() {
         messages = []

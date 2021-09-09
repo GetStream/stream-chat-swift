@@ -27,7 +27,8 @@ class ChannelListUpdater: Worker {
                     self?.database.write { session in
                         
                         if trumpExistingChannels {
-                            try session.deleteChannels(query: channelListQuery)
+                            let queryDTO = session.saveQuery(query: channelListQuery)
+                            queryDTO.channels.forEach { $0.resetLocalData() }
                         }
                         
                         try channelListPayload.channels.forEach {
