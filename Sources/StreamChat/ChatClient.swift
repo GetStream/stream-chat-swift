@@ -229,16 +229,7 @@ public class ChatClient {
             ]
             
             // All production event workers
-            eventWorkerBuilders = [
-                {
-                    ConnectionRecoveryUpdater(
-                        database: $0,
-                        eventNotificationCenter: $1,
-                        apiClient: $2,
-                        useSyncEndpoint: config.isLocalStorageEnabled
-                    )
-                }
-            ]
+            eventWorkerBuilders = []
         } else {
             workerBuilders = []
             eventWorkerBuilders = []
