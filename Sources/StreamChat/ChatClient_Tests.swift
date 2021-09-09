@@ -1115,64 +1115,73 @@ private class TestEnvironment {
     @Atomic var clientUpdater: ChatClientUpdaterMock?
     
     @Atomic var backgroundTaskScheduler: MockBackgroundTaskScheduler?
-    
-    lazy var environment: ChatClient.Environment = { [unowned self] in
+
+    lazy var environment: ChatClient.Environment = { [weak self] in
         .init(
             apiClientBuilder: {
-                self.apiClient = APIClientMock(
+                let apiClient = APIClientMock(
                     sessionConfiguration: $0,
                     requestEncoder: $1,
                     requestDecoder: $2,
                     CDNClient: $3
                 )
-                return self.apiClient!
+                self?.apiClient = apiClient
+                return apiClient
             },
             webSocketClientBuilder: {
-                self.webSocketClient = WebSocketClientMock(
+                let webSocketClient = WebSocketClientMock(
                     sessionConfiguration: $0,
                     requestEncoder: $1,
                     eventDecoder: $2,
                     eventNotificationCenter: $3,
                     internetConnection: $4
                 )
-                return self.webSocketClient!
+                self?.webSocketClient = webSocketClient
+                return webSocketClient
             },
             databaseContainerBuilder: {
-                self.databaseContainer = try! DatabaseContainerMock(
+                let databaseContainer = try! DatabaseContainerMock(
                     kind: $0,
                     shouldFlushOnStart: $1,
                     shouldResetEphemeralValuesOnStart: $2,
                     localCachingSettings: $3,
                     deletedMessagesVisibility: $4
                 )
-                return self.databaseContainer!
+                self?.databaseContainer = databaseContainer
+                return databaseContainer
             },
             requestEncoderBuilder: {
-                if let encoder = self.requestEncoder {
+                if let encoder = self?.requestEncoder {
                     return encoder
                 }
-                self.requestEncoder = TestRequestEncoder(baseURL: $0, apiKey: $1)
-                return self.requestEncoder!
+                let encoder = TestRequestEncoder(baseURL: $0, apiKey: $1)
+                self?.requestEncoder = encoder
+                return encoder
             },
             requestDecoderBuilder: {
-                self.requestDecoder = TestRequestDecoder()
-                return self.requestDecoder!
+                let requestDecoder = TestRequestDecoder()
+                self?.requestDecoder = requestDecoder
+                return requestDecoder
             },
             eventDecoderBuilder: {
-                self.eventDecoder = EventDecoder()
-                return self.eventDecoder!
+                let eventDecoder = EventDecoder()
+                self?.eventDecoder = eventDecoder
+                return eventDecoder
             },
             notificationCenterBuilder: {
-                self.notificationCenter = EventNotificationCenterMock(database: $0)
-                return self.notificationCenter!
+                let notificationCenter = EventNotificationCenterMock(database: $0)
+                self?.notificationCenter = notificationCenter
+                return notificationCenter
             },
             clientUpdaterBuilder: {
-                self.clientUpdater = ChatClientUpdaterMock(client: $0)
-                return self.clientUpdater!
+                let clientUpdater = ChatClientUpdaterMock(client: $0)
+                self?.clientUpdater = clientUpdater
+                return clientUpdater
             },
             backgroundTaskSchedulerBuilder: {
-                self.backgroundTaskScheduler = MockBackgroundTaskScheduler()
-                return self.backgroundTaskScheduler!
+                let backgroundTaskScheduler = MockBackgroundTaskScheduler()
+                self?.backgroundTaskScheduler = backgroundTaskScheduler
+                return backgroundTaskScheduler
             },
             timerType: VirtualTimeTimer.self
         )

@@ -458,32 +458,36 @@ private class TestEnvironment {
     @Atomic var memberObserver: EntityDatabaseObserverMock<ChatChannelMember, MemberDTO>?
     @Atomic var memberObserverSynchronizeError: Error?
 
-    lazy var environment: ChatChannelMemberController.Environment = .init(
-        memberUpdaterBuilder: { [unowned self] in
-            self.memberUpdater = .init(
-                database: $0,
-                apiClient: $1
-            )
-            return self.memberUpdater!
-        },
-        memberListUpdaterBuilder: { [unowned self] in
-            self.memberListUpdater = .init(
-                database: $0,
-                apiClient: $1
-            )
-            return self.memberListUpdater!
-        },
-        memberObserverBuilder: { [unowned self] in
-            self.memberObserver = .init(
-                context: $0,
-                fetchRequest: $1,
-                itemCreator: $2,
-                fetchedResultsControllerType: $3
-            )
-            self.memberObserver?.synchronizeError = self.memberObserverSynchronizeError
-            return self.memberObserver!
-        }
-    )
+    lazy var environment: ChatChannelMemberController.Environment =
+        .init(
+            memberUpdaterBuilder: { [weak self] in
+                let memberUpdater = ChannelMemberUpdaterMock(
+                    database: $0,
+                    apiClient: $1
+                )
+                self?.memberUpdater = memberUpdater
+                return memberUpdater
+            },
+            memberListUpdaterBuilder: { [weak self] in
+                let memberListUpdater = ChannelMemberListUpdaterMock(
+                    database: $0,
+                    apiClient: $1
+                )
+                self?.memberListUpdater = memberListUpdater
+                return memberListUpdater
+            },
+            memberObserverBuilder: { [weak self] in
+                let memberObserver = EntityDatabaseObserverMock<ChatChannelMember, MemberDTO>(
+                    context: $0,
+                    fetchRequest: $1,
+                    itemCreator: $2,
+                    fetchedResultsControllerType: $3
+                )
+                self?.memberObserver = memberObserver
+                memberObserver.synchronizeError = self?.memberObserverSynchronizeError
+                return memberObserver
+            }
+        )
 }
 
 // A concrete `ChatChannelMemberControllerDelegate` implementation allowing capturing the delegate calls

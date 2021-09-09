@@ -562,12 +562,13 @@ private class TestEnvironment {
     @Atomic var channelListUpdater: ChannelListUpdaterMock?
     
     lazy var environment: ChatChannelListController.Environment =
-        .init(channelQueryUpdaterBuilder: { [unowned self] in
-            self.channelListUpdater = ChannelListUpdaterMock(
+        .init(channelQueryUpdaterBuilder: { [weak self] in
+            let mock = ChannelListUpdaterMock(
                 database: $0,
                 apiClient: $1
             )
-            return self.channelListUpdater!
+            self?.channelListUpdater = mock
+            return mock
         })
 }
 

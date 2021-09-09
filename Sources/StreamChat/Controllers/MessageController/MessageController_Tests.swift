@@ -963,10 +963,10 @@ final class MessageController_Tests: StressTestCase {
             limit: 21,
             completion: nil
         )
-        
+
         // Pagination should not have a parameter because this is the first call
         XCTAssertNil(env.messageUpdater.loadReplies_pagination?.parameter)
-        
+
         // Call `loadPreviousReplies`, this time since the first batch was received already it should
         // pass the last message id
         env.messageUpdater.loadReplies_completion?(
@@ -984,18 +984,18 @@ final class MessageController_Tests: StressTestCase {
                 id: "last message", cid: .unique, text: .unique, author: .unique
             )
         ]
-        
+
         controller.loadPreviousReplies(
             limit: 21,
             completion: nil
         )
-        
+
         XCTAssertEqual(
             env.messageUpdater.loadReplies_pagination?.parameter,
             .lessThan("last message")
         )
     }
-    
+
     func test_loadPreviousReplies_messageIdPassed_properlyHandlesPagination() {
         // Simulate `loadNextReplies` call
         controller.loadPreviousReplies(
@@ -1003,13 +1003,13 @@ final class MessageController_Tests: StressTestCase {
             limit: 21,
             completion: nil
         )
-        
+
         XCTAssertEqual(
             env.messageUpdater.loadReplies_pagination?.parameter,
             .lessThan("last message")
         )
     }
-    
+
     // MARK: - `loadNextReplies`
     
     func test_loadNextReplies_failsOnEmptyReplies() throws {
@@ -1535,21 +1535,35 @@ private class TestEnvironment {
     var messageObserver: EntityDatabaseObserverMock<ChatMessage, MessageDTO>!
     var repliesObserver: ListDatabaseObserverMock<ChatMessage, MessageDTO>!
     var messageObserver_synchronizeError: Error?
-    
-    lazy var controllerEnvironment: ChatMessageController
-        .Environment = .init(
-            messageObserverBuilder: { [unowned self] in
-                self.messageObserver = .init(context: $0, fetchRequest: $1, itemCreator: $2, fetchedResultsControllerType: $3)
-                self.messageObserver.synchronizeError = self.messageObserver_synchronizeError
-                return self.messageObserver!
-            },
-            repliesObserverBuilder: { [unowned self] in
-                self.repliesObserver = .init(context: $0, fetchRequest: $1, itemCreator: $2, fetchedResultsControllerType: $3)
-                return self.repliesObserver!
-            },
-            messageUpdaterBuilder: { [unowned self] in
-                self.messageUpdater = MessageUpdaterMock(database: $0, apiClient: $1)
-                return self.messageUpdater
-            }
-        )
+
+    lazy var controllerEnvironment: ChatMessageController.Environment = .init(
+        messageObserverBuilder: { [weak self] in
+            let messageObserver =
+                EntityDatabaseObserverMock<ChatMessage, MessageDTO>(
+                    context: $0,
+                    fetchRequest: $1,
+                    itemCreator: $2,
+                    fetchedResultsControllerType: $3
+                )
+            self?.messageObserver = messageObserver
+            messageObserver.synchronizeError = self?.messageObserver_synchronizeError
+            return messageObserver
+        },
+        repliesObserverBuilder: { [weak self] in
+            let repliesObserver =
+                ListDatabaseObserverMock<ChatMessage, MessageDTO>(
+                    context: $0,
+                    fetchRequest: $1,
+                    itemCreator: $2,
+                    fetchedResultsControllerType: $3
+                )
+            self?.repliesObserver = repliesObserver
+            return repliesObserver
+        },
+        messageUpdaterBuilder: { [weak self] in
+            let messageUpdater = MessageUpdaterMock(database: $0, apiClient: $1)
+            self?.messageUpdater = messageUpdater
+            return messageUpdater
+        }
+    )
 }

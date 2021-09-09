@@ -177,9 +177,10 @@ private class TestDelegateGeneric: QueueAwareDelegate, ChatConnectionControllerD
 private class TestEnvironment {
     var chatClientUpdater: ChatClientUpdaterMock!
 
-    lazy var connectionControllerEnvironment: ChatConnectionController
-        .Environment = .init(chatClientUpdaterBuilder: { [unowned self] in
-            self.chatClientUpdater = ChatClientUpdaterMock(client: $0)
-            return self.chatClientUpdater!
+    lazy var connectionControllerEnvironment: ChatConnectionController.Environment =
+        .init(chatClientUpdaterBuilder: { [weak self] in
+            let chatClientUpdater = ChatClientUpdaterMock(client: $0)
+            self?.chatClientUpdater = chatClientUpdater
+            return chatClientUpdater
         })
 }

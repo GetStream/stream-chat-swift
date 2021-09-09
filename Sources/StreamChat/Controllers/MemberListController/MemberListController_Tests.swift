@@ -478,26 +478,29 @@ private class TestEnvironment {
     @Atomic var memberListUpdater: ChannelMemberListUpdaterMock?
     @Atomic var memberListObserver: ListDatabaseObserverMock<ChatChannelMember, MemberDTO>?
     @Atomic var memberListObserverSynchronizeError: Error?
-    
-    lazy var environment: ChatChannelMemberListController.Environment = .init(
-        memberListUpdaterBuilder: { [unowned self] in
-            self.memberListUpdater = .init(
-                database: $0,
-                apiClient: $1
-            )
-            return self.memberListUpdater!
-        },
-        memberListObserverBuilder: { [unowned self] in
-            self.memberListObserver = .init(
-                context: $0,
-                fetchRequest: $1,
-                itemCreator: $2,
-                fetchedResultsControllerType: $3
-            )
-            self.memberListObserver?.synchronizeError = self.memberListObserverSynchronizeError
-            return self.memberListObserver!
-        }
-    )
+
+    lazy var environment: ChatChannelMemberListController.Environment =
+        .init(
+            memberListUpdaterBuilder: { [weak self] in
+                let memberListUpdater = ChannelMemberListUpdaterMock(
+                    database: $0,
+                    apiClient: $1
+                )
+                self?.memberListUpdater = memberListUpdater
+                return memberListUpdater
+            },
+            memberListObserverBuilder: { [weak self] in
+                let memberListObserver = ListDatabaseObserverMock<ChatChannelMember, MemberDTO>(
+                    context: $0,
+                    fetchRequest: $1,
+                    itemCreator: $2,
+                    fetchedResultsControllerType: $3
+                )
+                self?.memberListObserver = memberListObserver
+                memberListObserver.synchronizeError = self?.memberListObserverSynchronizeError
+                return memberListObserver
+            }
+        )
 }
 
 // A concrete `ChatChannelMemberListControllerDelegate` implementation allowing capturing the delegate calls

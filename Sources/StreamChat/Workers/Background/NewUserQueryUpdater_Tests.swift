@@ -135,11 +135,12 @@ class NewUserQueryUpdater_Tests: StressTestCase {
 private class TestEnvironment {
     var userQueryUpdater: UserListUpdaterMock?
     
-    lazy var environment = NewUserQueryUpdater.Environment(createUserListUpdater: { [unowned self] in
-        self.userQueryUpdater = UserListUpdaterMock(
+    lazy var environment = NewUserQueryUpdater.Environment(createUserListUpdater: { [weak self] in
+        let userQueryUpdater = UserListUpdaterMock(
             database: $0,
             apiClient: $1
         )
-        return self.userQueryUpdater!
+        self?.userQueryUpdater = userQueryUpdater
+        return userQueryUpdater
     })
 }

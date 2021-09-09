@@ -355,12 +355,13 @@ private class TestEnvironment {
     @Atomic var userListUpdater: UserListUpdaterMock?
     
     lazy var environment: ChatUserListController.Environment =
-        .init(userQueryUpdaterBuilder: { [unowned self] in
-            self.userListUpdater = UserListUpdaterMock(
+        .init(userQueryUpdaterBuilder: { [weak self] in
+            let userListUpdater = UserListUpdaterMock(
                 database: $0,
                 apiClient: $1
             )
-            return self.userListUpdater!
+            self?.userListUpdater = userListUpdater
+            return userListUpdater
         })
 }
 

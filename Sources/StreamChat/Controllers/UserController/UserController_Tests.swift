@@ -586,22 +586,21 @@ private class TestEnvironment {
     @Atomic var userObserverSynchronizeError: Error?
 
     lazy var environment: ChatUserController.Environment = .init(
-        userUpdaterBuilder: { [unowned self] in
-            self.userUpdater = .init(
-                database: $0,
-                apiClient: $1
-            )
-            return self.userUpdater!
+        userUpdaterBuilder: { [weak self] in
+            let userUpdater = UserUpdaterMock(database: $0, apiClient: $1)
+            self?.userUpdater = userUpdater
+            return userUpdater
         },
-        userObserverBuilder: { [unowned self] in
-            self.userObserver = .init(
+        userObserverBuilder: { [weak self] in
+            let userObserver = EntityDatabaseObserverMock<ChatUser, UserDTO>(
                 context: $0,
                 fetchRequest: $1,
                 itemCreator: $2,
                 fetchedResultsControllerType: $3
             )
-            self.userObserver?.synchronizeError = self.userObserverSynchronizeError
-            return self.userObserver!
+            self?.userObserver = userObserver
+            userObserver.synchronizeError = self?.userObserverSynchronizeError
+            return userObserver
         }
     )
 }

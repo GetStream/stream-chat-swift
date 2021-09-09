@@ -15,10 +15,10 @@ class Cached_Tests: StressTestCase {
         counter = 0
         _value = Cached()
         
-        _value.computeValue = { [unowned self] in
+        _value.computeValue = { [weak self] in
             // Return the current counter value and increase the counter
-            defer { self.counter += 1 }
-            return self.counter
+            defer { self?.counter += 1 }
+            return self?.counter ?? 0
         }
     }
     

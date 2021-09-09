@@ -647,17 +647,27 @@ private class TestEnvironment {
     var chatClientUpdater: ChatClientUpdaterMock!
     var currentUserUpdater: CurrentUserUpdaterMock!
 
-    lazy var currentUserControllerEnvironment: CurrentChatUserController
-        .Environment = .init(currentUserObserverBuilder: { [unowned self] in
-            self.currentUserObserver = .init(context: $0, fetchRequest: $1, itemCreator: $2, fetchedResultsControllerType: $3)
-            self.currentUserObserver.synchronizeError = self.currentUserObserverStartUpdatingError
-            self.currentUserObserver.item_mock = self.currentUserObserverItem
-            return self.currentUserObserver!
-        }, currentUserUpdaterBuilder: { [unowned self] db, client in
-            self.currentUserUpdater = CurrentUserUpdaterMock(database: db, apiClient: client)
-            return self.currentUserUpdater!
-        }, chatClientUpdaterBuilder: { [unowned self] in
-            self.chatClientUpdater = ChatClientUpdaterMock(client: $0)
-            return self.chatClientUpdater!
+    lazy var currentUserControllerEnvironment: CurrentChatUserController.Environment =
+        .init(currentUserObserverBuilder: { [weak self] in
+            let currentUserObserver = EntityDatabaseObserverMock<CurrentChatUser, CurrentUserDTO>(
+                context: $0,
+                fetchRequest: $1,
+                itemCreator: $2,
+                fetchedResultsControllerType: $3
+            )
+            self?.currentUserObserver = currentUserObserver
+            currentUserObserver.synchronizeError = self?.currentUserObserverStartUpdatingError
+            currentUserObserver.item_mock = self?.currentUserObserverItem
+            return currentUserObserver
+
+        }, currentUserUpdaterBuilder: { [weak self] db, client in
+            let currentUserUpdater = CurrentUserUpdaterMock(database: db, apiClient: client)
+            self?.currentUserUpdater = currentUserUpdater
+            return currentUserUpdater
+
+        }, chatClientUpdaterBuilder: { [weak self] in
+            let chatClientUpdater = ChatClientUpdaterMock(client: $0)
+            self?.chatClientUpdater = chatClientUpdater
+            return chatClientUpdater
         })
 }

@@ -3614,13 +3614,15 @@ private class TestEnvironment {
     var eventSender: TypingEventsSenderMock?
     
     lazy var environment: ChatChannelController.Environment = .init(
-        channelUpdaterBuilder: { [unowned self] in
-            self.channelUpdater = ChannelUpdaterMock(database: $0, apiClient: $1)
-            return self.channelUpdater!
+        channelUpdaterBuilder: { [weak self] in
+            let channelUpdater = ChannelUpdaterMock(database: $0, apiClient: $1)
+            self?.channelUpdater = channelUpdater
+            return channelUpdater
         },
-        eventSenderBuilder: { [unowned self] in
-            self.eventSender = TypingEventsSenderMock(database: $0, apiClient: $1)
-            return self.eventSender!
+        eventSenderBuilder: { [weak self] in
+            let eventSender = TypingEventsSenderMock(database: $0, apiClient: $1)
+            self?.eventSender = eventSender
+            return eventSender
         }
     )
 }

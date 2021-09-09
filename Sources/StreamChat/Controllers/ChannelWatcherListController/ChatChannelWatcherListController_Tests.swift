@@ -518,22 +518,21 @@ private class TestEnvironment {
     @Atomic var watcherListObserverSynchronizeError: Error?
 
     lazy var environment: ChatChannelWatcherListController.Environment = .init(
-        channelUpdaterBuilder: { [unowned self] in
-            self.watcherListUpdater = .init(
-                database: $0,
-                apiClient: $1
-            )
-            return self.watcherListUpdater!
+        channelUpdaterBuilder: { [weak self] in
+            let watcherListUpdate = ChannelUpdaterMock(database: $0, apiClient: $1)
+            self?.watcherListUpdater = watcherListUpdate
+            return watcherListUpdate
         },
-        watcherListObserverBuilder: { [unowned self] in
-            self.watcherListObserver = .init(
+        watcherListObserverBuilder: { [weak self] in
+            let watcherListObserver = ListDatabaseObserverMock<ChatUser, UserDTO>(
                 context: $0,
                 fetchRequest: $1,
                 itemCreator: $2,
                 fetchedResultsControllerType: $3
             )
-            self.watcherListObserver?.synchronizeError = self.watcherListObserverSynchronizeError
-            return self.watcherListObserver!
+            self?.watcherListObserver = watcherListObserver
+            watcherListObserver.synchronizeError = self?.watcherListObserverSynchronizeError
+            return watcherListObserver
         }
     )
 }

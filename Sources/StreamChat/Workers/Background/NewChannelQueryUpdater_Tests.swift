@@ -148,11 +148,12 @@ class NewChannelQueryUpdater_Tests: StressTestCase {
 private class TestEnvironment {
     var channelQueryUpdater: ChannelListUpdaterMock?
     
-    lazy var environment = NewChannelQueryUpdater.Environment(createChannelListUpdater: { [unowned self] in
-        self.channelQueryUpdater = ChannelListUpdaterMock(
+    lazy var environment = NewChannelQueryUpdater.Environment(createChannelListUpdater: { [weak self] in
+        let channelQueryUpdater = ChannelListUpdaterMock(
             database: $0,
             apiClient: $1
         )
-        return self.channelQueryUpdater!
+        self?.channelQueryUpdater = channelQueryUpdater
+        return channelQueryUpdater
     })
 }
