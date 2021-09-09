@@ -105,7 +105,12 @@ public class ChatChannelMemberListController: DataController, DelegateCallable, 
             NSFetchedResultsController<MemberDTO>.self
         )
         
-        observer.onChange = { [unowned self] changes in
+        observer.onChange = { [weak self] changes in
+            guard let self = self else {
+                log.warning("Callback called while self is nil")
+                return
+            }
+
             self.delegateCallback {
                 $0.memberListController(self, didChangeMembers: changes)
             }

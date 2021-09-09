@@ -185,7 +185,7 @@ private extension InternetConnection {
         private func createMonitor() -> NWPathMonitor {
             let monitor = NWPathMonitor()
             
-            // We should be able to do `[unowned self]` here, but it seems `NWPathMonitor` sometimes calls the handler
+            // We should be able to do `[weak self]` here, but it seems `NWPathMonitor` sometimes calls the handler
             // event after `cancel()` has been called on it.
             monitor.pathUpdateHandler = { [weak self] in
                 self?.updateStatus(with: $0)
@@ -254,8 +254,8 @@ private extension InternetConnection {
             
             do {
                 reachability = try Reachability()
-                reachability?.whenReachable = { [unowned self] in self.updateStatus(with: $0) }
-                reachability?.whenUnreachable = { [unowned self] in self.updateStatus(with: $0) }
+                reachability?.whenReachable = { [weak self] in self?.updateStatus(with: $0) }
+                reachability?.whenUnreachable = { [weak self] in self?.updateStatus(with: $0) }
             } catch {
                 log.error(error)
             }

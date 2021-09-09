@@ -63,7 +63,7 @@ class StreamCDNClient: CDNClient {
         )
         let endpoint = Endpoint<FileUploadPayload>.uploadAttachment(with: attachment.id, type: attachment.type)
         
-        encoder.encodeRequest(for: endpoint) { [unowned self] (requestResult) in
+        encoder.encodeRequest(for: endpoint) { [weak self] (requestResult) in
             var urlRequest: URLRequest
             do {
                 urlRequest = try requestResult.get()
@@ -76,6 +76,11 @@ class StreamCDNClient: CDNClient {
             let data = multipartFormData.getMultipartFormData()
             urlRequest.addValue("multipart/form-data; boundary=\(MultipartFormData.boundary)", forHTTPHeaderField: "Content-Type")
             urlRequest.httpBody = data
+
+            guard let self = self else {
+                log.warning("Callback called while self is nil")
+                return
+            }
             
             let task = self.session.dataTask(with: urlRequest) { [decoder = self.decoder] (data, response, error) in
                 do {

@@ -81,12 +81,17 @@ class ConnectionRecoveryUpdater: EventWorker {
         connectionObserver = EventObserver(
             notificationCenter: eventNotificationCenter,
             transform: { $0 as? ConnectionStatusUpdated },
-            callback: { [unowned self] in
+            callback: { [weak self] in
+                guard let self = self else {
+                    log.warning("Callback called while self is nil")
+                    return
+                }
+
                 switch $0.webSocketConnectionState {
                 case .connecting:
                     self.obtainLastSyncDate()
                 case .connected:
-                    fetchAndReplayMissingEvents()
+                    self.fetchAndReplayMissingEvents()
                 default:
                     break
                 }

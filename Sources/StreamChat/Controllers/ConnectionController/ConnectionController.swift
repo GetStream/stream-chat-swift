@@ -64,7 +64,12 @@ public class ChatConnectionController: Controller, DelegateCallable, DataStorePr
         guard let webSocketClient = client.webSocketClient else { return nil }
         let observer = ConnectionEventObserver(
             notificationCenter: webSocketClient.eventNotificationCenter
-        ) { [unowned self] status in
+        ) { [weak self] status in
+            guard let self = self else {
+                log.warning("Callback called while self is nil")
+                return
+            }
+
             self.delegateCallback {
                 $0.connectionController(self, didUpdateConnectionStatus: status.connectionStatus)
             }
