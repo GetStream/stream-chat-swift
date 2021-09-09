@@ -2,6 +2,7 @@
 // Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
+import StreamChat
 import UIKit
 
 @main
@@ -12,6 +13,24 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     ) -> Bool {
         // Override point for customization after application launch.
         true
+    }
+
+    func application(
+        _ application: UIApplication,
+        didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data
+    ) {
+        guard let currentUserId = ChatClient.shared.currentUserId else {
+            log.warning("cannot add the device without connecting as user first, did you call connectUser")
+            return
+        }
+
+        ChatClient.shared.currentUserController().addDevice(token: deviceToken) { error in
+            if let error = error {
+                log.error("adding a device failed with an error \(error)")
+                return
+            }
+            UserDefaults(suiteName: applicationGroupIdentifier)?.set(currentUserId, forKey: currentUserIdRegisteredForPush)
+        }
     }
 
     // MARK: UISceneSession Lifecycle

@@ -73,6 +73,9 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
         }
     }
     
+    /// Shows whether the controller has received first batch of replies from remote
+    private var loadedRepliesHead = false
+    
     /// A Boolean value that returns wether pagination is finished
     public private(set) var hasLoadedAllPreviousReplies: Bool = false
 
@@ -252,8 +255,8 @@ public extension ChatMessageController {
             return
         }
         
-        let lastMessageId = messageId ?? replies.last?.id
-    
+        let lastMessageId = messageId ?? (loadedRepliesHead ? replies.last?.id : nil)
+        
         messageUpdater.loadReplies(
             cid: cid,
             messageId: self.messageId,
@@ -261,6 +264,7 @@ public extension ChatMessageController {
         ) { result in
             switch result {
             case let .success(payload):
+                self.loadedRepliesHead = true
                 self.hasLoadedAllPreviousReplies = payload.messages.count < limit
                 self.callback { completion?(nil) }
             case let .failure(error):
@@ -438,6 +442,13 @@ extension ChatMessageController {
             _ fetchedResultsControllerType: NSFetchedResultsController<MessageDTO>.Type
         ) -> EntityDatabaseObserver<ChatMessage, MessageDTO> = EntityDatabaseObserver.init
         
+        var repliesObserverBuilder: (
+            _ context: NSManagedObjectContext,
+            _ fetchRequest: NSFetchRequest<MessageDTO>,
+            _ itemCreator: @escaping (MessageDTO) -> ChatMessage,
+            _ fetchedResultsControllerType: NSFetchedResultsController<MessageDTO>.Type
+        ) -> ListDatabaseObserver<ChatMessage, MessageDTO> = ListDatabaseObserver.init
+        
         var messageUpdaterBuilder: (
             _ database: DatabaseContainer,
             _ apiClient: APIClient
@@ -465,14 +476,15 @@ private extension ChatMessageController {
             let deletedMessageVisibility = self.client.databaseContainer.viewContext
                 .deletedMessagesVisibility ?? .visibleForCurrentUser
 
-            let observer = ListDatabaseObserver(
-                context: self.client.databaseContainer.viewContext,
-                fetchRequest: MessageDTO.repliesFetchRequest(
+            let observer = environment.repliesObserverBuilder(
+                self.client.databaseContainer.viewContext,
+                MessageDTO.repliesFetchRequest(
                     for: self.messageId,
                     sortAscending: sortAscending,
                     deletedMessagesVisibility: deletedMessageVisibility
                 ),
-                itemCreator: { $0.asModel() as ChatMessage }
+                { $0.asModel() as ChatMessage },
+                NSFetchedResultsController<MessageDTO>.self
             )
             observer.onChange = { changes in
                 self.delegateCallback {

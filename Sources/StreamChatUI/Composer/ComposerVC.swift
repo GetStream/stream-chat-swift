@@ -163,6 +163,11 @@ open class ComposerVC: _ViewController,
         channelConfig?.commands.isEmpty == false
     }
 
+    /// A Boolean value indicating whether the user mentions are enabled.
+    open var isMentionsEnabled: Bool {
+        true
+    }
+
     /// A Boolean value indicating whether the attachments are enabled.
     open var isAttachmentsEnabled: Bool {
         channelConfig?.uploadsEnabled == true
@@ -343,12 +348,12 @@ open class ComposerVC: _ViewController,
             self.composerView.bottomContainer.isHidden = !self.content.isInsideThread
         }
 
-        if let typingCommand = typingCommand(in: composerView.inputMessageView.textView) {
+        if isCommandsEnabled, let typingCommand = typingCommand(in: composerView.inputMessageView.textView) {
             showCommandSuggestions(for: typingCommand)
             return
         }
 
-        if let (typingMention, mentionRange) = typingMention(in: composerView.inputMessageView.textView) {
+        if isMentionsEnabled, let (typingMention, mentionRange) = typingMention(in: composerView.inputMessageView.textView) {
             showMentionSuggestions(for: typingMention, mentionRange: mentionRange)
             return
         }
@@ -816,17 +821,18 @@ func searchUsers(_ users: [ChatUser], by searchInput: String, excludingId: Strin
     let searchInput = normalize(searchInput)
 
     let matchingUsers = users.filter { $0.id != excludingId }
-        .filter { $0.id.contains(searchInput) || (normalize($0.name ?? "").contains(searchInput)) }
-
-    let uniqueUsers = matchingUsers.reduce(into: [String: ChatUser]()) {
-        $0[$1.id] = $1
-    }
+        .filter { searchInput == "" || $0.id.contains(searchInput) || (normalize($0.name ?? "").contains(searchInput)) }
 
     let distance: (ChatUser) -> Int = {
         min($0.id.levenshtein(searchInput), $0.name?.levenshtein(searchInput) ?? 1000)
     }
 
-    return uniqueUsers.values.map { $0 }.sorted {
-        distance($0) < distance($1)
+    return Array(Set(matchingUsers)).sorted {
+        /// a tie breaker is needed here to avoid results from flickering
+        let dist = distance($0) - distance($1)
+        if dist == 0 {
+            return $0.id < $1.id
+        }
+        return dist < 0
     }
 }

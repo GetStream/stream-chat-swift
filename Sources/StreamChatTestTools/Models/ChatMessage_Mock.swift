@@ -6,7 +6,7 @@ import Foundation
 @testable import StreamChat
 
 public extension ChatMessage {
-    /// Creates a new `_ChatMessage` object from the provided data.
+    /// Creates a new `ChatMessage` object from the provided data.
     static func mock(
         id: MessageId,
         cid: ChannelId,
@@ -35,8 +35,7 @@ public extension ChatMessage {
         latestReactions: Set<ChatMessageReaction> = [],
         currentUserReactions: Set<ChatMessageReaction> = [],
         isSentByCurrentUser: Bool = false,
-        pinDetails: MessagePinDetails? = nil,
-        attachmentCounts: [AttachmentType: Int] = [:]
+        pinDetails: MessagePinDetails? = nil
     ) -> Self {
         .init(
             id: id,
@@ -67,7 +66,6 @@ public extension ChatMessage {
             currentUserReactions: { currentUserReactions },
             isSentByCurrentUser: isSentByCurrentUser,
             pinDetails: pinDetails,
-            attachmentCounts: { attachmentCounts },
             underlyingContext: nil
         )
     }

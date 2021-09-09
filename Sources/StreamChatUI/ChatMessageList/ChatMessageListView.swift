@@ -224,7 +224,10 @@ open class ChatMessageListView: UITableView, Customizable, ComponentsProvider {
 
             if
                 cellBeforeUpdateReuseIdentifier == cellAfterUpdateReuseIdentifier,
-                cellBeforeUpdateMessage?.id == cellAfterUpdateMessage?.id {
+                cellBeforeUpdateMessage?.id == cellAfterUpdateMessage?.id,
+                cellBeforeUpdateMessage?.updatedAt == cellAfterUpdateMessage?.updatedAt,
+                cellBeforeUpdateMessage?.type == cellAfterUpdateMessage?.type,
+                cellBeforeUpdateMessage?.deletedAt == cellAfterUpdateMessage?.deletedAt {
                 // If identifiers and messages match we can simply update the current cell with new content
                 cellBeforeUpdate?.messageContentView?.content = cellAfterUpdateMessage
             } else {

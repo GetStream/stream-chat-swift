@@ -194,7 +194,12 @@ public extension CurrentChatUserController {
             completion?(ClientError.CurrentUserDoesNotExist())
             return
         }
-        
+
+        if let devices = currentUser?.devices.filter({ $0.id == token.deviceToken }), !devices.isEmpty {
+            completion?(nil)
+            return
+        }
+
         currentUserUpdater.addDevice(token: token, currentUserId: currentUserId) { error in
             self.callback {
                 completion?(error)

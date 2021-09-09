@@ -22,6 +22,15 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         ).instantiateInitialViewController() as? UINavigationController else { return }
         window.rootViewController = navigationController
         coordinator = DemoAppCoordinator(navigationController: navigationController)
+
+        UNUserNotificationCenter.current().delegate = coordinator
+
+        if let notificationResponse = connectionOptions.notificationResponse {
+            print("debugging: \(notificationResponse)")
+            print("debugging: \(notificationResponse.actionIdentifier)")
+            print("debugging: \(notificationResponse.notification)")
+        }
+        
         self.window = window
         window.makeKeyAndVisible()
         scene.windows.forEach { $0.tintColor = .streamBlue }
