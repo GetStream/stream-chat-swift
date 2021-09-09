@@ -91,20 +91,15 @@ public struct ChatClientConfig {
     /// - Parameter apiKey: The API key of the chat app the `ChatClient` connects to.
     ///
     
-    public enum CDNClientConfig {
-        case custom(client: CDNClient)
-        case `default`(type: StreamCDNClient.Type)
-    }
-    
-    /// Allows to inject a custom API client for uploading attachments
-    public var cdnClientConfig: CDNClientConfig = .default(type: StreamCDNClient.self)
+    /// Allows to inject a custom API client for uploading attachments, if not specified `StreamCDNClient` is used
+    public var customCDNClient: CDNClient?
     
     /// Returns max possible attachment size in bytes.
     /// The value is taken from custom `maxAttachmentSize` type custom `CDNClient` type.
     /// The default value is 20 MiB.
     public var maxAttachmentSize: Int64 {
-        if case let .custom(client) = cdnClientConfig {
-            return type(of: client).maxAttachmentSize
+        if let customCDNClient = customCDNClient {
+            return type(of: customCDNClient).maxAttachmentSize
         } else {
             return StreamCDNClient.maxAttachmentSize
         }
@@ -174,24 +169,5 @@ public struct APIKey: Equatable {
     public init(_ apiKeyString: String) {
         log.assert(apiKeyString.isEmpty == false, "APIKey can't be initialize with an empty string.")
         self.apiKeyString = apiKeyString
-    }
-}
-
-public extension ChatClientConfig {
-    /// Allows to inject a custom API client for uploading attachments, if not specified `StreamCDNClient` is used
-    @available(*, deprecated, message: "Set `cdnClientConfig = .custom(client)` instead")
-    var customCDNClient: CDNClient? {
-        get {
-            guard case let .custom(client) = cdnClientConfig else { return nil }
-            
-            return client
-        }
-        set {
-            if let customClient = newValue {
-                cdnClientConfig = .custom(client: customClient)
-            } else {
-                cdnClientConfig = .default(type: StreamCDNClient.self)
-            }
-        }
     }
 }
