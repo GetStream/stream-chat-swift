@@ -14,12 +14,10 @@ The `ComposerVC` is the view controller that manages all the functionality and i
 
 ### Usage
 
-The `ComposerVC` is used by default by the [Message List](message-list.md) component, this component is automatically placed as a subview.
-
-You can also add the `ComposerVC` in your own View Controller as a child view if needed. Please keep in mind that if you do so you will need to manage the keyboard yourself. Here is an example of how you can add the composer as child view controller:
+The `ComposerVC` is used by both the Channel and Thread components, but you can also add the `ComposerVC` in your own View Controller as a child view if needed. Please keep in mind that if you do so you will need to manage the keyboard yourself. Here is an example of how you can add the composer as child view controller:
 
 ```swift
-class CustomMessageListVC: UIViewController {
+class CustomChatVC: UIViewController {
 
     /// The channel controller injected from the Channel List
     var channelController: ChatChannelController!
@@ -33,11 +31,10 @@ class CustomMessageListVC: UIViewController {
     /// The bottom constraint of the Message Composer for managing the keyboard
     private var messageComposerBottomConstraint: NSLayoutConstraint?
 
-    /// You can use our keyboard observer to manage the keyboard
-    open lazy var keyboardObserver = ChatMessageListKeyboardObserver(
-        containerView: view,
-        composerBottomConstraint: messageComposerBottomConstraint,
-        viewController: self
+    /// Component responsible for setting the correct offset when keyboard frame is changed.
+    open lazy var keyboardHandler: KeyboardHandler = ComposerKeyboardHandler(
+        composerParentVC: self,
+        composerBottomConstraint: messageComposerBottomConstraint
     )
 
     override func viewDidLoad() {
@@ -69,15 +66,13 @@ class CustomMessageListVC: UIViewController {
     override open func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
-        // Setup the keyboard observer
-        keyboardObserver.register()
+        keyboardHandler.start()
     }
 
     override open func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
 
-        // Remove the keyboard observer
-        keyboardObserver.unregister()
+        keyboardHandler.stop()
     }
 }
 ```

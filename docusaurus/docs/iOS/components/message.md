@@ -2,9 +2,9 @@
 title: Message
 ---
 
-The `ChatMessageListVC` component renders the list of messages using UIKit TableView. Messages rendering is delegated to different classes that can be customized or swapped with a custom class.
+The rendering of the messages is delegated to different classes that can be customized or swapped with a custom class.
 
-Here is a diagram that shows the classes that are involved in rendering a message in the channel list:
+Here is a diagram that shows the classes that are involved in rendering a message:
 
 import Digraph  from '../common-content/digraph.jsx'
 import ChatMessageContentViewProperties from '../common-content/reference-docs/stream-chat-ui/chat-message-list/chat-message/chat-message-content-view-properties.md'
