@@ -66,6 +66,8 @@ class EventNotificationCenter: NotificationCenter {
     private func scheduleProcessing() {
         DispatchQueue.main.asyncAfter(deadline: .now() + eventBatchPeriod) { [weak self] in
             guard let self = self else { return }
+            
+            var eventsToPublish = [Event]()
 
             self.database.write { session in
                 var eventsToProcess: [Event] = []
@@ -74,13 +76,9 @@ class EventNotificationCenter: NotificationCenter {
                     $0.removeAll()
                 }
                 
-                eventsToProcess.forEach { event in
-                    guard
-                        let eventToPublish = self.middlewares.process(event: event, session: session)
-                    else { return }
-
-                    self.post(Notification(newEventReceived: eventToPublish, sender: self))
-                }
+                eventsToPublish = eventsToProcess.compactMap { self.middlewares.process(event: $0, session: session) }
+            } completion: { _ in
+                eventsToPublish.forEach { self.post(Notification(newEventReceived: $0, sender: self)) }
             }
         }
     }
