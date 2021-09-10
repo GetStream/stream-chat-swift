@@ -9,7 +9,7 @@ public extension ChatClient {
     ///
     /// - Returns: A new instance of `EventsController`.
     func eventsController() -> EventsController {
-        .init(notificationCenter: eventNotificationCenter)
+        .init(client: self, notificationCenter: eventNotificationCenter)
     }
 }
 
@@ -23,7 +23,10 @@ public protocol EventsControllerDelegate: AnyObject {
 }
 
 /// `EventsController` is a controller class which allows to observe custom and system events.
-public class EventsController: Controller, DelegateCallable {
+public class EventsController: Controller, DelegateCallable, DataStoreProvider {
+    // The Client instance this controller belongs to.
+    public let client: ChatClient
+    
     // An underlaying observer listening for events.
     private var observer: EventObserver!
     
@@ -48,7 +51,8 @@ public class EventsController: Controller, DelegateCallable {
     /// Create a new instance of `EventsController`.
     ///
     /// - Parameter notificationCenter: A notification center that is listened for events.
-    init(notificationCenter: EventNotificationCenter) {
+    init(client: ChatClient, notificationCenter: EventNotificationCenter) {
+        self.client = client
         observer = .init(
             notificationCenter: notificationCenter,
             transform: { $0 },

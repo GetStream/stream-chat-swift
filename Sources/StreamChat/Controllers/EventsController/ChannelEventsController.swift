@@ -12,6 +12,7 @@ public extension ChatClient {
     /// - Returns: A new instance of `ChannelEventsController`.
     func channelEventsController(for cid: ChannelId) -> ChannelEventsController {
         .init(
+            client: self,
             cidProvider: { cid },
             eventSender: .init(database: databaseContainer, apiClient: apiClient),
             notificationCenter: eventNotificationCenter
@@ -26,6 +27,7 @@ public extension ChatChannelController {
     /// - Returns: A new instance of `ChannelEventsController`.
     func eventsController() -> ChannelEventsController {
         .init(
+            client: client,
             cidProvider: { self.cid },
             eventSender: .init(
                 database: client.databaseContainer,
@@ -54,6 +56,7 @@ public class ChannelEventsController: EventsController {
     ///   - eventSender: An event sender.
     ///   - notificationCenter: A notification center.
     init(
+        client: ChatClient,
         cidProvider: @escaping () -> ChannelId?,
         eventSender: EventSender,
         notificationCenter: EventNotificationCenter
@@ -61,7 +64,7 @@ public class ChannelEventsController: EventsController {
         self.cidProvider = cidProvider
         self.eventSender = eventSender
         
-        super.init(notificationCenter: notificationCenter)
+        super.init(client: client, notificationCenter: notificationCenter)
     }
 
     /// Sends a custom event to the channel with `cid`.
