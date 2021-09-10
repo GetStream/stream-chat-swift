@@ -17,10 +17,10 @@ public class ChatUser {
     public let id: UserId
     
     /// Name for this user.
-    public let name: String?
+    public var name: String?
     
     /// Image (avatar) url for this user.
-    public let imageURL: URL?
+    public var imageURL: URL?
     
     /// An indicator whether the user is online.
     public let isOnline: Bool
