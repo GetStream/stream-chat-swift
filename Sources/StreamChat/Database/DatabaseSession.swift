@@ -162,6 +162,8 @@ protocol ChannelDatabaseSession {
         query: ChannelListQuery?
     ) throws -> ChannelDTO
     
+    @discardableResult func saveQuery(query: ChannelListQuery) -> ChannelListQueryDTO
+    
     /// Fetches `ChannelDTO` with the given `cid` from the database.
     func channel(cid: ChannelId) -> ChannelDTO?
     
