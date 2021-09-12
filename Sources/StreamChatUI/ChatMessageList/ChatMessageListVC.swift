@@ -388,6 +388,14 @@ open class ChatMessageListVC:
                 "Tapped a quoted message. To customize the behavior, override messageContentViewDidTapOnQuotedMessage. Path: \(indexPath)"
             )
     }
+	
+	open func messageContentViewDidTapOnAvatarView(_ indexPath: IndexPath?) {
+		guard let indexPath = indexPath else { return log.error("IndexPath is not available") }
+		log
+			.info(
+				"Tapped an avatarView. To customize the behavior, override messageContentViewDidTapOnAvatarView. Path: \(indexPath)"
+			)
+	}
 
     // MARK: - GalleryContentViewDelegate
 
