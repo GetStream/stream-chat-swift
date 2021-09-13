@@ -99,9 +99,21 @@ public class ChatChannelMemberController: DataController, DelegateCallable, Data
             return
         }
         
-        memberListUpdater.load(.channelMember(userId: userId, cid: cid)) { error in
-            self.state = error == nil ? .remoteDataFetched : .remoteDataFetchFailed(ClientError(with: error))
-            self.callback { completion?(error) }
+        memberListUpdater.load(.channelMember(userId: userId, cid: cid)) { [weak self] result in
+            guard let self = self else {
+                log.warning("Callback called while self is nil")
+                return
+            }
+
+            switch result {
+            case .success(_):
+                self.state = .remoteDataFetched
+                self.callback { completion?(nil) }
+
+            case .failure(let error):
+                self.state = .remoteDataFetchFailed(ClientError(with: error))
+                self.callback { completion?(error) }
+            }
         }
     }
     

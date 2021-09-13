@@ -47,9 +47,14 @@ final class ChannelMemberListUpdater_Tests: StressTestCase {
         
         // Simulate `load` call.
         var completionCalled = false
-        listUpdater.load(query) { error in
-            XCTAssertNil(error)
+        listUpdater.load(query) { result in
             completionCalled = true
+            switch result {
+            case .success(_):
+                return
+            case .failure(let error):
+                XCTAssertNil(error)
+            }
         }
         
         // Assert members endpoint is called.
@@ -82,9 +87,14 @@ final class ChannelMemberListUpdater_Tests: StressTestCase {
     func test_load_happyPath_whenChannelDoesNotExistsLocally() {
         // Simulate `load` call.
         var completionCalled = false
-        listUpdater.load(query) { error in
-            XCTAssertNil(error)
+        listUpdater.load(query) { result in
             completionCalled = true
+            switch result {
+            case .success(_):
+                return
+            case .failure(let error):
+                XCTAssertNil(error)
+            }
         }
         
         // Assert channel endpoint is called.
@@ -134,8 +144,13 @@ final class ChannelMemberListUpdater_Tests: StressTestCase {
     func test_load_propagatesChannelNetworkError() {
         // Simulate `load` call and catch the error.
         var completionCalledError: Error?
-        listUpdater.load(query) {
-            completionCalledError = $0
+        listUpdater.load(query) { result in
+            switch result {
+            case .success(_):
+                completionCalledError = nil
+            case .failure(let error):
+                completionCalledError = error
+            }
         }
         
         // Assert channel endpoint is called.
@@ -157,8 +172,13 @@ final class ChannelMemberListUpdater_Tests: StressTestCase {
         
         // Simulate `load` call and catch the error.
         var completionCalledError: Error?
-        listUpdater.load(query) {
-            completionCalledError = $0
+        listUpdater.load(query) { result in
+            switch result {
+            case .success(_):
+                completionCalledError = nil
+            case .failure(let error):
+                completionCalledError = error
+            }
         }
         
         // Assert channel endpoint is called.
@@ -178,8 +198,13 @@ final class ChannelMemberListUpdater_Tests: StressTestCase {
         
         // Simulate `load` call and catch the error.
         var completionCalledError: Error?
-        listUpdater.load(query) {
-            completionCalledError = $0
+        listUpdater.load(query) { result in
+            switch result {
+            case .success(_):
+                completionCalledError = nil
+            case .failure(let error):
+                completionCalledError = error
+            }
         }
         
         // Assert members endpoint is called.
@@ -200,8 +225,13 @@ final class ChannelMemberListUpdater_Tests: StressTestCase {
         
         // Simulate `load` call and catch the error.
         var completionCalledError: Error?
-        listUpdater.load(query) {
-            completionCalledError = $0
+        listUpdater.load(query) { result in
+            switch result {
+            case .success(_):
+                completionCalledError = nil
+            case .failure(let error):
+                completionCalledError = error
+            }
         }
         
         // Assert members endpoint is called.

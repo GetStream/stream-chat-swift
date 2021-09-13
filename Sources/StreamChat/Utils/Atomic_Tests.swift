@@ -125,4 +125,37 @@ extension Atomic_Tests {
         
         XCTAssertEqual(value.wrappedValue, ["random": 2020])
     }
+
+    func test_Atomic_NotDeadlocks_WhenCalling_FromBackgroundQueues() {
+        // Given
+        let value = Atomic<[Int]>(wrappedValue: [])
+        let concurrentOperations = 10
+
+        var expectations: [XCTestExpectation] = []
+        let queue = OperationQueue()
+        queue.maxConcurrentOperationCount = concurrentOperations
+
+        var operations: [BlockOperation] = []
+        (0..<concurrentOperations).forEach { index in
+            let expected = expectation(description: "Queue #\(index) finished")
+            let operation = BlockOperation {
+                print("Block operation #\(index)")
+
+                // When
+                value.wrappedValue.append(index)
+                expected.fulfill()
+            }
+            expectations.append(expected)
+            operations.append(operation)
+        }
+
+        print(expectations)
+        print(operations)
+
+        queue.addOperations(operations, waitUntilFinished: true)
+        wait(for: expectations, timeout: 40)
+
+        // Then
+        XCTAssertEqual(value.wrappedValue.count, concurrentOperations)
+    }
 }

@@ -221,6 +221,9 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     
     private var eventObservers: [EventObserver] = []
     private let environment: Environment
+
+    /// Executor to control loading of messages, only one loading in progress
+    private let messageLoadingExecutor: BlockingExecutor = .init(executorTitle: "ChannelController.MessageLoading")
     
     /// This callback is called after channel is created on backend but before channel is saved to DB. When channel is created
     /// we receive backend generated cid and setting up current `ChannelController` to observe this channel DB changes.
@@ -641,7 +644,7 @@ public extension ChatChannelController {
         }
     }
     
-    /// Loads previous messages from backend.
+    /// Loads previous messages from backend, only one request in progress available.
     ///
     /// - Parameters:
     ///   - messageId: ID of the last fetched message. You will get messages `older` than the provided ID.
@@ -654,32 +657,21 @@ public extension ChatChannelController {
         limit: Int = 25,
         completion: ((Error?) -> Void)? = nil
     ) {
-        /// Perform action only if channel is already created on backend side and have a valid `cid`.
-        guard cid != nil, isChannelAlreadyCreated else {
-            channelModificationFailed(completion)
-            return
-        }
-        
-        guard let messageId = messageId ?? messages.last?.id else {
-            log.error(ClientError.ChannelEmptyMessages().localizedDescription)
-            callback { completion?(ClientError.ChannelEmptyMessages()) }
-            return
-        }
-
-        guard !hasLoadedAllPreviousMessages else {
-            completion?(nil)
-            return
-        }
-        channelQuery.pagination = MessagesPagination(pageSize: limit, parameter: .lessThan(messageId))
-        updater.update(channelQuery: channelQuery, completion: { result in
-            switch result {
-            case let .success(payload):
-                self.hasLoadedAllPreviousMessages = payload.messages.count < limit
-                self.callback { completion?(nil) }
-            case let .failure(error):
-                self.callback { completion?(error) }
+        messageLoadingExecutor.executeBlocking(
+            executor: { [weak self] executorCompletion in
+                self?.loadPreviousMessagesNonAtomic(
+                    before: messageId,
+                    limit: limit
+                ) { error in
+                    executorCompletion(error)
+                }
+            },
+            completion: { [weak self] error in
+                self?.callback {
+                    completion?(error)
+                }
             }
-        })
+        )
     }
     
     /// Loads next messages from backend.
@@ -1134,6 +1126,39 @@ public extension ChatChannelController {
                 completion?(error)
             }
         }
+    }
+
+    private func loadPreviousMessagesNonAtomic(
+        before messageId: MessageId? = nil,
+        limit: Int = 25,
+        completion: ((Error?) -> Void)? = nil
+    ) {
+        /// Perform action only if channel is already created on backend side and have a valid `cid`.
+        guard cid != nil, isChannelAlreadyCreated else {
+            channelModificationFailed(completion)
+            return
+        }
+
+        guard let messageId = messageId ?? messages.last?.id else {
+            log.error(ClientError.ChannelEmptyMessages().localizedDescription)
+            completion?(ClientError.ChannelEmptyMessages())
+            return
+        }
+
+        guard !hasLoadedAllPreviousMessages else {
+            completion?(nil)
+            return
+        }
+        channelQuery.pagination = MessagesPagination(pageSize: limit, parameter: .lessThan(messageId))
+        updater.update(channelQuery: channelQuery, completion: { result in
+            switch result {
+            case let .success(payload):
+                self.hasLoadedAllPreviousMessages = payload.messages.count < limit
+                completion?(nil)
+            case let .failure(error):
+                completion?(error)
+            }
+        })
     }
 }
 

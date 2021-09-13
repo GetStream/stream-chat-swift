@@ -94,16 +94,17 @@ final class MemberController_Tests: StressTestCase {
 
         // Assert controller is in `localDataFetched` state.
         XCTAssertEqual(controller.state, .localDataFetched)
-        
+
+        // Simulate successful network call.
+        env.memberListUpdater!.load_completion!(.success(.mock()))
+
         // Keep a weak ref so we can check if it's actually deallocated
         weak var weakController = controller
-        
+
         // (Try to) deallocate the controller
         // by not keeping any references to it
         controller = nil
 
-        // Simulate successful network call.
-        env.memberListUpdater!.load_completion!(nil)
         // Release reference of completion so we can deallocate stuff
         env.memberListUpdater!.load_completion = nil
 
@@ -142,7 +143,7 @@ final class MemberController_Tests: StressTestCase {
 
         // Simulate failed network call.
         let updaterError = TestError()
-        env.memberListUpdater!.load_completion?(updaterError)
+        env.memberListUpdater!.load_completion?(.failure(updaterError))
 
         AssertAsync {
             // Assert controller is in `remoteDataFetchFailed` state.
@@ -182,7 +183,7 @@ final class MemberController_Tests: StressTestCase {
         try client.databaseContainer.createMember(userId: userId, cid: cid)
         
         // Simulate updater callback
-        env.memberListUpdater?.load_completion?(nil)
+        env.memberListUpdater!.load_completion!(.success(.mock()))
         
         // Assert the user is loaded
         XCTAssertEqual(controller.member?.id, userId)
@@ -267,7 +268,7 @@ final class MemberController_Tests: StressTestCase {
         AssertAsync.willBeEqual(delegate.state, .localDataFetched)
 
         // Simulate network call response
-        env.memberListUpdater!.load_completion!(nil)
+        env.memberListUpdater!.load_completion!(.success(.mock()))
 
         // Assert delegate is notified about state changes
         AssertAsync.willBeEqual(delegate.state, .remoteDataFetched)
@@ -285,7 +286,7 @@ final class MemberController_Tests: StressTestCase {
         AssertAsync.willBeEqual(delegate.state, .localDataFetched)
 
         // Simulate network call response
-        env.memberListUpdater!.load_completion!(nil)
+        env.memberListUpdater!.load_completion!(.success(.mock()))
 
         // Assert delegate is notified about state changes
         AssertAsync.willBeEqual(delegate.state, .remoteDataFetched)
@@ -315,7 +316,7 @@ final class MemberController_Tests: StressTestCase {
             let dto = try XCTUnwrap(session.member(userId: self.userId, cid: self.cid))
             dto.channelRoleRaw = updatedRole.rawValue
         }
-        env.memberListUpdater!.load_completion!(nil)
+        env.memberListUpdater!.load_completion!(.success(.mock()))
 
         // Assert `update` entity change is received by the delegate
         AssertAsync {

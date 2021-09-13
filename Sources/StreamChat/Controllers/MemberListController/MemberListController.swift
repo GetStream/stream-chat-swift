@@ -21,6 +21,9 @@ extension ChatClient {
 public class ChatChannelMemberListController: DataController, DelegateCallable, DataStoreProvider {
     /// The query specifying sorting and filtering for the list of channel members.
     @Atomic public private(set) var query: ChannelMemberListQuery
+
+    /// A Boolean value that returns whether the previous members have all been loaded or not.
+    public private(set) var hasLoadedAllPreviousMembers: Bool = false
     
     /// The `ChatClient` instance this controller belongs to.
     public let client: ChatClient
@@ -53,6 +56,10 @@ public class ChatChannelMemberListController: DataController, DelegateCallable, 
     /// and expose the published values by mapping them to a read-only `AnyPublisher` type.
     @available(iOS 13, *)
     lazy var basePublishers: BasePublishers = .init(controller: self)
+
+    /// Executor to control loading of messages, only one loading in progress
+    private let membersLoadingExecutor: BlockingExecutor =
+        .init(executorTitle: "ChatChannelMemberListController.MembersLoading")
     
     private let environment: Environment
     
@@ -75,9 +82,21 @@ public class ChatChannelMemberListController: DataController, DelegateCallable, 
             return
         }
         
-        memberListUpdater.load(query) { error in
-            self.state = error == nil ? .remoteDataFetched : .remoteDataFetchFailed(ClientError(with: error))
-            self.callback { completion?(error) }
+        memberListUpdater.load(query) { [weak self] result in
+            guard let self = self else {
+                log.warning("Callback called while self is nil")
+                return
+            }
+
+            switch result {
+            case .success(_):
+                self.state = .remoteDataFetched
+                self.callback { completion?(nil) }
+
+            case .failure(let error):
+                self.state = .remoteDataFetchFailed(ClientError(with: error))
+                self.callback { completion?(error) }
+            }
         }
     }
     
@@ -130,12 +149,41 @@ public class ChatChannelMemberListController: DataController, DelegateCallable, 
             state = .localDataFetchFailed(ClientError(with: error))
         }
     }
+
+    private func loadNextMembersNonAtomic(
+        limit: Int = 25,
+        completion: ((Error?) -> Void)? = nil
+    ) {
+        guard !hasLoadedAllPreviousMembers else {
+            callback { completion?(nil) }
+            return
+        }
+
+        var updatedQuery = query
+        updatedQuery.pagination = Pagination(pageSize: limit, offset: members.count)
+        memberListUpdater.load(updatedQuery) { [weak self] result in
+            guard let self = self else {
+                log.warning("Callback called while self is nil")
+                return
+            }
+
+            switch result {
+            case .success(let payload):
+                self.hasLoadedAllPreviousMembers = payload.members.count < limit
+                self.query = updatedQuery
+                completion?(nil)
+
+            case .failure(let error):
+                completion?(error)
+            }
+        }
+    }
 }
 
 // MARK: - Actions
 
 public extension ChatChannelMemberListController {
-    /// Loads next members from backend.
+    /// Loads next members from backend, only one request in progress available.
     /// - Parameters:
     ///   - limit: The page size.
     ///   - completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
@@ -144,14 +192,20 @@ public extension ChatChannelMemberListController {
         limit: Int = 25,
         completion: ((Error?) -> Void)? = nil
     ) {
-        var updatedQuery = query
-        updatedQuery.pagination = Pagination(pageSize: limit, offset: members.count)
-        memberListUpdater.load(updatedQuery) { error in
-            self.query = updatedQuery
-            self.callback {
-                completion?(error)
+        membersLoadingExecutor.executeBlocking(
+            executor: { [weak self] executorCompletion in
+                self?.loadNextMembersNonAtomic(
+                    limit: limit
+                ) { error in
+                    executorCompletion(error)
+                }
+            },
+            completion: { [weak self] error in
+                self?.callback {
+                    completion?(error)
+                }
             }
-        }
+        )
     }
 }
 

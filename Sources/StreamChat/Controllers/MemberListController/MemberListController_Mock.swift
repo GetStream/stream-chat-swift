@@ -5,6 +5,14 @@
 @testable import StreamChat
 import XCTest
 
+extension ChannelMemberListPayload {
+    static func mock() -> ChannelMemberListPayload {
+        let json = XCTestCase.mockData(fromFile: "ChannelMembersQuery", extension: "json")
+        let payload = try! JSONDecoder.default.decode(ChannelMemberListPayload.self, from: json)
+        return payload
+    }
+}
+
 /// A mock for `ChatChannelMemberListController`.
 final class ChatChannelMemberListControllerMock: ChatChannelMemberListController {
     @Atomic var members_simulated: [ChatChannelMember]?
