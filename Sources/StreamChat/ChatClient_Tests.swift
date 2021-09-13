@@ -914,6 +914,8 @@ class ChatClient_Tests: StressTestCase {
         )
         client.connectAnonymousUser()
         
+        testEnv.clientUpdater?.reloadUserIfNeeded_completion?(nil)
+        
         // Simulate access to `webSocketClient` so it is initialized
         _ = client.webSocketClient
         
@@ -922,10 +924,10 @@ class ChatClient_Tests: StressTestCase {
             .webSocketClient(testEnv.webSocketClient!, didUpdateConnectionState: .disconnected(error: nil))
         
         // Simulate going into background
-        testEnv.backgroundTaskScheduler?.startListeningForAppStateUpdates_onBackground?()
+        testEnv.backgroundTaskScheduler!.startListeningForAppStateUpdates_onBackground?()
         
         // Assert that background task is not created
-        XCTAssertEqual(testEnv.backgroundTaskScheduler?.beginBackgroundTask_called, false)
+        XCTAssertEqual(testEnv.backgroundTaskScheduler!.beginBackgroundTask_called, false)
     }
     
     func test_disconnectCalled_ifBackgroundTaskCreationFails() {
