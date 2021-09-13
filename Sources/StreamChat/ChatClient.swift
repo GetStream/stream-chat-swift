@@ -338,7 +338,7 @@ public class ChatClient {
     public func disconnect() {
         clientUpdater.disconnect()
         userConnectionProvider = nil
-        backgroundTaskScheduler?.stopListeningForAppStateUpdates()
+        unsubscribeFromNotifications()
     }
 
     func fetchCurrentUserIdFromDatabase() -> UserId? {
@@ -387,15 +387,35 @@ public class ChatClient {
         clientUpdater.reloadUserIfNeeded(
             userInfo: userInfo,
             userConnectionProvider: userConnectionProvider
-        ) { [backgroundTaskScheduler, weak self] error in
+        ) { [weak self] error in
             if error == nil {
-                backgroundTaskScheduler?.startListeningForAppStateUpdates(
-                    onEnteringBackground: { self?.handleAppDidEnterBackground() },
-                    onEnteringForeground: { self?.handleAppDidBecomeActive() }
-                )
+                self?.subscribeOnNotifications()
             }
             completion?(error)
         }
+    }
+    
+    private func subscribeOnNotifications() {
+        backgroundTaskScheduler?.startListeningForAppStateUpdates(
+            onEnteringBackground: { [weak self] in self?.handleAppDidEnterBackground() },
+            onEnteringForeground: { [weak self] in self?.handleAppDidBecomeActive() }
+        )
+        
+        eventNotificationCenter.addObserver(
+            self,
+            selector: #selector(didChangeInternetConnectionStatus(_:)),
+            name: .internetConnectionStatusDidChange,
+            object: nil
+        )
+    }
+    
+    private func unsubscribeFromNotifications() {
+        backgroundTaskScheduler?.stopListeningForAppStateUpdates()
+        eventNotificationCenter.removeObserver(
+            self,
+            name: .internetConnectionStatusDidChange,
+            object: nil
+        )
     }
     
     private func handleAppDidEnterBackground() {
@@ -421,7 +441,14 @@ public class ChatClient {
     
     private func handleAppDidBecomeActive() {
         cancelBackgroundTaskIfNeeded()
-
+        reconnectIfNeeded()
+    }
+    
+    private func cancelBackgroundTaskIfNeeded() {
+        backgroundTaskScheduler?.endTask()
+    }
+    
+    private func reconnectIfNeeded() {
         guard userConnectionProvider != nil else {
             // The client has not been connected yet during this session
             return
@@ -431,11 +458,24 @@ public class ChatClient {
             // We are connected or connecting anyway
             return
         }
+        
+        guard internetConnection.status.isAvailable else {
+            // We are offline. Once the connection comes back we will try to reconnect again
+            return
+        }
+        
         clientUpdater.connect()
     }
-    
-    private func cancelBackgroundTaskIfNeeded() {
-        backgroundTaskScheduler?.endTask()
+
+    @objc private func didChangeInternetConnectionStatus(_ notification: Notification) {
+        switch (connectionStatus, notification.internetConnectionStatus?.isAvailable) {
+        case (.connected, false):
+            clientUpdater.disconnect(source: .systemInitiated)
+        case (.disconnected, true):
+            reconnectIfNeeded()
+        default:
+            return
+        }
     }
 }
 
