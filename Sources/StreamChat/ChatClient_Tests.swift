@@ -183,6 +183,22 @@ class ChatClient_Tests: StressTestCase {
         )
     }
     
+    // MARK: - Internet connection
+    
+    func test_internetConnectionConfiguration() throws {
+        // Create a new chat client
+        let client = ChatClient(
+            config: inMemoryStorageConfig,
+            workerBuilders: workerBuilders,
+            eventWorkerBuilders: eventWorkerBuilders,
+            environment: testEnv.environment
+        )
+        
+        // Assert `client.eventNotificationCenter` is passed to internet connection
+        let internetConnection = client.internetConnection as! InternetConnectionMock
+        XCTAssertEqual(internetConnection.init_notificationCenter, client.eventNotificationCenter)
+    }
+
     // MARK: - WebSocketClient tests
     
     func test_webSocketClientConfiguration() throws {
@@ -1116,6 +1132,8 @@ private class TestEnvironment {
     
     @Atomic var backgroundTaskScheduler: MockBackgroundTaskScheduler?
     
+    @Atomic var internetConnection: InternetConnectionMock?
+
     lazy var environment: ChatClient.Environment = { [unowned self] in
         .init(
             apiClientBuilder: {
@@ -1165,6 +1183,13 @@ private class TestEnvironment {
             notificationCenterBuilder: {
                 self.notificationCenter = EventNotificationCenterMock(database: $0)
                 return self.notificationCenter!
+            },
+            internetConnection: {
+                self.internetConnection = InternetConnectionMock(
+                    monitor: .init(),
+                    notificationCenter: $0
+                )
+                return self.internetConnection!
             },
             clientUpdaterBuilder: {
                 self.clientUpdater = ChatClientUpdaterMock(client: $0)

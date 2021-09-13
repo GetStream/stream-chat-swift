@@ -153,7 +153,7 @@ public class ChatClient {
         }
     }()
     
-    private(set) lazy var internetConnection = environment.internetConnection()
+    private(set) lazy var internetConnection = environment.internetConnection(eventNotificationCenter)
     private(set) lazy var clientUpdater = environment.clientUpdaterBuilder(self)
     private(set) var userConnectionProvider: UserConnectionProvider?
     
@@ -495,7 +495,9 @@ extension ChatClient {
         
         var notificationCenterBuilder = EventNotificationCenter.init
         
-        var internetConnection: () -> InternetConnection = { InternetConnection() }
+        var internetConnection: (_ center: NotificationCenter) -> InternetConnection = {
+            InternetConnection(notificationCenter: $0)
+        }
 
         var clientUpdaterBuilder = ChatClientUpdater.init
         
