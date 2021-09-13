@@ -6,6 +6,11 @@ import Foundation
 
 /// An object allowing making request to Stream Chat servers.
 class APIClient {
+    private struct RequestsQueueItem {
+        let requestAction: () -> Void
+        let failureAction: () -> Void
+    }
+    
     /// The URL session used for all requests.
     var session: URLSession
     
@@ -15,7 +20,19 @@ class APIClient {
     /// `APIClient` uses this object to decode the results of network requests.
     let decoder: RequestDecoder
     
+    /// Used for reobtating tokens when they expire and API client receives token expiration error
+    let tokenRefresher: (ClientError, @escaping () -> Void) -> Void
+    
     let cdnClient: CDNClient
+
+    /// Used for syncrhonizing access to requestsQueue
+    private let requestsAccessQueue = DispatchQueue(label: "io.getstream.requests")
+    
+    /// Stores request failed with token expired error for retrying them later
+    private var requestsQueue = [RequestsQueueItem]()
+    
+    /// Shows whether the token is being refreshed at the moment
+    private var isRefreshingToken: Bool = false
     
     /// Creates a new `APIClient`.
     ///
@@ -27,12 +44,14 @@ class APIClient {
         sessionConfiguration: URLSessionConfiguration,
         requestEncoder: RequestEncoder,
         requestDecoder: RequestDecoder,
-        CDNClient: CDNClient
+        CDNClient: CDNClient,
+        tokenRefresher: @escaping (ClientError, @escaping () -> Void) -> Void
     ) {
         encoder = requestEncoder
         decoder = requestDecoder
         session = URLSession(configuration: sessionConfiguration)
         cdnClient = CDNClient
+        self.tokenRefresher = tokenRefresher
     }
     
     /// Performs a network request.
@@ -40,7 +59,11 @@ class APIClient {
     /// - Parameters:
     ///   - endpoint: The `Endpoint` used to create the network request.
     ///   - completion: Called when the networking request is finished.
-    func request<Response: Decodable>(endpoint: Endpoint<Response>, completion: @escaping (Result<Response, Error>) -> Void) {
+    func request<Response: Decodable>(
+        endpoint: Endpoint<Response>,
+        timeout: TimeInterval = 60,
+        completion: @escaping (Result<Response, Error>) -> Void
+    ) {
         encoder.encodeRequest(for: endpoint) { [weak self] (requestResult) in
             let urlRequest: URLRequest
             do {
@@ -61,22 +84,37 @@ class APIClient {
                 log.warning("Callback called while self is nil")
                 return
             }
-            
-            let task = self.session.dataTask(with: urlRequest) { [decoder = self.decoder] (data, response, error) in
-                do {
-                    let decodedResponse: Response = try decoder.decodeRequestResponse(
-                        data: data,
-                        response: response,
-                        error: error
+            self.request(urlRequest: urlRequest, timeout: timeout, completion: completion)
+        }
+    }
+    
+    private func request<Response: Decodable>(
+        urlRequest: URLRequest,
+        timeout: TimeInterval,
+        completion: @escaping (Result<Response, Error>) -> Void
+    ) {
+        let task = session.dataTask(with: urlRequest) { [decoder = self.decoder] (data, response, error) in
+            do {
+                let decodedResponse: Response = try decoder.decodeRequestResponse(
+                    data: data,
+                    response: response,
+                    error: error
+                )
+                completion(.success(decodedResponse))
+            } catch {
+                if error is ClientError.ExpiredToken {
+                    self.handleTokenExpirationError(
+                        urlRequest: urlRequest,
+                        timeout: timeout,
+                        completion: completion
                     )
-                    completion(.success(decodedResponse))
-                } catch {
+                } else {
                     completion(.failure(error))
                 }
             }
-            
-            task.resume()
         }
+        
+        task.resume()
     }
     
     func uploadAttachment(
@@ -89,6 +127,46 @@ class APIClient {
             progress: progress,
             completion: completion
         )
+    }
+    
+    /// Queues a failed request for executing later or failing after a timeout
+    func handleTokenExpirationError<Response: Decodable>(
+        urlRequest: URLRequest,
+        timeout: TimeInterval,
+        completion: @escaping (Result<Response, Error>) -> Void
+    ) {
+        requestsAccessQueue.async {
+            let item = RequestsQueueItem(
+                requestAction: { self.request(
+                    urlRequest: urlRequest,
+                    timeout: timeout,
+                    completion: completion
+                )
+                },
+                failureAction: { completion(.failure(ClientError.ExpiredToken())) }
+            )
+            
+            // The moment we queue a first request for execution later we also set a timeout for 60 seconds
+            // after which we fail all the queued requests
+            if self.requestsQueue.isEmpty {
+                self.requestsAccessQueue.asyncAfter(deadline: .now() + timeout) {
+                    self.requestsQueue.forEach { $0.failureAction() }
+                    self.requestsQueue = []
+                }
+            }
+            
+            self.requestsQueue.append(item)
+            
+            // Only initiate token refreshing once
+            guard !self.isRefreshingToken else { return }
+            
+            self.isRefreshingToken = true
+            self.tokenRefresher(ClientError.ExpiredToken()) {
+                self.requestsQueue.forEach { $0.requestAction() }
+                self.requestsQueue = []
+                self.isRefreshingToken = false
+            }
+        }
     }
 }
 

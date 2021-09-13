@@ -78,7 +78,10 @@ public class ChatClient {
                 encoder: encoder,
                 decoder: decoder,
                 sessionConfiguration: urlSessionConfiguration
-            )
+            ),
+            { error, completion in
+                self.refreshToken(error: error, completion: { _ in completion() })
+            }
         )
         return apiClient
     }()
@@ -446,13 +449,15 @@ extension ChatClient {
             _ sessionConfiguration: URLSessionConfiguration,
             _ requestEncoder: RequestEncoder,
             _ requestDecoder: RequestDecoder,
-            _ CDNClient: CDNClient
+            _ CDNClient: CDNClient,
+            _ tokenRefresher: @escaping (ClientError, @escaping () -> Void) -> Void
         ) -> APIClient = {
             APIClient(
                 sessionConfiguration: $0,
                 requestEncoder: $1,
                 requestDecoder: $2,
-                CDNClient: $3
+                CDNClient: $3,
+                tokenRefresher: $4
             )
         }
         
@@ -566,7 +571,7 @@ extension ChatClient: ConnectionStateDelegate {
         case let .disconnected(error: error):
             if let error = error,
                error.isTokenExpiredError {
-                refreshToken(error: error)
+                refreshToken(error: error, completion: nil)
                 shouldNotifyConnectionIdWaiters = false
             } else {
                 shouldNotifyConnectionIdWaiters = true
@@ -586,7 +591,10 @@ extension ChatClient: ConnectionStateDelegate {
         )
     }
     
-    private func refreshToken(error: ClientError) {
+    private func refreshToken(
+        error: ClientError,
+        completion: ((Error?) -> Void)?
+    ) {
         guard let tokenProvider = tokenProvider else {
             return log.assertionFailure(
                 "In case if token expiration is enabled on backend you need to provide a way to reobtain it via `tokenProvider` on ChatClient"
@@ -612,7 +620,8 @@ extension ChatClient: ConnectionStateDelegate {
                             
                             completion(result)
                         }
-                    }
+                    },
+                    completion: completion
                 )
             }
     }
