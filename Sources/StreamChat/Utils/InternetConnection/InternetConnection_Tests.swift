@@ -63,10 +63,14 @@ class InternetConnection_Tests: XCTestCase {
 
 class InternetConnectionMock: InternetConnection {
     private(set) var monitorMock: InternetConnectionMonitorMock!
-    
-    init(notificationCenter: NotificationCenter = .default) {
-        let monitor = InternetConnectionMonitorMock()
+    private(set) var init_notificationCenter: NotificationCenter!
+
+    init(
+        monitor: InternetConnectionMonitorMock = .init(),
+        notificationCenter: NotificationCenter = .default
+    ) {
         super.init(notificationCenter: notificationCenter, monitor: monitor)
+        init_notificationCenter = notificationCenter
         monitorMock = monitor
     }
 }
