@@ -223,9 +223,13 @@ extension ChannelViewController: ChatChannelControllerDelegate {
 
 You can customize the message list by subclassing the `ChatMessageListVC` and replacing the `Components.default.messageListVC` component.
 
+```swift
+Components.default.messageListVC = CustomMessageListVC.self
+```
+
 <ComponentsNote />
 
-### Message content view
+### Message Content View
 In order to change how the messages are rendered, you need to subclass the `ChatMessageContentView` and replace it in the `Components.default.messageContentView`. For more details on how you can customize the message content view, you can take a look at the [Customizing Messages](message.md#customizing-messages) documentation.
 
 You can also set your custom `ChatMessageContentView` in the `ChatMessageListVC.cellContentClassForMessage()` function, this is especially useful if you have multiple instances of `ChatMessageListVC` and each have different `ChatMessageContentView`'s.
@@ -241,7 +245,7 @@ final class CustomMessageListVC: ChatMessageListVC {
 ```
 As you can see above, by overriding the `cellContentClassForMessage(at:)` function we can change the `ChatMessageContentView` that is used to render the message.
 
-### Message list layout
+### Message List Layout
 Like any other component in the SDK, you can customize the message list layout by overriding the `setUpLayout()` lifecycle method when subclassing `ChatMessageListVC`.
 
 ```swift
