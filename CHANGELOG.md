@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### ✅ Added
 - Introduce `shouldLinkNewChannel` and `shouldLinkUpdatedChannel` delegate callbacks to `ChannelListController`. With these, one can control and link new/updated channels to the existing controller. [#1438](https://github.com/GetStream/stream-chat-swift/issues/1438)
 - Added injection of `ChatMessageReactionsBubbleView` to `Components`, so customers will be able to subclass and customise it. [#1451](https://github.com/GetStream/stream-chat-swift/pull/1451)
+- Add delegate func for tap on user avatar for a message [#1453](https://github.com/GetStream/stream-chat-swift/issues/1453)
 
 ### 🔄 Changed
 - Update `ChatClient` to disconnect immediately when the Internet connection disappears [#1449](https://github.com/GetStream/stream-chat-swift/issues/1449)
