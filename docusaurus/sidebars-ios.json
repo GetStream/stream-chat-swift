@@ -10,8 +10,8 @@
     {
       "Customization": [
         "customization/theming",
-        "customization/localization",
-        "customization/custom-components"
+        "customization/custom-components",
+        "customization/localization"
       ]
     },
     {
