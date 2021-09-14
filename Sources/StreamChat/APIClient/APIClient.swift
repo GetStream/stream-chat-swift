@@ -20,19 +20,19 @@ class APIClient {
     /// `APIClient` uses this object to decode the results of network requests.
     let decoder: RequestDecoder
     
-    /// Used for reobtating tokens when they expire and API client receives token expiration error
+    /// Used for reobtaining tokens when they expire and API client receives token expiration error
     let tokenRefresher: (ClientError, @escaping () -> Void) -> Void
     
     let cdnClient: CDNClient
 
-    /// Used for syncrhonizing access to requestsQueue
+    /// Used for synchronizing access to requestsQueue
     private let requestsAccessQueue = DispatchQueue(label: "io.getstream.requests")
     
     /// Stores request failed with token expired error for retrying them later
     private var requestsQueue = [RequestsQueueItem]()
     
     /// Shows whether the token is being refreshed at the moment
-    private var isRefreshingToken: Bool = false
+    @Atomic private var isRefreshingToken: Bool = false
     
     /// Creates a new `APIClient`.
     ///
@@ -52,6 +52,10 @@ class APIClient {
         session = URLSession(configuration: sessionConfiguration)
         cdnClient = CDNClient
         self.tokenRefresher = tokenRefresher
+    }
+    
+    deinit {
+        requestsQueue = []
     }
     
     /// Performs a network request.
@@ -93,6 +97,16 @@ class APIClient {
         timeout: TimeInterval,
         completion: @escaping (Result<Response, Error>) -> Void
     ) {
+        let delayRequest = {
+            self.handleTokenExpirationError(
+                urlRequest: urlRequest,
+                timeout: timeout,
+                completion: completion
+            )
+        }
+        
+        guard !isRefreshingToken else { return delayRequest() }
+        
         let task = session.dataTask(with: urlRequest) { [decoder = self.decoder] (data, response, error) in
             do {
                 let decodedResponse: Response = try decoder.decodeRequestResponse(
@@ -103,11 +117,7 @@ class APIClient {
                 completion(.success(decodedResponse))
             } catch {
                 if error is ClientError.ExpiredToken {
-                    self.handleTokenExpirationError(
-                        urlRequest: urlRequest,
-                        timeout: timeout,
-                        completion: completion
-                    )
+                    delayRequest()
                 } else {
                     completion(.failure(error))
                 }
@@ -137,34 +147,33 @@ class APIClient {
     ) {
         requestsAccessQueue.async {
             let item = RequestsQueueItem(
-                requestAction: { self.request(
-                    urlRequest: urlRequest,
-                    timeout: timeout,
-                    completion: completion
-                )
+                requestAction: { [weak self] in
+                    self?.request(
+                        urlRequest: urlRequest,
+                        timeout: timeout,
+                        completion: completion
+                    )
                 },
                 failureAction: { completion(.failure(ClientError.ExpiredToken())) }
             )
             
-            // The moment we queue a first request for execution later we also set a timeout for 60 seconds
-            // after which we fail all the queued requests
-            if self.requestsQueue.isEmpty {
-                self.requestsAccessQueue.asyncAfter(deadline: .now() + timeout) {
-                    self.requestsQueue.forEach { $0.failureAction() }
-                    self.requestsQueue = []
-                }
-            }
-            
             self.requestsQueue.append(item)
             
             // Only initiate token refreshing once
-            guard !self.isRefreshingToken else { return }
+            guard self._isRefreshingToken.compareAndSwap(old: false, new: true) else { return }
             
-            self.isRefreshingToken = true
-            self.tokenRefresher(ClientError.ExpiredToken()) {
-                self.requestsQueue.forEach { $0.requestAction() }
+            // The moment we queue a first request for execution later we also set a timeout for 60 seconds
+            // after which we fail all the queued requests
+            self.requestsAccessQueue.asyncAfter(deadline: .now() + timeout) {
+                self.requestsQueue.forEach { $0.failureAction() }
                 self.requestsQueue = []
+            }
+            
+            self.tokenRefresher(ClientError.ExpiredToken()) {
                 self.isRefreshingToken = false
+                let queue = self.requestsQueue
+                self.requestsQueue = []
+                queue.forEach { $0.requestAction() }
             }
         }
     }
