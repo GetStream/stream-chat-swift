@@ -119,6 +119,44 @@ final class ChatMessageContentView_Tests: XCTestCase {
         // Assert message content view is rendered correctly.
         AssertSnapshot(view)
     }
+
+    func test_ChatReactionsBubbleViewInjectable() {
+        let testMessage: ChatMessage = .mock(
+            id: .unique,
+            cid: .unique,
+            text: "Some long text goes here.",
+            author: me,
+            createdAt: createdAt,
+            reactionScores: [
+                "like": 5,
+                "love": 2
+            ],
+            isSentByCurrentUser: true
+        )
+
+        // Given
+        // Create custom `ChatReactionsBubbleView` subclass.
+        class CustomChatReactionsBubbleView: ChatReactionsBubbleView {
+            override func setUpAppearance() {
+                super.setUpAppearance()
+                backgroundColor = .black
+            }
+        }
+
+        // When
+        var components = Components.default
+        components.chatReactionsBubbleView = CustomChatReactionsBubbleView.self
+        let view = contentView(
+            message: testMessage,
+            layout: testMessage.layout(isLastInGroup: true),
+            components: components
+        )
+
+        // Then
+        let reactionBubbleView = view.reactionsBubbleView
+        XCTAssertNotNil(reactionBubbleView)
+        XCTAssert(reactionBubbleView is CustomChatReactionsBubbleView)
+    }
 }
 
 // MARK: - Helpers

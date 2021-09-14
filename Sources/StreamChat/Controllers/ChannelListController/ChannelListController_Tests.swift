@@ -19,6 +19,8 @@ class ChannelListController_Tests: StressTestCase {
     /// Workaround for unwrapping **controllerCallbackQueueID!** in each closure that captures it
     private var callbackQueueID: UUID { controllerCallbackQueueID }
     
+    var database: DatabaseContainerMock { client.databaseContainer as! DatabaseContainerMock }
+    
     override func setUp() {
         super.setUp()
         
@@ -255,6 +257,190 @@ class ChannelListController_Tests: StressTestCase {
         
         // Assert the resulting value is updated
         AssertAsync.willBeEqual(controller.channels.map(\.cid), [cid])
+    }
+    
+    func test_newChannel_callsLinkHook() throws {
+        // Create wrapper test delegate
+        class TestLinkDelegate: ChatChannelListControllerDelegate {
+            let shouldLinkNewChannel: (ChatChannel) -> Bool
+            let shouldLinkUpdatedChannel: (ChatChannel) -> Bool
+            init(
+                shouldLinkNewChannel: @escaping (ChatChannel) -> Bool,
+                shouldLinkUpdatedChannel: @escaping (ChatChannel) -> Bool
+            ) {
+                self.shouldLinkNewChannel = shouldLinkNewChannel
+                self.shouldLinkUpdatedChannel = shouldLinkUpdatedChannel
+            }
+            
+            func controller(_ controller: ChatChannelListController, shouldLinkNewChannel channel: ChatChannel) -> Bool {
+                shouldLinkNewChannel(channel)
+            }
+            
+            func controller(_ controller: ChatChannelListController, shouldLinkUpdatedChannel channel: ChatChannel) -> Bool {
+                shouldLinkUpdatedChannel(channel)
+            }
+        }
+        
+        // Simulate `synchronize` call
+        controller.synchronize()
+        
+        // Simulate changes in the DB:
+        // Add the channel to the DB
+        let cid: ChannelId = .unique
+        _ = try waitFor {
+            client.databaseContainer.write({ session in
+                try session.saveChannel(payload: self.dummyPayload(with: cid), query: self.query)
+            }, completion: $0)
+        }
+        
+        // Assert the resulting value is updated
+        AssertAsync.willBeEqual(controller.channels.map(\.cid), [cid])
+        
+        let newCid: ChannelId = .unique
+        
+        // Create and assign delegate
+        let delegate = TestLinkDelegate(shouldLinkNewChannel: { channel in
+            channel.cid != newCid
+        }, shouldLinkUpdatedChannel: { _ in
+            false
+        })
+        controller.delegate = delegate
+        
+        // Insert a new channel to DB
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: .dummy(cid: newCid), query: nil)
+        }
+        
+        // Assert the resulting value is not inserted
+        AssertAsync.willBeEqual(controller.channels.map(\.cid), [cid])
+        
+        // Insert a new channel to DB
+        let insertedCid = ChannelId.unique
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: .dummy(cid: insertedCid), query: nil)
+        }
+        
+        // Assert the resulting value is inserted
+        AssertAsync.willBeEqual(controller.channels.map(\.cid.rawValue).sorted(), [cid.rawValue, insertedCid.rawValue].sorted())
+    }
+    
+    func test_updatedChannel_callsLinkHook() throws {
+        // Create wrapper test delegate
+        class TestLinkDelegate: ChatChannelListControllerDelegate {
+            let shouldLinkNewChannel: (ChatChannel) -> Bool
+            let shouldLinkUpdatedChannel: (ChatChannel) -> Bool
+            init(
+                shouldLinkNewChannel: @escaping (ChatChannel) -> Bool,
+                shouldLinkUpdatedChannel: @escaping (ChatChannel) -> Bool
+            ) {
+                self.shouldLinkNewChannel = shouldLinkNewChannel
+                self.shouldLinkUpdatedChannel = shouldLinkUpdatedChannel
+            }
+            
+            func controller(_ controller: ChatChannelListController, shouldLinkNewChannel channel: ChatChannel) -> Bool {
+                shouldLinkNewChannel(channel)
+            }
+                 
+            func controller(_ controller: ChatChannelListController, shouldLinkUpdatedChannel channel: ChatChannel) -> Bool {
+                shouldLinkUpdatedChannel(channel)
+            }
+        }
+        
+        // Simulate `synchronize` call
+        controller.synchronize()
+        
+        // Add the channel to the DB
+        let cid: ChannelId = .unique
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: self.dummyPayload(with: cid), query: self.query)
+        }
+        
+        // Assert the resulting value is updated
+        AssertAsync.willBeEqual(controller.channels.map(\.cid), [cid])
+        
+        let shouldBeInsertedCid: ChannelId = .unique
+        let shouldBeExcludedCid: ChannelId = .unique
+        
+        // Create and assign delegate
+        let delegate = TestLinkDelegate(shouldLinkNewChannel: { _ in
+            false
+        }, shouldLinkUpdatedChannel: { channel in
+            channel.cid == shouldBeInsertedCid
+        })
+        controller.delegate = delegate
+        
+        // Insert 2 channels to cid
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: .dummy(cid: shouldBeInsertedCid), query: nil)
+            try session.saveChannel(payload: .dummy(cid: shouldBeExcludedCid), query: nil)
+        }
+        
+        // Assert that 2 new channels are not linked
+        AssertAsync.willBeEqual(controller.channels.map(\.cid), [cid])
+        
+        // Update `shouldBeExcludedCid`
+        try database.writeSynchronously { session in
+            let dto = try XCTUnwrap(session.channel(cid: shouldBeExcludedCid))
+            dto.updatedAt = .unique
+        }
+        
+        // Assert that updated channel is not linked
+        AssertAsync.willBeEqual(controller.channels.map(\.cid), [cid])
+        
+        // Update `shouldBeInsertedCid`
+        try database.writeSynchronously { session in
+            let dto = try XCTUnwrap(session.channel(cid: shouldBeInsertedCid))
+            dto.updatedAt = .unique
+        }
+
+        // Assert that updated channel is linked
+        AssertAsync.willBeEqual(
+            controller.channels.map(\.cid.rawValue).sorted(),
+            [cid.rawValue, shouldBeInsertedCid.rawValue].sorted()
+        )
+    }
+    
+    func test_updatedChannel_callsUnlinkHook() throws {
+        // Create wrapper test delegate
+        class TestLinkDelegate: ChatChannelListControllerDelegate {
+            let shouldUnlinkUpdatedChannel: (ChatChannel) -> Bool
+            init(
+                shouldUnlinkUpdatedChannel: @escaping (ChatChannel) -> Bool
+            ) {
+                self.shouldUnlinkUpdatedChannel = shouldUnlinkUpdatedChannel
+            }
+            
+            func controller(_ controller: ChatChannelListController, shouldUnlinkUpdatedChannel channel: ChatChannel) -> Bool {
+                shouldUnlinkUpdatedChannel(channel)
+            }
+        }
+        
+        // Simulate `synchronize` call
+        controller.synchronize()
+        
+        // Add the channel to the DB
+        let cid: ChannelId = .unique
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: self.dummyPayload(with: cid), query: self.query)
+        }
+        
+        // Assert the resulting value is updated
+        AssertAsync.willBeEqual(controller.channels.map(\.cid), [cid])
+        
+        // Create and assign delegate
+        let delegate = TestLinkDelegate(shouldUnlinkUpdatedChannel: { channel in
+            channel.cid == cid
+        })
+        controller.delegate = delegate
+        
+        // Update linked channel
+        try database.writeSynchronously { session in
+            let channelDTO = session.channel(cid: cid)
+            channelDTO?.updatedAt = .unique
+        }
+        
+        // Assert that new channel is unlinked
+        AssertAsync.willBeEqual(controller.channels.map(\.cid), [])
     }
     
     // MARK: - Delegate tests
