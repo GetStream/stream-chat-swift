@@ -41,7 +41,7 @@ class APIClient {
     ///   - endpoint: The `Endpoint` used to create the network request.
     ///   - completion: Called when the networking request is finished.
     func request<Response: Decodable>(endpoint: Endpoint<Response>, completion: @escaping (Result<Response, Error>) -> Void) {
-        encoder.encodeRequest(for: endpoint) { [unowned self] (requestResult) in
+        encoder.encodeRequest(for: endpoint) { [weak self] (requestResult) in
             let urlRequest: URLRequest
             do {
                 urlRequest = try requestResult.get()
@@ -56,6 +56,11 @@ class APIClient {
                     + "Body:\n\(urlRequest.httpBody?.debugPrettyPrintedJSON ?? "<Empty>")\n"
                     + "Query items:\n\(urlRequest.queryItems.prettyPrinted)"
             )
+
+            guard let self = self else {
+                log.warning("Callback called while self is nil")
+                return
+            }
             
             let task = self.session.dataTask(with: urlRequest) { [decoder = self.decoder] (data, response, error) in
                 do {

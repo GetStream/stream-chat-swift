@@ -60,8 +60,13 @@ public class ChatChannelMemberController: DataController, DelegateCallable, Data
     
     /// The observer used to track the user changes in the database.
     private lazy var memberObserver = createMemberObserver()
-        .onChange { [unowned self] change in
-            self.delegateCallback {
+        .onChange { [weak self] change in
+            self?.delegateCallback { [weak self] in
+                guard let self = self else {
+                    log.warning("Callback called while self is nil")
+                    return
+                }
+
                 $0.memberController(self, didUpdateMember: change)
             }
         }

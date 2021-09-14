@@ -16,11 +16,11 @@ public struct GiphyAttachmentPayload: AttachmentPayload {
     public static let type: AttachmentType = .giphy
     
     /// A  title, usually the search request used to find the gif.
-    public let title: String
+    public var title: String
     /// A link to gif file.
-    public let previewURL: URL
+    public var previewURL: URL
     /// Actions when gif is not sent yet. (e.g. `Shuffle`)
-    public let actions: [AttachmentAction]
+    public var actions: [AttachmentAction]
 }
 
 extension GiphyAttachmentPayload: Equatable {}

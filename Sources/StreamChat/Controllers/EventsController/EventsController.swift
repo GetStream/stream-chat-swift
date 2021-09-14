@@ -52,10 +52,20 @@ public class EventsController: Controller, DelegateCallable {
         observer = .init(
             notificationCenter: notificationCenter,
             transform: { $0 },
-            callback: { [unowned self] event in
+            callback: { [weak self] event in
+                guard let self = self else {
+                    log.warning("Callback called while self is nil")
+                    return
+                }
+
                 guard self.shouldProcessEvent(event) else { return }
                 
-                self.delegateCallback {
+                self.delegateCallback { [weak self] in
+                    guard let self = self else {
+                        log.warning("Callback called while self is nil")
+                        return
+                    }
+
                     $0.eventsController(self, didReceiveEvent: event)
                 }
             }

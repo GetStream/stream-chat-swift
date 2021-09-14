@@ -15,7 +15,7 @@ public struct ChatMessageAttachment<Payload> {
     public let type: AttachmentType
 
     /// The attachment payload.
-    public let payload: Payload
+    public var payload: Payload
 
     /// The uploading state of the attachment.
     ///

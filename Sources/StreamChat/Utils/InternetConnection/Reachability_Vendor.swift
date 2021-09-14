@@ -192,7 +192,12 @@ extension Reachability {
 
 private extension Reachability {
     func setReachabilityFlags() throws {
-        try reachabilitySerialQueue.sync { [unowned self] in
+        try reachabilitySerialQueue.sync { [weak self] in
+            guard let self = self else {
+                log.warning("Callback called while self is nil")
+                return
+            }
+
             var flags = SCNetworkReachabilityFlags()
             if !SCNetworkReachabilityGetFlags(self.reachabilityRef, &flags) {
                 self.stopNotifier()

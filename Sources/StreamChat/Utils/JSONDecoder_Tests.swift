@@ -187,7 +187,7 @@ class JSONDecoderTests: XCTestCase {
 
         do {
             // When
-            try decoder.decode([String: Date].self, from: data)
+            _ = try decoder.decode([String: Date].self, from: data)
         } catch {
             // Then
             XCTAssertNotNil(error)

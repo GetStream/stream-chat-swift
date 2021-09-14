@@ -331,8 +331,12 @@ extension Filter: Codable {
                 return
             }
         }
-        
-        throw NSError()
+
+        throw DecodingError.dataCorruptedError(
+            forKey: container.allKeys.last ?? ArbitraryKey(""),
+            in: container,
+            debugDescription: "Filter logic structure is incorrect"
+        )
     }
 }
 
@@ -368,10 +372,22 @@ private struct FilterRightSide: Decodable {
     
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: ArbitraryKey.self)
-        guard container.allKeys.count == 1 else { throw NSError() }
+        guard container.allKeys.count == 1 else {
+            throw DecodingError.dataCorruptedError(
+                forKey: container.allKeys.last ?? ArbitraryKey(""),
+                in: container,
+                debugDescription: "FilterRightSide keys count should be only 1"
+            )
+        }
         
         let key = container.allKeys.first!
-        guard key.stringValue.hasPrefix("$") else { throw NSError() }
+        guard key.stringValue.hasPrefix("$") else {
+            throw DecodingError.dataCorruptedError(
+                forKey: key,
+                in: container,
+                debugDescription: "FilterRightSide does not contain $ operator"
+            )
+        }
         
         self.operator = container.allKeys.first!.stringValue
         var value: FilterValue?

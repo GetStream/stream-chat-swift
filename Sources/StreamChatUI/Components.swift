@@ -206,6 +206,10 @@ public struct Components {
     public var messageListUnreadCountView: ChatMessageListUnreadCountView.Type =
         ChatMessageListUnreadCountView.self
 
+    /// The view that corresponds to container of Reactions for Message
+    public var chatReactionsBubbleView: ChatReactionsBubbleView.Type =
+        ChatReactionsBubbleView.self
+
     // MARK: - Thread components
 
     /// The View Controller used to display the detail of a message thread.
