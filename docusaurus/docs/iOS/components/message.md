@@ -13,9 +13,9 @@ import ChatMessageBubbleViewContentProperties from '../common-content/reference-
 
 <Digraph>{ `
     {rank = same; ChatMessageBubbleView; ChatReactionsBubbleView;}
-    ChatMessageListVC [href="message-list"]
-    ChatMessageLayoutOptionsResolver [href="message-layout-options-resolver"]
-    ChatAvatarView [href="avatar"]
+    ChatMessageListVC [href="../message-list"]
+    ChatMessageLayoutOptionsResolver [href="../message-layout-options-resolver"]
+    ChatAvatarView [href="../avatar"]
     ChatMessageListVC -> ChatMessageLayoutOptionsResolver
     ChatMessageLayoutOptionsResolver -> ChatMessageListVC 
     ChatMessageListVC -> ChatMessageListView
