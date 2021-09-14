@@ -121,6 +121,19 @@ final class ChatMessageContentView_Tests: XCTestCase {
     }
 
     func test_ChatReactionsBubbleViewInjectable() {
+        let testMessage: ChatMessage = .mock(
+            id: .unique,
+            cid: .unique,
+            text: "Some long text goes here.",
+            author: me,
+            createdAt: createdAt,
+            reactionScores: [
+                "like": 5,
+                "love": 2
+            ],
+            isSentByCurrentUser: true
+        )
+
         // Given
         // Create custom `ChatReactionsBubbleView` subclass.
         class CustomChatReactionsBubbleView: ChatReactionsBubbleView {
@@ -134,8 +147,8 @@ final class ChatMessageContentView_Tests: XCTestCase {
         var components = Components.default
         components.chatReactionsBubbleView = CustomChatReactionsBubbleView.self
         let view = contentView(
-            message: failedMessage,
-            layout: failedMessage.layout(isLastInGroup: true),
+            message: testMessage,
+            layout: testMessage.layout(isLastInGroup: true),
             components: components
         )
 
