@@ -701,12 +701,16 @@ open class ChatMessageContentView: _View, ThemeProvider {
     /// Instantiates, configures and assigns `reactionsBubbleView` when called for the first time.
     /// - Returns: The `reactionsBubbleView` subview.
     open func createReactionsBubbleView() -> ChatReactionsBubbleView {
-        if reactionsBubbleView == nil {
-            // TODO: view type should be taken from `components` once `_ReactionsBubbleView` is audited
-            reactionsBubbleView = ChatReactionsBubbleView()
-                .withoutAutoresizingMaskConstraints
+        if let reactionsBubble = reactionsBubbleView {
+            return reactionsBubble
         }
-        return reactionsBubbleView!
+        let view = components
+            .chatReactionsBubbleView
+            .init()
+            .withoutAutoresizingMaskConstraints
+
+        reactionsBubbleView = view
+        return view
     }
 
     /// Instantiates, configures and assigns `timestampLabel` when called for the first time.
