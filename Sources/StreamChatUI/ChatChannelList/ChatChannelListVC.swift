@@ -18,6 +18,8 @@ open class ChatChannelListVC: _ViewController,
     public var controller: ChatChannelListController!
     
     @Atomic private var loadingPreviousMessages: Bool = false
+    
+    private let emptyListNumberOfRows = 99
 
     private var _isShowingLoadingState: Bool = false
     open private(set) var isShowingLoadingState: Bool {
@@ -180,7 +182,7 @@ open class ChatChannelListVC: _ViewController,
 
     open func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         if isShowingLoadingState {
-            return 99
+            return emptyListNumberOfRows
         } else {
             return channelsCount
         }

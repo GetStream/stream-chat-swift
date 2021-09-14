@@ -71,7 +71,7 @@ open class ChatChannelListItemView: _View, ThemeProvider, SwiftUIRepresentable {
     
     /// The height to corner radius ratio for channel list item loading shimmering views. 0 means zero corner radius, 0.5 means that the corner radius
     /// is half of the height, i.e. a rectangular view will produce a circular shimmer.
-    open var loadingStateHeightToCornerRadiusRatio: CGFloat = 0.5
+    open var loadingStateHeightToCornerRadiusRatio: CGFloat { 0.5 }
 
     /// Text of `titleLabel` which contains the channel name.
     open var titleText: String? {
@@ -191,12 +191,12 @@ open class ChatChannelListItemView: _View, ThemeProvider, SwiftUIRepresentable {
     
     open func updateLoader() {
         if isShowingLoadingState {
-            ListLoader.addLoaderToViews(
-                [self],
+            ListLoader.addLoaderTo(
+                views: [self],
                 heightToCornerRadiusRatio: loadingStateHeightToCornerRadiusRatio
             )
         } else {
-            ListLoader.removeLoaderFromViews([self])
+            ListLoader.removeLoaderFrom(views: [self])
         }
     }
     

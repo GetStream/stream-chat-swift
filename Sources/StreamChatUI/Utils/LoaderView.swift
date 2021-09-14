@@ -8,39 +8,48 @@ extension UIView {
     func showLoader(heightToCornerRadiusRatio: CGFloat) {
         isUserInteractionEnabled = false
         if self is UITableView {
-            ListLoader.addLoaderTo(self as! UITableView, heightToCornerRadiusRatio: heightToCornerRadiusRatio)
+            ListLoader.addLoaderTo(
+                list: self as! UITableView,
+                heightToCornerRadiusRatio: heightToCornerRadiusRatio
+            )
         } else if self is UICollectionView {
-            ListLoader.addLoaderTo(self as! UICollectionView, heightToCornerRadiusRatio: heightToCornerRadiusRatio)
+            ListLoader.addLoaderTo(
+                list: self as! UICollectionView,
+                heightToCornerRadiusRatio: heightToCornerRadiusRatio
+            )
         } else {
-            ListLoader.addLoaderToViews([self], heightToCornerRadiusRatio: heightToCornerRadiusRatio)
+            ListLoader.addLoaderTo(
+                views: [self],
+                heightToCornerRadiusRatio: heightToCornerRadiusRatio
+            )
         }
     }
     
     func hideLoader() {
         isUserInteractionEnabled = true
         if self is UITableView {
-            ListLoader.removeLoaderFrom(self as! UITableView)
+            ListLoader.removeLoaderFrom(list: self as! UITableView)
         } else if self is UICollectionView {
-            ListLoader.removeLoaderFrom(self as! UICollectionView)
+            ListLoader.removeLoaderFrom(list: self as! UICollectionView)
         } else {
-            ListLoader.removeLoaderFromViews([self])
+            ListLoader.removeLoaderFrom(views: [self])
         }
     }
 }
 
 protocol ListLoadable {
-    func ld_visibleContentViews() -> [UIView]
+    func visibleContentViews() -> [UIView]
 }
 
 extension UITableView: ListLoadable {
-    func ld_visibleContentViews() -> [UIView] {
-        (visibleCells as NSArray).value(forKey: "contentView") as! [UIView]
+    func visibleContentViews() -> [UIView] {
+        (visibleCells as NSArray).value(forKey: "contentView") as? [UIView] ?? []
     }
 }
 
 extension UICollectionView: ListLoadable {
-    func ld_visibleContentViews() -> [UIView] {
-        (visibleCells as NSArray).value(forKey: "contentView") as! [UIView]
+    func visibleContentViews() -> [UIView] {
+        (visibleCells as NSArray).value(forKey: "contentView") as? [UIView] ?? []
     }
 }
 
@@ -58,7 +67,7 @@ extension UIColor {
     }
 }
 
-extension UIView {
+private extension UIView {
     func boundInside(_ superView: UIView) {
         translatesAutoresizingMaskIntoConstraints = false
         superView.addConstraints(
@@ -80,32 +89,35 @@ extension UIView {
     }
 }
 
-extension CGFloat {
+private extension CGFloat {
     func doubleValue() -> Double {
         Double(self)
     }
 }
 
 enum ListLoader {
-    static func addLoaderToViews(_ views: [UIView], heightToCornerRadiusRatio: CGFloat) {
+    static func addLoaderTo(views: [UIView], heightToCornerRadiusRatio: CGFloat) {
         let views = views.filter { !$0.subviews.contains(where: { $0 is CutoutView }) }
         CATransaction.begin()
-        views.forEach { $0.ld_addLoader(heightToCornerRadiusRatio: heightToCornerRadiusRatio) }
+        views.forEach { $0.addLoader(heightToCornerRadiusRatio: heightToCornerRadiusRatio) }
         CATransaction.commit()
     }
     
-    static func removeLoaderFromViews(_ views: [UIView]) {
+    static func removeLoaderFrom(views: [UIView]) {
         CATransaction.begin()
-        views.forEach { $0.ld_removeLoader() }
+        views.forEach { $0.removeLoader() }
         CATransaction.commit()
     }
     
-    public static func addLoaderTo(_ list: ListLoadable, heightToCornerRadiusRatio: CGFloat) {
-        addLoaderToViews(list.ld_visibleContentViews(), heightToCornerRadiusRatio: heightToCornerRadiusRatio)
+    public static func addLoaderTo(list: ListLoadable, heightToCornerRadiusRatio: CGFloat) {
+        addLoaderTo(
+            views: list.visibleContentViews(),
+            heightToCornerRadiusRatio: heightToCornerRadiusRatio
+        )
     }
     
-    public static func removeLoaderFrom(_ list: ListLoadable) {
-        removeLoaderFromViews(list.ld_visibleContentViews())
+    public static func removeLoaderFrom(list: ListLoadable) {
+        removeLoaderFrom(views: list.visibleContentViews())
     }
 }
 
@@ -128,10 +140,14 @@ final class CutoutView: UIView {
         context?.setFillColor(UIColor.white.cgColor)
         context?.fill(bounds)
         
-        for view in (superview?.subviews)! {
+        superview?.subviews.forEach { view in
             if view != self {
                 if view is UIStackView || view is ContainerStackView {
-                    recursivelyDrawCutOutInView(view, fromParentView: view.superview!, context: context)
+                    recursivelyDrawCutOut(
+                        in: view,
+                        fromParentView: view.superview!,
+                        context: context
+                    )
                 } else {
                     drawPath(context: context, view: view)
                 }
@@ -139,15 +155,19 @@ final class CutoutView: UIView {
         }
     }
     
-    private func recursivelyDrawCutOutInView(
-        _ view: UIView,
+    private func recursivelyDrawCutOut(
+        in view: UIView,
         fromParentView parentView: UIView,
         context: CGContext?
     ) {
         guard let view = view as? Container else { return }
         view.arrangedSubviews.forEach { arrangedSubview in
             if arrangedSubview is Container {
-                recursivelyDrawCutOutInView(arrangedSubview, fromParentView: parentView, context: context)
+                recursivelyDrawCutOut(
+                    in: arrangedSubview,
+                    fromParentView: parentView,
+                    context: context
+                )
                 return
             }
             let frame = view.convert(arrangedSubview.frame, to: parentView)
@@ -162,7 +182,11 @@ final class CutoutView: UIView {
     ) {
         view.arrangedSubviews.forEach { arrangedSubview in
             if arrangedSubview is Container {
-                recursivelyDrawCutOutInView(arrangedSubview, fromParentView: parentView, context: context)
+                recursivelyDrawCutOut(
+                    in: arrangedSubview,
+                    fromParentView: parentView,
+                    context: context
+                )
                 return
             }
             let frame = view.convert(arrangedSubview.frame, to: parentView)
@@ -181,62 +205,55 @@ final class CutoutView: UIView {
         let clipPath: CGPath = UIBezierPath(
             roundedRect: rect,
             cornerRadius: frame.height * heightToCornerRadiusRatio
-        ).cgPath
+        )
+        .cgPath
         context?.addPath(clipPath)
         context?.setFillColor(UIColor.clear.cgColor)
         context?.closePath()
         context?.fillPath()
     }
-
+    
     override func layoutSubviews() {
         setNeedsDisplay()
-        superview?.ld_getGradient()?.frame = (superview?.bounds)!
+        superview?.gradient?.frame = superview?.bounds ?? CGRect()
     }
 }
 
-extension UIView {
+private extension UIView {
     private static var cutoutHandle: UInt8 = 0
     private static var gradientHandle: UInt8 = 0
     private static var loaderDuration = 0.85
     private static var gradientWidth = 0.17
     private static var gradientFirstStop = 0.1
     
-    private func ld_getCutoutView() -> UIView? {
-        objc_getAssociatedObject(self, &Self.cutoutHandle) as! UIView?
+    var cutoutView: UIView? {
+        get { objc_getAssociatedObject(self, &Self.cutoutHandle) as! UIView? }
+        set { objc_setAssociatedObject(self, &Self.cutoutHandle, newValue, .OBJC_ASSOCIATION_RETAIN) }
     }
     
-    private func ld_setCutoutView(_ aView: UIView) {
-        objc_setAssociatedObject(self, &Self.cutoutHandle, aView, .OBJC_ASSOCIATION_RETAIN)
+    var gradient: CAGradientLayer? {
+        get { objc_getAssociatedObject(self, &Self.gradientHandle) as! CAGradientLayer? }
+        set { objc_setAssociatedObject(self, &Self.gradientHandle, newValue, .OBJC_ASSOCIATION_RETAIN) }
     }
     
-    fileprivate func ld_getGradient() -> CAGradientLayer? {
-        objc_getAssociatedObject(self, &Self.gradientHandle) as! CAGradientLayer?
-    }
-    
-    private func ld_setGradient(_ aLayer: CAGradientLayer) {
-        objc_setAssociatedObject(self, &Self.gradientHandle, aLayer, .OBJC_ASSOCIATION_RETAIN)
-    }
-    
-    fileprivate func ld_addLoader(heightToCornerRadiusRatio: CGFloat) {
+    func addLoader(heightToCornerRadiusRatio: CGFloat) {
         let gradient: CAGradientLayer = CAGradientLayer()
         gradient.frame = CGRect(x: 0, y: 0, width: bounds.size.width, height: bounds.size.height)
         layer.insertSublayer(gradient, at: 0)
         
-        configureAndAddAnimationToGradient(gradient)
+        configureAndAddAnimation(to: gradient)
         addCutoutView(heightToCornerRadiusRatio: heightToCornerRadiusRatio)
     }
     
-    fileprivate func ld_removeLoader() {
-        ld_getCutoutView()?.removeFromSuperview()
-        ld_getGradient()?.removeAllAnimations()
-        ld_getGradient()?.removeFromSuperlayer()
+    func removeLoader() {
+        cutoutView?.removeFromSuperview()
+        gradient?.removeAllAnimations()
+        gradient?.removeFromSuperlayer()
         
-        for view in subviews {
-            view.alpha = 1
-        }
+        subviews.forEach { $0.alpha = 1 }
     }
     
-    func configureAndAddAnimationToGradient(_ gradient: CAGradientLayer) {
+    func configureAndAddAnimation(to gradient: CAGradientLayer) {
         gradient.startPoint = CGPoint(x: -1.0 + CGFloat(Self.gradientWidth), y: 0)
         gradient.endPoint = CGPoint(x: 1.0 + CGFloat(Self.gradientWidth), y: 0)
         
@@ -249,21 +266,21 @@ extension UIView {
         ]
         
         let startLocations = [
-            NSNumber(value: gradient.startPoint.x.doubleValue() as Double),
-            NSNumber(value: gradient.startPoint.x.doubleValue() as Double),
-            NSNumber(value: 0 as Double),
-            NSNumber(value: Self.gradientWidth as Double),
-            NSNumber(value: 1 + Self.gradientWidth as Double)
+            NSNumber(value: gradient.startPoint.x.doubleValue()),
+            NSNumber(value: gradient.startPoint.x.doubleValue()),
+            NSNumber(value: 0),
+            NSNumber(value: Self.gradientWidth),
+            NSNumber(value: 1 + Self.gradientWidth)
         ]
         
         gradient.locations = startLocations
         let gradientAnimation = CABasicAnimation(keyPath: "locations")
         gradientAnimation.fromValue = startLocations
         gradientAnimation.toValue = [
-            NSNumber(value: 0 as Double),
-            NSNumber(value: 1 as Double), NSNumber(value: 1 as Double),
-            NSNumber(value: 1 + (Self.gradientWidth - Self.gradientFirstStop) as Double),
-            NSNumber(value: 1 + Self.gradientWidth as Double)
+            NSNumber(value: 0),
+            NSNumber(value: 1), NSNumber(value: 1),
+            NSNumber(value: 1 + (Self.gradientWidth - Self.gradientFirstStop)),
+            NSNumber(value: 1 + Self.gradientWidth)
         ]
         
         gradientAnimation.repeatCount = Float.infinity
@@ -272,7 +289,7 @@ extension UIView {
         gradientAnimation.duration = Self.loaderDuration
         gradient.add(gradientAnimation, forKey: "locations")
         
-        ld_setGradient(gradient)
+        self.gradient = gradient
     }
     
     private func addCutoutView(heightToCornerRadiusRatio: CGFloat) {
@@ -284,13 +301,13 @@ extension UIView {
         cutout.setNeedsDisplay()
         cutout.boundInside(self)
         
-        for view in subviews {
+        subviews.forEach { view in
             if view != cutout {
                 view.alpha = 0
             }
         }
         
-        ld_setCutoutView(cutout)
+        cutoutView = cutout
     }
 }
 

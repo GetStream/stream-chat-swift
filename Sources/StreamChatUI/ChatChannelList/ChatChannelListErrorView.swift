@@ -13,13 +13,13 @@ open class ChatChannelListErrorView: _View, ThemeProvider, ChatChannelListErrorS
     open var buttonAction: (() -> Void)?
     
     /// Label describing there has been an error.
-    open lazy var titleLabel: UILabel = UILabel().withBidirectionalLanguagesSupport.withoutAutoresizingMaskConstraints
+    open private(set) lazy var titleLabel: UILabel = UILabel().withBidirectionalLanguagesSupport.withoutAutoresizingMaskConstraints
     /// Retry button which is located at the trailing of the view.
-    open lazy var retryButton: UIButton = UIButton().withoutAutoresizingMaskConstraints
+    open private(set) lazy var retryButton: UIButton = UIButton().withoutAutoresizingMaskConstraints
     /// Spacing view so the button has some spacing with bidirectional language support.
-    open lazy var spacer: UIView = UIView().withoutAutoresizingMaskConstraints
+    open private(set) lazy var spacer: UIView = UIView().withoutAutoresizingMaskConstraints
     /// Main container which holds title,spacer and the retry button.
-    open lazy var mainContainer: ContainerStackView = ContainerStackView().withoutAutoresizingMaskConstraints
+    open private(set) lazy var mainContainer: ContainerStackView = ContainerStackView().withoutAutoresizingMaskConstraints
     
     override open func setUp() {
         super.setUp()
@@ -49,7 +49,7 @@ open class ChatChannelListErrorView: _View, ThemeProvider, ChatChannelListErrorS
         mainContainer.alignment = .leading
     }
     
-    @objc func didTapRetryButton() {
+    @objc open func didTapRetryButton() {
         buttonAction?()
     }
 }

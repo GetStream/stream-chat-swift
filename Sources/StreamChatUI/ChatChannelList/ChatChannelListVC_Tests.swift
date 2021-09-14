@@ -57,7 +57,8 @@ class ChatChannelListVC_Tests: XCTestCase {
         view = nil
         mockedChannelListController = nil
         mockedCurrentUserController = nil
-        
+        UIView.setAnimationsEnabled(true)
+
         super.tearDown()
     }
 

@@ -13,15 +13,16 @@ open class ChatChannelListEmptyView: _View, ThemeProvider, ChatChannelListEmptyS
     public var buttonAction: (() -> Void)?
     
     /// Main container which holds all elements except action button in this view.
-    open lazy var mainContainer: ContainerStackView = ContainerStackView().withoutAutoresizingMaskConstraints
+    open private(set) lazy var mainContainer: ContainerStackView = ContainerStackView().withoutAutoresizingMaskConstraints
     /// ImageView which is displayed above the title label.
-    open lazy var mainImageView: UIImageView = UIImageView().withoutAutoresizingMaskConstraints
+    open private(set) lazy var mainImageView: UIImageView = UIImageView().withoutAutoresizingMaskConstraints
     /// Title label for the view.
-    open lazy var titleLabel: UILabel = UILabel().withBidirectionalLanguagesSupport.withoutAutoresizingMaskConstraints
+    open private(set) lazy var titleLabel: UILabel = UILabel().withBidirectionalLanguagesSupport.withoutAutoresizingMaskConstraints
     /// Subtitle label.
-    open lazy var subtitleLabel: UILabel = UILabel().withBidirectionalLanguagesSupport.withoutAutoresizingMaskConstraints
+    open private(set) lazy var subtitleLabel: UILabel = UILabel().withBidirectionalLanguagesSupport
+        .withoutAutoresizingMaskConstraints
     /// Button which has some action
-    open lazy var actionButton: UIButton = UIButton(type: .system).withoutAutoresizingMaskConstraints
+    open private(set) lazy var actionButton: UIButton = UIButton(type: .system).withoutAutoresizingMaskConstraints
     
     override open func setUp() {
         super.setUp()
@@ -29,13 +30,16 @@ open class ChatChannelListEmptyView: _View, ThemeProvider, ChatChannelListEmptyS
         titleLabel.text = L10n.Channellist.LoadingIndicator.Empty.title
         subtitleLabel.text = L10n.Channellist.LoadingIndicator.Empty.subtitle
         actionButton.setTitle(L10n.Channellist.LoadingIndicator.Empty.button, for: .normal)
-        actionButton.addTarget(self, action: #selector(didTapButton), for: .touchUpInside)
+        actionButton.addTarget(self, action: #selector(didTapRetryButton), for: .touchUpInside)
     }
     
     override open func setUpLayout() {
         super.setUpLayout()
         directionalLayoutMargins = .init(top: 8, leading: 30, bottom: 8, trailing: 30)
         addSubview(mainContainer)
+        
+        mainContainer.axis = .vertical
+        mainContainer.alignment = .center
         
         mainContainer.pin(anchors: [.centerX, .centerY], to: self)
         mainContainer.pin(anchors: [.leading, .trailing], to: layoutMarginsGuide)
@@ -55,9 +59,6 @@ open class ChatChannelListEmptyView: _View, ThemeProvider, ChatChannelListEmptyS
         mainImageView.image = appearance.images.message
         mainImageView.tintColor = appearance.colorPalette.background2
         
-        mainContainer.axis = .vertical
-        mainContainer.alignment = .center
-        
         titleLabel.font = appearance.fonts.bodyBold
         titleLabel.textColor = appearance.colorPalette.text
         titleLabel.textAlignment = .center
@@ -70,7 +71,7 @@ open class ChatChannelListEmptyView: _View, ThemeProvider, ChatChannelListEmptyS
         actionButton.titleLabel?.font = appearance.fonts.bodyBold
     }
     
-    @objc func didTapButton() {
+    @objc open func didTapRetryButton() {
         buttonAction?()
     }
 }
