@@ -60,7 +60,12 @@ open class ChatMessageListVC:
         .withoutAutoresizingMaskConstraints
 
     /// The height of the typing indicator view
-    open private(set) var typingIndicatorViewHeight: CGFloat = 22
+    open private(set) var typingIndicatorViewHeight: CGFloat = 28
+
+    /// A Boolean value indicating whether the typing events are enabled.
+    open var isTypingEventsEnabled: Bool {
+        dataSource?.channel(for: self)?.config.typingEventsEnabled == true
+    }
 
     /// A button to scroll the collection view to the bottom.
     /// Visible when there is unread message and the collection view is not at the bottom already.
@@ -102,13 +107,13 @@ open class ChatMessageListVC:
 
         view.addSubview(listView)
         listView.pin(anchors: [.top, .leading, .trailing, .bottom], to: view)
-        
-        if dataSource?.channel(for: self)?.config.typingEventsEnabled == true {
+
+        typingIndicatorView.isHidden = true
+        if isTypingEventsEnabled {
             view.addSubview(typingIndicatorView)
             typingIndicatorView.heightAnchor.pin(equalToConstant: typingIndicatorViewHeight).isActive = true
             typingIndicatorView.pin(anchors: [.leading, .trailing], to: view)
             typingIndicatorView.bottomAnchor.pin(equalTo: listView.bottomAnchor).isActive = true
-            typingIndicatorView.isHidden = true
         }
         
         view.addSubview(scrollToLatestMessageButton)
@@ -263,38 +268,23 @@ open class ChatMessageListVC:
     /// Shows typing Indicator.
     /// - Parameter typingUsers: typing users gotten from `channelController`
     open func showTypingIndicator(typingUsers: [ChatUser]) {
-        if typingIndicatorView.isHidden {
-            Animate {
-                self.listView.contentInset.top += self.typingIndicatorViewHeight
-                self.listView.scrollIndicatorInsets.top += self.typingIndicatorViewHeight
-            }
+        guard isTypingEventsEnabled else { return }
 
-            if listView.isLastCellFullyVisible {
-                scrollToMostRecentMessage()
-            }
-        }
-
-        // If we somehow cannot fetch any user name, we simply show that `Someone is typing`
-        guard let user = typingUsers.first(where: { user in user.name != nil }), let name = user.name else {
+        if let user = typingUsers.first(where: { user in user.name != nil }), let name = user.name {
+            typingIndicatorView.content = L10n.MessageList.TypingIndicator.users(name, typingUsers.count - 1)
+        } else {
+            // If we somehow cannot fetch any user name, we simply show that `Someone is typing`
             typingIndicatorView.content = L10n.MessageList.TypingIndicator.typingUnknown
-            typingIndicatorView.isHidden = false
-            return
         }
-        
-        typingIndicatorView.content = L10n.MessageList.TypingIndicator.users(name, typingUsers.count - 1)
+
         typingIndicatorView.isHidden = false
     }
     
     /// Hides typing Indicator.
     open func hideTypingIndicator() {
-        guard typingIndicatorView.isVisible else { return }
+        guard isTypingEventsEnabled, typingIndicatorView.isVisible else { return }
 
         typingIndicatorView.isHidden = true
-
-        Animate {
-            self.listView.contentInset.top -= self.typingIndicatorViewHeight
-            self.listView.scrollIndicatorInsets.top -= self.typingIndicatorViewHeight
-        }
     }
 
     // MARK: - UITableViewDataSource & UITableViewDelegate
@@ -386,6 +376,14 @@ open class ChatMessageListVC:
         log
             .info(
                 "Tapped a quoted message. To customize the behavior, override messageContentViewDidTapOnQuotedMessage. Path: \(indexPath)"
+            )
+    }
+	
+    open func messageContentViewDidTapOnAvatarView(_ indexPath: IndexPath?) {
+        guard let indexPath = indexPath else { return log.error("IndexPath is not available") }
+        log
+            .info(
+                "Tapped an avatarView. To customize the behavior, override messageContentViewDidTapOnAvatarView. Path: \(indexPath)"
             )
     }
 
