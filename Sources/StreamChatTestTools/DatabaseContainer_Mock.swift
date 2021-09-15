@@ -159,30 +159,23 @@ extension DatabaseContainer {
             }
             
             if withQuery {
-                let filter: Filter<ChannelListFilterScope> = .equal(.name, to: "luke:skywalker")
-                let queryDTO = NSEntityDescription.insertNewObject(
-                    forEntityName: ChannelListQueryDTO.entityName,
-                    into: session as! NSManagedObjectContext
-                ) as! ChannelListQueryDTO
-                queryDTO.filterHash = filter.filterHash
-                queryDTO.filterJSONData = try JSONEncoder.default.encode(filter)
+                let query = ChannelListQuery(filter: .equal(.cid, to: cid))
+                let queryDTO = session.saveQuery(query: query)
                 dto.queries = [queryDTO]
             }
+        }
+    }
+    
+    func createChannelListQuery(_ query: ChannelListQuery) throws {
+        try writeSynchronously { session in
+            _ = session.saveQuery(query: query)
         }
     }
     
     func createChannelListQuery(
         filter: Filter<ChannelListFilterScope> = .query(.cid, text: .unique)
     ) throws {
-        try writeSynchronously { session in
-            let dto = NSEntityDescription
-                .insertNewObject(
-                    forEntityName: ChannelListQueryDTO.entityName,
-                    into: session as! NSManagedObjectContext
-                ) as! ChannelListQueryDTO
-            dto.filterHash = filter.filterHash
-            dto.filterJSONData = try JSONEncoder.default.encode(filter)
-        }
+        try createChannelListQuery(.init(filter: filter))
     }
     
     func createUserListQuery(filter: Filter<UserListFilterScope> = .query(.id, text: .unique)) throws {

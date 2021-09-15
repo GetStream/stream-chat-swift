@@ -526,6 +526,7 @@
 		843F0BC526775D2D00B342CB /* VideoPreviewLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 843F0BC426775D2D00B342CB /* VideoPreviewLoader.swift */; };
 		843F0BC72677640000B342CB /* VideoAttachmentGalleryPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 843F0BC62677640000B342CB /* VideoAttachmentGalleryPreview.swift */; };
 		843F0BCD2677667000B342CB /* AttachmentActionButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 843F0BCC2677667000B342CB /* AttachmentActionButton.swift */; };
+		8447DA0826EBC6950061F9E0 /* ChannelListQueryDTO_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8447DA0726EBC6950061F9E0 /* ChannelListQueryDTO_Tests.swift */; };
 		847D60292679EDD300FB701D /* GalleryCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 847D60282679EDD300FB701D /* GalleryCollectionViewCell.swift */; };
 		847D602B2679EED400FB701D /* VideoAttachmentGalleryCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 847D602A2679EED400FB701D /* VideoAttachmentGalleryCell.swift */; };
 		847D602D2679EF8A00FB701D /* VideoPlaybackControlView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 847D602C2679EF8A00FB701D /* VideoPlaybackControlView.swift */; };
@@ -1931,6 +1932,7 @@
 		843F0BC426775D2D00B342CB /* VideoPreviewLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPreviewLoader.swift; sourceTree = "<group>"; };
 		843F0BC62677640000B342CB /* VideoAttachmentGalleryPreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoAttachmentGalleryPreview.swift; sourceTree = "<group>"; };
 		843F0BCC2677667000B342CB /* AttachmentActionButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttachmentActionButton.swift; sourceTree = "<group>"; };
+		8447DA0726EBC6950061F9E0 /* ChannelListQueryDTO_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelListQueryDTO_Tests.swift; sourceTree = "<group>"; };
 		847D60282679EDD300FB701D /* GalleryCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GalleryCollectionViewCell.swift; sourceTree = "<group>"; };
 		847D602A2679EED400FB701D /* VideoAttachmentGalleryCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoAttachmentGalleryCell.swift; sourceTree = "<group>"; };
 		847D602C2679EF8A00FB701D /* VideoPlaybackControlView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPlaybackControlView.swift; sourceTree = "<group>"; };
@@ -2963,6 +2965,7 @@
 				79877A1E2498E50D00015F8B /* ChannelDTO_Tests.swift */,
 				796FD215250654940076C99B /* ChannelReadDTO.swift */,
 				7964F3A3249A0ACF002A09EC /* ChannelListQueryDTO.swift */,
+				8447DA0726EBC6950061F9E0 /* ChannelListQueryDTO_Tests.swift */,
 				7978FBBB26E16295002CA2DF /* MessageSearchQueryDTO.swift */,
 				7991D83A24F5427E00D21BA3 /* EphemeralValuesContainer.swift */,
 				882C575F252C7CC400E60C44 /* ChannelMemberListQueryDTO.swift */,
@@ -6686,6 +6689,7 @@
 				DA7229E424E140600074503A /* ChannelEditDetailPayload_Tests.swift in Sources */,
 				799C9462247D78E2001F1104 /* WaitFor.swift in Sources */,
 				88DA57EA2631E82B00FA8C53 /* MutedChannelPayload_Tests.swift in Sources */,
+				8447DA0826EBC6950061F9E0 /* ChannelListQueryDTO_Tests.swift in Sources */,
 				88AA92882547332000BFA0C3 /* MessageReactionPayload.swift in Sources */,
 				8A0D64A924E57A560017A3C0 /* GuestUserTokenRequestPayload_Tests.swift in Sources */,
 				79280F732487CD3100CDEB89 /* Atomic_Tests.swift in Sources */,

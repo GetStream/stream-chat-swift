@@ -68,15 +68,16 @@
         </uniquenessConstraints>
     </entity>
     <entity name="ChannelListQueryDTO" representedClassName="ChannelListQueryDTO" syncable="YES">
-        <attribute name="filterHash" attributeType="String"/>
         <attribute name="filterJSONData" attributeType="Binary"/>
+        <attribute name="queryHash" attributeType="String"/>
+        <attribute name="sortingJSONData" attributeType="Binary"/>
         <relationship name="channels" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ChannelDTO" inverseName="queries" inverseEntity="ChannelDTO"/>
-        <fetchIndex name="filterHash">
-            <fetchIndexElement property="filterHash" type="Binary" order="ascending"/>
+        <fetchIndex name="queryHash">
+            <fetchIndexElement property="queryHash" type="Binary" order="ascending"/>
         </fetchIndex>
         <uniquenessConstraints>
             <uniquenessConstraint>
-                <constraint value="filterHash"/>
+                <constraint value="queryHash"/>
             </uniquenessConstraint>
         </uniquenessConstraints>
     </entity>

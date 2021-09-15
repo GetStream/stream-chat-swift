@@ -87,6 +87,11 @@ public struct ChannelListQuery: Encodable {
     /// Query options.
     var options: QueryOptions = [.watch]
     
+    /// We set query hash explicitely when we load it from the database.
+    /// This is needed because `filter` with value of some custom type (e.g. `ChannelId`)
+    /// looses this info in encode -> decode process which affect filter.filterHash and query hash.
+    var explicitHash: String?
+    
     /// Init a channels query.
     /// - Parameters:
     ///   - filter: a channels filter.
@@ -116,5 +121,16 @@ public struct ChannelListQuery: Encodable {
         try container.encode(messagesLimit, forKey: .messagesLimit)
         try options.encode(to: encoder)
         try pagination.encode(to: encoder)
+    }
+}
+
+extension ChannelListQuery {
+    var queryHash: String {
+        let components = [
+            filter.filterHash,
+            sort.map(\.description).joined()
+        ].filter { !$0.isEmpty }
+        
+        return explicitHash ?? components.joined(separator: "-")
     }
 }
