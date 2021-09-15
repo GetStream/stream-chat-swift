@@ -54,10 +54,7 @@ class EventNotificationCenter: NotificationCenter {
     /// does not exist in DB yet. Using this overload makes sure that
     /// we process the event fully before calling completion closures.
     func process(_ healthCheckEvent: HealthCheckEvent, completion: @escaping ((ConnectionId) -> Void)) {
-        database.write { session in
-            // We don't want to publish `HealthCheckEvent`, so we discard the output
-            _ = self.middlewares.process(event: healthCheckEvent, session: session)
-        } completion: { _ in
+        feedEventsToMiddlewares([healthCheckEvent], shouldPostEvents: false) {
             completion(healthCheckEvent.connectionId)
         }
     }
@@ -67,21 +64,37 @@ class EventNotificationCenter: NotificationCenter {
         DispatchQueue.main.asyncAfter(deadline: .now() + eventBatchPeriod) { [weak self] in
             guard let self = self else { return }
 
-            self.database.write { session in
-                var eventsToProcess: [Event] = []
-                self._pendingEvents {
-                    eventsToProcess = $0
-                    $0.removeAll()
-                }
-                
-                eventsToProcess.forEach { event in
-                    guard
-                        let eventToPublish = self.middlewares.process(event: event, session: session)
-                    else { return }
-
-                    self.post(Notification(newEventReceived: eventToPublish, sender: self))
+            var eventsToProcess: [Event] = []
+            self._pendingEvents {
+                eventsToProcess = $0
+                $0.removeAll()
+            }
+            
+            self.feedEventsToMiddlewares(eventsToProcess)
+        }
+    }
+    
+    /// Opens database session and feeds events to middlewares one by one respecting the order.
+    /// When an event is processed it is posted (except events of `HealthCheckEvent` type).
+    ///
+    /// - Parameters:
+    ///   - events: The list of events to be processed.
+    ///   - completion: The completion that will be invoked .
+    func feedEventsToMiddlewares(
+        _ events: [Event],
+        shouldPostEvents: Bool = true,
+        completion: @escaping () -> Void = {}
+    ) {
+        var eventsToPost = [Event]()
+        database.write({ session in
+            eventsToPost = events.compactMap { self.middlewares.process(event: $0, session: session) }
+        }, completion: { _ in
+            if shouldPostEvents {
+                eventsToPost.forEach {
+                    self.post(Notification(newEventReceived: $0, sender: self))
                 }
             }
-        }
+            completion()
+        })
     }
 }

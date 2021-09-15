@@ -94,6 +94,21 @@ final class EventNotificationCenter_Tests: XCTestCase {
         AssertAsync.willBeEqual(eventLogger.events as? [TestEvent], [event])
     }
     
+    func test_healthCheckEventIsNotPublished() {
+        // Create a notification center without any middlewares
+        let center = EventNotificationCenter(database: database)
+        
+        // Create event logger to check published events
+        let eventLogger = EventLogger(center)
+        
+        // Simulate incoming `HealthCheckEvent` event
+        let event = HealthCheckEvent(connectionId: .unique)
+        center.process(event)
+        
+        // Assert `HealthCheckEvent` is not published
+        AssertAsync.staysTrue(eventLogger.events.isEmpty)
+    }
+    
     func test_eventsAreProcessed_fromWithinTheWriteClosure() {
         // Create a notification center without any middlewares
         let center = EventNotificationCenter(database: database)
@@ -166,6 +181,56 @@ final class EventNotificationCenter_Tests: XCTestCase {
         wait(0.3)
         XCTAssertEqual(database.writeSessionCounter, 2)
         XCTAssertEqual(eventLogger.events as! [TestEvent], testEvents)
+    }
+    
+    func test_feedEventsToMiddlewares_whenShouldPostEventsIsTrue_eventsArePosted() {
+        // Create a notification center with just a forwarding middleware
+        let center = EventNotificationCenter(database: database)
+        
+        // Create event logger to check published events
+        let eventLogger = EventLogger(center)
+        
+        // Simulate incoming events
+        let events = [TestEvent(), TestEvent(), TestEvent(), TestEvent()]
+        
+        // Feed events that should be posted and catch the completion
+        var completionCalled = false
+        center.feedEventsToMiddlewares(events, shouldPostEvents: true) {
+            completionCalled = true
+        }
+        // Assert database session opening is initiated.
+        XCTAssertTrue(database.write_called)
+
+        // Wait completion to be called
+        AssertAsync.willBeTrue(completionCalled)
+        
+        // Assert events are posted.
+        XCTAssertEqual(eventLogger.events as! [TestEvent], events)
+    }
+    
+    func test_feedEventsToMiddlewares_whenShouldPostEventsIsFalse_eventsAreNotPosted() {
+        // Create a notification center with just a forwarding middleware
+        let center = EventNotificationCenter(database: database)
+        
+        // Create event logger to check published events
+        let eventLogger = EventLogger(center)
+        
+        // Simulate incoming events
+        let events = [TestEvent(), TestEvent(), TestEvent(), TestEvent()]
+        
+        // Feed events that should not be posted and catch the completion
+        var completionCalled = false
+        center.feedEventsToMiddlewares(events, shouldPostEvents: false) {
+            completionCalled = true
+        }
+        // Assert database session opening is initiated.
+        XCTAssertTrue(database.write_called)
+
+        // Wait completion to be called
+        AssertAsync.willBeTrue(completionCalled)
+        
+        // Assert events are not posted.
+        XCTAssertTrue(eventLogger.events.isEmpty)
     }
 }
 

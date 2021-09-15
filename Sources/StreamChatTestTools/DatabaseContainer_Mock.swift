@@ -76,6 +76,8 @@ class DatabaseContainerMock: DatabaseContainer {
         
         try super.recreatePersistentStore()
     }
+    
+    @Atomic var write_called = false
 
     /// `true` if there is currently an active writing session
     @Atomic var isWriteSessionInProgress: Bool = false
@@ -84,6 +86,8 @@ class DatabaseContainerMock: DatabaseContainer {
     @Atomic var writeSessionCounter: Int = 0
     
     override func write(_ actions: @escaping (DatabaseSession) throws -> Void, completion: @escaping (Error?) -> Void) {
+        write_called = true
+        
         let wrappedActions: ((DatabaseSession) throws -> Void) = { session in
             self.isWriteSessionInProgress = true
             try actions(session)
