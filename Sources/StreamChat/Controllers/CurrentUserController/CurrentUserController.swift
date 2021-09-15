@@ -193,18 +193,13 @@ public extension CurrentChatUserController {
     }
     
     /// Registers a device to the current user.
-    /// `setUser` must be called before calling this.
+    /// `connectUser` must be called before calling this.
     /// - Parameters:
     ///   - token: Device token, obtained via `didRegisterForRemoteNotificationsWithDeviceToken` function in `AppDelegate`.
     ///   - completion: Called when device is successfully registered, or with error.
     func addDevice(token: Data, completion: ((Error?) -> Void)? = nil) {
         guard let currentUserId = currentUser?.id else {
             completion?(ClientError.CurrentUserDoesNotExist())
-            return
-        }
-
-        if let devices = currentUser?.devices.filter({ $0.id == token.deviceToken }), !devices.isEmpty {
-            completion?(nil)
             return
         }
 
@@ -216,7 +211,7 @@ public extension CurrentChatUserController {
     }
     
     /// Removes a registered device from the current user.
-    /// `setUser` must be called before calling this.
+    /// `connectUser` must be called before calling this.
     /// - Parameters:
     ///   - id: Device id to be removed. You can obtain registered devices via `currentUser.devices`.
     ///   If `currentUser.devices` is not up-to-date, please make an `synchronize` call.

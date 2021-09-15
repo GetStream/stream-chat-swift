@@ -7,6 +7,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Introduce `shouldLinkNewChannel` and `shouldLinkUpdatedChannel` delegate callbacks to `ChannelListController`. With these, one can control and link new/updated channels to the existing controller. [#1438](https://github.com/GetStream/stream-chat-swift/issues/1438)
 - Added injection of `ChatMessageReactionsBubbleView` to `Components`, so customers will be able to subclass and customise it. [#1451](https://github.com/GetStream/stream-chat-swift/pull/1451)
 
+### 🐞 Fixed
+- `CurrentUser.currentDevice` is always `nil`. Now it won't be nil after `addDevice` is called [#1457](https://github.com/GetStream/stream-chat-swift/issues/1457)
+
 ### 🔄 Changed
 - Update `ChatClient` to disconnect immediately when the Internet connection disappears [#1449](https://github.com/GetStream/stream-chat-swift/issues/1449)
 

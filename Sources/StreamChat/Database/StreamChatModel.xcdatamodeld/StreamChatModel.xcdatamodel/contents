@@ -107,6 +107,7 @@
         <attribute name="uniquenessKey" attributeType="String" defaultValueString="this is an immmutable arbitrary key which makes sure we have only once instance of CurrentUserDTO in the db"/>
         <attribute name="unreadChannelsCount" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="unreadMessagesCount" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <relationship name="currentDevice" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="DeviceDTO"/>
         <relationship name="devices" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="DeviceDTO" inverseName="user" inverseEntity="DeviceDTO"/>
         <relationship name="flaggedMessages" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="MessageDTO" inverseName="flaggedBy" inverseEntity="MessageDTO"/>
         <relationship name="flaggedUsers" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="UserDTO" inverseName="flaggedBy" inverseEntity="UserDTO"/>
@@ -292,19 +293,19 @@
     </entity>
     <elements>
         <element name="AttachmentDTO" positionX="9" positionY="153" width="128" height="164"/>
-        <element name="CurrentUserDTO" positionX="0" positionY="0" width="128" height="148"/>
-        <element name="DeviceDTO" positionX="9" positionY="153" width="128" height="88"/>
         <element name="ChannelDTO" positionX="0" positionY="0" width="128" height="493"/>
         <element name="ChannelListQueryDTO" positionX="0" positionY="0" width="128" height="88"/>
         <element name="ChannelMemberListQueryDTO" positionX="9" positionY="153" width="128" height="88"/>
         <element name="ChannelMuteDTO" positionX="9" positionY="162" width="128" height="89"/>
         <element name="ChannelReadDTO" positionX="9" positionY="153" width="128" height="103"/>
+        <element name="CurrentUserDTO" positionX="0" positionY="0" width="128" height="179"/>
+        <element name="DeviceDTO" positionX="9" positionY="153" width="128" height="88"/>
         <element name="MemberDTO" positionX="0" positionY="0" width="128" height="254"/>
         <element name="MessageDTO" positionX="0" positionY="0" width="128" height="554"/>
         <element name="MessageReactionDTO" positionX="9" positionY="153" width="128" height="163"/>
+        <element name="MessageSearchQueryDTO" positionX="9" positionY="162" width="128" height="59"/>
         <element name="TeamDTO" positionX="0" positionY="0" width="128" height="88"/>
         <element name="UserDTO" positionX="0" positionY="0" width="128" height="419"/>
         <element name="UserListQueryDTO" positionX="9" positionY="153" width="128" height="103"/>
-        <element name="MessageSearchQueryDTO" positionX="9" positionY="162" width="128" height="59"/>
     </elements>
 </model>
