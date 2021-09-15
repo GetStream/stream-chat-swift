@@ -618,11 +618,9 @@ extension ChatClient: ConnectionStateDelegate {
                 clientUpdater.reloadUserIfNeeded(
                     userConnectionProvider: .closure { _, completion in
                         tokenProvider() { result in
-                            if case let .success(token) = result,
-                               !token.isExpired {
+                            if case .success = result {
                                 self.tokenExpirationRetryStrategy.successfullyConnected()
                             }
-                            
                             completion(result)
                         }
                     },

@@ -34,6 +34,12 @@ class APIClient {
     /// Shows whether the token is being refreshed at the moment
     @Atomic private var isRefreshingToken: Bool = false
     
+    /// How many times refreshing the token failed consecutively
+    @Atomic private var tokenRefreshConsecutiveFailures: Int = 0
+
+    /// How many times can the token refresh fail before giving up with an error
+    let maxTokenRefreshAttempts = 10
+
     /// Creates a new `APIClient`.
     ///
     /// - Parameters:
@@ -68,6 +74,14 @@ class APIClient {
         timeout: TimeInterval = 60,
         completion: @escaping (Result<Response, Error>) -> Void
     ) {
+        if tokenRefreshConsecutiveFailures > maxTokenRefreshAttempts {
+            return completion(.failure(ClientError.TooManyTokenRefreshAttempts()))
+        }
+
+        if isRefreshingToken {
+            return requeueRequestOnTokenExpired(endpoint: endpoint, timeout: timeout, completion: completion)
+        }
+
         encoder.encodeRequest(for: endpoint) { [weak self] (requestResult) in
             let urlRequest: URLRequest
             do {
@@ -77,7 +91,7 @@ class APIClient {
                 completion(.failure(error))
                 return
             }
-            
+
             log.debug(
                 "Making URL request: \(endpoint.method.rawValue.uppercased()) \(endpoint.path)\n"
                     + "Body:\n\(urlRequest.httpBody?.debugPrettyPrintedJSON ?? "<Empty>")\n"
@@ -88,43 +102,25 @@ class APIClient {
                 log.warning("Callback called while self is nil")
                 return
             }
-            self.request(urlRequest: urlRequest, timeout: timeout, completion: completion)
-        }
-    }
-    
-    private func request<Response: Decodable>(
-        urlRequest: URLRequest,
-        timeout: TimeInterval,
-        completion: @escaping (Result<Response, Error>) -> Void
-    ) {
-        let delayRequest = {
-            self.handleTokenExpirationError(
-                urlRequest: urlRequest,
-                timeout: timeout,
-                completion: completion
-            )
-        }
-        
-        guard !isRefreshingToken else { return delayRequest() }
-        
-        let task = session.dataTask(with: urlRequest) { [decoder = self.decoder] (data, response, error) in
-            do {
-                let decodedResponse: Response = try decoder.decodeRequestResponse(
-                    data: data,
-                    response: response,
-                    error: error
-                )
-                completion(.success(decodedResponse))
-            } catch {
-                if error is ClientError.ExpiredToken {
-                    delayRequest()
-                } else {
-                    completion(.failure(error))
+            let task = self.session.dataTask(with: urlRequest) { [decoder = self.decoder] (data, response, error) in
+                do {
+                    let decodedResponse: Response = try decoder.decodeRequestResponse(
+                        data: data,
+                        response: response,
+                        error: error
+                    )
+                    self.tokenRefreshConsecutiveFailures = 0
+                    completion(.success(decodedResponse))
+                } catch {
+                    if error is ClientError.ExpiredToken {
+                        self.requeueRequestOnTokenExpired(endpoint: endpoint, timeout: timeout, completion: completion)
+                    } else {
+                        completion(.failure(error))
+                    }
                 }
             }
+            task.resume()
         }
-        
-        task.resume()
     }
     
     func uploadAttachment(
@@ -140,8 +136,8 @@ class APIClient {
     }
     
     /// Queues a failed request for executing later or failing after a timeout
-    func handleTokenExpirationError<Response: Decodable>(
-        urlRequest: URLRequest,
+    func requeueRequestOnTokenExpired<Response: Decodable>(
+        endpoint: Endpoint<Response>,
         timeout: TimeInterval,
         completion: @escaping (Result<Response, Error>) -> Void
     ) {
@@ -149,7 +145,7 @@ class APIClient {
             let item = RequestsQueueItem(
                 requestAction: { [weak self] in
                     self?.request(
-                        urlRequest: urlRequest,
+                        endpoint: endpoint,
                         timeout: timeout,
                         completion: completion
                     )
@@ -162,6 +158,9 @@ class APIClient {
             // Only initiate token refreshing once
             guard self._isRefreshingToken.compareAndSwap(old: false, new: true) else { return }
             
+            /// Increase the amount of consecutive failures
+            self._tokenRefreshConsecutiveFailures.mutate { $0 += 1 }
+
             // The moment we queue a first request for execution later we also set a timeout for 60 seconds
             // after which we fail all the queued requests
             self.requestsAccessQueue.asyncAfter(deadline: .now() + timeout) {
