@@ -108,13 +108,11 @@ open class ChatMessageListVC:
         view.addSubview(listView)
         listView.pin(anchors: [.top, .leading, .trailing, .bottom], to: view)
 
+        view.addSubview(typingIndicatorView)
         typingIndicatorView.isHidden = true
-        if isTypingEventsEnabled {
-            view.addSubview(typingIndicatorView)
-            typingIndicatorView.heightAnchor.pin(equalToConstant: typingIndicatorViewHeight).isActive = true
-            typingIndicatorView.pin(anchors: [.leading, .trailing], to: view)
-            typingIndicatorView.bottomAnchor.pin(equalTo: listView.bottomAnchor).isActive = true
-        }
+        typingIndicatorView.heightAnchor.pin(equalToConstant: typingIndicatorViewHeight).isActive = true
+        typingIndicatorView.pin(anchors: [.leading, .trailing], to: view)
+        typingIndicatorView.bottomAnchor.pin(equalTo: listView.bottomAnchor).isActive = true
         
         view.addSubview(scrollToLatestMessageButton)
         listView.bottomAnchor.pin(equalToSystemSpacingBelow: scrollToLatestMessageButton.bottomAnchor).isActive = true
