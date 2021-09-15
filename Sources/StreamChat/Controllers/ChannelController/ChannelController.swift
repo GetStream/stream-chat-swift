@@ -270,6 +270,10 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
         setChannelObserver()
         setMessagesObserver()
     }
+    
+    deinit {
+        markChannelAsBeingRead(false)
+    }
 
     private func setChannelObserver() {
         _channelObserver.computeValue = { [weak self] in
@@ -286,6 +290,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
                 fetchRequest: ChannelDTO.fetchRequest(for: cid),
                 itemCreator: { $0.asModel() as ChatChannel }
             ).onChange { [weak self] change in
+                debugPrint(change)
                 self?.delegateCallback { [weak self] in
                     guard let self = self else {
                         log.warning("Callback called while self is nil")
@@ -354,8 +359,15 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             channelQuery: channelQuery,
             channelCreatedCallback: channelCreatedCallback
         ) { result in
-            self.state = result.error == nil ? .remoteDataFetched : .remoteDataFetchFailed(ClientError(with: result.error))
-            self.callback { completion?(result.error) }
+            switch result {
+            case .success:
+                self.markChannelAsBeingRead(true)
+                self.state = .remoteDataFetched
+                self.callback { completion?(nil) }
+            case let .failure(error):
+                self.state = .remoteDataFetchFailed(ClientError(with: error))
+                self.callback { completion?(error) }
+            }
         }
         
         /// Setup observers if we know the channel `cid` (if it's missing, it'll be set in `set(cid:)`
@@ -363,6 +375,15 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
         if let cid = cid {
             setupEventObservers(for: cid)
             setLocalStateBasedOnError(startDatabaseObservers())
+        }
+    }
+    
+    private func markChannelAsBeingRead(_ isBeingRead: Bool) {
+        guard let cid = cid else { return }
+        
+        client.databaseContainer.write {
+            let dto = $0.channel(cid: cid)
+            dto?.isBeingRead = isBeingRead
         }
     }
 

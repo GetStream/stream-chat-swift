@@ -19,6 +19,11 @@ class ChannelDTO: NSManagedObject {
     @NSManaged var defaultSortingAt: Date
     @NSManaged var updatedAt: Date
     @NSManaged var lastMessageAt: Date?
+    
+    // This field lives only locally and is not populated from the payload.
+    // The main purpose of having this is to keep track of channels that are
+    // open to correctly synchronize them on reconnect.
+    @NSManaged var isBeingRead: Bool
 
     // The oldest message of the channel we have locally coming from a regular channel query.
     // This property only lives locally, and it is useful to filter out older pinned messages
@@ -128,6 +133,7 @@ extension ChannelDTO: EphemeralValuesContainer {
         currentlyTypingUsers.removeAll()
         watchers.removeAll()
         watcherCount = 0
+        isBeingRead = false
     }
 }
 
@@ -415,6 +421,7 @@ extension ChatChannel {
             latestMessages: { fetchMessages() },
             pinnedMessages: { dto.pinnedMessages.map { $0.asModel() } },
             muteDetails: fetchMuteDetails,
+            isBeingRead: dto.isBeingRead,
             underlyingContext: dto.managedObjectContext
         )
     }

@@ -136,6 +136,9 @@ public struct ChatChannel {
     
     /// Additional data associated with the channel.
     public let extraData: [String: RawJSON]
+    
+    /// Says whether the channel is being read locally.
+    let isBeingRead: Bool
 
     // MARK: - Internal
     
@@ -170,6 +173,7 @@ public struct ChatChannel {
         latestMessages: @escaping (() -> [ChatMessage]) = { [] },
         pinnedMessages: @escaping (() -> [ChatMessage]) = { [] },
         muteDetails: @escaping () -> MuteDetails?,
+        isBeingRead: Bool,
         underlyingContext: NSManagedObjectContext?
     ) {
         self.cid = cid
@@ -188,6 +192,7 @@ public struct ChatChannel {
         self.memberCount = memberCount
         self.reads = reads
         self.cooldownDuration = cooldownDuration
+        self.isBeingRead = isBeingRead
         self.extraData = extraData
         
         $_unreadCount = (unreadCount, underlyingContext)

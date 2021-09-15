@@ -673,4 +673,31 @@ class ChannelDTO_Tests: XCTestCase {
             Assert.willBeEqual(channel.watcherCount, 0)
         }
     }
+    
+    func test_resetEphemeralValues_resetsIsBeingReadField() throws {
+        let cid: ChannelId = .unique
+        
+        // Create channel in the database
+        try database.createChannel(cid: cid)
+        
+        // Set `isBeingRead` to `true`
+        try database.writeSynchronously { session in
+            let channel = try XCTUnwrap(session.channel(cid: cid))
+            channel.isBeingRead = true
+        }
+        
+        // Load the channel
+        var channel: ChatChannel {
+            database.viewContext.channel(cid: cid)!.asModel()
+        }
+        
+        // Assert `isBeingRead` is set to `true`
+        XCTAssertTrue(channel.isBeingRead)
+        
+        // Simulate `resetEphemeralValues`
+        database.resetEphemeralValues()
+        
+        // Assert `isBeingRead` is set to `false`
+        AssertAsync.willBeFalse(channel.isBeingRead)
+    }
 }

@@ -234,8 +234,36 @@ class ChannelController_Tests: StressTestCase {
         XCTAssertFalse(controller.areUploadsEnabled)
     }
     
-    // MARK: - Synchronize tests
+    // MARK: - `Channel.isBeingRead` tests
     
+    func test_isBeingRead_isSetWhenSynchronizedAndResetWhenDeinited() throws {
+        // Save channel to database
+        try controller.client.databaseContainer.createChannel(cid: channelId)
+        
+        // Simulate `synchronize` call.
+        controller.synchronize()
+        
+        // Simulate successful network call.
+        env.channelUpdater?.update_completion?(.success(dummyPayload(with: channelId)))
+
+        // Assert `channel.isBeingRead` is set to `true`
+        AssertAsync.willBeTrue(controller.channel?.isBeingRead == true)
+        
+        // Load channel from database
+        let channelDTO = try XCTUnwrap(
+            client.databaseContainer.viewContext.channel(cid: channelId)
+        )
+        
+        // Simulate deallocation of a controller
+        env?.channelUpdater?.cleanUp()
+        AssertAsync.canBeReleased(&controller)
+        
+        // Assert `channel.isBeingRead` is set to `false` eventually
+        AssertAsync.willBeFalse(channelDTO.isBeingRead)
+    }
+    
+    // MARK: - Synchronize tests
+        
     func test_synchronize_changesControllerState() {
         // Check if controller has initialized state initially.
         XCTAssertEqual(controller.state, .initialized)
