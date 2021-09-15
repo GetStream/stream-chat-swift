@@ -584,6 +584,107 @@ class ChannelListController_Tests: StressTestCase {
     
     // MARK: - Channels pagination
     
+    func test_loadNextChannels_whenAllChannelsAreLoaded_doesNotCallsChannelListUpdater() {
+        let limit = 5
+        
+        var completion1Called = false
+        controller.loadNextChannels(limit: limit) { _ in
+            completion1Called = true
+        }
+        
+        // Assert channels are fetched
+        XCTAssertEqual(
+            env!.channelListUpdater?.update_queries.first?.queryHash,
+            controller.query.queryHash
+        )
+        
+        // Simulate successful update saying all channels are loaded
+        env!.channelListUpdater?.update_completion?(.success(ChannelListPayload(channels: [])))
+        
+        // Assert completion 1 is invoked
+        AssertAsync.willBeTrue(completion1Called)
+        
+        // Reset the state
+        env!.channelListUpdater?.update_queries.removeAll()
+        
+        // Load next page of channels
+        var completion2Called = false
+        controller.loadNextChannels(limit: limit) { _ in
+            completion2Called = true
+        }
+        
+        // Assert channel list updated is not called
+        XCTAssertTrue(env!.channelListUpdater!.update_queries.isEmpty)
+        
+        // Assert completion 2 is invoked
+        AssertAsync.willBeTrue(completion2Called)
+    }
+    
+//    func test_whenAllChannelsAreLoadedAndChannelRemoveChangeIsDetected_loadNextChannelsCallsUpdater() throws {
+//        // Synchronize
+//        var synchronizeCompletionCalled = false
+//        controller.synchronize { _ in
+//            synchronizeCompletionCalled = true
+//        }
+//
+//        // Simulate network call response
+//        let cid1: ChannelId = .unique
+//        let cid2: ChannelId = .unique
+//        try database.createChannel(cid: cid1)
+//        try database.createChannel(cid: cid2)
+//        try database.writeSynchronously { [query] session in
+//            let queryDTO = session.saveQuery(query: query!)
+//            let channel1 = try XCTUnwrap(session.channel(cid: cid1))
+//            let channel2 = try XCTUnwrap(session.channel(cid: cid2))
+//            queryDTO.channels = [channel1, channel2]
+//        }
+//        env.channelListUpdater?.update_completion?(.success(ChannelListPayload(channels: [])))
+//
+//        AssertAsync.willBeTrue(synchronizeCompletionCalled)
+//        AssertAsync.willBeEqual(Set(controller.channels.map(\.cid)), [cid1, cid2])
+//
+//        // Try to load next page of channels
+//        var completion1Called = false
+//        controller.loadNextChannels(limit: 5) { _ in
+//            completion1Called = true
+//        }
+//        // Simulate successful update saying all channels are loaded
+//        env!.channelListUpdater!.update_completion!(.success(ChannelListPayload(channels: [])))
+//        // Assert completion 1 is called
+//        AssertAsync.willBeTrue(completion1Called)
+//
+//        // Reset channel list updater
+//        env!.channelListUpdater!.update_queries.removeAll()
+//
+//        // Load next page of channels
+//        var completion2Called = false
+//        controller.loadNextChannels(limit: 5) { _ in
+//            completion2Called = true
+//        }
+//        // Assert channel list updated is not called
+//        XCTAssertTrue(env!.channelListUpdater!.update_queries.isEmpty)
+//        // Assert completion 2 is invoked
+//        AssertAsync.willBeTrue(completion2Called)
+//
+//        // Simulate unliking a channel from a query
+//        try database.writeSynchronously { session in
+//            let queryDTO = try XCTUnwrap(session.channelListQuery(queryHash: self.query!.queryHash))
+//            queryDTO.channels.removeAll()
+//        }
+//        AssertAsync.willBeEqual(Set(controller.channels.map(\.cid)), [])
+//
+//        // Load next page of channels
+//        var completion3Called = false
+//        controller.loadNextChannels(limit: 5) { _ in
+//            completion3Called = true
+//        }
+//
+//        // Assert channel list updater is invoked
+//        XCTAssertFalse(env!.channelListUpdater!.update_queries.isEmpty)
+//        // Assert completion 3 is invoked
+//        AssertAsync.willBeTrue(completion3Called)
+//    }
+    
     func test_loadNextChannels_callsChannelListUpdater() {
         var completionCalled = false
         let limit = 42
