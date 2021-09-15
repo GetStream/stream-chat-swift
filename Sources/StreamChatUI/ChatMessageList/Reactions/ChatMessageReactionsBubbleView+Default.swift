@@ -53,12 +53,8 @@ open class ChatMessageDefaultReactionsBubbleView: ChatMessageReactionsBubbleView
         contentViewBackground.layer.borderColor = contentBorderColor.cgColor
         contentViewBackground.directionalLayoutMargins = contentLayoutMargins
     }
-}
 
-// MARK: - Private
-
-private extension ChatMessageDefaultReactionsBubbleView {
-    var contentLayoutMargins: NSDirectionalEdgeInsets {
+    open var contentLayoutMargins: NSDirectionalEdgeInsets {
         guard let content = content else { return .zero }
 
         return content.style.isBig ?
@@ -66,7 +62,7 @@ private extension ChatMessageDefaultReactionsBubbleView {
             .init(top: 4, leading: 4, bottom: 4, trailing: 4)
     }
     
-    var contentBackgroundColor: UIColor {
+    open var contentBackgroundColor: UIColor {
         guard let content = content else { return .clear }
 
         switch content.style {
@@ -77,7 +73,7 @@ private extension ChatMessageDefaultReactionsBubbleView {
         }
     }
 
-    var contentBorderColor: UIColor {
+    open var contentBorderColor: UIColor {
         guard let content = content else { return .clear }
 
         let color: UIColor
@@ -92,7 +88,7 @@ private extension ChatMessageDefaultReactionsBubbleView {
         return resolvedColor(color)
     }
 
-    var tailBackImage: UIImage? {
+    open var tailBackImage: UIImage? {
         guard let content = content else { return nil }
 
         switch content.style {
@@ -125,7 +121,7 @@ private extension ChatMessageDefaultReactionsBubbleView {
         }
     }
 
-    var tailFrontImage: UIImage? {
+    open var tailFrontImage: UIImage? {
         guard let content = content else { return nil }
 
         switch content.style {

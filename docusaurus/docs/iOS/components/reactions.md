@@ -45,7 +45,41 @@ let customReactions: [MessageReactionType: ChatMessageReactionAppearanceType] = 
 Appearance.default.images.availableReactions = customReactions
 ```
 
-If you want to make more advanced customizations you can subclass `ChatMessageReactionsBubbleView` and use it in your application.
+### Change Appearance
+
+
+### Custom Reaction Bubble
+
+If you want to make more advanced customizations you can use your own `ChatMessageReactionsBubbleView` subclass and use it in your application.
+
+
+```swift
+class CustomChatMessageReactionsBubbleView: ChatMessageDefaultReactionsBubbleView {
+    
+    override open func layoutSubviews() {
+        super.layoutSubviews()
+        contentViewBackground.layer.cornerRadius = 0
+    }
+
+    override open var contentBackgroundColor: UIColor {
+        .init(red: 0.96, green: 0.92, blue: 0.017, alpha: 1.0)
+    }
+
+    override open var contentBorderColor: UIColor {
+        .init(red: 0.054, green: 0.36, blue: 0.39, alpha: 1.0)
+    }
+
+    override open var tailBackImage: UIImage? { nil }
+    
+    override open var tailFrontImage: UIImage? { nil }
+}
+```
+
+Then you need to change the `reactionsBubbleView` component to use your class as usual.
+
+```swift
+Components.default.reactionsBubbleView = CustomChatMessageReactionsBubbleView.self
+```
 
 ## Message Reactions
 

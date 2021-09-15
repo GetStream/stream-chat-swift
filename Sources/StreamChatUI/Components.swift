@@ -144,10 +144,10 @@ public struct Components {
     /// The injector used for injecting file attachment views
     public var filesAttachmentInjector: AttachmentViewInjector.Type = FilesAttachmentViewInjector.self
 
-    /// The view that shows reactions bubble. This is used in the message action dropdown.
+    /// The view that shows reactions bubble, this is used by the reaction picker.
     public var reactionsBubbleView: ChatMessageReactionsBubbleView.Type = ChatMessageDefaultReactionsBubbleView.self
     
-    /// The view that shows reactions of a message.
+    /// The view that shows reactions of a message. This is used by the message component.
     public var messageReactionsBubbleView: ChatReactionsBubbleView.Type = ChatReactionsBubbleView.self
 
     /// The button for taking an action on attachment being uploaded.

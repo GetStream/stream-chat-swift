@@ -11,8 +11,11 @@ open class ChatMessageReactionsVC: _ViewController, ThemeProvider, ChatMessageCo
 
     // MARK: - Subviews
 
-    public private(set) lazy var reactionsBubble = components
-        .reactionsBubbleView
+    open func reactionsBubbleClass() -> ChatMessageReactionsBubbleView.Type {
+        components.reactionsBubbleView
+    }
+
+    public private(set) lazy var reactionsBubble = reactionsBubbleClass()
         .init()
         .withoutAutoresizingMaskConstraints
 
