@@ -10,10 +10,8 @@ class CurrentUserDTO: NSManagedObject {
     @NSManaged var unreadChannelsCount: Int64
     @NSManaged var unreadMessagesCount: Int64
     
-    /// Into this field the creation date of last locally received event is saved.
-    /// The date later serves as reference date for `/sync` endpoint
-    /// that returns all events that happen after the given date
-    @NSManaged var lastReceivedEventDate: Date?
+    /// When reconnect happens this value is bump with the most recent event timestamp.
+    @NSManaged var lastSyncedAt: Date
 
     @NSManaged var flaggedUsers: Set<UserDTO>
     @NSManaged var flaggedMessages: Set<MessageDTO>
@@ -57,6 +55,7 @@ extension CurrentUserDTO {
         }
         
         let new = NSEntityDescription.insertNewObject(forEntityName: Self.entityName, into: context) as! CurrentUserDTO
+        new.lastSyncedAt = Date()
         return new
     }
 }

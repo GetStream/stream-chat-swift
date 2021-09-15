@@ -274,7 +274,17 @@ class DatabaseSession_Tests: XCTestCase {
         }
     }
     
-    func test_saveEvent_resetsLastReceivedEventDate_withEventCreatedAtValue() throws {
+    func test_saveEvent_doesNotChangeLastSyncedDate() throws {
+        let lastSyncedAt: Date = .unique
+        
+        // Create current user in database.
+        try database.createCurrentUser()
+        
+        // Update `lastSyncedAt` value
+        try database.writeSynchronously { session in
+            session.currentUser?.lastSyncedAt = lastSyncedAt
+        }
+        
         // Create event payload with specific `createdAt` date
         let eventPayload = EventPayload(
             eventType: .messageNew,
@@ -297,34 +307,7 @@ class DatabaseSession_Tests: XCTestCase {
         // Load current user
         let currentUser = database.viewContext.currentUser
         
-        // Assert `eventPayload.createdAt` is taked as last received event date
-        XCTAssertEqual(currentUser?.lastReceivedEventDate, eventPayload.createdAt)
-    }
-    
-    func test_saveEvent_doesntResetLastReceivedEventDate_whenEventCreatedAtValueIsNil() throws {
-        // Create event payload with missing `createdAt`
-        let eventPayload = EventPayload(
-            eventType: .messageNew,
-            connectionId: .unique,
-            cid: .unique,
-            currentUser: .dummy(
-                userId: .unique,
-                role: .user,
-                unreadCount: nil
-            ),
-            unreadCount: .dummy,
-            createdAt: nil
-        )
-        
-        // Save event to the database
-        try database.writeSynchronously { session in
-            try session.saveEvent(payload: eventPayload)
-        }
-        
-        // Load current user
-        let currentUser = database.viewContext.currentUser
-        
-        // Assert `lastReceivedEventDate` is nil
-        XCTAssertNil(currentUser?.lastReceivedEventDate)
+        // Assert `eventPayload.createdAt` was not updated
+        XCTAssertEqual(currentUser?.lastSyncedAt, lastSyncedAt)
     }
 }
