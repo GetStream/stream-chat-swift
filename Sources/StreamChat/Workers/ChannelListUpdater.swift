@@ -6,6 +6,21 @@ import CoreData
 
 /// Makes a channels query call to the backend and updates the local storage with the results.
 class ChannelListUpdater: Worker {
+    /// Makes a channels query call to the backend and calls completion with results.
+    ///
+    /// - Parameters:
+    ///   - channelListQuery: The query to be fetched.
+    ///   - completion: The completion.
+    func fetch(
+        _ channelListQuery: ChannelListQuery,
+        completion: @escaping (Result<ChannelListPayload, Error>) -> Void
+    ) {
+        apiClient.request(
+            endpoint: .channels(query: channelListQuery),
+            completion: completion
+        )
+    }
+    
     /// Makes a channels query call to the backend and updates the local storage with the results.
     ///
     /// - Parameters:

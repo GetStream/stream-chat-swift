@@ -123,4 +123,47 @@ class ChannelListUpdater_Tests: StressTestCase {
         
         AssertAsync.willBeEqual(completionCalledError as? TestError, error)
     }
+    
+    // MARK: - Fetch
+    
+    func test_fetch_makesCorrectAPICall() {
+        let cid: ChannelId = .unique
+        let query = ChannelListQuery(filter: .equal(.cid, to: cid))
+        
+        listUpdater.fetch(query) { _ in }
+        
+        let referenceEndpoint = Endpoint<ChannelListPayload>.channels(query: query)
+        
+        XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
+    }
+    
+    func test_fetch_successfulResponse_isPropagatedToCompletion() {
+        let cid: ChannelId = .unique
+        let query = ChannelListQuery(filter: .equal(.cid, to: cid))
+        
+        var completionCalled = false
+        listUpdater.fetch(query) { result in
+            XCTAssertNil(result.error)
+            completionCalled = true
+        }
+        
+        XCTAssertFalse(completionCalled)
+        
+        apiClient.test_simulateResponse(Result<ChannelListPayload, Error>.success(.init(channels: [])))
+        
+        AssertAsync.willBeTrue(completionCalled)
+    }
+    
+    func test_fetch_errorResponse_isPropagatedToCompletion() {
+        let cid: ChannelId = .unique
+        let query = ChannelListQuery(filter: .equal(.cid, to: cid))
+        
+        var completionCalledError: Error?
+        listUpdater.fetch(query) { completionCalledError = $0.error }
+        
+        let error = TestError()
+        apiClient.test_simulateResponse(Result<ChannelListPayload, Error>.failure(error))
+        
+        AssertAsync.willBeEqual(completionCalledError as? TestError, error)
+    }
 }
