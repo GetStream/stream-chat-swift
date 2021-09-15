@@ -84,16 +84,15 @@ public class ChatRemoteNotificationHandler {
     }
 
     private func obtainLastSyncDate(completion: @escaping (Date?) -> Void) {
-        var lastReceivedEventDate: Date?
-        database.viewContext.performAndWait {
-            lastReceivedEventDate = self.database.viewContext.currentUser?.lastReceivedEventDate
+        let context = database.viewContext
+        context.perform {
+            completion(context.currentUser?.lastSyncedAt)
         }
-        completion(lastReceivedEventDate)
     }
 
-    private func bumpLastSyncDate(lastReceivedEventDate: Date, completion: @escaping () -> Void) {
+    private func bumpLastSyncDate(_ lastSyncedAt: Date, completion: @escaping () -> Void) {
         database.write { session in
-            session.currentUser?.lastReceivedEventDate = lastReceivedEventDate
+            session.currentUser?.lastSyncedAt = lastSyncedAt
         } completion: { error in
             if let error = error {
                 log.error(error)
@@ -139,20 +138,20 @@ public class ChatRemoteNotificationHandler {
             )
 
             self.client.apiClient.request(endpoint: endpoint) {
-                var lastReceivedEventDate: Date?
                 switch $0 {
                 case let .success(payload):
-                    self.client.eventNotificationCenter.process(payload.eventPayloads)
-                    lastReceivedEventDate = payload.eventPayloads.first?.createdAt
+                    self.client.eventNotificationCenter.feedEventsToMiddlewares(
+                        payload.eventPayloads.compactMap { try? $0.event() },
+                        shouldPostEvents: false
+                    ) {
+                        let mostRecentEventDate = payload.eventPayloads.compactMap(\.createdAt).sorted().last
+                        self.bumpLastSyncDate(
+                            mostRecentEventDate ?? lastSyncAt,
+                            completion: completion
+                        )
+                    }
                 case let .failure(error):
                     log.error("Failed cleaning up channels data: \(error).")
-                }
-
-                if let lastReceivedEventDate = lastReceivedEventDate {
-                    self.bumpLastSyncDate(lastReceivedEventDate: lastReceivedEventDate) {
-                        completion()
-                    }
-                } else {
                     completion()
                 }
             }

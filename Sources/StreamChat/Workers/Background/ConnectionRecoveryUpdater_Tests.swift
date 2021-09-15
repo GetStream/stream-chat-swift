@@ -29,7 +29,7 @@ final class ConnectionRecoveryUpdater_Tests: StressTestCase {
             eventNotificationCenter: webSocketClient.eventNotificationCenter,
             apiClient: apiClient,
             databaseCleanupUpdater: channelDatabaseCleanupUpdater,
-            useSyncEndpoint: false
+            useSyncEndpoint: true
         )
     }
     
@@ -48,264 +48,467 @@ final class ConnectionRecoveryUpdater_Tests: StressTestCase {
     
     // MARK: - Tests
     
-    func test_endpointIsNotCalled_ifThereIsNoCurrentUser() throws {
-        // Simulate `.connecting` connection state of a web-socket
-        webSocketClient.simulateConnectionStatus(.connecting)
+    func test_whenConnectedFirstTime_currentDateIsUsedAsSyncDateAndQueriesAreNotFetched() throws {
+        // Create current user in database without last sync date
+        try database.createCurrentUser()
         
         // Simulate `.connected` connection state of a web-socket
         webSocketClient.simulateConnectionStatus(.connected(connectionId: .unique))
         
-        // Assert endpoint is not called as `lastSyncAt` is unknown
-        AssertAsync.staysTrue(apiClient.request_endpoint == nil)
+        // Load current user
+        let currentUser = try XCTUnwrap(database.viewContext.currentUser)
+        
+        AssertAsync {
+            // Assert /sync is not called
+            Assert.staysTrue(self.apiClient.request_endpoint == nil)
+            // Assert queries are not refetched
+            Assert.staysTrue(self.channelDatabaseCleanupUpdater.syncChannelListQueries_syncedChannelIDs == nil)
+            // Assert `lastSyncedAt` is updated with current date
+            Assert.willNotBeNil(currentUser.lastSyncedAt)
+        }
     }
     
-    func test_endpointIsNotCalled_ifThereAreNoWatchedChannels() throws {
-        // Create current user in the database
+    func test_whenSyncIsNotUsedAndRefetchFails_lastSyncDateStaysTheSame() throws {
+        // Create updates that should not use `/sync` endpoint
+        updater = ConnectionRecoveryUpdater(
+            database: database,
+            eventNotificationCenter: webSocketClient.eventNotificationCenter,
+            apiClient: apiClient,
+            databaseCleanupUpdater: channelDatabaseCleanupUpdater,
+            useSyncEndpoint: false
+        )
+        
+        // Create current user in database
         try database.createCurrentUser()
         
-        // Set `lastReceivedEventDate` field
+        // Set `lastSyncedAt` field
+        let lastSyncedAt = Date.unique
         try database.writeSynchronously {
-            let dto = try XCTUnwrap($0.currentUser)
-            dto.lastReceivedEventDate = Date()
+            $0.currentUser?.lastSyncedAt = lastSyncedAt
         }
         
-        // Simulate `.connecting` connection state of a web-socket
-        webSocketClient.simulateConnectionStatus(.connecting)
+        // Create channels linked to queries
+        let cids: Set<ChannelId> = [.unique, .unique, .unique]
+        for cid in cids {
+            try database.createChannel(cid: cid, withQuery: true)
+        }
         
         // Simulate `.connected` connection state of a web-socket
         webSocketClient.simulateConnectionStatus(.connected(connectionId: .unique))
         
-        // Assert endpoint is not called as there are no watched channels
-        AssertAsync.staysTrue(apiClient.request_endpoint == nil)
+        AssertAsync {
+            // Assert /sync is not called
+            Assert.staysTrue(self.apiClient.request_endpoint == nil)
+            // Assert queries are refetched without synced channels given
+            Assert.willBeEqual(self.channelDatabaseCleanupUpdater.syncChannelListQueries_syncedChannelIDs, [])
+        }
+        
+        // Simulate failed queries refetch
+        channelDatabaseCleanupUpdater.syncChannelListQueries_completion?(
+            .failure(ClientError(.unique))
+        )
+            
+        // Load current user
+        let currentUser = try XCTUnwrap(database.viewContext.currentUser)
+        
+        // Assert `lastSyncedAt` stays the same
+        AssertAsync.staysEqual(currentUser.lastSyncedAt, lastSyncedAt)
     }
     
-    func test_endpointIsCalled_whenStatusBecomesConnected() throws {
+    func test_whenSyncIsNotUsedAndRefetchSucceeds_lastSyncDateIsBumped() throws {
+        // Create updates that should not use `/sync` endpoint
         updater = ConnectionRecoveryUpdater(
             database: database,
             eventNotificationCenter: webSocketClient.eventNotificationCenter,
             apiClient: apiClient,
             databaseCleanupUpdater: channelDatabaseCleanupUpdater,
-            useSyncEndpoint: true
+            useSyncEndpoint: false
         )
-        let cid: ChannelId = .unique
-        let lastReceivedEventDate: Date = .unique
         
+        // Create current user in database
+        try database.createCurrentUser()
+        
+        // Set `lastSyncedAt` field
+        let lastSyncedAt = Date.unique
+        try database.writeSynchronously {
+            $0.currentUser?.lastSyncedAt = lastSyncedAt
+        }
+        
+        // Create channels linked to queries
+        let cids: Set<ChannelId> = [.unique, .unique, .unique]
+        for cid in cids {
+            try database.createChannel(cid: cid, withQuery: true)
+        }
+        
+        // Simulate `.connected` connection state of a web-socket
+        webSocketClient.simulateConnectionStatus(.connected(connectionId: .unique))
+        
+        AssertAsync {
+            // Assert /sync is not called
+            Assert.staysTrue(self.apiClient.request_endpoint == nil)
+            // Assert queries are refetched without synced channels given
+            Assert.willBeEqual(self.channelDatabaseCleanupUpdater.syncChannelListQueries_syncedChannelIDs, [])
+        }
+        
+        // Simulate successful queries refetch
+        channelDatabaseCleanupUpdater.syncChannelListQueries_completion?(.success(()))
+            
+        // Load current user
+        let currentUser = try XCTUnwrap(database.viewContext.currentUser)
+            
+        // Assert `lastSyncedAt` is updated with current date
+        AssertAsync.willBeTrue(currentUser.lastSyncedAt! > lastSyncedAt)
+    }
+    
+    func test_whenSyncReturnsEvents_eventsArePosted() throws {
         // Create current user in the database
         try database.createCurrentUser()
         
-        // Create channel in the database
-        try database.createChannel(cid: cid)
-
-        // Set `lastReceivedEventDate`
-        try database.writeSynchronously { session in
-            let currentUser = try XCTUnwrap(session.currentUser)
-            currentUser.lastReceivedEventDate = lastReceivedEventDate
+        // Set `lastSyncedAt` field
+        try database.writeSynchronously {
+            $0.currentUser?.lastSyncedAt = Date()
         }
-        
-        // Simulate `.connecting` connection state of a web-socket
-        webSocketClient.simulateConnectionStatus(.connecting)
         
         // Simulate `.connected` connection state of a web-socket
         webSocketClient.simulateConnectionStatus(.connected(connectionId: .unique))
         
-        // Assert endpoint is called with correct values
-        let endpoint: Endpoint<MissingEventsPayload> = .missingEvents(
-            since: lastReceivedEventDate,
-            cids: [cid]
-        )
+        // Assert /sync is called
+        AssertAsync.willBeTrue(apiClient.request_endpoint != nil)
         
-        AssertAsync.willBeEqual(apiClient.request_endpoint, AnyEndpoint(endpoint))
+        // Setup event logger
+        let eventLogger = EventLogger(webSocketClient.init_eventNotificationCenter)
+        
+        // Simulate successful response
+        let payload = MissingEventsPayload(
+            eventPayloads: [
+                .init(eventType: .messageNew),
+                .init(eventType: .channelHidden)
+            ]
+        )
+        apiClient.test_simulateResponse(.success(payload))
+        
+        // Assert received events are posted
+        AssertAsync.willBeEqual(
+            eventLogger.equatableEvents,
+            payload
+                .eventPayloads
+                .compactMap { try? $0.event() }
+                .map(\.asEquatable)
+        )
     }
     
-    func test_noEventsArePublished_ifErrorResponseComes() throws {
-        updater = ConnectionRecoveryUpdater(
-            database: database,
-            eventNotificationCenter: webSocketClient.eventNotificationCenter,
-            apiClient: apiClient,
-            databaseCleanupUpdater: channelDatabaseCleanupUpdater,
-            useSyncEndpoint: true
-        )
-        let cid: ChannelId = .unique
-
+    func test_whenSyncReturnsEventsAndRefetchSucceeds_lastSyncIsSetToMostRecentEventTimestamp() throws {
         // Create current user in the database
         try database.createCurrentUser()
         
-        // Create channel in the database
-        try database.createChannel(cid: cid)
-        
-        // Set `lastReceivedEventDate`
-        try database.writeSynchronously { session in
-            let currentUser = try XCTUnwrap(session.currentUser)
-            currentUser.lastReceivedEventDate = Date()
+        // Set `lastSyncedAt` field
+        try database.writeSynchronously {
+            $0.currentUser?.lastSyncedAt = Date()
         }
         
-        // Simulate `.connecting` connection state of a web-socket
-        webSocketClient.simulateConnectionStatus(.connecting)
+        // Create channels linked to queries
+        let cids: Set<ChannelId> = [.unique, .unique, .unique]
+        for cid in cids {
+            try database.createChannel(cid: cid, withQuery: true)
+        }
         
         // Simulate `.connected` connection state of a web-socket
         webSocketClient.simulateConnectionStatus(.connected(connectionId: .unique))
         
-        // Get access to EventNotificationCenter to check for events and remove already logged events
-        let eventCenter = webSocketClient.init_eventNotificationCenter as! EventNotificationCenterMock
-        eventCenter.process_loggedEvents = []
+        // Assert /sync is called
+        AssertAsync.willBeTrue(apiClient.request_endpoint != nil)
         
-        // Assert a network request is created
-        AssertAsync.willBeEqual(apiClient.request_allRecordedCalls.count, 1)
-        
-        // Simulate error response
-        apiClient.test_simulateResponse(Result<MissingEventsPayload, Error>.failure(TestError()))
-        
-        // Assert no events are published
-        AssertAsync.staysTrue(eventCenter.process_loggedEvents.isEmpty)
-    }
-    
-    func test_whenBackendRespondsWith400_callsChannelListCleanUp() throws {
-        updater = ConnectionRecoveryUpdater(
-            database: database,
-            eventNotificationCenter: webSocketClient.eventNotificationCenter,
-            apiClient: apiClient,
-            databaseCleanupUpdater: channelDatabaseCleanupUpdater,
-            useSyncEndpoint: true
+        // Simulate successful /sync response
+        let olderEvent = EventPayload(
+            eventType: .messageNew,
+            createdAt: Date()
         )
-        let cid: ChannelId = .unique
-
-        try database.createCurrentUser()
-        try database.createChannel(cid: cid)
-
-        try database.writeSynchronously { session in
-            let currentUser = try XCTUnwrap(session.currentUser)
-            currentUser.lastReceivedEventDate = Date()
-        }
-        
-        webSocketClient.simulateConnectionStatus(.connecting)
-        webSocketClient.simulateConnectionStatus(.connected(connectionId: .unique))
-
-        AssertAsync.willBeEqual(apiClient.request_allRecordedCalls.count, 1)
-
-        var refetchCalled = false
-        channelDatabaseCleanupUpdater.refetchExistingChannelListQueries_body = {
-            refetchCalled = true
-        }
-
-        var cleanupCalledWithSession: DatabaseSession?
-        channelDatabaseCleanupUpdater.resetExistingChannelsData_body = { session in
-            cleanupCalledWithSession = session
-            // Check refetch wasn't called yet
-            XCTAssertFalse(refetchCalled)
-        }
-        
+        let newerEvent = EventPayload(
+            eventType: .messageNew,
+            createdAt: Date().addingTimeInterval(10)
+        )
         apiClient.test_simulateResponse(
-            Result<MissingEventsPayload, Error>.failure(
-                ClientError(with: ErrorPayload(code: 0, message: "", statusCode: 400))
+            .success(
+                MissingEventsPayload(
+                    eventPayloads: [olderEvent, newerEvent]
+                )
             )
         )
-
-        AssertAsync {
-            Assert.willBeTrue(refetchCalled)
-            Assert.willBeEqual(cleanupCalledWithSession as? NSManagedObjectContext, self.database.writableContext)
-        }
+        
+        // Assert `syncChannelListQueries` is invoked with local channels as synced
+        AssertAsync.willBeEqual(
+            channelDatabaseCleanupUpdater.syncChannelListQueries_syncedChannelIDs,
+            cids
+        )
+        
+        // Simulate successful queries refetch
+        channelDatabaseCleanupUpdater.syncChannelListQueries_completion?(.success(()))
+        
+        // Load current user
+        let currentUser = try XCTUnwrap(database.viewContext.currentUser)
+        
+        // Assert `lastSyncedAt` equals most recent event timestamp
+        AssertAsync.willBeEqual(currentUser.lastSyncedAt, newerEvent.createdAt)
     }
     
-    func test_eventsFromPayloadArePublished_ifSuccessfulResponseComes() throws {
-        updater = ConnectionRecoveryUpdater(
-            database: database,
-            eventNotificationCenter: webSocketClient.eventNotificationCenter,
-            apiClient: apiClient,
-            databaseCleanupUpdater: channelDatabaseCleanupUpdater,
-            useSyncEndpoint: true
-        )
-        let json = XCTestCase.mockData(fromFile: "MissingEventsPayload")
-        let payload = try JSONDecoder.default.decode(MissingEventsPayload.self, from: json)
-        let events = payload.eventPayloads.compactMap { try? $0.event() }
-        
+    func test_whenSyncReturnsEventsButRefetchFails_lastSyncDateStaysTheSame() throws {
         // Create current user in the database
         try database.createCurrentUser()
         
-        // Create channel in the database
-        try database.createChannel(cid: (events.first as! ChannelSpecificEvent).cid)
-        
-        try database.writeSynchronously { session in
-            let currentUser = try XCTUnwrap(session.currentUser)
-            currentUser.lastReceivedEventDate = .unique
+        // Set `lastSyncedAt` field
+        let lastSyncedAt = Date()
+        try database.writeSynchronously {
+            $0.currentUser?.lastSyncedAt = lastSyncedAt
         }
         
-        webSocketClient.simulateConnectionStatus(.connecting)
+        // Create channels linked to queries
+        let cids: Set<ChannelId> = [.unique, .unique, .unique]
+        for cid in cids {
+            try database.createChannel(cid: cid, withQuery: true)
+        }
+        
+        // Simulate `.connected` connection state of a web-socket
         webSocketClient.simulateConnectionStatus(.connected(connectionId: .unique))
         
-        // Get access to EventNotificationCenter to check for events and remove already logged events
-        let eventCenter = webSocketClient.init_eventNotificationCenter as! EventNotificationCenterMock
-        eventCenter.process_loggedEvents = []
-
-        // Assert a network request is created
-        AssertAsync.willBeEqual(apiClient.request_allRecordedCalls.count, 1)
+        // Assert /sync is called
+        AssertAsync.willBeTrue(apiClient.request_endpoint != nil)
         
-        // Simulate successful response
-        apiClient.test_simulateResponse(Result<MissingEventsPayload, Error>.success(payload))
-        
-        // Assert events from payload are published
-        AssertAsync.willBeEqual(eventCenter.process_loggedEvents.map(\.asEquatable), events.map(\.asEquatable))
-    }
-
-    func test_existingQueriesAreRefetched_ifSuccessfulResponseComes() throws {
-        updater = ConnectionRecoveryUpdater(
-            database: database,
-            eventNotificationCenter: webSocketClient.eventNotificationCenter,
-            apiClient: apiClient,
-            databaseCleanupUpdater: channelDatabaseCleanupUpdater,
-            useSyncEndpoint: true
+        // Simulate successful /sync response
+        let olderEvent = EventPayload(
+            eventType: .messageNew,
+            createdAt: Date()
         )
-        // Create the current user and a channel in the database
-        try database.createCurrentUser()
-        try database.createChannel(cid: .unique)
-
-        try database.writeSynchronously { session in
-            let currentUser = try XCTUnwrap(session.currentUser)
-            currentUser.lastReceivedEventDate = .unique
-        }
-
-        webSocketClient.simulateConnectionStatus(.connecting)
-        webSocketClient.simulateConnectionStatus(.connected(connectionId: .unique))
-
-        // Assert a network request is created
-        AssertAsync.willBeEqual(apiClient.request_allRecordedCalls.count, 1)
-
-        // Set up callbacks
-        var resetChannelsDataCalled = false
-        channelDatabaseCleanupUpdater.resetExistingChannelsData_body = { _ in resetChannelsDataCalled = true }
-
-        var refetchQueriesCalled = false
-        channelDatabaseCleanupUpdater.refetchExistingChannelListQueries_body = { refetchQueriesCalled = true }
-
-        // Simulate successful response
+        let newerEvent = EventPayload(
+            eventType: .messageNew,
+            createdAt: Date().addingTimeInterval(10)
+        )
         apiClient.test_simulateResponse(
-            Result<MissingEventsPayload, Error>.success(MissingEventsPayload(eventPayloads: []))
+            .success(
+                MissingEventsPayload(
+                    eventPayloads: [olderEvent, newerEvent]
+                )
+            )
         )
-
-        // Assert only `refetchExistingChannelListQueries` is called
-        AssertAsync {
-            Assert.willBeTrue(refetchQueriesCalled)
-            Assert.staysFalse(resetChannelsDataCalled)
+        
+        // Assert `syncChannelListQueries` is invoked with local channels as synced
+        AssertAsync.willBeEqual(
+            channelDatabaseCleanupUpdater.syncChannelListQueries_syncedChannelIDs,
+            cids
+        )
+        
+        // Simulate failed queries refetch
+        channelDatabaseCleanupUpdater.syncChannelListQueries_completion?(
+            .failure(ClientError(.unique))
+        )
+        
+        // Load current user
+        let currentUser = try XCTUnwrap(database.viewContext.currentUser)
+        
+        // Assert `lastSyncedAt` stays the same
+        AssertAsync.staysEqual(currentUser.lastSyncedAt, lastSyncedAt)
+    }
+    
+    func test_whenSyncReturnsZeroEventsAndRefetchSucceeds_lastSyncDateStaysTheSame() throws {
+        // Create current user in the database
+        try database.createCurrentUser()
+        
+        // Set `lastSyncedAt` field
+        let lastSyncedAt: Date = .unique
+        try database.writeSynchronously {
+            $0.currentUser?.lastSyncedAt = lastSyncedAt
         }
+        
+        // Create channels linked to queries
+        let cids: Set<ChannelId> = [.unique, .unique, .unique]
+        for cid in cids {
+            try database.createChannel(cid: cid, withQuery: true)
+        }
+        
+        // Simulate `.connected` connection state of a web-socket
+        webSocketClient.simulateConnectionStatus(.connected(connectionId: .unique))
+        
+        // Assert /sync is called
+        AssertAsync.willBeTrue(apiClient.request_endpoint != nil)
+        
+        // Simulate successful /sync response
+        apiClient.test_simulateResponse(
+            .success(MissingEventsPayload(eventPayloads: []))
+        )
+        
+        // Assert `syncChannelListQueries` is invoked with local channels as synced
+        AssertAsync.willBeEqual(
+            channelDatabaseCleanupUpdater.syncChannelListQueries_syncedChannelIDs,
+            cids
+        )
+        
+        // Simulate successful queries refetch
+        channelDatabaseCleanupUpdater.syncChannelListQueries_completion?(.success(()))
+        
+        // Load current user
+        let currentUser = try XCTUnwrap(database.viewContext.currentUser)
+        
+        // Assert `lastSyncedAt` stays the same
+        AssertAsync.staysEqual(currentUser.lastSyncedAt, lastSyncedAt)
+    }
+    
+    func test_whenSyncReturnsZeroEventsAndRefetchFails_lastSyncDateStaysTheSame() throws {
+        // Create current user in the database
+        try database.createCurrentUser()
+        
+        // Set `lastSyncedAt` field
+        let lastSyncedAt: Date = .unique
+        try database.writeSynchronously {
+            $0.currentUser?.lastSyncedAt = lastSyncedAt
+        }
+        
+        // Create channels linked to queries
+        let cids: Set<ChannelId> = [.unique, .unique, .unique]
+        for cid in cids {
+            try database.createChannel(cid: cid, withQuery: true)
+        }
+        
+        // Simulate `.connected` connection state of a web-socket
+        webSocketClient.simulateConnectionStatus(.connected(connectionId: .unique))
+        
+        // Assert /sync is called
+        AssertAsync.willBeTrue(apiClient.request_endpoint != nil)
+        
+        // Simulate successful /sync response
+        apiClient.test_simulateResponse(
+            .success(MissingEventsPayload(eventPayloads: []))
+        )
+        
+        // Assert `syncChannelListQueries` is invoked with local channels as synced
+        AssertAsync.willBeEqual(
+            channelDatabaseCleanupUpdater.syncChannelListQueries_syncedChannelIDs,
+            cids
+        )
+        
+        // Simulate failed queries refetch
+        channelDatabaseCleanupUpdater.syncChannelListQueries_completion?(
+            .failure(ClientError(.unique))
+        )
+        
+        // Load current user
+        let currentUser = try XCTUnwrap(database.viewContext.currentUser)
+        
+        // Assert `lastSyncedAt` stays the same
+        AssertAsync.staysEqual(currentUser.lastSyncedAt, lastSyncedAt)
+    }
+    
+    func test_whenSyncFailsButRefetchSucceeds_lastSyncDateIsChangedToCurrentDate() throws {
+        // Create current user in the database
+        try database.createCurrentUser()
+        
+        // Set `lastSyncedAt` field
+        let lastSyncedAt = Date()
+        try database.writeSynchronously {
+            $0.currentUser?.lastSyncedAt = lastSyncedAt
+        }
+        
+        // Create channels linked to queries
+        let cids: Set<ChannelId> = [.unique, .unique, .unique]
+        for cid in cids {
+            try database.createChannel(cid: cid, withQuery: true)
+        }
+        
+        // Simulate `.connected` connection state of a web-socket
+        webSocketClient.simulateConnectionStatus(.connected(connectionId: .unique))
+        
+        // Assert /sync is called
+        AssertAsync.willBeTrue(apiClient.request_endpoint != nil)
+        
+        // Simulate error from /sync endpoint
+        let tooManyEventsError = ClientError(
+            with: ErrorPayload(
+                code: 0,
+                message: "",
+                statusCode: 400
+            )
+        )
+        apiClient.test_simulateResponse(
+            Result<MissingEventsPayload, Error>.failure(tooManyEventsError)
+        )
+        
+        // Assert `syncChannelListQueries` is invoked with empty synced channels
+        AssertAsync.willBeEqual(
+            channelDatabaseCleanupUpdater.syncChannelListQueries_syncedChannelIDs,
+            []
+        )
+        
+        // Simulate successful queries refetch
+        channelDatabaseCleanupUpdater.syncChannelListQueries_completion?(.success(()))
+        
+        // Load current user
+        let currentUser = try XCTUnwrap(database.viewContext.currentUser)
+        
+        // Assert `lastSyncedAt` is updated with the current date
+        AssertAsync.willBeTrue(currentUser.lastSyncedAt! > lastSyncedAt)
+    }
+    
+    func test_whenSyncAndRefetchFail_lastSyncDateStaysTheSame() throws {
+        // Create current user in the database
+        try database.createCurrentUser()
+        
+        // Set `lastSyncedAt` field
+        let lastSyncedAt: Date = .unique
+        try database.writeSynchronously {
+            $0.currentUser?.lastSyncedAt = lastSyncedAt
+        }
+        
+        // Create channels linked to queries
+        let cids: Set<ChannelId> = [.unique, .unique, .unique]
+        for cid in cids {
+            try database.createChannel(cid: cid, withQuery: true)
+        }
+        
+        // Simulate `.connected` connection state of a web-socket
+        webSocketClient.simulateConnectionStatus(.connected(connectionId: .unique))
+        
+        // Assert /sync is called
+        AssertAsync.willBeTrue(apiClient.request_endpoint != nil)
+        
+        // Simulate too many events error from /sync
+        let tooManyEventsError = ClientError(
+            with: ErrorPayload(
+                code: 0,
+                message: "",
+                statusCode: 400
+            )
+        )
+        apiClient.test_simulateResponse(
+            Result<MissingEventsPayload, Error>.failure(tooManyEventsError)
+        )
+        
+        // Assert `syncChannelListQueries` is invoked with empty synced channels
+        AssertAsync.willBeEqual(
+            channelDatabaseCleanupUpdater.syncChannelListQueries_syncedChannelIDs,
+            []
+        )
+        
+        // Simulate failed queries refetch
+        channelDatabaseCleanupUpdater.syncChannelListQueries_completion?(
+            .failure(ClientError(.unique))
+        )
+        
+        // Load current user
+        let currentUser = try XCTUnwrap(database.viewContext.currentUser)
+        
+        // Assert `lastSyncedAt` stays the same
+        AssertAsync.staysEqual(currentUser.lastSyncedAt, lastSyncedAt)
     }
     
     func test_eventPublisher_doesNotRetainItself() throws {
-        updater = ConnectionRecoveryUpdater(
-            database: database,
-            eventNotificationCenter: webSocketClient.eventNotificationCenter,
-            apiClient: apiClient,
-            databaseCleanupUpdater: channelDatabaseCleanupUpdater,
-            useSyncEndpoint: true
-        )
         // Create current user in the database
         try database.createCurrentUser()
         
         // Create channel in the database
-        try database.createChannel()
+        try database.createChannel(withQuery: true)
         
-        // Set `lastReceivedEventDate`
+        // Set `lastSyncedAt`
         try database.writeSynchronously { session in
             let currentUser = try XCTUnwrap(session.currentUser)
-            currentUser.lastReceivedEventDate = Date()
+            currentUser.lastSyncedAt = Date()
         }
         
         // Simulate `.connecting` connection state of a web-socket
@@ -322,9 +525,7 @@ final class ConnectionRecoveryUpdater_Tests: StressTestCase {
                 MissingEventsPayload(eventPayloads: [])
             )
         )
-        
-        channelDatabaseCleanupUpdater.refetchExistingChannelListQueries_body()
-        
+                
         // Assert
         AssertAsync.canBeReleased(&updater)
     }
