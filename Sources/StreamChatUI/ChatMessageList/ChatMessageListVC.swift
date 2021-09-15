@@ -60,7 +60,7 @@ open class ChatMessageListVC:
         .withoutAutoresizingMaskConstraints
 
     /// The height of the typing indicator view
-    open private(set) var typingIndicatorViewHeight: CGFloat = 22
+    open private(set) var typingIndicatorViewHeight: CGFloat = 28
 
     /// A Boolean value indicating whether the typing events are enabled.
     open var isTypingEventsEnabled: Bool {
@@ -268,25 +268,13 @@ open class ChatMessageListVC:
     open func showTypingIndicator(typingUsers: [ChatUser]) {
         guard isTypingEventsEnabled else { return }
 
-        if typingIndicatorView.isHidden {
-            Animate {
-                self.listView.contentInset.top += self.typingIndicatorViewHeight
-                self.listView.scrollIndicatorInsets.top += self.typingIndicatorViewHeight
-            }
-
-            if listView.isLastCellFullyVisible {
-                scrollToMostRecentMessage()
-            }
-        }
-
-        // If we somehow cannot fetch any user name, we simply show that `Someone is typing`
-        guard let user = typingUsers.first(where: { user in user.name != nil }), let name = user.name else {
+        if let user = typingUsers.first(where: { user in user.name != nil }), let name = user.name {
+            typingIndicatorView.content = L10n.MessageList.TypingIndicator.users(name, typingUsers.count - 1)
+        } else {
+            // If we somehow cannot fetch any user name, we simply show that `Someone is typing`
             typingIndicatorView.content = L10n.MessageList.TypingIndicator.typingUnknown
-            typingIndicatorView.isHidden = false
-            return
         }
-        
-        typingIndicatorView.content = L10n.MessageList.TypingIndicator.users(name, typingUsers.count - 1)
+
         typingIndicatorView.isHidden = false
     }
     
@@ -295,11 +283,6 @@ open class ChatMessageListVC:
         guard isTypingEventsEnabled, typingIndicatorView.isVisible else { return }
 
         typingIndicatorView.isHidden = true
-
-        Animate {
-            self.listView.contentInset.top -= self.typingIndicatorViewHeight
-            self.listView.scrollIndicatorInsets.top -= self.typingIndicatorViewHeight
-        }
     }
 
     // MARK: - UITableViewDataSource & UITableViewDelegate
