@@ -26,17 +26,6 @@ final class NewChannelQueryUpdater: Worker {
         fetchRequest: ChannelDTO.channelWithoutQueryFetchRequest
     )
     
-    private var queries: [ChannelListQueryDTO] {
-        do {
-            let queries = try database.backgroundReadOnlyContext
-                .fetch(NSFetchRequest<ChannelListQueryDTO>(entityName: ChannelListQueryDTO.entityName))
-            return queries
-        } catch {
-            log.error("Internal error: Failed to fetch [ChannelListQueryDTO]: \(error)")
-        }
-        return []
-    }
-    
     init(database: DatabaseContainer, apiClient: APIClient, env: Environment) {
         environment = env
         super.init(database: database, apiClient: apiClient)
@@ -87,26 +76,40 @@ final class NewChannelQueryUpdater: Worker {
     }
     
     private func updateChannelListQuery(for channelDTO: ChannelDTO) {
-        database.backgroundReadOnlyContext.perform { [weak self] in
-            guard let queries = self?.queries else { return }
+        let context = database.backgroundReadOnlyContext
+        context.perform { [weak self] in
+            let cid = channelDTO.cid
             
-            var updatedQueries: [ChannelListQuery] = []
-            
-            do {
-                updatedQueries = try queries.map {
-                    // Modify original query filter
-                    try $0.asChannelListQueryWithUpdatedFilter(filterToAdd: .equal("cid", to: channelDTO.cid))
+            let updatedQueries: [ChannelListQuery] = context
+                .loadChannelListQueries()
+                .compactMap { dto in
+                    guard let query = dto.asModel() else { return nil }
+                    
+                    return ChannelListQuery(
+                        filter: .and([query.filter, .equal("cid", to: cid)]),
+                        sort: query.sort,
+                        pageSize: 1
+                    )
                 }
-                
-            } catch {
-                log.error("Internal error. Failed to update ChannelListQueries for the new channel: \(error)")
-            }
             
-            // Send `update(channelListQuery:` requests so corresponding queries will be linked to the channel
-            updatedQueries.forEach {
-                self?.channelListUpdater.update(channelListQuery: $0) { result in
-                    if case let .failure(error) = result {
-                        log.error("Internal error. Failed to update ChannelListQueries for the new channel: \(error)")
+            for query in updatedQueries {
+                self?.channelListUpdater.fetch(query) {
+                    switch $0 {
+                    case let .success(payload):
+                        guard let channel = payload.channels.first(where: { $0.channel.cid.rawValue == cid }) else {
+                            log.debug("Channel \(cid) does not belong to query: \(query)")
+                            return
+                        }
+                        
+                        self?.database.write({ session in
+                            try session.saveChannel(payload: channel, query: query)
+                        }, completion: { error in
+                            if let error = error {
+                                log.error("Failed to link channel \(channel) to query: \(query): \(error)")
+                            }
+                        })
+                    case let .failure(error):
+                        log.error("Internal error. Failed to update query: \(query) for the new channel: \(error)")
                     }
                 }
             }
@@ -120,20 +123,5 @@ extension NewChannelQueryUpdater {
             _ database: DatabaseContainer,
             _ apiClient: APIClient
         ) -> ChannelListUpdater = ChannelListUpdater.init
-    }
-}
-
-private extension ChannelListQueryDTO {
-    func asChannelListQueryWithUpdatedFilter(
-        filterToAdd filter: Filter<ChannelListFilterScope>
-    ) throws -> ChannelListQuery {
-        let encodedFilter = try JSONDecoder.default
-            .decode(Filter<ChannelListFilterScope>.self, from: filterJSONData)
-        
-        // We need to pass original `filterHash` so channel will be linked to original query, not the modified one
-        var updatedFilter: Filter<ChannelListFilterScope> = .and([encodedFilter, filter])
-        updatedFilter.explicitHash = filterHash
-        
-        return ChannelListQuery(filter: updatedFilter)
     }
 }
