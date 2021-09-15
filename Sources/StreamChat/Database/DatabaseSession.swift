@@ -317,10 +317,6 @@ extension DatabaseSession {
             try saveCurrentUserUnreadCount(count: unreadCount)
         }
         
-        if let currentUser = currentUser, let date = payload.createdAt {
-            currentUser.lastReceivedEventDate = date
-        }
-        
         // Save message data (must be always done after the channel data!)
         if let message = payload.message {
             if let cid = payload.cid {

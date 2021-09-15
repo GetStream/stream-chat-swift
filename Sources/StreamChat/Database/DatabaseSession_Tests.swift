@@ -272,7 +272,17 @@ class DatabaseSession_Tests: StressTestCase {
         }
     }
     
-    func test_saveEvent_resetsLastReceivedEventDate_withEventCreatedAtValue() throws {
+    func test_saveEvent_doesNotChangeLastSyncedDate() throws {
+        let lastSyncedAt: Date = .unique
+        
+        // Create current user in database.
+        try database.createCurrentUser()
+        
+        // Update `lastSyncedAt` value
+        try database.writeSynchronously { session in
+            session.currentUser?.lastSyncedAt = lastSyncedAt
+        }
+        
         // Create event payload with specific `createdAt` date
         let eventPayload = EventPayload(
             eventType: .messageNew,
@@ -295,8 +305,8 @@ class DatabaseSession_Tests: StressTestCase {
         // Load current user
         let currentUser = database.viewContext.currentUser
         
-        // Assert `eventPayload.createdAt` is taked as last received event date
-        XCTAssertEqual(currentUser?.lastReceivedEventDate, eventPayload.createdAt)
+        // Assert `eventPayload.createdAt` was not updated
+        XCTAssertEqual(currentUser?.lastSyncedAt, lastSyncedAt)
     }
     
     func test_saveEvent_doesntResetLastReceivedEventDate_whenEventCreatedAtValueIsNil() throws {
@@ -322,7 +332,7 @@ class DatabaseSession_Tests: StressTestCase {
         // Load current user
         let currentUser = database.viewContext.currentUser
         
-        // Assert `lastReceivedEventDate` is nil
-        XCTAssertNil(currentUser?.lastReceivedEventDate)
+        // Assert `lastSyncedAt` is nil
+        XCTAssertNil(currentUser?.lastSyncedAt)
     }
 }
