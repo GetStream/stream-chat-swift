@@ -35,7 +35,6 @@ class ChannelListUpdaterMock: ChannelListUpdater {
     
     override func update(
         channelListQuery: ChannelListQuery,
-        trumpExistingChannels: Bool = false,
         completion: ((Result<ChannelListPayload, Error>) -> Void)? = nil
     ) {
         _update_queries.mutate { $0.append(channelListQuery) }

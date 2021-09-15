@@ -29,35 +29,27 @@ class ChannelListUpdater: Worker {
     ///
     func update(
         channelListQuery: ChannelListQuery,
-        trumpExistingChannels: Bool = false,
         completion: ((Result<ChannelListPayload, Error>) -> Void)? = nil
     ) {
-        apiClient
-            .request(endpoint: .channels(query: channelListQuery)) { [weak self] (result: Result<
-                ChannelListPayload,
-                Error
-            >) in
-                switch result {
-                case let .success(channelListPayload):
-                    self?.database.write { session in
-//                        if trumpExistingChannels {
-//                            try session.deleteChannels(query: channelListQuery)
-//                        }
-                        try channelListPayload.channels.forEach {
-                            try session.saveChannel(payload: $0, query: channelListQuery)
-                        }
-                    } completion: { error in
-                        if let error = error {
-                            log.error("Failed to save `ChannelListPayload` to the database. Error: \(error)")
-                            completion?(.failure(error))
-                        } else {
-                            completion?(.success(channelListPayload))
-                        }
+        fetch(channelListQuery) { [weak self] result in
+            switch result {
+            case let .success(channelListPayload):
+                self?.database.write { session in
+                    try channelListPayload.channels.forEach {
+                        try session.saveChannel(payload: $0, query: channelListQuery)
                     }
-                case let .failure(error):
-                    completion?(.failure(error))
+                } completion: { error in
+                    if let error = error {
+                        log.error("Failed to save `ChannelListPayload` to the database. Error: \(error)")
+                        completion?(.failure(error))
+                    } else {
+                        completion?(.success(channelListPayload))
+                    }
                 }
+            case let .failure(error):
+                completion?(.failure(error))
             }
+        }
     }
     
     /// Marks all channels for a user as read.
