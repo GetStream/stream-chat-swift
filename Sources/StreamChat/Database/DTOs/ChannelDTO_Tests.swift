@@ -493,22 +493,23 @@ class ChannelDTO_Tests: XCTestCase {
     /// `ChannelListSortingKey` test for sort descriptor and encoded value.
     func test_channelListSortingKey() {
         let encoder = JSONEncoder.stream
-
-        var channelListSortingKey = ChannelListSortingKey.default
-        XCTAssertEqual(encoder.encodedString(channelListSortingKey), "updated_at")
-        XCTAssertEqual(
-            channelListSortingKey.sortDescriptor(isAscending: true),
-            NSSortDescriptor(key: "defaultSortingAt", ascending: true)
-        )
-        XCTAssertEqual(
-            channelListSortingKey.sortDescriptor(isAscending: false),
-            NSSortDescriptor(key: "defaultSortingAt", ascending: false)
-        )
+        
         XCTAssertEqual(
             ChannelListSortingKey.defaultSortDescriptor,
             NSSortDescriptor(key: "defaultSortingAt", ascending: false)
         )
 
+        var channelListSortingKey = ChannelListSortingKey.updatedAt
+        XCTAssertEqual(encoder.encodedString(channelListSortingKey), "updated_at")
+        XCTAssertEqual(
+            channelListSortingKey.sortDescriptor(isAscending: false),
+            NSSortDescriptor(key: "updatedAt", ascending: false)
+        )
+        XCTAssertEqual(
+            channelListSortingKey.sortDescriptor(isAscending: true),
+            NSSortDescriptor(key: "updatedAt", ascending: true)
+        )
+        
         channelListSortingKey = .createdAt
         XCTAssertEqual(encoder.encodedString(channelListSortingKey), "created_at")
         XCTAssertEqual(

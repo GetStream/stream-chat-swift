@@ -6,42 +6,17 @@ import Foundation
 
 /// `ChannelListSortingKey` is keys by which you can get sorted channels after query.
 public enum ChannelListSortingKey: String, SortingKey {
-    /// The default sorting is by the last massage date or a channel created date. The same as by `updatedDate`.
-    case `default` = "defaultSortingAt"
     /// Sort channels by date they were created.
-    case createdAt
+    case createdAt = "created_at"
     /// Sort channels by date they were updated.
-    case updatedAt
+    case updatedAt = "updated_at"
     /// Sort channels by the last message date..
-    case lastMessageAt
+    case lastMessageAt = "last_message_at"
     /// Sort channels by number of members.
-    case memberCount
+    case memberCount = "member_count"
     /// Sort channels by `cid`.
     /// **Note**: This sorting option can extend your response waiting time if used as primary one.
     case cid
-    /// Sort channels by unread state. When using this sorting key, every unread channel weighs the same,
-    /// so they're sorted by `updatedAt`
-    case hasUnread
-    /// Sort channels by their unread count.
-    case unreadCount
-    
-    public func encode(to encoder: Encoder) throws {
-        var container = encoder.singleValueContainer()
-        let value: String
-        
-        switch self {
-        case .default: value = "updated_at"
-        case .createdAt: value = "created_at"
-        case .updatedAt: value = "updated_at"
-        case .lastMessageAt: value = "last_message_at"
-        case .memberCount: value = "member_count"
-        case .cid: value = "cid"
-        case .hasUnread: value = "has_unread"
-        case .unreadCount: value = "unread_count"
-        }
-        
-        try container.encode(value)
-    }
 }
 
 extension ChannelListSortingKey {
@@ -50,8 +25,18 @@ extension ChannelListSortingKey {
         return .init(keyPath: dateKeyPath, ascending: false)
     }()
     
-    func sortDescriptor(isAscending: Bool) -> NSSortDescriptor? {
-        .init(key: rawValue, ascending: isAscending)
+    func sortDescriptor(isAscending: Bool) -> NSSortDescriptor {
+        .init(key: sortDescriptorKey, ascending: isAscending)
+    }
+    
+    var sortDescriptorKey: String {
+        switch self {
+        case .updatedAt: return "updatedAt"
+        case .createdAt: return "createdAt"
+        case .memberCount: return "memberCount"
+        case .lastMessageAt: return "lastMessageAt"
+        case .cid: return "cid"
+        }
     }
 }
 

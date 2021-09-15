@@ -5,7 +5,7 @@
 import Foundation
 
 /// A sorting key protocol.
-public protocol SortingKey: Encodable {}
+public protocol SortingKey: Codable {}
 
 /// Sorting options.
 ///
@@ -14,7 +14,7 @@ public protocol SortingKey: Encodable {}
 /// // Sort channels by the last message date:
 /// let sorting = Sorting("lastMessageDate")
 /// ```
-public struct Sorting<Key: SortingKey>: Encodable, CustomStringConvertible {
+public struct Sorting<Key: SortingKey>: SortingKey, CustomStringConvertible {
     /// A sorting field name.
     public let key: Key
     /// A sorting direction.
