@@ -5,7 +5,7 @@ title: Message List
 import ComponentsNote from '../common-content/components-note.md'
 import MessageListProperties from '../common-content/reference-docs/stream-chat-ui/chat-message-list/chat-message-list-vc-properties.md'
 
-The `ChatMessageListVC` is a component responsible to display a list of messages. It is not the responsibility of the message list to know the source of the messages, the data should be provided through the `ChatMessageListVCDataSource` and the `ChatMessageListVCDelegate`, very similar to how a native `UITableView` and a `UICollectionView` works.
+The `ChatMessageListVC` is a component that renders a list of messages. It is responsible for deciding on how it should render a message dependent on its content and type of message. The messages data should be provided through the data source named `ChatMessageListVCDataSource` and some important actions should be delegated through the `ChatMessageListVCDelegate`, very similar to how a native `UITableView` and a `UICollectionView` works.
 
 :::note
 The Stream SDK already provides a `ChatChannelVC` and a `ChatThreadVC` that use the `ChatMessageListVC` to render the messages from a Channel and Thread, respectively.
@@ -30,9 +30,6 @@ open class ChannelViewController: UIViewController, ThemeProvider {
 
     /// Controller that handles the composer view.
     open lazy var messageComposerVC = ComposerVC()
-
-    /// Flag to control if it is currently loading previous messages.
-    @Atomic private var loadingPreviousMessages: Bool = false
 
     override open func viewDidLoad() {
         super.viewDidLoad()
@@ -134,14 +131,7 @@ extension ChannelViewController: ChatMessageListVCDelegate {
             return
         }
 
-        if _loadingPreviousMessages.compareAndSwap(old: false, new: true) {
-            channelController.loadPreviousMessages(completion: { [weak self] _ in
-                guard let self = self else {
-                    return
-                }
-                self.loadingPreviousMessages = false
-            })
-        }
+        channelController.loadPreviousMessages()
     }
 
     open func chatMessageListVC(
