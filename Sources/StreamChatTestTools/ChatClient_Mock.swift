@@ -25,6 +25,15 @@ public extension ChatClient {
                         eventNotificationCenter: $3,
                         internetConnection: $4
                     )
+                },
+                databaseContainerBuilder: {
+                    try DatabaseContainerMock(
+                        kind: $0,
+                        shouldFlushOnStart: $1,
+                        shouldResetEphemeralValuesOnStart: $2,
+                        localCachingSettings: $3,
+                        deletedMessagesVisibility: $4
+                    )
                 }
             ),
             tokenExpirationRetryStrategy: DefaultReconnectionStrategy()

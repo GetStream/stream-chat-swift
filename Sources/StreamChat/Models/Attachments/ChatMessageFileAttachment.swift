@@ -17,13 +17,13 @@ public struct FileAttachmentPayload: AttachmentPayload {
     public static let type: AttachmentType = .file
 
     /// A title, usually the name of the file.
-    public let title: String?
+    public var title: String?
     /// A link to the file.
-    public internal(set) var assetURL: URL
+    public var assetURL: URL
     /// The file itself.
-    public let file: AttachmentFile
+    public var file: AttachmentFile
     /// An extra data.
-    let extraData: [String: RawJSON]?
+    public var extraData: [String: RawJSON]?
     
     /// Decodes extra data as an instance of the given type.
     /// - Parameter ofType: The type an extra data should be decoded as.

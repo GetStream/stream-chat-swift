@@ -71,7 +71,12 @@ class UserUpdateViewController: UITableViewController {
             title: cell?.textLabel?.text ?? "",
             initialValue: cell?.detailTextLabel?.text ?? ""
         )
-        inputVC.onChange = { [unowned self] newValue in
+        inputVC.onChange = { [weak self] newValue in
+            guard let self = self else {
+                log.warning("Callback called while self is nil")
+                return
+            }
+
             switch keyPath {
             case \ChatUser.name:
                 self.userName = newValue

@@ -3,7 +3,29 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+### ✅ Added
+- Introduce `shouldLinkNewChannel` and `shouldLinkUpdatedChannel` delegate callbacks to `ChannelListController`. With these, one can control and link new/updated channels to the existing controller. [#1438](https://github.com/GetStream/stream-chat-swift/issues/1438)
+- Added injection of `ChatMessageReactionsBubbleView` to `Components`, so customers will be able to subclass and customise it. [#1451](https://github.com/GetStream/stream-chat-swift/pull/1451)
+- Add delegate func for tap on user avatar for a message [#1453](https://github.com/GetStream/stream-chat-swift/issues/1453)
+
 ### 🔄 Changed
+- Update `ChatClient` to disconnect immediately when the Internet connection disappears [#1449](https://github.com/GetStream/stream-chat-swift/issues/1449)
+
+### 🐞 Fixed
+- Fix message list wrong content inset when typing events disabled [#1455](https://github.com/GetStream/stream-chat-swift/pull/1455)
+- Fix message list unwanted scrolling when typing indicator shown [#1456](https://github.com/GetStream/stream-chat-swift/pull/1456)
+- Fix typing events always disabled when channel opened without cache from Channel List [#1458](https://github.com/GetStream/stream-chat-swift/pull/1458)
+
+# [4.0.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.0.0)
+_September 10, 2021_
+
+### 🔄 Changed
+
+# [4.0.0-RC.1](https://github.com/GetStream/stream-chat-swift/releases/tag/4.0.0-RC.1)
+_September 09, 2021_
+
+### 🐞 Fixed
+ - Fix channel list showing outdated data, and channels not showing any messages after reconnection [#1435](https://github.com/GetStream/stream-chat-swift/issues/1435)
 
 # [4.0.0-RC](https://github.com/GetStream/stream-chat-swift/releases/tag/4.0.0-RC)
 _September 03, 2021_

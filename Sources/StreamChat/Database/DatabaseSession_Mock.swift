@@ -165,6 +165,10 @@ extension DatabaseSessionMock {
         underlyingSession.loadChannelReads(for: userId)
     }
     
+    func saveQuery(query: ChannelListQuery) -> ChannelListQueryDTO {
+        underlyingSession.saveQuery(query: query)
+    }
+    
     func saveChannel(
         payload: ChannelPayload,
         query: ChannelListQuery?

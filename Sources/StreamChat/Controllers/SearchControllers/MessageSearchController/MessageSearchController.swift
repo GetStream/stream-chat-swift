@@ -92,8 +92,12 @@ public class ChatMessageSearchController: DataController, DelegateCallable, Data
                 ),
                 itemCreator: { $0.asModel() as ChatMessage }
             )
-            observer.onChange = { changes in
-                self.delegateCallback {
+            observer.onChange = { [weak self] changes in
+                self?.delegateCallback { [weak self] in
+                    guard let self = self else {
+                        log.warning("Callback called while self is nil")
+                        return
+                    }
                     $0.controller(self, didChangeMessages: changes)
                 }
             }

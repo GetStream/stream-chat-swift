@@ -31,13 +31,21 @@ public class CurrentChatUserController: DataController, DelegateCallable, DataSt
 
     /// Used for observing the current user changes in a database.
     private lazy var currentUserObserver = createUserObserver()
-        .onChange { [unowned self] change in
-            self.delegateCallback {
+        .onChange { [weak self] change in
+            self?.delegateCallback { [weak self] in
+                guard let self = self else {
+                    log.warning("Callback called while self is nil")
+                    return
+                }
                 $0.currentUserController(self, didChangeCurrentUser: change)
             }
         }
-        .onFieldChange(\.unreadCount) { [unowned self] change in
-            self.delegateCallback {
+        .onFieldChange(\.unreadCount) { [weak self] change in
+            self?.delegateCallback { [weak self] in
+                guard let self = self else {
+                    log.warning("Callback called while self is nil")
+                    return
+                }
                 $0.currentUserController(self, didChangeCurrentUserUnreadCount: change.unreadCount)
             }
         }
