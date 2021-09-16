@@ -5,6 +5,7 @@ title: Channel
 import Digraph  from '../common-content/digraph.jsx'
 import SingletonNote from '../common-content/chat-client.md'
 import ComponentsNote from '../common-content/components-note.md'
+//import ChannelProperties from '../common-content/reference-docs/stream-chat-ui/chat-channel/chat-channel-vc-properties.md'
 
 The `ChatChannelVC` is the component presented when a channel is selected from the channel list. This component is responsible to display the messages from the channel, as well as creating new messages through the composer.
 
@@ -122,20 +123,38 @@ class CustomChatChannelVC: ChatChannelVC {
 | ------------- | ------------- |
 | <img src={require("../assets/channelvc-default.png").default} /> | <img src={require("../assets/channelvc-livestream.png").default} /> |
 
-### Message List Data Source
-
-The `ChatChannelVC` component is responsible to provide the data to the `ChatMessageListVC` component by implementing the `ChatMessageListVCDataSource` protocol. You can customize how the data is provided by subclassing the `ChatChannelVC` and overriding the functions from the protocol.
-
-### Message List Delegate
-
-### Channel Events
-
 ## Channel Query
+When creating a `ChannelController` you can provide a `ChannelQuery` that is used for specifiying the query parameters for fetching the channel from Stream's backend. It has the following initializer: 
 
-### Filter
+```swift
+public init(
+    cid: ChannelId,
+    pageSize: Int? = .messagesPageSize,
+    paginationParameter: PaginationParameter? = nil,
+    membersLimit: Int? = nil,
+    watchersLimit: Int? = nil
+)
+```
 
-### Sorting
+### PageSize
+The page size is used to specify how many messages the channel will fetch initially and per page. By default the value is `.messagesPageSize` which is `25`.
 
-### Page Size
+### PaginationParameter
+The pagination parameter can be used to filter specific messages, like for example, to fetch messages only after or before a certain message. Example:
+
+```swift
+// Fetch messages after the message with id: "message-id-1"
+PaginationParameter.greaterThan("message-id-1")
+
+// Fetch messages before the message with id: "message-id-2"
+PaginationParameter.lessThan("message-id-2")
+```
+
+### MembersLimit
+This argument is used to specify the maximum number of members to be fetched along with the channel info.
+
+### WatchersLimit
+This argument is used to specify the maximum number of watchers to be fetched along with the channel info.
 
 ## Properties
+<!-- <ChannelProperties /> -->
