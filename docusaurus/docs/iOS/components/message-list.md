@@ -8,7 +8,7 @@ import MessageListProperties from '../common-content/reference-docs/stream-chat-
 The `ChatMessageListVC` is a component that renders a list of messages. It is responsible for deciding on how it should render a message dependent on its content and type of message. The messages data should be provided through the data source named `ChatMessageListVCDataSource` and some important actions should be delegated through the `ChatMessageListVCDelegate`, very similar to how a native `UITableView` and a `UICollectionView` works.
 
 :::note
-The Stream SDK already provides a `ChatChannelVC` and a `ChatThreadVC` that use the `ChatMessageListVC` to render the messages from a Channel and Thread, respectively.
+The Stream SDK already provides a [`ChatChannelVC`](../channel) and a [`ChatThreadVC`](../thread) that use the `ChatMessageListVC` to render the messages from a Channel and Thread, respectively.
 :::
 
 ## Usage

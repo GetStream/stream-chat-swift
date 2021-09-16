@@ -14,10 +14,10 @@ The following diagram shows the components hierarchy of `ChatThreadVC`:
 <Digraph>{ `
     ChatThreadVC -> ChatThreadHeaderView
     ChatThreadVC -> ChatMessageListVC
-    ChatThreadVC -> ChatMessageComposerVC
+    ChatThreadVC -> ComposerVC
     ChatThreadHeaderView [href="../thread-header-view"]
     ChatMessageListVC [href="../message-list"]
-    ChatMessageComposerVC [href="../message-composer"]
+    ComposerVC [href="../message-composer"]
 ` }</Digraph>
 
 ### Overview

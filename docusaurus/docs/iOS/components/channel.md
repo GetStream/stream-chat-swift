@@ -7,17 +7,17 @@ import SingletonNote from '../common-content/chat-client.md'
 import ComponentsNote from '../common-content/components-note.md'
 //import ChannelProperties from '../common-content/reference-docs/stream-chat-ui/chat-channel/chat-channel-vc-properties.md'
 
-The `ChatChannelVC` is the component presented when a channel is selected from the channel list. This component is responsible to display the messages from the channel, as well as creating new messages through the composer.
+The `ChatChannelVC` is the component presented when a channel is selected from the channel list. This component is responsible to display the messages from a channel, as well as creating new messages for the same channel.
 
 The following diagram shows the components hierarchy of `ChatChannelVC`:
 
 <Digraph>{ `
     ChatChannelVC -> ChatChannelHeaderView
     ChatChannelVC -> ChatMessageListVC
-    ChatChannelVC -> ChatMessageComposerVC
+    ChatChannelVC -> ComposerVC
     ChatChannelHeaderView [href="../channel-header-view"]
     ChatMessageListVC [href="../message-list"]
-    ChatMessageComposerVC [href="../message-composer"]
+    ComposerVC [href="../message-composer"]
 ` }</Digraph>
 
 ### Overview
@@ -52,8 +52,8 @@ Components.default.channelVC = CustomChatChannelVC.self
 
 Keep in mind this component is only responsible for composing the `ChatChannelHeaderView`, `ChatMessageListVC` and `ChatMessageComposerVC` components together. In case you want to customize the rendering of the messages, you should read the [Message List](../message-list) documentation and the [Message](../message) documentation.
 
-### Channel avatar size 
-It is really easy to change the channel avatar size displayed, by default, in the `navigationItem.rightBarButtonItem`. The only thing that is needed is to override the `channelAvatarSize` property, like this:
+### Channel Avatar Size 
+It is really easy to change the channel avatar size displayed by default in the `navigationItem.rightBarButtonItem`. The only thing that is needed is to override the `channelAvatarSize` property, like this:
 
 ```swift
 class CustomChatChannelVC: ChatChannelVC {
@@ -124,7 +124,7 @@ class CustomChatChannelVC: ChatChannelVC {
 | <img src={require("../assets/channelvc-default.png").default} /> | <img src={require("../assets/channelvc-livestream.png").default} /> |
 
 ## Channel Query
-When creating a `ChannelController` you can provide a `ChannelQuery` that is used for specifiying the query parameters for fetching the channel from Stream's backend. It has the following initializer: 
+When creating a `ChannelController` for the `ChatChannelVC` you can provide a different `ChannelQuery` instead of the default one. The `ChannelQuery` is the query parameters for fetching the channel from Stream's backend. It has the following initializer:
 
 ```swift
 public init(
