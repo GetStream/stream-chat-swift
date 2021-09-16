@@ -42,8 +42,7 @@ class ChatClientUpdater {
             client.createBackgroundWorkers()
 
             // Reset all existing local data.
-            try client.databaseContainer.removeAllData(force: true)
-            return
+            return try client.databaseContainer.removeAllData(force: true)
         }
 
         guard newToken != client.currentToken else {
