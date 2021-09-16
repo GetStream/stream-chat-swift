@@ -168,7 +168,11 @@ class APIClient {
                 self.requestsQueue = []
             }
             
-            self.tokenRefresher(ClientError.ExpiredToken()) {
+            self.tokenRefresher(ClientError.ExpiredToken()) { [weak self] in
+                guard let self = self else {
+                    return
+                }
+
                 self.isRefreshingToken = false
                 let queue = self.requestsQueue
                 self.requestsQueue = []

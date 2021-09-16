@@ -81,7 +81,11 @@ public class ChatClient {
                 decoder: decoder,
                 sessionConfiguration: urlSessionConfiguration
             ),
-            { error, completion in
+            { [weak self] error, completion in
+                guard let self = self else {
+                    completion()
+                    return
+                }
                 self.refreshToken(error: error, completion: { _ in completion() })
             }
         )
