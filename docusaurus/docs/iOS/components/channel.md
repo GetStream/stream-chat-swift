@@ -23,7 +23,7 @@ The following diagram shows the components hierarchy of `ChatChannelVC`:
 ### Overview
 
 - [`ChatChannelHeaderView`](../channel-header-view) is responsible to display the channel information in the `navigationItem.titleView`.
-- [`ChatMessageListVC`](../message-list) is the component that handles the rendering of the messages and delegates the data providing and events to the `ChatChannelVC` component.
+- [`ChatMessageListVC`](../message-list) is the component that handles the rendering of the messages.
 - [`ComposerVC`](../message-composer) is the component that handles the creation of new messages.
 
 ## Usage
@@ -53,7 +53,7 @@ Components.default.channelVC = CustomChatChannelVC.self
 Keep in mind this component is only responsible for composing the `ChatChannelHeaderView`, `ChatMessageListVC` and `ChatMessageComposerVC` components together. In case you want to customize the rendering of the messages, you should read the [Message List](../message-list) documentation and the [Message](../message) documentation.
 
 ### Channel avatar size 
-It is really easy to change the channel avatar size displayed, by default, in the `navigationItem.rightBarButtonItem`. The only think that is needed is to override the `channelAvatarSize` property, like this:
+It is really easy to change the channel avatar size displayed, by default, in the `navigationItem.rightBarButtonItem`. The only thing that is needed is to override the `channelAvatarSize` property, like this:
 
 ```swift
 class CustomChatChannelVC: ChatChannelVC {
