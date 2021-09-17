@@ -5,7 +5,7 @@ title: ChatChannelHeaderView
 import ComponentsNote from '../common-content/components-note.md'
 import Properties from '../common-content/reference-docs/stream-chat-ui/chat-message-list/chat-message-list-header-view-properties.md'
 
-This component is responsible to display the channel information in the [`Channel`](channel.md) header. By default it is rendered in the `navigationItem.titleView` of the message list and displays the channel name and the member's online status.
+This component is responsible for displaying the channel information in the [`Channel`](channel.md) header. By default it is rendered in the `navigationItem.titleView` above the message list and displays the channel name and the member's online status.
 
 ### Customization
 
