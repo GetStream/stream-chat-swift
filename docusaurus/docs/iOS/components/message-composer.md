@@ -135,7 +135,7 @@ The `ComposerVC.Content` is a struct that contains all the data that will be par
 Some of the composer's content properties are mutable, like the `attachments`, `threadMessage`, `text`, and `command` properties. They can be directly changed since they represent data that do not depend on the state of the composer. On the other hand, some properties are immutable, and can only be changed through mutating functions on the `ComposerVC.Content`. This is to protect against bad states, for example, having the `editingMessage` property to `nil` but the `state = .edit`.
 
 ### State
-The composer has three different states, `.new`, `.edit` and `.quote`. The `.new` state is when the composer is creating a new message, the `.edit` state is when we are editing an existing message and changing its content, and finally, the `.quote` state is when we are replying to a message inline (not in a thread). In the table below we can see the composer in all three different states:
+The composer has three states: `.new`, `.edit`, and `.quote`. The `.new` state is when the composer is creating a new message, the `.edit` state is when we are editing an existing message and changing its content, and finally, the `.quote` state is when we are replying to a message inline (not in a thread). In the table below we can see the composer in all three different states:
 
 | `.new`  | `.edit` | `.quote` |
 | ------------- | ------------- | ------------- |
