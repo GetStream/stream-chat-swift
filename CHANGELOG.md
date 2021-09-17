@@ -4,12 +4,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 # Upcoming
 
 ### ✅ Added
-- Introduce `shouldLinkNewChannel` and `shouldLinkUpdatedChannel` delegate callbacks to `ChannelListController`. With these, one can control and link new/updated channels to the existing controller. [#1438](https://github.com/GetStream/stream-chat-swift/issues/1438)
+- Introduce `shouldAddNewChannelToList` and `shouldListUpdatedChannel` delegate callbacks to `ChannelListController`. With these, one can list/unlist new/updated channels to the existing controller. [#1438](https://github.com/GetStream/stream-chat-swift/issues/1438) [#1460](https://github.com/GetStream/stream-chat-swift/issues/1460)
 - Added injection of `ChatMessageReactionsBubbleView` to `Components`, so customers will be able to subclass and customise it. [#1451](https://github.com/GetStream/stream-chat-swift/pull/1451)
 - Add delegate func for tap on user avatar for a message [#1453](https://github.com/GetStream/stream-chat-swift/issues/1453)
 
 ### 🔄 Changed
 - Update `ChatClient` to disconnect immediately when the Internet connection disappears [#1449](https://github.com/GetStream/stream-chat-swift/issues/1449)
+- `NewChannelQueryUpdater`, which takes care of listing/unlisting new/updated channels, is disabled. We recommend using the new `ChannelListController` delegate methods `shouldAddNewChannelToList` and `shouldListUpdatedChannel` [#1460](https://github.com/GetStream/stream-chat-swift/issues/1460)
 
 ### 🐞 Fixed
 - Fix message list wrong content inset when typing events disabled [#1455](https://github.com/GetStream/stream-chat-swift/pull/1455)

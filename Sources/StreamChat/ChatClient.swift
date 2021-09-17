@@ -222,7 +222,6 @@ public class ChatClient {
             // All production workers
             workerBuilders = [
                 MessageSender.init,
-                NewChannelQueryUpdater.init,
                 NewUserQueryUpdater.init,
                 MessageEditor.init,
                 AttachmentUploader.init
