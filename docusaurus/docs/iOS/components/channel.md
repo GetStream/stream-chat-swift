@@ -137,7 +137,7 @@ public init(
 ```
 
 ### PageSize
-The page size is used to specify how many messages the channel will fetch initially and per page. By default the value is `.messagesPageSize` which is `25`.
+The page size is used to specify how many messages the channel will fetch initially and per page. It is set to `25` by default.
 
 ### PaginationParameter
 The pagination parameter can be used to filter specific messages, like for example, to fetch messages only after or before a certain message. Example:
