@@ -3,6 +3,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+### 🔄 Changed
+
+# [4.0.1](https://github.com/GetStream/stream-chat-swift/releases/tag/4.0.1)
+_September 17, 2021_
+
 ### ✅ Added
 - Introduce `shouldAddNewChannelToList` and `shouldListUpdatedChannel` delegate callbacks to `ChannelListController`. With these, one can list/unlist new/updated channels to the existing controller. [#1438](https://github.com/GetStream/stream-chat-swift/issues/1438) [#1460](https://github.com/GetStream/stream-chat-swift/issues/1460)
 - Added injection of `ChatMessageReactionsBubbleView` to `Components`, so customers will be able to subclass and customise it. [#1451](https://github.com/GetStream/stream-chat-swift/pull/1451)
