@@ -13,7 +13,7 @@ The Stream SDK already provides a [`ChatChannelVC`](../channel) and a [`ChatThre
 
 ## Usage
 
-In case you want to compose a custom Chat view and not use our built-in `ChatChannelVC` and `ChatThreadVC` components, you can use `ChatMessageListVC` to display the list of messages. The messages should come from a `ChannelController` or a `MessageController` depending if you want to display messages from a channel or a thread.
+If built-in `ChatChannelVC` and `ChatThreadVC` components does not suit your need, consider using `ChatMessageListVC` directly. The messages should come from a `ChannelController` or a `MessageController` depending on if you want to display messages from a channel or a thread.
 
 First, we need to setup our view controller and set the layout constraints of the message list. For simplicity, we will be using the `ComposerVC` included in the Stream SDK, but you could provide your own message composer as well.
 ```swift
