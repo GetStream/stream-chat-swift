@@ -42,7 +42,7 @@ present(navVC, animated: true, completion: nil)
 
 ## UI Customization
 
-You can customize how the `ChatChannelVC` looks by subclassing it and swap the component in `Components` config in case you are using the `ChatChannelListVC`:
+You can customize how the `ChatChannelVC` looks by subclassing it and swapping the component in `Components` config in case you are using the `ChatChannelListVC`:
 
 ```swift
 Components.default.channelVC = CustomChatChannelVC.self
