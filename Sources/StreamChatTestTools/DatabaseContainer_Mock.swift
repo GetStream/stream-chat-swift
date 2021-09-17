@@ -18,7 +18,7 @@ class DatabaseContainerMock: DatabaseContainer {
     @Atomic var resetEphemeralValues_called = false
     
     /// If set to `true` and the mock will remove its database files once deinited.
-    private var shouldCleanUpTempDBFiles = false
+    var shouldCleanUpTempDBFiles = false
     
     convenience init(localCachingSettings: ChatClientConfig.LocalCaching? = nil) {
         try! self.init(kind: .onDisk(databaseFileURL: .newTemporaryFileURL()), localCachingSettings: localCachingSettings)
