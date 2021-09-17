@@ -6,7 +6,7 @@ import ComposerProperties from '../common-content/reference-docs/stream-chat-ui/
 import ComposerViewProperties from '../common-content/reference-docs/stream-chat-ui/composer/composer-view-properties.md'
 import ComposerContentProperties from '../common-content/reference-docs/stream-chat-ui/composer/composer-vc.content-properties.md'
 
-The Message Composer provides all the UI and necessary functionality for writing and sending messages. It supports sending text, handling chat commands, autocomplete suggestions, uploading attachments like images, files, and video. The composer is a combination of two components, the `ComposerVC` and the `ComposerView`, the first one is a view controller responsible for the functionality of the composer, where the latter is only responsible for the UI layout.
+The Message Composer provides all the UI and necessary functionality for writing and sending messages. It supports sending text, handling chat commands, suggestions autocompletion, uploading attachments like images, files, and videos. The composer is a combination of two components, the `ComposerVC` and the `ComposerView`, the first one is a view controller responsible for the functionality, where the latter is only responsible for the UI and layout.
 
 ## Composer View Controller
 
