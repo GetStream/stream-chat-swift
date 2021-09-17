@@ -114,7 +114,7 @@ extension ChannelViewController: ChatMessageListVCDataSource {
 ```
 As you can see, we implement the data source to feed the message list with the messages from the `ChannelController`. The most complex part is to calculate the layout options for each message, but since our custom `ChannelViewController` implements the `ThemeProvider` protocol, we have access to the `components` and `appearance` config, and with these we can use the `MessageLayoutOptionsResolver` to calculate the layout options for us.
 
-The `ChatMessageListVC` provides events throught the `ChatMessageListVCDelegate` so that we can react to actions and important lifecycle events.
+The `ChatMessageListVC` provides events through the `ChatMessageListVCDelegate` so that we can react to actions and important lifecycle events.
 ```swift
 extension ChannelViewController: ChatMessageListVCDelegate {
     open func chatMessageListVC(
