@@ -5,7 +5,7 @@
 import StreamChat
 import UIKit
 
-open class ChatMessageDefaultReactionsBubbleView: ChatMessageReactionsBubbleView {
+open class ChatMessageDefaultReactionsBubbleView: ReactionPickerBubbleView {
     // MARK: - Subviews
 
     public let contentViewBackground = UIView().withoutAutoresizingMaskConstraints

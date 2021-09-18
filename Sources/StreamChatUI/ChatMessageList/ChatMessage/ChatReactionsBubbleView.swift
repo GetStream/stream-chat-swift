@@ -5,12 +5,14 @@
 import StreamChat
 import UIKit
 
-open class ChatReactionsBubbleView: _View, AppearanceProvider {
-    private let tailHeight: CGFloat = 6
-
+open class ChatReactionBubbleBaseView: _View, AppearanceProvider {
     open var tailDirection: ChatThreadArrowView.Direction? {
         didSet { updateContentIfNeeded() }
     }
+}
+
+open class ChatReactionsBubbleView: ChatReactionBubbleBaseView {
+    private let tailHeight: CGFloat = 6
 
     override open func setUpAppearance() {
         super.setUpAppearance()

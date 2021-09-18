@@ -5,9 +5,34 @@
 import StreamChat
 import UIKit
 
+open class ChatReactionPickerReactionsView: ChatMessageReactionsView {
+    override public var reactionItemView: ChatMessageReactionItemView.Type {
+        components.reactionPickerReactionItemView
+    }
+}
+
 open class ChatMessageReactionsView: _View, ThemeProvider {
     public var content: Content? {
         didSet { updateContentIfNeeded() }
+    }
+
+    open var reactionItemView: ChatMessageReactionItemView.Type {
+        components.messageReactionItemView
+    }
+
+    // returns the selection of reactions that should be rendered by this view
+    open var reactions: [ChatMessageReactionData] {
+        guard let content = content else { return [] }
+        return content.reactions.filter { reaction in
+            guard appearance.images.availableReactions[reaction.type] != nil else {
+                log
+                    .warning(
+                        "reaction with type \(reaction.type) is not registered in appearance.images.availableReactions, skipping"
+                    )
+                return false
+            }
+            return true
+        }
     }
 
     // MARK: - Subviews
@@ -41,7 +66,7 @@ open class ChatMessageReactionsView: _View, ThemeProvider {
                     )
                 return
             }
-            let itemView = components.reactionItemView.init()
+            let itemView = reactionItemView.init()
             itemView.content = .init(
                 useBigIcon: content.useBigIcons,
                 reaction: reaction,

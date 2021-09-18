@@ -238,7 +238,7 @@ open class ChatMessageListVC:
                 return nil
             }
 
-            let controller = components.messageReactionsVC.init()
+            let controller = components.reactionPickerVC.init()
             controller.messageController = messageController
             return controller
         }()

@@ -105,9 +105,6 @@ public struct Components {
     /// The View Controller by default used to display message actions after long-pressing on the message.
     public var messageActionsVC: ChatMessageActionsVC.Type = ChatMessageActionsVC.self
 
-    /// The View Controller by default used to display interactive reactions view after long-pressing on the message.
-    public var messageReactionsVC: ChatMessageReactionsVC.Type = ChatMessageReactionsVC.self
-
     /// The View Controller by default used to display long-press menu of the message.
     public var messagePopupVC: ChatMessagePopupVC.Type = ChatMessagePopupVC.self
 
@@ -144,20 +141,8 @@ public struct Components {
     /// The injector used for injecting file attachment views
     public var filesAttachmentInjector: AttachmentViewInjector.Type = FilesAttachmentViewInjector.self
 
-    /// The view that shows reactions bubble, this is used by the reaction picker.
-    public var reactionsBubbleView: ChatMessageReactionsBubbleView.Type = ChatMessageDefaultReactionsBubbleView.self
-    
-    /// The view that shows reactions of a message. This is used by the message component.
-    public var messageReactionsBubbleView: ChatReactionsBubbleView.Type = ChatReactionsBubbleView.self
-
     /// The button for taking an action on attachment being uploaded.
     public var attachmentActionButton: AttachmentActionButton.Type = AttachmentActionButton.self
-
-    /// The view that shows reactions list in a bubble.
-    public var reactionsView: ChatMessageReactionsView.Type = ChatMessageReactionsView.self
-
-    /// The view that shows a single reaction.
-    public var reactionItemView: ChatMessageReactionsView.ItemView.Type = ChatMessageReactionsView.ItemView.self
     
     /// The view that shows error indicator in `messageContentView`.
     public var messageErrorIndicator: ChatMessageErrorIndicator.Type = ChatMessageErrorIndicator.self
@@ -208,6 +193,67 @@ public struct Components {
     /// The view that shows a number of unread messages on the Scroll-To-Latest-Message button in the Message List.
     public var messageListUnreadCountView: ChatMessageListUnreadCountView.Type =
         ChatMessageListUnreadCountView.self
+
+    // MARK: - Reaction components, deprecated
+
+    /// The Reaction picker VC.
+    @available(*, deprecated, message: "Use reactionPickerVC instead")
+    public var messageReactionsVC: ChatMessageReactionsVC.Type = ChatMessageReactionsVC.self {
+        didSet {
+            reactionPickerVC = messageReactionsVC
+        }
+    }
+
+    /// The view that shows reactions bubble, this is used by the reaction picker.
+    @available(*, deprecated, message: "Use reactionPickerBubbleView instead")
+    public var reactionsBubbleView: ReactionPickerBubbleView.Type = ChatMessageDefaultReactionsBubbleView.self {
+        didSet {
+            reactionPickerBubbleView = reactionsBubbleView
+        }
+    }
+
+    /// The view that shows reactions list. This component is used by both message and reaction picker components.
+    @available(*, deprecated, message: "Use reactionPickerReactionsView and/or messageReactionsView")
+    public var reactionsView: ChatMessageReactionsView.Type = ChatMessageReactionsView.self {
+        didSet {
+            reactionPickerReactionsView = reactionsView
+            messageReactionsView = reactionsView
+        }
+    }
+
+    /// The view that shows a single reaction. This component is used by the reactionsView component.
+    @available(*, deprecated, message: "Use reactionPickerReactionItemView and/or messageReactionItemView")
+    public var reactionItemView: ChatMessageReactionItemView.Type = ChatMessageReactionItemView.self {
+        didSet {
+            reactionPickerReactionItemView = reactionItemView
+            messageReactionItemView = reactionItemView
+        }
+    }
+    
+    // MARK: - Reaction Picker components
+    
+    /// The Reaction picker VC.
+    public var reactionPickerVC: ChatMessageReactionsVC.Type = ChatMessageReactionsVC.self
+
+    /// The view that shows reactions bubble.
+    public var reactionPickerBubbleView: ChatMessageReactionsBubbleView.Type = ChatMessageDefaultReactionsBubbleView.self
+
+    /// The view that shows the list of reaction toggles/buttons.
+    public var reactionPickerReactionsView: ChatMessageReactionsView.Type = ChatReactionPickerReactionsView.self
+
+    /// The view that renders a single reaction view button.
+    public var reactionPickerReactionItemView: ChatMessageReactionItemView.Type = ChatMessageReactionItemView.self
+    
+    // MARK: - Message Reaction components
+
+    /// The view that shows reactions of a message. This is used by the message component.
+    public var messageReactionsBubbleView: ChatReactionBubbleBaseView.Type = ChatReactionsBubbleView.self
+
+    /// The view that shows the list of reactions attached to the message.
+    public var messageReactionsView: ChatMessageReactionsView.Type = ChatMessageReactionsView.self
+
+    /// The view that renders a single reaction attached to the message.
+    public var messageReactionItemView: ChatMessageReactionItemView.Type = ChatMessageReactionItemView.self
 
     // MARK: - Thread components
 

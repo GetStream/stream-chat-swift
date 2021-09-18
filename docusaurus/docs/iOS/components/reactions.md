@@ -21,9 +21,9 @@ Components.default.messageReactionsVC = CustomChatMessageReactionsVC.self
 
 ### Custom Reactions and Images
 
-The `ChatMessageReactionsVC` picker uses the `components.reactionsBubbleView` component to render the reactions available to the user and to render their state. 
+The `ChatMessageReactionsVC` picker uses the `components.reactionPickerBubbleView` component to render the reactions available to the user and to render their state. 
 
-You can change the list of supported message reaction from the `Appearance` object, here is an example on how you can use your own set of reactions
+You can change the list of supported message reactions via the `Appearance` object. Here is an example on how you can use your own set of reactions
 
 ```swift
 let reactionFireSmall: UIImage = UIImage(named: "fireSmall")!
@@ -45,13 +45,9 @@ let customReactions: [MessageReactionType: ChatMessageReactionAppearanceType] = 
 Appearance.default.images.availableReactions = customReactions
 ```
 
-### Change Appearance
-
-
 ### Custom Reaction Bubble
 
 If you want to make more advanced customizations you can use your own `ChatMessageReactionsBubbleView` subclass and use it in your application.
-
 
 ```swift
 class CustomChatMessageReactionsBubbleView: ChatMessageDefaultReactionsBubbleView {
@@ -75,42 +71,84 @@ class CustomChatMessageReactionsBubbleView: ChatMessageDefaultReactionsBubbleVie
 }
 ```
 
-Then you need to change the `reactionsBubbleView` component to use your class as usual.
+Then you need to change the `reactionPickerBubbleView` component to use your class as usual.
 
 ```swift
-Components.default.reactionsBubbleView = CustomChatMessageReactionsBubbleView.self
+Components.default.reactionPickerBubbleView = CustomChatMessageReactionsBubbleView.self
+```
+
+| Default Picker | Custom Picker |
+| ------------- | ------------- |
+| ![Default picker](../assets/default-reaction-picker-bubble.png)  | ![Custom picker](../assets/custom-reaction-picker-bubble.png)  |
+
+### ChatReactionPickerReactionsView
+
+This view is used to render the list of reaction buttons. By default the library will show one reaction button for every entry in `Appearance.default.images.availableReactions`.
+
+You can use your own view class and replace using `Components.default.reactionPickerReactionsView`
+
+```swift
+Components.default.reactionPickerReactionsView = ChatReactionPickerReactionsView.self
+```
+
+### ChatMessageReactionItemView
+
+This view is used to show the single reaction button, you can use your own view class and replace using `Components.default.reactionPickerReactionItemView`
+
+```swift
+Components.default.reactionPickerReactionItemView = CustomChatMessageReactionItemView.self
 ```
 
 ## Message Reactions
 
-Message reactions are added inline to messages. The UI is organized in a similar way as the picker and some components are also in common.
+Message reactions are added inline to messages. Here's the list of views that are used by the SDK.
 
 ### ChatReactionsBubbleView
 
-This is just a container view for the reactions. You can to customize this if you want to change the border or the position of the whole list of reactions.
+A container view for the reactions. You can customize this if you want to change the border or the position of the whole list of reactions.
 
 ```swift
-class CustomMessageReactionsBubbleView: MessageReactionsBubbleView {}
+class CustomChatReactionsBubbleView: ChatReactionBubbleBaseView {
+    private let tailHeight: CGFloat = 10
 
-Components.default.messageReactionsBubbleView = CustomMessageReactionsBubbleView.self
+    override open func setUpLayout() {
+        super.setUpLayout()
+        directionalLayoutMargins.bottom += tailHeight
+    }
+}
+
+Components.default.messageReactionsBubbleView = CustomChatReactionsBubbleView.self
 ```
 
 ### ChatMessageReactionsView
 
-This component shows the list of reactions for the message.
+This component shows the list of reactions, you can customize this if you want to change how single reactions are positioned or arranged.
 
 ```swift
-class CustomChatMessageReactionsView: ChatMessageReactionsView {}
+class CustomChatChatMessageReactionsView: ChatMessageReactionsView {}
 
-Components.default.reactionsView = CustomChatMessageReactionsView.self
+Components.default.messageReactionsView = CustomChatChatMessageReactionsView.self
 ```
 
-### ChatMessageReactionsView.ItemView
+### ChatMessageReactionItemView
 
-This component renders the single message reaction.
+This component renders the single message reaction. 
 
 ```swift
-class CustomChatMessageReactionsItemView: ChatMessageReactionsView.ItemView {}
+class CustomChatMessageReactionItemView: ChatMessageReactionItemView {
+    override open func updateContent() {
+        super.updateContent()
 
-Components.default.reactionItemView = CustomChatMessageReactionsItemView.self
+        imageView?.layer.borderWidth = 1.0
+        imageView?.layer.cornerRadius = 3.0
+        imageView?.layer.masksToBounds = true
+        imageView?.layer.borderColor = .init(red: 0, green: 0, blue: 0, alpha: 1)
+    }
+}
+
+Components.default.messageReactionItemView = CustomChatMessageReactionItemView.self
 ```
+
+| Default Message Reactions | Custom Message Reactions |
+| ------------------------- | ------------------------ |
+| ![Default](../assets/default-message-reaction.png)  | ![Custom](../assets/custom-message-reaction.png)  |
