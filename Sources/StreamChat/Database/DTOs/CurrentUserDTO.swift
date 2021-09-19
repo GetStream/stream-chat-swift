@@ -20,6 +20,7 @@ class CurrentUserDTO: NSManagedObject {
     @NSManaged var mutedUsers: Set<UserDTO>
     @NSManaged var user: UserDTO
     @NSManaged var devices: Set<DeviceDTO>
+    @NSManaged var currentDevice: DeviceDTO?
     
     /// Returns a default fetch request for the current user.
     static var defaultFetchRequest: NSFetchRequest<CurrentUserDTO> {
@@ -77,7 +78,7 @@ extension NSManagedObjectContext: CurrentUserDatabaseSession {
             try saveCurrentUserUnreadCount(count: unreadCount)
         }
         
-        try saveCurrentUserDevices(payload.devices, clearExisting: true)
+        _ = try saveCurrentUserDevices(payload.devices, clearExisting: true)
         
         return dto
     }
@@ -91,20 +92,36 @@ extension NSManagedObjectContext: CurrentUserDatabaseSession {
         dto.unreadMessagesCount = Int64(clamping: count.messages)
     }
     
-    func saveCurrentUserDevices(_ devices: [DevicePayload], clearExisting: Bool) throws {
+    func saveCurrentUserDevices(_ devices: [DevicePayload], clearExisting: Bool) throws -> [DeviceDTO] {
         guard let currentUser = currentUser else {
             throw ClientError.CurrentUserDoesNotExist()
         }
         
         if clearExisting {
             currentUser.devices.removeAll()
+            if !devices.contains(where: { $0.id == currentUser.currentDevice?.id }) {
+                currentUser.currentDevice = nil
+            }
         }
         
-        for device in devices {
+        let deviceDTOs = devices.map { device -> DeviceDTO in
             let dto = DeviceDTO.loadOrCreate(id: device.id, context: self)
             dto.createdAt = device.createdAt
             dto.user = currentUser
+            return dto
         }
+        
+        return deviceDTOs
+    }
+    
+    func saveCurrentDevice(_ deviceId: String) throws {
+        guard let currentUser = currentUser else {
+            throw ClientError.CurrentUserDoesNotExist()
+        }
+        
+        let dto = DeviceDTO.loadOrCreate(id: deviceId, context: self)
+        dto.user = currentUser
+        currentUser.currentDevice = dto
     }
     
     func deleteDevice(id: String) {
@@ -192,7 +209,7 @@ extension CurrentChatUser {
             teams: Set(user.teams?.map(\.id) ?? []),
             extraData: extraData,
             devices: dto.devices.map { $0.asModel() },
-            currentDevice: nil,
+            currentDevice: dto.currentDevice?.asModel(),
             mutedUsers: Set(mutedUsers),
             flaggedUsers: Set(flaggedUsers),
             flaggedMessageIDs: Set(flaggedMessagesIDs),

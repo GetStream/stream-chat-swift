@@ -21,9 +21,14 @@ class DatabaseSessionMock: DatabaseSession {
 // Here start the boilerplate that forwards and intercepts the session calls if needed
 
 extension DatabaseSessionMock {
-    func saveCurrentUserDevices(_ devices: [DevicePayload], clearExisting: Bool) throws {
+    func saveCurrentDevice(_ deviceId: String) throws {
         try throwErrorIfNeeded()
-        try underlyingSession.saveCurrentUserDevices(devices, clearExisting: clearExisting)
+        return try saveCurrentDevice(deviceId)
+    }
+    
+    func saveCurrentUserDevices(_ devices: [DevicePayload], clearExisting: Bool) throws -> [DeviceDTO] {
+        try throwErrorIfNeeded()
+        return try underlyingSession.saveCurrentUserDevices(devices, clearExisting: clearExisting)
     }
     
     func saveChannel(

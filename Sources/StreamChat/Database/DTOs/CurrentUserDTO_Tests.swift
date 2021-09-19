@@ -92,6 +92,41 @@ class CurrentUserModelDTO_Tests: XCTestCase {
         XCTAssertEqual(mutedChannelIDs, Set(loadedCurrentUser.mutedChannels.map(\.cid)))
     }
     
+    func test_savingCurrentUser_removesCurrentDevice() throws {
+        let initialDevice = DevicePayload.dummy
+        let initialCurrentUserPayload = CurrentUserPayload.dummy(userId: .unique, role: .admin, devices: [initialDevice])
+        
+        // Save the payload to the db
+        try database.writeSynchronously { session in
+            let dto = try session.saveCurrentUser(payload: initialCurrentUserPayload)
+            dto.currentDevice = dto.devices.first
+        }
+        
+        // Assert the data saved to DB
+        var currentUser: CurrentChatUser? {
+            database.viewContext.currentUser?.asModel()
+        }
+        
+        // Assert only 1 device exists
+        XCTAssertEqual(currentUser?.devices.count, 1)
+        // ..and is set to currentDevice
+        XCTAssertNotEqual(currentUser?.currentDevice, nil)
+        
+        let newCurrentUserPayload = CurrentUserPayload.dummy(userId: initialCurrentUserPayload.id, role: .admin, devices: [.dummy])
+        
+        // Save the payload to the db
+        try database.writeSynchronously { session in
+            try session.saveCurrentUser(payload: newCurrentUserPayload)
+        }
+        
+        // Assert only 1 device exists
+        XCTAssertEqual(currentUser?.devices.count, 1)
+        // ..and it's not the old device
+        XCTAssertNotEqual(currentUser?.devices.first?.id, initialDevice.id)
+        // ..and is not set to currentDevice
+        XCTAssertEqual(currentUser?.currentDevice, nil)
+    }
+    
     func test_savingCurrentUser_removesPreviousChannelMutes() throws {
         let userPayload: UserPayload = .dummy(userId: .unique)
         let payloadWithMutes: CurrentUserPayload = .dummy(
