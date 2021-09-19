@@ -18,6 +18,7 @@ class APIClient_Tests: StressTestCase {
     var encoder: TestRequestEncoder!
     var decoder: TestRequestDecoder!
     var cdnClient: CDNClient_Mock!
+    var tokenRefresher: ((ClientError, @escaping () -> Void) -> Void)!
     
     override func setUp() {
         super.setUp()
@@ -39,12 +40,14 @@ class APIClient_Tests: StressTestCase {
         decoder = TestRequestDecoder()
         cdnClient = CDNClient_Mock()
         cdnClient.uploadAttachmentMockFunc.returns(())
+        tokenRefresher = { _, _ in }
         
         apiClient = APIClient(
             sessionConfiguration: sessionConfiguration,
             requestEncoder: encoder,
             requestDecoder: decoder,
-            CDNClient: cdnClient
+            CDNClient: cdnClient,
+            tokenRefresher: tokenRefresher
         )
     }
     
@@ -203,6 +206,146 @@ class APIClient_Tests: StressTestCase {
         let imageURL = URL.localYodaImage
         parameters.2(.success(imageURL))
         XCTAssertEqual(try result?.get(), imageURL)
+    }
+    
+    func test_requestFailedWithExpiredToken_refreshesToken() throws {
+        var tokenRefresherWasCalled = false
+        tokenRefresher = { _, _ in
+            tokenRefresherWasCalled = true
+        }
+        
+        let apiClient = APIClient(
+            sessionConfiguration: sessionConfiguration,
+            requestEncoder: encoder,
+            requestDecoder: decoder,
+            CDNClient: cdnClient,
+            tokenRefresher: tokenRefresher
+        )
+        
+        let testRequest = URLRequest(url: .unique())
+        
+        let networkError = NSError(domain: "TestNetworkError", code: -1, userInfo: nil)
+        let encoderError = ClientError.ExpiredToken()
+        
+        MockNetworkURLProtocol.mockResponse(
+            request: testRequest,
+            statusCode: 401,
+            error: networkError
+        )
+        
+        decoder.decodeRequestResponse = .failure(encoderError)
+
+        let testEndpoint = Endpoint<TestUser>.mock()
+        apiClient.request(endpoint: testEndpoint, completion: { _ in })
+        
+        AssertAsync.willBeTrue(tokenRefresherWasCalled)
+    }
+    
+    func test_requestFailedWithExpiredToken_reschedulesTaskForLater() throws {
+        var tokenRefresherWasCalled = false
+        var tokenRefresherCompletion = {}
+        tokenRefresher = { _, completion in
+            tokenRefresherWasCalled = true
+            tokenRefresherCompletion = completion
+        }
+        
+        let apiClient = APIClient(
+            sessionConfiguration: sessionConfiguration,
+            requestEncoder: encoder,
+            requestDecoder: decoder,
+            CDNClient: cdnClient,
+            tokenRefresher: tokenRefresher
+        )
+        
+        let testRequest = URLRequest(url: .unique())
+        
+        let networkError = NSError(domain: "TestNetworkError", code: -1, userInfo: nil)
+        let encoderError = ClientError.ExpiredToken()
+        decoder.decodeRequestResponse = .failure(encoderError)
+
+        MockNetworkURLProtocol.mockResponse(
+            request: testRequest,
+            statusCode: 401,
+            error: networkError
+        )
+        
+        let testUser = TestUser(name: "test")
+        let testEndpoint = Endpoint<TestUser>.mock()
+        
+        var result: Result<TestUser, Error>?
+        apiClient.request(
+            endpoint: testEndpoint,
+            completion: {
+                result = $0
+            }
+        )
+        
+        AssertAsync.willBeTrue(tokenRefresherWasCalled)
+        
+        decoder.decodeRequestResponse = .success(testUser)
+        
+        tokenRefresherCompletion()
+        
+        MockNetworkURLProtocol.mockResponse(
+            request: testRequest,
+            statusCode: 200
+        )
+        
+        AssertAsync.willBeTrue(result != nil)
+        
+        if case let .success(user) = result {
+            XCTAssertEqual(user, testUser)
+        } else {
+            XCTFail()
+        }
+    }
+    
+    func test_requestFailedWithExpiredToken_requestsTimeout() throws {
+        var tokenRefresherWasCalled = false
+        tokenRefresher = { _, _ in
+            tokenRefresherWasCalled = true
+        }
+        
+        let apiClient = APIClient(
+            sessionConfiguration: sessionConfiguration,
+            requestEncoder: encoder,
+            requestDecoder: decoder,
+            CDNClient: cdnClient,
+            tokenRefresher: tokenRefresher
+        )
+        
+        let testRequest = URLRequest(url: .unique())
+        
+        let networkError = NSError(domain: "TestNetworkError", code: -1, userInfo: nil)
+        let encoderError = ClientError.ExpiredToken()
+        decoder.decodeRequestResponse = .failure(encoderError)
+
+        MockNetworkURLProtocol.mockResponse(
+            request: testRequest,
+            statusCode: 401,
+            error: networkError
+        )
+        
+        let testEndpoint = Endpoint<TestUser>.mock()
+        
+        var result: Result<TestUser, Error>?
+        apiClient.request(
+            endpoint: testEndpoint,
+            timeout: 0.001,
+            completion: {
+                result = $0
+            }
+        )
+        
+        AssertAsync.willBeTrue(tokenRefresherWasCalled)
+        
+        AssertAsync.willBeTrue(result != nil)
+        
+        if case .failure = result {
+            XCTAssertTrue(true)
+        } else {
+            XCTFail()
+        }
     }
 }
 

@@ -45,7 +45,6 @@ class ChatClient_Tests: StressTestCase {
     
     var workerBuilders: [WorkerBuilder] = [
         MessageSender.init,
-        NewChannelQueryUpdater.init,
         NewUserQueryUpdater.init
     ]
     
@@ -597,7 +596,6 @@ class ChatClient_Tests: StressTestCase {
         
         // Check all the mandatory background workers are initialized
         XCTAssert(client.backgroundWorkers.contains { $0 is MessageSender })
-        XCTAssert(client.backgroundWorkers.contains { $0 is NewChannelQueryUpdater })
         XCTAssert(client.backgroundWorkers.contains { $0 is NewUserQueryUpdater })
         XCTAssert(client.backgroundWorkers.contains { $0 is MessageEditor })
         XCTAssert(client.backgroundWorkers.contains { $0 is ConnectionRecoveryUpdater })
@@ -1223,7 +1221,8 @@ private class TestEnvironment {
                     sessionConfiguration: $0,
                     requestEncoder: $1,
                     requestDecoder: $2,
-                    CDNClient: $3
+                    CDNClient: $3,
+                    tokenRefresher: $4
                 )
                 return self.apiClient!
             },
