@@ -108,8 +108,8 @@ public class CurrentChatUserController: DataController, DelegateCallable, DataSt
             if connectionId == nil {
                 error = ClientError.ConnectionNotSuccessful()
             }
-            self?.state = error == nil ? .remoteDataFetched : .remoteDataFetchFailed(error!)
-            self?.callback { completion?(error) }
+            self.state = error == nil ? .remoteDataFetched : .remoteDataFetchFailed(error!)
+            self.callback { completion?(error) }
         }
     }
     
