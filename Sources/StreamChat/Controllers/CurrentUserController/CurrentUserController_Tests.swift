@@ -27,6 +27,9 @@ final class CurrentUserController_Tests: StressTestCase {
     }
     
     override func tearDown() {
+        client.completeConnectionIdWaiters(connectionId: nil)
+        client.completeTokenWaiters(token: nil)
+
         controllerCallbackQueueID = nil
         client.mockAPIClient.cleanUp()
         env.chatClientUpdater?.cleanUp()
@@ -63,8 +66,16 @@ final class CurrentUserController_Tests: StressTestCase {
         
         env.currentUserObserverItem = .mock(id: expectedId, unreadCount: expectedUnreadCount)
         
-        controller.synchronize()
+        let expectation = self.expectation(description: "synchronize called")
+
+        controller.synchronize { error in
+            XCTAssertNil(error)
+            expectation.fulfill()
+        }
         
+        // the sync completion is called when there is a connectionID
+        client.completeConnectionIdWaiters(connectionId: UUID().uuidString)
+
         // Assert client is assigned correctly
         XCTAssertTrue(controller.client === client)
         
@@ -73,6 +84,8 @@ final class CurrentUserController_Tests: StressTestCase {
         
         // Assert unread-count is correct
         XCTAssertEqual(controller.unreadCount, expectedUnreadCount)
+        
+        waitForExpectations(timeout: 0.1, handler: nil)
     }
     
     func test_synchronize_changesState_and_propagatesObserverErrorOnCallbackQueue() {
