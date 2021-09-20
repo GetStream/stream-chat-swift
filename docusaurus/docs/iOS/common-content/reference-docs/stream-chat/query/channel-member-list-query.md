@@ -5,12 +5,8 @@ title: ChannelMemberListQuery
 A query type used for fetching channel members from the backend.
 
 ``` swift
-public struct _ChannelMemberListQuery<ExtraData: UserExtraData>: Encodable 
+public struct ChannelMemberListQuery: Encodable 
 ```
-
-> 
-
-Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/Cheat-Sheet#working-with-extra-data).
 
 ## Inheritance
 
@@ -25,7 +21,7 @@ Creates new `ChannelMemberListQuery` instance.
 ``` swift
 public init(
         cid: ChannelId,
-        filter: Filter<_MemberListFilterScope<ExtraData>>? = nil,
+        filter: Filter<MemberListFilterScope>? = nil,
         sort: [Sorting<ChannelMemberListSortingKey>] = [],
         pageSize: Int = .channelMembersPageSize
     ) 
@@ -53,7 +49,7 @@ public let cid: ChannelId
 A filter for the query (see `Filter`).
 
 ``` swift
-public let filter: Filter<_MemberListFilterScope<ExtraData>>?
+public let filter: Filter<MemberListFilterScope>?
 ```
 
 ### `sort`

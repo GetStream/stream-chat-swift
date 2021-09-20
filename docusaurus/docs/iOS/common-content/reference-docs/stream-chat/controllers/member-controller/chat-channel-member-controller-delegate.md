@@ -2,14 +2,11 @@
 title: ChatChannelMemberControllerDelegate
 ---
 
-`_ChatChannelMemberController` uses this protocol to communicate changes to its delegate.
+`ChatChannelMemberControllerDelegate` uses this protocol to communicate changes to its delegate.
 
 ``` swift
-public protocol _ChatChannelMemberControllerDelegate: DataControllerStateDelegate 
+public protocol ChatChannelMemberControllerDelegate: DataControllerStateDelegate 
 ```
-
-If you're **not** using custom extra data types, you can use a convenience version of this protocol
-named `ChatChannelMemberControllerDelegate`, which hides the generic types, and make the usage easier.
 
 ## Inheritance
 
@@ -21,26 +18,20 @@ named `ChatChannelMemberControllerDelegate`, which hides the generic types, and 
 
 ``` swift
 func memberController(
-        _ controller: _ChatChannelMemberController<ExtraData>,
-        didUpdateMember change: EntityChange<_ChatChannelMember<ExtraData.User>>
+        _ controller: ChatChannelMemberController,
+        didUpdateMember change: EntityChange<ChatChannelMember>
     ) 
 ```
 
 ## Requirements
 
-### ExtraData
-
-``` swift
-associatedtype ExtraData: ExtraDataTypes
-```
-
 ### memberController(\_:​didUpdateMember:​)
 
-The controller observed a change in the `_ChatChannelMember<ExtraData.User>` entity.
+The controller observed a change in the `ChatChannelMember` entity.
 
 ``` swift
 func memberController(
-        _ controller: _ChatChannelMemberController<ExtraData>,
-        didUpdateMember change: EntityChange<_ChatChannelMember<ExtraData.User>>
+        _ controller: ChatChannelMemberController,
+        didUpdateMember change: EntityChange<ChatChannelMember>
     )
 ```

@@ -7,7 +7,8 @@ If your application uses custom attachment types, you will need to create a subc
 method so that the correct AttachmentViewInjector is used.
 
 ``` swift
-open class _AttachmentViewCatalog<ExtraData: ExtraDataTypes> 
+@available(iOSApplicationExtension, unavailable)
+open class AttachmentViewCatalog 
 ```
 
 ## Methods
@@ -16,7 +17,7 @@ open class _AttachmentViewCatalog<ExtraData: ExtraDataTypes>
 
 ``` swift
 open class func attachmentViewInjectorClassFor(
-        message: _ChatMessage<ExtraData>,
-        components: _Components<ExtraData>
-    ) -> _AttachmentViewInjector<ExtraData>.Type? 
+        message: ChatMessage,
+        components: Components
+    ) -> AttachmentViewInjector.Type? 
 ```

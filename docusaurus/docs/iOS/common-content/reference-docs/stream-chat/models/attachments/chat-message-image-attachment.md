@@ -5,7 +5,7 @@ title: ChatMessageImageAttachment
 A type alias for attachment with `ImageAttachmentPayload` payload type.
 
 ``` swift
-public typealias ChatMessageImageAttachment = _ChatMessageAttachment<ImageAttachmentPayload>
+public typealias ChatMessageImageAttachment = ChatMessageAttachment<ImageAttachmentPayload>
 ```
 
 The `ChatMessageImageAttachment` attachment will be added to the message automatically

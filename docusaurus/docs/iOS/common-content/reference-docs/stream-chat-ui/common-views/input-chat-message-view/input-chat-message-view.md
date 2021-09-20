@@ -5,7 +5,7 @@ title: InputChatMessageView
 A view to input content of a message.
 
 ``` swift
-open class _InputChatMessageView<ExtraData: ExtraDataTypes>: _View, ComponentsProvider, AppearanceProvider 
+open class InputChatMessageView: _View, ComponentsProvider, AppearanceProvider 
 ```
 
 ## Inheritance

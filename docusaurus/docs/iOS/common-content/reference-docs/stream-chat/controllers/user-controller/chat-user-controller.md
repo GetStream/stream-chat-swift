@@ -5,15 +5,11 @@ title: ChatUserController
 `_ChatUserController` is a controller class which allows mutating and observing changes of a specific chat user.
 
 ``` swift
-public class _ChatUserController<ExtraData: ExtraDataTypes>: DataController, DelegateCallable, DataStoreProvider 
+public class ChatUserController: DataController, DelegateCallable, DataStoreProvider 
 ```
 
 `_ChatUserController` objects are lightweight, and they can be used for both, continuous data change observations,
 and for quick user actions (like mute/unmute).
-
-> 
-
-Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/Cheat-Sheet#working-with-extra-data).
 
 ## Inheritance
 
@@ -34,7 +30,7 @@ public var statePublisher: AnyPublisher<DataController.State, Never>
 A publisher emitting a new value every time the user changes.
 
 ``` swift
-public var userChangePublisher: AnyPublisher<EntityChange<_ChatUser<ExtraData.User>>, Never> 
+public var userChangePublisher: AnyPublisher<EntityChange<ChatUser>, Never> 
 ```
 
 ### `observableObject`
@@ -58,7 +54,7 @@ public let userId: UserId
 The `ChatClient` instance this controller belongs to.
 
 ``` swift
-public let client: _ChatClient<ExtraData>
+public let client: ChatClient
 ```
 
 ### `user`
@@ -66,11 +62,19 @@ public let client: _ChatClient<ExtraData>
 The user the controller represents.
 
 ``` swift
-public var user: _ChatUser<ExtraData.User>? 
+public var user: ChatUser? 
 ```
 
 To observe changes of the user, set your class as a delegate of this controller or use the provided
 `Combine` publishers.
+
+### `delegate`
+
+Set the delegate of `ChatUserController` to observe the changes in the system.
+
+``` swift
+var delegate: ChatUserControllerDelegate? 
+```
 
 ## Methods
 
@@ -85,11 +89,8 @@ override public func synchronize(_ completion: ((_ error: Error?) -> Void)? = ni
 Sets the provided object as a delegate of this controller.
 
 ``` swift
-public func setDelegate<Delegate: _ChatUserControllerDelegate>(_ delegate: Delegate)
-        where Delegate.ExtraData == ExtraData 
+public func setDelegate<Delegate: ChatUserControllerDelegate>(_ delegate: Delegate) 
 ```
-
-> 
 
 #### Parameters
 

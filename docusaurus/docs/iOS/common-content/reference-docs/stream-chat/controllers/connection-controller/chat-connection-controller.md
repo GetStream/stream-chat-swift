@@ -6,14 +6,8 @@ title: ChatConnectionController
 connect/disconnect the `ChatClient` and observe connection events.
 
 ``` swift
-public class _ChatConnectionController<ExtraData: ExtraDataTypes>: Controller, DelegateCallable, DataStoreProvider 
+public class ChatConnectionController: Controller, DelegateCallable, DataStoreProvider 
 ```
-
-Learn more about `ChatConnectionController` and its usage in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/Cheat-Sheet#connection).
-
-> 
-
-Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/Cheat-Sheet#working-with-extra-data).
 
 ## Inheritance
 
@@ -48,7 +42,7 @@ public var callbackQueue: DispatchQueue = .main
 The `ChatClient` instance this controller belongs to.
 
 ``` swift
-public let client: _ChatClient<ExtraData>
+public let client: ChatClient
 ```
 
 ### `connectionStatus`
@@ -61,6 +55,14 @@ public var connectionStatus: ConnectionStatus
 
 To observe changes of the connection status, set your class as a delegate of this controller or use the provided
 `Combine` publishers.
+
+### `delegate`
+
+Set the delegate of `ChatConnectionController` to observe the changes in the system.
+
+``` swift
+var delegate: ChatConnectionControllerDelegate? 
+```
 
 ## Methods
 
@@ -92,10 +94,8 @@ func disconnect()
 Sets the provided object as a delegate of this controller.
 
 ``` swift
-func setDelegate<Delegate: _ChatConnectionControllerDelegate>(_ delegate: Delegate?) where Delegate.ExtraData == ExtraData 
+func setDelegate<Delegate: ChatConnectionControllerDelegate>(_ delegate: Delegate?) 
 ```
-
-> 
 
 #### Parameters
 

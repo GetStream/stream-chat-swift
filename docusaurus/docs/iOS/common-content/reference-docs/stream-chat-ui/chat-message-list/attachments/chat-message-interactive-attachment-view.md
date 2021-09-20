@@ -3,7 +3,7 @@ title: ChatMessageInteractiveAttachmentView
 ---
 
 ``` swift
-open class _ChatMessageInteractiveAttachmentView<ExtraData: ExtraDataTypes>: _View, ThemeProvider 
+open class ChatMessageInteractiveAttachmentView: _View, ThemeProvider 
 ```
 
 ## Inheritance

@@ -5,7 +5,7 @@ title: ChatSuggestionsCollectionView
 The collection view of the suggestions view controller.
 
 ``` swift
-open class _ChatSuggestionsCollectionView<ExtraData: ExtraDataTypes>: UICollectionView,
+open class ChatSuggestionsCollectionView: UICollectionView,
     ThemeProvider,
     Customizable 
 ```

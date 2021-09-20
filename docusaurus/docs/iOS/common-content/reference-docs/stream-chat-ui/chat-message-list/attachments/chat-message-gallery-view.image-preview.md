@@ -3,7 +3,8 @@ title: ChatMessageGalleryView.ImagePreview
 ---
 
 ``` swift
-open class ImagePreview: _View, ThemeProvider, GalleryItemPreview 
+@objc(ChatMessageGalleryViewImagePreview)
+    open class ImagePreview: _View, ThemeProvider, GalleryItemPreview 
 ```
 
 ## Inheritance

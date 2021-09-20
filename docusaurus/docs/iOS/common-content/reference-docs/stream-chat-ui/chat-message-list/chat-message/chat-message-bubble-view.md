@@ -5,7 +5,7 @@ title: ChatMessageBubbleView
 A view that displays a bubble around a message.
 
 ``` swift
-open class _ChatMessageBubbleView<ExtraData: ExtraDataTypes>: _View, AppearanceProvider, SwiftUIRepresentable 
+open class ChatMessageBubbleView: _View, AppearanceProvider, SwiftUIRepresentable 
 ```
 
 ## Inheritance

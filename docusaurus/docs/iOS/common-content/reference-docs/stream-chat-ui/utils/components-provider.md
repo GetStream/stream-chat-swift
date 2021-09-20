@@ -3,12 +3,12 @@ title: ComponentsProvider
 ---
 
 ``` swift
-public protocol ComponentsProvider: GenericComponentsProvider 
+public protocol ComponentsProvider: AnyObject 
 ```
 
 ## Inheritance
 
-[`GenericComponentsProvider`](../generic-components-provider)
+`AnyObject`
 
 ## Default Implementations
 
@@ -16,12 +16,6 @@ public protocol ComponentsProvider: GenericComponentsProvider
 
 ``` swift
 public func componentsDidRegister() 
-```
-
-### `components`
-
-``` swift
-var components: _Components<ExtraData> 
 ```
 
 ### `componentsDidRegister()`
@@ -33,22 +27,16 @@ func componentsDidRegister()
 ### `register(components:)`
 
 ``` swift
-func register<T: ExtraDataTypes>(components: _Components<T>) 
+func register(components: Components) 
 ```
 
-### `components(_:)`
+### `components`
 
 ``` swift
-func components<T: ExtraDataTypes>(_ type: T.Type = T.self) -> _Components<T> 
+var components: Components 
 ```
 
 ## Requirements
-
-### ExtraData
-
-``` swift
-associatedtype ExtraData: ExtraDataTypes
-```
 
 ### components
 
@@ -56,5 +44,17 @@ Appearance object to change components and component types from which the defaul
 or to use the default components in custom views.
 
 ``` swift
-var components: _Components<ExtraData> 
+var components: Components 
+```
+
+### register(components:​)
+
+``` swift
+func register(components: Components)
+```
+
+### componentsDidRegister()
+
+``` swift
+func componentsDidRegister()
 ```

@@ -5,7 +5,7 @@ title: TypingIndicatorView
 An `UIView` subclass indicating that user or multiple users are currently typing.
 
 ``` swift
-open class _TypingIndicatorView<ExtraData: ExtraDataTypes>: _View, ThemeProvider 
+open class TypingIndicatorView: _View, ThemeProvider 
 ```
 
 ## Inheritance

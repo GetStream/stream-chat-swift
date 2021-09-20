@@ -13,7 +13,7 @@ public struct Content
 ### `init(channel:currentUserId:)`
 
 ``` swift
-public init(channel: _ChatChannel<ExtraData>, currentUserId: UserId?) 
+public init(channel: ChatChannel, currentUserId: UserId?) 
 ```
 
 ## Properties
@@ -23,7 +23,7 @@ public init(channel: _ChatChannel<ExtraData>, currentUserId: UserId?)
 Channel for the current Item.
 
 ``` swift
-public let channel: _ChatChannel<ExtraData>
+public let channel: ChatChannel
 ```
 
 ### `currentUserId`

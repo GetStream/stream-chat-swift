@@ -5,7 +5,7 @@ title: ChatMessageFileAttachmentListView
 View which holds one or more file attachment views in a message or composer attachment view
 
 ``` swift
-open class _ChatMessageFileAttachmentListView<ExtraData: ExtraDataTypes>: _View, ComponentsProvider 
+open class ChatMessageFileAttachmentListView: _View, ComponentsProvider 
 ```
 
 ## Inheritance

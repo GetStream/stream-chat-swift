@@ -13,7 +13,7 @@ public protocol AttachmentPreviewProvider
 The view representing the attachment.
 
 ``` swift
-func previewView<ExtraData: ExtraDataTypes>(components: _Components<ExtraData>) -> UIView
+func previewView(components: Components) -> UIView
 ```
 
 ### preferredAxis

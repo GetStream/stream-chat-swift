@@ -3,21 +3,47 @@ title: UserRole
 ---
 
 ``` swift
-public enum UserRole: String, Codable, Hashable 
+public struct UserRole: RawRepresentable, Codable, Hashable, ExpressibleByStringLiteral 
 ```
 
 ## Inheritance
 
-`Codable`, `Hashable`, `String`
+`Codable`, `ExpressibleByStringLiteral`, `Hashable`, `RawRepresentable`
 
-## Enumeration Cases
+## Initializers
+
+### `init(rawValue:)`
+
+``` swift
+public init(rawValue: String) 
+```
+
+### `init(stringLiteral:)`
+
+``` swift
+public init(stringLiteral value: String) 
+```
+
+### `init(from:)`
+
+``` swift
+init(from decoder: Decoder) throws 
+```
+
+## Properties
+
+### `rawValue`
+
+``` swift
+public let rawValue: String
+```
 
 ### `user`
 
 This is the default role assigned to any user.
 
 ``` swift
-case user
+static let user 
 ```
 
 ### `admin`
@@ -25,7 +51,7 @@ case user
 This role allows users to perform more advanced actions. This role should be granted only to staff users
 
 ``` swift
-case admin
+static let admin 
 ```
 
 ### `guest`
@@ -33,7 +59,7 @@ case admin
 A user that connected using guest user authentication.
 
 ``` swift
-case guest
+static let guest 
 ```
 
 ### `anonymous`
@@ -41,5 +67,5 @@ case guest
 A user that connected using anonymous authentication.
 
 ``` swift
-case anonymous
+static let anonymous 
 ```

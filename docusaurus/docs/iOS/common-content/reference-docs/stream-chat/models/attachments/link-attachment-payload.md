@@ -35,7 +35,7 @@ public static let type: AttachmentType = .linkPreview
 An original `URL` that was included into the message text and then enriched.
 
 ``` swift
-public let originalURL: URL
+public var originalURL: URL
 ```
 
 ### `title`
@@ -43,7 +43,7 @@ public let originalURL: URL
 A title (e.g video name in case of enriched `YouTube` link or song name in case of `Spotify` link).
 
 ``` swift
-public let title: String?
+public var title: String?
 ```
 
 ### `text`
@@ -51,7 +51,7 @@ public let title: String?
 A text, usually description of the link content.
 
 ``` swift
-public let text: String?
+public var text: String?
 ```
 
 ### `author`
@@ -59,7 +59,7 @@ public let text: String?
 An author, usually the link origin. (e.g. `YouTube`, `Spotify`)
 
 ``` swift
-public let author: String?
+public var author: String?
 ```
 
 ### `titleLink`
@@ -68,7 +68,7 @@ A link for displaying an attachment.
 Can be different from the original link, depends on the enriching rules.
 
 ``` swift
-public let titleLink: URL?
+public var titleLink: URL?
 ```
 
 ### `assetURL`
@@ -76,7 +76,7 @@ public let titleLink: URL?
 An image.
 
 ``` swift
-public let assetURL: URL?
+public var assetURL: URL?
 ```
 
 ### `previewURL`
@@ -84,7 +84,7 @@ public let assetURL: URL?
 A preview image URL.
 
 ``` swift
-public let previewURL: URL?
+public var previewURL: URL?
 ```
 
 ## Methods

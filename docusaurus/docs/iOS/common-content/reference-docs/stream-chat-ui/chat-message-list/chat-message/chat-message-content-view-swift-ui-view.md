@@ -5,7 +5,7 @@ title: ChatMessageContentViewSwiftUIView
 ``` swift
 @available(iOS 13.0, *)
 /// Protocol of `_ChatMessageContentView` wrapper for use in SwiftUI.
-public protocol _ChatMessageContentViewSwiftUIView: View 
+public protocol ChatMessageContentViewSwiftUIView: View 
 ```
 
 ## Inheritance
@@ -14,14 +14,8 @@ public protocol _ChatMessageContentViewSwiftUIView: View
 
 ## Requirements
 
-### ExtraData
-
-``` swift
-associatedtype ExtraData: ExtraDataTypes
-```
-
 ### init(dataSource:​)
 
 ``` swift
-init(dataSource: _ChatMessageContentView<ExtraData>.ObservedObject<Self>)
+init(dataSource: ChatMessageContentView.ObservedObject<Self>)
 ```

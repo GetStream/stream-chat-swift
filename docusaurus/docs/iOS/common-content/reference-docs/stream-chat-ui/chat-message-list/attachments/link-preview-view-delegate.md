@@ -5,6 +5,7 @@ title: LinkPreviewViewDelegate
 The delegate used in `LinkAttachmentViewInjector` to communicate user interactions.
 
 ``` swift
+@available(iOSApplicationExtension, unavailable)
 public protocol LinkPreviewViewDelegate: ChatMessageContentViewDelegate 
 ```
 

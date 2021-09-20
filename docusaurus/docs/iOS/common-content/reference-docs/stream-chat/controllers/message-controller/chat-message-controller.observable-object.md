@@ -10,7 +10,7 @@ public class ObservableObject: SwiftUI.ObservableObject
 
 ## Inheritance
 
-`SwiftUI.ObservableObject`, [`_ChatMessageControllerDelegate`](../chat-message-controller-delegate)
+[`ChatMessageControllerDelegate`](../chat-message-controller-delegate), `SwiftUI.ObservableObject`
 
 ## Properties
 
@@ -19,7 +19,7 @@ public class ObservableObject: SwiftUI.ObservableObject
 The underlying controller. You can still access it and call methods on it.
 
 ``` swift
-public let controller: _ChatMessageController
+public let controller: ChatMessageController
 ```
 
 ### `message`
@@ -27,7 +27,7 @@ public let controller: _ChatMessageController
 The message that current controller observes.
 
 ``` swift
-@Published public private(set) var message: _ChatMessage<ExtraData>?
+@Published public private(set) var message: ChatMessage?
 ```
 
 ### `replies`
@@ -35,7 +35,7 @@ The message that current controller observes.
 The replies to the message controller observes.
 
 ``` swift
-@Published public private(set) var replies: LazyCachedMapCollection<_ChatMessage<ExtraData>> = []
+@Published public private(set) var replies: LazyCachedMapCollection<ChatMessage> = []
 ```
 
 ### `state`
@@ -52,8 +52,8 @@ The current state of the Controller.
 
 ``` swift
 public func messageController(
-        _ controller: _ChatMessageController<ExtraData>,
-        didChangeMessage change: EntityChange<_ChatMessage<ExtraData>>
+        _ controller: ChatMessageController,
+        didChangeMessage change: EntityChange<ChatMessage>
     ) 
 ```
 
@@ -61,8 +61,8 @@ public func messageController(
 
 ``` swift
 public func messageController(
-        _ controller: _ChatMessageController<ExtraData>,
-        didChangeReplies changes: [ListChange<_ChatMessage<ExtraData>>]
+        _ controller: ChatMessageController,
+        didChangeReplies changes: [ListChange<ChatMessage>]
     ) 
 ```
 

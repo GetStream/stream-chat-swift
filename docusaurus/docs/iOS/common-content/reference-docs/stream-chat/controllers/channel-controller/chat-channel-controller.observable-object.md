@@ -10,7 +10,7 @@ public class ObservableObject: SwiftUI.ObservableObject
 
 ## Inheritance
 
-`SwiftUI.ObservableObject`, [`_ChatChannelControllerDelegate`](../chat-channel-controller-delegate)
+[`ChatChannelControllerDelegate`](../chat-channel-controller-delegate), `SwiftUI.ObservableObject`
 
 ## Properties
 
@@ -19,7 +19,7 @@ public class ObservableObject: SwiftUI.ObservableObject
 The underlying controller. You can still access it and call methods on it.
 
 ``` swift
-public let controller: _ChatChannelController
+public let controller: ChatChannelController
 ```
 
 ### `channel`
@@ -27,7 +27,7 @@ public let controller: _ChatChannelController
 The channel matching the ChannelId.
 
 ``` swift
-@Published public private(set) var channel: _ChatChannel<ExtraData>?
+@Published public private(set) var channel: ChatChannel?
 ```
 
 ### `messages`
@@ -35,7 +35,7 @@ The channel matching the ChannelId.
 The messages related to the channel.
 
 ``` swift
-@Published public private(set) var messages: LazyCachedMapCollection<_ChatMessage<ExtraData>> = []
+@Published public private(set) var messages: LazyCachedMapCollection<ChatMessage> = []
 ```
 
 ### `state`
@@ -51,7 +51,7 @@ The current state of the Controller.
 The typing users related to the channel.
 
 ``` swift
-@Published public private(set) var typingUsers: Set<_ChatUser<ExtraData.User>> = []
+@Published public private(set) var typingUsers: Set<ChatUser> = []
 ```
 
 ## Methods
@@ -60,8 +60,8 @@ The typing users related to the channel.
 
 ``` swift
 public func channelController(
-        _ channelController: _ChatChannelController<ExtraData>,
-        didUpdateChannel channel: EntityChange<_ChatChannel<ExtraData>>
+        _ channelController: ChatChannelController,
+        didUpdateChannel channel: EntityChange<ChatChannel>
     ) 
 ```
 
@@ -69,8 +69,8 @@ public func channelController(
 
 ``` swift
 public func channelController(
-        _ channelController: _ChatChannelController<ExtraData>,
-        didUpdateMessages changes: [ListChange<_ChatMessage<ExtraData>>]
+        _ channelController: ChatChannelController,
+        didUpdateMessages changes: [ListChange<ChatMessage>]
     ) 
 ```
 
@@ -84,7 +84,7 @@ public func controller(_ controller: DataController, didChangeState state: DataC
 
 ``` swift
 public func channelController(
-        _ channelController: _ChatChannelController<ExtraData>,
-        didChangeTypingUsers typingUsers: Set<_ChatUser<ExtraData.User>>
+        _ channelController: ChatChannelController,
+        didChangeTypingUsers typingUsers: Set<ChatUser>
     ) 
 ```

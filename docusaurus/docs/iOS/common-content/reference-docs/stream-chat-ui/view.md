@@ -9,8 +9,8 @@ title: View
 Sets up custom `Components`.
 
 ``` swift
-func setUpStreamChatComponents<ExtraData: ExtraDataTypes>(
-        _ components: _Components<ExtraData> = .default
+func setUpStreamChatComponents(
+        _ components: Components = .default
     ) -> some View 
 ```
 

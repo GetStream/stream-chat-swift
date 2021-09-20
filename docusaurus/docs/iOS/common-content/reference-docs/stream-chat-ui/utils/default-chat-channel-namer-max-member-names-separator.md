@@ -5,10 +5,10 @@ title: DefaultChatChannelNamer(maxMemberNames_separator_)
 Generates a name for the given channel, given the current user's id.
 
 ``` swift
-public func DefaultChatChannelNamer<ExtraData: ExtraDataTypes>(
+public func DefaultChatChannelNamer(
     maxMemberNames: Int = 2,
     separator: String = ","
-) -> _ChatChannelNamer<ExtraData> 
+) -> ChatChannelNamer 
 ```
 
 The priority order is:

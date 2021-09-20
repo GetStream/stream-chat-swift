@@ -16,11 +16,11 @@ public struct Content
 public init(
             text: String,
             state: ComposerState,
-            editingMessage: _ChatMessage<ExtraData>?,
-            quotingMessage: _ChatMessage<ExtraData>?,
-            threadMessage: _ChatMessage<ExtraData>?,
+            editingMessage: ChatMessage?,
+            quotingMessage: ChatMessage?,
+            threadMessage: ChatMessage?,
             attachments: [AnyAttachmentPayload],
-            mentionedUsers: Set<_ChatUser<ExtraData.User>>,
+            mentionedUsers: Set<ChatUser>,
             command: Command?
         ) 
 ```
@@ -48,7 +48,7 @@ public let state: ComposerState
 The editing message if the composer is currently editing a message.
 
 ``` swift
-public let editingMessage: _ChatMessage<ExtraData>?
+public let editingMessage: ChatMessage?
 ```
 
 ### `quotingMessage`
@@ -56,7 +56,7 @@ public let editingMessage: _ChatMessage<ExtraData>?
 The quoting message if the composer is currently quoting a message.
 
 ``` swift
-public let quotingMessage: _ChatMessage<ExtraData>?
+public let quotingMessage: ChatMessage?
 ```
 
 ### `threadMessage`
@@ -64,7 +64,7 @@ public let quotingMessage: _ChatMessage<ExtraData>?
 The thread parent message if the composer is currently replying in a thread.
 
 ``` swift
-public var threadMessage: _ChatMessage<ExtraData>?
+public var threadMessage: ChatMessage?
 ```
 
 ### `attachments`
@@ -80,7 +80,7 @@ public var attachments: [AnyAttachmentPayload]
 The mentioned users in the message.
 
 ``` swift
-public var mentionedUsers: Set<_ChatUser<ExtraData.User>>
+public var mentionedUsers: Set<ChatUser>
 ```
 
 ### `command`
@@ -130,7 +130,7 @@ public mutating func clear()
 Sets the content state to editing a message.
 
 ``` swift
-public mutating func editMessage(_ message: _ChatMessage<ExtraData>) 
+public mutating func editMessage(_ message: ChatMessage) 
 ```
 
 #### Parameters
@@ -142,7 +142,7 @@ public mutating func editMessage(_ message: _ChatMessage<ExtraData>)
 Sets the content state to quoting a message.
 
 ``` swift
-public mutating func quoteMessage(_ message: _ChatMessage<ExtraData>) 
+public mutating func quoteMessage(_ message: ChatMessage) 
 ```
 
 #### Parameters

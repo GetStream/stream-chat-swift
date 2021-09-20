@@ -6,12 +6,8 @@ A query is used for querying specific users from backend.
 You can specify filter, sorting and pagination.
 
 ``` swift
-public struct _UserListQuery<ExtraData: UserExtraData>: Encodable 
+public struct UserListQuery: Encodable 
 ```
-
-> 
-
-Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/Cheat-Sheet#working-with-extra-data).
 
 ## Inheritance
 
@@ -25,7 +21,7 @@ Init a users query.
 
 ``` swift
 public init(
-        filter: Filter<_UserListFilterScope<ExtraData>>? = nil,
+        filter: Filter<UserListFilterScope>? = nil,
         sort: [Sorting<UserListSortingKey>] = [],
         pageSize: Int = .usersPageSize
     ) 
@@ -44,7 +40,7 @@ public init(
 A filter for the query (see `Filter`).
 
 ``` swift
-public var filter: Filter<_UserListFilterScope<ExtraData>>?
+public var filter: Filter<UserListFilterScope>?
 ```
 
 ### `sort`

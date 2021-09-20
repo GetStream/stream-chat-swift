@@ -5,7 +5,7 @@ title: ChatSuggestionsCollectionReusableView
 The header reusable view of the suggestion collection view.
 
 ``` swift
-open class _ChatSuggestionsCollectionReusableView<ExtraData: ExtraDataTypes>: UICollectionReusableView,
+open class ChatSuggestionsCollectionReusableView: UICollectionReusableView,
     ComponentsProvider 
 ```
 

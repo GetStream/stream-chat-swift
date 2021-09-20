@@ -5,13 +5,12 @@ title: QuotedChatMessageView.SwiftUIWrapper
 SwiftUI wrapper of `QuotedChatMessageView`.
 
 ``` swift
-public class SwiftUIWrapper<Content: SwiftUIView>: _QuotedChatMessageView<ExtraData>, ObservableObject
-        where Content.ExtraData == ExtraData
+public class SwiftUIWrapper<Content: SwiftUIView>: QuotedChatMessageView, ObservableObject 
 ```
 
 ## Inheritance
 
-`ObservableObject`, `_QuotedChatMessageView<ExtraData>`
+[`QuotedChatMessageView`](../quoted-chat-message-view), `ObservableObject`
 
 ## Properties
 

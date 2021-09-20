@@ -6,16 +6,12 @@ A type representing the currently logged-in user. `_CurrentChatUser` is an immut
 the given time.
 
 ``` swift
-public class _CurrentChatUser<ExtraData: ExtraDataTypes>: _ChatUser<ExtraData.User> 
+public class CurrentChatUser: ChatUser 
 ```
-
-> 
-
-Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/Cheat-Sheet#working-with-extra-data).
 
 ## Inheritance
 
-`_ChatUser<ExtraData.User>`
+[`ChatUser`](../chat-user)
 
 ## Properties
 
@@ -40,7 +36,7 @@ public let currentDevice: Device?
 A set of users muted by the user.
 
 ``` swift
-public let mutedUsers: Set<_ChatUser<ExtraData.User>>
+public let mutedUsers: Set<ChatUser>
 ```
 
 ### `flaggedUsers`
@@ -48,7 +44,7 @@ public let mutedUsers: Set<_ChatUser<ExtraData.User>>
 A set of users flagged by the user.
 
 ``` swift
-public let flaggedUsers: Set<_ChatUser<ExtraData.User>>
+public let flaggedUsers: Set<ChatUser>
 ```
 
 > 
@@ -68,7 +64,7 @@ public let flaggedMessageIDs: Set<MessageId>
 A set of channels muted by the current user.
 
 ``` swift
-public var mutedChannels: Set<_ChatChannel<ExtraData>> 
+public var mutedChannels: Set<ChatChannel> 
 ```
 
 > 

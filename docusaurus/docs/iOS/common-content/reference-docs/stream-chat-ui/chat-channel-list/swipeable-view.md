@@ -5,7 +5,7 @@ title: SwipeableView
 A view with swipe functionality that is used as action buttons view for channel list item view.
 
 ``` swift
-open class _SwipeableView<ExtraData: ExtraDataTypes>: _View, ComponentsProvider, UIGestureRecognizerDelegate 
+open class SwipeableView: _View, ComponentsProvider, UIGestureRecognizerDelegate 
 ```
 
 ## Inheritance

@@ -3,14 +3,12 @@ title: ChatMessageAttachment
 ---
 
 A type representing a chat message attachment.
-`_ChatMessageAttachment<Payload>` is an immutable snapshot of message attachment at the given time.
+`ChatMessageAttachment<Payload>` is an immutable snapshot of message attachment at the given time.
 
 ``` swift
 @dynamicMemberLookup
-public struct _ChatMessageAttachment<Payload> 
+public struct ChatMessageAttachment<Payload> 
 ```
-
-> 
 
 ## Properties
 
@@ -35,7 +33,7 @@ public let type: AttachmentType
 The attachment payload.
 
 ``` swift
-public let payload: Payload
+public var payload: Payload
 ```
 
 ### `uploadingState`

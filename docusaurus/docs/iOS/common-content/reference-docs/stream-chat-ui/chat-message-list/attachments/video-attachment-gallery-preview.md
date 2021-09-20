@@ -5,7 +5,7 @@ title: VideoAttachmentGalleryPreview
 A view used to display video attachment preview in a gallery inside a message cell
 
 ``` swift
-open class _VideoAttachmentGalleryPreview<ExtraData: ExtraDataTypes>: _View, ThemeProvider 
+open class VideoAttachmentGalleryPreview: _View, ThemeProvider 
 ```
 
 ## Inheritance
