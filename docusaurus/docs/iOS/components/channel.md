@@ -5,7 +5,7 @@ title: Channel
 import Digraph  from '../common-content/digraph.jsx'
 import SingletonNote from '../common-content/chat-client.md'
 import ComponentsNote from '../common-content/components-note.md'
-//import ChannelProperties from '../common-content/reference-docs/stream-chat-ui/chat-channel/chat-channel-vc-properties.md'
+import ChannelProperties from '../common-content/reference-docs/stream-chat-ui/chat-channel/chat-channel-vc-properties.md'
 
 The `ChatChannelVC` is the component presented when a channel is selected from the channel list. This component is responsible to display the messages from a channel, as well as creating new messages for the same channel.
 
@@ -157,4 +157,4 @@ This argument is used to specify the maximum number of members to be fetched alo
 This argument is used to specify the maximum number of watchers to be fetched along with the channel info.
 
 ## Properties
-<!-- <ChannelProperties /> -->
+<ChannelProperties />

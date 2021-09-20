@@ -5,7 +5,7 @@ title: Thread
 import Digraph  from '../common-content/digraph.jsx'
 import SingletonNote from '../common-content/chat-client.md'
 import ComponentsNote from '../common-content/components-note.md'
-//import ThreadProperties from '../common-content/reference-docs/stream-chat-ui/chat-thread/chat-thread-vc-properties.md'
+import ThreadProperties from '../common-content/reference-docs/stream-chat-ui/chat-thread/chat-thread-vc-properties.md'
 
 The `ChatThreadVC` is very similar with the [`ChatChannelVC`](../channel), the difference is that instead of displaying messages, it displays the replies of a message thread. Just like the `ChatChannelVC` it also contains the `ComposerVC` component to create new replies.
 
@@ -57,4 +57,4 @@ Components.default.threadVC = CustomChatThreadVC.self
 Just like the `ChatChannelVC`, the `ChatThreadVC` is only responsible for composing the `ChatThreadHeaderView`, `ChatMessageListVC` and `ChatMessageComposerVC` components together. In case you want to customize the rendering of the replies, you should read the [Message List](../message-list) documentation and the [Message](../message) documentation.
 
 ## Properties
-<!-- <ThreadProperties /> -->
+<ThreadProperties />
