@@ -6,7 +6,7 @@
 @testable import StreamChatTestTools
 import XCTest
 
-class DatabaseSession_Tests: StressTestCase {
+class DatabaseSession_Tests: XCTestCase {
     var database: DatabaseContainerMock!
     
     override func setUp() {

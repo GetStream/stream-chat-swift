@@ -5,7 +5,7 @@
 @testable import StreamChat
 import XCTest
 
-final class Dictionary_Tests: StressTestCase {
+final class Dictionary_Tests: XCTestCase {
     func test_mapKeys() {
         // Declare key transformation closure.
         let keyTransform: (String) -> String = {

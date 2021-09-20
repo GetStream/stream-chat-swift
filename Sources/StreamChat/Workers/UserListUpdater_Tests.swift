@@ -6,7 +6,7 @@
 @testable import StreamChatTestTools
 import XCTest
 
-class UserListUpdater_Tests: StressTestCase {
+class UserListUpdater_Tests: XCTestCase {
     var webSocketClient: WebSocketClientMock!
     var apiClient: APIClientMock!
     var database: DatabaseContainer!

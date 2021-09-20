@@ -6,7 +6,7 @@
 @testable import StreamChatTestTools
 import XCTest
 
-final class ChatClientUpdater_Tests_Tests: StressTestCase {
+final class ChatClientUpdater_Tests_Tests: XCTestCase {
     // MARK: Disconnect
 
     func test_disconnect_doesNothing_ifClientIsPassive() {

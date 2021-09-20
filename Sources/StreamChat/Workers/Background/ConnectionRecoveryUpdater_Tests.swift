@@ -7,7 +7,7 @@ import CoreData
 @testable import StreamChatTestTools
 import XCTest
 
-final class ConnectionRecoveryUpdater_Tests: StressTestCase {
+final class ConnectionRecoveryUpdater_Tests: XCTestCase {
     var database: DatabaseContainerMock!
     var webSocketClient: WebSocketClientMock!
     var apiClient: APIClientMock!

@@ -7,7 +7,7 @@ import CoreData
 @testable import StreamChatTestTools
 import XCTest
 
-class ChatClient_Tests: StressTestCase {
+class ChatClient_Tests: XCTestCase {
     var userId: UserId!
     private var testEnv: TestEnvironment!
     private var time: VirtualTime!
