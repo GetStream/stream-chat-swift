@@ -73,6 +73,7 @@ var streamChatSourcesExcluded: [String] { [
     "WebSocketClient/EventMiddlewares/MessageReactionsMiddleware_Tests.swift",
     "WebSocketClient/EventMiddlewares/UserWatchingEventMiddleware_Tests.swift",
     "WebSocketClient/EventMiddlewares/TypingStartCleanupMiddleware_Tests.swift",
+    "WebSocketClient/EventMiddlewares/EventConverterMiddleware_Tests.swift",
     "WebSocketClient/EventMiddlewares/EventMiddleware_Mock.swift",
     "WebSocketClient/EventMiddlewares/UserTypingStateUpdaterMiddleware_Tests.swift",
     "WebSocketClient/EventMiddlewares/ChannelVisibilityEventMiddleware_Tests.swift",
