@@ -232,12 +232,13 @@ final class ChannelEventsController_Tests: XCTestCase {
         controller.callbackQueue = callbackQueue
         
         // Simulate incoming events.
-        let currentChannelEvent = try ChannelUpdatedEvent(
-            from: EventPayload(
-                eventType: .channelUpdated,
-                cid: cid
-            )
-        )
+        let eventPayload = EventPayload(eventType: .channelUpdated, channel: .dummy(cid: cid), createdAt: .unique)
+        try database.writeSynchronously {
+            try $0.saveChannel(payload: eventPayload.channel!, query: nil)
+        }
+        let currentChannelEvent = try ChannelUpdatedEventDTO(from: eventPayload)
+            .toDomainEvent(session: database.viewContext) as! ChannelUpdatedEvent
+        
         let currentChannelCustomEvent = UnknownEvent(
             type: .init(rawValue: .unique),
             cid: cid,

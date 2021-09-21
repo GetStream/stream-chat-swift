@@ -11,15 +11,15 @@ class ChannelEvents_Tests: XCTestCase {
     
     func test_updated() throws {
         let json = XCTestCase.mockData(fromFile: "ChannelUpdated")
-        let event = try eventDecoder.decode(from: json) as? ChannelUpdatedEvent
-        XCTAssertEqual(event?.cid, ChannelId(type: .messaging, id: "new_channel_7070"))
+        let event = try eventDecoder.decode(from: json) as? ChannelUpdatedEventDTO
+        XCTAssertEqual(event?.channel.cid, ChannelId(type: .messaging, id: "new_channel_7070"))
         XCTAssertEqual((event?.payload as? EventPayload)?.user?.id, "broken-waterfall-5")
     }
     
     func test_updated_usingServerSideAuth() throws {
         let json = XCTestCase.mockData(fromFile: "ChannelUpdated_ServerSide")
-        let event = try eventDecoder.decode(from: json) as? ChannelUpdatedEvent
-        XCTAssertEqual(event?.cid, ChannelId(type: .messaging, id: "new_channel_7070"))
+        let event = try eventDecoder.decode(from: json) as? ChannelUpdatedEventDTO
+        XCTAssertEqual(event?.channel.cid, ChannelId(type: .messaging, id: "new_channel_7070"))
         XCTAssertNil((event?.payload as? EventPayload)?.user?.id)
     }
     
@@ -70,6 +70,42 @@ class ChannelEvents_Tests: XCTestCase {
         let rawPayload = try JSONDecoder.stream.decode(EventPayload.self, from: mockData)
         XCTAssertEqual((event?.payload as? EventPayload)?.createdAt, rawPayload.createdAt)
     }
+    
+    // MARK: DTO -> Event
+    
+    func test_channelUpdatedEventDTO_toDomainEvent() throws {
+        // Create database session
+        let session = try DatabaseContainerMock(kind: .inMemory).viewContext
+        
+        // Create event payload
+        let cid: ChannelId = .unique
+        let eventPayload = EventPayload(
+            eventType: .channelUpdated,
+            cid: cid,
+            user: .dummy(userId: .unique),
+            channel: .dummy(cid: cid),
+            message: .dummy(messageId: .unique, authorUserId: .unique),
+            createdAt: .unique
+        )
+        
+        // Create event DTO
+        let dto = try ChannelUpdatedEventDTO(from: eventPayload)
+        
+        // Assert event creation fails due to missing dependencies in database
+        XCTAssertNil(dto.toDomainEvent(session: session))
+        
+        // Save event to database
+        try session.saveUser(payload: eventPayload.user!)
+        _ = try session.saveChannel(payload: eventPayload.channel!, query: nil)
+        _ = try session.saveMessage(payload: eventPayload.message!, for: cid)
+        
+        // Assert event can be created and has correct fields
+        let event = try XCTUnwrap(dto.toDomainEvent(session: session) as? ChannelUpdatedEvent)
+        XCTAssertEqual(event.user?.id, eventPayload.user?.id)
+        XCTAssertEqual(event.message?.id, eventPayload.message?.id)
+        XCTAssertEqual(event.channel.cid, eventPayload.channel?.cid)
+        XCTAssertEqual(event.createdAt, eventPayload.createdAt)
+    }
 }
 
 class ChannelEventsIntegration_Tests: XCTestCase {
@@ -94,7 +130,7 @@ class ChannelEventsIntegration_Tests: XCTestCase {
 
     func test_ChannelUpdatedEventPayload_isHandled() throws {
         let json = XCTestCase.mockData(fromFile: "ChannelUpdated")
-        let event = try eventDecoder.decode(from: json) as? ChannelUpdatedEvent
+        let event = try eventDecoder.decode(from: json) as? ChannelUpdatedEventDTO
 
         let channelId: ChannelId = ChannelId(type: .messaging, id: "new_channel_7070")
         

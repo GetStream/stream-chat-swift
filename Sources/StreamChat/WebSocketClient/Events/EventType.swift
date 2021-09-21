@@ -116,8 +116,9 @@ extension EventType {
         case .userStartTyping, .userStopTyping: return try TypingEventDTO(from: response)
         case .userBanned: return try UserBannedEventDTO(from: response)
         case .userUnbanned: return try UserUnbannedEventDTO(from: response)
+        
+        case .channelUpdated: return try ChannelUpdatedEventDTO(from: response)
             
-        case .channelUpdated: return try ChannelUpdatedEvent(from: response)
         case .channelDeleted: return try ChannelDeletedEvent(from: response)
         case .channelHidden: return try ChannelHiddenEvent(from: response)
         case .channelTruncated: return try ChannelTruncatedEvent(from: response)
