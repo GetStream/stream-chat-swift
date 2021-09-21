@@ -24,8 +24,8 @@ struct ChannelReadUpdaterMiddleware: EventMiddleware {
                 session: session
             )
             
-        case let event as MessageReadEvent:
-            resetChannelRead(for: event.cid, userId: event.userId, lastReadAt: event.readAt, session: session)
+        case let event as MessageReadEventDTO:
+            resetChannelRead(for: event.cid, userId: event.user.id, lastReadAt: event.createdAt, session: session)
 
         case let event as NotificationMarkReadEvent:
             resetChannelRead(for: event.cid, userId: event.userId, lastReadAt: event.readAt, session: session)

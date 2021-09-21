@@ -52,20 +52,20 @@ class MessageEvents_Tests: XCTestCase {
     
     func test_read() throws {
         let json = XCTestCase.mockData(fromFile: "MessageRead")
-        let event = try eventDecoder.decode(from: json) as? MessageReadEvent
-        XCTAssertEqual(event?.userId, "steep-moon-9")
+        let event = try eventDecoder.decode(from: json) as? MessageReadEventDTO
+        XCTAssertEqual(event?.user.id, "steep-moon-9")
         XCTAssertEqual(event?.cid, ChannelId(type: .messaging, id: "general"))
-        XCTAssertEqual(event?.readAt.description, "2020-07-17 13:55:56 +0000")
+        XCTAssertEqual(event?.createdAt.description, "2020-07-17 13:55:56 +0000")
         XCTAssertEqual(event?.unreadCount, .init(channels: 3, messages: 21))
     }
     
     func test_read_withoutUnreadCount() throws {
         let json = XCTestCase.mockData(fromFile: "MessageRead+MissingUnreadCount")
-        let event = try eventDecoder.decode(from: json) as? MessageReadEvent
-        XCTAssertEqual(event?.userId, "steep-moon-9")
+        let event = try eventDecoder.decode(from: json) as? MessageReadEventDTO
+        XCTAssertEqual(event?.user.id, "steep-moon-9")
         XCTAssertEqual(event?.cid, ChannelId(type: .messaging, id: "general"))
-        XCTAssertEqual(event?.readAt.description, "2020-07-17 13:55:56 +0000")
-        XCTAssertEqual(event?.unreadCount, nil)
+        XCTAssertEqual(event?.createdAt.description, "2020-07-17 13:55:56 +0000")
+        XCTAssertNil(event?.unreadCount)
     }
 }
 
@@ -285,6 +285,36 @@ class MessageEventsIntegration_Tests: XCTestCase {
         XCTAssertEqual(event.cid, eventPayload.cid)
         XCTAssertEqual(event.user.id, eventPayload.user?.id)
         XCTAssertEqual(event.message.id, eventPayload.message?.id)
+        XCTAssertEqual(event.createdAt, eventPayload.createdAt)
+    }
+    
+    func test_messageReadEventDTO_toDomainEvent() throws {
+        // Create database session
+        let session = try DatabaseContainerMock(kind: .inMemory).viewContext
+        
+        // Create event payload
+        let eventPayload = EventPayload(
+            eventType: .messageRead,
+            cid: .unique,
+            user: .dummy(userId: .unique),
+            unreadCount: .init(channels: 12, messages: 44),
+            createdAt: .unique
+        )
+        
+        // Create event DTO
+        let dto = try MessageReadEventDTO(from: eventPayload)
+        
+        // Assert event creation fails due to missing dependencies in database
+        XCTAssertNil(dto.toDomainEvent(session: session))
+        
+        // Save event to database
+        try session.saveUser(payload: eventPayload.user!)
+        
+        // Assert event can be created and has correct fields
+        let event = try XCTUnwrap(dto.toDomainEvent(session: session) as? MessageReadEvent)
+        XCTAssertEqual(event.cid, eventPayload.cid)
+        XCTAssertEqual(event.user.id, eventPayload.user?.id)
+        XCTAssertEqual(event.unreadCount, eventPayload.unreadCount)
         XCTAssertEqual(event.createdAt, eventPayload.createdAt)
     }
 }

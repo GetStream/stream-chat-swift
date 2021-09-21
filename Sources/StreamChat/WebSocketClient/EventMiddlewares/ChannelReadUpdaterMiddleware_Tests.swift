@@ -296,7 +296,7 @@ class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
             unreadCount: .noUnread,
             createdAt: newReadDate
         )
-        let messageReadEvent = try MessageReadEvent(from: eventPayload)
+        let messageReadEvent = try MessageReadEventDTO(from: eventPayload)
         
         // Let the middleware handle the event
         // Middleware should create a read event for the member

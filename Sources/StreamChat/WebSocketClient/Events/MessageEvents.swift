@@ -155,19 +155,43 @@ struct MessageDeletedEventDTO: EventWithPayload {
 public typealias ChannelReadEvent = MessageReadEvent
 
 /// `ChannelReadEvent`, this event tells that User has mark read all messages in channel.
-public struct MessageReadEvent: UserSpecificEvent, ChannelSpecificEvent {
-    public let userId: UserId
-    public let cid: ChannelId
-    public let readAt: Date
-    public let unreadCount: UnreadCount?
+public struct MessageReadEvent: ChannelSpecificEvent {
+    /// The user who read the channel.
+    public let user: ChatUser
     
+    /// The identifier of the read channel.
+    public let cid: ChannelId
+    
+    /// The event timestamp.
+    public let createdAt: Date
+    
+    /// The unread counts of the current user.
+    public let unreadCount: UnreadCount?
+}
+
+struct MessageReadEventDTO: EventWithPayload {
+    let user: UserPayload
+    let cid: ChannelId
+    let createdAt: Date
+    let unreadCount: UnreadCount?
     let payload: Any
     
     init(from response: EventPayload) throws {
-        userId = try response.value(at: \.user?.id)
+        user = try response.value(at: \.user)
         cid = try response.value(at: \.cid)
-        readAt = try response.value(at: \.createdAt)
+        createdAt = try response.value(at: \.createdAt)
         unreadCount = try? response.value(at: \.unreadCount)
         payload = response
+    }
+    
+    func toDomainEvent(session: DatabaseSession) -> Event? {
+        guard let userDTO = session.user(id: user.id) else { return nil }
+        
+        return MessageReadEvent(
+            user: userDTO.asModel(),
+            cid: cid,
+            createdAt: createdAt,
+            unreadCount: unreadCount
+        )
     }
 }

@@ -71,6 +71,14 @@ public extension MessageDeletedEvent {
     var deletedAt: Date { message.deletedAt ?? createdAt }
 }
 
+public extension MessageReadEvent {
+    @available(*, deprecated, message: "Use user.id")
+    var userId: UserId { user.id }
+    
+    @available(*, deprecated, message: "Use createdAt")
+    var readAt: Date { createdAt }
+}
+
 public extension TypingEvent {
     @available(*, deprecated, message: "Use user.id")
     var userId: UserId { user.id }
