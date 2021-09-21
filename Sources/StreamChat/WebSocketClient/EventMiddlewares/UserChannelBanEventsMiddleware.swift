@@ -18,9 +18,9 @@ struct UserChannelBanEventsMiddleware: EventMiddleware {
         
         do {
             switch event {
-            case let userBannedEvent as UserBannedEvent:
-                guard let memberDTO = session.member(userId: userBannedEvent.userId, cid: cid) else {
-                    throw ClientError.MemberDoesNotExist(userId: userBannedEvent.userId, cid: cid)
+            case let userBannedEvent as UserBannedEventDTO:
+                guard let memberDTO = session.member(userId: userBannedEvent.user.id, cid: cid) else {
+                    throw ClientError.MemberDoesNotExist(userId: userBannedEvent.user.id, cid: cid)
                 }
                 
                 memberDTO.isBanned = true

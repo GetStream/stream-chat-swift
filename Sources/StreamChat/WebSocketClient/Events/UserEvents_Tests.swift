@@ -35,8 +35,8 @@ class UserEvents_Tests: XCTestCase {
     
     func test_userBannedEvent() throws {
         let json = XCTestCase.mockData(fromFile: "UserBanned")
-        let event = try eventDecoder.decode(from: json) as? UserBannedEvent
-        XCTAssertEqual(event?.userId, "broken-waterfall-5")
+        let event = try eventDecoder.decode(from: json) as? UserBannedEventDTO
+        XCTAssertEqual(event?.user.id, "broken-waterfall-5")
         XCTAssertEqual(event?.ownerId, "steep-moon-9")
         XCTAssertEqual(event?.cid, ChannelId(type: .messaging, id: "new_channel_7070"))
         XCTAssertEqual(event?.reason, "I don't like you 🤮")
@@ -163,6 +163,40 @@ class UserEvents_Tests: XCTestCase {
         XCTAssertEqual(event.user.id, eventPayload.user!.id)
         XCTAssertEqual(event.createdAt, eventPayload.createdAt)
     }
+    
+    func test_userBannedEventDTO_toDomainEvent() throws {
+        // Create database session
+        let session = try DatabaseContainerMock(kind: .inMemory).viewContext
+        
+        // Create event payload
+        let eventPayload = EventPayload(
+            eventType: .userBanned,
+            cid: .unique,
+            user: .dummy(userId: .unique),
+            createdBy: .dummy(userId: .unique),
+            createdAt: .unique,
+            banReason: .unique,
+            banExpiredAt: .unique
+        )
+        
+        // Create event DTO
+        let dto = try UserBannedEventDTO(from: eventPayload)
+        
+        // Assert event creation fails due to missing dependencies
+        XCTAssertNil(dto.toDomainEvent(session: session))
+
+        // Save event payload to database
+        try session.saveUser(payload: eventPayload.user!)
+        
+        // Assert event can be created from DTO and has correct fields
+        let event = try XCTUnwrap(dto.toDomainEvent(session: session) as? UserBannedEvent)
+        XCTAssertEqual(event.cid, eventPayload.cid)
+        XCTAssertEqual(event.user.id, eventPayload.user!.id)
+        XCTAssertEqual(event.reason, eventPayload.banReason)
+        XCTAssertEqual(event.ownerId, eventPayload.createdBy?.id)
+        XCTAssertEqual(event.expiredAt, eventPayload.banExpiredAt)
+        XCTAssertEqual(event.createdAt, eventPayload.createdAt)
+    }
 }
 
 class UserEventsIntegration_Tests: XCTestCase {
@@ -275,7 +309,7 @@ class UserEventsIntegration_Tests: XCTestCase {
     
     func test_UserBannedPayload_isHandled() throws {
         let json = XCTestCase.mockData(fromFile: "UserBanned")
-        let event = try eventDecoder.decode(from: json) as? UserBannedEvent
+        let event = try eventDecoder.decode(from: json) as? UserBannedEventDTO
 
         try! client.databaseContainer.createMember(
             userId: "broken-waterfall-5",

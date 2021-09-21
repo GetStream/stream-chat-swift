@@ -128,24 +128,57 @@ public struct UserGloballyBannedEvent: UserSpecificEvent {
     }
 }
 
-public struct UserBannedEvent: UserSpecificEvent, ChannelSpecificEvent {
+/// Triggered when user is banned in a specific channel
+public struct UserBannedEvent: ChannelSpecificEvent {
+    /// The channel identifer user is banned at.
     public let cid: ChannelId
-    public let userId: UserId
-    public let ownerId: UserId
-    public let createdAt: Date?
-    public let reason: String?
-    public let expiredAt: Date?
     
+    /// The banned user.
+    public let user: ChatUser
+    
+    /// The identifier of a user who initiated a ban.
+    public let ownerId: UserId
+    
+    /// The event timestamp
+    public let createdAt: Date?
+    
+    /// The ban reason.
+    public let reason: String?
+    
+    /// The ban expiration date.
+    public let expiredAt: Date?
+}
+
+struct UserBannedEventDTO: EventWithPayload {
+    let cid: ChannelId
+    let user: UserPayload
+    let ownerId: UserId
+    let createdAt: Date
+    let reason: String?
+    let expiredAt: Date?
     let payload: Any
     
     init(from response: EventPayload) throws {
         cid = try response.value(at: \.cid)
-        userId = try response.value(at: \.user?.id)
+        user = try response.value(at: \.user)
         ownerId = try response.value(at: \.createdBy?.id)
-        createdAt = response.createdAt
+        createdAt = try response.value(at: \.createdAt)
         reason = response.banReason
         expiredAt = response.banExpiredAt
         payload = response
+    }
+    
+    func toDomainEvent(session: DatabaseSession) -> Event? {
+        guard let userDTO = session.user(id: user.id) else { return nil }
+        
+        return UserBannedEvent(
+            cid: cid,
+            user: userDTO.asModel(),
+            ownerId: ownerId,
+            createdAt: createdAt,
+            reason: reason,
+            expiredAt: expiredAt
+        )
     }
 }
 

@@ -44,6 +44,7 @@ final class UserChannelBanEventsMiddleware_Tests: XCTestCase {
             cid: .unique,
             user: .dummy(userId: .unique, name: "Luke", imageUrl: nil, extraData: [:]),
             createdBy: .dummy(userId: .unique, name: "Leia", imageUrl: nil, extraData: [:]),
+            createdAt: .unique,
             banExpiredAt: .unique
         )
 
@@ -52,11 +53,11 @@ final class UserChannelBanEventsMiddleware_Tests: XCTestCase {
         database.write_errorResponse = error
 
         // Simulate and handle banned event.
-        let event = try UserBannedEvent(from: eventPayload)
+        let event = try UserBannedEventDTO(from: eventPayload)
         let forwardedEvent = middleware.handle(event: event, session: database.viewContext)
 
         // Assert `UserBannedEvent` is forwarded even though database error happened.
-        XCTAssertTrue(forwardedEvent is UserBannedEvent)
+        XCTAssertTrue(forwardedEvent is UserBannedEventDTO)
     }
 
     func tests_middleware_forwardsUnbanEvent_ifDatabaseWriteGeneratesError() throws {
@@ -85,11 +86,12 @@ final class UserChannelBanEventsMiddleware_Tests: XCTestCase {
             cid: .unique,
             user: .dummy(userId: .unique, name: "Luke", imageUrl: nil, extraData: [:]),
             createdBy: .dummy(userId: .unique, name: "Leia", imageUrl: nil, extraData: [:]),
+            createdAt: .unique,
             banExpiredAt: .unique
         )
 
         // Create event with payload.
-        let event = try UserBannedEvent(from: eventPayload)
+        let event = try UserBannedEventDTO(from: eventPayload)
 
         // Create required objects in the DB
         try database.createChannel(cid: eventPayload.cid!)
@@ -106,7 +108,7 @@ final class UserChannelBanEventsMiddleware_Tests: XCTestCase {
         XCTAssertEqual(member.isBanned, true)
         XCTAssertEqual(member.banExpiresAt, eventPayload.banExpiredAt!)
 
-        XCTAssert(forwardedEvent is UserBannedEvent)
+        XCTAssert(forwardedEvent is UserBannedEventDTO)
     }
 
     func tests_middleware_handlesUserUnbannedEventCorrectly() throws {
