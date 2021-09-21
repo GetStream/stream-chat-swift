@@ -5,3 +5,8 @@
 import Foundation
 
 /// - NOTE: Deprecations of the next major release.
+
+public extension UserPresenceChangedEvent {
+    @available(*, deprecated, message: "Use user.id")
+    var userId: UserId { user.id }
+}

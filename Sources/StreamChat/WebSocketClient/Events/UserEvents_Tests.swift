@@ -11,9 +11,9 @@ class UserEvents_Tests: XCTestCase {
     
     func test_userPresenceEvent() throws {
         let json = XCTestCase.mockData(fromFile: "UserPresence")
-        let event = try eventDecoder.decode(from: json) as? UserPresenceChangedEvent
-        XCTAssertEqual(event?.userId, "steep-moon-9")
-        XCTAssertEqual(event?.createdAt?.description, "2020-07-16 15:44:19 +0000")
+        let event = try eventDecoder.decode(from: json) as? UserPresenceChangedEventDTO
+        XCTAssertEqual(event?.user.id, "steep-moon-9")
+        XCTAssertEqual(event?.createdAt.description, "2020-07-16 15:44:19 +0000")
     }
     
     func test_watchingEvent() throws {
@@ -47,6 +47,34 @@ class UserEvents_Tests: XCTestCase {
         let event = try eventDecoder.decode(from: json) as? UserUnbannedEvent
         XCTAssertEqual(event?.userId, "broken-waterfall-5")
         XCTAssertEqual(event?.cid, ChannelId(type: .messaging, id: "new_channel_7070"))
+    }
+    
+    // MARK: DTO -> Event
+    
+    func test_userPresenceChangedEventDTO_toDomainEvent() throws {
+        // Create database session
+        let session = try DatabaseContainerMock(kind: .inMemory).viewContext
+        
+        // Create event payload
+        let eventPayload = EventPayload(
+            eventType: .userPresenceChanged,
+            user: .dummy(userId: .unique),
+            createdAt: .unique
+        )
+        
+        // Create event DTO
+        let dto = try UserPresenceChangedEventDTO(from: eventPayload)
+        
+        // Assert event creation fails due to missing dependencies
+        XCTAssertNil(dto.toDomainEvent(session: session))
+        
+        // Save event payload to database
+        try session.saveUser(payload: eventPayload.user!)
+        
+        // Assert event can be created from DTO and has correct fields
+        let event = try XCTUnwrap(dto.toDomainEvent(session: session) as? UserPresenceChangedEvent)
+        XCTAssertEqual(event.createdAt, eventPayload.createdAt)
+        XCTAssertEqual(event.user.id, eventPayload.user!.id)
     }
 }
 
@@ -120,7 +148,7 @@ class UserEventsIntegration_Tests: XCTestCase {
     
     func test_UserPresenceChangedPayload_isHandled() throws {
         let json = XCTestCase.mockData(fromFile: "UserPresence")
-        let event = try eventDecoder.decode(from: json) as? UserPresenceChangedEvent
+        let event = try eventDecoder.decode(from: json) as? UserPresenceChangedEventDTO
 
         try! client.databaseContainer.createUser(id: "steep-moon-9")
         

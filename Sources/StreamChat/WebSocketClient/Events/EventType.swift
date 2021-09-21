@@ -109,8 +109,9 @@ extension EventType {
     func event(from response: EventPayload) throws -> Event {
         switch self {
         case .healthCheck: return try HealthCheckEvent(from: response)
+        
+        case .userPresenceChanged: return try UserPresenceChangedEventDTO(from: response)
             
-        case .userPresenceChanged: return try UserPresenceChangedEvent(from: response)
         case .userUpdated: return try UserUpdatedEvent(from: response)
         case .userStartWatching, .userStopWatching: return try UserWatchingEvent(from: response)
         case .userStartTyping, .userStopTyping: return try TypingEvent(from: response)

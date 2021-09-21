@@ -4,16 +4,33 @@
 
 import Foundation
 
-public struct UserPresenceChangedEvent: UserSpecificEvent {
-    public let userId: UserId
-    public let createdAt: Date?
+/// Triggered when user status changes (eg. online, offline, away, etc.)
+public struct UserPresenceChangedEvent: Event {
+    /// The user the status changed for
+    public let user: ChatUser
     
+    /// The event timestamp
+    public let createdAt: Date?
+}
+
+struct UserPresenceChangedEventDTO: EventWithPayload {
+    let user: UserPayload
+    let createdAt: Date
     let payload: Any
     
     init(from response: EventPayload) throws {
-        userId = try response.value(at: \.user?.id)
-        createdAt = response.createdAt
+        user = try response.value(at: \.user)
+        createdAt = try response.value(at: \.createdAt)
         payload = response
+    }
+    
+    func toDomainEvent(session: DatabaseSession) -> Event? {
+        guard let userDTO = session.user(id: user.id) else { return nil }
+        
+        return UserPresenceChangedEvent(
+            user: userDTO.asModel(),
+            createdAt: createdAt
+        )
     }
 }
 
