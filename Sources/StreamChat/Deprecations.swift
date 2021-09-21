@@ -31,6 +31,11 @@ public extension UserUnbannedEvent {
     var userId: UserId { user.id }
 }
 
+public extension ChannelHiddenEvent {
+    @available(*, deprecated, message: "Use createdAt")
+    var hiddenAt: Date { createdAt }
+}
+
 public extension ChannelDeletedEvent {
     @available(*, deprecated, message: "Use channel.deletedAt")
     var deletedAt: Date { channel.deletedAt ?? createdAt }

@@ -36,15 +36,15 @@ class ChannelEvents_Tests: XCTestCase {
     
     func test_ChannelHiddenEvent_decoding() throws {
         var json = XCTestCase.mockData(fromFile: "ChannelHidden")
-        var event = try XCTUnwrap(try eventDecoder.decode(from: json) as? ChannelHiddenEvent)
+        var event = try XCTUnwrap(try eventDecoder.decode(from: json) as? ChannelHiddenEventDTO)
         XCTAssertEqual(event.cid, ChannelId(type: .messaging, id: "default-channel-6"))
-        XCTAssertEqual(event.hiddenAt.description, "2021-04-23 07:03:54 +0000")
+        XCTAssertEqual(event.createdAt.description, "2021-04-23 07:03:54 +0000")
         XCTAssertEqual(event.isHistoryCleared, false)
 
         json = XCTestCase.mockData(fromFile: "ChannelHidden+HistoryCleared")
-        event = try XCTUnwrap(try eventDecoder.decode(from: json) as? ChannelHiddenEvent)
+        event = try XCTUnwrap(try eventDecoder.decode(from: json) as? ChannelHiddenEventDTO)
         XCTAssertEqual(event.cid, ChannelId(type: .messaging, id: "default-channel-6"))
-        XCTAssertEqual(event.hiddenAt.description, "2021-04-23 07:03:54 +0000")
+        XCTAssertEqual(event.createdAt.description, "2021-04-23 07:03:54 +0000")
         XCTAssertEqual(event.isHistoryCleared, true)
     }
     
@@ -192,6 +192,36 @@ class ChannelEvents_Tests: XCTestCase {
         XCTAssertEqual(event.cid, eventPayload.cid)
         XCTAssertEqual(event.createdAt, eventPayload.createdAt)
     }
+    
+    func test_channelHiddenEventDTO_toDomainEvent() throws {
+        // Create database session
+        let session = try DatabaseContainerMock(kind: .inMemory).viewContext
+        
+        // Create event payload
+        let eventPayload = EventPayload(
+            eventType: .channelHidden,
+            cid: .unique,
+            user: .dummy(userId: .unique),
+            createdAt: .unique,
+            isChannelHistoryCleared: true
+        )
+        
+        // Create event DTO
+        let dto = try ChannelHiddenEventDTO(from: eventPayload)
+        
+        // Assert event creation fails due to missing dependencies in database
+        XCTAssertNil(dto.toDomainEvent(session: session))
+        
+        // Save event to database
+        try session.saveUser(payload: eventPayload.user!)
+        
+        // Assert event can be created and has correct fields
+        let event = try XCTUnwrap(dto.toDomainEvent(session: session) as? ChannelHiddenEvent)
+        XCTAssertEqual(event.user.id, eventPayload.user?.id)
+        XCTAssertEqual(event.cid, eventPayload.cid)
+        XCTAssertEqual(event.isHistoryCleared, eventPayload.isChannelHistoryCleared)
+        XCTAssertEqual(event.createdAt, eventPayload.createdAt)
+    }
 }
 
 class ChannelEventsIntegration_Tests: XCTestCase {
@@ -281,7 +311,7 @@ class ChannelEventsIntegration_Tests: XCTestCase {
     
     func test_ChannelHiddenEventPayload_isHandled() throws {
         let json = XCTestCase.mockData(fromFile: "ChannelHidden")
-        let event = try eventDecoder.decode(from: json) as? ChannelHiddenEvent
+        let event = try eventDecoder.decode(from: json) as? ChannelHiddenEventDTO
 
         let channelId: ChannelId = ChannelId(type: .messaging, id: "default-channel-6")
         

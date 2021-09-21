@@ -170,16 +170,44 @@ struct ChannelVisibleEventDTO: EventWithPayload {
     }
 }
 
+/// Triggered when a channel is hidden.
 public struct ChannelHiddenEvent: ChannelSpecificEvent {
+    /// The hidden channel identifier.
     public let cid: ChannelId
-    public let hiddenAt: Date
+    
+    /// The user who hide the channel.
+    public let user: ChatUser
+    
+    /// The flag saying that channel history was cleared.
     public let isHistoryCleared: Bool
-    let payload: Any
+    
+    /// The date a channel was hidden.
+    public let createdAt: Date
+}
 
+struct ChannelHiddenEventDTO: EventWithPayload {
+    let cid: ChannelId
+    let user: UserPayload
+    let isHistoryCleared: Bool
+    let createdAt: Date
+    let payload: Any
+    
     init(from response: EventPayload) throws {
         cid = try response.value(at: \.cid)
-        hiddenAt = try response.value(at: \.createdAt)
+        createdAt = try response.value(at: \.createdAt)
+        user = try response.value(at: \.user)
         isHistoryCleared = try response.value(at: \.isChannelHistoryCleared)
         payload = response
+    }
+    
+    func toDomainEvent(session: DatabaseSession) -> Event? {
+        guard let userDTO = session.user(id: user.id) else { return nil }
+        
+        return ChannelHiddenEvent(
+            cid: cid,
+            user: userDTO.asModel(),
+            isHistoryCleared: isHistoryCleared,
+            createdAt: createdAt
+        )
     }
 }
