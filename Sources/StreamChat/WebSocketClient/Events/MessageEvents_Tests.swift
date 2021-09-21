@@ -43,11 +43,11 @@ class MessageEvents_Tests: XCTestCase {
     
     func test_deleted() throws {
         let json = XCTestCase.mockData(fromFile: "MessageDeleted")
-        let event = try eventDecoder.decode(from: json) as? MessageDeletedEvent
-        XCTAssertEqual(event?.userId, "broken-waterfall-5")
+        let event = try eventDecoder.decode(from: json) as? MessageDeletedEventDTO
+        XCTAssertEqual(event?.user.id, "broken-waterfall-5")
         XCTAssertEqual(event?.cid, ChannelId(type: .messaging, id: "general"))
-        XCTAssertEqual(event?.messageId, messageId)
-        XCTAssertEqual(event?.deletedAt.description, "2020-07-17 13:49:48 +0000")
+        XCTAssertEqual(event?.message.id, messageId)
+        XCTAssertEqual(event?.createdAt.description, "2020-07-17 13:49:48 +0000")
     }
     
     func test_read() throws {
@@ -146,7 +146,7 @@ class MessageEventsIntegration_Tests: XCTestCase {
     
     func test_MessageDeletedEventPayload_isHandled() throws {
         let updateJSON = XCTestCase.mockData(fromFile: "MessageDeleted")
-        let updateMessageEvent = try eventDecoder.decode(from: updateJSON) as? MessageDeletedEvent
+        let updateMessageEvent = try eventDecoder.decode(from: updateJSON) as? MessageDeletedEventDTO
         
         // For message to be received, we need to have channel:
         try client.databaseContainer.createChannel(
@@ -250,6 +250,38 @@ class MessageEventsIntegration_Tests: XCTestCase {
         
         // Assert event can be created and has correct fields
         let event = try XCTUnwrap(dto.toDomainEvent(session: session) as? MessageUpdatedEvent)
+        XCTAssertEqual(event.cid, eventPayload.cid)
+        XCTAssertEqual(event.user.id, eventPayload.user?.id)
+        XCTAssertEqual(event.message.id, eventPayload.message?.id)
+        XCTAssertEqual(event.createdAt, eventPayload.createdAt)
+    }
+    
+    func test_messageDeletedEventDTO_toDomainEvent() throws {
+        // Create database session
+        let session = try DatabaseContainerMock(kind: .inMemory).viewContext
+        
+        // Create event payload
+        let cid: ChannelId = .unique
+        let eventPayload = EventPayload(
+            eventType: .messageDeleted,
+            cid: cid,
+            user: .dummy(userId: .unique),
+            message: .dummy(messageId: .unique, authorUserId: .unique),
+            createdAt: .unique
+        )
+        
+        // Create event DTO
+        let dto = try MessageDeletedEventDTO(from: eventPayload)
+        
+        // Assert event creation fails due to missing dependencies in database
+        XCTAssertNil(dto.toDomainEvent(session: session))
+        
+        // Save event to database
+        try session.saveUser(payload: eventPayload.user!)
+        _ = try session.saveMessage(payload: eventPayload.message!, for: cid)
+        
+        // Assert event can be created and has correct fields
+        let event = try XCTUnwrap(dto.toDomainEvent(session: session) as? MessageDeletedEvent)
         XCTAssertEqual(event.cid, eventPayload.cid)
         XCTAssertEqual(event.user.id, eventPayload.user?.id)
         XCTAssertEqual(event.message.id, eventPayload.message?.id)
