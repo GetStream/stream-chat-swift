@@ -31,6 +31,11 @@ public extension UserUnbannedEvent {
     var userId: UserId { user.id }
 }
 
+public extension ChannelDeletedEvent {
+    @available(*, deprecated, message: "Use channel.deletedAt")
+    var deletedAt: Date { channel.deletedAt ?? createdAt }
+}
+
 public extension TypingEvent {
     @available(*, deprecated, message: "Use user.id")
     var userId: UserId { user.id }

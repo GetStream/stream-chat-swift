@@ -25,9 +25,9 @@ class ChannelEvents_Tests: XCTestCase {
     
     func test_deleted() throws {
         let json = XCTestCase.mockData(fromFile: "ChannelDeleted")
-        let event = try eventDecoder.decode(from: json) as? ChannelDeletedEvent
-        XCTAssertEqual(event?.cid, ChannelId(type: .messaging, id: "default-channel-1"))
-        XCTAssertEqual(event?.deletedAt.description, "2021-04-23 09:38:47 +0000")
+        let event = try eventDecoder.decode(from: json) as? ChannelDeletedEventDTO
+        XCTAssertEqual(event?.channel.cid, ChannelId(type: .messaging, id: "default-channel-1"))
+        XCTAssertEqual(event?.createdAt.description, "2021-04-23 09:38:47 +0000")
         XCTAssertEqual(
             (event?.payload as! EventPayload).channel?.cid,
             ChannelId(type: .messaging, id: "default-channel-1")
@@ -106,6 +106,35 @@ class ChannelEvents_Tests: XCTestCase {
         XCTAssertEqual(event.channel.cid, eventPayload.channel?.cid)
         XCTAssertEqual(event.createdAt, eventPayload.createdAt)
     }
+    
+    func test_channelDeletedEventDTO_toDomainEvent() throws {
+        // Create database session
+        let session = try DatabaseContainerMock(kind: .inMemory).viewContext
+        
+        // Create event payload
+        let eventPayload = EventPayload(
+            eventType: .channelDeleted,
+            user: .dummy(userId: .unique),
+            channel: .dummy(cid: .unique),
+            createdAt: .unique
+        )
+        
+        // Create event DTO
+        let dto = try ChannelDeletedEventDTO(from: eventPayload)
+        
+        // Assert event creation fails due to missing dependencies in database
+        XCTAssertNil(dto.toDomainEvent(session: session))
+        
+        // Save event to database
+        try session.saveUser(payload: eventPayload.user!)
+        _ = try session.saveChannel(payload: eventPayload.channel!, query: nil)
+        
+        // Assert event can be created and has correct fields
+        let event = try XCTUnwrap(dto.toDomainEvent(session: session) as? ChannelDeletedEvent)
+        XCTAssertEqual(event.user?.id, eventPayload.user?.id)
+        XCTAssertEqual(event.channel.cid, eventPayload.channel?.cid)
+        XCTAssertEqual(event.createdAt, eventPayload.createdAt)
+    }
 }
 
 class ChannelEventsIntegration_Tests: XCTestCase {
@@ -144,7 +173,7 @@ class ChannelEventsIntegration_Tests: XCTestCase {
     
     func test_ChannelDeletedEventPayload_isHandled() throws {
         let json = XCTestCase.mockData(fromFile: "ChannelDeleted")
-        let event = try eventDecoder.decode(from: json) as? ChannelDeletedEvent
+        let event = try eventDecoder.decode(from: json) as? ChannelDeletedEventDTO
 
         let channelId: ChannelId = ChannelId(type: .messaging, id: "default-channel-1")
         

@@ -118,8 +118,8 @@ extension EventType {
         case .userUnbanned: return try UserUnbannedEventDTO(from: response)
         
         case .channelUpdated: return try ChannelUpdatedEventDTO(from: response)
+        case .channelDeleted: return try ChannelDeletedEventDTO(from: response)
             
-        case .channelDeleted: return try ChannelDeletedEvent(from: response)
         case .channelHidden: return try ChannelHiddenEvent(from: response)
         case .channelTruncated: return try ChannelTruncatedEvent(from: response)
         case .channelVisible: return try ChannelVisibleEvent(from: response)
