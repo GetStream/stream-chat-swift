@@ -44,8 +44,8 @@ class UserEvents_Tests: XCTestCase {
     
     func test_userUnbannedEvent() throws {
         let json = XCTestCase.mockData(fromFile: "UserUnbanned")
-        let event = try eventDecoder.decode(from: json) as? UserUnbannedEvent
-        XCTAssertEqual(event?.userId, "broken-waterfall-5")
+        let event = try eventDecoder.decode(from: json) as? UserUnbannedEventDTO
+        XCTAssertEqual(event?.user.id, "broken-waterfall-5")
         XCTAssertEqual(event?.cid, ChannelId(type: .messaging, id: "new_channel_7070"))
     }
     
@@ -197,6 +197,34 @@ class UserEvents_Tests: XCTestCase {
         XCTAssertEqual(event.expiredAt, eventPayload.banExpiredAt)
         XCTAssertEqual(event.createdAt, eventPayload.createdAt)
     }
+    
+    func test_userUnbannedEventDTO_toDomainEvent() throws {
+        // Create database session
+        let session = try DatabaseContainerMock(kind: .inMemory).viewContext
+        
+        // Create event payload
+        let eventPayload = EventPayload(
+            eventType: .userUnbanned,
+            cid: .unique,
+            user: .dummy(userId: .unique),
+            createdAt: .unique
+        )
+        
+        // Create event DTO
+        let dto = try UserUnbannedEventDTO(from: eventPayload)
+        
+        // Assert event creation fails due to missing dependencies
+        XCTAssertNil(dto.toDomainEvent(session: session))
+
+        // Save event payload to database
+        try session.saveUser(payload: eventPayload.user!)
+        
+        // Assert event can be created from DTO and has correct fields
+        let event = try XCTUnwrap(dto.toDomainEvent(session: session) as? UserUnbannedEvent)
+        XCTAssertEqual(event.cid, eventPayload.cid)
+        XCTAssertEqual(event.user.id, eventPayload.user!.id)
+        XCTAssertEqual(event.createdAt, eventPayload.createdAt)
+    }
 }
 
 class UserEventsIntegration_Tests: XCTestCase {
@@ -338,7 +366,7 @@ class UserEventsIntegration_Tests: XCTestCase {
     
     func test_UserUnbannedPayload_isHandled() throws {
         let json = XCTestCase.mockData(fromFile: "UserUnbanned")
-        let event = try eventDecoder.decode(from: json) as? UserUnbannedEvent
+        let event = try eventDecoder.decode(from: json) as? UserUnbannedEventDTO
 
         try! client.databaseContainer.createMember(
             userId: "broken-waterfall-5",

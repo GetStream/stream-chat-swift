@@ -194,17 +194,38 @@ public struct UserGloballyUnbannedEvent: UserSpecificEvent {
     }
 }
 
-public struct UserUnbannedEvent: UserSpecificEvent, ChannelSpecificEvent {
+/// Triggered when banned user is unbanned in a specific channel
+public struct UserUnbannedEvent: ChannelSpecificEvent {
+    /// The channel identifer user is unbanned at.
     public let cid: ChannelId
-    public let userId: UserId
-    public let createdAt: Date?
     
+    /// The unbanned user.
+    public let user: ChatUser
+    
+    /// The event timestamp
+    public let createdAt: Date?
+}
+
+struct UserUnbannedEventDTO: EventWithPayload {
+    let cid: ChannelId
+    let user: UserPayload
+    let createdAt: Date
     let payload: Any
     
     init(from response: EventPayload) throws {
         cid = try response.value(at: \.cid)
-        userId = try response.value(at: \.user?.id)
-        createdAt = response.createdAt
+        user = try response.value(at: \.user)
+        createdAt = try response.value(at: \.createdAt)
         payload = response
+    }
+    
+    func toDomainEvent(session: DatabaseSession) -> Event? {
+        guard let userDTO = session.user(id: user.id) else { return nil }
+        
+        return UserUnbannedEvent(
+            cid: cid,
+            user: userDTO.asModel(),
+            createdAt: createdAt
+        )
     }
 }
