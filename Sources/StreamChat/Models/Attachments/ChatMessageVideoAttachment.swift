@@ -33,6 +33,16 @@ public struct VideoAttachmentPayload: AttachmentPayload {
             .flatMap { try? JSONEncoder.stream.encode($0) }
             .flatMap { try? JSONDecoder.stream.decode(T.self, from: $0) }
     }
+    
+    /// Creates `VideoAttachmentPayload` instance.
+    ///
+    /// Use this initializer if the attachment is already uploaded and you have the remote URLs.
+    public init(title: String?, videoRemoteURL: URL, file: AttachmentFile, extraData: [String: RawJSON]?) {
+        self.title = title
+        videoURL = videoRemoteURL
+        self.file = file
+        self.extraData = extraData
+    }
 }
 
 extension VideoAttachmentPayload: Hashable {}
@@ -58,7 +68,7 @@ extension VideoAttachmentPayload: Decodable {
         
         self.init(
             title: try container.decodeIfPresent(String.self, forKey: .title),
-            videoURL: try container.decode(URL.self, forKey: .assetURL),
+            videoRemoteURL: try container.decode(URL.self, forKey: .assetURL),
             file: try AttachmentFile(from: decoder),
             extraData: try Self.decodeExtraData(from: decoder)
         )
