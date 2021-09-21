@@ -184,16 +184,48 @@ struct NotificationAddedToChannelEventDTO: EventWithPayload {
     }
 }
 
-public struct NotificationRemovedFromChannelEvent: CurrentUserEvent, ChannelSpecificEvent {
-    public let currentUserId: UserId
+/// Triggered when the current user is removed from a channel member list.
+public struct NotificationRemovedFromChannelEvent: ChannelSpecificEvent {
+    /// The user who removed the current user from channel members.
+    public let user: ChatUser
+    
+    /// The channel identifier the current user was removed from.
     public let cid: ChannelId
+    
+    /// The current user.
+    public let member: ChatChannelMember
+    
+    /// The event timestamp.
+    public let createdAt: Date
+}
 
+struct NotificationRemovedFromChannelEventDTO: EventWithPayload {
+    let cid: ChannelId
+    let user: UserPayload
+    let member: MemberPayload
+    let createdAt: Date
     let payload: Any
     
     init(from response: EventPayload) throws {
         cid = try response.value(at: \.cid)
-        currentUserId = try response.value(at: \.user?.id)
+        user = try response.value(at: \.user)
+        member = try response.value(at: \.memberContainer?.member)
+        createdAt = try response.value(at: \.createdAt)
         payload = response
+    }
+    
+    func toDomainEvent(session: DatabaseSession) -> Event? {
+        guard
+            let userDTO = session.user(id: user.id),
+            let memberDTO = session.member(userId: member.user.id, cid: cid)
+        else { return nil }
+        
+        return NotificationRemovedFromChannelEvent(
+            user: userDTO.asModel(),
+            cid: cid,
+            member: memberDTO.asModel(),
+            createdAt: createdAt
+        )
     }
 }
 

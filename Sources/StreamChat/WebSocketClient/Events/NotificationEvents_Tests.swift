@@ -60,7 +60,7 @@ class NotificationsEvents_Tests: XCTestCase {
     
     func test_removedFromChannel() throws {
         let json = XCTestCase.mockData(fromFile: "NotificationRemovedFromChannel")
-        let event = try eventDecoder.decode(from: json) as? NotificationRemovedFromChannelEvent
+        let event = try eventDecoder.decode(from: json) as? NotificationRemovedFromChannelEventDTO
         XCTAssertEqual(event?.cid, ChannelId(type: .messaging, id: "!members-jkE22mnWM5tjzHPBurvjoVz0spuz4FULak93veyK0lY"))
     }
     
@@ -205,6 +205,40 @@ class NotificationsEvents_Tests: XCTestCase {
         // Assert event can be created and has correct fields
         let event = try XCTUnwrap(dto.toDomainEvent(session: session) as? NotificationAddedToChannelEvent)
         XCTAssertEqual(event.channel.cid, eventPayload.channel?.cid)
+        XCTAssertEqual(event.createdAt, eventPayload.createdAt)
+    }
+    
+    func test_notificationRemovedFromChannelEventDTO_toDomainEvent() throws {
+        // Create database session
+        let session = try DatabaseContainerMock(kind: .inMemory).viewContext
+        
+        // Create event payload
+        let eventPayload = EventPayload(
+            eventType: .notificationRemovedFromChannel,
+            cid: .unique,
+            user: .dummy(userId: .unique),
+            memberContainer: .init(member: .dummy(), invite: nil, memberRole: nil),
+            createdAt: .unique
+        )
+        
+        // Create event DTO
+        let dto = try NotificationRemovedFromChannelEventDTO(from: eventPayload)
+        
+        // Assert event creation fails due to missing dependencies in database
+        XCTAssertNil(dto.toDomainEvent(session: session))
+        
+        // Save event to database
+        try session.saveUser(payload: eventPayload.user!)
+        try session.saveMember(
+            payload: eventPayload.memberContainer!.member!,
+            channelId: eventPayload.cid!
+        )
+
+        // Assert event can be created and has correct fields
+        let event = try XCTUnwrap(dto.toDomainEvent(session: session) as? NotificationRemovedFromChannelEvent)
+        XCTAssertEqual(event.cid, eventPayload.cid)
+        XCTAssertEqual(event.user.id, eventPayload.user?.id)
+        XCTAssertEqual(event.member.id, eventPayload.memberContainer?.member?.user.id)
         XCTAssertEqual(event.createdAt, eventPayload.createdAt)
     }
 }

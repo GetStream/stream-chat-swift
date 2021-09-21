@@ -43,6 +43,8 @@ struct MemberEventMiddleware: EventMiddleware {
                 
             case let event as NotificationAddedToChannelEventDTO:
                 session.channel(cid: event.channel.cid)?.markNeedsRefreshQueries()
+            case let event as NotificationRemovedFromChannelEventDTO:
+                session.channel(cid: event.cid)?.markNeedsRefreshQueries()
             default:
                 break
             }

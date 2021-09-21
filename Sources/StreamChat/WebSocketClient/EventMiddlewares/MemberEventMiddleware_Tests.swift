@@ -287,11 +287,13 @@ final class MemberEventMiddleware_Tests: XCTestCase {
         let eventPayload: EventPayload = .init(
             eventType: .notificationRemovedFromChannel,
             cid: cid,
-            user: .dummy(userId: .unique)
+            user: .dummy(userId: .unique),
+            memberContainer: .dummy(userId: .unique),
+            createdAt: .unique
         )
 
         // Create event with payload.
-        let event = try NotificationRemovedFromChannelEvent(from: eventPayload)
+        let event = try NotificationRemovedFromChannelEventDTO(from: eventPayload)
 
         // Create channel in the database.
         try database.createChannel(cid: cid, withMessages: false)
@@ -303,7 +305,7 @@ final class MemberEventMiddleware_Tests: XCTestCase {
         let channel = try XCTUnwrap(database.viewContext.channel(cid: cid))
 
         // Assert event is forwarded.
-        XCTAssertTrue(forwardedEvent is NotificationRemovedFromChannelEvent)
+        XCTAssertTrue(forwardedEvent is NotificationRemovedFromChannelEventDTO)
         // Queries are invalidated
         XCTAssertTrue(channel.queries.isEmpty)
         XCTAssertTrue(channel.needsRefreshQueries)

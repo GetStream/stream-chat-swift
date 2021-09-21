@@ -128,6 +128,11 @@ public extension NotificationAddedToChannelEvent {
     var cid: ChannelId { channel.cid }
 }
 
+public extension NotificationRemovedFromChannelEvent {
+    @available(*, deprecated, message: "Use user.id")
+    var currentUserId: UserId { user.id }
+}
+
 public extension ReactionNewEvent {
     @available(*, deprecated, message: "Use user.id")
     var userId: UserId { user.id }
