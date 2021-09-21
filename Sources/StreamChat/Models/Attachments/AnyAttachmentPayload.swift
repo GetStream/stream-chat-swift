@@ -28,6 +28,9 @@ public struct AnyAttachmentPayload {
 public extension AnyAttachmentPayload {
     /// Creates an instance of `AnyAttachmentPayload` with the given payload.
     ///
+    /// - Important: This initializer should only be used for attachments already uploaded or not requiring uploading.
+    /// Please use `init(localFileURL:` initializer for attachments requiring uploading.
+    ///
     /// If attached to the new message the attachment with the given payload will be immediately
     /// available on `ChatMessage` with the `uploadingState == nil` since it doesn't require prior
     /// uploading.
@@ -75,28 +78,28 @@ public extension AnyAttachmentPayload {
         case .image:
             payload = ImageAttachmentPayload(
                 title: localFileURL.lastPathComponent,
-                imageURL: localFileURL,
-                imagePreviewURL: localFileURL,
+                imageRemoteURL: localFileURL,
+                imagePreviewRemoteURL: localFileURL,
                 extraData: extraData
             )
         case .video:
             payload = VideoAttachmentPayload(
                 title: localFileURL.lastPathComponent,
-                videoURL: localFileURL,
+                videoRemoteURL: localFileURL,
                 file: file,
                 extraData: extraData
             )
         case .audio:
             payload = AudioAttachmentPayload(
                 title: localFileURL.lastPathComponent,
-                audioURL: localFileURL,
+                audioRemoteURL: localFileURL,
                 file: file,
                 extraData: extraData
             )
         case .file:
             payload = FileAttachmentPayload(
                 title: localFileURL.lastPathComponent,
-                assetURL: localFileURL,
+                assetRemoteURL: localFileURL,
                 file: file,
                 extraData: extraData
             )

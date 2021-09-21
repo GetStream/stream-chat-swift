@@ -1041,4 +1041,57 @@ class ChannelUpdater_Tests: XCTestCase {
         
         AssertAsync.willBeEqual(completionCalledError as? TestError, error)
     }
+    
+    // MARK: - UploadFile
+    
+    func test_uploadFile_makesCorrectAPICall() {
+        let cid = ChannelId.unique
+        let type = AttachmentType.image
+        
+        XCTAssertNil(apiClient.uploadFile_attachment)
+        
+        channelUpdater.uploadFile(type: type, localFileURL: .localYodaImage, cid: cid) { _ in }
+        
+        XCTAssertNotNil(apiClient.uploadFile_attachment)
+    }
+    
+    func test_uploadFile_successfulResponse_isPropagatedToCompletion() {
+        let cid = ChannelId.unique
+        let type = AttachmentType.image
+        
+        var completionCalled = false
+        channelUpdater.uploadFile(type: type, localFileURL: .localYodaImage, cid: cid) { result in
+            do {
+                let url = try result.get()
+                XCTAssertEqual(url, .localYodaQuote)
+            } catch {
+                XCTFail("Error \(error)")
+            }
+            completionCalled = true
+        }
+        
+        apiClient.uploadFile_completion?(.success(.localYodaQuote))
+        
+        AssertAsync.willBeTrue(completionCalled)
+    }
+    
+    func test_uploadFile_errorResponse_isPropagatedToCompletion() {
+        let cid = ChannelId.unique
+        let type = AttachmentType.image
+        
+        var completionCalledError: Error?
+        channelUpdater.uploadFile(type: type, localFileURL: .localYodaImage, cid: cid) { result in
+            do {
+                _ = try result.get()
+                XCTFail("Error: Shouldn't succeed")
+            } catch {
+                completionCalledError = error
+            }
+        }
+        
+        let error = TestError()
+        apiClient.uploadFile_completion?(.failure(error))
+        
+        AssertAsync.willBeEqual(completionCalledError as? TestError, error)
+    }
 }

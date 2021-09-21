@@ -18,8 +18,8 @@ extension ChatMessageImageAttachment {
             type: .image,
             payload: .init(
                 title: title,
-                imageURL: imageURL,
-                imagePreviewURL: imageURL,
+                imageRemoteURL: imageURL,
+                imagePreviewRemoteURL: imageURL,
                 extraData: extraData
             ),
             uploadingState: localState.map {

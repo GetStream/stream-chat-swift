@@ -33,6 +33,16 @@ public struct AudioAttachmentPayload: AttachmentPayload {
             .flatMap { try? JSONEncoder.stream.encode($0) }
             .flatMap { try? JSONDecoder.stream.decode(T.self, from: $0) }
     }
+    
+    /// Creates `AudioAttachmentPayload` instance.
+    ///
+    /// Use this initializer if the attachment is already uploaded and you have the remote URLs.
+    public init(title: String?, audioRemoteURL: URL, file: AttachmentFile, extraData: [String: RawJSON]?) {
+        self.title = title
+        audioURL = audioRemoteURL
+        self.file = file
+        self.extraData = extraData
+    }
 }
 
 extension AudioAttachmentPayload: Hashable {}
@@ -58,7 +68,7 @@ extension AudioAttachmentPayload: Decodable {
         
         self.init(
             title: try container.decodeIfPresent(String.self, forKey: .title),
-            audioURL: try container.decode(URL.self, forKey: .assetURL),
+            audioRemoteURL: try container.decode(URL.self, forKey: .assetURL),
             file: try AttachmentFile(from: decoder),
             extraData: try Self.decodeExtraData(from: decoder)
         )

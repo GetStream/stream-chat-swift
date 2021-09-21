@@ -29,7 +29,7 @@ final class AttachmentEndpoints_Tests: XCTestCase {
             )
 
             // Build endpoint
-            let endpoint: Endpoint<FileUploadPayload> = .uploadAttachment(with: id, type: type)
+            let endpoint: Endpoint<FileUploadPayload> = .uploadAttachment(with: id.cid, type: type)
 
             // Assert endpoint is built correctly
             XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))

@@ -33,6 +33,16 @@ public struct ImageAttachmentPayload: AttachmentPayload {
             .flatMap { try? JSONEncoder.stream.encode($0) }
             .flatMap { try? JSONDecoder.stream.decode(T.self, from: $0) }
     }
+    
+    /// Creates `ImageAttachmentPayload` instance.
+    ///
+    /// Use this initializer if the attachment is already uploaded and you have the remote URLs.
+    public init(title: String?, imageRemoteURL: URL, imagePreviewRemoteURL: URL? = nil, extraData: [String: RawJSON]?) {
+        self.title = title
+        imageURL = imageRemoteURL
+        imagePreviewURL = imagePreviewRemoteURL ?? imageRemoteURL
+        self.extraData = extraData
+    }
 }
 
 extension ImageAttachmentPayload: Hashable {}
@@ -67,8 +77,8 @@ extension ImageAttachmentPayload: Decodable {
 
         self.init(
             title: title,
-            imageURL: imageURL,
-            imagePreviewURL: try container
+            imageRemoteURL: imageURL,
+            imagePreviewRemoteURL: try container
                 .decodeIfPresent(URL.self, forKey: .thumbURL) ?? imageURL,
             extraData: try Self.decodeExtraData(from: decoder)
         )

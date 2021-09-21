@@ -19,7 +19,7 @@ public extension ChatMessageFileAttachment {
             type: .file,
             payload: .init(
                 title: title,
-                assetURL: assetURL,
+                assetRemoteURL: assetURL,
                 file: file,
                 extraData: extraData
             ),

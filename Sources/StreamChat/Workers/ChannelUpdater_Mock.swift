@@ -83,6 +83,12 @@ class ChannelUpdaterMock: ChannelUpdater {
     @Atomic var freezeChannel_cid: ChannelId?
     @Atomic var freezeChannel_completion: ((Error?) -> Void)?
     
+    @Atomic var uploadFile_type: AttachmentType?
+    @Atomic var uploadFile_localFileURL: URL?
+    @Atomic var uploadFile_cid: ChannelId?
+    @Atomic var uploadFile_progress: ((Double) -> Void)?
+    @Atomic var uploadFile_completion: ((Result<URL, Error>) -> Void)?
+    
     // Cleans up all recorded values
     func cleanUp() {
         update_channelQuery = nil
@@ -157,6 +163,12 @@ class ChannelUpdaterMock: ChannelUpdater {
         freezeChannel_freeze = nil
         freezeChannel_cid = nil
         freezeChannel_completion = nil
+        
+        uploadFile_type = nil
+        uploadFile_localFileURL = nil
+        uploadFile_cid = nil
+        uploadFile_progress = nil
+        uploadFile_completion = nil
     }
     
     override func update(
@@ -298,5 +310,19 @@ class ChannelUpdaterMock: ChannelUpdater {
         freezeChannel_freeze = freeze
         freezeChannel_cid = cid
         freezeChannel_completion = completion
+    }
+    
+    override func uploadFile(
+        type: AttachmentType,
+        localFileURL: URL,
+        cid: ChannelId,
+        progress: ((Double) -> Void)? = nil,
+        completion: @escaping ((Result<URL, Error>) -> Void)
+    ) {
+        uploadFile_type = type
+        uploadFile_localFileURL = localFileURL
+        uploadFile_cid = cid
+        uploadFile_progress = progress
+        uploadFile_completion = completion
     }
 }
