@@ -49,6 +49,17 @@ public extension MessageNewEvent {
     var messageId: UserId { message.id }
 }
 
+public extension MessageUpdatedEvent {
+    @available(*, deprecated, message: "Use user.id")
+    var userId: UserId { user.id }
+    
+    @available(*, deprecated, message: "Use message.id")
+    var messageId: UserId { message.id }
+    
+    @available(*, deprecated, message: "Use message.updatedAt")
+    var updatedAt: Date { message.updatedAt }
+}
+
 public extension TypingEvent {
     @available(*, deprecated, message: "Use user.id")
     var userId: UserId { user.id }

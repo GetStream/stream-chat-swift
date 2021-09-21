@@ -61,20 +61,48 @@ struct MessageNewEventDTO: EventWithPayload {
     }
 }
 
-public struct MessageUpdatedEvent: MessageSpecificEvent {
-    public let userId: UserId
-    public let cid: ChannelId
-    public let messageId: MessageId
-    public let updatedAt: Date
+/// Triggered when a message is updated.
+public struct MessageUpdatedEvent: ChannelSpecificEvent {
+    /// The use who updated the message.
+    public let user: ChatUser
     
+    /// The channel identifier the message is sent to.
+    public let cid: ChannelId
+    
+    /// The updated message.
+    public let message: ChatMessage
+    
+    /// The event timestamp.
+    public let createdAt: Date
+}
+
+struct MessageUpdatedEventDTO: EventWithPayload {
+    let user: UserPayload
+    let cid: ChannelId
+    let message: MessagePayload
+    let createdAt: Date
     let payload: Any
     
     init(from response: EventPayload) throws {
-        userId = try response.value(at: \.user?.id)
+        user = try response.value(at: \.user)
         cid = try response.value(at: \.cid)
-        messageId = try response.value(at: \.message?.id)
-        updatedAt = try response.value(at: \.message?.updatedAt)
+        message = try response.value(at: \.message)
+        createdAt = try response.value(at: \.createdAt)
         payload = response
+    }
+    
+    func toDomainEvent(session: DatabaseSession) -> Event? {
+        guard
+            let userDTO = session.user(id: user.id),
+            let messageDTO = session.message(id: message.id)
+        else { return nil }
+        
+        return MessageUpdatedEvent(
+            user: userDTO.asModel(),
+            cid: cid,
+            message: messageDTO.asModel(),
+            createdAt: createdAt
+        )
     }
 }
 
