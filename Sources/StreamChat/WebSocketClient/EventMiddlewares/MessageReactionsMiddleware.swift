@@ -7,29 +7,24 @@ import Foundation
 /// The middleware listens for `EventWithReactionPayload` events and updates `MessageReactionDTO` accordingly.
 struct MessageReactionsMiddleware: EventMiddleware {
     func handle(event: Event, session: DatabaseSession) -> Event? {
-        guard
-            let reactionEvent = event as? ReactionEvent,
-            let payload = reactionEvent.payload as? EventPayload,
-            let reaction = payload.reaction
-        else {
-            return event
-        }
-        
         do {
-            if reactionEvent is ReactionNewEvent {
-                try session.saveReaction(payload: reaction)
-            } else if reactionEvent is ReactionUpdatedEvent {
-                try session.saveReaction(payload: reaction)
-            } else if reactionEvent is ReactionDeletedEvent {
+            switch event {
+            case let event as ReactionNewEventDTO:
+                try session.saveReaction(payload: event.reaction)
+                
+            case let event as ReactionUpdatedEventDTO:
+                try session.saveReaction(payload: event.reaction)
+                
+            case let event as ReactionDeletedEventDTO:
                 if let dto = session.reaction(
-                    messageId: reaction.messageId,
-                    userId: reaction.user.id,
-                    type: reaction.type
+                    messageId: event.message.id,
+                    userId: event.user.id,
+                    type: event.reaction.type
                 ) {
                     session.delete(reaction: dto)
                 }
-            } else {
-                throw ClientError.Unexpected("Middleware has tried to handle unsupported event type.")
+            default:
+                break
             }
         } catch {
             log.error("Failed to update message reaction in the database, error: \(error)")
