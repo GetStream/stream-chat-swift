@@ -42,7 +42,9 @@ final class ChannelTruncatedEventMiddleware_Tests: XCTestCase {
         let eventPayload: EventPayload = .init(
             eventType: .channelTruncated,
             cid: .unique,
-            user: .dummy(userId: .unique)
+            user: .dummy(userId: .unique),
+            channel: .dummy(cid: .unique),
+            createdAt: .unique
         )
 
         // Set error to be thrown on write.
@@ -50,11 +52,11 @@ final class ChannelTruncatedEventMiddleware_Tests: XCTestCase {
         database.write_errorResponse = error
 
         // Simulate and handle channel truncated event.
-        let event = try ChannelTruncatedEvent(from: eventPayload)
+        let event = try ChannelTruncatedEventDTO(from: eventPayload)
         let forwardedEvent = middleware.handle(event: event, session: database.viewContext)
 
         // Assert `ChannelTruncatedEvent` is forwarded even though database error happened.
-        XCTAssertTrue(forwardedEvent is ChannelTruncatedEvent)
+        XCTAssertTrue(forwardedEvent is ChannelTruncatedEventDTO)
     }
 
     func tests_middleware_handlesChannelTruncatedEventCorrectly() throws {
@@ -64,9 +66,10 @@ final class ChannelTruncatedEventMiddleware_Tests: XCTestCase {
             eventType: .channelTruncated,
             cid: cid,
             user: .dummy(userId: .unique),
+            channel: .dummy(cid: cid),
             createdAt: .unique
         )
-        let event = try ChannelTruncatedEvent(from: eventPayload)
+        let event = try ChannelTruncatedEventDTO(from: eventPayload)
 
         try database.createChannel(cid: cid, withMessages: true)
 
@@ -78,7 +81,7 @@ final class ChannelTruncatedEventMiddleware_Tests: XCTestCase {
 
         // Assert the `truncatedAt` value is updated
         XCTAssertEqual(database.viewContext.channel(cid: cid)?.truncatedAt, eventPayload.createdAt)
-        XCTAssert(forwardedEvent is ChannelTruncatedEvent)
+        XCTAssert(forwardedEvent is ChannelTruncatedEventDTO)
     }
 }
 

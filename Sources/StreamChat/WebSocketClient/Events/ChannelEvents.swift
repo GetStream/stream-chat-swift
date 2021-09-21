@@ -93,13 +93,44 @@ struct ChannelDeletedEventDTO: EventWithPayload {
     }
 }
 
+/// Triggered when a channel is truncated.
 public struct ChannelTruncatedEvent: ChannelSpecificEvent {
-    public let cid: ChannelId
+    /// The identifier of deleted channel.
+    public var cid: ChannelId { channel.cid }
+    
+    /// The truncated channel.
+    public let channel: ChatChannel
+    
+    /// The user who truncated a channel.
+    public let user: ChatUser?
+    
+    /// The event timestamp.
+    public let createdAt: Date
+}
+
+struct ChannelTruncatedEventDTO: EventWithPayload {
+    let channel: ChannelDetailPayload
+    let user: UserPayload?
+    let createdAt: Date
     let payload: Any
     
     init(from response: EventPayload) throws {
-        cid = try response.value(at: \.cid)
+        channel = try response.value(at: \.channel)
+        user = try? response.value(at: \.user)
+        createdAt = try response.value(at: \.createdAt)
         payload = response
+    }
+    
+    func toDomainEvent(session: DatabaseSession) -> Event? {
+        guard let channelDTO = session.channel(cid: channel.cid) else { return nil }
+                    
+        let userDTO = user.flatMap { session.user(id: $0.id) }
+        
+        return ChannelTruncatedEvent(
+            channel: channelDTO.asModel(),
+            user: userDTO?.asModel(),
+            createdAt: createdAt
+        )
     }
 }
 

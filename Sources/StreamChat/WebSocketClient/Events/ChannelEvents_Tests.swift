@@ -64,8 +64,8 @@ class ChannelEvents_Tests: XCTestCase {
     func test_channelTruncatedEvent() throws {
         let mockData = XCTestCase.mockData(fromFile: "ChannelTruncated")
 
-        let event = try eventDecoder.decode(from: mockData) as? ChannelTruncatedEvent
-        XCTAssertEqual(event?.cid, ChannelId(type: .messaging, id: "new_channel_7011"))
+        let event = try eventDecoder.decode(from: mockData) as? ChannelTruncatedEventDTO
+        XCTAssertEqual(event?.channel.cid, ChannelId(type: .messaging, id: "new_channel_7011"))
 
         let rawPayload = try JSONDecoder.stream.decode(EventPayload.self, from: mockData)
         XCTAssertEqual((event?.payload as? EventPayload)?.createdAt, rawPayload.createdAt)
@@ -135,6 +135,35 @@ class ChannelEvents_Tests: XCTestCase {
         XCTAssertEqual(event.channel.cid, eventPayload.channel?.cid)
         XCTAssertEqual(event.createdAt, eventPayload.createdAt)
     }
+    
+    func test_channelTruncatedEventDTO_toDomainEvent() throws {
+        // Create database session
+        let session = try DatabaseContainerMock(kind: .inMemory).viewContext
+        
+        // Create event payload
+        let eventPayload = EventPayload(
+            eventType: .channelTruncated,
+            user: .dummy(userId: .unique),
+            channel: .dummy(cid: .unique),
+            createdAt: .unique
+        )
+        
+        // Create event DTO
+        let dto = try ChannelTruncatedEventDTO(from: eventPayload)
+        
+        // Assert event creation fails due to missing dependencies in database
+        XCTAssertNil(dto.toDomainEvent(session: session))
+        
+        // Save event to database
+        try session.saveUser(payload: eventPayload.user!)
+        _ = try session.saveChannel(payload: eventPayload.channel!, query: nil)
+        
+        // Assert event can be created and has correct fields
+        let event = try XCTUnwrap(dto.toDomainEvent(session: session) as? ChannelTruncatedEvent)
+        XCTAssertEqual(event.user?.id, eventPayload.user?.id)
+        XCTAssertEqual(event.channel.cid, eventPayload.channel?.cid)
+        XCTAssertEqual(event.createdAt, eventPayload.createdAt)
+    }
 }
 
 class ChannelEventsIntegration_Tests: XCTestCase {
@@ -190,7 +219,7 @@ class ChannelEventsIntegration_Tests: XCTestCase {
     
     func test_ChannelTruncatedEventPayload_isHandled() throws {
         let json = XCTestCase.mockData(fromFile: "ChannelTruncated")
-        let event = try eventDecoder.decode(from: json) as? ChannelTruncatedEvent
+        let event = try eventDecoder.decode(from: json) as? ChannelTruncatedEventDTO
 
         let channelId: ChannelId = ChannelId(type: .messaging, id: "new_channel_7011")
         
