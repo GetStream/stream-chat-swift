@@ -328,7 +328,7 @@ class ChannelEventsIntegration_Tests: XCTestCase {
     
     func test_NotificationAddedToChannelEventPayload_isHandled() throws {
         let json = XCTestCase.mockData(fromFile: "NotificationAddedToChannel")
-        let event = try eventDecoder.decode(from: json) as? NotificationAddedToChannelEvent
+        let event = try eventDecoder.decode(from: json) as? NotificationAddedToChannelEventDTO
         
         let channelId: ChannelId = .init(type: .messaging, id: "!members-hu_6SE2Rniuu3O709FqAEEtVcJxW3tWr97l_hV33a-E")
         

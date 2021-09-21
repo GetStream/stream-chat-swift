@@ -256,11 +256,13 @@ final class MemberEventMiddleware_Tests: XCTestCase {
         // Create MemberAddedEvent payload
         let eventPayload: EventPayload = .init(
             eventType: .notificationAddedToChannel,
-            cid: cid
+            cid: cid,
+            channel: .dummy(cid: cid),
+            createdAt: .unique
         )
 
         // Create event with payload.
-        let event = try NotificationAddedToChannelEvent(from: eventPayload)
+        let event = try NotificationAddedToChannelEventDTO(from: eventPayload)
 
         // Create channel in the database.
         try database.createChannel(cid: cid, withMessages: false)
@@ -272,7 +274,7 @@ final class MemberEventMiddleware_Tests: XCTestCase {
         let channel = try XCTUnwrap(database.viewContext.channel(cid: cid))
 
         // Assert event is forwarded.
-        XCTAssertTrue(forwardedEvent is NotificationAddedToChannelEvent)
+        XCTAssertTrue(forwardedEvent is NotificationAddedToChannelEventDTO)
         // Queries are invalidated
         XCTAssertTrue(channel.queries.isEmpty)
         XCTAssertTrue(channel.needsRefreshQueries)

@@ -18,7 +18,7 @@ final class EventDecoder_Tests: XCTestCase {
         let event = try eventDecoder.decode(from: json)
         
         // Assert system event is decoded.
-        XCTAssertTrue(event is NotificationAddedToChannelEvent)
+        XCTAssertTrue(event is NotificationAddedToChannelEventDTO)
     }
     
     func test_decode_whenInvalidSystemEventPayloadComes_throwsEventDecodingError() throws {

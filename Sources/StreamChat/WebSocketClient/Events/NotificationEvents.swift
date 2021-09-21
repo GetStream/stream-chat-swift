@@ -154,13 +154,33 @@ struct NotificationMutesUpdatedEventDTO: EventWithPayload {
     }
 }
 
-public struct NotificationAddedToChannelEvent: ChannelSpecificEvent {
-    public let cid: ChannelId
+/// Triggered when the current user is added to the channel member list.
+public struct NotificationAddedToChannelEvent: Event {
+    /// The channel the current user was added to.
+    public let channel: ChatChannel
+    
+    /// The event timestamp.
+    public let createdAt: Date
+}
+
+struct NotificationAddedToChannelEventDTO: EventWithPayload {
+    let channel: ChannelDetailPayload
+    let createdAt: Date
     let payload: Any
     
     init(from response: EventPayload) throws {
-        cid = try response.value(at: \.cid)
+        channel = try response.value(at: \.channel)
+        createdAt = try response.value(at: \.createdAt)
         payload = response
+    }
+    
+    func toDomainEvent(session: DatabaseSession) -> Event? {
+        guard let channelDTO = session.channel(cid: channel.cid) else { return nil }
+
+        return NotificationAddedToChannelEvent(
+            channel: channelDTO.asModel(),
+            createdAt: createdAt
+        )
     }
 }
 

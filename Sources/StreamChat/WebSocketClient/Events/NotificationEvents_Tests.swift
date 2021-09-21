@@ -49,8 +49,8 @@ class NotificationsEvents_Tests: XCTestCase {
 
     func test_addToChannel() throws {
         let json = XCTestCase.mockData(fromFile: "NotificationAddedToChannel")
-        let event = try eventDecoder.decode(from: json) as? NotificationAddedToChannelEvent
-        XCTAssertEqual(event?.cid, ChannelId(type: .messaging, id: "new_channel_5905"))
+        let event = try eventDecoder.decode(from: json) as? NotificationAddedToChannelEventDTO
+        XCTAssertEqual(event?.channel.cid, ChannelId(type: .messaging, id: "!members-hu_6SE2Rniuu3O709FqAEEtVcJxW3tWr97l_hV33a-E"))
         // Check if there is existing channel object in the payload.
         XCTAssertEqual(
             (event?.payload as? EventPayload)?.channel?.cid,
@@ -179,6 +179,32 @@ class NotificationsEvents_Tests: XCTestCase {
         // Assert event can be created and has correct fields
         let event = try XCTUnwrap(dto.toDomainEvent(session: session) as? NotificationMutesUpdatedEvent)
         XCTAssertEqual(event.currentUser.id, eventPayload.currentUser?.id)
+        XCTAssertEqual(event.createdAt, eventPayload.createdAt)
+    }
+    
+    func test_notificationAddedToChannelEventDTO_toDomainEvent() throws {
+        // Create database session
+        let session = try DatabaseContainerMock(kind: .inMemory).viewContext
+        
+        // Create event payload
+        let eventPayload = EventPayload(
+            eventType: .notificationAddedToChannel,
+            channel: .dummy(cid: .unique),
+            createdAt: .unique
+        )
+        
+        // Create event DTO
+        let dto = try NotificationAddedToChannelEventDTO(from: eventPayload)
+        
+        // Assert event creation fails due to missing dependencies in database
+        XCTAssertNil(dto.toDomainEvent(session: session))
+        
+        // Save event to database
+        try session.saveEvent(payload: eventPayload)
+
+        // Assert event can be created and has correct fields
+        let event = try XCTUnwrap(dto.toDomainEvent(session: session) as? NotificationAddedToChannelEvent)
+        XCTAssertEqual(event.channel.cid, eventPayload.channel?.cid)
         XCTAssertEqual(event.createdAt, eventPayload.createdAt)
     }
 }

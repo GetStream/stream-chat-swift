@@ -123,6 +123,11 @@ public extension NotificationMutesUpdatedEvent {
     var currentUserId: UserId { currentUser.id }
 }
 
+public extension NotificationAddedToChannelEvent {
+    @available(*, deprecated, message: "Use channel.cid")
+    var cid: ChannelId { channel.cid }
+}
+
 public extension ReactionNewEvent {
     @available(*, deprecated, message: "Use user.id")
     var userId: UserId { user.id }

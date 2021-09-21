@@ -40,34 +40,12 @@ struct MemberEventMiddleware: EventMiddleware {
                 // If there are any MemberListQueries observing this channel,
                 // we need to update them too
                 member.queries.removeAll()
-
+                
+            case let event as NotificationAddedToChannelEventDTO:
+                session.channel(cid: event.channel.cid)?.markNeedsRefreshQueries()
             default:
                 break
             }
-
-            // If the added/remove member was the current user, we should also reset the channel list queries, because
-            // they usually depend on this.
-
-            // Notification events are always about the current user
-            let isMemberNotificationEvent = event is NotificationAddedToChannelEvent || event is NotificationRemovedFromChannelEvent
-
-            // If we watch the channel, we don't receive notification events, but "normal" member events
-            var isCurrentUserMemberEvent = false
-            if let currentUserId = session.currentUser?.user.id {
-                if event is MemberAddedEvent || event is MemberRemovedEvent,
-                   (event as? MemberEvent)?.memberUserId == currentUserId {
-                    isCurrentUserMemberEvent = true
-                }
-            }
-
-            if isMemberNotificationEvent || isCurrentUserMemberEvent, let cid = (event as? ChannelSpecificEvent)?.cid {
-                guard let channelDTO = session.channel(cid: cid) else {
-                    throw ClientError.ChannelDoesNotExist(cid: cid)
-                }
-                channelDTO.queries = []
-                channelDTO.needsRefreshQueries = true
-            }
-
         } catch {
             log.error("Failed to update channel members in the database, error: \(error)")
         }
