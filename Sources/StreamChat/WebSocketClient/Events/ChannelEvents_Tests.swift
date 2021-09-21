@@ -382,7 +382,7 @@ class ChannelEventsIntegration_Tests: XCTestCase {
     
     func test_NotificationChannelMutesUpdatedWithNoMutesEventPayload_isHandled() throws {
         let json = XCTestCase.mockData(fromFile: "NotificationChannelMutesUpdatedWithNoMutedChannels")
-        let event = try eventDecoder.decode(from: json) as? NotificationChannelMutesUpdatedEvent
+        let event = try eventDecoder.decode(from: json) as? NotificationChannelMutesUpdatedEventDTO
         
         try client.databaseContainer.createCurrentUser(id: "luke_skywalker")
         
@@ -422,7 +422,7 @@ class ChannelEventsIntegration_Tests: XCTestCase {
     
     func test_NotificationChannelMutesUpdatedWithSomeMutesEventPayload_isHandled() throws {
         let json = XCTestCase.mockData(fromFile: "NotificationChannelMutesUpdatedWithSomeMutedChannels")
-        let event = try eventDecoder.decode(from: json) as? NotificationChannelMutesUpdatedEvent
+        let event = try eventDecoder.decode(from: json) as? NotificationChannelMutesUpdatedEventDTO
         
         try client.databaseContainer.createCurrentUser(id: "luke_skywalker")
         

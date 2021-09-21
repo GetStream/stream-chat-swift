@@ -133,6 +133,11 @@ public extension NotificationRemovedFromChannelEvent {
     var currentUserId: UserId { user.id }
 }
 
+public extension NotificationChannelMutesUpdatedEvent {
+    @available(*, deprecated, message: "Use currentUser.id")
+    var userId: UserId { currentUser.id }
+}
+
 public extension ReactionNewEvent {
     @available(*, deprecated, message: "Use user.id")
     var userId: UserId { user.id }

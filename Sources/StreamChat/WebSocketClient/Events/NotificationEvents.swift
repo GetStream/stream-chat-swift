@@ -229,13 +229,33 @@ struct NotificationRemovedFromChannelEventDTO: EventWithPayload {
     }
 }
 
-public struct NotificationChannelMutesUpdatedEvent: UserSpecificEvent {
-    public let userId: UserId
+/// Triggered when current user mutes/unmutes a channel.
+public struct NotificationChannelMutesUpdatedEvent: Event {
+    /// The current user.
+    public let currentUser: CurrentChatUser
+    
+    /// The event timestamp.
+    public let createdAt: Date
+}
+
+struct NotificationChannelMutesUpdatedEventDTO: EventWithPayload {
+    let currentUser: CurrentUserPayload
+    let createdAt: Date
     let payload: Any
     
     init(from response: EventPayload) throws {
-        userId = try response.value(at: \.currentUser?.id)
+        currentUser = try response.value(at: \.currentUser)
+        createdAt = try response.value(at: \.createdAt)
         payload = response
+    }
+    
+    func toDomainEvent(session: DatabaseSession) -> Event? {
+        guard let currentUserDTO = session.currentUser else { return nil }
+        
+        return NotificationChannelMutesUpdatedEvent(
+            currentUser: currentUserDTO.asModel(),
+            createdAt: createdAt
+        )
     }
 }
 
