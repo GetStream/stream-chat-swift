@@ -12,6 +12,17 @@ public protocol Event {}
 protocol EventWithPayload: Event {
     /// Type-erased event payload. Cast it to `EventPayload` when you need to use it.
     var payload: Any { get }
+    
+    /// Converts event DTO to event with evaluated models.
+    ///
+    /// If some model is missing in database `nil` is returned.
+    ///
+    /// - Parameter session: The database session used to load event models from database.
+    func toDomainEvent(session: DatabaseSession) -> Event?
+}
+
+extension EventWithPayload {
+    func toDomainEvent(session: DatabaseSession) -> Event? { nil }
 }
 
 /// A protocol for any `ChannelEvent` where it has a  `channel` payload.
