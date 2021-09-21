@@ -251,6 +251,32 @@ class UserEvents_Tests: XCTestCase {
         XCTAssertEqual(event.user.id, eventPayload.user!.id)
         XCTAssertEqual(event.createdAt, eventPayload.createdAt)
     }
+    
+    func test_userGloballyUnbannedEventDTO_toDomainEvent() throws {
+        // Create database session
+        let session = try DatabaseContainerMock(kind: .inMemory).viewContext
+        
+        // Create event payload
+        let eventPayload = EventPayload(
+            eventType: .userUnbanned,
+            user: .dummy(userId: .unique),
+            createdAt: .unique
+        )
+        
+        // Create event DTO
+        let dto = try UserGloballyBannedEventDTO(from: eventPayload)
+        
+        // Assert event creation fails due to missing dependencies
+        XCTAssertNil(dto.toDomainEvent(session: session))
+
+        // Save event payload to database
+        try session.saveUser(payload: eventPayload.user!)
+        
+        // Assert event can be created from DTO and has correct fields
+        let event = try XCTUnwrap(dto.toDomainEvent(session: session) as? UserGloballyBannedEvent)
+        XCTAssertEqual(event.user.id, eventPayload.user!.id)
+        XCTAssertEqual(event.createdAt, eventPayload.createdAt)
+    }
 }
 
 class UserEventsIntegration_Tests: XCTestCase {

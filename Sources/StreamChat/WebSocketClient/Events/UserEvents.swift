@@ -200,15 +200,33 @@ struct UserBannedEventDTO: EventWithPayload {
     }
 }
 
-public struct UserGloballyUnbannedEvent: UserSpecificEvent {
-    var userId: UserId
-    var createdAt: Date?
-    var payload: Any
+/// Triggered when user is removed from global ban.
+public struct UserGloballyUnbannedEvent: Event {
+    /// The unbanned user.
+    public let user: ChatUser
+    
+    /// The event timestamp
+    public let createdAt: Date
+}
+
+struct UserGloballyUnbannedEventDTO: EventWithPayload {
+    let user: UserPayload
+    let createdAt: Date
+    let payload: Any
     
     init(from response: EventPayload) throws {
-        userId = try response.value(at: \.user?.id)
-        createdAt = response.createdAt
+        user = try response.value(at: \.user)
+        createdAt = try response.value(at: \.createdAt)
         payload = response
+    }
+    
+    func toDomainEvent(session: DatabaseSession) -> Event? {
+        guard let userDTO = session.user(id: user.id) else { return nil }
+        
+        return UserGloballyUnbannedEvent(
+            user: userDTO.asModel(),
+            createdAt: createdAt
+        )
     }
 }
 
