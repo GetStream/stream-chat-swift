@@ -21,8 +21,8 @@ class NotificationsEvents_Tests: XCTestCase {
     
     func test_markAllRead() throws {
         let json = XCTestCase.mockData(fromFile: "NotificationMarkAllRead")
-        let event = try eventDecoder.decode(from: json) as? NotificationMarkAllReadEvent
-        XCTAssertEqual(event?.userId, "steep-moon-9")
+        let event = try eventDecoder.decode(from: json) as? NotificationMarkAllReadEventDTO
+        XCTAssertEqual(event?.user.id, "steep-moon-9")
     }
     
     func test_markRead() throws {
@@ -98,6 +98,32 @@ class NotificationsEvents_Tests: XCTestCase {
         XCTAssertEqual(event.channel.cid, eventPayload.cid)
         XCTAssertEqual(event.message.id, eventPayload.message?.id)
         XCTAssertEqual(event.unreadCount, eventPayload.unreadCount)
+        XCTAssertEqual(event.createdAt, eventPayload.createdAt)
+    }
+    
+    func test_notificationMarkAllReadEventDTO_toDomainEvent() throws {
+        // Create database session
+        let session = try DatabaseContainerMock(kind: .inMemory).viewContext
+        
+        // Create event payload
+        let eventPayload = EventPayload(
+            eventType: .notificationMarkRead,
+            user: .dummy(userId: .unique),
+            createdAt: .unique
+        )
+        
+        // Create event DTO
+        let dto = try NotificationMarkAllReadEventDTO(from: eventPayload)
+        
+        // Assert event creation fails due to missing dependencies in database
+        XCTAssertNil(dto.toDomainEvent(session: session))
+        
+        // Save event to database
+        try session.saveEvent(payload: eventPayload)
+
+        // Assert event can be created and has correct fields
+        let event = try XCTUnwrap(dto.toDomainEvent(session: session) as? NotificationMarkAllReadEvent)
+        XCTAssertEqual(event.user.id, eventPayload.user?.id)
         XCTAssertEqual(event.createdAt, eventPayload.createdAt)
     }
 }

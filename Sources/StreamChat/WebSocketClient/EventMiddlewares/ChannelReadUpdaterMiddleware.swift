@@ -30,9 +30,9 @@ struct ChannelReadUpdaterMiddleware: EventMiddleware {
         case let event as NotificationMarkReadEvent:
             resetChannelRead(for: event.cid, userId: event.userId, lastReadAt: event.readAt, session: session)
 
-        case let event as NotificationMarkAllReadEvent:
-            session.loadChannelReads(for: event.userId).forEach { read in
-                read.lastReadAt = event.readAt
+        case let event as NotificationMarkAllReadEventDTO:
+            session.loadChannelReads(for: event.user.id).forEach { read in
+                read.lastReadAt = event.createdAt
                 read.unreadMessageCount = 0
             }
             

@@ -454,7 +454,7 @@ class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
             user: dummyCurrentUser,
             createdAt: newReadDate
         )
-        let notificationMarkAllReadEvent = try NotificationMarkAllReadEvent(from: eventPayload)
+        let notificationMarkAllReadEvent = try NotificationMarkAllReadEventDTO(from: eventPayload)
         
         // Let the middleware handle the event
         let handledEvent = middleware.handle(event: notificationMarkAllReadEvent, session: database.viewContext)

@@ -51,17 +51,34 @@ struct NotificationMessageNewEventDTO: EventWithPayload {
         )
     }
 }
+
+/// Triggered when all channels the current user is member of are marked as read.
+public struct NotificationMarkAllReadEvent: Event {
+    /// The current user.
+    public let user: ChatUser
+    
+    /// The event timestamp.
+    public let createdAt: Date
 }
 
-public struct NotificationMarkAllReadEvent: UserSpecificEvent {
-    public let userId: UserId
-    public let readAt: Date
+struct NotificationMarkAllReadEventDTO: EventWithPayload {
+    let user: UserPayload
+    let createdAt: Date
     let payload: Any
     
     init(from response: EventPayload) throws {
-        userId = try response.value(at: \.user?.id)
-        readAt = try response.value(at: \.createdAt)
+        user = try response.value(at: \.user)
+        createdAt = try response.value(at: \.createdAt)
         payload = response
+    }
+    
+    func toDomainEvent(session: DatabaseSession) -> Event? {
+        guard let userDTO = session.user(id: user.id) else { return nil }
+        
+        return NotificationMarkAllReadEvent(
+            user: userDTO.asModel(),
+            createdAt: createdAt
+        )
     }
 }
 
