@@ -59,7 +59,7 @@ class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
                 message: .dummy(messageId: .unique, authorUserId: user.id, createdAt: .unique(before: oldReadDate)),
                 createdAt: .unique(before: oldReadDate)
             )
-            let oldMessageNewEvent = try MessageNewEvent(from: eldEventPayload)
+            let oldMessageNewEvent = try MessageNewEventDTO(from: eldEventPayload)
 
             var handledEvent: Event?
             try database.writeSynchronously { session in
@@ -81,7 +81,7 @@ class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
                 message: .dummy(messageId: .unique, authorUserId: user.id, createdAt: .unique(after: oldReadDate)),
                 createdAt: .unique(after: oldReadDate)
             )
-            let messageNewEvent = try MessageNewEvent(from: eventPayload)
+            let messageNewEvent = try MessageNewEventDTO(from: eventPayload)
 
             try database.writeSynchronously { session in
                 // Let the middleware handle the event
@@ -201,7 +201,7 @@ class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
             message: .dummy(messageId: .unique, authorUserId: dummyCurrentUser.id, createdAt: .unique(after: oldReadDate)),
             createdAt: .unique(after: oldReadDate)
         )
-        let messageNewEvent = try MessageNewEvent(from: eventPayload)
+        let messageNewEvent = try MessageNewEventDTO(from: eventPayload)
 
         var handledEvent: Event?
         try database.writeSynchronously { session in
@@ -247,7 +247,7 @@ class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
             unreadCount: .noUnread,
             createdAt: newReadDate
         )
-        let messageReadEvent = try MessageReadEvent(from: eventPayload)
+        let messageReadEvent = try MessageReadEventDTO(from: eventPayload)
         
         // Let the middleware handle the event
         // Middleware should mutate the loadedChannel's read

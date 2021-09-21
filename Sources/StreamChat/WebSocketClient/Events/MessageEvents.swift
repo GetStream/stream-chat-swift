@@ -4,24 +4,60 @@
 
 import Foundation
 
-public struct MessageNewEvent: MessageSpecificEvent {
-    public let userId: UserId
-    public let cid: ChannelId
-    public let messageId: MessageId
-    public let createdAt: Date
-    public let watcherCount: Int?
-    public let unreadCount: UnreadCount?
+/// Triggered when a new message is sent to channel.
+public struct MessageNewEvent: ChannelSpecificEvent {
+    /// The user who sent a message.
+    public let user: ChatUser
     
+    /// The message that was sent.
+    public let message: ChatMessage
+    
+    /// The channel identifier the message was sent to.
+    public let cid: ChannelId
+    
+    /// The event timestamp.
+    public let createdAt: Date
+    
+    /// The # of channel watchers.
+    public let watcherCount: Int?
+    
+    /// The unread counts.
+    public let unreadCount: UnreadCount?
+}
+
+struct MessageNewEventDTO: EventWithPayload {
+    let user: UserPayload
+    let cid: ChannelId
+    let message: MessagePayload
+    let createdAt: Date
+    let watcherCount: Int?
+    let unreadCount: UnreadCount?
     let payload: Any
     
     init(from response: EventPayload) throws {
-        userId = try response.value(at: \.user?.id)
+        user = try response.value(at: \.user)
         cid = try response.value(at: \.cid)
-        messageId = try response.value(at: \.message?.id)
-        createdAt = try response.value(at: \.message?.createdAt)
+        message = try response.value(at: \.message)
+        createdAt = try response.value(at: \.createdAt)
         watcherCount = try? response.value(at: \.watcherCount)
         unreadCount = try? response.value(at: \.unreadCount)
         payload = response
+    }
+    
+    func toDomainEvent(session: DatabaseSession) -> Event? {
+        guard
+            let userDTO = session.user(id: user.id),
+            let messageDTO = session.message(id: message.id)
+        else { return nil }
+        
+        return MessageNewEvent(
+            user: userDTO.asModel(),
+            message: messageDTO.asModel(),
+            cid: cid,
+            createdAt: createdAt,
+            watcherCount: watcherCount,
+            unreadCount: unreadCount
+        )
     }
 }
 

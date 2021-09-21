@@ -12,10 +12,10 @@ class MessageEvents_Tests: XCTestCase {
     
     func test_new() throws {
         let json = XCTestCase.mockData(fromFile: "MessageNew")
-        let event = try eventDecoder.decode(from: json) as? MessageNewEvent
-        XCTAssertEqual(event?.userId, "broken-waterfall-5")
+        let event = try eventDecoder.decode(from: json) as? MessageNewEventDTO
+        XCTAssertEqual(event?.user.id, "broken-waterfall-5")
         XCTAssertEqual(event?.cid, ChannelId(type: .messaging, id: "general"))
-        XCTAssertEqual(event?.messageId, messageId)
+        XCTAssertEqual(event?.message.id, messageId)
         XCTAssertEqual(event?.createdAt.description, "2020-07-17 13:42:21 +0000")
         XCTAssertEqual(event?.watcherCount, 7)
         XCTAssertEqual(event?.unreadCount, .init(channels: 1, messages: 1))
@@ -23,10 +23,10 @@ class MessageEvents_Tests: XCTestCase {
     
     func test_new_withMissingFields() throws {
         let json = XCTestCase.mockData(fromFile: "MessageNew+MissingFields")
-        let event = try eventDecoder.decode(from: json) as? MessageNewEvent
-        XCTAssertEqual(event?.userId, "broken-waterfall-5")
+        let event = try eventDecoder.decode(from: json) as? MessageNewEventDTO
+        XCTAssertEqual(event?.user.id, "broken-waterfall-5")
         XCTAssertEqual(event?.cid, ChannelId(type: .messaging, id: "general"))
-        XCTAssertEqual(event?.messageId, messageId)
+        XCTAssertEqual(event?.message.id, messageId)
         XCTAssertEqual(event?.createdAt.description, "2020-07-17 13:42:21 +0000")
         XCTAssertNil(event?.watcherCount)
         XCTAssertNil(event?.unreadCount)
@@ -91,7 +91,7 @@ class MessageEventsIntegration_Tests: XCTestCase {
 
     func test_MessageNewEventPayload_isHandled() throws {
         let json = XCTestCase.mockData(fromFile: "MessageNew")
-        let event = try eventDecoder.decode(from: json) as? MessageNewEvent
+        let event = try eventDecoder.decode(from: json) as? MessageNewEventDTO
         
         // For message to be received, we need to have channel:
         try client.databaseContainer.createChannel(
@@ -174,7 +174,7 @@ class MessageEventsIntegration_Tests: XCTestCase {
     
     func test_NotificationMessageNewEventPayload_isHandled() throws {
         let json = XCTestCase.mockData(fromFile: "NotificationMessageNew")
-        let event = try eventDecoder.decode(from: json) as? NotificationMessageNewEvent
+        let event = try eventDecoder.decode(from: json) as? NotificationMessageNewEventDTO
         
         XCTAssertNil(client.databaseContainer.viewContext.message(id: "042772db-4af2-460d-beaa-1e49d1b8e3b9"))
         
@@ -184,5 +184,43 @@ class MessageEventsIntegration_Tests: XCTestCase {
         AssertAsync {
             Assert.willNotBeNil(self.client.databaseContainer.viewContext.message(id: "042772db-4af2-460d-beaa-1e49d1b8e3b9"))
         }
+    }
+    
+    // MARK: DTO -> Event
+    
+    func test_messageNewEventDTO_toDomainEvent() throws {
+        // Create database session
+        let session = try DatabaseContainerMock(kind: .inMemory).viewContext
+        
+        // Create event payload
+        let cid: ChannelId = .unique
+        let eventPayload = EventPayload(
+            eventType: .messageNew,
+            cid: cid,
+            user: .dummy(userId: .unique),
+            message: .dummy(messageId: .unique, authorUserId: .unique),
+            watcherCount: 10,
+            unreadCount: .init(channels: 14, messages: 12),
+            createdAt: .unique
+        )
+        
+        // Create event DTO
+        let dto = try MessageNewEventDTO(from: eventPayload)
+        
+        // Assert event creation fails due to missing dependencies in database
+        XCTAssertNil(dto.toDomainEvent(session: session))
+        
+        // Save event to database
+        try session.saveUser(payload: eventPayload.user!)
+        _ = try session.saveMessage(payload: eventPayload.message!, for: cid)
+        
+        // Assert event can be created and has correct fields
+        let event = try XCTUnwrap(dto.toDomainEvent(session: session) as? MessageNewEvent)
+        XCTAssertEqual(event.cid, eventPayload.cid)
+        XCTAssertEqual(event.user.id, eventPayload.user?.id)
+        XCTAssertEqual(event.message.id, eventPayload.message?.id)
+        XCTAssertEqual(event.watcherCount, eventPayload.watcherCount)
+        XCTAssertEqual(event.unreadCount, eventPayload.unreadCount)
+        XCTAssertEqual(event.createdAt, eventPayload.createdAt)
     }
 }

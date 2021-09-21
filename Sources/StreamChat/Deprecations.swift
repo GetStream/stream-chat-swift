@@ -41,6 +41,14 @@ public extension ChannelDeletedEvent {
     var deletedAt: Date { channel.deletedAt ?? createdAt }
 }
 
+public extension MessageNewEvent {
+    @available(*, deprecated, message: "Use user.id")
+    var userId: UserId { user.id }
+    
+    @available(*, deprecated, message: "Use message.id")
+    var messageId: UserId { message.id }
+}
+
 public extension TypingEvent {
     @available(*, deprecated, message: "Use user.id")
     var userId: UserId { user.id }

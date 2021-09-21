@@ -8,10 +8,10 @@ import Foundation
 struct ChannelReadUpdaterMiddleware: EventMiddleware {
     func handle(event: Event, session: DatabaseSession) -> Event? {
         switch event {
-        case let event as MessageNewEvent:
+        case let event as MessageNewEventDTO:
             increaseUnreadCountIfNeeded(
                 for: event.cid,
-                userId: event.userId,
+                userId: event.user.id,
                 newMessageAt: event.createdAt,
                 session: session
             )
