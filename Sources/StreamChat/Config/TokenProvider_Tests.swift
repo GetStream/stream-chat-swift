@@ -6,7 +6,7 @@
 @testable import StreamChatTestTools
 import XCTest
 
-final class TokenProvider_Tests: StressTestCase {
+final class TokenProvider_Tests: XCTestCase {
     func test_anonymousProvider_propagatesToken() throws {
         // Get token from `anonymous` provider.
         let token = try waitFor { UserConnectionProvider.anonymous.getToken(.mock, $0) }.get()

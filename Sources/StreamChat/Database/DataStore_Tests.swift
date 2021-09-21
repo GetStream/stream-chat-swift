@@ -6,7 +6,7 @@
 @testable import StreamChatTestTools
 import XCTest
 
-class DataStore_Tests: StressTestCase {
+class DataStore_Tests: XCTestCase {
     var _client: ChatClient!
     
     override func setUp() {

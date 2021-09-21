@@ -7,7 +7,7 @@ import CoreData
 @testable import StreamChatTestTools
 import XCTest
 
-class WebSocketClient_Tests: StressTestCase {
+class WebSocketClient_Tests: XCTestCase {
     struct TestEvent: Event, Equatable {
         let id = UUID()
     }

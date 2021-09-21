@@ -7,7 +7,7 @@ import CoreData
 @testable import StreamChatTestTools
 import XCTest
 
-final class ChatConnectionController_Tests: StressTestCase {
+final class ChatConnectionController_Tests: XCTestCase {
     private var env: TestEnvironment!
     private var client: ChatClient!
     private var controller: ChatConnectionController!

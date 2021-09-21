@@ -6,7 +6,7 @@
 @testable import StreamChatTestTools
 import XCTest
 
-class NewUserQueryUpdater_Tests: StressTestCase {
+class NewUserQueryUpdater_Tests: XCTestCase {
     private var env: TestEnvironment!
     
     var database: DatabaseContainerMock!
