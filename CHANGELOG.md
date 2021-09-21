@@ -4,7 +4,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 # Upcoming
 
 ### 🐞 Fixed
-- Fix token expiration refresh mechanism for API endpoints
+- Fix token expiration refresh mechanism for API endpoints [#1446](https://github.com/GetStream/stream-chat-swift/pull/1446)
+- Fix keyboard handling when navigation bar is not translucent [#1464](https://github.com/GetStream/stream-chat-swift/pull/1464)
 
 ### 🔄 Changed
 
