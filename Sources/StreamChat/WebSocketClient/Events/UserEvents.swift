@@ -116,15 +116,33 @@ struct UserWatchingEventDTO: EventWithPayload {
 
 // MARK: - User Ban
 
-public struct UserGloballyBannedEvent: UserSpecificEvent {
-    var userId: UserId
-    var createdAt: Date?
-    var payload: Any
+/// Triggered when user is banned not in a specific channel but globally.
+public struct UserGloballyBannedEvent: Event {
+    /// The banned user
+    public let user: ChatUser
+    
+    /// The event timestamp
+    public let createdAt: Date
+}
+
+struct UserGloballyBannedEventDTO: EventWithPayload {
+    let user: UserPayload
+    let createdAt: Date
+    let payload: Any
     
     init(from response: EventPayload) throws {
-        userId = try response.value(at: \.user?.id)
-        createdAt = response.createdAt
+        user = try response.value(at: \.user)
+        createdAt = try response.value(at: \.createdAt)
         payload = response
+    }
+    
+    func toDomainEvent(session: DatabaseSession) -> Event? {
+        guard let userDTO = session.user(id: user.id) else { return nil }
+        
+        return UserGloballyBannedEvent(
+            user: userDTO.asModel(),
+            createdAt: createdAt
+        )
     }
 }
 
