@@ -32,7 +32,7 @@ struct MessageNewEventDTO: EventDTO {
     let createdAt: Date
     let watcherCount: Int?
     let unreadCount: UnreadCount?
-    let payload: Any
+    let payload: EventPayload
     
     init(from response: EventPayload) throws {
         user = try response.value(at: \.user)
@@ -81,7 +81,7 @@ struct MessageUpdatedEventDTO: EventDTO {
     let cid: ChannelId
     let message: MessagePayload
     let createdAt: Date
-    let payload: Any
+    let payload: EventPayload
     
     init(from response: EventPayload) throws {
         user = try response.value(at: \.user)
@@ -126,7 +126,7 @@ struct MessageDeletedEventDTO: EventDTO {
     let cid: ChannelId
     let message: MessagePayload
     let createdAt: Date
-    let payload: Any
+    let payload: EventPayload
     
     init(from response: EventPayload) throws {
         user = try response.value(at: \.user)
@@ -174,7 +174,7 @@ struct MessageReadEventDTO: EventDTO {
     let cid: ChannelId
     let createdAt: Date
     let unreadCount: UnreadCount?
-    let payload: Any
+    let payload: EventPayload
     
     init(from response: EventPayload) throws {
         user = try response.value(at: \.user)

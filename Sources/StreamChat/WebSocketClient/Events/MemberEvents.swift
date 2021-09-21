@@ -24,7 +24,7 @@ struct MemberAddedEventDTO: EventDTO {
     let cid: ChannelId
     let member: MemberPayload
     let createdAt: Date
-    let payload: Any
+    let payload: EventPayload
     
     init(from response: EventPayload) throws {
         user = try response.value(at: \.user)
@@ -69,7 +69,7 @@ struct MemberUpdatedEventDTO: EventDTO {
     let cid: ChannelId
     let member: MemberPayload
     let createdAt: Date
-    let payload: Any
+    let payload: EventPayload
     
     init(from response: EventPayload) throws {
         user = try response.value(at: \.user)
@@ -110,7 +110,7 @@ struct MemberRemovedEventDTO: EventDTO {
     let user: UserPayload
     let cid: ChannelId
     let createdAt: Date
-    let payload: Any
+    let payload: EventPayload
     
     init(from response: EventPayload) throws {
         user = try response.value(at: \.user)

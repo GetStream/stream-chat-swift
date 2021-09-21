@@ -15,7 +15,7 @@ class ReactionEvents_Tests: XCTestCase {
     func test_new() throws {
         let json = XCTestCase.mockData(fromFile: "ReactionNew")
         let event = try eventDecoder.decode(from: json) as? ReactionNewEventDTO
-        let reactionPayload = (event?.payload as? EventPayload)?[keyPath: \.reaction]
+        let reactionPayload = event?.payload.reaction
         XCTAssertEqual(event?.user.id, userId)
         XCTAssertEqual(event?.cid, cid)
         XCTAssertEqual(event?.message.id, messageId)
@@ -29,7 +29,7 @@ class ReactionEvents_Tests: XCTestCase {
     func test_updated() throws {
         let json = XCTestCase.mockData(fromFile: "ReactionUpdated")
         let event = try eventDecoder.decode(from: json) as? ReactionUpdatedEventDTO
-        let reactionPayload = (event?.payload as? EventPayload)?[keyPath: \.reaction]
+        let reactionPayload = event?.payload.reaction
         XCTAssertEqual(event?.user.id, userId)
         XCTAssertEqual(event?.cid, cid)
         XCTAssertEqual(event?.message.id, messageId)
@@ -43,7 +43,7 @@ class ReactionEvents_Tests: XCTestCase {
     func test_deleted() throws {
         let json = XCTestCase.mockData(fromFile: "ReactionDeleted")
         let event = try eventDecoder.decode(from: json) as? ReactionDeletedEventDTO
-        let reactionPayload = (event?.payload as? EventPayload)?[keyPath: \.reaction]
+        let reactionPayload = event?.payload.reaction
         XCTAssertEqual(event?.user.id, userId)
         XCTAssertEqual(event?.cid, cid)
         XCTAssertEqual(event?.message.id, messageId)
@@ -111,7 +111,7 @@ class ReactionEventsIntegration_Tests: XCTestCase {
         
         let newReactionJSON = XCTestCase.mockData(fromFile: "ReactionNew")
         let newReactionEvent = try eventDecoder.decode(from: newReactionJSON) as? ReactionNewEventDTO
-        let newReactionPayload = try XCTUnwrap((newReactionEvent?.payload as? EventPayload)?.reaction)
+        let newReactionPayload = try XCTUnwrap(newReactionEvent?.payload.reaction)
         
         // For message to be received, we need to have channel:
         try client.databaseContainer.createChannel(

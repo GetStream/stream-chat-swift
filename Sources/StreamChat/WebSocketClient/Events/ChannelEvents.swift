@@ -27,7 +27,7 @@ struct ChannelUpdatedEventDTO: EventDTO {
     let user: UserPayload?
     let message: MessagePayload?
     let createdAt: Date
-    let payload: Any
+    let payload: EventPayload
     
     init(from response: EventPayload) throws {
         channel = try response.value(at: \.channel)
@@ -71,7 +71,7 @@ struct ChannelDeletedEventDTO: EventDTO {
     let user: UserPayload?
     let channel: ChannelDetailPayload
     let createdAt: Date
-    let payload: Any
+    let payload: EventPayload
     
     init(from response: EventPayload) throws {
         user = try? response.value(at: \.user)
@@ -112,7 +112,7 @@ struct ChannelTruncatedEventDTO: EventDTO {
     let channel: ChannelDetailPayload
     let user: UserPayload?
     let createdAt: Date
-    let payload: Any
+    let payload: EventPayload
     
     init(from response: EventPayload) throws {
         channel = try response.value(at: \.channel)
@@ -150,7 +150,7 @@ struct ChannelVisibleEventDTO: EventDTO {
     let cid: ChannelId
     let user: UserPayload
     let createdAt: Date
-    let payload: Any
+    let payload: EventPayload
     
     init(from response: EventPayload) throws {
         cid = try response.value(at: \.cid)
@@ -190,7 +190,7 @@ struct ChannelHiddenEventDTO: EventDTO {
     let user: UserPayload
     let isHistoryCleared: Bool
     let createdAt: Date
-    let payload: Any
+    let payload: EventPayload
     
     init(from response: EventPayload) throws {
         cid = try response.value(at: \.cid)

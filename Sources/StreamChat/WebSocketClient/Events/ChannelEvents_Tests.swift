@@ -13,14 +13,14 @@ class ChannelEvents_Tests: XCTestCase {
         let json = XCTestCase.mockData(fromFile: "ChannelUpdated")
         let event = try eventDecoder.decode(from: json) as? ChannelUpdatedEventDTO
         XCTAssertEqual(event?.channel.cid, ChannelId(type: .messaging, id: "new_channel_7070"))
-        XCTAssertEqual((event?.payload as? EventPayload)?.user?.id, "broken-waterfall-5")
+        XCTAssertEqual(event?.payload.user?.id, "broken-waterfall-5")
     }
     
     func test_updated_usingServerSideAuth() throws {
         let json = XCTestCase.mockData(fromFile: "ChannelUpdated_ServerSide")
         let event = try eventDecoder.decode(from: json) as? ChannelUpdatedEventDTO
         XCTAssertEqual(event?.channel.cid, ChannelId(type: .messaging, id: "new_channel_7070"))
-        XCTAssertNil((event?.payload as? EventPayload)?.user?.id)
+        XCTAssertNil(event?.payload.user?.id)
     }
     
     func test_deleted() throws {
@@ -29,7 +29,7 @@ class ChannelEvents_Tests: XCTestCase {
         XCTAssertEqual(event?.channel.cid, ChannelId(type: .messaging, id: "default-channel-1"))
         XCTAssertEqual(event?.createdAt.description, "2021-04-23 09:38:47 +0000")
         XCTAssertEqual(
-            (event?.payload as! EventPayload).channel?.cid,
+            event?.payload.channel?.cid,
             ChannelId(type: .messaging, id: "default-channel-1")
         )
     }
@@ -68,7 +68,7 @@ class ChannelEvents_Tests: XCTestCase {
         XCTAssertEqual(event?.channel.cid, ChannelId(type: .messaging, id: "new_channel_7011"))
 
         let rawPayload = try JSONDecoder.stream.decode(EventPayload.self, from: mockData)
-        XCTAssertEqual((event?.payload as? EventPayload)?.createdAt, rawPayload.createdAt)
+        XCTAssertEqual(event?.payload.createdAt, rawPayload.createdAt)
     }
     
     // MARK: DTO -> Event

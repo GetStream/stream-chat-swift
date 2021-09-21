@@ -11,7 +11,7 @@ public protocol ConnectionEvent: Event {
 public struct HealthCheckEvent: ConnectionEvent, EventDTO {
     public let connectionId: String
     
-    var payload: Any
+    let payload: EventPayload
     
     init(from eventResponse: EventPayload) throws {
         guard let connectionId = eventResponse.connectionId else {
@@ -19,7 +19,7 @@ public struct HealthCheckEvent: ConnectionEvent, EventDTO {
         }
         
         self.connectionId = connectionId
-        payload = eventResponse as Any
+        payload = eventResponse
     }
     
     init(connectionId: String) {

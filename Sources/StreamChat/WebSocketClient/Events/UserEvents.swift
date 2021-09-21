@@ -16,7 +16,7 @@ public struct UserPresenceChangedEvent: Event {
 struct UserPresenceChangedEventDTO: EventDTO {
     let user: UserPayload
     let createdAt: Date
-    let payload: Any
+    let payload: EventPayload
     
     init(from response: EventPayload) throws {
         user = try response.value(at: \.user)
@@ -46,7 +46,7 @@ public struct UserUpdatedEvent: Event {
 struct UserUpdatedEventDTO: EventDTO {
     let user: UserPayload
     let createdAt: Date
-    let payload: Any
+    let payload: EventPayload
     
     init(from response: EventPayload) throws {
         user = try response.value(at: \.user)
@@ -90,7 +90,7 @@ struct UserWatchingEventDTO: EventDTO {
     let createdAt: Date
     let watcherCount: Int
     let isStarted: Bool
-    let payload: Any
+    let payload: EventPayload
     
     init(from response: EventPayload) throws {
         cid = try response.value(at: \.cid)
@@ -128,7 +128,7 @@ public struct UserGloballyBannedEvent: Event {
 struct UserGloballyBannedEventDTO: EventDTO {
     let user: UserPayload
     let createdAt: Date
-    let payload: Any
+    let payload: EventPayload
     
     init(from response: EventPayload) throws {
         user = try response.value(at: \.user)
@@ -174,7 +174,7 @@ struct UserBannedEventDTO: EventDTO {
     let createdAt: Date
     let reason: String?
     let expiredAt: Date?
-    let payload: Any
+    let payload: EventPayload
     
     init(from response: EventPayload) throws {
         cid = try response.value(at: \.cid)
@@ -212,7 +212,7 @@ public struct UserGloballyUnbannedEvent: Event {
 struct UserGloballyUnbannedEventDTO: EventDTO {
     let user: UserPayload
     let createdAt: Date
-    let payload: Any
+    let payload: EventPayload
     
     init(from response: EventPayload) throws {
         user = try response.value(at: \.user)
@@ -246,7 +246,7 @@ struct UserUnbannedEventDTO: EventDTO {
     let cid: ChannelId
     let user: UserPayload
     let createdAt: Date
-    let payload: Any
+    let payload: EventPayload
     
     init(from response: EventPayload) throws {
         cid = try response.value(at: \.cid)

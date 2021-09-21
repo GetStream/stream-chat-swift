@@ -25,7 +25,7 @@ class EventDataProcessorMiddleware_Tests: XCTestCase {
     func test_eventWithPayload_isSavedToDB() throws {
         // Prepare an Event with a payload with channel data
         struct TestEvent: Event, EventDTO {
-            let payload: Any
+            let payload: EventPayload
         }
         
         let channelId: ChannelId = .unique
@@ -54,7 +54,7 @@ class EventDataProcessorMiddleware_Tests: XCTestCase {
     func test_eventWithInvalidPayload_isNotForwarded() throws {
         // Prepare an Event with an invalid payload data
         struct TestEvent: Event, EventDTO {
-            let payload: Any
+            let payload: EventPayload
         }
         
         // Create dummy event payload

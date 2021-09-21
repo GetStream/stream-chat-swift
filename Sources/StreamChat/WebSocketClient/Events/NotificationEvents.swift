@@ -27,7 +27,7 @@ struct NotificationMessageNewEventDTO: EventDTO {
     let message: MessagePayload
     let unreadCount: UnreadCount?
     let createdAt: Date
-    let payload: Any
+    let payload: EventPayload
     
     init(from response: EventPayload) throws {
         channel = try response.value(at: \.channel)
@@ -64,7 +64,7 @@ public struct NotificationMarkAllReadEvent: Event {
 struct NotificationMarkAllReadEventDTO: EventDTO {
     let user: UserPayload
     let createdAt: Date
-    let payload: Any
+    let payload: EventPayload
     
     init(from response: EventPayload) throws {
         user = try response.value(at: \.user)
@@ -102,7 +102,7 @@ struct NotificationMarkReadEventDTO: EventDTO {
     let cid: ChannelId
     let unreadCount: UnreadCount
     let createdAt: Date
-    let payload: Any
+    let payload: EventPayload
     
     init(from response: EventPayload) throws {
         user = try response.value(at: \.user)
@@ -136,7 +136,7 @@ public struct NotificationMutesUpdatedEvent: Event {
 struct NotificationMutesUpdatedEventDTO: EventDTO {
     let currentUser: CurrentUserPayload
     let createdAt: Date
-    let payload: Any
+    let payload: EventPayload
     
     init(from response: EventPayload) throws {
         currentUser = try response.value(at: \.currentUser)
@@ -166,7 +166,7 @@ public struct NotificationAddedToChannelEvent: Event {
 struct NotificationAddedToChannelEventDTO: EventDTO {
     let channel: ChannelDetailPayload
     let createdAt: Date
-    let payload: Any
+    let payload: EventPayload
     
     init(from response: EventPayload) throws {
         channel = try response.value(at: \.channel)
@@ -204,7 +204,7 @@ struct NotificationRemovedFromChannelEventDTO: EventDTO {
     let user: UserPayload
     let member: MemberPayload
     let createdAt: Date
-    let payload: Any
+    let payload: EventPayload
     
     init(from response: EventPayload) throws {
         cid = try response.value(at: \.cid)
@@ -241,7 +241,7 @@ public struct NotificationChannelMutesUpdatedEvent: Event {
 struct NotificationChannelMutesUpdatedEventDTO: EventDTO {
     let currentUser: CurrentUserPayload
     let createdAt: Date
-    let payload: Any
+    let payload: EventPayload
     
     init(from response: EventPayload) throws {
         currentUser = try response.value(at: \.currentUser)
@@ -279,7 +279,7 @@ struct NotificationInvitedEventDTO: EventDTO {
     let cid: ChannelId
     let member: MemberPayload
     let createdAt: Date
-    let payload: Any
+    let payload: EventPayload
     
     init(from response: EventPayload) throws {
         user = try response.value(at: \.user)
@@ -327,7 +327,7 @@ struct NotificationInviteAcceptedEventDTO: EventDTO {
     let channel: ChannelDetailPayload
     let member: MemberPayload
     let createdAt: Date
-    let payload: Any
+    let payload: EventPayload
     
     init(from response: EventPayload) throws {
         user = try response.value(at: \.user)
@@ -376,7 +376,7 @@ struct NotificationInviteRejectedEventDTO: EventDTO {
     let channel: ChannelDetailPayload
     let member: MemberPayload
     let createdAt: Date
-    let payload: Any
+    let payload: EventPayload
     
     init(from response: EventPayload) throws {
         user = try response.value(at: \.user)

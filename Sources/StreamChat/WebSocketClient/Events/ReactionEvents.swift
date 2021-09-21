@@ -28,7 +28,7 @@ struct ReactionNewEventDTO: EventDTO {
     let message: MessagePayload
     let reaction: MessageReactionPayload
     let createdAt: Date
-    let payload: Any
+    let payload: EventPayload
     
     init(from response: EventPayload) throws {
         user = try response.value(at: \.user)
@@ -84,7 +84,7 @@ struct ReactionUpdatedEventDTO: EventDTO {
     let message: MessagePayload
     let reaction: MessageReactionPayload
     let createdAt: Date
-    let payload: Any
+    let payload: EventPayload
     
     init(from response: EventPayload) throws {
         user = try response.value(at: \.user)
@@ -140,7 +140,7 @@ struct ReactionDeletedEventDTO: EventDTO {
     let message: MessagePayload
     let reaction: MessageReactionPayload
     let createdAt: Date
-    let payload: Any
+    let payload: EventPayload
     
     init(from response: EventPayload) throws {
         user = try response.value(at: \.user)

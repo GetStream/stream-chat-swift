@@ -25,7 +25,7 @@ final class EventConverterMiddleware_Tests: XCTestCase {
     
     func handle_whenEventDTOComes_toDomainResultIsReturned() throws {
         class EventDTOMock: EventDTO {
-            let payload: Any = 10
+            let payload = EventPayload(eventType: .channelDeleted)
             
             var toDomainEvent_session: DatabaseSession?
             var toDomainEvent_returnValue: Event?

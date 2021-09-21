@@ -32,7 +32,7 @@ struct TypingEventDTO: EventDTO {
     let parentId: MessageId?
     var isThread: Bool { parentId != nil }
     let createdAt: Date
-    let payload: Any
+    let payload: EventPayload
     
     init(from response: EventPayload) throws {
         cid = try response.value(at: \.cid)

@@ -10,8 +10,8 @@ public protocol Event {}
 /// An internal protocol marking the Events carrying the payload. This payload can be then used for additional work,
 /// i.e. for storing the data to the database.
 protocol EventDTO: Event {
-    /// Type-erased event payload. Cast it to `EventPayload` when you need to use it.
-    var payload: Any { get }
+    /// The entire event payload.
+    var payload: EventPayload { get }
     
     /// Converts event DTO to event with evaluated models.
     ///
