@@ -82,19 +82,45 @@ struct NotificationMarkAllReadEventDTO: EventWithPayload {
     }
 }
 
-public struct NotificationMarkReadEvent: UserSpecificEvent, ChannelSpecificEvent {
-    public let userId: UserId
+/// Triggered when a channel the current user is member of is marked as read.
+public struct NotificationMarkReadEvent: ChannelSpecificEvent {
+    /// The current user.
+    public let user: ChatUser
+    
+    /// The read channel identifier.
     public let cid: ChannelId
-    public let readAt: Date
+    
+    /// The unread counts of the current user.
     public let unreadCount: UnreadCount
+    
+    /// The event timestamp.
+    public let createdAt: Date
+}
+
+struct NotificationMarkReadEventDTO: EventWithPayload {
+    let user: UserPayload
+    let cid: ChannelId
+    let unreadCount: UnreadCount
+    let createdAt: Date
     let payload: Any
     
     init(from response: EventPayload) throws {
-        userId = try response.value(at: \.user?.id)
-        cid = try response.value(at: \.channel?.cid)
-        readAt = try response.value(at: \.createdAt)
+        user = try response.value(at: \.user)
+        cid = try response.value(at: \.cid)
+        createdAt = try response.value(at: \.createdAt)
         unreadCount = try response.value(at: \.unreadCount)
         payload = response
+    }
+    
+    func toDomainEvent(session: DatabaseSession) -> Event? {
+        guard let userDTO = session.user(id: user.id) else { return nil }
+        
+        return NotificationMarkReadEvent(
+            user: userDTO.asModel(),
+            cid: cid,
+            unreadCount: unreadCount,
+            createdAt: createdAt
+        )
     }
 }
 

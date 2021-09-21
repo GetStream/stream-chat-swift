@@ -27,9 +27,9 @@ class NotificationsEvents_Tests: XCTestCase {
     
     func test_markRead() throws {
         let json = XCTestCase.mockData(fromFile: "NotificationMarkRead")
-        let event = try eventDecoder.decode(from: json) as? NotificationMarkReadEvent
+        let event = try eventDecoder.decode(from: json) as? NotificationMarkReadEventDTO
         XCTAssertEqual(event?.cid, ChannelId(type: .messaging, id: "general"))
-        XCTAssertEqual(event?.userId, "steep-moon-9")
+        XCTAssertEqual(event?.user.id, "steep-moon-9")
         XCTAssertEqual(event?.unreadCount, .init(channels: 8, messages: 55))
     }
     
@@ -124,6 +124,35 @@ class NotificationsEvents_Tests: XCTestCase {
         // Assert event can be created and has correct fields
         let event = try XCTUnwrap(dto.toDomainEvent(session: session) as? NotificationMarkAllReadEvent)
         XCTAssertEqual(event.user.id, eventPayload.user?.id)
+        XCTAssertEqual(event.createdAt, eventPayload.createdAt)
+    }
+    
+    func test_notificationMarkReadEventDTO_toDomainEvent() throws {
+        // Create database session
+        let session = try DatabaseContainerMock(kind: .inMemory).viewContext
+        
+        // Create event payload
+        let eventPayload = EventPayload(
+            eventType: .notificationMarkRead,
+            cid: .unique,
+            user: .dummy(userId: .unique),
+            unreadCount: .init(channels: .unique, messages: .unique),
+            createdAt: .unique
+        )
+        
+        // Create event DTO
+        let dto = try NotificationMarkReadEventDTO(from: eventPayload)
+        
+        // Assert event creation fails due to missing dependencies in database
+        XCTAssertNil(dto.toDomainEvent(session: session))
+        
+        // Save event to database
+        try session.saveUser(payload: eventPayload.user!)
+
+        // Assert event can be created and has correct fields
+        let event = try XCTUnwrap(dto.toDomainEvent(session: session) as? NotificationMarkReadEvent)
+        XCTAssertEqual(event.user.id, eventPayload.user?.id)
+        XCTAssertEqual(event.cid, eventPayload.cid)
         XCTAssertEqual(event.createdAt, eventPayload.createdAt)
     }
 }

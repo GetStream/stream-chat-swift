@@ -139,11 +139,11 @@ extension EventType {
         case .notificationMessageNew: return try NotificationMessageNewEventDTO(from: response)
         
         case .notificationMarkRead:
-            return response.channel == nil:
-                try NotificationMarkReadEvent(from: response)
+            return response.channel == nil
                 ? try NotificationMarkAllReadEventDTO(from: response)
+                : try NotificationMarkReadEventDTO(from: response)
             
-            case .notificationMutesUpdated : return try NotificationMutesUpdatedEvent(from: response)
+        case .notificationMutesUpdated: return try NotificationMutesUpdatedEvent(from: response)
         case .notificationAddedToChannel: return try NotificationAddedToChannelEvent(from: response)
         case .notificationRemovedFromChannel: return try NotificationRemovedFromChannelEvent(from: response)
         case .notificationChannelMutesUpdated: return try NotificationChannelMutesUpdatedEvent(from: response)

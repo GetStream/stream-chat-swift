@@ -110,6 +110,14 @@ public extension NotificationMarkAllReadEvent {
     var readAt: Date { createdAt }
 }
 
+public extension NotificationMarkReadEvent {
+    @available(*, deprecated, message: "Use user.id")
+    var userId: UserId { user.id }
+    
+    @available(*, deprecated, message: "Use createdAt")
+    var readAt: Date { createdAt }
+}
+
 public extension ReactionNewEvent {
     @available(*, deprecated, message: "Use user.id")
     var userId: UserId { user.id }

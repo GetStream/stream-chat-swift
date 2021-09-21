@@ -356,12 +356,13 @@ class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         // Create EventPayload for NotificationMarkReadEvent
         let eventPayload = EventPayload(
             eventType: .notificationMarkRead,
+            cid: channelDetailPayload.cid,
             user: dummyCurrentUser,
             channel: channelDetailPayload,
             unreadCount: .noUnread,
             createdAt: newReadDate
         )
-        let notificationMarkReadEvent = try NotificationMarkReadEvent(from: eventPayload)
+        let notificationMarkReadEvent = try NotificationMarkReadEventDTO(from: eventPayload)
         
         // Let the middleware handle the event
         let handledEvent = middleware.handle(event: notificationMarkReadEvent, session: database.viewContext)
@@ -404,12 +405,13 @@ class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         // Create EventPayload for NotificationMarkReadEvent
         let eventPayload = EventPayload(
             eventType: .notificationMarkRead,
+            cid: payload.channel.cid,
             user: dummyUser(id: memberId),
             channel: payload.channel,
             unreadCount: .noUnread,
             createdAt: newReadDate
         )
-        let messageReadEvent = try NotificationMarkReadEvent(from: eventPayload)
+        let messageReadEvent = try NotificationMarkReadEventDTO(from: eventPayload)
         
         // Let the middleware handle the event
         // Middleware should create a read event for the member

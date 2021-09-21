@@ -439,7 +439,7 @@ class ChannelEventsIntegration_Tests: XCTestCase {
     
     func test_NotificationMarkAllReadEventPayload_isHandled() throws {
         let json = XCTestCase.mockData(fromFile: "NotificationMarkRead")
-        let event = try eventDecoder.decode(from: json) as? NotificationMarkReadEvent
+        let event = try eventDecoder.decode(from: json) as? NotificationMarkReadEventDTO
         
         let channelId: ChannelId = .init(type: .messaging, id: "general")
         let unwrappedEvent = try XCTUnwrap(event)
