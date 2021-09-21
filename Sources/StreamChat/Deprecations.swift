@@ -118,6 +118,11 @@ public extension NotificationMarkReadEvent {
     var readAt: Date { createdAt }
 }
 
+public extension NotificationMutesUpdatedEvent {
+    @available(*, deprecated, message: "Use currentUser.id")
+    var currentUserId: UserId { currentUser.id }
+}
+
 public extension ReactionNewEvent {
     @available(*, deprecated, message: "Use user.id")
     var userId: UserId { user.id }

@@ -124,13 +124,33 @@ struct NotificationMarkReadEventDTO: EventWithPayload {
     }
 }
 
-public struct NotificationMutesUpdatedEvent: CurrentUserEvent {
-    public let currentUserId: UserId
+/// Triggered when current user mutes/unmutes a user.
+public struct NotificationMutesUpdatedEvent: Event {
+    /// The current user.
+    public let currentUser: CurrentChatUser
+    
+    /// The event timestamp.
+    public let createdAt: Date
+}
+
+struct NotificationMutesUpdatedEventDTO: EventWithPayload {
+    let currentUser: CurrentUserPayload
+    let createdAt: Date
     let payload: Any
     
     init(from response: EventPayload) throws {
-        currentUserId = try response.value(at: \.currentUser?.id)
+        currentUser = try response.value(at: \.currentUser)
+        createdAt = try response.value(at: \.createdAt)
         payload = response
+    }
+    
+    func toDomainEvent(session: DatabaseSession) -> Event? {
+        guard let currentUserDTO = session.currentUser else { return nil }
+
+        return NotificationMutesUpdatedEvent(
+            currentUser: currentUserDTO.asModel(),
+            createdAt: createdAt
+        )
     }
 }
 
