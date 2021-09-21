@@ -41,6 +41,11 @@ public extension ChannelDeletedEvent {
     var deletedAt: Date { channel.deletedAt ?? createdAt }
 }
 
+public extension MemberAddedEvent {
+    @available(*, deprecated, message: "Use member.id")
+    var memberUserId: UserId { member.id }
+}
+
 public extension MessageNewEvent {
     @available(*, deprecated, message: "Use user.id")
     var userId: UserId { user.id }

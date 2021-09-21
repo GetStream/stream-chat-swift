@@ -45,7 +45,9 @@ final class MemberEventMiddleware_Tests: XCTestCase {
         let eventPayload: EventPayload = .init(
             eventType: .memberAdded,
             cid: .unique,
-            memberContainer: .dummy(userId: .unique)
+            user: .dummy(userId: .unique),
+            memberContainer: .dummy(userId: .unique),
+            createdAt: .unique
         )
         
         // Set error to be thrown on write.
@@ -53,26 +55,29 @@ final class MemberEventMiddleware_Tests: XCTestCase {
         database.write_errorResponse = error
         
         // Simulate and handle reaction event.
-        let event = try MemberAddedEvent(from: eventPayload)
+        let event = try MemberAddedEventDTO(from: eventPayload)
         let forwardedEvent = middleware.handle(event: event, session: database.viewContext)
         
         // Assert `MemberAddedEvent` is forwarded even though database error happened.
-        XCTAssertTrue(forwardedEvent is MemberAddedEvent)
+        XCTAssertTrue(forwardedEvent is MemberAddedEventDTO)
     }
     
     func tests_middleware_handlesMemberAddedEventCorrectly() throws {
         let cid = ChannelId.unique
         let memberId = UserId.unique
-        
+        let userId = UserId.unique
+
         // Create MemberAddedEvent payload
         let eventPayload: EventPayload = .init(
             eventType: .memberAdded,
             cid: cid,
-            memberContainer: .dummy(userId: memberId)
+            user: .dummy(userId: userId),
+            memberContainer: .dummy(userId: memberId),
+            createdAt: .unique
         )
         
         // Create event with payload.
-        let event = try MemberAddedEvent(from: eventPayload)
+        let event = try MemberAddedEventDTO(from: eventPayload)
         
         // Create channel in the database.
         try database.createChannel(cid: cid, withMessages: false)
@@ -86,7 +91,7 @@ final class MemberEventMiddleware_Tests: XCTestCase {
         )
         
         // Assert event is forwarded.
-        XCTAssertTrue(forwardedEvent is MemberAddedEvent)
+        XCTAssertTrue(forwardedEvent is MemberAddedEventDTO)
         // Assert member is linked to the channel.
         XCTAssert(channel.members.map(\.user.id).contains(memberId))
     }
@@ -183,6 +188,7 @@ final class MemberEventMiddleware_Tests: XCTestCase {
         let eventPayload: EventPayload = .init(
             eventType: .memberUpdated,
             cid: .unique,
+            user: .dummy(userId: .unique),
             memberContainer: .dummy(userId: .unique)
         )
         
@@ -308,17 +314,19 @@ final class MemberEventMiddleware_Tests: XCTestCase {
         var eventPayload: EventPayload = .init(
             eventType: .memberAdded,
             cid: cid,
-            memberContainer: .dummy(userId: .unique)
+            user: .dummy(userId: .unique),
+            memberContainer: .dummy(userId: .unique),
+            createdAt: .unique
         )
 
         // Simulate `MemberAddedEvent` event.
-        var event = try MemberAddedEvent(from: eventPayload)
+        var event = try MemberAddedEventDTO(from: eventPayload)
         var forwardedEvent = middleware.handle(event: event, session: database.viewContext)
 
         // Load the channel.
         var channel = try XCTUnwrap(database.viewContext.channel(cid: cid))
         // Assert event is forwarded.
-        XCTAssertTrue(forwardedEvent is MemberAddedEvent)
+        XCTAssertTrue(forwardedEvent is MemberAddedEventDTO)
         // Queries are NOT invalidated
         XCTAssertFalse(channel.queries.isEmpty)
 
@@ -326,17 +334,19 @@ final class MemberEventMiddleware_Tests: XCTestCase {
         eventPayload = .init(
             eventType: .memberAdded,
             cid: cid,
-            memberContainer: .dummy(userId: currentUserId)
+            user: .dummy(userId: .unique),
+            memberContainer: .dummy(userId: currentUserId),
+            createdAt: .unique
         )
 
         // Simulate `MemberAddedEvent` event.
-        event = try MemberAddedEvent(from: eventPayload)
+        event = try MemberAddedEventDTO(from: eventPayload)
         forwardedEvent = middleware.handle(event: event, session: database.viewContext)
 
         // Load the channel.
         channel = try XCTUnwrap(database.viewContext.channel(cid: cid))
         // Assert event is forwarded.
-        XCTAssertTrue(forwardedEvent is MemberAddedEvent)
+        XCTAssertTrue(forwardedEvent is MemberAddedEventDTO)
         // Queries are NOT invalidated
         XCTAssertTrue(channel.queries.isEmpty)
         XCTAssertTrue(channel.needsRefreshQueries)

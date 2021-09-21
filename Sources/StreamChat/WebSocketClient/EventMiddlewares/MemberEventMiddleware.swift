@@ -8,15 +8,15 @@ import Foundation
 struct MemberEventMiddleware: EventMiddleware {
     func handle(event: Event, session: DatabaseSession) -> Event? {
         do {
+            let currentUserId = session.currentUser?.user.id
+            
             switch event {
-            case is MemberAddedEvent, is MemberUpdatedEvent:
-                guard let eventWithMemberPayload = event as? EventWithPayload,
-                      let eventPayload = eventWithMemberPayload.payload as? EventPayload,
-                      let memberPayload = eventPayload.memberContainer?.member
-                else {
-                    break
+            case let event as MemberAddedEventDTO:
+                try session.saveMember(payload: event.member, channelId: event.cid)
+                
+                if event.member.user.id == currentUserId {
+                    session.channel(cid: event.cid)?.markNeedsRefreshQueries()
                 }
-                try session.saveMember(payload: memberPayload, channelId: (event as! MemberEvent).cid)
 
             case let event as MemberRemovedEvent:
                 guard let channel = session.channel(cid: event.cid) else {
@@ -67,5 +67,12 @@ struct MemberEventMiddleware: EventMiddleware {
         }
 
         return event
+    }
+}
+
+private extension ChannelDTO {
+    func markNeedsRefreshQueries() {
+        needsRefreshQueries = true
+        queries.removeAll()
     }
 }

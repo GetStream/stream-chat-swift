@@ -11,8 +11,8 @@ class MemberEvents_Tests: XCTestCase {
     
     func test_added() throws {
         let json = XCTestCase.mockData(fromFile: "MemberAdded")
-        let event = try eventDecoder.decode(from: json) as? MemberAddedEvent
-        XCTAssertEqual(event?.memberUserId, "steep-moon-9")
+        let event = try eventDecoder.decode(from: json) as? MemberAddedEventDTO
+        XCTAssertEqual(event?.member.user.id, "steep-moon-9")
         XCTAssertEqual(event?.cid, ChannelId(type: .messaging, id: "new_channel_9125"))
     }
     
@@ -28,6 +28,44 @@ class MemberEvents_Tests: XCTestCase {
         let event = try eventDecoder.decode(from: json) as? MemberRemovedEvent
         XCTAssertEqual(event?.memberUserId, "r2-d2")
         XCTAssertEqual(event?.cid, ChannelId(type: .messaging, id: "!members-jkE22mnWM5tjzHPBurvjoVz0spuz4FULak93veyK0lY"))
+    }
+    
+    // MARK: DTO -> Event
+    
+    func test_memberAddedEventDTO_toDomainEvent() throws {
+        // Create database session
+        let session = try DatabaseContainerMock(kind: .inMemory).viewContext
+        
+        // Create event payload
+        let eventPayload = EventPayload(
+            eventType: .memberAdded,
+            cid: .unique,
+            user: .dummy(userId: .unique),
+            memberContainer: .init(
+                member: .dummy(),
+                invite: nil,
+                memberRole: nil
+            ),
+            createdAt: .unique
+        )
+        
+        // Create event DTO
+        let dto = try MemberAddedEventDTO(from: eventPayload)
+        
+        // Assert event creation fails due to missing dependencies in database
+        XCTAssertNil(dto.toDomainEvent(session: session))
+        
+        // Save event to database
+        try session.saveUser(payload: eventPayload.user!)
+        try session.saveMember(payload: eventPayload.memberContainer!.member!, channelId: eventPayload.cid!)
+
+        // Assert event can be created and has correct fields
+        let event = try XCTUnwrap(dto.toDomainEvent(session: session) as? MemberAddedEvent)
+        XCTAssertEqual(event.cid, eventPayload.cid)
+        XCTAssertEqual(event.user.id, eventPayload.user?.id)
+        XCTAssertEqual(event.member.id, eventPayload.memberContainer?.member?.user.id)
+        XCTAssertEqual(event.member.memberRole, eventPayload.memberContainer?.member?.role)
+        XCTAssertEqual(event.createdAt, eventPayload.createdAt)
     }
 }
 
@@ -53,7 +91,7 @@ class MemberEventsIntegration_Tests: XCTestCase {
     
     func test_MemberAddedEventPayload_isHandled() throws {
         let json = XCTestCase.mockData(fromFile: "MemberAdded")
-        let event = try eventDecoder.decode(from: json) as? MemberAddedEvent
+        let event = try eventDecoder.decode(from: json) as? MemberAddedEventDTO
         
         let unwrappedEvent = try XCTUnwrap(event)
         client.eventNotificationCenter.process(unwrappedEvent)
