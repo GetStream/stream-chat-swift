@@ -11,6 +11,9 @@ struct MemberEventMiddleware: EventMiddleware {
             let currentUserId = session.currentUser?.user.id
             
             switch event {
+            case let event as MemberUpdatedEventDTO:
+                try session.saveMember(payload: event.member, channelId: event.cid)
+                
             case let event as MemberAddedEventDTO:
                 try session.saveMember(payload: event.member, channelId: event.cid)
                 

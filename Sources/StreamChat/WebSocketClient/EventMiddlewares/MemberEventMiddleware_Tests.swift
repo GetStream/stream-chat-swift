@@ -189,7 +189,8 @@ final class MemberEventMiddleware_Tests: XCTestCase {
             eventType: .memberUpdated,
             cid: .unique,
             user: .dummy(userId: .unique),
-            memberContainer: .dummy(userId: .unique)
+            memberContainer: .dummy(userId: .unique),
+            createdAt: .unique
         )
         
         // Set error to be thrown on write.
@@ -197,11 +198,11 @@ final class MemberEventMiddleware_Tests: XCTestCase {
         database.write_errorResponse = error
         
         // Simulate and handle reaction event.
-        let event = try MemberUpdatedEvent(from: eventPayload)
+        let event = try MemberUpdatedEventDTO(from: eventPayload)
         let forwardedEvent = middleware.handle(event: event, session: database.viewContext)
         
         // Assert `MemberUpdatedEvent` is forwarded even though database error happened.
-        XCTAssertTrue(forwardedEvent is MemberUpdatedEvent)
+        XCTAssertTrue(forwardedEvent is MemberUpdatedEventDTO)
     }
     
     func tests_middleware_handlesMemberUpdatedEventCorrectly() throws {
@@ -223,11 +224,13 @@ final class MemberEventMiddleware_Tests: XCTestCase {
         let eventPayload: EventPayload = .init(
             eventType: .memberUpdated,
             cid: cid,
-            memberContainer: .dummy(userId: memberId)
+            user: .dummy(userId: .unique),
+            memberContainer: .dummy(userId: memberId),
+            createdAt: .unique
         )
         
         // Create event with payload.
-        let event = try MemberUpdatedEvent(from: eventPayload)
+        let event = try MemberUpdatedEventDTO(from: eventPayload)
         
         // Simulate `MemberUpdatedEvent` event.
         let forwardedEvent = middleware.handle(event: event, session: database.viewContext)
@@ -238,7 +241,7 @@ final class MemberEventMiddleware_Tests: XCTestCase {
         )
         
         // Assert event is forwarded.
-        XCTAssertTrue(forwardedEvent is MemberUpdatedEvent)
+        XCTAssertTrue(forwardedEvent is MemberUpdatedEventDTO)
         // Assert member is updated.
         XCTAssertNotEqual(channel.members.first!.user.name, memberName)
     }
