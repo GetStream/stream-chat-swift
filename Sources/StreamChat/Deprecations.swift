@@ -125,6 +125,20 @@ public extension ReactionUpdatedEvent {
     var updatedAt: Date { reaction.updatedAt }
 }
 
+public extension ReactionDeletedEvent {
+    @available(*, deprecated, message: "Use user.id")
+    var userId: UserId { user.id }
+    
+    @available(*, deprecated, message: "Use message.id")
+    var messageId: UserId { message.id }
+
+    @available(*, deprecated, message: "Use reaction.type")
+    var reactionType: MessageReactionType { reaction.type }
+    
+    @available(*, deprecated, message: "Use reaction.score")
+    var reactionScore: Int { reaction.score }
+}
+
 public extension TypingEvent {
     @available(*, deprecated, message: "Use user.id")
     var userId: UserId { user.id }

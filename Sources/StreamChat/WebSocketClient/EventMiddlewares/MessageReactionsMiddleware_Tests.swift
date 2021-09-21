@@ -168,9 +168,15 @@ final class MessageReactionsMiddleware_Tests: XCTestCase {
         
         // Create event payload.
         let eventPayload: EventPayload = .init(
-            eventType: .reactionNew,
+            eventType: .reactionDeleted,
             cid: .unique,
-            reaction: reactionPayload
+            user: reactionPayload.user,
+            message: .dummy(
+                messageId: reactionPayload.messageId,
+                authorUserId: reactionPayload.user.id
+            ),
+            reaction: reactionPayload,
+            createdAt: .unique
         )
         
         // Save message to the database.
@@ -182,7 +188,7 @@ final class MessageReactionsMiddleware_Tests: XCTestCase {
         }
 
         // Simulate `ReactionDeletedEvent` event.
-        let event = try ReactionDeletedEvent(from: eventPayload)
+        let event = try ReactionDeletedEventDTO(from: eventPayload)
         let forwardedEvent = middleware.handle(event: event, session: database.viewContext)
         
         // Load the message.
@@ -200,7 +206,7 @@ final class MessageReactionsMiddleware_Tests: XCTestCase {
         }
         
         // Assert event is forwarded.
-        XCTAssertTrue(forwardedEvent is ReactionDeletedEvent)
+        XCTAssertTrue(forwardedEvent is ReactionDeletedEventDTO)
         // Assert message reaction is deleted.
         XCTAssertNil(reaction)
         // Assert message reactions are empty.
