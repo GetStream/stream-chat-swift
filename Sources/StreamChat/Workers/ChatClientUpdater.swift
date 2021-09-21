@@ -15,60 +15,51 @@ class ChatClientUpdater {
         userInfo: UserInfo?,
         newToken: Token
     ) throws {
-        // Check token is for different user.
-        guard newToken.userId != client.currentUserId else {
-            // Check the token has changed.
-            guard newToken != client.currentToken else {
-                return
+        guard newToken.userId == client.currentUserId else {
+            // Cancel all API requests since they are related to the previous user.
+            client.completeTokenWaiters(token: nil)
+
+            // Setting a new user is not possible in connectionless mode.
+            guard client.config.isClientInActiveMode else {
+                throw ClientError.ClientIsNotInActiveMode()
             }
 
-            // Update the token.
+            // Update the current user id to the new one.
+            client.currentUserId = newToken.userId
+
+            // Update the current token with the new one.
             client.currentToken = newToken
 
-            // Disconnect from web-socket since the connection was established
-            // with previous token that can be expired.
-            disconnect()
+            // Disconnect from web-socket.
+            disconnect(source: .systemInitiated)
+            
+            // Update web-socket endpoint.
+            client.webSocketClient?.connectEndpoint = .webSocketConnect(
+                userInfo: userInfo ?? .init(id: newToken.userId)
+            )
 
-            // Forward the new token to waiting requests.
-            client.completeTokenWaiters(token: newToken)
+            // Re-create backgroundWorker's since they are related to the previous user.
+            client.createBackgroundWorkers()
 
-            // It makes more sense to create background workers here
-            // other than in `init` because workers without currently logged-in
-            // user do nothing.
-            if client.backgroundWorkers.isEmpty {
-                client.createBackgroundWorkers()
-            }
+            // Reset all existing local data.
+            return try client.databaseContainer.removeAllData(force: true)
+        }
 
+        guard newToken != client.currentToken else {
             return
         }
 
-        // Cancel all API requests since they are related to the previous user.
-        client.completeTokenWaiters(token: nil)
-
-        // Setting a new user is not possible in connectionless mode.
-        guard client.config.isClientInActiveMode else {
-            throw ClientError.ClientIsNotInActiveMode()
-        }
-
-        // Update the current user id to the new one.
-        client.currentUserId = newToken.userId
-
-        // Update the current token with the new one.
         client.currentToken = newToken
 
-        // Disconnect from web-socket.
-        disconnect()
-        
-        // Update web-socket endpoint.
-        client.webSocketClient?.connectEndpoint = .webSocketConnect(
-            userInfo: userInfo ?? .init(id: newToken.userId)
-        )
+        // Forward the new token to waiting requests.
+        client.completeTokenWaiters(token: newToken)
 
-        // Re-create backgroundWorker's since they are related to the previous user.
-        client.createBackgroundWorkers()
-
-        // Reset all existing local data.
-        try client.databaseContainer.removeAllData(force: true)
+        // It makes more sense to create background workers here
+        // other than in `init` because workers without currently logged-in
+        // user do nothing.
+        if client.backgroundWorkers.isEmpty {
+            client.createBackgroundWorkers()
+        }
     }
 
     func reloadUserIfNeeded(
@@ -159,8 +150,10 @@ class ChatClientUpdater {
             return
         }
 
-        guard client.connectionId != nil else {
-            log.warning("The client is already disconnected. Skipping the `disconnect` call.")
+        if client.connectionId == nil {
+            if source == .userInitiated {
+                log.warning("The client is already disconnected. Skipping the `disconnect` call.")
+            }
             return
         }
 

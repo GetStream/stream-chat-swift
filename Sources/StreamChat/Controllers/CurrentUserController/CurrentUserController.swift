@@ -31,13 +31,21 @@ public class CurrentChatUserController: DataController, DelegateCallable, DataSt
 
     /// Used for observing the current user changes in a database.
     private lazy var currentUserObserver = createUserObserver()
-        .onChange { [unowned self] change in
-            self.delegateCallback {
+        .onChange { [weak self] change in
+            self?.delegateCallback { [weak self] in
+                guard let self = self else {
+                    log.warning("Callback called while self is nil")
+                    return
+                }
                 $0.currentUserController(self, didChangeCurrentUser: change)
             }
         }
-        .onFieldChange(\.unreadCount) { [unowned self] change in
-            self.delegateCallback {
+        .onFieldChange(\.unreadCount) { [weak self] change in
+            self?.delegateCallback { [weak self] in
+                guard let self = self else {
+                    log.warning("Callback called while self is nil")
+                    return
+                }
                 $0.currentUserController(self, didChangeCurrentUserUnreadCount: change.unreadCount)
             }
         }
@@ -95,13 +103,13 @@ public class CurrentChatUserController: DataController, DelegateCallable, DataSt
         // Unlike the other DataControllers, this one does not make a remote call when synchronising.
         // But we can assume that if we wait for the connection of the WebSocket, it means the local data
         // is in sync with the remote server, so we can set the state to remoteDataFetched.
-        client.provideConnectionId { [weak self] connectionId in
+        client.provideConnectionId { connectionId in
             var error: ClientError?
             if connectionId == nil {
                 error = ClientError.ConnectionNotSuccessful()
             }
-            self?.state = error == nil ? .remoteDataFetched : .remoteDataFetchFailed(error!)
-            self?.callback { completion?(error) }
+            self.state = error == nil ? .remoteDataFetched : .remoteDataFetchFailed(error!)
+            self.callback { completion?(error) }
         }
     }
     
@@ -185,18 +193,13 @@ public extension CurrentChatUserController {
     }
     
     /// Registers a device to the current user.
-    /// `setUser` must be called before calling this.
+    /// `connectUser` must be called before calling this.
     /// - Parameters:
     ///   - token: Device token, obtained via `didRegisterForRemoteNotificationsWithDeviceToken` function in `AppDelegate`.
     ///   - completion: Called when device is successfully registered, or with error.
     func addDevice(token: Data, completion: ((Error?) -> Void)? = nil) {
         guard let currentUserId = currentUser?.id else {
             completion?(ClientError.CurrentUserDoesNotExist())
-            return
-        }
-
-        if let devices = currentUser?.devices.filter({ $0.id == token.deviceToken }), !devices.isEmpty {
-            completion?(nil)
             return
         }
 
@@ -208,7 +211,7 @@ public extension CurrentChatUserController {
     }
     
     /// Removes a registered device from the current user.
-    /// `setUser` must be called before calling this.
+    /// `connectUser` must be called before calling this.
     /// - Parameters:
     ///   - id: Device id to be removed. You can obtain registered devices via `currentUser.devices`.
     ///   If `currentUser.devices` is not up-to-date, please make an `synchronize` call.

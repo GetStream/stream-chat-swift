@@ -47,26 +47,28 @@ struct DefaultRequestDecoder: RequestDecoder {
         
         guard httpResponse.statusCode < 400 else {
             guard let serverError = try? JSONDecoder.default.decode(ErrorPayload.self, from: data) else {
+                log
+                    .error(
+                        "API request failed with status code: \(httpResponse.statusCode), response:\n\(data.debugPrettyPrintedJSON))"
+                    )
                 throw ClientError.Unknown("Unknown error. Server response: \(httpResponse).")
             }
-            
-            // TODO: 👇
-//                if errorResponse.message.contains("was deactivated") {
-//                    webSocket.disconnect(reason: "JSON response error: the client was deactivated")
-//                }
             
             if ErrorPayload.tokenInvadlidErrorCodes ~= serverError.code {
                 log.info("Request failed because of an experied token.")
                 throw ClientError.ExpiredToken()
             }
             
+            log
+                .error(
+                    "API request failed with status code: \(httpResponse.statusCode), code: \(serverError.code) response:\n\(data.debugPrettyPrintedJSON))"
+                )
             throw ClientError(with: serverError)
         }
         
         do {
             let decodedPayload = try JSONDecoder.default.decode(ResponseType.self, from: data)
             return decodedPayload
-            
         } catch {
             log.error(error)
             throw error
@@ -76,6 +78,12 @@ struct DefaultRequestDecoder: RequestDecoder {
 
 extension ClientError {
     class ExpiredToken: ClientError {}
+    class TooManyTokenRefreshAttempts: ClientError {
+        override var localizedDescription: String {
+            "Authentication failed on expired tokens after too many refresh attempts, please check that your user tokens are created correctly."
+        }
+    }
+
     class ResponseBodyEmpty: ClientError {
         override var localizedDescription: String { "Response body is empty." }
     }

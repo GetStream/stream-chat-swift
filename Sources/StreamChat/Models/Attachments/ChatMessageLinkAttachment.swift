@@ -16,20 +16,20 @@ public struct LinkAttachmentPayload: AttachmentPayload {
     public static let type: AttachmentType = .linkPreview
 
     /// An original `URL` that was included into the message text and then enriched.
-    public let originalURL: URL
+    public var originalURL: URL
     /// A title (e.g video name in case of enriched `YouTube` link or song name in case of `Spotify` link).
-    public let title: String?
+    public var title: String?
     /// A text, usually description of the link content.
-    public let text: String?
+    public var text: String?
     /// An author, usually the link origin. (e.g. `YouTube`, `Spotify`)
-    public let author: String?
+    public var author: String?
     /// A link for displaying an attachment.
     /// Can be different from the original link, depends on the enriching rules.
-    public let titleLink: URL?
+    public var titleLink: URL?
     /// An image.
-    public let assetURL: URL?
+    public var assetURL: URL?
     /// A preview image URL.
-    public let previewURL: URL?
+    public var previewURL: URL?
 }
 
 extension LinkAttachmentPayload: Equatable {}

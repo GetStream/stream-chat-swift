@@ -139,7 +139,7 @@ class JSONEncoderTests: XCTestCase {
         )
 
         // Use GMT calendar, to test on GMT+0 timezone
-        var date: Date = Calendar.gmtCalendar.date(from: components)!
+        let date: Date = Calendar.gmtCalendar.date(from: components)!
 
         // When
         let encodedData: Data = try! encoder.encode(date)

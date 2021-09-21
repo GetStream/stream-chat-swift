@@ -6,7 +6,7 @@
 @testable import StreamChatTestTools
 import XCTest
 
-final class ChannelEventsController_Tests: StressTestCase {
+final class ChannelEventsController_Tests: XCTestCase {
     var apiClient: APIClientMock!
     var database: DatabaseContainerMock!
     var notificationCenter: EventNotificationCenterMock!

@@ -63,20 +63,31 @@ class CurrentUserUpdater: Worker {
         completion: ((Error?) -> Void)? = nil
     ) {
         let deviceId = token.deviceToken
+        
+        func saveCurrentDevice(deviceId: String, completion: ((Error?) -> Void)?) {
+            database.write({ (session) in
+                try session.saveCurrentDevice(deviceId)
+            }) { completion?($0) }
+        }
+        
+        // We already have the device saved
+        if let currentUserDTO = database.viewContext.currentUser,
+           currentUserDTO.devices.first(where: { $0.id == deviceId }) != nil {
+            saveCurrentDevice(deviceId: deviceId, completion: completion)
+            return
+        }
         apiClient
             .request(
                 endpoint: .addDevice(
                     userId: currentUserId,
-                    deviceId: token.deviceToken
+                    deviceId: deviceId
                 ),
-                completion: { [weak self] result in
+                completion: { result in
                     if let error = result.error {
                         completion?(error)
                         return
                     }
-                    self?.database.write({ (session) in
-                        try session.saveCurrentUserDevices([.init(id: deviceId)])
-                    }) { completion?($0) }
+                    saveCurrentDevice(deviceId: deviceId, completion: completion)
                 }
             )
     }

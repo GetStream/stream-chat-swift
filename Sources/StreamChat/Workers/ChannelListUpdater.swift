@@ -25,11 +25,9 @@ class ChannelListUpdater: Worker {
                 switch result {
                 case let .success(channelListPayload):
                     self?.database.write { session in
-                        
-                        if trumpExistingChannels {
-                            try session.deleteChannels(query: channelListQuery)
-                        }
-                        
+//                        if trumpExistingChannels {
+//                            try session.deleteChannels(query: channelListQuery)
+//                        }
                         try channelListPayload.channels.forEach {
                             try session.saveChannel(payload: $0, query: channelListQuery)
                         }

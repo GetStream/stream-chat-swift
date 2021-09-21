@@ -66,8 +66,13 @@ public class ChatUserSearchController: DataController, DelegateCallable, DataSto
             { $0.asModel() }
         )
         
-        observer.onChange = { [unowned self] changes in
-            self.delegateCallback {
+        observer.onChange = { [weak self] changes in
+            self?.delegateCallback { [weak self] in
+                guard let self = self else {
+                    log.warning("Callback called while self is nil")
+                    return
+                }
+
                 $0.controller(self, didChangeUsers: changes)
             }
         }

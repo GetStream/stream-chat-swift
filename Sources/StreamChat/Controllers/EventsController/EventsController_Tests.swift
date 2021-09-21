@@ -6,7 +6,7 @@
 import StreamChatTestTools
 import XCTest
 
-final class EventsController_Tests: StressTestCase {
+final class EventsController_Tests: XCTestCase {
     var client: ChatClient!
     var controller: EventsController!
     var callbackQueueID: UUID!

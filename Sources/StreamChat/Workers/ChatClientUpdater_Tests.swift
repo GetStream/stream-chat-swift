@@ -6,7 +6,7 @@
 @testable import StreamChatTestTools
 import XCTest
 
-final class ChatClientUpdater_Tests_Tests: StressTestCase {
+final class ChatClientUpdater_Tests_Tests: XCTestCase {
     // MARK: Disconnect
 
     func test_disconnect_doesNothing_ifClientIsPassive() {
@@ -265,8 +265,11 @@ final class ChatClientUpdater_Tests_Tests: StressTestCase {
             XCTAssertEqual(client.currentUserId, options.updatedToken.userId)
             // Assert token is valid.
             XCTAssertEqual(client.currentToken, options.updatedToken)
-            // Assert web-socket is disconnected.
-            XCTAssertEqual(client.mockWebSocketClient.disconnect_calledCounter, 1)
+            // Assert web-socket is disconnected if the user id changed
+            XCTAssertEqual(
+                client.mockWebSocketClient.disconnect_calledCounter,
+                options.initialToken.userId == options.updatedToken.userId ? 0 : 1
+            )
             // Assert web-socket endpoint is valid.
             XCTAssertEqual(
                 client.webSocketClient?.connectEndpoint.map(AnyEndpoint.init),
@@ -295,14 +298,16 @@ final class ChatClientUpdater_Tests_Tests: StressTestCase {
                 XCTAssertNotEqual(client.testBackgroundWorkerIDs, oldWorkerIDs)
                 // Assert database was flushed.
                 XCTAssertTrue(client.mockDatabaseContainer.removeAllData_called)
+                // Assert completion hasn't been called yet.
+                XCTAssertFalse(reloadUserIfNeededCompletionCalled)
             }
             
             // Assert web-socket `connect` is called.
-            XCTAssertEqual(client.mockWebSocketClient.connect_calledCounter, 1)
-            
-            // Assert completion hasn't been called yet.
-            XCTAssertFalse(reloadUserIfNeededCompletionCalled)
-            
+            XCTAssertEqual(
+                client.mockWebSocketClient.connect_calledCounter,
+                options.initialToken.userId == options.updatedToken.userId ? 0 : 1
+            )
+
             // Simulate established connection and provide `connectionId` to waiters.
             let connectionId: String = .unique
             client.mockWebSocketClient.simulateConnectionStatus(.connected(connectionId: connectionId))

@@ -36,7 +36,11 @@ protocol CurrentUserDatabaseSession {
     
     /// Updates the `CurrentUserDTO.devices` with the provided `DevicesPayload`
     /// If there's no current user set, an error will be thrown.
-    func saveCurrentUserDevices(_ devices: [DevicePayload], clearExisting: Bool) throws
+    @discardableResult
+    func saveCurrentUserDevices(_ devices: [DevicePayload], clearExisting: Bool) throws -> [DeviceDTO]
+    
+    /// Saves the `currentDevice` for current user.
+    func saveCurrentDevice(_ deviceId: String) throws
     
     /// Removes the device with the given id from DB.
     func deleteDevice(id: DeviceId)
@@ -46,7 +50,8 @@ protocol CurrentUserDatabaseSession {
 }
 
 extension CurrentUserDatabaseSession {
-    func saveCurrentUserDevices(_ devices: [DevicePayload]) throws {
+    @discardableResult
+    func saveCurrentUserDevices(_ devices: [DevicePayload]) throws -> [DeviceDTO] {
         try saveCurrentUserDevices(devices, clearExisting: false)
     }
 }
@@ -161,6 +166,8 @@ protocol ChannelDatabaseSession {
         payload: ChannelDetailPayload,
         query: ChannelListQuery?
     ) throws -> ChannelDTO
+    
+    @discardableResult func saveQuery(query: ChannelListQuery) -> ChannelListQueryDTO
     
     /// Fetches `ChannelDTO` with the given `cid` from the database.
     func channel(cid: ChannelId) -> ChannelDTO?
