@@ -13,7 +13,7 @@ public struct UserPresenceChangedEvent: Event {
     public let createdAt: Date?
 }
 
-struct UserPresenceChangedEventDTO: EventWithPayload {
+struct UserPresenceChangedEventDTO: EventDTO {
     let user: UserPayload
     let createdAt: Date
     let payload: Any
@@ -43,7 +43,7 @@ public struct UserUpdatedEvent: Event {
     public let createdAt: Date?
 }
 
-struct UserUpdatedEventDTO: EventWithPayload {
+struct UserUpdatedEventDTO: EventDTO {
     let user: UserPayload
     let createdAt: Date
     let payload: Any
@@ -84,7 +84,7 @@ public struct UserWatchingEvent: ChannelSpecificEvent {
     public let isStarted: Bool
 }
 
-struct UserWatchingEventDTO: EventWithPayload {
+struct UserWatchingEventDTO: EventDTO {
     let cid: ChannelId
     let user: UserPayload
     let createdAt: Date
@@ -125,7 +125,7 @@ public struct UserGloballyBannedEvent: Event {
     public let createdAt: Date
 }
 
-struct UserGloballyBannedEventDTO: EventWithPayload {
+struct UserGloballyBannedEventDTO: EventDTO {
     let user: UserPayload
     let createdAt: Date
     let payload: Any
@@ -167,7 +167,7 @@ public struct UserBannedEvent: ChannelSpecificEvent {
     public let expiredAt: Date?
 }
 
-struct UserBannedEventDTO: EventWithPayload {
+struct UserBannedEventDTO: EventDTO {
     let cid: ChannelId
     let user: UserPayload
     let ownerId: UserId
@@ -209,7 +209,7 @@ public struct UserGloballyUnbannedEvent: Event {
     public let createdAt: Date
 }
 
-struct UserGloballyUnbannedEventDTO: EventWithPayload {
+struct UserGloballyUnbannedEventDTO: EventDTO {
     let user: UserPayload
     let createdAt: Date
     let payload: Any
@@ -242,7 +242,7 @@ public struct UserUnbannedEvent: ChannelSpecificEvent {
     public let createdAt: Date?
 }
 
-struct UserUnbannedEventDTO: EventWithPayload {
+struct UserUnbannedEventDTO: EventDTO {
     let cid: ChannelId
     let user: UserPayload
     let createdAt: Date

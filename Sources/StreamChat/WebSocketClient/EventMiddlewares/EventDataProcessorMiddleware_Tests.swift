@@ -24,7 +24,7 @@ class EventDataProcessorMiddleware_Tests: XCTestCase {
     
     func test_eventWithPayload_isSavedToDB() throws {
         // Prepare an Event with a payload with channel data
-        struct TestEvent: Event, EventWithPayload {
+        struct TestEvent: Event, EventDTO {
             let payload: Any
         }
         
@@ -53,7 +53,7 @@ class EventDataProcessorMiddleware_Tests: XCTestCase {
     
     func test_eventWithInvalidPayload_isNotForwarded() throws {
         // Prepare an Event with an invalid payload data
-        struct TestEvent: Event, EventWithPayload {
+        struct TestEvent: Event, EventDTO {
             let payload: Any
         }
         

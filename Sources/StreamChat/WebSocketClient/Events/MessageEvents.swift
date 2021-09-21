@@ -25,7 +25,7 @@ public struct MessageNewEvent: ChannelSpecificEvent {
     public let unreadCount: UnreadCount?
 }
 
-struct MessageNewEventDTO: EventWithPayload {
+struct MessageNewEventDTO: EventDTO {
     let user: UserPayload
     let cid: ChannelId
     let message: MessagePayload
@@ -76,7 +76,7 @@ public struct MessageUpdatedEvent: ChannelSpecificEvent {
     public let createdAt: Date
 }
 
-struct MessageUpdatedEventDTO: EventWithPayload {
+struct MessageUpdatedEventDTO: EventDTO {
     let user: UserPayload
     let cid: ChannelId
     let message: MessagePayload
@@ -121,7 +121,7 @@ public struct MessageDeletedEvent: ChannelSpecificEvent {
     public let createdAt: Date
 }
 
-struct MessageDeletedEventDTO: EventWithPayload {
+struct MessageDeletedEventDTO: EventDTO {
     let user: UserPayload
     let cid: ChannelId
     let message: MessagePayload
@@ -169,7 +169,7 @@ public struct MessageReadEvent: ChannelSpecificEvent {
     public let unreadCount: UnreadCount?
 }
 
-struct MessageReadEventDTO: EventWithPayload {
+struct MessageReadEventDTO: EventDTO {
     let user: UserPayload
     let cid: ChannelId
     let createdAt: Date

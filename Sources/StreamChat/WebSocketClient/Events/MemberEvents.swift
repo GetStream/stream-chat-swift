@@ -19,7 +19,7 @@ public struct MemberAddedEvent: MemberEvent, ChannelSpecificEvent {
     public let createdAt: Date
 }
 
-struct MemberAddedEventDTO: EventWithPayload {
+struct MemberAddedEventDTO: EventDTO {
     let user: UserPayload
     let cid: ChannelId
     let member: MemberPayload
@@ -64,7 +64,7 @@ public struct MemberUpdatedEvent: MemberEvent, ChannelSpecificEvent {
     public let createdAt: Date
 }
 
-struct MemberUpdatedEventDTO: EventWithPayload {
+struct MemberUpdatedEventDTO: EventDTO {
     let user: UserPayload
     let cid: ChannelId
     let member: MemberPayload
@@ -106,7 +106,7 @@ public struct MemberRemovedEvent: MemberEvent, ChannelSpecificEvent {
     public let createdAt: Date
 }
 
-struct MemberRemovedEventDTO: EventWithPayload {
+struct MemberRemovedEventDTO: EventDTO {
     let user: UserPayload
     let cid: ChannelId
     let createdAt: Date

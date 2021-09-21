@@ -9,7 +9,7 @@ public protocol Event {}
 
 /// An internal protocol marking the Events carrying the payload. This payload can be then used for additional work,
 /// i.e. for storing the data to the database.
-protocol EventWithPayload: Event {
+protocol EventDTO: Event {
     /// Type-erased event payload. Cast it to `EventPayload` when you need to use it.
     var payload: Any { get }
     
@@ -21,7 +21,7 @@ protocol EventWithPayload: Event {
     func toDomainEvent(session: DatabaseSession) -> Event?
 }
 
-extension EventWithPayload {
+extension EventDTO {
     func toDomainEvent(session: DatabaseSession) -> Event? { nil }
 }
 

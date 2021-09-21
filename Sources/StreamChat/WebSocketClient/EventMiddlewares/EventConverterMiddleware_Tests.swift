@@ -24,7 +24,7 @@ final class EventConverterMiddleware_Tests: XCTestCase {
     }
     
     func handle_whenEventDTOComes_toDomainResultIsReturned() throws {
-        class EventDTOMock: EventWithPayload {
+        class EventDTOMock: EventDTO {
             let payload: Any = 10
             
             var toDomainEvent_session: DatabaseSession?
