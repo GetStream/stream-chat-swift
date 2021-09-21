@@ -134,13 +134,39 @@ struct ChannelTruncatedEventDTO: EventWithPayload {
     }
 }
 
+/// Triggered when a channel is made visible.
 public struct ChannelVisibleEvent: ChannelSpecificEvent {
+    /// The channel identifier.
     public let cid: ChannelId
-    let payload: Any
+    
+    /// The user who made the channel visible.
+    public let user: ChatUser
+    
+    /// The event timestamp.
+    public let createdAt: Date
+}
 
+struct ChannelVisibleEventDTO: EventWithPayload {
+    let cid: ChannelId
+    let user: UserPayload
+    let createdAt: Date
+    let payload: Any
+    
     init(from response: EventPayload) throws {
         cid = try response.value(at: \.cid)
+        user = try response.value(at: \.user)
+        createdAt = try response.value(at: \.createdAt)
         payload = response
+    }
+    
+    func toDomainEvent(session: DatabaseSession) -> Event? {
+        guard let userDTO = session.user(id: user.id) else { return nil }
+        
+        return ChannelVisibleEvent(
+            cid: cid,
+            user: userDTO.asModel(),
+            createdAt: createdAt
+        )
     }
 }
 

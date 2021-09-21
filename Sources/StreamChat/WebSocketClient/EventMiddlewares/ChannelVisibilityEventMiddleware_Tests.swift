@@ -56,15 +56,16 @@ final class ChannelVisibilityEventMiddleware_Tests: XCTestCase {
         XCTAssertTrue(forwardedEvent is ChannelHiddenEvent)
 
         // Simulate and handle channel hidden event.
-        let visibleEvent = try ChannelVisibleEvent(from: .init(
+        let visibleEvent = try ChannelVisibleEventDTO(from: .init(
             eventType: .channelVisible,
             cid: .unique,
+            user: .dummy(userId: .unique),
             createdAt: .unique
         ) as EventPayload)
         forwardedEvent = middleware.handle(event: visibleEvent, session: database.viewContext)
 
         // Assert `ChannelTruncatedEvent` is forwarded even though database error happened.
-        XCTAssertTrue(forwardedEvent is ChannelVisibleEvent)
+        XCTAssertTrue(forwardedEvent is ChannelVisibleEventDTO)
     }
     
     func test_middlewareCanSeePendingEntities() throws {
@@ -147,9 +148,10 @@ final class ChannelVisibilityEventMiddleware_Tests: XCTestCase {
         let cid: ChannelId = .unique
 
         // Create the event
-        let event = try ChannelVisibleEvent(from: .init(
+        let event = try ChannelVisibleEventDTO(from: .init(
             eventType: .channelVisible,
             cid: cid,
+            user: .dummy(userId: .unique),
             createdAt: .unique
         ) as EventPayload)
 
@@ -172,7 +174,7 @@ final class ChannelVisibilityEventMiddleware_Tests: XCTestCase {
 
         // Assert the `truncatedAt` value is not touched
         XCTAssertEqual(channelDTO.truncatedAt, originalTruncatedAt)
-        XCTAssert(forwardedEvent is ChannelVisibleEvent)
+        XCTAssert(forwardedEvent is ChannelVisibleEventDTO)
     }
 }
 

@@ -50,14 +50,14 @@ class ChannelEvents_Tests: XCTestCase {
     
     func test_ChannelVisibleEvent_decoding() throws {
         let json = XCTestCase.mockData(fromFile: "ChannelVisible")
-        let event = try eventDecoder.decode(from: json) as? ChannelVisibleEvent
+        let event = try eventDecoder.decode(from: json) as? ChannelVisibleEventDTO
         XCTAssertEqual(event?.cid, ChannelId(type: .messaging, id: "default-channel-6"))
     }
     
     func test_visible() throws {
         // Channel is visible again.
         let json = XCTestCase.mockData(fromFile: "ChannelVisible")
-        let event = try eventDecoder.decode(from: json) as? ChannelVisibleEvent
+        let event = try eventDecoder.decode(from: json) as? ChannelVisibleEventDTO
         XCTAssertEqual(event?.cid, ChannelId(type: .messaging, id: "default-channel-6"))
     }
 
@@ -164,6 +164,34 @@ class ChannelEvents_Tests: XCTestCase {
         XCTAssertEqual(event.channel.cid, eventPayload.channel?.cid)
         XCTAssertEqual(event.createdAt, eventPayload.createdAt)
     }
+    
+    func test_channelVisibleEventDTO_toDomainEvent() throws {
+        // Create database session
+        let session = try DatabaseContainerMock(kind: .inMemory).viewContext
+        
+        // Create event payload
+        let eventPayload = EventPayload(
+            eventType: .channelVisible,
+            cid: .unique,
+            user: .dummy(userId: .unique),
+            createdAt: .unique
+        )
+        
+        // Create event DTO
+        let dto = try ChannelVisibleEventDTO(from: eventPayload)
+        
+        // Assert event creation fails due to missing dependencies in database
+        XCTAssertNil(dto.toDomainEvent(session: session))
+        
+        // Save event to database
+        try session.saveUser(payload: eventPayload.user!)
+        
+        // Assert event can be created and has correct fields
+        let event = try XCTUnwrap(dto.toDomainEvent(session: session) as? ChannelVisibleEvent)
+        XCTAssertEqual(event.user.id, eventPayload.user?.id)
+        XCTAssertEqual(event.cid, eventPayload.cid)
+        XCTAssertEqual(event.createdAt, eventPayload.createdAt)
+    }
 }
 
 class ChannelEventsIntegration_Tests: XCTestCase {
@@ -236,7 +264,7 @@ class ChannelEventsIntegration_Tests: XCTestCase {
     
     func test_ChannelVisibleEventPayload_isHandled() throws {
         let json = XCTestCase.mockData(fromFile: "ChannelVisible")
-        let event = try eventDecoder.decode(from: json) as? ChannelVisibleEvent
+        let event = try eventDecoder.decode(from: json) as? ChannelVisibleEventDTO
 
         let channelId: ChannelId = ChannelId(type: .messaging, id: "default-channel-6")
         
