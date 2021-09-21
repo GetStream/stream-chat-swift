@@ -11,10 +11,10 @@ class NotificationsEvents_Tests: XCTestCase {
     
     func test_messageNew() throws {
         let json = XCTestCase.mockData(fromFile: "NotificationMessageNew")
-        let event = try eventDecoder.decode(from: json) as? NotificationMessageNewEvent
-        XCTAssertEqual(event?.userId, "steep-moon-9")
-        XCTAssertEqual(event?.cid, ChannelId(type: .messaging, id: "general"))
-        XCTAssertEqual(event?.messageId, "042772db-4af2-460d-beaa-1e49d1b8e3b9")
+        let event = try eventDecoder.decode(from: json) as? NotificationMessageNewEventDTO
+        XCTAssertEqual(event?.message.user.id, "steep-moon-9")
+        XCTAssertEqual(event?.channel.cid, ChannelId(type: .messaging, id: "general"))
+        XCTAssertEqual(event?.message.id, "042772db-4af2-460d-beaa-1e49d1b8e3b9")
         XCTAssertEqual(event?.createdAt.description, "2020-07-21 14:47:57 +0000")
         XCTAssertEqual(event?.unreadCount, .init(channels: 3, messages: 3))
     }
@@ -62,5 +62,42 @@ class NotificationsEvents_Tests: XCTestCase {
         let json = XCTestCase.mockData(fromFile: "NotificationRemovedFromChannel")
         let event = try eventDecoder.decode(from: json) as? NotificationRemovedFromChannelEvent
         XCTAssertEqual(event?.cid, ChannelId(type: .messaging, id: "!members-jkE22mnWM5tjzHPBurvjoVz0spuz4FULak93veyK0lY"))
+    }
+    
+    // MARK: DTO -> Event
+    
+    func test_notificationMessageNewEventDTO_toDomainEvent() throws {
+        // Create database session
+        let session = try DatabaseContainerMock(kind: .inMemory).viewContext
+        
+        // Create event payload
+        let cid: ChannelId = .unique
+        let eventPayload = EventPayload(
+            eventType: .notificationMessageNew,
+            cid: cid,
+            user: .dummy(userId: .unique),
+            channel: .dummy(cid: cid),
+            message: .dummy(messageId: .unique, authorUserId: .unique),
+            unreadCount: .init(channels: .unique, messages: .unique),
+            createdAt: .unique
+        )
+        
+        // Create event DTO
+        let dto = try NotificationMessageNewEventDTO(from: eventPayload)
+        
+        // Assert event creation fails due to missing dependencies in database
+        XCTAssertNil(dto.toDomainEvent(session: session))
+
+        // Save event to database
+        try session.saveUser(payload: eventPayload.user!)
+        _ = try session.saveChannel(payload: eventPayload.channel!, query: nil)
+        _ = try session.saveMessage(payload: eventPayload.message!, for: cid)
+
+        // Assert event can be created and has correct fields
+        let event = try XCTUnwrap(dto.toDomainEvent(session: session) as? NotificationMessageNewEvent)
+        XCTAssertEqual(event.channel.cid, eventPayload.cid)
+        XCTAssertEqual(event.message.id, eventPayload.message?.id)
+        XCTAssertEqual(event.unreadCount, eventPayload.unreadCount)
+        XCTAssertEqual(event.createdAt, eventPayload.createdAt)
     }
 }

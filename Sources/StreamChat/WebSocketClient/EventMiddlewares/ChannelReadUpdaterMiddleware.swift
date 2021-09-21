@@ -16,10 +16,10 @@ struct ChannelReadUpdaterMiddleware: EventMiddleware {
                 session: session
             )
             
-        case let event as NotificationMessageNewEvent:
+        case let event as NotificationMessageNewEventDTO:
             increaseUnreadCountIfNeeded(
-                for: event.cid,
-                userId: event.userId,
+                for: event.channel.cid,
+                userId: event.message.user.id,
                 newMessageAt: event.createdAt,
                 session: session
             )

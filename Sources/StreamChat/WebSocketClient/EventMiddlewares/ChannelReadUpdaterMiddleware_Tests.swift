@@ -134,7 +134,7 @@ class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
                 message: .dummy(messageId: .unique, authorUserId: user.id, createdAt: .unique(before: oldReadDate)),
                 createdAt: .unique(before: oldReadDate)
             )
-            let oldMessageNewEvent = try NotificationMessageNewEvent(from: eldEventPayload)
+            let oldMessageNewEvent = try NotificationMessageNewEventDTO(from: eldEventPayload)
 
             var handledEvent: Event?
             try database.writeSynchronously { session in
@@ -157,7 +157,7 @@ class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
                 message: .dummy(messageId: .unique, authorUserId: user.id, createdAt: .unique(after: oldReadDate)),
                 createdAt: .unique(after: oldReadDate)
             )
-            let messageNewEvent = try NotificationMessageNewEvent(from: eventPayload)
+            let messageNewEvent = try NotificationMessageNewEventDTO(from: eventPayload)
 
             try database.writeSynchronously { session in
                 // Let the middleware handle the event

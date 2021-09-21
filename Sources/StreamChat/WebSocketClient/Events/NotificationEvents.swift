@@ -4,22 +4,53 @@
 
 import Foundation
 
-public struct NotificationMessageNewEvent: MessageSpecificEvent {
-    public let userId: UserId
-    public let cid: ChannelId
-    public let messageId: MessageId
+/// Triggered when a new message is sent to a channel the current user is member of.
+public struct NotificationMessageNewEvent: ChannelSpecificEvent {
+    /// The identifier of a channel a message is sent to.
+    public var cid: ChannelId { channel.cid }
+    
+    /// The channel a message was sent to.
+    public let channel: ChatChannel
+    
+    /// The sent message.
+    public let message: ChatMessage
+    
+    /// The event timestamp.
     public let createdAt: Date
+    
+    /// The unread counts of the current user.
     public let unreadCount: UnreadCount?
+}
+
+struct NotificationMessageNewEventDTO: EventWithPayload {
+    let channel: ChannelDetailPayload
+    let message: MessagePayload
+    let unreadCount: UnreadCount?
+    let createdAt: Date
     let payload: Any
     
     init(from response: EventPayload) throws {
-        userId = try response.value(at: \.message?.user.id)
-        cid = try response.value(at: \.channel?.cid)
-        messageId = try response.value(at: \.message?.id)
-        createdAt = try response.value(at: \.message?.createdAt)
+        channel = try response.value(at: \.channel)
+        message = try response.value(at: \.message)
+        createdAt = try response.value(at: \.createdAt)
         unreadCount = try? response.value(at: \.unreadCount)
         payload = response
     }
+    
+    func toDomainEvent(session: DatabaseSession) -> Event? {
+        guard
+            let channelDTO = session.channel(cid: channel.cid),
+            let messageDTO = session.message(id: message.id)
+        else { return nil }
+        
+        return NotificationMessageNewEvent(
+            channel: channelDTO.asModel(),
+            message: messageDTO.asModel(),
+            createdAt: createdAt,
+            unreadCount: unreadCount
+        )
+    }
+}
 }
 
 public struct NotificationMarkAllReadEvent: UserSpecificEvent {
