@@ -112,21 +112,26 @@ final class MessageReactionsMiddleware_Tests: XCTestCase {
     }
     
     func tests_middleware_handlesReactionUpdatedEventCorrectly() throws {
+        let user = UserPayload.dummy(userId: .unique)
+
         // Create reaction payload.
         let reactionPayload: MessageReactionPayload = .dummy(
             messageId: .unique,
-            user: UserPayload.dummy(userId: .unique)
+            user: user
         )
         
         // Create event payload.
         let eventPayload: EventPayload = .init(
-            eventType: .reactionNew,
+            eventType: .reactionUpdated,
             cid: .unique,
-            reaction: reactionPayload
+            user: user,
+            message: .dummy(messageId: .unique, authorUserId: .unique),
+            reaction: reactionPayload,
+            createdAt: .unique
         )
         
         // Create event with payload.
-        let event = try ReactionUpdatedEvent(from: eventPayload)
+        let event = try ReactionUpdatedEventDTO(from: eventPayload)
         
         // Create message in the database.
         try database.createMessage(id: reactionPayload.messageId)
@@ -149,7 +154,7 @@ final class MessageReactionsMiddleware_Tests: XCTestCase {
         )
         
         // Assert event is forwarded.
-        XCTAssertTrue(forwardedEvent is ReactionUpdatedEvent)
+        XCTAssertTrue(forwardedEvent is ReactionUpdatedEventDTO)
         // Assert reaction is linked to the message.
         XCTAssertEqual(message.reactions, [reaction])
     }
