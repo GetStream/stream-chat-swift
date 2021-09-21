@@ -20,14 +20,17 @@ struct MemberEventMiddleware: EventMiddleware {
                 if event.member.user.id == currentUserId {
                     session.channel(cid: event.cid)?.markNeedsRefreshQueries()
                 }
-
-            case let event as MemberRemovedEvent:
+            case let event as MemberRemovedEventDTO:
                 guard let channel = session.channel(cid: event.cid) else {
                     // No need to throw ChannelNotFound error here
                     break
                 }
                 
-                guard let member = channel.members.first(where: { $0.user.id == event.memberUserId }) else {
+                if event.user.id == currentUserId {
+                    channel.markNeedsRefreshQueries()
+                }
+                
+                guard let member = channel.members.first(where: { $0.user.id == event.user.id }) else {
                     // No need to throw MemberNotFound error here
                     break
                 }

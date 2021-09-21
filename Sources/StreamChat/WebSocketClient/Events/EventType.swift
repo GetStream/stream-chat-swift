@@ -123,8 +123,6 @@ extension EventType {
         case .channelTruncated: return try ChannelTruncatedEventDTO(from: response)
         case .channelVisible: return try ChannelVisibleEventDTO(from: response)
             
-        case .memberRemoved: return try MemberRemovedEvent(from: response)
-            
         case .reactionNew: return try ReactionNewEvent(from: response)
         case .reactionUpdated: return try ReactionUpdatedEvent(from: response)
         case .reactionDeleted: return try ReactionDeletedEvent(from: response)
@@ -136,7 +134,8 @@ extension EventType {
         case .notificationMessageNew: return try NotificationMessageNewEvent(from: response)
         case .memberAdded: return try MemberAddedEventDTO(from: response)
         case .memberUpdated: return try MemberUpdatedEventDTO(from: response)
-        
+        case .memberRemoved: return try MemberRemovedEventDTO(from: response)
+            
         case .notificationMarkRead:
             return response.channel == nil
                 ? try NotificationMarkAllReadEvent(from: response)

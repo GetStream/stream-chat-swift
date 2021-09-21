@@ -25,8 +25,8 @@ class MemberEvents_Tests: XCTestCase {
     
     func test_removed() throws {
         let json = XCTestCase.mockData(fromFile: "MemberRemoved")
-        let event = try eventDecoder.decode(from: json) as? MemberRemovedEvent
-        XCTAssertEqual(event?.memberUserId, "r2-d2")
+        let event = try eventDecoder.decode(from: json) as? MemberRemovedEventDTO
+        XCTAssertEqual(event?.user.id, "r2-d2")
         XCTAssertEqual(event?.cid, ChannelId(type: .messaging, id: "!members-jkE22mnWM5tjzHPBurvjoVz0spuz4FULak93veyK0lY"))
     }
     
@@ -103,6 +103,34 @@ class MemberEvents_Tests: XCTestCase {
         XCTAssertEqual(event.member.memberRole, eventPayload.memberContainer?.member?.role)
         XCTAssertEqual(event.createdAt, eventPayload.createdAt)
     }
+    
+    func test_memberRemovedEventDTO_toDomainEvent() throws {
+        // Create database session
+        let session = try DatabaseContainerMock(kind: .inMemory).viewContext
+        
+        // Create event payload
+        let eventPayload = EventPayload(
+            eventType: .memberRemoved,
+            cid: .unique,
+            user: .dummy(userId: .unique),
+            createdAt: .unique
+        )
+        
+        // Create event DTO
+        let dto = try MemberRemovedEventDTO(from: eventPayload)
+        
+        // Assert event creation fails due to missing dependencies in database
+        XCTAssertNil(dto.toDomainEvent(session: session))
+        
+        // Save event to database
+        try session.saveUser(payload: eventPayload.user!)
+
+        // Assert event can be created and has correct fields
+        let event = try XCTUnwrap(dto.toDomainEvent(session: session) as? MemberRemovedEvent)
+        XCTAssertEqual(event.cid, eventPayload.cid)
+        XCTAssertEqual(event.user.id, eventPayload.user?.id)
+        XCTAssertEqual(event.createdAt, eventPayload.createdAt)
+    }
 }
 
 class MemberEventsIntegration_Tests: XCTestCase {
@@ -161,7 +189,7 @@ class MemberEventsIntegration_Tests: XCTestCase {
     
     func test_MemberRemovedEventPayload_isHandled() throws {
         let json = XCTestCase.mockData(fromFile: "MemberRemoved")
-        let event = try eventDecoder.decode(from: json) as? MemberRemovedEvent
+        let event = try eventDecoder.decode(from: json) as? MemberRemovedEventDTO
         
         let channelId = ChannelId(type: .messaging, id: "!members-jkE22mnWM5tjzHPBurvjoVz0spuz4FULak93veyK0lY")
         

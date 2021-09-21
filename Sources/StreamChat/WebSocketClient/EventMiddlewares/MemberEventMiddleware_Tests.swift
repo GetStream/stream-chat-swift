@@ -103,7 +103,8 @@ final class MemberEventMiddleware_Tests: XCTestCase {
         let eventPayload: EventPayload = .init(
             eventType: .memberRemoved,
             cid: .unique,
-            user: .dummy(userId: .unique)
+            user: .dummy(userId: .unique),
+            createdAt: .unique
         )
         
         // Set error to be thrown on write.
@@ -112,11 +113,11 @@ final class MemberEventMiddleware_Tests: XCTestCase {
         session.errorToReturn = error
         
         // Simulate and handle reaction event.
-        let event = try MemberRemovedEvent(from: eventPayload)
+        let event = try MemberRemovedEventDTO(from: eventPayload)
         let forwardedEvent = middleware.handle(event: event, session: database.viewContext)
         
         // Assert `MemberRemovedEvent` is forwarded even though database error happened.
-        XCTAssertTrue(forwardedEvent is MemberRemovedEvent)
+        XCTAssertTrue(forwardedEvent is MemberRemovedEventDTO)
     }
     
     func tests_middleware_handlesMemberRemovedEventCorrectly() throws {
@@ -153,11 +154,12 @@ final class MemberEventMiddleware_Tests: XCTestCase {
         let eventPayload: EventPayload = .init(
             eventType: .memberRemoved,
             cid: cid,
-            user: .dummy(userId: memberId)
+            user: .dummy(userId: memberId),
+            createdAt: .unique
         )
         
         // Create event with payload.
-        let event = try MemberRemovedEvent(from: eventPayload)
+        let event = try MemberRemovedEventDTO(from: eventPayload)
         
         // Simulate `MemberRemovedEvent` event.
         let forwardedEvent = middleware.handle(event: event, session: database.viewContext)
@@ -176,7 +178,7 @@ final class MemberEventMiddleware_Tests: XCTestCase {
         XCTAssertEqual(queryDTO.members.count, 0)
         
         // Assert event is forwarded.
-        XCTAssertTrue(forwardedEvent is MemberRemovedEvent)
+        XCTAssertTrue(forwardedEvent is MemberRemovedEventDTO)
         // Assert member is not linked to the channel.
         XCTAssertFalse(channel.members.map(\.user.id).contains(memberId))
     }
@@ -367,17 +369,18 @@ final class MemberEventMiddleware_Tests: XCTestCase {
         var eventPayload: EventPayload = .init(
             eventType: .memberRemoved,
             cid: cid,
-            user: .dummy(userId: .unique)
+            user: .dummy(userId: .unique),
+            createdAt: .unique
         )
 
         // Simulate `MemberRemovedEvent` event.
-        var event = try MemberRemovedEvent(from: eventPayload)
+        var event = try MemberRemovedEventDTO(from: eventPayload)
         var forwardedEvent = middleware.handle(event: event, session: database.viewContext)
 
         // Load the channel.
         var channel = try XCTUnwrap(database.viewContext.channel(cid: cid))
         // Assert event is forwarded.
-        XCTAssertTrue(forwardedEvent is MemberRemovedEvent)
+        XCTAssertTrue(forwardedEvent is MemberRemovedEventDTO)
         // Queries are NOT invalidated
         XCTAssertFalse(channel.queries.isEmpty)
 
@@ -385,18 +388,19 @@ final class MemberEventMiddleware_Tests: XCTestCase {
         eventPayload = .init(
             eventType: .memberRemoved,
             cid: cid,
-            user: .dummy(userId: currentUserId)
+            user: .dummy(userId: currentUserId),
+            createdAt: .unique
         )
 
         // Simulate `MemberRemovedEvent` event.
-        event = try MemberRemovedEvent(from: eventPayload)
+        event = try MemberRemovedEventDTO(from: eventPayload)
         forwardedEvent = middleware.handle(event: event, session: database.viewContext)
 
         // Load the channel.
         channel = try XCTUnwrap(database.viewContext.channel(cid: cid))
         // Assert event is forwarded.
-        XCTAssertTrue(forwardedEvent is MemberRemovedEvent)
-        // Queries are NOT invalidated
+        XCTAssertTrue(forwardedEvent is MemberRemovedEventDTO)
+        // Queries are invalidated
         XCTAssertTrue(channel.queries.isEmpty)
         XCTAssertTrue(channel.needsRefreshQueries)
     }

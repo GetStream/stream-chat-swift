@@ -51,6 +51,11 @@ public extension MemberUpdatedEvent {
     var memberUserId: UserId { member.id }
 }
 
+public extension MemberRemovedEvent {
+    @available(*, deprecated, message: "Use user.id")
+    var memberUserId: UserId { user.id }
+}
+
 public extension MessageNewEvent {
     @available(*, deprecated, message: "Use user.id")
     var userId: UserId { user.id }

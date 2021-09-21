@@ -94,15 +94,38 @@ struct MemberUpdatedEventDTO: EventWithPayload {
     }
 }
 
-public struct MemberRemovedEvent: MemberEvent, ChannelSpecificEvent, EventWithPayload {
-    public var memberUserId: UserId
+/// Triggered when a member is removed from a channel.
+public struct MemberRemovedEvent: MemberEvent, ChannelSpecificEvent {
+    /// The user who stopped being a member.
+    public let user: ChatUser
+    
+    /// The channel identifier a member was removed from.
     public let cid: ChannelId
     
+    /// The event timestamp.
+    public let createdAt: Date
+}
+
+struct MemberRemovedEventDTO: EventWithPayload {
+    let user: UserPayload
+    let cid: ChannelId
+    let createdAt: Date
     let payload: Any
     
     init(from response: EventPayload) throws {
-        memberUserId = try response.value(at: \.user?.id)
+        user = try response.value(at: \.user)
         cid = try response.value(at: \.cid)
+        createdAt = try response.value(at: \.createdAt)
         payload = response
+    }
+    
+    func toDomainEvent(session: DatabaseSession) -> Event? {
+        guard let userDTO = session.user(id: user.id) else { return nil }
+        
+        return MemberRemovedEvent(
+            user: userDTO.asModel(),
+            cid: cid,
+            createdAt: createdAt
+        )
     }
 }
