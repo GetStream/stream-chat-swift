@@ -76,6 +76,32 @@ class UserEvents_Tests: XCTestCase {
         XCTAssertEqual(event.createdAt, eventPayload.createdAt)
         XCTAssertEqual(event.user.id, eventPayload.user!.id)
     }
+    
+    func test_userUpdatedEventDTO_toDomainEvent() throws {
+        // Create database session
+        let session = try DatabaseContainerMock(kind: .inMemory).viewContext
+        
+        // Create event payload
+        let eventPayload = EventPayload(
+            eventType: .userUpdated,
+            user: .dummy(userId: .unique),
+            createdAt: .unique
+        )
+        
+        // Create event DTO
+        let dto = try UserUpdatedEventDTO(from: eventPayload)
+        
+        // Assert event creation fails due to missing dependencies
+        XCTAssertNil(dto.toDomainEvent(session: session))
+
+        // Save event payload to database
+        try session.saveUser(payload: eventPayload.user!)
+        
+        // Assert event can be created from DTO and has correct fields
+        let event = try XCTUnwrap(dto.toDomainEvent(session: session) as? UserUpdatedEvent)
+        XCTAssertEqual(event.createdAt, eventPayload.createdAt)
+        XCTAssertEqual(event.user.id, eventPayload.user!.id)
+    }
 }
 
 class UserEventsIntegration_Tests: XCTestCase {
@@ -165,7 +191,7 @@ class UserEventsIntegration_Tests: XCTestCase {
     // TODO: Find JSON:
     func test_UserUpdatedPayload_isHandled() throws {
         let json = XCTestCase.mockData(fromFile: "UserUpdated")
-        let event = try eventDecoder.decode(from: json) as? UserUpdatedEvent
+        let event = try eventDecoder.decode(from: json) as? UserUpdatedEventDTO
 
         let previousUpdateDate = Date.unique
         

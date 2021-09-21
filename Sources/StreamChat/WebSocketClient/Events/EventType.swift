@@ -111,8 +111,8 @@ extension EventType {
         case .healthCheck: return try HealthCheckEvent(from: response)
         
         case .userPresenceChanged: return try UserPresenceChangedEventDTO(from: response)
+        case .userUpdated: return try UserUpdatedEventDTO(from: response)
             
-        case .userUpdated: return try UserUpdatedEvent(from: response)
         case .userStartWatching, .userStopWatching: return try UserWatchingEvent(from: response)
         case .userStartTyping, .userStopTyping: return try TypingEvent(from: response)
         case .userBanned: return try UserBannedEvent(from: response)

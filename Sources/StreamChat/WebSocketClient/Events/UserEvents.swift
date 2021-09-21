@@ -34,16 +34,33 @@ struct UserPresenceChangedEventDTO: EventWithPayload {
     }
 }
 
-public struct UserUpdatedEvent: UserSpecificEvent {
-    public let userId: UserId
-    public let createdAt: Date?
+/// Triggered when user is updated
+public struct UserUpdatedEvent: Event {
+    /// The updated user
+    public let user: ChatUser
     
+    /// The event timestamp
+    public let createdAt: Date?
+}
+
+struct UserUpdatedEventDTO: EventWithPayload {
+    let user: UserPayload
+    let createdAt: Date
     let payload: Any
     
     init(from response: EventPayload) throws {
-        userId = try response.value(at: \.user?.id)
-        createdAt = response.createdAt
+        user = try response.value(at: \.user)
+        createdAt = try response.value(at: \.createdAt)
         payload = response
+    }
+    
+    func toDomainEvent(session: DatabaseSession) -> Event? {
+        guard let userDTO = session.user(id: user.id) else { return nil }
+        
+        return UserUpdatedEvent(
+            user: userDTO.asModel(),
+            createdAt: createdAt
+        )
     }
 }
 
