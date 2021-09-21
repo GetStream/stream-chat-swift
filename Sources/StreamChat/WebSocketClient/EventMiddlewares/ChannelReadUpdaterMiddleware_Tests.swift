@@ -490,7 +490,7 @@ class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         XCTAssertEqual(loadedChannel?.reads.first?.lastReadAt, Date(timeIntervalSince1970: 1))
         
         // Create an event that won't be handled by this middleware
-        let startTypingEvent = TypingEvent.startTyping(cid: channelId, userId: payload.members.first!.user.id)
+        let startTypingEvent = TypingEventDTO.startTyping(cid: channelId, userId: payload.members.first!.user.id)
         
         // Let the middleware handle the event
         let handledEvent = middleware.handle(event: startTypingEvent, session: database.viewContext)

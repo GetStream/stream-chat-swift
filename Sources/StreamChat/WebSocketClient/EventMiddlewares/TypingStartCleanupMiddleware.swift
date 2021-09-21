@@ -32,22 +32,22 @@ class TypingStartCleanupMiddleware: EventMiddleware {
 
     func handle(event: Event, session: DatabaseSession) -> Event? {
         // Skip other events and typing events from `excludedUserIds`.
-        guard let typingEvent = event as? TypingEvent, excludedUserIds().contains(typingEvent.userId) == false else {
+        guard let typingEvent = event as? TypingEventDTO, excludedUserIds().contains(typingEvent.user.id) == false else {
             return event
         }
 
         _typingEventTimeoutTimerControls {
-            $0[typingEvent.userId]?.cancel()
-            $0[typingEvent.userId] = nil
+            $0[typingEvent.user.id]?.cancel()
+            $0[typingEvent.user.id] = nil
 
             guard typingEvent.isTyping else { return }
 
             let stopTyping = { [emitEvent] in
-                let typingStopEvent = CleanUpTypingEvent(cid: typingEvent.cid, userId: typingEvent.userId)
+                let typingStopEvent = CleanUpTypingEvent(cid: typingEvent.cid, userId: typingEvent.user.id)
                 emitEvent(typingStopEvent)
             }
 
-            $0[typingEvent.userId] = timer.schedule(
+            $0[typingEvent.user.id] = timer.schedule(
                 timeInterval: .incomingTypingStartEventTimeout,
                 queue: .global(),
                 onFire: stopTyping
