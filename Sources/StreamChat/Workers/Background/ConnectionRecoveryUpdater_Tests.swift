@@ -222,7 +222,8 @@ final class ConnectionRecoveryUpdater_Tests: XCTestCase {
         try database.createCurrentUser()
         
         // Create channel in the database
-        try database.createChannel(cid: (events.first as! ChannelSpecificEvent).cid)
+        let cid = ((events.first as! EventWithPayload).payload as! EventPayload).cid!
+        try database.createChannel(cid: cid)
         
         try database.writeSynchronously { session in
             let currentUser = try XCTUnwrap(session.currentUser)

@@ -15,7 +15,7 @@ protocol EventWithPayload: Event {
 }
 
 /// A protocol for any `ChannelEvent` where it has a  `channel` payload.
-protocol ChannelSpecificEvent: EventWithPayload {
+protocol ChannelSpecificEvent: Event {
     var cid: ChannelId { get }
 }
 
