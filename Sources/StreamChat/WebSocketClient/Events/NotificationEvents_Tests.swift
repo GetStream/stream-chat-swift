@@ -301,4 +301,39 @@ class NotificationsEvents_Tests: XCTestCase {
         XCTAssertEqual(event.member.id, eventPayload.memberContainer?.member?.user.id)
         XCTAssertEqual(event.createdAt, eventPayload.createdAt)
     }
+    
+    func test_notificationInviteAcceptedEventDTO_toDomainEvent() throws {
+        // Create database session
+        let session = try DatabaseContainerMock(kind: .inMemory).viewContext
+        
+        // Create event payload
+        let eventPayload = EventPayload(
+            eventType: .notificationInviteAccepted,
+            user: .dummy(userId: .unique),
+            memberContainer: .init(member: .dummy(), invite: nil, memberRole: nil),
+            channel: .dummy(cid: .unique),
+            createdAt: .unique
+        )
+        
+        // Create event DTO
+        let dto = try NotificationInviteAcceptedEventDTO(from: eventPayload)
+        
+        // Assert event creation fails due to missing dependencies in database
+        XCTAssertNil(dto.toDomainEvent(session: session))
+        
+        // Save event to database
+        try session.saveUser(payload: eventPayload.user!)
+        _ = try session.saveChannel(payload: eventPayload.channel!, query: nil)
+        try session.saveMember(
+            payload: eventPayload.memberContainer!.member!,
+            channelId: eventPayload.channel!.cid
+        )
+
+        // Assert event can be created and has correct fields
+        let event = try XCTUnwrap(dto.toDomainEvent(session: session) as? NotificationInviteAcceptedEvent)
+        XCTAssertEqual(event.cid, eventPayload.channel?.cid)
+        XCTAssertEqual(event.user.id, eventPayload.user?.id)
+        XCTAssertEqual(event.member.id, eventPayload.memberContainer?.member?.user.id)
+        XCTAssertEqual(event.createdAt, eventPayload.createdAt)
+    }
 }

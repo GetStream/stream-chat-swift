@@ -150,7 +150,7 @@ extension EventType {
         case .notificationInvited:
             return try NotificationInvitedEventDTO(from: response)
         case .notificationInviteAccepted:
-            return try NotificationInviteAccepted(from: response)
+            return try NotificationInviteAcceptedEventDTO(from: response)
         case .notificationInviteRejected:
             return try NotificationInviteRejected(from: response)
         default:
