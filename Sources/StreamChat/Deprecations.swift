@@ -148,6 +148,11 @@ public extension NotificationInviteAcceptedEvent {
     var memberUserId: UserId { member.id }
 }
 
+public extension NotificationInviteRejectedEvent {
+    @available(*, deprecated, message: "Use member.id")
+    var memberUserId: UserId { member.id }
+}
+
 public extension ReactionNewEvent {
     @available(*, deprecated, message: "Use user.id")
     var userId: UserId { user.id }
@@ -200,3 +205,6 @@ public extension TypingEvent {
 
 @available(*, deprecated, renamed: "NotificationInviteRejectedEvent")
 public typealias NotificationInviteRejected = NotificationInviteRejectedEvent
+
+@available(*, deprecated, renamed: "NotificationInviteAcceptedEvent")
+public typealias NotificationInviteAccepted = NotificationInviteAcceptedEvent

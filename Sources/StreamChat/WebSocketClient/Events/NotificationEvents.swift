@@ -353,15 +353,51 @@ struct NotificationInviteAcceptedEventDTO: EventWithPayload {
     }
 }
 
-public struct NotificationInviteRejected: MemberEvent {
-    public let memberUserId: UserId
-    public let cid: ChannelId
+/// Triggered when the current user rejects an invite to a channel.
+public struct NotificationInviteRejectedEvent: MemberEvent, ChannelSpecificEvent {
+    /// The inviter.
+    public let user: ChatUser
     
+    /// The channel identifier the current user has rejected an intivation to.
+    public var cid: ChannelId { channel.cid }
+    
+    /// The channel the current user has rejected an intivation to.
+    public let channel: ChatChannel
+        
+    /// The membership information of the current user.
+    public let member: ChatChannelMember
+    
+    /// The event timestamp.
+    public let createdAt: Date
+}
+
+struct NotificationInviteRejectedEventDTO: EventWithPayload {
+    let user: UserPayload
+    let channel: ChannelDetailPayload
+    let member: MemberPayload
+    let createdAt: Date
     let payload: Any
     
     init(from response: EventPayload) throws {
-        cid = try response.value(at: \.cid)
-        memberUserId = try response.value(at: \.user?.id)
+        user = try response.value(at: \.user)
+        channel = try response.value(at: \.channel)
+        member = try response.value(at: \.memberContainer?.member)
+        createdAt = try response.value(at: \.createdAt)
         payload = response
+    }
+    
+    func toDomainEvent(session: DatabaseSession) -> Event? {
+        guard
+            let userDTO = session.user(id: user.id),
+            let channelDTO = session.channel(cid: channel.cid),
+            let memberDTO = session.member(userId: member.user.id, cid: channel.cid)
+        else { return nil }
+        
+        return NotificationInviteRejectedEvent(
+            user: userDTO.asModel(),
+            channel: channelDTO.asModel(),
+            member: memberDTO.asModel(),
+            createdAt: createdAt
+        )
     }
 }

@@ -152,7 +152,7 @@ extension EventType {
         case .notificationInviteAccepted:
             return try NotificationInviteAcceptedEventDTO(from: response)
         case .notificationInviteRejected:
-            return try NotificationInviteRejected(from: response)
+            return try NotificationInviteRejectedEventDTO(from: response)
         default:
             throw ClientError.UnknownEvent(response.eventType)
         }
