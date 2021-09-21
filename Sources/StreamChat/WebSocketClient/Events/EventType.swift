@@ -148,7 +148,7 @@ extension EventType {
         case .notificationRemovedFromChannel: return try NotificationRemovedFromChannelEventDTO(from: response)
         case .notificationChannelMutesUpdated: return try NotificationChannelMutesUpdatedEventDTO(from: response)
         case .notificationInvited:
-            return try NotificationInvitedEvent(from: response)
+            return try NotificationInvitedEventDTO(from: response)
         case .notificationInviteAccepted:
             return try NotificationInviteAccepted(from: response)
         case .notificationInviteRejected:

@@ -259,16 +259,48 @@ struct NotificationChannelMutesUpdatedEventDTO: EventWithPayload {
     }
 }
 
-public struct NotificationInvitedEvent: MemberEvent {
-    public let memberUserId: UserId
+/// Triggered when current user is invited to a channel.
+public struct NotificationInvitedEvent: MemberEvent, ChannelSpecificEvent {
+    /// The inviter.
+    public let user: ChatUser
+    
+    /// The channel identifier the current user was invited to.
     public let cid: ChannelId
     
+    /// The membership information of the current user.
+    public let member: ChatChannelMember
+    
+    /// The event timestamp.
+    public let createdAt: Date
+}
+
+struct NotificationInvitedEventDTO: EventWithPayload {
+    let user: UserPayload
+    let cid: ChannelId
+    let member: MemberPayload
+    let createdAt: Date
     let payload: Any
     
     init(from response: EventPayload) throws {
+        user = try response.value(at: \.user)
         cid = try response.value(at: \.cid)
-        memberUserId = try response.value(at: \.user?.id)
+        member = try response.value(at: \.memberContainer?.member)
+        createdAt = try response.value(at: \.createdAt)
         payload = response
+    }
+    
+    func toDomainEvent(session: DatabaseSession) -> Event? {
+        guard
+            let userDTO = session.user(id: user.id),
+            let memberDTO = session.member(userId: member.user.id, cid: cid)
+        else { return nil }
+        
+        return NotificationInvitedEvent(
+            user: userDTO.asModel(),
+            cid: cid,
+            member: memberDTO.asModel(),
+            createdAt: createdAt
+        )
     }
 }
 
