@@ -15,3 +15,8 @@ public extension UserUpdatedEvent {
     @available(*, deprecated, message: "Use user.id")
     var userId: UserId { user.id }
 }
+
+public extension UserWatchingEvent {
+    @available(*, deprecated, message: "Use user.id")
+    var userId: UserId { user.id }
+}

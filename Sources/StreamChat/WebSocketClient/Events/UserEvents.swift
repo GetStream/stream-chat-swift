@@ -66,22 +66,51 @@ struct UserUpdatedEventDTO: EventWithPayload {
 
 // MARK: - User Watching
 
-public struct UserWatchingEvent: UserSpecificEvent, ChannelSpecificEvent {
+/// Triggered when a user starts/stops watching a channel
+public struct UserWatchingEvent: ChannelSpecificEvent {
+    /// The channel identifier a user started/stopped watching
     public let cid: ChannelId
-    public let userId: UserId
-    public let createdAt: Date
-    public let watcherCount: Int
-    public let isStarted: Bool
     
+    /// The event timestamp
+    public let createdAt: Date
+    
+    /// The user who started/stopped watching a channel
+    public let user: ChatUser
+    
+    /// The # of channel watchers
+    public let watcherCount: Int
+    
+    /// The flag saying if watching was started or stopped
+    public let isStarted: Bool
+}
+
+struct UserWatchingEventDTO: EventWithPayload {
+    let cid: ChannelId
+    let user: UserPayload
+    let createdAt: Date
+    let watcherCount: Int
+    let isStarted: Bool
     let payload: Any
     
     init(from response: EventPayload) throws {
         cid = try response.value(at: \.cid)
-        userId = try response.value(at: \.user?.id)
+        user = try response.value(at: \.user)
         createdAt = try response.value(at: \.createdAt)
         watcherCount = try response.value(at: \.watcherCount)
         isStarted = response.eventType == .userStartWatching
         payload = response
+    }
+    
+    func toDomainEvent(session: DatabaseSession) -> Event? {
+        guard let userDTO = session.user(id: user.id) else { return nil }
+        
+        return UserWatchingEvent(
+            cid: cid,
+            createdAt: createdAt,
+            user: userDTO.asModel(),
+            watcherCount: watcherCount,
+            isStarted: isStarted
+        )
     }
 }
 

@@ -18,16 +18,16 @@ class UserEvents_Tests: XCTestCase {
     
     func test_watchingEvent() throws {
         var json = XCTestCase.mockData(fromFile: "UserStartWatching")
-        var event = try eventDecoder.decode(from: json) as? UserWatchingEvent
+        var event = try eventDecoder.decode(from: json) as? UserWatchingEventDTO
         XCTAssertEqual(event?.cid, ChannelId(type: .messaging, id: "!members-dpwtNCSGs-VaJKfAVaeosq6FNNbvDDWldf231ypDWqE"))
-        XCTAssertEqual(event?.userId, "luke_skywalker")
+        XCTAssertEqual(event?.user.id, "luke_skywalker")
         // Not exactly isStarted field on UserStartWatching event,
         // rather if it the event is START not STOP watching.
         XCTAssertTrue(event?.isStarted ?? false)
        
         json = XCTestCase.mockData(fromFile: "UserStopWatching")
-        event = try eventDecoder.decode(from: json) as? UserWatchingEvent
-        XCTAssertEqual(event?.userId, "luke_skywalker")
+        event = try eventDecoder.decode(from: json) as? UserWatchingEventDTO
+        XCTAssertEqual(event?.user.id, "luke_skywalker")
         XCTAssertFalse(event?.isStarted ?? false)
         XCTAssertTrue(event?.watcherCount ?? 0 > 0)
         XCTAssertEqual(event?.cid, ChannelId(type: .messaging, id: "!members-dpwtNCSGs-VaJKfAVaeosq6FNNbvDDWldf231ypDWqE"))
@@ -102,6 +102,67 @@ class UserEvents_Tests: XCTestCase {
         XCTAssertEqual(event.createdAt, eventPayload.createdAt)
         XCTAssertEqual(event.user.id, eventPayload.user!.id)
     }
+    
+    func test_userStartWatchingEventDTO_toDomainEvent() throws {
+        // Create database session
+        let session = try DatabaseContainerMock(kind: .inMemory).viewContext
+        
+        // Create event payload
+        let eventPayload = EventPayload(
+            eventType: .userStartWatching,
+            cid: .unique,
+            user: .dummy(userId: .unique),
+            watcherCount: 10,
+            createdAt: .unique
+        )
+        
+        // Create event DTO
+        let dto = try UserWatchingEventDTO(from: eventPayload)
+        
+        // Assert event creation fails due to missing dependencies
+        XCTAssertNil(dto.toDomainEvent(session: session))
+
+        // Save event payload to database
+        try session.saveUser(payload: eventPayload.user!)
+        
+        // Assert event can be created from DTO and has correct fields
+        let event = try XCTUnwrap(dto.toDomainEvent(session: session) as? UserWatchingEvent)
+        XCTAssertEqual(event.cid, eventPayload.cid)
+        XCTAssertEqual(event.isStarted, true)
+        XCTAssertEqual(event.user.id, eventPayload.user!.id)
+        XCTAssertEqual(event.createdAt, eventPayload.createdAt)
+        XCTAssertEqual(event.watcherCount, eventPayload.watcherCount)
+    }
+    
+    func test_userStopWatchingEventDTO_toDomainEvent() throws {
+        // Create database session
+        let session = try DatabaseContainerMock(kind: .inMemory).viewContext
+        
+        // Create event payload
+        let eventPayload = EventPayload(
+            eventType: .userStopWatching,
+            cid: .unique,
+            user: .dummy(userId: .unique),
+            watcherCount: 10,
+            createdAt: .unique
+        )
+        
+        // Create event DTO
+        let dto = try UserWatchingEventDTO(from: eventPayload)
+        
+        // Assert event creation fails due to missing dependencies
+        XCTAssertNil(dto.toDomainEvent(session: session))
+
+        // Save event payload to database
+        try session.saveUser(payload: eventPayload.user!)
+        
+        // Assert event can be created from DTO and has correct fields
+        let event = try XCTUnwrap(dto.toDomainEvent(session: session) as? UserWatchingEvent)
+        XCTAssertEqual(event.cid, eventPayload.cid)
+        XCTAssertEqual(event.isStarted, false)
+        XCTAssertEqual(event.user.id, eventPayload.user!.id)
+        XCTAssertEqual(event.createdAt, eventPayload.createdAt)
+    }
 }
 
 class UserEventsIntegration_Tests: XCTestCase {
@@ -126,7 +187,7 @@ class UserEventsIntegration_Tests: XCTestCase {
 
     func test_UserWatchingStartEventPayload_isHandled() throws {
         let json = XCTestCase.mockData(fromFile: "UserStartWatching")
-        let event = try eventDecoder.decode(from: json) as? UserWatchingEvent
+        let event = try eventDecoder.decode(from: json) as? UserWatchingEventDTO
 
         let channelId: ChannelId = .init(type: .messaging, id: "!members-dpwtNCSGs-VaJKfAVaeosq6FNNbvDDWldf231ypDWqE")
         
@@ -150,7 +211,7 @@ class UserEventsIntegration_Tests: XCTestCase {
     
     func test_UserWatchingStoppedEventPayload_isHandled() throws {
         let json = XCTestCase.mockData(fromFile: "UserStopWatching")
-        let event = try eventDecoder.decode(from: json) as? UserWatchingEvent
+        let event = try eventDecoder.decode(from: json) as? UserWatchingEventDTO
 
         let channelId: ChannelId = .init(type: .messaging, id: "!members-dpwtNCSGs-VaJKfAVaeosq6FNNbvDDWldf231ypDWqE")
         
