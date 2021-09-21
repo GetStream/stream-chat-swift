@@ -423,7 +423,7 @@ final class CurrentUserController_Tests: StressTestCase {
         
         controller.addDevice(token: expectedToken)
         
-        // Assert udpater is called with correct data
+        // Assert updater is called with correct data
         XCTAssertEqual(env.currentUserUpdater.addDevice_token, expectedToken)
         XCTAssertNotNil(env.currentUserUpdater.addDevice_completion)
     }

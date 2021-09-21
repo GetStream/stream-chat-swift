@@ -1221,7 +1221,8 @@ private class TestEnvironment {
                     sessionConfiguration: $0,
                     requestEncoder: $1,
                     requestDecoder: $2,
-                    CDNClient: $3
+                    CDNClient: $3,
+                    tokenRefresher: $4
                 )
                 return self.apiClient!
             },
