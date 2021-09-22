@@ -5,7 +5,7 @@
 import Foundation
 
 /// Triggered when a new message is sent to channel.
-public struct MessageNewEvent: ChannelSpecificEvent {
+public struct MessageNewEvent: ChannelSpecificEvent, HasUnreadCount {
     /// The user who sent a message.
     public let user: ChatUser
     

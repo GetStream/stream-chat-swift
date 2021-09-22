@@ -30,6 +30,12 @@ protocol ChannelSpecificEvent: Event {
     var cid: ChannelId { get }
 }
 
+/// A bounding protocol for all events that have unread counts.
+public protocol HasUnreadCount: Event {
+    /// If `ReadEvents` options is disabled the value is always `nil`.
+    var unreadCount: UnreadCount? { get }
+}
+
 /// A protocol for any `MemberEvent` where it has a `member`, and `channel` payload.
 public protocol MemberEvent: Event {
     var memberUserId: UserId { get }

@@ -5,7 +5,7 @@
 import Foundation
 
 /// Triggered when a new message is sent to a channel the current user is member of.
-public struct NotificationMessageNewEvent: ChannelSpecificEvent {
+public struct NotificationMessageNewEvent: ChannelSpecificEvent, HasUnreadCount {
     /// The identifier of a channel a message is sent to.
     public var cid: ChannelId { channel.cid }
     
@@ -53,9 +53,12 @@ struct NotificationMessageNewEventDTO: EventDTO {
 }
 
 /// Triggered when all channels the current user is member of are marked as read.
-public struct NotificationMarkAllReadEvent: Event {
+public struct NotificationMarkAllReadEvent: Event, HasUnreadCount {
     /// The current user.
     public let user: ChatUser
+    
+    /// The unread counts of the current user.
+    public let unreadCount: UnreadCount?
     
     /// The event timestamp.
     public let createdAt: Date
@@ -63,12 +66,14 @@ public struct NotificationMarkAllReadEvent: Event {
 
 struct NotificationMarkAllReadEventDTO: EventDTO {
     let user: UserPayload
+    let unreadCount: UnreadCount
     let createdAt: Date
     let payload: EventPayload
     
     init(from response: EventPayload) throws {
         user = try response.value(at: \.user)
         createdAt = try response.value(at: \.createdAt)
+        unreadCount = try response.value(at: \.unreadCount)
         payload = response
     }
     
@@ -77,13 +82,14 @@ struct NotificationMarkAllReadEventDTO: EventDTO {
         
         return NotificationMarkAllReadEvent(
             user: userDTO.asModel(),
+            unreadCount: unreadCount,
             createdAt: createdAt
         )
     }
 }
 
 /// Triggered when a channel the current user is member of is marked as read.
-public struct NotificationMarkReadEvent: ChannelSpecificEvent {
+public struct NotificationMarkReadEvent: ChannelSpecificEvent, HasUnreadCount {
     /// The current user.
     public let user: ChatUser
     
@@ -91,7 +97,7 @@ public struct NotificationMarkReadEvent: ChannelSpecificEvent {
     public let cid: ChannelId
     
     /// The unread counts of the current user.
-    public let unreadCount: UnreadCount
+    public let unreadCount: UnreadCount?
     
     /// The event timestamp.
     public let createdAt: Date
@@ -155,9 +161,12 @@ struct NotificationMutesUpdatedEventDTO: EventDTO {
 }
 
 /// Triggered when the current user is added to the channel member list.
-public struct NotificationAddedToChannelEvent: Event {
+public struct NotificationAddedToChannelEvent: Event, HasUnreadCount {
     /// The channel the current user was added to.
     public let channel: ChatChannel
+    
+    /// The unread counts of the current user.
+    public let unreadCount: UnreadCount?
     
     /// The event timestamp.
     public let createdAt: Date
@@ -165,11 +174,13 @@ public struct NotificationAddedToChannelEvent: Event {
 
 struct NotificationAddedToChannelEventDTO: EventDTO {
     let channel: ChannelDetailPayload
+    let unreadCount: UnreadCount?
     let createdAt: Date
     let payload: EventPayload
     
     init(from response: EventPayload) throws {
         channel = try response.value(at: \.channel)
+        unreadCount = try? response.value(at: \.unreadCount)
         createdAt = try response.value(at: \.createdAt)
         payload = response
     }
@@ -179,6 +190,7 @@ struct NotificationAddedToChannelEventDTO: EventDTO {
 
         return NotificationAddedToChannelEvent(
             channel: channelDTO.asModel(),
+            unreadCount: unreadCount,
             createdAt: createdAt
         )
     }
