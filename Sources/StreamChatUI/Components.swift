@@ -208,7 +208,7 @@ public struct Components {
     @available(*, deprecated, message: "Use messageReactionsBubbleView instead")
     public var chatReactionsBubbleView: ChatReactionBubbleBaseView.Type = ChatReactionsBubbleView.self {
         didSet {
-            reactionPickerVC = messageReactionsVC
+            messageReactionsBubbleView = chatReactionsBubbleView
         }
     }
 
