@@ -23,7 +23,7 @@ public struct GiphyAttachmentPayload: AttachmentPayload {
     public var actions: [AttachmentAction]
 }
 
-extension GiphyAttachmentPayload: Equatable {}
+extension GiphyAttachmentPayload: Hashable {}
 
 // MARK: - Encodable
 
