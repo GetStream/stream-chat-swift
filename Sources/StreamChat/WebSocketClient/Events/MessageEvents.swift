@@ -13,7 +13,10 @@ public struct MessageNewEvent: ChannelSpecificEvent, HasUnreadCount {
     public let message: ChatMessage
     
     /// The channel identifier the message was sent to.
-    public let cid: ChannelId
+    public var cid: ChannelId { channel.cid }
+    
+    /// The channel a message was sent to.
+    public let channel: ChatChannel
     
     /// The event timestamp.
     public let createdAt: Date
@@ -47,13 +50,14 @@ struct MessageNewEventDTO: EventDTO {
     func toDomainEvent(session: DatabaseSession) -> Event? {
         guard
             let userDTO = session.user(id: user.id),
-            let messageDTO = session.message(id: message.id)
+            let messageDTO = session.message(id: message.id),
+            let channelDTO = session.channel(cid: cid)
         else { return nil }
         
         return MessageNewEvent(
             user: userDTO.asModel(),
             message: messageDTO.asModel(),
-            cid: cid,
+            channel: channelDTO.asModel(),
             createdAt: createdAt,
             watcherCount: watcherCount,
             unreadCount: unreadCount
@@ -67,7 +71,10 @@ public struct MessageUpdatedEvent: ChannelSpecificEvent {
     public let user: ChatUser
     
     /// The channel identifier the message is sent to.
-    public let cid: ChannelId
+    public var cid: ChannelId { channel.cid }
+    
+    /// The channel a message is sent to.
+    public let channel: ChatChannel
     
     /// The updated message.
     public let message: ChatMessage
@@ -94,12 +101,13 @@ struct MessageUpdatedEventDTO: EventDTO {
     func toDomainEvent(session: DatabaseSession) -> Event? {
         guard
             let userDTO = session.user(id: user.id),
-            let messageDTO = session.message(id: message.id)
+            let messageDTO = session.message(id: message.id),
+            let channelDTO = session.channel(cid: cid)
         else { return nil }
         
         return MessageUpdatedEvent(
             user: userDTO.asModel(),
-            cid: cid,
+            channel: channelDTO.asModel(),
             message: messageDTO.asModel(),
             createdAt: createdAt
         )
@@ -111,8 +119,11 @@ public struct MessageDeletedEvent: ChannelSpecificEvent {
     /// The user who deleted the message.
     public let user: ChatUser
     
-    /// The channel identifier the message lives in.
-    public let cid: ChannelId
+    /// The channel identifier a message was deleted from.
+    public var cid: ChannelId { channel.cid }
+    
+    /// The channel a message was deleted from.
+    public let channel: ChatChannel
     
     /// The deleted message.
     public let message: ChatMessage
@@ -139,12 +150,13 @@ struct MessageDeletedEventDTO: EventDTO {
     func toDomainEvent(session: DatabaseSession) -> Event? {
         guard
             let userDTO = session.user(id: user.id),
-            let messageDTO = session.message(id: message.id)
+            let messageDTO = session.message(id: message.id),
+            let channelDTO = session.channel(cid: cid)
         else { return nil }
         
         return MessageDeletedEvent(
             user: userDTO.asModel(),
-            cid: cid,
+            channel: channelDTO.asModel(),
             message: messageDTO.asModel(),
             createdAt: createdAt
         )
@@ -160,7 +172,10 @@ public struct MessageReadEvent: ChannelSpecificEvent {
     public let user: ChatUser
     
     /// The identifier of the read channel.
-    public let cid: ChannelId
+    public var cid: ChannelId { channel.cid }
+    
+    /// The read channel.
+    public let channel: ChatChannel
     
     /// The event timestamp.
     public let createdAt: Date
@@ -185,11 +200,14 @@ struct MessageReadEventDTO: EventDTO {
     }
     
     func toDomainEvent(session: DatabaseSession) -> Event? {
-        guard let userDTO = session.user(id: user.id) else { return nil }
+        guard
+            let userDTO = session.user(id: user.id),
+            let channelDTO = session.channel(cid: cid)
+        else { return nil }
         
         return MessageReadEvent(
             user: userDTO.asModel(),
-            cid: cid,
+            channel: channelDTO.asModel(),
             createdAt: createdAt,
             unreadCount: unreadCount
         )

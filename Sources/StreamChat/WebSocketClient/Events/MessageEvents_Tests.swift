@@ -210,6 +210,9 @@ class MessageEventsIntegration_Tests: XCTestCase {
         // Assert event creation fails due to missing dependencies in database
         XCTAssertNil(dto.toDomainEvent(session: session))
         
+        // Save channel to database since it must exist when we get this event
+        _ = try session.saveChannel(payload: .dummy(cid: cid), query: nil)
+        
         // Save event to database
         try session.saveUser(payload: eventPayload.user!)
         _ = try session.saveMessage(payload: eventPayload.message!, for: cid)
@@ -244,6 +247,9 @@ class MessageEventsIntegration_Tests: XCTestCase {
         // Assert event creation fails due to missing dependencies in database
         XCTAssertNil(dto.toDomainEvent(session: session))
         
+        // Save channel to database since it must exist when we get this event
+        _ = try session.saveChannel(payload: .dummy(cid: cid), query: nil)
+        
         // Save event to database
         try session.saveUser(payload: eventPayload.user!)
         _ = try session.saveMessage(payload: eventPayload.message!, for: cid)
@@ -276,6 +282,9 @@ class MessageEventsIntegration_Tests: XCTestCase {
         // Assert event creation fails due to missing dependencies in database
         XCTAssertNil(dto.toDomainEvent(session: session))
         
+        // Save channel to database since it must exist when we get this event
+        _ = try session.saveChannel(payload: .dummy(cid: cid), query: nil)
+        
         // Save event to database
         try session.saveUser(payload: eventPayload.user!)
         _ = try session.saveMessage(payload: eventPayload.message!, for: cid)
@@ -306,6 +315,9 @@ class MessageEventsIntegration_Tests: XCTestCase {
         
         // Assert event creation fails due to missing dependencies in database
         XCTAssertNil(dto.toDomainEvent(session: session))
+        
+        // Save channel to database since it must exist when we get this event
+        _ = try session.saveChannel(payload: .dummy(cid: eventPayload.cid!), query: nil)
         
         // Save event to database
         try session.saveUser(payload: eventPayload.user!)
