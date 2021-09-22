@@ -204,6 +204,14 @@ public struct Components {
         }
     }
 
+    /// The view that shows reactions of a message. This is used by the message component.
+    @available(*, deprecated, message: "Use messageReactionsBubbleView instead")
+    public var chatReactionsBubbleView: ChatReactionBubbleBaseView.Type = ChatReactionsBubbleView.self {
+        didSet {
+            reactionPickerVC = messageReactionsVC
+        }
+    }
+
     /// The view that shows reactions bubble, this is used by the reaction picker.
     @available(*, deprecated, message: "Use reactionPickerBubbleView instead")
     public var reactionsBubbleView: ChatReactionPickerBubbleView.Type = ChatMessageDefaultReactionsBubbleView.self {
