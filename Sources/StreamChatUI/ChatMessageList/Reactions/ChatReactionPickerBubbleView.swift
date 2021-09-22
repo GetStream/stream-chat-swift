@@ -5,7 +5,7 @@
 import StreamChat
 import UIKit
 
-public typealias ReactionPickerBubbleView = ChatMessageReactionsBubbleView
+public typealias ChatReactionPickerBubbleView = ChatMessageReactionsBubbleView
 
 open class ChatMessageReactionsBubbleView: _View, ThemeProvider {
     public var content: Content? {
@@ -53,7 +53,7 @@ open class ChatMessageReactionsBubbleView: _View, ThemeProvider {
 
 // MARK: - Content
 
-extension ReactionPickerBubbleView {
+extension ChatReactionPickerBubbleView {
     public struct Content {
         public let style: ChatMessageReactionsBubbleStyle
         public let reactions: [ChatMessageReactionData]

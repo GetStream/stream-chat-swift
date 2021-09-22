@@ -5,12 +5,6 @@
 import StreamChat
 import UIKit
 
-open class ChatReactionPickerReactionsView: ChatMessageReactionsView {
-    override public var reactionItemView: ChatMessageReactionItemView.Type {
-        components.reactionPickerReactionItemView
-    }
-}
-
 open class ChatMessageReactionsView: _View, ThemeProvider {
     public var content: Content? {
         didSet { updateContentIfNeeded() }

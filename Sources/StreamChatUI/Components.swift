@@ -206,7 +206,7 @@ public struct Components {
 
     /// The view that shows reactions bubble, this is used by the reaction picker.
     @available(*, deprecated, message: "Use reactionPickerBubbleView instead")
-    public var reactionsBubbleView: ReactionPickerBubbleView.Type = ChatMessageDefaultReactionsBubbleView.self {
+    public var reactionsBubbleView: ChatReactionPickerBubbleView.Type = ChatMessageDefaultReactionsBubbleView.self {
         didSet {
             reactionPickerBubbleView = reactionsBubbleView
         }
