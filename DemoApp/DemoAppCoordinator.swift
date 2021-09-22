@@ -87,7 +87,6 @@ final class DemoAppCoordinator: NSObject, UNUserNotificationCenterDelegate {
         }
         
         // Config
-        Components.default.reactionsBubbleView = CustomChatMessageReactionsBubbleView.self
         Components.default.channelListRouter = DemoChatChannelListRouter.self
         Components.default.messageListVC = CustomMessageListVC.self
         Components.default.messageContentView = CustomMessageContentView.self
@@ -128,25 +127,6 @@ final class DemoAppCoordinator: NSObject, UNUserNotificationCenterDelegate {
             }
         }
     }
-}
-
-class CustomChatMessageReactionsBubbleView: ChatMessageDefaultReactionsBubbleView {
-    override open func layoutSubviews() {
-        super.layoutSubviews()
-        contentViewBackground.layer.cornerRadius = 0
-    }
-
-    override open var contentBackgroundColor: UIColor {
-        .init(red: 0.96, green: 0.92, blue: 0.017, alpha: 1.0)
-    }
-
-    override open var contentBorderColor: UIColor {
-        .init(red: 0.054, green: 0.36, blue: 0.39, alpha: 1.0)
-    }
-
-    override open var tailBackImage: UIImage? { nil }
-    
-    override open var tailFrontImage: UIImage? { nil }
 }
 
 class CustomMessageListVC: ChatMessageListVC {
