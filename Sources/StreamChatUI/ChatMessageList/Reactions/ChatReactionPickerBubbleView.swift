@@ -53,7 +53,7 @@ open class ChatMessageReactionsBubbleView: _View, ThemeProvider {
 
 // MARK: - Content
 
-extension ChatReactionPickerBubbleView {
+extension ChatMessageReactionsBubbleView {
     public struct Content {
         public let style: ChatMessageReactionsBubbleStyle
         public let reactions: [ChatMessageReactionData]

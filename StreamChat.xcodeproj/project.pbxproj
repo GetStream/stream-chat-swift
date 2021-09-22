@@ -658,7 +658,7 @@
 		88BEBCE725370BC900D9E8B7 /* SimpleChannelMembersViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88BEBCE625370BC900D9E8B7 /* SimpleChannelMembersViewController.swift */; };
 		88CABC1525933DD80061BB67 /* ChatMessageReactionsView+ItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88CABC0725933DD40061BB67 /* ChatMessageReactionsView+ItemView.swift */; };
 		88CABC4325933EE70061BB67 /* ChatMessageReactionsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88CABC2425933E490061BB67 /* ChatMessageReactionsVC.swift */; };
-		88CABC4425933EE70061BB67 /* ChatReactionPickerBubbleView+Default.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88CABC3425933ECC0061BB67 /* ChatReactionPickerBubbleView+Default.swift */; };
+		88CABC4425933EE70061BB67 /* ChatMessageDefaultReactionsBubbleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88CABC3425933ECC0061BB67 /* ChatMessageDefaultReactionsBubbleView.swift */; };
 		88CABC4525933EE70061BB67 /* ChatMessageReactionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88CABC1C25933DF50061BB67 /* ChatMessageReactionsView.swift */; };
 		88CABC4625933EE70061BB67 /* ChatReactionPickerBubbleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88CABC2C25933EB80061BB67 /* ChatReactionPickerBubbleView.swift */; };
 		88CABC6625934CF60061BB67 /* ChatMessageReactions+Types.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88CABC6525934CF60061BB67 /* ChatMessageReactions+Types.swift */; };
@@ -2066,7 +2066,7 @@
 		88CABC1C25933DF50061BB67 /* ChatMessageReactionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageReactionsView.swift; sourceTree = "<group>"; };
 		88CABC2425933E490061BB67 /* ChatMessageReactionsVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageReactionsVC.swift; sourceTree = "<group>"; };
 		88CABC2C25933EB80061BB67 /* ChatReactionPickerBubbleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatReactionPickerBubbleView.swift; sourceTree = "<group>"; };
-		88CABC3425933ECC0061BB67 /* ChatReactionPickerBubbleView+Default.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChatReactionPickerBubbleView+Default.swift"; sourceTree = "<group>"; };
+		88CABC3425933ECC0061BB67 /* ChatMessageDefaultReactionsBubbleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageDefaultReactionsBubbleView.swift; sourceTree = "<group>"; };
 		88CABC6525934CF60061BB67 /* ChatMessageReactions+Types.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChatMessageReactions+Types.swift"; sourceTree = "<group>"; };
 		88CABC8D25936E440061BB67 /* ChatMessageReactionsBubbleTail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageReactionsBubbleTail.swift; sourceTree = "<group>"; };
 		88CD395E25B5844700399F8E /* HTTPHeader_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTTPHeader_Tests.swift; sourceTree = "<group>"; };
@@ -4295,7 +4295,7 @@
 				88CABC0725933DD40061BB67 /* ChatMessageReactionsView+ItemView.swift */,
 				88CABC2425933E490061BB67 /* ChatMessageReactionsVC.swift */,
 				88CABC2C25933EB80061BB67 /* ChatReactionPickerBubbleView.swift */,
-				88CABC3425933ECC0061BB67 /* ChatReactionPickerBubbleView+Default.swift */,
+				88CABC3425933ECC0061BB67 /* ChatMessageDefaultReactionsBubbleView.swift */,
 				88CABC8D25936E440061BB67 /* ChatMessageReactionsBubbleTail.swift */,
 				43F4750B26F4E4FF0009487D /* ChatMessageReactionItemView.swift */,
 				43F4750D26FB247C0009487D /* ChatReactionPickerReactionsView.swift */,
@@ -6008,7 +6008,7 @@
 				F838F6B32636D42B0025E1F5 /* ZoomAnimator.swift in Sources */,
 				64B059E22670EFFE0024CE90 /* ChatChannelVC+SwiftUI.swift in Sources */,
 				BDDD1EA32632C50200BA007B /* Appearance.swift in Sources */,
-				88CABC4425933EE70061BB67 /* ChatReactionPickerBubbleView+Default.swift in Sources */,
+				88CABC4425933EE70061BB67 /* ChatMessageDefaultReactionsBubbleView.swift in Sources */,
 				79CCB66E259CBC4F0082F172 /* ChatChannelNamer.swift in Sources */,
 				43EB3AE22671718200954323 /* AttachmentViewCatalog.swift in Sources */,
 				79F691B22604C10A000AE89B /* SystemEnvironment.swift in Sources */,
