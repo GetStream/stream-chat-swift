@@ -5,6 +5,8 @@
 import StreamChat
 import UIKit
 
+public typealias ChatReactionPickerBubbleView = ChatMessageReactionsBubbleView
+
 open class ChatMessageReactionsBubbleView: _View, ThemeProvider {
     public var content: Content? {
         didSet { updateContentIfNeeded() }
@@ -13,7 +15,7 @@ open class ChatMessageReactionsBubbleView: _View, ThemeProvider {
     // MARK: - Subviews
 
     public private(set) lazy var contentView = components
-        .reactionsView
+        .reactionPickerReactionsView
         .init()
         .withoutAutoresizingMaskConstraints
 
@@ -31,7 +33,6 @@ open class ChatMessageReactionsBubbleView: _View, ThemeProvider {
     // MARK: - Life Cycle
 
     override open func updateContent() {
-        // TODO: Fix this when refactoring reactions.
         // We check if we have available images for the given type of reaction, if not, we hide the reaction.
         guard !(content?.reactions.compactMap { appearance.images.availableReactions[$0.type] }.isEmpty ?? false)
         else {

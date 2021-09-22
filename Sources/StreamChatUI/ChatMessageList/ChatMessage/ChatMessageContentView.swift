@@ -112,7 +112,7 @@ open class ChatMessageContentView: _View, ThemeProvider {
 
     /// Shows the bubble around message reactions.
     /// Exists if `layout(options: MessageLayoutOptions)` was invoked with the options containing `.reactions`.
-    public private(set) var reactionsBubbleView: ChatReactionsBubbleView?
+    public private(set) var reactionsBubbleView: ChatReactionBubbleBaseView?
 
     /// Shows the # of thread replies on the message.
     /// Exists if `layout(options: MessageLayoutOptions)` was invoked with the options containing `.threadInfo`.
@@ -678,7 +678,7 @@ open class ChatMessageContentView: _View, ThemeProvider {
     open func createReactionsView() -> ChatMessageReactionsView {
         if reactionsView == nil {
             reactionsView = components
-                .reactionsView
+                .messageReactionsView
                 .init()
                 .withoutAutoresizingMaskConstraints
         }
@@ -711,17 +711,11 @@ open class ChatMessageContentView: _View, ThemeProvider {
 
     /// Instantiates, configures and assigns `reactionsBubbleView` when called for the first time.
     /// - Returns: The `reactionsBubbleView` subview.
-    open func createReactionsBubbleView() -> ChatReactionsBubbleView {
-        if let reactionsBubble = reactionsBubbleView {
-            return reactionsBubble
+    open func createReactionsBubbleView() -> ChatReactionBubbleBaseView {
+        if reactionsBubbleView == nil {
+            reactionsBubbleView = components.messageReactionsBubbleView.init().withoutAutoresizingMaskConstraints
         }
-        let view = components
-            .chatReactionsBubbleView
-            .init()
-            .withoutAutoresizingMaskConstraints
-
-        reactionsBubbleView = view
-        return view
+        return reactionsBubbleView!
     }
 
     /// Instantiates, configures and assigns `timestampLabel` when called for the first time.
