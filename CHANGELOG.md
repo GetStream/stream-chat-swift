@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Fix keyboard handling when navigation bar or tab bar are not translucent [#1470](https://github.com/GetStream/stream-chat-swift/pull/1470) [#1464](https://github.com/GetStream/stream-chat-swift/pull/1464)
 
 ### 🔄 Changed
+- Attachments types are now `Hashable` [1469](https://github.com/GetStream/stream-chat-swift/pull/1469/files)
 
 # [4.0.1](https://github.com/GetStream/stream-chat-swift/releases/tag/4.0.1)
 _September 17, 2021_
