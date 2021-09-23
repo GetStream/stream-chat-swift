@@ -42,11 +42,9 @@ class Atomic_Tests: StressTestCase {
             group.enter()
             DispatchQueue.random.async {
                 if self._boolAtomicValue.compareAndSwap(old: false, new: true) {
-                    DispatchQueue.main.async {
-                        swaps += 1
-                        group.leave()
-                    }
+                    swaps += 1
                 }
+                group.leave()
             }
         }
         
