@@ -203,6 +203,28 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
         client.apiClient
     )
     
+    private var typingUsers: Set<ChatUser> = [] {
+        didSet {
+            delegateCallback {
+                $0.channelController(self, didChangeTypingUsers: self.typingUsers)
+            }
+        }
+    }
+    
+    private lazy var eventObserver = EventObserver(
+        notificationCenter: client.eventNotificationCenter,
+        transform: { $0 as? TypingEvent },
+        callback: { [weak self] typingEvent in
+            guard typingEvent.cid == self?.cid else { return }
+            
+            if typingEvent.isTyping {
+                self?.typingUsers.insert(typingEvent.user)
+            } else {
+                self?.typingUsers.remove(typingEvent.user)
+            }
+        }
+    )
+    
     /// A type-erased delegate.
     var multicastDelegate: MulticastDelegate<AnyChannelControllerDelegate> = .init() {
         didSet {
@@ -269,6 +291,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
 
         setChannelObserver()
         setMessagesObserver()
+        _ = eventObserver
     }
 
     private func setChannelObserver() {
@@ -292,15 +315,6 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
                         return
                     }
                     $0.channelController(self, didUpdateChannel: change)
-                }
-            }
-            .onFieldChange(\.currentlyTypingUsers) { [weak self] change in
-                self?.delegateCallback { [weak self] in
-                    guard let self = self else {
-                        log.warning("Callback called while self is nil")
-                        return
-                    }
-                    $0.channelController(self, didChangeTypingUsers: change.item)
                 }
             }
 
