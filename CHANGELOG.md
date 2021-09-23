@@ -4,6 +4,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 # Upcoming
 
 ### 🐞 Fixed
+- Fix channel unread counts, thread replies and silent messages do not increase the count anymore [#1472](https://github.com/GetStream/stream-chat-swift/pull/1472)
 - Fix token expiration refresh mechanism for API endpoints [#1446](https://github.com/GetStream/stream-chat-swift/pull/1446)
 - Fix keyboard handling when navigation bar is not translucent [#1464](https://github.com/GetStream/stream-chat-swift/pull/1464)
 
