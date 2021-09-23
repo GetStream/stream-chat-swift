@@ -32,7 +32,7 @@ public struct LinkAttachmentPayload: AttachmentPayload {
     public var previewURL: URL?
 }
 
-extension LinkAttachmentPayload: Equatable {}
+extension LinkAttachmentPayload: Hashable {}
 
 // MARK: - Encodable
 

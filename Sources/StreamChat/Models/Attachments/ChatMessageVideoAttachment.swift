@@ -35,7 +35,7 @@ public struct VideoAttachmentPayload: AttachmentPayload {
     }
 }
 
-extension VideoAttachmentPayload: Equatable {}
+extension VideoAttachmentPayload: Hashable {}
 
 // MARK: - Encodable
 
