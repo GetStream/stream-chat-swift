@@ -33,42 +33,42 @@ class Atomic_Tests: StressTestCase {
     }
     
     func test_Atomic_CAS_Concurrent() {
+        let group = DispatchGroup()
+
         boolAtomicValue = false
         var swaps = 0
 
         for _ in 0..<numberOfTestCycles {
+            group.enter()
             DispatchQueue.random.async {
                 if self._boolAtomicValue.compareAndSwap(old: false, new: true) {
                     DispatchQueue.main.async {
                         swaps += 1
+                        group.leave()
                     }
                 }
             }
         }
         
-        /// sleep for 1ms to avoid AssertAsync to quit too early (rare but possible)
-        usleep(1000)
-        AssertAsync.willBeEqual(swaps, 1)
+        group.wait()
+        XCTAssertEqual(swaps, 1)
     }
 
     func test_Atomic_usedAsCounter() {
+        let group = DispatchGroup()
         intAtomicValue = 0
-        
+
         // Count up to numberOfCycles
         for _ in 0..<numberOfTestCycles {
+            group.enter()
             DispatchQueue.random.async {
                 self._intAtomicValue { $0 += 1 }
+                group.leave()
             }
         }
-        AssertAsync.willBeEqual(intAtomicValue, numberOfTestCycles)
-        
-        // Count down to zero
-        for _ in 0..<numberOfTestCycles {
-            DispatchQueue.random.async {
-                self._intAtomicValue { $0 -= 1 }
-            }
-        }
-        AssertAsync.willBeEqual(intAtomicValue, 0)
+
+        group.wait()
+        XCTAssertEqual(intAtomicValue, numberOfTestCycles)
     }
 }
 
@@ -79,39 +79,43 @@ extension Atomic_Tests {
     var numberOfTestCycles: Int { 50 }
     
     func test_Atomic_usedWithCollection() {
+        let updateGroup = DispatchGroup()
         let atomicValue = Atomic<[String: Int]>(wrappedValue: [:])
         
         for idx in 0..<numberOfTestCycles {
+            updateGroup.enter()
             DispatchQueue.random.async {
                 atomicValue.mutate { $0["\(idx)"] = idx }
+                updateGroup.leave()
             }
         }
-        
-        AssertAsync.willBeEqual(atomicValue.wrappedValue.count, numberOfTestCycles)
+        updateGroup.wait()
+
+        XCTAssertEqual(atomicValue.wrappedValue.count, numberOfTestCycles)
     }
     
     func test_Atomic_whenSetAndGetCalledSimultaneously() {
         let atomicValue = Atomic<[String: Int]>(wrappedValue: [:])
         
-        let readGroup = DispatchGroup()
+        let group = DispatchGroup()
         for idx in 0..<numberOfTestCycles {
+            group.enter()
             DispatchQueue.random.async {
                 atomicValue { $0["\(idx)"] = idx }
+                group.leave()
             }
             
             for _ in 0...5 {
-                readGroup.enter()
+                group.enter()
                 DispatchQueue.random.async {
                     _ = atomicValue.wrappedValue
-                    readGroup.leave()
+                    group.leave()
                 }
             }
         }
         
-        AssertAsync.willBeEqual(atomicValue.wrappedValue.count, numberOfTestCycles)
-        
-        // Wait until all reading is done to prevent bad access
-        readGroup.wait()
+        group.wait()
+        XCTAssertEqual(atomicValue.wrappedValue.count, numberOfTestCycles)
     }
     
     func test_Atomic_whenCalledFromMainThred() {
