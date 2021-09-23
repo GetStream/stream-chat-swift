@@ -161,7 +161,10 @@ struct NotificationMutesUpdatedEventDTO: EventDTO {
 }
 
 /// Triggered when the current user is added to the channel member list.
-public struct NotificationAddedToChannelEvent: Event, HasUnreadCount {
+public struct NotificationAddedToChannelEvent: ChannelSpecificEvent, HasUnreadCount {
+    /// The identifier of a channel a message is sent to.
+    public var cid: ChannelId { channel.cid }
+    
     /// The channel the current user was added to.
     public let channel: ChatChannel
     

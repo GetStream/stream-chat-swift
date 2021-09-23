@@ -50,16 +50,14 @@ final class DatabaseCleanupUpdater_Tests: XCTestCase {
             cid: cid1,
             withMessages: true,
             withQuery: true,
-            hiddenAt: .unique,
-            needsRefreshQueries: false
+            hiddenAt: .unique
         )
         
         try database.createChannel(
             cid: cid2,
             withMessages: true,
             withQuery: true,
-            hiddenAt: .unique,
-            needsRefreshQueries: false
+            hiddenAt: .unique
         )
         
         try databaseCleanupUpdater?.resetExistingChannelsData(session: database.viewContext)
@@ -128,7 +126,6 @@ extension ChannelDTO {
             queries.isEmpty &&
             oldestMessageAt == nil &&
             hiddenAt == nil &&
-            truncatedAt == nil &&
-            !needsRefreshQueries
+            truncatedAt == nil
     }
 }

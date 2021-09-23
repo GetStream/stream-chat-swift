@@ -7,8 +7,8 @@ import CoreData
 @testable import StreamChatTestTools
 import XCTest
 
-final class EventConverterMiddleware_Tests: XCTestCase {
-    var middleware: EventConverterMiddleware!
+final class EventDTOConverterMiddleware_Tests: XCTestCase {
+    var middleware: EventDTOConverterMiddleware!
     var database: DatabaseContainerMock!
 
     override func setUp() {
@@ -23,7 +23,7 @@ final class EventConverterMiddleware_Tests: XCTestCase {
         super.tearDown()
     }
     
-    func handle_whenEventDTOComes_toDomainResultIsReturned() throws {
+    func test_handle_whenEventDTOComes_toDomainResultIsReturned() throws {
         class EventDTOMock: EventDTO {
             let payload = EventPayload(eventType: .channelDeleted)
             
@@ -52,7 +52,7 @@ final class EventConverterMiddleware_Tests: XCTestCase {
         XCTAssertTrue(result as! EventDTOMock === eventDTO.toDomainEvent_returnValue as! EventDTOMock)
     }
     
-    func handle_whenNotEventDTOComes_eventIsForwardedAsIs() throws {
+    func test_handle_whenNotEventDTOComes_eventIsForwardedAsIs() throws {
         // Create event
         let event = UnknownEvent(
             type: .reactionNew,

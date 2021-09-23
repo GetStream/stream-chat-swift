@@ -117,7 +117,7 @@ struct MessageUpdatedEventDTO: EventDTO {
 /// Triggered when a new message is deleted.
 public struct MessageDeletedEvent: ChannelSpecificEvent {
     /// The user who deleted the message.
-    public let user: ChatUser
+    public let user: ChatUser?
     
     /// The channel identifier a message was deleted from.
     public var cid: ChannelId { channel.cid }
@@ -133,14 +133,14 @@ public struct MessageDeletedEvent: ChannelSpecificEvent {
 }
 
 struct MessageDeletedEventDTO: EventDTO {
-    let user: UserPayload
+    let user: UserPayload?
     let cid: ChannelId
     let message: MessagePayload
     let createdAt: Date
     let payload: EventPayload
     
     init(from response: EventPayload) throws {
-        user = try response.value(at: \.user)
+        user = try? response.value(at: \.user)
         cid = try response.value(at: \.cid)
         message = try response.value(at: \.message)
         createdAt = try response.value(at: \.createdAt)
@@ -149,13 +149,14 @@ struct MessageDeletedEventDTO: EventDTO {
     
     func toDomainEvent(session: DatabaseSession) -> Event? {
         guard
-            let userDTO = session.user(id: user.id),
             let messageDTO = session.message(id: message.id),
             let channelDTO = session.channel(cid: cid)
         else { return nil }
         
+        let userDTO = user.flatMap { session.user(id: $0.id) }
+        
         return MessageDeletedEvent(
-            user: userDTO.asModel(),
+            user: userDTO?.asModel(),
             channel: channelDTO.asModel(),
             message: messageDTO.asModel(),
             createdAt: createdAt

@@ -56,7 +56,7 @@ public class ChatClient {
             UserChannelBanEventsMiddleware(),
             UserWatchingEventMiddleware(),
             ChannelVisibilityEventMiddleware(),
-            EventConverterMiddleware()
+            EventDTOConverterMiddleware()
         ]
 
         center.add(middlewares: middlewares)

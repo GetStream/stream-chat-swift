@@ -8,32 +8,29 @@ import Foundation
 struct MemberEventMiddleware: EventMiddleware {
     func handle(event: Event, session: DatabaseSession) -> Event? {
         do {
-            let currentUserId = session.currentUser?.user.id
+            var updatedChannelID: ChannelId?
             
             switch event {
             case let event as MemberUpdatedEventDTO:
                 try session.saveMember(payload: event.member, channelId: event.cid)
                 
+                updatedChannelID = event.cid
+                
             case let event as MemberAddedEventDTO:
                 try session.saveMember(payload: event.member, channelId: event.cid)
                 
-                if event.member.user.id == currentUserId {
-                    session.channel(cid: event.cid)?.markNeedsRefreshQueries()
-                }
+                updatedChannelID = event.cid
             case let event as MemberRemovedEventDTO:
                 guard let channel = session.channel(cid: event.cid) else {
                     // No need to throw ChannelNotFound error here
                     break
                 }
                 
-                if event.user.id == currentUserId {
-                    channel.markNeedsRefreshQueries()
-                }
-                
                 guard let member = channel.members.first(where: { $0.user.id == event.user.id }) else {
                     // No need to throw MemberNotFound error here
                     break
                 }
+                
                 // We remove the member from the channel
                 channel.members.remove(member)
                 
@@ -42,23 +39,21 @@ struct MemberEventMiddleware: EventMiddleware {
                 member.queries.removeAll()
                 
             case let event as NotificationAddedToChannelEventDTO:
-                session.channel(cid: event.channel.cid)?.markNeedsRefreshQueries()
+                updatedChannelID = event.channel.cid
             case let event as NotificationRemovedFromChannelEventDTO:
-                session.channel(cid: event.cid)?.markNeedsRefreshQueries()
+                updatedChannelID = event.cid
             default:
                 break
+            }
+            
+            if let cid = updatedChannelID, let channelDTO = session.channel(cid: cid) {
+                // Trigger channel update so channel list queries get updated
+                channelDTO.cid = channelDTO.cid
             }
         } catch {
             log.error("Failed to update channel members in the database, error: \(error)")
         }
 
         return event
-    }
-}
-
-private extension ChannelDTO {
-    func markNeedsRefreshQueries() {
-        needsRefreshQueries = true
-        queries.removeAll()
     }
 }

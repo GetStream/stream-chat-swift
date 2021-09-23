@@ -326,60 +326,6 @@ class ChannelEventsIntegration_Tests: XCTestCase {
         }
     }
     
-    func test_NotificationAddedToChannelEventPayload_isHandled() throws {
-        let json = XCTestCase.mockData(fromFile: "NotificationAddedToChannel")
-        let event = try eventDecoder.decode(from: json) as? NotificationAddedToChannelEventDTO
-        
-        let channelId: ChannelId = .init(type: .messaging, id: "!members-hu_6SE2Rniuu3O709FqAEEtVcJxW3tWr97l_hV33a-E")
-        
-        let unwrappedEvent = try XCTUnwrap(event)
-        client.eventNotificationCenter.process(unwrappedEvent)
-        
-        AssertAsync {
-            Assert.willBeTrue(
-                self.client.databaseContainer.viewContext.channel(
-                    cid: channelId
-                )?.needsRefreshQueries ?? false
-            )
-            Assert.willBeTrue(
-                self.client.databaseContainer.viewContext.channel(
-                    cid: channelId
-                )?.queries.isEmpty ?? false
-            )
-        }
-    }
-    
-    func test_NotificationRemovedFromChannelEventPayload_isHandled() throws {
-        let json = XCTestCase.mockData(fromFile: "NotificationRemovedFromChannel")
-        let event = try eventDecoder.decode(from: json) as? NotificationRemovedFromChannelEventDTO
-        
-        let channelId: ChannelId = .init(type: .messaging, id: "!members-jkE22mnWM5tjzHPBurvjoVz0spuz4FULak93veyK0lY")
-        
-        // For message to be received, we need to have channel:
-        try client.databaseContainer.createChannel(
-            cid: channelId,
-            withMessages: true,
-            withQuery: true,
-            needsRefreshQueries: false
-        )
-        
-        let unwrappedEvent = try XCTUnwrap(event)
-        client.eventNotificationCenter.process(unwrappedEvent)
-        
-        AssertAsync {
-            Assert.willBeTrue(
-                self.client.databaseContainer.viewContext.channel(
-                    cid: channelId
-                )?.needsRefreshQueries ?? false
-            )
-            Assert.willBeTrue(
-                self.client.databaseContainer.viewContext.channel(
-                    cid: channelId
-                )?.queries.isEmpty ?? false
-            )
-        }
-    }
-    
     func test_NotificationChannelMutesUpdatedWithNoMutesEventPayload_isHandled() throws {
         let json = XCTestCase.mockData(fromFile: "NotificationChannelMutesUpdatedWithNoMutedChannels")
         let event = try eventDecoder.decode(from: json) as? NotificationChannelMutesUpdatedEventDTO

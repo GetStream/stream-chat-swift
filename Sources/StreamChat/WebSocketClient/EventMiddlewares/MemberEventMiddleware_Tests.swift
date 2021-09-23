@@ -81,6 +81,9 @@ final class MemberEventMiddleware_Tests: XCTestCase {
         
         // Create channel in the database.
         try database.createChannel(cid: cid, withMessages: false)
+ 
+        // Setup channel list observer
+        let channelListObserver = TestChannelListObserver(database: database)
         
         // Simulate `MemberAddedEvent` event.
         let forwardedEvent = middleware.handle(event: event, session: database.viewContext)
@@ -94,6 +97,11 @@ final class MemberEventMiddleware_Tests: XCTestCase {
         XCTAssertTrue(forwardedEvent is MemberAddedEventDTO)
         // Assert member is linked to the channel.
         XCTAssert(channel.members.map(\.user.id).contains(memberId))
+        // Assert a channel update is triggered
+        AssertAsync.willBeEqual(
+            channelListObserver.observedChanges,
+            [.update(cid, index: .init(row: 0, section: 0))]
+        )
     }
     
     // MARK: - MemberRemovedEvent
@@ -125,6 +133,9 @@ final class MemberEventMiddleware_Tests: XCTestCase {
         
         // Create channel in the database.
         try database.createChannel(cid: cid, withMessages: false)
+        
+        // Setup channel list observer
+        let channelListObserver = TestChannelListObserver(database: database)
         
         // Load the channel
         var channel = try XCTUnwrap(
@@ -181,6 +192,11 @@ final class MemberEventMiddleware_Tests: XCTestCase {
         XCTAssertTrue(forwardedEvent is MemberRemovedEventDTO)
         // Assert member is not linked to the channel.
         XCTAssertFalse(channel.members.map(\.user.id).contains(memberId))
+        // Assert channel update is observed.
+        AssertAsync.willBeEqual(
+            channelListObserver.observedChanges,
+            [.update(cid, index: .init(row: 0, section: 0))]
+        )
     }
     
     // MARK: - MemberUpdatedEvent
@@ -212,6 +228,9 @@ final class MemberEventMiddleware_Tests: XCTestCase {
         
         // Create channel in the database.
         try database.createChannel(cid: cid, withMessages: false)
+        
+        // Setup channel list observer
+        let channelListObserver = TestChannelListObserver(database: database)
         
         // Load the channel
         var channel = try XCTUnwrap(
@@ -246,11 +265,16 @@ final class MemberEventMiddleware_Tests: XCTestCase {
         XCTAssertTrue(forwardedEvent is MemberUpdatedEventDTO)
         // Assert member is updated.
         XCTAssertNotEqual(channel.members.first!.user.name, memberName)
+        // Assert channel update is observed.
+        AssertAsync.willBeEqual(
+            channelListObserver.observedChanges,
+            [.update(cid, index: .init(row: 0, section: 0))]
+        )
     }
 
-    // Channel query reset
-
-    func test_NotificationAddedToChannelEvent_invalidateChannelDTOQueries() throws {
+    // MARK: - NotificationAddedToChannelEvent
+    
+    func test_handle_whenNotificationAddedToChannelEventComes_forwardsEventAndTriggersChannelUpdate() throws {
         let cid = ChannelId.unique
 
         // Create MemberAddedEvent payload
@@ -266,21 +290,25 @@ final class MemberEventMiddleware_Tests: XCTestCase {
 
         // Create channel in the database.
         try database.createChannel(cid: cid, withMessages: false)
+        
+        // Setup channel list observer
+        let channelListObserver = TestChannelListObserver(database: database)
 
         // Simulate `MemberAddedEvent` event.
         let forwardedEvent = middleware.handle(event: event, session: database.viewContext)
-
-        // Load the channel.
-        let channel = try XCTUnwrap(database.viewContext.channel(cid: cid))
-
+        
         // Assert event is forwarded.
         XCTAssertTrue(forwardedEvent is NotificationAddedToChannelEventDTO)
-        // Queries are invalidated
-        XCTAssertTrue(channel.queries.isEmpty)
-        XCTAssertTrue(channel.needsRefreshQueries)
+        // Assert channel update is observed.
+        AssertAsync.willBeEqual(
+            channelListObserver.observedChanges,
+            [.update(cid, index: .init(row: 0, section: 0))]
+        )
     }
     
-    func test_NotificationRemovedFromChannelEvent_invalidateChannelDTOQueries() throws {
+    // MARK: - NotificationAddedToChannelEvent
+    
+    func test_handle_whenNotificationRemovedFromChannelEventComes_forwardsEventAndTriggersChannelUpdate() throws {
         let cid = ChannelId.unique
 
         // Create MemberAddedEvent payload
@@ -298,118 +326,42 @@ final class MemberEventMiddleware_Tests: XCTestCase {
         // Create channel in the database.
         try database.createChannel(cid: cid, withMessages: false)
 
+        // Setup channel list observer
+        let channelListObserver = TestChannelListObserver(database: database)
+        
         // Simulate `MemberAddedEvent` event.
         let forwardedEvent = middleware.handle(event: event, session: database.viewContext)
-
-        // Load the channel.
-        let channel = try XCTUnwrap(database.viewContext.channel(cid: cid))
-
+        
         // Assert event is forwarded.
         XCTAssertTrue(forwardedEvent is NotificationRemovedFromChannelEventDTO)
-        // Queries are invalidated
-        XCTAssertTrue(channel.queries.isEmpty)
-        XCTAssertTrue(channel.needsRefreshQueries)
-    }
-    
-    func test_MemberAddedEvent_invalidateChannelDTOQueries() throws {
-        let currentUserId: UserId = .unique
-        try database.createCurrentUser(id: currentUserId)
-        
-        // Create channel in the database.
-        let cid = ChannelId.unique
-        try database.createChannel(cid: cid, withQuery: true)
-        
-        // Create MemberAddedEvent payload with other than current user
-        var eventPayload: EventPayload = .init(
-            eventType: .memberAdded,
-            cid: cid,
-            user: .dummy(userId: .unique),
-            memberContainer: .dummy(userId: .unique),
-            createdAt: .unique
+        /// Assert channel update is observed.
+        AssertAsync.willBeEqual(
+            channelListObserver.observedChanges,
+            [.update(cid, index: .init(row: 0, section: 0))]
         )
-
-        // Simulate `MemberAddedEvent` event.
-        var event = try MemberAddedEventDTO(from: eventPayload)
-        var forwardedEvent = middleware.handle(event: event, session: database.viewContext)
-
-        // Load the channel.
-        var channel = try XCTUnwrap(database.viewContext.channel(cid: cid))
-        // Assert event is forwarded.
-        XCTAssertTrue(forwardedEvent is MemberAddedEventDTO)
-        // Queries are NOT invalidated
-        XCTAssertFalse(channel.queries.isEmpty)
-
-        // Create MemberAddedEvent payload with the current user
-        eventPayload = .init(
-            eventType: .memberAdded,
-            cid: cid,
-            user: .dummy(userId: .unique),
-            memberContainer: .dummy(userId: currentUserId),
-            createdAt: .unique
-        )
-
-        // Simulate `MemberAddedEvent` event.
-        event = try MemberAddedEventDTO(from: eventPayload)
-        forwardedEvent = middleware.handle(event: event, session: database.viewContext)
-
-        // Load the channel.
-        channel = try XCTUnwrap(database.viewContext.channel(cid: cid))
-        // Assert event is forwarded.
-        XCTAssertTrue(forwardedEvent is MemberAddedEventDTO)
-        // Queries are NOT invalidated
-        XCTAssertTrue(channel.queries.isEmpty)
-        XCTAssertTrue(channel.needsRefreshQueries)
-    }
-
-    func test_MemberRemovedEvent_invalidateChannelDTOQueries() throws {
-        let currentUserId: UserId = .unique
-        try database.createCurrentUser(id: currentUserId)
-        
-        // Create channel in the database.
-        let cid = ChannelId.unique
-        try database.createChannel(cid: cid, withQuery: true)
-        
-        // Create MemberAddedEvent payload with other than current user
-        var eventPayload: EventPayload = .init(
-            eventType: .memberRemoved,
-            cid: cid,
-            user: .dummy(userId: .unique),
-            createdAt: .unique
-        )
-
-        // Simulate `MemberRemovedEvent` event.
-        var event = try MemberRemovedEventDTO(from: eventPayload)
-        var forwardedEvent = middleware.handle(event: event, session: database.viewContext)
-
-        // Load the channel.
-        var channel = try XCTUnwrap(database.viewContext.channel(cid: cid))
-        // Assert event is forwarded.
-        XCTAssertTrue(forwardedEvent is MemberRemovedEventDTO)
-        // Queries are NOT invalidated
-        XCTAssertFalse(channel.queries.isEmpty)
-
-        // Create MemberAddedEvent payload with the current user
-        eventPayload = .init(
-            eventType: .memberRemoved,
-            cid: cid,
-            user: .dummy(userId: currentUserId),
-            createdAt: .unique
-        )
-
-        // Simulate `MemberRemovedEvent` event.
-        event = try MemberRemovedEventDTO(from: eventPayload)
-        forwardedEvent = middleware.handle(event: event, session: database.viewContext)
-
-        // Load the channel.
-        channel = try XCTUnwrap(database.viewContext.channel(cid: cid))
-        // Assert event is forwarded.
-        XCTAssertTrue(forwardedEvent is MemberRemovedEventDTO)
-        // Queries are invalidated
-        XCTAssertTrue(channel.queries.isEmpty)
-        XCTAssertTrue(channel.needsRefreshQueries)
     }
 }
 
 private struct TestEvent: Event, Equatable {
     let id = UUID()
+}
+
+private class TestChannelListObserver {
+    let databaseObserver: ListDatabaseObserver<ChannelId, ChannelDTO>
+    
+    var observedChanges: [ListChange<ChannelId>] = []
+    
+    init(database: DatabaseContainerMock) {
+        databaseObserver = ListDatabaseObserver<ChannelId, ChannelDTO>(
+            context: database.viewContext,
+            fetchRequest: ChannelDTO.allChannelsFetchRequest,
+            itemCreator: { try! ChannelId(cid: $0.cid) }
+        )
+        
+        databaseObserver.onChange = { [weak self] in
+            self?.observedChanges.append(contentsOf: $0)
+        }
+        
+        try! databaseObserver.startObserving()
+    }
 }

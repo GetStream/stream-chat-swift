@@ -41,10 +41,19 @@ class MessageEvents_Tests: XCTestCase {
         XCTAssertEqual(event?.createdAt.description, "2020-07-17 13:46:10 +0000")
     }
     
-    func test_deleted() throws {
+    func test_messageDeletedEvent_clientSide() throws {
         let json = XCTestCase.mockData(fromFile: "MessageDeleted")
         let event = try eventDecoder.decode(from: json) as? MessageDeletedEventDTO
-        XCTAssertEqual(event?.user.id, "broken-waterfall-5")
+        XCTAssertEqual(event?.user?.id, "broken-waterfall-5")
+        XCTAssertEqual(event?.cid, ChannelId(type: .messaging, id: "general"))
+        XCTAssertEqual(event?.message.id, messageId)
+        XCTAssertEqual(event?.createdAt.description, "2020-07-17 13:49:48 +0000")
+    }
+    
+    func test_messageDeletedEvent_serverSide() throws {
+        let json = XCTestCase.mockData(fromFile: "MessageDeleted+MissingUser")
+        let event = try eventDecoder.decode(from: json) as? MessageDeletedEventDTO
+        XCTAssertNil(event?.user)
         XCTAssertEqual(event?.cid, ChannelId(type: .messaging, id: "general"))
         XCTAssertEqual(event?.message.id, messageId)
         XCTAssertEqual(event?.createdAt.description, "2020-07-17 13:49:48 +0000")
@@ -292,7 +301,7 @@ class MessageEventsIntegration_Tests: XCTestCase {
         // Assert event can be created and has correct fields
         let event = try XCTUnwrap(dto.toDomainEvent(session: session) as? MessageDeletedEvent)
         XCTAssertEqual(event.cid, eventPayload.cid)
-        XCTAssertEqual(event.user.id, eventPayload.user?.id)
+        XCTAssertEqual(event.user?.id, eventPayload.user?.id)
         XCTAssertEqual(event.message.id, eventPayload.message?.id)
         XCTAssertEqual(event.createdAt, eventPayload.createdAt)
     }
