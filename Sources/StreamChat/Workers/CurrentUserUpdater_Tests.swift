@@ -6,7 +6,7 @@
 @testable import StreamChatTestTools
 import XCTest
 
-final class CurrentUserUpdater_Tests: StressTestCase {
+final class CurrentUserUpdater_Tests: XCTestCase {
     var webSocketClient: WebSocketClientMock!
     var apiClient: APIClientMock!
     var database: DatabaseContainerMock!
@@ -291,9 +291,12 @@ final class CurrentUserUpdater_Tests: StressTestCase {
             database.viewContext.currentUser?.asModel()
         }
 
+        // Assert the initial values, where we have
+        // 1 device saved and no currentDevice set
         assert(currentUser?.devices.count == 1)
+        assert(currentUser?.currentDevice == nil)
 
-        // Call fetchDevices
+        // Call addDevice
         currentUserUpdater.addDevice(token: .init(repeating: 1, count: 1), currentUserId: .unique) {
             // No error should be returned
             XCTAssertNil($0)
@@ -303,7 +306,10 @@ final class CurrentUserUpdater_Tests: StressTestCase {
         apiClient.test_simulateResponse(.success(EmptyResponse()))
         
         AssertAsync {
+            // Assert the new device is added to devices
             Assert.willBeEqual(currentUser?.devices.count, 2)
+            // Assert that currentDevice is set
+            Assert.willBeTrue(currentUser?.currentDevice != nil)
         }
     }
     
@@ -383,7 +389,8 @@ final class CurrentUserUpdater_Tests: StressTestCase {
         
         // Save user to the db
         try database.writeSynchronously {
-            try $0.saveCurrentUser(payload: userPayload)
+            let dto = try $0.saveCurrentUser(payload: userPayload)
+            dto.currentDevice = dto.devices.first
         }
         
         // Call fetchDevices
@@ -402,6 +409,7 @@ final class CurrentUserUpdater_Tests: StressTestCase {
         
         AssertAsync {
             Assert.willBeEqual(currentUser?.devices.count, 0)
+            Assert.willBeEqual(currentUser?.currentDevice, nil)
         }
     }
     

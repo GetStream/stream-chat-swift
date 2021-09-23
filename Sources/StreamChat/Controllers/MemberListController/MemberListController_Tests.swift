@@ -7,7 +7,7 @@ import CoreData
 @testable import StreamChatTestTools
 import XCTest
 
-final class MemberListController_Tests: StressTestCase {
+final class MemberListController_Tests: XCTestCase {
     private var env: TestEnvironment!
     
     var query: ChannelMemberListQuery!

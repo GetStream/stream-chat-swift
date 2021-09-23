@@ -35,7 +35,7 @@ public struct AudioAttachmentPayload: AttachmentPayload {
     }
 }
 
-extension AudioAttachmentPayload: Equatable {}
+extension AudioAttachmentPayload: Hashable {}
 
 // MARK: - Encodable
 

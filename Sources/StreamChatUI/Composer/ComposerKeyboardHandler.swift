@@ -18,6 +18,8 @@ open class ComposerKeyboardHandler: KeyboardHandler {
     public weak var composerParentVC: UIViewController?
     public weak var composerBottomConstraint: NSLayoutConstraint?
 
+    public let originalBottomConstraintValue: CGFloat
+
     /// The component for handling keyboard events and adjust the composer.
     /// - Parameters:
     ///   - composerParentVC: The parent view controller of the composer.
@@ -28,13 +30,21 @@ open class ComposerKeyboardHandler: KeyboardHandler {
     ) {
         self.composerParentVC = composerParentVC
         self.composerBottomConstraint = composerBottomConstraint
+        originalBottomConstraintValue = composerBottomConstraint?.constant ?? 0
     }
 
     open func start() {
         NotificationCenter.default.addObserver(
             self,
             selector: #selector(keyboardWillChangeFrame),
-            name: UIResponder.keyboardWillChangeFrameNotification,
+            name: UIResponder.keyboardWillHideNotification,
+            object: nil
+        )
+
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(keyboardWillChangeFrame),
+            name: UIResponder.keyboardWillShowNotification,
             object: nil
         )
     }
@@ -49,15 +59,22 @@ open class ComposerKeyboardHandler: KeyboardHandler {
               let frame = (userInfo[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue,
               let duration = userInfo[UIResponder.keyboardAnimationDurationUserInfoKey] as? Double,
               let curve = userInfo[UIResponder.keyboardAnimationCurveUserInfoKey] as? UInt,
-              let composerParentView = composerParentVC?.view else {
+              let composerParentView = composerParentVC?.view,
+              let rootView = composerParentView.window?.rootViewController?.view else {
             return
         }
 
-        let convertedKeyboardFrame = composerParentView.convert(frame, from: UIScreen.main.coordinateSpace)
+        // When hiding, we reset the bottom constraint to the original value
+        // When showing, we set the bottom constraint equal to the keyboard height + original value
+        // The value is actually negative, so that the composer view goes up
 
-        let intersectedKeyboardHeight = composerParentView.frame.intersection(convertedKeyboardFrame).height
-
-        composerBottomConstraint?.constant = -intersectedKeyboardHeight
+        if notification.name == UIResponder.keyboardWillHideNotification {
+            composerBottomConstraint?.constant = originalBottomConstraintValue
+        } else {
+            let convertedKeyboardFrame = rootView.convert(frame, from: UIScreen.main.coordinateSpace)
+            let intersectedKeyboardHeight = composerParentView.frame.intersection(convertedKeyboardFrame).height
+            composerBottomConstraint?.constant = -(intersectedKeyboardHeight + originalBottomConstraintValue)
+        }
 
         UIView.animate(
             withDuration: duration,

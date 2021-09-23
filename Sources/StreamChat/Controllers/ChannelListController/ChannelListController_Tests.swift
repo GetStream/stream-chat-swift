@@ -7,7 +7,7 @@ import CoreData
 @testable import StreamChatTestTools
 import XCTest
 
-class ChannelListController_Tests: StressTestCase {
+class ChannelListController_Tests: XCTestCase {
     fileprivate var env: TestEnvironment!
     
     var client: ChatClient!
@@ -24,12 +24,8 @@ class ChannelListController_Tests: StressTestCase {
     override func setUp() {
         super.setUp()
         
-        setUp(isLocalStorageEnabled: true)
-    }
-    
-    private func setUp(isLocalStorageEnabled: Bool) {
         env = TestEnvironment()
-        client = ChatClient.mock(isLocalStorageEnabled: isLocalStorageEnabled)
+        client = ChatClient.mock(isLocalStorageEnabled: false)
         query = .init(filter: .in(.members, values: [.unique]))
         controller = ChatChannelListController(query: query, client: client, environment: env.environment)
         controllerCallbackQueueID = UUID()
@@ -39,6 +35,8 @@ class ChannelListController_Tests: StressTestCase {
     override func tearDown() {
         query = nil
         controllerCallbackQueueID = nil
+        
+        database.shouldCleanUpTempDBFiles = true
         
         env.channelListUpdater?.cleanUp()
         
@@ -167,8 +165,6 @@ class ChannelListController_Tests: StressTestCase {
     }
     
     func test_synchronize_callsChannelQueryUpdater_inOfflineMode() {
-        setUp(isLocalStorageEnabled: false)
-        
         let queueId = UUID()
         controller.callbackQueue = .testQueue(withId: queueId)
         
@@ -259,25 +255,25 @@ class ChannelListController_Tests: StressTestCase {
         AssertAsync.willBeEqual(controller.channels.map(\.cid), [cid])
     }
     
-    func test_newChannel_callsLinkHook() throws {
+    func test_newChannel_callsListHook() throws {
         // Create wrapper test delegate
         class TestLinkDelegate: ChatChannelListControllerDelegate {
-            let shouldLinkNewChannel: (ChatChannel) -> Bool
-            let shouldLinkUpdatedChannel: (ChatChannel) -> Bool
+            let shouldListNewChannel: (ChatChannel) -> Bool
+            let shouldListUpdatedChannel: (ChatChannel) -> Bool
             init(
-                shouldLinkNewChannel: @escaping (ChatChannel) -> Bool,
-                shouldLinkUpdatedChannel: @escaping (ChatChannel) -> Bool
+                shouldListNewChannel: @escaping (ChatChannel) -> Bool,
+                shouldListUpdatedChannel: @escaping (ChatChannel) -> Bool
             ) {
-                self.shouldLinkNewChannel = shouldLinkNewChannel
-                self.shouldLinkUpdatedChannel = shouldLinkUpdatedChannel
+                self.shouldListNewChannel = shouldListNewChannel
+                self.shouldListUpdatedChannel = shouldListUpdatedChannel
             }
             
-            func controller(_ controller: ChatChannelListController, shouldLinkNewChannel channel: ChatChannel) -> Bool {
-                shouldLinkNewChannel(channel)
+            func controller(_ controller: ChatChannelListController, shouldAddNewChannelToList channel: ChatChannel) -> Bool {
+                shouldListNewChannel(channel)
             }
             
-            func controller(_ controller: ChatChannelListController, shouldLinkUpdatedChannel channel: ChatChannel) -> Bool {
-                shouldLinkUpdatedChannel(channel)
+            func controller(_ controller: ChatChannelListController, shouldListUpdatedChannel channel: ChatChannel) -> Bool {
+                shouldListUpdatedChannel(channel)
             }
         }
         
@@ -299,9 +295,9 @@ class ChannelListController_Tests: StressTestCase {
         let newCid: ChannelId = .unique
         
         // Create and assign delegate
-        let delegate = TestLinkDelegate(shouldLinkNewChannel: { channel in
+        let delegate = TestLinkDelegate(shouldListNewChannel: { channel in
             channel.cid != newCid
-        }, shouldLinkUpdatedChannel: { _ in
+        }, shouldListUpdatedChannel: { _ in
             false
         })
         controller.delegate = delegate
@@ -327,22 +323,22 @@ class ChannelListController_Tests: StressTestCase {
     func test_updatedChannel_callsLinkHook() throws {
         // Create wrapper test delegate
         class TestLinkDelegate: ChatChannelListControllerDelegate {
-            let shouldLinkNewChannel: (ChatChannel) -> Bool
-            let shouldLinkUpdatedChannel: (ChatChannel) -> Bool
+            let shouldListNewChannel: (ChatChannel) -> Bool
+            let shouldListUpdatedChannel: (ChatChannel) -> Bool
             init(
-                shouldLinkNewChannel: @escaping (ChatChannel) -> Bool,
-                shouldLinkUpdatedChannel: @escaping (ChatChannel) -> Bool
+                shouldListNewChannel: @escaping (ChatChannel) -> Bool,
+                shouldListUpdatedChannel: @escaping (ChatChannel) -> Bool
             ) {
-                self.shouldLinkNewChannel = shouldLinkNewChannel
-                self.shouldLinkUpdatedChannel = shouldLinkUpdatedChannel
+                self.shouldListNewChannel = shouldListNewChannel
+                self.shouldListUpdatedChannel = shouldListUpdatedChannel
             }
             
-            func controller(_ controller: ChatChannelListController, shouldLinkNewChannel channel: ChatChannel) -> Bool {
-                shouldLinkNewChannel(channel)
+            func controller(_ controller: ChatChannelListController, shouldAddNewChannelToList channel: ChatChannel) -> Bool {
+                shouldListNewChannel(channel)
             }
-                 
-            func controller(_ controller: ChatChannelListController, shouldLinkUpdatedChannel channel: ChatChannel) -> Bool {
-                shouldLinkUpdatedChannel(channel)
+            
+            func controller(_ controller: ChatChannelListController, shouldListUpdatedChannel channel: ChatChannel) -> Bool {
+                shouldListUpdatedChannel(channel)
             }
         }
         
@@ -362,9 +358,9 @@ class ChannelListController_Tests: StressTestCase {
         let shouldBeExcludedCid: ChannelId = .unique
         
         // Create and assign delegate
-        let delegate = TestLinkDelegate(shouldLinkNewChannel: { _ in
+        let delegate = TestLinkDelegate(shouldListNewChannel: { _ in
             false
-        }, shouldLinkUpdatedChannel: { channel in
+        }, shouldListUpdatedChannel: { channel in
             channel.cid == shouldBeInsertedCid
         })
         controller.delegate = delegate
@@ -403,15 +399,15 @@ class ChannelListController_Tests: StressTestCase {
     func test_updatedChannel_callsUnlinkHook() throws {
         // Create wrapper test delegate
         class TestLinkDelegate: ChatChannelListControllerDelegate {
-            let shouldUnlinkUpdatedChannel: (ChatChannel) -> Bool
+            let shouldListUpdatedChannel: (ChatChannel) -> Bool
             init(
-                shouldUnlinkUpdatedChannel: @escaping (ChatChannel) -> Bool
+                shouldListUpdatedChannel: @escaping (ChatChannel) -> Bool
             ) {
-                self.shouldUnlinkUpdatedChannel = shouldUnlinkUpdatedChannel
+                self.shouldListUpdatedChannel = shouldListUpdatedChannel
             }
             
-            func controller(_ controller: ChatChannelListController, shouldUnlinkUpdatedChannel channel: ChatChannel) -> Bool {
-                shouldUnlinkUpdatedChannel(channel)
+            func controller(_ controller: ChatChannelListController, shouldListUpdatedChannel channel: ChatChannel) -> Bool {
+                shouldListUpdatedChannel(channel)
             }
         }
         
@@ -428,8 +424,8 @@ class ChannelListController_Tests: StressTestCase {
         AssertAsync.willBeEqual(controller.channels.map(\.cid), [cid])
         
         // Create and assign delegate
-        let delegate = TestLinkDelegate(shouldUnlinkUpdatedChannel: { channel in
-            channel.cid == cid
+        let delegate = TestLinkDelegate(shouldListUpdatedChannel: { channel in
+            channel.cid != cid
         })
         controller.delegate = delegate
         

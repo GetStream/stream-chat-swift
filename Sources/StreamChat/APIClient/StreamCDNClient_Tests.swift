@@ -8,7 +8,7 @@ import StreamChat
 import StreamChatTestTools
 import XCTest
 
-class StreamCDNClient_Tests: StressTestCase {
+class StreamCDNClient_Tests: XCTestCase {
     func test_uploadFileEncoderIsCalledWithEndpoint() throws {
         let builder = Builder()
         let client = builder.make()

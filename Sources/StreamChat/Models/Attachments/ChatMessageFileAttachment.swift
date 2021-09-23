@@ -35,7 +35,7 @@ public struct FileAttachmentPayload: AttachmentPayload {
     }
 }
 
-extension FileAttachmentPayload: Equatable {}
+extension FileAttachmentPayload: Hashable {}
 
 // MARK: - Encodable
 

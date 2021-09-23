@@ -34,7 +34,8 @@ class APIClientMock: APIClient {
         sessionConfiguration: URLSessionConfiguration,
         requestEncoder: RequestEncoder,
         requestDecoder: RequestDecoder,
-        CDNClient: CDNClient
+        CDNClient: CDNClient,
+        tokenRefresher: ((ClientError, @escaping () -> Void) -> Void)!
     ) {
         init_sessionConfiguration = sessionConfiguration
         init_requestEncoder = requestEncoder
@@ -45,7 +46,8 @@ class APIClientMock: APIClient {
             sessionConfiguration: sessionConfiguration,
             requestEncoder: requestEncoder,
             requestDecoder: requestDecoder,
-            CDNClient: CDNClient
+            CDNClient: CDNClient,
+            tokenRefresher: tokenRefresher
         )
     }
     
@@ -57,6 +59,7 @@ class APIClientMock: APIClient {
     
     override func request<Response>(
         endpoint: Endpoint<Response>,
+        timeout: TimeInterval,
         completion: @escaping (Result<Response, Error>) -> Void
     ) where Response: Decodable {
         request_endpoint = AnyEndpoint(endpoint)
@@ -81,7 +84,8 @@ extension APIClientMock {
             sessionConfiguration: .ephemeral,
             requestEncoder: DefaultRequestEncoder(baseURL: .unique(), apiKey: .init(.unique)),
             requestDecoder: DefaultRequestDecoder(),
-            CDNClient: CDNClient_Mock()
+            CDNClient: CDNClient_Mock(),
+            tokenRefresher: { _, _ in }
         )
     }
 }

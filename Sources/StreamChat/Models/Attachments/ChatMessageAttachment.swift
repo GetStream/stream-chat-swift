@@ -33,9 +33,10 @@ public extension ChatMessageAttachment {
 }
 
 extension ChatMessageAttachment: Equatable where Payload: Equatable {}
+extension ChatMessageAttachment: Hashable where Payload: Hashable {}
 
 /// A type representing the uploading state for attachments that require prior uploading.
-public struct AttachmentUploadingState: Equatable {
+public struct AttachmentUploadingState: Hashable {
     /// The local file URL that is being uploaded.
     public let localFileURL: URL
 
