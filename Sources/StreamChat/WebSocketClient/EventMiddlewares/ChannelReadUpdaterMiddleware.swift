@@ -7,20 +7,37 @@ import Foundation
 /// A middleware which updates a channel's read events as websocket events arrive.
 struct ChannelReadUpdaterMiddleware: EventMiddleware {
     func handle(event: Event, session: DatabaseSession) -> Event? {
+        guard let eventWithPayload = (event as? EventWithPayload) else {
+            return event
+        }
+
+        guard let payload = eventWithPayload.payload as? EventPayload else {
+            log.error("""
+            Type mismatch between `EventPayload` and `EventDataProcessorMiddleware`."
+                EventPayload type: \(type(of: eventWithPayload.payload))
+                EventDataProcessorMiddleware type: \(type(of: self))
+            """)
+            return nil
+        }
+
         switch event {
         case let event as MessageNewEvent:
+            guard let message = payload.message else {
+                return event
+            }
             increaseUnreadCountIfNeeded(
                 for: event.cid,
-                userId: event.userId,
-                newMessageAt: event.createdAt,
+                message: message,
                 session: session
             )
-            
+
         case let event as NotificationMessageNewEvent:
+            guard let message = payload.message else {
+                return event
+            }
             increaseUnreadCountIfNeeded(
                 for: event.cid,
-                userId: event.userId,
-                newMessageAt: event.createdAt,
+                message: message,
                 session: session
             )
             
@@ -74,18 +91,27 @@ struct ChannelReadUpdaterMiddleware: EventMiddleware {
     
     private func increaseUnreadCountIfNeeded(
         for cid: ChannelId,
-        userId: UserId,
-        newMessageAt: Date,
+        message: MessagePayload,
         session: DatabaseSession
     ) {
-        guard let currentUserId = session.currentUser?.user.id, currentUserId != userId else {
-            // Own messages don't increase unread count
+        // Silent messages don't increase unread count
+        if message.isSilent {
             return
         }
-        
-        // Try to get the existing channel read for the CURRENT user
+
+        // Thread replies don't increase unread count
+        if message.parentId != nil && !message.showReplyInChannel {
+            return
+        }
+
+        // Own messages don't increase unread count
+        guard let currentUserId = session.currentUser?.user.id, currentUserId != message.user.id else {
+            return
+        }
+
+        // Try to get the existing channel read for the current user
         if let read = session.loadChannelRead(cid: cid, userId: currentUserId) {
-            if newMessageAt > read.lastReadAt {
+            if message.createdAt > read.lastReadAt {
                 read.unreadMessageCount += 1
             }
         } else {
