@@ -12,7 +12,7 @@ open class ChatMessageReactionsVC: _ViewController, ThemeProvider, ChatMessageCo
     // MARK: - Subviews
 
     public private(set) lazy var reactionsBubble = components
-        .reactionsBubbleView
+        .reactionPickerBubbleView
         .init()
         .withoutAutoresizingMaskConstraints
 
@@ -52,6 +52,7 @@ open class ChatMessageReactionsVC: _ViewController, ThemeProvider, ChatMessageCo
 
     // MARK: - Actions
 
+    // toggleReaction toggles on/off the reaction for the message
     open func toggleReaction(_ reaction: MessageReactionType) {
         guard let message = messageController.message else { return }
         
