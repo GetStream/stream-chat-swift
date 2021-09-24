@@ -50,7 +50,7 @@ Components.default.channelVC = CustomChatChannelVC.self
 
 <ComponentsNote />
 
-Keep in mind this component is only responsible for composing the `ChatChannelHeaderView`, `ChatMessageListVC` and `ChatMessageComposerVC` components together. In case you want to customize the rendering of the messages, you should read the [Message List](../message-list) documentation and the [Message](../message) documentation.
+Keep in mind this component is only responsible for composing the `ChatChannelHeaderView`, `ChatMessageListVC` and `ChatMessageComposerVC` components together. In case you want to customize the rendering of the messages, you should read the [Message](../message) documentation.
 
 ### Channel Avatar Size 
 It is really easy to change the channel avatar size displayed by default in the `navigationItem.rightBarButtonItem`. The only thing that is needed is to override the `channelAvatarSize` property, like this:

@@ -54,7 +54,7 @@ Components.default.threadVC = CustomChatThreadVC.self
 
 <ComponentsNote />
 
-Just like the `ChatChannelVC`, the `ChatThreadVC` is only responsible for composing the `ChatThreadHeaderView`, `ChatMessageListVC` and `ChatMessageComposerVC` components together. In case you want to customize the rendering of the replies, you should read the [Message List](../message-list) documentation and the [Message](../message) documentation.
+Just like the `ChatChannelVC`, the `ChatThreadVC` is only responsible for composing the `ChatThreadHeaderView`, `ChatMessageListVC` and `ChatMessageComposerVC` components together. In case you want to customize the rendering of the replies, you should read the [Message](../message) documentation.
 
 ## Properties
 <ThreadProperties />

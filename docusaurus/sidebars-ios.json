@@ -38,7 +38,6 @@
         "components/channel-list",
         "components/channel",
         "components/thread",
-        "components/message-list",
         "components/message",
         "components/message-composer"
       ]
