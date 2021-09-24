@@ -193,12 +193,14 @@ class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         XCTAssertEqual(loadedChannel?.reads.first?.unreadMessagesCount, 10)
         XCTAssertEqual(oldReadDate, Date(timeIntervalSince1970: 1))
         
+        let user = dummyUser(id: .unique)
+
         // Create a MessageNewEvent with a `createdAt` date later than `oldReadDate`
         let eventPayload = EventPayload(
             eventType: .messageNew,
             cid: channelId,
-            user: dummyUser(id: .unique),
-            message: .dummy(messageId: .unique, authorUserId: dummyCurrentUser.id, createdAt: .unique(after: oldReadDate)),
+            user: user,
+            message: .dummy(messageId: .unique, authorUserId: user.id, createdAt: .unique(after: oldReadDate)),
             createdAt: .unique(after: oldReadDate)
         )
         let messageNewEvent = try MessageNewEvent(from: eventPayload)

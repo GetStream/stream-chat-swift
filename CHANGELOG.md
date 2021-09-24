@@ -3,7 +3,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+### ✅ Added
+- Introduce `ChannelController.uploadFile` function for uploading files to CDN to obtain a remote URL [#1468](https://github.com/GetStream/stream-chat-swift/issues/1468)
+
 ### 🐞 Fixed
+- Fix channel unread counts, thread replies and silent messages do not increase the count anymore [#1472](https://github.com/GetStream/stream-chat-swift/pull/1472)
 - Fix token expiration refresh mechanism for API endpoints [#1446](https://github.com/GetStream/stream-chat-swift/pull/1446)
 - Fix keyboard handling when navigation bar or tab bar are not translucent [#1470](https://github.com/GetStream/stream-chat-swift/pull/1470) [#1464](https://github.com/GetStream/stream-chat-swift/pull/1464)
 - Fix `ChatChannelListVC` showing channels muted by the current user when default `shouldAddNewChannelToList/shouldListUpdatedChannel` delegate method implementations are used [#1476](https://github.com/GetStream/stream-chat-swift/pull/1476)

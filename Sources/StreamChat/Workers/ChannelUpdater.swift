@@ -353,4 +353,29 @@ class ChannelUpdater: Worker {
             completion?($0.error)
         }
     }
+    
+    func uploadFile(
+        type: AttachmentType,
+        localFileURL: URL,
+        cid: ChannelId,
+        progress: ((Double) -> Void)? = nil,
+        completion: @escaping ((Result<URL, Error>) -> Void)
+    ) {
+        do {
+            let attachmentFile = try AttachmentFile(url: localFileURL)
+            let attachment = AnyChatMessageAttachment(
+                id: .init(cid: cid, messageId: "", index: 0), // messageId and index won't be used for uploading
+                type: type,
+                payload: .init(), // payload won't be used for uploading
+                uploadingState: .init(
+                    localFileURL: localFileURL,
+                    state: .pendingUpload, // will not be used
+                    file: attachmentFile
+                )
+            )
+            apiClient.uploadAttachment(attachment, progress: progress, completion: completion)
+        } catch {
+            completion(.failure(ClientError.InvalidAttachmentFileURL(localFileURL)))
+        }
+    }
 }
