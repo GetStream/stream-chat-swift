@@ -214,6 +214,11 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
     }
     
     private func handleUnlinkedChannels(_ changes: [ListChange<ChatChannel>]) {
+        guard state == .remoteDataFetched else {
+            log.debug("Ignoring inserted/updated unlinked channels due to query \(query) not being synced.")
+            return
+        }
+        
         let channels = changes.compactMap { change -> ChatChannel? in
             switch change {
             case let .insert(channel, _):
@@ -241,13 +246,17 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
     private func link(channels: [ChatChannel]) {
         guard !channels.isEmpty else { return }
         client.databaseContainer.write { session in
+            guard let queryDTO = session.channelListQuery(filterHash: self.query.filter.filterHash) else {
+                log.debug("Channel list query has not yet created \(self.query)")
+                return
+            }
+            
             for channel in channels {
                 guard let channelDTO = session.channel(cid: channel.cid) else {
                     log.error("Channel \(channel.cid) cannot be found in database.")
                     continue
                 }
-                let query = session.saveQuery(query: self.query)
-                query.channels.insert(channelDTO)
+                queryDTO.channels.insert(channelDTO)
             }
         }
     }
@@ -255,13 +264,17 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
     private func unlink(channels: [ChatChannel]) {
         guard !channels.isEmpty else { return }
         client.databaseContainer.write { session in
+            guard let queryDTO = session.channelListQuery(filterHash: self.query.filter.filterHash) else {
+                log.debug("Channel list query has not yet created \(self.query)")
+                return
+            }
+            
             for channel in channels {
                 guard let channelDTO = session.channel(cid: channel.cid) else {
                     log.error("Channel \(channel.cid) cannot be found in database.")
                     continue
                 }
-                let query = session.saveQuery(query: self.query)
-                query.channels.remove(channelDTO)
+                queryDTO.channels.remove(channelDTO)
             }
         }
     }
