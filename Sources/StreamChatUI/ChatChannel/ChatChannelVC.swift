@@ -69,7 +69,7 @@ open class ChatChannelVC:
         messageComposerVC.channelController = channelController
         messageComposerVC.userSearchController = userSuggestionSearchController
 
-        channelController.setDelegate(self)
+        channelController.delegate = self
         channelController.synchronize { [weak self] _ in
             self?.messageComposerVC.updateContent()
         }
