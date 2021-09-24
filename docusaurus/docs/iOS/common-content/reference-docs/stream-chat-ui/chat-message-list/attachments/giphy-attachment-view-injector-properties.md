@@ -2,7 +2,7 @@
 ### `giphyImageView`
 
 ``` swift
-open lazy var giphyImageView: _ChatMessageInteractiveAttachmentView<ExtraData> 
+open lazy var giphyImageView: ChatMessageInteractiveAttachmentView 
 ```
 
 ## Methods

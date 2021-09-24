@@ -5,7 +5,7 @@ title: ChatSuggestionsVC
 A view controller that shows suggestions of commands or mentions.
 
 ``` swift
-open class _ChatSuggestionsVC<ExtraData: ExtraDataTypes>: _ViewController,
+open class ChatSuggestionsVC: _ViewController,
     ThemeProvider,
     UICollectionViewDelegate 
 ```
@@ -55,7 +55,7 @@ public var isPresented: Bool
 The collection view of the commands.
 
 ``` swift
-open private(set) lazy var collectionView: _ChatSuggestionsCollectionView<ExtraData> = components
+open private(set) lazy var collectionView: ChatSuggestionsCollectionView = components
         .suggestionsCollectionView
         .init(layout: components.suggestionsCollectionViewLayout.init())
         .withoutAutoresizingMaskConstraints

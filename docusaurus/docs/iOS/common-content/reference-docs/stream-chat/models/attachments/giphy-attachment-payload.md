@@ -35,7 +35,7 @@ public static let type: AttachmentType = .giphy
 A  title, usually the search request used to find the gif.
 
 ``` swift
-public let title: String
+public var title: String
 ```
 
 ### `previewURL`
@@ -43,7 +43,7 @@ public let title: String
 A link to gif file.
 
 ``` swift
-public let previewURL: URL
+public var previewURL: URL
 ```
 
 ### `actions`
@@ -51,7 +51,7 @@ public let previewURL: URL
 Actions when gif is not sent yet. (e.g. `Shuffle`)
 
 ``` swift
-public let actions: [AttachmentAction]
+public var actions: [AttachmentAction]
 ```
 
 ## Methods

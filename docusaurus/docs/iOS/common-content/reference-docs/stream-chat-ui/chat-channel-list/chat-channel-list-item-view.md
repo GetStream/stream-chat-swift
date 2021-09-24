@@ -5,7 +5,7 @@ title: ChatChannelListItemView
 An `UIView` subclass that shows summary and preview information about a given channel.
 
 ``` swift
-open class _ChatChannelListItemView<ExtraData: ExtraDataTypes>: _View, ThemeProvider, SwiftUIRepresentable 
+open class ChatChannelListItemView: _View, ThemeProvider, SwiftUIRepresentable 
 ```
 
 ## Inheritance
@@ -19,7 +19,7 @@ open class _ChatChannelListItemView<ExtraData: ExtraDataTypes>: _View, ThemeProv
 Data source of `_ChatChannelListItemView` represented as `ObservedObject`.
 
 ``` swift
-public typealias ObservedObject<Content: SwiftUIView> = SwiftUIWrapper<Content> where Content.ExtraData == ExtraData
+public typealias ObservedObject<Content: SwiftUIView> = SwiftUIWrapper<Content>
 ```
 
 ### `SwiftUIView`
@@ -27,7 +27,7 @@ public typealias ObservedObject<Content: SwiftUIView> = SwiftUIWrapper<Content> 
 `_ChatChannelListItemView` represented in SwiftUI.
 
 ``` swift
-public typealias SwiftUIView = _ChatChannelListItemViewSwiftUIView
+public typealias SwiftUIView = ChatChannelListItemViewSwiftUIView
 ```
 
 ## Properties
@@ -113,7 +113,7 @@ open private(set) lazy var timestampLabel: UILabel = UILabel()
 The view used to show channels avatar.
 
 ``` swift
-open private(set) lazy var avatarView: _ChatChannelAvatarView<ExtraData> = components
+open private(set) lazy var avatarView: ChatChannelAvatarView = components
         .channelAvatarView
         .init()
         .withoutAutoresizingMaskConstraints

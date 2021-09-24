@@ -5,12 +5,13 @@ title: LinkAttachmentViewInjector
 View injector for showing link attachments.
 
 ``` swift
-open class _LinkAttachmentViewInjector<ExtraData: ExtraDataTypes>: _AttachmentViewInjector<ExtraData> 
+@available(iOSApplicationExtension, unavailable)
+open class LinkAttachmentViewInjector: AttachmentViewInjector 
 ```
 
 ## Inheritance
 
-`_AttachmentViewInjector<ExtraData>`
+[`AttachmentViewInjector`](../attachment-view-injector)
 
 ## Properties
 

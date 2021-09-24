@@ -5,14 +5,13 @@ title: ChatChannelListRouter
 A `NavigationRouter` subclass that handles navigation actions of `ChatChannelListVC`.
 
 ``` swift
-open class _ChatChannelListRouter<ExtraData: ExtraDataTypes>:
-    NavigationRouter<_ChatChannelListVC<ExtraData>>,
-    ComponentsProvider
+@available(iOSApplicationExtension, unavailable)
+open class ChatChannelListRouter: NavigationRouter<ChatChannelListVC>, ComponentsProvider 
 ```
 
 ## Inheritance
 
-[`ComponentsProvider`](../../utils/components-provider), `NavigationRouter<_ChatChannelListVC<ExtraData>>`
+[`ComponentsProvider`](../../utils/components-provider), `NavigationRouter<ChatChannelListVC>`
 
 ## Methods
 
@@ -24,12 +23,12 @@ Shows the view controller with the profile of the current user.
 open func showCurrentUserProfile() 
 ```
 
-### `showMessageList(for:)`
+### `showChannel(for:)`
 
 Shows the view controller with messages for the provided cid.
 
 ``` swift
-open func showMessageList(for cid: ChannelId) 
+open func showChannel(for cid: ChannelId) 
 ```
 
 #### Parameters

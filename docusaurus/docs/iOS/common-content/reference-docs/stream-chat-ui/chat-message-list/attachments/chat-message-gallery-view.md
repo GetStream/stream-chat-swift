@@ -5,7 +5,7 @@ title: ChatMessageGalleryView
 Gallery view that displays images and video previews.
 
 ``` swift
-open class _ChatMessageGalleryView<ExtraData: ExtraDataTypes>: _View, ThemeProvider 
+open class ChatMessageGalleryView: _View, ThemeProvider 
 ```
 
 ## Inheritance

@@ -7,7 +7,7 @@ By default, it has a blurred background, reactions, and actions which are shown 
 and with which user can interact.
 
 ``` swift
-open class _ChatMessagePopupVC<ExtraData: ExtraDataTypes>: _ViewController, ComponentsProvider 
+open class ChatMessagePopupVC: _ViewController, ComponentsProvider 
 ```
 
 ## Inheritance
@@ -55,7 +55,7 @@ public var messageBubbleViewInsets: UIEdgeInsets = .zero
 `messageContentView` being displayed.
 
 ``` swift
-public var messageContentView: _ChatMessageContentView<ExtraData>!
+public var messageContentView: ChatMessageContentView!
 ```
 
 ### `message`
@@ -63,7 +63,7 @@ public var messageContentView: _ChatMessageContentView<ExtraData>!
 Message data that is shown.
 
 ``` swift
-public var message: _ChatMessage<ExtraData> 
+public var message: ChatMessage 
 ```
 
 ### `messageViewFrame`
@@ -79,7 +79,7 @@ public var messageViewFrame: CGRect!
 `_ChatMessageActionsVC` instance for showing actions.
 
 ``` swift
-public var actionsController: _ChatMessageActionsVC<ExtraData>!
+public var actionsController: ChatMessageActionsVC!
 ```
 
 ### `reactionsController`
@@ -87,7 +87,7 @@ public var actionsController: _ChatMessageActionsVC<ExtraData>!
 `_ChatMessageReactionsVC` instance for showing reactions.
 
 ``` swift
-public var reactionsController: _ChatMessageReactionsVC<ExtraData>?
+public var reactionsController: ChatMessageReactionsVC?
 ```
 
 ## Methods

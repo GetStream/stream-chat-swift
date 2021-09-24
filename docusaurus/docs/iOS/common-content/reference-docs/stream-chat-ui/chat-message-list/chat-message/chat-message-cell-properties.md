@@ -10,7 +10,7 @@ public static var reuseId: String
 The message content view the cell is showing.
 
 ``` swift
-public private(set) var messageContentView: _ChatMessageContentView<ExtraData>?
+public private(set) var messageContentView: ChatMessageContentView?
 ```
 
 ### `minimumSpacingBelow`
@@ -47,8 +47,8 @@ Creates a message content view
 
 ``` swift
 public func setMessageContentIfNeeded(
-        contentViewClass: _ChatMessageContentView<ExtraData>.Type,
-        attachmentViewInjectorType: _AttachmentViewInjector<ExtraData>.Type?,
+        contentViewClass: ChatMessageContentView.Type,
+        attachmentViewInjectorType: AttachmentViewInjector.Type?,
         options: ChatMessageLayoutOptions
     ) 
 ```

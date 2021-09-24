@@ -2,7 +2,7 @@
 ### `fileAttachmentView`
 
 ``` swift
-open lazy var fileAttachmentView: _ChatMessageFileAttachmentListView<ExtraData> 
+open lazy var fileAttachmentView: ChatMessageFileAttachmentListView 
 ```
 
 ## Methods

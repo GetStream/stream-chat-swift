@@ -52,7 +52,7 @@ var isOnlyVisibleForCurrentUser: Bool
 Returns last active thread participant.
 
 ``` swift
-var lastActiveThreadParticipant: _ChatUser<ExtraData.User>? 
+var lastActiveThreadParticipant: ChatUser? 
 ```
 
 ### `isDeleted`

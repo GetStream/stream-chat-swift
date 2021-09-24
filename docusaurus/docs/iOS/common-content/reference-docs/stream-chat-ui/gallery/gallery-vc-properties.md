@@ -15,6 +15,14 @@ Items to display.
 open var items: [AnyChatMessageAttachment] 
 ```
 
+### `lastSeenDateFormatter`
+
+Returns the date formater function used to represent when the user was last seen online
+
+``` swift
+open var lastSeenDateFormatter: (Date) -> String? 
+```
+
 ### `transitionController`
 
 Controller for handling the transition for dismissal
@@ -117,7 +125,7 @@ open private(set) lazy var closeButton: UIButton = components
 View that controls the video player of currently visible cell.
 
 ``` swift
-open private(set) lazy var videoPlaybackBar: _VideoPlaybackControlView<ExtraData> = components
+open private(set) lazy var videoPlaybackBar: VideoPlaybackControlView = components
         .videoPlaybackControlView.init()
         .withoutAutoresizingMaskConstraints
 ```

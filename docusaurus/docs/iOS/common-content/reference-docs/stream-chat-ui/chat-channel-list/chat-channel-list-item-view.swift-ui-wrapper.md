@@ -6,13 +6,12 @@ SwiftUI wrapper of `_ChatChannelListItemView`.
 Servers to wrap custom SwiftUI view as a UIKit view so it can be easily injected into `_Components`.
 
 ``` swift
-public class SwiftUIWrapper<Content: SwiftUIView>: _ChatChannelListItemView<ExtraData>, ObservableObject
-        where Content.ExtraData == ExtraData
+public class SwiftUIWrapper<Content: SwiftUIView>: ChatChannelListItemView, ObservableObject 
 ```
 
 ## Inheritance
 
-`ObservableObject`, `_ChatChannelListItemView<ExtraData>`
+[`ChatChannelListItemView`](../chat-channel-list-item-view), `ObservableObject`
 
 ## Properties
 

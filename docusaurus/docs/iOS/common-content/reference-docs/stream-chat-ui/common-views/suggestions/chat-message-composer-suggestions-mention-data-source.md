@@ -3,14 +3,14 @@ title: ChatMessageComposerSuggestionsMentionDataSource
 ---
 
 ``` swift
-open class _ChatMessageComposerSuggestionsMentionDataSource<ExtraData: ExtraDataTypes>: NSObject,
+open class ChatMessageComposerSuggestionsMentionDataSource: NSObject,
     UICollectionViewDataSource,
-    _ChatUserSearchControllerDelegate 
+    ChatUserSearchControllerDelegate 
 ```
 
 ## Inheritance
 
-`NSObject`, `UICollectionViewDataSource`, `_ChatUserSearchControllerDelegate`
+`ChatUserSearchControllerDelegate`, `NSObject`, `UICollectionViewDataSource`
 
 ## Properties
 
@@ -19,7 +19,7 @@ open class _ChatMessageComposerSuggestionsMentionDataSource<ExtraData: ExtraData
 The collection view of the mentions.
 
 ``` swift
-open var collectionView: _ChatSuggestionsCollectionView<ExtraData>
+open var collectionView: ChatSuggestionsCollectionView
 ```
 
 ### `searchController`
@@ -27,7 +27,7 @@ open var collectionView: _ChatSuggestionsCollectionView<ExtraData>
 The search controller to search for mentions.
 
 ``` swift
-open var searchController: _ChatUserSearchController<ExtraData>
+open var searchController: ChatUserSearchController
 ```
 
 ## Methods
@@ -58,7 +58,7 @@ public func collectionView(_ collectionView: UICollectionView, cellForItemAt ind
 
 ``` swift
 public func controller(
-        _ controller: _ChatUserSearchController<ExtraData>,
-        didChangeUsers changes: [ListChange<_ChatUser<ExtraData.User>>]
+        _ controller: ChatUserSearchController,
+        didChangeUsers changes: [ListChange<ChatUser>]
     ) 
 ```

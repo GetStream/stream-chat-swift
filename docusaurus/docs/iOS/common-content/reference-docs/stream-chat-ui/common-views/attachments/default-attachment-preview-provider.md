@@ -26,5 +26,5 @@ public static var preferredAxis: NSLayoutConstraint.Axis
 ### `previewView(components:)`
 
 ``` swift
-public func previewView<ExtraData: ExtraDataTypes>(components: _Components<ExtraData>) -> UIView 
+public func previewView(components: Components) -> UIView 
 ```

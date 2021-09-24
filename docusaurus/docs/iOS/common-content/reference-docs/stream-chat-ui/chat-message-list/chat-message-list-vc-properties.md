@@ -1,114 +1,61 @@
 
-### `content`
+### `dataSource`
+
+The object that acts as the data source of the message list.
 
 ``` swift
-public var content: _ChatChannelController<ExtraData> 
+public weak var dataSource: ChatMessageListVCDataSource?
 ```
 
-### `channelController`
+### `delegate`
 
-Controller for observing data changes within the channel
+The object that acts as the delegate of the message list.
 
 ``` swift
-open var channelController: _ChatChannelController<ExtraData>!
+public weak var delegate: ChatMessageListVCDelegate?
 ```
 
 ### `client`
 
+The root object representing the Stream Chat.
+
 ``` swift
-public var client: _ChatClient<ExtraData> 
+public var client: ChatClient!
 ```
 
-### `keyboardObserver`
+### `router`
 
-Observer responsible for setting the correct offset when keyboard frame is changed
-
-``` swift
-open lazy var keyboardObserver 
-```
-
-### `userSuggestionSearchController`
-
-User search controller passed directly to the composer
+The router object that handles navigation to other view controllers.
 
 ``` swift
-open lazy var userSuggestionSearchController: _ChatUserSearchController<ExtraData> 
-```
-
-### `headerView`
-
-The header view of the message list that by default is the titleView of the navigation bar.
-
-``` swift
-open private(set) lazy var headerView: _ChatMessageListHeaderView<ExtraData> = components
-        .messageListHeaderView.init()
-        .withoutAutoresizingMaskConstraints
+open lazy var router: ChatMessageListRouter 
 ```
 
 ### `listView`
 
-View used to display the messages
+A View used to display the messages
 
 ``` swift
-open private(set) lazy var listView: _ChatMessageListView<ExtraData> 
+open private(set) lazy var listView: ChatMessageListView 
 ```
 
 ### `dateOverlayView`
 
-View used to display date of currently displayed messages
+A View used to display date of currently displayed messages
 
 ``` swift
 open private(set) lazy var dateOverlayView: ChatMessageListScrollOverlayView 
 ```
 
-### `messageComposerVC`
-
-Controller that handles the composer view
-
-``` swift
-open private(set) lazy var messageComposerVC 
-```
-
-### `channelAvatarView`
-
-View for displaying the channel image in the navigation bar.
-
-``` swift
-open private(set) lazy var channelAvatarView = components
-        .channelAvatarView.init()
-        .withoutAutoresizingMaskConstraints
-```
-
 ### `typingIndicatorView`
 
-View which displays information about current users who are typing.
+A View which displays information about current users who are typing.
 
 ``` swift
-open private(set) lazy var typingIndicatorView: _TypingIndicatorView<ExtraData> = components
+open private(set) lazy var typingIndicatorView: TypingIndicatorView = components
         .typingIndicatorView
         .init()
         .withoutAutoresizingMaskConstraints
-```
-
-### `scrollToLatestMessageButton`
-
-A button to scroll the collection view to the bottom.
-
-``` swift
-open private(set) lazy var scrollToLatestMessageButton: _ScrollToLatestMessageButton<ExtraData> = components
-        .scrollToLatestMessageButton
-        .init()
-        .withoutAutoresizingMaskConstraints
-```
-
-Visible when there is unread message and the collection view is not at the bottom already.
-
-### `router`
-
-A router object that handles navigation to other view controllers.
-
-``` swift
-open lazy var router 
 ```
 
 ### `typingIndicatorViewHeight`
@@ -116,7 +63,27 @@ open lazy var router
 The height of the typing indicator view
 
 ``` swift
-open private(set) var typingIndicatorViewHeight: CGFloat = 22
+open private(set) var typingIndicatorViewHeight: CGFloat = 28
+```
+
+### `isTypingEventsEnabled`
+
+A Boolean value indicating whether the typing events are enabled.
+
+``` swift
+open var isTypingEventsEnabled: Bool 
+```
+
+### `scrollToLatestMessageButton`
+
+A button to scroll the collection view to the bottom.
+Visible when there is unread message and the collection view is not at the bottom already.
+
+``` swift
+open private(set) lazy var scrollToLatestMessageButton: ScrollToLatestMessageButton = components
+        .scrollToLatestMessageButton
+        .init()
+        .withoutAutoresizingMaskConstraints
 ```
 
 ### `isScrollToBottomButtonVisible`
@@ -151,24 +118,6 @@ override open func setUpLayout()
 override open func setUpAppearance() 
 ```
 
-### `viewDidLoad()`
-
-``` swift
-override open func viewDidLoad() 
-```
-
-### `viewDidAppear(_:)`
-
-``` swift
-override open func viewDidAppear(_ animated: Bool) 
-```
-
-### `viewDidDisappear(_:)`
-
-``` swift
-override open func viewDidDisappear(_ animated: Bool) 
-```
-
 ### `cellLayoutOptionsForMessage(at:)`
 
 Returns layout options for the message on given `indexPath`.
@@ -186,50 +135,15 @@ determines which parts of the message are visible for the given message.
 Returns the content view class for the message at given `indexPath`
 
 ``` swift
-open func cellContentClassForMessage(at indexPath: IndexPath) -> _ChatMessageContentView<ExtraData>.Type 
+open func cellContentClassForMessage(at indexPath: IndexPath) -> ChatMessageContentView.Type 
 ```
 
 ### `attachmentViewInjectorClassForMessage(at:)`
 
-``` swift
-open func attachmentViewInjectorClassForMessage(at indexPath: IndexPath) -> _AttachmentViewInjector<ExtraData>.Type? 
-```
-
-### `tableView(_:willDisplay:forRowAt:)`
+Returns the attachment view injector for the message at given `indexPath`
 
 ``` swift
-open func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) 
-```
-
-### `scrollOverlay(_:textForItemAt:)`
-
-``` swift
-open func scrollOverlay(
-        _ overlay: ChatMessageListScrollOverlayView,
-        textForItemAt indexPath: IndexPath
-    ) -> String? 
-```
-
-### `scrollViewDidScroll(_:)`
-
-``` swift
-open func scrollViewDidScroll(_ scrollView: UIScrollView) 
-```
-
-### `scrollToMostRecentMessage(animated:)`
-
-Scrolls to most recent message
-
-``` swift
-open func scrollToMostRecentMessage(animated: Bool = true) 
-```
-
-### `updateScrollToLatestMessageButton()`
-
-Update the `scrollToLatestMessageButton` based on unread messages.
-
-``` swift
-open func updateScrollToLatestMessageButton() 
+open func attachmentViewInjectorClassForMessage(at indexPath: IndexPath) -> AttachmentViewInjector.Type? 
 ```
 
 ### `setScrollToLatestMessageButton(visible:animated:)`
@@ -248,16 +162,21 @@ Action for `scrollToLatestMessageButton` that scroll to most recent message.
 @objc open func scrollToLatestMessage() 
 ```
 
-### `handleLongPress(_:)`
+### `scrollToMostRecentMessage(animated:)`
 
-Handles long press action on collection view.
+Scrolls to most recent message
 
 ``` swift
-@objc open func handleLongPress(_ gesture: UILongPressGestureRecognizer) 
+open func scrollToMostRecentMessage(animated: Bool = true) 
 ```
 
-Default implementation will convert the gesture location to collection view's `indexPath`
-and then call selection action on the selected cell.
+### `updateMessages(with:completion:)`
+
+Updates the collection view data with given `changes`.
+
+``` swift
+open func updateMessages(with changes: [ListChange<ChatMessage>], completion: (() -> Void)? = nil) 
+```
 
 ### `handleTap(_:)`
 
@@ -269,24 +188,134 @@ Handles tap action on the table view.
 
 Default implementation will dismiss the keyboard if it is open
 
-### `updateMessages(with:completion:)`
+### `handleLongPress(_:)`
 
-Updates the collection view data with given `changes`.
-
-``` swift
-open func updateMessages(with changes: [ListChange<_ChatMessage<ExtraData>>], completion: (() -> Void)? = nil) 
-```
-
-### `messageForIndexPath(_:)`
+Handles long press action on collection view.
 
 ``` swift
-open func messageForIndexPath(_ indexPath: IndexPath) -> _ChatMessage<ExtraData> 
+@objc open func handleLongPress(_ gesture: UILongPressGestureRecognizer) 
 ```
+
+Default implementation will convert the gesture location to collection view's `indexPath`
+and then call selection action on the selected cell.
 
 ### `didSelectMessageCell(at:)`
 
+The message cell was select and should show the available message actions.
+
 ``` swift
 open func didSelectMessageCell(at indexPath: IndexPath) 
+```
+
+#### Parameters
+
+  - indexPath: The index path that the message was selected.
+
+### `showThread(messageId:)`
+
+Opens thread detail for given `MessageId`.
+
+``` swift
+open func showThread(messageId: MessageId) 
+```
+
+### `showTypingIndicator(typingUsers:)`
+
+Shows typing Indicator.
+
+``` swift
+open func showTypingIndicator(typingUsers: [ChatUser]) 
+```
+
+#### Parameters
+
+  - typingUsers: typing users gotten from `channelController`
+
+### `hideTypingIndicator()`
+
+Hides typing Indicator.
+
+``` swift
+open func hideTypingIndicator() 
+```
+
+### `numberOfSections(in:)`
+
+``` swift
+open func numberOfSections(in tableView: UITableView) -> Int 
+```
+
+### `tableView(_:numberOfRowsInSection:)`
+
+``` swift
+open func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int 
+```
+
+### `tableView(_:cellForRowAt:)`
+
+``` swift
+open func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell 
+```
+
+### `tableView(_:willDisplay:forRowAt:)`
+
+``` swift
+open func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) 
+```
+
+### `scrollViewDidScroll(_:)`
+
+``` swift
+open func scrollViewDidScroll(_ scrollView: UIScrollView) 
+```
+
+### `scrollOverlay(_:textForItemAt:)`
+
+``` swift
+open func scrollOverlay(
+        _ overlay: ChatMessageListScrollOverlayView,
+        textForItemAt indexPath: IndexPath
+    ) -> String? 
+```
+
+### `chatMessageActionsVC(_:message:didTapOnActionItem:)`
+
+``` swift
+open func chatMessageActionsVC(
+        _ vc: ChatMessageActionsVC,
+        message: ChatMessage,
+        didTapOnActionItem actionItem: ChatMessageActionItem
+    ) 
+```
+
+### `chatMessageActionsVCDidFinish(_:)`
+
+``` swift
+open func chatMessageActionsVCDidFinish(_ vc: ChatMessageActionsVC) 
+```
+
+### `messageContentViewDidTapOnErrorIndicator(_:)`
+
+``` swift
+open func messageContentViewDidTapOnErrorIndicator(_ indexPath: IndexPath?) 
+```
+
+### `messageContentViewDidTapOnThread(_:)`
+
+``` swift
+open func messageContentViewDidTapOnThread(_ indexPath: IndexPath?) 
+```
+
+### `messageContentViewDidTapOnQuotedMessage(_:)`
+
+``` swift
+open func messageContentViewDidTapOnQuotedMessage(_ indexPath: IndexPath?) 
+```
+
+### `messageContentViewDidTapOnAvatarView(_:)`
+
+``` swift
+open func messageContentViewDidTapOnAvatarView(_ indexPath: IndexPath?) 
 ```
 
 ### `galleryMessageContentView(at:didTapAttachmentPreview:previews:)`
@@ -337,120 +366,16 @@ open func didTapOnAttachmentAction(
     ) 
 ```
 
-### `showThread(messageId:)`
-
-Opens thread detail for given `message`
-
-``` swift
-open func showThread(messageId: MessageId) 
-```
-
-### `composerDidCreateNewMessage()`
-
-``` swift
-open func composerDidCreateNewMessage() 
-```
-
-### `channelController(_:didUpdateMessages:)`
-
-``` swift
-open func channelController(
-        _ channelController: _ChatChannelController<ExtraData>,
-        didUpdateMessages changes: [ListChange<_ChatMessage<ExtraData>>]
-    ) 
-```
-
-### `channelController(_:didUpdateChannel:)`
-
-``` swift
-open func channelController(
-        _ channelController: _ChatChannelController<ExtraData>,
-        didUpdateChannel channel: EntityChange<_ChatChannel<ExtraData>>
-    ) 
-```
-
-### `channelController(_:didChangeTypingUsers:)`
-
-``` swift
-open func channelController(
-        _ channelController: _ChatChannelController<ExtraData>,
-        didChangeTypingUsers typingUsers: Set<_ChatUser<ExtraData.User>>
-    ) 
-```
-
-### `showTypingIndicator(typingUsers:)`
-
-Shows typing Indicator
-
-``` swift
-open func showTypingIndicator(typingUsers: [_ChatUser<ExtraData.User>]) 
-```
-
-#### Parameters
-
-  - typingUsers: typing users gotten from `channelController`
-
-### `hideTypingIndicator()`
-
-Hides typing Indicator
-
-``` swift
-open func hideTypingIndicator() 
-```
-
-### `chatMessageActionsVC(_:message:didTapOnActionItem:)`
-
-``` swift
-open func chatMessageActionsVC(
-        _ vc: _ChatMessageActionsVC<ExtraData>,
-        message: _ChatMessage<ExtraData>,
-        didTapOnActionItem actionItem: ChatMessageActionItem
-    ) 
-```
-
-### `chatMessageActionsVCDidFinish(_:)`
-
-``` swift
-open func chatMessageActionsVCDidFinish(_ vc: _ChatMessageActionsVC<ExtraData>) 
-```
-
-### `messageContentViewDidTapOnErrorIndicator(_:)`
-
-``` swift
-open func messageContentViewDidTapOnErrorIndicator(_ indexPath: IndexPath?) 
-```
-
-### `messageContentViewDidTapOnThread(_:)`
-
-``` swift
-open func messageContentViewDidTapOnThread(_ indexPath: IndexPath?) 
-```
-
-### `messageContentViewDidTapOnQuotedMessage(_:)`
-
-``` swift
-open func messageContentViewDidTapOnQuotedMessage(_ indexPath: IndexPath?) 
-```
-
-### `numberOfSections(in:)`
-
-``` swift
-open func numberOfSections(in tableView: UITableView) -> Int 
-```
-
-### `tableView(_:numberOfRowsInSection:)`
-
-``` swift
-open func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int 
-```
-
-### `tableView(_:cellForRowAt:)`
-
-``` swift
-open func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell 
-```
-
 ### `gestureRecognizer(_:shouldReceive:)`
 
 ``` swift
-open func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool 
+open func gestureRecognizer(
+        _ gestureRecognizer: UIGestureRecognizer,
+        shouldReceive touch: UITouch
+    ) -> Bool 
+```
+
+### `presentationControllerShouldDismiss(_:)`
+
+``` swift
+public func presentationControllerShouldDismiss(_ presentationController: UIPresentationController) -> Bool 

@@ -4,7 +4,7 @@
 The underlying controller. You can still access it and call methods on it.
 
 ``` swift
-public let controller: _ChatUserListController
+public let controller: ChatUserListController
 ```
 
 ### `users`
@@ -12,7 +12,7 @@ public let controller: _ChatUserListController
 The users matching the query.
 
 ``` swift
-@Published public private(set) var users: LazyCachedMapCollection<_ChatUser<ExtraData.User>> = []
+@Published public private(set) var users: LazyCachedMapCollection<ChatUser> = []
 ```
 
 ### `state`
@@ -29,8 +29,8 @@ The current state of the Controller.
 
 ``` swift
 public func controller(
-        _ controller: _ChatUserListController<ExtraData>,
-        didChangeUsers changes: [ListChange<_ChatUser<ExtraData.User>>]
+        _ controller: ChatUserListController,
+        didChangeUsers changes: [ListChange<ChatUser>]
     ) 
 ```
 

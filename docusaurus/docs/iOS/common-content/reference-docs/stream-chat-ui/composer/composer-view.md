@@ -5,7 +5,7 @@ title: ComposerView
 /// The composer view that layouts all the components to create a new message.
 
 ``` swift
-open class _ComposerView<ExtraData: ExtraDataTypes>: _View, ThemeProvider 
+open class ComposerView: _View, ThemeProvider 
 ```
 
 High level overview of the composer layout:
@@ -85,7 +85,7 @@ public private(set) lazy var trailingContainer = ContainerStackView()
 A view to to input content of the new message.
 
 ``` swift
-public private(set) lazy var inputMessageView: _InputChatMessageView<ExtraData> = components
+public private(set) lazy var inputMessageView: InputChatMessageView = components
         .inputMessageView.init()
         .withoutAutoresizingMaskConstraints
 ```

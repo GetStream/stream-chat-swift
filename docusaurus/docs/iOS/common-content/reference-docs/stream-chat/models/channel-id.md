@@ -29,6 +29,12 @@ public init(type: ChannelType, id: String)
   - type: A type of the channel the `ChannelId` represents.
   - id: An id of the channel the `ChannelId` represents.
 
+### `init(cid:)`
+
+``` swift
+public init(cid: String) throws 
+```
+
 ### `init(from:)`
 
 ``` swift

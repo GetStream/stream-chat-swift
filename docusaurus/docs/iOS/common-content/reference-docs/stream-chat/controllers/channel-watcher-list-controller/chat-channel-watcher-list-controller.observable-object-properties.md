@@ -4,7 +4,7 @@
 The underlying controller. You can still access it and call methods on it.
 
 ``` swift
-public let controller: _ChatChannelWatcherListController
+public let controller: ChatChannelWatcherListController
 ```
 
 ### `watchers`
@@ -12,7 +12,7 @@ public let controller: _ChatChannelWatcherListController
 The channel members.
 
 ``` swift
-@Published public private(set) var watchers: LazyCachedMapCollection<_ChatUser<ExtraData.User>> = []
+@Published public private(set) var watchers: LazyCachedMapCollection<ChatUser> = []
 ```
 
 ### `state`
@@ -29,8 +29,8 @@ The current state of the controller.
 
 ``` swift
 public func channelWatcherListController(
-        _ controller: _ChatChannelWatcherListController<ExtraData>,
-        didChangeWatchers changes: [ListChange<_ChatUser<ExtraData.User>>]
+        _ controller: ChatChannelWatcherListController,
+        didChangeWatchers changes: [ListChange<ChatUser>]
     ) 
 ```
 

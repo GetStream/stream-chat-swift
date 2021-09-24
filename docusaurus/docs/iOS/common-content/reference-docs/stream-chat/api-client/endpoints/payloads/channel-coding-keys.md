@@ -5,14 +5,22 @@ title: ChannelCodingKeys
 Coding keys channel related payloads.
 
 ``` swift
-public enum ChannelCodingKeys: String, CodingKey 
+public enum ChannelCodingKeys: String, CodingKey, CaseIterable 
 ```
 
 ## Inheritance
 
-`CodingKey`, `String`
+`CaseIterable`, `CodingKey`, `String`
 
 ## Enumeration Cases
+
+### `id`
+
+The id of the channel
+
+``` swift
+case id
+```
 
 ### `cid`
 

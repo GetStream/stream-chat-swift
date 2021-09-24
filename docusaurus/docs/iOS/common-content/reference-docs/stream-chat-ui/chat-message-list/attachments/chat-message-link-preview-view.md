@@ -3,7 +3,7 @@ title: ChatMessageLinkPreviewView
 ---
 
 ``` swift
-open class _ChatMessageLinkPreviewView<ExtraData: ExtraDataTypes>: _Control, ThemeProvider 
+open class ChatMessageLinkPreviewView: _Control, ThemeProvider 
 ```
 
 ## Inheritance

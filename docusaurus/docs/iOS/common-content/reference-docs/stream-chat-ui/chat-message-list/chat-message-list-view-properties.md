@@ -46,8 +46,8 @@ Calculates the cell reuse identifier for the given options.
 
 ``` swift
 open func reuseIdentifier(
-        contentViewClass: _ChatMessageContentView<ExtraData>.Type,
-        attachmentViewInjectorType: _AttachmentViewInjector<ExtraData>.Type?,
+        contentViewClass: ChatMessageContentView.Type,
+        attachmentViewInjectorType: AttachmentViewInjector.Type?,
         layoutOptions: ChatMessageLayoutOptions
     ) -> String 
 ```
@@ -67,7 +67,7 @@ The cell reuse identifier.
 Returns the reuse identifier of the given cell.
 
 ``` swift
-open func reuseIdentifier(for cell: _ChatMessageCell<ExtraData>?) -> String? 
+open func reuseIdentifier(for cell: ChatMessageCell?) -> String? 
 ```
 
 #### Parameters
@@ -85,11 +85,11 @@ if needed.
 
 ``` swift
 open func dequeueReusableCell(
-        contentViewClass: _ChatMessageContentView<ExtraData>.Type,
-        attachmentViewInjectorType: _AttachmentViewInjector<ExtraData>.Type?,
+        contentViewClass: ChatMessageContentView.Type,
+        attachmentViewInjectorType: AttachmentViewInjector.Type?,
         layoutOptions: ChatMessageLayoutOptions,
         for indexPath: IndexPath
-    ) -> _ChatMessageCell<ExtraData> 
+    ) -> ChatMessageCell 
 ```
 
 #### Parameters
@@ -100,7 +100,7 @@ open func dequeueReusableCell(
 
 #### Returns
 
-The instance of `_ChatMessageCollectionViewCell<ExtraData>` set up with the provided `contentViewClass` and `layoutOptions`
+The instance of `ChatMessageCollectionViewCell` set up with the provided `contentViewClass` and `layoutOptions`
 
 ### `scrollToMostRecentMessage(animated:)`
 
@@ -116,7 +116,7 @@ Updates the table view data with given `changes`.
 
 ``` swift
 open func updateMessages(
-        with changes: [ListChange<_ChatMessage<ExtraData>>],
+        with changes: [ListChange<ChatMessage>],
         completion: (() -> Void)? = nil
     ) 
 ```

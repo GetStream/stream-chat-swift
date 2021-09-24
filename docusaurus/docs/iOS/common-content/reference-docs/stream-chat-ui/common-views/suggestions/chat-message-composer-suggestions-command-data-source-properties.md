@@ -2,7 +2,7 @@
 ### `collectionView`
 
 ``` swift
-open var collectionView: _ChatSuggestionsCollectionView<ExtraData>
+open var collectionView: ChatSuggestionsCollectionView
 ```
 
 ### `commands`
@@ -18,7 +18,7 @@ open var commands: [Command]
 The current types to override ui components.
 
 ``` swift
-open var components: _Components<ExtraData> 
+open var components: Components 
 ```
 
 ### `appearance`

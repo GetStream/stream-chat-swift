@@ -6,12 +6,8 @@ A query is used for querying specific channels from backend.
 You can specify filter, sorting, pagination, limit for fetched messages in channel and other options.
 
 ``` swift
-public struct _ChannelListQuery<ExtraData: ChannelExtraData>: Encodable 
+public struct ChannelListQuery: Encodable 
 ```
-
-> 
-
-Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/Cheat-Sheet#working-with-extra-data).
 
 ## Inheritance
 
@@ -25,7 +21,7 @@ Init a channels query.
 
 ``` swift
 public init(
-        filter: Filter<_ChannelListFilterScope<ExtraData>>,
+        filter: Filter<ChannelListFilterScope>,
         sort: [Sorting<ChannelListSortingKey>] = [],
         pageSize: Int = .channelsPageSize,
         messagesLimit: Int = .messagesPageSize
@@ -46,7 +42,7 @@ public init(
 A filter for the query (see `Filter`).
 
 ``` swift
-public let filter: Filter<_ChannelListFilterScope<ExtraData>>
+public let filter: Filter<ChannelListFilterScope>
 ```
 
 ### `sort`
@@ -86,5 +82,5 @@ public func encode(to encoder: Encoder) throws
 ### `==`
 
 ``` swift
-public static func == (lhs: _ChannelListQuery<ExtraData>, rhs: _ChannelListQuery<ExtraData>) -> Bool 
+public static func == (lhs: ChannelListQuery, rhs: ChannelListQuery) -> Bool 
 ```

@@ -12,7 +12,7 @@ public let cid: ChannelId
 A filter for the query (see `Filter`).
 
 ``` swift
-public let filter: Filter<_MemberListFilterScope<ExtraData>>?
+public let filter: Filter<MemberListFilterScope>?
 ```
 
 ### `sort`

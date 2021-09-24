@@ -10,7 +10,7 @@ public class ObservableObject: SwiftUI.ObservableObject
 
 ## Inheritance
 
-`SwiftUI.ObservableObject`, [`_ChatConnectionControllerDelegate`](../chat-connection-controller-delegate)
+[`ChatConnectionControllerDelegate`](../chat-connection-controller-delegate), `SwiftUI.ObservableObject`
 
 ## Properties
 
@@ -19,7 +19,7 @@ public class ObservableObject: SwiftUI.ObservableObject
 The underlying controller. You can still access it and call methods on it.
 
 ``` swift
-public let controller: _ChatConnectionController
+public let controller: ChatConnectionController
 ```
 
 ### `connectionStatus`
@@ -36,7 +36,7 @@ The connection status.
 
 ``` swift
 public func connectionController(
-        _ controller: _ChatConnectionController<ExtraData>,
+        _ controller: ChatConnectionController,
         didUpdateConnectionStatus status: ConnectionStatus
     ) 
 ```

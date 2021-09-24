@@ -5,13 +5,11 @@ title: ChatClient
 The root object representing a Stream Chat.
 
 ``` swift
-public class _ChatClient<ExtraData: ExtraDataTypes> 
+public class ChatClient 
 ```
 
 Typically, an app contains just one instance of `ChatClient`. However, it's possible to have multiple instances if your use
 case requires it (i.e. more than one window with different workspaces in a Slack-like app).
-
-> 
 
 ## Inheritance
 
@@ -76,13 +74,23 @@ public var tokenProvider: TokenProvider?
 
 ## Methods
 
+### `setToken(token:)`
+
+Sets the user token to the client, this method is only needed to perform API calls
+without connecting as a user.
+You should only use this in special cases like a notification service or other background process
+
+``` swift
+public func setToken(token: Token) 
+```
+
 ### `connectUser(userInfo:token:completion:)`
 
 Connects authorized user
 
 ``` swift
 public func connectUser(
-        userInfo: UserInfo<ExtraData>,
+        userInfo: UserInfo,
         token: Token,
         completion: ((Error?) -> Void)? = nil
     ) 
@@ -100,7 +108,7 @@ Connects a guest user
 
 ``` swift
 public func connectGuestUser(
-        userInfo: UserInfo<ExtraData>,
+        userInfo: UserInfo,
         completion: ((Error?) -> Void)? = nil
     ) 
 ```
@@ -132,39 +140,44 @@ are received.
 public func disconnect() 
 ```
 
-### `channelController(for:)`
+### `channelController(for:messageOrdering:)`
 
 Creates a new `ChatChannelController` for the channel with the provided id.
 
 ``` swift
-func channelController(for cid: ChannelId) -> _ChatChannelController<ExtraData> 
+func channelController(for cid: ChannelId, messageOrdering: MessageOrdering = .topToBottom) -> ChatChannelController 
 ```
 
 #### Parameters
 
   - cid: The id of the channel this controller represents.
+  - messageOrdering: Describes the ordering the messages are presented.
 
 #### Returns
 
 A new instance of `ChatChannelController`.
 
-### `channelController(for:)`
+### `channelController(for:messageOrdering:)`
 
 Creates a new `ChatChannelController` for the channel with the provided channel query.
 
 ``` swift
-func channelController(for channelQuery: _ChannelQuery<ExtraData>) -> _ChatChannelController<ExtraData> 
+func channelController(
+        for channelQuery: ChannelQuery,
+        messageOrdering: MessageOrdering = .topToBottom
+    ) -> ChatChannelController 
 ```
 
 #### Parameters
 
   - channelQuery: The ChannelQuery this controller represents
+  - messageOrdering: Describes the ordering the messages are presented.
 
 #### Returns
 
 A new instance of `ChatChannelController`.
 
-### `channelController(createChannelWithId:name:imageURL:team:members:isCurrentUserMember:invites:extraData:)`
+### `channelController(createChannelWithId:name:imageURL:team:members:isCurrentUserMember:messageOrdering:invites:extraData:)`
 
 Creates a `ChatChannelController` that will create a new channel, if the channel doesn't exist already.
 
@@ -176,9 +189,10 @@ func channelController(
         team: String? = nil,
         members: Set<UserId> = [],
         isCurrentUserMember: Bool = true,
+        messageOrdering: MessageOrdering = .topToBottom,
         invites: Set<UserId> = [],
-        extraData: ExtraData.Channel = .defaultValue
-    ) throws -> _ChatChannelController<ExtraData> 
+        extraData: [String: RawJSON] = [:]
+    ) throws -> ChatChannelController 
 ```
 
 It's safe to call this method for already existing channels. However, if you queried the channel before and you're sure it exists locally,
@@ -192,6 +206,7 @@ it can be faster and more convenient to use `channelController(for cid: ChannelI
   - team: Team for new channel.
   - members: Ds for the new channel members.
   - isCurrentUserMember: If set to `true` the current user will be included into the channel. Is `true` by default.
+  - messageOrdering: Describes the ordering the messages are presented.
   - invites: IDs for the new channel invitees.
   - extraData: Extra data for the new channel.
 
@@ -203,7 +218,7 @@ it can be faster and more convenient to use `channelController(for cid: ChannelI
 
 A new instance of `ChatChannelController`.
 
-### `channelController(createDirectMessageChannelWith:type:isCurrentUserMember:name:imageURL:team:extraData:)`
+### `channelController(createDirectMessageChannelWith:type:isCurrentUserMember:messageOrdering:name:imageURL:team:extraData:)`
 
 Creates a `ChatChannelController` that will create a new channel with the provided members without having to specify
 the channel id explicitly. This is great for direct message channels because the channel should be uniquely identified by
@@ -214,11 +229,12 @@ func channelController(
         createDirectMessageChannelWith members: Set<UserId>,
         type: ChannelType = .messaging,
         isCurrentUserMember: Bool = true,
+        messageOrdering: MessageOrdering = .topToBottom,
         name: String? = nil,
         imageURL: URL? = nil,
         team: String? = nil,
-        extraData: ExtraData.Channel = .defaultValue
-    ) throws -> _ChatChannelController<ExtraData> 
+        extraData: [String: RawJSON]
+    ) throws -> ChatChannelController 
 ```
 
 It's safe to call this method for already existing channels. However, if you queried the channel before and you're sure it exists locally,
@@ -229,6 +245,7 @@ it can be faster and more convenient to use `channelController(for cid: ChannelI
   - members: Members for the new channel. Must not be empty.
   - type: The type of the channel.
   - isCurrentUserMember: If set to `true` the current user will be included into the channel. Is `true` by default.
+  - messageOrdering: Describes the ordering the messages are presented.
   - name: The new channel name.
   - imageURL: The new channel avatar URL.
   - team: Team for the new channel.
@@ -248,7 +265,7 @@ A new instance of `ChatChannelController`.
 Creates a new `ChannelListController` with the provided channel query.
 
 ``` swift
-public func channelListController(query: _ChannelListQuery<ExtraData.Channel>) -> _ChatChannelListController<ExtraData> 
+public func channelListController(query: ChannelListQuery) -> ChatChannelListController 
 ```
 
 #### Parameters
@@ -264,7 +281,7 @@ A new instance of `ChannelController`.
 Creates a new `_ChatChannelWatcherListController` with the provided query.
 
 ``` swift
-public func watcherListController(query: ChannelWatcherListQuery) -> _ChatChannelWatcherListController<ExtraData> 
+public func watcherListController(query: ChannelWatcherListQuery) -> ChatChannelWatcherListController 
 ```
 
 #### Parameters
@@ -273,14 +290,14 @@ public func watcherListController(query: ChannelWatcherListQuery) -> _ChatChanne
 
 #### Returns
 
-A new instance of `_ChatChannelMemberListController`.
+A new instance of `ChatChannelMemberListController`.
 
 ### `connectionController()`
 
 Creates a new `ChatConnectionController` instance.
 
 ``` swift
-func connectionController() -> _ChatConnectionController<ExtraData> 
+func connectionController() -> ChatConnectionController 
 ```
 
 #### Returns
@@ -292,19 +309,48 @@ A new instance of `ChatConnectionController`.
 Creates a new `CurrentUserController` instance.
 
 ``` swift
-func currentUserController() -> _CurrentChatUserController<ExtraData> 
+func currentUserController() -> CurrentChatUserController 
 ```
 
 #### Returns
 
 A new instance of `CurrentChatUserController`.
 
-### `memberController(userId:in:)`
+### `channelEventsController(for:)`
 
-Creates a new `_ChatChannelMemberController` for the user with the provided `userId` and `cid`.
+Creates a new `ChannelEventsController` that can be used to listen to system events
+related to the channel with `cid` and to send custom events.
 
 ``` swift
-func memberController(userId: UserId, in cid: ChannelId) -> _ChatChannelMemberController<ExtraData> 
+func channelEventsController(for cid: ChannelId) -> ChannelEventsController 
+```
+
+#### Parameters
+
+  - cid: A channel identifier.
+
+#### Returns
+
+A new instance of `ChannelEventsController`.
+
+### `eventsController()`
+
+Creates a new `EventsController` that can be used for event listening.
+
+``` swift
+func eventsController() -> EventsController 
+```
+
+#### Returns
+
+A new instance of `EventsController`.
+
+### `memberController(userId:in:)`
+
+Creates a new `ChatChannelMemberController` for the user with the provided `userId` and `cid`.
+
+``` swift
+func memberController(userId: UserId, in cid: ChannelId) -> ChatChannelMemberController 
 ```
 
 #### Parameters
@@ -314,16 +360,16 @@ func memberController(userId: UserId, in cid: ChannelId) -> _ChatChannelMemberCo
 
 #### Returns
 
-A new instance of `_ChatChannelMemberController`.
+A new instance of `ChatChannelMemberController`.
 
 ### `memberListController(query:)`
 
-Creates a new `_ChatChannelMemberListController` with the provided query.
+Creates a new `ChatChannelMemberListController` with the provided query.
 
 ``` swift
 public func memberListController(
-        query: _ChannelMemberListQuery<ExtraData.User>
-    ) -> _ChatChannelMemberListController<ExtraData> 
+        query: ChannelMemberListQuery
+    ) -> ChatChannelMemberListController 
 ```
 
 #### Parameters
@@ -332,14 +378,14 @@ public func memberListController(
 
 #### Returns
 
-A new instance of `_ChatChannelMemberListController`.
+A new instance of `ChatChannelMemberListController`.
 
 ### `messageController(cid:messageId:)`
 
 Creates a new `MessageController` for the message with the provided id.
 
 ``` swift
-func messageController(cid: ChannelId, messageId: MessageId) -> _ChatMessageController<ExtraData> 
+func messageController(cid: ChannelId, messageId: MessageId) -> ChatMessageController 
 ```
 
 #### Parameters
@@ -351,12 +397,28 @@ func messageController(cid: ChannelId, messageId: MessageId) -> _ChatMessageCont
 
 A new instance of `MessageController`.
 
+### `messageSearchController()`
+
+Creates a new `MessageSearchController` with the provided message query.
+
+``` swift
+func messageSearchController() -> ChatMessageSearchController 
+```
+
+#### Parameters
+
+  - query: The query specify the filter of the messages the controller should fetch.
+
+#### Returns
+
+A new instance of `MessageSearchController`.
+
 ### `userSearchController()`
 
 Creates a new `_ChatUserSearchController` with the provided user query.
 
 ``` swift
-public func userSearchController() -> _ChatUserSearchController<ExtraData> 
+public func userSearchController() -> ChatUserSearchController 
 ```
 
 #### Parameters
@@ -372,7 +434,7 @@ A new instance of `_ChatUserSearchController`.
 Creates a new `_ChatUserController` for the user with the provided `userId`.
 
 ``` swift
-func userController(userId: UserId) -> _ChatUserController<ExtraData> 
+func userController(userId: UserId) -> ChatUserController 
 ```
 
 #### Parameters
@@ -388,7 +450,7 @@ A new instance of `_ChatUserController`.
 Creates a new `_ChatUserListController` with the provided user query.
 
 ``` swift
-public func userListController(query: _UserListQuery<ExtraData.User> = .init()) -> _ChatUserListController<ExtraData> 
+public func userListController(query: UserListQuery = .init()) -> ChatUserListController 
 ```
 
 #### Parameters

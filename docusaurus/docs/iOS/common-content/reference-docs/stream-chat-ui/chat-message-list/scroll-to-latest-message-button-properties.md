@@ -4,7 +4,7 @@
 The view showing number of unread messages in channel if any.
 
 ``` swift
-open private(set) lazy var unreadCountView: _ChatMessageListUnreadCountView<ExtraData> = components
+open private(set) lazy var unreadCountView: ChatMessageListUnreadCountView = components
         .messageListUnreadCountView
         .init()
         .withoutAutoresizingMaskConstraints

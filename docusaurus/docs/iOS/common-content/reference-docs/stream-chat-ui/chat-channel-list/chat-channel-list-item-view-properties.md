@@ -80,7 +80,7 @@ open private(set) lazy var timestampLabel: UILabel = UILabel()
 The view used to show channels avatar.
 
 ``` swift
-open private(set) lazy var avatarView: _ChatChannelAvatarView<ExtraData> = components
+open private(set) lazy var avatarView: ChatChannelAvatarView = components
         .channelAvatarView
         .init()
         .withoutAutoresizingMaskConstraints

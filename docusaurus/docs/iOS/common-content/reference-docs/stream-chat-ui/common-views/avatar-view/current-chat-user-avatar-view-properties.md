@@ -4,7 +4,7 @@
 `StreamChat`'s controller that observe the currently logged-in user.
 
 ``` swift
-open var controller: _CurrentChatUserController<ExtraData>? 
+open var controller: CurrentChatUserController? 
 ```
 
 ### `avatarView`
@@ -65,6 +65,6 @@ override open func setUpLayout()
 
 ``` swift
 public func currentUserController(
-        _ controller: _CurrentChatUserController<ExtraData>,
-        didChangeCurrentUser: EntityChange<_CurrentChatUser<ExtraData>>
+        _ controller: CurrentChatUserController,
+        didChangeCurrentUser: EntityChange<CurrentChatUser>
     ) 

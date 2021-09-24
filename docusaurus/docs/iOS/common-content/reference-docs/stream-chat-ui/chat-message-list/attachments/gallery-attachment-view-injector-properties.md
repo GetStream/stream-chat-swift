@@ -4,11 +4,24 @@
 A gallery which shows attachment previews.
 
 ``` swift
-open private(set) lazy var galleryView: _ChatMessageGalleryView<ExtraData> = contentView
+open private(set) lazy var galleryView: ChatMessageGalleryView = contentView
         .components
         .galleryView.init()
         .withoutAutoresizingMaskConstraints
 ```
+
+### `galleryViewAspectRatio`
+
+A gallery view width \* height ratio.
+
+``` swift
+open var galleryViewAspectRatio: CGFloat? 
+```
+
+If `nil` is returned, aspect ratio will not be applied and gallery view will
+aspect ratio will depend on internal constraints.
+
+Returns `1.32` by default.
 
 ## Methods
 

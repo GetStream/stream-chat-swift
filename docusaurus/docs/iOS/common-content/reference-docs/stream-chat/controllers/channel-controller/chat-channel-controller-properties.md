@@ -12,7 +12,7 @@ public var statePublisher: AnyPublisher<DataController.State, Never>
 A publisher emitting a new value every time the channel changes.
 
 ``` swift
-public var channelChangePublisher: AnyPublisher<EntityChange<_ChatChannel<ExtraData>>, Never> 
+public var channelChangePublisher: AnyPublisher<EntityChange<ChatChannel>, Never> 
 ```
 
 ### `messagesChangesPublisher`
@@ -20,7 +20,7 @@ public var channelChangePublisher: AnyPublisher<EntityChange<_ChatChannel<ExtraD
 A publisher emitting a new value every time the list of the messages matching the query changes.
 
 ``` swift
-public var messagesChangesPublisher: AnyPublisher<[ListChange<_ChatMessage<ExtraData>>], Never> 
+public var messagesChangesPublisher: AnyPublisher<[ListChange<ChatMessage>], Never> 
 ```
 
 ### `memberEventPublisher`
@@ -36,7 +36,7 @@ public var memberEventPublisher: AnyPublisher<MemberEvent, Never>
 A publisher emitting a new value every time typing users change.
 
 ``` swift
-public var typingUsersPublisher: AnyPublisher<Set<_ChatUser<ExtraData.User>>, Never> 
+public var typingUsersPublisher: AnyPublisher<Set<ChatUser>, Never> 
 ```
 
 ### `observableObject`
@@ -52,7 +52,7 @@ public var observableObject: ObservableObject
 The ChannelQuery this controller observes.
 
 ``` swift
-@Atomic public private(set) var channelQuery: _ChannelQuery<ExtraData>
+@Atomic public private(set) var channelQuery: ChannelQuery
 ```
 
 ### `hasLoadedAllPreviousMessages`
@@ -78,7 +78,7 @@ public var cid: ChannelId?
 The `ChatClient` instance this controller belongs to.
 
 ``` swift
-public let client: _ChatClient<ExtraData>
+public let client: ChatClient
 ```
 
 ### `channel`
@@ -86,7 +86,7 @@ public let client: _ChatClient<ExtraData>
 The channel the controller represents.
 
 ``` swift
-public var channel: _ChatChannel<ExtraData>? 
+public var channel: ChatChannel? 
 ```
 
 To observe changes of the channel, set your class as a delegate of this controller or use the provided
@@ -97,21 +97,19 @@ To observe changes of the channel, set your class as a delegate of this controll
 The messages of the channel the controller represents.
 
 ``` swift
-public var messages: LazyCachedMapCollection<_ChatMessage<ExtraData>> 
+public var messages: LazyCachedMapCollection<ChatMessage> 
 ```
 
 To observe changes of the messages, set your class as a delegate of this controller or use the provided
 `Combine` publishers.
 
-### `listOrdering`
+### `messageOrdering`
 
 Describes the ordering the messages are presented.
 
 ``` swift
-public var listOrdering: ListOrdering = .topToBottom 
+public let messageOrdering: MessageOrdering
 ```
-
-> 
 
 ### `areTypingEventsEnabled`
 
@@ -153,6 +151,14 @@ var areReadEventsEnabled: Bool
 var areUploadsEnabled: Bool 
 ```
 
+### `delegate`
+
+Set the delegate of `ChannelController` to observe the changes in the system.
+
+``` swift
+var delegate: ChatChannelControllerDelegate? 
+```
+
 ## Methods
 
 ### `synchronize(_:)`
@@ -166,11 +172,8 @@ override public func synchronize(_ completion: ((_ error: Error?) -> Void)? = ni
 Sets the provided object as a delegate of this controller.
 
 ``` swift
-public func setDelegate<Delegate: _ChatChannelControllerDelegate>(_ delegate: Delegate)
-        where Delegate.ExtraData == ExtraData 
+public func setDelegate<Delegate: ChatChannelControllerDelegate>(_ delegate: Delegate) 
 ```
-
-> 
 
 #### Parameters
 
@@ -187,7 +190,7 @@ func updateChannel(
         team: String?,
         members: Set<UserId> = [],
         invites: Set<UserId> = [],
-        extraData: ExtraData.Channel,
+        extraData: [String: RawJSON] = [:],
         completion: ((Error?) -> Void)? = nil
     ) 
 ```
@@ -371,7 +374,7 @@ func createNewMessage(
         attachments: [AnyAttachmentPayload] = [],
         mentionedUserIds: [UserId] = [],
         quotedMessageId: MessageId? = nil,
-        extraData: ExtraData.Message = .defaultValue,
+        extraData: [String: RawJSON] = [:],
         completion: ((Result<MessageId, Error>) -> Void)? = nil
     ) 
 ```
@@ -411,6 +414,47 @@ func removeMembers(userIds: Set<UserId>, completion: ((Error?) -> Void)? = nil)
 
   - users: Users Id to add to a channel.
   - completion: The completion. Will be called on a **callbackQueue** when the network request is finished. If request fails, the completion will be called with an error.
+
+### `inviteMembers(userIds:completion:)`
+
+Invite members to a channel. They can then accept or decline the invitation
+
+``` swift
+func inviteMembers(userIds: Set<UserId>, completion: ((Error?) -> Void)? = nil) 
+```
+
+#### Parameters
+
+  - userIds: Set of ids of users to be invited to the channel
+  - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
+
+### `acceptInvite(message:completion:)`
+
+Accept Request
+
+``` swift
+func acceptInvite(message: String? = nil, completion: ((Error?) -> Void)? = nil) 
+```
+
+#### Parameters
+
+  - cid: The channel identifier.
+  - userId: userId
+  - message: message
+  - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
+
+### `rejectInvite(completion:)`
+
+Reject Request
+
+``` swift
+func rejectInvite(completion: ((Error?) -> Void)? = nil) 
+```
+
+#### Parameters
+
+  - cid: The channel identifier.
+  - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
 
 ### `markRead(completion:)`
 
@@ -482,4 +526,17 @@ Freezing a channel will disallow sending new messages and sending / deleting rea
 For more information, see https://getstream.io/chat/docs/ios-swift/freezing\_channels/?language=swift
 
 #### Parameters
+
+  - completion: The completion. Will be called on a **callbackQueue** when the network request is finished. If request fails, the completion will be called with an error.
+
+### `eventsController()`
+
+Creates a new `ChannelEventsController` that can be used to listen to system events
+and for sending custom events into a channel the current controller manages.
+
+``` swift
+func eventsController() -> ChannelEventsController 
+```
+
+#### Returns
 

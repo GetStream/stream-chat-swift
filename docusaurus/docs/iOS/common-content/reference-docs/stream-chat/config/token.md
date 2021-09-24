@@ -62,6 +62,18 @@ public let rawValue: String
 public let userId: UserId
 ```
 
+### `expiration`
+
+``` swift
+public let expiration: Date?
+```
+
+### `isExpired`
+
+``` swift
+public var isExpired: Bool 
+```
+
 ### `anonymous`
 
 The token that can be used when user is unknown.

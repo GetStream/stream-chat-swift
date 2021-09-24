@@ -1,5 +1,5 @@
 ---
-title: Controllers Overview
+title: Overview
 ---
 
 The `StreamChat` framework ships with controllers and delegates that you can use to build your own views.

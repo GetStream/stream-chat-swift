@@ -3,7 +3,7 @@ title: ChatMessageActionsVCDelegate
 ---
 
 ``` swift
-public protocol _ChatMessageActionsVCDelegate: AnyObject 
+public protocol ChatMessageActionsVCDelegate: AnyObject 
 ```
 
 ## Inheritance
@@ -12,18 +12,12 @@ public protocol _ChatMessageActionsVCDelegate: AnyObject
 
 ## Requirements
 
-### ExtraData
-
-``` swift
-associatedtype ExtraData: ExtraDataTypes
-```
-
 ### chatMessageActionsVC(\_:​message:​didTapOnActionItem:​)
 
 ``` swift
 func chatMessageActionsVC(
-        _ vc: _ChatMessageActionsVC<ExtraData>,
-        message: _ChatMessage<ExtraData>,
+        _ vc: ChatMessageActionsVC,
+        message: ChatMessage,
         didTapOnActionItem actionItem: ChatMessageActionItem
     )
 ```
@@ -31,5 +25,5 @@ func chatMessageActionsVC(
 ### chatMessageActionsVCDidFinish(\_:​)
 
 ``` swift
-func chatMessageActionsVCDidFinish(_ vc: _ChatMessageActionsVC<ExtraData>)
+func chatMessageActionsVCDidFinish(_ vc: ChatMessageActionsVC)
 ```

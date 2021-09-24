@@ -4,7 +4,7 @@
 The underlying controller. You can still access it and call methods on it.
 
 ``` swift
-public let controller: _ChatChannelMemberController
+public let controller: ChatChannelMemberController
 ```
 
 ### `member`
@@ -12,7 +12,7 @@ public let controller: _ChatChannelMemberController
 The channel member.
 
 ``` swift
-@Published public private(set) var member: _ChatChannelMember<ExtraData.User>?
+@Published public private(set) var member: ChatChannelMember?
 ```
 
 ### `state`
@@ -29,8 +29,8 @@ The current state of the controller.
 
 ``` swift
 public func memberController(
-        _ controller: _ChatChannelMemberController<ExtraData>,
-        didUpdateMember change: EntityChange<_ChatChannelMember<ExtraData.User>>
+        _ controller: ChatChannelMemberController,
+        didUpdateMember change: EntityChange<ChatChannelMember>
     ) 
 ```
 

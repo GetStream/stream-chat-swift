@@ -5,7 +5,7 @@ title: ChatMessageActionsVC
 View controller to show message actions.
 
 ``` swift
-open class _ChatMessageActionsVC<ExtraData: ExtraDataTypes>: _ViewController, ThemeProvider 
+open class ChatMessageActionsVC: _ViewController, ThemeProvider 
 ```
 
 ## Inheritance
@@ -16,18 +16,16 @@ open class _ChatMessageActionsVC<ExtraData: ExtraDataTypes>: _ViewController, Th
 
 ### `delegate`
 
-`_ChatMessageActionsVC.Delegate` instance.
-
 ``` swift
-public var delegate: Delegate?
+public weak var delegate: ChatMessageActionsVCDelegate?
 ```
 
 ### `messageController`
 
-`_ChatMessageController` instance used to obtain the message data.
+`ChatMessageController` instance used to obtain the message data.
 
 ``` swift
-public var messageController: _ChatMessageController<ExtraData>!
+public var messageController: ChatMessageController!
 ```
 
 ### `channelConfig`
@@ -43,7 +41,7 @@ public var channelConfig: ChannelConfig!
 Message that should be shown in this view controller.
 
 ``` swift
-open var message: _ChatMessage<ExtraData>? 
+open var message: ChatMessage? 
 ```
 
 ### `alertsRouter`

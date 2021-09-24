@@ -2,17 +2,12 @@
 title: ChatMessageReaction
 ---
 
-A type representing a message reaction. `_ChatMessageReaction` is an immutable snapshot
+A type representing a message reaction. `ChatMessageReaction` is an immutable snapshot
 of a message reaction entity at the given time.
 
 ``` swift
-@dynamicMemberLookup
-public struct _ChatMessageReaction<ExtraData: ExtraDataTypes>: Hashable 
+public struct ChatMessageReaction: Hashable 
 ```
-
-> 
-
-Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/Cheat-Sheet#working-with-extra-data).
 
 ## Inheritance
 
@@ -54,10 +49,10 @@ public let updatedAt: Date
 
 ### `extraData`
 
-The reaction's extra data.
+Custom data
 
 ``` swift
-public let extraData: ExtraData.MessageReaction
+public let extraData: [String: RawJSON]
 ```
 
 ### `author`
@@ -65,5 +60,5 @@ public let extraData: ExtraData.MessageReaction
 The author.
 
 ``` swift
-public let author: _ChatUser<ExtraData.User>
+public let author: ChatUser
 ```

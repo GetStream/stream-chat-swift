@@ -12,7 +12,7 @@ public var statePublisher: AnyPublisher<DataController.State, Never>
 A publisher emitting a new value every time the message changes.
 
 ``` swift
-public var messageChangePublisher: AnyPublisher<EntityChange<_ChatMessage<ExtraData>>, Never> 
+public var messageChangePublisher: AnyPublisher<EntityChange<ChatMessage>, Never> 
 ```
 
 ### `repliesChangesPublisher`
@@ -20,7 +20,7 @@ public var messageChangePublisher: AnyPublisher<EntityChange<_ChatMessage<ExtraD
 A publisher emitting a new value every time the list of the replies of the message has changes.
 
 ``` swift
-public var repliesChangesPublisher: AnyPublisher<[ListChange<_ChatMessage<ExtraData>>], Never> 
+public var repliesChangesPublisher: AnyPublisher<[ListChange<ChatMessage>], Never> 
 ```
 
 ### `observableObject`
@@ -36,7 +36,7 @@ public var observableObject: ObservableObject
 The `ChatClient` instance this controller belongs to.
 
 ``` swift
-public let client: _ChatClient<ExtraData>
+public let client: ChatClient
 ```
 
 ### `cid`
@@ -60,7 +60,7 @@ public let messageId: MessageId
 The message object this controller represents.
 
 ``` swift
-public var message: _ChatMessage<ExtraData>? 
+public var message: ChatMessage? 
 ```
 
 To observe changes of the message, set your class as a delegate of this controller or use the provided
@@ -71,7 +71,7 @@ To observe changes of the message, set your class as a delegate of this controll
 The replies to the message the controller represents.
 
 ``` swift
-public var replies: LazyCachedMapCollection<_ChatMessage<ExtraData>> 
+public var replies: LazyCachedMapCollection<ChatMessage> 
 ```
 
 To observe changes of the replies, set your class as a delegate of this controller or use the provided
@@ -82,10 +82,26 @@ To observe changes of the replies, set your class as a delegate of this controll
 Describes the ordering the replies are presented.
 
 ``` swift
-public var listOrdering: ListOrdering = .topToBottom 
+public var listOrdering: MessageOrdering = .topToBottom 
 ```
 
 > 
+
+### `hasLoadedAllPreviousReplies`
+
+A Boolean value that returns wether pagination is finished
+
+``` swift
+public private(set) var hasLoadedAllPreviousReplies: Bool = false
+```
+
+### `delegate`
+
+Set the delegate of `ChatMessageController` to observe the changes in the system.
+
+``` swift
+var delegate: ChatMessageControllerDelegate? 
+```
 
 ## Methods
 
@@ -128,14 +144,12 @@ Creates a new reply message locally and schedules it for send.
 func createNewReply(
         text: String,
         pinning: MessagePinning? = nil,
-//        command: String? = nil,
-//        arguments: String? = nil,
         attachments: [AnyAttachmentPayload] = [],
         mentionedUserIds: [UserId] = [],
         showReplyInChannel: Bool = false,
         isSilent: Bool = false,
         quotedMessageId: MessageId? = nil,
-        extraData: ExtraData.Message = .defaultValue,
+        extraData: [String: RawJSON] = [:],
         completion: ((Result<MessageId, Error>) -> Void)? = nil
     ) 
 ```
@@ -219,7 +233,7 @@ func addReaction(
         _ type: MessageReactionType,
         score: Int = 1,
         enforceUnique: Bool = false,
-        extraData: ExtraData.MessageReaction = .defaultValue,
+        extraData: [String: RawJSON] = [:],
         completion: ((Error?) -> Void)? = nil
     ) 
 ```
@@ -312,17 +326,3 @@ func dispatchEphemeralMessageAction(_ action: AttachmentAction, completion: ((Er
 #### Parameters
 
   - action: The action to take.
-  - completion: The completion. Will be called on a **callbackQueue** when the operation is finished. If operation fails, the completion is called with the error.
-
-### `setDelegate(_:)`
-
-Sets the provided object as a delegate of this controller.
-
-``` swift
-func setDelegate<Delegate: _ChatMessageControllerDelegate>(_ delegate: Delegate?) where Delegate.ExtraData == ExtraData 
-```
-
-> 
-
-#### Parameters
-

@@ -3,7 +3,7 @@ title: ChatMessageComposerSuggestionsCommandDataSource
 ---
 
 ``` swift
-open class _ChatMessageComposerSuggestionsCommandDataSource<ExtraData: ExtraDataTypes>: NSObject, UICollectionViewDataSource 
+open class ChatMessageComposerSuggestionsCommandDataSource: NSObject, UICollectionViewDataSource 
 ```
 
 ## Inheritance
@@ -17,7 +17,7 @@ open class _ChatMessageComposerSuggestionsCommandDataSource<ExtraData: ExtraData
 Data Source Initialiser
 
 ``` swift
-public init(with commands: [Command], collectionView: _ChatSuggestionsCollectionView<ExtraData>) 
+public init(with commands: [Command], collectionView: ChatSuggestionsCollectionView) 
 ```
 
 #### Parameters
@@ -30,7 +30,7 @@ public init(with commands: [Command], collectionView: _ChatSuggestionsCollection
 ### `collectionView`
 
 ``` swift
-open var collectionView: _ChatSuggestionsCollectionView<ExtraData>
+open var collectionView: ChatSuggestionsCollectionView
 ```
 
 ### `commands`
@@ -46,7 +46,7 @@ open var commands: [Command]
 The current types to override ui components.
 
 ``` swift
-open var components: _Components<ExtraData> 
+open var components: Components 
 ```
 
 ### `appearance`

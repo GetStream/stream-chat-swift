@@ -5,7 +5,7 @@ title: VideoPlaybackControlView
 A view that shows playback controls and timeline for the given player.
 
 ``` swift
-open class _VideoPlaybackControlView<ExtraData: ExtraDataTypes>: _View, ThemeProvider 
+open class VideoPlaybackControlView: _View, ThemeProvider 
 ```
 
 ## Inheritance

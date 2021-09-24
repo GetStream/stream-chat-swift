@@ -1,5 +1,5 @@
 ---
-title: Connection
+title: Connection Controllers
 ---
 
 ## ConnectionController

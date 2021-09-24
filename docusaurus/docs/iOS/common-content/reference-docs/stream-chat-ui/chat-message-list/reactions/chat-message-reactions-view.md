@@ -3,7 +3,7 @@ title: ChatMessageReactionsView
 ---
 
 ``` swift
-open class _ChatMessageReactionsView<ExtraData: ExtraDataTypes>: _View, ThemeProvider 
+open class ChatMessageReactionsView: _View, ThemeProvider 
 ```
 
 ## Inheritance

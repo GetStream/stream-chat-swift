@@ -6,7 +6,7 @@ An object used for injecting attachment views into `ChatMessageContentView`. The
 responsible for updating the content of the injected views.
 
 ``` swift
-open class _AttachmentViewInjector<ExtraData: ExtraDataTypes> 
+open class AttachmentViewInjector 
 ```
 
 > 
@@ -18,7 +18,7 @@ open class _AttachmentViewInjector<ExtraData: ExtraDataTypes>
 Creates a new instance of the injector.
 
 ``` swift
-public required init(_ contentView: _ChatMessageContentView<ExtraData>) 
+public required init(_ contentView: ChatMessageContentView) 
 ```
 
 #### Parameters
@@ -48,7 +48,7 @@ open var fillAllAvailableWidth: Bool = true
 The target view used for injecting the views of this injector.
 
 ``` swift
-public unowned let contentView: _ChatMessageContentView<ExtraData>
+public unowned let contentView: ChatMessageContentView
 ```
 
 ## Methods
@@ -82,5 +82,5 @@ open func contentViewDidUpdateContent()
 ``` swift
 public func attachments<Payload: AttachmentPayload>(
         payloadType: Payload.Type
-    ) -> [_ChatMessageAttachment<Payload>] 
+    ) -> [ChatMessageAttachment<Payload>] 
 ```

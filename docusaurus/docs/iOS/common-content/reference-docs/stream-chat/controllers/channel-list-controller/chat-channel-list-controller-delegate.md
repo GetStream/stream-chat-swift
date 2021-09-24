@@ -5,11 +5,8 @@ title: ChatChannelListControllerDelegate
 `ChatChannelListController` uses this protocol to communicate changes to its delegate.
 
 ``` swift
-public protocol _ChatChannelListControllerDelegate: DataControllerStateDelegate 
+public protocol ChatChannelListControllerDelegate: DataControllerStateDelegate 
 ```
-
-If you're **not** using custom extra data types, you can use a convenience version of this protocol
-named `ChatChannelListControllerDelegate`, which hides the generic types, and make the usage easier.
 
 ## Inheritance
 
@@ -20,32 +17,44 @@ named `ChatChannelListControllerDelegate`, which hides the generic types, and ma
 ### `controllerWillChangeChannels(_:)`
 
 ``` swift
-func controllerWillChangeChannels(_ controller: _ChatChannelListController<ExtraData>) 
+func controllerWillChangeChannels(_ controller: ChatChannelListController) 
 ```
 
 ### `controller(_:didChangeChannels:)`
 
 ``` swift
 func controller(
-        _ controller: _ChatChannelListController<ExtraData>,
-        didChangeChannels changes: [ListChange<_ChatChannel<ExtraData>>]
+        _ controller: ChatChannelListController,
+        didChangeChannels changes: [ListChange<ChatChannel>]
     ) 
 ```
 
-## Requirements
-
-### ExtraData
+### `controller(_:shouldAddNewChannelToList:)`
 
 ``` swift
-associatedtype ExtraData: ExtraDataTypes
+func controller(
+        _ controller: ChatChannelListController,
+        shouldAddNewChannelToList channel: ChatChannel
+    ) -> Bool 
 ```
+
+### `controller(_:shouldListUpdatedChannel:)`
+
+``` swift
+func controller(
+        _ controller: ChatChannelListController,
+        shouldListUpdatedChannel channel: ChatChannel
+    ) -> Bool 
+```
+
+## Requirements
 
 ### controllerWillChangeChannels(\_:​)
 
 The controller will update the list of observed channels.
 
 ``` swift
-func controllerWillChangeChannels(_ controller: _ChatChannelListController<ExtraData>)
+func controllerWillChangeChannels(_ controller: ChatChannelListController)
 ```
 
 #### Parameters
@@ -58,8 +67,8 @@ The controller changed the list of observed channels.
 
 ``` swift
 func controller(
-        _ controller: _ChatChannelListController<ExtraData>,
-        didChangeChannels changes: [ListChange<_ChatChannel<ExtraData>>]
+        _ controller: ChatChannelListController,
+        didChangeChannels changes: [ListChange<ChatChannel>]
     )
 ```
 
@@ -67,3 +76,45 @@ func controller(
 
   - controller: The controller emitting the change callback.
   - changes: The change to the list of channels.\\
+
+### controller(\_:​shouldAddNewChannelToList:​)
+
+The controller asks the delegate if the newly inserted `ChatChannel` should be linked to this Controller's query.
+Defaults to `true`
+
+``` swift
+func controller(
+        _ controller: ChatChannelListController,
+        shouldAddNewChannelToList channel: ChatChannel
+    ) -> Bool
+```
+
+#### Parameters
+
+  - controller: The controller,
+  - shouldAddNewChannelToList: The newly inserted `ChatChannel` instance. This instance is not linked to the controller's query.
+
+#### Returns
+
+`true` if channel should be added to the list of observed channels, `false` if channel doesn't exists in this list.
+
+### controller(\_:​shouldListUpdatedChannel:​)
+
+The controller asks the delegate if the newly updated `ChatChannel` should be linked to this Controller's query.
+Defaults to `true`
+
+``` swift
+func controller(
+        _ controller: ChatChannelListController,
+        shouldListUpdatedChannel channel: ChatChannel
+    ) -> Bool
+```
+
+#### Parameters
+
+  - controller: The controller,
+  - shouldListUpdatedChannel: The newly updated `ChatChannel` instance.
+
+#### Returns
+
+`true` if channel should be added to the list of observed channels, `false` if channel doesn't exists in this list.

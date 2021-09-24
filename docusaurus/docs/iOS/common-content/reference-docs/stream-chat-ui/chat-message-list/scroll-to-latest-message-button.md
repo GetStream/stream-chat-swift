@@ -5,7 +5,7 @@ title: ScrollToLatestMessageButton
 A Button that is used to indicate unread messages in the Message list.
 
 ``` swift
-open class _ScrollToLatestMessageButton<ExtraData: ExtraDataTypes>: _Button, ThemeProvider 
+open class ScrollToLatestMessageButton: _Button, ThemeProvider 
 ```
 
 ## Inheritance
@@ -19,7 +19,7 @@ open class _ScrollToLatestMessageButton<ExtraData: ExtraDataTypes>: _Button, The
 The view showing number of unread messages in channel if any.
 
 ``` swift
-open private(set) lazy var unreadCountView: _ChatMessageListUnreadCountView<ExtraData> = components
+open private(set) lazy var unreadCountView: ChatMessageListUnreadCountView = components
         .messageListUnreadCountView
         .init()
         .withoutAutoresizingMaskConstraints

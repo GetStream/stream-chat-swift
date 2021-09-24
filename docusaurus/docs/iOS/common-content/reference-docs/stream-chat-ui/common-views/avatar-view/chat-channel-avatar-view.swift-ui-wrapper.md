@@ -5,13 +5,12 @@ title: ChatChannelAvatarView.SwiftUIWrapper
 SwiftUI wrapper of `_ChatChannelAvatarView`.
 
 ``` swift
-public class SwiftUIWrapper<Content: SwiftUIView>: _ChatChannelAvatarView<ExtraData>, ObservableObject
-        where Content.ExtraData == ExtraData
+public class SwiftUIWrapper<Content: SwiftUIView>: ChatChannelAvatarView, ObservableObject 
 ```
 
 ## Inheritance
 
-`ObservableObject`, `_ChatChannelAvatarView<ExtraData>`
+[`ChatChannelAvatarView`](../chat-channel-avatar-view), `ObservableObject`
 
 ## Properties
 

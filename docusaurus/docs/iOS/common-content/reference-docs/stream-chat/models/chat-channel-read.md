@@ -5,12 +5,8 @@ title: ChatChannelRead
 A type representing a user's last read action on a channel.
 
 ``` swift
-public struct _ChatChannelRead<ExtraData: ExtraDataTypes> 
+public struct ChatChannelRead 
 ```
-
-> 
-
-Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/Cheat-Sheet#working-with-extra-data).
 
 ## Properties
 
@@ -35,5 +31,5 @@ public let unreadMessagesCount: Int
 The user who read the channel.
 
 ``` swift
-public let user: _ChatUser<ExtraData.User>
+public let user: ChatUser
 ```

@@ -5,7 +5,7 @@ title: ImageAttachmentComposerPreview
 A view that displays image attachment preview in composer.
 
 ``` swift
-open class _ImageAttachmentComposerPreview<ExtraData: ExtraDataTypes>: _View, ThemeProvider 
+open class ImageAttachmentComposerPreview: _View, ThemeProvider 
 ```
 
 ## Inheritance

@@ -4,7 +4,7 @@
 Content of the cell - `ChatUser` instance from which we take all information.
 
 ``` swift
-open var content: _ChatUser<ExtraData.User>? 
+open var content: ChatUser? 
 ```
 
 ### `avatarView`
@@ -12,7 +12,7 @@ open var content: _ChatUser<ExtraData.User>?
 `_ChatChannelAvatarView` instance which holds photo of user for tagging.
 
 ``` swift
-open private(set) lazy var avatarView: _ChatUserAvatarView<ExtraData> = components
+open private(set) lazy var avatarView: ChatUserAvatarView = components
         .mentionAvatarView
         .init()
         .withoutAutoresizingMaskConstraints

@@ -5,7 +5,7 @@ title: UserInfo
 A model containing user info that's used to connect to chat's backend
 
 ``` swift
-public struct UserInfo<ExtraData: ExtraDataTypes> 
+public struct UserInfo 
 ```
 
 ## Initializers
@@ -17,7 +17,7 @@ public init(
         id: UserId,
         name: String? = nil,
         imageURL: URL? = nil,
-        extraData: ExtraData.User = .defaultValue
+        extraData: [String: RawJSON] = [:]
     ) 
 ```
 
@@ -44,5 +44,5 @@ public let imageURL: URL?
 ### `extraData`
 
 ``` swift
-public let extraData: ExtraData.User
+public let extraData: [String: RawJSON]
 ```

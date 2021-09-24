@@ -5,7 +5,7 @@ title: CurrentChatUserAvatarView
 A UIControl subclass that is designed to show the avatar of the currently logged in user.
 
 ``` swift
-open class _CurrentChatUserAvatarView<ExtraData: ExtraDataTypes>: _Control, ThemeProvider 
+open class CurrentChatUserAvatarView: _Control, ThemeProvider 
 ```
 
 It uses `CurrentChatUserController` for its input data and is able to update the avatar automatically based
@@ -13,7 +13,7 @@ on the currently logged-in user.
 
 ## Inheritance
 
-[`_Control`](../../_control), [`ThemeProvider`](../../../utils/theme-provider), `_CurrentChatUserControllerDelegate`
+[`_Control`](../../_control), `CurrentChatUserControllerDelegate`, [`ThemeProvider`](../../../utils/theme-provider)
 
 ## Properties
 
@@ -22,7 +22,7 @@ on the currently logged-in user.
 `StreamChat`'s controller that observe the currently logged-in user.
 
 ``` swift
-open var controller: _CurrentChatUserController<ExtraData>? 
+open var controller: CurrentChatUserController? 
 ```
 
 ### `avatarView`
@@ -83,7 +83,7 @@ override open func setUpLayout()
 
 ``` swift
 public func currentUserController(
-        _ controller: _CurrentChatUserController<ExtraData>,
-        didChangeCurrentUser: EntityChange<_CurrentChatUser<ExtraData>>
+        _ controller: CurrentChatUserController,
+        didChangeCurrentUser: EntityChange<CurrentChatUser>
     ) 
 ```

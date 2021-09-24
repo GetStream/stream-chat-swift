@@ -38,7 +38,7 @@ public struct ChannelQuery: Encodable {
     /// - Parameters:
     ///   - cid: a channel cid.
     ///   - pageSize: a page size for pagination.
-    ///   - paginationOptions: an advanced options for pagination. (see `PaginationOption`)
+    ///   - paginationParameter: the pagination configuration.
     ///   - membersLimit: a number of members for the channel  to be retrieved.
     ///   - watchersLimit: a number of watchers for the channel to be retrieved.
     public init(

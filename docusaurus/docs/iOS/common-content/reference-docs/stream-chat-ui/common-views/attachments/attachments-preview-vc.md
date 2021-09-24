@@ -3,7 +3,7 @@ title: AttachmentsPreviewVC
 ---
 
 ``` swift
-open class _AttachmentsPreviewVC<ExtraData: ExtraDataTypes>: _ViewController, ComponentsProvider 
+open class AttachmentsPreviewVC: _ViewController, ComponentsProvider 
 ```
 
 ## Inheritance

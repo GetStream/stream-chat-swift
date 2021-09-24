@@ -5,11 +5,8 @@ title: CurrentChatUserControllerDelegate
 `CurrentChatUserController` uses this protocol to communicate changes to its delegate.
 
 ``` swift
-public protocol _CurrentChatUserControllerDelegate: AnyObject 
+public protocol CurrentChatUserControllerDelegate: AnyObject 
 ```
-
-If you're **not** using custom extra data types, you can use a convenience version of this protocol
-named `CurrentChatUserControllerDelegate`, which hides the generic types, and make the usage easier.
 
 ## Inheritance
 
@@ -20,44 +17,29 @@ named `CurrentChatUserControllerDelegate`, which hides the generic types, and ma
 ### `currentUserController(_:didChangeCurrentUserUnreadCount:)`
 
 ``` swift
-func currentUserController(
-        _ controller: _CurrentChatUserController<ExtraData>,
-        didChangeCurrentUserUnreadCount: UnreadCount
-    ) 
+func currentUserController(_ controller: CurrentChatUserController, didChangeCurrentUserUnreadCount: UnreadCount) 
 ```
 
 ### `currentUserController(_:didChangeCurrentUser:)`
 
 ``` swift
-func currentUserController(
-        _ controller: _CurrentChatUserController<ExtraData>,
-        didChangeCurrentUser: EntityChange<_CurrentChatUser<ExtraData>>
-    ) 
+func currentUserController(_ controller: CurrentChatUserController, didChangeCurrentUser: EntityChange<CurrentChatUser>) 
 ```
 
 ## Requirements
-
-### ExtraData
-
-``` swift
-associatedtype ExtraData: ExtraDataTypes
-```
 
 ### currentUserController(\_:​didChangeCurrentUserUnreadCount:​)
 
 The controller observed a change in the `UnreadCount`.
 
 ``` swift
-func currentUserController(_ controller: _CurrentChatUserController<ExtraData>, didChangeCurrentUserUnreadCount: UnreadCount)
+func currentUserController(_ controller: CurrentChatUserController, didChangeCurrentUserUnreadCount: UnreadCount)
 ```
 
 ### currentUserController(\_:​didChangeCurrentUser:​)
 
-The controller observed a change in the `CurrentUser` entity.
+The controller observed a change in the `CurrentChatUser` entity.
 
 ``` swift
-func currentUserController(
-        _ controller: _CurrentChatUserController<ExtraData>,
-        didChangeCurrentUser: EntityChange<_CurrentChatUser<ExtraData>>
-    )
+func currentUserController(_ controller: CurrentChatUserController, didChangeCurrentUser: EntityChange<CurrentChatUser>)
 ```

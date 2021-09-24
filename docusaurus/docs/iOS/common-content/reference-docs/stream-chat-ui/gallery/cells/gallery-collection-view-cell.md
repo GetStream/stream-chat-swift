@@ -5,7 +5,7 @@ title: GalleryCollectionViewCell
 `UICollectionViewCell` for a gallery item.
 
 ``` swift
-open class _GalleryCollectionViewCell<ExtraData: ExtraDataTypes>: _CollectionViewCell, UIScrollViewDelegate, ComponentsProvider 
+open class GalleryCollectionViewCell: _CollectionViewCell, UIScrollViewDelegate, ComponentsProvider 
 ```
 
 ## Inheritance

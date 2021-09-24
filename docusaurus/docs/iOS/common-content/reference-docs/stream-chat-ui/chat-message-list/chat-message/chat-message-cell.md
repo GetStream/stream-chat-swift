@@ -7,7 +7,7 @@ Once the cell is set up it is expected to be dequeued for messages with
 the same content and layout the cell has already been configured with.
 
 ``` swift
-public final class _ChatMessageCell<ExtraData: ExtraDataTypes>: _TableViewCell 
+public final class ChatMessageCell: _TableViewCell 
 ```
 
 ## Inheritance
@@ -27,7 +27,7 @@ public static var reuseId: String
 The message content view the cell is showing.
 
 ``` swift
-public private(set) var messageContentView: _ChatMessageContentView<ExtraData>?
+public private(set) var messageContentView: ChatMessageContentView?
 ```
 
 ### `minimumSpacingBelow`
@@ -64,8 +64,8 @@ Creates a message content view
 
 ``` swift
 public func setMessageContentIfNeeded(
-        contentViewClass: _ChatMessageContentView<ExtraData>.Type,
-        attachmentViewInjectorType: _AttachmentViewInjector<ExtraData>.Type?,
+        contentViewClass: ChatMessageContentView.Type,
+        attachmentViewInjectorType: AttachmentViewInjector.Type?,
         options: ChatMessageLayoutOptions
     ) 
 ```

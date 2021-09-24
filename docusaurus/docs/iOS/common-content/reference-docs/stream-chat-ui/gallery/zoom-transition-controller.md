@@ -27,7 +27,7 @@ public private(set) lazy var zoomAnimator
 `UIImageView` that is being presented.
 
 ``` swift
-public weak var fromImageView: UIImageView!
+public weak var fromImageView: UIImageView?
 ```
 
 ### `presentedVCImageView`

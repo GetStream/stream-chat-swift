@@ -1,5 +1,5 @@
 ---
-title: Adding Localization and Internationalization
+title: Localization
 ---
 
 ## Introduction

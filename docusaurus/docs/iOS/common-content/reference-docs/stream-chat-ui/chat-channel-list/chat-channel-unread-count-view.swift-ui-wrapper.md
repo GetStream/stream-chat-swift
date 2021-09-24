@@ -6,13 +6,12 @@ SwiftUI wrapper of `_ChatChannelUnreadCountView`.
 Servers to wrap custom SwiftUI view as a UIKit view so it can be easily injected into `_Components`.
 
 ``` swift
-public class SwiftUIWrapper<Content: SwiftUIView>: _ChatChannelUnreadCountView<ExtraData>, ObservableObject
-        where Content.ExtraData == ExtraData
+public class SwiftUIWrapper<Content: SwiftUIView>: ChatChannelUnreadCountView, ObservableObject 
 ```
 
 ## Inheritance
 
-`ObservableObject`, `_ChatChannelUnreadCountView<ExtraData>`
+[`ChatChannelUnreadCountView`](../chat-channel-unread-count-view), `ObservableObject`
 
 ## Properties
 

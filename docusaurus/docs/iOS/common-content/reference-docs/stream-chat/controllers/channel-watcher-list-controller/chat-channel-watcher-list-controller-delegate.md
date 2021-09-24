@@ -2,8 +2,10 @@
 title: ChatChannelWatcherListControllerDelegate
 ---
 
+`ChatChannelWatcherListController` uses this protocol to communicate changes to its delegate.
+
 ``` swift
-public protocol _ChatChannelWatcherListControllerDelegate: DataControllerStateDelegate 
+public protocol ChatChannelWatcherListControllerDelegate: DataControllerStateDelegate 
 ```
 
 ## Inheritance
@@ -12,19 +14,13 @@ public protocol _ChatChannelWatcherListControllerDelegate: DataControllerStateDe
 
 ## Requirements
 
-### ExtraData
-
-``` swift
-associatedtype ExtraData: ExtraDataTypes
-```
-
 ### channelWatcherListController(\_:​didChangeWatchers:​)
 
 The controller observed a change in the channel watcher list.
 
 ``` swift
 func channelWatcherListController(
-        _ controller: _ChatChannelWatcherListController<ExtraData>,
-        didChangeWatchers changes: [ListChange<_ChatUser<ExtraData.User>>]
+        _ controller: ChatChannelWatcherListController,
+        didChangeWatchers changes: [ListChange<ChatUser>]
     )
 ```

@@ -135,12 +135,24 @@ Override this function if you want to provide custom logic to present
 the attachments preview of the message, or if you want to support your custom attachment.
 
 ``` swift
-open func setAttachmentPreview(for message: _ChatMessage<ExtraData>) 
+open func setAttachmentPreview(for message: ChatMessage) 
 ```
 
 #### Parameters
 
   - message: The message that contains all the attachments.
+
+### `setAttachmentPreviewImage(url:)`
+
+Sets the image from the given URL into `attachmentPreviewView.image`
+
+``` swift
+open func setAttachmentPreviewImage(url: URL?) 
+```
+
+#### Parameters
+
+  - url: The URL from which the image is to be loaded
 
 ### `showAttachmentPreview()`
 

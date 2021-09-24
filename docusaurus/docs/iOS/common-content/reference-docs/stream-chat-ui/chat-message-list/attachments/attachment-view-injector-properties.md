@@ -13,7 +13,7 @@ open var fillAllAvailableWidth: Bool = true
 The target view used for injecting the views of this injector.
 
 ``` swift
-public unowned let contentView: _ChatMessageContentView<ExtraData>
+public unowned let contentView: ChatMessageContentView
 ```
 
 ## Methods
@@ -47,4 +47,4 @@ open func contentViewDidUpdateContent()
 ``` swift
 public func attachments<Payload: AttachmentPayload>(
         payloadType: Payload.Type
-    ) -> [_ChatMessageAttachment<Payload>] 
+    ) -> [ChatMessageAttachment<Payload>] 

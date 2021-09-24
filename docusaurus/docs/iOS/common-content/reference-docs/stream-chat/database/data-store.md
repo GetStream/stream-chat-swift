@@ -5,7 +5,7 @@ title: DataStore
 `DataStore` provide access to all locally available model objects based on their id.
 
 ``` swift
-public struct DataStore<ExtraData: ExtraDataTypes> 
+public struct DataStore 
 ```
 
 ## Methods
@@ -15,7 +15,7 @@ public struct DataStore<ExtraData: ExtraDataTypes>
 Loads a user model with a matching `id` from the **local data store**.
 
 ``` swift
-public func user(id: UserId) -> _ChatUser<ExtraData.User>? 
+public func user(id: UserId) -> ChatUser? 
 ```
 
 If the data doesn't exist locally, it's recommended to use controllers to fetch data from remote servers.
@@ -35,7 +35,7 @@ If there's a user object in the locally cached data matching the provided `id`, 
 Loads a current user model with a matching `id` from the **local data store**.
 
 ``` swift
-public func currentUser() -> _CurrentChatUser<ExtraData>? 
+public func currentUser() -> CurrentChatUser? 
 ```
 
 If the data doesn't exist locally, it's recommended to use controllers to fetch data from remote servers.
@@ -51,7 +51,7 @@ If there's a current user object in the locally cached data, returns the matchin
 Loads a channel model with a matching `cid` from the **local data store**.
 
 ``` swift
-public func channel(cid: ChannelId) -> _ChatChannel<ExtraData>? 
+public func channel(cid: ChannelId) -> ChatChannel? 
 ```
 
 If the data doesn't exist locally, it's recommended to use controllers to fetch data from remote servers.
@@ -71,7 +71,7 @@ If there's a channel object in the locally cached data matching the provided `ci
 Loads a message model with a matching `id` from the **local data store**.
 
 ``` swift
-public func message(id: MessageId) -> _ChatMessage<ExtraData>? 
+public func message(id: MessageId) -> ChatMessage? 
 ```
 
 If the data doesn't exist locally, it's recommended to use controllers to fetch data from remote servers.

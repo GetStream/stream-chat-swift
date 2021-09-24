@@ -31,9 +31,9 @@ Shows the detail pop-up for the selected message. By default called when the mes
 
 ``` swift
 open func showMessageActionsPopUp(
-        messageContentView: _ChatMessageContentView<ExtraData>,
-        messageActionsController: _ChatMessageActionsVC<ExtraData>,
-        messageReactionsController: _ChatMessageReactionsVC<ExtraData>?
+        messageContentView: ChatMessageContentView,
+        messageActionsController: ChatMessageActionsVC,
+        messageReactionsController: ChatMessageReactionsVC?
     ) 
 ```
 
@@ -48,7 +48,8 @@ open func showMessageActionsPopUp(
 Handles opening of a link URL.
 
 ``` swift
-open func showLinkPreview(link: URL) 
+@available(iOSApplicationExtension, unavailable)
+    open func showLinkPreview(link: URL) 
 ```
 
 #### Parameters
@@ -72,10 +73,11 @@ open func showFilePreview(fileURL: URL?)
 Shows the detail View Controller of a message thread.
 
 ``` swift
-open func showThread(
+@available(iOSApplicationExtension, unavailable)
+    open func showThread(
         messageId: MessageId,
         cid: ChannelId,
-        client: _ChatClient<ExtraData>
+        client: ChatClient
     ) 
 ```
 
@@ -91,7 +93,7 @@ Shows the gallery VC for the given message starting on specific attachment.
 
 ``` swift
 open func showGallery(
-        message: _ChatMessage<ExtraData>,
+        message: ChatMessage,
         initialAttachmentId: AttachmentId,
         previews: [GalleryItemPreview]
     ) 

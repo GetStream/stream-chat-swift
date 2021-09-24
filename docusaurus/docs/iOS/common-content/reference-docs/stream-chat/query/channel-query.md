@@ -5,12 +5,8 @@ title: ChannelQuery
 A channel query.
 
 ``` swift
-public struct _ChannelQuery<ExtraData: ExtraDataTypes>: Encodable 
+public struct ChannelQuery: Encodable 
 ```
-
-> 
-
-Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/Cheat-Sheet#working-with-extra-data).
 
 ## Inheritance
 
@@ -36,7 +32,7 @@ public init(
 
   - cid: a channel cid.
   - pageSize: a page size for pagination.
-  - paginationOptions: an advanced options for pagination. (see `PaginationOption`)
+  - paginationParameter: the pagination configuration.
   - membersLimit: a number of members for the channel  to be retrieved.
   - watchersLimit: a number of watchers for the channel to be retrieved.
 

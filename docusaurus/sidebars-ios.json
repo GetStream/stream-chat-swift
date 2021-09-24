@@ -10,8 +10,8 @@
     {
       "Customization": [
         "customization/theming",
-        "customization/localization",
-        "customization/custom-components"
+        "customization/custom-components",
+        "customization/localization"
       ]
     },
     {
@@ -36,9 +36,9 @@
     {
       "Core Components": [
         "components/channel-list",
-        "components/message-list",
+        "components/channel",
+        "components/thread",
         "components/message",
-        "components/message-thread",
         "components/message-composer"
       ]
     },

@@ -5,14 +5,8 @@ title: ChatChannelListController
 `_ChatChannelListController` is a controller class which allows observing a list of chat channels based on the provided query.
 
 ``` swift
-public class _ChatChannelListController<ExtraData: ExtraDataTypes>: DataController, DelegateCallable, DataStoreProvider 
+public class ChatChannelListController: DataController, DelegateCallable, DataStoreProvider 
 ```
-
-Learn more about `_ChatChannelListController` and its usage in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/StreamChat-SDK-Cheat-Sheet#channel-list).
-
-> 
-
-Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/Cheat-Sheet#working-with-extra-data).
 
 ## Inheritance
 
@@ -33,7 +27,7 @@ public var statePublisher: AnyPublisher<DataController.State, Never>
 A publisher emitting a new value every time the list of the channels matching the query changes.
 
 ``` swift
-public var channelsChangesPublisher: AnyPublisher<[ListChange<_ChatChannel<ExtraData>>], Never> 
+public var channelsChangesPublisher: AnyPublisher<[ListChange<ChatChannel>], Never> 
 ```
 
 ### `observableObject`
@@ -49,7 +43,7 @@ public var observableObject: ObservableObject
 The query specifying and filtering the list of channels.
 
 ``` swift
-public let query: _ChannelListQuery<ExtraData.Channel>
+public let query: ChannelListQuery
 ```
 
 ### `client`
@@ -57,7 +51,7 @@ public let query: _ChannelListQuery<ExtraData.Channel>
 The `ChatClient` instance this controller belongs to.
 
 ``` swift
-public let client: _ChatClient<ExtraData>
+public let client: ChatClient
 ```
 
 ### `channels`
@@ -65,11 +59,27 @@ public let client: _ChatClient<ExtraData>
 The channels matching the query of this controller.
 
 ``` swift
-public var channels: LazyCachedMapCollection<_ChatChannel<ExtraData>> 
+public var channels: LazyCachedMapCollection<ChatChannel> 
 ```
 
 To observe changes of the channels, set your class as a delegate of this controller or use the provided
 `Combine` publishers.
+
+### `hasLoadedAllPreviousChannels`
+
+A Boolean value that returns wether pagination is finished
+
+``` swift
+public private(set) var hasLoadedAllPreviousChannels: Bool = false
+```
+
+### `delegate`
+
+Set the delegate of `ChannelListController` to observe the changes in the system.
+
+``` swift
+public weak var delegate: ChatChannelListControllerDelegate? 
+```
 
 ## Methods
 
@@ -84,11 +94,8 @@ override public func synchronize(_ completion: ((_ error: Error?) -> Void)? = ni
 Sets the provided object as a delegate of this controller.
 
 ``` swift
-public func setDelegate<Delegate: _ChatChannelListControllerDelegate>(_ delegate: Delegate)
-        where Delegate.ExtraData == ExtraData 
+public func setDelegate<Delegate: ChatChannelListControllerDelegate>(_ delegate: Delegate) 
 ```
-
-> 
 
 #### Parameters
 
@@ -100,7 +107,7 @@ Loads next channels from backend.
 
 ``` swift
 public func loadNextChannels(
-        limit: Int = 25,
+        limit: Int? = nil,
         completion: ((Error?) -> Void)? = nil
     ) 
 ```

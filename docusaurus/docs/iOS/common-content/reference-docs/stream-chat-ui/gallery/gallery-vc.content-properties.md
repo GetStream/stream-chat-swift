@@ -4,7 +4,7 @@
 The message which attachments are displayed by the gallery.
 
 ``` swift
-public var message: _ChatMessage<ExtraData>
+public var message: ChatMessage
 ```
 
 ### `currentPage`
