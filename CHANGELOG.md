@@ -3,6 +3,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+### 🔄 Changed
+
+# [4.0.2](https://github.com/GetStream/stream-chat-swift/releases/tag/4.0.2)
+_September 24, 2021_
+
 ### ✅ Added
 - Introduce `ChannelController.uploadFile` function for uploading files to CDN to obtain a remote URL [#1468](https://github.com/GetStream/stream-chat-swift/issues/1468)
 
