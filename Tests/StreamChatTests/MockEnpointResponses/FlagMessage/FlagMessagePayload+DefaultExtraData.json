@@ -17,7 +17,7 @@
             "invisible" : false,
             "team" : 1,
             "channel_mutes" : null,
-            "image" : "https:\/\/s3.amazonaws.com\/eventmobi-test-assets\/eventsbyids\/8024\/people\/100no-pic.png",
+            "image_url" : "https:\/\/s3.amazonaws.com\/eventmobi-test-assets\/eventsbyids\/8024\/people\/100no-pic.png",
             "updated_at" : "2020-10-21T14:43:22.80866Z",
             "role" : "user",
             "online" : true,
