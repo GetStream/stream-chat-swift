@@ -6,26 +6,40 @@ import StreamChat
 import UIKit
 
 open class AttachmentsPreviewVC: _ViewController, ComponentsProvider {
+    /// The attachment previews content.
     open var content: [AttachmentPreviewProvider] = [] {
         didSet {
             updateContentIfNeeded()
         }
     }
 
+    /// The maximum number of files visible before scrolling is enabled.
+    open var maxNumberOfVisibleFiles: Int = 3
+
     /// The closure handler when an attachment has been removed.
     open var didTapRemoveItemButton: ((Int) -> Void)?
-    
-    open private(set) var horizontalConstraints: [NSLayoutConstraint] = []
-    open private(set) var verticalConstraints: [NSLayoutConstraint] = []
-    
+
+    /// The scroll view that contains the horizontal and vertical stacks.
     open private(set) lazy var scrollView: UIScrollView = UIScrollView()
         .withoutAutoresizingMaskConstraints
 
-    open private(set) lazy var horizontalStackView: ContainerStackView = ContainerStackView(axis: .horizontal, spacing: 8)
-        .withoutAutoresizingMaskConstraints
+    /// The stack used to display the attachments previews horizontally.
+    open private(set) lazy var horizontalStackView = ContainerStackView(
+        axis: .horizontal,
+        spacing: 8
+    ).withoutAutoresizingMaskConstraints
 
-    open private(set) lazy var verticalStackView: ContainerStackView = ContainerStackView(axis: .vertical, spacing: 8)
-        .withoutAutoresizingMaskConstraints
+    /// The stack used to display the attachments previews vertically.
+    open private(set) lazy var verticalStackView = ContainerStackView(
+        axis: .vertical,
+        spacing: 8
+    ).withoutAutoresizingMaskConstraints
+
+    /// The constraints of the attachments horizontal stack.
+    open private(set) var horizontalConstraints: [NSLayoutConstraint] = []
+
+    /// The constraints of the attachments vertical stack.
+    open private(set) var verticalConstraints: [NSLayoutConstraint] = []
     
     override open func setUpAppearance() {
         super.setUpAppearance()
