@@ -23,6 +23,12 @@ open class AttachmentsPreviewVC: _ViewController, ComponentsProvider {
     open private(set) lazy var scrollView: UIScrollView = UIScrollView()
         .withoutAutoresizingMaskConstraints
 
+    /// The container stack that holds the vertical and horizontal items.
+    open private(set) lazy var containerStackView = ContainerStackView(
+        axis: .vertical,
+        spacing: 8
+    ).withoutAutoresizingMaskConstraints
+
     /// The stack used to display the attachments previews horizontally.
     open private(set) lazy var horizontalStackView = ContainerStackView(
         axis: .horizontal,
@@ -34,12 +40,6 @@ open class AttachmentsPreviewVC: _ViewController, ComponentsProvider {
         axis: .vertical,
         spacing: 8
     ).withoutAutoresizingMaskConstraints
-
-    /// The constraints of the attachments horizontal stack.
-    open private(set) var horizontalConstraints: [NSLayoutConstraint] = []
-
-    /// The constraints of the attachments vertical stack.
-    open private(set) var verticalConstraints: [NSLayoutConstraint] = []
 
     /// The current scroll view height used to activate the scrolling on the vertical stack.
     public var scrollViewHeightConstraint: NSLayoutConstraint?
@@ -62,19 +62,22 @@ open class AttachmentsPreviewVC: _ViewController, ComponentsProvider {
         super.setUpLayout()
         
         view.embed(scrollView)
-        scrollView.embed(horizontalStackView)
-        scrollView.embed(verticalStackView)
-        
-        horizontalConstraints.append(horizontalStackView.heightAnchor.pin(equalTo: scrollView.heightAnchor))
+        scrollView.embed(containerStackView)
+        containerStackView.addArrangedSubview(horizontalStackView)
+        containerStackView.addArrangedSubview(verticalStackView)
+        horizontalStackView.isHidden = true
+        verticalStackView.isHidden = true
 
-        verticalConstraints.append(verticalStackView.widthAnchor.pin(equalTo: scrollView.widthAnchor))
-        verticalConstraints.append(verticalStackView.heightAnchor.pin(equalTo: scrollView.heightAnchor))
+        scrollView.heightAnchor.pin(equalTo: containerStackView.heightAnchor).isActive = true
+        scrollView.widthAnchor.constraint(equalTo: verticalStackView.widthAnchor).isActive = true
     }
     
     open var attachmentViews: [UIView] {
         content.enumerated().map { index, attachment in
-            let view = attachment.previewView(components: components).withoutAutoresizingMaskConstraints
-            let cell = components.messageComposerAttachmentCell.init().withoutAutoresizingMaskConstraints
+            let view = attachment.previewView(components: components)
+                .withoutAutoresizingMaskConstraints
+            let cell = components.messageComposerAttachmentCell.init()
+                .withoutAutoresizingMaskConstraints
             cell.embed(attachmentView: view)
             cell.discardButtonHandler = { [weak self] in self?.didTapRemoveItemButton?(index) }
             return cell
@@ -103,10 +106,7 @@ open class AttachmentsPreviewVC: _ViewController, ComponentsProvider {
     open func setupHorizontalStackView() {
         // Re-enable scroll
         scrollView.isScrollEnabled = true
-        
-        horizontalConstraints.forEach { $0.isActive = true }
-        verticalConstraints.forEach { $0.isActive = false }
-        
+
         horizontalStackView.isHidden = false
         verticalStackView.isHidden = true
         
@@ -125,7 +125,7 @@ open class AttachmentsPreviewVC: _ViewController, ComponentsProvider {
                 scrollViewHeightConstraint = scrollView.heightAnchor.pin(
                     lessThanOrEqualToConstant: scrollView.frame.size.height
                 )
-                verticalConstraints.append(scrollViewHeightConstraint!)
+                scrollViewHeightConstraint?.isActive = true
             }
             // If the content is lower than the max vertical items,
             // reset the scroll view height constraint.
@@ -134,9 +134,6 @@ open class AttachmentsPreviewVC: _ViewController, ComponentsProvider {
             scrollViewHeightConstraint = nil
         }
 
-        horizontalConstraints.forEach { $0.isActive = false }
-        verticalConstraints.forEach { $0.isActive = true }
-        
         horizontalStackView.isHidden = true
         verticalStackView.isHidden = false
         
