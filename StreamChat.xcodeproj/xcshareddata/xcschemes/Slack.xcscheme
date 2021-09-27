@@ -14,9 +14,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "F86C87B125F906630000BCA9"
-               BuildableName = "MessengerClone.app"
-               BlueprintName = "MessengerClone"
+               BlueprintIdentifier = "F8933B9125FF55E30054BBFF"
+               BuildableName = "SlackClone.app"
+               BlueprintName = "Slack"
                ReferencedContainer = "container:StreamChat.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -44,9 +44,9 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "F86C87B125F906630000BCA9"
-            BuildableName = "MessengerClone.app"
-            BlueprintName = "MessengerClone"
+            BlueprintIdentifier = "F8933B9125FF55E30054BBFF"
+            BuildableName = "SlackClone.app"
+            BlueprintName = "Slack"
             ReferencedContainer = "container:StreamChat.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
@@ -61,9 +61,9 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "F86C87B125F906630000BCA9"
-            BuildableName = "MessengerClone.app"
-            BlueprintName = "MessengerClone"
+            BlueprintIdentifier = "F8933B9125FF55E30054BBFF"
+            BuildableName = "SlackClone.app"
+            BlueprintName = "Slack"
             ReferencedContainer = "container:StreamChat.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
