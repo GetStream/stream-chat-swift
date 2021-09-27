@@ -15,8 +15,6 @@ open class AttachmentsPreviewVC: _ViewController, ComponentsProvider {
     /// The closure handler when an attachment has been removed.
     open var didTapRemoveItemButton: ((Int) -> Void)?
     
-    open var selectedAttachmentType: AttachmentType?
-    
     open private(set) var horizontalConstraints: [NSLayoutConstraint] = []
     open private(set) var verticalConstraints: [NSLayoutConstraint] = []
     
