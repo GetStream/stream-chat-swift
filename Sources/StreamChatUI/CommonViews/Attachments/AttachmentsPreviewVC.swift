@@ -17,7 +17,6 @@ open class AttachmentsPreviewVC: _ViewController, ComponentsProvider {
     
     open var selectedAttachmentType: AttachmentType?
     
-    public private(set) var scrollViewHeightConstraint: NSLayoutConstraint?
     open private(set) var horizontalConstraints: [NSLayoutConstraint] = []
     open private(set) var verticalConstraints: [NSLayoutConstraint] = []
     
@@ -54,8 +53,7 @@ open class AttachmentsPreviewVC: _ViewController, ComponentsProvider {
         horizontalConstraints.append(horizontalStackView.heightAnchor.pin(equalTo: scrollView.heightAnchor))
         verticalConstraints.append(verticalStackView.widthAnchor.pin(equalTo: scrollView.widthAnchor))
         
-        scrollViewHeightConstraint = scrollView.heightAnchor.pin(equalToConstant: 0)
-        scrollViewHeightConstraint?.isActive = true
+        scrollView.heightAnchor.pin(greaterThanOrEqualToConstant: 0).isActive = true
     }
     
     open var attachmentViews: [UIView] {
@@ -88,15 +86,8 @@ open class AttachmentsPreviewVC: _ViewController, ComponentsProvider {
     }
     
     open func setupHorizontalStackView() {
-        let itemHeight: CGFloat = 100
-        
         // Re-enable scroll
         scrollView.isScrollEnabled = true
-        
-        // Calculate height of the scroll view
-        scrollViewHeightConstraint?.constant = itemHeight
-            + horizontalStackView.layoutMargins.top
-            + horizontalStackView.layoutMargins.bottom
         
         horizontalConstraints.forEach { $0.isActive = true }
         verticalConstraints.forEach { $0.isActive = false }
@@ -109,19 +100,9 @@ open class AttachmentsPreviewVC: _ViewController, ComponentsProvider {
     }
     
     open func setupVerticalStackView() {
-        let maxNumberOfVisibleFiles = 3
-        let itemHeight: CGFloat = 54
-        
         // Disable scroll when not needed
         scrollView.isScrollEnabled = content.count > maxNumberOfVisibleFiles
-        
-        // Calculate height of the scroll view
-        let numberOfVisibleItems = CGFloat(min(content.count, maxNumberOfVisibleFiles))
-        let itemsHeight = itemHeight * numberOfVisibleItems
-        let spacings = verticalStackView.spacing.rawValue * (numberOfVisibleItems - 1)
-        let height = itemsHeight + spacings + verticalStackView.layoutMargins.top + verticalStackView.layoutMargins.bottom
-        scrollViewHeightConstraint?.constant = height
-        
+
         horizontalConstraints.forEach { $0.isActive = false }
         verticalConstraints.forEach { $0.isActive = true }
         
