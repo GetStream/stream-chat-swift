@@ -3,7 +3,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
-### 🔄 Changed
+### 🐞 Fixed
+- Dynamic height for the composer attachment previews [#1480](https://github.com/GetStream/stream-chat-swift/pull/1480)
 
 # [4.0.2](https://github.com/GetStream/stream-chat-swift/releases/tag/4.0.2)
 _September 24, 2021_
