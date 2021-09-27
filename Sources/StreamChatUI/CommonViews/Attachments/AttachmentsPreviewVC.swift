@@ -6,29 +6,40 @@ import StreamChat
 import UIKit
 
 open class AttachmentsPreviewVC: _ViewController, ComponentsProvider {
+    /// The attachment previews content.
     open var content: [AttachmentPreviewProvider] = [] {
         didSet {
             updateContentIfNeeded()
         }
     }
 
+    /// The maximum number of files visible before scrolling is enabled.
+    open var maxNumberOfVisibleFiles: Int = 3
+
     /// The closure handler when an attachment has been removed.
     open var didTapRemoveItemButton: ((Int) -> Void)?
-    
-    open var selectedAttachmentType: AttachmentType?
-    
-    public private(set) var scrollViewHeightConstraint: NSLayoutConstraint?
-    open private(set) var horizontalConstraints: [NSLayoutConstraint] = []
-    open private(set) var verticalConstraints: [NSLayoutConstraint] = []
-    
+
+    /// The scroll view that contains the horizontal and vertical stacks.
     open private(set) lazy var scrollView: UIScrollView = UIScrollView()
         .withoutAutoresizingMaskConstraints
 
-    open private(set) lazy var horizontalStackView: ContainerStackView = ContainerStackView(axis: .horizontal, spacing: 8)
-        .withoutAutoresizingMaskConstraints
+    /// The stack used to display the attachments previews horizontally.
+    open private(set) lazy var horizontalStackView = ContainerStackView(
+        axis: .horizontal,
+        spacing: 8
+    ).withoutAutoresizingMaskConstraints
 
-    open private(set) lazy var verticalStackView: ContainerStackView = ContainerStackView(axis: .vertical, spacing: 8)
-        .withoutAutoresizingMaskConstraints
+    /// The stack used to display the attachments previews vertically.
+    open private(set) lazy var verticalStackView = ContainerStackView(
+        axis: .vertical,
+        spacing: 8
+    ).withoutAutoresizingMaskConstraints
+
+    /// The constraints of the attachments horizontal stack.
+    open private(set) var horizontalConstraints: [NSLayoutConstraint] = []
+
+    /// The constraints of the attachments vertical stack.
+    open private(set) var verticalConstraints: [NSLayoutConstraint] = []
     
     override open func setUpAppearance() {
         super.setUpAppearance()
@@ -54,8 +65,7 @@ open class AttachmentsPreviewVC: _ViewController, ComponentsProvider {
         horizontalConstraints.append(horizontalStackView.heightAnchor.pin(equalTo: scrollView.heightAnchor))
         verticalConstraints.append(verticalStackView.widthAnchor.pin(equalTo: scrollView.widthAnchor))
         
-        scrollViewHeightConstraint = scrollView.heightAnchor.pin(equalToConstant: 0)
-        scrollViewHeightConstraint?.isActive = true
+        scrollView.heightAnchor.pin(greaterThanOrEqualToConstant: 0).isActive = true
     }
     
     open var attachmentViews: [UIView] {
@@ -88,15 +98,8 @@ open class AttachmentsPreviewVC: _ViewController, ComponentsProvider {
     }
     
     open func setupHorizontalStackView() {
-        let itemHeight: CGFloat = 100
-        
         // Re-enable scroll
         scrollView.isScrollEnabled = true
-        
-        // Calculate height of the scroll view
-        scrollViewHeightConstraint?.constant = itemHeight
-            + horizontalStackView.layoutMargins.top
-            + horizontalStackView.layoutMargins.bottom
         
         horizontalConstraints.forEach { $0.isActive = true }
         verticalConstraints.forEach { $0.isActive = false }
@@ -109,19 +112,9 @@ open class AttachmentsPreviewVC: _ViewController, ComponentsProvider {
     }
     
     open func setupVerticalStackView() {
-        let maxNumberOfVisibleFiles = 3
-        let itemHeight: CGFloat = 54
-        
         // Disable scroll when not needed
         scrollView.isScrollEnabled = content.count > maxNumberOfVisibleFiles
-        
-        // Calculate height of the scroll view
-        let numberOfVisibleItems = CGFloat(min(content.count, maxNumberOfVisibleFiles))
-        let itemsHeight = itemHeight * numberOfVisibleItems
-        let spacings = verticalStackView.spacing.rawValue * (numberOfVisibleItems - 1)
-        let height = itemsHeight + spacings + verticalStackView.layoutMargins.top + verticalStackView.layoutMargins.bottom
-        scrollViewHeightConstraint?.constant = height
-        
+
         horizontalConstraints.forEach { $0.isActive = false }
         verticalConstraints.forEach { $0.isActive = true }
         
