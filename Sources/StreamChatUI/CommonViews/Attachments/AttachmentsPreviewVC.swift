@@ -13,8 +13,8 @@ open class AttachmentsPreviewVC: _ViewController, ComponentsProvider {
         }
     }
 
-    /// The maximum number of files visible before scrolling is enabled.
-    open var maxNumberOfVisibleFiles: Int = 3
+    /// The maximum number of vertical items before scrolling is enabled.
+    open var maxNumberOfVerticalItems: Int = 3
 
     /// The closure handler when an attachment has been removed.
     open var didTapRemoveItemButton: ((Int) -> Void)?
@@ -40,6 +40,9 @@ open class AttachmentsPreviewVC: _ViewController, ComponentsProvider {
 
     /// The constraints of the attachments vertical stack.
     open private(set) var verticalConstraints: [NSLayoutConstraint] = []
+
+    /// The current scroll view height used to activate the scrolling on the vertical stack.
+    public var scrollViewHeightConstraint: NSLayoutConstraint?
     
     override open func setUpAppearance() {
         super.setUpAppearance()
@@ -63,9 +66,9 @@ open class AttachmentsPreviewVC: _ViewController, ComponentsProvider {
         scrollView.embed(verticalStackView)
         
         horizontalConstraints.append(horizontalStackView.heightAnchor.pin(equalTo: scrollView.heightAnchor))
+
         verticalConstraints.append(verticalStackView.widthAnchor.pin(equalTo: scrollView.widthAnchor))
-        
-        scrollView.heightAnchor.pin(greaterThanOrEqualToConstant: 0).isActive = true
+        verticalConstraints.append(verticalStackView.heightAnchor.pin(equalTo: scrollView.heightAnchor))
     }
     
     open var attachmentViews: [UIView] {
@@ -113,7 +116,23 @@ open class AttachmentsPreviewVC: _ViewController, ComponentsProvider {
     
     open func setupVerticalStackView() {
         // Disable scroll when not needed
-        scrollView.isScrollEnabled = content.count > maxNumberOfVisibleFiles
+        scrollView.isScrollEnabled = content.count > maxNumberOfVerticalItems
+
+        // If the content is bigger than the max vertical items and the scroll view height
+        // constraint is not yet created, append to the vertical constraint and activate it.
+        if content.count > maxNumberOfVerticalItems {
+            if scrollViewHeightConstraint == nil {
+                scrollViewHeightConstraint = scrollView.heightAnchor.pin(
+                    lessThanOrEqualToConstant: scrollView.frame.size.height
+                )
+                verticalConstraints.append(scrollViewHeightConstraint!)
+            }
+            // If the content is lower than the max vertical items,
+            // reset the scroll view height constraint.
+        } else {
+            scrollViewHeightConstraint?.isActive = false
+            scrollViewHeightConstraint = nil
+        }
 
         horizontalConstraints.forEach { $0.isActive = false }
         verticalConstraints.forEach { $0.isActive = true }
