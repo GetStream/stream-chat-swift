@@ -5,7 +5,7 @@ title: ChatChannelListItemViewSwiftUIView
 ``` swift
 @available(iOS 13.0, *)
 /// Protocol of `_ChatChannelListItemView` wrapper for use in SwiftUI.
-public protocol _ChatChannelListItemViewSwiftUIView: View 
+public protocol ChatChannelListItemViewSwiftUIView: View 
 ```
 
 ## Inheritance
@@ -14,14 +14,8 @@ public protocol _ChatChannelListItemViewSwiftUIView: View
 
 ## Requirements
 
-### ExtraData
-
-``` swift
-associatedtype ExtraData: ExtraDataTypes
-```
-
 ### init(dataSource:​)
 
 ``` swift
-init(dataSource: _ChatChannelListItemView<ExtraData>.ObservedObject<Self>)
+init(dataSource: ChatChannelListItemView.ObservedObject<Self>)
 ```

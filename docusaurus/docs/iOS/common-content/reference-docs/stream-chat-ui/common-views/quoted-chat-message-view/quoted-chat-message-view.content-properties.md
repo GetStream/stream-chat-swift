@@ -4,7 +4,7 @@
 The quoted message.
 
 ``` swift
-public let message: _ChatMessage<ExtraData>
+public let message: ChatMessage
 ```
 
 ### `avatarAlignment`

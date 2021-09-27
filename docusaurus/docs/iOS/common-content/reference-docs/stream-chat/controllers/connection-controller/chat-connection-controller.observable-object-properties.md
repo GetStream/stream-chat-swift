@@ -4,7 +4,7 @@
 The underlying controller. You can still access it and call methods on it.
 
 ``` swift
-public let controller: _ChatConnectionController
+public let controller: ChatConnectionController
 ```
 
 ### `connectionStatus`
@@ -21,6 +21,6 @@ The connection status.
 
 ``` swift
 public func connectionController(
-        _ controller: _ChatConnectionController<ExtraData>,
+        _ controller: ChatConnectionController,
         didUpdateConnectionStatus status: ConnectionStatus
     ) 

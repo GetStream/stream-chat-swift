@@ -2,19 +2,15 @@
 title: ChatChannelMember
 ---
 
-A type representing a chat channel member. `_ChatChannelMember` is an immutable snapshot of a channel entity at the given time.
+A type representing a chat channel member. `ChatChannelMember` is an immutable snapshot of a channel entity at the given time.
 
 ``` swift
-public class _ChatChannelMember<ExtraData: UserExtraData>: _ChatUser<ExtraData> 
+public class ChatChannelMember: ChatUser 
 ```
-
-> 
-
-Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/Cheat-Sheet#working-with-extra-data).
 
 ## Inheritance
 
-`_ChatUser<ExtraData>`
+[`ChatUser`](../chat-user)
 
 ## Properties
 

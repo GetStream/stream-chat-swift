@@ -26,7 +26,7 @@ public var callbackQueue: DispatchQueue = .main
 The `ChatClient` instance this controller belongs to.
 
 ``` swift
-public let client: _ChatClient<ExtraData>
+public let client: ChatClient
 ```
 
 ### `connectionStatus`
@@ -39,6 +39,14 @@ public var connectionStatus: ConnectionStatus
 
 To observe changes of the connection status, set your class as a delegate of this controller or use the provided
 `Combine` publishers.
+
+### `delegate`
+
+Set the delegate of `ChatConnectionController` to observe the changes in the system.
+
+``` swift
+var delegate: ChatConnectionControllerDelegate? 
+```
 
 ## Methods
 
@@ -70,10 +78,8 @@ func disconnect()
 Sets the provided object as a delegate of this controller.
 
 ``` swift
-func setDelegate<Delegate: _ChatConnectionControllerDelegate>(_ delegate: Delegate?) where Delegate.ExtraData == ExtraData 
+func setDelegate<Delegate: ChatConnectionControllerDelegate>(_ delegate: Delegate?) 
 ```
-
-> 
 
 #### Parameters
 

@@ -14,7 +14,7 @@ public struct Content
 
 ``` swift
 public init(
-            message: _ChatMessage<ExtraData>,
+            message: ChatMessage,
             avatarAlignment: QuotedAvatarAlignment
         ) 
 ```
@@ -26,7 +26,7 @@ public init(
 The quoted message.
 
 ``` swift
-public let message: _ChatMessage<ExtraData>
+public let message: ChatMessage
 ```
 
 ### `avatarAlignment`

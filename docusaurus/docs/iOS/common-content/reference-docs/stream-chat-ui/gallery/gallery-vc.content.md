@@ -14,7 +14,7 @@ public struct Content
 
 ``` swift
 public init(
-            message: _ChatMessage<ExtraData>,
+            message: ChatMessage,
             currentPage: Int = 0
         ) 
 ```
@@ -26,7 +26,7 @@ public init(
 The message which attachments are displayed by the gallery.
 
 ``` swift
-public var message: _ChatMessage<ExtraData>
+public var message: ChatMessage
 ```
 
 ### `currentPage`

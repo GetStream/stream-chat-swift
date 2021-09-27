@@ -4,7 +4,7 @@
 The `ChatChannelListItemView` instance used as content view.
 
 ``` swift
-open private(set) lazy var itemView: _ChatChannelListItemView<ExtraData> = components
+open private(set) lazy var itemView: ChatChannelListItemView = components
         .channelContentView
         .init()
         .withoutAutoresizingMaskConstraints
@@ -15,7 +15,7 @@ open private(set) lazy var itemView: _ChatChannelListItemView<ExtraData> = compo
 The `SwipeableView` instance which is used for revealing buttons when cell is swiped.
 
 ``` swift
-open private(set) lazy var swipeableView: _SwipeableView<ExtraData> = components
+open private(set) lazy var swipeableView: SwipeableView = components
         .channelActionsView.init()
         .withoutAutoresizingMaskConstraints
 ```

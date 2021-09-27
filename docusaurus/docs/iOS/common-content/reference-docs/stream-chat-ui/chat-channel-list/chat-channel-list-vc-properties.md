@@ -2,7 +2,7 @@
 ### `content`
 
 ``` swift
-public var content: _ChatChannelListController<ExtraData> 
+public var content: ChatChannelListController 
 ```
 
 ### `controller`
@@ -10,7 +10,7 @@ public var content: _ChatChannelListController<ExtraData>
 The `ChatChannelListController` instance that provides channels data.
 
 ``` swift
-public var controller: _ChatChannelListController<ExtraData>!
+public var controller: ChatChannelListController!
 ```
 
 ### `loadingIndicator`
@@ -24,7 +24,7 @@ open private(set) lazy var loadingIndicator: UIActivityIndicatorView
 A router object responsible for handling navigation actions of this view controller.
 
 ``` swift
-open lazy var router: _ChatChannelListRouter<ExtraData> 
+open lazy var router: ChatChannelListRouter 
 ```
 
 ### `collectionViewLayout`
@@ -50,7 +50,7 @@ open private(set) lazy var collectionView: UICollectionView =
 The `CurrentChatUserAvatarView` instance used for displaying avatar of the current user.
 
 ``` swift
-open private(set) lazy var userAvatarView: _CurrentChatUserAvatarView<ExtraData> = components
+open private(set) lazy var userAvatarView: CurrentChatUserAvatarView = components
         .currentUserAvatarView.init()
         .withoutAutoresizingMaskConstraints
 ```
@@ -77,6 +77,16 @@ open var collectionViewCellReuseIdentifier: String
 
 ``` swift
 override open func setUp() 
+```
+
+### `collectionView(_:willDisplay:forItemAt:)`
+
+``` swift
+open func collectionView(
+        _ collectionView: UICollectionView,
+        willDisplay cell: UICollectionViewCell,
+        forItemAt indexPath: IndexPath
+    ) 
 ```
 
 ### `setUpLayout()`
@@ -122,12 +132,6 @@ open func collectionView(
 open func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) 
 ```
 
-### `scrollViewDidEndDecelerating(_:)`
-
-``` swift
-open func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) 
-```
-
 ### `didTapOnCurrentUserAvatar(_:)`
 
 ``` swift
@@ -138,6 +142,12 @@ open func scrollViewDidEndDecelerating(_ scrollView: UIScrollView)
 
 ``` swift
 override open func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) 
+```
+
+### `loadMoreChannels()`
+
+``` swift
+open func loadMoreChannels() 
 ```
 
 ### `swipeableViewWillShowActionViews(for:)`
@@ -179,15 +189,15 @@ open func moreButtonPressedForCell(at indexPath: IndexPath)
 ### `controllerWillChangeChannels(_:)`
 
 ``` swift
-open func controllerWillChangeChannels(_ controller: _ChatChannelListController<ExtraData>) 
+open func controllerWillChangeChannels(_ controller: ChatChannelListController) 
 ```
 
 ### `controller(_:didChangeChannels:)`
 
 ``` swift
 open func controller(
-        _ controller: _ChatChannelListController<ExtraData>,
-        didChangeChannels changes: [ListChange<_ChatChannel<ExtraData>>]
+        _ controller: ChatChannelListController,
+        didChangeChannels changes: [ListChange<ChatChannel>]
     ) 
 ```
 

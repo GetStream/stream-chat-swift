@@ -2,7 +2,7 @@
 title: ChatChannelMemberListController.ObservableObject
 ---
 
-A wrapper object for `_ChatChannelMemberListController` type which makes it possible to use the controller
+A wrapper object for `ChatChannelMemberListController` type which makes it possible to use the controller
 comfortably in SwiftUI.
 
 ``` swift
@@ -11,7 +11,7 @@ public class ObservableObject: SwiftUI.ObservableObject
 
 ## Inheritance
 
-`SwiftUI.ObservableObject`, [`_ChatChannelMemberListControllerDelegate`](../chat-channel-member-list-controller-delegate)
+[`ChatChannelMemberListControllerDelegate`](../chat-channel-member-list-controller-delegate), `SwiftUI.ObservableObject`
 
 ## Properties
 
@@ -20,7 +20,7 @@ public class ObservableObject: SwiftUI.ObservableObject
 The underlying controller. You can still access it and call methods on it.
 
 ``` swift
-public let controller: _ChatChannelMemberListController
+public let controller: ChatChannelMemberListController
 ```
 
 ### `members`
@@ -28,7 +28,7 @@ public let controller: _ChatChannelMemberListController
 The channel members.
 
 ``` swift
-@Published public private(set) var members: LazyCachedMapCollection<_ChatChannelMember<ExtraData.User>> = []
+@Published public private(set) var members: LazyCachedMapCollection<ChatChannelMember> = []
 ```
 
 ### `state`
@@ -45,8 +45,8 @@ The current state of the controller.
 
 ``` swift
 public func memberListController(
-        _ controller: _ChatChannelMemberListController<ExtraData>,
-        didChangeMembers changes: [ListChange<_ChatChannelMember<ExtraData.User>>]
+        _ controller: ChatChannelMemberListController,
+        didChangeMembers changes: [ListChange<ChatChannelMember>]
     ) 
 ```
 

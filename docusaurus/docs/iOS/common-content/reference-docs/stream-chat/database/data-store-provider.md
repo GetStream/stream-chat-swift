@@ -15,19 +15,13 @@ public protocol DataStoreProvider
 `DataStore` provide access to all locally available model objects based on their id.
 
 ``` swift
-public var dataStore: DataStore<ExtraData> 
+public var dataStore: DataStore 
 ```
 
 ## Requirements
 
-### ExtraData
-
-``` swift
-associatedtype ExtraData: ExtraDataTypes
-```
-
 ### client
 
 ``` swift
-var client: _ChatClient<ExtraData> 
+var client: ChatClient 
 ```

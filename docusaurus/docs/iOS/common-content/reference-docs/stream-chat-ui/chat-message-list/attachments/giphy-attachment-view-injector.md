@@ -3,19 +3,19 @@ title: GiphyAttachmentViewInjector
 ---
 
 ``` swift
-public class _GiphyAttachmentViewInjector<ExtraData: ExtraDataTypes>: _AttachmentViewInjector<ExtraData> 
+public class GiphyAttachmentViewInjector: AttachmentViewInjector 
 ```
 
 ## Inheritance
 
-`_AttachmentViewInjector<ExtraData>`
+[`AttachmentViewInjector`](../attachment-view-injector)
 
 ## Properties
 
 ### `giphyImageView`
 
 ``` swift
-open lazy var giphyImageView: _ChatMessageInteractiveAttachmentView<ExtraData> 
+open lazy var giphyImageView: ChatMessageInteractiveAttachmentView 
 ```
 
 ## Methods

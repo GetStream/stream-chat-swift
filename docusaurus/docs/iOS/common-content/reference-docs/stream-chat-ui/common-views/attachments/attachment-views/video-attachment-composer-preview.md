@@ -5,7 +5,7 @@ title: VideoAttachmentComposerPreview
 A view that displays the video attachment preview in composer.
 
 ``` swift
-open class _VideoAttachmentComposerPreview<ExtraData: ExtraDataTypes>: _View, ThemeProvider 
+open class VideoAttachmentComposerPreview: _View, ThemeProvider 
 ```
 
 ## Inheritance

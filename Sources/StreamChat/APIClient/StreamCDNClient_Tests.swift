@@ -20,7 +20,7 @@ class StreamCDNClient_Tests: XCTestCase {
         // Create a test endpoint
         let attachmentId = AttachmentId.unique
         let testEndpoint: Endpoint<FileUploadPayload> = .uploadAttachment(
-            with: attachmentId,
+            with: attachmentId.cid,
             type: .image
         )
 

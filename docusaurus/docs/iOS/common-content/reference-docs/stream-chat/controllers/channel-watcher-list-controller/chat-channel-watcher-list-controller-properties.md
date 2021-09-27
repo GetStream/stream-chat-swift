@@ -12,7 +12,7 @@ public var statePublisher: AnyPublisher<DataController.State, Never>
 A publisher emitting a new value every time the channel members change.
 
 ``` swift
-public var watchersChangesPublisher: AnyPublisher<[ListChange<_ChatUser<ExtraData.User>>], Never> 
+public var watchersChangesPublisher: AnyPublisher<[ListChange<ChatUser>], Never> 
 ```
 
 ### `observableObject`
@@ -36,7 +36,7 @@ The query specifying sorting and filtering for the list of channel watchers.
 The `ChatClient` instance this controller belongs to.
 
 ``` swift
-public let client: _ChatClient<ExtraData>
+public let client: ChatClient
 ```
 
 ### `watchers`
@@ -46,7 +46,15 @@ To observe the watcher list changes, set your class as a delegate of this contro
 `Combine` publishers.
 
 ``` swift
-public var watchers: LazyCachedMapCollection<_ChatUser<ExtraData.User>> 
+public var watchers: LazyCachedMapCollection<ChatUser> 
+```
+
+### `delegate`
+
+Set the delegate of `ChatChannelWatcherListController` to observe the changes in the system.
+
+``` swift
+public var delegate: ChatChannelWatcherListControllerDelegate? 
 ```
 
 ## Methods
@@ -68,11 +76,8 @@ override public func synchronize(_ completion: ((_ error: Error?) -> Void)? = ni
 Sets the provided object as a delegate of this controller.
 
 ``` swift
-public func setDelegate<Delegate: _ChatChannelWatcherListControllerDelegate>(_ delegate: Delegate)
-        where Delegate.ExtraData == ExtraData 
+public func setDelegate<Delegate: ChatChannelWatcherListControllerDelegate>(_ delegate: Delegate) 
 ```
-
-> 
 
 #### Parameters
 

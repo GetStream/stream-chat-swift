@@ -6,14 +6,8 @@ title: ChatChannelWatcherListController
 a list of chat watchers based on the provided query.
 
 ``` swift
-public class _ChatChannelWatcherListController<ExtraData: ExtraDataTypes>: DataController, DelegateCallable, DataStoreProvider 
+public class ChatChannelWatcherListController: DataController, DelegateCallable, DataStoreProvider 
 ```
-
-Learn more about `_ChatChannelWatcherListController` and its usage in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/StreamChat-SDK-Cheat-Sheet#user-list).
-
-> 
-
-Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/Cheat-Sheet#working-with-extra-data).
 
 ## Inheritance
 
@@ -34,7 +28,7 @@ public var statePublisher: AnyPublisher<DataController.State, Never>
 A publisher emitting a new value every time the channel members change.
 
 ``` swift
-public var watchersChangesPublisher: AnyPublisher<[ListChange<_ChatUser<ExtraData.User>>], Never> 
+public var watchersChangesPublisher: AnyPublisher<[ListChange<ChatUser>], Never> 
 ```
 
 ### `observableObject`
@@ -58,7 +52,7 @@ The query specifying sorting and filtering for the list of channel watchers.
 The `ChatClient` instance this controller belongs to.
 
 ``` swift
-public let client: _ChatClient<ExtraData>
+public let client: ChatClient
 ```
 
 ### `watchers`
@@ -68,7 +62,15 @@ To observe the watcher list changes, set your class as a delegate of this contro
 `Combine` publishers.
 
 ``` swift
-public var watchers: LazyCachedMapCollection<_ChatUser<ExtraData.User>> 
+public var watchers: LazyCachedMapCollection<ChatUser> 
+```
+
+### `delegate`
+
+Set the delegate of `ChatChannelWatcherListController` to observe the changes in the system.
+
+``` swift
+public var delegate: ChatChannelWatcherListControllerDelegate? 
 ```
 
 ## Methods
@@ -90,11 +92,8 @@ override public func synchronize(_ completion: ((_ error: Error?) -> Void)? = ni
 Sets the provided object as a delegate of this controller.
 
 ``` swift
-public func setDelegate<Delegate: _ChatChannelWatcherListControllerDelegate>(_ delegate: Delegate)
-        where Delegate.ExtraData == ExtraData 
+public func setDelegate<Delegate: ChatChannelWatcherListControllerDelegate>(_ delegate: Delegate) 
 ```
-
-> 
 
 #### Parameters
 

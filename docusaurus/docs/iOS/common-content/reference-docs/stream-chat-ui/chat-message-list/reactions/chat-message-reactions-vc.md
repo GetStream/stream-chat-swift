@@ -5,19 +5,19 @@ title: ChatMessageReactionsVC
 Controller for the message reactions picker as a list of toggles
 
 ``` swift
-open class _ChatMessageReactionsVC<ExtraData: ExtraDataTypes>: _ViewController, ThemeProvider 
+open class ChatMessageReactionsVC: _ViewController, ThemeProvider, ChatMessageControllerDelegate 
 ```
 
 ## Inheritance
 
-[`_ViewController`](../../../common-views/_view-controller), [`ThemeProvider`](../../../utils/theme-provider), `_ChatMessageControllerDelegate`
+[`_ViewController`](../../../common-views/_view-controller), `ChatMessageControllerDelegate`, [`ThemeProvider`](../../../utils/theme-provider)
 
 ## Properties
 
 ### `messageController`
 
 ``` swift
-public var messageController: _ChatMessageController<ExtraData>!
+public var messageController: ChatMessageController!
 ```
 
 ### `reactionsBubble`
@@ -52,14 +52,14 @@ override open func updateContent()
 ### `toggleReaction(_:)`
 
 ``` swift
-public func toggleReaction(_ reaction: MessageReactionType) 
+open func toggleReaction(_ reaction: MessageReactionType) 
 ```
 
 ### `messageController(_:didChangeMessage:)`
 
 ``` swift
-public func messageController(
-        _ controller: _ChatMessageController<ExtraData>,
-        didChangeMessage change: EntityChange<_ChatMessage<ExtraData>>
+open func messageController(
+        _ controller: ChatMessageController,
+        didChangeMessage change: EntityChange<ChatMessage>
     ) 
 ```

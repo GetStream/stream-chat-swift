@@ -35,7 +35,7 @@ public static let type: AttachmentType = .file
 A title, usually the name of the file.
 
 ``` swift
-public let title: String?
+public var title: String?
 ```
 
 ### `assetURL`
@@ -43,7 +43,7 @@ public let title: String?
 A link to the file.
 
 ``` swift
-public internal(set) var assetURL: URL
+public var assetURL: URL
 ```
 
 ### `file`
@@ -51,7 +51,15 @@ public internal(set) var assetURL: URL
 The file itself.
 
 ``` swift
-public let file: AttachmentFile
+public var file: AttachmentFile
+```
+
+### `extraData`
+
+An extra data.
+
+``` swift
+public var extraData: [String: RawJSON]?
 ```
 
 ## Methods

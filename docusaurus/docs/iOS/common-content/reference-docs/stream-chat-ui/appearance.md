@@ -8,15 +8,6 @@ An object containing visual configuration for whole application.
 public struct Appearance 
 ```
 
-## Nested Type Aliases
-
-### `Font`
-
-``` swift
-@available(*, deprecated, renamed: "Fonts")
-    typealias Font = Fonts
-```
-
 ## Initializers
 
 ### `init()`
@@ -65,15 +56,16 @@ public var images
 
 By providing different object or changing individal images, you can change the look of the views.
 
+### `localizationProvider`
+
+Provider for custom localization which is dependent on App Bundle.
+
+``` swift
+public var localizationProvider: (_ key: String, _ table: String) -> String 
+```
+
 ### `` `default` ``
 
 ``` swift
 static var `default`: Appearance 
-```
-
-### `font`
-
-``` swift
-@available(*, deprecated, renamed: "fonts")
-    var font: Font 
 ```

@@ -36,7 +36,7 @@ open var messageContentViewDeactivateConstraints: [NSLayoutConstraint] = []
 `messageContentView` instance that is animated.
 
 ``` swift
-open weak var messageContentView: _ChatMessageContentView<ExtraData>!
+open weak var messageContentView: ChatMessageContentView?
 ```
 
 ### `messageContentViewSuperview`
@@ -44,7 +44,7 @@ open weak var messageContentView: _ChatMessageContentView<ExtraData>!
 `messageContentView`'s initial superview.
 
 ``` swift
-open weak var messageContentViewSuperview: UIView!
+open weak var messageContentViewSuperview: UIView?
 ```
 
 ### `mainContainerTopAnchor`

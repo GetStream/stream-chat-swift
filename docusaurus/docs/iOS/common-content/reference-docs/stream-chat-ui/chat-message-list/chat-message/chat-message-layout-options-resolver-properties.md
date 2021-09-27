@@ -9,17 +9,6 @@ public let minTimeIntervalBetweenMessagesInGroup: TimeInterval
 
 ## Methods
 
-### `optionsForMessage(at:in:with:)`
-
-``` swift
-@available(*, deprecated, message: "Use the same method with the appearance parameter instead")
-    open func optionsForMessage(
-        at indexPath: IndexPath,
-        in channel: _ChatChannel<ExtraData>,
-        with messages: AnyRandomAccessCollection<_ChatMessage<ExtraData>>
-    ) -> ChatMessageLayoutOptions 
-```
-
 ### `optionsForMessage(at:in:with:appearance:)`
 
 Calculates layout options for the message.
@@ -27,8 +16,8 @@ Calculates layout options for the message.
 ``` swift
 open func optionsForMessage(
         at indexPath: IndexPath,
-        in channel: _ChatChannel<ExtraData>,
-        with messages: AnyRandomAccessCollection<_ChatMessage<ExtraData>>,
+        in channel: ChatChannel,
+        with messages: AnyRandomAccessCollection<ChatMessage>,
         appearance: Appearance
     ) -> ChatMessageLayoutOptions 
 ```
@@ -53,7 +42,7 @@ is `<= minTimeIntervalBetweenMessagesInGroup`.
 ``` swift
 open func isMessageLastInSequence(
         messageIndexPath: IndexPath,
-        messages: AnyRandomAccessCollection<_ChatMessage<ExtraData>>
+        messages: AnyRandomAccessCollection<ChatMessage>
     ) -> Bool 
 ```
 

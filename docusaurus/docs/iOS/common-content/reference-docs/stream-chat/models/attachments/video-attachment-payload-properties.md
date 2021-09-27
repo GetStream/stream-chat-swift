@@ -12,7 +12,7 @@ public static let type: AttachmentType = .video
 A title, usually the name of the video.
 
 ``` swift
-public let title: String?
+public var title: String?
 ```
 
 ### `videoURL`
@@ -20,7 +20,7 @@ public let title: String?
 A link to the video.
 
 ``` swift
-public internal(set) var videoURL: URL
+public var videoURL: URL
 ```
 
 ### `file`
@@ -28,7 +28,15 @@ public internal(set) var videoURL: URL
 The video itself.
 
 ``` swift
-public let file: AttachmentFile
+public var file: AttachmentFile
+```
+
+### `extraData`
+
+An extra data.
+
+``` swift
+public var extraData: [String: RawJSON]?
 ```
 
 ## Methods

@@ -4,7 +4,7 @@
 A filter for the query (see `Filter`).
 
 ``` swift
-public let filter: Filter<_ChannelListFilterScope<ExtraData>>
+public let filter: Filter<ChannelListFilterScope>
 ```
 
 ### `sort`
@@ -44,4 +44,4 @@ public func encode(to encoder: Encoder) throws
 ### `==`
 
 ``` swift
-public static func == (lhs: _ChannelListQuery<ExtraData>, rhs: _ChannelListQuery<ExtraData>) -> Bool 
+public static func == (lhs: ChannelListQuery, rhs: ChannelListQuery) -> Bool 

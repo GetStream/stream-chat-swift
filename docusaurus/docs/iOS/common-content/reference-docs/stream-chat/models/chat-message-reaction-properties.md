@@ -33,10 +33,10 @@ public let updatedAt: Date
 
 ### `extraData`
 
-The reaction's extra data.
+Custom data
 
 ``` swift
-public let extraData: ExtraData.MessageReaction
+public let extraData: [String: RawJSON]
 ```
 
 ### `author`
@@ -44,4 +44,4 @@ public let extraData: ExtraData.MessageReaction
 The author.
 
 ``` swift
-public let author: _ChatUser<ExtraData.User>
+public let author: ChatUser

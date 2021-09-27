@@ -3,7 +3,7 @@ title: NotificationMutesUpdatedEvent
 ---
 
 ``` swift
-public struct NotificationMutesUpdatedEvent<ExtraData: ExtraDataTypes>: CurrentUserEvent 
+public struct NotificationMutesUpdatedEvent: CurrentUserEvent 
 ```
 
 ## Inheritance

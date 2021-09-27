@@ -11,7 +11,7 @@ Converts type-erased attachment to the attachment with the concrete payload.
 ``` swift
 func attachment<Payload: AttachmentPayload>(
         payloadType: Payload.Type
-    ) -> _ChatMessageAttachment<Payload>? 
+    ) -> ChatMessageAttachment<Payload>? 
 ```
 
 Attachment with the requested payload type will be returned if the type-erased payload

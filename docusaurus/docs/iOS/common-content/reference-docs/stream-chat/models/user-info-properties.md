@@ -20,4 +20,4 @@ public let imageURL: URL?
 ### `extraData`
 
 ``` swift
-public let extraData: ExtraData.User
+public let extraData: [String: RawJSON]

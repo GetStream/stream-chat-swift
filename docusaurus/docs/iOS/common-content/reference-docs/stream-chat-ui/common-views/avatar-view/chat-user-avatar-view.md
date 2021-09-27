@@ -5,7 +5,7 @@ title: ChatUserAvatarView
 A view that shows a user avatar including an indicator of the user presence (online/offline).
 
 ``` swift
-open class _ChatUserAvatarView<ExtraData: ExtraDataTypes>: _View, ThemeProvider 
+open class ChatUserAvatarView: _View, ThemeProvider 
 ```
 
 ## Inheritance
@@ -19,7 +19,7 @@ open class _ChatUserAvatarView<ExtraData: ExtraDataTypes>: _View, ThemeProvider
 A view that shows the avatar image and online presence indicator.
 
 ``` swift
-open private(set) lazy var presenceAvatarView: _ChatPresenceAvatarView<ExtraData> = components
+open private(set) lazy var presenceAvatarView: ChatPresenceAvatarView = components
         .presenceAvatarView.init()
         .withoutAutoresizingMaskConstraints
 ```
@@ -29,7 +29,7 @@ open private(set) lazy var presenceAvatarView: _ChatPresenceAvatarView<ExtraData
 The data this view component shows.
 
 ``` swift
-open var content: _ChatUser<ExtraData.User>? 
+open var content: ChatUser? 
 ```
 
 ## Methods

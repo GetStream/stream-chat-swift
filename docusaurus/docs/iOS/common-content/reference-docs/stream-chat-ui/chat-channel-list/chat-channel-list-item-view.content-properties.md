@@ -4,7 +4,7 @@
 Channel for the current Item.
 
 ``` swift
-public let channel: _ChatChannel<ExtraData>
+public let channel: ChatChannel
 ```
 
 ### `currentUserId`

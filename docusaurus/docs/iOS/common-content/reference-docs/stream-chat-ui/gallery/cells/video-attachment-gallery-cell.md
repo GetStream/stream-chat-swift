@@ -5,12 +5,12 @@ title: VideoAttachmentGalleryCell
 `UICollectionViewCell` for video gallery item.
 
 ``` swift
-open class _VideoAttachmentGalleryCell<ExtraData: ExtraDataTypes>: _GalleryCollectionViewCell<ExtraData> 
+open class VideoAttachmentGalleryCell: GalleryCollectionViewCell 
 ```
 
 ## Inheritance
 
-`_GalleryCollectionViewCell<ExtraData>`
+[`GalleryCollectionViewCell`](../gallery-collection-view-cell)
 
 ## Properties
 

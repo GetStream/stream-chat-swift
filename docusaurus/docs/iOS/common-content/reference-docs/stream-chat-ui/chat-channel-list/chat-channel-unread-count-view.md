@@ -5,7 +5,7 @@ title: ChatChannelUnreadCountView
 A view that shows a number of unread messages in channel.
 
 ``` swift
-open class _ChatChannelUnreadCountView<ExtraData: ExtraDataTypes>: _View, ThemeProvider, SwiftUIRepresentable 
+open class ChatChannelUnreadCountView: _View, ThemeProvider, SwiftUIRepresentable 
 ```
 
 ## Inheritance
@@ -19,7 +19,7 @@ open class _ChatChannelUnreadCountView<ExtraData: ExtraDataTypes>: _View, ThemeP
 Data source of `_ChatChannelUnreadCountView` represented as `ObservedObject`.
 
 ``` swift
-public typealias ObservedObject<Content: SwiftUIView> = SwiftUIWrapper<Content> where Content.ExtraData == ExtraData
+public typealias ObservedObject<Content: SwiftUIView> = SwiftUIWrapper<Content>
 ```
 
 ### `SwiftUIView`
@@ -27,7 +27,7 @@ public typealias ObservedObject<Content: SwiftUIView> = SwiftUIWrapper<Content> 
 `_ChatChannelUnreadCountView` represented in SwiftUI.
 
 ``` swift
-public typealias SwiftUIView = _ChatChannelUnreadCountViewSwiftUIView
+public typealias SwiftUIView = ChatChannelUnreadCountViewSwiftUIView
 ```
 
 ## Properties

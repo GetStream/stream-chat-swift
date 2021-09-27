@@ -5,7 +5,7 @@ title: ChatPresenceAvatarView
 A view that shows a user avatar including an indicator of the user presence (online/offline).
 
 ``` swift
-open class _ChatPresenceAvatarView<ExtraData: ExtraDataTypes>: _View, ComponentsProvider 
+open class ChatPresenceAvatarView: _View, ComponentsProvider 
 ```
 
 ## Inheritance

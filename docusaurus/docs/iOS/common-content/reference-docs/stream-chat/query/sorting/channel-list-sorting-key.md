@@ -63,6 +63,23 @@ Sort channels by `cid`.
 case cid
 ```
 
+### `hasUnread`
+
+Sort channels by unread state. When using this sorting key, every unread channel weighs the same,
+so they're sorted by `updatedAt`
+
+``` swift
+case hasUnread
+```
+
+### `unreadCount`
+
+Sort channels by their unread count.
+
+``` swift
+case unreadCount
+```
+
 ## Methods
 
 ### `encode(to:)`

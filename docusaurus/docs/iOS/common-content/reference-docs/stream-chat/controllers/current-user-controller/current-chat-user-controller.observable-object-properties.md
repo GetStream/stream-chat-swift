@@ -4,7 +4,7 @@
 The underlying controller. You can still access it and call methods on it.
 
 ``` swift
-public let controller: _CurrentChatUserController
+public let controller: CurrentChatUserController
 ```
 
 ### `currentUser`
@@ -12,7 +12,7 @@ public let controller: _CurrentChatUserController
 The currently logged-in user.
 
 ``` swift
-@Published public private(set) var currentUser: _CurrentChatUser<ExtraData>?
+@Published public private(set) var currentUser: CurrentChatUser?
 ```
 
 ### `unreadCount`
@@ -29,7 +29,7 @@ The unread messages and channels count for the current user.
 
 ``` swift
 public func currentUserController(
-        _ controller: _CurrentChatUserController<ExtraData>,
+        _ controller: CurrentChatUserController,
         didChangeCurrentUserUnreadCount unreadCount: UnreadCount
     ) 
 ```
@@ -38,6 +38,6 @@ public func currentUserController(
 
 ``` swift
 public func currentUserController(
-        _ controller: _CurrentChatUserController<ExtraData>,
-        didChangeCurrentUser currentUser: EntityChange<_CurrentChatUser<ExtraData>>
+        _ controller: CurrentChatUserController,
+        didChangeCurrentUser currentUser: EntityChange<CurrentChatUser>
     ) 

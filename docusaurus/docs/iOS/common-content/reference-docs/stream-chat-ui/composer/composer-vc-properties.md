@@ -7,14 +7,6 @@ The content of the composer.
 public var content: Content 
 ```
 
-### `delegate`
-
-The delegate of the ComposerVC that notifies composer events.
-
-``` swift
-open weak var delegate: ComposerVCDelegate?
-```
-
 ### `mentionSymbol`
 
 A symbol that is used to recognise when the user is mentioning a user.
@@ -39,6 +31,14 @@ A Boolean value indicating whether the commands are enabled.
 open var isCommandsEnabled: Bool 
 ```
 
+### `isMentionsEnabled`
+
+A Boolean value indicating whether the user mentions are enabled.
+
+``` swift
+open var isMentionsEnabled: Bool 
+```
+
 ### `isAttachmentsEnabled`
 
 A Boolean value indicating whether the attachments are enabled.
@@ -47,12 +47,20 @@ A Boolean value indicating whether the attachments are enabled.
 open var isAttachmentsEnabled: Bool 
 ```
 
+### `mentionAllAppUsers`
+
+When enabled mentions search users across the entire app instead of searching
+
+``` swift
+open private(set) lazy var mentionAllAppUsers: Bool = components.mentionAllAppUsers
+```
+
 ### `userSearchController`
 
 A controller to search users and that is used to populate the mention suggestions.
 
 ``` swift
-open var userSearchController: _ChatUserSearchController<ExtraData>!
+open var userSearchController: ChatUserSearchController!
 ```
 
 ### `channelController`
@@ -60,7 +68,7 @@ open var userSearchController: _ChatUserSearchController<ExtraData>!
 A controller that manages the channel that the composer is creating content for.
 
 ``` swift
-open var channelController: _ChatChannelController<ExtraData>?
+open var channelController: ChatChannelController?
 ```
 
 ### `channelConfig`
@@ -92,7 +100,7 @@ open lazy var commandSuggester
 The view of the composer.
 
 ``` swift
-open private(set) lazy var composerView: _ComposerView<ExtraData> = components
+open private(set) lazy var composerView: ComposerView = components
         .messageComposerView.init()
         .withoutAutoresizingMaskConstraints
 ```
@@ -102,7 +110,7 @@ open private(set) lazy var composerView: _ComposerView<ExtraData> = components
 The view controller that shows the suggestions when the user is typing.
 
 ``` swift
-open private(set) lazy var suggestionsVC: _ChatSuggestionsVC<ExtraData> 
+open private(set) lazy var suggestionsVC: ChatSuggestionsVC 
 ```
 
 ### `attachmentsVC`
@@ -110,7 +118,7 @@ open private(set) lazy var suggestionsVC: _ChatSuggestionsVC<ExtraData>
 The view controller that shows the suggestions when the user is typing.
 
 ``` swift
-open private(set) lazy var attachmentsVC: _AttachmentsPreviewVC<ExtraData> 
+open private(set) lazy var attachmentsVC: AttachmentsPreviewVC 
 ```
 
 ### `mediaPickerVC`
@@ -138,12 +146,6 @@ open var attachmentsPickerActions: [UIAlertAction]
 ```
 
 ## Methods
-
-### `setDelegate(_:)`
-
-``` swift
-public func setDelegate(_ delegate: ComposerVCDelegate) 
-```
 
 ### `setUp()`
 
@@ -297,7 +299,7 @@ open func showCommandSuggestions(for typingCommand: String)
 Returns the query to be used for searching users for the given typing mention.
 
 ``` swift
-open func queryForMentionSuggestionsSearch(typingMention term: String) -> _UserListQuery<ExtraData.User> 
+open func queryForMentionSuggestionsSearch(typingMention term: String) -> UserListQuery 
 ```
 
 This function is called in `showMentionSuggestions` to retrieve the query
@@ -330,7 +332,7 @@ open func showMentionSuggestions(for typingMention: String, mentionRange: NSRang
 Provides the mention text for composer text field, when the user selects a mention suggestion.
 
 ``` swift
-open func mentionText(for user: _ChatUser<ExtraData.User>) -> String 
+open func mentionText(for user: ChatUser) -> String 
 ```
 
 ### `showSuggestions()`

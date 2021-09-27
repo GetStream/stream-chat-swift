@@ -4,7 +4,7 @@
 The underlying controller. You can still access it and call methods on it.
 
 ``` swift
-public let controller: _ChatUserController
+public let controller: ChatUserController
 ```
 
 ### `user`
@@ -12,7 +12,7 @@ public let controller: _ChatUserController
 The user matching the `userId`.
 
 ``` swift
-@Published public private(set) var user: _ChatUser<ExtraData.User>?
+@Published public private(set) var user: ChatUser?
 ```
 
 ### `state`
@@ -29,8 +29,8 @@ The current state of the controller.
 
 ``` swift
 public func userController(
-        _ controller: _ChatUserController<ExtraData>,
-        didUpdateUser change: EntityChange<_ChatUser<ExtraData.User>>
+        _ controller: ChatUserController,
+        didUpdateUser change: EntityChange<ChatUser>
     ) 
 ```
 

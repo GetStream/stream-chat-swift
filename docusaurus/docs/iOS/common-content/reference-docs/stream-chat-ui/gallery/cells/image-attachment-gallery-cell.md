@@ -5,12 +5,12 @@ title: ImageAttachmentGalleryCell
 `UICollectionViewCell` for an image item.
 
 ``` swift
-open class _ImageAttachmentGalleryCell<ExtraData: ExtraDataTypes>: _GalleryCollectionViewCell<ExtraData> 
+open class ImageAttachmentGalleryCell: GalleryCollectionViewCell 
 ```
 
 ## Inheritance
 
-`_GalleryCollectionViewCell<ExtraData>`
+[`GalleryCollectionViewCell`](../gallery-collection-view-cell)
 
 ## Properties
 

@@ -12,7 +12,7 @@ open class var reuseId: String
 Instance of `ChatMessageComposerMentionCellView` which shows information about the mentioned user.
 
 ``` swift
-open lazy var mentionView: _ChatMentionSuggestionView<ExtraData> = components
+open lazy var mentionView: ChatMentionSuggestionView = components
         .suggestionsMentionView.init()
         .withoutAutoresizingMaskConstraints
 ```

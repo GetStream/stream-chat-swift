@@ -4,7 +4,7 @@
 A filter for the query (see `Filter`).
 
 ``` swift
-public var filter: Filter<_UserListFilterScope<ExtraData>>?
+public var filter: Filter<UserListFilterScope>?
 ```
 
 ### `sort`

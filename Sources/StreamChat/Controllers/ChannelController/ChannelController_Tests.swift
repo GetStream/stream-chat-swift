@@ -3607,6 +3607,170 @@ class ChannelController_Tests: XCTestCase {
         // Completion should be called with the error
         AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
     }
+    
+    // MARK: - UploadFile
+    
+    func test_uploadFile_failsForNewChannels() throws {
+        //  Create `ChannelController` for new channel
+        let query = ChannelQuery(channelPayload: .unique)
+        setupControllerForNewChannel(query: query)
+        
+        // Simulate `uploadFile` call and assert error is returned
+        var error: Error? = try waitFor { [callbackQueueID] completion in
+            controller.uploadFile(localFileURL: .localYodaImage) { result in
+                AssertTestQueue(withId: callbackQueueID)
+                completion(result.error)
+            }
+        }
+        XCTAssert(error is ClientError.ChannelNotCreatedYet)
+        
+        // Simulate successful backend channel creation
+        env.channelUpdater!.update_channelCreatedCallback?(query.cid!)
+        
+        // Simulate `uploadFile` call and assert no error is returned
+        error = try waitFor { [callbackQueueID] completion in
+            controller.uploadFile(localFileURL: .localYodaImage) { result in
+                AssertTestQueue(withId: callbackQueueID)
+                completion(result.error)
+            }
+            env.channelUpdater!.uploadFile_completion?(.success(.localYodaQuote))
+        }
+        
+        XCTAssertNil(error)
+    }
+    
+    func test_uploadFile_callsChannelUpdater() {
+        // Simulate `uploadFile` call and catch the completion
+        var completionCalled = false
+        controller.uploadFile(localFileURL: .localYodaImage) { [callbackQueueID] result in
+            AssertTestQueue(withId: callbackQueueID)
+            XCTAssertNil(result.error)
+            completionCalled = true
+        }
+        
+        // Keep a weak ref so we can check if it's actually deallocated
+        weak var weakController = controller
+        
+        // (Try to) deallocate the controller
+        // by not keeping any references to it
+        controller = nil
+        
+        // Assert cid is passed to `channelUpdater`, completion is not called yet
+        XCTAssertEqual(env.channelUpdater!.uploadFile_cid, channelId)
+        // Assert correct type is passed
+        XCTAssertEqual(env.channelUpdater?.uploadFile_type, .file)
+        XCTAssertFalse(completionCalled)
+        
+        // Simulate successful update
+        env.channelUpdater!.uploadFile_completion?(.success(.localYodaQuote))
+        // Release reference of completion so we can deallocate stuff
+        env.channelUpdater!.uploadFile_completion = nil
+        
+        AssertAsync {
+            // Assert completion is called
+            Assert.willBeTrue(completionCalled)
+            // `weakController` should be deallocated too
+            Assert.canBeReleased(&weakController)
+        }
+    }
+    
+    func test_uploadFile_propagatesErrorFromUpdater() {
+        // Simulate `uploadFile` call and catch the completion
+        var completionCalledError: Error?
+        controller.uploadFile(localFileURL: .localYodaImage) { [callbackQueueID] in
+            AssertTestQueue(withId: callbackQueueID)
+            completionCalledError = $0.error
+        }
+        
+        // Simulate failed update
+        let testError = TestError()
+        env.channelUpdater!.uploadFile_completion?(.failure(testError))
+        
+        // Completion should be called with the error
+        AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
+    }
+    
+    // MARK: - UploadImage
+    
+    func test_uploadImage_failsForNewChannels() throws {
+        //  Create `ChannelController` for new channel
+        let query = ChannelQuery(channelPayload: .unique)
+        setupControllerForNewChannel(query: query)
+        
+        // Simulate `uploadImage` call and assert error is returned
+        var error: Error? = try waitFor { [callbackQueueID] completion in
+            controller.uploadImage(localFileURL: .localYodaImage) { result in
+                AssertTestQueue(withId: callbackQueueID)
+                completion(result.error)
+            }
+        }
+        XCTAssert(error is ClientError.ChannelNotCreatedYet)
+        
+        // Simulate successful backend channel creation
+        env.channelUpdater!.update_channelCreatedCallback?(query.cid!)
+        
+        // Simulate `uploadImage` call and assert no error is returned
+        error = try waitFor { [callbackQueueID] completion in
+            controller.uploadImage(localFileURL: .localYodaImage) { result in
+                AssertTestQueue(withId: callbackQueueID)
+                completion(result.error)
+            }
+            env.channelUpdater!.uploadFile_completion?(.success(.localYodaQuote))
+        }
+        
+        XCTAssertNil(error)
+    }
+    
+    func test_uploadImage_callsChannelUpdater() {
+        // Simulate `uploadImage` call and catch the completion
+        var completionCalled = false
+        controller.uploadImage(localFileURL: .localYodaImage) { [callbackQueueID] result in
+            AssertTestQueue(withId: callbackQueueID)
+            XCTAssertNil(result.error)
+            completionCalled = true
+        }
+        
+        // Keep a weak ref so we can check if it's actually deallocated
+        weak var weakController = controller
+        
+        // (Try to) deallocate the controller
+        // by not keeping any references to it
+        controller = nil
+        
+        // Assert cid is passed to `channelUpdater`, completion is not called yet
+        XCTAssertEqual(env.channelUpdater!.uploadFile_cid, channelId)
+        // Assert correct type is passed
+        XCTAssertEqual(env.channelUpdater?.uploadFile_type, .image)
+        XCTAssertFalse(completionCalled)
+        
+        // Simulate successful update
+        env.channelUpdater!.uploadFile_completion?(.success(.localYodaQuote))
+        // Release reference of completion so we can deallocate stuff
+        env.channelUpdater!.uploadFile_completion = nil
+        
+        AssertAsync {
+            // Assert completion is called
+            Assert.willBeTrue(completionCalled)
+            // `weakController` should be deallocated too
+            Assert.canBeReleased(&weakController)
+        }
+    }
+    
+    func test_uploadImage_propagatesErrorFromUpdater() {
+        // Simulate `uploadImage` call and catch the completion
+        var completionCalledError: Error?
+        controller.uploadImage(localFileURL: .localYodaImage) { [callbackQueueID] in
+            AssertTestQueue(withId: callbackQueueID)
+            completionCalledError = $0.error
+        }
+        
+        // Simulate failed update
+        let testError = TestError()
+        env.channelUpdater!.uploadFile_completion?(.failure(testError))
+        
+        // Completion should be called with the error
+        AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
+    }
 }
 
 private class TestEnvironment {

@@ -12,7 +12,7 @@ public let id: UserId
 Name for this user.
 
 ``` swift
-public let name: String?
+public var name: String?
 ```
 
 ### `imageURL`
@@ -20,7 +20,7 @@ public let name: String?
 Image (avatar) url for this user.
 
 ``` swift
-public let imageURL: URL?
+public var imageURL: URL?
 ```
 
 ### `isOnline`
@@ -94,13 +94,9 @@ You need to enable multi-tenancy if you want to use this, else it'll be empty. R
 
 ### `extraData`
 
-Custom additional data of the user object. You can modify it by setting your custom `ExtraData` type.
-
 ``` swift
-public let extraData: ExtraData
+public let extraData: [String: RawJSON]
 ```
-
-Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/Cheat-Sheet#working-with-extra-data).
 
 ## Methods
 
@@ -115,4 +111,4 @@ public func hash(into hasher: inout Hasher)
 ### `==`
 
 ``` swift
-public static func == (lhs: _ChatUser<ExtraData>, rhs: _ChatUser<ExtraData>) -> Bool 
+public static func == (lhs: ChatUser, rhs: ChatUser) -> Bool 

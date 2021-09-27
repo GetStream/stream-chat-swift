@@ -12,4 +12,4 @@ public static var preferredAxis: NSLayoutConstraint.Axis
 The view representing the video attachment.
 
 ``` swift
-public func previewView<ExtraData: ExtraDataTypes>(components: _Components<ExtraData>) -> UIView 
+public func previewView(components: Components) -> UIView 

@@ -3,19 +3,19 @@ title: FilesAttachmentViewInjector
 ---
 
 ``` swift
-public class _FilesAttachmentViewInjector<ExtraData: ExtraDataTypes>: _AttachmentViewInjector<ExtraData> 
+public class FilesAttachmentViewInjector: AttachmentViewInjector 
 ```
 
 ## Inheritance
 
-`_AttachmentViewInjector<ExtraData>`
+[`AttachmentViewInjector`](../attachment-view-injector)
 
 ## Properties
 
 ### `fileAttachmentView`
 
 ``` swift
-open lazy var fileAttachmentView: _ChatMessageFileAttachmentListView<ExtraData> 
+open lazy var fileAttachmentView: ChatMessageFileAttachmentListView 
 ```
 
 ## Methods

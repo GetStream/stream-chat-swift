@@ -19,7 +19,7 @@ open class ZoomAnimator: NSObject, UIViewControllerAnimatedTransitioning
 `UIImageView` for view controller initiating the transition.
 
 ``` swift
-public weak var fromImageView: UIImageView!
+public weak var fromImageView: UIImageView?
 ```
 
 ### `toImageView`
@@ -27,7 +27,7 @@ public weak var fromImageView: UIImageView!
 `UIImageView` for view controller being transitioned to.
 
 ``` swift
-public weak var toImageView: UIImageView!
+public weak var toImageView: UIImageView?
 ```
 
 ### `toVCSnapshot`
@@ -35,7 +35,7 @@ public weak var toImageView: UIImageView!
 Snapshot for view controller being transitioned to.
 
 ``` swift
-public weak var toVCSnapshot: UIView!
+public weak var toVCSnapshot: UIView?
 ```
 
 ### `fromVCSnapshot`
@@ -43,7 +43,7 @@ public weak var toVCSnapshot: UIView!
 Snapshot for view controller initiating the transition.
 
 ``` swift
-public weak var fromVCSnapshot: UIView!
+public weak var fromVCSnapshot: UIView?
 ```
 
 ### `containerTransitionImageView`
@@ -51,7 +51,7 @@ public weak var fromVCSnapshot: UIView!
 Container view for `transitionImageView`
 
 ``` swift
-public weak var containerTransitionImageView: UIView!
+public weak var containerTransitionImageView: UIView?
 ```
 
 ### `transitionImageView`
@@ -59,7 +59,7 @@ public weak var containerTransitionImageView: UIView!
 `UIImageView` to be animated between the view controllers.
 
 ``` swift
-public weak var transitionImageView: UIImageView!
+public weak var transitionImageView: UIImageView?
 ```
 
 ### `isPresenting`

@@ -20,7 +20,7 @@ public let type: AttachmentType
 The attachment payload.
 
 ``` swift
-public let payload: Payload
+public var payload: Payload
 ```
 
 ### `uploadingState`

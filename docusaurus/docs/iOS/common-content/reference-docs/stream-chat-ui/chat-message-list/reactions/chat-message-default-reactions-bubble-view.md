@@ -3,12 +3,12 @@ title: ChatMessageDefaultReactionsBubbleView
 ---
 
 ``` swift
-open class _ChatMessageDefaultReactionsBubbleView<ExtraData: ExtraDataTypes>: _ChatMessageReactionsBubbleView<ExtraData> 
+open class ChatMessageDefaultReactionsBubbleView: ChatMessageReactionsBubbleView 
 ```
 
 ## Inheritance
 
-`_ChatMessageReactionsBubbleView<ExtraData>`
+[`ChatMessageReactionsBubbleView`](../chat-message-reactions-bubble-view)
 
 ## Properties
 

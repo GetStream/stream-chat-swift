@@ -12,7 +12,7 @@ public static let type: AttachmentType = .image
 A title, usually the name of the image.
 
 ``` swift
-public let title: String?
+public var title: String?
 ```
 
 ### `imageURL`
@@ -20,7 +20,7 @@ public let title: String?
 A link to the image.
 
 ``` swift
-public internal(set) var imageURL: URL
+public var imageURL: URL
 ```
 
 ### `imagePreviewURL`
@@ -28,7 +28,15 @@ public internal(set) var imageURL: URL
 A link to the image preview.
 
 ``` swift
-public let imagePreviewURL: URL
+public var imagePreviewURL: URL
+```
+
+### `extraData`
+
+An extra data.
+
+``` swift
+public var extraData: [String: RawJSON]?
 ```
 
 ## Methods

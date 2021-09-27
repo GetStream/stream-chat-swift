@@ -2,7 +2,7 @@
 ### `messageController`
 
 ``` swift
-public var messageController: _ChatMessageController<ExtraData>!
+public var messageController: ChatMessageController!
 ```
 
 ### `reactionsBubble`
@@ -37,13 +37,13 @@ override open func updateContent()
 ### `toggleReaction(_:)`
 
 ``` swift
-public func toggleReaction(_ reaction: MessageReactionType) 
+open func toggleReaction(_ reaction: MessageReactionType) 
 ```
 
 ### `messageController(_:didChangeMessage:)`
 
 ``` swift
-public func messageController(
-        _ controller: _ChatMessageController<ExtraData>,
-        didChangeMessage change: EntityChange<_ChatMessage<ExtraData>>
+open func messageController(
+        _ controller: ChatMessageController,
+        didChangeMessage change: EntityChange<ChatMessage>
     ) 

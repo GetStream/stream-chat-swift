@@ -6,6 +6,14 @@ title: ChatMessageReactionData
 public struct ChatMessageReactionData 
 ```
 
+## Initializers
+
+### `init(type:score:isChosenByCurrentUser:)`
+
+``` swift
+public init(type: MessageReactionType, score: Int, isChosenByCurrentUser: Bool) 
+```
+
 ## Properties
 
 ### `type`

@@ -5,14 +5,8 @@ title: ChatUserListController
 `_ChatUserListController` is a controller class which allows observing a list of chat users based on the provided query.
 
 ``` swift
-public class _ChatUserListController<ExtraData: ExtraDataTypes>: DataController, DelegateCallable, DataStoreProvider 
+public class ChatUserListController: DataController, DelegateCallable, DataStoreProvider 
 ```
-
-Learn more about `_ChatUserListController` and its usage in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/StreamChat-SDK-Cheat-Sheet#user-list).
-
-> 
-
-Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/Cheat-Sheet#working-with-extra-data).
 
 ## Inheritance
 
@@ -33,7 +27,7 @@ public var statePublisher: AnyPublisher<DataController.State, Never>
 A publisher emitting a new value every time the list of the users matching the query changes.
 
 ``` swift
-public var usersChangesPublisher: AnyPublisher<[ListChange<_ChatUser<ExtraData.User>>], Never> 
+public var usersChangesPublisher: AnyPublisher<[ListChange<ChatUser>], Never> 
 ```
 
 ### `observableObject`
@@ -49,7 +43,7 @@ public var observableObject: ObservableObject
 The query specifying and filtering the list of users.
 
 ``` swift
-public let query: _UserListQuery<ExtraData.User>
+public let query: UserListQuery
 ```
 
 ### `client`
@@ -57,7 +51,7 @@ public let query: _UserListQuery<ExtraData.User>
 The `ChatClient` instance this controller belongs to.
 
 ``` swift
-public let client: _ChatClient<ExtraData>
+public let client: ChatClient
 ```
 
 ### `users`
@@ -65,11 +59,19 @@ public let client: _ChatClient<ExtraData>
 The users matching the query of this controller.
 
 ``` swift
-public var users: LazyCachedMapCollection<_ChatUser<ExtraData.User>> 
+public var users: LazyCachedMapCollection<ChatUser> 
 ```
 
 To observe changes of the users, set your class as a delegate of this controller or use the provided
 `Combine` publishers.
+
+### `delegate`
+
+Set the delegate of `UserListController` to observe the changes in the system.
+
+``` swift
+public weak var delegate: ChatUserListControllerDelegate? 
+```
 
 ## Methods
 
@@ -84,11 +86,8 @@ override public func synchronize(_ completion: ((_ error: Error?) -> Void)? = ni
 Sets the provided object as a delegate of this controller.
 
 ``` swift
-public func setDelegate<Delegate: _ChatUserListControllerDelegate>(_ delegate: Delegate)
-        where Delegate.ExtraData == ExtraData 
+public func setDelegate<Delegate: ChatUserListControllerDelegate>(_ delegate: Delegate) 
 ```
-
-> 
 
 #### Parameters
 

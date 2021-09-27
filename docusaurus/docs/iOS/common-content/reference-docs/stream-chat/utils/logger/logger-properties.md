@@ -18,25 +18,6 @@ public var destinations: [LogDestination]
 
 ## Methods
 
-### `assertationFailure(_:functionName:fileName:lineNumber:)`
-
-Stops program execution with `Swift.assertionFailure`. In RELEASE builds only
-logs the failure.
-
-``` swift
-@available(*, deprecated, renamed: "assertionFailure")
-    func assertationFailure(
-        _ message: @autoclosure () -> Any,
-        functionName: StaticString = #function,
-        fileName: StaticString = #file,
-        lineNumber: UInt = #line
-    ) 
-```
-
-#### Parameters
-
-  - message: A custom message to log if `condition` is evaluated to false.
-
 ### `callAsFunction(_:functionName:fileName:lineNumber:message:)`
 
 Allows logger to be called as function.

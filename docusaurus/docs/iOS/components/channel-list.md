@@ -10,7 +10,7 @@ This component is used to display a list of channels. Channels are fetched from 
 
 ## Basic Usage
 
-You can show the list of channels for the current user by adding the `ChatChannelListVC` to your application. 
+You can show the list of channels for the current user by adding the `ChatChannelListVC` to your application.
 
 ```swift
 class ViewController: ChatChannelListVC {
@@ -117,131 +117,6 @@ Page size is used to specify how many channels the initial page will show. You c
 ### Message Limit
 
 `messagesLimit` is used to specify how many messages the initial fetch will return.
-
-## Observing changes to Channel List
-
-Accessing `channels` property of the controller is not ideal, so in many cases you'd require a way to observe changes to this property. There are 3 most common ways of doing so: UIKit Delegates, Combine publishers and SwiftUI wrappers.
-
-### UIKit Delegates
-
-`ChatChannelListController` has `ChatChannelListControllerDelegate` with `didChangeChannels` function:
-```swift
-func controller(
-        _ controller: ChatChannelListController,
-        didChangeChannels changes: [ListChange<ChatChannel>]
-    )
-```
-Whenever the `channels` property of the controller changes, this delegate function will be called. So, our example above becomes:
-```swift
-class ChannelListViewController: UIViewController {
-
-    let channelListController = chatClient.channelListController(
-       query: ChannelListQuery(filter: .containMembers(userIds: [chatClient.currentUserId]))
-    )
-
-    override func viewDidLoad() {
-       super.viewDidLoad()
-       channelListController.delegate = self
-
-       // update your UI with the cached channels first, for example by calling reloadData() on UITableView
-       let locallyAvailableChannels = channelListController.channels
-
-       // call `synchronize()` to update the locally cached data. the updates will be delivered using delegate methods
-       channelListController.synchronize()
-    }
-}
-
-extension ChannelListViewController: ChatChannelListControllerDelegate { 
-    func controller(_ controller: ChatChannelListController, didChangeChannels changes: [ListChange<Channel>]) {
-        // The list of channels has changed. You can for example animate the changes:
-
-        tableView.beginUpdates()        
-        for change in changes {
-            switch change {
-            case let .insert(_, index: index):
-                tableView.insertRows(at: [index], with: .automatic)
-            // etc ...
-            }
-        }        
-        tableView.endUpdates()
-    }
-}
-```
-
-Additionally, as with all StreamChat Controllers, `ChannelListController` has `state` and a delegate function to observe it's `state`:
-```swift
-func controller(_ controller: DataController, didChangeState state: DataController.State) 
-```
-You can use this delegate function to show any error states you might see. For more information, see [DataController Overview](404).
-
-### Combine publishers
-
-`ChannelListController` has publishers for its `channels` property so it's observable, like so:
-```swift
-class ChannelsViewController: UIViewController {
-
-    let channelListController = chatClient.channelListController(
-       query: ChannelListQuery(filter: .containMembers(userIds: [chatClient.currentUserId]))
-    )
-
-    private var cancellables: Set<AnyCancellable> = []
-
-    override func viewDidLoad() {
-       super.viewDidLoad()
-
-       // update your UI with the cached channels first, for example by calling reloadData() on UITableView
-       let locallyAvailableChannels = channelListController.channels
-
-       // Observe changes to the list from the publishers
-        channelListController
-             .channelsChangesPublisher
-             .receive(on: RunLoop.main)
-             .sink { [weak self] changes in
-                // animate the changes to the channel list
-             }
-             .store(in: &cancellables)
-
-       // call `synchronize()` to update the locally cached data. the updates will be delivered using channelsChangesPublisher
-       channelListController.synchronize()
-    }
-}
-```
-
-### SwiftUI Wrappers
-
-`ChannelListController` is fully compatible with SwiftUI.
-```swift
-// View definition
-
-struct ChannelListView: View {
-    @ObservedObject var channelList: ChatChannelListController.ObservableObject
-
-    init(channelListController: ChatChannelListController) {
-        self.channelList = channelListController.observableObject
-    }
-
-    var body: some View {
-        VStack {
-            List(channelList.channels, id: \.self) { channel in
-                Text(channel.name)
-            }
-        }
-        .navigationBarTitle("Channels")
-        .onAppear { 
-            // call `synchronize()` to update the locally cached data.
-            channelList.controller.synchronize() 
-        }
-    }
-}
-
-// Usage
-
-let channelListController = chatClient.channelListController(
-    query: ChannelListQuery(filter: .containMembers(userIds: [chatClient.currentUserId]))
-)
-
-let view = ChannelListView(channelListController: channelListController)
-```
 
 ## Marking all Channels as Read
 

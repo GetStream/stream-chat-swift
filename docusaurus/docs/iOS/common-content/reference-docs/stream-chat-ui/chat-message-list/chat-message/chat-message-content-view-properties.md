@@ -30,7 +30,7 @@ public weak var delegate: ChatMessageContentViewDelegate?
 The message this view displays.
 
 ``` swift
-open var content: _ChatMessage<ExtraData>? 
+open var content: ChatMessage? 
 ```
 
 ### `dateFormatter`
@@ -65,7 +65,7 @@ Shows the bubble around message content.
 Exists if `layout(options:​ MessageLayoutOptions)` was invoked with the options containing `.bubble`.
 
 ``` swift
-public private(set) var bubbleView: _ChatMessageBubbleView<ExtraData>?
+public private(set) var bubbleView: ChatMessageBubbleView?
 ```
 
 ### `authorAvatarView`
@@ -148,7 +148,7 @@ Shows the message quoted by the message this view displays.
 Exists if `layout(options:​ MessageLayoutOptions)` was invoked with the options containing `.quotedMessage`.
 
 ``` swift
-public private(set) var quotedMessageView: _QuotedChatMessageView<ExtraData>?
+public private(set) var quotedMessageView: QuotedChatMessageView?
 ```
 
 ### `reactionsView`
@@ -157,7 +157,7 @@ Shows message reactions.
 Exists if `layout(options:​ MessageLayoutOptions)` was invoked with the options containing `.reactions`.
 
 ``` swift
-public private(set) var reactionsView: _ChatMessageReactionsView<ExtraData>?
+public private(set) var reactionsView: ChatMessageReactionsView?
 ```
 
 ### `reactionsBubbleView`
@@ -201,7 +201,7 @@ public private(set) var threadArrowView: ChatThreadArrowView?
 An object responsible for injecting the views needed to display the attachments content.
 
 ``` swift
-public private(set) var attachmentViewInjector: _AttachmentViewInjector<ExtraData>?
+public private(set) var attachmentViewInjector: AttachmentViewInjector?
 ```
 
 ### `mainContainer`
@@ -284,7 +284,7 @@ Makes sure the `layout(options:​ ChatMessageLayoutOptions)` is called just onc
 ``` swift
 open func setUpLayoutIfNeeded(
         options: ChatMessageLayoutOptions,
-        attachmentViewInjectorType: _AttachmentViewInjector<ExtraData>.Type?
+        attachmentViewInjectorType: AttachmentViewInjector.Type?
     ) 
 ```
 
@@ -338,6 +338,14 @@ Handles tap on `quotedMessageView` and forwards the action to the delegate.
 
 ``` swift
 @objc open func handleTapOnQuotedMessage() 
+```
+
+### `handleTapOnAvatarView()`
+
+Handles tap on `avatarView` and forwards the action to the delegate.
+
+``` swift
+@objc open func handleTapOnAvatarView() 
 ```
 
 ### `createTextView()`
@@ -417,7 +425,7 @@ The `threadReplyCountButton` subview.
 Instantiates, configures and assigns `bubbleView` when called for the first time.
 
 ``` swift
-open func createBubbleView() -> _ChatMessageBubbleView<ExtraData> 
+open func createBubbleView() -> ChatMessageBubbleView 
 ```
 
 #### Returns
@@ -429,7 +437,7 @@ The `bubbleView` subview.
 Instantiates, configures and assigns `quotedMessageView` when called for the first time.
 
 ``` swift
-open func createQuotedMessageView() -> _QuotedChatMessageView<ExtraData> 
+open func createQuotedMessageView() -> QuotedChatMessageView 
 ```
 
 #### Returns
@@ -441,7 +449,7 @@ The `quotedMessageView` subview.
 Instantiates, configures and assigns `reactionsView` when called for the first time.
 
 ``` swift
-open func createReactionsView() -> _ChatMessageReactionsView<ExtraData> 
+open func createReactionsView() -> ChatMessageReactionsView 
 ```
 
 #### Returns

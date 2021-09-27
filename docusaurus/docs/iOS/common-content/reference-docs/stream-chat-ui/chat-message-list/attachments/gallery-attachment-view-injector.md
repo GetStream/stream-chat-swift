@@ -5,12 +5,12 @@ title: GalleryAttachmentViewInjector
 The type used to show an media gallery in `ChatMessageContentView`.
 
 ``` swift
-open class _GalleryAttachmentViewInjector<ExtraData: ExtraDataTypes>: _AttachmentViewInjector<ExtraData> 
+open class GalleryAttachmentViewInjector: AttachmentViewInjector 
 ```
 
 ## Inheritance
 
-`_AttachmentViewInjector<ExtraData>`
+[`AttachmentViewInjector`](../attachment-view-injector)
 
 ## Properties
 
@@ -19,11 +19,24 @@ open class _GalleryAttachmentViewInjector<ExtraData: ExtraDataTypes>: _Attachmen
 A gallery which shows attachment previews.
 
 ``` swift
-open private(set) lazy var galleryView: _ChatMessageGalleryView<ExtraData> = contentView
+open private(set) lazy var galleryView: ChatMessageGalleryView = contentView
         .components
         .galleryView.init()
         .withoutAutoresizingMaskConstraints
 ```
+
+### `galleryViewAspectRatio`
+
+A gallery view width \* height ratio.
+
+``` swift
+open var galleryViewAspectRatio: CGFloat? 
+```
+
+If `nil` is returned, aspect ratio will not be applied and gallery view will
+aspect ratio will depend on internal constraints.
+
+Returns `1.32` by default.
 
 ## Methods
 

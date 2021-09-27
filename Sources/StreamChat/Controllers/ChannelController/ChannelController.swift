@@ -1135,6 +1135,56 @@ public extension ChatChannelController {
             }
         }
     }
+    
+    /// Uploads the given file to CDN and returns the file URL.
+    /// - Parameters:
+    ///   - localFileURL: Local URL of the file.
+    ///   - progress: Upload progress callback
+    ///   - completion: Completion to be called when upload finishes, or errors.  Will be called on a **callbackQueue** when the network request is finished.
+    func uploadFile(
+        localFileURL: URL,
+        progress: ((Double) -> Void)? = nil,
+        completion: @escaping ((Result<URL, Error>) -> Void)
+    ) {
+        /// Perform action only if channel is already created on backend side and have a valid `cid`.
+        guard let cid = cid, isChannelAlreadyCreated else {
+            channelModificationFailed { error in
+                completion(.failure(error ?? ClientError.ChannelNotCreatedYet()))
+            }
+            return
+        }
+        
+        updater.uploadFile(type: .file, localFileURL: localFileURL, cid: cid, progress: progress) { result in
+            self.callback {
+                completion(result)
+            }
+        }
+    }
+    
+    /// Uploads the given image to CDN and returns the file URL.
+    /// - Parameters:
+    ///   - localFileURL: Local URL of the image.
+    ///   - progress: Upload progress callback
+    ///   - completion: Completion to be called when upload finishes, or errors.  Will be called on a **callbackQueue** when the network request is finished.
+    func uploadImage(
+        localFileURL: URL,
+        progress: ((Double) -> Void)? = nil,
+        completion: @escaping ((Result<URL, Error>) -> Void)
+    ) {
+        /// Perform action only if channel is already created on backend side and have a valid `cid`.
+        guard let cid = cid, isChannelAlreadyCreated else {
+            channelModificationFailed { error in
+                completion(.failure(error ?? ClientError.ChannelNotCreatedYet()))
+            }
+            return
+        }
+        
+        updater.uploadFile(type: .image, localFileURL: localFileURL, cid: cid, progress: progress) { result in
+            self.callback {
+                completion(result)
+            }
+        }
+    }
 }
 
 extension ChatChannelController {

@@ -5,11 +5,8 @@ title: ChatUserListControllerDelegate
 `ChatUserListController` uses this protocol to communicate changes to its delegate.
 
 ``` swift
-public protocol _ChatUserListControllerDelegate: DataControllerStateDelegate 
+public protocol ChatUserListControllerDelegate: DataControllerStateDelegate 
 ```
-
-If you're **not** using custom extra data types, you can use a convenience version of this protocol
-named `ChatUserListControllerDelegate`, which hides the generic types, and make the usage easier.
 
 ## Inheritance
 
@@ -17,22 +14,25 @@ named `ChatUserListControllerDelegate`, which hides the generic types, and make 
 
 ## Default Implementations
 
+### `memberListController(_:didChangeMembers:)`
+
+``` swift
+func memberListController(
+        _ controller: ChatChannelMemberListController,
+        didChangeMembers changes: [ListChange<ChatChannelMember>]
+    ) 
+```
+
 ### `controller(_:didChangeUsers:)`
 
 ``` swift
 func controller(
-        _ controller: _ChatUserListController<ExtraData>,
-        didChangeUsers changes: [ListChange<_ChatUser<ExtraData.User>>]
+        _ controller: ChatUserListController,
+        didChangeUsers changes: [ListChange<ChatUser>]
     ) 
 ```
 
 ## Requirements
-
-### ExtraData
-
-``` swift
-associatedtype ExtraData: ExtraDataTypes
-```
 
 ### controller(\_:​didChangeUsers:​)
 
@@ -40,8 +40,8 @@ The controller changed the list of observed users.
 
 ``` swift
 func controller(
-        _ controller: _ChatUserListController<ExtraData>,
-        didChangeUsers changes: [ListChange<_ChatUser<ExtraData.User>>]
+        _ controller: ChatUserListController,
+        didChangeUsers changes: [ListChange<ChatUser>]
     )
 ```
 

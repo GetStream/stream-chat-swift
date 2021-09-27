@@ -10,7 +10,7 @@ public class ObservableObject: SwiftUI.ObservableObject
 
 ## Inheritance
 
-`SwiftUI.ObservableObject`, [`_ChatChannelListControllerDelegate`](../chat-channel-list-controller-delegate)
+[`ChatChannelListControllerDelegate`](../chat-channel-list-controller-delegate), `SwiftUI.ObservableObject`
 
 ## Properties
 
@@ -19,7 +19,7 @@ public class ObservableObject: SwiftUI.ObservableObject
 The underlying controller. You can still access it and call methods on it.
 
 ``` swift
-public let controller: _ChatChannelListController
+public let controller: ChatChannelListController
 ```
 
 ### `channels`
@@ -27,7 +27,7 @@ public let controller: _ChatChannelListController
 The channels matching the query.
 
 ``` swift
-@Published public private(set) var channels: LazyCachedMapCollection<_ChatChannel<ExtraData>> = []
+@Published public private(set) var channels: LazyCachedMapCollection<ChatChannel> = []
 ```
 
 ### `state`
@@ -44,8 +44,8 @@ The current state of the Controller.
 
 ``` swift
 public func controller(
-        _ controller: _ChatChannelListController<ExtraData>,
-        didChangeChannels changes: [ListChange<_ChatChannel<ExtraData>>]
+        _ controller: ChatChannelListController,
+        didChangeChannels changes: [ListChange<ChatChannel>]
     ) 
 ```
 

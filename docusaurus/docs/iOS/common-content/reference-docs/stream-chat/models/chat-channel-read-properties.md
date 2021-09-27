@@ -20,4 +20,4 @@ public let unreadMessagesCount: Int
 The user who read the channel.
 
 ``` swift
-public let user: _ChatUser<ExtraData.User>
+public let user: ChatUser

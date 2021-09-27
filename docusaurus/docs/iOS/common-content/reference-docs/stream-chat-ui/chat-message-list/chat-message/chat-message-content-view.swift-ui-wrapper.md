@@ -6,13 +6,12 @@ SwiftUI wrapper of `_ChatMessageContentView`.
 Servers to wrap custom SwiftUI view as a UIKit view so it can be easily injected into `_Components`.
 
 ``` swift
-public class SwiftUIWrapper<Content: SwiftUIView>: _ChatMessageContentView<ExtraData>, ObservableObject
-        where Content.ExtraData == ExtraData
+public class SwiftUIWrapper<Content: SwiftUIView>: ChatMessageContentView, ObservableObject 
 ```
 
 ## Inheritance
 
-`ObservableObject`, `_ChatMessageContentView<ExtraData>`
+[`ChatMessageContentView`](../chat-message-content-view), `ObservableObject`
 
 ## Properties
 

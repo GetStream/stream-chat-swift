@@ -4,7 +4,7 @@
 A publisher emitting a new value every time the current user changes.
 
 ``` swift
-public var currentUserChangePublisher: AnyPublisher<EntityChange<_CurrentChatUser<ExtraData>>, Never> 
+public var currentUserChangePublisher: AnyPublisher<EntityChange<CurrentChatUser>, Never> 
 ```
 
 ### `unreadCountPublisher`
@@ -28,7 +28,7 @@ public var observableObject: ObservableObject
 The `ChatClient` instance this controller belongs to.
 
 ``` swift
-public let client: _ChatClient<ExtraData>
+public let client: ChatClient
 ```
 
 ### `currentUser`
@@ -37,7 +37,7 @@ The currently logged-in user. `nil` if the connection hasn't been fully establis
 wasn't successful.
 
 ``` swift
-public var currentUser: _CurrentChatUser<ExtraData>? 
+public var currentUser: CurrentChatUser? 
 ```
 
 ### `unreadCount`
@@ -49,6 +49,14 @@ public var unreadCount: UnreadCount
 ```
 
 Returns `noUnread` if `currentUser` doesn't exist yet.
+
+### `delegate`
+
+Set the delegate of `CurrentUserController` to observe the changes in the system.
+
+``` swift
+var delegate: CurrentChatUserControllerDelegate? 
+```
 
 ## Methods
 
@@ -89,7 +97,7 @@ Updates the current user data.
 func updateUserData(
         name: String? = nil,
         imageURL: URL? = nil,
-        userExtraData: ExtraData.User? = nil,
+        userExtraData: [String: RawJSON] = [:],
         completion: ((Error?) -> Void)? = nil
     ) 
 ```
@@ -148,10 +156,8 @@ func removeDevice(id: String, completion: ((Error?) -> Void)? = nil)
 Sets the provided object as a delegate of this controller.
 
 ``` swift
-func setDelegate<Delegate: _CurrentChatUserControllerDelegate>(_ delegate: Delegate?) where Delegate.ExtraData == ExtraData 
+func setDelegate<Delegate: CurrentChatUserControllerDelegate>(_ delegate: Delegate?) 
 ```
-
-> 
 
 #### Parameters
 

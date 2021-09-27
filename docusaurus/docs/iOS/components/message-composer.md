@@ -6,7 +6,7 @@ import ComposerProperties from '../common-content/reference-docs/stream-chat-ui/
 import ComposerViewProperties from '../common-content/reference-docs/stream-chat-ui/composer/composer-view-properties.md'
 import ComposerContentProperties from '../common-content/reference-docs/stream-chat-ui/composer/composer-vc.content-properties.md'
 
-The Message Composer provides all the UI and necessary functionality for writing and sending messages. It supports sending text, handling chat commands, autocomplete suggestions, uploading attachments like images, files and video. The composer is a combination of two components, the `ComposerVC` and the `ComposerView`, the first one is a view controller responsible for the functionality of the composer, where the latter is only responsible for the UI layout.
+The Message Composer provides all the UI and necessary functionality for writing and sending messages. It supports sending text, handling chat commands, suggestions autocompletion, uploading attachments like images, files, and videos. The composer is a combination of two components, the `ComposerVC` and the `ComposerView`, the first one is a view controller responsible for the functionality, where the latter is only responsible for the UI and layout.
 
 ## Composer View Controller
 
@@ -14,12 +14,10 @@ The `ComposerVC` is the view controller that manages all the functionality and i
 
 ### Usage
 
-The `ComposerVC` is used by default by the [Message List](message-list.md) component, this component is automatically placed as a subview.
-
-You can also add the `ComposerVC` in your own View Controller as a child view if needed. Please keep in mind that if you do so you will need to manage the keyboard yourself. Here is an example of how you can add the composer as child view controller:
+The `ComposerVC` is used by both the Channel and Thread components, but you can also add the `ComposerVC` in your View Controller as a child view if needed. Please keep in mind that if you do so you will need to manage the keyboard yourself. Here is an example of how you can add the composer as a child view controller:
 
 ```swift
-class CustomMessageListVC: UIViewController {
+class CustomChatVC: UIViewController {
 
     /// The channel controller injected from the Channel List
     var channelController: ChatChannelController!
@@ -33,11 +31,10 @@ class CustomMessageListVC: UIViewController {
     /// The bottom constraint of the Message Composer for managing the keyboard
     private var messageComposerBottomConstraint: NSLayoutConstraint?
 
-    /// You can use our keyboard observer to manage the keyboard
-    open lazy var keyboardObserver = ChatMessageListKeyboardObserver(
-        containerView: view,
-        composerBottomConstraint: messageComposerBottomConstraint,
-        viewController: self
+    /// Component responsible for setting the correct offset when keyboard frame is changed.
+    open lazy var keyboardHandler: KeyboardHandler = ComposerKeyboardHandler(
+        composerParentVC: self,
+        composerBottomConstraint: messageComposerBottomConstraint
     )
 
     override func viewDidLoad() {
@@ -69,33 +66,31 @@ class CustomMessageListVC: UIViewController {
     override open func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
-        // Setup the keyboard observer
-        keyboardObserver.register()
+        keyboardHandler.start()
     }
 
     override open func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
 
-        // Remove the keyboard observer
-        keyboardObserver.unregister()
+        keyboardHandler.stop()
     }
 }
 ```
-As you can see if you want to use the `ComposerVC` in your own message list view you need to setup the dependencies of the composer, add it as a child view controller of your custom message list view controller and even manage the keyboard yourself or use our keyboard observer to manage it.
+As you can see if you want to use the `ComposerVC` in your custom message list view you need to setup the dependencies of the composer, add it as a child view controller of your custom message list view controller, and even manage the keyboard yourself or use our keyboard observer to manage it.
 
 ### Customization
 
-The `ComposerVC` and `ComposerView` are completely customizable. You can not only change the UI layout and styling, but you can extend the composer functionality as well. In case you want to change the styling, adding new views and new functionality you can take a look at the [Customize Message Composer](../guides/customize-message-composer) guide. If you want to add a new custom attachment and make the composer to support it, you should read the [Message Composer Custom Attachments](../guides/working-with-custom-attachments) guide. 
+The `ComposerVC` and `ComposerView` are highly customizable in both styling and functionality. In case you want to change the styling, adding new views, and new functionality you can take a look at the [Customize Message Composer](../guides/customize-message-composer) guide. If you want to introduce a new custom attachment and make the composer support it, please read the [Message Composer Custom Attachments](../guides/working-with-custom-attachments) guide.
 
 ### Properties
 
-Complete list of all the components of `ComposerVC`.
+The complete list of all the `ComposerVC`'s components.
 
 <ComposerProperties/>
 
 ## Composer View
 
-The `ComposerView` class which holds all the composer subviews and implements the composer layout. The composer layout is built with multiple `ContainerStackView`'s, which are very similar how  `UIStackView`'s work, you can read more about them [here](../customization/custom-components#setuplayout). This makes it very customizable since to change the layout you only need to move/remove/add views from different containers.
+The `ComposerView` class holds all the composer subviews and implements the composer layout. The composer layout is built with multiple `ContainerStackView`'s, which are very similar how `UIStackView`'s work, you can read more about them [here](../customization/custom-components#setuplayout). This makes it very customizable since to change the layout you only need to move/remove/add views from different containers.
 
 In the picture below you can see all the containers and main views of the composer:
 
@@ -103,7 +98,7 @@ In the picture below you can see all the containers and main views of the compos
 
 ### Customization
 
-By default the `ComposerView` is managed by the `ComposerVC`, but if you want to provide your own custom view controller to manage the composer view from scratch you can too. The only think you need to do is to add the composer view to your custom view controller, and then manage all the actions and logic of the composer yourself:
+By default, the `ComposerView` is managed by the `ComposerVC`, but if you want to provide your custom view controller to manage the composer view from scratch you can too. The only thing you need to do is to add the composer view to your custom view controller, and then manage all the actions and logic of the composer yourself:
 
 ```swift
 class CustomComposerVC: UIViewController {
@@ -135,18 +130,18 @@ Complete list of all the subviews that make the `ComposerView`.
 
 ## Composer Content
 
-The `ComposerVC.Content` is a struct that contains all the data that will be part of the composed message. It contains the current `text` of the message, the `attachments`, the `threadMessage` in case you are inside a Thread, the `command` if you are sending for example a Giphy, and the `state` of the composer to determine whether you are creating, editing or quoting a message.
+The `ComposerVC.Content` is a struct that contains all the data that will be part of the composed message. It contains the current `text` of the message, the `attachments`, the `threadMessage` in case you are inside a Thread, the `command` if you are sending, for example, a Giphy, and the `state` of the composer to determine whether you are creating, editing or quoting a message.
 
-Some of the composer's content properties are mutable, like the `attachments`, `threadMessage`, `text` and `command` properties. They can be directly changed since they represent data that do not depend on the state of the composer. On the other hand, there are properties that are immutable, and only can be changed through mutating functions on the `ComposerVC.Content`. This is to protect against bad states, for example, having the `editingMessage` property to `nil` but the `state = .edit`.
+Some of the composer's content properties are mutable, like the `attachments`, `threadMessage`, `text`, and `command` properties. They can be directly changed since they represent data that do not depend on the state of the composer. On the other hand, some properties are immutable, and can only be changed through mutating functions on the `ComposerVC.Content`. This is to protect against bad states, for example, having the `editingMessage` property to `nil` but the `state = .edit`.
 
 ### State
-The composer has three different states, `.new`, `.edit` and `.quote`. The `.new` state is when the composer is creating a new message, the `.edit` state is when we are editing an existing message and changing it's content, and finally, the `.quote` state is when we are replying a message inline (not in a thread). In the table below we can see the composer in all the three different states:
+The composer has three states: `.new`, `.edit`, and `.quote`. The `.new` state is when the composer is creating a new message, the `.edit` state is when we are editing an existing message and changing its content, and finally, the `.quote` state is when we are replying to a message inline (not in a thread). In the table below we can see the composer in all three different states:
 
 | `.new`  | `.edit` | `.quote` |
 | ------------- | ------------- | ------------- |
 | <img src={require("../assets/composer-ui-state-new.png").default} width="100%"/> | <img src={require("../assets/composer-ui-state-edit.png").default} width="100%"/> | <img src={require("../assets/composer-ui-state-quote.png").default} width="100%"/> |
 
-The `.new` state is the composer's default state, and it is initialised by the `initial()` static function of `ComposerVC.Content`:
+The `.new` state is the composer's default state, and it is initialized by the `initial()` static function of `ComposerVC.Content`:
 ```swift
 /// The content of the composer. Property of `ComposerVC`.
 public var content: Content = .initial() {

@@ -31,6 +31,33 @@ open private(set) lazy var placeholderLabel: UILabel = UILabel()
 override open var text: String! 
 ```
 
+### `minimumHeight`
+
+The minimum height of the text view.
+When there is no content in the text view OR the height of the content is less than this value,
+the text view will be of this height
+
+``` swift
+open var minimumHeight: CGFloat 
+```
+
+### `heightConstraint`
+
+The constraint responsible for setting the height of the text view.
+
+``` swift
+open var heightConstraint: NSLayoutConstraint?
+```
+
+### `maximumHeight`
+
+The maximum height of the text view.
+When the content in the text view is greater than this height, scrolling will be enabled and the text view's height will be restricted to this value
+
+``` swift
+open var maximumHeight: CGFloat 
+```
+
 ### `attributedText`
 
 ``` swift
@@ -86,6 +113,12 @@ open func textDidChangeProgrammatically()
 
 ``` swift
 @objc open func handleTextChange() 
+```
+
+### `setTextViewHeight()`
+
+``` swift
+open func setTextViewHeight() 
 ```
 
 ### `canPerformAction(_:withSender:)`

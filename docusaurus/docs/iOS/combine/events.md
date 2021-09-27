@@ -1,5 +1,5 @@
 ---
-title: Events
+title: Event Controllers
 ---
 
 ## EventsController

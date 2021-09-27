@@ -12,7 +12,7 @@ public let pinnedAt: Date
 The user that pinned the message
 
 ``` swift
-public let pinnedBy: _ChatUser<ExtraData.User>
+public let pinnedBy: ChatUser
 ```
 
 ### `expiresAt`
