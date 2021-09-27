@@ -13,7 +13,7 @@
 
 The **StreamChatUI SDK**  is the official iOS SDK for [Stream Chat](https://getstream.io/chat/sdk/ios/), a service for building chat and messaging applications.
 
---- 
+---
 
 ## Which Version Should I Choose?
 
@@ -38,6 +38,7 @@ The **StreamChatUI SDK**  is the official iOS SDK for [Stream Chat](https://gets
 * [Installation](https://github.com/GetStream/stream-chat-swift/blob/main/Documentation/Installation.MD): Learn more about how to install the SDK using CocoaPods or SPM.
 * [Cheat Sheet](https://github.com/GetStream/stream-chat-swift/wiki/UI-Cheat-Sheet): Learn how to use the SDK by real-world examples.
 * [Demo app](https://github.com/GetStream/stream-chat-swift/tree/main/DemoApp): This repo includes a fully functional demo app with example usage of the SDK.
+* [Example apps](https://github.com/GetStream/stream-chat-swift/tree/main/Examples): This section of the repo includes fully functional sample apps that you can use as reference.
 * [Documentation](https://getstream.io/chat/docs/ios-swift/?language=swift)
 
 * Information about the 2.x version can be found at [v2.x README](https://github.com/GetStream/stream-chat-swift/tree/main_v2/).
@@ -48,7 +49,7 @@ Stream is free for most side and hobby projects. You can use Stream Chat for fre
 
 ## Main Principles
 
-* **Progressive disclosure:** The SDK can be used easily with very minimal knowledge of it. As you become more familiar with it, you can dig deeper and start customizing it on all levels. 
+* **Progressive disclosure:** The SDK can be used easily with very minimal knowledge of it. As you become more familiar with it, you can dig deeper and start customizing it on all levels.
 
 * **Highly customizable:** Every element is designed to be easily customizable. You can modify the brand color by setting `tintColor`, apply appearance changes using custom UI rules, or subclass existing elements and inject them everywhere in the system, no matter how deep is the logic heirarchy.
 
@@ -56,7 +57,7 @@ Stream is free for most side and hobby projects. You can use Stream Chat for fre
 
 * **Good platform citizen:** The UI elements behave like good platform citizens. They use existing iOS patterns; their beahavior is predictable and matches system UI components; they respect `tintColor`, `layourMargins`, dynamic font sizes, and other system-defined UI constants.
 
---- 
+---
 
 ## We are hiring
 We've recently closed a [\$38 million Series B funding round](https://techcrunch.com/2021/03/04/stream-raises-38m-as-its-chat-and-activity-feed-apis-power-communications-for-1b-users/) and we keep actively growing.
@@ -134,7 +135,7 @@ Check out our current openings and apply via [Stream's website](https://getstrea
 </table>
 
 ---
-  
+
 ### Message Composer
 
 <table>
@@ -156,7 +157,7 @@ Check out our current openings and apply via [Stream's website](https://getstrea
 
 ---
 
-### Chat Commands 
+### Chat Commands
 
 <table>
   <tr>
@@ -176,7 +177,7 @@ Check out our current openings and apply via [Stream's website](https://getstrea
 
 ---
 
-### User Tagging Suggestion 
+### User Tagging Suggestion
 
 <table>
   <tr>

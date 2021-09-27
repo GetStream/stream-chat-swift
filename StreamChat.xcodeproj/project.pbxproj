@@ -2973,7 +2973,7 @@
 			path = DTOs;
 			sourceTree = "<group>";
 		};
-		792A4F23247FF01800EAF71D /* Sample */ = {
+		792A4F23247FF01800EAF71D /* StreamChatSample */ = {
 			isa = PBXGroup;
 			children = (
 				792A4F24247FF01800EAF71D /* AppDelegate.swift */,
@@ -2989,7 +2989,7 @@
 				792A4F31247FF01900EAF71D /* LaunchScreen.storyboard */,
 				792A4F34247FF01900EAF71D /* Info.plist */,
 			);
-			path = Sample;
+			path = StreamChatSample;
 			sourceTree = "<group>";
 		};
 		792A4F3A247FFB7600EAF71D /* Utils */ = {
@@ -4483,13 +4483,10 @@
 				799C9415247D2F38001F1104 /* Sources */,
 				799C9452247D59B1001F1104 /* Tests */,
 				E74DB0F32656729A00508D22 /* UISDKdocumentation */,
-				792A4F23247FF01800EAF71D /* Sample */,
-				792DDA58256FB69E001DB91B /* DemoApp */,
+				792A4F23247FF01800EAF71D /* StreamChatSample */,
 				8082785225D1BAD1008039DD /* DocsSnippets */,
-				F86C87B325F906630000BCA9 /* MessengerClone */,
-				F8933B9325FF55E30054BBFF /* SlackClone */,
-				F89C23A725E508DE0082CA5B /* iMessageClone */,
-				AC908382268B115F00ACFB8E /* YouTubeClone */,
+				E3D5D2142701F0450054ECE5 /* Examples */,
+				792DDA58256FB69E001DB91B /* DemoApp */,
 				437FCA0526D67BE40000223C /* DemoAppPush */,
 				8AD5EC9022E9A3E8005CFAC9 /* Products */,
 				8AD5ECA722E9B3C4005CFAC9 /* Frameworks */,
@@ -5007,6 +5004,17 @@
 				84A1D2E726AAEA3300014712 /* CustomEventRequestBody_Tests.swift */,
 			);
 			path = Requests;
+			sourceTree = "<group>";
+		};
+		E3D5D2142701F0450054ECE5 /* Examples */ = {
+			isa = PBXGroup;
+			children = (
+				F86C87B325F906630000BCA9 /* MessengerClone */,
+				F8933B9325FF55E30054BBFF /* SlackClone */,
+				F89C23A725E508DE0082CA5B /* iMessageClone */,
+				AC908382268B115F00ACFB8E /* YouTubeClone */,
+			);
+			path = Examples;
 			sourceTree = "<group>";
 		};
 		E74346B12593546000512C2D /* ChatMessage */ = {
