@@ -48,7 +48,8 @@ struct MemberEventMiddleware: EventMiddleware {
             
             if let cid = updatedChannelID, let channelDTO = session.channel(cid: cid) {
                 // Trigger channel update so channel list queries get updated
-                channelDTO.cid = channelDTO.cid
+                let tmp = channelDTO.cid
+                channelDTO.cid = tmp
             }
         } catch {
             log.error("Failed to update channel members in the database, error: \(error)")
