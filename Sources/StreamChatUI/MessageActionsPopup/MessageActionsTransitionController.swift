@@ -127,9 +127,10 @@ open class MessageActionsTransitionController: NSObject, UIViewControllerTransit
             reactionsSnapshot = nil
         }
         
-        let actionsSnapshot = toVC.actionsController.view.snapshotView(afterScreenUpdates: true)
-        if let actionsSnapshot = actionsSnapshot {
-            let actionsFrame = toVC.actionsController.view.superview!.convert(toVC.actionsController.view.frame, to: nil)
+        let actionsSnapshot = toVC.actionsController?.view.snapshotView(afterScreenUpdates: true)
+        if let actionsSnapshot = actionsSnapshot, let actionsController = toVC.actionsController {
+            let actionsFrame = actionsController.view.superview!
+                .convert(actionsController.view.frame, to: nil)
             actionsSnapshot.frame = actionsFrame
             actionsSnapshot.transform = CGAffineTransform(scaleX: 0, y: 0)
             actionsSnapshot.alpha = 0.0
@@ -245,9 +246,10 @@ open class MessageActionsTransitionController: NSObject, UIViewControllerTransit
             reactionsSnapshot = nil
         }
         
-        let actionsSnapshot = fromVC.actionsController.view.snapshotView(afterScreenUpdates: true)
-        if let actionsSnapshot = actionsSnapshot {
-            actionsSnapshot.frame = fromVC.actionsController.view.superview!.convert(fromVC.actionsController.view.frame, to: nil)
+        let actionsSnapshot = fromVC.actionsController?.view.snapshotView(afterScreenUpdates: true)
+        if let actionsSnapshot = actionsSnapshot, let actionsController = fromVC.actionsController {
+            actionsSnapshot.frame = actionsController.view.superview!
+                .convert(actionsController.view.frame, to: nil)
             transitionContext.containerView.addSubview(actionsSnapshot)
         }
         
