@@ -87,30 +87,9 @@ extension DateFormatter {
         /// - Returns: A date object, or nil if no valid date was found.
         static func rfc3339Date(from string: String) -> Date? {
             let RFC3339TimezoneWrapper = "Z"
-
-            // Formats according to samples
-            // 2000-12-19T16:39:57-0800
-            // 1934-01-01T12:00:27.87+0020
-            // 1989-01-01T12:00:27
-            let dateFormats = [
-                "yyyy'-'MM'-'dd'T'HH':'mm':'ssZZZ",
-                "yyyy'-'MM'-'dd'T'HH':'mm':'ss.SSSZZZ",
-                "yyyy'-'MM'-'dd'T'HH':'mm':'ss"
-            ]
-
-            let dateFormatter = Stream.gmtDateFormatter
             let uppercaseString = string.uppercased()
-
             let removedTimezoneWrapperString = uppercaseString.replacingOccurrences(of: RFC3339TimezoneWrapper, with: "-0000")
-
-            for format in dateFormats {
-                dateFormatter.dateFormat = format
-                if let date = dateFormatter.date(from: removedTimezoneWrapperString) {
-                    return date
-                }
-            }
-
-            return nil
+            return gmtDateFormatters.lazy.compactMap { $0.date(from: removedTimezoneWrapperString) }.first
         }
         
         /// Creates and returns an RFC 3339 formatted string representation of the specified date.
@@ -118,11 +97,7 @@ extension DateFormatter {
         /// - Parameter date: The date to be represented.
         /// - Returns: A user-readable string representing the date.
         static func rfc3339DateString(from date: Date) -> String? {
-            let dateFormatWithoutFractional = "yyyy-MM-dd'T'HH:mm:ssZZZZZ"
-            let dateFormatWithFractional = "yyyy-MM-dd'T'HH:mm:ss.SSSXXXXX"
             let nanosecondsInMillisecond = 1_000_000
-
-            gmtDateFormatter.dateFormat = dateFormatWithoutFractional
 
             var gmtCalendar = Calendar(identifier: .iso8601)
             if let zeroTimezone = TimeZone(secondsFromGMT: 0) {
@@ -131,20 +106,36 @@ extension DateFormatter {
 
             let components = gmtCalendar.dateComponents([.nanosecond], from: date)
             // If nanoseconds is more that 1 millisecond, use format with fractional seconds
-            if let nanoseconds = components.nanosecond,
-               nanoseconds >= nanosecondsInMillisecond {
-                gmtDateFormatter.dateFormat = dateFormatWithFractional
+            guard let nanoseconds = components.nanosecond,
+                  nanoseconds >= nanosecondsInMillisecond
+            else {
+                return dateFormatterWithoutFractional.string(from: date)
             }
 
-            return gmtDateFormatter.string(from: date)
+            return dateFormatterWithFractional.string(from: date)
         }
 
-        private static let gmtDateFormatter: DateFormatter = {
+        // Formats according to samples
+        // 2000-12-19T16:39:57-0800
+        // 1934-01-01T12:00:27.87+0020
+        // 1989-01-01T12:00:27
+        private static let gmtDateFormatters: [DateFormatter] = [
+            "yyyy'-'MM'-'dd'T'HH':'mm':'ssZZZ",
+            "yyyy'-'MM'-'dd'T'HH':'mm':'ss.SSSZZZ",
+            "yyyy'-'MM'-'dd'T'HH':'mm':'ss"
+        ].map(makeDateFormatter)
+
+
+        private static let dateFormatterWithoutFractional = makeDateFormatter(dateFormat: "yyyy-MM-dd'T'HH:mm:ssZZZZZ")
+        private static let dateFormatterWithFractional = makeDateFormatter(dateFormat: "yyyy-MM-dd'T'HH:mm:ss.SSSXXXXX")
+
+        private static func makeDateFormatter(dateFormat: String) -> DateFormatter {
             let formatter = DateFormatter()
             formatter.locale = Locale(identifier: "en_US_POSIX")
             formatter.timeZone = TimeZone(secondsFromGMT: 0)
+            formatter.dateFormat = dateFormat
             return formatter
-        }()
+        }
     }
 }
 
