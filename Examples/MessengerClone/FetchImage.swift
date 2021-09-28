@@ -76,7 +76,8 @@ public final class FetchImage: ObservableObject, Identifiable {
         self.request = request
 
         // Try to display the regular image if it is available in memory cache
-        if let container = pipeline.cachedImage(for: request) {
+        guard let imageURL = request.url else { return }
+        if let container = pipeline.cache[imageURL] {
             image = container.image
             return // Nothing to do
         }
