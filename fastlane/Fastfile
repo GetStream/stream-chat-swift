@@ -107,6 +107,7 @@ lane :match_me do |options|
       app_identifier: [
         "io.getstream.StreamChat",
         "io.getstream.iOS.ChatDemoApp",
+        "io.getstream.iOS.ChatDemoApp.DemoAppPush",
         "io.getstream.iOS.iMessageClone",
         "io.getstream.iOS.SlackClone",
         "io.getstream.iOS.MessengerClone",
