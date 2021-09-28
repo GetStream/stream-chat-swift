@@ -32,23 +32,23 @@ lane :release do |options|
   if git_tag_exists(tag: version_number)
     UI.user_error!("Tag for version #{version_number} already exists!")
   end
-  
+
   changes = touch_changelog(release_version: version_number)
 
   version_bump_podspec(path: "StreamChat.podspec", version_number: version_number)
   version_bump_podspec(path: "StreamChatUI.podspec", version_number: version_number)
 
   sh("git add -A")
-  
+
   prompt(text: "Will commit changes. All looking good?", boolean: true)
 
   sh("git commit -m 'Bump #{version_number}'")
   sh("git tag #{version_number}")
 
   prompt(text: "Will push changes. All looking good?", boolean: true)
-                   
+
   push_to_git_remote(tags: true)
-  
+
   github_release = set_github_release(
                      repository_name: "GetStream/stream-chat-swift",
                      api_token: ENV["GITHUB_TOKEN"],
@@ -56,10 +56,10 @@ lane :release do |options|
                      tag_name: version_number,
                      description: changes
                    )
-  
+
   # First pod release will not have any problems
   pod_push(path: "StreamChat.podspec", allow_warnings: true)
-  
+
   def release_ui
     begin
       pod_push(path: "StreamChatUI.podspec", allow_warnings: true)
@@ -69,11 +69,11 @@ lane :release do |options|
       release_ui
     end
   end
-  
+
   puts "Sleeping for 2 minutes for trunk to get updated..."
   sleep(60 * 2)
   release_ui
-  
+
   UI.success("Successfully released #{version_number}")
   UI.success("Github release was created, please visit #{github_release["url"]} to see it")
 end
@@ -84,7 +84,7 @@ lane :set_SDK_version do |options|
 //
 // Copyright © 2021 Stream.io Inc. All rights reserved.
 //
-// ⚠️  Generated file, please use `fastlane :bump_SDK_version or fastlane release major|minor|patch` lanes 
+// ⚠️  Generated file, please use `fastlane :bump_SDK_version or fastlane release major|minor|patch` lanes
 
 import Foundation
 
@@ -94,7 +94,7 @@ extension SystemEnvironment {
 }
 "
   File.write(pathToVersionFile, versionGeneratedFile)
-end 
+end
 
 desc "If `readonly: true` (by default), installs all Certs and Profiles necessary for development and ad-hoc.\nIf `readonly: false`, recreates all Profiles necessary for development and ad-hoc, updates them locally and remotely."
 lane :match_me do |options|
@@ -140,7 +140,7 @@ lane :distribute_demo_app do
     build_number: ENV["GITHUB_SHA"][0...7],
   )
 
-  match_me  
+  match_me
 
   gym(
     project: "StreamChat.xcodeproj",
@@ -153,9 +153,9 @@ lane :distribute_demo_app do
     include_symbols: true,
     output_directory: "./dist"
   )
-  
+
   message = changelog_from_git_commits(commits_count: 10)
-  
+
   firebase_app_distribution(
       app: "1:674907137625:ios:9e7b1074941f8728d7f348",
       groups: "ios-stream-testers",
@@ -165,7 +165,7 @@ end
 
 desc "Builds the latest version of Demo app and uploads it to TestFlight"
 lane :testflight_build do
-  
+
   # Ask around if you're wandering where you can get this key from
   api_key = app_store_connect_api_key(
     key_id: "8P4J3MDAWP",
@@ -173,7 +173,7 @@ lane :testflight_build do
     key_content: ENV["APPSTORE_API_KEY"],
     in_house: false
   )
-  
+
   # We take the version of the latest build available on TestFlight to find out the next available build number
   build_number = latest_testflight_build_number(
     app_identifier: "io.getstream.iOS.ChatDemoApp",
@@ -227,7 +227,7 @@ lane :testflight_build do
     include_symbols: true,
     output_directory: "archives"
   )
-  
+
   pilot(
     api_key: api_key,
     team_id: "118902954",
@@ -241,12 +241,12 @@ end
 desc "Get next PR number from github to be used in CHANGELOG"
 lane :get_next_issue_number do
   result = github_api(api_token: ENV["FASTLANE_GITHUB_TOKEN"], path: "/repos/GetStream/stream-chat-swift/issues")
-  
+
   next_issue_number = result[:json][0]["number"] + 1
   next_issue_link = "[##{next_issue_number}](https://github.com/GetStream/stream-chat-swift/issues/#{next_issue_number})"
-  
+
   clipboard(value: next_issue_link)
-  
+
   UI.success "The next PR / Issue will have number: #{next_issue_number}"
   UI.success "So the next markdown link is: #{next_issue_link}"
   UI.success "Next markdown link is copied to your clipboard! ⬆️"
@@ -427,7 +427,7 @@ end
 
 desc "Builds Sample app"
 lane :build_sample do |options|
-  build_example_app("Sample", options)
+  build_example_app("StreamChatSample", options)
 end
 
 desc "Builds Demo app"
@@ -437,22 +437,22 @@ end
 
 desc "Builds iMessageClone app"
 lane :build_imessage_clone do |options|
-  build_example_app("iMessageClone", options)
+  build_example_app("iMessage", options)
 end
 
 desc "Builds SlackClone app"
 lane :build_slack_clone do |options|
-  build_example_app("SlackClone", options)
+  build_example_app("Slack", options)
 end
 
 desc "Builds MessengerClone app"
 lane :build_messenger_clone do |options|
-  build_example_app("MessengerClone", options)
+  build_example_app("Messenger", options)
 end
 
 desc "Builds YouTubeClone app"
 lane :build_youtube_clone do |options|
-  build_example_app("YouTubeClone", options)
+  build_example_app("YouTube", options)
 end
 
 def build_example_app(scheme, options)

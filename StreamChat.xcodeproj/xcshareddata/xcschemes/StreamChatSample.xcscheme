@@ -14,9 +14,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "F89C23A525E508DE0082CA5B"
-               BuildableName = "iMessageClone.app"
-               BlueprintName = "iMessageClone"
+               BlueprintIdentifier = "792A4F21247FF01800EAF71D"
+               BuildableName = "Sample.app"
+               BlueprintName = "StreamChatSample"
                ReferencedContainer = "container:StreamChat.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -44,9 +44,9 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "F89C23A525E508DE0082CA5B"
-            BuildableName = "iMessageClone.app"
-            BlueprintName = "iMessageClone"
+            BlueprintIdentifier = "792A4F21247FF01800EAF71D"
+            BuildableName = "Sample.app"
+            BlueprintName = "StreamChatSample"
             ReferencedContainer = "container:StreamChat.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
@@ -61,9 +61,9 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "F89C23A525E508DE0082CA5B"
-            BuildableName = "iMessageClone.app"
-            BlueprintName = "iMessageClone"
+            BlueprintIdentifier = "792A4F21247FF01800EAF71D"
+            BuildableName = "Sample.app"
+            BlueprintName = "StreamChatSample"
             ReferencedContainer = "container:StreamChat.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
