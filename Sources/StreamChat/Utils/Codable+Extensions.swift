@@ -139,12 +139,16 @@ extension DateFormatter {
             return gmtDateFormatter.string(from: date)
         }
 
-        private static let gmtDateFormatter: DateFormatter = {
+        private static var locale: Locale = Locale(identifier: "en_US_POSIX")
+
+        private static var timeZone: TimeZone? = TimeZone(secondsFromGMT: 0)
+
+        private static var gmtDateFormatter: DateFormatter {
             let formatter = DateFormatter()
-            formatter.locale = Locale(identifier: "en_US_POSIX")
-            formatter.timeZone = TimeZone(secondsFromGMT: 0)
+            formatter.locale = locale
+            formatter.timeZone = timeZone
             return formatter
-        }()
+        }
     }
 }
 
