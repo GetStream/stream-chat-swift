@@ -6,29 +6,43 @@ import StreamChat
 import UIKit
 
 open class AttachmentsPreviewVC: _ViewController, ComponentsProvider {
+    /// The attachment previews content.
     open var content: [AttachmentPreviewProvider] = [] {
         didSet {
             updateContentIfNeeded()
         }
     }
 
+    /// The maximum number of vertical items before scrolling is enabled.
+    open var maxNumberOfVerticalItems: Int = 3
+
     /// The closure handler when an attachment has been removed.
     open var didTapRemoveItemButton: ((Int) -> Void)?
-    
-    open var selectedAttachmentType: AttachmentType?
-    
-    public private(set) var scrollViewHeightConstraint: NSLayoutConstraint?
-    open private(set) var horizontalConstraints: [NSLayoutConstraint] = []
-    open private(set) var verticalConstraints: [NSLayoutConstraint] = []
-    
+
+    /// The scroll view that contains the horizontal and vertical stacks.
     open private(set) lazy var scrollView: UIScrollView = UIScrollView()
         .withoutAutoresizingMaskConstraints
 
-    open private(set) lazy var horizontalStackView: ContainerStackView = ContainerStackView(axis: .horizontal, spacing: 8)
-        .withoutAutoresizingMaskConstraints
+    /// The container stack that holds the vertical and horizontal items.
+    open private(set) lazy var containerStackView = ContainerStackView(
+        axis: .vertical,
+        spacing: 8
+    ).withoutAutoresizingMaskConstraints
 
-    open private(set) lazy var verticalStackView: ContainerStackView = ContainerStackView(axis: .vertical, spacing: 8)
-        .withoutAutoresizingMaskConstraints
+    /// The stack used to display the attachments previews horizontally.
+    open private(set) lazy var horizontalStackView = ContainerStackView(
+        axis: .horizontal,
+        spacing: 8
+    ).withoutAutoresizingMaskConstraints
+
+    /// The stack used to display the attachments previews vertically.
+    open private(set) lazy var verticalStackView = ContainerStackView(
+        axis: .vertical,
+        spacing: 8
+    ).withoutAutoresizingMaskConstraints
+
+    /// The current scroll view height used to activate the scrolling on the vertical stack.
+    public var scrollViewHeightConstraint: NSLayoutConstraint?
     
     override open func setUpAppearance() {
         super.setUpAppearance()
@@ -48,20 +62,22 @@ open class AttachmentsPreviewVC: _ViewController, ComponentsProvider {
         super.setUpLayout()
         
         view.embed(scrollView)
-        scrollView.embed(horizontalStackView)
-        scrollView.embed(verticalStackView)
-        
-        horizontalConstraints.append(horizontalStackView.heightAnchor.pin(equalTo: scrollView.heightAnchor))
-        verticalConstraints.append(verticalStackView.widthAnchor.pin(equalTo: scrollView.widthAnchor))
-        
-        scrollViewHeightConstraint = scrollView.heightAnchor.pin(equalToConstant: 0)
-        scrollViewHeightConstraint?.isActive = true
+        scrollView.embed(containerStackView)
+        containerStackView.addArrangedSubview(horizontalStackView)
+        containerStackView.addArrangedSubview(verticalStackView)
+        horizontalStackView.isHidden = true
+        verticalStackView.isHidden = true
+
+        scrollView.heightAnchor.pin(equalTo: containerStackView.heightAnchor).isActive = true
+        scrollView.widthAnchor.constraint(equalTo: verticalStackView.widthAnchor).isActive = true
     }
     
     open var attachmentViews: [UIView] {
         content.enumerated().map { index, attachment in
-            let view = attachment.previewView(components: components).withoutAutoresizingMaskConstraints
-            let cell = components.messageComposerAttachmentCell.init().withoutAutoresizingMaskConstraints
+            let view = attachment.previewView(components: components)
+                .withoutAutoresizingMaskConstraints
+            let cell = components.messageComposerAttachmentCell.init()
+                .withoutAutoresizingMaskConstraints
             cell.embed(attachmentView: view)
             cell.discardButtonHandler = { [weak self] in self?.didTapRemoveItemButton?(index) }
             return cell
@@ -88,19 +104,9 @@ open class AttachmentsPreviewVC: _ViewController, ComponentsProvider {
     }
     
     open func setupHorizontalStackView() {
-        let itemHeight: CGFloat = 100
-        
         // Re-enable scroll
         scrollView.isScrollEnabled = true
-        
-        // Calculate height of the scroll view
-        scrollViewHeightConstraint?.constant = itemHeight
-            + horizontalStackView.layoutMargins.top
-            + horizontalStackView.layoutMargins.bottom
-        
-        horizontalConstraints.forEach { $0.isActive = true }
-        verticalConstraints.forEach { $0.isActive = false }
-        
+
         horizontalStackView.isHidden = false
         verticalStackView.isHidden = true
         
@@ -109,22 +115,25 @@ open class AttachmentsPreviewVC: _ViewController, ComponentsProvider {
     }
     
     open func setupVerticalStackView() {
-        let maxNumberOfVisibleFiles = 3
-        let itemHeight: CGFloat = 54
-        
         // Disable scroll when not needed
-        scrollView.isScrollEnabled = content.count > maxNumberOfVisibleFiles
-        
-        // Calculate height of the scroll view
-        let numberOfVisibleItems = CGFloat(min(content.count, maxNumberOfVisibleFiles))
-        let itemsHeight = itemHeight * numberOfVisibleItems
-        let spacings = verticalStackView.spacing.rawValue * (numberOfVisibleItems - 1)
-        let height = itemsHeight + spacings + verticalStackView.layoutMargins.top + verticalStackView.layoutMargins.bottom
-        scrollViewHeightConstraint?.constant = height
-        
-        horizontalConstraints.forEach { $0.isActive = false }
-        verticalConstraints.forEach { $0.isActive = true }
-        
+        scrollView.isScrollEnabled = content.count > maxNumberOfVerticalItems
+
+        // If the content is bigger than the max vertical items and the scroll view height
+        // constraint is not yet created, append to the vertical constraint and activate it.
+        if content.count > maxNumberOfVerticalItems {
+            if scrollViewHeightConstraint == nil {
+                scrollViewHeightConstraint = scrollView.heightAnchor.pin(
+                    lessThanOrEqualToConstant: scrollView.frame.size.height
+                )
+                scrollViewHeightConstraint?.isActive = true
+            }
+            // If the content is lower than the max vertical items,
+            // reset the scroll view height constraint.
+        } else {
+            scrollViewHeightConstraint?.isActive = false
+            scrollViewHeightConstraint = nil
+        }
+
         horizontalStackView.isHidden = true
         verticalStackView.isHidden = false
         

@@ -16,7 +16,7 @@
         "invisible" : false,
         "unreadChannels" : 0,
         "unread_count" : 0,
-        "image" : "https:\/\/s3.amazonaws.com\/100no-pic.png",
+        "image_url" : "https:\/\/s3.amazonaws.com\/100no-pic.png",
         "updated_at" : "2020-08-17T13:15:27.5564Z",
         "role" : "user",
         "total_unread_count" : 0,

@@ -7,7 +7,7 @@ import Foundation
 enum UserPayloadsCodingKeys: String, CodingKey, CaseIterable {
     case id
     case name
-    case imageURL = "image"
+    case imageURL = "image_url"
     case role
     case isOnline = "online"
     case isBanned = "banned"
