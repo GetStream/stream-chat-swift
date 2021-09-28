@@ -62,6 +62,24 @@ class RequestDecoder_Tests: XCTestCase {
             XCTAssert(error is ClientError.ExpiredToken)
         }
     }
+
+    func test_decodingDateThreadSafe() throws {
+        struct TestModel: Decodable {
+            let date: Date
+        }
+
+        let json = "{\"date\": \"2021-05-13T22:10:31.960878Z\"}"
+
+        DispatchQueue.concurrentPerform(iterations: 1000) { _ in
+            if let data = json.data(using: .utf8) {
+                do {
+                    _ = try JSONDecoder.stream.decode(TestModel.self, from: data)
+                } catch {
+                    XCTFail("\(error)")
+                }
+            }
+        }
+    }
 }
 
 private struct TestUser: Codable, Equatable {
