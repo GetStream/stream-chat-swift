@@ -8,6 +8,6 @@
     "banned" : false,
     "online" : true,
     "name" : "Broken Waterfall",
-    "image" : "https:\/\/getstream.io\/random_svg\/?id=broken-waterfall-5&amp;name=Broken+waterfall"
+    "image_url" : "https:\/\/getstream.io\/random_svg\/?id=broken-waterfall-5&amp;name=Broken+waterfall"
   }
 }

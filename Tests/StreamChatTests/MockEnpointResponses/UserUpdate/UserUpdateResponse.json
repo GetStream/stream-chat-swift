@@ -9,7 +9,7 @@
       "banned": false,
       "online": false,
       "name": "Luke",
-      "image": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
+      "image_url": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
       "secret_note" : "Anaking is Vader!",
       "teams" : ["RED", "GREEN", "BLUE"]
     }

@@ -22,7 +22,7 @@
           "name": "Broken Waterfall",
           "channel_mutes": null,
           "devices": null,
-          "image": "https://api.adorable.io/avatars/285/broken-waterfall-5.png"
+          "image_url": "https://api.adorable.io/avatars/285/broken-waterfall-5.png"
         },
         "attachments": [],
         "latest_reactions": [],
@@ -51,7 +51,7 @@
         "name": "Broken Waterfall",
         "channel_mutes": null,
         "devices": null,
-        "image": "https://api.adorable.io/avatars/285/broken-waterfall-5.png"
+        "image_url": "https://api.adorable.io/avatars/285/broken-waterfall-5.png"
       },
       "created_at": "2020-09-07T12:25:50.702323Z"
     }
