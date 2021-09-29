@@ -243,12 +243,28 @@ class DemoChatChannelListRouter: ChatChannelListRouter {
                     }
                 }
             }),
-            .init(title: "Hide channel", style: .default, handler: { _ in
-                channelController.hideChannel { error in
-                    if let error = error {
-                        self.rootViewController.presentAlert(title: "Couldn't hide channel \(cid)", message: "\(error)")
-                    }
-                }
+            (
+                channelController.channel?.hiddenAt == nil ?
+                    .init(title: "Hide channel", style: .default, handler: { _ in
+                        channelController.hideChannel { error in
+                            if let error = error {
+                                self.rootViewController.presentAlert(title: "Couldn't hide channel \(cid)", message: "\(error)")
+                            }
+                        }
+                    }) :
+                    .init(title: "Show channel", style: .default, handler: { _ in
+                        channelController.showChannel() { error in
+                            if let error = error {
+                                self.rootViewController.presentAlert(title: "Couldn't unhide channel \(cid)", message: "\(error)")
+                            }
+                        }
+                    })
+            ),
+            .init(title: "Show Channel Info", style: .default, handler: { _ in
+                self.rootViewController.presentAlert(
+                    title: "Channel Info",
+                    message: channelController.channel.debugDescription
+                )
             })
         ])
     }
@@ -266,19 +282,46 @@ class DemoChannelListVC: ChatChannelListVC {
     /// The `UIButton` instance used for navigating to new channel screen creation,
     lazy var createChannelButton: UIButton = {
         let button = UIButton()
-        button.setImage(UIImage(named: "pencil")!, for: .normal)
+        button.setImage(UIImage(systemName: "plus.message")!, for: .normal)
+        return button
+    }()
+    
+    lazy var hiddenChannelsButton: UIButton = {
+        let button = UIButton()
+        button.setImage(UIImage(systemName: "archivebox")!, for: .normal)
         return button
     }()
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: createChannelButton)
+        navigationItem.rightBarButtonItems = [
+            UIBarButtonItem(customView: hiddenChannelsButton),
+            UIBarButtonItem(customView: createChannelButton)
+        ]
         createChannelButton.addTarget(self, action: #selector(didTapCreateNewChannel), for: .touchUpInside)
+        hiddenChannelsButton.addTarget(self, action: #selector(didTapHiddenChannelsButton), for: .touchUpInside)
     }
 
     @objc open func didTapCreateNewChannel(_ sender: Any) {
         (router as! DemoChatChannelListRouter).showCreateNewChannelFlow()
+    }
+    
+    @objc open func didTapHiddenChannelsButton(_ sender: Any) {
+        let channelListVC = HiddenChannelListVC()
+        channelListVC.controller = controller
+            .client
+            .channelListController(
+                query: .init(
+                    filter: .and(
+                        [
+                            .containMembers(userIds: [controller.client.currentUserId!]),
+                            .equal(.hidden, to: true)
+                        ]
+                    )
+                )
+            )
+        navigationController?.pushViewController(channelListVC, animated: true)
     }
     
     override func controller(_ controller: ChatChannelListController, shouldListUpdatedChannel channel: ChatChannel) -> Bool {
@@ -287,5 +330,14 @@ class DemoChannelListVC: ChatChannelListVC {
     
     override func controller(_ controller: ChatChannelListController, shouldAddNewChannelToList channel: ChatChannel) -> Bool {
         channel.lastActiveMembers.contains(where: { $0.id == controller.client.currentUserId })
+    }
+}
+
+class HiddenChannelListVC: ChatChannelListVC {
+    override func setUpAppearance() {
+        super.setUpAppearance()
+        
+        title = "Hidden Channels"
+        navigationItem.leftBarButtonItem = nil
     }
 }
