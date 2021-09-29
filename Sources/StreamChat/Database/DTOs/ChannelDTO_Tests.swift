@@ -44,6 +44,7 @@ class ChannelDTO_Tests: XCTestCase {
             // Channel details
             Assert.willBeEqual(channelId, loadedChannel.cid)
             
+            Assert.willBeEqual(payload.hidden, loadedChannel.hiddenAt != nil)
             Assert.willBeEqual(payload.watcherCount, loadedChannel.watcherCount)
             Assert.willBeEqual(Set(payload.watchers?.map(\.id) ?? []), Set(loadedChannel.lastActiveWatchers.map(\.id)))
             Assert.willBeEqual(payload.channel.name, loadedChannel.name)

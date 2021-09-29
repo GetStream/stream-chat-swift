@@ -190,6 +190,14 @@ extension NSManagedObjectContext {
         try payload.messages.forEach { _ = try saveMessage(payload: $0, for: payload.channel.cid) }
 
         dto.updateOldestMessageAt(payload: payload)
+        
+        // Backend only returns a boolean for hidden state on channel query
+        // If backend returns true, we know channel is hidden
+        // but don't know when. Our best guess is that channel is hidden when
+        // it's last updated
+        if payload.hidden == true && dto.hiddenAt == nil {
+            dto.hiddenAt = payload.channel.updatedAt
+        }
 
         try payload.pinnedMessages.forEach {
             _ = try saveMessage(payload: $0, for: payload.channel.cid)
@@ -383,6 +391,7 @@ extension ChatChannel {
             createdAt: dto.createdAt,
             updatedAt: dto.updatedAt,
             deletedAt: dto.deletedAt,
+            hiddenAt: dto.hiddenAt,
             createdBy: dto.createdBy?.asModel(),
             config: try! JSONDecoder().decode(ChannelConfig.self, from: dto.config),
             isFrozen: dto.isFrozen,
