@@ -59,7 +59,6 @@
 		437FCA0726D67BE40000223C /* NotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 437FCA0626D67BE40000223C /* NotificationService.swift */; };
 		437FCA0B26D67BE40000223C /* DemoAppPush.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 437FCA0426D67BE40000223C /* DemoAppPush.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		437FCA1026D67CB40000223C /* StreamChat.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 799C941B247D2F80001F1104 /* StreamChat.framework */; };
-		437FCA1126D67CB40000223C /* StreamChat.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 799C941B247D2F80001F1104 /* StreamChat.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		437FCA1626D79A910000223C /* ChatRemoteNotificationHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 437FCA1526D79A910000223C /* ChatRemoteNotificationHandler.swift */; };
 		437FCA1926D906B20000223C /* ChatPushNotificationContent_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 437FCA1826D906B20000223C /* ChatPushNotificationContent_Tests.swift */; };
 		43ABF8B526C2CD900034BD62 /* ComposerVC_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43ABF8B326C2B7140034BD62 /* ComposerVC_Tests.swift */; };
@@ -1340,17 +1339,6 @@
 				437FCA0B26D67BE40000223C /* DemoAppPush.appex in Embed App Extensions */,
 			);
 			name = "Embed App Extensions";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		437FCA1426D67CB40000223C /* Embed Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				437FCA1126D67CB40000223C /* StreamChat.framework in Embed Frameworks */,
-			);
-			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		79200D48250140BB002F4EB1 /* Embed Frameworks */ = {
@@ -5281,7 +5269,6 @@
 				437FCA0026D67BE40000223C /* Sources */,
 				437FCA0126D67BE40000223C /* Frameworks */,
 				437FCA0226D67BE40000223C /* Resources */,
-				437FCA1426D67CB40000223C /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -7268,7 +7255,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = DemoAppPush/DemoAppPush.entitlements;
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_IDENTITY = "iPhone Distribution";
+				CODE_SIGN_STYLE = Manual;
 				DEVELOPMENT_TEAM = EHV7XZLAHA;
 				INFOPLIST_FILE = DemoAppPush/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 14.3;
@@ -7279,6 +7267,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = io.getstream.iOS.ChatDemoApp.DemoAppPush;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "match AppStore io.getstream.iOS.ChatDemoApp.DemoAppPush";
 				SKIP_INSTALL = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_VERSION = 5.0;
@@ -7291,7 +7280,7 @@
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = DemoAppPush/DemoAppPush.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Distribution";
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_STYLE = Manual;
 				DEVELOPMENT_TEAM = EHV7XZLAHA;
 				INFOPLIST_FILE = DemoAppPush/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 14.3;
@@ -7302,6 +7291,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = io.getstream.iOS.ChatDemoApp.DemoAppPush;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "match AppStore io.getstream.iOS.ChatDemoApp.DemoAppPush";
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -7312,7 +7302,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = DemoAppPush/DemoAppPush.entitlements;
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_IDENTITY = "iPhone Distribution";
+				CODE_SIGN_STYLE = Manual;
 				DEVELOPMENT_TEAM = EHV7XZLAHA;
 				INFOPLIST_FILE = DemoAppPush/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 14.3;
@@ -7323,6 +7314,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = io.getstream.iOS.ChatDemoApp.DemoAppPush;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "match AppStore io.getstream.iOS.ChatDemoApp.DemoAppPush";
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
