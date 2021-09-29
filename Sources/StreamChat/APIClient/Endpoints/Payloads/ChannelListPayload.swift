@@ -25,6 +25,8 @@ struct ChannelPayload: Decodable {
     let pinnedMessages: [MessagePayload]
     
     let channelReads: [ChannelReadPayload]
+    
+    let hidden: Bool?
 
     private enum CodingKeys: String, CodingKey {
         case channel
@@ -35,11 +37,13 @@ struct ChannelPayload: Decodable {
         case watchers
         case membership
         case watcherCount = "watcher_count"
+        case hidden
     }
     
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         channel = try container.decode(ChannelDetailPayload.self, forKey: .channel)
+        hidden = try container.decodeIfPresent(Bool.self, forKey: .hidden)
         watchers = try container.decodeIfPresent([UserPayload].self, forKey: .watchers)
         watcherCount = try container.decodeIfPresent(Int.self, forKey: .watcherCount)
         members = try container.decode([MemberPayload].self, forKey: .members)
@@ -53,6 +57,7 @@ struct ChannelPayload: Decodable {
     
     init(
         channel: ChannelDetailPayload,
+        hidden: Bool? = nil,
         watcherCount: Int,
         watchers: [UserPayload]?,
         members: [MemberPayload],
@@ -62,6 +67,7 @@ struct ChannelPayload: Decodable {
         channelReads: [ChannelReadPayload]
     ) {
         self.channel = channel
+        self.hidden = hidden
         self.watcherCount = watcherCount
         self.watchers = watchers
         self.members = members
