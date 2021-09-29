@@ -350,7 +350,7 @@ private struct ArbitraryKey: CodingKey, Hashable, CustomStringConvertible {
     init?(intValue: Int) { nil }
 }
 
-private extension String {
+extension String {
     /// Returns true if the string is one of the group `FilterOperator`s
     var isGroupOperator: Bool {
         let groupOperators: [FilterOperator] = [.and, .or, .nor]

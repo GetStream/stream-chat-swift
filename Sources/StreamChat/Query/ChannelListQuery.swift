@@ -17,6 +17,20 @@ public extension Filter where Scope: AnyChannelListFilterScope {
     }
 }
 
+extension Filter where Scope: AnyChannelListFilterScope {
+    /// Computed var helping us determine the value of `hidden` filter.
+    var hiddenFilterValue: Bool? {
+        if `operator`.isGroupOperator {
+            let filters = value as? [Filter] ?? []
+            return filters.compactMap(\.hiddenFilterValue).first
+        } else if `operator` == FilterOperator.equal.rawValue {
+            return key == FilterKey<Scope, Bool>.hidden.rawValue ? (value as? Bool) : nil
+        } else {
+            return nil
+        }
+    }
+}
+
 // We don't want to expose `members` publicly because it can't be used with any other operator
 // then `$in`. We expose it publicly via the `containMembers` filter helper.
 extension FilterKey where Scope: AnyChannelListFilterScope {
@@ -51,6 +65,9 @@ public extension FilterKey where Scope: AnyChannelListFilterScope {
     
     /// A filter key for matching the `deletedAt` value.
     static var deletedAt: FilterKey<Scope, Date> { "deleted_at" }
+    
+    /// A filter key for querying hidden channels.
+    static var hidden: FilterKey<Scope, Bool> { "hidden" }
     
     /// A filter key for matching the `frozen` value.
     static var frozen: FilterKey<Scope, Bool> { "frozen" }

@@ -265,20 +265,27 @@ extension ChannelDTO {
         let matchingQuery = NSPredicate(format: "ANY queries.filterHash == %@", query.filter.filterHash)
         let notDeleted = NSPredicate(format: "deletedAt == nil")
 
-        // This is not 100% correct and should be ideally solved differently. This makes it impossible
-        // to query for hidden channels from the SDK. However, it's the limitation other platforms have, too,
-        // so this feels like a good-enough solution for now.
-        let notHidden = NSCompoundPredicate(orPredicateWithSubpredicates: [
-            NSPredicate(format: "hiddenAt == nil"),
-            NSCompoundPredicate(andPredicateWithSubpredicates: [
-                NSPredicate(format: "lastMessageAt != nil"),
-                NSPredicate(format: "lastMessageAt > hiddenAt")
+        let subpredicates: [NSPredicate]
+        // If the query contains a filter for the `hidden` property,
+        // we don't exclude hidden channels, backend will or won't
+        if query.filter.hiddenFilterValue == true {
+            subpredicates = [
+                matchingQuery, notDeleted
+            ]
+        } else {
+            let notHidden = NSCompoundPredicate(orPredicateWithSubpredicates: [
+                NSPredicate(format: "hiddenAt == nil"),
+                NSCompoundPredicate(andPredicateWithSubpredicates: [
+                    NSPredicate(format: "lastMessageAt != nil"),
+                    NSPredicate(format: "lastMessageAt > hiddenAt")
+                ])
             ])
-        ])
-
-        request.predicate = NSCompoundPredicate(type: .and, subpredicates: [
-            matchingQuery, notDeleted, notHidden
-        ])
+            subpredicates = [
+                matchingQuery, notDeleted, notHidden
+            ]
+        }
+        
+        request.predicate = NSCompoundPredicate(type: .and, subpredicates: subpredicates)
         return request
     }
     
