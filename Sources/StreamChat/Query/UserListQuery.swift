@@ -20,7 +20,7 @@ public extension FilterKey where Scope: AnyUserListFilterScope {
     static var name: FilterKey<Scope, String> { "name" }
     
     /// A filter key for matching the `image` value.
-    static var imageURL: FilterKey<Scope, URL> { "image_url" }
+    static var imageURL: FilterKey<Scope, URL> { "image" }
     
     /// A filter key for matching the `role` value.
     static var role: FilterKey<Scope, UserRole> { "role" }
