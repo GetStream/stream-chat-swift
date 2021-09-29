@@ -72,7 +72,7 @@ class UserRequestBody_Tests: XCTestCase {
         let expected: [String: Any] = [
             "id": payload.id,
             "name": payload.name!,
-            "image_url": payload.imageURL!.absoluteString
+            "image": payload.imageURL!.absoluteString
         ]
         
         AssertJSONEqual(serialized, expected)
@@ -91,7 +91,7 @@ class UserUpdateRequestBody_Tests: XCTestCase {
         
         let expected: [String: Any] = [
             "name": payload.name!,
-            "image_url": payload.imageURL!.absoluteString,
+            "image": payload.imageURL!.absoluteString,
             "secret_note": value
         ]
         
