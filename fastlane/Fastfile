@@ -202,22 +202,13 @@ lane :testflight_build do
     build_number: (build_number + 1).to_s,
   )
 
-  ["development", "adhoc", "appstore"].each do |type|
-    match(
-      type: type,
-      # A user has to be a matched one, if it's not please run `match_me` with readOnly = false
-      username: "sacethi0@gmail.com",
-      app_identifier: [
-        "io.getstream.StreamChat",
-        "io.getstream.iOS.ChatDemoApp",
-        "io.getstream.iOS.iMessageClone",
-        "io.getstream.iOS.SlackClone",
-        "io.getstream.iOS.MessengerClone",
-        "io.getstream.iOS.YouTubeClone",
-      ],
-      readonly: true
-    )
-  end
+  increment_build_number_in_plist(
+    xcodeproj: "StreamChat.xcodeproj",
+    target: "DemoAppPush",
+    build_number: (build_number + 1).to_s,
+  )
+
+  match_me
 
   gym(
     project: "StreamChat.xcodeproj",
