@@ -10,6 +10,7 @@ jobs:
     name: Publish docusaurus docs
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v2
       - name: push
         uses: GetStream/push-stream-chat-docusaurus-action@main
         with:
