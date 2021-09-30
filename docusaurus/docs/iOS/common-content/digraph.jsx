@@ -1,6 +1,5 @@
 import React from 'react';
 import Viz from 'viz.js';
-import DOMPurify from 'dompurify';
 
 const style = `
 digraph G {
@@ -19,6 +18,6 @@ digraph G {
 export default function Digraph(props) {
     const graph = Viz(style + props.children + '}', { format: "svg", scale: 2, engine: 'dot' });
     return (
-      <div dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(graph)}} />
+      <div dangerouslySetInnerHTML={{__html: graph}} />
     );
   }
