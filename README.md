@@ -17,7 +17,7 @@ The **StreamChatUI SDK**  is the official iOS SDK for [Stream Chat](https://gets
 
 ## Which Version Should I Choose?
 
-- **4.x** is the current version under development. v4 is currently in the release candidate stage.
+- **4.x** is the current production version. (Recommended)
 - **3.x** is the previous production version and in maintenance mode.
 - **2.x** is in maintenance mode.
 
