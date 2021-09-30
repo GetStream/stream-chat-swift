@@ -1,6 +1,9 @@
 name: Publish Docusaurus to prod
 
 on:
+  push:
+    branches:
+      - run-doc-gen
   release:
     types: [published]
   workflow_dispatch:
