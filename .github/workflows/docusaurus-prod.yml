@@ -1,9 +1,8 @@
 name: Publish Docusaurus to prod
 
 on:
-  push:
-    branches:
-      - main
+  release:
+    types: [published]
   workflow_dispatch:
 jobs:
   push_docusaurus:
