@@ -108,8 +108,18 @@ The above command will generate the **MyProject.xcworkspace** file automatically
 
 With our workspace now containing our Pods project with dependencies, as well as our original project, let’s go ahead and move over to Xcode to complete the process.
 
-### Carthage Support
+### Installing with Carthage
 
-We currently don't support integrating the SDK via Carthage. The dependency manager seems to have many unresolved issues and its future is not clear. Please open an [issue in our repo](https://github.com/GetStream/stream-chat-swift/issues) if you think we should support it.
+Add entry to your `Cartfile`:
 
-If you need carthage for integrating StreamChat as a static library, please note that you can also use Cocoapods for that purpose. More info can be found [here](https://guides.cocoapods.org/plugins/pre-compiling-dependencies.html).
+```
+github "GetStream/stream-chat-swift" ~> 4.0
+```
+
+and run:
+
+```bash
+carthage update --use-xcframeworks --platform iOS
+```
+
+go into your project, in the General settings tab, in the Frameworks, Libraries, and Embedded Content section, drag and drop each XCFramework you use from the Carthage/Build folder on disk.
