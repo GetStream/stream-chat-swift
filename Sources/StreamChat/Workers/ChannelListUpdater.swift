@@ -28,8 +28,15 @@ class ChannelListUpdater: Worker {
 //                        if trumpExistingChannels {
 //                            try session.deleteChannels(query: channelListQuery)
 //                        }
+                        let shouldMarkAsHidden = channelListQuery.filter.hiddenFilterValue == true
                         try channelListPayload.channels.forEach {
-                            try session.saveChannel(payload: $0, query: channelListQuery)
+                            let dto = try session.saveChannel(payload: $0, query: channelListQuery)
+                            // Since backend doesn't send `hidden_at` field for channels,
+                            // we need to work around it by marking channels as `hidden`
+                            // if the user queries for `hidden == true`
+                            if shouldMarkAsHidden {
+                                dto.hiddenAt = $0.channel.updatedAt
+                            }
                         }
                     } completion: { error in
                         if let error = error {
