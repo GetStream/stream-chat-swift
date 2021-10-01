@@ -53,11 +53,11 @@ final class UserWatchingEventMiddleware_Tests: XCTestCase {
         session.errorToReturn = error
         
         // Simulate and handle user watching event.
-        let event = try UserWatchingEvent(from: eventPayload)
+        let event = try UserWatchingEventDTO(from: eventPayload)
         let forwardedEvent = middleware.handle(event: event, session: database.viewContext)
         
         // Assert `UserWatchingEvent` is forwarded even though database error happened.
-        XCTAssertTrue(forwardedEvent is UserWatchingEvent)
+        XCTAssertTrue(forwardedEvent is UserWatchingEventDTO)
     }
     
     func tests_middleware_handlesUserStartWatchingEventCorrectly() throws {
@@ -72,7 +72,7 @@ final class UserWatchingEventMiddleware_Tests: XCTestCase {
             watcherCount: watcherCount,
             createdAt: .unique
         )
-        let event = try UserWatchingEvent(from: eventPayload)
+        let event = try UserWatchingEventDTO(from: eventPayload)
         
         // Channel and user must exist for the middleware to work
         try database.createChannel(cid: cid, withMessages: false)
@@ -89,7 +89,7 @@ final class UserWatchingEventMiddleware_Tests: XCTestCase {
         // dummyChannel's watcherCount is 10, we generate 100...200
         // if this assert fails, check dummyChannel's watcherCount
         XCTAssertEqual(loadedChannel?.watcherCount, Int64(watcherCount))
-        XCTAssert(forwardedEvent is UserWatchingEvent)
+        XCTAssert(forwardedEvent is UserWatchingEventDTO)
     }
     
     func tests_middleware_handlesUserStopWatchingEventCorrectly() throws {
@@ -110,7 +110,7 @@ final class UserWatchingEventMiddleware_Tests: XCTestCase {
             watcherCount: watcherCount,
             createdAt: .unique
         )
-        let event = try UserWatchingEvent(from: eventPayload)
+        let event = try UserWatchingEventDTO(from: eventPayload)
         
         // Simulate incoming event
         let forwardedEvent = middleware.handle(event: event, session: database.viewContext)
@@ -123,7 +123,7 @@ final class UserWatchingEventMiddleware_Tests: XCTestCase {
         // dummyChannel's watcherCount is 10, we generate 100...200
         // if this assert fails, check dummyChannel's watcherCount
         XCTAssertEqual(loadedChannel?.watcherCount, Int64(watcherCount))
-        XCTAssert(forwardedEvent is UserWatchingEvent)
+        XCTAssert(forwardedEvent is UserWatchingEventDTO)
     }
 }
 

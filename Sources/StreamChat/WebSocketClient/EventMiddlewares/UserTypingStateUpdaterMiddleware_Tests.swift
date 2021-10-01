@@ -53,11 +53,11 @@ final class ChannelUserTypingStateUpdaterMiddleware_Tests: XCTestCase {
         database.write_errorResponse = error
         
         // Simulate typing event
-        let event = TypingEvent.startTyping(cid: cid, userId: userId)
+        let event = TypingEventDTO.startTyping(cid: cid, userId: userId)
         let forwardedEvent = middleware.handle(event: event, session: database.viewContext)
         
         // Assert `TypingEvent` is forwarded even though database error happened
-        XCTAssertEqual(forwardedEvent as! TypingEvent, event)
+        XCTAssertEqual(forwardedEvent as! TypingEventDTO, event)
     }
     
     func tests_middleware_handlesTypingStartedEventCorrectly() throws {
@@ -79,11 +79,11 @@ final class ChannelUserTypingStateUpdaterMiddleware_Tests: XCTestCase {
         XCTAssertTrue(channel.currentlyTypingUsers.isEmpty)
         
         // Simulate start typing event
-        let event = TypingEvent.startTyping(cid: cid, userId: userId)
+        let event = TypingEventDTO.startTyping(cid: cid, userId: userId)
         let forwardedEvent = middleware.handle(event: event, session: database.viewContext)
         
         // Assert `TypingEvent` is forwarded as it is
-        XCTAssertEqual(forwardedEvent as! TypingEvent, event)
+        XCTAssertEqual(forwardedEvent as! TypingEventDTO, event)
         // Assert channel's currentlyTypingUsers are updated correctly
         XCTAssertEqual(channel.currentlyTypingUsers.first?.id, userId)
         XCTAssertEqual(channel.currentlyTypingUsers.count, 1)
@@ -110,11 +110,11 @@ final class ChannelUserTypingStateUpdaterMiddleware_Tests: XCTestCase {
         }
         
         // Simulate stop typing events
-        let event = TypingEvent.stopTyping(cid: cid, userId: userId)
+        let event = TypingEventDTO.stopTyping(cid: cid, userId: userId)
         let forwardedEvent = middleware.handle(event: event, session: database.viewContext)
         
         // Assert `TypingEvent` is forwarded as it is
-        XCTAssertEqual(forwardedEvent as! TypingEvent, event)
+        XCTAssertEqual(forwardedEvent as! TypingEventDTO, event)
         // Assert channel's currentlyTypingUsers are updated correctly
         XCTAssertTrue(channel.currentlyTypingUsers.isEmpty)
     }
@@ -154,20 +154,43 @@ private struct TestEvent: Event, Equatable {
     let id = UUID()
 }
 
-extension TypingEvent: Equatable {
+extension TypingEventDTO: Equatable {
     static var unique: Self = try!
-        .init(from: EventPayload(eventType: .userStartTyping, cid: .unique, user: .dummy(userId: .unique)))
+        .init(
+            from: EventPayload(
+                eventType: .userStartTyping,
+                user: .dummy(userId: .unique),
+                channel: .dummy(cid: .unique)
+            )
+        )
     
-    static func startTyping(cid: ChannelId = .unique, userId: UserId = .unique) -> TypingEvent {
-        try! .init(from: EventPayload(eventType: .userStartTyping, cid: cid, user: .dummy(userId: userId)))
+    static func startTyping(
+        cid: ChannelId = .unique,
+        userId: UserId = .unique
+    ) -> Self {
+        let payload = EventPayload(
+            eventType: .userStartTyping,
+            cid: cid,
+            user: .dummy(userId: userId),
+            createdAt: .unique
+        )
+        
+        return try! .init(from: payload)
     }
     
-    static func stopTyping(cid: ChannelId = .unique, userId: UserId = .unique) -> TypingEvent {
-        try! .init(from: EventPayload(eventType: .userStopTyping, cid: cid, user: .dummy(userId: userId)))
+    static func stopTyping(cid: ChannelId = .unique, userId: UserId = .unique) -> Self {
+        let payload = EventPayload(
+            eventType: .userStopTyping,
+            cid: cid,
+            user: .dummy(userId: userId),
+            createdAt: .unique
+        )
+        
+        return try! .init(from: payload)
     }
     
-    public static func == (lhs: TypingEvent, rhs: TypingEvent) -> Bool {
-        lhs.isTyping == rhs.isTyping && lhs.cid == rhs.cid && lhs.userId == rhs.userId
+    public static func == (lhs: Self, rhs: Self) -> Bool {
+        lhs.isTyping == rhs.isTyping && lhs.cid == rhs.cid && lhs.user.id == rhs.user.id
     }
 }
 

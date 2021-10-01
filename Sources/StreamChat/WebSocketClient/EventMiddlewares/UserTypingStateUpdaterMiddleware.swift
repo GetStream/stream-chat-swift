@@ -8,10 +8,10 @@ import CoreData
 struct UserTypingStateUpdaterMiddleware: EventMiddleware {
     func handle(event: Event, session: DatabaseSession) -> Event? {
         switch event {
-        case let event as TypingEvent:
+        case let event as TypingEventDTO:
             guard
                 let channelDTO = session.channel(cid: event.cid),
-                let userDTO = session.user(id: event.userId)
+                let userDTO = session.user(id: event.user.id)
             else { break }
             
             if event.isTyping {

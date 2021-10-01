@@ -8,17 +8,16 @@ import Foundation
 struct ChannelTruncatedEventMiddleware: EventMiddleware {
     func handle(event: Event, session: DatabaseSession) -> Event? {
         guard
-            let truncatedEvent = event as? ChannelTruncatedEvent,
-            let payload = truncatedEvent.payload as? EventPayload
+            let truncatedEvent = event as? ChannelTruncatedEventDTO
         else {
             return event
         }
 
         do {
-            if let channelDTO = session.channel(cid: truncatedEvent.cid) {
-                channelDTO.truncatedAt = payload.createdAt
+            if let channelDTO = session.channel(cid: truncatedEvent.channel.cid) {
+                channelDTO.truncatedAt = truncatedEvent.createdAt
             } else {
-                throw ClientError.ChannelDoesNotExist(cid: truncatedEvent.cid)
+                throw ClientError.ChannelDoesNotExist(cid: truncatedEvent.channel.cid)
             }
         } catch {
             log.error("Failed to write the `truncatedAt` field update in the database, error: \(error)")

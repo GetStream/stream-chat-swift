@@ -143,8 +143,6 @@
   "channel_type" : "messaging",
   "channel_id" : "!members-hu_6SE2Rniuu3O709FqAEEtVcJxW3tWr97l_hV33a-E",
   "created_at" : "2021-04-22T19:24:43.849533296Z",
-  "total_unread_count" : 790,
-  "unread_count" : 790,
   "unread_channels" : 9,
   "type" : "notification.added_to_channel",
   "cid" : "messaging:!members-hu_6SE2Rniuu3O709FqAEEtVcJxW3tWr97l_hV33a-E"

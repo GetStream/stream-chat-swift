@@ -4,22 +4,55 @@
 
 import Foundation
 
-public struct TypingEvent: UserSpecificEvent, ChannelSpecificEvent {
+/// Triggered when user starts/stops typing in a channel.
+public struct TypingEvent: ChannelSpecificEvent {
+    /// The flag saying if typing is started/stopped.
     public let isTyping: Bool
+    
+    /// The channel the typing event happened.
     public let cid: ChannelId
-    public let userId: UserId
+    
+    /// The user who changed the typing state.
+    public let user: ChatUser
+    
+    /// If typing event happened in the message thread, this field contains thread root message identifier.
     public let parentId: MessageId?
-    public let isThread: Bool
+    
+    /// The event timestamp.
+    public let createdAt: Date
+    
+    /// `true` if typing event happened in the message thread.
+    public var isThread: Bool { parentId != nil }
+}
 
-    let payload: Any
+struct TypingEventDTO: EventDTO {
+    let user: UserPayload
+    let cid: ChannelId
+    let isTyping: Bool
+    let parentId: MessageId?
+    var isThread: Bool { parentId != nil }
+    let createdAt: Date
+    let payload: EventPayload
     
     init(from response: EventPayload) throws {
         cid = try response.value(at: \.cid)
-        userId = try response.value(at: \.user?.id)
+        user = try response.value(at: \.user)
+        createdAt = try response.value(at: \.createdAt)
         isTyping = response.eventType == .userStartTyping
-        payload = response
         parentId = try? response.value(at: \.parentId)
-        isThread = parentId != nil
+        payload = response
+    }
+    
+    func toDomainEvent(session: DatabaseSession) -> Event? {
+        guard let userDTO = session.user(id: user.id) else { return nil }
+        
+        return TypingEvent(
+            isTyping: isTyping,
+            cid: cid,
+            user: userDTO.asModel(),
+            parentId: parentId,
+            createdAt: createdAt
+        )
     }
 }
 

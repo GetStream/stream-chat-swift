@@ -65,7 +65,7 @@ final class MemberEventObserver_Tests: XCTestCase {
     }
 }
 
-struct TestMemberEvent: MemberEvent, Hashable {
+struct TestMemberEvent: MemberEvent, ChannelSpecificEvent, Hashable {
     static var unique: TestMemberEvent { .init(cid: .unique, memberUserId: .unique) }
     
     let cid: ChannelId
