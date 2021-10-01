@@ -79,7 +79,7 @@ extension JSONEncoder.DateEncodingStrategy {
 // MARK: - Date Formatter Helper
 
 extension DateFormatter {
-    /// A Stream Chat date formatters.
+    /// Stream Chat date formatters.
     enum Stream {
         // Creates and returns a date object from the specified RFC3339 formatted string representation.
         ///
@@ -124,7 +124,6 @@ extension DateFormatter {
             "yyyy'-'MM'-'dd'T'HH':'mm':'ss.SSSZZZ",
             "yyyy'-'MM'-'dd'T'HH':'mm':'ss"
         ].map(makeDateFormatter)
-
 
         private static let dateFormatterWithoutFractional = makeDateFormatter(dateFormat: "yyyy-MM-dd'T'HH:mm:ssZZZZZ")
         private static let dateFormatterWithFractional = makeDateFormatter(dateFormat: "yyyy-MM-dd'T'HH:mm:ss.SSSXXXXX")
