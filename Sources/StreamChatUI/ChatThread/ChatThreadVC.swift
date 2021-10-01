@@ -48,7 +48,7 @@ open class ChatThreadVC:
         .threadHeaderView.init()
         .withoutAutoresizingMaskConstraints
 
-    private var messageComposerBottomConstraint: NSLayoutConstraint?
+    public var messageComposerBottomConstraint: NSLayoutConstraint?
 
     @Atomic private var loadingPreviousMessages: Bool = false
 
