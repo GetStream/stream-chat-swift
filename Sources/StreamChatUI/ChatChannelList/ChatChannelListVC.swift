@@ -279,6 +279,14 @@ open class ChatChannelListVC: _ViewController,
         )
     }
     
+    open func controller(_ controller: ChatChannelListController, shouldAddNewChannelToList channel: ChatChannel) -> Bool {
+        true
+    }
+    
+    open func controller(_ controller: ChatChannelListController, shouldListUpdatedChannel channel: ChatChannel) -> Bool {
+        true
+    }
+    
     // MARK: - DataControllerStateDelegate
     
     open func controller(_ controller: DataController, didChangeState state: DataController.State) {

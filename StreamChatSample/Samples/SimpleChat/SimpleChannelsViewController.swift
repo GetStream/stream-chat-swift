@@ -78,6 +78,14 @@ class SimpleChannelsViewController: UITableViewController, ChatChannelListContro
         tableView.endUpdates()
     }
     
+    func controller(_ controller: ChatChannelListController, shouldAddNewChannelToList channel: ChatChannel) -> Bool {
+        true
+    }
+    
+    func controller(_ controller: ChatChannelListController, shouldListUpdatedChannel channel: ChatChannel) -> Bool {
+        true
+    }
+    
     // MARK: - UITableViewDataSource
 
     ///

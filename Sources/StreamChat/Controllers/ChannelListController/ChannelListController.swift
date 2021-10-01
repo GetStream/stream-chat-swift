@@ -401,16 +401,6 @@ public extension ChatChannelListControllerDelegate {
         _ controller: ChatChannelListController,
         didChangeChannels changes: [ListChange<ChatChannel>]
     ) {}
-    
-    func controller(
-        _ controller: ChatChannelListController,
-        shouldAddNewChannelToList channel: ChatChannel
-    ) -> Bool { true }
-    
-    func controller(
-        _ controller: ChatChannelListController,
-        shouldListUpdatedChannel channel: ChatChannel
-    ) -> Bool { true }
 }
 
 extension ClientError {

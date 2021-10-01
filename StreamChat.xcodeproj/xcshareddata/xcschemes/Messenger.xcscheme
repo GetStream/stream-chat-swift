@@ -15,7 +15,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "F86C87B125F906630000BCA9"
-               BuildableName = "MessengerClone.app"
+               BuildableName = "Messenger.app"
                BlueprintName = "Messenger"
                ReferencedContainer = "container:StreamChat.xcodeproj">
             </BuildableReference>
@@ -45,7 +45,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "F86C87B125F906630000BCA9"
-            BuildableName = "MessengerClone.app"
+            BuildableName = "Messenger.app"
             BlueprintName = "Messenger"
             ReferencedContainer = "container:StreamChat.xcodeproj">
          </BuildableReference>
@@ -62,7 +62,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "F86C87B125F906630000BCA9"
-            BuildableName = "MessengerClone.app"
+            BuildableName = "Messenger.app"
             BlueprintName = "Messenger"
             ReferencedContainer = "container:StreamChat.xcodeproj">
          </BuildableReference>
