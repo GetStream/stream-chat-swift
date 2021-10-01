@@ -55,7 +55,7 @@ open class ChatChannelVC:
         .channelAvatarView.init()
         .withoutAutoresizingMaskConstraints
 
-    private var messageComposerBottomConstraint: NSLayoutConstraint?
+    public var messageComposerBottomConstraint: NSLayoutConstraint?
 
     @Atomic private var loadingPreviousMessages: Bool = false
 
