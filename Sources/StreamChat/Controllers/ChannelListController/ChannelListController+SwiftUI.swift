@@ -46,4 +46,14 @@ extension ChatChannelListController.ObservableObject: ChatChannelListControllerD
     public func controller(_ controller: DataController, didChangeState state: DataController.State) {
         self.state = state
     }
+    
+    public func controller(_ controller: ChatChannelListController, shouldListUpdatedChannel channel: ChatChannel) -> Bool {
+        // Use the mainDelegate if exists, or true by default
+        controller.multicastDelegate.mainDelegate?.controller(controller, shouldListUpdatedChannel: channel) ?? true
+    }
+    
+    public func controller(_ controller: ChatChannelListController, shouldAddNewChannelToList channel: ChatChannel) -> Bool {
+        // Use the mainDelegate if exists, or true by default
+        controller.multicastDelegate.mainDelegate?.controller(controller, shouldAddNewChannelToList: channel) ?? true
+    }
 }

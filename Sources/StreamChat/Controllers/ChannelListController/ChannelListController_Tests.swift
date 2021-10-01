@@ -601,6 +601,14 @@ class ChannelListController_Tests: XCTestCase {
                 XCTAssertTrue(willChangeCallbackCalled)
                 didChangeCallbackCalled = true
             }
+            
+            func controller(_ controller: ChatChannelListController, shouldListUpdatedChannel channel: ChatChannel) -> Bool {
+                true
+            }
+            
+            func controller(_ controller: ChatChannelListController, shouldAddNewChannelToList channel: ChatChannel) -> Bool {
+                true
+            }
         }
 
         let cid: ChannelId = .unique
@@ -817,6 +825,16 @@ private class TestDelegate: QueueAwareDelegate, ChatChannelListControllerDelegat
         didChangeChannels_changes = changes
         validateQueue()
     }
+    
+    func controller(_ controller: ChatChannelListController, shouldListUpdatedChannel channel: ChatChannel) -> Bool {
+        validateQueue()
+        return true
+    }
+    
+    func controller(_ controller: ChatChannelListController, shouldAddNewChannelToList channel: ChatChannel) -> Bool {
+        validateQueue()
+        return true
+    }
 }
 
 // A concrete `_ChatChannelListControllerDelegate` implementation allowing capturing the delegate calls.
@@ -841,6 +859,16 @@ private class TestDelegateGeneric: QueueAwareDelegate, ChatChannelListController
     ) {
         didChangeChannels_changes = changes
         validateQueue()
+    }
+    
+    func controller(_ controller: ChatChannelListController, shouldListUpdatedChannel channel: ChatChannel) -> Bool {
+        validateQueue()
+        return true
+    }
+    
+    func controller(_ controller: ChatChannelListController, shouldAddNewChannelToList channel: ChatChannel) -> Bool {
+        validateQueue()
+        return true
     }
 }
 

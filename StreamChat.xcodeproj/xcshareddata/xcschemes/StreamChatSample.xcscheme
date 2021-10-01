@@ -15,7 +15,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "792A4F21247FF01800EAF71D"
-               BuildableName = "Sample.app"
+               BuildableName = "StreamChatSample.app"
                BlueprintName = "StreamChatSample"
                ReferencedContainer = "container:StreamChat.xcodeproj">
             </BuildableReference>
@@ -45,7 +45,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "792A4F21247FF01800EAF71D"
-            BuildableName = "Sample.app"
+            BuildableName = "StreamChatSample.app"
             BlueprintName = "StreamChatSample"
             ReferencedContainer = "container:StreamChat.xcodeproj">
          </BuildableReference>
@@ -62,7 +62,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "792A4F21247FF01800EAF71D"
-            BuildableName = "Sample.app"
+            BuildableName = "StreamChatSample.app"
             BlueprintName = "StreamChatSample"
             ReferencedContainer = "container:StreamChat.xcodeproj">
          </BuildableReference>

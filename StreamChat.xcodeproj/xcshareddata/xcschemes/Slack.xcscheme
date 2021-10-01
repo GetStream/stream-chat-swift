@@ -15,7 +15,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "F8933B9125FF55E30054BBFF"
-               BuildableName = "SlackClone.app"
+               BuildableName = "Slack.app"
                BlueprintName = "Slack"
                ReferencedContainer = "container:StreamChat.xcodeproj">
             </BuildableReference>
@@ -45,7 +45,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "F8933B9125FF55E30054BBFF"
-            BuildableName = "SlackClone.app"
+            BuildableName = "Slack.app"
             BlueprintName = "Slack"
             ReferencedContainer = "container:StreamChat.xcodeproj">
          </BuildableReference>
@@ -62,7 +62,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "F8933B9125FF55E30054BBFF"
-            BuildableName = "SlackClone.app"
+            BuildableName = "Slack.app"
             BlueprintName = "Slack"
             ReferencedContainer = "container:StreamChat.xcodeproj">
          </BuildableReference>

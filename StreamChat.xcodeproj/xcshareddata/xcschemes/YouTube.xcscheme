@@ -15,7 +15,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "AC908380268B115F00ACFB8E"
-               BuildableName = "YouTubeClone.app"
+               BuildableName = "YouTube.app"
                BlueprintName = "YouTube"
                ReferencedContainer = "container:StreamChat.xcodeproj">
             </BuildableReference>
@@ -45,7 +45,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "AC908380268B115F00ACFB8E"
-            BuildableName = "YouTubeClone.app"
+            BuildableName = "YouTube.app"
             BlueprintName = "YouTube"
             ReferencedContainer = "container:StreamChat.xcodeproj">
          </BuildableReference>
@@ -62,7 +62,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "AC908380268B115F00ACFB8E"
-            BuildableName = "YouTubeClone.app"
+            BuildableName = "YouTube.app"
             BlueprintName = "YouTube"
             ReferencedContainer = "container:StreamChat.xcodeproj">
          </BuildableReference>
