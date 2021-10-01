@@ -8,6 +8,8 @@
     <dict>
         <key>io.getStream.iOS.ChatDemoApp</key>
         <string>match AdHoc io.getstream.iOS.ChatDemoApp</string>
+        <key>io.getstream.iOS.ChatDemoApp.DemoAppPush</key>
+        <string>match AdHoc io.getstream.iOS.ChatDemoApp.DemoAppPush</string>
     </dict>
 </dict>
 </plist>
