@@ -67,21 +67,27 @@ class EventNotificationCenter: NotificationCenter {
         DispatchQueue.main.asyncAfter(deadline: .now() + eventBatchPeriod) { [weak self] in
             guard let self = self else { return }
 
-            self.database.write { session in
+            var eventsToPublish: [Event] = []
+            self.database.write({ session in
                 var eventsToProcess: [Event] = []
                 self._pendingEvents {
                     eventsToProcess = $0
                     $0.removeAll()
                 }
                 
-                eventsToProcess.forEach { event in
-                    guard
-                        let eventToPublish = self.middlewares.process(event: event, session: session)
-                    else { return }
-
-                    self.post(Notification(newEventReceived: eventToPublish, sender: self))
+                eventsToPublish = eventsToProcess.compactMap {
+                    self.middlewares.process(event: $0, session: session)
                 }
-            }
+            }, completion: { _ in
+                // We post events on a queue different from database.writable context
+                // queue to prevent a deadlock happening when @CoreDataLazy (with `context.performAndWait` inside)
+                // model is accessed in event handlers.
+                DispatchQueue.main.async {
+                    eventsToPublish.forEach {
+                        self.post(Notification(newEventReceived: $0, sender: self))
+                    }
+                }
+            })
         }
     }
 }

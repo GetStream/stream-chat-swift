@@ -59,7 +59,7 @@ class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
                 message: .dummy(messageId: .unique, authorUserId: user.id, createdAt: .unique(before: oldReadDate)),
                 createdAt: .unique(before: oldReadDate)
             )
-            let oldMessageNewEvent = try MessageNewEvent(from: eldEventPayload)
+            let oldMessageNewEvent = try MessageNewEventDTO(from: eldEventPayload)
 
             var handledEvent: Event?
             try database.writeSynchronously { session in
@@ -81,7 +81,7 @@ class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
                 message: .dummy(messageId: .unique, authorUserId: user.id, createdAt: .unique(after: oldReadDate)),
                 createdAt: .unique(after: oldReadDate)
             )
-            let messageNewEvent = try MessageNewEvent(from: eventPayload)
+            let messageNewEvent = try MessageNewEventDTO(from: eventPayload)
 
             try database.writeSynchronously { session in
                 // Let the middleware handle the event
@@ -134,7 +134,7 @@ class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
                 message: .dummy(messageId: .unique, authorUserId: user.id, createdAt: .unique(before: oldReadDate)),
                 createdAt: .unique(before: oldReadDate)
             )
-            let oldMessageNewEvent = try NotificationMessageNewEvent(from: eldEventPayload)
+            let oldMessageNewEvent = try NotificationMessageNewEventDTO(from: eldEventPayload)
 
             var handledEvent: Event?
             try database.writeSynchronously { session in
@@ -157,7 +157,7 @@ class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
                 message: .dummy(messageId: .unique, authorUserId: user.id, createdAt: .unique(after: oldReadDate)),
                 createdAt: .unique(after: oldReadDate)
             )
-            let messageNewEvent = try NotificationMessageNewEvent(from: eventPayload)
+            let messageNewEvent = try NotificationMessageNewEventDTO(from: eventPayload)
 
             try database.writeSynchronously { session in
                 // Let the middleware handle the event
@@ -203,7 +203,7 @@ class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
             message: .dummy(messageId: .unique, authorUserId: user.id, createdAt: .unique(after: oldReadDate)),
             createdAt: .unique(after: oldReadDate)
         )
-        let messageNewEvent = try MessageNewEvent(from: eventPayload)
+        let messageNewEvent = try MessageNewEventDTO(from: eventPayload)
 
         var handledEvent: Event?
         try database.writeSynchronously { session in
@@ -249,7 +249,7 @@ class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
             unreadCount: .noUnread,
             createdAt: newReadDate
         )
-        let messageReadEvent = try MessageReadEvent(from: eventPayload)
+        let messageReadEvent = try MessageReadEventDTO(from: eventPayload)
         
         // Let the middleware handle the event
         // Middleware should mutate the loadedChannel's read
@@ -298,7 +298,7 @@ class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
             unreadCount: .noUnread,
             createdAt: newReadDate
         )
-        let messageReadEvent = try MessageReadEvent(from: eventPayload)
+        let messageReadEvent = try MessageReadEventDTO(from: eventPayload)
         
         // Let the middleware handle the event
         // Middleware should create a read event for the member
@@ -358,12 +358,13 @@ class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         // Create EventPayload for NotificationMarkReadEvent
         let eventPayload = EventPayload(
             eventType: .notificationMarkRead,
+            cid: channelDetailPayload.cid,
             user: dummyCurrentUser,
             channel: channelDetailPayload,
             unreadCount: .noUnread,
             createdAt: newReadDate
         )
-        let notificationMarkReadEvent = try NotificationMarkReadEvent(from: eventPayload)
+        let notificationMarkReadEvent = try NotificationMarkReadEventDTO(from: eventPayload)
         
         // Let the middleware handle the event
         let handledEvent = middleware.handle(event: notificationMarkReadEvent, session: database.viewContext)
@@ -406,12 +407,13 @@ class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         // Create EventPayload for NotificationMarkReadEvent
         let eventPayload = EventPayload(
             eventType: .notificationMarkRead,
+            cid: payload.channel.cid,
             user: dummyUser(id: memberId),
             channel: payload.channel,
             unreadCount: .noUnread,
             createdAt: newReadDate
         )
-        let messageReadEvent = try NotificationMarkReadEvent(from: eventPayload)
+        let messageReadEvent = try NotificationMarkReadEventDTO(from: eventPayload)
         
         // Let the middleware handle the event
         // Middleware should create a read event for the member
@@ -454,9 +456,10 @@ class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         let eventPayload = EventPayload(
             eventType: .notificationMarkRead,
             user: dummyCurrentUser,
+            unreadCount: .init(channels: 19, messages: 124),
             createdAt: newReadDate
         )
-        let notificationMarkAllReadEvent = try NotificationMarkAllReadEvent(from: eventPayload)
+        let notificationMarkAllReadEvent = try NotificationMarkAllReadEventDTO(from: eventPayload)
         
         // Let the middleware handle the event
         let handledEvent = middleware.handle(event: notificationMarkAllReadEvent, session: database.viewContext)
@@ -492,7 +495,7 @@ class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         XCTAssertEqual(loadedChannel?.reads.first?.lastReadAt, Date(timeIntervalSince1970: 1))
         
         // Create an event that won't be handled by this middleware
-        let startTypingEvent = TypingEvent.startTyping(cid: channelId, userId: payload.members.first!.user.id)
+        let startTypingEvent = TypingEventDTO.startTyping(cid: channelId, userId: payload.members.first!.user.id)
         
         // Let the middleware handle the event
         let handledEvent = middleware.handle(event: startTypingEvent, session: database.viewContext)

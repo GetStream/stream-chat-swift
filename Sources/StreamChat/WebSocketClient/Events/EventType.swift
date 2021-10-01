@@ -109,50 +109,50 @@ extension EventType {
     func event(from response: EventPayload) throws -> Event {
         switch self {
         case .healthCheck: return try HealthCheckEvent(from: response)
+        
+        case .userPresenceChanged: return try UserPresenceChangedEventDTO(from: response)
+        case .userUpdated: return try UserUpdatedEventDTO(from: response)
+        case .userStartWatching, .userStopWatching: return try UserWatchingEventDTO(from: response)
+        case .userStartTyping, .userStopTyping: return try TypingEventDTO(from: response)
+        case .userBanned: return try UserBannedEventDTO(from: response)
+        case .userUnbanned: return try UserUnbannedEventDTO(from: response)
+        
+        case .channelUpdated: return try ChannelUpdatedEventDTO(from: response)
+        case .channelDeleted: return try ChannelDeletedEventDTO(from: response)
+        case .channelHidden: return try ChannelHiddenEventDTO(from: response)
+        case .channelTruncated: return try ChannelTruncatedEventDTO(from: response)
+        case .channelVisible: return try ChannelVisibleEventDTO(from: response)
             
-        case .userPresenceChanged: return try UserPresenceChangedEvent(from: response)
-        case .userUpdated: return try UserUpdatedEvent(from: response)
-        case .userStartWatching, .userStopWatching: return try UserWatchingEvent(from: response)
-        case .userStartTyping, .userStopTyping: return try TypingEvent(from: response)
-        case .userBanned: return try UserBannedEvent(from: response)
-        case .userUnbanned: return try UserUnbannedEvent(from: response)
-
-        case .channelUpdated: return try ChannelUpdatedEvent(from: response)
-        case .channelDeleted: return try ChannelDeletedEvent(from: response)
-        case .channelHidden: return try ChannelHiddenEvent(from: response)
-        case .channelTruncated: return try ChannelTruncatedEvent(from: response)
-        case .channelVisible: return try ChannelVisibleEvent(from: response)
+        case .messageNew: return try MessageNewEventDTO(from: response)
+        case .messageUpdated: return try MessageUpdatedEventDTO(from: response)
+        case .messageDeleted: return try MessageDeletedEventDTO(from: response)
+        case .messageRead: return try MessageReadEventDTO(from: response)
+        
+        case .memberAdded: return try MemberAddedEventDTO(from: response)
+        case .memberUpdated: return try MemberUpdatedEventDTO(from: response)
+        case .memberRemoved: return try MemberRemovedEventDTO(from: response)
             
-        case .messageNew: return try MessageNewEvent(from: response)
-        case .messageUpdated: return try MessageUpdatedEvent(from: response)
-        case .messageDeleted: return try MessageDeletedEvent(from: response)
-        case .messageRead: return try MessageReadEvent(from: response)
-            
-        case .memberAdded: return try MemberAddedEvent(from: response)
-        case .memberUpdated: return try MemberUpdatedEvent(from: response)
-        case .memberRemoved: return try MemberRemovedEvent(from: response)
-            
-        case .reactionNew: return try ReactionNewEvent(from: response)
-        case .reactionUpdated: return try ReactionUpdatedEvent(from: response)
-        case .reactionDeleted: return try ReactionDeletedEvent(from: response)
-            
-        case .notificationMessageNew: return try NotificationMessageNewEvent(from: response)
+        case .reactionNew: return try ReactionNewEventDTO(from: response)
+        case .reactionUpdated: return try ReactionUpdatedEventDTO(from: response)
+        case .reactionDeleted: return try ReactionDeletedEventDTO(from: response)
+        
+        case .notificationMessageNew: return try NotificationMessageNewEventDTO(from: response)
         
         case .notificationMarkRead:
             return response.channel == nil
-                ? try NotificationMarkAllReadEvent(from: response)
-                : try NotificationMarkReadEvent(from: response)
+                ? try NotificationMarkAllReadEventDTO(from: response)
+                : try NotificationMarkReadEventDTO(from: response)
             
-        case .notificationMutesUpdated: return try NotificationMutesUpdatedEvent(from: response)
-        case .notificationAddedToChannel: return try NotificationAddedToChannelEvent(from: response)
-        case .notificationRemovedFromChannel: return try NotificationRemovedFromChannelEvent(from: response)
-        case .notificationChannelMutesUpdated: return try NotificationChannelMutesUpdatedEvent(from: response)
+        case .notificationMutesUpdated: return try NotificationMutesUpdatedEventDTO(from: response)
+        case .notificationAddedToChannel: return try NotificationAddedToChannelEventDTO(from: response)
+        case .notificationRemovedFromChannel: return try NotificationRemovedFromChannelEventDTO(from: response)
+        case .notificationChannelMutesUpdated: return try NotificationChannelMutesUpdatedEventDTO(from: response)
         case .notificationInvited:
-            return try NotificationInvitedEvent(from: response)
+            return try NotificationInvitedEventDTO(from: response)
         case .notificationInviteAccepted:
-            return try NotificationInviteAccepted(from: response)
+            return try NotificationInviteAcceptedEventDTO(from: response)
         case .notificationInviteRejected:
-            return try NotificationInviteRejected(from: response)
+            return try NotificationInviteRejectedEventDTO(from: response)
         default:
             throw ClientError.UnknownEvent(response.eventType)
         }

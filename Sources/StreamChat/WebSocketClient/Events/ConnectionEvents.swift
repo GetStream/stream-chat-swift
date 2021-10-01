@@ -8,10 +8,10 @@ public protocol ConnectionEvent: Event {
     var connectionId: String { get }
 }
 
-public struct HealthCheckEvent: ConnectionEvent, EventWithPayload {
+public struct HealthCheckEvent: ConnectionEvent, EventDTO {
     public let connectionId: String
     
-    var payload: Any
+    let payload: EventPayload
     
     init(from eventResponse: EventPayload) throws {
         guard let connectionId = eventResponse.connectionId else {
@@ -19,7 +19,7 @@ public struct HealthCheckEvent: ConnectionEvent, EventWithPayload {
         }
         
         self.connectionId = connectionId
-        payload = eventResponse as Any
+        payload = eventResponse
     }
     
     init(connectionId: String) {

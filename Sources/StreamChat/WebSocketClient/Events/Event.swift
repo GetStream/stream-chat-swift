@@ -9,41 +9,37 @@ public protocol Event {}
 
 /// An internal protocol marking the Events carrying the payload. This payload can be then used for additional work,
 /// i.e. for storing the data to the database.
-protocol EventWithPayload: Event {
-    /// Type-erased event payload. Cast it to `EventPayload` when you need to use it.
-    var payload: Any { get }
+protocol EventDTO: Event {
+    /// The entire event payload.
+    var payload: EventPayload { get }
+    
+    /// Converts event DTO to event with evaluated models.
+    ///
+    /// If some model is missing in database `nil` is returned.
+    ///
+    /// - Parameter session: The database session used to load event models from database.
+    func toDomainEvent(session: DatabaseSession) -> Event?
 }
 
-/// A protocol for any `UserEvent` where it has a `user` payload.
-protocol UserSpecificEvent: EventWithPayload {
-    var userId: UserId { get }
+extension EventDTO {
+    func toDomainEvent(session: DatabaseSession) -> Event? { nil }
 }
 
 /// A protocol for any `ChannelEvent` where it has a  `channel` payload.
-protocol ChannelSpecificEvent: EventWithPayload {
+protocol ChannelSpecificEvent: Event {
     var cid: ChannelId { get }
+}
+
+/// A bounding protocol for all events that have unread counts.
+public protocol HasUnreadCount: Event {
+    /// If `ReadEvents` options is disabled the value is always `nil`.
+    var unreadCount: UnreadCount? { get }
 }
 
 /// A protocol for any `MemberEvent` where it has a `member`, and `channel` payload.
 public protocol MemberEvent: Event {
     var memberUserId: UserId { get }
     var cid: ChannelId { get }
-}
-
-/// A protocol for any `MessageEvent` where it has a `user`, `channel` and `message` payloads.
-protocol MessageSpecificEvent: ChannelSpecificEvent, UserSpecificEvent {
-    var messageId: MessageId { get }
-}
-
-/// A protocol for any  `ReactionEvent` where it has reaction with `message`, `channel`, `user` and `reaction` payload.
-protocol ReactionEvent: MessageSpecificEvent {
-    var reactionType: MessageReactionType { get }
-    var reactionScore: Int { get }
-}
-
-/// A protocol for `NotificationMutesUpdatedEvent` which contains `me` AKA `currentUser` payload.
-protocol CurrentUserEvent: EventWithPayload {
-    var currentUserId: UserId { get }
 }
 
 /// A protocol custom event payload must conform to.

@@ -20,7 +20,8 @@
         "controllers/connection",
         "controllers/channels",
         "controllers/users",
-        "controllers/messages"
+        "controllers/messages",
+        "controllers/events"
       ]
     },
     {

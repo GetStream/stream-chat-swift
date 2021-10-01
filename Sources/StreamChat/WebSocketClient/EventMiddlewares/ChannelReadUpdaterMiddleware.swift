@@ -7,49 +7,30 @@ import Foundation
 /// A middleware which updates a channel's read events as websocket events arrive.
 struct ChannelReadUpdaterMiddleware: EventMiddleware {
     func handle(event: Event, session: DatabaseSession) -> Event? {
-        guard let eventWithPayload = (event as? EventWithPayload) else {
-            return event
-        }
-
-        guard let payload = eventWithPayload.payload as? EventPayload else {
-            log.error("""
-            Type mismatch between `EventPayload` and `EventDataProcessorMiddleware`."
-                EventPayload type: \(type(of: eventWithPayload.payload))
-                EventDataProcessorMiddleware type: \(type(of: self))
-            """)
-            return nil
-        }
-
         switch event {
-        case let event as MessageNewEvent:
-            guard let message = payload.message else {
-                return event
-            }
+        case let event as MessageNewEventDTO:
             increaseUnreadCountIfNeeded(
                 for: event.cid,
-                message: message,
+                message: event.message,
                 session: session
             )
 
-        case let event as NotificationMessageNewEvent:
-            guard let message = payload.message else {
-                return event
-            }
+        case let event as NotificationMessageNewEventDTO:
             increaseUnreadCountIfNeeded(
-                for: event.cid,
-                message: message,
+                for: event.channel.cid,
+                message: event.message,
                 session: session
             )
             
-        case let event as MessageReadEvent:
-            resetChannelRead(for: event.cid, userId: event.userId, lastReadAt: event.readAt, session: session)
+        case let event as MessageReadEventDTO:
+            resetChannelRead(for: event.cid, userId: event.user.id, lastReadAt: event.createdAt, session: session)
 
-        case let event as NotificationMarkReadEvent:
-            resetChannelRead(for: event.cid, userId: event.userId, lastReadAt: event.readAt, session: session)
+        case let event as NotificationMarkReadEventDTO:
+            resetChannelRead(for: event.cid, userId: event.user.id, lastReadAt: event.createdAt, session: session)
 
-        case let event as NotificationMarkAllReadEvent:
-            session.loadChannelReads(for: event.userId).forEach { read in
-                read.lastReadAt = event.readAt
+        case let event as NotificationMarkAllReadEventDTO:
+            session.loadChannelReads(for: event.user.id).forEach { read in
+                read.lastReadAt = event.createdAt
                 read.unreadMessageCount = 0
             }
             

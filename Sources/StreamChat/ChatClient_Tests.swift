@@ -321,6 +321,8 @@ class ChatClient_Tests: XCTestCase {
         XCTAssert(middlewares.contains(where: { $0 is UserWatchingEventMiddleware }))
         // Assert `ChannelVisibilityEventMiddleware` exists
         XCTAssert(middlewares.contains(where: { $0 is ChannelVisibilityEventMiddleware }))
+        // Assert `EventDTOConverterMiddleware` is the last one
+        XCTAssertTrue(middlewares.last is EventDTOConverterMiddleware)
     }
     
     func test_connectionStatus_isExposed() {

@@ -7,28 +7,19 @@ import Foundation
 /// The middleware listens for `UserChannelBanEventMiddleware` events and updates `MemberDTO` accordingly.
 struct UserChannelBanEventsMiddleware: EventMiddleware {
     func handle(event: Event, session: DatabaseSession) -> Event? {
-        // Check if we have `cid` first. If `cid` is not presented the ban events are global bans and
-        // they are already handled by `EventDataProcessorMiddleware`
-        guard
-            let eventPayload = (event as? EventWithPayload)?.payload as? EventPayload,
-            let cid = eventPayload.cid
-        else {
-            return event
-        }
-        
         do {
             switch event {
-            case let userBannedEvent as UserBannedEvent:
-                guard let memberDTO = session.member(userId: userBannedEvent.userId, cid: cid) else {
-                    throw ClientError.MemberDoesNotExist(userId: userBannedEvent.userId, cid: cid)
+            case let userBannedEvent as UserBannedEventDTO:
+                guard let memberDTO = session.member(userId: userBannedEvent.user.id, cid: userBannedEvent.cid) else {
+                    throw ClientError.MemberDoesNotExist(userId: userBannedEvent.user.id, cid: userBannedEvent.cid)
                 }
                 
                 memberDTO.isBanned = true
                 memberDTO.banExpiresAt = userBannedEvent.expiredAt
                 
-            case let userUnbannedEvent as UserUnbannedEvent:
-                guard let memberDTO = session.member(userId: userUnbannedEvent.userId, cid: cid) else {
-                    throw ClientError.MemberDoesNotExist(userId: userUnbannedEvent.userId, cid: cid)
+            case let userUnbannedEvent as UserUnbannedEventDTO:
+                guard let memberDTO = session.member(userId: userUnbannedEvent.user.id, cid: userUnbannedEvent.cid) else {
+                    throw ClientError.MemberDoesNotExist(userId: userUnbannedEvent.user.id, cid: userUnbannedEvent.cid)
                 }
                 
                 memberDTO.isBanned = false

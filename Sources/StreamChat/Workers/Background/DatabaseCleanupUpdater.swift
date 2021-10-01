@@ -83,9 +83,6 @@ private extension ChannelDTO {
         oldestMessageAt = nil
         hiddenAt = nil
         truncatedAt = nil
-        // We should not set `needsRefreshQueries` to `true` because in that case NewChannelQueryUpdater
-        // triggers, which leads to `Too many requests for user` backend error
-        needsRefreshQueries = false
         currentlyTypingUsers = []
         reads = []
         queries = []
