@@ -3,6 +3,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+### 🐞 Fixed
+- Fix Injection of the component `videoAttachmentGalleryCell` to `GalleryVC`, so customers will be able to use their subclass.
+
 ### 🔄 Changed
 
 # [4.0.3](https://github.com/GetStream/stream-chat-swift/releases/tag/4.0.3)

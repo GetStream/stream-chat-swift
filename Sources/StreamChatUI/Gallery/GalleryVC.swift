@@ -157,8 +157,8 @@ open class GalleryVC:
             forCellWithReuseIdentifier: ImageAttachmentGalleryCell.reuseId
         )
         attachmentsCollectionView.register(
-            VideoAttachmentGalleryCell.self,
-            forCellWithReuseIdentifier: VideoAttachmentGalleryCell.reuseId
+            components.videoAttachmentGalleryCell.self,
+            forCellWithReuseIdentifier: components.videoAttachmentGalleryCell.reuseId
         )
         attachmentsCollectionView.contentInsetAdjustmentBehavior = .never
         attachmentsCollectionView.isPagingEnabled = true
@@ -415,7 +415,7 @@ open class GalleryVC:
         case .image:
             return ImageAttachmentGalleryCell.reuseId
         case .video:
-            return VideoAttachmentGalleryCell.reuseId
+            return components.videoAttachmentGalleryCell.reuseId
         default:
             return nil
         }
