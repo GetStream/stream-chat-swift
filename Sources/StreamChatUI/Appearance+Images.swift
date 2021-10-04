@@ -20,7 +20,7 @@ public extension Appearance {
                     A default 'red' circle image has been added.
                     """
                 )
-                return UIImage().circleImage()
+                return UIImage.circleImage
             }
         }
         
