@@ -226,7 +226,9 @@ lane :testflight_build do
     app_identifier: "io.getstream.iOS.ChatDemoApp",
     app_platform: "ios",
     ipa: "archives/ChatSample.ipa",
-    skip_waiting_for_build_processing: true
+    groups: ['Public'],
+    distribute_external: true,
+    reject_build_waiting_for_review: true
   )
 end
 
