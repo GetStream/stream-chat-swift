@@ -486,9 +486,17 @@ open class ChatMessageListVC:
             return controller
         }()
 
+        let reactionAuthorsController: ChatMessageReactionAuthorsVC? = {
+            let controller = ChatMessageReactionAuthorsVC()
+            controller.content = .init(reactions: Array(message.latestReactions))
+
+            return controller
+        }()
+
         router.showReactionsPopUp(
             messageContentView: messageContentView,
-            messageReactionsController: reactionsController
+            messageReactionsController: reactionsController,
+            messageReactionAuthorsController: reactionAuthorsController
         )
     }
 

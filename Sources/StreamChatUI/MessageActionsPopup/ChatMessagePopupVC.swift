@@ -47,6 +47,9 @@ open class ChatMessagePopupVC: _ViewController, ComponentsProvider {
     /// `ChatMessageReactionsVC` instance for showing reactions.
     public var reactionsController: ChatMessageReactionsVC?
 
+    /// `ChatMessageReactionAuthorsVC` instance for showing the authors of the reactions.
+    public var reactionAuthorsController: ChatMessageReactionAuthorsVC?
+
     override open func setUp() {
         super.setUp()
         
@@ -126,6 +129,31 @@ open class ChatMessagePopupVC: _ViewController, ComponentsProvider {
             } else {
                 constraints.append(
                     actionsController.view.leadingAnchor.pin(
+                        equalTo: messageContentContainerView.leadingAnchor,
+                        constant: messageBubbleViewInsets.left
+                    )
+                )
+            }
+        }
+
+        if let reactionAuthorsController = reactionAuthorsController {
+            reactionAuthorsController.view.translatesAutoresizingMaskIntoConstraints = false
+            addChildViewController(reactionAuthorsController, targetView: messageContainerStackView)
+
+            constraints.append(reactionAuthorsController.view.heightAnchor.pin(equalToConstant: 320))
+            constraints.append(
+                reactionAuthorsController.view.widthAnchor.pin(equalTo: view.widthAnchor, multiplier: 0.9)
+            )
+
+            if message.isSentByCurrentUser {
+                constraints.append(
+                    reactionAuthorsController.view.trailingAnchor.pin(
+                        equalTo: messageContentContainerView.trailingAnchor
+                    )
+                )
+            } else {
+                constraints.append(
+                    reactionAuthorsController.view.leadingAnchor.pin(
                         equalTo: messageContentContainerView.leadingAnchor,
                         constant: messageBubbleViewInsets.left
                     )

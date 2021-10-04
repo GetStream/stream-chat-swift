@@ -56,11 +56,13 @@ open class ChatMessageListRouter:
 
     open func showReactionsPopUp(
         messageContentView: ChatMessageContentView,
-        messageReactionsController: ChatMessageReactionsVC?
+        messageReactionsController: ChatMessageReactionsVC?,
+        messageReactionAuthorsController: ChatMessageReactionAuthorsVC?
     ) {
         let popup = components.messagePopupVC.init()
         popup.messageContentView = messageContentView
         popup.reactionsController = messageReactionsController
+        popup.reactionAuthorsController = messageReactionAuthorsController
         popup.modalPresentationStyle = .overFullScreen
         popup.transitioningDelegate = messagePopUpTransitionController
         messagePopUpTransitionController.messageContentView = messageContentView
