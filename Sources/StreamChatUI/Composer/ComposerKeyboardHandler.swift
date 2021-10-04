@@ -59,8 +59,7 @@ open class ComposerKeyboardHandler: KeyboardHandler {
               let frame = (userInfo[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue,
               let duration = userInfo[UIResponder.keyboardAnimationDurationUserInfoKey] as? Double,
               let curve = userInfo[UIResponder.keyboardAnimationCurveUserInfoKey] as? UInt,
-              let composerParentView = composerParentVC?.view,
-              let rootView = composerParentView.window?.rootViewController?.view else {
+              let composerParentView = composerParentVC?.view else {
             return
         }
 
@@ -71,7 +70,7 @@ open class ComposerKeyboardHandler: KeyboardHandler {
         if notification.name == UIResponder.keyboardWillHideNotification {
             composerBottomConstraint?.constant = originalBottomConstraintValue
         } else {
-            let convertedKeyboardFrame = rootView.convert(frame, from: UIScreen.main.coordinateSpace)
+            let convertedKeyboardFrame = composerParentView.convert(frame, from: UIScreen.main.coordinateSpace)
             let intersectedKeyboardHeight = composerParentView.frame.intersection(convertedKeyboardFrame).height
             composerBottomConstraint?.constant = -(intersectedKeyboardHeight + originalBottomConstraintValue)
         }
