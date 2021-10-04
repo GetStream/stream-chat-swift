@@ -39,7 +39,7 @@ public extension Appearance {
         public var discardAttachment: UIImage = loadImageSafely(with: "close_circle_filled")
         public var back: UIImage = loadImageSafely(with: "icn_back")
         public var onlyVisibleToCurrentUser = loadImageSafely(with: "eye")
-        public var more = loadImageSafely(with: "icn_mor")
+        public var more = loadImageSafely(with: "icn_more")
         public var share: UIImage = {
             if #available(iOS 13.0, *) {
                 return UIImage(systemName: "square.and.arrow.up")!
