@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### 🐞 Fixed
 - Safely unwrap images to prevent crashes on images from bundle [#1502](https://github.com/GetStream/stream-chat-swift/pull/1502)
+- Take `VideoAttachmentGalleryCell` and `ImageAttachmentGalleryCell` types used in `GalleryVC` from `Components` [#1509](https://github.com/GetStream/stream-chat-swift/pull/1509)
 
 ### 🔄 Changed
 
