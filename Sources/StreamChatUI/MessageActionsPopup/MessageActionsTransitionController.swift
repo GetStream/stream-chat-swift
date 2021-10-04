@@ -135,12 +135,25 @@ open class MessageActionsTransitionController: NSObject, UIViewControllerTransit
             actionsSnapshot.transform = CGAffineTransform(scaleX: 0, y: 0)
             actionsSnapshot.alpha = 0.0
         }
+
+        let reactionAuthorsSnapshot = toVC.reactionAuthorsController?.view.snapshotView(afterScreenUpdates: true)
+        if let reactionAuthorsSnapshot = reactionAuthorsSnapshot,
+           let reactionAuthorsController = toVC.reactionAuthorsController {
+            let reactionAuthorsFrame = reactionAuthorsController.view.superview!
+                .convert(reactionAuthorsController.view.frame, to: nil)
+            reactionAuthorsSnapshot.frame = reactionAuthorsFrame
+            reactionAuthorsSnapshot.transform = CGAffineTransform(scaleX: 0, y: 0)
+            reactionAuthorsSnapshot.alpha = 0.0
+        }
         
         if let messageContentViewSnapshot = messageContentViewSnapshot {
             fromVCSnapshot.map { transitionContext.containerView.insertSubview($0, belowSubview: messageContentViewSnapshot) }
             transitionContext.containerView.insertSubview(blurView, belowSubview: messageContentViewSnapshot)
             reactionsSnapshot.map { transitionContext.containerView.insertSubview($0, belowSubview: messageContentViewSnapshot) }
             actionsSnapshot.map { transitionContext.containerView.insertSubview($0, belowSubview: messageContentViewSnapshot) }
+            reactionAuthorsSnapshot.map {
+                transitionContext.containerView.insertSubview($0, belowSubview: messageContentViewSnapshot)
+            }
         }
 
         toVC.view.isHidden = true
@@ -176,6 +189,8 @@ open class MessageActionsTransitionController: NSObject, UIViewControllerTransit
                 actionsSnapshot?.alpha = 1.0
                 reactionsSnapshot?.transform = .identity
                 reactionsSnapshot?.alpha = 1.0
+                reactionAuthorsSnapshot?.transform = .identity
+                reactionAuthorsSnapshot?.alpha = 1.0
                 messageContentView.transform = .identity
                 messageContentView.frame.origin = toVC.messageContentContainerView.superview!.convert(
                     toVC.messageContentContainerView.frame,
@@ -196,6 +211,7 @@ open class MessageActionsTransitionController: NSObject, UIViewControllerTransit
                 fromVCSnapshot?.removeFromSuperview()
                 blurView.removeFromSuperview()
                 reactionsSnapshot?.removeFromSuperview()
+                reactionAuthorsSnapshot?.removeFromSuperview()
                 actionsSnapshot?.removeFromSuperview()
                 
                 transitionContext.completeTransition(!transitionContext.transitionWasCancelled)
@@ -252,12 +268,29 @@ open class MessageActionsTransitionController: NSObject, UIViewControllerTransit
                 .convert(actionsController.view.frame, to: nil)
             transitionContext.containerView.addSubview(actionsSnapshot)
         }
+
+        let reactionAuthorsSnapshot = fromVC.reactionAuthorsController?.view.snapshotView(afterScreenUpdates: true)
+        if let reactionAuthorsSnapshot = reactionAuthorsSnapshot,
+           let reactionAuthorsController = fromVC.reactionAuthorsController {
+            reactionAuthorsSnapshot.frame = reactionAuthorsController.view.superview!
+                .convert(reactionAuthorsController.view.frame, to: nil)
+            transitionContext.containerView.addSubview(reactionAuthorsSnapshot)
+        }
         
         if let messageContentViewSnapshot = messageContentViewSnapshot {
-            toVCSnapshot.map { transitionContext.containerView.insertSubview($0, belowSubview: messageContentViewSnapshot) }
+            toVCSnapshot.map {
+                transitionContext.containerView.insertSubview($0, belowSubview: messageContentViewSnapshot)
+            }
             transitionContext.containerView.insertSubview(blurView, belowSubview: messageContentViewSnapshot)
-            reactionsSnapshot.map { transitionContext.containerView.insertSubview($0, belowSubview: messageContentViewSnapshot) }
-            actionsSnapshot.map { transitionContext.containerView.insertSubview($0, belowSubview: messageContentViewSnapshot) }
+            reactionsSnapshot.map {
+                transitionContext.containerView.insertSubview($0, belowSubview: messageContentViewSnapshot)
+            }
+            actionsSnapshot.map {
+                transitionContext.containerView.insertSubview($0, belowSubview: messageContentViewSnapshot)
+            }
+            reactionAuthorsSnapshot.map {
+                transitionContext.containerView.insertSubview($0, belowSubview: messageContentViewSnapshot)
+            }
         }
 
         messageContentView.isHidden = false
@@ -278,8 +311,10 @@ open class MessageActionsTransitionController: NSObject, UIViewControllerTransit
             animations: { [self] in
                 actionsSnapshot?.transform = CGAffineTransform(scaleX: 0.01, y: 0.01)
                 reactionsSnapshot?.transform = CGAffineTransform(scaleX: 0.01, y: 0.01)
+                reactionAuthorsSnapshot?.transform = CGAffineTransform(scaleX: 0.01, y: 0.01)
                 actionsSnapshot?.alpha = 0.0
                 reactionsSnapshot?.alpha = 0.0
+                reactionAuthorsSnapshot?.alpha = 0.0
                 messageContentView.frame = messageContentViewFrame
                 blurView.effect = nil
             },
@@ -299,6 +334,7 @@ open class MessageActionsTransitionController: NSObject, UIViewControllerTransit
                 toVCSnapshot?.removeFromSuperview()
                 blurView.removeFromSuperview()
                 reactionsSnapshot?.removeFromSuperview()
+                reactionAuthorsSnapshot?.removeFromSuperview()
                 actionsSnapshot?.removeFromSuperview()
                 
                 transitionContext.completeTransition(!transitionContext.transitionWasCancelled)
