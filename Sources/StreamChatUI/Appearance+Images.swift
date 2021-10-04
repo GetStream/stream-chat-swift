@@ -7,63 +7,80 @@ import UIKit
 
 public extension Appearance {
     struct Images {
+        /// A private internal function that will safely load an image from the bundle or return a circle image as backup
+        /// - Parameter imageName: The required image name to load from the bundle
+        /// - Returns: A UIImage that is either the correct image from the bundle or backup circular image
+        private static func loadImageSafely(with imageName: String) -> UIImage {
+            if let image = UIImage(named: imageName, in: .streamChatUI) {
+                return image
+            } else {
+                log.error(
+                    """
+                    \(imageName) image has failed to load from the bundle please make sure it's included in your assets folder.
+                    A default 'red' circle image has been added.
+                    """
+                )
+                return UIImage().circleImage()
+            }
+        }
+        
         // MARK: - General
 
-        public var loadingIndicator: UIImage = UIImage(named: "loading_indicator", in: .streamChatUI)!
+        public var loadingIndicator: UIImage = loadImageSafely(with: "loading_indicator")
         public var close: UIImage = {
             if #available(iOS 13.0, *) {
                 return UIImage(systemName: "xmark")!
             } else {
-                return UIImage(named: "close", in: .streamChatUI)!
+                return loadImageSafely(with: "close")
             }
         }()
 
-        public var closeCircleTransparent: UIImage = UIImage(named: "close_circle_transparent", in: .streamChatUI)!
-        public var discardAttachment: UIImage = UIImage(named: "close_circle_filled", in: .streamChatUI)!
-        public var back: UIImage = UIImage(named: "icn_back", in: .streamChatUI)!
-        public var onlyVisibleToCurrentUser = UIImage(named: "eye", in: .streamChatUI)!
-        public var more = UIImage(named: "icn_more", in: .streamChatUI)!
+        public var closeCircleTransparent: UIImage = loadImageSafely(with: "close_circle_transparent")
+        public var discardAttachment: UIImage = loadImageSafely(with: "close_circle_filled")
+        public var back: UIImage = loadImageSafely(with: "icn_back")
+        public var onlyVisibleToCurrentUser = loadImageSafely(with: "eye")
+        public var more = loadImageSafely(with: "icn_mor")
         public var share: UIImage = {
             if #available(iOS 13.0, *) {
                 return UIImage(systemName: "square.and.arrow.up")!
             } else {
-                return UIImage(named: "share", in: .streamChatUI)!
+                return loadImageSafely(with: "share")
             }
         }()
 
-        public var commands: UIImage = UIImage(named: "bolt", in: .streamChatUI)!
-        public var smallBolt: UIImage = UIImage(named: "bolt_small", in: .streamChatUI)!
-        public var openAttachments: UIImage = UIImage(named: "clip", in: .streamChatUI)!
-        public var shrinkInputArrow: UIImage = UIImage(named: "arrow_shrink_input", in: .streamChatUI)!
-        public var sendArrow: UIImage = UIImage(named: "arrow_send", in: .streamChatUI)!
-        public var scrollDownArrow: UIImage = UIImage(named: "arrow_down", in: .streamChatUI)!
-        public var messageSent: UIImage = UIImage(named: "checkmark_grey", in: .streamChatUI)!
-        public var whiteCheckmark: UIImage = UIImage(named: "checkmark_white", in: .streamChatUI)!
-        public var readByAll: UIImage = UIImage(named: "checkmark_double", in: .streamChatUI)!
-        public var confirmCheckmark: UIImage = UIImage(named: "checkmark_confirm", in: .streamChatUI)!
-        public var bigConfirmCheckmark: UIImage = UIImage(named: "checkmark_confirm_big", in: .streamChatUI)!
-        public var folder: UIImage = UIImage(named: "folder", in: .streamChatUI)!
-        public var restart: UIImage = UIImage(named: "restart", in: .streamChatUI)!
+        public var commands: UIImage = loadImageSafely(with: "bolt")
+        public var smallBolt: UIImage = loadImageSafely(with: "bolt_small")
+        public var openAttachments: UIImage = loadImageSafely(with: "clip")
+        public var shrinkInputArrow: UIImage = loadImageSafely(with: "arrow_shrink_input")
+        public var sendArrow: UIImage = loadImageSafely(with: "arrow_send")
+        public var scrollDownArrow: UIImage = loadImageSafely(with: "arrow_down")
+        public var messageSent: UIImage = loadImageSafely(with: "checkmark_grey")
+        public var whiteCheckmark: UIImage = loadImageSafely(with: "checkmark_white")
+        public var readByAll: UIImage = loadImageSafely(with: "checkmark_double")
+        public var confirmCheckmark: UIImage = loadImageSafely(with: "checkmark_confirm")
+        public var bigConfirmCheckmark: UIImage = loadImageSafely(with: "checkmark_confirm_big")
+        public var folder: UIImage = loadImageSafely(with: "folder")
+        public var restart: UIImage = loadImageSafely(with: "restart")
         public var download: UIImage = {
             if #available(iOS 13.0, *) {
                 return UIImage(systemName: "icloud.and.arrow.down")!
             } else {
-                return UIImage(named: "download", in: .streamChatUI)!
+                return loadImageSafely(with: "download")
             }
         }()
 
         // MARK: - Reactions
 
-        public var reactionLoveSmall: UIImage = UIImage(named: "reaction_love_small", in: .streamChatUI)!
-        public var reactionLoveBig: UIImage = UIImage(named: "reaction_love_big", in: .streamChatUI)!
-        public var reactionLolSmall: UIImage = UIImage(named: "reaction_lol_small", in: .streamChatUI)!
-        public var reactionLolBig: UIImage = UIImage(named: "reaction_lol_big", in: .streamChatUI)!
-        public var reactionThumgsUpSmall: UIImage = UIImage(named: "reaction_thumbsup_small", in: .streamChatUI)!
-        public var reactionThumgsUpBig: UIImage = UIImage(named: "reaction_thumbsup_big", in: .streamChatUI)!
-        public var reactionThumgsDownSmall: UIImage = UIImage(named: "reaction_thumbsdown_small", in: .streamChatUI)!
-        public var reactionThumgsDownBig: UIImage = UIImage(named: "reaction_thumbsdown_big", in: .streamChatUI)!
-        public var reactionWutSmall: UIImage = UIImage(named: "reaction_wut_small", in: .streamChatUI)!
-        public var reactionWutBig: UIImage = UIImage(named: "reaction_wut_big", in: .streamChatUI)!
+        public var reactionLoveSmall: UIImage = loadImageSafely(with: "reaction_love_small")
+        public var reactionLoveBig: UIImage = loadImageSafely(with: "reaction_love_big")
+        public var reactionLolSmall: UIImage = loadImageSafely(with: "reaction_lol_small")
+        public var reactionLolBig: UIImage = loadImageSafely(with: "reaction_lol_big")
+        public var reactionThumgsUpSmall: UIImage = loadImageSafely(with: "reaction_thumbsup_small")
+        public var reactionThumgsUpBig: UIImage = loadImageSafely(with: "reaction_thumbsup_big")
+        public var reactionThumgsDownSmall: UIImage = loadImageSafely(with: "reaction_thumbsdown_small")
+        public var reactionThumgsDownBig: UIImage = loadImageSafely(with: "reaction_thumbsdown_big")
+        public var reactionWutSmall: UIImage = loadImageSafely(with: "reaction_wut_small")
+        public var reactionWutBig: UIImage = loadImageSafely(with: "reaction_wut_big")
 
         private var _availableReactions: [MessageReactionType: ChatMessageReactionAppearanceType]?
         public var availableReactions: [MessageReactionType: ChatMessageReactionAppearanceType] {
@@ -97,29 +114,29 @@ public extension Appearance {
 
         // MARK: - MessageList
 
-        public var messageListErrorIndicator: UIImage = UIImage(named: "error_indicator", in: .streamChatUI)!
+        public var messageListErrorIndicator: UIImage = loadImageSafely(with: "error_indicator")
 
         // MARK: - FileIcons
 
-        public var file7z: UIImage = UIImage(named: "7z", in: .streamChatUI)!
-        public var fileCsv: UIImage = UIImage(named: "csv", in: .streamChatUI)!
-        public var fileDoc: UIImage = UIImage(named: "doc", in: .streamChatUI)!
-        public var fileDocx: UIImage = UIImage(named: "docx", in: .streamChatUI)!
-        public var fileHtml: UIImage = UIImage(named: "html", in: .streamChatUI)!
-        public var fileMd: UIImage = UIImage(named: "md", in: .streamChatUI)!
-        public var fileMp3: UIImage = UIImage(named: "mp3", in: .streamChatUI)!
-        public var fileOdt: UIImage = UIImage(named: "odt", in: .streamChatUI)!
-        public var filePdf: UIImage = UIImage(named: "pdf", in: .streamChatUI)!
-        public var filePpt: UIImage = UIImage(named: "ppt", in: .streamChatUI)!
-        public var filePptx: UIImage = UIImage(named: "pptx", in: .streamChatUI)!
-        public var fileRar: UIImage = UIImage(named: "rar", in: .streamChatUI)!
-        public var fileRtf: UIImage = UIImage(named: "rtf", in: .streamChatUI)!
-        public var fileTargz: UIImage = UIImage(named: "tar.gz", in: .streamChatUI)!
-        public var fileTxt: UIImage = UIImage(named: "txt", in: .streamChatUI)!
-        public var fileXls: UIImage = UIImage(named: "xls", in: .streamChatUI)!
-        public var fileXlsx: UIImage = UIImage(named: "xlsx", in: .streamChatUI)!
-        public var filezip: UIImage = UIImage(named: "zip", in: .streamChatUI)!
-        public var fileFallback: UIImage = UIImage(named: "generic", in: .streamChatUI)!
+        public var file7z: UIImage = loadImageSafely(with: "7z")
+        public var fileCsv: UIImage = loadImageSafely(with: "csv")
+        public var fileDoc: UIImage = loadImageSafely(with: "doc")
+        public var fileDocx: UIImage = loadImageSafely(with: "docx")
+        public var fileHtml: UIImage = loadImageSafely(with: "html")
+        public var fileMd: UIImage = loadImageSafely(with: "md")
+        public var fileMp3: UIImage = loadImageSafely(with: "mp3")
+        public var fileOdt: UIImage = loadImageSafely(with: "odt")
+        public var filePdf: UIImage = loadImageSafely(with: "pdf")
+        public var filePpt: UIImage = loadImageSafely(with: "ppt")
+        public var filePptx: UIImage = loadImageSafely(with: "pptx")
+        public var fileRar: UIImage = loadImageSafely(with: "rar")
+        public var fileRtf: UIImage = loadImageSafely(with: "rtf")
+        public var fileTargz: UIImage = loadImageSafely(with: "tar.gz")
+        public var fileTxt: UIImage = loadImageSafely(with: "txt")
+        public var fileXls: UIImage = loadImageSafely(with: "xls")
+        public var fileXlsx: UIImage = loadImageSafely(with: "xlsx")
+        public var filezip: UIImage = loadImageSafely(with: "zip")
+        public var fileFallback: UIImage = loadImageSafely(with: "generic")
 
         private var _documentPreviews: [String: UIImage]?
 
@@ -164,22 +181,22 @@ public extension Appearance {
 
         // MARK: - Message Actions
 
-        public var messageActionInlineReply: UIImage = UIImage(named: "icn_inline_reply", in: .streamChatUI)!
-        public var messageActionThreadReply: UIImage = UIImage(named: "icn_thread_reply", in: .streamChatUI)!
-        public var messageActionEdit: UIImage = UIImage(named: "icn_edit", in: .streamChatUI)!
-        public var messageActionCopy: UIImage = UIImage(named: "icn_copy", in: .streamChatUI)!
-        public var messageActionBlockUser: UIImage = UIImage(named: "icn_block_user", in: .streamChatUI)!
-        public var messageActionMuteUser: UIImage = UIImage(named: "icn_mute_user", in: .streamChatUI)!
-        public var messageActionDelete: UIImage = UIImage(named: "icn_delete", in: .streamChatUI)!
-        public var messageActionResend: UIImage = UIImage(named: "icn_resend", in: .streamChatUI)!
+        public var messageActionInlineReply: UIImage = loadImageSafely(with: "icn_inline_reply")
+        public var messageActionThreadReply: UIImage = loadImageSafely(with: "icn_thread_reply")
+        public var messageActionEdit: UIImage = loadImageSafely(with: "icn_edit")
+        public var messageActionCopy: UIImage = loadImageSafely(with: "icn_copy")
+        public var messageActionBlockUser: UIImage = loadImageSafely(with: "icn_block_user")
+        public var messageActionMuteUser: UIImage = loadImageSafely(with: "icn_mute_user")
+        public var messageActionDelete: UIImage = loadImageSafely(with: "icn_delete")
+        public var messageActionResend: UIImage = loadImageSafely(with: "icn_resend")
 
         // MARK: - Placeholders
 
-        public var userAvatarPlaceholder1: UIImage = UIImage(named: "pattern1", in: .streamChatUI)!
-        public var userAvatarPlaceholder2: UIImage = UIImage(named: "pattern2", in: .streamChatUI)!
-        public var userAvatarPlaceholder3: UIImage = UIImage(named: "pattern3", in: .streamChatUI)!
-        public var userAvatarPlaceholder4: UIImage = UIImage(named: "pattern4", in: .streamChatUI)!
-        public var userAvatarPlaceholder5: UIImage = UIImage(named: "pattern5", in: .streamChatUI)!
+        public var userAvatarPlaceholder1: UIImage = loadImageSafely(with: "pattern1")
+        public var userAvatarPlaceholder2: UIImage = loadImageSafely(with: "pattern2")
+        public var userAvatarPlaceholder3: UIImage = loadImageSafely(with: "pattern3")
+        public var userAvatarPlaceholder4: UIImage = loadImageSafely(with: "pattern4")
+        public var userAvatarPlaceholder5: UIImage = loadImageSafely(with: "pattern5")
 
         public var avatarPlaceholders: [UIImage] {
             [
@@ -205,23 +222,23 @@ public extension Appearance {
             set { _fileAttachmentActionIcons = newValue }
         }
         
-        public var camera: UIImage = UIImage(named: "camera", in: .streamChatUI)!
-        public var bigPlay: UIImage = UIImage(named: "play_big", in: .streamChatUI)!
+        public var camera: UIImage = loadImageSafely(with: "camera")
+        public var bigPlay: UIImage = loadImageSafely(with: "play_big")
         
-        public var play: UIImage = UIImage(named: "play", in: .streamChatUI)!
-        public var pause: UIImage = UIImage(named: "pause", in: .streamChatUI)!
+        public var play: UIImage = loadImageSafely(with: "play")
+        public var pause: UIImage = loadImageSafely(with: "pause")
 
         // MARK: - CommandIcons
 
-        public var commandBan: UIImage = UIImage(named: "command_ban", in: .streamChatUI)!
-        public var commandFlag: UIImage = UIImage(named: "command_flag", in: .streamChatUI)!
-        public var commandGiphy: UIImage = UIImage(named: "command_giphy", in: .streamChatUI)!
-        public var commandImgur: UIImage = UIImage(named: "command_imgur", in: .streamChatUI)!
-        public var commandMention: UIImage = UIImage(named: "command_mention", in: .streamChatUI)!
-        public var commandMute: UIImage = UIImage(named: "command_mute", in: .streamChatUI)!
-        public var commandUnban: UIImage = UIImage(named: "command_unban", in: .streamChatUI)!
-        public var commandUnmute: UIImage = UIImage(named: "command_unmute", in: .streamChatUI)!
-        public var commandFallback: UIImage = UIImage(named: "command_fallback", in: .streamChatUI)!
+        public var commandBan: UIImage = loadImageSafely(with: "command_ban")
+        public var commandFlag: UIImage = loadImageSafely(with: "command_flag")
+        public var commandGiphy: UIImage = loadImageSafely(with: "command_giphy")
+        public var commandImgur: UIImage = loadImageSafely(with: "command_imgur")
+        public var commandMention: UIImage = loadImageSafely(with: "command_mention")
+        public var commandMute: UIImage = loadImageSafely(with: "command_mute")
+        public var commandUnban: UIImage = loadImageSafely(with: "command_unban")
+        public var commandUnmute: UIImage = loadImageSafely(with: "command_unmute")
+        public var commandFallback: UIImage = loadImageSafely(with: "command_fallback")
 
         private var _commandIcons: [String: UIImage]?
         public var commandIcons: [String: UIImage] {
