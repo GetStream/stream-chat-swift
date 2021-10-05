@@ -59,8 +59,7 @@ open class ComposerKeyboardHandler: KeyboardHandler {
               let frame = (userInfo[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue,
               let duration = userInfo[UIResponder.keyboardAnimationDurationUserInfoKey] as? Double,
               let curve = userInfo[UIResponder.keyboardAnimationCurveUserInfoKey] as? UInt,
-              let composerParentView = composerParentVC?.view,
-              let rootView = composerParentView.window?.rootViewController?.view else {
+              let composerParentView = composerParentVC?.view else {
             return
         }
 
@@ -68,12 +67,20 @@ open class ComposerKeyboardHandler: KeyboardHandler {
         // When showing, we set the bottom constraint equal to the keyboard height + original value
         // The value is actually negative, so that the composer view goes up
 
-        if notification.name == UIResponder.keyboardWillHideNotification {
+        let isHidingKeyboard = notification.name == UIResponder.keyboardWillHideNotification
+        if isHidingKeyboard {
             composerBottomConstraint?.constant = originalBottomConstraintValue
         } else {
-            let convertedKeyboardFrame = rootView.convert(frame, from: UIScreen.main.coordinateSpace)
+            let convertedKeyboardFrame = composerParentView.convert(frame, from: UIScreen.main.coordinateSpace)
             let intersectedKeyboardHeight = composerParentView.frame.intersection(convertedKeyboardFrame).height
-            composerBottomConstraint?.constant = -(intersectedKeyboardHeight + originalBottomConstraintValue)
+
+            let rootTabBar = composerParentView.window?.rootViewController?.tabBarController?.tabBar
+            let shouldAddTabBarHeight = rootTabBar != nil && rootTabBar!.isTranslucent == false
+            let rootTabBarHeight = shouldAddTabBarHeight ? rootTabBar!.frame.height : 0
+
+            composerBottomConstraint?.constant = -(
+                intersectedKeyboardHeight + originalBottomConstraintValue + rootTabBarHeight
+            )
         }
 
         UIView.animate(
