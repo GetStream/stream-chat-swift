@@ -3,7 +3,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+### ✅ Added
+- Make it possible to customize video asset (e.g. include custom HTTP header) before it's preview/content is loaded [#1510](https://github.com/GetStream/stream-chat-swift/pull/1510)
+
 ### 🔄 Changed
+- Rename `VideoPreviewLoader` type to `VideoLoading` and `videoPreviewLoader` to `videoLoader` in `Components` [#1510](https://github.com/GetStream/stream-chat-swift/pull/1510)
 
 # [4.0.4](https://github.com/GetStream/stream-chat-swift/releases/tag/4.0.4)
 _October 06, 2021_
