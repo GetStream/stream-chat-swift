@@ -7275,7 +7275,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = DemoAppPush/DemoAppPush.entitlements;
-				CODE_SIGN_IDENTITY = "iPhone Distribution";
+				CODE_SIGN_IDENTITY = "Apple Development: Bahadir Oncel (C42UH28Y58)";
 				CODE_SIGN_STYLE = Manual;
 				DEVELOPMENT_TEAM = EHV7XZLAHA;
 				INFOPLIST_FILE = DemoAppPush/Info.plist;
@@ -7287,7 +7287,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = io.getstream.iOS.ChatDemoApp.DemoAppPush;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "match AppStore io.getstream.iOS.ChatDemoApp.DemoAppPush";
+				PROVISIONING_PROFILE_SPECIFIER = "match Development io.getstream.iOS.ChatDemoApp.DemoAppPush";
 				SKIP_INSTALL = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_VERSION = 5.0;
@@ -7299,7 +7299,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = DemoAppPush/DemoAppPush.entitlements;
-				CODE_SIGN_IDENTITY = "iPhone Distribution";
+				CODE_SIGN_IDENTITY = "Apple Distribution: Stream.io Inc (EHV7XZLAHA)";
 				CODE_SIGN_STYLE = Manual;
 				DEVELOPMENT_TEAM = EHV7XZLAHA;
 				INFOPLIST_FILE = DemoAppPush/Info.plist;
@@ -7311,7 +7311,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = io.getstream.iOS.ChatDemoApp.DemoAppPush;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "match AppStore io.getstream.iOS.ChatDemoApp.DemoAppPush";
+				PROVISIONING_PROFILE_SPECIFIER = "match AdHoc io.getstream.iOS.ChatDemoApp.DemoAppPush";
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -7322,7 +7322,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = DemoAppPush/DemoAppPush.entitlements;
-				CODE_SIGN_IDENTITY = "iPhone Distribution";
+				CODE_SIGN_IDENTITY = "Apple Development: Bahadir Oncel (C42UH28Y58)";
 				CODE_SIGN_STYLE = Manual;
 				DEVELOPMENT_TEAM = EHV7XZLAHA;
 				INFOPLIST_FILE = DemoAppPush/Info.plist;
@@ -7334,7 +7334,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = io.getstream.iOS.ChatDemoApp.DemoAppPush;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "match AppStore io.getstream.iOS.ChatDemoApp.DemoAppPush";
+				PROVISIONING_PROFILE_SPECIFIER = "match Development io.getstream.iOS.ChatDemoApp.DemoAppPush";
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -7556,6 +7556,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = DemoApp/ChatSample.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development: Bahadir Oncel (C42UH28Y58)";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = EHV7XZLAHA;
@@ -7569,7 +7570,7 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = io.getstream.iOS.ChatDemoApp;
 				PRODUCT_NAME = ChatSample;
-				PROVISIONING_PROFILE_SPECIFIER = "match Development io.getstream.iOS.ChatDemoApp";
+				PROVISIONING_PROFILE_SPECIFIER = "match Development io.getstream.iOS.ChatDemoApp 1633095269";
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -7583,7 +7584,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = DemoApp/ChatSample.entitlements;
-				CODE_SIGN_IDENTITY = "iPhone Distribution";
+				CODE_SIGN_IDENTITY = "Apple Distribution: Stream.io Inc (EHV7XZLAHA)";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = EHV7XZLAHA;
@@ -7611,6 +7612,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = DemoApp/ChatSample.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development: Bahadir Oncel (C42UH28Y58)";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = EHV7XZLAHA;
@@ -7624,7 +7626,7 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = io.getstream.iOS.ChatDemoApp;
 				PRODUCT_NAME = ChatSample;
-				PROVISIONING_PROFILE_SPECIFIER = "match Development io.getstream.iOS.ChatDemoApp";
+				PROVISIONING_PROFILE_SPECIFIER = "match Development io.getstream.iOS.ChatDemoApp 1633095269";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
