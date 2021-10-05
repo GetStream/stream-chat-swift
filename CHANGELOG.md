@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### 🐞 Fixed
 - Safely unwrap images to prevent crashes on images from bundle [#1502](https://github.com/GetStream/stream-chat-swift/pull/1502)
+- Fixed when a channel list query has no channels, any future channels are not added to the controller [#1513](https://github.com/GetStream/stream-chat-swift/issues/1513)
 
 ### 🔄 Changed
 

@@ -91,6 +91,29 @@ class ChannelListUpdater_Tests: XCTestCase {
         AssertAsync.canBeReleased(&listUpdater)
     }
     
+    func test_update_savesQuery_onEmptyResponse() {
+        // Simulate `update` call
+        let query = ChannelListQuery(filter: .in(.members, values: [.unique]))
+        var completionCalled = false
+        listUpdater.update(channelListQuery: query, completion: { result in
+            XCTAssertNil(result.error)
+            completionCalled = true
+        })
+        
+        // Simulate API response with no channel data
+        let payload = ChannelListPayload(channels: [])
+        apiClient.test_simulateResponse(.success(payload))
+        
+        // Assert the data is stored in the DB
+        var queryDTO: ChannelListQueryDTO? {
+            database.viewContext.channelListQuery(filterHash: query.filter.filterHash)
+        }
+        AssertAsync {
+            Assert.willBeTrue(queryDTO != nil)
+            Assert.willBeTrue(completionCalled)
+        }
+    }
+    
     // MARK: - Mark all read
     
     func test_markAllRead_makesCorrectAPICall() {
