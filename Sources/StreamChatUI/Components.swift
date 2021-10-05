@@ -165,6 +165,9 @@ public struct Components {
     /// The view that shows an image attachment preview inside message cell.
     public var imageAttachmentGalleryPreview: ChatMessageGalleryView.ImagePreview.Type = ChatMessageGalleryView.ImagePreview.self
     
+    /// The view that shows an image attachment in full-screen gallery.
+    public var imageAttachmentGalleryCell: ImageAttachmentGalleryCell.Type = ImageAttachmentGalleryCell.self
+    
     /// The view that shows a video attachment in full-screen gallery.
     public var videoAttachmentGalleryCell: VideoAttachmentGalleryCell.Type = VideoAttachmentGalleryCell.self
     
