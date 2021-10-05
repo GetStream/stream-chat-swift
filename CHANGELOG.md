@@ -3,7 +3,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
-### 🔄 Changed
+### 🐞 Fixed
+- Fix keyboard showing over composer [#1506](https://github.com/GetStream/stream-chat-swift/pull/1506)
 
 # [4.0.3](https://github.com/GetStream/stream-chat-swift/releases/tag/4.0.3)
 _October 01, 2021_
