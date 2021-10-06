@@ -3,6 +3,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+### 🔄 Changed
+
+# [4.0.4](https://github.com/GetStream/stream-chat-swift/releases/tag/4.0.4)
+_October 06, 2021_
+
 ### 🐞 Fixed
 - Fix keyboard showing over composer [#1506](https://github.com/GetStream/stream-chat-swift/pull/1506)
 - Safely unwrap images to prevent crashes on images from bundle [#1502](https://github.com/GetStream/stream-chat-swift/pull/1502)
