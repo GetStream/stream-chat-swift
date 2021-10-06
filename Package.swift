@@ -39,7 +39,7 @@ let package = Package(
             name: "StreamChatUI",
             dependencies: ["StreamChat", "Nuke", "SwiftyGif"],
             exclude: ["README.md", "Info.plist", "Generated/L10n_template.stencil"] + streamChatUIFilesExcluded,
-            resources: [.process("Sources/StreamChatUI/Resources")]
+            resources: [.process("Resources")]
         )
     ]
 )
