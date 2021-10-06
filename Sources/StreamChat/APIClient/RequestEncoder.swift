@@ -41,13 +41,18 @@ extension RequestEncoder {
     func encodeRequest<ResponsePayload: Decodable>(for endpoint: Endpoint<ResponsePayload>) throws -> URLRequest {
         log.assert(
             !endpoint.requiresConnectionId,
-            "Use the asynchronous version of `encodeRequest` for endpoints with `requiresConnectionId` set to `true.`"
+            "Use the asynchronous version of `encodeRequest` for endpoints with `requiresConnectionId` set to `true.`",
+            subsystems: .httpRequests
         )
         
         var result: Result<URLRequest, Error>?
         encodeRequest(for: endpoint) { result = $0 }
         
-        log.assert(result != nil, "`encodeRequest` with `requiresConnectionId == false` should return immediatelly.")
+        log.assert(
+            result != nil,
+            "`encodeRequest` with `requiresConnectionId == false` should return immediately.",
+            subsystems: .httpRequests
+        )
         
         return try result!.get()
     }
@@ -121,7 +126,7 @@ struct DefaultRequestEncoder: RequestEncoder {
 
         log.assert(
             connectionDetailsProviderDelegate != nil,
-            "The endpoint requires `token` but `connectionDetailsProviderDelegate` is not set."
+            "The endpoint requires `token` but `connectionDetailsProviderDelegate` is not set.", subsystems: .httpRequests
         )
 
         connectionDetailsProviderDelegate?.provideToken {
@@ -154,7 +159,7 @@ struct DefaultRequestEncoder: RequestEncoder {
 
         log.assert(
             connectionDetailsProviderDelegate != nil,
-            "The endpoint requires `connectionId` but `connectionDetailsProviderDelegate` is not set."
+            "The endpoint requires `connectionId` but `connectionDetailsProviderDelegate` is not set.", subsystems: .httpRequests
         )
 
         connectionDetailsProviderDelegate?.provideConnectionId {
@@ -212,7 +217,7 @@ struct DefaultRequestEncoder: RequestEncoder {
                 } catch {
                     log.error(
                         "Skipping encoding data for key:`\(key)` because it's not a valid JSON: "
-                            + "\(String(data: data, encoding: .utf8) ?? "nil")"
+                            + "\(String(data: data, encoding: .utf8) ?? "nil")", subsystems: .httpRequests
                     )
                 }
             }
@@ -220,7 +225,7 @@ struct DefaultRequestEncoder: RequestEncoder {
             return URLQueryItem(name: key, value: String(describing: value))
         }
         
-        log.assert(request.url != nil, "Request URL must not be `nil`.")
+        log.assert(request.url != nil, "Request URL must not be `nil`.", subsystems: .httpRequests)
         
         request.url = try request.url!.appendingQueryItems(bodyQueryItems)
     }
