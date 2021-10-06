@@ -1749,7 +1749,6 @@
 		79A9EAC2262045DC00F2A72D /* MessageRead+MissingUnreadCount.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "MessageRead+MissingUnreadCount.json"; sourceTree = "<group>"; };
 		79A9EB4C2625793000F2A72D /* CoreDataLazy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataLazy.swift; sourceTree = "<group>"; };
 		79A9EB562625798000F2A72D /* CoreDataLazy_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataLazy_Tests.swift; sourceTree = "<group>"; };
-		79AF43922631692D00E75CDA /* StreamChat.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = StreamChat.playground; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		79AF43B32632AF1B00E75CDA /* ChannelVisibilityEventMiddleware.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelVisibilityEventMiddleware.swift; sourceTree = "<group>"; };
 		79B4F0DE25D305CD0063FFB5 /* CurrentChatUserAvatarView_Tests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CurrentChatUserAvatarView_Tests.swift; sourceTree = "<group>"; };
 		79B5517024E593C200CE9FEC /* UserPayloads_Tests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserPayloads_Tests.swift; sourceTree = "<group>"; };
@@ -2265,6 +2264,7 @@
 		AD8D180A268F8ED4004E3A5C /* SlackComposerVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlackComposerVC.swift; sourceTree = "<group>"; };
 		AD90D18425D56196001D03BB /* CurrentUserUpdater_Tests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CurrentUserUpdater_Tests.swift; sourceTree = "<group>"; };
 		AD90D18C25D5619C001D03BB /* CurrentUserUpdater_Mock.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CurrentUserUpdater_Mock.swift; sourceTree = "<group>"; };
+		AD9BE32526680E4200A6D284 /* Stream.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = Stream.playground; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		AD9F7B7C25C8215400DF8CD2 /* SnapshotVariant.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnapshotVariant.swift; sourceTree = "<group>"; };
 		AD9F7B8525C821C300DF8CD2 /* AssertSnapshot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssertSnapshot.swift; sourceTree = "<group>"; };
 		ADA3572D269C562A004AD8E9 /* ChatChannelHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatChannelHeaderView.swift; sourceTree = "<group>"; };
@@ -4481,7 +4481,7 @@
 		8AD5EC8522E9A3E8005CFAC9 = {
 			isa = PBXGroup;
 			children = (
-				79AF43922631692D00E75CDA /* StreamChat.playground */,
+				AD9BE32526680E4200A6D284 /* Stream.playground */,
 				792E3D6A25C97D920040B0C2 /* Package.swift */,
 				799C9415247D2F38001F1104 /* Sources */,
 				799C9452247D59B1001F1104 /* Tests */,
