@@ -26,7 +26,7 @@ struct UserWebSocketPayload: Encodable {
     private enum CodingKeys: String, CodingKey, CaseIterable {
         case id
         case name
-        case imageURL = "image_url"
+        case imageURL = "image"
     }
 
     let id: String
