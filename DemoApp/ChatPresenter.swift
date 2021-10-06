@@ -7,6 +7,14 @@ import StreamChatUI
 import UIKit
 
 class DemoChatChannelListRouter: ChatChannelListRouter {
+    enum ChannelPresentingStyle {
+        case push
+        case modally
+        case embeddedInTabBar
+    }
+
+    var channelPresentingStyle: ChannelPresentingStyle = .push
+
     func showCreateNewChannelFlow() {
         let storyboard = UIStoryboard(name: "Main", bundle: .main)
         
@@ -35,10 +43,69 @@ class DemoChatChannelListRouter: ChatChannelListRouter {
             })
         ])
     }
+
+    override func showChannel(for cid: ChannelId) {
+        switch channelPresentingStyle {
+        case .push:
+            super.showChannel(for: cid)
+
+        case .modally:
+            let vc = components.channelVC.init()
+            vc.channelController = rootViewController.controller.client.channelController(for: cid)
+            rootNavigationController?.present(vc, animated: true, completion: nil)
+
+        case .embeddedInTabBar:
+            let vc = components.channelVC.init()
+            vc.channelController = rootViewController.controller.client.channelController(for: cid)
+            vc.tabBarItem = .init(title: "Chat", image: nil, tag: 0)
+
+            let tabBarController = UITabBarController()
+            tabBarController.viewControllers = [vc]
+            // Make the tab bar not translucent to make sure the
+            // keyboard handling works in all conditions.
+            tabBarController.tabBar.isTranslucent = false
+
+            rootNavigationController?.show(tabBarController, sender: self)
+        }
+    }
     
     override func didTapMoreButton(for cid: ChannelId) {
         let channelController = rootViewController.controller.client.channelController(for: cid)
         rootViewController.presentAlert(title: "Select an action", actions: [
+            .init(title: "Change nav bar translucency", style: .default, handler: { _ in
+                self.rootViewController.presentAlert(
+                    title: "Change nav bar translucency",
+                    message: "Change the nav bar translucency to verify that the keyboard handling is working in different app setups.",
+                    actions: [
+                        .init(title: "Is Translucent", style: .default, handler: { _ in
+                            self.rootViewController.navigationController?.navigationBar.isTranslucent = true
+                        }),
+                        .init(title: "Not Translucent", style: .default, handler: { _ in
+                            self.rootViewController.navigationController?.navigationBar.isTranslucent = false
+                        })
+                    ],
+                    cancelHandler: nil
+                )
+            }),
+            .init(title: "Change channel presentation style", style: .default, handler: { _ in
+                self.rootViewController.presentAlert(
+                    title: "Change channel presentation style",
+                    message: "Change how the channel navigation is presented.",
+                    actions: [
+                        .init(title: "Push (Default)", style: .default, handler: { _ in
+                            self.channelPresentingStyle = .push
+                        }),
+                        .init(title: "Modally", style: .default, handler: { _ in
+                            self.channelPresentingStyle = .modally
+                        }),
+                        .init(title: "Embedded in Tab Bar", style: .default, handler: { _ in
+                            self.channelPresentingStyle = .embeddedInTabBar
+                        })
+                    ],
+                    cancelHandler: nil
+                )
+                self.channelPresentingStyle = .embeddedInTabBar
+            }),
             .init(title: "Update channel name", style: .default, handler: { _ in
                 self.rootViewController.presentAlert(title: "Enter channel name", textFieldPlaceholder: "Channel name") { name in
                     guard let name = name, !name.isEmpty else {

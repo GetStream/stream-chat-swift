@@ -153,12 +153,12 @@ open class GalleryVC:
         attachmentsFlowLayout.minimumLineSpacing = 0
                 
         attachmentsCollectionView.register(
-            ImageAttachmentGalleryCell.self,
-            forCellWithReuseIdentifier: ImageAttachmentGalleryCell.reuseId
+            components.imageAttachmentGalleryCell.self,
+            forCellWithReuseIdentifier: components.imageAttachmentGalleryCell.reuseId
         )
         attachmentsCollectionView.register(
-            VideoAttachmentGalleryCell.self,
-            forCellWithReuseIdentifier: VideoAttachmentGalleryCell.reuseId
+            components.videoAttachmentGalleryCell.self,
+            forCellWithReuseIdentifier: components.videoAttachmentGalleryCell.reuseId
         )
         attachmentsCollectionView.contentInsetAdjustmentBehavior = .never
         attachmentsCollectionView.isPagingEnabled = true
@@ -413,9 +413,9 @@ open class GalleryVC:
         
         switch item.type {
         case .image:
-            return ImageAttachmentGalleryCell.reuseId
+            return components.imageAttachmentGalleryCell.reuseId
         case .video:
-            return VideoAttachmentGalleryCell.reuseId
+            return components.videoAttachmentGalleryCell.reuseId
         default:
             return nil
         }

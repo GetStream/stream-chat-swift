@@ -3,13 +3,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
-### ✅ Added
-
 ### 🐞 Fixed
+- Fix keyboard showing over composer [#1506](https://github.com/GetStream/stream-chat-swift/pull/1506)
 - Safely unwrap images to prevent crashes on images from bundle [#1502](https://github.com/GetStream/stream-chat-swift/pull/1502)
 - Fixed when a channel list query has no channels, any future channels are not added to the controller [#1513](https://github.com/GetStream/stream-chat-swift/issues/1513)
 
 ### 🔄 Changed
+- Take `VideoAttachmentGalleryCell` and `ImageAttachmentGalleryCell` types used in `GalleryVC` from `Components` [#1509](https://github.com/GetStream/stream-chat-swift/pull/1509)
 
 # [4.0.3](https://github.com/GetStream/stream-chat-swift/releases/tag/4.0.3)
 _October 01, 2021_
