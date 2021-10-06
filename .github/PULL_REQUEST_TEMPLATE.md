@@ -1,9 +1,29 @@
-# Submit a pull request
+### 🔗 Issue Link
+_Jira or Github issue link, if applicable._
 
-## CLA
+### 🎯 Goal
 
-- [ ] I have signed the [Stream CLA](https://docs.google.com/forms/d/e/1FAIpQLScFKsKkAJI7mhCr7K9rEIOpqIDThrWxuvxnwUq2XkHyG154vQ/viewform) (required).
-- [ ] The code changes follow best practices
-- [ ] Code changes are tested (add some information if not applicable)
+_Describe why we are making this change._
 
-## Description of the pull request
+### 🛠 Implementation
+
+_Provide a description of the implementation._
+
+### 🧪 Testing
+
+_Explain how this change can be tested (or why it can't be tested)._
+
+### 🎨 Changes
+
+_ Add relevant screenshots or videos showcasing the changes._
+
+| Before | After |
+| --- | --- |
+| img | img |
+
+### ☑️ Checklist
+
+- [ ] I have signed the [Stream CLA](https://docs.google.com/forms/d/e/1FAIpQLScFKsKkAJI7mhCr7K9rEIOpqIDThrWxuvxnwUq2XkHyG154vQ/viewform) (required)
+- [ ] Changelog is updated with client-facing changes
+- [ ] New code is covered by unit tests
+- [ ] Affected documentation updated (docusaurus, tutorial, CMS (task created)
