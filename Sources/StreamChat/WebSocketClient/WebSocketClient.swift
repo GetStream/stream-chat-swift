@@ -11,7 +11,7 @@ class WebSocketClient {
     /// The current state the web socket connection.
     @Atomic private(set) var connectionState: WebSocketConnectionState = .disconnected() {
         didSet {
-            log.info("Web socket connection state changed: \(connectionState)")
+            log.info("Web socket connection state changed: \(connectionState)", subsystems: .webSocket)
             connectionStateDelegate?.webSocketClient(self, didUpdateConnectionState: connectionState)
             
             if connectionState.isConnected {
@@ -111,7 +111,7 @@ class WebSocketClient {
     /// Calling this method has no effect is the web socket is already connected, or is in the connecting phase.
     func connect() {
         guard let endpoint = connectEndpoint else {
-            log.assertionFailure("Attempt to connect `web-socket` while endpoint is missing")
+            log.assertionFailure("Attempt to connect `web-socket` while endpoint is missing", subsystems: .webSocket)
             return
         }
 
@@ -185,7 +185,7 @@ extension WebSocketClient: WebSocketEngineDelegate {
     func webSocketDidReceiveMessage(_ message: String) {
         do {
             let messageData = Data(message.utf8)
-            log.debug("Event received:\n\(messageData.debugPrettyPrintedJSON)")
+            log.debug("Event received:\n\(messageData.debugPrettyPrintedJSON)", subsystems: .webSocket)
 
             let event = try eventDecoder.decode(from: messageData)
             if let healthCheckEvent = event as? HealthCheckEvent {
@@ -197,7 +197,7 @@ extension WebSocketClient: WebSocketEngineDelegate {
                 eventNotificationCenter.process(event)
             }
         } catch is ClientError.UnsupportedEventType {
-            log.info("Skipping unsupported event type with payload: \(message)")
+            log.info("Skipping unsupported event type with payload: \(message)", subsystems: .webSocket)
             
         } catch {
             // Check if the message contains an error object from the server

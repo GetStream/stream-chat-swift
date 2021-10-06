@@ -34,6 +34,7 @@ public struct LogDetails {
 public protocol LogDestination {
     var identifier: String { get set }
     var level: LogLevel { get set }
+    var subsystems: LogSubsystem { get set }
     
     var dateFormatter: DateFormatter { get set }
     var formatters: [LogFormatter] { get set }
@@ -46,8 +47,17 @@ public protocol LogDestination {
     var showLineNumber: Bool { get set }
     var showFunctionName: Bool { get set }
     
-    func isEnabled(for level: LogLevel) -> Bool
+    func isEnabled(level: LogLevel) -> Bool
+    func isEnabled(level: LogLevel, subsystems: LogSubsystem) -> Bool
     func process(logDetails: LogDetails)
     func applyFormatters(logDetails: LogDetails, message: String) -> String
     func write(message: String)
+}
+
+public extension LogDestination {
+    var subsystems: LogSubsystem { .all }
+    
+    func isEnabled(level: LogLevel, subsystems: LogSubsystem) -> Bool {
+        isEnabled(level: level) && self.subsystems.contains(subsystems)
+    }
 }
