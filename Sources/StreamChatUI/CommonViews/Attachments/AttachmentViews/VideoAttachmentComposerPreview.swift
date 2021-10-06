@@ -93,7 +93,7 @@ open class VideoAttachmentComposerPreview: _View, ThemeProvider {
         videoDurationLabel.text = nil
         
         if let url = content {
-            components.videoPreviewLoader.loadPreviewForVideo(at: url) { [weak self] in
+            components.videoLoader.loadPreviewForVideo(at: url) { [weak self] in
                 self?.loadingIndicator.isHidden = true
                 switch $0 {
                 case let .success(preview):
@@ -103,7 +103,7 @@ open class VideoAttachmentComposerPreview: _View, ThemeProvider {
                 }
             }
             videoDurationLabel.text = DateComponentsFormatter.videoDuration.string(
-                from: AVURLAsset(url: url).duration.seconds
+                from: components.videoLoader.videoAsset(at: url).duration.seconds
             )
         }
     }

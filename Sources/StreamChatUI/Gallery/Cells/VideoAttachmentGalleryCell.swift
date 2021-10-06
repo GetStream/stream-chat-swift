@@ -52,11 +52,13 @@ open class VideoAttachmentGalleryCell: GalleryCollectionViewCell {
         let currentAssetURL = (player.currentItem?.asset as? AVURLAsset)?.url
 
         if newAssetURL != currentAssetURL {
-            let playerItem = newAssetURL.map { AVPlayerItem(url: $0) }
+            let playerItem = newAssetURL.map {
+                AVPlayerItem(asset: components.videoLoader.videoAsset(at: $0))
+            }
             player.replaceCurrentItem(with: playerItem)
             
             if let url = newAssetURL {
-                components.videoPreviewLoader.loadPreviewForVideo(at: url) { [weak self] in
+                components.videoLoader.loadPreviewForVideo(at: url) { [weak self] in
                     switch $0 {
                     case let .success(preview):
                         self?.animationPlaceholderImageView.image = preview

@@ -86,7 +86,7 @@ open class VideoAttachmentGalleryPreview: _View, ThemeProvider {
         playButton.isVisible = false
         
         if let url = content?.videoURL {
-            components.videoPreviewLoader.loadPreviewForVideo(at: url) { [weak self] in
+            components.videoLoader.loadPreviewForVideo(at: url) { [weak self] in
                 self?.loadingIndicator.isHidden = true
                 
                 switch $0 {
