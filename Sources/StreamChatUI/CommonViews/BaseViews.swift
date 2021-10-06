@@ -327,13 +327,14 @@ open class _NavigationBar: UINavigationBar, Customizable {
 }
 
 open class _ViewController: UIViewController, Customizable {
+    private var isInitialized: Bool = false
+    
     override open func viewDidLoad() {
         super.viewDidLoad()
         
-        setUp()
-        setUpLayout()
-        setUpAppearance()
-        updateContent()
+        if parent == nil {
+            runLifecycle()
+        }
     }
     
     open func setUp() { /* default empty implementation */ }
@@ -356,6 +357,21 @@ open class _ViewController: UIViewController, Customizable {
     override open func viewWillLayoutSubviews() {
         TraitCollectionReloadStack.executePendingUpdates()
         super.viewWillLayoutSubviews()
+    }
+    
+    override open func willMove(toParent parent: UIViewController?) {
+        runLifecycle()
+    }
+    
+    private func runLifecycle() {
+        guard !isInitialized else { return }
+        
+        setUp()
+        setUpLayout()
+        setUpAppearance()
+        updateContent()
+        
+        isInitialized = true
     }
 }
 
