@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://github.com/GetStream/stream-chat-swift/blob/main/Documentation/Assets/iOS%20Chat%20Messaging.png"/>
+  <img src="https://github.com/GetStream/stream-chat-swift/blob/main/ReadmeAssets/iOS%20Chat%20Messaging.png"/>
 </p>
 
 <p align="center">
@@ -77,7 +77,7 @@ Check out our current openings and apply via [Stream's website](https://getstrea
   </tr>
   <tr>
     <td> A list of channels matching provided query </td>
-    <th rowspan="7"><img src="https://github.com/GetStream/stream-chat-swift/blob/main/Documentation/Assets/Channel%20List%20Bezel.png?raw=true" width="80%" /></th>
+    <th rowspan="7"><img src="https://github.com/GetStream/stream-chat-swift/blob/main/ReadmeAssets/Channel%20List%20Bezel.png?raw=true" width="80%" /></th>
   </tr>
    <tr> <td> Channel name and image based on the channel members or custom data</td> </tr>
   <tr> <td> Unread messages indicator </td> </tr>
@@ -100,7 +100,7 @@ Check out our current openings and apply via [Stream's website](https://getstrea
   </tr>
   <tr>
     <td> Easily search users by tag or name </td>
-    <th rowspan="9"><img src="https://github.com/GetStream/stream-chat-swift/blob/main/Documentation/Assets/Channel%20Creation%20Bezel.png?raw=true" width="80%" /></th>
+    <th rowspan="9"><img src="https://github.com/GetStream/stream-chat-swift/blob/main/ReadmeAssets/Channel%20Creation%20Bezel.png?raw=true" width="80%" /></th>
   </tr>
   <tr> <td> Create group or direct message </td> </tr>
   <tr> <td> Send message and start the conversation </td> </tr>
@@ -121,7 +121,7 @@ Check out our current openings and apply via [Stream's website](https://getstrea
   </tr>
   <tr>
     <td> A list of message in a channel </td>
-    <th rowspan="9"><img src="https://github.com/GetStream/stream-chat-swift/blob/main/Documentation/Assets/Message%20List%20Bezel.png?raw=true" width="80%" /></th>
+    <th rowspan="9"><img src="https://github.com/GetStream/stream-chat-swift/blob/main/ReadmeAssets/Message%20List%20Bezel.png?raw=true" width="80%" /></th>
   </tr>
   <tr> <td> Photo preview </td> </tr>
   <tr> <td> Message reactions </td> </tr>
@@ -145,7 +145,7 @@ Check out our current openings and apply via [Stream's website](https://getstrea
   </tr>
   <tr>
     <td> Support for multiline text, expands and shrinks as needed </td>
-    <th rowspan="6"><img src="https://github.com/GetStream/stream-chat-swift/blob/main/Documentation/Assets/Message%20Composer%20Bezels.png?raw=true" width="80%" /></th>
+    <th rowspan="6"><img src="https://github.com/GetStream/stream-chat-swift/blob/main/ReadmeAssets/Message%20Composer%20Bezels.png?raw=true" width="80%" /></th>
   </tr>
   <tr> <td> Image and file attachments</td> </tr>
   <tr> <td> Replies to messages </td> </tr>
@@ -166,7 +166,7 @@ Check out our current openings and apply via [Stream's website](https://getstrea
   </tr>
   <tr>
     <td> Easily search commands by writing / symbol or tap bolt icon </td>
-    <th rowspan="5"><img src="https://github.com/GetStream/stream-chat-swift/blob/main/Documentation/Assets/Commands%20Bezel.png?raw=true" width="80%" /></th>
+    <th rowspan="5"><img src="https://github.com/GetStream/stream-chat-swift/blob/main/ReadmeAssets/Commands%20Bezel.png?raw=true" width="80%" /></th>
   </tr>
   <tr> <td> GIPHY support out of box</td> </tr>
   <tr> <td> Supports mute, unmute, ban, unban commands </td> </tr>
@@ -186,7 +186,7 @@ Check out our current openings and apply via [Stream's website](https://getstrea
   </tr>
   <tr>
     <td> User mentions preview </td>
-    <th rowspan="4"><img src="https://github.com/GetStream/stream-chat-swift/blob/main/Documentation/Assets/Mentions%20Bezel.png?raw=true" width="80%" /></th>
+    <th rowspan="4"><img src="https://github.com/GetStream/stream-chat-swift/blob/main/ReadmeAssets/Mentions%20Bezel.png?raw=true" width="80%" /></th>
   </tr>
   <tr> <td> Easily search for concrete user </td> </tr>
   <tr> <td> Mention as many users as you want </td> </tr>
