@@ -29,7 +29,7 @@ class WebSocketConnectPayload_Tests: XCTestCase {
             "user_details": [
                 "id": payload.userDetails.id,
                 "name": payload.userDetails.name!,
-                "image_url": "https://path/to/image",
+                "image": "https://path/to/image",
                 "color": "blue"
             ]
         ]
