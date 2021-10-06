@@ -11,15 +11,11 @@ _Provide a description of the implementation._
 
 ### 🧪 Testing
 
-_Explain how this change can be tested (or why it can't be tested)._
+_Describe the steps how this change can be tested (or why it can't be tested)._
 
 ### 🎨 Changes
 
-_ Add relevant screenshots or videos showcasing the changes._
-
-| Before | After |
-| --- | --- |
-| img | img |
+_Add relevant screenshots or videos showcasing the changes._
 
 ### ☑️ Checklist
 
