@@ -486,7 +486,7 @@ class ChannelListController_Tests: XCTestCase {
         try database.writeSynchronously { session in
             try session.saveChannel(payload: self.dummyPayload(with: cid), query: self.query)
             let dto = try session.saveChannel(payload: self.dummyPayload(with: .unique), query: self.query)
-            dto.hiddenAt = .unique(after: dto.lastMessageAt ?? .unique)
+            dto.hidden = true
         }
         
         // Simulate `synchronize` call
@@ -495,7 +495,7 @@ class ChannelListController_Tests: XCTestCase {
         // Assert only non-hidden one is tracked
         XCTAssertEqual(controller.channels.map(\.cid), [cid])
         // Assert tracked channels are not hidden
-        XCTAssertNil(controller.channels.first?.hiddenAt)
+        XCTAssertEqual(controller.channels.first?.hidden, false)
     }
     
     func test_hiddenChannel_isIncluded_whenFilterContainsHiddenKey() throws {
@@ -508,14 +508,14 @@ class ChannelListController_Tests: XCTestCase {
         try database.writeSynchronously { session in
             try session.saveChannel(payload: self.dummyPayload(with: cid), query: self.query)
             let dto = try session.saveChannel(payload: self.dummyPayload(with: .unique), query: self.query)
-            dto.hiddenAt = .unique(after: dto.lastMessageAt ?? .unique)
+            dto.hidden = true
         }
         
         // Simulate `synchronize` call
         controller.synchronize()
         
-        // Assert both are tracked
-        XCTAssertEqual(controller.channels.count, 2)
+        // Assert only hidden is tracked
+        XCTAssertEqual(controller.channels.count, 1)
     }
     
     // MARK: - Delegate tests
