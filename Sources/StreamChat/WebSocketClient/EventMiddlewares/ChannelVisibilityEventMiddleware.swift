@@ -14,14 +14,14 @@ struct ChannelVisibilityEventMiddleware: EventMiddleware {
                     throw ClientError.ChannelDoesNotExist(cid: event.cid)
                 }
                 
-                channelDTO.hiddenAt = nil
+                channelDTO.hidden = false
                 
             case let event as ChannelHiddenEventDTO:
                 guard let channelDTO = session.channel(cid: event.cid) else {
                     throw ClientError.ChannelDoesNotExist(cid: event.cid)
                 }
                 
-                channelDTO.hiddenAt = event.createdAt
+                channelDTO.hidden = true
                 
                 if event.isHistoryCleared {
                     channelDTO.truncatedAt = event.createdAt

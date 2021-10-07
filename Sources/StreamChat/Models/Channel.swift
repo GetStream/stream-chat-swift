@@ -29,8 +29,8 @@ public struct ChatChannel {
     /// If the channel was deleted, this field contains the date of the deletion.
     public let deletedAt: Date?
     
-    /// If the channel was hidden, this field contains the date of the hiding.
-    public let hiddenAt: Date?
+    /// Flag for representing hidden state for the channel.
+    public let hidden: Bool
     
     /// The user which created the channel.
     public let createdBy: ChatUser?
@@ -156,7 +156,7 @@ public struct ChatChannel {
         createdAt: Date = .init(),
         updatedAt: Date = .init(),
         deletedAt: Date? = nil,
-        hiddenAt: Date? = nil,
+        hidden: Bool,
         createdBy: ChatUser? = nil,
         config: ChannelConfig = .init(),
         isFrozen: Bool = false,
@@ -183,7 +183,7 @@ public struct ChatChannel {
         self.createdAt = createdAt
         self.updatedAt = updatedAt
         self.deletedAt = deletedAt
-        self.hiddenAt = hiddenAt
+        self.hidden = hidden
         self.createdBy = createdBy
         self.config = config
         self.isFrozen = isFrozen

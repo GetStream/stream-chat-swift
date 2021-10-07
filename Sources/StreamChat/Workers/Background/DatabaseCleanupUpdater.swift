@@ -81,7 +81,7 @@ private extension ChannelDTO {
         members = []
         attachments = []
         oldestMessageAt = nil
-        hiddenAt = nil
+        hidden = false
         truncatedAt = nil
         currentlyTypingUsers = []
         reads = []

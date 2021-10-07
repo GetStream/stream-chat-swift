@@ -23,7 +23,7 @@
         <attribute name="defaultSortingAt" attributeType="Date" usesScalarValueType="NO" spotlightIndexingEnabled="YES"/>
         <attribute name="deletedAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="extraData" attributeType="Binary"/>
-        <attribute name="hiddenAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="hidden" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
         <attribute name="imageURL" optional="YES" attributeType="URI"/>
         <attribute name="isFrozen" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="lastMessageAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>

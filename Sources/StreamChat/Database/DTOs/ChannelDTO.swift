@@ -34,10 +34,7 @@ class ChannelDTO: NSManagedObject {
     //
     @NSManaged var truncatedAt: Date?
 
-    // This field lives only locally and is not populated directly from the payload. It's populated only form the
-    // `ChannelVisibilityEventMiddleware` and it's main purpose is to control the visibility of hidden channels
-    // locally.
-    @NSManaged var hiddenAt: Date?
+    @NSManaged var hidden: Bool
 
     @NSManaged var watcherCount: Int64
     @NSManaged var memberCount: Int64
@@ -199,8 +196,8 @@ extension NSManagedObjectContext {
         // If backend returns true, we know channel is hidden
         // but don't know when. Our best guess is that channel is hidden when
         // it's last updated
-        if payload.hidden == true && dto.hiddenAt == nil {
-            dto.hiddenAt = payload.channel.updatedAt
+        if payload.hidden == true && dto.hidden == false {
+            dto.hidden = true
         }
 
         try payload.pinnedMessages.forEach {
@@ -265,25 +262,13 @@ extension ChannelDTO {
         let matchingQuery = NSPredicate(format: "ANY queries.filterHash == %@", query.filter.filterHash)
         let notDeleted = NSPredicate(format: "deletedAt == nil")
 
-        let subpredicates: [NSPredicate]
         // If the query contains a filter for the `hidden` property,
-        // we don't exclude hidden channels, backend will or won't
-        if query.filter.hiddenFilterValue == true {
-            subpredicates = [
-                matchingQuery, notDeleted
-            ]
-        } else {
-            let notHidden = NSCompoundPredicate(orPredicateWithSubpredicates: [
-                NSPredicate(format: "hiddenAt == nil"),
-                NSCompoundPredicate(andPredicateWithSubpredicates: [
-                    NSPredicate(format: "lastMessageAt != nil"),
-                    NSPredicate(format: "lastMessageAt > hiddenAt")
-                ])
-            ])
-            subpredicates = [
-                matchingQuery, notDeleted, notHidden
-            ]
-        }
+        // we use the filter here
+        let correctHidden = NSPredicate(format: "hidden == \(query.filter.hiddenFilterValue == true ? "YES" : "NO")")
+        
+        let subpredicates = [
+            matchingQuery, notDeleted, correctHidden
+        ]
         
         request.predicate = NSCompoundPredicate(type: .and, subpredicates: subpredicates)
         return request
@@ -399,7 +384,7 @@ extension ChatChannel {
             createdAt: dto.createdAt,
             updatedAt: dto.updatedAt,
             deletedAt: dto.deletedAt,
-            hiddenAt: dto.hiddenAt,
+            hidden: dto.hidden,
             createdBy: dto.createdBy?.asModel(),
             config: try! JSONDecoder().decode(ChannelConfig.self, from: dto.config),
             isFrozen: dto.isFrozen,

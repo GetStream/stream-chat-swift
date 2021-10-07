@@ -42,7 +42,7 @@ class ChannelListUpdater: Worker {
                             // we need to work around it by marking channels as `hidden`
                             // if the user queries for `hidden == true`
                             if shouldMarkAsHidden {
-                                dto.hiddenAt = $0.channel.updatedAt
+                                dto.hidden = true
                             }
                         }
                     } completion: { error in

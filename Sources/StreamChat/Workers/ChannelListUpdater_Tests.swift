@@ -114,38 +114,6 @@ class ChannelListUpdater_Tests: XCTestCase {
         }
     }
     
-    func test_update_marksChannelsAsHidden_whenFilterIncludesHidden() {
-        // Simulate `update` call with `.equal(.hidden, to: true)` filter
-        let query = ChannelListQuery(
-            filter: .and(
-                [
-                    .in(.members, values: [.unique]),
-                    .equal(.hidden, to: true)
-                ]
-            )
-        )
-        var completionCalled = false
-        listUpdater.update(channelListQuery: query, completion: { result in
-            XCTAssertNil(result.error)
-            completionCalled = true
-        })
-        
-        // Simulate API response with channel data
-        let cid = ChannelId(type: .messaging, id: .unique)
-        let payload = ChannelListPayload(channels: [dummyPayload(with: cid)])
-        apiClient.test_simulateResponse(.success(payload))
-        
-        // Assert the data is stored in the DB
-        var channel: ChatChannel? {
-            database.viewContext.channel(cid: cid)?.asModel()
-        }
-        AssertAsync {
-            Assert.willBeTrue(channel != nil)
-            Assert.willBeTrue(channel?.hiddenAt != nil)
-            Assert.willBeTrue(completionCalled)
-        }
-    }
-    
     // MARK: - Mark all read
     
     func test_markAllRead_makesCorrectAPICall() {
