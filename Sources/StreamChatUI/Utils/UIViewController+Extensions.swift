@@ -7,6 +7,7 @@ import UIKit
 extension UIViewController {
     func addChildViewController(_ child: UIViewController, targetView superview: UIView) {
         addChild(child)
+        child.view.translatesAutoresizingMaskIntoConstraints = false
         superview.addSubview(child.view)
         child.didMove(toParent: self)
     }
