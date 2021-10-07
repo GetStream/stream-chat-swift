@@ -498,3 +498,22 @@ lane :cocoapods_integration do
     destination: "generic/platform=iOS Simulator"
   )
 end
+
+desc "Build and upload DemoApp to Emerge"
+lane :emerge_upload do
+  # Build and upload Release config
+  build_ios_app(
+    project: "StreamChat.xcodeproj",
+    scheme: "DemoApp",
+    skip_package_ipa: true,
+    skip_archive: false,
+    clean: true,
+  )
+
+  emerge(
+    build_type: "release",
+    repo_name: ENV["GITHUB_REPOSITORY"],
+    pr_number: ENV["GITHUB_PR_NUM"],
+    sha: ENV["GITHUB_SHA"]
+  )
+end
