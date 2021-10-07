@@ -309,9 +309,9 @@ open class ComposerVC: _ViewController,
         composerView.sendButton.isEnabled = !content.isEmpty
         composerView.confirmButton.isEnabled = !content.isEmpty
 
-        let isAttachmentButtonHidden = !content.isEmpty || !isAttachmentsEnabled
-        let isCommandsButtonHidden = !content.isEmpty || !isCommandsEnabled
-        let isShrinkInputButtonHidden = content.isEmpty || (!isCommandsEnabled && !isAttachmentsEnabled)
+        let isAttachmentButtonHidden = !content.isEmpty || !isAttachmentsEnabled || content.hasCommand
+        let isCommandsButtonHidden = !content.isEmpty || !isCommandsEnabled || content.hasCommand
+        let isShrinkInputButtonHidden = content.isEmpty || (!isCommandsEnabled && !isAttachmentsEnabled) || content.hasCommand
         
         Animate {
             self.composerView.attachmentButton.isHidden = isAttachmentButtonHidden
