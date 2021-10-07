@@ -46,10 +46,9 @@ open class ChatReactionsBubbleView: ChatReactionBubbleBaseView {
     open var maskingPath: UIBezierPath {
         bubblePath(withRadiiIncreasedBy: 4)
     }
-}
-
-private extension ChatReactionsBubbleView {
-    var fillColor: UIColor? {
+    
+    /// Bubble's background color.
+    open var fillColor: UIColor? {
         tailDirection.map {
             $0 == .toTrailing ?
                 appearance.colorPalette.popoverBackground :
@@ -57,35 +56,40 @@ private extension ChatReactionsBubbleView {
         }
     }
 
-    var strokeColor: UIColor? {
+    /// Bubble's border color.
+    open var strokeColor: UIColor? {
         tailDirection.map {
             $0 == .toTrailing ?
                 appearance.colorPalette.border :
                 appearance.colorPalette.background2
         }
     }
-
-    var bubbleBodyCenter: CGPoint {
+    
+    /// The center of bubble's body.
+    open var bubbleBodyCenter: CGPoint {
         bounds
             .inset(by: .init(top: 0, left: 0, bottom: tailHeight, right: 0))
             .center
     }
 
-    var bigTailCircleCenter: CGPoint {
+    /// The center of a big circle which is a part of the bubble's tail .
+    open var bigTailCircleCenter: CGPoint {
         bubbleBodyCenter.offsetBy(
             dx: tailDirection == .toTrailing ? 10 : -10,
             dy: 14
         )
     }
 
-    var smallTailCircleCenter: CGPoint {
+    /// The center of a small circle which is a part of the bubble's tail .
+    open var smallTailCircleCenter: CGPoint {
         bigTailCircleCenter.offsetBy(
             dx: tailDirection == .toTrailing ? 4 : -4,
             dy: 6
         )
     }
 
-    func bubblePath(withRadiiIncreasedBy dr: CGFloat = 0) -> UIBezierPath {
+    /// The path combined from bubble's body path and bubble's tail path.
+    open func bubblePath(withRadiiIncreasedBy dr: CGFloat = 0) -> UIBezierPath {
         let borderLineWidth: CGFloat = 1
         let dr = dr - borderLineWidth / 2
 
