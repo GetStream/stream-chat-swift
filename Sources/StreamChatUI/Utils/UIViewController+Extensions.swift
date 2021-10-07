@@ -6,7 +6,6 @@ import UIKit
 
 extension UIViewController {
     func addChildViewController(_ child: UIViewController, targetView superview: UIView) {
-        child.willMove(toParent: self)
         addChild(child)
         superview.addSubview(child.view)
         child.didMove(toParent: self)
@@ -14,14 +13,12 @@ extension UIViewController {
     
     /// Adds `child` as a child view controller to `self` and as an arranged subview of `ContainerView`.
     func addChildViewController(_ child: UIViewController, targetView superview: ContainerStackView) {
-        child.willMove(toParent: self)
         addChild(child)
         superview.addArrangedSubview(child.view)
         child.didMove(toParent: self)
     }
     
     func addChildViewController(_ child: UIViewController, embedIn superview: UIView) {
-        child.willMove(toParent: self)
         addChild(child)
         child.view.translatesAutoresizingMaskIntoConstraints = false
         superview.embed(child.view)
