@@ -52,7 +52,7 @@ open class ComposerVC: _ViewController,
         /// The mentioned users in the message.
         public var mentionedUsers: Set<ChatUser>
         /// The command of the message.
-        public var command: Command?
+        public let command: Command?
 
         /// A boolean that checks if the message contains any content.
         public var isEmpty: Bool {
@@ -139,6 +139,19 @@ open class ComposerVC: _ViewController,
                 quotingMessage: message,
                 threadMessage: threadMessage,
                 attachments: attachments,
+                mentionedUsers: mentionedUsers,
+                command: command
+            )
+        }
+
+        public mutating func addCommand(_ command: Command) {
+            self = .init(
+                text: "",
+                state: state,
+                editingMessage: editingMessage,
+                quotingMessage: quotingMessage,
+                threadMessage: threadMessage,
+                attachments: [],
                 mentionedUsers: mentionedUsers,
                 command: command
             )
@@ -571,10 +584,7 @@ open class ComposerVC: _ViewController,
             availableCommand.name.compare(typingCommand, options: .caseInsensitive) == .orderedSame
         }
         if let foundCommand = availableCommands.first(where: typingCommandMatches), !content.hasCommand {
-            var newContent = content
-            newContent.command = foundCommand
-            newContent.text = ""
-            content = newContent
+            content.addCommand(foundCommand)
 
             dismissSuggestions()
             return
@@ -586,10 +596,7 @@ open class ComposerVC: _ViewController,
         )
         suggestionsVC.dataSource = dataSource
         suggestionsVC.didSelectItemAt = { [weak self] commandIndex in
-            guard var newContent = self?.content else { return }
-            newContent.command = commandHints[commandIndex]
-            newContent.text = ""
-            self?.content = newContent
+            self?.content.addCommand(commandHints[commandIndex])
 
             self?.dismissSuggestions()
         }
