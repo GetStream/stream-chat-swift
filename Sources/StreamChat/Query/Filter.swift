@@ -81,6 +81,7 @@ extension Filter: FilterValue {}
 extension ChannelId: FilterValue {}
 extension ChannelType: FilterValue {}
 extension UserRole: FilterValue {}
+extension AttachmentType: FilterValue {}
 
 /// Filter is used to specify the details about which elements should be returned from a specific query.
 ///

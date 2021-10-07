@@ -422,6 +422,10 @@ final class SimpleChatViewController: UITableViewController, ChatChannelControll
             }
         }))
         
+        alert.addAction(.init(title: "Show image gallery", style: .default, handler: { [weak self] _ in
+            self?.showImageGallery()
+        }))
+        
         alert.addAction(.init(title: "Cancel", style: .cancel, handler: nil))
         
         present(alert, animated: true)
@@ -439,6 +443,21 @@ final class SimpleChatViewController: UITableViewController, ChatChannelControll
         )
         
         show(channelMembersViewController, sender: self)
+    }
+    
+    private func showImageGallery() {
+        guard
+            let cid = channelController.channel?.cid,
+            let imageGalleryViewController = UIStoryboard.simpleChat
+            .instantiateViewController(
+                withIdentifier: "SimpleChannelImageAttachmentsListController"
+            ) as? SimpleChannelImageAttachmentsListController
+        else { return }
+        
+        imageGalleryViewController.messageSearchController = channelController.client.messageSearchController()
+        imageGalleryViewController.cid = cid
+        
+        present(imageGalleryViewController, animated: true)
     }
     
     // MARK: - UITextViewDelegate
