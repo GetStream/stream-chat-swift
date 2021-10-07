@@ -136,6 +136,11 @@ Test SPM Integration
 fastlane cocoapods_integration
 ```
 Test CocoaPods Integration
+### emerge_upload
+```
+fastlane emerge_upload
+```
+Build and upload DemoApp to Emerge
 
 ----
 
