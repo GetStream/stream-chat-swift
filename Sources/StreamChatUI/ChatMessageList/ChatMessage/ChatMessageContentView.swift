@@ -177,8 +177,6 @@ open class ChatMessageContentView: _View, ThemeProvider {
         }
 
         attachmentViewInjector = attachmentViewInjectorType?.init(self)
-
-        layout(options: options)
         layoutOptions = options
     }
 
@@ -421,6 +419,17 @@ open class ChatMessageContentView: _View, ThemeProvider {
                 updateContent()
             }
         }
+    }
+    
+    override open func setUpLayout() {
+        super.setUpLayout()
+        
+        guard let options = layoutOptions else {
+            log.assertionFailure("Layout options are missing")
+            return
+        }
+
+        layout(options: options)
     }
 
     override open func updateContent() {
