@@ -16,11 +16,16 @@ public struct MessageSearchFilterScope: FilterScope, AnyMessageSearchFilterScope
 public extension FilterKey where Scope: AnyMessageSearchFilterScope {
     static var text: FilterKey<Scope, String> { "text" }
     static var authorId: FilterKey<Scope, UserId> { "user.id" }
+    static var hasAttachmentsOfType: FilterKey<Scope, AttachmentType> { "attachments.type" }
 }
 
 public extension Filter where Scope: AnyMessageSearchFilterScope {
     static func queryText(_ text: String) -> Filter<Scope> {
         .query(.text, text: text)
+    }
+    
+    static func withAttachments(_ types: Set<AttachmentType>) -> Filter<Scope> {
+        .in(.hasAttachmentsOfType, values: .init(types))
     }
 }
 

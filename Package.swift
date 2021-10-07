@@ -197,6 +197,7 @@ var streamChatSourcesExcluded: [String] { [
     "Query/FilterDecoding_Tests.swift",
     "Query/FilterEncoding_Tests.swift",
     "Query/UserListQuery_Tests.swift",
+    "Query/MessageSearchQuery_Tests.swift",
     "Query/ChannelListQuery_Tests.swift",
     "Query/ChannelWatcherListQuery_Tests.swift",
     "Query/Pagination_Tests.swift",
