@@ -41,6 +41,7 @@ _October 12, 2021_
 ### 🔄 Changed
 - Rename `VideoPreviewLoader` type to `VideoLoading` and `videoPreviewLoader` to `videoLoader` in `Components` [#1510](https://github.com/GetStream/stream-chat-swift/pull/1510)
 - Changes `ComposerVC.Content.command` to `let` instead of `var` and introduces `ComposerVC.content.addCommand` to add commands to a message for a safer approach [#1528](https://github.com/GetStream/stream-chat-swift/pull/1528)
+- `ChannelListController` can now correctly give a list of hidden channels [#1529](https://github.com/GetStream/stream-chat-swift/issues/1529)
 
 # [4.0.4](https://github.com/GetStream/stream-chat-swift/releases/tag/4.0.4)
 _October 06, 2021_
