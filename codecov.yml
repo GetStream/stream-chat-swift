@@ -1,11 +1,6 @@
-flags:
-  stream-chat:
-    paths:
-      - Sources/StreamChat/
-  stream-chat-ui:
-    paths:
-      - Sources/StreamChatUI/
 ignore:
+  - "Sources/StreamChatTestTools/**/*"
+  - "Sources/StreamChatUI/**/*" # ignore UI tests for now
   - "Tests/**/*"
   - "**/*_Tests.swift"
   - "**/*_Mock.swift"

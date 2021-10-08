@@ -74,6 +74,9 @@ jobs:
       run: bundle exec fastlane test
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v1.2.1
+      with:
+        flags: stream-chat
+        verbose: true
     - uses: 8398a7/action-slack@v3
       with:
         status: ${{ job.status }}
