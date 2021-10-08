@@ -132,6 +132,27 @@ extension ChannelDTO: EphemeralValuesContainer {
 // MARK: Saving and loading the data
 
 extension NSManagedObjectContext {
+    func saveChannelList(
+        payload: ChannelListPayload,
+        query: ChannelListQuery
+    ) throws -> [ChannelDTO] {
+        // The query will be saved during `saveChannel` call
+        // but in case this query does not have any channels,
+        // the query won't be saved, which will cause any future
+        // channels to not become linked to this query
+        _ = saveQuery(query: query)
+        
+        return try payload.channels.map { channelPayload in
+            let dto = try saveChannel(payload: channelPayload, query: query)
+            // The `hidden` field is only returned for `queryChannels` and `queryChannel` endpoints
+            // `saveChannel` is called for event payloads too,
+            // so we save the `hidden` field outside `saveChannel`
+            // Inexistence of hidden field implies false
+            dto.hidden = channelPayload.channel.hidden ?? false
+            return dto
+        }
+    }
+    
     func saveChannel(
         payload: ChannelDetailPayload,
         query: ChannelListQuery?
@@ -160,6 +181,15 @@ extension NSManagedObjectContext {
         dto.memberCount = Int64(clamping: payload.memberCount)
 
         dto.isFrozen = payload.isFrozen
+        
+        // Backend only returns a boolean for hidden state
+        // on channel query and channel list query
+        // Inexistence of this field implies `false`
+        // but only for those queries
+        if payload.hidden == true {
+            dto.hidden = true
+        }
+        
         dto.cooldownDuration = payload.cooldownDuration
 
         dto.team = try payload.team.map { try saveTeam(teamId: $0) }
@@ -191,14 +221,6 @@ extension NSManagedObjectContext {
         try payload.messages.forEach { _ = try saveMessage(payload: $0, channelDTO: dto) }
 
         dto.updateOldestMessageAt(payload: payload)
-        
-        // Backend only returns a boolean for hidden state on channel query
-        // If backend returns true, we know channel is hidden
-        // but don't know when. Our best guess is that channel is hidden when
-        // it's last updated
-        if payload.hidden == true && dto.hidden == false {
-            dto.hidden = true
-        }
 
         try payload.pinnedMessages.forEach {
             _ = try saveMessage(payload: $0, channelDTO: dto)

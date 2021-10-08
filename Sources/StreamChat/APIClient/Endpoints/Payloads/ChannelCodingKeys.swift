@@ -26,6 +26,8 @@ public enum ChannelCodingKeys: String, CodingKey, CaseIterable {
     case updatedAt = "updated_at"
     /// A deleted date.
     case deletedAt = "deleted_at"
+    /// Hidden flag.
+    case hidden
     /// A channel config.
     case config
     /// A frozen flag.
