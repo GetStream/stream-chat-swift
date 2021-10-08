@@ -1,4 +1,5 @@
 ignore:
+  - "StreamChatUI/**" # Ignore UI SDK for now
   - "Tests/**/*"
   - "**/*_Tests.swift"
   - "**/*_Mock.swift"
