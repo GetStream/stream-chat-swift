@@ -27,6 +27,15 @@ struct ChannelVisibilityEventMiddleware: EventMiddleware {
                     channelDTO.truncatedAt = event.createdAt
                 }
                 
+            // New Message will unhide the channel
+            // but we won't get `ChannelVisibleEvent` for this case
+            case let event as MessageNewEventDTO:
+                guard let channelDTO = session.channel(cid: event.cid) else {
+                    throw ClientError.ChannelDoesNotExist(cid: event.cid)
+                }
+                
+                channelDTO.hidden = false
+                
             default:
                 break
             }

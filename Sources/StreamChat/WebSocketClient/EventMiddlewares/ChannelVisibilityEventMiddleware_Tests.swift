@@ -179,6 +179,35 @@ final class ChannelVisibilityEventMiddleware_Tests: XCTestCase {
         XCTAssertEqual(channelDTO.truncatedAt, originalTruncatedAt)
         XCTAssert(forwardedEvent is ChannelVisibleEventDTO)
     }
+    
+    func test_messageNewEvent_resetsHiddenAtValue() throws {
+        let cid: ChannelId = .unique
+        
+        // Create the event
+        let event = try MessageNewEventDTO(
+            from: .init(
+                eventType: .messageNew,
+                cid: cid,
+                user: .dummy(userId: .unique),
+                message: .dummy(messageId: .unique, authorUserId: .unique),
+                createdAt: .unique
+            ) as EventPayload
+        )
+        
+        // Create a channel in the DB with `hidden` set to true
+        try database.writeSynchronously { session in
+            let dto = try session.saveChannel(payload: XCTestCase().dummyPayload(with: cid))
+            dto.hidden = true
+        }
+        
+        // Simulate incoming event
+        _ = middleware.handle(event: event, session: database.viewContext)
+        
+        let channelDTO = try XCTUnwrap(database.viewContext.channel(cid: cid))
+        
+        // Assert the `hidden` value is reset
+        XCTAssertFalse(channelDTO.hidden)
+    }
 }
 
 private struct TestEvent: Event, Equatable {
