@@ -244,7 +244,7 @@ class DemoChatChannelListRouter: ChatChannelListRouter {
                 }
             }),
             (
-                channelController.channel?.hiddenAt == nil ?
+                channelController.channel?.hidden == false ?
                     .init(title: "Hide channel", style: .default, handler: { _ in
                         channelController.hideChannel { error in
                             if let error = error {
