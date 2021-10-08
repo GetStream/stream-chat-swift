@@ -30,4 +30,15 @@ class TypingEventsSenderMock: TypingEventsSender {
         stopTyping_cid = cid
         stopTyping_completion = completion
     }
+    
+    func cleanUp() {
+        keystroke_cid = nil
+        keystroke_completion = nil
+        
+        startTyping_cid = nil
+        startTyping_completion = nil
+        
+        stopTyping_cid = nil
+        stopTyping_completion = nil
+    }
 }
