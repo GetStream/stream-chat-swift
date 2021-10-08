@@ -20,33 +20,33 @@ env:
   DEVELOPER_DIR: /Applications/Xcode_12.4.app/Contents/Developer # Use Xcode 12.4
 
 jobs:
-  automated-code-review:
-    name: Automated Code Review
-    runs-on: macos-latest
-    steps:
-      - uses: actions/checkout@v1
-      - uses: ./.github/actions/set-build-image-var
-      - name: Cache RubyGems
-        uses: actions/cache@v2
-        id: rubygem-cache
-        with:
-          path: vendor/bundle
-          key: ${{ runner.os }}-${{ env.ImageVersion }}-gem-${{ hashFiles('**/Gemfile.lock') }}
-          restore-keys: ${{ runner.os }}-${{ env.ImageVersion }}-gem-
-      - name: Cache Mint
-        uses: actions/cache@v2
-        id: mint-cache
-        with:
-          path: /usr/local/lib/mint
-          key: ${{ runner.os }}-mint-${{ hashFiles('./Mintfile') }}
-          restore-keys: ${{ runner.os }}-mint-
-      - uses: ./.github/actions/bootstrap
-      - name: Run Danger
-        run: bundle exec danger
-        env:
-          GITHUB_TOKEN: ${{ secrets.DANGER_GITHUB_API_TOKEN }}
-      - name: Run Linting
-        run: ./Scripts/run-linter.sh
+  # automated-code-review:
+  #   name: Automated Code Review
+  #   runs-on: macos-latest
+  #   steps:
+  #     - uses: actions/checkout@v1
+  #     - uses: ./.github/actions/set-build-image-var
+  #     - name: Cache RubyGems
+  #       uses: actions/cache@v2
+  #       id: rubygem-cache
+  #       with:
+  #         path: vendor/bundle
+  #         key: ${{ runner.os }}-${{ env.ImageVersion }}-gem-${{ hashFiles('**/Gemfile.lock') }}
+  #         restore-keys: ${{ runner.os }}-${{ env.ImageVersion }}-gem-
+  #     - name: Cache Mint
+  #       uses: actions/cache@v2
+  #       id: mint-cache
+  #       with:
+  #         path: /usr/local/lib/mint
+  #         key: ${{ runner.os }}-mint-${{ hashFiles('./Mintfile') }}
+  #         restore-keys: ${{ runner.os }}-mint-
+  #     - uses: ./.github/actions/bootstrap
+  #     - name: Run Danger
+  #       run: bundle exec danger
+  #       env:
+  #         GITHUB_TOKEN: ${{ secrets.DANGER_GITHUB_API_TOKEN }}
+  #     - name: Run Linting
+  #       run: ./Scripts/run-linter.sh
 
   build-and-test-debug:
     name: Test LLC (Debug)
@@ -89,88 +89,8 @@ jobs:
         MATRIX_CONTEXT: ${{ toJson(matrix) }}
       if: ${{ github.event_name == 'push' && failure() }}
 
-  build-and-test-ui-debug:
-    name: Test UI (Debug)
-    runs-on: macos-latest
-    steps:
-    - uses: actions/checkout@v1
-    - name: Set build image var
-      run: echo "ImageVersion=$ImageVersion"  >> $GITHUB_ENV
-    - name: Cache RubyGems
-      uses: actions/cache@v2
-      id: rubygem-cache
-      with:
-        path: vendor/bundle
-        key: ${{ runner.os }}-${{ env.ImageVersion }}-gem-${{ hashFiles('**/Gemfile.lock') }}
-        restore-keys: ${{ runner.os }}-${{ env.ImageVersion }}-gem-
-    - name: Cache Mint
-      uses: actions/cache@v2
-      id: mint-cache
-      with:
-        path: /usr/local/lib/mint
-        key: ${{ runner.os }}-mint-${{ hashFiles('./Mintfile') }}
-        restore-keys: ${{ runner.os }}-mint-
-    - uses: ./.github/actions/bootstrap
-    - name: Run UI Tests (Debug)
-      run: bundle exec fastlane test_ui device:"iPhone 12"
-    - uses: 8398a7/action-slack@v3
-      with:
-        status: ${{ job.status }}
-        text: "You shall not pass!"
-        job_name: "Test UI (Debug)"
-        fields: message,commit,author,action,workflow,job,took
-      env:
-        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-        MATRIX_CONTEXT: ${{ toJson(matrix) }}
-      if: ${{ github.event_name == 'push' && failure() }}
-
-  build-apps:
-    name: Build Sample + Demo Apps
-    runs-on: macos-latest
-    steps:
-    - uses: actions/checkout@v1
-    - name: Set build image var
-      run: echo "ImageVersion=$ImageVersion"  >> $GITHUB_ENV
-    - name: Cache RubyGems
-      uses: actions/cache@v2
-      id: rubygem-cache
-      with:
-        path: vendor/bundle
-        key: ${{ runner.os }}-${{ env.ImageVersion }}-gem-${{ hashFiles('**/Gemfile.lock') }}
-        restore-keys: ${{ runner.os }}-${{ env.ImageVersion }}-gem-
-    - name: Cache Mint
-      uses: actions/cache@v2
-      id: mint-cache
-      with:
-        path: /usr/local/lib/mint
-        key: ${{ runner.os }}-mint-${{ hashFiles('./Mintfile') }}
-        restore-keys: ${{ runner.os }}-mint-
-    - uses: ./.github/actions/bootstrap
-    - name: Build Sample App
-      run: bundle exec fastlane build_sample
-    - name: Build Demo App
-      run: bundle exec fastlane build_demo
-    - name: Build iMessageClone App
-      run: bundle exec fastlane build_imessage_clone
-    - name: Build SlackClone App
-      run: bundle exec fastlane build_slack_clone
-    - name: Build MessengerClone App
-      run: bundle exec fastlane build_messenger_clone
-    - name: Build YouTubeClone App
-      run: bundle exec fastlane build_youtube_clone
-    - uses: 8398a7/action-slack@v3
-      with:
-        status: ${{ job.status }}
-        text: "You shall not pass!"
-        job_name: "Build Sample + Demo Apps"
-        fields: message,commit,author,action,workflow,job,took
-      env:
-        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-        MATRIX_CONTEXT: ${{ toJson(matrix) }}
-      if: ${{ github.event_name == 'push' && failure() }}
-
-  # build-docs-snippets:
-  #   name: Build Docs Snippets
+  # build-and-test-ui-debug:
+  #   name: Test UI (Debug)
   #   runs-on: macos-latest
   #   steps:
   #   - uses: actions/checkout@v1
@@ -183,85 +103,165 @@ jobs:
   #       path: vendor/bundle
   #       key: ${{ runner.os }}-${{ env.ImageVersion }}-gem-${{ hashFiles('**/Gemfile.lock') }}
   #       restore-keys: ${{ runner.os }}-${{ env.ImageVersion }}-gem-
-  #   - name: Build Docs Snippets
-  #     run: bundle exec fastlane build_docs_snippets
+  #   - name: Cache Mint
+  #     uses: actions/cache@v2
+  #     id: mint-cache
+  #     with:
+  #       path: /usr/local/lib/mint
+  #       key: ${{ runner.os }}-mint-${{ hashFiles('./Mintfile') }}
+  #       restore-keys: ${{ runner.os }}-mint-
+  #   - uses: ./.github/actions/bootstrap
+  #   - name: Run UI Tests (Debug)
+  #     run: bundle exec fastlane test_ui device:"iPhone 12"
   #   - uses: 8398a7/action-slack@v3
   #     with:
   #       status: ${{ job.status }}
   #       text: "You shall not pass!"
-  #       job_name: "Build Docs Snippets"
+  #       job_name: "Test UI (Debug)"
   #       fields: message,commit,author,action,workflow,job,took
   #     env:
   #       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
   #       MATRIX_CONTEXT: ${{ toJson(matrix) }}
   #     if: ${{ github.event_name == 'push' && failure() }}
 
-  spm-integration:
-    name: Test Integration (SPM)
-    runs-on: macos-latest
-    steps:
-    - uses: actions/checkout@v1
-    - name: Set build image var
-      run: echo "ImageVersion=$ImageVersion"  >> $GITHUB_ENV
-    - name: Cache RubyGems
-      uses: actions/cache@v2
-      id: rubygem-cache
-      with:
-        path: vendor/bundle
-        key: ${{ runner.os }}-${{ env.ImageVersion }}-gem-${{ hashFiles('**/Gemfile.lock') }}
-        restore-keys: ${{ runner.os }}-${{ env.ImageVersion }}-gem-
-    - name: Cache Mint
-      uses: actions/cache@v2
-      id: mint-cache
-      with:
-        path: /usr/local/lib/mint
-        key: ${{ runner.os }}-mint-${{ hashFiles('./Mintfile') }}
-        restore-keys: ${{ runner.os }}-mint-
-    - uses: ./.github/actions/bootstrap
-    - name: Build Test Project
-      run: bundle exec fastlane spm_integration
-    - uses: 8398a7/action-slack@v3
-      with:
-        status: ${{ job.status }}
-        text: "You shall not pass!"
-        job_name: "Test Integration (SPM)"
-        fields: message,commit,author,action,workflow,job,took
-      env:
-        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-        MATRIX_CONTEXT: ${{ toJson(matrix) }}
-      if: ${{ github.event_name == 'push' && failure() }}
+  # build-apps:
+  #   name: Build Sample + Demo Apps
+  #   runs-on: macos-latest
+  #   steps:
+  #   - uses: actions/checkout@v1
+  #   - name: Set build image var
+  #     run: echo "ImageVersion=$ImageVersion"  >> $GITHUB_ENV
+  #   - name: Cache RubyGems
+  #     uses: actions/cache@v2
+  #     id: rubygem-cache
+  #     with:
+  #       path: vendor/bundle
+  #       key: ${{ runner.os }}-${{ env.ImageVersion }}-gem-${{ hashFiles('**/Gemfile.lock') }}
+  #       restore-keys: ${{ runner.os }}-${{ env.ImageVersion }}-gem-
+  #   - name: Cache Mint
+  #     uses: actions/cache@v2
+  #     id: mint-cache
+  #     with:
+  #       path: /usr/local/lib/mint
+  #       key: ${{ runner.os }}-mint-${{ hashFiles('./Mintfile') }}
+  #       restore-keys: ${{ runner.os }}-mint-
+  #   - uses: ./.github/actions/bootstrap
+  #   - name: Build Sample App
+  #     run: bundle exec fastlane build_sample
+  #   - name: Build Demo App
+  #     run: bundle exec fastlane build_demo
+  #   - name: Build iMessageClone App
+  #     run: bundle exec fastlane build_imessage_clone
+  #   - name: Build SlackClone App
+  #     run: bundle exec fastlane build_slack_clone
+  #   - name: Build MessengerClone App
+  #     run: bundle exec fastlane build_messenger_clone
+  #   - name: Build YouTubeClone App
+  #     run: bundle exec fastlane build_youtube_clone
+  #   - uses: 8398a7/action-slack@v3
+  #     with:
+  #       status: ${{ job.status }}
+  #       text: "You shall not pass!"
+  #       job_name: "Build Sample + Demo Apps"
+  #       fields: message,commit,author,action,workflow,job,took
+  #     env:
+  #       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+  #       MATRIX_CONTEXT: ${{ toJson(matrix) }}
+  #     if: ${{ github.event_name == 'push' && failure() }}
 
-  cocoapods-integration:
-    name: Test Integration (CocoaPods)
-    runs-on: macos-latest
-    steps:
-    - uses: actions/checkout@v1
-    - name: Set build image var
-      run: echo "ImageVersion=$ImageVersion"  >> $GITHUB_ENV
-    - name: Cache RubyGems
-      uses: actions/cache@v2
-      id: rubygem-cache
-      with:
-        path: vendor/bundle
-        key: ${{ runner.os }}-${{ env.ImageVersion }}-gem-${{ hashFiles('**/Gemfile.lock') }}
-        restore-keys: ${{ runner.os }}-${{ env.ImageVersion }}-gem-
-    - name: Cache Mint
-      uses: actions/cache@v2
-      id: mint-cache
-      with:
-        path: /usr/local/lib/mint
-        key: ${{ runner.os }}-mint-${{ hashFiles('./Mintfile') }}
-        restore-keys: ${{ runner.os }}-mint-
-    - uses: ./.github/actions/bootstrap
-    - name: Build Test Project
-      run: bundle exec fastlane cocoapods_integration
-    - uses: 8398a7/action-slack@v3
-      with:
-        status: ${{ job.status }}
-        text: "You shall not pass!"
-        job_name: "Test Integration (CocoaPods)"
-        fields: message,commit,author,action,workflow,job,took
-      env:
-        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-        MATRIX_CONTEXT: ${{ toJson(matrix) }}
-      if: ${{ github.event_name == 'push' && failure() }}
+  # # build-docs-snippets:
+  # #   name: Build Docs Snippets
+  # #   runs-on: macos-latest
+  # #   steps:
+  # #   - uses: actions/checkout@v1
+  # #   - name: Set build image var
+  # #     run: echo "ImageVersion=$ImageVersion"  >> $GITHUB_ENV
+  # #   - name: Cache RubyGems
+  # #     uses: actions/cache@v2
+  # #     id: rubygem-cache
+  # #     with:
+  # #       path: vendor/bundle
+  # #       key: ${{ runner.os }}-${{ env.ImageVersion }}-gem-${{ hashFiles('**/Gemfile.lock') }}
+  # #       restore-keys: ${{ runner.os }}-${{ env.ImageVersion }}-gem-
+  # #   - name: Build Docs Snippets
+  # #     run: bundle exec fastlane build_docs_snippets
+  # #   - uses: 8398a7/action-slack@v3
+  # #     with:
+  # #       status: ${{ job.status }}
+  # #       text: "You shall not pass!"
+  # #       job_name: "Build Docs Snippets"
+  # #       fields: message,commit,author,action,workflow,job,took
+  # #     env:
+  # #       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+  # #       MATRIX_CONTEXT: ${{ toJson(matrix) }}
+  # #     if: ${{ github.event_name == 'push' && failure() }}
+
+  # spm-integration:
+  #   name: Test Integration (SPM)
+  #   runs-on: macos-latest
+  #   steps:
+  #   - uses: actions/checkout@v1
+  #   - name: Set build image var
+  #     run: echo "ImageVersion=$ImageVersion"  >> $GITHUB_ENV
+  #   - name: Cache RubyGems
+  #     uses: actions/cache@v2
+  #     id: rubygem-cache
+  #     with:
+  #       path: vendor/bundle
+  #       key: ${{ runner.os }}-${{ env.ImageVersion }}-gem-${{ hashFiles('**/Gemfile.lock') }}
+  #       restore-keys: ${{ runner.os }}-${{ env.ImageVersion }}-gem-
+  #   - name: Cache Mint
+  #     uses: actions/cache@v2
+  #     id: mint-cache
+  #     with:
+  #       path: /usr/local/lib/mint
+  #       key: ${{ runner.os }}-mint-${{ hashFiles('./Mintfile') }}
+  #       restore-keys: ${{ runner.os }}-mint-
+  #   - uses: ./.github/actions/bootstrap
+  #   - name: Build Test Project
+  #     run: bundle exec fastlane spm_integration
+  #   - uses: 8398a7/action-slack@v3
+  #     with:
+  #       status: ${{ job.status }}
+  #       text: "You shall not pass!"
+  #       job_name: "Test Integration (SPM)"
+  #       fields: message,commit,author,action,workflow,job,took
+  #     env:
+  #       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+  #       MATRIX_CONTEXT: ${{ toJson(matrix) }}
+  #     if: ${{ github.event_name == 'push' && failure() }}
+
+  # cocoapods-integration:
+  #   name: Test Integration (CocoaPods)
+  #   runs-on: macos-latest
+  #   steps:
+  #   - uses: actions/checkout@v1
+  #   - name: Set build image var
+  #     run: echo "ImageVersion=$ImageVersion"  >> $GITHUB_ENV
+  #   - name: Cache RubyGems
+  #     uses: actions/cache@v2
+  #     id: rubygem-cache
+  #     with:
+  #       path: vendor/bundle
+  #       key: ${{ runner.os }}-${{ env.ImageVersion }}-gem-${{ hashFiles('**/Gemfile.lock') }}
+  #       restore-keys: ${{ runner.os }}-${{ env.ImageVersion }}-gem-
+  #   - name: Cache Mint
+  #     uses: actions/cache@v2
+  #     id: mint-cache
+  #     with:
+  #       path: /usr/local/lib/mint
+  #       key: ${{ runner.os }}-mint-${{ hashFiles('./Mintfile') }}
+  #       restore-keys: ${{ runner.os }}-mint-
+  #   - uses: ./.github/actions/bootstrap
+  #   - name: Build Test Project
+  #     run: bundle exec fastlane cocoapods_integration
+  #   - uses: 8398a7/action-slack@v3
+  #     with:
+  #       status: ${{ job.status }}
+  #       text: "You shall not pass!"
+  #       job_name: "Test Integration (CocoaPods)"
+  #       fields: message,commit,author,action,workflow,job,took
+  #     env:
+  #       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+  #       MATRIX_CONTEXT: ${{ toJson(matrix) }}
+  #     if: ${{ github.event_name == 'push' && failure() }}
