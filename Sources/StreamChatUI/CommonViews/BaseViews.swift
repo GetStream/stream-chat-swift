@@ -327,6 +327,14 @@ open class _NavigationBar: UINavigationBar, Customizable {
 }
 
 open class _ViewController: UIViewController, Customizable {
+    override open var next: UIResponder? {
+        // When `self` is being added to the parent controller, the default `next` implementation returns nil
+        // unless the `self.view` is added as a subview to `parent.view`. But `self.viewDidLoad` is
+        // called before the transition finishes so the subviews are created from `Components.default`.
+        // To prevent responder chain from being cutoff during `_ViewController` lifecycle we fallback to parent.
+        super.next ?? parent
+    }
+    
     override open func viewDidLoad() {
         super.viewDidLoad()
         

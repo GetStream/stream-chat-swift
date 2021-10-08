@@ -63,6 +63,9 @@ final class ChatMessageContentView_Tests: XCTestCase {
             layout: failedMessage.layout(isLastInGroup: true),
             components: components
         )
+        
+        // Add view to view heirarchy to trigger lifecycle methods.
+        UIView().addSubview(view)
 
         // Assert message content view is rendered correctly.
         AssertSnapshot(view)
@@ -145,12 +148,15 @@ final class ChatMessageContentView_Tests: XCTestCase {
 
         // When
         var components = Components.default
-        components.chatReactionsBubbleView = CustomChatReactionsBubbleView.self
+        components.messageReactionsBubbleView = CustomChatReactionsBubbleView.self
         let view = contentView(
             message: testMessage,
             layout: testMessage.layout(isLastInGroup: true),
             components: components
         )
+        
+        // Add view to view heirarchy to trigger lifecycle methods.
+        UIView().addSubview(view)
 
         // Then
         let reactionBubbleView = view.reactionsBubbleView

@@ -25,6 +25,19 @@ public final class ChatMessageCell: _TableViewCell {
         selectionStyle = .none
     }
     
+    override public func setUpLayout() {
+        super.setUpLayout()
+        
+        contentView.addSubview(messageContentView!)
+        
+        messageContentView!.pin(
+            anchors: [.leading, .top, .trailing, .bottom],
+            to: contentView
+        )
+        
+        updateBottomSpacing()
+    }
+    
     override public func setUpAppearance() {
         super.setUpAppearance()
         
@@ -55,14 +68,12 @@ public final class ChatMessageCell: _TableViewCell {
             return
         }
 
+        // Instantiate message content view of the given type
         messageContentView = contentViewClass.init().withoutAutoresizingMaskConstraints
-        // We add the content view to the view hierarchy before invoking `setUpLayoutIfNeeded`
-        // (where the subviews are instantiated and configured) to use `components` and `appearance`
-        // taken from the responder chain.
-        contentView.addSubview(messageContentView!)
-        messageContentView!.pin(anchors: [.leading, .top, .trailing, .bottom], to: contentView)
-        messageContentView!.setUpLayoutIfNeeded(options: options, attachmentViewInjectorType: attachmentViewInjectorType)
-        updateBottomSpacing()
+        messageContentView!.setUpLayoutIfNeeded(
+            options: options,
+            attachmentViewInjectorType: attachmentViewInjectorType
+        )
     }
     
     private func updateBottomSpacing() {
