@@ -72,7 +72,8 @@ jobs:
     - uses: ./.github/actions/bootstrap
     - name: Run LLC Tests (Debug)
       run: bundle exec fastlane test
-    - uses: codecov/codecov-action@v1
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v1.2.1
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
         flags: llc-tests
