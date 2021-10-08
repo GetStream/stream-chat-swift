@@ -149,6 +149,27 @@ final class ChatChannelVC_Tests: XCTestCase {
             variants: [.defaultLight]
         )
     }
+    
+    func test_childControllersUseComponentsTakenFromResponderChain() {
+        // Declare custom message list used by `ChatMessageListVC`
+        class TestMessageListView: ChatMessageListView {}
+        
+        // Declare custom composer view used by `ComposerVC`
+        class TestComposerView: ComposerView {}
+
+        // Create and inject components with test view types
+        var components = Components.mock
+        components.messageListView = TestMessageListView.self
+        components.messageComposerView = TestComposerView.self
+        vc.components = components
+        
+        // Simulate view loading
+        _ = vc.view
+        
+        // Assert child controllers have subviews of injected view types
+        XCTAssertTrue(vc.messageListVC.listView is TestMessageListView)
+        XCTAssertTrue(vc.messageComposerVC.composerView is TestComposerView)
+    }
 }
 
 private class ChatChannelHeaderView_Mock: ChatChannelHeaderView {

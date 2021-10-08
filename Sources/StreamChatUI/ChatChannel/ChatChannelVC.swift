@@ -80,11 +80,9 @@ open class ChatChannelVC:
 
         view.backgroundColor = appearance.colorPalette.background
 
-        messageListVC.view.translatesAutoresizingMaskIntoConstraints = false
         addChildViewController(messageListVC, targetView: view)
         messageListVC.view.pin(anchors: [.top, .leading, .trailing], to: view.safeAreaLayoutGuide)
 
-        messageComposerVC.view.translatesAutoresizingMaskIntoConstraints = false
         addChildViewController(messageComposerVC, targetView: view)
         messageComposerVC.view.pin(anchors: [.leading, .trailing], to: view)
         messageComposerVC.view.topAnchor.pin(equalTo: messageListVC.view.bottomAnchor).isActive = true
