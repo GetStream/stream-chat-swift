@@ -132,8 +132,6 @@ Complete list of all the subviews that make the `ComposerView`.
 
 The `ComposerVC.Content` is a struct that contains all the data that will be part of the composed message. It contains the current `text` of the message, the `attachments`, the `threadMessage` in case you are inside a Thread, the `command` if you are sending, for example, a Giphy, and the `state` of the composer to determine whether you are creating, editing or quoting a message.
 
-Some of the composer's content properties are mutable, like the `attachments`, `threadMessage`, `text`, and `command` properties. They can be directly changed since they represent data that do not depend on the state of the composer. On the other hand, some properties are immutable, and can only be changed through mutating functions on the `ComposerVC.Content`. This is to protect against bad states, for example, having the `editingMessage` property to `nil` but the `state = .edit`.
-
 ### State
 The composer has three states: `.new`, `.edit`, and `.quote`. The `.new` state is when the composer is creating a new message, the `.edit` state is when we are editing an existing message and changing its content, and finally, the `.quote` state is when we are replying to a message inline (not in a thread). In the table below we can see the composer in all three different states:
 
@@ -155,6 +153,9 @@ public var content: Content = .initial() {
 - `content.editMessage(message:)`: Set's the state to `.edit` and populates the `editingMessage` with the provided message.
 - `content.quoteMessage(message:)`: Set's the state to `.quote` and populates the `quotingMessage`.
 - `content.clear()`: Set's the state to `.new` and clears all the composer's content data.
+
+### Adding a Command
+When adding a command to a message we need to make sure we clean the attachments and the current text. This is why you can only add a command through the `ComposerVC.Content`'s `addCommand(command:)` mutating function which does this automatically for you.
 
 ### Properties
 

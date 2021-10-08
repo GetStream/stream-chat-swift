@@ -4,6 +4,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 # Upcoming
 
 ### 🐞 Fixed
+- Fixes left buttons not being hidden when a command was added in the composer [#1528](https://github.com/GetStream/stream-chat-swift/pull/1528)
+- Fixes attachments not being cleared when a command was added [#1528](https://github.com/GetStream/stream-chat-swift/pull/1528)
 - Fix `imageURL` is incorrectly encoded as `image_url` during `connectUser` [#1523](https://github.com/GetStream/stream-chat-swift/issues/1523)
 - Fix fallback to `Components.default` because of responder chain being broken in `ChatChannelVC/ChatThreadVC/ChatMessageCell` [#1519](https://github.com/GetStream/stream-chat-swift/issues/1519)
 
@@ -14,6 +16,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### 🔄 Changed
 - Rename `VideoPreviewLoader` type to `VideoLoading` and `videoPreviewLoader` to `videoLoader` in `Components` [#1510](https://github.com/GetStream/stream-chat-swift/pull/1510)
+- Changes `ComposerVC.Content.command` to `let` instead of `var` and introduces `ComposerVC.content.addCommand` to add commands to a message for a safer approach [#1528](https://github.com/GetStream/stream-chat-swift/pull/1528)
 
 # [4.0.4](https://github.com/GetStream/stream-chat-swift/releases/tag/4.0.4)
 _October 06, 2021_
