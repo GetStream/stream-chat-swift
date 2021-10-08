@@ -35,7 +35,8 @@ class ChannelController_Tests: XCTestCase {
         controllerCallbackQueueID = nil
         
         env?.channelUpdater?.cleanUp()
-        
+        env?.eventSender?.cleanUp()
+
         AssertAsync {
             Assert.canBeReleased(&controller)
             Assert.canBeReleased(&client)
@@ -2550,6 +2551,72 @@ class ChannelController_Tests: XCTestCase {
         }
         
         XCTAssertEqual(channelFeatureError.localizedDescription, "Channel feature: typing events is disabled for this channel.")
+    }
+    
+    func test_keystroke_keepsControllerAlive() throws {
+        // Save channel with typing events enabled to database
+        try client.mockDatabaseContainer.writeSynchronously {
+            try $0.saveChannel(
+                payload: self.dummyPayload(
+                    with: self.channelId,
+                    channelConfig: .init(typingEventsEnabled: true)
+                )
+            )
+        }
+        
+        // Simulate `sendKeystrokeEvent` call.
+        controller.sendKeystrokeEvent()
+        
+        // Create a weak ref and release a controller.
+        weak var weakController = controller
+        controller = nil
+        
+        // Assert controller is kept alive
+        AssertAsync.staysTrue(weakController != nil)
+    }
+    
+    func test_startTyping_keepsControllerAlive() throws {
+        // Save channel with typing events enabled to database
+        try client.mockDatabaseContainer.writeSynchronously {
+            try $0.saveChannel(
+                payload: self.dummyPayload(
+                    with: self.channelId,
+                    channelConfig: .init(typingEventsEnabled: true)
+                )
+            )
+        }
+        
+        // Simulate `sendStartTypingEvent` call.
+        controller.sendStartTypingEvent()
+        
+        // Create a weak ref and release a controller.
+        weak var weakController = controller
+        controller = nil
+        
+        // Assert controller is kept alive
+        AssertAsync.staysTrue(weakController != nil)
+    }
+    
+    func test_stopTyping_keepsControllerAlive() throws {
+        // Save channel with typing events enabled to database
+        try client.mockDatabaseContainer.writeSynchronously {
+            try $0.saveChannel(
+                payload: self.dummyPayload(
+                    with: self.channelId,
+                    channelConfig: .init(typingEventsEnabled: true)
+                )
+            )
+        }
+        
+        // Simulate `sendStopTypingEvent` call.
+        controller.sendStopTypingEvent()
+        
+        // Create a weak ref and release a controller.
+        weak var weakController = controller
+        controller = nil
+        
+        // Assert controller is kept alive
+        AssertAsync.staysTrue(weakController != nil)
     }
     
     // MARK: - Message sending

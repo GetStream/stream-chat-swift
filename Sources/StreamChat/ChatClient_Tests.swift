@@ -586,6 +586,24 @@ class ChatClient_Tests: XCTestCase {
         XCTAssert(testEnv.apiClient?.init_requestEncoder is TestRequestEncoder)
     }
     
+    func test_disconnect_flushesRequestsQueue() {
+        // Create a chat client
+        let client = ChatClient(
+            config: inMemoryStorageConfig,
+            workerBuilders: workerBuilders,
+            eventWorkerBuilders: [],
+            environment: testEnv.environment
+        )
+        
+        // Disconnect chat client
+        client.disconnect()
+        
+        // Assert `flushRequestsQueue` is triggered, client is not recreated
+        XCTAssertTrue(testEnv.apiClient! === client.apiClient)
+        XCTAssertEqual(testEnv.apiClient!.flushRequestsQueue_timeout, 0)
+        XCTAssertNil(testEnv.apiClient!.flushRequestsQueue_itemAction)
+    }
+    
     // MARK: - Background workers tests
     
     func test_productionClientIsInitalizedWithAllMandatoryBackgroundWorkers() {
