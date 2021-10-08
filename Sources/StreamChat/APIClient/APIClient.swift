@@ -6,7 +6,7 @@ import Foundation
 
 /// An object allowing making request to Stream Chat servers.
 class APIClient {
-    private struct RequestsQueueItem {
+    struct RequestsQueueItem {
         let requestAction: () -> Void
         let failureAction: () -> Void
     }
@@ -163,9 +163,8 @@ class APIClient {
 
             // The moment we queue a first request for execution later we also set a timeout for 60 seconds
             // after which we fail all the queued requests
-            self.requestsAccessQueue.asyncAfter(deadline: .now() + timeout) {
-                self.requestsQueue.forEach { $0.failureAction() }
-                self.requestsQueue = []
+            self.flushRequestsQueue(after: timeout) {
+                $0.failureAction()
             }
             
             self.tokenRefresher(ClientError.ExpiredToken()) { [weak self] in
@@ -174,10 +173,28 @@ class APIClient {
                 }
 
                 self.isRefreshingToken = false
-                let queue = self.requestsQueue
-                self.requestsQueue = []
-                queue.forEach { $0.requestAction() }
+                self.flushRequestsQueue {
+                    $0.requestAction()
+                }
             }
+        }
+    }
+    
+    /// Flushes the request queue after the given timeout.
+    ///
+    /// - Parameters:
+    ///   - timeout: The timeout when the request queue has to be flushed.
+    ///   - itemAction: The item action invoked for every request item when the queue is flushed.
+    func flushRequestsQueue(
+        after timeout: TimeInterval = 0,
+        itemAction: ((RequestsQueueItem) -> Void)? = nil
+    ) {
+        requestsAccessQueue.asyncAfter(deadline: .now() + timeout) { [weak self] in
+            guard let self = self else { return }
+            
+            let queue = self.requestsQueue
+            self.requestsQueue = []
+            queue.forEach { itemAction?($0) }
         }
     }
 }

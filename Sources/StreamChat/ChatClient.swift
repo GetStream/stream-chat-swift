@@ -65,9 +65,7 @@ public class ChatClient {
     }()
     
     /// The `APIClient` instance `Client` uses to communicate with Stream REST API.
-    lazy var apiClient: APIClient = makeAPIClient()
-        
-    private func makeAPIClient() -> APIClient {
+    lazy var apiClient: APIClient = {
         var encoder = environment.requestEncoderBuilder(config.baseURL.restAPIBaseURL, config.apiKey)
         encoder.connectionDetailsProviderDelegate = self
         
@@ -91,7 +89,7 @@ public class ChatClient {
             }
         )
         return apiClient
-    }
+    }()
     
     /// The `WebSocketClient` instance `Client` uses to communicate with Stream WS servers.
     lazy var webSocketClient: WebSocketClient? = {
@@ -348,7 +346,7 @@ public class ChatClient {
         clientUpdater.disconnect()
         userConnectionProvider = nil
         unsubscribeFromNotifications()
-        apiClient = makeAPIClient()
+        apiClient.flushRequestsQueue()
     }
 
     func fetchCurrentUserIdFromDatabase() -> UserId? {
