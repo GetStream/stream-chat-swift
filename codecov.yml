@@ -11,5 +11,6 @@ ignore:
   - "**/*_Mock.swift"
   - "**/*_Vendor.swift"
   - "**/Generated/*.swift"
+  - "**/Deprecations.swift"
 github_checks:
     annotations: false
