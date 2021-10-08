@@ -29,22 +29,7 @@ class ChannelListUpdater: Worker {
 //                            try session.deleteChannels(query: channelListQuery)
 //                        }
                         
-                        // The query will be saved during `saveChannel` call
-                        // but in case this query does not have any channels,
-                        // the query won't be saved, which will cause any future
-                        // channels to not become linked to this query
-                        session.saveQuery(query: channelListQuery)
-                        
-                        let shouldMarkAsHidden = channelListQuery.filter.hiddenFilterValue == true
-                        try channelListPayload.channels.forEach {
-                            let dto = try session.saveChannel(payload: $0, query: channelListQuery)
-                            // Since backend doesn't send `hidden_at` field for channels,
-                            // we need to work around it by marking channels as `hidden`
-                            // if the user queries for `hidden == true`
-                            if shouldMarkAsHidden {
-                                dto.hidden = true
-                            }
-                        }
+                        try session.saveChannelList(payload: channelListPayload, query: channelListQuery)
                     } completion: { error in
                         if let error = error {
                             log.error("Failed to save `ChannelListPayload` to the database. Error: \(error)")

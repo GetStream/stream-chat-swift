@@ -106,6 +106,12 @@ struct ChannelDetailPayload: Decodable {
     /// Checks if the channel is frozen.
     public let isFrozen: Bool
     
+    /// Checks if the channel is hidden.
+    /// Backend only sends this field for `QueryChannel` and `QueryChannels` API calls,
+    /// but not for events.
+    /// Missing `hidden` field doesn't mean `false` for this reason.
+    let hidden: Bool?
+    
     let members: [MemberPayload]?
     
     let memberCount: Int
@@ -135,6 +141,10 @@ struct ChannelDetailPayload: Decodable {
         updatedAt = try container.decode(Date.self, forKey: .updatedAt)
         deletedAt = try container.decodeIfPresent(Date.self, forKey: .deletedAt)
         createdBy = try container.decodeIfPresent(UserPayload.self, forKey: .createdBy)
+        // For `hidden`, we don't fallback to `false`
+        // since this field is not sent for all API calls and for events
+        // We can't assume anything regarding this flag when it's absent
+        hidden = try container.decodeIfPresent(Bool.self, forKey: .hidden)
         lastMessageAt = try container.decodeIfPresent(Date.self, forKey: .lastMessageAt)
         isFrozen = try container.decode(Bool.self, forKey: .frozen)
         team = try container.decodeIfPresent(String.self, forKey: .team)
@@ -164,6 +174,7 @@ struct ChannelDetailPayload: Decodable {
         createdAt: Date,
         deletedAt: Date?,
         updatedAt: Date,
+        hidden: Bool? = nil,
         createdBy: UserPayload?,
         config: ChannelConfig,
         isFrozen: Bool,
@@ -188,6 +199,7 @@ struct ChannelDetailPayload: Decodable {
         self.team = team
         self.members = members
         self.cooldownDuration = cooldownDuration
+        self.hidden = hidden
     }
 }
 
