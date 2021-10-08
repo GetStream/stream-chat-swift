@@ -73,11 +73,7 @@ jobs:
     - name: Run LLC Tests (Debug)
       run: bundle exec fastlane test
     - name: Upload coverage to Codecov
-      uses: codecov/codecov-action@v1
-      with:
-        token: ${{ secrets.CODECOV_TOKEN }}
-        fail_ci_if_error: true # if codecov upload fails, should fail ci
-        verbose: true
+      uses: codecov/codecov-action@v1.2.1
     - uses: 8398a7/action-slack@v3
       with:
         status: ${{ job.status }}
