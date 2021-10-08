@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Fix `imageURL` is incorrectly encoded as `image_url` during `connectUser` [#1523](https://github.com/GetStream/stream-chat-swift/pull/1523)
 - Fix fallback to `Components.default` because of responder chain being broken in `ChatChannelVC/ChatThreadVC/ChatMessageCell` [#1519](https://github.com/GetStream/stream-chat-swift/pull/1519)
 - Fix crash after `ChatClient` disconnection [#1532](https://github.com/GetStream/stream-chat-swift/pull/1532)
+- Fix when sending a new message UI flickers [#1536](https://github.com/GetStream/stream-chat-swift/pull/1536)
 
 ### ✅ Added
 - Make it possible to customize video asset (e.g. include custom HTTP header) before it's preview/content is loaded [#1510](https://github.com/GetStream/stream-chat-swift/pull/1510)
