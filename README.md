@@ -2,6 +2,8 @@
   <img src="ReadmeAssets/iOS_Chat_Messaging.png"/>
 </p>
 
+TEST
+
 <p align="center">
   <a href="https://cocoapods.org/pods/StreamChatUI"><img src="https://img.shields.io/cocoapods/v/StreamChatUI.svg" /></a>
   <a href="https://github.com/Carthage/Carthage"><img src="https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat" /></a>
