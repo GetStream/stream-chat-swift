@@ -220,6 +220,8 @@ lane :testflight_build do
     output_directory: "archives"
   )
 
+  changelog = "This is the official sample app built with Stream’s iOS Chat SDK v4.0. It’s designed to highlight engaging features and new improvements to the SDK, but remember that this is just one possible implementation. You can start your own by borrowing and customizing the code from this sample, or build something completely different using Stream’s components."
+
   pilot(
     api_key: api_key,
     team_id: "118902954",
@@ -228,7 +230,8 @@ lane :testflight_build do
     ipa: "archives/ChatSample.ipa",
     groups: ['Public'],
     distribute_external: true,
-    reject_build_waiting_for_review: true
+    reject_build_waiting_for_review: true,
+    changelog: changelog
   )
 end
 
