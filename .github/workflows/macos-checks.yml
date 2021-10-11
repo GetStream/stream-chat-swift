@@ -22,7 +22,7 @@ env:
 jobs:
   build-and-test-release-macos:
     name: Run Tests macOS (Release)
-    runs-on: macos-latest
+    runs-on: macos-11
     steps:
     - name: Install Bot SSH Key
       uses: webfactory/ssh-agent@v0.4.1
@@ -62,7 +62,7 @@ jobs:
 
   build-and-test-debug-macos:
     name: Run Tests macOS (Debug)
-    runs-on: macos-latest
+    runs-on: macos-11
     steps:
     - name: Install Bot SSH Key
       uses: webfactory/ssh-agent@v0.4.1
