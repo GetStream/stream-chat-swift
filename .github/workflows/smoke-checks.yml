@@ -71,7 +71,7 @@ jobs:
         restore-keys: ${{ runner.os }}-mint-
     - uses: ./.github/actions/bootstrap
     - name: Run LLC Tests (Debug)
-      run: bundle exec fastlane test
+      run: bundle exec fastlane test device:"iPhone 12"
     - uses: codecov/codecov-action@v1
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
