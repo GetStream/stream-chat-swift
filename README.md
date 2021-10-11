@@ -2,7 +2,7 @@
   <img src="ReadmeAssets/iOS_Chat_Messaging.png"/>
 </p>
 
-TEST
+TEST 2
 
 <p align="center">
   <a href="https://cocoapods.org/pods/StreamChatUI"><img src="https://img.shields.io/cocoapods/v/StreamChatUI.svg" /></a>
