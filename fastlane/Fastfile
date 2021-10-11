@@ -221,6 +221,8 @@ lane :testflight_build do
     output_directory: "archives"
   )
 
+  changelog = "This is the official sample app built with Stream’s iOS Chat SDK v4.0. It’s designed to highlight engaging features and new improvements to the SDK, but remember that this is just one possible implementation. You can start your own by borrowing and customizing the code from this sample, or build something completely different using Stream’s components."
+
   pilot(
     api_key: api_key,
     team_id: "118902954",
@@ -229,7 +231,8 @@ lane :testflight_build do
     ipa: "archives/ChatSample.ipa",
     groups: ['Public'],
     distribute_external: true,
-    reject_build_waiting_for_review: true
+    reject_build_waiting_for_review: true,
+    changelog: changelog
   )
 end
 
@@ -497,5 +500,43 @@ lane :cocoapods_integration do
     skip_archive: true,
     clean: true,
     destination: "generic/platform=iOS Simulator"
+  )
+end
+
+desc "Build and upload DemoApp to Emerge"
+lane :emerge_upload do
+  # Build and upload Release config
+  build_ios_app(
+    project: "StreamChat.xcodeproj",
+    scheme: "DemoApp",
+    skip_package_ipa: true,
+    skip_archive: false,
+    clean: true,
+  )
+
+  if is_ci
+    if ENV["GITHUB_EVENT_NAME"] == 'pull_request'
+      pr_num = ENV["GITHUB_PR_NUM"]
+      # The commit SHA has to be passed from workflow
+      # see https://stackoverflow.com/questions/68061051/get-commit-sha-in-github-actions
+      sha = ENV["GITHUB_COMMIT_SHA"]
+    else
+      # This is a PR merge to main
+      pr_num = nil
+      sha = ENV["GITHUB_SHA"]
+    end
+    repo_name = ENV["GITHUB_REPOSITORY"]
+  else
+    pr_num = nil
+    commit = last_git_commit
+    sha = commit[:commit_hash]
+    repo_name = 'GetStream/stream-chat-swift'
+  end
+
+  emerge(
+    build_type: "release",
+    repo_name: repo_name,
+    pr_number: pr_num,
+    sha: sha
   )
 end

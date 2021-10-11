@@ -155,6 +155,8 @@ GEM
       xcodeproj (>= 1.13.0, < 2.0.0)
       xcpretty (~> 0.3.0)
       xcpretty-travis-formatter (>= 0.0.3)
+    fastlane-plugin-emerge (0.4.0)
+      faraday (~> 1.1)
     fastlane-plugin-firebase_app_distribution (0.3.1)
     fastlane-plugin-versioning (0.5.0)
     ffi (1.13.1)
@@ -305,6 +307,7 @@ DEPENDENCIES
   danger
   danger-commit_lint
   fastlane
+  fastlane-plugin-emerge
   fastlane-plugin-firebase_app_distribution
   fastlane-plugin-versioning
   jazzy
