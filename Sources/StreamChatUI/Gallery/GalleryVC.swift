@@ -316,6 +316,7 @@ open class GalleryVC:
             activityItems: [shareItem],
             applicationActivities: nil
         )
+        activityViewController.popoverPresentationController?.sourceView = shareButton
         present(activityViewController, animated: true)
     }
     
