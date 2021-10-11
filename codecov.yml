@@ -1,8 +1,14 @@
+coverage:
+  precision: 2
+  round: down
+  range: "70...100"
+
 ignore:
   - "Tests/**/*"
   - "**/*_Tests.swift"
   - "**/*_Mock.swift"
   - "**/*_Vendor.swift"
   - "**/Generated/*.swift"
+
 github_checks:
     annotations: false
