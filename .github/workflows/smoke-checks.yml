@@ -111,8 +111,14 @@ jobs:
         key: ${{ runner.os }}-mint-${{ hashFiles('./Mintfile') }}
         restore-keys: ${{ runner.os }}-mint-
     - uses: ./.github/actions/bootstrap
+    - name: Prepare iPhone 12 with iOS 14.4
+      uses: ./.github/actions/prepare-ios-simulator
+      with:
+        device: "iPhone 12"
+        ios: "14.4"
+        xcode: "12.4"
     - name: Run UI Tests (Debug)
-      run: bundle exec fastlane test_ui device:"iPhone 12"
+      run: bundle exec fastlane test_ui device:"iPhone 12 (14.4)"
     - uses: 8398a7/action-slack@v3
       with:
         status: ${{ job.status }}
