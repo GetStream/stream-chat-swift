@@ -11,6 +11,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Fix crash after `ChatClient` disconnection [#1532](https://github.com/GetStream/stream-chat-swift/pull/1532)
 - Fix when sending a new message UI flickers [#1536](https://github.com/GetStream/stream-chat-swift/pull/1536)
 - Fix crash on `GalleryVC` happening on iPad when share button is clicked [#1537](https://github.com/GetStream/stream-chat-swift/pull/1537)
+- Fix pending API requests being cancelled when client is connecting for the first time [#1538](https://github.com/GetStream/stream-chat-swift/issues/1538)
 
 ### ✅ Added
 - Make it possible to customize video asset (e.g. include custom HTTP header) before it's preview/content is loaded [#1510](https://github.com/GetStream/stream-chat-swift/pull/1510)

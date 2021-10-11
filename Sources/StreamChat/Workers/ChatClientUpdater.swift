@@ -15,7 +15,21 @@ class ChatClientUpdater {
         userInfo: UserInfo?,
         newToken: Token
     ) throws {
-        guard newToken.userId == client.currentUserId else {
+        guard let currentUserId = client.currentUserId else {
+            // Set the current user id
+            client.currentUserId = newToken.userId
+            // Set the token
+            client.currentToken = newToken
+            // Set the web-socket endpoint
+            client.webSocketClient?.connectEndpoint = .webSocketConnect(userInfo: userInfo ?? .init(id: newToken.userId))
+            // Create background workers
+            client.createBackgroundWorkers()
+            // Provide the token to pending API requests
+            client.completeTokenWaiters(token: newToken)
+            return
+        }
+        
+        guard newToken.userId == currentUserId else {
             // Cancel all API requests since they are related to the previous user.
             client.completeTokenWaiters(token: nil)
 
