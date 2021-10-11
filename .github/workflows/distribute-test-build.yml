@@ -16,7 +16,7 @@ env:
 jobs:
   demo:
     name: Distribute Demo App
-    runs-on: macos-latest
+    runs-on: macos-11
     steps:
     - name: Install Bot SSH Key
       uses: webfactory/ssh-agent@v0.4.1
