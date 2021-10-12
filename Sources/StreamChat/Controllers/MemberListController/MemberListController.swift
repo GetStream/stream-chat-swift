@@ -40,7 +40,7 @@ public class ChatChannelMemberListController: DataController, DelegateCallable, 
     private lazy var memberListObserver = createMemberListObserver()
     
     /// The type-erased delegate.
-    var multicastDelegate: MulticastDelegate<AnyChatChannelMemberListControllerDelegate> = .init() {
+    var multicastDelegate: MulticastDelegate<ChatChannelMemberListControllerDelegate> = .init() {
         didSet {
             stateMulticastDelegate.mainDelegate = multicastDelegate.mainDelegate
             stateMulticastDelegate.additionalDelegates = multicastDelegate.additionalDelegates
@@ -86,8 +86,8 @@ public class ChatChannelMemberListController: DataController, DelegateCallable, 
     /// - Parameter delegate: The object used as a delegate. It's referenced weakly, so you need to keep the object
     /// alive if you want keep receiving updates.
     ///
-    public func setDelegate<Delegate: ChatChannelMemberListControllerDelegate>(_ delegate: Delegate) {
-        multicastDelegate.mainDelegate = AnyChatChannelMemberListControllerDelegate(delegate)
+    public func setDelegate(_ delegate: ChatChannelMemberListControllerDelegate) {
+        multicastDelegate.mainDelegate = delegate
     }
     
     private func createMemberListUpdater() -> ChannelMemberListUpdater {
@@ -174,8 +174,8 @@ extension ChatChannelMemberListController {
 extension ChatChannelMemberListController {
     /// Set the delegate of `ChatChannelMemberListController` to observe the changes in the system.
     public var delegate: ChatChannelMemberListControllerDelegate? {
-        get { multicastDelegate.mainDelegate?.wrappedDelegate as? ChatChannelMemberListControllerDelegate }
-        set { multicastDelegate.mainDelegate = AnyChatChannelMemberListControllerDelegate(newValue) }
+        get { multicastDelegate.mainDelegate }
+        set { multicastDelegate.mainDelegate = newValue }
     }
 }
 
@@ -200,69 +200,4 @@ public extension ChatChannelMemberListControllerDelegate {
         _ controller: ChatChannelMemberListController,
         didChangeMembers changes: [ListChange<ChatChannelMember>]
     ) {}
-}
-
-// MARK: - Delegate type eraser
-
-final class AnyChatChannelMemberListControllerDelegate: ChatChannelMemberListControllerDelegate {
-    private let _controllerDidChangeState: (DataController, DataController.State) -> Void
-    
-    private let _controllerDidChangeMembers: (
-        ChatChannelMemberListController,
-        [ListChange<ChatChannelMember>]
-    ) -> Void
-    
-    weak var wrappedDelegate: AnyObject?
-    
-    init(
-        wrappedDelegate: AnyObject?,
-        controllerDidChangeState: @escaping (DataController, DataController.State) -> Void,
-        controllerDidChangeMembers: @escaping (
-            ChatChannelMemberListController,
-            [ListChange<ChatChannelMember>]
-        ) -> Void
-    ) {
-        self.wrappedDelegate = wrappedDelegate
-        _controllerDidChangeState = controllerDidChangeState
-        _controllerDidChangeMembers = controllerDidChangeMembers
-    }
-
-    func controller(_ controller: DataController, didChangeState state: DataController.State) {
-        _controllerDidChangeState(controller, state)
-    }
-
-    func memberListController(
-        _ controller: ChatChannelMemberListController,
-        didChangeMembers changes: [ListChange<ChatChannelMember>]
-    ) {
-        _controllerDidChangeMembers(controller, changes)
-    }
-}
-
-extension AnyChatChannelMemberListControllerDelegate {
-    convenience init<Delegate: ChatChannelMemberListControllerDelegate>(_ delegate: Delegate) {
-        self.init(
-            wrappedDelegate: delegate,
-            controllerDidChangeState: { [weak delegate] in
-                delegate?.controller($0, didChangeState: $1)
-            },
-            controllerDidChangeMembers: { [weak delegate] in
-                delegate?.memberListController($0, didChangeMembers: $1)
-            }
-        )
-    }
-}
-
-extension AnyChatChannelMemberListControllerDelegate {
-    convenience init(_ delegate: ChatChannelMemberListControllerDelegate?) {
-        self.init(
-            wrappedDelegate: delegate,
-            controllerDidChangeState: { [weak delegate] in
-                delegate?.controller($0, didChangeState: $1)
-            },
-            controllerDidChangeMembers: { [weak delegate] in
-                delegate?.memberListController($0, didChangeMembers: $1)
-            }
-        )
-    }
 }

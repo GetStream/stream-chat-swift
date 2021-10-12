@@ -29,7 +29,7 @@ extension ChatMessageController {
             self.controller = controller
             state = controller.state
             
-            controller.multicastDelegate.additionalDelegates.append(AnyChatMessageControllerDelegate(self))
+            controller.multicastDelegate.additionalDelegates.append(self)
             
             message = controller.message
             replies = controller.replies

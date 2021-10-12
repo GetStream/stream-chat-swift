@@ -34,7 +34,7 @@ extension ChatChannelMemberController {
             self.controller = controller
             state = .init(controller.state)
             
-            controller.multicastDelegate.additionalDelegates.append(AnyChatChannelMemberControllerDelegate(self))
+            controller.multicastDelegate.additionalDelegates.append(self)
         }
     }
 }

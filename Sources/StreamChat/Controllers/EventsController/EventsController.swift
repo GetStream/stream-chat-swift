@@ -41,8 +41,8 @@ public class EventsController: Controller, DelegateCallable {
     
     /// A delegate the controller notifies about the updates.
     public var delegate: EventsControllerDelegate? {
-        get { (multicastDelegate.mainDelegate as? AnyEventsControllerDelegate)?.delegate }
-        set { multicastDelegate.mainDelegate = newValue.map(AnyEventsControllerDelegate.init) }
+        get { multicastDelegate.mainDelegate }
+        set { multicastDelegate.mainDelegate = newValue }
     }
             
     /// Create a new instance of `EventsController`.
@@ -78,19 +78,5 @@ public class EventsController: Controller, DelegateCallable {
     /// - Returns: A result saying if the event should be processed.
     func shouldProcessEvent(_ event: Event) -> Bool {
         true
-    }
-}
-
-/// An wrapper around `EventsControllerDelegate` which holds a weak reference
-/// to the underlaying delegate.
-class AnyEventsControllerDelegate: EventsControllerDelegate {
-    weak var delegate: EventsControllerDelegate?
-   
-    init(delegate: EventsControllerDelegate) {
-        self.delegate = delegate
-    }
-    
-    func eventsController(_ controller: EventsController, didReceiveEvent event: Event) {
-        delegate?.eventsController(controller, didReceiveEvent: event)
     }
 }

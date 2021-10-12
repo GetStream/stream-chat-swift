@@ -112,8 +112,7 @@ public class ChatMessageSearchController: DataController, DelegateCallable, Data
     @available(iOS 13, *)
     lazy var basePublishers: BasePublishers = .init(controller: self)
 
-    /// A type-erased delegate.
-    var multicastDelegate: MulticastDelegate<AnyMessageSearchControllerDelegate> = .init() {
+    var multicastDelegate: MulticastDelegate<ChatMessageSearchControllerDelegate> = .init() {
         didSet {
             stateMulticastDelegate.mainDelegate = multicastDelegate.mainDelegate
             stateMulticastDelegate.additionalDelegates = multicastDelegate.additionalDelegates
@@ -128,7 +127,7 @@ public class ChatMessageSearchController: DataController, DelegateCallable, Data
     /// - Parameter delegate: The object used as a delegate. It's referenced weakly, so you need to keep the object
     /// alive if you want keep receiving updates.
     public func setDelegate<Delegate: ChatMessageSearchControllerDelegate>(_ delegate: Delegate) {
-        multicastDelegate.mainDelegate = AnyMessageSearchControllerDelegate(delegate)
+        multicastDelegate.mainDelegate = delegate
     }
 
     /// Searches messages for the given text.
@@ -232,8 +231,8 @@ extension ChatMessageSearchController {
 extension ChatMessageSearchController {
     /// Set the delegate of `ChatMessageSearchController` to observe the changes in the system.
     public weak var delegate: ChatMessageSearchControllerDelegate? {
-        get { multicastDelegate.mainDelegate?.wrappedDelegate as? ChatMessageSearchControllerDelegate }
-        set { multicastDelegate.mainDelegate = AnyMessageSearchControllerDelegate(newValue) }
+        get { multicastDelegate.mainDelegate }
+        set { multicastDelegate.mainDelegate = newValue }
     }
 }
 
@@ -248,56 +247,4 @@ public protocol ChatMessageSearchControllerDelegate: DataControllerStateDelegate
         _ controller: ChatMessageSearchController,
         didChangeMessages changes: [ListChange<ChatMessage>]
     )
-}
-
-// MARK: - Delegate type eraser
-
-class AnyMessageSearchControllerDelegate: ChatMessageSearchControllerDelegate {
-    private var _controllerDidChangeMessages: (ChatMessageSearchController, [ListChange<ChatMessage>])
-        -> Void
-    private var _controllerDidChangeState: (DataController, DataController.State) -> Void
-
-    weak var wrappedDelegate: AnyObject?
-
-    init(
-        wrappedDelegate: AnyObject?,
-        controllerDidChangeState: @escaping (DataController, DataController.State) -> Void,
-        controllerDidChangeMessages: @escaping (ChatMessageSearchController, [ListChange<ChatMessage>])
-            -> Void
-    ) {
-        self.wrappedDelegate = wrappedDelegate
-        _controllerDidChangeState = controllerDidChangeState
-        _controllerDidChangeMessages = controllerDidChangeMessages
-    }
-
-    func controller(_ controller: DataController, didChangeState state: DataController.State) {
-        _controllerDidChangeState(controller, state)
-    }
-
-    func controller(
-        _ controller: ChatMessageSearchController,
-        didChangeMessages changes: [ListChange<ChatMessage>]
-    ) {
-        _controllerDidChangeMessages(controller, changes)
-    }
-}
-
-extension AnyMessageSearchControllerDelegate {
-    convenience init<Delegate: ChatMessageSearchControllerDelegate>(_ delegate: Delegate) {
-        self.init(
-            wrappedDelegate: delegate,
-            controllerDidChangeState: { [weak delegate] in delegate?.controller($0, didChangeState: $1) },
-            controllerDidChangeMessages: { [weak delegate] in delegate?.controller($0, didChangeMessages: $1) }
-        )
-    }
-}
-
-extension AnyMessageSearchControllerDelegate {
-    convenience init(_ delegate: ChatMessageSearchControllerDelegate?) {
-        self.init(
-            wrappedDelegate: delegate,
-            controllerDidChangeState: { [weak delegate] in delegate?.controller($0, didChangeState: $1) },
-            controllerDidChangeMessages: { [weak delegate] in delegate?.controller($0, didChangeMessages: $1) }
-        )
-    }
 }

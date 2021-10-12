@@ -42,8 +42,7 @@ public class ChatUserListController: DataController, DelegateCallable, DataStore
             client.apiClient
         )
 
-    /// A type-erased delegate.
-    var multicastDelegate: MulticastDelegate<AnyUserListControllerDelegate> = .init() {
+    var multicastDelegate: MulticastDelegate<ChatUserListControllerDelegate> = .init() {
         didSet {
             stateMulticastDelegate.mainDelegate = multicastDelegate.mainDelegate
             stateMulticastDelegate.additionalDelegates = multicastDelegate.additionalDelegates
@@ -127,8 +126,8 @@ public class ChatUserListController: DataController, DelegateCallable, DataStore
     /// - Parameter delegate: The object used as a delegate. It's referenced weakly, so you need to keep the object
     /// alive if you want keep receiving updates.
     ///
-    public func setDelegate<Delegate: ChatUserListControllerDelegate>(_ delegate: Delegate) {
-        multicastDelegate.mainDelegate = AnyUserListControllerDelegate(delegate)
+    public func setDelegate(_ delegate: ChatUserListControllerDelegate) {
+        multicastDelegate.mainDelegate = delegate
     }
 }
 
@@ -175,8 +174,8 @@ extension ChatUserListController {
 extension ChatUserListController {
     /// Set the delegate of `UserListController` to observe the changes in the system.
     public weak var delegate: ChatUserListControllerDelegate? {
-        get { multicastDelegate.mainDelegate?.wrappedDelegate as? ChatUserListControllerDelegate }
-        set { multicastDelegate.mainDelegate = AnyUserListControllerDelegate(newValue) }
+        get { multicastDelegate.mainDelegate }
+        set { multicastDelegate.mainDelegate = newValue }
     }
 }
 
@@ -199,56 +198,4 @@ public extension ChatUserListControllerDelegate {
         _ controller: ChatUserListController,
         didChangeUsers changes: [ListChange<ChatUser>]
     ) {}
-}
-
-// MARK: - Delegate type eraser
-
-class AnyUserListControllerDelegate: ChatUserListControllerDelegate {
-    private var _controllerDidChangeUsers: (ChatUserListController, [ListChange<ChatUser>])
-        -> Void
-    private var _controllerDidChangeState: (DataController, DataController.State) -> Void
-    
-    weak var wrappedDelegate: AnyObject?
-    
-    init(
-        wrappedDelegate: AnyObject?,
-        controllerDidChangeState: @escaping (DataController, DataController.State) -> Void,
-        controllerDidChangeUsers: @escaping (ChatUserListController, [ListChange<ChatUser>])
-            -> Void
-    ) {
-        self.wrappedDelegate = wrappedDelegate
-        _controllerDidChangeState = controllerDidChangeState
-        _controllerDidChangeUsers = controllerDidChangeUsers
-    }
-
-    func controller(_ controller: DataController, didChangeState state: DataController.State) {
-        _controllerDidChangeState(controller, state)
-    }
-
-    func controller(
-        _ controller: ChatUserListController,
-        didChangeUsers changes: [ListChange<ChatUser>]
-    ) {
-        _controllerDidChangeUsers(controller, changes)
-    }
-}
-
-extension AnyUserListControllerDelegate {
-    convenience init<Delegate: ChatUserListControllerDelegate>(_ delegate: Delegate) {
-        self.init(
-            wrappedDelegate: delegate,
-            controllerDidChangeState: { [weak delegate] in delegate?.controller($0, didChangeState: $1) },
-            controllerDidChangeUsers: { [weak delegate] in delegate?.controller($0, didChangeUsers: $1) }
-        )
-    }
-}
-
-extension AnyUserListControllerDelegate {
-    convenience init(_ delegate: ChatUserListControllerDelegate?) {
-        self.init(
-            wrappedDelegate: delegate,
-            controllerDidChangeState: { [weak delegate] in delegate?.controller($0, didChangeState: $1) },
-            controllerDidChangeUsers: { [weak delegate] in delegate?.controller($0, didChangeUsers: $1) }
-        )
-    }
 }
