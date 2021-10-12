@@ -22,7 +22,7 @@ public struct NotificationMessageNewEvent: ChannelSpecificEvent, HasUnreadCount 
     public let unreadCount: UnreadCount?
 }
 
-struct NotificationMessageNewEventDTO: EventDTO {
+class NotificationMessageNewEventDTO: EventDTO {
     let channel: ChannelDetailPayload
     let message: MessagePayload
     let unreadCount: UnreadCount?
@@ -64,7 +64,7 @@ public struct NotificationMarkAllReadEvent: Event, HasUnreadCount {
     public let createdAt: Date
 }
 
-struct NotificationMarkAllReadEventDTO: EventDTO {
+class NotificationMarkAllReadEventDTO: EventDTO {
     let user: UserPayload
     let unreadCount: UnreadCount
     let createdAt: Date
@@ -103,7 +103,7 @@ public struct NotificationMarkReadEvent: ChannelSpecificEvent, HasUnreadCount {
     public let createdAt: Date
 }
 
-struct NotificationMarkReadEventDTO: EventDTO {
+class NotificationMarkReadEventDTO: EventDTO {
     let user: UserPayload
     let cid: ChannelId
     let unreadCount: UnreadCount
@@ -139,7 +139,7 @@ public struct NotificationMutesUpdatedEvent: Event {
     public let createdAt: Date
 }
 
-struct NotificationMutesUpdatedEventDTO: EventDTO {
+class NotificationMutesUpdatedEventDTO: EventDTO {
     let currentUser: CurrentUserPayload
     let createdAt: Date
     let payload: EventPayload
@@ -175,7 +175,7 @@ public struct NotificationAddedToChannelEvent: ChannelSpecificEvent, HasUnreadCo
     public let createdAt: Date
 }
 
-struct NotificationAddedToChannelEventDTO: EventDTO {
+class NotificationAddedToChannelEventDTO: EventDTO {
     let channel: ChannelDetailPayload
     let unreadCount: UnreadCount?
     let createdAt: Date
@@ -214,7 +214,7 @@ public struct NotificationRemovedFromChannelEvent: ChannelSpecificEvent {
     public let createdAt: Date
 }
 
-struct NotificationRemovedFromChannelEventDTO: EventDTO {
+class NotificationRemovedFromChannelEventDTO: EventDTO {
     let cid: ChannelId
     let user: UserPayload
     let member: MemberPayload
@@ -253,7 +253,7 @@ public struct NotificationChannelMutesUpdatedEvent: Event {
     public let createdAt: Date
 }
 
-struct NotificationChannelMutesUpdatedEventDTO: EventDTO {
+class NotificationChannelMutesUpdatedEventDTO: EventDTO {
     let currentUser: CurrentUserPayload
     let createdAt: Date
     let payload: EventPayload
@@ -289,7 +289,7 @@ public struct NotificationInvitedEvent: MemberEvent, ChannelSpecificEvent {
     public let createdAt: Date
 }
 
-struct NotificationInvitedEventDTO: EventDTO {
+class NotificationInvitedEventDTO: EventDTO {
     let user: UserPayload
     let cid: ChannelId
     let member: MemberPayload
@@ -337,7 +337,7 @@ public struct NotificationInviteAcceptedEvent: MemberEvent, ChannelSpecificEvent
     public let createdAt: Date
 }
 
-struct NotificationInviteAcceptedEventDTO: EventDTO {
+class NotificationInviteAcceptedEventDTO: EventDTO {
     let user: UserPayload
     let channel: ChannelDetailPayload
     let member: MemberPayload
@@ -386,7 +386,7 @@ public struct NotificationInviteRejectedEvent: MemberEvent, ChannelSpecificEvent
     public let createdAt: Date
 }
 
-struct NotificationInviteRejectedEventDTO: EventDTO {
+class NotificationInviteRejectedEventDTO: EventDTO {
     let user: UserPayload
     let channel: ChannelDetailPayload
     let member: MemberPayload

@@ -7,7 +7,7 @@ import Foundation
 // MARK: - Temporary
 
 /// The DTO object mirroring the JSON representation of an event.
-struct EventPayload: Decodable {
+class EventPayload: Decodable {
     enum CodingKeys: String, CodingKey, CaseIterable {
         case eventType = "type"
         case connectionId = "connection_id"
@@ -85,7 +85,7 @@ struct EventPayload: Decodable {
         self.parentId = parentId
     }
     
-    init(from decoder: Decoder) throws {
+    required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         eventType = try container.decode(EventType.self, forKey: .eventType)
         connectionId = try container.decodeIfPresent(String.self, forKey: .connectionId)
