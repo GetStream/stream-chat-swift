@@ -112,6 +112,7 @@ lane :match_me do |options|
         "io.getstream.iOS.SlackClone",
         "io.getstream.iOS.MessengerClone",
         "io.getstream.iOS.YouTubeClone",
+        "io.getstream.iOS.DemoAppSwiftUI"
       ],
       readonly: readonly,
       force_for_new_devices: !is_ci
