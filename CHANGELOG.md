@@ -3,6 +3,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+### 🔄 Changed
+
+# [4.1.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.1.0)
+_October 12, 2021_
+
 ### 🐞 Fixed
 - Fixes left buttons not being hidden when a command was added in the composer [#1528](https://github.com/GetStream/stream-chat-swift/pull/1528)
 - Fixes attachments not being cleared when a command was added [#1528](https://github.com/GetStream/stream-chat-swift/pull/1528)
