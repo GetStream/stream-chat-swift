@@ -87,7 +87,7 @@ class APIClient {
             do {
                 urlRequest = try requestResult.get()
             } catch {
-                log.error(error)
+                log.error(error, subsystems: .httpRequests)
                 completion(.failure(error))
                 return
             }
@@ -95,11 +95,11 @@ class APIClient {
             log.debug(
                 "Making URL request: \(endpoint.method.rawValue.uppercased()) \(endpoint.path)\n"
                     + "Body:\n\(urlRequest.httpBody?.debugPrettyPrintedJSON ?? "<Empty>")\n"
-                    + "Query items:\n\(urlRequest.queryItems.prettyPrinted)"
+                    + "Query items:\n\(urlRequest.queryItems.prettyPrinted)", subsystems: .httpRequests
             )
 
             guard let self = self else {
-                log.warning("Callback called while self is nil")
+                log.warning("Callback called while self is nil", subsystems: .httpRequests)
                 return
             }
             let task = self.session.dataTask(with: urlRequest) { [decoder = self.decoder] (data, response, error) in
