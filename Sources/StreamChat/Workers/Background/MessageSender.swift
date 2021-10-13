@@ -152,7 +152,7 @@ private class MessageSendingQueue {
                     return
                 }
                 
-                guard let cid = dto.channel.map({ try! ChannelId(cid: $0.cid) }) else {
+                guard let channelDTO = dto.channel, let cid = try? ChannelId(cid: channelDTO.cid) else {
                     log.info("Skipping sending message with id \(dto.id) because it doesn't have a valid channel.")
                     self?.removeRequestAndContinue(request)
                     return
@@ -202,7 +202,9 @@ private class MessageSendingQueue {
     
     private func saveSuccessfullySentMessage(cid: ChannelId, message: MessagePayload, completion: @escaping () -> Void) {
         database.write({
-            let messageDTO = try $0.saveMessage(payload: message, for: cid)
+            guard let messageDTO = try? $0.saveMessage(payload: message, for: cid) else {
+                return
+            }
             if messageDTO.localMessageState == .sending {
                 messageDTO.localMessageState = nil
                 messageDTO.locallyCreatedAt = nil

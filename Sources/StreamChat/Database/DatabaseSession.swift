@@ -83,10 +83,13 @@ protocol MessageDatabaseSession {
     func saveMessage(
         payload: MessagePayload,
         for cid: ChannelId?
-    ) throws -> MessageDTO
+    ) throws -> MessageDTO?
     
     @discardableResult
-    func saveMessage(payload: MessagePayload, for query: MessageSearchQuery) throws -> MessageDTO
+    func saveMessage(payload: MessagePayload, channelDTO: ChannelDTO) throws -> MessageDTO
+
+    @discardableResult
+    func saveMessage(payload: MessagePayload, for query: MessageSearchQuery) throws -> MessageDTO?
 
     /// Pins the provided message
     /// - Parameters:
@@ -299,11 +302,13 @@ extension DatabaseSession {
             try saveUser(payload: userPayload)
         }
         
+        var channelDTO: ChannelDTO?
+
         // Member events are handled in `MemberEventMiddleware`
         
         // Save a channel detail data.
         if let channelDetailPayload = payload.channel {
-            try saveChannel(payload: channelDetailPayload, query: nil)
+            channelDTO = try saveChannel(payload: channelDetailPayload, query: nil)
         }
         
         if let currentUserPayload = payload.currentUser {
@@ -317,14 +322,24 @@ extension DatabaseSession {
         if let currentUser = currentUser, let date = payload.createdAt {
             currentUser.lastReceivedEventDate = date
         }
-        
-        // Save message data (must be always done after the channel data!)
-        if let message = payload.message {
-            if let cid = payload.cid {
-                try saveMessage(payload: message, for: cid)
-            } else {
-                log.error("Message payload \(message) can't be saved because `cid` is missing. Ignoring.")
-            }
+
+        guard let message = payload.message, let cid = payload.cid else {
+            return
         }
+
+        guard let context = self as? NSManagedObjectContext else {
+            return
+        }
+
+        if channelDTO == nil {
+            channelDTO = ChannelDTO.load(cid: cid, context: context)
+        }
+
+        guard let channelDTO = channelDTO else {
+            log.info("event contains a cid that is not yet known, skipping")
+            return
+        }
+
+        try saveMessage(payload: message, channelDTO: channelDTO)
     }
 }

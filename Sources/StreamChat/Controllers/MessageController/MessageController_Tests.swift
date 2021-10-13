@@ -592,7 +592,7 @@ final class MessageController_Tests: XCTestCase {
         
         var replyModel: ChatMessage?
         try client.databaseContainer.writeSynchronously { session in
-            replyModel = try session.saveMessage(payload: reply, for: self.cid).asModel()
+            replyModel = try session.saveMessage(payload: reply, for: self.cid)!.asModel()
         }
     
         // Assert `insert` entity change is received by the delegate
