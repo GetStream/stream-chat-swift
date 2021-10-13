@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### ✅ Added
 - `LogConfig.subsystems` for customizing subsysems where logger should be active [#1522](https://github.com/GetStream/stream-chat-swift/issues/1522)
 
+### 🐞 Fixed
+- Fix incorrect key in `created_by` filter used in channel list query [#1544](https://github.com/GetStream/stream-chat-swift/issues/1544)
+
 ### 🔄 Changed
 - `LogConfig` changes after logger was used will now take affect [#1522](https://github.com/GetStream/stream-chat-swift/issues/1522)
 
