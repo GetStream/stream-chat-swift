@@ -4,7 +4,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 # Upcoming
 
 ### 🐞 Fixed
-- Fixes broken constraint in the `ComposerView`, we have made the `BottomContainer` a standard `UIStackView` [#1545](https://github.com/GetStream/stream-chat-swift/pull/1545)
 
 ### ✅ Added
 
