@@ -41,7 +41,7 @@ public extension FilterKey where Scope: AnyChannelListFilterScope {
     static var lastMessageAt: FilterKey<Scope, Date> { "last_message_at" }
     
     /// A filter key for matching the `createdBy` value.
-    static var createdBy: FilterKey<Scope, UserId> { "created_by" }
+    static var createdBy: FilterKey<Scope, UserId> { "created_by_id" }
     
     /// A filter key for matching the `createdAt` value.
     static var createdAt: FilterKey<Scope, Date> { "created_at" }

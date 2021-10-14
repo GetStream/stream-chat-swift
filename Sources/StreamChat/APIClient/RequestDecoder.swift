@@ -25,11 +25,11 @@ struct DefaultRequestDecoder: RequestDecoder {
             let error = error!
             switch (error as NSError).code {
             case NSURLErrorCancelled:
-                log.info("The request was cancelled.")
+                log.info("The request was cancelled.", subsystems: .httpRequests)
             case NSURLErrorNetworkConnectionLost:
-                log.info("The network connection was lost.")
+                log.info("The network connection was lost.", subsystems: .httpRequests)
             default:
-                log.error(error)
+                log.error(error, subsystems: .httpRequests)
             }
             
             throw error
@@ -43,25 +43,27 @@ struct DefaultRequestDecoder: RequestDecoder {
             throw ClientError.ResponseBodyEmpty()
         }
         
-        log.debug("URL request response: \(httpResponse), data:\n\(data.debugPrettyPrintedJSON))")
+        log.debug("URL request response: \(httpResponse), data:\n\(data.debugPrettyPrintedJSON))", subsystems: .httpRequests)
         
         guard httpResponse.statusCode < 400 else {
             guard let serverError = try? JSONDecoder.default.decode(ErrorPayload.self, from: data) else {
                 log
                     .error(
-                        "API request failed with status code: \(httpResponse.statusCode), response:\n\(data.debugPrettyPrintedJSON))"
+                        "API request failed with status code: \(httpResponse.statusCode), response:\n\(data.debugPrettyPrintedJSON))",
+                        subsystems: .httpRequests
                     )
                 throw ClientError.Unknown("Unknown error. Server response: \(httpResponse).")
             }
             
             if ErrorPayload.tokenInvadlidErrorCodes ~= serverError.code {
-                log.info("Request failed because of an experied token.")
+                log.info("Request failed because of an experied token.", subsystems: .httpRequests)
                 throw ClientError.ExpiredToken()
             }
             
             log
                 .error(
-                    "API request failed with status code: \(httpResponse.statusCode), code: \(serverError.code) response:\n\(data.debugPrettyPrintedJSON))"
+                    "API request failed with status code: \(httpResponse.statusCode), code: \(serverError.code) response:\n\(data.debugPrettyPrintedJSON))",
+                    subsystems: .httpRequests
                 )
             throw ClientError(with: serverError)
         }
@@ -70,7 +72,7 @@ struct DefaultRequestDecoder: RequestDecoder {
             let decodedPayload = try JSONDecoder.default.decode(ResponseType.self, from: data)
             return decodedPayload
         } catch {
-            log.error(error)
+            log.error(error, subsystems: .httpRequests)
             throw error
         }
     }

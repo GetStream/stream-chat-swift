@@ -172,7 +172,7 @@ class DatabaseContainer: NSPersistentContainer {
     ///   - completion: Called when the changes are saved to the DB. If the changes can't be saved, called with an error.
     func write(_ actions: @escaping (DatabaseSession) throws -> Void, completion: @escaping (Error?) -> Void) {
         writableContext.perform {
-            log.debug("Starting a database session.")
+            log.debug("Starting a database session.", subsystems: .database)
             do {
                 try actions(self.writableContext)
                 // If you touch ManagedObject and update one of it properties to same value
@@ -185,17 +185,17 @@ class DatabaseContainer: NSPersistentContainer {
                 }
 
                 if self.writableContext.hasChanges {
-                    log.debug("Context has changes. Saving.")
+                    log.debug("Context has changes. Saving.", subsystems: .database)
                     try self.writableContext.save()
                 } else {
-                    log.debug("Context has no changes. Skipping save.")
+                    log.debug("Context has no changes. Skipping save.", subsystems: .database)
                 }
                 
-                log.debug("Database session succesfully saved.")
+                log.debug("Database session succesfully saved.", subsystems: .database)
                 completion(nil)
                 
             } catch {
-                log.error("Failed to save data to DB. Error: \(error)")
+                log.error("Failed to save data to DB. Error: \(error)", subsystems: .database)
                 completion(error)
             }
         }
@@ -242,7 +242,7 @@ class DatabaseContainer: NSPersistentContainer {
                 forName: Notification.Name.NSManagedObjectContextDidSave,
                 object: writableContext,
                 queue: nil
-            ) { log.debug("Data saved to DB: \(String(describing: $0.userInfo))") }
+            ) { log.debug("Data saved to DB: \(String(describing: $0.userInfo))", subsystems: .database) }
     }
     
     /// Tries to load a persistent store.
@@ -266,7 +266,8 @@ class DatabaseContainer: NSPersistentContainer {
     func recreatePersistentStore() throws {
         log.assert(
             persistentStoreDescriptions.count == 1,
-            "DatabaseContainer always assumes 1 persistent store description. Existing descriptions: \(persistentStoreDescriptions)"
+            "DatabaseContainer always assumes 1 persistent store description. Existing descriptions: \(persistentStoreDescriptions)",
+            subsystems: .database
         )
         
         guard let storeDescription = persistentStoreDescriptions.first else {
@@ -309,9 +310,9 @@ class DatabaseContainer: NSPersistentContainer {
                     entities?.forEach { $0.resetEphemeralValues() }
                 }
                 try writableContext.save()
-                log.debug("Ephemeral values reset.")
+                log.debug("Ephemeral values reset.", subsystems: .database)
             } catch {
-                log.error("Error resetting ephemeral values: \(error)")
+                log.error("Error resetting ephemeral values: \(error)", subsystems: .database)
             }
         }
     }
