@@ -74,15 +74,11 @@ open class ChatMessageListVC:
         .init()
         .withoutAutoresizingMaskConstraints
 
+    /// A Boolean value indicating wether the scroll to bottom button is visible.
     open var isScrollToBottomButtonVisible: Bool {
         let isMoreContentThanOnePage = listView.contentSize.height > listView.bounds.height
 
         return !listView.isLastCellFullyVisible && isMoreContentThanOnePage
-    }
-
-    override open func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
-        super.traitCollectionDidChange(previousTraitCollection)
-        view.layoutIfNeeded()
     }
     
     override open func setUp() {
@@ -135,6 +131,12 @@ open class ChatMessageListVC:
         view.backgroundColor = appearance.colorPalette.background
         
         listView.backgroundColor = appearance.colorPalette.background
+    }
+
+    override open func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+
+        view.layoutIfNeeded()
     }
     
     /// Returns layout options for the message on given `indexPath`.

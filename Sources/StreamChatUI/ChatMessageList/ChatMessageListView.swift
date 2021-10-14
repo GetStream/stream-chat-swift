@@ -187,7 +187,9 @@ open class ChatMessageListView: UITableView, Customizable, ComponentsProvider {
         changes.forEach {
             switch $0 {
             case let .insert(message, index: index):
-                self.reloadData()
+                UIView.performWithoutAnimation {
+                    self.reloadData()
+                }
                 if message.isSentByCurrentUser, index == IndexPath(item: 0, section: 0) {
                     self.scrollToBottomAction = .init { [weak self] in
                         self?.scrollToMostRecentMessage()
@@ -237,7 +239,9 @@ open class ChatMessageListView: UITableView, Customizable, ComponentsProvider {
         }
 
         if !indexPathToReload.isEmpty {
-            super.reloadRows(at: indexPathToReload, with: animation)
+            UIView.performWithoutAnimation {
+                super.reloadRows(at: indexPathToReload, with: animation)
+            }
         }
     }
 
