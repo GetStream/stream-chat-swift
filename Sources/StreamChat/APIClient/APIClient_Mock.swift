@@ -18,6 +18,10 @@ class APIClientMock: APIClient {
     @Atomic var uploadFile_progress: ((Double) -> Void)?
     @Atomic var uploadFile_completion: ((Result<URL, Error>) -> Void)?
     
+    /// The last params `flushRequestsQueue` function was called with.
+    @Atomic var flushRequestsQueue_timeout: TimeInterval?
+    @Atomic var flushRequestsQueue_itemAction: ((APIClient.RequestsQueueItem) -> Void)?
+    
     @Atomic var init_sessionConfiguration: URLSessionConfiguration
     @Atomic var init_requestEncoder: RequestEncoder
     @Atomic var init_requestDecoder: RequestDecoder
@@ -28,6 +32,13 @@ class APIClientMock: APIClient {
         request_allRecordedCalls = []
         request_endpoint = nil
         request_completion = nil
+        
+        uploadFile_attachment = nil
+        uploadFile_progress = nil
+        uploadFile_completion = nil
+        
+        flushRequestsQueue_timeout = nil
+        flushRequestsQueue_itemAction = nil
     }
     
     override init(
@@ -75,6 +86,14 @@ class APIClientMock: APIClient {
         uploadFile_attachment = attachment
         uploadFile_progress = progress
         uploadFile_completion = completion
+    }
+    
+    override func flushRequestsQueue(
+        after timeout: TimeInterval = 0,
+        itemAction: ((APIClient.RequestsQueueItem) -> Void)? = nil
+    ) {
+        flushRequestsQueue_timeout = timeout
+        flushRequestsQueue_itemAction = itemAction
     }
 }
 

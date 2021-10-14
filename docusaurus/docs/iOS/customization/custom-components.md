@@ -79,7 +79,7 @@ Let's say, we want to change the appearance of avatars from the rounded ones to 
 class RectAvatarView: ChatAvatarView {
     override func setUpAppearance() {
         super.setUpAppearance()
-        
+
         imageView.layer.cornerRadius = 3
     }
 }
@@ -98,7 +98,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
 | Before  | After |
 | ------------- | ------------- |
-| ![Default Avatars](https://github.com/GetStream/stream-chat-swift/wiki/default-avatars.png)  | ![Rect Avatars](https://github.com/GetStream/stream-chat-swift/wiki/rect-avatars.png)  |
+| ![Default Avatars](../assets/default-avatars.png)  | ![Rect Avatars](../assets/rect-avatars.png)  |
 
 And that's it 🎉 as you can see all avatars across the UI are now rectangular.
 
@@ -108,7 +108,7 @@ Now, to show an example on how to use to other lifecycle methods, let's try to c
 
 | Default style  | Custom "iMessage" Style |
 | ------------- | ------------- |
-| ![Default unread count](https://github.com/GetStream/stream-chat-swift/wiki/default-unread-count.png)  | ![iMessage unread count](https://github.com/GetStream/stream-chat-swift/wiki/custom-unread-count.png)  |
+| ![Default unread count](../assets/default-unread-count.png)  | ![iMessage unread count](../assets/custom-unread-count.png)  |
 
 First, we need to create a custom subclass of `ChatChannelListItemView`, which is the component responsible for showing the channel summary in the channel list. Because the iMessage-style unread indicator is just a blue dot, rather then trying to modify the existing unread indicator, it's easier to create a brand new view for it:
 

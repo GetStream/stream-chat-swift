@@ -16,7 +16,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let scene = scene as? UIWindowScene else { return }
 
         scene.windows.forEach {
-          $0.tintColor = .systemPink 
+          $0.tintColor = .systemPink
         }
     }
 }
@@ -24,7 +24,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
 | Before  | After |
 | ------------- | ------------- |
-| ![Chat UI with default tint color](https://github.com/GetStream/stream-chat-swift/wiki/blue-tint.png)  | ![Chat UI with pink tint color](https://github.com/GetStream/stream-chat-swift/wiki/pink-tint.png)  |
+| ![Chat UI with default tint color](../assets/blue-tint.png)  | ![Chat UI with pink tint color](../assets/pink-tint.png)  |
 
 ## Changing Colors and Fonts
 
@@ -44,7 +44,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
 | Before  | After |
 | ------------- | ------------- |
-| ![Messages Default Appearance](https://github.com/GetStream/stream-chat-swift/wiki/default-appearance.png)  | ![Messages Adjusted Appearance](https://github.com/GetStream/stream-chat-swift/wiki/adjusted-appearance.png)  |
+| ![Messages Default Appearance](../assets/default-appearance.png)  | ![Messages Adjusted Appearance](../assets/adjusted-appearance.png)  |
 
 You can see the font and the background color of the message has changed. Also note, that the font in the composer text view is also changed, since it uses the same semantic font as the body of the message.
 
@@ -58,7 +58,7 @@ Appearance.default.images.sendArrow = UIImage(systemName: "arrowshape.turn.up.ri
 
 | Before  | After |
 | ------------- | ------------- |
-| ![Custom Send Button](https://github.com/GetStream/stream-chat-swift/wiki/default-send-button.png)  | ![Default Send Button](https://github.com/GetStream/stream-chat-swift/wiki/custom-send-button.png)  |
+| ![Custom Send Button](../assets/default-send-button.png)  | ![Default Send Button](../assets/custom-send-button.png)  |
 
 If the same image is used in multiple places, changing the image in the `Appearance` object will update it in all places.
 

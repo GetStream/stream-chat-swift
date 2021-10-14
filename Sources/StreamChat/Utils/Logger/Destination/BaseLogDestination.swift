@@ -9,6 +9,7 @@ import Foundation
 open class BaseLogDestination: LogDestination {
     open var identifier: String
     open var level: LogLevel
+    open var subsystems: LogSubsystem
     
     open var dateFormatter: DateFormatter
     open var formatters: [LogFormatter]
@@ -39,6 +40,7 @@ open class BaseLogDestination: LogDestination {
     public required init(
         identifier: String = "",
         level: LogLevel = .debug,
+        subsystems: LogSubsystem = .all,
         showDate: Bool = true,
         dateFormatter: DateFormatter = {
             let df = DateFormatter()
@@ -55,6 +57,7 @@ open class BaseLogDestination: LogDestination {
     ) {
         self.identifier = identifier
         self.level = level
+        self.subsystems = subsystems
         self.showIdentifier = showIdentifier
         self.showThreadName = showThreadName
         self.showDate = showDate
@@ -66,11 +69,17 @@ open class BaseLogDestination: LogDestination {
         self.showFunctionName = showFunctionName
     }
     
-    /// Checks if this destination is enabled for the given level
+    open func isEnabled(level: LogLevel) -> Bool {
+        assertionFailure("`isEnabled(level:)` is deprecated, please use `isEnabled(level:subsystem:)`")
+        return true
+    }
+    
+    /// Checks if this destination is enabled for the given level and subsystems.
     /// - Parameter level: Log level to be checked
+    /// - Parameter subsystems: Log subsystems to be checked
     /// - Returns: `true` if destination is enabled for the given level, else `false`
-    open func isEnabled(for level: LogLevel) -> Bool {
-        level.rawValue >= self.level.rawValue
+    open func isEnabled(level: LogLevel, subsystems: LogSubsystem) -> Bool {
+        level.rawValue >= self.level.rawValue && self.subsystems.contains(subsystems)
     }
     
     /// Process the log details before outputting the log.

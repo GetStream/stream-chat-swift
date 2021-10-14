@@ -78,9 +78,9 @@ public struct Components {
     
     /// Object responsible for providing resizing operations for `UIImage`
     public var imageProcessor: ImageProcessor = NukeImageProcessor()
-
-    /// The object that loads previews for video attachments.
-    public var videoPreviewLoader: VideoPreviewLoader = DefaultVideoPreviewLoader()
+    
+    /// The object responsible for loading video attachments.
+    public var videoLoader: VideoLoading = StreamVideoLoader()
     
     /// The view that shows a gradient.
     public var gradientView: GradientView.Type = GradientView.self

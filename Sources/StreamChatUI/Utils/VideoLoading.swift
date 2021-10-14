@@ -6,21 +6,32 @@ import AVKit
 import StreamChat
 import UIKit
 
-/// A protocol the video preview uploader implementation must conform to.
-public protocol VideoPreviewLoader: AnyObject {
+/// A protocol the video loader must conform to.
+public protocol VideoLoading: AnyObject {
     /// Loads a preview for the video at given URL.
     /// - Parameters:
     ///   - url: A video URL.
     ///   - completion: A completion that is called when a preview is loaded. Must be invoked on main queue.
     func loadPreviewForVideo(at url: URL, completion: @escaping (Result<UIImage, Error>) -> Void)
+    
+    /// Returns a video asset with the given URL.
+    ///
+    /// - Returns: The video asset.
+    func videoAsset(at url: URL) -> AVURLAsset
 }
 
-/// The `VideoPreviewLoader` implemenation used by default.
-final class DefaultVideoPreviewLoader: VideoPreviewLoader {
+public extension VideoLoading {
+    func videoAsset(at url: URL) -> AVURLAsset {
+        .init(url: url)
+    }
+}
+
+/// The default `VideoLoading` implementation.
+open class StreamVideoLoader: VideoLoading {
     private let cache: Cache<URL, UIImage>
     
-    init(countLimit: Int = 50) {
-        cache = .init(countLimit: countLimit)
+    public init(cachedVideoPreviewsCountLimit: Int = 50) {
+        cache = .init(countLimit: cachedVideoPreviewsCountLimit)
         
         NotificationCenter.default.addObserver(
             self,
@@ -34,12 +45,12 @@ final class DefaultVideoPreviewLoader: VideoPreviewLoader {
         NotificationCenter.default.removeObserver(self)
     }
     
-    func loadPreviewForVideo(at url: URL, completion: @escaping (Result<UIImage, Error>) -> Void) {
+    open func loadPreviewForVideo(at url: URL, completion: @escaping (Result<UIImage, Error>) -> Void) {
         if let cached = cache[url] {
             return call(completion, with: .success(cached))
         }
         
-        let asset = AVURLAsset(url: url)
+        let asset = videoAsset(at: url)
         let imageGenerator = AVAssetImageGenerator(asset: asset)
         let frameTime = CMTime(seconds: 0.1, preferredTimescale: 600)
         
@@ -62,6 +73,10 @@ final class DefaultVideoPreviewLoader: VideoPreviewLoader {
         }
     }
     
+    open func videoAsset(at url: URL) -> AVURLAsset {
+        .init(url: url)
+    }
+    
     private func call(_ completion: @escaping (Result<UIImage, Error>) -> Void, with result: Result<UIImage, Error>) {
         if Thread.current.isMainThread {
             completion(result)
@@ -72,7 +87,7 @@ final class DefaultVideoPreviewLoader: VideoPreviewLoader {
         }
     }
     
-    @objc private func handleMemoryWarning(_ notification: NSNotification) {
+    @objc open func handleMemoryWarning(_ notification: NSNotification) {
         cache.removeAllObjects()
     }
 }

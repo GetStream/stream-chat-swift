@@ -1,4 +1,3 @@
-fastlane_version "2.68.0"
 default_platform :ios
 
 require 'json'
@@ -16,6 +15,8 @@ desc "Release a new version"
 lane :release do |options|
   ensure_git_branch(branch: 'main') # We can only release on default branch
   ensure_git_status_clean unless options[:no_ensure_clean]
+
+  UI.user_error!("Please set GITHUB_TOKEN environment value. See https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token") unless !ENV["GITHUB_TOKEN"].nil?
 
   if (!options[:version].nil?) # User passed a version, use it
     version_number = options.fetch(:version)
@@ -38,14 +39,22 @@ lane :release do |options|
   version_bump_podspec(path: "StreamChat.podspec", version_number: version_number)
   version_bump_podspec(path: "StreamChatUI.podspec", version_number: version_number)
 
+  # Make sure the podspecs actually build before pushing
+  pod_lib_lint(podspec: "StreamChat.podspec", allow_warnings: true)
+  pod_lib_lint(podspec: "StreamChatUI.podspec", allow_warnings: true)
+
   sh("git add -A")
 
-  prompt(text: "Will commit changes. All looking good?", boolean: true)
+  if(!prompt(text: "Will commit changes. All looking good?", boolean: true))
+    UI.user_error!("Not committing changes")
+  end
 
   sh("git commit -m 'Bump #{version_number}'")
   sh("git tag #{version_number}")
 
-  prompt(text: "Will push changes. All looking good?", boolean: true)
+  if(!prompt(text: "Will push changes. All looking good?", boolean: true))
+    UI.user_error!("Not pushing changes")
+  end
 
   push_to_git_remote(tags: true)
 
@@ -57,12 +66,22 @@ lane :release do |options|
                      description: changes
                    )
 
+  # The & operator makes sure truthy values are converted to bool true
+  # and falsy (false and nil) values are converted to bool false
+  push_pods(sync: options[:sync] & true)
+
+  UI.success("Successfully released #{version_number}")
+  UI.success("Github release was created, please visit #{github_release["url"]} to see it")
+end
+
+desc "Pushes the StreamChat and StreamChatUI SDK podspecs to Cocoapods trunk"
+lane :push_pods do |options|
   # First pod release will not have any problems
   pod_push(path: "StreamChat.podspec", allow_warnings: true)
 
-  def release_ui
+  def release_ui(sync)
     begin
-      pod_push(path: "StreamChatUI.podspec", allow_warnings: true)
+      pod_push(path: "StreamChatUI.podspec", allow_warnings: true, synchronous: sync)
     rescue
       puts "pod_push failed. Waiting a minute until retry for trunk to get updated..."
       sleep(60) # sleep for a minute, wait until trunk gets updates
@@ -72,10 +91,7 @@ lane :release do |options|
 
   puts "Sleeping for 2 minutes for trunk to get updated..."
   sleep(60 * 2)
-  release_ui
-
-  UI.success("Successfully released #{version_number}")
-  UI.success("Github release was created, please visit #{github_release["url"]} to see it")
+  release_ui(options[:sync])
 end
 
 lane :set_SDK_version do |options|
@@ -112,6 +128,7 @@ lane :match_me do |options|
         "io.getstream.iOS.SlackClone",
         "io.getstream.iOS.MessengerClone",
         "io.getstream.iOS.YouTubeClone",
+        "io.getstream.iOS.DemoAppSwiftUI"
       ],
       readonly: readonly,
       force_for_new_devices: !is_ci
@@ -220,6 +237,8 @@ lane :testflight_build do
     output_directory: "archives"
   )
 
+  changelog = "This is the official sample app built with Stream’s iOS Chat SDK v4.0. It’s designed to highlight engaging features and new improvements to the SDK, but remember that this is just one possible implementation. You can start your own by borrowing and customizing the code from this sample, or build something completely different using Stream’s components."
+
   pilot(
     api_key: api_key,
     team_id: "118902954",
@@ -228,7 +247,8 @@ lane :testflight_build do
     ipa: "archives/ChatSample.ipa",
     groups: ['Public'],
     distribute_external: true,
-    reject_build_waiting_for_review: true
+    reject_build_waiting_for_review: true,
+    changelog: changelog
   )
 end
 
@@ -496,5 +516,43 @@ lane :cocoapods_integration do
     skip_archive: true,
     clean: true,
     destination: "generic/platform=iOS Simulator"
+  )
+end
+
+desc "Build and upload DemoApp to Emerge"
+lane :emerge_upload do
+  # Build and upload Release config
+  build_ios_app(
+    project: "StreamChat.xcodeproj",
+    scheme: "DemoApp",
+    skip_package_ipa: true,
+    skip_archive: false,
+    clean: true,
+  )
+
+  if is_ci
+    if ENV["GITHUB_EVENT_NAME"] == 'pull_request'
+      pr_num = ENV["GITHUB_PR_NUM"]
+      # The commit SHA has to be passed from workflow
+      # see https://stackoverflow.com/questions/68061051/get-commit-sha-in-github-actions
+      sha = ENV["GITHUB_COMMIT_SHA"]
+    else
+      # This is a PR merge to main
+      pr_num = nil
+      sha = ENV["GITHUB_SHA"]
+    end
+    repo_name = ENV["GITHUB_REPOSITORY"]
+  else
+    pr_num = nil
+    commit = last_git_commit
+    sha = commit[:commit_hash]
+    repo_name = 'GetStream/stream-chat-swift'
+  end
+
+  emerge(
+    build_type: "release",
+    repo_name: repo_name,
+    pr_number: pr_num,
+    sha: sha
   )
 end

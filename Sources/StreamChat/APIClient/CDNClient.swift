@@ -68,7 +68,7 @@ class StreamCDNClient: CDNClient {
             do {
                 urlRequest = try requestResult.get()
             } catch {
-                log.error(error)
+                log.error(error, subsystems: .httpRequests)
                 completion(.failure(error))
                 return
             }
@@ -78,7 +78,7 @@ class StreamCDNClient: CDNClient {
             urlRequest.httpBody = data
 
             guard let self = self else {
-                log.warning("Callback called while self is nil")
+                log.warning("Callback called while self is nil", subsystems: .httpRequests)
                 return
             }
             

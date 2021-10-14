@@ -59,7 +59,7 @@ class URLSessionWebSocketEngine: NSObject, WebSocketEngine, URLSessionDataDelega
                 self.doRead()
                 
             case let .failure(error):
-                log.error("Failed receiving Web Socket Message with error: \(error)")
+                log.error("Failed receiving Web Socket Message with error: \(error)", subsystems: .webSocket)
             }
         }
     }

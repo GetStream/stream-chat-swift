@@ -6,7 +6,7 @@ import Foundation
 
 /// An object allowing making request to Stream Chat servers.
 class APIClient {
-    private struct RequestsQueueItem {
+    struct RequestsQueueItem {
         let requestAction: () -> Void
         let failureAction: () -> Void
     }
@@ -87,7 +87,7 @@ class APIClient {
             do {
                 urlRequest = try requestResult.get()
             } catch {
-                log.error(error)
+                log.error(error, subsystems: .httpRequests)
                 completion(.failure(error))
                 return
             }
@@ -95,11 +95,11 @@ class APIClient {
             log.debug(
                 "Making URL request: \(endpoint.method.rawValue.uppercased()) \(endpoint.path)\n"
                     + "Body:\n\(urlRequest.httpBody?.debugPrettyPrintedJSON ?? "<Empty>")\n"
-                    + "Query items:\n\(urlRequest.queryItems.prettyPrinted)"
+                    + "Query items:\n\(urlRequest.queryItems.prettyPrinted)", subsystems: .httpRequests
             )
 
             guard let self = self else {
-                log.warning("Callback called while self is nil")
+                log.warning("Callback called while self is nil", subsystems: .httpRequests)
                 return
             }
             let task = self.session.dataTask(with: urlRequest) { [decoder = self.decoder] (data, response, error) in
@@ -163,9 +163,8 @@ class APIClient {
 
             // The moment we queue a first request for execution later we also set a timeout for 60 seconds
             // after which we fail all the queued requests
-            self.requestsAccessQueue.asyncAfter(deadline: .now() + timeout) {
-                self.requestsQueue.forEach { $0.failureAction() }
-                self.requestsQueue = []
+            self.flushRequestsQueue(after: timeout) {
+                $0.failureAction()
             }
             
             self.tokenRefresher(ClientError.ExpiredToken()) { [weak self] in
@@ -174,10 +173,28 @@ class APIClient {
                 }
 
                 self.isRefreshingToken = false
-                let queue = self.requestsQueue
-                self.requestsQueue = []
-                queue.forEach { $0.requestAction() }
+                self.flushRequestsQueue {
+                    $0.requestAction()
+                }
             }
+        }
+    }
+    
+    /// Flushes the request queue after the given timeout.
+    ///
+    /// - Parameters:
+    ///   - timeout: The timeout when the request queue has to be flushed.
+    ///   - itemAction: The item action invoked for every request item when the queue is flushed.
+    func flushRequestsQueue(
+        after timeout: TimeInterval = 0,
+        itemAction: ((RequestsQueueItem) -> Void)? = nil
+    ) {
+        requestsAccessQueue.asyncAfter(deadline: .now() + timeout) { [weak self] in
+            guard let self = self else { return }
+            
+            let queue = self.requestsQueue
+            self.requestsQueue = []
+            queue.forEach { itemAction?($0) }
         }
     }
 }

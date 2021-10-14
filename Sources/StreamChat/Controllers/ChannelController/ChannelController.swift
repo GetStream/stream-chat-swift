@@ -735,7 +735,11 @@ public extension ChatChannelController {
             return
         }
         
-        eventSender.keystroke(in: cid, completion: completion)
+        eventSender.keystroke(in: cid) { error in
+            self.callback {
+                completion?(error)
+            }
+        }
     }
     
     /// Sends the start typing event.
@@ -759,7 +763,11 @@ public extension ChatChannelController {
             return
         }
         
-        eventSender.startTyping(in: cid, completion: completion)
+        eventSender.startTyping(in: cid) { error in
+            self.callback {
+                completion?(error)
+            }
+        }
     }
     
     /// Sends the stop typing event.
@@ -783,7 +791,11 @@ public extension ChatChannelController {
             return
         }
         
-        eventSender.stopTyping(in: cid, completion: completion)
+        eventSender.stopTyping(in: cid) { error in
+            self.callback {
+                completion?(error)
+            }
+        }
     }
     
     /// Creates a new message locally and schedules it for send.

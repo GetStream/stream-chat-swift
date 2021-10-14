@@ -12,17 +12,17 @@ on:
       - created
 
 concurrency: 
-  group: ${{ github.head_ref }}
+  group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
       
 env:
   HOMEBREW_NO_INSTALL_CLEANUP=1: 1 # Disable cleanup for homebrew, we don't need it on CI
-  DEVELOPER_DIR: /Applications/Xcode_12.4.app/Contents/Developer # Use Xcode 12.4
+  DEVELOPER_DIR: /Applications/Xcode_12.5.app/Contents/Developer
 
 jobs:
   build-and-test-release-macos:
     name: Run Tests macOS (Release)
-    runs-on: macos-latest
+    runs-on: macos-11
     steps:
     - name: Install Bot SSH Key
       uses: webfactory/ssh-agent@v0.4.1
@@ -62,7 +62,7 @@ jobs:
 
   build-and-test-debug-macos:
     name: Run Tests macOS (Debug)
-    runs-on: macos-latest
+    runs-on: macos-11
     steps:
     - name: Install Bot SSH Key
       uses: webfactory/ssh-agent@v0.4.1

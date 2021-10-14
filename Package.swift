@@ -39,7 +39,7 @@ let package = Package(
             name: "StreamChatUI",
             dependencies: ["StreamChat", "Nuke", "SwiftyGif"],
             exclude: ["README.md", "Info.plist", "Generated/L10n_template.stencil"] + streamChatUIFilesExcluded,
-            resources: [.process("Sources/StreamChatUI/Resources")]
+            resources: [.process("Resources")]
         )
     ]
 )
@@ -197,6 +197,7 @@ var streamChatSourcesExcluded: [String] { [
     "Query/FilterDecoding_Tests.swift",
     "Query/FilterEncoding_Tests.swift",
     "Query/UserListQuery_Tests.swift",
+    "Query/MessageSearchQuery_Tests.swift",
     "Query/ChannelListQuery_Tests.swift",
     "Query/ChannelWatcherListQuery_Tests.swift",
     "Query/Pagination_Tests.swift",
@@ -252,6 +253,7 @@ var streamChatSourcesExcluded: [String] { [
 var streamChatUIFilesExcluded: [String] { [
     "ChatMessageList/TypingIndicatorView_Tests.swift",
     "ChatMessageList/ChatMessage/ChatMessageErrorIndicator_Tests.swift",
+    "ChatMessageList/ChatMessage/ChatReactionsBubbleView_Tests.swift",
     "ChatMessageList/ChatMessage/ChatMessageBubbleView_Tests.swift",
     "ChatMessageList/ChatMessage/ChatMessageLayoutOptionsResolver_Tests.swift",
     "ChatMessageList/ChatMessage/ChatMessageContentView_Tests.swift",
@@ -259,6 +261,14 @@ var streamChatUIFilesExcluded: [String] { [
     "ChatMessageList/ChatMessage/__Snapshots__/ChatMessageErrorIndicator_Tests/test_appearanceCustomization_usingAppearance.default-dark.png",
     "ChatMessageList/ChatMessage/__Snapshots__/ChatMessageErrorIndicator_Tests/test_appearanceCustomization_usingAppearance.default-light.png",
     "ChatMessageList/ChatMessage/__Snapshots__/ChatMessageErrorIndicator_Tests/test_appearanceCustomization_usingSubclassing.default-light.png",
+    "ChatMessageList/ChatMessage/__Snapshots__/ChatReactionsBubbleView_Tests/test_defaultAppearance_toLeadingTail.default-dark.png",
+    "ChatMessageList/ChatMessage/__Snapshots__/ChatReactionsBubbleView_Tests/test_defaultAppearance_toTrailingTail.default-dark.png",
+    "ChatMessageList/ChatMessage/__Snapshots__/ChatReactionsBubbleView_Tests/test_appearanceCustomization_usingSubclassing.default-dark.png",
+    "ChatMessageList/ChatMessage/__Snapshots__/ChatReactionsBubbleView_Tests/test_appearanceCustomization_usingAppearance.default-dark.png",
+    "ChatMessageList/ChatMessage/__Snapshots__/ChatReactionsBubbleView_Tests/test_defaultAppearance_toLeadingTail.default-light.png",
+    "ChatMessageList/ChatMessage/__Snapshots__/ChatReactionsBubbleView_Tests/test_appearanceCustomization_usingAppearance.default-light.png",
+    "ChatMessageList/ChatMessage/__Snapshots__/ChatReactionsBubbleView_Tests/test_defaultAppearance_toTrailingTail.default-light.png",
+    "ChatMessageList/ChatMessage/__Snapshots__/ChatReactionsBubbleView_Tests/test_appearanceCustomization_usingSubclassing.default-light.png",
     "ChatMessageList/ChatMessage/__Snapshots__/ChatMessageBubbleView_Tests/test_appearance_whenContentIsSet.default-light.png",
     "ChatMessageList/ChatMessage/__Snapshots__/ChatMessageBubbleView_Tests/test_appearance_whenNoContentSet.default-dark.png",
     "ChatMessageList/ChatMessage/__Snapshots__/ChatMessageBubbleView_Tests/test_appearance_whenContentIsSet.default-dark.png",
@@ -301,6 +311,7 @@ var streamChatUIFilesExcluded: [String] { [
     "ChatMessageList/ChatMessage/__Snapshots__/ChatMessageContentView_Tests/test_appearanceCustomization_usingUIConfig.rightToLeftLayout-default.png",
     "ChatMessageList/ChatMessage/__Snapshots__/ChatMessageContentView_Tests/test_appearance.default-light-bubble-continuousBubble-avatarSizePadding-text-quotedMessage-threadInfo-reactions.png",
     "ChatMessageList/ChatMessage/__Snapshots__/ChatMessageContentView_Tests/test_appearanceCustomization_usingSubclassing.default-light.png",
+    "ChatMessageList/Attachments/VideoAttachmentGalleryPreview_Tests.swift",
     "ChatMessageList/Attachments/ChatMessageFileAttachmentListView_Tests.swift",
     "ChatMessageList/Attachments/ChatMessageGalleryView_Tests.swift",
     "ChatMessageList/Attachments/ChatFileAttachmentListView+ItemView_Tests.swift",
@@ -364,6 +375,7 @@ var streamChatUIFilesExcluded: [String] { [
     "ChatMessageList/__Snapshots__/TypingIndicatorView_Tests/test_defaultAppearance.extraExtraExtraLarge-light.png",
     "ChatMessageList/__Snapshots__/TypingIndicatorView_Tests/test_appearanceCustomization_usingAppearance.small-dark.png",
     "ChatMessageList/__Snapshots__/TypingIndicatorView_Tests/test_appearanceCustomization_usingSubclassing.default-light.png",
+    "Gallery/Cells/VideoAttachmentGalleryCell_Tests.swift",
     "Gallery/GalleryVC_Tests.swift",
     "Gallery/__Snapshots__/GalleryVC_Tests/test_appearanceCustomization_usingSubclassing.small-dark.png",
     "Gallery/__Snapshots__/GalleryVC_Tests/test_appearanceCustomization_usingUIConfig.small-dark.png",
@@ -636,6 +648,7 @@ var streamChatUIFilesExcluded: [String] { [
     "CommonViews/SendButton/__Snapshots__/SendButton_Tests/test_appearanceCustomization_usingSubclassing.default-light-new-disabled.png",
     "CommonViews/SendButton/__Snapshots__/SendButton_Tests/test_appearanceCustomization_usingSubclassing.default-light-new-enabled.png",
     "CommonViews/SendButton/__Snapshots__/SendButton_Tests/test_defaultAppearance.default-light-new-disabled.png",
+    "CommonViews/Attachments/AttachmentViews/VideoAttachmentComposerPreview_Tests.swift",
     "CommonViews/Attachments/ImageAttachments/ChatImageAttachmentsCollectionView_Tests.swift",
     "CommonViews/Attachments/ImageAttachments/__Snapshots__/ChatImageAttachmentsCollectionView_Tests/test_defaultAppearance.default-light.png",
     "CommonViews/Attachments/ImageAttachments/__Snapshots__/ChatImageAttachmentsCollectionView_Tests/test_defaultAppearance.default-dark.png",
@@ -776,6 +789,7 @@ var streamChatUIFilesExcluded: [String] { [
     "ChatChannel/__Snapshots__/ChatChannelVC+SwiftUI_Tests/test_customNavigationViewValues_arePopulated.default-light.png",
     "Navigation/ChatChannelListRouter_Mock.swift",
     "Utils/CollectionUpdatesMapper_Tests.swift",
+    "Utils/VideoLoading_Mock.swift",
     "Utils/String+Extensions_Tests.swift",
     "Utils/UIViewController+Extensions_Tests.swift",
     "Utils/ChatChannelNamer_Tests.swift",

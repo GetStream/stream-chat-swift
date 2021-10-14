@@ -8,6 +8,10 @@ extension Components {
     static var mock: Self {
         var components = Self()
         components.imageLoader = MockImageLoader()
+        components.videoLoader = MockVideoLoader()
         return components
     }
+    
+    var mockImageLoader: MockImageLoader { imageLoader as! MockImageLoader }
+    var mockVideoLoader: MockVideoLoader { videoLoader as! MockVideoLoader }
 }

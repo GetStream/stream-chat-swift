@@ -19,11 +19,7 @@ runs:
 
         sudo mkdir -p /Library/Developer/CoreSimulator/Profiles/Runtimes
 
-        if [[ "$xcode_version" == "10.3" ]]; then
-          sudo ln -s /Applications/Xcode_$xcode_version.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/Library/CoreSimulator/Profiles/Runtimes/iOS.simruntime /Library/Developer/CoreSimulator/Profiles/Runtimes/iOS\ $ios_version.simruntime
-        else
-          sudo ln -s /Applications/Xcode_$xcode_version.app/Contents/Developer/Platforms/iPhoneOS.platform/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS.simruntime /Library/Developer/CoreSimulator/Profiles/Runtimes/iOS\ $ios_version.simruntime
-        fi
+        sudo ln -s /Applications/Xcode_$xcode_version.app/Contents/Developer/Platforms/iPhoneOS.platform/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS.simruntime /Library/Developer/CoreSimulator/Profiles/Runtimes/iOS\ $ios_version.simruntime
 
         xcrun simctl list runtimes
         xcrun simctl create custom-test-device "${{ inputs.device }}" "com.apple.CoreSimulator.SimRuntime.iOS-$ios_version_dash"
