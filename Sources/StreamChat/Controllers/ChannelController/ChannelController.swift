@@ -10,27 +10,44 @@ public extension ChatClient {
     ///
     /// - Parameters:
     ///   - cid: The id of the channel this controller represents.
+    ///   - channelListQuery: The channel list query the channel this controller represents is part of.
     ///   - messageOrdering: Describes the ordering the messages are presented.
     ///
     /// - Returns: A new instance of `ChatChannelController`.
     ///
-    func channelController(for cid: ChannelId, messageOrdering: MessageOrdering = .topToBottom) -> ChatChannelController {
-        .init(channelQuery: .init(cid: cid), client: self, messageOrdering: messageOrdering)
+    func channelController(
+        for cid: ChannelId,
+        channelListQuery: ChannelListQuery? = nil,
+        messageOrdering: MessageOrdering = .topToBottom
+    ) -> ChatChannelController {
+        .init(
+            channelQuery: .init(cid: cid),
+            channelListQuery: channelListQuery,
+            client: self,
+            messageOrdering: messageOrdering
+        )
     }
     
     /// Creates a new `ChatChannelController` for the channel with the provided channel query.
     ///
     /// - Parameters:
     ///   - channelQuery: The ChannelQuery this controller represents
+    ///   - channelListQuery: The channel list query the channel this controller represents is part of.
     ///   - messageOrdering: Describes the ordering the messages are presented.
     ///
     /// - Returns: A new instance of `ChatChannelController`.
     ///
     func channelController(
         for channelQuery: ChannelQuery,
+        channelListQuery: ChannelListQuery? = nil,
         messageOrdering: MessageOrdering = .topToBottom
     ) -> ChatChannelController {
-        .init(channelQuery: channelQuery, client: self, messageOrdering: messageOrdering)
+        .init(
+            channelQuery: channelQuery,
+            channelListQuery: channelListQuery,
+            client: self,
+            messageOrdering: messageOrdering
+        )
     }
     
     /// Creates a `ChatChannelController` that will create a new channel, if the channel doesn't exist already.
@@ -48,6 +65,7 @@ public extension ChatClient {
     ///   - messageOrdering: Describes the ordering the messages are presented.
     ///   - invites: IDs for the new channel invitees.
     ///   - extraData: Extra data for the new channel.
+    ///   - channelListQuery: The channel list query the channel this controller represents is part of.
     /// - Throws: `ClientError.CurrentUserDoesNotExist` if there is no currently logged-in user.
     /// - Returns: A new instance of `ChatChannelController`.
     func channelController(
@@ -59,7 +77,8 @@ public extension ChatClient {
         isCurrentUserMember: Bool = true,
         messageOrdering: MessageOrdering = .topToBottom,
         invites: Set<UserId> = [],
-        extraData: [String: RawJSON] = [:]
+        extraData: [String: RawJSON] = [:],
+        channelListQuery: ChannelListQuery? = nil
     ) throws -> ChatChannelController {
         guard let currentUserId = currentUserId else {
             throw ClientError.CurrentUserDoesNotExist()
@@ -77,6 +96,7 @@ public extension ChatClient {
 
         return .init(
             channelQuery: .init(channelPayload: payload),
+            channelListQuery: channelListQuery,
             client: self,
             isChannelAlreadyCreated: false,
             messageOrdering: messageOrdering
@@ -99,6 +119,8 @@ public extension ChatClient {
     ///   - imageURL: The new channel avatar URL.
     ///   - team: Team for the new channel.
     ///   - extraData: Extra data for the new channel.
+    ///   - channelListQuery: The channel list query the channel this controller represents is part of.
+    ///
     /// - Throws:
     ///     - `ClientError.ChannelEmptyMembers` if `members` is empty.
     ///     - `ClientError.CurrentUserDoesNotExist` if there is no currently logged-in user.
@@ -111,7 +133,8 @@ public extension ChatClient {
         name: String? = nil,
         imageURL: URL? = nil,
         team: String? = nil,
-        extraData: [String: RawJSON]
+        extraData: [String: RawJSON],
+        channelListQuery: ChannelListQuery? = nil
     ) throws -> ChatChannelController {
         guard let currentUserId = currentUserId else { throw ClientError.CurrentUserDoesNotExist() }
         guard !members.isEmpty else { throw ClientError.ChannelEmptyMembers() }
@@ -127,6 +150,7 @@ public extension ChatClient {
         )
         return .init(
             channelQuery: .init(channelPayload: payload),
+            channelListQuery: channelListQuery,
             client: self,
             isChannelAlreadyCreated: false,
             messageOrdering: messageOrdering
@@ -142,6 +166,10 @@ public extension ChatClient {
 public class ChatChannelController: DataController, DelegateCallable, DataStoreProvider {
     /// The ChannelQuery this controller observes.
     @Atomic public private(set) var channelQuery: ChannelQuery
+    
+    /// The channel list query the channel is related to.
+    /// It's `nil` when this controller wasn't created by a `ChannelListController`
+    public let channelListQuery: ChannelListQuery?
     
     /// Flag indicating whether channel is created on backend. We need this flag to restrict channel modification requests
     /// before channel is created on backend.
@@ -250,17 +278,20 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     /// Creates a new `ChannelController`
     /// - Parameters:
     ///   - channelQuery: channel query for observing changes
+    ///   - channelListQuery: The channel list query the channel this controller represents is part of.
     ///   - client: The `Client` this controller belongs to.
     ///   - environment: Environment for this controller.
     ///   - isChannelAlreadyCreated: Flag indicating whether channel is created on backend.
     init(
         channelQuery: ChannelQuery,
+        channelListQuery: ChannelListQuery?,
         client: ChatClient,
         environment: Environment = .init(),
         isChannelAlreadyCreated: Bool = true,
         messageOrdering: MessageOrdering = .topToBottom
     ) {
         self.channelQuery = channelQuery
+        self.channelListQuery = channelListQuery
         self.client = client
         self.environment = environment
         self.isChannelAlreadyCreated = isChannelAlreadyCreated
@@ -270,7 +301,11 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
         setChannelObserver()
         setMessagesObserver()
     }
-
+    
+    deinit {
+        markChannelAsOpen(false)
+    }
+    
     private func setChannelObserver() {
         _channelObserver.computeValue = { [weak self] in
             guard let self = self else {
@@ -354,8 +389,16 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             channelQuery: channelQuery,
             channelCreatedCallback: channelCreatedCallback
         ) { result in
-            self.state = result.error == nil ? .remoteDataFetched : .remoteDataFetchFailed(ClientError(with: result.error))
-            self.callback { completion?(result.error) }
+            switch result {
+            case .success:
+                self.markChannelAsOpen(true) { error in
+                    self.state = error.map { .remoteDataFetchFailed($0) } ?? .remoteDataFetched
+                    self.callback { completion?(error) }
+                }
+            case let .failure(error):
+                self.state = .remoteDataFetchFailed(ClientError(with: error))
+                self.callback { completion?(error) }
+            }
         }
         
         /// Setup observers if we know the channel `cid` (if it's missing, it'll be set in `set(cid:)`
@@ -447,6 +490,33 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
                 }
             }
         ]
+    }
+    
+    private func markChannelAsOpen(_ open: Bool, completion: ((ClientError?) -> Void)? = nil) {
+        guard let cid = cid else {
+            completion?(ClientError.ChannelNotCreatedYet())
+            return
+        }
+                
+        client.databaseContainer.write({ [channelListQuery] session in
+            guard let channelDTO = session.channel(cid: cid) else {
+                throw ClientError.ChannelDoesNotExist(cid: cid)
+            }
+            
+            let query = channelListQuery ?? .unique(for: cid)
+            let queryDTO = session.saveQuery(query: query)
+            
+            if open {
+                queryDTO.openChannels.insert(channelDTO)
+            } else if channelListQuery != nil {
+                queryDTO.openChannels.remove(channelDTO)
+            } else {
+                session.delete(query: query)
+            }
+        }, completion: {
+            let clientError = ($0 as? ClientError) ?? $0.map { ClientError(with: $0) }
+            completion?(clientError)
+        })
     }
     
     /// Sets the provided object as a delegate of this controller.
@@ -1425,4 +1495,12 @@ extension ClientError {
 
 extension ClientError {
     class ChannelFeatureDisabled: ClientError {}
+}
+
+extension ChannelListQuery {
+    static func unique(for cid: ChannelId) -> Self {
+        var filter: Filter<ChannelListFilterScope> = .equal(.cid, to: cid)
+        filter.explicitHash = cid.rawValue
+        return .init(filter: filter)
+    }
 }

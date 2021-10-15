@@ -235,13 +235,10 @@ extension NSManagedObjectContext {
         ChannelDTO.load(cid: cid, context: self)
     }
     
-    func deleteChannels(query: ChannelListQuery) throws {
-        guard let fetchRequest = ChannelDTO.channelListFetchRequest(
-            query: query
-        ) as? NSFetchRequest<NSFetchRequestResult> else { return }
-        let deleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
-        try execute(deleteRequest)
-        try save()
+    func delete(query: ChannelListQuery) {
+        guard let dto = channelListQuery(filterHash: query.filter.filterHash) else { return }
+        
+        delete(dto)
     }
 }
 
