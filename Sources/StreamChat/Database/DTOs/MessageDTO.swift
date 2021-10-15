@@ -351,19 +351,8 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         return message
     }
     
-    func saveMessage(payload: MessagePayload, for cid: ChannelId?) throws -> MessageDTO {
-        guard payload.channel != nil || cid != nil else {
-            throw ClientError.MessagePayloadSavingFailure("""
-            Either `payload.channel` or `cid` must be provided to sucessfuly save the message payload.
-            - `payload.channel` value: \(String(describing: payload.channel))
-            - `cid` value: \(String(describing: cid))
-            """)
-        }
-
-        if let cid = cid, let payloadCid = payload.channel?.cid {
-            log.assert(cid == payloadCid, "`cid` provided is different from the `payload.channel.cid`.")
-        }
-        
+    func saveMessage(payload: MessagePayload, channelDTO: ChannelDTO) throws -> MessageDTO {
+        let cid = try ChannelId(cid: channelDTO.cid)
         let dto = MessageDTO.loadOrCreate(id: payload.id, context: self)
 
         dto.text = payload.text
@@ -396,7 +385,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         }
 
         if let quotedMessage = payload.quotedMessage {
-            dto.quotedMessage = try saveMessage(payload: quotedMessage, for: cid)
+            dto.quotedMessage = try saveMessage(payload: quotedMessage, channelDTO: channelDTO)
         } else if let quotedMessageId = payload.quotedMessageId {
             // In case we do not have a fully formed quoted message in the payload,
             // we check for quotedMessageId. This can happen in the case of nested quoted messages.
@@ -422,34 +411,18 @@ extension NSManagedObjectContext: MessageDatabaseSession {
             array: payload.threadParticipants.map { try saveUser(payload: $0) }
         )
 
-        var channelDTO: ChannelDTO?
-
-        if let channelPayload = payload.channel {
-            channelDTO = try saveChannel(payload: channelPayload, query: nil)
-        } else if let cid = cid {
-            channelDTO = ChannelDTO.load(cid: cid, context: self)
+        channelDTO.lastMessageAt = max(channelDTO.lastMessageAt ?? payload.createdAt, payload.createdAt)
+        
+        if dto.pinned {
+            channelDTO.pinnedMessages.insert(dto)
         } else {
-            log.assertionFailure("Should never happen because either `cid` or `payload.channel` should be present.")
+            channelDTO.pinnedMessages.remove(dto)
         }
-
-        if let channelDTO = channelDTO {
-            channelDTO.lastMessageAt = max(channelDTO.lastMessageAt ?? payload.createdAt, payload.createdAt)
-            
-            if dto.pinned {
-                channelDTO.pinnedMessages.insert(dto)
-            } else {
-                channelDTO.pinnedMessages.remove(dto)
-            }
-            
-            dto.channel = channelDTO
-        } else {
-            log.assertionFailure("Should never happen, a channel should have been fetched.")
-        }
+        
+        dto.channel = channelDTO
         
         let reactions = payload.latestReactions + payload.ownReactions
         try reactions.forEach { try saveReaction(payload: $0) }
-        
-        let cid = cid ?? payload.channel!.cid
         
         let attachments: Set<AttachmentDTO> = try Set(
             payload.attachments.enumerated().map { index, attachment in
@@ -474,9 +447,44 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         
         return dto
     }
+
+    func saveMessage(payload: MessagePayload, for cid: ChannelId?) throws -> MessageDTO? {
+        guard payload.channel != nil || cid != nil else {
+            throw ClientError.MessagePayloadSavingFailure("""
+            Either `payload.channel` or `cid` must be provided to sucessfuly save the message payload.
+            - `payload.channel` value: \(String(describing: payload.channel))
+            - `cid` value: \(String(describing: cid))
+            """)
+        }
+
+        if let cid = cid, let payloadCid = payload.channel?.cid {
+            log.assert(cid == payloadCid, "`cid` provided is different from the `payload.channel.cid`.")
+        }
+
+        var channelDTO: ChannelDTO?
+
+        if let channelPayload = payload.channel {
+            channelDTO = try saveChannel(payload: channelPayload, query: nil)
+        } else if let cid = cid {
+            channelDTO = ChannelDTO.load(cid: cid, context: self)
+        } else {
+            log.assertionFailure("Should never happen because either `cid` or `payload.channel` should be present.")
+            return nil
+        }
+
+        guard let channelDTO = channelDTO else {
+            log.assertionFailure("Should never happen, a channel should have been fetched.")
+            return nil
+        }
+        
+        return try saveMessage(payload: payload, channelDTO: channelDTO)
+    }
     
-    func saveMessage(payload: MessagePayload, for query: MessageSearchQuery) throws -> MessageDTO {
-        let messageDTO = try saveMessage(payload: payload, for: nil)
+    func saveMessage(payload: MessagePayload, for query: MessageSearchQuery) throws -> MessageDTO? {
+        guard let messageDTO = try saveMessage(payload: payload, for: nil) else {
+            return nil
+        }
+
         messageDTO.searches.insert(saveQuery(query: query))
         return messageDTO
     }

@@ -186,13 +186,13 @@ extension NSManagedObjectContext {
         query: ChannelListQuery?
     ) throws -> ChannelDTO {
         let dto = try saveChannel(payload: payload.channel, query: query)
-        
-        try payload.messages.forEach { _ = try saveMessage(payload: $0, for: payload.channel.cid) }
+
+        try payload.messages.forEach { _ = try saveMessage(payload: $0, channelDTO: dto) }
 
         dto.updateOldestMessageAt(payload: payload)
 
         try payload.pinnedMessages.forEach {
-            _ = try saveMessage(payload: $0, for: payload.channel.cid)
+            _ = try saveMessage(payload: $0, channelDTO: dto)
         }
         
         try payload.channelReads.forEach { _ = try saveChannelRead(payload: $0, for: payload.channel.cid) }

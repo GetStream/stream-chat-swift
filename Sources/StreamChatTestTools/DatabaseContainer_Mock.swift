@@ -220,7 +220,7 @@ extension DatabaseContainer {
         numberOfReplies: Int = 0
     ) throws {
         try writeSynchronously { session in
-            try session.saveChannel(payload: XCTestCase().dummyPayload(with: cid))
+            let channelDTO = try session.saveChannel(payload: XCTestCase().dummyPayload(with: cid))
             
             let message: MessagePayload = .dummy(
                 type: type,
@@ -237,7 +237,7 @@ extension DatabaseContainer {
                 pinExpires: pinExpires
             )
             
-            let messageDTO = try session.saveMessage(payload: message, for: cid)
+            let messageDTO = try session.saveMessage(payload: message, channelDTO: channelDTO)
             messageDTO.localMessageState = localState
             
             for idx in 0..<numberOfReplies {
@@ -249,7 +249,7 @@ extension DatabaseContainer {
                     text: "Reply \(idx)"
                 )
                 
-                let replyDTO = try session.saveMessage(payload: reply, for: cid)
+                let replyDTO = try session.saveMessage(payload: reply, for: cid)!
                 messageDTO.replies.insert(replyDTO)
             }
         }
