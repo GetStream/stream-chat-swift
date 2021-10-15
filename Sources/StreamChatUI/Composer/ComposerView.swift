@@ -27,8 +27,7 @@ open class ComposerView: _View, ThemeProvider {
         .withoutAutoresizingMaskConstraints
 
     /// The container that displays the components below the message input view.
-    public private(set) lazy var bottomContainer = ContainerStackView()
-        .withoutAutoresizingMaskConstraints
+    public private(set) lazy var bottomContainer = UIStackView()
 
     /// The container that layouts the message input view and the leading/trailing containers around it.
     public private(set) lazy var centerContainer = ContainerStackView()

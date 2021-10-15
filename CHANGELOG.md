@@ -10,10 +10,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Fix incorrect key in `created_by` filter used in channel list query [#1544](https://github.com/GetStream/stream-chat-swift/issues/1544)
 - Fix message list jumps when new reaction added [#1542](https://github.com/GetStream/stream-chat-swift/pull/1542)
 - Fix message list jumps when message received [#1542](https://github.com/GetStream/stream-chat-swift/pull/1542)
+- Fix broken constraint in the `ComposerView`, we have made the `BottomContainer` a standard `UIStackView` [#1545](https://github.com/GetStream/stream-chat-swift/pull/1545)
 
 ### 🔄 Changed
 - `LogConfig` changes after logger was used will now take affect [#1522](https://github.com/GetStream/stream-chat-swift/issues/1522)
-
 
 # [4.1.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.1.0)
 _October 12, 2021_
