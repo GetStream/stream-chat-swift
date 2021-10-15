@@ -8,44 +8,116 @@ public var log: Logger {
     LogConfig.logger
 }
 
+/// Entity for identifying which subsystem the log message comes from.
+public struct LogSubsystem: OptionSet {
+    public let rawValue: Int
+    
+    public init(rawValue: Int) {
+        self.rawValue = rawValue
+    }
+    
+    /// All subsystems within the SDK.
+    public static let all: LogSubsystem = [.database, .httpRequests, .webSocket, .other]
+    
+    static let other = Self(rawValue: 1 << 0)
+    
+    /// The subsystem responsible for database operations.
+    public static let database = Self(rawValue: 1 << 1)
+    /// The subsystem responsible for HTTP operations.
+    public static let httpRequests = Self(rawValue: 1 << 2)
+    /// The subsystem responsible for websocket operations.
+    public static let webSocket = Self(rawValue: 1 << 3)
+}
+
 public enum LogConfig {
     /// Identifier for the logger. Defaults to empty.
-    public static var identifier = ""
+    public static var identifier = "" {
+        didSet {
+            invalidateLogger()
+        }
+    }
     
     /// Output level for the logger.
-    public static var level: LogLevel = .error
+    public static var level: LogLevel = .error {
+        didSet {
+            invalidateLogger()
+        }
+    }
     
     /// Date formatter for the logger. Defaults to ISO8601
     public static var dateFormatter: DateFormatter = {
         let df = DateFormatter()
         df.dateFormat = "yyyy-MM-dd HH:mm:ss.SSS"
         return df
-    }()
+    }() {
+        didSet {
+            invalidateLogger()
+        }
+    }
     
     /// Log formatters to be applied in order before logs are outputted. Defaults to empty (no formatters).
     /// Please see `LogFormatter` for more info.
-    public static var formatters = [LogFormatter]()
+    public static var formatters = [LogFormatter]() {
+        didSet {
+            invalidateLogger()
+        }
+    }
     
     /// Toggle for showing date in logs
-    public static var showDate = true
+    public static var showDate = true {
+        didSet {
+            invalidateLogger()
+        }
+    }
     
     /// Toggle for showing log level in logs
-    public static var showLevel = true
+    public static var showLevel = true {
+        didSet {
+            invalidateLogger()
+        }
+    }
     
     /// Toggle for showing identifier in logs
-    public static var showIdentifier = false
+    public static var showIdentifier = false {
+        didSet {
+            invalidateLogger()
+        }
+    }
     
     /// Toggle for showing thread name in logs
-    public static var showThreadName = true
+    public static var showThreadName = true {
+        didSet {
+            invalidateLogger()
+        }
+    }
     
     /// Toggle for showing file name in logs
-    public static var showFileName = true
+    public static var showFileName = true {
+        didSet {
+            invalidateLogger()
+        }
+    }
     
     /// Toggle for showing line number in logs
-    public static var showLineNumber = true
+    public static var showLineNumber = true {
+        didSet {
+            invalidateLogger()
+        }
+    }
     
     /// Toggle for showing function name in logs
-    public static var showFunctionName = true
+    public static var showFunctionName = true {
+        didSet {
+            invalidateLogger()
+        }
+    }
+    
+    /// Subsystems for the logger
+    public static var subsystems: LogSubsystem = .all {
+        didSet {
+            invalidateLogger()
+        }
+    }
     
     /// Destinations for the default logger. Please see `LogDestination`.
     /// Defaults to only `ConsoleLogDestination`, which only prints the messages.
@@ -54,6 +126,7 @@ public enum LogConfig {
     public static var destinations: [LogDestination] = {
         let consoleLogDestination = ConsoleLogDestination(
             level: level,
+            subsystems: subsystems,
             showDate: showDate,
             dateFormatter: dateFormatter,
             formatters: formatters,
@@ -65,17 +138,39 @@ public enum LogConfig {
             showFunctionName: showFunctionName
         )
         return [consoleLogDestination]
-    }()
+    }() {
+        didSet {
+            invalidateLogger()
+        }
+    }
+    
+    /// Underlying logger instance to control singleton.
+    private static var _logger: Logger?
     
     /// Logger instance to be used by StreamChat.
     ///
-    /// - Important: Other options in `ChatClientConfig.Logging` will not take affect if this is changed.
-    public static var logger: Logger = {
-        Logger(identifier: identifier, destinations: destinations)
-    }()
+    /// - Important: Other options in `LogConfig` will not take affect if this is changed.
+    public static var logger: Logger {
+        get {
+            if let logger = _logger {
+                return logger
+            } else {
+                _logger = Logger(identifier: identifier, destinations: destinations)
+                return _logger!
+            }
+        }
+        set {
+            _logger = newValue
+        }
+    }
+    
+    /// Invalidates the current logger instance so it can be recreated.
+    private static func invalidateLogger() {
+        _logger = nil
+    }
 }
 
-/// Entitiy used for loggin messages.
+/// Entity used for logging messages.
 public class Logger {
     /// Identifier of the Logger. Will be visible if a destination has `showIdentifiers` enabled.
     public let identifier: String
@@ -106,9 +201,17 @@ public class Logger {
         functionName: StaticString = #function,
         fileName: StaticString = #file,
         lineNumber: UInt = #line,
-        message: @autoclosure () -> Any
+        message: @autoclosure () -> Any,
+        subsystems: LogSubsystem = .all
     ) {
-        log(level, functionName: functionName, fileName: fileName, lineNumber: lineNumber, message: message())
+        log(
+            level,
+            functionName: functionName,
+            fileName: fileName,
+            lineNumber: lineNumber,
+            message: message(),
+            subsystems: subsystems
+        )
     }
     
     /// Log a message to all enabled destinations.
@@ -125,9 +228,10 @@ public class Logger {
         functionName: StaticString = #function,
         fileName: StaticString = #file,
         lineNumber: UInt = #line,
-        message: @autoclosure () -> Any
+        message: @autoclosure () -> Any,
+        subsystems: LogSubsystem = .all
     ) {
-        let enabledDestinations = destinations.filter { $0.isEnabled(for: level) }
+        let enabledDestinations = destinations.filter { $0.isEnabled(level: level, subsystems: subsystems) }
         guard !enabledDestinations.isEmpty else { return }
         
         let logDetails = LogDetails(
@@ -156,11 +260,19 @@ public class Logger {
     ///   - lineNumber: Line number of the caller
     public func info(
         _ message: @autoclosure () -> Any,
+        subsystems: LogSubsystem = .all,
         functionName: StaticString = #function,
         fileName: StaticString = #file,
         lineNumber: UInt = #line
     ) {
-        log(.info, functionName: functionName, fileName: fileName, lineNumber: lineNumber, message: message())
+        log(
+            .info,
+            functionName: functionName,
+            fileName: fileName,
+            lineNumber: lineNumber,
+            message: message(),
+            subsystems: subsystems
+        )
     }
     
     /// Log a debug message.
@@ -172,11 +284,19 @@ public class Logger {
     ///   - lineNumber: Line number of the caller
     public func debug(
         _ message: @autoclosure () -> Any,
+        subsystems: LogSubsystem = .all,
         functionName: StaticString = #function,
         fileName: StaticString = #file,
         lineNumber: UInt = #line
     ) {
-        log(.debug, functionName: functionName, fileName: fileName, lineNumber: lineNumber, message: message())
+        log(
+            .debug,
+            functionName: functionName,
+            fileName: fileName,
+            lineNumber: lineNumber,
+            message: message(),
+            subsystems: subsystems
+        )
     }
     
     /// Log a warning message.
@@ -188,11 +308,19 @@ public class Logger {
     ///   - lineNumber: Line number of the caller
     public func warning(
         _ message: @autoclosure () -> Any,
+        subsystems: LogSubsystem = .all,
         functionName: StaticString = #function,
         fileName: StaticString = #file,
         lineNumber: UInt = #line
     ) {
-        log(.warning, functionName: functionName, fileName: fileName, lineNumber: lineNumber, message: message())
+        log(
+            .warning,
+            functionName: functionName,
+            fileName: fileName,
+            lineNumber: lineNumber,
+            message: message(),
+            subsystems: subsystems
+        )
     }
     
     /// Log an error message.
@@ -204,11 +332,19 @@ public class Logger {
     ///   - lineNumber: Line number of the caller
     public func error(
         _ message: @autoclosure () -> Any,
+        subsystems: LogSubsystem = .all,
         functionName: StaticString = #function,
         fileName: StaticString = #file,
         lineNumber: UInt = #line
     ) {
-        log(.error, functionName: functionName, fileName: fileName, lineNumber: lineNumber, message: message())
+        log(
+            .error,
+            functionName: functionName,
+            fileName: fileName,
+            lineNumber: lineNumber,
+            message: message(),
+            subsystems: subsystems
+        )
     }
     
     /// Performs `Swift.assert` and stops program execution if `condition` evaluated to false. In RELEASE builds only
@@ -220,13 +356,21 @@ public class Logger {
     public func assert(
         _ condition: @autoclosure () -> Bool,
         _ message: @autoclosure () -> Any,
+        subsystems: LogSubsystem = .all,
         functionName: StaticString = #function,
         fileName: StaticString = #file,
         lineNumber: UInt = #line
     ) {
         guard !condition() else { return }
         Swift.assert(condition(), String(describing: message()), file: fileName, line: lineNumber)
-        log(.error, functionName: functionName, fileName: fileName, lineNumber: lineNumber, message: "Assert failed: \(message())")
+        log(
+            .error,
+            functionName: functionName,
+            fileName: fileName,
+            lineNumber: lineNumber,
+            message: "Assert failed: \(message())",
+            subsystems: subsystems
+        )
     }
     
     /// Stops program execution with `Swift.assertionFailure`. In RELEASE builds only
@@ -236,12 +380,20 @@ public class Logger {
     ///   - message: A custom message to log if `condition` is evaluated to false.
     public func assertionFailure(
         _ message: @autoclosure () -> Any,
+        subsystems: LogSubsystem = .all,
         functionName: StaticString = #function,
         fileName: StaticString = #file,
         lineNumber: UInt = #line
     ) {
         Swift.assertionFailure(String(describing: message()), file: fileName, line: lineNumber)
-        log(.error, functionName: functionName, fileName: fileName, lineNumber: lineNumber, message: "Assert failed: \(message())")
+        log(
+            .error,
+            functionName: functionName,
+            fileName: fileName,
+            lineNumber: lineNumber,
+            message: "Assert failed: \(message())",
+            subsystems: subsystems
+        )
     }
 }
 

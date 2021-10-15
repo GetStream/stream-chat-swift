@@ -122,7 +122,7 @@ class MessageSender_Tests: XCTestCase {
         let dummyPayload: MessagePayload.Boxed = .init(
             message: .dummy(messageId: message1Id, authorUserId: .anonymous)
         )
-        
+
         apiClient.test_simulateResponse(.success(dummyPayload))
 
         // Simulate all message2 attachments are uploaded.
