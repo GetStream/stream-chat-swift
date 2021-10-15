@@ -34,9 +34,7 @@ final class DatabaseCleanupUpdater_Tests: XCTestCase {
         
         AssertAsync {
             Assert.canBeReleased(&databaseCleanupUpdater)
-            Assert.canBeReleased(&database)
             Assert.canBeReleased(&webSocketClient)
-            Assert.canBeReleased(&apiClient)
         }
         
         super.tearDown()

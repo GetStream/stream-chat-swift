@@ -38,9 +38,7 @@ final class ConnectionRecoveryUpdater_Tests: XCTestCase {
 
         AssertAsync {
             Assert.canBeReleased(&updater)
-            Assert.canBeReleased(&database)
             Assert.canBeReleased(&webSocketClient)
-            Assert.canBeReleased(&apiClient)
         }
         
         super.tearDown()
