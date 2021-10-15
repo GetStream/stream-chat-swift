@@ -16,22 +16,20 @@ typealias EventWorkerBuilder = (
     _ apiClient: APIClient
 ) -> Worker
 
-// This is a super-class instead of protocol because we need to be sure, `unowned` is used for socket client and api client
-class Worker: NSObject { // TODO: remove NSObject
-    unowned let database: DatabaseContainer
-    unowned let apiClient: APIClient
-    
-    init(database: DatabaseContainer, apiClient: APIClient) {
+class Worker {
+    let database: DatabaseContainer
+    let apiClient: APIClient
+
+    public init(database: DatabaseContainer, apiClient: APIClient) {
         self.database = database
         self.apiClient = apiClient
-        super.init()
     }
 }
 
 class EventWorker: Worker {
-    unowned let eventNotificationCenter: EventNotificationCenter
-    
-    init(
+    let eventNotificationCenter: EventNotificationCenter
+
+    public init(
         database: DatabaseContainer,
         eventNotificationCenter: EventNotificationCenter,
         apiClient: APIClient
