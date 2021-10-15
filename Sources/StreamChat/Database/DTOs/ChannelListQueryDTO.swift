@@ -16,6 +16,9 @@ class ChannelListQueryDTO: NSManagedObject {
     
     @NSManaged var channels: Set<ChannelDTO>
     
+    /// Channels that are being read by the current user (the subset of `channels`)
+    @NSManaged var openChannels: Set<ChannelDTO>
+    
     static func load(filterHash: String, context: NSManagedObjectContext) -> ChannelListQueryDTO? {
         let request = NSFetchRequest<ChannelListQueryDTO>(entityName: ChannelListQueryDTO.entityName)
         request.predicate = NSPredicate(format: "filterHash == %@", filterHash)
