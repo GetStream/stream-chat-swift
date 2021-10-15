@@ -77,7 +77,7 @@ class NameGroupViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        view.backgroundColor = .white
+        view.backgroundColor = .systemBackground
         title = "Name of Group Chat"
         
         navigationItem.rightBarButtonItem = doneButton
