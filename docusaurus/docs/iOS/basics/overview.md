@@ -74,7 +74,7 @@ Because StreamChat SDKs have to be distributed with its resources, the minimal S
 
 ### Install with CocoaPods
 
-In your project's Podfile, add: `pod 'StreamChatUI', '~> 4.0'`. It should look similar to the snippet below.
+In your project's Podfile, add: `pod 'StreamChatUI', '~> 4.0.0'`. It should look similar to the snippet below.
 
 ```ruby
 target 'MyProject' do
@@ -82,7 +82,7 @@ target 'MyProject' do
   use_frameworks!
 
   # Pods for MyProject
-  pod 'StreamChatUI', '~> 4.0'
+  pod 'StreamChatUI', '~> 4.0.0'
 end
 ```
 
@@ -94,7 +94,7 @@ target 'MyProject' do
   use_frameworks!
 
   # Pods for MyProject
-  pod 'StreamChat', '~> 4.0'
+  pod 'StreamChat', '~> 4.0.0'
 end
 ```
 
@@ -108,12 +108,12 @@ The above command will generate the **MyProject.xcworkspace** file automatically
 
 With our workspace now containing our Pods project with dependencies, as well as our original project, let’s go ahead and move over to Xcode to complete the process.
 
-### Installing with Carthage
+### Install with Carthage
 
 Add entry to your `Cartfile`:
 
 ```
-github "GetStream/stream-chat-swift" ~> 4.0
+github "GetStream/stream-chat-swift" ~> 4.0.0
 ```
 
 and run:
@@ -123,3 +123,25 @@ carthage update --use-xcframeworks --platform iOS
 ```
 
 go into your project, in the General settings tab, in the Frameworks, Libraries, and Embedded Content section, drag and drop each XCFramework you use from the Carthage/Build folder on disk.
+
+## Upgrade and Versioning Strategy
+
+The StreamChat Swift SDK adheres to the [semantic versioning](https://semver.org/) rules. 
+
+- Bug fixes and behavior improvements cause **patch** version bump. 
+- New features are shipped with an increased **minor** version. 
+- Incompatible changes in the API will cause a **major** version increase.
+
+Occasionally, the SDK can include visual changes (whitespace, color changes, sizing, etc) in minor versions, as we are continuously improving the default look of our UI components. Bumping the major version for such changes would not be practical. 
+
+
+### How should I specify my dependency version? 
+
+You should either use a fixed version, or an optimitistic operator (a.k.a. squiggly arrow), with **all three versions specified**.
+
+```ruby 
+pod 'StreamChat', '~> 4.0.0'
+```
+
+To stay up-to-date with our updates and get a detailed breakdown of what's new, subscribe to the releases of [getstream/stream-chat-swift](https://github.com/GetStream/stream-chat-swift/releases) by clicking the "watch" button. You can further tweak your watch preferences and subscribe only to the release events.
+
