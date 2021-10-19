@@ -26,7 +26,7 @@ extension ChatUserListController {
             self.controller = controller
             state = controller.state
             
-            controller.multicastDelegate.additionalDelegates.append(self)
+            controller.multicastDelegate.additionalDelegates.append(AnyUserListControllerDelegate(self))
             users = controller.users
         }
     }

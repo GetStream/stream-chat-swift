@@ -33,7 +33,7 @@ extension ChatMessageSearchController {
             self.controller = controller
             state = .init(controller.state)
 
-            controller.multicastDelegate.additionalDelegates.append(self)
+            controller.multicastDelegate.additionalDelegates.append(AnyMessageSearchControllerDelegate(self))
         }
     }
 }

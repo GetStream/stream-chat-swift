@@ -38,7 +38,8 @@ public class ChatChannelWatcherListController: DataController, DelegateCallable,
     @available(iOS 13, *)
     lazy var basePublishers: BasePublishers = .init(controller: self)
     
-    var multicastDelegate: MulticastDelegate<ChatChannelWatcherListControllerDelegate> = .init() {
+    /// The type-erased delegate.
+    var multicastDelegate: MulticastDelegate<AnyChatChannelWatcherListControllerDelegate> = .init() {
         didSet {
             stateMulticastDelegate.mainDelegate = multicastDelegate.mainDelegate
             stateMulticastDelegate.additionalDelegates = multicastDelegate.additionalDelegates
@@ -90,8 +91,8 @@ public class ChatChannelWatcherListController: DataController, DelegateCallable,
     /// - Parameter delegate: The object used as a delegate. It's referenced weakly, so you need to keep the object
     /// alive if you want keep receiving updates.
     ///
-    public func setDelegate(_ delegate: ChatChannelWatcherListControllerDelegate) {
-        multicastDelegate.mainDelegate = delegate
+    public func setDelegate<Delegate: ChatChannelWatcherListControllerDelegate>(_ delegate: Delegate) {
+        multicastDelegate.mainDelegate = AnyChatChannelWatcherListControllerDelegate(delegate)
     }
     
     private func createWatchersObserver() -> ListDatabaseObserver<ChatUser, UserDTO> {
@@ -148,8 +149,8 @@ extension ChatChannelWatcherListController {
     /// Set the delegate of `ChatChannelWatcherListController` to observe the changes in the system.
 
     public var delegate: ChatChannelWatcherListControllerDelegate? {
-        get { multicastDelegate.mainDelegate }
-        set { multicastDelegate.mainDelegate = newValue }
+        get { multicastDelegate.mainDelegate?.wrappedDelegate as? ChatChannelWatcherListControllerDelegate }
+        set { multicastDelegate.mainDelegate = AnyChatChannelWatcherListControllerDelegate(newValue) }
     }
 }
 
@@ -215,5 +216,33 @@ final class AnyChatChannelWatcherListControllerDelegate: ChatChannelWatcherListC
         didChangeWatchers changes: [ListChange<ChatUser>]
     ) {
         _controllerDidChangeWatchers(controller, changes)
+    }
+}
+
+extension AnyChatChannelWatcherListControllerDelegate {
+    convenience init<Delegate: ChatChannelWatcherListControllerDelegate>(_ delegate: Delegate) {
+        self.init(
+            wrappedDelegate: delegate,
+            controllerDidChangeState: { [weak delegate] in
+                delegate?.controller($0, didChangeState: $1)
+            },
+            controllerDidChangeWatchers: { [weak delegate] in
+                delegate?.channelWatcherListController($0, didChangeWatchers: $1)
+            }
+        )
+    }
+}
+
+extension AnyChatChannelWatcherListControllerDelegate {
+    convenience init(_ delegate: ChatChannelWatcherListControllerDelegate?) {
+        self.init(
+            wrappedDelegate: delegate,
+            controllerDidChangeState: { [weak delegate] in
+                delegate?.controller($0, didChangeState: $1)
+            },
+            controllerDidChangeWatchers: { [weak delegate] in
+                delegate?.channelWatcherListController($0, didChangeWatchers: $1)
+            }
+        )
     }
 }

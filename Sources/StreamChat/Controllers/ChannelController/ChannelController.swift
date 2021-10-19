@@ -204,7 +204,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     )
     
     /// A type-erased delegate.
-    var multicastDelegate: MulticastDelegate<ChatChannelControllerDelegate> = .init() {
+    var multicastDelegate: MulticastDelegate<AnyChannelControllerDelegate> = .init() {
         didSet {
             stateMulticastDelegate.mainDelegate = multicastDelegate.mainDelegate
             stateMulticastDelegate.additionalDelegates = multicastDelegate.additionalDelegates
@@ -454,8 +454,8 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     /// - Parameter delegate: The object used as a delegate. It's referenced weakly, so you need to keep the object
     /// alive if you want keep receiving updates.
     ///
-    public func setDelegate(_ delegate: ChatChannelControllerDelegate) {
-        multicastDelegate.mainDelegate = delegate
+    public func setDelegate<Delegate: ChatChannelControllerDelegate>(_ delegate: Delegate) {
+        multicastDelegate.mainDelegate = AnyChannelControllerDelegate(delegate)
     }
 }
 
@@ -1216,8 +1216,8 @@ extension ChatChannelController {
 public extension ChatChannelController {
     /// Set the delegate of `ChannelController` to observe the changes in the system.
     var delegate: ChatChannelControllerDelegate? {
-        get { multicastDelegate.mainDelegate }
-        set { multicastDelegate.mainDelegate = newValue }
+        get { multicastDelegate.mainDelegate?.wrappedDelegate as? ChatChannelControllerDelegate }
+        set { multicastDelegate.mainDelegate = AnyChannelControllerDelegate(newValue) }
     }
 }
 
@@ -1273,6 +1273,128 @@ public extension ChatChannelControllerDelegate {
         _ channelController: ChatChannelController,
         didChangeTypingUsers: Set<ChatUser>
     ) {}
+}
+
+// MARK: Type erased Delegate
+
+class AnyChannelControllerDelegate: ChatChannelControllerDelegate {
+    private var _controllerdidUpdateMessages: (
+        ChatChannelController,
+        [ListChange<ChatMessage>]
+    ) -> Void
+    
+    private var _controllerDidUpdateChannel: (
+        ChatChannelController,
+        EntityChange<ChatChannel>
+    ) -> Void
+
+    private var _controllerDidChangeState: (DataController, DataController.State) -> Void
+    
+    private var _controllerDidReceiveMemberEvent: (
+        ChatChannelController,
+        MemberEvent
+    ) -> Void
+    
+    private var _controllerDidChangeTypingUsers: (
+        ChatChannelController,
+        Set<ChatUser>
+    ) -> Void
+
+    weak var wrappedDelegate: AnyObject?
+    
+    init(
+        wrappedDelegate: AnyObject?,
+        controllerDidChangeState: @escaping (DataController, DataController.State) -> Void,
+        controllerDidUpdateChannel: @escaping (
+            ChatChannelController,
+            EntityChange<ChatChannel>
+        ) -> Void,
+        controllerdidUpdateMessages: @escaping (
+            ChatChannelController,
+            [ListChange<ChatMessage>]
+        ) -> Void,
+        controllerDidReceiveMemberEvent: @escaping (
+            ChatChannelController,
+            MemberEvent
+        ) -> Void,
+        controllerDidChangeTypingUsers: @escaping (
+            ChatChannelController,
+            Set<ChatUser>
+        ) -> Void
+    ) {
+        self.wrappedDelegate = wrappedDelegate
+        _controllerDidChangeState = controllerDidChangeState
+        _controllerDidUpdateChannel = controllerDidUpdateChannel
+        _controllerdidUpdateMessages = controllerdidUpdateMessages
+        _controllerDidReceiveMemberEvent = controllerDidReceiveMemberEvent
+        _controllerDidChangeTypingUsers = controllerDidChangeTypingUsers
+    }
+    
+    func controller(_ controller: DataController, didChangeState state: DataController.State) {
+        _controllerDidChangeState(controller, state)
+    }
+    
+    func channelController(
+        _ controller: ChatChannelController,
+        didUpdateChannel channel: EntityChange<ChatChannel>
+    ) {
+        _controllerDidUpdateChannel(controller, channel)
+    }
+    
+    func channelController(
+        _ controller: ChatChannelController,
+        didUpdateMessages changes: [ListChange<ChatMessage>]
+    ) {
+        _controllerdidUpdateMessages(controller, changes)
+    }
+    
+    func channelController(
+        _ controller: ChatChannelController,
+        didReceiveMemberEvent event: MemberEvent
+    ) {
+        _controllerDidReceiveMemberEvent(controller, event)
+    }
+    
+    func channelController(
+        _ channelController: ChatChannelController,
+        didChangeTypingUsers typingUsers: Set<ChatUser>
+    ) {
+        _controllerDidChangeTypingUsers(channelController, typingUsers)
+    }
+}
+
+extension AnyChannelControllerDelegate {
+    convenience init<Delegate: ChatChannelControllerDelegate>(_ delegate: Delegate) {
+        self.init(
+            wrappedDelegate: delegate,
+            controllerDidChangeState: { [weak delegate] in delegate?.controller($0, didChangeState: $1) },
+            controllerDidUpdateChannel: { [weak delegate] in delegate?.channelController($0, didUpdateChannel: $1) },
+            controllerdidUpdateMessages: { [weak delegate] in delegate?.channelController($0, didUpdateMessages: $1) },
+            controllerDidReceiveMemberEvent: { [weak delegate] in
+                delegate?.channelController($0, didReceiveMemberEvent: $1)
+            },
+            controllerDidChangeTypingUsers: { [weak delegate] in
+                delegate?.channelController($0, didChangeTypingUsers: $1)
+            }
+        )
+    }
+}
+
+extension AnyChannelControllerDelegate {
+    convenience init(_ delegate: ChatChannelControllerDelegate?) {
+        self.init(
+            wrappedDelegate: delegate,
+            controllerDidChangeState: { [weak delegate] in delegate?.controller($0, didChangeState: $1) },
+            controllerDidUpdateChannel: { [weak delegate] in delegate?.channelController($0, didUpdateChannel: $1) },
+            controllerdidUpdateMessages: { [weak delegate] in delegate?.channelController($0, didUpdateMessages: $1) },
+            controllerDidReceiveMemberEvent: { [weak delegate] in
+                delegate?.channelController($0, didReceiveMemberEvent: $1)
+            },
+            controllerDidChangeTypingUsers: { [weak delegate] in
+                delegate?.channelController($0, didChangeTypingUsers: $1)
+            }
+        )
+    }
 }
 
 extension ClientError {

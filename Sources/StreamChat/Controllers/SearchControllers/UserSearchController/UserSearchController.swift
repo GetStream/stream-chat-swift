@@ -80,7 +80,8 @@ public class ChatUserSearchController: DataController, DelegateCallable, DataSto
         return observer
     }()
     
-    var multicastDelegate: MulticastDelegate<ChatUserSearchControllerDelegate> = .init() {
+    /// A type-erased delegate.
+    var multicastDelegate: MulticastDelegate<AnyUserSearchControllerDelegate> = .init() {
         didSet {
             stateMulticastDelegate.mainDelegate = multicastDelegate.mainDelegate
             stateMulticastDelegate.additionalDelegates = multicastDelegate.additionalDelegates
@@ -127,7 +128,7 @@ public class ChatUserSearchController: DataController, DelegateCallable, DataSto
     /// alive if you want keep receiving updates.
     ///
     public func setDelegate<Delegate: ChatUserSearchControllerDelegate>(_ delegate: Delegate) {
-        multicastDelegate.mainDelegate = delegate
+        multicastDelegate.mainDelegate = AnyUserSearchControllerDelegate(delegate)
     }
     
     /// Searches users for the given term.
@@ -237,8 +238,8 @@ extension ChatUserSearchController {
 extension ChatUserSearchController {
     /// Set the delegate of `UserListController` to observe the changes in the system.
     public weak var delegate: ChatUserSearchControllerDelegate? {
-        get { multicastDelegate.mainDelegate }
-        set { multicastDelegate.mainDelegate = newValue }
+        get { multicastDelegate.mainDelegate?.wrappedDelegate as? ChatUserSearchControllerDelegate }
+        set { multicastDelegate.mainDelegate = AnyUserSearchControllerDelegate(newValue) }
     }
 }
 
@@ -261,4 +262,56 @@ public extension ChatUserSearchControllerDelegate {
         _ controller: ChatUserSearchController,
         didChangeUsers changes: [ListChange<ChatUser>]
     ) {}
+}
+
+// MARK: - Delegate type eraser
+
+class AnyUserSearchControllerDelegate: ChatUserSearchControllerDelegate {
+    private var _controllerDidChangeUsers: (ChatUserSearchController, [ListChange<ChatUser>])
+        -> Void
+    private var _controllerDidChangeState: (DataController, DataController.State) -> Void
+    
+    weak var wrappedDelegate: AnyObject?
+    
+    init(
+        wrappedDelegate: AnyObject?,
+        controllerDidChangeState: @escaping (DataController, DataController.State) -> Void,
+        controllerDidChangeUsers: @escaping (ChatUserSearchController, [ListChange<ChatUser>])
+            -> Void
+    ) {
+        self.wrappedDelegate = wrappedDelegate
+        _controllerDidChangeState = controllerDidChangeState
+        _controllerDidChangeUsers = controllerDidChangeUsers
+    }
+    
+    func controller(_ controller: DataController, didChangeState state: DataController.State) {
+        _controllerDidChangeState(controller, state)
+    }
+    
+    func controller(
+        _ controller: ChatUserSearchController,
+        didChangeUsers changes: [ListChange<ChatUser>]
+    ) {
+        _controllerDidChangeUsers(controller, changes)
+    }
+}
+
+extension AnyUserSearchControllerDelegate {
+    convenience init<Delegate: ChatUserSearchControllerDelegate>(_ delegate: Delegate) {
+        self.init(
+            wrappedDelegate: delegate,
+            controllerDidChangeState: { [weak delegate] in delegate?.controller($0, didChangeState: $1) },
+            controllerDidChangeUsers: { [weak delegate] in delegate?.controller($0, didChangeUsers: $1) }
+        )
+    }
+}
+
+extension AnyUserSearchControllerDelegate {
+    convenience init(_ delegate: ChatUserSearchControllerDelegate?) {
+        self.init(
+            wrappedDelegate: delegate,
+            controllerDidChangeState: { [weak delegate] in delegate?.controller($0, didChangeState: $1) },
+            controllerDidChangeUsers: { [weak delegate] in delegate?.controller($0, didChangeUsers: $1) }
+        )
+    }
 }

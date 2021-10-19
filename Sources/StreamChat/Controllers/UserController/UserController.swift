@@ -6,18 +6,18 @@ import CoreData
 import Foundation
 
 public extension ChatClient {
-    /// Creates a new `ChatUserController` for the user with the provided `userId`.
+    /// Creates a new `_ChatUserController` for the user with the provided `userId`.
     ///
     /// - Parameter userId: The user identifier.
-    /// - Returns: A new instance of `ChatUserController`.
+    /// - Returns: A new instance of `_ChatUserController`.
     func userController(userId: UserId) -> ChatUserController {
         .init(userId: userId, client: self)
     }
 }
 
-/// `ChatUserController` is a controller class which allows mutating and observing changes of a specific chat user.
+/// `_ChatUserController` is a controller class which allows mutating and observing changes of a specific chat user.
 ///
-/// `ChatUserController` objects are lightweight, and they can be used for both, continuous data change observations,
+/// `_ChatUserController` objects are lightweight, and they can be used for both, continuous data change observations,
 /// and for quick user actions (like mute/unmute).
 public class ChatUserController: DataController, DelegateCallable, DataStoreProvider {
     /// The identifier of tge user this controller observes.
@@ -35,7 +35,8 @@ public class ChatUserController: DataController, DelegateCallable, DataStoreProv
         return userObserver.item
     }
     
-    var multicastDelegate: MulticastDelegate<ChatUserControllerDelegate> = .init() {
+    /// A type-erased delegate.
+    var multicastDelegate: MulticastDelegate<AnyChatUserControllerDelegate> = .init() {
         didSet {
             stateMulticastDelegate.mainDelegate = multicastDelegate.mainDelegate
             stateMulticastDelegate.additionalDelegates = multicastDelegate.additionalDelegates
@@ -100,8 +101,8 @@ public class ChatUserController: DataController, DelegateCallable, DataStoreProv
     /// - Parameter delegate: The object used as a delegate. It's referenced weakly, so you need to keep the object
     /// alive if you want keep receiving updates.
     ///
-    public func setDelegate(_ delegate: ChatUserControllerDelegate) {
-        multicastDelegate.mainDelegate = delegate
+    public func setDelegate<Delegate: ChatUserControllerDelegate>(_ delegate: Delegate) {
+        multicastDelegate.mainDelegate = AnyChatUserControllerDelegate(delegate)
     }
     
     // MARK: - Private
@@ -202,8 +203,8 @@ extension ChatUserController {
 public extension ChatUserController {
     /// Set the delegate of `ChatUserController` to observe the changes in the system.
     var delegate: ChatUserControllerDelegate? {
-        get { multicastDelegate.mainDelegate }
-        set { multicastDelegate.mainDelegate = newValue }
+        get { multicastDelegate.mainDelegate?.wrappedDelegate as? ChatUserControllerDelegate }
+        set { multicastDelegate.mainDelegate = AnyChatUserControllerDelegate(newValue) }
     }
 }
 
@@ -223,4 +224,61 @@ public extension ChatChannelControllerDelegate {
         _ controller: ChatUserController,
         didUpdateUser change: EntityChange<ChatUser>
     ) {}
+}
+
+// MARK: Type erased Delegate
+
+class AnyChatUserControllerDelegate: ChatChannelControllerDelegate {
+    private var _controllerDidChangeState: (DataController, DataController.State) -> Void
+    
+    private var _controllerDidUpdateUser: (
+        ChatUserController,
+        EntityChange<ChatUser>
+    ) -> Void
+    
+    weak var wrappedDelegate: AnyObject?
+    
+    init(
+        wrappedDelegate: AnyObject?,
+        controllerDidChangeState: @escaping (DataController, DataController.State) -> Void,
+        controllerDidUpdateUser: @escaping (
+            ChatUserController,
+            EntityChange<ChatUser>
+        ) -> Void
+    ) {
+        self.wrappedDelegate = wrappedDelegate
+        _controllerDidChangeState = controllerDidChangeState
+        _controllerDidUpdateUser = controllerDidUpdateUser
+    }
+    
+    func controller(_ controller: DataController, didChangeState state: DataController.State) {
+        _controllerDidChangeState(controller, state)
+    }
+    
+    func userController(
+        _ controller: ChatUserController,
+        didUpdateUser change: EntityChange<ChatUser>
+    ) {
+        _controllerDidUpdateUser(controller, change)
+    }
+}
+
+extension AnyChatUserControllerDelegate {
+    convenience init<Delegate: ChatUserControllerDelegate>(_ delegate: Delegate) {
+        self.init(
+            wrappedDelegate: delegate,
+            controllerDidChangeState: { [weak delegate] in delegate?.controller($0, didChangeState: $1) },
+            controllerDidUpdateUser: { [weak delegate] in delegate?.userController($0, didUpdateUser: $1) }
+        )
+    }
+}
+
+extension AnyChatUserControllerDelegate {
+    convenience init(_ delegate: ChatUserControllerDelegate?) {
+        self.init(
+            wrappedDelegate: delegate,
+            controllerDidChangeState: { [weak delegate] in delegate?.controller($0, didChangeState: $1) },
+            controllerDidUpdateUser: { [weak delegate] in delegate?.userController($0, didUpdateUser: $1) }
+        )
+    }
 }

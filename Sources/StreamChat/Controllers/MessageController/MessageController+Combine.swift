@@ -41,7 +41,8 @@ extension ChatMessageController {
         init(controller: ChatMessageController) {
             self.controller = controller
             state = .init(controller.state)
-            controller.multicastDelegate.additionalDelegates.append(self)
+            
+            controller.multicastDelegate.additionalDelegates.append(AnyChatMessageControllerDelegate(self))
         }
     }
 }

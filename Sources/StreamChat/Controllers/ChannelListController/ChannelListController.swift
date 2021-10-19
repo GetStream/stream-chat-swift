@@ -48,7 +48,8 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
     /// A Boolean value that returns wether pagination is finished
     public private(set) var hasLoadedAllPreviousChannels: Bool = false
 
-    var multicastDelegate: MulticastDelegate<ChatChannelListControllerDelegate> = .init() {
+    /// A type-erased delegate.
+    var multicastDelegate: MulticastDelegate<AnyChannelListControllerDelegate> = .init() {
         didSet {
             stateMulticastDelegate.mainDelegate = multicastDelegate.mainDelegate
             stateMulticastDelegate.additionalDelegates = multicastDelegate.additionalDelegates
@@ -208,8 +209,8 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
     /// - Parameter delegate: The object used as a delegate. It's referenced weakly, so you need to keep the object
     /// alive if you want keep receiving updates.
     ///
-    public func setDelegate(_ delegate: ChatChannelListControllerDelegate) {
-        multicastDelegate.mainDelegate = delegate
+    public func setDelegate<Delegate: ChatChannelListControllerDelegate>(_ delegate: Delegate) {
+        multicastDelegate.mainDelegate = AnyChannelListControllerDelegate(delegate)
     }
     
     private func handleUnlinkedChannels(_ changes: [ListChange<ChatChannel>]) {
@@ -344,8 +345,8 @@ extension ChatChannelListController {
 extension ChatChannelListController {
     /// Set the delegate of `ChannelListController` to observe the changes in the system.
     public weak var delegate: ChatChannelListControllerDelegate? {
-        get { multicastDelegate.mainDelegate }
-        set { multicastDelegate.mainDelegate = newValue }
+        get { multicastDelegate.mainDelegate?.wrappedDelegate as? ChatChannelListControllerDelegate }
+        set { multicastDelegate.mainDelegate = AnyChannelListControllerDelegate(newValue) }
     }
 }
 
@@ -405,5 +406,75 @@ public extension ChatChannelListControllerDelegate {
 extension ClientError {
     public class FetchFailed: Error {
         public var localizedDescription: String = "Failed to perform fetch request. This is an internal error."
+    }
+}
+
+// MARK: - Delegate type eraser
+
+class AnyChannelListControllerDelegate: ChatChannelListControllerDelegate {
+    private var _controllerWillChangeChannels: (ChatChannelListController) -> Void
+    private var _controllerDidChangeChannels: (ChatChannelListController, [ListChange<ChatChannel>])
+        -> Void
+    private var _controllerDidChangeState: (DataController, DataController.State) -> Void
+    private var _controllerShouldAddNewChannelToList: (ChatChannelListController, ChatChannel) -> Bool
+    private var _controllerShouldListUpdatedChannel: (ChatChannelListController, ChatChannel) -> Bool
+    
+    weak var wrappedDelegate: AnyObject?
+    
+    init(
+        wrappedDelegate: AnyObject?,
+        controllerDidChangeState: @escaping (DataController, DataController.State) -> Void,
+        controllerWillChangeChannels: @escaping (ChatChannelListController) -> Void,
+        controllerDidChangeChannels: @escaping (ChatChannelListController, [ListChange<ChatChannel>])
+            -> Void,
+        controllerShouldAddNewChannelToList: @escaping (ChatChannelListController, ChatChannel) -> Bool,
+        controllerShouldListUpdatedChannel: @escaping (ChatChannelListController, ChatChannel) -> Bool
+    ) {
+        self.wrappedDelegate = wrappedDelegate
+        _controllerDidChangeState = controllerDidChangeState
+        _controllerWillChangeChannels = controllerWillChangeChannels
+        _controllerDidChangeChannels = controllerDidChangeChannels
+        _controllerShouldAddNewChannelToList = controllerShouldAddNewChannelToList
+        _controllerShouldListUpdatedChannel = controllerShouldListUpdatedChannel
+    }
+
+    func controller(_ controller: DataController, didChangeState state: DataController.State) {
+        _controllerDidChangeState(controller, state)
+    }
+
+    func controllerWillChangeChannels(_ controller: ChatChannelListController) {
+        _controllerWillChangeChannels(controller)
+    }
+
+    func controller(
+        _ controller: ChatChannelListController,
+        didChangeChannels changes: [ListChange<ChatChannel>]
+    ) {
+        _controllerDidChangeChannels(controller, changes)
+    }
+    
+    func controller(_ controller: ChatChannelListController, shouldAddNewChannelToList channel: ChatChannel) -> Bool {
+        _controllerShouldAddNewChannelToList(controller, channel)
+    }
+    
+    func controller(_ controller: ChatChannelListController, shouldListUpdatedChannel channel: ChatChannel) -> Bool {
+        _controllerShouldListUpdatedChannel(controller, channel)
+    }
+}
+
+extension AnyChannelListControllerDelegate {
+    convenience init(_ delegate: ChatChannelListControllerDelegate?) {
+        self.init(
+            wrappedDelegate: delegate,
+            controllerDidChangeState: { [weak delegate] in delegate?.controller($0, didChangeState: $1) },
+            controllerWillChangeChannels: { [weak delegate] in delegate?.controllerWillChangeChannels($0) },
+            controllerDidChangeChannels: { [weak delegate] in delegate?.controller($0, didChangeChannels: $1) },
+            controllerShouldAddNewChannelToList: { [weak delegate] in
+                delegate?.controller($0, shouldAddNewChannelToList: $1) ?? true
+            },
+            controllerShouldListUpdatedChannel: { [weak delegate] in
+                delegate?.controller($0, shouldListUpdatedChannel: $1) ?? true
+            }
+        )
     }
 }
