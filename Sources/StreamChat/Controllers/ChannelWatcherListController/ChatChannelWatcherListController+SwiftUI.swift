@@ -27,7 +27,7 @@ extension ChatChannelWatcherListController {
             self.controller = controller
             state = controller.state
             
-            controller.multicastDelegate.additionalDelegates.append(AnyChatChannelWatcherListControllerDelegate(self))
+            controller.multicastDelegate.add(self)
             
             watchers = controller.watchers
         }

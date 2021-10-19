@@ -49,10 +49,11 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
     public private(set) var hasLoadedAllPreviousChannels: Bool = false
 
     /// A type-erased delegate.
-    var multicastDelegate: MulticastDelegate<AnyChannelListControllerDelegate> = .init() {
+    var multicastDelegate: MulticastDelegate<ChatChannelListControllerDelegate> = .init() {
         didSet {
-            stateMulticastDelegate.mainDelegate = multicastDelegate.mainDelegate
-            stateMulticastDelegate.additionalDelegates = multicastDelegate.additionalDelegates
+            multicastDelegate.delegates.forEach {
+                stateMulticastDelegate.add($0)
+            }
             
             // After setting delegate local changes will be fetched and observed.
             startChannelListObserverIfNeeded()
@@ -210,7 +211,7 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
     /// alive if you want keep receiving updates.
     ///
     public func setDelegate<Delegate: ChatChannelListControllerDelegate>(_ delegate: Delegate) {
-        multicastDelegate.mainDelegate = AnyChannelListControllerDelegate(delegate)
+        multicastDelegate.add(delegate)
     }
     
     private func handleUnlinkedChannels(_ changes: [ListChange<ChatChannel>]) {
@@ -345,8 +346,8 @@ extension ChatChannelListController {
 extension ChatChannelListController {
     /// Set the delegate of `ChannelListController` to observe the changes in the system.
     public weak var delegate: ChatChannelListControllerDelegate? {
-        get { multicastDelegate.mainDelegate?.wrappedDelegate as? ChatChannelListControllerDelegate }
-        set { multicastDelegate.mainDelegate = AnyChannelListControllerDelegate(newValue) }
+        get { multicastDelegate.delegates.first }
+        set { newValue.map { multicastDelegate.add($0) } }
     }
 }
 

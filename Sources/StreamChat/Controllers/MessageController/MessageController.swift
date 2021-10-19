@@ -88,10 +88,12 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
     lazy var basePublishers: BasePublishers = .init(controller: self)
     
     /// A type-erased multicast delegate.
-    var multicastDelegate: MulticastDelegate<AnyChatMessageControllerDelegate> = .init() {
+    var multicastDelegate: MulticastDelegate<ChatMessageControllerDelegate> = .init() {
         didSet {
-            stateMulticastDelegate.mainDelegate = multicastDelegate.mainDelegate
-            stateMulticastDelegate.additionalDelegates = multicastDelegate.additionalDelegates
+            multicastDelegate.delegates.forEach {
+                stateMulticastDelegate.add($0)
+            }
+            
             startObserversIfNeeded()
         }
     }
@@ -599,8 +601,8 @@ extension AnyChatMessageControllerDelegate {
 public extension ChatMessageController {
     /// Set the delegate of `ChatMessageController` to observe the changes in the system.
     var delegate: ChatMessageControllerDelegate? {
-        get { multicastDelegate.mainDelegate?.wrappedDelegate as? ChatMessageControllerDelegate }
-        set { multicastDelegate.mainDelegate = AnyChatMessageControllerDelegate(newValue) }
+        get { multicastDelegate.delegates.first }
+        set { newValue.map { multicastDelegate.add($0) } }
     }
 }
 

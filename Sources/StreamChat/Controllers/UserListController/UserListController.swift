@@ -43,10 +43,11 @@ public class ChatUserListController: DataController, DelegateCallable, DataStore
         )
 
     /// A type-erased delegate.
-    var multicastDelegate: MulticastDelegate<AnyUserListControllerDelegate> = .init() {
+    var multicastDelegate: MulticastDelegate<ChatUserListControllerDelegate> = .init() {
         didSet {
-            stateMulticastDelegate.mainDelegate = multicastDelegate.mainDelegate
-            stateMulticastDelegate.additionalDelegates = multicastDelegate.additionalDelegates
+            multicastDelegate.delegates.forEach {
+                stateMulticastDelegate.add($0)
+            }
             
             // After setting delegate local changes will be fetched and observed.
             startUserListObserverIfNeeded()
@@ -128,7 +129,7 @@ public class ChatUserListController: DataController, DelegateCallable, DataStore
     /// alive if you want keep receiving updates.
     ///
     public func setDelegate<Delegate: ChatUserListControllerDelegate>(_ delegate: Delegate) {
-        multicastDelegate.mainDelegate = AnyUserListControllerDelegate(delegate)
+        multicastDelegate.add(delegate)
     }
 }
 
@@ -175,8 +176,8 @@ extension ChatUserListController {
 extension ChatUserListController {
     /// Set the delegate of `UserListController` to observe the changes in the system.
     public weak var delegate: ChatUserListControllerDelegate? {
-        get { multicastDelegate.mainDelegate?.wrappedDelegate as? ChatUserListControllerDelegate }
-        set { multicastDelegate.mainDelegate = AnyUserListControllerDelegate(newValue) }
+        get { multicastDelegate.delegates.first }
+        set { newValue.map { multicastDelegate.add($0) } }
     }
 }
 

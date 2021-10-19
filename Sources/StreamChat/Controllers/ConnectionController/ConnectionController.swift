@@ -44,7 +44,7 @@ public class ChatConnectionController: Controller, DelegateCallable, DataStorePr
     private var connectionEventObserver: ConnectionEventObserver?
 
     /// A type-erased delegate.
-    var multicastDelegate: MulticastDelegate<AnyChatConnectionControllerDelegate> = .init()
+    var multicastDelegate: MulticastDelegate<ChatConnectionControllerDelegate> = .init()
 
     private lazy var chatClientUpdater = environment.chatClientUpdaterBuilder(client)
 
@@ -174,15 +174,17 @@ public extension ChatConnectionController {
     /// - Parameter delegate: The object used as a delegate. It's referenced weakly, so you need to keep the object
     /// alive if you want keep receiving updates.
     func setDelegate<Delegate: ChatConnectionControllerDelegate>(_ delegate: Delegate?) {
-        multicastDelegate.mainDelegate = delegate.flatMap(AnyChatConnectionControllerDelegate.init)
+        if let delegate = delegate {
+            multicastDelegate.add(delegate)
+        }
     }
 }
 
 public extension ChatConnectionController {
     /// Set the delegate of `ChatConnectionController` to observe the changes in the system.
     var delegate: ChatConnectionControllerDelegate? {
-        get { multicastDelegate.mainDelegate?.wrappedDelegate as? ChatConnectionControllerDelegate }
-        set { multicastDelegate.mainDelegate = AnyChatConnectionControllerDelegate(newValue) }
+        get { multicastDelegate.delegates.first }
+        set { newValue.map { multicastDelegate.add($0) } }
     }
 }
 

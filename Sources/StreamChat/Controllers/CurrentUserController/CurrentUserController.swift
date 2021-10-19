@@ -51,7 +51,7 @@ public class CurrentChatUserController: DataController, DelegateCallable, DataSt
         }
 
     /// A type-erased delegate.
-    var multicastDelegate: MulticastDelegate<AnyCurrentUserControllerDelegate> = .init()
+    var multicastDelegate: MulticastDelegate<CurrentChatUserControllerDelegate> = .init()
     
     /// The currently logged-in user. `nil` if the connection hasn't been fully established yet, or the connection
     /// wasn't successful.
@@ -367,14 +367,16 @@ public extension CurrentChatUserController {
     /// - Parameter delegate: The object used as a delegate. It's referenced weakly, so you need to keep the object
     /// alive if you want keep receiving updates.
     func setDelegate<Delegate: CurrentChatUserControllerDelegate>(_ delegate: Delegate?) {
-        multicastDelegate.mainDelegate = delegate.flatMap(AnyCurrentUserControllerDelegate.init)
+        if let delegate = delegate {
+            multicastDelegate.add(delegate)
+        }
     }
 }
 
 public extension CurrentChatUserController {
     /// Set the delegate of `CurrentUserController` to observe the changes in the system.
     var delegate: CurrentChatUserControllerDelegate? {
-        get { multicastDelegate.mainDelegate?.wrappedDelegate as? CurrentChatUserControllerDelegate }
-        set { multicastDelegate.mainDelegate = AnyCurrentUserControllerDelegate(newValue) }
+        get { multicastDelegate.delegates.first }
+        set { newValue.map { multicastDelegate.add($0) } }
     }
 }

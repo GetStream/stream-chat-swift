@@ -204,10 +204,11 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     )
     
     /// A type-erased delegate.
-    var multicastDelegate: MulticastDelegate<AnyChannelControllerDelegate> = .init() {
+    var multicastDelegate: MulticastDelegate<ChatChannelControllerDelegate> = .init() {
         didSet {
-            stateMulticastDelegate.mainDelegate = multicastDelegate.mainDelegate
-            stateMulticastDelegate.additionalDelegates = multicastDelegate.additionalDelegates
+            multicastDelegate.delegates.forEach {
+                stateMulticastDelegate.add($0)
+            }
             
             // After setting delegate local changes will be fetched and observed.
             setLocalStateBasedOnError(startDatabaseObservers())
@@ -455,7 +456,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     /// alive if you want keep receiving updates.
     ///
     public func setDelegate<Delegate: ChatChannelControllerDelegate>(_ delegate: Delegate) {
-        multicastDelegate.mainDelegate = AnyChannelControllerDelegate(delegate)
+        multicastDelegate.add(delegate)
     }
 }
 
@@ -1216,8 +1217,8 @@ extension ChatChannelController {
 public extension ChatChannelController {
     /// Set the delegate of `ChannelController` to observe the changes in the system.
     var delegate: ChatChannelControllerDelegate? {
-        get { multicastDelegate.mainDelegate?.wrappedDelegate as? ChatChannelControllerDelegate }
-        set { multicastDelegate.mainDelegate = AnyChannelControllerDelegate(newValue) }
+        get { multicastDelegate.delegates.first }
+        set { newValue.map { multicastDelegate.add($0) } }
     }
 }
 

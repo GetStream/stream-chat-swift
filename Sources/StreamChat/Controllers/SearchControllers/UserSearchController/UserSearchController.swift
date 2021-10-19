@@ -81,10 +81,11 @@ public class ChatUserSearchController: DataController, DelegateCallable, DataSto
     }()
     
     /// A type-erased delegate.
-    var multicastDelegate: MulticastDelegate<AnyUserSearchControllerDelegate> = .init() {
+    var multicastDelegate: MulticastDelegate<ChatUserSearchControllerDelegate> = .init() {
         didSet {
-            stateMulticastDelegate.mainDelegate = multicastDelegate.mainDelegate
-            stateMulticastDelegate.additionalDelegates = multicastDelegate.additionalDelegates
+            multicastDelegate.delegates.forEach {
+                stateMulticastDelegate.add($0)
+            }
             
             // After setting delegate local changes will be fetched and observed.
             startUserListObserverIfNeeded()
@@ -128,7 +129,7 @@ public class ChatUserSearchController: DataController, DelegateCallable, DataSto
     /// alive if you want keep receiving updates.
     ///
     public func setDelegate<Delegate: ChatUserSearchControllerDelegate>(_ delegate: Delegate) {
-        multicastDelegate.mainDelegate = AnyUserSearchControllerDelegate(delegate)
+        multicastDelegate.add(delegate)
     }
     
     /// Searches users for the given term.
@@ -238,8 +239,8 @@ extension ChatUserSearchController {
 extension ChatUserSearchController {
     /// Set the delegate of `UserListController` to observe the changes in the system.
     public weak var delegate: ChatUserSearchControllerDelegate? {
-        get { multicastDelegate.mainDelegate?.wrappedDelegate as? ChatUserSearchControllerDelegate }
-        set { multicastDelegate.mainDelegate = AnyUserSearchControllerDelegate(newValue) }
+        get { multicastDelegate.delegates.first }
+        set { newValue.map { multicastDelegate.add($0) } }
     }
 }
 

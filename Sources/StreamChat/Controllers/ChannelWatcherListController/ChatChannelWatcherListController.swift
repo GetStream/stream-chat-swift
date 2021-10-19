@@ -39,10 +39,11 @@ public class ChatChannelWatcherListController: DataController, DelegateCallable,
     lazy var basePublishers: BasePublishers = .init(controller: self)
     
     /// The type-erased delegate.
-    var multicastDelegate: MulticastDelegate<AnyChatChannelWatcherListControllerDelegate> = .init() {
+    var multicastDelegate: MulticastDelegate<ChatChannelWatcherListControllerDelegate> = .init() {
         didSet {
-            stateMulticastDelegate.mainDelegate = multicastDelegate.mainDelegate
-            stateMulticastDelegate.additionalDelegates = multicastDelegate.additionalDelegates
+            multicastDelegate.delegates.forEach {
+                stateMulticastDelegate.add($0)
+            }
             startObservingIfNeeded()
         }
     }
@@ -92,7 +93,7 @@ public class ChatChannelWatcherListController: DataController, DelegateCallable,
     /// alive if you want keep receiving updates.
     ///
     public func setDelegate<Delegate: ChatChannelWatcherListControllerDelegate>(_ delegate: Delegate) {
-        multicastDelegate.mainDelegate = AnyChatChannelWatcherListControllerDelegate(delegate)
+        multicastDelegate.add(delegate)
     }
     
     private func createWatchersObserver() -> ListDatabaseObserver<ChatUser, UserDTO> {
@@ -147,10 +148,10 @@ extension ChatChannelWatcherListController {
 
 extension ChatChannelWatcherListController {
     /// Set the delegate of `ChatChannelWatcherListController` to observe the changes in the system.
-
+    
     public var delegate: ChatChannelWatcherListControllerDelegate? {
-        get { multicastDelegate.mainDelegate?.wrappedDelegate as? ChatChannelWatcherListControllerDelegate }
-        set { multicastDelegate.mainDelegate = AnyChatChannelWatcherListControllerDelegate(newValue) }
+        get { multicastDelegate.delegates.first }
+        set { newValue.map { multicastDelegate.add($0) } }
     }
 }
 

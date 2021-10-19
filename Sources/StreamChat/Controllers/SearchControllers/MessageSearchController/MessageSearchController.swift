@@ -113,10 +113,11 @@ public class ChatMessageSearchController: DataController, DelegateCallable, Data
     lazy var basePublishers: BasePublishers = .init(controller: self)
 
     /// A type-erased delegate.
-    var multicastDelegate: MulticastDelegate<AnyMessageSearchControllerDelegate> = .init() {
+    var multicastDelegate: MulticastDelegate<ChatMessageSearchControllerDelegate> = .init() {
         didSet {
-            stateMulticastDelegate.mainDelegate = multicastDelegate.mainDelegate
-            stateMulticastDelegate.additionalDelegates = multicastDelegate.additionalDelegates
+            multicastDelegate.delegates.forEach {
+                stateMulticastDelegate.add($0)
+            }
 
             // After setting delegate local changes will be fetched and observed.
             startObserversIfNeeded()
@@ -128,7 +129,7 @@ public class ChatMessageSearchController: DataController, DelegateCallable, Data
     /// - Parameter delegate: The object used as a delegate. It's referenced weakly, so you need to keep the object
     /// alive if you want keep receiving updates.
     public func setDelegate<Delegate: ChatMessageSearchControllerDelegate>(_ delegate: Delegate) {
-        multicastDelegate.mainDelegate = AnyMessageSearchControllerDelegate(delegate)
+        multicastDelegate.add(delegate)
     }
 
     /// Searches messages for the given text.
@@ -232,8 +233,8 @@ extension ChatMessageSearchController {
 extension ChatMessageSearchController {
     /// Set the delegate of `ChatMessageSearchController` to observe the changes in the system.
     public weak var delegate: ChatMessageSearchControllerDelegate? {
-        get { multicastDelegate.mainDelegate?.wrappedDelegate as? ChatMessageSearchControllerDelegate }
-        set { multicastDelegate.mainDelegate = AnyMessageSearchControllerDelegate(newValue) }
+        get { multicastDelegate.delegates.first }
+        set { newValue.map { multicastDelegate.add($0) } }
     }
 }
 
