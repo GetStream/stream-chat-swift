@@ -11,6 +11,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Fix message list jumps when new reaction added [#1542](https://github.com/GetStream/stream-chat-swift/pull/1542)
 - Fix message list jumps when message received [#1542](https://github.com/GetStream/stream-chat-swift/pull/1542)
 - Fix broken constraint in the `ComposerView`, we have made the `BottomContainer` a standard `UIStackView` [#1545](https://github.com/GetStream/stream-chat-swift/pull/1545)
+- Fix `ChannelListSortingKey.hasUnread` causing a crash when used [#1561](https://github.com/GetStream/stream-chat-swift/issues/1561)
 
 ### 🔄 Changed
 - `LogConfig` changes after logger was used will now take affect [#1522](https://github.com/GetStream/stream-chat-swift/issues/1522)
