@@ -280,4 +280,12 @@ class DemoChannelListVC: ChatChannelListVC {
     @objc open func didTapCreateNewChannel(_ sender: Any) {
         (router as! DemoChatChannelListRouter).showCreateNewChannelFlow()
     }
+    
+    override func controller(_ controller: ChatChannelListController, shouldListUpdatedChannel channel: ChatChannel) -> Bool {
+        channel.lastActiveMembers.contains(where: { $0.id == controller.client.currentUserId })
+    }
+    
+    override func controller(_ controller: ChatChannelListController, shouldAddNewChannelToList channel: ChatChannel) -> Bool {
+        channel.lastActiveMembers.contains(where: { $0.id == controller.client.currentUserId })
+    }
 }
