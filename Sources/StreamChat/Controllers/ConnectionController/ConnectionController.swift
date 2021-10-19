@@ -119,55 +119,6 @@ public protocol ChatConnectionControllerDelegate: AnyObject {
 public extension ChatConnectionControllerDelegate {
     func connectionController(_ controller: ChatConnectionController, didUpdateConnectionStatus status: ConnectionStatus) {}
 }
-
-final class AnyChatConnectionControllerDelegate: ChatConnectionControllerDelegate {
-    weak var wrappedDelegate: AnyObject?
-    
-    private var _controllerDidChangeConnectionStatus: (
-        ChatConnectionController,
-        ConnectionStatus
-    ) -> Void
-    
-    init(
-        wrappedDelegate: AnyObject?,
-        controllerDidChangeConnectionStatus: @escaping (
-            ChatConnectionController,
-            ConnectionStatus
-        ) -> Void
-    ) {
-        self.wrappedDelegate = wrappedDelegate
-        _controllerDidChangeConnectionStatus = controllerDidChangeConnectionStatus
-    }
-    
-    func connectionController(
-        _ controller: ChatConnectionController,
-        didUpdateConnectionStatus status: ConnectionStatus
-    ) {
-        _controllerDidChangeConnectionStatus(controller, status)
-    }
-}
-
-extension AnyChatConnectionControllerDelegate {
-    convenience init<Delegate: ChatConnectionControllerDelegate>(_ delegate: Delegate) {
-        self.init(
-            wrappedDelegate: delegate,
-            controllerDidChangeConnectionStatus: { [weak delegate] in
-                delegate?.connectionController($0, didUpdateConnectionStatus: $1)
-            }
-        )
-    }
-}
-
-extension AnyChatConnectionControllerDelegate {
-    convenience init(_ delegate: ChatConnectionControllerDelegate?) {
-        self.init(
-            wrappedDelegate: delegate,
-            controllerDidChangeConnectionStatus: { [weak delegate] in
-                delegate?.connectionController($0, didUpdateConnectionStatus: $1)
-            }
-        )
-    }
-}
  
 public extension ChatConnectionController {
     /// Sets the provided object as a delegate of this controller.

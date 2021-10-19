@@ -1276,128 +1276,6 @@ public extension ChatChannelControllerDelegate {
     ) {}
 }
 
-// MARK: Type erased Delegate
-
-class AnyChannelControllerDelegate: ChatChannelControllerDelegate {
-    private var _controllerdidUpdateMessages: (
-        ChatChannelController,
-        [ListChange<ChatMessage>]
-    ) -> Void
-    
-    private var _controllerDidUpdateChannel: (
-        ChatChannelController,
-        EntityChange<ChatChannel>
-    ) -> Void
-
-    private var _controllerDidChangeState: (DataController, DataController.State) -> Void
-    
-    private var _controllerDidReceiveMemberEvent: (
-        ChatChannelController,
-        MemberEvent
-    ) -> Void
-    
-    private var _controllerDidChangeTypingUsers: (
-        ChatChannelController,
-        Set<ChatUser>
-    ) -> Void
-
-    weak var wrappedDelegate: AnyObject?
-    
-    init(
-        wrappedDelegate: AnyObject?,
-        controllerDidChangeState: @escaping (DataController, DataController.State) -> Void,
-        controllerDidUpdateChannel: @escaping (
-            ChatChannelController,
-            EntityChange<ChatChannel>
-        ) -> Void,
-        controllerdidUpdateMessages: @escaping (
-            ChatChannelController,
-            [ListChange<ChatMessage>]
-        ) -> Void,
-        controllerDidReceiveMemberEvent: @escaping (
-            ChatChannelController,
-            MemberEvent
-        ) -> Void,
-        controllerDidChangeTypingUsers: @escaping (
-            ChatChannelController,
-            Set<ChatUser>
-        ) -> Void
-    ) {
-        self.wrappedDelegate = wrappedDelegate
-        _controllerDidChangeState = controllerDidChangeState
-        _controllerDidUpdateChannel = controllerDidUpdateChannel
-        _controllerdidUpdateMessages = controllerdidUpdateMessages
-        _controllerDidReceiveMemberEvent = controllerDidReceiveMemberEvent
-        _controllerDidChangeTypingUsers = controllerDidChangeTypingUsers
-    }
-    
-    func controller(_ controller: DataController, didChangeState state: DataController.State) {
-        _controllerDidChangeState(controller, state)
-    }
-    
-    func channelController(
-        _ controller: ChatChannelController,
-        didUpdateChannel channel: EntityChange<ChatChannel>
-    ) {
-        _controllerDidUpdateChannel(controller, channel)
-    }
-    
-    func channelController(
-        _ controller: ChatChannelController,
-        didUpdateMessages changes: [ListChange<ChatMessage>]
-    ) {
-        _controllerdidUpdateMessages(controller, changes)
-    }
-    
-    func channelController(
-        _ controller: ChatChannelController,
-        didReceiveMemberEvent event: MemberEvent
-    ) {
-        _controllerDidReceiveMemberEvent(controller, event)
-    }
-    
-    func channelController(
-        _ channelController: ChatChannelController,
-        didChangeTypingUsers typingUsers: Set<ChatUser>
-    ) {
-        _controllerDidChangeTypingUsers(channelController, typingUsers)
-    }
-}
-
-extension AnyChannelControllerDelegate {
-    convenience init<Delegate: ChatChannelControllerDelegate>(_ delegate: Delegate) {
-        self.init(
-            wrappedDelegate: delegate,
-            controllerDidChangeState: { [weak delegate] in delegate?.controller($0, didChangeState: $1) },
-            controllerDidUpdateChannel: { [weak delegate] in delegate?.channelController($0, didUpdateChannel: $1) },
-            controllerdidUpdateMessages: { [weak delegate] in delegate?.channelController($0, didUpdateMessages: $1) },
-            controllerDidReceiveMemberEvent: { [weak delegate] in
-                delegate?.channelController($0, didReceiveMemberEvent: $1)
-            },
-            controllerDidChangeTypingUsers: { [weak delegate] in
-                delegate?.channelController($0, didChangeTypingUsers: $1)
-            }
-        )
-    }
-}
-
-extension AnyChannelControllerDelegate {
-    convenience init(_ delegate: ChatChannelControllerDelegate?) {
-        self.init(
-            wrappedDelegate: delegate,
-            controllerDidChangeState: { [weak delegate] in delegate?.controller($0, didChangeState: $1) },
-            controllerDidUpdateChannel: { [weak delegate] in delegate?.channelController($0, didUpdateChannel: $1) },
-            controllerdidUpdateMessages: { [weak delegate] in delegate?.channelController($0, didUpdateMessages: $1) },
-            controllerDidReceiveMemberEvent: { [weak delegate] in
-                delegate?.channelController($0, didReceiveMemberEvent: $1)
-            },
-            controllerDidChangeTypingUsers: { [weak delegate] in
-                delegate?.channelController($0, didChangeTypingUsers: $1)
-            }
-        )
-    }
-}
-
 extension ClientError {
     class ChannelNotCreatedYet: ClientError {
         override public var localizedDescription: String {
@@ -1410,13 +1288,13 @@ extension ClientError {
             "You can't create direct messaging channel with empty members."
         }
     }
-    
+
     class ChannelEmptyMessages: ClientError {
         override public var localizedDescription: String {
             "You can't load new messages when there is no messages in the channel."
         }
     }
-    
+
     class InvalidCooldownDuration: ClientError {
         override public var localizedDescription: String {
             "You can't specify a value outside the range 1-120 for cooldown duration."

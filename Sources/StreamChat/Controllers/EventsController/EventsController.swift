@@ -80,17 +80,3 @@ public class EventsController: Controller, DelegateCallable {
         true
     }
 }
-
-/// An wrapper around `EventsControllerDelegate` which holds a weak reference
-/// to the underlaying delegate.
-class AnyEventsControllerDelegate: EventsControllerDelegate {
-    weak var delegate: EventsControllerDelegate?
-   
-    init(delegate: EventsControllerDelegate) {
-        self.delegate = delegate
-    }
-    
-    func eventsController(_ controller: EventsController, didReceiveEvent event: Event) {
-        delegate?.eventsController(controller, didReceiveEvent: event)
-    }
-}

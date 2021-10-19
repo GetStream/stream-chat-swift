@@ -545,58 +545,6 @@ public protocol _ChatMessageControllerDelegate: DataControllerStateDelegate {
         didChangeReplies changes: [ListChange<ChatMessage>]
     )
 }
-
-final class AnyChatMessageControllerDelegate: ChatMessageControllerDelegate {
-    weak var wrappedDelegate: AnyObject?
-    private var _controllerDidChangeState: (DataController, DataController.State) -> Void
-    private var _messageControllerDidChangeMessage: (ChatMessageController, EntityChange<ChatMessage>)
-        -> Void
-    private var _messageControllerDidChangeReplies: (ChatMessageController, [ListChange<ChatMessage>])
-        -> Void
-    
-    init(
-        wrappedDelegate: AnyObject?,
-        controllerDidChangeState: @escaping (DataController, DataController.State) -> Void,
-        messageControllerDidChangeMessage: @escaping (ChatMessageController, EntityChange<ChatMessage>)
-            -> Void,
-        messageControllerDidChangeReplies: @escaping (ChatMessageController, [ListChange<ChatMessage>])
-            -> Void
-    ) {
-        self.wrappedDelegate = wrappedDelegate
-        _controllerDidChangeState = controllerDidChangeState
-        _messageControllerDidChangeMessage = messageControllerDidChangeMessage
-        _messageControllerDidChangeReplies = messageControllerDidChangeReplies
-    }
-
-    func controller(_ controller: DataController, didChangeState state: DataController.State) {
-        _controllerDidChangeState(controller, state)
-    }
-
-    func messageController(
-        _ controller: ChatMessageController,
-        didChangeMessage change: EntityChange<ChatMessage>
-    ) {
-        _messageControllerDidChangeMessage(controller, change)
-    }
-    
-    func messageController(
-        _ controller: ChatMessageController,
-        didChangeReplies changes: [ListChange<ChatMessage>]
-    ) {
-        _messageControllerDidChangeReplies(controller, changes)
-    }
-}
-
-extension AnyChatMessageControllerDelegate {
-    convenience init(_ delegate: ChatMessageControllerDelegate?) {
-        self.init(
-            wrappedDelegate: delegate,
-            controllerDidChangeState: { [weak delegate] in delegate?.controller($0, didChangeState: $1) },
-            messageControllerDidChangeMessage: { [weak delegate] in delegate?.messageController($0, didChangeMessage: $1) },
-            messageControllerDidChangeReplies: { [weak delegate] in delegate?.messageController($0, didChangeReplies: $1) }
-        )
-    }
-}
  
 public extension ChatMessageController {
     /// Set the delegate of `ChatMessageController` to observe the changes in the system.
