@@ -14,52 +14,57 @@ class MulticastDelegate_Tests: XCTestCase {
         multicastDelegate = .init()
     }
 
-    func test_mainDelegate_isCalled() {
-        let mainDelegate = TestDelegate()
-        assert(mainDelegate.called == false)
+    func test_invoke_shouldCallDelegate() {
+        let testDelegate = TestDelegate()
+        assert(testDelegate.called == false)
         
-        multicastDelegate.mainDelegate = mainDelegate
+        multicastDelegate.add(testDelegate)
         multicastDelegate.invoke {
             $0.called = true
         }
         
-        XCTAssertTrue(mainDelegate.called)
+        XCTAssertTrue(testDelegate.called)
     }
 
-    func test_mainDelegate_isRessetable() {
-        let mainDelegate = TestDelegate()
-        
-        multicastDelegate.mainDelegate = mainDelegate
-        XCTAssert(multicastDelegate.mainDelegate === mainDelegate)
-        
-        multicastDelegate.mainDelegate = nil
-        XCTAssertNil(multicastDelegate.mainDelegate)
-    }
-    
-    func test_additionalDelegate_isCalled_whenNoMainDelegateIsSet() {
-        let additionalDelegate = TestDelegate()
-        
-        multicastDelegate.additionalDelegates.append(additionalDelegate)
-        multicastDelegate.invoke {
-            $0.called = true
-        }
-        
-        XCTAssertTrue(additionalDelegate.called)
+    func test_add_shouldAddDelegate() {
+        let testDelegate1 = TestDelegate()
+        let testDelegate2 = TestDelegate()
+
+        multicastDelegate.add(testDelegate1)
+        multicastDelegate.add(testDelegate2)
+
+        XCTAssertEqual(multicastDelegate.delegates.count, 2)
+        XCTAssertTrue(multicastDelegate.delegates.contains(where: { $0 === testDelegate1 }))
+        XCTAssertTrue(multicastDelegate.delegates.contains(where: { $0 === testDelegate2 }))
     }
 
-    func test_allDelegates_areCalled() {
-        let mainDelegate = TestDelegate()
-        let additionalDelegate = TestDelegate()
-        
-        multicastDelegate.mainDelegate = mainDelegate
-        multicastDelegate.additionalDelegates.append(additionalDelegate)
+    func test_remove_shouldRemoveDelegate() {
+        let testDelegate1 = TestDelegate()
+        let testDelegate2 = TestDelegate()
 
-        multicastDelegate.invoke {
-            $0.called = true
-        }
+        multicastDelegate.add(testDelegate1)
+        multicastDelegate.add(testDelegate2)
         
-        XCTAssertTrue(mainDelegate.called)
-        XCTAssertTrue(additionalDelegate.called)
+        XCTAssertEqual(multicastDelegate.delegates.count, 2)
+        
+        multicastDelegate.remove(testDelegate1)
+
+        XCTAssert(multicastDelegate.delegates.first === testDelegate2)
+        XCTAssertEqual(multicastDelegate.delegates.count, 1)
+    }
+
+    func test_removeAll_shouldRemoveAllDelegates() {
+        let testDelegate1 = TestDelegate()
+        let testDelegate2 = TestDelegate()
+
+        multicastDelegate.add(testDelegate1)
+        multicastDelegate.add(testDelegate2)
+
+        XCTAssertEqual(multicastDelegate.delegates.count, 2)
+
+        multicastDelegate.removeAll()
+
+        XCTAssertEqual(multicastDelegate.delegates.count, 0)
     }
 }
 
