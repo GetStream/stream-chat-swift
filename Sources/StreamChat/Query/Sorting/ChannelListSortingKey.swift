@@ -25,6 +25,19 @@ public enum ChannelListSortingKey: String, SortingKey {
     /// Sort channels by their unread count.
     case unreadCount
     
+    private var canUseAsSortDescriptor: Bool {
+        switch self {
+        case .createdAt: return true
+        case .updatedAt: return true
+        case .lastMessageAt: return true
+        case .memberCount: return true
+        case .cid: return true
+        case .hasUnread: return false
+        case .unreadCount: return true
+        case .default: return true
+        }
+    }
+    
     public func encode(to encoder: Encoder) throws {
         var container = encoder.singleValueContainer()
         let value: String
@@ -51,7 +64,7 @@ extension ChannelListSortingKey {
     }()
     
     func sortDescriptor(isAscending: Bool) -> NSSortDescriptor? {
-        .init(key: rawValue, ascending: isAscending)
+        canUseAsSortDescriptor ? .init(key: rawValue, ascending: isAscending) : nil
     }
 }
 
