@@ -108,6 +108,12 @@ public struct Components {
     /// The View Controller by default used to display long-press menu of the message.
     public var messagePopupVC: ChatMessagePopupVC.Type = ChatMessagePopupVC.self
 
+    /// The View Controller by default used to display the reaction authors of a message.
+    public var reactionAuthorsVC: ChatMessageReactionAuthorsVC.Type = ChatMessageReactionAuthorsVC.self
+
+    /// A view cell that displays an individual reaction author of a message.
+    public var reactionAuthorsCell: ChatMessageReactionAuthorViewCell.Type = ChatMessageReactionAuthorViewCell.self
+
     /// The View Controller used for showing detail of a file message attachment.
     public var filePreviewVC: ChatMessageAttachmentPreviewVC.Type = ChatMessageAttachmentPreviewVC.self
 

@@ -49,8 +49,8 @@ open class ChatMessageReactionAuthorsVC:
         super.setUp()
 
         collectionView.register(
-            ChatMessageReactionAuthorViewCell.self,
-            forCellWithReuseIdentifier: ChatMessageReactionAuthorViewCell.reuseId
+            components.reactionAuthorsCell.self,
+            forCellWithReuseIdentifier: components.reactionAuthorsCell.reuseId
         )
 
         collectionView.collectionViewLayout = flowLayout
@@ -113,7 +113,7 @@ open class ChatMessageReactionAuthorsVC:
 
     open func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(
-            withReuseIdentifier: ChatMessageReactionAuthorViewCell.reuseId,
+            withReuseIdentifier: components.reactionAuthorsCell.reuseId,
             for: indexPath
         ) as! ChatMessageReactionAuthorViewCell
 

@@ -487,9 +487,8 @@ open class ChatMessageListVC:
         }()
 
         let reactionAuthorsController: ChatMessageReactionAuthorsVC? = {
-            let controller = ChatMessageReactionAuthorsVC()
+            let controller = components.reactionAuthorsVC.init()
             controller.content = .init(reactions: Array(message.latestReactions))
-
             return controller
         }()
 
