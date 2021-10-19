@@ -277,7 +277,7 @@ final class MemberEventMiddleware_Tests: XCTestCase {
     func test_handle_whenNotificationAddedToChannelEventComes_forwardsEventAndTriggersChannelUpdate() throws {
         let cid = ChannelId.unique
 
-        // Create MemberAddedEvent payload
+        // Create NotificationAddedToChannelEvent payload
         let eventPayload: EventPayload = .init(
             eventType: .notificationAddedToChannel,
             cid: cid,
@@ -294,7 +294,7 @@ final class MemberEventMiddleware_Tests: XCTestCase {
         // Setup channel list observer
         let channelListObserver = TestChannelListObserver(database: database)
 
-        // Simulate `MemberAddedEvent` event.
+        // Simulate `NotificationAddedToChannelEvent` event.
         let forwardedEvent = middleware.handle(event: event, session: database.viewContext)
         
         // Assert event is forwarded.
@@ -306,39 +306,34 @@ final class MemberEventMiddleware_Tests: XCTestCase {
         )
     }
     
-    // MARK: - NotificationAddedToChannelEvent
+    // MARK: - NotificationRemovedFromChannelEvent
     
-    func test_handle_whenNotificationRemovedFromChannelEventComes_forwardsEventAndTriggersChannelUpdate() throws {
+    func tests_middleware_handlesNotificationRemovedFromChannelEventCorrectly() throws {
         let cid = ChannelId.unique
+        
+        // Create channel in the database.
+        try database.createChannel(cid: cid, withMessages: false)
+        
+        // Get first member id to be removed
+        let memberId = try XCTUnwrap(database.viewContext.channel(cid: cid)?.members.first?.user.id)
 
-        // Create MemberAddedEvent payload
+        // Create NotificationRemovedFromChannelEvent payload
         let eventPayload: EventPayload = .init(
             eventType: .notificationRemovedFromChannel,
             cid: cid,
             user: .dummy(userId: .unique),
-            memberContainer: .dummy(userId: .unique),
+            memberContainer: .dummy(userId: memberId),
             createdAt: .unique
         )
 
         // Create event with payload.
         let event = try NotificationRemovedFromChannelEventDTO(from: eventPayload)
-
-        // Create channel in the database.
-        try database.createChannel(cid: cid, withMessages: false)
-
-        // Setup channel list observer
-        let channelListObserver = TestChannelListObserver(database: database)
         
-        // Simulate `MemberAddedEvent` event.
-        let forwardedEvent = middleware.handle(event: event, session: database.viewContext)
+        // Simulate `NotificationRemovedFromChannelEvent` event.
+        _ = middleware.handle(event: event, session: database.viewContext)
         
-        // Assert event is forwarded.
-        XCTAssertTrue(forwardedEvent is NotificationRemovedFromChannelEventDTO)
-        /// Assert channel update is observed.
-        AssertAsync.willBeEqual(
-            channelListObserver.observedChanges,
-            [.update(cid, index: .init(row: 0, section: 0))]
-        )
+        // Assert member is removed from channel
+        XCTAssertFalse(database.viewContext.channel(cid: cid)!.members.contains(where: { $0.user.id == memberId }))
     }
 }
 
