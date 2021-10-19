@@ -19,7 +19,9 @@ public struct LogSubsystem: OptionSet {
     /// All subsystems within the SDK.
     public static let all: LogSubsystem = [.database, .httpRequests, .webSocket, .other]
     
-    static let other = Self(rawValue: 1 << 0)
+    /// The subsystem responsible for any other part of the SDK.
+    /// This is the default subsystem value for logging, to be used when `subsystem` is not specified.
+    public static let other = Self(rawValue: 1 << 0)
     
     /// The subsystem responsible for database operations.
     public static let database = Self(rawValue: 1 << 1)
@@ -202,7 +204,7 @@ public class Logger {
         fileName: StaticString = #file,
         lineNumber: UInt = #line,
         message: @autoclosure () -> Any,
-        subsystems: LogSubsystem = .all
+        subsystems: LogSubsystem = .other
     ) {
         log(
             level,
@@ -229,7 +231,7 @@ public class Logger {
         fileName: StaticString = #file,
         lineNumber: UInt = #line,
         message: @autoclosure () -> Any,
-        subsystems: LogSubsystem = .all
+        subsystems: LogSubsystem = .other
     ) {
         let enabledDestinations = destinations.filter { $0.isEnabled(level: level, subsystems: subsystems) }
         guard !enabledDestinations.isEmpty else { return }
@@ -260,7 +262,7 @@ public class Logger {
     ///   - lineNumber: Line number of the caller
     public func info(
         _ message: @autoclosure () -> Any,
-        subsystems: LogSubsystem = .all,
+        subsystems: LogSubsystem = .other,
         functionName: StaticString = #function,
         fileName: StaticString = #file,
         lineNumber: UInt = #line
@@ -284,7 +286,7 @@ public class Logger {
     ///   - lineNumber: Line number of the caller
     public func debug(
         _ message: @autoclosure () -> Any,
-        subsystems: LogSubsystem = .all,
+        subsystems: LogSubsystem = .other,
         functionName: StaticString = #function,
         fileName: StaticString = #file,
         lineNumber: UInt = #line
@@ -308,7 +310,7 @@ public class Logger {
     ///   - lineNumber: Line number of the caller
     public func warning(
         _ message: @autoclosure () -> Any,
-        subsystems: LogSubsystem = .all,
+        subsystems: LogSubsystem = .other,
         functionName: StaticString = #function,
         fileName: StaticString = #file,
         lineNumber: UInt = #line
@@ -332,7 +334,7 @@ public class Logger {
     ///   - lineNumber: Line number of the caller
     public func error(
         _ message: @autoclosure () -> Any,
-        subsystems: LogSubsystem = .all,
+        subsystems: LogSubsystem = .other,
         functionName: StaticString = #function,
         fileName: StaticString = #file,
         lineNumber: UInt = #line
@@ -356,7 +358,7 @@ public class Logger {
     public func assert(
         _ condition: @autoclosure () -> Bool,
         _ message: @autoclosure () -> Any,
-        subsystems: LogSubsystem = .all,
+        subsystems: LogSubsystem = .other,
         functionName: StaticString = #function,
         fileName: StaticString = #file,
         lineNumber: UInt = #line
@@ -380,7 +382,7 @@ public class Logger {
     ///   - message: A custom message to log if `condition` is evaluated to false.
     public func assertionFailure(
         _ message: @autoclosure () -> Any,
-        subsystems: LogSubsystem = .all,
+        subsystems: LogSubsystem = .other,
         functionName: StaticString = #function,
         fileName: StaticString = #file,
         lineNumber: UInt = #line
