@@ -16,15 +16,15 @@ struct MulticastDelegate<T> {
             .forEach { action($0) }
     }
 
-    mutating func add(_ delegate: T) {
+    func add(_ delegate: T) {
         _delegates.add(delegate as AnyObject)
     }
 
-    mutating func remove(_ delegate: T) {
+    func remove(_ delegate: T) {
         _delegates.remove(delegate as AnyObject)
     }
 
-    mutating func removeAll() {
+    func removeAll() {
         _delegates.removeAllObjects()
     }
 }
