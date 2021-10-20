@@ -143,13 +143,7 @@ extension NSManagedObjectContext {
         _ = saveQuery(query: query)
         
         return try payload.channels.map { channelPayload in
-            let dto = try saveChannel(payload: channelPayload, query: query)
-            // The `hidden` field is only returned for `queryChannels` and `queryChannel` endpoints
-            // `saveChannel` is called for event payloads too,
-            // so we save the `hidden` field outside `saveChannel`
-            // Inexistence of hidden field implies false
-            dto.hidden = channelPayload.channel.hidden ?? false
-            return dto
+            try saveChannel(payload: channelPayload, query: query)
         }
     }
     
@@ -186,8 +180,8 @@ extension NSManagedObjectContext {
         // on channel query and channel list query
         // Inexistence of this field implies `false`
         // but only for those queries
-        if payload.hidden == true {
-            dto.hidden = true
+        if query != nil {
+            dto.hidden = payload.hidden ?? false
         }
         
         dto.cooldownDuration = payload.cooldownDuration
