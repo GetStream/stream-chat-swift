@@ -41,8 +41,8 @@ public class EventsController: Controller, DelegateCallable {
     
     /// A delegate the controller notifies about the updates.
     public var delegate: EventsControllerDelegate? {
-        get { multicastDelegate.delegates.first }
-        set { newValue.map { multicastDelegate.add($0) } }
+        get { multicastDelegate.mainDelegate }
+        set { multicastDelegate.set(mainDelegate: newValue) }
     }
             
     /// Create a new instance of `EventsController`.

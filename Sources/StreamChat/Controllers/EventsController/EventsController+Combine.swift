@@ -30,7 +30,7 @@ extension EventsController {
                 
         /// Creates a new `BasePublishers` instance with the provided controller.
         init(controller: EventsController) {
-            controller.multicastDelegate.add(self)
+            controller.multicastDelegate.add(additionalDelegate: self)
         }
     }
 }

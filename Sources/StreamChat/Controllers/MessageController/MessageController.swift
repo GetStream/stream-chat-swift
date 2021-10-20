@@ -90,8 +90,9 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
     /// A type-erased multicast delegate.
     var multicastDelegate: MulticastDelegate<ChatMessageControllerDelegate> = .init() {
         didSet {
-            multicastDelegate.delegates.forEach {
-                stateMulticastDelegate.add($0)
+            stateMulticastDelegate.set(mainDelegate: multicastDelegate.mainDelegate)
+            multicastDelegate.additionalDelegates.forEach {
+                stateMulticastDelegate.add(additionalDelegate: $0)
             }
             
             startObserversIfNeeded()
@@ -549,8 +550,8 @@ public protocol _ChatMessageControllerDelegate: DataControllerStateDelegate {
 public extension ChatMessageController {
     /// Set the delegate of `ChatMessageController` to observe the changes in the system.
     var delegate: ChatMessageControllerDelegate? {
-        get { multicastDelegate.delegates.first }
-        set { newValue.map { multicastDelegate.add($0) } }
+        get { multicastDelegate.mainDelegate }
+        set { multicastDelegate.set(mainDelegate: newValue) }
     }
 }
 

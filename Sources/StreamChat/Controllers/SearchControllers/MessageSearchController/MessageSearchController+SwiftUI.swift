@@ -26,7 +26,7 @@ extension ChatMessageSearchController {
             self.controller = controller
             state = self.controller.state
 
-            controller.multicastDelegate.add(self)
+            controller.multicastDelegate.add(additionalDelegate: self)
 
             messages = controller.messages
         }

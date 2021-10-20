@@ -34,7 +34,7 @@ extension ChatChannelListController {
             self.controller = controller
             state = .init(controller.state)
             
-            controller.multicastDelegate.add(self)
+            controller.multicastDelegate.add(additionalDelegate: self)
         }
     }
 }
@@ -54,11 +54,11 @@ extension ChatChannelListController.BasePublishers: ChatChannelListControllerDel
     
     func controller(_ controller: ChatChannelListController, shouldListUpdatedChannel channel: ChatChannel) -> Bool {
         // Use the mainDelegate if exists, or true by default
-        controller.multicastDelegate.delegates.first?.controller(controller, shouldListUpdatedChannel: channel) ?? true
+        controller.multicastDelegate.mainDelegate?.controller(controller, shouldListUpdatedChannel: channel) ?? true
     }
     
     func controller(_ controller: ChatChannelListController, shouldAddNewChannelToList channel: ChatChannel) -> Bool {
         // Use the mainDelegate if exists, or true by default
-        controller.multicastDelegate.delegates.first?.controller(controller, shouldAddNewChannelToList: channel) ?? true
+        controller.multicastDelegate.mainDelegate?.controller(controller, shouldAddNewChannelToList: channel) ?? true
     }
 }

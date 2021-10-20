@@ -46,8 +46,9 @@ public class ChatChannelMemberController: DataController, DelegateCallable, Data
     /// A type-erased delegate.
     var multicastDelegate: MulticastDelegate<ChatChannelMemberControllerDelegate> = .init() {
         didSet {
-            multicastDelegate.delegates.forEach {
-                stateMulticastDelegate.add($0)
+            stateMulticastDelegate.set(mainDelegate: multicastDelegate.mainDelegate)
+            multicastDelegate.additionalDelegates.forEach {
+                stateMulticastDelegate.add(additionalDelegate: $0)
             }
             startObservingIfNeeded()
         }
@@ -112,7 +113,7 @@ public class ChatChannelMemberController: DataController, DelegateCallable, Data
     /// alive if you want keep receiving updates.
     ///
     public func setDelegate<Delegate: ChatChannelMemberControllerDelegate>(_ delegate: Delegate) {
-        multicastDelegate.add(delegate)
+        multicastDelegate.set(mainDelegate: delegate)
     }
     
     // MARK: - Private
@@ -210,8 +211,8 @@ extension ChatChannelMemberController {
 public extension ChatChannelMemberController {
     /// Set the delegate of `ChatMemberController` to observe the changes in the system.
     var delegate: ChatChannelMemberControllerDelegate? {
-        get { multicastDelegate.delegates.first }
-        set { newValue.map { multicastDelegate.add($0) } }
+        get { multicastDelegate.mainDelegate }
+        set { multicastDelegate.set(mainDelegate: newValue) }
     }
 }
 

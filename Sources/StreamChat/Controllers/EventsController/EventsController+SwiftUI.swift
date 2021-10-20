@@ -21,7 +21,7 @@ extension EventsController {
         /// Creates a new `ObservableObject` wrapper with the provided controller instance.
         init(controller: EventsController) {
             self.controller = controller
-            controller.multicastDelegate.add(self)
+            controller.multicastDelegate.add(additionalDelegate: self)
         }
     }
 }

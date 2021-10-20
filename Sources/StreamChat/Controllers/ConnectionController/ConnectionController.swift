@@ -126,7 +126,7 @@ public extension ChatConnectionController {
     /// alive if you want keep receiving updates.
     func setDelegate<Delegate: ChatConnectionControllerDelegate>(_ delegate: Delegate?) {
         if let delegate = delegate {
-            multicastDelegate.add(delegate)
+            multicastDelegate.set(mainDelegate: delegate)
         }
     }
 }
@@ -134,8 +134,8 @@ public extension ChatConnectionController {
 public extension ChatConnectionController {
     /// Set the delegate of `ChatConnectionController` to observe the changes in the system.
     var delegate: ChatConnectionControllerDelegate? {
-        get { multicastDelegate.delegates.first }
-        set { newValue.map { multicastDelegate.add($0) } }
+        get { multicastDelegate.mainDelegate }
+        set { multicastDelegate.set(mainDelegate: newValue) }
     }
 }
 
