@@ -20,7 +20,7 @@ public class ReactionNotificationContent {
     public let message: ChatMessage
     public let channel: ChatChannel?
     
-    init(message: ChatMessage, channel: ChatChannel?) {
+    public init(message: ChatMessage, channel: ChatChannel?) {
         self.message = message
         self.channel = channel
     }
