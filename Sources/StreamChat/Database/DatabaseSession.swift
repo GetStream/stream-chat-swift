@@ -179,7 +179,8 @@ protocol ChannelDatabaseSession {
     /// Fetches `ChannelDTO` with the given `cid` from the database.
     func channel(cid: ChannelId) -> ChannelDTO?
     
-    func deleteChannels(query: ChannelListQuery) throws
+    /// Removes channel list query from database.
+    func delete(query: ChannelListQuery)
 }
 
 protocol ChannelReadDatabaseSession {
