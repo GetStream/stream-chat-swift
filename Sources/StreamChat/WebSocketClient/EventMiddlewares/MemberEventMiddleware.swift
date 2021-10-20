@@ -39,17 +39,29 @@ struct MemberEventMiddleware: EventMiddleware {
                 member.queries.removeAll()
                 
             case let event as NotificationAddedToChannelEventDTO:
-                updatedChannelID = event.channel.cid
+                _ = try session.saveChannel(payload: event.channel, query: nil)
+                
             case let event as NotificationRemovedFromChannelEventDTO:
-                updatedChannelID = event.cid
+                guard let channel = session.channel(cid: event.cid) else {
+                    // No need to throw ChannelNotFound error here
+                    log.debug("Channel \(event.cid) not found for MemberRemovedEventDTO")
+                    break
+                }
+                
+                guard let member = channel.members.first(where: { $0.user.id == event.member.user.id }) else {
+                    // No need to throw MemberNotFound error here
+                    log.debug("Member \(event.member.user.id) not found for MemberRemovedEventDTO")
+                    break
+                }
+                
+                // We remove the member from the channel
+                channel.members.remove(member)
+                
+                // If there are any MemberListQueries observing this channel,
+                // we need to update them too
+                member.queries.removeAll()
             default:
                 break
-            }
-            
-            if let cid = updatedChannelID, let channelDTO = session.channel(cid: cid) {
-                // Trigger channel update so channel list queries get updated
-                let tmp = channelDTO.cid
-                channelDTO.cid = tmp
             }
         } catch {
             log.error("Failed to update channel members in the database, error: \(error)")

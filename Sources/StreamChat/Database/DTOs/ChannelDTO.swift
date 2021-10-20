@@ -49,6 +49,9 @@ class ChannelDTO: NSManagedObject {
 
     // The channel list queries the channel is a part of
     @NSManaged var queries: Set<ChannelListQueryDTO>
+    
+    /// Channel list queries the channel is open in (the subset of `queries`)
+    @NSManaged var openIn: Set<ChannelListQueryDTO>
 
     // MARK: - Relationships
     
@@ -122,6 +125,7 @@ class ChannelDTO: NSManagedObject {
 
 extension ChannelDTO: EphemeralValuesContainer {
     func resetEphemeralValues() {
+        openIn.removeAll()
         currentlyTypingUsers.removeAll()
         watchers.removeAll()
         watcherCount = 0
@@ -186,13 +190,13 @@ extension NSManagedObjectContext {
         query: ChannelListQuery?
     ) throws -> ChannelDTO {
         let dto = try saveChannel(payload: payload.channel, query: query)
-        
-        try payload.messages.forEach { _ = try saveMessage(payload: $0, for: payload.channel.cid) }
+
+        try payload.messages.forEach { _ = try saveMessage(payload: $0, channelDTO: dto) }
 
         dto.updateOldestMessageAt(payload: payload)
 
         try payload.pinnedMessages.forEach {
-            _ = try saveMessage(payload: $0, for: payload.channel.cid)
+            _ = try saveMessage(payload: $0, channelDTO: dto)
         }
         
         try payload.channelReads.forEach { _ = try saveChannelRead(payload: $0, for: payload.channel.cid) }
@@ -231,13 +235,10 @@ extension NSManagedObjectContext {
         ChannelDTO.load(cid: cid, context: self)
     }
     
-    func deleteChannels(query: ChannelListQuery) throws {
-        guard let fetchRequest = ChannelDTO.channelListFetchRequest(
-            query: query
-        ) as? NSFetchRequest<NSFetchRequestResult> else { return }
-        let deleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
-        try execute(deleteRequest)
-        try save()
+    func delete(query: ChannelListQuery) {
+        guard let dto = channelListQuery(filterHash: query.filter.filterHash) else { return }
+        
+        delete(dto)
     }
 }
 

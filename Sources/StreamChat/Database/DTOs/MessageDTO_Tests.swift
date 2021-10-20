@@ -296,7 +296,7 @@ class MessageDTO_Tests: XCTestCase {
                 let channelDTO = try! session.saveChannel(payload: channelPayload, query: nil)
 
                 // Save the message
-                let messageDTO = try! session.saveMessage(payload: payload, for: channelId)
+                let messageDTO = try! session.saveMessage(payload: payload, channelDTO: channelDTO)
                 completion((channelDTO, messageDTO))
             }
         }
@@ -332,10 +332,10 @@ class MessageDTO_Tests: XCTestCase {
         
         try database.writeSynchronously { session in
             // Create the channel first
-            try! session.saveChannel(payload: channelPayload, query: nil)
+            let channelDTO = try! session.saveChannel(payload: channelPayload, query: nil)
             
             // Save the message
-            let messageDTO = try! session.saveMessage(payload: messagePayload, for: channelId)
+            let messageDTO = try! session.saveMessage(payload: messagePayload, channelDTO: channelDTO)
             // Make the extra data JSON invalid
             messageDTO.extraData = #"{"invalid": json}"#.data(using: .utf8)!
         }
@@ -689,7 +689,10 @@ class MessageDTO_Tests: XCTestCase {
         }
 
         // Act: Save payload again
-        let message = try database.viewContext.saveMessage(payload: messagePayload, for: channelId)
+        guard let message = try? database.viewContext.saveMessage(payload: messagePayload, for: channelId) else {
+            XCTFail()
+            return
+        }
 
         // Assert: DTO should not contain any changes
         XCTAssertFalse(message.hasPersistentChangedValues)
@@ -1205,25 +1208,5 @@ class MessageDTO_Tests: XCTestCase {
         XCTAssertEqual(loadedMessages[1].quotedMessage?.id, createdMessages[0].id)
         // The third message also quotes the first message
         XCTAssertEqual(loadedMessages[2].quotedMessage?.id, createdMessages[1].id)
-    }
-}
-
-private extension RawJSON {
-    var string: String? {
-        switch self {
-        case let .string(value):
-            return value
-        default:
-            return nil
-        }
-    }
-
-    var dictionary: [String: RawJSON]? {
-        switch self {
-        case let .dictionary(value):
-            return value
-        default:
-            return nil
-        }
     }
 }

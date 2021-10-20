@@ -29,7 +29,6 @@ class TypingEventsSender_Tests: XCTestCase {
     
     override func tearDown() {
         apiClient.cleanUp()
-        AssertAsync.canBeReleased(&database)
         super.tearDown()
     }
     

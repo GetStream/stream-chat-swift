@@ -107,9 +107,14 @@ extension DatabaseSessionMock {
         )
     }
     
-    func saveMessage(payload: MessagePayload, for cid: ChannelId?) throws -> MessageDTO {
+    func saveMessage(payload: MessagePayload, channelDTO: ChannelDTO) throws -> MessageDTO {
         try throwErrorIfNeeded()
-        return try underlyingSession.saveMessage(payload: payload, for: cid)
+        return try underlyingSession.saveMessage(payload: payload, channelDTO: channelDTO)
+    }
+
+    func saveMessage(payload: MessagePayload, for cid: ChannelId?) throws -> MessageDTO? {
+        try throwErrorIfNeeded()
+        return try? underlyingSession.saveMessage(payload: payload, for: cid)
     }
     
     func pin(message: MessageDTO, pinning: MessagePinning) throws {
@@ -245,11 +250,11 @@ extension DatabaseSessionMock {
         underlyingSession.loadChannelMute(cid: cid, userId: userId)
     }
     
-    func deleteChannels(query: ChannelListQuery) throws {
-        try underlyingSession.deleteChannels(query: query)
+    func delete(query: ChannelListQuery) {
+        try underlyingSession.delete(query: query)
     }
 
-    func saveMessage(payload: MessagePayload, for query: MessageSearchQuery) throws -> MessageDTO {
+    func saveMessage(payload: MessagePayload, for query: MessageSearchQuery) throws -> MessageDTO? {
         try throwErrorIfNeeded()
         return try underlyingSession.saveMessage(payload: payload, for: query)
     }

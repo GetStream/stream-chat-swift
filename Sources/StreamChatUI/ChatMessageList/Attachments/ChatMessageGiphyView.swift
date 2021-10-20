@@ -2,7 +2,6 @@
 // Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
-import Nuke
 import StreamChat
 import SwiftyGif
 import UIKit
@@ -16,9 +15,11 @@ open class ChatMessageGiphyView: _View, ComponentsProvider {
         }
     }
     
-    private var imageTask: ImageTask? {
+    private var dataTask: URLSessionDataTask? {
         didSet { oldValue?.cancel() }
     }
+
+    private var gifLoadingHandler = SwiftyGifLoadingHandler()
 
     public private(set) lazy var imageView = UIImageView().withoutAutoresizingMaskConstraints
 
@@ -35,7 +36,21 @@ open class ChatMessageGiphyView: _View, ComponentsProvider {
     public private(set) var hasFailed = false
 
     deinit {
-        imageTask?.cancel()
+        dataTask?.cancel()
+    }
+
+    override open func setUp() {
+        super.setUp()
+
+        gifLoadingHandler.didFail = { [weak self] _ in
+            self?.hasFailed = true
+        }
+
+        gifLoadingHandler.didSucceed = { [weak self] in
+            self?.hasFailed = false
+        }
+
+        imageView.delegate = gifLoadingHandler
     }
 
     override open func setUpLayout() {
@@ -47,10 +62,6 @@ open class ChatMessageGiphyView: _View, ComponentsProvider {
 
         addSubview(badge)
         badge.pin(anchors: [.leading, .bottom], to: layoutMarginsGuide)
-
-        addSubview(loadingIndicator)
-        loadingIndicator.centerYAnchor.pin(equalTo: centerYAnchor).isActive = true
-        loadingIndicator.centerXAnchor.pin(equalTo: centerXAnchor).isActive = true
     }
 
     override open func setUpAppearance() {
@@ -62,67 +73,25 @@ open class ChatMessageGiphyView: _View, ComponentsProvider {
     override open func updateContent() {
         super.updateContent()
 
-        hasFailed = false
-        loadingIndicator.isVisible = true
-        imageTask = nil
-        imageView.clear()
-
         if let url = content?.previewURL {
-            imageTask = ImagePipeline.shared.loadData(with: url) { [weak self] result in
-                guard case let .success((rawGif, _)) = result else {
-                    self?.hasFailed = true
-                    return
-                }
-                guard let image = try? UIImage(gifData: rawGif) else { return }
-                self?.imageView.setGifImage(image)
-                self?.loadingIndicator.isVisible = false
-                self?.imageTask = nil
-            }
+            dataTask = imageView.setGifFromURL(url, customLoader: loadingIndicator)
         }
     }
 }
 
+// Internal class to handle the SwiftyGifDelegate.
+// Right now exposing the SwiftyGifDelegate breaks the SDK.
 extension ChatMessageGiphyView {
-    open class GiphyBadge: _View, AppearanceProvider {
-        public private(set) lazy var title: UILabel = {
-            let label = UILabel().withoutAutoresizingMaskConstraints
-            label.text = "GIPHY"
-            label.textColor = appearance.colorPalette.staticColorText
-            label.font = appearance.fonts.bodyBold
-            return label.withBidirectionalLanguagesSupport
-        }()
+    class SwiftyGifLoadingHandler: SwiftyGifDelegate {
+        var didFail: (Error?) -> Void = { _ in }
+        var didSucceed: () -> Void = {}
 
-        public private(set) lazy var lightning = UIImageView(
-            image: appearance
-                .images
-                .commandGiphy
-        )
-        public private(set) lazy var contentStack: UIStackView = {
-            let stack = UIStackView(arrangedSubviews: [lightning, title]).withoutAutoresizingMaskConstraints
-            stack.axis = .horizontal
-            stack.alignment = .center
-            return stack
-        }()
-
-        override open func setUpLayout() {
-            super.setUpLayout()
-
-            directionalLayoutMargins = NSDirectionalEdgeInsets(top: 4, leading: 6, bottom: 4, trailing: 6)
-
-            addSubview(contentStack)
-            contentStack.pin(to: layoutMarginsGuide)
+        func gifDidStart(sender: UIImageView) {
+            didSucceed()
         }
 
-        override open func setUpAppearance() {
-            super.setUpAppearance()
-            backgroundColor = UIColor.black.withAlphaComponent(0.6)
-            lightning.tintColor = appearance.colorPalette.staticColorText
-        }
-
-        override open func layoutSubviews() {
-            super.layoutSubviews()
-
-            layer.cornerRadius = bounds.height / 2
+        func gifURLDidFail(sender: UIImageView, url: URL, error: Error?) {
+            didFail(error)
         }
     }
 }
