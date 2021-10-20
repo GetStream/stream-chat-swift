@@ -25,7 +25,12 @@ class ChannelController_Tests: XCTestCase {
         env = TestEnvironment()
         client = ChatClient.mock
         channelId = ChannelId.unique
-        controller = ChatChannelController(channelQuery: .init(cid: channelId), client: client, environment: env.environment)
+        controller = ChatChannelController(
+            channelQuery: .init(cid: channelId),
+            channelListQuery: nil,
+            client: client,
+            environment: env.environment
+        )
         controllerCallbackQueueID = UUID()
         controller.callbackQueue = .testQueue(withId: controllerCallbackQueueID)
     }
@@ -48,7 +53,11 @@ class ChannelController_Tests: XCTestCase {
     
     // MARK: - Helpers
     
-    func setupControllerForNewDirectMessageChannel(currentUserId: UserId, otherUserId: UserId) {
+    func setupControllerForNewDirectMessageChannel(
+        currentUserId: UserId,
+        otherUserId: UserId,
+        channelListQuery: ChannelListQuery? = nil
+    ) {
         let payload = ChannelEditDetailPayload(
             type: .messaging,
             name: nil,
@@ -61,6 +70,7 @@ class ChannelController_Tests: XCTestCase {
         
         controller = ChatChannelController(
             channelQuery: .init(channelPayload: payload),
+            channelListQuery: channelListQuery,
             client: client,
             environment: env.environment,
             isChannelAlreadyCreated: false
@@ -68,9 +78,13 @@ class ChannelController_Tests: XCTestCase {
         controller.callbackQueue = .testQueue(withId: controllerCallbackQueueID)
     }
     
-    func setupControllerForNewChannel(query: ChannelQuery) {
+    func setupControllerForNewChannel(
+        query: ChannelQuery,
+        channelListQuery: ChannelListQuery? = nil
+    ) {
         controller = ChatChannelController(
             channelQuery: query,
+            channelListQuery: channelListQuery,
             client: client,
             environment: env.environment,
             isChannelAlreadyCreated: false
@@ -79,7 +93,10 @@ class ChannelController_Tests: XCTestCase {
         controller.synchronize()
     }
     
-    func setupControllerForNewMessageChannel(cid: ChannelId) {
+    func setupControllerForNewMessageChannel(
+        cid: ChannelId,
+        channelListQuery: ChannelListQuery? = nil
+    ) {
         let payload = ChannelEditDetailPayload(
             cid: cid,
             name: nil,
@@ -92,6 +109,7 @@ class ChannelController_Tests: XCTestCase {
         
         controller = ChatChannelController(
             channelQuery: .init(channelPayload: payload),
+            channelListQuery: channelListQuery,
             client: client,
             environment: env.environment,
             isChannelAlreadyCreated: false
@@ -122,11 +140,126 @@ class ChannelController_Tests: XCTestCase {
     
     // MARK: - Init tests
     
-    func test_clientAndIdAreCorrect() {
-        XCTAssert(controller.client === client)
+    func test_init_assignsValuesCorrectly() {
+        let channelQuery = ChannelQuery(cid: channelId)
+        let channelListQuery = ChannelListQuery(filter: .containMembers(userIds: [.unique]))
+        
+        let controller = ChatChannelController(
+            channelQuery: channelQuery,
+            channelListQuery: channelListQuery,
+            client: client
+        )
+        
         XCTAssertEqual(controller.channelQuery.cid, channelId)
+        XCTAssertEqual(controller.channelListQuery, channelListQuery)
+        XCTAssert(controller.client === client)
     }
     
+    // MARK: - Mark channel as open
+    
+    func test_channelOpenState_whenChannelListQueryIsProvided() throws {
+        // Declare channel query
+        let channelQuery = ChannelQuery(cid: channelId)
+        
+        // Declare channel list query
+        let channelListQuery = ChannelListQuery(filter: .containMembers(userIds: [.unique]))
+        
+        // Setup controller with given `channelQuery` and `channelListQuery`
+        setupControllerForNewChannel(
+            query: channelQuery,
+            channelListQuery: channelListQuery
+        )
+        
+        // Simulate `synchronize` calls and catch the completion
+        var completionCalled = false
+        controller.synchronize { _ in
+            completionCalled = true
+        }
+        
+        // Save channel to database.
+        try client.mockDatabaseContainer.createChannel(cid: channelId)
+        
+        // Simulate successful network call.
+        let channelPayload = dummyPayload(with: channelId)
+        env.channelUpdater!.update_completion?(.success(channelPayload))
+        env.channelUpdater!.cleanUp()
+        
+        // Wait for completion to be called
+        AssertAsync.willBeTrue(completionCalled)
+        
+        // Load the channel from database
+        let channelDTO = try XCTUnwrap(
+            client.databaseContainer.viewContext.channel(cid: channelId)
+        )
+        
+        // Load the channel list query from database
+        let channelListQueryDTO = try XCTUnwrap(
+            client.databaseContainer.viewContext.channelListQuery(
+                filterHash: channelListQuery.filter.filterHash
+            )
+        )
+        
+        // Assert channel is marked as open in a query
+        XCTAssertTrue(channelDTO.openIn.contains(channelListQueryDTO))
+        
+        // Release the controller.
+        controller = nil
+        
+        // Assert channel stops being marked as open in a query
+        AssertAsync.willBeFalse(channelDTO.openIn.contains(channelListQueryDTO))
+    }
+    
+    func test_channelOpenState_whenChannelListQueryIsNotProvided() throws {
+        // Declare channel query
+        let channelQuery = ChannelQuery(cid: channelId)
+        
+        // Setup controller with given `channelQuery` and no channel list query
+        setupControllerForNewChannel(query: channelQuery, channelListQuery: nil)
+        
+        // Simulate `synchronize` calls and catch the completion
+        var completionCalled = false
+        controller.synchronize { _ in
+            completionCalled = true
+        }
+        
+        // Save channel to database.
+        try client.mockDatabaseContainer.createChannel(cid: channelId)
+        
+        // Simulate successful network call.
+        let channelPayload = dummyPayload(with: channelId)
+        env.channelUpdater!.update_completion?(.success(channelPayload))
+        env.channelUpdater!.cleanUp()
+        
+        // Wait for completion to be called
+        AssertAsync.willBeTrue(completionCalled)
+        
+        // Load the channel from database
+        let channelDTO = try XCTUnwrap(
+            client.databaseContainer.viewContext.channel(cid: channelId)
+        )
+        
+        // Load channel specific list query from database
+        let channelListQuery: ChannelListQuery = .unique(for: channelId)
+        var queryDTO: ChannelListQueryDTO? {
+            client.databaseContainer.viewContext.channelListQuery(
+                filterHash: channelListQuery.filter.filterHash
+            )
+        }
+                
+        // Assert channel is marked as open in a query
+        XCTAssertTrue(channelDTO.openIn.contains(try XCTUnwrap(queryDTO)))
+        
+        // Release the controller.
+        controller = nil
+        
+        AssertAsync {
+            // Assert channel stops being marked as open in a query
+            Assert.willBeTrue(channelDTO.openIn.isEmpty)
+            // Assert channel specific query is deleted from database
+            Assert.willBeNil(queryDTO)
+        }
+    }
+        
     // MARK: - Channel
     
     func test_channel_accessible_initially() throws {
@@ -237,18 +370,21 @@ class ChannelController_Tests: XCTestCase {
     
     // MARK: - Synchronize tests
     
-    func test_synchronize_changesControllerState() {
+    func test_synchronize_changesControllerState() throws {
         // Check if controller has initialized state initially.
         XCTAssertEqual(controller.state, .initialized)
         
         // Simulate `synchronize` call.
         controller.synchronize()
         
+        // Save channel to database.
+        try client.mockDatabaseContainer.createChannel(cid: channelId)
+        
         // Simulate successful network call.
         env.channelUpdater?.update_completion?(.success(dummyPayload(with: .unique)))
         
         // Check if state changed after successful network call.
-        XCTAssertEqual(controller.state, .remoteDataFetched)
+        AssertAsync.willBeEqual(controller.state, .remoteDataFetched)
     }
     
     func test_synchronize_changesControllerStateOnError() {
@@ -266,7 +402,7 @@ class ChannelController_Tests: XCTestCase {
         XCTAssertEqual(controller.state, .remoteDataFetchFailed(ClientError(with: error)))
     }
     
-    func test_synchronize_callsChannelUpdater() {
+    func test_synchronize_callsChannelUpdater() throws {
         // Simulate `synchronize` calls and catch the completion
         var completionCalled = false
         controller.synchronize { [callbackQueueID] error in
@@ -286,6 +422,9 @@ class ChannelController_Tests: XCTestCase {
         XCTAssertEqual(env.channelUpdater!.update_channelQuery?.cid, channelId)
         // Completion shouldn't be called yet
         XCTAssertFalse(completionCalled)
+        
+        // Save channel to database.
+        try client.mockDatabaseContainer.createChannel(cid: channelId)
         
         // Simulate successful update
         env.channelUpdater!.update_completion?(.success(dummyPayload(with: .unique)))
@@ -480,6 +619,24 @@ class ChannelController_Tests: XCTestCase {
         XCTAssertEqual(controller.messages[0].id, newerMessagePayload.id)
         // Third message is the failed one
         XCTAssertEqual(controller.messages[2].id, oldMessageId)
+    }
+    
+    func test_synchronize_whenMarkingChannelAsOpenFails() {
+        // Simulate `synchronize` call.
+        var completionError: ClientError?
+        controller.synchronize { [callbackQueueID] in
+            AssertTestQueue(withId: callbackQueueID)
+            completionError = $0 as? ClientError
+        }
+        
+        // Simulate successful network call without saving a channel.
+        env.channelUpdater?.update_completion?(.success(dummyPayload(with: .unique)))
+        
+        // Assert `ChannelDoesNotExist` is propagated
+        AssertAsync.willBeTrue(completionError is ClientError.ChannelDoesNotExist)
+        
+        // Assert state is set to `remoteDataFetchFailed` with the corect error
+        XCTAssertEqual(controller.state, .remoteDataFetchFailed(completionError!))
     }
 
     // MARK: - Creating `ChannelController` tests
@@ -985,6 +1142,9 @@ class ChannelController_Tests: XCTestCase {
         // Synchronize
         controller.synchronize()
             
+        // Save channel to database.
+        try client.mockDatabaseContainer.createChannel(cid: channelId)
+        
         // Simulate network call response
         env.channelUpdater?.update_completion?(.success(dummyPayload(with: .unique)))
         
@@ -1003,6 +1163,9 @@ class ChannelController_Tests: XCTestCase {
         // Synchronize
         controller.synchronize()
         
+        // Save channel to database.
+        try client.mockDatabaseContainer.createChannel(cid: channelId)
+        
         // Simulate network call response
         env.channelUpdater?.update_completion?(.success(dummyPayload(with: .unique)))
         //   env.messageUpdater.getMessage_completion?(nil)
@@ -1015,6 +1178,7 @@ class ChannelController_Tests: XCTestCase {
         // Assign `ChannelController` that creates new channel
         controller = ChatChannelController(
             channelQuery: ChannelQuery(cid: channelId),
+            channelListQuery: nil,
             client: client,
             environment: env.environment,
             isChannelAlreadyCreated: false
@@ -1197,6 +1361,7 @@ class ChannelController_Tests: XCTestCase {
         let client: ChatClient = ChatClient.mock()
         let controller = ChatChannelController(
             channelQuery: .init(cid: channelId),
+            channelListQuery: nil,
             client: client,
             environment: env.environment
         )

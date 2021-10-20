@@ -673,4 +673,42 @@ class ChannelDTO_Tests: XCTestCase {
             Assert.willBeEqual(channel.watcherCount, 0)
         }
     }
+    
+    func test_openInQueries_areCleared_onResetEphemeralValues() throws {
+        // Declare channel query
+        let cid: ChannelId = .unique
+        
+        // Declare channel list query
+        let channelListQuery = ChannelListQuery(filter: .containMembers(userIds: [.unique]))
+        
+        // Save both to database and mark channel as open
+        try database.createChannel(cid: cid)
+        try database.createChannelListQuery(filter: channelListQuery.filter)
+        try database.writeSynchronously { session in
+            let queryDTO = try XCTUnwrap(session.channelListQuery(filterHash: channelListQuery.filter.filterHash))
+            let channelDTO = try XCTUnwrap(session.channel(cid: cid))
+            queryDTO.openChannels.insert(channelDTO)
+        }
+        
+        // Load the channel from database
+        let channelDTO = try XCTUnwrap(
+            database.viewContext.channel(cid: cid)
+        )
+        
+        // Load the channel list query from database
+        let channelListQueryDTO = try XCTUnwrap(
+            database.viewContext.channelListQuery(
+                filterHash: channelListQuery.filter.filterHash
+            )
+        )
+        
+        // Assert channel is marked as open in a query
+        XCTAssertTrue(channelDTO.openIn.contains(channelListQueryDTO))
+        
+        // Simulate `resetEphemeralValues`
+        database.resetEphemeralValues()
+        
+        // Assert channel is not longer marked as open in a query
+        XCTAssertFalse(channelDTO.openIn.contains(channelListQueryDTO))
+    }
 }

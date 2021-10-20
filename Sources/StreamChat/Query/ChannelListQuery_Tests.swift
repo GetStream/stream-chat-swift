@@ -49,4 +49,16 @@ final class ChannelListFilterScope_Tests: XCTestCase {
             XCTAssertEqual($0.sort.last?.key, Sorting<ChannelListSortingKey>(key: .cid).key)
         }
     }
+    
+    func test_uniqueForChannel() {
+        // Create channel identifier
+        let cid: ChannelId = .unique
+        
+        // Create query unique for channel
+        let query: ChannelListQuery = .unique(for: cid)
+        
+        // Assert correct query is created
+        XCTAssertEqual(query, .init(filter: .equal(.cid, to: cid)))
+        XCTAssertEqual(query.filter.filterHash, cid.rawValue)
+    }
 }

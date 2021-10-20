@@ -130,7 +130,11 @@ class ChannelControllerMock: ChatChannelController {
     }
     
     init(channelQuery: ChannelQuery = .init(channelPayload: .unique)) {
-        super.init(channelQuery: channelQuery, client: .mock)
+        super.init(
+            channelQuery: channelQuery,
+            channelListQuery: nil,
+            client: .mock
+        )
     }
     
     override func synchronize(_ completion: ((Error?) -> Void)? = nil) {
