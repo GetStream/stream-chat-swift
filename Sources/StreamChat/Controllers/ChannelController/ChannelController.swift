@@ -1064,7 +1064,14 @@ public extension ChatChannelController {
             return
         }
 
-        updater.markRead(cid: cid) { error in
+        guard let userId = client.currentUserId else {
+            callback {
+                completion?(nil)
+            }
+            return
+        }
+
+        updater.markRead(cid: cid, userId: userId) { error in
             self.callback {
                 completion?(error)
             }

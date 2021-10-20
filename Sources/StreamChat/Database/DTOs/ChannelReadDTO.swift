@@ -93,6 +93,26 @@ extension NSManagedObjectContext {
         return dto
     }
     
+    func markChannelAsRead(cid: ChannelId, userId: UserId, at: Date) {
+        if let read = loadChannelRead(cid: cid, userId: userId) {
+            // We have a read object saved, we can update it
+            read.lastReadAt = at
+            read.unreadMessageCount = 0
+        } else if let channel = channel(cid: cid), channel.members.contains(where: { $0.user.id == userId }) {
+            // We don't have a read object, but the user is a member.
+            // We can safely create a read object for the user
+            _ = saveChannelRead(cid: cid, userId: userId, lastReadAt: at, unreadMessageCount: 0)
+        } else {
+            // If we don't have a read object saved for the user,
+            // and the user is not a member,
+            // we can safely discard this event.
+            log.debug(
+                "Discarding read event for cid \(cid) and userId \(userId). "
+                    + "This is expected when the user calls `markRead` but they're not a member."
+            )
+        }
+    }
+
     func loadChannelRead(cid: ChannelId, userId: String) -> ChannelReadDTO? {
         ChannelReadDTO.load(cid: cid, userId: userId, context: self)
     }

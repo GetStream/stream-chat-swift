@@ -787,7 +787,7 @@ class ChannelUpdater_Tests: XCTestCase {
     func test_markRead_makesCorrectAPICall() {
         let cid = ChannelId.unique
         
-        channelUpdater.markRead(cid: cid)
+        channelUpdater.markRead(cid: cid, userId: .unique)
         
         let referenceEndpoint = Endpoint<EmptyResponse>.markRead(cid: cid)
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
@@ -795,7 +795,7 @@ class ChannelUpdater_Tests: XCTestCase {
     
     func test_markRead_successfulResponse_isPropagatedToCompletion() {
         var completionCalled = false
-        channelUpdater.markRead(cid: .unique) { error in
+        channelUpdater.markRead(cid: .unique, userId: .unique) { error in
             XCTAssertNil(error)
             completionCalled = true
         }
@@ -809,7 +809,7 @@ class ChannelUpdater_Tests: XCTestCase {
     
     func test_markRead_errorResponse_isPropagatedToCompletion() {
         var completionCalledError: Error?
-        channelUpdater.markRead(cid: .unique) { completionCalledError = $0 }
+        channelUpdater.markRead(cid: .unique, userId: .unique) { completionCalledError = $0 }
         
         let error = TestError()
         apiClient.test_simulateResponse(Result<EmptyResponse, Error>.failure(error))

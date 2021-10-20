@@ -255,8 +255,11 @@ class ChannelUpdater: Worker {
     /// - Parameters:
     ///   - cid: Channel id of the channel to be marked as read
     ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
-    func markRead(cid: ChannelId, completion: ((Error?) -> Void)? = nil) {
-        apiClient.request(endpoint: .markRead(cid: cid)) {
+    func markRead(cid: ChannelId, userId: UserId, completion: ((Error?) -> Void)? = nil) {
+        apiClient.request(endpoint: .markRead(cid: cid)) { [weak self] in
+            self?.database.write { (session) in
+                session.markChannelAsRead(cid: cid, userId: userId, at: .init())
+            }
             completion?($0.error)
         }
     }

@@ -58,6 +58,7 @@ open class ChatChannelVC:
     public var messageComposerBottomConstraint: NSLayoutConstraint?
 
     @Atomic private var loadingPreviousMessages: Bool = false
+    @Atomic private var markingRead: Bool = false
 
     override open func setUp() {
         super.setUp()
@@ -195,10 +196,28 @@ open class ChatChannelVC:
         }
     }
 
-    open func chatMessageListVC(_ vc: ChatMessageListVC, scrollViewDidScroll scrollView: UIScrollView) {
-        if messageListVC.listView.isLastCellFullyVisible, channelController.channel?.isUnread == true {
-            channelController.markRead()
+    open func maybeMarkRead() {
+        guard let channel = channelController.channel, channel.isUnread else {
+            return
+        }
+        guard messageListVC.listView.isLastCellFullyVisible else {
+            return
+        }
+        guard channel.latestMessages.first?.author.id != channelController.client.currentUserId else {
+            return
+        }
+        
+        if _markingRead.compareAndSwap(old: false, new: true) {
+            channelController.markRead { _ in
+                self.markingRead = false
+            }
+        }
+    }
 
+    open func chatMessageListVC(_ vc: ChatMessageListVC, scrollViewDidScroll scrollView: UIScrollView) {
+        maybeMarkRead()
+
+        if messageListVC.listView.isLastCellFullyVisible, channelController.channel?.isUnread == true {
             // Hide the badge immediately. Temporary solution until CIS-881 is implemented.
             messageListVC.scrollToLatestMessageButton.content = .noUnread
         }
@@ -210,6 +229,7 @@ open class ChatChannelVC:
         _ channelController: ChatChannelController,
         didUpdateMessages changes: [ListChange<ChatMessage>]
     ) {
+        maybeMarkRead()
         messageListVC.updateMessages(with: changes)
     }
 
