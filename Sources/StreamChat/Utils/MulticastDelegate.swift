@@ -34,7 +34,7 @@ struct MulticastDelegate<T> {
 
     /// Sets the main delegate. If is nil, removes the main delegate.
     /// - Parameter mainDelegate: The main delegate.
-    func set(mainDelegate: T?) {
+    mutating func set(mainDelegate: T?) {
         _mainDelegate.removeAllObjects()
 
         if let delegate = mainDelegate {
@@ -44,18 +44,18 @@ struct MulticastDelegate<T> {
 
     /// Adds a new delegate to the additional delegates.
     /// - Parameter additionalDelegate: The additional delegate.
-    func add(additionalDelegate: T) {
+    mutating func add(additionalDelegate: T) {
         _additionalDelegates.add(additionalDelegate as AnyObject)
     }
 
     /// Removes a delegate from the additional delegates.
     /// - Parameter additionalDelegate: The delegate to be removed.
-    func remove(additionalDelegate: T) {
+    mutating func remove(additionalDelegate: T) {
         _additionalDelegates.remove(additionalDelegate as AnyObject)
     }
 
     /// Removes all delegates, including the main and additional delegates.
-    func removeAll() {
+    mutating func removeAll() {
         _additionalDelegates.removeAllObjects()
         _mainDelegate.removeAllObjects()
     }
