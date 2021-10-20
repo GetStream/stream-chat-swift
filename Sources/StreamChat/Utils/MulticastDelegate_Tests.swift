@@ -102,6 +102,30 @@ class MulticastDelegate_Tests: XCTestCase {
         XCTAssertNil(multicastDelegate.mainDelegate)
         XCTAssertTrue(multicastDelegate.additionalDelegates.isEmpty)
     }
+
+    func test_whenDelegatesDeallocated_shouldNotRetainDelegates() {
+        let exp = expectation(description: "should clean all delegates after autoreleasepool")
+
+        autoreleasepool {
+            let mainDelegate = TestDelegate()
+            let testDelegate1 = TestDelegate()
+            let testDelegate2 = TestDelegate()
+
+            multicastDelegate.set(mainDelegate: mainDelegate)
+            multicastDelegate.add(additionalDelegate: testDelegate1)
+            multicastDelegate.add(additionalDelegate: testDelegate2)
+
+            XCTAssertNotNil(multicastDelegate.mainDelegate)
+            XCTAssertFalse(multicastDelegate.additionalDelegates.isEmpty)
+
+            exp.fulfill()
+        }
+
+        wait(for: [exp], timeout: 0.2)
+
+        XCTAssertNil(multicastDelegate.mainDelegate)
+        XCTAssertTrue(multicastDelegate.additionalDelegates.isEmpty)
+    }
 }
 
 private class TestDelegate {
