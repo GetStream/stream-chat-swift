@@ -29,7 +29,7 @@ public class ReactionNotificationContent {
 public class UnknownNotificationContent {
     public let content: UNNotificationContent
     
-    init(content: UNNotificationContent) {
+    public init(content: UNNotificationContent) {
         self.content = content
     }
 }
