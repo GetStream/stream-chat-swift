@@ -250,8 +250,8 @@ extension DatabaseSessionMock {
         underlyingSession.loadChannelMute(cid: cid, userId: userId)
     }
     
-    func deleteChannels(query: ChannelListQuery) throws {
-        try underlyingSession.deleteChannels(query: query)
+    func delete(query: ChannelListQuery) {
+        try underlyingSession.delete(query: query)
     }
 
     func saveMessage(payload: MessagePayload, for query: MessageSearchQuery) throws -> MessageDTO? {
