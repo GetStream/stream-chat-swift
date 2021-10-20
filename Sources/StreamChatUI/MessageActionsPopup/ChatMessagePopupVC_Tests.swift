@@ -51,15 +51,13 @@ final class ChatMessagePopupVC_Tests: XCTestCase {
         vc = TestChatMessagePopupVC()
         vc.messageBubbleViewInsets.right = 70
         vc.messageContentView = messageContentView
+        vc.messageContentContainerView.embed(messageContentView)
         vc.messageViewFrame = CGRect(x: 50, y: 300, width: 220, height: 200)
         vc.messageViewFrame.size = vc.messageContentView.systemLayoutSizeFitting(
             CGSize(width: vc.messageViewFrame.width, height: UIView.layoutFittingCompressedSize.height),
             withHorizontalFittingPriority: .streamRequire,
             verticalFittingPriority: .streamLow
         )
-
-        messageContentView.translatesAutoresizingMaskIntoConstraints = false
-        vc.messageContentContainerView.embed(messageContentView)
         
         let chatMessageController = ChatMessageController_Mock.mock()
         chatMessageController.simulateInitial(
@@ -129,14 +127,13 @@ final class ChatMessagePopupVC_Tests: XCTestCase {
         let vc = TestView()
         vc.actionsController = actionsController
         vc.messageContentView = messageContentView
+        vc.messageContentContainerView.embed(messageContentView)
         vc.messageViewFrame = CGRect(x: 50, y: 300, width: 220, height: 50)
         vc.messageViewFrame.size = vc.messageContentView.systemLayoutSizeFitting(
             CGSize(width: vc.messageViewFrame.width, height: UIView.layoutFittingCompressedSize.height),
             withHorizontalFittingPriority: .streamRequire,
             verticalFittingPriority: .streamLow
         )
-        messageContentView.translatesAutoresizingMaskIntoConstraints = false
-        vc.messageContentContainerView.embed(messageContentView)
 
         AssertSnapshot(vc, variants: [.defaultDark, .defaultLight])
     }
