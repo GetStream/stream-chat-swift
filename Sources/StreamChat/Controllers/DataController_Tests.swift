@@ -11,7 +11,7 @@ class DataController_Tests: XCTestCase {
         let delegateQueueId = UUID()
         let delegate = TestDelegate(expectedQueueId: delegateQueueId)
         
-        controller.stateMulticastDelegate.mainDelegate = delegate
+        controller.stateMulticastDelegate.add(additionalDelegate: delegate)
         controller.callbackQueue = DispatchQueue.testQueue(withId: delegateQueueId)
         
         // Check if state is `initialized` initially.

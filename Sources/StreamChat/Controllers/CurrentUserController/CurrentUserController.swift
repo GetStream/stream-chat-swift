@@ -51,7 +51,7 @@ public class CurrentChatUserController: DataController, DelegateCallable, DataSt
         }
 
     /// A type-erased delegate.
-    var multicastDelegate: MulticastDelegate<AnyCurrentUserControllerDelegate> = .init()
+    var multicastDelegate: MulticastDelegate<CurrentChatUserControllerDelegate> = .init()
     
     /// The currently logged-in user. `nil` if the connection hasn't been fully established yet, or the connection
     /// wasn't successful.
@@ -290,91 +290,10 @@ public extension CurrentChatUserControllerDelegate {
     func currentUserController(_ controller: CurrentChatUserController, didChangeCurrentUser: EntityChange<CurrentChatUser>) {}
 }
 
-final class AnyCurrentUserControllerDelegate: CurrentChatUserControllerDelegate {
-    weak var wrappedDelegate: AnyObject?
-    
-    private var _controllerDidChangeCurrentUserUnreadCount: (
-        CurrentChatUserController,
-        UnreadCount
-    ) -> Void
-    
-    private var _controllerDidChangeCurrentUser: (
-        CurrentChatUserController,
-        EntityChange<CurrentChatUser>
-    ) -> Void
-    
-    init(
-        wrappedDelegate: AnyObject?,
-        controllerDidChangeCurrentUserUnreadCount: @escaping (
-            CurrentChatUserController,
-            UnreadCount
-        ) -> Void,
-        controllerDidChangeCurrentUser: @escaping (
-            CurrentChatUserController,
-            EntityChange<CurrentChatUser>
-        ) -> Void
-    ) {
-        self.wrappedDelegate = wrappedDelegate
-        _controllerDidChangeCurrentUserUnreadCount = controllerDidChangeCurrentUserUnreadCount
-        _controllerDidChangeCurrentUser = controllerDidChangeCurrentUser
-    }
-    
-    func currentUserController(
-        _ controller: CurrentChatUserController,
-        didChangeCurrentUserUnreadCount unreadCount: UnreadCount
-    ) {
-        _controllerDidChangeCurrentUserUnreadCount(controller, unreadCount)
-    }
-    
-    func currentUserController(
-        _ controller: CurrentChatUserController,
-        didChangeCurrentUser user: EntityChange<CurrentChatUser>
-    ) {
-        _controllerDidChangeCurrentUser(controller, user)
-    }
-}
-
-extension AnyCurrentUserControllerDelegate {
-    convenience init<Delegate: CurrentChatUserControllerDelegate>(_ delegate: Delegate) {
-        self.init(
-            wrappedDelegate: delegate,
-            controllerDidChangeCurrentUserUnreadCount: { [weak delegate] in
-                delegate?.currentUserController($0, didChangeCurrentUserUnreadCount: $1)
-            },
-            controllerDidChangeCurrentUser: { [weak delegate] in
-                delegate?.currentUserController($0, didChangeCurrentUser: $1)
-            }
-        )
-    }
-}
-
-extension AnyCurrentUserControllerDelegate {
-    convenience init(_ delegate: CurrentChatUserControllerDelegate?) {
-        self.init(
-            wrappedDelegate: delegate,
-            controllerDidChangeCurrentUserUnreadCount: { [weak delegate] in
-                delegate?.currentUserController($0, didChangeCurrentUserUnreadCount: $1)
-            },
-            controllerDidChangeCurrentUser: { [weak delegate] in
-                delegate?.currentUserController($0, didChangeCurrentUser: $1)
-            }
-        )
-    }
-}
- 
-public extension CurrentChatUserController {
-    /// Sets the provided object as a delegate of this controller.
-    /// - Parameter delegate: The object used as a delegate. It's referenced weakly, so you need to keep the object
-    /// alive if you want keep receiving updates.
-    func setDelegate<Delegate: CurrentChatUserControllerDelegate>(_ delegate: Delegate?) {
-        multicastDelegate.mainDelegate = delegate.flatMap(AnyCurrentUserControllerDelegate.init)
-    }
-}
-
 public extension CurrentChatUserController {
     /// Set the delegate of `CurrentUserController` to observe the changes in the system.
     var delegate: CurrentChatUserControllerDelegate? {
-        get { multicastDelegate.mainDelegate?.wrappedDelegate as? CurrentChatUserControllerDelegate }
-        set { multicastDelegate.mainDelegate = AnyCurrentUserControllerDelegate(newValue) }
+        get { multicastDelegate.mainDelegate }
+        set { multicastDelegate.set(mainDelegate: newValue) }
     }
 }

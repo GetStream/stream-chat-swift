@@ -26,7 +26,7 @@ extension ChatConnectionController {
             self.controller = controller
             connectionStatus = .init(controller.connectionStatus)
             
-            controller.multicastDelegate.additionalDelegates.append(AnyChatConnectionControllerDelegate(self))
+            controller.multicastDelegate.add(additionalDelegate: self)
         }
     }
 }

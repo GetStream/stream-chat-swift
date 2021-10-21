@@ -34,7 +34,7 @@ extension CurrentChatUserController {
             self.controller = controller
             unreadCount = .init(.noUnread)
             
-            controller.multicastDelegate.additionalDelegates.append(AnyCurrentUserControllerDelegate(self))
+            controller.multicastDelegate.add(additionalDelegate: self)
         }
     }
 }

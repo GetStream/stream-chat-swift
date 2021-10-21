@@ -18,6 +18,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### 🔄 Changed
 - `LogConfig` changes after logger was used will now take affect [#1522](https://github.com/GetStream/stream-chat-swift/issues/1522)
+- `setDelegate(delegate:)` is now deprecated in favor of using the `delegate` property directly [#1564](https://github.com/GetStream/stream-chat-swift/pull/1564)
 
 # [4.1.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.1.0)
 _October 12, 2021_

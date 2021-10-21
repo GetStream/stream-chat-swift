@@ -220,7 +220,7 @@ open class ChatMessageComposerSuggestionsMentionDataSource: NSObject,
         registerCollectionViewCell()
         (collectionView.collectionViewLayout as? UICollectionViewFlowLayout)?
             .headerReferenceSize = CGSize(width: self.collectionView.frame.size.width, height: 0)
-        searchController.setDelegate(self)
+        searchController.delegate = self
     }
 
     private func registerCollectionViewCell() {

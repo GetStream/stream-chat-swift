@@ -26,7 +26,7 @@ open class ChatThreadHeaderView:
     override open func setUp() {
         super.setUp()
 
-        channelController?.setDelegate(self)
+        channelController?.delegate = self
     }
 
     override open func setUpLayout() {

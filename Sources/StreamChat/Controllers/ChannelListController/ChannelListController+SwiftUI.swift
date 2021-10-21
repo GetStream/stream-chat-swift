@@ -26,7 +26,7 @@ extension ChatChannelListController {
             self.controller = controller
             state = controller.state
             
-            controller.multicastDelegate.additionalDelegates.append(AnyChannelListControllerDelegate(self))
+            controller.multicastDelegate.add(additionalDelegate: self)
             channels = controller.channels
         }
     }

@@ -39,10 +39,11 @@ public class ChatChannelWatcherListController: DataController, DelegateCallable,
     lazy var basePublishers: BasePublishers = .init(controller: self)
     
     /// The type-erased delegate.
-    var multicastDelegate: MulticastDelegate<AnyChatChannelWatcherListControllerDelegate> = .init() {
+    var multicastDelegate: MulticastDelegate<ChatChannelWatcherListControllerDelegate> = .init() {
         didSet {
-            stateMulticastDelegate.mainDelegate = multicastDelegate.mainDelegate
-            stateMulticastDelegate.additionalDelegates = multicastDelegate.additionalDelegates
+            stateMulticastDelegate.set(mainDelegate: multicastDelegate.mainDelegate)
+            stateMulticastDelegate.set(additionalDelegates: multicastDelegate.additionalDelegates)
+            
             startObservingIfNeeded()
         }
     }
@@ -84,15 +85,6 @@ public class ChatChannelWatcherListController: DataController, DelegateCallable,
             self.state = error == nil ? .remoteDataFetched : .remoteDataFetchFailed(ClientError(with: error))
             self.callback { completion?(error) }
         }
-    }
-    
-    /// Sets the provided object as a delegate of this controller.
-    ///
-    /// - Parameter delegate: The object used as a delegate. It's referenced weakly, so you need to keep the object
-    /// alive if you want keep receiving updates.
-    ///
-    public func setDelegate<Delegate: ChatChannelWatcherListControllerDelegate>(_ delegate: Delegate) {
-        multicastDelegate.mainDelegate = AnyChatChannelWatcherListControllerDelegate(delegate)
     }
     
     private func createWatchersObserver() -> ListDatabaseObserver<ChatUser, UserDTO> {
@@ -147,10 +139,10 @@ extension ChatChannelWatcherListController {
 
 extension ChatChannelWatcherListController {
     /// Set the delegate of `ChatChannelWatcherListController` to observe the changes in the system.
-
+    
     public var delegate: ChatChannelWatcherListControllerDelegate? {
-        get { multicastDelegate.mainDelegate?.wrappedDelegate as? ChatChannelWatcherListControllerDelegate }
-        set { multicastDelegate.mainDelegate = AnyChatChannelWatcherListControllerDelegate(newValue) }
+        get { multicastDelegate.mainDelegate }
+        set { multicastDelegate.set(mainDelegate: newValue) }
     }
 }
 
@@ -180,69 +172,4 @@ public protocol ChatChannelWatcherListControllerDelegate: DataControllerStateDel
         _ controller: ChatChannelWatcherListController,
         didChangeWatchers changes: [ListChange<ChatUser>]
     )
-}
-
-// MARK: - Delegate type eraser
-
-final class AnyChatChannelWatcherListControllerDelegate: ChatChannelWatcherListControllerDelegate {
-    private let _controllerDidChangeState: (DataController, DataController.State) -> Void
-    
-    private let _controllerDidChangeWatchers: (
-        ChatChannelWatcherListController,
-        [ListChange<ChatUser>]
-    ) -> Void
-    
-    weak var wrappedDelegate: AnyObject?
-    
-    init(
-        wrappedDelegate: AnyObject?,
-        controllerDidChangeState: @escaping (DataController, DataController.State) -> Void,
-        controllerDidChangeWatchers: @escaping (
-            ChatChannelWatcherListController,
-            [ListChange<ChatUser>]
-        ) -> Void
-    ) {
-        self.wrappedDelegate = wrappedDelegate
-        _controllerDidChangeState = controllerDidChangeState
-        _controllerDidChangeWatchers = controllerDidChangeWatchers
-    }
-    
-    func controller(_ controller: DataController, didChangeState state: DataController.State) {
-        _controllerDidChangeState(controller, state)
-    }
-    
-    func channelWatcherListController(
-        _ controller: ChatChannelWatcherListController,
-        didChangeWatchers changes: [ListChange<ChatUser>]
-    ) {
-        _controllerDidChangeWatchers(controller, changes)
-    }
-}
-
-extension AnyChatChannelWatcherListControllerDelegate {
-    convenience init<Delegate: ChatChannelWatcherListControllerDelegate>(_ delegate: Delegate) {
-        self.init(
-            wrappedDelegate: delegate,
-            controllerDidChangeState: { [weak delegate] in
-                delegate?.controller($0, didChangeState: $1)
-            },
-            controllerDidChangeWatchers: { [weak delegate] in
-                delegate?.channelWatcherListController($0, didChangeWatchers: $1)
-            }
-        )
-    }
-}
-
-extension AnyChatChannelWatcherListControllerDelegate {
-    convenience init(_ delegate: ChatChannelWatcherListControllerDelegate?) {
-        self.init(
-            wrappedDelegate: delegate,
-            controllerDidChangeState: { [weak delegate] in
-                delegate?.controller($0, didChangeState: $1)
-            },
-            controllerDidChangeWatchers: { [weak delegate] in
-                delegate?.channelWatcherListController($0, didChangeWatchers: $1)
-            }
-        )
-    }
 }

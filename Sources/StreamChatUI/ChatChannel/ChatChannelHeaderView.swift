@@ -13,7 +13,7 @@ open class ChatChannelHeaderView:
     /// Controller for observing data changes within the channel.
     open var channelController: ChatChannelController? {
         didSet {
-            channelController?.setDelegate(self)
+            channelController?.delegate = self
         }
     }
 

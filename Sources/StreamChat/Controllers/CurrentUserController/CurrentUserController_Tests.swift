@@ -191,20 +191,6 @@ final class CurrentUserController_Tests: XCTestCase {
         XCTAssertNil(controller.delegate)
     }
     
-    func test_genericDelegate_isReferencedWeakly() {
-        // Create the delegate
-        var delegate: TestDelegateGeneric? = .init(expectedQueueId: callbackQueueID)
-        
-        // Set the delegate
-        controller.setDelegate(delegate)
-        
-        // Stop keeping a delegate alive
-        delegate = nil
-        
-        // Assert delegate is deallocated
-        XCTAssertNil(controller.delegate)
-    }
-    
     func test_delegate_isNotifiedAboutCreatedUser() throws {
         // Call synchronize to get updates from DB
         controller.synchronize()
@@ -614,30 +600,6 @@ private class TestDelegate: QueueAwareDelegate, CurrentChatUserControllerDelegat
         validateQueue()
     }
 
-    func currentUserController(
-        _ controller: CurrentChatUserController,
-        didChangeCurrentUser change: EntityChange<CurrentChatUser>
-    ) {
-        didChangeCurrentUser_change = change
-        validateQueue()
-    }
-    
-    func currentUserController(_ controller: CurrentChatUserController, didChangeCurrentUserUnreadCount count: UnreadCount) {
-        didChangeCurrentUserUnreadCount_count = count
-        validateQueue()
-    }
-}
-
-private class TestDelegateGeneric: QueueAwareDelegate, CurrentChatUserControllerDelegate {
-    @Atomic var state: DataController.State?
-    @Atomic var didChangeCurrentUser_change: EntityChange<CurrentChatUser>?
-    @Atomic var didChangeCurrentUserUnreadCount_count: UnreadCount?
-    
-    func controller(_ controller: DataController, didChangeState state: DataController.State) {
-        self.state = state
-        validateQueue()
-    }
-    
     func currentUserController(
         _ controller: CurrentChatUserController,
         didChangeCurrentUser change: EntityChange<CurrentChatUser>
