@@ -26,7 +26,7 @@ struct ChannelPayload: Decodable {
     
     let channelReads: [ChannelReadPayload]
     
-    let hidden: Bool?
+    let isHidden: Bool?
 
     private enum CodingKeys: String, CodingKey {
         case channel
@@ -43,7 +43,7 @@ struct ChannelPayload: Decodable {
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         channel = try container.decode(ChannelDetailPayload.self, forKey: .channel)
-        hidden = try container.decodeIfPresent(Bool.self, forKey: .hidden)
+        isHidden = try container.decodeIfPresent(Bool.self, forKey: .hidden)
         watchers = try container.decodeIfPresent([UserPayload].self, forKey: .watchers)
         watcherCount = try container.decodeIfPresent(Int.self, forKey: .watcherCount)
         members = try container.decode([MemberPayload].self, forKey: .members)
@@ -57,7 +57,7 @@ struct ChannelPayload: Decodable {
     
     init(
         channel: ChannelDetailPayload,
-        hidden: Bool? = nil,
+        isHidden: Bool? = nil,
         watcherCount: Int,
         watchers: [UserPayload]?,
         members: [MemberPayload],
@@ -67,7 +67,7 @@ struct ChannelPayload: Decodable {
         channelReads: [ChannelReadPayload]
     ) {
         self.channel = channel
-        self.hidden = hidden
+        self.isHidden = isHidden
         self.watcherCount = watcherCount
         self.watchers = watchers
         self.members = members
@@ -110,7 +110,7 @@ struct ChannelDetailPayload: Decodable {
     /// Backend only sends this field for `QueryChannel` and `QueryChannels` API calls,
     /// but not for events.
     /// Missing `hidden` field doesn't mean `false` for this reason.
-    let hidden: Bool?
+    let isHidden: Bool?
     
     let members: [MemberPayload]?
     
@@ -144,7 +144,7 @@ struct ChannelDetailPayload: Decodable {
         // For `hidden`, we don't fallback to `false`
         // since this field is not sent for all API calls and for events
         // We can't assume anything regarding this flag when it's absent
-        hidden = try container.decodeIfPresent(Bool.self, forKey: .hidden)
+        isHidden = try container.decodeIfPresent(Bool.self, forKey: .hidden)
         lastMessageAt = try container.decodeIfPresent(Date.self, forKey: .lastMessageAt)
         isFrozen = try container.decode(Bool.self, forKey: .frozen)
         team = try container.decodeIfPresent(String.self, forKey: .team)
@@ -174,7 +174,7 @@ struct ChannelDetailPayload: Decodable {
         createdAt: Date,
         deletedAt: Date?,
         updatedAt: Date,
-        hidden: Bool? = nil,
+        isHidden: Bool? = nil,
         createdBy: UserPayload?,
         config: ChannelConfig,
         isFrozen: Bool,
@@ -199,7 +199,7 @@ struct ChannelDetailPayload: Decodable {
         self.team = team
         self.members = members
         self.cooldownDuration = cooldownDuration
-        self.hidden = hidden
+        self.isHidden = isHidden
     }
 }
 

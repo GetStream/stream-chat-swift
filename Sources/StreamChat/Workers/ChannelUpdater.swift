@@ -29,7 +29,7 @@ class ChannelUpdater: Worker {
                     // on channel query and channel list query
                     // Inexistence of this field implies `false`
                     // but only for those queries
-                    dto.hidden = payload.hidden ?? false
+                    dto.isHidden = payload.isHidden ?? false
                 } completion: { error in
                     if let error = error {
                         completion?(.failure(error))
@@ -112,7 +112,7 @@ class ChannelUpdater: Worker {
                 // hide the channel
                 self?.database.write {
                     if let channel = $0.channel(cid: cid) {
-                        channel.hidden = true
+                        channel.isHidden = true
                         if clearHistory {
                             channel.truncatedAt = Date()
                         }

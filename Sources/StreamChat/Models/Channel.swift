@@ -30,7 +30,7 @@ public struct ChatChannel {
     public let deletedAt: Date?
     
     /// Flag for representing hidden state for the channel.
-    public let hidden: Bool
+    public let isHidden: Bool
     
     /// The user which created the channel.
     public let createdBy: ChatUser?
@@ -156,7 +156,7 @@ public struct ChatChannel {
         createdAt: Date = .init(),
         updatedAt: Date = .init(),
         deletedAt: Date? = nil,
-        hidden: Bool,
+        isHidden: Bool,
         createdBy: ChatUser? = nil,
         config: ChannelConfig = .init(),
         isFrozen: Bool = false,
@@ -183,7 +183,7 @@ public struct ChatChannel {
         self.createdAt = createdAt
         self.updatedAt = updatedAt
         self.deletedAt = deletedAt
-        self.hidden = hidden
+        self.isHidden = isHidden
         self.createdBy = createdBy
         self.config = config
         self.isFrozen = isFrozen

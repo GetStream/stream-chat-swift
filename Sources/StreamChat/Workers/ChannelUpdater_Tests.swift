@@ -443,7 +443,7 @@ class ChannelUpdater_Tests: XCTestCase {
         var channel: ChannelDTO? { database.viewContext.channel(cid: cid) }
         
         // Assert that channel is not hidden
-        XCTAssertEqual(channel?.hidden, false)
+        XCTAssertEqual(channel?.isHidden, false)
         
         // Simulate `hideChannel(cid:, clearHistory:, completion:)` call
         let exp = expectation(description: "should hide channel")
@@ -458,7 +458,7 @@ class ChannelUpdater_Tests: XCTestCase {
         wait(for: [exp], timeout: 5)
         
         // Ensure channel is marked as hidden
-        XCTAssertEqual(channel?.hidden, true)
+        XCTAssertEqual(channel?.isHidden, true)
     }
 
     func test_hideChannel_errorResponse_isPropagatedToCompletion() throws {
@@ -474,7 +474,7 @@ class ChannelUpdater_Tests: XCTestCase {
         }
         
         // Assert that channel is not hidden
-        XCTAssertEqual(channel?.hidden, false)
+        XCTAssertEqual(channel?.isHidden, false)
         
         // Simulate `hideChannel(cid:, clearHistory:, completion:)` call
         var completionCalledError: Error?
@@ -488,7 +488,7 @@ class ChannelUpdater_Tests: XCTestCase {
         AssertAsync.willBeEqual(completionCalledError as? TestError, error)
         
         // Assert that channel is not hidden
-        XCTAssertEqual(channel?.hidden, false)
+        XCTAssertEqual(channel?.isHidden, false)
     }
 
     // MARK: - Show channel
