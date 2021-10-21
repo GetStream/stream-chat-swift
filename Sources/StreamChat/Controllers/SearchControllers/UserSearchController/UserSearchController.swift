@@ -129,7 +129,7 @@ public class ChatUserSearchController: DataController, DelegateCallable, DataSto
     ///
     @available(*, deprecated, message: "the `delegate` property should be used directly instead.")
     public func setDelegate<Delegate: ChatUserSearchControllerDelegate>(_ delegate: Delegate) {
-        multicastDelegate.set(mainDelegate: delegate)
+        self.delegate = delegate
     }
 
     /// Searches users for the given term.

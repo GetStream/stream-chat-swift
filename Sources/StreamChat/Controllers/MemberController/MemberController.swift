@@ -112,7 +112,7 @@ public class ChatChannelMemberController: DataController, DelegateCallable, Data
     ///
     @available(*, deprecated, message: "the `delegate` property should be used directly instead.")
     public func setDelegate<Delegate: ChatChannelMemberControllerDelegate>(_ delegate: Delegate) {
-        multicastDelegate.set(mainDelegate: delegate)
+        self.delegate = delegate
     }
     
     // MARK: - Private

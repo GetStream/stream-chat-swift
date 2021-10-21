@@ -126,7 +126,7 @@ public extension ChatConnectionController {
     /// alive if you want keep receiving updates.
     @available(*, deprecated, message: "the `delegate` property should be used directly instead.")
     func setDelegate<Delegate: ChatConnectionControllerDelegate>(_ delegate: Delegate?) {
-        multicastDelegate.set(mainDelegate: delegate)
+        self.delegate = delegate
     }
 }
 

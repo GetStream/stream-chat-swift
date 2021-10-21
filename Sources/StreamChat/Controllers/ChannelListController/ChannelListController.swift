@@ -211,7 +211,7 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
     ///
     @available(*, deprecated, message: "the `delegate` property should be used directly instead.")
     public func setDelegate<Delegate: ChatChannelListControllerDelegate>(_ delegate: Delegate) {
-        multicastDelegate.set(mainDelegate: delegate)
+        self.delegate = delegate
     }
     
     private func handleUnlinkedChannels(_ changes: [ListChange<ChatChannel>]) {
