@@ -204,16 +204,6 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
         }
     }
     
-    /// Sets the provided object as a delegate of this controller.
-    ///
-    /// - Parameter delegate: The object used as a delegate. It's referenced weakly, so you need to keep the object
-    /// alive if you want keep receiving updates.
-    ///
-    @available(*, deprecated, message: "the `delegate` property should be used directly instead.")
-    public func setDelegate<Delegate: ChatChannelListControllerDelegate>(_ delegate: Delegate) {
-        self.delegate = delegate
-    }
-    
     private func handleUnlinkedChannels(_ changes: [ListChange<ChatChannel>]) {
         guard state == .remoteDataFetched else {
             log.debug("Ignoring inserted/updated unlinked channels due to query \(query) not being synced.")

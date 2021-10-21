@@ -123,15 +123,6 @@ public class ChatMessageSearchController: DataController, DelegateCallable, Data
         }
     }
 
-    /// Sets the provided object as a delegate of this controller.
-    ///
-    /// - Parameter delegate: The object used as a delegate. It's referenced weakly, so you need to keep the object
-    /// alive if you want keep receiving updates.
-    @available(*, deprecated, message: "the `delegate` property should be used directly instead.")
-    public func setDelegate<Delegate: ChatMessageSearchControllerDelegate>(_ delegate: Delegate) {
-        self.delegate = delegate
-    }
-
     /// Searches messages for the given text.
     ///
     /// When this function is called, `messages` property of this controller will refresh with new messages matching the text.

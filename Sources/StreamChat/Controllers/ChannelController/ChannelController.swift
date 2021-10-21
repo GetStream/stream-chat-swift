@@ -518,16 +518,6 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             completion?(clientError)
         })
     }
-    
-    /// Sets the provided object as a delegate of this controller.
-    ///
-    /// - Parameter delegate: The object used as a delegate. It's referenced weakly, so you need to keep the object
-    /// alive if you want keep receiving updates.
-    ///
-    @available(*, deprecated, message: "the `delegate` property should be used directly instead.")
-    public func setDelegate<Delegate: ChatChannelControllerDelegate>(_ delegate: Delegate) {
-        self.delegate = delegate
-    }
 }
 
 // MARK: - Channel features

@@ -119,16 +119,6 @@ public protocol ChatConnectionControllerDelegate: AnyObject {
 public extension ChatConnectionControllerDelegate {
     func connectionController(_ controller: ChatConnectionController, didUpdateConnectionStatus status: ConnectionStatus) {}
 }
- 
-public extension ChatConnectionController {
-    /// Sets the provided object as a delegate of this controller.
-    /// - Parameter delegate: The object used as a delegate. It's referenced weakly, so you need to keep the object
-    /// alive if you want keep receiving updates.
-    @available(*, deprecated, message: "the `delegate` property should be used directly instead.")
-    func setDelegate<Delegate: ChatConnectionControllerDelegate>(_ delegate: Delegate?) {
-        self.delegate = delegate
-    }
-}
 
 public extension ChatConnectionController {
     /// Set the delegate of `ChatConnectionController` to observe the changes in the system.
