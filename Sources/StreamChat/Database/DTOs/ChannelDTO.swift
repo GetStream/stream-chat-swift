@@ -34,7 +34,7 @@ class ChannelDTO: NSManagedObject {
     //
     @NSManaged var truncatedAt: Date?
 
-    @NSManaged var hidden: Bool
+    @NSManaged var isHidden: Bool
 
     @NSManaged var watcherCount: Int64
     @NSManaged var memberCount: Int64
@@ -181,7 +181,7 @@ extension NSManagedObjectContext {
         // Inexistence of this field implies `false`
         // but only for those queries
         if query != nil {
-            dto.hidden = payload.hidden ?? false
+            dto.isHidden = payload.isHidden ?? false
         }
         
         dto.cooldownDuration = payload.cooldownDuration
@@ -278,9 +278,12 @@ extension ChannelDTO {
         let matchingQuery = NSPredicate(format: "ANY queries.filterHash == %@", query.filter.filterHash)
         let notDeleted = NSPredicate(format: "deletedAt == nil")
 
-        // If the query contains a filter for the `hidden` property,
+        // If the query contains a filter for the `isHidden` property,
         // we use the filter here
-        let correctHidden = NSPredicate(format: "hidden == \(query.filter.hiddenFilterValue == true ? "YES" : "NO")")
+        // This is safe to do since backend appends a `hidden: false` filter when it's not specified
+        // (so backend never returns hidden channels unless `hidden: true` is explicitly passed)
+        // We can't pass bools directly to NSPredicate so we have to use integers
+        let correctHidden = NSPredicate(format: "isHidden == %i", query.filter.hiddenFilterValue == true ? 1 : 0)
         
         let subpredicates = [
             matchingQuery, notDeleted, correctHidden
@@ -400,7 +403,7 @@ extension ChatChannel {
             createdAt: dto.createdAt,
             updatedAt: dto.updatedAt,
             deletedAt: dto.deletedAt,
-            hidden: dto.hidden,
+            isHidden: dto.isHidden,
             createdBy: dto.createdBy?.asModel(),
             config: try! JSONDecoder().decode(ChannelConfig.self, from: dto.config),
             isFrozen: dto.isFrozen,

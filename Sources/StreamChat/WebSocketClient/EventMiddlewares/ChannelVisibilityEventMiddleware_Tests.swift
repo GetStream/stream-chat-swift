@@ -89,7 +89,7 @@ final class ChannelVisibilityEventMiddleware_Tests: XCTestCase {
         }
         
         // Check if the channel was found and marked as hidden
-        XCTAssertEqual(database.viewContext.channel(cid: cid)?.hidden, true)
+        XCTAssertEqual(database.viewContext.channel(cid: cid)?.isHidden, true)
     }
 
     func test_channelHiddenEvent_updateChannelHiddenAtValue() throws {
@@ -106,16 +106,16 @@ final class ChannelVisibilityEventMiddleware_Tests: XCTestCase {
 
         try database.createChannel(cid: cid, withMessages: true)
 
-        // Assert `hidden` is `false` by default
-        assert(database.viewContext.channel(cid: cid)?.hidden == false)
+        // Assert `isHidden` is `false` by default
+        assert(database.viewContext.channel(cid: cid)?.isHidden == false)
 
         // Simulate incoming event
         let forwardedEvent = middleware.handle(event: event, session: database.viewContext)
 
         let channelDTO = try XCTUnwrap(database.viewContext.channel(cid: cid))
 
-        // Assert the `hidden` value is updated
-        XCTAssertTrue(channelDTO.hidden)
+        // Assert the `isHidden` value is updated
+        XCTAssertTrue(channelDTO.isHidden)
 
         // Assert the `truncatedAt` value is not touched
         XCTAssertNil(channelDTO.truncatedAt)
@@ -159,11 +159,11 @@ final class ChannelVisibilityEventMiddleware_Tests: XCTestCase {
             createdAt: .unique
         ) as EventPayload)
 
-        // Create a channel in the DB with `hidden` and `truncatedAt` values
+        // Create a channel in the DB with `isHidden` and `truncatedAt` values
         let originalTruncatedAt = Date.unique
         try database.writeSynchronously { session in
             let dto = try session.saveChannel(payload: XCTestCase().dummyPayload(with: cid))
-            dto.hidden = true
+            dto.isHidden = true
             dto.truncatedAt = originalTruncatedAt
         }
 
@@ -172,8 +172,8 @@ final class ChannelVisibilityEventMiddleware_Tests: XCTestCase {
 
         let channelDTO = try XCTUnwrap(database.viewContext.channel(cid: cid))
 
-        // Assert the `hidden` value is reset
-        XCTAssertFalse(channelDTO.hidden)
+        // Assert the `isHidden` value is reset
+        XCTAssertFalse(channelDTO.isHidden)
 
         // Assert the `truncatedAt` value is not touched
         XCTAssertEqual(channelDTO.truncatedAt, originalTruncatedAt)
@@ -194,10 +194,10 @@ final class ChannelVisibilityEventMiddleware_Tests: XCTestCase {
             ) as EventPayload
         )
         
-        // Create a channel in the DB with `hidden` set to true
+        // Create a channel in the DB with `isHidden` set to true
         try database.writeSynchronously { session in
             let dto = try session.saveChannel(payload: XCTestCase().dummyPayload(with: cid))
-            dto.hidden = true
+            dto.isHidden = true
         }
         
         // Simulate incoming event
@@ -205,8 +205,8 @@ final class ChannelVisibilityEventMiddleware_Tests: XCTestCase {
         
         let channelDTO = try XCTUnwrap(database.viewContext.channel(cid: cid))
         
-        // Assert the `hidden` value is reset
-        XCTAssertFalse(channelDTO.hidden)
+        // Assert the `isHidden` value is reset
+        XCTAssertFalse(channelDTO.isHidden)
     }
 }
 

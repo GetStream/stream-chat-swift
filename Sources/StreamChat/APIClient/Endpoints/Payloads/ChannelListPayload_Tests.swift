@@ -29,7 +29,7 @@ class ChannelPayload_Tests: XCTestCase {
         XCTAssertEqual(payload.watcherCount, 7)
         XCTAssertEqual(payload.watchers?.count, 3)
         XCTAssertEqual(payload.members.count, 4)
-        XCTAssertEqual(payload.hidden, true)
+        XCTAssertEqual(payload.isHidden, true)
         XCTAssertEqual(payload.watchers?.first?.id, "cilvia")
         
         XCTAssertEqual(payload.messages.count, 25)

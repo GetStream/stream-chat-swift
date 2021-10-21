@@ -244,7 +244,7 @@ class DemoChatChannelListRouter: ChatChannelListRouter {
                 }
             }),
             (
-                channelController.channel?.hidden == false ?
+                channelController.channel?.isHidden == false ?
                     .init(title: "Hide channel", style: .default, handler: { _ in
                         channelController.hideChannel { error in
                             if let error = error {
@@ -303,11 +303,11 @@ class DemoChannelListVC: ChatChannelListVC {
         hiddenChannelsButton.addTarget(self, action: #selector(didTapHiddenChannelsButton), for: .touchUpInside)
     }
 
-    @objc open func didTapCreateNewChannel(_ sender: Any) {
+    @objc private func didTapCreateNewChannel(_ sender: Any) {
         (router as! DemoChatChannelListRouter).showCreateNewChannelFlow()
     }
     
-    @objc open func didTapHiddenChannelsButton(_ sender: Any) {
+    @objc private func didTapHiddenChannelsButton(_ sender: Any) {
         let channelListVC = HiddenChannelListVC()
         channelListVC.controller = controller
             .client

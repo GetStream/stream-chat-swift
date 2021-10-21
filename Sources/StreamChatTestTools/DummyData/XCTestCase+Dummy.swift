@@ -168,7 +168,7 @@ extension XCTestCase {
                     members: members,
                     cooldownDuration: .random(in: 0...120)
                 ),
-                hidden: false,
+                isHidden: false,
                 watcherCount: watchers?.count ?? 1,
                 watchers: watchers ?? [dummyUser],
                 members: members,

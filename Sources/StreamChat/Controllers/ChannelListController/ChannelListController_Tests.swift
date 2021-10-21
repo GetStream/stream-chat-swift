@@ -486,7 +486,7 @@ class ChannelListController_Tests: XCTestCase {
         try database.writeSynchronously { session in
             try session.saveChannel(payload: self.dummyPayload(with: cid), query: self.query)
             let dto = try session.saveChannel(payload: self.dummyPayload(with: .unique), query: self.query)
-            dto.hidden = true
+            dto.isHidden = true
         }
         
         // Simulate `synchronize` call
@@ -495,7 +495,7 @@ class ChannelListController_Tests: XCTestCase {
         // Assert only non-hidden one is tracked
         XCTAssertEqual(controller.channels.map(\.cid), [cid])
         // Assert tracked channels are not hidden
-        XCTAssertEqual(controller.channels.first?.hidden, false)
+        XCTAssertEqual(controller.channels.first?.isHidden, false)
     }
     
     func test_hiddenChannel_isIncluded_whenFilterContainsHiddenKey() throws {
@@ -506,16 +506,18 @@ class ChannelListController_Tests: XCTestCase {
         // Add 2 channels to the DB
         let cid: ChannelId = .unique
         try database.writeSynchronously { session in
-            try session.saveChannel(payload: self.dummyPayload(with: cid), query: self.query)
-            let dto = try session.saveChannel(payload: self.dummyPayload(with: .unique), query: self.query)
-            dto.hidden = true
+            try session.saveChannel(payload: self.dummyPayload(with: .unique), query: self.query)
+            let dto = try session.saveChannel(payload: self.dummyPayload(with: cid), query: self.query)
+            dto.isHidden = true
         }
         
         // Simulate `synchronize` call
         controller.synchronize()
         
-        // Assert only hidden is tracked
-        XCTAssertEqual(controller.channels.count, 1)
+        // Assert only hidden channel is tracked
+        XCTAssertEqual(controller.channels.map(\.cid), [cid])
+        // Assert tracked channels are hidden
+        XCTAssertEqual(controller.channels.first?.isHidden, true)
     }
     
     // MARK: - Delegate tests
