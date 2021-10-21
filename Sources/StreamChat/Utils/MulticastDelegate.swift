@@ -60,10 +60,4 @@ struct MulticastDelegate<T> {
         _additionalDelegates.removeAllObjects()
         additionalDelegates.forEach { _additionalDelegates.add($0 as AnyObject) }
     }
-
-    /// Removes all delegates, including the main and additional delegates.
-    mutating func removeAll() {
-        _additionalDelegates.removeAllObjects()
-        _mainDelegate.removeAllObjects()
-    }
 }

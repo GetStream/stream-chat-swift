@@ -85,24 +85,6 @@ class MulticastDelegate_Tests: XCTestCase {
         XCTAssertEqual(multicastDelegate.additionalDelegates.count, 1)
     }
 
-    func test_removeAll_shouldRemoveMainAndAllAdditionalDelegates() {
-        let mainDelegate = TestDelegate()
-        let testDelegate1 = TestDelegate()
-        let testDelegate2 = TestDelegate()
-
-        multicastDelegate.set(mainDelegate: mainDelegate)
-        multicastDelegate.add(additionalDelegate: testDelegate1)
-        multicastDelegate.add(additionalDelegate: testDelegate2)
-
-        XCTAssertNotNil(multicastDelegate.mainDelegate)
-        XCTAssertFalse(multicastDelegate.additionalDelegates.isEmpty)
-
-        multicastDelegate.removeAll()
-
-        XCTAssertNil(multicastDelegate.mainDelegate)
-        XCTAssertTrue(multicastDelegate.additionalDelegates.isEmpty)
-    }
-
     func test_replaceAdditionalDelegates_shouldRemovePreviousDelegatesAndAddNewOnes() {
         let testDelegate1 = TestDelegate()
         let testDelegate2 = TestDelegate()
