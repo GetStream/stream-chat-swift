@@ -34,7 +34,7 @@ class TypingEventDTO: EventDTO {
     let createdAt: Date
     let payload: EventPayload
     
-    required init(from response: EventPayload) throws {
+    init(from response: EventPayload) throws {
         cid = try response.value(at: \.cid)
         user = try response.value(at: \.user)
         createdAt = try response.value(at: \.createdAt)

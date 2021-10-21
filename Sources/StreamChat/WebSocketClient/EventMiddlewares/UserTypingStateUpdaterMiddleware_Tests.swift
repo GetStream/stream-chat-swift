@@ -178,7 +178,7 @@ extension TypingEventDTO: Equatable {
         return try! .init(from: payload)
     }
     
-    static func stopTyping(cid: ChannelId = .unique, userId: UserId = .unique) -> Self {
+    static func stopTyping(cid: ChannelId = .unique, userId: UserId = .unique) -> TypingEventDTO {
         let payload = EventPayload(
             eventType: .userStopTyping,
             cid: cid,
