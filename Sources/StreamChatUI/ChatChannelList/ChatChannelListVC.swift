@@ -60,7 +60,7 @@ open class ChatChannelListVC: _ViewController,
 
     override open func setUp() {
         super.setUp()
-        controller.setDelegate(self)
+        controller.delegate = self
         controller.synchronize()
         channelsCount = controller.channels.count
         

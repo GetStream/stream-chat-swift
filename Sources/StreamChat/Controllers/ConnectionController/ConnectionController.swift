@@ -44,7 +44,7 @@ public class ChatConnectionController: Controller, DelegateCallable, DataStorePr
     private var connectionEventObserver: ConnectionEventObserver?
 
     /// A type-erased delegate.
-    var multicastDelegate: MulticastDelegate<AnyChatConnectionControllerDelegate> = .init()
+    var multicastDelegate: MulticastDelegate<ChatConnectionControllerDelegate> = .init()
 
     private lazy var chatClientUpdater = environment.chatClientUpdaterBuilder(client)
 
@@ -120,69 +120,11 @@ public extension ChatConnectionControllerDelegate {
     func connectionController(_ controller: ChatConnectionController, didUpdateConnectionStatus status: ConnectionStatus) {}
 }
 
-final class AnyChatConnectionControllerDelegate: ChatConnectionControllerDelegate {
-    weak var wrappedDelegate: AnyObject?
-    
-    private var _controllerDidChangeConnectionStatus: (
-        ChatConnectionController,
-        ConnectionStatus
-    ) -> Void
-    
-    init(
-        wrappedDelegate: AnyObject?,
-        controllerDidChangeConnectionStatus: @escaping (
-            ChatConnectionController,
-            ConnectionStatus
-        ) -> Void
-    ) {
-        self.wrappedDelegate = wrappedDelegate
-        _controllerDidChangeConnectionStatus = controllerDidChangeConnectionStatus
-    }
-    
-    func connectionController(
-        _ controller: ChatConnectionController,
-        didUpdateConnectionStatus status: ConnectionStatus
-    ) {
-        _controllerDidChangeConnectionStatus(controller, status)
-    }
-}
-
-extension AnyChatConnectionControllerDelegate {
-    convenience init<Delegate: ChatConnectionControllerDelegate>(_ delegate: Delegate) {
-        self.init(
-            wrappedDelegate: delegate,
-            controllerDidChangeConnectionStatus: { [weak delegate] in
-                delegate?.connectionController($0, didUpdateConnectionStatus: $1)
-            }
-        )
-    }
-}
-
-extension AnyChatConnectionControllerDelegate {
-    convenience init(_ delegate: ChatConnectionControllerDelegate?) {
-        self.init(
-            wrappedDelegate: delegate,
-            controllerDidChangeConnectionStatus: { [weak delegate] in
-                delegate?.connectionController($0, didUpdateConnectionStatus: $1)
-            }
-        )
-    }
-}
- 
-public extension ChatConnectionController {
-    /// Sets the provided object as a delegate of this controller.
-    /// - Parameter delegate: The object used as a delegate. It's referenced weakly, so you need to keep the object
-    /// alive if you want keep receiving updates.
-    func setDelegate<Delegate: ChatConnectionControllerDelegate>(_ delegate: Delegate?) {
-        multicastDelegate.mainDelegate = delegate.flatMap(AnyChatConnectionControllerDelegate.init)
-    }
-}
-
 public extension ChatConnectionController {
     /// Set the delegate of `ChatConnectionController` to observe the changes in the system.
     var delegate: ChatConnectionControllerDelegate? {
-        get { multicastDelegate.mainDelegate?.wrappedDelegate as? ChatConnectionControllerDelegate }
-        set { multicastDelegate.mainDelegate = AnyChatConnectionControllerDelegate(newValue) }
+        get { multicastDelegate.mainDelegate }
+        set { multicastDelegate.set(mainDelegate: newValue) }
     }
 }
 

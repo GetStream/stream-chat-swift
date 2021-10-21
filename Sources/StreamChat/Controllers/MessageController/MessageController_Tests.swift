@@ -479,24 +479,6 @@ final class MessageController_Tests: XCTestCase {
         AssertAsync.willBeEqual(delegate.state, .remoteDataFetched)
     }
 
-    func test_genericDelegate_isNotifiedAboutStateChanges() throws {
-        // Set the generic delegate
-        let delegate = TestDelegateGeneric(expectedQueueId: callbackQueueID)
-        controller.delegate = delegate
-        
-        // Assert delegate is notified about state changes
-        AssertAsync.willBeEqual(delegate.state, .localDataFetched)
-
-        // Synchronize
-        controller.synchronize()
-        
-        // Simulate network call response
-        env.messageUpdater.getMessage_completion?(nil)
-        
-        // Assert delegate is notified about state changes
-        AssertAsync.willBeEqual(delegate.state, .remoteDataFetched)
-    }
-
     func test_delegate_isNotifiedAboutCreatedMessage() throws {
         // Create current user in the database
         try client.databaseContainer.createCurrentUser(id: currentUserId)
@@ -1511,21 +1493,6 @@ private class TestDelegate: QueueAwareDelegate, ChatMessageControllerDelegate {
     
     func messageController(_ controller: ChatMessageController, didChangeReplies changes: [ListChange<ChatMessage>]) {
         didChangeReplies_changes = changes
-        validateQueue()
-    }
-}
-
-private class TestDelegateGeneric: QueueAwareDelegate, ChatMessageControllerDelegate {
-    @Atomic var state: DataController.State?
-    @Atomic var didChangeMessage_change: EntityChange<ChatMessage>?
-   
-    func controller(_ controller: DataController, didChangeState state: DataController.State) {
-        self.state = state
-        validateQueue()
-    }
-    
-    func messageController(_ controller: ChatMessageController, didChangeMessage change: EntityChange<ChatMessage>) {
-        didChangeMessage_change = change
         validateQueue()
     }
 }

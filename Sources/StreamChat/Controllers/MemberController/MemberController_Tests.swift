@@ -272,24 +272,6 @@ final class MemberController_Tests: XCTestCase {
         // Assert delegate is notified about state changes
         AssertAsync.willBeEqual(delegate.state, .remoteDataFetched)
     }
-
-    func test_genericDelegate_isNotifiedAboutStateChanges() throws {
-        // Set the generic delegate
-        let delegate = TestDelegateGeneric(expectedQueueId: callbackQueueID)
-        controller.setDelegate(delegate)
-
-        // Synchronize
-        controller.synchronize()
-
-        // Assert delegate is notified about state changes
-        AssertAsync.willBeEqual(delegate.state, .localDataFetched)
-
-        // Simulate network call response
-        env.memberListUpdater!.load_completion!(nil)
-
-        // Assert delegate is notified about state changes
-        AssertAsync.willBeEqual(delegate.state, .remoteDataFetched)
-    }
     
     func test_delegate_isNotifiedAboutMemberUpdates() throws {
         // Set the delegate
@@ -494,22 +476,6 @@ private class TestDelegate: QueueAwareDelegate, ChatChannelMemberControllerDeleg
     func controller(_ controller: DataController, didChangeState state: DataController.State) {
         validateQueue()
         self.state = state
-    }
-
-    func memberController(_ controller: ChatChannelMemberController, didUpdateMember change: EntityChange<ChatChannelMember>) {
-        validateQueue()
-        didUpdateMember_change = change
-    }
-}
-
-// A concrete `ChatChannelMemberControllerDelegate` implementation allowing capturing the delegate calls.
-private class TestDelegateGeneric: QueueAwareDelegate, ChatChannelMemberControllerDelegate {
-    @Atomic var state: DataController.State?
-    @Atomic var didUpdateMember_change: EntityChange<ChatChannelMember>?
-
-    func controller(_ controller: DataController, didChangeState state: DataController.State) {
-        self.state = state
-        validateQueue()
     }
 
     func memberController(_ controller: ChatChannelMemberController, didUpdateMember change: EntityChange<ChatChannelMember>) {

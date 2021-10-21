@@ -44,10 +44,10 @@ public class ChatChannelMemberController: DataController, DelegateCallable, Data
     lazy var basePublishers: BasePublishers = .init(controller: self)
     
     /// A type-erased delegate.
-    var multicastDelegate: MulticastDelegate<AnyChatChannelMemberControllerDelegate> = .init() {
+    var multicastDelegate: MulticastDelegate<ChatChannelMemberControllerDelegate> = .init() {
         didSet {
-            stateMulticastDelegate.mainDelegate = multicastDelegate.mainDelegate
-            stateMulticastDelegate.additionalDelegates = multicastDelegate.additionalDelegates
+            stateMulticastDelegate.set(mainDelegate: multicastDelegate.mainDelegate)
+            stateMulticastDelegate.set(additionalDelegates: multicastDelegate.additionalDelegates)
             startObservingIfNeeded()
         }
     }
@@ -103,15 +103,6 @@ public class ChatChannelMemberController: DataController, DelegateCallable, Data
             self.state = error == nil ? .remoteDataFetched : .remoteDataFetchFailed(ClientError(with: error))
             self.callback { completion?(error) }
         }
-    }
-    
-    /// Sets the provided object as a delegate of this controller.
-    ///
-    /// - Parameter delegate: The object used as a delegate. It's referenced weakly, so you need to keep the object
-    /// alive if you want keep receiving updates.
-    ///
-    public func setDelegate<Delegate: ChatChannelMemberControllerDelegate>(_ delegate: Delegate) {
-        multicastDelegate.mainDelegate = AnyChatChannelMemberControllerDelegate(delegate)
     }
     
     // MARK: - Private
@@ -209,8 +200,8 @@ extension ChatChannelMemberController {
 public extension ChatChannelMemberController {
     /// Set the delegate of `ChatMemberController` to observe the changes in the system.
     var delegate: ChatChannelMemberControllerDelegate? {
-        get { multicastDelegate.mainDelegate?.wrappedDelegate as? ChatChannelMemberControllerDelegate }
-        set { multicastDelegate.mainDelegate = AnyChatChannelMemberControllerDelegate(newValue) }
+        get { multicastDelegate.mainDelegate }
+        set { multicastDelegate.set(mainDelegate: newValue) }
     }
 }
 
@@ -230,61 +221,4 @@ public extension ChatChannelMemberControllerDelegate {
         _ controller: ChatChannelMemberController,
         didUpdateMember change: EntityChange<ChatChannelMember>
     ) {}
-}
-
-// MARK: Type erased Delegate
-
-class AnyChatChannelMemberControllerDelegate: ChatChannelMemberControllerDelegate {
-    private var _controllerDidChangeState: (DataController, DataController.State) -> Void
-    
-    private var _controllerDidUpdateMember: (
-        ChatChannelMemberController,
-        EntityChange<ChatChannelMember>
-    ) -> Void
-    
-    weak var wrappedDelegate: AnyObject?
-    
-    init(
-        wrappedDelegate: AnyObject?,
-        controllerDidChangeState: @escaping (DataController, DataController.State) -> Void,
-        controllerDidUpdateMember: @escaping (
-            ChatChannelMemberController,
-            EntityChange<ChatChannelMember>
-        ) -> Void
-    ) {
-        self.wrappedDelegate = wrappedDelegate
-        _controllerDidChangeState = controllerDidChangeState
-        _controllerDidUpdateMember = controllerDidUpdateMember
-    }
-    
-    func controller(_ controller: DataController, didChangeState state: DataController.State) {
-        _controllerDidChangeState(controller, state)
-    }
-    
-    func memberController(
-        _ controller: ChatChannelMemberController,
-        didUpdateMember change: EntityChange<ChatChannelMember>
-    ) {
-        _controllerDidUpdateMember(controller, change)
-    }
-}
-
-extension AnyChatChannelMemberControllerDelegate {
-    convenience init<Delegate: ChatChannelMemberControllerDelegate>(_ delegate: Delegate) {
-        self.init(
-            wrappedDelegate: delegate,
-            controllerDidChangeState: { [weak delegate] in delegate?.controller($0, didChangeState: $1) },
-            controllerDidUpdateMember: { [weak delegate] in delegate?.memberController($0, didUpdateMember: $1) }
-        )
-    }
-}
-
-extension AnyChatChannelMemberControllerDelegate {
-    convenience init(_ delegate: ChatChannelMemberControllerDelegate?) {
-        self.init(
-            wrappedDelegate: delegate,
-            controllerDidChangeState: { [weak delegate] in delegate?.controller($0, didChangeState: $1) },
-            controllerDidUpdateMember: { [weak delegate] in delegate?.memberController($0, didUpdateMember: $1) }
-        )
-    }
 }

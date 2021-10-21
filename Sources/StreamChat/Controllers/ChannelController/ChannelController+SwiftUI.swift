@@ -32,7 +32,7 @@ extension ChatChannelController {
             self.controller = controller
             state = controller.state
             
-            controller.multicastDelegate.additionalDelegates.append(AnyChannelControllerDelegate(self))
+            controller.multicastDelegate.add(additionalDelegate: self)
             
             channel = controller.channel
             messages = controller.messages

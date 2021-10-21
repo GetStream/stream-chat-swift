@@ -27,7 +27,7 @@ extension ChatChannelMemberController {
             self.controller = controller
             state = controller.state
             
-            controller.multicastDelegate.additionalDelegates.append(AnyChatChannelMemberControllerDelegate(self))
+            controller.multicastDelegate.add(additionalDelegate: self)
             
             member = controller.member
         }

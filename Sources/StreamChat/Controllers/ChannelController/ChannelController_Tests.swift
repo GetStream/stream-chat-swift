@@ -1152,28 +1152,6 @@ class ChannelController_Tests: XCTestCase {
         AssertAsync.willBeEqual(delegate.state, .remoteDataFetched)
     }
 
-    func test_genericDelegate_isNotifiedAboutStateChanges() throws {
-        // Set the generic delegate
-        let delegate = TestDelegateGeneric(expectedQueueId: controllerCallbackQueueID)
-        controller.delegate = delegate
-        
-        // Assert delegate is notified about state changes
-        AssertAsync.willBeEqual(delegate.state, .localDataFetched)
-
-        // Synchronize
-        controller.synchronize()
-        
-        // Save channel to database.
-        try client.mockDatabaseContainer.createChannel(cid: channelId)
-        
-        // Simulate network call response
-        env.channelUpdater?.update_completion?(.success(dummyPayload(with: .unique)))
-        //   env.messageUpdater.getMessage_completion?(nil)
-        
-        // Assert delegate is notified about state changes
-        AssertAsync.willBeEqual(delegate.state, .remoteDataFetched)
-    }
-
     func test_delegateContinueToReceiveEvents_afterObserversReset() throws {
         // Assign `ChannelController` that creates new channel
         controller = ChatChannelController(
@@ -1251,22 +1229,6 @@ class ChannelController_Tests: XCTestCase {
         AssertAsync.willBeEqual(delegate.didReceiveMemberEvent_event as? TestMemberEvent, event)
     }
     
-    func test_channelMemberEvents_areForwardedToGenericDelegate() throws {
-        let delegate = TestDelegateGeneric(expectedQueueId: controllerCallbackQueueID)
-        controller.delegate = delegate
-        
-        // Simulate `synchronize()` call
-        controller.synchronize()
-        
-        // Send notification with event happened in the observed channel
-        let event = TestMemberEvent(cid: controller.cid!, memberUserId: .unique)
-        let notification = Notification(newEventReceived: event, sender: self)
-        client.webSocketClient!.eventNotificationCenter.post(notification)
-        
-        // Assert the event is received
-        AssertAsync.willBeEqual(delegate.didReceiveMemberEvent_event as? TestMemberEvent, event)
-    }
-    
     func test_channelTypingEvents_areForwardedToDelegate() throws {
         let userId: UserId = .unique
         // Create channel in the database
@@ -1297,36 +1259,6 @@ class ChannelController_Tests: XCTestCase {
         AssertAsync.willBeEqual(delegate.didChangeTypingUsers_typingUsers, [typingUser])
     }
     
-    func test_channelTypingEvents_areForwardedToGenericDelegate() throws {
-        let userId: UserId = .unique
-        // Create channel in the database
-        try client.databaseContainer.createChannel(cid: channelId)
-        // Create user in the database
-        try client.databaseContainer.createUser(id: userId)
-        
-        // Set the queue for delegate calls
-        let delegate = TestDelegateGeneric(expectedQueueId: controllerCallbackQueueID)
-        controller.delegate = delegate
-        
-        // Simulate `synchronize()` call
-        controller.synchronize()
-
-        // Set created user as a typing user
-        try client.databaseContainer.writeSynchronously { session in
-            let channel = try XCTUnwrap(session.channel(cid: self.channelId))
-            let user = try XCTUnwrap(session.user(id: userId))
-            channel.currentlyTypingUsers.insert(user)
-        }
-        
-        // Load the channel user
-        var typingUser: ChatUser {
-            client.databaseContainer.viewContext.user(id: userId)!.asModel()
-        }
-        
-        // Assert the delegate receives typing user
-        AssertAsync.willBeEqual(delegate.didChangeTypingUsers_typingUsers, [typingUser])
-    }
-    
     func test_delegateMethodsAreCalled() throws {
         let delegate = TestDelegate(expectedQueueId: controllerCallbackQueueID)
         controller.delegate = delegate
@@ -1345,132 +1277,6 @@ class ChannelController_Tests: XCTestCase {
             }, completion: $0)
         }
         XCTAssertNil(error)
-        let channel: ChatChannel = client.databaseContainer.viewContext.channel(cid: channelId)!.asModel()
-        XCTAssertEqual(channel.latestMessages.count, 1)
-        let message: ChatMessage = try XCTUnwrap(channel.latestMessages.first)
-        
-        AssertAsync {
-            Assert.willBeEqual(delegate.didUpdateChannel_channel, .create(channel))
-            Assert.willBeEqual(delegate.didUpdateMessages_messages, [.insert(message, index: [0, 0])])
-        }
-    }
-    
-    func test_delegateMethodsAreCalled_onExtraDataUpdates() throws {
-        // Create necessary properties with CustomExtraData
-        let env = TestEnvironment()
-        let client: ChatClient = ChatClient.mock()
-        let controller = ChatChannelController(
-            channelQuery: .init(cid: channelId),
-            channelListQuery: nil,
-            client: client,
-            environment: env.environment
-        )
-        controller.callbackQueue = .testQueue(withId: controllerCallbackQueueID)
-        
-        // Create and assign delegate
-        let delegate = TestDelegateGeneric(expectedQueueId: controllerCallbackQueueID)
-        controller.setDelegate(delegate)
-        
-        // Simulate `synchronize()` call
-        controller.synchronize()
-        
-        // Create the payload with CustomExtraData
-        let payload: ChannelPayload = .init(
-            channel: .init(
-                cid: channelId,
-                name: .unique,
-                imageURL: .unique(),
-                extraData: [:],
-                typeRawValue: .unique,
-                lastMessageAt: .unique,
-                createdAt: .unique,
-                deletedAt: nil,
-                updatedAt: .unique,
-                createdBy: .dummy(userId: .unique),
-                config: .init(),
-                isFrozen: false,
-                memberCount: 1,
-                team: nil,
-                members: nil,
-                cooldownDuration: 0
-            ),
-            watcherCount: 0,
-            watchers: nil,
-            members: [],
-            membership: nil,
-            messages: [],
-            pinnedMessages: [],
-            channelReads: []
-        )
-        
-        // Simulate DB update
-        var error = try waitFor {
-            client.databaseContainer.write({ session in
-                try session.saveChannel(payload: payload, query: nil)
-            }, completion: $0)
-        }
-        XCTAssertNil(error)
-        
-        // Fetch channel from DB
-        var channel: ChatChannel { client.databaseContainer.viewContext.channel(cid: channelId)!.asModel() }
-        XCTAssertEqual(channel.cid, channelId)
-        
-        // Assert that `.create` callback is called
-        AssertAsync.willBeEqual(delegate.didUpdateChannel_channel, .create(channel))
-        
-        // Simulate DB update with the same payload
-        // except `extraData` is changed now
-        error = try waitFor {
-            client.databaseContainer.write({ session in
-                let newPayload: ChannelPayload = .init(
-                    channel: .init(
-                        cid: self.channelId,
-                        name: payload.channel.name,
-                        imageURL: payload.channel.imageURL,
-                        extraData: ["color": .string("NEW_VALUE")],
-                        typeRawValue: payload.channel.typeRawValue,
-                        lastMessageAt: payload.channel.lastMessageAt,
-                        createdAt: payload.channel.createdAt,
-                        deletedAt: nil,
-                        updatedAt: payload.channel.updatedAt,
-                        createdBy: payload.channel.createdBy,
-                        config: payload.channel.config,
-                        isFrozen: payload.channel.isFrozen,
-                        memberCount: payload.channel.memberCount,
-                        team: payload.channel.team,
-                        members: payload.channel.members,
-                        cooldownDuration: payload.channel.cooldownDuration
-                    ),
-                    watcherCount: payload.watcherCount!,
-                    watchers: payload.watchers,
-                    members: payload.members,
-                    membership: payload.membership,
-                    messages: payload.messages,
-                    pinnedMessages: payload.pinnedMessages,
-                    channelReads: payload.channelReads
-                )
-                try session.saveChannel(payload: newPayload, query: nil)
-            }, completion: $0)
-        }
-        XCTAssertNil(error)
-        
-        // Check if we get `.update` callback
-        AssertAsync.willBeEqual(delegate.didUpdateChannel_channel, .update(channel))
-    }
-    
-    func test_genericDelegateMethodsAreCalled() throws {
-        let delegate = TestDelegateGeneric(expectedQueueId: controllerCallbackQueueID)
-        controller.delegate = delegate
-        
-        // Simulate `synchronize()` call
-        controller.synchronize()
-        
-        // Simulate DB update
-        _ = try waitFor {
-            client.databaseContainer.write({ session in
-                try session.saveChannel(payload: self.dummyPayload(with: self.channelId), query: nil)
-            }, completion: $0)
-        }
         let channel: ChatChannel = client.databaseContainer.viewContext.channel(cid: channelId)!.asModel()
         XCTAssertEqual(channel.latestMessages.count, 1)
         let message: ChatMessage = try XCTUnwrap(channel.latestMessages.first)
@@ -4052,49 +3858,6 @@ private class TestDelegate: QueueAwareDelegate, ChatChannelControllerDelegate {
     }
     
     func channelController(_ channelController: ChatChannelController, didUpdateChannel channel: EntityChange<ChatChannel>) {
-        didUpdateChannel_channel = channel
-        validateQueue()
-    }
-    
-    func channelController(_ channelController: ChatChannelController, didReceiveMemberEvent event: MemberEvent) {
-        didReceiveMemberEvent_event = event
-        validateQueue()
-    }
-    
-    func channelController(
-        _ channelController: ChatChannelController,
-        didChangeTypingUsers typingUsers: Set<ChatUser>
-    ) {
-        didChangeTypingUsers_typingUsers = typingUsers
-        validateQueue()
-    }
-}
-
-/// A concrete `ChannelControllerDelegateGeneric` implementation allowing capturing the delegate calls.
-private class TestDelegateGeneric: QueueAwareDelegate, ChatChannelControllerDelegate {
-    @Atomic var state: DataController.State?
-    @Atomic var didUpdateChannel_channel: EntityChange<ChatChannel>?
-    @Atomic var didUpdateMessages_messages: [ListChange<ChatMessage>]?
-    @Atomic var didReceiveMemberEvent_event: MemberEvent?
-    @Atomic var didChangeTypingUsers_typingUsers: Set<ChatUser>?
-    
-    func controller(_ controller: DataController, didChangeState state: DataController.State) {
-        self.state = state
-        validateQueue()
-    }
-    
-    func channelController(
-        _ channelController: ChatChannelController,
-        didUpdateMessages changes: [ListChange<ChatMessage>]
-    ) {
-        didUpdateMessages_messages = changes
-        validateQueue()
-    }
-    
-    func channelController(
-        _ channelController: ChatChannelController,
-        didUpdateChannel channel: EntityChange<ChatChannel>
-    ) {
         didUpdateChannel_channel = channel
         validateQueue()
     }

@@ -636,23 +636,6 @@ class UserSearchController_Tests: XCTestCase {
         // Assert an error is reported
         AssertAsync.willBeFalse(reportedError == nil)
     }
-    
-    // MARK: - Delegate Methods
-    
-    func test_genericDelegateMethodsAreCalled() throws {
-        // Set delegate
-        let delegate = TestDelegateGeneric(expectedQueueId: controllerCallbackQueueID)
-        controller.setDelegate(delegate)
-        
-        // Simulate DB update
-        let id: UserId = .unique
-        try client.databaseContainer.writeSynchronously { session in
-            try session.saveUser(payload: self.dummyUser(id: id), query: self.controller.query)
-        }
-        
-        let user: ChatUser = client.databaseContainer.viewContext.user(id: id)!.asModel()
-        AssertAsync.willBeEqual(delegate.didChangeUsers_changes, [.insert(user, index: [0, 0])])
-    }
 }
 
 private class TestEnvironment {
@@ -670,25 +653,6 @@ private class TestEnvironment {
 
 // A concrete `UserSearchControllerDelegate` implementation allowing capturing the delegate calls
 private class TestDelegate: QueueAwareDelegate, ChatUserSearchControllerDelegate {
-    @Atomic var state: DataController.State?
-    @Atomic var didChangeUsers_changes: [ListChange<ChatUser>]?
-    
-    func controller(_ controller: DataController, didChangeState state: DataController.State) {
-        self.state = state
-        validateQueue()
-    }
-    
-    func controller(
-        _ controller: ChatUserSearchController,
-        didChangeUsers changes: [ListChange<ChatUser>]
-    ) {
-        didChangeUsers_changes = changes
-        validateQueue()
-    }
-}
-
-// A concrete `_ChatUserSearchControllerDelegate` implementation allowing capturing the delegate calls.
-private class TestDelegateGeneric: QueueAwareDelegate, ChatUserSearchControllerDelegate {
     @Atomic var state: DataController.State?
     @Atomic var didChangeUsers_changes: [ListChange<ChatUser>]?
     
