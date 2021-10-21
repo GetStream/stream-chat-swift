@@ -42,6 +42,13 @@ struct MulticastDelegate<T> {
         }
     }
 
+    /// Replaces the current additional delegates with another collection of delegates.
+    /// - Parameter additionalDelegates: The new additional delegates.
+    mutating func set(additionalDelegates: [T]) {
+        _additionalDelegates.removeAllObjects()
+        additionalDelegates.forEach { _additionalDelegates.add($0 as AnyObject) }
+    }
+
     /// Adds a new delegate to the additional delegates.
     /// - Parameter additionalDelegate: The additional delegate.
     mutating func add(additionalDelegate: T) {
@@ -52,12 +59,5 @@ struct MulticastDelegate<T> {
     /// - Parameter additionalDelegate: The delegate to be removed.
     mutating func remove(additionalDelegate: T) {
         _additionalDelegates.remove(additionalDelegate as AnyObject)
-    }
-
-    /// Replaces the current additional delegates with another collection of delegates.
-    /// - Parameter additionalDelegates: The new additional delegates.
-    mutating func replace(additionalDelegates: [T]) {
-        _additionalDelegates.removeAllObjects()
-        additionalDelegates.forEach { _additionalDelegates.add($0 as AnyObject) }
     }
 }

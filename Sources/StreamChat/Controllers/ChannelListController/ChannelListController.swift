@@ -52,7 +52,7 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
     var multicastDelegate: MulticastDelegate<ChatChannelListControllerDelegate> = .init() {
         didSet {
             stateMulticastDelegate.set(mainDelegate: multicastDelegate.mainDelegate)
-            stateMulticastDelegate.replace(additionalDelegates: multicastDelegate.additionalDelegates)
+            stateMulticastDelegate.set(additionalDelegates: multicastDelegate.additionalDelegates)
             
             // After setting delegate local changes will be fetched and observed.
             startChannelListObserverIfNeeded()

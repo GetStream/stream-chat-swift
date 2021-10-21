@@ -58,6 +58,33 @@ class MulticastDelegate_Tests: XCTestCase {
         XCTAssertNil(multicastDelegate.mainDelegate)
     }
 
+    func test_setAdditionalDelegates_shouldRemovePreviousDelegatesAndAddNewOnes() {
+        let testDelegate1 = TestDelegate()
+        let testDelegate2 = TestDelegate()
+
+        let testDelegate3 = TestDelegate()
+        let testDelegate4 = TestDelegate()
+
+        multicastDelegate.add(additionalDelegate: testDelegate1)
+        multicastDelegate.add(additionalDelegate: testDelegate2)
+
+        XCTAssertTrue(
+            multicastDelegate.additionalDelegates.contains(where: { $0 === testDelegate1 })
+        )
+        XCTAssertTrue(
+            multicastDelegate.additionalDelegates.contains(where: { $0 === testDelegate2 })
+        )
+
+        multicastDelegate.set(additionalDelegates: [testDelegate3, testDelegate4])
+
+        XCTAssertTrue(
+            multicastDelegate.additionalDelegates.contains(where: { $0 === testDelegate3 })
+        )
+        XCTAssertTrue(
+            multicastDelegate.additionalDelegates.contains(where: { $0 === testDelegate4 })
+        )
+    }
+
     func test_addAdditionalDelegate_shouldAddDelegate() {
         let testDelegate1 = TestDelegate()
         let testDelegate2 = TestDelegate()
@@ -83,33 +110,6 @@ class MulticastDelegate_Tests: XCTestCase {
 
         XCTAssert(multicastDelegate.additionalDelegates.first === testDelegate2)
         XCTAssertEqual(multicastDelegate.additionalDelegates.count, 1)
-    }
-
-    func test_replaceAdditionalDelegates_shouldRemovePreviousDelegatesAndAddNewOnes() {
-        let testDelegate1 = TestDelegate()
-        let testDelegate2 = TestDelegate()
-
-        let testDelegate3 = TestDelegate()
-        let testDelegate4 = TestDelegate()
-
-        multicastDelegate.add(additionalDelegate: testDelegate1)
-        multicastDelegate.add(additionalDelegate: testDelegate2)
-
-        XCTAssertTrue(
-            multicastDelegate.additionalDelegates.contains(where: { $0 === testDelegate1 })
-        )
-        XCTAssertTrue(
-            multicastDelegate.additionalDelegates.contains(where: { $0 === testDelegate2 })
-        )
-
-        multicastDelegate.replace(additionalDelegates: [testDelegate3, testDelegate4])
-
-        XCTAssertTrue(
-            multicastDelegate.additionalDelegates.contains(where: { $0 === testDelegate3 })
-        )
-        XCTAssertTrue(
-            multicastDelegate.additionalDelegates.contains(where: { $0 === testDelegate4 })
-        )
     }
 
     func test_whenDelegatesDeallocated_shouldNotRetainDelegates() {

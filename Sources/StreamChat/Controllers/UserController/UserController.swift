@@ -39,7 +39,7 @@ public class ChatUserController: DataController, DelegateCallable, DataStoreProv
     var multicastDelegate: MulticastDelegate<ChatUserControllerDelegate> = .init() {
         didSet {
             stateMulticastDelegate.set(mainDelegate: multicastDelegate.mainDelegate)
-            stateMulticastDelegate.replace(additionalDelegates: multicastDelegate.additionalDelegates)
+            stateMulticastDelegate.set(additionalDelegates: multicastDelegate.additionalDelegates)
             
             startObservingIfNeeded()
         }

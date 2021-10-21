@@ -84,7 +84,7 @@ public class ChatUserSearchController: DataController, DelegateCallable, DataSto
     var multicastDelegate: MulticastDelegate<ChatUserSearchControllerDelegate> = .init() {
         didSet {
             stateMulticastDelegate.set(mainDelegate: multicastDelegate.mainDelegate)
-            stateMulticastDelegate.replace(additionalDelegates: multicastDelegate.additionalDelegates)
+            stateMulticastDelegate.set(additionalDelegates: multicastDelegate.additionalDelegates)
             
             // After setting delegate local changes will be fetched and observed.
             startUserListObserverIfNeeded()
