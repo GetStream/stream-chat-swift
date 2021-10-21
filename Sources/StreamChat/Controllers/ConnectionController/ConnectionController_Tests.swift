@@ -75,20 +75,6 @@ final class ChatConnectionController_Tests: XCTestCase {
         XCTAssertNil(controller.delegate)
     }
     
-    func test_genericDelegate_isReferencedWeakly() {
-        // Create the delegate
-        var delegate: TestDelegateGeneric? = .init(expectedQueueId: callbackQueueID)
-        
-        // Set the delegate
-        controller.delegate = delegate
-        
-        // Stop keeping a delegate alive
-        delegate = nil
-        
-        // Assert delegate is deallocated
-        XCTAssertNil(controller.delegate)
-    }
-    
     func test_delegate_isNotifiedAboutConnectionStatusChanges() {
         // Set the delegate
         let delegate = TestDelegate(expectedQueueId: callbackQueueID)
@@ -145,21 +131,6 @@ final class ChatConnectionController_Tests: XCTestCase {
 }
 
 private class TestDelegate: QueueAwareDelegate, ChatConnectionControllerDelegate {
-    @Atomic var state: DataController.State?
-    @Atomic var didUpdateConnectionStatus_statuses = [ConnectionStatus]()
-    
-    func controller(_ controller: DataController, didChangeState state: DataController.State) {
-        self.state = state
-        validateQueue()
-    }
-    
-    func connectionController(_ controller: ChatConnectionController, didUpdateConnectionStatus status: ConnectionStatus) {
-        _didUpdateConnectionStatus_statuses.mutate { $0.append(status) }
-        validateQueue()
-    }
-}
-
-private class TestDelegateGeneric: QueueAwareDelegate, ChatConnectionControllerDelegate {
     @Atomic var state: DataController.State?
     @Atomic var didUpdateConnectionStatus_statuses = [ConnectionStatus]()
     

@@ -272,24 +272,6 @@ final class ChatChannelWatcherListController_Tests: XCTestCase {
         AssertAsync.willBeEqual(delegate.state, .remoteDataFetched)
     }
 
-    func test_genericDelegate_isNotifiedAboutStateChanges() throws {
-        // Set the generic delegate
-        let delegate = TestDelegateGeneric(expectedQueueId: callbackQueueID)
-        controller.delegate = delegate
-
-        // Synchronize
-        controller.synchronize()
-
-        // Assert delegate is notified about state changes
-        AssertAsync.willBeEqual(delegate.state, .localDataFetched)
-
-        // Simulate network call response
-        env.watcherListUpdater!.channelWatchers_completion!(nil)
-
-        // Assert delegate is notified about state changes
-        AssertAsync.willBeEqual(delegate.state, .remoteDataFetched)
-    }
-
     func test_delegate_isNotifiedAboutWatcherUpdates() throws {
         let watcher1ID: UserId = .unique
         let watcher2ID: UserId = .unique
@@ -540,25 +522,6 @@ private class TestEnvironment {
 
 // A concrete `ChatChannelWatcherListControllerDelegate` implementation allowing capturing the delegate calls
 private class TestDelegate: QueueAwareDelegate, ChatChannelWatcherListControllerDelegate {
-    @Atomic var state: DataController.State?
-    @Atomic var didUpdateWatchers_changes: [ListChange<ChatUser>]?
-
-    func controller(_ controller: DataController, didChangeState state: DataController.State) {
-        validateQueue()
-        self.state = state
-    }
-
-    func channelWatcherListController(
-        _ controller: ChatChannelWatcherListController,
-        didChangeWatchers changes: [ListChange<ChatUser>]
-    ) {
-        validateQueue()
-        didUpdateWatchers_changes = changes
-    }
-}
-
-// A concrete `_ChatChannelWatcherListControllerDelegate` implementation allowing capturing the delegate calls.
-private class TestDelegateGeneric: QueueAwareDelegate, ChatChannelWatcherListControllerDelegate {
     @Atomic var state: DataController.State?
     @Atomic var didUpdateWatchers_changes: [ListChange<ChatUser>]?
 

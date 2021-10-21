@@ -512,24 +512,6 @@ class ChannelListController_Tests: XCTestCase {
         AssertAsync.willBeEqual(delegate.state, .remoteDataFetched)
     }
 
-    func test_genericDelegate_isNotifiedAboutStateChanges() throws {
-        // Set the generic delegate
-        let delegate = TestDelegateGeneric(expectedQueueId: controllerCallbackQueueID)
-        controller.delegate = delegate
-        
-        // Assert delegate is notified about state changes
-        AssertAsync.willBeEqual(delegate.state, .localDataFetched)
-
-        // Synchronize
-        controller.synchronize()
-        
-        // Simulate network call response
-        env.channelListUpdater?.update_completion?(.success(ChannelListPayload(channels: [])))
-        
-        // Assert delegate is notified about state changes
-        AssertAsync.willBeEqual(delegate.state, .remoteDataFetched)
-    }
-    
     func test_delegateMethodsAreCalled() throws {
         // Set the delegate
         let delegate = TestDelegate(expectedQueueId: controllerCallbackQueueID)
@@ -547,25 +529,6 @@ class ChannelListController_Tests: XCTestCase {
 
         let channel: ChatChannel = client.databaseContainer.viewContext.channel(cid: cid)!.asModel()
         
-        AssertAsync {
-            Assert.willBeTrue(delegate.willChangeChannels_called)
-            Assert.willBeEqual(delegate.didChangeChannels_changes, [.insert(channel, index: [0, 0])])
-        }
-    }
-    
-    func test_genericDelegateMethodsAreCalled() throws {
-        // Set delegate
-        let delegate = TestDelegateGeneric(expectedQueueId: controllerCallbackQueueID)
-        controller.delegate = delegate
-        
-        // Simulate DB update
-        let cid: ChannelId = .unique
-        try client.databaseContainer.writeSynchronously { session in
-            try session.saveChannel(payload: self.dummyPayload(with: cid), query: self.query)
-        }
-        
-        let channel: ChatChannel = client.databaseContainer.viewContext.channel(cid: cid)!.asModel()
-
         AssertAsync {
             Assert.willBeTrue(delegate.willChangeChannels_called)
             Assert.willBeEqual(delegate.didChangeChannels_changes, [.insert(channel, index: [0, 0])])
@@ -804,41 +767,6 @@ private class TestEnvironment {
 
 // A concrete `ChannelListControllerDelegate` implementation allowing capturing the delegate calls
 private class TestDelegate: QueueAwareDelegate, ChatChannelListControllerDelegate {
-    @Atomic var state: DataController.State?
-    @Atomic var willChangeChannels_called = false
-    @Atomic var didChangeChannels_changes: [ListChange<ChatChannel>]?
-
-    func controller(_ controller: DataController, didChangeState state: DataController.State) {
-        self.state = state
-        validateQueue()
-    }
-
-    func controllerWillChangeChannels(_ controller: ChatChannelListController) {
-        willChangeChannels_called = true
-        validateQueue()
-    }
-
-    func controller(
-        _ controller: ChatChannelListController,
-        didChangeChannels changes: [ListChange<ChatChannel>]
-    ) {
-        didChangeChannels_changes = changes
-        validateQueue()
-    }
-    
-    func controller(_ controller: ChatChannelListController, shouldListUpdatedChannel channel: ChatChannel) -> Bool {
-        validateQueue()
-        return true
-    }
-    
-    func controller(_ controller: ChatChannelListController, shouldAddNewChannelToList channel: ChatChannel) -> Bool {
-        validateQueue()
-        return true
-    }
-}
-
-// A concrete `_ChatChannelListControllerDelegate` implementation allowing capturing the delegate calls.
-private class TestDelegateGeneric: QueueAwareDelegate, ChatChannelListControllerDelegate {
     @Atomic var state: DataController.State?
     @Atomic var willChangeChannels_called = false
     @Atomic var didChangeChannels_changes: [ListChange<ChatChannel>]?

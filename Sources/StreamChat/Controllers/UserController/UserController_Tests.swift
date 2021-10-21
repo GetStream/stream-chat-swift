@@ -319,24 +319,6 @@ final class UserController_Tests: XCTestCase {
         AssertAsync.willBeEqual(delegate.state, .remoteDataFetched)
     }
 
-    func test_genericDelegate_isNotifiedAboutStateChanges() throws {
-        // Set the generic delegate
-        let delegate = TestDelegateGeneric(expectedQueueId: callbackQueueID)
-        controller.delegate = delegate
-
-        // Synchronize
-        controller.synchronize()
-        
-        // Assert delegate is notified about state changes
-        AssertAsync.willBeEqual(delegate.state, .localDataFetched)
-        
-        // Simulate network call response
-        env.userUpdater!.loadUser_completion!(nil)
-        
-        // Assert delegate is notified about state changes
-        AssertAsync.willBeEqual(delegate.state, .remoteDataFetched)
-    }
-
     func test_delegate_isNotifiedAboutCreatedUser() throws {
         // Set the delegate
         let delegate = TestDelegate(expectedQueueId: callbackQueueID)
@@ -614,22 +596,6 @@ private class TestDelegate: QueueAwareDelegate, ChatUserControllerDelegate {
     func controller(_ controller: DataController, didChangeState state: DataController.State) {
         validateQueue()
         self.state = state
-    }
-    
-    func userController(_ controller: ChatUserController, didUpdateUser change: EntityChange<ChatUser>) {
-        validateQueue()
-        didUpdateUser_change = change
-    }
-}
-
-// A concrete `_ChatUserControllerDelegate` implementation allowing capturing the delegate calls.
-private class TestDelegateGeneric: QueueAwareDelegate, ChatUserControllerDelegate {
-    @Atomic var state: DataController.State?
-    @Atomic var didUpdateUser_change: EntityChange<ChatUser>?
-    
-    func controller(_ controller: DataController, didChangeState state: DataController.State) {
-        self.state = state
-        validateQueue()
     }
     
     func userController(_ controller: ChatUserController, didUpdateUser change: EntityChange<ChatUser>) {

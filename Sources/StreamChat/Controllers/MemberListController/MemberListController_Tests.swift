@@ -270,24 +270,6 @@ final class MemberListController_Tests: XCTestCase {
         AssertAsync.willBeEqual(delegate.state, .remoteDataFetched)
     }
     
-    func test_genericDelegate_isNotifiedAboutStateChanges() throws {
-        // Set the generic delegate
-        let delegate = TestDelegateGeneric(expectedQueueId: callbackQueueID)
-        controller.delegate = delegate
-        
-        // Synchronize
-        controller.synchronize()
-        
-        // Assert delegate is notified about state changes
-        AssertAsync.willBeEqual(delegate.state, .localDataFetched)
-        
-        // Simulate network call response
-        env.memberListUpdater!.load_completion!(nil)
-        
-        // Assert delegate is notified about state changes
-        AssertAsync.willBeEqual(delegate.state, .remoteDataFetched)
-    }
-    
     func test_delegate_isNotifiedAboutMembersUpdates() throws {
         let member1ID: UserId = .unique
         let member2ID: UserId = .unique
@@ -502,25 +484,6 @@ private class TestEnvironment {
 
 // A concrete `ChatChannelMemberListControllerDelegate` implementation allowing capturing the delegate calls
 private class TestDelegate: QueueAwareDelegate, ChatChannelMemberListControllerDelegate {
-    @Atomic var state: DataController.State?
-    @Atomic var didUpdateMembers_changes: [ListChange<ChatChannelMember>]?
-    
-    func controller(_ controller: DataController, didChangeState state: DataController.State) {
-        validateQueue()
-        self.state = state
-    }
-    
-    func memberListController(
-        _ controller: ChatChannelMemberListController,
-        didChangeMembers changes: [ListChange<ChatChannelMember>]
-    ) {
-        validateQueue()
-        didUpdateMembers_changes = changes
-    }
-}
-
-// A concrete `ChatChannelMemberListControllerDelegate` implementation allowing capturing the delegate calls.
-private class TestDelegateGeneric: QueueAwareDelegate, ChatChannelMemberListControllerDelegate {
     @Atomic var state: DataController.State?
     @Atomic var didUpdateMembers_changes: [ListChange<ChatChannelMember>]?
     

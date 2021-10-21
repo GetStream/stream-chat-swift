@@ -243,24 +243,6 @@ class UserListController_Tests: XCTestCase {
         // Assert delegate is notified about state changes
         AssertAsync.willBeEqual(delegate.state, .remoteDataFetched)
     }
-
-    func test_genericDelegate_isNotifiedAboutStateChanges() throws {
-        // Set the generic delegate
-        let delegate = TestDelegateGeneric(expectedQueueId: controllerCallbackQueueID)
-        controller.delegate = delegate
-        
-        // Assert delegate is notified about state changes
-        AssertAsync.willBeEqual(delegate.state, .localDataFetched)
-
-        // Synchronize
-        controller.synchronize()
-        
-        // Simulate network call response
-        env.userListUpdater?.update_completion?(nil)
-        
-        // Assert delegate is notified about state changes
-        AssertAsync.willBeEqual(delegate.state, .remoteDataFetched)
-    }
     
     func test_delegateMethodsAreCalled() throws {
         // Set the delegate
@@ -279,21 +261,6 @@ class UserListController_Tests: XCTestCase {
         
         let user: ChatUser = client.databaseContainer.viewContext.user(id: id)!.asModel()
         
-        AssertAsync.willBeEqual(delegate.didChangeUsers_changes, [.insert(user, index: [0, 0])])
-    }
-    
-    func test_genericDelegateMethodsAreCalled() throws {
-        // Set delegate
-        let delegate = TestDelegateGeneric(expectedQueueId: controllerCallbackQueueID)
-        controller.delegate = delegate
-        
-        // Simulate DB update
-        let id: UserId = .unique
-        try client.databaseContainer.writeSynchronously { session in
-            try session.saveUser(payload: self.dummyUser(id: id), query: self.query)
-        }
-        
-        let user: ChatUser = client.databaseContainer.viewContext.user(id: id)!.asModel()
         AssertAsync.willBeEqual(delegate.didChangeUsers_changes, [.insert(user, index: [0, 0])])
     }
     
@@ -366,25 +333,6 @@ private class TestEnvironment {
 
 // A concrete `UserListControllerDelegate` implementation allowing capturing the delegate calls
 private class TestDelegate: QueueAwareDelegate, ChatUserListControllerDelegate {
-    @Atomic var state: DataController.State?
-    @Atomic var didChangeUsers_changes: [ListChange<ChatUser>]?
-    
-    func controller(_ controller: DataController, didChangeState state: DataController.State) {
-        self.state = state
-        validateQueue()
-    }
-    
-    func controller(
-        _ controller: ChatUserListController,
-        didChangeUsers changes: [ListChange<ChatUser>]
-    ) {
-        didChangeUsers_changes = changes
-        validateQueue()
-    }
-}
-
-// A concrete `_ChatUserListControllerDelegate` implementation allowing capturing the delegate calls.
-private class TestDelegateGeneric: QueueAwareDelegate, ChatUserListControllerDelegate {
     @Atomic var state: DataController.State?
     @Atomic var didChangeUsers_changes: [ListChange<ChatUser>]?
     
