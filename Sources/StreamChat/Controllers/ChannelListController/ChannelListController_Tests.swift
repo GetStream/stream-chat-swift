@@ -515,7 +515,7 @@ class ChannelListController_Tests: XCTestCase {
     func test_genericDelegate_isNotifiedAboutStateChanges() throws {
         // Set the generic delegate
         let delegate = TestDelegateGeneric(expectedQueueId: controllerCallbackQueueID)
-        controller.setDelegate(delegate)
+        controller.delegate = delegate
         
         // Assert delegate is notified about state changes
         AssertAsync.willBeEqual(delegate.state, .localDataFetched)
@@ -556,7 +556,7 @@ class ChannelListController_Tests: XCTestCase {
     func test_genericDelegateMethodsAreCalled() throws {
         // Set delegate
         let delegate = TestDelegateGeneric(expectedQueueId: controllerCallbackQueueID)
-        controller.setDelegate(delegate)
+        controller.delegate = delegate
         
         // Simulate DB update
         let cid: ChannelId = .unique

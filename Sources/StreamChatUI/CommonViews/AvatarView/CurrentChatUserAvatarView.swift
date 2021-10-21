@@ -14,7 +14,7 @@ open class CurrentChatUserAvatarView: _Control, ThemeProvider {
     /// `StreamChat`'s controller that observe the currently logged-in user.
     open var controller: CurrentChatUserController? {
         didSet {
-            controller?.setDelegate(self)
+            controller?.delegate = self
             controller?.synchronize()
             updateContentIfNeeded()
         }

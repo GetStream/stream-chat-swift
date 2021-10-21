@@ -294,10 +294,9 @@ public extension CurrentChatUserController {
     /// Sets the provided object as a delegate of this controller.
     /// - Parameter delegate: The object used as a delegate. It's referenced weakly, so you need to keep the object
     /// alive if you want keep receiving updates.
+    @available(*, deprecated, message: "the `delegate` property should be used directly instead.")
     func setDelegate<Delegate: CurrentChatUserControllerDelegate>(_ delegate: Delegate?) {
-        if let delegate = delegate {
-            multicastDelegate.set(mainDelegate: delegate)
-        }
+        multicastDelegate.set(mainDelegate: delegate)
     }
 }
 

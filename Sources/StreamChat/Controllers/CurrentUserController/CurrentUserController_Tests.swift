@@ -196,7 +196,7 @@ final class CurrentUserController_Tests: XCTestCase {
         var delegate: TestDelegateGeneric? = .init(expectedQueueId: callbackQueueID)
         
         // Set the delegate
-        controller.setDelegate(delegate)
+        controller.delegate = delegate
         
         // Stop keeping a delegate alive
         delegate = nil

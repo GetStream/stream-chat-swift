@@ -276,7 +276,7 @@ final class MemberController_Tests: XCTestCase {
     func test_genericDelegate_isNotifiedAboutStateChanges() throws {
         // Set the generic delegate
         let delegate = TestDelegateGeneric(expectedQueueId: callbackQueueID)
-        controller.setDelegate(delegate)
+        controller.delegate = delegate
 
         // Synchronize
         controller.synchronize()

@@ -642,7 +642,7 @@ class UserSearchController_Tests: XCTestCase {
     func test_genericDelegateMethodsAreCalled() throws {
         // Set delegate
         let delegate = TestDelegateGeneric(expectedQueueId: controllerCallbackQueueID)
-        controller.setDelegate(delegate)
+        controller.delegate = delegate
         
         // Simulate DB update
         let id: UserId = .unique

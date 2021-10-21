@@ -1369,7 +1369,7 @@ class ChannelController_Tests: XCTestCase {
         
         // Create and assign delegate
         let delegate = TestDelegateGeneric(expectedQueueId: controllerCallbackQueueID)
-        controller.setDelegate(delegate)
+        controller.delegate = delegate
         
         // Simulate `synchronize()` call
         controller.synchronize()
