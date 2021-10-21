@@ -103,6 +103,33 @@ class MulticastDelegate_Tests: XCTestCase {
         XCTAssertTrue(multicastDelegate.additionalDelegates.isEmpty)
     }
 
+    func test_replaceAdditionalDelegates_shouldRemovePreviousDelegatesAndAddNewOnes() {
+        let testDelegate1 = TestDelegate()
+        let testDelegate2 = TestDelegate()
+
+        let testDelegate3 = TestDelegate()
+        let testDelegate4 = TestDelegate()
+
+        multicastDelegate.add(additionalDelegate: testDelegate1)
+        multicastDelegate.add(additionalDelegate: testDelegate2)
+
+        XCTAssertTrue(
+            multicastDelegate.additionalDelegates.contains(where: { $0 === testDelegate1 })
+        )
+        XCTAssertTrue(
+            multicastDelegate.additionalDelegates.contains(where: { $0 === testDelegate2 })
+        )
+
+        multicastDelegate.replace(additionalDelegates: [testDelegate3, testDelegate4])
+
+        XCTAssertTrue(
+            multicastDelegate.additionalDelegates.contains(where: { $0 === testDelegate3 })
+        )
+        XCTAssertTrue(
+            multicastDelegate.additionalDelegates.contains(where: { $0 === testDelegate4 })
+        )
+    }
+
     func test_whenDelegatesDeallocated_shouldNotRetainDelegates() {
         let exp = expectation(description: "should clean all delegates after autoreleasepool")
 

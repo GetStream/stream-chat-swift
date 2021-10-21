@@ -91,9 +91,7 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
     var multicastDelegate: MulticastDelegate<ChatMessageControllerDelegate> = .init() {
         didSet {
             stateMulticastDelegate.set(mainDelegate: multicastDelegate.mainDelegate)
-            multicastDelegate.additionalDelegates.forEach {
-                stateMulticastDelegate.add(additionalDelegate: $0)
-            }
+            stateMulticastDelegate.replace(additionalDelegates: multicastDelegate.additionalDelegates)
             
             startObserversIfNeeded()
         }

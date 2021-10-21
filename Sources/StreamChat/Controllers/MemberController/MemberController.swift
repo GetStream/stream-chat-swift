@@ -47,9 +47,7 @@ public class ChatChannelMemberController: DataController, DelegateCallable, Data
     var multicastDelegate: MulticastDelegate<ChatChannelMemberControllerDelegate> = .init() {
         didSet {
             stateMulticastDelegate.set(mainDelegate: multicastDelegate.mainDelegate)
-            multicastDelegate.additionalDelegates.forEach {
-                stateMulticastDelegate.add(additionalDelegate: $0)
-            }
+            stateMulticastDelegate.replace(additionalDelegates: multicastDelegate.additionalDelegates)
             startObservingIfNeeded()
         }
     }
