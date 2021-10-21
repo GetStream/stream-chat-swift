@@ -128,6 +128,7 @@ open class ZoomAnimator: NSObject, UIViewControllerAnimatedTransitioning {
                 fromVCSnapshot?.removeFromSuperview()
                 toVCSnapshot?.removeFromSuperview()
 
+                transitionContext.finishInteractiveTransition()
                 transitionContext.completeTransition(!transitionContext.transitionWasCancelled)
             }
         )
