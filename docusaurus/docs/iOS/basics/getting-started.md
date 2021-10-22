@@ -6,7 +6,7 @@ This section provides a high-level overview of the library, core components, and
 
 ## Your First App with Stream Chat
 
-Before starting, make sure you have installed `StreamChatUI` as explained in the [Installation](../#installation) section.
+Before starting, make sure you have installed `StreamChatUI` as explained in the [Installation](./overview.md#installation) section.
 
 ### Chat setup and users
 

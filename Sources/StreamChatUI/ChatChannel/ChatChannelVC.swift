@@ -57,7 +57,7 @@ open class ChatChannelVC:
 
     public var messageComposerBottomConstraint: NSLayoutConstraint?
 
-    @Atomic private var loadingPreviousMessages: Bool = false
+    private var loadingPreviousMessages: Bool = false
 
     override open func setUp() {
         super.setUp()
@@ -162,14 +162,14 @@ open class ChatChannelVC:
             return
         }
 
-        if _loadingPreviousMessages.compareAndSwap(old: false, new: true) {
-            channelController.loadPreviousMessages(completion: { [weak self] _ in
-                guard let self = self else {
-                    return
-                }
-                self.loadingPreviousMessages = false
-            })
+        guard !loadingPreviousMessages else {
+            return
         }
+        loadingPreviousMessages = true
+
+        channelController.loadPreviousMessages(completion: { [weak self] _ in
+            self?.loadingPreviousMessages = false
+        })
     }
 
     open func chatMessageListVC(
@@ -195,10 +195,16 @@ open class ChatChannelVC:
         }
     }
 
-    open func chatMessageListVC(_ vc: ChatMessageListVC, scrollViewDidScroll scrollView: UIScrollView) {
-        if messageListVC.listView.isLastCellFullyVisible, channelController.channel?.isUnread == true {
-            channelController.markRead()
+    var didReadAllMessages: Bool {
+        messageListVC.listView.isLastCellFullyVisible
+    }
 
+    open func chatMessageListVC(_ vc: ChatMessageListVC, scrollViewDidScroll scrollView: UIScrollView) {
+        if didReadAllMessages {
+            channelController.markRead()
+        }
+
+        if messageListVC.listView.isLastCellFullyVisible, channelController.channel?.isUnread == true {
             // Hide the badge immediately. Temporary solution until CIS-881 is implemented.
             messageListVC.scrollToLatestMessageButton.content = .noUnread
         }
@@ -210,6 +216,9 @@ open class ChatChannelVC:
         _ channelController: ChatChannelController,
         didUpdateMessages changes: [ListChange<ChatMessage>]
     ) {
+        if didReadAllMessages {
+            channelController.markRead()
+        }
         messageListVC.updateMessages(with: changes)
     }
 

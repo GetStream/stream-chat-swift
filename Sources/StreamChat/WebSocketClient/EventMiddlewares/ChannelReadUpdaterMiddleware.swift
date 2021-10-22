@@ -47,27 +47,7 @@ struct ChannelReadUpdaterMiddleware: EventMiddleware {
         lastReadAt: Date,
         session: DatabaseSession
     ) {
-        if let read = session.loadChannelRead(cid: cid, userId: userId) {
-            // We have a read object saved, we can update it
-            read.lastReadAt = lastReadAt
-            read.unreadMessageCount = 0
-        } else if let channel = session.channel(cid: cid), channel.members.contains(where: { $0.user.id == userId }) {
-            // We don't have a read object, but the user is a member.
-            // We can safely create a read object for the user
-            do {
-                _ = try session.saveChannelRead(cid: cid, userId: userId, lastReadAt: lastReadAt, unreadMessageCount: 0)
-            } catch {
-                log.error("Failed to update channel read for cid \(cid) and userId \(userId): \(error)")
-            }
-        } else {
-            // If we don't have a read object saved for the user,
-            // and the user is not a member,
-            // we can safely discard this event.
-            log.debug(
-                "Discarding read event for cid \(cid) and userId \(userId). "
-                    + "This is expected when the user calls `markRead` but they're not a member."
-            )
-        }
+        session.markChannelAsRead(cid: cid, userId: userId, at: lastReadAt)
     }
     
     private func increaseUnreadCountIfNeeded(

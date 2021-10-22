@@ -1355,7 +1355,10 @@ class ChannelController_Tests: XCTestCase {
         let dummyChannel = dummyPayload(
             with: .unique,
             numberOfMessages: 10,
-            members: [.dummy(userId: currentUserId), .dummy(userId: otherUserId)]
+            members: [
+                .dummy(user: .dummy(userId: currentUserId)),
+                .dummy(user: .dummy(userId: otherUserId))
+            ]
         )
         
         // Simulate successful backend channel creation
@@ -1387,7 +1390,10 @@ class ChannelController_Tests: XCTestCase {
         let dummyChannel = dummyPayload(
             with: .unique,
             numberOfMessages: 10,
-            members: [.dummy(userId: currentUserId), .dummy(userId: otherUserId)]
+            members: [
+                .dummy(user: .dummy(userId: currentUserId)),
+                .dummy(user: .dummy(userId: otherUserId))
+            ]
         )
         
         // Simulate new channel creation in DB
@@ -3069,7 +3075,7 @@ class ChannelController_Tests: XCTestCase {
     
     func test_markRead_callsChannelUpdater() throws {
         // setup data for this test
-        let payload = dummyPayload(with: channelId)
+        let payload = dummyPayload(with: channelId, numberOfMessages: 3)
         let dummyUserPayload: CurrentUserPayload = .dummy(userId: payload.channelReads.first!.user.id, role: .user)
 
         // Save two channels to DB (only one matching the query) and wait for completion
@@ -3079,7 +3085,10 @@ class ChannelController_Tests: XCTestCase {
             // Channel with the id matching the query
             try session.saveChannel(payload: payload)
         }
- 
+
+        // This is needed to determine if the channel needs to be marked as read
+        client.currentUserId = dummyUserPayload.id
+
         // Simulate `markRead` call and catch the completion
         var completionCalled = false
 
@@ -3112,13 +3121,16 @@ class ChannelController_Tests: XCTestCase {
     }
     
     func test_markRead_propagatesErrorFromUpdater() throws {
-        let payload = dummyPayload(with: channelId)
+        let payload = dummyPayload(with: channelId, numberOfMessages: 3)
         let dummyUserPayload: CurrentUserPayload = .dummy(userId: payload.channelReads.first!.user.id, role: .user)
         
         try client.databaseContainer.writeSynchronously { session in
             try session.saveCurrentUser(payload: dummyUserPayload)
             try session.saveChannel(payload: payload)
         }
+
+        // This is needed to determine if the channel needs to be marked as read
+        client.currentUserId = dummyUserPayload.id
 
         // Simulate `markRead` call and catch the completion
         var completionCalledError: Error?

@@ -283,11 +283,11 @@ final class MemberListController_Tests: XCTestCase {
         
         // Create 2 members, the first created more recently
         var member1: MemberPayload = .dummy(
-            userId: member1ID,
+            user: .dummy(userId: member1ID),
             createdAt: Date()
         )
         var member2: MemberPayload = .dummy(
-            userId: member2ID,
+            user: .dummy(userId: member2ID),
             createdAt: Date().addingTimeInterval(-10)
         )
         
@@ -322,11 +322,11 @@ final class MemberListController_Tests: XCTestCase {
 
         // Update 2 members, the first created more recently
         member1 = .dummy(
-            userId: member1ID,
+            user: .dummy(userId: member1ID),
             createdAt: Date()
         )
         member2 = .dummy(
-            userId: member2ID,
+            user: .dummy(userId: member2ID),
             createdAt: Date().addingTimeInterval(-10)
         )
         

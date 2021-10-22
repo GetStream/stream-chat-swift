@@ -681,7 +681,7 @@ open class ComposerVC: _ViewController,
     /// Provides the mention text for composer text field, when the user selects a mention suggestion.
     open func mentionText(for user: ChatUser) -> String {
         if let name = user.name, !name.isEmpty {
-            return name.lowercased()
+            return name
         } else {
             return user.id
         }
