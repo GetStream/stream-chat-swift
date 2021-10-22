@@ -9,9 +9,27 @@ import UIKit
 open class ChatMessageReactionAuthorViewCell: _CollectionViewCell, ThemeProvider {
     open class var reuseId: String { String(describing: self) }
 
-    /// The reaction of a message.
-    open var reaction: ChatMessageReaction? {
-        didSet { updateContentIfNeeded() }
+    /// The content of reaction author view cell.
+    public struct Content {
+        /// The reaction of the message.
+        public var reaction: ChatMessageReaction
+        /// The id of the current logged in user.
+        public var currentUserId: UserId
+
+        public init(
+            reaction: ChatMessageReaction,
+            currentUserId: UserId
+        ) {
+            self.reaction = reaction
+            self.currentUserId = currentUserId
+        }
+    }
+
+    /// The content of reaction author view cell.
+    open var content: Content? {
+        didSet {
+            updateContentIfNeeded()
+        }
     }
 
     open lazy var containerStack = ContainerStackView(
@@ -63,12 +81,17 @@ open class ChatMessageReactionAuthorViewCell: _CollectionViewCell, ThemeProvider
         let placeholder = appearance.images.userAvatarPlaceholder1
         components.imageLoader.loadImage(
             into: authorAvatarView.imageView,
-            url: reaction?.author.imageURL,
+            url: content?.reaction.author.imageURL,
             imageCDN: components.imageCDN,
             placeholder: placeholder,
             preferredSize: authorAvatarSize
         )
 
-        authorNameLabel.text = reaction?.author.name
+        if let content = self.content {
+            let reactionAuthor = content.reaction.author
+            let isCurrentUser = content.currentUserId == reactionAuthor.id
+            // TODO: Localization
+            authorNameLabel.text = isCurrentUser ? "You" : reactionAuthor.name
+        }
     }
 }

@@ -30,6 +30,9 @@ open class ChatMessageReactionAuthorsVC:
         }
     }
 
+    /// The message controller of message that the reactions belong.
+    open var messageController: ChatMessageController!
+
     /// Label that shows how many reactions the message has.
     open private(set) lazy var topLabel: UILabel = UILabel()
         .withoutAutoresizingMaskConstraints
@@ -60,6 +63,13 @@ open class ChatMessageReactionAuthorsVC:
         collectionView.isPagingEnabled = true
         collectionView.alwaysBounceVertical = false
         collectionView.alwaysBounceHorizontal = false
+
+        if let message = messageController?.message, message.reactionScores.count <= 10 {
+            content = .init(reactions: Array(message.latestReactions))
+            collectionView.reloadData()
+        } else {
+            // TODO: Perform call
+        }
     }
 
     override open func setUpAppearance() {
@@ -104,7 +114,6 @@ open class ChatMessageReactionAuthorsVC:
         super.updateContent()
 
         topLabel.text = "\(content?.reactions.count ?? 0) Message Reactions"
-        collectionView.reloadData()
     }
 
     open func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -117,7 +126,13 @@ open class ChatMessageReactionAuthorsVC:
             for: indexPath
         ) as! ChatMessageReactionAuthorViewCell
 
-        cell.reaction = content?.reactions[indexPath.item]
+        if let reactions = content?.reactions,
+           let currentUserId = messageController?.client.currentUserId {
+            cell.content = ChatMessageReactionAuthorViewCell.Content(
+                reaction: reactions[indexPath.item],
+                currentUserId: currentUserId
+            )
+        }
 
         return cell
     }
@@ -127,6 +142,7 @@ open class ChatMessageReactionAuthorsVC:
         layout collectionViewLayout: UICollectionViewLayout,
         sizeForItemAt indexPath: IndexPath
     ) -> CGSize {
+        // TODO: Try to make this automatic? Check GalleryVC
         CGSize(width: 64, height: 110)
     }
 }
