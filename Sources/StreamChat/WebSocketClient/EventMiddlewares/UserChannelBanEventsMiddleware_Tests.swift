@@ -129,7 +129,10 @@ final class UserChannelBanEventsMiddleware_Tests: XCTestCase {
         try database.createChannel(cid: eventPayload.cid!)
         try database.writeSynchronously { session in
             let memberDTO = try session.saveMember(
-                payload: .dummy(userId: eventPayload.user!.id, role: .member),
+                payload: .dummy(
+                    user: .dummy(userId: eventPayload.user!.id),
+                    role: .member
+                ),
                 channelId: eventPayload.cid!,
                 query: nil
             )

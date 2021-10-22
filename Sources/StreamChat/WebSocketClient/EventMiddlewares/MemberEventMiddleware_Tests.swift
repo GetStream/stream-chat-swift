@@ -151,7 +151,11 @@ final class MemberEventMiddleware_Tests: XCTestCase {
         // Link the member to a MemberListQuery
         try database.writeSynchronously {
             try $0.saveQuery(query)
-            try $0.saveMember(payload: .dummy(userId: memberId), channelId: cid, query: query)
+            try $0.saveMember(
+                payload: .dummy(user: .dummy(userId: memberId)),
+                channelId: cid,
+                query: query
+            )
         }
         
         var queryDTO = try XCTUnwrap(

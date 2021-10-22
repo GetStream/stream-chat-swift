@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - `LogConfig.subsystems` for customizing subsysems where logger should be active [#1522](https://github.com/GetStream/stream-chat-swift/issues/1522)
 - `ChannelListController` can now correctly give a list of hidden channels [#1529](https://github.com/GetStream/stream-chat-swift/issues/1529)
 - `ChatChannel.isHidden` is now exposed [#1529](https://github.com/GetStream/stream-chat-swift/issues/1529)
+- Add `name` sort option for member list queries [#1576](https://github.com/GetStream/stream-chat-swift/issues/1576)
 
 ### 🐞 Fixed
 - Fix incorrect key in `created_by` filter used in channel list query [#1544](https://github.com/GetStream/stream-chat-swift/issues/1544)
@@ -18,6 +19,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Fix Logger not logging when custom `subsystem` is specified [#1559](https://github.com/GetStream/stream-chat-swift/issues/1559)
 - Fix channel not updated when a member is removed [#1560](https://github.com/GetStream/stream-chat-swift/issues/1560)
 - Fix channel mark read [#1569](https://github.com/GetStream/stream-chat-swift/pull/1569)
+- Fix lowercased username was used for mention instead of original name [#1575](https://github.com/GetStream/stream-chat-swift/issues/1575)
 
 ### 🔄 Changed
 - `LogConfig` changes after logger was used will now take affect [#1522](https://github.com/GetStream/stream-chat-swift/issues/1522)

@@ -177,7 +177,7 @@ extension ChatChannelMember {
     }
 }
 
-private extension ChannelMemberListQuery {
+extension ChannelMemberListQuery {
     var sortDescriptors: [NSSortDescriptor] {
         let sortDescriptors = sort.compactMap { $0.key.sortDescriptor(isAscending: $0.isAscending) }
         return sortDescriptors.isEmpty ? [ChannelMemberListSortingKey.defaultSortDescriptor] : sortDescriptors

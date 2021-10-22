@@ -1355,7 +1355,10 @@ class ChannelController_Tests: XCTestCase {
         let dummyChannel = dummyPayload(
             with: .unique,
             numberOfMessages: 10,
-            members: [.dummy(userId: currentUserId), .dummy(userId: otherUserId)]
+            members: [
+                .dummy(user: .dummy(userId: currentUserId)),
+                .dummy(user: .dummy(userId: otherUserId))
+            ]
         )
         
         // Simulate successful backend channel creation
@@ -1387,7 +1390,10 @@ class ChannelController_Tests: XCTestCase {
         let dummyChannel = dummyPayload(
             with: .unique,
             numberOfMessages: 10,
-            members: [.dummy(userId: currentUserId), .dummy(userId: otherUserId)]
+            members: [
+                .dummy(user: .dummy(userId: currentUserId)),
+                .dummy(user: .dummy(userId: otherUserId))
+            ]
         )
         
         // Simulate new channel creation in DB
