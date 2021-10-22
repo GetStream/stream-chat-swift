@@ -155,7 +155,7 @@ private struct TestEvent: Event, Equatable {
 }
 
 extension TypingEventDTO: Equatable {
-    static var unique: Self = try!
+    static var unique: TypingEventDTO = try!
         .init(
             from: EventPayload(
                 eventType: .userStartTyping,
@@ -167,7 +167,7 @@ extension TypingEventDTO: Equatable {
     static func startTyping(
         cid: ChannelId = .unique,
         userId: UserId = .unique
-    ) -> Self {
+    ) -> TypingEventDTO {
         let payload = EventPayload(
             eventType: .userStartTyping,
             cid: cid,
@@ -178,7 +178,7 @@ extension TypingEventDTO: Equatable {
         return try! .init(from: payload)
     }
     
-    static func stopTyping(cid: ChannelId = .unique, userId: UserId = .unique) -> Self {
+    static func stopTyping(cid: ChannelId = .unique, userId: UserId = .unique) -> TypingEventDTO {
         let payload = EventPayload(
             eventType: .userStopTyping,
             cid: cid,
@@ -189,7 +189,7 @@ extension TypingEventDTO: Equatable {
         return try! .init(from: payload)
     }
     
-    public static func == (lhs: Self, rhs: Self) -> Bool {
+    public static func == (lhs: TypingEventDTO, rhs: TypingEventDTO) -> Bool {
         lhs.isTyping == rhs.isTyping && lhs.cid == rhs.cid && lhs.user.id == rhs.user.id
     }
 }

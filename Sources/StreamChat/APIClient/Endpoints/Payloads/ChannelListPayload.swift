@@ -201,7 +201,7 @@ struct ChannelReadPayload: Decodable {
 }
 
 /// A channel config.
-public struct ChannelConfig: Codable {
+public class ChannelConfig: Codable {
     private enum CodingKeys: String, CodingKey {
         case reactionsEnabled = "reactions"
         case typingEventsEnabled = "typing_events"
@@ -251,7 +251,7 @@ public struct ChannelConfig: Codable {
     /// Determines if users are able to flag messages. Enabled by default.
     public var flagsEnabled: Bool { commands.map(\.name).contains("flag") }
         
-    public init(from decoder: Decoder) throws {
+    public required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         reactionsEnabled = try container.decode(Bool.self, forKey: .reactionsEnabled)
         typingEventsEnabled = try container.decode(Bool.self, forKey: .typingEventsEnabled)
@@ -270,7 +270,7 @@ public struct ChannelConfig: Codable {
         updatedAt = try container.decode(Date.self, forKey: .updatedAt)
     }
     
-    internal init(
+    internal required init(
         reactionsEnabled: Bool = false,
         typingEventsEnabled: Bool = false,
         readEventsEnabled: Bool = false,

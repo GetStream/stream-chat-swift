@@ -6,18 +6,32 @@ import CoreData
 import Foundation
 import UserNotifications
 
-public struct MessageNotificationContent {
+public class MessageNotificationContent {
     public let message: ChatMessage
     public let channel: ChatChannel?
+    
+    init(message: ChatMessage, channel: ChatChannel?) {
+        self.message = message
+        self.channel = channel
+    }
 }
 
-public struct ReactionNotificationContent {
+public class ReactionNotificationContent {
     public let message: ChatMessage
     public let channel: ChatChannel?
+    
+    public init(message: ChatMessage, channel: ChatChannel?) {
+        self.message = message
+        self.channel = channel
+    }
 }
 
-public struct UnknownNotificationContent {
+public class UnknownNotificationContent {
     public let content: UNNotificationContent
+    
+    public init(content: UNNotificationContent) {
+        self.content = content
+    }
 }
 
 public enum ChatPushNotificationContent {
@@ -30,11 +44,12 @@ enum ChatPushNotificationError: Error {
     case invalidUserInfo(String)
 }
 
-public struct ChatPushNotificationInfo {
+public class ChatPushNotificationInfo {
     public let cid: ChannelId?
     public let messageId: MessageId?
     public let eventType: EventType?
-    
+    public let custom: [String: String]?
+
     public init(content: UNNotificationContent) throws {
         guard let payload = content.userInfo["stream"], let dict = payload as? [String: String] else {
             throw ChatPushNotificationError.invalidUserInfo("missing stream key or not a [string:string] dict")
@@ -57,6 +72,8 @@ public struct ChatPushNotificationInfo {
         } else {
             messageId = nil
         }
+
+        custom = dict.removingValues(forKeys: ["cid", "type", "id"])
     }
 }
 
