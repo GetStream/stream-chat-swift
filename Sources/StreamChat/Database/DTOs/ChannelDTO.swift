@@ -178,10 +178,8 @@ extension NSManagedObjectContext {
         
         // Backend only returns a boolean for hidden state
         // on channel query and channel list query
-        // Inexistence of this field implies `false`
-        // but only for those queries
-        if query != nil {
-            dto.isHidden = payload.isHidden ?? false
+        if let isHidden = payload.isHidden {
+            dto.isHidden = isHidden
         }
         
         dto.cooldownDuration = payload.cooldownDuration
@@ -283,10 +281,10 @@ extension ChannelDTO {
         // This is safe to do since backend appends a `hidden: false` filter when it's not specified
         // (so backend never returns hidden channels unless `hidden: true` is explicitly passed)
         // We can't pass bools directly to NSPredicate so we have to use integers
-        let correctHidden = NSPredicate(format: "isHidden == %i", query.filter.hiddenFilterValue == true ? 1 : 0)
+        let isHidden = NSPredicate(format: "isHidden == %i", query.filter.hiddenFilterValue == true ? 1 : 0)
         
         let subpredicates = [
-            matchingQuery, notDeleted, correctHidden
+            matchingQuery, notDeleted, isHidden
         ]
         
         request.predicate = NSCompoundPredicate(type: .and, subpredicates: subpredicates)
