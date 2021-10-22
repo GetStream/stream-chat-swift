@@ -119,7 +119,7 @@ class MemberModelDTO_Tests: XCTestCase {
         let cid: ChannelId = .unique
 
         // Create member and query.
-        let member: MemberPayload = .dummy(userId: userId)
+        let member: MemberPayload = .dummy(user: .dummy(userId: userId))
         let query = ChannelMemberListQuery(cid: cid, filter: .equal("id", to: userId))
 
         // Save channel, then member, and pass the query in.

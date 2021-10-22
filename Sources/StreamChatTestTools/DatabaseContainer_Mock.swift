@@ -265,7 +265,14 @@ extension DatabaseContainer {
     ) throws {
         try writeSynchronously { session in
             try session.saveMember(
-                payload: .dummy(userId: userId, role: role, isMemberBanned: isMemberBanned, isUserBanned: isGloballyBanned),
+                payload: .dummy(
+                    user: .dummy(
+                        userId: userId,
+                        isBanned: isGloballyBanned
+                    ),
+                    role: role,
+                    isMemberBanned: isMemberBanned
+                ),
                 channelId: query?.cid ?? cid,
                 query: query
             )
