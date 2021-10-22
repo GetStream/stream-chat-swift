@@ -73,13 +73,13 @@ import StreamChatUI
 class ViewController: ChatChannelListVC {
     
     override func viewDidLoad() {
-        super.viewDidLoad()
-
         /// the query used to retrieve channels
         let query = ChannelListQuery.init(filter: .containMembers(userIds: [ChatClient.shared.currentUserId!]))
         
         /// create a controller and assign it to this view controller
         self.controller = ChatClient.shared.channelListController(query: query)
+
+        super.viewDidLoad()
     }
 }
 ```
