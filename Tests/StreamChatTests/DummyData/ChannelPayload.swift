@@ -9,28 +9,10 @@ import XCTest
 
 extension ChannelDetailPayload {
     /// Returns a dummy channel detail payload with the given cid
-    static func dummy(cid: ChannelId) -> ChannelDetailPayload {
-        let member: MemberPayload =
-            .init(
-                user: .init(
-                    id: .unique,
-                    name: .unique,
-                    imageURL: nil,
-                    role: .admin,
-                    createdAt: .unique,
-                    updatedAt: .unique,
-                    lastActiveAt: .unique,
-                    isOnline: true,
-                    isInvisible: true,
-                    isBanned: true,
-                    teams: [],
-                    extraData: [:]
-                ),
-                role: .moderator,
-                createdAt: .unique,
-                updatedAt: .unique
-            )
-        
+    static func dummy(
+        cid: ChannelId,
+        members: [MemberPayload] = [.dummy()]
+    ) -> ChannelDetailPayload {
         let channelCreatedDate = Date.unique
         let lastMessageAt: Date? = Bool.random() ? channelCreatedDate.addingTimeInterval(.random(in: 100_000...900_000)) : nil
         
@@ -71,7 +53,7 @@ extension ChannelDetailPayload {
             isFrozen: true,
             memberCount: 100,
             team: .unique,
-            members: [member],
+            members: members,
             cooldownDuration: .random(in: 0...120)
         )
     }

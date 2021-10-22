@@ -8,15 +8,14 @@ import Foundation
 extension MemberPayload {
     /// Returns a dummy member payload with the given `userId` and `role`
     static func dummy(
-        userId: UserId = .unique,
+        user: UserPayload = .dummy(userId: .unique),
         createdAt: Date = .unique,
         updatedAt: Date = .unique,
         role: MemberRole = .member,
-        isMemberBanned: Bool = false,
-        isUserBanned: Bool = false
+        isMemberBanned: Bool = false
     ) -> MemberPayload {
         .init(
-            user: .dummy(userId: userId, isBanned: isUserBanned),
+            user: user,
             role: role,
             createdAt: createdAt,
             updatedAt: updatedAt,
@@ -27,6 +26,10 @@ extension MemberPayload {
 
 extension MemberContainerPayload {
     static func dummy(userId: UserId = .unique) -> MemberContainerPayload {
-        .init(member: .dummy(userId: userId), invite: nil, memberRole: nil)
+        .init(
+            member: .dummy(user: .dummy(userId: userId)),
+            invite: nil,
+            memberRole: nil
+        )
     }
 }

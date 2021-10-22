@@ -11,7 +11,7 @@ final class ChannelMemberListSortingKey_Tests: XCTestCase {
     func test_sortDescriptor_keyPaths_areValid() throws {
         // Put all `ChannelMemberListSortingKey`s in an array
         // We don't use `CaseIterable` since we only need this for tests
-        let sortingKeys = [ChannelMemberListSortingKey.createdAt]
+        let sortingKeys: [ChannelMemberListSortingKey] = [.createdAt, .name]
         
         // Iterate over keys...
         for key in sortingKeys {
@@ -19,6 +19,11 @@ final class ChannelMemberListSortingKey_Tests: XCTestCase {
             case .createdAt:
                 // ... and make sure all keys correspond to a valid KeyPath
                 XCTAssertEqual(key.rawValue, NSExpression(forKeyPath: \MemberDTO.memberCreatedAt).keyPath)
+            case .name:
+                XCTAssertEqual(
+                    ChannelMemberListSortingKey.name.rawValue,
+                    NSExpression(forKeyPath: \MemberDTO.user.name).keyPath
+                )
             }
         }
     }

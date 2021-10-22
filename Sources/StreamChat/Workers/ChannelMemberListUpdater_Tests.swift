@@ -58,9 +58,9 @@ final class ChannelMemberListUpdater_Tests: XCTestCase {
         
         // Simulate members response.
         let payload = ChannelMemberListPayload(members: [
-            .dummy(userId: .unique),
-            .dummy(userId: .unique),
-            .dummy(userId: .unique)
+            .dummy(user: .dummy(userId: .unique)),
+            .dummy(user: .dummy(userId: .unique)),
+            .dummy(user: .dummy(userId: .unique))
         ])
         apiClient.test_simulateResponse(.success(payload))
         
@@ -110,9 +110,9 @@ final class ChannelMemberListUpdater_Tests: XCTestCase {
         
         // Simulate members response.
         let payload = ChannelMemberListPayload(members: [
-            .dummy(userId: .unique),
-            .dummy(userId: .unique),
-            .dummy(userId: .unique)
+            .dummy(user: .dummy(userId: .unique)),
+            .dummy(user: .dummy(userId: .unique)),
+            .dummy(user: .dummy(userId: .unique))
         ])
         apiClient.test_simulateResponse(.success(payload))
         
@@ -214,9 +214,9 @@ final class ChannelMemberListUpdater_Tests: XCTestCase {
         
         // Simulate members response with success.
         let payload = ChannelMemberListPayload(members: [
-            .dummy(userId: .unique),
-            .dummy(userId: .unique),
-            .dummy(userId: .unique)
+            .dummy(user: .dummy(userId: .unique)),
+            .dummy(user: .dummy(userId: .unique)),
+            .dummy(user: .dummy(userId: .unique))
         ])
         apiClient.test_simulateResponse(.success(payload))
         
