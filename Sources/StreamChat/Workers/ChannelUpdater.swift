@@ -24,12 +24,7 @@ class ChannelUpdater: Worker {
                 let payload = try result.get()
                 channelCreatedCallback?(payload.channel.cid)
                 self.database.write { session in
-                    let dto = try session.saveChannel(payload: payload)
-                    // Backend only returns a boolean for hidden state
-                    // on channel query and channel list query
-                    // Inexistence of this field implies `false`
-                    // but only for those queries
-                    dto.isHidden = payload.isHidden ?? false
+                    try session.saveChannel(payload: payload)
                 } completion: { error in
                     if let error = error {
                         completion?(.failure(error))
