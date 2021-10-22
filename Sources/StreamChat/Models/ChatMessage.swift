@@ -70,6 +70,9 @@ public struct ChatMessage {
     
     /// The reactions to the message created by any user.
     public let reactionScores: [MessageReactionType: Int]
+
+    /// The number of reactions per reaction type.
+    public let reactionCounts: [MessageReactionType: Int]
     
     /// The user which is the author of the message.
     ///
@@ -159,6 +162,7 @@ public struct ChatMessage {
         quotedMessage: @escaping () -> ChatMessage?,
         isSilent: Bool,
         reactionScores: [MessageReactionType: Int],
+        reactionCounts: [MessageReactionType: Int],
         author: @escaping () -> ChatUser,
         mentionedUsers: @escaping () -> Set<ChatUser>,
         threadParticipants: @escaping () -> [ChatUser],
@@ -188,6 +192,7 @@ public struct ChatMessage {
         self.extraData = extraData
         self.isSilent = isSilent
         self.reactionScores = reactionScores
+        self.reactionCounts = reactionCounts
         self.localState = localState
         self.isFlaggedByCurrentUser = isFlaggedByCurrentUser
         self.isSentByCurrentUser = isSentByCurrentUser
@@ -204,14 +209,17 @@ public struct ChatMessage {
     }
 }
 
-extension ChatMessage {
+public extension ChatMessage {
     /// Indicates whether the message is pinned or not.
-    public var isPinned: Bool {
+    var isPinned: Bool {
         pinDetails != nil
     }
-}
 
-public extension ChatMessage {
+    /// The total number of reactions.
+    var totalReactionsCount: Int {
+        reactionCounts.values.reduce(0, +)
+    }
+
     /// Returns all the attachments with the payload of the provided type.
     ///
     /// - Important: Attachments are loaded lazily and cached to maintain high performance.

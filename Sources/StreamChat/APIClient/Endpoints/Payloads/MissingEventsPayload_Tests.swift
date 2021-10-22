@@ -37,6 +37,7 @@ final class MissingEventsPayload_Tests: XCTestCase {
         XCTAssertTrue(message.latestReactions.isEmpty)
         XCTAssertTrue(message.ownReactions.isEmpty)
         XCTAssertTrue(message.reactionScores.isEmpty)
+        XCTAssertTrue(message.reactionCounts.isEmpty)
         XCTAssertEqual(message.replyCount, 0)
         XCTAssertEqual(message.createdAt, "2020-09-07T12:25:50.702323Z".toDate())
         XCTAssertEqual(message.updatedAt, "2020-09-07T12:25:50.702324Z".toDate())

@@ -116,6 +116,7 @@ class ChannelDTO_Tests: XCTestCase {
             Assert.willBeEqual(payload.messages[0].mentionedUsers.count, loadedChannel.latestMessages.first?.mentionedUsers.count)
             Assert.willBeEqual(payload.messages[0].parentId, loadedChannel.latestMessages.first?.parentMessageId)
             Assert.willBeEqual(payload.messages[0].reactionScores, loadedChannel.latestMessages.first?.reactionScores)
+            Assert.willBeEqual(payload.messages[0].reactionCounts, loadedChannel.latestMessages.first?.reactionCounts)
             Assert.willBeEqual(payload.messages[0].replyCount, loadedChannel.latestMessages.first?.replyCount)
 
             // Pinned Messages
@@ -290,6 +291,7 @@ class ChannelDTO_Tests: XCTestCase {
             replyCount: 0,
             extraData: [:],
             reactionScores: ["like": 1],
+            reactionCounts: ["like": 1],
             isSilent: false,
             attachments: [],
             pinned: true
@@ -322,6 +324,7 @@ class ChannelDTO_Tests: XCTestCase {
             replyCount: 0,
             extraData: [:],
             reactionScores: ["like": 1],
+            reactionCounts: ["like": 1],
             isSilent: false,
             attachments: [],
             pinned: true

@@ -64,11 +64,15 @@ open class ChatMessageReactionAuthorsVC:
         collectionView.alwaysBounceVertical = false
         collectionView.alwaysBounceHorizontal = false
 
-        if let message = messageController?.message, message.reactionScores.count <= 10 {
+        if let message = messageController?.message {
+            // Pre-load the latest reactions
             content = .init(reactions: Array(message.latestReactions))
             collectionView.reloadData()
-        } else {
-            // TODO: Perform call
+
+            // If there are more than the latest reactions, perform getReactions() call
+            if message.totalReactionsCount > message.latestReactions.count {
+                // TODO: Call more (+ pagination)
+            }
         }
     }
 
@@ -113,7 +117,7 @@ open class ChatMessageReactionAuthorsVC:
     override open func updateContent() {
         super.updateContent()
 
-        topLabel.text = "\(content?.reactions.count ?? 0) Message Reactions"
+        topLabel.text = "\(messageController.message?.totalReactionsCount ?? 0) Message Reactions"
     }
 
     open func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {

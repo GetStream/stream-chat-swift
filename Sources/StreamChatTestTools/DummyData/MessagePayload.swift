@@ -61,6 +61,7 @@ extension MessagePayload {
             latestReactions: latestReactions,
             ownReactions: ownReactions,
             reactionScores: ["like": 1],
+            reactionCounts: ["like": 1],
             isSilent: isSilent,
             attachments: attachments,
             channel: channel,

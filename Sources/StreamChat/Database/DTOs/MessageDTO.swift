@@ -23,6 +23,7 @@ class MessageDTO: NSManagedObject {
     @NSManaged var extraData: Data
     @NSManaged var isSilent: Bool
     @NSManaged var reactionScores: [String: Int]
+    @NSManaged var reactionCounts: [String: Int]
     
     @NSManaged var user: UserDTO
     @NSManaged var mentionedUsers: Set<UserDTO>
@@ -317,6 +318,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         message.extraData = try JSONEncoder.default.encode(extraData)
         message.isSilent = isSilent
         message.reactionScores = [:]
+        message.reactionCounts = [:]
 
         message.attachments = Set(
             try attachments.enumerated().map { index, attachment in
@@ -398,6 +400,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         dto.user = user
 
         dto.reactionScores = payload.reactionScores.mapKeys { $0.rawValue }
+        dto.reactionCounts = payload.reactionScores.mapKeys { $0.rawValue }
 
         // If user edited their message to remove mentioned users, we need to get rid of it
         // as backend does
@@ -571,6 +574,7 @@ private extension ChatMessage {
         replyCount = Int(dto.replyCount)
         isSilent = dto.isSilent
         reactionScores = dto.reactionScores.mapKeys { MessageReactionType(rawValue: $0) }
+        reactionCounts = dto.reactionCounts.mapKeys { MessageReactionType(rawValue: $0) }
         
         do {
             extraData = try JSONDecoder.default.decode([String: RawJSON].self, from: dto.extraData)

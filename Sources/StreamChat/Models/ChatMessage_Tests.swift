@@ -88,4 +88,16 @@ final class ChatMessage_Tests: XCTestCase {
             targetAttachment
         )
     }
+
+    func test_totalReactionsCount() {
+        let message = ChatMessage.mock(
+            id: .anonymous,
+            cid: .unique,
+            text: "Text",
+            author: ChatUser.mock(id: .anonymous),
+            reactionCounts: ["like": 2, "super-like": 3]
+        )
+
+        XCTAssertEqual(message.totalReactionsCount, 5)
+    }
 }
