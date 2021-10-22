@@ -17,7 +17,7 @@ open class ChatChannelListVC: _ViewController,
     /// The `ChatChannelListController` instance that provides channels data.
     public var controller: ChatChannelListController!
 
-    @Atomic private var loadingPreviousMessages: Bool = false
+    private var loadingPreviousMessages: Bool = false
 
     open private(set) lazy var loadingIndicator: UIActivityIndicatorView = {
         if #available(iOS 13.0, *) {
@@ -189,14 +189,17 @@ open class ChatChannelListVC: _ViewController,
     }
 
     open func loadMoreChannels() {
-        if _loadingPreviousMessages.compareAndSwap(old: false, new: true) {
-            controller.loadNextChannels(completion: { [weak self] _ in
-                guard let self = self else {
-                    return
-                }
-                self.loadingPreviousMessages = false
-            })
+        guard !loadingPreviousMessages else {
+            return
         }
+        loadingPreviousMessages = true
+
+        controller.loadNextChannels(completion: { [weak self] _ in
+            guard let self = self else {
+                return
+            }
+            self.loadingPreviousMessages = false
+        })
     }
 
     open func swipeableViewWillShowActionViews(for indexPath: IndexPath) {
