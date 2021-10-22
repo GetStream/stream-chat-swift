@@ -195,10 +195,7 @@ open class ChatChannelListVC: _ViewController,
         loadingPreviousMessages = true
 
         controller.loadNextChannels(completion: { [weak self] _ in
-            guard let self = self else {
-                return
-            }
-            self.loadingPreviousMessages = false
+            self?.loadingPreviousMessages = false
         })
     }
 
