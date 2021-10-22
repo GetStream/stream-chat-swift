@@ -168,10 +168,7 @@ open class ChatChannelVC:
         loadingPreviousMessages = true
 
         channelController.loadPreviousMessages(completion: { [weak self] _ in
-            guard let self = self else {
-                return
-            }
-            self.loadingPreviousMessages = false
+            self?.loadingPreviousMessages = false
         })
     }
 
