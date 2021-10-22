@@ -231,6 +231,8 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
         client.apiClient
     )
     
+    private var markingRead: Bool = false
+
     /// A type-erased delegate.
     var multicastDelegate: MulticastDelegate<ChatChannelControllerDelegate> = .init() {
         didSet {
@@ -1029,7 +1031,7 @@ public extension ChatChannelController {
             }
         }
     }
-    
+
     /// Marks the channel as read.
     ///
     /// - Parameter completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
@@ -1055,8 +1057,29 @@ public extension ChatChannelController {
             return
         }
 
-        updater.markRead(cid: cid) { error in
+        guard let userId = client.currentUserId else {
+            callback {
+                completion?(nil)
+            }
+            return
+        }
+
+        guard channel?.latestMessages.first?.author.id != userId else {
+            callback {
+                completion?(nil)
+            }
+            return
+        }
+
+        guard !markingRead else {
+            return
+        }
+
+        markingRead = true
+
+        updater.markRead(cid: cid, userId: userId) { error in
             self.callback {
+                self.markingRead = false
                 completion?(error)
             }
         }

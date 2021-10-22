@@ -18,6 +18,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Fix `ChannelListSortingKey.hasUnread` causing a crash when used [#1561](https://github.com/GetStream/stream-chat-swift/issues/1561)
 - Fix Logger not logging when custom `subsystem` is specified [#1559](https://github.com/GetStream/stream-chat-swift/issues/1559)
 - Fix channel not updated when a member is removed [#1560](https://github.com/GetStream/stream-chat-swift/issues/1560)
+- Fix channel mark read [#1569](https://github.com/GetStream/stream-chat-swift/pull/1569)
 - Fix lowercased username was used for mention instead of original name [#1575](https://github.com/GetStream/stream-chat-swift/issues/1575)
 
 ### 🔄 Changed

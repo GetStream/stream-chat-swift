@@ -204,7 +204,7 @@ protocol ChannelReadDatabaseSession {
         userId: UserId,
         lastReadAt: Date,
         unreadMessageCount: Int
-    ) throws -> ChannelReadDTO
+    ) -> ChannelReadDTO
     
     /// Fetches `ChannelReadDTO` with the given `cid` and `userId` from the DB.
     /// Returns `nil` if no `ChannelReadDTO` matching the `cid` and `userId`  exists.
@@ -212,6 +212,9 @@ protocol ChannelReadDatabaseSession {
     
     /// Fetches `ChannelReadDTO`entities for the given `userId` from the DB.
     func loadChannelReads(for userId: UserId) -> [ChannelReadDTO]
+    
+    /// Sets the channel `cid` as read for `userId`
+    func markChannelAsRead(cid: ChannelId, userId: UserId, at: Date)
 }
 
 protocol ChannelMuteDatabaseSession {

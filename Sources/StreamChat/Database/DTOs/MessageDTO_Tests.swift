@@ -31,6 +31,7 @@ class MessageDTO_Tests: XCTestCase {
             messageId: .unique,
             authorUserId: userId,
             extraData: ["k1": .string("v1")],
+            createdAt: max(channelPayload.lastMessageAt ?? channelPayload.createdAt, channelPayload.createdAt) + 1,
             channel: channelPayload
         )
         
@@ -46,6 +47,7 @@ class MessageDTO_Tests: XCTestCase {
             ownReactions: [
                 .dummy(messageId: messageId, user: UserPayload.dummy(userId: userId))
             ],
+            createdAt: max(channelPayload.lastMessageAt ?? channelPayload.createdAt, channelPayload.createdAt) + 2,
             channel: channelPayload,
             pinned: true,
             pinnedByUserId: .unique,
@@ -53,8 +55,7 @@ class MessageDTO_Tests: XCTestCase {
             pinExpires: .unique
         )
         
-        // Asynchronously save the payload to the db
-        database.write { session in
+        try! database.writeSynchronously { session in
             // Save the message, it should also save the channel
             try! session.saveMessage(payload: messagePayload, for: channelId)
         }
@@ -76,87 +77,82 @@ class MessageDTO_Tests: XCTestCase {
             return Set(try! database.viewContext.fetch(request))
         }
         
-        // Assert the channel data was saved correctly
-        AssertAsync {
-            // Channel details
-            Assert.willBeEqual(channelId, loadedChannel?.cid)
-            Assert.willBeEqual(channelPayload.name, loadedChannel?.name)
-            Assert.willBeEqual(channelPayload.imageURL, loadedChannel?.imageURL)
-            Assert.willBeEqual(channelPayload.memberCount, loadedChannel?.memberCount)
-            Assert.willBeEqual(channelPayload.extraData, loadedChannel?.extraData)
-            Assert.willBeEqual(channelPayload.typeRawValue, loadedChannel?.type.rawValue)
-            Assert.willBeEqual(loadedChannel?.lastMessageAt, channelPayload.lastMessageAt)
-            Assert.willBeEqual(channelPayload.createdAt, loadedChannel?.createdAt)
-            Assert.willBeEqual(channelPayload.updatedAt, loadedChannel?.updatedAt)
-            Assert.willBeEqual(channelPayload.deletedAt, loadedChannel?.deletedAt)
-            
-            // Config
-            Assert.willBeEqual(channelPayload.config.reactionsEnabled, loadedChannel?.config.reactionsEnabled)
-            Assert.willBeEqual(channelPayload.config.typingEventsEnabled, loadedChannel?.config.typingEventsEnabled)
-            Assert.willBeEqual(channelPayload.config.readEventsEnabled, loadedChannel?.config.readEventsEnabled)
-            Assert.willBeEqual(channelPayload.config.connectEventsEnabled, loadedChannel?.config.connectEventsEnabled)
-            Assert.willBeEqual(channelPayload.config.uploadsEnabled, loadedChannel?.config.uploadsEnabled)
-            Assert.willBeEqual(channelPayload.config.repliesEnabled, loadedChannel?.config.repliesEnabled)
-            Assert.willBeEqual(channelPayload.config.searchEnabled, loadedChannel?.config.searchEnabled)
-            Assert.willBeEqual(channelPayload.config.mutesEnabled, loadedChannel?.config.mutesEnabled)
-            Assert.willBeEqual(channelPayload.config.urlEnrichmentEnabled, loadedChannel?.config.urlEnrichmentEnabled)
-            Assert.willBeEqual(channelPayload.config.messageRetention, loadedChannel?.config.messageRetention)
-            Assert.willBeEqual(channelPayload.config.maxMessageLength, loadedChannel?.config.maxMessageLength)
-            Assert.willBeEqual(channelPayload.config.commands, loadedChannel?.config.commands)
-            Assert.willBeEqual(channelPayload.config.createdAt, loadedChannel?.config.createdAt)
-            Assert.willBeEqual(channelPayload.config.updatedAt, loadedChannel?.config.updatedAt)
-            
-            // Creator
-            Assert.willBeEqual(channelPayload.createdBy!.id, loadedChannel?.createdBy?.id)
-            Assert.willBeEqual(channelPayload.createdBy!.createdAt, loadedChannel?.createdBy?.userCreatedAt)
-            Assert.willBeEqual(channelPayload.createdBy!.updatedAt, loadedChannel?.createdBy?.userUpdatedAt)
-            Assert.willBeEqual(channelPayload.createdBy!.lastActiveAt, loadedChannel?.createdBy?.lastActiveAt)
-            Assert.willBeEqual(channelPayload.createdBy!.isOnline, loadedChannel?.createdBy?.isOnline)
-            Assert.willBeEqual(channelPayload.createdBy!.isBanned, loadedChannel?.createdBy?.isBanned)
-            Assert.willBeEqual(channelPayload.createdBy!.role, loadedChannel?.createdBy?.userRole)
-            Assert.willBeEqual(channelPayload.createdBy!.extraData, loadedChannel?.createdBy?.extraData)
-        }
+        // Channel details
+        XCTAssertEqual(channelId, loadedChannel?.cid)
+        XCTAssertEqual(channelPayload.name, loadedChannel?.name)
+        XCTAssertEqual(channelPayload.imageURL, loadedChannel?.imageURL)
+        XCTAssertEqual(channelPayload.memberCount, loadedChannel?.memberCount)
+        XCTAssertEqual(channelPayload.extraData, loadedChannel?.extraData)
+        XCTAssertEqual(channelPayload.typeRawValue, loadedChannel?.type.rawValue)
+        XCTAssertEqual(loadedChannel?.lastMessageAt, messagePayload.createdAt)
+        XCTAssertEqual(channelPayload.createdAt, loadedChannel?.createdAt)
+        XCTAssertEqual(channelPayload.updatedAt, loadedChannel?.updatedAt)
+        XCTAssertEqual(channelPayload.deletedAt, loadedChannel?.deletedAt)
         
+        // Config
+        XCTAssertEqual(channelPayload.config.reactionsEnabled, loadedChannel?.config.reactionsEnabled)
+        XCTAssertEqual(channelPayload.config.typingEventsEnabled, loadedChannel?.config.typingEventsEnabled)
+        XCTAssertEqual(channelPayload.config.readEventsEnabled, loadedChannel?.config.readEventsEnabled)
+        XCTAssertEqual(channelPayload.config.connectEventsEnabled, loadedChannel?.config.connectEventsEnabled)
+        XCTAssertEqual(channelPayload.config.uploadsEnabled, loadedChannel?.config.uploadsEnabled)
+        XCTAssertEqual(channelPayload.config.repliesEnabled, loadedChannel?.config.repliesEnabled)
+        XCTAssertEqual(channelPayload.config.searchEnabled, loadedChannel?.config.searchEnabled)
+        XCTAssertEqual(channelPayload.config.mutesEnabled, loadedChannel?.config.mutesEnabled)
+        XCTAssertEqual(channelPayload.config.urlEnrichmentEnabled, loadedChannel?.config.urlEnrichmentEnabled)
+        XCTAssertEqual(channelPayload.config.messageRetention, loadedChannel?.config.messageRetention)
+        XCTAssertEqual(channelPayload.config.maxMessageLength, loadedChannel?.config.maxMessageLength)
+        XCTAssertEqual(channelPayload.config.commands, loadedChannel?.config.commands)
+        XCTAssertEqual(channelPayload.config.createdAt, loadedChannel?.config.createdAt)
+        XCTAssertEqual(channelPayload.config.updatedAt, loadedChannel?.config.updatedAt)
+        
+        // Creator
+        XCTAssertEqual(channelPayload.createdBy!.id, loadedChannel?.createdBy?.id)
+        XCTAssertEqual(channelPayload.createdBy!.createdAt, loadedChannel?.createdBy?.userCreatedAt)
+        XCTAssertEqual(channelPayload.createdBy!.updatedAt, loadedChannel?.createdBy?.userUpdatedAt)
+        XCTAssertEqual(channelPayload.createdBy!.lastActiveAt, loadedChannel?.createdBy?.lastActiveAt)
+        XCTAssertEqual(channelPayload.createdBy!.isOnline, loadedChannel?.createdBy?.isOnline)
+        XCTAssertEqual(channelPayload.createdBy!.isBanned, loadedChannel?.createdBy?.isBanned)
+        XCTAssertEqual(channelPayload.createdBy!.role, loadedChannel?.createdBy?.userRole)
+        XCTAssertEqual(channelPayload.createdBy!.extraData, loadedChannel?.createdBy?.extraData)
+
         // Assert the message was saved correctly
-        AssertAsync {
-            Assert.willBeEqual(messagePayload.id, loadedMessage?.id)
-            Assert.willBeEqual(messagePayload.type.rawValue, loadedMessage?.type)
-            Assert.willBeEqual(messagePayload.user.id, loadedMessage?.user.id)
-            Assert.willBeEqual(messagePayload.createdAt, loadedMessage?.createdAt)
-            Assert.willBeEqual(messagePayload.updatedAt, loadedMessage?.updatedAt)
-            Assert.willBeEqual(messagePayload.deletedAt, loadedMessage?.deletedAt)
-            Assert.willBeEqual(messagePayload.text, loadedMessage?.text)
-            Assert.willBeEqual(loadedMessage?.command, messagePayload.command)
-            Assert.willBeEqual(loadedMessage?.args, messagePayload.args)
-            Assert.willBeEqual(messagePayload.parentId, loadedMessage?.parentMessageId)
-            Assert.willBeEqual(messagePayload.quotedMessage?.id, loadedMessage?.quotedMessage?.id)
-            Assert.willBeEqual(messagePayload.showReplyInChannel, loadedMessage?.showReplyInChannel)
-            Assert.willBeEqual(messagePayload.pinned, loadedMessage?.pinned)
-            Assert.willBeEqual(messagePayload.pinExpires, loadedMessage?.pinExpires!)
-            Assert.willBeEqual(messagePayload.pinnedAt, loadedMessage?.pinnedAt!)
-            Assert.willBeEqual(messagePayload.pinnedBy!.id, loadedMessage?.pinnedBy!.id)
-            Assert.willBeEqual(
-                messagePayload.mentionedUsers.map(\.id),
-                loadedMessage?.mentionedUsers.map(\.id)
-            )
-            Assert.willBeEqual(
-                messagePayload.threadParticipants.map(\.id),
-                (loadedMessage?.threadParticipants.array as? [UserDTO])?.map(\.id)
-            )
-            Assert.willBeEqual(Int32(messagePayload.replyCount), loadedMessage?.replyCount)
-            Assert.willBeEqual(messagePayload.extraData, loadedMessage.map {
-                try? JSONDecoder.default.decode([String: RawJSON].self, from: $0.extraData)
-            })
-            Assert.willBeEqual(messagePayload.reactionScores, loadedMessage?.reactionScores.mapKeys { reaction in
-                MessageReactionType(rawValue: reaction)
-            })
-            Assert.willBeEqual(loadedMessage?.reactions, loadedReactions)
-            Assert.willBeEqual(messagePayload.isSilent, loadedMessage?.isSilent)
-            Assert.willBeEqual(
-                Set(messagePayload.attachmentIDs(cid: channelId)),
-                loadedMessage.flatMap { Set($0.attachments.map(\.attachmentID)) }
-            )
-        }
+        XCTAssertEqual(messagePayload.id, loadedMessage?.id)
+        XCTAssertEqual(messagePayload.type.rawValue, loadedMessage?.type)
+        XCTAssertEqual(messagePayload.user.id, loadedMessage?.user.id)
+        XCTAssertEqual(messagePayload.createdAt, loadedMessage?.createdAt)
+        XCTAssertEqual(messagePayload.updatedAt, loadedMessage?.updatedAt)
+        XCTAssertEqual(messagePayload.deletedAt, loadedMessage?.deletedAt)
+        XCTAssertEqual(messagePayload.text, loadedMessage?.text)
+        XCTAssertEqual(loadedMessage?.command, messagePayload.command)
+        XCTAssertEqual(loadedMessage?.args, messagePayload.args)
+        XCTAssertEqual(messagePayload.parentId, loadedMessage?.parentMessageId)
+        XCTAssertEqual(messagePayload.quotedMessage?.id, loadedMessage?.quotedMessage?.id)
+        XCTAssertEqual(messagePayload.showReplyInChannel, loadedMessage?.showReplyInChannel)
+        XCTAssertEqual(messagePayload.pinned, loadedMessage?.pinned)
+        XCTAssertEqual(messagePayload.pinExpires, loadedMessage?.pinExpires!)
+        XCTAssertEqual(messagePayload.pinnedAt, loadedMessage?.pinnedAt!)
+        XCTAssertEqual(messagePayload.pinnedBy!.id, loadedMessage?.pinnedBy!.id)
+        XCTAssertEqual(
+            messagePayload.mentionedUsers.map(\.id),
+            loadedMessage?.mentionedUsers.map(\.id)
+        )
+        XCTAssertEqual(
+            messagePayload.threadParticipants.map(\.id),
+            (loadedMessage?.threadParticipants.array as? [UserDTO])?.map(\.id)
+        )
+        XCTAssertEqual(Int32(messagePayload.replyCount), loadedMessage?.replyCount)
+        XCTAssertEqual(messagePayload.extraData, loadedMessage.map {
+            try? JSONDecoder.default.decode([String: RawJSON].self, from: $0.extraData)
+        })
+        XCTAssertEqual(messagePayload.reactionScores, loadedMessage?.reactionScores.mapKeys { reaction in
+            MessageReactionType(rawValue: reaction)
+        })
+        XCTAssertEqual(loadedMessage?.reactions, loadedReactions)
+        XCTAssertEqual(messagePayload.isSilent, loadedMessage?.isSilent)
+        XCTAssertEqual(
+            Set(messagePayload.attachmentIDs(cid: channelId)),
+            loadedMessage.flatMap { Set($0.attachments.map(\.attachmentID)) }
+        )
     }
     
     func test_messagePayload_withExtraData_isStoredAndLoadedFromDB() {

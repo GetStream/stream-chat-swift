@@ -64,6 +64,7 @@ class ChannelUpdaterMock: ChannelUpdater {
     @Atomic var createNewMessage_completion: ((Result<MessageId, Error>) -> Void)?
     
     @Atomic var markRead_cid: ChannelId?
+    @Atomic var markRead_userId: UserId?
     @Atomic var markRead_completion: ((Error?) -> Void)?
     
     @Atomic var enableSlowMode_cid: ChannelId?
@@ -280,8 +281,9 @@ class ChannelUpdaterMock: ChannelUpdater {
         removeMembers_completion = completion
     }
     
-    override func markRead(cid: ChannelId, completion: ((Error?) -> Void)? = nil) {
+    override func markRead(cid: ChannelId, userId: UserId, completion: ((Error?) -> Void)? = nil) {
         markRead_cid = cid
+        markRead_userId = userId
         markRead_completion = completion
     }
     
