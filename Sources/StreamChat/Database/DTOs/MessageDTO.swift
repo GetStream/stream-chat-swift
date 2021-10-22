@@ -650,7 +650,7 @@ private extension ChatMessage {
             $_latestReactions = ({
                 Set(
                     MessageReactionDTO
-                        .loadLatestReactions(for: dto.id, limit: 5, context: context)
+                        .loadLatestReactions(for: dto.id, limit: 10, context: context)
                         .map { $0.asModel() }
                 )
             }, dto.managedObjectContext)
