@@ -2,7 +2,7 @@
 title: Components
 ---
 
-The Stream SDK UI components are fully customizable and interchangeable through the `Components` configuration type that holds all the reusable views of the SDK. You can customize these views by subclassing them and replacing them in the configuration with your subclass. Just like the `Appearance` configuration mentioned in the [Theming](../customization/theming) page, you should modify the values of the `Components` configuration from `Components.default` as early as possible in your application life-cycle.
+The Stream SDK UI components are fully customizable and interchangeable through the `Components` configuration type that holds all the reusable views of the SDK. You can customize these views by subclassing them and replacing them in the configuration with your subclass. Just like the `Appearance` configuration mentioned in the [Theming](../customization/theming.md) page, you should modify the values of the `Components` configuration from `Components.default` as early as possible in your application life-cycle.
 
 ## Customizing Components
 

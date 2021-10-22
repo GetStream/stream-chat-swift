@@ -162,7 +162,7 @@ Image attachment requires prior uploading before the message is sent. The local 
 
 `Version 3.x`
 
-Image attachments are exposed as `ChatMessageDefaultAttachment`. Mandatory fields are **optinal** because of `ChatMessageDefaultAttachment` being used for all built-in attachment types.
+Image attachments are exposed as `ChatMessageDefaultAttachment`. Mandatory fields are **optional** because of `ChatMessageDefaultAttachment` being used for all built-in attachment types.
 
 ```swift
 // Get `.image` attachments
@@ -184,7 +184,7 @@ if let image = imageAttachments.first {
 
 `Version 4.x`
 
-Image attachments are exposed as `ChatMessageImageAttachment`. Mandatory fields are **non-optinal** and can be accessed directly on attachment.
+Image attachments are exposed as `ChatMessageImageAttachment`. Mandatory fields are **non-optional** and can be accessed directly on attachment.
 
 ```swift
 // Get the first `.image` attachment
@@ -205,7 +205,7 @@ The ephemeral message containing giphy attachment will be created when `/giphy` 
 
 `Version 3.x`
 
-Giphy attachments are exposed as `ChatMessageDefaultAttachment`. Mandatory fields are **optinal** because of `ChatMessageDefaultAttachment` being used for all built-in attachment types.
+Giphy attachments are exposed as `ChatMessageDefaultAttachment`. Mandatory fields are **optional** because of `ChatMessageDefaultAttachment` being used for all built-in attachment types.
 
 ```swift
 // Get `.giphy` attachments
@@ -225,7 +225,7 @@ if let giphy = giphyAttachments.first {
 
 `Version 4.x`
 
-Giphy attachments are exposed as `ChatMessageGiphyAttachment`. Mandatory fields are **non-optinal** and can be accessed directly on attachment.
+Giphy attachments are exposed as `ChatMessageGiphyAttachment`. Mandatory fields are **non-optional** and can be accessed directly on attachment.
 
 ```swift
 // Get the first `.giphy` attachment
@@ -241,7 +241,7 @@ The link attachment will be added to the message automatically if the message is
 
 `Version 3.x`
 
-Giphy attachments are exposed as `ChatMessageDefaultAttachment`. Mandatory fields are **optinal** because of `ChatMessageDefaultAttachment` being used for all built-in attachment types.
+Giphy attachments are exposed as `ChatMessageDefaultAttachment`. Mandatory fields are **optional** because of `ChatMessageDefaultAttachment` being used for all built-in attachment types.
 
 ```swift
 // Get `.link(...)` attachments
@@ -261,7 +261,7 @@ if let link = linkAttachments.first {
 
 `Version 4.x`
 
-Link preview attachments are exposed as `ChatMessageLinkAttachment`. Mandatory fields are **non-optinal** and can be accessed directly on attachment.
+Link preview attachments are exposed as `ChatMessageLinkAttachment`. Mandatory fields are **non-optional** and can be accessed directly on attachment.
 
 ```swift
 // Get the first `.linkPreview` attachment
