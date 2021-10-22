@@ -88,7 +88,7 @@ final class DemoAppCoordinator: NSObject, UNUserNotificationCenterDelegate {
         
         // Config
         Components.default.channelListRouter = DemoChatChannelListRouter.self
-        Components.default.messageListVC = CustomMessageListVC.self
+        Components.default.channelVC = CustomChannelVC.self
         Components.default.messageContentView = CustomMessageContentView.self
         Appearance.default.localizationProvider = { key, table in
             Bundle.main.localizedString(forKey: key, value: nil, table: table)
@@ -129,7 +129,7 @@ final class DemoAppCoordinator: NSObject, UNUserNotificationCenterDelegate {
     }
 }
 
-class CustomMessageListVC: ChatMessageListVC {
+class CustomChannelVC: ChatChannelVC {
     override func viewDidLoad() {
         super.viewDidLoad()
     
@@ -143,7 +143,7 @@ class CustomMessageListVC: ChatMessageListVC {
     }
     
     @objc func debugTap() {
-        if let cid = dataSource?.channel(for: self)?.cid {
+        if let cid = channelController.cid {
             (navigationController?.viewControllers.first as? ChatChannelListVC)?.router.didTapMoreButton(for: cid)
         }
     }

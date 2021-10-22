@@ -14,7 +14,6 @@ concurrency:
       
 env:
   HOMEBREW_NO_INSTALL_CLEANUP=1: 1 # Disable cleanup for homebrew, we don't need it on CI
-  DEVELOPER_DIR: /Applications/Xcode_12.5.1.app/Contents/Developer
 
 jobs:
   upload--build:

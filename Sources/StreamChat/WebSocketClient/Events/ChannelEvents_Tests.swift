@@ -298,14 +298,14 @@ class ChannelEventsIntegration_Tests: XCTestCase {
 
         let channelId: ChannelId = ChannelId(type: .messaging, id: "default-channel-6")
         
-        try client.databaseContainer.createChannel(cid: channelId, withMessages: false, withQuery: false, hiddenAt: Date.unique)
-        XCTAssertNotNil(client.databaseContainer.viewContext.channel(cid: channelId)?.hiddenAt)
+        try client.databaseContainer.createChannel(cid: channelId, withMessages: false, withQuery: false, isHidden: true)
+        XCTAssertEqual(client.databaseContainer.viewContext.channel(cid: channelId)?.isHidden, true)
        
         let unwrappedEvent = try XCTUnwrap(event)
         client.eventNotificationCenter.process(unwrappedEvent)
 
         AssertAsync {
-            Assert.willBeNil(self.client.databaseContainer.viewContext.channel(cid: channelId)?.hiddenAt)
+            Assert.willBeEqual(self.client.databaseContainer.viewContext.channel(cid: channelId)?.isHidden, false)
         }
     }
     
@@ -316,13 +316,13 @@ class ChannelEventsIntegration_Tests: XCTestCase {
         let channelId: ChannelId = ChannelId(type: .messaging, id: "default-channel-6")
         
         try client.databaseContainer.createChannel(cid: channelId, withMessages: false, withQuery: false)
-        XCTAssertNil(client.databaseContainer.viewContext.channel(cid: channelId)?.hiddenAt)
+        XCTAssertEqual(client.databaseContainer.viewContext.channel(cid: channelId)?.isHidden, false)
      
         let unwrappedEvent = try XCTUnwrap(event)
         client.eventNotificationCenter.process(unwrappedEvent)
 
         AssertAsync {
-            Assert.willNotBeNil(self.client.databaseContainer.viewContext.channel(cid: channelId)?.hiddenAt)
+            Assert.willBeEqual(self.client.databaseContainer.viewContext.channel(cid: channelId)?.isHidden, true)
         }
     }
     

@@ -107,7 +107,7 @@ class ChannelUpdater: Worker {
                 // hide the channel
                 self?.database.write {
                     if let channel = $0.channel(cid: cid) {
-                        channel.hiddenAt = Date()
+                        channel.isHidden = true
                         if clearHistory {
                             channel.truncatedAt = Date()
                         }

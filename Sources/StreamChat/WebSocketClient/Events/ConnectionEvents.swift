@@ -8,7 +8,7 @@ public protocol ConnectionEvent: Event {
     var connectionId: String { get }
 }
 
-public struct HealthCheckEvent: ConnectionEvent, EventDTO {
+public class HealthCheckEvent: ConnectionEvent, EventDTO {
     public let connectionId: String
     
     let payload: EventPayload

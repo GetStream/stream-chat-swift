@@ -44,6 +44,7 @@ class ChannelDTO_Tests: XCTestCase {
             // Channel details
             Assert.willBeEqual(channelId, loadedChannel.cid)
             
+            Assert.willBeEqual(payload.isHidden, loadedChannel.isHidden)
             Assert.willBeEqual(payload.watcherCount, loadedChannel.watcherCount)
             Assert.willBeEqual(Set(payload.watchers?.map(\.id) ?? []), Set(loadedChannel.lastActiveWatchers.map(\.id)))
             Assert.willBeEqual(payload.channel.name, loadedChannel.name)
@@ -543,27 +544,19 @@ class ChannelDTO_Tests: XCTestCase {
             // Save the non-hidden channel
             try session.saveChannel(payload: self.dummyPayload(with: visibleCid1), query: query)
 
-            // Save a channel with `hiddenAt` < `lastMessageAt` -> should be visible
+            // Save a channel with `isHidden` = false -> should be visible
             let visible = try session.saveChannel(
                 payload: self.dummyPayload(with: visibleCid2, numberOfMessages: 10),
                 query: query
             )
-            visible.hiddenAt = .unique(before: visible.lastMessageAt!)
+            visible.isHidden = false
 
-            // Save a channel with `hiddenAt` > `lastMessageAt` -> should NOT be visible
+            // Save a channel with `isHidden` = `true` -> should NOT be visible
             let hidden1 = try session.saveChannel(
                 payload: self.dummyPayload(with: .unique, numberOfMessages: 10),
                 query: query
             )
-            hidden1.hiddenAt = .unique(after: hidden1.lastMessageAt!)
-
-            // Save a channel with existing `hiddenAt` but no messages -> should NOT be visible
-            let hidden2 = try session.saveChannel(
-                payload: self.dummyPayload(with: .unique, numberOfMessages: 0),
-                query: query
-            )
-            assert(hidden2.lastMessageAt == nil)
-            hidden2.hiddenAt = .unique(after: hidden2.createdAt)
+            hidden1.isHidden = true
         }
 
         let fetchRequest = ChannelDTO.channelListFetchRequest(query: query)

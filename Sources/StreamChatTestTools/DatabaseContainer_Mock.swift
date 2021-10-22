@@ -140,14 +140,14 @@ extension DatabaseContainer {
         cid: ChannelId = .unique,
         withMessages: Bool = true,
         withQuery: Bool = false,
-        hiddenAt: Date? = nil,
+        isHidden: Bool = false,
         channelReads: Set<ChannelReadDTO> = [],
         channelExtraData: [String: RawJSON] = [:]
     ) throws {
         try writeSynchronously { session in
             let dto = try session.saveChannel(payload: XCTestCase().dummyPayload(with: cid, channelExtraData: channelExtraData))
 
-            dto.hiddenAt = hiddenAt
+            dto.isHidden = isHidden
             dto.reads = channelReads
             // Delete possible messages from the payload if `withMessages` is false
             if !withMessages {

@@ -34,10 +34,7 @@ class ChannelDTO: NSManagedObject {
     //
     @NSManaged var truncatedAt: Date?
 
-    // This field lives only locally and is not populated directly from the payload. It's populated only form the
-    // `ChannelVisibilityEventMiddleware` and it's main purpose is to control the visibility of hidden channels
-    // locally.
-    @NSManaged var hiddenAt: Date?
+    @NSManaged var isHidden: Bool
 
     @NSManaged var watcherCount: Int64
     @NSManaged var memberCount: Int64
@@ -135,6 +132,21 @@ extension ChannelDTO: EphemeralValuesContainer {
 // MARK: Saving and loading the data
 
 extension NSManagedObjectContext {
+    func saveChannelList(
+        payload: ChannelListPayload,
+        query: ChannelListQuery
+    ) throws -> [ChannelDTO] {
+        // The query will be saved during `saveChannel` call
+        // but in case this query does not have any channels,
+        // the query won't be saved, which will cause any future
+        // channels to not become linked to this query
+        _ = saveQuery(query: query)
+        
+        return try payload.channels.map { channelPayload in
+            try saveChannel(payload: channelPayload, query: query)
+        }
+    }
+    
     func saveChannel(
         payload: ChannelDetailPayload,
         query: ChannelListQuery?
@@ -163,6 +175,13 @@ extension NSManagedObjectContext {
         dto.memberCount = Int64(clamping: payload.memberCount)
 
         dto.isFrozen = payload.isFrozen
+        
+        // Backend only returns a boolean for hidden state
+        // on channel query and channel list query
+        if let isHidden = payload.isHidden {
+            dto.isHidden = isHidden
+        }
+        
         dto.cooldownDuration = payload.cooldownDuration
 
         dto.team = try payload.team.map { try saveTeam(teamId: $0) }
@@ -257,20 +276,18 @@ extension ChannelDTO {
         let matchingQuery = NSPredicate(format: "ANY queries.filterHash == %@", query.filter.filterHash)
         let notDeleted = NSPredicate(format: "deletedAt == nil")
 
-        // This is not 100% correct and should be ideally solved differently. This makes it impossible
-        // to query for hidden channels from the SDK. However, it's the limitation other platforms have, too,
-        // so this feels like a good-enough solution for now.
-        let notHidden = NSCompoundPredicate(orPredicateWithSubpredicates: [
-            NSPredicate(format: "hiddenAt == nil"),
-            NSCompoundPredicate(andPredicateWithSubpredicates: [
-                NSPredicate(format: "lastMessageAt != nil"),
-                NSPredicate(format: "lastMessageAt > hiddenAt")
-            ])
-        ])
-
-        request.predicate = NSCompoundPredicate(type: .and, subpredicates: [
-            matchingQuery, notDeleted, notHidden
-        ])
+        // If the query contains a filter for the `isHidden` property,
+        // we use the filter here
+        // This is safe to do since backend appends a `hidden: false` filter when it's not specified
+        // (so backend never returns hidden channels unless `hidden: true` is explicitly passed)
+        // We can't pass bools directly to NSPredicate so we have to use integers
+        let isHidden = NSPredicate(format: "isHidden == %i", query.filter.hiddenFilterValue == true ? 1 : 0)
+        
+        let subpredicates = [
+            matchingQuery, notDeleted, isHidden
+        ]
+        
+        request.predicate = NSCompoundPredicate(type: .and, subpredicates: subpredicates)
         return request
     }
     
@@ -384,6 +401,7 @@ extension ChatChannel {
             createdAt: dto.createdAt,
             updatedAt: dto.updatedAt,
             deletedAt: dto.deletedAt,
+            isHidden: dto.isHidden,
             createdBy: dto.createdBy?.asModel(),
             config: try! JSONDecoder().decode(ChannelConfig.self, from: dto.config),
             isFrozen: dto.isFrozen,

@@ -480,6 +480,46 @@ class ChannelListController_Tests: XCTestCase {
         AssertAsync.willBeEqual(controller.channels.map(\.cid), [])
     }
     
+    func test_hiddenChannel_isExcluded_whenFilterDoesntContainHiddenKey() throws {
+        // Add 2 channels to the DB
+        let cid: ChannelId = .unique
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: self.dummyPayload(with: cid), query: self.query)
+            let dto = try session.saveChannel(payload: self.dummyPayload(with: .unique), query: self.query)
+            dto.isHidden = true
+        }
+        
+        // Simulate `synchronize` call
+        controller.synchronize()
+        
+        // Assert only non-hidden one is tracked
+        XCTAssertEqual(controller.channels.map(\.cid), [cid])
+        // Assert tracked channels are not hidden
+        XCTAssertEqual(controller.channels.first?.isHidden, false)
+    }
+    
+    func test_hiddenChannel_isIncluded_whenFilterContainsHiddenKey() throws {
+        // Create controller with hidden filter
+        query = .init(filter: .equal(.hidden, to: true))
+        controller = .init(query: query, client: client)
+        
+        // Add 2 channels to the DB
+        let cid: ChannelId = .unique
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: self.dummyPayload(with: .unique), query: self.query)
+            let dto = try session.saveChannel(payload: self.dummyPayload(with: cid), query: self.query)
+            dto.isHidden = true
+        }
+        
+        // Simulate `synchronize` call
+        controller.synchronize()
+        
+        // Assert only hidden channel is tracked
+        XCTAssertEqual(controller.channels.map(\.cid), [cid])
+        // Assert tracked channels are hidden
+        XCTAssertEqual(controller.channels.first?.isHidden, true)
+    }
+    
     // MARK: - Delegate tests
     
     func test_settingDelegate_leadsToFetchingLocalData() {

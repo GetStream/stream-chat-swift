@@ -31,6 +31,11 @@ extension DatabaseSessionMock {
         return try underlyingSession.saveCurrentUserDevices(devices, clearExisting: clearExisting)
     }
     
+    func saveChannelList(payload: ChannelListPayload, query: ChannelListQuery) throws -> [ChannelDTO] {
+        try throwErrorIfNeeded()
+        return try underlyingSession.saveChannelList(payload: payload, query: query)
+    }
+    
     func saveChannel(
         payload: ChannelDetailPayload,
         query: ChannelListQuery?

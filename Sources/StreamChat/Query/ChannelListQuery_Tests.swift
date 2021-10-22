@@ -61,4 +61,21 @@ final class ChannelListFilterScope_Tests: XCTestCase {
         XCTAssertEqual(query, .init(filter: .equal(.cid, to: cid)))
         XCTAssertEqual(query.filter.filterHash, cid.rawValue)
     }
+    
+    func test_hiddenFilter_valueIsDetected() {
+        let hiddenValue = Bool.random()
+        let testValues: [(Filter<ChannelListFilterScope>, Bool?)] = [
+            (.equal(.hidden, to: hiddenValue), hiddenValue),
+            (.containMembers(userIds: [.unique]), nil),
+            (.autocomplete(.cid, text: .unique), nil),
+            (.and([.exists(.imageURL), .autocomplete(.name, text: .unique)]), nil),
+            (.and([.exists(.imageURL), .equal(.hidden, to: hiddenValue)]), hiddenValue),
+            (.and([.exists(.imageURL), .or([.autocomplete(.name, text: .unique), .equal(.hidden, to: hiddenValue)])]), hiddenValue),
+            (.and([.exists(.imageURL), .or([.autocomplete(.name, text: .unique), .equal(.frozen, to: true)])]), nil)
+        ]
+        
+        for testValue in testValues {
+            XCTAssertEqual(testValue.0.hiddenFilterValue, testValue.1, "\(testValue) failed")
+        }
+    }
 }

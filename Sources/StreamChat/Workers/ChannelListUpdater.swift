@@ -29,15 +29,7 @@ class ChannelListUpdater: Worker {
 //                            try session.deleteChannels(query: channelListQuery)
 //                        }
                         
-                        // The query will be saved during `saveChannel` call
-                        // but in case this query does not have any channels,
-                        // the query won't be saved, which will cause any future
-                        // channels to not become linked to this query
-                        session.saveQuery(query: channelListQuery)
-                        
-                        try channelListPayload.channels.forEach {
-                            try session.saveChannel(payload: $0, query: channelListQuery)
-                        }
+                        try session.saveChannelList(payload: channelListPayload, query: channelListQuery)
                     } completion: { error in
                         if let error = error {
                             log.error("Failed to save `ChannelListPayload` to the database. Error: \(error)")

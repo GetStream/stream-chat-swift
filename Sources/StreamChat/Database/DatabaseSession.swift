@@ -156,6 +156,13 @@ extension MessageDatabaseSession {
 }
 
 protocol ChannelDatabaseSession {
+    /// Creates `ChannelDTO` objects for the given channel payloads and `query`.
+    @discardableResult
+    func saveChannelList(
+        payload: ChannelListPayload,
+        query: ChannelListQuery
+    ) throws -> [ChannelDTO]
+    
     /// Creates a new `ChannelDTO` object in the database with the given `payload` and `query`.
     @discardableResult
     func saveChannel(

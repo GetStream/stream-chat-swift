@@ -25,6 +25,8 @@ struct ChannelPayload: Decodable {
     let pinnedMessages: [MessagePayload]
     
     let channelReads: [ChannelReadPayload]
+    
+    let isHidden: Bool?
 
     private enum CodingKeys: String, CodingKey {
         case channel
@@ -35,11 +37,13 @@ struct ChannelPayload: Decodable {
         case watchers
         case membership
         case watcherCount = "watcher_count"
+        case hidden
     }
     
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         channel = try container.decode(ChannelDetailPayload.self, forKey: .channel)
+        isHidden = try container.decodeIfPresent(Bool.self, forKey: .hidden)
         watchers = try container.decodeIfPresent([UserPayload].self, forKey: .watchers)
         watcherCount = try container.decodeIfPresent(Int.self, forKey: .watcherCount)
         members = try container.decode([MemberPayload].self, forKey: .members)
@@ -53,6 +57,7 @@ struct ChannelPayload: Decodable {
     
     init(
         channel: ChannelDetailPayload,
+        isHidden: Bool? = nil,
         watcherCount: Int,
         watchers: [UserPayload]?,
         members: [MemberPayload],
@@ -62,6 +67,7 @@ struct ChannelPayload: Decodable {
         channelReads: [ChannelReadPayload]
     ) {
         self.channel = channel
+        self.isHidden = isHidden
         self.watcherCount = watcherCount
         self.watchers = watchers
         self.members = members
@@ -100,6 +106,12 @@ struct ChannelDetailPayload: Decodable {
     /// Checks if the channel is frozen.
     public let isFrozen: Bool
     
+    /// Checks if the channel is hidden.
+    /// Backend only sends this field for `QueryChannel` and `QueryChannels` API calls,
+    /// but not for events.
+    /// Missing `hidden` field doesn't mean `false` for this reason.
+    let isHidden: Bool?
+    
     let members: [MemberPayload]?
     
     let memberCount: Int
@@ -129,6 +141,10 @@ struct ChannelDetailPayload: Decodable {
         updatedAt = try container.decode(Date.self, forKey: .updatedAt)
         deletedAt = try container.decodeIfPresent(Date.self, forKey: .deletedAt)
         createdBy = try container.decodeIfPresent(UserPayload.self, forKey: .createdBy)
+        // For `hidden`, we don't fallback to `false`
+        // since this field is not sent for all API calls and for events
+        // We can't assume anything regarding this flag when it's absent
+        isHidden = try container.decodeIfPresent(Bool.self, forKey: .hidden)
         lastMessageAt = try container.decodeIfPresent(Date.self, forKey: .lastMessageAt)
         isFrozen = try container.decode(Bool.self, forKey: .frozen)
         team = try container.decodeIfPresent(String.self, forKey: .team)
@@ -158,6 +174,7 @@ struct ChannelDetailPayload: Decodable {
         createdAt: Date,
         deletedAt: Date?,
         updatedAt: Date,
+        isHidden: Bool? = nil,
         createdBy: UserPayload?,
         config: ChannelConfig,
         isFrozen: Bool,
@@ -182,6 +199,7 @@ struct ChannelDetailPayload: Decodable {
         self.team = team
         self.members = members
         self.cooldownDuration = cooldownDuration
+        self.isHidden = isHidden
     }
 }
 
@@ -201,7 +219,7 @@ struct ChannelReadPayload: Decodable {
 }
 
 /// A channel config.
-public struct ChannelConfig: Codable {
+public class ChannelConfig: Codable {
     private enum CodingKeys: String, CodingKey {
         case reactionsEnabled = "reactions"
         case typingEventsEnabled = "typing_events"
@@ -251,7 +269,7 @@ public struct ChannelConfig: Codable {
     /// Determines if users are able to flag messages. Enabled by default.
     public var flagsEnabled: Bool { commands.map(\.name).contains("flag") }
         
-    public init(from decoder: Decoder) throws {
+    public required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         reactionsEnabled = try container.decode(Bool.self, forKey: .reactionsEnabled)
         typingEventsEnabled = try container.decode(Bool.self, forKey: .typingEventsEnabled)
@@ -270,7 +288,7 @@ public struct ChannelConfig: Codable {
         updatedAt = try container.decode(Date.self, forKey: .updatedAt)
     }
     
-    internal init(
+    internal required init(
         reactionsEnabled: Bool = false,
         typingEventsEnabled: Bool = false,
         readEventsEnabled: Bool = false,
