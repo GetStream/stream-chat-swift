@@ -1064,8 +1064,7 @@ public extension ChatChannelController {
             return
         }
 
-        /// Dont call mark read for empty channels or if the latest message is from the current user
-        guard let message = channel?.latestMessages.first, message.author.id != userId else {
+        guard channel?.latestMessages.first?.author.id != userId else {
             callback {
                 completion?(nil)
             }
