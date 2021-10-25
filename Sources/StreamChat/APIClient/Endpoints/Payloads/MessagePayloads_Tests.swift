@@ -198,3 +198,13 @@ class MessageRepliesPayload_Tests: XCTestCase {
         XCTAssertTrue(payload.messages.count == 2)
     }
 }
+
+class MessageReactionsPayload_Tests: XCTestCase {
+    func test_isSerialized() throws {
+        let mockJSON = XCTestCase.mockData(fromFile: "MessageReactionsPayload")
+        let payload = try JSONDecoder.default.decode(MessageReactionsPayload.self, from: mockJSON)
+
+        // Assert 2 reactions successfully decoded.
+        XCTAssertTrue(payload.reactions.count == 2)
+    }
+}

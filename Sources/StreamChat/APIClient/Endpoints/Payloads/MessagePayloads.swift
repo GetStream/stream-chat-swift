@@ -279,6 +279,10 @@ struct MessageRepliesPayload: Decodable {
     let messages: [MessagePayload]
 }
 
+struct MessageReactionsPayload: Decodable {
+    let reactions: [MessageReactionPayload]
+}
+
 // TODO: Command???
 
 /// A command in a message, e.g. /giphy.
