@@ -62,6 +62,29 @@ class MessageController_SwiftUI_Tests: iOS13TestCase {
         
         AssertAsync.willBeEqual(Array(observableObject.replies), [newReply])
     }
+
+    func test_observableObject_reactsToDelegateReactionsChangesCallback() {
+        let observableObject = messageController.observableObject
+
+        let newReaction: ChatMessageReaction = .init(
+            type: "likes",
+            score: 3,
+            createdAt: .unique,
+            updatedAt: .unique,
+            extraData: [:],
+            author: .unique
+        )
+
+        messageController.reactions_simulated = [newReaction]
+        messageController.delegateCallback {
+            $0.messageController(
+                self.messageController,
+                didChangeReactions: [.insert(newReaction, index: .init())]
+            )
+        }
+
+        AssertAsync.willBeEqual(Array(observableObject.reactions), [newReaction])
+    }
     
     func test_observableObject_reactsToDelegateStateChangesCallback() {
         let observableObject = messageController.observableObject
@@ -90,6 +113,11 @@ class MessageControllerMock: ChatMessageController {
     var replies_simulated: [ChatMessage]?
     override var replies: LazyCachedMapCollection<ChatMessage> {
         replies_simulated.map { $0.lazyCachedMap { $0 } } ?? super.replies
+    }
+
+    var reactions_simulated: [ChatMessageReaction]?
+    override var reactions: LazyCachedMapCollection<ChatMessageReaction> {
+        reactions_simulated.map { $0.lazyCachedMap { $0 } } ?? super.reactions
     }
     
     var state_simulated: DataController.State?

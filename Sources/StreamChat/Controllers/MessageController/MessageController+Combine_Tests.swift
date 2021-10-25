@@ -89,4 +89,29 @@ class MessageController_Combine_Tests: iOS13TestCase {
         
         XCTAssertEqual(recording.output, [[.insert(newReply, index: .init())]])
     }
+
+    func test_reactionsChangesPublisher() {
+        // Setup Recording publishers
+        var recording = Record<[ListChange<ChatMessageReaction>], Never>.Recording()
+
+        // Setup the chain
+        messageController
+            .reactionsChangesPublisher
+            .sink(receiveValue: { recording.receive($0) })
+            .store(in: &cancellables)
+
+        // Keep only the weak reference to the controller. The existing publisher should keep it alive.
+        weak var controller: MessageControllerMock? = messageController
+        messageController = nil
+
+        let newReaction: ChatMessageReaction = .init(
+            type: "like", score: 1, createdAt: .unique, updatedAt: .unique, extraData: [:], author: .unique
+        )
+        controller?.reactions_simulated = [newReaction]
+        controller?.delegateCallback {
+            $0.messageController(controller!, didChangeReactions: [.insert(newReaction, index: .init())])
+        }
+
+        XCTAssertEqual(recording.output, [[.insert(newReaction, index: .init())]])
+    }
 }

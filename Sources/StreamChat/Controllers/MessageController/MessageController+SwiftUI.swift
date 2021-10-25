@@ -18,8 +18,11 @@ extension ChatMessageController {
         /// The message that current controller observes.
         @Published public private(set) var message: ChatMessage?
         
-        /// The replies to the message controller observes.
+        /// The replies the message controller observes.
         @Published public private(set) var replies: LazyCachedMapCollection<ChatMessage> = []
+
+        /// The reactions the message controller observes.
+        @Published public private(set) var reactions: LazyCachedMapCollection<ChatMessageReaction> = []
         
         /// The current state of the Controller.
         @Published public private(set) var state: DataController.State
@@ -33,6 +36,7 @@ extension ChatMessageController {
             
             message = controller.message
             replies = controller.replies
+            reactions = controller.reactions
         }
     }
 }
@@ -55,5 +59,12 @@ extension ChatMessageController.ObservableObject: ChatMessageControllerDelegate 
     
     public func controller(_ controller: DataController, didChangeState state: DataController.State) {
         self.state = state
+    }
+
+    public func messageController(
+        _ controller: ChatMessageController,
+        didChangeReactions changes: [ListChange<ChatMessageReaction>]
+    ) {
+        reactions = controller.reactions
     }
 }
