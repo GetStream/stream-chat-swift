@@ -198,6 +198,35 @@ class MessageUpdater: Worker {
             }
         }
     }
+
+    func loadReactions(
+        cid: ChannelId,
+        messageId: MessageId,
+        pagination: Pagination,
+        completion: ((Result<MessageReactionsPayload, Error>) -> Void)? = nil
+    ) {
+        let endpoint: Endpoint<MessageReactionsPayload> = .loadReactions(
+            messageId: messageId,
+            pagination: pagination
+        )
+
+        apiClient.request(endpoint: endpoint) { result in
+            switch result {
+            case let .success(payload):
+                self.database.write({ session in
+                    try payload.reactions.forEach { try session.saveReaction(payload: $0) }
+                }, completion: { error in
+                    if let error = error {
+                        completion?(.failure(error))
+                    } else {
+                        completion?(.success(payload))
+                    }
+                })
+            case let .failure(error):
+                completion?(.failure(error))
+            }
+        }
+    }
     
     /// Flags or unflags the message with the provided `messageId` depending on `flag` value.
     /// If the message doesn't exist locally it will be fetched and saved locally first first.

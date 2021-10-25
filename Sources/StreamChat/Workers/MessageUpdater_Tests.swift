@@ -572,6 +572,94 @@ final class MessageUpdater_Tests: XCTestCase {
         // Assert fetched message is saved to the database
         XCTAssertNotNil(database.viewContext.message(id: messageId))
     }
+
+    // MARK: - Load reactions
+
+    func test_loadReactions_makesCorrectAPICall() {
+        let messageId: MessageId = .unique
+        let pagination: Pagination = .init(pageSize: 25)
+
+        messageUpdater.loadReactions(cid: .unique, messageId: messageId, pagination: pagination)
+
+        let expectedEndpoint: Endpoint<MessageReactionsPayload> = .loadReactions(
+            messageId: messageId,
+            pagination: pagination
+        )
+        XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
+    }
+
+    func test_loadReactions_propagatesRequestError() {
+        var completionCalledError: Error?
+        messageUpdater.loadReactions(cid: .unique, messageId: .unique, pagination: .init(pageSize: 25)) {
+            completionCalledError = $0.error
+        }
+
+        let error = TestError()
+        apiClient.test_simulateResponse(Result<MessageReactionsPayload, Error>.failure(error))
+
+        AssertAsync.willBeEqual(completionCalledError as? TestError, error)
+    }
+
+    func test_loadReactions_propagatesDatabaseError() throws {
+        let reactionsPayload: MessageReactionsPayload = .init(
+            reactions: [
+                .dummy(messageId: .unique, user: .dummy(userId: .unique)),
+                .dummy(messageId: .unique, user: .dummy(userId: .unique))
+            ]
+        )
+
+        // Create channel in the database
+        let cid = ChannelId.unique
+        try database.createChannel(cid: cid)
+
+        // Update database container to throw the error on write
+        let testError = TestError()
+        database.write_errorResponse = testError
+
+        var completionCalledError: Error?
+        messageUpdater.loadReactions(cid: cid, messageId: .unique, pagination: .init(pageSize: 25)) {
+            completionCalledError = $0.error
+        }
+
+        // Simulate API response with success
+        apiClient.test_simulateResponse(Result<MessageReactionsPayload, Error>.success(reactionsPayload))
+
+        // Assert database error is propagated
+        AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
+    }
+
+    func test_loadReactions_savesReactionsToDatabase() throws {
+        let currentUserId: UserId = .unique
+        let messageId: MessageId = .unique
+        let cid: ChannelId = .unique
+
+        // Create current user in the database
+        try database.createCurrentUser(id: currentUserId)
+
+        // Create channel in the database
+        try database.createChannel(cid: cid)
+
+        // Create message in the database
+        try database.createMessage(id: messageId)
+
+        var completionCalled = false
+        messageUpdater.loadReactions(cid: cid, messageId: messageId, pagination: .init(pageSize: 25)) { _ in
+            completionCalled = true
+        }
+
+        // Simulate API response with success
+        let reactionsPayload: MessageReactionsPayload = .init(
+            reactions: [
+                .dummy(type: "like", messageId: messageId, user: .dummy(userId: currentUserId)),
+                .dummy(type: "dislike", messageId: messageId, user: .dummy(userId: currentUserId))
+            ]
+        )
+        apiClient.test_simulateResponse(Result<MessageReactionsPayload, Error>.success(reactionsPayload))
+
+        AssertAsync.willBeTrue(completionCalled)
+        XCTAssertNotNil(database.viewContext.reaction(messageId: messageId, userId: currentUserId, type: "like"))
+        XCTAssertNotNil(database.viewContext.reaction(messageId: messageId, userId: currentUserId, type: "dislike"))
+    }
     
     // MARK: - Flag message
     

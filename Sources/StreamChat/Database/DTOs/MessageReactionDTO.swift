@@ -28,6 +28,15 @@ final class MessageReactionDTO: NSManagedObject {
 }
 
 extension MessageReactionDTO {
+    static func reactionsFetchRequest(
+        for messageId: MessageId
+    ) -> NSFetchRequest<MessageReactionDTO> {
+        let request = NSFetchRequest<MessageReactionDTO>(entityName: MessageReactionDTO.entityName)
+        request.predicate = NSPredicate(format: "message.id == %@", messageId)
+        request.sortDescriptors = [NSSortDescriptor(keyPath: \MessageReactionDTO.updatedAt, ascending: false)]
+        return request
+    }
+    
     static func load(
         userId: String,
         messageId: MessageId,
