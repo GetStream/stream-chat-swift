@@ -46,6 +46,16 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
         startObserversIfNeeded()
         return repliesObserver?.items ?? []
     }
+
+    /// The total reactions of the message the controller represents.
+    ///
+    /// To observe changes of the reactions, set your class as a delegate of this controller or use the provided
+    /// `Combine` publishers.
+    ///
+    public var reactions: LazyCachedMapCollection<ChatMessageReaction> {
+        startObserversIfNeeded()
+        return reactionsObserver?.items ?? []
+    }
     
     /// Describes the ordering the replies are presented.
     ///
@@ -113,6 +123,9 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
     /// The observer used to listen replies updates.
     /// It will be reset on `listOrdering` changes.
     @Cached private var repliesObserver: ListDatabaseObserver<ChatMessage, MessageDTO>?
+
+    /// The observer used to listen reactions updates.
+    @Cached private var reactionsObserver: ListDatabaseObserver<ChatMessageReaction, MessageReactionDTO>?
     
     /// The worker used to fetch the remote data and communicate with servers.
     private lazy var messageUpdater: MessageUpdater = environment.messageUpdaterBuilder(
@@ -134,6 +147,7 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
         super.init()
         
         setRepliesObserver()
+        setReactionsObserver()
     }
 
     override public func synchronize(_ completion: ((Error?) -> Void)? = nil) {
@@ -146,7 +160,7 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
     }
     
     /// If the `state` of the controller is `initialized`, this method calls `startObserving` on
-    /// `messageObserver` and `repliesObserver` to fetch the local data and start observing the changes.
+    /// `messageObserver`, `repliesObserver` and `reactionsObserver` to fetch the local data and start observing the changes.
     /// It also changes `state` based on the result.
     ///
     /// It's safe to call this method repeatedly.
@@ -156,6 +170,7 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
         do {
             try messageObserver.startObserving()
             try repliesObserver?.startObserving()
+            try reactionsObserver?.startObserving()
             
             state = .localDataFetched
         } catch {
@@ -242,7 +257,7 @@ public extension ChatMessageController {
         }
     }
     
-    /// Loads previous messages from backend.
+    /// Loads previous messages from the backend.
     ///
     /// - Parameters:
     ///   - messageId: ID of the last fetched message. You will get messages `older` than the provided ID.
@@ -279,7 +294,7 @@ public extension ChatMessageController {
         }
     }
     
-    /// Loads new messages from backend.
+    /// Loads new messages from the backend.
     ///
     /// - Parameters:
     ///   - messageId: ID of the current first message. You will get messages `newer` then the provided ID.
@@ -302,6 +317,25 @@ public extension ChatMessageController {
             cid: cid,
             messageId: self.messageId,
             pagination: MessagesPagination(pageSize: limit, parameter: .greaterThan(messageId))
+        ) { result in
+            self.callback { completion?(result.error) }
+        }
+    }
+
+    /// Loads new reactions from the backend.
+    ///
+    /// - Parameters:
+    ///   - limit: The reactions page size.
+    ///   - completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
+    ///                 If request fails, the completion will be called with an error.
+    func loadNextReactions(
+        limit: Int = 25,
+        completion: ((Error?) -> Void)? = nil
+    ) {
+        messageUpdater.loadReactions(
+            cid: cid,
+            messageId: messageId,
+            pagination: Pagination(pageSize: limit, offset: reactions.count)
         ) { result in
             self.callback { completion?(result.error) }
         }
@@ -454,6 +488,13 @@ extension ChatMessageController {
             _ itemCreator: @escaping (MessageDTO) -> ChatMessage,
             _ fetchedResultsControllerType: NSFetchedResultsController<MessageDTO>.Type
         ) -> ListDatabaseObserver<ChatMessage, MessageDTO> = ListDatabaseObserver.init
+
+        var reactionsObserverBuilder: (
+            _ context: NSManagedObjectContext,
+            _ fetchRequest: NSFetchRequest<MessageReactionDTO>,
+            _ itemCreator: @escaping (MessageReactionDTO) -> ChatMessageReaction,
+            _ fetchedResultsControllerType: NSFetchedResultsController<MessageReactionDTO>.Type
+        ) -> ListDatabaseObserver<ChatMessageReaction, MessageReactionDTO> = ListDatabaseObserver.init
         
         var messageUpdaterBuilder: (
             _ database: DatabaseContainer,
@@ -511,6 +552,35 @@ private extension ChatMessageController {
             return observer
         }
     }
+
+    func setReactionsObserver() {
+        _reactionsObserver.computeValue = { [weak self] in
+            guard let self = self else {
+                log.warning("Callback called while self is nil")
+                return nil
+            }
+
+            let observer = self.environment.reactionsObserverBuilder(
+                self.client.databaseContainer.viewContext,
+                MessageReactionDTO.reactionsFetchRequest(for: self.messageId),
+                { $0.asModel() as ChatMessageReaction },
+                NSFetchedResultsController<MessageReactionDTO>.self
+            )
+
+            observer.onChange = { [weak self] changes in
+                self?.delegateCallback { [weak self] in
+                    guard let self = self else {
+                        log.warning("Callback called while self is nil")
+                        return
+                    }
+
+                    $0.messageController(self, didChangeReactions: changes)
+                }
+            }
+
+            return observer
+        }
+    }
 }
 
 // MARK: - Delegate
@@ -522,12 +592,17 @@ public protocol ChatMessageControllerDelegate: DataControllerStateDelegate {
     
     /// The controller observed changes in the replies of the observed `ChatMessage`.
     func messageController(_ controller: ChatMessageController, didChangeReplies changes: [ListChange<ChatMessage>])
+
+    /// The controller observed changes in the reactions of the observed `ChatMessage`.
+    func messageController(_ controller: ChatMessageController, didChangeReactions changes: [ListChange<ChatMessageReaction>])
 }
 
 public extension ChatMessageControllerDelegate {
     func messageController(_ controller: ChatMessageController, didChangeMessage change: EntityChange<ChatMessage>) {}
     
     func messageController(_ controller: ChatMessageController, didChangeReplies changes: [ListChange<ChatMessage>]) {}
+
+    func messageController(_ controller: ChatMessageController, didChangeReactions changes: [ListChange<ChatMessageReaction>]) {}
 }
 
 /// `ChatMessageControllerDelegate` uses this protocol to communicate changes to its delegate.

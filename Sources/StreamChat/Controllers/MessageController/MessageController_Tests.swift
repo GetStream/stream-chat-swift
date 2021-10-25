@@ -583,6 +583,36 @@ final class MessageController_Tests: XCTestCase {
             [.insert(replyModel!, index: [0, 0])]
         )
     }
+
+    func test_delegate_isNotifiedAboutReactionChanges() throws {
+        // Create current user in the database
+        try client.databaseContainer.createCurrentUser(id: currentUserId)
+
+        // Create channel in the database
+        try client.databaseContainer.createChannel(cid: cid)
+
+        // Create message
+        try client.databaseContainer.createMessage(id: messageId, authorId: currentUserId, cid: cid)
+
+        // Set the delegate
+        let delegate = TestDelegate(expectedQueueId: callbackQueueID)
+        controller.delegate = delegate
+
+        // Add reaction to DB
+        let reactionPayload = MessageReactionPayload.dummy(
+            messageId: messageId,
+            user: .dummy(userId: currentUserId)
+        )
+        var reactionModel: ChatMessageReaction?
+        try client.databaseContainer.writeSynchronously { session in
+            reactionModel = try session.saveReaction(payload: reactionPayload).asModel()
+        }
+
+        AssertAsync.willBeEqual(
+            delegate.didChangeReactions_changes,
+            [.insert(reactionModel!, index: [0, 0])]
+        )
+    }
     
     // MARK: - Delete message
     
@@ -1057,6 +1087,99 @@ final class MessageController_Tests: XCTestCase {
         XCTAssertEqual(env.messageUpdater.loadReplies_messageId, messageId)
         XCTAssertEqual(env.messageUpdater.loadReplies_pagination, .init(pageSize: 25, parameter: .greaterThan(afterMessageId)))
     }
+
+    // MARK: - Load Next Reactions
+
+    func test_reactions_shouldUpdateWhenDbChanges() throws {
+        // Create current user in the database
+        try client.databaseContainer.createCurrentUser(id: currentUserId)
+
+        // Create message in that matches controller's `messageId`
+        try client.databaseContainer.createMessage(id: messageId, authorId: currentUserId, cid: cid, text: .unique)
+
+        // Simulate response from the backend with updated `text`, update the local message in the databse
+        let messageReactionPayload: MessageReactionPayload = .dummy(
+            messageId: messageId,
+            user: .dummy(userId: currentUserId)
+        )
+
+        try client.databaseContainer.writeSynchronously { session in
+            try session.saveReaction(payload: messageReactionPayload)
+        }
+
+        XCTAssertEqual(controller.reactions.count, 1)
+        XCTAssertEqual(controller.reactions.first?.score, messageReactionPayload.score)
+        XCTAssertEqual(controller.reactions.first?.type, messageReactionPayload.type)
+    }
+
+    func test_loadNextReactions_propagatesError() {
+        var completionError: Error?
+        controller.loadNextReactions() { [callbackQueueID] in
+            AssertTestQueue(withId: callbackQueueID)
+            completionError = $0
+        }
+
+        // Simulate network response with the error
+        let networkError = TestError()
+        env.messageUpdater.loadReactions_completion?(.failure(networkError))
+
+        // Assert error is propagated
+        AssertAsync.willBeEqual(completionError as? TestError, networkError)
+    }
+
+    func test_loadNextReactions_propagatesNilError() {
+        var completionCalled = false
+        controller.loadNextReactions() { [callbackQueueID] in
+            AssertTestQueue(withId: callbackQueueID)
+            XCTAssertNil($0)
+            completionCalled = true
+        }
+
+        // Keep a weak ref so we can check if it's actually deallocated
+        weak var weakController = controller
+
+        // (Try to) deallocate the controller
+        // by not keeping any references to it
+        controller = nil
+
+        // Simulate successful network response
+        env.messageUpdater.loadReactions_completion?(.success(MessageReactionsPayload(reactions: [])))
+        // Release reference of completion so we can deallocate stuff
+        env.messageUpdater.loadReactions_completion = nil
+
+        // Assert completion is called
+        AssertAsync.willBeTrue(completionCalled)
+        // `weakController` should be deallocated too
+        AssertAsync.canBeReleased(&weakController)
+    }
+
+    func test_loadNextReactions_callsMessageUpdater_withCorrectValues() {
+        controller.loadNextReactions()
+
+        XCTAssertEqual(env.messageUpdater.loadReactions_cid, cid)
+        XCTAssertEqual(env.messageUpdater.loadReactions_messageId, messageId)
+        XCTAssertEqual(env.messageUpdater.loadReactions_pagination, .init(pageSize: 25, offset: 0))
+    }
+
+    func test_loadNextReactions_shouldPaginateFromLastReaction() {
+        // Start reactions observer
+        _ = controller.reactions
+
+        let mockedReactions = repeatElement(
+            ChatMessageReaction(type: "likes", score: 1, createdAt: .unique, updatedAt: .unique, extraData: [:], author: .unique),
+            count: 20
+        )
+
+        env.reactionsObserver.items_mock = .init(source: mockedReactions, map: { $0 })
+
+        controller.loadNextReactions(
+            limit: 10,
+            completion: nil
+        )
+
+        XCTAssertEqual(env.messageUpdater.loadReactions_pagination?.pageSize, 10)
+        XCTAssertEqual(env.messageUpdater.loadReactions_pagination?.offset, mockedReactions.count)
+    }
     
     // MARK: - Add reaction
     
@@ -1480,6 +1603,7 @@ private class TestDelegate: QueueAwareDelegate, ChatMessageControllerDelegate {
     @Atomic var state: DataController.State?
     @Atomic var didChangeMessage_change: EntityChange<ChatMessage>?
     @Atomic var didChangeReplies_changes: [ListChange<ChatMessage>] = []
+    @Atomic var didChangeReactions_changes: [ListChange<ChatMessageReaction>] = []
     
     func controller(_ controller: DataController, didChangeState state: DataController.State) {
         self.state = state
@@ -1495,12 +1619,19 @@ private class TestDelegate: QueueAwareDelegate, ChatMessageControllerDelegate {
         didChangeReplies_changes = changes
         validateQueue()
     }
+
+    func messageController(_ controller: ChatMessageController, didChangeReactions changes: [ListChange<ChatMessageReaction>]) {
+        didChangeReactions_changes = changes
+        validateQueue()
+    }
 }
 
 private class TestEnvironment {
     var messageUpdater: MessageUpdaterMock!
     var messageObserver: EntityDatabaseObserverMock<ChatMessage, MessageDTO>!
     var repliesObserver: ListDatabaseObserverMock<ChatMessage, MessageDTO>!
+    var reactionsObserver: ListDatabaseObserverMock<ChatMessageReaction, MessageReactionDTO>!
+
     var messageObserver_synchronizeError: Error?
     
     lazy var controllerEnvironment: ChatMessageController
@@ -1513,6 +1644,10 @@ private class TestEnvironment {
             repliesObserverBuilder: { [unowned self] in
                 self.repliesObserver = .init(context: $0, fetchRequest: $1, itemCreator: $2, fetchedResultsControllerType: $3)
                 return self.repliesObserver!
+            },
+            reactionsObserverBuilder: { [unowned self] in
+                self.reactionsObserver = .init(context: $0, fetchRequest: $1, itemCreator: $2, fetchedResultsControllerType: $3)
+                return self.reactionsObserver
             },
             messageUpdaterBuilder: { [unowned self] in
                 self.messageUpdater = MessageUpdaterMock(database: $0, apiClient: $1)
