@@ -10,6 +10,9 @@ import UIKit
 public enum AttachmentValidationError: Error {
     /// The size of the attachment exceeds the max file size
     case maxFileSizeExceeded
+    
+    /// The number of attachments reached the limit.
+    case maxAttachmentsCountPerMessageExceeded(limit: Int)
 }
 
 /// The possible composer states. An Enum is not used so it does not cause
@@ -447,14 +450,12 @@ open class ComposerVC: _ViewController,
         // Files in the message composer are scrolling vertically and images horizontally.
         // There is no techical limitation for multiple attachment types.
         if content.attachments.isEmpty {
-            let actionSheet = UIAlertController(
-                title: nil,
+            presentAlert(
                 message: L10n.Composer.Picker.title,
-                preferredStyle: .actionSheet
+                preferredStyle: .actionSheet,
+                actions: attachmentsPickerActions,
+                sourceView: sender
             )
-            actionSheet.popoverPresentationController?.sourceView = sender
-            attachmentsPickerActions.forEach(actionSheet.addAction)
-            present(actionSheet, animated: true)
         } else if content.attachments.contains(where: { $0.type == .file }) {
             showFilePicker()
         } else if content.attachments.contains(where: { $0.type == .image || $0.type == .video }) {
@@ -714,14 +715,44 @@ open class ComposerVC: _ViewController,
     ///   - url: The URL of the attachment
     ///   - type: The type of the attachment
     open func addAttachmentToContent(from url: URL, type: AttachmentType) throws {
-        let fileSize = try AttachmentFile(url: url).size
-        let maxFileSize = channelController?.client.config.maxAttachmentSize ?? 0
+        guard let chatConfig = channelController?.client.config else {
+            log.assertionFailure("Channel controller must be set at this point")
+            return
+        }
         
-        if fileSize < maxFileSize {
-            let attachment = try AnyAttachmentPayload(localFileURL: url, attachmentType: type)
-            content.attachments.append(attachment)
-        } else {
+        let maxAttachmentsCount = chatConfig.maxAttachmentCountPerMessage
+        guard content.attachments.count < maxAttachmentsCount else {
+            throw AttachmentValidationError.maxAttachmentsCountPerMessageExceeded(
+                limit: maxAttachmentsCount
+            )
+        }
+        
+        let fileSize = try AttachmentFile(url: url).size
+        guard fileSize < chatConfig.maxAttachmentSize else {
             throw AttachmentValidationError.maxFileSizeExceeded
+        }
+        
+        let attachment = try AnyAttachmentPayload(localFileURL: url, attachmentType: type)
+        content.attachments.append(attachment)
+    }
+    
+    /// Shows an alert for the error thrown when adding attachment to a composer.
+    /// - Parameters:
+    ///   - attachmentURL: The attachment's file URL.
+    ///   - attachmentType: The type of attachment.
+    ///   - error: The thrown error.
+    open func handleAddAttachmentError(
+        attachmentURL: URL,
+        attachmentType: AttachmentType,
+        error: Error
+    ) {
+        switch error {
+        case AttachmentValidationError.maxFileSizeExceeded:
+            showAttachmentExceedsMaxSizeAlert()
+        case let AttachmentValidationError.maxAttachmentsCountPerMessageExceeded(limit):
+            showAttachmentsCountExceedingLimitAlert(limit)
+        default:
+            log.assertionFailure(error.localizedDescription)
         }
     }
 
@@ -771,10 +802,12 @@ open class ComposerVC: _ViewController,
             
             do {
                 try self?.addAttachmentToContent(from: urlAndType.0, type: urlAndType.1)
-            } catch AttachmentValidationError.maxFileSizeExceeded {
-                self?.showAttachmentExceedsMaxSizeAlert()
             } catch {
-                log.assertionFailure(error.localizedDescription)
+                self?.handleAddAttachmentError(
+                    attachmentURL: urlAndType.0,
+                    attachmentType: urlAndType.1,
+                    error: error
+                )
             }
         }
     }
@@ -782,37 +815,68 @@ open class ComposerVC: _ViewController,
     // MARK: - UIDocumentPickerViewControllerDelegate
     
     open func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
-        content.attachments.append(contentsOf: urls.compactMap {
+        let type: AttachmentType = .file
+        
+        for fileURL in urls {
             do {
-                return try AnyAttachmentPayload(localFileURL: $0, attachmentType: .file)
+                try addAttachmentToContent(from: fileURL, type: type)
             } catch {
-                log.assertionFailure(error.localizedDescription)
-                return nil
+                handleAddAttachmentError(
+                    attachmentURL: fileURL,
+                    attachmentType: type,
+                    error: error
+                )
+                break
             }
-        })
+        }
     }
     
+    /// Shows an alert saying that attachment's size exceeds the limit.
     open func showAttachmentExceedsMaxSizeAlert() {
-        let alert = UIAlertController(title: nil, message: L10n.Attachment.maxSizeExceeded, preferredStyle: .alert)
-        alert.addAction(.init(title: L10n.Alert.Actions.ok, style: .default, handler: { _ in }))
-        present(alert, animated: true)
+        presentAlert(message: L10n.Attachment.maxSizeExceeded)
+    }
+    
+    /// Shows an alert saying that the max # of attachments per message is exceeded.
+    open func showAttachmentsCountExceedingLimitAlert(_ limit: Int) {
+        presentAlert(message: L10n.Attachment.maxCountExceeded(limit))
     }
     
     // MARK: - InputTextViewClipboardAttachmentDelegate
     
     open func inputTextView(_ inputTextView: InputTextView, didPasteImage image: UIImage) {
-        do {
-            guard let imageUrl = try image.temporaryLocalFileUrl() else {
-                log.error("Could not create temporary local file from image")
-                return
-            }
-            
-            try addAttachmentToContent(from: imageUrl, type: .image)
-        } catch AttachmentValidationError.maxFileSizeExceeded {
-            showAttachmentExceedsMaxSizeAlert()
-        } catch {
-            log.assertionFailure(error.localizedDescription)
+        guard let imageUrl = try? image.temporaryLocalFileUrl() else {
+            log.error("Could not create temporary local file from image")
+            return
         }
+        
+        let type: AttachmentType = .image
+        do {
+            try addAttachmentToContent(from: imageUrl, type: type)
+        } catch {
+            handleAddAttachmentError(
+                attachmentURL: imageUrl,
+                attachmentType: type,
+                error: error
+            )
+        }
+    }
+    
+    // MARK: - Private
+    
+    private func presentAlert(
+        title: String? = nil,
+        message: String? = nil,
+        preferredStyle: UIAlertController.Style = .alert,
+        actions: [UIAlertAction] = [
+            .init(title: L10n.Alert.Actions.ok, style: .default, handler: { _ in })
+        ],
+        sourceView: UIView? = nil
+    ) {
+        let alert = UIAlertController(title: title, message: message, preferredStyle: preferredStyle)
+        alert.popoverPresentationController?.sourceView = sourceView
+        actions.forEach(alert.addAction)
+        
+        present(alert, animated: true)
     }
 }
 

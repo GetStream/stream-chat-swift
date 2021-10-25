@@ -55,6 +55,8 @@
 "current-selection" = "%d of %d";
 
 "attachment.max-size-exceeded" = "Attachment size exceed the limit.";
+"attachment.max-count-exceeded" = "The max number of attachments per message is %d.";
+
 "dates.time-ago-seconds-plural" = "last seen %d seconds ago";
 "dates.time-ago-seconds-singular" = "last seen just one second ago";
 "dates.time-ago-minutes-singular" = "last seen one minute ago";
