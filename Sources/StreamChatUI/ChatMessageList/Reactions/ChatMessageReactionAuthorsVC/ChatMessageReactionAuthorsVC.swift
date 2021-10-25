@@ -11,25 +11,6 @@ open class ChatMessageReactionAuthorsVC:
     UICollectionViewDataSource,
     UICollectionViewDelegate,
     UICollectionViewDelegateFlowLayout {
-    /// The content of reaction authors view.
-    public struct Content {
-        /// The reactions of the message.
-        public var reactions: [ChatMessageReaction]
-
-        public init(
-            reactions: [ChatMessageReaction]
-        ) {
-            self.reactions = reactions
-        }
-    }
-
-    /// The content of reaction authors view.
-    open var content: Content? {
-        didSet {
-            updateContentIfNeeded()
-        }
-    }
-
     /// The message controller of message that the reactions belong.
     open var messageController: ChatMessageController!
 
@@ -48,6 +29,8 @@ open class ChatMessageReactionAuthorsVC:
         collectionViewLayout: flowLayout
     ).withoutAutoresizingMaskConstraints
 
+    public var isLoadingReactions: Bool = false
+
     override open func setUp() {
         super.setUp()
 
@@ -63,17 +46,6 @@ open class ChatMessageReactionAuthorsVC:
         collectionView.isPagingEnabled = true
         collectionView.alwaysBounceVertical = false
         collectionView.alwaysBounceHorizontal = false
-
-        if let message = messageController?.message {
-            // Pre-load the latest reactions
-            content = .init(reactions: Array(message.latestReactions))
-            collectionView.reloadData()
-
-            // If there are more than the latest reactions, perform getReactions() call
-            if message.totalReactionsCount > message.latestReactions.count {
-                // TODO: Call more (+ pagination)
-            }
-        }
     }
 
     override open func setUpAppearance() {
@@ -121,17 +93,20 @@ open class ChatMessageReactionAuthorsVC:
     }
 
     open func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        content?.reactions.count ?? 0
+        messageController.reactions.count
     }
 
-    open func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+    open func collectionView(
+        _ collectionView: UICollectionView,
+        cellForItemAt indexPath: IndexPath
+    ) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(
             withReuseIdentifier: components.reactionAuthorsCell.reuseId,
             for: indexPath
         ) as! ChatMessageReactionAuthorViewCell
 
-        if let reactions = content?.reactions,
-           let currentUserId = messageController?.client.currentUserId {
+        let reactions = messageController.reactions
+        if let currentUserId = messageController?.client.currentUserId {
             cell.content = ChatMessageReactionAuthorViewCell.Content(
                 reaction: reactions[indexPath.item],
                 currentUserId: currentUserId
@@ -139,6 +114,29 @@ open class ChatMessageReactionAuthorsVC:
         }
 
         return cell
+    }
+
+    public func collectionView(
+        _ collectionView: UICollectionView,
+        willDisplay cell: UICollectionViewCell,
+        forItemAt indexPath: IndexPath
+    ) {
+        if isLoadingReactions {
+            return
+        }
+
+        if indexPath.row < messageController.reactions.count - 10 {
+            return
+        }
+
+        let totalReactionsCount = messageController.message?.totalReactionsCount ?? 0
+        
+        if totalReactionsCount > messageController.reactions.count {
+            isLoadingReactions = true
+            messageController.loadNextReactions { [weak self] _ in
+                self?.isLoadingReactions = false
+            }
+        }
     }
 
     open func collectionView(
