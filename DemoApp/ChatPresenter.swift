@@ -175,6 +175,8 @@ class DemoChatChannelListRouter: ChatChannelListRouter {
                                     title: "Couldn't remove user \(member.id) from channel \(cid)",
                                     message: "\(error)"
                                 )
+                            } else {
+                                self.rootNavigationController?.popViewController(animated: true)
                             }
                         }
                     }
