@@ -21,7 +21,7 @@ open class ChatMessageReactionAuthorsVC:
         .withAdjustingFontForContentSizeCategory
 
     /// `UICollectionViewFlowLayout` instance for the collection view.
-    open lazy var flowLayout: UICollectionViewFlowLayout = .init()
+    open lazy var flowLayout: UICollectionViewFlowLayout = ChatMessageReactionAuthorsFlowLayout()
 
     /// `UICollectionView` instance to display the reaction authors.
     open lazy var collectionView: UICollectionView = UICollectionView(
@@ -41,6 +41,7 @@ open class ChatMessageReactionAuthorsVC:
         )
 
         collectionView.collectionViewLayout = flowLayout
+        collectionView.contentInsetAdjustmentBehavior = .always
         collectionView.delegate = self
         collectionView.dataSource = self
 
@@ -59,7 +60,7 @@ open class ChatMessageReactionAuthorsVC:
         flowLayout.scrollDirection = .vertical
         flowLayout.sectionInset = .init(top: 0, left: 16, bottom: 0, right: 16)
         flowLayout.minimumLineSpacing = 20
-        flowLayout.minimumInteritemSpacing = 4
+        flowLayout.minimumInteritemSpacing = 16
 
         collectionView.backgroundColor = .clear
         collectionView.showsHorizontalScrollIndicator = false
@@ -80,11 +81,11 @@ open class ChatMessageReactionAuthorsVC:
             topLabel.topAnchor.pin(equalTo: view.topAnchor, constant: 16),
             topLabel.leadingAnchor.pin(equalTo: view.leadingAnchor),
             topLabel.trailingAnchor.pin(equalTo: view.trailingAnchor),
+            collectionView.leadingAnchor.pin(equalTo: view.leadingAnchor),
+            collectionView.trailingAnchor.pin(equalTo: view.trailingAnchor),
             collectionView.topAnchor.pin(equalTo: topLabel.bottomAnchor, constant: 24),
             collectionView.bottomAnchor.pin(equalTo: view.bottomAnchor, constant: 0)
         ])
-
-        setCollectionViewWidthConstraints()
     }
 
     override open func updateContent() {
@@ -94,22 +95,13 @@ open class ChatMessageReactionAuthorsVC:
         topLabel.text = L10n.Reaction.Authors.numberOfReactions(numberOfReactions)
     }
 
-    /// Sets the collection view width constraints. By default it is dependent on the number of reactions.
-    open func setCollectionViewWidthConstraints() {
-        if messageController.reactions.count >= 3 {
-            collectionView.leadingAnchor.pin(equalTo: view.leadingAnchor).isActive = true
-            collectionView.trailingAnchor.pin(equalTo: view.trailingAnchor).isActive = true
-        } else if messageController.reactions.count == 1 {
-            collectionView.centerXAnchor.pin(equalTo: view.centerXAnchor).isActive = true
-            collectionView.widthAnchor.pin(equalTo: view.widthAnchor, multiplier: 0.5).isActive = true
-        } else {
-            collectionView.centerXAnchor.pin(equalTo: view.centerXAnchor).isActive = true
-            collectionView.widthAnchor.pin(equalTo: view.widthAnchor, multiplier: 0.8).isActive = true
-        }
-    }
-
     open func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         messageController.reactions.count
+    }
+
+    override open func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+        collectionView.collectionViewLayout.invalidateLayout()
+        super.viewWillTransition(to: size, with: coordinator)
     }
 
     open func collectionView(
