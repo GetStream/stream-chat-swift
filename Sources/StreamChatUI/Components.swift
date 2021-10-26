@@ -90,11 +90,12 @@ public struct Components {
 
     //  MARK: -  Message List components
 
-    /// The View Controller used to display content of the message, i.e. in the channel detail message list.
+    /// The view controller responsible for rendering a list of messages.
+    /// Used in both the Channel and Thread view controllers.
     @available(iOSApplicationExtension, unavailable)
     public var messageListVC: ChatMessageListVC.Type = ChatMessageListVC.self
 
-    /// The view that shows the message list.
+    /// The foundation view for the message list view controller.
     public var messageListView: ChatMessageListView.Type = ChatMessageListView
         .self
 
@@ -102,22 +103,22 @@ public struct Components {
     public var messageListScrollOverlayView: ChatMessageListScrollOverlayView.Type =
         ChatMessageListScrollOverlayView.self
 
-    /// The View Controller by default used to display message actions after long-pressing on the message.
+    /// The view controller used to perform message actions.
     public var messageActionsVC: ChatMessageActionsVC.Type = ChatMessageActionsVC.self
 
-    /// The View Controller by default used to display long-press menu of the message.
+    /// The view controller that is presented when long-pressing a message.
     public var messagePopupVC: ChatMessagePopupVC.Type = ChatMessagePopupVC.self
 
-    /// The View Controller by default used to display the reaction authors of a message.
+    /// A view controller that renders the reaction and it's author avatar for all the reactions of a message.
     public var reactionAuthorsVC: ChatMessageReactionAuthorsVC.Type = ChatMessageReactionAuthorsVC.self
 
     /// A view cell that displays an individual reaction author of a message.
     public var reactionAuthorsCell: ChatMessageReactionAuthorViewCell.Type = ChatMessageReactionAuthorViewCell.self
 
-    /// The View Controller used for showing detail of a file message attachment.
+    /// The view controller used for showing the detail of a file message attachment.
     public var filePreviewVC: ChatMessageAttachmentPreviewVC.Type = ChatMessageAttachmentPreviewVC.self
 
-    /// The View Controller used for show image and video attachments.
+    /// The view controller responsible to render image and video attachments.
     public var galleryVC: GalleryVC.Type = GalleryVC.self
     
     /// The view used to control the player for currently visible vide attachment.
@@ -274,7 +275,7 @@ public struct Components {
 
     // MARK: - Thread components
 
-    /// The View Controller used to display the detail of a message thread.
+    /// The view vontroller used to display the detail of a message thread.
     public var threadVC: ChatThreadVC.Type = ChatThreadVC.self
 
     /// The view that displays channel information on the thread header.
