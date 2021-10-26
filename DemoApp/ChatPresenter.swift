@@ -176,7 +176,6 @@ class DemoChatChannelListRouter: ChatChannelListRouter {
                                     message: "\(error)"
                                 )
                             } else {
-                                channelController.synchronize()
                                 self.rootNavigationController?.popViewController(animated: true)
                             }
                         }
