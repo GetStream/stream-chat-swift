@@ -21,6 +21,9 @@
 "message.actions.user-unmute" = "Unmute User";
 "message.actions.user-mute" = "Mute User";
 "message.actions.resend" = "Resend";
+"message.actions.flag" = "Flag Message";
+"message.actions.flag.confirmation-title" = "Flag Message";
+"message.actions.flag.confirmation-message" = "Do you want to send a copy of this message to a moderator for further investigation?";
 
 "messageList.typingIndicator.typing-unknown" = "Someone is typing";
 
@@ -29,6 +32,7 @@
 
 "alert.actions.cancel" = "Cancel";
 "alert.actions.delete" = "Delete";
+"alert.actions.flag" = "Flag";
 "alert.actions.ok" = "Ok";
 
 "message.only-visible-to-you" = "Only visible to you";

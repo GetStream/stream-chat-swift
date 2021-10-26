@@ -94,9 +94,12 @@ open class ChatMessageActionsVC: _ViewController, ThemeProvider {
             if message.isSentByCurrentUser {
                 actions += [editActionItem(), deleteActionItem()]
 
-            } else if channelConfig.mutesEnabled {
-                let isMuted = currentUser.mutedUsers.contains(message.author)
-                actions.append(isMuted ? unmuteActionItem() : muteActionItem())
+            } else {
+                actions += [flagActionItem()]
+                if channelConfig.mutesEnabled {
+                    let isMuted = currentUser.mutedUsers.contains(message.author)
+                    actions.append(isMuted ? unmuteActionItem() : muteActionItem())
+                }
             }
 
             return actions
@@ -208,6 +211,23 @@ open class ChatMessageActionsVC: _ViewController, ThemeProvider {
                 UIPasteboard.general.string = self.message?.text
 
                 self.delegate?.chatMessageActionsVCDidFinish(self)
+            },
+            appearance: appearance
+        )
+    }
+    
+    /// Returns `ChatMessageActionItem` for flag action.
+    open func flagActionItem() -> ChatMessageActionItem {
+        FlagActionItem(
+            action: { [weak self] _ in
+                guard let self = self else { return }
+                self.alertsRouter.showMessageFlagConfirmationAlert { confirmed in
+                    guard confirmed else { return }
+                    
+                    self.messageController.flag { _ in
+                        self.delegate?.chatMessageActionsVCDidFinish(self)
+                    }
+                }
             },
             appearance: appearance
         )
