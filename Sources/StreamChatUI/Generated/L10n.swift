@@ -199,6 +199,19 @@ internal enum L10n {
       }
     }
   }
+
+  internal enum Reaction {
+    internal enum Authors {
+      /// %d Message Reactions
+      internal static func numberOfReactions(_ p1: Int) -> String {
+        return L10n.tr("Localizable", "reaction.authors.number-of-reactions", p1)
+      }
+      internal enum Cell {
+        /// You
+        internal static var you: String { L10n.tr("Localizable", "reaction.authors.cell.you") }
+      }
+    }
+  }
 }
 
 // MARK: - Implementation Details
