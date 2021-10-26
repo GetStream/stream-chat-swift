@@ -32,6 +32,7 @@ open class ChatMessageReactionAuthorViewCell: _CollectionViewCell, ThemeProvider
         }
     }
 
+    /// The container stack that composes the author avatar view and the author name label.
     open lazy var containerStack = ContainerStackView(
         axis: .vertical,
         alignment: .center,
@@ -39,14 +40,32 @@ open class ChatMessageReactionAuthorViewCell: _CollectionViewCell, ThemeProvider
         distribution: .natural
     ).withoutAutoresizingMaskConstraints
 
+    /// The author's avatar view.
     open lazy var authorAvatarView: ChatAvatarView = components
         .avatarView.init()
         .withoutAutoresizingMaskConstraints
 
+    /// The author's name label.
     open lazy var authorNameLabel = UILabel()
         .withoutAutoresizingMaskConstraints
         .withBidirectionalLanguagesSupport
         .withAdjustingFontForContentSizeCategory
+
+    /// The bubble view around the message reaction.
+    open lazy var reactionBubbleView: ChatReactionBubbleBaseView = components
+        .messageReactionsBubbleView.init()
+        .withoutAutoresizingMaskConstraints
+
+    /// The reaction view inside the reaction bubble.
+    public lazy var reactionItemView: ChatMessageReactionItemView = components
+        .messageReactionItemView.init()
+        .withoutAutoresizingMaskConstraints
+
+    /// The constraint that if active renders the reaction in the leading side of the avatar view.
+    public var reactionLeadingConstraint: NSLayoutConstraint?
+
+    /// The constraint that if active renders the reaction in the trailing side of the avatar view.
+    public var reactionTrailingConstraint: NSLayoutConstraint?
 
     /// The size of the avatar view that belongs to the author of the reaction.
     open var authorAvatarSize: CGSize { .init(width: 64, height: 64) }
@@ -67,12 +86,23 @@ open class ChatMessageReactionAuthorViewCell: _CollectionViewCell, ThemeProvider
         contentView.embed(containerStack)
         containerStack.addArrangedSubview(authorAvatarView)
         containerStack.addArrangedSubview(authorNameLabel)
+        authorAvatarView.addSubview(reactionBubbleView)
+
+        reactionBubbleView.addSubview(reactionItemView)
+        reactionItemView.pin(to: reactionBubbleView.layoutMarginsGuide)
 
         NSLayoutConstraint.activate([
             authorAvatarView.widthAnchor.pin(equalToConstant: authorAvatarSize.width),
             authorAvatarView.heightAnchor.pin(equalToConstant: authorAvatarSize.height),
-            authorNameLabel.widthAnchor.pin(equalTo: authorAvatarView.widthAnchor)
+            authorNameLabel.widthAnchor.pin(equalTo: authorAvatarView.widthAnchor),
+            reactionBubbleView.bottomAnchor.pin(equalTo: authorAvatarView.bottomAnchor)
         ])
+
+        reactionTrailingConstraint = reactionBubbleView.trailingAnchor.pin(equalTo: authorAvatarView.centerXAnchor)
+        reactionLeadingConstraint = reactionBubbleView.leadingAnchor.pin(equalTo: authorAvatarView.centerXAnchor)
+
+        reactionTrailingConstraint?.isActive = false
+        reactionLeadingConstraint?.isActive = false
     }
 
     override open func updateContent() {
@@ -90,8 +120,22 @@ open class ChatMessageReactionAuthorViewCell: _CollectionViewCell, ThemeProvider
         if let content = self.content {
             let reactionAuthor = content.reaction.author
             let isCurrentUser = content.currentUserId == reactionAuthor.id
-            // TODO: Localization
-            authorNameLabel.text = isCurrentUser ? "You" : reactionAuthor.name
+
+            authorNameLabel.text = isCurrentUser ? L10n.Reaction.Authors.Cell.you : reactionAuthor.name
+
+            reactionBubbleView.tailDirection = isCurrentUser ? .toTrailing : .toLeading
+            reactionItemView.content = .init(
+                useBigIcon: false,
+                reaction: ChatMessageReactionData(
+                    type: content.reaction.type,
+                    score: content.reaction.score,
+                    isChosenByCurrentUser: isCurrentUser
+                ),
+                onTap: nil
+            )
+
+            reactionTrailingConstraint?.isActive = isCurrentUser
+            reactionLeadingConstraint?.isActive = !isCurrentUser
         }
     }
 }

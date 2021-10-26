@@ -15,16 +15,16 @@ open class ChatMessageReactionAuthorsVC:
     open var messageController: ChatMessageController!
 
     /// Label that shows how many reactions the message has.
-    open private(set) lazy var topLabel: UILabel = UILabel()
+    open lazy var topLabel: UILabel = UILabel()
         .withoutAutoresizingMaskConstraints
         .withBidirectionalLanguagesSupport
         .withAdjustingFontForContentSizeCategory
 
     /// `UICollectionViewFlowLayout` instance for the collection view.
-    open private(set) lazy var flowLayout: UICollectionViewFlowLayout = .init()
+    open lazy var flowLayout: UICollectionViewFlowLayout = .init()
 
     /// `UICollectionView` instance to display the reaction authors.
-    open private(set) lazy var collectionView: UICollectionView = UICollectionView(
+    open lazy var collectionView: UICollectionView = UICollectionView(
         frame: .zero,
         collectionViewLayout: flowLayout
     ).withoutAutoresizingMaskConstraints
@@ -82,14 +82,15 @@ open class ChatMessageReactionAuthorsVC:
             collectionView.topAnchor.pin(equalTo: topLabel.bottomAnchor, constant: 24),
             collectionView.leadingAnchor.pin(equalTo: view.leadingAnchor),
             collectionView.trailingAnchor.pin(equalTo: view.trailingAnchor),
-            collectionView.bottomAnchor.pin(equalTo: view.bottomAnchor, constant: 24)
+            collectionView.bottomAnchor.pin(equalTo: view.bottomAnchor, constant: 0)
         ])
     }
 
     override open func updateContent() {
         super.updateContent()
 
-        topLabel.text = "\(messageController.message?.totalReactionsCount ?? 0) Message Reactions"
+        let numberOfReactions = messageController.message?.totalReactionsCount ?? 0
+        topLabel.text = L10n.Reaction.Authors.numberOfReactions(numberOfReactions)
     }
 
     open func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -144,7 +145,6 @@ open class ChatMessageReactionAuthorsVC:
         layout collectionViewLayout: UICollectionViewLayout,
         sizeForItemAt indexPath: IndexPath
     ) -> CGSize {
-        // TODO: Try to make this automatic? Check GalleryVC
         CGSize(width: 64, height: 110)
     }
 }
