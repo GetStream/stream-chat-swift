@@ -29,6 +29,11 @@ open class ChatMessageReactionAuthorsVC:
         collectionViewLayout: flowLayout
     ).withoutAutoresizingMaskConstraints
 
+    /// The width and height of each reaction author cell.
+    open var reactionAuthorCellSize: CGSize {
+        CGSize(width: 64, height: 110)
+    }
+
     /// A Boolean indicating whether the reactions are currently loading.
     public var isLoadingReactions: Bool = false
 
@@ -152,6 +157,6 @@ open class ChatMessageReactionAuthorsVC:
         layout collectionViewLayout: UICollectionViewLayout,
         sizeForItemAt indexPath: IndexPath
     ) -> CGSize {
-        CGSize(width: 64, height: 110)
+        reactionAuthorCellSize
     }
 }
