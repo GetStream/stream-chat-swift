@@ -49,7 +49,7 @@ extension Endpoint {
 
     static func loadReactions(messageId: MessageId, pagination: Pagination) -> Endpoint<MessageReactionsPayload> {
         .init(
-            path: messageId.repliesPath,
+            path: messageId.reactionsPath,
             method: .get,
             queryItems: nil,
             requiresConnectionId: false,

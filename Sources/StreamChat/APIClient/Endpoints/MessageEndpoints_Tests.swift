@@ -93,7 +93,7 @@ final class MessageEndpoints_Tests: XCTestCase {
             pagination: pagination
         )
 
-        XCTAssertEqual(endpoint.path, "messages/ID/replies")
+        XCTAssertEqual(endpoint.path, "messages/ID/reactions")
         XCTAssertEqual(endpoint.method, .get)
         XCTAssertTrue(endpoint.queryItems == nil)
         XCTAssertEqual(endpoint.requiresConnectionId, false)
