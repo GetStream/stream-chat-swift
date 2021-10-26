@@ -29,6 +29,7 @@ open class ChatMessageReactionAuthorsVC:
         collectionViewLayout: flowLayout
     ).withoutAutoresizingMaskConstraints
 
+    /// A Boolean indicating whether the reactions are currently loading.
     public var isLoadingReactions: Bool = false
 
     override open func setUp() {

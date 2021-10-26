@@ -33,12 +33,7 @@ open class ChatMessageReactionAuthorViewCell: _CollectionViewCell, ThemeProvider
     }
 
     /// The container stack that composes the author avatar view and the author name label.
-    open lazy var containerStack = ContainerStackView(
-        axis: .vertical,
-        alignment: .center,
-        spacing: 4,
-        distribution: .natural
-    ).withoutAutoresizingMaskConstraints
+    open lazy var containerStack = ContainerStackView().withoutAutoresizingMaskConstraints
 
     /// The author's avatar view.
     open lazy var authorAvatarView: ChatAvatarView = components
@@ -83,7 +78,18 @@ open class ChatMessageReactionAuthorViewCell: _CollectionViewCell, ThemeProvider
     override open func setUpLayout() {
         super.setUpLayout()
 
-        contentView.embed(containerStack)
+        containerStack.axis = .vertical
+        containerStack.alignment = .top
+        containerStack.spacing = 8
+        containerStack.distribution = .natural
+
+        contentView.addSubview(containerStack)
+        NSLayoutConstraint.activate([
+            containerStack.leadingAnchor.pin(equalTo: contentView.leadingAnchor),
+            containerStack.trailingAnchor.pin(equalTo: contentView.trailingAnchor),
+            containerStack.topAnchor.pin(equalTo: contentView.topAnchor)
+        ])
+
         containerStack.addArrangedSubview(authorAvatarView)
         containerStack.addArrangedSubview(authorNameLabel)
         authorAvatarView.addSubview(reactionBubbleView)
