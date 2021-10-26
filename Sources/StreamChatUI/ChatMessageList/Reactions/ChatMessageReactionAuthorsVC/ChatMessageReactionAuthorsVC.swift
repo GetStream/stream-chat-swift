@@ -81,10 +81,10 @@ open class ChatMessageReactionAuthorsVC:
             topLabel.leadingAnchor.pin(equalTo: view.leadingAnchor),
             topLabel.trailingAnchor.pin(equalTo: view.trailingAnchor),
             collectionView.topAnchor.pin(equalTo: topLabel.bottomAnchor, constant: 24),
-            collectionView.leadingAnchor.pin(equalTo: view.leadingAnchor),
-            collectionView.trailingAnchor.pin(equalTo: view.trailingAnchor),
             collectionView.bottomAnchor.pin(equalTo: view.bottomAnchor, constant: 0)
         ])
+
+        setCollectionViewWidthConstraints()
     }
 
     override open func updateContent() {
@@ -92,6 +92,20 @@ open class ChatMessageReactionAuthorsVC:
 
         let numberOfReactions = messageController.message?.totalReactionsCount ?? 0
         topLabel.text = L10n.Reaction.Authors.numberOfReactions(numberOfReactions)
+    }
+
+    /// Sets the collection view width constraints. By default it is dependent on the number of reactions.
+    open func setCollectionViewWidthConstraints() {
+        if messageController.reactions.count >= 3 {
+            collectionView.leadingAnchor.pin(equalTo: view.leadingAnchor).isActive = true
+            collectionView.trailingAnchor.pin(equalTo: view.trailingAnchor).isActive = true
+        } else if messageController.reactions.count == 1 {
+            collectionView.centerXAnchor.pin(equalTo: view.centerXAnchor).isActive = true
+            collectionView.widthAnchor.pin(equalTo: view.widthAnchor, multiplier: 0.5).isActive = true
+        } else {
+            collectionView.centerXAnchor.pin(equalTo: view.centerXAnchor).isActive = true
+            collectionView.widthAnchor.pin(equalTo: view.widthAnchor, multiplier: 0.8).isActive = true
+        }
     }
 
     open func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {

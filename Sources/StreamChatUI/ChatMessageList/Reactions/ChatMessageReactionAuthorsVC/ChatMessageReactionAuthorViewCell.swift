@@ -70,8 +70,7 @@ open class ChatMessageReactionAuthorViewCell: _CollectionViewCell, ThemeProvider
 
         authorNameLabel.font = appearance.fonts.footnoteBold
         authorNameLabel.textAlignment = .center
-        authorNameLabel.numberOfLines = 0
-        authorNameLabel.lineBreakMode = .byClipping
+        authorNameLabel.numberOfLines = 2
         authorNameLabel.adjustsFontSizeToFitWidth = true
     }
 

@@ -50,6 +50,22 @@ open class ChatMessagePopupVC: _ViewController, ComponentsProvider {
     /// `ChatMessageReactionAuthorsVC` instance for showing the authors of the reactions.
     public var reactionAuthorsController: ChatMessageReactionAuthorsVC?
 
+    /// The width percentage of the actions view in relation with the popup's width.
+    open var actionsViewWidthMultiplier: CGFloat {
+        0.7
+    }
+
+    /// The height of the reactions author view. By default it depends on the number of total reactions.
+    open var reactionAuthorsViewHeight: CGFloat {
+        message.totalReactionsCount > 4 ? 320 : 180
+    }
+
+    /// The width percentage of the reactions author view in relation with the popup's width.
+    /// By default it depends on the number of total reactions.
+    open var reactionAuthorsViewWidthMultiplier: CGFloat {
+        message.totalReactionsCount >= 4 ? 0.9 : 0.7
+    }
+
     override open func setUp() {
         super.setUp()
         
@@ -112,7 +128,7 @@ open class ChatMessagePopupVC: _ViewController, ComponentsProvider {
 
         if let actionsController = actionsController {
             constraints.append(
-                actionsController.view.widthAnchor.pin(equalTo: view.widthAnchor, multiplier: 0.7)
+                actionsController.view.widthAnchor.pin(equalTo: view.widthAnchor, multiplier: actionsViewWidthMultiplier)
             )
 
             let actionsContainerStackView = ContainerStackView()
@@ -140,9 +156,16 @@ open class ChatMessagePopupVC: _ViewController, ComponentsProvider {
             reactionAuthorsController.view.translatesAutoresizingMaskIntoConstraints = false
             addChildViewController(reactionAuthorsController, targetView: messageContainerStackView)
 
-            constraints.append(reactionAuthorsController.view.heightAnchor.pin(equalToConstant: 320))
             constraints.append(
-                reactionAuthorsController.view.widthAnchor.pin(equalTo: view.widthAnchor, multiplier: 0.9)
+                reactionAuthorsController.view.heightAnchor.pin(
+                    equalToConstant: reactionAuthorsViewHeight
+                )
+            )
+            constraints.append(
+                reactionAuthorsController.view.widthAnchor.pin(
+                    equalTo: view.widthAnchor,
+                    multiplier: reactionAuthorsViewWidthMultiplier
+                )
             )
 
             if message.isSentByCurrentUser {
