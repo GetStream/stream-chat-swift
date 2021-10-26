@@ -23,6 +23,10 @@ internal enum L10n {
   }
 
   internal enum Attachment {
+    /// The max number of attachments per message is %d.
+    internal static func maxCountExceeded(_ p1: Int) -> String {
+      return L10n.tr("Localizable", "attachment.max-count-exceeded", p1)
+    }
     /// Attachment size exceed the limit.
     internal static var maxSizeExceeded: String { L10n.tr("Localizable", "attachment.max-size-exceeded") }
   }

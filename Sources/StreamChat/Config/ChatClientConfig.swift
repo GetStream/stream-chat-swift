@@ -125,6 +125,11 @@ public struct ChatClientConfig {
             return StreamCDNClient.maxAttachmentSize
         }
     }
+    
+    /// Returns max number of attachments that can be attached to a message.
+    ///
+    /// The current limit is `10`.
+    public let maxAttachmentCountPerMessage = 10
 
     /// Specifies the visibility of deleted messages.
     public enum DeletedMessageVisibility {

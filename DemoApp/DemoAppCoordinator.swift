@@ -90,8 +90,14 @@ final class DemoAppCoordinator: NSObject, UNUserNotificationCenterDelegate {
         Components.default.channelListRouter = DemoChatChannelListRouter.self
         Components.default.channelVC = CustomChannelVC.self
         Components.default.messageContentView = CustomMessageContentView.self
+        
+        let localizationProvider = Appearance.default.localizationProvider
         Appearance.default.localizationProvider = { key, table in
-            Bundle.main.localizedString(forKey: key, value: nil, table: table)
+            let localizedString = localizationProvider(key, table)
+            
+            return localizedString == key
+                ? Bundle.main.localizedString(forKey: key, value: nil, table: table)
+                : localizedString
         }
 
         // Channels with the current user
