@@ -26,8 +26,8 @@ final class ChatMessagePopupVC_Tests: XCTestCase {
             reactionsController?.view.alpha = 1
             reactionsController?.view.transform = .identity
 
-            actionsController.view.alpha = 1
-            actionsController.view.transform = .identity
+            actionsController?.view.alpha = 1
+            actionsController?.view.transform = .identity
         }
     }
     
