@@ -591,7 +591,7 @@ open class ChatMessageContentView: _View, ThemeProvider {
             textView?.isScrollEnabled = false
             textView?.backgroundColor = .clear
             textView?.adjustsFontForContentSizeCategory = true
-            textView?.textContainerInset = .init(top: 0, left: 8, bottom: 0, right: 8)
+            textView?.textContainerInset = .init(top: 8, left: 8, bottom: 8, right: 8)
             textView?.textContainer.lineFragmentPadding = 0
             textView?.font = appearance.fonts.body
         }
