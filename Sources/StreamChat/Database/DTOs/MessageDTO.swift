@@ -424,7 +424,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         
         dto.channel = channelDTO
         
-        let reactions = payload.latestReactions
+        let reactions = payload.latestReactions + payload.ownReactions
         try reactions.forEach { try saveReaction(payload: $0) }
         
         let attachments: Set<AttachmentDTO> = try Set(
