@@ -9,6 +9,7 @@ import UIKit
 open class ChatMessageReactionAuthorsVC:
     _ViewController,
     ThemeProvider,
+    ChatMessageControllerDelegate,
     UICollectionViewDataSource,
     UICollectionViewDelegate,
     UICollectionViewDelegateFlowLayout {
@@ -54,6 +55,8 @@ open class ChatMessageReactionAuthorsVC:
         collectionView.isPagingEnabled = true
         collectionView.alwaysBounceVertical = false
         collectionView.alwaysBounceHorizontal = false
+
+        messageController.delegate = self
     }
 
     override open func setUpAppearance() {
@@ -99,6 +102,12 @@ open class ChatMessageReactionAuthorsVC:
 
         let numberOfReactions = messageController.message?.totalReactionsCount ?? 0
         topLabel.text = L10n.Reaction.Authors.numberOfReactions(numberOfReactions)
+    }
+
+    public func messageController(
+        _ controller: ChatMessageController, didChangeReactions changes: [ListChange<ChatMessageReaction>]
+    ) {
+        collectionView.reloadData()
     }
 
     open func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
