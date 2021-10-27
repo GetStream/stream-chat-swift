@@ -54,7 +54,8 @@
       ]
     },
     {
-      "Guides": [  
+      "Guides": [
+        "guides/customize-message-actions",
         "guides/push-notifications",
         "guides/working-with-attachments",
         "guides/customize-message-composer",
