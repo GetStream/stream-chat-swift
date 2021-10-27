@@ -215,6 +215,8 @@ extension DatabaseContainer {
         latestReactions: [MessageReactionPayload] = [],
         ownReactions: [MessageReactionPayload] = [],
         attachments: [MessageAttachmentPayload] = [],
+        reactionScores: [MessageReactionType: Int] = [:],
+        reactionCounts: [MessageReactionType: Int] = [:],
         localState: LocalMessageState? = nil,
         type: MessageType? = nil,
         numberOfReplies: Int = 0
@@ -234,11 +236,15 @@ extension DatabaseContainer {
                 pinned: pinned,
                 pinnedByUserId: pinnedByUserId,
                 pinnedAt: pinnedAt,
-                pinExpires: pinExpires
+                pinExpires: pinExpires,
+                reactionScores: reactionScores,
+                reactionCounts: reactionCounts
             )
             
             let messageDTO = try session.saveMessage(payload: message, channelDTO: channelDTO)
             messageDTO.localMessageState = localState
+            messageDTO.reactionCounts = reactionCounts.mapKeys(\.rawValue)
+            messageDTO.reactionScores = reactionScores.mapKeys(\.rawValue)
             
             for idx in 0..<numberOfReplies {
                 let reply: MessagePayload = .dummy(

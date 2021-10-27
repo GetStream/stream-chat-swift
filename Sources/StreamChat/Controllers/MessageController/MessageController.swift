@@ -332,6 +332,12 @@ public extension ChatMessageController {
         limit: Int = 25,
         completion: ((Error?) -> Void)? = nil
     ) {
+        let hasLoadedAllReactions = message?.totalReactionsCount == reactions.count
+        if hasLoadedAllReactions {
+            callback { completion?(nil) }
+            return
+        }
+
         messageUpdater.loadReactions(
             cid: cid,
             messageId: messageId,

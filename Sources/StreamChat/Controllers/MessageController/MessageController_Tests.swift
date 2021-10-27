@@ -1161,12 +1161,57 @@ final class MessageController_Tests: XCTestCase {
         XCTAssertEqual(env.messageUpdater.loadReactions_pagination, .init(pageSize: 25, offset: 0))
     }
 
+    func test_loadNextReactions_whenAllReactionsLoaded_doNotCallMessageUpdater() throws {
+        controller.loadNextReactions()
+
+        env.messageUpdater.loadReactions_messageId = nil
+
+        // Create message with the 20 reactions
+        try client.databaseContainer.createCurrentUser(id: currentUserId)
+        try client.databaseContainer.createChannel(cid: cid)
+        try client.databaseContainer.createMessage(
+            id: messageId,
+            authorId: currentUserId,
+            cid: cid,
+            text: "",
+            reactionCounts: ["mock": 20]
+        )
+
+        // Start reactions observer
+        _ = controller.reactions
+
+        // Mock reactions observer with 20 items
+        let mockedReactions = repeatElement(
+            ChatMessageReaction(
+                type: "mock",
+                score: 1,
+                createdAt: .unique,
+                updatedAt: .unique,
+                extraData: [:], author: .unique
+            ),
+            count: 20
+        )
+
+        env.reactionsObserver.items_mock = .init(source: mockedReactions, map: { $0 })
+
+        controller.loadNextReactions()
+
+        XCTAssertNil(env.messageUpdater.loadReactions_messageId)
+    }
+
     func test_loadNextReactions_shouldPaginateFromLastReaction() {
         // Start reactions observer
         _ = controller.reactions
 
         let mockedReactions = repeatElement(
-            ChatMessageReaction(type: "likes", score: 1, createdAt: .unique, updatedAt: .unique, extraData: [:], author: .unique),
+            ChatMessageReaction(
+                type: "likes",
+                score: 1,
+                createdAt: .unique,
+                updatedAt: .unique,
+                extraData: [:],
+                author: .unique
+            ),
             count: 20
         )
 
