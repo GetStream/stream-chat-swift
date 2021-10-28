@@ -54,15 +54,36 @@ open class ChatMessageListRouter:
         rootViewController.present(popup, animated: true)
     }
 
+    /// Shows the detail pop-up for the selected message with all the message reactions presented.
+    ///
+    /// - Parameters:
+    ///   - messageContentView: The selected message content view.
+    ///   - client: The current `ChatClient` instance.
     open func showReactionsPopUp(
         messageContentView: ChatMessageContentView,
-        messageReactionsController: ChatMessageReactionsVC?,
-        messageReactionAuthorsController: ChatMessageReactionAuthorsVC?
+        client: ChatClient
     ) {
+        guard let message = messageContentView.content,
+              let cid = message.cid
+        else {
+            return
+        }
+        
+        let messageController = client.messageController(
+            cid: cid,
+            messageId: message.id
+        )
+
+        let reactionsController = components.reactionPickerVC.init()
+        reactionsController.messageController = messageController
+
+        let reactionAuthorsController = components.reactionAuthorsVC.init()
+        reactionAuthorsController.messageController = messageController
+
         let popup = components.messagePopupVC.init()
         popup.messageContentView = messageContentView
-        popup.reactionsController = messageReactionsController
-        popup.reactionAuthorsController = messageReactionAuthorsController
+        popup.reactionsController = reactionsController
+        popup.reactionAuthorsController = reactionAuthorsController
         popup.modalPresentationStyle = .overFullScreen
         popup.transitioningDelegate = messagePopUpTransitionController
         messagePopUpTransitionController.messageContentView = messageContentView

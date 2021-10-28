@@ -464,38 +464,13 @@ open class ChatMessageListVC:
     open func messageContentViewDidTapOnReactionsView(_ indexPath: IndexPath?) {
         guard let indexPath = indexPath,
               let cell = listView.cellForRow(at: indexPath) as? ChatMessageCell,
-              let messageContentView = cell.messageContentView,
-              let message = messageContentView.content,
-              let cid = message.cid else {
+              let messageContentView = cell.messageContentView else {
             return
         }
 
-        let messageController = client.messageController(
-            cid: cid,
-            messageId: message.id
-        )
-
-        let reactionsController: ChatMessageReactionsVC? = {
-            guard message.localState == nil else { return nil }
-            guard dataSource?.channel(for: self)?.config.reactionsEnabled == true else {
-                return nil
-            }
-
-            let controller = components.reactionPickerVC.init()
-            controller.messageController = messageController
-            return controller
-        }()
-
-        let reactionAuthorsController: ChatMessageReactionAuthorsVC? = {
-            let controller = components.reactionAuthorsVC.init()
-            controller.messageController = messageController
-            return controller
-        }()
-
         router.showReactionsPopUp(
             messageContentView: messageContentView,
-            messageReactionsController: reactionsController,
-            messageReactionAuthorsController: reactionAuthorsController
+            client: client
         )
     }
 
