@@ -483,7 +483,11 @@ open class ChatMessageContentView: _View, ThemeProvider {
                         }
                     }
                 } else {
-                    return appearance.colorPalette.background8
+                    if content?.isAttachmentAdded() ?? false {
+                        return .clear
+                    } else {
+                        return appearance.colorPalette.background8
+                    }
                 }
             }
             
