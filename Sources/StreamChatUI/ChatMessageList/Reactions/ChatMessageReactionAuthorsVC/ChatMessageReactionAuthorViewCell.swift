@@ -113,34 +113,34 @@ open class ChatMessageReactionAuthorViewCell: _CollectionViewCell, ThemeProvider
     override open func updateContent() {
         super.updateContent()
 
+        guard let content = self.content else { return }
+
         let placeholder = appearance.images.userAvatarPlaceholder1
         components.imageLoader.loadImage(
             into: authorAvatarView.imageView,
-            url: content?.reaction.author.imageURL,
+            url: content.reaction.author.imageURL,
             imageCDN: components.imageCDN,
             placeholder: placeholder,
             preferredSize: authorAvatarSize
         )
 
-        if let content = self.content {
-            let reactionAuthor = content.reaction.author
-            let isCurrentUser = content.currentUserId == reactionAuthor.id
+        let reactionAuthor = content.reaction.author
+        let isCurrentUser = content.currentUserId == reactionAuthor.id
 
-            authorNameLabel.text = isCurrentUser ? L10n.Reaction.Authors.Cell.you : reactionAuthor.name
+        authorNameLabel.text = isCurrentUser ? L10n.Reaction.Authors.Cell.you : reactionAuthor.name
 
-            reactionBubbleView.tailDirection = isCurrentUser ? .toTrailing : .toLeading
-            reactionItemView.content = .init(
-                useBigIcon: false,
-                reaction: ChatMessageReactionData(
-                    type: content.reaction.type,
-                    score: content.reaction.score,
-                    isChosenByCurrentUser: isCurrentUser
-                ),
-                onTap: nil
-            )
+        reactionBubbleView.tailDirection = isCurrentUser ? .toTrailing : .toLeading
+        reactionItemView.content = .init(
+            useBigIcon: false,
+            reaction: ChatMessageReactionData(
+                type: content.reaction.type,
+                score: content.reaction.score,
+                isChosenByCurrentUser: isCurrentUser
+            ),
+            onTap: nil
+        )
 
-            reactionTrailingConstraint?.isActive = isCurrentUser
-            reactionLeadingConstraint?.isActive = !isCurrentUser
-        }
+        reactionTrailingConstraint?.isActive = isCurrentUser
+        reactionLeadingConstraint?.isActive = !isCurrentUser
     }
 }
