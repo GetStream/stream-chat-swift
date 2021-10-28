@@ -28,7 +28,7 @@ enum UserPayloadsCodingKeys: String, CodingKey, CaseIterable {
 // MARK: - GET users
 
 /// An object describing the incoming user JSON payload.
-class UserPayload: Decodable {
+class UserPayload: Codable {
     let id: String
     let name: String?
     let imageURL: URL?
@@ -97,6 +97,22 @@ class UserPayload: Decodable {
             )
             extraData = [:]
         }
+    }
+
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: UserPayloadsCodingKeys.self)
+        try container.encode(id, forKey: .id)
+        try container.encodeIfPresent(name, forKey: .name)
+        try container.encodeIfPresent(imageURL, forKey: .imageURL)
+        try container.encode(role, forKey: .role)
+        try container.encode(createdAt, forKey: .createdAt)
+        try container.encode(updatedAt, forKey: .updatedAt)
+        try container.encodeIfPresent(lastActiveAt, forKey: .lastActiveAt)
+        try container.encode(isOnline, forKey: .isOnline)
+        try container.encode(isInvisible, forKey: .isInvisible)
+        try container.encode(isBanned, forKey: .isBanned)
+        try container.encode(teams, forKey: .teams)
+        try extraData.encode(to: encoder)
     }
 }
 

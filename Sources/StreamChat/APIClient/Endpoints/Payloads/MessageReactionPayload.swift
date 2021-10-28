@@ -5,7 +5,7 @@
 import Foundation
 
 /// The type describes the incoming message-reaction JSON.
-struct MessageReactionPayload: Decodable {
+struct MessageReactionPayload: Codable {
     private enum CodingKeys: String, CodingKey, CaseIterable {
         case type
         case score
@@ -62,5 +62,16 @@ struct MessageReactionPayload: Decodable {
             user: try container.decode(UserPayload.self, forKey: .user),
             extraData: extraData
         )
+    }
+
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(type, forKey: .type)
+        try container.encode(score, forKey: .score)
+        try container.encode(messageId, forKey: .messageId)
+        try container.encode(createdAt, forKey: .createdAt)
+        try container.encode(updatedAt, forKey: .updatedAt)
+        try container.encode(user, forKey: .user)
+        try extraData.encode(to: encoder)
     }
 }

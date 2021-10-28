@@ -31,10 +31,15 @@ class MessageDTO: NSManagedObject {
     @NSManaged var channel: ChannelDTO?
     @NSManaged var replies: Set<MessageDTO>
     @NSManaged var flaggedBy: CurrentUserDTO?
-    @NSManaged var reactions: Set<MessageReactionDTO>
     @NSManaged var attachments: Set<AttachmentDTO>
     @NSManaged var quotedMessage: MessageDTO?
     @NSManaged var searches: Set<MessageSearchQueryDTO>
+
+    // We separate reactions from own reactions so that when paginating reactions,
+    // the own reactions don't break the pagination logic. This is why ownReactions
+    // are stored in a different property and as JSON Data.
+    @NSManaged var reactions: Set<MessageReactionDTO>
+    @NSManaged var ownReactions: Data
 
     @NSManaged var pinned: Bool
     @NSManaged var pinnedBy: UserDTO?
@@ -423,9 +428,12 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         }
         
         dto.channel = channelDTO
-        
-        let reactions = payload.latestReactions + payload.ownReactions
-        try reactions.forEach { try saveReaction(payload: $0) }
+
+        try payload.latestReactions.forEach {
+            try saveReaction(payload: $0)
+        }
+
+        dto.ownReactions = try JSONEncoder.default.encode(payload.ownReactions)
         
         let attachments: Set<AttachmentDTO> = try Set(
             payload.attachments.enumerated().map { index, attachment in
@@ -606,11 +614,20 @@ private extension ChatMessage {
                 $_currentUserReactions = ({ [] }, nil)
             } else {
                 $_currentUserReactions = ({
-                    Set(
-                        MessageReactionDTO
-                            .loadReactions(for: dto.id, authoredBy: currentUser.user.id, context: context)
-                            .map { $0.asModel() }
-                    )
+                    let ownReactionsPayload = try? JSONDecoder.default.decode(
+                        [MessageReactionPayload].self,
+                        from: dto.ownReactions
+                    ).map {
+                        ChatMessageReaction(
+                            type: $0.type,
+                            score: $0.score,
+                            createdAt: $0.createdAt,
+                            updatedAt: $0.updatedAt,
+                            extraData: $0.extraData,
+                            author: UserDTO.load(id: $0.user.id, context: context)!.asModel()
+                        )
+                    }
+                    return Set(ownReactionsPayload ?? [])
                 }, dto.managedObjectContext)
             }
         } else {

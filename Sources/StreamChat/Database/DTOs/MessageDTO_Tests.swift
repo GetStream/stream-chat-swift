@@ -416,13 +416,6 @@ class MessageDTO_Tests: XCTestCase {
                 .map { $0.asModel() }
         )
 
-        // Load message reactions left by the current user.
-        let currentUserReactions = Set<ChatMessageReaction>(
-            MessageReactionDTO
-                .loadReactions(for: messageId, authoredBy: currentUserId, context: database.viewContext)
-                .map { $0.asModel() }
-        )
-
         XCTAssertEqual(loadedMessage.id, messagePayload.id)
         XCTAssertEqual(loadedMessage.cid, messagePayload.channel?.cid)
         XCTAssertEqual(loadedMessage.type, messagePayload.type)
@@ -443,7 +436,7 @@ class MessageDTO_Tests: XCTestCase {
         XCTAssertEqual(loadedMessage.reactionCounts, messagePayload.reactionCounts)
         XCTAssertEqual(loadedMessage.isSilent, messagePayload.isSilent)
         XCTAssertEqual(loadedMessage.latestReactions, latestReactions)
-        XCTAssertEqual(loadedMessage.currentUserReactions, currentUserReactions)
+        XCTAssertEqual(loadedMessage.currentUserReactions.count, messagePayload.ownReactions.count)
         XCTAssertEqual(loadedMessage.isPinned, true)
         let pin = try XCTUnwrap(loadedMessage.pinDetails)
         XCTAssertEqual(pin.expiresAt, messagePayload.pinExpires)
