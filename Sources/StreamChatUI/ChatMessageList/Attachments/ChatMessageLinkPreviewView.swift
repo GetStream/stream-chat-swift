@@ -50,7 +50,7 @@ open class ChatMessageLinkPreviewView: _Control, ThemeProvider {
         authorBackground.layer.cornerRadius = 15
         authorBackground.layer.maskedCorners = [.layerMaxXMinYCorner]
         authorBackground.clipsToBounds = true
-        authorBackground.backgroundColor = appearance.colorPalette.highlightedAccentBackground1
+        authorBackground.backgroundColor = appearance.colorPalette.background6
         
         authorLabel.font = appearance.fonts.bodyBold
         authorLabel.adjustsFontForContentSizeCategory = true
@@ -114,7 +114,7 @@ open class ChatMessageLinkPreviewView: _Control, ThemeProvider {
         let isImageHidden = payload?.previewURL == nil
         let isAuthorHidden = payload?.author == nil
 
-        authorLabel.textColor = tintColor
+        authorLabel.textColor = appearance.colorPalette.tappableLinkTint //tintColor
 
         components.imageLoader.loadImage(
             into: imagePreview,

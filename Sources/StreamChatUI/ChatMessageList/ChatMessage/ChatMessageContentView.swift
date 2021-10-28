@@ -469,7 +469,6 @@ open class ChatMessageContentView: _View, ThemeProvider {
         } else {
             authorAvatarView?.imageView.image = placeholder
         }
-
         // Bubble view
         bubbleView?.content = content.map { message in
             var backgroundColor: UIColor {
@@ -477,7 +476,11 @@ open class ChatMessageContentView: _View, ThemeProvider {
                     if message.type == .ephemeral {
                         return appearance.colorPalette.background8
                     } else {
-                        return appearance.colorPalette.background6
+                        if content?.isAttachmentAdded() ?? false {
+                            return .clear
+                        } else {
+                            return appearance.colorPalette.background6
+                        }
                     }
                 } else {
                     return appearance.colorPalette.background8
@@ -594,6 +597,7 @@ open class ChatMessageContentView: _View, ThemeProvider {
             textView?.textContainerInset = .init(top: 8, left: 8, bottom: 8, right: 8)
             textView?.textContainer.lineFragmentPadding = 0
             textView?.font = appearance.fonts.body
+            textView?.tintColor = appearance.colorPalette.tappableLinkTint
         }
         return textView!
     }

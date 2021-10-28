@@ -271,6 +271,10 @@ public extension ChatMessage {
     func attachment(with id: AttachmentId) -> AnyChatMessageAttachment? {
         _attachments.first { $0.id == id }
     }
+
+    func isAttachmentAdded() -> Bool {
+        return _attachments.count > 0
+    }
 }
 
 extension ChatMessage: Hashable {
