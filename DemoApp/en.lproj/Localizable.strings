@@ -70,7 +70,6 @@
 "dates.time-ago-months-singular" = "last seen one month ago";
 "dates.time-ago-months-plural" = "last seen %d months ago";
 
-"reaction.authors.number-of-reactions" = "%d Message Reactions";
 "reaction.authors.cell.you" = "You";
 
 // MARK: -  DemoApp Strings

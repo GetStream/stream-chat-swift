@@ -36,5 +36,23 @@
 			<string>%d Thread Replies</string>
 		</dict>
 	</dict>
+	<key>reaction.authors.number-of-reactions</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@reactions@</string>
+		<key>reactions</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>d</string>
+			<key>zero</key>
+			<string>%d Message Reactions</string>
+			<key>one</key>
+			<string>%d Message Reaction</string>
+			<key>other</key>
+			<string>%d Message Reactions</string>
+		</dict>
+	</dict>
 </dict>
 </plist>
