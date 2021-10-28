@@ -17,6 +17,8 @@ internal enum L10n {
       internal static var cancel: String { L10n.tr("Localizable", "alert.actions.cancel") }
       /// Delete
       internal static var delete: String { L10n.tr("Localizable", "alert.actions.delete") }
+      /// Flag
+      internal static var flag: String { L10n.tr("Localizable", "alert.actions.flag") }
       /// Ok
       internal static var ok: String { L10n.tr("Localizable", "alert.actions.ok") }
     }
@@ -140,6 +142,8 @@ internal enum L10n {
       internal static var delete: String { L10n.tr("Localizable", "message.actions.delete") }
       /// Edit Message
       internal static var edit: String { L10n.tr("Localizable", "message.actions.edit") }
+      /// Flag Message
+      internal static var flag: String { L10n.tr("Localizable", "message.actions.flag") }
       /// Reply
       internal static var inlineReply: String { L10n.tr("Localizable", "message.actions.inline-reply") }
       /// Resend
@@ -159,6 +163,12 @@ internal enum L10n {
         internal static var confirmationMessage: String { L10n.tr("Localizable", "message.actions.delete.confirmation-message") }
         /// Delete Message
         internal static var confirmationTitle: String { L10n.tr("Localizable", "message.actions.delete.confirmation-title") }
+      }
+      internal enum Flag {
+        /// Do you want to send a copy of this message to a moderator for further investigation?
+        internal static var confirmationMessage: String { L10n.tr("Localizable", "message.actions.flag.confirmation-message") }
+        /// Flag Message
+        internal static var confirmationTitle: String { L10n.tr("Localizable", "message.actions.flag.confirmation-title") }
       }
     }
     internal enum Sending {
