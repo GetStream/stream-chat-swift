@@ -189,6 +189,7 @@ public extension Appearance {
         public var messageActionMuteUser: UIImage = loadImageSafely(with: "icn_mute_user")
         public var messageActionDelete: UIImage = loadImageSafely(with: "icn_delete")
         public var messageActionResend: UIImage = loadImageSafely(with: "icn_resend")
+        public var messageActionFlag: UIImage = loadImageSafely(with: "icn_flag")
 
         // MARK: - Placeholders
 

@@ -221,3 +221,22 @@ public struct ResendActionItem: ChatMessageActionItem {
         icon = appearance.images.messageActionResend
     }
 }
+
+/// Instance of `FlagActionItem` for flagging a message action.
+public struct FlagActionItem: ChatMessageActionItem {
+    public var title: String { L10n.Message.Actions.flag }
+    public let icon: UIImage
+    public let action: (ChatMessageActionItem) -> Void
+    
+    /// Init of `FlagActionItem`.
+    /// - Parameters:
+    ///     - action: Action to be triggered when `FlagActionItem` is tapped.
+    ///     - appearance: `Appearance` that is used to configure UI properties.
+    public init(
+        action: @escaping (ChatMessageActionItem) -> Void,
+        appearance: Appearance = .default
+    ) {
+        self.action = action
+        icon = appearance.images.messageActionFlag
+    }
+}
