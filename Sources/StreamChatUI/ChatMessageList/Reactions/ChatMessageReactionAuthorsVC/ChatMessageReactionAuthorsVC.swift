@@ -144,22 +144,7 @@ open class ChatMessageReactionAuthorsVC:
         willDisplay cell: UICollectionViewCell,
         forItemAt indexPath: IndexPath
     ) {
-        if isLoadingReactions {
-            return
-        }
-
-        if indexPath.row < messageController.reactions.count - 10 {
-            return
-        }
-
-        let totalReactionsCount = messageController.message?.totalReactionsCount ?? 0
-        
-        if totalReactionsCount > messageController.reactions.count {
-            isLoadingReactions = true
-            messageController.loadNextReactions { [weak self] _ in
-                self?.isLoadingReactions = false
-            }
-        }
+        prefetchNextReactions(willDisplayItemAt: indexPath)
     }
 
     open func collectionView(
@@ -168,5 +153,25 @@ open class ChatMessageReactionAuthorsVC:
         sizeForItemAt indexPath: IndexPath
     ) -> CGSize {
         reactionAuthorCellSize
+    }
+
+    open func prefetchNextReactions(willDisplayItemAt indexPath: IndexPath) {
+        if isLoadingReactions {
+            return
+        }
+
+        if indexPath.row > messageController.reactions.count - 10 {
+            return
+        }
+
+        let totalReactionsCount = messageController.message?.totalReactionsCount ?? 0
+        if totalReactionsCount == messageController.reactions.count {
+            return
+        }
+
+        isLoadingReactions = true
+        messageController.loadNextReactions { [weak self] _ in
+            self?.isLoadingReactions = false
+        }
     }
 }
