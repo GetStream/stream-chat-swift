@@ -476,18 +476,20 @@ open class ChatMessageContentView: _View, ThemeProvider {
                     if message.type == .ephemeral {
                         return appearance.colorPalette.background8
                     } else {
-                        if content?.isAttachmentAdded() ?? false {
+                        return appearance.colorPalette.background6
+                        /*if content?.isAttachmentAdded() ?? false {
                             return .clear
                         } else {
                             return appearance.colorPalette.background6
-                        }
+                        }*/
                     }
                 } else {
-                    if content?.isAttachmentAdded() ?? false {
+                    return appearance.colorPalette.background8
+                    /*if content?.isAttachmentAdded() ?? false {
                         return .clear
                     } else {
                         return appearance.colorPalette.background8
-                    }
+                    }*/
                 }
             }
             

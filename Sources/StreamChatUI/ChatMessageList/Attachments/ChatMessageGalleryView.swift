@@ -77,12 +77,12 @@ open class ChatMessageGalleryView: _View, ThemeProvider {
         previewsContainerView.axis = .horizontal
         previewsContainerView.distribution = .equal
         previewsContainerView.alignment = .fill
-        previewsContainerView.spacing = 2
+        previewsContainerView.spacing = 0
         previewsContainerView.isLayoutMarginsRelativeArrangement = true
-        previewsContainerView.directionalLayoutMargins = .init(top: 2, leading: 2, bottom: 2, trailing: 2)
+        previewsContainerView.directionalLayoutMargins = .init(top: 0, leading: 0, bottom: 0, trailing: 0)
         embed(previewsContainerView)
         
-        leftPreviewsContainerView.spacing = 2
+        leftPreviewsContainerView.spacing = 0
         leftPreviewsContainerView.axis = .vertical
         leftPreviewsContainerView.distribution = .equal
         leftPreviewsContainerView.alignment = .fill
@@ -91,7 +91,7 @@ open class ChatMessageGalleryView: _View, ThemeProvider {
         leftPreviewsContainerView.addArrangedSubview(itemSpots[0])
         leftPreviewsContainerView.addArrangedSubview(itemSpots[2])
         
-        rightPreviewsContainerView.spacing = 2
+        rightPreviewsContainerView.spacing = 0
         rightPreviewsContainerView.axis = .vertical
         rightPreviewsContainerView.distribution = .equal
         rightPreviewsContainerView.alignment = .fill
