@@ -91,6 +91,16 @@ protocol MessageDatabaseSession {
     @discardableResult
     func saveMessage(payload: MessagePayload, for query: MessageSearchQuery) throws -> MessageDTO?
 
+    func addReaction(
+        to messageId: MessageId,
+        type: MessageReactionType,
+        score: Int,
+        enforceUnique: Bool,
+        extraData: [String: RawJSON]
+    ) throws -> MessageReactionDTO?
+    
+    func removeReaction(from messageId: MessageId, type: MessageReactionType) throws -> MessageReactionDTO?
+
     /// Pins the provided message
     /// - Parameters:
     ///   - message: The DTO to be pinned

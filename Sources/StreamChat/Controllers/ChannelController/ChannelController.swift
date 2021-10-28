@@ -877,8 +877,6 @@ public extension ChatChannelController {
     func createNewMessage(
         text: String,
         pinning: MessagePinning? = nil,
-//        command: String? = nil,
-//        arguments: String? = nil,
         isSilent: Bool = false,
         attachments: [AnyAttachmentPayload] = [],
         mentionedUserIds: [UserId] = [],

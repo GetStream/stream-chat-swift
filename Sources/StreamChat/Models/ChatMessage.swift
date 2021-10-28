@@ -340,3 +340,13 @@ public enum LocalMessageState: String {
     /// Deleting of the message failed after multiple of tries. The system is not trying to delete this message anymore.
     case deletingFailed
 }
+
+public enum LocalReactionState: String {
+    case pendingSend
+
+    case sending
+
+    case pendingDelete
+    
+    case deleting
+}

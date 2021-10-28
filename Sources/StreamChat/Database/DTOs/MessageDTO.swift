@@ -512,6 +512,67 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         message.pinnedBy = nil
         message.pinExpires = nil
     }
+
+    // addReaction does an upsert operation to the database and applies changes to the message as well
+    func addReaction(
+        to messageId: MessageId,
+        type: MessageReactionType,
+        score: Int,
+        enforceUnique: Bool,
+        extraData: [String: RawJSON]
+    ) throws -> MessageReactionDTO? {
+        guard let currentUserDTO = currentUser else {
+            throw ClientError.CurrentUserDoesNotExist()
+        }
+
+        guard let message = MessageDTO.load(id: messageId, context: self) else {
+            return nil
+        }
+
+        let result = try MessageReactionDTO.loadOrCreate(messageId: messageId, type: type, user: currentUserDTO.user, context: self)
+        result.dto.localState = LocalReactionState.pendingSend
+
+        // make sure we update the reactionScores for the message in a way that works for new or updated reactions
+        let scoreDiff = Int64(score) - result.dto.score
+        message
+            .reactionScores[type.rawValue] = max(0, message.reactionScores[type.rawValue] ?? Int(result.dto.score) + Int(scoreDiff))
+
+        result.dto.score = Int64(score)
+        result.dto.extraData = try JSONEncoder.default.encode(extraData)
+
+        if message.reactions.filter({ MessageReactionDTO.createId(dto: $0) == MessageReactionDTO.createId(dto: result.dto) })
+            .isEmpty {
+            message.reactions.insert(result.dto)
+        }
+        return result.dto
+    }
+    
+    func removeReaction(from messageId: MessageId, type: MessageReactionType) throws -> MessageReactionDTO? {
+        guard let currentUserDTO = currentUser else {
+            throw ClientError.CurrentUserDoesNotExist()
+        }
+
+        guard let reaction = MessageReactionDTO
+            .load(userId: currentUserDTO.user.id, messageId: messageId, type: type, context: self) else {
+            return nil
+        }
+
+        guard let message = MessageDTO.load(id: messageId, context: self) else {
+            return nil
+        }
+
+        reaction.localState = LocalReactionState.pendingDelete
+        message.reactions = message.reactions
+            .filter { MessageReactionDTO.createId(dto: reaction) != MessageReactionDTO.createId(dto: $0) }
+
+        guard let reactionScore = message.reactionScores.removeValue(forKey: type.rawValue), reactionScore > 1 else {
+            return reaction
+        }
+
+        message.reactionScores[type.rawValue] = max(reactionScore - 1, 0)
+        message.reactionScores[type.rawValue] = reactionScore
+        return reaction
+    }
 }
 
 extension MessageDTO {

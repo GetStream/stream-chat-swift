@@ -255,6 +255,7 @@ class MessageUpdater: Worker {
         messageId: MessageId,
         completion: ((Error?) -> Void)? = nil
     ) {
+        var reaction: MessageReactionDTO?
         let endpoint: Endpoint<EmptyResponse> = .addReaction(
             type,
             score: score,
@@ -262,8 +263,36 @@ class MessageUpdater: Worker {
             extraData: extraData,
             messageId: messageId
         )
-        apiClient.request(endpoint: endpoint) {
-            completion?($0.error)
+
+        database.write({ session in
+            do {
+                reaction = try session.addReaction(
+                    to: messageId,
+                    type: type,
+                    score: score,
+                    enforceUnique: enforceUnique,
+                    extraData: extraData
+                )
+                completion?(nil)
+            } catch {
+                log.error("Failed to add the reaction to the database: \(error)")
+                completion?(error)
+            }
+
+            guard let reaction = reaction, reaction.localState == .pendingSend else {
+                return
+            }
+
+            reaction.localState = .sending
+        }) { _ in
+            guard let reaction = reaction, reaction.localState == .sending else {
+                return
+            }
+            self.apiClient.request(endpoint: endpoint) { result in
+                self.database.write { _ in
+                    reaction.localState = result.error == nil ? nil : .pendingSend
+                }
+            }
         }
     }
     
@@ -277,8 +306,31 @@ class MessageUpdater: Worker {
         messageId: MessageId,
         completion: ((Error?) -> Void)? = nil
     ) {
-        apiClient.request(endpoint: .deleteReaction(type, messageId: messageId)) {
-            completion?($0.error)
+        var reaction: MessageReactionDTO?
+
+        database.write({ session in
+            do {
+                reaction = try session.removeReaction(from: messageId, type: type)
+                completion?(nil)
+            } catch {
+                log.error("Failed to remove the reaction from to the database: \(error)")
+                completion?(error)
+            }
+            
+            guard let reaction = reaction, reaction.localState == .pendingDelete else {
+                return
+            }
+
+            reaction.localState = .deleting
+        }) { _ in
+            guard let reaction = reaction, reaction.localState == .deleting else {
+                return
+            }
+            self.apiClient.request(endpoint: .deleteReaction(type, messageId: messageId)) { result in
+                self.database.write { _ in
+                    reaction.localState = result.error == nil ? nil : .pendingDelete
+                }
+            }
         }
     }
 
