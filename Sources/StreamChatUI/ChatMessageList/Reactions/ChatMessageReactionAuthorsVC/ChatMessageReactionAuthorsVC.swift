@@ -36,6 +36,11 @@ open class ChatMessageReactionAuthorsVC:
         CGSize(width: 64, height: 110)
     }
 
+    /// By default it is 10. It will prefetch the reactions before showing the last 10th reaction.
+    open var prefetchThreshold: Int {
+        10
+    }
+
     /// A Boolean indicating whether the reactions are currently loading.
     public var isLoadingReactions: Bool = false
 
@@ -104,7 +109,7 @@ open class ChatMessageReactionAuthorsVC:
         topLabel.text = L10n.Reaction.Authors.numberOfReactions(numberOfReactions)
     }
 
-    public func messageController(
+    open func messageController(
         _ controller: ChatMessageController, didChangeReactions changes: [ListChange<ChatMessageReaction>]
     ) {
         collectionView.reloadData()
@@ -139,12 +144,12 @@ open class ChatMessageReactionAuthorsVC:
         return cell
     }
 
-    public func collectionView(
+    open func collectionView(
         _ collectionView: UICollectionView,
         willDisplay cell: UICollectionViewCell,
         forItemAt indexPath: IndexPath
     ) {
-        prefetchNextReactions(willDisplayItemAt: indexPath)
+        prefetchNextReactions(currentIndexPath: indexPath)
     }
 
     open func collectionView(
@@ -155,12 +160,12 @@ open class ChatMessageReactionAuthorsVC:
         reactionAuthorCellSize
     }
 
-    open func prefetchNextReactions(willDisplayItemAt indexPath: IndexPath) {
+    open func prefetchNextReactions(currentIndexPath indexPath: IndexPath) {
         if isLoadingReactions {
             return
         }
 
-        if indexPath.row > messageController.reactions.count - 10 {
+        if indexPath.row > messageController.reactions.count - prefetchThreshold {
             return
         }
 

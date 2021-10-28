@@ -461,7 +461,7 @@ open class ChatMessageListVC:
             .dispatchEphemeralMessageAction(action)
     }
 
-    public func messageContentViewDidTapOnReactionsView(_ indexPath: IndexPath?) {
+    open func messageContentViewDidTapOnReactionsView(_ indexPath: IndexPath?) {
         guard let indexPath = indexPath,
               let cell = listView.cellForRow(at: indexPath) as? ChatMessageCell,
               let messageContentView = cell.messageContentView,
