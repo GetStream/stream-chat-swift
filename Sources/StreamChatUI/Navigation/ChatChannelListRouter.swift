@@ -24,6 +24,7 @@ open class ChatChannelListRouter: NavigationRouter<ChatChannelListVC>, Component
     ///
     open func showChannel(for cid: ChannelId) {
         let vc = components.channelVC.init()
+        vc.edgesForExtendedLayout = []
         vc.channelController = rootViewController.controller.client.channelController(
             for: cid,
             channelListQuery: rootViewController.controller.query
