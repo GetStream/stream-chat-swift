@@ -513,12 +513,17 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         message.pinExpires = nil
     }
 
-    // addReaction does an upsert operation to the database and applies changes to the message as well
+    /// Adds the reaction for the current user to the message with id `messageId`
+    ///
+    /// Notes:
+    /// - The reaction is added to the database and it updates the message `reactionScores` property
+    /// - This method will throw if there is no current user set
+    /// - If the message is not found, there will be no side effect and the method will return `nil`
+    /// - If a reaction for the same user, type and message exists
     func addReaction(
         to messageId: MessageId,
         type: MessageReactionType,
         score: Int,
-        enforceUnique: Bool,
         extraData: [String: RawJSON]
     ) throws -> MessageReactionDTO? {
         guard let currentUserDTO = currentUser else {
@@ -530,7 +535,6 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         }
 
         let result = try MessageReactionDTO.loadOrCreate(messageId: messageId, type: type, user: currentUserDTO.user, context: self)
-        result.dto.localState = LocalReactionState.pendingSend
 
         // make sure we update the reactionScores for the message in a way that works for new or updated reactions
         let scoreDiff = Int64(score) - result.dto.score
@@ -546,7 +550,14 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         }
         return result.dto
     }
-    
+
+    /// Removes the reaction for the current user to the message with id `messageId`
+    ///
+    /// Notes:
+    /// - The reaction is *not* removed from the database
+    /// - This method will throw if there is no current user set
+    /// - If the message is not found, there will be no side effect and the method will return `nil`
+    /// - If there is no reaction found in the database, this method returns `nil`
     func removeReaction(from messageId: MessageId, type: MessageReactionType) throws -> MessageReactionDTO? {
         guard let currentUserDTO = currentUser else {
             throw ClientError.CurrentUserDoesNotExist()
@@ -561,7 +572,6 @@ extension NSManagedObjectContext: MessageDatabaseSession {
             return nil
         }
 
-        reaction.localState = LocalReactionState.pendingDelete
         message.reactions = message.reactions
             .filter { MessageReactionDTO.createId(dto: reaction) != MessageReactionDTO.createId(dto: $0) }
 
@@ -569,7 +579,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
             return reaction
         }
 
-        message.reactionScores[type.rawValue] = max(reactionScore - 1, 0)
+        message.reactionScores[type.rawValue] = max(reactionScore - Int(reaction.score), 0)
         message.reactionScores[type.rawValue] = reactionScore
         return reaction
     }

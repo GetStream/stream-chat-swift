@@ -9,6 +9,7 @@ import Foundation
 final class MessageReactionDTO: NSManagedObject {
     @NSManaged fileprivate var id: String
 
+    // holds the rawValue of LocalReactionState
     @NSManaged fileprivate var localStateRaw: String?
     @NSManaged var type: String
     @NSManaged var score: Int64
@@ -31,15 +32,6 @@ final class MessageReactionDTO: NSManagedObject {
         dto: MessageReactionDTO
     ) -> String {
         createId(userId: dto.user.id, messageId: dto.message.id, type: .init(rawValue: dto.type))
-    }
-    
-    static func hasChanged(reaction: MessageReactionDTO, score: Int, extraData: [String: RawJSON]) -> Bool {
-        if reaction.score != score {
-            return true
-        }
-
-        // TODO: implement cmp between reaction.extraData and extraData
-        return false
     }
 }
 

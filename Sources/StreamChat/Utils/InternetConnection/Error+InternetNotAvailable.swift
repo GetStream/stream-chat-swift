@@ -32,4 +32,12 @@ extension Error {
         }
         return false
     }
+    
+    var isRateLimitError: Bool {
+        if let error = (self as? ClientError)?.underlyingError as? ErrorPayload,
+           error.statusCode == 429 {
+            return true
+        }
+        return false
+    }
 }

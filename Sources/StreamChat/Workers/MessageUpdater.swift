@@ -264,13 +264,12 @@ class MessageUpdater: Worker {
             messageId: messageId
         )
 
-        database.write({ session in
+        database.write { session in
             do {
                 reaction = try session.addReaction(
                     to: messageId,
                     type: type,
                     score: score,
-                    enforceUnique: enforceUnique,
                     extraData: extraData
                 )
                 completion?(nil)
@@ -279,18 +278,32 @@ class MessageUpdater: Worker {
                 completion?(error)
             }
 
-            guard let reaction = reaction, reaction.localState == .pendingSend else {
+            // if session.addReaction failed we fire the API call, worst case the call with have no effect
+            guard let reaction = reaction else {
+                self.apiClient.request(endpoint: endpoint) { _ in }
                 return
             }
 
             reaction.localState = .sending
-        }) { _ in
-            guard let reaction = reaction, reaction.localState == .sending else {
-                return
-            }
+
+            // TODO: verify that this is OK and that does not cause problems (api call inside db write)
             self.apiClient.request(endpoint: endpoint) { result in
+                guard let error = result.error else {
+                    return
+                }
+
+                guard ClientError.isEphemeral(error: error) else {
+                    self.database.write { session in
+                        guard let reaction = try? session.removeReaction(from: messageId, type: type) else {
+                            return
+                        }
+                        reaction.localState = .sendingFailed
+                    }
+                    return
+                }
+
                 self.database.write { _ in
-                    reaction.localState = result.error == nil ? nil : .pendingSend
+                    reaction.localState = .pendingSend
                 }
             }
         }
@@ -308,7 +321,7 @@ class MessageUpdater: Worker {
     ) {
         var reaction: MessageReactionDTO?
 
-        database.write({ session in
+        database.write { session in
             do {
                 reaction = try session.removeReaction(from: messageId, type: type)
                 completion?(nil)
@@ -317,18 +330,23 @@ class MessageUpdater: Worker {
                 completion?(error)
             }
             
-            guard let reaction = reaction, reaction.localState == .pendingDelete else {
+            // if session.removeReaction failed we fire the API call, worst case the call with have no effect
+            guard let reaction = reaction else {
+                self.apiClient.request(endpoint: .deleteReaction(type, messageId: messageId)) { _ in }
                 return
             }
 
             reaction.localState = .deleting
-        }) { _ in
-            guard let reaction = reaction, reaction.localState == .deleting else {
-                return
-            }
+
+            // TODO: verify that this is OK and that does not cause problems (api call inside db write)
             self.apiClient.request(endpoint: .deleteReaction(type, messageId: messageId)) { result in
+                guard let error = result.error else {
+                    return
+                }
+
+                /// update the localState depending on the kind of API error
                 self.database.write { _ in
-                    reaction.localState = result.error == nil ? nil : .pendingDelete
+                    reaction.localState = ClientError.isEphemeral(error: error) ? .pendingDelete : .deletingFailed
                 }
             }
         }
