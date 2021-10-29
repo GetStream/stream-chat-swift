@@ -29,11 +29,11 @@ open class ChatChannelVC:
         channelController.client
     }
 
-    /// Component responsible for setting the correct offset when keyboard frame is changed.
-    open lazy var keyboardHandler: KeyboardHandler = ComposerKeyboardHandler(
-        composerParentVC: self,
-        composerBottomConstraint: messageComposerBottomConstraint
-    )
+//    /// Component responsible for setting the correct offset when keyboard frame is changed.
+//    open lazy var keyboardHandler: KeyboardHandler = ComposerKeyboardHandler(
+//        composerParentVC: self,
+//        composerBottomConstraint: messageComposerBottomConstraint
+//    )
 
     /// The message list component responsible to render the messages.
     open lazy var messageListVC: ChatMessageListVC = components
@@ -108,7 +108,7 @@ open class ChatChannelVC:
     override open func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
-        keyboardHandler.start()
+        //keyboardHandler.start()
     }
 
     override open func viewDidDisappear(_ animated: Bool) {
@@ -116,7 +116,7 @@ open class ChatChannelVC:
 
         resignFirstResponder()
 
-        keyboardHandler.stop()
+        //keyboardHandler.stop()
     }
 
     // MARK: - ChatMessageListVCDataSource
