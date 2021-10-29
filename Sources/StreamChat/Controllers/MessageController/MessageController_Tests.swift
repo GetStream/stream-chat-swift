@@ -1187,7 +1187,8 @@ final class MessageController_Tests: XCTestCase {
                 score: 1,
                 createdAt: .unique,
                 updatedAt: .unique,
-                extraData: [:], author: .unique
+                author: .unique,
+                extraData: [:]
             ),
             count: 20
         )
@@ -1209,8 +1210,8 @@ final class MessageController_Tests: XCTestCase {
                 score: 1,
                 createdAt: .unique,
                 updatedAt: .unique,
-                extraData: [:],
-                author: .unique
+                author: .unique,
+                extraData: [:]
             ),
             count: 20
         )

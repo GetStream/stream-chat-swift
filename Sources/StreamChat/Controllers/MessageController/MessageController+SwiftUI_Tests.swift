@@ -71,8 +71,8 @@ class MessageController_SwiftUI_Tests: iOS13TestCase {
             score: 3,
             createdAt: .unique,
             updatedAt: .unique,
-            extraData: [:],
-            author: .unique
+            author: .unique,
+            extraData: [:]
         )
 
         messageController.reactions_simulated = [newReaction]

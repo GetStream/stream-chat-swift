@@ -105,7 +105,12 @@ class MessageController_Combine_Tests: iOS13TestCase {
         messageController = nil
 
         let newReaction: ChatMessageReaction = .init(
-            type: "like", score: 1, createdAt: .unique, updatedAt: .unique, extraData: [:], author: .unique
+            type: "like",
+            score: 1,
+            createdAt: .unique,
+            updatedAt: .unique,
+            author: .unique,
+            extraData: [:]
         )
         controller?.reactions_simulated = [newReaction]
         controller?.delegateCallback {
