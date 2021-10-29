@@ -137,4 +137,64 @@ final class ChatMessagePopupVC_Tests: XCTestCase {
 
         AssertSnapshot(vc, variants: [.defaultDark, .defaultLight])
     }
+
+    func test_reactions_whenReactionsCountMoreThan4_shouldHaveBiggerWidth() {
+        let mockReactions: [ChatMessageReaction] = [
+            .mock(),
+            .mock(),
+            .mock(),
+            .mock(),
+            .mock()
+        ]
+        vc = makePopupVC(withReactions: mockReactions)
+
+        AssertSnapshot(vc, variants: [.defaultDark, .defaultLight])
+    }
+
+    func test_reactions_whenReactionsCountLessThan4_shouldHaveSmallerWidth() {
+        let mockReactions: [ChatMessageReaction] = [
+            .mock(),
+            .mock()
+        ]
+        vc = makePopupVC(withReactions: mockReactions)
+
+        AssertSnapshot(vc, variants: [.defaultDark, .defaultLight])
+    }
+
+    func test_reactions_whenReactionsCountEqual4_shouldOnlyHaveSmallerHeight() {
+        let mockReactions: [ChatMessageReaction] = [
+            .mock(),
+            .mock(),
+            .mock(),
+            .mock()
+        ]
+        vc = makePopupVC(withReactions: mockReactions)
+
+        AssertSnapshot(
+            vc,
+            variants: [.defaultDark, .defaultLight],
+            screenSize: CGSize(width: 400, height: 700)
+        )
+    }
+}
+
+extension ChatMessagePopupVC_Tests {
+    private func makePopupVC(withReactions reactions: [ChatMessageReaction]) -> ChatMessagePopupVC {
+        let mockMessageController = ChatMessageController_Mock.mock()
+        mockMessageController.message_mock = .mock(
+            id: .unique,
+            cid: .unique,
+            text: "Some message",
+            author: .mock(id: .unique),
+            reactionCounts: ["fake": reactions.count]
+        )
+        mockMessageController.reactions_mock = reactions
+
+        vc.actionsController = nil
+        vc.messageContentView.content = mockMessageController.message_mock
+        vc.reactionAuthorsController = ChatMessageReactionAuthorsVC()
+        vc.reactionAuthorsController?.messageController = mockMessageController
+
+        return vc
+    }
 }

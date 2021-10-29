@@ -623,8 +623,8 @@ private extension ChatMessage {
                             score: $0.score,
                             createdAt: $0.createdAt,
                             updatedAt: $0.updatedAt,
-                            extraData: $0.extraData,
-                            author: UserDTO.load(id: $0.user.id, context: context)!.asModel()
+                            author: UserDTO.load(id: $0.user.id, context: context)!.asModel(),
+                            extraData: $0.extraData
                         )
                     }
                     return Set(ownReactionsPayload ?? [])

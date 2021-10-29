@@ -825,6 +825,8 @@
 		AD158B6626C1876800C104CD /* ChatChannelVC+SwiftUI_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64B059EC267116B40024CE90 /* ChatChannelVC+SwiftUI_Tests.swift */; };
 		AD158B6726C1876D00C104CD /* ChatChannelVC_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64B8AC16266F86020092D5F6 /* ChatChannelVC_Tests.swift */; };
 		AD1D7A8526A2131D00494CA5 /* ChatChannelVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD1D7A8326A212D000494CA5 /* ChatChannelVC.swift */; };
+		AD25070D272C0C8D00BC14C4 /* ChatMessageReactionAuthorsVC_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD25070B272C0C8800BC14C4 /* ChatMessageReactionAuthorsVC_Tests.swift */; };
+		AD250710272C16D200BC14C4 /* ChatMessageReaction_Mock.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD25070E272C156600BC14C4 /* ChatMessageReaction_Mock.swift */; };
 		AD3D0CC026A8727800A6D813 /* SlackChatChannelHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD3D0CBF26A8727800A6D813 /* SlackChatChannelHeaderView.swift */; };
 		AD3D0CC226A88E5100A6D813 /* MessengerChatChannelHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD3D0CC126A88E5100A6D813 /* MessengerChatChannelHeaderView.swift */; };
 		AD3D0CC426A89E6300A6D813 /* iMessageChatChannelHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD3D0CC326A89E6300A6D813 /* iMessageChatChannelHeaderView.swift */; };
@@ -2234,6 +2236,8 @@
 		AD154C6C25DC3BA000850925 /* ChatCommandSuggestionView_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatCommandSuggestionView_Tests.swift; sourceTree = "<group>"; };
 		AD158B6326C1872D00C104CD /* ChatThreadVC+SwiftUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChatThreadVC+SwiftUI.swift"; sourceTree = "<group>"; };
 		AD1D7A8326A212D000494CA5 /* ChatChannelVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatChannelVC.swift; sourceTree = "<group>"; };
+		AD25070B272C0C8800BC14C4 /* ChatMessageReactionAuthorsVC_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageReactionAuthorsVC_Tests.swift; sourceTree = "<group>"; };
+		AD25070E272C156600BC14C4 /* ChatMessageReaction_Mock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageReaction_Mock.swift; sourceTree = "<group>"; };
 		AD3D0CBF26A8727800A6D813 /* SlackChatChannelHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlackChatChannelHeaderView.swift; sourceTree = "<group>"; };
 		AD3D0CC126A88E5100A6D813 /* MessengerChatChannelHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessengerChatChannelHeaderView.swift; sourceTree = "<group>"; };
 		AD3D0CC326A89E6300A6D813 /* iMessageChatChannelHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iMessageChatChannelHeaderView.swift; sourceTree = "<group>"; };
@@ -3166,6 +3170,7 @@
 				7930615F2577A39D005CF846 /* ChatMessage_Mock.swift */,
 				ADFCCD0725C9B8D70024505D /* ChannelUnreadCount_Mock.swift */,
 				ADEA7EAF261C88E200CA2289 /* CurrentChatUser_Mock.swift */,
+				AD25070E272C156600BC14C4 /* ChatMessageReaction_Mock.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -4743,6 +4748,7 @@
 			isa = PBXGroup;
 			children = (
 				AD793F48270B767500B05456 /* ChatMessageReactionAuthorsVC.swift */,
+				AD25070B272C0C8800BC14C4 /* ChatMessageReactionAuthorsVC_Tests.swift */,
 				AD793F4A270B769E00B05456 /* ChatMessageReactionAuthorViewCell.swift */,
 				AD876B4627288DF700317314 /* ChatMessageReactionAuthorsFlowLayout.swift */,
 			);
@@ -6184,6 +6190,7 @@
 				849AE668270CB65F00423A20 /* VideoAttachmentGalleryPreview_Tests.swift in Sources */,
 				64ECF6BC2672272D008B9D47 /* ChatThreadVC+SwiftUI_Tests.swift in Sources */,
 				AD050BA8265D600B006649A5 /* QuotedChatMessageView+SwiftUI_Tests.swift in Sources */,
+				AD25070D272C0C8D00BC14C4 /* ChatMessageReactionAuthorsVC_Tests.swift in Sources */,
 				AD158B6726C1876D00C104CD /* ChatChannelVC_Tests.swift in Sources */,
 				79158D5B25F15CF900186102 /* AssertAsync.swift in Sources */,
 				849AE664270CB14000423A20 /* VideoAttachmentComposerPreview_Tests.swift in Sources */,
@@ -6301,6 +6308,7 @@
 				F86A2456263732970050EBF1 /* ChatMessageImageAttachment_Mock.swift in Sources */,
 				ADFCCD5F25C9D4350024505D /* ChatUserSearchController_Mock.swift in Sources */,
 				F8788F09261D9D81006019DD /* CurrentUserPayload.swift in Sources */,
+				AD250710272C16D200BC14C4 /* ChatMessageReaction_Mock.swift in Sources */,
 				7930610F25778C37005CF846 /* ChatChannelListController_Mock.swift in Sources */,
 				880899CE2652817F007D3493 /* AttachmentUploadingState_Mock.swift in Sources */,
 				F870011A264D21B700898FDF /* ChatMessageLinkAttachment_Mock.swift in Sources */,

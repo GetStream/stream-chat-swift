@@ -975,8 +975,8 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
                     score: 1,
                     createdAt: .unique,
                     updatedAt: .unique,
-                    extraData: [:],
-                    author: .mock(id: .unique)
+                    author: .mock(id: .unique),
+                    extraData: [:]
                 )
             ]
         )
@@ -1013,8 +1013,8 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
                     score: 1,
                     createdAt: .unique,
                     updatedAt: .unique,
-                    extraData: [:],
-                    author: .mock(id: .unique)
+                    author: .mock(id: .unique),
+                    extraData: [:]
                 )
             ]
         )
@@ -1051,8 +1051,8 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
                     score: 1,
                     createdAt: .unique,
                     updatedAt: .unique,
-                    extraData: [:],
-                    author: .mock(id: .unique)
+                    author: .mock(id: .unique),
+                    extraData: [:]
                 )
             ]
         )
@@ -1089,8 +1089,8 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
                     score: 1,
                     createdAt: .unique,
                     updatedAt: .unique,
-                    extraData: [:],
-                    author: .mock(id: .unique)
+                    author: .mock(id: .unique),
+                    extraData: [:]
                 )
             ]
         )
@@ -1309,8 +1309,8 @@ private extension Array where Element == (ChatMessage, Bool) {
                     score: 1,
                     createdAt: .unique,
                     updatedAt: .unique,
-                    extraData: [:],
-                    author: currentUser
+                    author: currentUser,
+                    extraData: [:]
                 )
             ]
         )

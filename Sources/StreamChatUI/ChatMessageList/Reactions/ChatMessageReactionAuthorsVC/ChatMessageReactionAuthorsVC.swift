@@ -72,7 +72,7 @@ open class ChatMessageReactionAuthorsVC:
         view.backgroundColor = appearance.colorPalette.background
 
         flowLayout.scrollDirection = .vertical
-        flowLayout.sectionInset = .init(top: 0, left: 16, bottom: 0, right: 16)
+        flowLayout.sectionInset = .init(top: 0, left: 8, bottom: 0, right: 8)
         flowLayout.minimumLineSpacing = 20
         flowLayout.minimumInteritemSpacing = 16
 
@@ -109,11 +109,7 @@ open class ChatMessageReactionAuthorsVC:
         topLabel.text = L10n.Reaction.Authors.numberOfReactions(numberOfReactions)
     }
 
-    open func messageController(
-        _ controller: ChatMessageController, didChangeReactions changes: [ListChange<ChatMessageReaction>]
-    ) {
-        collectionView.reloadData()
-    }
+    // MARK: - Collection View Data Source & Delegate
 
     open func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         messageController.reactions.count
@@ -159,6 +155,16 @@ open class ChatMessageReactionAuthorsVC:
     ) -> CGSize {
         reactionAuthorCellSize
     }
+
+    // MARK: - ChatMessageControllerDelegate
+
+    open func messageController(
+        _ controller: ChatMessageController, didChangeReactions changes: [ListChange<ChatMessageReaction>]
+    ) {
+        collectionView.reloadData()
+    }
+
+    // MARK: - Public API
 
     open func prefetchNextReactions(currentIndexPath indexPath: IndexPath) {
         if isLoadingReactions {

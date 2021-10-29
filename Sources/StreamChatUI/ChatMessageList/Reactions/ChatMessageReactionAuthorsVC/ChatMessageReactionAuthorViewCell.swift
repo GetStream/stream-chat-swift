@@ -103,8 +103,8 @@ open class ChatMessageReactionAuthorViewCell: _CollectionViewCell, ThemeProvider
             reactionBubbleView.bottomAnchor.pin(equalTo: authorAvatarView.bottomAnchor)
         ])
 
-        reactionTrailingConstraint = reactionBubbleView.trailingAnchor.pin(equalTo: authorAvatarView.centerXAnchor)
-        reactionLeadingConstraint = reactionBubbleView.leadingAnchor.pin(equalTo: authorAvatarView.centerXAnchor)
+        reactionTrailingConstraint = reactionBubbleView.rightAnchor.pin(equalTo: authorAvatarView.centerXAnchor)
+        reactionLeadingConstraint = reactionBubbleView.leftAnchor.pin(equalTo: authorAvatarView.centerXAnchor)
 
         reactionTrailingConstraint?.isActive = false
         reactionLeadingConstraint?.isActive = false

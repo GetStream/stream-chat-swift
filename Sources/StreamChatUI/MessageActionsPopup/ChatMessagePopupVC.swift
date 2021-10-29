@@ -63,7 +63,7 @@ open class ChatMessagePopupVC: _ViewController, ComponentsProvider {
     /// The width percentage of the reactions author view in relation with the popup's width.
     /// By default it depends on the number of total reactions.
     open var reactionAuthorsViewWidthMultiplier: CGFloat {
-        message.totalReactionsCount >= 4 ? 0.9 : 0.7
+        message.totalReactionsCount >= 4 ? 0.90 : 0.75
     }
 
     override open func setUp() {

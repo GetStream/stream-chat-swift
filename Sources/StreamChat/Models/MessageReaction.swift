@@ -19,9 +19,25 @@ public struct ChatMessageReaction: Hashable {
     /// The date the reaction was last updated.
     public let updatedAt: Date
     
-    /// Custom data
-    public let extraData: [String: RawJSON]
-    
     /// The author.
     public let author: ChatUser
+
+    /// Custom data
+    public let extraData: [String: RawJSON]
+
+    public init(
+        type: MessageReactionType,
+        score: Int,
+        createdAt: Date,
+        updatedAt: Date,
+        author: ChatUser,
+        extraData: [String: RawJSON]
+    ) {
+        self.type = type
+        self.score = score
+        self.createdAt = createdAt
+        self.updatedAt = updatedAt
+        self.author = author
+        self.extraData = extraData
+    }
 }

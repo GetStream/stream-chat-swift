@@ -7,21 +7,28 @@ import Foundation
 
 public class ChatMessageController_Mock: ChatMessageController {
     /// Creates a new mock instance of `ChatMessageController`.
-    public static func mock() -> ChatMessageController_Mock {
-        .init(client: .mock(), cid: try! .init(cid: "mock:channel"), messageId: "MockMessage")
+    public static func mock(currentUserId: UserId = "ID") -> ChatMessageController_Mock {
+        let chatClient = ChatClient.mock()
+        chatClient.currentUserId = currentUserId
+        return .init(client: chatClient, cid: try! .init(cid: "mock:channel"), messageId: "MockMessage")
     }
     
-    public private(set) var message_mock: ChatMessage?
+    public var message_mock: ChatMessage?
     override public var message: ChatMessage? {
         message_mock ?? super.message
     }
 
-    public private(set) var replies_mock: [ChatMessage]?
+    public var reactions_mock: [ChatMessageReaction]?
+    override public var reactions: LazyCachedMapCollection<ChatMessageReaction> {
+        reactions_mock.map { $0.lazyCachedMap { $0 } } ?? super.reactions
+    }
+
+    public var replies_mock: [ChatMessage]?
     override public var replies: LazyCachedMapCollection<ChatMessage> {
         replies_mock.map { $0.lazyCachedMap { $0 } } ?? super.replies
     }
 
-    public private(set) var state_mock: State?
+    public var state_mock: State?
     override public var state: DataController.State {
         get { state_mock ?? super.state }
         set { super.state = newValue }
