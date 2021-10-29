@@ -80,14 +80,20 @@ open class ChatMessageListVC:
 
         return !listView.isLastCellFullyVisible && isMoreContentThanOnePage
     }
-    
+
+    open override func viewDidLoad() {
+        super.viewDidLoad()
+        listView.register(UINib(nibName: "UserTransactionBubble", bundle: nil),
+                          forCellReuseIdentifier: "UserTransactionBubble")
+    }
+
     override open func setUp() {
         super.setUp()
         
         let longPress = UILongPressGestureRecognizer(target: self, action: #selector(handleLongPress))
         longPress.minimumPressDuration = 0.33
         listView.addGestureRecognizer(longPress)
-        
+
         let tapOnList = UITapGestureRecognizer(target: self, action: #selector(handleTap(_:)))
         tapOnList.cancelsTouchesInView = false
         tapOnList.delegate = self
@@ -299,18 +305,38 @@ open class ChatMessageListVC:
 
     open func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let message = dataSource?.chatMessageListVC(self, messageAt: indexPath)
+        if isPaymentCell(message) {
+            guard let cell = tableView.dequeueReusableCell(
+                withIdentifier: "UserTransactionBubble",
+                for: indexPath) as? UserTransactionBubble else {
+                return UITableViewCell()
+            }
+            cell.contentView.transform = .mirrorY
+            return cell
+        } else {
+            let cell: ChatMessageCell = listView.dequeueReusableCell(
+                contentViewClass: cellContentClassForMessage(at: indexPath),
+                attachmentViewInjectorType: attachmentViewInjectorClassForMessage(at: indexPath),
+                layoutOptions: cellLayoutOptionsForMessage(at: indexPath),
+                for: indexPath
+            )
+            cell.messageContentView?.delegate = self
+            cell.messageContentView?.content = message
+            return cell
+        }
+    }
 
-        let cell: ChatMessageCell = listView.dequeueReusableCell(
-            contentViewClass: cellContentClassForMessage(at: indexPath),
-            attachmentViewInjectorType: attachmentViewInjectorClassForMessage(at: indexPath),
-            layoutOptions: cellLayoutOptionsForMessage(at: indexPath),
-            for: indexPath
-        )
-
-        cell.messageContentView?.delegate = self
-        cell.messageContentView?.content = message
-
-        return cell
+    private func isPaymentCell(_ message: ChatMessage?) -> Bool {
+        if let rawJson = message?.extraData["isPaymentCell"] {
+            switch rawJson {
+            case .bool(let bool):
+                return bool
+            default:
+                return false
+            }
+        } else {
+            return false
+        }
     }
 
     open func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {

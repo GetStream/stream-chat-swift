@@ -95,6 +95,19 @@ open class ChatMessageLayoutOptionsResolver {
         return options
     }
 
+    private func isPaymentCell(_ message: ChatMessage?) -> Bool {
+        if let rawJson = message?.extraData["isPaymentCell"] {
+            switch rawJson {
+            case .bool(let bool):
+                return bool
+            default:
+                return false
+            }
+        } else {
+            return false
+        }
+    }
+
     func hasQuotedMessage(_ message: ChatMessage) -> Bool {
         message.quotedMessage?.id != nil
     }

@@ -51,6 +51,11 @@ open class ComposerView: _View, ThemeProvider {
         .sendButton.init()
         .withoutAutoresizingMaskConstraints
 
+    /// A button to transfer p2p payment
+    public private(set) lazy var moneyTransferButton: UIButton = components
+        .sendMoneyButton.init()
+        .withoutAutoresizingMaskConstraints
+
     /// A button to confirm when editing a message.
     public private(set) lazy var confirmButton: UIButton = components
         .confirmButton.init()
@@ -144,18 +149,19 @@ open class ComposerView: _View, ThemeProvider {
         leadingContainer.directionalLayoutMargins = .zero
         leadingContainer.addArrangedSubview(attachmentButton)
         leadingContainer.addArrangedSubview(commandsButton)
+        leadingContainer.addArrangedSubview(moneyTransferButton)
         leadingContainer.addArrangedSubview(shrinkInputButton)
         shrinkInputButton.isHidden = true
 
-        dismissButton.widthAnchor.pin(equalToConstant: 24).isActive = true
-        dismissButton.heightAnchor.pin(equalToConstant: 24).isActive = true
+        dismissButton.widthAnchor.pin(equalToConstant: 22).isActive = true
+        dismissButton.heightAnchor.pin(equalToConstant: 22).isActive = true
         dismissButton.trailingAnchor.pin(equalTo: trailingContainer.trailingAnchor).isActive = true
         titleLabel.centerXAnchor.pin(equalTo: centerXAnchor).isActive = true
         titleLabel.pin(anchors: [.top, .bottom], to: headerView)
 
-        [shrinkInputButton, attachmentButton, commandsButton, sendButton, confirmButton]
+        [shrinkInputButton, attachmentButton, commandsButton, moneyTransferButton, sendButton, confirmButton]
             .forEach { button in
-                button.pin(anchors: [.width], to: 20)
+                button.pin(anchors: [.width], to: 30)
                 button.pin(anchors: [.height], to: 38)
             }
     }

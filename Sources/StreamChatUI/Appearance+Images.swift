@@ -53,6 +53,7 @@ public extension Appearance {
         public var openAttachments: UIImage = loadImageSafely(with: "clip")
         public var shrinkInputArrow: UIImage = loadImageSafely(with: "arrow_shrink_input")
         public var sendArrow: UIImage = loadImageSafely(with: "arrow_send")
+        public var moneyTransaction: UIImage = loadImageSafely(with: "money-transaction")
         public var scrollDownArrow: UIImage = loadImageSafely(with: "arrow_down")
         public var messageSent: UIImage = loadImageSafely(with: "checkmark_grey")
         public var whiteCheckmark: UIImage = loadImageSafely(with: "checkmark_white")

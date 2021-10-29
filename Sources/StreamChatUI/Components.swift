@@ -39,6 +39,9 @@ public struct Components {
 
     /// A button used for sending a message, or any type of content.
     public var sendButton: UIButton.Type = SendButton.self
+    
+    /// A button used for sending digital currency
+    public var sendMoneyButton: UIButton.Type = SendMoneyButton.self
 
     /// A button for confirming actions.
     public var confirmButton: UIButton.Type = ConfirmButton.self

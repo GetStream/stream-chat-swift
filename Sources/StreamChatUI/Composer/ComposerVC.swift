@@ -258,12 +258,14 @@ open class ComposerVC: _ViewController,
         // Set the delegate for handling the pasting of UIImages in the text view
         composerView.inputMessageView.textView.clipboardAttachmentDelegate = self
 
+        
         composerView.attachmentButton.addTarget(self, action: #selector(showAttachmentsPicker), for: .touchUpInside)
         composerView.sendButton.addTarget(self, action: #selector(publishMessage), for: .touchUpInside)
         composerView.confirmButton.addTarget(self, action: #selector(publishMessage), for: .touchUpInside)
         composerView.shrinkInputButton.addTarget(self, action: #selector(shrinkInput), for: .touchUpInside)
         composerView.commandsButton.addTarget(self, action: #selector(showAvailableCommands), for: .touchUpInside)
         composerView.dismissButton.addTarget(self, action: #selector(clearContent(sender:)), for: .touchUpInside)
+        composerView.moneyTransferButton.addTarget(self, action: #selector(sendMoneyAction(sender:)), for: .touchUpInside)
         composerView.inputMessageView.clearButton.addTarget(
             self,
             action: #selector(clearContent(sender:)),
@@ -327,12 +329,14 @@ open class ComposerVC: _ViewController,
 
         let isAttachmentButtonHidden = !content.isEmpty || !isAttachmentsEnabled || content.hasCommand
         let isCommandsButtonHidden = !content.isEmpty || !isCommandsEnabled || content.hasCommand
+        let isMoneyTransferButtonHiddden = !content.isEmpty
         let isShrinkInputButtonHidden = content.isEmpty || (!isCommandsEnabled && !isAttachmentsEnabled) || content.hasCommand
         
         Animate {
             self.composerView.attachmentButton.isHidden = isAttachmentButtonHidden
             self.composerView.commandsButton.isHidden = isCommandsButtonHidden
             self.composerView.shrinkInputButton.isHidden = isShrinkInputButtonHidden
+            self.composerView.moneyTransferButton.isHidden = isMoneyTransferButtonHiddden
         }
 
         composerView.inputMessageView.content = .init(
@@ -491,6 +495,10 @@ open class ComposerVC: _ViewController,
         content.clear()
     }
 
+    @objc open func sendMoneyAction(sender: UIButton) {
+        sendPaymentBubble()
+    }
+
     /// Creates a new message and notifies the delegate that a new message was created.
     /// - Parameter text: The text content of the message.
     open func createNewMessage(text: String) {
@@ -529,6 +537,17 @@ open class ComposerVC: _ViewController,
             mentionedUserIds: content.mentionedUsers.map(\.id),
             quotedMessageId: content.quotingMessage?.id
         )
+    }
+
+    open func sendPaymentBubble() {
+        channelController?.createNewMessage(
+            text: "",
+            pinning: nil,
+            attachments: [],
+            mentionedUserIds: content.mentionedUsers.map(\.id),
+            quotedMessageId: content.quotingMessage?.id,
+            extraData: ["isPaymentCell" : .bool(true)],
+            completion: nil)
     }
 
     /// Updates an existing message.

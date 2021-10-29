@@ -257,6 +257,6 @@ open class ChatMessageListView: UITableView, Customizable, ComponentsProvider {
     }
 }
 
-private extension CGAffineTransform {
+extension CGAffineTransform {
     static let mirrorY = Self(scaleX: 1, y: -1)
 }
