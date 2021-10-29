@@ -83,8 +83,7 @@ open class ChatMessageListVC:
 
     open override func viewDidLoad() {
         super.viewDidLoad()
-        listView.register(UINib(nibName: "UserTransactionBubble", bundle: nil),
-                          forCellReuseIdentifier: "UserTransactionBubble")
+        listView.register(UserTransactionBubble.self, forCellReuseIdentifier: "UserTransactionBubble")
     }
 
     override open func setUp() {
@@ -311,7 +310,7 @@ open class ChatMessageListVC:
                 for: indexPath) as? UserTransactionBubble else {
                 return UITableViewCell()
             }
-            cell.contentView.transform = .mirrorY
+
             return cell
         } else {
             let cell: ChatMessageCell = listView.dequeueReusableCell(
