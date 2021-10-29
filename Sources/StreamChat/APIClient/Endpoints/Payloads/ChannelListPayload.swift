@@ -267,7 +267,7 @@ public class ChannelConfig: Codable {
     public let updatedAt: Date
     
     /// Determines if users are able to flag messages. Enabled by default.
-    public var flagsEnabled: Bool { commands.map(\.name).contains("flag") }
+    public var flagsEnabled: Bool { true }
         
     public required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
