@@ -7,6 +7,7 @@ import UIKit
 
 public typealias ChatReactionPickerBubbleView = ChatMessageReactionsBubbleView
 
+/// This component will be renamed to `ChatReactionPickerBubbleView` in future major versions.
 open class ChatMessageReactionsBubbleView: _View, ThemeProvider {
     public var content: Content? {
         didSet { updateContentIfNeeded() }

@@ -4,11 +4,35 @@ title: Reactions
 
 import Digraph  from '../common-content/digraph.jsx'
 
-The Stream Chat API provides built-in support for adding reactions to messages. The UI SDK provides components for displaying and adding the reactions to a message.
+The Stream Chat API provides built-in support for adding reactions to messages. The UI SDK provides components for displaying and adding reactions to a message.
 
 ## Basic Usage
 
 Message reactions come out of the box with Stream Chat. The SDK will respect your channel configuration, if you disable reactions for a channel or channel type from the dashboard, the SDK will not render the UI for reactions.
+
+### Custom Reactions and Images
+
+All the available reactions are extendible or totally replacable with custom ones. You can change the list of supported message reactions via the `Appearance` object. Here is an example on how you can use your own set of reactions:
+
+```swift
+let reactionFireSmall: UIImage = UIImage(named: "fireSmall")!
+let reactionFireBig: UIImage = UIImage(named: "fireBig")!
+let reactionWaveSmall: UIImage = UIImage(named: "waveSmall")!
+let reactionWaveBig: UIImage = UIImage(named: "waveBig")!
+
+let customReactions: [MessageReactionType: ChatMessageReactionAppearanceType] = [
+    "fire": ChatMessageReactionAppearance(
+        smallIcon: reactionFireSmall,
+        largeIcon: reactionFireBig
+    ),
+    "wave": ChatMessageReactionAppearance(
+        smallIcon: reactionWaveSmall,
+        largeIcon: reactionWaveBig
+    )
+]
+
+Appearance.default.images.availableReactions = customReactions
+```
 
 ## Message Reactions
 
@@ -64,20 +88,22 @@ Components.default.messageReactionsView = CustomChatChatMessageReactionsView.sel
 
 ### ChatMessageReactionItemView
 
-This component is responsible to display a single reaction. By default if the reaction is from the logged in user, the reaction image color is blue, if not, the color is gray. Let's do a simple customization and force the reaction color to always be white:
+This component is responsible to display a single reaction. By default if the reaction is from the logged in user, the reaction image color is blue, if not, the color is gray. Let's do a simple customization and set the color to white instead of blue when the reaction is from the logged in user:
 
 ```swift
 class CustomChatMessageReactionItemView: ChatMessageReactionItemView {
 
     override var reactionImageTint: UIColor? {
-        UIColor.white
+        guard let content = content else { return nil }
+        let isChosenByCurrentUser = content.reaction.isChosenByCurrentUser
+        return isChosenByCurrentUser ? .white : .gray
     }
 }
 
 Components.default.messageReactionItemView = CustomChatMessageReactionItemView.self
 ```
 
-If we do all the customizations descrive the above to the message reactions view, this will be the end result:
+If we do all the customizations described above to the message reactions view, this will be the end result:
 
 | Default Message Reactions | Custom Message Reactions |
 | ------------------------- | ------------------------ |
@@ -85,91 +111,101 @@ If we do all the customizations descrive the above to the message reactions view
 
 ## Reactions Picker
 
-When you long-press a message or tap the reactions view bubble above the message view, the SDK will show a popup that contains a reactions picker. The `ChatMessageReactionsVC` view controller allows the user to toggle message reactions. Most of the time, changing the sub-components used by this class or its configurations is enough. For more complex customizations you can sub-class `ChatMessageReactionsVC` and use it. 
+In order to add a new reaction to a message you need to long-press a message or tap the message reactions bubble view, and the SDK will show a popup view with a reactions picker at the top. The reactions picker which is represented by the `ChatMessageReactionsVC` is basically a bigger message reaction view that is interactable to allow the user to select a reaction.
+
+When the user long-presses the message, the popup view will display the reactions picker at the top, the message content at the center, and the message actions at the bottom. On the other hand, if the user taps the reactions bubble view, instead of having the message actions at the bottom, it will show a view with all the reactions that belongs to the message.
+
+| Long-pressing a message | Tapping reaction bubble view |
+| ------------------------- | ------------------------ |
+| ![Long-press](../assets/message-reactions-long-press.png)  | ![Tap](../assets/message-reactions-tap.png)  |
+
+The reaction picker view has a similar structure to the message reaction view. Here is the hierarchy of th reaction picker view:
+
+<Digraph margin="0 auto" width="300px">
+{`
+    ChatReactionPickerBubbleView -> ChatReactionPickerReactionsView
+    ChatReactionPickerReactionsView -> ChatMessageReactionItemView
+`}
+</Digraph>
+
+### ChatReactionPickerBubbleView
+
+Much like the message reaction view, the picker view also has a container bubble view that is responsible to hold the stack of reactions and the styling of the bubble. By default the UI SDK uses the `DefaultChatReactionPickerBubbleView` which is a subclass of the base `ChatReactionPickerBubbleView`. If you want to do more advanced customization you can subclass directly the `ChatReactionPickerBubbleView`, but for the most common customizations, subclassing `DefaultChatReactionPickerBubbleView` should be fine.
+
+Let's show an example of customizing the `DefaultChatReactionPickerBubbleView` component:
 
 ```swift
-
-class CustomChatMessageReactionsVC: ChatMessageReactionsVC {}
-
-Components.default.messageReactionsVC = CustomChatMessageReactionsVC.self
-```
-
-### Custom Reactions and Images
-
-The `ChatMessageReactionsVC` picker uses the `components.reactionPickerBubbleView` component to render the reactions available to the user and to render their state. 
-
-You can change the list of supported message reactions via the `Appearance` object. Here is an example on how you can use your own set of reactions
-
-```swift
-let reactionFireSmall: UIImage = UIImage(named: "fireSmall")!
-let reactionFireBig: UIImage = UIImage(named: "fireBig")!
-let reactionWaveSmall: UIImage = UIImage(named: "waveSmall")!
-let reactionWaveBig: UIImage = UIImage(named: "waveBig")!
-
-let customReactions: [MessageReactionType: ChatMessageReactionAppearanceType] = [
-    "fire": ChatMessageReactionAppearance(
-        smallIcon: reactionFireSmall,
-        largeIcon: reactionFireBig
-    ),
-    "wave": ChatMessageReactionAppearance(
-        smallIcon: reactionWaveSmall,
-        largeIcon: reactionWaveBig
-    )
-]
-
-Appearance.default.images.availableReactions = customReactions
-```
-
-### Custom Reaction Bubble
-
-If you want to make more advanced customizations you can use your own `ChatMessageReactionsBubbleView` subclass and use it in your application.
-
-```swift
-class CustomChatMessageReactionsBubbleView: ChatMessageDefaultReactionsBubbleView {
-    
-    override open func layoutSubviews() {
-        super.layoutSubviews()
-        contentViewBackground.layer.cornerRadius = 0
-    }
+class CustomChatReactionPickerBubbleView: DefaultChatReactionPickerBubbleView {
 
     override open var contentBackgroundColor: UIColor {
-        .init(red: 0.96, green: 0.92, blue: 0.017, alpha: 1.0)
+        .black
     }
 
     override open var contentBorderColor: UIColor {
-        .init(red: 0.054, green: 0.36, blue: 0.39, alpha: 1.0)
+        .black
     }
 
-    override open var tailBackImage: UIImage? { nil }
-    
-    override open var tailFrontImage: UIImage? { nil }
+    override open var tailBackImage: UIImage? { 
+        super.tailBackImage?.withTintColor(.black) 
+    }
+
+    override open var tailFrontImage: UIImage? { 
+        super.tailFrontImage?.withTintColor(.black) 
+    }
+
+    override open func layoutSubviews() {
+        super.layoutSubviews()
+
+        contentViewBackground.layer.cornerRadius = 20
+    }
 }
+
+Components.default.reactionPickerBubbleView = CustomChatReactionPickerBubbleView.self
 ```
 
-Then you need to change the `reactionPickerBubbleView` component to use your class as usual.
-
-```swift
-Components.default.reactionPickerBubbleView = CustomChatMessageReactionsBubbleView.self
-```
-
-| Default Picker | Custom Picker |
-| ------------- | ------------- |
-| ![Default picker](../assets/default-reaction-picker-bubble.png)  | ![Custom picker](../assets/custom-reaction-picker-bubble.png)  |
+In the example above we changed the color of the bubble to black. For this we had not only to change the background to black, but also the border color and the tail images. We also changed the corner radius of the bubble since in the next step we will make the bubble vertical instead of horizontal.
 
 ### ChatReactionPickerReactionsView
 
-This view is used to render the list of reaction buttons. By default the library will show one reaction button for every entry in `Appearance.default.images.availableReactions`.
+This component is resposinble to layout the list of reactions. By default the reactions are rendered in a horizontal stack, exactly like the message reaction view.
 
-You can use your own view class and replace using `Components.default.reactionPickerReactionsView`
-
+Let's do the same change we did with the message reaction view, and change the stack to be vertical aligned:
 ```swift
+class CustomChatReactionPickerReactionsView: ChatReactionPickerReactionsView {
+
+    override func setUpLayout() {
+        super.setUpLayout()
+
+        stackView.axis = .vertical
+    }
+}
+
 Components.default.reactionPickerReactionsView = ChatReactionPickerReactionsView.self
 ```
 
 ### ChatMessageReactionItemView
 
-This view is used to show the single reaction button, you can use your own view class and replace using `Components.default.reactionPickerReactionItemView`
+The component responsible to display a single reaction is actually the same as the one used by the message reaction view. Let's reuse the same customization we did the message reaction view and apply it to the reaction picker too:
 
 ```swift
+class CustomChatMessageReactionItemView: ChatMessageReactionItemView {
+
+    override var reactionImageTint: UIColor? {
+        guard let content = content else { return nil }
+        let isChosenByCurrentUser = content.reaction.isChosenByCurrentUser
+        return isChosenByCurrentUser ? .white : .gray
+    }
+}
+
 Components.default.reactionPickerReactionItemView = CustomChatMessageReactionItemView.self
 ```
+
+Here is the result for all the customizations done to the reaction picker view:
+
+| Default Picker | Custom Picker |
+| ------------- | ------------- |
+| ![Default Picker](../assets/message-reactions-tap.png)  | ![Custom Picker](../assets/message-reactions-picker-custom.png)  |
+
+## Reaction Authors
+
+TODO
