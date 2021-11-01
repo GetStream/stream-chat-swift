@@ -22,6 +22,7 @@ class MessageDTO: NSManagedObject {
     @NSManaged var replyCount: Int32
     @NSManaged var extraData: Data
     @NSManaged var isSilent: Bool
+    @NSManaged var isShadowed: Bool
     @NSManaged var reactionScores: [String: Int]
     
     @NSManaged var user: UserDTO
@@ -377,6 +378,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         }
         
         dto.isSilent = payload.isSilent
+        dto.isShadowed = payload.isShadowed
         dto.pinned = payload.pinned
         dto.pinExpires = payload.pinExpires
         dto.pinnedAt = payload.pinnedAt
@@ -570,6 +572,7 @@ private extension ChatMessage {
         showReplyInChannel = dto.showReplyInChannel
         replyCount = Int(dto.replyCount)
         isSilent = dto.isSilent
+        isShadowed = dto.isShadowed
         reactionScores = dto.reactionScores.mapKeys { MessageReactionType(rawValue: $0) }
         
         do {
