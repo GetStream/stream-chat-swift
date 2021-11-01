@@ -11,6 +11,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### ✅ Added
 - Added Flag message action [#1583](https://github.com/GetStream/stream-chat-swift/issues/1583)
+- Added handling of "shadowed" messages (messages from shadow banned users). The behavior is controlled by `ChatClientConfig.shouldShowShadowedMessages` and defaults to `false`. [#1591](https://github.com/GetStream/stream-chat-swift/issues/1591)
 
 # [4.2.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.2.0)
 _October 26, 2021_
