@@ -245,6 +245,22 @@ class DatabaseContainer_Tests: XCTestCase {
             XCTAssertEqual(database.backgroundReadOnlyContext.deletedMessagesVisibility, visibility)
         }
     }
+    
+    func test_shouldShowShadowedMessages_isStoredInAllContexts() throws {
+        let shouldShowShadowedMessages = Bool.random()
+        
+        let database = try DatabaseContainerMock(kind: .inMemory, shouldShowShadowedMessages: shouldShowShadowedMessages)
+        
+        XCTAssertEqual(database.viewContext.shouldShowShadowedMessages, shouldShowShadowedMessages)
+        
+        database.writableContext.performAndWait {
+            XCTAssertEqual(database.writableContext.shouldShowShadowedMessages, shouldShowShadowedMessages)
+        }
+        
+        database.backgroundReadOnlyContext.performAndWait {
+            XCTAssertEqual(database.backgroundReadOnlyContext.shouldShowShadowedMessages, shouldShowShadowedMessages)
+        }
+    }
 }
 
 extension TestManagedObject: EphemeralValuesContainer {
