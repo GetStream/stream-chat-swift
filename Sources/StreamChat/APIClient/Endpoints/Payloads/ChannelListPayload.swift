@@ -265,9 +265,6 @@ public class ChannelConfig: Codable {
     public let createdAt: Date
     /// A channel updated date.
     public let updatedAt: Date
-    
-    /// Determines if users are able to flag messages. Enabled by default.
-    public var flagsEnabled: Bool { true }
         
     public required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
@@ -282,7 +279,11 @@ public class ChannelConfig: Codable {
         urlEnrichmentEnabled = try container.decode(Bool.self, forKey: .urlEnrichmentEnabled)
         messageRetention = try container.decode(String.self, forKey: .messageRetention)
         maxMessageLength = try container.decode(Int.self, forKey: .maxMessageLength)
-        commands = try container.decodeIfPresent([Command].self, forKey: .commands) ?? []
+        let commands = try container.decodeIfPresent([Command].self, forKey: .commands) ?? []
+        // We exclude the flag commands since it's not implemented by backend
+        // and it'll be removed soon.
+        // TODO: Remove this line of code when backend stops sending the `flag` command
+        self.commands = commands.filter { $0.name != "flag" }
         
         createdAt = try container.decode(Date.self, forKey: .createdAt)
         updatedAt = try container.decode(Date.self, forKey: .updatedAt)

@@ -1278,6 +1278,12 @@
           "args" : "[text]",
           "name" : "giphy",
           "description" : "Post a random gif to the channel"
+        },
+        {
+            "set" : "moderation_set",
+            "args" : "[@username]",
+            "name" : "flag",
+            "description" : "Flag a user"
         }
       ],
       "connect_events" : true,
