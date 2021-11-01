@@ -3,6 +3,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+### 🐞 Fixed
+- `flag` command is no longer visible on Composer [#1589](https://github.com/GetStream/stream-chat-swift/issues/1589)
+
 ### 🔄 Changed
 - The message action icons were changed to be a bit more darker color [#1583](https://github.com/GetStream/stream-chat-swift/issues/1583)
 
