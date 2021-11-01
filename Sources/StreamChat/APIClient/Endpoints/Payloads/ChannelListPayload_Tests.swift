@@ -84,7 +84,6 @@ class ChannelPayload_Tests: XCTestCase {
         XCTAssertEqual(config.searchEnabled, true)
         XCTAssertEqual(config.mutesEnabled, true)
         XCTAssertEqual(config.urlEnrichmentEnabled, true)
-        XCTAssertEqual(config.flagsEnabled, false)
         XCTAssertEqual(config.messageRetention, "infinite")
         XCTAssertEqual(config.maxMessageLength, 5000)
         XCTAssertEqual(
