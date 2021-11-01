@@ -311,7 +311,6 @@
 		79940B8C258398A500791EAE /* StreamChatUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 790881FD25432B7200896F03 /* StreamChatUI.framework */; };
 		79940B8D258398A500791EAE /* StreamChatUI.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 790881FD25432B7200896F03 /* StreamChatUI.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		79983C8126663436000995F6 /* ChatMessageVideoAttachment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79983C80266633C2000995F6 /* ChatMessageVideoAttachment.swift */; };
-		799ADAAF2563FFA1006D43F9 /* Nuke in Frameworks */ = {isa = PBXBuildFile; productRef = 799ADAAE2563FFA1006D43F9 /* Nuke */; };
 		799B5DC5253081C900C108FB /* DevicePayloads.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799B5DC4253081C900C108FB /* DevicePayloads.swift */; };
 		799BE2EA248A8C9D00DAC8A0 /* WebSocketReconnectionStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799BE2E9248A8C9D00DAC8A0 /* WebSocketReconnectionStrategy.swift */; };
 		799BE2EC248A8CB300DAC8A0 /* WebSocketReconnectionStrategy_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799BE2EB248A8CB300DAC8A0 /* WebSocketReconnectionStrategy_Tests.swift */; };
@@ -344,7 +343,6 @@
 		79A0E9BB2498C31300E9BD50 /* TypingStartCleanupMiddleware.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79A0E9B92498C31300E9BD50 /* TypingStartCleanupMiddleware.swift */; };
 		79A0E9BC2498C31A00E9BD50 /* TypingStartCleanupMiddleware_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79A0E9B82498C31300E9BD50 /* TypingStartCleanupMiddleware_Tests.swift */; };
 		79A0E9BE2498C33100E9BD50 /* TypingEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79A0E9BD2498C33100E9BD50 /* TypingEvent.swift */; };
-		79A4AE112536EE5500C32A74 /* Starscream in Frameworks */ = {isa = PBXBuildFile; productRef = 79A4AE102536EE5500C32A74 /* Starscream */; };
 		79A9EAC3262045DC00F2A72D /* MessageRead+MissingUnreadCount.json in Resources */ = {isa = PBXBuildFile; fileRef = 79A9EAC2262045DC00F2A72D /* MessageRead+MissingUnreadCount.json */; };
 		79A9EB4D2625793000F2A72D /* CoreDataLazy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79A9EB4C2625793000F2A72D /* CoreDataLazy.swift */; };
 		79A9EB572625798000F2A72D /* CoreDataLazy_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79A9EB562625798000F2A72D /* CoreDataLazy_Tests.swift */; };
@@ -912,6 +910,47 @@
 		BDDD1EAC2632E32000BA007B /* AppearanceProvider_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDDD1EAB2632E32000BA007B /* AppearanceProvider_Tests.swift */; };
 		BDDD1EAE2632E6C200BA007B /* Appearance+SwiftUI_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDDD1EAD2632E6C200BA007B /* Appearance+SwiftUI_Tests.swift */; };
 		BDEB9417268211EC00928AF1 /* ChatMessageListUnreadCountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDEB9416268211EC00928AF1 /* ChatMessageListUnreadCountView.swift */; };
+		C12873DF272FF00F00671E79 /* Starscream in Frameworks */ = {isa = PBXBuildFile; productRef = C12873DE272FF00F00671E79 /* Starscream */; };
+		C12873F2273003B900671E79 /* SwiftyGif in Frameworks */ = {isa = PBXBuildFile; productRef = C12873F1273003B900671E79 /* SwiftyGif */; };
+		C128746027303CE600671E79 /* StreamChat.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 799C941B247D2F80001F1104 /* StreamChat.framework */; };
+		C13C113D2732C4F20089EBB2 /* StreamNuke.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C13C10E22732C2730089EBB2 /* StreamNuke.framework */; };
+		C13C113E2732C4F20089EBB2 /* StreamNuke.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = C13C10E22732C2730089EBB2 /* StreamNuke.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		C1BE72732732CA62006EB51E /* Nuke in Frameworks */ = {isa = PBXBuildFile; productRef = C1BE72722732CA62006EB51E /* Nuke */; };
+		C1BE729F2732CB7B006EB51E /* ImageViewExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1BE72762732CB7B006EB51E /* ImageViewExtensions.swift */; };
+		C1BE72A02732CB7B006EB51E /* FetchImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1BE72772732CB7B006EB51E /* FetchImage.swift */; };
+		C1BE72A12732CB7B006EB51E /* ImageCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1BE72792732CB7B006EB51E /* ImageCache.swift */; };
+		C1BE72A22732CB7B006EB51E /* ImageTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1BE727A2732CB7B006EB51E /* ImageTask.swift */; };
+		C1BE72A32732CB7B006EB51E /* ImagePipeline.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1BE727B2732CB7B006EB51E /* ImagePipeline.swift */; };
+		C1BE72A42732CB7B006EB51E /* ImageProcessing.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1BE727C2732CB7B006EB51E /* ImageProcessing.swift */; };
+		C1BE72A52732CB7B006EB51E /* ImagePipelineConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1BE727D2732CB7B006EB51E /* ImagePipelineConfiguration.swift */; };
+		C1BE72A62732CB7B006EB51E /* ImageEncoding.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1BE727E2732CB7B006EB51E /* ImageEncoding.swift */; };
+		C1BE72A72732CB7B006EB51E /* ImageRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1BE727F2732CB7B006EB51E /* ImageRequest.swift */; };
+		C1BE72A82732CB7B006EB51E /* DataCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1BE72802732CB7B006EB51E /* DataCache.swift */; };
+		C1BE72A92732CB7B006EB51E /* ImageDecoding.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1BE72812732CB7B006EB51E /* ImageDecoding.swift */; };
+		C1BE72AA2732CB7B006EB51E /* ImagePipelineCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1BE72822732CB7B006EB51E /* ImagePipelineCache.swift */; };
+		C1BE72AB2732CB7B006EB51E /* DataLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1BE72832732CB7B006EB51E /* DataLoader.swift */; };
+		C1BE72AC2732CB7B006EB51E /* ImageResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1BE72842732CB7B006EB51E /* ImageResponse.swift */; };
+		C1BE72AD2732CB7B006EB51E /* ImagePipelineDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1BE72852732CB7B006EB51E /* ImagePipelineDelegate.swift */; };
+		C1BE72AE2732CB7B006EB51E /* ImagePrefetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1BE72862732CB7B006EB51E /* ImagePrefetcher.swift */; };
+		C1BE72AF2732CB7B006EB51E /* ImagePublisher.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1BE72882732CB7B006EB51E /* ImagePublisher.swift */; };
+		C1BE72B02732CB7B006EB51E /* ResumableData.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1BE728A2732CB7B006EB51E /* ResumableData.swift */; };
+		C1BE72B12732CB7B006EB51E /* Allocations.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1BE728B2732CB7B006EB51E /* Allocations.swift */; };
+		C1BE72B22732CB7B006EB51E /* TaskFetchDecodedImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1BE728D2732CB7B006EB51E /* TaskFetchDecodedImage.swift */; };
+		C1BE72B32732CB7B006EB51E /* TaskLoadData.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1BE728E2732CB7B006EB51E /* TaskLoadData.swift */; };
+		C1BE72B42732CB7B006EB51E /* TaskFetchOriginalImageData.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1BE728F2732CB7B006EB51E /* TaskFetchOriginalImageData.swift */; };
+		C1BE72B52732CB7B006EB51E /* ImagePipelineTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1BE72902732CB7B006EB51E /* ImagePipelineTask.swift */; };
+		C1BE72B62732CB7B006EB51E /* OperationTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1BE72912732CB7B006EB51E /* OperationTask.swift */; };
+		C1BE72B72732CB7B006EB51E /* TaskLoadImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1BE72922732CB7B006EB51E /* TaskLoadImage.swift */; };
+		C1BE72B82732CB7B006EB51E /* Task.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1BE72932732CB7B006EB51E /* Task.swift */; };
+		C1BE72B92732CB7B006EB51E /* TaskFetchWithPublisher.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1BE72942732CB7B006EB51E /* TaskFetchWithPublisher.swift */; };
+		C1BE72BA2732CB7B006EB51E /* Log.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1BE72952732CB7B006EB51E /* Log.swift */; };
+		C1BE72BB2732CB7B006EB51E /* RateLimiter.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1BE72962732CB7B006EB51E /* RateLimiter.swift */; };
+		C1BE72BC2732CB7B006EB51E /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1BE72972732CB7B006EB51E /* Extensions.swift */; };
+		C1BE72BD2732CB7B006EB51E /* Deprecated.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1BE72982732CB7B006EB51E /* Deprecated.swift */; };
+		C1BE72BE2732CB7B006EB51E /* Combine.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1BE72992732CB7B006EB51E /* Combine.swift */; };
+		C1BE72BF2732CB7B006EB51E /* Operation.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1BE729A2732CB7B006EB51E /* Operation.swift */; };
+		C1BE72C02732CB7B006EB51E /* ImageRequestKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1BE729B2732CB7B006EB51E /* ImageRequestKeys.swift */; };
+		C1BE72C12732CB7B006EB51E /* LinkedList.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1BE729C2732CB7B006EB51E /* LinkedList.swift */; };
 		DA0BB1612513B5F200CAEFBD /* StringInterpolation+Extenstions.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA0BB1602513B5F200CAEFBD /* StringInterpolation+Extenstions.swift */; };
 		DA15A20424DF257500BE2423 /* ChannelQuery_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA15A20224DF256F00BE2423 /* ChannelQuery_Tests.swift */; };
 		DA49714E2549C28000AC68C2 /* AttachmentDTO_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA49714D2549C28000AC68C2 /* AttachmentDTO_Tests.swift */; };
@@ -975,7 +1014,6 @@
 		DB3CCF3F258CF7ED009D5E99 /* ChatMessageLinkPreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB3CCF3E258CF7ED009D5E99 /* ChatMessageLinkPreviewView.swift */; };
 		DB70CFFB25702EB900DDF436 /* ChatMessagePopupVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB70CFFA25702EB900DDF436 /* ChatMessagePopupVC.swift */; };
 		DB8230F2259B8DBF00E7D7FE /* ChatMessageGiphyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB8230F1259B8DBF00E7D7FE /* ChatMessageGiphyView.swift */; };
-		DB823107259C271C00E7D7FE /* SwiftyGif in Frameworks */ = {isa = PBXBuildFile; productRef = DB823106259C271C00E7D7FE /* SwiftyGif */; };
 		DB842E4525C9F94C000AAC46 /* LazyCachedMapCollection_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB842E4425C9F94C000AAC46 /* LazyCachedMapCollection_Tests.swift */; };
 		DB9A3D562582689A00555D36 /* ChatMessageListRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB9A3D552582689A00555D36 /* ChatMessageListRouter.swift */; };
 		DBC8A4BB257E5BFB00B20A82 /* Localizable.stringsdict in Resources */ = {isa = PBXBuildFile; fileRef = DBC8A4BD257E5BFB00B20A82 /* Localizable.stringsdict */; };
@@ -1206,13 +1244,6 @@
 			remoteGlobalIDString = 790881FC25432B7200896F03;
 			remoteInfo = StreamChatUI;
 		};
-		7908826525432D7900896F03 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 8AD5EC8622E9A3E8005CFAC9 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 799C941A247D2F80001F1104;
-			remoteInfo = StreamChat;
-		};
 		792DDA71256FB6AD001DB91B /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 8AD5EC8622E9A3E8005CFAC9 /* Project object */;
@@ -1275,6 +1306,20 @@
 			proxyType = 1;
 			remoteGlobalIDString = 799C941A247D2F80001F1104;
 			remoteInfo = StreamChat;
+		};
+		C128746227303CE600671E79 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8AD5EC8622E9A3E8005CFAC9 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 799C941A247D2F80001F1104;
+			remoteInfo = StreamChat;
+		};
+		C13C113F2732C4F20089EBB2 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8AD5EC8622E9A3E8005CFAC9 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = C13C10E12732C2730089EBB2;
+			remoteInfo = StreamNuke;
 		};
 		E74DB08C2656631700508D22 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -1380,6 +1425,27 @@
 			files = (
 				79940B8D258398A500791EAE /* StreamChatUI.framework in Embed Frameworks */,
 				79940B89258398A500791EAE /* StreamChat.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C12873E1272FF00F00671E79 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C13C11412732C4F20089EBB2 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				C13C113E2732C4F20089EBB2 /* StreamNuke.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2317,6 +2383,42 @@
 		BDDD1EAB2632E32000BA007B /* AppearanceProvider_Tests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppearanceProvider_Tests.swift; sourceTree = "<group>"; };
 		BDDD1EAD2632E6C200BA007B /* Appearance+SwiftUI_Tests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Appearance+SwiftUI_Tests.swift"; sourceTree = "<group>"; };
 		BDEB9416268211EC00928AF1 /* ChatMessageListUnreadCountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageListUnreadCountView.swift; sourceTree = "<group>"; };
+		C13C10E22732C2730089EBB2 /* StreamNuke.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = StreamNuke.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		C1BE72762732CB7B006EB51E /* ImageViewExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageViewExtensions.swift; sourceTree = "<group>"; };
+		C1BE72772732CB7B006EB51E /* FetchImage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FetchImage.swift; sourceTree = "<group>"; };
+		C1BE72792732CB7B006EB51E /* ImageCache.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageCache.swift; sourceTree = "<group>"; };
+		C1BE727A2732CB7B006EB51E /* ImageTask.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageTask.swift; sourceTree = "<group>"; };
+		C1BE727B2732CB7B006EB51E /* ImagePipeline.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImagePipeline.swift; sourceTree = "<group>"; };
+		C1BE727C2732CB7B006EB51E /* ImageProcessing.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageProcessing.swift; sourceTree = "<group>"; };
+		C1BE727D2732CB7B006EB51E /* ImagePipelineConfiguration.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImagePipelineConfiguration.swift; sourceTree = "<group>"; };
+		C1BE727E2732CB7B006EB51E /* ImageEncoding.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageEncoding.swift; sourceTree = "<group>"; };
+		C1BE727F2732CB7B006EB51E /* ImageRequest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageRequest.swift; sourceTree = "<group>"; };
+		C1BE72802732CB7B006EB51E /* DataCache.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DataCache.swift; sourceTree = "<group>"; };
+		C1BE72812732CB7B006EB51E /* ImageDecoding.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageDecoding.swift; sourceTree = "<group>"; };
+		C1BE72822732CB7B006EB51E /* ImagePipelineCache.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImagePipelineCache.swift; sourceTree = "<group>"; };
+		C1BE72832732CB7B006EB51E /* DataLoader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DataLoader.swift; sourceTree = "<group>"; };
+		C1BE72842732CB7B006EB51E /* ImageResponse.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageResponse.swift; sourceTree = "<group>"; };
+		C1BE72852732CB7B006EB51E /* ImagePipelineDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImagePipelineDelegate.swift; sourceTree = "<group>"; };
+		C1BE72862732CB7B006EB51E /* ImagePrefetcher.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImagePrefetcher.swift; sourceTree = "<group>"; };
+		C1BE72882732CB7B006EB51E /* ImagePublisher.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImagePublisher.swift; sourceTree = "<group>"; };
+		C1BE728A2732CB7B006EB51E /* ResumableData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ResumableData.swift; sourceTree = "<group>"; };
+		C1BE728B2732CB7B006EB51E /* Allocations.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Allocations.swift; sourceTree = "<group>"; };
+		C1BE728D2732CB7B006EB51E /* TaskFetchDecodedImage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TaskFetchDecodedImage.swift; sourceTree = "<group>"; };
+		C1BE728E2732CB7B006EB51E /* TaskLoadData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TaskLoadData.swift; sourceTree = "<group>"; };
+		C1BE728F2732CB7B006EB51E /* TaskFetchOriginalImageData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TaskFetchOriginalImageData.swift; sourceTree = "<group>"; };
+		C1BE72902732CB7B006EB51E /* ImagePipelineTask.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImagePipelineTask.swift; sourceTree = "<group>"; };
+		C1BE72912732CB7B006EB51E /* OperationTask.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OperationTask.swift; sourceTree = "<group>"; };
+		C1BE72922732CB7B006EB51E /* TaskLoadImage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TaskLoadImage.swift; sourceTree = "<group>"; };
+		C1BE72932732CB7B006EB51E /* Task.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Task.swift; sourceTree = "<group>"; };
+		C1BE72942732CB7B006EB51E /* TaskFetchWithPublisher.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TaskFetchWithPublisher.swift; sourceTree = "<group>"; };
+		C1BE72952732CB7B006EB51E /* Log.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Log.swift; sourceTree = "<group>"; };
+		C1BE72962732CB7B006EB51E /* RateLimiter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RateLimiter.swift; sourceTree = "<group>"; };
+		C1BE72972732CB7B006EB51E /* Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
+		C1BE72982732CB7B006EB51E /* Deprecated.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Deprecated.swift; sourceTree = "<group>"; };
+		C1BE72992732CB7B006EB51E /* Combine.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Combine.swift; sourceTree = "<group>"; };
+		C1BE729A2732CB7B006EB51E /* Operation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Operation.swift; sourceTree = "<group>"; };
+		C1BE729B2732CB7B006EB51E /* ImageRequestKeys.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageRequestKeys.swift; sourceTree = "<group>"; };
+		C1BE729C2732CB7B006EB51E /* LinkedList.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LinkedList.swift; sourceTree = "<group>"; };
 		DA0BB1602513B5F200CAEFBD /* StringInterpolation+Extenstions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "StringInterpolation+Extenstions.swift"; sourceTree = "<group>"; };
 		DA15A20224DF256F00BE2423 /* ChannelQuery_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelQuery_Tests.swift; sourceTree = "<group>"; };
 		DA49714D2549C28000AC68C2 /* AttachmentDTO_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttachmentDTO_Tests.swift; sourceTree = "<group>"; };
@@ -2562,8 +2664,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				799ADAAF2563FFA1006D43F9 /* Nuke in Frameworks */,
-				DB823107259C271C00E7D7FE /* SwiftyGif in Frameworks */,
+				C12873F2273003B900671E79 /* SwiftyGif in Frameworks */,
+				C128746027303CE600671E79 /* StreamChat.framework in Frameworks */,
+				C13C113D2732C4F20089EBB2 /* StreamNuke.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2589,6 +2692,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C1BE72732732CA62006EB51E /* Nuke in Frameworks */,
 				79940B88258398A500791EAE /* StreamChat.framework in Frameworks */,
 				79940B8C258398A500791EAE /* StreamChatUI.framework in Frameworks */,
 			);
@@ -2613,7 +2717,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				79A4AE112536EE5500C32A74 /* Starscream in Frameworks */,
+				C12873DF272FF00F00671E79 /* Starscream in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2641,6 +2745,13 @@
 			files = (
 				AC90839D268B120900ACFB8E /* StreamChat.framework in Frameworks */,
 				AC908398268B120300ACFB8E /* StreamChatUI.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C13C10DF2732C2730089EBB2 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3390,6 +3501,7 @@
 				790881AB254327C800896F03 /* StreamChat */,
 				793060E725778896005CF846 /* StreamChatTestTools */,
 				7908823025432C6400896F03 /* StreamChatUI */,
+				C1BE72742732CB7B006EB51E /* StreamNuke */,
 			);
 			indentWidth = 4;
 			path = Sources;
@@ -4535,6 +4647,7 @@
 				E74DB0D32656631700508D22 /* UISDKDocumentation.xctest */,
 				AC908381268B115F00ACFB8E /* YouTube.app */,
 				437FCA0426D67BE40000223C /* DemoAppPush.appex */,
+				C13C10E22732C2730089EBB2 /* StreamNuke.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -4913,6 +5026,88 @@
 			path = AttachmentViews;
 			sourceTree = "<group>";
 		};
+		C1BE72742732CB7B006EB51E /* StreamNuke */ = {
+			isa = PBXGroup;
+			children = (
+				C1BE72752732CB7B006EB51E /* UI */,
+				C1BE72782732CB7B006EB51E /* Core */,
+				C1BE72872732CB7B006EB51E /* Combine */,
+				C1BE72892732CB7B006EB51E /* Internal */,
+			);
+			path = StreamNuke;
+			sourceTree = "<group>";
+		};
+		C1BE72752732CB7B006EB51E /* UI */ = {
+			isa = PBXGroup;
+			children = (
+				C1BE72762732CB7B006EB51E /* ImageViewExtensions.swift */,
+				C1BE72772732CB7B006EB51E /* FetchImage.swift */,
+			);
+			path = UI;
+			sourceTree = "<group>";
+		};
+		C1BE72782732CB7B006EB51E /* Core */ = {
+			isa = PBXGroup;
+			children = (
+				C1BE72792732CB7B006EB51E /* ImageCache.swift */,
+				C1BE727A2732CB7B006EB51E /* ImageTask.swift */,
+				C1BE727B2732CB7B006EB51E /* ImagePipeline.swift */,
+				C1BE727C2732CB7B006EB51E /* ImageProcessing.swift */,
+				C1BE727D2732CB7B006EB51E /* ImagePipelineConfiguration.swift */,
+				C1BE727E2732CB7B006EB51E /* ImageEncoding.swift */,
+				C1BE727F2732CB7B006EB51E /* ImageRequest.swift */,
+				C1BE72802732CB7B006EB51E /* DataCache.swift */,
+				C1BE72812732CB7B006EB51E /* ImageDecoding.swift */,
+				C1BE72822732CB7B006EB51E /* ImagePipelineCache.swift */,
+				C1BE72832732CB7B006EB51E /* DataLoader.swift */,
+				C1BE72842732CB7B006EB51E /* ImageResponse.swift */,
+				C1BE72852732CB7B006EB51E /* ImagePipelineDelegate.swift */,
+				C1BE72862732CB7B006EB51E /* ImagePrefetcher.swift */,
+			);
+			path = Core;
+			sourceTree = "<group>";
+		};
+		C1BE72872732CB7B006EB51E /* Combine */ = {
+			isa = PBXGroup;
+			children = (
+				C1BE72882732CB7B006EB51E /* ImagePublisher.swift */,
+			);
+			path = Combine;
+			sourceTree = "<group>";
+		};
+		C1BE72892732CB7B006EB51E /* Internal */ = {
+			isa = PBXGroup;
+			children = (
+				C1BE728A2732CB7B006EB51E /* ResumableData.swift */,
+				C1BE728B2732CB7B006EB51E /* Allocations.swift */,
+				C1BE728C2732CB7B006EB51E /* Tasks */,
+				C1BE72952732CB7B006EB51E /* Log.swift */,
+				C1BE72962732CB7B006EB51E /* RateLimiter.swift */,
+				C1BE72972732CB7B006EB51E /* Extensions.swift */,
+				C1BE72982732CB7B006EB51E /* Deprecated.swift */,
+				C1BE72992732CB7B006EB51E /* Combine.swift */,
+				C1BE729A2732CB7B006EB51E /* Operation.swift */,
+				C1BE729B2732CB7B006EB51E /* ImageRequestKeys.swift */,
+				C1BE729C2732CB7B006EB51E /* LinkedList.swift */,
+			);
+			path = Internal;
+			sourceTree = "<group>";
+		};
+		C1BE728C2732CB7B006EB51E /* Tasks */ = {
+			isa = PBXGroup;
+			children = (
+				C1BE728D2732CB7B006EB51E /* TaskFetchDecodedImage.swift */,
+				C1BE728E2732CB7B006EB51E /* TaskLoadData.swift */,
+				C1BE728F2732CB7B006EB51E /* TaskFetchOriginalImageData.swift */,
+				C1BE72902732CB7B006EB51E /* ImagePipelineTask.swift */,
+				C1BE72912732CB7B006EB51E /* OperationTask.swift */,
+				C1BE72922732CB7B006EB51E /* TaskLoadImage.swift */,
+				C1BE72932732CB7B006EB51E /* Task.swift */,
+				C1BE72942732CB7B006EB51E /* TaskFetchWithPublisher.swift */,
+			);
+			path = Tasks;
+			sourceTree = "<group>";
+		};
 		DA4971652549C46400AC68C2 /* Attachment */ = {
 			isa = PBXGroup;
 			children = (
@@ -5280,6 +5475,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		C13C10DD2732C2730089EBB2 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
@@ -5310,16 +5512,17 @@
 				790881F925432B7200896F03 /* Sources */,
 				790881FA25432B7200896F03 /* Frameworks */,
 				790881FB25432B7200896F03 /* Resources */,
+				C13C11412732C4F20089EBB2 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				7908826625432D7900896F03 /* PBXTargetDependency */,
+				C128746327303CE600671E79 /* PBXTargetDependency */,
+				C13C11402732C4F20089EBB2 /* PBXTargetDependency */,
 			);
 			name = StreamChatUI;
 			packageProductDependencies = (
-				799ADAAE2563FFA1006D43F9 /* Nuke */,
-				DB823106259C271C00E7D7FE /* SwiftyGif */,
+				C12873F1273003B900671E79 /* SwiftyGif */,
 			);
 			productName = StreamChatUI;
 			productReference = 790881FD25432B7200896F03 /* StreamChatUI.framework */;
@@ -5386,6 +5589,7 @@
 			);
 			name = DemoApp;
 			packageProductDependencies = (
+				C1BE72722732CA62006EB51E /* Nuke */,
 			);
 			productName = DemoApp;
 			productReference = 792DDA57256FB69E001DB91B /* ChatSample.app */;
@@ -5436,6 +5640,7 @@
 				799C9417247D2F80001F1104 /* Sources */,
 				799C9418247D2F80001F1104 /* Frameworks */,
 				799C9419247D2F80001F1104 /* Resources */,
+				C12873E1272FF00F00671E79 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -5443,7 +5648,7 @@
 			);
 			name = StreamChat;
 			packageProductDependencies = (
-				79A4AE102536EE5500C32A74 /* Starscream */,
+				C12873DE272FF00F00671E79 /* Starscream */,
 			);
 			productName = Sources;
 			productReference = 799C941B247D2F80001F1104 /* StreamChat.framework */;
@@ -5506,6 +5711,24 @@
 			productName = YouTubeClone;
 			productReference = AC908381268B115F00ACFB8E /* YouTube.app */;
 			productType = "com.apple.product-type.application";
+		};
+		C13C10E12732C2730089EBB2 /* StreamNuke */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C13C10E62732C2730089EBB2 /* Build configuration list for PBXNativeTarget "StreamNuke" */;
+			buildPhases = (
+				C13C10DD2732C2730089EBB2 /* Headers */,
+				C13C10DE2732C2730089EBB2 /* Sources */,
+				C13C10DF2732C2730089EBB2 /* Frameworks */,
+				C13C10E02732C2730089EBB2 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = StreamNuke;
+			productName = StreamNuke;
+			productReference = C13C10E22732C2730089EBB2 /* StreamNuke.framework */;
+			productType = "com.apple.product-type.framework";
 		};
 		E74DB08A2656631700508D22 /* UISDKDocumentation */ = {
 			isa = PBXNativeTarget;
@@ -5635,6 +5858,9 @@
 					AC908380268B115F00ACFB8E = {
 						CreatedOnToolsVersion = 12.5;
 					};
+					C13C10E12732C2730089EBB2 = {
+						CreatedOnToolsVersion = 13.0;
+					};
 					F86C87B125F906630000BCA9 = {
 						CreatedOnToolsVersion = 12.3;
 					};
@@ -5657,10 +5883,10 @@
 			);
 			mainGroup = 8AD5EC8522E9A3E8005CFAC9;
 			packageReferences = (
-				79A4AE0F2536EE5500C32A74 /* XCRemoteSwiftPackageReference "Starscream" */,
-				799ADAAD2563FFA1006D43F9 /* XCRemoteSwiftPackageReference "Nuke" */,
-				DB823105259C271C00E7D7FE /* XCRemoteSwiftPackageReference "SwiftyGif" */,
 				AD472EF625C425FB00A96E70 /* XCRemoteSwiftPackageReference "swift-snapshot-testing" */,
+				C12873DD272FF00F00671E79 /* XCRemoteSwiftPackageReference "Starscream" */,
+				C12873F0273003B900671E79 /* XCRemoteSwiftPackageReference "SwiftyGif" */,
+				C1BE72712732C91F006EB51E /* XCRemoteSwiftPackageReference "Nuke" */,
 			);
 			productRefGroup = 8AD5EC9022E9A3E8005CFAC9 /* Products */;
 			projectDirPath = "";
@@ -5681,6 +5907,7 @@
 				F89C23A525E508DE0082CA5B /* iMessage */,
 				AC908380268B115F00ACFB8E /* YouTube */,
 				792A4F21247FF01800EAF71D /* StreamChatSample */,
+				C13C10E12732C2730089EBB2 /* StreamNuke */,
 			);
 		};
 /* End PBXProject section */
@@ -5877,6 +6104,13 @@
 				AC908390268B116000ACFB8E /* LaunchScreen.storyboard in Resources */,
 				AC90838D268B116000ACFB8E /* Assets.xcassets in Resources */,
 				ACBEF4E6268B439A00FE7557 /* YTLiveVideoViewController.xib in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C13C10E02732C2730089EBB2 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6951,6 +7185,48 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		C13C10DE2732C2730089EBB2 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C1BE72A62732CB7B006EB51E /* ImageEncoding.swift in Sources */,
+				C1BE72A22732CB7B006EB51E /* ImageTask.swift in Sources */,
+				C1BE72B62732CB7B006EB51E /* OperationTask.swift in Sources */,
+				C1BE72B42732CB7B006EB51E /* TaskFetchOriginalImageData.swift in Sources */,
+				C1BE72AD2732CB7B006EB51E /* ImagePipelineDelegate.swift in Sources */,
+				C1BE72BE2732CB7B006EB51E /* Combine.swift in Sources */,
+				C1BE72AF2732CB7B006EB51E /* ImagePublisher.swift in Sources */,
+				C1BE72B02732CB7B006EB51E /* ResumableData.swift in Sources */,
+				C1BE72AC2732CB7B006EB51E /* ImageResponse.swift in Sources */,
+				C1BE72B92732CB7B006EB51E /* TaskFetchWithPublisher.swift in Sources */,
+				C1BE72B82732CB7B006EB51E /* Task.swift in Sources */,
+				C1BE72BF2732CB7B006EB51E /* Operation.swift in Sources */,
+				C1BE72A52732CB7B006EB51E /* ImagePipelineConfiguration.swift in Sources */,
+				C1BE72A12732CB7B006EB51E /* ImageCache.swift in Sources */,
+				C1BE72B52732CB7B006EB51E /* ImagePipelineTask.swift in Sources */,
+				C1BE72C02732CB7B006EB51E /* ImageRequestKeys.swift in Sources */,
+				C1BE72A92732CB7B006EB51E /* ImageDecoding.swift in Sources */,
+				C1BE72B12732CB7B006EB51E /* Allocations.swift in Sources */,
+				C1BE72A42732CB7B006EB51E /* ImageProcessing.swift in Sources */,
+				C1BE72A32732CB7B006EB51E /* ImagePipeline.swift in Sources */,
+				C1BE72A82732CB7B006EB51E /* DataCache.swift in Sources */,
+				C1BE72AA2732CB7B006EB51E /* ImagePipelineCache.swift in Sources */,
+				C1BE72BD2732CB7B006EB51E /* Deprecated.swift in Sources */,
+				C1BE72B22732CB7B006EB51E /* TaskFetchDecodedImage.swift in Sources */,
+				C1BE72B32732CB7B006EB51E /* TaskLoadData.swift in Sources */,
+				C1BE72AE2732CB7B006EB51E /* ImagePrefetcher.swift in Sources */,
+				C1BE72BA2732CB7B006EB51E /* Log.swift in Sources */,
+				C1BE72C12732CB7B006EB51E /* LinkedList.swift in Sources */,
+				C1BE72AB2732CB7B006EB51E /* DataLoader.swift in Sources */,
+				C1BE72BB2732CB7B006EB51E /* RateLimiter.swift in Sources */,
+				C1BE72BC2732CB7B006EB51E /* Extensions.swift in Sources */,
+				C1BE72A02732CB7B006EB51E /* FetchImage.swift in Sources */,
+				C1BE72B72732CB7B006EB51E /* TaskLoadImage.swift in Sources */,
+				C1BE72A72732CB7B006EB51E /* ImageRequest.swift in Sources */,
+				C1BE729F2732CB7B006EB51E /* ImageViewExtensions.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		E74DB0912656631700508D22 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -7071,11 +7347,6 @@
 			target = 790881FC25432B7200896F03 /* StreamChatUI */;
 			targetProxy = 7908821025432B7200896F03 /* PBXContainerItemProxy */;
 		};
-		7908826625432D7900896F03 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 799C941A247D2F80001F1104 /* StreamChat */;
-			targetProxy = 7908826525432D7900896F03 /* PBXContainerItemProxy */;
-		};
 		792DDA72256FB6AD001DB91B /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 790881FC25432B7200896F03 /* StreamChatUI */;
@@ -7120,6 +7391,16 @@
 			isa = PBXTargetDependency;
 			target = 799C941A247D2F80001F1104 /* StreamChat */;
 			targetProxy = AC90839F268B120900ACFB8E /* PBXContainerItemProxy */;
+		};
+		C128746327303CE600671E79 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 799C941A247D2F80001F1104 /* StreamChat */;
+			targetProxy = C128746227303CE600671E79 /* PBXContainerItemProxy */;
+		};
+		C13C11402732C4F20089EBB2 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = C13C10E12732C2730089EBB2 /* StreamNuke */;
+			targetProxy = C13C113F2732C4F20089EBB2 /* PBXContainerItemProxy */;
 		};
 		E74DB08B2656631700508D22 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -8384,6 +8665,103 @@
 			};
 			name = ReleaseTests;
 		};
+		C13C10E72732C2730089EBB2 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = EHV7XZLAHA;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Sources/StreamChatUI/Info.plist;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2021 Stream.io Inc. All rights reserved.";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.stream.StreamNuke;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		C13C10E82732C2730089EBB2 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = EHV7XZLAHA;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Sources/StreamChatUI/Info.plist;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2021 Stream.io Inc. All rights reserved.";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.stream.StreamNuke;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		C13C10E92732C2730089EBB2 /* ReleaseTests */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = EHV7XZLAHA;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Sources/StreamChatUI/Info.plist;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2021 Stream.io Inc. All rights reserved.";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.stream.StreamNuke;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = ReleaseTests;
+		};
 		E74DB0D02656631700508D22 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -8775,6 +9153,16 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
+		C13C10E62732C2730089EBB2 /* Build configuration list for PBXNativeTarget "StreamNuke" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C13C10E72732C2730089EBB2 /* Debug */,
+				C13C10E82732C2730089EBB2 /* Release */,
+				C13C10E92732C2730089EBB2 /* ReleaseTests */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		E74DB0CF2656631700508D22 /* Build configuration list for PBXNativeTarget "UISDKDocumentation" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -8818,22 +9206,6 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		799ADAAD2563FFA1006D43F9 /* XCRemoteSwiftPackageReference "Nuke" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/kean/Nuke";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 10.0.0;
-			};
-		};
-		79A4AE0F2536EE5500C32A74 /* XCRemoteSwiftPackageReference "Starscream" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/daltoniam/Starscream.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 4.0.4;
-			};
-		};
 		AD472EF625C425FB00A96E70 /* XCRemoteSwiftPackageReference "swift-snapshot-testing" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/pointfreeco/swift-snapshot-testing.git";
@@ -8842,12 +9214,28 @@
 				minimumVersion = 1.8.2;
 			};
 		};
-		DB823105259C271C00E7D7FE /* XCRemoteSwiftPackageReference "SwiftyGif" */ = {
+		C12873DD272FF00F00671E79 /* XCRemoteSwiftPackageReference "Starscream" */ = {
 			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/kirualex/SwiftyGif.git";
+			repositoryURL = "https://github.com/GetStream/Starscream.git";
+			requirement = {
+				branch = "dynamic-linking";
+				kind = branch;
+			};
+		};
+		C12873F0273003B900671E79 /* XCRemoteSwiftPackageReference "SwiftyGif" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/GetStream/SwiftyGif.git";
+			requirement = {
+				branch = "dynamic-linking";
+				kind = branch;
+			};
+		};
+		C1BE72712732C91F006EB51E /* XCRemoteSwiftPackageReference "Nuke" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/kean/Nuke";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 5.3.0;
+				minimumVersion = 9.0.0;
 			};
 		};
 		E74DB0902656631700508D22 /* XCRemoteSwiftPackageReference "swift-snapshot-testing" */ = {
@@ -8861,25 +9249,25 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		799ADAAE2563FFA1006D43F9 /* Nuke */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 799ADAAD2563FFA1006D43F9 /* XCRemoteSwiftPackageReference "Nuke" */;
-			productName = Nuke;
-		};
-		79A4AE102536EE5500C32A74 /* Starscream */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 79A4AE0F2536EE5500C32A74 /* XCRemoteSwiftPackageReference "Starscream" */;
-			productName = Starscream;
-		};
 		AD472EF725C425FB00A96E70 /* SnapshotTesting */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = AD472EF625C425FB00A96E70 /* XCRemoteSwiftPackageReference "swift-snapshot-testing" */;
 			productName = SnapshotTesting;
 		};
-		DB823106259C271C00E7D7FE /* SwiftyGif */ = {
+		C12873DE272FF00F00671E79 /* Starscream */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = DB823105259C271C00E7D7FE /* XCRemoteSwiftPackageReference "SwiftyGif" */;
+			package = C12873DD272FF00F00671E79 /* XCRemoteSwiftPackageReference "Starscream" */;
+			productName = Starscream;
+		};
+		C12873F1273003B900671E79 /* SwiftyGif */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C12873F0273003B900671E79 /* XCRemoteSwiftPackageReference "SwiftyGif" */;
 			productName = SwiftyGif;
+		};
+		C1BE72722732CA62006EB51E /* Nuke */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C1BE72712732C91F006EB51E /* XCRemoteSwiftPackageReference "Nuke" */;
+			productName = Nuke;
 		};
 		E74DB08F2656631700508D22 /* SnapshotTesting */ = {
 			isa = XCSwiftPackageProductDependency;

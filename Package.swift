@@ -22,11 +22,10 @@ let package = Package(
     ],
     dependencies: [
         // StreamChat
-        .package(url: "https://github.com/daltoniam/Starscream.git", from: "4.0.0"),
+        .package(url: "https://github.com/GetStream/Starscream.git", .branch("dynamic-linking")),
         
         // StreamChatUI
-        .package(url: "https://github.com/kean/Nuke.git", from: "10.0.0"),
-        .package(url: "https://github.com/kirualex/SwiftyGif.git", from: "5.3.0")
+        .package(url: "https://github.com/GetStream/SwiftyGif.git", .branch("dynamic-linking"))
     ],
     targets: [
         .target(
@@ -37,9 +36,13 @@ let package = Package(
         ),
         .target(
             name: "StreamChatUI",
-            dependencies: ["StreamChat", "Nuke", "SwiftyGif"],
+            dependencies: ["StreamChat", "StreamNuke", "SwiftyGif"],
             exclude: ["README.md", "Info.plist", "Generated/L10n_template.stencil"] + streamChatUIFilesExcluded,
             resources: [.process("Resources")]
+        ),
+        .target(
+            name: "StreamNuke",
+            exclude: [Info.plist"]
         )
     ]
 )

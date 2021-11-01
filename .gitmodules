@@ -1,0 +1,3 @@
+[submodule "Dependencies/Nuke"]
+	path = Dependencies/Nuke
+	url = git@github.com:kean/Nuke.git
