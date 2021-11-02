@@ -19,7 +19,7 @@ extension UserId {
     }
 }
 
-/// A type representing the currently logged-in user. `_CurrentChatUser` is an immutable snapshot of a current user entity at
+/// A type representing the currently logged-in user. `CurrentChatUser` is an immutable snapshot of a current user entity at
 /// the given time.
 ///
 public class CurrentChatUser: ChatUser {

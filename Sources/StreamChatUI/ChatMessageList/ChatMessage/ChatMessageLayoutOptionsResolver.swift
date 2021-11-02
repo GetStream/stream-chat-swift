@@ -10,7 +10,7 @@ open class ChatMessageLayoutOptionsResolver {
     /// The minimum time interval between messages to treat them as a single message group.
     public let minTimeIntervalBetweenMessagesInGroup: TimeInterval
 
-    /// Creates the `_ChatMessageLayoutOptionsResolver` with the given `minTimeIntervalBetweenMessagesInGroup` value
+    /// Creates the `ChatMessageLayoutOptionsResolver` with the given `minTimeIntervalBetweenMessagesInGroup` value
     public init(minTimeIntervalBetweenMessagesInGroup: TimeInterval = 30) {
         self.minTimeIntervalBetweenMessagesInGroup = minTimeIntervalBetweenMessagesInGroup
     }

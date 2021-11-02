@@ -645,7 +645,7 @@ open class ChatMessageContentView: _View, ThemeProvider {
     /// - Returns: The `threadArrowView` subview.
     open func createThreadArrowView() -> ChatThreadArrowView {
         if threadArrowView == nil {
-            // TODO: view type should be taken from `components` once `_ThreadArrowView` is audited
+            // TODO: view type should be taken from `components` once `ThreadArrowView` is audited
             threadArrowView = ChatThreadArrowView()
                 .withoutAutoresizingMaskConstraints
         }

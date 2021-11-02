@@ -6,7 +6,7 @@ import StreamChat
 import UIKit
 
 /// Protocol for action item.
-/// Action items are then showed in `_ChatMessageActionsView`.
+/// Action items are then showed in `ChatMessageActionsView`.
 /// Setup individual item by creating new instance that conforms to this protocol.
 public protocol ChatMessageActionItem {
     /// Title of `ChatMessageActionItem`.

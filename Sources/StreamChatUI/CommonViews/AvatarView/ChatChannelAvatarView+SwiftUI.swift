@@ -6,20 +6,20 @@ import StreamChat
 import SwiftUI
 
 @available(iOS 13.0, *)
-/// Protocol of `_ChatChannelAvatarView` wrapper for use in SwiftUI.
+/// Protocol of `ChatChannelAvatarView` wrapper for use in SwiftUI.
 public protocol ChatChannelAvatarViewSwiftUIView: View {
     init(dataSource: ChatChannelAvatarView.ObservedObject<Self>)
 }
 
 @available(iOS 13.0, *)
 extension ChatChannelAvatarView {
-    /// Data source of `_ChatChannelAvatarView` represented as `ObservedObject`.
+    /// Data source of `ChatChannelAvatarView` represented as `ObservedObject`.
     public typealias ObservedObject<Content: SwiftUIView> = SwiftUIWrapper<Content>
 
-    /// `_ChatChannelAvatarView` represented in SwiftUI.
+    /// `ChatChannelAvatarView` represented in SwiftUI.
     public typealias SwiftUIView = ChatChannelAvatarViewSwiftUIView
 
-    /// SwiftUI wrapper of `_ChatChannelAvatarView`.
+    /// SwiftUI wrapper of `ChatChannelAvatarView`.
     public class SwiftUIWrapper<Content: SwiftUIView>: ChatChannelAvatarView, ObservableObject {
         var hostingController: UIViewController?
         

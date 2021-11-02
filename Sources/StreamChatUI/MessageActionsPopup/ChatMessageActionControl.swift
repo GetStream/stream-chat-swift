@@ -5,7 +5,7 @@
 import StreamChat
 import UIKit
 
-/// Button for action displayed in `_ChatMessageActionsView`.
+/// Button for action displayed in `ChatMessageActionsView`.
 open class ChatMessageActionControl: _Control, AppearanceProvider {
     /// The data this view component shows.
     public var content: ChatMessageActionItem? {
@@ -81,7 +81,7 @@ open class ChatMessageActionControl: _Control, AppearanceProvider {
         }
     }
     
-    /// Triggered when `_ChatMessageActionControl` is tapped.
+    /// Triggered when `ChatMessageActionControl` is tapped.
     @objc open func touchUpInsideHandler(_ sender: Any) {
         guard let content = content else { return log.assertionFailure("Content is unexpectedly nil") }
         content.action(content)

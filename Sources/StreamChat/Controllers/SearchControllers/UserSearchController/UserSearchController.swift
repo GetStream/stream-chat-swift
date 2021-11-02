@@ -6,11 +6,11 @@ import CoreData
 import Foundation
 
 extension ChatClient {
-    /// Creates a new `_ChatUserSearchController` with the provided user query.
+    /// Creates a new `ChatUserSearchController` with the provided user query.
     ///
     /// - Parameter query: The query specify the filter and sorting of the users the controller should fetch.
     ///
-    /// - Returns: A new instance of `_ChatUserSearchController`.
+    /// - Returns: A new instance of `ChatUserSearchController`.
     ///
     public func userSearchController() -> ChatUserSearchController {
         .init(client: self)

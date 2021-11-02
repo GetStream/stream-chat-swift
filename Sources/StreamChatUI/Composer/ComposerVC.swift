@@ -612,7 +612,7 @@ open class ComposerVC: _ViewController,
     /// user searching logic.
     ///
     /// - Parameter typingMention: The potential user mention the current user is typing.
-    /// - Returns: `_UserListQuery` instance that will be used for searching users.
+    /// - Returns: `UserListQuery` instance that will be used for searching users.
     open func queryForMentionSuggestionsSearch(typingMention term: String) -> UserListQuery {
         UserListQuery(
             filter: .or([
