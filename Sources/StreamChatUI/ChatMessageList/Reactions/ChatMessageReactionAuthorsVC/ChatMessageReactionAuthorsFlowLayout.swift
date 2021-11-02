@@ -6,19 +6,19 @@ import UIKit
 
 /// The default `ChatMessageReactionAuthorsVC` collection view flow layout.
 /// It manipulates the cell attributes so that each row is centred.
-class ChatMessageReactionAuthorsFlowLayout: UICollectionViewFlowLayout {
-    override required init() {
+open class ChatMessageReactionAuthorsFlowLayout: UICollectionViewFlowLayout {
+    override public required init() {
         super.init()
         estimatedItemSize = UICollectionViewFlowLayout.automaticSize
         sectionInsetReference = .fromSafeArea
     }
 
     @available(*, unavailable)
-    required init?(coder aDecoder: NSCoder) {
+    public required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
-    override func layoutAttributesForElements(in rect: CGRect) -> [UICollectionViewLayoutAttributes]? {
+    override open func layoutAttributesForElements(in rect: CGRect) -> [UICollectionViewLayoutAttributes]? {
         guard let superLayoutAttributes = super.layoutAttributesForElements(in: rect) else {
             return nil
         }
