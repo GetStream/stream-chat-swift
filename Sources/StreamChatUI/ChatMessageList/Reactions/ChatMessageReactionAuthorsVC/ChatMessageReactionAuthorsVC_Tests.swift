@@ -115,7 +115,7 @@ final class ChatMessageReactionAuthorsVC_Tests: XCTestCase {
         let vc = CustomVC()
         vc.messageController = messageControllerMock
         vc.components = Components.mock
-        vc.components.reactionAuthorsCell = CustomCell.self
+        vc.components.reactionAuthorCell = CustomCell.self
 
         AssertSnapshot(vc, variants: [.defaultLight, .defaultDark])
     }

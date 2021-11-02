@@ -113,7 +113,7 @@ public struct Components {
     public var reactionAuthorsVC: ChatMessageReactionAuthorsVC.Type = ChatMessageReactionAuthorsVC.self
 
     /// A view cell that displays an individual reaction author of a message.
-    public var reactionAuthorsCell: ChatMessageReactionAuthorViewCell.Type = ChatMessageReactionAuthorViewCell.self
+    public var reactionAuthorCell: ChatMessageReactionAuthorViewCell.Type = ChatMessageReactionAuthorViewCell.self
 
     /// The view controller used for showing the detail of a file message attachment.
     public var filePreviewVC: ChatMessageAttachmentPreviewVC.Type = ChatMessageAttachmentPreviewVC.self
