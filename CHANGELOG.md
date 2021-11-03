@@ -3,6 +3,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+### 🔄 Changed
+
+# [4.3.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.3.0)
+_November 03, 2021_
+
 ### 🐞 Fixed
 - `flag` command is no longer visible on Composer [#1590](https://github.com/GetStream/stream-chat-swift/issues/1590)
 - Fix long-pressed message being swapped with newly received message if both have the same visual style [#1596](https://github.com/GetStream/stream-chat-swift/issues/1596)
