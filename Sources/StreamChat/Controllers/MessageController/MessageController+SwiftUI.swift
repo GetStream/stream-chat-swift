@@ -22,7 +22,7 @@ extension ChatMessageController {
         @Published public private(set) var replies: LazyCachedMapCollection<ChatMessage> = []
 
         /// The reactions the message controller observes.
-        @Published public private(set) var reactions: LazyCachedMapCollection<ChatMessageReaction> = []
+        @Published public private(set) var reactions: [ChatMessageReaction] = []
         
         /// The current state of the Controller.
         @Published public private(set) var state: DataController.State
@@ -63,8 +63,8 @@ extension ChatMessageController.ObservableObject: ChatMessageControllerDelegate 
 
     public func messageController(
         _ controller: ChatMessageController,
-        didChangeReactions changes: [ListChange<ChatMessageReaction>]
+        didChangeReactions reactions: [ChatMessageReaction]
     ) {
-        reactions = controller.reactions
+        self.reactions = controller.reactions
     }
 }

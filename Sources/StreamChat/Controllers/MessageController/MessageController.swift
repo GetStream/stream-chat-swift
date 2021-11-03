@@ -52,10 +52,21 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
     /// To observe changes of the reactions, set your class as a delegate of this controller or use the provided
     /// `Combine` publishers.
     ///
-    public var reactions: LazyCachedMapCollection<ChatMessageReaction> {
-        startObserversIfNeeded()
-        return reactionsObserver?.items ?? []
+    public var reactions: [ChatMessageReaction] = [] {
+        didSet {
+            delegateCallback { [weak self] in
+                guard let self = self else {
+                    log.warning("Callback called while self is nil")
+                    return
+                }
+
+                $0.messageController(self, didChangeReactions: self.reactions)
+            }
+        }
     }
+
+    /// A Boolean value that returns wether the reactions have all been loaded or not.
+    public internal(set) var hasLoadedAllReactions = false
     
     /// Describes the ordering the replies are presented.
     ///
@@ -115,7 +126,7 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
                     log.warning("Callback called while self is nil")
                     return
                 }
-                
+
                 $0.messageController(self, didChangeMessage: change)
             }
         }
@@ -123,9 +134,6 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
     /// The observer used to listen replies updates.
     /// It will be reset on `listOrdering` changes.
     @Cached private var repliesObserver: ListDatabaseObserver<ChatMessage, MessageDTO>?
-
-    /// The observer used to listen reactions updates.
-    @Cached private var reactionsObserver: ListDatabaseObserver<ChatMessageReaction, MessageReactionDTO>?
     
     /// The worker used to fetch the remote data and communicate with servers.
     private lazy var messageUpdater: MessageUpdater = environment.messageUpdaterBuilder(
@@ -145,9 +153,8 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
         self.messageId = messageId
         self.environment = environment
         super.init()
-        
+
         setRepliesObserver()
-        setReactionsObserver()
     }
 
     override public func synchronize(_ completion: ((Error?) -> Void)? = nil) {
@@ -170,8 +177,8 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
         do {
             try messageObserver.startObserving()
             try repliesObserver?.startObserving()
-            try reactionsObserver?.startObserving()
-            
+            reactions = Array(messageObserver.item?.latestReactions.sorted(by: { $0.updatedAt > $1.updatedAt }) ?? [])
+
             state = .localDataFetched
         } catch {
             log.error("Failed to perform fetch request with error: \(error). This is an internal error.")
@@ -322,28 +329,65 @@ public extension ChatMessageController {
         }
     }
 
-    /// Loads new reactions from the backend.
+    /// Loads the next page of reactions starting from the current fetched reactions.
     ///
     /// - Parameters:
     ///   - limit: The reactions page size.
-    ///   - completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
-    ///                 If request fails, the completion will be called with an error.
+    ///   - completion: The completion is called when the network request is finished.
+    ///   If the request fails, the completion will be called with an error, if it succeeds it is
+    ///   called without an error and the delegate is notified of reactions changes.
     func loadNextReactions(
         limit: Int = 25,
         completion: ((Error?) -> Void)? = nil
     ) {
-        let hasLoadedAllReactions = message?.totalReactionsCount == reactions.count
         if hasLoadedAllReactions {
             callback { completion?(nil) }
             return
         }
 
+        loadReactions(offset: reactions.count, limit: limit) { result in
+            switch result {
+            case let .success(reactions):
+                let currentReactions = Set(self.reactions)
+                for reaction in reactions where !currentReactions.contains(reaction) {
+                    self.reactions.append(reaction)
+                }
+
+                if reactions.count < limit {
+                    self.hasLoadedAllReactions = true
+                }
+
+                self.callback { completion?(nil) }
+
+            case let .failure(error):
+                self.callback { completion?(error) }
+            }
+        }
+    }
+
+    /// Loads reactions from the backend given an offset and a limit.
+    ///
+    /// - Parameters:
+    ///   - offset: The starting position from the desired range to be fetched.
+    ///   - limit: The reactions page size.
+    ///   - completion: The completion is called when the network request is finished.
+    ///   It is called with the reactions if the request succeeds or error if the request fails.
+    func loadReactions(
+        offset: Int,
+        limit: Int,
+        completion: @escaping (Result<[ChatMessageReaction], Error>) -> Void
+    ) {
         messageUpdater.loadReactions(
             cid: cid,
             messageId: messageId,
-            pagination: Pagination(pageSize: limit, offset: reactions.count)
+            pagination: Pagination(pageSize: limit, offset: offset)
         ) { result in
-            self.callback { completion?(result.error) }
+            switch result {
+            case let .success(reactions):
+                self.callback { completion(.success(reactions)) }
+            case let .failure(error):
+                self.callback { completion(.failure(error)) }
+            }
         }
     }
     
@@ -558,35 +602,6 @@ private extension ChatMessageController {
             return observer
         }
     }
-
-    func setReactionsObserver() {
-        _reactionsObserver.computeValue = { [weak self] in
-            guard let self = self else {
-                log.warning("Callback called while self is nil")
-                return nil
-            }
-
-            let observer = self.environment.reactionsObserverBuilder(
-                self.client.databaseContainer.viewContext,
-                MessageReactionDTO.reactionsFetchRequest(for: self.messageId),
-                { $0.asModel() as ChatMessageReaction },
-                NSFetchedResultsController<MessageReactionDTO>.self
-            )
-
-            observer.onChange = { [weak self] changes in
-                self?.delegateCallback { [weak self] in
-                    guard let self = self else {
-                        log.warning("Callback called while self is nil")
-                        return
-                    }
-
-                    $0.messageController(self, didChangeReactions: changes)
-                }
-            }
-
-            return observer
-        }
-    }
 }
 
 // MARK: - Delegate
@@ -600,7 +615,7 @@ public protocol ChatMessageControllerDelegate: DataControllerStateDelegate {
     func messageController(_ controller: ChatMessageController, didChangeReplies changes: [ListChange<ChatMessage>])
 
     /// The controller observed changes in the reactions of the observed `ChatMessage`.
-    func messageController(_ controller: ChatMessageController, didChangeReactions changes: [ListChange<ChatMessageReaction>])
+    func messageController(_ controller: ChatMessageController, didChangeReactions reactions: [ChatMessageReaction])
 }
 
 public extension ChatMessageControllerDelegate {
@@ -608,7 +623,7 @@ public extension ChatMessageControllerDelegate {
     
     func messageController(_ controller: ChatMessageController, didChangeReplies changes: [ListChange<ChatMessage>]) {}
 
-    func messageController(_ controller: ChatMessageController, didChangeReactions changes: [ListChange<ChatMessageReaction>]) {}
+    func messageController(_ controller: ChatMessageController, didChangeReactions reactions: [ChatMessageReaction]) {}
 }
 
 /// `ChatMessageControllerDelegate` uses this protocol to communicate changes to its delegate.

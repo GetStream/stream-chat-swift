@@ -177,11 +177,6 @@ open class ChatMessageReactionAuthorsVC:
             return
         }
 
-        let totalReactionsCount = messageController.message?.totalReactionsCount ?? 0
-        if totalReactionsCount == messageController.reactions.count {
-            return
-        }
-
         isLoadingReactions = true
         messageController.loadNextReactions { [weak self] _ in
             self?.isLoadingReactions = false

@@ -203,7 +203,7 @@ class MessageUpdater: Worker {
         cid: ChannelId,
         messageId: MessageId,
         pagination: Pagination,
-        completion: ((Result<MessageReactionsPayload, Error>) -> Void)? = nil
+        completion: ((Result<[ChatMessageReaction], Error>) -> Void)? = nil
     ) {
         let endpoint: Endpoint<MessageReactionsPayload> = .loadReactions(
             messageId: messageId,
@@ -213,13 +213,18 @@ class MessageUpdater: Worker {
         apiClient.request(endpoint: endpoint) { result in
             switch result {
             case let .success(payload):
+                var reactions: [ChatMessageReaction] = []
                 self.database.write({ session in
-                    try payload.reactions.forEach { try session.saveReaction(payload: $0) }
+                    try payload.reactions.forEach {
+                        let reactionDTO = try session.saveReaction(payload: $0)
+                        let reaction = reactionDTO.asModel()
+                        reactions.append(reaction)
+                    }
                 }, completion: { error in
                     if let error = error {
                         completion?(.failure(error))
                     } else {
-                        completion?(.success(payload))
+                        completion?(.success(reactions))
                     }
                 })
             case let .failure(error):

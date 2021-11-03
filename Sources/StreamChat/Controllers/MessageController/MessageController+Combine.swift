@@ -23,8 +23,8 @@ extension ChatMessageController {
     }
 
     /// A publisher emitting a new value every time a reaction changes.
-    public var reactionsChangesPublisher: AnyPublisher<[ListChange<ChatMessageReaction>], Never> {
-        basePublishers.reactionsChanges.keepAlive(self)
+    public var reactionsPublisher: AnyPublisher<[ChatMessageReaction], Never> {
+        basePublishers.reactions.keepAlive(self)
     }
     
     /// An internal backing object for all publicly available Combine publishers. We use it to simplify the way we expose
@@ -44,7 +44,7 @@ extension ChatMessageController {
         let repliesChanges: PassthroughSubject<[ListChange<ChatMessage>], Never> = .init()
 
         /// A backing subject for `reactionsChangesPublisher`.
-        let reactionsChanges: PassthroughSubject<[ListChange<ChatMessageReaction>], Never> = .init()
+        let reactions: PassthroughSubject<[ChatMessageReaction], Never> = .init()
         
         init(controller: ChatMessageController) {
             self.controller = controller
@@ -77,8 +77,8 @@ extension ChatMessageController.BasePublishers: ChatMessageControllerDelegate {
 
     func messageController(
         _ controller: ChatMessageController,
-        didChangeReactions changes: [ListChange<ChatMessageReaction>]
+        didChangeReactions reactions: [ChatMessageReaction]
     ) {
-        reactionsChanges.send(changes)
+        self.reactions.send(reactions)
     }
 }
