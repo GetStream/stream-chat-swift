@@ -105,7 +105,7 @@ open class ChatMessageReactionAuthorsVC:
     override open func updateContent() {
         super.updateContent()
 
-        let numberOfReactions = messageController.message?.totalReactionsCount ?? 0
+        let numberOfReactions = messageController.reactions.count
         topLabel.text = L10n.Reaction.Authors.numberOfReactions(numberOfReactions)
     }
 
@@ -158,10 +158,12 @@ open class ChatMessageReactionAuthorsVC:
 
     // MARK: - ChatMessageControllerDelegate
 
-    open func messageController(
-        _ controller: ChatMessageController, didChangeReactions changes: [ListChange<ChatMessageReaction>]
+    public func messageController(
+        _ controller: ChatMessageController,
+        didChangeReactions reactions: [ChatMessageReaction]
     ) {
         collectionView.reloadData()
+        updateContent()
     }
 
     // MARK: - Public API
