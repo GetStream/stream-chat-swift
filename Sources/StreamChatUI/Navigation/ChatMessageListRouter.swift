@@ -14,8 +14,10 @@ open class ChatMessageListRouter:
     ComponentsProvider
 {
     /// The transition controller used to animate `ChatMessagePopupVC` transition.
-    open private(set) lazy var messagePopUpTransitionController = MessageActionsTransitionController()
-
+    open private(set) lazy var messagePopUpTransitionController: ChatMessageActionsTransitionController = components
+        .messageActionsTransitionController
+        .init(messageListVC: rootViewController as? ChatMessageListVC)
+    
     /// Feedback generator used when presenting actions controller on selected message
     open var impactFeedbackGenerator = UIImpactFeedbackGenerator(style: .medium)
 
@@ -50,7 +52,7 @@ open class ChatMessageListRouter:
         popup.modalPresentationStyle = .overFullScreen
         popup.transitioningDelegate = messagePopUpTransitionController
 
-        messagePopUpTransitionController.messageContentView = messageContentView
+        messagePopUpTransitionController.selectedMessageId = messageContentView.content?.id
         
         rootViewController.present(popup, animated: true)
     }
