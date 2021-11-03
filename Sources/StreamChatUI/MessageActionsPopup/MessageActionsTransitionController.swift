@@ -6,25 +6,50 @@ import Foundation
 import StreamChat
 import UIKit
 
-/// Transitions controller for `ChatMessagePopupVC`.
-open class MessageActionsTransitionController: NSObject, UIViewControllerTransitioningDelegate,
+/// The controller that handles `ChatMessageListVC <-> ChatMessagePopUp` transition.
+open class ChatMessageActionsTransitionController: NSObject, UIViewControllerTransitioningDelegate,
     UIViewControllerAnimatedTransitioning {
     /// Indicates if the transition is for presenting or dismissing.
     open var isPresenting: Bool = false
-    /// `messageContentView`'s initial frame.
-    open var messageContentViewFrame: CGRect = .zero
-    /// `messageContentView`'s constraints to be activated after dismissal.
-    open var messageContentViewActivateConstraints: [NSLayoutConstraint] = []
-    /// Constraints to be deactivated after dismissal.
-    open var messageContentViewDeactivateConstraints: [NSLayoutConstraint] = []
-    /// `messageContentView` instance that is animated.
-    open weak var messageContentView: ChatMessageContentView?
-    /// `messageContentView`'s initial superview.
-    open weak var messageContentViewSuperview: UIView?
-    /// Top anchor for main container.
-    open var mainContainerTopAnchor: NSLayoutConstraint?
+    
     /// Feedback generator.
     public private(set) lazy var impactFeedbackGenerator = UIImpactFeedbackGenerator(style: .medium)
+    
+    /// The currently selected message identifier.
+    public internal(set) var selectedMessageId: MessageId?
+    
+    /// The message list view controller.
+    public private(set) weak var messageListVC: ChatMessageListVC?
+    
+    /// The frame the message view's snapshot animates to when pop-up is being dismissed.
+    open var selectedMessageContentViewFrame: CGRect? {
+        guard let messageContentView = selectedMessageCell?.messageContentView else { return nil }
+        
+        let reactionsBubbleHeight = messageContentView.reactionsBubbleView?.frame.height ?? 0
+        
+        var frame = messageContentView.superview?.convert(messageContentView.frame, to: nil) ?? .zero
+        frame.size.height -= reactionsBubbleHeight / 2
+        frame.origin.y += reactionsBubbleHeight / 2
+        return frame
+    }
+    
+    /// The message cell that displays the selected message.
+    open var selectedMessageCell: ChatMessageCell? {
+        messageListVC?
+            .listView
+            .visibleCells
+            .compactMap { $0 as? ChatMessageCell }
+            .first(where: { $0.messageContentView?.content?.id == selectedMessageId })
+    }
+    
+    /// Creates transition controller used to animate message actions pop-up for the message displayed by the given message list view controller.
+    ///
+    /// - Parameter messageListVC: The view controller displaying the message list to animate to/from.
+    public required init(messageListVC: ChatMessageListVC?) {
+        super.init()
+        
+        self.messageListVC = messageListVC
+    }
     
     public func animationController(
         forPresented presented: UIViewController,
@@ -56,112 +81,65 @@ open class MessageActionsTransitionController: NSObject, UIViewControllerTransit
     open func animatePresent(using transitionContext: UIViewControllerContextTransitioning) {
         guard
             let toVC = transitionContext.viewController(forKey: .to) as? ChatMessagePopupVC,
-            let fromVC = transitionContext.viewController(forKey: .from),
-            let messageContentView = self.messageContentView,
-            let messageContentViewSuperview = messageContentView.superview
+            let originalMessageContentView = selectedMessageCell?.messageContentView
         else { return }
-
-        self.messageContentViewSuperview = messageContentViewSuperview
-
-        let messageContentViewSnapshot = messageContentView.snapshotView(afterScreenUpdates: true)
-        if let messageContentViewSnapshot = messageContentViewSnapshot {
-            messageContentViewSnapshot.frame = messageContentViewSuperview.convert(messageContentView.frame, to: fromVC.view)
-            transitionContext.containerView.addSubview(messageContentViewSnapshot)
-        }
-    
-        messageContentView.isHidden = true
         
-        // Prepare `messageContentView` and update its frame to be without reactions.
-        if messageContentView.reactionsBubbleView?.isVisible == true {
-            messageContentView.reactionsBubbleView?.isVisible = false
-            messageContentView.bubbleToReactionsConstraint?.isActive = false
-            mainContainerTopAnchor = messageContentView.mainContainer.topAnchor.pin(equalTo: messageContentView.topAnchor)
-            mainContainerTopAnchor?.isActive = true
-        }
-        messageContentView.setNeedsLayout()
-        messageContentView.layoutIfNeeded()
-        var messageContentViewFrame = messageContentView.superview!.convert(messageContentView.frame, to: nil)
-        self.messageContentViewFrame = messageContentViewFrame
-        let allMessageContentViewSuperviewConstraints = Set(messageContentView.superview!.constraints)
-        messageContentView.removeFromSuperview()
-        messageContentViewActivateConstraints = Array(
-            allMessageContentViewSuperviewConstraints.subtracting(messageContentViewSuperview.constraints)
-        )
-        messageContentViewDeactivateConstraints = [
-            messageContentViewSuperview.widthAnchor.constraint(equalToConstant: messageContentViewFrame.width),
-            messageContentViewSuperview.heightAnchor.constraint(equalToConstant: messageContentViewFrame.height)
-        ]
-        NSLayoutConstraint.deactivate(messageContentViewActivateConstraints)
-        NSLayoutConstraint.activate(messageContentViewDeactivateConstraints)
-        messageContentViewFrame.size = messageContentView.systemLayoutSizeFitting(
-            CGSize(width: messageContentViewFrame.width, height: UIView.layoutFittingCompressedSize.height),
-            withHorizontalFittingPriority: .streamRequire,
-            verticalFittingPriority: .streamLow
-        )
-
-        toVC.messageViewFrame = messageContentViewFrame
-        toVC.setUpLayout()
+        selectedMessageId = originalMessageContentView.content?.id
+        
+        let messageViewFrame = selectedMessageContentViewFrame ?? .zero
+        let messageViewType = type(of: originalMessageContentView)
+        let messageAttachmentInjectorType = originalMessageContentView.attachmentViewInjector.map { type(of: $0) }
+        let messageLayoutOptions = originalMessageContentView.layoutOptions?.subtracting(.reactions) ?? []
+        let message = originalMessageContentView.content
+        
+        let messageView = messageViewType.init()
+        messageView.setUpLayoutIfNeeded(options: messageLayoutOptions, attachmentViewInjectorType: messageAttachmentInjectorType)
+        messageView.frame = messageViewFrame
+        messageView.content = message
         
         transitionContext.containerView.addSubview(toVC.view)
-
-        let fromVCSnapshot = fromVC.view.snapshotView(afterScreenUpdates: true)
-        if let fromVCSnapshot = fromVCSnapshot {
-            // Make sure the snapshot is added to the bottom of the container, in case the container
-            // is bigger than the snapshot (for the case the popup is being presented in a modal)
-            let newY = transitionContext.containerView.frame.size.height - fromVC.view.frame.size.height
-            fromVCSnapshot.frame = fromVC.view.frame
-            fromVCSnapshot.frame.origin.y += newY
-            fromVC.view.isHidden = true
-        }
-
-        let blurView = UIVisualEffectView()
-        blurView.frame = toVC.view.frame
-
-        let reactionsSnapshot: UIView?
-        if let reactionsController = toVC.reactionsController {
-            reactionsSnapshot = reactionsController.view.snapshotView(afterScreenUpdates: true)
-            reactionsSnapshot?.frame = reactionsController.view.superview!.convert(reactionsController.view.frame, to: nil)
-            reactionsSnapshot?.transform = CGAffineTransform(scaleX: 0, y: 0)
-            reactionsSnapshot?.alpha = 0.0
-        } else {
-            reactionsSnapshot = nil
-        }
-        
-        let actionsSnapshot = toVC.actionsController.view.snapshotView(afterScreenUpdates: true)
-        if let actionsSnapshot = actionsSnapshot {
-            let actionsFrame = toVC.actionsController.view.superview!.convert(toVC.actionsController.view.frame, to: nil)
-            actionsSnapshot.frame = actionsFrame
-            actionsSnapshot.transform = CGAffineTransform(scaleX: 0, y: 0)
-            actionsSnapshot.alpha = 0.0
-        }
-        
-        if let messageContentViewSnapshot = messageContentViewSnapshot {
-            fromVCSnapshot.map { transitionContext.containerView.insertSubview($0, belowSubview: messageContentViewSnapshot) }
-            transitionContext.containerView.insertSubview(blurView, belowSubview: messageContentViewSnapshot)
-            reactionsSnapshot.map { transitionContext.containerView.insertSubview($0, belowSubview: messageContentViewSnapshot) }
-            actionsSnapshot.map { transitionContext.containerView.insertSubview($0, belowSubview: messageContentViewSnapshot) }
-        }
-
         toVC.view.isHidden = true
+        toVC.messageContentView = messageView
+        toVC.messageViewFrame = messageViewFrame
+        toVC.setUpLayout()
+        
+        let blurView = UIVisualEffectView()
+        blurView.frame = transitionContext.finalFrame(for: toVC)
+        
+        let reactionsSnapshot: UIView? = {
+            guard let view = toVC.reactionsController?.view else { return nil }
+            
+            let snapshot = view.snapshotView(afterScreenUpdates: true)
+            snapshot?.frame = view.superview?.convert(view.frame, to: nil) ?? .zero
+            snapshot?.transform = .init(scaleX: 0, y: 0)
+            snapshot?.alpha = 0.0
+            return snapshot
+        }()
+        
+        let actionsSnapshot: UIView? = {
+            guard let view = toVC.actionsController.view else { return nil }
+            
+            let snapshot = view.snapshotView(afterScreenUpdates: true)
+            snapshot?.frame = view.superview?.convert(view.frame, to: nil) ?? .zero
+            snapshot?.transform = .init(scaleX: 0, y: 0)
+            snapshot?.alpha = 0.0
+            return snapshot
+        }()
+        
+        let transitionSubviews = [blurView, reactionsSnapshot, actionsSnapshot, messageView].compactMap { $0 }
+        transitionSubviews.forEach(transitionContext.containerView.addSubview)
+        messageView.mainContainer.layoutMargins = originalMessageContentView.mainContainer.layoutMargins
 
-        messageContentView.isHidden = false
-        
-        transitionContext.containerView.addSubview(messageContentView)
-        messageContentView.frame = messageContentViewFrame
-        messageContentView.translatesAutoresizingMaskIntoConstraints = true
-        
-        messageContentViewSnapshot?.removeFromSuperview()
-        
         let duration = transitionDuration(using: transitionContext)
         UIView.animate(
             withDuration: 0.2 * duration,
             delay: 0,
             options: [.curveEaseOut],
             animations: {
-                messageContentView.transform = CGAffineTransform(scaleX: 0.8, y: 0.8)
+                messageView.transform = CGAffineTransform(scaleX: 0.8, y: 0.8)
             },
-            completion: { [self] _ in
-                impactFeedbackGenerator.impactOccurred()
+            completion: { _ in
+                self.impactFeedbackGenerator.impactOccurred()
             }
         )
         UIView.animate(
@@ -171,31 +149,26 @@ open class MessageActionsTransitionController: NSObject, UIViewControllerTransit
             initialSpringVelocity: 4,
             options: [.curveEaseInOut],
             animations: {
-                actionsSnapshot?.transform = .identity
-                actionsSnapshot?.alpha = 1.0
-                reactionsSnapshot?.transform = .identity
-                reactionsSnapshot?.alpha = 1.0
-                messageContentView.transform = .identity
-                messageContentView.frame.origin = toVC.messageContentContainerView.superview!.convert(
+                messageView.transform = .identity
+                messageView.frame = toVC.messageContentContainerView.superview?.convert(
                     toVC.messageContentContainerView.frame,
                     to: nil
-                )
-                .origin
-                if let effect = (toVC.blurView as? UIVisualEffectView)?.effect {
-                    blurView.effect = effect
-                }
+                ) ?? .zero
+                
+                actionsSnapshot?.transform = .identity
+                actionsSnapshot?.alpha = 1.0
+                
+                reactionsSnapshot?.transform = .identity
+                reactionsSnapshot?.alpha = 1.0
+                
+                blurView.effect = (toVC.blurView as? UIVisualEffectView)?.effect
             },
             completion: { _ in
+                transitionSubviews.forEach { $0.removeFromSuperview() }
+                
+                toVC.messageContentContainerView.embed(messageView.withoutAutoresizingMaskConstraints)
+                
                 toVC.view.isHidden = false
-                fromVC.view.isHidden = false
-                messageContentView.isHidden = false
-                toVC.messageContentContainerView.addSubview(messageContentView)
-                messageContentView.translatesAutoresizingMaskIntoConstraints = false
-                toVC.messageContentContainerView.embed(messageContentView)
-                fromVCSnapshot?.removeFromSuperview()
-                blurView.removeFromSuperview()
-                reactionsSnapshot?.removeFromSuperview()
-                actionsSnapshot?.removeFromSuperview()
                 
                 transitionContext.completeTransition(!transitionContext.transitionWasCancelled)
             }
@@ -206,100 +179,70 @@ open class MessageActionsTransitionController: NSObject, UIViewControllerTransit
     open func animateDismiss(using transitionContext: UIViewControllerContextTransitioning) {
         guard
             let fromVC = transitionContext.viewController(forKey: .from) as? ChatMessagePopupVC,
-            let toVC = transitionContext.viewController(forKey: .to),
-            let messageContentView = self.messageContentView
+            let toVC = transitionContext.viewController(forKey: .to)
         else { return }
         
-        let messageContentViewSnapshot = messageContentView.snapshotView(afterScreenUpdates: true)
-        if let messageContentViewSnapshot = messageContentViewSnapshot {
-            messageContentViewSnapshot.frame = messageContentView.convert(messageContentView.frame, to: fromVC.view)
-            transitionContext.containerView.addSubview(messageContentViewSnapshot)
-        }
-        
-        messageContentView.isHidden = true
-        
-        let toVCSnapshot = toVC.view.snapshotView(afterScreenUpdates: true)
-        if let toVCSnapshot = toVCSnapshot {
-            transitionContext.containerView.addSubview(toVCSnapshot)
-            // Make sure the snapshot is added to the bottom of the container, in case the container
-            // is bigger than the snapshot (for the case the popup is being presented in a modal)
-            let newY = transitionContext.containerView.frame.size.height - toVC.view.frame.size.height
-            toVCSnapshot.frame = toVC.view.frame
-            toVCSnapshot.frame.origin.y += newY
-            toVC.view.isHidden = true
-        }
-
         let blurView = UIVisualEffectView()
-        if let effect = (fromVC.blurView as? UIVisualEffectView)?.effect {
-            blurView.effect = effect
-        }
-        blurView.frame = fromVC.view.frame
+        blurView.effect = (fromVC.blurView as? UIVisualEffectView)?.effect
+        blurView.frame = transitionContext.finalFrame(for: toVC)
         
-        let reactionsSnapshot: UIView?
-        if let reactionsController = fromVC.reactionsController {
-            reactionsSnapshot = reactionsController.view.snapshotView(afterScreenUpdates: true)
-            reactionsSnapshot?.frame = reactionsController.view.superview!.convert(reactionsController.view.frame, to: nil)
-            reactionsSnapshot?.transform = .identity
-            reactionsSnapshot.map(transitionContext.containerView.addSubview)
-        } else {
-            reactionsSnapshot = nil
-        }
+        let reactionsSnapshot: UIView? = {
+            guard let view = fromVC.reactionsController?.view else { return nil }
+            
+            let snapshot = view.snapshotView(afterScreenUpdates: true)
+            snapshot?.frame = view.superview?.convert(view.frame, to: nil) ?? .zero
+            return snapshot
+        }()
         
-        let actionsSnapshot = fromVC.actionsController.view.snapshotView(afterScreenUpdates: true)
-        if let actionsSnapshot = actionsSnapshot {
-            actionsSnapshot.frame = fromVC.actionsController.view.superview!.convert(fromVC.actionsController.view.frame, to: nil)
-            transitionContext.containerView.addSubview(actionsSnapshot)
-        }
+        let actionsSnapshot: UIView? = {
+            guard let view = fromVC.actionsController.view else { return nil }
+            
+            let snapshot = view.snapshotView(afterScreenUpdates: true)
+            snapshot?.frame = view.superview?.convert(view.frame, to: nil) ?? .zero
+            return snapshot
+        }()
         
-        if let messageContentViewSnapshot = messageContentViewSnapshot {
-            toVCSnapshot.map { transitionContext.containerView.insertSubview($0, belowSubview: messageContentViewSnapshot) }
-            transitionContext.containerView.insertSubview(blurView, belowSubview: messageContentViewSnapshot)
-            reactionsSnapshot.map { transitionContext.containerView.insertSubview($0, belowSubview: messageContentViewSnapshot) }
-            actionsSnapshot.map { transitionContext.containerView.insertSubview($0, belowSubview: messageContentViewSnapshot) }
-        }
-
-        messageContentView.isHidden = false
-        let frame = messageContentView.convert(messageContentView.frame, to: fromVC.view)
-        messageContentView.removeFromSuperview()
-        transitionContext.containerView.addSubview(messageContentView)
-        messageContentView.translatesAutoresizingMaskIntoConstraints = true
-        messageContentView.frame = frame
+        let messageView = fromVC.messageContentView!
+        let frame = fromVC.messageContentContainerView.convert(messageView.frame, to: transitionContext.containerView)
+        messageView.removeFromSuperview()
+        messageView.frame = frame
+        messageView.translatesAutoresizingMaskIntoConstraints = true
         
-        messageContentViewSnapshot?.removeFromSuperview()
+        let transitionSubviews = [blurView, reactionsSnapshot, actionsSnapshot, messageView].compactMap { $0 }
+        transitionSubviews.forEach(transitionContext.containerView.addSubview)
         
         fromVC.view.isHidden = true
+        
+        selectedMessageCell?.messageContentView?.isHidden = true
         
         let duration = transitionDuration(using: transitionContext)
         UIView.animate(
             withDuration: duration,
             delay: 0,
-            animations: { [self] in
+            animations: {
+                if let frame = self.selectedMessageContentViewFrame {
+                    messageView.frame = frame
+                } else {
+                    messageView.transform = CGAffineTransform(scaleX: 0.01, y: 0.01)
+                    messageView.alpha = 0.0
+                }
+                
                 actionsSnapshot?.transform = CGAffineTransform(scaleX: 0.01, y: 0.01)
-                reactionsSnapshot?.transform = CGAffineTransform(scaleX: 0.01, y: 0.01)
                 actionsSnapshot?.alpha = 0.0
+                
+                reactionsSnapshot?.transform = CGAffineTransform(scaleX: 0.01, y: 0.01)
                 reactionsSnapshot?.alpha = 0.0
-                messageContentView.frame = messageContentViewFrame
+                
                 blurView.effect = nil
             },
-            completion: { [self] _ in
-                toVC.view.isHidden = false
-                fromVC.view.isHidden = false
-                messageContentView.translatesAutoresizingMaskIntoConstraints = false
-                if let mainContainerTopAnchor = mainContainerTopAnchor {
-                    mainContainerTopAnchor.isActive = false
-                    messageContentView.reactionsBubbleView?.isVisible = true
-                    messageContentView.bubbleToReactionsConstraint?.isActive = true
-                }
-                messageContentView.removeFromSuperview()
-                messageContentViewSuperview?.addSubview(messageContentView)
-                NSLayoutConstraint.activate(messageContentViewActivateConstraints)
-                NSLayoutConstraint.deactivate(messageContentViewDeactivateConstraints)
-                toVCSnapshot?.removeFromSuperview()
-                blurView.removeFromSuperview()
-                reactionsSnapshot?.removeFromSuperview()
-                actionsSnapshot?.removeFromSuperview()
+            completion: { _ in
+                transitionSubviews.forEach { $0.removeFromSuperview() }
                 
+                self.selectedMessageCell?.messageContentView?.isHidden = false
+
                 transitionContext.completeTransition(!transitionContext.transitionWasCancelled)
+                
+                self.selectedMessageId = nil
             }
         )
     }
