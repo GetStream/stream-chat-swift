@@ -12,7 +12,7 @@ Message reactions come out of the box with Stream Chat. The SDK will respect you
 
 ### Custom Reactions and Images
 
-All the available reactions are extendible or totally replacable with custom ones. You can change the list of supported message reactions via the `Appearance` object. Here is an example on how you can use your own set of reactions:
+All the available reactions are extendible or totally replaceable with custom ones. You can change the list of supported message reactions via the `Appearance` object. Here is an example of how you can use your own set of reactions:
 
 ```swift
 let reactionFireSmall: UIImage = UIImage(named: "fireSmall")!
@@ -70,7 +70,7 @@ Components.default.messageReactionsBubbleView = CustomChatReactionsBubbleView.se
 
 ### ChatMessageReactionsView
 
-This component is resposinble to layout the list of reactions. By default the reactions are rendered in a horizontal stack.
+This component is responsible for rendering the list of reactions. By default, the reactions are rendered in a horizontal stack.
 
 In this example we customize the `ChatMessageReactionsView` so that the reactions are rendered in a vertical stack instead:
 ```swift
@@ -88,7 +88,7 @@ Components.default.messageReactionsView = CustomChatChatMessageReactionsView.sel
 
 ### ChatMessageReactionItemView
 
-This component is responsible to display a single reaction. By default if the reaction is from the logged in user, the reaction image color is blue, if not, the color is gray. Let's do a simple customization and set the color to white instead of blue when the reaction is from the logged in user:
+This component is responsible to display a single reaction. By default, if the reaction is from the logged-in user, the reaction image color is blue, if not, the color is gray. Let's do a simple customization and set the color to white instead of blue when the reaction is from the logged-in user:
 
 ```swift
 class CustomChatMessageReactionItemView: ChatMessageReactionItemView {
@@ -113,13 +113,13 @@ If we do all the customizations described above to the message reactions view, t
 
 In order to add a new reaction to a message you need to long-press a message or tap the message reactions bubble view, and the SDK will show a popup view with a reactions picker at the top. The reactions picker which is represented by the `ChatMessageReactionsVC` is basically a bigger message reaction view that is interactable to allow the user to select a reaction.
 
-When the user long-presses the message, the popup view will display the reactions picker at the top, the message content at the center, and the message actions at the bottom. On the other hand, if the user taps the reactions bubble view, instead of having the message actions at the bottom, it will show a view with all the reactions that belongs to the message.
+When the user long-presses the message, the popup view will display the reactions picker at the top, the message content at the centre, and the message actions at the bottom. On the other hand, if the user taps the reactions bubble view, instead of having the message actions at the bottom, it will show a view with all the reactions that belong to the message.
 
 | Long-pressing a message | Tapping reaction bubble view |
 | ------------------------- | ------------------------ |
 | ![Long-press](../assets/message-reactions-long-press.png)  | ![Tap](../assets/message-reactions-tap.png)  |
 
-The reaction picker view has a similar structure to the message reaction view. Here is the hierarchy of th reaction picker view:
+The reaction picker view has a similar structure to the message reaction view. Here is the hierarchy of the reaction picker view:
 
 <Digraph margin="0 auto" width="300px">
 {`
@@ -163,11 +163,11 @@ class CustomChatReactionPickerBubbleView: DefaultChatReactionPickerBubbleView {
 Components.default.reactionPickerBubbleView = CustomChatReactionPickerBubbleView.self
 ```
 
-In the example above we changed the color of the bubble to black. For this we had not only to change the background to black, but also the border color and the tail images. We also changed the corner radius of the bubble since in the next step we will make the bubble vertical instead of horizontal.
+In the example above we changed the color of the bubble to black. For this, we had not only to change the background to black but also the border color and the tail images. We also changed the corner radius of the bubble since in the next step we will make the bubble vertical instead of horizontal.
 
 ### ChatReactionPickerReactionsView
 
-This component is resposinble to layout the list of reactions. By default the reactions are rendered in a horizontal stack, exactly like the message reaction view.
+This component is responsible to render the list of reactions. By default, the reactions are rendered in a horizontal stack, exactly like the message reaction view.
 
 Let's do the same change we did with the message reaction view, and change the stack to be vertical aligned:
 ```swift
@@ -208,4 +208,50 @@ Here is the result for all the customizations done to the reaction picker view:
 
 ## Reaction Authors
 
-TODO
+The `ChatMessageReactionAuthorsVC` is responsible to displays all the reactions of the message and its author. It is the view that is presented at the bottom when the user taps the reactions bubble view.
+
+### ChatMessageReactionAuthorsVC
+By default the `ChatMessageReactionAuthorsVC` render the reactions in a collection view and each cell is represented by the `ChatMessageReactionAuthorViewCell` component.
+
+Let's change the background color of the reaction authors view and change the cell size by subclassing the `ChatMessageReactionAuthorsVC` component:
+
+```swift
+class CustomChatMessageReactionAuthorsVC: ChatMessageReactionAuthorsVC {
+
+    override var reactionAuthorCellSize: CGSize {
+        CGSize(width: 64, height: 70)
+    }
+
+    override func setUpAppearance() {
+        super.setUpAppearance()
+
+        topLabel.textColor = UIColor.white
+        view.backgroundColor = .black
+    }
+}
+
+Components.default.reactionAuthorsVC = CustomChatMessageReactionAuthorsVC.self
+```
+
+### ChatMessageReactionAuthorViewCell
+
+In order to customize each cell of the reaction authors view, we need to subclass the `ChatMessageReactionAuthorViewCell` component.
+
+```swift
+class CustomChatMessageReactionAuthorViewCell: ChatMessageReactionAuthorViewCell {
+
+    override func setUpLayout() {
+        super.setUpLayout()
+
+        containerStack.removeArrangedSubview(authorNameLabel)
+    }
+}
+
+Components.default.reactionAuthorCell = CustomChatMessageReactionAuthorViewCell.self
+```
+
+If we apply these customizations above on the reaction authors view component, we will see the following result:
+
+| Default Reaction Authors | Custom Reaction Authors |
+| ------------- | ------------- |
+| ![Default Picker](../assets/message-reactions-picker-custom.png)  | ![Custom Picker](../assets/message-reaction-authors-custom.png)  |
