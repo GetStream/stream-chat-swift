@@ -25,7 +25,7 @@ public struct ChatMessageReaction: Hashable {
     /// Custom data
     public let extraData: [String: RawJSON]
 
-    public init(
+    init(
         type: MessageReactionType,
         score: Int,
         createdAt: Date,
