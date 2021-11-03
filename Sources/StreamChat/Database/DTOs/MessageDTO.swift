@@ -406,6 +406,15 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         
         dto.isSilent = payload.isSilent
         dto.isShadowed = payload.isShadowed
+        // Due to backend not working as advertised
+        // (sending `shadowed: true` flag to the shadow banned user)
+        // we have to implement this workaround to get the advertised behavior
+        // info on slack: https://getstream.slack.com/archives/CE5N802GP/p1635785568060500
+        // TODO: Remove the workaround once backend bug is fixed
+        if currentUser?.user.id == payload.user.id {
+            dto.isShadowed = false
+        }
+        
         dto.pinned = payload.pinned
         dto.pinExpires = payload.pinExpires
         dto.pinnedAt = payload.pinnedAt
