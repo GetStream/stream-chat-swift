@@ -291,6 +291,7 @@ class ChannelDTO_Tests: XCTestCase {
             extraData: [:],
             reactionScores: ["like": 1],
             isSilent: false,
+            isShadowed: false,
             attachments: [],
             pinned: true
         )
@@ -323,6 +324,7 @@ class ChannelDTO_Tests: XCTestCase {
             extraData: [:],
             reactionScores: ["like": 1],
             isSilent: false,
+            isShadowed: false,
             attachments: [],
             pinned: true
         )

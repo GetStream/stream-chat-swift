@@ -41,9 +41,10 @@ class DatabaseContainer: NSPersistentContainer {
         let context = newBackgroundContext()
         context.automaticallyMergesChangesFromParent = true
         context.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
-        context.perform { [localCachingSettings, deletedMessageVisibility] in
+        context.perform { [localCachingSettings, deletedMessageVisibility, shouldShowShadowedMessages] in
             context.localCachingSettings = localCachingSettings
             context.deletedMessagesVisibility = deletedMessageVisibility
+            context.shouldShowShadowedMessages = shouldShowShadowedMessages
         }
         return context
     }()
@@ -60,9 +61,10 @@ class DatabaseContainer: NSPersistentContainer {
         let context = newBackgroundContext()
         context.automaticallyMergesChangesFromParent = true
         context.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
-        context.perform { [localCachingSettings, deletedMessageVisibility] in
+        context.perform { [localCachingSettings, deletedMessageVisibility, shouldShowShadowedMessages] in
             context.localCachingSettings = localCachingSettings
             context.deletedMessagesVisibility = deletedMessageVisibility
+            context.shouldShowShadowedMessages = shouldShowShadowedMessages
         }
         return context
     }()
@@ -70,6 +72,7 @@ class DatabaseContainer: NSPersistentContainer {
     private var loggerNotificationObserver: NSObjectProtocol?
     private let localCachingSettings: ChatClientConfig.LocalCaching?
     private let deletedMessageVisibility: ChatClientConfig.DeletedMessageVisibility?
+    private let shouldShowShadowedMessages: Bool?
     
     /// All `NSManagedObjectContext`s this container owns.
     private lazy var allContext: [NSManagedObjectContext] = [viewContext, backgroundReadOnlyContext, writableContext]
@@ -93,7 +96,8 @@ class DatabaseContainer: NSPersistentContainer {
         modelName: String = "StreamChatModel",
         bundle: Bundle? = .streamChat,
         localCachingSettings: ChatClientConfig.LocalCaching? = nil,
-        deletedMessagesVisibility: ChatClientConfig.DeletedMessageVisibility? = nil
+        deletedMessagesVisibility: ChatClientConfig.DeletedMessageVisibility? = nil,
+        shouldShowShadowedMessages: Bool? = nil
     ) throws {
         // It's safe to unwrap the following values because this is not settable by users and it's always a programmer error.
         let bundle = bundle ?? Bundle(for: DatabaseContainer.self)
@@ -102,6 +106,7 @@ class DatabaseContainer: NSPersistentContainer {
         
         self.localCachingSettings = localCachingSettings
         deletedMessageVisibility = deletedMessagesVisibility
+        self.shouldShowShadowedMessages = shouldShowShadowedMessages
 
         super.init(name: modelName, managedObjectModel: model)
         
@@ -135,10 +140,12 @@ class DatabaseContainer: NSPersistentContainer {
         if Thread.current.isMainThread {
             viewContext.localCachingSettings = localCachingSettings
             viewContext.deletedMessagesVisibility = deletedMessagesVisibility
+            viewContext.shouldShowShadowedMessages = shouldShowShadowedMessages
         } else {
-            viewContext.perform { [viewContext, localCachingSettings, deletedMessagesVisibility] in
+            viewContext.perform { [viewContext, localCachingSettings, deletedMessagesVisibility, shouldShowShadowedMessages] in
                 viewContext.localCachingSettings = localCachingSettings
                 viewContext.deletedMessagesVisibility = deletedMessagesVisibility
+                viewContext.shouldShowShadowedMessages = shouldShowShadowedMessages
             }
         }
         

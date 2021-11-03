@@ -137,7 +137,8 @@ public class ChatClient {
                     config.shouldFlushLocalStorageOnStart,
                     config.isClientInActiveMode, // Only reset Ephemeral values in active mode
                     config.localCaching,
-                    config.deletedMessagesVisibility
+                    config.deletedMessagesVisibility,
+                    config.shouldShowShadowedMessages
                 )
             }
             
@@ -154,7 +155,8 @@ public class ChatClient {
                 config.shouldFlushLocalStorageOnStart,
                 config.isClientInActiveMode, // Only reset Ephemeral values in active mode
                 config.localCaching,
-                config.deletedMessagesVisibility
+                config.deletedMessagesVisibility,
+                config.shouldShowShadowedMessages
             )
         } catch {
             fatalError("Failed to initialize the in-memory storage with error: \(error). This is a non-recoverable error.")
@@ -527,14 +529,16 @@ extension ChatClient {
             _ shouldFlushOnStart: Bool,
             _ shouldResetEphemeralValuesOnStart: Bool,
             _ localCachingSettings: ChatClientConfig.LocalCaching?,
-            _ deletedMessageVisibility: ChatClientConfig.DeletedMessageVisibility?
+            _ deletedMessageVisibility: ChatClientConfig.DeletedMessageVisibility?,
+            _ shouldShowShadowedMessages: Bool?
         ) throws -> DatabaseContainer = {
             try DatabaseContainer(
                 kind: $0,
                 shouldFlushOnStart: $1,
                 shouldResetEphemeralValuesOnStart: $2,
                 localCachingSettings: $3,
-                deletedMessagesVisibility: $4
+                deletedMessagesVisibility: $4,
+                shouldShowShadowedMessages: $5
             )
         }
         

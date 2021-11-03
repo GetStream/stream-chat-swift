@@ -31,7 +31,7 @@ class ChatPushNotificationContent_Tests: XCTestCase {
         database = DatabaseContainerMock()
 
         var env = ChatClient.Environment()
-        env.databaseContainerBuilder = { _, _, _, _, _ in self.database }
+        env.databaseContainerBuilder = { _, _, _, _, _, _ in self.database }
         env.apiClientBuilder = { _, _, _, _, _ in self.apiClient }
         
         clientWithOffline = ChatClient(
