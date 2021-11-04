@@ -68,6 +68,12 @@ public struct ChatMessage {
     ///
     public let isSilent: Bool
     
+    /// A flag indicating whether the message is a shadowed message.
+    ///
+    /// Shadowed message are special messages that are sent from shadow banned users.
+    ///
+    public let isShadowed: Bool
+    
     /// The reactions to the message created by any user.
     public let reactionScores: [MessageReactionType: Int]
 
@@ -161,6 +167,7 @@ public struct ChatMessage {
         extraData: [String: RawJSON],
         quotedMessage: @escaping () -> ChatMessage?,
         isSilent: Bool,
+        isShadowed: Bool,
         reactionScores: [MessageReactionType: Int],
         reactionCounts: [MessageReactionType: Int],
         author: @escaping () -> ChatUser,
@@ -191,6 +198,7 @@ public struct ChatMessage {
         self.replyCount = replyCount
         self.extraData = extraData
         self.isSilent = isSilent
+        self.isShadowed = isShadowed
         self.reactionScores = reactionScores
         self.reactionCounts = reactionCounts
         self.localState = localState

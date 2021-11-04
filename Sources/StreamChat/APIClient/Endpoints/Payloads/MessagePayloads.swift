@@ -78,6 +78,7 @@ class MessagePayload: Decodable {
     let reactionCounts: [MessageReactionType: Int]
     let attachments: [MessageAttachmentPayload]
     let isSilent: Bool
+    let isShadowed: Bool
 
     var pinned: Bool
     var pinnedBy: UserPayload?
@@ -98,6 +99,7 @@ class MessagePayload: Decodable {
         deletedAt = try container.decodeIfPresent(Date.self, forKey: .deletedAt)
         text = try container.decode(String.self, forKey: .text).trimmingCharacters(in: .whitespacesAndNewlines)
         isSilent = try container.decodeIfPresent(Bool.self, forKey: .isSilent) ?? false
+        isShadowed = try container.decodeIfPresent(Bool.self, forKey: .shadowed) ?? false
         command = try container.decodeIfPresent(String.self, forKey: .command)
         args = try container.decodeIfPresent(String.self, forKey: .args)
         parentId = try container.decodeIfPresent(String.self, forKey: .parentId)
@@ -162,6 +164,7 @@ class MessagePayload: Decodable {
         reactionScores: [MessageReactionType: Int],
         reactionCounts: [MessageReactionType: Int],
         isSilent: Bool,
+        isShadowed: Bool,
         attachments: [MessageAttachmentPayload],
         channel: ChannelDetailPayload? = nil,
         pinned: Bool = false,
@@ -190,6 +193,7 @@ class MessagePayload: Decodable {
         self.reactionScores = reactionScores
         self.reactionCounts = reactionCounts
         self.isSilent = isSilent
+        self.isShadowed = isShadowed
         self.attachments = attachments
         self.channel = channel
         self.pinned = pinned

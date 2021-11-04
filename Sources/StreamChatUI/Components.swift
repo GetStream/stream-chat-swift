@@ -94,6 +94,10 @@ public struct Components {
     /// Used in both the Channel and Thread view controllers.
     @available(iOSApplicationExtension, unavailable)
     public var messageListVC: ChatMessageListVC.Type = ChatMessageListVC.self
+    
+    /// The controller that handles `ChatMessageListVC <-> ChatMessagePopUp` transition.
+    public var messageActionsTransitionController: ChatMessageActionsTransitionController.Type =
+        ChatMessageActionsTransitionController.self
 
     /// The foundation view for the message list view controller.
     public var messageListView: ChatMessageListView.Type = ChatMessageListView

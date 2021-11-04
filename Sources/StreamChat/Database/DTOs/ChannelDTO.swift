@@ -338,11 +338,12 @@ extension ChatChannel {
             
             // Fetch count of all mentioned messages after last read
             // (this is not 100% accurate but it's the best we have)
-            let metionedUnreadMessagesRequest = NSFetchRequest<MessageDTO>(entityName: MessageDTO.entityName)
-            metionedUnreadMessagesRequest.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
+            let mentionedUnreadMessagesRequest = NSFetchRequest<MessageDTO>(entityName: MessageDTO.entityName)
+            mentionedUnreadMessagesRequest.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
                 MessageDTO.channelMessagesPredicate(
                     for: dto.cid,
-                    deletedMessagesVisibility: context.deletedMessagesVisibility ?? .visibleForCurrentUser
+                    deletedMessagesVisibility: context.deletedMessagesVisibility ?? .visibleForCurrentUser,
+                    shouldShowShadowedMessages: context.shouldShowShadowedMessages ?? false
                 ),
                 NSPredicate(format: "createdAt > %@", currentUserRead?.lastReadAt as NSDate? ?? NSDate(timeIntervalSince1970: 0)),
                 NSPredicate(format: "%@ IN mentionedUsers", currentUser.user)
@@ -351,7 +352,7 @@ extension ChatChannel {
             do {
                 return ChannelUnreadCount(
                     messages: allUnreadMessages,
-                    mentionedMessages: try context.count(for: metionedUnreadMessagesRequest)
+                    mentionedMessages: try context.count(for: mentionedUnreadMessagesRequest)
                 )
             } catch {
                 log.error("Failed to fetch unread counts for channel `\(cid)`. Error: \(error)")

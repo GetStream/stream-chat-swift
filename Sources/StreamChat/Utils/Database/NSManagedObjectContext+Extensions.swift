@@ -14,10 +14,18 @@ extension NSManagedObjectContext {
     }
 
     private static let deletedMessagesVisibilityKey = "io.getStream.StreamChat.deletedMessagesVisibility_key"
+    
+    private static let shouldShowShadowedMessagesKey = "io.getStream.StreamChat.shouldShowShadowedMessages_key"
 
     /// Provides the info about deleted messages behavior
     var deletedMessagesVisibility: ChatClientConfig.DeletedMessageVisibility? {
         get { userInfo[Self.deletedMessagesVisibilityKey] as? ChatClientConfig.DeletedMessageVisibility }
         set { userInfo[Self.deletedMessagesVisibilityKey] = newValue }
+    }
+    
+    /// Provides the info about shadowed messages behavior
+    var shouldShowShadowedMessages: Bool? {
+        get { userInfo[Self.shouldShowShadowedMessagesKey] as? Bool }
+        set { userInfo[Self.shouldShowShadowedMessagesKey] = newValue }
     }
 }

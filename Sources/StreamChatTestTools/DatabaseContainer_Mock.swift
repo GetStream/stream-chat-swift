@@ -32,7 +32,8 @@ class DatabaseContainerMock: DatabaseContainer {
         modelName: String = "StreamChatModel",
         bundle: Bundle? = nil,
         localCachingSettings: ChatClientConfig.LocalCaching? = nil,
-        deletedMessagesVisibility: ChatClientConfig.DeletedMessageVisibility? = nil
+        deletedMessagesVisibility: ChatClientConfig.DeletedMessageVisibility? = nil,
+        shouldShowShadowedMessages: Bool? = nil
     ) throws {
         init_kind = kind
         try super.init(
@@ -42,7 +43,8 @@ class DatabaseContainerMock: DatabaseContainer {
             modelName: modelName,
             bundle: bundle,
             localCachingSettings: localCachingSettings,
-            deletedMessagesVisibility: deletedMessagesVisibility
+            deletedMessagesVisibility: deletedMessagesVisibility,
+            shouldShowShadowedMessages: shouldShowShadowedMessages
         )
     }
     

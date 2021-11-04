@@ -143,6 +143,10 @@ public struct ChatClientConfig {
 
     /// Specifies the visibility of deleted messages.
     public var deletedMessagesVisibility: DeletedMessageVisibility = .visibleForCurrentUser
+    
+    /// Specifies whether `shadowed` messages should be shown in Message list.
+    /// For more information, please check "Shadow Bans" docs.
+    public var shouldShowShadowedMessages = false
 
     public init(apiKey: APIKey) {
         self.apiKey = apiKey

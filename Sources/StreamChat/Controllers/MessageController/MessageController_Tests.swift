@@ -436,7 +436,104 @@ final class MessageController_Tests: XCTestCase {
         // both deleted replies should be visible
         XCTAssertEqual(Set(controller.replies.map(\.id)), Set([ownReply.id, otherReply.id]))
     }
-
+    
+    func test_replies_whenShadowedMessagesVisible() throws {
+        // Create dummy channel
+        let cid = ChannelId.unique
+        let channel = dummyPayload(with: cid)
+        let truncatedDate = Date.unique
+        
+        try client.databaseContainer.createCurrentUser(id: currentUserId)
+        client.databaseContainer.viewContext.shouldShowShadowedMessages = true
+        
+        // Save channel
+        try client.databaseContainer.writeSynchronously {
+            let dto = try $0.saveChannel(payload: channel)
+            dto.truncatedAt = truncatedDate
+        }
+        
+        // Insert parent message
+        try client.databaseContainer.createMessage(id: messageId, authorId: .unique, cid: cid, text: "Parent")
+        
+        // Insert a reply
+        let nonShadowedReply: MessagePayload = .dummy(
+            messageId: .unique,
+            parentId: messageId,
+            showReplyInChannel: false,
+            authorUserId: .unique,
+            createdAt: .unique(after: truncatedDate),
+            isShadowed: false
+        )
+        
+        // Insert shadowed reply by another user
+        let createdAt = Date.unique(after: truncatedDate)
+        let shadowedReply: MessagePayload = .dummy(
+            messageId: .unique,
+            parentId: messageId,
+            showReplyInChannel: false,
+            authorUserId: .unique,
+            createdAt: createdAt,
+            isShadowed: true
+        )
+        
+        // Save messages
+        try client.databaseContainer.writeSynchronously {
+            try $0.saveMessage(payload: nonShadowedReply, for: cid)
+            try $0.saveMessage(payload: shadowedReply, for: cid)
+        }
+        
+        // all replies should be visible
+        XCTAssertEqual(Set(controller.replies.map(\.id)), Set([nonShadowedReply.id, shadowedReply.id]))
+    }
+    
+    func test_replies_withDefaultShadowedMessagesVisible() throws {
+        // Create dummy channel
+        let cid = ChannelId.unique
+        let channel = dummyPayload(with: cid)
+        let truncatedDate = Date.unique
+        
+        try client.databaseContainer.createCurrentUser(id: currentUserId)
+        
+        // Save channel
+        try client.databaseContainer.writeSynchronously {
+            let dto = try $0.saveChannel(payload: channel)
+            dto.truncatedAt = truncatedDate
+        }
+        
+        // Insert parent message
+        try client.databaseContainer.createMessage(id: messageId, authorId: .unique, cid: cid, text: "Parent")
+        
+        // Insert a reply
+        let nonShadowedReply: MessagePayload = .dummy(
+            messageId: .unique,
+            parentId: messageId,
+            showReplyInChannel: false,
+            authorUserId: .unique,
+            createdAt: .unique(after: truncatedDate),
+            isShadowed: false
+        )
+        
+        // Insert shadowed reply by another user
+        let createdAt = Date.unique(after: truncatedDate)
+        let shadowedReply: MessagePayload = .dummy(
+            messageId: .unique,
+            parentId: messageId,
+            showReplyInChannel: false,
+            authorUserId: .unique,
+            createdAt: createdAt,
+            isShadowed: true
+        )
+        
+        // Save messages
+        try client.databaseContainer.writeSynchronously {
+            try $0.saveMessage(payload: nonShadowedReply, for: cid)
+            try $0.saveMessage(payload: shadowedReply, for: cid)
+        }
+        
+        // only non-shadowed reply should be visible
+        XCTAssertEqual(Set(controller.replies.map(\.id)), Set([nonShadowedReply.id]))
+    }
+    
     // MARK: - Delegate
 
     func test_delegate_isAssignedCorrectly() {

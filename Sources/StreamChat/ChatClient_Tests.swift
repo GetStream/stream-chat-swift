@@ -73,24 +73,27 @@ class ChatClient_Tests: XCTestCase {
         config.localCaching.chatChannel.lastActiveWatchersLimit = .unique
 
         config.deletedMessagesVisibility = .alwaysVisible
+        config.shouldShowShadowedMessages = .random()
 
         var usedDatabaseKind: DatabaseContainer.Kind?
         var shouldFlushDBOnStart: Bool?
         var shouldResetEphemeralValues: Bool?
         var localCachingSettings: ChatClientConfig.LocalCaching?
         var deleteMessagesVisibility: ChatClientConfig.DeletedMessageVisibility?
+        var shouldShowShadowedMessages: Bool?
         
         // Create env object with custom database builder
         var env = ChatClient.Environment()
         env.clientUpdaterBuilder = ChatClientUpdaterMock.init
         env
             .databaseContainerBuilder =
-            { kind, shouldFlushOnStart, shouldResetEphemeralValuesOnStart, cachingSettings, messageVisibility in
+            { kind, shouldFlushOnStart, shouldResetEphemeralValuesOnStart, cachingSettings, messageVisibility, showShadowedMessages in
                 usedDatabaseKind = kind
                 shouldFlushDBOnStart = shouldFlushOnStart
                 shouldResetEphemeralValues = shouldResetEphemeralValuesOnStart
                 localCachingSettings = cachingSettings
                 deleteMessagesVisibility = messageVisibility
+                shouldShowShadowedMessages = showShadowedMessages
                 return DatabaseContainerMock()
             }
         
@@ -110,6 +113,7 @@ class ChatClient_Tests: XCTestCase {
         XCTAssertEqual(shouldResetEphemeralValues, config.isClientInActiveMode)
         XCTAssertEqual(localCachingSettings, config.localCaching)
         XCTAssertEqual(deleteMessagesVisibility, config.deletedMessagesVisibility)
+        XCTAssertEqual(shouldShowShadowedMessages, config.shouldShowShadowedMessages)
     }
     
     func test_clientDatabaseStackInitialization_whenLocalStorageDisabled() {
@@ -122,7 +126,7 @@ class ChatClient_Tests: XCTestCase {
         // Create env object with custom database builder
         var env = ChatClient.Environment()
         env.clientUpdaterBuilder = ChatClientUpdaterMock.init
-        env.databaseContainerBuilder = { kind, _, _, _, _ in
+        env.databaseContainerBuilder = { kind, _, _, _, _, _ in
             usedDatabaseKind = kind
             return DatabaseContainerMock()
         }
@@ -157,7 +161,7 @@ class ChatClient_Tests: XCTestCase {
         // Create env object and store all `kinds it's called with.
         var env = ChatClient.Environment()
         env.clientUpdaterBuilder = ChatClientUpdaterMock.init
-        env.databaseContainerBuilder = { kind, _, _, _, _ in
+        env.databaseContainerBuilder = { kind, _, _, _, _, _ in
             usedDatabaseKinds.append(kind)
             // Return error for the first time
             if let error = errorsToReturn.pop() {
@@ -198,7 +202,7 @@ class ChatClient_Tests: XCTestCase {
         XCTAssertEqual(internetConnection.init_notificationCenter, client.eventNotificationCenter)
     }
     
-    func test_whenInterentConnectionDisappearsAndComesBack_clientReconnects() {
+    func test_whenInternetConnectionDisappearsAndComesBack_clientReconnects() {
         // Create a new chat client
         let client = ChatClient(
             config: inMemoryStorageConfig,
@@ -1262,7 +1266,8 @@ private class TestEnvironment {
                     shouldFlushOnStart: $1,
                     shouldResetEphemeralValuesOnStart: $2,
                     localCachingSettings: $3,
-                    deletedMessagesVisibility: $4
+                    deletedMessagesVisibility: $4,
+                    shouldShowShadowedMessages: $5
                 )
                 return self.databaseContainer!
             },

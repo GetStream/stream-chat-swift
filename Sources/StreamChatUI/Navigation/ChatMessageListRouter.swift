@@ -14,8 +14,10 @@ open class ChatMessageListRouter:
     ComponentsProvider
 {
     /// The transition controller used to animate `ChatMessagePopupVC` transition.
-    open private(set) lazy var messagePopUpTransitionController = MessageActionsTransitionController()
-
+    open private(set) lazy var messagePopUpTransitionController: ChatMessageActionsTransitionController = components
+        .messageActionsTransitionController
+        .init(messageListVC: rootViewController as? ChatMessageListVC)
+    
     /// Feedback generator used when presenting actions controller on selected message
     open var impactFeedbackGenerator = UIImpactFeedbackGenerator(style: .medium)
 
@@ -49,7 +51,7 @@ open class ChatMessageListRouter:
         popup.modalPresentationStyle = .overFullScreen
         popup.transitioningDelegate = messagePopUpTransitionController
 
-        messagePopUpTransitionController.messageContentView = messageContentView
+        messagePopUpTransitionController.selectedMessageId = messageContentView.content?.id
         
         rootViewController.present(popup, animated: true)
     }
@@ -84,10 +86,6 @@ open class ChatMessageListRouter:
         popup.messageContentView = messageContentView
         popup.reactionsController = reactionsController
         popup.reactionAuthorsController = reactionAuthorsController
-        popup.modalPresentationStyle = .overFullScreen
-        popup.transitioningDelegate = messagePopUpTransitionController
-        messagePopUpTransitionController.messageContentView = messageContentView
-
         let bubbleView = messageContentView.bubbleView ?? messageContentView.bubbleContentContainer
         let bubbleViewFrame = bubbleView.superview!.convert(bubbleView.frame, to: nil)
         popup.messageBubbleViewInsets = UIEdgeInsets(
@@ -96,6 +94,10 @@ open class ChatMessageListRouter:
             bottom: messageContentView.frame.height - bubbleViewFrame.height,
             right: messageContentView.frame.width - bubbleViewFrame.origin.x - bubbleViewFrame.width
         )
+        popup.modalPresentationStyle = .overFullScreen
+        popup.transitioningDelegate = messagePopUpTransitionController
+
+        messagePopUpTransitionController.selectedMessageId = messageContentView.content?.id
 
         rootViewController.present(popup, animated: true)
     }

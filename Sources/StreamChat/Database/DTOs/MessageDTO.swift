@@ -22,6 +22,7 @@ class MessageDTO: NSManagedObject {
     @NSManaged var replyCount: Int32
     @NSManaged var extraData: Data
     @NSManaged var isSilent: Bool
+    @NSManaged var isShadowed: Bool
     @NSManaged var reactionScores: [String: Int]
     @NSManaged var reactionCounts: [String: Int]
     
@@ -137,7 +138,8 @@ class MessageDTO: NSManagedObject {
     /// Returns predicate with channel messages and replies that should be shown in channel.
     static func channelMessagesPredicate(
         for cid: String,
-        deletedMessagesVisibility: ChatClientConfig.DeletedMessageVisibility
+        deletedMessagesVisibility: ChatClientConfig.DeletedMessageVisibility,
+        shouldShowShadowedMessages: Bool
     ) -> NSCompoundPredicate {
         let channelMessage = NSPredicate(
             format: "channel.cid == %@", cid
@@ -154,39 +156,59 @@ class MessageDTO: NSManagedObject {
             .init(format: "channel.oldestMessageAt == nil"),
             .init(format: "createdAt >= channel.oldestMessageAt")
         ])
-
-        return .init(andPredicateWithSubpredicates: [
+        
+        var subpredicates = [
             channelMessage,
             messageTypePredicate,
             nonTruncatedMessagesPredicate(),
             ignoreOlderMessagesPredicate,
             deletedMessagesPredicate(deletedMessagesVisibility: deletedMessagesVisibility)
-        ])
+        ]
+        
+        if !shouldShowShadowedMessages {
+            let ignoreShadowedMessages = NSPredicate(format: "isShadowed == NO")
+            subpredicates.append(ignoreShadowedMessages)
+        }
+
+        return .init(andPredicateWithSubpredicates: subpredicates)
     }
     
     /// Returns predicate with thread messages that should be shown in the thread.
     static func threadRepliesPredicate(
         for messageId: MessageId,
-        deletedMessagesVisibility: ChatClientConfig.DeletedMessageVisibility
+        deletedMessagesVisibility: ChatClientConfig.DeletedMessageVisibility,
+        shouldShowShadowedMessages: Bool
     ) -> NSCompoundPredicate {
         let replyMessage = NSPredicate(format: "parentMessageId == %@", messageId)
         
-        return .init(andPredicateWithSubpredicates: [
+        var subpredicates = [
             replyMessage,
             deletedMessagesPredicate(deletedMessagesVisibility: deletedMessagesVisibility),
             nonTruncatedMessagesPredicate()
-        ])
+        ]
+        
+        if !shouldShowShadowedMessages {
+            let ignoreShadowedMessages = NSPredicate(format: "isShadowed == NO")
+            subpredicates.append(ignoreShadowedMessages)
+        }
+        
+        return .init(andPredicateWithSubpredicates: subpredicates)
     }
     
     /// Returns a fetch request for messages from the channel with the provided `cid`.
     static func messagesFetchRequest(
         for cid: ChannelId,
         sortAscending: Bool = false,
-        deletedMessagesVisibility: ChatClientConfig.DeletedMessageVisibility
+        deletedMessagesVisibility: ChatClientConfig.DeletedMessageVisibility,
+        shouldShowShadowedMessages: Bool
     ) -> NSFetchRequest<MessageDTO> {
         let request = NSFetchRequest<MessageDTO>(entityName: MessageDTO.entityName)
         request.sortDescriptors = [NSSortDescriptor(keyPath: \MessageDTO.defaultSortingKey, ascending: sortAscending)]
-        request.predicate = channelMessagesPredicate(for: cid.rawValue, deletedMessagesVisibility: deletedMessagesVisibility)
+        request.predicate = channelMessagesPredicate(
+            for: cid.rawValue,
+            deletedMessagesVisibility: deletedMessagesVisibility,
+            shouldShowShadowedMessages: shouldShowShadowedMessages
+        )
         return request
     }
     
@@ -194,11 +216,16 @@ class MessageDTO: NSManagedObject {
     static func repliesFetchRequest(
         for messageId: MessageId,
         sortAscending: Bool = false,
-        deletedMessagesVisibility: ChatClientConfig.DeletedMessageVisibility
+        deletedMessagesVisibility: ChatClientConfig.DeletedMessageVisibility,
+        shouldShowShadowedMessages: Bool
     ) -> NSFetchRequest<MessageDTO> {
         let request = NSFetchRequest<MessageDTO>(entityName: MessageDTO.entityName)
         request.sortDescriptors = [NSSortDescriptor(keyPath: \MessageDTO.defaultSortingKey, ascending: sortAscending)]
-        request.predicate = threadRepliesPredicate(for: messageId, deletedMessagesVisibility: deletedMessagesVisibility)
+        request.predicate = threadRepliesPredicate(
+            for: messageId,
+            deletedMessagesVisibility: deletedMessagesVisibility,
+            shouldShowShadowedMessages: shouldShowShadowedMessages
+        )
         return request
     }
     
@@ -221,7 +248,8 @@ class MessageDTO: NSManagedObject {
         let request = NSFetchRequest<MessageDTO>(entityName: entityName)
         request.predicate = channelMessagesPredicate(
             for: cid,
-            deletedMessagesVisibility: context.deletedMessagesVisibility ?? .visibleForCurrentUser
+            deletedMessagesVisibility: context.deletedMessagesVisibility ?? .visibleForCurrentUser,
+            shouldShowShadowedMessages: context.shouldShowShadowedMessages ?? false
         )
         request.sortDescriptors = [NSSortDescriptor(keyPath: \MessageDTO.createdAt, ascending: false)]
         request.fetchLimit = limit
@@ -379,6 +407,16 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         }
         
         dto.isSilent = payload.isSilent
+        dto.isShadowed = payload.isShadowed
+        // Due to backend not working as advertised
+        // (sending `shadowed: true` flag to the shadow banned user)
+        // we have to implement this workaround to get the advertised behavior
+        // info on slack: https://getstream.slack.com/archives/CE5N802GP/p1635785568060500
+        // TODO: Remove the workaround once backend bug is fixed
+        if currentUser?.user.id == payload.user.id {
+            dto.isShadowed = false
+        }
+        
         dto.pinned = payload.pinned
         dto.pinExpires = payload.pinExpires
         dto.pinnedAt = payload.pinnedAt
@@ -573,6 +611,7 @@ private extension ChatMessage {
         showReplyInChannel = dto.showReplyInChannel
         replyCount = Int(dto.replyCount)
         isSilent = dto.isSilent
+        isShadowed = dto.isShadowed
         reactionScores = dto.reactionScores.mapKeys { MessageReactionType(rawValue: $0) }
         reactionCounts = dto.reactionCounts.mapKeys { MessageReactionType(rawValue: $0) }
         

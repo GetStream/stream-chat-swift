@@ -97,6 +97,7 @@ class DatabaseSession_Tests: XCTestCase {
             reactionScores: [:],
             reactionCounts: [:],
             isSilent: false,
+            isShadowed: false,
             attachments: []
         )
         

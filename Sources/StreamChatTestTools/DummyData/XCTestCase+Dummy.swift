@@ -68,6 +68,7 @@ extension XCTestCase {
             reactionScores: ["like": 1],
             reactionCounts: ["like": 1],
             isSilent: false,
+            isShadowed: false,
             attachments: []
         )
     }
@@ -94,6 +95,7 @@ extension XCTestCase {
             reactionScores: ["like": 1],
             reactionCounts: ["like": 1],
             isSilent: false,
+            isShadowed: false,
             attachments: [],
             pinned: true,
             pinnedBy: dummyUser,
@@ -202,6 +204,7 @@ extension XCTestCase {
             reactionScores: [:],
             reactionCounts: [:],
             isSilent: false,
+            isShadowed: false,
             attachments: []
         )
     }
