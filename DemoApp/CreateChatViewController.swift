@@ -354,6 +354,10 @@ extension CreateChatViewController: UITableViewDelegate, UITableViewDataSource {
         }
     }
     
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        72
+    }
+    
     public func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
         let bottomEdge = scrollView.contentOffset.y + scrollView.bounds.height
         guard bottomEdge >= scrollView.contentSize.height else { return }
