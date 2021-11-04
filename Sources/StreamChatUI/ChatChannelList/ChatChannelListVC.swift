@@ -71,13 +71,23 @@ open class ChatChannelListVC: _ViewController,
     ) -> ChatChannelListVC {
         var chatChannelListVC: ChatChannelListVC!
         
+        // Check if we have a UIStoryboard and/or StoryboardId
         if let storyboardId = storyboardId, let storyboard = storyboard {
-            chatChannelListVC = storyboard.instantiateViewController(withIdentifier: storyboardId) as? ChatChannelListVC
+            // Safely unwrap the ViewController from the Storyboard
+            guard let localViewControllerFromStoryboard = storyboard
+                .instantiateViewController(withIdentifier: storyboardId) as? ChatChannelListVC else {
+                fatalError("Failed to load from UIStoryboard, please check your storyboardId and/or UIStoryboard reference.")
+            }
+            chatChannelListVC = localViewControllerFromStoryboard
         } else {
             chatChannelListVC = ChatChannelListVC()
         }
+        
+        // Set the Controller on the ViewController
         chatChannelListVC.controller = controller
         chatChannelListVC.setUp()
+        
+        // Return the newly created ChatChannelListVC
         return chatChannelListVC
     }
 
