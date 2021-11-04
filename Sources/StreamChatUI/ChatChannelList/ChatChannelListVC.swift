@@ -66,14 +66,13 @@ open class ChatChannelListVC: _ViewController,
     /// - Returns: A newly created ChatChannelListViewController
     public static func createChannelVC(
         _ controller: ChatChannelListController,
-        storyboard: UIStoryboard?,
+        storyboard: UIStoryboard? = nil,
         storyboardId: String? = nil
     ) -> ChatChannelListVC {
         var chatChannelListVC: ChatChannelListVC!
         
-        if let storyboardId = storyboardId {
-            let storyboard = storyboard
-            chatChannelListVC = storyboard?.instantiateViewController(withIdentifier: storyboardId) as? ChatChannelListVC
+        if let storyboardId = storyboardId, let storyboard = storyboard {
+            chatChannelListVC = storyboard.instantiateViewController(withIdentifier: storyboardId) as? ChatChannelListVC
         } else {
             chatChannelListVC = ChatChannelListVC()
         }
