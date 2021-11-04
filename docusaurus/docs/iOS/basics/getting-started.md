@@ -78,7 +78,7 @@ This will create a brand new UIViewController that is subclassing the ChatChanne
 ```swift
 let query = ChannelListQuery(filter: .containMembers(userIds: [userId]))
 let controller = ChatClient.shared.channelListController(query: query)
-let channelList = DemoChannelList.createChannelVC(controller)
+let channelList = DemoChannelList.make(with: controller)
 ```
 
 When deciding to push your `UIViewController` on to the `NavigationStack`, you can use our factory method to instantiate this `ViewController`. We also support `UIStoryboard` by passing in the reference of the `UIStoryboard` and the `StoryboardId`.

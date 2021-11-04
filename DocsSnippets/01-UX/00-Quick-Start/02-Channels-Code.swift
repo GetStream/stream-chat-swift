@@ -26,7 +26,7 @@ func snippet_ux_quick_start_channels_code() {
                         )
                     )
                 )
-            let channelList = ChatChannelListVC.createChannelVC(channelListController, storyboard: nil, storyboardId: nil)
+            let channelList = ChatChannelListVC.make(with: channelListController)
             
             let window = UIWindow(windowScene: scene)
             window.rootViewController = UINavigationController(rootViewController: channelList)
