@@ -61,7 +61,7 @@ open class ChatChannelListVC: _ViewController,
     /// Create a new ChatChannelListViewController
     /// - Parameters:
     ///   - controller: Your created ChatChannelListController with required query
-    ///   - storyboard: The storyboard to instanciate your ViewController from
+    ///   - storyboard: The storyboard to instantiate your ViewController from
     ///   - storyboardId: The storyboardId that is set in your Storyboard reference
     /// - Returns: A newly created ChatChannelListViewController
     public static func make(
