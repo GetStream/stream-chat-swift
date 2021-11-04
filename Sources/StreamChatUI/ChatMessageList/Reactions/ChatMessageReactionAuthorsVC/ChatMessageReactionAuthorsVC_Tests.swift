@@ -48,6 +48,7 @@ final class ChatMessageReactionAuthorsVC_Tests: XCTestCase {
         vc.components = Components.mock
 
         messageControllerMock = ChatMessageController_Mock.mock(currentUserId: currentUserId)
+        messageControllerMock.startObserversIfNeeded_mock = {}
         messageControllerMock.message_mock = .mock(
             id: .unique,
             cid: .unique,
@@ -55,7 +56,7 @@ final class ChatMessageReactionAuthorsVC_Tests: XCTestCase {
             author: .mock(id: .unique),
             reactionCounts: ["fake": defaultReactions.count]
         )
-        messageControllerMock.reactions_mock = defaultReactions
+        messageControllerMock.reactions = defaultReactions
         vc.messageController = messageControllerMock
     }
 
@@ -78,7 +79,7 @@ final class ChatMessageReactionAuthorsVC_Tests: XCTestCase {
             author: .mock(id: .unique),
             reactionCounts: ["fake": 1]
         )
-        messageControllerMock.reactions_mock = [
+        messageControllerMock.reactions = [
             .mock(author: .mock(id: .unique, imageURL: TestImages.vader.url))
         ]
         AssertSnapshot(vc, variants: [.defaultLight])

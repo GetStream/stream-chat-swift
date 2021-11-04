@@ -60,6 +60,7 @@ final class ChatMessagePopupVC_Tests: XCTestCase {
         )
         
         let chatMessageController = ChatMessageController_Mock.mock()
+        chatMessageController.startObserversIfNeeded_mock = {}
         chatMessageController.simulateInitial(
             message: ChatMessage.mock(id: .unique, cid: .unique, text: "", author: ChatUser.mock(id: .unique)),
             replies: [],
@@ -188,7 +189,8 @@ extension ChatMessagePopupVC_Tests {
             author: .mock(id: .unique),
             reactionCounts: ["fake": reactions.count]
         )
-        mockMessageController.reactions_mock = reactions
+        mockMessageController.reactions = reactions
+        mockMessageController.startObserversIfNeeded_mock = {}
 
         vc.actionsController = nil
         vc.messageContentView.content = mockMessageController.message_mock

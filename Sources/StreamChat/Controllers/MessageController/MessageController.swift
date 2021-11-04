@@ -172,7 +172,7 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
     ///
     /// It's safe to call this method repeatedly.
     ///
-    private func startObserversIfNeeded() {
+    internal func startObserversIfNeeded() {
         guard state == .initialized else { return }
         do {
             try messageObserver.startObserving()
@@ -345,7 +345,7 @@ public extension ChatMessageController {
             return
         }
 
-        loadReactions(offset: reactions.count, limit: limit) { result in
+        loadReactions(limit: limit, offset: reactions.count) { result in
             switch result {
             case let .success(reactions):
                 let currentReactions = Set(self.reactions)
@@ -357,10 +357,10 @@ public extension ChatMessageController {
                     self.hasLoadedAllReactions = true
                 }
 
-                self.callback { completion?(nil) }
+                completion?(nil)
 
             case let .failure(error):
-                self.callback { completion?(error) }
+                completion?(error)
             }
         }
     }
@@ -368,13 +368,13 @@ public extension ChatMessageController {
     /// Loads reactions from the backend given an offset and a limit.
     ///
     /// - Parameters:
-    ///   - offset: The starting position from the desired range to be fetched.
     ///   - limit: The reactions page size.
+    ///   - offset: The starting position from the desired range to be fetched.
     ///   - completion: The completion is called when the network request is finished.
     ///   It is called with the reactions if the request succeeds or error if the request fails.
     func loadReactions(
-        offset: Int,
         limit: Int,
+        offset: Int = 0,
         completion: @escaping (Result<[ChatMessageReaction], Error>) -> Void
     ) {
         messageUpdater.loadReactions(
@@ -538,13 +538,6 @@ extension ChatMessageController {
             _ itemCreator: @escaping (MessageDTO) -> ChatMessage,
             _ fetchedResultsControllerType: NSFetchedResultsController<MessageDTO>.Type
         ) -> ListDatabaseObserver<ChatMessage, MessageDTO> = ListDatabaseObserver.init
-
-        var reactionsObserverBuilder: (
-            _ context: NSManagedObjectContext,
-            _ fetchRequest: NSFetchRequest<MessageReactionDTO>,
-            _ itemCreator: @escaping (MessageReactionDTO) -> ChatMessageReaction,
-            _ fetchedResultsControllerType: NSFetchedResultsController<MessageReactionDTO>.Type
-        ) -> ListDatabaseObserver<ChatMessageReaction, MessageReactionDTO> = ListDatabaseObserver.init
         
         var messageUpdaterBuilder: (
             _ database: DatabaseContainer,

@@ -628,7 +628,7 @@ final class MessageUpdater_Tests: XCTestCase {
         AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
     }
 
-    func test_loadReactions_savesReactionsToDatabase() throws {
+    func test_loadReactions_savesReactionsToDatabase_andCallsCompletionWithReactions() throws {
         let currentUserId: UserId = .unique
         let messageId: MessageId = .unique
         let cid: ChannelId = .unique
@@ -642,18 +642,20 @@ final class MessageUpdater_Tests: XCTestCase {
         // Create message in the database
         try database.createMessage(id: messageId)
 
-        var completionCalled = false
-        messageUpdater.loadReactions(cid: cid, messageId: messageId, pagination: .init(pageSize: 25)) { _ in
-            completionCalled = true
-        }
-
-        // Simulate API response with success
         let reactionsPayload: MessageReactionsPayload = .init(
             reactions: [
                 .dummy(type: "like", messageId: messageId, user: .dummy(userId: currentUserId)),
                 .dummy(type: "dislike", messageId: messageId, user: .dummy(userId: currentUserId))
             ]
         )
+
+        var completionCalled = false
+        messageUpdater.loadReactions(cid: cid, messageId: messageId, pagination: .init(pageSize: 25)) { result in
+            XCTAssertEqual(try? result.get().count, reactionsPayload.reactions.count)
+            completionCalled = true
+        }
+
+        // Simulate API response with success
         apiClient.test_simulateResponse(Result<MessageReactionsPayload, Error>.success(reactionsPayload))
 
         AssertAsync.willBeTrue(completionCalled)

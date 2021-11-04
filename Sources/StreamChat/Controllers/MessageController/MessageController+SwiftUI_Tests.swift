@@ -3,15 +3,16 @@
 //
 
 @testable import StreamChat
+@testable import StreamChatTestTools
 import XCTest
 
 @available(iOS 13, *)
 class MessageController_SwiftUI_Tests: iOS13TestCase {
-    var messageController: MessageControllerMock!
+    var messageController: ChatMessageController_Mock!
     
     override func setUp() {
         super.setUp()
-        messageController = MessageControllerMock()
+        messageController = ChatMessageController_Mock.mock()
     }
     
     override func tearDown() {
@@ -20,9 +21,9 @@ class MessageController_SwiftUI_Tests: iOS13TestCase {
     }
     
     func test_controllerInitialValuesAreLoaded() {
-        messageController.state_simulated = .localDataFetched
-        messageController.message_simulated = .unique
-        messageController.replies_simulated = [.unique]
+        messageController.state_mock = .localDataFetched
+        messageController.message_mock = .unique
+        messageController.replies_mock = [.unique]
         
         let observableObject = messageController.observableObject
         
@@ -36,7 +37,7 @@ class MessageController_SwiftUI_Tests: iOS13TestCase {
         
         // Simulate message change
         let newMessage: ChatMessage = .unique
-        messageController.message_simulated = newMessage
+        messageController.message_mock = newMessage
         messageController.delegateCallback {
             $0.messageController(
                 self.messageController,
@@ -52,7 +53,7 @@ class MessageController_SwiftUI_Tests: iOS13TestCase {
         
         // Simulate replies changes
         let newReply: ChatMessage = .unique
-        messageController.replies_simulated = [newReply]
+        messageController.replies_mock = [newReply]
         messageController.delegateCallback {
             $0.messageController(
                 self.messageController,
@@ -75,11 +76,11 @@ class MessageController_SwiftUI_Tests: iOS13TestCase {
             extraData: [:]
         )
 
-        messageController.reactions_simulated = [newReaction]
+        messageController.reactions = [newReaction]
         messageController.delegateCallback {
             $0.messageController(
                 self.messageController,
-                didChangeReactions: [.insert(newReaction, index: .init())]
+                didChangeReactions: [newReaction]
             )
         }
 
@@ -90,7 +91,7 @@ class MessageController_SwiftUI_Tests: iOS13TestCase {
         let observableObject = messageController.observableObject
         // Simulate state change
         let newState: DataController.State = .remoteDataFetchFailed(ClientError(with: TestError()))
-        messageController.state_simulated = newState
+        messageController.state_mock = newState
         messageController.delegateCallback {
             $0.controller(
                 self.messageController,
@@ -99,38 +100,5 @@ class MessageController_SwiftUI_Tests: iOS13TestCase {
         }
         
         AssertAsync.willBeEqual(observableObject.state, newState)
-    }
-}
-
-class MessageControllerMock: ChatMessageController {
-    @Atomic var synchronize_called = false
-    
-    var message_simulated: ChatMessage?
-    override var message: ChatMessage? {
-        message_simulated ?? super.message
-    }
-    
-    var replies_simulated: [ChatMessage]?
-    override var replies: LazyCachedMapCollection<ChatMessage> {
-        replies_simulated.map { $0.lazyCachedMap { $0 } } ?? super.replies
-    }
-
-    var reactions_simulated: [ChatMessageReaction]?
-    override var reactions: LazyCachedMapCollection<ChatMessageReaction> {
-        reactions_simulated.map { $0.lazyCachedMap { $0 } } ?? super.reactions
-    }
-    
-    var state_simulated: DataController.State?
-    override var state: DataController.State {
-        get { state_simulated ?? super.state }
-        set { super.state = newValue }
-    }
-    
-    init() {
-        super.init(client: .mock, cid: .unique, messageId: .unique)
-    }
-
-    override func synchronize(_ completion: ((Error?) -> Void)? = nil) {
-        synchronize_called = true
     }
 }

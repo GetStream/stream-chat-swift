@@ -18,11 +18,6 @@ public class ChatMessageController_Mock: ChatMessageController {
         message_mock ?? super.message
     }
 
-    public var reactions_mock: [ChatMessageReaction]?
-    override public var reactions: LazyCachedMapCollection<ChatMessageReaction> {
-        reactions_mock.map { $0.lazyCachedMap { $0 } } ?? super.reactions
-    }
-
     public var replies_mock: [ChatMessage]?
     override public var replies: LazyCachedMapCollection<ChatMessage> {
         replies_mock.map { $0.lazyCachedMap { $0 } } ?? super.replies
@@ -32,6 +27,21 @@ public class ChatMessageController_Mock: ChatMessageController {
     override public var state: DataController.State {
         get { state_mock ?? super.state }
         set { super.state = newValue }
+    }
+
+    public var startObserversIfNeeded_mock: (() -> Void)?
+    override public func startObserversIfNeeded() {
+        if let mock = startObserversIfNeeded_mock {
+            mock()
+            return
+        }
+
+        super.startObserversIfNeeded()
+    }
+
+    var synchronize_callCount = 0
+    override public func synchronize(_ completion: ((Error?) -> Void)? = nil) {
+        synchronize_callCount += 1
     }
 }
 

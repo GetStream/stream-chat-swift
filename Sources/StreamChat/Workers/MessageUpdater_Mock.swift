@@ -40,7 +40,8 @@ final class MessageUpdaterMock: MessageUpdater {
     @Atomic var loadReactions_cid: ChannelId?
     @Atomic var loadReactions_messageId: MessageId?
     @Atomic var loadReactions_pagination: Pagination?
-    @Atomic var loadReactions_completion: ((Result<MessageReactionsPayload, Error>) -> Void)? = nil
+    @Atomic var loadReactions_completion: ((Result<[ChatMessageReaction], Error>) -> Void)? = nil
+    @Atomic var loadReactions_result: Result<[ChatMessageReaction], Error>? = nil
     
     @Atomic var flagMessage_flag: Bool?
     @Atomic var flagMessage_messageId: MessageId?
@@ -110,6 +111,7 @@ final class MessageUpdaterMock: MessageUpdater {
         loadReactions_messageId = nil
         loadReactions_pagination = nil
         loadReactions_completion = nil
+        loadReactions_result = nil
         
         flagMessage_flag = nil
         flagMessage_messageId = nil
@@ -213,12 +215,15 @@ final class MessageUpdaterMock: MessageUpdater {
         cid: ChannelId,
         messageId: MessageId,
         pagination: Pagination,
-        completion: ((Result<MessageReactionsPayload, Error>) -> Void)? = nil
+        completion: ((Result<[ChatMessageReaction], Error>) -> Void)? = nil
     ) {
         loadReactions_cid = cid
         loadReactions_messageId = messageId
         loadReactions_pagination = pagination
         loadReactions_completion = completion
+        if let loadReactionsResult = loadReactions_result {
+            completion?(loadReactionsResult)
+        }
     }
     
     override func flagMessage(_ flag: Bool, with messageId: MessageId, in cid: ChannelId, completion: ((Error?) -> Void)? = nil) {
