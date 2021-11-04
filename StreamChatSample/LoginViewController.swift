@@ -125,9 +125,7 @@ extension LoginViewController {
             #endif
         case streamDesignCell:
             
-            let channelList = ChatChannelListVC()
-            
-            channelList.controller = channelListController
+            let channelList = ChatChannelListVC.createChannelVC(channelListController, storyboard: nil, storyboardId: nil)
    
             let navigation = channelList.components.navigationVC.init(
                 rootViewController: channelList
