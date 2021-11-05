@@ -56,7 +56,7 @@ ChatClient.shared.connectUser(
 - You can grab your API Key and API Secret from the [dashboard](https://getstream.io/dashboard/)
 - You can use the token generator [here](https://getstream.io/chat/docs/ios-swift/token_generator/?language=swift)
 
-This example has the user and its token hard-coded. The best practice is to fetch the user and generate a valid chat token on your backend infrastructure. 
+This example has the user and its token hard-coded. The best practice is to fetch the user and generate a valid chat token on your backend infrastructure.
 
 In the next step, we are adding the channel list and message list screens to our app. If this is a new application, make sure to embed your view controller in a navigation controller.
 
@@ -70,20 +70,19 @@ import StreamChat
 import StreamChatUI
 
 
-class ViewController: ChatChannelListVC {
-    
-    override func viewDidLoad() {
-        /// the query used to retrieve channels
-        let query = ChannelListQuery.init(filter: .containMembers(userIds: [ChatClient.shared.currentUserId!]))
-        
-        /// create a controller and assign it to this view controller
-        self.controller = ChatClient.shared.channelListController(query: query)
-
-        super.viewDidLoad()
-    }
-}
+class DemoChannelList: ChatChannelListVC {}
 ```
 
-The snippet above changes the parent class of `ViewController` to `ChatChannelListVC` and uses the `channelListController` to specify which channels we want to retrieve. 
+This will create a brand new UIViewController that is subclassing the ChatChannelListVC.
+
+```swift
+let query = ChannelListQuery(filter: .containMembers(userIds: [userId]))
+let controller = ChatClient.shared.channelListController(query: query)
+let channelList = DemoChannelList.make(with: controller)
+```
+
+When deciding to push your `UIViewController` on to the `NavigationStack`, you can use our factory method to instantiate this `ViewController`. We also support `UIStoryboard` by passing in the reference of the `UIStoryboard` and the `StoryboardId`.
+
+The snippet above will also create the `ChatChannelListController` with the specified query. In this case the query will load all the channels that you're currently a member of.
 
 `ChannelListQuery` allows us to define the channels to fetch and their order. Here we are listing channels where the current user is a member. By default tapping on a channel will navigate to `ChatMessageListVC`.

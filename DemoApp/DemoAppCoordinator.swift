@@ -104,8 +104,7 @@ final class DemoAppCoordinator: NSObject, UNUserNotificationCenterDelegate {
         // Channels with the current user
         let controller = ChatClient.shared
             .channelListController(query: .init(filter: .containMembers(userIds: [userCredentials.id])))
-        let chatList = DemoChannelListVC()
-        chatList.controller = controller
+        let chatList = ChatChannelListVC.make(with: controller)
         
         connectionController = ChatClient.shared.connectionController()
         connectionController?.delegate = connectionDelegate

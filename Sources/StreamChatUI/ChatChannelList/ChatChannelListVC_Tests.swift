@@ -156,6 +156,14 @@ class ChatChannelListVC_Tests: XCTestCase {
         AssertSnapshot(vc, isEmbeddedInNavigationController: true, variants: .onlyUserInterfaceStyles)
     }
     
+    func test_makeChatChannelListVC() {
+        let mockedController = ChatChannelListController_Mock.mock()
+        let mockChatChannelListVC = TestChatChannelListVC.make(with: mockedController)
+        
+        XCTAssertNotNil(mockChatChannelListVC)
+        XCTAssert(mockChatChannelListVC.isKind(of: ChatChannelListVC.self))
+    }
+    
     func test_router_openCurrentUserProfile() {
         vc.executeLifecycleMethods()
         
