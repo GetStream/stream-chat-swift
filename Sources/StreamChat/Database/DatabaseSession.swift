@@ -98,7 +98,7 @@ protocol MessageDatabaseSession {
         extraData: [String: RawJSON]
     ) throws -> MessageReactionDTO?
     
-    func removeReaction(from messageId: MessageId, type: MessageReactionType) throws -> MessageReactionDTO?
+    func removeReaction(from messageId: MessageId, type: MessageReactionType, on version: String?) throws -> MessageReactionDTO?
 
     /// Pins the provided message
     /// - Parameters:

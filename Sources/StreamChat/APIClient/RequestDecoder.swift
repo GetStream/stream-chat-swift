@@ -101,7 +101,8 @@ extension ClientError {
         NSURLErrorNotConnectedToInternet,
         NSURLErrorBadServerResponse,
         NSURLErrorUserCancelledAuthentication,
-        NSURLErrorCannotLoadFromNetwork
+        NSURLErrorCannotLoadFromNetwork,
+        NSURLErrorDataNotAllowed
     ]
 
     // returns true if the error is related to a temporary condition

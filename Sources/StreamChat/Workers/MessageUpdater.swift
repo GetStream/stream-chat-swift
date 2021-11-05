@@ -256,6 +256,8 @@ class MessageUpdater: Worker {
         completion: ((Error?) -> Void)? = nil
     ) {
         var reaction: MessageReactionDTO?
+        let version = UUID().uuidString
+
         let endpoint: Endpoint<EmptyResponse> = .addReaction(
             type,
             score: score,
@@ -274,36 +276,25 @@ class MessageUpdater: Worker {
                 )
                 completion?(nil)
             } catch {
-                log.error("Failed to add the reaction to the database: \(error)")
+                log.warning("Failed to add the reaction to the database: \(error)")
                 completion?(error)
             }
 
-            // if session.addReaction failed we fire the API call, worst case the call with have no effect
-            guard let reaction = reaction else {
-                self.apiClient.request(endpoint: endpoint) { _ in }
-                return
+            if let reaction = reaction {
+                reaction.localState = .sending
+                reaction.version = version
             }
-
-            reaction.localState = .sending
-
-            // TODO: verify that this is OK and that does not cause problems (api call inside db write)
-            self.apiClient.request(endpoint: endpoint) { result in
-                guard let error = result.error else {
+        } completion: { _ in
+            self.apiClient.request(endpoint: endpoint, retryOptions: .init()) { result in
+                if result.error == nil {
                     return
                 }
 
-                guard ClientError.isEphemeral(error: error) else {
-                    self.database.write { session in
-                        guard let reaction = try? session.removeReaction(from: messageId, type: type) else {
-                            return
-                        }
-                        reaction.localState = .sendingFailed
+                self.database.write { session in
+                    guard let reaction = try? session.removeReaction(from: messageId, type: type, on: version) else {
+                        return
                     }
-                    return
-                }
-
-                self.database.write { _ in
-                    reaction.localState = .pendingSend
+                    reaction.localState = .sendingFailed
                 }
             }
         }
@@ -323,30 +314,29 @@ class MessageUpdater: Worker {
 
         database.write { session in
             do {
-                reaction = try session.removeReaction(from: messageId, type: type)
+                reaction = try session.removeReaction(from: messageId, type: type, on: nil)
                 completion?(nil)
             } catch {
-                log.error("Failed to remove the reaction from to the database: \(error)")
+                log.warning("Failed to remove the reaction from to the database: \(error)")
                 completion?(error)
             }
-            
-            // if session.removeReaction failed we fire the API call, worst case the call with have no effect
+
             guard let reaction = reaction else {
-                self.apiClient.request(endpoint: .deleteReaction(type, messageId: messageId)) { _ in }
                 return
             }
-
-            reaction.localState = .deleting
-
-            // TODO: verify that this is OK and that does not cause problems (api call inside db write)
-            self.apiClient.request(endpoint: .deleteReaction(type, messageId: messageId)) { result in
-                guard let error = result.error else {
+            reaction.localState = .pendingDelete
+        } completion: { _ in
+            self.apiClient.request(endpoint: .deleteReaction(type, messageId: messageId), retryOptions: .init()) { result in
+                if result.error == nil {
                     return
                 }
 
-                /// update the localState depending on the kind of API error
+                guard let reaction = reaction else {
+                    return
+                }
+
                 self.database.write { _ in
-                    reaction.localState = ClientError.isEphemeral(error: error) ? .pendingDelete : .deletingFailed
+                    reaction.localState = nil
                 }
             }
         }

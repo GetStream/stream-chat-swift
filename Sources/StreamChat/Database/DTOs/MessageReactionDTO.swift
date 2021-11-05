@@ -19,7 +19,10 @@ final class MessageReactionDTO: NSManagedObject {
     
     @NSManaged var message: MessageDTO
     @NSManaged var user: UserDTO
-    
+
+    // internal field needed to sync data optimistically
+    @NSManaged var version: String?
+
     private static func createId(
         userId: String,
         messageId: MessageId,
@@ -133,6 +136,8 @@ extension NSManagedObjectContext {
         dto.createdAt = payload.createdAt
         dto.updatedAt = payload.updatedAt
         dto.extraData = try JSONEncoder.default.encode(payload.extraData)
+        dto.localState = nil
+        dto.version = nil
         return dto
     }
     

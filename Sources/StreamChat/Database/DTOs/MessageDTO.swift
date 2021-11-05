@@ -558,13 +558,18 @@ extension NSManagedObjectContext: MessageDatabaseSession {
     /// - This method will throw if there is no current user set
     /// - If the message is not found, there will be no side effect and the method will return `nil`
     /// - If there is no reaction found in the database, this method returns `nil`
-    func removeReaction(from messageId: MessageId, type: MessageReactionType) throws -> MessageReactionDTO? {
+    func removeReaction(from messageId: MessageId, type: MessageReactionType, on version: String?) throws -> MessageReactionDTO? {
         guard let currentUserDTO = currentUser else {
             throw ClientError.CurrentUserDoesNotExist()
         }
 
         guard let reaction = MessageReactionDTO
             .load(userId: currentUserDTO.user.id, messageId: messageId, type: type, context: self) else {
+            return nil
+        }
+
+        // if the reaction on the database does not match the version, do nothing
+        guard version == nil || version == reaction.version else {
             return nil
         }
 

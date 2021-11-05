@@ -4,6 +4,13 @@
 
 import Foundation
 
+public struct RetryOptions {
+    let MaxRetries: Int = 3
+    let Backoff: (Int) -> Double = {
+        min(max(Double($0) * Double($0), 0.5), 6.0)
+    }
+}
+
 /// An object allowing making request to Stream Chat servers.
 class APIClient {
     struct RequestsQueueItem {
@@ -28,6 +35,9 @@ class APIClient {
     /// Used for synchronizing access to requestsQueue
     private let requestsAccessQueue = DispatchQueue(label: "io.getstream.requests")
     
+    /// Used for request retires
+    private let requestsRetriesQueue = DispatchQueue(label: "io.getstream.requests-retries")
+
     /// Stores request failed with token expired error for retrying them later
     private var requestsQueue = [RequestsQueueItem]()
     
@@ -62,6 +72,64 @@ class APIClient {
     
     deinit {
         requestsQueue = []
+    }
+
+    /// Performs a network request and retries in case of network failures
+    ///
+    /// - Parameters:
+    ///   - endpoint: The `Endpoint` used to create the network request.
+    ///   - timeout: The timeout in seconds for the API request.
+    ///   - retryOptions: The `RetryOptions` used to retry the request.
+    ///   - completion: Called when the networking request is finished.
+    func request<Response: Decodable>(
+        endpoint: Endpoint<Response>,
+        timeout: TimeInterval = 60,
+        retryOptions: RetryOptions,
+        completion: @escaping (Result<Response, Error>) -> Void
+    ) {
+        print("debugging: request \(endpoint.method) \(endpoint.path)")
+        requestsRetriesQueue.async { [weak self] in
+            self?.request(attempt: 0, endpoint: endpoint, timeout: timeout, retryOptions: retryOptions, completion: completion)
+        }
+    }
+
+    private func request<Response: Decodable>(
+        attempt: Int,
+        endpoint: Endpoint<Response>,
+        timeout: TimeInterval,
+        retryOptions: RetryOptions,
+        completion: @escaping (Result<Response, Error>) -> Void
+    ) {
+        request(endpoint: endpoint) {
+            let backoff = retryOptions.Backoff(attempt)
+
+            guard case let .failure(error) = $0 else {
+                return completion($0)
+            }
+
+            // we only retry transient errors like connectivity stuff or HTTP 5xx errors
+            guard ClientError.isEphemeral(error: error) else {
+                return completion($0)
+            }
+
+            let offlineErrorCodes: Set<Int> = [NSURLErrorDataNotAllowed, NSURLErrorNotConnectedToInternet]
+            let connectionError = offlineErrorCodes.contains((error as NSError).code)
+
+            // give up after `retryOptions.MaxRetries` unless its a connection problem
+            if attempt <= retryOptions.MaxRetries && !connectionError {
+                return completion($0)
+            }
+
+            self.requestsRetriesQueue.asyncAfter(deadline: .now() + backoff) {
+                self.request(
+                    attempt: attempt + 1,
+                    endpoint: endpoint,
+                    timeout: timeout,
+                    retryOptions: retryOptions,
+                    completion: completion
+                )
+            }
+        }
     }
     
     /// Performs a network request.
