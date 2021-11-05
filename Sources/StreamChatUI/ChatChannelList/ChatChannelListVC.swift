@@ -80,7 +80,7 @@ open class ChatChannelListVC: _ViewController,
             }
             chatChannelListVC = localViewControllerFromStoryboard
         } else {
-            chatChannelListVC = ChatChannelListVC()
+            chatChannelListVC = Self()
         }
         
         // Set the Controller on the ViewController
