@@ -21,6 +21,21 @@ class DatabaseSessionMock: DatabaseSession {
 // Here start the boilerplate that forwards and intercepts the session calls if needed
 
 extension DatabaseSessionMock {
+    func addReaction(
+        to messageId: MessageId,
+        type: MessageReactionType,
+        score: Int,
+        extraData: [String: RawJSON]
+    ) throws -> MessageReactionDTO? {
+        try throwErrorIfNeeded()
+        return try underlyingSession.addReaction(to: messageId, type: type, score: score, extraData: extraData)
+    }
+    
+    func removeReaction(from messageId: MessageId, type: MessageReactionType, on version: String?) throws -> MessageReactionDTO? {
+        try throwErrorIfNeeded()
+        return try underlyingSession.removeReaction(from: messageId, type: type, on: version)
+    }
+
     func saveCurrentDevice(_ deviceId: String) throws {
         try throwErrorIfNeeded()
         return try saveCurrentDevice(deviceId)
