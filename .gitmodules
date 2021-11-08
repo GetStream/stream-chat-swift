@@ -1,3 +1,6 @@
 [submodule "Dependencies/Nuke"]
 	path = Dependencies/Nuke
 	url = git@github.com:kean/Nuke.git
+[submodule "Dependencies/SwiftyGif"]
+	path = Dependencies/SwiftyGif
+	url = git@github.com:kirualex/SwiftyGif.git

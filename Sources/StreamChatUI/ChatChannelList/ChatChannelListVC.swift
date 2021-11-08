@@ -4,7 +4,7 @@
 
 import StreamNuke
 import StreamChat
-import SwiftyGif
+import StreamSwiftyGif
 import UIKit
 
 /// A `UIViewController` subclass  that shows list of channels.
