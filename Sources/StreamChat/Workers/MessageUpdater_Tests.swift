@@ -854,9 +854,9 @@ final class MessageUpdater_Tests: XCTestCase {
 
     func test_addReaction_propagatesSuccessfulResponse() throws {
         let messageId: MessageId = try setupReactionData()
+        let dbCall = XCTestExpectation(description: "database call")
 
         // Simulate `addReaction` call
-        var completionCalled = false
         messageUpdater.addReaction(
             .init(rawValue: .unique),
             score: 1,
@@ -865,30 +865,25 @@ final class MessageUpdater_Tests: XCTestCase {
             messageId: messageId
         ) { error in
             XCTAssertNil(error)
-            completionCalled = true
+            dbCall.fulfill()
         }
 
-        // Assert completion is not called yet
-        XCTAssertFalse(completionCalled)
+        wait(for: [dbCall], timeout: 0.1)
 
         // Requests are sent async so we need to wait for that
         apiClient.waitForRequest()
 
         // Simulate API response with success
         apiClient.test_simulateResponse(Result<EmptyResponse, Error>.success(.init()))
-
-        // Assert completion is called
-        AssertAsync.willBeTrue(completionCalled)
     }
 
     func test_addReaction_retry() throws {
         let userId: UserId = .unique
         let messageId: MessageId = try setupReactionData(userId: userId)
         let reactionType: MessageReactionType = .init(rawValue: .unique)
-        
-        // Simulate `addReaction` call
         let dbCall = XCTestExpectation(description: "database call")
 
+        // Simulate `addReaction` call
         messageUpdater.addReaction(
             reactionType,
             score: 1,
@@ -932,48 +927,96 @@ final class MessageUpdater_Tests: XCTestCase {
     
     // MARK: - Delete reaction
 
-    func test_deleteReaction_makesCorrectAPICall() {
+    func test_deleteReaction_makesCorrectAPICall() throws {
         let reactionType: MessageReactionType = "like"
-        let messageId: MessageId = .unique
+        let messageId: MessageId = try setupReactionData()
+
+        let dbCall = XCTestExpectation(description: "database call")
 
         // Simulate `deleteReaction` call.
-        messageUpdater.deleteReaction(reactionType, messageId: messageId)
+        messageUpdater.deleteReaction(reactionType, messageId: messageId) { error in
+            XCTAssertNil(error)
+            dbCall.fulfill()
+        }
+
+        // wait for the db call to be done
+        wait(for: [dbCall], timeout: 0.1)
 
         // Assert correct endpoint is called.
+        apiClient.waitForRequest()
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(.deleteReaction(reactionType, messageId: messageId)))
     }
 
-    func test_deleteReaction_propagatesSuccessfulResponse() {
+    func test_deleteReaction_propagatesSuccessfulResponse() throws {
+        let reactionType: MessageReactionType = "like"
+        let messageId: MessageId = try setupReactionData()
+
         // Simulate `deleteReaction` call.
-        var completionCalled = false
-        messageUpdater.deleteReaction(.init(rawValue: .unique), messageId: .unique) { error in
+        let dbCall = XCTestExpectation(description: "database call")
+        messageUpdater.deleteReaction(reactionType, messageId: messageId) { error in
             XCTAssertNil(error)
-            completionCalled = true
+            dbCall.fulfill()
         }
 
-        // Assert completion is not called yet.
-        XCTAssertFalse(completionCalled)
+        // wait for the db call to be done
+        wait(for: [dbCall], timeout: 0.1)
 
         // Simulate API response with success.
+        apiClient.waitForRequest()
         apiClient.test_simulateResponse(Result<EmptyResponse, Error>.success(.init()))
-
-        // Assert completion is called.
-        AssertAsync.willBeTrue(completionCalled)
     }
 
-    func test_deleteReaction_propagatesError() {
-        // Simulate `deleteReaction` call.
-        var completionCalledError: Error?
-        messageUpdater.deleteReaction(.init(rawValue: .unique), messageId: .unique) {
-            completionCalledError = $0
+    func test_deleteReaction_propagatesError() throws {
+        let userId: UserId = .unique
+        let messageId: MessageId = try setupReactionData(userId: userId)
+        let reactionType: MessageReactionType = .init(rawValue: .unique)
+
+        try database.writeSynchronously { _ in
+            try self.database.writableContext
+                .saveReaction(payload: .dummy(
+                    type: reactionType,
+                    messageId: messageId,
+                    user: .dummy(userId: userId),
+                    extraData: [:]
+                ))
         }
+
+        // Simulate `deleteReaction` call.
+        let dbCall = XCTestExpectation(description: "database call")
+        messageUpdater.deleteReaction(reactionType, messageId: messageId) { error in
+            XCTAssertNil(error)
+            dbCall.fulfill()
+        }
+
+        // wait for the db call to be done
+        wait(for: [dbCall], timeout: 0.1)
+
+        let reaction = database.viewContext.reaction(messageId: messageId, userId: userId, type: reactionType)
+
+        guard let reaction = reaction else {
+            XCTFail()
+            return
+        }
+
+        XCTAssertEqual(reaction.localState, .pendingDelete)
 
         // Simulate API response with failure.
         let error = TestError()
         apiClient.test_simulateResponse(Result<EmptyResponse, Error>.failure(error))
+        apiClient.waitForRequest()
 
-        // Assert the completion is called with the error.
-        AssertAsync.willBeEqual(completionCalledError as? TestError, error)
+        try database.writeSynchronously { _ in
+            try self.database.writableContext.save()
+        }
+
+        let reactionReloaded = database.viewContext.reaction(messageId: messageId, userId: userId, type: reactionType)
+
+        guard let reactionReloaded = reactionReloaded else {
+            XCTFail()
+            return
+        }
+
+        XCTAssertEqual(reactionReloaded.localState, nil)
     }
 
     // MARK: - Pinning message
