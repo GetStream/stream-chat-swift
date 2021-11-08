@@ -11,30 +11,12 @@
         }
       },
       {
-        "package": "Starscream",
-        "repositoryURL": "https://github.com/GetStream/Starscream.git",
-        "state": {
-          "branch": "dynamic-linking",
-          "revision": "ac55dc1c487896a95fbf31d275167b1aeab7610b",
-          "version": null
-        }
-      },
-      {
         "package": "SnapshotTesting",
         "repositoryURL": "https://github.com/pointfreeco/swift-snapshot-testing.git",
         "state": {
           "branch": null,
           "revision": "f8a9c997c3c1dab4e216a8ec9014e23144cbab37",
           "version": "1.9.0"
-        }
-      },
-      {
-        "package": "SwiftyGif",
-        "repositoryURL": "https://github.com/GetStream/SwiftyGif.git",
-        "state": {
-          "branch": "dynamic-linking",
-          "revision": "a3029fe3799b0920f0eae47ce7b6f60c9ed5d507",
-          "version": null
         }
       }
     ]

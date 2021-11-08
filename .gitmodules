@@ -4,3 +4,6 @@
 [submodule "Dependencies/SwiftyGif"]
 	path = Dependencies/SwiftyGif
 	url = git@github.com:kirualex/SwiftyGif.git
+[submodule "Dependencies/Starscream"]
+	path = Dependencies/Starscream
+	url = git@github.com:daltoniam/Starscream.git
