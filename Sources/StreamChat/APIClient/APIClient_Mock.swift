@@ -4,6 +4,7 @@
 
 import Foundation
 @testable import StreamChat
+import XCTest
 
 /// Mock implementation of APIClient allowing easy control and simulation of responses.
 class APIClientMock: APIClient {
@@ -26,13 +27,15 @@ class APIClientMock: APIClient {
     @Atomic var init_requestEncoder: RequestEncoder
     @Atomic var init_requestDecoder: RequestDecoder
     @Atomic var init_CDNClient: CDNClient
+    @Atomic var request_expectation: XCTestExpectation
 
     // Cleans up all recorded values
     func cleanUp() {
         request_allRecordedCalls = []
         request_endpoint = nil
         request_completion = nil
-        
+        request_expectation = .init()
+
         uploadFile_attachment = nil
         uploadFile_progress = nil
         uploadFile_completion = nil
@@ -52,7 +55,8 @@ class APIClientMock: APIClient {
         init_requestEncoder = requestEncoder
         init_requestDecoder = requestDecoder
         init_CDNClient = CDNClient
-        
+        request_expectation = .init()
+
         super.init(
             sessionConfiguration: sessionConfiguration,
             requestEncoder: requestEncoder,
@@ -76,6 +80,7 @@ class APIClientMock: APIClient {
         request_endpoint = AnyEndpoint(endpoint)
         request_completion = completion
         _request_allRecordedCalls.mutate { $0.append((request_endpoint!, request_completion!)) }
+        request_expectation.fulfill()
     }
     
     override func uploadAttachment(
@@ -94,6 +99,12 @@ class APIClientMock: APIClient {
     ) {
         flushRequestsQueue_timeout = timeout
         flushRequestsQueue_itemAction = itemAction
+    }
+
+    @discardableResult
+    func waitForRequest(timeout: Double = 0.5) -> AnyEndpoint? {
+        XCTWaiter().wait(for: [request_expectation], timeout: timeout)
+        return request_endpoint
     }
 }
 

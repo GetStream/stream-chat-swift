@@ -805,11 +805,20 @@ final class MessageUpdater_Tests: XCTestCase {
     
     // MARK: - Add reaction
 
-    func test_addReaction_makesCorrectAPICall() {
+    func setupReactionData(userId: UserId = .unique) throws -> MessageId {
+        let messageId: MessageId = .unique
+        try database.createCurrentUser(id: userId)
+        try database.createMessage(id: messageId, authorId: userId)
+        return messageId
+    }
+
+    func test_addReaction_makesCorrectAPICall() throws {
         let reactionType: MessageReactionType = "like"
         let reactionScore = 1
         let reactionExtraData: [String: RawJSON] = [:]
-        let messageId: MessageId = .unique
+        let messageId: MessageId = try setupReactionData()
+
+        let dbCall = XCTestExpectation(description: "database call")
 
         // Simulate `addReaction` call.
         messageUpdater.addReaction(
@@ -818,11 +827,21 @@ final class MessageUpdater_Tests: XCTestCase {
             enforceUnique: false,
             extraData: reactionExtraData,
             messageId: messageId
-        )
+        ) { error in
+            dbCall.fulfill()
+            XCTAssertNil(error)
+        }
+        
+        // wait for the db call to be done
+        wait(for: [dbCall], timeout: 0.1)
+
+        let request = apiClient.waitForRequest()
+
+        XCTAssertNotNil(apiClient.request_endpoint)
 
         // Assert correct endpoint is called.
         XCTAssertEqual(
-            apiClient.request_endpoint,
+            request,
             AnyEndpoint(.addReaction(
                 reactionType,
                 score: reactionScore,
@@ -833,7 +852,9 @@ final class MessageUpdater_Tests: XCTestCase {
         )
     }
 
-    func test_addReaction_propagatesSuccessfulResponse() {
+    func test_addReaction_propagatesSuccessfulResponse() throws {
+        let messageId: MessageId = try setupReactionData()
+
         // Simulate `addReaction` call
         var completionCalled = false
         messageUpdater.addReaction(
@@ -841,7 +862,7 @@ final class MessageUpdater_Tests: XCTestCase {
             score: 1,
             enforceUnique: false,
             extraData: [:],
-            messageId: .unique
+            messageId: messageId
         ) { error in
             XCTAssertNil(error)
             completionCalled = true
@@ -850,6 +871,9 @@ final class MessageUpdater_Tests: XCTestCase {
         // Assert completion is not called yet
         XCTAssertFalse(completionCalled)
 
+        // Requests are sent async so we need to wait for that
+        apiClient.waitForRequest()
+
         // Simulate API response with success
         apiClient.test_simulateResponse(Result<EmptyResponse, Error>.success(.init()))
 
@@ -857,25 +881,53 @@ final class MessageUpdater_Tests: XCTestCase {
         AssertAsync.willBeTrue(completionCalled)
     }
 
-    func test_addReaction_propagatesError() {
+    func test_addReaction_retry() throws {
+        let userId: UserId = .unique
+        let messageId: MessageId = try setupReactionData(userId: userId)
+        let reactionType: MessageReactionType = .init(rawValue: .unique)
+        
         // Simulate `addReaction` call
-        var completionCalledError: Error?
+        let dbCall = XCTestExpectation(description: "database call")
+
         messageUpdater.addReaction(
-            .init(rawValue: .unique),
+            reactionType,
             score: 1,
             enforceUnique: false,
             extraData: [:],
-            messageId: .unique
-        ) {
-            completionCalledError = $0
+            messageId: messageId
+        ) { error in
+            XCTAssertNil(error)
+            dbCall.fulfill()
         }
 
-        // Simulate API response with failure
-        let error = TestError()
-        apiClient.test_simulateResponse(Result<EmptyResponse, Error>.failure(error))
+        // wait for the db call to be done
+        wait(for: [dbCall], timeout: 0.1)
 
-        // Assert the completion is called with the error
-        AssertAsync.willBeEqual(completionCalledError as? TestError, error)
+        let reaction = database.viewContext.reaction(messageId: messageId, userId: userId, type: reactionType)
+
+        guard let reaction = reaction else {
+            XCTFail()
+            return
+        }
+
+        XCTAssertEqual(reaction.localState, .sending)
+
+        // Simulate API response with failure - this kind of error is not retried
+        apiClient.test_simulateResponse(Result<EmptyResponse, Error>.failure(TestError()))
+        apiClient.waitForRequest()
+
+        try database.writeSynchronously { _ in
+            try self.database.writableContext.save()
+        }
+
+        let reactionReloaded = database.viewContext.reaction(messageId: messageId, userId: userId, type: reactionType)
+
+        guard let reactionReloaded = reactionReloaded else {
+            XCTFail()
+            return
+        }
+
+        XCTAssertEqual(reactionReloaded.localState, .sendingFailed)
     }
     
     // MARK: - Delete reaction

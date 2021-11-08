@@ -87,7 +87,6 @@ class APIClient {
         retryOptions: RetryOptions,
         completion: @escaping (Result<Response, Error>) -> Void
     ) {
-        print("debugging: request \(endpoint.method) \(endpoint.path)")
         requestsRetriesQueue.async { [weak self] in
             self?.request(attempt: 0, endpoint: endpoint, timeout: timeout, retryOptions: retryOptions, completion: completion)
         }
