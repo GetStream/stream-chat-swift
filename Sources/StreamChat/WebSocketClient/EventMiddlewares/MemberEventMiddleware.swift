@@ -8,18 +8,13 @@ import Foundation
 struct MemberEventMiddleware: EventMiddleware {
     func handle(event: Event, session: DatabaseSession) -> Event? {
         do {
-            var updatedChannelID: ChannelId?
-            
             switch event {
             case let event as MemberUpdatedEventDTO:
                 try session.saveMember(payload: event.member, channelId: event.cid)
                 
-                updatedChannelID = event.cid
-                
             case let event as MemberAddedEventDTO:
                 try session.saveMember(payload: event.member, channelId: event.cid)
-                
-                updatedChannelID = event.cid
+
             case let event as MemberRemovedEventDTO:
                 guard let channel = session.channel(cid: event.cid) else {
                     // No need to throw ChannelNotFound error here
