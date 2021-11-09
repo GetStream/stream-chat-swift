@@ -35,7 +35,7 @@ class APIClient {
     /// Used for synchronizing access to requestsQueue
     private let requestsAccessQueue = DispatchQueue(label: "io.getstream.requests")
     
-    /// Used for request retires
+    /// Used for request retries
     private let requestsRetriesQueue = DispatchQueue(label: "io.getstream.request-retries")
 
     /// Stores request failed with token expired error for retrying them later
