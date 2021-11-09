@@ -36,7 +36,7 @@ class APIClient {
     private let requestsAccessQueue = DispatchQueue(label: "io.getstream.requests")
     
     /// Used for request retires
-    private let requestsRetriesQueue = DispatchQueue(label: "io.getstream.requests-retries")
+    private let requestsRetriesQueue = DispatchQueue(label: "io.getstream.request-retries")
 
     /// Stores request failed with token expired error for retrying them later
     private var requestsQueue = [RequestsQueueItem]()
