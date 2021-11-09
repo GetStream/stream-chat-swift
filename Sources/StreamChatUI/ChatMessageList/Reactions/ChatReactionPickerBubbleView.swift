@@ -5,9 +5,6 @@
 import StreamChat
 import UIKit
 
-@available(*, deprecated, message: "Use ChatReactionPickerBubbleView instead")
-public typealias ChatMessageReactionsBubbleView = ChatReactionPickerBubbleView
-
 /// The view that shows reactions bubble.
 open class ChatReactionPickerBubbleView: _View, ThemeProvider {
     public var content: Content? {

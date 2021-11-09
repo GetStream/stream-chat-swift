@@ -212,7 +212,7 @@ internal enum L10n {
 
   internal enum Reaction {
     internal enum Authors {
-      /// %d Message Reactions
+      /// Plural format key: "%#@reactions@"
       internal static func numberOfReactions(_ p1: Int) -> String {
         return L10n.tr("Localizable", "reaction.authors.number-of-reactions", p1)
       }

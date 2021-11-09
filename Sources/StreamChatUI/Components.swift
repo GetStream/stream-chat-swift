@@ -208,50 +208,6 @@ public struct Components {
     public var messageListUnreadCountView: ChatMessageListUnreadCountView.Type =
         ChatMessageListUnreadCountView.self
 
-    // MARK: - Reaction components, deprecated
-
-    /// The Reaction picker VC.
-    @available(*, deprecated, message: "Use reactionPickerVC instead")
-    public var messageReactionsVC: ChatMessageReactionsVC.Type = ChatMessageReactionsVC.self {
-        didSet {
-            reactionPickerVC = messageReactionsVC
-        }
-    }
-
-    /// The view that shows reactions of a message. This is used by the message component.
-    @available(*, deprecated, message: "Use messageReactionsBubbleView instead")
-    public var chatReactionsBubbleView: ChatReactionBubbleBaseView.Type = ChatReactionsBubbleView.self {
-        didSet {
-            messageReactionsBubbleView = chatReactionsBubbleView
-        }
-    }
-
-    /// The view that shows reactions bubble, this is used by the reaction picker.
-    @available(*, deprecated, message: "Use reactionPickerBubbleView instead")
-    public var reactionsBubbleView: ChatReactionPickerBubbleView.Type = ChatMessageDefaultReactionsBubbleView.self {
-        didSet {
-            reactionPickerBubbleView = reactionsBubbleView
-        }
-    }
-
-    /// The view that shows reactions list. This component is used by both message and reaction picker components.
-    @available(*, deprecated, message: "Use reactionPickerReactionsView and/or messageReactionsView")
-    public var reactionsView: ChatMessageReactionsView.Type = ChatMessageReactionsView.self {
-        didSet {
-            reactionPickerReactionsView = reactionsView
-            messageReactionsView = reactionsView
-        }
-    }
-
-    /// The view that shows a single reaction. This component is used by the reactionsView component.
-    @available(*, deprecated, message: "Use reactionPickerReactionItemView and/or messageReactionItemView")
-    public var reactionItemView: ChatMessageReactionItemView.Type = ChatMessageReactionItemView.self {
-        didSet {
-            reactionPickerReactionItemView = reactionItemView
-            messageReactionItemView = reactionItemView
-        }
-    }
-    
     // MARK: - Reaction Picker components
     
     /// The Reaction picker VC.

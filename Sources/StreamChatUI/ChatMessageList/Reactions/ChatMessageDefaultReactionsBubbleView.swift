@@ -5,9 +5,6 @@
 import StreamChat
 import UIKit
 
-@available(*, deprecated, message: "Use DefaultChatReactionPickerBubbleView instead")
-public typealias ChatMessageDefaultReactionsBubbleView = DefaultChatReactionPickerBubbleView
-
 open class DefaultChatReactionPickerBubbleView: ChatReactionPickerBubbleView {
     // MARK: - Subviews
 
