@@ -5,6 +5,7 @@
 import StreamChat
 import UIKit
 
+/// The view that renders a single reaction view button.
 open class ChatMessageReactionItemView: _Button, AppearanceProvider {
     public struct Content {
         public let useBigIcon: Bool
