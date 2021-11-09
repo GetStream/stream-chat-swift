@@ -543,7 +543,11 @@ extension NSManagedObjectContext: MessageDatabaseSession {
 
         result.dto.score = Int64(score)
         result.dto.extraData = try JSONEncoder.default.encode(extraData)
-        message.reactions.insert(result.dto)
+
+        if message.reactions.filter({ MessageReactionDTO.createId(dto: $0) == MessageReactionDTO.createId(dto: result.dto) })
+            .isEmpty {
+            message.reactions.insert(result.dto)
+        }
         return result.dto
     }
 
