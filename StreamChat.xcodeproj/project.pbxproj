@@ -910,14 +910,11 @@
 		BDDD1EAC2632E32000BA007B /* AppearanceProvider_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDDD1EAB2632E32000BA007B /* AppearanceProvider_Tests.swift */; };
 		BDDD1EAE2632E6C200BA007B /* Appearance+SwiftUI_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDDD1EAD2632E6C200BA007B /* Appearance+SwiftUI_Tests.swift */; };
 		BDEB9417268211EC00928AF1 /* ChatMessageListUnreadCountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDEB9416268211EC00928AF1 /* ChatMessageListUnreadCountView.swift */; };
-		C128746027303CE600671E79 /* StreamChat.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 799C941B247D2F80001F1104 /* StreamChat.framework */; };
-		C13C113D2732C4F20089EBB2 /* StreamNuke.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C13C10E22732C2730089EBB2 /* StreamNuke.framework */; };
 		C13C74D7273932D200F93B34 /* UIImageView+SwiftyGif.swift in Sources */ = {isa = PBXBuildFile; fileRef = C13C74D2273932D200F93B34 /* UIImageView+SwiftyGif.swift */; };
 		C13C74D8273932D200F93B34 /* NSImage+SwiftyGif.swift in Sources */ = {isa = PBXBuildFile; fileRef = C13C74D3273932D200F93B34 /* NSImage+SwiftyGif.swift */; };
 		C13C74D9273932D200F93B34 /* UIImage+SwiftyGif.swift in Sources */ = {isa = PBXBuildFile; fileRef = C13C74D4273932D200F93B34 /* UIImage+SwiftyGif.swift */; };
 		C13C74DA273932D200F93B34 /* SwiftyGifManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C13C74D5273932D200F93B34 /* SwiftyGifManager.swift */; };
 		C13C74DB273932D200F93B34 /* NSImageView+SwiftyGif.swift in Sources */ = {isa = PBXBuildFile; fileRef = C13C74D6273932D200F93B34 /* NSImageView+SwiftyGif.swift */; };
-		C13C74DC2739338700F93B34 /* StreamSwiftyGif.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C13C74C92739315D00F93B34 /* StreamSwiftyGif.framework */; };
 		C13C750B273936DA00F93B34 /* Transport.swift in Sources */ = {isa = PBXBuildFile; fileRef = C13C74F0273936D900F93B34 /* Transport.swift */; };
 		C13C750C273936DA00F93B34 /* FoundationTransport.swift in Sources */ = {isa = PBXBuildFile; fileRef = C13C74F1273936D900F93B34 /* FoundationTransport.swift */; };
 		C13C750D273936DA00F93B34 /* TCPTransport.swift in Sources */ = {isa = PBXBuildFile; fileRef = C13C74F2273936D900F93B34 /* TCPTransport.swift */; };
@@ -939,7 +936,9 @@
 		C13C751D273936DA00F93B34 /* NativeEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = C13C7509273936DA00F93B34 /* NativeEngine.swift */; };
 		C13C751E273936DA00F93B34 /* WSEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = C13C750A273936DA00F93B34 /* WSEngine.swift */; };
 		C13C751F2739375D00F93B34 /* StreamStarscream.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C13C74E6273935D800F93B34 /* StreamStarscream.framework */; };
-		C13C75202739375D00F93B34 /* StreamStarscream.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = C13C74E6273935D800F93B34 /* StreamStarscream.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		C13E2439273A866700E3AF7A /* StreamChat.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 799C941B247D2F80001F1104 /* StreamChat.framework */; };
+		C13E243C273A866800E3AF7A /* StreamNuke.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C13C10E22732C2730089EBB2 /* StreamNuke.framework */; };
+		C13E243E273A866900E3AF7A /* StreamSwiftyGif.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C13C74C92739315D00F93B34 /* StreamSwiftyGif.framework */; };
 		C1BE72732732CA62006EB51E /* Nuke in Frameworks */ = {isa = PBXBuildFile; productRef = C1BE72722732CA62006EB51E /* Nuke */; };
 		C1BE729F2732CB7B006EB51E /* ImageViewExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1BE72762732CB7B006EB51E /* ImageViewExtensions.swift */; };
 		C1BE72A02732CB7B006EB51E /* FetchImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1BE72772732CB7B006EB51E /* FetchImage.swift */; };
@@ -1464,17 +1463,6 @@
 			files = (
 				79940B8D258398A500791EAE /* StreamChatUI.framework in Embed Frameworks */,
 				79940B89258398A500791EAE /* StreamChat.framework in Embed Frameworks */,
-			);
-			name = "Embed Frameworks";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		C12873E1272FF00F00671E79 /* Embed Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				C13C75202739375D00F93B34 /* StreamStarscream.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2720,9 +2708,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C128746027303CE600671E79 /* StreamChat.framework in Frameworks */,
-				C13C74DC2739338700F93B34 /* StreamSwiftyGif.framework in Frameworks */,
-				C13C113D2732C4F20089EBB2 /* StreamNuke.framework in Frameworks */,
+				C13E2439273A866700E3AF7A /* StreamChat.framework in Frameworks */,
+				C13E243E273A866900E3AF7A /* StreamSwiftyGif.framework in Frameworks */,
+				C13E243C273A866800E3AF7A /* StreamNuke.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5830,7 +5818,6 @@
 				799C9417247D2F80001F1104 /* Sources */,
 				799C9418247D2F80001F1104 /* Frameworks */,
 				799C9419247D2F80001F1104 /* Resources */,
-				C12873E1272FF00F00671E79 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
