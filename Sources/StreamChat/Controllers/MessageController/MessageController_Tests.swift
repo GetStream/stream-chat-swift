@@ -1382,6 +1382,51 @@ final class MessageController_Tests: XCTestCase {
 
         XCTAssertEqual(controller.reactions.count, 5)
     }
+
+    func test_loadNextReactions_shouldCallDelegateWhenReactionsChange() {
+        // This is required somehow to initialise the env.messageUpdater
+        controller.loadNextReactions()
+
+        controller.callbackQueue = .main
+        controller.state = .localDataFetched
+
+        controller.reactions = [
+            .mock(author: .unique),
+            .mock(author: .unique)
+        ]
+
+        class SpyTestDelegate: ChatMessageControllerDelegate {
+            var callCount = 0
+            func messageController(
+                _ controller: ChatMessageController,
+                didChangeReactions reactions: [ChatMessageReaction]
+            ) {
+                callCount += 1
+            }
+        }
+
+        let testDelegate = SpyTestDelegate()
+        controller.delegate = testDelegate
+
+        let exp = expectation(description: "should succeed load next reactions call")
+
+        let mockedReactions: [ChatMessageReaction] = [
+            .mock(author: .unique),
+            .mock(author: .unique),
+            .mock(author: .unique)
+        ]
+        env.messageUpdater.loadReactions_result = .success(mockedReactions)
+
+        controller.loadNextReactions() { error in
+            XCTAssertNil(error)
+            exp.fulfill()
+        }
+
+        wait(for: [exp], timeout: 0.2)
+
+        XCTAssertEqual(controller.reactions.count, 5)
+        XCTAssertEqual(testDelegate.callCount, 1)
+    }
     
     // MARK: - Add reaction
     

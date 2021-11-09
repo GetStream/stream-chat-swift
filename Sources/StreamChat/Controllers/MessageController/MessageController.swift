@@ -349,9 +349,11 @@ public extension ChatMessageController {
             switch result {
             case let .success(reactions):
                 let currentReactions = Set(self.reactions)
-                for reaction in reactions where !currentReactions.contains(reaction) {
-                    self.reactions.append(reaction)
+                let newReactionsWithoutDuplicates = reactions.filter {
+                    !currentReactions.contains($0)
                 }
+                
+                self.reactions += newReactionsWithoutDuplicates
 
                 if reactions.count < limit {
                     self.hasLoadedAllReactions = true
