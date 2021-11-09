@@ -113,7 +113,12 @@ open class ChatMessageReactionAuthorViewCell: _CollectionViewCell, ThemeProvider
     override open func updateContent() {
         super.updateContent()
 
-        guard let content = self.content else { return }
+        guard let content = self.content else {
+            reactionItemView.content = nil
+            authorNameLabel.text = nil
+            authorAvatarView.imageView.image = nil
+            return
+        }
 
         let placeholder = appearance.images.userAvatarPlaceholder1
         components.imageLoader.loadImage(

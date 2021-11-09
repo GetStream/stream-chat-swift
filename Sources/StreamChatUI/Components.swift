@@ -279,7 +279,7 @@ public struct Components {
 
     // MARK: - Thread components
 
-    /// The view vontroller used to display the detail of a message thread.
+    /// The view controller used to display the detail of a message thread.
     public var threadVC: ChatThreadVC.Type = ChatThreadVC.self
 
     /// The view that displays channel information on the thread header.

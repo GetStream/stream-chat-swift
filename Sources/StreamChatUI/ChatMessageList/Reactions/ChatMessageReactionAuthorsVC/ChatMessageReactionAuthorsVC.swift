@@ -42,7 +42,8 @@ open class ChatMessageReactionAuthorsVC:
     }
 
     /// A Boolean indicating whether the reactions are currently loading.
-    public var isLoadingReactions: Bool = false
+    /// This should be removed once our Core SDK handles duplicate requests correctly.
+    private var isLoadingReactions: Bool = false
 
     override open func setUp() {
         super.setUp()
@@ -158,7 +159,7 @@ open class ChatMessageReactionAuthorsVC:
 
     // MARK: - ChatMessageControllerDelegate
 
-    public func messageController(
+    open func messageController(
         _ controller: ChatMessageController,
         didChangeReactions reactions: [ChatMessageReaction]
     ) {
