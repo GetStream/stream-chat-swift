@@ -7,9 +7,9 @@ import Foundation
 /// The retry policy to use by the API retry mechanism
 public struct RetryOptions {
     /// How many attempts should be performed at most
-    let MaxRetries: Int = 3
+    let maxRetries: Int = 3
     /// How much time there should be in between attempts, this function is usually dependant on the amount of attempts already performed
-    let Backoff: (Int) -> Double = {
+    let backoff: (Int) -> Double = {
         min(max(Double($0) * Double($0), 0.5), 6.0)
     }
 }
@@ -103,7 +103,7 @@ class APIClient {
         completion: @escaping (Result<Response, Error>) -> Void
     ) {
         request(endpoint: endpoint) {
-            let backoff = retryOptions.Backoff(attempt)
+            let backoff = retryOptions.backoff(attempt)
 
             guard case let .failure(error) = $0 else {
                 return completion($0)
@@ -118,7 +118,7 @@ class APIClient {
             let connectionError = offlineErrorCodes.contains((error as NSError).code)
 
             // give up after `retryOptions.MaxRetries` unless its a connection problem
-            if attempt <= retryOptions.MaxRetries && !connectionError {
+            if attempt <= retryOptions.maxRetries && !connectionError {
                 return completion($0)
             }
 
