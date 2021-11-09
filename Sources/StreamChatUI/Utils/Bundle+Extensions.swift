@@ -18,7 +18,7 @@ extension Bundle {
         // See https://github.com/GetStream/stream-chat-swift/issues/774
         #if COCOAPODS
         return Bundle(for: BundleIdentifyingClass.self)
-            .url(forResource: "StreamChatUI", withExtension: "bundle")
+            .url(forResource: "StreamChatUIResources", withExtension: "bundle")
             .flatMap(Bundle.init(url:))!
         #elseif SWIFT_PACKAGE
         return Bundle.module

@@ -10,6 +10,8 @@ extension ImageTask: Cancellable {}
 /// The class which is resposible for loading images from URLs.
 /// Internally uses `Nuke`'s shared object of `ImagePipeline` to load the image.
 open class NukeImageLoader: ImageLoading {
+    public init() {}
+
     @discardableResult
     open func loadImage(
         using urlRequest: URLRequest,

@@ -18,7 +18,6 @@ func snippet_ux_quick_start_channels_code() {
         func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
             guard let scene = scene as? UIWindowScene else { return }
             
-            let channelList = ChatChannelListVC()
             let channelListController = chatClient
                 .channelListController(
                     query: ChannelListQuery(
@@ -27,7 +26,7 @@ func snippet_ux_quick_start_channels_code() {
                         )
                     )
                 )
-            channelList.controller = channelListController
+            let channelList = ChatChannelListVC.make(with: channelListController)
             
             let window = UIWindow(windowScene: scene)
             window.rootViewController = UINavigationController(rootViewController: channelList)
