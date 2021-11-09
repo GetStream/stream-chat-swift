@@ -24,6 +24,7 @@ _November 03, 2021_
 
 ### ✅ Added
 - Added Flag message action [#1583](https://github.com/GetStream/stream-chat-swift/issues/1583)
+- Add view to show all reactions of a message when tapping reactions [#1582](https://github.com/GetStream/stream-chat-swift/pull/1582)
 - Added handling of "shadowed" messages (messages from shadow banned users). The behavior is controlled by `ChatClientConfig.shouldShowShadowedMessages` and defaults to `false`. [#1591](https://github.com/GetStream/stream-chat-swift/issues/1591)
 - Add message actions transition controller to `Components` [#1596](https://github.com/GetStream/stream-chat-swift/issues/1596)
 

@@ -7,7 +7,7 @@ import Foundation
 /// A namespace for the `FilterKey`s suitable to be used for `ChannelListQuery`. This scope is not aware of any extra data types.
 public protocol AnyChannelListFilterScope {}
 
-/// An extra-data-specific namespace for the `FilterKey`s suitable to be used for `_ChannelListQuery`.
+/// An extra-data-specific namespace for the `FilterKey`s suitable to be used for `ChannelListQuery`.
 public struct ChannelListFilterScope: FilterScope, AnyChannelListFilterScope {}
 
 public extension Filter where Scope: AnyChannelListFilterScope {

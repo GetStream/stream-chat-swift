@@ -331,7 +331,7 @@ open class _ViewController: UIViewController, Customizable {
         // When `self` is being added to the parent controller, the default `next` implementation returns nil
         // unless the `self.view` is added as a subview to `parent.view`. But `self.viewDidLoad` is
         // called before the transition finishes so the subviews are created from `Components.default`.
-        // To prevent responder chain from being cutoff during `_ViewController` lifecycle we fallback to parent.
+        // To prevent responder chain from being cutoff during `ViewController` lifecycle we fallback to parent.
         super.next ?? parent
     }
     

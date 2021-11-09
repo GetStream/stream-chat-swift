@@ -232,6 +232,9 @@ class MessageDTO_Tests: XCTestCase {
             Assert.willBeEqual(messagePayload.reactionScores, loadedMessage?.reactionScores.mapKeys { reaction in
                 MessageReactionType(rawValue: reaction)
             })
+            Assert.willBeEqual(messagePayload.reactionCounts, loadedMessage?.reactionCounts.mapKeys { reaction in
+                MessageReactionType(rawValue: reaction)
+            })
             Assert.willBeEqual(loadedMessage?.reactions, loadedReactions)
             Assert.willBeEqual(messagePayload.isSilent, loadedMessage?.isSilent)
             Assert.willBeEqual(
@@ -434,6 +437,7 @@ class MessageDTO_Tests: XCTestCase {
         XCTAssertEqual(loadedMessage.replyCount, messagePayload.replyCount)
         XCTAssertEqual(loadedMessage.extraData, messagePayload.extraData)
         XCTAssertEqual(loadedMessage.reactionScores, messagePayload.reactionScores)
+        XCTAssertEqual(loadedMessage.reactionCounts, messagePayload.reactionCounts)
         XCTAssertEqual(loadedMessage.isSilent, messagePayload.isSilent)
         XCTAssertEqual(loadedMessage.latestReactions, latestReactions)
         XCTAssertEqual(loadedMessage.currentUserReactions, currentUserReactions)

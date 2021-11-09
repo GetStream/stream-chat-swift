@@ -90,7 +90,8 @@ public struct Components {
 
     //  MARK: -  Message List components
 
-    /// The View Controller used to display content of the message, i.e. in the channel detail message list.
+    /// The view controller responsible for rendering a list of messages.
+    /// Used in both the Channel and Thread view controllers.
     @available(iOSApplicationExtension, unavailable)
     public var messageListVC: ChatMessageListVC.Type = ChatMessageListVC.self
     
@@ -98,7 +99,7 @@ public struct Components {
     public var messageActionsTransitionController: ChatMessageActionsTransitionController.Type =
         ChatMessageActionsTransitionController.self
 
-    /// The view that shows the message list.
+    /// The foundation view for the message list view controller.
     public var messageListView: ChatMessageListView.Type = ChatMessageListView
         .self
 
@@ -106,16 +107,22 @@ public struct Components {
     public var messageListScrollOverlayView: ChatMessageListScrollOverlayView.Type =
         ChatMessageListScrollOverlayView.self
 
-    /// The View Controller by default used to display message actions after long-pressing on the message.
+    /// The view controller used to perform message actions.
     public var messageActionsVC: ChatMessageActionsVC.Type = ChatMessageActionsVC.self
 
-    /// The View Controller by default used to display long-press menu of the message.
+    /// The view controller that is presented when long-pressing a message.
     public var messagePopupVC: ChatMessagePopupVC.Type = ChatMessagePopupVC.self
 
-    /// The View Controller used for showing detail of a file message attachment.
+    /// A view controller that renders the reaction and it's author avatar for all the reactions of a message.
+    public var reactionAuthorsVC: ChatMessageReactionAuthorsVC.Type = ChatMessageReactionAuthorsVC.self
+
+    /// A view cell that displays an individual reaction author of a message.
+    public var reactionAuthorCell: ChatMessageReactionAuthorViewCell.Type = ChatMessageReactionAuthorViewCell.self
+
+    /// The view controller used for showing the detail of a file message attachment.
     public var filePreviewVC: ChatMessageAttachmentPreviewVC.Type = ChatMessageAttachmentPreviewVC.self
 
-    /// The View Controller used for show image and video attachments.
+    /// The view controller responsible to render image and video attachments.
     public var galleryVC: GalleryVC.Type = GalleryVC.self
     
     /// The view used to control the player for currently visible vide attachment.
@@ -201,57 +208,13 @@ public struct Components {
     public var messageListUnreadCountView: ChatMessageListUnreadCountView.Type =
         ChatMessageListUnreadCountView.self
 
-    // MARK: - Reaction components, deprecated
-
-    /// The Reaction picker VC.
-    @available(*, deprecated, message: "Use reactionPickerVC instead")
-    public var messageReactionsVC: ChatMessageReactionsVC.Type = ChatMessageReactionsVC.self {
-        didSet {
-            reactionPickerVC = messageReactionsVC
-        }
-    }
-
-    /// The view that shows reactions of a message. This is used by the message component.
-    @available(*, deprecated, message: "Use messageReactionsBubbleView instead")
-    public var chatReactionsBubbleView: ChatReactionBubbleBaseView.Type = ChatReactionsBubbleView.self {
-        didSet {
-            messageReactionsBubbleView = chatReactionsBubbleView
-        }
-    }
-
-    /// The view that shows reactions bubble, this is used by the reaction picker.
-    @available(*, deprecated, message: "Use reactionPickerBubbleView instead")
-    public var reactionsBubbleView: ChatReactionPickerBubbleView.Type = ChatMessageDefaultReactionsBubbleView.self {
-        didSet {
-            reactionPickerBubbleView = reactionsBubbleView
-        }
-    }
-
-    /// The view that shows reactions list. This component is used by both message and reaction picker components.
-    @available(*, deprecated, message: "Use reactionPickerReactionsView and/or messageReactionsView")
-    public var reactionsView: ChatMessageReactionsView.Type = ChatMessageReactionsView.self {
-        didSet {
-            reactionPickerReactionsView = reactionsView
-            messageReactionsView = reactionsView
-        }
-    }
-
-    /// The view that shows a single reaction. This component is used by the reactionsView component.
-    @available(*, deprecated, message: "Use reactionPickerReactionItemView and/or messageReactionItemView")
-    public var reactionItemView: ChatMessageReactionItemView.Type = ChatMessageReactionItemView.self {
-        didSet {
-            reactionPickerReactionItemView = reactionItemView
-            messageReactionItemView = reactionItemView
-        }
-    }
-    
     // MARK: - Reaction Picker components
     
     /// The Reaction picker VC.
     public var reactionPickerVC: ChatMessageReactionsVC.Type = ChatMessageReactionsVC.self
 
     /// The view that shows reactions bubble.
-    public var reactionPickerBubbleView: ChatMessageReactionsBubbleView.Type = ChatMessageDefaultReactionsBubbleView.self
+    public var reactionPickerBubbleView: ChatReactionPickerBubbleView.Type = DefaultChatReactionPickerBubbleView.self
 
     /// The view that shows the list of reaction toggles/buttons.
     public var reactionPickerReactionsView: ChatMessageReactionsView.Type = ChatReactionPickerReactionsView.self
@@ -272,7 +235,7 @@ public struct Components {
 
     // MARK: - Thread components
 
-    /// The View Controller used to display the detail of a message thread.
+    /// The view controller used to display the detail of a message thread.
     public var threadVC: ChatThreadVC.Type = ChatThreadVC.self
 
     /// The view that displays channel information on the thread header.

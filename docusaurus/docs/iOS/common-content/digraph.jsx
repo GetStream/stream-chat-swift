@@ -18,6 +18,9 @@ digraph G {
 export default function Digraph(props) {
     const graph = Viz(style + props.children + '}', { format: "svg", scale: 2, engine: 'dot' });
     return (
-      <div dangerouslySetInnerHTML={{__html: graph}} />
+      <div 
+        style={{ margin: props.margin, width: props.width }} 
+        dangerouslySetInnerHTML={{__html: graph}} 
+      />
     );
   }

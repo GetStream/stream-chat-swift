@@ -32,6 +32,7 @@ class MessagePayload_Tests: XCTestCase {
         XCTAssertEqual(payload.latestReactions.count, 1)
         XCTAssertEqual(payload.ownReactions.count, 1)
         XCTAssertEqual(payload.reactionScores, ["love": 1])
+        XCTAssertEqual(payload.reactionCounts, ["love": 1])
         XCTAssertEqual(payload.isSilent, true)
         XCTAssertEqual(payload.isShadowed, true)
         XCTAssertEqual(payload.channel?.cid.rawValue, "messaging:channel-ex7-63")
@@ -68,6 +69,7 @@ class MessagePayload_Tests: XCTestCase {
         XCTAssertEqual(payload.latestReactions.count, 1)
         XCTAssertEqual(payload.ownReactions.count, 1)
         XCTAssertEqual(payload.reactionScores, ["love": 1])
+        XCTAssertEqual(payload.reactionCounts, ["love": 1])
         XCTAssertEqual(payload.isSilent, true)
         XCTAssertEqual(payload.isShadowed, false)
         XCTAssertEqual(payload.channel?.cid.rawValue, "messaging:channel-ex7-63")
@@ -102,6 +104,7 @@ class MessagePayload_Tests: XCTestCase {
         XCTAssertEqual(payload.latestReactions.count, 1)
         XCTAssertEqual(payload.ownReactions.count, 1)
         XCTAssertEqual(payload.reactionScores, ["love": 1])
+        XCTAssertEqual(payload.reactionCounts, ["love": 1])
         XCTAssertEqual(payload.isSilent, true)
         XCTAssertEqual(payload.isShadowed, true)
         XCTAssertEqual(payload.channel?.cid.rawValue, "messaging:channel-ex7-63")
@@ -196,5 +199,15 @@ class MessageRepliesPayload_Tests: XCTestCase {
         
         // Assert 2 messages successfully decoded.
         XCTAssertTrue(payload.messages.count == 2)
+    }
+}
+
+class MessageReactionsPayload_Tests: XCTestCase {
+    func test_isSerialized() throws {
+        let mockJSON = XCTestCase.mockData(fromFile: "MessageReactionsPayload")
+        let payload = try JSONDecoder.default.decode(MessageReactionsPayload.self, from: mockJSON)
+
+        // Assert 2 reactions successfully decoded.
+        XCTAssertTrue(payload.reactions.count == 2)
     }
 }

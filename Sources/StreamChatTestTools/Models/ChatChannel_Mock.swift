@@ -43,7 +43,7 @@ public extension ChannelConfig {
 }
 
 public extension ChatChannelRead {
-    /// Creates a new `_ChatChannelRead` object from the provided data.
+    /// Creates a new `ChatChannelRead` object from the provided data.
     static func mock(
         lastReadAt: Date,
         unreadMessagesCount: Int,
@@ -58,7 +58,7 @@ public extension ChatChannelRead {
 }
 
 public extension ChatChannel {
-    /// Creates a new `_ChatChannel` object from the provided data.
+    /// Creates a new `ChatChannel` object from the provided data.
     static func mock(
         cid: ChannelId,
         name: String? = nil,
@@ -110,7 +110,7 @@ public extension ChatChannel {
         )
     }
     
-    /// Creates a new `_ChatChannel` object for  from the provided data.
+    /// Creates a new `ChatChannel` object for  from the provided data.
     static func mockDMChannel(
         name: String? = nil,
         imageURL: URL? = nil,
@@ -159,7 +159,7 @@ public extension ChatChannel {
         )
     }
     
-    /// Creates a new `_ChatChannel` object for  from the provided data.
+    /// Creates a new `ChatChannel` object for  from the provided data.
     static func mockNonDMChannel(
         name: String? = nil,
         imageURL: URL? = nil,

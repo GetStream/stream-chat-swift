@@ -29,6 +29,11 @@ public protocol ChatMessageContentViewDelegate: AnyObject {
     /// - Parameter indexPath: The index path of the cell displaying the content view. Equals to `nil` when
     /// the content view is displayed outside the collection/table view.
     func messageContentViewDidTapOnAvatarView(_ indexPath: IndexPath?)
+
+    /// Gets called when reactions view is tapped.
+    /// - Parameter indexPath: The index path of the cell displaying the content view. Equals to `nil` when
+    /// the content view is displayed outside the collection/table view.
+    func messageContentViewDidTapOnReactionsView(_ indexPath: IndexPath?)
 }
 
 /// A view that displays the message content.
@@ -578,6 +583,10 @@ open class ChatMessageContentView: _View, ThemeProvider {
     @objc open func handleTapOnAvatarView() {
         delegate?.messageContentViewDidTapOnAvatarView(indexPath?())
     }
+
+    @objc open func handleTapOnReactionsView() {
+        delegate?.messageContentViewDidTapOnReactionsView(indexPath?())
+    }
 	
     // MARK: - Setups
 
@@ -636,7 +645,7 @@ open class ChatMessageContentView: _View, ThemeProvider {
     /// - Returns: The `threadArrowView` subview.
     open func createThreadArrowView() -> ChatThreadArrowView {
         if threadArrowView == nil {
-            // TODO: view type should be taken from `components` once `_ThreadArrowView` is audited
+            // TODO: view type should be taken from `components` once `ThreadArrowView` is audited
             threadArrowView = ChatThreadArrowView()
                 .withoutAutoresizingMaskConstraints
         }
@@ -690,6 +699,12 @@ open class ChatMessageContentView: _View, ThemeProvider {
                 .messageReactionsView
                 .init()
                 .withoutAutoresizingMaskConstraints
+
+            let tapRecognizer = UITapGestureRecognizer(
+                target: self,
+                action: #selector(handleTapOnReactionsView)
+            )
+            reactionsBubbleView?.addGestureRecognizer(tapRecognizer)
         }
         return reactionsView!
     }

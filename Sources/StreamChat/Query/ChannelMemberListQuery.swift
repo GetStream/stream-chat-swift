@@ -8,7 +8,7 @@ import Foundation
 /// extra data types.
 public protocol AnyMemberListFilterScope: AnyUserListFilterScope {}
 
-/// An extra-data-specific namespace for the `FilterKey`s suitable to be used for `_ChannelMemberListQuery`.
+/// An extra-data-specific namespace for the `FilterKey`s suitable to be used for `ChannelMemberListQuery`.
 public class MemberListFilterScope: UserListFilterScope, AnyMemberListFilterScope {}
 
 /// Non extra-data-specific filer keys for member list.

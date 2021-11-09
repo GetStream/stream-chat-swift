@@ -335,7 +335,7 @@ final class MessageController_Tests: XCTestCase {
             try $0.saveMessage(payload: otherReply, for: cid)
         }
 
-        // Only own reply shoudl be visible
+        // Only own reply should be visible
         XCTAssertEqual(controller.replies.map(\.id), [ownReply.id])
     }
 
@@ -678,6 +678,19 @@ final class MessageController_Tests: XCTestCase {
         AssertAsync.willBeEqual(
             delegate.didChangeReplies_changes,
             [.insert(replyModel!, index: [0, 0])]
+        )
+    }
+
+    func test_delegate_isNotifiedAboutReactionChanges() throws {
+        // Set the delegate
+        let delegate = TestDelegate(expectedQueueId: callbackQueueID)
+        controller.delegate = delegate
+
+        controller.reactions = [.mock()]
+
+        AssertAsync.willBeEqual(
+            delegate.didChangeReactions_reactions,
+            [.mock()]
         )
     }
     
@@ -1154,6 +1167,266 @@ final class MessageController_Tests: XCTestCase {
         XCTAssertEqual(env.messageUpdater.loadReplies_messageId, messageId)
         XCTAssertEqual(env.messageUpdater.loadReplies_pagination, .init(pageSize: 25, parameter: .greaterThan(afterMessageId)))
     }
+
+    // MARK: - Load Reactions
+
+    func test_reactions_shouldReturnLatestReactionsWhenObserversStarts() throws {
+        try client.databaseContainer.createCurrentUser(id: currentUserId)
+        try client.databaseContainer.createMessage(id: messageId, authorId: currentUserId, cid: cid, text: .unique)
+
+        var mockedReactions: [MessageReactionPayload] = []
+
+        for _ in (0..<20) {
+            mockedReactions.append(MessageReactionPayload.dummy(
+                messageId: messageId,
+                user: .dummy(userId: .unique)
+            ))
+        }
+
+        try client.databaseContainer.writeSynchronously { session in
+            try mockedReactions.forEach {
+                try session.saveReaction(payload: $0)
+            }
+        }
+
+        let expectedLatestReactions = mockedReactions
+            .sorted(by: { $0.updatedAt > $1.updatedAt })[0..<10]
+
+        controller.startObserversIfNeeded()
+        
+        XCTAssertEqual(controller.reactions.count, 10)
+        XCTAssertEqual(
+            controller.reactions.map(\.author).map(\.id),
+            expectedLatestReactions.map(\.user).map(\.id)
+        )
+    }
+
+    func test_loadReactions_propagatesError() {
+        var completionError: Error?
+        controller.loadReactions(limit: 25) { [callbackQueueID] in
+            AssertTestQueue(withId: callbackQueueID)
+            completionError = $0.error
+        }
+
+        // Simulate network response with the error
+        let networkError = TestError()
+        env.messageUpdater.loadReactions_completion?(.failure(networkError))
+
+        // Assert error is propagated
+        AssertAsync.willBeEqual(completionError as? TestError, networkError)
+    }
+
+    func test_loadReactions_propagatesReactions() {
+        var completionCalled = false
+        controller.loadReactions(limit: 25) { [callbackQueueID] in
+            AssertTestQueue(withId: callbackQueueID)
+            let reactions = try? $0.get()
+            XCTAssertEqual(reactions!.count, 1)
+            completionCalled = true
+        }
+
+        // Keep a weak ref so we can check if it's actually deallocated
+        weak var weakController = controller
+
+        // (Try to) deallocate the controller
+        // by not keeping any references to it
+        controller = nil
+
+        // Simulate successful network response
+        env.messageUpdater.loadReactions_completion?(.success([.mock()]))
+        // Release reference of completion so we can deallocate stuff
+        env.messageUpdater.loadReactions_completion = nil
+
+        // Assert completion is called
+        AssertAsync.willBeTrue(completionCalled)
+        // `weakController` should be deallocated too
+        AssertAsync.canBeReleased(&weakController)
+    }
+
+    func test_loadReactions_callsMessageUpdater_withCorrectValues() {
+        controller.loadReactions(limit: 25, offset: 15) { _ in }
+
+        XCTAssertEqual(env.messageUpdater.loadReactions_cid, cid)
+        XCTAssertEqual(env.messageUpdater.loadReactions_messageId, messageId)
+        XCTAssertEqual(env.messageUpdater.loadReactions_pagination, .init(pageSize: 25, offset: 15))
+    }
+
+    func test_loadNextReactions_whenAllReactionsLoaded_doNotCallMessageUpdater() throws {
+        controller.loadNextReactions()
+
+        XCTAssertNotNil(env.messageUpdater.loadReactions_messageId)
+
+        env.messageUpdater.loadReactions_messageId = nil
+
+        controller.hasLoadedAllReactions = true
+        controller.loadNextReactions()
+
+        XCTAssertNil(env.messageUpdater.loadReactions_messageId)
+    }
+
+    func test_loadNextReactions_whenResultLowerThanLimit_shouldSetLoadedAllReactions() {
+        // This is required somehow to initialise the env.messageUpdater
+        controller.loadNextReactions()
+
+        controller.callbackQueue = .main
+
+        let exp = expectation(description: "should succeed load next reactions call")
+
+        env.messageUpdater.loadReactions_result = .success([.mock(), .mock()])
+
+        controller.loadNextReactions(limit: 5) { error in
+            XCTAssertNil(error)
+            exp.fulfill()
+        }
+
+        wait(for: [exp], timeout: 0.2)
+
+        XCTAssertEqual(controller.hasLoadedAllReactions, true)
+    }
+
+    func test_loadNextReactions_whenResultHigherThanLimit_shouldNotSetLoadedAllReactions() {
+        // This is required somehow to initialise the env.messageUpdater
+        controller.loadNextReactions()
+
+        controller.callbackQueue = .main
+
+        let exp = expectation(description: "should succeed load next reactions call")
+
+        env.messageUpdater.loadReactions_result = .success([.mock(), .mock(), .mock()])
+
+        controller.loadNextReactions(limit: 1) { error in
+            XCTAssertNil(error)
+            exp.fulfill()
+        }
+
+        wait(for: [exp], timeout: 0.2)
+
+        XCTAssertEqual(controller.hasLoadedAllReactions, false)
+    }
+
+    func test_loadNextReactions_shouldPaginateFromLastReaction() {
+        controller.startObserversIfNeeded()
+
+        let mockedReactions = repeatElement(
+            ChatMessageReaction(
+                type: "likes",
+                score: 1,
+                createdAt: .unique,
+                updatedAt: .unique,
+                author: .unique,
+                extraData: [:]
+            ),
+            count: 20
+        )
+
+        controller.reactions = Array(mockedReactions)
+
+        controller.loadNextReactions(
+            limit: 10,
+            completion: nil
+        )
+
+        XCTAssertEqual(env.messageUpdater.loadReactions_pagination?.pageSize, 10)
+        XCTAssertEqual(env.messageUpdater.loadReactions_pagination?.offset, mockedReactions.count)
+    }
+
+    func test_loadNextReactions_shouldAppendNewReactions() {
+        // This is required somehow to initialise the env.messageUpdater
+        controller.loadNextReactions()
+
+        controller.callbackQueue = .main
+
+        let exp = expectation(description: "should succeed load next reactions call")
+
+        let mockedReactions: [ChatMessageReaction] = [.mock(), .mock(), .mock()]
+        env.messageUpdater.loadReactions_result = .success(mockedReactions)
+
+        controller.loadNextReactions() { error in
+            XCTAssertNil(error)
+            exp.fulfill()
+        }
+
+        wait(for: [exp], timeout: 0.2)
+
+        XCTAssertEqual(controller.reactions.count, mockedReactions.count)
+    }
+
+    func test_loadNextReactions_shouldNotAppendDuplicatedReactions() {
+        // This is required somehow to initialise the env.messageUpdater
+        controller.loadNextReactions()
+
+        controller.callbackQueue = .main
+
+        let exp = expectation(description: "should succeed load next reactions call")
+
+        let duplicatedReaction = ChatMessageReaction.mock(author: .unique)
+        let mockedReactions: [ChatMessageReaction] = [
+            .mock(author: .unique),
+            duplicatedReaction,
+            .mock(author: .unique)
+        ]
+        env.messageUpdater.loadReactions_result = .success(mockedReactions)
+
+        controller.reactions = [
+            duplicatedReaction,
+            .mock(author: .unique),
+            .mock(author: .unique)
+        ]
+
+        controller.loadNextReactions() { error in
+            XCTAssertNil(error)
+            exp.fulfill()
+        }
+
+        wait(for: [exp], timeout: 0.2)
+
+        XCTAssertEqual(controller.reactions.count, 5)
+    }
+
+    func test_loadNextReactions_shouldCallDelegateWhenReactionsChange() {
+        // This is required somehow to initialise the env.messageUpdater
+        controller.loadNextReactions()
+
+        controller.callbackQueue = .main
+        controller.state = .localDataFetched
+
+        controller.reactions = [
+            .mock(author: .unique),
+            .mock(author: .unique)
+        ]
+
+        class SpyTestDelegate: ChatMessageControllerDelegate {
+            var callCount = 0
+            func messageController(
+                _ controller: ChatMessageController,
+                didChangeReactions reactions: [ChatMessageReaction]
+            ) {
+                callCount += 1
+            }
+        }
+
+        let testDelegate = SpyTestDelegate()
+        controller.delegate = testDelegate
+
+        let exp = expectation(description: "should succeed load next reactions call")
+
+        let mockedReactions: [ChatMessageReaction] = [
+            .mock(author: .unique),
+            .mock(author: .unique),
+            .mock(author: .unique)
+        ]
+        env.messageUpdater.loadReactions_result = .success(mockedReactions)
+
+        controller.loadNextReactions() { error in
+            XCTAssertNil(error)
+            exp.fulfill()
+        }
+
+        wait(for: [exp], timeout: 0.2)
+
+        XCTAssertEqual(controller.reactions.count, 5)
+        XCTAssertEqual(testDelegate.callCount, 1)
+    }
     
     // MARK: - Add reaction
     
@@ -1577,6 +1850,7 @@ private class TestDelegate: QueueAwareDelegate, ChatMessageControllerDelegate {
     @Atomic var state: DataController.State?
     @Atomic var didChangeMessage_change: EntityChange<ChatMessage>?
     @Atomic var didChangeReplies_changes: [ListChange<ChatMessage>] = []
+    @Atomic var didChangeReactions_reactions: [ChatMessageReaction] = []
     
     func controller(_ controller: DataController, didChangeState state: DataController.State) {
         self.state = state
@@ -1592,12 +1866,18 @@ private class TestDelegate: QueueAwareDelegate, ChatMessageControllerDelegate {
         didChangeReplies_changes = changes
         validateQueue()
     }
+
+    func messageController(_ controller: ChatMessageController, didChangeReactions reactions: [ChatMessageReaction]) {
+        didChangeReactions_reactions = reactions
+        validateQueue()
+    }
 }
 
 private class TestEnvironment {
     var messageUpdater: MessageUpdaterMock!
     var messageObserver: EntityDatabaseObserverMock<ChatMessage, MessageDTO>!
     var repliesObserver: ListDatabaseObserverMock<ChatMessage, MessageDTO>!
+
     var messageObserver_synchronizeError: Error?
     
     lazy var controllerEnvironment: ChatMessageController

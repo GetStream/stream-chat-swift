@@ -6,18 +6,18 @@ import CoreData
 import Foundation
 
 public extension ChatClient {
-    /// Creates a new `_ChatUserController` for the user with the provided `userId`.
+    /// Creates a new `ChatUserController` for the user with the provided `userId`.
     ///
     /// - Parameter userId: The user identifier.
-    /// - Returns: A new instance of `_ChatUserController`.
+    /// - Returns: A new instance of `ChatUserController`.
     func userController(userId: UserId) -> ChatUserController {
         .init(userId: userId, client: self)
     }
 }
 
-/// `_ChatUserController` is a controller class which allows mutating and observing changes of a specific chat user.
+/// `ChatUserController` is a controller class which allows mutating and observing changes of a specific chat user.
 ///
-/// `_ChatUserController` objects are lightweight, and they can be used for both, continuous data change observations,
+/// `ChatUserController` objects are lightweight, and they can be used for both, continuous data change observations,
 /// and for quick user actions (like mute/unmute).
 public class ChatUserController: DataController, DelegateCallable, DataStoreProvider {
     /// The identifier of tge user this controller observes.
@@ -68,7 +68,7 @@ public class ChatUserController: DataController, DelegateCallable, DataStoreProv
     @available(iOS 13, *)
     lazy var basePublishers: BasePublishers = .init(controller: self)
 
-    /// Creates a new `_ChatUserController`
+    /// Creates a new `ChatUserController`
     /// - Parameters:
     ///   - userId: The identifier of the user this controller manages.
     ///   - client: The `Client` this controller belongs to.

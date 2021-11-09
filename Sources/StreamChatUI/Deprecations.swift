@@ -98,3 +98,70 @@ public extension ChatUserListController {
         self.delegate = delegate
     }
 }
+
+extension ChatMessageReactionsView {
+    @available(*, deprecated, message: "Use ChatMessageReactionItemView instead")
+    public typealias ItemView = ChatMessageReactionItemView
+}
+
+@available(*, deprecated, message: "Use ChatReactionPickerBubbleView instead")
+public typealias ChatMessageReactionsBubbleView = ChatReactionPickerBubbleView
+
+@available(*, deprecated, message: "Use DefaultChatReactionPickerBubbleView instead")
+public typealias ChatMessageDefaultReactionsBubbleView = DefaultChatReactionPickerBubbleView
+
+extension Components {
+    // MARK: - Reaction components, deprecated
+    
+    @available(*, deprecated, message: "Use reactionPickerVC instead")
+    public var messageReactionsVC: ChatMessageReactionsVC.Type {
+        get {
+            reactionPickerVC
+        }
+        set {
+            reactionPickerVC = newValue
+        }
+    }
+
+    @available(*, deprecated, message: "Use messageReactionsBubbleView instead")
+    public var chatReactionsBubbleView: ChatReactionBubbleBaseView.Type {
+        get {
+            messageReactionsBubbleView
+        }
+        set {
+            messageReactionsBubbleView = newValue
+        }
+    }
+
+    @available(*, deprecated, message: "Use reactionPickerBubbleView instead")
+    public var reactionsBubbleView: ChatReactionPickerBubbleView.Type {
+        get {
+            reactionPickerBubbleView
+        }
+        set {
+            reactionPickerBubbleView = newValue
+        }
+    }
+
+    @available(*, deprecated, message: "Use reactionPickerReactionsView and/or messageReactionsView")
+    public var reactionsView: ChatMessageReactionsView.Type {
+        get {
+            reactionPickerReactionsView
+        }
+        set {
+            reactionPickerReactionsView = newValue
+            messageReactionsView = newValue
+        }
+    }
+
+    @available(*, deprecated, message: "Use reactionPickerReactionItemView and/or messageReactionItemView")
+    public var reactionItemView: ChatMessageReactionItemView.Type {
+        get {
+            reactionPickerReactionItemView
+        }
+        set {
+            reactionPickerReactionItemView = newValue
+            messageReactionItemView = newValue
+        }
+    }
+}

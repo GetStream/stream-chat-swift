@@ -6,21 +6,21 @@ import StreamChat
 import SwiftUI
 
 @available(iOS 13.0, *)
-/// Protocol of `_ChatChannelUnreadCountView` wrapper for use in SwiftUI.
+/// Protocol of `ChatChannelUnreadCountView` wrapper for use in SwiftUI.
 public protocol ChatChannelUnreadCountViewSwiftUIView: View {
     init(dataSource: ChatChannelUnreadCountView.ObservedObject<Self>)
 }
 
 @available(iOS 13.0, *)
 extension ChatChannelUnreadCountView {
-    /// Data source of `_ChatChannelUnreadCountView` represented as `ObservedObject`.
+    /// Data source of `ChatChannelUnreadCountView` represented as `ObservedObject`.
     public typealias ObservedObject<Content: SwiftUIView> = SwiftUIWrapper<Content>
 
-    /// `_ChatChannelUnreadCountView` represented in SwiftUI.
+    /// `ChatChannelUnreadCountView` represented in SwiftUI.
     public typealias SwiftUIView = ChatChannelUnreadCountViewSwiftUIView
 
-    /// SwiftUI wrapper of `_ChatChannelUnreadCountView`.
-    /// Servers to wrap custom SwiftUI view as a UIKit view so it can be easily injected into `_Components`.
+    /// SwiftUI wrapper of `ChatChannelUnreadCountView`.
+    /// Servers to wrap custom SwiftUI view as a UIKit view so it can be easily injected into `Components`.
     public class SwiftUIWrapper<Content: SwiftUIView>: ChatChannelUnreadCountView, ObservableObject {
         var hostingController: UIViewController?
 

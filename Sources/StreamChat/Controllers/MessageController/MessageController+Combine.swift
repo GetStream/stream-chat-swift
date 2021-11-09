@@ -21,6 +21,11 @@ extension ChatMessageController {
     public var repliesChangesPublisher: AnyPublisher<[ListChange<ChatMessage>], Never> {
         basePublishers.repliesChanges.keepAlive(self)
     }
+
+    /// A publisher emitting a new value every time a reaction changes.
+    public var reactionsPublisher: AnyPublisher<[ChatMessageReaction], Never> {
+        basePublishers.reactions.keepAlive(self)
+    }
     
     /// An internal backing object for all publicly available Combine publishers. We use it to simplify the way we expose
     /// publishers. Instead of creating custom `Publisher` types, we use `CurrentValueSubject` and `PassthroughSubject` internally,
@@ -37,6 +42,9 @@ extension ChatMessageController {
         
         /// A backing subject for `repliesChangesPublisher`.
         let repliesChanges: PassthroughSubject<[ListChange<ChatMessage>], Never> = .init()
+
+        /// A backing subject for `reactionsChangesPublisher`.
+        let reactions: PassthroughSubject<[ChatMessageReaction], Never> = .init()
         
         init(controller: ChatMessageController) {
             self.controller = controller
@@ -65,5 +73,12 @@ extension ChatMessageController.BasePublishers: ChatMessageControllerDelegate {
         didChangeReplies changes: [ListChange<ChatMessage>]
     ) {
         repliesChanges.send(changes)
+    }
+
+    func messageController(
+        _ controller: ChatMessageController,
+        didChangeReactions reactions: [ChatMessageReaction]
+    ) {
+        self.reactions.send(reactions)
     }
 }

@@ -225,7 +225,7 @@ extension String {
 }
 
 public extension ChatChannel {
-    /// Creates a new `_ChatChannel` object from the provided data.
+    /// Creates a new `ChatChannel` object from the provided data.
     static func documentationMock(
         cid: ChannelId,
         name: String? = "channelName",
