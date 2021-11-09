@@ -52,7 +52,8 @@ class MessageDTO_Tests: XCTestCase {
             pinned: true,
             pinnedByUserId: .unique,
             pinnedAt: .unique,
-            pinExpires: .unique
+            pinExpires: .unique,
+            isShadowed: true
         )
         
         try! database.writeSynchronously { session in
@@ -149,6 +150,7 @@ class MessageDTO_Tests: XCTestCase {
         })
         XCTAssertEqual(loadedMessage?.reactions, loadedReactions)
         XCTAssertEqual(messagePayload.isSilent, loadedMessage?.isSilent)
+        XCTAssertEqual(messagePayload.isShadowed, loadedMessage?.isShadowed)
         XCTAssertEqual(
             Set(messagePayload.attachmentIDs(cid: channelId)),
             loadedMessage.flatMap { Set($0.attachments.map(\.attachmentID)) }

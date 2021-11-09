@@ -57,6 +57,39 @@ open class ChatChannelListVC: _ViewController,
 
     /// Used for mapping `ListChanges` to sets of `IndexPath` and verifying possible conflicts
     private let collectionUpdatesMapper = CollectionUpdatesMapper()
+    
+    /// Create a new `ChatChannelListViewController`
+    /// - Parameters:
+    ///   - controller: Your created `ChatChannelListController` with required query
+    ///   - storyboard: The storyboard to instantiate your `ViewController` from
+    ///   - storyboardId: The `storyboardId` that is set in your `UIStoryboard` reference
+    /// - Returns: A newly created `ChatChannelListViewController`
+    public static func make(
+        with controller: ChatChannelListController,
+        storyboard: UIStoryboard? = nil,
+        storyboardId: String? = nil
+    ) -> ChatChannelListVC {
+        var chatChannelListVC: ChatChannelListVC!
+        
+        // Check if we have a UIStoryboard and/or StoryboardId
+        if let storyboardId = storyboardId, let storyboard = storyboard {
+            // Safely unwrap the ViewController from the Storyboard
+            guard let localViewControllerFromStoryboard = storyboard
+                .instantiateViewController(withIdentifier: storyboardId) as? ChatChannelListVC else {
+                fatalError("Failed to load from UIStoryboard, please check your storyboardId and/or UIStoryboard reference.")
+            }
+            chatChannelListVC = localViewControllerFromStoryboard
+        } else {
+            chatChannelListVC = Self()
+        }
+        
+        // Set the Controller on the ViewController
+        chatChannelListVC.controller = controller
+        chatChannelListVC.setUp()
+        
+        // Return the newly created ChatChannelListVC
+        return chatChannelListVC
+    }
 
     override open func setUp() {
         super.setUp()

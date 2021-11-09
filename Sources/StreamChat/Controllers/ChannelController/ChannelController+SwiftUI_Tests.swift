@@ -161,6 +161,7 @@ extension ChatMessage {
             extraData: [:],
             quotedMessage: { nil },
             isSilent: false,
+            isShadowed: false,
             reactionScores: ["": 1],
             author: { .mock(id: .unique) },
             mentionedUsers: { [] },

@@ -6,6 +6,9 @@ import StreamChat
 
 /// - NOTE: Deprecations of the next major release.
 
+@available(*, deprecated, renamed: "ChatMessageActionsTransitionController")
+public typealias MessageActionsTransitionController = ChatMessageActionsTransitionController
+
 @available(*, deprecated, renamed: "VideoLoading")
 public typealias VideoPreviewLoader = VideoLoading
 

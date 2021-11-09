@@ -1116,6 +1116,73 @@ class ChannelController_Tests: XCTestCase {
         XCTAssertEqual(controller.messages.count, 5)
         XCTAssert(controller.messages.allSatisfy { $0.createdAt > truncatedAtDate })
     }
+    
+    func test_shadowedMessages_whenVisible() throws {
+        // Simulate the config setting
+        client.databaseContainer.viewContext.shouldShowShadowedMessages = true
+        
+        let currentUserID: UserId = .unique
+        
+        // Create current user
+        try client.databaseContainer.createCurrentUser(id: currentUserID)
+        
+        // Create a channel
+        try client.databaseContainer.createChannel(cid: channelId, withMessages: false)
+        
+        // Create incoming shadowed message
+        let shadowedMessage: MessagePayload = .dummy(
+            messageId: .unique,
+            authorUserId: .unique,
+            isShadowed: true
+        )
+        
+        // Create incoming non-shadowed message
+        let nonShadowedMessage: MessagePayload = .dummy(
+            messageId: .unique,
+            authorUserId: .unique,
+            isShadowed: false
+        )
+        
+        try client.databaseContainer.writeSynchronously {
+            try $0.saveMessage(payload: shadowedMessage, for: self.channelId)
+            try $0.saveMessage(payload: nonShadowedMessage, for: self.channelId)
+        }
+        
+        // Both messages should be visible
+        XCTAssertEqual(Set(controller.messages.map(\.id)), Set([nonShadowedMessage.id, shadowedMessage.id]))
+    }
+    
+    func test_shadowedMessages_defaultBehavior_isToHide() throws {
+        let currentUserID: UserId = .unique
+        
+        // Create current user
+        try client.databaseContainer.createCurrentUser(id: currentUserID)
+        
+        // Create a channel
+        try client.databaseContainer.createChannel(cid: channelId, withMessages: false)
+        
+        // Create incoming shadowed message
+        let shadowedMessage: MessagePayload = .dummy(
+            messageId: .unique,
+            authorUserId: .unique,
+            isShadowed: true
+        )
+        
+        // Create incoming non-shadowed message
+        let nonShadowedMessage: MessagePayload = .dummy(
+            messageId: .unique,
+            authorUserId: .unique,
+            isShadowed: false
+        )
+        
+        try client.databaseContainer.writeSynchronously {
+            try $0.saveMessage(payload: shadowedMessage, for: self.channelId)
+            try $0.saveMessage(payload: nonShadowedMessage, for: self.channelId)
+        }
+        
+        // Only non-shadowed message should be visible
+        XCTAssertEqual(Set(controller.messages.map(\.id)), Set([nonShadowedMessage.id]))
+    }
 
     // MARK: - Delegate tests
     

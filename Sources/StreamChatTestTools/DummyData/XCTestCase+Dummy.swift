@@ -67,6 +67,7 @@ extension XCTestCase {
             extraData: [:],
             reactionScores: ["like": 1],
             isSilent: false,
+            isShadowed: false,
             attachments: []
         )
     }
@@ -92,6 +93,7 @@ extension XCTestCase {
             extraData: [:],
             reactionScores: ["like": 1],
             isSilent: false,
+            isShadowed: false,
             attachments: [],
             pinned: true,
             pinnedBy: dummyUser,
@@ -199,6 +201,7 @@ extension XCTestCase {
             extraData: [:],
             reactionScores: [:],
             isSilent: false,
+            isShadowed: false,
             attachments: []
         )
     }

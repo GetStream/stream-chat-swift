@@ -486,13 +486,15 @@ private extension ChatMessageController {
             let sortAscending = self.listOrdering == .topToBottom ? false : true
             let deletedMessageVisibility = self.client.databaseContainer.viewContext
                 .deletedMessagesVisibility ?? .visibleForCurrentUser
+            let shouldShowShadowedMessages = self.client.databaseContainer.viewContext.shouldShowShadowedMessages ?? false
 
             let observer = self.environment.repliesObserverBuilder(
                 self.client.databaseContainer.viewContext,
                 MessageDTO.repliesFetchRequest(
                     for: self.messageId,
                     sortAscending: sortAscending,
-                    deletedMessagesVisibility: deletedMessageVisibility
+                    deletedMessagesVisibility: deletedMessageVisibility,
+                    shouldShowShadowedMessages: shouldShowShadowedMessages
                 ),
                 { $0.asModel() as ChatMessage },
                 NSFetchedResultsController<MessageDTO>.self

@@ -43,12 +43,6 @@ class ChatMessageActionsVC_Tests: XCTestCase {
         AssertSnapshot(vc.embedded())
     }
     
-    func test_defaultAppearance_whenFlagsEnabled() {
-        vc.channelConfig = .mock(commands: [Command(name: "flag", description: "", set: "", args: "")])
-        
-        AssertSnapshot(vc.embedded())
-    }
-    
     func test_appearanceCustomization_usingAppearance() {
         var appearance = Appearance()
         appearance.colorPalette.border = .cyan
@@ -92,18 +86,6 @@ class ChatMessageActionsVC_Tests: XCTestCase {
         vc.channelConfig = .mock(mutesEnabled: false)
 
         XCTAssertFalse(vc.messageActions.contains(where: { $0 is MuteUserActionItem }))
-    }
-    
-    func test_messageActions_whenFlagsEnabled_containsFlagAction() {
-        vc.channelConfig = .mock(commands: [Command(name: "flag", description: "", set: "", args: "")])
-        
-        XCTAssertTrue(vc.messageActions.contains(where: { $0 is FlagActionItem }))
-    }
-    
-    func test_messageActions_whenFlagsDisabled_doesNotContainFlagAction() {
-        vc.channelConfig = .mock(commands: [])
-        
-        XCTAssertFalse(vc.messageActions.contains(where: { $0 is FlagActionItem }))
     }
 }
 

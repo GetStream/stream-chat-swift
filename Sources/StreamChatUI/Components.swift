@@ -93,6 +93,10 @@ public struct Components {
     /// The View Controller used to display content of the message, i.e. in the channel detail message list.
     @available(iOSApplicationExtension, unavailable)
     public var messageListVC: ChatMessageListVC.Type = ChatMessageListVC.self
+    
+    /// The controller that handles `ChatMessageListVC <-> ChatMessagePopUp` transition.
+    public var messageActionsTransitionController: ChatMessageActionsTransitionController.Type =
+        ChatMessageActionsTransitionController.self
 
     /// The view that shows the message list.
     public var messageListView: ChatMessageListView.Type = ChatMessageListView

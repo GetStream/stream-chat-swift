@@ -354,12 +354,14 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             guard let cid = self.cid else { return nil }
             let sortAscending = self.messageOrdering == .topToBottom ? false : true
             var deletedMessageVisibility: ChatClientConfig.DeletedMessageVisibility?
+            var shouldShowShadowedMessages: Bool?
             self.client.databaseContainer.viewContext.performAndWait { [weak self] in
                 guard let self = self else {
                     log.warning("Callback called while self is nil")
                     return
                 }
                 deletedMessageVisibility = self.client.databaseContainer.viewContext.deletedMessagesVisibility
+                shouldShowShadowedMessages = self.client.databaseContainer.viewContext.shouldShowShadowedMessages
             }
 
             let observer = ListDatabaseObserver(
@@ -367,7 +369,8 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
                 fetchRequest: MessageDTO.messagesFetchRequest(
                     for: cid,
                     sortAscending: sortAscending,
-                    deletedMessagesVisibility: deletedMessageVisibility ?? .visibleForCurrentUser
+                    deletedMessagesVisibility: deletedMessageVisibility ?? .visibleForCurrentUser,
+                    shouldShowShadowedMessages: shouldShowShadowedMessages ?? false
                 ),
                 itemCreator: { $0.asModel() as ChatMessage }
             )
