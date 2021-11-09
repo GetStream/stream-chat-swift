@@ -345,24 +345,33 @@ public extension ChatMessageController {
             return
         }
 
-        loadReactions(limit: limit, offset: reactions.count) { result in
+        // Note: For now we don't reuse the `loadReactions()` function to avoid deadlock on the callbackQueue.
+        messageUpdater.loadReactions(
+            cid: cid,
+            messageId: messageId,
+            pagination: Pagination(pageSize: limit, offset: reactions.count)
+        ) { result in
             switch result {
             case let .success(reactions):
                 let currentReactions = Set(self.reactions)
                 let newReactionsWithoutDuplicates = reactions.filter {
                     !currentReactions.contains($0)
                 }
-                
+
                 self.reactions += newReactionsWithoutDuplicates
 
                 if reactions.count < limit {
                     self.hasLoadedAllReactions = true
                 }
 
-                completion?(nil)
+                self.callback {
+                    completion?(nil)
+                }
 
             case let .failure(error):
-                completion?(error)
+                self.callback {
+                    completion?(error)
+                }
             }
         }
     }
