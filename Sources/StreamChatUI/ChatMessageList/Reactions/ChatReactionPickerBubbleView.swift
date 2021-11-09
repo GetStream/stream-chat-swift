@@ -9,7 +9,7 @@ import UIKit
 public typealias ChatMessageReactionsBubbleView = ChatReactionPickerBubbleView
 
 /// The view that shows reactions bubble.
-open class ChatReactionPickerBubbleView _View, ThemeProvider {
+open class ChatReactionPickerBubbleView: _View, ThemeProvider {
     public var content: Content? {
         didSet { updateContentIfNeeded() }
     }
@@ -55,7 +55,7 @@ open class ChatReactionPickerBubbleView _View, ThemeProvider {
 
 // MARK: - Content
 
-extension ChatMessageReactionsBubbleView {
+extension ChatReactionPickerBubbleView {
     public struct Content {
         public let style: ChatMessageReactionsBubbleStyle
         public let reactions: [ChatMessageReactionData]

@@ -258,7 +258,7 @@ public struct Components {
     public var reactionPickerVC: ChatMessageReactionsVC.Type = ChatMessageReactionsVC.self
 
     /// The view that shows reactions bubble.
-    public var reactionPickerBubbleView: ChatMessageReactionsBubbleView.Type = ChatMessageDefaultReactionsBubbleView.self
+    public var reactionPickerBubbleView: ChatReactionPickerBubbleView.Type = DefaultChatReactionPickerBubbleView.self
 
     /// The view that shows the list of reaction toggles/buttons.
     public var reactionPickerReactionsView: ChatMessageReactionsView.Type = ChatReactionPickerReactionsView.self
