@@ -4,8 +4,11 @@
 
 import Foundation
 
+/// The retry policy to use by the API retry mechanism
 public struct RetryOptions {
+    /// How many attempts should be performed at most
     let MaxRetries: Int = 3
+    /// How much time there should be in between attempts, this function is usually dependant on the amount of attempts already performed
     let Backoff: (Int) -> Double = {
         min(max(Double($0) * Double($0), 0.5), 6.0)
     }
