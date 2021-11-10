@@ -96,7 +96,7 @@ protocol MessageDatabaseSession {
         type: MessageReactionType,
         score: Int,
         extraData: [String: RawJSON]
-    ) throws -> MessageReactionDTO?
+    ) throws -> MessageReactionDTO
     
     func removeReaction(from messageId: MessageId, type: MessageReactionType, on version: String?) throws -> MessageReactionDTO?
 

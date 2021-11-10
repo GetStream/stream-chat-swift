@@ -563,13 +563,13 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         type: MessageReactionType,
         score: Int,
         extraData: [String: RawJSON]
-    ) throws -> MessageReactionDTO? {
+    ) throws -> MessageReactionDTO {
         guard let currentUserDTO = currentUser else {
             throw ClientError.CurrentUserDoesNotExist()
         }
 
         guard let message = MessageDTO.load(id: messageId, context: self) else {
-            return nil
+            throw ClientError.MessageDoesNotExist(messageId: messageId)
         }
 
         let result = try MessageReactionDTO.loadOrCreate(messageId: messageId, type: type, user: currentUserDTO.user, context: self)
@@ -601,6 +601,10 @@ extension NSManagedObjectContext: MessageDatabaseSession {
             throw ClientError.CurrentUserDoesNotExist()
         }
 
+        guard let message = MessageDTO.load(id: messageId, context: self) else {
+            throw ClientError.MessageDoesNotExist(messageId: messageId)
+        }
+
         guard let reaction = MessageReactionDTO
             .load(userId: currentUserDTO.user.id, messageId: messageId, type: type, context: self) else {
             return nil
@@ -608,10 +612,6 @@ extension NSManagedObjectContext: MessageDatabaseSession {
 
         // if the reaction on the database does not match the version, do nothing
         guard version == nil || version == reaction.version else {
-            return nil
-        }
-
-        guard let message = MessageDTO.load(id: messageId, context: self) else {
             return nil
         }
 

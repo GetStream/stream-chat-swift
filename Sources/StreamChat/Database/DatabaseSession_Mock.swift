@@ -26,7 +26,7 @@ extension DatabaseSessionMock {
         type: MessageReactionType,
         score: Int,
         extraData: [String: RawJSON]
-    ) throws -> MessageReactionDTO? {
+    ) throws -> MessageReactionDTO {
         try throwErrorIfNeeded()
         return try underlyingSession.addReaction(to: messageId, type: type, score: score, extraData: extraData)
     }
@@ -274,7 +274,7 @@ extension DatabaseSessionMock {
     }
     
     func delete(query: ChannelListQuery) {
-        try underlyingSession.delete(query: query)
+        underlyingSession.delete(query: query)
     }
 
     func saveMessage(payload: MessagePayload, for query: MessageSearchQuery) throws -> MessageDTO? {

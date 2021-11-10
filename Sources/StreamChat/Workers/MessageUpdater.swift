@@ -277,7 +277,7 @@ class MessageUpdater: Worker {
                     extraData: extraData
                 )
             } catch {
-                log.warning("Failed to add the reaction to the database: \(error)")
+                log.warning("Failed to optimistically add the reaction to the database: \(error)")
             }
 
             if let reaction = reaction {
