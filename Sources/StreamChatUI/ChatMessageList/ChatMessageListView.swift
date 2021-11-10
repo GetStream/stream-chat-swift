@@ -177,10 +177,14 @@ open class ChatMessageListView: UITableView, Customizable, ComponentsProvider {
             onConflict: {
                 reloadData()
             }
-        ) else { return }
+        ) else {
+            completion?()
+            return
+        }
 
         if changes.count > 1 {
             reloadData()
+            completion?()
             return
         }
 
@@ -188,8 +192,17 @@ open class ChatMessageListView: UITableView, Customizable, ComponentsProvider {
             switch $0 {
             case let .insert(message, index: index):
                 UIView.performWithoutAnimation {
-                    self.reloadData()
+                    self.performBatchUpdates {
+                        self.insertRows(at: [index], with: .none)
+                    } completion: { _ in
+                        // Update previous row to remove timestamp if needed
+                        // +1 instead of -1 because the message list is inverted
+                        let previousIndex = IndexPath(row: index.row + 1, section: index.section)
+                        self.reloadRows(at: [previousIndex], with: .none)
+                        completion?()
+                    }
                 }
+
                 if message.isSentByCurrentUser, index == IndexPath(item: 0, section: 0) {
                     self.scrollToBottomAction = .init { [weak self] in
                         self?.scrollToMostRecentMessage()
@@ -198,12 +211,15 @@ open class ChatMessageListView: UITableView, Customizable, ComponentsProvider {
 
             case let .move(_, fromIndex: fromIndex, toIndex: toIndex):
                 self.moveRow(at: fromIndex, to: toIndex)
+                completion?()
 
             case let .update(_, index: index):
                 self.reloadRows(at: [index], with: .automatic)
+                completion?()
 
             case .remove:
                 self.reloadData()
+                completion?()
             }
         }
     }
