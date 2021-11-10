@@ -176,12 +176,9 @@ open class ChatMessageListView: UITableView, Customizable, ComponentsProvider {
             completion?()
         }
 
-        guard let _ = collectionUpdatesMapper.mapToSetsOfIndexPaths(
-            changes: changes,
-            onConflict: {
-                reloadData()
-            }
-        ) else {
+        let hasConflictUpdates = collectionUpdatesMapper.mapToSetsOfIndexPaths(changes: changes) == nil
+        if hasConflictUpdates {
+            reloadData()
             return
         }
 
