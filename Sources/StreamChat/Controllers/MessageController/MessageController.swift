@@ -46,6 +46,27 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
         startObserversIfNeeded()
         return repliesObserver?.items ?? []
     }
+
+    /// The total reactions of the message the controller represents.
+    ///
+    /// To observe changes of the reactions, set your class as a delegate of this controller or use the provided
+    /// `Combine` publishers.
+    ///
+    public var reactions: [ChatMessageReaction] = [] {
+        didSet {
+            delegateCallback { [weak self] in
+                guard let self = self else {
+                    log.warning("Callback called while self is nil")
+                    return
+                }
+
+                $0.messageController(self, didChangeReactions: self.reactions)
+            }
+        }
+    }
+
+    /// A Boolean value that returns wether the reactions have all been loaded or not.
+    public internal(set) var hasLoadedAllReactions = false
     
     /// Describes the ordering the replies are presented.
     ///
@@ -105,7 +126,7 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
                     log.warning("Callback called while self is nil")
                     return
                 }
-                
+
                 $0.messageController(self, didChangeMessage: change)
             }
         }
@@ -132,7 +153,7 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
         self.messageId = messageId
         self.environment = environment
         super.init()
-        
+
         setRepliesObserver()
     }
 
@@ -146,17 +167,18 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
     }
     
     /// If the `state` of the controller is `initialized`, this method calls `startObserving` on
-    /// `messageObserver` and `repliesObserver` to fetch the local data and start observing the changes.
+    /// `messageObserver`, `repliesObserver` and `reactionsObserver` to fetch the local data and start observing the changes.
     /// It also changes `state` based on the result.
     ///
     /// It's safe to call this method repeatedly.
     ///
-    private func startObserversIfNeeded() {
+    internal func startObserversIfNeeded() {
         guard state == .initialized else { return }
         do {
             try messageObserver.startObserving()
             try repliesObserver?.startObserving()
-            
+            reactions = Array(messageObserver.item?.latestReactions.sorted(by: { $0.updatedAt > $1.updatedAt }) ?? [])
+
             state = .localDataFetched
         } catch {
             log.error("Failed to perform fetch request with error: \(error). This is an internal error.")
@@ -242,7 +264,7 @@ public extension ChatMessageController {
         }
     }
     
-    /// Loads previous messages from backend.
+    /// Loads previous messages from the backend.
     ///
     /// - Parameters:
     ///   - messageId: ID of the last fetched message. You will get messages `older` than the provided ID.
@@ -279,7 +301,7 @@ public extension ChatMessageController {
         }
     }
     
-    /// Loads new messages from backend.
+    /// Loads new messages from the backend.
     ///
     /// - Parameters:
     ///   - messageId: ID of the current first message. You will get messages `newer` then the provided ID.
@@ -304,6 +326,79 @@ public extension ChatMessageController {
             pagination: MessagesPagination(pageSize: limit, parameter: .greaterThan(messageId))
         ) { result in
             self.callback { completion?(result.error) }
+        }
+    }
+
+    /// Loads the next page of reactions starting from the current fetched reactions.
+    ///
+    /// - Parameters:
+    ///   - limit: The reactions page size.
+    ///   - completion: The completion is called when the network request is finished.
+    ///   If the request fails, the completion will be called with an error, if it succeeds it is
+    ///   called without an error and the delegate is notified of reactions changes.
+    func loadNextReactions(
+        limit: Int = 25,
+        completion: ((Error?) -> Void)? = nil
+    ) {
+        if hasLoadedAllReactions {
+            callback { completion?(nil) }
+            return
+        }
+
+        // Note: For now we don't reuse the `loadReactions()` function to avoid deadlock on the callbackQueue.
+        messageUpdater.loadReactions(
+            cid: cid,
+            messageId: messageId,
+            pagination: Pagination(pageSize: limit, offset: reactions.count)
+        ) { result in
+            switch result {
+            case let .success(reactions):
+                let currentReactions = Set(self.reactions)
+                let newReactionsWithoutDuplicates = reactions.filter {
+                    !currentReactions.contains($0)
+                }
+
+                self.reactions += newReactionsWithoutDuplicates
+
+                if reactions.count < limit {
+                    self.hasLoadedAllReactions = true
+                }
+
+                self.callback {
+                    completion?(nil)
+                }
+
+            case let .failure(error):
+                self.callback {
+                    completion?(error)
+                }
+            }
+        }
+    }
+
+    /// Loads reactions from the backend given an offset and a limit.
+    ///
+    /// - Parameters:
+    ///   - limit: The reactions page size.
+    ///   - offset: The starting position from the desired range to be fetched.
+    ///   - completion: The completion is called when the network request is finished.
+    ///   It is called with the reactions if the request succeeds or error if the request fails.
+    func loadReactions(
+        limit: Int,
+        offset: Int = 0,
+        completion: @escaping (Result<[ChatMessageReaction], Error>) -> Void
+    ) {
+        messageUpdater.loadReactions(
+            cid: cid,
+            messageId: messageId,
+            pagination: Pagination(pageSize: limit, offset: offset)
+        ) { result in
+            switch result {
+            case let .success(reactions):
+                self.callback { completion(.success(reactions)) }
+            case let .failure(error):
+                self.callback { completion(.failure(error)) }
+            }
         }
     }
     
@@ -524,12 +619,17 @@ public protocol ChatMessageControllerDelegate: DataControllerStateDelegate {
     
     /// The controller observed changes in the replies of the observed `ChatMessage`.
     func messageController(_ controller: ChatMessageController, didChangeReplies changes: [ListChange<ChatMessage>])
+
+    /// The controller observed changes in the reactions of the observed `ChatMessage`.
+    func messageController(_ controller: ChatMessageController, didChangeReactions reactions: [ChatMessageReaction])
 }
 
 public extension ChatMessageControllerDelegate {
     func messageController(_ controller: ChatMessageController, didChangeMessage change: EntityChange<ChatMessage>) {}
     
     func messageController(_ controller: ChatMessageController, didChangeReplies changes: [ListChange<ChatMessage>]) {}
+
+    func messageController(_ controller: ChatMessageController, didChangeReactions reactions: [ChatMessageReaction]) {}
 }
 
 /// `ChatMessageControllerDelegate` uses this protocol to communicate changes to its delegate.

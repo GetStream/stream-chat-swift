@@ -179,8 +179,8 @@ extension MessageReactionDTO {
             score: Int(score),
             createdAt: createdAt ?? .init(),
             updatedAt: updatedAt ?? .init(),
-            extraData: extraData,
-            author: user.asModel()
+            author: user.asModel(),
+            extraData: extraData
         )
     }
 }

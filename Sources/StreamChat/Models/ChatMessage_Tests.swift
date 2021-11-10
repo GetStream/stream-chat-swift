@@ -6,7 +6,7 @@
 import XCTest
 
 final class ChatMessage_Tests: XCTestCase {
-    func test_isPinnedShouldReturnTrue() {
+    func test_isPinned_whenHasPinDetails_shouldReturnTrue() {
         let message = ChatMessage.mock(
             id: .anonymous,
             cid: .unique,
@@ -22,7 +22,7 @@ final class ChatMessage_Tests: XCTestCase {
         XCTAssertTrue(message.isPinned)
     }
     
-    func test_isPinnedShouldReturnFalse() {
+    func test_isPinned_whenEmptyPinDetails_shouldReturnFalse() {
         let message = ChatMessage.mock(
             id: .anonymous,
             cid: .unique,
@@ -32,6 +32,22 @@ final class ChatMessage_Tests: XCTestCase {
         )
         
         XCTAssertFalse(message.isPinned)
+    }
+
+    func test_isPinned_whenEmptyExpireDate_shouldReturnTrue() {
+        let message = ChatMessage.mock(
+            id: .anonymous,
+            cid: .unique,
+            text: "Text",
+            author: ChatUser.mock(id: .anonymous),
+            pinDetails: MessagePinDetails(
+                pinnedAt: Date.distantPast,
+                pinnedBy: ChatUser.mock(id: .anonymous),
+                expiresAt: nil
+            )
+        )
+
+        XCTAssertTrue(message.isPinned)
     }
     
     func test_attachmentWithId_whenAttachmentDoesNotExist_returnsNil() {
@@ -87,5 +103,17 @@ final class ChatMessage_Tests: XCTestCase {
             attachment?.attachment(payloadType: ImageAttachmentPayload.self),
             targetAttachment
         )
+    }
+
+    func test_totalReactionsCount() {
+        let message = ChatMessage.mock(
+            id: .anonymous,
+            cid: .unique,
+            text: "Text",
+            author: ChatUser.mock(id: .anonymous),
+            reactionCounts: ["like": 2, "super-like": 3]
+        )
+
+        XCTAssertEqual(message.totalReactionsCount, 5)
     }
 }

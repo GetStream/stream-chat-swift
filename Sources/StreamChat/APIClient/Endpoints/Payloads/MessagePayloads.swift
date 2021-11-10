@@ -75,6 +75,7 @@ class MessagePayload: Decodable {
     let latestReactions: [MessageReactionPayload]
     let ownReactions: [MessageReactionPayload]
     let reactionScores: [MessageReactionType: Int]
+    let reactionCounts: [MessageReactionType: Int]
     let attachments: [MessageAttachmentPayload]
     let isSilent: Bool
     let isShadowed: Bool
@@ -110,9 +111,15 @@ class MessagePayload: Decodable {
         replyCount = try container.decode(Int.self, forKey: .replyCount)
         latestReactions = try container.decode([MessageReactionPayload].self, forKey: .latestReactions)
         ownReactions = try container.decode([MessageReactionPayload].self, forKey: .ownReactions)
+
         reactionScores = try container
             .decodeIfPresent([String: Int].self, forKey: .reactionScores)?
             .mapKeys { MessageReactionType(rawValue: $0) } ?? [:]
+
+        reactionCounts = try container
+            .decodeIfPresent([String: Int].self, forKey: .reactionCounts)?
+            .mapKeys { MessageReactionType(rawValue: $0) } ?? [:]
+
         // Because attachment objects can be malformed, we wrap those into `OptionalDecodable`
         // and if decoding of those fail, it assignes `nil` instead of throwing whole MessagePayload away.
         attachments = try container.decode([OptionalDecodable].self, forKey: .attachments)
@@ -155,6 +162,7 @@ class MessagePayload: Decodable {
         latestReactions: [MessageReactionPayload] = [],
         ownReactions: [MessageReactionPayload] = [],
         reactionScores: [MessageReactionType: Int],
+        reactionCounts: [MessageReactionType: Int],
         isSilent: Bool,
         isShadowed: Bool,
         attachments: [MessageAttachmentPayload],
@@ -183,6 +191,7 @@ class MessagePayload: Decodable {
         self.latestReactions = latestReactions
         self.ownReactions = ownReactions
         self.reactionScores = reactionScores
+        self.reactionCounts = reactionCounts
         self.isSilent = isSilent
         self.isShadowed = isShadowed
         self.attachments = attachments
@@ -272,6 +281,10 @@ struct MessageRequestBody: Encodable {
 /// An object describing the message replies JSON payload.
 struct MessageRepliesPayload: Decodable {
     let messages: [MessagePayload]
+}
+
+struct MessageReactionsPayload: Decodable {
+    let reactions: [MessageReactionPayload]
 }
 
 // TODO: Command???

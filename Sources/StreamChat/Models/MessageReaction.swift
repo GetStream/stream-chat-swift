@@ -19,9 +19,9 @@ public struct ChatMessageReaction: Hashable {
     /// The date the reaction was last updated.
     public let updatedAt: Date
     
-    /// Custom data
-    public let extraData: [String: RawJSON]
-    
     /// The author.
     public let author: ChatUser
+
+    /// Custom data
+    public let extraData: [String: RawJSON]
 }

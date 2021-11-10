@@ -105,28 +105,29 @@ open class ChatMessageActionsTransitionController: NSObject, UIViewControllerTra
         
         let blurView = UIVisualEffectView()
         blurView.frame = transitionContext.finalFrame(for: toVC)
-        
-        let reactionsSnapshot: UIView? = {
-            guard let view = toVC.reactionsController?.view else { return nil }
+
+        let makeSnapshot: (UIViewController?) -> UIView? = { viewController in
+            guard let view = viewController?.view else { return nil }
             
             let snapshot = view.snapshotView(afterScreenUpdates: true)
             snapshot?.frame = view.superview?.convert(view.frame, to: nil) ?? .zero
             snapshot?.transform = .init(scaleX: 0, y: 0)
             snapshot?.alpha = 0.0
             return snapshot
-        }()
+        }
         
-        let actionsSnapshot: UIView? = {
-            guard let view = toVC.actionsController.view else { return nil }
-            
-            let snapshot = view.snapshotView(afterScreenUpdates: true)
-            snapshot?.frame = view.superview?.convert(view.frame, to: nil) ?? .zero
-            snapshot?.transform = .init(scaleX: 0, y: 0)
-            snapshot?.alpha = 0.0
-            return snapshot
-        }()
+        let reactionsSnapshot: UIView? = makeSnapshot(toVC.reactionsController)
+        let actionsSnapshot: UIView? = makeSnapshot(toVC.actionsController)
+        let reactionAuthorsSnapshot: UIView? = makeSnapshot(toVC.reactionAuthorsController)
         
-        let transitionSubviews = [blurView, reactionsSnapshot, actionsSnapshot, messageView].compactMap { $0 }
+        let transitionSubviews = [
+            blurView,
+            reactionsSnapshot,
+            actionsSnapshot,
+            reactionAuthorsSnapshot,
+            messageView
+        ].compactMap { $0 }
+
         transitionSubviews.forEach(transitionContext.containerView.addSubview)
         messageView.mainContainer.layoutMargins = originalMessageContentView.mainContainer.layoutMargins
 
@@ -142,6 +143,12 @@ open class ChatMessageActionsTransitionController: NSObject, UIViewControllerTra
                 self.impactFeedbackGenerator.impactOccurred()
             }
         )
+
+        let showSnapshot: (UIView?) -> Void = { view in
+            view?.transform = .identity
+            view?.alpha = 1.0
+        }
+
         UIView.animate(
             withDuration: 0.8 * duration,
             delay: 0.2 * duration,
@@ -155,11 +162,9 @@ open class ChatMessageActionsTransitionController: NSObject, UIViewControllerTra
                     to: nil
                 ) ?? .zero
                 
-                actionsSnapshot?.transform = .identity
-                actionsSnapshot?.alpha = 1.0
-                
-                reactionsSnapshot?.transform = .identity
-                reactionsSnapshot?.alpha = 1.0
+                showSnapshot(actionsSnapshot)
+                showSnapshot(reactionsSnapshot)
+                showSnapshot(reactionAuthorsSnapshot)
                 
                 blurView.effect = (toVC.blurView as? UIVisualEffectView)?.effect
             },
@@ -185,22 +190,18 @@ open class ChatMessageActionsTransitionController: NSObject, UIViewControllerTra
         let blurView = UIVisualEffectView()
         blurView.effect = (fromVC.blurView as? UIVisualEffectView)?.effect
         blurView.frame = transitionContext.finalFrame(for: toVC)
-        
-        let reactionsSnapshot: UIView? = {
-            guard let view = fromVC.reactionsController?.view else { return nil }
+
+        let makeSnapshot: (UIViewController?) -> UIView? = { viewController in
+            guard let view = viewController?.view else { return nil }
             
             let snapshot = view.snapshotView(afterScreenUpdates: true)
             snapshot?.frame = view.superview?.convert(view.frame, to: nil) ?? .zero
             return snapshot
-        }()
+        }
         
-        let actionsSnapshot: UIView? = {
-            guard let view = fromVC.actionsController.view else { return nil }
-            
-            let snapshot = view.snapshotView(afterScreenUpdates: true)
-            snapshot?.frame = view.superview?.convert(view.frame, to: nil) ?? .zero
-            return snapshot
-        }()
+        let reactionsSnapshot: UIView? = makeSnapshot(fromVC.reactionsController)
+        let actionsSnapshot: UIView? = makeSnapshot(fromVC.actionsController)
+        let reactionAuthorsSnapshot: UIView? = makeSnapshot(fromVC.reactionAuthorsController)
         
         let messageView = fromVC.messageContentView!
         let frame = fromVC.messageContentContainerView.convert(messageView.frame, to: transitionContext.containerView)
@@ -208,12 +209,18 @@ open class ChatMessageActionsTransitionController: NSObject, UIViewControllerTra
         messageView.frame = frame
         messageView.translatesAutoresizingMaskIntoConstraints = true
         
-        let transitionSubviews = [blurView, reactionsSnapshot, actionsSnapshot, messageView].compactMap { $0 }
+        let transitionSubviews = [blurView, reactionsSnapshot, actionsSnapshot, reactionAuthorsSnapshot, messageView]
+            .compactMap { $0 }
         transitionSubviews.forEach(transitionContext.containerView.addSubview)
         
         fromVC.view.isHidden = true
         
         selectedMessageCell?.messageContentView?.isHidden = true
+
+        let hideView: (UIView?) -> Void = { view in
+            view?.transform = CGAffineTransform(scaleX: 0.01, y: 0.01)
+            view?.alpha = 0.0
+        }
         
         let duration = transitionDuration(using: transitionContext)
         UIView.animate(
@@ -223,15 +230,12 @@ open class ChatMessageActionsTransitionController: NSObject, UIViewControllerTra
                 if let frame = self.selectedMessageContentViewFrame {
                     messageView.frame = frame
                 } else {
-                    messageView.transform = CGAffineTransform(scaleX: 0.01, y: 0.01)
-                    messageView.alpha = 0.0
+                    hideView(messageView)
                 }
                 
-                actionsSnapshot?.transform = CGAffineTransform(scaleX: 0.01, y: 0.01)
-                actionsSnapshot?.alpha = 0.0
-                
-                reactionsSnapshot?.transform = CGAffineTransform(scaleX: 0.01, y: 0.01)
-                reactionsSnapshot?.alpha = 0.0
+                hideView(actionsSnapshot)
+                hideView(reactionsSnapshot)
+                hideView(reactionAuthorsSnapshot)
                 
                 blurView.effect = nil
             },

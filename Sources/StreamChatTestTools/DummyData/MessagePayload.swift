@@ -38,7 +38,9 @@ extension MessagePayload {
         pinnedAt: Date? = nil,
         pinExpires: Date? = nil,
         isSilent: Bool = false,
-        isShadowed: Bool = false
+        isShadowed: Bool = false,
+        reactionScores: [MessageReactionType: Int] = ["like": 1],
+        reactionCounts: [MessageReactionType: Int] = ["like": 1]
     ) -> MessagePayload {
         .init(
             id: messageId,
@@ -61,7 +63,8 @@ extension MessagePayload {
             extraData: extraData,
             latestReactions: latestReactions,
             ownReactions: ownReactions,
-            reactionScores: ["like": 1],
+            reactionScores: reactionScores,
+            reactionCounts: reactionCounts,
             isSilent: isSilent,
             isShadowed: isShadowed,
             attachments: attachments,

@@ -83,6 +83,22 @@ final class MessageEndpoints_Tests: XCTestCase {
         // Assert endpoint is built correctly
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
     }
+
+    func test_loadReactions_buildsCorrectly() {
+        let messageId: MessageId = "ID"
+        let pagination: Pagination = .init(pageSize: 10)
+
+        let endpoint: Endpoint<MessageReactionsPayload> = .loadReactions(
+            messageId: messageId,
+            pagination: pagination
+        )
+
+        XCTAssertEqual(endpoint.path, "messages/ID/reactions")
+        XCTAssertEqual(endpoint.method, .get)
+        XCTAssertTrue(endpoint.queryItems == nil)
+        XCTAssertEqual(endpoint.requiresConnectionId, false)
+        XCTAssertEqual(endpoint.body?.asAnyEncodable, pagination.asAnyEncodable)
+    }
     
     func test_addReaction_buildsCorrectly() {
         let messageId: MessageId = .unique

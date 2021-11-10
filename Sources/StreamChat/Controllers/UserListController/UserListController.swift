@@ -6,18 +6,18 @@ import CoreData
 import Foundation
 
 extension ChatClient {
-    /// Creates a new `_ChatUserListController` with the provided user query.
+    /// Creates a new `ChatUserListController` with the provided user query.
     ///
     /// - Parameter query: The query specify the filter and sorting of the users the controller should fetch.
     ///
-    /// - Returns: A new instance of `_ChatUserListController`.
+    /// - Returns: A new instance of `ChatUserListController`.
     ///
     public func userListController(query: UserListQuery = .init()) -> ChatUserListController {
         .init(query: query, client: self)
     }
 }
 
-/// `_ChatUserListController` is a controller class which allows observing a list of chat users based on the provided query.
+/// `ChatUserListController` is a controller class which allows observing a list of chat users based on the provided query.
 public class ChatUserListController: DataController, DelegateCallable, DataStoreProvider {
     /// The query specifying and filtering the list of users.
     public let query: UserListQuery

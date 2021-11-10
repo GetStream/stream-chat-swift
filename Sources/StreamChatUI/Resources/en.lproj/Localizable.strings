@@ -73,3 +73,5 @@
 "dates.time-ago-weeks-plural" = "last seen %d weeks ago";
 "dates.time-ago-months-singular" = "last seen one month ago";
 "dates.time-ago-months-plural" = "last seen %d months ago";
+
+"reaction.authors.cell.you" = "You";

@@ -461,6 +461,19 @@ open class ChatMessageListVC:
             .dispatchEphemeralMessageAction(action)
     }
 
+    open func messageContentViewDidTapOnReactionsView(_ indexPath: IndexPath?) {
+        guard let indexPath = indexPath,
+              let cell = listView.cellForRow(at: indexPath) as? ChatMessageCell,
+              let messageContentView = cell.messageContentView else {
+            return
+        }
+
+        router.showReactionsPopUp(
+            messageContentView: messageContentView,
+            client: client
+        )
+    }
+
     // MARK: - UIGestureRecognizerDelegate
 
     open func gestureRecognizer(

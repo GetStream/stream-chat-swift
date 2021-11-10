@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### 🐞 Fixed
 - Using Xcode 13 & CocoaPods should load all the required assets. [#1602](https://github.com/GetStream/stream-chat-swift/pull/1602)
 - Make the NukeImageLoader initialiser accessible [#1600](https://github.com/GetStream/stream-chat-swift/issues/1600)
+- Fix message not pinned when there is no expiration date [#1603](https://github.com/GetStream/stream-chat-swift/issues/1603)
 
 ### ✅ Added
 - Added a new `make` API within our ChatChannelListVC so it's easier to instantiate, this eliminates the need to setup within the ViewController lifecycle [#1597](https://github.com/GetStream/stream-chat-swift/issues/1597)
@@ -24,6 +25,7 @@ _November 03, 2021_
 
 ### ✅ Added
 - Added Flag message action [#1583](https://github.com/GetStream/stream-chat-swift/issues/1583)
+- Add view to show all reactions of a message when tapping reactions [#1582](https://github.com/GetStream/stream-chat-swift/pull/1582)
 - Added handling of "shadowed" messages (messages from shadow banned users). The behavior is controlled by `ChatClientConfig.shouldShowShadowedMessages` and defaults to `false`. [#1591](https://github.com/GetStream/stream-chat-swift/issues/1591)
 - Add message actions transition controller to `Components` [#1596](https://github.com/GetStream/stream-chat-swift/issues/1596)
 

@@ -5,6 +5,7 @@
 import StreamChat
 import UIKit
 
+/// The view that shows the list of reactions attached to the message.
 open class ChatMessageReactionsView: _View, ThemeProvider {
     public var content: Content? {
         didSet { updateContentIfNeeded() }
