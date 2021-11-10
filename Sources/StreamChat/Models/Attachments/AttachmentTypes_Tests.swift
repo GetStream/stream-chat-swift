@@ -28,6 +28,14 @@ class AttachmentTypes_Tests: XCTestCase {
         }
     }
     
+    func test_attachmentFileType_isUnaffected_byUppercase() {
+        let types = AttachmentFileType.allCases
+        
+        for type in types {
+            XCTAssertEqual(type, AttachmentFileType(ext: type.rawValue.uppercased()))
+        }
+    }
+    
     func test_action_encodedAndDecodedCorrectly() throws {
         let action: AttachmentAction = .init(
             name: .unique,
