@@ -228,11 +228,13 @@ open class ChatMessageListView: UITableView, Customizable, ComponentsProvider {
                 cellBeforeUpdateReuseIdentifier == cellAfterUpdateReuseIdentifier,
                 cellBeforeUpdateMessage?.id == cellAfterUpdateMessage?.id,
                 cellBeforeUpdateMessage?.type == cellAfterUpdateMessage?.type,
-                cellBeforeUpdateMessage?.deletedAt == cellAfterUpdateMessage?.deletedAt {
+                cellBeforeUpdateMessage?.deletedAt == cellAfterUpdateMessage?.deletedAt,
+                cellBeforeUpdateMessage?.text == cellAfterUpdateMessage?.text {
                 // If identifiers and messages match we can simply update the current cell with new content
                 cellBeforeUpdate?.messageContentView?.content = cellAfterUpdateMessage
             } else {
-                // If identifiers does not match we do a reload to let the table view dequeue another cell
+                // If identifiers do not match or the cell size will need to change, ex: Editing text
+                // we do a reload to let the table view dequeue another cell
                 // with the layout fitting the updated message.
                 indexPathToReload.append(indexPath)
             }
