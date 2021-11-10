@@ -335,8 +335,10 @@ class MessageUpdater: Worker {
                         return
                     }
 
-                    self.database.write { _ in
-                        reaction.localState = nil
+                    self.database.write { session in
+                        if let reaction = session.reaction(messageId: messageId, userId: reaction.user.id, type: type) {
+                            reaction.localState = nil
+                        }
                     }
                 }
             completion?(error)
