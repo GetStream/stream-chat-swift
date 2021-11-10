@@ -172,19 +172,21 @@ open class ChatMessageListView: UITableView, Customizable, ComponentsProvider {
         with changes: [ListChange<ChatMessage>],
         completion: (() -> Void)? = nil
     ) {
+        defer {
+            completion?()
+        }
+
         guard let _ = collectionUpdatesMapper.mapToSetsOfIndexPaths(
             changes: changes,
             onConflict: {
                 reloadData()
             }
         ) else {
-            completion?()
             return
         }
 
         if changes.count > 1 {
             reloadData()
-            completion?()
             return
         }
 
@@ -199,7 +201,6 @@ open class ChatMessageListView: UITableView, Customizable, ComponentsProvider {
                         // +1 instead of -1 because the message list is inverted
                         let previousIndex = IndexPath(row: index.row + 1, section: index.section)
                         self.reloadRows(at: [previousIndex], with: .none)
-                        completion?()
                     }
                 }
 
@@ -211,15 +212,12 @@ open class ChatMessageListView: UITableView, Customizable, ComponentsProvider {
 
             case let .move(_, fromIndex: fromIndex, toIndex: toIndex):
                 self.moveRow(at: fromIndex, to: toIndex)
-                completion?()
 
             case let .update(_, index: index):
                 self.reloadRows(at: [index], with: .automatic)
-                completion?()
 
             case .remove:
                 self.reloadData()
-                completion?()
             }
         }
     }
