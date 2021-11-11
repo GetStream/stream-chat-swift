@@ -360,6 +360,16 @@ extension DatabaseSession {
             return
         }
 
+        let messageDoesNotExist = MessageDTO.load(id: message.id, context: context) == nil
+        
+        let eventsThatCreateMessages: Set<EventType> = [
+            .channelUpdated, .messageNew, .notificationMessageNew
+        ]
+
+        if messageDoesNotExist && !eventsThatCreateMessages.contains(payload.eventType) {
+            return
+        }
+        
         try saveMessage(payload: message, channelDTO: channelDTO)
     }
 }

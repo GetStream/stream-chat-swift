@@ -103,9 +103,11 @@ class EventDataProcessorMiddleware_Tests: XCTestCase {
     func tests_middleware_handlesReactionUpdated() throws {
         let cid: ChannelId = .unique
         let messageId: MessageId = .unique
-
+        let messagePayload: MessagePayload = .dummy(messageId: messageId, authorUserId: .unique)
+        
         try database.writeSynchronously { session in
             try session.saveChannel(payload: .dummy(cid: cid), query: nil)
+            try session.saveMessage(payload: messagePayload, for: cid)
         }
 
         let user = UserPayload.dummy(userId: .unique)
@@ -153,9 +155,11 @@ class EventDataProcessorMiddleware_Tests: XCTestCase {
     func tests_middleware_handlesReactionNewEvent() throws {
         let cid: ChannelId = .unique
         let messageId: MessageId = .unique
+        let messagePayload: MessagePayload = .dummy(messageId: messageId, authorUserId: .unique)
 
         try database.writeSynchronously { session in
             try session.saveChannel(payload: .dummy(cid: cid), query: nil)
+            try session.saveMessage(payload: messagePayload, for: cid)
         }
 
         // Create reaction payload.
