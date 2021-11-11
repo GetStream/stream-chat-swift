@@ -90,7 +90,8 @@ class ReactionEventsIntegration_Tests: XCTestCase {
         )
         
         XCTAssertTrue(
-            client.databaseContainer.viewContext.message(id: "0e042a9c-d648-4a28-8ed6-dbdb2b7b4779")?.reactions.isEmpty ?? false
+            client.databaseContainer.viewContext.message(id: "0e042a9c-d648-4a28-8ed6-dbdb2b7b4779")?.latestReactions
+                .isEmpty ?? false
         )
         
         let unwrappedEvent = try XCTUnwrap(event)
@@ -100,7 +101,7 @@ class ReactionEventsIntegration_Tests: XCTestCase {
             Assert.willBeFalse(
                 self.client.databaseContainer.viewContext.message(
                     id: "0e042a9c-d648-4a28-8ed6-dbdb2b7b4779"
-                )?.reactions.isEmpty ?? true
+                )?.latestReactions.isEmpty ?? true
             )
         }
     }
@@ -131,7 +132,7 @@ class ReactionEventsIntegration_Tests: XCTestCase {
         XCTAssertEqual(
             client.databaseContainer.viewContext.message(
                 id: "0e042a9c-d648-4a28-8ed6-dbdb2b7b4779"
-            )?.reactions.first?.updatedAt?.description,
+            )?.asModel().latestReactions.first?.updatedAt.description,
             lastUpdateMessageTime
         )
         
@@ -142,7 +143,7 @@ class ReactionEventsIntegration_Tests: XCTestCase {
             Assert.willBeEqual(
                 self.client.databaseContainer.viewContext.message(
                     id: "0e042a9c-d648-4a28-8ed6-dbdb2b7b4779"
-                )?.reactions.first?.updatedAt?.description,
+                )?.asModel().latestReactions.first?.updatedAt.description,
                 "2020-07-20 17:09:56 +0000"
             )
         }
@@ -164,7 +165,8 @@ class ReactionEventsIntegration_Tests: XCTestCase {
         )
         
         XCTAssertTrue(
-            client.databaseContainer.viewContext.message(id: "0e042a9c-d648-4a28-8ed6-dbdb2b7b4779")?.reactions.isEmpty ?? false
+            client.databaseContainer.viewContext.message(id: "0e042a9c-d648-4a28-8ed6-dbdb2b7b4779")?.latestReactions
+                .isEmpty ?? false
         )
         
         let unwrappedEvent = try XCTUnwrap(event)
@@ -174,7 +176,7 @@ class ReactionEventsIntegration_Tests: XCTestCase {
             Assert.willBeFalse(
                 self.client.databaseContainer.viewContext.message(
                     id: "0e042a9c-d648-4a28-8ed6-dbdb2b7b4779"
-                )?.reactions.isEmpty ?? true
+                )?.latestReactions.isEmpty ?? true
             )
         }
     }

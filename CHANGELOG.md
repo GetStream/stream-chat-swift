@@ -9,7 +9,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Fix message not pinned when there is no expiration date [#1603](https://github.com/GetStream/stream-chat-swift/issues/1603)
 
 ### ✅ Added
-- Added a new `make` API within our ChatChannelListVC so it's easier to instantiate, this eliminates the need to setup within the ViewController lifecycle [#1597](https://github.com/GetStream/stream-chat-swift/issues/1597)
+- Added a new `make` API within our ChatChannelListVC so it's easier to instantiate, this eliminates the need to setup within the ViewController lifecycle [#1597](https://github.com/GetStream/stream-chat-swift/issues/1597)A
+- Optimistic Reaction UI, adding/removing reactions can be done offline and API calls are performed asynchronously
+- Automatically retry failed API calls for adding and removing reactions 
 
 # [4.3.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.3.0)
 _November 03, 2021_

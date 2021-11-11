@@ -25,14 +25,16 @@ class MessageDTO: NSManagedObject {
     @NSManaged var isShadowed: Bool
     @NSManaged var reactionScores: [String: Int]
     @NSManaged var reactionCounts: [String: Int]
-    
+
+    @NSManaged var latestReactions: [String]
+    @NSManaged var ownReactions: [String]
+
     @NSManaged var user: UserDTO
     @NSManaged var mentionedUsers: Set<UserDTO>
     @NSManaged var threadParticipants: NSOrderedSet
     @NSManaged var channel: ChannelDTO?
     @NSManaged var replies: Set<MessageDTO>
     @NSManaged var flaggedBy: CurrentUserDTO?
-    @NSManaged var reactions: Set<MessageReactionDTO>
     @NSManaged var attachments: Set<AttachmentDTO>
     @NSManaged var quotedMessage: MessageDTO?
     @NSManaged var searches: Set<MessageSearchQueryDTO>
@@ -461,10 +463,25 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         }
         
         dto.channel = channelDTO
-        
-        let reactions = payload.latestReactions + payload.ownReactions
-        try reactions.forEach { try saveReaction(payload: $0) }
-        
+
+        dto.latestReactions = payload.latestReactions.compactMap {
+            guard let reactionDTO = try? saveReaction(payload: $0, message: dto) else {
+                return nil
+            }
+            return MessageReactionDTO.createId(dto: reactionDTO)
+        }
+
+        // the .filter part is a workaround an API bug, some WS events contain
+        // the message.own_reactions field populated with reactions from other users
+        if payload.ownReactions.filter({ currentUser?.user.id != $0.user.id }).isEmpty {
+            dto.ownReactions = payload.ownReactions.compactMap {
+                guard let reactionDTO = try? saveReaction(payload: $0, message: dto) else {
+                    return nil
+                }
+                return MessageReactionDTO.createId(dto: reactionDTO)
+            }
+        }
+
         let attachments: Set<AttachmentDTO> = try Set(
             payload.attachments.enumerated().map { index, attachment in
                 let id = AttachmentId(cid: cid, messageId: payload.id, index: index)
@@ -473,7 +490,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
             }
         )
         dto.attachments = attachments
-        
+
         if let parentMessageId = payload.parentId,
            let parentMessageDTO = MessageDTO.load(id: parentMessageId, context: self) {
             parentMessageDTO.replies.insert(dto)
@@ -585,10 +602,16 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         result.dto.score = Int64(score)
         result.dto.extraData = try JSONEncoder.default.encode(extraData)
 
-        if message.reactions.filter({ MessageReactionDTO.createId(dto: $0) == MessageReactionDTO.createId(dto: result.dto) })
-            .isEmpty {
-            message.reactions.insert(result.dto)
+        let reactionId = MessageReactionDTO.createId(dto: result.dto)
+
+        if message.latestReactions.filter({ $0 == reactionId }).isEmpty {
+            message.latestReactions.append(reactionId)
         }
+
+        if message.ownReactions.filter({ $0 == reactionId }).isEmpty {
+            message.ownReactions.append(reactionId)
+        }
+
         return result.dto
     }
 
@@ -618,8 +641,10 @@ extension NSManagedObjectContext: MessageDatabaseSession {
             return nil
         }
 
-        message.reactions = message.reactions
-            .filter { MessageReactionDTO.createId(dto: reaction) != MessageReactionDTO.createId(dto: $0) }
+        let reactionId = MessageReactionDTO.createId(dto: reaction)
+
+        message.latestReactions = message.latestReactions.filter { $0 != reactionId }
+        message.ownReactions = message.ownReactions.filter { $0 != reactionId }
 
         guard let reactionScore = message.reactionScores.removeValue(forKey: type.rawValue), reactionScore > 1 else {
             return reaction
@@ -712,26 +737,29 @@ private extension ChatMessage {
         } else {
             pinDetails = nil
         }
-        
+
         if let currentUser = context.currentUser {
             isSentByCurrentUser = currentUser.user.id == dto.user.id
-            
-            if dto.reactions.isEmpty {
-                $_currentUserReactions = ({ [] }, nil)
-            } else {
-                $_currentUserReactions = ({
-                    Set(
-                        MessageReactionDTO
-                            .loadReactions(for: dto.id, authoredBy: currentUser.user.id, context: context)
-                            .map { $0.asModel() }
-                    )
-                }, dto.managedObjectContext)
-            }
+            $_currentUserReactions = ({
+                Set(
+                    MessageReactionDTO
+                        .loadReactions(ids: dto.ownReactions, context: context)
+                        .map { $0.asModel() }
+                )
+            }, dto.managedObjectContext)
         } else {
             isSentByCurrentUser = false
             $_currentUserReactions = ({ [] }, nil)
         }
         
+        $_latestReactions = ({
+            Set(
+                MessageReactionDTO
+                    .loadReactions(ids: dto.latestReactions, context: context)
+                    .map { $0.asModel() }
+            )
+        }, dto.managedObjectContext)
+
         if dto.threadParticipants.array.isEmpty {
             $_threadParticipants = ({ [] }, nil)
         } else {
@@ -761,19 +789,7 @@ private extension ChatMessage {
                     .map(ChatMessage.init)
             }, dto.managedObjectContext)
         }
-        
-        if dto.reactions.isEmpty {
-            $_latestReactions = ({ [] }, nil)
-        } else {
-            $_latestReactions = ({
-                Set(
-                    MessageReactionDTO
-                        .loadLatestReactions(for: dto.id, limit: 10, context: context)
-                        .map { $0.asModel() }
-                )
-            }, dto.managedObjectContext)
-        }
-        
+
         $_quotedMessage = ({ dto.quotedMessage?.asModel() }, dto.managedObjectContext)
     }
 }

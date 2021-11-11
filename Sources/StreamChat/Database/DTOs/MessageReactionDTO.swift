@@ -59,37 +59,39 @@ extension MessageReactionDTO {
         ])
     }()
 
-    static func loadReactions(
-        for messageId: MessageId,
-        authoredBy userId: UserId,
-        context: NSManagedObjectContext
-    ) -> [MessageReactionDTO] {
-        let request = NSFetchRequest<MessageReactionDTO>(entityName: MessageReactionDTO.entityName)
-        request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
-            NSPredicate(format: "message.id == %@", messageId),
-            NSPredicate(format: "user.id == %@", userId),
-            Self.notLocallyDeletedPredicates
-        ])
-        
-        return (try? context.fetch(request)) ?? []
-    }
+    static func loadReactions(ids: [String], context: NSManagedObjectContext) -> [MessageReactionDTO] {
+        guard !ids.isEmpty else {
+            return []
+        }
 
-    static func loadLatestReactions(
-        for messageId: MessageId,
-        limit: Int,
-        context: NSManagedObjectContext
-    ) -> [MessageReactionDTO] {
         let request = NSFetchRequest<MessageReactionDTO>(entityName: MessageReactionDTO.entityName)
         request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
-            NSPredicate(format: "message.id == %@", messageId),
+            NSPredicate(format: "id IN %@", ids),
             Self.notLocallyDeletedPredicates
         ])
-        request.sortDescriptors = [NSSortDescriptor(keyPath: \MessageReactionDTO.updatedAt, ascending: false)]
-        request.fetchLimit = limit
-        
         return (try? context.fetch(request)) ?? []
     }
     
+    static func loadOrCreate(
+        message: MessageDTO,
+        type: MessageReactionType,
+        user: UserDTO,
+        context: NSManagedObjectContext
+    ) throws -> (dto: MessageReactionDTO, created: Bool) {
+        let userId = user.id
+
+        if let existing = Self.load(userId: userId, messageId: message.id, type: type, context: context) {
+            return (existing, false)
+        }
+
+        let new = NSEntityDescription.insertNewObject(forEntityName: Self.entityName, into: context) as! MessageReactionDTO
+        new.id = createId(userId: userId, messageId: message.id, type: type)
+        new.type = type.rawValue
+        new.message = message
+        new.user = user
+        return (new, true)
+    }
+
     static func loadOrCreate(
         messageId: MessageId,
         type: MessageReactionType,
@@ -106,18 +108,22 @@ extension MessageReactionDTO {
             throw ClientError.MessageDoesNotExist(messageId: messageId)
         }
 
-        let new = NSEntityDescription.insertNewObject(forEntityName: Self.entityName, into: context) as! MessageReactionDTO
-        new.id = createId(userId: userId, messageId: messageId, type: type)
-        new.type = type.rawValue
-        new.message = message
-        new.user = user
-        return (new, true)
+        return try loadOrCreate(message: message, type: type, user: user, context: context)
     }
 }
 
 extension NSManagedObjectContext {
     func reaction(messageId: MessageId, userId: UserId, type: MessageReactionType) -> MessageReactionDTO? {
         MessageReactionDTO.load(userId: userId, messageId: messageId, type: type, context: self)
+    }
+
+    func populateFieldsBeforeSave(dto: MessageReactionDTO, payload: MessageReactionPayload) throws {
+        dto.score = Int64(clamping: payload.score)
+        dto.createdAt = payload.createdAt
+        dto.updatedAt = payload.updatedAt
+        dto.extraData = try JSONEncoder.default.encode(payload.extraData)
+        dto.localState = nil
+        dto.version = nil
     }
 
     @discardableResult
@@ -130,17 +136,27 @@ extension NSManagedObjectContext {
             user: try saveUser(payload: payload.user),
             context: self
         )
-        
-        let dto = result.dto
-        dto.score = Int64(clamping: payload.score)
-        dto.createdAt = payload.createdAt
-        dto.updatedAt = payload.updatedAt
-        dto.extraData = try JSONEncoder.default.encode(payload.extraData)
-        dto.localState = nil
-        dto.version = nil
-        return dto
+
+        try populateFieldsBeforeSave(dto: result.dto, payload: payload)
+        return result.dto
     }
-    
+
+    @discardableResult
+    func saveReaction(
+        payload: MessageReactionPayload,
+        message: MessageDTO
+    ) throws -> MessageReactionDTO {
+        let result = try MessageReactionDTO.loadOrCreate(
+            message: message,
+            type: payload.type,
+            user: try saveUser(payload: payload.user),
+            context: self
+        )
+
+        try populateFieldsBeforeSave(dto: result.dto, payload: payload)
+        return result.dto
+    }
+
     func delete(reaction: MessageReactionDTO) {
         delete(reaction)
     }
