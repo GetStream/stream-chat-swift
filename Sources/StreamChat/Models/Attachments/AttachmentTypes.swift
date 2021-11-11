@@ -215,6 +215,10 @@ public enum AttachmentFileType: String, Codable, Equatable, CaseIterable {
     ///
     /// - Parameter ext: a file extension.
     public init(ext: String) {
+        // We've seen that iOS sometimes uppercases the filename (and also extension)
+        // which breaks our file type detection code.
+        // We lowercase it for extra safety
+        let ext = ext.lowercased()
         if ext == "jpg" {
             self = .jpeg
             return

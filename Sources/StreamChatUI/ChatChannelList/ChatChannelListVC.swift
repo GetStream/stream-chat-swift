@@ -286,12 +286,12 @@ open class ChatChannelListVC: _ViewController,
         didChangeChannels changes: [ListChange<ChatChannel>]
     ) {
         guard let indices = collectionUpdatesMapper.mapToSetsOfIndexPaths(
-            changes: changes,
-            onConflict: {
-                channelsCount = controller.channels.count
-                collectionView.reloadData()
-            }
-        ) else { return }
+            changes: changes
+        ) else {
+            channelsCount = controller.channels.count
+            collectionView.reloadData()
+            return
+        }
 
         collectionView.performBatchUpdates(
             {
