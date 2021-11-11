@@ -3,7 +3,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
-### 🔄 Changed
+### 🐞 Fixed
+- Fix message list scrolling jumps when a new message is received [#1605](https://github.com/GetStream/stream-chat-swift/pull/1605)
+- Fix message cell not resized after editing a message with bigger/smaller content [#1605](https://github.com/GetStream/stream-chat-swift/pull/1605)
 
 # [4.4.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.4.0)
 _November 11, 2021_
@@ -13,11 +15,10 @@ _November 11, 2021_
 - Make the NukeImageLoader initialiser accessible [#1600](https://github.com/GetStream/stream-chat-swift/issues/1600)
 - Fix message not pinned when there is no expiration date [#1603](https://github.com/GetStream/stream-chat-swift/issues/1603)
 - Fix uploaded videos' mime types were not encoded correctly [#1604](https://github.com/GetStream/stream-chat-swift/issues/1604)
-- Fix message list scrolling jumps when a new message is received [#1605](https://github.com/GetStream/stream-chat-swift/pull/1605)
-- Fix message cell not resized after editing a message with bigger/smaller content [#1605](https://github.com/GetStream/stream-chat-swift/pull/1605)
 
 ### ✅ Added
 - Added a new `make` API within our ChatChannelListVC so it's easier to instantiate, this eliminates the need to setup within the ViewController lifecycle [#1597](https://github.com/GetStream/stream-chat-swift/issues/1597)
+- Add view to show all reactions of a message when tapping reactions [#1582](https://github.com/GetStream/stream-chat-swift/pull/1582)
 
 # [4.3.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.3.0)
 _November 03, 2021_
@@ -33,7 +34,6 @@ _November 03, 2021_
 
 ### ✅ Added
 - Added Flag message action [#1583](https://github.com/GetStream/stream-chat-swift/issues/1583)
-- Add view to show all reactions of a message when tapping reactions [#1582](https://github.com/GetStream/stream-chat-swift/pull/1582)
 - Added handling of "shadowed" messages (messages from shadow banned users). The behavior is controlled by `ChatClientConfig.shouldShowShadowedMessages` and defaults to `false`. [#1591](https://github.com/GetStream/stream-chat-swift/issues/1591)
 - Add message actions transition controller to `Components` [#1596](https://github.com/GetStream/stream-chat-swift/issues/1596)
 
