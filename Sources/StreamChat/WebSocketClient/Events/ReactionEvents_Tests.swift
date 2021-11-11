@@ -81,8 +81,7 @@ class ReactionEventsIntegration_Tests: XCTestCase {
         // For message to be received, we need to have channel:
         try client.databaseContainer.createChannel(
             cid: .init(type: .messaging, id: "general"),
-            withMessages: true,
-            withQuery: false
+            withMessages: true
         )
         
         try client.databaseContainer.createMessage(
@@ -116,8 +115,7 @@ class ReactionEventsIntegration_Tests: XCTestCase {
         // For message to be received, we need to have channel:
         try client.databaseContainer.createChannel(
             cid: .init(type: .messaging, id: "general"),
-            withMessages: true,
-            withQuery: false
+            withMessages: true
         )
     
         let lastUpdateMessageTime = "2020-06-20 17:09:56 +0000"
@@ -155,8 +153,7 @@ class ReactionEventsIntegration_Tests: XCTestCase {
         // For message to be received, we need to have channel:
         try client.databaseContainer.createChannel(
             cid: .init(type: .messaging, id: "general"),
-            withMessages: true,
-            withQuery: false
+            withMessages: true
         )
         
         try client.databaseContainer.createMessage(

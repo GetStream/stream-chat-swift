@@ -195,7 +195,7 @@ class ChannelController_Tests: XCTestCase {
         // Load the channel list query from database
         let channelListQueryDTO = try XCTUnwrap(
             client.databaseContainer.viewContext.channelListQuery(
-                filterHash: channelListQuery.filter.filterHash
+                queryHash: channelListQuery.queryHash
             )
         )
         
@@ -242,7 +242,7 @@ class ChannelController_Tests: XCTestCase {
         let channelListQuery: ChannelListQuery = .unique(for: channelId)
         var queryDTO: ChannelListQueryDTO? {
             client.databaseContainer.viewContext.channelListQuery(
-                filterHash: channelListQuery.filter.filterHash
+                queryHash: channelListQuery.queryHash
             )
         }
                 

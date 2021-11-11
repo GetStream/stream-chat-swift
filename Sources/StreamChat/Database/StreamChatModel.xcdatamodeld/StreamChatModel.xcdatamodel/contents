@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="19461" systemVersion="20G165" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="19461" systemVersion="21A559" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
     <entity name="AttachmentDTO" representedClassName="AttachmentDTO" syncable="YES">
         <attribute name="data" attributeType="Binary"/>
         <attribute name="id" attributeType="String"/>
@@ -67,16 +67,16 @@
         </uniquenessConstraints>
     </entity>
     <entity name="ChannelListQueryDTO" representedClassName="ChannelListQueryDTO" syncable="YES">
-        <attribute name="filterHash" attributeType="String"/>
         <attribute name="filterJSONData" attributeType="Binary"/>
+        <attribute name="queryHash" attributeType="String"/>
         <relationship name="channels" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ChannelDTO" inverseName="queries" inverseEntity="ChannelDTO"/>
         <relationship name="openChannels" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ChannelDTO" inverseName="openIn" inverseEntity="ChannelDTO"/>
-        <fetchIndex name="filterHash">
-            <fetchIndexElement property="filterHash" type="Binary" order="ascending"/>
+        <fetchIndex name="queryHash">
+            <fetchIndexElement property="queryHash" type="Binary" order="ascending"/>
         </fetchIndex>
         <uniquenessConstraints>
             <uniquenessConstraint>
-                <constraint value="filterHash"/>
+                <constraint value="queryHash"/>
             </uniquenessConstraint>
         </uniquenessConstraints>
     </entity>

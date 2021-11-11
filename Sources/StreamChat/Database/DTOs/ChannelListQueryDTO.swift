@@ -7,7 +7,7 @@ import CoreData
 @objc(ChannelListQueryDTO)
 class ChannelListQueryDTO: NSManagedObject {
     /// Unique identifier of the query/
-    @NSManaged var filterHash: String
+    @NSManaged var queryHash: String
     
     /// Serialized `Filter` JSON which can be used in cases the query needs to be repeated, i.e. for newly created channels.
     @NSManaged var filterJSONData: Data
@@ -19,26 +19,26 @@ class ChannelListQueryDTO: NSManagedObject {
     /// Channels that are being read by the current user (the subset of `channels`)
     @NSManaged var openChannels: Set<ChannelDTO>
     
-    static func load(filterHash: String, context: NSManagedObjectContext) -> ChannelListQueryDTO? {
+    static func load(queryHash: String, context: NSManagedObjectContext) -> ChannelListQueryDTO? {
         let request = NSFetchRequest<ChannelListQueryDTO>(entityName: ChannelListQueryDTO.entityName)
-        request.predicate = NSPredicate(format: "filterHash == %@", filterHash)
+        request.predicate = NSPredicate(format: "queryHash == %@", queryHash)
         return try? context.fetch(request).first
     }
 }
 
 extension NSManagedObjectContext {
-    func channelListQuery(filterHash: String) -> ChannelListQueryDTO? {
-        ChannelListQueryDTO.load(filterHash: filterHash, context: self)
+    func channelListQuery(queryHash: String) -> ChannelListQueryDTO? {
+        ChannelListQueryDTO.load(queryHash: queryHash, context: self)
     }
     
     func saveQuery(query: ChannelListQuery) -> ChannelListQueryDTO {
-        if let existingDTO = ChannelListQueryDTO.load(filterHash: query.filter.filterHash, context: self) {
+        if let existingDTO = ChannelListQueryDTO.load(queryHash: query.queryHash, context: self) {
             return existingDTO
         }
         
         let newDTO = NSEntityDescription
             .insertNewObject(forEntityName: ChannelListQueryDTO.entityName, into: self) as! ChannelListQueryDTO
-        newDTO.filterHash = query.filter.filterHash
+        newDTO.queryHash = query.queryHash
         
         let jsonData: Data
         do {

@@ -135,3 +135,17 @@ public struct ChannelListQuery: Encodable {
         try pagination.encode(to: encoder)
     }
 }
+
+extension ChannelListQuery {
+    var queryHash: String {
+        let filterHash = filter.filterHash
+        
+        let sortingHash = sort
+            .map(\.description)
+            .joined(separator: ",")
+        
+        return [filterHash, sortingHash]
+            .filter { !$0.isEmpty }
+            .joined(separator: " | ")
+    }
+}

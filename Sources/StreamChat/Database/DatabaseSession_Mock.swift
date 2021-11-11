@@ -187,8 +187,8 @@ extension DatabaseSessionMock {
         underlyingSession.saveQuery(query: query)
     }
     
-    func channelListQuery(filterHash: String) -> ChannelListQueryDTO? {
-        underlyingSession.channelListQuery(filterHash: filterHash)
+    func channelListQuery(queryHash: String) -> ChannelListQueryDTO? {
+        underlyingSession.channelListQuery(queryHash: queryHash)
     }
     
     func saveChannel(

@@ -264,7 +264,7 @@ class ChannelEventsIntegration_Tests: XCTestCase {
 
         let channelId: ChannelId = ChannelId(type: .messaging, id: "default-channel-1")
         
-        try client.databaseContainer.createChannel(cid: channelId, withMessages: false, withQuery: false)
+        try client.databaseContainer.createChannel(cid: channelId, withMessages: false)
         XCTAssertNil(client.databaseContainer.viewContext.channel(cid: channelId)?.deletedAt)
         
         let unwrappedEvent = try XCTUnwrap(event)
@@ -281,7 +281,7 @@ class ChannelEventsIntegration_Tests: XCTestCase {
 
         let channelId: ChannelId = ChannelId(type: .messaging, id: "new_channel_7011")
         
-        try client.databaseContainer.createChannel(cid: channelId, withMessages: false, withQuery: false)
+        try client.databaseContainer.createChannel(cid: channelId, withMessages: false)
         XCTAssertNil(client.databaseContainer.viewContext.channel(cid: channelId)?.truncatedAt)
        
         let unwrappedEvent = try XCTUnwrap(event)
@@ -298,7 +298,7 @@ class ChannelEventsIntegration_Tests: XCTestCase {
 
         let channelId: ChannelId = ChannelId(type: .messaging, id: "default-channel-6")
         
-        try client.databaseContainer.createChannel(cid: channelId, withMessages: false, withQuery: false, isHidden: true)
+        try client.databaseContainer.createChannel(cid: channelId, withMessages: false, isHidden: true)
         XCTAssertEqual(client.databaseContainer.viewContext.channel(cid: channelId)?.isHidden, true)
        
         let unwrappedEvent = try XCTUnwrap(event)
@@ -315,7 +315,7 @@ class ChannelEventsIntegration_Tests: XCTestCase {
 
         let channelId: ChannelId = ChannelId(type: .messaging, id: "default-channel-6")
         
-        try client.databaseContainer.createChannel(cid: channelId, withMessages: false, withQuery: false)
+        try client.databaseContainer.createChannel(cid: channelId, withMessages: false)
         XCTAssertEqual(client.databaseContainer.viewContext.channel(cid: channelId)?.isHidden, false)
      
         let unwrappedEvent = try XCTUnwrap(event)
@@ -393,8 +393,7 @@ class ChannelEventsIntegration_Tests: XCTestCase {
         // For event to be received, we need to have channel:
         try client.databaseContainer.createChannel(
             cid: channelId,
-            withMessages: true,
-            withQuery: false
+            withMessages: true
         )
         
         try client.databaseContainer.writeSynchronously { session in

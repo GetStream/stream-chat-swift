@@ -97,7 +97,7 @@ private extension ChannelListQueryDTO {
         let encodedFilter = try JSONDecoder.default
             .decode(Filter<ChannelListFilterScope>.self, from: filterJSONData)
         var updatedFilter: Filter<ChannelListFilterScope> = encodedFilter
-        updatedFilter.explicitHash = filterHash
+        updatedFilter.explicitHash = queryHash
         return ChannelListQuery(filter: updatedFilter)
     }
 }

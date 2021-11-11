@@ -237,7 +237,7 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
     private func link(channels: [ChatChannel]) {
         guard !channels.isEmpty else { return }
         client.databaseContainer.write { session in
-            guard let queryDTO = session.channelListQuery(filterHash: self.query.filter.filterHash) else {
+            guard let queryDTO = session.channelListQuery(queryHash: self.query.queryHash) else {
                 log.debug("Channel list query has not yet created \(self.query)")
                 return
             }
@@ -255,7 +255,7 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
     private func unlink(channels: [ChatChannel]) {
         guard !channels.isEmpty else { return }
         client.databaseContainer.write { session in
-            guard let queryDTO = session.channelListQuery(filterHash: self.query.filter.filterHash) else {
+            guard let queryDTO = session.channelListQuery(queryHash: self.query.queryHash) else {
                 log.debug("Channel list query has not yet created \(self.query)")
                 return
             }

@@ -106,7 +106,7 @@ class ChannelListUpdater_Tests: XCTestCase {
         
         // Assert the data is stored in the DB
         var queryDTO: ChannelListQueryDTO? {
-            database.viewContext.channelListQuery(filterHash: query.filter.filterHash)
+            database.viewContext.channelListQuery(queryHash: query.queryHash)
         }
         AssertAsync {
             Assert.willBeTrue(queryDTO != nil)

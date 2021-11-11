@@ -52,7 +52,7 @@ class ChannelListController_Tests: XCTestCase {
     func test_clientAndQueryAreCorrect() {
         let controller = client.channelListController(query: query)
         XCTAssert(controller.client === client)
-        XCTAssertEqual(controller.query.filter.filterHash, query.filter.filterHash)
+        XCTAssertEqual(controller.query.queryHash, query.queryHash)
     }
     
     // MARK: - Synchronize tests
@@ -149,7 +149,7 @@ class ChannelListController_Tests: XCTestCase {
         controller = nil
         
         // Assert the updater is called with the query
-        XCTAssertEqual(env.channelListUpdater!.update_queries.first?.filter.filterHash, query.filter.filterHash)
+        XCTAssertEqual(env.channelListUpdater!.update_queries.first?.queryHash, query.queryHash)
         // Completion shouldn't be called yet
         XCTAssertFalse(completionCalled)
         
@@ -184,7 +184,7 @@ class ChannelListController_Tests: XCTestCase {
         controller = nil
         
         // Assert the updater is called with the query
-        XCTAssertEqual(env.channelListUpdater?.update_queries.first?.filter.filterHash, query.filter.filterHash)
+        XCTAssertEqual(env.channelListUpdater?.update_queries.first?.queryHash, query.queryHash)
         // Completion shouldn't be called yet
         XCTAssertFalse(completionCalled)
         

@@ -141,7 +141,7 @@ extension DatabaseContainer {
     func createChannel(
         cid: ChannelId = .unique,
         withMessages: Bool = true,
-        withQuery: Bool = false,
+        query: ChannelListQuery? = nil,
         isHidden: Bool = false,
         channelReads: Set<ChannelReadDTO> = [],
         channelExtraData: [String: RawJSON] = [:]
@@ -158,30 +158,18 @@ extension DatabaseContainer {
                 dto.oldestMessageAt = .distantPast
             }
             
-            if withQuery {
-                let filter: Filter<ChannelListFilterScope> = .equal(.name, to: "luke:skywalker")
-                let queryDTO = NSEntityDescription.insertNewObject(
-                    forEntityName: ChannelListQueryDTO.entityName,
-                    into: session as! NSManagedObjectContext
-                ) as! ChannelListQueryDTO
-                queryDTO.filterHash = filter.filterHash
-                queryDTO.filterJSONData = try JSONEncoder.default.encode(filter)
+            if let query = query {
+                let queryDTO = session.saveQuery(query: query)
                 dto.queries = [queryDTO]
             }
         }
     }
     
     func createChannelListQuery(
-        filter: Filter<ChannelListFilterScope> = .query(.cid, text: .unique)
+        _ query: ChannelListQuery = .mock()
     ) throws {
         try writeSynchronously { session in
-            let dto = NSEntityDescription
-                .insertNewObject(
-                    forEntityName: ChannelListQueryDTO.entityName,
-                    into: session as! NSManagedObjectContext
-                ) as! ChannelListQueryDTO
-            dto.filterHash = filter.filterHash
-            dto.filterJSONData = try JSONEncoder.default.encode(filter)
+            session.saveQuery(query: query)
         }
     }
     

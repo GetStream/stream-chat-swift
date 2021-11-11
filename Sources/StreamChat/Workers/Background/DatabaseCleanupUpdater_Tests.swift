@@ -47,14 +47,14 @@ final class DatabaseCleanupUpdater_Tests: XCTestCase {
         try database.createChannel(
             cid: cid1,
             withMessages: true,
-            withQuery: true,
+            query: .mock(),
             isHidden: true
         )
         
         try database.createChannel(
             cid: cid2,
             withMessages: true,
-            withQuery: true,
+            query: .mock(),
             isHidden: true
         )
         
@@ -72,11 +72,11 @@ final class DatabaseCleanupUpdater_Tests: XCTestCase {
     func test_refetchExistingChannelListQueries_updateQueries() throws {
         let filter1 = Filter<ChannelListFilterScope>.query(.cid, text: .unique)
         let query1 = ChannelListQuery(filter: filter1)
-        try database.createChannelListQuery(filter: filter1)
+        try database.createChannelListQuery(query1)
         
         let filter2 = Filter<ChannelListFilterScope>.query(.cid, text: .unique)
         let query2 = ChannelListQuery(filter: filter2)
-        try database.createChannelListQuery(filter: filter2)
+        try database.createChannelListQuery(query2)
         
         databaseCleanupUpdater?.refetchExistingChannelListQueries()
         
@@ -88,7 +88,7 @@ final class DatabaseCleanupUpdater_Tests: XCTestCase {
         
     func test_refetchExistingChannelListQueries_whenDatabaseCleanupUpdaterIsDeallocated_doesNotUpdateQueries() throws {
         // Create a channel list query to be refetched.
-        try database.createChannelListQuery(filter: .query(.cid, text: .unique))
+        try database.createChannelListQuery()
     
         // Initiate channel list queries refetch.
         databaseCleanupUpdater?.refetchExistingChannelListQueries()

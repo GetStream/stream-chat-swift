@@ -307,8 +307,7 @@ class UserEventsIntegration_Tests: XCTestCase {
         
         try client.databaseContainer.createChannel(
             cid: .init(type: .messaging, id: "!members-dpwtNCSGs-VaJKfAVaeosq6FNNbvDDWldf231ypDWqE"),
-            withMessages: false,
-            withQuery: false
+            withMessages: false
         )
         
         let unwrappedEvent = try XCTUnwrap(event)
@@ -331,8 +330,7 @@ class UserEventsIntegration_Tests: XCTestCase {
         
         try client.databaseContainer.createChannel(
             cid: .init(type: .messaging, id: "!members-dpwtNCSGs-VaJKfAVaeosq6FNNbvDDWldf231ypDWqE"),
-            withMessages: false,
-            withQuery: false
+            withMessages: false
         )
         
         let unwrappedEvent = try XCTUnwrap(event)

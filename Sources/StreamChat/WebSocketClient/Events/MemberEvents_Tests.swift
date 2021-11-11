@@ -196,8 +196,7 @@ class MemberEventsIntegration_Tests: XCTestCase {
         // First create channel and member of that channel to be saved in database.
         try client.databaseContainer.createChannel(
             cid: channelId,
-            withMessages: false,
-            withQuery: false
+            withMessages: false
         )
         
         try! client.databaseContainer.createMember(

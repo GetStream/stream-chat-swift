@@ -462,21 +462,22 @@ class ChannelDTO_Tests: XCTestCase {
         let payload4 = dummyPayload(with: try! .init(cid: "a:d"), numberOfMessages: 0)
 
         // Get `lastMessageDate` and `created` dates from generated dummy channels and sort the for the default sorting.
-        let createdAndLastMessageDates = [payload1, payload2, payload3, payload4]
+        let createdAndLastMessageDates = [payload1, payload2]
             .map { $0.channel.lastMessageAt ?? $0.channel.createdAt }
             .sorted(by: { $0 > $1 })
         
         // Get `updatedAt` dates from generated dummy channels and sort the for the updatedAt sorting.
-        let updatedAtDates = [payload1, payload2, payload3, payload4]
+        let updatedAtDates = [payload3, payload4]
             .map(\.channel.updatedAt)
             .sorted(by: { $0 > $1 })
 
-        // Save the channels to DB. It doesn't matter which query we use because the filter for both of them is the same.
+        // Save the channels to DB
         try! database.writeSynchronously { session in
             try session.saveChannel(payload: payload1, query: queryWithDefaultSorting)
             try session.saveChannel(payload: payload2, query: queryWithDefaultSorting)
-            try session.saveChannel(payload: payload3, query: queryWithDefaultSorting)
-            try session.saveChannel(payload: payload4, query: queryWithDefaultSorting)
+            
+            try session.saveChannel(payload: payload3, query: queryWithUpdatedAtSorting)
+            try session.saveChannel(payload: payload4, query: queryWithUpdatedAtSorting)
         }
 
         // A fetch request with a default sorting.
@@ -488,11 +489,11 @@ class ChannelDTO_Tests: XCTestCase {
         var channelsWithUpdatedAtSorting: [ChannelDTO] { try! database.viewContext.fetch(fetchRequestWithUpdatedAtSorting) }
 
         // Check the default sorting.
-        XCTAssertEqual(channelsWithDefaultSorting.count, 4)
+        XCTAssertEqual(channelsWithDefaultSorting.count, 2)
         XCTAssertEqual(channelsWithDefaultSorting.map { $0.lastMessageAt ?? $0.createdAt }, createdAndLastMessageDates)
 
         // Check the sorting by `updatedAt`.
-        XCTAssertEqual(channelsWithUpdatedAtSorting.count, 4)
+        XCTAssertEqual(channelsWithUpdatedAtSorting.count, 2)
         XCTAssertEqual(channelsWithUpdatedAtSorting.map(\.updatedAt), updatedAtDates)
     }
 
@@ -681,9 +682,9 @@ class ChannelDTO_Tests: XCTestCase {
         
         // Save both to database and mark channel as open
         try database.createChannel(cid: cid)
-        try database.createChannelListQuery(filter: channelListQuery.filter)
+        try database.createChannelListQuery(channelListQuery)
         try database.writeSynchronously { session in
-            let queryDTO = try XCTUnwrap(session.channelListQuery(filterHash: channelListQuery.filter.filterHash))
+            let queryDTO = try XCTUnwrap(session.channelListQuery(queryHash: channelListQuery.queryHash))
             let channelDTO = try XCTUnwrap(session.channel(cid: cid))
             queryDTO.openChannels.insert(channelDTO)
         }
@@ -696,7 +697,7 @@ class ChannelDTO_Tests: XCTestCase {
         // Load the channel list query from database
         let channelListQueryDTO = try XCTUnwrap(
             database.viewContext.channelListQuery(
-                filterHash: channelListQuery.filter.filterHash
+                queryHash: channelListQuery.queryHash
             )
         )
         

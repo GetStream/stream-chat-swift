@@ -3,6 +3,7 @@
 //
 
 @testable import StreamChat
+import StreamChatTestTools
 import XCTest
 
 final class ChannelListFilterScope_Tests: XCTestCase {
@@ -59,7 +60,7 @@ final class ChannelListFilterScope_Tests: XCTestCase {
         
         // Assert correct query is created
         XCTAssertEqual(query, .init(filter: .equal(.cid, to: cid)))
-        XCTAssertEqual(query.filter.filterHash, cid.rawValue)
+        XCTAssertEqual(query.queryHash, cid.rawValue)
     }
     
     func test_hiddenFilter_valueIsDetected() {
@@ -77,5 +78,76 @@ final class ChannelListFilterScope_Tests: XCTestCase {
         for testValue in testValues {
             XCTAssertEqual(testValue.0.hiddenFilterValue, testValue.1, "\(testValue) failed")
         }
+    }
+    
+    func test_queryHash_isDeterministic() {
+        // Declare a query
+        let query: ChannelListQuery = .mock()
+        
+        // Declare a query with the same values
+        let sameQuery: ChannelListQuery = .mock()
+        
+        // Assert hashes match
+        XCTAssertEqual(query.queryHash, sameQuery.queryHash)
+    }
+        
+    func test_queryHash_takesFilterIntoAccount() {
+        // Declare a query
+        let query: ChannelListQuery = .mock()
+        
+        // Declare a query with another filter
+        let modifiedQuery: ChannelListQuery = .mock(filter: .and([query.filter, .equal(.hidden, to: false)]))
+        
+        // Assert hashes do not match
+        XCTAssertNotEqual(query.queryHash, modifiedQuery.queryHash)
+    }
+        
+    func test_queryHash_takesSortingIntoAccount() {
+        // Declare a query
+        let query: ChannelListQuery = .mock()
+        
+        // Declare a query with another sort options
+        let modifiedQuery: ChannelListQuery = .mock(sort: query.sort + [.init(key: .memberCount, isAscending: true)])
+        
+        // Assert hashes do not match
+        XCTAssertNotEqual(query.queryHash, modifiedQuery.queryHash)
+    }
+        
+    func test_queryHash_doesNotTakePaginationIntoAccount() {
+        // Declare a query
+        let query: ChannelListQuery = .mock()
+        
+        // Declare a query with another pagination
+        let modifiedQuery: ChannelListQuery = .mock(
+            pagination: .init(
+                pageSize: query.pagination.pageSize + 1,
+                offset: query.pagination.offset + 1
+            )
+        )
+        
+        // Assert hashes match
+        XCTAssertEqual(query.queryHash, modifiedQuery.queryHash)
+    }
+    
+    func test_queryHash_doesNotTakeMessageLimitIntoAccount() {
+        // Declare a query
+        let query: ChannelListQuery = .mock()
+        
+        // Declare a query with another messages limit
+        let modifiedQuery: ChannelListQuery = .mock(messagesLimit: query.messagesLimit + 10)
+        
+        // Assert hashes match
+        XCTAssertEqual(query.queryHash, modifiedQuery.queryHash)
+    }
+    
+    func test_queryHash_doesNotTakeWatchOptionsIntoAccount() {
+        // Declare a query
+        let query: ChannelListQuery = .mock()
+        
+        // Declare a query with another watch options
+        let modifiedQuery: ChannelListQuery = .mock(watchOptions: .all)
+        
+        // Assert hashes match
+        XCTAssertEqual(query.queryHash, modifiedQuery.queryHash)
     }
 }

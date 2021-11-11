@@ -105,8 +105,7 @@ class MessageEventsIntegration_Tests: XCTestCase {
         // For message to be received, we need to have channel:
         try client.databaseContainer.createChannel(
             cid: .init(type: .messaging, id: "general"),
-            withMessages: true,
-            withQuery: false
+            withMessages: true
         )
         
         let unwrappedEvent = try XCTUnwrap(event)
@@ -124,8 +123,7 @@ class MessageEventsIntegration_Tests: XCTestCase {
         // For message to be received, we need to have channel:
         try client.databaseContainer.createChannel(
             cid: .init(type: .messaging, id: "general"),
-            withMessages: true,
-            withQuery: false
+            withMessages: true
         )
     
         let lastUpdateMessageTime: Date = .unique
@@ -160,8 +158,7 @@ class MessageEventsIntegration_Tests: XCTestCase {
         // For message to be received, we need to have channel:
         try client.databaseContainer.createChannel(
             cid: .init(type: .messaging, id: "general"),
-            withMessages: true,
-            withQuery: false
+            withMessages: true
         )
         
         try client.databaseContainer.createMessage(id: "1ff9f6d0-df70-4703-aef0-379f95ad7366", type: .regular)

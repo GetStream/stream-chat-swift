@@ -154,7 +154,7 @@ class TypingEventsIntegration_Tests: XCTestCase {
         let event = try eventDecoder.decode(from: json) as? TypingEventDTO
 
         let channelId: ChannelId = ChannelId(type: .messaging, id: "general")
-        try client.databaseContainer.createChannel(cid: channelId, withMessages: false, withQuery: false)
+        try client.databaseContainer.createChannel(cid: channelId, withMessages: false)
         try client.databaseContainer.createMember(userId: "luke_skywalker", role: .member, cid: channelId)
         
         let channel = try XCTUnwrap(client.databaseContainer.viewContext.channel(cid: channelId))
@@ -177,8 +177,7 @@ class TypingEventsIntegration_Tests: XCTestCase {
         let channelId: ChannelId = ChannelId(type: .messaging, id: "general")
         try client.databaseContainer.createChannel(
             cid: channelId,
-            withMessages: false,
-            withQuery: false
+            withMessages: false
         )
 
         try client.databaseContainer.createUser(id: "luke_skywalker")

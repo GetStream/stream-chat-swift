@@ -255,7 +255,7 @@ extension NSManagedObjectContext {
     }
     
     func delete(query: ChannelListQuery) {
-        guard let dto = channelListQuery(filterHash: query.filter.filterHash) else { return }
+        guard let dto = channelListQuery(queryHash: query.queryHash) else { return }
         
         delete(dto)
     }
@@ -273,7 +273,7 @@ extension ChannelDTO {
         let sortDescriptors = query.sort.compactMap { $0.key.sortDescriptor(isAscending: $0.isAscending) }
         request.sortDescriptors = sortDescriptors.isEmpty ? [ChannelListSortingKey.defaultSortDescriptor] : sortDescriptors
         
-        let matchingQuery = NSPredicate(format: "ANY queries.filterHash == %@", query.filter.filterHash)
+        let matchingQuery = NSPredicate(format: "ANY queries.queryHash == %@", query.queryHash)
         let notDeleted = NSPredicate(format: "deletedAt == nil")
 
         // If the query contains a filter for the `isHidden` property,
@@ -297,7 +297,7 @@ extension ChannelDTO {
         // Channels which are not linked to this query
         request.predicate = NSCompoundPredicate(
             notPredicateWithSubpredicate: NSPredicate(
-                format: "ANY queries.filterHash == %@", query.filter.filterHash
+                format: "ANY queries.queryHash == %@", query.queryHash
             )
         )
         return request

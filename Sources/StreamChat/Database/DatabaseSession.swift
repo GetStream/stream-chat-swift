@@ -177,9 +177,9 @@ protocol ChannelDatabaseSession {
         query: ChannelListQuery?
     ) throws -> ChannelDTO
     
-    /// Loads channel list query with the given filter hash from the database.
-    /// - Parameter filterHash: The filter hash.
-    func channelListQuery(filterHash: String) -> ChannelListQueryDTO?
+    /// Loads channel list query with the given hash from the database.
+    /// - Parameter queryHash: The query hash.
+    func channelListQuery(queryHash: String) -> ChannelListQueryDTO?
     
     @discardableResult func saveQuery(query: ChannelListQuery) -> ChannelListQueryDTO
     
