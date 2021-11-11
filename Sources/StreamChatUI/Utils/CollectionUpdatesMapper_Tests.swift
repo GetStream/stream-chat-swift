@@ -8,9 +8,8 @@ import Foundation
 import XCTest
 
 final class CollectionUpdatesMapper_Tests: XCTestCase {
-    func test_hasConflicts_callsOnConflict_returnsNil() {
+    func test_hasConflicts_returnsNil() {
         let mapper = CollectionUpdatesMapper()
-        var onConflictWasCalled = false
         
         let changes: [ListChange<Int>] = [
             .update(0, index: .init(row: 0, section: 0)),
@@ -24,17 +23,14 @@ final class CollectionUpdatesMapper_Tests: XCTestCase {
         ]
 
         let indices = mapper.mapToSetsOfIndexPaths(
-            changes: changes,
-            onConflict: { onConflictWasCalled = true }
+            changes: changes
         )
-        
-        XCTAssertTrue(onConflictWasCalled)
+
         XCTAssertNil(indices)
     }
     
-    func test_hasNoConflicts_doesNotCallOnConflict_returnsIndices() {
+    func test_hasNoConflicts_returnsIndices() {
         let mapper = CollectionUpdatesMapper()
-        var onConflictWasCalled = false
         
         let changes: [ListChange<Int>] = [
             .update(0, index: .init(row: 0, section: 0)),
@@ -47,11 +43,9 @@ final class CollectionUpdatesMapper_Tests: XCTestCase {
         ]
 
         let indices = mapper.mapToSetsOfIndexPaths(
-            changes: changes,
-            onConflict: { onConflictWasCalled = true }
+            changes: changes
         )
         
-        XCTAssertFalse(onConflictWasCalled)
         XCTAssertEqual(
             indices?.update,
             [
