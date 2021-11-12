@@ -45,7 +45,7 @@ struct DefaultRequestDecoder: RequestDecoder {
         
         log.debug("URL request response: \(httpResponse), data:\n\(data.debugPrettyPrintedJSON))", subsystems: .httpRequests)
         
-        guard httpResponse.statusCode < 400 else {
+        guard httpResponse.statusCode < 300 else {
             guard let serverError = try? JSONDecoder.default.decode(ErrorPayload.self, from: data) else {
                 log
                     .error(
@@ -88,5 +88,34 @@ extension ClientError {
 
     class ResponseBodyEmpty: ClientError {
         override var localizedDescription: String { "Response body is empty." }
+    }
+    
+    static let temporaryErrors: Set<Int> = [
+        NSURLErrorCancelled,
+        NSURLErrorNetworkConnectionLost,
+        NSURLErrorTimedOut,
+        NSURLErrorCannotFindHost,
+        NSURLErrorCannotConnectToHost,
+        NSURLErrorNetworkConnectionLost,
+        NSURLErrorDNSLookupFailed,
+        NSURLErrorNotConnectedToInternet,
+        NSURLErrorBadServerResponse,
+        NSURLErrorUserCancelledAuthentication,
+        NSURLErrorCannotLoadFromNetwork,
+        NSURLErrorDataNotAllowed
+    ]
+
+    // returns true if the error is related to a temporary condition
+    // you can use this to check if it makes sense to retry an API call
+    static func isEphemeral(error: Error) -> Bool {
+        if temporaryErrors.contains((error as NSError).code) {
+            return true
+        }
+
+        if error.isRateLimitError {
+            return true
+        }
+
+        return false
     }
 }

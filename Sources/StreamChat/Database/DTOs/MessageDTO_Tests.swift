@@ -148,7 +148,7 @@ class MessageDTO_Tests: XCTestCase {
         XCTAssertEqual(messagePayload.reactionScores, loadedMessage?.reactionScores.mapKeys { reaction in
             MessageReactionType(rawValue: reaction)
         })
-        XCTAssertEqual(loadedMessage?.reactions, loadedReactions)
+        XCTAssertEqual(loadedMessage?.latestReactions.count, messagePayload.latestReactions.count)
         XCTAssertEqual(messagePayload.isSilent, loadedMessage?.isSilent)
         XCTAssertEqual(messagePayload.isShadowed, loadedMessage?.isShadowed)
         XCTAssertEqual(
@@ -182,6 +182,7 @@ class MessageDTO_Tests: XCTestCase {
         
         // Asynchronously save the payload to the db
         database.write { session in
+            try! session.saveCurrentUser(payload: CurrentUserPayload.dummy(userPayload: UserPayload.dummy(userId: userId)))
             // Create the channel first
             try! session.saveChannel(payload: channelPayload, query: nil)
             
@@ -235,7 +236,8 @@ class MessageDTO_Tests: XCTestCase {
             Assert.willBeEqual(messagePayload.reactionCounts, loadedMessage?.reactionCounts.mapKeys { reaction in
                 MessageReactionType(rawValue: reaction)
             })
-            Assert.willBeEqual(loadedMessage?.reactions, loadedReactions)
+            Assert.willBeEqual(loadedMessage?.latestReactions.count, messagePayload.latestReactions.count)
+            Assert.willBeEqual(loadedMessage?.ownReactions.count, messagePayload.ownReactions.count)
             Assert.willBeEqual(messagePayload.isSilent, loadedMessage?.isSilent)
             Assert.willBeEqual(
                 Set(messagePayload.attachmentIDs(cid: channelId)),
@@ -423,7 +425,7 @@ class MessageDTO_Tests: XCTestCase {
                 .dummy(messageId: messageId, user: .dummy(userId: .unique))
             },
             ownReactions: (0..<2).map { _ in
-                .dummy(messageId: messageId, user: .dummy(userId: messageAuthorId))
+                .dummy(messageId: messageId, user: .dummy(userId: currentUserId))
             },
             channel: .dummy(cid: channelId),
             pinned: true,
@@ -441,20 +443,6 @@ class MessageDTO_Tests: XCTestCase {
         // Load the message from the db and check the fields are correct
         let loadedMessage: ChatMessage = try XCTUnwrap(
             database.viewContext.message(id: messageId)?.asModel()
-        )
-        
-        // Load 3 latest reactions for the message.
-        let latestReactions = Set<ChatMessageReaction>(
-            MessageReactionDTO
-                .loadLatestReactions(for: messageId, limit: 10, context: database.viewContext)
-                .map { $0.asModel() }
-        )
-
-        // Load message reactions left by the current user.
-        let currentUserReactions = Set<ChatMessageReaction>(
-            MessageReactionDTO
-                .loadReactions(for: messageId, authoredBy: currentUserId, context: database.viewContext)
-                .map { $0.asModel() }
         )
 
         XCTAssertEqual(loadedMessage.id, messagePayload.id)
@@ -476,8 +464,8 @@ class MessageDTO_Tests: XCTestCase {
         XCTAssertEqual(loadedMessage.reactionScores, messagePayload.reactionScores)
         XCTAssertEqual(loadedMessage.reactionCounts, messagePayload.reactionCounts)
         XCTAssertEqual(loadedMessage.isSilent, messagePayload.isSilent)
-        XCTAssertEqual(loadedMessage.latestReactions, latestReactions)
-        XCTAssertEqual(loadedMessage.currentUserReactions, currentUserReactions)
+        XCTAssertEqual(loadedMessage.latestReactions.count, 3)
+        XCTAssertEqual(loadedMessage.currentUserReactions.count, 2)
         XCTAssertEqual(loadedMessage.isPinned, true)
         let pin = try XCTUnwrap(loadedMessage.pinDetails)
         XCTAssertEqual(pin.expiresAt, messagePayload.pinExpires)

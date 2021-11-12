@@ -7,6 +7,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Fix message list scrolling jumps when a new message is received [#1605](https://github.com/GetStream/stream-chat-swift/pull/1605)
 - Fix message cell not resized after editing a message with bigger/smaller content [#1605](https://github.com/GetStream/stream-chat-swift/pull/1605)
 
+### ✅ Added
+
+- Optimistic Reaction UI, adding/removing reactions can be done offline and API calls are performed asynchronously [#1592](https://github.com/GetStream/stream-chat-swift/pull/1592)
+- Automatically retry failed API calls for adding and removing reactions [#1592](https://github.com/GetStream/stream-chat-swift/pull/1592)
+
 # [4.4.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.4.0)
 _November 11, 2021_
 

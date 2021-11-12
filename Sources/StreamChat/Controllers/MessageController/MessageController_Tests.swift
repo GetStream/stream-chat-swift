@@ -1172,7 +1172,6 @@ final class MessageController_Tests: XCTestCase {
 
     func test_reactions_shouldReturnLatestReactionsWhenObserversStarts() throws {
         try client.databaseContainer.createCurrentUser(id: currentUserId)
-        try client.databaseContainer.createMessage(id: messageId, authorId: currentUserId, cid: cid, text: .unique)
 
         var mockedReactions: [MessageReactionPayload] = []
 
@@ -1183,18 +1182,20 @@ final class MessageController_Tests: XCTestCase {
             ))
         }
 
-        try client.databaseContainer.writeSynchronously { session in
-            try mockedReactions.forEach {
-                try session.saveReaction(payload: $0)
-            }
-        }
+        try client.databaseContainer.createMessage(
+            id: messageId,
+            authorId: currentUserId,
+            cid: cid,
+            text: .unique,
+            latestReactions: mockedReactions
+        )
 
         let expectedLatestReactions = mockedReactions
-            .sorted(by: { $0.updatedAt > $1.updatedAt })[0..<10]
+            .sorted(by: { $0.updatedAt > $1.updatedAt })
 
         controller.startObserversIfNeeded()
         
-        XCTAssertEqual(controller.reactions.count, 10)
+        XCTAssertEqual(controller.reactions.count, 20)
         XCTAssertEqual(
             controller.reactions.map(\.author).map(\.id),
             expectedLatestReactions.map(\.user).map(\.id)

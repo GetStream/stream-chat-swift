@@ -7,6 +7,8 @@ import Foundation
 
 /// The type provides the API for getting/editing/deleting a message
 class MessageUpdater: Worker {
+    private var retryOptions: RetryOptions = .init()
+
     /// Fetches the message from the backend and saves it into the database
     /// - Parameters:
     ///   - cid: The channel identifier the message relates to.
@@ -289,6 +291,9 @@ class MessageUpdater: Worker {
         messageId: MessageId,
         completion: ((Error?) -> Void)? = nil
     ) {
+        var reaction: MessageReactionDTO?
+        let version = UUID().uuidString
+
         let endpoint: Endpoint<EmptyResponse> = .addReaction(
             type,
             score: score,
@@ -296,8 +301,37 @@ class MessageUpdater: Worker {
             extraData: extraData,
             messageId: messageId
         )
-        apiClient.request(endpoint: endpoint) {
-            completion?($0.error)
+
+        database.write { session in
+            do {
+                reaction = try session.addReaction(
+                    to: messageId,
+                    type: type,
+                    score: score,
+                    extraData: extraData
+                )
+            } catch {
+                log.warning("Failed to optimistically add the reaction to the database: \(error)")
+            }
+
+            if let reaction = reaction {
+                reaction.localState = .sending
+                reaction.version = version
+            }
+        } completion: { error in
+            self.apiClient.request(endpoint: endpoint, retryOptions: self.retryOptions) { result in
+                if result.error == nil {
+                    return
+                }
+
+                self.database.write { session in
+                    guard let reaction = try? session.removeReaction(from: messageId, type: type, on: version) else {
+                        return
+                    }
+                    reaction.localState = .sendingFailed
+                }
+            }
+            completion?(error)
         }
     }
     
@@ -311,8 +345,37 @@ class MessageUpdater: Worker {
         messageId: MessageId,
         completion: ((Error?) -> Void)? = nil
     ) {
-        apiClient.request(endpoint: .deleteReaction(type, messageId: messageId)) {
-            completion?($0.error)
+        var reaction: MessageReactionDTO?
+
+        database.write { session in
+            do {
+                reaction = try session.removeReaction(from: messageId, type: type, on: nil)
+            } catch {
+                log.warning("Failed to remove the reaction from to the database: \(error)")
+            }
+
+            guard let reaction = reaction else {
+                return
+            }
+            reaction.localState = .pendingDelete
+        } completion: { error in
+            self.apiClient
+                .request(endpoint: .deleteReaction(type, messageId: messageId), retryOptions: self.retryOptions) { result in
+                    if result.error == nil {
+                        return
+                    }
+
+                    guard let reaction = reaction else {
+                        return
+                    }
+
+                    self.database.write { session in
+                        if let reaction = session.reaction(messageId: messageId, userId: reaction.user.id, type: type) {
+                            reaction.localState = nil
+                        }
+                    }
+                }
+            completion?(error)
         }
     }
 

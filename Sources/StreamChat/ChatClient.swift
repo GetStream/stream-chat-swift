@@ -50,7 +50,6 @@ public class ChatClient {
             ),
             ChannelReadUpdaterMiddleware(),
             UserTypingStateUpdaterMiddleware(),
-            MessageReactionsMiddleware(),
             ChannelTruncatedEventMiddleware(),
             MemberEventMiddleware(),
             UserChannelBanEventsMiddleware(),

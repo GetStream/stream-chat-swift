@@ -91,6 +91,15 @@ protocol MessageDatabaseSession {
     @discardableResult
     func saveMessage(payload: MessagePayload, for query: MessageSearchQuery) throws -> MessageDTO?
 
+    func addReaction(
+        to messageId: MessageId,
+        type: MessageReactionType,
+        score: Int,
+        extraData: [String: RawJSON]
+    ) throws -> MessageReactionDTO
+    
+    func removeReaction(from messageId: MessageId, type: MessageReactionType, on version: String?) throws -> MessageReactionDTO?
+
     /// Pins the provided message
     /// - Parameters:
     ///   - message: The DTO to be pinned
@@ -351,6 +360,16 @@ extension DatabaseSession {
             return
         }
 
+        let messageDoesNotExist = MessageDTO.load(id: message.id, context: context) == nil
+        
+        let eventsThatCreateMessages: Set<EventType> = [
+            .channelUpdated, .messageNew, .notificationMessageNew
+        ]
+
+        if messageDoesNotExist && !eventsThatCreateMessages.contains(payload.eventType) {
+            return
+        }
+        
         try saveMessage(payload: message, channelDTO: channelDTO)
     }
 }

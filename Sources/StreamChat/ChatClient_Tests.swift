@@ -313,8 +313,6 @@ class ChatClient_Tests: XCTestCase {
         XCTAssertNotNil(typingStateUpdaterMiddlewareIndex)
         // Assert `ChannelMemberTypingStateUpdaterMiddleware` goes after `TypingStartCleanupMiddleware`
         XCTAssertTrue(typingStateUpdaterMiddlewareIndex! > typingStartCleanupMiddlewareIndex!)
-        // Assert `MessageReactionsMiddleware` exists
-        XCTAssert(middlewares.contains(where: { $0 is MessageReactionsMiddleware }))
         // Assert `ChannelTruncatedEventMiddleware` exists
         XCTAssert(middlewares.contains(where: { $0 is ChannelTruncatedEventMiddleware }))
         // Assert `MemberEventMiddleware` exists

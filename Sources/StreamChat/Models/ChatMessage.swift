@@ -356,3 +356,23 @@ public enum LocalMessageState: String {
     /// Deleting of the message failed after multiple of tries. The system is not trying to delete this message anymore.
     case deletingFailed
 }
+
+public enum LocalReactionState: String {
+    /// The reaction is waiting to be sent to the server
+    case pendingSend
+
+    /// The reaction is being sent
+    case sending
+
+    /// Creating the reaction failed and cannot be fulfilled
+    case sendingFailed
+
+    /// The reaction is waiting to be deleted from the server
+    case pendingDelete
+    
+    /// The reaction is being deleted
+    case deleting
+    
+    /// Deleting of the reaction failed and cannot be fulfilled
+    case deletingFailed
+}
