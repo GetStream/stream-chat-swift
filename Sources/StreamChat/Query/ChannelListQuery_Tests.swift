@@ -50,18 +50,6 @@ final class ChannelListFilterScope_Tests: XCTestCase {
         }
     }
     
-    func test_uniqueForChannel() {
-        // Create channel identifier
-        let cid: ChannelId = .unique
-        
-        // Create query unique for channel
-        let query: ChannelListQuery = .unique(for: cid)
-        
-        // Assert correct query is created
-        XCTAssertEqual(query, .init(filter: .equal(.cid, to: cid)))
-        XCTAssertEqual(query.filter.filterHash, cid.rawValue)
-    }
-    
     func test_hiddenFilter_valueIsDetected() {
         let hiddenValue = Bool.random()
         let testValues: [(Filter<ChannelListFilterScope>, Bool?)] = [

@@ -47,9 +47,6 @@ class ChannelDTO: NSManagedObject {
 
     // The channel list queries the channel is a part of
     @NSManaged var queries: Set<ChannelListQueryDTO>
-    
-    /// Channel list queries the channel is open in (the subset of `queries`)
-    @NSManaged var openIn: Set<ChannelListQueryDTO>
 
     // MARK: - Relationships
     
@@ -122,7 +119,6 @@ class ChannelDTO: NSManagedObject {
 
 extension ChannelDTO: EphemeralValuesContainer {
     func resetEphemeralValues() {
-        openIn.removeAll()
         currentlyTypingUsers.removeAll()
         watchers.removeAll()
         watcherCount = 0
