@@ -260,10 +260,14 @@ open class ComposerVC: _ViewController,
         super.setUp()
 
         composerView.inputMessageView.textView.delegate = self
-        
         // Set the delegate for handling the pasting of UIImages in the text view
         composerView.inputMessageView.textView.clipboardAttachmentDelegate = self
-
+        composerView.inputMessageView.textView.handleToolkitToggle = { [weak self] isHidden in
+            guard let weakSelf = self else {
+                return
+            }
+            weakSelf.composerView.toolKitView.isHidden = isHidden
+        }
 
         //composerView.attachmentButton.addTarget(self, action: #selector(showAttachmentsPicker), for: .touchUpInside)
         composerView.sendButton.addTarget(self, action: #selector(publishMessage), for: .touchUpInside)

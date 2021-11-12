@@ -20,7 +20,8 @@ public protocol InputTextViewClipboardAttachmentDelegate: AnyObject {
 open class InputTextView: UITextView, AppearanceProvider {
     /// The delegate which gets notified when an attachment is pasted into the text view
     open weak var clipboardAttachmentDelegate: InputTextViewClipboardAttachmentDelegate?
-    
+    var handleToolkitToggle: ((_ isHidden: Bool) -> Void)?
+
     /// Whether this text view should allow images to be pasted
     open var isPastingImagesEnabled: Bool = true
     
@@ -81,7 +82,8 @@ open class InputTextView: UITextView, AppearanceProvider {
         font = appearance.fonts.body
         textColor = appearance.colorPalette.text
         textAlignment = .natural
-        
+        spellCheckingType = .no
+        autocorrectionType = .no
         placeholderLabel.font = font
         placeholderLabel.textAlignment = .center
         placeholderLabel.textColor = appearance.colorPalette.subtitleText
@@ -125,6 +127,26 @@ open class InputTextView: UITextView, AppearanceProvider {
     @objc open func handleTextChange() {
         placeholderLabel.isHidden = !text.isEmpty
         setTextViewHeight()
+        NSObject.cancelPreviousPerformRequests(withTarget: self)
+        perform(#selector(handleKeyboardDisplay), with: nil, afterDelay: 0.3)
+    }
+
+    @objc func handleKeyboardDisplay() {
+        if text.isEmpty && spellCheckingType == .default {
+            resignFirstResponder()
+            spellCheckingType = .no
+            autocorrectionType = .no
+            becomeFirstResponder()
+            setNeedsDisplay()
+            handleToolkitToggle?(false)
+        } else if !text.isEmpty && spellCheckingType == .no {
+            resignFirstResponder()
+            spellCheckingType = .default
+            autocorrectionType = .default
+            becomeFirstResponder()
+            setNeedsDisplay()
+            handleToolkitToggle?(true)
+        }
     }
 
     open func setTextViewHeight() {

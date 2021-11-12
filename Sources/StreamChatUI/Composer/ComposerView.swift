@@ -25,7 +25,7 @@ open class ComposerView: _View, ThemeProvider {
         return KeyboardToolKit().getList()
     }()
     /// The main container of the composer that layouts all the other containers around the message input view.
-    public private(set) lazy var container = ContainerStackView()
+    public private(set) lazy var container = UIStackView()//ContainerStackView()
         .withoutAutoresizingMaskConstraints
 
     /// The header view that displays components above the message input view.
@@ -77,6 +77,7 @@ open class ComposerView: _View, ThemeProvider {
             frame: .init(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 38),
             collectionViewLayout: layout)
             .withoutAutoresizingMaskConstraints
+        collectionView.backgroundColor = .clear
         collectionView.showsHorizontalScrollIndicator = false
         return collectionView
     }()
@@ -136,11 +137,12 @@ open class ComposerView: _View, ThemeProvider {
     override open func setUpLayout() {
         super.setUpLayout()
         embed(container)
-        toolKitView.heightAnchor.constraint(equalToConstant: 38).isActive = true
+        toolKitView.backgroundColor = UIColor(red: 40/255, green: 38/255, blue: 40/255, alpha: 1)
+
         container.isLayoutMarginsRelativeArrangement = true
         container.axis = .vertical
         container.alignment = .fill
-        container.distribution = .natural
+        container.distribution = .fillEqually
         container.spacing = 0
         container.addArrangedSubview(headerView)
         container.addArrangedSubview(centerContainer)
@@ -150,6 +152,10 @@ open class ComposerView: _View, ThemeProvider {
         headerView.isHidden = true
 
         toolKitView.addSubview(toolBarCollectionView)
+        toolBarCollectionView.leadingAnchor.constraint(equalTo: toolKitView.leadingAnchor).isActive = true
+        toolBarCollectionView.trailingAnchor.constraint(equalTo: toolKitView.trailingAnchor).isActive = true
+        toolBarCollectionView.topAnchor.constraint(equalTo: toolKitView.topAnchor).isActive = true
+        toolBarCollectionView.bottomAnchor.constraint(equalTo: toolKitView.bottomAnchor).isActive = true
 
         bottomContainer.addArrangedSubview(checkboxControl)
         headerView.addSubview(titleLabel)
@@ -237,7 +243,7 @@ extension ComposerView: UICollectionViewDelegate, UICollectionViewDataSource, UI
     public func collectionView(_ collectionView: UICollectionView,
                                layout collectionViewLayout: UICollectionViewLayout,
                                sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: 40, height: 30)
+        return CGSize(width: 40, height: collectionView.frame.height)
     }
 
     public func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
@@ -262,10 +268,10 @@ class KeyboardToolTipCVCell: UICollectionViewCell {
         super.init(frame: frame)
         addSubview(toolImage)
         NSLayoutConstraint.activate([
-            toolImage.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 0),
-            toolImage.topAnchor.constraint(equalTo: self.topAnchor, constant: 4),
-            toolImage.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: 4),
-            toolImage.heightAnchor.constraint(equalToConstant: 30)
+            toolImage.heightAnchor.constraint(equalToConstant: 30),
+            toolImage.widthAnchor.constraint(equalToConstant: 40),
+            toolImage.centerXAnchor.constraint(equalTo: self.centerXAnchor, constant: 0),
+            toolImage.centerYAnchor.constraint(equalTo: self.centerYAnchor, constant: 0)
         ])
     }
 
