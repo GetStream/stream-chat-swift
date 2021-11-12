@@ -263,5 +263,8 @@ public extension Appearance {
         public var nftGallery: UIImage = loadImageSafely(with: "nft_gallery")
         public var photoPicker: UIImage = loadImageSafely(with: "photo_picker")
         public var redPacket: UIImage = loadImageSafely(with: "red_packet")
+
+        // MARK: - Gift cell
+        public var starbucks: UIImage = loadImageSafely(with: "starbucks")
     }
 }

@@ -250,6 +250,12 @@ open class ComposerVC: _ViewController,
         return picker
     }()
 
+    private(set) lazy var tempInputAccessaryView: UIView = {
+        let view = UIView(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 44))
+        view.backgroundColor = .red
+        return view
+    }()
+
     override open func setUp() {
         super.setUp()
 
@@ -258,7 +264,7 @@ open class ComposerVC: _ViewController,
         // Set the delegate for handling the pasting of UIImages in the text view
         composerView.inputMessageView.textView.clipboardAttachmentDelegate = self
 
-        
+
         //composerView.attachmentButton.addTarget(self, action: #selector(showAttachmentsPicker), for: .touchUpInside)
         composerView.sendButton.addTarget(self, action: #selector(publishMessage), for: .touchUpInside)
         composerView.confirmButton.addTarget(self, action: #selector(publishMessage), for: .touchUpInside)
