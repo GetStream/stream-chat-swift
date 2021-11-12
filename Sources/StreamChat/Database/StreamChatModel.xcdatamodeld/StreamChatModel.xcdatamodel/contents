@@ -43,7 +43,6 @@
         <relationship name="membership" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="MemberDTO" inverseName="membershipChannel" inverseEntity="MemberDTO"/>
         <relationship name="messages" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="MessageDTO" inverseName="channel" inverseEntity="MessageDTO"/>
         <relationship name="mutes" toMany="YES" deletionRule="Nullify" destinationEntity="ChannelMuteDTO" inverseName="channel" inverseEntity="ChannelMuteDTO"/>
-        <relationship name="openIn" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ChannelListQueryDTO" inverseName="openChannels" inverseEntity="ChannelListQueryDTO"/>
         <relationship name="pinnedMessages" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="MessageDTO" inverseName="pinnedChannel" inverseEntity="MessageDTO"/>
         <relationship name="queries" toMany="YES" deletionRule="Nullify" destinationEntity="ChannelListQueryDTO" inverseName="channels" inverseEntity="ChannelListQueryDTO"/>
         <relationship name="reads" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ChannelReadDTO" inverseName="channel" inverseEntity="ChannelReadDTO"/>
@@ -70,7 +69,6 @@
         <attribute name="filterHash" attributeType="String"/>
         <attribute name="filterJSONData" attributeType="Binary"/>
         <relationship name="channels" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ChannelDTO" inverseName="queries" inverseEntity="ChannelDTO"/>
-        <relationship name="openChannels" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ChannelDTO" inverseName="openIn" inverseEntity="ChannelDTO"/>
         <fetchIndex name="filterHash">
             <fetchIndexElement property="filterHash" type="Binary" order="ascending"/>
         </fetchIndex>

@@ -154,111 +154,6 @@ class ChannelController_Tests: XCTestCase {
         XCTAssertEqual(controller.channelListQuery, channelListQuery)
         XCTAssert(controller.client === client)
     }
-    
-    // MARK: - Mark channel as open
-    
-    func test_channelOpenState_whenChannelListQueryIsProvided() throws {
-        // Declare channel query
-        let channelQuery = ChannelQuery(cid: channelId)
-        
-        // Declare channel list query
-        let channelListQuery = ChannelListQuery(filter: .containMembers(userIds: [.unique]))
-        
-        // Setup controller with given `channelQuery` and `channelListQuery`
-        setupControllerForNewChannel(
-            query: channelQuery,
-            channelListQuery: channelListQuery
-        )
-        
-        // Simulate `synchronize` calls and catch the completion
-        var completionCalled = false
-        controller.synchronize { _ in
-            completionCalled = true
-        }
-        
-        // Save channel to database.
-        try client.mockDatabaseContainer.createChannel(cid: channelId)
-        
-        // Simulate successful network call.
-        let channelPayload = dummyPayload(with: channelId)
-        env.channelUpdater!.update_completion?(.success(channelPayload))
-        env.channelUpdater!.cleanUp()
-        
-        // Wait for completion to be called
-        AssertAsync.willBeTrue(completionCalled)
-        
-        // Load the channel from database
-        let channelDTO = try XCTUnwrap(
-            client.databaseContainer.viewContext.channel(cid: channelId)
-        )
-        
-        // Load the channel list query from database
-        let channelListQueryDTO = try XCTUnwrap(
-            client.databaseContainer.viewContext.channelListQuery(
-                filterHash: channelListQuery.filter.filterHash
-            )
-        )
-        
-        // Assert channel is marked as open in a query
-        XCTAssertTrue(channelDTO.openIn.contains(channelListQueryDTO))
-        
-        // Release the controller.
-        controller = nil
-        
-        // Assert channel stops being marked as open in a query
-        AssertAsync.willBeFalse(channelDTO.openIn.contains(channelListQueryDTO))
-    }
-    
-    func test_channelOpenState_whenChannelListQueryIsNotProvided() throws {
-        // Declare channel query
-        let channelQuery = ChannelQuery(cid: channelId)
-        
-        // Setup controller with given `channelQuery` and no channel list query
-        setupControllerForNewChannel(query: channelQuery, channelListQuery: nil)
-        
-        // Simulate `synchronize` calls and catch the completion
-        var completionCalled = false
-        controller.synchronize { _ in
-            completionCalled = true
-        }
-        
-        // Save channel to database.
-        try client.mockDatabaseContainer.createChannel(cid: channelId)
-        
-        // Simulate successful network call.
-        let channelPayload = dummyPayload(with: channelId)
-        env.channelUpdater!.update_completion?(.success(channelPayload))
-        env.channelUpdater!.cleanUp()
-        
-        // Wait for completion to be called
-        AssertAsync.willBeTrue(completionCalled)
-        
-        // Load the channel from database
-        let channelDTO = try XCTUnwrap(
-            client.databaseContainer.viewContext.channel(cid: channelId)
-        )
-        
-        // Load channel specific list query from database
-        let channelListQuery: ChannelListQuery = .unique(for: channelId)
-        var queryDTO: ChannelListQueryDTO? {
-            client.databaseContainer.viewContext.channelListQuery(
-                filterHash: channelListQuery.filter.filterHash
-            )
-        }
-                
-        // Assert channel is marked as open in a query
-        XCTAssertTrue(channelDTO.openIn.contains(try XCTUnwrap(queryDTO)))
-        
-        // Release the controller.
-        controller = nil
-        
-        AssertAsync {
-            // Assert channel stops being marked as open in a query
-            Assert.willBeTrue(channelDTO.openIn.isEmpty)
-            // Assert channel specific query is deleted from database
-            Assert.willBeNil(queryDTO)
-        }
-    }
         
     // MARK: - Channel
     
@@ -619,24 +514,6 @@ class ChannelController_Tests: XCTestCase {
         XCTAssertEqual(controller.messages[0].id, newerMessagePayload.id)
         // Third message is the failed one
         XCTAssertEqual(controller.messages[2].id, oldMessageId)
-    }
-    
-    func test_synchronize_whenMarkingChannelAsOpenFails() {
-        // Simulate `synchronize` call.
-        var completionError: ClientError?
-        controller.synchronize { [callbackQueueID] in
-            AssertTestQueue(withId: callbackQueueID)
-            completionError = $0 as? ClientError
-        }
-        
-        // Simulate successful network call without saving a channel.
-        env.channelUpdater?.update_completion?(.success(dummyPayload(with: .unique)))
-        
-        // Assert `ChannelDoesNotExist` is propagated
-        AssertAsync.willBeTrue(completionError is ClientError.ChannelDoesNotExist)
-        
-        // Assert state is set to `remoteDataFetchFailed` with the corect error
-        XCTAssertEqual(controller.state, .remoteDataFetchFailed(completionError!))
     }
 
     // MARK: - Creating `ChannelController` tests
