@@ -257,5 +257,11 @@ public extension Appearance {
             }
             set { _commandIcons = newValue }
         }
+
+        // MARK: - Keyboard toolkit
+        public var sendMoney: UIImage = loadImageSafely(with: "send_money")
+        public var nftGallery: UIImage = loadImageSafely(with: "nft_gallery")
+        public var photoPicker: UIImage = loadImageSafely(with: "photo_picker")
+        public var redPacket: UIImage = loadImageSafely(with: "red_packet")
     }
 }

@@ -1,0 +1,12 @@
+{
+  "images" : [
+    {
+      "filename" : "red_packet.pdf",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}

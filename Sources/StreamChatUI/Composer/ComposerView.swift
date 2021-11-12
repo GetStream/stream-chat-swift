@@ -16,14 +16,23 @@ import UIKit
 /// |---------------------------------------------------------|--|
 /// |                     bottomContainer                     |
 /// |---------------------------------------------------------|
+/// |                     ToolkitView                         |
+/// |---------------------------------------------------------|
 /// ```
 open class ComposerView: _View, ThemeProvider {
+    var keyboardToolTipTapped: ((_ tooltip: ToolKit) -> Void)?
+    lazy var toolTipList: [ToolKit] = {
+        return KeyboardToolKit().getList()
+    }()
     /// The main container of the composer that layouts all the other containers around the message input view.
     public private(set) lazy var container = ContainerStackView()
         .withoutAutoresizingMaskConstraints
 
     /// The header view that displays components above the message input view.
     public private(set) lazy var headerView = UIView()
+        .withoutAutoresizingMaskConstraints
+
+    public private(set) lazy var toolKitView = UIView()
         .withoutAutoresizingMaskConstraints
 
     /// The container that displays the components below the message input view.
@@ -55,6 +64,22 @@ open class ComposerView: _View, ThemeProvider {
     public private(set) lazy var moneyTransferButton: UIButton = components
         .sendMoneyButton.init()
         .withoutAutoresizingMaskConstraints
+
+    public private(set) lazy var toolbarToggleButton: UIButton = components
+        .toolTipToggleButton.init()
+        .withoutAutoresizingMaskConstraints
+
+    public private(set) lazy var toolBarCollectionView: UICollectionView = {
+        let layout = UICollectionViewFlowLayout()
+        layout.minimumLineSpacing = 8
+        layout.scrollDirection = .horizontal
+        let collectionView = UICollectionView(
+            frame: .init(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 38),
+            collectionViewLayout: layout)
+            .withoutAutoresizingMaskConstraints
+        collectionView.showsHorizontalScrollIndicator = false
+        return collectionView
+    }()
 
     /// A button to confirm when editing a message.
     public private(set) lazy var confirmButton: UIButton = components
@@ -111,15 +136,20 @@ open class ComposerView: _View, ThemeProvider {
     override open func setUpLayout() {
         super.setUpLayout()
         embed(container)
-
+        toolKitView.heightAnchor.constraint(equalToConstant: 38).isActive = true
         container.isLayoutMarginsRelativeArrangement = true
         container.axis = .vertical
         container.alignment = .fill
+        container.distribution = .natural
+        container.spacing = 0
         container.addArrangedSubview(headerView)
         container.addArrangedSubview(centerContainer)
         container.addArrangedSubview(bottomContainer)
-        bottomContainer.isHidden = true
+        container.addArrangedSubview(toolKitView)
+        bottomContainer.isHidden = false
         headerView.isHidden = true
+
+        toolKitView.addSubview(toolBarCollectionView)
 
         bottomContainer.addArrangedSubview(checkboxControl)
         headerView.addSubview(titleLabel)
@@ -131,7 +161,7 @@ open class ComposerView: _View, ThemeProvider {
         centerContainer.addArrangedSubview(leadingContainer)
         centerContainer.addArrangedSubview(inputMessageView)
         centerContainer.addArrangedSubview(trailingContainer)
-        
+
         trailingContainer.alignment = .center
         trailingContainer.spacing = .auto
         trailingContainer.distribution = .equal
@@ -147,10 +177,12 @@ open class ComposerView: _View, ThemeProvider {
         leadingContainer.distribution = .equal
         leadingContainer.isLayoutMarginsRelativeArrangement = true
         leadingContainer.directionalLayoutMargins = .zero
-        leadingContainer.addArrangedSubview(attachmentButton)
-        leadingContainer.addArrangedSubview(commandsButton)
-        leadingContainer.addArrangedSubview(moneyTransferButton)
-        leadingContainer.addArrangedSubview(shrinkInputButton)
+        //leadingContainer.addArrangedSubview(attachmentButton)
+        //leadingContainer.addArrangedSubview(commandsButton)
+        //leadingContainer.addArrangedSubview(moneyTransferButton)
+        //leadingContainer.addArrangedSubview(shrinkInputButton)
+        leadingContainer.addArrangedSubview(toolbarToggleButton)
+
         shrinkInputButton.isHidden = true
 
         dismissButton.widthAnchor.pin(equalToConstant: 22).isActive = true
@@ -159,10 +191,90 @@ open class ComposerView: _View, ThemeProvider {
         titleLabel.centerXAnchor.pin(equalTo: centerXAnchor).isActive = true
         titleLabel.pin(anchors: [.top, .bottom], to: headerView)
 
-        [shrinkInputButton, attachmentButton, commandsButton, moneyTransferButton, sendButton, confirmButton]
+        /*[shrinkInputButton, attachmentButton, commandsButton, moneyTransferButton, sendButton, confirmButton]
+            .forEach { button in
+                button.pin(anchors: [.width], to: 30)
+                button.pin(anchors: [.height], to: 38)
+            }*/
+        [toolbarToggleButton, sendButton, confirmButton]
             .forEach { button in
                 button.pin(anchors: [.width], to: 30)
                 button.pin(anchors: [.height], to: 38)
             }
+    }
+
+    override public init(frame: CGRect) {
+        super.init(frame: frame)
+        toolBarCollectionView.delegate = self
+        toolBarCollectionView.dataSource = self
+        toolBarCollectionView.register(KeyboardToolTipCVCell.self,
+                                       forCellWithReuseIdentifier: KeyboardToolTipCVCell.reuseId)
+    }
+
+    @available(*, unavailable)
+    public required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+}
+
+extension ComposerView: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
+    public func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return toolTipList.count
+    }
+
+    public func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        guard let cell = collectionView.dequeueReusableCell(
+            withReuseIdentifier: KeyboardToolTipCVCell.reuseId,
+            for: indexPath) as? KeyboardToolTipCVCell else {
+            return UICollectionViewCell()
+        }
+        let indexData = toolTipList[indexPath.row]
+        cell.configCell(indexData)
+        return cell
+    }
+
+    public func collectionView(_ collectionView: UICollectionView,
+                               layout collectionViewLayout: UICollectionViewLayout,
+                               sizeForItemAt indexPath: IndexPath) -> CGSize {
+        return CGSize(width: 40, height: 30)
+    }
+
+    public func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let indexData = toolTipList[indexPath.row]
+        keyboardToolTipTapped?(indexData)
+    }
+}
+
+class KeyboardToolTipCVCell: UICollectionViewCell {
+
+    class var reuseId: String { String(describing: self) }
+
+    lazy var toolImage: UIImageView = {
+        let imageView = UIImageView()
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        imageView.layer.cornerRadius = imageView.frame.size.height/2
+        imageView.clipsToBounds = true
+        return imageView
+    }()
+
+    override public init(frame: CGRect) {
+        super.init(frame: frame)
+        addSubview(toolImage)
+        NSLayoutConstraint.activate([
+            toolImage.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 0),
+            toolImage.topAnchor.constraint(equalTo: self.topAnchor, constant: 4),
+            toolImage.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: 4),
+            toolImage.heightAnchor.constraint(equalToConstant: 30)
+        ])
+    }
+
+    @available(*, unavailable)
+    public required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    func configCell(_ model: ToolKit) {
+        toolImage.image = model.image
     }
 }

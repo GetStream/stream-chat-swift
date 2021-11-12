@@ -43,6 +43,9 @@ public struct Components {
     /// A button used for sending digital currency
     public var sendMoneyButton: UIButton.Type = SendMoneyButton.self
 
+    /// A button for toggle bottom tooltip
+    public var toolTipToggleButton: UIButton.Type = ToolTipToggleButton.self
+
     /// A button for confirming actions.
     public var confirmButton: UIButton.Type = ConfirmButton.self
 

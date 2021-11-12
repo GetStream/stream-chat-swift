@@ -29,17 +29,3 @@ open class SendButton: _Button, AppearanceProvider {
         setImage(disabledStateImage, for: .disabled)
     }
 }
-
-open class SendMoneyButton: _Button, AppearanceProvider {
-
-    override open func setUpAppearance() {
-        super.setUpAppearance()
-        let moneyTransaction = appearance.images.moneyTransaction
-            .tinted(with: appearance.colorPalette.inactiveTint)
-        setImage(moneyTransaction, for: .normal)
-
-        let buttonColor: UIColor = appearance.colorPalette.alternativeInactiveTint
-        let disabledStateImage = appearance.images.moneyTransaction.tinted(with: buttonColor)
-        setImage(disabledStateImage, for: .disabled)
-    }
-}

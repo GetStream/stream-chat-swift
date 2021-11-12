@@ -1,0 +1,12 @@
+{
+  "images" : [
+    {
+      "filename" : "photo_picker.pdf",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}

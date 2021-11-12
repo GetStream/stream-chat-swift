@@ -259,19 +259,34 @@ open class ComposerVC: _ViewController,
         composerView.inputMessageView.textView.clipboardAttachmentDelegate = self
 
         
-        composerView.attachmentButton.addTarget(self, action: #selector(showAttachmentsPicker), for: .touchUpInside)
+        //composerView.attachmentButton.addTarget(self, action: #selector(showAttachmentsPicker), for: .touchUpInside)
         composerView.sendButton.addTarget(self, action: #selector(publishMessage), for: .touchUpInside)
         composerView.confirmButton.addTarget(self, action: #selector(publishMessage), for: .touchUpInside)
         composerView.shrinkInputButton.addTarget(self, action: #selector(shrinkInput), for: .touchUpInside)
-        composerView.commandsButton.addTarget(self, action: #selector(showAvailableCommands), for: .touchUpInside)
+        //composerView.commandsButton.addTarget(self, action: #selector(showAvailableCommands), for: .touchUpInside)
         composerView.dismissButton.addTarget(self, action: #selector(clearContent(sender:)), for: .touchUpInside)
-        composerView.moneyTransferButton.addTarget(self, action: #selector(sendMoneyAction(sender:)), for: .touchUpInside)
+        //composerView.moneyTransferButton.addTarget(self, action: #selector(sendMoneyAction(sender:)), for: .touchUpInside)
+        composerView.toolbarToggleButton.addTarget(self, action: #selector(toolKitToggleAction(sender:)), for: .touchUpInside)
         composerView.inputMessageView.clearButton.addTarget(
             self,
             action: #selector(clearContent(sender:)),
             for: .touchUpInside
         )
-        
+        composerView.keyboardToolTipTapped = { [weak self] toolKit in
+            guard let weakSelf = self else {
+                return
+            }
+            switch toolKit.type {
+            case .photoPicker:
+                weakSelf.showAttachmentsPicker()
+            case .sendOneDollar:
+                weakSelf.sendMoneyAction()
+            case .sendRedPacket:
+                weakSelf.showAvailableCommands()
+            case .shareNFTGalllery:
+                weakSelf.showAvailableCommands()
+            }
+        }
         setupAttachmentsView()
     }
 
@@ -449,7 +464,7 @@ open class ComposerVC: _ViewController,
     }
     
     /// Action that handles tap on attachments button in composer.
-    @objc open func showAttachmentsPicker(sender: UIButton) {
+    @objc open func showAttachmentsPicker(sender: UIButton = UIButton()) {
         // The UI doesn't support mix of image and file attachments so we are limiting this option.
         // Files in the message composer are scrolling vertically and images horizontally.
         // There is no techical limitation for multiple attachment types.
@@ -483,7 +498,7 @@ open class ComposerVC: _ViewController,
         }
     }
     
-    @objc open func showAvailableCommands(sender: UIButton) {
+    @objc open func showAvailableCommands() {
         if suggestionsVC.isPresented {
             dismissSuggestions()
         } else {
@@ -495,8 +510,15 @@ open class ComposerVC: _ViewController,
         content.clear()
     }
 
-    @objc open func sendMoneyAction(sender: UIButton) {
+    @objc open func sendMoneyAction() {
         sendPaymentBubble()
+    }
+
+    @objc open func toolKitToggleAction(sender: UIButton) {
+        Animate {
+            //self.composerView.headerView.isHidden = false
+            self.composerView.toolKitView.isHidden = !self.composerView.toolKitView.isHidden
+        }
     }
 
     /// Creates a new message and notifies the delegate that a new message was created.
