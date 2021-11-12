@@ -23,6 +23,43 @@ class DatabaseContainer_Tests: XCTestCase {
         XCTAssertThrowsError(try DatabaseContainer(kind: .onDisk(databaseFileURL: dbURL)))
     }
     
+    func test_writeCompletionBlockIsCalled() throws {
+        let container = try DatabaseContainer(kind: .inMemory)
+        let goldenPathExpectation = expectation(description: "gold")
+
+        // Write a valid entity to DB and wait for the completion block to be called
+        try container.writeSynchronously { session in
+            container.write({ session in
+                let context = session as! NSManagedObjectContext
+                let userDTO = NSEntityDescription.insertNewObject(forEntityName: "UserDTO", into: context) as! UserDTO
+                userDTO.id = .unique
+                userDTO.extraData = "{}".data(using: .utf8)!
+                userDTO.isOnline = false
+                userDTO.userCreatedAt = .init()
+                userDTO.userUpdatedAt = .init()
+                userDTO.userRoleRaw = "user"
+            }, completion: { error in
+                XCTAssertNil(error)
+                goldenPathExpectation.fulfill()
+            })
+        }
+
+        wait(for: [goldenPathExpectation], timeout: 0.2)
+        let errorPathExpectation = expectation(description: "error")
+
+        // Write an invalid entity to DB and wait for the completion block to be called with error
+        container.write({ session in
+            let context = session as! NSManagedObjectContext
+            NSEntityDescription.insertNewObject(forEntityName: "UserDTO", into: context)
+            // Team id is not set, this should produce an error
+        }, completion: { error in
+            XCTAssertNotNil(error)
+            errorPathExpectation.fulfill()
+        })
+
+        wait(for: [errorPathExpectation], timeout: 0.2)
+    }
+
     func test_removingAllData() throws {
         // Test removing all data works for all persistent store types
         let containerTypes: [DatabaseContainer.Kind] = [.inMemory, .onDisk(databaseFileURL: .newTemporaryFileURL())]
