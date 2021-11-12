@@ -56,6 +56,7 @@ class UserTransactionBubble: UITableViewCell {
 
         giftLabel = UILabel()
         giftLabel.text = "   STARBUCKS"
+        giftLabel.textColor = .black
         giftLabel.font = UIFont.systemFont(ofSize: 14, weight: .bold)
         giftLabel.backgroundColor = UIColor(red: 243/255, green: 243/255, blue: 243/255, alpha: 1.0)
         giftLabel.translatesAutoresizingMaskIntoConstraints = false
@@ -79,7 +80,8 @@ class UserTransactionBubble: UITableViewCell {
         descriptionView.topAnchor.constraint(equalTo: viewContainer.topAnchor, constant: 18).isActive = true
 
         descriptionLabel = UILabel()
-        giftLabel.font = UIFont.systemFont(ofSize: 14, weight: .regular)
+        descriptionLabel.font = UIFont.systemFont(ofSize: 14, weight: .regular)
+        descriptionLabel.textColor = .black
         descriptionLabel.numberOfLines = 0
         descriptionLabel.text = "Lorem Ipsum is simply dummy text of the printing and typesetting industry."
         descriptionLabel.translatesAutoresizingMaskIntoConstraints = false
