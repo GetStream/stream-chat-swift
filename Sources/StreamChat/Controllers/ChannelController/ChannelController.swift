@@ -304,10 +304,6 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
         setMessagesObserver()
     }
     
-    deinit {
-        markChannelAsOpen(false)
-    }
-    
     private func setChannelObserver() {
         _channelObserver.computeValue = { [weak self] in
             guard let self = self else {
@@ -396,10 +392,8 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
         ) { result in
             switch result {
             case .success:
-                self.markChannelAsOpen(true) { error in
-                    self.state = error.map { .remoteDataFetchFailed($0) } ?? .remoteDataFetched
-                    self.callback { completion?(error) }
-                }
+                self.state = .remoteDataFetched
+                self.callback { completion?(nil) }
             case let .failure(error):
                 self.state = .remoteDataFetchFailed(ClientError(with: error))
                 self.callback { completion?(error) }
@@ -495,33 +489,6 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
                 }
             }
         ]
-    }
-    
-    private func markChannelAsOpen(_ open: Bool, completion: ((ClientError?) -> Void)? = nil) {
-        guard let cid = cid else {
-            completion?(ClientError.ChannelNotCreatedYet())
-            return
-        }
-                
-        client.databaseContainer.write({ [channelListQuery] session in
-            guard let channelDTO = session.channel(cid: cid) else {
-                throw ClientError.ChannelDoesNotExist(cid: cid)
-            }
-            
-            let query = channelListQuery ?? .unique(for: cid)
-            let queryDTO = session.saveQuery(query: query)
-            
-            if open {
-                queryDTO.openChannels.insert(channelDTO)
-            } else if channelListQuery != nil {
-                queryDTO.openChannels.remove(channelDTO)
-            } else {
-                session.delete(query: query)
-            }
-        }, completion: {
-            let clientError = ($0 as? ClientError) ?? $0.map { ClientError(with: $0) }
-            completion?(clientError)
-        })
     }
 }
 
@@ -1390,12 +1357,4 @@ extension ClientError {
 
 extension ClientError {
     class ChannelFeatureDisabled: ClientError {}
-}
-
-extension ChannelListQuery {
-    static func unique(for cid: ChannelId) -> Self {
-        var filter: Filter<ChannelListFilterScope> = .equal(.cid, to: cid)
-        filter.explicitHash = cid.rawValue
-        return .init(filter: filter)
-    }
 }
