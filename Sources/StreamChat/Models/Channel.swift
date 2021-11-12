@@ -83,7 +83,7 @@ public struct ChatChannel {
     
     /// The team the channel belongs to.
     ///
-    /// You need to enable multi-tenancy if you want to use this, else it'll be nil.
+    /// You need to enable multi-tenancy if you want to use this otherwise it is always nil
     /// Refer to [docs](https://getstream.io/chat/docs/multi_tenant_chat/?language=swift) for more info.
     ///
     public let team: TeamId?

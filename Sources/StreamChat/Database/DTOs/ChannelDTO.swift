@@ -41,6 +41,7 @@ class ChannelDTO: NSManagedObject {
     
     @NSManaged var isFrozen: Bool
     @NSManaged var cooldownDuration: Int
+    @NSManaged var team: String?
 
     // MARK: - Queries
 
@@ -53,7 +54,6 @@ class ChannelDTO: NSManagedObject {
     // MARK: - Relationships
     
     @NSManaged var createdBy: UserDTO?
-    @NSManaged var team: TeamDTO?
     @NSManaged var members: Set<MemberDTO>
 
     /// If the current user is a member of the channel, this is their MemberDTO
@@ -183,8 +183,7 @@ extension NSManagedObjectContext {
         }
         
         dto.cooldownDuration = payload.cooldownDuration
-
-        dto.team = try payload.team.map { try saveTeam(teamId: $0) }
+        dto.team = payload.team
 
         if let createdByPayload = payload.createdBy {
             let creatorDTO = try saveUser(payload: createdByPayload)
@@ -410,7 +409,7 @@ extension ChatChannel {
             membership: dto.membership.map { $0.asModel() },
             currentlyTypingUsers: { Set(dto.currentlyTypingUsers.map { $0.asModel() }) },
             lastActiveWatchers: { fetchWatchers() },
-            team: dto.team?.id,
+            team: dto.team,
             unreadCount: { unreadCount() },
             watcherCount: Int(dto.watcherCount),
             memberCount: Int(dto.memberCount),

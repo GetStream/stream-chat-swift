@@ -42,7 +42,7 @@ class UserDTO_Tests: XCTestCase {
             Assert.willBeEqual(payload.createdAt, loadedUserDTO.userCreatedAt)
             Assert.willBeEqual(payload.updatedAt, loadedUserDTO.userUpdatedAt)
             Assert.willBeEqual(payload.lastActiveAt, loadedUserDTO.lastActivityAt)
-            Assert.willBeEqual(payload.teams.sorted(), loadedUserDTO.teams?.map(\.id).sorted())
+            Assert.willBeEqual(payload.teams.sorted(), loadedUserDTO.teams?.sorted())
             Assert.willBeEqual(
                 payload.extraData,
                 try? JSONDecoder.default.decode([String: RawJSON].self, from: loadedUserDTO.extraData)

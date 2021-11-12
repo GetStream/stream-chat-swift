@@ -23,34 +23,6 @@ class DatabaseContainer_Tests: XCTestCase {
         XCTAssertThrowsError(try DatabaseContainer(kind: .onDisk(databaseFileURL: dbURL)))
     }
     
-    func test_writeCompletionBlockIsCalled() throws {
-        let container = try DatabaseContainer(kind: .inMemory)
-        
-        // Write a valid entity to DB and wait for the completion block to be called
-        let successCompletion = try waitFor { container.write({ session in
-            let context = session as! NSManagedObjectContext
-            let teamDTO = NSEntityDescription.insertNewObject(forEntityName: "TeamDTO", into: context) as! TeamDTO
-            teamDTO.id = .unique
-        }, completion: $0) }
-        
-        // Assert the completion was called with `nil` error value
-        XCTAssertNil(successCompletion)
-        
-        // Write an invalid entity to DB and wait for the completion block to be called with error
-        let errorCompletion = try waitFor { container.write({ session in
-            let context = session as! NSManagedObjectContext
-            NSEntityDescription.insertNewObject(forEntityName: "TeamDTO", into: context)
-            // Team id is not set, this should produce an error
-        }, completion: $0) }
-        
-        // Assert the completion was called with an error
-        //
-        // XCTAssertNotNil should be used but it seems to touch various properties of `errorCompletion`
-        // which results in touching `TeamDTO` stored in error's `userInfo`
-        // which is managed in local context inside write function and that makes CoreData concurrency unhappy
-        XCTAssert(errorCompletion != nil)
-    }
-    
     func test_removingAllData() throws {
         // Test removing all data works for all persistent store types
         let containerTypes: [DatabaseContainer.Kind] = [.inMemory, .onDisk(databaseFileURL: .newTemporaryFileURL())]
