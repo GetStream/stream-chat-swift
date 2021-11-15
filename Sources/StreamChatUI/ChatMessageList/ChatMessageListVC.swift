@@ -198,6 +198,7 @@ open class ChatMessageListVC:
     ///
     /// Default implementation will dismiss the keyboard if it is open
     @objc open func handleTap(_ gesture: UITapGestureRecognizer) {
+        delegate?.chatMessageListVC(self, didTapOnMessageListView: listView, with: gesture)
         view.endEditing(true)
     }
 

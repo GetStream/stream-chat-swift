@@ -227,6 +227,14 @@ open class ChatThreadVC:
         // but you as customer can override this function and provide an implementation.
     }
 
+    open func chatMessageListVC(
+        _ vc: ChatMessageListVC,
+        didTapOnMessageListView messageListView: ChatMessageListView,
+        with gestureRecognizer: UITapGestureRecognizer
+    ) {
+        messageComposerVC.dismissSuggestions()
+    }
+
     // MARK: -  ChatMessageControllerDelegate
 
     open func messageController(
