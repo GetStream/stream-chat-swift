@@ -358,6 +358,9 @@ public enum LocalMessageState: String {
 }
 
 public enum LocalReactionState: String {
+    ///  The reaction state is unknown
+    case unknown = ""
+    
     /// The reaction is waiting to be sent to the server
     case pendingSend
 

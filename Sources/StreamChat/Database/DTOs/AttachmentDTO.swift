@@ -15,9 +15,9 @@ class AttachmentDTO: NSManagedObject {
     }
 
     /// An attachment type.
-    @NSManaged private var type: String
+    @NSManaged private var type: String?
     var attachmentType: AttachmentType {
-        get { .init(rawValue: type) }
+        get { AttachmentType(rawValue: type ?? AttachmentType.unknown.rawValue) }
         set { type = newValue.rawValue }
     }
 
@@ -25,7 +25,9 @@ class AttachmentDTO: NSManagedObject {
     @NSManaged private var localStateRaw: String
     @NSManaged private var localProgress: Double
     var localState: LocalAttachmentState? {
-        get { LocalAttachmentState(rawValue: localStateRaw, progress: localProgress) }
+        get {
+            LocalAttachmentState(rawValue: localStateRaw, progress: localProgress)
+        }
         set {
             localStateRaw = newValue?.rawValue ?? ""
             localProgress = newValue?.progress ?? 0
@@ -221,6 +223,8 @@ extension AttachmentDTO {
 extension LocalAttachmentState {
     var rawValue: String {
         switch self {
+        case .unknown:
+            return ""
         case .pendingUpload:
             return "pendingUpload"
         case .uploading:
@@ -251,8 +255,10 @@ extension LocalAttachmentState {
             self = .uploadingFailed
         case LocalAttachmentState.uploaded.rawValue:
             self = .uploaded
+        case LocalAttachmentState.unknown.rawValue:
+            self = .unknown
         default:
-            return nil
+            self = .unknown
         }
     }
 }
