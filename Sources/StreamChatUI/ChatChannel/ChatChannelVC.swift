@@ -211,8 +211,8 @@ open class ChatChannelVC:
     }
 
     open func chatMessageListVC(
-        _ vc: ChatMessageListVC, didTapOnMessageListView messageListView: ChatMessageListView,
-        
+        _ vc: ChatMessageListVC,
+        didTapOnMessageListView messageListView: ChatMessageListView,
         with gestureRecognizer: UITapGestureRecognizer
     ) {
         messageComposerVC.dismissSuggestions()
