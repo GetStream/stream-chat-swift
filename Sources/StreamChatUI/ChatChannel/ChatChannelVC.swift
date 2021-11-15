@@ -65,6 +65,9 @@ open class ChatChannelVC:
         messageListVC.delegate = self
         messageListVC.dataSource = self
         messageListVC.client = client
+        messageListVC.didTapOnMessageListView = { [weak self] _ in
+            self?.messageComposerVC.dismissSuggestions()
+        }
 
         messageComposerVC.channelController = channelController
         messageComposerVC.userSearchController = userSuggestionSearchController

@@ -80,6 +80,9 @@ open class ChatMessageListVC:
 
         return !listView.isLastCellFullyVisible && isMoreContentThanOnePage
     }
+
+    /// A callback closure that is called when the message list is tapped
+    open var didTapOnMessageListView: ((UITapGestureRecognizer) -> Void)?
     
     override open func setUp() {
         super.setUp()
@@ -198,6 +201,7 @@ open class ChatMessageListVC:
     ///
     /// Default implementation will dismiss the keyboard if it is open
     @objc open func handleTap(_ gesture: UITapGestureRecognizer) {
+        didTapOnMessageListView?(gesture)
         view.endEditing(true)
     }
 
