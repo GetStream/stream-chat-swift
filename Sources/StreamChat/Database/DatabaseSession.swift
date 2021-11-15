@@ -17,6 +17,10 @@ protocol UserDatabaseSession {
     @discardableResult
     func saveQuery(query: UserListQuery) throws -> UserListQueryDTO?
     
+    /// Load user list query with the given hash.
+    /// - Returns: The query hash.
+    func userListQuery(filterHash: String) -> UserListQueryDTO?
+    
     /// Fetches `UserDTO` with the given `id` from the DB. Returns `nil` if no `UserDTO` matching the `id` exists.
     func user(id: UserId) -> UserDTO?
     

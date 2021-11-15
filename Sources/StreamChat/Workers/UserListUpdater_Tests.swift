@@ -214,4 +214,57 @@ class UserListUpdater_Tests: XCTestCase {
         
         AssertAsync.willBeTrue(completionCalled)
     }
+    
+    // MARK: - Fetch
+    
+    func test_fetch_makesCorrectAPICall() {
+        // Simulate `fetch` call
+        let query = UserListQuery(filter: .equal(.id, to: "Luke"))
+        listUpdater.fetch(userListQuery: query, completion: { _ in })
+        
+        let referenceEndpoint: Endpoint<UserListPayload> = .users(query: query)
+        XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
+    }
+    
+    func test_fetch_whenSuccess_payloadIsPropagatedToCompletion() {
+        // Simulate `fetch` call
+        let query = UserListQuery(filter: .equal(.id, to: "Luke"))
+        var userListPayload: UserListPayload?
+        listUpdater.fetch(userListQuery: query, completion: { result in
+            XCTAssertNil(result.error)
+            userListPayload = try? result.get()
+        })
+        
+        // Simualte API response with user data
+        let payload = UserListPayload(users: [dummyUser])
+        apiClient.test_simulateResponse(.success(payload))
+        
+        AssertAsync.willBeEqual(
+            Set(payload.users.map(\.id)),
+            Set(userListPayload?.users.map(\.id) ?? [])
+        )
+    }
+    
+    func test_fetch_whenFailure_errorIsPropagatedToCompletion() {
+        // Simulate `fetch` call
+        let query = UserListQuery(filter: .equal(.id, to: "Luke"))
+        var completionCalledError: Error?
+        listUpdater.fetch(userListQuery: query, completion: { completionCalledError = $0.error })
+        
+        // Simualte API response with failure
+        let error = TestError()
+        apiClient.test_simulateResponse(Result<UserListPayload, Error>.failure(error))
+        
+        // Assert the completion is called with the error
+        AssertAsync.willBeEqual(completionCalledError as? TestError, error)
+    }
+    
+    func test_fetch_doesNotRetainSelf() {
+        // Simulate `fetch` call
+        let query = UserListQuery(filter: .equal(.id, to: "Luke"))
+        listUpdater.fetch(userListQuery: query, completion: { _ in })
+        
+        // Assert updater can be released
+        AssertAsync.canBeReleased(&listUpdater)
+    }
 }
