@@ -108,6 +108,7 @@ open class ComposerView: _View, ThemeProvider {
         embed(container)
 
         container.isLayoutMarginsRelativeArrangement = true
+        container.layoutMargins = .init(top: 8, left: 4, bottom: 8, right: 4)
         container.axis = .vertical
         container.alignment = .fill
         container.addArrangedSubview(headerView)
@@ -122,15 +123,15 @@ open class ComposerView: _View, ThemeProvider {
 
         centerContainer.axis = .horizontal
         centerContainer.alignment = .bottom
-        centerContainer.spacing = .auto
+        centerContainer.spacing = 2
         centerContainer.addArrangedSubview(leadingContainer)
         centerContainer.addArrangedSubview(inputMessageView)
         centerContainer.addArrangedSubview(trailingContainer)
+        centerContainer.layoutMargins = .zero
         
         trailingContainer.alignment = .center
-        trailingContainer.spacing = .auto
+        trailingContainer.spacing = 0
         trailingContainer.distribution = .equal
-        trailingContainer.isLayoutMarginsRelativeArrangement = true
         trailingContainer.directionalLayoutMargins = .zero
         trailingContainer.addArrangedSubview(sendButton)
         trailingContainer.addArrangedSubview(confirmButton)
@@ -138,9 +139,8 @@ open class ComposerView: _View, ThemeProvider {
 
         leadingContainer.axis = .horizontal
         leadingContainer.alignment = .center
-        leadingContainer.spacing = .auto
+        leadingContainer.spacing = 0
         leadingContainer.distribution = .equal
-        leadingContainer.isLayoutMarginsRelativeArrangement = true
         leadingContainer.directionalLayoutMargins = .zero
         leadingContainer.addArrangedSubview(attachmentButton)
         leadingContainer.addArrangedSubview(commandsButton)
@@ -153,10 +153,16 @@ open class ComposerView: _View, ThemeProvider {
         titleLabel.centerXAnchor.pin(equalTo: centerXAnchor).isActive = true
         titleLabel.pin(anchors: [.top, .bottom], to: headerView)
 
-        [shrinkInputButton, attachmentButton, commandsButton, sendButton, confirmButton]
+        [sendButton, confirmButton]
             .forEach { button in
-                button.pin(anchors: [.width], to: 20)
-                button.pin(anchors: [.height], to: 38)
+                button.pin(anchors: [.width], to: 35)
+                button.pin(anchors: [.height], to: 40)
+            }
+
+        [shrinkInputButton, attachmentButton, commandsButton]
+            .forEach { button in
+                button.pin(anchors: [.width], to: 28)
+                button.pin(anchors: [.height], to: 40)
             }
     }
 }
