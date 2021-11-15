@@ -1,3 +1,13 @@
+#!/usr/bin/env bash
+#
+# Usage: ./removePublicDeclaracions.sh Sources/StreamNuke
+#
+# This script would iterate over the files on a particular directory, and perform basic replacement operations.
+# It heavily relies on 'sed':
+#     sed -i '<backup-file-extension>' -e 's/<original-string>/<replacement>/g' <file>
+#             ^
+#             Passing empty string prevents the creation of backup files
+
 args=("$@")
 directory=$1
 
