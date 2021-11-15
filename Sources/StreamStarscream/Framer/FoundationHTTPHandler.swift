@@ -22,18 +22,18 @@
 
 import Foundation
 #if os(watchOS)
-public typealias FoundationHTTPHandler = StringHTTPHandler
+typealias FoundationHTTPHandler = StringHTTPHandler
 #else
-public class FoundationHTTPHandler: HTTPHandler {
+class FoundationHTTPHandler: HTTPHandler {
 
     var buffer = Data()
     weak var delegate: HTTPHandlerDelegate?
     
-    public init() {
+    init() {
         
     }
     
-    public func convert(request: URLRequest) -> Data {
+    func convert(request: URLRequest) -> Data {
         let msg = CFHTTPMessageCreateRequest(kCFAllocatorDefault, request.httpMethod! as CFString,
                                              request.url! as CFURL, kCFHTTPVersion1_1).takeRetainedValue()
         if let headers = request.allHTTPHeaderFields {
@@ -50,7 +50,7 @@ public class FoundationHTTPHandler: HTTPHandler {
         return data.takeRetainedValue() as Data
     }
     
-    public func parse(data: Data) -> Int {
+    func parse(data: Data) -> Int {
         let offset = findEndOfHTTP(data: data)
         if offset > 0 {
             buffer.append(data.subdata(in: 0..<offset))
@@ -98,7 +98,7 @@ public class FoundationHTTPHandler: HTTPHandler {
         return true
     }
     
-    public func register(delegate: HTTPHandlerDelegate) {
+    func register(delegate: HTTPHandlerDelegate) {
         self.delegate = delegate
     }
     

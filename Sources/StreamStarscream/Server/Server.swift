@@ -22,7 +22,7 @@
 
 import Foundation
 
-public enum ConnectionEvent {
+enum StarscreamConnectionEvent {
     case connected([String: String])
     case disconnected(String, UInt16)
     case text(String)
@@ -32,15 +32,15 @@ public enum ConnectionEvent {
     case error(Error)
 }
 
-public protocol Connection {
+protocol Connection {
     func write(data: Data, opcode: FrameOpCode)
 }
 
-public protocol ConnectionDelegate: class {
+protocol ConnectionDelegate: class {
     func didReceive(event: ServerEvent)
 }
 
-public enum ServerEvent {
+enum ServerEvent {
     case connected(Connection, [String: String])
     case disconnected(Connection, String, UInt16)
     case text(Connection, String)
@@ -49,7 +49,7 @@ public enum ServerEvent {
     case ping(Connection, Data?)
 }
 
-public protocol Server {
+protocol Server {
     func start(address: String, port: UInt16) -> Error?
 }
 

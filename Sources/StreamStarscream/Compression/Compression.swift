@@ -22,7 +22,7 @@
 
 import Foundation
 
-public protocol CompressionHandler {
+protocol CompressionHandler {
     func load(headers: [String: String])
     func decompress(data: Data, isFinal: Bool) -> Data?
     func compress(data: Data) -> Data?

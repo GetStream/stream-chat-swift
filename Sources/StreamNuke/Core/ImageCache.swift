@@ -12,7 +12,7 @@ import Cocoa
 /// In-memory image cache.
 ///
 /// The implementation must be thread safe.
-public protocol ImageCaching: AnyObject {
+protocol ImageCaching: AnyObject {
     /// Access the image cached for the given request.
     subscript(key: ImageCacheKey) -> ImageContainer? { get set }
 
@@ -23,7 +23,7 @@ public protocol ImageCaching: AnyObject {
 /// An opaque container that acts as a cache key.
 ///
 /// In general, you don't construct it directly, and use `ImagePipeline` or `ImagePipeline.Cache` APIs.
-public struct ImageCacheKey: Hashable {
+struct ImageCacheKey: Hashable {
     let key: Inner
 
     // This is faster than using AnyHashable (and it shows in performance tests).
@@ -32,7 +32,7 @@ public struct ImageCacheKey: Hashable {
         case `default`(CacheKey)
     }
 
-    public init(key: String) {
+    init(key: String) {
         self.key = .custom(key)
     }
 
@@ -41,7 +41,7 @@ public struct ImageCacheKey: Hashable {
     }
 }
 
-public extension ImageCaching {
+extension ImageCaching {
     /// A convenience API for getting an image for the given request.
     ///
     /// - warning: If you provide a custom key using `ImagePipelineDelegate`, use
@@ -62,44 +62,44 @@ public extension ImageCaching {
 /// `ImageCache` automatically removes all stored elements when it receives a
 /// memory warning. It also automatically removes *most* stored elements
 /// when the app enters the background.
-public final class ImageCache: ImageCaching {
-    private let impl: Cache<ImageCacheKey, ImageContainer>
+final class ImageCache: ImageCaching {
+    private let impl: NukeCache<ImageCacheKey, ImageContainer>
 
     /// The maximum total cost that the cache can hold.
-    public var costLimit: Int {
+    var costLimit: Int {
         get { impl.costLimit }
         set { impl.costLimit = newValue }
     }
 
     /// The maximum number of items that the cache can hold.
-    public var countLimit: Int {
+    var countLimit: Int {
         get { impl.countLimit }
         set { impl.countLimit = newValue }
     }
 
     /// Default TTL (time to live) for each entry. Can be used to make sure that
     /// the entries get validated at some point. `0` (never expire) by default.
-    public var ttl: TimeInterval {
+    var ttl: TimeInterval {
         get { impl.ttl }
         set { impl.ttl = newValue }
     }
 
     /// The total cost of items in the cache.
-    public var totalCost: Int {
+    var totalCost: Int {
         return impl.totalCost
     }
 
     /// The maximum cost of an entry in proportion to the `costLimit`.
     /// By default, `0.1`.
-    public var entryCostLimit: Double = 0.1
+    var entryCostLimit: Double = 0.1
 
     /// The total number of items in the cache.
-    public var totalCount: Int {
+    var totalCount: Int {
         return impl.totalCount
     }
 
     /// Shared `Cache` instance.
-    public static let shared = ImageCache()
+    static let shared = ImageCache()
 
     deinit {
         #if TRACK_ALLOCATIONS
@@ -111,8 +111,8 @@ public final class ImageCache: ImageCaching {
     /// - parameter costLimit: Default value representes a number of bytes and is
     /// calculated based on the amount of the phisical memory available on the device.
     /// - parameter countLimit: `Int.max` by default.
-    public init(costLimit: Int = ImageCache.defaultCostLimit(), countLimit: Int = Int.max) {
-        impl = Cache(costLimit: costLimit, countLimit: countLimit)
+    init(costLimit: Int = ImageCache.defaultCostLimit(), countLimit: Int = Int.max) {
+        impl = NukeCache(costLimit: costLimit, countLimit: countLimit)
 
         #if TRACK_ALLOCATIONS
         Allocations.increment("ImageCache")
@@ -121,14 +121,14 @@ public final class ImageCache: ImageCaching {
 
     /// Returns a recommended cost limit which is computed based on the amount
     /// of the phisical memory available on the device.
-    public static func defaultCostLimit() -> Int {
+    static func defaultCostLimit() -> Int {
         let physicalMemory = ProcessInfo.processInfo.physicalMemory
         let ratio = physicalMemory <= (536_870_912 /* 512 Mb */) ? 0.1 : 0.2
         let limit = physicalMemory / UInt64(1 / ratio)
         return limit > UInt64(Int.max) ? Int.max : Int(limit)
     }
 
-    public subscript(key: ImageCacheKey) -> ImageContainer? {
+    subscript(key: ImageCacheKey) -> ImageContainer? {
         get {
             return impl.value(forKey: key)
         }
@@ -148,18 +148,18 @@ public final class ImageCache: ImageCaching {
     }
 
     /// Removes all cached images.
-    public func removeAll() {
+    func removeAll() {
         impl.removeAll()
     }
     /// Removes least recently used items from the cache until the total cost
     /// of the remaining items is less than the given cost limit.
-    public func trim(toCost limit: Int) {
+    func trim(toCost limit: Int) {
         impl.trim(toCost: limit)
     }
 
     /// Removes least recently used items from the cache until the total count
     /// of the remaining items is less than the given count limit.
-    public func trim(toCount limit: Int) {
+    func trim(toCount limit: Int) {
         impl.trim(toCount: limit)
     }
 
@@ -182,7 +182,7 @@ public final class ImageCache: ImageCaching {
     }
 }
 
-final class Cache<Key: Hashable, Value> {
+final class NukeCache<Key: Hashable, Value> {
     // Can't use `NSCache` because it is not LRU
 
     private var map = [Key: LinkedList<Entry>.Node]()

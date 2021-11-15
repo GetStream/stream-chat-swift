@@ -22,12 +22,12 @@
 
 import Foundation
 
-public enum HTTPUpgradeError: Error {
+enum HTTPUpgradeError: Error {
     case notAnUpgrade(Int)
     case invalidData
 }
 
-public struct HTTPWSHeader {
+struct HTTPWSHeader {
     static let upgradeName        = "Upgrade"
     static let upgradeValue       = "websocket"
     static let hostName           = "Host"
@@ -48,7 +48,7 @@ public struct HTTPWSHeader {
     /// - Parameter supportsCompression: set if the client support text compression.
     /// - Parameter secKeyName: the security key to use in the WebSocket request. https://tools.ietf.org/html/rfc6455#section-1.3
     /// - returns: A URLRequest request to be converted to data and sent to the server.
-    public static func createUpgrade(request: URLRequest, supportsCompression: Bool, secKeyValue: String) -> URLRequest {
+    static func createUpgrade(request: URLRequest, supportsCompression: Bool, secKeyValue: String) -> URLRequest {
         guard let url = request.url, let parts = url.getParts() else {
             return request
         }
@@ -84,43 +84,43 @@ public struct HTTPWSHeader {
     }
     
     // generateWebSocketKey 16 random characters between a-z and return them as a base64 string
-    public static func generateWebSocketKey() -> String {
+    static func generateWebSocketKey() -> String {
         return Data((0..<16).map{ _ in UInt8.random(in: 97...122) }).base64EncodedString()
     }
 }
 
-public enum HTTPEvent {
+enum HTTPEvent {
     case success([String: String])
     case failure(Error)
 }
 
-public protocol HTTPHandlerDelegate: class {
+protocol HTTPHandlerDelegate: class {
     func didReceiveHTTP(event: HTTPEvent)
 }
 
-public protocol HTTPHandler {
+protocol HTTPHandler {
     func register(delegate: HTTPHandlerDelegate)
     func convert(request: URLRequest) -> Data
     func parse(data: Data) -> Int
 }
 
-public protocol HTTPServerDelegate: class {
+protocol HTTPServerDelegate: class {
     func didReceive(event: HTTPEvent)
 }
 
-public protocol HTTPServerHandler {
+protocol HTTPServerHandler {
     func register(delegate: HTTPServerDelegate)
     func parse(data: Data)
     func createResponse(headers: [String: String]) -> Data
 }
 
-public struct URLParts {
+struct URLParts {
     let port: Int
     let host: String
     let isTLS: Bool
 }
 
-public extension URL {
+extension URL {
     /// isTLSScheme returns true if the scheme is https or wss
     var isTLSScheme: Bool {
         guard let scheme = self.scheme else {

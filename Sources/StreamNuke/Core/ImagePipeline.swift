@@ -19,19 +19,19 @@ import Foundation
 /// [guide](https://kean.blog/nuke/guides/combine) with some common use-cases.
 ///
 /// `ImagePipeline` is fully thread-safe.
-public final class ImagePipeline {
+final class ImagePipeline {
     /// Shared image pipeline.
-    public static var shared = ImagePipeline(configuration: .withURLCache)
+    static var shared = ImagePipeline(configuration: .withURLCache)
 
     /// The pipeline configuration.
-    public let configuration: Configuration
+    let configuration: Configuration
 
     /// Provides access to the underlying caching subsystems.
-    public var cache: ImagePipeline.Cache { ImagePipeline.Cache(pipeline: self) }
+    var cache: ImagePipeline.Cache { ImagePipeline.Cache(pipeline: self) }
 
     // Deprecated in 10.0.0
     @available(*, deprecated, message: "Please use ImagePipelineDelegate")
-    public var observer: ImagePipelineObserving?
+    var observer: ImagePipelineObserving?
 
     let delegate: ImagePipelineDelegate // swiftlint:disable:this all
     private(set) var imageCache: ImageCache?
@@ -68,7 +68,7 @@ public final class ImagePipeline {
     ///
     /// - parameter configuration: `Configuration()` by default.
     /// - parameter delegate: `nil` by default.
-    public init(configuration: Configuration = Configuration(), delegate: ImagePipelineDelegate? = nil) {
+    init(configuration: Configuration = Configuration(), delegate: ImagePipelineDelegate? = nil) {
         self.configuration = configuration
         self.rateLimiter = configuration.isRateLimiterEnabled ? RateLimiter(queue: queue) : nil
         self.delegate = delegate ?? ImagePipelineDefaultDelegate()
@@ -95,7 +95,7 @@ public final class ImagePipeline {
         #endif
     }
 
-    public convenience init(delegate: ImagePipelineDelegate? = nil, _ configure: (inout ImagePipeline.Configuration) -> Void) {
+    convenience init(delegate: ImagePipelineDelegate? = nil, _ configure: (inout ImagePipeline.Configuration) -> Void) {
         var configuration = ImagePipeline.Configuration()
         configure(&configuration)
         self.init(configuration: configuration, delegate: delegate)
@@ -103,7 +103,7 @@ public final class ImagePipeline {
 
     /// Invalidates the pipeline and cancels all outstanding tasks. No new
     /// requests can be started.
-    public func invalidate() {
+    func invalidate() {
         queue.async {
             guard !self.isInvalidated else { return }
             self.isInvalidated = true
@@ -114,7 +114,7 @@ public final class ImagePipeline {
     // MARK: - Loading Images
 
     /// Loads an image for the given request.
-    @discardableResult public func loadImage(
+    @discardableResult func loadImage(
         with request: ImageRequestConvertible,
         completion: @escaping (_ result: Result<ImageResponse, Error>) -> Void
     ) -> ImageTask {
@@ -132,7 +132,7 @@ public final class ImagePipeline {
     /// when the progress is updated. `nil` by default.
     /// - parameter completion: A closure to be called on the main thread when the
     /// request is finished. `nil` by default.
-    @discardableResult public func loadImage(
+    @discardableResult func loadImage(
         with request: ImageRequestConvertible,
         queue: DispatchQueue? = nil,
         progress: ((_ response: ImageResponse?, _ completed: Int64, _ total: Int64) -> Void)?,
@@ -205,7 +205,7 @@ public final class ImagePipeline {
 
     /// Loads the image data for the given request. The data doesn't get decoded
     /// or processed in any other way.
-    @discardableResult public func loadData(
+    @discardableResult func loadData(
         with request: ImageRequestConvertible,
         completion: @escaping (Result<(data: Data, response: URLResponse?), Error>) -> Void
     ) -> ImageTask {
@@ -226,7 +226,7 @@ public final class ImagePipeline {
     /// when the progress is updated. `nil` by default.
     /// - parameter completion: A closure to be called on the main thread when the
     /// request is finished.
-    @discardableResult public func loadData(
+    @discardableResult func loadData(
         with request: ImageRequestConvertible,
         queue: DispatchQueue? = nil,
         progress: ((_ completed: Int64, _ total: Int64) -> Void)?,
@@ -291,7 +291,7 @@ public final class ImagePipeline {
     // MARK: - Errors
 
     /// Represents all possible image pipeline errors.
-    public enum Error: Swift.Error, CustomStringConvertible {
+    enum Error: Swift.Error, CustomStringConvertible {
         /// Data loader failed to load image data with a wrapped error.
         case dataLoadingFailed(Swift.Error)
         /// Decoder failed to produce a final image.
@@ -299,7 +299,7 @@ public final class ImagePipeline {
         /// Processor failed to produce a final image.
         case processingFailed(ImageProcessing)
 
-        public var description: String {
+        var description: String {
             switch self {
             case let .dataLoadingFailed(error): return "Failed to load image data: \(error)"
             case .decodingFailed: return "Failed to create an image from the image data"
@@ -308,7 +308,7 @@ public final class ImagePipeline {
         }
 
         /// Returns underlying data loading error.
-        public var dataLoadingError: Swift.Error? {
+        var dataLoadingError: Swift.Error? {
             switch self {
             case .dataLoadingFailed(let error):
                 return error

@@ -22,16 +22,16 @@
 
 import Foundation
 
-public class StringHTTPHandler: HTTPHandler {
+class StringHTTPHandler: HTTPHandler {
     
     var buffer = Data()
     weak var delegate: HTTPHandlerDelegate?
     
-    public init() {
+    init() {
         
     }
     
-    public func convert(request: URLRequest) -> Data {
+    func convert(request: URLRequest) -> Data {
         guard let url = request.url else {
             return Data()
         }
@@ -67,7 +67,7 @@ public class StringHTTPHandler: HTTPHandler {
         return data
     }
     
-    public func parse(data: Data) -> Int {
+    func parse(data: Data) -> Int {
         let offset = findEndOfHTTP(data: data)
         if offset > 0 {
             buffer.append(data.subdata(in: 0..<offset))
@@ -118,7 +118,7 @@ public class StringHTTPHandler: HTTPHandler {
         return true
     }
     
-    public func register(delegate: HTTPHandlerDelegate) {
+    func register(delegate: HTTPHandlerDelegate) {
         self.delegate = delegate
     }
     

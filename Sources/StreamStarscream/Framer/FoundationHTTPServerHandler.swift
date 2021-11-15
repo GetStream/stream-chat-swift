@@ -22,16 +22,16 @@
 
 import Foundation
 
-public class FoundationHTTPServerHandler: HTTPServerHandler {
+class FoundationHTTPServerHandler: HTTPServerHandler {
     var buffer = Data()
     weak var delegate: HTTPServerDelegate?
     let getVerb: NSString = "GET"
     
-    public func register(delegate: HTTPServerDelegate) {
+    func register(delegate: HTTPServerDelegate) {
         self.delegate = delegate
     }
     
-    public func createResponse(headers: [String: String]) -> Data {
+    func createResponse(headers: [String: String]) -> Data {
         #if os(watchOS)
         //TODO: build response header
         return Data()
@@ -51,7 +51,7 @@ public class FoundationHTTPServerHandler: HTTPServerHandler {
         #endif
     }
     
-    public func parse(data: Data) {
+    func parse(data: Data) {
         buffer.append(data)
         if parseContent(data: buffer) {
             buffer = Data()
