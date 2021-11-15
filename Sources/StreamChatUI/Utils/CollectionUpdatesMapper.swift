@@ -32,10 +32,9 @@ final class CollectionUpdatesMapper {
     /// Verify if there are conflicts in changes and if there are call `onConflict`
     /// - Parameters:
     ///   - changes: changes
-    ///   - onConflict: Is called when a conflict occurs
+    /// - Returns: Returns the indices mapped to sets. Returns nil if there were conflicts.
     func mapToSetsOfIndexPaths<Item>(
-        changes: [ListChange<Item>],
-        onConflict: () -> Void
+        changes: [ListChange<Item>]
     ) -> Indexes? {
         var allIndexes = Set<IndexPath>()
         var moveIndexes = Set<IndexPathMove>()
@@ -72,14 +71,6 @@ final class CollectionUpdatesMapper {
         }
         
         if hasConflicts {
-            onConflict()
-            
-            logConflicts(
-                moves: moveIndexes,
-                inserts: insertIndexes,
-                updates: updateIndexes,
-                removes: removeIndexes
-            )
             return nil
         }
         
@@ -88,27 +79,6 @@ final class CollectionUpdatesMapper {
             insert: insertIndexes,
             remove: removeIndexes,
             update: updateIndexes
-        )
-    }
-    
-    private func logConflicts(
-        moves: Set<IndexPathMove>,
-        inserts: Set<IndexPath>,
-        updates: Set<IndexPath>,
-        removes: Set<IndexPath>
-    ) {
-        log.error(
-            """
-
-            ⚠️ Inconsistent updates from ChatChannelListController.
-            🙏 Please copy the following log and open an issue at: https://github.com/GetStream/stream-chat-swift/issues
-
-            Moves: \(moves)
-            Inserts: \(inserts)
-            updates: \(updates)
-            removes: \(removes)
-
-            """
         )
     }
 }

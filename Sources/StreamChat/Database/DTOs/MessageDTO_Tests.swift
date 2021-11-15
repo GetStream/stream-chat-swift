@@ -305,6 +305,43 @@ class MessageDTO_Tests: XCTestCase {
         }
     }
 
+    func test_messagePayload_whenEmptyPinExpiration_addedToPinnedMessages() throws {
+        let channelId: ChannelId = .unique
+        let channelPayload: ChannelPayload = dummyPayload(with: channelId)
+        let payload: MessagePayload = .dummy(
+            messageId: .unique,
+            authorUserId: .unique,
+            createdAt: "2018-12-12T15:33:46.488935Z".toDate(),
+            pinned: true,
+            pinnedByUserId: .unique,
+            pinnedAt: "2018-12-12T15:33:46.488935Z".toDate(),
+            pinExpires: nil
+        )
+
+        let (channelDTO, messageDTO): (ChannelDTO, MessageDTO) = try waitFor { completion in
+            var channelDTO: ChannelDTO!
+            var messageDTO: MessageDTO!
+
+            // Asynchronously save the payload to the db
+            database.write { session in
+                // Create the channel first
+                channelDTO = try! session.saveChannel(payload: channelPayload, query: nil)
+
+                // Save the message
+                messageDTO = try! session.saveMessage(payload: payload, for: channelId)
+
+                XCTAssertTrue(messageDTO!.asModel().isPinned)
+            } completion: { _ in
+                completion((channelDTO, messageDTO))
+            }
+        }
+
+        XCTAssertTrue(
+            channelDTO.inContext(database.viewContext).pinnedMessages
+                .contains(messageDTO.inContext(database.viewContext))
+        )
+    }
+
     func test_messagePayloadNotStored_withoutChannelInfo() throws {
         let payload: MessagePayload = .dummy(messageId: .unique, authorUserId: .unique)
         assert(payload.channel == nil, "Channel must be `nil`")

@@ -172,12 +172,15 @@ open class ChatMessageListView: UITableView, Customizable, ComponentsProvider {
         with changes: [ListChange<ChatMessage>],
         completion: (() -> Void)? = nil
     ) {
-        guard let _ = collectionUpdatesMapper.mapToSetsOfIndexPaths(
-            changes: changes,
-            onConflict: {
-                reloadData()
-            }
-        ) else { return }
+        defer {
+            completion?()
+        }
+
+        let hasConflictUpdates = collectionUpdatesMapper.mapToSetsOfIndexPaths(changes: changes) == nil
+        if hasConflictUpdates {
+            reloadData()
+            return
+        }
 
         if changes.count > 1 {
             reloadData()
@@ -188,8 +191,17 @@ open class ChatMessageListView: UITableView, Customizable, ComponentsProvider {
             switch $0 {
             case let .insert(message, index: index):
                 UIView.performWithoutAnimation {
-                    self.reloadData()
+                    self.performBatchUpdates {
+                        self.insertRows(at: [index], with: .none)
+                    } completion: { _ in
+                        guard self.numberOfRows(inSection: index.section) > 1 else { return }
+                        // Update previous row to remove timestamp if needed
+                        // +1 instead of -1 because the message list is inverted
+                        let previousIndex = IndexPath(row: index.row + 1, section: index.section)
+                        self.reloadRows(at: [previousIndex], with: .none)
+                    }
                 }
+
                 if message.isSentByCurrentUser, index == IndexPath(item: 0, section: 0) {
                     self.scrollToBottomAction = .init { [weak self] in
                         self?.scrollToMostRecentMessage()
@@ -228,11 +240,13 @@ open class ChatMessageListView: UITableView, Customizable, ComponentsProvider {
                 cellBeforeUpdateReuseIdentifier == cellAfterUpdateReuseIdentifier,
                 cellBeforeUpdateMessage?.id == cellAfterUpdateMessage?.id,
                 cellBeforeUpdateMessage?.type == cellAfterUpdateMessage?.type,
-                cellBeforeUpdateMessage?.deletedAt == cellAfterUpdateMessage?.deletedAt {
+                cellBeforeUpdateMessage?.deletedAt == cellAfterUpdateMessage?.deletedAt,
+                cellBeforeUpdateMessage?.text == cellAfterUpdateMessage?.text {
                 // If identifiers and messages match we can simply update the current cell with new content
                 cellBeforeUpdate?.messageContentView?.content = cellAfterUpdateMessage
             } else {
-                // If identifiers does not match we do a reload to let the table view dequeue another cell
+                // If identifiers do not match or the cell size will need to change, ex: Editing text
+                // we do a reload to let the table view dequeue another cell
                 // with the layout fitting the updated message.
                 indexPathToReload.append(indexPath)
             }

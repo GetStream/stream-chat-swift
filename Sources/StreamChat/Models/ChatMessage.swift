@@ -332,7 +332,7 @@ public struct MessagePinDetails {
     public let pinnedBy: ChatUser
 
     /// Date when the message pin expires. An nil value means that message does not expire
-    public let expiresAt: Date
+    public let expiresAt: Date?
 }
 
 /// A possible additional local state of the message. Applies only for the messages of the current user.
