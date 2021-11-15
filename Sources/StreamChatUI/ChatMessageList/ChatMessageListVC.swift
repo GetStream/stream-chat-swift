@@ -82,7 +82,7 @@ open class ChatMessageListVC:
     }
 
     /// A callback closure that is called when the message list is tapped
-    open var didTapOnMessageListView: ((UITapGestureRecognizer) -> Void)?
+    public var didTapOnMessageListView: ((UITapGestureRecognizer) -> Void)?
     
     override open func setUp() {
         super.setUp()
