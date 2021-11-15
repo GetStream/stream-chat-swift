@@ -910,10 +910,7 @@
 		BDDD1EAC2632E32000BA007B /* AppearanceProvider_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDDD1EAB2632E32000BA007B /* AppearanceProvider_Tests.swift */; };
 		BDDD1EAE2632E6C200BA007B /* Appearance+SwiftUI_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDDD1EAD2632E6C200BA007B /* Appearance+SwiftUI_Tests.swift */; };
 		BDEB9417268211EC00928AF1 /* ChatMessageListUnreadCountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDEB9416268211EC00928AF1 /* ChatMessageListUnreadCountView.swift */; };
-		C13C751F2739375D00F93B34 /* StreamStarscream.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C13C74E6273935D800F93B34 /* StreamStarscream.framework */; };
 		C13E2439273A866700E3AF7A /* StreamChat.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 799C941B247D2F80001F1104 /* StreamChat.framework */; };
-		C13E243C273A866800E3AF7A /* StreamNuke.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C13C10E22732C2730089EBB2 /* StreamNuke.framework */; };
-		C13E243E273A866900E3AF7A /* StreamSwiftyGif.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C13C74C92739315D00F93B34 /* StreamSwiftyGif.framework */; };
 		C1BE72732732CA62006EB51E /* Nuke in Frameworks */ = {isa = PBXBuildFile; productRef = C1BE72722732CA62006EB51E /* Nuke */; };
 		C1FC2F6727416E150062530F /* ResumableData.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1BE728A2732CB7B006EB51E /* ResumableData.swift */; };
 		C1FC2F6827416E150062530F /* ImagePipelineCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1BE72822732CB7B006EB51E /* ImagePipelineCache.swift */; };
@@ -1337,27 +1334,6 @@
 			proxyType = 1;
 			remoteGlobalIDString = 799C941A247D2F80001F1104;
 			remoteInfo = StreamChat;
-		};
-		C13C113F2732C4F20089EBB2 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 8AD5EC8622E9A3E8005CFAC9 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = C13C10E12732C2730089EBB2;
-			remoteInfo = StreamNuke;
-		};
-		C13C74DE2739338700F93B34 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 8AD5EC8622E9A3E8005CFAC9 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = C13C74C82739315D00F93B34;
-			remoteInfo = StreamSwiftyGif;
-		};
-		C13C75212739375D00F93B34 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 8AD5EC8622E9A3E8005CFAC9 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = C13C74E5273935D800F93B34;
-			remoteInfo = StreamStarscream;
 		};
 		E74DB08C2656631700508D22 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -2400,14 +2376,11 @@
 		BDDD1EAB2632E32000BA007B /* AppearanceProvider_Tests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppearanceProvider_Tests.swift; sourceTree = "<group>"; };
 		BDDD1EAD2632E6C200BA007B /* Appearance+SwiftUI_Tests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Appearance+SwiftUI_Tests.swift"; sourceTree = "<group>"; };
 		BDEB9416268211EC00928AF1 /* ChatMessageListUnreadCountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageListUnreadCountView.swift; sourceTree = "<group>"; };
-		C13C10E22732C2730089EBB2 /* StreamNuke.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = StreamNuke.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		C13C74C92739315D00F93B34 /* StreamSwiftyGif.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = StreamSwiftyGif.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		C13C74D2273932D200F93B34 /* UIImageView+SwiftyGif.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIImageView+SwiftyGif.swift"; sourceTree = "<group>"; };
 		C13C74D3273932D200F93B34 /* NSImage+SwiftyGif.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSImage+SwiftyGif.swift"; sourceTree = "<group>"; };
 		C13C74D4273932D200F93B34 /* UIImage+SwiftyGif.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIImage+SwiftyGif.swift"; sourceTree = "<group>"; };
 		C13C74D5273932D200F93B34 /* SwiftyGifManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SwiftyGifManager.swift; sourceTree = "<group>"; };
 		C13C74D6273932D200F93B34 /* NSImageView+SwiftyGif.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSImageView+SwiftyGif.swift"; sourceTree = "<group>"; };
-		C13C74E6273935D800F93B34 /* StreamStarscream.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = StreamStarscream.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		C13C74F0273936D900F93B34 /* Transport.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Transport.swift; sourceTree = "<group>"; };
 		C13C74F1273936D900F93B34 /* FoundationTransport.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FoundationTransport.swift; sourceTree = "<group>"; };
 		C13C74F2273936D900F93B34 /* TCPTransport.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TCPTransport.swift; sourceTree = "<group>"; };
@@ -2709,8 +2682,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				C13E2439273A866700E3AF7A /* StreamChat.framework in Frameworks */,
-				C13E243E273A866900E3AF7A /* StreamSwiftyGif.framework in Frameworks */,
-				C13E243C273A866800E3AF7A /* StreamNuke.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2761,7 +2732,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C13C751F2739375D00F93B34 /* StreamStarscream.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2789,27 +2759,6 @@
 			files = (
 				AC90839D268B120900ACFB8E /* StreamChat.framework in Frameworks */,
 				AC908398268B120300ACFB8E /* StreamChatUI.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		C13C10DF2732C2730089EBB2 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		C13C74C62739315D00F93B34 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		C13C74E3273935D800F93B34 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4707,9 +4656,6 @@
 				E74DB0D32656631700508D22 /* UISDKDocumentation.xctest */,
 				AC908381268B115F00ACFB8E /* YouTube.app */,
 				437FCA0426D67BE40000223C /* DemoAppPush.appex */,
-				C13C10E22732C2730089EBB2 /* StreamNuke.framework */,
-				C13C74C92739315D00F93B34 /* StreamSwiftyGif.framework */,
-				C13C74E6273935D800F93B34 /* StreamStarscream.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -5640,27 +5586,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		C13C10DD2732C2730089EBB2 /* Headers */ = {
-			isa = PBXHeadersBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		C13C74C42739315D00F93B34 /* Headers */ = {
-			isa = PBXHeadersBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		C13C74E1273935D800F93B34 /* Headers */ = {
-			isa = PBXHeadersBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
@@ -5696,8 +5621,6 @@
 			);
 			dependencies = (
 				C128746327303CE600671E79 /* PBXTargetDependency */,
-				C13C11402732C4F20089EBB2 /* PBXTargetDependency */,
-				C13C74DF2739338700F93B34 /* PBXTargetDependency */,
 			);
 			name = StreamChatUI;
 			packageProductDependencies = (
@@ -5822,7 +5745,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				C13C75222739375D00F93B34 /* PBXTargetDependency */,
 			);
 			name = StreamChat;
 			packageProductDependencies = (
@@ -5888,60 +5810,6 @@
 			productName = YouTubeClone;
 			productReference = AC908381268B115F00ACFB8E /* YouTube.app */;
 			productType = "com.apple.product-type.application";
-		};
-		C13C10E12732C2730089EBB2 /* StreamNuke */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = C13C10E62732C2730089EBB2 /* Build configuration list for PBXNativeTarget "StreamNuke" */;
-			buildPhases = (
-				C13C10DD2732C2730089EBB2 /* Headers */,
-				C13C10DE2732C2730089EBB2 /* Sources */,
-				C13C10DF2732C2730089EBB2 /* Frameworks */,
-				C13C10E02732C2730089EBB2 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = StreamNuke;
-			productName = StreamNuke;
-			productReference = C13C10E22732C2730089EBB2 /* StreamNuke.framework */;
-			productType = "com.apple.product-type.framework";
-		};
-		C13C74C82739315D00F93B34 /* StreamSwiftyGif */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = C13C74CD2739315D00F93B34 /* Build configuration list for PBXNativeTarget "StreamSwiftyGif" */;
-			buildPhases = (
-				C13C74C42739315D00F93B34 /* Headers */,
-				C13C74C52739315D00F93B34 /* Sources */,
-				C13C74C62739315D00F93B34 /* Frameworks */,
-				C13C74C72739315D00F93B34 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = StreamSwiftyGif;
-			productName = StreamSwiftyGif;
-			productReference = C13C74C92739315D00F93B34 /* StreamSwiftyGif.framework */;
-			productType = "com.apple.product-type.framework";
-		};
-		C13C74E5273935D800F93B34 /* StreamStarscream */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = C13C74EA273935D800F93B34 /* Build configuration list for PBXNativeTarget "StreamStarscream" */;
-			buildPhases = (
-				C13C74E1273935D800F93B34 /* Headers */,
-				C13C74E2273935D800F93B34 /* Sources */,
-				C13C74E3273935D800F93B34 /* Frameworks */,
-				C13C74E4273935D800F93B34 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = StreamStarscream;
-			productName = StreamStarscream;
-			productReference = C13C74E6273935D800F93B34 /* StreamStarscream.framework */;
-			productType = "com.apple.product-type.framework";
 		};
 		E74DB08A2656631700508D22 /* UISDKDocumentation */ = {
 			isa = PBXNativeTarget;
@@ -6071,15 +5939,6 @@
 					AC908380268B115F00ACFB8E = {
 						CreatedOnToolsVersion = 12.5;
 					};
-					C13C10E12732C2730089EBB2 = {
-						CreatedOnToolsVersion = 13.0;
-					};
-					C13C74C82739315D00F93B34 = {
-						CreatedOnToolsVersion = 13.0;
-					};
-					C13C74E5273935D800F93B34 = {
-						CreatedOnToolsVersion = 13.0;
-					};
 					F86C87B125F906630000BCA9 = {
 						CreatedOnToolsVersion = 12.3;
 					};
@@ -6124,9 +5983,6 @@
 				F89C23A525E508DE0082CA5B /* iMessage */,
 				AC908380268B115F00ACFB8E /* YouTube */,
 				792A4F21247FF01800EAF71D /* StreamChatSample */,
-				C13C10E12732C2730089EBB2 /* StreamNuke */,
-				C13C74C82739315D00F93B34 /* StreamSwiftyGif */,
-				C13C74E5273935D800F93B34 /* StreamStarscream */,
 			);
 		};
 /* End PBXProject section */
@@ -6323,27 +6179,6 @@
 				AC908390268B116000ACFB8E /* LaunchScreen.storyboard in Resources */,
 				AC90838D268B116000ACFB8E /* Assets.xcassets in Resources */,
 				ACBEF4E6268B439A00FE7557 /* YTLiveVideoViewController.xib in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		C13C10E02732C2730089EBB2 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		C13C74C72739315D00F93B34 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		C13C74E4273935D800F93B34 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -7478,27 +7313,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		C13C10DE2732C2730089EBB2 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		C13C74C52739315D00F93B34 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		C13C74E2273935D800F93B34 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		E74DB0912656631700508D22 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -7668,21 +7482,6 @@
 			isa = PBXTargetDependency;
 			target = 799C941A247D2F80001F1104 /* StreamChat */;
 			targetProxy = C128746227303CE600671E79 /* PBXContainerItemProxy */;
-		};
-		C13C11402732C4F20089EBB2 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = C13C10E12732C2730089EBB2 /* StreamNuke */;
-			targetProxy = C13C113F2732C4F20089EBB2 /* PBXContainerItemProxy */;
-		};
-		C13C74DF2739338700F93B34 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = C13C74C82739315D00F93B34 /* StreamSwiftyGif */;
-			targetProxy = C13C74DE2739338700F93B34 /* PBXContainerItemProxy */;
-		};
-		C13C75222739375D00F93B34 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = C13C74E5273935D800F93B34 /* StreamStarscream */;
-			targetProxy = C13C75212739375D00F93B34 /* PBXContainerItemProxy */;
 		};
 		E74DB08B2656631700508D22 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -8947,294 +8746,6 @@
 			};
 			name = ReleaseTests;
 		};
-		C13C10E72732C2730089EBB2 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = EHV7XZLAHA;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = Sources/StreamChatUI/Info.plist;
-				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2021 Stream.io Inc. All rights reserved.";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.stream.StreamNuke;
-				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
-				SKIP_INSTALL = YES;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Debug;
-		};
-		C13C10E82732C2730089EBB2 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = EHV7XZLAHA;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = Sources/StreamChatUI/Info.plist;
-				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2021 Stream.io Inc. All rights reserved.";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.stream.StreamNuke;
-				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
-				SKIP_INSTALL = YES;
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Release;
-		};
-		C13C10E92732C2730089EBB2 /* ReleaseTests */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = EHV7XZLAHA;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = Sources/StreamChatUI/Info.plist;
-				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2021 Stream.io Inc. All rights reserved.";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.stream.StreamNuke;
-				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
-				SKIP_INSTALL = YES;
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = ReleaseTests;
-		};
-		C13C74CE2739315D00F93B34 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = EHV7XZLAHA;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = Sources/StreamChatUI/Info.plist;
-				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2021 Stream.io Inc. All rights reserved.";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.stream.StreamSwiftyGif;
-				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
-				SKIP_INSTALL = YES;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Debug;
-		};
-		C13C74CF2739315D00F93B34 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = EHV7XZLAHA;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = Sources/StreamChatUI/Info.plist;
-				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2021 Stream.io Inc. All rights reserved.";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.stream.StreamSwiftyGif;
-				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
-				SKIP_INSTALL = YES;
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Release;
-		};
-		C13C74D02739315D00F93B34 /* ReleaseTests */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = EHV7XZLAHA;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = Sources/StreamChatUI/Info.plist;
-				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2021 Stream.io Inc. All rights reserved.";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.stream.StreamSwiftyGif;
-				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
-				SKIP_INSTALL = YES;
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = ReleaseTests;
-		};
-		C13C74EB273935D800F93B34 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = EHV7XZLAHA;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = Sources/StreamChat/Info.plist;
-				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2021 Stream.io Inc. All rights reserved.";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.stream.StreamStarscream;
-				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
-				SKIP_INSTALL = YES;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Debug;
-		};
-		C13C74EC273935D800F93B34 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = EHV7XZLAHA;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = Sources/StreamChat/Info.plist;
-				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2021 Stream.io Inc. All rights reserved.";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.stream.StreamStarscream;
-				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
-				SKIP_INSTALL = YES;
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Release;
-		};
-		C13C74ED273935D800F93B34 /* ReleaseTests */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = EHV7XZLAHA;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = Sources/StreamChat/Info.plist;
-				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2021 Stream.io Inc. All rights reserved.";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.stream.StreamStarscream;
-				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
-				SKIP_INSTALL = YES;
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = ReleaseTests;
-		};
 		E74DB0D02656631700508D22 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -9622,36 +9133,6 @@
 				AC908392268B116000ACFB8E /* Debug */,
 				AC908393268B116000ACFB8E /* Release */,
 				AC908394268B116000ACFB8E /* ReleaseTests */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		C13C10E62732C2730089EBB2 /* Build configuration list for PBXNativeTarget "StreamNuke" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				C13C10E72732C2730089EBB2 /* Debug */,
-				C13C10E82732C2730089EBB2 /* Release */,
-				C13C10E92732C2730089EBB2 /* ReleaseTests */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		C13C74CD2739315D00F93B34 /* Build configuration list for PBXNativeTarget "StreamSwiftyGif" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				C13C74CE2739315D00F93B34 /* Debug */,
-				C13C74CF2739315D00F93B34 /* Release */,
-				C13C74D02739315D00F93B34 /* ReleaseTests */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		C13C74EA273935D800F93B34 /* Build configuration list for PBXNativeTarget "StreamStarscream" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				C13C74EB273935D800F93B34 /* Debug */,
-				C13C74EC273935D800F93B34 /* Release */,
-				C13C74ED273935D800F93B34 /* ReleaseTests */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
