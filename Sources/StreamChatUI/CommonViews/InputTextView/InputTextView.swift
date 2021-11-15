@@ -127,27 +127,27 @@ open class InputTextView: UITextView, AppearanceProvider {
     @objc open func handleTextChange() {
         placeholderLabel.isHidden = !text.isEmpty
         setTextViewHeight()
-        NSObject.cancelPreviousPerformRequests(withTarget: self)
-        perform(#selector(handleKeyboardDisplay), with: nil, afterDelay: 0.3)
+        //NSObject.cancelPreviousPerformRequests(withTarget: self)
+        //perform(#selector(handleKeyboardDisplay), with: nil, afterDelay: 0.3)
     }
 
-    @objc func handleKeyboardDisplay() {
-        if text.isEmpty && spellCheckingType == .default {
-            resignFirstResponder()
-            spellCheckingType = .no
-            autocorrectionType = .no
-            becomeFirstResponder()
-            setNeedsDisplay()
-            handleToolkitToggle?(false)
-        } else if !text.isEmpty && spellCheckingType == .no {
-            resignFirstResponder()
-            spellCheckingType = .default
-            autocorrectionType = .default
-            becomeFirstResponder()
-            setNeedsDisplay()
-            handleToolkitToggle?(true)
-        }
-    }
+//    @objc func handleKeyboardDisplay() {
+//        if text.isEmpty && spellCheckingType == .default {
+//            resignFirstResponder()
+//            spellCheckingType = .no
+//            autocorrectionType = .no
+//            becomeFirstResponder()
+//            setNeedsDisplay()
+//            handleToolkitToggle?(false)
+//        } else if !text.isEmpty && spellCheckingType == .no {
+//            resignFirstResponder()
+//            spellCheckingType = .default
+//            autocorrectionType = .default
+//            becomeFirstResponder()
+//            setNeedsDisplay()
+//            handleToolkitToggle?(true)
+//        }
+//    }
 
     open func setTextViewHeight() {
         var heightToSet = minimumHeight
