@@ -74,7 +74,7 @@ open class ChatChannelListVC: _ViewController,
 
     override open func setUp() {
         super.setUp()
-        headerSafeAreaView.backgroundColor = appearance.colorPalette.walletTabbarBackground
+        headerSafeAreaView.backgroundColor = .red//appearance.colorPalette.walletTabbarBackground
         headerView.backgroundColor = appearance.colorPalette.walletTabbarBackground
         navigationController?.navigationBar.isHidden = true
         controller.delegate = self
