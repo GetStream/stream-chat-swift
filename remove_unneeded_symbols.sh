@@ -1,4 +1,28 @@
 #!/usr/bin/env bash
+#
+# Usage: ./remove_unneeded_symbols.sh StreamChatUI ./Products
+#
+# Creating an xcframework for StreamChatUI generates a .bcsymbolmap file for itself, and one for
+# each of its dependencies too (eg. StreamChat). That means that we will end up having something like:
+#
+# -> StreamChatUI/BCSymbolMaps/
+#                              <UUID-StreamChatUI>.bcsymbolmap
+#                              <UUID-StreamChat>.bcsymbolmap
+# -> StreamChat/BCSymbolMaps/
+#                              <UUID-StreamChat>.bcsymbolmap
+#
+# When adding both StreamChat and StreamChatUI to an app, it will throw an error when trying to compile
+# saying that there are multiple executions producing the same file (<UUID-StreamChat>.bcsymbolmap).
+#
+# This script will remove duplicated .bcsymbolmap in the generated xcframeworks.
+# If we countinue with the same example, it will leave it as follows:
+#
+# -> StreamChatUI/BCSymbolMaps/
+#                              <UUID-StreamChatUI>.bcsymbolmap
+# -> StreamChat/BCSymbolMaps/
+#                              <UUID-StreamChat>.bcsymbolmap
+#
+# Each xcframework only contains its symbols now.
 
 args=("$@")
 library=$1
