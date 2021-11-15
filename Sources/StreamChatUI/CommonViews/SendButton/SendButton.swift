@@ -20,11 +20,9 @@ open class SendButton: _Button, AppearanceProvider {
 
     override open func setUpAppearance() {
         super.setUpAppearance()
-
-        let normalStateImage = appearance.images.sendArrow
+        let normalStateImage = appearance.images.sendArrow.tinted(with: .white)
         setImage(normalStateImage, for: .normal)
-
-        let buttonColor: UIColor = appearance.colorPalette.alternativeInactiveTint
+        let buttonColor: UIColor = .darkGray
         let disabledStateImage = appearance.images.sendArrow.tinted(with: buttonColor)
         setImage(disabledStateImage, for: .disabled)
     }

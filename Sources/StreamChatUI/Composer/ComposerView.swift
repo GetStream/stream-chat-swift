@@ -121,8 +121,7 @@ open class ComposerView: _View, ThemeProvider {
 
     override open func setUpAppearance() {
         super.setUpAppearance()
-        
-        backgroundColor = appearance.colorPalette.background
+        backgroundColor = appearance.colorPalette.walletTabbarBackground
         layer.shadowColor = UIColor.systemGray.cgColor
         layer.shadowOpacity = 1
         layer.shadowOffset = .zero
@@ -137,7 +136,6 @@ open class ComposerView: _View, ThemeProvider {
     override open func setUpLayout() {
         super.setUpLayout()
         embed(container)
-        toolKitView.backgroundColor = UIColor(red: 40/255, green: 38/255, blue: 40/255, alpha: 1)
 
         container.isLayoutMarginsRelativeArrangement = true
         container.axis = .vertical
@@ -160,7 +158,8 @@ open class ComposerView: _View, ThemeProvider {
         bottomContainer.addArrangedSubview(checkboxControl)
         headerView.addSubview(titleLabel)
         headerView.addSubview(dismissButton)
-
+        centerContainer.layoutMargins = UIEdgeInsets(top: 0, left: 8, bottom: 0, right: 8)
+        centerContainer.isLayoutMarginsRelativeArrangement = true
         centerContainer.axis = .horizontal
         centerContainer.alignment = .bottom
         centerContainer.spacing = .auto
@@ -202,7 +201,9 @@ open class ComposerView: _View, ThemeProvider {
                 button.pin(anchors: [.width], to: 30)
                 button.pin(anchors: [.height], to: 38)
             }*/
-        [toolbarToggleButton, sendButton, confirmButton]
+        toolbarToggleButton.pin(anchors: [.width], to: 40)
+        toolbarToggleButton.pin(anchors: [.height], to: 38)
+        [sendButton, confirmButton]
             .forEach { button in
                 button.pin(anchors: [.width], to: 30)
                 button.pin(anchors: [.height], to: 38)
@@ -249,6 +250,14 @@ extension ComposerView: UICollectionViewDelegate, UICollectionViewDataSource, UI
     public func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let indexData = toolTipList[indexPath.row]
         keyboardToolTipTapped?(indexData)
+    }
+
+    public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
+        return CGSize(width: 8, height: collectionView.frame.height)
+    }
+
+    public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForFooterInSection section: Int) -> CGSize {
+        return CGSize(width: 8, height: collectionView.frame.height)
     }
 }
 
