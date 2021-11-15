@@ -58,9 +58,6 @@ open class ChatThreadVC:
         messageListVC.delegate = self
         messageListVC.dataSource = self
         messageListVC.client = client
-        messageListVC.didTapOnMessageListView = { [weak self] _ in
-            self?.messageComposerVC.dismissSuggestions()
-        }
 
         messageComposerVC.channelController = channelController
         messageComposerVC.userSearchController = userSuggestionSearchController
@@ -228,6 +225,14 @@ open class ChatThreadVC:
     ) {
         // No-op. By default this component is not interest in scrollView events,
         // but you as customer can override this function and provide an implementation.
+    }
+
+    open func chatMessageListVC(
+        _ vc: ChatMessageListVC, didTapOnMessageListView messageListView: ChatMessageListView,
+        
+        with gestureRecognizer: UITapGestureRecognizer
+    ) {
+        messageComposerVC.dismissSuggestions()
     }
 
     // MARK: -  ChatMessageControllerDelegate

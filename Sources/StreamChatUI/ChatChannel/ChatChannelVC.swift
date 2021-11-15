@@ -65,9 +65,6 @@ open class ChatChannelVC:
         messageListVC.delegate = self
         messageListVC.dataSource = self
         messageListVC.client = client
-        messageListVC.didTapOnMessageListView = { [weak self] _ in
-            self?.messageComposerVC.dismissSuggestions()
-        }
 
         messageComposerVC.channelController = channelController
         messageComposerVC.userSearchController = userSuggestionSearchController
@@ -211,6 +208,14 @@ open class ChatChannelVC:
             // Hide the badge immediately. Temporary solution until CIS-881 is implemented.
             messageListVC.scrollToLatestMessageButton.content = .noUnread
         }
+    }
+
+    open func chatMessageListVC(
+        _ vc: ChatMessageListVC, didTapOnMessageListView messageListView: ChatMessageListView,
+        
+        with gestureRecognizer: UITapGestureRecognizer
+    ) {
+        messageComposerVC.dismissSuggestions()
     }
 
     // MARK: - ChatChannelControllerDelegate
