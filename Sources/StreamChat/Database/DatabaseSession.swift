@@ -190,6 +190,10 @@ protocol ChannelDatabaseSession {
     /// - Parameter filterHash: The filter hash.
     func channelListQuery(filterHash: String) -> ChannelListQueryDTO?
     
+    /// Loads all channel list queries from the database.
+    /// - Returns: The array of channel list queries.
+    func loadAllChannelListQueries() -> [ChannelListQueryDTO]
+    
     @discardableResult func saveQuery(query: ChannelListQuery) -> ChannelListQueryDTO
     
     /// Fetches `ChannelDTO` with the given `cid` from the database.

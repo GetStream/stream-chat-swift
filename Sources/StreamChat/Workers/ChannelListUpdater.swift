@@ -17,31 +17,42 @@ class ChannelListUpdater: Worker {
         trumpExistingChannels: Bool = false,
         completion: ((Result<ChannelListPayload, Error>) -> Void)? = nil
     ) {
-        apiClient
-            .request(endpoint: .channels(query: channelListQuery)) { [weak self] (result: Result<
-                ChannelListPayload,
-                Error
-            >) in
-                switch result {
-                case let .success(channelListPayload):
-                    self?.database.write { session in
+        fetch(channelListQuery: channelListQuery) { [weak self] in
+            switch $0 {
+            case let .success(channelListPayload):
+                self?.database.write { session in
 //                        if trumpExistingChannels {
 //                            try session.deleteChannels(query: channelListQuery)
 //                        }
-                        
-                        try session.saveChannelList(payload: channelListPayload, query: channelListQuery)
-                    } completion: { error in
-                        if let error = error {
-                            log.error("Failed to save `ChannelListPayload` to the database. Error: \(error)")
-                            completion?(.failure(error))
-                        } else {
-                            completion?(.success(channelListPayload))
-                        }
+                    
+                    try session.saveChannelList(payload: channelListPayload, query: channelListQuery)
+                } completion: { error in
+                    if let error = error {
+                        log.error("Failed to save `ChannelListPayload` to the database. Error: \(error)")
+                        completion?(.failure(error))
+                    } else {
+                        completion?(.success(channelListPayload))
                     }
-                case let .failure(error):
-                    completion?(.failure(error))
                 }
+            case let .failure(error):
+                completion?(.failure(error))
             }
+        }
+    }
+    
+    /// Fetches the given query from the API and returns results via completion.
+    ///
+    /// - Parameters:
+    ///   - channelListQuery: The query to fetch from the API.
+    ///   - completion: The completion to call with the results.
+    func fetch(
+        channelListQuery: ChannelListQuery,
+        completion: @escaping (Result<ChannelListPayload, Error>) -> Void
+    ) {
+        apiClient.request(
+            endpoint: .channels(query: channelListQuery),
+            completion: completion
+        )
     }
     
     /// Marks all channels for a user as read.
