@@ -3,6 +3,7 @@
 //
 
 import SwiftUI
+import Combine
 
 /// Protocol with necessary properties to make `SwiftUIRepresentable` instance
 public protocol SwiftUIRepresentable: AnyObject {

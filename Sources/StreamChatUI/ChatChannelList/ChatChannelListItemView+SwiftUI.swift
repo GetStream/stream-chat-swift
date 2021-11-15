@@ -4,6 +4,7 @@
 
 import StreamChat
 import SwiftUI
+import Combine
 
 @available(iOS 13.0, *)
 /// Protocol of `ChatChannelListItemView` wrapper for use in SwiftUI.
