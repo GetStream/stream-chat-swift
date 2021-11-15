@@ -217,7 +217,7 @@ open class ChatMessageContentView: _View, ThemeProvider {
             bubbleView.embed(bubbleContentContainer)
 
             if options.contains(.continuousBubble) && !options.contains(.threadInfo) {
-                mainContainer.layoutMargins.bottom = 0
+                mainContainer.layoutMargins.bottom = 4
             }
 
             bubbleThreadMetaContainer.addArrangedSubview(bubbleView)
@@ -348,7 +348,7 @@ open class ChatMessageContentView: _View, ThemeProvider {
 
         mainContainer.alignment = .bottom
         mainContainer.isLayoutMarginsRelativeArrangement = true
-        mainContainer.layoutMargins.top = 0
+        mainContainer.layoutMargins.top = 4
         insertSubview(mainContainer, at: 0)
 
         let mainContainerSubviews = [

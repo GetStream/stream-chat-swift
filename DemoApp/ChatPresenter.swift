@@ -282,7 +282,7 @@ class DemoChatChannelListRouter: ChatChannelListRouter {
 
 class DemoChannelListVC: ChatChannelListVC {
     /// The `UIButton` instance used for navigating to new channel screen creation,
-    lazy var createChannelButton: UIButton = {
+    lazy var createChannelsButton: UIButton = {
         let button = UIButton()
         button.setImage(UIImage(systemName: "plus.message")!, for: .normal)
         return button
@@ -299,13 +299,13 @@ class DemoChannelListVC: ChatChannelListVC {
 
         navigationItem.rightBarButtonItems = [
             UIBarButtonItem(customView: hiddenChannelsButton),
-            UIBarButtonItem(customView: createChannelButton)
+            UIBarButtonItem(customView: createChannelsButton)
         ]
-        createChannelButton.addTarget(self, action: #selector(didTapCreateNewChannel), for: .touchUpInside)
+        createChannelsButton.addTarget(self, action: #selector(didTapCreateNewChannels), for: .touchUpInside)
         hiddenChannelsButton.addTarget(self, action: #selector(didTapHiddenChannelsButton), for: .touchUpInside)
     }
 
-    @objc private func didTapCreateNewChannel(_ sender: Any) {
+    @objc private func didTapCreateNewChannels(_ sender: Any) {
         (router as! DemoChatChannelListRouter).showCreateNewChannelFlow()
     }
     

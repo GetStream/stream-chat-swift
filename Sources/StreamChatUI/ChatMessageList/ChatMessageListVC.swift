@@ -312,15 +312,15 @@ open class ChatMessageListVC:
         if isPaymentCell(message) {
             if isMessageFromCurrentUser {
                 guard let cell = tableView.dequeueReusableCell(
-                    withIdentifier: "InputUserTransactionBubble",
-                    for: indexPath) as? InputUserTransactionBubble else {
+                    withIdentifier: "UserTransactionBubble",
+                    for: indexPath) as? UserTransactionBubble else {
                     return UITableViewCell()
                 }
                 return cell
             } else {
                 guard let cell = tableView.dequeueReusableCell(
-                    withIdentifier: "UserTransactionBubble",
-                    for: indexPath) as? UserTransactionBubble else {
+                    withIdentifier: "InputUserTransactionBubble",
+                    for: indexPath) as? InputUserTransactionBubble else {
                     return UITableViewCell()
                 }
                 return cell

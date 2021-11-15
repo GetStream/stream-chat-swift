@@ -122,6 +122,10 @@ open class ComposerView: _View, ThemeProvider {
     override open func setUpAppearance() {
         super.setUpAppearance()
         backgroundColor = appearance.colorPalette.walletTabbarBackground
+        toolKitView.backgroundColor = appearance.colorPalette.walletTabbarBackground
+        headerView.backgroundColor = appearance.colorPalette.walletTabbarBackground
+        centerContainer.backgroundColor = appearance.colorPalette.walletTabbarBackground
+        bottomContainer.backgroundColor = appearance.colorPalette.walletTabbarBackground
         layer.shadowColor = UIColor.systemGray.cgColor
         layer.shadowOpacity = 1
         layer.shadowOffset = .zero
@@ -140,7 +144,7 @@ open class ComposerView: _View, ThemeProvider {
         container.isLayoutMarginsRelativeArrangement = true
         container.axis = .vertical
         container.alignment = .fill
-        container.distribution = .fillEqually
+        container.distribution = .fill
         container.spacing = 0
         container.addArrangedSubview(headerView)
         container.addArrangedSubview(centerContainer)
@@ -150,6 +154,7 @@ open class ComposerView: _View, ThemeProvider {
         headerView.isHidden = true
 
         toolKitView.addSubview(toolBarCollectionView)
+        toolKitView.heightAnchor.constraint(equalToConstant: 38).isActive = true
         toolBarCollectionView.leadingAnchor.constraint(equalTo: toolKitView.leadingAnchor).isActive = true
         toolBarCollectionView.trailingAnchor.constraint(equalTo: toolKitView.trailingAnchor).isActive = true
         toolBarCollectionView.topAnchor.constraint(equalTo: toolKitView.topAnchor).isActive = true
@@ -158,7 +163,7 @@ open class ComposerView: _View, ThemeProvider {
         bottomContainer.addArrangedSubview(checkboxControl)
         headerView.addSubview(titleLabel)
         headerView.addSubview(dismissButton)
-        centerContainer.layoutMargins = UIEdgeInsets(top: 0, left: 8, bottom: 0, right: 8)
+        centerContainer.layoutMargins = UIEdgeInsets(top: 4, left: 8, bottom: 4, right: 8)
         centerContainer.isLayoutMarginsRelativeArrangement = true
         centerContainer.axis = .horizontal
         centerContainer.alignment = .bottom

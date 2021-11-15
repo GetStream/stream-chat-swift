@@ -525,9 +525,32 @@ open class ComposerVC: _ViewController,
     }
 
     @objc open func toolKitToggleAction(sender: UIButton) {
-        Animate {
-            //self.composerView.headerView.isHidden = false
-            self.composerView.toolKitView.isHidden = !self.composerView.toolKitView.isHidden
+        func animateToolkitView(isHide: Bool) {
+            UIView.animate(
+                        withDuration: 0.35,
+                        delay: 0,
+                        usingSpringWithDamping: 0.9,
+                        initialSpringVelocity: 1,
+                        options: [],
+                        animations: { [weak self] in
+                            guard let weakSelf = self else {
+                                return
+                            }
+                            weakSelf.composerView.toolKitView.isHidden = isHide
+                            if isHide {
+                                weakSelf.composerView.toolKitView.alpha = 0
+                            } else {
+                                weakSelf.composerView.toolKitView.alpha = 1
+                            }
+                            weakSelf.composerView.layoutIfNeeded()
+                        },
+                        completion: nil
+                    )
+        }
+        if composerView.toolKitView.isHidden {
+            animateToolkitView(isHide: false)
+        } else {
+            animateToolkitView(isHide: true)
         }
     }
 

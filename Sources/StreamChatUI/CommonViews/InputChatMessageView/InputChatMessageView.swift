@@ -97,6 +97,7 @@ open class InputChatMessageView: _View, ComponentsProvider, AppearanceProvider {
         textView.setContentCompressionResistancePriority(.streamLow, for: .horizontal)
         textView.preservesSuperviewLayoutMargins = false
         textView.tintColor = .white
+        textView.textColor = .white
         NSLayoutConstraint.activate([
             clearButton.heightAnchor.pin(equalToConstant: 24),
             clearButton.widthAnchor.pin(equalTo: clearButton.heightAnchor, multiplier: 1)

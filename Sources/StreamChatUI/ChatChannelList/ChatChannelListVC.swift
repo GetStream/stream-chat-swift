@@ -4,6 +4,7 @@
 
 import StreamChat
 import UIKit
+import SwiftUI
 
 /// A `UIViewController` subclass  that shows list of channels.
 @available(iOSApplicationExtension, unavailable)
@@ -40,7 +41,20 @@ open class ChatChannelListVC: _ViewController,
     open private(set) lazy var collectionView: UICollectionView =
         UICollectionView(frame: .zero, collectionViewLayout: collectionViewLayout)
             .withoutAutoresizingMaskConstraints
-    
+
+    open private(set) lazy var headerSafeAreaView: UIView = UIView(frame: .zero).withoutAutoresizingMaskConstraints
+
+    open private(set) lazy var headerView: UIView = UIView(frame: .zero).withoutAutoresizingMaskConstraints
+
+    open private(set) lazy var createChannelButton: UIButton = {
+        let button = UIButton()
+        button.setImage(UIImage(named: "pencil")!, for: .normal)
+        button.tintColor = .white
+        button.addTarget(self, action: #selector(didTapCreateNewChannel), for: .touchUpInside)
+        return button.withoutAutoresizingMaskConstraints
+    }()
+    open var createChannelAction: (() -> Void)?
+
     /// The `CurrentChatUserAvatarView` instance used for displaying avatar of the current user.
     open private(set) lazy var userAvatarView: CurrentChatUserAvatarView = components
         .currentUserAvatarView.init()
@@ -60,6 +74,9 @@ open class ChatChannelListVC: _ViewController,
 
     override open func setUp() {
         super.setUp()
+        headerSafeAreaView.backgroundColor = appearance.colorPalette.walletTabbarBackground
+        headerView.backgroundColor = appearance.colorPalette.walletTabbarBackground
+        navigationController?.navigationBar.isHidden = true
         controller.delegate = self
         controller.synchronize()
         channelsCount = controller.channels.count
@@ -100,7 +117,44 @@ open class ChatChannelListVC: _ViewController,
 
     override open func setUpLayout() {
         super.setUpLayout()
-        view.embed(collectionView)
+
+        view.addSubview(headerSafeAreaView)
+        NSLayoutConstraint.activate([
+            headerSafeAreaView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 0),
+            headerSafeAreaView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: 0),
+            headerSafeAreaView.topAnchor.constraint(equalTo: view.topAnchor, constant: 0),
+            headerSafeAreaView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 0)
+        ])
+
+        view.addSubview(headerView)
+        NSLayoutConstraint.activate([
+            headerView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 0),
+            headerView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: 0),
+            headerView.topAnchor.constraint(equalTo: headerSafeAreaView.bottomAnchor, constant: 0),
+            headerView.heightAnchor.constraint(equalToConstant: 44)
+        ])
+
+        headerView.addSubview(userAvatarView)
+        NSLayoutConstraint.activate([
+            userAvatarView.leadingAnchor.constraint(equalTo: headerView.leadingAnchor, constant: 16),
+            userAvatarView.centerYAnchor.constraint(equalTo: headerView.centerYAnchor, constant: 0)
+        ])
+
+        headerView.addSubview(createChannelButton)
+        NSLayoutConstraint.activate([
+            createChannelButton.trailingAnchor.constraint(equalTo: headerView.trailingAnchor, constant: -16),
+            createChannelButton.centerYAnchor.constraint(equalTo: headerView.centerYAnchor, constant: 0),
+            createChannelButton.heightAnchor.constraint(equalToConstant: 32),
+            createChannelButton.widthAnchor.constraint(equalToConstant: 32),
+        ])
+
+        view.addSubview(collectionView)
+        NSLayoutConstraint.activate([
+            collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 0),
+            collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: 0),
+            collectionView.topAnchor.constraint(equalTo: headerView.bottomAnchor, constant: 0),
+            collectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: 0)
+        ])
         collectionView.addSubview(loadingIndicator)
         loadingIndicator.pin(anchors: [.centerX, .centerY], to: view)
     }
@@ -109,8 +163,8 @@ open class ChatChannelListVC: _ViewController,
         super.setUpAppearance()
         title = "Stream Chat"
         
-        navigationItem.backButtonTitle = ""
-        navigationItem.leftBarButtonItem = UIBarButtonItem(customView: userAvatarView)
+        //navigationItem.backButtonTitle = ""
+        //navigationItem.leftBarButtonItem = UIBarButtonItem(customView: userAvatarView)
 
         collectionView.backgroundColor = appearance.colorPalette.background
 
@@ -121,6 +175,10 @@ open class ChatChannelListVC: _ViewController,
                 height: 64
             )
         }
+    }
+
+    @objc func didTapCreateNewChannel(_ sender: Any) {
+        createChannelAction?()
     }
 
     open func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {

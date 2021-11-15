@@ -21,22 +21,6 @@ class InputUserTransactionBubble: UITableViewCell {
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         self.selectionStyle = .none
-
-        /*self.selectionStyle = .none
-        viewContainer = UIView()
-        viewContainer.translatesAutoresizingMaskIntoConstraints = false
-        viewContainer.backgroundColor = .red
-        viewContainer.layer.cornerRadius = 12
-        viewContainer.clipsToBounds = true
-        addSubview(viewContainer)
-        viewContainer.topAnchor.constraint(equalTo: self.topAnchor, constant: 4).isActive = true
-        viewContainer.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: -4).isActive = true
-        viewContainer.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 20).isActive = true
-        viewContainer.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -cellWidth).isActive = true
-        viewContainer.heightAnchor.constraint(equalToConstant: 350).isActive = true
-        viewContainer.transform = .mirrorY
-*/
-
         viewContainer = UIView()
         viewContainer.translatesAutoresizingMaskIntoConstraints = false
         viewContainer.backgroundColor = .white
