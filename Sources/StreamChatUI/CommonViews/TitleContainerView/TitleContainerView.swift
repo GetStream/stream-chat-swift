@@ -33,11 +33,11 @@ open class TitleContainerView: _View, AppearanceProvider, SwiftUIRepresentable {
         
         titleLabel.textAlignment = .center
         titleLabel.font = appearance.fonts.headlineBold
-        titleLabel.textColor = appearance.colorPalette.text
+        titleLabel.textColor = .white//appearance.colorPalette.text
 
         subtitleLabel.textAlignment = .center
         subtitleLabel.font = appearance.fonts.caption1
-        subtitleLabel.textColor = appearance.colorPalette.subtitleText
+        subtitleLabel.textColor = .white//appearance.colorPalette.subtitleText
     }
     
     override open func setUp() {

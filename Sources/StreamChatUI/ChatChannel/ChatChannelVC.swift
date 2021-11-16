@@ -35,6 +35,30 @@ open class ChatChannelVC:
 //        composerBottomConstraint: messageComposerBottomConstraint
 //    )
 
+    open private(set) lazy var navigationSafeAreaView: UIView = {
+        let view = UIView(frame: .zero).withoutAutoresizingMaskConstraints
+        view.backgroundColor = appearance.colorPalette.walletTabbarBackground
+        return view
+    }()
+
+    open private(set) lazy var navigationHeaderView: UIView = {
+        let view = UIView(frame: .zero).withoutAutoresizingMaskConstraints
+        view.backgroundColor = appearance.colorPalette.walletTabbarBackground
+        return view
+    }()
+
+    open private(set) lazy var backButton: UIButton = {
+        let button = UIButton()
+        if #available(iOS 13.0, *) {
+            button.setImage(UIImage(systemName: "chevron.backward"), for: .normal)
+        } else {
+            // Fallback on earlier versions
+        }
+        button.tintColor = .white
+        button.addTarget(self, action: #selector(backAction), for: .touchUpInside)
+        return button.withoutAutoresizingMaskConstraints
+    }()
+
     /// The message list component responsible to render the messages.
     open lazy var messageListVC: ChatMessageListVC = components
         .messageListVC
@@ -80,29 +104,60 @@ open class ChatChannelVC:
 
         view.backgroundColor = appearance.colorPalette.background
 
-        addChildViewController(messageListVC, targetView: view)
-        messageListVC.view.pin(anchors: [.top, .leading, .trailing], to: view.safeAreaLayoutGuide)
+        view.addSubview(navigationSafeAreaView)
+        NSLayoutConstraint.activate([
+            navigationSafeAreaView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 0),
+            navigationSafeAreaView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: 0),
+            navigationSafeAreaView.topAnchor.constraint(equalTo: view.topAnchor, constant: 0),
+            navigationSafeAreaView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 0)
+        ])
 
+        view.addSubview(navigationHeaderView)
+        NSLayoutConstraint.activate([
+            navigationHeaderView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 0),
+            navigationHeaderView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: 0),
+            navigationHeaderView.topAnchor.constraint(equalTo: navigationSafeAreaView.bottomAnchor, constant: 0),
+            navigationHeaderView.heightAnchor.constraint(equalToConstant: 44)
+        ])
+
+        navigationHeaderView.addSubview(backButton)
+        NSLayoutConstraint.activate([
+            backButton.leadingAnchor.constraint(equalTo: navigationHeaderView.leadingAnchor, constant: 8),
+            backButton.centerYAnchor.constraint(equalTo: navigationHeaderView.centerYAnchor, constant: 0),
+            backButton.heightAnchor.constraint(equalToConstant: 32),
+            backButton.widthAnchor.constraint(equalToConstant: 32)
+        ])
+
+        navigationHeaderView.addSubview(headerView)
+        NSLayoutConstraint.activate([
+            headerView.centerYAnchor.constraint(equalTo: navigationHeaderView.centerYAnchor, constant: 0),
+            headerView.centerXAnchor.constraint(equalTo: navigationHeaderView.centerXAnchor, constant: 0)
+        ])
+        addChildViewController(messageListVC, targetView: view)
+        NSLayoutConstraint.activate([
+            messageListVC.view.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 0),
+            messageListVC.view.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: 0),
+            messageListVC.view.topAnchor.constraint(equalTo: navigationHeaderView.bottomAnchor, constant: 0),
+            //messageListVC.view.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: 0)
+        ])
         addChildViewController(messageComposerVC, targetView: view)
         messageComposerVC.view.pin(anchors: [.leading, .trailing], to: view)
         messageComposerVC.view.topAnchor.pin(equalTo: messageListVC.view.bottomAnchor).isActive = true
         messageComposerBottomConstraint = messageComposerVC.view.bottomAnchor.pin(equalTo: view.bottomAnchor)
         messageComposerBottomConstraint?.isActive = true
 
-        NSLayoutConstraint.activate([
-            channelAvatarView.widthAnchor.pin(equalToConstant: channelAvatarSize.width),
-            channelAvatarView.heightAnchor.pin(equalToConstant: channelAvatarSize.height)
-        ])
-
-        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: channelAvatarView)
+        navigationHeaderView.addSubview(channelAvatarView)
         channelAvatarView.content = (channelController.channel, client.currentUserId)
+        NSLayoutConstraint.activate([
+            channelAvatarView.widthAnchor.constraint(equalToConstant: channelAvatarSize.width),
+            channelAvatarView.heightAnchor.constraint(equalToConstant: channelAvatarSize.height),
+            channelAvatarView.trailingAnchor.constraint(equalTo: navigationHeaderView.trailingAnchor, constant: -8),
+            channelAvatarView.centerYAnchor.constraint(equalTo: navigationHeaderView.centerYAnchor, constant: 0)
+        ])
 
         if let cid = channelController.cid {
             headerView.channelController = client.channelController(for: cid)
         }
-        
-        navigationItem.titleView = headerView
-        navigationItem.largeTitleDisplayMode = .never
     }
 
     override open func viewDidAppear(_ animated: Bool) {
@@ -117,6 +172,10 @@ open class ChatChannelVC:
         resignFirstResponder()
 
         //keyboardHandler.stop()
+    }
+
+    @objc func backAction(_ sender: Any) {
+        navigationController?.popViewController(animated: true)
     }
 
     // MARK: - ChatMessageListVCDataSource
