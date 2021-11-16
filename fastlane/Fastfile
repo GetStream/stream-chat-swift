@@ -24,7 +24,7 @@ lane :build_xcframeworks do
       xcframework_output_directory: output_directory,
       remove_xcarchives: true
     )
-    sh("../remove_unneeded_symbols.sh", scheme, output_directory)
+    sh("../Scripts/remove_unneeded_symbols.sh", scheme, output_directory)
   end
 end
 

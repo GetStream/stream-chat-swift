@@ -24,32 +24,32 @@
 import Foundation
 import Network
 
-public enum TCPTransportError: Error {
+enum TCPTransportError: Error {
     case invalidRequest
 }
 
 @available(macOS 10.14, iOS 12.0, watchOS 5.0, tvOS 12.0, *)
-public class TCPTransport: Transport {
+class TCPTransport: Transport {
     private var connection: NWConnection?
     private let queue = DispatchQueue(label: "com.vluxe.starscream.networkstream", attributes: [])
     private weak var delegate: TransportEventClient?
     private var isRunning = false
     private var isTLS = false
     
-    public var usingTLS: Bool {
+    var usingTLS: Bool {
         return self.isTLS
     }
     
-    public init(connection: NWConnection) {
+    init(connection: NWConnection) {
         self.connection = connection
         start()
     }
     
-    public init() {
+    init() {
         //normal connection, will use the "connect" method below
     }
     
-    public func connect(url: URL, timeout: Double = 10, certificatePinning: CertificatePinning? = nil) {
+    func connect(url: URL, timeout: Double = 10, certificatePinning: CertificatePinning? = nil) {
         guard let parts = url.getParts() else {
             delegate?.connectionChanged(state: .failed(TCPTransportError.invalidRequest))
             return
@@ -82,16 +82,16 @@ public class TCPTransport: Transport {
         start()
     }
     
-    public func disconnect() {
+    func disconnect() {
         isRunning = false
         connection?.cancel()
     }
     
-    public func register(delegate: TransportEventClient) {
+    func register(delegate: TransportEventClient) {
         self.delegate = delegate
     }
     
-    public func write(data: Data, completion: @escaping ((Error?) -> ())) {
+    func write(data: Data, completion: @escaping ((Error?) -> ())) {
         connection?.send(content: data, completion: .contentProcessed { (error) in
             completion(error)
         })

@@ -23,14 +23,14 @@
 import Foundation
 import CommonCrypto
 
-public enum FoundationSecurityError: Error {
+enum FoundationSecurityError: Error {
     case invalidRequest
 }
 
-public class FoundationSecurity  {
+class FoundationSecurity  {
     var allowSelfSigned = false
     
-    public init(allowSelfSigned: Bool = false) {
+    init(allowSelfSigned: Bool = false) {
         self.allowSelfSigned = allowSelfSigned
     }
     
@@ -38,7 +38,7 @@ public class FoundationSecurity  {
 }
 
 extension FoundationSecurity: CertificatePinning {
-    public func evaluateTrust(trust: SecTrust, domain: String?, completion: ((PinningState) -> ())) {
+    func evaluateTrust(trust: SecTrust, domain: String?, completion: ((PinningState) -> ())) {
         if allowSelfSigned {
             completion(.success)
             return
@@ -77,7 +77,7 @@ extension FoundationSecurity: CertificatePinning {
 }
 
 extension FoundationSecurity: HeaderValidator {
-    public func validate(headers: [String: String], key: String) -> Error? {
+    func validate(headers: [String: String], key: String) -> Error? {
         if let acceptKey = headers[HTTPWSHeader.acceptName] {
             let sha = "\(key)258EAFA5-E914-47DA-95CA-C5AB0DC85B11".sha1Base64()
             if sha != acceptKey {

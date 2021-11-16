@@ -35,7 +35,7 @@ import Cocoa
 /// ```
 ///
 /// You must implement either one of those methods.
-public protocol ImageProcessing {
+protocol ImageProcessing {
     /// Returns a processed image. By default, returns `nil`.
     ///
     /// - note: Gets called a background queue managed by the pipeline.
@@ -64,7 +64,7 @@ public protocol ImageProcessing {
     var hashableIdentifier: AnyHashable { get }
 }
 
-public extension ImageProcessing {
+extension ImageProcessing {
     /// The default implementation simply calls the basic
     /// `process(_ image: PlatformImage) -> PlatformImage?` method.
     func process(_ container: ImageContainer, context: ImageProcessingContext) -> ImageContainer? {
@@ -76,12 +76,12 @@ public extension ImageProcessing {
 }
 
 /// Image processing context used when selecting which processor to use.
-public struct ImageProcessingContext {
-    public let request: ImageRequest
-    public let response: ImageResponse
-    public let isFinal: Bool
+struct ImageProcessingContext {
+    let request: ImageRequest
+    let response: ImageResponse
+    let isFinal: Bool
 
-    public init(request: ImageRequest, response: ImageResponse, isFinal: Bool) {
+    init(request: ImageRequest, response: ImageResponse, isFinal: Bool) {
         self.request = request
         self.response = response
         self.isFinal = isFinal
@@ -91,20 +91,20 @@ public struct ImageProcessingContext {
 // MARK: - ImageProcessors
 
 /// A namespace for all processors that implement `ImageProcessing` protocol.
-public enum ImageProcessors {}
+enum ImageProcessors {}
 
 // MARK: - ImageProcessors.Resize
 
 extension ImageProcessors {
     /// Scales an image to a specified size.
-    public struct Resize: ImageProcessing, Hashable, CustomStringConvertible {
+    struct Resize: ImageProcessing, Hashable, CustomStringConvertible {
         private let size: Size
         private let contentMode: ContentMode
         private let crop: Bool
         private let upscale: Bool
 
         /// An option for how to resize the image.
-        public enum ContentMode: CustomStringConvertible {
+        enum ContentMode: CustomStringConvertible {
             /// Scales the image so that it completely fills the target area.
             /// Maintains the aspect ratio of the original image.
             case aspectFill
@@ -113,7 +113,7 @@ extension ImageProcessors {
             /// aspect ratio of the original image.
             case aspectFit
 
-            public var description: String {
+            var description: String {
                 switch self {
                 case .aspectFill: return ".aspectFill"
                 case .aspectFit: return ".aspectFit"
@@ -129,7 +129,7 @@ extension ImageProcessors {
         /// - parameter crop: If `true` will crop the image to match the target size.
         /// Does nothing with content mode .aspectFill. `false` by default.
         /// - parameter upscale: `false` by default.
-        public init(size: CGSize, unit: ImageProcessingOptions.Unit = .points, contentMode: ContentMode = .aspectFill, crop: Bool = false, upscale: Bool = false) {
+        init(size: CGSize, unit: ImageProcessingOptions.Unit = .points, contentMode: ContentMode = .aspectFill, crop: Bool = false, upscale: Bool = false) {
             self.size = Size(cgSize: CGSize(size: size, unit: unit))
             self.contentMode = contentMode
             self.crop = crop
@@ -139,31 +139,31 @@ extension ImageProcessors {
         /// Resizes the image to the given width preserving aspect ratio.
         ///
         /// - parameter unit: Unit of the target size, `.points` by default.
-        public init(width: CGFloat, unit: ImageProcessingOptions.Unit = .points, upscale: Bool = false) {
+        init(width: CGFloat, unit: ImageProcessingOptions.Unit = .points, upscale: Bool = false) {
             self.init(size: CGSize(width: width, height: 9999), unit: unit, contentMode: .aspectFit, crop: false, upscale: upscale)
         }
 
         /// Resizes the image to the given height preserving aspect ratio.
         ///
         /// - parameter unit: Unit of the target size, `.points` by default.
-        public init(height: CGFloat, unit: ImageProcessingOptions.Unit = .points, upscale: Bool = false) {
+        init(height: CGFloat, unit: ImageProcessingOptions.Unit = .points, upscale: Bool = false) {
             self.init(size: CGSize(width: 9999, height: height), unit: unit, contentMode: .aspectFit, crop: false, upscale: upscale)
         }
 
-        public func process(_ image: PlatformImage) -> PlatformImage? {
+        func process(_ image: PlatformImage) -> PlatformImage? {
             if crop && contentMode == .aspectFill {
                 return image.processed.byResizingAndCropping(to: size.cgSize)
             }
             return image.processed.byResizing(to: size.cgSize, contentMode: contentMode, upscale: upscale)
         }
 
-        public var identifier: String {
+        var identifier: String {
             "com.github.kean/nuke/resize?s=\(size.cgSize),cm=\(contentMode),crop=\(crop),upscale=\(upscale)"
         }
 
-        public var hashableIdentifier: AnyHashable { self }
+        var hashableIdentifier: AnyHashable { self }
 
-        public var description: String {
+        var description: String {
             "Resize(size: \(size.cgSize) pixels, contentMode: \(contentMode), crop: \(crop), upscale: \(upscale))"
         }
     }
@@ -175,25 +175,25 @@ extension ImageProcessors {
 
     /// Rounds the corners of an image into a circle. If the image is not a square,
     /// crops it to a square first.
-    public struct Circle: ImageProcessing, Hashable, CustomStringConvertible {
+    struct Circle: ImageProcessing, Hashable, CustomStringConvertible {
         private let border: ImageProcessingOptions.Border?
 
-        public init(border: ImageProcessingOptions.Border? = nil) {
+        init(border: ImageProcessingOptions.Border? = nil) {
             self.border = border
         }
 
-        public func process(_ image: PlatformImage) -> PlatformImage? {
+        func process(_ image: PlatformImage) -> PlatformImage? {
             image.processed.byDrawingInCircle(border: border)
         }
 
-        public var identifier: String {
+        var identifier: String {
             let suffix = border.map { "?border=\($0)" }
             return "com.github.kean/nuke/circle" + (suffix ?? "")
         }
 
-        public var hashableIdentifier: AnyHashable { self }
+        var hashableIdentifier: AnyHashable { self }
 
-        public var description: String {
+        var description: String {
             "Circle(border: \(border?.description ?? "nil"))"
         }
     }
@@ -206,7 +206,7 @@ extension ImageProcessors {
     ///
     /// - warning: In order for the corners to be displayed correctly, the image must exactly match the size
     /// of the image view in which it will be displayed. See `ImageProcessor.Resize` for more info.
-    public struct RoundedCorners: ImageProcessing, Hashable, CustomStringConvertible {
+    struct RoundedCorners: ImageProcessing, Hashable, CustomStringConvertible {
         private let radius: CGFloat
         private let border: ImageProcessingOptions.Border?
 
@@ -215,23 +215,23 @@ extension ImageProcessors {
         /// - parameter radius: The radius of the corners.
         /// - parameter unit: Unit of the radius, `.points` by default.
         /// - parameter border: An optional border drawn around the image.
-        public init(radius: CGFloat, unit: ImageProcessingOptions.Unit = .points, border: ImageProcessingOptions.Border? = nil) {
+        init(radius: CGFloat, unit: ImageProcessingOptions.Unit = .points, border: ImageProcessingOptions.Border? = nil) {
             self.radius = radius.converted(to: unit)
             self.border = border
         }
 
-        public func process(_ image: PlatformImage) -> PlatformImage? {
+        func process(_ image: PlatformImage) -> PlatformImage? {
             image.processed.byAddingRoundedCorners(radius: radius, border: border)
         }
 
-        public var identifier: String {
+        var identifier: String {
             let suffix = border.map { ",border=\($0)" }
             return "com.github.kean/nuke/rounded_corners?radius=\(radius)" + (suffix ?? "")
         }
 
-        public var hashableIdentifier: AnyHashable { self }
+        var hashableIdentifier: AnyHashable { self }
 
-        public var description: String {
+        var description: String {
             "RoundedCorners(radius: \(radius) pixels, border: \(border?.description ?? "nil"))"
         }
     }
@@ -256,25 +256,25 @@ extension ImageProcessors {
     ///
     /// - [Core Image Programming Guide](https://developer.apple.com/library/ios/documentation/GraphicsImaging/Conceptual/CoreImaging/ci_intro/ci_intro.html)
     /// - [Core Image Filter Reference](https://developer.apple.com/library/prerelease/ios/documentation/GraphicsImaging/Reference/CoreImageFilterReference/index.html)
-    public struct CoreImageFilter: ImageProcessing, CustomStringConvertible {
+    struct CoreImageFilter: ImageProcessing, CustomStringConvertible {
         private let name: String
         private let parameters: [String: Any]
-        public let identifier: String
+        let identifier: String
 
         /// - parameter identifier: Uniquely identifies the processor.
-        public init(name: String, parameters: [String: Any], identifier: String) {
+        init(name: String, parameters: [String: Any], identifier: String) {
             self.name = name
             self.parameters = parameters
             self.identifier = identifier
         }
 
-        public init(name: String) {
+        init(name: String) {
             self.name = name
             self.parameters = [:]
             self.identifier = "com.github.kean/nuke/core_image?name=\(name))"
         }
 
-        public func process(_ image: PlatformImage) -> PlatformImage? {
+        func process(_ image: PlatformImage) -> PlatformImage? {
             let filter = CIFilter(name: name, parameters: parameters)
             return CoreImageFilter.apply(filter: filter, to: image)
         }
@@ -283,9 +283,9 @@ extension ImageProcessors {
 
         /// A default context shared between all Core Image filters. The context
         /// has `.priorityRequestLow` option set to `true`.
-        public static var context = CIContext(options: [.priorityRequestLow: true])
+        static var context = CIContext(options: [.priorityRequestLow: true])
 
-        public static func apply(filter: CIFilter?, to image: PlatformImage) -> PlatformImage? {
+        static func apply(filter: CIFilter?, to image: PlatformImage) -> PlatformImage? {
             guard let filter = filter else {
                 return nil
             }
@@ -314,7 +314,7 @@ extension ImageProcessors {
             return PlatformImage.make(cgImage: imageRef, source: image)
         }
 
-        public var description: String {
+        var description: String {
             "CoreImageFilter(name: \(name), parameters: \(parameters))"
         }
     }
@@ -324,27 +324,27 @@ extension ImageProcessors {
 
 extension ImageProcessors {
     /// Blurs an image using `CIGaussianBlur` filter.
-    public struct GaussianBlur: ImageProcessing, Hashable, CustomStringConvertible {
+    struct GaussianBlur: ImageProcessing, Hashable, CustomStringConvertible {
         private let radius: Int
 
         /// Initializes the receiver with a blur radius.
-        public init(radius: Int = 8) {
+        init(radius: Int = 8) {
             self.radius = radius
         }
 
         /// Applies `CIGaussianBlur` filter to the image.
-        public func process(_ image: PlatformImage) -> PlatformImage? {
+        func process(_ image: PlatformImage) -> PlatformImage? {
             let filter = CIFilter(name: "CIGaussianBlur", parameters: ["inputRadius": radius])
             return CoreImageFilter.apply(filter: filter, to: image)
         }
 
-        public var identifier: String {
+        var identifier: String {
             "com.github.kean/nuke/gaussian_blur?radius=\(radius)"
         }
 
-        public var hashableIdentifier: AnyHashable { self }
+        var hashableIdentifier: AnyHashable { self }
 
-        public var description: String {
+        var description: String {
             "GaussianBlur(radius: \(radius))"
         }
     }
@@ -377,16 +377,16 @@ struct ImageDecompression {
 
 extension ImageProcessors {
     /// Composes multiple processors.
-    public struct Composition: ImageProcessing, Hashable, CustomStringConvertible {
+    struct Composition: ImageProcessing, Hashable, CustomStringConvertible {
         let processors: [ImageProcessing]
 
         /// Composes multiple processors.
-        public init(_ processors: [ImageProcessing]) {
+        init(_ processors: [ImageProcessing]) {
             // note: multiple compositions are not flatten by default.
             self.processors = processors
         }
 
-        public func process(_ image: PlatformImage) -> PlatformImage? {
+        func process(_ image: PlatformImage) -> PlatformImage? {
             processors.reduce(image) { image, processor in
                 autoreleasepool {
                     image.flatMap { processor.process($0) }
@@ -397,7 +397,7 @@ extension ImageProcessors {
         /// Processes the given image by applying each processor in an order in
         /// which they were added. If one of the processors fails to produce
         /// an image the processing stops and `nil` is returned.
-        public func process(_ container: ImageContainer, context: ImageProcessingContext) -> ImageContainer? {
+        func process(_ container: ImageContainer, context: ImageProcessingContext) -> ImageContainer? {
             processors.reduce(container) { container, processor in
                 autoreleasepool {
                     container.flatMap { processor.process($0, context: context) }
@@ -405,23 +405,23 @@ extension ImageProcessors {
             }
         }
 
-        public var identifier: String {
+        var identifier: String {
             processors.map({ $0.identifier }).joined()
         }
 
-        public var hashableIdentifier: AnyHashable { self }
+        var hashableIdentifier: AnyHashable { self }
 
-        public func hash(into hasher: inout Hasher) {
+        func hash(into hasher: inout Hasher) {
             for processor in processors {
                 hasher.combine(processor.hashableIdentifier)
             }
         }
 
-        public static func == (lhs: Composition, rhs: Composition) -> Bool {
+        static func == (lhs: Composition, rhs: Composition) -> Bool {
             lhs.processors == rhs.processors
         }
 
-        public var description: String {
+        var description: String {
             "Composition(processors: \(processors))"
         }
     }
@@ -431,20 +431,20 @@ extension ImageProcessors {
 
 extension ImageProcessors {
     /// Processed an image using a specified closure.
-    public struct Anonymous: ImageProcessing, CustomStringConvertible {
-        public let identifier: String
+    struct Anonymous: ImageProcessing, CustomStringConvertible {
+        let identifier: String
         private let closure: (PlatformImage) -> PlatformImage?
 
-        public init(id: String, _ closure: @escaping (PlatformImage) -> PlatformImage?) {
+        init(id: String, _ closure: @escaping (PlatformImage) -> PlatformImage?) {
             self.identifier = id
             self.closure = closure
         }
 
-        public func process(_ image: PlatformImage) -> PlatformImage? {
+        func process(_ image: PlatformImage) -> PlatformImage? {
             self.closure(image)
         }
 
-        public var description: String {
+        var description: String {
             "AnonymousProcessor(identifier: \(identifier)"
         }
     }
@@ -640,7 +640,7 @@ private extension CGFloat {
     }
 }
 
-// Adds Hashable without making changes to public CGSize API
+// Adds Hashable without making changes to CGSize API
 private struct Size: Hashable {
     let cgSize: CGSize
 
@@ -724,13 +724,13 @@ func == (lhs: [ImageProcessing], rhs: [ImageProcessing]) -> Bool {
 // MARK: - ImageProcessingOptions
 
 /// A namespace with shared image processing options.
-public enum ImageProcessingOptions {
+enum ImageProcessingOptions {
 
-    public enum Unit: CustomStringConvertible {
+    enum Unit: CustomStringConvertible {
         case points
         case pixels
 
-        public var description: String {
+        var description: String {
             switch self {
             case .points: return "points"
             case .pixels: return "pixels"
@@ -745,32 +745,32 @@ public enum ImageProcessingOptions {
     /// views in which they get displayed. If you can't guarantee that, pleasee
     /// consider adding border to a view layer. This should be your primary
     /// option regardless.
-    public struct Border: Hashable, CustomStringConvertible {
-        public let width: CGFloat
+    struct Border: Hashable, CustomStringConvertible {
+        let width: CGFloat
 
         #if os(iOS) || os(tvOS) || os(watchOS)
-        public let color: UIColor
+        let color: UIColor
 
         /// - parameter color: Border color.
         /// - parameter width: Border width. 1 points by default.
         /// - parameter unit: Unit of the width, `.points` by default.
-        public init(color: UIColor, width: CGFloat = 1, unit: Unit = .points) {
+        init(color: UIColor, width: CGFloat = 1, unit: Unit = .points) {
             self.color = color
             self.width = width.converted(to: unit)
         }
         #else
-        public let color: NSColor
+        let color: NSColor
 
         /// - parameter color: Border color.
         /// - parameter width: Border width. 1 points by default.
         /// - parameter unit: Unit of the width, `.points` by default.
-        public init(color: NSColor, width: CGFloat = 1, unit: Unit = .points) {
+        init(color: NSColor, width: CGFloat = 1, unit: Unit = .points) {
             self.color = color
             self.width = width.converted(to: unit)
         }
         #endif
 
-        public var description: String {
+        var description: String {
             "Border(color: \(color.hex), width: \(width) pixels)"
         }
     }

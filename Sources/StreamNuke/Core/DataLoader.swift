@@ -4,13 +4,8 @@
 
 import Foundation
 
-/// A unit of work that can be cancelled.
-public protocol Cancellable: AnyObject {
-    func cancel()
-}
-
 /// Fetches original image data.
-public protocol DataLoading {
+protocol DataLoading {
     /// - parameter didReceiveData: Can be called multiple times if streaming
     /// is supported.
     /// - parameter completion: Must be called once after all (or none in case
@@ -23,11 +18,11 @@ public protocol DataLoading {
 extension URLSessionTask: Cancellable {}
 
 /// Provides basic networking using `URLSession`.
-public final class DataLoader: DataLoading, _DataLoaderObserving {
-    public let session: URLSession
+final class DataLoader: DataLoading, _DataLoaderObserving {
+    let session: URLSession
     private let impl = _DataLoader()
 
-    public var observer: DataLoaderObserving?
+    var observer: DataLoaderObserving?
 
     deinit {
         session.invalidateAndCancel()
@@ -40,7 +35,7 @@ public final class DataLoader: DataLoading, _DataLoaderObserving {
     /// Initializes `DataLoader` with the given configuration.
     /// - parameter configuration: `URLSessionConfiguration.default` with
     /// `URLCache` with 0 MB memory capacity and 150 MB disk capacity.
-    public init(configuration: URLSessionConfiguration = DataLoader.defaultConfiguration,
+    init(configuration: URLSessionConfiguration = DataLoader.defaultConfiguration,
                 validate: @escaping (URLResponse) -> Swift.Error? = DataLoader.validate) {
         let queue = OperationQueue()
         queue.maxConcurrentOperationCount = 1
@@ -55,7 +50,7 @@ public final class DataLoader: DataLoading, _DataLoaderObserving {
 
     /// Returns a default configuration which has a `sharedUrlCache` set
     /// as a `urlCache`.
-    public static var defaultConfiguration: URLSessionConfiguration {
+    static var defaultConfiguration: URLSessionConfiguration {
         let conf = URLSessionConfiguration.default
         conf.urlCache = DataLoader.sharedUrlCache
         return conf
@@ -63,7 +58,7 @@ public final class DataLoader: DataLoading, _DataLoaderObserving {
 
     /// Validates `HTTP` responses by checking that the status code is 2xx. If
     /// it's not returns `DataLoader.Error.statusCodeUnacceptable`.
-    public static func validate(response: URLResponse) -> Swift.Error? {
+    static func validate(response: URLResponse) -> Swift.Error? {
         guard let response = response as? HTTPURLResponse else {
             return nil
         }
@@ -85,7 +80,7 @@ public final class DataLoader: DataLoading, _DataLoaderObserving {
 
     /// Shared url cached used by a default `DataLoader`. The cache is
     /// initialized with 0 MB memory capacity and 150 MB disk capacity.
-    public static let sharedUrlCache: URLCache = {
+    static let sharedUrlCache: URLCache = {
         let diskCapacity = 150 * 1024 * 1024 // 150 MB
         #if targetEnvironment(macCatalyst)
         return URLCache(memoryCapacity: 0, diskCapacity: diskCapacity, directory: URL(fileURLWithPath: cachePath))
@@ -94,18 +89,18 @@ public final class DataLoader: DataLoading, _DataLoaderObserving {
         #endif
     }()
 
-    public func loadData(with request: URLRequest,
+    func loadData(with request: URLRequest,
                          didReceiveData: @escaping (Data, URLResponse) -> Void,
                          completion: @escaping (Swift.Error?) -> Void) -> Cancellable {
         impl.loadData(with: request, session: session, didReceiveData: didReceiveData, completion: completion)
     }
 
     /// Errors produced by `DataLoader`.
-    public enum Error: Swift.Error, CustomStringConvertible {
+    enum Error: Swift.Error, CustomStringConvertible {
         /// Validation failed.
         case statusCodeUnacceptable(Int)
 
-        public var description: String {
+        var description: String {
             switch self {
             case let .statusCodeUnacceptable(code):
                 return "Response status code was unacceptable: \(code.description)"
@@ -208,7 +203,7 @@ private final class _DataLoader: NSObject, URLSessionDataDelegate {
 // MARK: - DataLoaderObserving
 
 /// An event send by the data loader.
-public enum DataTaskEvent {
+enum DataTaskEvent {
     case resumed
     case receivedResponse(response: URLResponse)
     case receivedData(data: Data)
@@ -217,7 +212,7 @@ public enum DataTaskEvent {
 
 /// Allows you to tap into internal events of the data loader. Events are
 /// delivered on the internal serial operation queue.
-public protocol DataLoaderObserving {
+protocol DataLoaderObserving {
     func dataLoader(_ loader: DataLoader, urlSession: URLSession, dataTask: URLSessionDataTask, didReceiveEvent event: DataTaskEvent)
 }
 

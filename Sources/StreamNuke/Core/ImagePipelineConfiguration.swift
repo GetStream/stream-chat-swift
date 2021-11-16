@@ -9,11 +9,11 @@ import os
 
 extension ImagePipeline {
     /// The pipeline configuration.
-    public struct Configuration {
+    struct Configuration {
         // MARK: - Dependencies
 
         /// Image cache used by the pipeline.
-        public var imageCache: ImageCaching? {
+        var imageCache: ImageCaching? {
             // This exists simply to ensure we don't init ImageCache.shared if the
             // user provides their own instance.
             get { isCustomImageCacheProvided ? customImageCache : ImageCache.shared }
@@ -25,47 +25,47 @@ extension ImagePipeline {
         private var customImageCache: ImageCaching?
 
         /// Data loader used by the pipeline.
-        public var dataLoader: DataLoading
+        var dataLoader: DataLoading
 
         /// Data cache used by the pipeline.
-        public var dataCache: DataCaching?
+        var dataCache: DataCaching?
 
         /// Default implementation uses shared `ImageDecoderRegistry` to create
         /// a decoder that matches the context.
-        public var makeImageDecoder: (ImageDecodingContext) -> ImageDecoding? = ImageDecoderRegistry.shared.decoder(for:)
+        var makeImageDecoder: (ImageDecodingContext) -> ImageDecoding? = ImageDecoderRegistry.shared.decoder(for:)
 
         /// Returns `ImageEncoders.Default()` by default.
-        public var makeImageEncoder: (ImageEncodingContext) -> ImageEncoding = { _ in
+        var makeImageEncoder: (ImageEncodingContext) -> ImageEncoding = { _ in
             ImageEncoders.Default()
         }
 
         // MARK: - Operation Queues
 
         /// Data loading queue. Default maximum concurrent task count is 6.
-        public var dataLoadingQueue = OperationQueue(maxConcurrentCount: 6)
+        var dataLoadingQueue = OperationQueue(maxConcurrentCount: 6)
 
         /// Data caching queue. Default maximum concurrent task count is 2.
-        public var dataCachingQueue = OperationQueue(maxConcurrentCount: 2)
+        var dataCachingQueue = OperationQueue(maxConcurrentCount: 2)
 
         /// Image decoding queue. Default maximum concurrent task count is 1.
-        public var imageDecodingQueue = OperationQueue(maxConcurrentCount: 1)
+        var imageDecodingQueue = OperationQueue(maxConcurrentCount: 1)
 
         /// Image encoding queue. Default maximum concurrent task count is 1.
-        public var imageEncodingQueue = OperationQueue(maxConcurrentCount: 1)
+        var imageEncodingQueue = OperationQueue(maxConcurrentCount: 1)
 
         /// Image processing queue. Default maximum concurrent task count is 2.
-        public var imageProcessingQueue = OperationQueue(maxConcurrentCount: 2)
+        var imageProcessingQueue = OperationQueue(maxConcurrentCount: 2)
 
         #if !os(macOS)
         /// Image decompressing queue. Default maximum concurrent task count is 2.
-        public var imageDecompressingQueue = OperationQueue(maxConcurrentCount: 2)
+        var imageDecompressingQueue = OperationQueue(maxConcurrentCount: 2)
         #endif
 
         // MARK: - Options
 
         /// A queue on which all callbacks, like `progress` and `completion`
         /// callbacks are called. `.main` by default.
-        public var callbackQueue = DispatchQueue.main
+        var callbackQueue = DispatchQueue.main
 
         #if !os(macOS)
         /// Decompresses the loaded images. `true` by default.
@@ -73,14 +73,14 @@ extension ImagePipeline {
         /// Decompressing compressed image formats (such as JPEG) can significantly
         /// improve drawing performance as it allows a bitmap representation to be
         /// created in a background rather than on the main thread.
-        public var isDecompressionEnabled = true
+        var isDecompressionEnabled = true
         #endif
 
         /// `.storeOriginalData` by default.
-        public var dataCachePolicy = DataCachePolicy.storeOriginalData
+        var dataCachePolicy = DataCachePolicy.storeOriginalData
 
         /// Determines what images are stored in the disk cache.
-        public enum DataCachePolicy {
+        enum DataCachePolicy {
             /// For requests with processors, encode and store processed images.
             /// For requests with no processors, store original image data, unless
             /// the resource is local (file:// or data:// scheme is used).
@@ -114,7 +114,7 @@ extension ImagePipeline {
 
         // Deprecated in 10.0.0
         @available(*, deprecated, message: "Please use `dataCachePolicy` instead.")
-        public var dataCacheOptions: DataCacheOptions = DataCacheOptions() {
+        var dataCacheOptions: DataCacheOptions = DataCacheOptions() {
             didSet {
                 let items = dataCacheOptions.storedItems
                 if items == [.finalImage] {
@@ -129,8 +129,8 @@ extension ImagePipeline {
 
         // Deprecated in 10.0.0
         @available(*, deprecated, message: "Please use `dataCachePolicy` instead. The recommended policy is the new `.automatic` policy.")
-        public struct DataCacheOptions {
-            public var storedItems: Set<DataCacheItem> = [.originalImageData]
+        struct DataCacheOptions {
+            var storedItems: Set<DataCacheItem> = [.originalImageData]
         }
 
         // Deprecated in 10.0.0
@@ -157,31 +157,31 @@ extension ImagePipeline {
         /// Nuke will load the image data only once, resize the image once and
         /// apply the blur also only once. There is no duplicated work done at
         /// any stage.
-        public var isTaskCoalescingEnabled = true
+        var isTaskCoalescingEnabled = true
 
         /// `true` by default. If `true` the pipeline will rate limit requests
         /// to prevent trashing of the underlying systems (e.g. `URLSession`).
         /// The rate limiter only comes into play when the requests are started
         /// and cancelled at a high rate (e.g. scrolling through a collection view).
-        public var isRateLimiterEnabled = true
+        var isRateLimiterEnabled = true
 
         /// `false` by default. If `true` the pipeline will try to produce a new
         /// image each time it receives a new portion of data from data loader.
         /// The decoder used by the image loading session determines whether
         /// to produce a partial image or not. The default image decoder
         /// (`ImageDecoder`) supports progressive JPEG decoding.
-        public var isProgressiveDecodingEnabled = true
+        var isProgressiveDecodingEnabled = true
 
         /// `false` by default. If `true`, the pipeline will store all of the
         /// progressively generated previews in the memory cache. All of the
         /// previews have `isPreview` flag set to `true`.
-        public var isStoringPreviewsInMemoryCache = true
+        var isStoringPreviewsInMemoryCache = true
 
         /// If the data task is terminated (either because of a failure or a
         /// cancellation) and the image was partially loaded, the next load will
         /// resume where it left off. Supports both validators (`ETag`,
         /// `Last-Modified`). Resumable downloads are enabled by default.
-        public var isResumableDataEnabled = true
+        var isResumableDataEnabled = true
 
         // MARK: - Options (Shared)
 
@@ -198,9 +198,9 @@ extension ImagePipeline {
         /// metrics in `os_signpost` Instrument. For more information see
         /// https://developer.apple.com/documentation/os/logging and
         /// https://developer.apple.com/videos/play/wwdc2018/405/.
-        public static var isSignpostLoggingEnabled = false {
+        static var isSignpostLoggingEnabled = false {
             didSet {
-                log = isSignpostLoggingEnabled ?
+                nukeLog = isSignpostLoggingEnabled ?
                     OSLog(subsystem: "com.github.kean.Nuke.ImagePipeline", category: "Image Loading") :
                     .disabled
             }
@@ -215,17 +215,17 @@ extension ImagePipeline {
         /// Instantiates a default pipeline configuration.
         ///
         /// - parameter dataLoader: `DataLoader()` by default.
-        public init(dataLoader: DataLoading = DataLoader()) {
+        init(dataLoader: DataLoading = DataLoader()) {
             self.dataLoader = dataLoader
         }
 
         /// A configuration with a `DataLoader` with an HTTP disk cache (`URLCache`)
         /// with a size limit of 150 MB.
-        public static var withURLCache: Configuration { Configuration() }
+        static var withURLCache: Configuration { Configuration() }
 
         /// A configuration with an aggressive disk cache (`DataCache`) with a
         /// size limit of 150 MB. An HTTP cache (`URLCache`) is disabled.
-        public static var withDataCache: Configuration {
+        static var withDataCache: Configuration {
             let dataLoader: DataLoader = {
                 let config = URLSessionConfiguration.default
                 config.urlCache = nil

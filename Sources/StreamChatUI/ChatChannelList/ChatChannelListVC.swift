@@ -2,9 +2,7 @@
 // Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
-import StreamNuke
 import StreamChat
-import StreamSwiftyGif
 import UIKit
 
 /// A `UIViewController` subclass  that shows list of channels.

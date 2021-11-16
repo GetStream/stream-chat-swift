@@ -31,7 +31,7 @@ let PayloadLenMask: UInt8   = 0x7F
 let MaxFrameSize: Int       = 32
 
 // Standard WebSocket close codes
-public enum CloseCode: UInt16 {
+enum CloseCode: UInt16 {
     case normal                 = 1000
     case goingAway              = 1001
     case protocolError          = 1002
@@ -44,7 +44,7 @@ public enum CloseCode: UInt16 {
     case messageTooBig          = 1009
 }
 
-public enum FrameOpCode: UInt8 {
+enum FrameOpCode: UInt8 {
     case continueFrame = 0x0
     case textFrame = 0x1
     case binaryFrame = 0x2
@@ -56,7 +56,7 @@ public enum FrameOpCode: UInt8 {
     case unknown = 100
 }
 
-public struct Frame {
+struct Frame {
     let isFin: Bool
     let needsDecompression: Bool
     let isMasked: Bool
@@ -66,16 +66,16 @@ public struct Frame {
     let closeCode: UInt16 //only used by connectionClose opcode
 }
 
-public enum FrameEvent {
+enum FrameEvent {
     case frame(Frame)
     case error(Error)
 }
 
-public protocol FramerEventClient: class {
+protocol FramerEventClient: class {
     func frameProcessed(event: FrameEvent)
 }
 
-public protocol Framer {
+protocol Framer {
     func add(data: Data)
     func register(delegate: FramerEventClient)
     func createWriteFrame(opcode: FrameOpCode, payload: Data, isCompressed: Bool) -> Data
@@ -83,22 +83,22 @@ public protocol Framer {
     func supportsCompression() -> Bool
 }
 
-public class WSFramer: Framer {
+class WSFramer: Framer {
     private let queue = DispatchQueue(label: "com.vluxe.starscream.wsframer", attributes: [])
     private weak var delegate: FramerEventClient?
     private var buffer = Data()
-    public var compressionEnabled = false
+    var compressionEnabled = false
     private let isServer: Bool
     
-    public init(isServer: Bool = false) {
+    init(isServer: Bool = false) {
         self.isServer = isServer
     }
     
-    public func updateCompression(supports: Bool) {
+    func updateCompression(supports: Bool) {
         compressionEnabled = supports
     }
     
-    public func supportsCompression() -> Bool {
+    func supportsCompression() -> Bool {
         return compressionEnabled
     }
     
@@ -108,7 +108,7 @@ public class WSFramer: Framer {
         case failed(Error)
     }
     
-    public func add(data: Data) {
+    func add(data: Data) {
         queue.async { [weak self] in
             self?.buffer.append(data)
             while(true) {
@@ -133,7 +133,7 @@ public class WSFramer: Framer {
         }
     }
 
-    public func register(delegate: FramerEventClient) {
+    func register(delegate: FramerEventClient) {
         self.delegate = delegate
     }
     
@@ -242,7 +242,7 @@ public class WSFramer: Framer {
         return .processedFrame(frame, offset)
     }
     
-    public func createWriteFrame(opcode: FrameOpCode, payload: Data, isCompressed: Bool) -> Data {
+    func createWriteFrame(opcode: FrameOpCode, payload: Data, isCompressed: Bool) -> Data {
         let payloadLength = payload.count
         
         let capacity = payloadLength + MaxFrameSize
@@ -295,10 +295,10 @@ public class WSFramer: Framer {
 
 /// MARK: - functions for simpler array buffer reading and writing
 
-public protocol MyWSArrayType {}
+protocol MyWSArrayType {}
 extension UInt8: MyWSArrayType {}
 
-public extension Array where Element: MyWSArrayType & UnsignedInteger {
+extension Array where Element: MyWSArrayType & UnsignedInteger {
     
     /**
      Read a UInt16 from a buffer.
@@ -337,7 +337,7 @@ public extension Array where Element: MyWSArrayType & UnsignedInteger {
  - parameter buffer: is the UInt8 array (pointer) to write the value too.
  - parameter offset: is the offset index to start the write from (e.g. buffer[0], buffer[1], etc).
  */
-public func writeUint16( _ buffer: inout [UInt8], offset: Int, value: UInt16) {
+func writeUint16( _ buffer: inout [UInt8], offset: Int, value: UInt16) {
     buffer[offset + 0] = UInt8(value >> 8)
     buffer[offset + 1] = UInt8(value & 0xff)
 }
@@ -347,7 +347,7 @@ public func writeUint16( _ buffer: inout [UInt8], offset: Int, value: UInt16) {
  - parameter buffer: is the UInt8 array (pointer) to write the value too.
  - parameter offset: is the offset index to start the write from (e.g. buffer[0], buffer[1], etc).
  */
-public func writeUint32( _ buffer: inout [UInt8], offset: Int, value: UInt32) {
+func writeUint32( _ buffer: inout [UInt8], offset: Int, value: UInt32) {
     for i in 0...3 {
         buffer[offset + i] = UInt8((value >> (8*UInt32(3 - i))) & 0xff)
     }
@@ -358,7 +358,7 @@ public func writeUint32( _ buffer: inout [UInt8], offset: Int, value: UInt32) {
  - parameter buffer: is the UInt8 array (pointer) to write the value too.
  - parameter offset: is the offset index to start the write from (e.g. buffer[0], buffer[1], etc).
  */
-public func writeUint64( _ buffer: inout [UInt8], offset: Int, value: UInt64) {
+func writeUint64( _ buffer: inout [UInt8], offset: Int, value: UInt64) {
     for i in 0...7 {
         buffer[offset + i] = UInt8((value >> (8*UInt64(7 - i))) & 0xff)
     }

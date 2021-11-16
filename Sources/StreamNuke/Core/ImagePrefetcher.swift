@@ -11,7 +11,7 @@ import Foundation
 ///
 /// All `ImagePrefetcher` methods are thread-safe and are optimized to be used
 /// even from the main thread during scrolling.
-public final class ImagePrefetcher {
+final class ImagePrefetcher {
     private let pipeline: ImagePipeline
     private var tasks = [ImageLoadKey: Task]()
     private let destination: Destination
@@ -22,7 +22,7 @@ public final class ImagePrefetcher {
     ///
     /// - note: When you pause, the prefetcher will finish outstanding tasks
     /// (by default, there are only 2 at a time), and pause the rest.
-    public var isPaused: Bool = false {
+    var isPaused: Bool = false {
         didSet { queue.isSuspended = isPaused }
     }
 
@@ -30,7 +30,7 @@ public final class ImagePrefetcher {
     ///
     /// Changing the priority also changes the priority of all of the outstanding
     /// tasks managed by the prefetcher.
-    public var priority: ImageRequest.Priority = .low {
+    var priority: ImageRequest.Priority = .low {
         didSet {
             let newValue = priority
             pipeline.queue.async { self.didUpdatePriority(to: newValue) }
@@ -39,7 +39,7 @@ public final class ImagePrefetcher {
     private var _priority: ImageRequest.Priority = .low
 
     /// Prefetching destination.
-    public enum Destination {
+    enum Destination {
         /// Prefetches the image and stores it in both the memory and the disk
         /// cache (make sure to enable it).
         case memoryCache
@@ -56,7 +56,7 @@ public final class ImagePrefetcher {
     /// - parameter manager: `Loader.shared` by default.
     /// - parameter destination: `.memoryCache` by default.
     /// - parameter `maxConcurrentRequestCount`: 2 by default.
-    public init(pipeline: ImagePipeline = ImagePipeline.shared,
+    init(pipeline: ImagePipeline = ImagePipeline.shared,
                 destination: Destination = .memoryCache,
                 maxConcurrentRequestCount: Int = 2) {
         self.pipeline = pipeline
@@ -90,7 +90,7 @@ public final class ImagePrefetcher {
     ///
     /// The priority of the requests is set to the priority of the prefetcher
     /// (`.low` by default).
-    public func startPrefetching(with requests: [ImageRequestConvertible]) {
+    func startPrefetching(with requests: [ImageRequestConvertible]) {
         pipeline.queue.async {
             for request in requests {
                 var request = request.asImageRequest()
@@ -150,7 +150,7 @@ public final class ImagePrefetcher {
     /// of `ImagePrefetcher`.
     ///
     /// - parameter destination: `.memoryCache` by default.
-    public func stopPrefetching(with requests: [ImageRequestConvertible]) {
+    func stopPrefetching(with requests: [ImageRequestConvertible]) {
         pipeline.queue.async {
             for request in requests {
                 self._stopPrefetching(with: request.asImageRequest())
@@ -165,7 +165,7 @@ public final class ImagePrefetcher {
     }
 
     /// Stops all prefetching tasks.
-    public func stopPrefetching() {
+    func stopPrefetching() {
         pipeline.queue.async {
             self.tasks.values.forEach { $0.cancel() }
             self.tasks.removeAll()

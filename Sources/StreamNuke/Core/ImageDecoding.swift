@@ -20,7 +20,7 @@ import WatchKit
 ///
 /// - note: If you need additional information in the decoder, you can pass
 /// anything that you might need from the `ImageDecodingContext`.
-public protocol ImageDecoding {
+protocol ImageDecoding {
     /// Return `true` if you want the decoding to be performed on the decoding
     /// queue (see `imageDecodingQueue`). If `false`, the decoding will be
     /// performed synchronously on the pipeline operation queue. By default, `true`.
@@ -39,13 +39,13 @@ public protocol ImageDecoding {
 
 extension ImageDecoding {
     /// Returns `true` by default.
-    public var isAsynchronous: Bool {
+    var isAsynchronous: Bool {
         true
     }
 
     /// The default implementation which simply returns `nil` (no progressive
     /// decoding available).
-    public func decodePartiallyDownloadedData(_ data: Data) -> ImageContainer? {
+    func decodePartiallyDownloadedData(_ data: Data) -> ImageContainer? {
         nil
     }
 }
@@ -72,7 +72,7 @@ extension ImageDecoding {
 // MARK: - ImageDecoders
 
 /// A namespace with all available decoders.
-public enum ImageDecoders {}
+enum ImageDecoders {}
 
 // MARK: - ImageDecoders.Default
 
@@ -85,7 +85,7 @@ extension ImageDecoders {
     ///
     /// - note: The default decoder supports progressive JPEG. It produces a new
     /// preview every time it encounters a new full frame.
-    public final class Default: ImageDecoding, ImageDecoderRegistering {
+    final class Default: ImageDecoding, ImageDecoderRegistering {
         // Number of scans that the decoder has found so far. The last scan might be
         // incomplete at this point.
         var numberOfScans: Int { scanner.numberOfScans }
@@ -97,13 +97,13 @@ extension ImageDecoders {
         private var isPreviewForGIFGenerated = false
         private var scale: CGFloat?
 
-        public init() { }
+        init() { }
 
-        public var isAsynchronous: Bool {
+        var isAsynchronous: Bool {
             false
         }
 
-        public init?(data: Data, context: ImageDecodingContext) {
+        init?(data: Data, context: ImageDecodingContext) {
             let scale = context.request.ref.userInfo?[.scaleKey]
             self.scale = (scale as? NSNumber).map { CGFloat($0.floatValue) }
             guard let container = _decode(data) else {
@@ -112,7 +112,7 @@ extension ImageDecoders {
             self.container = container
         }
 
-        public init?(partiallyDownloadedData data: Data, context: ImageDecodingContext) {
+        init?(partiallyDownloadedData data: Data, context: ImageDecodingContext) {
             let imageType = ImageType(data)
 
             self.scale = context.request.ref.userInfo?[.scaleKey] as? CGFloat
@@ -133,7 +133,7 @@ extension ImageDecoders {
             return nil
         }
 
-        public func decode(_ data: Data) -> ImageContainer? {
+        func decode(_ data: Data) -> ImageContainer? {
             container ?? _decode(data)
         }
 
@@ -157,7 +157,7 @@ extension ImageDecoders {
             return container
         }
 
-        public func decodePartiallyDownloadedData(_ data: Data) -> ImageContainer? {
+        func decodePartiallyDownloadedData(_ data: Data) -> ImageContainer? {
             if isDecodingGIFProgressively { // Special handling for GIF
                 if !isPreviewForGIFGenerated, let image = ImageDecoders.Default._decode(data, scale: scale) {
                     isPreviewForGIFGenerated = true
@@ -237,11 +237,11 @@ extension ImageDecoders.Default {
 extension ImageDecoders {
     /// A decoder that returns an empty placeholder image and attaches image
     /// data to the image container.
-    public struct Empty: ImageDecoding {
-        public let isProgressive: Bool
+    struct Empty: ImageDecoding {
+        let isProgressive: Bool
         private let imageType: ImageType?
 
-        public var isAsynchronous: Bool {
+        var isAsynchronous: Bool {
             false
         }
 
@@ -252,16 +252,16 @@ extension ImageDecoders {
         ///   `nil` by defalt.
         ///   - isProgressive: If `false`, returns nil for every progressive
         ///   scan. `false` by default.
-        public init(imageType: ImageType? = nil, isProgressive: Bool = false) {
+        init(imageType: ImageType? = nil, isProgressive: Bool = false) {
             self.imageType = imageType
             self.isProgressive = isProgressive
         }
 
-        public func decodePartiallyDownloadedData(_ data: Data) -> ImageContainer? {
+        func decodePartiallyDownloadedData(_ data: Data) -> ImageContainer? {
             isProgressive ? ImageContainer(image: PlatformImage(), type: imageType, data: data, userInfo: [:]) : nil
         }
 
-        public func decode(_ data: Data) -> ImageContainer? {
+        func decode(_ data: Data) -> ImageContainer? {
             ImageContainer(image: PlatformImage(), type: imageType, data: data, userInfo: [:])
         }
     }
@@ -270,7 +270,7 @@ extension ImageDecoders {
 // MARK: - ImageDecoderRegistering
 
 /// An image decoder which supports automatically registering in the decoder register.
-public protocol ImageDecoderRegistering: ImageDecoding {
+protocol ImageDecoderRegistering: ImageDecoding {
     /// Returns non-nil if the decoder can be used to decode the given data.
     ///
     /// - parameter data: The same data is going to be delivered to decoder via
@@ -285,7 +285,7 @@ public protocol ImageDecoderRegistering: ImageDecoding {
     init?(partiallyDownloadedData data: Data, context: ImageDecodingContext)
 }
 
-public extension ImageDecoderRegistering {
+extension ImageDecoderRegistering {
     /// The default implementation which simply returns `nil` (no progressive
     /// decoding available).
     init?(partiallyDownloadedData data: Data, context: ImageDecodingContext) {
@@ -296,9 +296,9 @@ public extension ImageDecoderRegistering {
 // MARK: - ImageDecoderRegistry
 
 /// A registry of image codecs.
-public final class ImageDecoderRegistry {
+final class ImageDecoderRegistry {
     /// A shared registry.
-    public static let shared = ImageDecoderRegistry()
+    static let shared = ImageDecoderRegistry()
 
     private struct Match {
         let closure: (ImageDecodingContext) -> ImageDecoding?
@@ -306,12 +306,12 @@ public final class ImageDecoderRegistry {
 
     private var matches = [Match]()
 
-    public init() {
+    init() {
         self.register(ImageDecoders.Default.self)
     }
 
     /// Returns a decoder which matches the given context.
-    public func decoder(for context: ImageDecodingContext) -> ImageDecoding? {
+    func decoder(for context: ImageDecodingContext) -> ImageDecoding? {
         for match in matches {
             if let decoder = match.closure(context) {
                 return decoder
@@ -323,7 +323,7 @@ public final class ImageDecoderRegistry {
     // MARK: - Registering
 
     /// Registers the given decoder.
-    public func register<Decoder: ImageDecoderRegistering>(_ decoder: Decoder.Type) {
+    func register<Decoder: ImageDecoderRegistering>(_ decoder: Decoder.Type) {
         register { context in
             if context.isCompleted {
                 return decoder.init(data: context.data, context: context)
@@ -335,25 +335,25 @@ public final class ImageDecoderRegistry {
 
     /// Registers a decoder to be used in a given decoding context. The closure
     /// is going to be executed before all other already registered closures.
-    public func register(_ match: @escaping (ImageDecodingContext) -> ImageDecoding?) {
+    func register(_ match: @escaping (ImageDecodingContext) -> ImageDecoding?) {
         matches.insert(Match(closure: match), at: 0)
     }
 
     /// Removes all registered decoders.
-    public func clear() {
+    func clear() {
         matches = []
     }
 }
 
 /// Image decoding context used when selecting which decoder to use.
-public struct ImageDecodingContext {
-    public let request: ImageRequest
-    public let data: Data
+struct ImageDecodingContext {
+    let request: ImageRequest
+    let data: Data
     /// Returns `true` if the download was completed.
-    public let isCompleted: Bool
-    public let urlResponse: URLResponse?
+    let isCompleted: Bool
+    let urlResponse: URLResponse?
 
-    public init(request: ImageRequest, data: Data, isCompleted: Bool, urlResponse: URLResponse?) {
+    init(request: ImageRequest, data: Data, isCompleted: Bool, urlResponse: URLResponse?) {
         self.request = request
         self.data = data
         self.isCompleted = isCompleted
@@ -364,31 +364,31 @@ public struct ImageDecodingContext {
 // MARK: - ImageType
 
 /// A uniform type identifier (UTI).
-public struct ImageType: ExpressibleByStringLiteral, Hashable {
-    public let rawValue: String
+struct ImageType: ExpressibleByStringLiteral, Hashable {
+    let rawValue: String
 
-    public init(rawValue: String) {
+    init(rawValue: String) {
         self.rawValue = rawValue
     }
 
-    public init(stringLiteral value: String) {
+    init(stringLiteral value: String) {
         self.rawValue = value
     }
 
-    public static let png: ImageType = "public.png"
-    public static let jpeg: ImageType = "public.jpeg"
-    public static let gif: ImageType = "com.compuserve.gif"
+    static let png: ImageType = "public.png"
+    static let jpeg: ImageType = "public.jpeg"
+    static let gif: ImageType = "com.compuserve.gif"
     /// HEIF (High Efficiency Image Format) by Apple.
-    public static let heic: ImageType = "public.heic"
+    static let heic: ImageType = "public.heic"
 
     /// WebP
     ///
     /// Native decoding support only available on the following platforms: macOS 11,
     /// iOS 14, watchOS 7, tvOS 14.
-    public static let webp: ImageType = "public.webp"
+    static let webp: ImageType = "public.webp"
 }
 
-public extension ImageType {
+extension ImageType {
     /// Determines a type of the image based on the given data.
     init?(_ data: Data) {
         guard let type = ImageType.make(data) else {
@@ -432,9 +432,9 @@ enum ImageProperties {}
 // Keeping this private for now, not sure neither about the API, not the implementation.
 extension ImageProperties {
     struct JPEG {
-        public var isProgressive: Bool
+        var isProgressive: Bool
 
-        public init?(_ data: Data) {
+        init?(_ data: Data) {
             guard let isProgressive = ImageProperties.JPEG.isProgressive(data) else {
                 return nil
             }

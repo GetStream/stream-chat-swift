@@ -6,7 +6,7 @@ import Foundation
 import Combine
 
 @available(iOS 13.0, tvOS 13.0, watchOS 6.0, macOS 10.15, *)
-public extension ImagePipeline {
+extension ImagePipeline {
     /// Returns a publisher which starts a new `ImageTask` when a subscriber is added.
     ///
     /// - note: For more information, see `ImagePublisher`.
@@ -25,19 +25,19 @@ public extension ImagePipeline {
 /// and the image being downloaded supports progressive decoding, the publisher
 /// might emit more than a single value.
 @available(iOS 13.0, tvOS 13.0, watchOS 6.0, macOS 10.15, *)
-public struct ImagePublisher: Publisher {
-    public typealias Output = ImageResponse
-    public typealias Failure = ImagePipeline.Error
+struct ImagePublisher: Publisher {
+    typealias Output = ImageResponse
+    typealias Failure = ImagePipeline.Error
 
-    public let request: ImageRequest
-    public let pipeline: ImagePipeline
+    let request: ImageRequest
+    let pipeline: ImagePipeline
 
-    public init(request: ImageRequest, pipeline: ImagePipeline) {
+    init(request: ImageRequest, pipeline: ImagePipeline) {
         self.request = request
         self.pipeline = pipeline
     }
 
-    public func receive<S>(subscriber: S) where S: Subscriber, Failure == S.Failure, Output == S.Input {
+    func receive<S>(subscriber: S) where S: Subscriber, Failure == S.Failure, Output == S.Input {
         let subscription = ImageSubscription(
             request: self.request,
             pipeline: self.pipeline,

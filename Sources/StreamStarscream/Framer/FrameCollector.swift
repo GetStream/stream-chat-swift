@@ -22,13 +22,13 @@
 
 import Foundation
 
-public protocol FrameCollectorDelegate: class {
+protocol FrameCollectorDelegate: class {
     func didForm(event: FrameCollector.Event)
     func decompress(data: Data, isFinal: Bool) -> Data?
 }
 
-public class FrameCollector {
-    public enum Event {
+class FrameCollector {
+    enum Event {
         case text(String)
         case binary(Data)
         case pong(Data?)
@@ -42,7 +42,7 @@ public class FrameCollector {
     var isText = false //was the first frame a text frame or a binary frame?
     var needsDecompression = false
     
-    public func add(frame: Frame) {
+    func add(frame: Frame) {
         //check single frame action and out of order frames
         if frame.opcode == .connectionClose {
             var code = frame.closeCode
