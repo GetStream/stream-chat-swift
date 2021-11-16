@@ -14,7 +14,7 @@ end
 desc "Build .xcframeworks"
 lane :build_xcframeworks do
   output_directory = "#{Dir.pwd}/../Products"
-  ["StreamChatUI", "StreamChat", "StreamNuke", "StreamStarscream", "StreamSwiftyGif"].each do |scheme|
+  ["StreamChatUI", "StreamChat"].each do |scheme|
     create_xcframework(
       project: "StreamChat.xcodeproj",
       scheme: scheme,
@@ -24,7 +24,7 @@ lane :build_xcframeworks do
       xcframework_output_directory: output_directory,
       remove_xcarchives: true
     )
-    sh("../Scripts/remove_unneeded_symbols.sh", scheme, output_directory)
+    sh("../Scripts/removeUnneededSymbols.sh", scheme, output_directory)
   end
 end
 

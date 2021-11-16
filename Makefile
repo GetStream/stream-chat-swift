@@ -3,6 +3,9 @@ MAKEFLAGS += --silent
 bootstrap:
 	./Scripts/bootstrap.sh
 
+frameworks:
+	bundle exec fastlane build_xcframeworks
+
 update_dependencies:
 	echo "♦︎♦︎♦︎ Updating Nuke ♦︎♦︎♦︎"
 	make update_nuke version=10.3.3
