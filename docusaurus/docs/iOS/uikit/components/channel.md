@@ -2,10 +2,10 @@
 title: Channel
 ---
 
-import Digraph  from '../common-content/digraph.jsx'
-import SingletonNote from '../common-content/chat-client.md'
-import ComponentsNote from '../common-content/components-note.md'
-import ChannelProperties from '../common-content/reference-docs/stream-chat-ui/chat-channel/chat-channel-vc-properties.md'
+import Digraph  from '../../common-content/digraph.jsx'
+import SingletonNote from '../../common-content/chat-client.md'
+import ComponentsNote from '../../common-content/components-note.md'
+import ChannelProperties from '../../common-content/reference-docs/stream-chat-ui/chat-channel/chat-channel-vc-properties.md'
 
 The `ChatChannelVC` is the component presented when a channel is selected from the channel list. This component is responsible to display the messages from a channel, as well as creating new messages for the same channel.
 
@@ -121,7 +121,7 @@ class CustomChatChannelVC: ChatChannelVC {
 #### Result:
 | Before  | After |
 | ------------- | ------------- |
-| <img src={require("../assets/channelvc-default.png").default} /> | <img src={require("../assets/channelvc-livestream.png").default} /> |
+| <img src={require("../../assets/channelvc-default.png").default} /> | <img src={require("../../assets/channelvc-livestream.png").default} /> |
 
 ## Channel Query
 When creating a `ChannelController` for the `ChatChannelVC` you can provide `ChannelQuery` different from one used by default. The `ChannelQuery` is the query parameters for fetching the channel from Stream's backend. It has the following initializer:

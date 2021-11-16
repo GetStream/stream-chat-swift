@@ -2,10 +2,10 @@
 title: ChatChannelListItemView
 ---
 
-import Properties from '../common-content/reference-docs/stream-chat-ui/chat-channel-list/chat-channel-list-item-view-properties.md'
-import ComponentsNote from '../common-content/components-note.md'
+import Properties from '../../common-content/reference-docs/stream-chat-ui/chat-channel-list/chat-channel-list-item-view-properties.md'
+import ComponentsNote from '../../common-content/components-note.md'
 
-This component is used to display a channel in the [`ChannelList`](channel-list.md) component.
+This component is used to display a channel in the [`ChannelList`](../components/channel-list.md) component.
 
 ### Customization
 
@@ -25,7 +25,7 @@ As an example of how to use these methods in practice, let's try to change the c
 
 | Default style  | Custom "iMessage" Style |
 | -------------- | ----------------------- |
-| ![Default unread count](../assets/default-unread-count.png)  | ![iMessage unread count](../assets/custom-unread-count.png)  |
+| ![Default unread count](../../assets/default-unread-count.png)  | ![iMessage unread count](../../assets/custom-unread-count.png)  |
 
 
 Firstly, we need to create a custom subclass of `ChatChannelListItemView`, which is the component responsible for showing the channel summary in the channel list. Because the iMessage-style unread indicator is just a blue dot, rather then trying to modify the existing unread indicator, it's easier to create a brand new view for it:

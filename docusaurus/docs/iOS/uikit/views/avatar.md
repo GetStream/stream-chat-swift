@@ -2,7 +2,7 @@
 title: ChatAvatarView
 ---
 
-import ComponentsNote from '../common-content/components-note.md'
+import ComponentsNote from '../../common-content/components-note.md'
 
 This component renders the user avatar. By default, a circular image is used. 
 
@@ -39,4 +39,4 @@ Components.default.avatarView = SquareAvatarView.self
 
 | Default avatars | Square avatars |
 | ------------- | ------------- |
-| ![Chat with default message alignment](../assets/message-layout-default.png)  | ![Chat with square avatart](../assets/message-layout-squared-avatar.png)  |
+| ![Chat with default message alignment](../../assets/message-layout-default.png)  | ![Chat with square avatart](../../assets/message-layout-squared-avatar.png)  |

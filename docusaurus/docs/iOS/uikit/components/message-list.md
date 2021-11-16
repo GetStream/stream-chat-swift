@@ -2,8 +2,8 @@
 title: Message List
 ---
 
-import ComponentsNote from '../common-content/components-note.md'
-import MessageListProperties from '../common-content/reference-docs/stream-chat-ui/chat-message-list/chat-message-list-vc-properties.md'
+import ComponentsNote from '../../common-content/components-note.md'
+import MessageListProperties from '../../common-content/reference-docs/stream-chat-ui/chat-message-list/chat-message-list-vc-properties.md'
 
 The `ChatMessageListVC` is a component that renders a list of messages. It decides how to render a message based on its type and content. The messages data should be provided through the data source named `ChatMessageListVCDataSource` and some important actions should be delegated through the `ChatMessageListVCDelegate`, very similar to how the native `UITableView` and `UICollectionView` works.
 

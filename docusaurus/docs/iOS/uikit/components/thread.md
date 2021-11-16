@@ -2,10 +2,10 @@
 title: Thread
 ---
 
-import Digraph  from '../common-content/digraph.jsx'
-import SingletonNote from '../common-content/chat-client.md'
-import ComponentsNote from '../common-content/components-note.md'
-import ThreadProperties from '../common-content/reference-docs/stream-chat-ui/chat-thread/chat-thread-vc-properties.md'
+import Digraph  from '../../common-content/digraph.jsx'
+import SingletonNote from '../../common-content/chat-client.md'
+import ComponentsNote from '../../common-content/components-note.md'
+import ThreadProperties from '../../common-content/reference-docs/stream-chat-ui/chat-thread/chat-thread-vc-properties.md'
 
 The `ChatThreadVC` is very similar with the [`ChatChannelVC`](../channel), the difference is that instead of displaying messages, it displays the replies of a message thread. Just like the `ChatChannelVC` it also contains the `ComposerVC` component to create new replies.
 
