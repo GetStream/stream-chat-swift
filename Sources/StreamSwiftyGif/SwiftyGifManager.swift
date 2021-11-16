@@ -12,15 +12,15 @@ import UIKit
 #endif
 
 #if os(macOS)
-public typealias PlatformImageView = NSImageView
+typealias PlatformImageView = NSImageView
 #else
-public typealias PlatformImageView = UIImageView
+typealias PlatformImageView = UIImageView
 #endif
 
-open class SwiftyGifManager {
+class SwiftyGifManager {
     
     // A convenient default manager if we only have one gif to display here and there
-    public static var defaultManager = SwiftyGifManager(memoryLimit: 50)
+    static var defaultManager = SwiftyGifManager(memoryLimit: 50)
     
     #if os(macOS)
     fileprivate var timer: CVDisplayLink?
@@ -31,13 +31,13 @@ open class SwiftyGifManager {
     fileprivate var displayViews: [PlatformImageView] = []
     fileprivate var totalGifSize: Int
     fileprivate var memoryLimit: Int
-    open var haveCache: Bool
-    open var remoteCache : [URL : Data] = [:]
+    var haveCache: Bool
+    var remoteCache : [URL : Data] = [:]
     
     /// Initialize a manager
     ///
     /// - Parameter memoryLimit: The number of Mb max for this manager
-    public init(memoryLimit: Int) {
+    init(memoryLimit: Int) {
         self.memoryLimit = memoryLimit
         totalGifSize = 0
         haveCache = true
@@ -47,7 +47,7 @@ open class SwiftyGifManager {
         stopTimer()
     }
     
-    public func startTimerIfNeeded() {
+    func startTimerIfNeeded() {
         guard timer == nil else {
             return
         }
@@ -81,7 +81,7 @@ open class SwiftyGifManager {
         #endif
     }
     
-    public func stopTimer() {
+    func stopTimer() {
         #if os(macOS)
         CVDisplayLinkStop(timer!)
         #else
@@ -93,7 +93,7 @@ open class SwiftyGifManager {
     
     /// Add a new imageView to this manager if it doesn't exist
     /// - Parameter imageView: The image view we're adding to this manager
-    open func addImageView(_ imageView: PlatformImageView) -> Bool {
+    func addImageView(_ imageView: PlatformImageView) -> Bool {
         if containsImageView(imageView) {
             startTimerIfNeeded()
             return false
@@ -108,7 +108,7 @@ open class SwiftyGifManager {
     
     /// Delete an imageView from this manager if it exists
     /// - Parameter imageView: The image view we want to delete
-    open func deleteImageView(_ imageView: PlatformImageView) {
+    func deleteImageView(_ imageView: PlatformImageView) {
         guard let index = displayViews.firstIndex(of: imageView) else {
             return
         }
@@ -117,7 +117,7 @@ open class SwiftyGifManager {
         updateCacheSize(for: imageView, add: false)
     }
     
-    open func updateCacheSize(for imageView: PlatformImageView, add: Bool) {
+    func updateCacheSize(for imageView: PlatformImageView, add: Bool) {
         totalGifSize += (add ? 1 : -1) * (imageView.gifImage?.imageSize ?? 0)
         haveCache = totalGifSize <= memoryLimit
         
@@ -126,7 +126,7 @@ open class SwiftyGifManager {
         }
     }
     
-    open func clear() {
+    func clear() {
         displayViews.forEach { $0.clear() }
         displayViews = []
         stopTimer()
@@ -135,14 +135,14 @@ open class SwiftyGifManager {
     /// Check if an imageView is already managed by this manager
     /// - Parameter imageView: The image view we're searching
     /// - Returns : a boolean for wether the imageView was found
-    open func containsImageView(_ imageView: PlatformImageView) -> Bool{
+    func containsImageView(_ imageView: PlatformImageView) -> Bool{
         return displayViews.contains(imageView)
     }
     
     /// Check if this manager has cache for an imageView
     /// - Parameter imageView: The image view we're searching cache for
     /// - Returns : a boolean for wether we have cache for the imageView
-    open func hasCache(_ imageView: PlatformImageView) -> Bool {
+    func hasCache(_ imageView: PlatformImageView) -> Bool {
         return imageView.displaying && (imageView.loopCount == -1 || imageView.loopCount >= 5) ? haveCache : false
     }
     

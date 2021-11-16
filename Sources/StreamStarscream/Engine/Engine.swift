@@ -8,11 +8,11 @@
 
 import Foundation
 
-public protocol EngineDelegate: class {
+protocol EngineDelegate: class {
     func didReceive(event: WebSocketEvent)
 }
 
-public protocol Engine {
+protocol Engine {
     func register(delegate: EngineDelegate)
     func start(request: URLRequest)
     func stop(closeCode: UInt16)

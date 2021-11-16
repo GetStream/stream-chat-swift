@@ -22,13 +22,13 @@
 
 import Foundation
 
-public enum FoundationTransportError: Error {
+enum FoundationTransportError: Error {
     case invalidRequest
     case invalidOutputStream
     case timeout
 }
 
-public class FoundationTransport: NSObject, Transport, StreamDelegate {
+class FoundationTransport: NSObject, Transport, StreamDelegate {
     private weak var delegate: TransportEventClient?
     private let workQueue = DispatchQueue(label: "com.vluxe.starscream.websocket", attributes: [])
     private var inputStream: InputStream?
@@ -38,11 +38,11 @@ public class FoundationTransport: NSObject, Transport, StreamDelegate {
     private var isTLS = false
     private var certPinner: CertificatePinning?
     
-    public var usingTLS: Bool {
+    var usingTLS: Bool {
         return self.isTLS
     }
     
-    public init(streamConfiguration: ((InputStream, OutputStream) -> Void)? = nil) {
+    init(streamConfiguration: ((InputStream, OutputStream) -> Void)? = nil) {
         super.init()
         onConnect = streamConfiguration
     }
@@ -52,7 +52,7 @@ public class FoundationTransport: NSObject, Transport, StreamDelegate {
         outputStream?.delegate = nil
     }
     
-    public func connect(url: URL, timeout: Double = 10, certificatePinning: CertificatePinning? = nil) {
+    func connect(url: URL, timeout: Double = 10, certificatePinning: CertificatePinning? = nil) {
         guard let parts = url.getParts() else {
             delegate?.connectionChanged(state: .failed(FoundationTransportError.invalidRequest))
             return
@@ -94,7 +94,7 @@ public class FoundationTransport: NSObject, Transport, StreamDelegate {
         })
     }
     
-    public func disconnect() {
+    func disconnect() {
         if let stream = inputStream {
             stream.delegate = nil
             CFReadStreamSetDispatchQueue(stream, nil)
@@ -110,11 +110,11 @@ public class FoundationTransport: NSObject, Transport, StreamDelegate {
         inputStream = nil
     }
     
-    public func register(delegate: TransportEventClient) {
+    func register(delegate: TransportEventClient) {
         self.delegate = delegate
     }
     
-    public func write(data: Data, completion: @escaping ((Error?) -> ())) {
+    func write(data: Data, completion: @escaping ((Error?) -> ())) {
         guard let outStream = outputStream else {
             completion(FoundationTransportError.invalidOutputStream)
             return
@@ -176,7 +176,7 @@ public class FoundationTransport: NSObject, Transport, StreamDelegate {
     
     // MARK: - StreamDelegate
     
-    open func stream(_ aStream: Stream, handle eventCode: Stream.Event) {
+    func stream(_ aStream: Stream, handle eventCode: Stream.Event) {
         switch eventCode {
         case .hasBytesAvailable:
             if aStream == inputStream {

@@ -69,7 +69,7 @@ final class ResumableDataStorage {
     private let lock = NSLock()
     private var registeredPipelines = Set<UUID>()
 
-    private var cache: Cache<Key, ResumableData>?
+    private var cache: NukeCache<Key, ResumableData>?
 
     // MARK: Registration
 
@@ -78,7 +78,7 @@ final class ResumableDataStorage {
 
         if registeredPipelines.isEmpty {
             // 32 MB
-            cache = Cache(costLimit: 32000000, countLimit: 100)
+            cache = NukeCache(costLimit: 32000000, countLimit: 100)
         }
         registeredPipelines.insert(pipeline.id)
     }

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Usage: ./remove_unneeded_symbols.sh StreamChatUI ./Products
+# Usage: ./removeUnneededSymbols.sh StreamChatUI ./Products
 #
 # Creating an xcframework for StreamChatUI generates a .bcsymbolmap file for itself, and one for
 # each of its dependencies too (eg. StreamChat). That means that we will end up having something like:

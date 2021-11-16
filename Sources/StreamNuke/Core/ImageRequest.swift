@@ -8,14 +8,14 @@ import Combine
 // MARK: - ImageRequest
 
 /// Represents an image request.
-public struct ImageRequest: CustomStringConvertible {
+struct ImageRequest: CustomStringConvertible {
 
     // MARK: Parameters
 
     /// Returns the request `URLRequest`.
     ///
     /// Returns `nil` for publisher-based requests.
-    public var urlRequest: URLRequest? {
+    var urlRequest: URLRequest? {
         switch ref.resource {
         case .url(let url): return url.map { URLRequest(url: $0) } // create lazily
         case .urlRequest(let urlRequest): return urlRequest
@@ -26,7 +26,7 @@ public struct ImageRequest: CustomStringConvertible {
     /// Returns the request `URL`.
     ///
     /// Returns `nil` for publisher-based requests.
-    public var url: URL? {
+    var url: URL? {
         switch ref.resource {
         case .url(let url): return url
         case .urlRequest(let request): return request.url
@@ -36,7 +36,7 @@ public struct ImageRequest: CustomStringConvertible {
 
     /// Returns the ID of the underlying image. For URL-based request, it's an
     /// image URL. For publisher – a custom ID.
-    public var imageId: String? {
+    var imageId: String? {
         switch ref.resource {
         case .url(let url): return url?.absoluteString
         case .urlRequest(let urlRequest): return urlRequest.url?.absoluteString
@@ -46,47 +46,47 @@ public struct ImageRequest: CustomStringConvertible {
 
     /// The relative priority of the request. The priority affects the order in
     /// which the requests are performed. `.normal` by default.
-    public var priority: Priority {
+    var priority: Priority {
         get { ref.priority }
         set { mutate { $0.priority = newValue } }
     }
 
     /// Processor to be applied to the image. Empty by default.
-    public var processors: [ImageProcessing] {
+    var processors: [ImageProcessing] {
         get { ref.processors ?? [] }
         set { mutate { $0.processors = newValue } }
     }
 
     /// The request options.
-    public var options: Options {
+    var options: Options {
         get { ref.options }
         set { mutate { $0.options = newValue } }
     }
 
     /// Custom info passed alongside the request.
-    public var userInfo: [UserInfoKey: Any] {
+    var userInfo: [UserInfoKey: Any] {
         get { ref.userInfo ?? [:] }
         set { mutate { $0.userInfo = newValue } }
     }
 
     /// The priority affecting the order in which the requests are performed.
-    public enum Priority: Int, Comparable {
+    enum Priority: Int, Comparable {
         case veryLow = 0, low, normal, high, veryHigh
 
-        public static func < (lhs: Priority, rhs: Priority) -> Bool {
+        static func < (lhs: Priority, rhs: Priority) -> Bool {
             lhs.rawValue < rhs.rawValue
         }
     }
 
     /// A key use in `userInfo`.
-    public struct UserInfoKey: Hashable, ExpressibleByStringLiteral {
-        public let rawValue: String
+    struct UserInfoKey: Hashable, ExpressibleByStringLiteral {
+        let rawValue: String
 
-        public init(_ rawValue: String) {
+        init(_ rawValue: String) {
             self.rawValue = rawValue
         }
 
-        public init(stringLiteral value: String) {
+        init(stringLiteral value: String) {
             self.rawValue = value
         }
 
@@ -101,11 +101,11 @@ public struct ImageRequest: CustomStringConvertible {
         ///     userInfo: [.imageIdKey: "http://example.com/image.jpeg"]
         /// )
         /// ```
-        public static let imageIdKey: ImageRequest.UserInfoKey = "github.com/kean/nuke/imageId"
+        static let imageIdKey: ImageRequest.UserInfoKey = "github.com/kean/nuke/imageId"
 
         /// The image scale to be used. By default, the scale matches the scale
         /// of the current display.
-        public static let scaleKey: ImageRequest.UserInfoKey = "github.com/kean/nuke/scale"
+        static let scaleKey: ImageRequest.UserInfoKey = "github.com/kean/nuke/scale"
     }
 
     // MARK: Initializers
@@ -125,7 +125,7 @@ public struct ImageRequest: CustomStringConvertible {
     ///     priority: .high
     /// )
     /// ```
-    public init(url: URL?,
+    init(url: URL?,
                 processors: [ImageProcessing]? = nil,
                 priority: Priority = .normal,
                 options: Options = [],
@@ -154,7 +154,7 @@ public struct ImageRequest: CustomStringConvertible {
     ///     priority: .high
     /// )
     /// ```
-    public init(urlRequest: URLRequest,
+    init(urlRequest: URLRequest,
                 processors: [ImageProcessing]? = nil,
                 priority: Priority = .normal,
                 options: Options = [],
@@ -191,7 +191,7 @@ public struct ImageRequest: CustomStringConvertible {
     /// sure to create a pipeline without it or disable it on a per-request basis.
     /// You can also disable it dynamically using `ImagePipelineDelegate`.
     @available(iOS 13.0, tvOS 13.0, watchOS 6.0, macOS 10.15, *)
-    public init<P>(id: String, data: P,
+    init<P>(id: String, data: P,
                    processors: [ImageProcessing]? = nil,
                    priority: Priority = .normal,
                    options: Options = [],
@@ -211,42 +211,42 @@ public struct ImageRequest: CustomStringConvertible {
     // MARK: Options
 
     /// Image request options.
-    public struct Options: OptionSet, Hashable {
+    struct Options: OptionSet, Hashable {
         /// Returns a raw value.
-        public let rawValue: UInt16
+        let rawValue: UInt16
 
         /// Initialializes options with a given raw values.
-        public init(rawValue: UInt16) {
+        init(rawValue: UInt16) {
             self.rawValue = rawValue
         }
 
         /// Disables memory cache reads (`ImageCaching`).
-        public static let disableMemoryCacheReads = Options(rawValue: 1 << 0)
+        static let disableMemoryCacheReads = Options(rawValue: 1 << 0)
 
         /// Disables memory cache writes (`ImageCaching`).
-        public static let disableMemoryCacheWrites = Options(rawValue: 1 << 1)
+        static let disableMemoryCacheWrites = Options(rawValue: 1 << 1)
 
         /// Disables both memory cache reads and writes (`ImageCaching`).
-        public static let disableMemoryCache: Options = [.disableMemoryCacheReads, .disableMemoryCacheWrites]
+        static let disableMemoryCache: Options = [.disableMemoryCacheReads, .disableMemoryCacheWrites]
 
         /// Disables disk cache reads (`DataCaching`).
-        public static let disableDiskCacheReads = Options(rawValue: 1 << 2)
+        static let disableDiskCacheReads = Options(rawValue: 1 << 2)
 
         /// Disables disk cache writes (`DataCaching`).
-        public static let disableDiskCacheWrites = Options(rawValue: 1 << 3)
+        static let disableDiskCacheWrites = Options(rawValue: 1 << 3)
 
         /// Disables both disk cache reads and writes (`DataCaching`).
-        public static let disableDiskCache: Options = [.disableDiskCacheReads, .disableDiskCacheWrites]
+        static let disableDiskCache: Options = [.disableDiskCacheReads, .disableDiskCacheWrites]
 
         /// The image should be loaded only from the originating source.
         ///
         /// This option only works `ImageCaching` and `DataCaching`, but not
         /// `URLCache`. If you want to ignore `URLCache`, initialize the request
         /// with `URLRequest` with the respective policy
-        public static let reloadIgnoringCachedData: Options = [.disableMemoryCacheReads, .disableDiskCacheReads]
+        static let reloadIgnoringCachedData: Options = [.disableMemoryCacheReads, .disableDiskCacheReads]
 
         /// Use existing cache data and fail if no cached data is available.
-        public static let returnCacheDataDontLoad = Options(rawValue: 1 << 4)
+        static let returnCacheDataDontLoad = Options(rawValue: 1 << 4)
     }
 
     // MARK: Internal
@@ -323,7 +323,7 @@ public struct ImageRequest: CustomStringConvertible {
         }
     }
 
-    public var description: String {
+    var description: String {
         "ImageRequest(resource: \(ref.resource), priority: \(priority), processors: \(processors), options: \(options), userInfo: \(userInfo))"
     }
 
@@ -351,36 +351,36 @@ public struct ImageRequest: CustomStringConvertible {
 // MARK: - ImageRequestConvertible
 
 /// Represents a type that can be converted to an `ImageRequest`.
-public protocol ImageRequestConvertible {
+protocol ImageRequestConvertible {
     func asImageRequest() -> ImageRequest
 }
 
 extension ImageRequest: ImageRequestConvertible {
-    public func asImageRequest() -> ImageRequest {
+    func asImageRequest() -> ImageRequest {
         self
     }
 }
 
 extension URL: ImageRequestConvertible {
-    public func asImageRequest() -> ImageRequest {
+    func asImageRequest() -> ImageRequest {
         ImageRequest(url: self)
     }
 }
 
 extension Optional: ImageRequestConvertible where Wrapped == URL {
-    public func asImageRequest() -> ImageRequest {
+    func asImageRequest() -> ImageRequest {
         ImageRequest(url: self)
     }
 }
 
 extension URLRequest: ImageRequestConvertible {
-    public func asImageRequest() -> ImageRequest {
+    func asImageRequest() -> ImageRequest {
         ImageRequest(urlRequest: self)
     }
 }
 
 extension String: ImageRequestConvertible {
-    public func asImageRequest() -> ImageRequest {
+    func asImageRequest() -> ImageRequest {
         ImageRequest(url: URL(string: self))
     }
 }

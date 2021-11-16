@@ -7,14 +7,14 @@
 import ImageIO
 import UIKit
 
-public typealias GifLevelOfIntegrity = Float
+typealias GifLevelOfIntegrity = Float
 
 extension GifLevelOfIntegrity {
-    public static let highestNoFrameSkipping: GifLevelOfIntegrity = 1
-    public static let `default`: GifLevelOfIntegrity = 0.8
-    public static let lowForManyGifs: GifLevelOfIntegrity = 0.5
-    public static let lowForTooManyGifs: GifLevelOfIntegrity = 0.2
-    public static let superLowForSlideShow: GifLevelOfIntegrity = 0.1
+    static let highestNoFrameSkipping: GifLevelOfIntegrity = 1
+    static let `default`: GifLevelOfIntegrity = 0.8
+    static let lowForManyGifs: GifLevelOfIntegrity = 0.5
+    static let lowForTooManyGifs: GifLevelOfIntegrity = 0.2
+    static let superLowForSlideShow: GifLevelOfIntegrity = 0.1
 }
 
 enum GifParseError: Error {
@@ -26,7 +26,7 @@ enum GifParseError: Error {
 }
 
 extension GifParseError: LocalizedError {
-    public var errorDescription: String? {
+    var errorDescription: String? {
         switch self {
         case .invalidFilename:
             return "Invalid file name"
@@ -36,7 +36,7 @@ extension GifParseError: LocalizedError {
     }
 }
 
-public extension UIImage {
+extension UIImage {
     /// Convenience initializer. Creates a gif with its backing data.
     ///
     /// - Parameter imageData: The actual image data, can be GIF or some other format
@@ -66,7 +66,7 @@ public extension UIImage {
 
 // MARK: - Inits
 
-public extension UIImage {
+extension UIImage {
     
     /// Convenience initializer. Creates a gif with its backing data.
     ///
@@ -295,7 +295,7 @@ private let _imageCountKey = malloc(4)
 private let _displayOrderKey = malloc(4)
 private let _imageDataKey = malloc(4)
 
-public extension UIImage {
+extension UIImage {
     
     var imageSource: CGImageSource? {
         get {

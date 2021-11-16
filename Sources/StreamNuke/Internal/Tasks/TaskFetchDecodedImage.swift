@@ -46,7 +46,7 @@ final class TaskFetchDecodedImage: ImagePipelineTask<ImageResponse> {
         // Fast-track default decoders, most work is already done during
         // initialization anyway.
         let decode = {
-            signpost(log, "DecodeImageData", isCompleted ? "FinalImage" : "ProgressiveImage") {
+            signpost(nukeLog, "DecodeImageData", isCompleted ? "FinalImage" : "ProgressiveImage") {
                 decoder.decode(data, urlResponse: urlResponse, isCompleted: isCompleted, cacheType: nil)
             }
         }

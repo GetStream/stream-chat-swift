@@ -17,7 +17,7 @@ import ImageIO
 // MARK: - ImageEncoding
 
 /// An image encoder.
-public protocol ImageEncoding {
+protocol ImageEncoding {
     /// Encodes the given image.
     func encode(_ image: PlatformImage) -> Data?
 
@@ -25,7 +25,7 @@ public protocol ImageEncoding {
     func encode(_ container: ImageContainer, context: ImageEncodingContext) -> Data?
 }
 
-public extension ImageEncoding {
+extension ImageEncoding {
     func encode(_ container: ImageContainer, context: ImageEncodingContext) -> Data? {
         self.encode(container.image)
     }
@@ -34,34 +34,34 @@ public extension ImageEncoding {
 // MARK: - ImageEncoder
 
 /// Image encoding context used when selecting which encoder to use.
-public struct ImageEncodingContext {
-    public let request: ImageRequest
-    public let image: PlatformImage
-    public let urlResponse: URLResponse?
+struct ImageEncodingContext {
+    let request: ImageRequest
+    let image: PlatformImage
+    let urlResponse: URLResponse?
 }
 
 // MARK: - ImageEncoders
 
 /// A namespace with all available encoders.
-public enum ImageEncoders {}
+enum ImageEncoders {}
 
 // MARK: - ImageEncoders.Default
 
 extension ImageEncoders {
     /// A default adaptive encoder which uses best encoder available depending
     /// on the input image and its configuration.
-    public struct Default: ImageEncoding {
-        public var compressionQuality: Float
+    struct Default: ImageEncoding {
+        var compressionQuality: Float
 
         /// Set to `true` to switch to HEIF when it is available on the current hardware.
         /// `false` by default.
-        public var isHEIFPreferred = false
+        var isHEIFPreferred = false
 
-        public init(compressionQuality: Float = 0.8) {
+        init(compressionQuality: Float = 0.8) {
             self.compressionQuality = compressionQuality
         }
 
-        public func encode(_ image: PlatformImage) -> Data? {
+        func encode(_ image: PlatformImage) -> Data? {
             guard let cgImage = image.cgImage else {
                 return nil
             }
@@ -89,14 +89,14 @@ extension ImageEncoders {
     /// Image I/O is a system framework that allows applications to read and
     /// write most image file formats. This framework offers high efficiency,
     /// color management, and access to image metadata.
-    public struct ImageIO: ImageEncoding {
-        public let type: ImageType
-        public let compressionRatio: Float
+    struct ImageIO: ImageEncoding {
+        let type: ImageType
+        let compressionRatio: Float
 
         /// - parameter format: The output format. Make sure that the format is
         /// supported on the current hardware.s
         /// - parameter compressionRatio: 0.8 by default.
-        public init(type: ImageType, compressionRatio: Float = 0.8) {
+        init(type: ImageType, compressionRatio: Float = 0.8) {
             self.type = type
             self.compressionRatio = compressionRatio
         }
@@ -107,7 +107,7 @@ extension ImageEncoders {
         /// Retuns `true` if the encoding is available for the given format on
         /// the current hardware. Some of the most recent formats might not be
         /// available so its best to check before using them.
-        public static func isSupported(type: ImageType) -> Bool {
+        static func isSupported(type: ImageType) -> Bool {
             lock.lock()
             defer { lock.unlock() }
             if let isAvailable = availability[type] {
@@ -120,7 +120,7 @@ extension ImageEncoders {
             return isAvailable
         }
 
-        public func encode(_ image: PlatformImage) -> Data? {
+        func encode(_ image: PlatformImage) -> Data? {
             let data = NSMutableData()
             let options: NSDictionary = [
                 kCGImageDestinationLossyCompressionQuality: compressionRatio

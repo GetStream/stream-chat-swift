@@ -6,9 +6,9 @@ import Foundation
 
 // Deprecated in 9.4.1
 @available(*, deprecated, message: "Renamed to ImagePrefetcher")
-public typealias ImagePreheater = ImagePrefetcher
+typealias ImagePreheater = ImagePrefetcher
 
-public extension ImagePrefetcher {
+extension ImagePrefetcher {
     // Deprecated in 9.4.1
     @available(*, deprecated, message: "Renamed to startPrefetching")
     func startPreheating(with urls: [URL]) {
@@ -40,7 +40,7 @@ public extension ImagePrefetcher {
     }
 }
 
-public extension ImagePipeline {
+extension ImagePipeline {
     // Deprecated in 10.0.0
     @available(*, deprecated, message: "Use pipeline.cache[url] instead")
     func cachedImage(for url: URL) -> ImageContainer? {
@@ -76,31 +76,31 @@ public extension ImagePipeline {
 
 // Deprecated in 10.0.0
 @available(*, deprecated, message: "Please use ImagePipelineDelegate")
-public protocol ImagePipelineObserving {
+protocol ImagePipelineObserving {
     /// Delivers the events produced by the image tasks started via `loadImage` method.
     func pipeline(_ pipeline: ImagePipeline, imageTask: ImageTask, didReceiveEvent event: ImageTaskEvent)
 }
 
 // Deprecated in 10.0.0
 @available(*, deprecated, message: "Please use the new initializer with `ImageRequest.Options`. It offers the same options and more. For more information see the migration guide at https://github.com/kean/Nuke/blob/master/Documentation/Migrations/Nuke%2010%20Migration%20Guide.md#imagerequestoptions.")
-public struct ImageRequestOptions {
+struct ImageRequestOptions {
     // Deprecated in 10.0.0
     @available(*, deprecated, message: "Please use `ImagePipeline.Options` instead: `disableMemoryCacheRead`, `disableMemoryCacheWrite`.")
-    public struct MemoryCacheOptions {
+    struct MemoryCacheOptions {
         /// `true` by default.
-        public var isReadAllowed = true
+        var isReadAllowed = true
 
         /// `true` by default.
-        public var isWriteAllowed = true
+        var isWriteAllowed = true
 
-        public init(isReadAllowed: Bool = true, isWriteAllowed: Bool = true) {
+        init(isReadAllowed: Bool = true, isWriteAllowed: Bool = true) {
             self.isReadAllowed = isReadAllowed
             self.isWriteAllowed = isWriteAllowed
         }
     }
 
     /// `MemoryCacheOptions()` (read allowed, write allowed) by default.
-    public var memoryCacheOptions: MemoryCacheOptions
+    var memoryCacheOptions: MemoryCacheOptions
 
     // Deprecated in 10.0.0
     @available(*, deprecated, message: "Please pass ")
@@ -118,7 +118,7 @@ public struct ImageRequestOptions {
     @available(*, deprecated, message: "Please pass the `userInfo` directly to the request. The deprecated API does nothing starting with Nuke 10.")
     var userInfo: [AnyHashable: Any]
 
-    public init(memoryCacheOptions: MemoryCacheOptions = .init(),
+    init(memoryCacheOptions: MemoryCacheOptions = .init(),
                 filteredURL: String? = nil,
                 cacheKey: AnyHashable? = nil,
                 loadKey: AnyHashable? = nil,
@@ -131,7 +131,7 @@ public struct ImageRequestOptions {
     }
 }
 
-public extension ImageRequest {
+extension ImageRequest {
     // Deprecated in 10.0.0
     @available(*, deprecated, message: "Please use the new initializer with `ImageRequest.Options`. It offers the same options and more. For more information see the migration guide at https://github.com/kean/Nuke/blob/master/Documentation/Migrations/Nuke%2010%20Migration%20Guide.md#imagerequestoptions.")
     init(url: URL,
@@ -224,13 +224,13 @@ private extension ImageRequest.Options {
     }
 }
 
-public extension ImageDecoders.Default {
+extension ImageDecoders.Default {
     // Deprecated in 10.0.0
     @available(*, deprecated, message: "Please use `ImageConatainer.UserInfoKey.scanNumber.")
     static let scanNumberKey = "ImageDecoders.Default.scanNumberKey"
 }
 
-public extension ImagePipeline.Configuration {
+extension ImagePipeline.Configuration {
     // Deprecated in 10.0.0
     @available(*, deprecated, message: "Please use `ImageConatainer` `data` instead. The default image decoder now automatically attaches image data to the ImageContainer type. To learn how to implement animated image support using this new type, see the new Image Formats guide https://github.com/kean/Nuke/blob/9.6.0/Documentation/Guides/image-formats.md. Also see Nuke 10 migration guide https://github.com/kean/Nuke/blob/master/Documentation/Migrations/Nuke%2010%20Migration%20Guide.md.")
     static var isAnimatedImageDataEnabled: Bool {
@@ -245,7 +245,7 @@ extension PlatformImage {
     // Deprecated in 10.0.0
     /// - warning: Soft-deprecated in Nuke 9.0.
     @available(*, deprecated, message: "Please use `ImageConatainer` `data` instead")
-    public var animatedImageData: Data? {
+    var animatedImageData: Data? {
         get { _animatedImageData }
         set { _animatedImageData = newValue }
     }
@@ -260,14 +260,14 @@ extension PlatformImage {
 extension ImagePipeline.Configuration {
     // Deprecated in 10.0.0
     @available(*, deprecated, message: "Please use `ImageConfiguration.default` and provide a `dataLoader` afterwards or use a closure-based ImagePipeline initializer.")
-    public init(dataLoader: DataLoading = DataLoader(), imageCache: ImageCaching?) {
+    init(dataLoader: DataLoading = DataLoader(), imageCache: ImageCaching?) {
         self.init(dataLoader: dataLoader)
         self.imageCache = imageCache
     }
 
     // Deprecated in 10.0.0
     @available(*, deprecated, message: "Renamed to isTaskCoalescingEnabled")
-    public var isDeduplicationEnabled: Bool {
+    var isDeduplicationEnabled: Bool {
         get { isTaskCoalescingEnabled }
         set { isTaskCoalescingEnabled = newValue }
     }
@@ -275,7 +275,7 @@ extension ImagePipeline.Configuration {
     // Deprecated in 10.0.0
     // There is simply no way to make it work consistently across subsystems.
     @available(*, deprecated, message: "Deprecated and will be removed. Please use the new ImageLoadingOptions processors option, or create another way to apply processors by default.")
-    public var processors: [ImageProcessing] {
+    var processors: [ImageProcessing] {
         get { _processors }
         set { _processors = newValue }
     }
@@ -293,8 +293,8 @@ extension ImagePipeline.Configuration {
 
 // Deprecated in 10.0.0
 @available(*, deprecated, message: "Please use ImageDecoders.Default directly")
-public typealias ImageDecoder = ImageDecoders.Default
+typealias ImageDecoder = ImageDecoders.Default
 
 // Deprecated in 10.0.0
 @available(*, deprecated, message: "Please use ImageEncoders.Default directly")
-public typealias ImageEncoder = ImageEncoders.Default
+typealias ImageEncoder = ImageEncoders.Default

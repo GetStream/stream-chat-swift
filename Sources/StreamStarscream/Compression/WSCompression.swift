@@ -29,18 +29,18 @@
 import Foundation
 import zlib
 
-public class WSCompression: CompressionHandler {
+class WSCompression: CompressionHandler {
     let headerWSExtensionName = "Sec-WebSocket-Extensions"
     var decompressor: Decompressor?
     var compressor: Compressor?
     var decompressorTakeOver = false
     var compressorTakeOver = false
     
-    public init() {
+    init() {
         
     }
     
-    public func load(headers: [String: String]) {
+    func load(headers: [String: String]) {
         guard let extensionHeader = headers[headerWSExtensionName] else { return }
         decompressorTakeOver = false
         compressorTakeOver = false
@@ -66,7 +66,7 @@ public class WSCompression: CompressionHandler {
         }
     }
     
-    public func decompress(data: Data, isFinal: Bool) -> Data? {
+    func decompress(data: Data, isFinal: Bool) -> Data? {
         guard let decompressor = decompressor else { return nil }
         do {
             let decompressedData = try decompressor.decompress(data, finish: isFinal)
@@ -80,7 +80,7 @@ public class WSCompression: CompressionHandler {
         return nil
     }
     
-    public func compress(data: Data) -> Data? {
+    func compress(data: Data) -> Data? {
         guard let compressor = compressor else { return nil }
         do {
             let compressedData = try compressor.compress(data)

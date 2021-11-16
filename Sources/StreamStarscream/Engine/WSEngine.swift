@@ -8,7 +8,7 @@
 
 import Foundation
 
-public class WSEngine: Engine, TransportEventClient, FramerEventClient,
+class WSEngine: Engine, TransportEventClient, FramerEventClient,
 FrameCollectorDelegate, HTTPHandlerDelegate {
     private let transport: Transport
     private let framer: Framer
@@ -26,9 +26,9 @@ FrameCollectorDelegate, HTTPHandlerDelegate {
     private var canSend = false
     
     weak var delegate: EngineDelegate?
-    public var respondToPingWithPong: Bool = true
+    var respondToPingWithPong: Bool = true
     
-    public init(transport: Transport,
+    init(transport: Transport,
                 certPinner: CertificatePinning? = nil,
                 headerValidator: HeaderValidator = FoundationSecurity(),
                 httpHandler: HTTPHandler = FoundationHTTPHandler(),
@@ -44,11 +44,11 @@ FrameCollectorDelegate, HTTPHandlerDelegate {
         frameHandler.delegate = self
     }
     
-    public func register(delegate: EngineDelegate) {
+    func register(delegate: EngineDelegate) {
         self.delegate = delegate
     }
     
-    public func start(request: URLRequest) {
+    func start(request: URLRequest) {
         mutex.wait()
         let isConnected = canSend
         mutex.signal()
@@ -67,7 +67,7 @@ FrameCollectorDelegate, HTTPHandlerDelegate {
         transport.connect(url: url, timeout: request.timeoutInterval, certificatePinning: certPinner)
     }
     
-    public func stop(closeCode: UInt16 = CloseCode.normal.rawValue) {
+    func stop(closeCode: UInt16 = CloseCode.normal.rawValue) {
         let capacity = MemoryLayout<UInt16>.size
         var pointer = [UInt8](repeating: 0, count: capacity)
         writeUint16(&pointer, offset: 0, value: closeCode)
@@ -78,16 +78,16 @@ FrameCollectorDelegate, HTTPHandlerDelegate {
         })
     }
     
-    public func forceStop() {
+    func forceStop() {
         transport.disconnect()
     }
     
-    public func write(string: String, completion: (() -> ())?) {
+    func write(string: String, completion: (() -> ())?) {
         let data = string.data(using: .utf8)!
         write(data: data, opcode: .textFrame, completion: completion)
     }
     
-    public func write(data: Data, opcode: FrameOpCode, completion: (() -> ())?) {
+    func write(data: Data, opcode: FrameOpCode, completion: (() -> ())?) {
         writeQueue.async { [weak self] in
             guard let s = self else { return }
             s.mutex.wait()
@@ -113,7 +113,7 @@ FrameCollectorDelegate, HTTPHandlerDelegate {
     
     // MARK: - TransportEventClient
     
-    public func connectionChanged(state: ConnectionState) {
+    func connectionChanged(state: ConnectionState) {
         switch state {
         case .connected:
             secKeyValue = HTTPWSHeader.generateWebSocketKey()
@@ -145,7 +145,7 @@ FrameCollectorDelegate, HTTPHandlerDelegate {
     
     // MARK: - HTTPHandlerDelegate
     
-    public func didReceiveHTTP(event: HTTPEvent) {
+    func didReceiveHTTP(event: HTTPEvent) {
         switch event {
         case .success(let headers):
             if let error = headerChecker.validate(headers: headers, key: secKeyValue) {
@@ -171,7 +171,7 @@ FrameCollectorDelegate, HTTPHandlerDelegate {
     
     // MARK: - FramerEventClient
     
-    public func frameProcessed(event: FrameEvent) {
+    func frameProcessed(event: FrameEvent) {
         switch event {
         case .frame(let frame):
             frameHandler.add(frame: frame)
@@ -182,11 +182,11 @@ FrameCollectorDelegate, HTTPHandlerDelegate {
     
     // MARK: - FrameCollectorDelegate
     
-    public func decompress(data: Data, isFinal: Bool) -> Data? {
+    func decompress(data: Data, isFinal: Bool) -> Data? {
         return compressionHandler?.decompress(data: data, isFinal: isFinal)
     }
     
-    public func didForm(event: FrameCollector.Event) {
+    func didForm(event: FrameCollector.Event) {
         switch event {
         case .text(let string):
             broadcast(event: .text(string))

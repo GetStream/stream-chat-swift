@@ -27,17 +27,17 @@ import Network
 /// WebSocketServer is a Network.framework implementation of a WebSocket server
 @available(watchOS, unavailable)
 @available(macOS 10.14, iOS 12.0, watchOS 5.0, tvOS 12.0, *)
-public class WebSocketServer: Server, ConnectionDelegate {
-    public var onEvent: ((ServerEvent) -> Void)?
+class WebSocketServer: Server, ConnectionDelegate {
+    var onEvent: ((ServerEvent) -> Void)?
     private var connections = [String: ServerConnection]()
     private var listener: NWListener?
     private let queue = DispatchQueue(label: "com.vluxe.starscream.server.networkstream", attributes: [])
     
-    public init() {
+    init() {
         
     }
     
-    public func start(address: String, port: UInt16) -> Error? {
+    func start(address: String, port: UInt16) -> Error? {
         //TODO: support TLS cert adding/binding
         let parameters = NWParameters(tls: nil, tcp: NWProtocolTCP.Options())
         let p = NWEndpoint.Port(rawValue: port)!
@@ -73,7 +73,7 @@ public class WebSocketServer: Server, ConnectionDelegate {
         return nil
     }
     
-    public func didReceive(event: ServerEvent) {
+    func didReceive(event: ServerEvent) {
         onEvent?(event)
         switch event {
         case .disconnected(let conn, _, _):
@@ -88,14 +88,14 @@ public class WebSocketServer: Server, ConnectionDelegate {
 }
 
 @available(macOS 10.14, iOS 12.0, watchOS 5.0, tvOS 12.0, *)
-public class ServerConnection: Connection, HTTPServerDelegate, FramerEventClient, FrameCollectorDelegate, TransportEventClient {
+class ServerConnection: Connection, HTTPServerDelegate, FramerEventClient, FrameCollectorDelegate, TransportEventClient {
     let transport: TCPTransport
     private let httpHandler = FoundationHTTPServerHandler()
     private let framer = WSFramer(isServer: true)
     private let frameHandler = FrameCollector()
     private var didUpgrade = false
-    public var onEvent: ((ConnectionEvent) -> Void)?
-    public weak var delegate: ConnectionDelegate?
+    var onEvent: ((StarscreamConnectionEvent) -> Void)?
+    weak var delegate: ConnectionDelegate?
     private let id: String
     var uuid: String {
         return id
@@ -110,14 +110,14 @@ public class ServerConnection: Connection, HTTPServerDelegate, FramerEventClient
         frameHandler.delegate = self
     }
     
-    public func write(data: Data, opcode: FrameOpCode) {
+    func write(data: Data, opcode: FrameOpCode) {
         let wsData = framer.createWriteFrame(opcode: opcode, payload: data, isCompressed: false)
         transport.write(data: wsData, completion: {_ in })
     }
     
     // MARK: - TransportEventClient
     
-    public func connectionChanged(state: ConnectionState) {
+    func connectionChanged(state: ConnectionState) {
         switch state {
         case .connected:
             break
@@ -143,7 +143,7 @@ public class ServerConnection: Connection, HTTPServerDelegate, FramerEventClient
     
     /// MARK: - HTTPServerDelegate
     
-    public func didReceive(event: HTTPEvent) {
+    func didReceive(event: HTTPEvent) {
         switch event {
         case .success(let headers):
             didUpgrade = true
@@ -158,7 +158,7 @@ public class ServerConnection: Connection, HTTPServerDelegate, FramerEventClient
     
     /// MARK: - FrameCollectorDelegate
     
-    public func frameProcessed(event: FrameEvent) {
+    func frameProcessed(event: FrameEvent) {
         switch event {
         case .frame(let frame):
             frameHandler.add(frame: frame)
@@ -167,7 +167,7 @@ public class ServerConnection: Connection, HTTPServerDelegate, FramerEventClient
         }
     }
     
-    public func didForm(event: FrameCollector.Event) {
+    func didForm(event: FrameCollector.Event) {
         switch event {
         case .text(let string):
             delegate?.didReceive(event: .text(self, string))
@@ -189,7 +189,7 @@ public class ServerConnection: Connection, HTTPServerDelegate, FramerEventClient
         }
     }
     
-    public func decompress(data: Data, isFinal: Bool) -> Data? {
+    func decompress(data: Data, isFinal: Bool) -> Data? {
         return nil
     }
 }

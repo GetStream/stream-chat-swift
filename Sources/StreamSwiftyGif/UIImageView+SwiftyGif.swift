@@ -7,7 +7,7 @@
 import ImageIO
 import UIKit
 
-@objc public protocol SwiftyGifDelegate {
+@objc protocol SwiftyGifDelegate {
     @objc optional func gifDidStart(sender: UIImageView)
     @objc optional func gifDidLoop(sender: UIImageView)
     @objc optional func gifDidStop(sender: UIImageView)
@@ -15,7 +15,7 @@ import UIKit
     @objc optional func gifURLDidFail(sender: UIImageView, url: URL, error: Error?)
 }
 
-public extension UIImageView {
+extension UIImageView {
     /// Set an image and a manager to an existing UIImageView. If the image is not an GIF image, set it in normal way and remove self form SwiftyGifManager
     ///
     /// WARNING : this overwrite any previous gif.
@@ -32,7 +32,7 @@ public extension UIImageView {
     }
 }
 
-public extension UIImageView {
+extension UIImageView {
     
     // MARK: - Inits
     
@@ -87,7 +87,7 @@ public extension UIImageView {
 
 // MARK: - Download gif
 
-public extension UIImageView {
+extension UIImageView {
     
     /// Download gif image and sets it.
     ///
@@ -194,7 +194,7 @@ public extension UIImageView {
 
 // MARK: - Logic
 
-public extension UIImageView {
+extension UIImageView {
     
     /// Start displaying the gif for this UIImageView.
     private func startDisplay() {
@@ -403,7 +403,7 @@ private let _isPlayingKey = malloc(4)
 private let _animationManagerKey = malloc(4)
 private let _delegateKey = malloc(4)
 
-public extension UIImageView {
+extension UIImageView {
     
     var gifImage: UIImage? {
         get { return possiblyNil(_gifImageKey) }

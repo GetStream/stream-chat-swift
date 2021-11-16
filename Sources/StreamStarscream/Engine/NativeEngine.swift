@@ -9,37 +9,37 @@
 import Foundation
 
 @available(macOS 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *)
-public class NativeEngine: NSObject, Engine, URLSessionDataDelegate, URLSessionWebSocketDelegate {
+class NativeEngine: NSObject, Engine, URLSessionDataDelegate, URLSessionWebSocketDelegate {
     private var task: URLSessionWebSocketTask?
     weak var delegate: EngineDelegate?
 
-    public func register(delegate: EngineDelegate) {
+    func register(delegate: EngineDelegate) {
         self.delegate = delegate
     }
 
-    public func start(request: URLRequest) {
+    func start(request: URLRequest) {
         let session = URLSession(configuration: URLSessionConfiguration.default, delegate: self, delegateQueue: nil)
         task = session.webSocketTask(with: request)
         doRead()
         task?.resume()
     }
 
-    public func stop(closeCode: UInt16) {
+    func stop(closeCode: UInt16) {
         let closeCode = URLSessionWebSocketTask.CloseCode(rawValue: Int(closeCode)) ?? .normalClosure
         task?.cancel(with: closeCode, reason: nil)
     }
 
-    public func forceStop() {
+    func forceStop() {
         stop(closeCode: UInt16(URLSessionWebSocketTask.CloseCode.abnormalClosure.rawValue))
     }
 
-    public func write(string: String, completion: (() -> ())?) {
+    func write(string: String, completion: (() -> ())?) {
         task?.send(.string(string), completionHandler: { (error) in
             completion?()
         })
     }
 
-    public func write(data: Data, opcode: FrameOpCode, completion: (() -> ())?) {
+    func write(data: Data, opcode: FrameOpCode, completion: (() -> ())?) {
         switch opcode {
         case .binaryFrame:
             task?.send(.data(data), completionHandler: { (error) in
@@ -81,12 +81,12 @@ public class NativeEngine: NSObject, Engine, URLSessionDataDelegate, URLSessionW
         delegate?.didReceive(event: event)
     }
     
-    public func urlSession(_ session: URLSession, webSocketTask: URLSessionWebSocketTask, didOpenWithProtocol protocol: String?) {
+    func urlSession(_ session: URLSession, webSocketTask: URLSessionWebSocketTask, didOpenWithProtocol protocol: String?) {
         let p = `protocol` ?? ""
         broadcast(event: .connected([HTTPWSHeader.protocolName: p]))
     }
     
-    public func urlSession(_ session: URLSession, webSocketTask: URLSessionWebSocketTask, didCloseWith closeCode: URLSessionWebSocketTask.CloseCode, reason: Data?) {
+    func urlSession(_ session: URLSession, webSocketTask: URLSessionWebSocketTask, didCloseWith closeCode: URLSessionWebSocketTask.CloseCode, reason: Data?) {
         var r = ""
         if let d = reason {
             r = String(data: d, encoding: .utf8) ?? ""

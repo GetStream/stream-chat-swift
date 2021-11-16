@@ -24,7 +24,7 @@
 
 import Foundation
 
-public enum ConnectionState {
+enum ConnectionState {
     case connected
     case waiting
     case cancelled
@@ -42,11 +42,11 @@ public enum ConnectionState {
     case receive(Data)
 }
 
-public protocol TransportEventClient: class {
+protocol TransportEventClient: class {
     func connectionChanged(state: ConnectionState)
 }
 
-public protocol Transport: class {
+protocol Transport: class {
     func register(delegate: TransportEventClient)
     func connect(url: URL, timeout: Double, certificatePinning: CertificatePinning?)
     func disconnect()

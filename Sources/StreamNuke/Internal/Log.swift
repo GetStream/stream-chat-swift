@@ -45,7 +45,7 @@ func signpost<T>(_ log: OSLog, _ name: StaticString, _ message: @autoclosure () 
     }
 }
 
-var log: OSLog = .disabled
+var nukeLog: OSLog = .disabled
 
 private let byteFormatter = ByteCountFormatter()
 

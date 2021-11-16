@@ -9,7 +9,7 @@ import Foundation
 /// Data cache.
 ///
 /// - warning: The implementation must be thread safe.
-public protocol DataCaching {
+protocol DataCaching {
     /// Retrieves data from cache for the given key.
     func cachedData(for key: String) -> Data?
 
@@ -56,14 +56,14 @@ public protocol DataCaching {
 ///
 /// - warning: It's possible to have more than one instance of `DataCache` with
 /// the same `path` but it is not recommended.
-public final class DataCache: DataCaching {
+final class DataCache: DataCaching {
     /// A cache key.
-    public typealias Key = String
+    typealias Key = String
 
     /// Size limit in bytes. `150 Mb` by default.
     ///
     /// Changes to `sizeLimit` will take effect when the next LRU sweep is run.
-    public var sizeLimit: Int = 1024 * 1024 * 150
+    var sizeLimit: Int = 1024 * 1024 * 150
 
     /// When performing a sweep, the cache will remote entries until the size of
     /// the remaining items is lower than or equal to `sizeLimit * trimRatio` and
@@ -72,14 +72,14 @@ public final class DataCache: DataCaching {
     var trimRatio = 0.7
 
     /// The path for the directory managed by the cache.
-    public let path: URL
+    let path: URL
 
     /// The number of seconds between each LRU sweep. 30 by default.
     /// The first sweep is performed right after the cache is initialized.
     ///
     /// Sweeps are performed in a background and can be performed in parallel
     /// with reading.
-    public var sweepInterval: TimeInterval = 30
+    var sweepInterval: TimeInterval = 30
 
     /// The delay after which the initial sweep is performed. 10 by default.
     /// The initial sweep is performed after a delay to avoid competing with
@@ -95,7 +95,7 @@ public final class DataCache: DataCaching {
     var flushInterval: DispatchTimeInterval = .seconds(1)
 
     /// A queue which is used for disk I/O.
-    public let queue = DispatchQueue(label: "com.github.kean.Nuke.DataCache.WriteQueue", qos: .utility)
+    let queue = DispatchQueue(label: "com.github.kean.Nuke.DataCache.WriteQueue", qos: .utility)
 
     /// A function which generates a filename for the given key. A good candidate
     /// for a filename generator is a _cryptographic_ hash function like SHA1.
@@ -103,7 +103,7 @@ public final class DataCache: DataCaching {
     /// The reason why filename needs to be generated in the first place is
     /// that filesystems have a size limit for filenames (e.g. 255 UTF-8 characters
     /// in AFPS) and do not allow certain characters to be used in filenames.
-    public typealias FilenameGenerator = (_ key: String) -> String?
+    typealias FilenameGenerator = (_ key: String) -> String?
 
     private let filenameGenerator: FilenameGenerator
 
@@ -111,7 +111,7 @@ public final class DataCache: DataCaching {
     /// with the given `name` in a `.cachesDirectory` in `.userDomainMask`.
     /// - parameter filenameGenerator: Generates a filename for the given URL.
     /// The default implementation generates a filename using SHA1 hash function.
-    public convenience init(name: String, filenameGenerator: @escaping (String) -> String? = DataCache.filename(for:)) throws {
+    convenience init(name: String, filenameGenerator: @escaping (String) -> String? = DataCache.filename(for:)) throws {
         guard let root = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first else {
             throw NSError(domain: NSCocoaErrorDomain, code: NSFileNoSuchFileError, userInfo: nil)
         }
@@ -121,7 +121,7 @@ public final class DataCache: DataCaching {
     /// Creates a cache instance with a given path.
     /// - parameter filenameGenerator: Generates a filename for the given URL.
     /// The default implementation generates a filename using SHA1 hash function.
-    public init(path: URL, filenameGenerator: @escaping (String) -> String? = DataCache.filename(for:)) throws {
+    init(path: URL, filenameGenerator: @escaping (String) -> String? = DataCache.filename(for:)) throws {
         self.path = path
         self.filenameGenerator = filenameGenerator
         try self.didInit()
@@ -139,7 +139,7 @@ public final class DataCache: DataCaching {
 
     /// A `FilenameGenerator` implementation which uses SHA1 hash function to
     /// generate a filename from the given key.
-    public static func filename(for key: String) -> String? {
+    static func filename(for key: String) -> String? {
         key.sha1
     }
 
@@ -153,7 +153,7 @@ public final class DataCache: DataCaching {
     // MARK: DataCaching
 
     /// Retrieves data for the given key.
-    public func cachedData(for key: Key) -> Data? {
+    func cachedData(for key: Key) -> Data? {
         if let change = change(for: key) {
             switch change { // Change wasn't flushed to disk yet
             case let .add(data):
@@ -169,7 +169,7 @@ public final class DataCache: DataCaching {
     }
 
     /// Returns `true` if the cache contains the data for the given key.
-    public func containsData(for key: String) -> Bool {
+    func containsData(for key: String) -> Bool {
         if let change = change(for: key) {
             switch change { // Change wasn't flushed to disk yet
             case .add:
@@ -192,19 +192,19 @@ public final class DataCache: DataCaching {
 
     /// Stores data for the given key. The method returns instantly and the data
     /// is written asynchronously.
-    public func storeData(_ data: Data, for key: Key) {
+    func storeData(_ data: Data, for key: Key) {
         stage { staging.add(data: data, for: key) }
     }
 
     /// Removes data for the given key. The method returns instantly, the data
     /// is removed asynchronously.
-    public func removeData(for key: Key) {
+    func removeData(for key: Key) {
         stage { staging.removeData(for: key) }
     }
 
     /// Removes all items. The method returns instantly, the data is removed
     /// asynchronously.
-    public func removeAll() {
+    func removeAll() {
         stage { staging.removeAll() }
     }
 
@@ -236,7 +236,7 @@ public final class DataCache: DataCaching {
     ///     // Data is nil
     ///     let data = cache[key]
     ///
-    public subscript(key: Key) -> Data? {
+    subscript(key: Key) -> Data? {
         get {
             cachedData(for: key)
         }
@@ -253,12 +253,12 @@ public final class DataCache: DataCaching {
 
     /// Uses the `FilenameGenerator` that the cache was initialized with to
     /// generate and return a filename for the given key.
-    public func filename(for key: Key) -> String? {
+    func filename(for key: Key) -> String? {
         filenameGenerator(key)
     }
 
     /// Returns `url` for the given cache key.
-    public func url(for key: Key) -> URL? {
+    func url(for key: Key) -> URL? {
         guard let filename = self.filename(for: key) else {
             return nil
         }
@@ -269,13 +269,13 @@ public final class DataCache: DataCaching {
 
     /// Synchronously waits on the caller's thread until all outstanding disk I/O
     /// operations are finished.
-    public func flush() {
+    func flush() {
         queue.sync(execute: flushChangesIfNeeded)
     }
 
     /// Synchronously waits on the caller's thread until all outstanding disk I/O
     /// operations for the given key are finished.
-    public func flush(for key: Key) {
+    func flush(for key: Key) {
         queue.sync {
             guard let change = lock.sync({ staging.changes[key] }) else { return }
             perform(change)
@@ -367,7 +367,7 @@ public final class DataCache: DataCaching {
 
     /// Synchronously performs a cache sweep and removes the least recently items
     /// which no longer fit in cache.
-    public func sweep() {
+    func sweep() {
         queue.sync(execute: performSweep)
     }
 
@@ -422,7 +422,7 @@ public final class DataCache: DataCaching {
 
     /// The total number of items in the cache.
     /// - warning: Requires disk IO, avoid using from the main thread.
-    public var totalCount: Int {
+    var totalCount: Int {
         contents().count
     }
 
@@ -433,7 +433,7 @@ public final class DataCache: DataCaching {
     /// actually be bigger.
     ///
     /// - warning: Requires disk IO, avoid using from the main thread.
-    public var totalSize: Int {
+    var totalSize: Int {
         contents(keys: [.fileSizeKey]).reduce(0) {
             $0 + ($1.meta.fileSize ?? 0)
         }
@@ -444,7 +444,7 @@ public final class DataCache: DataCaching {
     /// Uses `URLResourceKey.totalFileAllocatedSizeKey`.
     ///
     /// - warning: Requires disk IO, avoid using from the main thread.
-    public var totalAllocatedSize: Int {
+    var totalAllocatedSize: Int {
         contents(keys: [.totalFileAllocatedSizeKey]).reduce(0) {
             $0 + ($1.meta.totalFileAllocatedSize ?? 0)
         }

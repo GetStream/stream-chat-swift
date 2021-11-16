@@ -62,7 +62,7 @@ final class TaskFetchOriginalImageData: ImagePipelineTask<(Data, URLResponse?)> 
             self.resumableData = resumableData
         }
 
-        signpost(log, self, "LoadImageData", .begin, "URL: \(urlRequest.url?.absoluteString ?? ""), resumable data: \(Formatter.bytes(resumableData?.data.count ?? 0))")
+        signpost(nukeLog, self, "LoadImageData", .begin, "URL: \(urlRequest.url?.absoluteString ?? ""), resumable data: \(Formatter.bytes(resumableData?.data.count ?? 0))")
 
         let dataLoader = pipeline.delegate.dataLoader(for: request, pipeline: pipeline)
         let dataTask = dataLoader.loadData(with: urlRequest, didReceiveData: { [weak self] data, response in
@@ -73,7 +73,7 @@ final class TaskFetchOriginalImageData: ImagePipelineTask<(Data, URLResponse?)> 
         }, completion: { [weak self] error in
             finish() // Finish the operation!
             guard let self = self else { return }
-            signpost(log, self, "LoadImageData", .end, "Finished with size \(Formatter.bytes(self.data.count))")
+            signpost(nukeLog, self, "LoadImageData", .end, "Finished with size \(Formatter.bytes(self.data.count))")
             self.async {
                 self.dataTaskDidFinish(error: error)
             }
@@ -82,7 +82,7 @@ final class TaskFetchOriginalImageData: ImagePipelineTask<(Data, URLResponse?)> 
         onCancelled = { [weak self] in
             guard let self = self else { return }
 
-            signpost(log, self, "LoadImageData", .end, "Cancelled")
+            signpost(nukeLog, self, "LoadImageData", .end, "Cancelled")
             dataTask.cancel()
             finish() // Finish the operation!
 
@@ -97,7 +97,7 @@ final class TaskFetchOriginalImageData: ImagePipelineTask<(Data, URLResponse?)> 
             if let resumableData = resumableData, ResumableData.isResumedResponse(response) {
                 data = resumableData.data
                 resumedDataCount = Int64(resumableData.data.count)
-                signpost(log, self, "LoadImageData", .event, "Resumed with data \(Formatter.bytes(resumedDataCount))")
+                signpost(nukeLog, self, "LoadImageData", .event, "Resumed with data \(Formatter.bytes(resumedDataCount))")
             }
             resumableData = nil // Get rid of resumable data
         }

@@ -9,18 +9,18 @@ import Foundation
 /// The pipeline maintains a strong reference to the task until the request
 /// finishes or fails; you do not need to maintain a reference to the task unless
 /// it is useful for your app.
-public final class ImageTask: Hashable, CustomStringConvertible {
+final class ImageTask: Hashable, CustomStringConvertible {
     /// An identifier that uniquely identifies the task within a given pipeline.
     /// Unique only within that pipeline.
-    public let taskId: Int64
+    let taskId: Int64
 
     /// The original request.
-    public let request: ImageRequest
+    let request: ImageRequest
 
     let isDataTask: Bool
 
     /// Updates the priority of the task, even if it is already running.
-    public var priority: ImageRequest.Priority {
+    var priority: ImageRequest.Priority {
         didSet {
             pipeline?.imageTaskUpdatePriorityCalled(self, priority: priority)
         }
@@ -33,13 +33,13 @@ public final class ImageTask: Hashable, CustomStringConvertible {
     // MARK: Progress
 
     /// The number of bytes that the task has received.
-    public private(set) var completedUnitCount: Int64 = 0
+    private(set) var completedUnitCount: Int64 = 0
 
     /// A best-guess upper bound on the number of bytes of the resource.
-    public private(set) var totalUnitCount: Int64 = 0
+    private(set) var totalUnitCount: Int64 = 0
 
     /// Returns a progress object for the task, created lazily.
-    public var progress: Progress {
+    var progress: Progress {
         if _progress == nil { _progress = Progress() }
         return _progress!
     }
@@ -75,7 +75,7 @@ public final class ImageTask: Hashable, CustomStringConvertible {
     /// The pipeline will immediately cancel any work associated with a task
     /// unless there is an equivalent outstanding task running (see
     /// `ImagePipeline.Configuration.isCoalescingEnabled` for more info).
-    public func cancel() {
+    func cancel() {
         if OSAtomicCompareAndSwap32Barrier(0, 1, _isCancelled) {
             pipeline?.imageTaskCancelCalled(self)
         }
@@ -90,17 +90,17 @@ public final class ImageTask: Hashable, CustomStringConvertible {
 
     // MARK: Hashable
 
-    public func hash(into hasher: inout Hasher) {
+    func hash(into hasher: inout Hasher) {
         hasher.combine(ObjectIdentifier(self).hashValue)
     }
 
-    public static func == (lhs: ImageTask, rhs: ImageTask) -> Bool {
+    static func == (lhs: ImageTask, rhs: ImageTask) -> Bool {
         ObjectIdentifier(lhs) == ObjectIdentifier(rhs)
     }
 
     // MARK: CustomStringConvertible
 
-    public var description: String {
+    var description: String {
         "ImageTask(id: \(taskId), priority: \(priority), completedUnitCount: \(completedUnitCount), totalUnitCount: \(totalUnitCount), isCancelled: \(isCancelled))"
     }
 }

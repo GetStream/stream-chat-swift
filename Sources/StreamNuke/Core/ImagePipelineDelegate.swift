@@ -8,7 +8,7 @@ import Foundation
 ///
 /// - warning: The delegate methods are performed on the pipeline queue in the
 /// background.
-public protocol ImagePipelineDelegate: AnyObject {
+protocol ImagePipelineDelegate: AnyObject {
     // MARK: Configuration
 
     /// Returns data loader for the given request.
@@ -55,7 +55,7 @@ public protocol ImagePipelineDelegate: AnyObject {
     func pipeline(_ pipeline: ImagePipeline, imageTask: ImageTask, didReceiveEvent event: ImageTaskEvent)
 }
 
-public extension ImagePipelineDelegate {
+extension ImagePipelineDelegate {
     func dataLoader(for request: ImageRequest, pipeline: ImagePipeline) -> DataLoading {
         pipeline.configuration.dataLoader
     }
@@ -86,7 +86,7 @@ public extension ImagePipelineDelegate {
 }
 
 /// An image task event sent by the pipeline.
-public enum ImageTaskEvent {
+enum ImageTaskEvent {
     case started
     case cancelled
     case priorityUpdated(priority: ImageRequest.Priority)
