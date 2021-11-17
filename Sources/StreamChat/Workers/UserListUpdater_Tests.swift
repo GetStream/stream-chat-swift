@@ -139,9 +139,7 @@ class UserListUpdater_Tests: XCTestCase {
     
     func test_removePolicy_takesAffect() throws {
         // Create query
-        let filterHash = String.unique
-        var query = UserListQuery(filter: .equal(.id, to: "Luke"))
-        query.filter?.explicitHash = filterHash
+        let query = UserListQuery(filter: .equal(.id, to: "Luke"))
         // Simulate `update` call
         // This call doesn't need `policy` argument specified since
         // it's the first call for this query, hence there's no data to `replace` or `merge` to
@@ -178,7 +176,7 @@ class UserListUpdater_Tests: XCTestCase {
         
         // Assert first user is not linked to the query anymore
         var queryDTO: UserListQueryDTO? {
-            database.viewContext.userListQuery(filterHash: filterHash)
+            database.viewContext.userListQuery(filterHash: query.filter!.filterHash)
         }
         
         // Assert only 1 user is linked to query
