@@ -7,7 +7,7 @@ import UIKit
 /// Controller for interactive dismissal.
 open class ZoomDismissalInteractionController: NSObject, UIViewControllerInteractiveTransitioning {
     /// Context of the current transition.
-    public var transitionContext: UIViewControllerContextTransitioning?
+    public weak var transitionContext: UIViewControllerContextTransitioning?
     /// Current transition's animator.
     public var animator: UIViewControllerAnimatedTransitioning?
     
