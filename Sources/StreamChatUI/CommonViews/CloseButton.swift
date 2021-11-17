@@ -24,10 +24,10 @@ open class CloseButton: _Button, AppearanceProvider {
         
         if isHighlighted {
             tintColor = appearance.colorPalette.highlightedColorForColor(
-                appearance.colorPalette.text
+                .white//appearance.colorPalette.text
             )
         } else {
-            tintColor = appearance.colorPalette.text
+            tintColor = .white//appearance.colorPalette.text
         }
     }
 }

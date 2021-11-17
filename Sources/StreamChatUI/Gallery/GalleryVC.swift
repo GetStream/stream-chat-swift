@@ -120,28 +120,28 @@ open class GalleryVC:
     override open func setUpAppearance() {
         super.setUpAppearance()
         
-        view.backgroundColor = appearance.colorPalette.background
+        view.backgroundColor = .black//appearance.colorPalette.background
         
         attachmentsCollectionView.backgroundColor = .clear
         attachmentsCollectionView.showsHorizontalScrollIndicator = false
         attachmentsCollectionView.showsVerticalScrollIndicator = false
         
-        topBarView.backgroundColor = appearance.colorPalette.popoverBackground
-        bottomBarView.backgroundColor = appearance.colorPalette.popoverBackground
-        videoPlaybackBar.backgroundColor = appearance.colorPalette.popoverBackground
+        topBarView.backgroundColor = appearance.colorPalette.walletTabbarBackground//appearance.colorPalette.popoverBackground
+        bottomBarView.backgroundColor = appearance.colorPalette.walletTabbarBackground//appearance.colorPalette.popoverBackground
+        videoPlaybackBar.backgroundColor = .black//appearance.colorPalette.popoverBackground
         
         userLabel.font = appearance.fonts.bodyBold
-        userLabel.textColor = appearance.colorPalette.text
+        userLabel.textColor = .white//appearance.colorPalette.text
         userLabel.adjustsFontForContentSizeCategory = true
         userLabel.textAlignment = .center
         
         dateLabel.font = appearance.fonts.footnote
-        dateLabel.textColor = appearance.colorPalette.subtitleText
+        dateLabel.textColor = .white//appearance.colorPalette.subtitleText
         dateLabel.adjustsFontForContentSizeCategory = true
         dateLabel.textAlignment = .center
         
         currentPhotoLabel.font = appearance.fonts.bodyBold
-        currentPhotoLabel.textColor = appearance.colorPalette.text
+        currentPhotoLabel.textColor = .white//appearance.colorPalette.text
         currentPhotoLabel.adjustsFontForContentSizeCategory = true
         currentPhotoLabel.textAlignment = .center
     }
@@ -168,7 +168,9 @@ open class GalleryVC:
         attachmentsCollectionView.delegate = self
         
         closeButton.addTarget(self, action: #selector(closeButtonTapped), for: .touchUpInside)
+        closeButton.tintColor = .white
         shareButton.addTarget(self, action: #selector(shareButtonTapped), for: .touchUpInside)
+        shareButton.tintColor = .white
         
         let panGestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(handlePan))
         panGestureRecognizer.delegate = self
