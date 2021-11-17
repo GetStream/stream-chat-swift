@@ -86,7 +86,7 @@ lane :push_pods do |options|
     rescue
       puts "pod_push failed. Waiting a minute until retry for trunk to get updated..."
       sleep(60) # sleep for a minute, wait until trunk gets updates
-      release_ui
+      release_ui(sync)
     end
   end
 
