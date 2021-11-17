@@ -50,9 +50,10 @@ class UserSearchController_Tests: XCTestCase {
         super.tearDown()
     }
     
-    func test_clientIsCorrect() {
+    func test_controllerHasCorrectInitialState() {
         let controller = client.userSearchController()
         XCTAssert(controller.client === client)
+        XCTAssertEqual(controller.state, .initialized)
     }
     
     func test_userListIsEmpty_beforeSearch() throws {
@@ -62,579 +63,577 @@ class UserSearchController_Tests: XCTestCase {
         }
         
         // Assert that controller users is empty
-        XCTAssert(controller.users.isEmpty)
+        XCTAssert(controller.userArray.isEmpty)
     }
     
-    func test_controllerQueryRemoved_whenControllerIsDeallocated() throws {
-        // Assert that controller users is empty
-        // Calling `users` property starts observing DB too
-        XCTAssert(controller.users.isEmpty)
+    func test_delegateIsAssignedCorrectly() {
+        // Set the delegate
+        let delegate = TestDelegate(expectedQueueId: controllerCallbackQueueID)
+        controller.delegate = delegate
         
-        // Make a search
-        controller.search(term: "test")
-        
-        // Simulate DB update
-        let userId = UserId.unique
-        try client.databaseContainer.writeSynchronously { session in
-            try session.saveUser(payload: self.dummyUser(id: userId), query: self.controller.query)
-        }
-        
-        // Simulate network call response
-        env.userListUpdater?.update_completion?(nil)
-        // Release reference of completion so we can deallocate stuff
-        env.userListUpdater!.update_completion = nil
-        
-        var user: ChatUser? { client.databaseContainer.viewContext.user(id: userId)!.asModel() }
-        
-        // Check if user is reported
-        AssertAsync.willBeEqual(controller.users.first, user)
-        
-        let filterHash = controller.query.filter!.filterHash
-        // Deallocate controller
-        controller = nil
-        
-        // Assert query doesn't exist in DB anymore
-        AssertAsync.willBeNil(client.databaseContainer.viewContext.userListQuery(filterHash: filterHash))
-        
-        // Assert the user is still here
-        AssertAsync.staysTrue(user != nil)
+        // Assert the delegate is assigned correctly. We should test this because of the type-erasing we
+        // do in the controller.
+        XCTAssert(controller.delegate === delegate)
     }
     
     // MARK: - search(term:)
     
-    func test_searchWithTerm_callsUserQueryUpdater() {
-        let queueId = UUID()
-        controller.callbackQueue = .testQueue(withId: queueId)
+    func test_searchWithTerm_callsUserListUpdater() {
+        let searchTerm = "test"
         
-        // Simulate `search` calls and catch the completion
-        var completionCalled = false
-        controller.search(term: "test") { error in
+        // Simulate `search` calls
+        controller.search(term: searchTerm)
+        
+        // Assert the updater is called with the query
+        XCTAssertEqual(env.userListUpdater!.fetch_queries.first, .search(term: searchTerm))
+    }
+    
+    func test_searchWithTerm_whenNewSearchSucceeds() {
+        // Set the delegate
+        let delegate = TestDelegate(expectedQueueId: callbackQueueID)
+        controller.delegate = delegate
+        
+        // Simulate `search` for 1st query and catch the completion
+        let searchTerm1 = "1"
+        var searchCompletionCalled = false
+        controller.search(term: searchTerm1) { error in
             XCTAssertNil(error)
-            AssertTestQueue(withId: queueId)
+            AssertTestQueue(withId: self.callbackQueueID)
+            searchCompletionCalled = true
+        }
+        
+        // Simulate successful API response for 1st query
+        let userPayload1 = dummyUser(id: .unique)
+        let userPayload2 = dummyUser(id: .unique)
+        env.userListUpdater!.fetch_completion!(.success(.init(users: [userPayload1, userPayload2])))
+        
+        // Wait for 1st query completion to be called
+        AssertAsync.willBeTrue(searchCompletionCalled)
+        
+        // Load 1st query users from database
+        let context = client.databaseContainer.viewContext
+        let user1 = context.user(id: userPayload1.id)!.asModel()
+        let user2 = context.user(id: userPayload2.id)!.asModel()
+        
+        // Assert users are exposed
+        XCTAssertEqual(controller.userArray, [user1, user2])
+        // Assert query is updated with the new one
+        XCTAssertEqual(controller.query, .search(term: searchTerm1))
+        // Assert state is set to `.remoteDataFetched`
+        XCTAssertEqual(controller.state, .remoteDataFetched)
+        // Assert correct list changes are reported
+        XCTAssertEqual(delegate.didChangeUsers_changes, [
+            .insert(user1, index: .init(row: 0, section: 0)),
+            .insert(user2, index: .init(row: 1, section: 0))
+        ])
+        
+        // Clean up the state for 2nd query call
+        delegate.didChangeUsers_changes = nil
+        searchCompletionCalled = false
+        
+        // Simulate `search` for 2nd query and catch the completion
+        let searchTerm2 = "2"
+        controller.search(term: searchTerm2) { error in
+            XCTAssertNil(error)
+            AssertTestQueue(withId: self.callbackQueueID)
+            searchCompletionCalled = true
+        }
+        
+        // Simulate successful API response for 2nd query
+        let userPayload3 = dummyUser(id: .unique)
+        let userPayload4 = dummyUser(id: .unique)
+        env.userListUpdater!.fetch_completion!(.success(.init(users: [userPayload3, userPayload4])))
+        
+        // Wait for 2nd query completion to be called
+        AssertAsync.willBeTrue(searchCompletionCalled)
+        
+        // Load users from database
+        let user3 = context.user(id: userPayload3.id)!.asModel()
+        let user4 = context.user(id: userPayload4.id)!.asModel()
+        
+        // Assert users for 2nd query are exposed
+        XCTAssertEqual(controller.userArray, [user3, user4])
+        // Assert query is updated with the new one
+        XCTAssertEqual(controller.query, .search(term: searchTerm2))
+        // Assert state is set to `.remoteDataFetched`
+        XCTAssertEqual(controller.state, .remoteDataFetched)
+        // Assert correct list changes are reported
+        XCTAssertEqual(delegate.didChangeUsers_changes, [
+            // Assert deletions for 1st query are reported in reverse order
+            .remove(user2, index: .init(row: 1, section: 0)),
+            .remove(user1, index: .init(row: 0, section: 0)),
+            
+            // Assert insertions for 2nd query are reported in normal order
+            .insert(user3, index: .init(row: 0, section: 0)),
+            .insert(user4, index: .init(row: 1, section: 0))
+        ])
+    }
+    
+    func test_searchWithTerm_whenNewSearchFails() {
+        // Set the delegate
+        let delegate = TestDelegate(expectedQueueId: callbackQueueID)
+        controller.delegate = delegate
+        
+        // Simulate `search` for 1st query and catch the completion
+        let searchTerm1 = "1"
+        var search1CompletionCalled = false
+        controller.search(term: searchTerm1) { error in
+            XCTAssertNil(error)
+            AssertTestQueue(withId: self.callbackQueueID)
+            search1CompletionCalled = true
+        }
+        
+        // Simulate successful API response for 1st query
+        let userPayload1 = dummyUser(id: .unique)
+        let userPayload2 = dummyUser(id: .unique)
+        env.userListUpdater!.fetch_completion!(.success(.init(users: [userPayload1, userPayload2])))
+        
+        // Wait for 1st query completion to be called
+        AssertAsync.willBeTrue(search1CompletionCalled)
+        
+        // Load 1st query users from database
+        let context = client.databaseContainer.viewContext
+        let user1 = context.user(id: userPayload1.id)!.asModel()
+        let user2 = context.user(id: userPayload2.id)!.asModel()
+        
+        // Assert users are exposed
+        XCTAssertEqual(controller.userArray, [user1, user2])
+        // Assert query is updated with the new one
+        XCTAssertEqual(controller.query, .search(term: searchTerm1))
+        // Assert state is set to `.remoteDataFetched`
+        XCTAssertEqual(controller.state, .remoteDataFetched)
+        // Assert correct list changes are reported
+        XCTAssertEqual(delegate.didChangeUsers_changes, [
+            .insert(user1, index: .init(row: 0, section: 0)),
+            .insert(user2, index: .init(row: 1, section: 0))
+        ])
+        
+        // Save controller's state
+        let previousQuery = controller.query
+        let previousUsers = controller.userArray
+        
+        // Clean up the state for 2nd query call
+        delegate.didChangeUsers_changes = nil
+
+        // Simulate 2nd `search` calls and catch the completion
+        var search2CompletionError: Error?
+        controller.search(term: .unique) { error in
+            // Assert completion is called on callback queue
+            AssertTestQueue(withId: self.callbackQueueID)
+            search2CompletionError = error
+        }
+        
+        // Simulate API request failure
+        let testError = TestError()
+        env.userListUpdater!.fetch_completion!(.failure(testError))
+        
+        // Wait for completion to be called with error
+        AssertAsync.willBeTrue(search2CompletionError != nil)
+        
+        // Assert users stays the same
+        XCTAssertEqual(controller.userArray, previousUsers)
+        // Assert query stays the same
+        XCTAssertEqual(controller.query, previousQuery)
+        // Assert state is set to failed
+        XCTAssertEqual(controller.state, .remoteDataFetchFailed(ClientError(with: testError)))
+        // Assert no list changes are reported
+        XCTAssertEqual(delegate.didChangeUsers_changes, nil)
+    }
+    
+    func test_searchWithTerm_whenControllerHasInitialState_changesStateToLocalDataCached() {
+        // Simulate `search` call and catch completion
+        var completionCalled = false
+        controller.search(term: .unique) { _ in
             completionCalled = true
         }
         
-        // Assert the updater is called with the query
-        XCTAssertEqual(
-            env.userListUpdater?.update_queries.first?.filter?.filterHash,
-            controller.query.filter?.filterHash
-        )
-        // Completion shouldn't be called yet
-        XCTAssertFalse(completionCalled)
+        // Assert state is set to `.localDataFetched`
+        XCTAssertEqual(controller.state, .localDataFetched)
         
-        // Keep a weak ref so we can check if it's actually deallocated
+        // Simulate successful API response
+        env.userListUpdater!.fetch_completion!(.success(.init(users: [])))
+        
+        // Wait for completion to be called
+        AssertAsync.willBeTrue(completionCalled)
+        
+        // Assert state is set to `.remoteDataFetched`
+        XCTAssertEqual(controller.state, .remoteDataFetched)
+        
+        // Simulate `search` call again
+        controller.search(term: .unique)
+
+        // Assert state is not reset to `.localDataFetched` and stays `.remoteDataFetched`
+        XCTAssertEqual(controller.state, .remoteDataFetched)
+    }
+    
+    func test_searchWithTerm_keepsControllerAlive() throws {
+        // Simulate `search` call.
+        controller.search(term: .unique)
+        
+        // Create a weak ref and release a controller.
         weak var weakController = controller
-        
-        // (Try to) deallocate the controller
-        // by not keeping any references to it
         controller = nil
         
-        // Simulate successful update
-        env.userListUpdater!.update_completion?(nil)
-        // Release reference of completion so we can deallocate stuff
-        env.userListUpdater!.update_completion = nil
-        
-        // Completion should be called
-        AssertAsync.willBeTrue(completionCalled)
-        // `weakController` should be deallocated too
-        AssertAsync.canBeReleased(&weakController)
-    }
-    
-    func test_searchWithTerm_resultIsReported() throws {
-        // Set the delegate
-        let delegate = TestDelegate(expectedQueueId: controllerCallbackQueueID)
-        controller.delegate = delegate
-        
-        // Assert the delegate is assigned correctly. We should test this because of the type-erasing we
-        // do in the controller.
-        XCTAssert(controller.delegate === delegate)
-        
-        // Assert that controller users is empty
-        XCTAssert(controller.users.isEmpty)
-        
-        // Assert that state is updated
-        XCTAssertEqual(controller.state, .localDataFetched)
-        // Delegate is updated on a different queue so we have to use AssertAsync
-        AssertAsync.willBeEqual(delegate.state, .localDataFetched)
-        
-        // Make a search
-        controller.search(term: "test")
-        
-        // Simulate DB update
-        let userId = UserId.unique
-        try client.databaseContainer.writeSynchronously { session in
-            try session.saveUser(payload: self.dummyUser(id: userId), query: self.controller.query)
-        }
-        
-        // Simulate network call response
-        env.userListUpdater?.update_completion?(nil)
-        
-        let user: ChatUser = client.databaseContainer.viewContext.user(id: userId)!.asModel()
-        
-        AssertAsync.willBeEqual(controller.users.count, 1)
-        // Check if delegate method is called
-        AssertAsync.willBeEqual(delegate.didChangeUsers_changes, [.insert(user, index: [0, 0])])
-    }
-    
-    /// This test simulates a bug where the `users` field was not updated if it wasn't
-    /// touched before calling synchronize.
-    func test_searchWithTerm_resultIsReported_evenAfterCallingSynchronize() throws {
-        // Make a search
-        controller.search(term: "test")
-        
-        // Simulate DB update
-        let userId = UserId.unique
-        try client.databaseContainer.writeSynchronously { session in
-            try session.saveUser(payload: self.dummyUser(id: userId), query: self.controller.query)
-        }
-        
-        // Simulate network call response
-        env.userListUpdater?.update_completion?(nil)
-        
-        let user: ChatUser = try XCTUnwrap(
-            client.databaseContainer.viewContext.user(id: userId)?.asModel()
-        )
-        XCTAssertEqual(controller.users, [user])
-    }
-
-    func test_searchWithTerm_newlyMatchedUser_isReportedAsInserted() throws {
-        // Add user to DB before searching
-        let userId = UserId.unique
-        try client.databaseContainer.writeSynchronously { session in
-            try session.saveUser(payload: self.dummyUser(id: userId), query: nil)
-        }
-        
-        // Set the delegate
-        let delegate = TestDelegate(expectedQueueId: controllerCallbackQueueID)
-        controller.delegate = delegate
-        
-        // Make a search
-        controller.search(term: "test")
-        
-        // Simulate DB update
-        try client.databaseContainer.writeSynchronously { session in
-            // This will actually link the existing user to controller's query, not insert a new one
-            try session.saveUser(payload: self.dummyUser(id: userId), query: self.controller.query)
-        }
-        
-        // Simulate network call response
-        env.userListUpdater?.update_completion?(nil)
-        
-        let user: ChatUser = client.databaseContainer.viewContext.user(id: userId)!.asModel()
-        
-        // Check if delegate method is called
-        AssertAsync.willBeEqual(delegate.didChangeUsers_changes, [.insert(user, index: [0, 0])])
-    }
-    
-    func test_searchWithTerm_whenNewSearchIsMade_oldUsersAreNotLinked() throws {
-        // For this test, we need to check if `.replace` update policy is correctly passed to
-        // the updater instance
-        
-        // Set the delegate
-        let delegate = TestDelegate(expectedQueueId: controllerCallbackQueueID)
-        controller.delegate = delegate
-        
-        // Make a search
-        controller.search(term: "test")
-        
-        // Assert the correct update policy is passed
-        XCTAssertEqual(env.userListUpdater!.update_policy, .replace)
-        
-        // Simulate DB update
-        let userId = UserId.unique
-        try client.databaseContainer.writeSynchronously { session in
-            try session.saveUser(payload: self.dummyUser(id: userId), query: self.controller.query)
-        }
-        
-        // Simulate update call response
-        env.userListUpdater?.update_completion?(nil)
-        
-        let user: ChatUser = client.databaseContainer.viewContext.user(id: userId)!.asModel()
-        
-        // Check if delegate method is called
-        AssertAsync.willBeEqual(delegate.didChangeUsers_changes, [.insert(user, index: [0, 0])])
-        
-        // Make another search
-        controller.search(term: "newTest")
-        
-        // Simulate DB update
-        // This is the expected behavior of UserListUpdater under `.replace` update policy
-        let newUserId = UserId.unique
-        try client.databaseContainer.writeSynchronously { session in
-            let dto = try session.saveQuery(query: self.controller.query)
-            dto?.users.removeAll()
-            try session.saveUser(payload: self.dummyUser(id: newUserId), query: self.controller.query)
-        }
-        
-        // Simulate network call response
-        env.userListUpdater?.update_completion?(nil)
-        
-        let newUser: ChatUser = client.databaseContainer.viewContext.user(id: newUserId)!.asModel()
-        
-        // Check if the old user is still matching the new search query (shouldn't)
-        XCTAssertEqual(controller.users.count, 1)
-        // Check if delegate method is called
-        AssertAsync.willBeEqual(delegate.didChangeUsers_changes, [.remove(user, index: [0, 0]), .insert(newUser, index: [0, 0])])
-    }
-    
-    func test_searchWithTerm_errorIsPropagated() {
-        let testError = TestError()
-        
-        // Make a search
-        var reportedError: Error?
-        controller.search(term: "test") { error in
-            reportedError = error
-        }
-        
-        // Simulate network call response
-        env.userListUpdater?.update_completion?(testError)
-        
-        AssertAsync.willBeEqual(reportedError as? TestError, testError)
-    }
-    
-    func test_searchWithTerm_emptySearch_returnsAllUsers() throws {
-        // Set the delegate
-        let delegate = TestDelegate(expectedQueueId: controllerCallbackQueueID)
-        controller.delegate = delegate
-        
-        // Make a search
-        controller.search(term: "")
-        
-        // Simulate DB update
-        let userIds: [UserId] = (0..<10).map { _ in UserId.unique }
-        try client.databaseContainer.writeSynchronously { session in
-            try userIds.forEach { try session.saveUser(payload: self.dummyUser(id: $0), query: self.controller.query) }
-        }
-        
-        // Simulate network call response
-        env.userListUpdater?.update_completion?(nil)
-        
-        let users: [ChatUser] = userIds.map { client.databaseContainer.viewContext.user(id: $0)!.asModel() }
-        
-        AssertAsync.willBeEqual(controller.users.count, 10)
-        // Check if delegate method is called
-        // It's expected that users will be sorted by name (and id if name is nil)
-        let expectedChanges = users
-            .sorted { $0.name! < $1.name! } // This is correct but we can't guarantee index order
-            .enumerated()
-            .map { ListChange.insert($1, index: [0, $0]) }
-        // Since we can't guarantee ordering from DB reporter, we'll have to sort
-        // But we are sorting end results so it won't affect correction
-        AssertAsync.willBeEqual(
-            delegate.didChangeUsers_changes?.sorted { $0.item.id > $1.item.id },
-            expectedChanges.sorted { $0.item.id > $1.item.id }
-        )
+        // Assert controller is kept alive
+        AssertAsync.staysTrue(weakController != nil)
     }
     
     // MARK: - search(query:)
     
-    func test_searchWithQuery_callsUserQueryUpdater() {
-        let queueId = UUID()
-        controller.callbackQueue = .testQueue(withId: queueId)
+    func test_searchWithQuery_callsUserListUpdater() {
+        // Simulate `search` call with a query
+        controller.search(query: query)
         
-        // Simulate `search` calls and catch the completion
-        var completionCalled = false
+        // Assert the updater is called with the given query
+        XCTAssertEqual(env.userListUpdater!.fetch_queries.first, query)
+    }
+    
+    func test_searchWithQuery_whenNewSearchSucceeds() {
+        // Set the delegate
+        let delegate = TestDelegate(expectedQueueId: callbackQueueID)
+        controller.delegate = delegate
+        
+        // Simulate `search` for 1st query and catch the completion
+        var searchCompletionCalled = false
         controller.search(query: query) { error in
             XCTAssertNil(error)
-            AssertTestQueue(withId: queueId)
+            AssertTestQueue(withId: self.callbackQueueID)
+            searchCompletionCalled = true
+        }
+        
+        // Simulate successful API response for 1st query
+        let userPayload1 = dummyUser(id: .unique)
+        let userPayload2 = dummyUser(id: .unique)
+        env.userListUpdater!.fetch_completion!(.success(.init(users: [userPayload1, userPayload2])))
+        
+        // Wait for 1st query completion to be called
+        AssertAsync.willBeTrue(searchCompletionCalled)
+        
+        // Load 1st query users from database
+        let context = client.databaseContainer.viewContext
+        let user1 = context.user(id: userPayload1.id)!.asModel()
+        let user2 = context.user(id: userPayload2.id)!.asModel()
+        
+        // Assert users are exposed
+        XCTAssertEqual(controller.userArray, [user1, user2])
+        // Assert query is updated with the requested query
+        XCTAssertEqual(controller.query, query)
+        // Assert state is set to `.remoteDataFetched`
+        XCTAssertEqual(controller.state, .remoteDataFetched)
+        // Assert correct list changes are reported
+        XCTAssertEqual(delegate.didChangeUsers_changes, [
+            .insert(user1, index: .init(row: 0, section: 0)),
+            .insert(user2, index: .init(row: 1, section: 0))
+        ])
+        
+        // Clean up the state for 2nd query call
+        delegate.didChangeUsers_changes = nil
+        searchCompletionCalled = false
+        
+        // Simulate `search` for 2nd query and catch the completion
+        let newQuery: UserListQuery = .search(term: "test2")
+        controller.search(query: newQuery) { error in
+            XCTAssertNil(error)
+            AssertTestQueue(withId: self.callbackQueueID)
+            searchCompletionCalled = true
+        }
+        
+        // Simulate successful API response for 2nd query
+        let userPayload3 = dummyUser(id: .unique)
+        let userPayload4 = dummyUser(id: .unique)
+        env.userListUpdater!.fetch_completion!(.success(.init(users: [userPayload3, userPayload4])))
+        
+        // Wait for 2nd query completion to be called
+        AssertAsync.willBeTrue(searchCompletionCalled)
+        
+        // Load users from database
+        let user3 = context.user(id: userPayload3.id)!.asModel()
+        let user4 = context.user(id: userPayload4.id)!.asModel()
+        
+        // Assert users for 2nd query are exposed
+        XCTAssertEqual(controller.userArray, [user3, user4])
+        // Assert query is updated with the new one
+        XCTAssertEqual(controller.query, newQuery)
+        // Assert state is set to `.remoteDataFetched`
+        XCTAssertEqual(controller.state, .remoteDataFetched)
+        // Assert correct list changes are reported
+        XCTAssertEqual(delegate.didChangeUsers_changes, [
+            // Assert deletions for 1st query are reported in reverse order
+            .remove(user2, index: .init(row: 1, section: 0)),
+            .remove(user1, index: .init(row: 0, section: 0)),
+            
+            // Assert insertions for 2nd query are reported in normal order
+            .insert(user3, index: .init(row: 0, section: 0)),
+            .insert(user4, index: .init(row: 1, section: 0))
+        ])
+    }
+    
+    func test_searchWithQuery_whenNewSearchFails() {
+        // Set the delegate
+        let delegate = TestDelegate(expectedQueueId: callbackQueueID)
+        controller.delegate = delegate
+        
+        // Simulate `search` for 1st query and catch the completion
+        var search1CompletionCalled = false
+        controller.search(query: query) { error in
+            XCTAssertNil(error)
+            AssertTestQueue(withId: self.callbackQueueID)
+            search1CompletionCalled = true
+        }
+        
+        // Simulate successful API response for 1st query
+        let userPayload1 = dummyUser(id: .unique)
+        let userPayload2 = dummyUser(id: .unique)
+        env.userListUpdater!.fetch_completion!(.success(.init(users: [userPayload1, userPayload2])))
+        
+        // Wait for 1st query completion to be called
+        AssertAsync.willBeTrue(search1CompletionCalled)
+        
+        // Load 1st query users from database
+        let context = client.databaseContainer.viewContext
+        let user1 = context.user(id: userPayload1.id)!.asModel()
+        let user2 = context.user(id: userPayload2.id)!.asModel()
+        
+        // Assert users are exposed
+        XCTAssertEqual(controller.userArray, [user1, user2])
+        // Assert query is updated with the given one
+        XCTAssertEqual(controller.query, query)
+        // Assert state is set to `.remoteDataFetched`
+        XCTAssertEqual(controller.state, .remoteDataFetched)
+        // Assert correct list changes are reported
+        XCTAssertEqual(delegate.didChangeUsers_changes, [
+            .insert(user1, index: .init(row: 0, section: 0)),
+            .insert(user2, index: .init(row: 1, section: 0))
+        ])
+        
+        // Save controller's state
+        let previousQuery = controller.query
+        let previousUsers = controller.userArray
+        
+        // Clean up the state for 2nd query call
+        delegate.didChangeUsers_changes = nil
+
+        // Simulate 2nd `search` calls and catch the completion
+        var search2CompletionError: Error?
+        controller.search(query: .user(withID: .unique)) { error in
+            // Assert completion is called on callback queue
+            AssertTestQueue(withId: self.callbackQueueID)
+            search2CompletionError = error
+        }
+        
+        // Simulate API request failure
+        let testError = TestError()
+        env.userListUpdater!.fetch_completion!(.failure(testError))
+        
+        // Wait for completion to be called with error
+        AssertAsync.willBeTrue(search2CompletionError != nil)
+        
+        // Assert users stays the same
+        XCTAssertEqual(controller.userArray, previousUsers)
+        // Assert query stays the same
+        XCTAssertEqual(controller.query, previousQuery)
+        // Assert state is set to failed
+        XCTAssertEqual(controller.state, .remoteDataFetchFailed(ClientError(with: testError)))
+        // Assert no list changes are reported
+        XCTAssertEqual(delegate.didChangeUsers_changes, nil)
+    }
+    
+    func test_searchWithQuery_whenControllerHasInitialState_changesStateToLocalDataCached() {
+        // Simulate `search` call and catch completion
+        var completionCalled = false
+        controller.search(query: query) { _ in
             completionCalled = true
         }
         
-        // Assert the updater is called with the query
-        XCTAssertEqual(
-            env.userListUpdater?.update_queries.first?.filter?.filterHash,
-            controller.query.filter?.filterHash
-        )
-        // Completion shouldn't be called yet
-        XCTAssertFalse(completionCalled)
+        // Assert state is set to `.localDataFetched`
+        XCTAssertEqual(controller.state, .localDataFetched)
         
-        // Keep a weak ref so we can check if it's actually deallocated
+        // Simulate successful API response
+        env.userListUpdater!.fetch_completion!(.success(.init(users: [])))
+        
+        // Wait for completion to be called
+        AssertAsync.willBeTrue(completionCalled)
+        
+        // Assert state is set to `.remoteDataFetched`
+        XCTAssertEqual(controller.state, .remoteDataFetched)
+        
+        // Simulate `search` call again
+        controller.search(query: query)
+
+        // Assert state is not reset to `.localDataFetched` and stays `.remoteDataFetched`
+        XCTAssertEqual(controller.state, .remoteDataFetched)
+    }
+    
+    func test_searchWithQuery_keepsControllerAlive() throws {
+        // Simulate `search` call.
+        controller.search(query: query)
+        
+        // Create a weak ref and release a controller.
         weak var weakController = controller
-        
-        // (Try to) deallocate the controller
-        // by not keeping any references to it
         controller = nil
         
-        // Simulate successful update
-        env.userListUpdater!.update_completion?(nil)
-        // Release reference of completion so we can deallocate stuff
-        env.userListUpdater!.update_completion = nil
-        
-        // Completion should be called
-        AssertAsync.willBeTrue(completionCalled)
-        // `weakController` should be deallocated too
-        AssertAsync.canBeReleased(&weakController)
-    }
-    
-    func test_searchWithQuery_resultIsReported() throws {
-        // Set the delegate
-        let delegate = TestDelegate(expectedQueueId: controllerCallbackQueueID)
-        controller.delegate = delegate
-        
-        // Assert the delegate is assigned correctly. We should test this because of the type-erasing we
-        // do in the controller.
-        XCTAssert(controller.delegate === delegate)
-        
-        // Assert that controller users is empty
-        XCTAssert(controller.users.isEmpty)
-        
-        // Assert that state is updated
-        XCTAssertEqual(controller.state, .localDataFetched)
-        // Delegate is updated on a different queue so we have to use AssertAsync
-        AssertAsync.willBeEqual(delegate.state, .localDataFetched)
-        
-        // Make a search
-        controller.search(query: query)
-        
-        // Simulate DB update
-        let userId = UserId.unique
-        try client.databaseContainer.writeSynchronously { session in
-            try session.saveUser(payload: self.dummyUser(id: userId), query: self.controller.query)
-        }
-        
-        // Simulate network call response
-        env.userListUpdater?.update_completion?(nil)
-        
-        let user: ChatUser = client.databaseContainer.viewContext.user(id: userId)!.asModel()
-        
-        AssertAsync.willBeEqual(controller.users.count, 1)
-        // Check if delegate method is called
-        AssertAsync.willBeEqual(delegate.didChangeUsers_changes, [.insert(user, index: [0, 0])])
-    }
-    
-    /// This test simulates a bug where the `users` field was not updated if it wasn't
-    /// touched before calling synchronize.
-    func test_searchWithQuery_resultIsReported_evenAfterCallingSynchronize() throws {
-        // Make a search
-        controller.search(query: query)
-        
-        // Simulate DB update
-        let userId = UserId.unique
-        try client.databaseContainer.writeSynchronously { session in
-            try session.saveUser(payload: self.dummyUser(id: userId), query: self.controller.query)
-        }
-        
-        // Simulate network call response
-        env.userListUpdater?.update_completion?(nil)
-        
-        let user: ChatUser = try XCTUnwrap(
-            client.databaseContainer.viewContext.user(id: userId)?.asModel()
-        )
-        XCTAssertEqual(controller.users, [user])
-    }
-    
-    func test_searchWithQuery_newlyMatchedUser_isReportedAsInserted() throws {
-        // Add user to DB before searching
-        let userId = UserId.unique
-        try client.databaseContainer.writeSynchronously { session in
-            try session.saveUser(payload: self.dummyUser(id: userId), query: nil)
-        }
-        
-        // Set the delegate
-        let delegate = TestDelegate(expectedQueueId: controllerCallbackQueueID)
-        controller.delegate = delegate
-        
-        // Make a search
-        controller.search(query: query)
-        
-        // Simulate DB update
-        try client.databaseContainer.writeSynchronously { session in
-            // This will actually link the existing user to controller's query, not insert a new one
-            try session.saveUser(payload: self.dummyUser(id: userId), query: self.controller.query)
-        }
-        
-        // Simulate network call response
-        env.userListUpdater?.update_completion?(nil)
-        
-        let user: ChatUser = client.databaseContainer.viewContext.user(id: userId)!.asModel()
-        
-        // Check if delegate method is called
-        AssertAsync.willBeEqual(delegate.didChangeUsers_changes, [.insert(user, index: [0, 0])])
-    }
-    
-    func test_searchWithQuery_whenNewSearchIsMade_oldUsersAreNotLinked() throws {
-        // For this test, we need to check if `.replace` update policy is correctly passed to
-        // the updater instance
-        
-        // Set the delegate
-        let delegate = TestDelegate(expectedQueueId: controllerCallbackQueueID)
-        controller.delegate = delegate
-        
-        // Make a search
-        controller.search(query: query)
-        
-        // Assert the correct update policy is passed
-        XCTAssertEqual(env.userListUpdater!.update_policy, .replace)
-        
-        // Simulate DB update
-        let userId = UserId.unique
-        try client.databaseContainer.writeSynchronously { session in
-            try session.saveUser(payload: self.dummyUser(id: userId), query: self.controller.query)
-        }
-        
-        // Simulate update call response
-        env.userListUpdater?.update_completion?(nil)
-        
-        let user: ChatUser = client.databaseContainer.viewContext.user(id: userId)!.asModel()
-        
-        // Check if delegate method is called
-        AssertAsync.willBeEqual(delegate.didChangeUsers_changes, [.insert(user, index: [0, 0])])
-        
-        // Make another search
-        controller.search(query: query)
-        
-        // Simulate DB update
-        // This is the expected behavior of UserListUpdater under `.replace` update policy
-        let newUserId = UserId.unique
-        try client.databaseContainer.writeSynchronously { session in
-            let dto = try session.saveQuery(query: self.controller.query)
-            dto?.users.removeAll()
-            try session.saveUser(payload: self.dummyUser(id: newUserId), query: self.controller.query)
-        }
-        
-        // Simulate network call response
-        env.userListUpdater?.update_completion?(nil)
-        
-        let newUser: ChatUser = client.databaseContainer.viewContext.user(id: newUserId)!.asModel()
-        
-        // Check if the old user is still matching the new search query (shouldn't)
-        XCTAssertEqual(controller.users.count, 1)
-        // Check if delegate method is called
-        AssertAsync.willBeEqual(delegate.didChangeUsers_changes, [.remove(user, index: [0, 0]), .insert(newUser, index: [0, 0])])
-    }
-    
-    func test_searchWithQuery_errorIsPropagated() {
-        let testError = TestError()
-        
-        // Make a search
-        var reportedError: Error?
-        controller.search(query: query) { error in
-            reportedError = error
-        }
-        
-        // Simulate network call response
-        env.userListUpdater?.update_completion?(testError)
-        
-        AssertAsync.willBeEqual(reportedError as? TestError, testError)
+        // Assert controller is kept alive
+        AssertAsync.staysTrue(weakController != nil)
     }
     
     // MARK: - loadNextUsers
     
-    func test_loadNextUsers_propagatesError() {
-        let testError = TestError()
-        var reportedError: Error?
-        
-        // Make a search so we can call `loadNextUsers`
-        controller.search(term: "test")
-        
-        // Simulate network call response
-        env.userListUpdater?.update_completion?(nil)
-        
-        // Call `loadNextUsers`
-        controller.loadNextUsers { error in
-            reportedError = error
-        }
-        
-        // Keep a weak ref so we can check if it's actually deallocated
-        weak var weakController = controller
-        
-        // (Try to) deallocate the controller
-        // by not keeping any references to it
-        controller = nil
-        
-        // Simulate network call response
-        env.userListUpdater?.update_completion?(testError)
-        // Release reference of completion so we can deallocate stuff
-        env.userListUpdater!.update_completion = nil
-        
-        AssertAsync.willBeEqual(reportedError as? TestError, testError)
-        // `weakController` should be deallocated too
-        AssertAsync.canBeReleased(&weakController)
-    }
-    
-    func test_loadNextUsers_nextResultPage_isLoaded() throws {
-        // Set the delegate
-        let delegate = TestDelegate(expectedQueueId: controllerCallbackQueueID)
-        controller.delegate = delegate
-        
-        // Make a search
-        controller.search(term: "test")
-        
-        // Simulate DB update
-        // `ChatUserSearchController` sorts the results by name and id
-        // We use random character and not `.unique` for userId and name
-        // Since we'll generate a bigger id for next user's id and name
-        // so that insertion will be [0,1] and not [0,0]
-        let userId = "abc".randomElement()!.description
-        let dummyUser = UserPayload(
-            id: userId,
-            name: userId,
-            imageURL: .unique(),
-            role: .admin,
-            createdAt: .unique,
-            updatedAt: .unique,
-            lastActiveAt: .unique,
-            isOnline: .random(),
-            isInvisible: .random(),
-            isBanned: .random(),
-            extraData: [:]
-        )
-        try client.databaseContainer.writeSynchronously { session in
-            try session.saveUser(payload: dummyUser, query: self.controller.query)
-        }
-        
-        // Simulate update call response
-        env.userListUpdater?.update_completion?(nil)
-        
-        let user: ChatUser = client.databaseContainer.viewContext.user(id: userId)!.asModel()
-        
-        // Check if delegate method is called
-        AssertAsync.willBeEqual(delegate.didChangeUsers_changes, [.insert(user, index: [0, 0])])
-        
-        // Load next page
-        controller.loadNextUsers()
-        
-        // Simulate DB update
-        let newUserId = "def".randomElement()!.description
-        let newDummyUser = UserPayload(
-            id: newUserId,
-            name: newUserId,
-            imageURL: .unique(),
-            role: .admin,
-            createdAt: .unique,
-            updatedAt: .unique,
-            lastActiveAt: .unique,
-            isOnline: .random(),
-            isInvisible: .random(),
-            isBanned: .random(),
-            extraData: [:]
-        )
-        try client.databaseContainer.writeSynchronously { session in
-            try session.saveUser(payload: newDummyUser, query: self.controller.query)
-        }
-        
-        // Simulate network call response
-        env.userListUpdater?.update_completion?(nil)
-        
-        let newUser: ChatUser = client.databaseContainer.viewContext.user(id: newUserId)!.asModel()
-        
-        // Check if the old user is still matching the new search query (it should - since this is new page)
-        XCTAssertEqual(controller.users.count, 2)
-        // Check if delegate method is called, for new users' insert
-        AssertAsync.willBeEqual(delegate.didChangeUsers_changes, [.insert(newUser, index: [0, 1])])
-    }
-    
-    func test_loadNextUsers_nextResultsPage_cantBeCalledBeforeSearch() {
+    func test_loadNextUsers_whenCalledBeforeSearch_fails() {
+        // Call `loadNextUsers` and catch the completion
         var reportedError: Error?
         controller.loadNextUsers { error in
             reportedError = error
         }
         
         // Assert updater is not called
-        XCTAssertNil(env.userListUpdater?.update_completion)
+        XCTAssertNil(env.userListUpdater?.fetch_completion)
         
         // Assert an error is reported
         AssertAsync.willBeFalse(reportedError == nil)
+    }
+    
+    func test_loadNextUsers_whenAPIRequestSucceeds() throws {
+        // Simulate `search` for query and catch the completion
+        var searchCompletionCalled = false
+        controller.search(query: query) { error in
+            XCTAssertNil(error)
+            AssertTestQueue(withId: self.callbackQueueID)
+            searchCompletionCalled = true
+        }
+        
+        // Simulate successful API response for search call
+        let userPayload1 = dummyUser(id: .unique)
+        env.userListUpdater!.fetch_completion!(.success(.init(users: [userPayload1])))
+        
+        // Wait for search completion to be called
+        AssertAsync.willBeTrue(searchCompletionCalled)
+        
+        // Load users are exposed
+        let context = client.databaseContainer.viewContext
+        let user1 = context.user(id: userPayload1.id)!.asModel()
+        XCTAssertEqual(controller.userArray, [user1])
+        
+        // Set the delegate
+        let delegate = TestDelegate(expectedQueueId: callbackQueueID)
+        controller.delegate = delegate
+        
+        // Simulate `loadNextUsers` and catch the completion
+        let limit = 10
+        var loadNextUsersCompletionCalled = false
+        controller.loadNextUsers(limit: limit) { error in
+            XCTAssertNil(error)
+            AssertTestQueue(withId: self.callbackQueueID)
+            loadNextUsersCompletionCalled = true
+        }
+        
+        // Declare expected query
+        var expectedQuery = try XCTUnwrap(controller.query)
+        expectedQuery.pagination = .init(pageSize: 10, offset: controller.userArray.count)
+        
+        // Assert updater is called with correct query
+        XCTAssertEqual(env.userListUpdater!.fetch_queries.last, expectedQuery)
+        
+        // Simulate successful API response for `loadNextUsers`
+        let userPayload2 = dummyUser(id: .unique)
+        let userPayload3 = dummyUser(id: .unique)
+        let nextPage = UserListPayload(users: [userPayload2, userPayload3])
+        env.userListUpdater!.fetch_completion!(.success(nextPage))
+        
+        // Wait for `loadNextUsers` completion to be called
+        AssertAsync.willBeTrue(loadNextUsersCompletionCalled)
+        
+        // Load users from database
+        let user2 = context.user(id: userPayload2.id)!.asModel()
+        let user3 = context.user(id: userPayload3.id)!.asModel()
+        
+        // Assert akk users are exposed
+        XCTAssertEqual(controller.userArray, [user1, user2, user3])
+        // Assert query is updated with the new one
+        XCTAssertEqual(controller.query, expectedQuery)
+        // Assert state is set to `.remoteDataFetched`
+        XCTAssertEqual(controller.state, .remoteDataFetched)
+        // Assert correct list changes are reported
+        XCTAssertEqual(delegate.didChangeUsers_changes, [
+            .insert(user2, index: .init(row: 1, section: 0)),
+            .insert(user3, index: .init(row: 2, section: 0))
+        ])
+    }
+    
+    func test_loadNextUsers_whenAPIRequestFails() throws {
+        // Simulate `search` for query and catch the completion
+        var searchCompletionCalled = false
+        controller.search(query: query) { error in
+            XCTAssertNil(error)
+            AssertTestQueue(withId: self.callbackQueueID)
+            searchCompletionCalled = true
+        }
+                
+        // Simulate successful API response for search call
+        let userPayload1 = dummyUser(id: .unique)
+        env.userListUpdater!.fetch_completion!(.success(.init(users: [userPayload1])))
+        
+        // Wait for search completion to be called
+        AssertAsync.willBeTrue(searchCompletionCalled)
+        
+        // Load users are exposed
+        let context = client.databaseContainer.viewContext
+        let user1 = context.user(id: userPayload1.id)!.asModel()
+        XCTAssertEqual(controller.userArray, [user1])
+        
+        // Remember current query and users
+        let previousQuery = controller.query
+        let previousUsers = controller.userArray
+
+        // Set the delegate
+        let delegate = TestDelegate(expectedQueueId: callbackQueueID)
+        controller.delegate = delegate
+        
+        // Simulate `loadNextUsers` and catch the completion
+        var loadNextUsersCompletionError: Error?
+        controller.loadNextUsers { error in
+            AssertTestQueue(withId: self.callbackQueueID)
+            loadNextUsersCompletionError = error
+        }
+        
+        // Simulate API request failure for `loadNextUsers`
+        let testError = TestError()
+        env.userListUpdater!.fetch_completion!(.failure(testError))
+        
+        // Wait for `loadNextUsers` completion to be called
+        AssertAsync.willBeTrue(loadNextUsersCompletionError != nil)
+        
+        // Assert exposed users stay the same
+        XCTAssertEqual(controller.userArray, previousUsers)
+        // Assert query stays the same
+        XCTAssertEqual(controller.query, previousQuery)
+        // Assert state is set to `.remoteDataFetchFailed`
+        XCTAssertEqual(controller.state, .remoteDataFetchFailed(ClientError(with: testError)))
+        // Assert no list changes are reported
+        XCTAssertEqual(delegate.didChangeUsers_changes, nil)
+    }
+    
+    func test_loadNextUsers_keepsControllerAlive() throws {
+        // Simulate `search` for query and catch the completion
+        var searchCompletionCalled = false
+        controller.search(query: query) { _ in
+            searchCompletionCalled = true
+        }
+                
+        // Simulate successful API response for search call
+        env.userListUpdater!.fetch_completion!(.success(.init(users: [])))
+        
+        // Wait for search completion to be called
+        AssertAsync.willBeTrue(searchCompletionCalled)
+        
+        // Simulate `loadNextUsers`
+        controller.loadNextUsers()
+        
+        // Create a weak ref and release a controller.
+        weak var weakController = controller
+        controller = nil
+
+        // Assert controller is kept alive
+        AssertAsync.staysTrue(weakController != nil)
     }
 }
 
@@ -667,5 +666,21 @@ private class TestDelegate: QueueAwareDelegate, ChatUserSearchControllerDelegate
     ) {
         didChangeUsers_changes = changes
         validateQueue()
+    }
+}
+
+extension UserListQuery: Equatable {
+    public static func == (lhs: UserListQuery, rhs: UserListQuery) -> Bool {
+        lhs.filter == rhs.filter
+            && lhs.sort == rhs.sort
+            && lhs.pagination == rhs.pagination
+            && lhs.options == rhs.options
+            && lhs.shouldBeUpdatedInBackground == rhs.shouldBeUpdatedInBackground
+    }
+}
+
+extension Sorting: Equatable where Key: Equatable {
+    public static func == (lhs: Sorting, rhs: Sorting) -> Bool {
+        lhs.key == rhs.key && lhs.direction == rhs.direction
     }
 }

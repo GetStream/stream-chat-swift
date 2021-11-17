@@ -210,3 +210,10 @@ public typealias NotificationInviteRejected = NotificationInviteRejectedEvent
 
 @available(*, deprecated, renamed: "NotificationInviteAcceptedEvent")
 public typealias NotificationInviteAccepted = NotificationInviteAcceptedEvent
+
+public extension ChatUserSearchController {
+    @available(*, deprecated, message: "Please, switch to `userArray: [ChatUser]`")
+    var users: LazyCachedMapCollection<ChatUser> {
+        .init(source: userArray, map: { $0 })
+    }
+}
