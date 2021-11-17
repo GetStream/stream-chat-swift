@@ -22,7 +22,7 @@ class CoreDataLazy<T> {
         var returnValue: T!
 
         // We need to make the changes inside the `mutate` block to ensure the wrapper is thread-safe.
-        __cached.mutate { value in
+        __cached.mutate { [weak self] value in
             
             if let value = value {
                 returnValue = value
@@ -30,8 +30,13 @@ class CoreDataLazy<T> {
             }
 
             let perform = {
-                log.assert(self.computeValue != nil, "You must set the `computeValue` closure before accessing the cached value.")
-                returnValue = self.computeValue()
+                guard let computeValue = self?.computeValue else {
+                    log.assertionFailure(
+                        "You must set the `computeValue` closure before accessing the cached value."
+                    )
+                    return
+                }
+                returnValue = computeValue()
             }
             
             if let context = context {
