@@ -530,12 +530,12 @@ extension NSManagedObjectContext: MessageDatabaseSession {
             return nil
         }
 
-        guard let channelDTO = channelDTO else {
+        guard let channel = channelDTO else {
             log.assertionFailure("Should never happen, a channel should have been fetched.")
             return nil
         }
         
-        return try saveMessage(payload: payload, channelDTO: channelDTO)
+        return try saveMessage(payload: payload, channelDTO: channel)
     }
     
     func saveMessage(payload: MessagePayload, for query: MessageSearchQuery) throws -> MessageDTO? {
