@@ -49,24 +49,50 @@ class DatabaseCleanupUpdater: Worker {
     func refetchExistingChannelListQueries() {
         let context = database.backgroundReadOnlyContext
         context.perform { [weak self] in
-            do {
-                let queriesDTOs = try context.fetch(
-                    NSFetchRequest<ChannelListQueryDTO>(
-                        entityName: ChannelListQueryDTO.entityName
+            let queriesDTOs = context.loadAllChannelListQueries()
+            
+            queriesDTOs.forEach { dto in
+                let queryHash = dto.filterHash
+                
+                do {
+                    self?.refetch(
+                        query: try dto.asChannelListQuery(),
+                        queryHash: queryHash
                     )
-                )
-                let queries: [ChannelListQuery] = try queriesDTOs.map {
-                    try $0.asChannelListQuery()
+                } catch {
+                    log.error("Failed to decode channel list query from database entity: \(queryHash)")
                 }
-                queries.forEach {
-                    self?.channelListUpdater.update(channelListQuery: $0) { result in
-                        if case let .failure(error) = result {
-                            log.error("Internal error. Failed to update ChannelListQueries for the new channel: \(error)")
+            }
+        }
+    }
+    
+    private func refetch(query: ChannelListQuery, queryHash: String) {
+        channelListUpdater.fetch(channelListQuery: query) { [weak self] in
+            switch $0 {
+            case let .success(payload):
+                self?.database.write { session in
+                    guard let queryDTO = session.channelListQuery(filterHash: queryHash) else {
+                        log.error("Channel list query: \(queryHash) no longer exists")
+                        return
+                    }
+                    
+                    for channel in payload.channels {
+                        // TODO: Remove when query hashing is fixed
+                        //
+                        // We pass nil as a query and manually link channel the next line because
+                        // the query.hash does not match the hash of original query since we loose
+                        // information about filter keys types after saving and loading from the database.
+                        //
+                        guard let channelDTO = try? session.saveChannel(payload: channel, query: nil) else {
+                            log.error("Failed to save channel \(channel.channel.cid) to database and link to \(queryHash)")
+                            continue
                         }
+                        
+                        queryDTO.channels.insert(channelDTO)
                     }
                 }
-            } catch {
-                log.error("Internal error: Failed to fetch [ChannelListQueryDTO]: \(error)")
+            case let .failure(error):
+                log.error("Failed to fetch channel list query: \(error)")
             }
         }
     }
@@ -90,14 +116,11 @@ private extension ChannelDTO {
 }
 
 private extension ChannelListQueryDTO {
-    /// Converts ChannelListQueryDTO to _ChannelListQuery
-    /// - Throws: Decoding error
-    /// - Returns: Domain model for _ChannelListQuery
     func asChannelListQuery() throws -> ChannelListQuery {
-        let encodedFilter = try JSONDecoder.default
-            .decode(Filter<ChannelListFilterScope>.self, from: filterJSONData)
-        var updatedFilter: Filter<ChannelListFilterScope> = encodedFilter
-        updatedFilter.explicitHash = filterHash
-        return ChannelListQuery(filter: updatedFilter)
+        .init(
+            filter: try JSONDecoder
+                .default
+                .decode(Filter<ChannelListFilterScope>.self, from: filterJSONData)
+        )
     }
 }

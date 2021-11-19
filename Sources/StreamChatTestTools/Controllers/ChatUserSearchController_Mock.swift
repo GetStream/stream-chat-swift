@@ -11,7 +11,7 @@ public class ChatUserSearchController_Mock: ChatUserSearchController {
     }
     
     public var users_mock: [ChatUser]?
-    override public var users: LazyCachedMapCollection<ChatUser> {
-        users_mock.map { $0.lazyCachedMap { $0 } } ?? super.users
+    override public var userArray: [ChatUser] {
+        users_mock ?? super.userArray
     }
 }

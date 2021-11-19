@@ -81,8 +81,8 @@ final class DatabaseCleanupUpdater_Tests: XCTestCase {
         databaseCleanupUpdater?.refetchExistingChannelListQueries()
         
         AssertAsync.willBeEqual(
-            channelListUpdater.update_queries,
-            [query1, query2]
+            Set(channelListUpdater.fetch_queries.map(\.filter.filterHash)),
+            Set([query1, query2].map(\.filter.filterHash))
         )
     }
         
