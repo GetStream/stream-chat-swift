@@ -103,7 +103,6 @@ class ChatClientUpdater {
                     }
 
                     self.connect(
-                        userInfo: userInfo,
                         completion: completion
                     )
                 } catch {
@@ -122,10 +121,7 @@ class ChatClientUpdater {
     /// - Parameter completion: Called when the connection is established. If the connection fails, the completion is
     /// called with an error.
     ///
-    func connect(
-        userInfo: UserInfo? = nil,
-        completion: ((Error?) -> Void)? = nil
-    ) {
+    func connect(completion: ((Error?) -> Void)? = nil) {
         // Connecting is not possible in connectionless mode (duh)
         guard client.config.isClientInActiveMode else {
             completion?(ClientError.ClientIsNotInActiveMode())
@@ -144,8 +140,8 @@ class ChatClientUpdater {
                 completion?(nil)
             } else {
                 // Try to get a concrete error
-                if case let .disconnected(error) = client?.webSocketClient?.connectionState {
-                    completion?(ClientError.ConnectionNotSuccessful(with: error))
+                if case let .disconnected(source) = client?.webSocketClient?.connectionState {
+                    completion?(ClientError.ConnectionNotSuccessful(with: source.serverError))
                 } else {
                     completion?(ClientError.ConnectionNotSuccessful())
                 }

@@ -17,13 +17,20 @@ class ChannelUpdater: Worker {
     func update(
         channelQuery: ChannelQuery,
         channelCreatedCallback: ((ChannelId) -> Void)? = nil,
+        keepMessageHistory: Bool = true,
         completion: ((Result<ChannelPayload, Error>) -> Void)? = nil
     ) {
-        apiClient.request(endpoint: .channel(query: channelQuery)) { (result) in
+        fetch(channelQuery: channelQuery) { (result) in
             do {
                 let payload = try result.get()
-                channelCreatedCallback?(payload.channel.cid)
+                let cid = payload.channel.cid
+                channelCreatedCallback?(cid)
                 self.database.write { session in
+                    if !keepMessageHistory {
+                        let channelDTO = session.channel(cid: cid)
+                        channelDTO?.messages.removeAll()
+                    }
+                    
                     try session.saveChannel(payload: payload)
                 } completion: { error in
                     if let error = error {
@@ -36,6 +43,16 @@ class ChannelUpdater: Worker {
                 completion?(.failure(error))
             }
         }
+    }
+    
+    func fetch(
+        channelQuery: ChannelQuery,
+        completion: @escaping (Result<ChannelPayload, Error>) -> Void
+    ) {
+        apiClient.request(
+            endpoint: .channel(query: channelQuery),
+            completion: completion
+        )
     }
     
     /// Updates specific channel with new data.
@@ -292,7 +309,7 @@ class ChannelUpdater: Worker {
     /// - Parameter completion: Called when the API call is finished. Called with `Error` if the remote update fails.
     func startWatching(cid: ChannelId, completion: ((Error?) -> Void)? = nil) {
         var query = ChannelQuery(cid: cid)
-        query.options = .all
+        query.options = [.watch, .presence]
         apiClient.request(endpoint: .channel(query: query)) {
             completion?($0.error)
         }

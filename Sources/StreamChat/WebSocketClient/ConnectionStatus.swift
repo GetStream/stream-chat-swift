@@ -29,8 +29,11 @@ extension ConnectionStatus {
     // In internal initializer used for convering internal `WebSocketConnectionState` to `ChatClientConnectionStatus`.
     init(webSocketConnectionState: WebSocketConnectionState) {
         switch webSocketConnectionState {
-        case let .disconnected(error: error):
-            self = .disconnected(error: error)
+        case .initialized:
+            self = .initialized
+            
+        case let .disconnected(source):
+            self = .disconnected(error: source.serverError)
             
         case .connecting, .waitingForConnectionId, .waitingForReconnect:
             self = .connecting
@@ -61,10 +64,19 @@ enum WebSocketConnectionState: Equatable {
         
         /// `WebSocketPingController` didn't get a pong response.
         case noPongReceived
+        
+        var serverError: ClientError? {
+            guard case let .serverInitiated(error) = self else { return nil }
+            
+            return error
+        }
     }
     
+    /// The client is initialized but not connected to the remote server yet.
+    case initialized
+    
     /// The web socket is not connected. Optionally contains an error, if the connection was disconnected due to an error.
-    case disconnected(error: ClientError? = nil)
+    case disconnected(source: DisconnectionSource)
     
     /// The web socket is connecting
     case connecting
@@ -95,5 +107,16 @@ enum WebSocketConnectionState: Equatable {
             return false
         }
         return true
+    }
+    
+    var shouldAutomaticallyReconnect: Bool {
+        guard case let .disconnected(source) = self else { return false }
+        
+        switch source {
+        case .systemInitiated, .noPongReceived:
+            return true
+        case .userInitiated, .serverInitiated:
+            return false
+        }
     }
 }

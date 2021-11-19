@@ -54,10 +54,7 @@ class EventNotificationCenter: NotificationCenter {
     /// does not exist in DB yet. Using this overload makes sure that
     /// we process the event fully before calling completion closures.
     func process(_ healthCheckEvent: HealthCheckEvent, completion: @escaping ((ConnectionId) -> Void)) {
-        database.write { session in
-            // We don't want to publish `HealthCheckEvent`, so we discard the output
-            _ = self.middlewares.process(event: healthCheckEvent, session: session)
-        } completion: { _ in
+        feedEventsToMiddlewares([healthCheckEvent], shouldPostEvents: false) {
             completion(healthCheckEvent.connectionId)
         }
     }
@@ -66,28 +63,48 @@ class EventNotificationCenter: NotificationCenter {
     private func scheduleProcessing() {
         DispatchQueue.main.asyncAfter(deadline: .now() + eventBatchPeriod) { [weak self] in
             guard let self = self else { return }
-
-            var eventsToPublish: [Event] = []
-            self.database.write({ session in
-                var eventsToProcess: [Event] = []
-                self._pendingEvents {
-                    eventsToProcess = $0
-                    $0.removeAll()
-                }
-                
-                eventsToPublish = eventsToProcess.compactMap {
-                    self.middlewares.process(event: $0, session: session)
-                }
-            }, completion: { _ in
-                // We post events on a queue different from database.writable context
-                // queue to prevent a deadlock happening when @CoreDataLazy (with `context.performAndWait` inside)
-                // model is accessed in event handlers.
-                DispatchQueue.main.async {
-                    eventsToPublish.forEach {
+            
+            var eventsToProcess: [Event] = []
+            self._pendingEvents {
+                eventsToProcess = $0
+                $0.removeAll()
+            }
+            
+            self.feedEventsToMiddlewares(eventsToProcess)
+        }
+    }
+    
+    /// Opens database session and feeds events to middlewares one by one respecting the order.
+    /// When an event is processed it is posted (except events of `HealthCheckEvent` type).
+    ///
+    /// - Parameters:
+    ///   - events: The list of events to be processed.
+    ///   - completion: The completion that will be invoked .
+    func feedEventsToMiddlewares(
+        _ events: [Event],
+        shouldPostEvents: Bool = true,
+        completion: @escaping () -> Void = {}
+    ) {
+        guard !events.isEmpty else {
+            completion()
+            return
+        }
+        
+        var eventsToPost = [Event]()
+        database.write({ session in
+            eventsToPost = events.compactMap { self.middlewares.process(event: $0, session: session) }
+        }, completion: { _ in
+            // We post events on a queue different from database.writable context
+            // queue to prevent a deadlock happening when @CoreDataLazy (with `context.performAndWait` inside)
+            // model is accessed in event handlers.
+            DispatchQueue.main.async {
+                if shouldPostEvents {
+                    eventsToPost.forEach {
                         self.post(Notification(newEventReceived: $0, sender: self))
                     }
                 }
-            })
-        }
+                completion()
+            }
+        })
     }
 }

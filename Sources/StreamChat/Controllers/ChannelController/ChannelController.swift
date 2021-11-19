@@ -158,6 +158,16 @@ public extension ChatClient {
     }
 }
 
+extension ChatChannelController {
+    func recover(syncedCIDs: Set<ChannelId>, completion: @escaping (Error?) -> Void) {
+        if let cid = cid, syncedCIDs.contains(cid) {
+            startWatching(completion: completion)
+        } else {
+            synchronize(completion)
+        }
+    }
+}
+
 /// `ChatChannelController` is a controller class which allows mutating and observing changes of a specific chat channel.
 ///
 /// `ChatChannelController` objects are lightweight, and they can be used for both, continuous data change observations (like
@@ -389,28 +399,46 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     }
     
     override public func synchronize(_ completion: ((_ error: Error?) -> Void)? = nil) {
-        let channelCreatedCallback = isChannelAlreadyCreated ? nil : channelCreated(forwardErrorTo: setLocalStateBasedOnError)
-        updater.update(
-            channelQuery: channelQuery,
-            channelCreatedCallback: channelCreatedCallback
-        ) { result in
-            switch result {
-            case .success:
-                self.markChannelAsOpen(true) { error in
-                    self.state = error.map { .remoteDataFetchFailed($0) } ?? .remoteDataFetched
-                    self.callback { completion?(error) }
-                }
-            case let .failure(error):
-                self.state = .remoteDataFetchFailed(ClientError(with: error))
+        client.connectionRecoveryUpdater.register(self)
+                
+        fetchAndUpdateChannelLocally(
+            channelQuery,
+            keepLocalMessageHistory: false,
+            channelCreatedCallback: isChannelAlreadyCreated ? nil : channelCreated(forwardErrorTo: setLocalStateBasedOnError),
+            completion: { error in
                 self.callback { completion?(error) }
             }
-        }
+        )
         
         /// Setup observers if we know the channel `cid` (if it's missing, it'll be set in `set(cid:)`
         /// Otherwise they will be set up after channel creation, in `set(cid:)`.
         if let cid = cid {
             setupEventObservers(for: cid)
             setLocalStateBasedOnError(startDatabaseObservers())
+        }
+    }
+    
+    private func fetchAndUpdateChannelLocally(
+        _ channelQuery: ChannelQuery,
+        keepLocalMessageHistory: Bool,
+        channelCreatedCallback: ((ChannelId) -> Void)? = nil,
+        completion: ((Error?) -> Void)? = nil
+    ) {
+        updater.update(
+            channelQuery: channelQuery,
+            channelCreatedCallback: channelCreatedCallback,
+            keepMessageHistory: keepLocalMessageHistory
+        ) { result in
+            switch result {
+            case .success:
+                self.markChannelAsOpen(true) { error in
+                    self.state = error.map { .remoteDataFetchFailed($0) } ?? .remoteDataFetched
+                    completion?(error)
+                }
+            case let .failure(error):
+                self.state = .remoteDataFetchFailed(ClientError(with: error))
+                completion?(error)
+            }
         }
     }
 
