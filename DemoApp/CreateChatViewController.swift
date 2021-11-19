@@ -65,8 +65,8 @@ class CreateChatViewController: UIViewController {
     
     var searchController: ChatUserSearchController!
     
-    var users: LazyCachedMapCollection<ChatUser> {
-        searchController.users
+    var users: [ChatUser] {
+        searchController.userArray
     }
     
     var selectedUserIds: Set<String> {
