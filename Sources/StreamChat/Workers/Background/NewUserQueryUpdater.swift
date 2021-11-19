@@ -80,28 +80,36 @@ final class NewUserQueryUpdater: Worker {
     
     private func updateUserListQuery(for userDTO: UserDTO) {
         database.backgroundReadOnlyContext.perform { [weak self] in
-            guard let queries = self?.queries else { return }
-
-            // Existing queries with modified filter parameter
-            var updatedQueries: [UserListQuery] = []
+            let userID = userDTO.id
+            let queryDTOs = self?.queries ?? []
             
-            do {
-                updatedQueries = try queries.map {
-                    // Modify original query filter
-                    try $0.asUserListQueryWithUpdatedFilter(filterToAdd: .equal("id", to: userDTO.id))
-                }
-                
-            } catch {
-                log.error("Internal error. Failed to update UserListQueries for the new user: \(error)")
-            }
-            
-            // Send `update(userListQuery:` requests so corresponding queries will be linked to the user
-            updatedQueries.forEach {
-                self?.userListUpdater.update(userListQuery: $0) { error in
-                    if let error = error {
-                        log
-                            .error("Internal error. Failed to update UserListQueries for the new user: \(error)")
+            queryDTOs.forEach { dto in
+                let queryHash = dto.filterHash
+               
+                do {
+                    let queryMatchingUser = try dto.asUserListQueryWithUpdatedFilter(filterToAdd: .equal("id", to: userID))
+                    
+                    self?.userListUpdater.fetch(userListQuery: queryMatchingUser) {
+                        switch $0 {
+                        case let .success(userListPayload):
+                            self?.database.write { session in
+                                guard
+                                    let queryDTO = session.userListQuery(filterHash: queryHash),
+                                    let userDTO = session.user(id: userID)
+                                else { return }
+                                
+                                if userListPayload.users.contains(where: { $0.id == userID }) {
+                                    queryDTO.users.insert(userDTO)
+                                } else {
+                                    queryDTO.users.remove(userDTO)
+                                }
+                            }
+                        case let .failure(error):
+                            log.error("Failed to check if user with id \(userID) matches query: \(queryHash): \(error)")
+                        }
                     }
+                } catch {
+                    log.error("Failed to decode model from user list query: \(queryHash)")
                 }
             }
         }
@@ -121,12 +129,10 @@ private extension UserListQueryDTO {
     func asUserListQueryWithUpdatedFilter(
         filterToAdd filter: Filter<UserListFilterScope>
     ) throws -> UserListQuery {
-        let encodedFilter = try JSONDecoder.default.decode(Filter<UserListFilterScope>.self, from: filterJSONData)
+        let originalFilter = try JSONDecoder.default.decode(Filter<UserListFilterScope>.self, from: filterJSONData)
         
-        // We need to pass original `filterHash` so user will be linked to original query, not the modified one
-        var updatedFilter: Filter<UserListFilterScope> = .and([encodedFilter, filter])
-        updatedFilter.explicitHash = filterHash
-        
-        return UserListQuery(filter: updatedFilter)
+        return UserListQuery(
+            filter: .and([originalFilter, filter])
+        )
     }
 }

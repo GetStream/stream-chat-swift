@@ -69,6 +69,10 @@ extension DatabaseSessionMock {
         return try underlyingSession.saveQuery(query: query)
     }
     
+    func userListQuery(filterHash: String) -> UserListQueryDTO? {
+        underlyingSession.userListQuery(filterHash: filterHash)
+    }
+    
     func user(id: UserId) -> UserDTO? {
         underlyingSession.user(id: id)
     }
@@ -204,6 +208,10 @@ extension DatabaseSessionMock {
     
     func channelListQuery(filterHash: String) -> ChannelListQueryDTO? {
         underlyingSession.channelListQuery(filterHash: filterHash)
+    }
+    
+    func loadAllChannelListQueries() -> [ChannelListQueryDTO] {
+        underlyingSession.loadAllChannelListQueries()
     }
     
     func saveChannel(

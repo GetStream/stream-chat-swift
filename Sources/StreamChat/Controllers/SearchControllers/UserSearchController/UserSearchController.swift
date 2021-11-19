@@ -22,63 +22,21 @@ public class ChatUserSearchController: DataController, DelegateCallable, DataSto
     /// The `ChatClient` instance this controller belongs to.
     public let client: ChatClient
     
-    /// Filter hash this controller observes.
-    let explicitFilterHash = UUID().uuidString
-    
-    lazy var query: UserListQuery = {
-        // Filter is just a mock, explicit hash will override it
-        var query = UserListQuery(filter: .exists(.id), sort: [.init(key: .name, isAscending: true)])
-        // Setting `shouldBeObserved` to false prevents NewUserQueryUpdater to pick this query up
-        query.shouldBeUpdatedInBackground = false
-        // The initial DB fetch will return 0 users and this is expected
-        // In the future we'll implement DB search too
-        query.filter?.explicitHash = explicitFilterHash
-        
-        return query
-    }()
-    
     /// Copy of last search query made, used for getting next page.
-    var lastQuery: UserListQuery?
+    public private(set) var query: UserListQuery?
     
-    /// The users matching the query of this controller.
-    ///
-    /// To observe changes of the users, set your class as a delegate of this controller or use the provided
-    /// `Combine` publishers.
-    ///
-    public var users: LazyCachedMapCollection<ChatUser> {
-        startUserListObserverIfNeeded()
-        return userListObserver.items
+    /// The users matching the last query of this controller.
+    private var _users: [ChatUser] = []
+    public var userArray: [ChatUser] {
+        setLocalDataFetchedStateIfNeeded()
+        return _users
     }
-    
+
     lazy var userQueryUpdater = self.environment
         .userQueryUpdaterBuilder(
             client.databaseContainer,
             client.apiClient
         )
-    
-    /// Used for observing the database for changes.
-    lazy var userListObserver: ListDatabaseObserver<ChatUser, UserDTO> = {
-        let request = UserDTO.userListFetchRequest(query: query)
-        
-        let observer = self.environment.createUserListDatabaseObserver(
-            client.databaseContainer.viewContext,
-            request,
-            { $0.asModel() }
-        )
-        
-        observer.onChange = { [weak self] changes in
-            self?.delegateCallback { [weak self] in
-                guard let self = self else {
-                    log.warning("Callback called while self is nil")
-                    return
-                }
-
-                $0.controller(self, didChangeUsers: changes)
-            }
-        }
-        
-        return observer
-    }()
     
     /// A type-erased delegate.
     var multicastDelegate: MulticastDelegate<ChatUserSearchControllerDelegate> = .init() {
@@ -86,8 +44,7 @@ public class ChatUserSearchController: DataController, DelegateCallable, DataSto
             stateMulticastDelegate.set(mainDelegate: multicastDelegate.mainDelegate)
             stateMulticastDelegate.set(additionalDelegates: multicastDelegate.additionalDelegates)
             
-            // After setting delegate local changes will be fetched and observed.
-            startUserListObserverIfNeeded()
+            setLocalDataFetchedStateIfNeeded()
         }
     }
     
@@ -96,30 +53,6 @@ public class ChatUserSearchController: DataController, DelegateCallable, DataSto
     init(client: ChatClient, environment: Environment = .init()) {
         self.client = client
         self.environment = environment
-    }
-    
-    deinit {
-        let query = self.query
-        client.databaseContainer.write { session in
-            session.deleteQuery(query)
-        }
-    }
-    
-    /// If the `state` of the controller is `initialized`, this method calls `startObserving` on the
-    /// `userListObserver` to fetch the local data and start observing the changes. It also changes
-    /// `state` based on the result.
-    ///
-    /// It's safe to call this method repeatedly.
-    ///
-    private func startUserListObserverIfNeeded() {
-        guard state == .initialized else { return }
-        do {
-            try userListObserver.startObserving()
-            state = .localDataFetched
-        } catch {
-            state = .localDataFetchFailed(ClientError(with: error))
-            log.error("Failed to perform fetch request with error: \(error). This is an internal error.")
-        }
     }
 
     /// Searches users for the given term.
@@ -134,28 +67,7 @@ public class ChatUserSearchController: DataController, DelegateCallable, DataSto
     ///   - completion: Called when the controller has finished fetching remote data.
     ///   If the data fetching fails, the error variable contains more details about the problem.
     public func search(term: String?, completion: ((_ error: Error?) -> Void)? = nil) {
-        startUserListObserverIfNeeded()
-        
-        var query = UserListQuery(sort: [.init(key: .name, isAscending: true)])
-        if let term = term, !term.isEmpty {
-            query.filter = .or([
-                .autocomplete(.name, text: term),
-                .autocomplete(.id, text: term)
-            ])
-        } else {
-            query.filter = .exists(.id) // Pseudo-filter to fetch all users
-        }
-        // Backend suggest not sorting by name
-        // so we only sort client-side
-        query.filter?.explicitHash = explicitFilterHash
-        query.shouldBeUpdatedInBackground = false
-        
-        lastQuery = query
-        
-        userQueryUpdater.update(userListQuery: query, policy: .replace) { error in
-            self.state = error == nil ? .remoteDataFetched : .remoteDataFetchFailed(ClientError(with: error))
-            self.callback { completion?(error) }
-        }
+        fetch(.search(term: term), completion: completion)
     }
     
     /// Searches users for the given query.
@@ -170,18 +82,7 @@ public class ChatUserSearchController: DataController, DelegateCallable, DataSto
     ///   - completion: Called when the controller has finished fetching remote data.
     ///   If the data fetching fails, the error variable contains more details about the problem.
     public func search(query: UserListQuery, completion: ((_ error: Error?) -> Void)? = nil) {
-        startUserListObserverIfNeeded()
-        
-        var query = query
-        query.filter?.explicitHash = explicitFilterHash
-        query.shouldBeUpdatedInBackground = false
-        
-        lastQuery = query
-        
-        userQueryUpdater.update(userListQuery: query, policy: .replace) { error in
-            self.state = error == nil ? .remoteDataFetched : .remoteDataFetchFailed(ClientError(with: error))
-            self.callback { completion?(error) }
-        }
+        fetch(query, completion: completion)
     }
     
     /// Loads next users from backend.
@@ -195,16 +96,129 @@ public class ChatUserSearchController: DataController, DelegateCallable, DataSto
         limit: Int = 25,
         completion: ((Error?) -> Void)? = nil
     ) {
-        guard let lastQuery = lastQuery else {
+        guard let lastQuery = query else {
             completion?(ClientError("You should make a search before calling for next page."))
             return
         }
         
         var updatedQuery = lastQuery
-        updatedQuery.pagination = Pagination(pageSize: limit, offset: users.count)
-        userQueryUpdater.update(userListQuery: updatedQuery) { error in
-            self.callback { completion?(error) }
+        updatedQuery.pagination = Pagination(pageSize: limit, offset: userArray.count)
+        
+        fetch(updatedQuery, completion: completion)
+    }
+}
+
+private extension ChatUserSearchController {
+    /// Fetches the given query from the API, saves the loaded page to the database, updates the list of users and notifies the delegate.
+    ///
+    /// - Parameters:
+    ///   - query: The query to fetch.
+    ///   - completion: The completion that is triggered when the query is processed.
+    func fetch(_ query: UserListQuery, completion: ((Error?) -> Void)? = nil) {
+        // TODO: Remove with the next major
+        //
+        // This is needed to make the delegate fire about state changes at the same time with the same
+        // values as it was when query was persisted.
+        setLocalDataFetchedStateIfNeeded()
+        
+        userQueryUpdater.fetch(userListQuery: query) { result in
+            switch result {
+            case let .success(page):
+                self.save(page: page) { loadedUsers in
+                    let listChanges = self.prepareListChanges(
+                        loadedPage: loadedUsers,
+                        updatePolicy: query.pagination?.offset == 0 ? .replace : .merge
+                    )
+                    
+                    self.query = query
+                    self._users = self.userList(after: listChanges)
+                    self.state = .remoteDataFetched
+                    
+                    self.callback {
+                        self.multicastDelegate.invoke { $0.controller(self, didChangeUsers: listChanges) }
+                        completion?(nil)
+                    }
+                }
+            case let .failure(error):
+                self.state = .remoteDataFetchFailed(ClientError(with: error))
+                self.callback { completion?(error) }
+            }
         }
+    }
+    
+    /// Saves the given payload to the database and returns database independent models.
+    ///
+    /// - Parameters:
+    ///   - page: The page of users fetched from the API.
+    ///   - completion: The completion that will be called with user models when database write is completed.
+    func save(page: UserListPayload, completion: @escaping ([ChatUser]) -> Void) {
+        var loadedUsers: [ChatUser] = []
+        
+        client.databaseContainer.write({ session in
+            loadedUsers = page
+                .users
+                .compactMap { try? session.saveUser(payload: $0) }
+                .map { $0.asModel() }
+            
+        }, completion: { _ in
+            completion(loadedUsers)
+        })
+    }
+    
+    /// Creates the list of changes based on current list, the new page, and the policy.
+    ///
+    /// - Parameters:
+    ///   - loadedPage: The next page of users.
+    ///   - updatePolicy: The update policy.
+    /// - Returns: The list of changes that can be applied to the current list of users.
+    func prepareListChanges(loadedPage: [ChatUser], updatePolicy: UserListUpdater.UpdatePolicy) -> [ListChange<ChatUser>] {
+        switch updatePolicy {
+        case .replace:
+            let deletions = userArray.enumerated().reversed().map { (index, user) in
+                ListChange.remove(user, index: .init(row: index, section: 0))
+            }
+            
+            let insertions = loadedPage.enumerated().map { (index, user) in
+                ListChange.insert(user, index: .init(row: index, section: 0))
+            }
+            
+            return deletions + insertions
+        case .merge:
+            let insertions = loadedPage.enumerated().map { (index, user) in
+                ListChange.insert(user, index: .init(row: index + userArray.count, section: 0))
+            }
+            
+            return insertions
+        }
+    }
+    
+    /// Applies the given changes to the current list of users and returns the updated list.
+    ///
+    /// - Parameter changes: The changes to apply.
+    /// - Returns: The user list after the given changes applied.
+    ///
+    func userList(after changes: [ListChange<ChatUser>]) -> [ChatUser] {
+        var users = _users
+        
+        for change in changes {
+            switch change {
+            case let .insert(user, indexPath):
+                users.insert(user, at: indexPath.row)
+            case let .remove(_, indexPath):
+                users.remove(at: indexPath.row)
+            default:
+                log.assertionFailure("Unsupported list change observed: \(change)")
+            }
+        }
+        
+        return users
+    }
+    
+    /// Sets state to `localDataFetched` if current state is `initialized`.
+    func setLocalDataFetchedStateIfNeeded() {
+        guard state == .initialized else { return }
+            
+        state = .localDataFetched
     }
 }
 

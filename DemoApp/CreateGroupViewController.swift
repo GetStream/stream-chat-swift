@@ -49,8 +49,8 @@ class CreateGroupViewController: UIViewController {
     
     var searchController: ChatUserSearchController!
     
-    var users: LazyCachedMapCollection<ChatUser> {
-        searchController.users
+    var users: [ChatUser] {
+        searchController.userArray
     }
     
     var selectedUsers = [ChatUser]()

@@ -17,6 +17,10 @@ protocol UserDatabaseSession {
     @discardableResult
     func saveQuery(query: UserListQuery) throws -> UserListQueryDTO?
     
+    /// Load user list query with the given hash.
+    /// - Returns: The query hash.
+    func userListQuery(filterHash: String) -> UserListQueryDTO?
+    
     /// Fetches `UserDTO` with the given `id` from the DB. Returns `nil` if no `UserDTO` matching the `id` exists.
     func user(id: UserId) -> UserDTO?
     
@@ -189,6 +193,10 @@ protocol ChannelDatabaseSession {
     /// Loads channel list query with the given filter hash from the database.
     /// - Parameter filterHash: The filter hash.
     func channelListQuery(filterHash: String) -> ChannelListQueryDTO?
+    
+    /// Loads all channel list queries from the database.
+    /// - Returns: The array of channel list queries.
+    func loadAllChannelListQueries() -> [ChannelListQueryDTO]
     
     @discardableResult func saveQuery(query: ChannelListQuery) -> ChannelListQueryDTO
     
