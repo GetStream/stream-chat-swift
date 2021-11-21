@@ -8,20 +8,16 @@ Pod::Spec.new do |spec|
   spec.license = { :type => "BSD-3", :file => "LICENSE" }
   spec.author = { "getstream.io" => "support@getstream.io" }
   spec.social_media_url = "https://getstream.io"
-  spec.swift_version = "5.2"
 
+  spec.swift_version = "5.2"
   spec.ios.deployment_target  = '11.0'
   spec.osx.deployment_target  = '10.15'
-
-  spec.source = { :git => "https://github.com/GetStream/stream-chat-swift.git", :tag => "#{spec.version}" }
   spec.requires_arc = true
-
-  spec.source_files  = "Sources/StreamChat/**/*.swift"
-  spec.exclude_files = ["Sources/StreamChat/**/*_Tests.swift", "Sources/StreamChat/**/*_Mock.swift"]
-  spec.resource_bundles = { "StreamChat" => ["Sources/StreamChat/**/*.xcdatamodeld"] }
 
   spec.framework = "Foundation"
   spec.ios.framework = "UIKit"
 
-  spec.dependency "Starscream", "~> 4.0"
+  spec.source = { :http => "https://github.com/GetStream/stream-chat-swift/releases/download/#{spec.version}/#{spec.name}.xcframework.zip" }
+  spec.vendored_frameworks = "#{spec.name}.xcframework"
+  spec.preserve_paths = "#{spec.name}.xcframework/*"
 end

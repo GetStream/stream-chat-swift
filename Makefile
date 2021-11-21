@@ -4,8 +4,12 @@ bootstrap:
 	./Scripts/bootstrap.sh
 
 frameworks:
+	echo "♦︎♦︎♦︎ Creating xcframeworks ♦︎♦︎♦︎"
 	bundle exec fastlane build_xcframeworks
-	cd ./Products && zip -r "../BuiltArtifacts/StreamChat-All.xcframework.zip" ./*.xcframework
+	echo "♦︎♦︎♦︎ Creating compressed archives ♦︎♦︎♦︎"
+	cd ./Products && zip -r "StreamChat-All.xcframework.zip" ./*.xcframework
+	cd ./Products && zip -r "StreamChat.xcframework.zip" ./StreamChat.xcframework
+	cd ./Products && zip -r "StreamChatUI.xcframework.zip" ./StreamChatUI.xcframework
 
 update_dependencies:
 	echo "♦︎♦︎♦︎ Updating Nuke ♦︎♦︎♦︎"
