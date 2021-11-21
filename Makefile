@@ -5,6 +5,7 @@ bootstrap:
 
 frameworks:
 	bundle exec fastlane build_xcframeworks
+	cd ./Products && zip -r "../BuiltArtifacts/StreamChat-All.zip" ./*.xcframework
 
 update_dependencies:
 	echo "♦︎♦︎♦︎ Updating Nuke ♦︎♦︎♦︎"
