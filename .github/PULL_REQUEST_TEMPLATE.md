@@ -23,3 +23,6 @@ _Add relevant screenshots or videos showcasing the changes._
 - [ ] Changelog is updated with client-facing changes
 - [ ] New code is covered by unit tests
 - [ ] Affected documentation updated (docusaurus, tutorial, CMS (task created)
+
+### 👀 Reviewers
+- @GetStream/ios-developers
