@@ -74,42 +74,21 @@ open class ChatMessageActionsVC: _ViewController, ThemeProvider {
     /// Array of `ChatMessageActionItem`s - override this to setup your own custom actions
     open var messageActions: [ChatMessageActionItem] {
         guard
-            let currentUser = messageController.dataStore.currentUser(),
+            messageController.dataStore.currentUser() != nil,
             let message = message,
             message.isDeleted == false
         else { return [] }
-
-        switch message.localState {
-        case nil:
-            var actions: [ChatMessageActionItem] = [
-                inlineReplyActionItem()
-            ]
-
-            if channelConfig.repliesEnabled && !message.isPartOfThread {
-                actions.append(threadReplyActionItem())
-            }
-
-            actions.append(copyActionItem())
-
-            if message.isSentByCurrentUser {
-                actions += [editActionItem(), deleteActionItem()]
-
-            } else if channelConfig.mutesEnabled {
-                let isMuted = currentUser.mutedUsers.contains(message.author)
-                actions.append(isMuted ? unmuteActionItem() : muteActionItem())
-            }
-
-            return actions
-        case .pendingSend, .sendingFailed, .pendingSync, .syncingFailed, .deletingFailed:
-            return [
-                message.localState == .sendingFailed ? resendActionItem() : nil,
-                editActionItem(),
-                deleteActionItem()
-            ]
-            .compactMap { $0 }
-        case .sending, .syncing, .deleting:
-            return []
-        }
+        var actions: [ChatMessageActionItem] = []
+        actions.append(inlineReplyActionItem())
+        actions.append(copyActionItem())
+        actions.append(translateMessageItem())
+        actions.append(moreItem())
+        return [
+            inlineReplyActionItem(),
+            copyActionItem(),
+            translateMessageItem(),
+            moreItem()
+        ]
     }
     
     /// Returns `ChatMessageActionItem` for edit action
@@ -211,6 +190,24 @@ open class ChatMessageActionsVC: _ViewController, ThemeProvider {
             },
             appearance: appearance
         )
+    }
+    //TranslateMessageActionItem
+    open func translateMessageItem() -> ChatMessageActionItem {
+        TranslateMessageActionItem(action: { [weak self] _ in
+            guard let self = self else { return }
+            print("------------>>>>>>>>")
+            self.delegate?.chatMessageActionsVCDidFinish(self)
+            // ToDo:
+        }, appearance: appearance)
+    }
+
+    // More ActionItem
+    open func moreItem() -> ChatMessageActionItem {
+        MoreActionItem(action: { [weak self] _ in
+            guard let self = self else { return }
+            print("------------>>>>>>>> more tapped")
+            self.delegate?.chatMessageActionsVCDidFinish(self)
+        }, appearance: appearance)
     }
 
     /// Triggered for actions which should be handled by `delegate` and not in this view controller.

@@ -13,6 +13,8 @@
 "message.actions.thread-reply" = "Thread Reply";
 "message.actions.edit" = "Edit Message";
 "message.actions.copy" = "Copy Message";
+"message.actions.translate" = "Translate";
+"message.actions.more" = "More...";
 "message.actions.delete" = "Delete Message";
 "message.actions.delete.confirmation-title" = "Delete Message";
 "message.actions.delete.confirmation-message" = "Are you sure you want to permanently delete this message?";

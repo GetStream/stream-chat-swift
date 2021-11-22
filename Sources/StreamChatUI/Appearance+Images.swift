@@ -187,6 +187,8 @@ public extension Appearance {
         public var messageActionThreadReply: UIImage = loadImageSafely(with: "icn_thread_reply")
         public var messageActionEdit: UIImage = loadImageSafely(with: "icn_edit")
         public var messageActionCopy: UIImage = loadImageSafely(with: "icn_copy")
+        public var messageActionTranslate: UIImage = loadImageSafely(with: "icn_translate")
+        public var moreAction: UIImage = loadImageSafely(with: "icn_more")
         public var messageActionBlockUser: UIImage = loadImageSafely(with: "icn_block_user")
         public var messageActionMuteUser: UIImage = loadImageSafely(with: "icn_mute_user")
         public var messageActionDelete: UIImage = loadImageSafely(with: "icn_delete")

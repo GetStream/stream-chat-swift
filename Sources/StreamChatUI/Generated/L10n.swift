@@ -136,6 +136,10 @@ internal enum L10n {
     internal enum Actions {
       /// Copy Message
       internal static var copy: String { L10n.tr("Localizable", "message.actions.copy") }
+      /// Tranalate Message
+      internal static var tranalate: String { L10n.tr("Localizable", "message.actions.translate")}
+      /// More Action
+      internal static var more: String { L10n.tr("Localizable", "message.actions.more") }
       /// Delete Message
       internal static var delete: String { L10n.tr("Localizable", "message.actions.delete") }
       /// Edit Message

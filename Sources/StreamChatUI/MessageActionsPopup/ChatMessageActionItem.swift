@@ -106,6 +106,44 @@ public struct CopyActionItem: ChatMessageActionItem {
     }
 }
 
+/// Instance of `ChatMessageActionItem` for translate message.
+public struct TranslateMessageActionItem: ChatMessageActionItem {
+    public var title: String { L10n.Message.Actions.tranalate }
+    public let icon: UIImage
+    public let action: (ChatMessageActionItem) -> Void
+
+    /// Init of `CopyActionItem`
+    /// - Parameters:
+    ///     - action: Action to be triggered when `CopyActionItem` is tapped.
+    ///     - appearance: `Appearance` that is used to configure UI properties.
+    public init(
+        action: @escaping (ChatMessageActionItem) -> Void,
+        appearance: Appearance = .default
+    ) {
+        self.action = action
+        icon = appearance.images.messageActionTranslate
+    }
+}
+
+/// Instance of `ChatMessageActionItem` for more action.
+public struct MoreActionItem: ChatMessageActionItem {
+    public var title: String { L10n.Message.Actions.more }
+    public let icon: UIImage
+    public let action: (ChatMessageActionItem) -> Void
+
+    /// Init of `CopyActionItem`
+    /// - Parameters:
+    ///     - action: Action to be triggered when `CopyActionItem` is tapped.
+    ///     - appearance: `Appearance` that is used to configure UI properties.
+    public init(
+        action: @escaping (ChatMessageActionItem) -> Void,
+        appearance: Appearance = .default
+    ) {
+        self.action = action
+        icon = appearance.images.moreAction
+    }
+}
+
 /// Instance of `ChatMessageActionItem` for unblocking user.
 public struct UnblockUserActionItem: ChatMessageActionItem {
     public var title: String { L10n.Message.Actions.userUnblock }
