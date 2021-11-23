@@ -84,24 +84,4 @@ class InternetConnection_Tests: XCTestCase {
         internetConnection = nil
         XCTAssertFalse(monitor.isStarted)
     }
-    
-    func test_notifyOnce() throws {
-        var calledCounter = 0
-        internetConnection.notifyOnce(when: { $0 == .available(.great) }) {
-            calledCounter += 1
-        }
-        
-        // Simulate status change to some other value
-        monitor.status = .unavailable
-        XCTAssertEqual(calledCounter, 0)
-        
-        // Simulate status change to the target value
-        monitor.status = .available(.great)
-        XCTAssertEqual(calledCounter, 1)
-        
-        // Simulate more changes and verify callback is no longer called
-        monitor.status = .unavailable
-        monitor.status = .available(.great)
-        XCTAssertEqual(calledCounter, 1)
-    }
 }

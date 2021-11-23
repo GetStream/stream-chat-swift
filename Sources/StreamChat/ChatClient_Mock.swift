@@ -135,8 +135,7 @@ extension ChatClient.Environment {
                     sessionConfiguration: $0,
                     requestEncoder: $1,
                     eventDecoder: $2,
-                    eventNotificationCenter: $3,
-                    internetConnection: $4
+                    eventNotificationCenter: $3
                 )
             },
             databaseContainerBuilder: {
@@ -175,7 +174,6 @@ extension ChatClient.Environment {
                     requestEncoder: $1,
                     eventDecoder: $2,
                     eventNotificationCenter: $3,
-                    internetConnection: $4,
                     environment: webSocketEnvironment
                 )
             }

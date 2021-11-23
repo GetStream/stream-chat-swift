@@ -12,7 +12,6 @@ class WebSocketClientMock: WebSocketClient {
     let init_requestEncoder: RequestEncoder
     let init_eventDecoder: AnyEventDecoder
     let init_eventNotificationCenter: EventNotificationCenter
-    let init_internetConnection: InternetConnection
     let init_reconnectionStrategy: WebSocketClientReconnectionStrategy
     let init_environment: WebSocketClient.Environment
 
@@ -24,7 +23,6 @@ class WebSocketClientMock: WebSocketClient {
         requestEncoder: RequestEncoder,
         eventDecoder: AnyEventDecoder,
         eventNotificationCenter: EventNotificationCenter,
-        internetConnection: InternetConnection,
         reconnectionStrategy: WebSocketClientReconnectionStrategy = DefaultReconnectionStrategy(),
         environment: WebSocketClient.Environment = .mock
     ) {
@@ -32,7 +30,6 @@ class WebSocketClientMock: WebSocketClient {
         init_requestEncoder = requestEncoder
         init_eventDecoder = eventDecoder
         init_eventNotificationCenter = eventNotificationCenter
-        init_internetConnection = internetConnection
         init_reconnectionStrategy = reconnectionStrategy
         init_environment = environment
 
@@ -41,7 +38,6 @@ class WebSocketClientMock: WebSocketClient {
             requestEncoder: requestEncoder,
             eventDecoder: eventDecoder,
             eventNotificationCenter: eventNotificationCenter,
-            internetConnection: internetConnection,
             reconnectionStrategy: reconnectionStrategy,
             environment: environment
         )
@@ -66,8 +62,7 @@ extension WebSocketClientMock {
             sessionConfiguration: .ephemeral,
             requestEncoder: DefaultRequestEncoder(baseURL: .unique(), apiKey: .init(.unique)),
             eventDecoder: EventDecoder(),
-            eventNotificationCenter: EventNotificationCenterMock(database: DatabaseContainerMock()),
-            internetConnection: InternetConnection()
+            eventNotificationCenter: EventNotificationCenterMock(database: DatabaseContainerMock())
         )
     }
 }

@@ -22,8 +22,7 @@ public extension ChatClient {
                         sessionConfiguration: $0,
                         requestEncoder: $1,
                         eventDecoder: $2,
-                        eventNotificationCenter: $3,
-                        internetConnection: $4
+                        eventNotificationCenter: $3
                     )
                 },
                 databaseContainerBuilder: {

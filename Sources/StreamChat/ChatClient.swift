@@ -103,8 +103,7 @@ public class ChatClient {
             urlSessionConfiguration,
             encoder,
             EventDecoder(),
-            eventNotificationCenter,
-            internetConnection
+            eventNotificationCenter
         )
 
         if let currentUserId = currentUserId {
@@ -523,15 +522,13 @@ extension ChatClient {
             _ sessionConfiguration: URLSessionConfiguration,
             _ requestEncoder: RequestEncoder,
             _ eventDecoder: AnyEventDecoder,
-            _ notificationCenter: EventNotificationCenter,
-            _ internetConnection: InternetConnection
+            _ notificationCenter: EventNotificationCenter
         ) -> WebSocketClient)? = {
             WebSocketClient(
                 sessionConfiguration: $0,
                 requestEncoder: $1,
                 eventDecoder: $2,
-                eventNotificationCenter: $3,
-                internetConnection: $4
+                eventNotificationCenter: $3
             )
         }
         
