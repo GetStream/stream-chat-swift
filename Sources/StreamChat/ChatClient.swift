@@ -35,8 +35,8 @@ public class ChatClient {
     /// Builder blocks used for creating `backgroundWorker`s when needed.
     private let workerBuilders: [WorkerBuilder]
     
-    /// Builder blocks used for creating `backgroundWorker`s dealing with events when needed.
-    private let eventWorkerBuilders: [EventWorkerBuilder]
+    /// Background worker that takes care about client connection recovery when the Internet comes back OR app transitions from background to foreground.
+    private(set) var connectionRecoveryUpdater: ConnectionRecoveryUpdater?
 
     /// The notification center used to send and receive notifications about incoming events.
     private(set) lazy var eventNotificationCenter: EventNotificationCenter = {
@@ -234,7 +234,6 @@ public class ChatClient {
         tokenProvider: TokenProvider? = nil
     ) {
         let workerBuilders: [WorkerBuilder]
-        let eventWorkerBuilders: [EventWorkerBuilder]
         var environment = Environment()
         
         if config.isClientInActiveMode {
@@ -245,21 +244,8 @@ public class ChatClient {
                 MessageEditor.init,
                 AttachmentUploader.init
             ]
-            
-            // All production event workers
-            eventWorkerBuilders = [
-                {
-                    ConnectionRecoveryUpdater(
-                        database: $0,
-                        eventNotificationCenter: $1,
-                        apiClient: $2,
-                        useSyncEndpoint: config.isLocalStorageEnabled
-                    )
-                }
-            ]
         } else {
             workerBuilders = []
-            eventWorkerBuilders = []
             environment.webSocketClientBuilder = nil
         }
         
@@ -267,7 +253,6 @@ public class ChatClient {
             config: config,
             tokenProvider: tokenProvider,
             workerBuilders: workerBuilders,
-            eventWorkerBuilders: eventWorkerBuilders,
             environment: environment
         )
     }
@@ -284,14 +269,12 @@ public class ChatClient {
         config: ChatClientConfig,
         tokenProvider: TokenProvider? = nil,
         workerBuilders: [WorkerBuilder],
-        eventWorkerBuilders: [EventWorkerBuilder],
         environment: Environment
     ) {
         self.config = config
         self.tokenProvider = tokenProvider
         self.environment = environment
         self.workerBuilders = workerBuilders
-        self.eventWorkerBuilders = eventWorkerBuilders
 
         currentUserId = fetchCurrentUserIdFromDatabase()
     }
@@ -376,9 +359,15 @@ public class ChatClient {
     func createBackgroundWorkers() {
         backgroundWorkers = workerBuilders.map { builder in
             builder(self.databaseContainer, self.apiClient)
-        } + eventWorkerBuilders.map { builder in
-            builder(self.databaseContainer, self.eventNotificationCenter, self.apiClient)
         }
+        
+        connectionRecoveryUpdater = environment.connectionRecoveryUpdaterBuilder(
+            databaseContainer,
+            eventNotificationCenter,
+            apiClient,
+            .init(database: databaseContainer, apiClient: apiClient),
+            config.isLocalStorageEnabled
+        )
     }
 
     func completeConnectionIdWaiters(connectionId: String?) {
@@ -577,6 +566,8 @@ extension ChatClient {
         var timerType: Timer.Type = DefaultTimer.self
         
         var tokenExpirationRetryStrategy: WebSocketClientReconnectionStrategy = DefaultReconnectionStrategy()
+        
+        var connectionRecoveryUpdaterBuilder = ConnectionRecoveryUpdater.init
     }
 }
 

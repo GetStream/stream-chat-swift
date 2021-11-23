@@ -37,7 +37,6 @@ class ChatPushNotificationContent_Tests: XCTestCase {
         clientWithOffline = ChatClient(
             config: configOffline,
             workerBuilders: [],
-            eventWorkerBuilders: [],
             environment: env
         )
         

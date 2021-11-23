@@ -48,17 +48,6 @@ class ChatClient_Tests: XCTestCase {
         NewUserQueryUpdater.init
     ]
     
-    var eventWorkerBuilders: [EventWorkerBuilder] = [
-        {
-            ConnectionRecoveryUpdater(
-                database: $0,
-                eventNotificationCenter: $1,
-                apiClient: $2,
-                useSyncEndpoint: false
-            )
-        }
-    ]
-    
     // MARK: - Database stack tests
     
     func test_clientDatabaseStackInitialization_whenLocalStorageEnabled_respectsConfigValues() {
@@ -101,7 +90,6 @@ class ChatClient_Tests: XCTestCase {
         _ = ChatClient(
             config: config,
             workerBuilders: [Worker.init],
-            eventWorkerBuilders: [],
             environment: env
         )
 
@@ -135,7 +123,6 @@ class ChatClient_Tests: XCTestCase {
         _ = ChatClient(
             config: config,
             workerBuilders: [Worker.init],
-            eventWorkerBuilders: [],
             environment: env
         )
         
@@ -176,7 +163,6 @@ class ChatClient_Tests: XCTestCase {
         _ = ChatClient(
             config: config,
             workerBuilders: [Worker.init],
-            eventWorkerBuilders: [],
             environment: env
         )
         
@@ -193,7 +179,6 @@ class ChatClient_Tests: XCTestCase {
         let client = ChatClient(
             config: inMemoryStorageConfig,
             workerBuilders: workerBuilders,
-            eventWorkerBuilders: eventWorkerBuilders,
             environment: testEnv.environment
         )
         
@@ -207,7 +192,6 @@ class ChatClient_Tests: XCTestCase {
         let client = ChatClient(
             config: inMemoryStorageConfig,
             workerBuilders: workerBuilders,
-            eventWorkerBuilders: eventWorkerBuilders,
             environment: testEnv.environment
         )
         
@@ -260,7 +244,6 @@ class ChatClient_Tests: XCTestCase {
         let client = ChatClient(
             config: inMemoryStorageConfig,
             workerBuilders: workerBuilders,
-            eventWorkerBuilders: eventWorkerBuilders,
             environment: testEnv.environment
         )
         
@@ -290,7 +273,6 @@ class ChatClient_Tests: XCTestCase {
         let client = ChatClient(
             config: inMemoryStorageConfig,
             workerBuilders: workerBuilders,
-            eventWorkerBuilders: [],
             environment: testEnv.environment
         )
 
@@ -348,7 +330,6 @@ class ChatClient_Tests: XCTestCase {
         let client = ChatClient(
             config: config,
             workerBuilders: [],
-            eventWorkerBuilders: [],
             environment: env
         )
         
@@ -394,7 +375,6 @@ class ChatClient_Tests: XCTestCase {
         let client = ChatClient(
             config: inMemoryStorageConfig,
             workerBuilders: workerBuilders,
-            eventWorkerBuilders: [],
             environment: testEnv.environment
         )
 
@@ -440,7 +420,6 @@ class ChatClient_Tests: XCTestCase {
         let client = ChatClient(
             config: inMemoryStorageConfig,
             workerBuilders: workerBuilders,
-            eventWorkerBuilders: [],
             environment: testEnv.environment
         )
         
@@ -479,7 +458,6 @@ class ChatClient_Tests: XCTestCase {
         let client = ChatClient(
             config: inMemoryStorageConfig,
             workerBuilders: workerBuilders,
-            eventWorkerBuilders: [],
             environment: testEnv.environment
         )
         
@@ -542,7 +520,6 @@ class ChatClient_Tests: XCTestCase {
         let client = ChatClient(
             config: inMemoryStorageConfig,
             workerBuilders: workerBuilders,
-            eventWorkerBuilders: [],
             environment: testEnv.environment
         )
         
@@ -579,7 +556,6 @@ class ChatClient_Tests: XCTestCase {
         let client = ChatClient(
             config: inMemoryStorageConfig,
             workerBuilders: workerBuilders,
-            eventWorkerBuilders: [],
             environment: testEnv.environment
         )
 
@@ -596,7 +572,6 @@ class ChatClient_Tests: XCTestCase {
         let client = ChatClient(
             config: inMemoryStorageConfig,
             workerBuilders: workerBuilders,
-            eventWorkerBuilders: [],
             environment: testEnv.environment
         )
         
@@ -623,8 +598,8 @@ class ChatClient_Tests: XCTestCase {
         XCTAssert(client.backgroundWorkers.contains { $0 is MessageSender })
         XCTAssert(client.backgroundWorkers.contains { $0 is NewUserQueryUpdater })
         XCTAssert(client.backgroundWorkers.contains { $0 is MessageEditor })
-        XCTAssert(client.backgroundWorkers.contains { $0 is ConnectionRecoveryUpdater })
         XCTAssert(client.backgroundWorkers.contains { $0 is AttachmentUploader })
+        XCTAssertNotNil(client.connectionRecoveryUpdater)
         
         AssertAsync.canBeReleased(&client)
     }
@@ -637,9 +612,11 @@ class ChatClient_Tests: XCTestCase {
         let client = ChatClient(
             config: config,
             workerBuilders: [TestWorker.init],
-            eventWorkerBuilders: [TestEventWorker.init],
             environment: testEnv.environment
         )
+        
+        XCTAssertTrue(client.backgroundWorkers.isEmpty)
+        XCTAssertNil(client.connectionRecoveryUpdater)
 
         // Simulate `createBackgroundWorkers` so workers are created.
         client.createBackgroundWorkers()
@@ -648,11 +625,7 @@ class ChatClient_Tests: XCTestCase {
         XCTAssert(testWorker?.init_database is DatabaseContainerMock)
         XCTAssert(testWorker?.init_apiClient is APIClientMock)
         
-        // Event workers are initialized after normal workers
-        let testEventWorker = client.backgroundWorkers.last as? TestEventWorker
-        XCTAssert(testEventWorker?.init_database is DatabaseContainerMock)
-        XCTAssert(testEventWorker?.init_eventNotificationCenter is EventNotificationCenterMock)
-        XCTAssert(testEventWorker?.init_apiClient is APIClientMock)
+        XCTAssertNotNil(client.connectionRecoveryUpdater)
     }
     
     // MARK: - Init
@@ -709,7 +682,6 @@ class ChatClient_Tests: XCTestCase {
             let client = ChatClient(
                 config: inMemoryStorageConfig,
                 workerBuilders: [],
-                eventWorkerBuilders: [],
                 environment: testEnv.environment
             )
             client.connectAnonymousUser { error in
@@ -734,7 +706,6 @@ class ChatClient_Tests: XCTestCase {
         _ = ChatClient(
             config: inMemoryStorageConfig,
             workerBuilders: [],
-            eventWorkerBuilders: [],
             environment: testEnv.environment
         )
         
@@ -745,7 +716,6 @@ class ChatClient_Tests: XCTestCase {
         let client = ChatClient(
             config: inMemoryStorageConfig,
             workerBuilders: [],
-            eventWorkerBuilders: [],
             environment: testEnv.environment
         )
         let token = Token.unique()
@@ -766,7 +736,6 @@ class ChatClient_Tests: XCTestCase {
         let client = ChatClient(
             config: inMemoryStorageConfig,
             workerBuilders: [],
-            eventWorkerBuilders: [],
             environment: testEnv.environment
         )
         let token = Token.unique()
@@ -808,7 +777,6 @@ class ChatClient_Tests: XCTestCase {
         let client = ChatClient(
             config: inMemoryStorageConfig,
             workerBuilders: [],
-            eventWorkerBuilders: [],
             environment: testEnv.environment
         )
         XCTAssert(testEnv.clientUpdater?.reloadUserIfNeeded_called != true)
@@ -868,7 +836,6 @@ class ChatClient_Tests: XCTestCase {
         let client = ChatClient(
             config: inMemoryStorageConfig,
             workerBuilders: workerBuilders,
-            eventWorkerBuilders: [],
             environment: testEnv.environment
         )
         client.connectAnonymousUser()
@@ -901,7 +868,6 @@ class ChatClient_Tests: XCTestCase {
         let client = ChatClient(
             config: config,
             workerBuilders: workerBuilders,
-            eventWorkerBuilders: [],
             environment: testEnv.environment
         )
         client.connectAnonymousUser()
@@ -932,7 +898,6 @@ class ChatClient_Tests: XCTestCase {
         let client = ChatClient(
             config: inMemoryStorageConfig,
             workerBuilders: workerBuilders,
-            eventWorkerBuilders: [],
             environment: testEnv.environment
         )
         client.connectAnonymousUser()
@@ -961,7 +926,6 @@ class ChatClient_Tests: XCTestCase {
         let client = ChatClient(
             config: inMemoryStorageConfig,
             workerBuilders: workerBuilders,
-            eventWorkerBuilders: [],
             environment: testEnv.environment
         )
         client.connectAnonymousUser()
@@ -992,7 +956,6 @@ class ChatClient_Tests: XCTestCase {
         let client = ChatClient(
             config: inMemoryStorageConfig,
             workerBuilders: workerBuilders,
-            eventWorkerBuilders: [],
             environment: testEnv.environment
         )
         client.connectAnonymousUser()
@@ -1026,7 +989,6 @@ class ChatClient_Tests: XCTestCase {
         let client = ChatClient(
             config: inMemoryStorageConfig,
             workerBuilders: workerBuilders,
-            eventWorkerBuilders: [],
             environment: testEnv.environment
         )
         client.connectAnonymousUser()
@@ -1066,7 +1028,6 @@ class ChatClient_Tests: XCTestCase {
         let client = ChatClient(
             config: inMemoryStorageConfig,
             workerBuilders: workerBuilders,
-            eventWorkerBuilders: [],
             environment: testEnv.environment
         )
         client.connectAnonymousUser()
@@ -1093,7 +1054,6 @@ class ChatClient_Tests: XCTestCase {
         let client = ChatClient(
             config: inMemoryStorageConfig,
             workerBuilders: workerBuilders,
-            eventWorkerBuilders: [],
             environment: testEnv.environment
         )
         client.connectAnonymousUser()
@@ -1120,7 +1080,6 @@ class ChatClient_Tests: XCTestCase {
         let client = ChatClient(
             config: inMemoryStorageConfig,
             workerBuilders: workerBuilders,
-            eventWorkerBuilders: [],
             environment: testEnv.environment
         )
         
@@ -1143,7 +1102,6 @@ class ChatClient_Tests: XCTestCase {
         let client = ChatClient(
             config: inMemoryStorageConfig,
             workerBuilders: workerBuilders,
-            eventWorkerBuilders: [],
             environment: testEnv.environment
         )
         client.connectAnonymousUser()
@@ -1169,7 +1127,6 @@ class ChatClient_Tests: XCTestCase {
         let client = ChatClient(
             config: inMemoryStorageConfig,
             workerBuilders: workerBuilders,
-            eventWorkerBuilders: [],
             environment: testEnv.environment
         )
         client.connectAnonymousUser()
@@ -1223,22 +1180,6 @@ class TestWorker: Worker {
         init_apiClient = apiClient
         
         super.init(database: database, apiClient: apiClient)
-    }
-}
-
-class TestEventWorker: EventWorker {
-    let id = UUID()
-    
-    var init_database: DatabaseContainer?
-    var init_eventNotificationCenter: EventNotificationCenter?
-    var init_apiClient: APIClient?
-    
-    override init(database: DatabaseContainer, eventNotificationCenter: EventNotificationCenter, apiClient: APIClient) {
-        init_database = database
-        init_eventNotificationCenter = eventNotificationCenter
-        init_apiClient = apiClient
-        
-        super.init(database: database, eventNotificationCenter: eventNotificationCenter, apiClient: apiClient)
     }
 }
 

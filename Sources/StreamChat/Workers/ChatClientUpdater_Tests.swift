@@ -430,8 +430,7 @@ final class ChatClientUpdater_Tests: XCTestCase {
         // Create an active client without a user session.
         let client = ChatClientMock(
             config: .init(apiKeyString: .unique),
-            workerBuilders: [TestWorker.init],
-            eventWorkerBuilders: [TestEventWorker.init]
+            workerBuilders: [TestWorker.init]
         )
         // Access the web-socket client to see that connect endpoint is assigned
         // and not rely on lazy init.
@@ -511,8 +510,7 @@ final class ChatClientUpdater_Tests: XCTestCase {
         // Create a client.
         let client = ChatClientMock(
             config: config,
-            workerBuilders: [TestWorker.init],
-            eventWorkerBuilders: [TestEventWorker.init]
+            workerBuilders: [TestWorker.init]
         )
         client.connectUser(userInfo: .init(id: token.userId), token: token)
 
@@ -538,9 +536,8 @@ private extension ChatClient {
         .init(
             backgroundWorkers.compactMap {
                 let testWorker = $0 as? TestWorker
-                let eventTestWorker = $0 as? TestEventWorker
 
-                return testWorker?.id ?? eventTestWorker?.id
+                return testWorker?.id
             }
         )
     }

@@ -17,46 +17,18 @@ import Foundation
 /// We remember `lastReceivedEventDate` when state becomes `connecting` to catch the last event date
 /// before the `HealthCheck` override the `lastReceivedEventDate` with the recent date.
 ///
-class ConnectionRecoveryUpdater: EventWorker {
+class ConnectionRecoveryUpdater {
     // MARK: - Properties
     
+    private let database: DatabaseContainer
+    private let eventNotificationCenter: EventNotificationCenter
+    private let apiClient: APIClient
     private var connectionObserver: EventObserver?
     private let databaseCleanupUpdater: DatabaseCleanupUpdater
     @Atomic private var lastSyncedAt: Date?
     private let useSyncEndpoint: Bool
     
     // MARK: - Init
-
-    override init(
-        database: DatabaseContainer,
-        eventNotificationCenter: EventNotificationCenter,
-        apiClient: APIClient
-    ) {
-        useSyncEndpoint = false
-        databaseCleanupUpdater = DatabaseCleanupUpdater(database: database, apiClient: apiClient)
-        super.init(
-            database: database,
-            eventNotificationCenter: eventNotificationCenter,
-            apiClient: apiClient
-        )
-        startObserving()
-    }
-    
-    init(
-        database: DatabaseContainer,
-        eventNotificationCenter: EventNotificationCenter,
-        apiClient: APIClient,
-        useSyncEndpoint: Bool
-    ) {
-        databaseCleanupUpdater = DatabaseCleanupUpdater(database: database, apiClient: apiClient)
-        self.useSyncEndpoint = useSyncEndpoint
-        super.init(
-            database: database,
-            eventNotificationCenter: eventNotificationCenter,
-            apiClient: apiClient
-        )
-        startObserving()
-    }
     
     init(
         database: DatabaseContainer,
@@ -65,13 +37,12 @@ class ConnectionRecoveryUpdater: EventWorker {
         databaseCleanupUpdater: DatabaseCleanupUpdater,
         useSyncEndpoint: Bool
     ) {
+        self.database = database
+        self.eventNotificationCenter = eventNotificationCenter
+        self.apiClient = apiClient
         self.databaseCleanupUpdater = databaseCleanupUpdater
         self.useSyncEndpoint = useSyncEndpoint
-        super.init(
-            database: database,
-            eventNotificationCenter: eventNotificationCenter,
-            apiClient: apiClient
-        )
+
         startObserving()
     }
     

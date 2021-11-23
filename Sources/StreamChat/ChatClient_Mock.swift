@@ -12,7 +12,6 @@ extension ChatClient {
         .init(
             config: .init(apiKey: .init(.unique)),
             workerBuilders: [],
-            eventWorkerBuilders: [],
             environment: .mock
         )
     }
@@ -45,7 +44,6 @@ class ChatClientMock: ChatClient {
     @Atomic var init_config: ChatClientConfig
     @Atomic var init_tokenProvider: TokenProvider?
     @Atomic var init_workerBuilders: [WorkerBuilder]
-    @Atomic var init_eventWorkerBuilders: [EventWorkerBuilder]
     @Atomic var init_environment: Environment
     @Atomic var init_completion: ((Error?) -> Void)?
 
@@ -65,20 +63,17 @@ class ChatClientMock: ChatClient {
         config: ChatClientConfig,
         tokenProvider: TokenProvider? = nil,
         workerBuilders: [WorkerBuilder] = [],
-        eventWorkerBuilders: [EventWorkerBuilder] = [],
         environment: Environment = .mock
     ) {
         init_config = config
         init_tokenProvider = tokenProvider
         init_workerBuilders = workerBuilders
-        init_eventWorkerBuilders = eventWorkerBuilders
         init_environment = environment
 
         super.init(
             config: config,
             tokenProvider: tokenProvider,
             workerBuilders: workerBuilders,
-            eventWorkerBuilders: eventWorkerBuilders,
             environment: environment
         )
     }
