@@ -1195,7 +1195,7 @@ class ChatClient_Tests: XCTestCase {
             eventWorkerBuilders: [],
             environment: testEnv.environment
         )
-        let prefix = "stream-chat-uikit-client-v"
+        let prefix = "stream-chat-swift-client-v"
         
         // When
         client.connectAnonymousUser()
@@ -1343,7 +1343,7 @@ extension ChatClient_Tests {
         let headers = config.httpAdditionalHeaders as? [String: String] ?? [:]
         XCTAssertEqual(
             headers["X-Stream-Client"],
-            "stream-chat-uikit-client-v\(SystemEnvironment.version)"
+            "stream-chat-swift-client-v\(SystemEnvironment.version)"
         )
     }
 }
