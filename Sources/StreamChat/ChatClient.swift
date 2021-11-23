@@ -638,7 +638,8 @@ extension ChatClient: ConnectionStateDelegate {
                 shouldNotifyConnectionIdWaiters = true
             }
             connectionId = nil
-        case .connecting,
+        case .initialized,
+             .connecting,
              .disconnecting,
              .waitingForConnectionId,
              .waitingForReconnect:

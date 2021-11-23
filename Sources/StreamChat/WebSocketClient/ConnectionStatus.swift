@@ -29,6 +29,9 @@ extension ConnectionStatus {
     // In internal initializer used for convering internal `WebSocketConnectionState` to `ChatClientConnectionStatus`.
     init(webSocketConnectionState: WebSocketConnectionState) {
         switch webSocketConnectionState {
+        case .initialized:
+            self = .initialized
+            
         case let .disconnected(error: error):
             self = .disconnected(error: error)
             
@@ -62,6 +65,9 @@ enum WebSocketConnectionState: Equatable {
         /// `WebSocketPingController` didn't get a pong response.
         case noPongReceived
     }
+    
+    /// The initial state meaning that  there was no atempt to connect yet.
+    case initialized
     
     /// The web socket is not connected. Optionally contains an error, if the connection was disconnected due to an error.
     case disconnected(error: ClientError? = nil)

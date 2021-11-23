@@ -9,6 +9,7 @@ class ChatClientConnectionStatus_Tests: XCTestCase {
     func test_wsConnectionState_isTranslatedCorrectly() {
         let testError = ClientError(with: TestError())
         let pairs: [(WebSocketConnectionState, ConnectionStatus)] = [
+            (.initialized, .initialized),
             (.disconnected(error: testError), .disconnected(error: testError)),
             (.connecting, .connecting),
             (.waitingForConnectionId, .connecting),
