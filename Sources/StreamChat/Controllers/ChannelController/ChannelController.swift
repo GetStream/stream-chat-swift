@@ -159,12 +159,8 @@ public extension ChatClient {
 }
 
 extension ChatChannelController {
-    func recover(syncedCIDs: Set<ChannelId>, completion: @escaping (Error?) -> Void) {
-        if let cid = cid, syncedCIDs.contains(cid) {
-            startWatching(completion: completion)
-        } else {
-            synchronize(completion)
-        }
+    func recover(completion: @escaping (Error?) -> Void) {
+        synchronize(completion)
     }
 }
 

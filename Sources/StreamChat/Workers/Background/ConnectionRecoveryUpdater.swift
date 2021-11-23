@@ -157,28 +157,26 @@ class ConnectionRecoveryUpdater {
                 
                 // 3. Get missing events for channels since the given date
                 self?.fetchAndSaveMissingEvents(for: cidsToSync, since: lastSyncAt) {
-                    guard case .success(let (syncedCIDs, mostRecentEventDate)) = $0 else {
-                        log.error("Failed to get missing events for channels: \($0.error?.localizedDescription ?? "")")
-                        return
+                    var syncedCIDs = Set<ChannelId>()
+
+                    switch $0 {
+                    case let .success(cids):
+                        syncedCIDs = cids
+                    case let .failure(error):
+                        log.error("Failed to get missing events for channels: \(error)")
                     }
-                        
+
                     // 4. Start watching active channels
-                    self?.syncActiveChannels(syncedCIDs: syncedCIDs) {
-                        guard $0.compactMap({ _, error in error }).isEmpty else {
+                    self?.syncActiveChannels {
+                        if !$0.compactMap({ _, error in error }).isEmpty {
                             log.error("Failed to to sync one or more active channels: \($0)")
-                            return
                         }
-                                                
+
                         // 5. Start watching active channel list queries
-                        self?.syncChannelListQueries(syncedCIDs: syncedCIDs.union($0.compactMap(\.0.cid))) {
+                        self?.syncChannelListQueries(syncedCIDs: syncedCIDs) {
                             guard $0.compactMap({ _, error in error }).isEmpty else {
                                 log.error("Failed to to sync one or more active channel list queries: \($0)")
                                 return
-                            }
-                            
-                            // 6. Update last sync date since all missing events were applied
-                            self?.bumpLastSyncDate(mostRecentEventDate) {
-                                log.info("Active channels and channel list queries are up-to-date.")
                             }
                         }
                     }
@@ -212,16 +210,22 @@ private extension ConnectionRecoveryUpdater {
     func fetchAndSaveMissingEvents(
         for cids: Set<ChannelId>,
         since lastSyncedAt: Date,
-        completion: @escaping (Result<(Set<ChannelId>, Date), Error>) -> Void
+        completion: @escaping (Result<(Set<ChannelId>), Error>) -> Void
     ) {
         guard !cids.isEmpty else {
-            completion(.success((cids, lastSyncedAt)))
+            completion(.success([]))
             return
         }
         
         client.apiClient.request(
             endpoint: .missingEvents(since: lastSyncedAt, cids: .init(cids))
         ) { [weak self] in
+
+            guard let self = self else {
+                completion(.success([]))
+                return
+            }
+
             switch $0 {
             case let .success(payload):
                 log.info("Did receive \(payload.eventPayloads.count) missing events: \(payload.eventPayloads)")
@@ -235,17 +239,21 @@ private extension ConnectionRecoveryUpdater {
                         return nil
                     }
                 }
-                
+
                 // 2. Save events to the database without publishing
-                self?.client.eventNotificationCenter.feedEventsToMiddlewares(
+                self.client.eventNotificationCenter.feedEventsToMiddlewares(
                     events,
                     shouldPostEvents: false,
-                    completion: {
-                        // 3. Get oldest event timestamp
-                        let oldestEventTimestamp = payload.eventPayloads.last?.createdAt ?? lastSyncedAt
-                        
-                        // 4. Report all given channels as synced and the new sync date
-                        completion(.success((cids, mostRecentEventTimestamp)))
+                    completion: { [weak self] in
+                        guard let oldestEventTimestamp = payload.eventPayloads.last?.createdAt else {
+                            completion(.success(cids))
+                            return
+                        }
+                      
+                        self?.bumpLastSyncDate(oldestEventTimestamp) {
+                            log.info("Active channels and channel list queries are up-to-date.")
+                            completion(.success(cids))
+                        }
                     }
                 )
             case let .failure(error):
@@ -263,7 +271,7 @@ private extension ConnectionRecoveryUpdater {
                 )
                 
                 // Report no channels as synced and current date
-                completion(.success(([], Date())))
+                completion(.success([]))
             }
         }
     }
@@ -294,7 +302,6 @@ private extension ConnectionRecoveryUpdater {
     }
         
     func syncActiveChannels(
-        syncedCIDs: Set<ChannelId>,
         completion: @escaping ([(ChannelQuery, Error?)]) -> Void
     ) {
         let group = DispatchGroup()
@@ -304,7 +311,7 @@ private extension ConnectionRecoveryUpdater {
         for controller in activeChannelControllers {
             group.enter()
             
-            controller.recover(syncedCIDs: syncedCIDs) { error in
+            controller.recover { error in
                 semaphore.wait()
                 results += [(controller.channelQuery, error)]
                 semaphore.signal()
