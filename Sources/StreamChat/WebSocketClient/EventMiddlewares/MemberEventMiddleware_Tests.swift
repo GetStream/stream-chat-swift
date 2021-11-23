@@ -100,7 +100,7 @@ final class MemberEventMiddleware_Tests: XCTestCase {
         // Assert a channel update is triggered
         AssertAsync.willBeEqual(
             channelListObserver.observedChanges,
-            [.update(cid, index: .init(row: 0, section: 0))]
+            [.update(cid, index: .init(item: 0, section: 0))]
         )
     }
     
@@ -199,7 +199,7 @@ final class MemberEventMiddleware_Tests: XCTestCase {
         // Assert channel update is observed.
         AssertAsync.willBeEqual(
             channelListObserver.observedChanges,
-            [.update(cid, index: .init(row: 0, section: 0))]
+            [.update(cid, index: .init(item: 0, section: 0))]
         )
     }
     
@@ -272,7 +272,7 @@ final class MemberEventMiddleware_Tests: XCTestCase {
         // Assert channel update is observed.
         AssertAsync.willBeEqual(
             channelListObserver.observedChanges,
-            [.update(cid, index: .init(row: 0, section: 0))]
+            [.update(cid, index: .init(item: 0, section: 0))]
         )
     }
 
@@ -306,7 +306,7 @@ final class MemberEventMiddleware_Tests: XCTestCase {
         // Assert channel update is observed.
         AssertAsync.willBeEqual(
             channelListObserver.observedChanges,
-            [.update(cid, index: .init(row: 0, section: 0))]
+            [.update(cid, index: .init(item: 0, section: 0))]
         )
     }
     
