@@ -311,7 +311,8 @@ lane :test_ui do |options|
     testplan: "StreamChatUITestPlan",
     configuration: "Debug",
     clean: true,
-    devices: options[:device]
+    devices: options[:device],
+    build_for_testing: options[:build_for_testing]
   )
 end
 
