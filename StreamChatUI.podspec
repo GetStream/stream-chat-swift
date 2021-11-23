@@ -20,4 +20,6 @@ Pod::Spec.new do |spec|
   spec.preserve_paths = "#{spec.name}.xcframework/*"
 
   spec.dependency "StreamChat", "#{spec.version}"
+
+  spec.cocoapods_version = ">= 1.11.0"
 end

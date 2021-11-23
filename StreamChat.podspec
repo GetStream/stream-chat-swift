@@ -20,4 +20,6 @@ Pod::Spec.new do |spec|
   spec.source = { :http => "https://github.com/GetStream/stream-chat-swift/releases/download/#{spec.version}/#{spec.name}.xcframework.zip" }
   spec.vendored_frameworks = "#{spec.name}.xcframework"
   spec.preserve_paths = "#{spec.name}.xcframework/*"
+
+  spec.cocoapods_version = ">= 1.11.0"
 end
