@@ -13,8 +13,7 @@ extension ChatClient {
             config: .init(apiKey: .init(.unique)),
             workerBuilders: [],
             eventWorkerBuilders: [],
-            environment: .mock,
-            tokenExpirationRetryStrategy: DefaultReconnectionStrategy()
+            environment: .mock
         )
     }
     
@@ -67,8 +66,7 @@ class ChatClientMock: ChatClient {
         tokenProvider: TokenProvider? = nil,
         workerBuilders: [WorkerBuilder] = [],
         eventWorkerBuilders: [EventWorkerBuilder] = [],
-        environment: Environment = .mock,
-        tokenExpirationRetryStrategy: WebSocketClientReconnectionStrategy = DefaultReconnectionStrategy()
+        environment: Environment = .mock
     ) {
         init_config = config
         init_tokenProvider = tokenProvider
@@ -81,8 +79,7 @@ class ChatClientMock: ChatClient {
             tokenProvider: tokenProvider,
             workerBuilders: workerBuilders,
             eventWorkerBuilders: eventWorkerBuilders,
-            environment: environment,
-            tokenExpirationRetryStrategy: tokenExpirationRetryStrategy
+            environment: environment
         )
     }
 

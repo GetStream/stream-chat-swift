@@ -35,8 +35,7 @@ public extension ChatClient {
                         shouldShowShadowedMessages: $5
                     )
                 }
-            ),
-            tokenExpirationRetryStrategy: DefaultReconnectionStrategy()
+            )
         )
     }
 }

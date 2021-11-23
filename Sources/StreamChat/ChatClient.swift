@@ -172,7 +172,7 @@ public class ChatClient {
     private let environment: Environment
     
     /// Retry timing strategy for refreshing an expiried token
-    private var tokenExpirationRetryStrategy: WebSocketClientReconnectionStrategy
+    private lazy var tokenExpirationRetryStrategy = environment.tokenExpirationRetryStrategy
     
     /// A timer that runs token refreshing job
     private var tokenRetryTimer: TimerControl?
@@ -285,15 +285,13 @@ public class ChatClient {
         tokenProvider: TokenProvider? = nil,
         workerBuilders: [WorkerBuilder],
         eventWorkerBuilders: [EventWorkerBuilder],
-        environment: Environment,
-        tokenExpirationRetryStrategy: WebSocketClientReconnectionStrategy = DefaultReconnectionStrategy()
+        environment: Environment
     ) {
         self.config = config
         self.tokenProvider = tokenProvider
         self.environment = environment
         self.workerBuilders = workerBuilders
         self.eventWorkerBuilders = eventWorkerBuilders
-        self.tokenExpirationRetryStrategy = tokenExpirationRetryStrategy
 
         currentUserId = fetchCurrentUserIdFromDatabase()
     }
@@ -577,6 +575,8 @@ extension ChatClient {
         }
         
         var timerType: Timer.Type = DefaultTimer.self
+        
+        var tokenExpirationRetryStrategy: WebSocketClientReconnectionStrategy = DefaultReconnectionStrategy()
     }
 }
 
