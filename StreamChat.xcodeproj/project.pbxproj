@@ -2832,6 +2832,7 @@
 		790881AB254327C800896F03 /* StreamChat */ = {
 			isa = PBXGroup;
 			children = (
+				C13C74EE273936D900F93B34 /* StreamStarscream */,
 				79A0E9AC2498BD0C00E9BD50 /* ChatClient.swift */,
 				799C942F247D2FB9001F1104 /* ChatClient_Tests.swift */,
 				7991D83E24F8F1BF00D21BA3 /* ChatClient_Mock.swift */,
@@ -2856,6 +2857,8 @@
 		7908823025432C6400896F03 /* StreamChatUI */ = {
 			isa = PBXGroup;
 			children = (
+				C1BE72742732CB7B006EB51E /* StreamNuke */,
+				C13C74D1273932D200F93B34 /* StreamSwiftyGif */,
 				BDDD1EA22632C50200BA007B /* Appearance.swift */,
 				8850B929255C286B003AED69 /* Components.swift */,
 				E7166CB125BED22B00B03B07 /* Appearance+ColorPalette.swift */,
@@ -3499,9 +3502,6 @@
 				790881AB254327C800896F03 /* StreamChat */,
 				793060E725778896005CF846 /* StreamChatTestTools */,
 				7908823025432C6400896F03 /* StreamChatUI */,
-				C1BE72742732CB7B006EB51E /* StreamNuke */,
-				C13C74D1273932D200F93B34 /* StreamSwiftyGif */,
-				C13C74EE273936D900F93B34 /* StreamStarscream */,
 			);
 			indentWidth = 4;
 			path = Sources;

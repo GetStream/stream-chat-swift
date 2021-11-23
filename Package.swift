@@ -23,19 +23,15 @@ let package = Package(
     targets: [
         .target(
             name: "StreamChat",
-            dependencies: ["StreamStarscream"],
             exclude: ["README.md", "Info.plist"] + streamChatSourcesExcluded,
             resources: [.copy("Database/StreamChatModel.xcdatamodeld")]
         ),
         .target(
             name: "StreamChatUI",
-            dependencies: ["StreamChat", "StreamNuke", "StreamSwiftyGif"],
+            dependencies: ["StreamChat"],
             exclude: ["README.md", "Info.plist", "Generated/L10n_template.stencil"] + streamChatUIFilesExcluded,
             resources: [.process("Resources")]
-        ),
-        .target(name: "StreamStarscream"),
-        .target(name: "StreamSwiftyGif"),
-        .target(name: "StreamNuke"),
+        )
     ]
 )
 
