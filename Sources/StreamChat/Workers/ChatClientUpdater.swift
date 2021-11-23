@@ -144,8 +144,8 @@ class ChatClientUpdater {
                 completion?(nil)
             } else {
                 // Try to get a concrete error
-                if case let .disconnected(error) = client?.webSocketClient?.connectionState {
-                    completion?(ClientError.ConnectionNotSuccessful(with: error))
+                if case let .disconnected(source) = client?.webSocketClient?.connectionState {
+                    completion?(ClientError.ConnectionNotSuccessful(with: source.serverError))
                 } else {
                     completion?(ClientError.ConnectionNotSuccessful())
                 }
