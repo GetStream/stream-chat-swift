@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### 🐞 Fixed
 - Fix memory leak in GalleryVC [#1631](https://github.com/GetStream/stream-chat-swift/pull/1631)
 - Increase tappable area surrounding the ShareButton inside the GalleryVC [#1640](https://github.com/GetStream/stream-chat-swift/pull/1640)
+- Fix giphy action message (ephemeral message) in a thread is also shown in the channel [#1641](https://github.com/GetStream/stream-chat-swift/issues/1641)
 
 # [4.5.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.5.0)
 _November 16, 2021_
