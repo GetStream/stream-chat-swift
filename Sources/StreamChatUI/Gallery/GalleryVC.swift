@@ -219,6 +219,7 @@ open class GalleryVC:
         bottomBarView.embed(bottomBarContainerStackView)
         
         shareButton.setContentHuggingPriority(.streamRequire, for: .horizontal)
+        shareButton.contentEdgeInsets = UIEdgeInsets(top: 12, left: 12, bottom: 12, right: 12)
         bottomBarContainerStackView.addArrangedSubview(shareButton)
 
         currentPhotoLabel.setContentHuggingPriority(.defaultLow, for: .horizontal)
