@@ -242,7 +242,7 @@ private extension ConnectionRecoveryUpdater {
                     shouldPostEvents: false,
                     completion: {
                         // 3. Get most recent evetn timestamp
-                        let mostRecentEventTimestamp = payload.eventPayloads.first?.createdAt ?? lastSyncedAt
+                        let mostRecentEventTimestamp = payload.eventPayloads.last?.createdAt ?? lastSyncedAt
                         
                         // 4. Report all given channels as synced and the new sync date
                         completion(.success((cids, mostRecentEventTimestamp)))
