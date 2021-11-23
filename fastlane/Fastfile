@@ -296,6 +296,7 @@ lane :test do |options|
     configuration: "Debug",
     clean: true,
     devices: options[:device],
+    build_for_testing: options[:build_for_testing]
     )
 end
 
