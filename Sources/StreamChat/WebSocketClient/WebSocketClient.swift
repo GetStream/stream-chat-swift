@@ -63,9 +63,6 @@ class WebSocketClient {
     /// An object describing reconnection behavior after the web socket is disconnected.
     private var reconnectionStrategy: WebSocketClientReconnectionStrategy
     
-    /// The internet connection observer we use for recovering when the connection was offline for some time.
-    private let internetConnection: InternetConnection
-    
     /// An object containing external dependencies of `WebSocketClient`
     private let environment: Environment
     
@@ -97,7 +94,6 @@ class WebSocketClient {
         requestEncoder: RequestEncoder,
         eventDecoder: AnyEventDecoder,
         eventNotificationCenter: EventNotificationCenter,
-        internetConnection: InternetConnection,
         reconnectionStrategy: WebSocketClientReconnectionStrategy = DefaultReconnectionStrategy(),
         environment: Environment = .init()
     ) {
@@ -106,7 +102,6 @@ class WebSocketClient {
         self.sessionConfiguration = sessionConfiguration
         self.reconnectionStrategy = reconnectionStrategy
         self.eventDecoder = eventDecoder
-        self.internetConnection = internetConnection
 
         self.eventNotificationCenter = eventNotificationCenter
     }
@@ -264,19 +259,6 @@ extension WebSocketClient: WebSocketEngineDelegate {
             }()
             
             connectionState = .disconnected(source: source)
-            
-            // If the disconnection error was one of the internet-is-down error, schedule reconnecting once the
-            // connection is back online.
-            guard disconnectionError?.isInternetOfflineError == true else { return }
-            
-            internetConnection.notifyOnce(when: { $0.isAvailable }) { [weak self] in
-                // Check the current state is still "disconnected" with an internet-down error. If not, it means
-                // the state was changed manually and we don't want to reconnect automatically.
-                if case let .disconnected(source) = self?.connectionState,
-                   source.serverError?.isInternetOfflineError == true {
-                    self?.connect()
-                }
-            }
         }
     }
 }

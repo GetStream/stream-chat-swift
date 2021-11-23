@@ -67,26 +67,6 @@ extension InternetConnection: InternetConnectionDelegate {
     }
 }
 
-extension InternetConnection {
-    /// Sets up a one-time observer which is called when the status chnages to the desired status.
-    func notifyOnce(when: @escaping (Status) -> Bool, callback: @escaping () -> Void) {
-        var token: NSObjectProtocol?
-        token = notificationCenter.addObserver(
-            forName: .internetConnectionStatusDidChange,
-            object: self,
-            queue: nil,
-            using: { [weak notificationCenter] in
-                if let status = $0.internetConnectionStatus, when(status) {
-                    callback()
-                    if let token = token {
-                        notificationCenter?.removeObserver(token)
-                    }
-                }
-            }
-        )
-    }
-}
-
 // MARK: - Internet Connection Monitors
 
 /// A delegate to receive Internet connection events.

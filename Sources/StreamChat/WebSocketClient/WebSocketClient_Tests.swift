@@ -26,7 +26,6 @@ class WebSocketClient_Tests: XCTestCase {
     var user: ChatUser!
     var requestEncoder: TestRequestEncoder!
     var pingController: WebSocketPingControllerMock { webSocketClient.pingController as! WebSocketPingControllerMock }
-    var internetConnectionMonitor: InternetConnectionMonitorMock!
     var eventsBatcher: EventBatcher_Mock { webSocketClient.eventsBatch as! EventBatcher_Mock }
     
     var eventNotificationCenter: EventNotificationCenterMock!
@@ -55,8 +54,6 @@ class WebSocketClient_Tests: XCTestCase {
         eventNotificationCenterMiddleware = EventMiddlewareMock()
         eventNotificationCenter.add(middleware: eventNotificationCenterMiddleware)
         
-        internetConnectionMonitor = InternetConnectionMonitorMock()
-        
         var environment = WebSocketClient.Environment.mock
         environment.timerType = VirtualTimeTimer.self
         
@@ -65,7 +62,6 @@ class WebSocketClient_Tests: XCTestCase {
             requestEncoder: requestEncoder,
             eventDecoder: decoder,
             eventNotificationCenter: eventNotificationCenter,
-            internetConnection: InternetConnection(monitor: internetConnectionMonitor),
             reconnectionStrategy: reconnectionStrategy,
             environment: environment
         )
