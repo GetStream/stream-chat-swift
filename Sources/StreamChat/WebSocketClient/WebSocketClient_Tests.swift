@@ -132,7 +132,7 @@ class WebSocketClient_Tests: XCTestCase {
     // MARK: - Connection tests
     
     func test_connectionFlow() {
-        assert(webSocketClient.connectionState == .disconnected())
+        assert(webSocketClient.connectionState == .initialized)
         
         // Simulate response from the encoder
         let request = URLRequest(url: .unique())

@@ -9,7 +9,7 @@ class WebSocketClient {
     let eventNotificationCenter: EventNotificationCenter
     
     /// The current state the web socket connection.
-    @Atomic private(set) var connectionState: WebSocketConnectionState = .disconnected() {
+    @Atomic private(set) var connectionState: WebSocketConnectionState = .initialized {
         didSet {
             log.info("Web socket connection state changed: \(connectionState)", subsystems: .webSocket)
             connectionStateDelegate?.webSocketClient(self, didUpdateConnectionState: connectionState)
