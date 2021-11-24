@@ -43,7 +43,7 @@ function removeUnneededSymbols() {
 	    library_match="${BASH_REMATCH[2]}"
 	    if [[ $library_match != $library ]]
 	    then
-	    	echo "👉 Removing uneeded 'bcsymbolmap' from $library-$arch: $library_match - $f"
+	    	echo "→ Removing uneeded 'bcsymbolmap' from $library-$arch: $library_match - $f"
 	    	rm $f
 	    fi
 	done

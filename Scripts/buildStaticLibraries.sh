@@ -37,8 +37,8 @@ do
   fi
 
   logs_file="$derived_data/build_static_libraries_iphone$platform-xcodebuild.log"
-  echo "👉 Creating archive for iphone$platform. Destination: $destination."
-  echo "👉 Building... Logs available: $logs_file"
+  echo "→ Creating archive for iphone$platform. Destination: $destination."
+  echo "→ Building... Logs available: $logs_file"
 
   # We only archive StreamChatUI because since it has a dependency on StreamChat, it will build this one too.
   xcodebuild archive \
@@ -63,10 +63,10 @@ do
   archives_framework_path="$archives/$library-iphone-$platform.xcarchive/$framework_path"
   for artifact in ${artifacts[@]}
   do
-    echo "👉 Getting .swiftmodule for $artifact"
+    echo "→ Getting .swiftmodule for $artifact"
     cp -r "$derived_data_products/Release-iphone$platform/$artifact.swiftmodule/" "$archives_framework_path/$artifact.swiftmodule"
 
-    echo "👉 Filling $artifact.xcframework for iphone$platform"
+    echo "→ Filling $artifact.xcframework for iphone$platform"
     xcodebuild -create-xcframework \
       -library "$archives_framework_path/lib$artifact.a" \
       -output "Products/$artifact.xcframework"
@@ -74,11 +74,11 @@ do
 done
 
 mv $archives "$derived_data/Archives"
-echo "👉 XCFrameworks created in $products_path"
+echo "→ XCFrameworks created in $products_path"
 
 # Our libraries depend on resources. Those cannot be embedded in a static library, so we are manually creating the needed bundles.
 # Those bundles need its content to be compiled.
-echo "👉 Creating StreamChat.bundle"
+echo "→ Creating StreamChat.bundle"
 
 streamchat_bundle_path="$products_path/StreamChat.bundle"
 xcdatamodeld_name="StreamChatModel"
@@ -90,7 +90,7 @@ mkdir $streamchat_bundle_path
 # Credits to CocoaPods https://github.com/CocoaPods/CocoaPods/blob/master/lib/cocoapods/generator/copy_resources_script.rb
 xcrun momc $xcdatamodeld_path "$streamchat_bundle_path/$xcdatamodeld_name.mom"
 
-echo "👉 Creating StreamChatUIResources.bundle"
+echo "→ Creating StreamChatUIResources.bundle"
 
 streamchatui_resources_path="Sources/StreamChatUI/Resources"
 streamchatui_bundle_path="$products_path/StreamChatUIResources.bundle"
@@ -114,5 +114,3 @@ do
   # Compiles .strings and .stringsdict files
   xcrun plutil -convert binary1 "$string_files"
 done
-
-echo "👉 Done! Find all the artifacts in $products_path"

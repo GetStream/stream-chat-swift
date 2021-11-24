@@ -7,7 +7,7 @@
 ensure_clean_git () {
 	if !(git diff-index --quiet HEAD)
 	then
-		echo "👉 Seems like git is not clean in $dependency_directory. Please make sure it is clean, and run it again"
+		echo "→ Seems like git is not clean in $dependency_directory. Please make sure it is clean, and run it again"
 		exit 1
 	fi
 }
@@ -37,6 +37,6 @@ cp -r "$dependency_directory/$sources_directory/." $output_directory
 
 for f in `find $output_directory -type f \( -iname \*.h -o -iname \*.plist \)`
 do
-	echo "👉 Removing $f"
+	echo "→ Removing $f"
 	rm $f
 done

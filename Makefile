@@ -6,7 +6,9 @@ bootstrap:
 all_artifacts:
 	echo "🏁 Starting at $$(date +%T)"
 	make frameworks
+	echo "🏁 Finished creating dynamic libraries at $$(date +%T)"
 	make static_libraries
+	echo "🏁 Finished creating static libraries at $$(date +%T)"
 	make clean
 	make swiftpm_checksum
 	open ./Products
