@@ -3,24 +3,65 @@ MAKEFLAGS += --silent
 bootstrap:
 	./Scripts/bootstrap.sh
 
-frameworks:
-	echo "♦︎♦︎♦︎ Creating xcframeworks ♦︎♦︎♦︎"
-	bundle exec fastlane build_xcframeworks
-	echo "♦︎♦︎♦︎ Creating compressed archives ♦︎♦︎♦︎"
-	cd ./Products && zip -r "StreamChat-All.xcframework.zip" ./*.xcframework
-	cd ./Products && zip -r "StreamChat.xcframework.zip" ./StreamChat.xcframework
-	cd ./Products && zip -r "StreamChatUI.xcframework.zip" ./StreamChatUI.xcframework
-	echo "♦︎♦︎♦︎ Checksum for StreamChat.xcframework.zip ♦︎♦︎♦︎"
-	swift package compute-checksum Products/StreamChat.xcframework.zip
-	echo "♦︎♦︎♦︎ Checksum for StreamChatUI.xcframework.zip ♦︎♦︎♦︎"
-	swift package compute-checksum Products/StreamChatUI.xcframework.zip
+all_artifacts:
+	echo "🏁 Starting at $$(date +%T)"
+	make frameworks
+	echo "🏁 Finished creating dynamic libraries at $$(date +%T)"
+	make static_libraries
+	echo "🏁 Finished creating static libraries at $$(date +%T)"
+	make clean
+	make swiftpm_checksum
+	open ./Products
+	echo "🏁 Ended at $$(date +%T)"
+
+frameworks: clean
+	echo "👉 Creating dynamic libraries. Will take a while... Logs available: DerivedData/fastlane.log"
+	bundle exec fastlane build_xcframeworks > DerivedData/fastlane.log
+	echo "👉 Creating compressed archives"
+	# Adding ".xcframework" in the zip name is on purpose, since Carthage looks out for this pattern.
+	make zip_artifacts name="StreamChat-All.xcframework" pattern=./*.xcframework
+	make zip_artifacts name="StreamChat" pattern=./StreamChat.xcframework
+	make zip_artifacts name="StreamChatUI" pattern=./StreamChatUI.xcframework
+
+static_libraries: clean
+	echo "👉 Creating static libraries"
+	./Scripts/buildStaticLibraries.sh
+	echo "👉 Creating compressed archive"
+	make zip_artifacts name="StreamChat-All-Static" pattern='./*.xcframework ./*.bundle'
+
+clean:
+	echo "♻️  Cleaning ./Products & ./DerivedData"
+	rm -rf DerivedData
+	mkdir -p DerivedData
+	rm -rf Products/*.xcframework
+	rm -rf Products/*.bundle
+	rm -rf Products/*.BCSymbolMaps
+	rm -rf Products/*.dSYMs
+
+zip_artifacts:
+	@if [ "$(name)" = "" ]; then\
+		echo "❌ Missing name parameter"; \
+        exit 1;\
+    fi
+	@if [ "$(pattern)" = "" ]; then\
+		echo "❌ Missing pattern parameter"; \
+        exit 1;\
+    fi
+	echo "👉 Compressing $(name)"
+	cd ./Products && zip -r "$(name).zip" $(pattern) > /dev/null
+
+swiftpm_checksum:
+	echo "ℹ️  Checksum for StreamChat.zip"
+	swift package compute-checksum Products/StreamChat.zip
+	echo "ℹ️  Checksum for StreamChatUI.zip"
+	swift package compute-checksum Products/StreamChatUI.zip
 
 update_dependencies:
-	echo "♦︎♦︎♦︎ Updating Nuke ♦︎♦︎♦︎"
+	echo "👉 Updating Nuke"
 	make update_nuke version=10.3.3
-	echo "♦︎♦︎♦︎ Updating Starscream ♦︎♦︎♦︎"
+	echo "👉 Updating Starscream"
 	make update_starscream version=4.0.4
-	echo "♦︎♦︎♦︎ Updating SwiftyGif ♦︎♦︎♦︎"
+	echo "👉 Updating SwiftyGif"
 	make update_swiftygif version=5.4.0
 
 update_nuke: check_version_parameter
@@ -37,6 +78,6 @@ update_swiftygif: check_version_parameter
 
 check_version_parameter:
 	@if [ "$(version)" = "" ]; then\
-		echo "✕ Missing parameter"; \
+		echo "❌ Missing version parameter"; \
         exit 1;\
     fi
