@@ -189,8 +189,19 @@ public class ChatClient {
     
     /// Stream-specific request headers.
     private let sessionHeaders: [String: String] = [
-        "X-Stream-Client": "stream-chat-swift-client-v\(SystemEnvironment.version)"
+        "X-Stream-Client": "stream-chat-\(sdkIdentifier)-client-v\(SystemEnvironment.version)"
     ]
+    
+    /// Identifies which SDK is being used.
+    private static var sdkIdentifier: String {
+        #if canImport(StreamChatSwiftUI)
+        return "swiftui"
+        #elseif canImport(StreamChatUI)
+        return "uikit"
+        #else
+        return "swift"
+        #endif
+    }
     
     /// The current connection id
     @Atomic var connectionId: String?
