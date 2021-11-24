@@ -98,16 +98,36 @@ xcrun momc $xcdatamodeld_path "$streamchat_bundle_path/$xcdatamodeld_name.momd"
 
 echo "→ Creating StreamChatUIResources.bundle"
 
+streamchatui_bundle_name="StreamChatUIResources.bundle"
 streamchatui_resources_path="Sources/StreamChatUI/Resources"
-streamchatui_bundle_path="$products_path/StreamChatUIResources.bundle"
-assets_path="$streamchatui_resources_path/Assets.xcassets/"
+streamchatui_bundle_path="$products_path/$streamchatui_bundle_name"
+assets_path="$streamchatui_resources_path/Assets.xcassets"
 
 mkdir $streamchatui_bundle_path
 
 # Compiles Assets.xcassets into Assets.car
-xcrun actool --compile $streamchatui_bundle_path $assets_path \
-  --platform "iphoneos" --minimum-deployment-target 11.0 \
-  --output-format human-readable-text --notices --warnings > /dev/null
+xcrun actool --warnings --notices --output-format human-readable-text \
+  --minimum-deployment-target 11.0 --platform iphonesimulator \
+  --target-device ipad --target-device iphone --compress-pngs \
+  --compile $streamchatui_bundle_path $assets_path > /dev/null
+
+# Creates an Info.plist to locate assets from the bundle
+assets_info_plist="$streamchatui_bundle_path/Info.plist"
+`cat > $assets_info_plist <<EOF
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>CFBundleIdentifier</key>
+  <string>com.stream.$streamchatui_bundle_name</string>
+  <key>CFBundleName</key>
+  <string>$streamchatui_bundle_name</string>
+</dict>
+</plist>
+EOF`
+
+# Compiles the Info.plist
+xcrun plutil -convert binary1 $assets_info_plist
 
 strings_folder_name="en.lproj"
 strings_destination_folder="$streamchatui_bundle_path/$strings_folder_name"
@@ -115,8 +135,8 @@ strings_destination_folder="$streamchatui_bundle_path/$strings_folder_name"
 cp -r "$streamchatui_resources_path/$strings_folder_name" $streamchatui_bundle_path
 
 files=`find $strings_destination_folder -type f \( -iname \*.strings -o -iname \*.stringsdict \)`
-for string_files in $files
+for string_file in $files
 do
   # Compiles .strings and .stringsdict files
-  xcrun plutil -convert binary1 "$string_files"
+  xcrun plutil -convert binary1 $string_file
 done
