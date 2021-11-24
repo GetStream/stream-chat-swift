@@ -140,10 +140,10 @@ class ConnectionRecoveryUpdater: EventWorker {
             case let .success(payload):
                 // The sync call was successful.
                 // We schedule all events for existing channels for processing...
-                self.eventNotificationCenter.process(payload.eventPayloads)
-                
-                // ... and refetch the existing queries to see if there are some new channels
-                completion()
+                self.eventNotificationCenter.processMissingEvents(
+                    payload.eventPayloads,
+                    completion: completion
+                )
                 
             case let .failure(error):
                 log.info(
@@ -190,14 +190,21 @@ extension EventNotificationCenter {
     /// that was successfully decoded.
     ///
     /// - Parameter payloads: The event payloads
-    func process(_ payloads: [EventPayload]) {
-        payloads.forEach {
+    func processMissingEvents(_ payloads: [EventPayload], post: Bool = true, completion: (() -> Void)? = nil) {
+        let events: [Event] = payloads.compactMap {
             do {
-                process(try $0.event())
+                return try $0.event()
             } catch {
                 log.error("Failed to transform a payload into an event: \($0)")
+                return nil
             }
         }
+        
+        process(
+            events,
+            post: post,
+            completion: completion
+        )
     }
 }
 

@@ -1198,7 +1198,6 @@ class ChatClient_Tests: XCTestCase {
         let client = ChatClient(
             config: inMemoryStorageConfig,
             workerBuilders: workerBuilders,
-            eventWorkerBuilders: [],
             environment: testEnv.environment
         )
         let prefix = "stream-chat-swift-client-v"
@@ -1380,10 +1379,15 @@ private extension ChatClientConfig {
 
 class EventNotificationCenterMock: EventNotificationCenter {
     /// Logs all events the `process` method was called with
-    @Atomic var process_loggedEvents: [Event] = []
-    
-    override func process(_ event: Event) {
-        super.process(event)
-        _process_loggedEvents { $0.append(event) }
+    @Atomic var process_events: [Event] = []
+    @Atomic var process_post: Bool?
+    @Atomic var process_completion: (() -> Void)?
+
+    override func process(_ events: [Event], post: Bool = true, completion: (() -> Void)? = nil) {
+        super.process(events, post: post, completion: completion)
+        
+        process_events = events
+        process_post = post
+        process_completion = completion
     }
 }

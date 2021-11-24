@@ -26,7 +26,7 @@ class WebSocketClientMock: WebSocketClient {
         eventNotificationCenter: EventNotificationCenter,
         internetConnection: InternetConnection,
         reconnectionStrategy: WebSocketClientReconnectionStrategy = DefaultReconnectionStrategy(),
-        environment: WebSocketClient.Environment = .init()
+        environment: WebSocketClient.Environment = .mock
     ) {
         init_sessionConfiguration = sessionConfiguration
         init_requestEncoder = requestEncoder
@@ -64,6 +64,18 @@ extension WebSocketClientMock {
             eventDecoder: EventDecoder(),
             eventNotificationCenter: EventNotificationCenterMock(database: DatabaseContainerMock()),
             internetConnection: InternetConnection()
+        )
+    }
+}
+
+extension WebSocketClient.Environment {
+    static var mock: Self {
+        .init(
+            createPingController: WebSocketPingControllerMock.init,
+            createEngine: WebSocketEngineMock.init,
+            createEventBatcher: {
+                EventBatcher_Mock(period: 0, handler: $0)
+            }
         )
     }
 }

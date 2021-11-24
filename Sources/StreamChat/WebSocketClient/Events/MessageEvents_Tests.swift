@@ -87,14 +87,9 @@ class MessageEventsIntegration_Tests: XCTestCase {
     override func setUp() {
         super.setUp()
 
-        var config = ChatClientConfig(apiKeyString: "Integration_Tests_Key")
-        config.isLocalStorageEnabled = false
-        config.isClientInActiveMode = false
-        
         currentUserId = .unique
-        client = ChatClient(config: config)
+        client = ChatClient.mock
         try! client.databaseContainer.createCurrentUser(id: currentUserId)
-        client.eventNotificationCenter.eventBatchPeriod = 0
         client.connectUser(userInfo: .init(id: currentUserId), token: .development(userId: currentUserId))
     }
 

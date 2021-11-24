@@ -27,8 +27,9 @@ class WebSocketClient_Tests: XCTestCase {
     var requestEncoder: TestRequestEncoder!
     var pingController: WebSocketPingControllerMock { webSocketClient.pingController as! WebSocketPingControllerMock }
     var internetConnectionMonitor: InternetConnectionMonitorMock!
+    var eventsBatcher: EventBatcher_Mock { webSocketClient.eventsBatch as! EventBatcher_Mock }
     
-    var eventNotificationCenter: EventNotificationCenter!
+    var eventNotificationCenter: EventNotificationCenterMock!
     private var eventNotificationCenterMiddleware: EventMiddlewareMock!
     
     var database: DatabaseContainer!
@@ -50,16 +51,14 @@ class WebSocketClient_Tests: XCTestCase {
         requestEncoder = TestRequestEncoder(baseURL: .unique(), apiKey: .init(.unique))
         
         database = DatabaseContainerMock()
-        eventNotificationCenter = EventNotificationCenter(database: database)
+        eventNotificationCenter = EventNotificationCenterMock(database: database)
         eventNotificationCenterMiddleware = EventMiddlewareMock()
         eventNotificationCenter.add(middleware: eventNotificationCenterMiddleware)
         
         internetConnectionMonitor = InternetConnectionMonitorMock()
         
-        var environment = WebSocketClient.Environment()
+        var environment = WebSocketClient.Environment.mock
         environment.timerType = VirtualTimeTimer.self
-        environment.createPingController = WebSocketPingControllerMock.init
-        environment.createEngine = WebSocketEngineMock.init
         
         webSocketClient = WebSocketClient(
             sessionConfiguration: .ephemeral,
@@ -207,6 +206,20 @@ class WebSocketClient_Tests: XCTestCase {
         
         // Assert disconnect is called
         AssertAsync.willBeEqual(engine!.disconnect_calledCount, 1)
+    }
+    
+    func test_disconnect_initiatesImmidiateEventsProcessing() {
+        // Simulate connection
+        test_connectionFlow()
+        
+        // Assert `processImmidiately` was not triggered
+        XCTAssertFalse(eventsBatcher.mock_processImmidiately.called)
+        
+        // Simulate disconnection
+        webSocketClient.disconnect()
+        
+        // Assert `processImmidiately` is triggered
+        AssertAsync.willBeTrue(eventsBatcher.mock_processImmidiately.called)
     }
     
     func test_whenConnectedAndEngineDisconnectsWithInternetConnectionError_itIsTreatedAsSystemInitiatedDisconnect() {
@@ -506,7 +519,6 @@ class WebSocketClient_Tests: XCTestCase {
         decoder.decodedEvent = .success(testEvent)
         
         // Clean up pending events and start logging the new ones
-        eventNotificationCenter.pendingEvents = []
         let eventLogger = EventLogger(eventNotificationCenter)
         
         // Simulate incoming data
@@ -516,7 +528,7 @@ class WebSocketClient_Tests: XCTestCase {
         // Assert that the decoder is used with correct data and the event decoder returns is published
         AssertAsync {
             Assert.willBeEqual(self.decoder.decode_calledWithData, incomingData)
-            Assert.willBeEqual(eventLogger.events, [testEvent])
+            Assert.willBeTrue(eventLogger.equatableEvents.contains(testEvent.asEquatable))
         }
     }
     
@@ -524,9 +536,6 @@ class WebSocketClient_Tests: XCTestCase {
         // Simulate connection
         test_connectionFlow()
         
-        // Clean up pending events
-        eventNotificationCenter.pendingEvents = []
-
         // Make the decoder return an event
         let incomingEvent = TestEvent()
         decoder.decodedEvent = .success(incomingEvent)
@@ -545,7 +554,10 @@ class WebSocketClient_Tests: XCTestCase {
         engine!.simulateMessageReceived()
         
         // Assert the published event is the one from the middleware
-        AssertAsync.willBeEqual(eventLogger.equatableEvents, [processedEvent.asEquatable])
+        AssertAsync {
+            Assert.willBeTrue(eventLogger.equatableEvents.contains(processedEvent.asEquatable))
+            Assert.willBeFalse(eventLogger.equatableEvents.contains(incomingEvent.asEquatable))
+        }
     }
     
     func test_connectionStatusUpdated_eventsArePublished_whenWSConnectionStateChanges() {
@@ -625,6 +637,38 @@ class WebSocketClient_Tests: XCTestCase {
         // We should see `CurrentUserDTO` being saved before we get connectionId
         AssertAsync.willBeEqual(currentUser?.user.id, payloadCurrentUser.id)
         AssertAsync.willBeEqual(webSocketClient.connectionState, .connected(connectionId: connectionId))
+    }
+    
+    func test_whenHealthCheckEventComes_itIsNotPublished() {
+        // Simulate response from the encoder
+        let request = URLRequest(url: .unique())
+        requestEncoder.encodeRequest = .success(request)
+        
+        // Assign connect endpoint
+        webSocketClient.connectEndpoint = endpoint
+        
+        // Connect the web-socket client
+        webSocketClient.connect()
+        
+        // Wait for engine to be called
+        AssertAsync.willBeEqual(engine!.connect_calledCount, 1)
+        
+        // Simulate engine established connection
+        engine!.simulateConnectionSuccess()
+        
+        // Wait for the connection state to be propagated to web-socket client
+        AssertAsync.willBeEqual(webSocketClient.connectionState, .waitingForConnectionId)
+        
+        // Create event logger to check published events
+        let eventLogger = EventLogger(eventNotificationCenter)
+        
+        // Simulate received health check event
+        let healthCheckEvent = HealthCheckEvent(connectionId: .unique)
+        decoder.decodedEvent = .success(healthCheckEvent)
+        engine!.simulateMessageReceived()
+        
+        // Assert `HealthCheckEvent` is not published
+        AssertAsync.staysTrue(!eventLogger.events.contains(where: { $0 is HealthCheckEvent }))
     }
 }
 

@@ -8,6 +8,11 @@ class WebSocketClient {
     /// The notification center `WebSocketClient` uses to send notifications about incoming events.
     let eventNotificationCenter: EventNotificationCenter
     
+    /// The batch of events received via the web-socket that wait to be processed.
+    private(set) lazy var eventsBatch = environment.createEventBatcher { [weak self] events in
+        self?.eventNotificationCenter.process(events)
+    }
+    
     /// The current state the web socket connection.
     @Atomic private(set) var connectionState: WebSocketConnectionState = .initialized {
         didSet {
@@ -25,7 +30,7 @@ class WebSocketClient {
 
             if event.connectionStatus != previousStatus {
                 // Publish Connection event with the new state
-                eventNotificationCenter.process(event)
+                eventsBatch.append(event)
             }
         }
     }
@@ -140,8 +145,10 @@ class WebSocketClient {
     /// - Parameter source: Additional information about the source of the disconnection. Default value is `.userInitiated`.
     func disconnect(source: WebSocketConnectionState.DisconnectionSource = .userInitiated) {
         connectionState = .disconnecting(source: source)
-        engineQueue.async { [engine] in
+        engineQueue.async { [engine, eventsBatch] in
             engine?.disconnect()
+            
+            eventsBatch.processImmidiately()
         }
     }
 }
@@ -161,6 +168,10 @@ extension WebSocketClient {
             _ callbackQueue: DispatchQueue
         ) -> WebSocketEngine
         
+        typealias CreateEventBatcher = (
+            _ handler: @escaping ([Event]) -> Void
+        ) -> EventBatcher
+        
         var timerType: Timer.Type = DefaultTimer.self
         
         var createPingController: CreatePingController = WebSocketPingController.init
@@ -171,6 +182,10 @@ extension WebSocketClient {
             } else {
                 return StarscreamWebSocketProvider(request: $0, sessionConfiguration: $1, callbackQueue: $2)
             }
+        }
+        
+        var createEventBatcher: CreateEventBatcher = {
+            Batcher<Event>(period: 0.5, handler: $0)
         }
     }
 }
@@ -189,12 +204,12 @@ extension WebSocketClient: WebSocketEngineDelegate {
 
             let event = try eventDecoder.decode(from: messageData)
             if let healthCheckEvent = event as? HealthCheckEvent {
-                eventNotificationCenter.process(healthCheckEvent) { [weak self] connectionId in
+                eventNotificationCenter.process([healthCheckEvent], post: false) { [weak self] in
                     self?.pingController.pongRecieved()
-                    self?.connectionState = .connected(connectionId: connectionId)
+                    self?.connectionState = .connected(connectionId: healthCheckEvent.connectionId)
                 }
             } else {
-                eventNotificationCenter.process(event)
+                eventsBatch.append(event)
             }
         } catch is ClientError.UnsupportedEventType {
             log.info("Skipping unsupported event type with payload: \(message)", subsystems: .webSocket)
