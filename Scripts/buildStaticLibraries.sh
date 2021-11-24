@@ -65,12 +65,18 @@ do
   do
     echo "→ Getting .swiftmodule for $artifact"
     cp -r "$derived_data_products/Release-iphone$platform/$artifact.swiftmodule/" "$archives_framework_path/$artifact.swiftmodule"
-
-    echo "→ Filling $artifact.xcframework for iphone$platform"
-    xcodebuild -create-xcframework \
-      -library "$archives_framework_path/lib$artifact.a" \
-      -output "Products/$artifact.xcframework"
   done
+done
+
+for artifact in ${artifacts[@]}
+do
+  echo "→ Generating $artifact.xcframework"
+  simulator_archive_path="$archives/$library-iphone-simulator.xcarchive/$framework_path"
+  iphone_archive_path="$archives/$library-iphone-os.xcarchive/$framework_path"
+  xcodebuild -create-xcframework \
+    -library "$simulator_archive_path/lib$artifact.a" \
+    -library "$iphone_archive_path/lib$artifact.a" \
+    -output "Products/$artifact.xcframework"
 done
 
 mv $archives "$derived_data/Archives"
@@ -88,7 +94,7 @@ mkdir $streamchat_bundle_path
 
 # Compiles .xcdatamodeld into .mom
 # Credits to CocoaPods https://github.com/CocoaPods/CocoaPods/blob/master/lib/cocoapods/generator/copy_resources_script.rb
-xcrun momc $xcdatamodeld_path "$streamchat_bundle_path/$xcdatamodeld_name.mom"
+xcrun momc $xcdatamodeld_path "$streamchat_bundle_path/$xcdatamodeld_name.momd"
 
 echo "→ Creating StreamChatUIResources.bundle"
 
