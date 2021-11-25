@@ -2,9 +2,9 @@
 title: Message
 ---
 
-The rendering of the messages is delegated to different classes that can be customized or swapped with a custom class.
+The responsibility of rendering the messages is shared between multiple components that can be customized or totally replaced.
 
-Here is a diagram that shows the classes that are involved in rendering a message:
+Here is a diagram that shows the different components that are involved in rendering a message:
 
 import Digraph  from '../../common-content/digraph.jsx'
 import ChatMessageContentViewProperties from '../../common-content/reference-docs/stream-chat-ui/chat-message-list/chat-message/chat-message-content-view-properties.md'
@@ -24,17 +24,18 @@ import ChatMessageBubbleViewContentProperties from '../../common-content/referen
     ChatMessageContentView -> ChatReactionsBubbleView
     ChatMessageContentView -> ChatMessageBubbleView
     ChatReactionsBubbleView -> ChatMessageReactionsView
-    ChatMessageReactionsView -> "ChatMessageReactionsView.ItemView"
+    ChatMessageReactionsView -> "ChatMessageReactionItemView"
 ` }</Digraph>
 
 ### Overview
 
-1. [`ChatMessageLayoutOptionsResolver`](message-layout-options-resolver) is called for each message and create an instance `ChatMessageLayoutOptions`. This object contains all information needed by the view about the message (ie. does the message contains reactions, is it coming from the same user, should this message be rendered as part of a group of messages, ...)
-1. [`ChatMessageContentView`](#chatmessagecontentview) holds the entire message view and all its sub-views
-1. [`ChatMessageBubbleView`](#chatmessagebubbleview) wraps the message content inside a bubble. Depending on the layout options, the bubble will have different borders and colors and will show or not the user profile and name
-1. `ChatReactionsBubbleView` is a wrapper for `ChatMessageReactionsView` 
-1. `ChatMessageReactionsView` is responsible for rendering all reactions attached to the message
-1. `ChatMessageReactionsView.ItemView` renders a single reaction as a stateful toggle 
+1. [`ChatMessageLayoutOptionsResolver`](message-layout-options-resolver) calculates the `ChatMessageLayoutOptions` for each message.
+1. `ChatMessageLayoutOptions` contains all the information needed by the view to render the message (ie. does the message contains reactions, is it coming from the same user, etc...).
+1. [`ChatMessageContentView`](#chatmessagecontentview) holds the entire message view and all its sub-views.
+1. [`ChatMessageBubbleView`](#chatmessagebubbleview) wraps the message content inside a bubble. Depending on the layout options, the bubble will have different borders and colors and will show or not the user profile and name.
+1. `ChatReactionsBubbleView` is a wrapper for `ChatMessageReactionsView`.
+1. `ChatMessageReactionsView` is responsible for rendering all reactions attached to the message.
+1. `ChatMessageReactionItemView` renders a single reaction.
 
 ## Customizing Layout Options
 
