@@ -15,7 +15,7 @@ Classes that conform to the `CurrentChatUserController` protocol will receive ch
 func currentUserController(
     _ controller: CurrentChatUserController, didChangeCurrentUserUnreadCount: UnreadCount
 )
-    
+
 /// The controller observed a change in the `CurrentUser` entity.
 func currentUserController(
     _ controller: CurrentChatUserController,
@@ -80,6 +80,12 @@ class ViewController: UIViewController {
 }
 ```
 
+:::tip Using Synchronize
+
+After accessing the `ChatClient.shared.currentUserController()` it's important you call `synchronize()` after so the local and remote data is updated. You can read more about the importance of `synchronize()` [here](../../guides/importance-of-synchronize)..
+
+:::
+
 ## UserListController
 
 `ChatUserListController` allows you to observe a list of users based on the provided query.
@@ -101,7 +107,7 @@ func controller(
 
 ### UserControllerDelegate
 
-Classes that conform to this protocol will receive changes to chat users. 
+Classes that conform to this protocol will receive changes to chat users.
 
 ```swift
 func userController(
@@ -145,7 +151,7 @@ class UsersListView: UIView, ChatUserSearchControllerDelegate {
 
     override public init(frame: CGRect) {
         super.init(frame: frame)
-        
+
         addSubview(labelView)
 
         NSLayoutConstraint.activate([
@@ -155,7 +161,7 @@ class UsersListView: UIView, ChatUserSearchControllerDelegate {
             labelView.trailingAnchor.constraint(equalTo: trailingAnchor)
         ])
     }
-    
+
     required init?(coder: NSCoder) {
         super.init(coder: coder)
     }
@@ -177,8 +183,8 @@ class ViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        
+
+
         let query = UserListQuery.init(filter: .autocomplete(.name, text: "t"), sort: [], pageSize: 10)
         controller = ChatClient.shared.userSearchController()
         controller.delegate = usersListView
