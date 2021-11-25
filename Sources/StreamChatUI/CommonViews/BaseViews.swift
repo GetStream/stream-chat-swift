@@ -344,6 +344,11 @@ open class _ViewController: UIViewController, Customizable {
         updateContent()
     }
     
+    /// `setUp()` is an important function within the ViewController lifecycle
+    /// It's resposibility is to set the delegates and also call `synchronize()`
+    /// this will make sure your local & remote data is in sync.
+    /// If you override this method without calling `super.setUp()` it's important
+    /// to make sure `synchronize()` is called.
     open func setUp() { /* default empty implementation */ }
     open func setUpAppearance() { view.setNeedsLayout() }
     open func setUpLayout() { view.setNeedsLayout() }
