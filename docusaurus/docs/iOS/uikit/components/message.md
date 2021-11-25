@@ -6,10 +6,8 @@ The responsibility of rendering the messages is shared between multiple componen
 
 Here is a diagram that shows the different components that are involved in rendering a message:
 
-import Digraph  from '../../common-content/digraph.jsx'
-import ChatMessageContentViewProperties from '../../common-content/reference-docs/stream-chat-ui/chat-message-list/chat-message/chat-message-content-view-properties.md'
-import ChatMessageBubbleViewProperties from '../../common-content/reference-docs/stream-chat-ui/chat-message-list/chat-message/chat-message-bubble-view-properties.md'
-import ChatMessageBubbleViewContentProperties from '../../common-content/reference-docs/stream-chat-ui/chat-message-list/chat-message/chat-message-bubble-view.content-properties.md'
+import Digraph  from '../common-content/digraph.jsx'
+import ChatMessageContentViewProperties from '../common-content/reference-docs/stream-chat-ui/chat-message-list/chat-message/chat-message-content-view-properties.md'
 
 <Digraph>{ `
     {rank = same; ChatMessageBubbleView; ChatReactionsBubbleView;}
@@ -37,7 +35,11 @@ import ChatMessageBubbleViewContentProperties from '../../common-content/referen
 1. `ChatMessageReactionsView` is responsible for rendering all reactions attached to the message.
 1. `ChatMessageReactionItemView` renders a single reaction.
 
-## Customizing Layout Options
+
+## Basic Message Customizations
+
+
+### Customizing Layout Options
 
 Messages are rendered differently depending on their content. Layout options are flags that the `ChatMessageLayoutOptionsResolver` injects in each message view. You can customize how messages are grouped and displayed by using your own `ChatMessageLayoutOptionsResolver` class.
 
@@ -77,11 +79,24 @@ final class YTMessageLayoutOptionsResolver: ChatMessageLayoutOptionsResolver {
 }
 ```
 
-## ChatMessageContentView
+### Customizing Bubble View
 
-ChatMessageContentView is the container class for a message. Internally this class uses subviews such as the message bubble, reactions, attachments, and user avatars.
+You can either remove the bubble view by removing the `.bubble` from the layout options (see `ChatMessageLayoutOptionsResolver` docs) or provide your own message bubble view.
 
-## Customizing Messages
+```swift
+class CustomMessageSquaredBubbleView: ChatMessageBubbleView {
+    override open func setUpAppearance() {
+        super.setUpAppearance()
+        layer.cornerRadius = 0
+    }
+}
+```
+
+```swift
+Components.default.messageBubbleView = CustomMessageSquaredBubbleView.self
+```
+
+## Advanced Message Customizations
 
 Creating subclasses of `ChatMessageContentView` let's you alter views, create custom ones, and create complex layouts for your app. More information on lifecycle and subclassing is available [here](../custom-components#components-lifecycle-methods).
 
@@ -176,27 +191,10 @@ Components.default.messageContentView = CustomChatMessageContentView.self
 
 <img src={require("../../assets/messagelist-layout-custom-final.png").default} width="40%" />
 
+## ChatMessageContentView
+
+`ChatMessageContentView` is the container class for a message. Internally this class uses subviews such as the message bubble, reactions, attachments, and user avatars.
+
 ### Properties and Methods
 
 <ChatMessageContentViewProperties />
-
-## ChatMessageBubbleView
-
-ChatMessageBubbleView wraps the message content with a bubble. 
-
-### Customizing Bubble View
-
-You can either remove the bubble view by removing the `.bubble` from the layout options (see `ChatMessageLayoutOptionsResolver` docs) or provide your own message bubble view.
-
-```swift
-class CustomMessageSquaredBubbleView: ChatMessageBubbleView {
-    override open func setUpAppearance() {
-        super.setUpAppearance()
-        layer.cornerRadius = 0
-    }
-}
-```
-
-```swift
-Components.default.messageBubbleView = CustomMessageSquaredBubbleView.self
-```
