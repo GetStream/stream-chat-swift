@@ -19,16 +19,16 @@ public enum LogLevel: Int {
 
 /// Encapsulates the components of a log message.
 public struct LogDetails {
-    let loggerIdentifier: String
+    public let loggerIdentifier: String
     
-    let level: LogLevel
-    let date: Date
-    let message: String
-    let threadName: String
+    public let level: LogLevel
+    public let date: Date
+    public let message: String
+    public let threadName: String
     
-    let functionName: StaticString
-    let fileName: StaticString
-    let lineNumber: UInt
+    public let functionName: StaticString
+    public let fileName: StaticString
+    public let lineNumber: UInt
 }
 
 public protocol LogDestination {
