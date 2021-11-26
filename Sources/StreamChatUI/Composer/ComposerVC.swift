@@ -38,6 +38,10 @@ open class ComposerVC: _ViewController,
     UIDocumentPickerDelegate,
     UINavigationControllerDelegate,
     InputTextViewClipboardAttachmentDelegate {
+
+    /// Send One Action closure
+    public var sendOneAction: (() -> Void)?
+
     /// The content of the composer.
     public struct Content {
         /// The text of the input text view.
@@ -290,7 +294,7 @@ open class ComposerVC: _ViewController,
             case .photoPicker:
                 weakSelf.showAttachmentsPicker()
             case .sendOneDollar:
-                weakSelf.sendMoneyAction()
+                weakSelf.sendONEAction()
             case .sendRedPacket:
                 weakSelf.showAvailableCommands()
             case .shareNFTGalllery:
@@ -520,8 +524,9 @@ open class ComposerVC: _ViewController,
         content.clear()
     }
 
-    @objc open func sendMoneyAction() {
-        sendPaymentBubble()
+    @objc open func sendONEAction() {
+        //sendPaymentBubble()
+        sendOneAction?()
     }
 
     @objc open func toolKitToggleAction(sender: UIButton) {
