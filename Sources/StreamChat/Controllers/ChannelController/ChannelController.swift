@@ -1274,7 +1274,37 @@ public extension ChatChannelController {
 
 // MARK: - ChatRecoverableComponent
 
-extension ChatChannelController: ChatRecoverableComponent {}
+extension ChatChannelController: ChatRecoverableComponent {
+    var requiresRecovery: Bool {
+        state != .initialized
+    }
+    
+    func recover(
+        syncedCIDs: LocalSyncedCIDs,
+        watchedCIDs: LocalWatchedCIDs,
+        completion: @escaping (Result<LocalWatchedCIDs, Error>) -> Void
+    ) {
+        if let cid = cid {
+            updater.startWatching(cid: cid) { error in
+                if let error = error {
+                    completion(.failure(error))
+                } else {
+                    completion(.success([cid]))
+                }
+            }
+        } else {
+            synchronize { error in
+                if let cid = self.cid {
+                    completion(.success([cid]))
+                } else if let error = error {
+                    completion(.failure(error))
+                } else {
+                    completion(.failure(ClientError.Unexpected()))
+                }
+            }
+        }
+    }
+}
 
 extension ChatChannelController {
     struct Environment {

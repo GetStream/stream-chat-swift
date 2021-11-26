@@ -272,7 +272,67 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
 
 // MARK: - ChatRecoverableComponent
 
-extension ChatChannelListController: ChatRecoverableComponent {}
+extension ChatChannelListController: ChatRecoverableComponent {
+    var requiresRecovery: Bool {
+        state != .initialized
+    }
+    
+    func recover(
+        syncedCIDs: LocalSyncedCIDs,
+        watchedCIDs: LocalWatchedCIDs,
+        completion: @escaping (Result<LocalWatchedCIDs, Error>) -> Void
+    ) {
+        var updatedQuery = query
+        updatedQuery.pagination = .init(pageSize: .channelsPageSize, offset: 0)
+        
+        worker.fetch(channelListQuery: updatedQuery) {
+            switch $0 {
+            case let .success(channelListPayload):
+                var watchedQueryCIDs = Set<ChannelId>()
+                
+                self.client.databaseContainer.write({ session in
+                    guard let queryDTO = session.channelListQuery(filterHash: updatedQuery.filter.filterHash) else {
+                        completion(.failure(ClientError("Channel list query \(updatedQuery) is missing in database")))
+                        return
+                    }
+                    
+                    let localQueryCIDs = Set(queryDTO.channels.map(\.cid).compactMap { try? ChannelId(cid: $0) })
+                    let remoteQueryCIDs = Set(channelListPayload.channels.map(\.channel.cid))
+                                        
+                    let localOutdatedQueryCIDs = localQueryCIDs
+                        .subtracting(remoteQueryCIDs.intersection(syncedCIDs))
+                        .subtracting(watchedCIDs)
+                    
+                    for cid in localOutdatedQueryCIDs {
+                        guard let channelDTO = session.channel(cid: cid) else { continue }
+                        
+                        channelDTO.resetEphemeralValues()
+                        channelDTO.messages.removeAll()
+                    }
+                    
+                    // Unlink all local channels
+                    queryDTO.channels.removeAll()
+                    
+                    // Link what we've received from the backend
+                    try session.saveChannelList(
+                        payload: channelListPayload,
+                        query: updatedQuery
+                    )
+                    
+                    watchedQueryCIDs = remoteQueryCIDs
+                }, completion: { error in
+                    if let error = error {
+                        completion(.failure(error))
+                    } else {
+                        completion(.success(watchedQueryCIDs))
+                    }
+                })
+            case let .failure(error):
+                completion(.failure(error))
+            }
+        }
+    }
+}
 
 extension ChatChannelListController {
     struct Environment {
