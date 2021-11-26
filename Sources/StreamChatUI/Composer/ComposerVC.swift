@@ -6,6 +6,10 @@ import Foundation
 import StreamChat
 import UIKit
 
+extension Notification.Name {
+    static let sendOneWalletTapAction = Notification.Name("kStreamChatOneWalletTapAction")
+}
+
 /// The possible errors that can occur in attachment validation
 public enum AttachmentValidationError: Error {
     /// The size of the attachment exceeds the max file size
@@ -38,9 +42,6 @@ open class ComposerVC: _ViewController,
     UIDocumentPickerDelegate,
     UINavigationControllerDelegate,
     InputTextViewClipboardAttachmentDelegate {
-
-    /// Send One Action closure
-    public var sendOneAction: (() -> Void)?
 
     /// The content of the composer.
     public struct Content {
@@ -525,8 +526,8 @@ open class ComposerVC: _ViewController,
     }
 
     @objc open func sendONEAction() {
+        NotificationCenter.default.post(name: .sendOneWalletTapAction, object: nil)
         //sendPaymentBubble()
-        sendOneAction?()
     }
 
     @objc open func toolKitToggleAction(sender: UIButton) {
