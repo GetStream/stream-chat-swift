@@ -8,6 +8,7 @@ Here is a diagram that shows the different components that are involved in rende
 
 import Digraph  from '../common-content/digraph.jsx'
 import ChatMessageContentViewProperties from '../common-content/reference-docs/stream-chat-ui/chat-message-list/chat-message/chat-message-content-view-properties.md'
+import ComponentsNote from '../common-content/components-note.md'
 
 <Digraph>{ `
     {rank = same; ChatMessageBubbleView; ChatReactionsBubbleView;}
@@ -28,7 +29,7 @@ import ChatMessageContentViewProperties from '../common-content/reference-docs/s
 ### Overview
 
 1. [`ChatMessageLayoutOptionsResolver`](message-layout-options-resolver) calculates the `ChatMessageLayoutOptions` for each message.
-1. `ChatMessageLayoutOptions` contains all the information needed by the view to render the message (ie. does the message contains reactions, is it coming from the same user, etc...).
+1. `ChatMessageLayoutOptions` contains all the information needed by the view to render the message.
 1. [`ChatMessageContentView`](#chatmessagecontentview) holds the entire message view and all its sub-views.
 1. [`ChatMessageBubbleView`](#chatmessagebubbleview) wraps the message content inside a bubble. Depending on the layout options, the bubble will have different borders and colors and will show or not the user profile and name.
 1. `ChatReactionsBubbleView` is a wrapper for `ChatMessageReactionsView`.
@@ -36,57 +37,19 @@ import ChatMessageContentViewProperties from '../common-content/reference-docs/s
 1. `ChatMessageReactionItemView` renders a single reaction.
 
 
-## Basic Message Customizations
+## Basic Customizations
 
-
-### Customizing Layout Options
-
-Messages are rendered differently depending on their content. Layout options are flags that the `ChatMessageLayoutOptionsResolver` injects in each message view. You can customize how messages are grouped and displayed by using your own `ChatMessageLayoutOptionsResolver` class.
-
-```swift
-import StreamChat
-import StreamChatUI
-import UIKit
-
-final class YTMessageLayoutOptionsResolver: ChatMessageLayoutOptionsResolver {
-    override func optionsForMessage(
-        at indexPath: IndexPath,
-        in channel: ChatChannel,
-        with messages: AnyRandomAccessCollection<ChatMessage>,
-        appearance: Appearance
-    ) -> ChatMessageLayoutOptions {
-        var options = super.optionsForMessage(at: indexPath, in: channel, with: messages, appearance: appearance)
-        
-        // Remove the message options that are not needed in our case
-        options.remove([
-            .flipped,
-            .bubble,
-            .timestamp,
-            .avatar,
-            .avatarSizePadding,
-            .authorName,
-            .threadInfo,
-            .reactions,
-            .onlyVisibleForYouIndicator,
-            .errorIndicator
-        ])
-        
-        // Always show the avatar, timestamp and author name for each message
-        options.insert([.avatar, .timestamp, .authorName])
-        
-        return options
-    }
-}
-```
+In case your application only requires minimal changes to the message view, you can easily change the styling of the message subviews by replacing them with custom views, or do simple layout changes by customizing the message layout options resolver.
 
 ### Customizing Bubble View
 
-You can either remove the bubble view by removing the `.bubble` from the layout options (see `ChatMessageLayoutOptionsResolver` docs) or provide your own message bubble view.
+As an example of a styling change of the `ChatMessageContentView`, we will replace the bubble view with a custom one.
 
 ```swift
 class CustomMessageSquaredBubbleView: ChatMessageBubbleView {
     override open func setUpAppearance() {
         super.setUpAppearance()
+
         layer.cornerRadius = 0
     }
 }
@@ -96,7 +59,56 @@ class CustomMessageSquaredBubbleView: ChatMessageBubbleView {
 Components.default.messageBubbleView = CustomMessageSquaredBubbleView.self
 ```
 
-## Advanced Message Customizations
+#### Result:
+| Before  | After |
+| ------------- | ------------- |
+| <img src={require("../assets/message-basic-customization-before.png").default} /> | <img src={require("../assets/message-basic-customization-after.png").default} /> |
+
+<ComponentsNote />
+
+### Customizing Layout Options Resolver
+
+The `ChatMessageLayoutOptions` are flags that the `ChatMessageLayoutOptionsResolver` injects in each message view depending on the message content (ie. Does the message contains reactions? Is it coming from the same user? Etc...). When rendering the message view, the layout options will be used to know which views to show or hide, and if the message cell can be reused since different layout options combinations will produce different reuse identifiers. 
+
+By customizing the `ChatMessageLayoutOptionsResolver` it is possible to do simple layout changes, like for example always showing the timestamp (by default if the messages are sent in the same minute, only the last one shows the timestamp).
+
+```swift
+final class CustomMessageLayoutOptionsResolver: ChatMessageLayoutOptionsResolver {
+    override func optionsForMessage(
+        at indexPath: IndexPath,
+        in channel: ChatChannel,
+        with messages: AnyRandomAccessCollection<ChatMessage>,
+        appearance: Appearance
+    ) -> ChatMessageLayoutOptions {
+        var options = super.optionsForMessage(at: indexPath, in: channel, with: messages, appearance: appearance)
+
+        // Remove the reactions and thread info from each message.
+        // Remove `.flipped` option, all messages will be rendered in the leading side
+        // independent if it's the current user or not.
+        options.remove([
+            .flipped,
+            .threadInfo,
+            .reactions
+        ])
+
+        // Always show the avatar, timestamp and author name for each message.
+        options.insert([.avatar, .timestamp, .authorName])
+
+        return options
+    }
+}
+```
+
+```swift
+Components.default.messageLayoutOptionsResolver = CustomMessageLayoutOptionsResolver()
+```
+
+#### Result:
+| Before  | After |
+| ------------- | ------------- |
+| <img src={require("../assets/message-basic-resolver-before.png").default} /> | <img src={require("../assets/message-basic-resolver-after.png").default} /> |
+
+## Advanced Customizations
 
 Creating subclasses of `ChatMessageContentView` let's you alter views, create custom ones, and create complex layouts for your app. More information on lifecycle and subclassing is available [here](../custom-components#components-lifecycle-methods).
 
