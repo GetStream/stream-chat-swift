@@ -386,6 +386,12 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     
     override public func synchronize(_ completion: ((_ error: Error?) -> Void)? = nil) {
         let channelCreatedCallback = isChannelAlreadyCreated ? nil : channelCreated(forwardErrorTo: setLocalStateBasedOnError)
+        
+        channelQuery.pagination = .init(
+            pageSize: channelQuery.pagination?.pageSize ?? .messagesPageSize,
+            parameter: nil
+        )
+        
         updater.update(
             channelQuery: channelQuery,
             channelCreatedCallback: channelCreatedCallback
