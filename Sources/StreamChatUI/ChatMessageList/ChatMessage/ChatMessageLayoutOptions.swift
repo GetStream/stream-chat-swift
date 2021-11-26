@@ -10,6 +10,14 @@ public extension ChatMessageLayoutOptions {
     var rawValue: String {
         map(\.rawValue).joined(separator: "-")
     }
+
+    mutating func remove(_ options: ChatMessageLayoutOptions) {
+        self = subtracting(options)
+    }
+
+    mutating func insert(_ options: ChatMessageLayoutOptions) {
+        options.forEach { self.insert($0) }
+    }
 }
 
 /// Describes the layout of base message content view.
