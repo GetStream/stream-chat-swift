@@ -47,40 +47,40 @@ public extension ChatMessageLayoutOption {
 
     /// If set the message content will have an offset (from the `trailing` edge if `flipped` is set otherwise from `leading`)
     /// equal to the avatar size.
-    static let avatarSizePadding = Self(rawValue: "avatarSizePadding")
+    static let avatarSizePadding: Self = "avatarSizePadding"
 
     /// If set the message author avatar will be shown.
-    static let avatar = Self(rawValue: "avatar")
+    static let avatar: Self = "avatar"
 
     /// If set the message timestamp will be shown.
-    static let timestamp = Self(rawValue: "timestamp")
+    static let timestamp: Self = "timestamp"
 
     /// If set the message author name will be shown in metadata.
-    static let authorName = Self(rawValue: "authorName")
+    static let authorName: Self = "authorName"
 
     /// If set the message text content will be shown.
-    static let text = Self(rawValue: "text")
+    static let text: Self = "text"
 
     /// If set the message quoted by the current message will be shown.
-    static let quotedMessage = Self(rawValue: "quotedMessage")
+    static let quotedMessage: Self = "quotedMessage"
 
     /// If set the message thread replies information will be shown.
-    static let threadInfo = Self(rawValue: "threadInfo")
+    static let threadInfo: Self = "threadInfo"
 
     /// If set the error indicator will be shown.
-    static let errorIndicator = Self(rawValue: "errorIndicator")
+    static let errorIndicator: Self = "errorIndicator"
 
     /// If set the reactions added to the message will be shown.
-    static let reactions = Self(rawValue: "reactions")
+    static let reactions: Self = "reactions"
 
     /// If set the indicator saying that the message is visible for current user only will be shown.
-    static let onlyVisibleForYouIndicator = Self("onlyVisibleForYouIndicator")
+    static let onlyVisibleForYouIndicator: Self = "onlyVisibleForYouIndicator"
     
     /// If set all the content will have centered alignment. By default, the system messages are centered.
     ///
     /// `flipped` and `centered` are mutually exclusive. Only one of these two should be used at a time.
     /// If both are specified in the options, `centered` is prioritized
-    static let centered = Self(rawValue: "centered")
+    static let centered: Self = "centered"
 }
 
 extension ChatMessageLayoutOption: CustomStringConvertible {
