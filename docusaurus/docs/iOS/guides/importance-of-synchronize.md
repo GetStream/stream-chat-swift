@@ -25,7 +25,9 @@ channelController.freezeChannel()
 
 But as stated in the table above, if the Channel is not created in the backend yet, you'll need to call `synchronize()` first, else the action calls will fail.
 
-`Synchronize()` is automatically called within the `setUp()` function on each `View` or `ViewController` which will automatically update both local and remote data for you. It's important to note that if you implement your own custom implementation that you call `super.setUp()` so this function is called. If you implement your own UI completely then make sure you call `synchronize()` on the custom UI lifecycle.
+Also, if you create a channel without passing a `ChannelID` then you must call `synchronize()` every time.
+
+`synchronize()` is automatically called within the `setUp()` function on each `View` or `ViewController` which will automatically update both local and remote data for you. It's important to note that if you implement your own custom implementation that you call `super.setUp()` so this function is called. If you implement your own UI completely then make sure you call `synchronize()` on the custom UI lifecycle.
 
 Additionally, as with all StreamChat Controllers, `ChannelController` has `state` and a delegate function to observe it's `state`:
 

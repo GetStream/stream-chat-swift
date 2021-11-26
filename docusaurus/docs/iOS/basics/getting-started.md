@@ -93,7 +93,7 @@ You now have your very first Stream Chat app showing a list of Channels, but you
 
 ```swift
 do {
-    try controller(createChannelWithId: ChannelId(type: .livestream, id: UUID().uuidString), name: channelName)
+    try client.controller(createChannelWithId: ChannelId(type: .livestream, id: UUID().uuidString), name: channelName)
 
     channelController.synchronize { error in
         if let error = error {
@@ -113,7 +113,7 @@ Your `ChannelId` has to be a unique ID and you can set this to anything, in this
 
 :::tip Using Synchronize
 
-After creating the channel `try controller(createChannelWithId: ChannelId(type: .livestream, id: UUID().uuidString), name: channelName)` it's important you call `synchronize()` after so the local and remote data is updated. You can read more about the importance of `synchronize()` [here](../../guides/importance-of-synchronize)..
+After creating the channel `try client.controller(createChannelWithId: ChannelId(type: .livestream, id: UUID().uuidString), name: channelName)` it's important you call `synchronize()` after so the local and remote data is updated. You can read more about the importance of `synchronize()` [here](../../guides/importance-of-synchronize)..
 
 :::
 
