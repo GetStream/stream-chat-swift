@@ -4,68 +4,82 @@
 
 import Foundation
 
-/// Describes the layout of base message content view.
-public struct ChatMessageLayoutOptions: OptionSet, Hashable {
-    public let rawValue: Int
+public typealias ChatMessageLayoutOptions = Set<ChatMessageLayoutOption>
 
-    public init(rawValue: Int) {
-        self.rawValue = rawValue
+public extension ChatMessageLayoutOptions {
+    var rawValue: String {
+        map(\.rawValue).joined(separator: "-")
     }
 }
 
-public extension ChatMessageLayoutOptions {
+/// Describes the layout of base message content view.
+public struct ChatMessageLayoutOption: RawRepresentable, Hashable, Equatable, ExpressibleByStringLiteral {
+    public typealias StringLiteralType = String
+
+    public let rawValue: String
+
+    public init(rawValue: String) {
+        self.rawValue = rawValue
+    }
+
+    public init(stringLiteral value: String) {
+        rawValue = value
+    }
+}
+
+public extension ChatMessageLayoutOption {
     /// If set all the content will have trailing alignment. By default, the message sent by the current user is flipped.
-    static let flipped = Self(rawValue: 1 << 0)
+    static let flipped: Self = "flipped"
 
     /// If set the message content will be wrapped into a bubble.
-    static let bubble = Self(rawValue: 1 << 1)
+    static let bubble: Self = "bubble"
 
     /// If set the message bubble will not have a `tail` (rendered by default as a non rounded corner)
-    static let continuousBubble = Self(rawValue: 1 << 2)
+    static let continuousBubble: Self = "continuousBubble"
 
     /// If set the message content will have an offset (from the `trailing` edge if `flipped` is set otherwise from `leading`)
     /// equal to the avatar size.
-    static let avatarSizePadding = Self(rawValue: 1 << 3)
+    static let avatarSizePadding = Self(rawValue: "avatarSizePadding")
 
     /// If set the message author avatar will be shown.
-    static let avatar = Self(rawValue: 1 << 4)
+    static let avatar = Self(rawValue: "avatar")
 
     /// If set the message timestamp will be shown.
-    static let timestamp = Self(rawValue: 1 << 5)
+    static let timestamp = Self(rawValue: "timestamp")
 
     /// If set the message author name will be shown in metadata.
-    static let authorName = Self(rawValue: 1 << 6)
+    static let authorName = Self(rawValue: "authorName")
 
     /// If set the message text content will be shown.
-    static let text = Self(rawValue: 1 << 7)
+    static let text = Self(rawValue: "text")
 
     /// If set the message quoted by the current message will be shown.
-    static let quotedMessage = Self(rawValue: 1 << 8)
+    static let quotedMessage = Self(rawValue: "quotedMessage")
 
     /// If set the message thread replies information will be shown.
-    static let threadInfo = Self(rawValue: 1 << 9)
+    static let threadInfo = Self(rawValue: "threadInfo")
 
     /// If set the error indicator will be shown.
-    static let errorIndicator = Self(rawValue: 1 << 10)
+    static let errorIndicator = Self(rawValue: "errorIndicator")
 
     /// If set the reactions added to the message will be shown.
-    static let reactions = Self(rawValue: 1 << 11)
+    static let reactions = Self(rawValue: "reactions")
 
     /// If set the indicator saying that the message is visible for current user only will be shown.
-    static let onlyVisibleForYouIndicator = Self(rawValue: 1 << 12)
+    static let onlyVisibleForYouIndicator = Self("onlyVisibleForYouIndicator")
     
     /// If set all the content will have centered alignment. By default, the system messages are centered.
     ///
     /// `flipped` and `centered` are mutually exclusive. Only one of these two should be used at a time.
     /// If both are specified in the options, `centered` is prioritized
-    static let centered = Self(rawValue: 1 << 13)
+    static let centered = Self(rawValue: "centered")
 }
 
-extension ChatMessageLayoutOptions: CustomStringConvertible {
+extension ChatMessageLayoutOption: CustomStringConvertible {
     /// Returns all options the current option set consists of separated by `-` character.
     public var description: String {
         Self.singleOptions
-            .compactMap { contains($0) ? $0.optionName : nil }
+            .compactMap(\.optionName)
             .joined(separator: "-")
     }
 
@@ -87,37 +101,6 @@ extension ChatMessageLayoutOptions: CustomStringConvertible {
     ]
 
     var optionName: String? {
-        switch self {
-        case .flipped:
-            return "flipped"
-        case .bubble:
-            return "bubble"
-        case .continuousBubble:
-            return "continuousBubble"
-        case .avatarSizePadding:
-            return "avatarSizePadding"
-        case .avatar:
-            return "avatar"
-        case .timestamp:
-            return "timestamp"
-        case .authorName:
-            return "authorName"
-        case .text:
-            return "text"
-        case .quotedMessage:
-            return "quotedMessage"
-        case .threadInfo:
-            return "threadInfo"
-        case .errorIndicator:
-            return "errorIndicator"
-        case .reactions:
-            return "reactions"
-        case .onlyVisibleForYouIndicator:
-            return "onlyVisibleForYouIndicator"
-        case .centered:
-            return "centered"
-        default:
-            return nil
-        }
+        rawValue
     }
 }
