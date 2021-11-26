@@ -7,7 +7,7 @@ import StreamChat
 import UIKit
 
 extension Notification.Name {
-    static let sendOneWalletTapAction = Notification.Name("kStreamChatOneWalletTapAction")
+    public static let sendOneWalletTapAction = Notification.Name("kStreamChatOneWalletTapAction")
 }
 
 /// The possible errors that can occur in attachment validation
