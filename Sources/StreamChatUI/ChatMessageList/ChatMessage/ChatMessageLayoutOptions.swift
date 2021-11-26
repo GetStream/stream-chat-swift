@@ -33,6 +33,11 @@ public struct ChatMessageLayoutOption: RawRepresentable, Hashable, Equatable, Ex
     public init(stringLiteral value: String) {
         rawValue = value
     }
+
+    @available(*, deprecated, message: "Use the string raw value initialiser.")
+    public init(rawValue: Int) {
+        self.rawValue = "\(rawValue)"
+    }
 }
 
 public extension ChatMessageLayoutOption {
