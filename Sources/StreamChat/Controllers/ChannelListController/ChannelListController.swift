@@ -13,7 +13,9 @@ extension ChatClient {
     /// - Returns: A new instance of `ChannelController`.
     ///
     public func channelListController(query: ChannelListQuery) -> ChatChannelListController {
-        .init(query: query, client: self)
+        let controller = ChatChannelListController(query: query, client: self)
+        connectionRecoveryHandler.register(channelList: controller)
+        return controller
     }
 }
 
@@ -267,6 +269,10 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
         }
     }
 }
+
+// MARK: - ChatRecoverableComponent
+
+extension ChatChannelListController: ChatRecoverableComponent {}
 
 extension ChatChannelListController {
     struct Environment {

@@ -20,10 +20,10 @@ public extension ChatClient {
         channelListQuery: ChannelListQuery? = nil,
         messageOrdering: MessageOrdering = .topToBottom
     ) -> ChatChannelController {
-        .init(
+        createAndRegisterChatChannelController(
             channelQuery: .init(cid: cid),
             channelListQuery: channelListQuery,
-            client: self,
+            isChannelAlreadyCreated: true,
             messageOrdering: messageOrdering
         )
     }
@@ -42,10 +42,10 @@ public extension ChatClient {
         channelListQuery: ChannelListQuery? = nil,
         messageOrdering: MessageOrdering = .topToBottom
     ) -> ChatChannelController {
-        .init(
+        createAndRegisterChatChannelController(
             channelQuery: channelQuery,
             channelListQuery: channelListQuery,
-            client: self,
+            isChannelAlreadyCreated: true,
             messageOrdering: messageOrdering
         )
     }
@@ -94,10 +94,9 @@ public extension ChatClient {
             extraData: extraData
         )
 
-        return .init(
+        return createAndRegisterChatChannelController(
             channelQuery: .init(channelPayload: payload),
             channelListQuery: channelListQuery,
-            client: self,
             isChannelAlreadyCreated: false,
             messageOrdering: messageOrdering
         )
@@ -148,13 +147,29 @@ public extension ChatClient {
             invites: [],
             extraData: extraData
         )
-        return .init(
+        return createAndRegisterChatChannelController(
             channelQuery: .init(channelPayload: payload),
             channelListQuery: channelListQuery,
-            client: self,
             isChannelAlreadyCreated: false,
             messageOrdering: messageOrdering
         )
+    }
+    
+    private func createAndRegisterChatChannelController(
+        channelQuery: ChannelQuery,
+        channelListQuery: ChannelListQuery?,
+        isChannelAlreadyCreated: Bool,
+        messageOrdering: MessageOrdering
+    ) -> ChatChannelController {
+        let controller = ChatChannelController(
+            channelQuery: channelQuery,
+            channelListQuery: channelListQuery,
+            client: self,
+            isChannelAlreadyCreated: isChannelAlreadyCreated,
+            messageOrdering: messageOrdering
+        )
+        connectionRecoveryHandler.register(channel: controller)
+        return controller
     }
 }
 
@@ -1256,6 +1271,10 @@ public extension ChatChannelController {
         }
     }
 }
+
+// MARK: - ChatRecoverableComponent
+
+extension ChatChannelController: ChatRecoverableComponent {}
 
 extension ChatChannelController {
     struct Environment {

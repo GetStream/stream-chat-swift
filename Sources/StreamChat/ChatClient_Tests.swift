@@ -779,6 +779,75 @@ class ChatClient_Tests: XCTestCase {
         let streamHeader = sessionHeaders!["X-Stream-Client"] as! String
         XCTAssert(streamHeader.starts(with: prefix))
     }
+    
+    // MARK: - Active components registration
+    
+    func test_whenChannelListControllerIsCreated_itIsRegisterdInConnectionRecoveryUpdater() {
+        // Declare mock connection recovery updater
+        var mockConnectionRecoveryHandler: ConnectionRecoveryHandlerMock!
+        
+        // Create mock environment
+        var environment = ChatClient.Environment.mock
+        environment.connectionRecoveryHandlerBuilder = { _ in
+            let handler = ConnectionRecoveryHandlerMock()
+            mockConnectionRecoveryHandler = handler
+            return handler
+        }
+        
+        // Create chat client with mock environment
+        let client = ChatClient(
+            config: inMemoryStorageConfig,
+            workerBuilders: workerBuilders,
+            environment: environment
+        )
+        
+        // Ask client to make a channel list controller
+        let controller = client.channelListController(query: .init(filter: .exists(.cid)))
+        
+        // Assert channel list controller is registered
+        XCTAssertTrue(mockConnectionRecoveryHandler.mock_registerChannelList.calls.first === controller)
+        XCTAssertEqual(mockConnectionRecoveryHandler.mock_registerChannelList.count, 1)
+    }
+    
+    func test_whenChannelControllerIsCreated_itIsRegisterdInConnectionRecoveryUpdater() throws {
+        // Declare mock connection recovery updater
+        var mockConnectionRecoveryHandler: ConnectionRecoveryHandlerMock!
+        
+        // Create mock environment
+        var environment = ChatClient.Environment.mock
+        environment.connectionRecoveryHandlerBuilder = { _ in
+            let handler = ConnectionRecoveryHandlerMock()
+            mockConnectionRecoveryHandler = handler
+            return handler
+        }
+        environment.clientUpdaterBuilder = ChatClientUpdater.init
+        
+        // Create chat client with mock environment
+        let client = ChatClient(
+            config: inMemoryStorageConfig,
+            workerBuilders: workerBuilders,
+            environment: environment
+        )
+        
+        // Simulate connect to have current user id set
+        client.connectUser(userInfo: .init(id: userId), token: .anonymous)
+        
+        // Ask client to make a channel controllers via all possible ways
+        let controllers = [
+            client.channelController(for: ChannelId.unique),
+            client.channelController(for: ChannelQuery(cid: .unique)),
+            try client.channelController(createChannelWithId: .unique),
+            try client.channelController(createDirectMessageChannelWith: [.unique], extraData: [:])
+        ]
+        
+        // Assert all controller are registered
+        XCTAssertEqual(mockConnectionRecoveryHandler.mock_registerChannel.count, controllers.count)
+        controllers.forEach { controller in
+            XCTAssertTrue(
+                mockConnectionRecoveryHandler.mock_registerChannel.calls.contains(where: { $0 === controller })
+            )
+        }
+    }
 }
 
 class TestWorker: Worker {

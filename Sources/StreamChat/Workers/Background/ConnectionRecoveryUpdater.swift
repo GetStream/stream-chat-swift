@@ -5,8 +5,34 @@
 import CoreData
 import Foundation
 
+/// The type that descibes chat component that might need recovery when client reconnects.
+protocol ChatRecoverableComponent: AnyObject {}
+
 /// The type that keeps track of active chat components and asks them to reconnect when it's needed
 protocol ConnectionRecoveryHandler: AnyObject {
+    /// The array of registered channel list components.
+    var registeredChannelLists: [ChatRecoverableComponent] { get }
+    
+    /// The array of registered channels components.
+    var registeredChannels: [ChatRecoverableComponent] { get }
+
+    /// Registers channel list component as one that might need recovery on reconnect.
+    func register(channelList: ChatRecoverableComponent)
+    
+    /// Registers channel component as one that might need recovery on reconnect.
+    func register(channel: ChatRecoverableComponent)
+}
+
+extension ConnectionRecoveryHandler {
+    /// The array of registered channel list components that need recovery.
+    var channelListsToRecover: [ChatRecoverableComponent] {
+        registeredChannelLists.filter(\.requiresRecovery)
+    }
+    
+    /// The array of registered channel components that need recovery.
+    var channelsToRecover: [ChatRecoverableComponent] {
+        registeredChannels.filter(\.requiresRecovery)
+    }
 }
 
 final class ConnectionRecoveryUpdater {
@@ -16,6 +42,10 @@ final class ConnectionRecoveryUpdater {
     private let eventNotificationCenter: EventNotificationCenter
     private let backgroundTaskScheduler: BackgroundTaskScheduler?
     private let internetConnection: InternetConnection
+    private let componentsAccessQueue = DispatchQueue(label: "co.getStream.ConnectionRecoveryUpdater")
+    private var channelLists: [Weak<ChatRecoverableComponent>] = []
+    private var channels: [Weak<ChatRecoverableComponent>] = []
+
     // MARK: - Init
     
     init(
@@ -127,13 +157,31 @@ final class ConnectionRecoveryUpdater {
     }
 }
 
+// MARK: - ConnectionRecoveryHandler
+
+extension ConnectionRecoveryUpdater: ConnectionRecoveryHandler {
+    var registeredChannelLists: [ChatRecoverableComponent] {
+        channelLists.compactMap(\.value)
     }
     
+    var registeredChannels: [ChatRecoverableComponent] {
+        channels.compactMap(\.value)
+    }
+    
+    func register(channelList: ChatRecoverableComponent) {
+        componentsAccessQueue.sync {
+            channelLists.removeAll(where: { $0.value == nil || $0.value === channelList })
+            channelLists.append(.init(value: channelList))
         }
     }
     
+    func register(channel: ChatRecoverableComponent) {
+        componentsAccessQueue.sync {
+            channels.removeAll(where: { $0.value == nil || $0.value === channel })
+            channels.append(.init(value: channel))
         }
     }
+}
 
 extension ConnectionRecoveryUpdater {
     struct Environment {

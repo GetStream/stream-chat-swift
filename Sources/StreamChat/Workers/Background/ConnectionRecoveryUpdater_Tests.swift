@@ -37,6 +37,90 @@ final class ConnectionRecoveryUpdater_Tests: XCTestCase {
         super.tearDown()
     }
     
+    // MARK: - Active components
+    
+    func test_whenChannelListIsRegistered_itGetTracked() {
+        // Create chat components
+        let channelLists = [
+            mockChatClient.channelListController(query: .init(filter: .equal(.cid, to: .unique))),
+            mockChatClient.channelListController(query: .init(filter: .exists(.cid)))
+        ]
+
+        // Assert no components are registered yet
+        XCTAssertTrue(updater.registeredChannelLists.isEmpty)
+        
+        // Register chat components
+        channelLists.forEach {
+            updater.register(channelList: $0)
+        }
+        
+        // Assert chat components are registered
+        XCTAssertEqual(updater.registeredChannelLists.count, channelLists.count)
+        channelLists.forEach { component in
+            XCTAssertTrue(updater.registeredChannelLists.contains(where: { $0 === component }))
+        }
+    }
+    
+    func test_whenRegisteredChannelListIsDeallocated_itStoppedBeingTracked() {
+        // Create chat components
+        var channelLists = [
+            mockChatClient.channelListController(query: .init(filter: .equal(.cid, to: .unique))),
+            mockChatClient.channelListController(query: .init(filter: .exists(.cid)))
+        ]
+        
+        // Register chat components
+        channelLists.forEach {
+            updater.register(channelList: $0)
+        }
+        
+        // Release all chat components
+        channelLists.removeAll()
+        
+        // Assert components are not longer tracked
+        XCTAssertTrue(updater.registeredChannelLists.isEmpty)
+    }
+    
+    func test_whenChannelIsRegistered_itGetTracked() {
+        // Create chat components
+        let channels = [
+            mockChatClient.channelController(for: .unique),
+            mockChatClient.channelController(for: .unique)
+        ]
+        
+        // Assert no components are registered yet
+        XCTAssertTrue(updater.registeredChannels.isEmpty)
+        
+        // Register chat components
+        channels.forEach {
+            updater.register(channel: $0)
+        }
+        
+        // Assert chat components are registered
+        XCTAssertEqual(updater.registeredChannels.count, channels.count)
+        channels.forEach { component in
+            XCTAssertTrue(updater.registeredChannels.contains(where: { $0 === component }))
+        }
+    }
+    
+    func test_whenRegisteredChannelIsDeallocated_itStoppedBeingTracked() {
+        // Create chat components
+        var channels = [
+            mockChatClient.channelController(for: .unique),
+            mockChatClient.channelController(for: .unique)
+        ]
+        
+        // Register chat components
+        channels.forEach {
+            updater.register(channel: $0)
+        }
+        
+        // Release all chat components
+        channels.removeAll()
+        
+        // Assert components are not longer tracked
+        XCTAssertTrue(updater.registeredChannelLists.isEmpty)
+    }
+    
     // MARK: - Client not connected
     
     func test_whenClientWasNotConnectedAndInternetComesBack_reconnectionDoesNotHappen() {
@@ -357,8 +441,8 @@ final class ConnectionRecoveryUpdater_Tests: XCTestCase {
 extension ChannelListQuery: Equatable {
     public static func == (lhs: ChannelListQuery, rhs: ChannelListQuery) -> Bool {
         lhs.filter == rhs.filter &&
-        lhs.messagesLimit == rhs.messagesLimit &&
-        lhs.options == rhs.options &&
-        lhs.pagination == rhs.pagination
+            lhs.messagesLimit == rhs.messagesLimit &&
+            lhs.options == rhs.options &&
+            lhs.pagination == rhs.pagination
     }
 }
