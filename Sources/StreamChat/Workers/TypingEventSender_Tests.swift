@@ -32,7 +32,7 @@ class TypingEventsSender_Tests: XCTestCase {
         super.tearDown()
     }
     
-    func test_keystroke_startTypingAndStopAfterTimeout() throws {
+    func test_keystroke_sendsStartTypingAndStopTypingEvents() {
         // Send keystroke.
         let cid = ChannelId.unique
         eventSender.keystroke(in: cid)
@@ -49,7 +49,7 @@ class TypingEventsSender_Tests: XCTestCase {
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(stopTypingEndpoint))
     }
     
-    func test_keystroke_startTypingAndResetStopTyping() throws {
+    func test_keystroke_sendsStartTyping_andResetsTimer() {
         // Send keystroke.
         let cid = ChannelId.unique
         eventSender.keystroke(in: cid)
@@ -66,29 +66,26 @@ class TypingEventsSender_Tests: XCTestCase {
         XCTAssertEqual(apiClient.request_allRecordedCalls.count, 1)
     }
     
-    func test_keystroke_StartTypingForLongTime() {
+    func test_keystroke_sendsStartTypingEvent_afterResendInterval() {
         // Send keystroke.
         let cid = ChannelId.unique
         eventSender.keystroke(in: cid)
         
-        var requests = [AnyEndpoint?]()
-        
-        // Make a loop with a step less then `.startTypingEventTimeout` until `.startTypingResendInterval`.
+        // Make a loop with a step less than `.startTypingEventTimeout` until `.startTypingResendInterval`.
         let stepTimeInterval = .startTypingEventTimeout - 1
         
         repeat {
             time.run(numberOfSeconds: stepTimeInterval)
             eventSender.keystroke(in: cid)
-            requests.append(apiClient.request_endpoint)
         } while time.currentTime < .startTypingResendInterval
         
-        // Another start typing event should be sent.
+        // Only 1 other startTyping event should be sent, for a total of 2 events
         let startTypingEndpoint: Endpoint<EmptyResponse> = .sendEvent(cid: cid, eventType: .userStartTyping)
         let calls: [AnyEndpoint] = apiClient.request_allRecordedCalls.map(\.endpoint)
         XCTAssertEqual(calls, [AnyEndpoint(startTypingEndpoint), AnyEndpoint(startTypingEndpoint)])
     }
     
-    func test_stopTyping() throws {
+    func test_stopTyping_afterKeystroke() {
         // Send keystroke.
         let cid = ChannelId.unique
         eventSender.keystroke(in: cid)
@@ -103,13 +100,14 @@ class TypingEventsSender_Tests: XCTestCase {
         eventSender.stopTyping(in: cid)
         let stopTypingEndpoint: Endpoint<EmptyResponse> = .sendEvent(cid: cid, eventType: .userStopTyping)
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(stopTypingEndpoint))
+        XCTAssertEqual(apiClient.request_allRecordedCalls.count, 2)
         
         // Check the scheduled stop typing timer was cancelled.
         time.run(numberOfSeconds: .startTypingEventTimeout)
         XCTAssertEqual(apiClient.request_allRecordedCalls.count, 2)
     }
     
-    func test_typingEventsSender_sendsStopTyping_whenDealocated() {
+    func test_stopTypingIsSent_afterKeystroke_whenDeallocated() {
         let cid = ChannelId.unique
         
         // First send keystroke to store `cid` internally inside `typingEventsSender` to have CID for stopTyping.
@@ -125,5 +123,77 @@ class TypingEventsSender_Tests: XCTestCase {
         // Make sure the stop typing event has been sent.
         let stopTypingEndpoint: Endpoint<EmptyResponse> = .sendEvent(cid: cid, eventType: .userStopTyping)
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(stopTypingEndpoint))
+    }
+    
+    func test_startTyping_sendsStartTypingEvent() {
+        let cid = ChannelId.unique
+        
+        // Call startTyping
+        eventSender.startTyping(in: cid)
+        
+        // Check the start typing event has been sent.
+        let startTypingEndpoint: Endpoint<EmptyResponse> = .sendEvent(cid: cid, eventType: .userStartTyping)
+        XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(startTypingEndpoint))
+    }
+    
+    func test_stopTyping_afterStartTyping() {
+        let cid = ChannelId.unique
+        
+        // Call startTyping
+        eventSender.startTyping(in: cid)
+        
+        // Check the start typing event has been sent.
+        let startTypingEndpoint: Endpoint<EmptyResponse> = .sendEvent(cid: cid, eventType: .userStartTyping)
+        XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(startTypingEndpoint))
+        
+        // Call stopTyping
+        eventSender.stopTyping(in: cid)
+        
+        // Make sure the stop typing event has been sent.
+        let stopTypingEndpoint: Endpoint<EmptyResponse> = .sendEvent(cid: cid, eventType: .userStopTyping)
+        XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(stopTypingEndpoint))
+    }
+    
+    func test_stopTypingIsSent_afterStartTyping_whenDeallocated() {
+        let cid = ChannelId.unique
+        
+        // First send startTyping to store `cid` internally inside `typingEventsSender` to have CID for stopTyping.
+        eventSender.startTyping(in: cid)
+        
+        // Check the start typing event has been sent.
+        let startTypingEndpoint: Endpoint<EmptyResponse> = .sendEvent(cid: cid, eventType: .userStartTyping)
+        XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(startTypingEndpoint))
+        
+        // Deinit the eventSender
+        eventSender = nil
+        
+        // Make sure the stop typing event has been sent.
+        let stopTypingEndpoint: Endpoint<EmptyResponse> = .sendEvent(cid: cid, eventType: .userStopTyping)
+        XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(stopTypingEndpoint))
+    }
+    
+    func test_stopTypingIsNotSentTwice_afterKeystroke_whenDeallocated() {
+        let cid = ChannelId.unique
+        
+        // First send startTyping to store `cid` internally inside `typingEventsSender` to have CID for stopTyping.
+        eventSender.keystroke(in: cid)
+        
+        // Check the start typing event has been sent.
+        let startTypingEndpoint: Endpoint<EmptyResponse> = .sendEvent(cid: cid, eventType: .userStartTyping)
+        XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(startTypingEndpoint))
+        
+        // Run the time until stopTyping is sent by the timer
+        time.run(numberOfSeconds: .startTypingEventTimeout)
+        
+        // Make sure the stop typing event has been sent.
+        let stopTypingEndpoint: Endpoint<EmptyResponse> = .sendEvent(cid: cid, eventType: .userStopTyping)
+        XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(stopTypingEndpoint))
+        XCTAssertEqual(apiClient.request_allRecordedCalls.count, 2)
+        
+        // Deinit the eventSender
+        eventSender = nil
+        
+        // Make sure no other call has been made
+        XCTAssertEqual(apiClient.request_allRecordedCalls.count, 2)
     }
 }
