@@ -5,151 +5,154 @@
 import CoreData
 import Foundation
 
-/// The type is designed to obtain missing events that happened in watched channels while user
-/// was not connected to the web-socket.
-///
-/// The object listens for `ConnectionStatusUpdated` events
-/// and remembers the `CurrentUserDTO.lastReceivedEventDate` when status becomes `connecting`.
-///
-/// When the status becomes `connected` the `/sync` endpoint is called
-/// with `lastReceivedEventDate` and `cids` of watched channels.
-///
-/// We remember `lastReceivedEventDate` when state becomes `connecting` to catch the last event date
-/// before the `HealthCheck` override the `lastReceivedEventDate` with the recent date.
-///
-class ConnectionRecoveryUpdater {
+/// The type that keeps track of active chat components and asks them to reconnect when it's needed
+protocol ConnectionRecoveryHandler: AnyObject {
+}
+
+final class ConnectionRecoveryUpdater {
     // MARK: - Properties
     
-    private let database: DatabaseContainer
+    private unowned var client: ChatClient
     private let eventNotificationCenter: EventNotificationCenter
-    private let apiClient: APIClient
-    private var connectionObserver: EventObserver?
-    private let databaseCleanupUpdater: DatabaseCleanupUpdater
-    @Atomic private var lastSyncedAt: Date?
-    private let useSyncEndpoint: Bool
-    
+    private let backgroundTaskScheduler: BackgroundTaskScheduler?
+    private let internetConnection: InternetConnection
     // MARK: - Init
     
     init(
-        database: DatabaseContainer,
-        eventNotificationCenter: EventNotificationCenter,
-        apiClient: APIClient,
-        databaseCleanupUpdater: DatabaseCleanupUpdater,
-        useSyncEndpoint: Bool
+        client: ChatClient,
+        environment: Environment = .init()
     ) {
-        self.database = database
-        self.eventNotificationCenter = eventNotificationCenter
-        self.apiClient = apiClient
-        self.databaseCleanupUpdater = databaseCleanupUpdater
-        self.useSyncEndpoint = useSyncEndpoint
-
-        startObserving()
+        self.client = client
+        backgroundTaskScheduler = environment.backgroundTaskSchedulerBuilder()
+        internetConnection = environment.internetConnectionBuilder(client.eventNotificationCenter)
+        eventNotificationCenter = client.eventNotificationCenter
+        
+        subscribeOnNotifications()
     }
     
-    // MARK: - Private
+    deinit {
+        unsubscribeFromNotifications()
+    }
     
-    private func startObserving() {
-        connectionObserver = EventObserver(
-            notificationCenter: eventNotificationCenter,
-            transform: { $0 as? ConnectionStatusUpdated },
-            callback: { [weak self] in
-                guard let self = self else {
-                    log.warning("Callback called while self is nil")
-                    return
-                }
-
-                switch $0.webSocketConnectionState {
-                case .connecting:
-                    self.obtainLastSyncDate()
-                case .connected:
-                    self.fetchAndReplayMissingEvents()
-                default:
-                    break
-                }
-            }
+    // MARK: - Subscriptions
+        
+    private func subscribeOnNotifications() {
+        backgroundTaskScheduler?.startListeningForAppStateUpdates(
+            onEnteringBackground: { [weak self] in self?.handleAppDidEnterBackground() },
+            onEnteringForeground: { [weak self] in self?.handleAppDidBecomeActive() }
+        )
+        
+        eventNotificationCenter.addObserver(
+            self,
+            selector: #selector(didChangeInternetConnectionStatus(_:)),
+            name: .internetConnectionStatusDidChange,
+            object: nil
         )
     }
     
-    private func obtainLastSyncDate() {
-        database.backgroundReadOnlyContext.perform { [weak self] in
-            self?.lastSyncedAt = self?.database.backgroundReadOnlyContext.currentUser?.lastSyncedAt
-        }
-    }
-    
-    private func fetchAndReplayMissingEvents() {
-        database.backgroundReadOnlyContext.perform { [weak self, useSyncEndpoint] in
-            let refetchExistingQueries: () -> Void = {
-                self?.databaseCleanupUpdater.refetchExistingChannelListQueries()
-            }
-            
-            if useSyncEndpoint {
-                self?.sync(completion: refetchExistingQueries)
-            } else {
-                refetchExistingQueries()
-            }
-        }
+    private func unsubscribeFromNotifications() {
+        backgroundTaskScheduler?.stopListeningForAppStateUpdates()
+        backgroundTaskScheduler?.endTask()
+        
+        eventNotificationCenter.removeObserver(
+            self,
+            name: .internetConnectionStatusDidChange,
+            object: nil
+        )
     }
 
-    private func sync(completion: @escaping () -> Void) {
-        guard let lastSyncedAt = lastSyncedAt else { return }
+    // MARK: - Notification handlers
         
-        let watchedChannelIDs = allChannels.map(\.cid).compactMap { try? ChannelId(cid: $0) }
+    private func handleAppDidBecomeActive() {
+        backgroundTaskScheduler?.endTask()
         
-        guard !watchedChannelIDs.isEmpty else {
-            log.info("Skipping `/sync` endpoint call as there are no channels to watch.")
+        reconnectIfNeeded()
+    }
+    
+    private func handleAppDidEnterBackground() {
+        // We can't disconnect if we're not connected
+        guard client.connectionStatus == .connected else {
             return
         }
         
-        let endpoint: Endpoint<MissingEventsPayload> = .missingEvents(
-            since: lastSyncedAt,
-            cids: watchedChannelIDs
-        )
+        guard client.config.staysConnectedInBackground else {
+            // We immediately disconnect
+            client.clientUpdater.disconnect(source: .systemInitiated)
+            return
+        }
         
-        apiClient.request(endpoint: endpoint) { [weak self] in
-            guard let self = self else { return }
-            switch $0 {
-            case let .success(payload):
-                // The sync call was successful.
-                // We schedule all events for existing channels for processing...
-                self.eventNotificationCenter.processMissingEvents(
-                    payload.eventPayloads,
-                    completion: completion
-                )
-                
-            case let .failure(error):
-                log.info(
-                    """
-                    Backend couldn't handle replaying missing events - there was too many (>1000) events to replay. \
-                    Cleaning local channels data and refetching it from scratch
-                    """
-                )
-                
-                if error.isTooManyMissingEventsToSyncError {
-                    // The sync call failed...
-                    self.database.write {
-                        // First we need to clean up existing data
-                        try self.databaseCleanupUpdater.resetExistingChannelsData(session: $0)
-                    } completion: { error in
-                        if let error = error {
-                            log.error("Failed cleaning up channels data: \(error).")
-                            return
-                        }
-                        // Then we have to refetch existing channel list queries
-                        completion()
-                    }
-                }
-            }
+        guard let scheduler = backgroundTaskScheduler else { return }
+        
+        let succeed = scheduler.beginTask { [weak self] in
+            self?.client.clientUpdater.disconnect(source: .systemInitiated)
+        }
+        
+        if !succeed {
+            // Can't initiate a background task, close the connection
+            client.clientUpdater.disconnect(source: .systemInitiated)
         }
     }
     
-    private var allChannels: [ChannelDTO] {
-        do {
-            let request = ChannelDTO.allChannelsFetchRequest
-            request.fetchLimit = 1000
-            return try database.backgroundReadOnlyContext.fetch(request)
-        } catch {
-            log.error("Internal error: Failed to fetch [ChannelDTO]: \(error)")
-            return []
+    @objc private func didChangeInternetConnectionStatus(_ notification: Notification) {
+        switch (client.connectionStatus, notification.internetConnectionStatus?.isAvailable) {
+        case (.connected, false):
+            client.clientUpdater.disconnect(source: .systemInitiated)
+        case (.disconnected, true):
+            reconnectIfNeeded()
+        default:
+            return
+        }
+    }
+    
+    // MARK: - Reconnection
+        
+    private func reconnectIfNeeded() {
+        guard client.userConnectionProvider != nil else {
+            // The client has not been connected yet during this session
+            return
+        }
+        
+        guard client.webSocketClient?.connectionState.shouldAutomaticallyReconnect == true else {
+            // We should not reconnect automatically
+            return
+        }
+        
+        guard internetConnection.status.isAvailable else {
+            // We are offline. Once the connection comes back we will try to reconnect again
+            return
+        }
+        
+        // 1. Establish web-socket connection, no `channel` events will come as we don't watch any queries/channels yet
+        client.clientUpdater.connect()
+    }
+}
+
+    }
+    
+        }
+    }
+    
+        }
+    }
+
+extension ConnectionRecoveryUpdater {
+    struct Environment {
+        var internetConnectionBuilder: (NotificationCenter) -> InternetConnection = {
+            InternetConnection(notificationCenter: $0)
+        }
+        
+        var backgroundTaskSchedulerBuilder: () -> BackgroundTaskScheduler? = {
+            if Bundle.main.isAppExtension {
+                // No background task scheduler exists for app extensions.
+                return nil
+            } else {
+                #if os(iOS)
+                return IOSBackgroundTaskScheduler()
+                #else
+                // No need for background schedulers on macOS, app continues running when inactive.
+                return nil
+                #endif
+            }
         }
     }
 }

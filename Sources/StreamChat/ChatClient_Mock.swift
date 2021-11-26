@@ -27,6 +27,10 @@ extension ChatClient {
     var mockDatabaseContainer: DatabaseContainerMock {
         databaseContainer as! DatabaseContainerMock
     }
+    
+    var mockClientUpdater: ChatClientUpdaterMock {
+        clientUpdater as! ChatClientUpdaterMock
+    }
 
     func simulateProvidedConnectionId(connectionId: ConnectionId?) {
         guard let connectionId = connectionId else {

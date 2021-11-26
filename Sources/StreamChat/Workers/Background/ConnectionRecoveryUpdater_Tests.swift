@@ -8,290 +8,357 @@ import CoreData
 import XCTest
 
 final class ConnectionRecoveryUpdater_Tests: XCTestCase {
-    var database: DatabaseContainerMock!
-    var webSocketClient: WebSocketClientMock!
-    var apiClient: APIClientMock!
-    var updater: ConnectionRecoveryUpdater?
-    var channelDatabaseCleanupUpdater: DatabaseCleanupUpdater_Mock!
+    var updater: ConnectionRecoveryUpdater!
+    var mockChatClient: ChatClientMock!
+    var mockConnectionMonitor: InternetConnectionMonitorMock!
+    var mockBackgroundTaskScheduler: MockBackgroundTaskScheduler!
     
-    // MARK: - Setup
+    // MARK: - Set up/tear down
     
     override func setUp() {
         super.setUp()
         
-        database = DatabaseContainerMock()
-        webSocketClient = WebSocketClientMock()
-        apiClient = APIClientMock()
-        channelDatabaseCleanupUpdater = DatabaseCleanupUpdater_Mock(database: database, apiClient: apiClient)
+        mockConnectionMonitor = InternetConnectionMonitorMock()
+        mockBackgroundTaskScheduler = MockBackgroundTaskScheduler()
+        mockChatClient = makeMockChatClient(staysConnectedInBackground: false)
         
         updater = ConnectionRecoveryUpdater(
-            database: database,
-            eventNotificationCenter: webSocketClient.eventNotificationCenter,
-            apiClient: apiClient,
-            databaseCleanupUpdater: channelDatabaseCleanupUpdater,
-            useSyncEndpoint: false
+            client: mockChatClient,
+            environment: makeMockEnvironment()
         )
     }
     
     override func tearDown() {
-        apiClient.cleanUp()
-
-        AssertAsync {
-            Assert.canBeReleased(&updater)
-            Assert.canBeReleased(&webSocketClient)
-        }
+        AssertAsync.canBeReleased(&updater)
+        AssertAsync.canBeReleased(&mockChatClient)
+        AssertAsync.canBeReleased(&mockConnectionMonitor)
+        AssertAsync.canBeReleased(&mockBackgroundTaskScheduler)
         
         super.tearDown()
     }
     
-    // MARK: - Tests
+    // MARK: - Client not connected
     
-    func test_endpointIsNotCalled_ifThereIsNoCurrentUser() throws {
-        // Simulate `.connecting` connection state of a web-socket
-        webSocketClient.simulateConnectionStatus(.connecting)
+    func test_whenClientWasNotConnectedAndInternetComesBack_reconnectionDoesNotHappen() {
+        // Simulate connection going down
+        mockConnectionMonitor.status = .unavailable
         
-        // Simulate `.connected` connection state of a web-socket
-        webSocketClient.simulateConnectionStatus(.connected(connectionId: .unique))
+        // Assert disconnect is not called
+        XCTAssertFalse(mockChatClient.mockClientUpdater.disconnect_called)
         
-        // Assert endpoint is not called as `lastSyncAt` is unknown
-        AssertAsync.staysTrue(apiClient.request_endpoint == nil)
+        // Simulate connection comming back
+        mockConnectionMonitor.status = .available(.great)
+        
+        // Assert the reconnection does not happen
+        XCTAssertFalse(mockChatClient.mockClientUpdater.connect_called)
     }
     
-    func test_endpointIsNotCalled_ifThereAreNoWatchedChannels() throws {
-        // Create current user in the database
-        try database.createCurrentUser()
+    func test_whenActiveInBackgroundClientWasNotConnectedAndAppGoesToForeground_reconnectionDoesNotHappen() {
+        // Create mock chat client active in background
+        mockChatClient = makeMockChatClient(staysConnectedInBackground: true)
         
-        // Simulate `.connecting` connection state of a web-socket
-        webSocketClient.simulateConnectionStatus(.connecting)
+        // Create connection recovery updater
+        updater = ConnectionRecoveryUpdater(client: mockChatClient, environment: makeMockEnvironment())
         
-        // Simulate `.connected` connection state of a web-socket
-        webSocketClient.simulateConnectionStatus(.connected(connectionId: .unique))
+        // Simulate app going to background
+        mockBackgroundTaskScheduler.startListeningForAppStateUpdates_onBackground?()
         
-        // Assert endpoint is not called as there are no watched channels
-        AssertAsync.staysTrue(apiClient.request_endpoint == nil)
+        // Assert disconnect is not called
+        XCTAssertFalse(mockChatClient.mockClientUpdater.disconnect_called)
+        // Background task is not started
+        XCTAssertFalse(mockBackgroundTaskScheduler.beginBackgroundTask_called)
+        
+        // Simulate app going to foreground
+        mockBackgroundTaskScheduler.startListeningForAppStateUpdates_onForeground?()
+        
+        // Assert the reconnection does not happen
+        XCTAssertFalse(mockChatClient.mockClientUpdater.connect_called)
     }
     
-    func test_endpointIsCalled_whenStatusBecomesConnected() throws {
-        updater = ConnectionRecoveryUpdater(
-            database: database,
-            eventNotificationCenter: webSocketClient.eventNotificationCenter,
-            apiClient: apiClient,
-            databaseCleanupUpdater: channelDatabaseCleanupUpdater,
-            useSyncEndpoint: true
-        )
-        let cid: ChannelId = .unique
-        let lastSyncedAt: Date = .unique
+    func test_whenPassiveInBackgroundClientWasNotConnectedAndAppGoesToForeground_reconnectionDoesNotHappen() {
+        // Simulate app going to background
+        mockBackgroundTaskScheduler.startListeningForAppStateUpdates_onBackground?()
         
-        // Create current user in the database
-        try database.createCurrentUser()
+        // Assert disconnect is not called
+        XCTAssertFalse(mockChatClient.mockClientUpdater.disconnect_called)
+        // Background task is not started
+        XCTAssertFalse(mockBackgroundTaskScheduler.beginBackgroundTask_called)
         
-        // Create channel in the database
-        try database.createChannel(cid: cid)
-
-        // Set `lastReceivedEventDate`
-        try database.writeSynchronously { session in
-            let currentUser = try XCTUnwrap(session.currentUser)
-            currentUser.lastSyncedAt = lastSyncedAt
-        }
+        // Simulate app going to foreground
+        mockBackgroundTaskScheduler.startListeningForAppStateUpdates_onForeground?()
         
-        // Simulate `.connecting` connection state of a web-socket
-        webSocketClient.simulateConnectionStatus(.connecting)
-        
-        // Simulate `.connected` connection state of a web-socket
-        webSocketClient.simulateConnectionStatus(.connected(connectionId: .unique))
-        
-        // Assert endpoint is called with correct values
-        let endpoint: Endpoint<MissingEventsPayload> = .missingEvents(
-            since: lastSyncedAt,
-            cids: [cid]
-        )
-        
-        AssertAsync.willBeEqual(apiClient.request_endpoint, AnyEndpoint(endpoint))
+        // Assert the reconnection does not happen
+        XCTAssertFalse(mockChatClient.mockClientUpdater.connect_called)
     }
     
-    func test_noEventsArePublished_ifErrorResponseComes() throws {
-        updater = ConnectionRecoveryUpdater(
-            database: database,
-            eventNotificationCenter: webSocketClient.eventNotificationCenter,
-            apiClient: apiClient,
-            databaseCleanupUpdater: channelDatabaseCleanupUpdater,
-            useSyncEndpoint: true
-        )
-        let cid: ChannelId = .unique
-
-        // Create current user in the database
-        try database.createCurrentUser()
+    // MARK: - Client connected and disconnected by the user
+    
+    func test_whenClientWasManuallyDisconnectedAndInternetComesBack_reconnectionDoesNotHappen() {
+        // Connect chat client
+        mockChatClient.connectGuestUser(userInfo: .init(id: .unique))
+        mockChatClient.mockWebSocketClient.simulateConnectionStatus(.connected(connectionId: .unique))
         
-        // Create channel in the database
-        try database.createChannel(cid: cid)
+        // Manually disconnect chat client
+        mockChatClient.disconnect()
+        mockChatClient.mockWebSocketClient.simulateConnectionStatus(.disconnected(source: .userInitiated))
         
-        // Simulate `.connecting` connection state of a web-socket
-        webSocketClient.simulateConnectionStatus(.connecting)
+        // Reset values
+        mockChatClient.mockClientUpdater.disconnect_called = false
         
-        // Simulate `.connected` connection state of a web-socket
-        webSocketClient.simulateConnectionStatus(.connected(connectionId: .unique))
+        // Simulate connection going down and comming back
+        mockConnectionMonitor.status = .unavailable
         
-        // Get access to EventNotificationCenter to check for events and remove already logged events
-        let eventCenter = webSocketClient.init_eventNotificationCenter as! EventNotificationCenterMock
-        eventCenter.process_events = []
+        // Assert disconnect is not called for one more time
+        XCTAssertFalse(mockChatClient.mockClientUpdater.disconnect_called)
         
-        // Assert a network request is created
-        AssertAsync.willBeEqual(apiClient.request_allRecordedCalls.count, 1)
+        // Simulate connection comming back
+        mockConnectionMonitor.status = .available(.great)
         
-        // Simulate error response
-        apiClient.test_simulateResponse(Result<MissingEventsPayload, Error>.failure(TestError()))
-        
-        // Assert no events are published
-        AssertAsync.staysTrue(eventCenter.process_events.isEmpty)
+        // Assert the reconnection does not happen
+        XCTAssertFalse(mockChatClient.mockClientUpdater.connect_called)
     }
     
-    func test_whenBackendRespondsWith400_callsChannelListCleanUp() throws {
-        updater = ConnectionRecoveryUpdater(
-            database: database,
-            eventNotificationCenter: webSocketClient.eventNotificationCenter,
-            apiClient: apiClient,
-            databaseCleanupUpdater: channelDatabaseCleanupUpdater,
-            useSyncEndpoint: true
-        )
-        let cid: ChannelId = .unique
-
-        try database.createCurrentUser()
-        try database.createChannel(cid: cid)
+    func test_whenActiveClientWasManuallyDisconnectedAndAppGoesToForeground_reconnectionDoesNotHappen() {
+        // Create mock chat client active in background
+        mockChatClient = makeMockChatClient(staysConnectedInBackground: true)
         
-        webSocketClient.simulateConnectionStatus(.connecting)
-        webSocketClient.simulateConnectionStatus(.connected(connectionId: .unique))
-
-        AssertAsync.willBeEqual(apiClient.request_allRecordedCalls.count, 1)
-
-        var refetchCalled = false
-        channelDatabaseCleanupUpdater.refetchExistingChannelListQueries_body = {
-            refetchCalled = true
-        }
-
-        var cleanupCalledWithSession: DatabaseSession?
-        channelDatabaseCleanupUpdater.resetExistingChannelsData_body = { session in
-            cleanupCalledWithSession = session
-            // Check refetch wasn't called yet
-            XCTAssertFalse(refetchCalled)
-        }
+        // Create connection recovery updater
+        updater = ConnectionRecoveryUpdater(client: mockChatClient, environment: makeMockEnvironment())
         
-        apiClient.test_simulateResponse(
-            Result<MissingEventsPayload, Error>.failure(
-                ClientError(with: ErrorPayload(code: 0, message: "", statusCode: 400))
-            )
-        )
-
-        AssertAsync {
-            Assert.willBeTrue(refetchCalled)
-            Assert.willBeEqual(cleanupCalledWithSession as? NSManagedObjectContext, self.database.writableContext)
-        }
+        // Connect a chat client
+        mockChatClient.connectGuestUser(userInfo: .init(id: .unique))
+        mockChatClient.mockWebSocketClient.simulateConnectionStatus(.connected(connectionId: .unique))
+        
+        // Manually disconnect chat client
+        mockChatClient.disconnect()
+        mockChatClient.mockWebSocketClient.simulateConnectionStatus(.disconnected(source: .userInitiated))
+        
+        // Reset values
+        mockChatClient.mockClientUpdater.disconnect_called = false
+        
+        // Simulate app going to background
+        mockBackgroundTaskScheduler.startListeningForAppStateUpdates_onBackground?()
+        
+        // Assert disconnect is not called for one more time
+        XCTAssertFalse(mockChatClient.mockClientUpdater.disconnect_called)
+        // Assert background task is not started
+        XCTAssertFalse(mockBackgroundTaskScheduler.beginBackgroundTask_called)
+        
+        // Simulate app going to foreground
+        mockBackgroundTaskScheduler.startListeningForAppStateUpdates_onForeground?()
+        
+        // Assert the reconnection does not happen
+        XCTAssertFalse(mockChatClient.mockClientUpdater.connect_called)
     }
     
-    func test_eventsFromPayloadArePublished_ifSuccessfulResponseComes() throws {
-        updater = ConnectionRecoveryUpdater(
-            database: database,
-            eventNotificationCenter: webSocketClient.eventNotificationCenter,
-            apiClient: apiClient,
-            databaseCleanupUpdater: channelDatabaseCleanupUpdater,
-            useSyncEndpoint: true
-        )
-        let json = XCTestCase.mockData(fromFile: "MissingEventsPayload")
-        let payload = try JSONDecoder.default.decode(MissingEventsPayload.self, from: json)
-        let events = payload.eventPayloads.compactMap { try? $0.event() }
+    func test_whenPassiveClientWasManuallyDisconnectedAndAppGoesToForeground_reconnectionDoesNotHappen() {
+        // Connect a chat client
+        mockChatClient.connectGuestUser(userInfo: .init(id: .unique))
+        mockChatClient.mockWebSocketClient.simulateConnectionStatus(.connected(connectionId: .unique))
         
-        // Create current user in the database
-        try database.createCurrentUser()
+        // Manually disconnect chat client
+        mockChatClient.disconnect()
+        mockChatClient.mockWebSocketClient.simulateConnectionStatus(.disconnected(source: .userInitiated))
         
-        // Create channel in the database
-        let cid = (events.first as! EventDTO).payload.cid!
-        try database.createChannel(cid: cid)
+        // Reset values
+        mockChatClient.mockClientUpdater.disconnect_called = false
         
-        webSocketClient.simulateConnectionStatus(.connecting)
-        webSocketClient.simulateConnectionStatus(.connected(connectionId: .unique))
+        // Simulate app going to background
+        mockBackgroundTaskScheduler.startListeningForAppStateUpdates_onBackground?()
         
-        // Get access to EventNotificationCenter to check for events and remove already logged events
-        let eventCenter = webSocketClient.init_eventNotificationCenter as! EventNotificationCenterMock
-        eventCenter.process_events = []
-
-        // Assert a network request is created
-        AssertAsync.willBeEqual(apiClient.request_allRecordedCalls.count, 1)
+        // Assert disconnect is not called for one more time
+        XCTAssertFalse(mockChatClient.mockClientUpdater.disconnect_called)
+        // Assert background task is not started
+        XCTAssertFalse(mockBackgroundTaskScheduler.beginBackgroundTask_called)
         
-        // Simulate successful response
-        apiClient.test_simulateResponse(Result<MissingEventsPayload, Error>.success(payload))
+        // Simulate app going to foreground
+        mockBackgroundTaskScheduler.startListeningForAppStateUpdates_onForeground?()
         
-        // Assert events from payload are published
-        AssertAsync.willBeEqual(eventCenter.process_events.map(\.asEquatable), events.map(\.asEquatable))
-    }
-
-    func test_existingQueriesAreRefetched_ifSuccessfulResponseComes() throws {
-        updater = ConnectionRecoveryUpdater(
-            database: database,
-            eventNotificationCenter: webSocketClient.eventNotificationCenter,
-            apiClient: apiClient,
-            databaseCleanupUpdater: channelDatabaseCleanupUpdater,
-            useSyncEndpoint: true
-        )
-        // Create the current user and a channel in the database
-        try database.createCurrentUser()
-        try database.createChannel(cid: .unique)
-        
-        webSocketClient.simulateConnectionStatus(.connecting)
-        webSocketClient.simulateConnectionStatus(.connected(connectionId: .unique))
-
-        // Assert a network request is created
-        AssertAsync.willBeEqual(apiClient.request_allRecordedCalls.count, 1)
-
-        // Set up callbacks
-        var resetChannelsDataCalled = false
-        channelDatabaseCleanupUpdater.resetExistingChannelsData_body = { _ in resetChannelsDataCalled = true }
-
-        var refetchQueriesCalled = false
-        channelDatabaseCleanupUpdater.refetchExistingChannelListQueries_body = { refetchQueriesCalled = true }
-
-        // Simulate successful response
-        apiClient.test_simulateResponse(
-            Result<MissingEventsPayload, Error>.success(MissingEventsPayload(eventPayloads: []))
-        )
-
-        // Assert only `refetchExistingChannelListQueries` is called
-        AssertAsync {
-            Assert.willBeTrue(refetchQueriesCalled)
-            Assert.staysFalse(resetChannelsDataCalled)
-        }
+        // Assert the reconnection does not happen
+        XCTAssertFalse(mockChatClient.mockClientUpdater.connect_called)
     }
     
-    func test_eventPublisher_doesNotRetainItself() throws {
-        updater = ConnectionRecoveryUpdater(
-            database: database,
-            eventNotificationCenter: webSocketClient.eventNotificationCenter,
-            apiClient: apiClient,
-            databaseCleanupUpdater: channelDatabaseCleanupUpdater,
-            useSyncEndpoint: true
+    // MARK: - Client connected and disconnected by the system
+    
+    func test_whenClientWasConnectedAndInternetComesBack_reconnectionHappens() {
+        // Connect a chat client
+        mockChatClient.connectGuestUser(userInfo: .init(id: .unique))
+        mockChatClient.mockWebSocketClient.simulateConnectionStatus(.connected(connectionId: .unique))
+        
+        // Simulate connection going down
+        mockConnectionMonitor.status = .unavailable
+        
+        // Assert disconnection is initiated by the system
+        XCTAssertTrue(mockChatClient.mockClientUpdater.disconnect_called)
+        XCTAssertEqual(mockChatClient.mockClientUpdater.disconnect_source, .systemInitiated)
+        
+        // Simulate client disconnection
+        mockChatClient.mockWebSocketClient.simulateConnectionStatus(.disconnected(source: .systemInitiated))
+        
+        // Simulate connection comming back
+        mockConnectionMonitor.status = .available(.great)
+        
+        // Assert the reconnection happens
+        XCTAssertTrue(mockChatClient.mockClientUpdater.connect_called)
+    }
+    
+    func test_whenPassiveInBackgroundClientWasConnectedAndAppGoesToForeground_reconnectionHappens() {
+        // Connect chat client
+        mockChatClient.connectGuestUser(userInfo: .init(id: .unique))
+        mockChatClient.mockWebSocketClient.simulateConnectionStatus(.connected(connectionId: .unique))
+        
+        // Simulate app going to background
+        mockBackgroundTaskScheduler.startListeningForAppStateUpdates_onBackground?()
+        
+        // Assert disconnection is initiated by the system
+        XCTAssertTrue(mockChatClient.mockClientUpdater.disconnect_called)
+        XCTAssertEqual(mockChatClient.mockClientUpdater.disconnect_source, .systemInitiated)
+        
+        // Simulate client disconnection
+        mockChatClient.mockWebSocketClient.simulateConnectionStatus(.disconnected(source: .systemInitiated))
+        
+        // Simulate app going to foreground
+        mockBackgroundTaskScheduler.startListeningForAppStateUpdates_onForeground?()
+        
+        // Assert reconnection does happen
+        XCTAssertTrue(mockChatClient.mockClientUpdater.connect_called)
+    }
+    
+    func test_whenBackgroundTaskWasInterruptedAndAppGoesToForegroundWithInternetConnectionAvailable_reconnectionHappens() {
+        // Create mock chat client active in background
+        mockChatClient = makeMockChatClient(staysConnectedInBackground: true)
+        
+        // Create connection recovery updater
+        updater = ConnectionRecoveryUpdater(client: mockChatClient, environment: makeMockEnvironment())
+        
+        // Connect a chat client
+        mockChatClient.connectGuestUser(userInfo: .init(id: .unique))
+        mockChatClient.mockWebSocketClient.simulateConnectionStatus(.connected(connectionId: .unique))
+        
+        // Simulate app going to background
+        mockBackgroundTaskScheduler.startListeningForAppStateUpdates_onBackground?()
+        
+        // Assert disconnect is not called because it should stay connected in background
+        XCTAssertFalse(mockChatClient.mockClientUpdater.disconnect_called)
+        // Assert background task is started so client stays connected in background
+        XCTAssertTrue(mockBackgroundTaskScheduler.beginBackgroundTask_called)
+        
+        // Simulate backgroud task interruption
+        mockBackgroundTaskScheduler.beginBackgroundTask_expirationHandler?()
+        
+        // Assert disconnect is initiated by the system
+        XCTAssertTrue(mockChatClient.mockClientUpdater.disconnect_called)
+        XCTAssertEqual(mockChatClient.mockClientUpdater.disconnect_source, .systemInitiated)
+        
+        // Simulate client disconnection
+        mockChatClient.mockWebSocketClient.simulateConnectionStatus(.disconnected(source: .systemInitiated))
+        
+        // Simulate internet connection being available
+        mockConnectionMonitor.status = .available(.great)
+        
+        // Simulate app going to foreground
+        mockBackgroundTaskScheduler.startListeningForAppStateUpdates_onForeground?()
+        
+        // Assert the reconnection does happens
+        XCTAssertTrue(mockChatClient.mockClientUpdater.connect_called)
+    }
+    
+    func test_whenBackgroundTaskWasInterruptedAndAppGoesToForegroundWithInternetConnectionNotAvailable_reconnectionDoesNotHappens() {
+        // Create mock chat client active in background
+        mockChatClient = makeMockChatClient(staysConnectedInBackground: true)
+        
+        // Create connection recovery updater
+        updater = ConnectionRecoveryUpdater(client: mockChatClient, environment: makeMockEnvironment())
+        
+        // Connect a chat client
+        mockChatClient.connectGuestUser(userInfo: .init(id: .unique))
+        mockChatClient.mockWebSocketClient.simulateConnectionStatus(.connected(connectionId: .unique))
+        
+        // Simulate app going to background
+        mockBackgroundTaskScheduler.startListeningForAppStateUpdates_onBackground?()
+        
+        // Assert disconnect is not called because it should stay connected in background
+        XCTAssertFalse(mockChatClient.mockClientUpdater.disconnect_called)
+        // Assert background task is started so client stays connected in background
+        XCTAssertTrue(mockBackgroundTaskScheduler.beginBackgroundTask_called)
+        
+        // Simulate backgroud task interruption
+        mockBackgroundTaskScheduler.beginBackgroundTask_expirationHandler?()
+        
+        // Assert disconnect is initiated by the system
+        XCTAssertTrue(mockChatClient.mockClientUpdater.disconnect_called)
+        XCTAssertEqual(mockChatClient.mockClientUpdater.disconnect_source, .systemInitiated)
+        
+        // Simulate client disconnection
+        mockChatClient.mockWebSocketClient.simulateConnectionStatus(.disconnected(source: .systemInitiated))
+        
+        // Simulate internet connection being NOT available
+        mockConnectionMonitor.status = .unavailable
+        
+        // Simulate app going to foreground
+        mockBackgroundTaskScheduler.startListeningForAppStateUpdates_onForeground?()
+        
+        // Assert the reconnection does not happens
+        XCTAssertFalse(mockChatClient.mockClientUpdater.connect_called)
+    }
+    
+    func test_whenBackgroundTaskWasNotInterruptedAndAppGoesToForeground_reconnectionDoesNotHappen() {
+        // Create mock chat client active in background
+        mockChatClient = makeMockChatClient(staysConnectedInBackground: true)
+        
+        // Create connection recovery updater
+        updater = ConnectionRecoveryUpdater(client: mockChatClient, environment: makeMockEnvironment())
+        
+        // Connect a chat client
+        mockChatClient.connectGuestUser(userInfo: .init(id: .unique))
+        mockChatClient.mockWebSocketClient.simulateConnectionStatus(.connected(connectionId: .unique))
+        
+        // Simulate app going to background
+        mockBackgroundTaskScheduler.startListeningForAppStateUpdates_onBackground?()
+        
+        // Assert disconnect is not called because it should stay connected in background
+        XCTAssertFalse(mockChatClient.mockClientUpdater.disconnect_called)
+        // Assert background task is started so client stays connected in background
+        XCTAssertTrue(mockBackgroundTaskScheduler.beginBackgroundTask_called)
+        
+        // Simulate app going to foreground
+        mockBackgroundTaskScheduler.startListeningForAppStateUpdates_onForeground?()
+        
+        // Assert background task is ended
+        XCTAssertTrue(mockBackgroundTaskScheduler.endBackgroundTask_called)
+        
+        // Assert the reconnection does not happen since client was not disconnected
+        XCTAssertFalse(mockChatClient.mockClientUpdater.connect_called)
+    }
+    
+    // MARK: - Private
+    
+    private func makeMockChatClient(staysConnectedInBackground: Bool) -> ChatClientMock {
+        var config = ChatClientConfig(apiKeyString: .unique)
+        config.staysConnectedInBackground = staysConnectedInBackground
+        return ChatClientMock(config: config)
+    }
+    
+    private func makeMockEnvironment() -> ConnectionRecoveryUpdater.Environment {
+        .init(
+            internetConnectionBuilder: {
+                InternetConnectionMock(
+                    monitor: self.mockConnectionMonitor,
+                    notificationCenter: $0
+                )
+            },
+            backgroundTaskSchedulerBuilder: {
+                self.mockBackgroundTaskScheduler
+            }
         )
-        // Create current user in the database
-        try database.createCurrentUser()
-        
-        // Create channel in the database
-        try database.createChannel()
-        
-        // Simulate `.connecting` connection state of a web-socket
-        webSocketClient.simulateConnectionStatus(.connecting)
-        
-        // Simulate `.connected` connection state of a web-socket
-        webSocketClient.simulateConnectionStatus(.connected(connectionId: .unique))
-        
-        // Assert apiClient is called
-        AssertAsync.willBeTrue(apiClient.request_endpoint != nil)
-        
-        apiClient.test_simulateResponse(
-            Result<MissingEventsPayload, Error>.success(
-                MissingEventsPayload(eventPayloads: [])
-            )
-        )
-        
-        channelDatabaseCleanupUpdater.refetchExistingChannelListQueries_body()
-        
-        // Assert
-        AssertAsync.canBeReleased(&updater)
+    }
+}
+
+extension ChannelListQuery: Equatable {
+    public static func == (lhs: ChannelListQuery, rhs: ChannelListQuery) -> Bool {
+        lhs.filter == rhs.filter &&
+        lhs.messagesLimit == rhs.messagesLimit &&
+        lhs.options == rhs.options &&
+        lhs.pagination == rhs.pagination
     }
 }

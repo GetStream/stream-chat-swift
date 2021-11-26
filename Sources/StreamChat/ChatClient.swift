@@ -36,7 +36,7 @@ public class ChatClient {
     private let workerBuilders: [WorkerBuilder]
     
     /// Background worker that takes care about client connection recovery when the Internet comes back OR app transitions from background to foreground.
-    private(set) var connectionRecoveryUpdater: ConnectionRecoveryUpdater?
+    private(set) var connectionRecoveryHandler: ConnectionRecoveryHandler!
 
     /// The notification center used to send and receive notifications about incoming events.
     private(set) lazy var eventNotificationCenter: EventNotificationCenter = {
@@ -161,12 +161,8 @@ public class ChatClient {
         }
     }()
     
-    private(set) lazy var internetConnection = environment.internetConnection(eventNotificationCenter)
     private(set) lazy var clientUpdater = environment.clientUpdaterBuilder(self)
     private(set) var userConnectionProvider: UserConnectionProvider?
-    
-    /// Used for starting and ending background tasks. Hides platform specific logic.
-    private lazy var backgroundTaskScheduler = environment.backgroundTaskSchedulerBuilder()
     
     /// The environment object containing all dependencies of this `Client` instance.
     private let environment: Environment
@@ -247,6 +243,7 @@ public class ChatClient {
         } else {
             workerBuilders = []
             environment.webSocketClientBuilder = nil
+            environment.connectionRecoveryHandlerBuilder = nil
         }
         
         self.init(
@@ -275,7 +272,8 @@ public class ChatClient {
         self.tokenProvider = tokenProvider
         self.environment = environment
         self.workerBuilders = workerBuilders
-
+        connectionRecoveryHandler = environment.connectionRecoveryHandlerBuilder?(self)
+        
         currentUserId = fetchCurrentUserIdFromDatabase()
     }
     
@@ -337,7 +335,6 @@ public class ChatClient {
     public func disconnect() {
         clientUpdater.disconnect()
         userConnectionProvider = nil
-        unsubscribeFromNotifications()
         apiClient.flushRequestsQueue()
     }
 
@@ -360,14 +357,6 @@ public class ChatClient {
         backgroundWorkers = workerBuilders.map { builder in
             builder(self.databaseContainer, self.apiClient)
         }
-        
-        connectionRecoveryUpdater = environment.connectionRecoveryUpdaterBuilder(
-            databaseContainer,
-            eventNotificationCenter,
-            apiClient,
-            .init(database: databaseContainer, apiClient: apiClient),
-            config.isLocalStorageEnabled
-        )
     }
 
     func completeConnectionIdWaiters(connectionId: String?) {
@@ -392,96 +381,9 @@ public class ChatClient {
         self.userConnectionProvider = userConnectionProvider
         clientUpdater.reloadUserIfNeeded(
             userInfo: userInfo,
-            userConnectionProvider: userConnectionProvider
-        ) { [weak self] error in
-            if error == nil {
-                self?.subscribeOnNotifications()
-            }
-            completion?(error)
-        }
-    }
-    
-    private func subscribeOnNotifications() {
-        backgroundTaskScheduler?.startListeningForAppStateUpdates(
-            onEnteringBackground: { [weak self] in self?.handleAppDidEnterBackground() },
-            onEnteringForeground: { [weak self] in self?.handleAppDidBecomeActive() }
+            userConnectionProvider: userConnectionProvider,
+            completion: completion
         )
-        
-        eventNotificationCenter.addObserver(
-            self,
-            selector: #selector(didChangeInternetConnectionStatus(_:)),
-            name: .internetConnectionStatusDidChange,
-            object: nil
-        )
-    }
-    
-    private func unsubscribeFromNotifications() {
-        backgroundTaskScheduler?.stopListeningForAppStateUpdates()
-        eventNotificationCenter.removeObserver(
-            self,
-            name: .internetConnectionStatusDidChange,
-            object: nil
-        )
-    }
-    
-    private func handleAppDidEnterBackground() {
-        // We can't disconnect if we're not connected
-        guard connectionStatus == .connected else { return }
-        
-        guard config.staysConnectedInBackground else {
-            // We immediately disconnect
-            clientUpdater.disconnect(source: .systemInitiated)
-            return
-        }
-        guard let scheduler = backgroundTaskScheduler else { return }
-        
-        let succeed = scheduler.beginTask { [weak self] in
-            self?.clientUpdater.disconnect(source: .systemInitiated)
-        }
-        
-        if !succeed {
-            // Can't initiate a background task, close the connection
-            clientUpdater.disconnect(source: .systemInitiated)
-        }
-    }
-    
-    private func handleAppDidBecomeActive() {
-        cancelBackgroundTaskIfNeeded()
-        reconnectIfNeeded()
-    }
-    
-    private func cancelBackgroundTaskIfNeeded() {
-        backgroundTaskScheduler?.endTask()
-    }
-    
-    private func reconnectIfNeeded() {
-        guard userConnectionProvider != nil else {
-            // The client has not been connected yet during this session
-            return
-        }
-        
-        guard connectionStatus != .connected && connectionStatus != .connecting else {
-            // We are connected or connecting anyway
-            return
-        }
-        
-        guard internetConnection.status.isAvailable else {
-            // We are offline. Once the connection comes back we will try to reconnect again
-            return
-        }
-        
-        clientUpdater.connect()
-    }
-
-    @objc private func didChangeInternetConnectionStatus(_ notification: Notification) {
-        switch (connectionStatus, notification.internetConnectionStatus?.isAvailable) {
-        case (.connected, false):
-            clientUpdater.disconnect(source: .systemInitiated)
-        case (.disconnected, true):
-            reconnectIfNeeded()
-        default:
-            return
-        }
     }
 }
 
@@ -542,32 +444,16 @@ extension ChatClient {
         var eventDecoderBuilder: () -> EventDecoder = EventDecoder.init
         
         var notificationCenterBuilder = EventNotificationCenter.init
-        
-        var internetConnection: (_ center: NotificationCenter) -> InternetConnection = {
-            InternetConnection(notificationCenter: $0)
-        }
 
         var clientUpdaterBuilder = ChatClientUpdater.init
-        
-        var backgroundTaskSchedulerBuilder: () -> BackgroundTaskScheduler? = {
-            if Bundle.main.isAppExtension {
-                // No background task scheduler exists for app extensions.
-                return nil
-            } else {
-                #if os(iOS)
-                return IOSBackgroundTaskScheduler()
-                #else
-                // No need for background schedulers on macOS, app continues running when inactive.
-                return nil
-                #endif
-            }
-        }
         
         var timerType: Timer.Type = DefaultTimer.self
         
         var tokenExpirationRetryStrategy: WebSocketClientReconnectionStrategy = DefaultReconnectionStrategy()
         
-        var connectionRecoveryUpdaterBuilder = ConnectionRecoveryUpdater.init
+        var connectionRecoveryHandlerBuilder: ((ChatClient) -> ConnectionRecoveryHandler)? = {
+            ConnectionRecoveryUpdater(client: $0)
+        }
     }
 }
 
