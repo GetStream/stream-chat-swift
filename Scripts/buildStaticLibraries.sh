@@ -88,13 +88,13 @@ echo "→ Creating StreamChat.bundle"
 
 streamchat_bundle_path="$products_path/StreamChat.bundle"
 xcdatamodeld_name="StreamChatModel"
-xcdatamodeld_path="Sources/StreamChat/Database/$xcdatamodeld_name.xcdatamodeld"
+xcdatamodeld_location="$(pwd)/Sources/StreamChat/Database/$xcdatamodeld_name.xcdatamodeld"
 
 mkdir $streamchat_bundle_path
 
 # Compiles .xcdatamodeld into .mom
 # Credits to CocoaPods https://github.com/CocoaPods/CocoaPods/blob/master/lib/cocoapods/generator/copy_resources_script.rb
-xcrun momc $xcdatamodeld_path "$streamchat_bundle_path/$xcdatamodeld_name.momd"
+xcrun momc $xcdatamodeld_location "$(pwd)/$streamchat_bundle_path/$xcdatamodeld_name.momd"
 
 echo "→ Creating StreamChatUIResources.bundle"
 
