@@ -526,7 +526,10 @@ open class ComposerVC: _ViewController,
     }
 
     @objc open func sendONEAction() {
-        NotificationCenter.default.post(name: .sendOneWalletTapAction, object: nil)
+        guard let channelId = channelController?.channel?.cid else { return }
+        var userInfo = [String: Any]()
+        userInfo["channelId"] = channelId
+        NotificationCenter.default.post(name: .sendOneWalletTapAction, object: nil, userInfo: userInfo)
         //sendPaymentBubble()
     }
 
