@@ -110,9 +110,9 @@ public typealias ChatMessageReactionsBubbleView = ChatReactionPickerBubbleView
 @available(*, deprecated, message: "Use DefaultChatReactionPickerBubbleView instead")
 public typealias ChatMessageDefaultReactionsBubbleView = DefaultChatReactionPickerBubbleView
 
+// MARK: - Reaction components, deprecated
+
 extension Components {
-    // MARK: - Reaction components, deprecated
-    
     @available(*, deprecated, message: "Use reactionPickerVC instead")
     public var messageReactionsVC: ChatMessageReactionsVC.Type {
         get {
@@ -163,5 +163,48 @@ extension Components {
             reactionPickerReactionItemView = newValue
             messageReactionItemView = newValue
         }
+    }
+}
+
+// MARK: - Deprecation of `ChatMessageLayoutOptions: OptionSet`
+
+extension ChatMessageLayoutOptions {
+    @available(*, deprecated, message: """
+        use `id` instead.
+    """)
+    var rawValue: String {
+        id
+    }
+
+    @available(*, deprecated, message: """
+        use `remove(_ member: ChatMessageLayoutOption)` instead.
+    """)
+    public mutating func remove(_ options: ChatMessageLayoutOptions) {
+        self = subtracting(options)
+    }
+
+    @available(*, deprecated, message: """
+        use `insert(_ member: ChatMessageLayoutOption)` instead.
+    """)
+    public mutating func insert(_ options: ChatMessageLayoutOptions) {
+        options.forEach { self.insert($0) }
+    }
+
+    @available(*, deprecated, message: """
+        use `contains(_ member: ChatMessageLayoutOption` instead. And make sure the custom option is being extended in
+        `ChatMessageLayoutOption` and not in `ChatMessageLayoutOptions`.
+    """)
+    public func contains(_ options: ChatMessageLayoutOptions) -> Bool {
+        let intersected = intersection(options)
+        return intersected.count == options.count
+    }
+
+    @available(*, deprecated, message: """
+        ChatMessageLayoutOptions is not an OptionSet anymore. Extend ChatMessageLayoutOption to create new options.
+        Use the string raw value initialiser from `ChatMessageLayoutOption` instead of `ChatMessageLayoutOptions`.
+    """)
+    init(rawValue: Int) {
+        let option = ChatMessageLayoutOption(rawValue: "\(rawValue)")
+        self = Set(arrayLiteral: option)
     }
 }

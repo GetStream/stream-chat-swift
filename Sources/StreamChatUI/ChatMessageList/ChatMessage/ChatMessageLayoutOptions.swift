@@ -7,21 +7,12 @@ import Foundation
 /// A typealias of `Set<ChatMessageLayoutOption>` to make the API similar of an `OptionSet`.
 public typealias ChatMessageLayoutOptions = Set<ChatMessageLayoutOption>
 
-public extension ChatMessageLayoutOptions {
-    /// The raw value of all the options that is used to create identify a collection of options.
-    /// It is essentially to make the API backwards-compatible with `OptionSet`
-    /// and used to create the reuse identifier of the message cell.
-    var rawValue: String {
-        // Since it is a Set, we need to sort it to make sure the identifier doesn't change.
+extension ChatMessageLayoutOptions: Identifiable {
+    /// The id is composed by the raw values of each option joined by "-".
+    /// This id is then used to compute the reuse identifier of each message cell.
+    public var id: String {
+        // Since it is a Set, we need to sort it to make sure the value doesn't change per call.
         map(\.rawValue).sorted().joined(separator: "-")
-    }
-
-    mutating func remove(_ options: ChatMessageLayoutOptions) {
-        self = subtracting(options)
-    }
-    
-    mutating func insert(_ options: ChatMessageLayoutOptions) {
-        options.forEach { self.insert($0) }
     }
 }
 
@@ -37,14 +28,6 @@ public struct ChatMessageLayoutOption: RawRepresentable, Hashable, ExpressibleBy
     public init(stringLiteral value: String) {
         self.init(rawValue: value)
     }
-
-    // Probably this is not needed. It will be a breaking change anyway to the current customer
-    // since the customer was doing initialising from `ChatMessageLayoutOptions`.
-    //
-//    @available(*, deprecated, message: "Use the string raw value initialiser.")
-//    public init(rawValue: Int) {
-//        self.rawValue = "\(rawValue)"
-//    }
 }
 
 public extension ChatMessageLayoutOption {
