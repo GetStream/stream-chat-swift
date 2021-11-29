@@ -346,13 +346,13 @@ open class _ViewController: UIViewController, Customizable {
     
     /**
      A function that will be called on first launch of the `View` it's a function that can be used
-     for any initial setup work required by the `View` such as setting delegates or datasources
+     for any initial setup work required by the `View` such as setting delegates or data sources
      
      `setUp()` is an important function within the ViewController lifecycle
-     It's resposibility is to set the delegates and also call `synchronize()`
+     Its responsibility is to set the delegates and also call `synchronize()`
      this will make sure your local & remote data is in sync.
      
-     - Important: If you override this method without calling `super.setUp()` it's important
+     - Important: If you override this method without calling `super.setUp()`, it's essential
      to make sure `synchronize()` is called.
      */
     open func setUp() { /* default empty implementation */ }
