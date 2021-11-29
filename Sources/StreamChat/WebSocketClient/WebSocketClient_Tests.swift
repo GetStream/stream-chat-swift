@@ -194,21 +194,94 @@ class WebSocketClient_Tests: XCTestCase {
         }
     }
     
-    func test_disconnect() {
+    func test_disconnect_callsEngine() {
         // Simulate connection
         test_connectionFlow()
         
         assert(webSocketClient.connectionState == .connected(connectionId: connectionId))
         assert(engine!.disconnect_calledCount == 0)
-        
+                
         // Call `disconnect`, it should change connection state and call `disconnect` on the engine
-        webSocketClient.disconnect()
-        XCTAssertEqual(webSocketClient.connectionState, .disconnecting(source: .userInitiated))
-        AssertAsync.willBeEqual(engine!.disconnect_calledCount, 1)
+        let source: WebSocketConnectionState.DisconnectionSource = .userInitiated
+        webSocketClient.disconnect(source: source)
         
-        // Simulate the engine is disconnected and check the connection state is updated
-        engine!.simulateDisconnect()
-        AssertAsync.willBeEqual(webSocketClient.connectionState, .disconnected())
+        // Assert disconnect is called
+        AssertAsync.willBeEqual(engine!.disconnect_calledCount, 1)
+    }
+    
+    func test_whenConnectedAndEngineDisconnectsWithInternetConnectionError_itIsTreatedAsSystemInitiatedDisconnect() {
+        // Simulate connection
+        test_connectionFlow()
+        
+        // Simulate the engine disconnecting because there's no internet connection
+        let noInternetConnectionError = WebSocketEngineError(
+            reason: UUID().uuidString,
+            code: 0,
+            engineError: NSError(
+                domain: NSURLErrorDomain,
+                code: NSURLErrorNotConnectedToInternet,
+                userInfo: [:]
+            )
+        )
+        engine!.simulateDisconnect(noInternetConnectionError)
+        
+        // Assert state is disconnected with `systemInitiated` source
+        XCTAssertEqual(webSocketClient.connectionState, .disconnected(source: .systemInitiated))
+    }
+    
+    func test_whenConnectedAndEngineDisconnectsWithServerError_itIsTreatedAsServerInitiatedDisconnect() {
+        // Simulate connection
+        test_connectionFlow()
+        
+        // Simulate the engine disconnecting with server error
+        let errorPayload = ErrorPayload(
+            code: .unique,
+            message: .unique,
+            statusCode: .unique
+        )
+        let engineError = WebSocketEngineError(
+            reason: UUID().uuidString,
+            code: 0,
+            engineError: errorPayload
+        )
+        engine!.simulateDisconnect(engineError)
+        
+        // Assert state is disconnected with `systemInitiated` source
+        XCTAssertEqual(
+            webSocketClient.connectionState,
+            .disconnected(source: .serverInitiated(error: ClientError.WebSocket(with: engineError)))
+        )
+    }
+    
+    func test_disconnect_propagatesDisconnectionSource() {
+        // Simulate connection
+        test_connectionFlow()
+        
+        let testCases: [WebSocketConnectionState.DisconnectionSource] = [
+            .userInitiated,
+            .systemInitiated,
+            .serverInitiated(error: nil),
+            .serverInitiated(error: .init(.unique))
+        ]
+        
+        for source in testCases {
+            engine?.disconnect_calledCount = 0
+            
+            // Call `disconnect` with the given source
+            webSocketClient.disconnect(source: source)
+            
+            // Assert connection state is changed to disconnecting respecting the source
+            XCTAssertEqual(webSocketClient.connectionState, .disconnecting(source: source))
+            
+            // Assert disconnect is called
+            AssertAsync.willBeEqual(engine!.disconnect_calledCount, 1)
+            
+            // Simulate engine disconnection
+            engine!.simulateDisconnect()
+            
+            // Assert state is `disconnected` with the correct source
+            AssertAsync.willBeEqual(webSocketClient.connectionState, .disconnected(source: source))
+        }
     }
     
     func test_reconnectionStrategy_successfullyConnectedIsCalled() {
@@ -276,14 +349,14 @@ class WebSocketClient_Tests: XCTestCase {
         
         // Simulate the engine disconnects and check `connectionState` is updated
         engine!.simulateDisconnect()
-        AssertAsync.willBeEqual(webSocketClient.connectionState, .disconnected())
+        AssertAsync.willBeEqual(webSocketClient.connectionState, .disconnected(source: .serverInitiated(error: nil)))
         
         // Simulate time passed and make sure `connect` is not called
         time.run(numberOfSeconds: 60)
         AssertAsync.staysTrue(engine!.connect_calledCount == 0)
     }
     
-    func test_reconnectionStrategy_notCalledWhenDisconnectedManually() {
+    func test_reconnectionStrategy_whenDisconnectWasUserInitiated_reconnectionDoesNotHappen() {
         // Simulate connection
         test_connectionFlow()
         // Reset the counter
@@ -292,8 +365,27 @@ class WebSocketClient_Tests: XCTestCase {
         // Make the reconnection return 10 seconds
         reconnectionStrategy.reconnectionDelay = 10
         
-        // Simulate manual disconnect
-        webSocketClient.disconnect()
+        // Simulate disconnect initiated by the user
+        webSocketClient.disconnect(source: .userInitiated)
+        engine!.simulateDisconnect()
+        
+        // Simulate time passed and make sure `connect` is not called
+        time.run(numberOfSeconds: 60)
+        AssertAsync.staysTrue(engine!.connect_calledCount == 0)
+    }
+    
+    func test_reconnectionStrategy_whenDisconnectWasSystemInitiated_reconnectionDoesNotHappen() {
+        // Simulate connection
+        test_connectionFlow()
+        
+        // Reset the counter
+        engine!.connect_calledCount = 0
+        
+        // Make the reconnection return 10 seconds
+        reconnectionStrategy.reconnectionDelay = 10
+        
+        // Simulate disconnect initiated by the system
+        webSocketClient.disconnect(source: .systemInitiated)
         engine!.simulateDisconnect()
         
         // Simulate time passed and make sure `connect` is not called
@@ -470,8 +562,8 @@ class WebSocketClient_Tests: XCTestCase {
             .connected(connectionId: connectionId), // duplicate state should be ignored
             .disconnecting(source: .userInitiated),
             .disconnecting(source: .userInitiated), // duplicate state should be ignored
-            .disconnected(),
-            .disconnected() // duplicate state should be ignored
+            .disconnected(source: .userInitiated),
+            .disconnected(source: .userInitiated) // duplicate state should be ignored
         ]
         
         connectionStates.forEach { webSocketClient.simulateConnectionStatus($0) }
@@ -480,7 +572,7 @@ class WebSocketClient_Tests: XCTestCase {
             WebSocketConnectionState.connecting, // states 0...3
             .connected(connectionId: connectionId), // states 4...5
             .disconnecting(source: .userInitiated), // states 6...7
-            .disconnected() // states 8...9
+            .disconnected(source: .userInitiated) // states 8...9
         ].map {
             ConnectionStatusUpdated(webSocketConnectionState: $0).asEquatable
         }

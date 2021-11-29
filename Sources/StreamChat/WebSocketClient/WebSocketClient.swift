@@ -235,8 +235,21 @@ extension WebSocketClient: WebSocketEngineDelegate {
                 .schedule(timeInterval: reconnectionDelay, queue: engineQueue) { [weak self] in self?.connect() }
             
         } else {
-            connectionState = .disconnected(error: disconnectionError.map { ClientError.WebSocket(with: $0) })
-
+            let source: WebSocketConnectionState.DisconnectionSource = {
+                switch connectionState {
+                case let .disconnecting(source):
+                    return source
+                default:
+                    // If it's lack of internet connection `.systemInitiated` source is used that allows
+                    // to reconnect when connection comes back
+                    return disconnectionError?.isInternetOfflineError == true
+                        ? .systemInitiated
+                        : .serverInitiated(error: disconnectionError.map { ClientError.WebSocket(with: $0) })
+                }
+            }()
+            
+            connectionState = .disconnected(source: source)
+            
             // If the disconnection error was one of the internet-is-down error, schedule reconnecting once the
             // connection is back online.
             guard disconnectionError?.isInternetOfflineError == true else { return }
@@ -244,8 +257,8 @@ extension WebSocketClient: WebSocketEngineDelegate {
             internetConnection.notifyOnce(when: { $0.isAvailable }) { [weak self] in
                 // Check the current state is still "disconnected" with an internet-down error. If not, it means
                 // the state was changed manually and we don't want to reconnect automatically.
-                if case let .disconnected(error) = self?.connectionState,
-                   error?.underlyingError?.isInternetOfflineError == true {
+                if case let .disconnected(source) = self?.connectionState,
+                   source.serverError?.isInternetOfflineError == true {
                     self?.connect()
                 }
             }

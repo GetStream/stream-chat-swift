@@ -32,8 +32,8 @@ extension ConnectionStatus {
         case .initialized:
             self = .initialized
             
-        case let .disconnected(error: error):
-            self = .disconnected(error: error)
+        case let .disconnected(source):
+            self = .disconnected(error: source.serverError)
             
         case .connecting, .waitingForConnectionId, .waitingForReconnect:
             self = .connecting
@@ -64,13 +64,20 @@ enum WebSocketConnectionState: Equatable {
         
         /// `WebSocketPingController` didn't get a pong response.
         case noPongReceived
+        
+        /// Returns the underlaying error if connection cut was initiated by the server.
+        var serverError: ClientError? {
+            guard case let .serverInitiated(error) = self else { return nil }
+            
+            return error
+        }
     }
     
     /// The initial state meaning that  there was no atempt to connect yet.
     case initialized
     
-    /// The web socket is not connected. Optionally contains an error, if the connection was disconnected due to an error.
-    case disconnected(error: ClientError? = nil)
+    /// The web socket is not connected. Contains the source/reason why the disconnection has happened.
+    case disconnected(source: DisconnectionSource)
     
     /// The web socket is connecting
     case connecting
