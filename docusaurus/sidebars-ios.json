@@ -55,6 +55,7 @@
     },
     {
       "Guides": [
+        "guides/importance-of-synchronize",
         "guides/customize-message-actions",
         "guides/push-notifications",
         "guides/working-with-attachments",
