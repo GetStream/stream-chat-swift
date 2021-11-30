@@ -1379,11 +1379,11 @@ private extension ChatClientConfig {
 // MARK: - Mock
 
 class EventNotificationCenterMock: EventNotificationCenter {
-    /// Logs all events the `process` method was called with
-    @Atomic var process_loggedEvents: [Event] = []
+    lazy var mock_process = MockFunc<([Event], Bool, (() -> Void)?), Void>.mock(for: process)
     
-    override func process(_ event: Event) {
-        super.process(event)
-        _process_loggedEvents { $0.append(event) }
+    override func process(_ events: [Event], postNotifications: Bool = true, completion: (() -> Void)? = nil) {
+        super.process(events, postNotifications: postNotifications, completion: completion)
+        
+        mock_process.call(with: (events, postNotifications, completion))
     }
 }

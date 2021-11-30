@@ -123,56 +123,88 @@ final class EventNotificationCenter_Tests: XCTestCase {
         }
     }
     
-    func test_eventsAreBatched() {
+    func test_process_whenShouldPostEventsIsTrue_eventsArePosted() {
         // Create a notification center with just a forwarding middleware
         let center = EventNotificationCenter(database: database)
 
         // Create event logger to check published events
         let eventLogger = EventLogger(center)
 
-        // Prepare test events
-        let testEvents = [TestEvent(), TestEvent(), TestEvent(), TestEvent()]
-        
-        // Note: The most correct approach would be to mock the timer and mock this whole thing. However
-        // it's just a couple of milliseconds and it safes us a lot of complexity, so I decided to do it
-        // directly like this. Let's see it bites back 🤞.
-        center.eventBatchPeriod = 0.2
+        // Simulate incoming events
+        let events = [TestEvent(), TestEvent(), TestEvent(), TestEvent()]
 
-        // Assert no write sessions exist yet
-        XCTAssertEqual(database.writeSessionCounter, 0)
+        // Feed events that should be posted and catch the completion
+        var completionCalled = false
+        center.process(events, postNotifications: true) {
+            completionCalled = true
+        }
         
-        // Submit some events
-        center.process(testEvents[0])
-        center.process(testEvents[1])
-        
-        // Wait a bit and assert no write sessions happen
-        wait(0.1)
-        XCTAssertEqual(database.writeSessionCounter, 0)
+        // Wait completion to be called
+        AssertAsync.willBeTrue(completionCalled)
 
-        // Wait another bit and assert the events were processed in a single session
-        wait(0.3)
-        XCTAssertEqual(database.writeSessionCounter, 1)
-        XCTAssertEqual(eventLogger.events as! [TestEvent], Array(testEvents[0...1]))
-        
-        // Submit more events
-        center.process(testEvents[2])
-        center.process(testEvents[3])
-        
-        // Wait a bit and assert no additional write sessions happen
-        wait(0.1)
-        XCTAssertEqual(database.writeSessionCounter, 1)
-        
-        // Wait another bit and assert the events were processed in another session
-        wait(0.3)
-        XCTAssertEqual(database.writeSessionCounter, 2)
-        XCTAssertEqual(eventLogger.events as! [TestEvent], testEvents)
+        // Assert events are posted.
+        XCTAssertEqual(eventLogger.events as! [TestEvent], events)
     }
-}
 
-private extension EventNotificationCenter_Tests {
-    func wait(_ time: TimeInterval) {
-        let start = Date()
-        AssertAsync.willBeTrue(Date().timeIntervalSince(start) >= time)
+    func test_process_whenShouldPostEventsIsFalse_eventsAreNotPosted() {
+        // Create a notification center with just a forwarding middleware
+        let center = EventNotificationCenter(database: database)
+
+        // Create event logger to check published events
+        let eventLogger = EventLogger(center)
+
+        // Simulate incoming events
+        let events = [TestEvent(), TestEvent(), TestEvent(), TestEvent()]
+
+        // Feed events that should not be posted and catch the completion
+        var completionCalled = false
+        center.process(events, postNotifications: false) {
+            completionCalled = true
+        }
+        
+        // Wait completion to be called
+        AssertAsync.willBeTrue(completionCalled)
+
+        // Assert events are not posted.
+        XCTAssertTrue(eventLogger.events.isEmpty)
+    }
+    
+    func test_process_postsEventsOnPostingQueue() {
+        // Create notification center
+        let center = EventNotificationCenter(database: database)
+        
+        // Assign mock events posting queue
+        let mockQueueUUID = UUID()
+        let mockQueue = DispatchQueue.testQueue(withId: mockQueueUUID)
+        center.eventPostingQueue = mockQueue
+        
+        // Create test event
+        let testEvent = TestEvent()
+        
+        // Setup event observer
+        var observerTriggered = false
+        
+        let observer = center.addObserver(
+            forName: .NewEventReceived,
+            object: nil,
+            queue: nil
+        ) { notification in
+            // Assert notification contains test event
+            XCTAssertEqual(notification.event as? TestEvent, testEvent)
+            // Assert notificaion is posted on correct queue
+            XCTAssertTrue(DispatchQueue.isTestQueue(withId: mockQueueUUID))
+            
+            observerTriggered = true
+        }
+
+        // Process test event and post when processing is completed
+        center.process([testEvent], postNotifications: true)
+        
+        // Wait for observer to be called
+        AssertAsync.willBeTrue(observerTriggered)
+        
+        // Remove observer
+        center.removeObserver(observer)
     }
 }
 

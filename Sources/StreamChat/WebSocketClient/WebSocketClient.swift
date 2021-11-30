@@ -189,7 +189,7 @@ extension WebSocketClient: WebSocketEngineDelegate {
 
             let event = try eventDecoder.decode(from: messageData)
             if let healthCheckEvent = event as? HealthCheckEvent {
-                eventNotificationCenter.process(healthCheckEvent) { [weak self] connectionId in
+                eventNotificationCenter.process(healthCheckEvent, postNotification: false) { [weak self] in
                     self?.pingController.pongRecieved()
                     self?.connectionState = .connected(connectionId: connectionId)
                 }
