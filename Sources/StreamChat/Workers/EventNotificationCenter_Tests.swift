@@ -206,6 +206,41 @@ final class EventNotificationCenter_Tests: XCTestCase {
         // Remove observer
         center.removeObserver(observer)
     }
+    
+    func test_process_whenOriginalEventIsSwapped_newEventIsProcessedFurther() {
+        // Create incoming event
+        let originalEvent = TestEvent()
+        
+        // Create event that will be returned instead of incoming event
+        let outputEvent = TestEvent()
+        
+        // Create a notification center
+        let center = EventNotificationCenter(database: database)
+        
+        // Create event logger to check published events
+        let eventLogger = EventLogger(center)
+        
+        // Add event swapping middleware
+        center.add(middleware: EventMiddlewareMock { event, session in
+            // Assert expected event is received
+            XCTAssertEqual(event as? TestEvent, originalEvent)
+            
+            // Assert expected database session is received
+            XCTAssertEqual(session as? NSManagedObjectContext, self.database.writableContext)
+            
+            // Simulate event swapping
+            return outputEvent
+        })
+        
+        // Start processing of original event
+        center.process(originalEvent, postNotification: true)
+        
+        // Assert event returned from middleware is posted
+        AssertAsync.willBeEqual(
+            eventLogger.events.compactMap { $0 as? TestEvent },
+            [outputEvent]
+        )
+    }
 }
 
 // MARK: - Helpers
