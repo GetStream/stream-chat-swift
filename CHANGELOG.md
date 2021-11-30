@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Fix memory leak in GalleryVC [#1631](https://github.com/GetStream/stream-chat-swift/pull/1631)
 - Increase tappable area surrounding the ShareButton inside the GalleryVC [#1640](https://github.com/GetStream/stream-chat-swift/pull/1640)
 - Fix giphy action message (ephemeral message) in a thread is also shown in the channel [#1641](https://github.com/GetStream/stream-chat-swift/issues/1641)
+- Fix crash when sending giphies. (Requires update of SwiftyGif to 5.4.1) [SwiftyGif#158](https://github.com/kirualex/SwiftyGif/pull/158)
 
 ### 🔄 Changed
 - Make `LogDetails` fields `public` so they are be accessible. Typical usage is when overriding `process(logDetails:)` when subclassing `BaseLogDestination` [#1650](https://github.com/GetStream/stream-chat-swift/issues/1650)
