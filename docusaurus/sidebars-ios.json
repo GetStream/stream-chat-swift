@@ -9,51 +9,75 @@
       ]
     },
     {
-      "Customization": [
-        "customization/theming",
-        "customization/custom-components",
-        "customization/localization"
+      "UIKit" : [
+        "uikit/uikit-overview",
+        "uikit/getting-started",
+        "uikit/localization",
+        "uikit/theming",
+        {
+            "Controllers and Delegates": [
+              "uikit/controllers/controllers-overview",
+              "uikit/controllers/connection",
+              "uikit/controllers/channels",
+              "uikit/controllers/users",
+              "uikit/controllers/messages",
+              "uikit/controllers/events"
+            ]
+          },
+          {
+            "Core Components": [
+              "uikit/components/channel-list",
+              "uikit/components/channel",
+              "uikit/components/thread",
+              "uikit/components/message",
+              "uikit/components/message-composer",
+              "uikit/components/custom-components"
+            ]
+          },
+         {
+            "Views": [
+              "uikit/views/channel-list-item-view",
+              "uikit/views/channel-header-view",
+              "uikit/views/thread-header-view",
+              "uikit/views/message-layout-options-resolver",
+              "uikit/views/avatar",
+              "uikit/views/reactions"
+            ]
+          }
+        ]
+      },
+    {
+      "SwiftUI": [
+        "swiftui/swiftui-overview",
+        "swiftui/getting-started",
+        "swiftui/localization",
+        "swiftui/view-customizations",
+        {
+          "Components" : [
+            "swiftui/components/channel-list-header",
+            "swiftui/components/swipe-actions-channels",
+            "swiftui/components/query-filters",
+            "swiftui/components/helper-views",
+            "swiftui/components/list-tap-events",
+            "swiftui/components/custom-avatar",
+            "swiftui/components/channel-header",
+            "swiftui/components/attachments",
+            "swiftui/components/message-composer",
+            "swiftui/components/message-reactions"
+          ]
+        }
       ]
     },
     {
-      "Controllers and Delegates": [
-        "controllers/controllers-overview",
-        "controllers/connection",
-        "controllers/channels",
-        "controllers/users",
-        "controllers/messages",
-        "controllers/events"
-      ]
-    },
-    {
-      "Combine" : [
-        "combine/combine-overview",
-        "combine/connection",
-        "combine/channels",
-        "combine/users",
-        "combine/messages",
-        "combine/events"
-      ]
-    },
-    {
-      "Core Components": [
-        "components/channel-list",
-        "components/channel",
-        "components/thread",
-        "components/message",
-        "components/message-composer"
-      ]
-    },
-    {
-      "UI Components": [
-        "components/channel-list-item-view",
-        "components/channel-header-view",
-        "components/thread-header-view",
-        "components/message-layout-options-resolver",
-        "components/avatar",
-        "components/reactions"
-      ]
-    },
+        "Combine" : [
+          "combine/combine-overview",
+          "combine/connection",
+          "combine/channels",
+          "combine/users",
+          "combine/messages",
+          "combine/events"
+        ]
+      },
     {
       "Guides": [
         "guides/importance-of-synchronize",

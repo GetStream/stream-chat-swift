@@ -2,8 +2,8 @@
 title: ChatThreadHeaderView
 ---
 
-import ComponentsNote from '../common-content/components-note.md'
-import Properties from '../common-content/reference-docs/stream-chat-ui/chat-thread/chat-thread-header-view-properties.md'
+import ComponentsNote from '../../common-content/components-note.md'
+import Properties from '../../common-content/reference-docs/stream-chat-ui/chat-thread/chat-thread-header-view-properties.md'
 
 This component is responsible to display the information in the header of a thread. By default, it is rendered in the `navigationItem.titleView` of the [`ChatThreadVC`](../thread).
 
@@ -23,7 +23,7 @@ Let's change the default `ChatThreadHeaderView` and put the channel name in the 
 
 | Default Style  | Custom Style | Custom Style (Typing) |
 | -------------- | ------------ | --------------------- |
-| <img src={require("../assets/chat-thread-header-view-default.png").default}/>  | <img src={require("../assets/chat-thread-header-view-custom.png").default}/>  | <img src={require("../assets/chat-thread-header-view-custom-typing.png").default}/>  |
+| <img src={require("../../assets/chat-thread-header-view-default.png").default}/>  | <img src={require("../../assets/chat-thread-header-view-custom.png").default}/>  | <img src={require("../../assets/chat-thread-header-view-custom-typing.png").default}/>  |
 
 For this we need to subclass `ChatThreadHeaderView` and handle typing events as well as moving the channel name to the title instead of subtitle.
 
