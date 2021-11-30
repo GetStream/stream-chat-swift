@@ -6,11 +6,11 @@ title: Message Attachments
 
 The SwiftUI SDK supports the following types of attachments:
 
-- images
-- giphys
-- videos
-- links
-- files
+- Images
+- Giphys
+- Videos
+- Links
+- Files
 
 They all come with default views displaying the attachments. In addition, they are all swappable, so you can easily change some of them if you want a more customized look.
 
