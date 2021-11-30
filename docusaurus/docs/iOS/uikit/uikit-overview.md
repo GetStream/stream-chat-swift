@@ -1,9 +1,11 @@
 ---
-title: Overview
+title: UIKit Overview
 slug: /uikit
 ---
 
-We have a component library available for UIKit. The library includes an extensive set of performant and customizable UI components which allow you to get started quickly with little to no plumbing required. The library supports:
+Building on top of the the Stream Chat API, the Stream Chat iOS component libraries include everything you need to build feature-rich and high-functioning chat user experiences out of the box.
+
+We have a component libraries available for both UIKit and SwiftUI. Each library includes an extensive set of performant and customizable UI components which allow you to get started quickly with little to no plumbing required. The libraries supports:
 
 - Rich media messages
 - Reactions
@@ -14,6 +16,23 @@ We have a component library available for UIKit. The library includes an extensi
 - Read state and typing indicators
 - Channel and message lists
 - Push (APN or Firebase)
+- Offline storage
+- OSX
+
+### Dependencies 
+
+This SDK tries to keep the list of external dependencies to a minimum, these are the dependencies currently used:
+
+#### StreamChatUI
+
+- [Nuke](https://github.com/kean/Nuke) for loading images  
+- [SwiftyGif](https://github.com/kirualex/SwiftyGif) for high performance GIF rendering
+- StreamChat the low-level client to Stream Chat API
+
+#### StreamChat
+
+- [Starscream](https://github.com/daltoniam/Starscream) to handle WebSocket connections
+
 
 ## Installation
 
@@ -29,9 +48,10 @@ After pressing next, Xcode will look for the repository and automatically select
 
 ![Screenshot shows an Xcode screen selecting a dependency version and an Xcode screen downloading that dependency](../assets/spm-01.png)
 
-The repository contains 2 targets: StreamChat and StreamChatUI.
+The repository contains 3 targets: StreamChat, StreamChatUI and StreamChatSwiftUI.
 
 - If you'll use the UIKit components, select StreamChat and StreamChatUI.
+- If you will use the SwiftUI components, select StreamChat and StreamChatSwiftUI.
 - If you don't need any UI components, select just StreamChat.
 
 ![Screenshot shows an Xcode screen with dependency targets to be selected](../assets/spm-02.png)
@@ -42,11 +62,15 @@ After you press finish, it's done!
 Because StreamChat SDKs have to be distributed with its resources, the minimal Swift version requirement for this installation method is 5.3. If you need to support older Swift version, please install it using CocoaPods.
 :::
 
+
+
+
 ### Install with CocoaPods
 
 In your project's Podfile, add one of these options
 
 - `pod 'StreamChatUI', '~> 4.0.0'`
+- `pod 'StreamChatSwiftUI', '~> 4.0.0'`
 - `pod 'StreamChat', '~> 4.0.0'`
 
 If you'll use the UIKit components, it should look similar the snippet below.
@@ -61,7 +85,19 @@ target 'MyProject' do
 end
 ```
 
-The StreamChatUI pod will automatically include the StreamChat dependency. If you want just the StreamChat dependency, without the UI components, add `pod 'StreamChat', '~> 4.0'` to your Podfile instead. It should look similar to the snippet below.
+If you'll use the SwiftUI components, it should look similar the snippet below.
+
+```ruby
+target 'MyProject' do
+  # Comment the next line if you don't want to use dynamic frameworks
+  use_frameworks!
+
+  # Pods for MyProject
+  pod 'StreamChatSwiftUI', '~> 4.0.0'
+end
+```
+
+The StreamChatUI and StreamChatSwiftUI pod will automatically include the StreamChat dependency. If you want just the StreamChat dependency, without the UI components, add `pod 'StreamChat', '~> 4.0'` to your Podfile instead. It should look similar to the snippet below.
 
 ```ruby
 target 'MyProject' do

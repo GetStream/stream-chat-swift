@@ -33,7 +33,7 @@ class MessageDetailView: UIView, ChatMessageControllerDelegate {
             updateContent()
         }
     }
-
+    
     var labelView: UILabel = {
         var label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -42,7 +42,7 @@ class MessageDetailView: UIView, ChatMessageControllerDelegate {
 
     override public init(frame: CGRect) {
         super.init(frame: frame)
-
+        
         addSubview(labelView)
 
         NSLayoutConstraint.activate([
@@ -52,7 +52,7 @@ class MessageDetailView: UIView, ChatMessageControllerDelegate {
             labelView.trailingAnchor.constraint(equalTo: trailingAnchor)
         ])
     }
-
+    
     required init?(coder: NSCoder) {
         super.init(coder: coder)
     }
@@ -85,7 +85,7 @@ class ViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
         let cid = ChannelId(type: .messaging, id: "E9BF5FCE-1")
         controller = ChatClient.shared.messageController(cid: cid, messageId: "91AC67C6-C2AF-486E-8552-08E6F9B48D85")
         controller.delegate = messageDetailView
@@ -103,9 +103,3 @@ class ViewController: UIViewController {
     }
 }
 ```
-
-:::tip Using Synchronize
-
-After accessing the `ChatClient.shared.messageController(cid: cid, messageId: "91AC67C6-C2AF-486E-8552-08E6F9B48D85")` it's important you call `synchronize()` after so the local and remote data is updated. You can read more about the importance of `synchronize()` [here](../../guides/importance-of-synchronize)..
-
-:::
