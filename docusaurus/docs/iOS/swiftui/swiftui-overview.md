@@ -21,7 +21,7 @@ This SDK tries to keep the list of external dependencies to a minimum, and these
 
 - [Nuke](https://github.com/kean/Nuke) for loading images
 - [NukeUI](https://github.com/kean/NukeUI) for SwiftUI async image loading  
-- [SwiftyGif](https://github.com/kirualex/SwiftyGif) for high performance GIF rendering
+- [Gifu](hhttps://github.com/kaishin/Gifu) for high performance GIF rendering
 - StreamChat the low-level client to Stream Chat API
 
 #### StreamChat
