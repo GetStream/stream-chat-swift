@@ -2,8 +2,8 @@
 title: ChatMessageLayoutOptionsResolver
 ---
 
-import ComponentsNote from '../common-content/components-note.md'
-import Properties from '../common-content/reference-docs/stream-chat-ui/chat-message-list/chat-message/chat-message-layout-options-properties.md'
+import ComponentsNote from '../../common-content/components-note.md'
+import Properties from '../../common-content/reference-docs/stream-chat-ui/chat-message-list/chat-message/chat-message-layout-options-properties.md'
 
 The `ChatMessageLayoutOptionsResolver` object is responsible for assigning layout options to a message in a specific position inside a list. Layout options are stored in the `ChatMessageLayoutOptions` struct type.
 
@@ -95,7 +95,7 @@ Components.default.messageLayoutOptionsResolver = LeftAlignedMessageLayoutOption
 
 | Default alignment | Left-side alignment |
 | ------------- | ------------- |
-| ![Chat with default message alignment](../assets/message-layout-default.png)  | ![Chat with left-only alignment](../assets/message-layout-left.png)  |
+| ![Chat with default message alignment](../../assets/message-layout-default.png)  | ![Chat with left-only alignment](../../assets/message-layout-left.png)  |
 
 ### Hiding Message Bubble
 
@@ -118,7 +118,7 @@ Components.default.messageLayoutOptionsResolver = NoBubblesMessageLayoutOptionsR
 
 | visible bubbles | hidden bubbles |
 | ------------- | ------------- |
-| ![Chat with default message alignment](../assets/message-layout-default.png)  | ![Chat with left-only alignment](../assets/message-layout-nobubbles.png)  |
+| ![Chat with default message alignment](../../assets/message-layout-default.png)  | ![Chat with left-only alignment](../../assets/message-layout-nobubbles.png)  |
 
 ### Disabling Message Groups
 
@@ -152,4 +152,4 @@ Components.default.messageLayoutOptionsResolver = NotGroupedMessageLayoutOptions
 
 | Message grouped | Messages separated |
 | ------------- | ------------- |
-| ![Chat with default message alignment](../assets/message-layout-squared-grouping.png)  | ![Chat with left-only alignment](../assets/message-layout-squared-nogrouping.png)  |
+| ![Chat with default message alignment](../../assets/message-layout-squared-grouping.png)  | ![Chat with left-only alignment](../../assets/message-layout-squared-nogrouping.png)  |

@@ -1,8 +1,8 @@
 ---
-title: Components
+title: Customizing Components
 ---
 
-The Stream SDK UI components are fully customizable and interchangeable through the `Components` configuration type that holds all the reusable views of the SDK. You can customize these views by subclassing them and replacing them in the configuration with your subclass. Just like the `Appearance` configuration mentioned in the [Theming](../customization/theming.md) page, you should modify the values of the `Components` configuration from `Components.default` as early as possible in your application life-cycle.
+The Stream SDK UI components are fully customizable and interchangeable through the `Components` configuration type that holds all the reusable views of the SDK. You can customize these views by subclassing them and replacing them in the configuration with your subclass. Just like the `Appearance` configuration mentioned in the [Theming](../theming.md) page, you should modify the values of the `Components` configuration from `Components.default` as early as possible in your application life-cycle.
 
 ## Customizing Components
 
@@ -36,7 +36,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 }
 ```
 
-The full list of customizations exposed by `Components` is available [here](../common-content/reference-docs/stream-chat-ui/components.md#properties).
+The full list of customizations exposed by `Components` is available [here](../../common-content/reference-docs/stream-chat-ui/components.md#properties).
 
 ## Components Lifecycle Methods
 
@@ -98,7 +98,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
 | Before  | After |
 | ------------- | ------------- |
-| ![Default Avatars](../assets/default-avatars.png)  | ![Rect Avatars](../assets/rect-avatars.png)  |
+| ![Default Avatars](../../assets/default-avatars.png)  | ![Rect Avatars](../../assets/rect-avatars.png)  |
 
 And that's it 🎉 as you can see all avatars across the UI are now rectangular.
 
@@ -108,7 +108,7 @@ Now, to show an example on how to use to other lifecycle methods, let's try to c
 
 | Default style  | Custom "iMessage" Style |
 | ------------- | ------------- |
-| ![Default unread count](../assets/default-unread-count.png)  | ![iMessage unread count](../assets/custom-unread-count.png)  |
+| ![Default unread count](../../assets/default-unread-count.png)  | ![iMessage unread count](../../assets/custom-unread-count.png)  |
 
 First, we need to create a custom subclass of `ChatChannelListItemView`, which is the component responsible for showing the channel summary in the channel list. Because the iMessage-style unread indicator is just a blue dot, rather then trying to modify the existing unread indicator, it's easier to create a brand new view for it:
 

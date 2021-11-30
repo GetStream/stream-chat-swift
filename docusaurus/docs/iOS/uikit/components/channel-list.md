@@ -2,9 +2,9 @@
 title: Channel List
 ---
 
-import SingletonNote from '../common-content/chat-client.md'
-import ComponentsNote from '../common-content/components-note.md'
-import Properties from '../common-content/reference-docs/stream-chat-ui/chat-channel-list/chat-channel-list-vc-properties.md'
+import SingletonNote from '../../common-content/chat-client.md'
+import ComponentsNote from '../../common-content/components-note.md'
+import Properties from '../../common-content/reference-docs/stream-chat-ui/chat-channel-list/chat-channel-list-vc-properties.md'
 
 This component is used to display a list of channels. Channels are fetched from the API and kept in sync automatically. Behind the scenes this component uses the `Query Channels` API endpoint and Websocket events.
 
@@ -33,7 +33,7 @@ If you have a navigation controller setup the SDK will navigate from the channel
 
 ## UI Customization
 
-You can customize how channels are rendered in the list by replacing the [`ChannelListItemView`](channel-list-item-view.md) component with your own. Like every component from this library, this component will also follow the [theming](../customization/theming.md) of your application.
+You can customize how channels are rendered in the list by replacing the [`ChannelListItemView`](../../views/channel-list-item-view) component with your own. Like every component from this library, this component will also follow the [theming](../theming.md) of your application.
 
 ### Channel Header
 
@@ -54,7 +54,7 @@ class ViewController: ChatChannelListVC {
 
 ## Navigation
 
-This component uses the [`ChannelListRouter`](../common-content/reference-docs/stream-chat-ui/navigation/chat-channel-list-router.md) navigation component, you can customize this by providing your own.
+This component uses the [`ChannelListRouter`](../../common-content/reference-docs/stream-chat-ui/navigation/chat-channel-list-router.md) navigation component, you can customize this by providing your own.
 
 ```swift
 Components.channelListRouter = CustomChannelListRouter.self

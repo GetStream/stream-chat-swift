@@ -58,7 +58,7 @@ class TypingIndicatorView: UIView, ChatChannelControllerDelegate {
 
     override public init(frame: CGRect) {
         super.init(frame: frame)
-
+        
         addSubview(labelView)
 
         NSLayoutConstraint.activate([
@@ -68,19 +68,19 @@ class TypingIndicatorView: UIView, ChatChannelControllerDelegate {
             labelView.trailingAnchor.constraint(equalTo: trailingAnchor)
         ])
     }
-
+    
     required init?(coder: NSCoder) {
         super.init(coder: coder)
     }
 
     func channelController(_ channelController: ChatChannelController, didChangeTypingUsers typingUsers: Set<ChatUser>) {
         let otherUsersTyping = typingUsers.filter({ $0.id != channelController.client.currentUserId })
-
+        
         guard let typingUser = otherUsersTyping.first else {
             labelView.text = ""
             return
         }
-
+        
         labelView.text = "\(typingUser.name ?? typingUser.id) is typing ..."
     }
 }
@@ -106,12 +106,6 @@ class ViewController: UIViewController {
     }
 }
 ```
-
-:::tip Using Synchronize
-
-After accessing the `ChatClient.shared.channelController(for: cid)` it's important you call `synchronize()` after so the local and remote data is updated. You can read more about the importance of `synchronize()` [here](../../guides/importance-of-synchronize)..
-
-:::
 
 ## ChannelMemberListController
 
@@ -142,7 +136,7 @@ class MembersSearchResultsView: UIView, ChatChannelMemberListControllerDelegate 
 
     override public init(frame: CGRect) {
         super.init(frame: frame)
-
+        
         addSubview(labelView)
 
         NSLayoutConstraint.activate([
@@ -152,7 +146,7 @@ class MembersSearchResultsView: UIView, ChatChannelMemberListControllerDelegate 
             labelView.trailingAnchor.constraint(equalTo: trailingAnchor)
         ])
     }
-
+    
     required init?(coder: NSCoder) {
         super.init(coder: coder)
     }
@@ -176,10 +170,10 @@ class ViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
         let cid = ChannelId.init(type:.messaging, id:"123")
         let query = ChannelMemberListQuery.init(cid: cid)
-
+        
         controller = ChatClient.shared.memberListController(query: query)
         controller.delegate = membersSearchResultsView
 
@@ -193,12 +187,6 @@ class ViewController: UIViewController {
     }
 }
 ```
-
-:::tip Using Synchronize
-
-After accessing the `ChatClient.shared.memberListController(query: query)` it's important you call `synchronize()` after so the local and remote data is updated. You can read more about the importance of `synchronize()` [here](../../guides/importance-of-synchronize)..
-
-:::
 
 ## ChannelMemberController
 
