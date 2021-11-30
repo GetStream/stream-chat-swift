@@ -590,7 +590,13 @@ extension ClientError {
     
     public class ConnectionNotSuccessful: ClientError {
         override public var localizedDescription: String {
-            "Connecting to the chat servers wasn't successful. Please check the console log for additional info."
+            """
+            Connection to the API has failed.
+            You can read more about making a successful connection in our docs:
+            https://getstream.io/chat/docs/sdk/ios/basics/getting-started/#your-first-app-with-stream-chat
+            \n
+            API Error: \(String(describing: errorDescription))
+            """
         }
     }
     
