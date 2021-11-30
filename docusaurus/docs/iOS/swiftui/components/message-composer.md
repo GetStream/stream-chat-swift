@@ -60,7 +60,7 @@ struct ContactAttachmentPayload: AttachmentPayload {
 }
 ```
 
-Since we will go through the attachments in a scrollable list, we also need to conform the payload to the `Identifiable` protocol. For an id, it's enough to use a key that's combination of the name and the phone number.
+Since we will go through the attachments in a scrollable list, we also need to conform the payload to the `Identifiable` protocol. For an id, it's enough to use a key that's a combination of the name and the phone number.
 
 ```swift
 extension ContactAttachmentPayload: Identifiable {
