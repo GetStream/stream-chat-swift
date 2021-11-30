@@ -34,12 +34,12 @@ The `AttachmentPickerTypeView` comes with a lot of functionalities, in terms of 
 For example, let's say we want to add additional contacts picker, which will allow us to send contacts via the chat. We also want to keep the existing functionalities, therefore we will explore ways to customize the existing component.
 
 There are few things we need to do in order to accomplish this: 
-- introduce new type of payload for contacts
-- create new contact attachment type component
-- enable the new contact component to be selectable from the attachment types picker
-- implement the UI for previewing the selected item (contact) in the message composer
-- update the message resolving logic of the message list to include the contact payload
-- provide UI for the contacts attachment in the message list
+- Introduce a new type of payload for contacts
+- Create a new contact attachment type component
+- Enable the new contact component to be selectable from the attachment types picker
+- Implement the UI for previewing the selected item (contact) in the message composer
+- Update the message resolving logic of the message list to include the contact payload
+- Provide UI for the contacts attachment in the message list
 
 Let's explore these steps in more details
 
