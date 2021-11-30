@@ -83,8 +83,8 @@ open class ChatMessageListVC:
 
     open override func viewDidLoad() {
         super.viewDidLoad()
-        listView.register(UserTransactionBubble.self, forCellReuseIdentifier: "UserTransactionBubble")
-        listView.register(InputUserTransactionBubble.self, forCellReuseIdentifier: "InputUserTransactionBubble")
+        listView.register(CryptoSentBubble.self, forCellReuseIdentifier: "CryptoSentBubble")
+        listView.register(CryptoReceiveBubble.self, forCellReuseIdentifier: "CryptoReceiveBubble")
     }
 
     override open func setUp() {
@@ -307,22 +307,26 @@ open class ChatMessageListVC:
         let message = dataSource?.chatMessageListVC(self, messageAt: indexPath)
         let currentUserId = client.currentUserId//dataSource?.channel(for: self)?.config.client.currentUserId
         let isMessageFromCurrentUser = message?.author.id == currentUserId
-
-        //
         if isPaymentCell(message) {
             if isMessageFromCurrentUser {
                 guard let cell = tableView.dequeueReusableCell(
-                    withIdentifier: "UserTransactionBubble",
-                    for: indexPath) as? UserTransactionBubble else {
+                    withIdentifier: "CryptoSentBubble",
+                    for: indexPath) as? CryptoSentBubble else {
                     return UITableViewCell()
                 }
+                cell.options = cellLayoutOptionsForMessage(at: indexPath)
+                cell.content = message
+                cell.configData()
                 return cell
             } else {
                 guard let cell = tableView.dequeueReusableCell(
-                    withIdentifier: "InputUserTransactionBubble",
-                    for: indexPath) as? InputUserTransactionBubble else {
+                    withIdentifier: "CryptoReceiveBubble",
+                    for: indexPath) as? CryptoReceiveBubble else {
                     return UITableViewCell()
                 }
+                cell.options = cellLayoutOptionsForMessage(at: indexPath)
+                cell.content = message
+                cell.configData()
                 return cell
             }
         } else {

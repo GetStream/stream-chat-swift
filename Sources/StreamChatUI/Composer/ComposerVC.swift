@@ -8,6 +8,7 @@ import UIKit
 
 extension Notification.Name {
     public static let sendOneWalletTapAction = Notification.Name("kStreamChatOneWalletTapAction")
+    public static let sendOneWallet = Notification.Name("kTimelessWalletsendOneWallet")
 }
 
 /// The possible errors that can occur in attachment validation
@@ -312,6 +313,11 @@ open class ComposerVC: _ViewController,
         composerView.pin(to: view)
     }
 
+    override open func viewDidLoad() {
+        super.viewDidLoad()
+        NotificationCenter.default.addObserver(self, selector: #selector(sendPaymentBubble(notification:)), name: .sendOneWallet, object: nil)
+    }
+
     override open func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
 
@@ -603,7 +609,7 @@ open class ComposerVC: _ViewController,
         )
     }
 
-    open func sendPaymentBubble() {
+    @objc open func sendPaymentBubble(notification: Notification) {
         channelController?.createNewMessage(
             text: "",
             pinning: nil,

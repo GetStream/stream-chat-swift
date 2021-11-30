@@ -269,5 +269,6 @@ public extension Appearance {
 
         // MARK: - Gift cell
         public var starbucks: UIImage = loadImageSafely(with: "starbucks")
+        public var cryptoSentThumb: UIImage = loadImageSafely(with: "crypto_sent_thumb")
     }
 }

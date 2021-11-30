@@ -47,7 +47,7 @@ open class ChatMessageContentView: _View, ThemeProvider {
     public weak var delegate: ChatMessageContentViewDelegate?
 
     /// The message this view displays.
-    open var content: ChatMessage? {
+    public var content: ChatMessage? {
         didSet { updateContentIfNeeded() }
     }
 
