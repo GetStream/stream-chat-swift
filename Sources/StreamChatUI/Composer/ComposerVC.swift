@@ -315,7 +315,7 @@ open class ComposerVC: _ViewController,
 
     override open func viewDidLoad() {
         super.viewDidLoad()
-        NotificationCenter.default.addObserver(self, selector: #selector(sendPaymentBubble(notification:)), name: .sendOneWallet, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(sendOneWalletBubble(notification:)), name: .sendOneWallet, object: nil)
     }
 
     override open func viewDidDisappear(_ animated: Bool) {
@@ -609,14 +609,17 @@ open class ComposerVC: _ViewController,
         )
     }
 
-    @objc open func sendPaymentBubble(notification: Notification) {
+    @objc open func sendOneWalletBubble(notification: Notification) {
+        guard let sendOneWalletData = notification.userInfo?["oneWalletTx"] as? SendOneWalletDetail else {
+            return
+        }
         channelController?.createNewMessage(
             text: "",
             pinning: nil,
             attachments: [],
             mentionedUserIds: content.mentionedUsers.map(\.id),
             quotedMessageId: content.quotingMessage?.id,
-            extraData: ["isPaymentCell" : .bool(true)],
+            extraData: ["oneWalletTx" : .dictionary(sendOneWalletData.toDictionary())],
             completion: nil)
     }
 

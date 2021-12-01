@@ -307,7 +307,7 @@ open class ChatMessageListVC:
         let message = dataSource?.chatMessageListVC(self, messageAt: indexPath)
         let currentUserId = client.currentUserId//dataSource?.channel(for: self)?.config.client.currentUserId
         let isMessageFromCurrentUser = message?.author.id == currentUserId
-        if isPaymentCell(message) {
+        if isOneWalletCell(message) {
             if isMessageFromCurrentUser {
                 guard let cell = tableView.dequeueReusableCell(
                     withIdentifier: "CryptoSentBubble",
@@ -342,17 +342,18 @@ open class ChatMessageListVC:
         }
     }
 
-    private func isPaymentCell(_ message: ChatMessage?) -> Bool {
-        if let rawJson = message?.extraData["isPaymentCell"] {
-            switch rawJson {
-            case .bool(let bool):
-                return bool
-            default:
-                return false
-            }
-        } else {
-            return false
-        }
+    private func isOneWalletCell(_ message: ChatMessage?) -> Bool {
+        message?.extraData.keys.contains("oneWalletTx") ?? false
+//        if let rawJson = message?.extraData["oneWalletTx"] {
+//            switch rawJson {
+//            case .bool(let bool):
+//                return bool
+//            default:
+//                return false
+//            }
+//        } else {
+//            return false
+//        }
     }
 
     open func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {

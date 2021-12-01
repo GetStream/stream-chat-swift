@@ -66,7 +66,6 @@ class CryptoSentBubble: UITableViewCell {
         ])
 
         descriptionLabel = createDescLabel()
-        descriptionLabel.text = "Ajay has sent you crypto"
         descriptionLabel.translatesAutoresizingMaskIntoConstraints = false
         subContainer.addSubview(descriptionLabel)
         NSLayoutConstraint.activate([
@@ -77,7 +76,6 @@ class CryptoSentBubble: UITableViewCell {
         descriptionLabel.transform = .mirrorY
 
         sentCryptoLabel = createSentCryptoLabel()
-        sentCryptoLabel.text = "SENT: 750 ONE"
         sentCryptoLabel.translatesAutoresizingMaskIntoConstraints = false
         subContainer.addSubview(sentCryptoLabel)
         NSLayoutConstraint.activate([
@@ -173,6 +171,58 @@ class CryptoSentBubble: UITableViewCell {
             timestampLabel?.text = dateFormatter.string(from: createdAt)
         } else {
             timestampLabel?.text = nil
+        }
+        configOneWallet()
+//        let walletData = getOneWalletExtraData()
+//        let fromUserName = walletData["myName"]
+//        descriptionLabel.text = "\(walle)"//"Ajay has sent you crypto"
+    }
+
+    private func configOneWallet() {
+        guard let walletData = getOneWalletExtraData() else {
+            return
+        }
+        if let fromUserName = walletData["myName"] {
+            var userName = fetchRawData(raw: fromUserName) as? String ?? ""
+            userName = String(userName.prefix(4))
+            descriptionLabel.text = "\(userName) has sent you crypto"
+        }
+        if let amount = walletData["transferAmount"] {
+            let one = fetchRawData(raw: amount) as? Double ?? 0
+            sentCryptoLabel.text = "SENT: \(one) ONE"
+        }
+
+    }
+
+    private func getOneWalletExtraData() -> [String: RawJSON]? {
+        if let extraData = content?.extraData["oneWalletTx"] {
+            switch extraData {
+            case .dictionary(let dictionary):
+                return dictionary
+            default:
+                return nil
+            }
+        } else {
+            return nil
+        }
+    }
+
+    private func fetchRawData(raw: RawJSON) -> Any? {
+        switch raw {
+        case .number(let double):
+            return double
+        case .string(let string):
+            return string
+        case .bool(let bool):
+            return bool
+        case .dictionary(let dictionary):
+            return dictionary
+        case .array(let array):
+            return array
+        case .nil:
+            return nil
+        @unknown default:
+            return nil
         }
     }
 }

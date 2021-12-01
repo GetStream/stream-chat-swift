@@ -128,10 +128,21 @@ open class ChatChannelVC:
             backButton.widthAnchor.constraint(equalToConstant: 32)
         ])
 
+        navigationHeaderView.addSubview(channelAvatarView)
+        channelAvatarView.content = (channelController.channel, client.currentUserId)
+        NSLayoutConstraint.activate([
+            channelAvatarView.widthAnchor.constraint(equalToConstant: channelAvatarSize.width),
+            channelAvatarView.heightAnchor.constraint(equalToConstant: channelAvatarSize.height),
+            channelAvatarView.trailingAnchor.constraint(equalTo: navigationHeaderView.trailingAnchor, constant: -8),
+            channelAvatarView.centerYAnchor.constraint(equalTo: navigationHeaderView.centerYAnchor, constant: 0)
+        ])
+
         navigationHeaderView.addSubview(headerView)
         NSLayoutConstraint.activate([
             headerView.centerYAnchor.constraint(equalTo: navigationHeaderView.centerYAnchor, constant: 0),
-            headerView.centerXAnchor.constraint(equalTo: navigationHeaderView.centerXAnchor, constant: 0)
+            headerView.centerXAnchor.constraint(equalTo: navigationHeaderView.centerXAnchor, constant: 0),
+            headerView.leadingAnchor.constraint(equalTo: backButton.trailingAnchor, constant: 8),
+            headerView.trailingAnchor.constraint(equalTo: channelAvatarView.leadingAnchor, constant: -8)
         ])
         addChildViewController(messageListVC, targetView: view)
         NSLayoutConstraint.activate([
@@ -145,15 +156,6 @@ open class ChatChannelVC:
         messageComposerVC.view.topAnchor.pin(equalTo: messageListVC.view.bottomAnchor).isActive = true
         messageComposerBottomConstraint = messageComposerVC.view.bottomAnchor.pin(equalTo: view.bottomAnchor)
         messageComposerBottomConstraint?.isActive = true
-
-        navigationHeaderView.addSubview(channelAvatarView)
-        channelAvatarView.content = (channelController.channel, client.currentUserId)
-        NSLayoutConstraint.activate([
-            channelAvatarView.widthAnchor.constraint(equalToConstant: channelAvatarSize.width),
-            channelAvatarView.heightAnchor.constraint(equalToConstant: channelAvatarSize.height),
-            channelAvatarView.trailingAnchor.constraint(equalTo: navigationHeaderView.trailingAnchor, constant: -8),
-            channelAvatarView.centerYAnchor.constraint(equalTo: navigationHeaderView.centerYAnchor, constant: 0)
-        ])
 
         if let cid = channelController.cid {
             headerView.channelController = client.channelController(for: cid)
