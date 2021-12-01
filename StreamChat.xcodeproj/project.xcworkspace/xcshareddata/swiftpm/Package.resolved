@@ -6,8 +6,8 @@
         "repositoryURL": "https://github.com/kean/Nuke",
         "state": {
           "branch": null,
-          "revision": "472a03c15f39592007d94f25abe554350bc8aa2b",
-          "version": "10.5.1"
+          "revision": "c0b32b0d7154afceb3fc08b199492f125ff4267e",
+          "version": "10.3.3"
         }
       },
       {
@@ -33,8 +33,8 @@
         "repositoryURL": "https://github.com/kirualex/SwiftyGif.git",
         "state": {
           "branch": null,
-          "revision": "652b344111a363a53af602b9eef0b52ab1146b42",
-          "version": "5.4.1"
+          "revision": "0cd770feed5807d9fd4fa8df5ad74b56b814b0c8",
+          "version": "5.4.0"
         }
       }
     ]
