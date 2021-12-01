@@ -118,3 +118,9 @@ After creating the channel `try client.controller(createChannelWithId: ChannelId
 :::
 
 Your `ChatChannelListVC` is updated and will display the newly created channel, congratulations!
+
+:::tip Enabling Logs
+
+By default, logs in the SDK are disabled. Check out [this](../../basics/logs) article on how to enable them in your app.
+
+:::
