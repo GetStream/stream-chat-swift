@@ -15,11 +15,11 @@ Pod::Spec.new do |spec|
 
   spec.framework = "Foundation", "UIKit"
 
-  spec.source = { :http => "https://github.com/GetStream/stream-chat-swift/releases/download/#{spec.version}/#{spec.name}.xcframework.zip" }
-  spec.vendored_frameworks = "#{spec.name}.xcframework"
-  spec.preserve_paths = "#{spec.name}.xcframework/*"
+  spec.module_name = "StreamChatUI"
+  spec.source = { :git => "https://github.com/GetStream/stream-chat-swift.git", :tag => "#{spec.version}" }
+  spec.source_files  = ["Sources/StreamChatUI/**/*.swift", "Sources/StreamNuke/**/*.swift", "Sources/StreamSwiftyGif/**/*.swift"]
+  spec.exclude_files = ["Sources/StreamChatUI/**/*_Tests.swift", "Sources/StreamChatUI/**/*_Mock.swift"]
+  spec.resource_bundles = { "StreamChatUIResources" => ["Sources/StreamChatUI/Resources/**/*"] }
 
   spec.dependency "StreamChat", "#{spec.version}"
-
-  spec.cocoapods_version = ">= 1.11.0"
 end
