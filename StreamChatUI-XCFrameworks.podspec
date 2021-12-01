@@ -15,9 +15,10 @@ Pod::Spec.new do |spec|
 
   spec.framework = "Foundation", "UIKit"
 
-  spec.source = { :http => "https://github.com/GetStream/stream-chat-swift/releases/download/#{spec.version}/#{spec.name}.xcframework.zip" }
-  spec.vendored_frameworks = "#{spec.name}.xcframework"
-  spec.preserve_paths = "#{spec.name}.xcframework/*"
+  spec.module_name = "StreamChatUI"
+  spec.source = { :http => "https://github.com/GetStream/stream-chat-swift/releases/download//#{spec.version}/#{spec.module_name}.zip" }
+  spec.vendored_frameworks = "#{spec.module_name}.xcframework"
+  spec.preserve_paths = "#{spec.module_name}.xcframework/*"
 
   spec.dependency "StreamChat-XCFrameworks", "#{spec.version}"
 
