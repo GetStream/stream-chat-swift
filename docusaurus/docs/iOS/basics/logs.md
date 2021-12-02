@@ -22,8 +22,8 @@ We have four different `logLevel`'s available.
 
 - `.info` (This will provide all the information logs to the console).
 - `.debug` (This is unfiltered and will show **ALL** logs).
-- `.error` (This will surface all error logs).
 - `.warning` (This will surface all warnings to the console).
+- `.error` (This will surface all error logs).
 
 ## Customizing Logs
 
