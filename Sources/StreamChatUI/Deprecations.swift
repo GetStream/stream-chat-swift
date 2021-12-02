@@ -2,6 +2,7 @@
 // Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
+import Foundation
 import StreamChat
 
 /// - NOTE: Deprecations of the next major release.
@@ -205,8 +206,7 @@ extension ChatMessageLayoutOptions {
         `ChatMessageLayoutOption` and not in `ChatMessageLayoutOptions`.
     """)
     public func contains(_ options: ChatMessageLayoutOptions) -> Bool {
-        let intersected = intersection(options)
-        return intersected.count == options.count
+        options.isSubset(of: self)
     }
 
     @available(*, deprecated, message: """
