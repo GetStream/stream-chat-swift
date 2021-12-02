@@ -166,28 +166,38 @@ extension Components {
     }
 }
 
-// MARK: - Deprecation of `ChatMessageLayoutOptions: OptionSet`
+// MARK: - Deprecation of ChatMessageLayoutOptions as an OptionSet
+
+/// Previously `ChatMessageLayoutOptions` was an `OptionSet`, this limited the customization on
+/// the customer side because the raw value needs to be an `Int`. A more flexible approach is to just
+/// have a `Set` of `ChatMessageLayoutOption`. So for backwards compatibility we created the following
+/// typealias `typealias = Set<ChatMessageLayoutOption>` and provided an API like the `OptionSet` so we
+/// don't break the public API.
 
 extension ChatMessageLayoutOptions {
-    @available(*, deprecated, message: """
-        use `id` instead.
-    """)
+    @available(*, deprecated, message: "use `id` instead.")
     var rawValue: String {
         id
     }
 
-    @available(*, deprecated, message: """
-        use `remove(_ member: ChatMessageLayoutOption)` instead.
-    """)
+    @available(*, deprecated, message: "use `remove(_ member: ChatMessageLayoutOption)` instead.")
     public mutating func remove(_ options: ChatMessageLayoutOptions) {
         self = subtracting(options)
     }
 
-    @available(*, deprecated, message: """
-        use `insert(_ member: ChatMessageLayoutOption)` instead.
-    """)
+    @available(*, deprecated, message: "use `insert(_ member: ChatMessageLayoutOption)` instead.")
     public mutating func insert(_ options: ChatMessageLayoutOptions) {
         options.forEach { self.insert($0) }
+    }
+
+    @available(*, deprecated, message: "use `subtracting(_ other: Sequence)` instead.")
+    public mutating func subtracting(_ option: ChatMessageLayoutOption) {
+        self = subtracting([option])
+    }
+
+    @available(*, deprecated, message: "use `intersection(_ other: Sequence)` instead.")
+    public mutating func intersection(_ option: ChatMessageLayoutOption) {
+        self = intersection([option])
     }
 
     @available(*, deprecated, message: """
