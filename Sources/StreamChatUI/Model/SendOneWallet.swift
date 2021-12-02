@@ -8,16 +8,19 @@
 import Foundation
 import StreamChat
 
-struct SendOneWalletDetail {
+public struct SendOneWallet {
     // MARK: - Variables
-    var myName: String?
-    var myWalletAddress: String?
-    var recipientName: String?
-    var recipientAddress: String?
-    var recipientImageUrl: URL?
-    var myImageUrl: URL?
-    var transferAmount: Float?
-    var txId: String?
+    public var myName: String?
+    public var myWalletAddress: String?
+    public var recipientName: String?
+    public var recipientAddress: String?
+    public var recipientImageUrl: URL?
+    public var myImageUrl: URL?
+    public var transferAmount: Float?
+    public var txId: String?
+
+    public init() {
+    }
 
     func toDictionary() -> [String: RawJSON] {
         var dictOut = [String: RawJSON]()

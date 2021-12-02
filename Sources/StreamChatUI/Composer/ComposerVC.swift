@@ -610,7 +610,7 @@ open class ComposerVC: _ViewController,
     }
 
     @objc open func sendOneWalletBubble(notification: Notification) {
-        guard let sendOneWalletData = notification.userInfo?["oneWalletTx"] as? SendOneWalletDetail else {
+        guard let sendOneWalletData = notification.userInfo?["oneWalletTx"] as? SendOneWallet else {
             return
         }
         channelController?.createNewMessage(

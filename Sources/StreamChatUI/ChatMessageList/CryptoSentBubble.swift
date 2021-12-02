@@ -173,25 +173,21 @@ class CryptoSentBubble: UITableViewCell {
             timestampLabel?.text = nil
         }
         configOneWallet()
-//        let walletData = getOneWalletExtraData()
-//        let fromUserName = walletData["myName"]
-//        descriptionLabel.text = "\(walle)"//"Ajay has sent you crypto"
     }
 
     private func configOneWallet() {
         guard let walletData = getOneWalletExtraData() else {
             return
         }
-        if let fromUserName = walletData["myName"] {
-            var userName = fetchRawData(raw: fromUserName) as? String ?? ""
-            userName = String(userName.prefix(4))
-            descriptionLabel.text = "\(userName) has sent you crypto"
+        if let toUserName = walletData["recipientName"] {
+            var recipientName = fetchRawData(raw: toUserName) as? String ?? ""
+            recipientName = String(recipientName.prefix(4))
+            descriptionLabel.text = "you has sent crypto to \(recipientName)"
         }
         if let amount = walletData["transferAmount"] {
             let one = fetchRawData(raw: amount) as? Double ?? 0
             sentCryptoLabel.text = "SENT: \(one) ONE"
         }
-
     }
 
     private func getOneWalletExtraData() -> [String: RawJSON]? {
@@ -206,23 +202,23 @@ class CryptoSentBubble: UITableViewCell {
             return nil
         }
     }
+}
 
-    private func fetchRawData(raw: RawJSON) -> Any? {
-        switch raw {
-        case .number(let double):
-            return double
-        case .string(let string):
-            return string
-        case .bool(let bool):
-            return bool
-        case .dictionary(let dictionary):
-            return dictionary
-        case .array(let array):
-            return array
-        case .nil:
-            return nil
-        @unknown default:
-            return nil
-        }
+func fetchRawData(raw: RawJSON) -> Any? {
+    switch raw {
+    case .number(let double):
+        return double
+    case .string(let string):
+        return string
+    case .bool(let bool):
+        return bool
+    case .dictionary(let dictionary):
+        return dictionary
+    case .array(let array):
+        return array
+    case .nil:
+        return nil
+    @unknown default:
+        return nil
     }
 }
