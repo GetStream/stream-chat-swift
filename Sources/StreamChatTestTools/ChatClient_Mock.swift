@@ -14,7 +14,6 @@ public extension ChatClient {
         return .init(
             config: config,
             workerBuilders: [],
-            eventWorkerBuilders: [],
             environment: .init(
                 apiClientBuilder: APIClient_Mock.init,
                 webSocketClientBuilder: {
