@@ -17,9 +17,9 @@ Pod::Spec.new do |spec|
   spec.framework = "Foundation"
   spec.ios.framework = "UIKit"
 
-  spec.source = { :http => "https://github.com/GetStream/stream-chat-swift/releases/download/#{spec.version}/#{spec.name}.xcframework.zip" }
-  spec.vendored_frameworks = "#{spec.name}.xcframework"
-  spec.preserve_paths = "#{spec.name}.xcframework/*"
-
-  spec.cocoapods_version = ">= 1.11.0"
+  spec.module_name = "StreamChat"
+  spec.source = { :git => "https://github.com/GetStream/stream-chat-swift.git", :tag => "#{spec.version}" }
+  spec.source_files  = ["Sources/StreamChat/**/*.swift", "Sources/StreamStarscream/**/*.swift"]
+  spec.exclude_files = ["Sources/StreamChat/**/*_Tests.swift", "Sources/StreamChat/**/*_Mock.swift"]
+  spec.resource_bundles = { "StreamChat" => ["Sources/StreamChat/**/*.xcdatamodeld"] }
 end

@@ -1,5 +1,5 @@
 Pod::Spec.new do |spec|
-  spec.name = "StreamChatUI-OSS"
+  spec.name = "StreamChatUI-XCFrameworks"
   spec.version = "4.5.0"
   spec.summary = "StreamChat UI Components"
   spec.description = "StreamChatUI SDK offers flexible UI components able to display data provided by StreamChat SDK."
@@ -16,10 +16,11 @@ Pod::Spec.new do |spec|
   spec.framework = "Foundation", "UIKit"
 
   spec.module_name = "StreamChatUI"
-  spec.source = { :git => "https://github.com/GetStream/stream-chat-swift.git", :tag => "#{spec.version}" }
-  spec.source_files  = ["Sources/StreamChatUI/**/*.swift", "Sources/StreamNuke/**/*.swift", "Sources/StreamSwiftyGif/**/*.swift"]
-  spec.exclude_files = ["Sources/StreamChatUI/**/*_Tests.swift", "Sources/StreamChatUI/**/*_Mock.swift"]
-  spec.resource_bundles = { "StreamChatUIResources" => ["Sources/StreamChatUI/Resources/**/*"] }
+  spec.source = { :http => "https://github.com/GetStream/stream-chat-swift/releases/download//#{spec.version}/#{spec.module_name}.zip" }
+  spec.vendored_frameworks = "#{spec.module_name}.xcframework"
+  spec.preserve_paths = "#{spec.module_name}.xcframework/*"
 
-  spec.dependency "StreamChat-OSS", "#{spec.version}"
+  spec.dependency "StreamChat-XCFrameworks", "#{spec.version}"
+
+  spec.cocoapods_version = ">= 1.11.0"
 end

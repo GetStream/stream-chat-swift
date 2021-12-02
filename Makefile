@@ -18,8 +18,7 @@ frameworks: clean
 	echo "👉 Creating dynamic libraries. Will take a while... Logs available: DerivedData/fastlane.log"
 	bundle exec fastlane build_xcframeworks > DerivedData/fastlane.log
 	echo "👉 Creating compressed archives"
-	# Adding ".xcframework" in the zip name is on purpose, since Carthage looks out for this pattern.
-	make zip_artifacts name="StreamChat-All.xcframework" pattern=./*.xcframework
+	make zip_artifacts name="StreamChat-All" pattern=./*.xcframework
 	make zip_artifacts name="StreamChat" pattern=./StreamChat.xcframework
 	make zip_artifacts name="StreamChatUI" pattern=./StreamChatUI.xcframework
 
