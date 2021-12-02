@@ -1,6 +1,6 @@
 Pod::Spec.new do |spec|
     spec.name = "StreamChatUI"
-    spec.version = "4.5.0"
+    spec.version = "4.5.1"
     spec.summary = "StreamChat UI Components"
     spec.description = "StreamChatUI SDK offers flexible UI components able to display data provided by StreamChat SDK."
 
@@ -21,5 +21,5 @@ Pod::Spec.new do |spec|
 
     spec.dependency "StreamChat", "#{spec.version}"
     spec.dependency "Nuke", "~> 10.0"
-    spec.dependency "SwiftyGif", "~> 5.0"
+    spec.dependency "SwiftyGif", "~> 5.4"
   end

@@ -2,10 +2,10 @@
 title: ChatChannelHeaderView
 ---
 
-import ComponentsNote from '../common-content/components-note.md'
-import Properties from '../common-content/reference-docs/stream-chat-ui/chat-channel/chat-channel-header-view-properties.md'
+import ComponentsNote from '../../common-content/components-note.md'
+import Properties from '../../common-content/reference-docs/stream-chat-ui/chat-channel/chat-channel-header-view-properties.md'
 
-This component is responsible for displaying the channel information in the [`Channel`](channel.md) header. By default it is rendered in the `navigationItem.titleView` above the message list and displays the channel name and the member's online status.
+This component is responsible for displaying the channel information in the [`Channel`](../components/channel.md) header. By default it is rendered in the `navigationItem.titleView` above the message list and displays the channel name and the member's online status.
 
 ### Customization
 
@@ -23,7 +23,7 @@ As an example of how to customize the `ChatChannelHeaderView`, let's change it t
 
 | Default Style  | Custom Style |
 | -------------- | ----------------------- |
-| <img src={require("../assets/chat-channel-header-view-default.png").default}/>  | <img src={require("../assets/chat-channel-header-view-typing.png").default}/>  |
+| <img src={require("../../assets/chat-channel-header-view-default.png").default}/>  | <img src={require("../../assets/chat-channel-header-view-typing.png").default}/>  |
 
 We need to subclass the `ChatChannelHeaderView` and override the `subtitleText` to change how the subtitle label is displayed. The header by default subscribes to channel events since it conforms to `ChatChannelControllerDelegate`, so we need to observe the typing events and override the subtitle when someone is typing.
 

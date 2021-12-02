@@ -2,7 +2,7 @@
 title: Reactions
 ---
 
-import Digraph  from '../common-content/digraph.jsx'
+import Digraph  from '../../common-content/digraph.jsx'
 
 The Stream Chat API provides built-in support for adding reactions to messages. The UI SDK provides components for displaying and adding reactions to a message.
 
@@ -39,7 +39,7 @@ Appearance.default.images.availableReactions = customReactions
 By default, the message reactions are displayed inline as a bubble view on top of the messages.
 
 <img 
-    src={require("../assets/message-reactions.png").default}
+    src={require("../../assets/message-reactions.png").default}
     width="300rem"
     style={{margin: "0 auto", display: "block"}}
 />
@@ -107,7 +107,7 @@ If we do all the customizations described above to the message reactions view, t
 
 | Default Message Reactions | Custom Message Reactions |
 | ------------------------- | ------------------------ |
-| ![Default](../assets/message-reactions.png)  | ![Custom](../assets/message-reactions-customizations.png)  |
+| ![Default](../../assets/message-reactions.png)  | ![Custom](../../assets/message-reactions-customizations.png)  |
 
 ## Reactions Picker
 
@@ -117,7 +117,7 @@ When the user long-presses the message, the popup view will display the reaction
 
 | Long-pressing a message | Tapping reaction bubble view |
 | ------------------------- | ------------------------ |
-| ![Long-press](../assets/message-reactions-long-press.png)  | ![Tap](../assets/message-reactions-tap.png)  |
+| ![Long-press](../../assets/message-reactions-long-press.png)  | ![Tap](../../assets/message-reactions-tap.png)  |
 
 The reaction picker view has a similar structure to the message reaction view. Here is the hierarchy of the reaction picker view:
 
@@ -204,7 +204,7 @@ Here is the result for all the customizations done to the reaction picker view:
 
 | Default Picker | Custom Picker |
 | ------------- | ------------- |
-| ![Default Picker](../assets/message-reactions-tap.png)  | ![Custom Picker](../assets/message-reactions-picker-custom.png)  |
+| ![Default Picker](../../assets/message-reactions-tap.png)  | ![Custom Picker](../../assets/message-reactions-picker-custom.png)  |
 
 ## Reaction Authors
 
@@ -254,4 +254,4 @@ If we apply these customizations above on the reaction authors view component, w
 
 | Default Reaction Authors | Custom Reaction Authors |
 | ------------- | ------------- |
-| ![Default Picker](../assets/message-reactions-picker-custom.png)  | ![Custom Picker](../assets/message-reaction-authors-custom.png)  |
+| ![Default Picker](../../assets/message-reactions-picker-custom.png)  | ![Custom Picker](../../assets/message-reaction-authors-custom.png)  |

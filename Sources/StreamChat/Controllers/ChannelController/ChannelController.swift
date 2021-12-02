@@ -1051,21 +1051,14 @@ public extension ChatChannelController {
             return
         }
         
-        if channel?.isUnread != true {
+        guard channel?.isUnread == true else {
             callback {
                 completion?(nil)
             }
             return
         }
 
-        guard let userId = client.currentUserId else {
-            callback {
-                completion?(nil)
-            }
-            return
-        }
-
-        guard channel?.latestMessages.first?.author.id != userId else {
+        guard let currentUserId = client.currentUserId else {
             callback {
                 completion?(nil)
             }
@@ -1078,7 +1071,7 @@ public extension ChatChannelController {
 
         markingRead = true
 
-        updater.markRead(cid: cid, userId: userId) { error in
+        updater.markRead(cid: cid, userId: currentUserId) { error in
             self.callback {
                 self.markingRead = false
                 completion?(error)

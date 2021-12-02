@@ -6,10 +6,10 @@ The rendering of the messages is delegated to different classes that can be cust
 
 Here is a diagram that shows the classes that are involved in rendering a message:
 
-import Digraph  from '../common-content/digraph.jsx'
-import ChatMessageContentViewProperties from '../common-content/reference-docs/stream-chat-ui/chat-message-list/chat-message/chat-message-content-view-properties.md'
-import ChatMessageBubbleViewProperties from '../common-content/reference-docs/stream-chat-ui/chat-message-list/chat-message/chat-message-bubble-view-properties.md'
-import ChatMessageBubbleViewContentProperties from '../common-content/reference-docs/stream-chat-ui/chat-message-list/chat-message/chat-message-bubble-view.content-properties.md'
+import Digraph  from '../../common-content/digraph.jsx'
+import ChatMessageContentViewProperties from '../../common-content/reference-docs/stream-chat-ui/chat-message-list/chat-message/chat-message-content-view-properties.md'
+import ChatMessageBubbleViewProperties from '../../common-content/reference-docs/stream-chat-ui/chat-message-list/chat-message/chat-message-bubble-view-properties.md'
+import ChatMessageBubbleViewContentProperties from '../../common-content/reference-docs/stream-chat-ui/chat-message-list/chat-message/chat-message-bubble-view.content-properties.md'
 
 <Digraph>{ `
     {rank = same; ChatMessageBubbleView; ChatReactionsBubbleView;}
@@ -82,7 +82,7 @@ ChatMessageContentView is the container class for a message. Internally this cla
 
 ## Customizing Messages
 
-Creating subclasses of `ChatMessageContentView` let's you alter views, create custom ones, and create complex layouts for your app. More information on lifecycle and subclassing is available [here](../customization/custom-components#components-lifecycle-methods).
+Creating subclasses of `ChatMessageContentView` let's you alter views, create custom ones, and create complex layouts for your app. More information on lifecycle and subclassing is available [here](../custom-components#components-lifecycle-methods).
 
 :::note
 `ChatMessageContentView` sets up its own layout on the `layout(options: ChatMessageLayoutOptions)` method and not in `setupLayout()` like other regular views.
@@ -90,11 +90,11 @@ Creating subclasses of `ChatMessageContentView` let's you alter views, create cu
 
 ### Message Subviews Layout
 
-![ChatMessageContentView](../assets/messagelist-layout-annotation.png)
+![ChatMessageContentView](../../assets/messagelist-layout-annotation.png)
 
 ### Message Labels Layout
 
-![ChatMessageContentView detailed components](../assets/messagelist-layout-detail-components-annotation.png)
+![ChatMessageContentView detailed components](../../assets/messagelist-layout-detail-components-annotation.png)
 
 - `mainContainer` is a horizontal container that holds all top-hierarchy views inside the `ChatMessageContentView` - This includes the `AvatarView`, `Spacer` and `BubbleThreadMetaContainer`.
 - `bubbleThreadMetaContainer` is a vertical container that holds `bubbleView` at the top and `metadataContainer` at the bottom by default. You can switch the positions for those elements or even add your own according to your needs.
@@ -108,7 +108,7 @@ Creating subclasses of `ChatMessageContentView` let's you alter views, create cu
 
 #### Example Layout
 
- ![](../assets/messagelist-layout-custom.png)
+ ![](../../assets/messagelist-layout-custom.png)
 
 As we detailed in the previous section, we can adjust the layout by subclassing `ChatMessageContentView` and switching the `metadataContainer` with `bubbleView`/`bubbleThreadContainer`.  
 
@@ -173,7 +173,7 @@ Components.default.messageLayoutOptionsResolver = CustomMessageOptionsResolver()
 Components.default.messageContentView = CustomChatMessageContentView.self
 ```
 
-<img src={require("../assets/messagelist-layout-custom-final.png").default} width="40%" />
+<img src={require("../../assets/messagelist-layout-custom-final.png").default} width="40%" />
 
 ### Properties and Methods
 

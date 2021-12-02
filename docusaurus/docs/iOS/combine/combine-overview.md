@@ -1,5 +1,6 @@
 ---
-title: Overview
+title: Combine Overview
+slug: /combine
 ---
 
 The `StreamChat` framework ships with `Combine` publishers out of the box.
