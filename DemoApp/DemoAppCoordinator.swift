@@ -66,15 +66,23 @@ final class DemoAppCoordinator: NSObject, UNUserNotificationCenterDelegate {
 
     func presentChat(userCredentials: UserCredentials, channelID: ChannelId? = nil) {
         // Create a token
-        let token = try! Token(rawValue: userCredentials.token)
+        guard let token = try? Token(rawValue: userCredentials.token) else {
+            fatalError("There has been a problem getting the token, please check Stream API status")
+        }
         
+        // Set the log level
         LogConfig.level = .warning
-        // Create client
+        LogConfig.formatters = [
+            PrefixLogFormatter(prefixes: [.info: "ℹ️", .debug: "🛠", .warning: "⚠️", .error: "🚨"])
+        ]
+        
+        // Define the Config
         var config = ChatClientConfig(apiKey: .init(apiKeyString))
 //        config.isLocalStorageEnabled = true
         config.shouldShowShadowedMessages = true
         config.applicationGroupIdentifier = applicationGroupIdentifier
 
+        // Connect the User
         ChatClient.shared = ChatClient(config: config)
         ChatClient.shared.connectUser(
             userInfo: .init(id: userCredentials.id, name: userCredentials.name, imageURL: userCredentials.avatarURL),
