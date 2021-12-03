@@ -6,9 +6,9 @@ The responsibility of rendering the messages is shared between multiple componen
 
 Here is a diagram that shows the different components that are involved in rendering a message:
 
-import Digraph  from '../common-content/digraph.jsx'
-import ChatMessageContentViewProperties from '../common-content/reference-docs/stream-chat-ui/chat-message-list/chat-message/chat-message-content-view-properties.md'
-import ComponentsNote from '../common-content/components-note.md'
+import Digraph from '../../common-content/digraph.jsx'
+import ChatMessageContentViewProperties from '../../common-content/reference-docs/stream-chat-ui/chat-message-list/chat-message/chat-message-content-view-properties.md'
+import ComponentsNote from '../../common-content/components-note.md'
 
 <Digraph>{ `
     {rank = same; ChatMessageBubbleView; ChatReactionsBubbleView;}
@@ -62,7 +62,7 @@ Components.default.messageBubbleView = CustomMessageSquaredBubbleView.self
 #### Result:
 | Before  | After |
 | ------------- | ------------- |
-| <img src={require("../assets/message-basic-customization-before.png").default} /> | <img src={require("../assets/message-basic-customization-after.png").default} /> |
+| <img src={require("../../assets/message-basic-customization-before.png").default} /> | <img src={require("../../assets/message-basic-customization-after.png").default} /> |
 
 <ComponentsNote />
 
@@ -106,7 +106,7 @@ Components.default.messageLayoutOptionsResolver = CustomMessageLayoutOptionsReso
 #### Result:
 | Before  | After |
 | ------------- | ------------- |
-| <img src={require("../assets/message-basic-resolver-before.png").default} /> | <img src={require("../assets/message-basic-resolver-after.png").default} /> |
+| <img src={require("../../assets/message-basic-resolver-before.png").default} /> | <img src={require("../../assets/message-basic-resolver-after.png").default} /> |
 
 ## Advanced Customizations
 
