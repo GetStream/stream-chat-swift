@@ -240,7 +240,7 @@ class ChatClient_Tests: XCTestCase {
         
         // Simulate disconnected state
         testEnv.webSocketClient?.connectionStateDelegate?
-            .webSocketClient(testEnv.webSocketClient!, didUpdateConnectionState: .disconnected())
+            .webSocketClient(testEnv.webSocketClient!, didUpdateConnectionState: .disconnected(source: .systemInitiated))
         
         // Assert client is disconnected
         XCTAssertEqual(client.connectionStatus, .disconnected())
@@ -381,7 +381,7 @@ class ChatClient_Tests: XCTestCase {
 
         // Simulate web-socket disconnection.
         let error = ClientError(with: TestError())
-        client.webSocketClient?.simulateConnectionStatus(.disconnected(error: error))
+        client.webSocketClient?.simulateConnectionStatus(.disconnected(source: .serverInitiated(error: error)))
 
         // Assert the WSConnectionState is exposed as ChatClientConnectionStatus
         XCTAssertEqual(client.connectionStatus, .disconnected(error: error))
@@ -459,7 +459,10 @@ class ChatClient_Tests: XCTestCase {
         // Simulate WebSocketConnection change to "disconnected"
         let error = ClientError(with: TestError())
         testEnv.webSocketClient?.connectionStateDelegate?
-            .webSocketClient(testEnv.webSocketClient!, didUpdateConnectionState: .disconnected(error: error))
+            .webSocketClient(
+                testEnv.webSocketClient!,
+                didUpdateConnectionState: .disconnected(source: .serverInitiated(error: error))
+            )
         
         // Assert the provided connection id is `nil`
         XCTAssertNil(providedConnectionId)
@@ -502,7 +505,7 @@ class ChatClient_Tests: XCTestCase {
             .connectionStateDelegate?
             .webSocketClient(
                 testEnv.webSocketClient!,
-                didUpdateConnectionState: .disconnected(error: error)
+                didUpdateConnectionState: .disconnected(source: .serverInitiated(error: error))
             )
         
         time.run(numberOfSeconds: 0.6)
@@ -514,7 +517,7 @@ class ChatClient_Tests: XCTestCase {
             .connectionStateDelegate?
             .webSocketClient(
                 testEnv.webSocketClient!,
-                didUpdateConnectionState: .disconnected(error: error)
+                didUpdateConnectionState: .disconnected(source: .serverInitiated(error: error))
             )
         
         // Does not call secondary token refresh right away
@@ -941,7 +944,10 @@ class ChatClient_Tests: XCTestCase {
         
         // Simulate .disconnected state
         testEnv.webSocketClient?.connectionStateDelegate?
-            .webSocketClient(testEnv.webSocketClient!, didUpdateConnectionState: .disconnected(error: nil))
+            .webSocketClient(
+                testEnv.webSocketClient!,
+                didUpdateConnectionState: .disconnected(source: .serverInitiated(error: nil))
+            )
         
         // Simulate going into background
         testEnv.backgroundTaskScheduler!.startListeningForAppStateUpdates_onBackground?()

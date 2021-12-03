@@ -159,8 +159,8 @@ final class ChatClientUpdater_Tests: XCTestCase {
             XCTAssertEqual(client.connectionIdWaiters.count, 1)
 
             if let error = connectionError {
-                // Simulate web socket `disconnected` state with the specific error.
-                client.mockWebSocketClient.simulateConnectionStatus(.disconnected(error: error))
+                // Simulate web socket `disconnected` state initiated by the server with the specific error.
+                client.mockWebSocketClient.simulateConnectionStatus(.disconnected(source: .serverInitiated(error: error)))
             }
 
             // Simulate error while establishing a connection.

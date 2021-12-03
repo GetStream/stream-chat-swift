@@ -629,8 +629,8 @@ extension ChatClient: ConnectionStateDelegate {
         case let .connected(connectionId: id):
             shouldNotifyConnectionIdWaiters = true
             connectionId = id
-        case let .disconnected(error: error):
-            if let error = error,
+        case let .disconnected(source):
+            if let error = source.serverError,
                error.isTokenExpiredError {
                 refreshToken(error: error, completion: nil)
                 shouldNotifyConnectionIdWaiters = false
@@ -638,7 +638,8 @@ extension ChatClient: ConnectionStateDelegate {
                 shouldNotifyConnectionIdWaiters = true
             }
             connectionId = nil
-        case .connecting,
+        case .initialized,
+             .connecting,
              .disconnecting,
              .waitingForConnectionId,
              .waitingForReconnect:
