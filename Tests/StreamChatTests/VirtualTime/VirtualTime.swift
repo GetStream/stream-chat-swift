@@ -9,12 +9,9 @@ import XCTest
 class VirtualTime {
     typealias Seconds = TimeInterval
     
-    /// Specifies the number of seconds the execution pauses for after the virtual time is advanced.
-    ///
-    /// This is needed to give the system time to execute async tasks properly. Typically, you don't need to change this value.
-    var timeAdvanceExecutionDelay: TimeInterval = 1 / 1_000_000
-    
     var scheduledTimers: [VirtualTime.TimerControl] = []
+    var timestampToFiredTimers: [TimeInterval: [VirtualTime.TimerControl]] = [:]
+
     var currentTime: Seconds
     
     enum State {
@@ -37,34 +34,31 @@ class VirtualTime {
         let targetTime: Seconds = numberOfSeconds.map { $0 + currentTime } ?? .greatestFiniteMagnitude
         state = .running
         
-        var keepRunning = true
-        
-        while keepRunning {
-            let sortedTimers = scheduledTimers
-                .map { (nextFireTime: $0.nextFireTime(currentTime: currentTime), timer: $0) }
-                .filter { $0.nextFireTime != nil && $0.timer.isActive }
-                .sorted { $0.nextFireTime! < $1.nextFireTime! }
+        while true {
+            let timersToFire = scheduledTimers
+                .filter { timer in timer.shouldeFire(at: currentTime) }
+                .filter { timer in !timestampToFiredTimers[currentTime, default: []].contains(where: { $0 === timer }) }
+            timersToFire.forEach { $0.callback($0) }
+            timestampToFiredTimers[currentTime, default: []] += timersToFire
+
+            let nextFireTime = scheduledTimers
+                .compactMap { $0.nextFireTime(after: currentTime) }
+                .sorted()
+                .first
             
-            let nextTime = sortedTimers.first?.nextFireTime
-            if let nextTime = nextTime, nextTime > currentTime, nextTime <= targetTime {
-                currentTime = nextTime
-            } else {
-                // If `numberOfSeconds` was specified, set the current time to the target time.
-                if targetTime != .greatestFiniteMagnitude {
-                    currentTime = targetTime
-                }
-                
-                keepRunning = false
+            guard let nextFireAt = nextFireTime else {
+                // We're done, no active timers left
+                break
             }
             
-            let timersToRun = sortedTimers
-                .prefix { $0.nextFireTime! == currentTime }
+            guard nextFireAt <= targetTime else {
+                // We're done, some timers are still active but we've reached the target time
+                currentTime = targetTime
+                break
+            }
             
-            timersToRun
-                .map(\.timer)
-                .forEach { $0.callback($0) }
-            
-            _ = XCTWaiter.wait(for: [.init()], timeout: timeAdvanceExecutionDelay)
+            // Bump current time
+            currentTime = nextFireAt
         }
         
         if numberOfSeconds == nil {
@@ -99,6 +93,10 @@ extension VirtualTime {
         var scheduledFireTime: TimeInterval
         var callback: (TimerControl) -> Void
         
+        var isRepeated: Bool {
+            repeatingPeriod > 0
+        }
+        
         init(scheduledFireTime: TimeInterval, repeatingPeriod: TimeInterval, callback: @escaping (TimerControl) -> Void) {
             self.repeatingPeriod = repeatingPeriod
             self.scheduledFireTime = scheduledFireTime
@@ -117,19 +115,26 @@ extension VirtualTime {
             isActive = false
         }
         
-        func nextFireTime(currentTime: TimeInterval) -> TimeInterval? {
-            // First fire
-            if scheduledFireTime > currentTime {
-                return scheduledFireTime
-            }
+        func shouldeFire(at time: TimeInterval) -> Bool {
+            guard isActive else { return false }
             
-            // Repeated fire
-            if scheduledFireTime <= currentTime, repeatingPeriod > 0 {
-                let elapsedTime = currentTime - scheduledFireTime
-                return currentTime + (repeatingPeriod - elapsedTime.truncatingRemainder(dividingBy: repeatingPeriod))
+            if isRepeated {
+                return time >= scheduledFireTime && time.truncatingRemainder(dividingBy: repeatingPeriod).isZero
+            } else {
+                return scheduledFireTime == time
             }
+        }
+        
+        func nextFireTime(after time: TimeInterval) -> TimeInterval? {
+            guard isActive else { return nil }
             
-            return nil
+            if isRepeated {
+                let periodsPassed = Int(time / repeatingPeriod)
+                let nextPeriod = TimeInterval(periodsPassed + 1)
+                return nextPeriod * repeatingPeriod
+            } else {
+                return scheduledFireTime > time ? scheduledFireTime : nil
+            }
         }
     }
 }
