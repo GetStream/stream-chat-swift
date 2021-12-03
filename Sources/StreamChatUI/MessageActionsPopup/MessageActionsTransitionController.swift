@@ -89,7 +89,7 @@ open class ChatMessageActionsTransitionController: NSObject, UIViewControllerTra
         let messageViewFrame = selectedMessageContentViewFrame ?? .zero
         let messageViewType = type(of: originalMessageContentView)
         let messageAttachmentInjectorType = originalMessageContentView.attachmentViewInjector.map { type(of: $0) }
-        let messageLayoutOptions = originalMessageContentView.layoutOptions?.subtracting(.reactions) ?? []
+        let messageLayoutOptions = originalMessageContentView.layoutOptions?.subtracting([.reactions]) ?? []
         let message = originalMessageContentView.content
         
         let messageView = messageViewType.init()
