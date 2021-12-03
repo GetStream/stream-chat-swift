@@ -178,6 +178,7 @@ open class ChatChannelVC:
 
     @objc func backAction(_ sender: Any) {
         navigationController?.popViewController(animated: true)
+        self.dismiss(animated: true, completion: nil)
     }
 
     // MARK: - ChatMessageListVCDataSource
