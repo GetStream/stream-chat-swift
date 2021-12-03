@@ -188,6 +188,7 @@ var streamChatSourcesExcluded: [String] { [
     "Workers/EventSender_Mock.swift",
     "Workers/UserListUpdater_Mock.swift",
     "Workers/ChannelListUpdater_Mock.swift",
+    "Workers/EventNotificationCenter_Mock.swift",
     "Workers/ChannelListUpdater_Tests.swift",
     "Workers/TypingEventSender_Tests.swift",
     "Workers/ChannelUpdater_Mock.swift",
