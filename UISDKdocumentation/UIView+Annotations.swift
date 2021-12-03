@@ -59,12 +59,14 @@ public struct Annotation {
 ///   - variants: Variants to snapshot, this is to support dark mode.
 ///   - file: File reference which will be passed to snapshot to generate folder if needed.
 /// - Returns: A UIView instance which contains all annotations and possibly description of properties outside the annotated view.
-func generateDocs(
-    for view: UIView,
+func generateDocs<View: UIView>(
+    for view: View,
     parentView: UIView? = nil,
-    annotations: [Annotation],
+    annotations: (View) -> [Annotation],
     name: String,
     variants: [SnapshotVariant],
+    containerBorderWidth: CGFloat = 1,
+    record: Bool = false,
     file: StaticString = #file
 ) {
     let container = UIView().withoutAutoresizingMaskConstraints
@@ -73,11 +75,15 @@ func generateDocs(
     container.addSubview(view.withoutAutoresizingMaskConstraints)
     view.centerYAnchor.constraint(equalTo: container.centerYAnchor).isActive = true
     view.centerXAnchor.constraint(equalTo: container.centerXAnchor).isActive = true
-    view.layer.borderWidth = 1
+    view.layer.borderWidth = containerBorderWidth
     view.layer.borderColor = UIColor.gray.cgColor
 
     container.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 3).isActive = true
     container.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 3).isActive = true
+
+    // The annotations should be created after the view has been added to the container
+    // Because in some views the views are recreated and loose the original reference
+    let annotations: [Annotation] = annotations(view)
     
     container.layoutIfNeeded()
     for annotation in annotations {
@@ -97,7 +103,7 @@ func generateDocs(
             annotation.view.backgroundColor = highlightColor
         }
     }
-    AssertSnapshot(container, variants: variants, file: file, function: name)
+    AssertSnapshot(container, variants: variants, record: record, file: file, function: name)
 }
 
 private func createLineAndLabelWithPropertyName(

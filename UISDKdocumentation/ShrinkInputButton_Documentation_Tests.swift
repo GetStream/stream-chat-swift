@@ -20,7 +20,7 @@ class ShrinkInputButton_Documentation_Tests: XCTestCase {
         
         generateDocs(
             for: view,
-            annotations: [],
+            annotations: { _ in [] },
             name: "ShrinkInputButton_documentation",
             variants: .onlyUserInterfaceStyles
         )
