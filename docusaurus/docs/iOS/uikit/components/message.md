@@ -136,7 +136,7 @@ As an example on how we can restructure the layout of the message view we will d
 ![Custom Message Layout](../../assets/messagelist-layout-custom.png)  
 
 First, we need to customize the `ChatMessageLayoutOptionsResolver` and change the message layout options according to our needs. For this specific example, let's assume our message view layout needs to respect the following conditions:
-- Always include he avatar, timestamp and author name.
+- Always include the avatar, timestamp and author name.
 - All messages should be rendered on the leading side.
 - Don't support reactions.
 - Don't support threads.
@@ -288,8 +288,9 @@ final class CustomChatMessageContentView: ChatMessageContentView {
         let gifs = message.giphyAttachments.map(\.previewURL)
         let videos = message.videoAttachments.map(\.videoURL)
         let audios = message.audioAttachments.map(\.audioURL)
-        let allAttachments = [images, files, gifs, videos, audios].reduce([], +)
-
+        let links = message.linkAttachments.map(\.originalURL)
+        
+        let allAttachments = [images, files, gifs, videos, audios, links].reduce([], +)
         onShareAttachments?(allAttachments)
     }
 }
