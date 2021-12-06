@@ -331,7 +331,7 @@ open class ChatMessageContentView: _View, ThemeProvider {
             reactionsView.pin(to: reactionsBubbleView.layoutMarginsGuide)
 
             bubbleToReactionsConstraint = (bubbleView ?? bubbleContentContainer).topAnchor
-                .pin(equalTo: reactionsBubbleView.centerYAnchor)
+                .pin(equalTo: reactionsBubbleView.centerYAnchor, constant: 5)
             constraintsToActivate += [
                 reactionsBubbleView.topAnchor.pin(equalTo: topAnchor),
                 bubbleToReactionsConstraint,
