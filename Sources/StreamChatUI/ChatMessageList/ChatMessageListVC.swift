@@ -82,6 +82,8 @@ open class ChatMessageListVC:
         return !listView.isLastCellFullyVisible && isMoreContentThanOnePage
     }
 
+    var viewEmptyState: UIView!
+
     open override func viewDidLoad() {
         super.viewDidLoad()
         listView.register(CryptoSentBubble.self, forCellReuseIdentifier: "CryptoSentBubble")
@@ -89,6 +91,10 @@ open class ChatMessageListVC:
         listView.register(RedPacketSentBubble.self, forCellReuseIdentifier: "RedPacketSentBubble")
         listView.register(RedPacketBubble.self, forCellReuseIdentifier: "RedPacketBubble")
         listView.register(RedPacketAmountBubble.self, forCellReuseIdentifier: "RedPacketAmountBubble")
+        setupEmptyState()
+        if let numberMessage = dataSource?.numberOfMessages(in: self) {
+            viewEmptyState.isHidden = numberMessage != 0
+        }
     }
 
     override open func setUp() {
@@ -202,6 +208,9 @@ open class ChatMessageListVC:
     /// Updates the collection view data with given `changes`.
     open func updateMessages(with changes: [ListChange<ChatMessage>], completion: (() -> Void)? = nil) {
         listView.updateMessages(with: changes, completion: completion)
+        if let numberMessage = dataSource?.numberOfMessages(in: self) {
+            viewEmptyState.isHidden = numberMessage != 0
+        }
     }
 
     /// Handles tap action on the table view.
@@ -406,6 +415,33 @@ open class ChatMessageListVC:
             cell.messageContentView?.content = message
             return cell
         }
+    }
+
+    private func setupEmptyState() {
+        viewEmptyState = UIView()
+        self.view.addSubview(viewEmptyState)
+        viewEmptyState.translatesAutoresizingMaskIntoConstraints = false
+        viewEmptyState.backgroundColor = .clear
+        viewEmptyState.translatesAutoresizingMaskIntoConstraints = false
+        viewEmptyState.pin(anchors: [.top, .leading, .trailing, .bottom], to: view)
+
+        let imageView = UIImageView()
+        imageView.image = appearance.images.chatIcon
+        viewEmptyState.addSubview(imageView)
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        imageView.heightAnchor.constraint(equalToConstant: 92).isActive = true
+        imageView.widthAnchor.constraint(equalToConstant: 88).isActive = true
+        imageView.centerXAnchor.constraint(equalTo: viewEmptyState.centerXAnchor).isActive = true
+        imageView.centerYAnchor.constraint(equalTo: viewEmptyState.centerYAnchor).isActive = true
+
+        let lblChat = UILabel()
+        lblChat.text = "Awfully quiet in here"
+        lblChat.font = .systemFont(ofSize: 18)
+        lblChat.textColor = UIColor(rgb: 0x96A9C2)
+        viewEmptyState.addSubview(lblChat)
+        lblChat.translatesAutoresizingMaskIntoConstraints = false
+        lblChat.centerXAnchor.constraint(equalTo: viewEmptyState.centerXAnchor, constant: 0).isActive = true
+        lblChat.bottomAnchor.constraint(equalTo: imageView.bottomAnchor, constant: 50).isActive = true
     }
 
     private func isOneWalletCell(_ message: ChatMessage?) -> Bool {
