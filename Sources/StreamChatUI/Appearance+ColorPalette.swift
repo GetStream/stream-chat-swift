@@ -60,6 +60,10 @@ public extension Appearance {
 
         // MARK: - Wallet tabbar
         public var walletTabbarBackground: UIColor = .walletTabbarBackground
+        public var redPacketColor: UIColor = .init(rgb: 0xFF6961)
+        public var redPacketButton: UIColor = .init(rgb: 0x333333)
+        public var cardBackground: UIColor = .init(rgb: 0xFFFFFF).withAlphaComponent(0.5)
+        public var redPacketExpired: UIColor = .init(rgb: 0x758796)
     }
 }
 

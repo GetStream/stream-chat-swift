@@ -1047,6 +1047,10 @@
 		E7DD8EA825E3F7F50059A322 /* MessageWithBrokenAttachments.json in Resources */ = {isa = PBXBuildFile; fileRef = E7DD8EA725E3F7F50059A322 /* MessageWithBrokenAttachments.json */; };
 		E7DD8EC125E4083B0059A322 /* OptionalDecodable.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7DD8EC025E4083B0059A322 /* OptionalDecodable.swift */; };
 		E7DF7E2425C2C67E00AE9D21 /* ChatAvatarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7DF7E2325C2C67E00AE9D21 /* ChatAvatarView.swift */; };
+		ED0D5143275DDB3400753692 /* RedPacketReceiveBubble.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED0D5142275DDB3400753692 /* RedPacketReceiveBubble.swift */; };
+		ED0D5145275DE10B00753692 /* RedPacketBubble.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED0D5144275DE10B00753692 /* RedPacketBubble.swift */; };
+		ED0D5147275DED8800753692 /* RedPacketAmountBubble.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED0D5146275DED8800753692 /* RedPacketAmountBubble.swift */; };
+		ED3B5F05275A3A5A00DEAF0A /* RedPacketSentBubble.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED3B5F04275A3A5A00DEAF0A /* RedPacketSentBubble.swift */; };
 		F61D7C3124FF9D1F00188A0E /* MessageEndpoints_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F61D7C3024FF9D1F00188A0E /* MessageEndpoints_Tests.swift */; };
 		F61D7C3324FFA60600188A0E /* MessageUpdater_Mock.swift in Sources */ = {isa = PBXBuildFile; fileRef = F61D7C3224FFA60600188A0E /* MessageUpdater_Mock.swift */; };
 		F61D7C3524FFA6FD00188A0E /* MessageUpdater_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F61D7C3424FFA6FD00188A0E /* MessageUpdater_Tests.swift */; };
@@ -2439,6 +2443,10 @@
 		E7DD8EA725E3F7F50059A322 /* MessageWithBrokenAttachments.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = MessageWithBrokenAttachments.json; sourceTree = "<group>"; };
 		E7DD8EC025E4083B0059A322 /* OptionalDecodable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OptionalDecodable.swift; sourceTree = "<group>"; };
 		E7DF7E2325C2C67E00AE9D21 /* ChatAvatarView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatAvatarView.swift; sourceTree = "<group>"; };
+		ED0D5142275DDB3400753692 /* RedPacketReceiveBubble.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RedPacketReceiveBubble.swift; sourceTree = "<group>"; };
+		ED0D5144275DE10B00753692 /* RedPacketBubble.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RedPacketBubble.swift; sourceTree = "<group>"; };
+		ED0D5146275DED8800753692 /* RedPacketAmountBubble.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RedPacketAmountBubble.swift; sourceTree = "<group>"; };
+		ED3B5F04275A3A5A00DEAF0A /* RedPacketSentBubble.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RedPacketSentBubble.swift; sourceTree = "<group>"; };
 		F61D7C3024FF9D1F00188A0E /* MessageEndpoints_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageEndpoints_Tests.swift; sourceTree = "<group>"; };
 		F61D7C3224FFA60600188A0E /* MessageUpdater_Mock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageUpdater_Mock.swift; sourceTree = "<group>"; };
 		F61D7C3424FFA6FD00188A0E /* MessageUpdater_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageUpdater_Tests.swift; sourceTree = "<group>"; };
@@ -5072,6 +5080,10 @@
 				88A11B2F2590CC860000AC24 /* ChatMessageErrorIndicator.swift */,
 				8893FF15265FC60B00DD62BE /* ChatMessageErrorIndicator_Tests.swift */,
 				847F3CE92689FDEB00D240E0 /* ChatMessageCell.swift */,
+				ED3B5F04275A3A5A00DEAF0A /* RedPacketSentBubble.swift */,
+				ED0D5142275DDB3400753692 /* RedPacketReceiveBubble.swift */,
+				ED0D5144275DE10B00753692 /* RedPacketBubble.swift */,
+				ED0D5146275DED8800753692 /* RedPacketAmountBubble.swift */,
 			);
 			path = ChatMessage;
 			sourceTree = "<group>";
@@ -5989,6 +6001,7 @@
 				E7A37B8425ADA66E0055458F /* ChatSuggestionsHeaderView.swift in Sources */,
 				8850FE91256558B200C8D534 /* NavigationRouter.swift in Sources */,
 				883051C82630579D0069D731 /* ChatThreadArrowView.swift in Sources */,
+				ED3B5F05275A3A5A00DEAF0A /* RedPacketSentBubble.swift in Sources */,
 				E798D6D325FF69120002C3B9 /* SwipeableView.swift in Sources */,
 				E701201E2583EBD50036DACD /* CALayer+Extensions.swift in Sources */,
 				A3BB3FFF261DA74D00365496 /* ContainerStackView.swift in Sources */,
@@ -6038,6 +6051,7 @@
 				8825334C258CE82500B77352 /* ChatMessageActionsRouter.swift in Sources */,
 				AD4474FD263B19F90030E583 /* ImageAttachmentComposerPreview.swift in Sources */,
 				88BA7F87258B97C9006CE0C5 /* ChatMessageImageGallery+UploadingOverlay.swift in Sources */,
+				ED0D5145275DE10B00753692 /* RedPacketBubble.swift in Sources */,
 				8806570D259A51C200E31D23 /* ChatMessageInteractiveAttachmentView+ActionButton.swift in Sources */,
 				E79AC10C25831A1500C3CE5D /* ChatSuggestionsCollectionView.swift in Sources */,
 				88D66E762599DF1400CFC102 /* ChatMessageReactionAppearance.swift in Sources */,
@@ -6074,6 +6088,7 @@
 				CD8918A6273E32AD0051C651 /* ToolTipToggleButton.swift in Sources */,
 				790882FD25486BFD00896F03 /* ChatChannelListCollectionViewCell.swift in Sources */,
 				88CABC4525933EE70061BB67 /* ChatMessageReactionsView.swift in Sources */,
+				ED0D5143275DDB3400753692 /* RedPacketReceiveBubble.swift in Sources */,
 				E7166CE225BEE20600B03B07 /* Appearance+Images.swift in Sources */,
 				88CABC6625934CF60061BB67 /* ChatMessageReactions+Types.swift in Sources */,
 				BD69F5D52669392E00E9E3FA /* ScrollToLatestMessageButton.swift in Sources */,
@@ -6130,6 +6145,7 @@
 				640FE0EA26A56921006CE703 /* CollectionUpdatesMapper.swift in Sources */,
 				CD1C90F0272C417F00A6E85B /* CryptoSentBubble.swift in Sources */,
 				AD43F90926153BAD00F2D4BB /* QuotedChatMessageView.swift in Sources */,
+				ED0D5147275DED8800753692 /* RedPacketAmountBubble.swift in Sources */,
 				847F3CEA2689FDEB00D240E0 /* ChatMessageCell.swift in Sources */,
 				885B3D7725642B3D003E6BDF /* CurrentChatUserAvatarView.swift in Sources */,
 				224FF6912562F58F00725DD1 /* UIColor+Extensions.swift in Sources */,

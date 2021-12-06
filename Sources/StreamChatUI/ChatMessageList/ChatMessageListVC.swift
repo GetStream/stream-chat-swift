@@ -85,6 +85,10 @@ open class ChatMessageListVC:
         super.viewDidLoad()
         listView.register(CryptoSentBubble.self, forCellReuseIdentifier: "CryptoSentBubble")
         listView.register(CryptoReceiveBubble.self, forCellReuseIdentifier: "CryptoReceiveBubble")
+        listView.register(RedPacketSentBubble.self, forCellReuseIdentifier: "RedPacketSentBubble")
+        listView.register(RedPacketReceiveBubble.self, forCellReuseIdentifier: "RedPacketReceiveBubble")
+        listView.register(RedPacketBubble.self, forCellReuseIdentifier: "RedPacketBubble")
+        listView.register(RedPacketAmountBubble.self, forCellReuseIdentifier: "RedPacketAmountBubble")
     }
 
     override open func setUp() {
@@ -329,6 +333,50 @@ open class ChatMessageListVC:
                 cell.configData()
                 return cell
             }
+        } else if isRedPacketCell(message) {
+            if isMessageFromCurrentUser {
+                guard let cell = tableView.dequeueReusableCell(
+                    withIdentifier: "RedPacketSentBubble",
+                    for: indexPath) as? RedPacketSentBubble else {
+                    return UITableViewCell()
+                }
+                cell.options = cellLayoutOptionsForMessage(at: indexPath)
+                cell.content = message
+                cell.configData()
+                return cell
+            } else {
+                guard let cell = tableView.dequeueReusableCell(
+                    withIdentifier: "RedPacketReceiveBubble",
+                    for: indexPath) as? RedPacketReceiveBubble else {
+                    return UITableViewCell()
+                }
+                cell.options = cellLayoutOptionsForMessage(at: indexPath)
+                cell.content = message
+                cell.configData()
+                return cell
+            }
+        } else if isRedPacketExpiredCell(message) {
+            guard let cell = tableView.dequeueReusableCell(
+                withIdentifier: "RedPacketBubble",
+                for: indexPath) as? RedPacketBubble else {
+                return UITableViewCell()
+            }
+            cell.options = cellLayoutOptionsForMessage(at: indexPath)
+            cell.content = message
+            cell.configureCell(isSender: isMessageFromCurrentUser, with: .EXPIRED)
+            cell.configData()
+            return cell
+        } else if isRedPacketAmountCell(message) {
+            guard let cell = tableView.dequeueReusableCell(
+                withIdentifier: "RedPacketAmountBubble",
+                for: indexPath) as? RedPacketAmountBubble else {
+                return UITableViewCell()
+            }
+            cell.options = cellLayoutOptionsForMessage(at: indexPath)
+            cell.content = message
+            cell.configureCell(isSender: isMessageFromCurrentUser)
+            cell.configData()
+            return cell
         } else {
             let cell: ChatMessageCell = listView.dequeueReusableCell(
                 contentViewClass: cellContentClassForMessage(at: indexPath),
@@ -354,6 +402,22 @@ open class ChatMessageListVC:
 //        } else {
 //            return false
 //        }
+    }
+
+    private func isRedPacketCell(_ message: ChatMessage?) -> Bool {
+        message?.extraData.keys.contains("redPacketCell") ?? false
+    }
+
+    private func isRedPacketExpiredCell(_ message: ChatMessage?) -> Bool {
+        message?.extraData.keys.contains("redPacketExpiredCell") ?? false
+    }
+
+    private func isRedPacketReceivedCell(_ message: ChatMessage?) -> Bool {
+        message?.extraData.keys.contains("redPacketReceivedCell") ?? false
+    }
+
+    private func isRedPacketAmountCell(_ message: ChatMessage?) -> Bool {
+        message?.extraData.keys.contains("redPacketAmountCell") ?? false
     }
 
     open func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {

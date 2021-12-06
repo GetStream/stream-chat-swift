@@ -537,6 +537,20 @@ open class ComposerVC: _ViewController,
         userInfo["channelId"] = channelId
         NotificationCenter.default.post(name: .sendOneWalletTapAction, object: nil, userInfo: userInfo)
         //sendPaymentBubble()
+        #if targetEnvironment(simulator)
+        var sendOneWalletData = SendOneWallet()
+        sendOneWalletData.myName = "Hochung"
+        sendOneWalletData.myWalletAddress = ""
+
+        channelController?.createNewMessage(
+            text: "",
+            pinning: nil,
+            attachments: [],
+            mentionedUserIds: content.mentionedUsers.map(\.id),
+            quotedMessageId: content.quotingMessage?.id,
+            extraData: ["redPacketAmountCell" : .dictionary(sendOneWalletData.toDictionary())],
+            completion: nil)
+        #endif
     }
 
     @objc open func toolKitToggleAction(sender: UIButton) {
