@@ -354,6 +354,17 @@ open class ChatMessageListVC:
             cell.configureCell(isSender: isMessageFromCurrentUser, with: .EXPIRED)
             cell.configData()
             return cell
+        } else if isRedPacketReceivedCell(message) {
+            guard let cell = tableView.dequeueReusableCell(
+                withIdentifier: "RedPacketBubble",
+                for: indexPath) as? RedPacketBubble else {
+                return UITableViewCell()
+            }
+            cell.options = cellLayoutOptionsForMessage(at: indexPath)
+            cell.content = message
+            cell.configureCell(isSender: isMessageFromCurrentUser, with: .RECEIVED)
+            cell.configData()
+            return cell
         } else if isRedPacketAmountCell(message) {
             guard let cell = tableView.dequeueReusableCell(
                 withIdentifier: "RedPacketAmountBubble",
