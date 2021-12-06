@@ -3,7 +3,6 @@
 //
 
 import Foundation
-import Nuke
 import StreamChat
 import UIKit
 
