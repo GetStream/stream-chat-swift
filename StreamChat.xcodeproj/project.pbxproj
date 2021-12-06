@@ -915,7 +915,6 @@
 		C121E80D274544AC00023E4C /* ChannelReadUpdaterMiddleware.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79896D63250A62EE00BA8F1C /* ChannelReadUpdaterMiddleware.swift */; };
 		C121E80E274544AC00023E4C /* UserTypingStateUpdaterMiddleware.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6CCA24C251235F7004C1859 /* UserTypingStateUpdaterMiddleware.swift */; };
 		C121E80F274544AC00023E4C /* ChannelTruncatedEventMiddleware.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79158CF325F133FB00186102 /* ChannelTruncatedEventMiddleware.swift */; };
-		C121E810274544AC00023E4C /* MessageReactionsMiddleware.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8899BC56254337C7003CB98B /* MessageReactionsMiddleware.swift */; };
 		C121E811274544AC00023E4C /* UserChannelBanEventsMiddleware.swift in Sources */ = {isa = PBXBuildFile; fileRef = 796CBC1225F7CD48003299B0 /* UserChannelBanEventsMiddleware.swift */; };
 		C121E812274544AC00023E4C /* MemberEventMiddleware.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79D6CF1725FA671C00BE2EEC /* MemberEventMiddleware.swift */; };
 		C121E813274544AD00023E4C /* UserWatchingEventMiddleware.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79617CB025F236B600D54E61 /* UserWatchingEventMiddleware.swift */; };
@@ -1013,7 +1012,6 @@
 		C121E870274544AF00023E4C /* MessageReactionDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8899BC4C25430E40003CB98B /* MessageReactionDTO.swift */; };
 		C121E871274544AF00023E4C /* MessageDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799C942D247D2FB9001F1104 /* MessageDTO.swift */; };
 		C121E872274544AF00023E4C /* AttachmentDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = DABC6AC7254707CB00A8FC78 /* AttachmentDTO.swift */; };
-		C121E873274544AF00023E4C /* TeamDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79877A1F2498E50D00015F8B /* TeamDTO.swift */; };
 		C121E874274544AF00023E4C /* UserDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79877A222498E50D00015F8B /* UserDTO.swift */; };
 		C121E875274544AF00023E4C /* UserListQueryDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA84070F25250720005A0F62 /* UserListQueryDTO.swift */; };
 		C121E876274544AF00023E4C /* CurrentUserDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79CDE1DC24B321FE0003BD1D /* CurrentUserDTO.swift */; };
@@ -1384,6 +1382,7 @@
 		C121EC612746AC8C00023E4C /* StreamChatUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 790881FD25432B7200896F03 /* StreamChatUI.framework */; platformFilter = ios; };
 		C121EC622746AC8C00023E4C /* StreamChatUI.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 790881FD25432B7200896F03 /* StreamChatUI.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		C121EC662746AD0E00023E4C /* StreamChat.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 799C941B247D2F80001F1104 /* StreamChat.framework */; };
+		C139335F275E7BD800225E7A /* Nuke in Frameworks */ = {isa = PBXBuildFile; productRef = C139335E275E7BD800225E7A /* Nuke */; };
 		C1BE72732732CA62006EB51E /* Nuke in Frameworks */ = {isa = PBXBuildFile; productRef = C1BE72722732CA62006EB51E /* Nuke */; };
 		C1FC2F6727416E150062530F /* ResumableData.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1BE728A2732CB7B006EB51E /* ResumableData.swift */; };
 		C1FC2F6827416E150062530F /* ImagePipelineCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1BE72822732CB7B006EB51E /* ImagePipelineCache.swift */; };
@@ -3177,6 +3176,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C139335F275E7BD800225E7A /* Nuke in Frameworks */,
 				7908821225432B7200896F03 /* StreamChatUI.framework in Frameworks */,
 				79200D46250140BB002F4EB1 /* StreamChat.framework in Frameworks */,
 			);
@@ -6145,6 +6145,9 @@
 				7908821125432B7200896F03 /* PBXTargetDependency */,
 			);
 			name = StreamChatSample;
+			packageProductDependencies = (
+				C139335E275E7BD800225E7A /* Nuke */,
+			);
 			productName = Sample;
 			productReference = 792A4F22247FF01800EAF71D /* StreamChatSample.app */;
 			productType = "com.apple.product-type.application";
@@ -7840,7 +7843,6 @@
 				C121E80D274544AC00023E4C /* ChannelReadUpdaterMiddleware.swift in Sources */,
 				C121E80E274544AC00023E4C /* UserTypingStateUpdaterMiddleware.swift in Sources */,
 				C121E80F274544AC00023E4C /* ChannelTruncatedEventMiddleware.swift in Sources */,
-				C121E810274544AC00023E4C /* MessageReactionsMiddleware.swift in Sources */,
 				C121E811274544AC00023E4C /* UserChannelBanEventsMiddleware.swift in Sources */,
 				C121E812274544AC00023E4C /* MemberEventMiddleware.swift in Sources */,
 				C121E813274544AD00023E4C /* UserWatchingEventMiddleware.swift in Sources */,
@@ -7938,7 +7940,6 @@
 				C121E870274544AF00023E4C /* MessageReactionDTO.swift in Sources */,
 				C121E871274544AF00023E4C /* MessageDTO.swift in Sources */,
 				C121E872274544AF00023E4C /* AttachmentDTO.swift in Sources */,
-				C121E873274544AF00023E4C /* TeamDTO.swift in Sources */,
 				C121E874274544AF00023E4C /* UserDTO.swift in Sources */,
 				C121E875274544AF00023E4C /* UserListQueryDTO.swift in Sources */,
 				C121E876274544AF00023E4C /* CurrentUserDTO.swift in Sources */,
@@ -10334,6 +10335,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = AD472EF625C425FB00A96E70 /* XCRemoteSwiftPackageReference "swift-snapshot-testing" */;
 			productName = SnapshotTesting;
+		};
+		C139335E275E7BD800225E7A /* Nuke */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C1BE72712732C91F006EB51E /* XCRemoteSwiftPackageReference "Nuke" */;
+			productName = Nuke;
 		};
 		C1BE72722732CA62006EB51E /* Nuke */ = {
 			isa = XCSwiftPackageProductDependency;
