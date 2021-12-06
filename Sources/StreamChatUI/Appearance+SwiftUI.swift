@@ -2,9 +2,9 @@
 // Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
+import Combine
 import StreamChat
 import SwiftUI
-import Combine
 
 @available(iOS 13.0, *)
 extension Appearance {
