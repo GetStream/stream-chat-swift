@@ -4,5 +4,8 @@ ignore:
   - "**/*_Mock.swift"
   - "**/*_Vendor.swift"
   - "**/Generated/*.swift"
+  - "Sources/StreamChat/StreamStarscream"
+  - "Sources/StreamChatUI/StreamNuke"
+  - "Sources/StreamChatUI/StreamSwiftyGif"
 github_checks:
     annotations: false
