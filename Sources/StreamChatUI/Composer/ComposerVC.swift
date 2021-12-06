@@ -299,7 +299,7 @@ open class ComposerVC: _ViewController,
             case .sendOneDollar:
                 weakSelf.sendONEAction()
             case .sendRedPacket:
-                weakSelf.showAvailableCommands()
+                weakSelf.sendRedPacketAction()
             case .shareNFTGalllery:
                 weakSelf.showAvailableCommands()
             }
