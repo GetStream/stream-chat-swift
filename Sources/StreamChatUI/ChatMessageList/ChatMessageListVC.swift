@@ -86,7 +86,6 @@ open class ChatMessageListVC:
         listView.register(CryptoSentBubble.self, forCellReuseIdentifier: "CryptoSentBubble")
         listView.register(CryptoReceiveBubble.self, forCellReuseIdentifier: "CryptoReceiveBubble")
         listView.register(RedPacketSentBubble.self, forCellReuseIdentifier: "RedPacketSentBubble")
-        listView.register(RedPacketReceiveBubble.self, forCellReuseIdentifier: "RedPacketReceiveBubble")
         listView.register(RedPacketBubble.self, forCellReuseIdentifier: "RedPacketBubble")
         listView.register(RedPacketAmountBubble.self, forCellReuseIdentifier: "RedPacketAmountBubble")
     }
@@ -334,27 +333,16 @@ open class ChatMessageListVC:
                 return cell
             }
         } else if isRedPacketCell(message) {
-            if isMessageFromCurrentUser {
-                guard let cell = tableView.dequeueReusableCell(
-                    withIdentifier: "RedPacketSentBubble",
-                    for: indexPath) as? RedPacketSentBubble else {
-                    return UITableViewCell()
-                }
-                cell.options = cellLayoutOptionsForMessage(at: indexPath)
-                cell.content = message
-                cell.configData()
-                return cell
-            } else {
-                guard let cell = tableView.dequeueReusableCell(
-                    withIdentifier: "RedPacketReceiveBubble",
-                    for: indexPath) as? RedPacketReceiveBubble else {
-                    return UITableViewCell()
-                }
-                cell.options = cellLayoutOptionsForMessage(at: indexPath)
-                cell.content = message
-                cell.configData()
-                return cell
+            guard let cell = tableView.dequeueReusableCell(
+                withIdentifier: "RedPacketSentBubble",
+                for: indexPath) as? RedPacketSentBubble else {
+                return UITableViewCell()
             }
+            cell.options = cellLayoutOptionsForMessage(at: indexPath)
+            cell.content = message
+            cell.configureCell(isSender: isMessageFromCurrentUser)
+            cell.configData()
+            return cell
         } else if isRedPacketExpiredCell(message) {
             guard let cell = tableView.dequeueReusableCell(
                 withIdentifier: "RedPacketBubble",

@@ -30,10 +30,10 @@ open class ChatChannelVC:
     }
 
 //    /// Component responsible for setting the correct offset when keyboard frame is changed.
-//    open lazy var keyboardHandler: KeyboardHandler = ComposerKeyboardHandler(
-//        composerParentVC: self,
-//        composerBottomConstraint: messageComposerBottomConstraint
-//    )
+    open lazy var keyboardHandler: KeyboardHandler = ComposerKeyboardHandler(
+        composerParentVC: self,
+        composerBottomConstraint: messageComposerBottomConstraint
+    )
 
     open private(set) lazy var navigationSafeAreaView: UIView = {
         let view = UIView(frame: .zero).withoutAutoresizingMaskConstraints
@@ -165,7 +165,7 @@ open class ChatChannelVC:
     override open func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
-        //keyboardHandler.start()
+        keyboardHandler.start()
     }
 
     override open func viewDidDisappear(_ animated: Bool) {
@@ -173,11 +173,12 @@ open class ChatChannelVC:
 
         resignFirstResponder()
 
-        //keyboardHandler.stop()
+        keyboardHandler.stop()
     }
 
     @objc func backAction(_ sender: Any) {
         navigationController?.popViewController(animated: true)
+        self.dismiss(animated: true, completion: nil)
     }
 
     // MARK: - ChatMessageListVCDataSource

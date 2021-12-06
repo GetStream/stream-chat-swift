@@ -31,19 +31,30 @@ class RedPacketSentBubble: UITableViewCell {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         self.selectionStyle = .none
         self.backgroundColor = .clear
+    }
 
+    required init?(coder: NSCoder) {
+        super.init(coder: coder)
+    }
+
+    func configureCell(isSender: Bool) {
         viewContainer = UIView()
         viewContainer.translatesAutoresizingMaskIntoConstraints = false
         viewContainer.backgroundColor = .clear
         viewContainer.clipsToBounds = true
-        addSubview(viewContainer)
+        contentView.addSubview(viewContainer)
         NSLayoutConstraint.activate([
-            viewContainer.topAnchor.constraint(equalTo: self.topAnchor, constant: 4),
-            viewContainer.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: -4),
-            viewContainer.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: cellWidth),
-            viewContainer.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -8),
+            viewContainer.topAnchor.constraint(equalTo: self.contentView.topAnchor, constant: 4),
+            viewContainer.bottomAnchor.constraint(equalTo: self.contentView.bottomAnchor, constant: -4)
         ])
-
+        if isSender {
+            viewContainer.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor, constant: cellWidth).isActive = true
+            viewContainer.trailingAnchor.constraint(equalTo: self.contentView.trailingAnchor, constant: -8).isActive = true
+        } else {
+            viewContainer.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor, constant: 8).isActive = true
+            viewContainer.trailingAnchor.constraint(equalTo: self.contentView.trailingAnchor, constant: -cellWidth).isActive = true
+        }
+        
         subContainer = UIView()
         subContainer.translatesAutoresizingMaskIntoConstraints = false
         subContainer.backgroundColor = Appearance.default.colorPalette.background6
@@ -113,6 +124,7 @@ class RedPacketSentBubble: UITableViewCell {
         pickUpButton.backgroundColor = Appearance.default.colorPalette.redPacketButton
         pickUpButton.clipsToBounds = true
         pickUpButton.layer.cornerRadius = 20
+        pickUpButton.addTarget(self, action: #selector(btnPickButtonAction), for: .touchUpInside)
         subContainer.addSubview(pickUpButton)
         NSLayoutConstraint.activate([
             pickUpButton.leadingAnchor.constraint(equalTo: subContainer.leadingAnchor, constant: 12),
@@ -123,10 +135,10 @@ class RedPacketSentBubble: UITableViewCell {
         ])
         pickUpButton.transform = .mirrorY
 
-
         timestampLabel = createTimestampLabel()
         timestampLabel.translatesAutoresizingMaskIntoConstraints = false
         viewContainer.addSubview(timestampLabel)
+        timestampLabel.textAlignment = isSender ? .right : .left
         NSLayoutConstraint.activate([
             timestampLabel.leadingAnchor.constraint(equalTo: viewContainer.leadingAnchor, constant: 0),
             timestampLabel.trailingAnchor.constraint(equalTo: viewContainer.trailingAnchor, constant: 0),
@@ -135,10 +147,6 @@ class RedPacketSentBubble: UITableViewCell {
             timestampLabel.heightAnchor.constraint(equalToConstant: 15)
         ])
         timestampLabel.transform = .mirrorY
-    }
-
-    required init?(coder: NSCoder) {
-        super.init(coder: coder)
     }
 
     private var cellWidth: CGFloat {
@@ -204,6 +212,10 @@ class RedPacketSentBubble: UITableViewCell {
         } else {
             timestampLabel?.text = nil
         }
+    }
+
+    @objc func btnPickButtonAction() {
+        print("btnPickButtonAction")
     }
 
 }

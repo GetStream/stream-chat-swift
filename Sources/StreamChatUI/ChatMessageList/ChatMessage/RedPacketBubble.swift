@@ -51,17 +51,17 @@ class RedPacketBubble: UITableViewCell {
         viewContainer.translatesAutoresizingMaskIntoConstraints = false
         viewContainer.backgroundColor = .clear
         viewContainer.clipsToBounds = true
-        addSubview(viewContainer)
+        contentView.addSubview(viewContainer)
         NSLayoutConstraint.activate([
-            viewContainer.topAnchor.constraint(equalTo: self.topAnchor, constant: 4),
-            viewContainer.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: -4)
+            viewContainer.topAnchor.constraint(equalTo: self.contentView.topAnchor, constant: 4),
+            viewContainer.bottomAnchor.constraint(equalTo: self.contentView.bottomAnchor, constant: -4)
         ])
         if isSender {
-            viewContainer.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: cellWidth).isActive = true
-            viewContainer.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -8).isActive = true
+            viewContainer.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor, constant: cellWidth).isActive = true
+            viewContainer.trailingAnchor.constraint(equalTo: self.contentView.trailingAnchor, constant: -8).isActive = true
         } else {
-            viewContainer.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 8).isActive = true
-            viewContainer.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -cellWidth).isActive = true
+            viewContainer.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor, constant: 8).isActive = true
+            viewContainer.trailingAnchor.constraint(equalTo: self.contentView.trailingAnchor, constant: -cellWidth).isActive = true
         }
 
         subContainer = UIView()
@@ -127,6 +127,7 @@ class RedPacketBubble: UITableViewCell {
         pickUpButton = UIButton()
         pickUpButton.translatesAutoresizingMaskIntoConstraints = false
         pickUpButton.setTitle("Send Packet", for: .normal)
+        pickUpButton.addTarget(self, action: #selector(btnPickButtonAction), for: .touchUpInside)
         pickUpButton.setTitleColor(.white, for: .normal)
         pickUpButton.titleLabel?.font = UIFont.systemFont(ofSize: 14, weight: .regular)
         pickUpButton.backgroundColor = Appearance.default.colorPalette.redPacketButton
@@ -216,5 +217,9 @@ class RedPacketBubble: UITableViewCell {
         } else {
             timestampLabel?.text = nil
         }
+    }
+
+    @objc func btnPickButtonAction() {
+        print("btnPickButtonAction")
     }
 }

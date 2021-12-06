@@ -8,6 +8,7 @@ import UIKit
 
 extension Notification.Name {
     public static let sendOneWalletTapAction = Notification.Name("kStreamChatOneWalletTapAction")
+    public static let sendRedPacketTapAction = Notification.Name("kStreamChatSendRedPacketTapAction")
     public static let sendOneWallet = Notification.Name("kTimelessWalletsendOneWallet")
 }
 
@@ -537,20 +538,27 @@ open class ComposerVC: _ViewController,
         userInfo["channelId"] = channelId
         NotificationCenter.default.post(name: .sendOneWalletTapAction, object: nil, userInfo: userInfo)
         //sendPaymentBubble()
-        #if targetEnvironment(simulator)
-        var sendOneWalletData = SendOneWallet()
-        sendOneWalletData.myName = "Hochung"
-        sendOneWalletData.myWalletAddress = ""
+//        #if targetEnvironment(simulator)
+//        var sendOneWalletData = SendOneWallet()
+//        sendOneWalletData.myName = "Hochung"
+//        sendOneWalletData.myWalletAddress = ""
+//
+//        channelController?.createNewMessage(
+//            text: "",
+//            pinning: nil,
+//            attachments: [],
+//            mentionedUserIds: content.mentionedUsers.map(\.id),
+//            quotedMessageId: content.quotingMessage?.id,
+//            extraData: ["redPacketAmountCell" : .dictionary(sendOneWalletData.toDictionary())],
+//            completion: nil)
+//        #endif
+    }
 
-        channelController?.createNewMessage(
-            text: "",
-            pinning: nil,
-            attachments: [],
-            mentionedUserIds: content.mentionedUsers.map(\.id),
-            quotedMessageId: content.quotingMessage?.id,
-            extraData: ["redPacketAmountCell" : .dictionary(sendOneWalletData.toDictionary())],
-            completion: nil)
-        #endif
+    @objc open func sendRedPacketAction() {
+        guard let channelId = channelController?.channel?.cid else { return }
+        var userInfo = [String: Any]()
+        userInfo["channelId"] = channelId
+        NotificationCenter.default.post(name: .sendRedPacketTapAction, object: nil, userInfo: userInfo)
     }
 
     @objc open func toolKitToggleAction(sender: UIButton) {
