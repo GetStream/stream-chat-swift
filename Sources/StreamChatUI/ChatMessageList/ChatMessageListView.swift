@@ -68,7 +68,7 @@ open class ChatMessageListView: UITableView, Customizable, ComponentsProvider {
     ) -> String {
         let components = [
             ChatMessageCell.reuseId,
-            String(layoutOptions.rawValue),
+            String(layoutOptions.id),
             String(describing: contentViewClass),
             String(describing: attachmentViewInjectorType)
         ]

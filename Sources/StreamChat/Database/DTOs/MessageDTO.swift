@@ -152,6 +152,13 @@ class MessageDTO: NSManagedObject {
             .init(format: "type == %@ AND showReplyInChannel == 1", MessageType.reply.rawValue)
         ])
         
+        // When an ephemeral message (like a giphy) exists in a thread reply,
+        // it shouldn't be visible in the main channel.
+        let ephemeralRepliesPredicate = NSCompoundPredicate(orPredicateWithSubpredicates: [
+            .init(format: "type != %@", MessageType.ephemeral.rawValue),
+            .init(format: "type == %@ AND parentMessageId == nil", MessageType.ephemeral.rawValue)
+        ])
+        
         // Some pinned messages might be in the local database, but should not be fetched
         // if they do not belong to the regular channel query.
         let ignoreOlderMessagesPredicate = NSCompoundPredicate(orPredicateWithSubpredicates: [
@@ -162,6 +169,7 @@ class MessageDTO: NSManagedObject {
         var subpredicates = [
             channelMessage,
             messageTypePredicate,
+            ephemeralRepliesPredicate,
             nonTruncatedMessagesPredicate(),
             ignoreOlderMessagesPredicate,
             deletedMessagesPredicate(deletedMessagesVisibility: deletedMessagesVisibility)
@@ -530,12 +538,12 @@ extension NSManagedObjectContext: MessageDatabaseSession {
             return nil
         }
 
-        guard let channelDTO = channelDTO else {
+        guard let channel = channelDTO else {
             log.assertionFailure("Should never happen, a channel should have been fetched.")
             return nil
         }
         
-        return try saveMessage(payload: payload, channelDTO: channelDTO)
+        return try saveMessage(payload: payload, channelDTO: channel)
     }
     
     func saveMessage(payload: MessagePayload, for query: MessageSearchQuery) throws -> MessageDTO? {

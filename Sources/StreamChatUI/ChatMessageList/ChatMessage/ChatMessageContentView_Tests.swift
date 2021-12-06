@@ -26,7 +26,7 @@ final class ChatMessageContentView_Tests: XCTestCase {
             let view = contentView(message: message, layout: layout, components: components)
 
             // Assert message content view is rendered correctly.
-            AssertSnapshot(view, variants: [.defaultLight], suffix: layout.description)
+            AssertSnapshot(view, variants: [.defaultLight], suffix: layout.rawValue)
         }
     }
 

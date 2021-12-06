@@ -123,7 +123,7 @@ class ChatPushNotificationContent_Tests: XCTestCase {
         XCTAssertTrue(handler.handleNotification(completion: { notification in
             expectation.fulfill()
             
-            guard case let .unknown = notification else {
+            guard case .unknown = notification else {
                 XCTFail()
                 return
             }

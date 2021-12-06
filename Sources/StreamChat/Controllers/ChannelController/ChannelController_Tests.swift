@@ -990,6 +990,34 @@ class ChannelController_Tests: XCTestCase {
         let messagesWithReply = [message1, message2, reply1].sorted { $0.createdAt > $1.createdAt }.map(\.id)
         XCTAssertEqual(controller.messages.map(\.id), messagesWithReply)
     }
+    
+    func test_threadEphemeralMessages_areNotShownInChannel() throws {
+        // Create a channel
+        try client.databaseContainer.createChannel(cid: channelId, withMessages: false)
+        controller = client.channelController(
+            for: channelId,
+            messageOrdering: .topToBottom
+        )
+        
+        // Insert a message
+        let message1: MessagePayload = .dummy(messageId: .unique, authorUserId: .unique)
+        
+        // Insert ephemeral message in message1's thread
+        let ephemeralMessage: MessagePayload = .dummy(
+            type: .ephemeral,
+            messageId: .unique,
+            parentId: message1.id,
+            authorUserId: .unique
+        )
+        
+        try client.databaseContainer.writeSynchronously {
+            try $0.saveMessage(payload: message1, for: self.channelId)
+            try $0.saveMessage(payload: ephemeralMessage, for: self.channelId)
+        }
+        
+        // Check the relevant ephemeral message is not shown in channel
+        XCTAssertEqual(controller.messages.map(\.id), [message1].map(\.id))
+    }
 
     func test_deletedMessages_withVisibleForCurrentUser_messageVisibility() throws {
         // Simulate the config setting

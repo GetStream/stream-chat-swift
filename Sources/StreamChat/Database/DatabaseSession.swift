@@ -355,7 +355,7 @@ extension DatabaseSession {
             channelDTO = ChannelDTO.load(cid: cid, context: context)
         }
 
-        guard let channelDTO = channelDTO else {
+        guard let channel = channelDTO else {
             log.info("event contains a cid that is not yet known, skipping")
             return
         }
@@ -370,6 +370,6 @@ extension DatabaseSession {
             return
         }
         
-        try saveMessage(payload: message, channelDTO: channelDTO)
+        try saveMessage(payload: message, channelDTO: channel)
     }
 }

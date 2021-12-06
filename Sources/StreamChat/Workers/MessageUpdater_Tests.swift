@@ -988,9 +988,7 @@ final class MessageUpdater_Tests: XCTestCase {
         // wait for the db call to be done
         wait(for: [dbCall], timeout: 0.1)
 
-        let reaction = database.viewContext.reaction(messageId: messageId, userId: userId, type: reactionType)
-
-        guard let reaction = reaction else {
+        guard let reaction = database.viewContext.reaction(messageId: messageId, userId: userId, type: reactionType) else {
             XCTFail()
             return
         }
@@ -1005,9 +1003,7 @@ final class MessageUpdater_Tests: XCTestCase {
             try self.database.writableContext.save()
         }
 
-        let reactionReloaded = database.viewContext.reaction(messageId: messageId, userId: userId, type: reactionType)
-
-        guard let reactionReloaded = reactionReloaded else {
+        guard let reactionReloaded = database.viewContext.reaction(messageId: messageId, userId: userId, type: reactionType) else {
             XCTFail()
             return
         }
@@ -1081,9 +1077,7 @@ final class MessageUpdater_Tests: XCTestCase {
         // wait for the db call to be done
         wait(for: [dbCall], timeout: 0.1)
 
-        let reaction = database.viewContext.reaction(messageId: messageId, userId: userId, type: reactionType)
-
-        guard let reaction = reaction else {
+        guard let reaction = database.viewContext.reaction(messageId: messageId, userId: userId, type: reactionType) else {
             XCTFail()
             return
         }
@@ -1099,9 +1093,7 @@ final class MessageUpdater_Tests: XCTestCase {
             try self.database.writableContext.save()
         }
 
-        let reactionReloaded = database.viewContext.reaction(messageId: messageId, userId: userId, type: reactionType)
-
-        guard let reactionReloaded = reactionReloaded else {
+        guard let reactionReloaded = database.viewContext.reaction(messageId: messageId, userId: userId, type: reactionType) else {
             XCTFail()
             return
         }

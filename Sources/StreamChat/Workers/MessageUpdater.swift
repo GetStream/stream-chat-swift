@@ -291,7 +291,7 @@ class MessageUpdater: Worker {
         messageId: MessageId,
         completion: ((Error?) -> Void)? = nil
     ) {
-        var reaction: MessageReactionDTO?
+        var reactionDTO: MessageReactionDTO?
         let version = UUID().uuidString
 
         let endpoint: Endpoint<EmptyResponse> = .addReaction(
@@ -304,7 +304,7 @@ class MessageUpdater: Worker {
 
         database.write { session in
             do {
-                reaction = try session.addReaction(
+                reactionDTO = try session.addReaction(
                     to: messageId,
                     type: type,
                     score: score,
@@ -314,7 +314,7 @@ class MessageUpdater: Worker {
                 log.warning("Failed to optimistically add the reaction to the database: \(error)")
             }
 
-            if let reaction = reaction {
+            if let reaction = reactionDTO {
                 reaction.localState = .sending
                 reaction.version = version
             }
@@ -345,16 +345,16 @@ class MessageUpdater: Worker {
         messageId: MessageId,
         completion: ((Error?) -> Void)? = nil
     ) {
-        var reaction: MessageReactionDTO?
+        var reactionDTO: MessageReactionDTO?
 
         database.write { session in
             do {
-                reaction = try session.removeReaction(from: messageId, type: type, on: nil)
+                reactionDTO = try session.removeReaction(from: messageId, type: type, on: nil)
             } catch {
                 log.warning("Failed to remove the reaction from to the database: \(error)")
             }
 
-            guard let reaction = reaction else {
+            guard let reaction = reactionDTO else {
                 return
             }
             reaction.localState = .pendingDelete
@@ -365,7 +365,7 @@ class MessageUpdater: Worker {
                         return
                     }
 
-                    guard let reaction = reaction else {
+                    guard let reaction = reactionDTO else {
                         return
                     }
 

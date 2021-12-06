@@ -1185,6 +1185,26 @@ class ChatClient_Tests: XCTestCase {
         testEnv.backgroundTaskScheduler?.startListeningForAppStateUpdates_onForeground?()
         XCTAssertEqual(testEnv.clientUpdater?.connect_called, true)
     }
+    
+    // Test identifier setup
+    func test_sessionHeaders_sdkIdentifier_correctValue() {
+        // Given
+        let client = ChatClient(
+            config: inMemoryStorageConfig,
+            workerBuilders: workerBuilders,
+            eventWorkerBuilders: [],
+            environment: testEnv.environment
+        )
+        let prefix = "stream-chat-swift-client-v"
+        
+        // When
+        client.connectAnonymousUser()
+        
+        // Then
+        let sessionHeaders = client.apiClient.session.configuration.httpAdditionalHeaders
+        let streamHeader = sessionHeaders!["X-Stream-Client"] as! String
+        XCTAssert(streamHeader.starts(with: prefix))
+    }
 }
 
 class TestWorker: Worker {

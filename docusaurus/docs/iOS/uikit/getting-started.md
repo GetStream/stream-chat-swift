@@ -6,7 +6,7 @@ This section provides a high-level overview of the library, core components, and
 
 ## Your First App with Stream Chat
 
-Before starting, make sure you have installed `StreamChatUI` as explained in the [Installation](./overview.md#installation) section.
+Before starting, make sure you have installed `StreamChatUI` as explained in the [Installation](./uikit-overview.md#installation) section.
 
 ### Chat setup and users
 
@@ -86,3 +86,41 @@ When deciding to push your `UIViewController` on to the `NavigationStack`, you c
 The snippet above will also create the `ChatChannelListController` with the specified query. In this case the query will load all the channels that you're currently a member of.
 
 `ChannelListQuery` allows us to define the channels to fetch and their order. Here we are listing channels where the current user is a member. By default tapping on a channel will navigate to `ChatMessageListVC`.
+
+### Creating a Channel
+
+You now have your very first Stream Chat app showing a list of Channels, but you're probably wondering how you can create your very first channel.
+
+```swift
+do {
+    try client.controller(createChannelWithId: ChannelId(type: .livestream, id: UUID().uuidString), name: channelName)
+
+    channelController.synchronize { error in
+        if let error = error {
+            print(error)
+        }
+    }
+} catch {
+    print("Channel creation failed")
+}
+```
+
+You can access `createChannelWithId:` function on the `ChannelController` which allows you to pass some parameters and create your very first channel.
+
+The channel `type` is an enum that describes what the channel's intention is.
+
+Your `ChannelId` has to be a unique ID and you can set this to anything, in this example we're using the `UUID()` provided by Apple. Finally, you can pass through the name of the channel which is a `String` and also some additional parameters if required.
+
+:::tip Using Synchronize
+
+After creating the channel `try client.controller(createChannelWithId: ChannelId(type: .livestream, id: UUID().uuidString), name: channelName)` it's important you call `synchronize()` after so the local and remote data is updated. You can read more about the importance of `synchronize()` [here](../../guides/importance-of-synchronize)..
+
+:::
+
+Your `ChatChannelListVC` is updated and will display the newly created channel, congratulations!
+
+:::tip Enabling Logs
+
+By default, logs in the SDK are disabled. Check out [this](../../basics/logs) article on how to enable them in your app.
+
+:::
