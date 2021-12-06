@@ -914,6 +914,7 @@
 		CD8918A3273E32110051C651 /* SendMoneyButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD8918A1273E32030051C651 /* SendMoneyButton.swift */; };
 		CD8918A6273E32AD0051C651 /* ToolTipToggleButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD8918A5273E32AD0051C651 /* ToolTipToggleButton.swift */; };
 		CD8918BC273E99160051C651 /* CryptoReceiveBubble.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD8918BB273E99160051C651 /* CryptoReceiveBubble.swift */; };
+		CD9A4706275DFA1100CA9931 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD9A4705275DFA1100CA9931 /* Constants.swift */; };
 		CDB98D132757D43A00CA7CDE /* SendOneWallet.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDB98D112757D43A00CA7CDE /* SendOneWallet.swift */; };
 		DA0BB1612513B5F200CAEFBD /* StringInterpolation+Extenstions.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA0BB1602513B5F200CAEFBD /* StringInterpolation+Extenstions.swift */; };
 		DA15A20424DF257500BE2423 /* ChannelQuery_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA15A20224DF256F00BE2423 /* ChannelQuery_Tests.swift */; };
@@ -2323,6 +2324,7 @@
 		CD8918A1273E32030051C651 /* SendMoneyButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendMoneyButton.swift; sourceTree = "<group>"; };
 		CD8918A5273E32AD0051C651 /* ToolTipToggleButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToolTipToggleButton.swift; sourceTree = "<group>"; };
 		CD8918BB273E99160051C651 /* CryptoReceiveBubble.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CryptoReceiveBubble.swift; sourceTree = "<group>"; };
+		CD9A4705275DFA1100CA9931 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		CDB98D112757D43A00CA7CDE /* SendOneWallet.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SendOneWallet.swift; sourceTree = "<group>"; };
 		DA0BB1602513B5F200CAEFBD /* StringInterpolation+Extenstions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "StringInterpolation+Extenstions.swift"; sourceTree = "<group>"; };
 		DA15A20224DF256F00BE2423 /* ChannelQuery_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelQuery_Tests.swift; sourceTree = "<group>"; };
@@ -4264,6 +4266,7 @@
 				640FE0F526A57903006CE703 /* CollectionUpdatesMapper_Tests.swift */,
 				ACD502A826BC0C670029FB7D /* ImageMerger.swift */,
 				ACCA772D26C568D8007AE2ED /* NukeImageProcessor.swift */,
+				CD9A4705275DFA1100CA9931 /* Constants.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -6154,6 +6157,7 @@
 				88CABC8E25936E440061BB67 /* ChatMessageReactionsBubbleTail.swift in Sources */,
 				AD87D0AB263C7A7E008B466C /* ShrinkInputButton.swift in Sources */,
 				CD8918BC273E99160051C651 /* CryptoReceiveBubble.swift in Sources */,
+				CD9A4706275DFA1100CA9931 /* Constants.swift in Sources */,
 				883998212576397900294DB9 /* ChatMessageGalleryView.swift in Sources */,
 				F64DFA8C26282F8B00F7F6F9 /* CGPoint+Extensions.swift in Sources */,
 				2210525F256FE16600A5F0DB /* CommandLabelView.swift in Sources */,

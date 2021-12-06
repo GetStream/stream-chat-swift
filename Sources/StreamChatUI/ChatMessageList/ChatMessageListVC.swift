@@ -4,6 +4,7 @@
 
 import StreamChat
 import UIKit
+import SafariServices
 
 /// Controller that shows list of messages and composer together in the selected channel.
 @available(iOSApplicationExtension, unavailable)
@@ -320,6 +321,13 @@ open class ChatMessageListVC:
                 cell.options = cellLayoutOptionsForMessage(at: indexPath)
                 cell.content = message
                 cell.configData()
+                cell.blockExpAction = { [weak self] blockExpUrl in
+                    guard let weakSelf = self else {
+                        return
+                    }
+                    let svc = SFSafariViewController(url: blockExpUrl)
+                    weakSelf.present(svc, animated: true, completion: nil)
+                }
                 return cell
             } else {
                 guard let cell = tableView.dequeueReusableCell(

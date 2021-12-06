@@ -8,6 +8,7 @@
 
 import UIKit
 import StreamChat
+import StreamChatUI
 
 class CryptoSentBubble: UITableViewCell {
 
@@ -21,7 +22,8 @@ class CryptoSentBubble: UITableViewCell {
     var options: ChatMessageLayoutOptions?
     var content: ChatMessage?
     public lazy var dateFormatter: DateFormatter = .makeDefault()
-    
+    public var blockExpAction: ((URL) -> Void)?
+
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         self.selectionStyle = .none
@@ -31,12 +33,12 @@ class CryptoSentBubble: UITableViewCell {
         viewContainer.translatesAutoresizingMaskIntoConstraints = false
         viewContainer.backgroundColor = .clear
         viewContainer.clipsToBounds = true
-        addSubview(viewContainer)
+        contentView.addSubview(viewContainer)
         NSLayoutConstraint.activate([
-            viewContainer.topAnchor.constraint(equalTo: self.topAnchor, constant: 4),
-            viewContainer.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: -4),
-            viewContainer.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: cellWidth),
-            viewContainer.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -8),
+            viewContainer.topAnchor.constraint(equalTo: self.contentView.topAnchor, constant: 4),
+            viewContainer.bottomAnchor.constraint(equalTo: self.contentView.bottomAnchor, constant: -4),
+            viewContainer.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor, constant: cellWidth),
+            viewContainer.trailingAnchor.constraint(equalTo: self.contentView.trailingAnchor, constant: -8),
         ])
 
         subContainer = UIView()
@@ -86,6 +88,7 @@ class CryptoSentBubble: UITableViewCell {
         sentCryptoLabel.transform = .mirrorY
 
         blockExplorerButton = UIButton()
+        blockExplorerButton.addTarget(self, action: #selector(check), for: .touchUpInside)
         blockExplorerButton.translatesAutoresizingMaskIntoConstraints = false
         blockExplorerButton.setTitle("Block Explorer", for: .normal)
         blockExplorerButton.setTitleColor(.white, for: .normal)
@@ -123,6 +126,18 @@ class CryptoSentBubble: UITableViewCell {
 
     private var cellWidth: CGFloat {
         return UIScreen.main.bounds.width * 0.3
+    }
+
+    @objc private func check() {
+        guard let walletData = getOneWalletExtraData() else {
+            return
+        }
+        if let txID = walletData["txId"] {
+            let rawTxId = fetchRawData(raw: txID) as? String ?? ""
+            if let blockExpURL = URL(string: "\(Constants.blockExplorer)\(rawTxId)") {
+                blockExpAction?(blockExpURL)
+            }
+        }
     }
 
     private func createTimestampLabel() -> UILabel {
