@@ -21,17 +21,18 @@ class CryptoReceiveBubble: UITableViewCell {
     var options: ChatMessageLayoutOptions?
     var content: ChatMessage?
     public lazy var dateFormatter: DateFormatter = .makeDefault()
+    public var blockExpAction: ((URL) -> Void)?
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         self.selectionStyle = .none
         self.backgroundColor = .clear
-        
+
         viewContainer = UIView()
         viewContainer.translatesAutoresizingMaskIntoConstraints = false
         viewContainer.backgroundColor = .clear
         viewContainer.clipsToBounds = true
-        addSubview(viewContainer)
+        self.contentView.addSubview(viewContainer)
         NSLayoutConstraint.activate([
             viewContainer.topAnchor.constraint(equalTo: self.contentView.topAnchor, constant: 4),
             viewContainer.bottomAnchor.constraint(equalTo: self.contentView.bottomAnchor, constant: -4),
@@ -91,6 +92,7 @@ class CryptoReceiveBubble: UITableViewCell {
         blockExplorerButton.setTitleColor(.white, for: .normal)
         blockExplorerButton.titleLabel?.font = UIFont.systemFont(ofSize: 14, weight: .regular)
         blockExplorerButton.backgroundColor = Appearance.default.colorPalette.popoverBackground
+        blockExplorerButton.addTarget(self, action: #selector(check), for: .touchUpInside)
         blockExplorerButton.clipsToBounds = true
         blockExplorerButton.layer.cornerRadius = 20
         subContainer.addSubview(blockExplorerButton)
@@ -200,6 +202,18 @@ class CryptoReceiveBubble: UITableViewCell {
             }
         } else {
             return nil
+        }
+    }
+
+    @objc private func check() {
+        guard let walletData = getOneWalletExtraData() else {
+            return
+        }
+        if let txID = walletData["txId"] {
+            let rawTxId = fetchRawData(raw: txID) as? String ?? ""
+            if let blockExpURL = URL(string: "\(Constants.blockExplorer)\(rawTxId)") {
+                blockExpAction?(blockExpURL)
+            }
         }
     }
 }

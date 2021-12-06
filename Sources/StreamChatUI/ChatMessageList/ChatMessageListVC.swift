@@ -326,7 +326,9 @@ open class ChatMessageListVC:
                         return
                     }
                     let svc = SFSafariViewController(url: blockExpUrl)
-                    weakSelf.present(svc, animated: true, completion: nil)
+                    let nav = UINavigationController(rootViewController: svc)
+                    nav.isNavigationBarHidden = true
+                    UIApplication.shared.keyWindow?.rootViewController?.present(nav, animated: true, completion: nil)
                 }
                 return cell
             } else {
@@ -338,6 +340,15 @@ open class ChatMessageListVC:
                 cell.options = cellLayoutOptionsForMessage(at: indexPath)
                 cell.content = message
                 cell.configData()
+                cell.blockExpAction = { [weak self] blockExpUrl in
+                    guard let weakSelf = self else {
+                        return
+                    }
+                    let svc = SFSafariViewController(url: blockExpUrl)
+                    let nav = UINavigationController(rootViewController: svc)
+                    nav.isNavigationBarHidden = true
+                    UIApplication.shared.keyWindow?.rootViewController?.present(nav, animated: true, completion: nil)
+                }
                 return cell
             }
         } else if isRedPacketCell(message) {
