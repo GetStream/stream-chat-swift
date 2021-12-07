@@ -91,8 +91,6 @@ lane :complete_release do |options|
   # Create TestFlight Build
   testflight_build
 
-  # Slack Updates?
-
   # Success
   UI.success("Github release was created, please visit #{github_release["url"]} to see it")
 end
