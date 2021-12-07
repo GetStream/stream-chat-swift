@@ -1383,6 +1383,7 @@
 		C121EC622746AC8C00023E4C /* StreamChatUI.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 790881FD25432B7200896F03 /* StreamChatUI.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		C121EC662746AD0E00023E4C /* StreamChat.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 799C941B247D2F80001F1104 /* StreamChat.framework */; };
 		C139335F275E7BD800225E7A /* Nuke in Frameworks */ = {isa = PBXBuildFile; productRef = C139335E275E7BD800225E7A /* Nuke */; };
+		C1393361275F5D1E00225E7A /* Nuke in Frameworks */ = {isa = PBXBuildFile; productRef = C1393360275F5D1E00225E7A /* Nuke */; };
 		C1BE72732732CA62006EB51E /* Nuke in Frameworks */ = {isa = PBXBuildFile; productRef = C1BE72722732CA62006EB51E /* Nuke */; };
 		C1FC2F6727416E150062530F /* ResumableData.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1BE728A2732CB7B006EB51E /* ResumableData.swift */; };
 		C1FC2F6827416E150062530F /* ImagePipelineCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1BE72822732CB7B006EB51E /* ImagePipelineCache.swift */; };
@@ -3254,6 +3255,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C1393361275F5D1E00225E7A /* Nuke in Frameworks */,
 				F86C87F125F907CA0000BCA9 /* StreamChat.framework in Frameworks */,
 				F86C87F225F907CA0000BCA9 /* StreamChatUI.framework in Frameworks */,
 			);
@@ -6361,6 +6363,9 @@
 				F86C87E625F907A70000BCA9 /* PBXTargetDependency */,
 			);
 			name = Messenger;
+			packageProductDependencies = (
+				C1393360275F5D1E00225E7A /* Nuke */,
+			);
 			productName = MessengerClone;
 			productReference = F86C87B225F906630000BCA9 /* Messenger.app */;
 			productType = "com.apple.product-type.application";
@@ -10337,6 +10342,11 @@
 			productName = SnapshotTesting;
 		};
 		C139335E275E7BD800225E7A /* Nuke */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C1BE72712732C91F006EB51E /* XCRemoteSwiftPackageReference "Nuke" */;
+			productName = Nuke;
+		};
+		C1393360275F5D1E00225E7A /* Nuke */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = C1BE72712732C91F006EB51E /* XCRemoteSwiftPackageReference "Nuke" */;
 			productName = Nuke;

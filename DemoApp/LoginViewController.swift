@@ -2,8 +2,8 @@
 // Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
-import StreamChat
 import Nuke
+import StreamChat
 import UIKit
 
 class AvatarView: UIImageView {

@@ -3,6 +3,7 @@
 //
 
 import SwiftUI
+import Nuke
 
 // The MIT License (MIT)
 //
@@ -75,8 +76,8 @@ public final class FetchImage: ObservableObject, Identifiable {
         self.request = request
 
         // Try to display the regular image if it is available in memory cache
-        guard let imageURL = request.url else { return }
-        if let container = pipeline.cache[imageURL] {
+        guard let imageURL = request.urlRequest.url else { return }
+        if let container = pipeline.cachedImage(for: imageURL) {
             image = container.image
             return // Nothing to do
         }
