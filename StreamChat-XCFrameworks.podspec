@@ -9,7 +9,7 @@ Pod::Spec.new do |spec|
   spec.author = { "getstream.io" => "support@getstream.io" }
   spec.social_media_url = "https://getstream.io"
 
-  spec.swift_version = "5.2"
+  spec.swift_version = "5.5"
   spec.ios.deployment_target  = '11.0'
   spec.osx.deployment_target  = '10.15'
   spec.requires_arc = true

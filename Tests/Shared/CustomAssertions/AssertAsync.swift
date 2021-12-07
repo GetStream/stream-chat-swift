@@ -336,7 +336,7 @@ struct AssertAsync {
     }
 }
 
-@resultBuilder
+@_functionBuilder
 enum AssertionBuilder {
     static func buildBlock(_ assertion: Assertion) -> Assertion {
         assertion

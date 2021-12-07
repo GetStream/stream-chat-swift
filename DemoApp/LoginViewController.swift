@@ -3,6 +3,7 @@
 //
 
 import StreamChat
+import Nuke
 import UIKit
 
 class AvatarView: UIImageView {
