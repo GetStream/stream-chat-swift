@@ -66,7 +66,7 @@ class CryptoSentBubble: UITableViewCell {
             sentThumbImageView.bottomAnchor.constraint(equalTo: subContainer.bottomAnchor, constant: 0),
             sentThumbImageView.heightAnchor.constraint(equalToConstant: 250)
         ])
-
+        sentThumbImageView.transform = .mirrorY
         descriptionLabel = createDescLabel()
         descriptionLabel.translatesAutoresizingMaskIntoConstraints = false
         subContainer.addSubview(descriptionLabel)
@@ -93,7 +93,7 @@ class CryptoSentBubble: UITableViewCell {
         blockExplorerButton.setTitle("Block Explorer", for: .normal)
         blockExplorerButton.setTitleColor(.white, for: .normal)
         blockExplorerButton.titleLabel?.font = UIFont.systemFont(ofSize: 14, weight: .regular)
-        blockExplorerButton.backgroundColor = Appearance.default.colorPalette.popoverBackground
+        blockExplorerButton.backgroundColor = Appearance.default.colorPalette.redPacketButton
         blockExplorerButton.clipsToBounds = true
         blockExplorerButton.layer.cornerRadius = 20
         subContainer.addSubview(blockExplorerButton)

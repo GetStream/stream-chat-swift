@@ -69,7 +69,8 @@ class RedPacketSentBubble: UITableViewCell {
 
         sentThumbImageView = UIImageView()
         sentThumbImageView.backgroundColor = Appearance.default.colorPalette.background6
-        sentThumbImageView.image = Appearance.default.images.cryptoSentThumb
+        sentThumbImageView.image = Appearance.default.images.redPacketThumb
+        sentThumbImageView.transform = .mirrorY
         sentThumbImageView.contentMode = .scaleAspectFill
         sentThumbImageView.translatesAutoresizingMaskIntoConstraints = false
         sentThumbImageView.clipsToBounds = true

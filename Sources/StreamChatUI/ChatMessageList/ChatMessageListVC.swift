@@ -331,9 +331,6 @@ open class ChatMessageListVC:
                 cell.content = message
                 cell.configData()
                 cell.blockExpAction = { [weak self] blockExpUrl in
-                    guard let weakSelf = self else {
-                        return
-                    }
                     let svc = SFSafariViewController(url: blockExpUrl)
                     let nav = UINavigationController(rootViewController: svc)
                     nav.isNavigationBarHidden = true
@@ -350,9 +347,6 @@ open class ChatMessageListVC:
                 cell.content = message
                 cell.configData()
                 cell.blockExpAction = { [weak self] blockExpUrl in
-                    guard let weakSelf = self else {
-                        return
-                    }
                     let svc = SFSafariViewController(url: blockExpUrl)
                     let nav = UINavigationController(rootViewController: svc)
                     nav.isNavigationBarHidden = true

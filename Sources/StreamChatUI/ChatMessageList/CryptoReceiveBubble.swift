@@ -55,6 +55,7 @@ class CryptoReceiveBubble: UITableViewCell {
         sentThumbImageView = UIImageView()
         sentThumbImageView.backgroundColor = Appearance.default.colorPalette.background6
         sentThumbImageView.image = Appearance.default.images.cryptoSentThumb
+        sentThumbImageView.transform = .mirrorY
         sentThumbImageView.contentMode = .scaleAspectFill
         sentThumbImageView.translatesAutoresizingMaskIntoConstraints = false
         sentThumbImageView.clipsToBounds = true
@@ -91,7 +92,7 @@ class CryptoReceiveBubble: UITableViewCell {
         blockExplorerButton.setTitle("Block Explorer", for: .normal)
         blockExplorerButton.setTitleColor(.white, for: .normal)
         blockExplorerButton.titleLabel?.font = UIFont.systemFont(ofSize: 14, weight: .regular)
-        blockExplorerButton.backgroundColor = Appearance.default.colorPalette.popoverBackground
+        blockExplorerButton.backgroundColor = Appearance.default.colorPalette.redPacketButton
         blockExplorerButton.addTarget(self, action: #selector(check), for: .touchUpInside)
         blockExplorerButton.clipsToBounds = true
         blockExplorerButton.layer.cornerRadius = 20
