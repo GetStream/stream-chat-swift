@@ -20,24 +20,15 @@ let package = Package(
             targets: ["StreamChatUI"]
         )
     ],
-    dependencies: [
-        // StreamChat
-        .package(url: "https://github.com/daltoniam/Starscream.git", from: "4.0.0"),
-        
-        // StreamChatUI
-        .package(url: "https://github.com/kean/Nuke.git", from: "10.0.0"),
-        .package(url: "https://github.com/kirualex/SwiftyGif.git", from: "5.4.1")
-    ],
     targets: [
         .target(
             name: "StreamChat",
-            dependencies: ["Starscream"],
             exclude: ["README.md", "Info.plist"] + streamChatSourcesExcluded,
             resources: [.copy("Database/StreamChatModel.xcdatamodeld")]
         ),
         .target(
             name: "StreamChatUI",
-            dependencies: ["StreamChat", "Nuke", "SwiftyGif"],
+            dependencies: ["StreamChat"],
             exclude: ["README.md", "Info.plist", "Generated/L10n_template.stencil"] + streamChatUIFilesExcluded,
             resources: [.process("Resources")]
         )

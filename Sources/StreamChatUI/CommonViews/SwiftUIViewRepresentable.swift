@@ -2,6 +2,7 @@
 // Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
+import Combine
 import SwiftUI
 
 /// Protocol with necessary properties to make `SwiftUIRepresentable` instance
