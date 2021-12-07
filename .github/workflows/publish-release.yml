@@ -15,4 +15,6 @@ jobs:
     steps:
       - name: If the release branch contains the version, let's go!
         if: startsWith(github.event.pull_request.head.ref, 'release/')
-        run: bundle exec fastlane complete_release
+              BRANCH_NAME="${{ github.event.pull_request.head.ref }}"
+              VERSION=${BRANCH_NAME#release/}
+        run: bundle exec fastlane complete_release version:$VERSION

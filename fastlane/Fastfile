@@ -76,11 +76,12 @@ end
 
 desc "Completes an SDK Release"
 lane :complete_release do |options|
+  version = options[:version]
   github_release = set_github_release(
                      repository_name: "GetStream/stream-chat-swift",
                      api_token: ENV["GITHUB_TOKEN"],
-                     name: version_number,
-                     tag_name: version_number,
+                     name: version,
+                     tag_name: version,
                      description: changes
                    )
   # The & operator makes sure truthy values are converted to bool
