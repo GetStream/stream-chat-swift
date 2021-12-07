@@ -13,37 +13,8 @@ jobs:
     runs-on: macos-11
     if: github.event.pull_request.merged == true # only merged pull requests must trigger this job
     steps:
-      - name: Install Bot SSH Key
-        uses: webfactory/ssh-agent@v0.4.1
-        with:
-          ssh-private-key: ${{ secrets.BOT_SSH_PRIVATE_KEY }}
-      - uses: actions/checkout@v2
-      - name: "Set build image var"
-        run: echo "ImageVersion=$ImageVersion"  >> $GITHUB_ENV
-      - name: Cache RubyGems
-        uses: actions/cache@v2
-        id: rubygem-cache
-        with:
-          path: vendor/bundle
-          key: ${{ runner.os }}-${{ env.ImageVersion }}-gem-${{ hashFiles('**/Gemfile.lock') }}
-          restore-keys: ${{ runner.os }}-${{ env.ImageVersion }}-gem-
-      - name: Cache Mint
-        uses: actions/cache@v2
-        id: mint-cache
-        with:
-          path: /usr/local/lib/mint
-          key: ${{ runner.os }}-mint-${{ hashFiles('./Mintfile') }}
-          restore-keys: ${{ runner.os }}-mint-
-      - name: Extract version from branch name (for release branches)
+      - name: If the release branch contains the version, let's go!
         if: startsWith(github.event.pull_request.head.ref, 'release/')
-        run: |
-          BRANCH_NAME="${{ github.event.pull_request.head.ref }}"
-          VERSION=${BRANCH_NAME#release/}
-          echo "RELEASE_VERSION=$VERSION" >> $GITHUB_ENV
-      - uses: ./.github/actions/bootstrap
-      - name: "Fastlane - Publish Release"
-        if: startsWith(github.event.pull_request.head.ref, 'release/')
-        env:
-          GITHUB_API_TOKEN: ${{ secrets.DANGER_GITHUB_API_TOKEN }}
-          COCOAPODS_TRUNK_TOKEN: ${{ secrets.COCOAPODS_TRUNK_TOKEN }}
-        run: bundle exec fastlane publish_release version:${{ env.RELEASE_VERSION }}
+              BRANCH_NAME="${{ github.event.pull_request.head.ref }}"
+              VERSION=${BRANCH_NAME#release/}
+        run: bundle exec fastlane complete_release version:$VERSION

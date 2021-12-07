@@ -1,9 +1,7 @@
 default_platform :ios
 
 require 'json'
-require 'net/http'
 
-xcode_version = ENV['XCODE_VERSION'].nil? ? '13.2.1' : ENV['XCODE_VERSION']
 # The number of times the stress test suite is ran
 stress_tests_cycles = 50
 
@@ -11,31 +9,11 @@ before_all do
   if is_ci
     setup_ci()
   end
-
-  xcversion(version: "~> #{xcode_version}")
 end
 
-desc "Build .xcframeworks"
-lane :build_xcframeworks do
-  output_directory = "#{Dir.pwd}/../Products"
-  ["StreamChatUI", "StreamChat"].each do |scheme|
-    create_xcframework(
-      project: "StreamChat.xcodeproj",
-      scheme: scheme,
-      destinations: ["iOS"],
-      include_BCSymbolMaps: true,
-      include_debug_symbols: true,
-      xcframework_output_directory: output_directory,
-      remove_xcarchives: true
-    )
-    sh("../Scripts/removeUnneededSymbols.sh", scheme, output_directory)
-  end
-end
-
-desc "Start a new release"
+desc "Release a new version"
 lane :release do |options|
-  # Ensure we have a clean git status
-  ensure_git_status_clean unless options[:no_ensure_clean]
+  # ensure_git_status_clean unless options[:no_ensure_clean]
 
   # Ensure we have a release type
   UI.user_error!("Please use type parameter with one of the options: type:patch, type:minor, type:major") unless ["patch", "minor", "major"].include?(options[:type])
@@ -46,41 +24,28 @@ lane :release do |options|
   # Version Number
   version_number = increment_version_number_in_plist(bump_type: options[:type], xcodeproj: "StreamChat.xcodeproj", target: "StreamChat")
 
+  # Checkout New Release Branch
+  sh("git checkout -b " + "release/" + version_number)
+
   if git_tag_exists(tag: version_number)
     UI.user_error!("Tag for version #{version_number} already exists!")
   end
-
-  # Checkout New Release Branch
-  sh("git checkout -b " + "release/" + version_number)
 
   # Set version on the SDK & Project
   increment_version_number_in_plist(version_number: version_number, xcodeproj: "StreamChat.xcodeproj", target: "StreamChat")
   set_SDK_version(version: version_number)
   increment_version_number_in_plist(version_number: version_number, xcodeproj: "StreamChat.xcodeproj", target: "StreamChatUI")
 
-  # Set the framework version on the artifacts
-  file = File.read('../StreamChatArtifacts.json')
-  data_hash = JSON.parse(file)
-
-  data_hash["#{version_number}"] = "https://github.com/GetStream/stream-chat-swift/releases/download/#{version_number}/StreamChat-All.zip"
-  File.write('../StreamChatArtifacts.json', JSON.dump(data_hash))
-
   changes = touch_changelog(release_version: version_number)
 
    # Make sure the podspecs actually build before pushing
-   # Disabled now since `StreamChatUI` pod lints it against `StreamChat`s latest version instead of `develop` branch
+   # Disabled now since `StreamChatUI` pod lints it against `StreamChat`s latest version instead of `main` branch
   #pod_lib_lint(podspec: "StreamChat.podspec", allow_warnings: true)
   #pod_lib_lint(podspec: "StreamChatUI.podspec", allow_warnings: true)
 
-  # Bump Podspec Version
   version_bump_podspec(path: "StreamChat.podspec", version_number: version_number)
   version_bump_podspec(path: "StreamChatUI.podspec", version_number: version_number)
 
-  # Bump XCFramework Version
-  version_bump_podspec(path: "StreamChat-XCFramework.podspec", version_number: version_number)
-  version_bump_podspec(path: "StreamChatUI-XCFramework.podspec", version_number: version_number)
-
-  # Stage all changes
   sh("git add -A")
 
   if(!prompt(text: "Will commit changes. All looking good?", boolean: true))
@@ -88,12 +53,13 @@ lane :release do |options|
   end
 
   sh("git commit -m 'Bump #{version_number}'")
+  sh("git tag #{version_number}")
 
   if(!prompt(text: "Will push changes. All looking good?", boolean: true))
     UI.user_error!("Not pushing changes")
   end
 
-  push_to_git_remote(tags: false)
+  push_to_git_remote(tags: true)
 
   # Open a new PR
   create_pull_request(
@@ -109,171 +75,53 @@ lane :release do |options|
 end
 
 desc "Completes an SDK Release"
-lane :publish_release do |options|
-  version = options[:version] || ""
-  UI.user_error!("You need to pass the version of the release") unless version.length > 0
-
-  # Create XCFrameworks
-  xcversion(version: "13.0")
-  sh("cd .. && make frameworks")
-
-  changes = read_changelog(version: version)
-
-  # Create Github Release
+lane :complete_release do |options|
+  version = options[:version]
   github_release = set_github_release(
                      repository_name: "GetStream/stream-chat-swift",
                      api_token: ENV["GITHUB_TOKEN"],
                      name: version,
                      tag_name: version,
-                     commitish: "main",
-                     description: changes,
-                     upload_assets: ["Products/StreamChat.zip", "Products/StreamChatUI.zip", "Products/StreamChat-All.zip"]
+                     description: changes
                    )
+  # The & operator makes sure truthy values are converted to bool
+  # and falsy (false and nil) values are converted to bool false
+  push_pods(sync: options[:sync] & true)
 
-  spm_github_release_url = update_spm(version: version)
-  push_pods(sync: options[:sync])
-  # TODO: Update stream-chat-swift-integration-apps
+  # Create TestFlight Build
+  testflight_build
 
-  UI.success("🎉🎉🎉🎉🎉 Github releases successfully created:\n 👉 stream-chat-swift: #{github_release["html_url"]}\n👉 stream-chat-swift-spm: #{spm_github_release_url}")
-end
+  # Slack Updates?
 
-desc "Read CHANGELOG"
-private_lane :read_changelog do |options|
-  version = options[:version] || ""
-  UI.user_error!("You need to pass the version of the release you want to obtain the changelog from") unless version.length > 0
-
-  UI.message("Getting changelog for #{version}")
-  reading_changelog = false
-  changes = ""
-  changelog_lines = File.readlines("../CHANGELOG.md")
-  changelog_lines.each do | line |
-    start_token = "# ["
-    if reading_changelog
-      if line.start_with?(start_token)
-        break
-      end
-      changes << line
-    end
-
-    if line.start_with?("#{start_token}#{version}")
-      reading_changelog = true
-    end
-  end
-
-  UI.user_error!("No changelog found for #{version}") unless changes.length > 0
-  UI.success("Changelog for #{version}: \n#{changes}")
-  changes
-end
-
-desc "Update XCFrameworks and submit to the SPM repository"
-private_lane :update_spm do |options|
-  version = options[:version] || ""
-  UI.user_error!("You need to pass the version of the release you want to obtain the changelog from") unless version.length > 0
-
-  # Generate Checksums
-  streamChatChecksum = sh("swift package compute-checksum ../Products/StreamChat.zip").strip
-  streamChatUIChecksum = sh("swift package compute-checksum ../Products/StreamChatUI.zip").strip
-
-  initial_directory = Dir.pwd
-
-  # Update SPM Repo
-  spm_directory_name = "StreamSPM"
-  spm_directory = "../../#{spm_directory_name}"
-  sh("git clone git@github.com:GetStream/stream-chat-swift-spm.git ../../#{spm_directory_name}")
-  Dir.chdir(spm_directory)
-
-  result = sh("basename `git rev-parse --show-toplevel`").strip
-  UI.error("Not using #{spm_directory_name} repo") unless result.to_s == spm_directory_name
-
-  file_lines = File.readlines("Package.swift")
-  file_data = ""
-  previous_module = ""
-
-  file_lines.each do |line|
-    formatted_line = line
-    if previous_module == "StreamChat"
-      formatted_line = formatted_line.gsub(/(checksum: ")[a-z0-9]+(")/, '\1' + "#{streamChatChecksum}" + '\2')
-    elsif previous_module == "StreamChatUI"
-      formatted_line = formatted_line.gsub(/(checksum: ")[a-z0-9]+(")/, '\1' + "#{streamChatUIChecksum}" + '\2')
-    end
-
-    url_pattern = /(releases\/download\/)[.0-9]+(\/)/
-    if line.match(url_pattern)
-      formatted_line = line.gsub(url_pattern, '\1' + "#{version}" + '\2')
-      previous_module = line.match(/([a-zA-Z]+).zip/).to_s.gsub(/.zip/, '')
-    end
-
-    file_data << formatted_line
-  end
-
-  # Write the new changes
-  File.open("./Package.swift", "w") { |file| file << file_data }
-
-  # Update the repo
-  sh("git add -A")
-  sh("git commit -m 'Bump #{version}'")
-  sh("git push")
-
-  github_release = set_github_release(
-    repository_name: "GetStream/stream-chat-swift-spm",
-    api_token: ENV["GITHUB_TOKEN"],
-    name: version,
-    tag_name: version,
-    commitish: "main",
-    description: "https://github.com/GetStream/stream-chat-swift/releases/tag/#{version}"
-  )
-
-  UI.message("Moving back to fastlane's directory - #{initial_directory}")
-  Dir.chdir(initial_directory)
-
-  # Clean Up
-  sh("rm -rf #{spm_directory}")
-  UI.success("New SPM release available: #{github_release["html_url"]}")
-  github_release["html_url"]
+  # Success
+  UI.success("Github release was created, please visit #{github_release["url"]} to see it")
 end
 
 desc "Pushes the StreamChat and StreamChatUI SDK podspecs to Cocoapods trunk"
 lane :push_pods do |options|
+  # First pod release will not have any problems
+  pod_push(path: "StreamChat.podspec", allow_warnings: true)
 
-  def release_pod(sync:, podspec:, dry:)
+  def release_ui(sync)
     begin
-      UI.message "Starting to push podspec: #{podspec}"
-
-      if dry == false
-        pod_push(path: podspec, allow_warnings: true, synchronous: sync)
-      end
-    rescue => exception
-      UI.message exception
-      UI.message "pod_push failed for #{podspec}. Waiting a minute until retry for trunk to get updated..."
+      pod_push(path: "StreamChatUI.podspec", allow_warnings: true, synchronous: sync)
+    rescue
+      puts "pod_push failed. Waiting a minute until retry for trunk to get updated..."
       sleep(60) # sleep for a minute, wait until trunk gets updates
-      release_pod(sync: sync, podspec: podspec, dry: dry)
+      release_ui(sync)
     end
   end
 
-  # The == 1 comparison makes sure truthy values are converted to bool
-  # and falsy (false and nil) values are converted to bool false
-
-  # When sync is false, pod trunk push is run asynchronously
-  sync = options[:sync] == 1
-
-  # When dry option is specified - `dry:1`, the lane is executed in test/safe mode
-  # that won't cause pod_push action to fire.
-  dry = options[:dry] == 1
-
-  ["StreamChat.podspec", "StreamChat-XCFramework.podspec"].each do |podspec|
-    release_pod(sync: sync, podspec: podspec, dry: dry)
-  end
-
-  ["StreamChatUI.podspec", "StreamChatUI-XCFramework.podspec"].each do |podspec|
-    release_pod(sync: sync, podspec: podspec, dry: dry)
-  end
+  puts "Sleeping for 2 minutes for trunk to get updated..."
+  sleep(60 * 2)
+  release_ui(options[:sync])
 end
 
 lane :set_SDK_version do |options|
   pathToVersionFile = "../Sources/StreamChat/Generated/SystemEnvironment+Version.swift"
   versionGeneratedFile = "
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 // ⚠️  Generated file, please use `fastlane :bump_SDK_version or fastlane release major|minor|patch` lanes
 
@@ -340,7 +188,7 @@ lane :distribute_demo_app do
     scheme: "DemoApp",
     configuration: "Release",
     export_method: "ad-hoc",
-    export_options: "./fastlane/firebase_export_options.plist",
+    export_options: "./fastlane/demo_app_export_options.plist",
     silent: true,
     clean: true,
     include_symbols: true,
@@ -361,7 +209,7 @@ lane :testflight_build do
 
   # Ask around if you're wandering where you can get this key from
   api_key = app_store_connect_api_key(
-    key_id: "MT3PRT8TB7",
+    key_id: "8P4J3MDAWP",
     issuer_id: "69a6de96-0738-47e3-e053-5b8c7c11a4d1",
     key_content: ENV["APPSTORE_API_KEY"],
     in_house: false
@@ -407,7 +255,6 @@ lane :testflight_build do
     scheme: "DemoApp",
     configuration: "Release",
     export_method: "app-store",
-    export_options: "./fastlane/testflight_export_options.plist", # We have to pass manually since `gym` detects profiles from `match` and that breaks it
     clean: true,
     include_symbols: true,
     output_directory: "archives"
@@ -472,19 +319,7 @@ lane :test do |options|
     clean: true,
     devices: options[:device],
     build_for_testing: options[:build_for_testing]
-  )
-end
-
-desc "Runs e2e ui tests using mock server in Debug config"
-lane :test_e2e_mock do |options|
-  scan(
-    project: 'StreamChat.xcodeproj',
-    scheme: 'StreamChatUITestsApp',
-    configuration: 'Debug',
-    clean: true,
-    devices: options[:device],
-    build_for_testing: options[:build_for_testing]
-  )
+    )
 end
 
 desc "Runs ui tests in Debug config"
