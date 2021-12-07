@@ -137,13 +137,31 @@ public class ChatUserSearchController: DataController, DelegateCallable, DataSto
         startUserListObserverIfNeeded()
         
         var query = UserListQuery(sort: [.init(key: .name, isAscending: true)])
-        if let term = term, !term.isEmpty {
+        /*if let term = term, !term.isEmpty {
             query.filter = .or([
                 .autocomplete(.name, text: term),
                 .autocomplete(.id, text: term)
             ])
         } else {
             query.filter = .exists(.id) // Pseudo-filter to fetch all users
+        }*/
+        if let term = term, !term.isEmpty {
+            query.filter = .or([
+                .autocomplete(.name, text: term),
+                //.autocomplete(.id, text: term)
+                .and([
+                    .exists(.id),
+                    .notEqual(.role, to: .admin),
+                    .notEqual(.id, to: client.currentUserId ?? "")
+                ])
+            ])
+        } else {
+            //query.filter = .exists(.id) // Pseudo-filter to fetch all users
+            query.filter = .and([
+                .exists(.id),
+                .notEqual(.role, to: .admin),
+                .notEqual(.id, to: client.currentUserId ?? "")
+            ])
         }
         // Backend suggest not sorting by name
         // so we only sort client-side

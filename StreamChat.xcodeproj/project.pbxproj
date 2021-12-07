@@ -909,6 +909,7 @@
 		BDEB9417268211EC00928AF1 /* ChatMessageListUnreadCountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDEB9416268211EC00928AF1 /* ChatMessageListUnreadCountView.swift */; };
 		CD1C90F0272C417F00A6E85B /* CryptoSentBubble.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD1C90EF272C417F00A6E85B /* CryptoSentBubble.swift */; };
 		CD66B56F273D41E600DAC5D2 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 88E779B12563FA6B00BA79B6 /* Assets.xcassets */; };
+		CD72548D275F556100CD6444 /* RedPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD72548C275F556100CD6444 /* RedPacket.swift */; };
 		CD89189E273E25B70051C651 /* KeyboardToolKitList.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD66B570273D5D1D00DAC5D2 /* KeyboardToolKitList.swift */; };
 		CD89189F273E278B0051C651 /* KeyboardToolKitList.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD66B570273D5D1D00DAC5D2 /* KeyboardToolKitList.swift */; };
 		CD8918A3273E32110051C651 /* SendMoneyButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD8918A1273E32030051C651 /* SendMoneyButton.swift */; };
@@ -2321,6 +2322,7 @@
 		BDEB9416268211EC00928AF1 /* ChatMessageListUnreadCountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageListUnreadCountView.swift; sourceTree = "<group>"; };
 		CD1C90EF272C417F00A6E85B /* CryptoSentBubble.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CryptoSentBubble.swift; sourceTree = "<group>"; };
 		CD66B570273D5D1D00DAC5D2 /* KeyboardToolKitList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardToolKitList.swift; sourceTree = "<group>"; };
+		CD72548C275F556100CD6444 /* RedPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RedPacket.swift; sourceTree = "<group>"; };
 		CD8918A1273E32030051C651 /* SendMoneyButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendMoneyButton.swift; sourceTree = "<group>"; };
 		CD8918A5273E32AD0051C651 /* ToolTipToggleButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToolTipToggleButton.swift; sourceTree = "<group>"; };
 		CD8918BB273E99160051C651 /* CryptoReceiveBubble.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CryptoReceiveBubble.swift; sourceTree = "<group>"; };
@@ -4939,6 +4941,7 @@
 			isa = PBXGroup;
 			children = (
 				CDB98D112757D43A00CA7CDE /* SendOneWallet.swift */,
+				CD72548C275F556100CD6444 /* RedPacket.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -6059,6 +6062,7 @@
 				843F0BC326775CDB00B342CB /* Cache.swift in Sources */,
 				8830513E263031C40069D731 /* ChatMessageLayoutOptions.swift in Sources */,
 				792DD9D9256BC542001DB91B /* BaseViews.swift in Sources */,
+				CD72548D275F556100CD6444 /* RedPacket.swift in Sources */,
 				ADA3572F269C807A004AD8E9 /* ChatChannelHeaderView.swift in Sources */,
 				F80BCA1426304F7800F2107B /* ShareButton.swift in Sources */,
 				F838F6B32636D42B0025E1F5 /* ZoomAnimator.swift in Sources */,
