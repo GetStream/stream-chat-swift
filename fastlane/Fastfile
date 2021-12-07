@@ -13,26 +13,28 @@ end
 
 desc "Release a new version"
 lane :release do |options|
-  ensure_git_branch(branch: 'main') # We can only release on default branch
-  ensure_git_status_clean unless options[:no_ensure_clean]
+  # ensure_git_status_clean unless options[:no_ensure_clean]
 
+  # Ensure we have a release type
+  UI.user_error!("Please use type parameter with one of the options: type:patch, type:minor, type:major") unless ["patch", "minor", "major"].include?(options[:type])
+
+  # Ensure We Have the GITHUB Token
   UI.user_error!("Please set GITHUB_TOKEN environment value. See https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token") unless !ENV["GITHUB_TOKEN"].nil?
 
-  if (!options[:version].nil?) # User passed a version, use it
-    version_number = options.fetch(:version)
-    increment_version_number_in_plist(version_number: version_number, xcodeproj: "StreamChat.xcodeproj", target: "StreamChat")
-  else
-    UI.user_error!("Please use type parameter with one of the options: type:patch, type:minor, type:major") unless ["patch", "minor", "major"].include?(options[:type])
-    version_number = increment_version_number_in_plist(bump_type: options[:type], xcodeproj: "StreamChat.xcodeproj", target: "StreamChat")
-  end
+  # Version Number
+  version_number = increment_version_number_in_plist(bump_type: options[:type], xcodeproj: "StreamChat.xcodeproj", target: "StreamChat")
 
-  set_SDK_version(version: version_number)
-
-  increment_version_number_in_plist(version_number: version_number, xcodeproj: "StreamChat.xcodeproj", target: "StreamChatUI")
+  # Checkout New Release Branch
+  sh("git checkout -b " + "release/" + version_number)
 
   if git_tag_exists(tag: version_number)
     UI.user_error!("Tag for version #{version_number} already exists!")
   end
+
+  # Set version on the SDK & Project
+  increment_version_number_in_plist(version_number: version_number, xcodeproj: "StreamChat.xcodeproj", target: "StreamChat")
+  set_SDK_version(version: version_number)
+  increment_version_number_in_plist(version_number: version_number, xcodeproj: "StreamChat.xcodeproj", target: "StreamChatUI")
 
   changes = touch_changelog(release_version: version_number)
 
@@ -59,6 +61,21 @@ lane :release do |options|
 
   push_to_git_remote(tags: true)
 
+  # Open a new PR
+  create_pull_request(
+    api_token: ENV["GITHUB_TOKEN"],
+    repo: "GetStream/stream-chat-swift",
+    title: "#{version_number} Release",
+    head: "release/#{version_number}",
+    base: "main",
+    body: "#{changes}"
+)
+
+  UI.success("Successfully started release #{version_number}")
+end
+
+desc "Completes an SDK Release"
+lane :complete_release do |options|
   github_release = set_github_release(
                      repository_name: "GetStream/stream-chat-swift",
                      api_token: ENV["GITHUB_TOKEN"],
@@ -66,12 +83,16 @@ lane :release do |options|
                      tag_name: version_number,
                      description: changes
                    )
-
-  # The & operator makes sure truthy values are converted to bool true
+  # The & operator makes sure truthy values are converted to bool
   # and falsy (false and nil) values are converted to bool false
   push_pods(sync: options[:sync] & true)
 
-  UI.success("Successfully released #{version_number}")
+  # Create TestFlight Build
+  testflight_build
+
+  # Slack Updates?
+
+  # Success
   UI.success("Github release was created, please visit #{github_release["url"]} to see it")
 end
 
