@@ -14,6 +14,14 @@ extension ChatMessageLayoutOptions: Identifiable {
         // Since it is a Set, we need to sort it to make sure the value doesn't change per call.
         map(\.rawValue).sorted().joined(separator: "-")
     }
+    
+    public mutating func remove(_ options: ChatMessageLayoutOptions) {
+        self = subtracting(options)
+    }
+
+    public mutating func insert(_ options: ChatMessageLayoutOptions) {
+        options.forEach { self.insert($0) }
+    }
 }
 
 /// Each message layout option is used to define which views will be part of the message cell.

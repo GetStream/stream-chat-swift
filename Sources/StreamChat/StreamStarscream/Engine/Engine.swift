@@ -8,7 +8,7 @@
 
 import Foundation
 
-protocol EngineDelegate: class {
+protocol EngineDelegate: AnyObject {
     func didReceive(event: WebSocketEvent)
 }
 
