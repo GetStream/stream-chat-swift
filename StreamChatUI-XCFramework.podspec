@@ -1,5 +1,5 @@
 Pod::Spec.new do |spec|
-  spec.name = "StreamChatUI-XCFrameworks"
+  spec.name = "StreamChatUI-XCFramework"
   spec.version = "4.5.0"
   spec.summary = "StreamChat UI Components"
   spec.description = "StreamChatUI SDK offers flexible UI components able to display data provided by StreamChat SDK."
@@ -20,7 +20,7 @@ Pod::Spec.new do |spec|
   spec.vendored_frameworks = "#{spec.module_name}.xcframework"
   spec.preserve_paths = "#{spec.module_name}.xcframework/*"
 
-  spec.dependency "StreamChat-XCFrameworks", "#{spec.version}"
+  spec.dependency "StreamChat-XCFramework", "#{spec.version}"
 
   spec.cocoapods_version = ">= 1.11.0"
 end
