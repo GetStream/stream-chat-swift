@@ -4,6 +4,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 # Upcoming
 
 ### 🔄 Changed
+
+# [4.6.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.6.0)
+_December 07, 2021_
+
+### 🔄 Changed
 - Change `ChatMessageLayoutOptions` to a `Set` instead of an `OptionSet` for a more flexible and safer customization [#1651](https://github.com/GetStream/stream-chat-swift/issues/1651)
 
 ### 🐞 Fixed
