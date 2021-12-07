@@ -14,7 +14,10 @@ extension ChatMessageLayoutOptions: Identifiable {
         // Since it is a Set, we need to sort it to make sure the value doesn't change per call.
         map(\.rawValue).sorted().joined(separator: "-")
     }
-    
+}
+
+/// Helper functions for handling set of `ChatMessageLayoutOption`.
+extension ChatMessageLayoutOptions {
     public mutating func remove(_ options: ChatMessageLayoutOptions) {
         self = subtracting(options)
     }
