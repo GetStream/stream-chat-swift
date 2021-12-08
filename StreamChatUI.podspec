@@ -21,6 +21,6 @@ Pod::Spec.new do |spec|
   
     spec.dependency "StreamChat", "#{spec.version}"
     spec.dependency "Nuke", "~> 10.0"
-    spec.dependency "SwiftyGif", "~> 5.0"
+    spec.dependency "SwiftyGif", "~> 5.4.1"
   end
   
