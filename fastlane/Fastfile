@@ -53,13 +53,12 @@ lane :release do |options|
   end
 
   sh("git commit -m 'Bump #{version_number}'")
-  sh("git tag #{version_number}")
 
   if(!prompt(text: "Will push changes. All looking good?", boolean: true))
     UI.user_error!("Not pushing changes")
   end
 
-  push_to_git_remote(tags: true)
+  push_to_git_remote(tags: false)
 
   # Open a new PR
   create_pull_request(
@@ -87,6 +86,12 @@ lane :complete_release do |options|
   # The & operator makes sure truthy values are converted to bool
   # and falsy (false and nil) values are converted to bool false
   push_pods(sync: options[:sync] & true)
+
+  # Set tag
+  sh("git tag #{version}")
+
+  # Push tag to remote
+  push_to_git_remote(tags: true)
 
   # Create TestFlight Build
   testflight_build
