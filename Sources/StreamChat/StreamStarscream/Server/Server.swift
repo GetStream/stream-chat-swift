@@ -36,7 +36,7 @@ protocol Connection {
     func write(data: Data, opcode: FrameOpCode)
 }
 
-protocol ConnectionDelegate: class {
+protocol ConnectionDelegate: AnyObject {
     func didReceive(event: ServerEvent)
 }
 

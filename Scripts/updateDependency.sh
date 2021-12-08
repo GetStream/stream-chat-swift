@@ -24,7 +24,7 @@ cd $dependency_directory
 ensure_clean_git
 
 git fetch --tags
-git co $version
+git checkout $version
 
 ensure_clean_git
 
