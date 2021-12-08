@@ -41,7 +41,7 @@ import ComponentsNote from '../../common-content/components-note.md'
 
 In case your application only requires minimal changes to the message view, you can easily change the styling of the message subviews by replacing them with custom views, or do simple layout changes by customizing the message layout options resolver.
 
-### Changing the bubble view
+### Changing the Bubble View
 
 As an example of a styling change of the `ChatMessageContentView`, we will replace the bubble view with a custom one.
 
@@ -66,7 +66,7 @@ Components.default.messageBubbleView = CustomMessageSquaredBubbleView.self
 
 <ComponentsNote />
 
-### Simple layout changes
+### Simple Layout Changes
 
 The `ChatMessageLayoutOptions` are flags that the `ChatMessageLayoutOptionsResolver` injects in each message view depending on the message content (ie. Does the message contains reactions? Is it coming from the same user? Etc...). When rendering the message view, the layout options will be used to know which views to show or hide, and if the message cell can be reused since different layout options combinations will produce different reuse identifiers. 
 
@@ -116,7 +116,7 @@ Creating a subclass of [`ChatMessageContentView`](#chatmessagecontentview) is th
 `ChatMessageContentView` sets up its own layout on the `layout(options: ChatMessageLayoutOptions)` method and not in `setupLayout()` like other regular views. This view is different from the other ones since the layout is calculated based on the `ChatMessageLayoutOptions`.
 :::
 
-### Restructuring the message layout
+### Restructuring the Message Layout
 
 In order to change the message layout we first need to understand how it is structured:
 
@@ -202,7 +202,7 @@ Components.default.messageContentView = CustomChatMessageContentView.self
 | ------------- | ------------- |
 | <img src={require("../../assets/message-restructure-layout-before.png").default} /> | <img src={require("../../assets/message-restructure-layout-after.png").default} /> |
 
-### Adding new views and functionality
+### Adding new Views and Functionality
 
 To show an example of how to add a new view and functionality to the message view, let's add a share button whenever the message has attachments, so that we can share or save the attachments to our device.
 

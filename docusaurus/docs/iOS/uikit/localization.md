@@ -6,7 +6,7 @@ title: Localization
 
 If you deploy your app to users who speak another language, you'll need to internationalize (localize) it. That means you need to write the app in a way that makes it possible to localize values like text and layouts for each language or locale that the app supports.
 
-## Adding a new language
+## Adding a new Language
 
 1. If you don't have `strings` or `stringsdict` files in your project, add those new files to `Localizable.strings` and `Localizable.stringsdict`.
 2. Next [add new language to the project](https://developer.apple.com/documentation/xcode/adding-support-for-languages-and-regions).
@@ -23,7 +23,7 @@ Appearance.default.localizationProvider = { key, table in
 We recommend naming your `strings` and `stringsdict` files: `Localizable.strings` and `Localizable.stringsdict`.
 :::
 
-## Override existing languages
+## Override Existing Languages
 
 Overriding the existing language works in the same as adding a new language.
 

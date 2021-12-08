@@ -10,7 +10,7 @@ The SwiftUI SDK allows complete view swapping of some of its components. This me
 
 All the views that allow slots that your implementations can replace are generic over those views. This means that view type erasure (AnyView) is not used. The views contain default implementations, and in general, you don't have to deal with the generics part of the code. Using generics over type erasure allows SwiftUI to compute the diffing of the views faster and more accurately while boosting performance and correctness. With this, your SwiftUI views will not slow down the chat experience.
 
-### View factory
+### View Factory
 
 To abstract away the creation of the views, a protocol called `ViewFactory` is used in the SDK. This protocol defines the swappable views of the chat experience. There are default implementations for all the views used in the SDK. If you want to customize a view, you will need to implement the `ViewFactory`, but you will need to implement only the view you want to swap.
 

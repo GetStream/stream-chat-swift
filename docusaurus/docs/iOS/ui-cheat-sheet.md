@@ -36,7 +36,7 @@ Didn't find what you were looking for? Open an [issue in our repo](https://githu
 
 In short, using `StreamChatUI` can be summarized as: create the UI component, inject the necessary `StreamChat` controller and use it. Below we will look at examples of displaying a list of chats (channels) and a single chat (channel) in detail.
 
-#### Displaying the list of Channels
+#### Displaying the List of Channels
 Displaying the list of Channels a user belongs to can be summarized in 5 steps:
 - Create the `ChatClient` instance (outlined [here](https://github.com/GetStream/stream-chat-swift/wiki/Cheat-Sheet#creating-a-new-instance-of-chat-client))
 - Set your user to login (outlined [here](https://github.com/GetStream/stream-chat-swift/wiki/Cheat-Sheet#setting-the-current-user))
@@ -73,7 +73,7 @@ UIView.transition(with: view.window!,
 
 To reiterate, the process is similar for nearly all UI components `StreamChatUI` SDK provides: create the component, inject the necessary `StreamChat` controller, and use it.
 
-#### Displaying a single chat (Channel)
+#### Displaying a Single Chat (Channel)
 If we want to display a single chat, we can do so as:
 - Create the `ChatClient` instance (outlined [here](https://github.com/GetStream/stream-chat-swift/wiki/Cheat-Sheet#creating-a-new-instance-of-chat-client))
 - Set your user to login (outlined [here](https://github.com/GetStream/stream-chat-swift/wiki/Cheat-Sheet#setting-the-current-user))
@@ -94,7 +94,7 @@ show(chatChannelVC, sender: self)
 ```
 
 
-## Customizing views
+## Customizing Views
 
 ### View Lifecycle Methods
 
@@ -157,7 +157,7 @@ All the customizations can be done in **3** steps:
 
 This whole section is **- 🅱️ Beta only -**
 
-##### Adding a new subview to the UI component
+##### Adding a new Subview to the UI Component
 
 This type of customization is especially useful when working with custom extra-data. Whenever custom extra data contains the information that should be shown inside the UI component, it can be subclassed and extended with the new subview.
 > Read more about `ExtraData` [here](https://github.com/GetStream/stream-chat-swift/wiki/Cheat-Sheet#working-with-extra-data)
@@ -202,7 +202,7 @@ class MyChatMessageMetadataView: _ChatMessageMetadataView<MyExtraData> {
 Once the custom subclass is implemented, it should be injected via `UIConfig` so it is used instead of base UI component.
 > Refer to [Injecting Custom Subclass](#injecting-custom-subclass) chapter below for more information.
 
-##### Changing component subview's relative arrangement, or removing subview
+##### Changing Component Subview's Relative Arrangement, or Removing Subview
 
 Imagine you are not satisfied with some UI component default layout and you're looking for how to exclude a particular subview or change relative subviews arrangement.
 

@@ -13,7 +13,7 @@ Members are represented by `ChatChannelMember` model.
 `ChatChannelMember` is a subclass of `ChatUser` and apart properties typical for users, it also contains such info as member's role (owner, admin, moderator or member), invitation and ban details.
 The difference between these two is that `ChatUser` models represent all the users present on a Stream Chat server, whereas `ChatChannelMember` is user's representation in particular channel. That means that a single user is represented by different `ChatChannelMember` in different channels.
 
-## Getting all members for a channel
+## Getting all Members for a Channel
 
 `ChatChannelMemberListController` is an entity that provides access to members.
 To get all the members for a channel with `general` id:
@@ -28,7 +28,7 @@ memberListController.synchronize { error in
 }
 ```
 
-## Filtering members
+## Filtering Members
 
 The endpoint working with members supports filtering on numerous criteria, for example:
 
@@ -42,7 +42,7 @@ let memberListController = chatClient.memberListController(
 ) 
 ```
 
-### Filtering by part of the user.name
+### Filtering by Part of the user.name
 
 ```swift
 let memberListController = chatClient.memberListController( 
@@ -53,7 +53,7 @@ let memberListController = chatClient.memberListController(
 ) 
 ```
 
-### Autocompleting members by user.name
+### Autocompleting Members by user.name
 
 ```swift
 let memberListController = chatClient.memberListController( 
@@ -64,7 +64,7 @@ let memberListController = chatClient.memberListController(
 ) 
 ```
 
-### Querying single a member by id
+### Querying a Single Member by id
 
 `ChatChannelMemberController` is an entity that allows to work with and observe changes for a specific member.
 It has convenience methods for banning and unbanning a member.
@@ -80,7 +80,7 @@ memberController.ban(for: 10, reason: "spam")
 memberController.unban()
 ```
 
-### Querying several members by id
+### Querying Several Members by id
 
 ```swift
 let memberListController = chatClient.memberListController( 
@@ -91,7 +91,7 @@ let memberListController = chatClient.memberListController(
 ) 
 ```
 
-### Querying channel moderators 
+### Querying Channel Moderators 
 
 ```swift
 let memberListController = chatClient.memberListController( 
@@ -102,7 +102,7 @@ let memberListController = chatClient.memberListController(
 ) 
 ```
 
-### Querying banned members
+### Querying Banned Members
 
 ```swift
 let memberListController = chatClient.memberListController( 
@@ -113,7 +113,7 @@ let memberListController = chatClient.memberListController(
 ) 
 ```
 
-## Pagination and ordering
+## Pagination aSnd Ordering
 
 Since there potentially can be large amount of members in a channel, querying members supports pagination.
 By default members are ordered from oldest to newest and can be paginated using offset-based pagination:
@@ -125,7 +125,7 @@ memberListController.loadNextMembers(limit: 10) { error in
 }
 ```
 
-## Adding/removing members
+## Adding/Removing Members
 
 ```swift
 let controller = chatClient.channelController(for: .init(type: .messaging, id: "general")) 
@@ -137,7 +137,7 @@ controller.removeMembers(userIds: ["raya"])
 You can only add/remove up to 100 members at once.
 :::
 
-### Leaving a channel
+### Leaving a Channel
 
 Leaving a channel is the same as removing members from a channel, but it's called with the current user id:
 
@@ -148,11 +148,11 @@ let controller = chatClient.channelController(
 controller.removeMembers(userIds: ["current-user-id"])
 ```
 
-## Observing changes to members
+## Observing Changes to Members
 
 Set the delegate of `ChatChannelMemberListController` to observe the changes in the system.
 
-### Using delegate
+### Using Delegate
 ```swift
 class Controller: ChatChannelMemberListControllerDelegate {
     let memberListController: ChatChannelMemberListController
@@ -173,7 +173,7 @@ class Controller: ChatChannelMemberListControllerDelegate {
 }
 ```
 
-### Using Combine publishers
+### Using Combine Publishers
 
 ```swift
 let memberListController = chatClient.memberListController( 
