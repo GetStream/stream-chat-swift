@@ -16,6 +16,9 @@ open class ChatChannelVC:
     /// Controller for observing data changes within the channel.
     open var channelController: ChatChannelController!
 
+    /// Listen to keyboard observer or not
+    open var enableKeyboardObserver = false
+
     /// User search controller for suggestion users when typing in the composer.
     open lazy var userSuggestionSearchController: ChatUserSearchController =
         channelController.client.userSearchController()
@@ -165,7 +168,9 @@ open class ChatChannelVC:
     override open func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
-        keyboardHandler.start()
+        if enableKeyboardObserver {
+            keyboardHandler.start()
+        }
     }
 
     override open func viewDidDisappear(_ animated: Bool) {
@@ -173,7 +178,9 @@ open class ChatChannelVC:
 
         resignFirstResponder()
 
-        keyboardHandler.stop()
+        if enableKeyboardObserver {
+            keyboardHandler.stop()
+        }
     }
 
     @objc func backAction(_ sender: Any) {
