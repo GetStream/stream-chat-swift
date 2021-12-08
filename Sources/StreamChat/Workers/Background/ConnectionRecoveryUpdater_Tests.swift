@@ -145,7 +145,7 @@ final class ConnectionRecoveryUpdater_Tests: XCTestCase {
         
         // Get access to EventNotificationCenter to check for events and remove already logged events
         let eventCenter = webSocketClient.init_eventNotificationCenter as! EventNotificationCenterMock
-        eventCenter.process_loggedEvents = []
+        eventCenter.mock_process.calls.removeAll()
         
         // Assert a network request is created
         AssertAsync.willBeEqual(apiClient.request_allRecordedCalls.count, 1)
@@ -154,7 +154,7 @@ final class ConnectionRecoveryUpdater_Tests: XCTestCase {
         apiClient.test_simulateResponse(Result<MissingEventsPayload, Error>.failure(TestError()))
         
         // Assert no events are published
-        AssertAsync.staysTrue(eventCenter.process_loggedEvents.isEmpty)
+        AssertAsync.staysTrue(!eventCenter.mock_process.called)
     }
     
     func test_whenBackendRespondsWith400_callsChannelListCleanUp() throws {
@@ -233,7 +233,7 @@ final class ConnectionRecoveryUpdater_Tests: XCTestCase {
         
         // Get access to EventNotificationCenter to check for events and remove already logged events
         let eventCenter = webSocketClient.init_eventNotificationCenter as! EventNotificationCenterMock
-        eventCenter.process_loggedEvents = []
+        eventCenter.mock_process.calls.removeAll()
 
         // Assert a network request is created
         AssertAsync.willBeEqual(apiClient.request_allRecordedCalls.count, 1)
@@ -242,7 +242,7 @@ final class ConnectionRecoveryUpdater_Tests: XCTestCase {
         apiClient.test_simulateResponse(Result<MissingEventsPayload, Error>.success(payload))
         
         // Assert events from payload are published
-        AssertAsync.willBeEqual(eventCenter.process_loggedEvents.map(\.asEquatable), events.map(\.asEquatable))
+        AssertAsync.willBeEqual(eventCenter.mock_process.calls.flatMap(\.0).map(\.asEquatable), events.map(\.asEquatable))
     }
 
     func test_existingQueriesAreRefetched_ifSuccessfulResponseComes() throws {

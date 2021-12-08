@@ -1386,15 +1386,3 @@ private extension ChatClientConfig {
         self = .init(apiKey: APIKey(.unique))
     }
 }
-
-// MARK: - Mock
-
-class EventNotificationCenterMock: EventNotificationCenter {
-    /// Logs all events the `process` method was called with
-    @Atomic var process_loggedEvents: [Event] = []
-    
-    override func process(_ event: Event) {
-        super.process(event)
-        _process_loggedEvents { $0.append(event) }
-    }
-}

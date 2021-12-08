@@ -68,9 +68,13 @@ class ReactionEventsIntegration_Tests: XCTestCase {
         config.isClientInActiveMode = false
         
         currentUserId = .unique
-        client = ChatClient(config: config)
+        client = ChatClient(
+            config: config,
+            workerBuilders: [],
+            eventWorkerBuilders: [],
+            environment: .withZeroEventBatchingPeriod
+        )
         try! client.databaseContainer.createCurrentUser(id: currentUserId)
-        client.eventNotificationCenter.eventBatchPeriod = 0
         client.connectUser(userInfo: .init(id: currentUserId), token: .development(userId: currentUserId))
     }
 
