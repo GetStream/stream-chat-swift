@@ -11,6 +11,7 @@ extension Notification.Name {
     public static let sendRedPacketTapAction = Notification.Name("kStreamChatSendRedPacketTapAction")
     public static let sendOneWallet = Notification.Name("kTimelessWalletsendOneWallet")
     public static let sendRedPacket = Notification.Name("kTimelessWalletsendRedPacket")
+    public static let pickUpRedPacket = Notification.Name("kStreamChatPickUpRedPacket")
 }
 
 /// The possible errors that can occur in attachment validation
@@ -652,7 +653,14 @@ open class ComposerVC: _ViewController,
         guard let redPacket = notification.userInfo?["redPacketPickup"] as? RedPacket else {
             return
         }
-        print(redPacket)
+        channelController?.createNewMessage(
+            text: "",
+            pinning: nil,
+            attachments: [],
+            mentionedUserIds: content.mentionedUsers.map(\.id),
+            quotedMessageId: content.quotingMessage?.id,
+            extraData: ["redPacketPickup" : .dictionary(redPacket.toDictionary())],
+            completion: nil)
     }
     /// Updates an existing message.
     /// - Parameters:

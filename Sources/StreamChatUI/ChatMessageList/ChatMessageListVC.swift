@@ -346,7 +346,7 @@ open class ChatMessageListVC:
                 cell.options = cellLayoutOptionsForMessage(at: indexPath)
                 cell.content = message
                 cell.configData()
-                cell.blockExpAction = { [weak self] blockExpUrl in
+                cell.blockExpAction = { blockExpUrl in
                     let svc = SFSafariViewController(url: blockExpUrl)
                     let nav = UINavigationController(rootViewController: svc)
                     nav.isNavigationBarHidden = true
@@ -355,6 +355,20 @@ open class ChatMessageListVC:
                 return cell
             }
         } else if isRedPacketCell(message) {
+            //if isMessageFromCurrentUser {
+                guard let cell = tableView.dequeueReusableCell(
+                    withIdentifier: "RedPacketSentBubble",
+                    for: indexPath) as? RedPacketSentBubble else {
+                    return UITableViewCell()
+                }
+                cell.options = cellLayoutOptionsForMessage(at: indexPath)
+                cell.content = message
+                cell.configureCell(isSender: isMessageFromCurrentUser)
+                cell.configData()
+                return cell
+            //}
+        }
+        /*else if isRedPacketCell(message) {
             guard let cell = tableView.dequeueReusableCell(
                 withIdentifier: "RedPacketSentBubble",
                 for: indexPath) as? RedPacketSentBubble else {
@@ -398,7 +412,7 @@ open class ChatMessageListVC:
             cell.configureCell(isSender: isMessageFromCurrentUser)
             cell.configData()
             return cell
-        } else {
+        }*/ else {
             let cell: ChatMessageCell = listView.dequeueReusableCell(
                 contentViewClass: cellContentClassForMessage(at: indexPath),
                 attachmentViewInjectorType: attachmentViewInjectorClassForMessage(at: indexPath),
@@ -453,7 +467,7 @@ open class ChatMessageListVC:
     }
 
     private func isRedPacketCell(_ message: ChatMessage?) -> Bool {
-        message?.extraData.keys.contains("redPacketCell") ?? false
+        message?.extraData.keys.contains("redPacketPickup") ?? false
     }
 
     private func isRedPacketExpiredCell(_ message: ChatMessage?) -> Bool {

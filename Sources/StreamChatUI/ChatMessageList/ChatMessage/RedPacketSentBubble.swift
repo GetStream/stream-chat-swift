@@ -25,6 +25,7 @@ class RedPacketSentBubble: UITableViewCell {
     private var detailsStack: UIStackView!
     var options: ChatMessageLayoutOptions?
     var content: ChatMessage?
+    var isSender = false
     public lazy var dateFormatter: DateFormatter = .makeDefault()
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
@@ -38,6 +39,7 @@ class RedPacketSentBubble: UITableViewCell {
     }
 
     func configureCell(isSender: Bool) {
+        self.isSender = isSender
         viewContainer = UIView()
         viewContainer.translatesAutoresizingMaskIntoConstraints = false
         viewContainer.backgroundColor = .clear
@@ -91,17 +93,12 @@ class RedPacketSentBubble: UITableViewCell {
             descriptionLabel.bottomAnchor.constraint(equalTo: sentThumbImageView.topAnchor, constant: -8),
         ])
         descriptionLabel.transform = .mirrorY
-        descriptionLabel.text = "Red Packet Drop!"
         descriptionLabel.textAlignment = .left
 
         lblTotal = createDetailsLabel()
-        lblTotal.text = "Total: 100 ONE"
         lblMax = createDetailsLabel()
-        lblMax.text = "Max: 65 ONE"
         lblDetails = createDetailsLabel()
-        lblDetails.text = "First user receives 100% of the packet!"
         lblExpire = createDetailsLabel()
-        lblExpire.text = "Expires in 10 minutes!"
 
         detailsStack = UIStackView(arrangedSubviews: [lblTotal, lblMax, lblDetails, lblExpire])
         detailsStack.axis = .vertical
@@ -213,10 +210,86 @@ class RedPacketSentBubble: UITableViewCell {
         } else {
             timestampLabel?.text = nil
         }
+        configRedPacket()
+    }
+
+    private func configRedPacket() {
+        guard let redPacket = getRedPacketExtraData() else {
+            return
+        }
+        if let title = redPacket["title"] {
+            let redPacketTitle = fetchRawData(raw: title) as? String ?? ""
+            descriptionLabel.text = redPacketTitle
+        }
+        if let maxOne = redPacket["maxOne"] {
+            let one = fetchRawData(raw: maxOne) as? String ?? "0"
+            lblTotal.text = "Total: \(one) ONE"
+        } else {
+            lblTotal.text = "Total: 0 ONE"
+        }
+        if let minOne = redPacket["minOne"] {
+            let one = fetchRawData(raw: minOne) as? String ?? "0"
+            lblMax.text = "Max: \(one) ONE"
+        } else {
+            lblMax.text = "Max: 0 ONE"
+        }
+        if let participants = redPacket["participantsCount"] {
+            let participantCount = fetchRawData(raw: participants) as? String ?? "0"
+            let intParticipants = Int(participantCount) ?? 0
+            if intParticipants <= 1 {
+                lblDetails.text = "First user receives 100% of the packet!"
+            } else {
+                lblDetails.text = "Split randomly between: \(intParticipants) users"
+            }
+        }
+//        if let endTime = redPacket["endTime"] {
+//            let strEndTime = fetchRawData(raw: endTime) as? String ?? ""
+//            let dateFormatter = DateFormatter()
+//            dateFormatter.locale = Locale(identifier: "en_US_POSIX") // set locale to reliable US_POSIX
+//            dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZ"
+//            if let date = dateFormatter.date(from: strEndTime) {
+//
+//            }
+//        }
+        lblExpire.text = "Expires in 10 minutes!"
+    }
+
+    private func getRedPacketExtraData() -> [String: RawJSON]? {
+        if let extraData = content?.extraData["redPacketPickup"] {
+            switch extraData {
+            case .dictionary(let dictionary):
+                return dictionary
+            default:
+                return nil
+            }
+        } else {
+            return nil
+        }
     }
 
     @objc func btnPickButtonAction() {
-        print("btnPickButtonAction")
+        guard let redPacket = getRedPacketExtraData() else {
+            return
+        }
+        if let packetId = redPacket["packetId"] {
+            let redPacketId = fetchRawData(raw: packetId) as? String ?? ""
+            var userInfo = [String: Any]()
+            userInfo["packetId"] = redPacketId
+            NotificationCenter.default.post(name: .pickUpRedPacket, object: nil, userInfo: userInfo)
+        }
+
     }
 
 }
+
+/**
+ if let toUserName = walletData["recipientName"] {
+     var recipientName = fetchRawData(raw: toUserName) as? String ?? ""
+     recipientName = String(recipientName.prefix(4))
+     descriptionLabel.text = "you have sent crypto to \(recipientName)"
+ }
+ if let amount = walletData["transferAmount"] {
+     let one = fetchRawData(raw: amount) as? Double ?? 0
+     sentCryptoLabel.text = "SENT: \(one) ONE"
+ }
+ */
