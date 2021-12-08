@@ -107,7 +107,7 @@ class ChatPushNotificationContent_Tests: XCTestCase {
         }))
 
         apiClient.test_simulateResponse(Result<MessagePayload.Boxed, Error>.success(exampleMessagePayload))
-        wait(for: [expectation], timeout: 1.0)
+        wait(for: [expectation], timeout: defaultTimeout)
     }
     
     func testCompletion_withUnknownEvent() throws {

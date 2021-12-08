@@ -31,6 +31,12 @@ open class ChatChannelListItemView: _View, ThemeProvider, SwiftUIRepresentable {
     /// Main container which holds `avatarView` and two horizontal containers `title` and `unreadCount` and
     /// `subtitle` and `timestampLabel`
     open private(set) lazy var mainContainer: ContainerStackView = ContainerStackView().withoutAutoresizingMaskConstraints
+    
+    /// This container embeded by `mainContainer` containing `topContainer` and `bottomContainer`.
+    open private(set) lazy var rightContainer: ContainerStackView = ContainerStackView(
+        axis: .vertical,
+        spacing: 4
+    ).withoutAutoresizingMaskConstraints
 
     /// By default contains `title` and `unreadCount`.
     /// This container is embed inside `mainContainer ` and is the one above `bottomContainer`
@@ -139,6 +145,10 @@ open class ChatChannelListItemView: _View, ThemeProvider, SwiftUIRepresentable {
         bottomContainer.addArrangedSubviews([
             subtitleLabel.flexible(axis: .horizontal), timestampLabel
         ])
+        
+        rightContainer.addArrangedSubviews([
+            topContainer, bottomContainer
+        ])
 
         NSLayoutConstraint.activate([
             avatarView.heightAnchor.pin(equalToConstant: 48),
@@ -147,11 +157,7 @@ open class ChatChannelListItemView: _View, ThemeProvider, SwiftUIRepresentable {
 
         mainContainer.addArrangedSubviews([
             avatarView,
-            ContainerStackView(
-                axis: .vertical,
-                spacing: 4,
-                arrangedSubviews: [topContainer, bottomContainer]
-            )
+            rightContainer
         ])
         
         mainContainer.alignment = .center
