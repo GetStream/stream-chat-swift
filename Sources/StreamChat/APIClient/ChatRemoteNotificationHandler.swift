@@ -156,20 +156,18 @@ public class ChatRemoteNotificationHandler {
             )
 
             self.client.apiClient.request(endpoint: endpoint) {
-                var lastReceivedEventDate: Date?
                 switch $0 {
                 case let .success(payload):
-                    self.client.eventNotificationCenter.process(payload.eventPayloads)
-                    lastReceivedEventDate = payload.eventPayloads.first?.createdAt
+                    self.client.eventNotificationCenter.process(
+                        payload.eventPayloads.asEvents(),
+                        postNotifications: false
+                    ) {
+                        self.bumpLastSyncDate(lastReceivedEventDate: payload.eventPayloads.first?.createdAt ?? lastSyncAt) {
+                            completion()
+                        }
+                    }
                 case let .failure(error):
                     log.error("Failed cleaning up channels data: \(error).")
-                }
-
-                if let lastReceivedEventDate = lastReceivedEventDate {
-                    self.bumpLastSyncDate(lastReceivedEventDate: lastReceivedEventDate) {
-                        completion()
-                    }
-                } else {
                     completion()
                 }
             }

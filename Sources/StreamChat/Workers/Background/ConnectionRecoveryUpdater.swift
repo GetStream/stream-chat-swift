@@ -140,10 +140,11 @@ class ConnectionRecoveryUpdater: EventWorker {
             case let .success(payload):
                 // The sync call was successful.
                 // We schedule all events for existing channels for processing...
-                self.eventNotificationCenter.process(payload.eventPayloads)
-                
-                // ... and refetch the existing queries to see if there are some new channels
-                completion()
+                self.eventNotificationCenter.process(
+                    payload.eventPayloads.asEvents(),
+                    postNotifications: false,
+                    completion: completion
+                )
                 
             case let .failure(error):
                 log.info(
@@ -179,24 +180,6 @@ class ConnectionRecoveryUpdater: EventWorker {
         } catch {
             log.error("Internal error: Failed to fetch [ChannelDTO]: \(error)")
             return []
-        }
-    }
-}
-
-// MARK: - Extensions
-
-extension EventNotificationCenter {
-    /// The method is used to convert incoming event payloads into events and calls `process(_:)` for each event
-    /// that was successfully decoded.
-    ///
-    /// - Parameter payloads: The event payloads
-    func process(_ payloads: [EventPayload]) {
-        payloads.forEach {
-            do {
-                process(try $0.event())
-            } catch {
-                log.error("Failed to transform a payload into an event: \($0)")
-            }
         }
     }
 }

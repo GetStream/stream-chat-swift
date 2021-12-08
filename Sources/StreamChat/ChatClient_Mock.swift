@@ -164,4 +164,24 @@ extension ChatClient.Environment {
             clientUpdaterBuilder: ChatClientUpdaterMock.init
         )
     }
+
+    static var withZeroEventBatchingPeriod: Self {
+        .init(
+            webSocketClientBuilder: {
+                var webSocketEnvironment = WebSocketClient.Environment()
+                webSocketEnvironment.eventBatcherBuilder = {
+                    Batcher<Event>(period: 0, handler: $0)
+                }
+                
+                return WebSocketClient(
+                    sessionConfiguration: $0,
+                    requestEncoder: $1,
+                    eventDecoder: $2,
+                    eventNotificationCenter: $3,
+                    internetConnection: $4,
+                    environment: webSocketEnvironment
+                )
+            }
+        )
+    }
 }

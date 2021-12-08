@@ -27,8 +27,9 @@ class WebSocketClient_Tests: XCTestCase {
     var requestEncoder: TestRequestEncoder!
     var pingController: WebSocketPingControllerMock { webSocketClient.pingController as! WebSocketPingControllerMock }
     var internetConnectionMonitor: InternetConnectionMonitorMock!
+    var eventsBatcher: EventBatcherMock { webSocketClient.eventsBatcher as! EventBatcherMock }
     
-    var eventNotificationCenter: EventNotificationCenter!
+    var eventNotificationCenter: EventNotificationCenterMock!
     private var eventNotificationCenterMiddleware: EventMiddlewareMock!
     
     var database: DatabaseContainer!
@@ -50,16 +51,14 @@ class WebSocketClient_Tests: XCTestCase {
         requestEncoder = TestRequestEncoder(baseURL: .unique(), apiKey: .init(.unique))
         
         database = DatabaseContainerMock()
-        eventNotificationCenter = EventNotificationCenter(database: database)
+        eventNotificationCenter = EventNotificationCenterMock(database: database)
         eventNotificationCenterMiddleware = EventMiddlewareMock()
         eventNotificationCenter.add(middleware: eventNotificationCenterMiddleware)
         
         internetConnectionMonitor = InternetConnectionMonitorMock()
         
-        var environment = WebSocketClient.Environment()
+        var environment = WebSocketClient.Environment.mock
         environment.timerType = VirtualTimeTimer.self
-        environment.createPingController = WebSocketPingControllerMock.init
-        environment.createEngine = WebSocketEngineMock.init
         
         webSocketClient = WebSocketClient(
             sessionConfiguration: .ephemeral,
@@ -497,57 +496,6 @@ class WebSocketClient_Tests: XCTestCase {
     
     // MARK: - Event handling tests
     
-    func test_incomingEventIsPublished() {
-        // Simulate connection
-        test_connectionFlow()
-        
-        // Make the decoder always return TestEvent
-        let testEvent = TestEvent()
-        decoder.decodedEvent = .success(testEvent)
-        
-        // Clean up pending events and start logging the new ones
-        eventNotificationCenter.pendingEvents = []
-        let eventLogger = EventLogger(eventNotificationCenter)
-        
-        // Simulate incoming data
-        let incomingData = UUID().uuidString.data(using: .utf8)!
-        engine!.simulateMessageReceived(incomingData)
-        
-        // Assert that the decoder is used with correct data and the event decoder returns is published
-        AssertAsync {
-            Assert.willBeEqual(self.decoder.decode_calledWithData, incomingData)
-            Assert.willBeEqual(eventLogger.events, [testEvent])
-        }
-    }
-    
-    func test_incomingEvent_processedUsingMiddlewares() {
-        // Simulate connection
-        test_connectionFlow()
-        
-        // Clean up pending events
-        eventNotificationCenter.pendingEvents = []
-
-        // Make the decoder return an event
-        let incomingEvent = TestEvent()
-        decoder.decodedEvent = .success(incomingEvent)
-        
-        let processedEvent = TestEvent()
-        eventNotificationCenterMiddleware.closure = { middlewareIncomingEvent, session in
-            XCTAssertEqual(incomingEvent.asEquatable, middlewareIncomingEvent.asEquatable)
-            XCTAssertEqual(session as? NSManagedObjectContext, self.database.writableContext)
-            return processedEvent
-        }
-        
-        // Start logging events
-        let eventLogger = EventLogger(eventNotificationCenter)
-        
-        // Simulate incoming event
-        engine!.simulateMessageReceived()
-        
-        // Assert the published event is the one from the middleware
-        AssertAsync.willBeEqual(eventLogger.equatableEvents, [processedEvent.asEquatable])
-    }
-    
     func test_connectionStatusUpdated_eventsArePublished_whenWSConnectionStateChanges() {
         // Start logging events
         let eventLogger = EventLogger(eventNotificationCenter)
@@ -625,6 +573,85 @@ class WebSocketClient_Tests: XCTestCase {
         // We should see `CurrentUserDTO` being saved before we get connectionId
         AssertAsync.willBeEqual(currentUser?.user.id, payloadCurrentUser.id)
         AssertAsync.willBeEqual(webSocketClient.connectionState, .connected(connectionId: connectionId))
+    }
+    
+    func test_whenHealthCheckEventComes_itGetProcessedSilentlyWithoutBatching() throws {
+        // Simulate response from the encoder
+        let request = URLRequest(url: .unique())
+        requestEncoder.encodeRequest = .success(request)
+        
+        // Assign connect endpoint
+        webSocketClient.connectEndpoint = endpoint
+        
+        // Connect the web-socket client
+        webSocketClient.connect()
+        
+        // Wait for engine to be called
+        AssertAsync.willBeEqual(engine!.connect_calledCount, 1)
+        
+        // Simulate engine established connection
+        engine!.simulateConnectionSuccess()
+        
+        // Wait for the connection state to be propagated to web-socket client
+        AssertAsync.willBeEqual(webSocketClient.connectionState, .waitingForConnectionId)
+        
+        // Simulate received health check event
+        let healthCheckEvent = HealthCheckEvent(connectionId: .unique)
+        decoder.decodedEvent = .success(healthCheckEvent)
+        engine!.simulateMessageReceived()
+        
+        // Assert healtch check event does not get batched
+        let batchedEvents = eventsBatcher.mock_append.calls.map(\.asEquatable)
+        XCTAssertFalse(batchedEvents.contains(healthCheckEvent.asEquatable))
+        
+        // Assert health check event was processed
+        let (_, postNotification, _) = try XCTUnwrap(
+            eventNotificationCenter.mock_process.calls.first(where: { events, _, _ in
+                events.first is HealthCheckEvent
+            })
+        )
+        
+        // Assert health check events was not posted
+        XCTAssertFalse(postNotification)
+    }
+        
+    func test_whenNonHealthCheckEventComes_getsBatchedAndPostedAfterProcessing() throws {
+        // Simulate connection
+        test_connectionFlow()
+        
+        // Clear state
+        eventsBatcher.mock_append.calls.removeAll()
+        eventNotificationCenter.mock_process.calls.removeAll()
+        
+        // Simulate incoming event
+        let incomingEvent = UserPresenceChangedEvent(user: .unique, createdAt: .unique)
+        decoder.decodedEvent = .success(incomingEvent)
+        engine!.simulateMessageReceived()
+        
+        // Assert event gets batched
+        XCTAssertEqual(
+            eventsBatcher.mock_append.calls.map(\.asEquatable),
+            [incomingEvent.asEquatable]
+        )
+        
+        // Assert incoming event get processed and posted
+        let (events, postNotifications, _) = try XCTUnwrap(eventNotificationCenter.mock_process.calls.first)
+        XCTAssertEqual(events.map(\.asEquatable), [incomingEvent.asEquatable])
+        XCTAssertTrue(postNotifications)
+    }
+    
+    func test_whenDisconnectHappens_immidiateBatchedEventsProcessingIsTriggered() {
+        // Simulate connection
+        test_connectionFlow()
+        
+        // Assert `processImmediately` was not triggered
+        XCTAssertFalse(eventsBatcher.mock_processImmediately.called)
+        
+        // Simulate disconnection
+        webSocketClient.disconnect()
+        
+        // Assert `processImmediately` is triggered
+        AssertAsync.willBeTrue(eventsBatcher.mock_processImmediately.called)
     }
 }
 

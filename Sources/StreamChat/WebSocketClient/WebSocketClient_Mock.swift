@@ -26,7 +26,7 @@ class WebSocketClientMock: WebSocketClient {
         eventNotificationCenter: EventNotificationCenter,
         internetConnection: InternetConnection,
         reconnectionStrategy: WebSocketClientReconnectionStrategy = DefaultReconnectionStrategy(),
-        environment: WebSocketClient.Environment = .init()
+        environment: WebSocketClient.Environment = .mock
     ) {
         init_sessionConfiguration = sessionConfiguration
         init_requestEncoder = requestEncoder
@@ -54,6 +54,10 @@ class WebSocketClientMock: WebSocketClient {
     override func disconnect(source: WebSocketConnectionState.DisconnectionSource = .userInitiated) {
         _disconnect_calledCounter { $0 += 1 }
     }
+    
+    var mockEventsBatcher: EventBatcherMock {
+        eventsBatcher as! EventBatcherMock
+    }
 }
 
 extension WebSocketClientMock {
@@ -64,6 +68,16 @@ extension WebSocketClientMock {
             eventDecoder: EventDecoder(),
             eventNotificationCenter: EventNotificationCenterMock(database: DatabaseContainerMock()),
             internetConnection: InternetConnection()
+        )
+    }
+}
+
+extension WebSocketClient.Environment {
+    static var mock: Self {
+        .init(
+            createPingController: WebSocketPingControllerMock.init,
+            createEngine: WebSocketEngineMock.init,
+            eventBatcherBuilder: { EventBatcherMock(handler: $0) }
         )
     }
 }
