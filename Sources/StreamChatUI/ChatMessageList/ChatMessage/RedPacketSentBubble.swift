@@ -122,6 +122,7 @@ class RedPacketSentBubble: UITableViewCell {
         pickUpButton.backgroundColor = Appearance.default.colorPalette.redPacketButton
         pickUpButton.clipsToBounds = true
         pickUpButton.layer.cornerRadius = 20
+        pickUpButton.isUserInteractionEnabled = true
         pickUpButton.addTarget(self, action: #selector(btnPickButtonAction), for: .touchUpInside)
         subContainer.addSubview(pickUpButton)
         NSLayoutConstraint.activate([
@@ -268,7 +269,7 @@ class RedPacketSentBubble: UITableViewCell {
     }
 
     @objc func btnPickButtonAction() {
-        guard let redPacket = getRedPacketExtraData() else {
+        guard let redPacket = getRedPacketExtraData(), isSender == false else {
             return
         }
         if let packetId = redPacket["packetId"] {
@@ -277,7 +278,6 @@ class RedPacketSentBubble: UITableViewCell {
             userInfo["packetId"] = redPacketId
             NotificationCenter.default.post(name: .pickUpRedPacket, object: nil, userInfo: userInfo)
         }
-
     }
 
 }
