@@ -95,6 +95,10 @@ class IOSBackgroundTaskScheduler: BackgroundTaskScheduler {
     @objc private func handleAppDidBecomeActive() {
         onEnteringForeground()
     }
+    
+    deinit {
+        endTask()
+    }
 }
 
 #endif
