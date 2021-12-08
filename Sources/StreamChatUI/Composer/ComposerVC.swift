@@ -10,6 +10,7 @@ extension Notification.Name {
     public static let sendOneWalletTapAction = Notification.Name("kStreamChatOneWalletTapAction")
     public static let sendRedPacketTapAction = Notification.Name("kStreamChatSendRedPacketTapAction")
     public static let sendOneWallet = Notification.Name("kTimelessWalletsendOneWallet")
+    public static let sendRedPacket = Notification.Name("kTimelessWalletsendRedPacket")
 }
 
 /// The possible errors that can occur in attachment validation
@@ -318,6 +319,7 @@ open class ComposerVC: _ViewController,
     override open func viewDidLoad() {
         super.viewDidLoad()
         NotificationCenter.default.addObserver(self, selector: #selector(sendOneWalletBubble(notification:)), name: .sendOneWallet, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(redPacketBubble(notification:)), name: .sendRedPacket, object: nil)
     }
 
     override open func viewDidDisappear(_ animated: Bool) {
@@ -646,6 +648,12 @@ open class ComposerVC: _ViewController,
             completion: nil)
     }
 
+    @objc open func redPacketBubble(notification: Notification) {
+        guard let redPacket = notification.userInfo?["redPacketPickup"] as? RedPacket else {
+            return
+        }
+        print(redPacket)
+    }
     /// Updates an existing message.
     /// - Parameters:
     ///   - id: The id of the editing message.

@@ -12,10 +12,14 @@ public struct RedPacket {
     // MARK: - Variables
     public var myName: String?
     public var myWalletAddress: String?
-    public var recipientName: String?
-    public var recipientAddress: String?
-    public var recipientImageUrl: URL?
     public var myImageUrl: URL?
+    public var channelUsers: Int?
+    public var amount: Float? // max/min ONE
+    public var minWeiAmount: Double? // wie unit BigUIng
+    public var maxWeiAmount: Double? // wie unit BigUIng
+    public var usdAmount: Double? // ONE to USD
+    public var channelId: String?
+    public var participantsCount: Int?
 
     public init() {
     }
