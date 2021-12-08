@@ -23,7 +23,7 @@ class RedPacketBubble: UITableViewCell {
     var options: ChatMessageLayoutOptions?
     var content: ChatMessage?
     public lazy var dateFormatter: DateFormatter = .makeDefault()
-
+    var cellType: CellType!
     var isSender = false
 
     //Cell Type
@@ -47,6 +47,7 @@ class RedPacketBubble: UITableViewCell {
     }
 
     func configureCell(isSender: Bool, with type: CellType) {
+        cellType = type
         viewContainer = UIView()
         viewContainer.translatesAutoresizingMaskIntoConstraints = false
         viewContainer.backgroundColor = .clear
@@ -107,7 +108,7 @@ class RedPacketBubble: UITableViewCell {
             lblDetails.text = "Ajay selected the highest amount!"
             descriptionLabel.text = "That was fun! \nWant to go next!?"
         } else if type == .RECEIVED {
-            lblDetails.text = "You just picked up 65 ONE!"
+            //lblDetails.text = "You just picked up 65 ONE!"
             descriptionLabel.text = "Rad - Top Amount!"
         }
 
@@ -218,9 +219,39 @@ class RedPacketBubble: UITableViewCell {
         } else {
             timestampLabel?.text = nil
         }
+        if cellType == .RECEIVED {
+            configTopAmountCell()
+        }
     }
 
+    func configTopAmountCell() {
+        guard let topAmount = getTopAmountExtraData() else {
+            return
+        }
+        if let receivedAmount = topAmount["receivedAmount"] {
+            let dblReceivedAmount = fetchRawData(raw: receivedAmount) as? Double ?? 0
+            lblDetails.text = "You just picked up \(dblReceivedAmount) ONE!"
+        }
+    }
+
+    private func getTopAmountExtraData() -> [String: RawJSON]? {
+        if let extraData = content?.extraData["RedPacketTopAmountReceived"] {
+            switch extraData {
+            case .dictionary(let dictionary):
+                return dictionary
+            default:
+                return nil
+            }
+        } else {
+            return nil
+        }
+    }
+    
     @objc func btnPickButtonAction() {
         print("btnPickButtonAction")
     }
 }
+
+/**
+ ["highestAmountUserId": StreamChat.RawJSON.string("b939f923-eabc-4094-99cc-0e4e587091f1"), "highestAmountUserName": StreamChat.RawJSON.string("ajay4"), "receivedAmount": StreamChat.RawJSON.number(1.0), "isTopAmountUser": StreamChat.RawJSON.bool(true), "isExpired": StreamChat.RawJSON.bool(false), "redPacketId": StreamChat.RawJSON.string("b300fb35-89a9-4c92-bc5e-71236c92a085")]
+ */

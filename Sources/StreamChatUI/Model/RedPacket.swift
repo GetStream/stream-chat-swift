@@ -46,6 +46,7 @@ public struct RedPacket {
         dictOut["maxOne"] = .string(maxOne ?? "0")
         dictOut["endTime"] = .string(endTime ?? "0")
         dictOut["packetId"] = .string(packetId ?? "")
+        dictOut["isExpired"] = .bool(false)
         return dictOut
     }
 }
