@@ -296,6 +296,7 @@ open class ComposerVC: _ViewController,
             guard let weakSelf = self else {
                 return
             }
+            weakSelf.composerView.inputMessageView.textView.resignFirstResponder()
             switch toolKit.type {
             case .photoPicker:
                 weakSelf.showAttachmentsPicker()
