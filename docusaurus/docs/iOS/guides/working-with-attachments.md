@@ -16,7 +16,7 @@ URL previews can have type image, video or audio depending on the resource that 
 
 All Chat SDKs allow you to customize how built-in types are handled as well as use your own custom attachment types.
 
-## How to customize built-in attachments
+## How to Customize Built-In Attachments
 
 Built-in attachments are mapped to specific `AttachmentViewInjector` classes, the mapping is defined on the `Components` class.
 
@@ -80,7 +80,7 @@ class MyCustomAttachmentView: _View {
 
 ```
 
-### Register the custom class to be used for file attachments
+### Register the cUstom Class to be Used for File Attachments
 
 The last step is to inform the SDK to use `MyCustomAttachmentViewInjector` for file attachments instead of the default one. This is something that you want to do as early as possible in your application life-cycle.
 
@@ -88,7 +88,7 @@ The last step is to inform the SDK to use `MyCustomAttachmentViewInjector` for f
 Components.default.filesAttachmentInjector = MyCustomAttachmentViewInjector.self
 ```
 
-## How to build a custom attachment
+## How to Build a Custom Attachment
 
 Stream chat allows you to create your own types of attachments as well. The steps to follow to add support for a custom attachment type are the following:
 

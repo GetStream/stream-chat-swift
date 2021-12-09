@@ -23,7 +23,7 @@ The standard message actions consist of:
 
 These actions will be displayed based on where it's triggered in the StreamChatUI SDK. It will also depend on the user's membership.
 
-## How to change the list of actions based on membership
+## How to Change the List of Actions Based on Membership
 
 You might want to change the list of actions displayed based on your permissions. For example, here, you will demonstrate the `delete` action for `admins`.
 

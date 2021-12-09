@@ -8,7 +8,7 @@ This section provides a high-level overview of the library, core components, and
 
 Before starting, make sure you have installed `StreamChatUI` as explained in the [Installation](./uikit-overview.md#installation) section.
 
-### Chat setup and users
+### Chat Setup and Users
 
 The first step to use the library is to create an instance of `ChatClient` and then connect as a user. You should do this as early as possible in your application and ensure that only one
 `ChatClient` instance is used across your application. For the sake of simplicity, we are going to show this using a singleton pattern.

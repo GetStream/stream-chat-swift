@@ -7,7 +7,7 @@ import ComponentsNote from '../common-content/components-note.md'
 
 The `ComposerVC` is the component responsible to create new messages or change existing messages. The composer belongs to the `ChatMessageListVC` component that integrates the message list and the composer in one view. But if you are not using our `ChatMessageListVC` you can use the composer component in isolation with your own chat view as well. The `ComposerVC` manages all the logic and actions of the `ComposerView`, where the latter is only responsible for the composer's layout.
 
-## How to change the composer layout
+## How to Change the Composer Layout
 Since the `ComposerView` is responsible for the composer's layout, if you want to change the styling, the position of the views, removing views or adding new ones, you need to override the `ComposerView`. Let's go through an example of customizing the composer to look like the iMessage app. The iMessage's composer is quite different than the composer that comes with the SDK: there is only one button to add pictures/videos and the send button is inside the input text container.
 
 | Before  | After |
@@ -69,7 +69,7 @@ Appearance.default.images.openAttachments = UIImage(systemName: "camera.fill")!.
 ```
 <ThemingNote/>
 
-## How to add a new composer action
+## How to add a new Composer Action
 All the actions triggered by the Composer buttons are wired in the `ComposerVC.setUp()` lifecycle. When adding new buttons it is possible to add new actions by overriding this function. Let's pick the iMessage example and add an emoji button to the composer to open an Emoji picker.
 
 First, we need to add the emoji button to the `ComposerView`:
@@ -161,10 +161,10 @@ Components.default.messageComposerView = iMessageComposerView.self
 
 After customizing the `ComposerVC` with the changes above you should now have an emoji picker when tapping the emoji button. To make the guide simple, we used an `UIAlertController` for the emoji picker but you can create your own custom emoji picker.
 
-## Customizing typing suggestions
+## Customizing Typing Suggestions
 When typing on the composer, if you type `@` it will present a view suggesting users that you can mention, or if you type `/` as the first character, it will show command suggestions. You can customize not only the UI of the suggestions but also the logic around it, as well as disable this feature.
 
-### Disabling the suggestions
+### Disabling the Suggestions
 Your app might not want to support suggestions at all like the iMessage app, or want to support only one of the suggestions available. You can disable the suggestions feature by just returning `nil` on the following functions:
 
 ```swift
@@ -180,10 +180,10 @@ class iMessageComposerVC: ComposerVC {
 }
 ```
 
-### Changing the suggestions UI
+### Changing the Suggestions UI
 The UI SDK provides a `ChatSuggestionsVC` component responsible for showing user suggestions and commands suggestions.
 
-#### Customizing the suggestions container
+#### Customizing the Suggestions Container
 In case you only want to change the styling of the container that shows both suggestions, you can override the `ChatSuggestionsVC`. Here is an example of a basic customization of the container component:
 ```swift
 class CustomChatSuggestionsVC: ChatSuggestionsVC {
@@ -210,7 +210,7 @@ Here we simply remove the shadow and customize the border style of the suggestio
 | ------------- | ------------- |
 | <img src={require("../assets/composer-suggestionsVC-before.png").default} /> | <img src={require("../assets/composer-suggestionsVC-after.png").default} /> |
 
-#### Customizing the suggestions cells
+#### Customizing the Suggestions Cells
 If you want to further customize the suggestions UI and want to change the suggestions cells, the recommended way is to subclass the `ChatMentionSuggestionView` and `ChatCommandSuggestionView` components. Let's see an example of how we can change the user mention cell by remove the username and the "@" symbol:
 
 ```swift
@@ -234,7 +234,7 @@ Components.default.suggestionsMentionView = CustomMentionSuggestionView.self
 | ------------- | ------------- |
 | <img src={require("../assets/composer-suggestionsVC-after.png").default} /> | <img src={require("../assets/composer-suggestionsVC-custom-cell.png").default} /> |
 
-#### Bypassing how the suggestions are presented
+#### Bypassing how the Suggestions are Presented
 Finally, if you need to have complete control over how the suggestions are presented and not use our `ChatSuggestionsVC` component you can by overriding the following functions:
 ```swift
 class CustomComposerVC: ComposerVC {

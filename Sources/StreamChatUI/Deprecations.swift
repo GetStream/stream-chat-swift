@@ -175,19 +175,29 @@ extension Components {
 /// typealias `typealias = Set<ChatMessageLayoutOption>` and provided an API like the `OptionSet` so we
 /// don't break the public API.
 
-extension ChatMessageLayoutOptions {
+public extension ChatMessageLayoutOptions {
     @available(*, deprecated, message: "use `id` instead.")
     var rawValue: String {
         id
     }
 
+    @available(*, deprecated, message: "use `remove(_ member: ChatMessageLayoutOption)` instead.")
+    mutating func remove(_ options: ChatMessageLayoutOptions) {
+        self = subtracting(options)
+    }
+
+    @available(*, deprecated, message: "use `insert(_ member: ChatMessageLayoutOption)` instead.")
+    mutating func insert(_ options: ChatMessageLayoutOptions) {
+        options.forEach { self.insert($0) }
+    }
+
     @available(*, deprecated, message: "use `subtracting(_ other: Sequence)` instead.")
-    public mutating func subtracting(_ option: ChatMessageLayoutOption) {
+    mutating func subtracting(_ option: ChatMessageLayoutOption) {
         self = subtracting([option])
     }
 
     @available(*, deprecated, message: "use `intersection(_ other: Sequence)` instead.")
-    public mutating func intersection(_ option: ChatMessageLayoutOption) {
+    mutating func intersection(_ option: ChatMessageLayoutOption) {
         self = intersection([option])
     }
 
@@ -195,7 +205,7 @@ extension ChatMessageLayoutOptions {
         use `contains(_ member: ChatMessageLayoutOption` instead. And make sure the custom option is being extended in
         `ChatMessageLayoutOption` and not in `ChatMessageLayoutOptions`.
     """)
-    public func contains(_ options: ChatMessageLayoutOptions) -> Bool {
+    func contains(_ options: ChatMessageLayoutOptions) -> Bool {
         options.isSubset(of: self)
     }
 

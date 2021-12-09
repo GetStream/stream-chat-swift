@@ -20,7 +20,7 @@ class AttachmentButton_Documentation_Tests: XCTestCase {
         
         generateDocs(
             for: view,
-            annotations: [],
+            annotations: { _ in [] },
             name: "AttachmentButton_documentation",
             variants: .onlyUserInterfaceStyles
         )
