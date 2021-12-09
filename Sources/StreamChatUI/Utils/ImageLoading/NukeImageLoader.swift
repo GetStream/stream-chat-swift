@@ -2,7 +2,6 @@
 // Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
-import Nuke
 import UIKit
 
 extension ImageTask: Cancellable {}
@@ -119,7 +118,7 @@ open class NukeImageLoader: ImageLoading {
         )
         
         let options = ImageLoadingOptions(placeholder: placeholder)
-        imageView.currentImageLoadingTask = Nuke.loadImage(
+        imageView.currentImageLoadingTask = StreamChatUI.loadImage(
             with: request,
             options: options,
             into: imageView

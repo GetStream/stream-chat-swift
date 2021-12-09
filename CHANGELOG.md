@@ -8,6 +8,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### 🐞 Fixed
 - Fix `stopTyping` can be called on `TypingEventSender` after calling `startTyping` [#1649](https://github.com/GetStream/stream-chat-swift/issues/1649)
+- Reactions no longer cover the text in message bubble [#1666](https://github.com/GetStream/stream-chat-swift/pull/1666)
+- Fix `error` type messages rendered as user's messages and interactive [#1672](https://github.com/GetStream/stream-chat-swift/issues/1672)
+
+### ✅ Added
+- Add support for pre-built XCFrameworks [#1665](https://github.com/GetStream/stream-chat-swift/pull/1665)
+
+### ✅ Added
+- Expose container embedding top & bottom containers by `ChatChannelListItemView` [#1670](https://github.com/GetStream/stream-chat-swift/issues/1670)
 
 # [4.5.1](https://github.com/GetStream/stream-chat-swift/releases/tag/4.5.1)
 _December 01, 2021_

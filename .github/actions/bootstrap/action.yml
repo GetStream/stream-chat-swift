@@ -3,5 +3,5 @@ description: 'Run bootstrap.sh'
 runs:
   using: "composite"
   steps:
-    - run: ./bootstrap.sh   
+    - run: ./Scripts/bootstrap.sh
       shell: bash
