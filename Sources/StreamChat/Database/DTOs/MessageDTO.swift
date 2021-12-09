@@ -598,17 +598,17 @@ extension NSManagedObjectContext: MessageDatabaseSession {
             throw ClientError.MessageDoesNotExist(messageId: messageId)
         }
 
-        let result = try MessageReactionDTO.loadOrCreate(messageId: messageId, type: type, user: currentUserDTO.user, context: self)
+        let dto = try MessageReactionDTO.loadOrCreate(messageId: messageId, type: type, user: currentUserDTO.user, context: self)
 
         // make sure we update the reactionScores for the message in a way that works for new or updated reactions
-        let scoreDiff = Int64(score) - result.dto.score
-        let newScore = max(0, message.reactionScores[type.rawValue] ?? Int(result.dto.score) + Int(scoreDiff))
+        let scoreDiff = Int64(score) - dto.score
+        let newScore = max(0, message.reactionScores[type.rawValue] ?? Int(dto.score) + Int(scoreDiff))
         message.reactionScores[type.rawValue] = newScore
 
-        result.dto.score = Int64(score)
-        result.dto.extraData = try JSONEncoder.default.encode(extraData)
+        dto.score = Int64(score)
+        dto.extraData = try JSONEncoder.default.encode(extraData)
 
-        let reactionId = MessageReactionDTO.createId(dto: result.dto)
+        let reactionId = MessageReactionDTO.createId(dto: dto)
 
         if message.latestReactions.filter({ $0 == reactionId }).isEmpty {
             message.latestReactions.append(reactionId)
@@ -618,7 +618,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
             message.ownReactions.append(reactionId)
         }
 
-        return result.dto
+        return dto
     }
 
     /// Removes the reaction for the current user to the message with id `messageId`

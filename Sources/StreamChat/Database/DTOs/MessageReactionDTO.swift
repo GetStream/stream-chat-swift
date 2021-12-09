@@ -77,11 +77,11 @@ extension MessageReactionDTO {
         type: MessageReactionType,
         user: UserDTO,
         context: NSManagedObjectContext
-    ) throws -> (dto: MessageReactionDTO, created: Bool) {
+    ) throws -> MessageReactionDTO {
         let userId = user.id
 
         if let existing = Self.load(userId: userId, messageId: message.id, type: type, context: context) {
-            return (existing, false)
+            return existing
         }
 
         let new = NSEntityDescription.insertNewObject(forEntityName: Self.entityName, into: context) as! MessageReactionDTO
@@ -89,7 +89,7 @@ extension MessageReactionDTO {
         new.type = type.rawValue
         new.message = message
         new.user = user
-        return (new, true)
+        return new
     }
 
     static func loadOrCreate(
@@ -97,11 +97,11 @@ extension MessageReactionDTO {
         type: MessageReactionType,
         user: UserDTO,
         context: NSManagedObjectContext
-    ) throws -> (dto: MessageReactionDTO, created: Bool) {
+    ) throws -> MessageReactionDTO {
         let userId = user.id
 
         if let existing = Self.load(userId: userId, messageId: messageId, type: type, context: context) {
-            return (existing, false)
+            return existing
         }
 
         guard let message = MessageDTO.load(id: messageId, context: context) else {
@@ -137,8 +137,9 @@ extension NSManagedObjectContext {
             context: self
         )
 
-        try populateFieldsBeforeSave(dto: result.dto, payload: payload)
-        return result.dto
+        try populateFieldsBeforeSave(dto: result, payload: payload)
+        
+        return result
     }
 
     @discardableResult
@@ -153,8 +154,9 @@ extension NSManagedObjectContext {
             context: self
         )
 
-        try populateFieldsBeforeSave(dto: result.dto, payload: payload)
-        return result.dto
+        try populateFieldsBeforeSave(dto: result, payload: payload)
+        
+        return result
     }
 
     func delete(reaction: MessageReactionDTO) {
