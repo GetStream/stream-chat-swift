@@ -2,14 +2,14 @@
 title: Working with Messages
 ---
 
-## Message object
+## Message Object
 A message is represented by `ChatMessage` model.
 Depending on combination of its properties messages appear differently, a screenshot on the left showcases the most common types of messages. A screenshot on the right shows how some of `ChatMessage` properties are reflected in views:
 
 <img src={require("../assets/messages-showcase.png").default} width="40%"/>
 <img src={require("../assets/messages-properties.png").default} width="40%" />
 
-## Optimistic updates
+## Optimistic Updates
 
 Optimistic updates model is applied to messages, meaning that when there is a change to local messages state it is propagated to chat components so it is displayed for users right away and then it's synchronized with backend. In case of synchronization failure users may be prompted to retry the failed action.
 
@@ -38,7 +38,7 @@ messageController.synchronize { error in
 } 
 ```
 
-## Create a message 
+## Create a Message 
 
 `ComposerVC` is a UI component that handles messages creation:
 
@@ -70,7 +70,7 @@ More info on [Pinning](./pinned-messages.md) and [Attachments](./working-with-at
 
 More on [Quoted](#reply-a-message)  messages could be found in this guide below.
 
-## How sending a message works
+## How Sending a Message Works
 
 When `createNewMessage` is called, `ChatChannelController` creates a new message locally and schedules it for send.
 
@@ -128,7 +128,7 @@ When a message is created `ChannelController` sends *stop typing event* for this
 
 :::
 
-## Edit a message
+## Edit a Message
 
 There is an action for editing messages:
 
@@ -196,7 +196,7 @@ class MyChannelViewController: UIViewController {
 }
 ```
 
-## Delete a message
+## Delete a Message
 
 A message can be deleted with the corresponding action:
 
@@ -269,7 +269,7 @@ class MyChannelViewController: UIViewController {
 }
 ```
 
-## Reply a message
+## Reply a Message
 
 There are two ways of replying a message:
 * **Quoted reply**.

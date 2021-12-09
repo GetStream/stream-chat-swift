@@ -20,24 +20,15 @@ let package = Package(
             targets: ["StreamChatUI"]
         )
     ],
-    dependencies: [
-        // StreamChat
-        .package(url: "https://github.com/daltoniam/Starscream.git", from: "4.0.0"),
-        
-        // StreamChatUI
-        .package(url: "https://github.com/kean/Nuke.git", from: "10.0.0"),
-        .package(url: "https://github.com/kirualex/SwiftyGif.git", from: "5.4.1")
-    ],
     targets: [
         .target(
             name: "StreamChat",
-            dependencies: ["Starscream"],
             exclude: ["README.md", "Info.plist"] + streamChatSourcesExcluded,
             resources: [.copy("Database/StreamChatModel.xcdatamodeld")]
         ),
         .target(
             name: "StreamChatUI",
-            dependencies: ["StreamChat", "Nuke", "SwiftyGif"],
+            dependencies: ["StreamChat"],
             exclude: ["README.md", "Info.plist", "Generated/L10n_template.stencil"] + streamChatUIFilesExcluded,
             resources: [.process("Resources")]
         )
@@ -288,6 +279,7 @@ var streamChatUIFilesExcluded: [String] { [
     "ChatMessageList/ChatMessage/__Snapshots__/ChatMessageContentView_Tests/test_appearanceCustomization_usingSubclassing.small-dark.png",
     "ChatMessageList/ChatMessage/__Snapshots__/ChatMessageContentView_Tests/test_appearanceForSystemMessage.rightToLeftLayout-default.png",
     "ChatMessageList/ChatMessage/__Snapshots__/ChatMessageContentView_Tests/test_appearanceCustomization_usingUIConfig.small-dark.png",
+    "ChatMessageList/ChatMessage/__Snapshots__/ChatMessageContentView_Tests/test_appearanceForErrorMessage.small-dark.png",
     "ChatMessageList/ChatMessage/__Snapshots__/ChatMessageContentView_Tests/test_appearance.default-light-bubble-continuousBubble-flipped-quotedMessage-reactions-text-threadInfo.png",
     "ChatMessageList/ChatMessage/__Snapshots__/ChatMessageContentView_Tests/test_appearance.default-light-bubble-flipped-text-timestamp.png",
     "ChatMessageList/ChatMessage/__Snapshots__/ChatMessageContentView_Tests/test_appearance.default-light-avatarSizePadding-bubble-continuousBubble-quotedMessage-reactions-text.png",
@@ -297,6 +289,7 @@ var streamChatUIFilesExcluded: [String] { [
     "ChatMessageList/ChatMessage/__Snapshots__/ChatMessageContentView_Tests/test_appearanceForSystemMessage.default-light.png",
     "ChatMessageList/ChatMessage/__Snapshots__/ChatMessageContentView_Tests/test_appearanceCustomization_usingSubclassing.rightToLeftLayout-default.png",
     "ChatMessageList/ChatMessage/__Snapshots__/ChatMessageContentView_Tests/test_appearance.default-light-avatarSizePadding-bubble-continuousBubble-quotedMessage-reactions-text-threadInfo.png",
+    "ChatMessageList/ChatMessage/__Snapshots__/ChatMessageContentView_Tests/test_appearanceForErrorMessage.rightToLeftLayout-default.png",
     "ChatMessageList/ChatMessage/__Snapshots__/ChatMessageContentView_Tests/test_appearance.default-light-avatarSizePadding-bubble-continuousBubble-text.png",
     "ChatMessageList/ChatMessage/__Snapshots__/ChatMessageContentView_Tests/test_appearance.default-light-bubble-continuousBubble-flipped-text.png",
     "ChatMessageList/ChatMessage/__Snapshots__/ChatMessageContentView_Tests/test_appearance.default-light-bubble-flipped-reactions-text-timestamp.png",
@@ -305,6 +298,7 @@ var streamChatUIFilesExcluded: [String] { [
     "ChatMessageList/ChatMessage/__Snapshots__/ChatMessageContentView_Tests/test_appearance.default-light-avatar-bubble-reactions-text-timestamp.png",
     "ChatMessageList/ChatMessage/__Snapshots__/ChatMessageContentView_Tests/test_appearance.default-light-bubble-continuousBubble-flipped-quotedMessage-text.png",
     "ChatMessageList/ChatMessage/__Snapshots__/ChatMessageContentView_Tests/test_appearanceCustomization_usingUIConfig.extraExtraExtraLarge-light.png",
+    "ChatMessageList/ChatMessage/__Snapshots__/ChatMessageContentView_Tests/test_appearanceForErrorMessage.default-light.png",
     "ChatMessageList/ChatMessage/__Snapshots__/ChatMessageContentView_Tests/test_appearance.default-light-bubble-continuousBubble-flipped-quotedMessage-reactions-text-threadInfo-timestamp.png",
     "ChatMessageList/ChatMessage/__Snapshots__/ChatMessageContentView_Tests/test_appearanceForSystemMessage.small-dark.png",
     "ChatMessageList/ChatMessage/__Snapshots__/ChatMessageContentView_Tests/test_appearance.default-light-bubble-flipped-quotedMessage-reactions-text-timestamp.png",
@@ -318,6 +312,7 @@ var streamChatUIFilesExcluded: [String] { [
     "ChatMessageList/ChatMessage/__Snapshots__/ChatMessageContentView_Tests/test_appearance.default-light-bubble-flipped-quotedMessage-text-timestamp.png",
     "ChatMessageList/ChatMessage/__Snapshots__/ChatMessageContentView_Tests/test_appearance.default-light-bubble-continuousBubble-errorIndicator-flipped-quotedMessage-reactions-text-threadInfo-timestamp.png",
     "ChatMessageList/ChatMessage/__Snapshots__/ChatMessageContentView_Tests/test_appearanceCustomization_usingSubclassing.default-light.png",
+    "ChatMessageList/ChatMessage/__Snapshots__/ChatMessageContentView_Tests/test_appearanceForErrorMessage.extraExtraExtraLarge-light.png",
     "ChatMessageList/Attachments/VideoAttachmentGalleryPreview_Tests.swift",
     "ChatMessageList/Attachments/ChatMessageFileAttachmentListView_Tests.swift",
     "ChatMessageList/Attachments/ChatMessageGalleryView_Tests.swift",

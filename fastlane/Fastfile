@@ -11,6 +11,23 @@ before_all do
   end
 end
 
+desc "Build .xcframeworks"
+lane :build_xcframeworks do
+  output_directory = "#{Dir.pwd}/../Products"
+  ["StreamChatUI", "StreamChat"].each do |scheme|
+    create_xcframework(
+      project: "StreamChat.xcodeproj",
+      scheme: scheme,
+      destinations: ["iOS"],
+      include_BCSymbolMaps: true,
+      include_debug_symbols: true,
+      xcframework_output_directory: output_directory,
+      remove_xcarchives: true
+    )
+    sh("../Scripts/removeUnneededSymbols.sh", scheme, output_directory)
+  end
+end
+
 desc "Release a new version"
 lane :release do |options|
   # ensure_git_status_clean unless options[:no_ensure_clean]

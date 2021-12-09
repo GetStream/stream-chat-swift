@@ -21,7 +21,7 @@ class ConfirmButton_Documentation_Tests: XCTestCase {
         view.isEnabled = true
         generateDocs(
             for: view,
-            annotations: [],
+            annotations: { _ in [] },
             name: "ConfirmButton_documentation_enabled",
             variants: .onlyUserInterfaceStyles
         )
@@ -29,7 +29,7 @@ class ConfirmButton_Documentation_Tests: XCTestCase {
         view.isEnabled = false
         generateDocs(
             for: view,
-            annotations: [],
+            annotations: { _ in [] },
             name: "ConfirmButton_documentation_disabled",
             variants: .onlyUserInterfaceStyles
         )

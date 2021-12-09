@@ -2,10 +2,7 @@
 title: Working with MessageList Layout
 ---
 
-## Square avatars
-
- 
-
+## Square Avatars
 
 :::tip Learn more about custom messagelist layout in the reference docs
 

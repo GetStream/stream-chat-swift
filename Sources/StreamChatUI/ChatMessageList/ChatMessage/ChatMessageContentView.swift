@@ -452,7 +452,7 @@ open class ChatMessageContentView: _View, ThemeProvider {
             textColor = appearance.colorPalette.textLowEmphasis
         } else if content?.shouldRenderAsJumbomoji == true {
             textFont = appearance.fonts.emoji
-        } else if content?.type == .system {
+        } else if content?.type == .system || content?.type == .error {
             textFont = appearance.fonts.caption1.bold
             textColor = appearance.colorPalette.textLowEmphasis
         }

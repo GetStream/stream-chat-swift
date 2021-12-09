@@ -3,7 +3,6 @@
 //
 
 import StreamChat
-import SwiftyGif
 import UIKit
 
 open class ChatMessageGiphyView: _View, ComponentsProvider {

@@ -44,13 +44,15 @@ class ComposerVC_Documentation_Tests: XCTestCase {
         generateDocs(
             for: composerVC.view,
             parentView: composerView,
-            annotations: [ // Annotation types for the given subviews of the view
-                .init(view: composerView.headerView, descriptionLabelPosition: .top),
-                .init(view: composerView.leadingContainer, descriptionLabelPosition: .left),
-                .init(view: composerView.trailingContainer, descriptionLabelPosition: .right),
-                .init(view: composerView.bottomContainer, descriptionLabelPosition: .bottom),
-                .init(view: composerView.inputMessageView, descriptionLabelPosition: .bottomRight)
-            ],
+            annotations: { _ in
+                [ // Annotation types for the given subviews of the view
+                    .init(view: composerView.headerView, descriptionLabelPosition: .top),
+                    .init(view: composerView.leadingContainer, descriptionLabelPosition: .left),
+                    .init(view: composerView.trailingContainer, descriptionLabelPosition: .right),
+                    .init(view: composerView.bottomContainer, descriptionLabelPosition: .bottom),
+                    .init(view: composerView.inputMessageView, descriptionLabelPosition: .bottomRight)
+                ]
+            },
             name: "ComposerVC_documentation", // Name of the file, will be suffixed with dark/light trait...
             variants: .onlyUserInterfaceStyles
         )

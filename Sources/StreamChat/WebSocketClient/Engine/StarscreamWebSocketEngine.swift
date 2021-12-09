@@ -4,11 +4,8 @@
 
 import Foundation
 
-#if canImport(Starscream)
-import Starscream
-    
 class StarscreamWebSocketProvider: WebSocketEngine {
-    private let webSocket: Starscream.WebSocket
+    private let webSocket: WebSocket
     var request: URLRequest { webSocket.request }
     var callbackQueue: DispatchQueue { webSocket.callbackQueue }
     weak var delegate: WebSocketEngineDelegate?
@@ -27,7 +24,7 @@ class StarscreamWebSocketProvider: WebSocketEngine {
         var request = request
         request.allHTTPHeaderFields = allHeaders
             
-        webSocket = Starscream.WebSocket(request: request)
+        webSocket = WebSocket(request: request)
         webSocket.delegate = self
         webSocket.callbackQueue = callbackQueue
     }
@@ -45,7 +42,7 @@ class StarscreamWebSocketProvider: WebSocketEngine {
     }
 }
     
-extension StarscreamWebSocketProvider: Starscream.WebSocketDelegate {
+extension StarscreamWebSocketProvider: WebSocketDelegate {
     func didReceive(event: WebSocketEvent, client: WebSocket) {
         switch event {
         case .connected:
@@ -69,5 +66,3 @@ extension StarscreamWebSocketProvider: Starscream.WebSocketDelegate {
         }
     }
 }
-    
-#endif
