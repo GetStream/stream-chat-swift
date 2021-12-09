@@ -56,7 +56,10 @@ open class ChatChannelHeaderView:
     override open func updateContent() {
         super.updateContent()
 
-        titleContainerView.content = (titleText, subtitleText)
+        channelTitleText { [weak self] title in
+            guard let self = self else { return }
+            self.titleContainerView.content = (title?.trimStringBy(count: 10), self.subtitleText)
+        }
     }
 
     /// The title text used to render the title label. By default it is the channel name.
@@ -64,6 +67,52 @@ open class ChatChannelHeaderView:
         guard let channel = channelController?.channel else { return nil }
         return components.channelNamer(channel, currentUserId)
     }
+
+    open func opponentWalletAddress(channel: ChatChannel, completion: @escaping ((String?) -> Void)) {
+        guard let controller = channelController else {
+            completion(nil)
+            return
+        }
+        let memberListController = controller.client.memberListController(query: .init(cid: channel.cid))
+        memberListController.synchronize { [weak self] error in
+            guard error == nil, let weakSelf = self else { return }
+            if channel.isDirectMessageChannel { // 1-1 chat
+                let opponent = memberListController.members.filter({ (member: ChatChannelMember) -> Bool in
+                    return member.id != memberListController.client.currentUserId
+                })
+                if let firstMember = opponent.first {
+                    let extraData = firstMember.extraData
+                    if let walletAddress = extraData["walletAddress"] {
+                        let wallet = fetchRawData(raw: walletAddress) as? String ?? ""
+                        completion(wallet)
+                    } else {
+                        completion(nil)
+                    }
+                } else {
+                    completion(nil)
+                }
+            } else {
+                completion(nil)
+            }
+        }
+    }
+
+    open func channelTitleText(completion: @escaping ((String?) -> Void)) {
+        guard let channel = channelController?.channel else {
+            completion(nil)
+            return
+        }
+        if let channelName = components.channelNamer(channel, currentUserId) {
+            if channelName.isEmpty {
+                opponentWalletAddress(channel: channel, completion: completion)
+            } else {
+                completion(channelName)
+            }
+        } else {
+            completion(nil)
+        }
+    }
+
 
     /// The subtitle text used in the subtitle label. By default it shows member online status.
     open var subtitleText: String? {
@@ -145,5 +194,17 @@ open class ChatChannelHeaderView:
 
     deinit {
         timer?.invalidate()
+    }
+}
+
+extension String {
+    func trimStringBy(count: Int) -> String {
+        let newString = self.trimmingCharacters(in: .whitespacesAndNewlines)
+        if self.count > count * 2 {
+            let prefix = String(newString.prefix(count))
+            let suffix = String(newString.suffix(count))
+            return "\(prefix)...\(suffix)"
+        }
+        return self
     }
 }
