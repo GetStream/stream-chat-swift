@@ -82,11 +82,12 @@ protocol MessageDatabaseSession {
     @discardableResult
     func saveMessage(
         payload: MessagePayload,
-        for cid: ChannelId?
+        for cid: ChannelId?,
+        syncOwnReactions: Bool
     ) throws -> MessageDTO?
     
     @discardableResult
-    func saveMessage(payload: MessagePayload, channelDTO: ChannelDTO) throws -> MessageDTO
+    func saveMessage(payload: MessagePayload, channelDTO: ChannelDTO, syncOwnReactions: Bool) throws -> MessageDTO
 
     @discardableResult
     func saveMessage(payload: MessagePayload, for query: MessageSearchQuery) throws -> MessageDTO?
@@ -369,7 +370,40 @@ extension DatabaseSession {
         if messageDoesNotExist && !eventsThatCreateMessages.contains(payload.eventType) {
             return
         }
-        
-        try saveMessage(payload: message, channelDTO: channel)
+
+        let messageDTO = try saveMessage(payload: message, channelDTO: channel, syncOwnReactions: false)
+
+        // handle reaction events for messages that already exist in the database and for this user
+        // this is needed because WS events do not contain message.own_reactions
+        guard let eventUserID = payload.user?.id, eventUserID == currentUser?.user.id else {
+            return
+        }
+
+        guard let event = try? payload.event() else {
+            return
+        }
+
+        do {
+            switch event {
+            case let event as ReactionNewEventDTO:
+                let reaction = try context.saveReaction(payload: event.reaction)
+                messageDTO.ownReactions.append(MessageReactionDTO.createId(dto: reaction))
+                messageDTO.ownReactions = Set(messageDTO.ownReactions).sorted()
+            case let event as ReactionUpdatedEventDTO:
+                try context.saveReaction(payload: event.reaction)
+            case let event as ReactionDeletedEventDTO:
+                if let dto = context.reaction(
+                    messageId: event.message.id,
+                    userId: event.user.id,
+                    type: event.reaction.type
+                ) {
+                    context.delete(reaction: dto)
+                }
+            default:
+                break
+            }
+        } catch {
+            log.warning("Failed to update message reaction in the database, error: \(error)")
+        }
     }
 }

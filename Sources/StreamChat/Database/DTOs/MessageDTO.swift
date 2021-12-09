@@ -390,8 +390,8 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         
         return message
     }
-    
-    func saveMessage(payload: MessagePayload, channelDTO: ChannelDTO) throws -> MessageDTO {
+
+    func saveMessage(payload: MessagePayload, channelDTO: ChannelDTO, syncOwnReactions: Bool) throws -> MessageDTO {
         let cid = try ChannelId(cid: channelDTO.cid)
         let dto = MessageDTO.loadOrCreate(id: payload.id, context: self)
 
@@ -435,7 +435,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         }
 
         if let quotedMessage = payload.quotedMessage {
-            dto.quotedMessage = try saveMessage(payload: quotedMessage, channelDTO: channelDTO)
+            dto.quotedMessage = try saveMessage(payload: quotedMessage, channelDTO: channelDTO, syncOwnReactions: false)
         } else if let quotedMessageId = payload.quotedMessageId {
             // In case we do not have a fully formed quoted message in the payload,
             // we check for quotedMessageId. This can happen in the case of nested quoted messages.
@@ -479,9 +479,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
             return MessageReactionDTO.createId(dto: reactionDTO)
         }
 
-        // the .filter part is a workaround an API bug, some WS events contain
-        // the message.own_reactions field populated with reactions from other users
-        if payload.ownReactions.filter({ currentUser?.user.id != $0.user.id }).isEmpty {
+        if syncOwnReactions {
             dto.ownReactions = payload.ownReactions.compactMap {
                 guard let reactionDTO = try? saveReaction(payload: $0, message: dto) else {
                     return nil
@@ -514,7 +512,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         return dto
     }
 
-    func saveMessage(payload: MessagePayload, for cid: ChannelId?) throws -> MessageDTO? {
+    func saveMessage(payload: MessagePayload, for cid: ChannelId?, syncOwnReactions: Bool = true) throws -> MessageDTO? {
         guard payload.channel != nil || cid != nil else {
             throw ClientError.MessagePayloadSavingFailure("""
             Either `payload.channel` or `cid` must be provided to sucessfuly save the message payload.
@@ -543,7 +541,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
             return nil
         }
         
-        return try saveMessage(payload: payload, channelDTO: channel)
+        return try saveMessage(payload: payload, channelDTO: channel, syncOwnReactions: syncOwnReactions)
     }
     
     func saveMessage(payload: MessagePayload, for query: MessageSearchQuery) throws -> MessageDTO? {
