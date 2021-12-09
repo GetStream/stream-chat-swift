@@ -7,7 +7,7 @@ import Foundation
 
 @objc(MessageReactionDTO)
 final class MessageReactionDTO: NSManagedObject {
-    @NSManaged fileprivate var id: String
+    @NSManaged private(set) var id: String
 
     // holds the rawValue of LocalReactionState
     @NSManaged fileprivate var localStateRaw: String?
@@ -29,12 +29,6 @@ final class MessageReactionDTO: NSManagedObject {
         type: MessageReactionType
     ) -> String {
         [userId, messageId, type.rawValue].joined(separator: "/")
-    }
-    
-    static func createId(
-        dto: MessageReactionDTO
-    ) -> String {
-        createId(userId: dto.user.id, messageId: dto.message.id, type: .init(rawValue: dto.type))
     }
 }
 

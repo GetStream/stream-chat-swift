@@ -394,8 +394,10 @@ extension DatabaseSession {
             switch event {
             case let event as ReactionNewEventDTO:
                 let reaction = try context.saveReaction(payload: event.reaction)
-                messageDTO.ownReactions.append(MessageReactionDTO.createId(dto: reaction))
-                messageDTO.ownReactions = Set(messageDTO.ownReactions).sorted()
+                
+                if !messageDTO.ownReactions.contains(reaction.id) {
+                    messageDTO.ownReactions.append(reaction.id)
+                }
             case let event as ReactionUpdatedEventDTO:
                 try context.saveReaction(payload: event.reaction)
             case let event as ReactionDeletedEventDTO:

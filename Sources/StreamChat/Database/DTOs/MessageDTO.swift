@@ -472,20 +472,16 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         
         dto.channel = channelDTO
 
-        dto.latestReactions = payload.latestReactions.compactMap {
-            guard let reactionDTO = try? saveReaction(payload: $0, message: dto) else {
-                return nil
-            }
-            return MessageReactionDTO.createId(dto: reactionDTO)
-        }
+        dto.latestReactions = payload
+            .latestReactions
+            .compactMap { try? saveReaction(payload: $0, message: dto) }
+            .map(\.id)
 
         if syncOwnReactions {
-            dto.ownReactions = payload.ownReactions.compactMap {
-                guard let reactionDTO = try? saveReaction(payload: $0, message: dto) else {
-                    return nil
-                }
-                return MessageReactionDTO.createId(dto: reactionDTO)
-            }
+            dto.ownReactions = payload
+                .ownReactions
+                .compactMap { try? saveReaction(payload: $0, message: dto) }
+                .map(\.id)
         }
 
         let attachments: Set<AttachmentDTO> = try Set(
@@ -608,13 +604,13 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         dto.score = Int64(score)
         dto.extraData = try JSONEncoder.default.encode(extraData)
 
-        let reactionId = MessageReactionDTO.createId(dto: dto)
-
-        if message.latestReactions.filter({ $0 == reactionId }).isEmpty {
+        let reactionId = dto.id
+        
+        if !message.latestReactions.contains(reactionId) {
             message.latestReactions.append(reactionId)
         }
 
-        if message.ownReactions.filter({ $0 == reactionId }).isEmpty {
+        if !message.ownReactions.contains(reactionId) {
             message.ownReactions.append(reactionId)
         }
 
@@ -646,11 +642,9 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         guard version == nil || version == reaction.version else {
             return nil
         }
-
-        let reactionId = MessageReactionDTO.createId(dto: reaction)
-
-        message.latestReactions = message.latestReactions.filter { $0 != reactionId }
-        message.ownReactions = message.ownReactions.filter { $0 != reactionId }
+        
+        message.latestReactions = message.latestReactions.filter { $0 != reaction.id }
+        message.ownReactions = message.ownReactions.filter { $0 != reaction.id }
 
         guard let reactionScore = message.reactionScores.removeValue(forKey: type.rawValue), reactionScore > 1 else {
             return reaction
