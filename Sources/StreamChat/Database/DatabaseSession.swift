@@ -79,6 +79,8 @@ protocol MessageDatabaseSession {
     /// Throws an error if the save fails.
     ///
     /// You must either provide `cid` or `payload.channel` value must not be `nil`.
+    /// The `syncOwnReactions` should be set to `true` when the payload comes from an API response and `false` when the payload
+    /// is received via WS events. For performance reasons the API does not populate the `message.own_reactions` when sending events
     @discardableResult
     func saveMessage(
         payload: MessagePayload,
@@ -86,6 +88,11 @@ protocol MessageDatabaseSession {
         syncOwnReactions: Bool
     ) throws -> MessageDTO?
     
+    /// Saves the provided message payload to the DB. Return's the matching `MessageDTO` if the save was successful.
+    /// Throws an error if the save fails.
+    ///
+    /// The `syncOwnReactions` should be set to `true` when the payload comes from an API response and `false` when the payload
+    /// is received via WS events. For performance reasons the API does not populate the `message.own_reactions` when sending events
     @discardableResult
     func saveMessage(payload: MessagePayload, channelDTO: ChannelDTO, syncOwnReactions: Bool) throws -> MessageDTO
 
