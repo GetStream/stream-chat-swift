@@ -3,6 +3,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+### 🔄 Changed
+
+# [4.5.2](https://github.com/GetStream/stream-chat-swift/releases/tag/4.5.2)
+_December 10, 2021_
+
 ### 🐞 Fixed
 
 - Fix regression for reactions left by the current user being not accurate [#1680](https://github.com/GetStream/stream-chat-swift/issues/1680)
