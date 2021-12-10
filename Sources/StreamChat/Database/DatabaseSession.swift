@@ -378,37 +378,30 @@ extension DatabaseSession {
 
         // handle reaction events for messages that already exist in the database and for this user
         // this is needed because WS events do not contain message.own_reactions
-        guard let eventUserID = payload.user?.id, eventUserID == currentUser?.user.id else {
-            return
-        }
-
-        guard let event = try? payload.event() else {
-            return
-        }
-
-        do {
-            switch event {
-            case let event as ReactionNewEventDTO:
-                let reaction = try saveReaction(payload: event.reaction)
-                
-                if !messageDTO.ownReactions.contains(reaction.id) {
-                    messageDTO.ownReactions.append(reaction.id)
+        if let currentUser = self.currentUser, currentUser.user.id == payload.user?.id {
+            do {
+                switch try? payload.event() {
+                case let event as ReactionNewEventDTO:
+                    let reaction = try saveReaction(payload: event.reaction)
+                    if !reaction.message.ownReactions.contains(reaction.id) {
+                        reaction.message.ownReactions.append(reaction.id)
+                    }
+                case let event as ReactionUpdatedEventDTO:
+                    try saveReaction(payload: event.reaction)
+                case let event as ReactionDeletedEventDTO:
+                    if let dto = reaction(
+                        messageId: event.message.id,
+                        userId: event.user.id,
+                        type: event.reaction.type
+                    ) {
+                        delete(reaction: dto)
+                    }
+                default:
+                    break
                 }
-            case let event as ReactionUpdatedEventDTO:
-                try saveReaction(payload: event.reaction)
-            case let event as ReactionDeletedEventDTO:
-                if let dto = reaction(
-                    messageId: event.message.id,
-                    userId: event.user.id,
-                    type: event.reaction.type
-                ) {
-                    delete(reaction: dto)
-                }
-            default:
-                break
+            } catch {
+                log.warning("Failed to update message reaction in the database, error: \(error)")
             }
-        } catch {
-            log.warning("Failed to update message reaction in the database, error: \(error)")
         }
     }
 }
