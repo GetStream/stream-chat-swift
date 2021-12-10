@@ -18,6 +18,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### ✅ Added
 - Expose container embedding top & bottom containers by `ChatChannelListItemView` [#1670](https://github.com/GetStream/stream-chat-swift/issues/1670)
 
+# [4.5.2](https://github.com/GetStream/stream-chat-swift/releases/tag/4.5.2)
+_December 10, 2021_
+
+### 🐞 Fixed
+
+- Fix regression for reactions left by the current user being not accurate [#1680](https://github.com/GetStream/stream-chat-swift/issues/1680)
+
 # [4.5.1](https://github.com/GetStream/stream-chat-swift/releases/tag/4.5.1)
 _December 01, 2021_
 
