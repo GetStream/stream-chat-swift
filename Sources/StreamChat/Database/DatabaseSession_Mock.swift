@@ -127,14 +127,14 @@ extension DatabaseSessionMock {
         )
     }
     
-    func saveMessage(payload: MessagePayload, channelDTO: ChannelDTO) throws -> MessageDTO {
+    func saveMessage(payload: MessagePayload, for cid: ChannelId?, syncOwnReactions: Bool) throws -> MessageDTO? {
         try throwErrorIfNeeded()
-        return try underlyingSession.saveMessage(payload: payload, channelDTO: channelDTO)
+        return try? underlyingSession.saveMessage(payload: payload, for: cid, syncOwnReactions: syncOwnReactions)
     }
-
-    func saveMessage(payload: MessagePayload, for cid: ChannelId?) throws -> MessageDTO? {
+    
+    func saveMessage(payload: MessagePayload, channelDTO: ChannelDTO, syncOwnReactions: Bool) throws -> MessageDTO {
         try throwErrorIfNeeded()
-        return try? underlyingSession.saveMessage(payload: payload, for: cid)
+        return try underlyingSession.saveMessage(payload: payload, channelDTO: channelDTO, syncOwnReactions: syncOwnReactions)
     }
     
     func pin(message: MessageDTO, pinning: MessagePinning) throws {
