@@ -17,4 +17,4 @@ jobs:
         if: startsWith(github.event.pull_request.head.ref, 'release/')
               BRANCH_NAME="${{ github.event.pull_request.head.ref }}"
               VERSION=${BRANCH_NAME#release/}
-        run: bundle exec fastlane complete_release version:$VERSION
+        run: bundle exec fastlane publish_release version:$VERSION
