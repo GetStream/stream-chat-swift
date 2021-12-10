@@ -30,7 +30,7 @@ end
 
 desc "Release a new version"
 lane :release do |options|
-  # ensure_git_status_clean unless options[:no_ensure_clean]
+  ensure_git_status_clean unless options[:no_ensure_clean]
 
   # Ensure we have a release type
   UI.user_error!("Please use type parameter with one of the options: type:patch, type:minor, type:major") unless ["patch", "minor", "major"].include?(options[:type])
@@ -91,7 +91,7 @@ lane :release do |options|
 end
 
 desc "Completes an SDK Release"
-lane :complete_release do |options|
+lane :publish_release do |options|
   version = options[:version]
   github_release = set_github_release(
                      repository_name: "GetStream/stream-chat-swift",
