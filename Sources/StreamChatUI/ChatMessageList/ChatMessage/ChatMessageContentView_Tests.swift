@@ -26,7 +26,7 @@ final class ChatMessageContentView_Tests: XCTestCase {
             let view = contentView(message: message, layout: layout, components: components)
 
             // Assert message content view is rendered correctly.
-            AssertSnapshot(view, variants: [.defaultLight], suffix: layout.description)
+            AssertSnapshot(view, variants: [.defaultLight], suffix: layout.rawValue)
         }
     }
 
@@ -119,6 +119,30 @@ final class ChatMessageContentView_Tests: XCTestCase {
             appearance: appearance
         )
 
+        // Assert message content view is rendered correctly.
+        AssertSnapshot(view)
+    }
+    
+    func test_appearanceForErrorMessage() {
+        // Create a system message
+        let systemMessage: ChatMessage = .mock(
+            id: .unique,
+            cid: .unique,
+            text: "Some member was added",
+            type: .error,
+            author: myFriend,
+            createdAt: createdAt,
+            isSentByCurrentUser: false
+        )
+        
+        let appearance = Appearance.default
+        
+        let view = contentView(
+            message: systemMessage,
+            layout: systemMessage.layout(isLastInGroup: true),
+            appearance: appearance
+        )
+        
         // Assert message content view is rendered correctly.
         AssertSnapshot(view)
     }
@@ -366,7 +390,7 @@ private extension ChatMessageContentView_Tests {
 
 extension ChatMessage {
     func layout(isLastInGroup: Bool) -> ChatMessageLayoutOptions {
-        guard type != .system else {
+        guard type != .system && type != .error else {
             return [.centered, .text]
         }
         

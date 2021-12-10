@@ -20,7 +20,7 @@ class AttachmentPlaceholderView_Documentation_Tests: XCTestCase {
         
         generateDocs(
             for: view,
-            annotations: [],
+            annotations: { _ in [] },
             name: "AttachmentPlaceholderView_documentation",
             variants: .onlyUserInterfaceStyles
         )

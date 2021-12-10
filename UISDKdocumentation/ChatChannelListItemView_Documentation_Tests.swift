@@ -22,15 +22,17 @@ class ChatChannelListItemView_Documentation_Tests: XCTestCase {
         // Generate the docs for the given view:
         generateDocs(
             for: view, // The whole view which we want to annotate
-            annotations: [ // Annotation types for the given subviews of the view
-                .init(view: view.titleLabel, descriptionLabelPosition: .top),
-                .init(view: view.subtitleLabel, descriptionLabelPosition: .bottom),
-                .init(view: view.avatarView, descriptionLabelPosition: .left),
-                .init(view: view.timestampLabel, descriptionLabelPosition: .bottomRight),
-                .init(view: view.unreadCountView, descriptionLabelPosition: .topRight),
-                .init(view: view.topContainer, highlightColor: .purple, isNameIncluded: false, descriptionLabelPosition: nil),
-                .init(view: view.bottomContainer, highlightColor: .purple, isNameIncluded: false, descriptionLabelPosition: nil)
-            ],
+            annotations: { view in
+               [ // Annotation types for the given subviews of the view
+                    .init(view: view.titleLabel, descriptionLabelPosition: .top),
+                    .init(view: view.subtitleLabel, descriptionLabelPosition: .bottom),
+                    .init(view: view.avatarView, descriptionLabelPosition: .left),
+                    .init(view: view.timestampLabel, descriptionLabelPosition: .bottomRight),
+                    .init(view: view.unreadCountView, descriptionLabelPosition: .topRight),
+                    .init(view: view.topContainer, highlightColor: .purple, isNameIncluded: false, descriptionLabelPosition: nil),
+                    .init(view: view.bottomContainer, highlightColor: .purple, isNameIncluded: false, descriptionLabelPosition: nil)
+                ]
+            },
             name: "ChannelListItemView_documentation", // Name of the file, will be suffixed with dark/light trait...
             variants: .onlyUserInterfaceStyles
         )

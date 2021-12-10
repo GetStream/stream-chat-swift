@@ -9,7 +9,7 @@ This component is used to display a channel in the [`ChannelList`](../components
 
 ### Customization
 
-#### Use a custom component
+#### Use a Custom Component
 
 You can swap the built-in component with your own by setting `Components.default.channelContentView` to your own view type.
 

@@ -3,7 +3,8 @@
     {
       "Basics": [
         "basics/overview",
-        "basics/glossary"
+        "basics/glossary",
+        "basics/logs"
       ]
     },
     {

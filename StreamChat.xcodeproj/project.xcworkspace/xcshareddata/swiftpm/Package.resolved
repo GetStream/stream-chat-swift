@@ -6,17 +6,8 @@
         "repositoryURL": "https://github.com/kean/Nuke",
         "state": {
           "branch": null,
-          "revision": "c0b32b0d7154afceb3fc08b199492f125ff4267e",
-          "version": "10.3.3"
-        }
-      },
-      {
-        "package": "Starscream",
-        "repositoryURL": "https://github.com/daltoniam/Starscream.git",
-        "state": {
-          "branch": null,
-          "revision": "df8d82047f6654d8e4b655d1b1525c64e1059d21",
-          "version": "4.0.4"
+          "revision": "7f73ceaeacd5df75a7994cd82e165ad9ff1815db",
+          "version": "9.6.1"
         }
       },
       {
@@ -26,15 +17,6 @@
           "branch": null,
           "revision": "f8a9c997c3c1dab4e216a8ec9014e23144cbab37",
           "version": "1.9.0"
-        }
-      },
-      {
-        "package": "SwiftyGif",
-        "repositoryURL": "https://github.com/kirualex/SwiftyGif.git",
-        "state": {
-          "branch": null,
-          "revision": "652b344111a363a53af602b9eef0b52ab1146b42",
-          "version": "5.4.1"
         }
       }
     ]

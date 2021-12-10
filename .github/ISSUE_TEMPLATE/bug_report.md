@@ -18,7 +18,7 @@ assignees: ''
 
 ## GetStream Environment
 **GetStream Chat version:**
-**GetStream Chat frameworks:** StreamChat, StreamChatUI, StreamChatClient, StreamChatCore
+**GetStream Chat frameworks:** StreamChat, StreamChatUI
 **iOS version:**
 **Swift version:**
 **Xcode version:**

@@ -23,10 +23,12 @@ class TitleContainerView_Documentation_Tests: XCTestCase {
         
         generateDocs(
             for: view,
-            annotations: [ // Annotation types for the given subviews of the view
+            annotations: { view in
+               [ // Annotation types for the given subviews of the view
                 .init(view: view.titleLabel, descriptionLabelPosition: .topLeft),
                 .init(view: view.subtitleLabel, descriptionLabelPosition: .topRight),
-            ],
+               ]
+            },
             name: "TitleContainerView_documentation", // Name of the file, will be suffixed with dark/light trait...
             variants: .onlyUserInterfaceStyles
         )
