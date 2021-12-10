@@ -22,7 +22,7 @@ fastlane release
 Release a new version
 ### complete_release
 ```
-fastlane complete_release
+fastlane publish_release
 ```
 Completes an SDK Release
 ### push_pods
