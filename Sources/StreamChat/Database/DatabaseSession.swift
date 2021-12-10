@@ -330,13 +330,11 @@ extension DatabaseSession {
             try saveUser(payload: userPayload)
         }
         
-        var channelDTO: ChannelDTO?
-
         // Member events are handled in `MemberEventMiddleware`
         
         // Save a channel detail data.
         if let channelDetailPayload = payload.channel {
-            channelDTO = try saveChannel(payload: channelDetailPayload, query: nil)
+            try saveChannel(payload: channelDetailPayload, query: nil)
         }
         
         if let currentUserPayload = payload.currentUser {
@@ -351,31 +349,8 @@ extension DatabaseSession {
             currentUser.lastReceivedEventDate = date
         }
 
-        guard let message = payload.message, let cid = payload.cid else {
-            return
-        }
-
-        if channelDTO == nil {
-            channelDTO = channel(cid: cid)
-        }
-
-        guard let channel = channelDTO else {
-            log.info("event contains a cid that is not yet known, skipping")
-            return
-        }
-
-        let messageDoesNotExist = self.message(id: message.id) == nil
+        try saveMessageIfNeeded(from: payload)
         
-        let eventsThatCreateMessages: Set<EventType> = [
-            .channelUpdated, .messageNew, .notificationMessageNew
-        ]
-
-        if messageDoesNotExist && !eventsThatCreateMessages.contains(payload.eventType) {
-            return
-        }
-
-        let messageDTO = try saveMessage(payload: message, channelDTO: channel, syncOwnReactions: false)
-
         // handle reaction events for messages that already exist in the database and for this user
         // this is needed because WS events do not contain message.own_reactions
         if let currentUser = self.currentUser, currentUser.user.id == payload.user?.id {
@@ -403,5 +378,37 @@ extension DatabaseSession {
                 log.warning("Failed to update message reaction in the database, error: \(error)")
             }
         }
+    }
+    
+    func saveMessageIfNeeded(from payload: EventPayload) throws {
+        guard let messagePayload = payload.message else {
+            // Event does not contain message
+            return
+        }
+        
+        guard let cid = payload.cid, let channelDTO = channel(cid: cid) else {
+            // Channel does not exist locally
+            return
+        }
+        
+        let messageExistsLocally = message(id: messagePayload.id) != nil
+        let messageMustBeCreated = payload.eventType.shouldCreateMessageInDatabase
+        
+        guard messageExistsLocally || messageMustBeCreated else {
+            // Message does not exits locally and should not be saved
+            return
+        }
+        
+        try saveMessage(
+            payload: messagePayload,
+            channelDTO: channelDTO,
+            syncOwnReactions: false
+        )
+    }
+}
+
+private extension EventType {
+    var shouldCreateMessageInDatabase: Bool {
+        [.channelUpdated, .messageNew, .notificationMessageNew].contains(self)
     }
 }
