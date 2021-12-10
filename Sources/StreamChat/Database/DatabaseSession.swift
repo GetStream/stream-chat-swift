@@ -355,12 +355,8 @@ extension DatabaseSession {
             return
         }
 
-        guard let context = self as? NSManagedObjectContext else {
-            return
-        }
-
         if channelDTO == nil {
-            channelDTO = ChannelDTO.load(cid: cid, context: context)
+            channelDTO = channel(cid: cid)
         }
 
         guard let channel = channelDTO else {
@@ -368,7 +364,7 @@ extension DatabaseSession {
             return
         }
 
-        let messageDoesNotExist = MessageDTO.load(id: message.id, context: context) == nil
+        let messageDoesNotExist = self.message(id: message.id) == nil
         
         let eventsThatCreateMessages: Set<EventType> = [
             .channelUpdated, .messageNew, .notificationMessageNew
@@ -393,20 +389,20 @@ extension DatabaseSession {
         do {
             switch event {
             case let event as ReactionNewEventDTO:
-                let reaction = try context.saveReaction(payload: event.reaction)
+                let reaction = try saveReaction(payload: event.reaction)
                 
                 if !messageDTO.ownReactions.contains(reaction.id) {
                     messageDTO.ownReactions.append(reaction.id)
                 }
             case let event as ReactionUpdatedEventDTO:
-                try context.saveReaction(payload: event.reaction)
+                try saveReaction(payload: event.reaction)
             case let event as ReactionDeletedEventDTO:
-                if let dto = context.reaction(
+                if let dto = reaction(
                     messageId: event.message.id,
                     userId: event.user.id,
                     type: event.reaction.type
                 ) {
-                    context.delete(reaction: dto)
+                    delete(reaction: dto)
                 }
             default:
                 break
