@@ -369,6 +369,7 @@ extension DatabaseSession {
                         userId: event.user.id,
                         type: event.reaction.type
                     ) {
+                        dto.message.ownReactions.removeAll(where: { $0 == dto.id })
                         delete(reaction: dto)
                     }
                 default:
