@@ -474,13 +474,13 @@ extension NSManagedObjectContext: MessageDatabaseSession {
 
         dto.latestReactions = payload
             .latestReactions
-            .compactMap { try? saveReaction(payload: $0, message: dto) }
+            .compactMap { try? saveReaction(payload: $0) }
             .map(\.id)
 
         if syncOwnReactions {
             dto.ownReactions = payload
                 .ownReactions
-                .compactMap { try? saveReaction(payload: $0, message: dto) }
+                .compactMap { try? saveReaction(payload: $0) }
                 .map(\.id)
         }
 
@@ -594,7 +594,12 @@ extension NSManagedObjectContext: MessageDatabaseSession {
             throw ClientError.MessageDoesNotExist(messageId: messageId)
         }
 
-        let dto = try MessageReactionDTO.loadOrCreate(messageId: messageId, type: type, user: currentUserDTO.user, context: self)
+        let dto = MessageReactionDTO.loadOrCreate(
+            message: message,
+            type: type,
+            user: currentUserDTO.user,
+            context: self
+        )
 
         // make sure we update the reactionScores for the message in a way that works for new or updated reactions
         let scoreDiff = Int64(score) - dto.score
