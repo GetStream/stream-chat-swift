@@ -268,38 +268,81 @@ class RedPacketSentBubble: UITableViewCell {
         }
     }
 
-    @objc func btnPickButtonAction() {
-        guard let redPacket = getRedPacketExtraData(), isSender == false else {
-            return
-        }
-        if let packetId = redPacket["packetId"] {
-            let redPacketId = fetchRawData(raw: packetId) as? String ?? ""
-            var userInfo = [String: Any]()
-            userInfo["packetId"] = redPacketId
-            NotificationCenter.default.post(name: .pickUpRedPacket, object: nil, userInfo: userInfo)
+    private func getEndTime(raw: [String: RawJSON]?) -> Date? {
+        guard let rawData = raw else { return nil }
+        if let endTime = rawData ["endTime"] {
+            let strEndTime = fetchRawData(raw: endTime) as? String ?? ""
+            let dateFormatter = DateFormatter()
+            dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss"
+            dateFormatter.locale = Locale.autoupdatingCurrent
+            if let date = dateFormatter.date(from: strEndTime) {
+                return date.toLocalTime()
+            } else {
+                return nil
+            }
+        } else {
+            return nil
         }
     }
 
+    private func isAllowToPick() -> Bool {
+        guard let redPacket = getRedPacketExtraData() else {
+            showSnakBar(text: "Expired - better luck next time!")
+            return false
+        }
+        // check userId
+        if content?.isSentByCurrentUser ?? false {
+            showSnakBar(text: "You can not pickup your own packet")
+            return false
+        } else {
+            // check end time
+            if let endDate = getEndTime(raw: redPacket) {
+                let minutes = Date().minutesFromCurrentDate(endDate)
+                if minutes > 10 {
+                    showSnakBar(text: "Expired - better luck next time!")
+                    return false
+                } else {
+                    return true
+                }
+            } else {
+                showSnakBar(text: "Expired - better luck next time!")
+                return false
+            }
+        }
+        return false
+    }
+
+    @objc private func btnPickButtonAction() {
+        if isAllowToPick() {
+            guard let redPacket = getRedPacketExtraData(), isSender == false else {
+                return
+            }
+            if let packetId = redPacket["packetId"] {
+                let redPacketId = fetchRawData(raw: packetId) as? String ?? ""
+                var userInfo = [String: Any]()
+                userInfo["packetId"] = redPacketId
+                NotificationCenter.default.post(name: .pickUpRedPacket, object: nil, userInfo: userInfo)
+            }
+        }
+    }
+
+    private func showSnakBar(text: String) {
+        var userInfo = [String: Any]()
+        userInfo["message"] = text
+        NotificationCenter.default.post(name: .showSnackBar, object: nil, userInfo: userInfo)
+    }
 }
 
-/**
- if let toUserName = walletData["recipientName"] {
-     var recipientName = fetchRawData(raw: toUserName) as? String ?? ""
-     recipientName = String(recipientName.prefix(4))
-     descriptionLabel.text = "you have sent crypto to \(recipientName)"
- }
- if let amount = walletData["transferAmount"] {
-     let one = fetchRawData(raw: amount) as? Double ?? 0
-     sentCryptoLabel.text = "SENT: \(one) ONE"
- }
- */
+extension Date {
+    func toLocalTime() -> Date {
+        let timezone = TimeZone.current
+        let seconds = TimeInterval(timezone.secondsFromGMT(for: self))
+        return Date(timeInterval: seconds, since: self)
+    }
 
-//extension Date {
-//    static func minutesBetweenDates(_ oldDate: Date, _ newDate: Date) -> CGFloat {
-//        //get both times sinces refrenced date and divide by 60 to get minutes
-//        let newDateMinutes = newDate.timeIntervalSinceReferenceDate/60
-//        let oldDateMinutes = oldDate.timeIntervalSinceReferenceDate/60
-//        //then return the difference
-//        return CGFloat(newDateMinutes - oldDateMinutes)
-//    }
-//}
+    func minutesFromCurrentDate(_ oldDate: Date) -> Float {
+        let newDateMinutes = Date().timeIntervalSinceReferenceDate/60
+        let oldDateMinutes = oldDate.timeIntervalSinceReferenceDate/60
+        return Float(newDateMinutes - oldDateMinutes)
+    }
+}

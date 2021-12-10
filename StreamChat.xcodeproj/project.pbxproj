@@ -917,6 +917,7 @@
 		CD8918BC273E99160051C651 /* CryptoReceiveBubble.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD8918BB273E99160051C651 /* CryptoReceiveBubble.swift */; };
 		CD9A4706275DFA1100CA9931 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD9A4705275DFA1100CA9931 /* Constants.swift */; };
 		CDB98D132757D43A00CA7CDE /* SendOneWallet.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDB98D112757D43A00CA7CDE /* SendOneWallet.swift */; };
+		CDC2BCE72763756500D75F6F /* Date+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8837C6392539B4A600D8FE86 /* Date+Extensions.swift */; };
 		DA0BB1612513B5F200CAEFBD /* StringInterpolation+Extenstions.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA0BB1602513B5F200CAEFBD /* StringInterpolation+Extenstions.swift */; };
 		DA15A20424DF257500BE2423 /* ChannelQuery_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA15A20224DF256F00BE2423 /* ChannelQuery_Tests.swift */; };
 		DA49714E2549C28000AC68C2 /* AttachmentDTO_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA49714D2549C28000AC68C2 /* AttachmentDTO_Tests.swift */; };
@@ -6030,6 +6031,7 @@
 				88A11B0A2590AFBB0000AC24 /* ChatMessage+Extensions.swift in Sources */,
 				780DFCFC25EF7DA500A39A6E /* ChatChannelListVC+SwiftUI.swift in Sources */,
 				DBC8A5762581476E00B20A82 /* ChatMessageListVC.swift in Sources */,
+				CDC2BCE72763756500D75F6F /* Date+Extensions.swift in Sources */,
 				8800A28C258A1924006D64C4 /* ChatMessageFileAttachmentListView.swift in Sources */,
 				ACCA772E26C568D8007AE2ED /* NukeImageProcessor.swift in Sources */,
 				88A8CF16256E7BDA004EA4C7 /* ChatMessageContentView.swift in Sources */,
