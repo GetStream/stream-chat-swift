@@ -17,6 +17,7 @@ class RedPacketAmountBubble: UITableViewCell {
     public private(set) var descriptionLabel: UILabel!
     var options: ChatMessageLayoutOptions?
     var content: ChatMessage?
+    var client: ChatClient?
     public lazy var dateFormatter: DateFormatter = .makeDefault()
 
     var isSender = false
@@ -76,7 +77,6 @@ class RedPacketAmountBubble: UITableViewCell {
         ])
         descriptionLabel.transform = .mirrorY
         descriptionLabel.textAlignment = .left
-        descriptionLabel.text = "Sweet! \nYou just picked up 15 ONE! \n\n🧧Red Packet"
 
         timestampLabel = createTimestampLabel()
         timestampLabel.translatesAutoresizingMaskIntoConstraints = false
@@ -136,6 +136,60 @@ class RedPacketAmountBubble: UITableViewCell {
             timestampLabel?.text = dateFormatter.string(from: createdAt)
         } else {
             timestampLabel?.text = nil
+        }
+        configOtherAmount()
+    }
+
+    private func configOtherAmount() {
+        guard let extraData = getExtraData() else {
+            return
+        }
+        if let userId = extraData["userId"] {
+            let strUserId = fetchRawData(raw: userId) as? String ?? ""
+            if strUserId == client?.currentUserId ?? "" {
+                // I picked up other amount
+                descriptionLabel.text = "Sweet! \nYou just picked up \(getAmount(extraData)) ONE! \n\n🧧Red Packet"
+            } else {
+                // someone pickup amount
+                descriptionLabel.text = "Sweet! \n\(getUserName(extraData)) just picked up \(getAmount(extraData)) ONE! \n\n🧧Red Packet"
+            }
+        }
+    }
+
+    private func getAmount(_ extraData: [String: RawJSON]?) -> String {
+        guard let data = extraData else {
+            return ""
+        }
+        if let receivedAmount = data["receivedAmount"] {
+            let strAmount = fetchRawData(raw: receivedAmount) as? Double ?? 0
+            return "\(strAmount)"
+        } else {
+            return "\(0)"
+        }
+    }
+
+    private func getUserName(_ extraData: [String: RawJSON]?) -> String {
+        guard let data = extraData else {
+            return ""
+        }
+        if let receivedAmount = data["userName"] {
+            let strAmount = fetchRawData(raw: receivedAmount) as? String ?? ""
+            return strAmount
+        } else {
+            return ""
+        }
+    }
+
+    private func getExtraData() -> [String: RawJSON]? {
+        if let extraData = content?.extraData["RedPacketOtherAmountReceived"] {
+            switch extraData {
+            case .dictionary(let dictionary):
+                return dictionary
+            default:
+                return nil
+            }
+        } else {
+            return nil
         }
     }
 }

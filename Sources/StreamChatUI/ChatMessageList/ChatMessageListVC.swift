@@ -373,6 +373,9 @@ open class ChatMessageListVC:
                 for: indexPath) as? RedPacketBubble else {
                 return UITableViewCell()
             }
+            if let channel = dataSource?.channel(for: self) {
+                cell.channel = channel
+            }
             cell.options = cellLayoutOptionsForMessage(at: indexPath)
             cell.content = message
             cell.configureCell(isSender: isMessageFromCurrentUser, with: .EXPIRED)
@@ -390,11 +393,13 @@ open class ChatMessageListVC:
             cell.configData()
             return cell
         } else if isRedPacketAmountCell(message) {
+            
             guard let cell = tableView.dequeueReusableCell(
                 withIdentifier: "RedPacketAmountBubble",
                 for: indexPath) as? RedPacketAmountBubble else {
                 return UITableViewCell()
             }
+            cell.client = client
             cell.options = cellLayoutOptionsForMessage(at: indexPath)
             cell.content = message
             cell.configureCell(isSender: isMessageFromCurrentUser)
@@ -501,19 +506,20 @@ open class ChatMessageListVC:
 
     private func isRedPacketCell(_ message: ChatMessage?) -> Bool {
         message?.extraData.keys.contains("redPacketPickup") ?? false
-//        guard let extraData = message?.extraData, let redPacket = getRedPacketExtraData(extraData: extraData) else {
-//            return false
-//        }
-//        if let isExpired = redPacket["isExpired"] {
-//            let boolExpired = fetchRawData(raw: isExpired) as? Bool ?? false
-//            return !boolExpired
-//        } else {
-//            return false
-//        }
+        /*guard let extraData = message?.extraData, let redPacket = getRedPacketExtraData(extraData: extraData) else {
+            return false
+        }
+        if let isExpired = redPacket["isExpired"] {
+            let boolExpired = fetchRawData(raw: isExpired) as? Bool ?? false
+            return !boolExpired
+        } else {
+            return false
+        }*/
     }
 
     private func isRedPacketExpiredCell(_ message: ChatMessage?) -> Bool {
-        guard let extraData = message?.extraData, let redPacket = getRedPacketExtraData(extraData: extraData) else {
+        message?.extraData.keys.contains("RedPacketExpired") ?? false
+        /*guard let extraData = message?.extraData, let redPacket = getRedPacketExtraData(extraData: extraData) else {
             return false
         }
         if let isExpired = redPacket["isExpired"] {
@@ -521,21 +527,9 @@ open class ChatMessageListVC:
             return boolExpired
         } else {
             return false
-        }
+        }*/
     }
 
-    private func getRedPacketExtraData(extraData: [String: RawJSON]) -> [String: RawJSON]? {
-        if let extraData = extraData["redPacketPickup"] {
-            switch extraData {
-            case .dictionary(let dictionary):
-                return dictionary
-            default:
-                return nil
-            }
-        } else {
-            return nil
-        }
-    }
     private func isRedPacketReceivedCell(_ message: ChatMessage?) -> Bool {
         message?.extraData.keys.contains("RedPacketTopAmountReceived") ?? false
     }

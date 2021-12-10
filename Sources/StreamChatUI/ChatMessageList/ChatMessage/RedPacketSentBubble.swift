@@ -293,3 +293,13 @@ class RedPacketSentBubble: UITableViewCell {
      sentCryptoLabel.text = "SENT: \(one) ONE"
  }
  */
+
+//extension Date {
+//    static func minutesBetweenDates(_ oldDate: Date, _ newDate: Date) -> CGFloat {
+//        //get both times sinces refrenced date and divide by 60 to get minutes
+//        let newDateMinutes = newDate.timeIntervalSinceReferenceDate/60
+//        let oldDateMinutes = oldDate.timeIntervalSinceReferenceDate/60
+//        //then return the difference
+//        return CGFloat(newDateMinutes - oldDateMinutes)
+//    }
+//}

@@ -50,3 +50,5 @@ public struct RedPacket {
         return dictOut
     }
 }
+
+/*[“totalOne”: 100, “max”: “65”, split_type: “group/single”, createdAt: “Date”, expireaT: “Date”, splitBetween: 7, isPacketClaimed: Bool, redPacketId: 123345, isExpired: Bool, highestAmountUserName: “ABC”, highestAmountUserId: “1234”]*/

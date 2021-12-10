@@ -25,6 +25,7 @@ class RedPacketBubble: UITableViewCell {
     public lazy var dateFormatter: DateFormatter = .makeDefault()
     var cellType: CellType!
     var isSender = false
+    var channel: ChatChannel?
 
     //Cell Type
     enum CellType {
@@ -105,7 +106,6 @@ class RedPacketBubble: UITableViewCell {
 
         lblDetails = createDetailsLabel()
         if type == .EXPIRED {
-            lblDetails.text = "Ajay selected the highest amount!"
             descriptionLabel.text = "That was fun! \nWant to go next!?"
         } else if type == .RECEIVED {
             //lblDetails.text = "You just picked up 65 ONE!"
@@ -129,7 +129,7 @@ class RedPacketBubble: UITableViewCell {
         pickUpButton = UIButton()
         pickUpButton.translatesAutoresizingMaskIntoConstraints = false
         pickUpButton.setTitle("Send Packet", for: .normal)
-        pickUpButton.addTarget(self, action: #selector(btnPickButtonAction), for: .touchUpInside)
+        pickUpButton.addTarget(self, action: #selector(btnSendPacketAction), for: .touchUpInside)
         pickUpButton.setTitleColor(.white, for: .normal)
         pickUpButton.titleLabel?.font = UIFont.systemFont(ofSize: 14, weight: .regular)
         pickUpButton.backgroundColor = Appearance.default.colorPalette.redPacketButton
@@ -221,11 +221,13 @@ class RedPacketBubble: UITableViewCell {
         }
         if cellType == .RECEIVED {
             configTopAmountCell()
+        } else if cellType == .EXPIRED {
+            configExpiredCell()
         }
     }
 
     func configTopAmountCell() {
-        guard let topAmount = getTopAmountExtraData() else {
+        guard let topAmount = getExtraData(key: "RedPacketTopAmountReceived") else {
             return
         }
         if let receivedAmount = topAmount["receivedAmount"] {
@@ -234,8 +236,18 @@ class RedPacketBubble: UITableViewCell {
         }
     }
 
-    private func getTopAmountExtraData() -> [String: RawJSON]? {
-        if let extraData = content?.extraData["RedPacketTopAmountReceived"] {
+    func configExpiredCell() {
+        guard let expiredData = getExtraData(key: "RedPacketExpired") else {
+            return
+        }
+        if let userName = expiredData["highestAmountUserName"] {
+            let strUserName = fetchRawData(raw: userName) as? String ?? ""
+            lblDetails.text = "\(strUserName) selected the highest amount!"
+        }
+    }
+
+    private func getExtraData(key: String) -> [String: RawJSON]? {
+        if let extraData = content?.extraData[key] {
             switch extraData {
             case .dictionary(let dictionary):
                 return dictionary
@@ -247,11 +259,13 @@ class RedPacketBubble: UITableViewCell {
         }
     }
     
-    @objc func btnPickButtonAction() {
-        print("btnPickButtonAction")
+    @objc func btnSendPacketAction() {
+        guard let channelId = channel?.cid else { return }
+        var userInfo = [String: Any]()
+        userInfo["channelId"] = channelId
+        NotificationCenter.default.post(name: .sendRedPacketTapAction, object: nil, userInfo: userInfo)
     }
 }
-
 /**
  ["highestAmountUserId": StreamChat.RawJSON.string("b939f923-eabc-4094-99cc-0e4e587091f1"), "highestAmountUserName": StreamChat.RawJSON.string("ajay4"), "receivedAmount": StreamChat.RawJSON.number(1.0), "isTopAmountUser": StreamChat.RawJSON.bool(true), "isExpired": StreamChat.RawJSON.bool(false), "redPacketId": StreamChat.RawJSON.string("b300fb35-89a9-4c92-bc5e-71236c92a085")]
  */
