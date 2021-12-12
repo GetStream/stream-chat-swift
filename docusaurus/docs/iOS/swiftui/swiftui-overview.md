@@ -30,58 +30,7 @@ This SDK tries to keep the list of external dependencies to a minimum, and these
 
 ## Installation
 
-To start integrating Stream Chat in your iOS app, install the `StreamChatSwiftUI` dependency using one of the following dependency managers.
+To start integrating Stream Chat in your iOS app, check our [Integration](../basics/integration) page
 
-### Install With Swift Package Manager
-
-Open your `.xcodeproj`, select the option "Add Package Dependency" in File > Add Packages, and paste the URL: https://github.com/GetStream/stream-chat-swiftui.git.
-
-Xcode will look for the repository and automatically select the latest version tagged. Press next, and Xcode will download the dependency. While the SDK is in beta mode, it's best to stay on the main branch as a dependency.
-
-![Screenshot shows Xcode with the Add Package Dependency dialog opened and Stream Chat iOS SDK GitHub URL in the input field](../assets/spm-sui-01.png)
-
-The repository contains 1 target - StreamChatSwiftUI.
-
-![Screenshot shows an Xcode screen with dependency targets to be selected](../assets/spm-sui-02.png)
-
-After you press finish, it's done!
-
-:::caution
-Because StreamChat SDKs have to be distributed with its resources, the minimal Swift version requirement for this installation method is 5.3. If you need to support older Swift version, please install it using CocoaPods.
-:::
-
-### Install With CocoaPods
-
-In your project's Podfile, add: `pod 'StreamChatSwiftUI', '~> 4.6.0'`. It should look similar to the snippet below.
-
-```ruby
-target 'MyProject' do
-  # Comment the next line if you don't want to use dynamic frameworks
-  use_frameworks!
-
-  # Pods for MyProject
-  pod 'StreamChatSwiftUI', '~> 4.6.0'
-end
-```
-
-The StreamChatSwiftUI pod will automatically include the StreamChat dependency. If you want just the StreamChat dependency, without the SwiftUI components, add `pod 'StreamChat', '~> 4.0'` to your Podfile instead. It should look similar to the snippet below.
-
-```ruby
-target 'MyProject' do
-  # Comment the next line if you don't want to use dynamic frameworks
-  use_frameworks!
-
-  # Pods for MyProject
-  pod 'StreamChat', '~> 4.0.0'
-end
-```
-
-Now that we’ve modified our Podfile, let’s go ahead and install the project dependencies via the terminal with a straightforward command:
-
-```bash
-pod install --repo-update
-```
-
-The above command will generate the **MyProject.xcworkspace** file automatically.
 
 To stay up-to-date with our updates and get a detailed breakdown of what's new, subscribe to the releases of [getstream/stream-chat-swift](https://github.com/GetStream/stream-chat-swiftui/releases) by clicking the "watch" button. You can further tweak your watch preferences and subscribe only to the release events.

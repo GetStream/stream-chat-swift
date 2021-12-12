@@ -33,7 +33,7 @@ We suggest using either [`StreamChatUI`](./uikit) or [`StreamChatSwiftUI`](./swi
 You can use this library to develop OSX application by using the `StreamChat` framework
 :::
 
-### Dependencies 
+### Dependencies
 
 This SDK tries to keep the list of external dependencies to a minimum, these are the dependencies currently used:
 
@@ -54,6 +54,11 @@ This SDK tries to keep the list of external dependencies to a minimum, these are
 
 - [Starscream](https://github.com/daltoniam/Starscream) to handle WebSocket connections
 
+:::note
+Starting **4.6.0**, and in order to improve the developer experience, dependencies are hidden inside our libraries.
+(Does not apply to StreamChatSwiftUI's dependencies yet)
+:::
+
 ## Upgrade and Versioning Strategy
 
 The StreamChat Swift SDK adheres to the [semantic versioning](https://semver.org/) rules. 
@@ -68,6 +73,8 @@ Occasionally, the SDK can include visual changes (whitespace, color changes, siz
 ### How should I specify my dependency version? 
 
 You should either use a fixed version, or an optimitistic operator (a.k.a. squiggly arrow), with **all three versions specified**.
+
+Eg. with CocoaPods:
 
 ```ruby 
 pod 'StreamChat', '~> 4.0.0'

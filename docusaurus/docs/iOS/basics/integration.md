@@ -1,27 +1,8 @@
 ---
-title: UIKit Overview
-slug: /uikit
+title: Integration
 ---
 
-# Getting started
-
-Building on top of the the Stream Chat API, the Stream Chat libraries include everything you need to build feature-rich and high-functioning chat user experiences out of the box.
-
-We have a component libraries available for both UIKit and SwiftUI, together with a LLC (low level client). Each library includes an extensive set of performant and customizable UI components which allow you to get started quickly with little to no plumbing required. The libraries supports:
-
-- Rich media messages
-- Reactions
-- Threads and quoted replies
-- Text input commands (ex: Giphy and @mentions)
-- Image and file uploads
-- Video playback
-- Read state and typing indicators
-- Channel and message lists
-- Push (APN or Firebase)
-- Offline storage
-- OSX (only for our LLC)
-
-## Integration
+# Integration
 
 To integrate Stream Chat in your app, you can use one of the following dependency managers:
 
@@ -59,11 +40,11 @@ You can learn more about [our Module Stable XCFrameworks](#xcframeworks)
 </p>
 </details>
 
-![Screenshot shows Xcode with the Add Package Dependency dialog opened and Stream Chat iOS SDK GitHub URL in the input field](assets/spm-00.png)
+![Screenshot shows Xcode with the Add Package Dependency dialog opened and Stream Chat iOS SDK GitHub URL in the input field](../assets/spm-00.png)
 
 After pressing next, Xcode will look for the Packages available in the repository and automatically select the latest version tagged. Press next and Xcode will download the dependency.
 
-![Screenshot shows an Xcode screen selecting a dependency version and an Xcode screen downloading that dependency](assets/spm-01.png)
+![Screenshot shows an Xcode screen selecting a dependency version and an Xcode screen downloading that dependency](../assets/spm-01.png)
 
 Based on the repository you select you can find 3 different targets: StreamChat, StreamChatUI and StreamChatSwiftUI.
 
@@ -71,7 +52,7 @@ Based on the repository you select you can find 3 different targets: StreamChat,
 - If you want to use the SwiftUI components, select **StreamChatSwiftUI**.
 - If you don't need any UI components, select **StreamChat**.
 
-![Screenshot shows an Xcode screen with dependency targets to be selected](assets/spm-02.png)
+![Screenshot shows an Xcode screen with dependency targets to be selected](../assets/spm-02.png)
 
 After you press finish, it's done!
 
@@ -172,7 +153,7 @@ This command will create pre-built XCFrameworks built from our source code. You 
 
 Open the `Carthage/Build` folder that has been created in the root of your project, and drag and drop the frameworks you want to use. Those should be added to the "Frameworks, Libraries, and Embedded Content" section under General settings:
 
-![Screenshot shows XCFrameworks being draged into Xcode](assets/carthage-drag.png)
+![Screenshot shows XCFrameworks being draged into Xcode](../assets/carthage-drag.png)
 
 _More information about Carthage [can be found here](https://github.com/Carthage/Carthage)_
 
