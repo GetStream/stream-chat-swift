@@ -23,7 +23,7 @@ Open your `.xcodeproj`, select the option "Add Package Dependency" in File > Swi
 - For the SwiftUI components (**StreamChatSwiftUI**, which depends on **StreamChat**) use:
   - `https://github.com/getstream/stream-chat-swiftui`
 
-<details><summary>Using <b>XCFrameworks</b></summary>
+<details><summary>➤ Using <b>XCFrameworks</b></summary>
 <p>
 
 :::caution
@@ -73,7 +73,7 @@ In your project's `Podfile`, add one of these options
 - For the SwiftUI components (**StreamChatSwiftUI**, which depends on **StreamChat**) use:
   - `pod 'StreamChatSwiftUI', '~> 4.0.0'`
 
-<details><summary>Using <b>XCFrameworks</b></summary>
+<details><summary>➤ Using <b>XCFrameworks</b></summary>
 <p>
 
 :::caution
@@ -126,7 +126,7 @@ In your project's `Cartfile`, add one of these options
 - For the SwiftUI components (**StreamChatSwiftUI**, which depends on **StreamChat**) use:
   - `github "getstream/stream-chat-swiftui" ~> 4.0.0`
 
-<details><summary>Using <b>XCFrameworks</b></summary>
+<details><summary>➤ Using <b>XCFrameworks</b></summary>
 <p>
 
 :::caution
