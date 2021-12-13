@@ -1,6 +1,6 @@
 # Attachments v4.x migration
 
-## Send attachments
+## Send Attachments
 
 In both `v4.x` and `v3.2` the sequence of steps is the same:
 - **[1]** create a controller for the channel the message should be sent to
@@ -31,7 +31,7 @@ channelController.createNewMessage(
 
 Let's see how to create **file/image** and **custom** attachments in `v4.x` and make the compiler happy.
 
-### File/image attachments
+### File/Image Attachments
 
 `Version 3.x`
 ```swift
@@ -57,7 +57,7 @@ let attachments: [AnyAttachmentPayload] = [
 
 The `.file` and `.image` attachments are the only built-in attachment types that can be added to the message manually.
 
-### Custom attachments
+### Custom Attachments
 
 To add a custom attachments to the message the custom type has to be created first.
 This is true for both `v3.2` and `v4.x` however there're some differences so let's see what they are:
@@ -110,7 +110,7 @@ let attachments: [AnyAttachmentPayload] = [
 | Attachments of `.file/.image` type are added via `ChatMessageAttachmentSeed` | Attachments of `.file/.image` type are added via `AnyAttachmentPayload` |
 | Custom attachment must conform to `AttachmentEnvelope` protocol and can be directly passed to `createMessage` | Custom attachment must conform to `AttachmentPayload` protocol and wrapped by `AnyAttachmentPayload` before passing to `createMessage` |
 
-## Get attachments
+## Get Attachments
 
 In both `v4.x` and `v3.2` the sequence of steps is the same:
 - **[1]** get a `ChatMessage` model ([Working with messages](./working-with-messages.md))
@@ -119,7 +119,7 @@ In both `v4.x` and `v3.2` the sequence of steps is the same:
 
 Let's see how at steps **[2]** and **[3]** look in `v4.x` for different kind of attachments.
 
-### File attachments
+### File Attachments
 
 File attachment requires prior uploading before the message is sent. The local state is exposed for `.file` attachments to track how the uploading goes.
 
@@ -156,7 +156,7 @@ if let file = message.fileAttachments.first {
 }
 ```
 
-### Image attachments
+### Image Attachments
 
 Image attachment requires prior uploading before the message is sent. The local state is exposed for `.image` attachments to track how the uploading goes.
 
@@ -199,7 +199,7 @@ if let image = message.imageAttachments.first {
 }
 ```
 
-### Giphy attachments
+### Giphy Attachments
 
 The ephemeral message containing giphy attachment will be created when `/giphy` command is used.
 
@@ -235,7 +235,7 @@ if let giphy = message.giphyAttachments.first {
 }
 ```
 
-### Link preview attachments
+### Link Preview Attachments
 
 The link attachment will be added to the message automatically if the message is sent with the text containing the URL.
 
@@ -271,7 +271,7 @@ if let linkPreview = message.linkAttachments.first {
 }
 ```
 
-### Custom attachments
+### Custom Attachments
 
 `Version 3.x`
 
@@ -322,7 +322,7 @@ if let product = productAttachments.first {
 }
 ```
 
-### Changes summary
+### Changes Summary
 
 | `v3.2` | `v4.x` |
 | ----------- | ----------- |

@@ -20,7 +20,7 @@ class OnlineIndicatorView_Documentation_Tests: XCTestCase {
         
         generateDocs(
             for: view,
-            annotations: [],
+            annotations: { _ in [] },
             name: "OnlineIndicatorView_documentation",
             variants: .onlyUserInterfaceStyles
         )

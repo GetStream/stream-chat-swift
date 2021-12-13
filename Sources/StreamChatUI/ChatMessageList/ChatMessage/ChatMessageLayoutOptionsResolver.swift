@@ -38,8 +38,8 @@ open class ChatMessageLayoutOptionsResolver {
         
         var options: ChatMessageLayoutOptions = []
 
-        // The text should be centered without a bubble for system messages
-        guard message.type != .system else {
+        // The text should be centered without a bubble for system or error messages
+        guard message.type != .system && message.type != .error else {
             return [.text, .centered]
         }
 

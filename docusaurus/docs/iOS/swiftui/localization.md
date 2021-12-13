@@ -6,7 +6,7 @@ title: Localization
 
 If your app supports multiple languages, the chat SDK has support for localizations. For example, you can add more languages, or you can change translations for the existing texts used throughout the SDK.
 
-## Adding a new language
+## Adding a New Language
 
 1. If you don't have `strings` or `stringsdict` files in your project, add those new files to `Localizable.strings` and `Localizable.stringsdict`.
 2. Next [add new language to the project](https://developer.apple.com/documentation/xcode/adding-support-for-languages-and-regions).
@@ -23,7 +23,7 @@ Appearance.localizationProvider = { key, table in
 We recommend naming your `strings` and `stringsdict` files: `Localizable.strings` and `Localizable.stringsdict`.
 :::
 
-## Override existing languages
+## Override Existing Languages
 
 Overriding the existing language works in the same as adding a new language.
 

@@ -70,7 +70,7 @@ The StreamChat Swift SDK adheres to the [semantic versioning](https://semver.org
 Occasionally, the SDK can include visual changes (whitespace, color changes, sizing, etc) in minor versions, as we are continuously improving the default look of our UI components. Bumping the major version for such changes would not be practical. 
 
 
-### How should I specify my dependency version? 
+### How Should I Specify My Dependency Version? 
 
 You should either use a fixed version, or an optimitistic operator (a.k.a. squiggly arrow), with **all three versions specified**.
 

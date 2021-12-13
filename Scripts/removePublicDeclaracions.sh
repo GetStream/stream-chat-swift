@@ -34,5 +34,6 @@ do
 	if [[ $directory == *"Starscream"* ]]; then
 		`sed -i '' -e 's/WebSocketClient/StarscreamWebSocketClient/g' $f`
 		`sed -i '' -e 's/ConnectionEvent/StarscreamConnectionEvent/g' $f`
+		`sed -i '' -e 's/: class {/: AnyObject {/g' $f`
 	fi
 done

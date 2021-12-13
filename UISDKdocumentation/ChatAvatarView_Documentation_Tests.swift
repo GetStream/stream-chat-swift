@@ -21,7 +21,7 @@ class ChatAvatarView_Documentation_Tests: XCTestCase {
         
         generateDocs(
             for: view,
-            annotations: [],
+            annotations: { _ in [] },
             name: "ChatAvatarView_documentation",
             variants: .onlyUserInterfaceStyles
         )

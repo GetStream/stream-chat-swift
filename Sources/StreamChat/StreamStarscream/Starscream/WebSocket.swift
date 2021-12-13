@@ -41,7 +41,7 @@ struct WSError: Error {
     }
 }
 
-protocol StarscreamWebSocketClient: class {
+protocol StarscreamWebSocketClient: AnyObject {
     func connect()
     func disconnect(closeCode: UInt16)
     func write(string: String, completion: (() -> ())?)
@@ -87,7 +87,7 @@ enum WebSocketEvent {
     case cancelled
 }
 
-protocol WebSocketDelegate: class {
+protocol WebSocketDelegate: AnyObject {
     func didReceive(event: WebSocketEvent, client: WebSocket)
 }
 

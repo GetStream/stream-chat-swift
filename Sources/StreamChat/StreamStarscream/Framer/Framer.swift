@@ -71,7 +71,7 @@ enum FrameEvent {
     case error(Error)
 }
 
-protocol FramerEventClient: class {
+protocol FramerEventClient: AnyObject {
     func frameProcessed(event: FrameEvent)
 }
 
