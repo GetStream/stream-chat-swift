@@ -12,7 +12,6 @@ class WebSocketClientMock: WebSocketClient {
     let init_requestEncoder: RequestEncoder
     let init_eventDecoder: AnyEventDecoder
     let init_eventNotificationCenter: EventNotificationCenter
-    let init_reconnectionStrategy: WebSocketClientReconnectionStrategy
     let init_environment: WebSocketClient.Environment
 
     @Atomic var connect_calledCounter = 0
@@ -23,14 +22,12 @@ class WebSocketClientMock: WebSocketClient {
         requestEncoder: RequestEncoder,
         eventDecoder: AnyEventDecoder,
         eventNotificationCenter: EventNotificationCenter,
-        reconnectionStrategy: WebSocketClientReconnectionStrategy = DefaultReconnectionStrategy(),
         environment: WebSocketClient.Environment = .mock
     ) {
         init_sessionConfiguration = sessionConfiguration
         init_requestEncoder = requestEncoder
         init_eventDecoder = eventDecoder
         init_eventNotificationCenter = eventNotificationCenter
-        init_reconnectionStrategy = reconnectionStrategy
         init_environment = environment
 
         super.init(
@@ -38,7 +35,6 @@ class WebSocketClientMock: WebSocketClient {
             requestEncoder: requestEncoder,
             eventDecoder: eventDecoder,
             eventNotificationCenter: eventNotificationCenter,
-            reconnectionStrategy: reconnectionStrategy,
             environment: environment
         )
     }

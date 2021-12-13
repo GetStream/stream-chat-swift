@@ -19,10 +19,6 @@ class WebSocketClient {
             log.info("Web socket connection state changed: \(connectionState)", subsystems: .webSocket)
             connectionStateDelegate?.webSocketClient(self, didUpdateConnectionState: connectionState)
             
-            if connectionState.isConnected {
-                reconnectionStrategy.successfullyConnected()
-            }
-            
             pingController.connectionStateDidChange(connectionState)
 
             let previousStatus = ConnectionStatus(webSocketConnectionState: oldValue)
@@ -49,9 +45,6 @@ class WebSocketClient {
     /// The web socket engine used to make the actual WS connection
     private(set) var engine: WebSocketEngine?
     
-    /// If in the `waitingForReconnect` state, this variable contains the reconnection timer.
-    private var reconnectionTimer: TimerControl?
-    
     /// The queue on which web socket engine methods are called
     private let engineQueue: DispatchQueue = .init(label: "io.getStream.chat.core.web_socket_engine_queue", qos: .userInitiated)
     
@@ -59,9 +52,6 @@ class WebSocketClient {
     
     /// The session config used for the web socket engine
     private let sessionConfiguration: URLSessionConfiguration
-    
-    /// An object describing reconnection behavior after the web socket is disconnected.
-    private var reconnectionStrategy: WebSocketClientReconnectionStrategy
     
     /// An object containing external dependencies of `WebSocketClient`
     private let environment: Environment
@@ -94,13 +84,11 @@ class WebSocketClient {
         requestEncoder: RequestEncoder,
         eventDecoder: AnyEventDecoder,
         eventNotificationCenter: EventNotificationCenter,
-        reconnectionStrategy: WebSocketClientReconnectionStrategy = DefaultReconnectionStrategy(),
         environment: Environment = .init()
     ) {
         self.environment = environment
         self.requestEncoder = requestEncoder
         self.sessionConfiguration = sessionConfiguration
-        self.reconnectionStrategy = reconnectionStrategy
         self.eventDecoder = eventDecoder
 
         self.eventNotificationCenter = eventNotificationCenter
@@ -123,9 +111,6 @@ class WebSocketClient {
         }
         
         engine = createEngineIfNeeded(for: endpoint)
-        
-        // Cancel the reconnection timer if exists
-        reconnectionTimer?.cancel()
         
         connectionState = .connecting
         
@@ -220,41 +205,17 @@ extension WebSocketClient: WebSocketEngineDelegate {
     }
     
     func webSocketDidDisconnect(error engineError: WebSocketEngineError?) {
-        // Reconnection shouldn't happen for manually initiated disconnect
-        // or system initated disconnect (app enters background)
-        let shouldReconnect = connectionState != .disconnecting(source: .userInitiated)
-            && connectionState != .disconnecting(source: .systemInitiated)
+        switch connectionState {
+        case .connecting, .waitingForConnectionId, .connected:
+            let serverError = engineError.map { ClientError.WebSocket(with: $0) }
+            
+            connectionState = .disconnected(source: .serverInitiated(error: serverError))
         
-        let disconnectionError: Error?
-        if case let .disconnecting(.serverInitiated(webSocketError)) = connectionState {
-            disconnectionError = webSocketError?.underlyingError
-        } else {
-            disconnectionError = engineError
-        }
-        
-        if shouldReconnect,
-           let reconnectionDelay = reconnectionStrategy.reconnectionDelay(forConnectionError: disconnectionError) {
-            let clientError = disconnectionError.map { ClientError.WebSocket(with: $0) }
-            connectionState = .waitingForReconnect(error: clientError)
-            
-            reconnectionTimer = environment.timerType
-                .schedule(timeInterval: reconnectionDelay, queue: engineQueue) { [weak self] in self?.connect() }
-            
-        } else {
-            let source: WebSocketConnectionState.DisconnectionSource = {
-                switch connectionState {
-                case let .disconnecting(source):
-                    return source
-                default:
-                    // If it's lack of internet connection `.systemInitiated` source is used that allows
-                    // to reconnect when connection comes back
-                    return disconnectionError?.isInternetOfflineError == true
-                        ? .systemInitiated
-                        : .serverInitiated(error: disconnectionError.map { ClientError.WebSocket(with: $0) })
-                }
-            }()
-            
+        case let .disconnecting(source):
             connectionState = .disconnected(source: source)
+        
+        case .initialized, .disconnected:
+            log.error("Web socket can not be disconnected when in \(connectionState) state.")
         }
     }
 }
