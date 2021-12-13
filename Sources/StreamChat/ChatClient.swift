@@ -85,7 +85,6 @@ public class ChatClient {
                     return
                 }
                 self.refreshToken(
-                    error: ClientError.ExpiredToken(),
                     completion: { _ in completion() }
                 )
             }
@@ -579,8 +578,7 @@ extension ChatClient {
         
         var timerType: Timer.Type = DefaultTimer.self
         
-        var tokenExpirationRetryStrategy: WebSocketClientReconnectionStrategy = DefaultReconnectionStrategy()
-    }
+        var tokenExpirationRetryStrategy: RetryStrategy = DefaultRetryStrategy()
 }
 
 extension ClientError {
@@ -638,7 +636,7 @@ extension ChatClient: ConnectionStateDelegate {
         case let .disconnected(source):
             if let error = source.serverError,
                error.isTokenExpiredError {
-                refreshToken(error: error, completion: nil)
+                refreshToken(completion: nil)
                 shouldNotifyConnectionIdWaiters = false
             } else {
                 shouldNotifyConnectionIdWaiters = true
@@ -660,7 +658,6 @@ extension ChatClient: ConnectionStateDelegate {
     }
     
     private func refreshToken(
-        error: ClientError,
         completion: ((Error?) -> Void)?
     ) {
         guard let tokenProvider = tokenProvider else {
@@ -669,9 +666,8 @@ extension ChatClient: ConnectionStateDelegate {
             )
         }
         
-        guard let reconnectionDelay = tokenExpirationRetryStrategy.reconnectionDelay(
-            forConnectionError: error
-        ) else { return }
+        let reconnectionDelay = tokenExpirationRetryStrategy.getDelayAfterTheFailure()
+        
         tokenRetryTimer = environment
             .timerType
             .schedule(
@@ -682,7 +678,7 @@ extension ChatClient: ConnectionStateDelegate {
                     userConnectionProvider: .closure { _, completion in
                         tokenProvider() { result in
                             if case .success = result {
-                                self.tokenExpirationRetryStrategy.successfullyConnected()
+                                self.tokenExpirationRetryStrategy.resetConsecutiveFailures()
                             }
                             completion(result)
                         }

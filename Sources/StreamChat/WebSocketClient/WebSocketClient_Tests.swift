@@ -522,22 +522,6 @@ private class EventDecoderMock: AnyEventDecoder {
     }
 }
 
-private class MockReconnectionStrategy: WebSocketClientReconnectionStrategy {
-    var sucessfullyConnected_calledCount: Int = 0
-    var reconnectionDelay_calledWithError: Error?
-    
-    var reconnectionDelay: TimeInterval?
-    
-    func successfullyConnected() {
-        sucessfullyConnected_calledCount += 1
-    }
-    
-    func reconnectionDelay(forConnectionError error: Error?) -> TimeInterval? {
-        reconnectionDelay_calledWithError = error
-        return reconnectionDelay
-    }
-}
-
 extension WebSocketEngineError: Equatable {
     public static func == (lhs: WebSocketEngineError, rhs: WebSocketEngineError) -> Bool {
         String(describing: lhs) == String(describing: rhs)

@@ -306,8 +306,8 @@
 		7991D83F24F8F1BF00D21BA3 /* ChatClient_Mock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7991D83E24F8F1BF00D21BA3 /* ChatClient_Mock.swift */; };
 		79983C8126663436000995F6 /* ChatMessageVideoAttachment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79983C80266633C2000995F6 /* ChatMessageVideoAttachment.swift */; };
 		799B5DC5253081C900C108FB /* DevicePayloads.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799B5DC4253081C900C108FB /* DevicePayloads.swift */; };
-		799BE2EA248A8C9D00DAC8A0 /* WebSocketReconnectionStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799BE2E9248A8C9D00DAC8A0 /* WebSocketReconnectionStrategy.swift */; };
-		799BE2EC248A8CB300DAC8A0 /* WebSocketReconnectionStrategy_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799BE2EB248A8CB300DAC8A0 /* WebSocketReconnectionStrategy_Tests.swift */; };
+		799BE2EA248A8C9D00DAC8A0 /* RetryStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799BE2E9248A8C9D00DAC8A0 /* RetryStrategy.swift */; };
+		799BE2EC248A8CB300DAC8A0 /* RetryStrategy_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799BE2EB248A8CB300DAC8A0 /* RetryStrategy_Tests.swift */; };
 		799C941F247D2F80001F1104 /* Sources.h in Headers */ = {isa = PBXBuildFile; fileRef = 799C941D247D2F80001F1104 /* Sources.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		799C9438247D2FB9001F1104 /* ChatClientConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799C9428247D2FB9001F1104 /* ChatClientConfig.swift */; };
 		799C9439247D2FB9001F1104 /* ChannelDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799C942A247D2FB9001F1104 /* ChannelDTO.swift */; };
@@ -512,6 +512,7 @@
 		80C6027B25157E4D00A6B714 /* View+AlertTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80C6027A25157E4D00A6B714 /* View+AlertTextField.swift */; };
 		80D880432546553500908B7B /* ChatScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80D880422546553500908B7B /* ChatScrollView.swift */; };
 		840B4FCF26A9E53100D5EFAB /* CustomEventRequestBody.swift in Sources */ = {isa = PBXBuildFile; fileRef = 840B4FCE26A9E53100D5EFAB /* CustomEventRequestBody.swift */; };
+		8414A81C2767944B001BA9D7 /* RetryStrategy_Mock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8414A81B2767944B001BA9D7 /* RetryStrategy_Mock.swift */; };
 		8431843B26FB53B400B5B25E /* NotificationMessageNew+MissingFields.json in Resources */ = {isa = PBXBuildFile; fileRef = 8431843A26FB53B400B5B25E /* NotificationMessageNew+MissingFields.json */; };
 		8431843D26FB54F400B5B25E /* NotificationAddedToChannel+MissingFields.json in Resources */ = {isa = PBXBuildFile; fileRef = 8431843C26FB54F400B5B25E /* NotificationAddedToChannel+MissingFields.json */; };
 		843C53AB269370A900C7D8EA /* ImageAttachmentPayload_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 843C53AA269370A900C7D8EA /* ImageAttachmentPayload_Tests.swift */; };
@@ -945,7 +946,7 @@
 		C121E825274544AD00023E4C /* BackgroundTaskScheduler.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBF17AE725D48865004517B3 /* BackgroundTaskScheduler.swift */; };
 		C121E826274544AD00023E4C /* WebSocketClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799C9444247D3DD2001F1104 /* WebSocketClient.swift */; };
 		C121E827274544AD00023E4C /* WebSocketPingController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A618E4424D19D510003D83C /* WebSocketPingController.swift */; };
-		C121E828274544AD00023E4C /* WebSocketReconnectionStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799BE2E9248A8C9D00DAC8A0 /* WebSocketReconnectionStrategy.swift */; };
+		C121E828274544AD00023E4C /* RetryStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799BE2E9248A8C9D00DAC8A0 /* RetryStrategy.swift */; };
 		C121E829274544AD00023E4C /* WebSocketConnectPayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 797A756324814E7A003CF16D /* WebSocketConnectPayload.swift */; };
 		C121E82A274544AD00023E4C /* ConnectionStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79C750BD2490D0130023F0B7 /* ConnectionStatus.swift */; };
 		C121E82B274544AD00023E4C /* APIPathConvertible.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8933D2025FFAB400054BBFF /* APIPathConvertible.swift */; };
@@ -2271,8 +2272,8 @@
 		7991D83E24F8F1BF00D21BA3 /* ChatClient_Mock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatClient_Mock.swift; sourceTree = "<group>"; };
 		79983C80266633C2000995F6 /* ChatMessageVideoAttachment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageVideoAttachment.swift; sourceTree = "<group>"; };
 		799B5DC4253081C900C108FB /* DevicePayloads.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DevicePayloads.swift; sourceTree = "<group>"; };
-		799BE2E9248A8C9D00DAC8A0 /* WebSocketReconnectionStrategy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebSocketReconnectionStrategy.swift; sourceTree = "<group>"; };
-		799BE2EB248A8CB300DAC8A0 /* WebSocketReconnectionStrategy_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebSocketReconnectionStrategy_Tests.swift; sourceTree = "<group>"; };
+		799BE2E9248A8C9D00DAC8A0 /* RetryStrategy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RetryStrategy.swift; sourceTree = "<group>"; };
+		799BE2EB248A8CB300DAC8A0 /* RetryStrategy_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RetryStrategy_Tests.swift; sourceTree = "<group>"; };
 		799C941B247D2F80001F1104 /* StreamChat.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = StreamChat.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		799C941D247D2F80001F1104 /* Sources.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Sources.h; sourceTree = "<group>"; };
 		799C941E247D2F80001F1104 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -2474,6 +2475,7 @@
 		80C6027A25157E4D00A6B714 /* View+AlertTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View+AlertTextField.swift"; sourceTree = "<group>"; };
 		80D880422546553500908B7B /* ChatScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatScrollView.swift; sourceTree = "<group>"; };
 		840B4FCE26A9E53100D5EFAB /* CustomEventRequestBody.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomEventRequestBody.swift; sourceTree = "<group>"; };
+		8414A81B2767944B001BA9D7 /* RetryStrategy_Mock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RetryStrategy_Mock.swift; sourceTree = "<group>"; };
 		8431843A26FB53B400B5B25E /* NotificationMessageNew+MissingFields.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "NotificationMessageNew+MissingFields.json"; sourceTree = "<group>"; };
 		8431843C26FB54F400B5B25E /* NotificationAddedToChannel+MissingFields.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "NotificationAddedToChannel+MissingFields.json"; sourceTree = "<group>"; };
 		843C53AA269370A900C7D8EA /* ImageAttachmentPayload_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageAttachmentPayload_Tests.swift; sourceTree = "<group>"; };
@@ -4025,8 +4027,9 @@
 				79A0E9AE2498BFD800E9BD50 /* WebSocketClient_Tests.swift */,
 				8A618E4424D19D510003D83C /* WebSocketPingController.swift */,
 				8A08C6A524D437DF00DEF995 /* WebSocketPingController_Tests.swift */,
-				799BE2E9248A8C9D00DAC8A0 /* WebSocketReconnectionStrategy.swift */,
-				799BE2EB248A8CB300DAC8A0 /* WebSocketReconnectionStrategy_Tests.swift */,
+				799BE2E9248A8C9D00DAC8A0 /* RetryStrategy.swift */,
+				799BE2EB248A8CB300DAC8A0 /* RetryStrategy_Tests.swift */,
+				8414A81B2767944B001BA9D7 /* RetryStrategy_Mock.swift */,
 				797A756324814E7A003CF16D /* WebSocketConnectPayload.swift */,
 				430156F126B4523A0006E7EA /* WebSocketConnectPayload_Tests.swift */,
 				79C750BD2490D0130023F0B7 /* ConnectionStatus.swift */,
@@ -7326,7 +7329,7 @@
 				792A4F3F247FFDE700EAF71D /* Codable+Extensions.swift in Sources */,
 				8819DFCF2525F3C600FD1A50 /* UserUpdater.swift in Sources */,
 				79C750BB248FC4100023F0B7 /* ErrorPayload.swift in Sources */,
-				799BE2EA248A8C9D00DAC8A0 /* WebSocketReconnectionStrategy.swift in Sources */,
+				799BE2EA248A8C9D00DAC8A0 /* RetryStrategy.swift in Sources */,
 				DA84070C25250581005A0F62 /* UserListPayload.swift in Sources */,
 				79877A272498E50D00015F8B /* MemberModelDTO.swift in Sources */,
 				79617CB125F236B600D54E61 /* UserWatchingEventMiddleware.swift in Sources */,
@@ -7590,6 +7593,7 @@
 				792921C524C0479700116BBB /* ChannelListUpdater_Tests.swift in Sources */,
 				79177A2D248A6A2600F053A2 /* AssertAsync+Events.swift in Sources */,
 				F6C56D1424F7B89D0012BB1F /* EventMiddleware_Mock.swift in Sources */,
+				8414A81C2767944B001BA9D7 /* RetryStrategy_Mock.swift in Sources */,
 				F61D7C3524FFA6FD00188A0E /* MessageUpdater_Tests.swift in Sources */,
 				79B5517824E5969700CE9FEC /* UserPayloads_Tests.swift in Sources */,
 				8802F9BD25AF1DE200475159 /* WebSocketClient_Mock.swift in Sources */,
@@ -7664,7 +7668,7 @@
 				79D6CE8625F7D72800BE2EEC /* ChatChannelWatcherListController_Mock.swift in Sources */,
 				8A62705C24BE2BC00040BFD6 /* TypingEvent_Tests.swift in Sources */,
 				84A1D2EA26AAFB1D00014712 /* EventSender_Tests.swift in Sources */,
-				799BE2EC248A8CB300DAC8A0 /* WebSocketReconnectionStrategy_Tests.swift in Sources */,
+				799BE2EC248A8CB300DAC8A0 /* RetryStrategy_Tests.swift in Sources */,
 				888E8C41252B2ADC00195E03 /* UserController+SwiftUI_Tests.swift in Sources */,
 				8A08C6A624D437DF00DEF995 /* WebSocketPingController_Tests.swift in Sources */,
 				8A62706C24BF3DBC0040BFD6 /* ChannelEvents_Tests.swift in Sources */,
@@ -7896,7 +7900,7 @@
 				C121E825274544AD00023E4C /* BackgroundTaskScheduler.swift in Sources */,
 				C121E826274544AD00023E4C /* WebSocketClient.swift in Sources */,
 				C121E827274544AD00023E4C /* WebSocketPingController.swift in Sources */,
-				C121E828274544AD00023E4C /* WebSocketReconnectionStrategy.swift in Sources */,
+				C121E828274544AD00023E4C /* RetryStrategy.swift in Sources */,
 				C121E829274544AD00023E4C /* WebSocketConnectPayload.swift in Sources */,
 				C121E82A274544AD00023E4C /* ConnectionStatus.swift in Sources */,
 				C121E82B274544AD00023E4C /* APIPathConvertible.swift in Sources */,
