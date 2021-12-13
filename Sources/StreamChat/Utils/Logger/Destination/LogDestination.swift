@@ -47,6 +47,20 @@ public protocol LogDestination {
     var showLineNumber: Bool { get set }
     var showFunctionName: Bool { get set }
     
+    init(
+        identifier: String,
+        level: LogLevel,
+        subsystems: LogSubsystem,
+        showDate: Bool,
+        dateFormatter: DateFormatter,
+        formatters: [LogFormatter],
+        showLevel: Bool,
+        showIdentifier: Bool,
+        showThreadName: Bool,
+        showFileName: Bool,
+        showLineNumber: Bool,
+        showFunctionName: Bool
+    )
     func isEnabled(level: LogLevel) -> Bool
     func isEnabled(level: LogLevel, subsystems: LogSubsystem) -> Bool
     func process(logDetails: LogDetails)

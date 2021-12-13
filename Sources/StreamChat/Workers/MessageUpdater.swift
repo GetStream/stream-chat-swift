@@ -20,7 +20,7 @@ class MessageUpdater: Worker {
             switch $0 {
             case let .success(boxed):
                 self.database.write({ session in
-                    try session.saveMessage(payload: boxed.message, for: cid)
+                    try session.saveMessage(payload: boxed.message, for: cid, syncOwnReactions: true)
                 }, completion: { error in
                     completion?(error)
                 })
@@ -187,7 +187,7 @@ class MessageUpdater: Worker {
             switch $0 {
             case let .success(payload):
                 self.database.write({ session in
-                    try payload.messages.forEach { try session.saveMessage(payload: $0, for: cid) }
+                    try payload.messages.forEach { try session.saveMessage(payload: $0, for: cid, syncOwnReactions: true) }
                 }, completion: { error in
                     if let error = error {
                         completion?(.failure(error))
@@ -517,7 +517,7 @@ class MessageUpdater: Worker {
                 switch $0 {
                 case let .success(payload):
                     self.database.write({ session in
-                        try session.saveMessage(payload: payload.message, for: cid)
+                        try session.saveMessage(payload: payload.message, for: cid, syncOwnReactions: true)
                     }, completion: { error in
                         completion?(error)
                     })

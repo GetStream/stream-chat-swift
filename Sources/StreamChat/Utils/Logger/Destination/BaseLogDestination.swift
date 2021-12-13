@@ -38,22 +38,18 @@ open class BaseLogDestination: LogDestination {
     ///   - showLineNumber: Toggle for showing line number in logs
     ///   - showFunctionName: Toggle for showing function name in logs
     public required init(
-        identifier: String = "",
-        level: LogLevel = .debug,
-        subsystems: LogSubsystem = .all,
-        showDate: Bool = true,
-        dateFormatter: DateFormatter = {
-            let df = DateFormatter()
-            df.dateFormat = "yyyy-MM-dd HH:mm:ss.SSS"
-            return df
-        }(),
-        formatters: [LogFormatter] = [],
-        showLevel: Bool = true,
-        showIdentifier: Bool = true,
-        showThreadName: Bool = true,
-        showFileName: Bool = true,
-        showLineNumber: Bool = true,
-        showFunctionName: Bool = true
+        identifier: String,
+        level: LogLevel,
+        subsystems: LogSubsystem,
+        showDate: Bool,
+        dateFormatter: DateFormatter,
+        formatters: [LogFormatter],
+        showLevel: Bool,
+        showIdentifier: Bool,
+        showThreadName: Bool,
+        showFileName: Bool,
+        showLineNumber: Bool,
+        showFunctionName: Bool
     ) {
         self.identifier = identifier
         self.level = level

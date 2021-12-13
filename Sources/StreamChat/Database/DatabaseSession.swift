@@ -79,14 +79,22 @@ protocol MessageDatabaseSession {
     /// Throws an error if the save fails.
     ///
     /// You must either provide `cid` or `payload.channel` value must not be `nil`.
+    /// The `syncOwnReactions` should be set to `true` when the payload comes from an API response and `false` when the payload
+    /// is received via WS events. For performance reasons the API does not populate the `message.own_reactions` when sending events
     @discardableResult
     func saveMessage(
         payload: MessagePayload,
-        for cid: ChannelId?
+        for cid: ChannelId?,
+        syncOwnReactions: Bool
     ) throws -> MessageDTO?
     
+    /// Saves the provided message payload to the DB. Return's the matching `MessageDTO` if the save was successful.
+    /// Throws an error if the save fails.
+    ///
+    /// The `syncOwnReactions` should be set to `true` when the payload comes from an API response and `false` when the payload
+    /// is received via WS events. For performance reasons the API does not populate the `message.own_reactions` when sending events
     @discardableResult
-    func saveMessage(payload: MessagePayload, channelDTO: ChannelDTO) throws -> MessageDTO
+    func saveMessage(payload: MessagePayload, channelDTO: ChannelDTO, syncOwnReactions: Bool) throws -> MessageDTO
 
     @discardableResult
     func saveMessage(payload: MessagePayload, for query: MessageSearchQuery) throws -> MessageDTO?
@@ -322,13 +330,11 @@ extension DatabaseSession {
             try saveUser(payload: userPayload)
         }
         
-        var channelDTO: ChannelDTO?
-
         // Member events are handled in `MemberEventMiddleware`
         
         // Save a channel detail data.
         if let channelDetailPayload = payload.channel {
-            channelDTO = try saveChannel(payload: channelDetailPayload, query: nil)
+            try saveChannel(payload: channelDetailPayload, query: nil)
         }
         
         if let currentUserPayload = payload.currentUser {
@@ -343,33 +349,67 @@ extension DatabaseSession {
             currentUser.lastReceivedEventDate = date
         }
 
-        guard let message = payload.message, let cid = payload.cid else {
-            return
-        }
-
-        guard let context = self as? NSManagedObjectContext else {
-            return
-        }
-
-        if channelDTO == nil {
-            channelDTO = ChannelDTO.load(cid: cid, context: context)
-        }
-
-        guard let channel = channelDTO else {
-            log.info("event contains a cid that is not yet known, skipping")
-            return
-        }
-
-        let messageDoesNotExist = MessageDTO.load(id: message.id, context: context) == nil
+        try saveMessageIfNeeded(from: payload)
         
-        let eventsThatCreateMessages: Set<EventType> = [
-            .channelUpdated, .messageNew, .notificationMessageNew
-        ]
-
-        if messageDoesNotExist && !eventsThatCreateMessages.contains(payload.eventType) {
+        // handle reaction events for messages that already exist in the database and for this user
+        // this is needed because WS events do not contain message.own_reactions
+        if let currentUser = self.currentUser, currentUser.user.id == payload.user?.id {
+            do {
+                switch try? payload.event() {
+                case let event as ReactionNewEventDTO:
+                    let reaction = try saveReaction(payload: event.reaction)
+                    if !reaction.message.ownReactions.contains(reaction.id) {
+                        reaction.message.ownReactions.append(reaction.id)
+                    }
+                case let event as ReactionUpdatedEventDTO:
+                    try saveReaction(payload: event.reaction)
+                case let event as ReactionDeletedEventDTO:
+                    if let dto = reaction(
+                        messageId: event.message.id,
+                        userId: event.user.id,
+                        type: event.reaction.type
+                    ) {
+                        dto.message.ownReactions.removeAll(where: { $0 == dto.id })
+                        delete(reaction: dto)
+                    }
+                default:
+                    break
+                }
+            } catch {
+                log.warning("Failed to update message reaction in the database, error: \(error)")
+            }
+        }
+    }
+    
+    func saveMessageIfNeeded(from payload: EventPayload) throws {
+        guard let messagePayload = payload.message else {
+            // Event does not contain message
             return
         }
         
-        try saveMessage(payload: message, channelDTO: channel)
+        guard let cid = payload.cid, let channelDTO = channel(cid: cid) else {
+            // Channel does not exist locally
+            return
+        }
+        
+        let messageExistsLocally = message(id: messagePayload.id) != nil
+        let messageMustBeCreated = payload.eventType.shouldCreateMessageInDatabase
+        
+        guard messageExistsLocally || messageMustBeCreated else {
+            // Message does not exits locally and should not be saved
+            return
+        }
+        
+        try saveMessage(
+            payload: messagePayload,
+            channelDTO: channelDTO,
+            syncOwnReactions: false
+        )
+    }
+}
+
+private extension EventType {
+    var shouldCreateMessageInDatabase: Bool {
+        [.channelUpdated, .messageNew, .notificationMessageNew].contains(self)
     }
 }

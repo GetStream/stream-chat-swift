@@ -390,8 +390,8 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         
         return message
     }
-    
-    func saveMessage(payload: MessagePayload, channelDTO: ChannelDTO) throws -> MessageDTO {
+
+    func saveMessage(payload: MessagePayload, channelDTO: ChannelDTO, syncOwnReactions: Bool) throws -> MessageDTO {
         let cid = try ChannelId(cid: channelDTO.cid)
         let dto = MessageDTO.loadOrCreate(id: payload.id, context: self)
 
@@ -435,7 +435,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         }
 
         if let quotedMessage = payload.quotedMessage {
-            dto.quotedMessage = try saveMessage(payload: quotedMessage, channelDTO: channelDTO)
+            dto.quotedMessage = try saveMessage(payload: quotedMessage, channelDTO: channelDTO, syncOwnReactions: false)
         } else if let quotedMessageId = payload.quotedMessageId {
             // In case we do not have a fully formed quoted message in the payload,
             // we check for quotedMessageId. This can happen in the case of nested quoted messages.
@@ -472,22 +472,16 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         
         dto.channel = channelDTO
 
-        dto.latestReactions = payload.latestReactions.compactMap {
-            guard let reactionDTO = try? saveReaction(payload: $0, message: dto) else {
-                return nil
-            }
-            return MessageReactionDTO.createId(dto: reactionDTO)
-        }
+        dto.latestReactions = payload
+            .latestReactions
+            .compactMap { try? saveReaction(payload: $0) }
+            .map(\.id)
 
-        // the .filter part is a workaround an API bug, some WS events contain
-        // the message.own_reactions field populated with reactions from other users
-        if payload.ownReactions.filter({ currentUser?.user.id != $0.user.id }).isEmpty {
-            dto.ownReactions = payload.ownReactions.compactMap {
-                guard let reactionDTO = try? saveReaction(payload: $0, message: dto) else {
-                    return nil
-                }
-                return MessageReactionDTO.createId(dto: reactionDTO)
-            }
+        if syncOwnReactions {
+            dto.ownReactions = payload
+                .ownReactions
+                .compactMap { try? saveReaction(payload: $0) }
+                .map(\.id)
         }
 
         let attachments: Set<AttachmentDTO> = try Set(
@@ -514,7 +508,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         return dto
     }
 
-    func saveMessage(payload: MessagePayload, for cid: ChannelId?) throws -> MessageDTO? {
+    func saveMessage(payload: MessagePayload, for cid: ChannelId?, syncOwnReactions: Bool = true) throws -> MessageDTO? {
         guard payload.channel != nil || cid != nil else {
             throw ClientError.MessagePayloadSavingFailure("""
             Either `payload.channel` or `cid` must be provided to sucessfuly save the message payload.
@@ -543,7 +537,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
             return nil
         }
         
-        return try saveMessage(payload: payload, channelDTO: channel)
+        return try saveMessage(payload: payload, channelDTO: channel, syncOwnReactions: syncOwnReactions)
     }
     
     func saveMessage(payload: MessagePayload, for query: MessageSearchQuery) throws -> MessageDTO? {
@@ -600,27 +594,32 @@ extension NSManagedObjectContext: MessageDatabaseSession {
             throw ClientError.MessageDoesNotExist(messageId: messageId)
         }
 
-        let result = try MessageReactionDTO.loadOrCreate(messageId: messageId, type: type, user: currentUserDTO.user, context: self)
+        let dto = MessageReactionDTO.loadOrCreate(
+            message: message,
+            type: type,
+            user: currentUserDTO.user,
+            context: self
+        )
 
         // make sure we update the reactionScores for the message in a way that works for new or updated reactions
-        let scoreDiff = Int64(score) - result.dto.score
-        let newScore = max(0, message.reactionScores[type.rawValue] ?? Int(result.dto.score) + Int(scoreDiff))
+        let scoreDiff = Int64(score) - dto.score
+        let newScore = max(0, message.reactionScores[type.rawValue] ?? Int(dto.score) + Int(scoreDiff))
         message.reactionScores[type.rawValue] = newScore
 
-        result.dto.score = Int64(score)
-        result.dto.extraData = try JSONEncoder.default.encode(extraData)
+        dto.score = Int64(score)
+        dto.extraData = try JSONEncoder.default.encode(extraData)
 
-        let reactionId = MessageReactionDTO.createId(dto: result.dto)
-
-        if message.latestReactions.filter({ $0 == reactionId }).isEmpty {
+        let reactionId = dto.id
+        
+        if !message.latestReactions.contains(reactionId) {
             message.latestReactions.append(reactionId)
         }
 
-        if message.ownReactions.filter({ $0 == reactionId }).isEmpty {
+        if !message.ownReactions.contains(reactionId) {
             message.ownReactions.append(reactionId)
         }
 
-        return result.dto
+        return dto
     }
 
     /// Removes the reaction for the current user to the message with id `messageId`
@@ -648,11 +647,9 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         guard version == nil || version == reaction.version else {
             return nil
         }
-
-        let reactionId = MessageReactionDTO.createId(dto: reaction)
-
-        message.latestReactions = message.latestReactions.filter { $0 != reactionId }
-        message.ownReactions = message.ownReactions.filter { $0 != reactionId }
+        
+        message.latestReactions = message.latestReactions.filter { $0 != reaction.id }
+        message.ownReactions = message.ownReactions.filter { $0 != reaction.id }
 
         guard let reactionScore = message.reactionScores.removeValue(forKey: type.rawValue), reactionScore > 1 else {
             return reaction

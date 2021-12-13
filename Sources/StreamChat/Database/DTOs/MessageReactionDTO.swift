@@ -7,7 +7,7 @@ import Foundation
 
 @objc(MessageReactionDTO)
 final class MessageReactionDTO: NSManagedObject {
-    @NSManaged fileprivate var id: String
+    @NSManaged private(set) var id: String
 
     // holds the rawValue of LocalReactionState
     @NSManaged fileprivate var localStateRaw: String?
@@ -29,12 +29,6 @@ final class MessageReactionDTO: NSManagedObject {
         type: MessageReactionType
     ) -> String {
         [userId, messageId, type.rawValue].joined(separator: "/")
-    }
-    
-    static func createId(
-        dto: MessageReactionDTO
-    ) -> String {
-        createId(userId: dto.user.id, messageId: dto.message.id, type: .init(rawValue: dto.type))
     }
 }
 
@@ -77,11 +71,11 @@ extension MessageReactionDTO {
         type: MessageReactionType,
         user: UserDTO,
         context: NSManagedObjectContext
-    ) throws -> (dto: MessageReactionDTO, created: Bool) {
+    ) -> MessageReactionDTO {
         let userId = user.id
 
         if let existing = Self.load(userId: userId, messageId: message.id, type: type, context: context) {
-            return (existing, false)
+            return existing
         }
 
         let new = NSEntityDescription.insertNewObject(forEntityName: Self.entityName, into: context) as! MessageReactionDTO
@@ -89,26 +83,7 @@ extension MessageReactionDTO {
         new.type = type.rawValue
         new.message = message
         new.user = user
-        return (new, true)
-    }
-
-    static func loadOrCreate(
-        messageId: MessageId,
-        type: MessageReactionType,
-        user: UserDTO,
-        context: NSManagedObjectContext
-    ) throws -> (dto: MessageReactionDTO, created: Bool) {
-        let userId = user.id
-
-        if let existing = Self.load(userId: userId, messageId: messageId, type: type, context: context) {
-            return (existing, false)
-        }
-
-        guard let message = MessageDTO.load(id: messageId, context: context) else {
-            throw ClientError.MessageDoesNotExist(messageId: messageId)
-        }
-
-        return try loadOrCreate(message: message, type: type, user: user, context: context)
+        return new
     }
 }
 
@@ -117,44 +92,29 @@ extension NSManagedObjectContext {
         MessageReactionDTO.load(userId: userId, messageId: messageId, type: type, context: self)
     }
 
-    func populateFieldsBeforeSave(dto: MessageReactionDTO, payload: MessageReactionPayload) throws {
+    @discardableResult
+    func saveReaction(
+        payload: MessageReactionPayload
+    ) throws -> MessageReactionDTO {
+        guard let messageDTO = message(id: payload.messageId) else {
+            throw ClientError.MessageDoesNotExist(messageId: payload.messageId)
+        }
+        
+        let dto = MessageReactionDTO.loadOrCreate(
+            message: messageDTO,
+            type: payload.type,
+            user: try saveUser(payload: payload.user),
+            context: self
+        )
+
         dto.score = Int64(clamping: payload.score)
         dto.createdAt = payload.createdAt
         dto.updatedAt = payload.updatedAt
         dto.extraData = try JSONEncoder.default.encode(payload.extraData)
         dto.localState = nil
         dto.version = nil
-    }
-
-    @discardableResult
-    func saveReaction(
-        payload: MessageReactionPayload
-    ) throws -> MessageReactionDTO {
-        let result = try MessageReactionDTO.loadOrCreate(
-            messageId: payload.messageId,
-            type: payload.type,
-            user: try saveUser(payload: payload.user),
-            context: self
-        )
-
-        try populateFieldsBeforeSave(dto: result.dto, payload: payload)
-        return result.dto
-    }
-
-    @discardableResult
-    func saveReaction(
-        payload: MessageReactionPayload,
-        message: MessageDTO
-    ) throws -> MessageReactionDTO {
-        let result = try MessageReactionDTO.loadOrCreate(
-            message: message,
-            type: payload.type,
-            user: try saveUser(payload: payload.user),
-            context: self
-        )
-
-        try populateFieldsBeforeSave(dto: result.dto, payload: payload)
-        return result.dto
+        
+        return dto
     }
 
     func delete(reaction: MessageReactionDTO) {

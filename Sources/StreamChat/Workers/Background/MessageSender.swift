@@ -202,7 +202,7 @@ private class MessageSendingQueue {
     
     private func saveSuccessfullySentMessage(cid: ChannelId, message: MessagePayload, completion: @escaping () -> Void) {
         database.write({
-            guard let messageDTO = try? $0.saveMessage(payload: message, for: cid) else {
+            guard let messageDTO = try? $0.saveMessage(payload: message, for: cid, syncOwnReactions: false) else {
                 return
             }
             if messageDTO.localMessageState == .sending {
