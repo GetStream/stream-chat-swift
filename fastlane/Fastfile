@@ -28,8 +28,12 @@ lane :build_xcframeworks do
   end
 end
 
-desc "Release a new version"
+desc "Start a new release"
 lane :release do |options|
+  # Ensure we are on the main branch
+  ensure_git_branch(branch: 'main')
+
+  # Ensure we have a clean git status
   ensure_git_status_clean unless options[:no_ensure_clean]
 
   # Ensure we have a release type
@@ -41,12 +45,12 @@ lane :release do |options|
   # Version Number
   version_number = increment_version_number_in_plist(bump_type: options[:type], xcodeproj: "StreamChat.xcodeproj", target: "StreamChat")
 
-  # Checkout New Release Branch
-  sh("git checkout -b " + "release/" + version_number)
-
   if git_tag_exists(tag: version_number)
     UI.user_error!("Tag for version #{version_number} already exists!")
   end
+
+  # Checkout New Release Branch
+  sh("git checkout -b " + "release/" + version_number)
 
   # Set version on the SDK & Project
   increment_version_number_in_plist(version_number: version_number, xcodeproj: "StreamChat.xcodeproj", target: "StreamChat")
@@ -92,6 +96,10 @@ end
 
 desc "Completes an SDK Release"
 lane :publish_release do |options|
+
+  # Make xcframeworks
+  make frameworks
+
   version = options[:version]
   github_release = set_github_release(
                      repository_name: "GetStream/stream-chat-swift",
@@ -109,9 +117,6 @@ lane :publish_release do |options|
 
   # Push tag to remote
   push_to_git_remote(tags: true)
-
-  # Create TestFlight Build
-  testflight_build
 
   # Success
   UI.success("Github release was created, please visit #{github_release["url"]} to see it")
