@@ -1,4 +1,29 @@
 {
+  "member" : {
+      "banned" : false,
+      "shadow_banned" : false,
+      "created_at" : "2021-12-21T15:51:42.125776Z",
+      "role" : "member",
+      "channel_role" : "channel_member",
+      "user_id" : "general_grievous",
+      "updated_at" : "2021-12-21T15:51:42.125776Z",
+      "user" : {
+          "id" : "general_grievous",
+          "banned" : false,
+          "extraData" : {
+              
+          },
+          "last_active" : "2021-12-21T15:50:18.579489557Z",
+          "created_at" : "2020-12-07T11:37:39.918436Z",
+          "image_url" : "https:\/\/vignette.wikia.nocookie.net\/starwars\/images\/d\/de\/Grievoushead.jpg",
+          "image" : "https:\/\/vignette.wikia.nocookie.net\/starwars\/images\/d\/de\/Grievoushead.jpg",
+          "updated_at" : "2021-08-27T05:38:15.102195Z",
+          "birthland" : "Qymaen jai Sheelal",
+          "role" : "user",
+          "online" : true,
+          "name" : "General Grievous"
+      }
+  },
   "channel" : {
     "created_by" : {
       "banned" : false,
