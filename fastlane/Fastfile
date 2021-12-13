@@ -57,6 +57,13 @@ lane :release do |options|
   set_SDK_version(version: version_number)
   increment_version_number_in_plist(version_number: version_number, xcodeproj: "StreamChat.xcodeproj", target: "StreamChatUI")
 
+  # Set the framework version on the artifacts
+  file = File.read('../StreamChatArtifacts.json')
+  data_hash = JSON.parse(file)
+
+  data_hash["#{version_number}"] = "https://github.com/GetStream/stream-chat-swift/releases/download/#{version_number}/StreamChat-All.zip"
+  File.write('../StreamChatArtifacts.json', JSON.dump(data_hash))
+
   changes = touch_changelog(release_version: version_number)
 
    # Make sure the podspecs actually build before pushing

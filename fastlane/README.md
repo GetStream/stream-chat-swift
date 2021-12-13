@@ -24,8 +24,8 @@ Build .xcframeworks
 ```
 fastlane release
 ```
-Release a new version
-### complete_release
+Start a new release
+### publish_release
 ```
 fastlane publish_release
 ```
