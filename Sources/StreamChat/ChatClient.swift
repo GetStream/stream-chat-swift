@@ -163,12 +163,8 @@ public class ChatClient {
         }
     }()
     
-    private(set) lazy var internetConnection = environment.internetConnection(eventNotificationCenter)
     private(set) lazy var clientUpdater = environment.clientUpdaterBuilder(self)
     private(set) var userConnectionProvider: UserConnectionProvider?
-    
-    /// Used for starting and ending background tasks. Hides platform specific logic.
-    private lazy var backgroundTaskScheduler = environment.backgroundTaskSchedulerBuilder()
     
     /// The environment object containing all dependencies of this `Client` instance.
     private let environment: Environment
@@ -339,7 +335,6 @@ public class ChatClient {
     public func disconnect() {
         clientUpdater.disconnect()
         userConnectionProvider = nil
-        unsubscribeFromNotifications()
         apiClient.flushRequestsQueue()
     }
 
@@ -394,96 +389,9 @@ public class ChatClient {
         self.userConnectionProvider = userConnectionProvider
         clientUpdater.reloadUserIfNeeded(
             userInfo: userInfo,
-            userConnectionProvider: userConnectionProvider
-        ) { [weak self] error in
-            if error == nil {
-                self?.subscribeOnNotifications()
-            }
-            completion?(error)
-        }
-    }
-    
-    private func subscribeOnNotifications() {
-        backgroundTaskScheduler?.startListeningForAppStateUpdates(
-            onEnteringBackground: { [weak self] in self?.handleAppDidEnterBackground() },
-            onEnteringForeground: { [weak self] in self?.handleAppDidBecomeActive() }
+            userConnectionProvider: userConnectionProvider,
+            completion: completion
         )
-        
-        eventNotificationCenter.addObserver(
-            self,
-            selector: #selector(didChangeInternetConnectionStatus(_:)),
-            name: .internetConnectionStatusDidChange,
-            object: nil
-        )
-    }
-    
-    private func unsubscribeFromNotifications() {
-        backgroundTaskScheduler?.stopListeningForAppStateUpdates()
-        eventNotificationCenter.removeObserver(
-            self,
-            name: .internetConnectionStatusDidChange,
-            object: nil
-        )
-    }
-    
-    private func handleAppDidEnterBackground() {
-        // We can't disconnect if we're not connected
-        guard connectionStatus == .connected else { return }
-        
-        guard config.staysConnectedInBackground else {
-            // We immediately disconnect
-            clientUpdater.disconnect(source: .systemInitiated)
-            return
-        }
-        guard let scheduler = backgroundTaskScheduler else { return }
-        
-        let succeed = scheduler.beginTask { [weak self] in
-            self?.clientUpdater.disconnect(source: .systemInitiated)
-        }
-        
-        if !succeed {
-            // Can't initiate a background task, close the connection
-            clientUpdater.disconnect(source: .systemInitiated)
-        }
-    }
-    
-    private func handleAppDidBecomeActive() {
-        cancelBackgroundTaskIfNeeded()
-        reconnectIfNeeded()
-    }
-    
-    private func cancelBackgroundTaskIfNeeded() {
-        backgroundTaskScheduler?.endTask()
-    }
-    
-    private func reconnectIfNeeded() {
-        guard userConnectionProvider != nil else {
-            // The client has not been connected yet during this session
-            return
-        }
-        
-        guard connectionStatus != .connected && connectionStatus != .connecting else {
-            // We are connected or connecting anyway
-            return
-        }
-        
-        guard internetConnection.status.isAvailable else {
-            // We are offline. Once the connection comes back we will try to reconnect again
-            return
-        }
-        
-        clientUpdater.connect()
-    }
-
-    @objc private func didChangeInternetConnectionStatus(_ notification: Notification) {
-        switch (connectionStatus, notification.internetConnectionStatus?.isAvailable) {
-        case (.connected, false):
-            clientUpdater.disconnect(source: .systemInitiated)
-        case (.disconnected, true):
-            reconnectIfNeeded()
-        default:
-            return
-        }
     }
 }
 
