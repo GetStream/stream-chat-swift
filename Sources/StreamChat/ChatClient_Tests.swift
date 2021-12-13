@@ -1195,7 +1195,16 @@ class ChatClient_Tests: XCTestCase {
             eventWorkerBuilders: [],
             environment: testEnv.environment
         )
-        let prefix = "stream-chat-swift-client-v"
+        var expectedIdentifier: String {
+            #if canImport(StreamChatSwiftUI)
+            "swiftui"
+            #elseif canImport(StreamChatUI)
+            "uikit"
+            #else
+            "swift"
+            #endif
+        }
+        let prefix = "stream-chat-\(expectedIdentifier)-client-v"
         
         // When
         client.connectAnonymousUser()
@@ -1340,10 +1349,20 @@ extension ChatClient_Tests {
             return
         }
         
+        var expectedIdentifier: String {
+            #if canImport(StreamChatSwiftUI)
+            "swiftui"
+            #elseif canImport(StreamChatUI)
+            "uikit"
+            #else
+            "swift"
+            #endif
+        }
+        
         let headers = config.httpAdditionalHeaders as? [String: String] ?? [:]
         XCTAssertEqual(
             headers["X-Stream-Client"],
-            "stream-chat-swift-client-v\(SystemEnvironment.version)"
+            "stream-chat-\(expectedIdentifier)-client-v\(SystemEnvironment.version)"
         )
     }
 }
