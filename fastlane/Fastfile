@@ -5,7 +5,10 @@ require 'json'
 # The number of times the stress test suite is ran
 stress_tests_cycles = 50
 
-before_all do
+before_all do |lane|
+  if FastlaneCore::Helper.mac?
+    xcversion(version: "~> 13.2.0")
+  end
   if is_ci
     setup_ci()
   end
