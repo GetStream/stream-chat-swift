@@ -387,6 +387,9 @@ open class ChatMessageListVC:
                 for: indexPath) as? RedPacketBubble else {
                 return UITableViewCell()
             }
+            if let channel = dataSource?.channel(for: self) {
+                cell.channel = channel
+            }
             cell.options = cellLayoutOptionsForMessage(at: indexPath)
             cell.content = message
             cell.configureCell(isSender: isMessageFromCurrentUser, with: .RECEIVED)

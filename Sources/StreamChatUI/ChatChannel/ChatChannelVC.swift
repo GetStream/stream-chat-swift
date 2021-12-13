@@ -52,11 +52,7 @@ open class ChatChannelVC:
 
     open private(set) lazy var backButton: UIButton = {
         let button = UIButton()
-        if #available(iOS 13.0, *) {
-            button.setImage(UIImage(systemName: "chevron.backward"), for: .normal)
-        } else {
-            // Fallback on earlier versions
-        }
+        button.setImage(appearance.images.backCircle, for: .normal)
         button.tintColor = .white
         button.addTarget(self, action: #selector(backAction), for: .touchUpInside)
         return button.withoutAutoresizingMaskConstraints

@@ -309,7 +309,6 @@ class RedPacketSentBubble: UITableViewCell {
                 return false
             }
         }
-        return false
     }
 
     @objc private func btnPickButtonAction() {

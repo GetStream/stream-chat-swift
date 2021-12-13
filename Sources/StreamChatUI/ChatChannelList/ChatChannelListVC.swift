@@ -48,7 +48,7 @@ open class ChatChannelListVC: _ViewController,
 
     open private(set) lazy var createChannelButton: UIButton = {
         let button = UIButton()
-        button.setImage(UIImage(named: "pencil")!, for: .normal)
+        button.setImage(appearance.images.editCircle, for: .normal)
         button.tintColor = .white
         button.addTarget(self, action: #selector(didTapCreateNewChannel), for: .touchUpInside)
         return button.withoutAutoresizingMaskConstraints

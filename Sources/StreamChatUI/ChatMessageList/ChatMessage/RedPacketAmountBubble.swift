@@ -161,8 +161,8 @@ class RedPacketAmountBubble: UITableViewCell {
             return ""
         }
         if let receivedAmount = data["receivedAmount"] {
-            let strAmount = fetchRawData(raw: receivedAmount) as? Double ?? 0
-            return "\(strAmount)"
+            let amount = fetchRawData(raw: receivedAmount) as? Double ?? 0
+            return String(format: "%.2f", amount)
         } else {
             return "\(0)"
         }

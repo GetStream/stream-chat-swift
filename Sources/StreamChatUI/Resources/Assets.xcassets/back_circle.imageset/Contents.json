@@ -1,0 +1,12 @@
+{
+  "images" : [
+    {
+      "filename" : "back_circle.pdf",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}

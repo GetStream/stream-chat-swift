@@ -195,9 +195,8 @@ class CryptoSentBubble: UITableViewCell {
             return
         }
         if let toUserName = walletData["recipientName"] {
-            var recipientName = fetchRawData(raw: toUserName) as? String ?? ""
-            recipientName = String(recipientName.prefix(4))
-            descriptionLabel.text = "you have sent crypto to \(recipientName)"
+            let recipientName = fetchRawData(raw: toUserName) as? String ?? ""
+            descriptionLabel.text = "You sent $ONE to \(recipientName)"
         }
         if let amount = walletData["transferAmount"] {
             let one = fetchRawData(raw: amount) as? Double ?? 0

@@ -183,8 +183,7 @@ class CryptoReceiveBubble: UITableViewCell {
             return
         }
         if let fromUserName = walletData["myName"] {
-            var userName = fetchRawData(raw: fromUserName) as? String ?? ""
-            userName = String(userName.prefix(4))
+            let userName = fetchRawData(raw: fromUserName) as? String ?? ""
             descriptionLabel.text = "\(userName) has sent you crypto"
         }
         if let amount = walletData["transferAmount"] {

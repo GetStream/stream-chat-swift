@@ -80,7 +80,11 @@ class RedPacketBubble: UITableViewCell {
 
         sentThumbImageView = UIImageView()
         sentThumbImageView.backgroundColor = Appearance.default.colorPalette.background6
-        sentThumbImageView.image = Appearance.default.images.expiredPacketThumb
+        if type == .EXPIRED {
+            sentThumbImageView.image = Appearance.default.images.expiredPacketThumb
+        } else {
+            sentThumbImageView.image = Appearance.default.images.cryptoSentThumb
+        }
         sentThumbImageView.transform = .mirrorY
         sentThumbImageView.contentMode = .scaleAspectFill
         sentThumbImageView.translatesAutoresizingMaskIntoConstraints = false
@@ -232,7 +236,8 @@ class RedPacketBubble: UITableViewCell {
         }
         if let receivedAmount = topAmount["receivedAmount"] {
             let dblReceivedAmount = fetchRawData(raw: receivedAmount) as? Double ?? 0
-            lblDetails.text = "You just picked up \(dblReceivedAmount) ONE!"
+            let strReceivedAmount = String(format: "%.2f", dblReceivedAmount)
+            lblDetails.text = "You just picked up \(strReceivedAmount) ONE!"
         }
     }
 

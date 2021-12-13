@@ -56,6 +56,7 @@ public extension Appearance {
         public var moneyTransaction: UIImage = loadImageSafely(with: "money-transaction")
         public var moreRounded: UIImage = loadImageSafely(with: "more-rounded")
         public var scrollDownArrow: UIImage = loadImageSafely(with: "arrow_down")
+        public var backCircle: UIImage = loadImageSafely(with: "back_circle")
         public var messageSent: UIImage = loadImageSafely(with: "checkmark_grey")
         public var whiteCheckmark: UIImage = loadImageSafely(with: "checkmark_white")
         public var readByAll: UIImage = loadImageSafely(with: "checkmark_double")
@@ -232,6 +233,7 @@ public extension Appearance {
         
         public var play: UIImage = loadImageSafely(with: "play")
         public var pause: UIImage = loadImageSafely(with: "pause")
+        public var editCircle: UIImage = loadImageSafely(with: "editIcon")
 
         // MARK: - CommandIcons
 
