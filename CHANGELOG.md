@@ -15,6 +15,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Add support for pre-built XCFrameworks [#1665](https://github.com/GetStream/stream-chat-swift/pull/1665)
 - Added `LogConfig.destinationTypes` for ease of adding new destinations to logger [#1681](https://github.com/GetStream/stream-chat-swift/issues/1681)
 - Expose container embedding top & bottom containers by `ChatChannelListItemView` [#1670](https://github.com/GetStream/stream-chat-swift/issues/1670)
+- Configurable Message List Date Separators [#1686](https://github.com/GetStream/stream-chat-swift/issues/1686)
+   - You can change the message list date configuration by changing the following flags:
+     - `Components.default.messageListVC.isDateSeparatorEnabled`
+     - `Components.default.messageListVC.isDateOverlayEnabled`
 - Add Static Message List Date Separators [#1686](https://github.com/GetStream/stream-chat-swift/issues/1686)
 
 # [4.5.2](https://github.com/GetStream/stream-chat-swift/releases/tag/4.5.2)
