@@ -107,6 +107,9 @@ public struct Components {
     public var messageListScrollOverlayView: ChatMessageListScrollOverlayView.Type =
         ChatMessageListScrollOverlayView.self
 
+    /// The date separator view that groups messages from the same day.
+    public var messageListDateSeparatorView: ChatMessageListDateSeparatorView.Type = ChatMessageListDateSeparatorView.self
+
     /// The view controller used to perform message actions.
     public var messageActionsVC: ChatMessageActionsVC.Type = ChatMessageActionsVC.self
 

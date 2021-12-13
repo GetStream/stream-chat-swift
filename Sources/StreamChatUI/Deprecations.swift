@@ -4,6 +4,7 @@
 
 import Foundation
 import StreamChat
+import UIKit
 
 /// - NOTE: Deprecations of the next major release.
 
@@ -216,5 +217,14 @@ public extension ChatMessageLayoutOptions {
     init(rawValue: Int) {
         let option = ChatMessageLayoutOption(rawValue: "\(rawValue)")
         self = Set(arrayLiteral: option)
+    }
+}
+
+// MARK: - Refactoring of message list date separator
+
+extension ChatMessageListScrollOverlayView {
+    @available(*, deprecated, message: "use `dateSeparatorView.textLabel` instead.")
+    open var textLabel: UILabel {
+        dateSeparatorView.textLabel
     }
 }
