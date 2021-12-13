@@ -80,6 +80,12 @@ open class ChatMessageListVC:
 
         return !listView.isLastCellFullyVisible && isMoreContentThanOnePage
     }
+
+    /// A boolean value that determines wether the date overlay should be displayed while scrolling.
+    public static var isDateOverlayEnabled = true
+
+    /// A boolean value that determines wether date separators should be shown between each message.
+    public static var isDateSeparatorEnabled = false
     
     override open func setUp() {
         super.setUp()
@@ -116,13 +122,15 @@ open class ChatMessageListVC:
         scrollToLatestMessageButton.widthAnchor.pin(equalTo: scrollToLatestMessageButton.heightAnchor).isActive = true
         scrollToLatestMessageButton.heightAnchor.pin(equalToConstant: 40).isActive = true
         setScrollToLatestMessageButton(visible: false, animated: false)
-        
-        view.addSubview(dateOverlayView)
-        NSLayoutConstraint.activate([
-            dateOverlayView.centerXAnchor.pin(equalTo: view.safeAreaLayoutGuide.centerXAnchor),
-            dateOverlayView.topAnchor.pin(equalToSystemSpacingBelow: view.safeAreaLayoutGuide.topAnchor)
-        ])
-        dateOverlayView.isHidden = true
+
+        if Self.isDateOverlayEnabled {
+            view.addSubview(dateOverlayView)
+            NSLayoutConstraint.activate([
+                dateOverlayView.centerXAnchor.pin(equalTo: view.safeAreaLayoutGuide.centerXAnchor),
+                dateOverlayView.topAnchor.pin(equalToSystemSpacingBelow: view.safeAreaLayoutGuide.topAnchor)
+            ])
+            dateOverlayView.isHidden = true
+        }
     }
 
     override open func setUpAppearance() {
@@ -310,6 +318,18 @@ open class ChatMessageListVC:
 
         cell.messageContentView?.delegate = self
         cell.messageContentView?.content = message
+        cell.dateSeparatorView.isHidden = true
+
+        let previousIndexPath = IndexPath(row: indexPath.row + 1, section: indexPath.section)
+        if let previousMessage = dataSource?.chatMessageListVC(self, messageAt: previousIndexPath),
+           let currentMessage = message,
+           Self.isDateSeparatorEnabled {
+            let previousDate = DateFormatter.messageListDateOverlay.string(from: previousMessage.createdAt)
+            let currentDate = DateFormatter.messageListDateOverlay.string(from: currentMessage.createdAt)
+
+            cell.dateSeparatorView.content = currentDate
+            cell.dateSeparatorView.isHidden = previousDate == currentDate
+        }
 
         return cell
     }
