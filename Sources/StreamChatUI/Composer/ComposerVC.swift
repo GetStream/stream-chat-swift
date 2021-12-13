@@ -539,28 +539,17 @@ open class ComposerVC: _ViewController,
     }
 
     @objc open func sendONEAction() {
+        composerView.inputMessageView.textView.text = nil
+        composerView.inputMessageView.textView.resignFirstResponder()
         guard let channelId = channelController?.channel?.cid else { return }
         var userInfo = [String: Any]()
         userInfo["channelId"] = channelId
         NotificationCenter.default.post(name: .sendOneWalletTapAction, object: nil, userInfo: userInfo)
-        //sendPaymentBubble()
-//        #if targetEnvironment(simulator)
-//        var sendOneWalletData = SendOneWallet()
-//        sendOneWalletData.myName = "Hochung"
-//        sendOneWalletData.myWalletAddress = ""
-//
-//        channelController?.createNewMessage(
-//            text: "",
-//            pinning: nil,
-//            attachments: [],
-//            mentionedUserIds: content.mentionedUsers.map(\.id),
-//            quotedMessageId: content.quotingMessage?.id,
-//            extraData: ["redPacketAmountCell" : .dictionary(sendOneWalletData.toDictionary())],
-//            completion: nil)
-//        #endif
     }
 
     @objc open func sendRedPacketAction() {
+        composerView.inputMessageView.textView.text = nil
+        composerView.inputMessageView.textView.resignFirstResponder()
         guard let channelId = channelController?.channel?.cid else { return }
         var userInfo = [String: Any]()
         userInfo["channelId"] = channelId
@@ -695,17 +684,18 @@ open class ComposerVC: _ViewController,
     /// - Returns: A string of the corresponding potential command.
     open func typingCommand(in textView: UITextView) -> String? {
         let typingSuggestion = commandSuggester.typingSuggestion(in: textView)
+        print("*****", typingSuggestion?.text)
         return typingSuggestion?.text
     }
 
     /// Shows the command suggestions for the potential command the current user is typing.
     /// - Parameter typingCommand: The potential command that the current user is typing.
     open func showCommandSuggestions(for typingCommand: String) {
-        let availableCommands = channelController?.channel?.config.commands ?? []
-        
+        print("^^^^^",typingCommand)
+        var availableCommands = channelController?.channel?.config.commands ?? []
         // Don't show the commands suggestion VC if there are no commands
         guard availableCommands.isEmpty == false else { return }
-        
+        availableCommands.append(contentsOf: extraCommands())
         var commandHints: [Command] = availableCommands
 
         if !typingCommand.isEmpty {
@@ -718,9 +708,15 @@ open class ComposerVC: _ViewController,
             availableCommand.name.compare(typingCommand, options: .caseInsensitive) == .orderedSame
         }
         if let foundCommand = availableCommands.first(where: typingCommandMatches), !content.hasCommand {
-            content.addCommand(foundCommand)
-
-            dismissSuggestions()
+            let commandName = foundCommand.name
+            if commandName == "Send" {
+                sendONEAction()
+            } else if commandName == "redpacket" {
+                sendRedPacketAction()
+            } else {
+                content.addCommand(foundCommand)
+                dismissSuggestions()
+            }
             return
         }
 
@@ -730,12 +726,25 @@ open class ComposerVC: _ViewController,
         )
         suggestionsVC.dataSource = dataSource
         suggestionsVC.didSelectItemAt = { [weak self] commandIndex in
-            self?.content.addCommand(commandHints[commandIndex])
-
-            self?.dismissSuggestions()
+            let command = dataSource.commands[commandIndex]
+            print(command.name)
+            let commandName = command.name
+            if commandName == "Send" {
+                self?.sendONEAction()
+            } else if commandName == "redpacket" {
+                self?.sendRedPacketAction()
+            } else {
+                self?.content.addCommand(commandHints[commandIndex])
+                self?.dismissSuggestions()
+            }
         }
-
         showSuggestions()
+    }
+
+    open func extraCommands() -> [Command] {
+        let sendOne = Command(name: "Send", description: "Shortcut for send $ONE", set: "$ONE", args: "Send $ONE")
+        let redPacket = Command(name: "redpacket", description: "Shortcut for redpacket", set: "$ONE", args: "RedPacket")
+        return [sendOne, redPacket]
     }
     
     /// Returns the query to be used for searching users for the given typing mention.
