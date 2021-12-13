@@ -79,12 +79,15 @@ public class ChatClient {
                 decoder: decoder,
                 sessionConfiguration: urlSessionConfiguration
             ),
-            { [weak self] error, completion in
+            { [weak self] completion in
                 guard let self = self else {
                     completion()
                     return
                 }
-                self.refreshToken(error: error, completion: { _ in completion() })
+                self.refreshToken(
+                    error: ClientError.ExpiredToken(),
+                    completion: { _ in completion() }
+                )
             }
         )
         return apiClient
@@ -505,7 +508,7 @@ extension ChatClient {
             _ requestEncoder: RequestEncoder,
             _ requestDecoder: RequestDecoder,
             _ CDNClient: CDNClient,
-            _ tokenRefresher: @escaping (ClientError, @escaping () -> Void) -> Void
+            _ tokenRefresher: @escaping (@escaping () -> Void) -> Void
         ) -> APIClient = {
             APIClient(
                 sessionConfiguration: $0,

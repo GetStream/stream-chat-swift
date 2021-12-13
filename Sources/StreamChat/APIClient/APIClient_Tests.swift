@@ -18,7 +18,7 @@ class APIClient_Tests: XCTestCase {
     var encoder: TestRequestEncoder!
     var decoder: TestRequestDecoder!
     var cdnClient: CDNClient_Mock!
-    var tokenRefresher: ((ClientError, @escaping () -> Void) -> Void)!
+    var tokenRefresher: ((@escaping () -> Void) -> Void)!
     
     override func setUp() {
         super.setUp()
@@ -40,7 +40,7 @@ class APIClient_Tests: XCTestCase {
         decoder = TestRequestDecoder()
         cdnClient = CDNClient_Mock()
         cdnClient.uploadAttachmentMockFunc.returns(())
-        tokenRefresher = { _, _ in }
+        tokenRefresher = { _ in }
         
         apiClient = APIClient(
             sessionConfiguration: sessionConfiguration,
@@ -210,7 +210,7 @@ class APIClient_Tests: XCTestCase {
     
     func test_requestFailedWithExpiredToken_refreshesToken() throws {
         var tokenRefresherWasCalled = false
-        tokenRefresher = { _, _ in
+        tokenRefresher = { _ in
             tokenRefresherWasCalled = true
         }
         
@@ -244,7 +244,7 @@ class APIClient_Tests: XCTestCase {
     func test_requestFailedWithExpiredToken_reschedulesTaskForLater() throws {
         var tokenRefresherWasCalled = false
         var tokenRefresherCompletion = {}
-        tokenRefresher = { _, completion in
+        tokenRefresher = { completion in
             tokenRefresherWasCalled = true
             tokenRefresherCompletion = completion
         }
@@ -302,7 +302,7 @@ class APIClient_Tests: XCTestCase {
     
     func test_requestFailedWithExpiredToken_requestsTimeout() throws {
         var tokenRefresherWasCalled = false
-        tokenRefresher = { _, _ in
+        tokenRefresher = { _ in
             tokenRefresherWasCalled = true
         }
         
