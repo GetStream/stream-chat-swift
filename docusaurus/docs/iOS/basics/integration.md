@@ -82,9 +82,9 @@ Our XCFrameworks are built with **Swift 5.5**. In order to use them you need **X
 You can learn more about [our Module Stable XCFrameworks here](#xcframeworks)
 
 - For the LLC (**StreamChat**) use:
-  - `pod 'StreamChat-XCFramework', '~> 4.0.0'`
+  - `pod 'StreamChat-XCFramework', '~> 4.6.0'`
 - For the UIKit components (**StreamChatUI**, which depends on **StreamChat**) use:
-  - `pod 'StreamChatUI-XCFramework', '~> 4.0.0'`
+  - `pod 'StreamChatUI-XCFramework', '~> 4.6.0'`
 
 </p>
 </details>
@@ -121,7 +121,7 @@ In your project's `Cartfile`, add one of these options
 - For the LLC (**StreamChat**) use:
   - `github "getstream/stream-chat-swift" ~> 4.6.0`
 - For the UIKit components (**StreamChatUI**, which depends on **StreamChat**) use:
-  - `github "getstream/stream-chat-swift" ~> 4.0.0`
+  - `github "getstream/stream-chat-swift" ~> 4.6.0`
 
 :::note
 Our SwiftUI components library is not yet available using Carthage, please use Swift Package Manager or CocoaPods.
@@ -140,7 +140,7 @@ You can learn more about [our Module Stable XCFrameworks here](#xcframeworks)
 - For the LLC (**StreamChat**) use:
   - `binary "https://raw.githubusercontent.com/GetStream/stream-chat-swift/main/StreamChatArtifacts.json" ~> 4.6`
 - For the UIKit components (**StreamChatUI**, which depends on **StreamChat**) use:
-  - `binary "https://raw.githubusercontent.com/GetStream/stream-chat-swift/main/StreamChatArtifacts.json" ~> 4.0`
+  - `binary "https://raw.githubusercontent.com/GetStream/stream-chat-swift/main/StreamChatArtifacts.json" ~> 4.6`
 
 </p>
 </details>

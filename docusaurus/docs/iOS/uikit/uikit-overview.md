@@ -38,4 +38,6 @@ This SDK tries to keep the list of external dependencies to a minimum, these are
 
 To get started integrating Stream Chat in your UIKit iOS app, check our [Integration](../basics/integration) page
 
-To stay up-to-date with our updates and get a detailed breakdown of what's new, subscribe to the releases of [getstream/stream-chat-swift](https://github.com/GetStream/stream-chat-swift/releases) by clicking the "watch" button. You can further tweak your watch preferences and subscribe only to the release events.
+:::tip 
+To stay up-to-date with our updates and get a detailed breakdown of what's new, subscribe to the releases of [getstream/stream-chat-swift](https://github.com/GetStream/stream-chat-swift/releases) by clicking the "watch" button. You can further tweak your watch preferences and subscribe only to the release events. 
+:::
