@@ -82,10 +82,14 @@ open class ChatMessageListVC:
     }
 
     /// A boolean value that determines wether the date overlay should be displayed while scrolling.
-    public static var isDateOverlayEnabled = true
+    open var isDateOverlayEnabled: Bool {
+        components.messageListDateOverlayEnabled
+    }
 
     /// A boolean value that determines wether date separators should be shown between each message.
-    public static var isDateSeparatorEnabled = false
+    open var isDateSeparatorEnabled: Bool {
+        components.messageListDateSeparatorEnabled
+    }
     
     override open func setUp() {
         super.setUp()
@@ -126,7 +130,7 @@ open class ChatMessageListVC:
         scrollToLatestMessageButton.heightAnchor.pin(equalToConstant: 40).isActive = true
         setScrollToLatestMessageButton(visible: false, animated: false)
 
-        if Self.isDateOverlayEnabled {
+        if isDateOverlayEnabled {
             view.addSubview(dateOverlayView)
             NSLayoutConstraint.activate([
                 dateOverlayView.centerXAnchor.pin(equalTo: view.safeAreaLayoutGuide.centerXAnchor),
@@ -323,7 +327,7 @@ open class ChatMessageListVC:
         cell.messageContentView?.content = message
         cell.dateSeparatorView.isHidden = true
 
-        if Self.isDateSeparatorEnabled, let currentMessage = message {
+        if isDateSeparatorEnabled, let currentMessage = message {
             let currentDay = DateFormatter.messageListDateOverlay.string(from: currentMessage.createdAt)
             cell.dateSeparatorView.content = currentDay
 

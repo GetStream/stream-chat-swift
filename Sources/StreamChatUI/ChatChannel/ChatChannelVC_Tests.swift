@@ -99,7 +99,7 @@ final class ChatChannelVC_Tests: XCTestCase {
     }
 
     func test_staticDateSeparatorsAppearance() {
-        vc.components.messageListVC.isDateSeparatorEnabled = true
+        vc.components.messageListDateSeparatorEnabled = true
 
         channelControllerMock.simulateInitial(
             channel: .mock(cid: .unique),

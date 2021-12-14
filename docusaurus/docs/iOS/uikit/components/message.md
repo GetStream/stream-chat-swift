@@ -113,16 +113,16 @@ Components.default.messageLayoutOptionsResolver = CustomMessageLayoutOptionsReso
 The SDK groups each message from the same day and shows the day which these messages belong to, since by default each message only has the time it was sent, not the day. The StreamChat SDK provides two options out-of-the-box on how to render the grouped messages date separator that can be configured in the `Components` config:
 
 ```swift
-Components.default.messageListVC.isDateOverlayEnabled
-Components.default.messageListVC.isDateSeparatorEnabled
+Components.default.messageListDateOverlayEnabled
+Components.default.messageListDateSeparatorEnabled
 ```
 
-By default only the `Components.default.messageListVC.isDateOverlayEnabled` is enabled, and in this case an overlay at the top will be shown with the day which the current messages being scrolled belong to.
+By default only the `Components.default.messageListDateOverlayEnabled` is enabled, and in this case an overlay at the top will be shown with the day which the current messages being scrolled belong to.
 
 In case you want the separator to also be shown statically between each group of messages, you can enable that option as well, and turn off the overlay option if you so desire:
 
 ```swift
-Components.default.messageListVC.isDateSeparatorEnabled = true
+Components.default.messageListDateSeparatorEnabled = true
 ```
 
 #### Result:

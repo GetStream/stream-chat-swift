@@ -110,6 +110,12 @@ public struct Components {
     /// The date separator view that groups messages from the same day.
     public var messageListDateSeparatorView: ChatMessageListDateSeparatorView.Type = ChatMessageListDateSeparatorView.self
 
+    /// A boolean value that determines wether the date overlay should be displayed while scrolling.
+    public var messageListDateOverlayEnabled = true
+
+    /// A boolean value that determines wether date separators should be shown between each message.
+    public var messageListDateSeparatorEnabled = false
+
     /// The view controller used to perform message actions.
     public var messageActionsVC: ChatMessageActionsVC.Type = ChatMessageActionsVC.self
 
