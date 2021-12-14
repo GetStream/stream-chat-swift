@@ -59,6 +59,16 @@ class ChatClient_Tests: XCTestCase {
         }
     ]
     
+    var expectedIdentifier: String {
+        #if canImport(StreamChatSwiftUI)
+        "swiftui"
+        #elseif canImport(StreamChatUI)
+        "uikit"
+        #else
+        "swift"
+        #endif
+    }
+    
     // MARK: - Database stack tests
     
     func test_clientDatabaseStackInitialization_whenLocalStorageEnabled_respectsConfigValues() {
@@ -1195,7 +1205,8 @@ class ChatClient_Tests: XCTestCase {
             eventWorkerBuilders: [],
             environment: testEnv.environment
         )
-        let prefix = "stream-chat-swift-client-v"
+        
+        let prefix = "stream-chat-\(expectedIdentifier)-client-v"
         
         // When
         client.connectAnonymousUser()
@@ -1343,7 +1354,7 @@ extension ChatClient_Tests {
         let headers = config.httpAdditionalHeaders as? [String: String] ?? [:]
         XCTAssertEqual(
             headers["X-Stream-Client"],
-            "stream-chat-swift-client-v\(SystemEnvironment.version)"
+            "stream-chat-\(expectedIdentifier)-client-v\(SystemEnvironment.version)"
         )
     }
 }
