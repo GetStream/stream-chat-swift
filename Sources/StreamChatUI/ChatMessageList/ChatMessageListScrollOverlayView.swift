@@ -14,16 +14,15 @@ public protocol ChatMessageListScrollOverlayDataSource: AnyObject {
 }
 
 /// View that is displayed as top overlay when message list is scrolling
-open class ChatMessageListScrollOverlayView: _View, AppearanceProvider {
+open class ChatMessageListScrollOverlayView: _View, ThemeProvider {
     /// The displayed content.
     open var content: String? {
         didSet { updateContentIfNeeded() }
     }
-    
-    /// The view used to display the content.
-    open private(set) lazy var textLabel: UILabel = UILabel()
-        .withBidirectionalLanguagesSupport
-        .withAdjustingFontForContentSizeCategory
+
+    /// A date separator view that shows the day of the current grouped messages.
+    open lazy var dateSeparatorView: ChatMessageListDateSeparatorView = components
+        .messageListDateSeparatorView.init()
         .withoutAutoresizingMaskConstraints
             
     /// The data source used to get the content to display.
@@ -76,28 +75,13 @@ open class ChatMessageListScrollOverlayView: _View, AppearanceProvider {
     override open func setUpLayout() {
         super.setUpLayout()
         
-        embed(textLabel, insets: NSDirectionalEdgeInsets(top: 3, leading: 9, bottom: 3, trailing: 9))
-    }
-    
-    override open func setUpAppearance() {
-        super.setUpAppearance()
-                
-        backgroundColor = appearance.colorPalette.background7
-        
-        textLabel.font = appearance.fonts.footnote
-        textLabel.textColor = appearance.colorPalette.staticColorText
+        embed(dateSeparatorView)
     }
     
     override open func updateContent() {
         super.updateContent()
-        
-        textLabel.text = content
-    }
-    
-    override open func layoutSubviews() {
-        super.layoutSubviews()
-        
-        layer.cornerRadius = bounds.height / 2
+
+        dateSeparatorView.content = content
     }
     
     /// Is invoked when a pan gesture state is changed.

@@ -8,8 +8,18 @@ import UIKit
 /// The cell that displays the message content of a dynamic type and layout.
 /// Once the cell is set up it is expected to be dequeued for messages with
 /// the same content and layout the cell has already been configured with.
-public final class ChatMessageCell: _TableViewCell {
+public final class ChatMessageCell: _TableViewCell, ComponentsProvider {
     public static var reuseId: String { "\(self)" }
+
+    /// The container that holds the date separator and the message content view.
+    /// This is internal since it is a temporary solution.
+    internal lazy var containerStackView = UIStackView().withoutAutoresizingMaskConstraints
+
+    /// The date separator view that groups messages from the same day.
+    /// This is internal since it is a temporary solution.
+    internal lazy var dateSeparatorView: ChatMessageListScrollOverlayView = components
+        .messageListScrollOverlayView.init()
+        .withoutAutoresizingMaskConstraints
     
     /// The message content view the cell is showing.
     public private(set) var messageContentView: ChatMessageContentView?
@@ -27,12 +37,22 @@ public final class ChatMessageCell: _TableViewCell {
     
     override public func setUpLayout() {
         super.setUpLayout()
+
+        containerStackView.axis = .vertical
+        containerStackView.alignment = .center
+        containerStackView.spacing = 8
+        containerStackView.addArrangedSubview(dateSeparatorView)
+        messageContentView.map { containerStackView.addArrangedSubview($0) }
+        contentView.addSubview(containerStackView)
         
-        contentView.addSubview(messageContentView!)
-        
-        messageContentView!.pin(
+        containerStackView.pin(
             anchors: [.leading, .top, .trailing, .bottom],
             to: contentView
+        )
+
+        messageContentView?.pin(
+            anchors: [.leading, .trailing],
+            to: containerStackView
         )
         
         updateBottomSpacing()
