@@ -12,11 +12,11 @@ public final class ChatMessageCell: _TableViewCell, ComponentsProvider {
     public static var reuseId: String { "\(self)" }
 
     /// The container that holds the date separator and the message content view.
-    /// This is internal since it a temporary solution.
+    /// This is internal since it is a temporary solution.
     internal lazy var containerStackView = UIStackView().withoutAutoresizingMaskConstraints
 
     /// The date separator view that groups messages from the same day.
-    /// This is internal since it a temporary solution.
+    /// This is internal since it is a temporary solution.
     internal lazy var dateSeparatorView: ChatMessageListScrollOverlayView = components
         .messageListScrollOverlayView.init()
         .withoutAutoresizingMaskConstraints
