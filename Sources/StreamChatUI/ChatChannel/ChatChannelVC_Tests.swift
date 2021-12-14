@@ -98,6 +98,50 @@ final class ChatChannelVC_Tests: XCTestCase {
         )
     }
 
+    func test_staticDateSeparatorsAppearance() {
+        vc.components.messageListVC.isDateSeparatorEnabled = true
+
+        channelControllerMock.simulateInitial(
+            channel: .mock(cid: .unique),
+            messages: [
+                .mock(
+                    id: .unique,
+                    cid: .unique,
+                    text: "One",
+                    author: .mock(id: .unique),
+                    createdAt: Date(timeIntervalSince1970: 100_000_000)
+                ),
+                .mock(
+                    id: .unique,
+                    cid: .unique,
+                    text: "Two",
+                    author: .mock(id: .unique),
+                    createdAt: Date(timeIntervalSince1970: 1_000_000)
+                ),
+                .mock(
+                    id: .unique,
+                    cid: .unique,
+                    text: "Three",
+                    author: .mock(id: .unique),
+                    createdAt: Date(timeIntervalSince1970: 1_000_000)
+                ),
+                .mock(
+                    id: .unique,
+                    cid: .unique,
+                    text: "Four",
+                    author: .mock(id: .unique),
+                    createdAt: Date(timeIntervalSince1970: 800)
+                )
+            ],
+            state: .localDataFetched
+        )
+        AssertSnapshot(
+            vc,
+            isEmbeddedInNavigationController: true,
+            variants: [.defaultLight]
+        )
+    }
+
     func test_setUp_whenChannelControllerSynchronizeCompletes_shouldUpdateComposer() {
         class ComposerVC_Mock: ComposerVC {
             var updateContentCallCount = 0
