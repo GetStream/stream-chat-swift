@@ -157,6 +157,10 @@ Open the `Carthage/Build` folder that has been created in the root of your proje
 
 ![Screenshot shows XCFrameworks being draged into Xcode](../assets/carthage-drag.png)
 
+Make sure you select **Embed & Sign** under "Embed" options if you are adding Stream libraries to an app target. If not, use **Do Not Embed**
+
+![Screenshot shows Embed and Sign being the option selected](../assets/carthage-embed-and-sign.png)
+
 _More information about Carthage [can be found here](https://github.com/Carthage/Carthage)._
 
 ## XCFrameworks
