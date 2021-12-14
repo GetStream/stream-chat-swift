@@ -12,7 +12,7 @@ import ComponentsNote from '../../common-content/components-note.md'
 
 <Digraph>{ `
     {rank = same; ChatMessageBubbleView; ChatReactionsBubbleView;}
-    ChatMessageListVC [href="../message-list"]
+    ChatMessageListVC
     ChatMessageLayoutOptionsResolver [href="../message-layout-options-resolver"]
     ChatAvatarView [href="../avatar"]
     ChatMessageListVC -> ChatMessageLayoutOptionsResolver
