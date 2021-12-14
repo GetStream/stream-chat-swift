@@ -63,7 +63,8 @@
             "swiftui/components/channel-header",
             "swiftui/components/attachments",
             "swiftui/components/message-composer",
-            "swiftui/components/message-reactions"
+            "swiftui/components/message-reactions",
+            "swiftui/components/message-threads"
           ]
         }
       ]
