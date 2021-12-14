@@ -14,7 +14,7 @@ We also provide pre-built XCFramework support, read more [here](#xcframeworks).
 
 ### Swift Package Manager
 
-Open your `.xcodeproj`, select the option "Add Package Dependency" in File > Swift Packages, and paste the URL for the library you want to integrate:
+Open your `.xcodeproj`, select the option "Add Package..." in the File menu, and paste the URL for the library you want to integrate:
 
 - For the LLC (**StreamChat**) use:
   - `https://github.com/getstream/stream-chat-swift`
@@ -40,9 +40,8 @@ You can learn more about [our Module Stable XCFrameworks here](#xcframeworks)
 </p>
 </details>
 
-![Screenshot shows Xcode with the Add Package Dependency dialog opened and Stream Chat iOS SDK GitHub URL in the input field](../assets/spm-00.png)
 
-After pressing next, Xcode will look for the Packages available in the repository and automatically select the latest version tagged. Press next and Xcode will download the dependency.
+After introducing the desired url, Xcode will look for the Packages available in the repository and automatically select the latest version tagged. Press next and Xcode will download the dependency.
 
 ![Screenshot shows an Xcode screen selecting a dependency version and an Xcode screen downloading that dependency](../assets/spm-01.png)
 
@@ -123,8 +122,11 @@ In your project's `Cartfile`, add one of these options
   - `github "getstream/stream-chat-swift" ~> 4.0.0`
 - For the UIKit components (**StreamChatUI**, which depends on **StreamChat**) use:
   - `github "getstream/stream-chat-swift" ~> 4.0.0`
-- For the SwiftUI components (**StreamChatSwiftUI**, which depends on **StreamChat**) use:
-  - `github "getstream/stream-chat-swiftui" ~> 4.0.0`
+
+:::note
+Our SwiftUI components library is not yet available using Carthage, please use Swift Package Manager or CocoaPods.
+:::
+
 
 <details><summary>➤ Do you want to use <b>XCFrameworks</b>? (Click to read more)</summary>
 <p>
