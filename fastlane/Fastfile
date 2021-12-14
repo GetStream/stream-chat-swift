@@ -152,6 +152,10 @@ lane :publish_release do |options|
   # Make xcframeworks
   make frameworks
 
+  # Generate Checksums
+  sh("swift package compute-checksum Products/StreamChat.zip")
+  sh("swift package compute-checksum Products/StreamChatUI.zip")
+
   version = options[:version]
   github_release = set_github_release(
                      repository_name: "GetStream/stream-chat-swift",
