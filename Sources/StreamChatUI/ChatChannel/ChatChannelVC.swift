@@ -142,7 +142,7 @@ open class ChatChannelVC:
 
     open func chatMessageListVC(_ vc: ChatMessageListVC, messageAt indexPath: IndexPath) -> ChatMessage? {
         guard indexPath.item < channelController.messages.count else { return nil }
-        return channelController.messages[indexPath.item]
+        return channelController.messages[safe: indexPath.item]
     }
 
     open func chatMessageListVC(
