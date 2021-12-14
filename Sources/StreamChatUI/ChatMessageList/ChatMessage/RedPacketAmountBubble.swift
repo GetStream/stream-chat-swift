@@ -148,10 +148,10 @@ class RedPacketAmountBubble: UITableViewCell {
             let strUserId = fetchRawData(raw: userId) as? String ?? ""
             if strUserId == client?.currentUserId ?? "" {
                 // I picked up other amount
-                descriptionLabel.text = "Sweet! \nYou just picked up \(getAmount(extraData)) ONE! \n\n🧧Red Packet"
+                descriptionLabel.text = "\(getCongrates(extraData)) \nYou just picked up \(getAmount(extraData)) ONE! \n\n🧧Red Packet"
             } else {
                 // someone pickup amount
-                descriptionLabel.text = "Sweet! \n\(getUserName(extraData)) just picked up \(getAmount(extraData)) ONE! \n\n🧧Red Packet"
+                descriptionLabel.text = "\(getCongrates(extraData)) \n\(getUserName(extraData)) just picked up \(getAmount(extraData)) ONE! \n\n🧧Red Packet"
             }
         }
     }
@@ -162,7 +162,7 @@ class RedPacketAmountBubble: UITableViewCell {
         }
         if let receivedAmount = data["receivedAmount"] {
             let amount = fetchRawData(raw: receivedAmount) as? Double ?? 0
-            return String(format: "%.2f", amount)
+            return String(format: "%.1f", amount)
         } else {
             return "\(0)"
         }
@@ -175,6 +175,18 @@ class RedPacketAmountBubble: UITableViewCell {
         if let receivedAmount = data["userName"] {
             let strAmount = fetchRawData(raw: receivedAmount) as? String ?? ""
             return strAmount
+        } else {
+            return ""
+        }
+    }
+
+    private func getCongrates(_ extraData: [String: RawJSON]?) -> String {
+        guard let data = extraData else {
+            return ""
+        }
+        if let congrates = data["congratsKey"] {
+            let strCongrates = fetchRawData(raw: congrates) as? String ?? ""
+            return strCongrates
         } else {
             return ""
         }
