@@ -42,7 +42,7 @@ public final class ChatMessageCell: _TableViewCell, ComponentsProvider {
         containerStackView.alignment = .center
         containerStackView.spacing = 8
         containerStackView.addArrangedSubview(dateSeparatorView)
-        containerStackView.addArrangedSubview(messageContentView!)
+        messageContentView.map { containerStackView.addArrangedSubview($0) }
         contentView.addSubview(containerStackView)
         
         containerStackView.pin(
@@ -50,7 +50,7 @@ public final class ChatMessageCell: _TableViewCell, ComponentsProvider {
             to: contentView
         )
 
-        messageContentView!.pin(
+        messageContentView?.pin(
             anchors: [.leading, .trailing],
             to: containerStackView
         )
