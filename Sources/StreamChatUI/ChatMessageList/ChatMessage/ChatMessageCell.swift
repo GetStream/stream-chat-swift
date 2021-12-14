@@ -8,14 +8,16 @@ import UIKit
 /// The cell that displays the message content of a dynamic type and layout.
 /// Once the cell is set up it is expected to be dequeued for messages with
 /// the same content and layout the cell has already been configured with.
-open class ChatMessageCell: _TableViewCell, ComponentsProvider {
+public final class ChatMessageCell: _TableViewCell, ComponentsProvider {
     public static var reuseId: String { "\(self)" }
 
     /// The container that holds the date separator and the message content view.
-    open lazy var containerStackView = UIStackView().withoutAutoresizingMaskConstraints
+    /// This is internal since it a temporary solution.
+    internal lazy var containerStackView = UIStackView().withoutAutoresizingMaskConstraints
 
     /// The date separator view that groups messages from the same day.
-    open lazy var dateSeparatorView: ChatMessageListScrollOverlayView = components
+    /// This is internal since it a temporary solution.
+    internal lazy var dateSeparatorView: ChatMessageListScrollOverlayView = components
         .messageListScrollOverlayView.init()
         .withoutAutoresizingMaskConstraints
     
