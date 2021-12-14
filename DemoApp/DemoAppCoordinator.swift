@@ -99,8 +99,8 @@ final class DemoAppCoordinator: NSObject, UNUserNotificationCenterDelegate {
         Components.default.channelListRouter = DemoChatChannelListRouter.self
         Components.default.channelVC = CustomChannelVC.self
         Components.default.messageContentView = CustomMessageContentView.self
-        Components.default.messageListVC.isDateSeparatorEnabled = true
-        Components.default.messageListVC.isDateOverlayEnabled = true
+        Components.default.messageListDateSeparatorEnabled = true
+        Components.default.messageListDateOverlayEnabled = true
         
         let localizationProvider = Appearance.default.localizationProvider
         Appearance.default.localizationProvider = { key, table in
