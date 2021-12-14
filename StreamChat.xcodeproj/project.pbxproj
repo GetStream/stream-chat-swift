@@ -918,6 +918,7 @@
 		CD9A4706275DFA1100CA9931 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD9A4705275DFA1100CA9931 /* Constants.swift */; };
 		CDB98D132757D43A00CA7CDE /* SendOneWallet.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDB98D112757D43A00CA7CDE /* SendOneWallet.swift */; };
 		CDC2BCE72763756500D75F6F /* Date+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8837C6392539B4A600D8FE86 /* Date+Extensions.swift */; };
+		CDFA6EDD2768DB0A00DC3B7F /* ActivityIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDFA6EDC2768DB0900DC3B7F /* ActivityIndicator.swift */; };
 		DA0BB1612513B5F200CAEFBD /* StringInterpolation+Extenstions.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA0BB1602513B5F200CAEFBD /* StringInterpolation+Extenstions.swift */; };
 		DA15A20424DF257500BE2423 /* ChannelQuery_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA15A20224DF256F00BE2423 /* ChannelQuery_Tests.swift */; };
 		DA49714E2549C28000AC68C2 /* AttachmentDTO_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA49714D2549C28000AC68C2 /* AttachmentDTO_Tests.swift */; };
@@ -2329,6 +2330,7 @@
 		CD8918BB273E99160051C651 /* CryptoReceiveBubble.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CryptoReceiveBubble.swift; sourceTree = "<group>"; };
 		CD9A4705275DFA1100CA9931 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		CDB98D112757D43A00CA7CDE /* SendOneWallet.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SendOneWallet.swift; sourceTree = "<group>"; };
+		CDFA6EDC2768DB0900DC3B7F /* ActivityIndicator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityIndicator.swift; sourceTree = "<group>"; };
 		DA0BB1602513B5F200CAEFBD /* StringInterpolation+Extenstions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "StringInterpolation+Extenstions.swift"; sourceTree = "<group>"; };
 		DA15A20224DF256F00BE2423 /* ChannelQuery_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelQuery_Tests.swift; sourceTree = "<group>"; };
 		DA49714D2549C28000AC68C2 /* AttachmentDTO_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttachmentDTO_Tests.swift; sourceTree = "<group>"; };
@@ -4270,6 +4272,7 @@
 				ACD502A826BC0C670029FB7D /* ImageMerger.swift */,
 				ACCA772D26C568D8007AE2ED /* NukeImageProcessor.swift */,
 				CD9A4705275DFA1100CA9931 /* Constants.swift */,
+				CDFA6EDC2768DB0900DC3B7F /* ActivityIndicator.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -6145,6 +6148,7 @@
 				E79AC10D25831A1500C3CE5D /* ChatSuggestionsCollectionViewLayout.swift in Sources */,
 				E73A8B2B2578EB2B00FBDC56 /* ComposerVC.swift in Sources */,
 				ADFA09C926A99E0A002A6EFA /* ChatThreadHeaderView.swift in Sources */,
+				CDFA6EDD2768DB0A00DC3B7F /* ActivityIndicator.swift in Sources */,
 				8800A26F258A04D5006D64C4 /* ChatMessageAttachmentPreviewVC.swift in Sources */,
 				847DD2DB267233DB0084E14B /* GradientView.swift in Sources */,
 				640FE0EA26A56921006CE703 /* CollectionUpdatesMapper.swift in Sources */,
