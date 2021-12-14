@@ -5,6 +5,11 @@
 import StreamChat
 import UIKit
 
+extension Notification.Name {
+    public static let showTabbar = Notification.Name("kStreamChatshowTabbar")
+    public static let hideTabbar = Notification.Name("kStreamHideTabbar")
+}
+
 /// Controller responsible for displaying the channel messages.
 @available(iOSApplicationExtension, unavailable)
 open class ChatChannelVC:
@@ -161,6 +166,11 @@ open class ChatChannelVC:
         }
     }
 
+    override open func viewDidLoad() {
+        super.viewDidLoad()
+        NotificationCenter.default.post(name: .hideTabbar, object: nil)
+    }
+
     override open func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
@@ -182,6 +192,7 @@ open class ChatChannelVC:
     @objc func backAction(_ sender: Any) {
         navigationController?.popViewController(animated: true)
         self.dismiss(animated: true, completion: nil)
+        NotificationCenter.default.post(name: .showTabbar, object: nil)
     }
 
     // MARK: - ChatMessageListVCDataSource
