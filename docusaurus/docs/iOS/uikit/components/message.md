@@ -39,11 +39,11 @@ import ComponentsNote from '../../common-content/components-note.md'
 
 ## Basic Customizations
 
-In case your application only requires minimal changes to the message view, you can easily change the styling of the message subviews by replacing them with custom views, or do simple layout changes by customizing the message layout options resolver.
+In case your application only requires minimal changes to the message view, the SDK makes it easy to apply these changes without much code.
 
 ### Changing the Bubble View
 
-As an example of a styling change of the `ChatMessageContentView`, we will replace the bubble view with a custom one.
+If you need to customize just one component of the message view, you can easily do it by replacing one of its components with your custom subclass. As an example of how to customize one of the components from the `ChatMessageContentView` we will replace the bubble view with a custom squared bubble view.
 
 ```swift
 class CustomMessageSquaredBubbleView: ChatMessageBubbleView {
@@ -107,6 +107,66 @@ Components.default.messageLayoutOptionsResolver = CustomMessageLayoutOptionsReso
 | Before  | After |
 | ------------- | ------------- |
 | <img src={require("../../assets/message-basic-resolver-before.png").default} /> | <img src={require("../../assets/message-basic-resolver-after.png").default} /> |
+
+### Date Separators
+
+The SDK groups each message from the same day and shows the day which these messages belong to, since by default each message only has the time it was sent, not the day. The StreamChat SDK provides two options out-of-the-box on how to render the grouped messages date separator that can be configured in the `Components` config:
+
+```swift
+Components.default.messageListVC.isDateOverlayEnabled
+Components.default.messageListVC.isDateSeparatorEnabled
+```
+
+By default only the `Components.default.messageListVC.isDateOverlayEnabled` is enabled, and in this case an overlay at the top will be shown with the day which the current messages being scrolled belong to.
+
+In case you want the separator to also be shown statically between each group of messages, you can enable that option as well, and turn off the overlay option if you so desire:
+
+```swift
+Components.default.messageListVC.isDateSeparatorEnabled = true
+```
+
+#### Result:
+| Overlay Enabled  | Overlay & Static Enabled |
+| ------------- | ------------- |
+| <img src={require("../../assets/message-list-date-separator-overlay.png").default} /> | <img src={require("../../assets/message-list-date-separator-static.png").default} /> |
+
+You can also easily customize the look of the date separators by subclassing the `ChatMessageListDateSeparatorView`:
+
+```swift
+class CustomChatMessageListDateSeparatorView: ChatMessageListDateSeparatorView {
+
+    override func setUpAppearance() {
+        super.setUpAppearance()
+
+        backgroundColor = .systemBlue
+        textLabel.textColor = .black
+    }
+
+    override func updateContent() {
+        super.updateContent()
+
+        textLabel.text = content?.uppercased()
+    }
+
+    override func setUpLayout() {
+        super.setUpLayout()
+
+        NSLayoutConstraint.activate([
+            textLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 24.0),
+            textLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -24.0),
+            textLabel.topAnchor.constraint(equalTo: topAnchor, constant: 8.0),
+            textLabel.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -8.0)
+        ])
+    }
+}
+
+Components.default.messageListDateSeparatorView = CustomChatMessageListDateSeparatorView.self
+```
+
+#### Result:
+| Before | After |
+| ------------- | ------------- |
+| <img src={require("../../assets/message-list-date-separator-static.png").default} /> | <img src={require("../../assets/message-list-date-separator-custom.png").default} /> |
 
 ## Advanced Customizations
 
