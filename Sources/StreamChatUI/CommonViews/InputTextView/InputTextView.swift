@@ -82,8 +82,8 @@ open class InputTextView: UITextView, AppearanceProvider {
         font = appearance.fonts.body
         textColor = appearance.colorPalette.text
         textAlignment = .natural
-        spellCheckingType = .no
-        autocorrectionType = .no
+        spellCheckingType = .default
+        autocorrectionType = .default
         placeholderLabel.font = font
         placeholderLabel.textAlignment = .center
         placeholderLabel.textColor = appearance.colorPalette.subtitleText
