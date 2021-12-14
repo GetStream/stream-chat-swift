@@ -109,6 +109,9 @@ open class ChatMessageListVC:
 
         view.addSubview(listView)
         listView.pin(anchors: [.top, .leading, .trailing, .bottom], to: view)
+        // Add a top padding to the table view so that the top message is not in the edge of the nav bar
+        // Note: we use "bottom" because the table view is inverted.
+        listView.contentInset = .init(top: 0, left: 0, bottom: 8, right: 0)
 
         view.addSubview(typingIndicatorView)
         typingIndicatorView.isHidden = true
