@@ -112,14 +112,14 @@ The above command will generate the **MyProject.xcworkspace** file automatically
 
 With our workspace now containing our Pods project with dependencies, as well as our original project, let’s go ahead and move over to Xcode to complete the process.
 
-_More information about CocoaPods [can be found here](https://cocoapods.org/)_
+_More information about CocoaPods [can be found here](https://cocoapods.org/)._
 
 ### Carthage
 
 In your project's `Cartfile`, add one of these options
 
 - For the LLC (**StreamChat**) use:
-  - `github "getstream/stream-chat-swift" ~> 4.0.0`
+  - `github "getstream/stream-chat-swift" ~> 4.6.0`
 - For the UIKit components (**StreamChatUI**, which depends on **StreamChat**) use:
   - `github "getstream/stream-chat-swift" ~> 4.0.0`
 
@@ -138,7 +138,7 @@ Our XCFrameworks are built with **Swift 5.5**. In order to use them you need **X
 You can learn more about [our Module Stable XCFrameworks here](#xcframeworks)
 
 - For the LLC (**StreamChat**) use:
-  - `binary "https://raw.githubusercontent.com/GetStream/stream-chat-swift/main/StreamChatArtifacts.json" ~> 4.0`
+  - `binary "https://raw.githubusercontent.com/GetStream/stream-chat-swift/main/StreamChatArtifacts.json" ~> 4.6`
 - For the UIKit components (**StreamChatUI**, which depends on **StreamChat**) use:
   - `binary "https://raw.githubusercontent.com/GetStream/stream-chat-swift/main/StreamChatArtifacts.json" ~> 4.0`
 
@@ -157,21 +157,21 @@ Open the `Carthage/Build` folder that has been created in the root of your proje
 
 ![Screenshot shows XCFrameworks being draged into Xcode](../assets/carthage-drag.png)
 
-_More information about Carthage [can be found here](https://github.com/Carthage/Carthage)_
+_More information about Carthage [can be found here](https://github.com/Carthage/Carthage)._
 
 ## XCFrameworks
 
 In an effort to have [**Module Stability**](https://www.swift.org/blog/library-evolution/), we have started distributing **pre-built XCFrameworks** starting ***4.6.0***
 
 :::info
-Our XCFrameworks are built with Swift 5.5. In order to use them you need Xcode 13 or above
+Our XCFrameworks are built with Swift 5.5. In order to use them you need Xcode 13 or above.
 :::
 
 An **XCFramework** is a package that contains binaries for multiple architectures/platforms, but only the particular slice of that package required for your architecture/platform will be used.
 
 **Benefits of XCFrameworks:**
 - Conveniently import a single package
-- Supports all platforms and architectures (We support iOS in StreamChatUI and iOS/macOS in StreamChat )
+- Supports all platforms and architectures (We support iOS in StreamChatUI and iOS/macOS in StreamChat)
 - No more fat binaries. No more architectures stripping
 
 > Does this mean that from now on, I will need to import Stream manually?
