@@ -276,7 +276,7 @@ open class ChatChannelListVC: _ViewController,
 
         deleteView.action = { self.deleteButtonPressedForCell(at: indexPath) }
 
-        let moreView = CellActionView().withoutAutoresizingMaskConstraints
+        /*let moreView = CellActionView().withoutAutoresizingMaskConstraints
         moreView.actionButton.setImage(appearance.images.more, for: .normal)
 
         moreView.actionButton.backgroundColor = appearance.colorPalette.background1
@@ -284,13 +284,21 @@ open class ChatChannelListVC: _ViewController,
 
         moreView.action = { self.moreButtonPressedForCell(at: indexPath) }
 
-        return [moreView, deleteView]
+        return [moreView, deleteView]*/
+        return [deleteView]
     }
 
     /// This function is called when delete button is pressed from action items of a cell.
     /// - Parameter indexPath: IndexPath of given cell to fetch the content of it.
     open func deleteButtonPressedForCell(at indexPath: IndexPath) {
-        router.didTapDeleteButton(for: controller.channels[indexPath.row].cid)
+        let deleteAction = UIAlertAction(title: "Delete", style: .destructive) { [weak self] alert in
+            guard let self = self else { return }
+            let controller = self.controller.client.channelController(for: self.controller.channels[indexPath.row].cid)
+            controller.hideChannel(clearHistory: true, completion: nil)
+        }
+        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel) { _ in }
+        let alert = UIAlertController.showAlert(title: "Would you like to delete this conversation?", message: nil, actions: [deleteAction, cancelAction], preferredStyle: .actionSheet)
+        self.present(alert, animated: true, completion: nil)
     }
 
     /// This function is called when more button is pressed from action items of a cell.
