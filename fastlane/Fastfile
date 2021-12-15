@@ -67,44 +67,6 @@ lane :release do |options|
 
   changes = touch_changelog(release_version: version_number)
 
-  # Update SPM Repo
-  sh("git clone git@github.com:GetStream/stream-chat-swift-spm.git ../StreamSPM")
-  file = File.open("../StreamSPM/Package.swift")
-  file_data = file.read
-
-  File.open("../StreamSPM/Package.swift").each do |line|
-  if line.include?("url") && line.include?("StreamChat.zip")
-      streamChat = "url: \"https://github.com/GetStream/stream-chat-swift/releases/download/#{version_number}/StreamChat.zip\","
-      file_data.gsub!(line, streamChat)
-  end
-  if line.include?("url") && line.include?("StreamChatUI.zip")
-      streamChatUI = "url: \"https://github.com/GetStream/stream-chat-swift/releases/download/#{version_number}/StreamChatUI.zip\","
-      file_data.gsub!(line, streamChatUI)
-  end
-end
-
-  # Write the new changes
-  File.open("../StreamSPM/Package.swift", "w") { |file| file << file_data }
-
-  sh("cd ../StreamSPM && git add -A")
-
-  if(!prompt(text: "About to Commit changes to the SPM repo, happy?", boolean: true))
-    UI.user_error!("Not committing changes")
-  end
-
-  sh("git commit -m 'Bump #{version_number}'")
-  sh("git tag #{version_number}")
-
-  if(!prompt(text: "Will push changes. All looking good?", boolean: true))
-    UI.user_error!("Not pushing changes")
-  end
-
-  sh("git push origin main --force --tags")
-
-  # Clean Up
-  sh("cd ../")
-  sh("rm -r StreamSPM")
-
    # Make sure the podspecs actually build before pushing
    # Disabled now since `StreamChatUI` pod lints it against `StreamChat`s latest version instead of `main` branch
   #pod_lib_lint(podspec: "StreamChat.podspec", allow_warnings: true)
@@ -149,14 +111,45 @@ end
 desc "Completes an SDK Release"
 lane :publish_release do |options|
 
+  version = options[:version]
+
   # Make xcframeworks
   make frameworks
+
+  # Update SPM Repo
+  sh("git clone git@github.com:GetStream/stream-chat-swift-spm.git ../StreamSPM")
+  file = File.open("../StreamSPM/Package.swift")
+  file_data = file.read
+
+  File.open("../StreamSPM/Package.swift").each do |line|
+  if line.include?("url") && line.include?("StreamChat.zip")
+      streamChat = "url: \"https://github.com/GetStream/stream-chat-swift/releases/download/#{version}/StreamChat.zip\","
+      file_data.gsub!(line, streamChat)
+  end
+  if line.include?("url") && line.include?("StreamChatUI.zip")
+      streamChatUI = "url: \"https://github.com/GetStream/stream-chat-swift/releases/download/#{version}/StreamChatUI.zip\","
+      file_data.gsub!(line, streamChatUI)
+  end
+end
+
+  # Write the new changes
+  File.open("../StreamSPM/Package.swift", "w") { |file| file << file_data }
+
+  # Update the repo
+  sh("cd ../StreamSPM && git add -A")
+  sh("git commit -m 'Bump #{version}'")
+  sh("git tag #{version}")
+  sh("git push origin main --force --tags")
+
+  # Clean Up
+  sh("cd ../")
+  sh("rm -r StreamSPM")
 
   # Generate Checksums
   sh("swift package compute-checksum Products/StreamChat.zip")
   sh("swift package compute-checksum Products/StreamChatUI.zip")
 
-  version = options[:version]
+  # Create Github Release
   github_release = set_github_release(
                      repository_name: "GetStream/stream-chat-swift",
                      api_token: ENV["GITHUB_TOKEN"],
