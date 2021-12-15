@@ -31,9 +31,6 @@ end
 
 desc "Start a new release"
 lane :release do |options|
-  # Ensure we are on `develop` or `main`
-  ensure_git_branch(branch: '^main$|^develop$')
-
   # Ensure we have a clean git status
   ensure_git_status_clean unless options[:no_ensure_clean]
 
