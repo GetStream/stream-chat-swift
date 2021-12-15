@@ -58,7 +58,7 @@ class MessageDTO_Tests: XCTestCase {
         
         try! database.writeSynchronously { session in
             // Save the message, it should also save the channel
-            try! session.saveMessage(payload: messagePayload, for: channelId)
+            try! session.saveMessage(payload: messagePayload, for: channelId, syncOwnReactions: true)
         }
 
         // Load the channel from the db and check the fields are correct
@@ -187,7 +187,7 @@ class MessageDTO_Tests: XCTestCase {
             try! session.saveChannel(payload: channelPayload, query: nil)
             
             // Save the message
-            try! session.saveMessage(payload: messagePayload, for: channelId)
+            try! session.saveMessage(payload: messagePayload, for: channelId, syncOwnReactions: true)
         }
         
         // Load the message from the db and check the fields are correct
@@ -266,7 +266,7 @@ class MessageDTO_Tests: XCTestCase {
                 channelDTO = try! session.saveChannel(payload: channelPayload, query: nil)
 
                 // Save the message
-                messageDTO = try! session.saveMessage(payload: payload, for: channelId)
+                messageDTO = try! session.saveMessage(payload: payload, for: channelId, syncOwnReactions: true)
             } completion: { _ in
                 completion((channelDTO, messageDTO))
             }
@@ -295,7 +295,7 @@ class MessageDTO_Tests: XCTestCase {
                 let channelDTO = try! session.saveChannel(payload: channelPayload, query: nil)
 
                 // Save the message
-                let messageDTO = try! session.saveMessage(payload: payload, channelDTO: channelDTO)
+                let messageDTO = try! session.saveMessage(payload: payload, channelDTO: channelDTO, syncOwnReactions: true)
                 completion((channelDTO, messageDTO))
             }
         }
@@ -330,7 +330,7 @@ class MessageDTO_Tests: XCTestCase {
                 channelDTO = try! session.saveChannel(payload: channelPayload, query: nil)
 
                 // Save the message
-                messageDTO = try! session.saveMessage(payload: payload, for: channelId)
+                messageDTO = try! session.saveMessage(payload: payload, for: channelId, syncOwnReactions: true)
 
                 XCTAssertTrue(messageDTO!.asModel().isPinned)
             } completion: { _ in
@@ -351,7 +351,7 @@ class MessageDTO_Tests: XCTestCase {
         XCTAssertThrowsError(
             try database.writeSynchronously {
                 // Both `payload.channel` and `cid` are nil
-                try $0.saveMessage(payload: payload, for: nil)
+                try $0.saveMessage(payload: payload, for: nil, syncOwnReactions: true)
             }
         ) { error in
             XCTAssert(error is ClientError.MessagePayloadSavingFailure)
@@ -371,7 +371,7 @@ class MessageDTO_Tests: XCTestCase {
             let channelDTO = try! session.saveChannel(payload: channelPayload, query: nil)
             
             // Save the message
-            let messageDTO = try! session.saveMessage(payload: messagePayload, channelDTO: channelDTO)
+            let messageDTO = try! session.saveMessage(payload: messagePayload, channelDTO: channelDTO, syncOwnReactions: true)
             // Make the extra data JSON invalid
             messageDTO.extraData = #"{"invalid": json}"#.data(using: .utf8)!
         }
@@ -437,7 +437,7 @@ class MessageDTO_Tests: XCTestCase {
         // Asynchronously save the payload to the db
         try database.writeSynchronously { session in
             // Save the message
-            try session.saveMessage(payload: messagePayload, for: channelId)
+            try session.saveMessage(payload: messagePayload, for: channelId, syncOwnReactions: true)
         }
         
         // Load the message from the db and check the fields are correct
@@ -588,7 +588,7 @@ class MessageDTO_Tests: XCTestCase {
             try! session.saveChannel(payload: channelPayload, query: nil)
             
             // Save the message
-            try! session.saveMessage(payload: messagePayload, for: channelId)
+            try! session.saveMessage(payload: messagePayload, for: channelId, syncOwnReactions: true)
         }
         
         // Set the local state of the message
@@ -606,7 +606,7 @@ class MessageDTO_Tests: XCTestCase {
         
         // Re-save the payload and check the local state is not overridden
         database.write { session in
-            try! session.saveMessage(payload: messagePayload, for: channelId)
+            try! session.saveMessage(payload: messagePayload, for: channelId, syncOwnReactions: true)
         }
         AssertAsync.staysEqual(loadedMessage?.localState, .pendingSend)
         
@@ -708,7 +708,7 @@ class MessageDTO_Tests: XCTestCase {
         )
 
         try database.writeSynchronously { session in
-            try session.saveMessage(payload: messagePayload, for: channelId)
+            try session.saveMessage(payload: messagePayload, for: channelId, syncOwnReactions: true)
         }
 
         // Act: Save payload again
@@ -971,7 +971,7 @@ class MessageDTO_Tests: XCTestCase {
         
         // Save reply payload
         try database.writeSynchronously { session in
-            try session.saveMessage(payload: payload, for: cid)
+            try session.saveMessage(payload: payload, for: cid, syncOwnReactions: true)
         }
         
         // Get parent message
@@ -1041,7 +1041,7 @@ class MessageDTO_Tests: XCTestCase {
         assert(olderMessagePayload.createdAt < channelPayload.channel.lastMessageAt!)
         // Save the message payload and check `channel.lastMessageAt` is not updated by older message
         try database.writeSynchronously {
-            try $0.saveMessage(payload: olderMessagePayload, for: channelId)
+            try $0.saveMessage(payload: olderMessagePayload, for: channelId, syncOwnReactions: true)
         }
         var channel = try XCTUnwrap(database.viewContext.channel(cid: channelId))
         XCTAssertEqual(channel.lastMessageAt, originalLastMessageAt)
@@ -1055,7 +1055,7 @@ class MessageDTO_Tests: XCTestCase {
         assert(newerMessagePayload.createdAt > channelPayload.channel.lastMessageAt!)
         // Save the message payload and check `channel.lastMessageAt` is updated
         try database.writeSynchronously {
-            try $0.saveMessage(payload: newerMessagePayload, for: channelId)
+            try $0.saveMessage(payload: newerMessagePayload, for: channelId, syncOwnReactions: true)
         }
         channel = try XCTUnwrap(database.viewContext.channel(cid: channelId))
         XCTAssertEqual(channel.lastMessageAt, newerMessagePayload.createdAt)
@@ -1120,7 +1120,7 @@ class MessageDTO_Tests: XCTestCase {
         try createdMessages.forEach { messagePayload in
             try database.writeSynchronously { session in
                 // Save the message
-                try session.saveMessage(payload: messagePayload, for: channelId)
+                try session.saveMessage(payload: messagePayload, for: channelId, syncOwnReactions: true)
             }
         }
 
@@ -1210,7 +1210,7 @@ class MessageDTO_Tests: XCTestCase {
         try createdMessages.forEach { messagePayload in
             try database.writeSynchronously { session in
                 // Save the message
-                try session.saveMessage(payload: messagePayload, for: channelId)
+                try session.saveMessage(payload: messagePayload, for: channelId, syncOwnReactions: true)
             }
         }
 

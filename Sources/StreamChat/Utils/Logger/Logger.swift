@@ -121,25 +121,37 @@ public enum LogConfig {
         }
     }
     
+    /// Destination types this logger will use.
+    ///
+    /// Logger will initialize the destinations with its own parameters. If you want full control on the parameters, use `destinations` directly,
+    /// where you can pass parameters to destination initializers yourself.
+    public static var destinationTypes: [LogDestination.Type] = [ConsoleLogDestination.self] {
+        didSet {
+            invalidateLogger()
+        }
+    }
+    
     /// Destinations for the default logger. Please see `LogDestination`.
     /// Defaults to only `ConsoleLogDestination`, which only prints the messages.
     ///
     /// - Important: Other options in `ChatClientConfig.Logging` will not take affect if this is changed.
     public static var destinations: [LogDestination] = {
-        let consoleLogDestination = ConsoleLogDestination(
-            level: level,
-            subsystems: subsystems,
-            showDate: showDate,
-            dateFormatter: dateFormatter,
-            formatters: formatters,
-            showLevel: showLevel,
-            showIdentifier: showIdentifier,
-            showThreadName: showThreadName,
-            showFileName: showFileName,
-            showLineNumber: showLineNumber,
-            showFunctionName: showFunctionName
-        )
-        return [consoleLogDestination]
+        destinationTypes.map {
+            $0.init(
+                identifier: identifier,
+                level: level,
+                subsystems: subsystems,
+                showDate: showDate,
+                dateFormatter: dateFormatter,
+                formatters: formatters,
+                showLevel: showLevel,
+                showIdentifier: showIdentifier,
+                showThreadName: showThreadName,
+                showFileName: showFileName,
+                showLineNumber: showLineNumber,
+                showFunctionName: showFunctionName
+            )
+        }
     }() {
         didSet {
             invalidateLogger()

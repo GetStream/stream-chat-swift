@@ -756,6 +756,7 @@ var streamChatUIFilesExcluded: [String] { [
     "ChatChannel/__Snapshots__/ChatChannelVC_Tests/test_deletedMessagesWithAttachmentsAppearance.default-light.png",
     "ChatChannel/__Snapshots__/ChatChannelVC_Tests/test_onlyEmojiMessageAppearance.default-light.png",
     "ChatChannel/__Snapshots__/ChatChannelVC_Tests/test_defaultAppearance.default-light.png",
+    "ChatChannel/__Snapshots__/ChatChannelVC_Tests/test_staticDateSeparatorsAppearance.default-light.png",
     "ChatChannel/__Snapshots__/ChatChannelVC_Tests/test_emptyAppearance.extraExtraExtraLarge-light.png",
     "ChatChannel/__Snapshots__/ChatChannelVC_Tests/test_emptyAppearance.default-light.png",
     "ChatChannel/__Snapshots__/ChatChannelVC_Tests/test_emptyAppearance.rightToLeftLayout-default.png",

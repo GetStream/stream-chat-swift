@@ -80,6 +80,16 @@ open class ChatMessageListVC:
 
         return !listView.isLastCellFullyVisible && isMoreContentThanOnePage
     }
+
+    /// A boolean value that determines wether the date overlay should be displayed while scrolling.
+    open var isDateOverlayEnabled: Bool {
+        components.messageListDateOverlayEnabled
+    }
+
+    /// A boolean value that determines wether date separators should be shown between each message.
+    open var isDateSeparatorEnabled: Bool {
+        components.messageListDateSeparatorEnabled
+    }
     
     override open func setUp() {
         super.setUp()
@@ -103,6 +113,9 @@ open class ChatMessageListVC:
 
         view.addSubview(listView)
         listView.pin(anchors: [.top, .leading, .trailing, .bottom], to: view)
+        // Add a top padding to the table view so that the top message is not in the edge of the nav bar
+        // Note: we use "bottom" because the table view is inverted.
+        listView.contentInset = .init(top: 0, left: 0, bottom: 8, right: 0)
 
         view.addSubview(typingIndicatorView)
         typingIndicatorView.isHidden = true
@@ -116,13 +129,15 @@ open class ChatMessageListVC:
         scrollToLatestMessageButton.widthAnchor.pin(equalTo: scrollToLatestMessageButton.heightAnchor).isActive = true
         scrollToLatestMessageButton.heightAnchor.pin(equalToConstant: 40).isActive = true
         setScrollToLatestMessageButton(visible: false, animated: false)
-        
-        view.addSubview(dateOverlayView)
-        NSLayoutConstraint.activate([
-            dateOverlayView.centerXAnchor.pin(equalTo: view.safeAreaLayoutGuide.centerXAnchor),
-            dateOverlayView.topAnchor.pin(equalToSystemSpacingBelow: view.safeAreaLayoutGuide.topAnchor)
-        ])
-        dateOverlayView.isHidden = true
+
+        if isDateOverlayEnabled {
+            view.addSubview(dateOverlayView)
+            NSLayoutConstraint.activate([
+                dateOverlayView.centerXAnchor.pin(equalTo: view.safeAreaLayoutGuide.centerXAnchor),
+                dateOverlayView.topAnchor.pin(equalToSystemSpacingBelow: view.safeAreaLayoutGuide.topAnchor)
+            ])
+            dateOverlayView.isHidden = true
+        }
     }
 
     override open func setUpAppearance() {
@@ -310,6 +325,22 @@ open class ChatMessageListVC:
 
         cell.messageContentView?.delegate = self
         cell.messageContentView?.content = message
+        cell.dateSeparatorView.isHidden = true
+
+        if isDateSeparatorEnabled, let currentMessage = message {
+            let currentDay = DateFormatter.messageListDateOverlay.string(from: currentMessage.createdAt)
+            cell.dateSeparatorView.content = currentDay
+
+            // Only the show the separator if the previous message has a different day
+            let previousIndexPath = IndexPath(row: indexPath.row + 1, section: indexPath.section)
+            if let previousMessage = dataSource?.chatMessageListVC(self, messageAt: previousIndexPath) {
+                let previousDay = DateFormatter.messageListDateOverlay.string(from: previousMessage.createdAt)
+                cell.dateSeparatorView.isHidden = previousDay == currentDay
+            } else {
+                // If previous message doesn't exist show the separator as well
+                cell.dateSeparatorView.isHidden = false
+            }
+        }
 
         return cell
     }

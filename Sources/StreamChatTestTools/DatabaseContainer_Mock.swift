@@ -243,7 +243,7 @@ extension DatabaseContainer {
                 reactionCounts: reactionCounts
             )
             
-            let messageDTO = try session.saveMessage(payload: message, channelDTO: channelDTO)
+            let messageDTO = try session.saveMessage(payload: message, channelDTO: channelDTO, syncOwnReactions: true)
             messageDTO.localMessageState = localState
             messageDTO.reactionCounts = reactionCounts.mapKeys(\.rawValue)
             messageDTO.reactionScores = reactionScores.mapKeys(\.rawValue)
@@ -257,7 +257,7 @@ extension DatabaseContainer {
                     text: "Reply \(idx)"
                 )
                 
-                let replyDTO = try session.saveMessage(payload: reply, for: cid)!
+                let replyDTO = try session.saveMessage(payload: reply, for: cid, syncOwnReactions: true)!
                 messageDTO.replies.insert(replyDTO)
             }
         }
