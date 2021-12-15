@@ -109,4 +109,38 @@ enum WebSocketConnectionState: Equatable {
         }
         return true
     }
+    
+    /// Returns `true` is the state requires and allows automatic reconnection.
+    var isAutomaticReconnectionEnabled: Bool {
+        guard case let .disconnected(source) = self else { return false }
+        
+        switch source {
+        case let .serverInitiated(clientError):
+            if let wsEngineError = clientError?.underlyingError as? WebSocketEngineError,
+               wsEngineError.code == WebSocketEngineError.stopErrorCode {
+                // Don't reconnect on `stop` errors
+                return false
+            }
+            
+            if let serverInitiatedError = clientError?.underlyingError as? ErrorPayload {
+                if serverInitiatedError.isInvalidTokenError {
+                    // Don't reconnect on invalid token errors
+                    return false
+                }
+                
+                if serverInitiatedError.isClientError {
+                    // Don't reconnect on client side errors
+                    return false
+                }
+            }
+            
+            return true
+        case .systemInitiated:
+            return true
+        case .noPongReceived:
+            return true
+        case .userInitiated:
+            return false
+        }
+    }
 }
