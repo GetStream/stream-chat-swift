@@ -117,29 +117,34 @@ lane :publish_release do |options|
   sh("cd .. && make frameworks")
 
   # Generate Checksums
-  streamChatChecksum = sh("swift package compute-checksum Products/StreamChat.zip")
-  streamChatUIChecksum = sh("swift package compute-checksum Products/StreamChatUI.zip")
+  streamChatChecksum = sh("swift package compute-checksum ../Products/StreamChat.zip").strip
+  streamChatUIChecksum = sh("swift package compute-checksum ../Products/StreamChatUI.zip").strip
 
   # Update SPM Repo
   sh("git clone git@github.com:GetStream/stream-chat-swift-spm.git ../StreamSPM")
   file = File.open("../StreamSPM/Package.swift")
   file_data = file.read
 
-  # [WIP] I can improve using regex here
-  File.open("../StreamSPM/Package.swift").each do |line|
+  # [WIP] We can improve using regex here
+  fileLines = File.readlines("../StreamSPM/Package.swift")
+
+  # We are unfortunately having to dig into a file and manually change the lines required
+  fileLines.each_with_index do |line, index|
   if line.include?("url") && line.include?("StreamChat.zip")
       streamChat = "url: \"https://github.com/GetStream/stream-chat-swift/releases/download/#{version}/StreamChat.zip\","
       file_data.gsub!(line, streamChat)
-      next
-      newChecksumLine = "checksum: #{streamChatChecksum}\","
-      file_data.gsub!(line, newChecksumLine)
+
+      checksumItem = fileLines[index + 1]
+      newChecksumLine = "checksum: \"#{streamChatChecksum}\"),"
+      file_data.gsub!(checksumItem, newChecksumLine)
   end
   if line.include?("url") && line.include?("StreamChatUI.zip")
       streamChatUI = "url: \"https://github.com/GetStream/stream-chat-swift/releases/download/#{version}/StreamChatUI.zip\","
       file_data.gsub!(line, streamChatUI)
-      next
-      newUIChecksumLine = "checksum: #{streamChatUIChecksum}\","
-      file_data.gsub!(line, newUIChecksumLine)
+
+      newUIChecksumItem = fileLines[index + 1]
+      newUIChecksumLine = "checksum: \"#{streamChatUIChecksum}\"),"
+      file_data.gsub!(newUIChecksumItem, newUIChecksumLine)
   end
 end
 
@@ -175,7 +180,6 @@ end
   # Push tag to remote
   push_to_git_remote(tags: true)
 
-  # Success
   UI.success("Github release was created, please visit #{github_release["url"]} to see it")
 end
 
