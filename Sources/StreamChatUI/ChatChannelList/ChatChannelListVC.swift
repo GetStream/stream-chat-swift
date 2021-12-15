@@ -297,7 +297,7 @@ open class ChatChannelListVC: _ViewController,
             controller.hideChannel(clearHistory: true, completion: nil)
         }
         let cancelAction = UIAlertAction(title: "Cancel", style: .cancel) { _ in }
-        let alert = UIAlertController.showAlert(title: "Would you like to delete this conversation?", message: nil, actions: [deleteAction, cancelAction], preferredStyle: .actionSheet)
+        let alert = UIAlertController.showAlert(title: "Would you like to delete this conversation? It'll be permanently deleted.", message: nil, actions: [deleteAction, cancelAction], preferredStyle: .actionSheet)
         self.present(alert, animated: true, completion: nil)
     }
 
