@@ -561,6 +561,7 @@
 		84DCB851269F4D31006CDF32 /* EventsController+Combine_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84DCB850269F4D31006CDF32 /* EventsController+Combine_Tests.swift */; };
 		84DCB853269F569A006CDF32 /* EventsController+SwiftUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84DCB852269F569A006CDF32 /* EventsController+SwiftUI.swift */; };
 		84DCB855269F56A7006CDF32 /* EventsController+SwiftUI_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84DCB854269F56A7006CDF32 /* EventsController+SwiftUI_Tests.swift */; };
+		84EB4E742769F76500E47E73 /* BackgroundTaskScheduler_Mock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84EB4E732769F76500E47E73 /* BackgroundTaskScheduler_Mock.swift */; };
 		84E32EA5276C9AB200A27112 /* InternetConnection_Mock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84E32EA4276C9AB200A27112 /* InternetConnection_Mock.swift */; };
 		84F61270268B415C00DDF6EE /* ChatClientConfig_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84F6126F268B415C00DDF6EE /* ChatClientConfig_Tests.swift */; };
 		8800A26F258A04D5006D64C4 /* ChatMessageAttachmentPreviewVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8800A26E258A04D5006D64C4 /* ChatMessageAttachmentPreviewVC.swift */; };
@@ -2524,6 +2525,7 @@
 		84DCB850269F4D31006CDF32 /* EventsController+Combine_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "EventsController+Combine_Tests.swift"; sourceTree = "<group>"; };
 		84DCB852269F569A006CDF32 /* EventsController+SwiftUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "EventsController+SwiftUI.swift"; sourceTree = "<group>"; };
 		84DCB854269F56A7006CDF32 /* EventsController+SwiftUI_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "EventsController+SwiftUI_Tests.swift"; sourceTree = "<group>"; };
+		84EB4E732769F76500E47E73 /* BackgroundTaskScheduler_Mock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackgroundTaskScheduler_Mock.swift; sourceTree = "<group>"; };
 		84E32EA4276C9AB200A27112 /* InternetConnection_Mock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InternetConnection_Mock.swift; sourceTree = "<group>"; };
 		84F6126F268B415C00DDF6EE /* ChatClientConfig_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatClientConfig_Tests.swift; sourceTree = "<group>"; };
 		8800A26E258A04D5006D64C4 /* ChatMessageAttachmentPreviewVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageAttachmentPreviewVC.swift; sourceTree = "<group>"; };
@@ -4022,6 +4024,7 @@
 				79280F76248917EB00CDEB89 /* Engine */,
 				DBF17AE725D48865004517B3 /* BackgroundTaskScheduler.swift */,
 				DB05FC1025D569590084B6A3 /* BackgroundTaskScheduler_Tests.swift */,
+				84EB4E732769F76500E47E73 /* BackgroundTaskScheduler_Mock.swift */,
 				799C9444247D3DD2001F1104 /* WebSocketClient.swift */,
 				8802F9BC25AF1DE200475159 /* WebSocketClient_Mock.swift */,
 				79A0E9AE2498BFD800E9BD50 /* WebSocketClient_Tests.swift */,
@@ -7577,6 +7580,7 @@
 				88BEBCE1253704AE00D9E8B7 /* MemberListController_Mock.swift in Sources */,
 				AD45333A25D153CF00CD9D47 /* ConnectionController+SwiftUI_Tests.swift in Sources */,
 				8A0D64AE24E5853F0017A3C0 /* DataController_Tests.swift in Sources */,
+				84EB4E742769F76500E47E73 /* BackgroundTaskScheduler_Mock.swift in Sources */,
 				8486CAF926FA51EE00A9AD96 /* EventDTOConverterMiddleware_Tests.swift in Sources */,
 				ADC40C3226E26E9F005B616C /* UserSearchController_Tests.swift in Sources */,
 				8A0C3BC924C0BBAB00CAFD19 /* UserEvents_Tests.swift in Sources */,
