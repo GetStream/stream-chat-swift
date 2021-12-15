@@ -114,21 +114,32 @@ lane :publish_release do |options|
   version = options[:version]
 
   # Make xcframeworks
-  make frameworks
+  sh("make frameworks")
+
+  # Generate Checksums
+  streamChatChecksum = sh("swift package compute-checksum Products/StreamChat.zip")
+  streamChatUIChecksum = sh("swift package compute-checksum Products/StreamChatUI.zip")
 
   # Update SPM Repo
   sh("git clone git@github.com:GetStream/stream-chat-swift-spm.git ../StreamSPM")
   file = File.open("../StreamSPM/Package.swift")
   file_data = file.read
 
+  # [WIP] I can improve using regex here
   File.open("../StreamSPM/Package.swift").each do |line|
   if line.include?("url") && line.include?("StreamChat.zip")
       streamChat = "url: \"https://github.com/GetStream/stream-chat-swift/releases/download/#{version}/StreamChat.zip\","
       file_data.gsub!(line, streamChat)
+      next
+      newChecksumLine = "checksum: #{streamChatChecksum}\","
+      file_data.gsub!(line, newChecksumLine)
   end
   if line.include?("url") && line.include?("StreamChatUI.zip")
       streamChatUI = "url: \"https://github.com/GetStream/stream-chat-swift/releases/download/#{version}/StreamChatUI.zip\","
       file_data.gsub!(line, streamChatUI)
+      next
+      newUIChecksumLine = "checksum: #{streamChatUIChecksum}\","
+      file_data.gsub!(line, newUIChecksumLine)
   end
 end
 
@@ -144,10 +155,6 @@ end
   # Clean Up
   sh("cd ../")
   sh("rm -r StreamSPM")
-
-  # Generate Checksums
-  sh("swift package compute-checksum Products/StreamChat.zip")
-  sh("swift package compute-checksum Products/StreamChatUI.zip")
 
   # Create Github Release
   github_release = set_github_release(
