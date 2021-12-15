@@ -3,6 +3,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+### ⚠️ Important
+- Dependencies are no longer exposed (this includes Nuke, SwiftyGif and Starscream). If you were using those dependencies we were exposing, you would need to import them manually. This is due to our newest addition supporting Module Stable XCFrameworks, see more below in the "Added" section.
+
 ### 🔄 Changed
 - Change `ChatMessageLayoutOptions` to a `Set` instead of an `OptionSet` for a more flexible and safer customization [#1651](https://github.com/GetStream/stream-chat-swift/issues/1651)
 - There is a new `ChatMessageListDateSeparatorView` component that should be used instead of the `ChatMessageListScrollOverlayView` if the goal is customize the styling of the date separator. Read [here](https://getstream.io/chat/docs/sdk/ios/uikit/components/message/#date-separators) for more details.
