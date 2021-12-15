@@ -5,18 +5,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### 🔄 Changed
 - Change `ChatMessageLayoutOptions` to a `Set` instead of an `OptionSet` for a more flexible and safer customization [#1651](https://github.com/GetStream/stream-chat-swift/issues/1651)
+- There is a new `ChatMessageListDateSeparatorView` component that should be used instead of the `ChatMessageListScrollOverlayView` if the goal is customize the styling of the date separator. Read [here](https://getstream.io/chat/docs/sdk/ios/uikit/components/message/#date-separators) for more details.
 
 ### 🐞 Fixed
 - Fix `stopTyping` can be called on `TypingEventSender` after calling `startTyping` [#1649](https://github.com/GetStream/stream-chat-swift/issues/1649)
 - Reactions no longer cover the text in message bubble [#1666](https://github.com/GetStream/stream-chat-swift/pull/1666)
 - Fix `error` type messages rendered as user's messages and interactive [#1672](https://github.com/GetStream/stream-chat-swift/issues/1672)
+- Fix `ChannelListController` makes one redundant API call [#1687](https://github.com/GetStream/stream-chat-swift/issues/1687)
 
 ### ✅ Added
 - Add support for pre-built XCFrameworks [#1665](https://github.com/GetStream/stream-chat-swift/pull/1665)
 - Added `LogConfig.destinationTypes` for ease of adding new destinations to logger [#1681](https://github.com/GetStream/stream-chat-swift/issues/1681)
-
-### ✅ Added
 - Expose container embedding top & bottom containers by `ChatChannelListItemView` [#1670](https://github.com/GetStream/stream-chat-swift/issues/1670)
+- Add Static Message List Date Separators [#1686](https://github.com/GetStream/stream-chat-swift/issues/1686) (You can read this [doc](https://getstream.io/chat/docs/sdk/ios/uikit/components/message/#date-separators) to understand how to configure this feature)
 
 # [4.5.2](https://github.com/GetStream/stream-chat-swift/releases/tag/4.5.2)
 _December 10, 2021_

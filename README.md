@@ -36,7 +36,8 @@ The **StreamChatUI SDK**  is the official iOS SDK for [Stream Chat](https://gets
 
 * [iOS/Swift Chat Tutorial](https://getstream.io/tutorials/ios-chat/): Learn how to use the SDK by following our simple tutorial.
 * [Register](https://getstream.io/chat/trial/): Register to get an API key for Stream Chat.
-* [Installation](https://getstream.io/chat/docs/sdk/ios/#installation): Learn more about how to install the SDK using CocoaPods, SPM or Carthage.
+* [Installation](https://getstream.io/chat/docs/sdk/ios/basics/integration): Learn more about how to install the SDK using CocoaPods, SPM or Carthage.
+  * Do you want to use Module Stable XCFrameworks? [Check this out](https://getstream.io/chat/docs/sdk/ios/basics/integration#xcframeworks)
 * [Documentation](https://getstream.io/chat/docs/sdk/ios/): An extensive documentation is available to help with you integration.
 * [Demo app](https://github.com/GetStream/stream-chat-swift/tree/main/DemoApp): This repo includes a fully functional demo app with example usage of the SDK.
 * [Example apps](https://github.com/GetStream/stream-chat-swift/tree/main/Examples): This section of the repo includes fully functional sample apps that you can use as reference.
@@ -54,6 +55,14 @@ Stream is free for most side and hobby projects. You can use Stream Chat for fre
 * **`open` by default:** Everything is `open` unless there's a strong reason for it to not be. This means you can easily modify almost every behavior of the SDK such that it fits your needs.
 
 * **Good platform citizen:** The UI elements behave like good platform citizens. They use existing iOS patterns; their behavior is predictable and matches system UI components; they respect `tintColor`, `layourMargins`, dynamic font sizes, and other system-defined UI constants.
+
+## Dependencies
+
+This SDK tries to keep the list of external dependencies to a minimum.
+Starting **4.6.0**, and in order to improve the developer experience, dependencies are hidden inside our libraries.
+(Does not apply to StreamChatSwiftUI's dependencies yet).
+
+Learn more about our dependencies [here](https://getstream.io/chat/docs/sdk/ios/#dependencies)
 
 ---
 

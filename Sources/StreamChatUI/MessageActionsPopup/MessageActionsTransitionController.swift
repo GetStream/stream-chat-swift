@@ -214,8 +214,10 @@ open class ChatMessageActionsTransitionController: NSObject, UIViewControllerTra
         transitionSubviews.forEach(transitionContext.containerView.addSubview)
         
         fromVC.view.isHidden = true
-        
-        selectedMessageCell?.messageContentView?.isHidden = true
+
+        // We use alpha instead of isHidden, because messageContentView is embed
+        // in a UIStackView, and so hiding it will change the layout of the message cell.
+        selectedMessageCell?.messageContentView?.alpha = 0.0
 
         let hideView: (UIView?) -> Void = { view in
             view?.transform = CGAffineTransform(scaleX: 0.01, y: 0.01)
@@ -242,7 +244,7 @@ open class ChatMessageActionsTransitionController: NSObject, UIViewControllerTra
             completion: { _ in
                 transitionSubviews.forEach { $0.removeFromSuperview() }
                 
-                self.selectedMessageCell?.messageContentView?.isHidden = false
+                self.selectedMessageCell?.messageContentView?.alpha = 1.0
 
                 transitionContext.completeTransition(!transitionContext.transitionWasCancelled)
                 
