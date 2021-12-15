@@ -130,23 +130,23 @@ lane :publish_release do |options|
 
   # We are unfortunately having to dig into a file and manually change the lines required
   fileLines.each_with_index do |line, index|
-  if line.include?("url") && line.include?("StreamChat.zip")
+    if line.include?("url") && line.include?("StreamChat.zip")
       streamChat = "url: \"https://github.com/GetStream/stream-chat-swift/releases/download/#{version}/StreamChat.zip\","
       file_data.gsub!(line, streamChat)
 
       checksumItem = fileLines[index + 1]
       newChecksumLine = "checksum: \"#{streamChatChecksum}\"),"
       file_data.gsub!(checksumItem, newChecksumLine)
-  end
-  if line.include?("url") && line.include?("StreamChatUI.zip")
+    end
+    if line.include?("url") && line.include?("StreamChatUI.zip")
       streamChatUI = "url: \"https://github.com/GetStream/stream-chat-swift/releases/download/#{version}/StreamChatUI.zip\","
       file_data.gsub!(line, streamChatUI)
 
       newUIChecksumItem = fileLines[index + 1]
       newUIChecksumLine = "checksum: \"#{streamChatUIChecksum}\"),"
       file_data.gsub!(newUIChecksumItem, newUIChecksumLine)
+    end
   end
-end
 
   # Write the new changes
   File.open("../StreamSPM/Package.swift", "w") { |file| file << file_data }
