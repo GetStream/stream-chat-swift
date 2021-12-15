@@ -55,7 +55,7 @@ struct DefaultRequestDecoder: RequestDecoder {
                 throw ClientError.Unknown("Unknown error. Server response: \(httpResponse).")
             }
             
-            if ErrorPayload.tokenInvadlidErrorCodes ~= serverError.code {
+            if serverError.isInvalidTokenError {
                 log.info("Request failed because of an experied token.", subsystems: .httpRequests)
                 throw ClientError.ExpiredToken()
             }

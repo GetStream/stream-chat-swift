@@ -6,9 +6,6 @@ import Foundation
 
 /// A parsed server response error.
 public struct ErrorPayload: LocalizedError, Codable, CustomDebugStringConvertible, Equatable {
-    /// The error codes for token-related errors. Typically, a refreshed token is required to recover.
-    static let tokenInvadlidErrorCodes = 40...43
-    
     private enum CodingKeys: String, CodingKey {
         case code
         case message
@@ -29,4 +26,16 @@ public struct ErrorPayload: LocalizedError, Codable, CustomDebugStringConvertibl
     public var debugDescription: String {
         "ServerErrorPayload(code: \(code), message: \"\(message)\", statusCode: \(statusCode)))."
     }
+}
+
+extension ErrorPayload {
+    /// Returns `true` if code is withing invalid token codes range.
+    var isInvalidTokenError: Bool {
+        ClosedRange.tokenInvalidErrorCodes ~= code
+    }
+}
+
+extension ClosedRange where Bound == Int {
+    /// The error codes for token-related errors. Typically, a refreshed token is required to recover.
+    static let tokenInvalidErrorCodes: Self = 40...43
 }

@@ -188,6 +188,8 @@ var streamChatSourcesExcluded: [String] { [
     "Workers/ChannelUpdater_Mock.swift",
     "Workers/EventNotificationCenter_Tests.swift",
     "Workers/ChatClientUpdater_Tests.swift",
+    "Errors/ErrorPayload_Tests.swift",
+    "Errors/ClientError_Tests.swift",
     "Query/FilterTestExtensions_Tests.swift",
     "Query/ChannelMemberListQuery_Tests.swift",
     "Query/FilterDecoding_Tests.swift",

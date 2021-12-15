@@ -535,7 +535,7 @@ extension ChatClient: ConnectionStateDelegate {
             connectionId = id
         case let .disconnected(source):
             if let error = source.serverError,
-               error.isTokenExpiredError {
+               error.isInvalidTokenError {
                 refreshToken(completion: nil)
                 shouldNotifyConnectionIdWaiters = false
             } else {
@@ -609,16 +609,6 @@ extension ChatClient: ConnectionStateDelegate {
         if shouldNotifyWaiters {
             connectionIdWaiters.forEach { $0(connectionId) }
         }
-    }
-}
-
-private extension ClientError {
-    var isTokenExpiredError: Bool {
-        if let error = underlyingError as? ErrorPayload,
-           ErrorPayload.tokenInvadlidErrorCodes ~= error.code {
-            return true
-        }
-        return false
     }
 }
 
