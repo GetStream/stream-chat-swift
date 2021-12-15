@@ -155,7 +155,8 @@ end
                      api_token: ENV["GITHUB_TOKEN"],
                      name: version,
                      tag_name: version,
-                     description: changes
+                     description: changes,
+                     upload_assets: ["Products/StreamChat.zip", "Products/StreamChatUI.zip", "Products/StreamChat-All.zip"]
                    )
   # The & operator makes sure truthy values are converted to bool
   # and falsy (false and nil) values are converted to bool false
