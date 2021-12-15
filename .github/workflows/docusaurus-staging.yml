@@ -3,7 +3,7 @@ name: Publish Docusaurus to staging
 on:
   push:
     branches:
-      - main
+      - develop
   workflow_dispatch:
 
 jobs:

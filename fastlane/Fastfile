@@ -31,8 +31,8 @@ end
 
 desc "Start a new release"
 lane :release do |options|
-  # Ensure we are on the main branch
-  ensure_git_branch(branch: 'main')
+  # Ensure we are on the develop branch
+  ensure_git_branch(branch: 'develop')
 
   # Ensure we have a clean git status
   ensure_git_status_clean unless options[:no_ensure_clean]
@@ -68,7 +68,7 @@ lane :release do |options|
   changes = touch_changelog(release_version: version_number)
 
    # Make sure the podspecs actually build before pushing
-   # Disabled now since `StreamChatUI` pod lints it against `StreamChat`s latest version instead of `main` branch
+   # Disabled now since `StreamChatUI` pod lints it against `StreamChat`s latest version instead of `develop` branch
   #pod_lib_lint(podspec: "StreamChat.podspec", allow_warnings: true)
   #pod_lib_lint(podspec: "StreamChatUI.podspec", allow_warnings: true)
 
