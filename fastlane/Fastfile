@@ -114,7 +114,7 @@ lane :publish_release do |options|
   version = options[:version]
 
   # Make xcframeworks
-  sh("make frameworks")
+  sh("cd .. && make frameworks")
 
   # Generate Checksums
   streamChatChecksum = sh("swift package compute-checksum Products/StreamChat.zip")
