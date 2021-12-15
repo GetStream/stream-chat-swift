@@ -134,17 +134,17 @@ lane :publish_release do |options|
       streamChat = "url: \"https://github.com/GetStream/stream-chat-swift/releases/download/#{version}/StreamChat.zip\","
       file_data.gsub!(line, streamChat)
 
-      checksumItem = fileLines[index + 1]
+      currentChecksumItem = fileLines[index + 1]
       newChecksumLine = "checksum: \"#{streamChatChecksum}\"),"
-      file_data.gsub!(checksumItem, newChecksumLine)
+      file_data.gsub!(currentChecksumItem, newChecksumLine)
     end
     if line.include?("url") && line.include?("StreamChatUI.zip")
       streamChatUI = "url: \"https://github.com/GetStream/stream-chat-swift/releases/download/#{version}/StreamChatUI.zip\","
       file_data.gsub!(line, streamChatUI)
 
-      newUIChecksumItem = fileLines[index + 1]
+      currentUIChecksumLine = fileLines[index + 1]
       newUIChecksumLine = "checksum: \"#{streamChatUIChecksum}\"),"
-      file_data.gsub!(newUIChecksumItem, newUIChecksumLine)
+      file_data.gsub!(currentUIChecksumLine, newUIChecksumLine)
     end
   end
 
