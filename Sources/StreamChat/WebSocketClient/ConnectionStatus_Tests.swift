@@ -8,21 +8,30 @@ import XCTest
 class ChatClientConnectionStatus_Tests: XCTestCase {
     func test_wsConnectionState_isTranslatedCorrectly() {
         let testError = ClientError(with: TestError())
+        
+        let invalidTokenError = ClientError(
+            with: ErrorPayload(
+                code: ClosedRange.tokenInvalidErrorCodes.lowerBound,
+                message: .unique,
+                statusCode: .unique
+            )
+        )
+
         let pairs: [(WebSocketConnectionState, ConnectionStatus)] = [
             (.initialized, .initialized),
             (.connecting, .connecting),
             (.waitingForConnectionId, .connecting),
-            (.waitingForReconnect(error: testError), .connecting),
+            (.disconnected(source: .systemInitiated), .connecting),
+            (.disconnected(source: .noPongReceived), .connecting),
+            (.disconnected(source: .serverInitiated(error: nil)), .connecting),
+            (.disconnected(source: .serverInitiated(error: testError)), .connecting),
+            (.disconnected(source: .serverInitiated(error: invalidTokenError)), .connecting),
             (.connected(connectionId: .unique), .connected),
             (.disconnecting(source: .noPongReceived), .disconnecting),
             (.disconnecting(source: .serverInitiated(error: testError)), .disconnecting),
             (.disconnecting(source: .systemInitiated), .disconnecting),
             (.disconnecting(source: .userInitiated), .disconnecting),
-            (.disconnected(source: .userInitiated), .disconnected(error: nil)),
-            (.disconnected(source: .systemInitiated), .disconnected(error: nil)),
-            (.disconnected(source: .noPongReceived), .disconnected(error: nil)),
-            (.disconnected(source: .serverInitiated(error: nil)), .disconnected(error: nil)),
-            (.disconnected(source: .serverInitiated(error: testError)), .disconnected(error: testError))
+            (.disconnected(source: .userInitiated), .disconnected(error: nil))
         ]
         
         pairs.forEach {

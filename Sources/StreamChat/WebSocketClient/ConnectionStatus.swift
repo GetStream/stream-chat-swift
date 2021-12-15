@@ -32,10 +32,7 @@ extension ConnectionStatus {
         case .initialized:
             self = .initialized
             
-        case let .disconnected(source):
-            self = .disconnected(error: source.serverError)
-            
-        case .connecting, .waitingForConnectionId, .waitingForReconnect:
+        case .connecting, .waitingForConnectionId:
             self = .connecting
             
         case .connected:
@@ -43,6 +40,12 @@ extension ConnectionStatus {
             
         case .disconnecting:
             self = .disconnecting
+            
+        case let .disconnected(source):
+            let isWaitingForReconnect = webSocketConnectionState.isAutomaticReconnectionEnabled || source.serverError?
+                .isInvalidTokenError == true
+            
+            self = isWaitingForReconnect ? .connecting : .disconnected(error: source.serverError)
         }
     }
 }
@@ -90,9 +93,6 @@ enum WebSocketConnectionState: Equatable {
     
     /// The web socket is disconnecting. `source` contains more info about the source of the event.
     case disconnecting(source: DisconnectionSource)
-    
-    /// The web socket is waiting for reconnecting. Optinally, an error is provided with the reason why it was disconnected.
-    case waitingForReconnect(error: ClientError? = nil)
     
     /// Checks if the connection state is connected.
     var isConnected: Bool {

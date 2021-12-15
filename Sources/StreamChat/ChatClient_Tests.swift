@@ -307,7 +307,12 @@ class ChatClient_Tests: XCTestCase {
         XCTAssertTrue(connectCompletionCalled)
 
         // Simulate web-socket disconnection.
-        let error = ClientError(with: TestError())
+        let stopError = WebSocketEngineError(
+            reason: .unique,
+            code: WebSocketEngineError.stopErrorCode,
+            engineError: nil
+        )
+        let error = ClientError(with: stopError)
         client.webSocketClient?.simulateConnectionStatus(.disconnected(source: .serverInitiated(error: error)))
 
         // Assert the WSConnectionState is exposed as ChatClientConnectionStatus

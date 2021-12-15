@@ -545,8 +545,7 @@ extension ChatClient: ConnectionStateDelegate {
         case .initialized,
              .connecting,
              .disconnecting,
-             .waitingForConnectionId,
-             .waitingForReconnect:
+             .waitingForConnectionId:
             shouldNotifyConnectionIdWaiters = false
             connectionId = nil
         }
