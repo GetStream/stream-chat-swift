@@ -30,7 +30,7 @@ open class ChatMessageLayoutOptionsResolver {
     ) -> ChatMessageLayoutOptions {
         let messageIndex = messages.index(messages.startIndex, offsetBy: indexPath.item)
         guard let message = messages[safe: messageIndex] else {
-            log.warning("Accessing an index that is not present in the data source")
+            indexNotFoundAssertion()
             return []
         }
 
@@ -141,7 +141,7 @@ open class ChatMessageLayoutOptionsResolver {
     ) -> Bool {
         let messageIndex = messages.index(messages.startIndex, offsetBy: messageIndexPath.item)
         guard let message = messages[safe: messageIndex] else {
-            log.warning("Accessing an index that is not present in the data source")
+            indexNotFoundAssertion()
             return true
         }
 
@@ -150,7 +150,7 @@ open class ChatMessageLayoutOptionsResolver {
 
         let nextMessageIndex = messages.index(before: messageIndex)
         guard let nextMessage = messages[safe: nextMessageIndex] else {
-            log.warning("Accessing an index that is not present in the data source")
+            indexNotFoundAssertion()
             return true
         }
 
