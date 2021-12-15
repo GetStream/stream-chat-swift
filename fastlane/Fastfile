@@ -1,6 +1,7 @@
 default_platform :ios
 
 require 'json'
+require 'net/http'
 
 # The number of times the stress test suite is ran
 stress_tests_cycles = 50
@@ -28,28 +29,41 @@ lane :build_xcframeworks do
   end
 end
 
-desc "Release a new version"
+desc "Start a new release"
 lane :release do |options|
-  ensure_git_branch(branch: 'main') # We can only release on default branch
+  # Ensure we are on the main branch
+  ensure_git_branch(branch: 'main')
+
+  # Ensure we have a clean git status
   ensure_git_status_clean unless options[:no_ensure_clean]
 
+  # Ensure we have a release type
+  UI.user_error!("Please use type parameter with one of the options: type:patch, type:minor, type:major") unless ["patch", "minor", "major"].include?(options[:type])
+
+  # Ensure We Have the GITHUB Token
   UI.user_error!("Please set GITHUB_TOKEN environment value. See https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token") unless !ENV["GITHUB_TOKEN"].nil?
 
-  if (!options[:version].nil?) # User passed a version, use it
-    version_number = options.fetch(:version)
-    increment_version_number_in_plist(version_number: version_number, xcodeproj: "StreamChat.xcodeproj", target: "StreamChat")
-  else
-    UI.user_error!("Please use type parameter with one of the options: type:patch, type:minor, type:major") unless ["patch", "minor", "major"].include?(options[:type])
-    version_number = increment_version_number_in_plist(bump_type: options[:type], xcodeproj: "StreamChat.xcodeproj", target: "StreamChat")
-  end
-
-  set_SDK_version(version: version_number)
-
-  increment_version_number_in_plist(version_number: version_number, xcodeproj: "StreamChat.xcodeproj", target: "StreamChatUI")
+  # Version Number
+  version_number = increment_version_number_in_plist(bump_type: options[:type], xcodeproj: "StreamChat.xcodeproj", target: "StreamChat")
 
   if git_tag_exists(tag: version_number)
     UI.user_error!("Tag for version #{version_number} already exists!")
   end
+
+  # Checkout New Release Branch
+  sh("git checkout -b " + "release/" + version_number)
+
+  # Set version on the SDK & Project
+  increment_version_number_in_plist(version_number: version_number, xcodeproj: "StreamChat.xcodeproj", target: "StreamChat")
+  set_SDK_version(version: version_number)
+  increment_version_number_in_plist(version_number: version_number, xcodeproj: "StreamChat.xcodeproj", target: "StreamChatUI")
+
+  # Set the framework version on the artifacts
+  file = File.read('../StreamChatArtifacts.json')
+  data_hash = JSON.parse(file)
+
+  data_hash["#{version_number}"] = "https://github.com/GetStream/stream-chat-swift/releases/download/#{version_number}/StreamChat-All.zip"
+  File.write('../StreamChatArtifacts.json', JSON.dump(data_hash))
 
   changes = touch_changelog(release_version: version_number)
 
@@ -58,9 +72,15 @@ lane :release do |options|
   #pod_lib_lint(podspec: "StreamChat.podspec", allow_warnings: true)
   #pod_lib_lint(podspec: "StreamChatUI.podspec", allow_warnings: true)
 
+  # Bump Podspec Version
   version_bump_podspec(path: "StreamChat.podspec", version_number: version_number)
   version_bump_podspec(path: "StreamChatUI.podspec", version_number: version_number)
 
+  # Bump XCFramework Version
+  version_bump_podspec(path: "StreamChat-XCFramework.podspec", version_number: version_number)
+  version_bump_podspec(path: "StreamChatUI-XCFramework.podspec", version_number: version_number)
+
+  # Stage all changes
   sh("git add -A")
 
   if(!prompt(text: "Will commit changes. All looking good?", boolean: true))
@@ -68,27 +88,98 @@ lane :release do |options|
   end
 
   sh("git commit -m 'Bump #{version_number}'")
-  sh("git tag #{version_number}")
 
   if(!prompt(text: "Will push changes. All looking good?", boolean: true))
     UI.user_error!("Not pushing changes")
   end
 
-  push_to_git_remote(tags: true)
+  push_to_git_remote(tags: false)
 
+  # Open a new PR
+  create_pull_request(
+    api_token: ENV["GITHUB_TOKEN"],
+    repo: "GetStream/stream-chat-swift",
+    title: "#{version_number} Release",
+    head: "release/#{version_number}",
+    base: "main",
+    body: "#{changes}"
+)
+
+  UI.success("Successfully started release #{version_number}")
+end
+
+desc "Completes an SDK Release"
+lane :publish_release do |options|
+
+  version = options[:version]
+
+  # Make xcframeworks
+  sh("cd .. && make frameworks")
+
+  # Generate Checksums
+  streamChatChecksum = sh("swift package compute-checksum ../Products/StreamChat.zip").strip
+  streamChatUIChecksum = sh("swift package compute-checksum ../Products/StreamChatUI.zip").strip
+
+  # Update SPM Repo
+  sh("git clone git@github.com:GetStream/stream-chat-swift-spm.git ../StreamSPM")
+  file = File.open("../StreamSPM/Package.swift")
+  file_data = file.read
+
+  # [WIP] We can improve using regex here
+  fileLines = File.readlines("../StreamSPM/Package.swift")
+
+  # We are unfortunately having to dig into a file and manually change the lines required
+  fileLines.each_with_index do |line, index|
+    if line.include?("url") && line.include?("StreamChat.zip")
+      streamChat = "url: \"https://github.com/GetStream/stream-chat-swift/releases/download/#{version}/StreamChat.zip\","
+      file_data.gsub!(line, streamChat)
+
+      currentChecksumItem = fileLines[index + 1]
+      newChecksumLine = "checksum: \"#{streamChatChecksum}\"),"
+      file_data.gsub!(currentChecksumItem, newChecksumLine)
+    end
+    if line.include?("url") && line.include?("StreamChatUI.zip")
+      streamChatUI = "url: \"https://github.com/GetStream/stream-chat-swift/releases/download/#{version}/StreamChatUI.zip\","
+      file_data.gsub!(line, streamChatUI)
+
+      currentUIChecksumLine = fileLines[index + 1]
+      newUIChecksumLine = "checksum: \"#{streamChatUIChecksum}\"),"
+      file_data.gsub!(currentUIChecksumLine, newUIChecksumLine)
+    end
+  end
+
+  # Write the new changes
+  File.open("../StreamSPM/Package.swift", "w") { |file| file << file_data }
+
+  # Update the repo
+  sh("cd ../StreamSPM && git add -A")
+  sh("git commit -m 'Bump #{version}'")
+  sh("git tag #{version}")
+  sh("git push origin main --force --tags")
+
+  # Clean Up
+  sh("cd ../")
+  sh("rm -r StreamSPM")
+
+  # Create Github Release
   github_release = set_github_release(
                      repository_name: "GetStream/stream-chat-swift",
                      api_token: ENV["GITHUB_TOKEN"],
-                     name: version_number,
-                     tag_name: version_number,
-                     description: changes
+                     name: version,
+                     tag_name: version,
+                     description: changes,
+                     upload_assets: ["Products/StreamChat.zip", "Products/StreamChatUI.zip", "Products/StreamChat-All.zip"]
                    )
-
-  # The & operator makes sure truthy values are converted to bool true
+  # The & operator makes sure truthy values are converted to bool
   # and falsy (false and nil) values are converted to bool false
   push_pods(sync: options[:sync] & true)
 
-  UI.success("Successfully released #{version_number}")
+  # Set tag
+  sh("git tag #{version}")
+
+  # Push tag to remote
+  push_to_git_remote(tags: true)
+
   UI.success("Github release was created, please visit #{github_release["url"]} to see it")
 end
 
@@ -183,7 +274,7 @@ lane :distribute_demo_app do
     scheme: "DemoApp",
     configuration: "Release",
     export_method: "ad-hoc",
-    export_options: "./fastlane/demo_app_export_options.plist",
+    export_options: "./fastlane/firebase_export_options.plist",
     silent: true,
     clean: true,
     include_symbols: true,
@@ -204,7 +295,7 @@ lane :testflight_build do
 
   # Ask around if you're wandering where you can get this key from
   api_key = app_store_connect_api_key(
-    key_id: "8P4J3MDAWP",
+    key_id: "MT3PRT8TB7",
     issuer_id: "69a6de96-0738-47e3-e053-5b8c7c11a4d1",
     key_content: ENV["APPSTORE_API_KEY"],
     in_house: false
@@ -250,6 +341,7 @@ lane :testflight_build do
     scheme: "DemoApp",
     configuration: "Release",
     export_method: "app-store",
+    export_options: "./fastlane/testflight_export_options.plist", # We have to pass manually since `gym` detects profiles from `match` and that breaks it
     clean: true,
     include_symbols: true,
     output_directory: "archives"

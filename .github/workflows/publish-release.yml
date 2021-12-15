@@ -1,0 +1,20 @@
+name: "Publish new release"
+
+on:
+  pull_request:
+    branches:
+      - main
+    types:
+      - closed
+
+jobs:
+  release:
+    name: Publish new release
+    runs-on: macos-11
+    if: github.event.pull_request.merged == true # only merged pull requests must trigger this job
+    steps:
+      - name: If the release branch contains the version, let's go!
+        if: startsWith(github.event.pull_request.head.ref, 'release/')
+              BRANCH_NAME="${{ github.event.pull_request.head.ref }}"
+              VERSION=${BRANCH_NAME#release/}
+        run: bundle exec fastlane publish_release version:$VERSION

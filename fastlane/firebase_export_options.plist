@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>method</key>
+    <string>ad-hoc</string>
+    <key>provisioningProfiles</key>
+    <dict>
+        <key>io.getstream.iOS.ChatDemoApp</key>
+        <string>match AdHoc io.getstream.iOS.ChatDemoApp</string>
+        <key>io.getstream.iOS.ChatDemoApp.DemoAppPush</key>
+        <string>match AdHoc io.getstream.iOS.ChatDemoApp.DemoAppPush</string>
+    </dict>
+</dict>
+</plist>
