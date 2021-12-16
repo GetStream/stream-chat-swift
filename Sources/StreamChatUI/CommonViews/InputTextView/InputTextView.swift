@@ -79,7 +79,7 @@ open class InputTextView: UITextView, AppearanceProvider {
     open func setUpAppearance() {
         backgroundColor = .clear
         textContainer.lineFragmentPadding = 8
-        font = appearance.fonts.body
+        font = UIFont.systemFont(ofSize: 15)
         textColor = appearance.colorPalette.text
         textAlignment = .natural
         spellCheckingType = .default
