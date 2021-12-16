@@ -4,9 +4,11 @@ on:
   push:
     branches:
       - main
+      - develop
   pull_request:
     branches:
       - main
+      - develop
   release:
     types:
       - created
@@ -44,7 +46,7 @@ jobs:
         key: ${{ runner.os }}-mint-${{ hashFiles('./Mintfile') }}
         restore-keys: ${{ runner.os }}-mint-
     - name: Run bootstrap.sh
-      run: ./bootstrap.sh
+      run: ./Scripts/bootstrap.sh
     - name: Run Tests (Release)
       env:
         MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
@@ -84,7 +86,7 @@ jobs:
         key: ${{ runner.os }}-mint-${{ hashFiles('./Mintfile') }}
         restore-keys: ${{ runner.os }}-mint-
     - name: Run bootstrap.sh
-      run: ./bootstrap.sh
+      run: ./Scripts/bootstrap.sh
     - name: Run Tests (Release)
       env:
         MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
