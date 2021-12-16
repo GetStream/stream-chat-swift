@@ -113,10 +113,7 @@ final class EventsController_Tests: XCTestCase {
         controller.delegate = delegate
         
         // Create `event -> should be processed` mapping.
-        let event = UnknownUserEvent(type: .userBanned,
-                                     userId: .unique,
-                                     createdAt: Date(),
-                                     payload: [:])
+        let event = UnknownUserEvent(type: .userBanned, userId: .unique, createdAt: Date(), payload: [:])
         
         let notification = Notification(newEventReceived: event, sender: self)
         client.eventNotificationCenter.post(notification)
@@ -133,11 +130,8 @@ final class EventsController_Tests: XCTestCase {
         controller.delegate = delegate
         
         // Create `event -> should be processed` mapping.
-        let event = UnknownChannelEvent(type: .channelHidden,
-                                        cid: try .init(cid: "clubid:1234"),
-                                        userId: .unique,
-                                        createdAt: Date(),
-                                        payload: [:])
+        let cid: ChannelId = try .init(cid: "clubid:1234")
+        let event = UnknownChannelEvent(type: .channelHidden, cid: cid, userId: .unique, createdAt: Date(), payload: [:])
         
         let notification = Notification(newEventReceived: event, sender: self)
         client.eventNotificationCenter.post(notification)
