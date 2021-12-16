@@ -773,6 +773,7 @@ var streamChatUIFilesExcluded: [String] { [
     "Utils/UIViewController+Extensions_Tests.swift",
     "Utils/ChatChannelNamer_Tests.swift",
     "Utils/ComponentsProvider_Tests.swift",
+    "Utils/Array+SafeSubscript_Tests.swift",
     "Utils/AppearanceProvider_Tests.swift",
     "Utils/ImageCDN_Tests.swift",
     "Utils/DateUtils_Tests.swift",
