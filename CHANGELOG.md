@@ -27,6 +27,8 @@ _December 15, 2021_
 - Added `LogConfig.destinationTypes` for ease of adding new destinations to logger [#1681](https://github.com/GetStream/stream-chat-swift/issues/1681)
 - Expose container embedding top & bottom containers by `ChatChannelListItemView` [#1670](https://github.com/GetStream/stream-chat-swift/issues/1670)
 - Add Static Message List Date Separators [#1686](https://github.com/GetStream/stream-chat-swift/issues/1686) (You can read this [doc](https://getstream.io/chat/docs/sdk/ios/uikit/components/message/#date-separators) to understand how to configure this feature)
+- `ChannelQuery.options` and `ChannelListQuery.options` are now public and mutable [#1696](https://github.com/GetStream/stream-chat-swift/issues/1696)
+- `ChannelController.startWatching` and `stopWatching` are now `public`. You can explicitly stop watching a channel [#1696](https://github.com/GetStream/stream-chat-swift/issues/1696)
 
 # [4.5.2](https://github.com/GetStream/stream-chat-swift/releases/tag/4.5.2)
 _December 10, 2021_

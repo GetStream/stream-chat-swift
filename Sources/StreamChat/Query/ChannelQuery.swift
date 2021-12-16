@@ -24,7 +24,7 @@ public struct ChannelQuery: Encodable {
     /// A number of watchers for the channel to be retrieved.
     public let watchersLimit: Int?
     /// A query options.
-    var options: QueryOptions = .all
+    public var options: QueryOptions = .all
     /// ChannelCreatePayload that is needed only when creating channel
     let channelPayload: ChannelEditDetailPayload?
     
