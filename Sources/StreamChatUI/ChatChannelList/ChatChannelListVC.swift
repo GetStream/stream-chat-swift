@@ -169,7 +169,7 @@ open class ChatChannelListVC: _ViewController,
             for: indexPath
         ) as! ChatChannelListCollectionViewCell
 
-        guard let channel = getChannel(at: indexPath) else { return UICollectionViewCell() }
+        guard let channel = getChannel(at: indexPath) else { return cell }
 
         cell.components = components
         cell.itemView.content = .init(channel: channel, currentUserId: controller.client.currentUserId)

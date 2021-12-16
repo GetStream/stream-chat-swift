@@ -342,7 +342,7 @@ open class GalleryVC:
             for: indexPath
         ) as! GalleryCollectionViewCell
 
-        guard let item = getItem(at: indexPath) else { return UICollectionViewCell() }
+        guard let item = getItem(at: indexPath) else { return cell }
 
         cell.content = item
         
