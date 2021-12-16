@@ -11,8 +11,10 @@ struct EventDecoder {
         do {
             let response = try decoder.decode(EventPayload.self, from: data)
             return try response.event()
-        } catch is ClientError.UnknownEvent {
-            return try decoder.decode(UnknownEvent.self, from: data)
+        } catch is ClientError.UnknownChannelEvent {
+            return try decoder.decode(UnknownChannelEvent.self, from: data)
+        } catch is ClientError.UnknownUserEvent {
+            return try decoder.decode(UnknownUserEvent.self, from: data)
         }
     }
 }

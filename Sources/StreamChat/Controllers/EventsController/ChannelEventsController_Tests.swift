@@ -239,7 +239,7 @@ final class ChannelEventsController_Tests: XCTestCase {
         let currentChannelEvent = try ChannelUpdatedEventDTO(from: eventPayload)
             .toDomainEvent(session: database.viewContext) as! ChannelUpdatedEvent
         
-        let currentChannelCustomEvent = UnknownEvent(
+        let currentChannelCustomEvent = UnknownChannelEvent(
             type: .init(rawValue: .unique),
             cid: cid,
             userId: .unique,
@@ -263,7 +263,7 @@ final class ChannelEventsController_Tests: XCTestCase {
         AssertAsync {
             Assert.willBeEqual(delegate.events.count, 2)
             Assert.willBeTrue(delegate.events.first is ChannelUpdatedEvent)
-            Assert.willBeTrue(delegate.events.last is UnknownEvent)
+            Assert.willBeTrue(delegate.events.last is UnknownChannelEvent)
         }
     }
 }

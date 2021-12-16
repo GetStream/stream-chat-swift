@@ -106,6 +106,47 @@ final class EventsController_Tests: XCTestCase {
             )
         }
     }
+    
+    func test_whenEventsNotificationIsObserved_theUnknownUserEvent_isForwardedToDelegate() {
+        // Create and set the delegate.
+        let delegate = EventsControllerDelegateMock(expectedQueueId: callbackQueueID)
+        controller.delegate = delegate
+        
+        // Create `event -> should be processed` mapping.
+        let event = UnknownUserEvent(type: .userBanned,
+                                     userId: .unique,
+                                     createdAt: Date(),
+                                     payload: [:])
+        
+        let notification = Notification(newEventReceived: event, sender: self)
+        client.eventNotificationCenter.post(notification)
+        
+        // Assert delegate received only events which have passed the filter
+        AssertAsync.willBeEqual(
+            delegate.events.compactMap { $0 as? UnknownUserEvent }, [event]
+        )
+    }
+    
+    func test_whenEventsNotificationIsObserved_theUnknownChannelEvent_isForwardedToDelegate() throws {
+        // Create and set the delegate.
+        let delegate = EventsControllerDelegateMock(expectedQueueId: callbackQueueID)
+        controller.delegate = delegate
+        
+        // Create `event -> should be processed` mapping.
+        let event = UnknownChannelEvent(type: .channelHidden,
+                                        cid: try .init(cid: "clubid:1234"),
+                                        userId: .unique,
+                                        createdAt: Date(),
+                                        payload: [:])
+        
+        let notification = Notification(newEventReceived: event, sender: self)
+        client.eventNotificationCenter.post(notification)
+        
+        // Assert delegate received only events which have passed the filter
+        AssertAsync.willBeEqual(
+            delegate.events.compactMap { $0 as? UnknownChannelEvent }, [event]
+        )
+    }
 }
 
 class EventsControllerDelegateMock: QueueAwareDelegate, EventsControllerDelegate {

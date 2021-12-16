@@ -14,21 +14,23 @@ _December 15, 2021_
 ### 🔄 Changed
 - Change `ChatMessageLayoutOptions` to a `Set` instead of an `OptionSet` for a more flexible and safer customization [#1651](https://github.com/GetStream/stream-chat-swift/issues/1651)
 - There is a new `ChatMessageListDateSeparatorView` component that should be used instead of the `ChatMessageListScrollOverlayView` if the goal is customize the styling of the date separator. Read [here](https://getstream.io/chat/docs/sdk/ios/uikit/components/message/#date-separators) for more details.
+- `UnknownEvent` is now deprecated, use `UnknownChannelEvent` or `UnknownUserEvent` instead. [#1695](https://github.com/GetStream/stream-chat-swift/pull/1695).
 
 ### 🐞 Fixed
-- Fix `stopTyping` can be called on `TypingEventSender` after calling `startTyping` [#1649](https://github.com/GetStream/stream-chat-swift/issues/1649)
-- Reactions no longer cover the text in message bubble [#1666](https://github.com/GetStream/stream-chat-swift/pull/1666)
-- Fix `error` type messages rendered as user's messages and interactive [#1672](https://github.com/GetStream/stream-chat-swift/issues/1672)
-- Fix `ChannelListController` makes one redundant API call [#1687](https://github.com/GetStream/stream-chat-swift/issues/1687)
-- Safely access indexes of collections [#1692](https://github.com/GetStream/stream-chat-swift/pull/1692)
+- Fix `stopTyping` can be called on `TypingEventSender` after calling `startTyping` [#1649](https://github.com/GetStream/stream-chat-swift/issues/1649).
+- Reactions no longer cover the text in message bubble [#1666](https://github.com/GetStream/stream-chat-swift/pull/1666).
+- Fix `error` type messages rendered as user's messages and interactive [#1672](https://github.com/GetStream/stream-chat-swift/issues/1672).
+- Fix `ChannelListController` makes one redundant API call [#1687](https://github.com/GetStream/stream-chat-swift/issues/1687).
+- Safely access indexes of collections [#1692](https://github.com/GetStream/stream-chat-swift/pull/1692).
 
 ### ✅ Added
-- Add support for pre-built XCFrameworks [#1665](https://github.com/GetStream/stream-chat-swift/pull/1665)
-- Added `LogConfig.destinationTypes` for ease of adding new destinations to logger [#1681](https://github.com/GetStream/stream-chat-swift/issues/1681)
-- Expose container embedding top & bottom containers by `ChatChannelListItemView` [#1670](https://github.com/GetStream/stream-chat-swift/issues/1670)
-- Add Static Message List Date Separators [#1686](https://github.com/GetStream/stream-chat-swift/issues/1686) (You can read this [doc](https://getstream.io/chat/docs/sdk/ios/uikit/components/message/#date-separators) to understand how to configure this feature)
+- Add support for pre-built XCFrameworks [#1665](https://github.com/GetStream/stream-chat-swift/pull/1665).
+- Added `LogConfig.destinationTypes` for ease of adding new destinations to logger [#1681](https://github.com/GetStream/stream-chat-swift/issues/1681).
+- Expose container embedding top & bottom containers by `ChatChannelListItemView` [#1670](https://github.com/GetStream/stream-chat-swift/issues/1670).
+- Add Static Message List Date Separators [#1686](https://github.com/GetStream/stream-chat-swift/issues/1686) (You can read this [doc](https://getstream.io/chat/docs/sdk/ios/uikit/components/message/#date-separators) to understand how to configure this feature).
+- Adds `UnknownUserEvent` that models custom user event [#1695](https://github.com/GetStream/stream-chat-swift/pull/1695).
 - `ChannelQuery.options` and `ChannelListQuery.options` are now public and mutable [#1696](https://github.com/GetStream/stream-chat-swift/issues/1696)
-- `ChannelController.startWatching` and `stopWatching` are now `public`. You can explicitly stop watching a channel [#1696](https://github.com/GetStream/stream-chat-swift/issues/1696)
+- `ChannelController.startWatching` and `stopWatching` are now `public`. You can explicitly stop watching a channel [#1696](https://github.com/GetStream/stream-chat-swift/issues/1696).
 
 # [4.5.2](https://github.com/GetStream/stream-chat-swift/releases/tag/4.5.2)
 _December 10, 2021_
