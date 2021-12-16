@@ -45,3 +45,15 @@ final class MockBackgroundTaskScheduler: BackgroundTaskScheduler {
         stopListeningForAppStateUpdates_called = true
     }
 }
+
+extension MockBackgroundTaskScheduler {
+    func simulateAppGoingToBackground() {
+        isAppActive_returns = false
+        startListeningForAppStateUpdates_onBackground?()
+    }
+    
+    func simulateAppGoingToForeground() {
+        isAppActive_returns = true
+        startListeningForAppStateUpdates_onForeground?()
+    }
+}

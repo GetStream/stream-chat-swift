@@ -550,7 +550,7 @@ class ChatClient_Tests: XCTestCase {
         XCTAssert(client.backgroundWorkers.contains { $0 is NewUserQueryUpdater })
         XCTAssert(client.backgroundWorkers.contains { $0 is MessageEditor })
         XCTAssert(client.backgroundWorkers.contains { $0 is AttachmentUploader })
-        XCTAssertNotNil(client.connectionRecoveryUpdater)
+        XCTAssertNotNil(client.connectionRecoveryHandler)
         
         AssertAsync.canBeReleased(&client)
     }
@@ -573,7 +573,7 @@ class ChatClient_Tests: XCTestCase {
         XCTAssert(testWorker?.init_database is DatabaseContainerMock)
         XCTAssert(testWorker?.init_apiClient is APIClientMock)
         
-        XCTAssertNotNil(client.connectionRecoveryUpdater)
+        XCTAssertNotNil(client.connectionRecoveryHandler)
     }
     
     // MARK: - Init

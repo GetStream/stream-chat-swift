@@ -15,7 +15,11 @@ class WebSocketClientMock: WebSocketClient {
     let init_environment: WebSocketClient.Environment
 
     @Atomic var connect_calledCounter = 0
+    var connect_called: Bool { connect_calledCounter > 0 }
+    
     @Atomic var disconnect_calledCounter = 0
+    var disconnect_source: WebSocketConnectionState.DisconnectionSource?
+    var disconnect_called: Bool { disconnect_calledCounter > 0 }
 
     override init(
         sessionConfiguration: URLSessionConfiguration,
@@ -45,6 +49,7 @@ class WebSocketClientMock: WebSocketClient {
 
     override func disconnect(source: WebSocketConnectionState.DisconnectionSource = .userInitiated) {
         _disconnect_calledCounter { $0 += 1 }
+        disconnect_source = source
     }
     
     var mockEventsBatcher: EventBatcherMock {
