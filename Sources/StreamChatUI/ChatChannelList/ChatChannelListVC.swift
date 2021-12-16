@@ -168,12 +168,11 @@ open class ChatChannelListVC: _ViewController,
             withReuseIdentifier: collectionViewCellReuseIdentifier,
             for: indexPath
         ) as! ChatChannelListCollectionViewCell
-    
+
+        guard let channel = getChannel(at: indexPath) else { return UICollectionViewCell() }
+
         cell.components = components
-        cell.itemView.content = .init(
-            channel: controller.channels[indexPath.row],
-            currentUserId: controller.client.currentUserId
-        )
+        cell.itemView.content = .init(channel: channel, currentUserId: controller.client.currentUserId)
 
         cell.swipeableView.delegate = self
         cell.swipeableView.indexPath = { [weak cell, weak self] in
@@ -197,7 +196,7 @@ open class ChatChannelListVC: _ViewController,
     }
         
     open func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let channel = controller.channels[indexPath.row]
+        guard let channel = getChannel(at: indexPath) else { return }
         router.showChannel(for: channel.cid)
     }
         
@@ -265,13 +264,15 @@ open class ChatChannelListVC: _ViewController,
     /// This function is called when delete button is pressed from action items of a cell.
     /// - Parameter indexPath: IndexPath of given cell to fetch the content of it.
     open func deleteButtonPressedForCell(at indexPath: IndexPath) {
-        router.didTapDeleteButton(for: controller.channels[indexPath.row].cid)
+        guard let channel = getChannel(at: indexPath) else { return }
+        router.didTapDeleteButton(for: channel.cid)
     }
 
     /// This function is called when more button is pressed from action items of a cell.
     /// - Parameter indexPath: IndexPath of given cell to fetch the content of it.
     open func moreButtonPressedForCell(at indexPath: IndexPath) {
-        router.didTapMoreButton(for: controller.channels[indexPath.row].cid)
+        guard let channel = getChannel(at: indexPath) else { return }
+        router.didTapMoreButton(for: channel.cid)
     }
     
     // MARK: - ChatChannelListControllerDelegate
@@ -333,5 +334,11 @@ open class ChatChannelListVC: _ViewController,
         default:
             loadingIndicator.stopAnimating()
         }
+    }
+
+    private func getChannel(at indexPath: IndexPath) -> ChatChannel? {
+        let index = indexPath.row
+        controller.channels.assertIndexIsPresent(index)
+        return controller.channels[safe: index]
     }
 }

@@ -29,7 +29,10 @@ open class ChatMessageLayoutOptionsResolver {
         appearance: Appearance
     ) -> ChatMessageLayoutOptions {
         let messageIndex = messages.index(messages.startIndex, offsetBy: indexPath.item)
-        let message = messages[messageIndex]
+        guard let message = messages[safe: messageIndex] else {
+            indexNotFoundAssertion()
+            return []
+        }
 
         let isLastInSequence = isMessageLastInSequence(
             messageIndexPath: indexPath,
@@ -137,13 +140,19 @@ open class ChatMessageLayoutOptionsResolver {
         messages: AnyRandomAccessCollection<ChatMessage>
     ) -> Bool {
         let messageIndex = messages.index(messages.startIndex, offsetBy: messageIndexPath.item)
-        let message = messages[messageIndex]
+        guard let message = messages[safe: messageIndex] else {
+            indexNotFoundAssertion()
+            return true
+        }
 
         // The current message is the last message so it's either a standalone or last in sequence.
         guard messageIndexPath.item > 0 else { return true }
 
         let nextMessageIndex = messages.index(before: messageIndex)
-        let nextMessage = messages[nextMessageIndex]
+        guard let nextMessage = messages[safe: nextMessageIndex] else {
+            indexNotFoundAssertion()
+            return true
+        }
 
         // The message after the current one has different author so the current message
         // is either a standalone or last in sequence.

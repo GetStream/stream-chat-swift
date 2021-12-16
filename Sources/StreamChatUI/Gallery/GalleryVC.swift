@@ -341,8 +341,10 @@ open class GalleryVC:
             withReuseIdentifier: reuseIdentifier,
             for: indexPath
         ) as! GalleryCollectionViewCell
-        
-        cell.content = items[indexPath.item]
+
+        guard let item = getItem(at: indexPath) else { return UICollectionViewCell() }
+
+        cell.content = item
         
         cell.didTapOnce = { [weak self] in
             self?.handleSingleTapOnCell(at: indexPath)
@@ -389,14 +391,15 @@ open class GalleryVC:
     
     /// A currently visible gallery item.
     open var currentItem: AnyChatMessageAttachment {
-        items[currentItemIndexPath.item]
+        items.assertIndexIsPresent(currentItemIndexPath.item)
+        return items[currentItemIndexPath.item]
     }
     
     /// Returns a share item for the gallery item at given index path.
     /// - Parameter indexPath: An index path.
     /// - Returns: An item to share.
     open func shareItem(at indexPath: IndexPath) -> Any? {
-        let item = items[indexPath.item]
+        guard let item = getItem(at: indexPath) else { return nil }
         
         if let image = item.attachment(payloadType: ImageAttachmentPayload.self) {
             return image.imageURL
@@ -411,8 +414,8 @@ open class GalleryVC:
     /// - Parameter indexPath: An index path.
     /// - Returns: A cell reuse identifier.
     open func cellReuseIdentifierForItem(at indexPath: IndexPath) -> String? {
-        let item = items[indexPath.item]
-        
+        guard let item = getItem(at: indexPath) else { return nil }
+
         switch item.type {
         case .image:
             return components.imageAttachmentGalleryCell.reuseId
@@ -441,8 +444,9 @@ open class GalleryVC:
     /// Returns an image view to animate during interactive dismissing.
     open var imageViewToAnimateWhenDismissing: UIImageView? {
         let indexPath = currentItemIndexPath
-        
-        switch items[indexPath.item].type {
+        guard let item = getItem(at: indexPath) else { return nil }
+
+        switch item.type {
         case .image:
             let cell = attachmentsCollectionView
                 .cellForItem(at: indexPath) as? ImageAttachmentGalleryCell
@@ -454,5 +458,11 @@ open class GalleryVC:
         default:
             return nil
         }
+    }
+
+    private func getItem(at indexPath: IndexPath) -> AnyChatMessageAttachment? {
+        let index = indexPath.item
+        items.assertIndexIsPresent(index)
+        return items[safe: index]
     }
 }

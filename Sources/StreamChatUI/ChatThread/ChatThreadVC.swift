@@ -153,7 +153,11 @@ open class ChatThreadVC:
 
     open func chatMessageListVC(_ vc: ChatMessageListVC, messageAt indexPath: IndexPath) -> ChatMessage? {
         guard indexPath.item < replies.count else { return nil }
-        return replies[indexPath.item]
+        guard let reply = replies[safe: indexPath.item] else {
+            indexNotFoundAssertion()
+            return nil
+        }
+        return reply
     }
 
     open func chatMessageListVC(

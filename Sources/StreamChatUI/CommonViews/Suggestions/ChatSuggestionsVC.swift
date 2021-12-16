@@ -180,7 +180,12 @@ open class ChatMessageComposerSuggestionsCommandDataSource: NSObject, UICollecti
         ) as! ChatCommandSuggestionCollectionViewCell
 
         cell.components = components
-        cell.commandView.content = commands[indexPath.row]
+        guard let command = commands[safe: indexPath.row] else {
+            indexNotFoundAssertion()
+            return UICollectionViewCell()
+        }
+
+        cell.commandView.content = command
 
         return cell
     }
@@ -248,7 +253,10 @@ open class ChatMessageComposerSuggestionsMentionDataSource: NSObject,
             for: indexPath
         ) as! ChatMentionSuggestionCollectionViewCell
 
-        let user = usersCache[indexPath.row]
+        guard let user = usersCache[safe: indexPath.row] else {
+            indexNotFoundAssertion()
+            return UICollectionViewCell()
+        }
         // We need to make sure we set the components before accessing the mentionView,
         // so the mentionView is created with the most up-to-dated components.
         cell.components = components

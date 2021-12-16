@@ -20,6 +20,7 @@ _December 15, 2021_
 - Reactions no longer cover the text in message bubble [#1666](https://github.com/GetStream/stream-chat-swift/pull/1666)
 - Fix `error` type messages rendered as user's messages and interactive [#1672](https://github.com/GetStream/stream-chat-swift/issues/1672)
 - Fix `ChannelListController` makes one redundant API call [#1687](https://github.com/GetStream/stream-chat-swift/issues/1687)
+- Safely access indexes of collections [#1692](https://github.com/GetStream/stream-chat-swift/pull/1692)
 
 ### ✅ Added
 - Add support for pre-built XCFrameworks [#1665](https://github.com/GetStream/stream-chat-swift/pull/1665)
