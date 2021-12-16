@@ -168,7 +168,6 @@ open class ChatChannelVC:
 
     override open func viewDidLoad() {
         super.viewDidLoad()
-        NotificationCenter.default.post(name: .hideTabbar, object: nil)
     }
 
     override open func viewDidAppear(_ animated: Bool) {
@@ -190,9 +189,13 @@ open class ChatChannelVC:
     }
 
     @objc func backAction(_ sender: Any) {
-        navigationController?.popViewController(animated: true)
-        self.dismiss(animated: true, completion: nil)
-        NotificationCenter.default.post(name: .showTabbar, object: nil)
+        view.endEditing(true)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) { [weak self] in
+            guard let self = self else { return }
+            self.navigationController?.popViewController(animated: true)
+            self.dismiss(animated: true, completion: nil)
+            NotificationCenter.default.post(name: .showTabbar, object: nil)
+        }
     }
 
     // MARK: - ChatMessageListVCDataSource
