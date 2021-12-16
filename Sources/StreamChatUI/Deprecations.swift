@@ -182,16 +182,6 @@ public extension ChatMessageLayoutOptions {
         id
     }
 
-    @available(*, deprecated, message: "use `remove(_ member: ChatMessageLayoutOption)` instead.")
-    mutating func remove(_ options: ChatMessageLayoutOptions) {
-        self = subtracting(options)
-    }
-
-    @available(*, deprecated, message: "use `insert(_ member: ChatMessageLayoutOption)` instead.")
-    mutating func insert(_ options: ChatMessageLayoutOptions) {
-        options.forEach { self.insert($0) }
-    }
-
     @available(*, deprecated, message: "use `subtracting(_ other: Sequence)` instead.")
     mutating func subtracting(_ option: ChatMessageLayoutOption) {
         self = subtracting([option])
