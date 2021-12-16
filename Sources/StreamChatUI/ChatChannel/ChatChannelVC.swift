@@ -141,7 +141,7 @@ open class ChatChannelVC:
     }
 
     open func chatMessageListVC(_ vc: ChatMessageListVC, messageAt indexPath: IndexPath) -> ChatMessage? {
-        guard indexPath.item < channelController.messages.count else { return nil }
+        channelController.messages.assertIndexIsPresent(indexPath.item)
         return channelController.messages[safe: indexPath.item]
     }
 
