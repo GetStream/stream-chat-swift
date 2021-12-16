@@ -64,7 +64,8 @@
             "swiftui/components/attachments",
             "swiftui/components/message-composer",
             "swiftui/components/message-reactions",
-            "swiftui/components/message-threads"
+            "swiftui/components/message-threads",
+            "swiftui/components/inline-replies"
           ]
         }
       ]
