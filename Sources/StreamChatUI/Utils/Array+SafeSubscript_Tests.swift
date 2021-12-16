@@ -1,9 +1,5 @@
 //
-//  Array+SafeSubscript_Tests.swift
-//  StreamChat
-//
-//  Created by Pol Quintana on 16/12/21.
-//  Copyright © 2021 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
