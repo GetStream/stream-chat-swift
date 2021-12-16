@@ -545,8 +545,8 @@
 		84A1D2EE26AAFDEE00014712 /* TestCustomEventPayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84A1D2ED26AAFDEE00014712 /* TestCustomEventPayload.swift */; };
 		84A1D2F026AB10DB00014712 /* EventDecoder_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84A1D2EF26AB10DB00014712 /* EventDecoder_Tests.swift */; };
 		84A1D2F426AB221E00014712 /* ChannelEventsController_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84A1D2F326AB221E00014712 /* ChannelEventsController_Tests.swift */; };
-		84A1D2F626AB357900014712 /* UnknownEvent_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84A1D2F526AB357900014712 /* UnknownEvent_Tests.swift */; };
-		84A43CAF26A9A25000302763 /* UnknownEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84A43CAE26A9A25000302763 /* UnknownEvent.swift */; };
+		84A1D2F626AB357900014712 /* UnknownChannelEvent_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84A1D2F526AB357900014712 /* UnknownChannelEvent_Tests.swift */; };
+		84A43CAF26A9A25000302763 /* UnknownChannelEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84A43CAE26A9A25000302763 /* UnknownChannelEvent.swift */; };
 		84A43CB326A9A54700302763 /* EventSender.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84A43CB226A9A54700302763 /* EventSender.swift */; };
 		84AA4E3626F264610056A684 /* EventDTOConverterMiddleware.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84AA4E3526F264610056A684 /* EventDTOConverterMiddleware.swift */; };
 		84ABB015269F0A84003A4585 /* EventsController+Combine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84ABB014269F0A84003A4585 /* EventsController+Combine.swift */; };
@@ -772,6 +772,8 @@
 		8AE335A924FCF999002B6677 /* InternetConnection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AE335A624FCF999002B6677 /* InternetConnection.swift */; };
 		8AE335AA24FCF99E002B6677 /* InternetConnection_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AE335A424FCF999002B6677 /* InternetConnection_Tests.swift */; };
 		8AE8950D24D8660800E852EC /* PingPongEmojiFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AE8950B24D85FF200E852EC /* PingPongEmojiFormatter.swift */; };
+		A30C3F20276B428F00DA5968 /* UnknownUserEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = A30C3F1F276B428F00DA5968 /* UnknownUserEvent.swift */; };
+		A30C3F22276B4F8800DA5968 /* UnknownUserEvent_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A30C3F21276B4F8800DA5968 /* UnknownUserEvent_Tests.swift */; };
 		A35757C72613081B00DC914C /* ComposerKeyboardHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = A35757C62613081B00DC914C /* ComposerKeyboardHandler.swift */; };
 		A39A8AE7263825F4003453D9 /* ChatMessageLayoutOptionsResolver.swift in Sources */ = {isa = PBXBuildFile; fileRef = A39A8AE6263825F4003453D9 /* ChatMessageLayoutOptionsResolver.swift */; };
 		A3BB3FFF261DA74D00365496 /* ContainerStackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3BB3FFE261DA74D00365496 /* ContainerStackView.swift */; };
@@ -968,7 +970,7 @@
 		C121E841274544AE00023E4C /* FileUploadPayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88381E64258258C20047A6A3 /* FileUploadPayload.swift */; };
 		C121E842274544AE00023E4C /* MutedChannelPayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88DA57DF2631E80D00FA8C53 /* MutedChannelPayload.swift */; };
 		C121E843274544AE00023E4C /* RawJSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22B54C3E25C80E940041B357 /* RawJSON.swift */; };
-		C121E844274544AE00023E4C /* UnknownEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84A43CAE26A9A25000302763 /* UnknownEvent.swift */; };
+		C121E844274544AE00023E4C /* UnknownChannelEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84A43CAE26A9A25000302763 /* UnknownChannelEvent.swift */; };
 		C121E845274544AE00023E4C /* GuestUserTokenRequestPayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A0D64A524E57A520017A3C0 /* GuestUserTokenRequestPayload.swift */; };
 		C121E846274544AE00023E4C /* MissingEventsRequestBody.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6ED5F7725027907005D7327 /* MissingEventsRequestBody.swift */; };
 		C121E847274544AE00023E4C /* ChannelMemberBanRequestPayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 888E8C4D252B4B1C00195E03 /* ChannelMemberBanRequestPayload.swift */; };
@@ -2505,8 +2507,8 @@
 		84A1D2ED26AAFDEE00014712 /* TestCustomEventPayload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestCustomEventPayload.swift; sourceTree = "<group>"; };
 		84A1D2EF26AB10DB00014712 /* EventDecoder_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventDecoder_Tests.swift; sourceTree = "<group>"; };
 		84A1D2F326AB221E00014712 /* ChannelEventsController_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelEventsController_Tests.swift; sourceTree = "<group>"; };
-		84A1D2F526AB357900014712 /* UnknownEvent_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnknownEvent_Tests.swift; sourceTree = "<group>"; };
-		84A43CAE26A9A25000302763 /* UnknownEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnknownEvent.swift; sourceTree = "<group>"; };
+		84A1D2F526AB357900014712 /* UnknownChannelEvent_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnknownChannelEvent_Tests.swift; sourceTree = "<group>"; };
+		84A43CAE26A9A25000302763 /* UnknownChannelEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnknownChannelEvent.swift; sourceTree = "<group>"; };
 		84A43CB226A9A54700302763 /* EventSender.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventSender.swift; sourceTree = "<group>"; };
 		84AA4E3526F264610056A684 /* EventDTOConverterMiddleware.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventDTOConverterMiddleware.swift; sourceTree = "<group>"; };
 		84ABB014269F0A84003A4585 /* EventsController+Combine.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "EventsController+Combine.swift"; sourceTree = "<group>"; };
@@ -2732,6 +2734,8 @@
 		8AE335A524FCF999002B6677 /* Reachability_Vendor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Reachability_Vendor.swift; sourceTree = "<group>"; };
 		8AE335A624FCF999002B6677 /* InternetConnection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InternetConnection.swift; sourceTree = "<group>"; };
 		8AE8950B24D85FF200E852EC /* PingPongEmojiFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PingPongEmojiFormatter.swift; sourceTree = "<group>"; };
+		A30C3F1F276B428F00DA5968 /* UnknownUserEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnknownUserEvent.swift; sourceTree = "<group>"; };
+		A30C3F21276B4F8800DA5968 /* UnknownUserEvent_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnknownUserEvent_Tests.swift; sourceTree = "<group>"; };
 		A30DEC98260B47DE0066E8CE /* TitleContainerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TitleContainerView.swift; sourceTree = "<group>"; };
 		A35757C62613081B00DC914C /* ComposerKeyboardHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ComposerKeyboardHandler.swift; sourceTree = "<group>"; };
 		A396B752260CCE7400D8D15B /* TitleContainerView_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TitleContainerView_Tests.swift; sourceTree = "<group>"; };
@@ -3894,9 +3898,11 @@
 				88DA57E92631E82B00FA8C53 /* MutedChannelPayload_Tests.swift */,
 				22B54C3E25C80E940041B357 /* RawJSON.swift */,
 				22CAFA7525CAE278005935D9 /* RawJSON_Tests.swift */,
-				84A43CAE26A9A25000302763 /* UnknownEvent.swift */,
-				84A1D2F526AB357900014712 /* UnknownEvent_Tests.swift */,
+				84A43CAE26A9A25000302763 /* UnknownChannelEvent.swift */,
+				84A1D2F526AB357900014712 /* UnknownChannelEvent_Tests.swift */,
 				430156DB26B1862C0006E7EA /* CustomDataHashMap_Tests.swift */,
+				A30C3F1F276B428F00DA5968 /* UnknownUserEvent.swift */,
+				A30C3F21276B4F8800DA5968 /* UnknownUserEvent_Tests.swift */,
 			);
 			path = Payloads;
 			sourceTree = "<group>";
@@ -7411,13 +7417,14 @@
 				C1FC2F9B2742579D0062530F /* FrameCollector.swift in Sources */,
 				8A0C3BBC24C0947400CAFD19 /* UserEvents.swift in Sources */,
 				DA4EE5B2252B67F500CB26D4 /* UserListController+SwiftUI.swift in Sources */,
+				A30C3F20276B428F00DA5968 /* UnknownUserEvent.swift in Sources */,
 				79280F7A248918FD00CDEB89 /* StarscreamWebSocketEngine.swift in Sources */,
 				7963BD6926B0208900281F8C /* ChatMessageAudioAttachment.swift in Sources */,
 				697C6F90260CFA37000E9023 /* Deprecations.swift in Sources */,
 				7964F3A4249A0ACF002A09EC /* ChannelListQueryDTO.swift in Sources */,
 				79280F3F2484E3BA00CDEB89 /* ClientError.swift in Sources */,
 				884C61222594A449008B70DC /* AttachmentActionRequestBody.swift in Sources */,
-				84A43CAF26A9A25000302763 /* UnknownEvent.swift in Sources */,
+				84A43CAF26A9A25000302763 /* UnknownChannelEvent.swift in Sources */,
 				DAFAD6A124DC476A0043ED06 /* Result+Extensions.swift in Sources */,
 				C1FC2F982742579D0062530F /* TCPTransport.swift in Sources */,
 				AD7DFC3625D2FA8100DD9DA3 /* CurrentUserUpdater.swift in Sources */,
@@ -7505,6 +7512,7 @@
 				F6CCA24F2512491B004C1859 /* UserTypingStateUpdaterMiddleware_Tests.swift in Sources */,
 				DA8407332526003D005A0F62 /* UserListUpdater_Tests.swift in Sources */,
 				F69E7F7D24ED7562000F5252 /* CurrentUserController_Tests.swift in Sources */,
+				A30C3F22276B4F8800DA5968 /* UnknownUserEvent_Tests.swift in Sources */,
 				7922F30A24DAE3B600C364BC /* EntityDatabaseObserver_Tests.swift in Sources */,
 				DA84074025260CA3005A0F62 /* UserListController_Tests.swift in Sources */,
 				84A1D2EE26AAFDEE00014712 /* TestCustomEventPayload.swift in Sources */,
@@ -7639,7 +7647,7 @@
 				843C53AB269370A900C7D8EA /* ImageAttachmentPayload_Tests.swift in Sources */,
 				792FCB4D24A3D56D000290C7 /* DatabaseSession_Tests.swift in Sources */,
 				430156F226B4523A0006E7EA /* WebSocketConnectPayload_Tests.swift in Sources */,
-				84A1D2F626AB357900014712 /* UnknownEvent_Tests.swift in Sources */,
+				84A1D2F626AB357900014712 /* UnknownChannelEvent_Tests.swift in Sources */,
 				F62BE7852506309B00D13B86 /* MissingEventsPayload_Tests.swift in Sources */,
 				7922F30824DACF1F00C364BC /* TestManagedObject.swift in Sources */,
 				792B805424D95FC700C2963E /* RandomDispatchQueue.swift in Sources */,
@@ -7913,7 +7921,7 @@
 				C121E841274544AE00023E4C /* FileUploadPayload.swift in Sources */,
 				C121E842274544AE00023E4C /* MutedChannelPayload.swift in Sources */,
 				C121E843274544AE00023E4C /* RawJSON.swift in Sources */,
-				C121E844274544AE00023E4C /* UnknownEvent.swift in Sources */,
+				C121E844274544AE00023E4C /* UnknownChannelEvent.swift in Sources */,
 				C121E845274544AE00023E4C /* GuestUserTokenRequestPayload.swift in Sources */,
 				C121E846274544AE00023E4C /* MissingEventsRequestBody.swift in Sources */,
 				C121E847274544AE00023E4C /* ChannelMemberBanRequestPayload.swift in Sources */,
