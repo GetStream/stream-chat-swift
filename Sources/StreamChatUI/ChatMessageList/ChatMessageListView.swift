@@ -194,7 +194,7 @@ open class ChatMessageListView: UITableView, Customizable, ComponentsProvider {
                     self.performBatchUpdates {
                         self.insertRows(at: [index], with: .none)
                     } completion: { _ in
-                        guard self.numberOfRows(inSection: index.section) > 1 else { return }
+                        guard self.numberOfRows(inSection: index.section) > index.row + 1 else { return }
                         // Update previous row to remove timestamp if needed
                         // +1 instead of -1 because the message list is inverted
                         let previousIndex = IndexPath(row: index.row + 1, section: index.section)
