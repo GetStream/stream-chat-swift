@@ -368,7 +368,24 @@ open class ChatMessageListVC:
                 cell.configData()
                 return cell
             //}
-        } else if isRedPacketExpiredCell(message) {
+        }
+        else if isRedPacketNoPickUpCell(message) {
+            guard let cell = tableView.dequeueReusableCell(
+                withIdentifier: "RedPacketExpired",
+                for: indexPath) as? RedPacketExpired else {
+                return UITableViewCell()
+            }
+            if let channel = dataSource?.channel(for: self) {
+                cell.channel = channel
+            }
+            cell.client = client
+            cell.options = cellLayoutOptionsForMessage(at: indexPath)
+            cell.content = message
+            cell.configureCell(isSender: isMessageFromCurrentUser)
+            cell.configData()
+            return cell
+        }
+        else if isRedPacketExpiredCell(message) {
             guard let cell = tableView.dequeueReusableCell(
                 withIdentifier: "RedPacketBubble",
                 for: indexPath) as? RedPacketBubble else {
@@ -377,6 +394,7 @@ open class ChatMessageListVC:
             if let channel = dataSource?.channel(for: self) {
                 cell.channel = channel
             }
+            cell.chatClient = client
             cell.options = cellLayoutOptionsForMessage(at: indexPath)
             cell.content = message
             cell.configureCell(isSender: isMessageFromCurrentUser, with: .EXPIRED)
@@ -401,18 +419,6 @@ open class ChatMessageListVC:
             guard let cell = tableView.dequeueReusableCell(
                 withIdentifier: "RedPacketAmountBubble",
                 for: indexPath) as? RedPacketAmountBubble else {
-                return UITableViewCell()
-            }
-            cell.client = client
-            cell.options = cellLayoutOptionsForMessage(at: indexPath)
-            cell.content = message
-            cell.configureCell(isSender: isMessageFromCurrentUser)
-            cell.configData()
-            return cell
-        } else if isRedPacketNoPickUpCell(message) {
-            guard let cell = tableView.dequeueReusableCell(
-                withIdentifier: "RedPacketExpired",
-                for: indexPath) as? RedPacketExpired else {
                 return UITableViewCell()
             }
             cell.client = client
@@ -522,32 +528,30 @@ open class ChatMessageListVC:
 
     private func isRedPacketCell(_ message: ChatMessage?) -> Bool {
         message?.extraData.keys.contains("redPacketPickup") ?? false
-        /*guard let extraData = message?.extraData, let redPacket = getRedPacketExtraData(extraData: extraData) else {
-            return false
-        }
-        if let isExpired = redPacket["isExpired"] {
-            let boolExpired = fetchRawData(raw: isExpired) as? Bool ?? false
-            return !boolExpired
-        } else {
-            return false
-        }*/
     }
 
     private func isRedPacketExpiredCell(_ message: ChatMessage?) -> Bool {
-        message?.extraData.keys.contains("RedPacketExpired") ?? false
-        /*guard let extraData = message?.extraData, let redPacket = getRedPacketExtraData(extraData: extraData) else {
+        guard let extraData = message?.extraData, let redPacket = getExtraData(message: message, key: "RedPacketExpired") else {
             return false
         }
-        if let isExpired = redPacket["isExpired"] {
-            let boolExpired = fetchRawData(raw: isExpired) as? Bool ?? false
-            return boolExpired
+        if let userName = redPacket["highestAmountUserName"] {
+            let strUserName = fetchRawData(raw: userName) as? String ?? ""
+            return !strUserName.isEmpty
         } else {
             return false
-        }*/
+        }
     }
 
     private func isRedPacketNoPickUpCell(_ message: ChatMessage?) -> Bool {
-        message?.extraData.keys.contains("isRedPacketNoPickUpCell") ?? false
+        guard let extraData = message?.extraData, let redPacket = getExtraData(message: message, key: "RedPacketExpired") else {
+            return false
+        }
+        if let userName = redPacket["highestAmountUserName"] {
+            let strUserName = fetchRawData(raw: userName) as? String ?? ""
+            return strUserName.isEmpty
+        } else {
+            return false
+        }
     }
 
     private func isRedPacketReceivedCell(_ message: ChatMessage?) -> Bool {
@@ -564,8 +568,20 @@ open class ChatMessageListVC:
 
     open func scrollViewDidScroll(_ scrollView: UIScrollView) {
         delegate?.chatMessageListVC(self, scrollViewDidScroll: scrollView)
-
         setScrollToLatestMessageButton(visible: isScrollToBottomButtonVisible)
+    }
+
+    func getExtraData(message: ChatMessage?, key: String) -> [String: RawJSON]? {
+        if let extraData = message?.extraData[key] {
+            switch extraData {
+            case .dictionary(let dictionary):
+                return dictionary
+            default:
+                return nil
+            }
+        } else {
+            return nil
+        }
     }
 
     // MARK: - ChatMessageListScrollOverlayDataSource

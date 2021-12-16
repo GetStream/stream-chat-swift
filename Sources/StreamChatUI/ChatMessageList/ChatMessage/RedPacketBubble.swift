@@ -26,6 +26,7 @@ class RedPacketBubble: UITableViewCell {
     var cellType: CellType!
     var isSender = false
     var channel: ChatChannel?
+    var chatClient: ChatClient?
 
     //Cell Type
     enum CellType {
@@ -237,7 +238,7 @@ class RedPacketBubble: UITableViewCell {
         if let receivedAmount = topAmount["receivedAmount"] {
             let dblReceivedAmount = fetchRawData(raw: receivedAmount) as? Double ?? 0
             let strReceivedAmount = String(format: "%.2f", dblReceivedAmount)
-            if content?.id ?? "" == getUserId(raw: topAmount) {
+            if chatClient?.currentUserId ?? "" == getUserId(raw: topAmount) {
                 lblDetails.text = "You just picked up \(strReceivedAmount) ONE!"
             } else {
                 lblDetails.text = "\(getUserName(raw: topAmount)) just picked up \(strReceivedAmount) ONE!"

@@ -208,30 +208,6 @@ class RedPacketExpired: UITableViewCell {
         } else {
             timestampLabel?.text = nil
         }
-        configExpiredCell()
-    }
-
-    func configExpiredCell() {
-        guard let expiredData = getExtraData(key: "RedPacketExpired") else {
-            return
-        }
-        if let userName = expiredData["highestAmountUserName"] {
-            let strUserName = fetchRawData(raw: userName) as? String ?? ""
-            lblDetails.text = "\(strUserName) selected the highest amount!"
-        }
-    }
-
-    private func getExtraData(key: String) -> [String: RawJSON]? {
-        if let extraData = content?.extraData[key] {
-            switch extraData {
-            case .dictionary(let dictionary):
-                return dictionary
-            default:
-                return nil
-            }
-        } else {
-            return nil
-        }
     }
 
     @objc func btnSendPacketAction() {
