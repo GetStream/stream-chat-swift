@@ -40,7 +40,7 @@ open class InputTextView: UITextView, AppearanceProvider {
     /// When there is no content in the text view OR the height of the content is less than this value,
     /// the text view will be of this height
     open var minimumHeight: CGFloat {
-        38.0
+        33.0
     }
     
     /// The constraint responsible for setting the height of the text view.

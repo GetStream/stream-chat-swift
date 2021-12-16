@@ -169,9 +169,9 @@ open class ComposerView: _View, ThemeProvider {
         centerContainer.alignment = .bottom
         centerContainer.spacing = .auto
         centerContainer.addArrangedSubview(leadingContainer)
-        centerContainer.addArrangedSubview(inputMessageView)
+        centerContainer.addArrangedSubview(inputMessageView, respectsLayoutMargins: true)
+        inputMessageView.layoutMargins = UIEdgeInsets(top: 2, left: 0, bottom: 3, right: 0)
         centerContainer.addArrangedSubview(trailingContainer)
-
         trailingContainer.alignment = .center
         trailingContainer.spacing = .auto
         trailingContainer.distribution = .equal
