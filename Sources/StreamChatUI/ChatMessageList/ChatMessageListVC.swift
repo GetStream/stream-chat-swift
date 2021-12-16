@@ -91,6 +91,7 @@ open class ChatMessageListVC:
         listView.register(RedPacketSentBubble.self, forCellReuseIdentifier: "RedPacketSentBubble")
         listView.register(RedPacketBubble.self, forCellReuseIdentifier: "RedPacketBubble")
         listView.register(RedPacketAmountBubble.self, forCellReuseIdentifier: "RedPacketAmountBubble")
+        listView.register(RedPacketExpired.self, forCellReuseIdentifier: "RedPacketExpired")
         setupEmptyState()
         if let numberMessage = dataSource?.numberOfMessages(in: self) {
             viewEmptyState.isHidden = numberMessage != 0
@@ -408,6 +409,18 @@ open class ChatMessageListVC:
             cell.configureCell(isSender: isMessageFromCurrentUser)
             cell.configData()
             return cell
+        } else if isRedPacketNoPickUpCell(message) {
+            guard let cell = tableView.dequeueReusableCell(
+                withIdentifier: "RedPacketExpired",
+                for: indexPath) as? RedPacketExpired else {
+                return UITableViewCell()
+            }
+            cell.client = client
+            cell.options = cellLayoutOptionsForMessage(at: indexPath)
+            cell.content = message
+            cell.configureCell(isSender: isMessageFromCurrentUser)
+            cell.configData()
+            return cell
         }
         /*else if isRedPacketCell(message) {
             guard let cell = tableView.dequeueReusableCell(
@@ -531,6 +544,10 @@ open class ChatMessageListVC:
         } else {
             return false
         }*/
+    }
+
+    private func isRedPacketNoPickUpCell(_ message: ChatMessage?) -> Bool {
+        message?.extraData.keys.contains("isRedPacketNoPickUpCell") ?? false
     }
 
     private func isRedPacketReceivedCell(_ message: ChatMessage?) -> Bool {

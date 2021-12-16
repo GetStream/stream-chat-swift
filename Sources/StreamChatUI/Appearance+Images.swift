@@ -274,6 +274,7 @@ public extension Appearance {
         public var starbucks: UIImage = loadImageSafely(with: "starbucks")
         public var cryptoSentThumb: UIImage = loadImageSafely(with: "crypto_sent_thumb")
         public var expiredPacketThumb: UIImage = loadImageSafely(with: "expiredPacket")
+        public var redPacketExpired: UIImage = loadImageSafely(with: "redPacketExpired")
         public var redPacketThumb: UIImage = loadImageSafely(with: "redPacket")
     }
 }

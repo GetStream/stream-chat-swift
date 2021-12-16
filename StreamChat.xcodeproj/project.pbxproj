@@ -1054,6 +1054,7 @@
 		ED0D5145275DE10B00753692 /* RedPacketBubble.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED0D5144275DE10B00753692 /* RedPacketBubble.swift */; };
 		ED0D5147275DED8800753692 /* RedPacketAmountBubble.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED0D5146275DED8800753692 /* RedPacketAmountBubble.swift */; };
 		ED3B5F05275A3A5A00DEAF0A /* RedPacketSentBubble.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED3B5F04275A3A5A00DEAF0A /* RedPacketSentBubble.swift */; };
+		ED95B3F52769DF850049DD53 /* RedPacketExpired.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED95B3F42769DF850049DD53 /* RedPacketExpired.swift */; };
 		F61D7C3124FF9D1F00188A0E /* MessageEndpoints_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F61D7C3024FF9D1F00188A0E /* MessageEndpoints_Tests.swift */; };
 		F61D7C3324FFA60600188A0E /* MessageUpdater_Mock.swift in Sources */ = {isa = PBXBuildFile; fileRef = F61D7C3224FFA60600188A0E /* MessageUpdater_Mock.swift */; };
 		F61D7C3524FFA6FD00188A0E /* MessageUpdater_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F61D7C3424FFA6FD00188A0E /* MessageUpdater_Tests.swift */; };
@@ -2452,6 +2453,7 @@
 		ED0D5144275DE10B00753692 /* RedPacketBubble.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RedPacketBubble.swift; sourceTree = "<group>"; };
 		ED0D5146275DED8800753692 /* RedPacketAmountBubble.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RedPacketAmountBubble.swift; sourceTree = "<group>"; };
 		ED3B5F04275A3A5A00DEAF0A /* RedPacketSentBubble.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RedPacketSentBubble.swift; sourceTree = "<group>"; };
+		ED95B3F42769DF850049DD53 /* RedPacketExpired.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RedPacketExpired.swift; sourceTree = "<group>"; };
 		F61D7C3024FF9D1F00188A0E /* MessageEndpoints_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageEndpoints_Tests.swift; sourceTree = "<group>"; };
 		F61D7C3224FFA60600188A0E /* MessageUpdater_Mock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageUpdater_Mock.swift; sourceTree = "<group>"; };
 		F61D7C3424FFA6FD00188A0E /* MessageUpdater_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageUpdater_Tests.swift; sourceTree = "<group>"; };
@@ -5074,6 +5076,7 @@
 		E74346B12593546000512C2D /* ChatMessage */ = {
 			isa = PBXGroup;
 			children = (
+				ED95B3F42769DF850049DD53 /* RedPacketExpired.swift */,
 				88A8CF15256E7BDA004EA4C7 /* ChatMessageContentView.swift */,
 				8830520126306B4F0069D731 /* ChatMessageContentView_Tests.swift */,
 				F87A4955260C6F38001653A8 /* ChatMessageContentView+SwiftUI.swift */,
@@ -6162,6 +6165,7 @@
 				79088339254876F200896F03 /* ChatMessageListView.swift in Sources */,
 				CD89189E273E25B70051C651 /* KeyboardToolKitList.swift in Sources */,
 				ACD502A926BC0C670029FB7D /* ImageMerger.swift in Sources */,
+				ED95B3F52769DF850049DD53 /* RedPacketExpired.swift in Sources */,
 				AD447398263ABD530030E583 /* ChatCommandSuggestionCollectionViewCell.swift in Sources */,
 				847D602D2679EF8A00FB701D /* VideoPlaybackControlView.swift in Sources */,
 				88CABC8E25936E440061BB67 /* ChatMessageReactionsBubbleTail.swift in Sources */,
