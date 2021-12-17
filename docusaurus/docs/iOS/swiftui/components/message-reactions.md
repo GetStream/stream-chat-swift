@@ -42,17 +42,17 @@ The reactions overlay view (shown on long press of a message), also provides acc
 public func supportedMessageActions(
         for message: ChatMessage,
         channel: ChatChannel,
-        onDismiss: @escaping () -> Void,
+        onFinish: @escaping (MessageActionInfo) -> Void,
         onError: @escaping (Error) -> Void
 ) -> [MessageAction] {
     MessageAction.defaultActions(
-            factory: self,
-            for: message,
-            channel: channel,
-            chatClient: chatClient,
-            onDismiss: onDismiss,
-            onError: onError
-        )
+        factory: self,
+        for: message,
+        channel: channel,
+        chatClient: chatClient,
+        onFinish: onFinish,
+        onError: onError
+    )
 }
 
 extension MessageAction {
@@ -61,23 +61,24 @@ extension MessageAction {
         for message: ChatMessage,
         channel: ChatChannel,
         chatClient: ChatClient,
-        onDismiss: @escaping () -> Void,
+        onFinish: @escaping (MessageActionInfo) -> Void,
         onError: @escaping (Error) -> Void
     ) -> [MessageAction] {
         var messageActions = [MessageAction]()
         
+        let replyAction = replyAction(
+            for: message,
+            channel: channel,
+            onFinish: onFinish
+        )
+        messageActions.append(replyAction)
+        
         if !message.isPartOfThread {
-            var replyThread = MessageAction(
-                title: L10n.Message.Actions.threadReply,
-                iconName: "icn_thread_reply",
-                action: onDismiss,
-                confirmationPopup: nil,
-                isDestructive: false
+            let replyThread = threadReplyAction(
+                factory: factory,
+                for: message,
+                channel: channel
             )
-            
-            let destination = factory.makeMessageThreadDestination()
-            replyThread.navigationDestination = AnyView(destination(channel, message))
-            
             messageActions.append(replyThread)
         }
 
@@ -86,7 +87,7 @@ extension MessageAction {
                 for: message,
                 channel: channel,
                 chatClient: chatClient,
-                onDismiss: onDismiss,
+                onFinish: onFinish,
                 onError: onError
             )
             
@@ -96,7 +97,7 @@ extension MessageAction {
                 for: message,
                 channel: channel,
                 chatClient: chatClient,
-                onDismiss: onDismiss,
+                onFinish: onFinish,
                 onError: onError
             )
             
@@ -106,11 +107,54 @@ extension MessageAction {
         return messageActions
     }
     
+    // MARK: - private
+    
+    private static func replyAction(
+        for message: ChatMessage,
+        channel: ChatChannel,
+        onFinish: @escaping (MessageActionInfo) -> Void
+    ) -> MessageAction {
+        let replyAction = MessageAction(
+            title: L10n.Message.Actions.inlineReply,
+            iconName: "icn_inline_reply",
+            action: {
+                onFinish(
+                    MessageActionInfo(
+                        message: message,
+                        identifier: "inlineReply"
+                    )
+                )
+            },
+            confirmationPopup: nil,
+            isDestructive: false
+        )
+        
+        return replyAction
+    }
+    
+    private static func threadReplyAction<Factory: ViewFactory>(
+        factory: Factory,
+        for message: ChatMessage,
+        channel: ChatChannel
+    ) -> MessageAction {
+        var replyThread = MessageAction(
+            title: L10n.Message.Actions.threadReply,
+            iconName: "icn_thread_reply",
+            action: {},
+            confirmationPopup: nil,
+            isDestructive: false
+        )
+        
+        let destination = factory.makeMessageThreadDestination()
+        replyThread.navigationDestination = AnyView(destination(channel, message))
+        return replyThread
+    }
+    
     private static func deleteMessageAction(
         for message: ChatMessage,
         channel: ChatChannel,
         chatClient: ChatClient,
-        onDismiss: @escaping () -> Void,
+        onFinish: @escaping (MessageActionInfo) -> Void,
         onError: @escaping (Error) -> Void
     ) -> MessageAction {
         let messageController = chatClient.messageController(
@@ -123,7 +167,12 @@ extension MessageAction {
                 if let error = error {
                     onError(error)
                 } else {
-                    onDismiss()
+                    onFinish(
+                        MessageActionInfo(
+                            message: message,
+                            identifier: "delete"
+                        )
+                    )
                 }
             }
         }
@@ -149,7 +198,7 @@ extension MessageAction {
         for message: ChatMessage,
         channel: ChatChannel,
         chatClient: ChatClient,
-        onDismiss: @escaping () -> Void,
+        onFinish: @escaping (MessageActionInfo) -> Void,
         onError: @escaping (Error) -> Void
     ) -> MessageAction {
         let messageController = chatClient.messageController(
@@ -162,7 +211,12 @@ extension MessageAction {
                 if let error = error {
                     onError(error)
                 } else {
-                    onDismiss()
+                    onFinish(
+                        MessageActionInfo(
+                            message: message,
+                            identifier: "flag"
+                        )
+                    )
                 }
             }
         }
@@ -183,24 +237,25 @@ extension MessageAction {
         
         return flagMessage
     }
+}
 ```
 
 Alternatively, you can swap the whole `MessageActionsView` with your own implementation, by implementing the `makeMessageActionsView` method in the `ViewFactory`. 
 
 ```swift
 public func makeMessageActionsView(
-        for message: ChatMessage,
-        channel: ChatChannel,
-        onDismiss: @escaping () -> Void,
-        onError: @escaping (Error) -> Void
+    for message: ChatMessage,
+    channel: ChatChannel,
+    onFinish: @escaping (MessageActionInfo) -> Void,
+    onError: @escaping (Error) -> Void
 ) -> some View {
     let messageActions = supportedMessageActions(
         for: message,
         channel: channel,
-        onDismiss: onDismiss,
+        onFinish: onFinish,
         onError: onError
     )
-        
+    
     return MessageActionsView(messageActions: messageActions)
 }
 ```
@@ -209,17 +264,19 @@ Additionally, you can swap the whole `ReactionsOverlayView` with your own implem
 
 ```swift
 public func makeReactionsOverlayView(
-        channel: ChatChannel,
-        currentSnapshot: UIImage,
-        messageDisplayInfo: MessageDisplayInfo,
-        onBackgroundTap: @escaping () -> Void
+    channel: ChatChannel,
+    currentSnapshot: UIImage,
+    messageDisplayInfo: MessageDisplayInfo,
+    onBackgroundTap: @escaping () -> Void,
+    onActionExecuted: @escaping (MessageActionInfo) -> Void
 ) -> some View {
     ReactionsOverlayView(
         factory: self,
         channel: channel,
         currentSnapshot: currentSnapshot,
         messageDisplayInfo: messageDisplayInfo,
-        onBackgroundTap: onBackgroundTap
+        onBackgroundTap: onBackgroundTap,
+        onActionExecuted: onActionExecuted
     )
 }
 ```

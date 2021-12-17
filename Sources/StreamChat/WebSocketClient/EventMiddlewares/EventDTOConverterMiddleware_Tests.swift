@@ -54,7 +54,7 @@ final class EventDTOConverterMiddleware_Tests: XCTestCase {
     
     func test_handle_whenNotEventDTOComes_eventIsForwardedAsIs() throws {
         // Create event
-        let event = UnknownEvent(
+        let event = UnknownChannelEvent(
             type: .reactionNew,
             cid: .unique,
             userId: .unique,
@@ -66,6 +66,6 @@ final class EventDTOConverterMiddleware_Tests: XCTestCase {
         let result = middleware.handle(event: event, session: database.viewContext)
         
         // Assert
-        XCTAssertEqual(result as! UnknownEvent, event)
+        XCTAssertEqual(result as! UnknownChannelEvent, event)
     }
 }

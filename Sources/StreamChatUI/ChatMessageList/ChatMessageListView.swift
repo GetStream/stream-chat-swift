@@ -182,41 +182,39 @@ open class ChatMessageListView: UITableView, Customizable, ComponentsProvider {
             return
         }
 
-        if changes.count > 1 {
+        guard changes.count == 1, let change = changes.first else {
             reloadData()
             return
         }
 
-        changes.forEach {
-            switch $0 {
-            case let .insert(message, index: index):
-                UIView.performWithoutAnimation {
-                    self.performBatchUpdates {
-                        self.insertRows(at: [index], with: .none)
-                    } completion: { _ in
-                        guard self.numberOfRows(inSection: index.section) > 1 else { return }
-                        // Update previous row to remove timestamp if needed
-                        // +1 instead of -1 because the message list is inverted
-                        let previousIndex = IndexPath(row: index.row + 1, section: index.section)
-                        self.reloadRows(at: [previousIndex], with: .none)
-                    }
+        switch change {
+        case let .insert(message, index: index):
+            UIView.performWithoutAnimation {
+                self.performBatchUpdates {
+                    self.insertRows(at: [index], with: .none)
+                } completion: { _ in
+                    guard self.numberOfRows(inSection: index.section) > index.row + 1 else { return }
+                    // Update previous row to remove timestamp if needed
+                    // +1 instead of -1 because the message list is inverted
+                    let previousIndex = IndexPath(row: index.row + 1, section: index.section)
+                    self.reloadRows(at: [previousIndex], with: .none)
                 }
-
-                if message.isSentByCurrentUser, index == IndexPath(item: 0, section: 0) {
-                    self.scrollToBottomAction = .init { [weak self] in
-                        self?.scrollToMostRecentMessage()
-                    }
-                }
-
-            case let .move(_, fromIndex: fromIndex, toIndex: toIndex):
-                self.moveRow(at: fromIndex, to: toIndex)
-
-            case let .update(_, index: index):
-                self.reloadRows(at: [index], with: .automatic)
-
-            case .remove:
-                self.reloadData()
             }
+
+            if message.isSentByCurrentUser, index == IndexPath(item: 0, section: 0) {
+                scrollToBottomAction = .init { [weak self] in
+                    self?.scrollToMostRecentMessage()
+                }
+            }
+
+        case let .move(_, fromIndex: fromIndex, toIndex: toIndex):
+            moveRow(at: fromIndex, to: toIndex)
+
+        case let .update(_, index: index):
+            reloadRows(at: [index], with: .automatic)
+
+        case .remove:
+            reloadData()
         }
     }
 

@@ -597,7 +597,12 @@ open class ComposerVC: _ViewController,
         )
         suggestionsVC.dataSource = dataSource
         suggestionsVC.didSelectItemAt = { [weak self] commandIndex in
-            self?.content.addCommand(commandHints[commandIndex])
+            guard let hintCommand = commandHints[safe: commandIndex] else {
+                indexNotFoundAssertion()
+                return
+            }
+
+            self?.content.addCommand(hintCommand)
 
             self?.dismissSuggestions()
         }
@@ -660,9 +665,12 @@ open class ComposerVC: _ViewController,
             guard dataSource.usersCache.count >= userIndex else {
                 return
             }
+            guard let user = dataSource.usersCache[safe: userIndex] else {
+                indexNotFoundAssertion()
+                return
+            }
 
             let textView = self.composerView.inputMessageView.textView
-            let user = dataSource.usersCache[userIndex]
             let text = textView.text as NSString
             let mentionText = self.mentionText(for: user)
             let newText = text.replacingCharacters(in: mentionRange, with: mentionText)

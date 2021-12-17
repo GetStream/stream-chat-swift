@@ -13,6 +13,7 @@ jobs:
     runs-on: macos-11
     if: github.event.pull_request.merged == true # only merged pull requests must trigger this job
     steps:
+      - uses: ./.github/actions/bootstrap
       - name: If the release branch contains the version, let's go!
         if: startsWith(github.event.pull_request.head.ref, 'release/')
               BRANCH_NAME="${{ github.event.pull_request.head.ref }}"
