@@ -213,6 +213,9 @@ open class ChatMessageListView: UITableView, Customizable, ComponentsProvider {
 
             case let .update(_, index: index):
                 self.reloadRows(at: [index], with: .automatic)
+                if let quotedMessageUpdates = getVisibleQuotedMessageUpdates(forUpdatedMessageAt: index) {
+                    self.reloadRows(at: quotedMessageUpdates, with: .automatic)
+                }
 
             case .remove:
                 self.reloadData()
@@ -257,6 +260,28 @@ open class ChatMessageListView: UITableView, Customizable, ComponentsProvider {
                 super.reloadRows(at: indexPathToReload, with: animation)
             }
         }
+    }
+
+    private func getVisibleQuotedMessageUpdates(forUpdatedMessageAt indexPath: IndexPath) -> [IndexPath]? {
+        let visibleCells = getVisibleCells()
+        guard let visibleUpdatedMessage = visibleCells[indexPath]?.messageContentView?.content else {
+            return nil
+        }
+
+        var quotedMessageUpdates: [IndexPath] = []
+
+        for (index, messageCell) in visibleCells {
+            let quotedMessageId = messageCell.messageContentView?.content?.quotedMessage?.id
+            let visibleUpdatedMessageId = visibleUpdatedMessage.id
+
+            if quotedMessageId == visibleUpdatedMessageId {
+                quotedMessageUpdates.append(index)
+            }
+        }
+
+        guard !quotedMessageUpdates.isEmpty else { return nil }
+
+        return quotedMessageUpdates
     }
 
     private func getVisibleCells() -> [IndexPath: ChatMessageCell] {
