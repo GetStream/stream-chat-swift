@@ -6,7 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### 🔄 Changed
 
 # [4.6.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.6.0)
-_December 17, 2021_
+_December 15, 2021_
 
 ### ⚠️ Important
 - Dependencies are no longer exposed (this includes Nuke, SwiftyGif and Starscream). If you were using those dependencies we were exposing, you would need to import them manually. This is due to our newest addition supporting Module Stable XCFrameworks, see more below in the "Added" section.
