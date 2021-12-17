@@ -6,7 +6,7 @@ import Foundation
 
 /// An event type SDK fallbacks to if incoming event was failed to be
 /// decoded as a system event.
-public struct UnknownEvent: Event, Hashable {
+public struct UnknownChannelEvent: Event, Hashable {
     /// An event type.
     public let type: EventType
     
@@ -19,13 +19,13 @@ public struct UnknownEvent: Event, Hashable {
     /// An event creation date.
     public let createdAt: Date
     
-    /// A dictionary with custom fields.
-    let payload: [String: RawJSON]
+    /// A dictionary containing the entire event JSON.
+    public let payload: [String: RawJSON]
 }
 
 // MARK: - Decodable
 
-extension UnknownEvent: Decodable {
+extension UnknownChannelEvent: Decodable {
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: EventPayload.CodingKeys.self)
         
@@ -37,14 +37,13 @@ extension UnknownEvent: Decodable {
             payload: try decoder
                 .singleValueContainer()
                 .decode([String: RawJSON].self)
-                .removingValues(forKeys: EventPayload.CodingKeys.allCases.map(\.rawValue))
         )
     }
 }
 
 // MARK: - Payload
 
-public extension UnknownEvent {
+public extension UnknownChannelEvent {
     /// Decodes a payload of the given type from the event.
     ///
     /// - Parameter ofType: The type of payload the custom fields should be treated as.

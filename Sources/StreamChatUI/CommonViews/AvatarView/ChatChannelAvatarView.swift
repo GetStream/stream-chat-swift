@@ -168,12 +168,12 @@ open class ChatChannelAvatarView: _View, ThemeProvider, SwiftUIRepresentable {
         // The half of the width of the avatar
         let halfContainerSize = CGSize(width: CGSize.avatarThumbnailSize.width / 2, height: CGSize.avatarThumbnailSize.height)
         
-        if images.count == 1 {
-            combinedImage = images[0]
-        } else if images.count == 2 {
-            let leftImage = imageProcessor.crop(image: images[0], to: halfContainerSize)
+        if images.count == 1, let image = images.first {
+            combinedImage = image
+        } else if images.count == 2, let firstImage = images.first, let secondImage = images.last {
+            let leftImage = imageProcessor.crop(image: firstImage, to: halfContainerSize)
                 ?? appearance.images.userAvatarPlaceholder1
-            let rightImage = imageProcessor.crop(image: images[1], to: halfContainerSize)
+            let rightImage = imageProcessor.crop(image: secondImage, to: halfContainerSize)
                 ?? appearance.images.userAvatarPlaceholder1
             combinedImage = imageMerger.merge(
                 images: [
@@ -182,13 +182,16 @@ open class ChatChannelAvatarView: _View, ThemeProvider, SwiftUIRepresentable {
                 ],
                 orientation: .horizontal
             )
-        } else if images.count == 3 {
-            let leftImage = imageProcessor.crop(image: images[0], to: halfContainerSize)
+        } else if images.count == 3,
+                  let firstImage = images[safe: 0],
+                  let secondImage = images[safe: 1],
+                  let thirdImage = images[safe: 2] {
+            let leftImage = imageProcessor.crop(image: firstImage, to: halfContainerSize)
 
             let rightCollage = imageMerger.merge(
                 images: [
-                    images[1],
-                    images[2]
+                    secondImage,
+                    thirdImage
                 ],
                 orientation: .vertical
             )
@@ -207,11 +210,15 @@ open class ChatChannelAvatarView: _View, ThemeProvider, SwiftUIRepresentable {
                 ],
                 orientation: .horizontal
             )
-        } else if images.count == 4 {
+        } else if images.count == 4,
+                  let firstImage = images[safe: 0],
+                  let secondImage = images[safe: 1],
+                  let thirdImage = images[safe: 2],
+                  let forthImage = images[safe: 3] {
             let leftCollage = imageMerger.merge(
                 images: [
-                    images[0],
-                    images[2]
+                    firstImage,
+                    thirdImage
                 ],
                 orientation: .vertical
             )
@@ -224,8 +231,8 @@ open class ChatChannelAvatarView: _View, ThemeProvider, SwiftUIRepresentable {
             
             let rightCollage = imageMerger.merge(
                 images: [
-                    images[1],
-                    images[3]
+                    secondImage,
+                    forthImage
                 ],
                 orientation: .vertical
             )

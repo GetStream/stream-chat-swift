@@ -16,6 +16,18 @@ extension ChatMessageLayoutOptions: Identifiable {
     }
 }
 
+public extension ChatMessageLayoutOptions {
+    /// Remove multiple message layout options.
+    mutating func remove(_ options: ChatMessageLayoutOptions) {
+        self = subtracting(options)
+    }
+
+    /// Insert multiple message layout options.
+    mutating func insert(_ options: ChatMessageLayoutOptions) {
+        options.forEach { self.insert($0) }
+    }
+}
+
 /// Each message layout option is used to define which views will be part of the message cell.
 /// A different combination of layout options will produce a different cell reuse identifier.
 public struct ChatMessageLayoutOption: RawRepresentable, Hashable, ExpressibleByStringLiteral {

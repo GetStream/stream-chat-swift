@@ -176,7 +176,10 @@ open class ChatMessageListRouter:
             galleryVC?.imageViewToAnimateWhenDismissing
         }
         zoomTransitionController.presentingImageView = {
-            let id = galleryVC.items[galleryVC.content.currentPage].id
+            guard let id = galleryVC.items[safe: galleryVC.content.currentPage]?.id else {
+                indexNotFoundAssertion()
+                return nil
+            }
             
             return previews.first(where: { $0.attachmentId == id })?.imageView ?? previews.last?.imageView
         }

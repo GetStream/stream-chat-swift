@@ -37,7 +37,7 @@ final class EventDecoder_Tests: XCTestCase {
     
     // MARK: Custom events
     
-    func test_decode_whenValidCustomEventPayloadComes_returnsUnkownEvent() throws {
+    func test_decode_whenValidCustomEventPayloadComes_returnsUnknownChannelEvent() throws {
         // Create custom event fields
         let userId: UserId = .unique
         let cid: ChannelId = .unique
@@ -74,11 +74,52 @@ final class EventDecoder_Tests: XCTestCase {
         
         // Assert event is decoded.
         let event = try eventDecoder.decode(from: json)
-        // Assert `UnknownEvent` event with expected payload is decoded
-        let unkownEvent = try XCTUnwrap(event as? UnknownEvent)
+        // Assert `UnknownChannelEvent` event with expected payload is decoded
+        let unkownEvent = try XCTUnwrap(event as? UnknownChannelEvent)
         
         // Assert event has correct fields.
         XCTAssertEqual(unkownEvent.cid, cid)
+        XCTAssertEqual(unkownEvent.userId, userId)
+        XCTAssertEqual(unkownEvent.createdAt, createdAt.toDate())
+        XCTAssertEqual(unkownEvent.payload(ofType: IdeaEventPayload.self), ideaPayload)
+    }
+    
+    func test_decode_whenValidCustomEventPayloadComes_returnsUnknownUserEvent() throws {
+        // Create custom event fields
+        let userId: UserId = .unique
+        let ideaPayload: IdeaEventPayload = .unique
+        let createdAt: String = "2020-07-16T15:38:10.289007Z"
+
+        // Create custom event JSON
+        let json = """
+        {
+            "user" : {
+                "id" : "\(userId)",
+                "banned" : false,
+                "created_at" : "2019-12-12T15:33:46.488935Z",
+                "invisible" : false,
+                "unreadChannels" : 0,
+                "extra_uid" : 2000,
+                "unread_count" : 0,
+                "image" : "https://getstream.io/random_svg/?id=broken-waterfall-5&amp;name=Broken+waterfall",
+                "updated_at" : "2020-07-16T15:38:10.289007Z",
+                "role" : "user",
+                "total_unread_count" : 0,
+                "online" : true,
+                "name" : "broken-waterfall-5"
+            },
+            "created_at" : "\(createdAt)",
+            "type" : "\(IdeaEventPayload.eventType.rawValue)",
+            "idea" : "\(ideaPayload.idea)"
+        }
+        """.data(using: .utf8)!
+        
+        // Assert event is decoded.
+        let event = try eventDecoder.decode(from: json)
+        // Assert `UnknownUserEvent` event with expected payload is decoded
+        let unkownEvent = try XCTUnwrap(event as? UnknownUserEvent)
+        
+        // Assert event has correct fields.
         XCTAssertEqual(unkownEvent.userId, userId)
         XCTAssertEqual(unkownEvent.createdAt, createdAt.toDate())
         XCTAssertEqual(unkownEvent.payload(ofType: IdeaEventPayload.self), ideaPayload)
