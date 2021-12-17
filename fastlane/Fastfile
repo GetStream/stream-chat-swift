@@ -158,8 +158,7 @@ lane :publish_release do |options|
   sh("git push origin main --force --tags")
 
   # Clean Up
-  sh("cd ../")
-  sh("rm -r StreamSPM")
+  sh("rm -r ../StreamSPM")
 
   # Create Github Release
   github_release = set_github_release(
