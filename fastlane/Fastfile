@@ -62,7 +62,7 @@ lane :release do |options|
   file = File.read('../StreamChatArtifacts.json')
   data_hash = JSON.parse(file)
 
-  data_hash["#{version_number}"] = "https://github.com/adamrushy/stream-chat-swift/releases/download/#{version_number}/StreamChat-All.zip"
+  data_hash["#{version_number}"] = "https://github.com/GetStream/stream-chat-swift/releases/download/#{version_number}/StreamChat-All.zip"
   File.write('../StreamChatArtifacts.json', JSON.dump(data_hash))
 
   changes = touch_changelog(release_version: version_number)
