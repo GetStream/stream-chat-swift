@@ -59,3 +59,5 @@ do
 	echo "→ Removing $f"
 	rm $f
 done
+
+rm -rf $dependency_directory
