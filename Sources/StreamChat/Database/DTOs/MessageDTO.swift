@@ -37,6 +37,7 @@ class MessageDTO: NSManagedObject {
     @NSManaged var flaggedBy: CurrentUserDTO?
     @NSManaged var attachments: Set<AttachmentDTO>
     @NSManaged var quotedMessage: MessageDTO?
+    @NSManaged var quotedBy: Set<MessageDTO>
     @NSManaged var searches: Set<MessageSearchQueryDTO>
 
     @NSManaged var pinned: Bool
