@@ -154,13 +154,23 @@ extension EventType {
         case .notificationInviteRejected:
             return try NotificationInviteRejectedEventDTO(from: response)
         default:
-            throw ClientError.UnknownEvent(response.eventType)
+            if response.cid == nil {
+                throw ClientError.UnknownUserEvent(response.eventType)
+            } else {
+                throw ClientError.UnknownChannelEvent(response.eventType)
+            }
         }
     }
 }
 
 extension ClientError {
-    class UnknownEvent: ClientError {
+    class UnknownChannelEvent: ClientError {
+        init(_ type: EventType) {
+            super.init("Event with \(type) cannot be decoded as system event.")
+        }
+    }
+    
+    class UnknownUserEvent: ClientError {
         init(_ type: EventType) {
             super.init("Event with \(type) cannot be decoded as system event.")
         }

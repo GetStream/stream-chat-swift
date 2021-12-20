@@ -327,19 +327,22 @@ open class ChatMessageListVC:
         cell.messageContentView?.content = message
         cell.dateSeparatorView.isHidden = true
 
-        if isDateSeparatorEnabled, let currentMessage = message {
-            let currentDay = DateFormatter.messageListDateOverlay.string(from: currentMessage.createdAt)
-            cell.dateSeparatorView.content = currentDay
+        guard isDateSeparatorEnabled, let currentMessage = message else {
+            return cell
+        }
 
-            // Only the show the separator if the previous message has a different day
-            let previousIndexPath = IndexPath(row: indexPath.row + 1, section: indexPath.section)
-            if let previousMessage = dataSource?.chatMessageListVC(self, messageAt: previousIndexPath) {
-                let previousDay = DateFormatter.messageListDateOverlay.string(from: previousMessage.createdAt)
-                cell.dateSeparatorView.isHidden = previousDay == currentDay
-            } else {
-                // If previous message doesn't exist show the separator as well
-                cell.dateSeparatorView.isHidden = false
-            }
+        let currentDay = DateFormatter.messageListDateOverlay.string(from: currentMessage.createdAt)
+        cell.dateSeparatorView.content = currentDay
+
+        // Only show the separator if the previous message is from a different day
+        // TODO: simplify this and make it simpler to customize the logic (ie. extract this into a open `showDateSeparatorView` method)
+        let previousIndexPath = IndexPath(row: indexPath.row + 1, section: indexPath.section)
+        if let previousMessage = dataSource?.chatMessageListVC(self, messageAt: previousIndexPath) {
+            let previousDay = DateFormatter.messageListDateOverlay.string(from: previousMessage.createdAt)
+            cell.dateSeparatorView.isHidden = previousDay == currentDay
+        } else {
+            // If previous message doesn't exist show the separator as well
+            cell.dateSeparatorView.isHidden = false
         }
 
         return cell

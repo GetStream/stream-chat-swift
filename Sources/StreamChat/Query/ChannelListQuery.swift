@@ -102,7 +102,7 @@ public struct ChannelListQuery: Encodable {
     /// A number of messages inside each channel.
     public let messagesLimit: Int
     /// Query options.
-    var options: QueryOptions = [.watch]
+    public var options: QueryOptions = [.watch]
     
     /// Init a channels query.
     /// - Parameters:
