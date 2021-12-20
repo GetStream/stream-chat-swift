@@ -84,7 +84,7 @@ public class ChannelEventsController: EventsController {
         guard let cid = cid else { return false }
         
         let channelEvent = event as? ChannelSpecificEvent
-        let unknownEvent = event as? UnknownEvent
+        let unknownEvent = event as? UnknownChannelEvent
         
         return channelEvent?.cid == cid || unknownEvent?.cid == cid
     }
