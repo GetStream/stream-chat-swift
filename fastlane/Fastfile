@@ -170,9 +170,7 @@ lane :publish_release do |options|
                      description: changes,
                      upload_assets: ["Products/StreamChat.zip", "Products/StreamChatUI.zip", "Products/StreamChat-All.zip"]
                    )
-  # The & operator makes sure truthy values are converted to bool
-  # and falsy (false and nil) values are converted to bool false
-  push_pods(sync: options[:sync] & true)
+  push_pods(sync: options[:sync])
 
   # Set tag
   sh("git tag #{version}")
@@ -201,7 +199,14 @@ lane :push_pods do |options|
     end
   end
 
-  sync = options[:sync]
+  # The == 1 comparison makes sure truthy values are converted to bool
+  # and falsy (false and nil) values are converted to bool false
+
+  # When sync is false, pod trunk push is run asynchronously
+  sync = options[:sync] == 1
+
+  # When dry option is specified - `dry:1`, the lane is executed in test/safe mode
+  # that won't cause pod_push action to fire.
   dry = options[:dry] == 1
 
   ["StreamChat.podspec", "StreamChatUI.podspec"].each do |podspec|
