@@ -34,9 +34,13 @@ jobs:
           path: /usr/local/lib/mint
           key: ${{ runner.os }}-mint-${{ hashFiles('./Mintfile') }}
           restore-keys: ${{ runner.os }}-mint-
-      - uses: ./.github/actions/bootstrap
-      - name: "If the release branch contains the version, let's go!"
+      - name: Extract version from branch name (for release branches)
         if: startsWith(github.event.pull_request.head.ref, 'release/')
+        run: |
           BRANCH_NAME="${{ github.event.pull_request.head.ref }}"
           VERSION=${BRANCH_NAME#release/}
-        run: bundle exec fastlane publish_release version:$VERSION
+          echo "RELEASE_VERSION=$VERSION" >> $GITHUB_ENV
+      - uses: ./.github/actions/bootstrap
+      - name: "Starting on the Fastlane Publish Release"
+        if: startsWith(github.event.pull_request.head.ref, 'release/')
+        run: bundle exec fastlane publish_release version:${{ env.RELEASE_VERSION }}
