@@ -31,6 +31,9 @@ end
 
 desc "Start a new release"
 lane :release do |options|
+  # Ensure we are on the main branch
+  ensure_git_branch(branch: 'main')
+
   # Ensure we have a clean git status
   ensure_git_status_clean unless options[:no_ensure_clean]
 
@@ -59,7 +62,7 @@ lane :release do |options|
   file = File.read('../StreamChatArtifacts.json')
   data_hash = JSON.parse(file)
 
-  data_hash["#{version_number}"] = "https://github.com/GetStream/stream-chat-swift/releases/download/#{version_number}/StreamChat-All.zip"
+  data_hash["#{version_number}"] = "https://github.com/adamrushy/stream-chat-swift/releases/download/#{version_number}/StreamChat-All.zip"
   File.write('../StreamChatArtifacts.json', JSON.dump(data_hash))
 
   changes = touch_changelog(release_version: version_number)
@@ -110,6 +113,33 @@ lane :publish_release do |options|
 
   version = options[:version]
 
+  # Update Frameworks (WIP)
+  # update_frameworks
+
+  # Create Github Release
+  github_release = set_github_release(
+                     repository_name: "GetStream/stream-chat-swift",
+                     api_token: ENV["GITHUB_TOKEN"],
+                     name: version,
+                     tag_name: version,
+                     description: changes
+                     # upload_assets: ["Products/StreamChat.zip", "Products/StreamChatUI.zip", "Products/StreamChat-All.zip"]
+                   )
+  # The & operator makes sure truthy values are converted to bool
+  # and falsy (false and nil) values are converted to bool false
+  push_pods(sync: options[:sync] & true)
+
+  # Set tag
+  sh("git tag #{version}")
+
+  # Push tag to remote
+  push_to_git_remote(tags: true)
+
+  UI.success("Github release was created, please visit #{github_release["url"]} to see it")
+end
+
+desc "Update XCFrameworks and submit to the SPM repository"
+lane :update_frameworks do |options|
   # Make xcframeworks
   sh("cd .. && make frameworks")
 
@@ -118,12 +148,13 @@ lane :publish_release do |options|
   streamChatUIChecksum = sh("swift package compute-checksum ../Products/StreamChatUI.zip").strip
 
   # Update SPM Repo
-  sh("git clone git@github.com:GetStream/stream-chat-swift-spm.git ../StreamSPM")
-  file = File.open("../StreamSPM/Package.swift")
+  sh("git clone git@github.com:GetStream/stream-chat-swift-spm.git ../../StreamSPM")
+  sh("cd ../../StreamSPM")
+  file = File.open("Package.swift")
   file_data = file.read
 
   # [WIP] We can improve using regex here
-  fileLines = File.readlines("../StreamSPM/Package.swift")
+  fileLines = File.readlines("Package.swift")
 
   # We are unfortunately having to dig into a file and manually change the lines required
   fileLines.each_with_index do |line, index|
@@ -146,38 +177,16 @@ lane :publish_release do |options|
   end
 
   # Write the new changes
-  File.open("../StreamSPM/Package.swift", "w") { |file| file << file_data }
+  File.open("./Package.swift", "w") { |file| file << file_data }
 
   # Update the repo
-  sh("cd ../StreamSPM && git add -A")
+  sh("git add -A")
   sh("git commit -m 'Bump #{version}'")
   sh("git tag #{version}")
   sh("git push origin main --force --tags")
 
   # Clean Up
-  sh("cd ../")
-  sh("rm -r StreamSPM")
-
-  # Create Github Release
-  github_release = set_github_release(
-                     repository_name: "GetStream/stream-chat-swift",
-                     api_token: ENV["GITHUB_TOKEN"],
-                     name: version,
-                     tag_name: version,
-                     description: changes,
-                     upload_assets: ["Products/StreamChat.zip", "Products/StreamChatUI.zip", "Products/StreamChat-All.zip"]
-                   )
-  # The & operator makes sure truthy values are converted to bool
-  # and falsy (false and nil) values are converted to bool false
-  push_pods(sync: options[:sync] & true)
-
-  # Set tag
-  sh("git tag #{version}")
-
-  # Push tag to remote
-  push_to_git_remote(tags: true)
-
-  UI.success("Github release was created, please visit #{github_release["url"]} to see it")
+  sh("rm -r ../../StreamSPM")
 end
 
 desc "Pushes the StreamChat and StreamChatUI SDK podspecs to Cocoapods trunk"
