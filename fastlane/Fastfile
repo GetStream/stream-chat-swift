@@ -59,7 +59,7 @@ lane :release do |options|
   file = File.read('../StreamChatArtifacts.json')
   data_hash = JSON.parse(file)
 
-  data_hash["#{version_number}"] = "https://github.com/GetStream/stream-chat-swift/releases/download/#{version_number}/StreamChat-All.zip"
+  data_hash["#{version_number}"] = "https://github.com/adamrushy/stream-chat-swift/releases/download/#{version_number}/StreamChat-All.zip"
   File.write('../StreamChatArtifacts.json', JSON.dump(data_hash))
 
   changes = touch_changelog(release_version: version_number)
@@ -95,7 +95,7 @@ lane :release do |options|
   # Open a new PR
   create_pull_request(
     api_token: ENV["GITHUB_TOKEN"],
-    repo: "GetStream/stream-chat-swift",
+    repo: "Adamrushy/stream-chat-swift",
     title: "#{version_number} Release",
     head: "release/#{version_number}",
     base: "main",
@@ -118,7 +118,7 @@ lane :publish_release do |options|
   streamChatUIChecksum = sh("swift package compute-checksum ../Products/StreamChatUI.zip").strip
 
   # Update SPM Repo
-  sh("git clone git@github.com:GetStream/stream-chat-swift-spm.git ../StreamSPM")
+  sh("git clone git@github.com:AdamRushy/stream-chat-swift-spm.git ../StreamSPM")
   file = File.open("../StreamSPM/Package.swift")
   file_data = file.read
 
@@ -128,7 +128,7 @@ lane :publish_release do |options|
   # We are unfortunately having to dig into a file and manually change the lines required
   fileLines.each_with_index do |line, index|
     if line.include?("url") && line.include?("StreamChat.zip")
-      streamChat = "url: \"https://github.com/GetStream/stream-chat-swift/releases/download/#{version}/StreamChat.zip\","
+      streamChat = "url: \"https://github.com/AdamRushy/stream-chat-swift/releases/download/#{version}/StreamChat.zip\","
       file_data.gsub!(line, streamChat)
 
       currentChecksumItem = fileLines[index + 1]
@@ -136,7 +136,7 @@ lane :publish_release do |options|
       file_data.gsub!(currentChecksumItem, newChecksumLine)
     end
     if line.include?("url") && line.include?("StreamChatUI.zip")
-      streamChatUI = "url: \"https://github.com/GetStream/stream-chat-swift/releases/download/#{version}/StreamChatUI.zip\","
+      streamChatUI = "url: \"https://github.com/AdamRushy/stream-chat-swift/releases/download/#{version}/StreamChatUI.zip\","
       file_data.gsub!(line, streamChatUI)
 
       currentUIChecksumLine = fileLines[index + 1]
@@ -160,7 +160,7 @@ lane :publish_release do |options|
 
   # Create Github Release
   github_release = set_github_release(
-                     repository_name: "GetStream/stream-chat-swift",
+                     repository_name: "AdamRushy/stream-chat-swift",
                      api_token: ENV["GITHUB_TOKEN"],
                      name: version,
                      tag_name: version,
@@ -169,7 +169,7 @@ lane :publish_release do |options|
                    )
   # The & operator makes sure truthy values are converted to bool
   # and falsy (false and nil) values are converted to bool false
-  push_pods(sync: options[:sync] & true)
+  # push_pods(sync: options[:sync] & true)
 
   # Set tag
   sh("git tag #{version}")
