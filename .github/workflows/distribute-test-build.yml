@@ -3,7 +3,7 @@ name: Distribute Firebase Test Build
 on:
   push:
     branches:
-      - main
+      - develop
   workflow_dispatch:
 
 concurrency: 
