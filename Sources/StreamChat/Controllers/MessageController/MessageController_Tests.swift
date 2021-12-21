@@ -686,11 +686,11 @@ final class MessageController_Tests: XCTestCase {
         let delegate = TestDelegate(expectedQueueId: callbackQueueID)
         controller.delegate = delegate
 
-        controller.reactions = [.mock()]
+        controller.reactions = [.mock(type: "like")]
 
         AssertAsync.willBeEqual(
             delegate.didChangeReactions_reactions,
-            [.mock()]
+            [.mock(type: "like")]
         )
     }
     
@@ -1234,7 +1234,7 @@ final class MessageController_Tests: XCTestCase {
         controller = nil
 
         // Simulate successful network response
-        env.messageUpdater.loadReactions_completion?(.success([.mock()]))
+        env.messageUpdater.loadReactions_completion?(.success([.mock(type: "like")]))
         // Release reference of completion so we can deallocate stuff
         env.messageUpdater.loadReactions_completion = nil
 
@@ -1273,7 +1273,7 @@ final class MessageController_Tests: XCTestCase {
 
         let exp = expectation(description: "should succeed load next reactions call")
 
-        env.messageUpdater.loadReactions_result = .success([.mock(), .mock()])
+        env.messageUpdater.loadReactions_result = .success([.mock(type: "like"), .mock(type: "like")])
 
         controller.loadNextReactions(limit: 5) { error in
             XCTAssertNil(error)
@@ -1293,7 +1293,9 @@ final class MessageController_Tests: XCTestCase {
 
         let exp = expectation(description: "should succeed load next reactions call")
 
-        env.messageUpdater.loadReactions_result = .success([.mock(), .mock(), .mock()])
+        env.messageUpdater.loadReactions_result = .success(
+            [.mock(type: "like"), .mock(type: "sad"), .mock(type: "wow")]
+        )
 
         controller.loadNextReactions(limit: 1) { error in
             XCTAssertNil(error)
@@ -1339,7 +1341,9 @@ final class MessageController_Tests: XCTestCase {
 
         let exp = expectation(description: "should succeed load next reactions call")
 
-        let mockedReactions: [ChatMessageReaction] = [.mock(), .mock(), .mock()]
+        let mockedReactions: [ChatMessageReaction] = [
+            .mock(type: "like"), .mock(type: "like"), .mock(type: "like")
+        ]
         env.messageUpdater.loadReactions_result = .success(mockedReactions)
 
         controller.loadNextReactions() { error in
@@ -1360,18 +1364,18 @@ final class MessageController_Tests: XCTestCase {
 
         let exp = expectation(description: "should succeed load next reactions call")
 
-        let duplicatedReaction = ChatMessageReaction.mock(author: .unique)
+        let duplicatedReaction = ChatMessageReaction.mock(type: "like", author: .unique)
         let mockedReactions: [ChatMessageReaction] = [
-            .mock(author: .unique),
+            .mock(type: "sad", author: .unique),
             duplicatedReaction,
-            .mock(author: .unique)
+            .mock(type: "wow", author: .unique)
         ]
         env.messageUpdater.loadReactions_result = .success(mockedReactions)
 
         controller.reactions = [
             duplicatedReaction,
-            .mock(author: .unique),
-            .mock(author: .unique)
+            .mock(type: "sad", author: .unique),
+            .mock(type: "wow", author: .unique)
         ]
 
         controller.loadNextReactions() { error in
@@ -1392,8 +1396,8 @@ final class MessageController_Tests: XCTestCase {
         controller.state = .localDataFetched
 
         controller.reactions = [
-            .mock(author: .unique),
-            .mock(author: .unique)
+            .mock(type: "like", author: .unique),
+            .mock(type: "like", author: .unique)
         ]
 
         class SpyTestDelegate: ChatMessageControllerDelegate {
@@ -1412,9 +1416,9 @@ final class MessageController_Tests: XCTestCase {
         let exp = expectation(description: "should succeed load next reactions call")
 
         let mockedReactions: [ChatMessageReaction] = [
-            .mock(author: .unique),
-            .mock(author: .unique),
-            .mock(author: .unique)
+            .mock(type: "like", author: .unique),
+            .mock(type: "like", author: .unique),
+            .mock(type: "like", author: .unique)
         ]
         env.messageUpdater.loadReactions_result = .success(mockedReactions)
 
