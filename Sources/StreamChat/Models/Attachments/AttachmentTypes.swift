@@ -23,6 +23,8 @@ enum AttachmentCodingKeys: String, CodingKey, CaseIterable {
 
 /// A local state of the attachment. Applies only for attachments linked to the new messages sent from current device.
 public enum LocalAttachmentState: Hashable {
+    /// The current state is unknown
+    case unknown
     /// The attachment is waiting to be uploaded.
     case pendingUpload
     /// The attachment is currently being uploaded. The progress in [0, 1] range.

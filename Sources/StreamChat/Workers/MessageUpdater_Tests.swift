@@ -234,25 +234,20 @@ final class MessageUpdater_Tests: XCTestCase {
             // Create a new message in the database
             try database.createMessage(id: messageId, authorId: currentUserId, localState: state)
 
+            let expectation = expectation(description: "deleteMessage")
+
             // Simulate `deleteMessage(messageId:)` call
-            var completionCalled = false
             messageUpdater.deleteMessage(messageId: messageId) { error in
                 XCTAssertNil(error)
-                completionCalled = true
+                expectation.fulfill()
             }
-            
+
+            wait(for: [expectation], timeout: 0.1)
             let message = try XCTUnwrap(database.viewContext.message(id: messageId))
-            
-            AssertAsync {
-                // Assert completion is called
-                Assert.willBeTrue(completionCalled)
-                // Assert `deletedAt` is set for the message
-                Assert.willBeTrue(message.deletedAt != nil)
-                // Assert `type` is set to `.deleted`
-                Assert.willBeEqual(message.type, MessageType.deleted.rawValue)
-                // Assert API is not called
-                Assert.staysTrue(self.apiClient.request_endpoint == nil)
-            }
+
+            XCTAssertNotNil(message.deletedAt)
+            XCTAssertEqual(message.type, MessageType.deleted.rawValue)
+            XCTAssertNil(apiClient.request_endpoint)
         }
     }
     
@@ -1098,7 +1093,7 @@ final class MessageUpdater_Tests: XCTestCase {
             return
         }
 
-        XCTAssertEqual(reactionReloaded.localState, nil)
+        XCTAssertEqual(reactionReloaded.localState, .unknown)
     }
 
     // MARK: - Pinning message

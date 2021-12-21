@@ -5,11 +5,10 @@
 @testable import StreamChat
 import XCTest
 
-final class UnknownEvent_Tests: XCTestCase {
+final class UnknownUserEvent_Tests: XCTestCase {
     func test_unkownEvent_decoding() throws {
         // Create event fields
         let userId: UserId = .unique
-        let cid: ChannelId = .unique
         let ideaPayload: IdeaEventPayload = .unique
         let createdAt: String = "2020-07-16T15:38:10.289007Z"
 
@@ -32,24 +31,21 @@ final class UnknownEvent_Tests: XCTestCase {
                 "online" : true,
                 "name" : "broken-waterfall-5"
             },
-            "channel_type" : "\(cid.type.rawValue)",
-            "channel_id" : "\(cid.id)",
-            "cid" : "\(cid.rawValue)",
             "created_at" : "\(createdAt)",
             "type" : "\(IdeaEventPayload.eventType.rawValue)",
             "idea" : "\(ideaPayload.idea)"
         }
         """.data(using: .utf8)!
-        
+    
         // Decode unkown event from JSON.
-        let unknownEvent = try JSONDecoder.default.decode(UnknownEvent.self, from: json)
+        let unknownEvent = try JSONDecoder.default.decode(UnknownUserEvent.self, from: json)
+        let payload = try JSONDecoder.default.decode([String: RawJSON].self, from: json)
         
         // Assert all fields are correct.
-        XCTAssertEqual(unknownEvent.cid, cid)
         XCTAssertEqual(unknownEvent.userId, userId)
         XCTAssertEqual(unknownEvent.createdAt, createdAt.toDate())
         XCTAssertEqual(unknownEvent.type, IdeaEventPayload.eventType)
-        XCTAssertEqual(unknownEvent.payload, ["idea": .string(ideaPayload.idea)])
+        XCTAssertEqual(unknownEvent.payload, payload)
     }
     
     func test_whenAllFieldsArePresentedAndTypeMatches_customPayloadIsDecoded() throws {
@@ -57,9 +53,8 @@ final class UnknownEvent_Tests: XCTestCase {
         let payload = IdeaEventPayload.unique
         
         // Create event with `IdeaEventPayload` payload.
-        let unkownEvent = UnknownEvent(
+        let unkownEvent = UnknownUserEvent(
             type: IdeaEventPayload.eventType,
-            cid: .unique,
             userId: .unique,
             createdAt: .unique,
             payload: ["idea": .string(payload.idea)]
@@ -71,9 +66,8 @@ final class UnknownEvent_Tests: XCTestCase {
     
     func test_whenFieldsAreMissing_customPayloadIsNotDecoded() throws {
         // Create event with `IdeaEventPayload` fields missing.
-        let unkownEvent = UnknownEvent(
+        let unkownEvent = UnknownUserEvent(
             type: IdeaEventPayload.eventType,
-            cid: .unique,
             userId: .unique,
             createdAt: .unique,
             payload: [:]
@@ -88,9 +82,8 @@ final class UnknownEvent_Tests: XCTestCase {
         let randomEventType = EventType(rawValue: .unique)
         
         // Create event with `IdeaEventPayload` fields missing.
-        let unkownEvent = UnknownEvent(
+        let unkownEvent = UnknownUserEvent(
             type: randomEventType,
-            cid: .unique,
             userId: .unique,
             createdAt: .unique,
             payload: ["idea": .string(.unique)]

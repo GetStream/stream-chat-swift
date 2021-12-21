@@ -210,3 +210,6 @@ public typealias NotificationInviteRejected = NotificationInviteRejectedEvent
 
 @available(*, deprecated, renamed: "NotificationInviteAcceptedEvent")
 public typealias NotificationInviteAccepted = NotificationInviteAcceptedEvent
+
+@available(*, deprecated, renamed: "UnknownChannelEvent")
+public typealias UnknownEvent = UnknownChannelEvent

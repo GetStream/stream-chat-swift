@@ -7,7 +7,7 @@ import CoreData
 @objc(MessageSearchQueryDTO)
 class MessageSearchQueryDTO: NSManagedObject {
     /// Unique identifier of the query/
-    @NSManaged var filterHash: String
+    @NSManaged var filterHash: String?
     
     @NSManaged var messages: Set<MessageDTO>
     
