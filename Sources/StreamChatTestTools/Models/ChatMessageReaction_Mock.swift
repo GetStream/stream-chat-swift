@@ -7,7 +7,7 @@ import Foundation
 
 extension ChatMessageReaction {
     public static func mock(
-        type: MessageReactionType = "like",
+        type: MessageReactionType,
         score: Int = 1,
         createdAt: Date = .distantPast,
         updatedAt: Date = .distantPast,
