@@ -99,7 +99,7 @@ extension ChatMessageGalleryView {
             
             actionButton.content = content.flatMap {
                 switch $0.state {
-                case .pendingUpload, .uploading:
+                case .pendingUpload, .uploading, .unknown:
                     // TODO: Return `.cancel` when it's is supported.
                     return nil
                 case .uploadingFailed:
@@ -116,7 +116,7 @@ extension ChatMessageGalleryView {
                     return NumberFormatter.uploadingPercentage.string(from: .init(value: progress))
                 case .pendingUpload:
                     return NumberFormatter.uploadingPercentage.string(from: 0)
-                case .uploaded:
+                case .uploaded, .unknown:
                     return nil
                 case .uploadingFailed:
                     return L10n.Message.Sending.attachmentUploadingFailed
@@ -157,7 +157,7 @@ extension AttachmentUploadingState {
             return "\(uploadedSize)/\(file.sizeString)"
         case .pendingUpload:
             return "0/\(file.sizeString)"
-        case .uploaded, .uploadingFailed:
+        case .uploaded, .uploadingFailed, .unknown:
             return file.sizeString
         }
     }

@@ -37,7 +37,7 @@ class AttachmentDTO_Tests: XCTestCase {
 
         // Assert attachment has correct values.
         XCTAssertEqual(loadedAttachment.attachmentID, attachmentId)
-        XCTAssertEqual(loadedAttachment.localState, nil)
+        XCTAssertEqual(loadedAttachment.localState, .unknown)
         XCTAssertEqual(loadedAttachment.attachmentType, attachment.type)
         XCTAssertEqual(loadedAttachment.message.id, messageId)
         XCTAssertEqual(loadedAttachment.channel.cid, cid.rawValue)
@@ -72,7 +72,7 @@ class AttachmentDTO_Tests: XCTestCase {
 
         // Assert attachment has correct values.
         XCTAssertEqual(loadedAttachment.attachmentID, attachmentId)
-        XCTAssertEqual(loadedAttachment.localState, nil)
+        XCTAssertEqual(loadedAttachment.localState, .unknown)
         XCTAssertEqual(loadedAttachment.attachmentType, attachment.type)
         XCTAssertEqual(loadedAttachment.message.id, messageId)
         XCTAssertEqual(loadedAttachment.channel.cid, cid.rawValue)
@@ -107,7 +107,7 @@ class AttachmentDTO_Tests: XCTestCase {
 
         // Assert attachment has correct values.
         XCTAssertEqual(loadedAttachment.attachmentID, attachmentId)
-        XCTAssertEqual(loadedAttachment.localState, nil)
+        XCTAssertEqual(loadedAttachment.localState, .unknown)
         XCTAssertEqual(loadedAttachment.attachmentType, attachment.type)
         XCTAssertEqual(loadedAttachment.message.id, messageId)
         XCTAssertEqual(loadedAttachment.channel.cid, cid.rawValue)
@@ -270,7 +270,7 @@ class AttachmentDTO_Tests: XCTestCase {
 
         // Assert attachment local file URL and state are nil.
         XCTAssertNil(loadedAttachment?.localURL)
-        XCTAssertNil(loadedAttachment?.localState)
+        XCTAssertEqual(loadedAttachment?.localState, .unknown)
     }
 
     func test_attachmentChange_triggerMessageUpdate() throws {

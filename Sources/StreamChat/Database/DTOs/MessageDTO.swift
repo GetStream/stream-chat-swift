@@ -20,7 +20,7 @@ class MessageDTO: NSManagedObject {
     @NSManaged var parentMessageId: MessageId?
     @NSManaged var showReplyInChannel: Bool
     @NSManaged var replyCount: Int32
-    @NSManaged var extraData: Data
+    @NSManaged var extraData: Data?
     @NSManaged var isSilent: Bool
     @NSManaged var isShadowed: Bool
     @NSManaged var reactionScores: [String: Int]
@@ -280,6 +280,8 @@ class MessageDTO: NSManagedObject {
         
         let new = NSEntityDescription.insertNewObject(forEntityName: entityName, into: context) as! Self
         new.id = id
+        new.latestReactions = []
+        new.ownReactions = []
         return new
     }
     
@@ -667,15 +669,20 @@ extension MessageDTO {
     
     /// Snapshots the current state of `MessageDTO` and returns its representation for the use in API calls.
     func asRequestBody() -> MessageRequestBody {
-        var extraData: [String: RawJSON]
-        do {
-            extraData = try JSONDecoder.default.decode([String: RawJSON].self, from: self.extraData)
-        } catch {
-            log.assertionFailure(
-                "Failed decoding saved extra data with error: \(error). This should never happen because"
-                    + "the extra data must be a valid JSON to be saved."
-            )
-            extraData = [:]
+        var decodedExtraData: [String: RawJSON]
+        
+        if let extraData = self.extraData {
+            do {
+                decodedExtraData = try JSONDecoder.default.decode([String: RawJSON].self, from: extraData)
+            } catch {
+                log.assertionFailure(
+                    "Failed decoding saved extra data with error: \(error). This should never happen because"
+                        + "the extra data must be a valid JSON to be saved."
+                )
+                decodedExtraData = [:]
+            }
+        } else {
+            decodedExtraData = [:]
         }
         
         return .init(
@@ -694,7 +701,7 @@ extension MessageDTO {
             mentionedUserIds: mentionedUsers.map(\.id),
             pinned: pinned,
             pinExpires: pinExpires,
-            extraData: extraData
+            extraData: decodedExtraData
         )
     }
 }
@@ -720,11 +727,18 @@ private extension ChatMessage {
         isShadowed = dto.isShadowed
         reactionScores = dto.reactionScores.mapKeys { MessageReactionType(rawValue: $0) }
         reactionCounts = dto.reactionCounts.mapKeys { MessageReactionType(rawValue: $0) }
-        
-        do {
-            extraData = try JSONDecoder.default.decode([String: RawJSON].self, from: dto.extraData)
-        } catch {
-            log.error("Failed to decode extra data for Message with id: <\(dto.id)>, using default value instead. Error: \(error)")
+                
+        if let extraData = dto.extraData, !extraData.isEmpty {
+            do {
+                self.extraData = try JSONDecoder.default.decode([String: RawJSON].self, from: extraData)
+            } catch {
+                log
+                    .error(
+                        "Failed to decode extra data for Message with id: <\(dto.id)>, using default value instead. Error: \(error)"
+                    )
+                self.extraData = [:]
+            }
+        } else {
             extraData = [:]
         }
 

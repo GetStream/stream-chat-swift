@@ -20,7 +20,7 @@ class MessageDTO_Tests: XCTestCase {
         super.tearDown()
     }
     
-    func test_messagePayload_isStoredAndLoadedFromDB() {
+    func test_messagePayload_isStoredAndLoadedFromDB() throws {
         let userId: UserId = .unique
         let messageId: MessageId = .unique
         let channelId: ChannelId = .unique
@@ -143,7 +143,7 @@ class MessageDTO_Tests: XCTestCase {
         )
         XCTAssertEqual(Int32(messagePayload.replyCount), loadedMessage?.replyCount)
         XCTAssertEqual(messagePayload.extraData, loadedMessage.map {
-            try? JSONDecoder.default.decode([String: RawJSON].self, from: $0.extraData)
+            try? JSONDecoder.default.decode([String: RawJSON].self, from: $0.extraData!)
         })
         XCTAssertEqual(messagePayload.reactionScores, loadedMessage?.reactionScores.mapKeys { reaction in
             MessageReactionType(rawValue: reaction)
@@ -228,7 +228,7 @@ class MessageDTO_Tests: XCTestCase {
             )
             Assert.willBeEqual(Int32(messagePayload.replyCount), loadedMessage?.replyCount)
             Assert.willBeEqual(messagePayload.extraData, loadedMessage.map {
-                try? JSONDecoder.default.decode([String: RawJSON].self, from: $0.extraData)
+                try? JSONDecoder.default.decode([String: RawJSON].self, from: $0.extraData!)
             })
             Assert.willBeEqual(messagePayload.reactionScores, loadedMessage?.reactionScores.mapKeys { reaction in
                 MessageReactionType(rawValue: reaction)
