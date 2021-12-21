@@ -244,6 +244,7 @@ var streamChatSourcesExcluded: [String] { [
 var streamChatUIFilesExcluded: [String] { [
     "ChatMessageList/TypingIndicatorView_Tests.swift",
     "ChatMessageList/Reactions/ChatMessageReactionAuthorsVC/ChatMessageReactionAuthorsVC_Tests.swift",
+    "ChatMessageList/Reactions/ChatMessageReactionAuthorsVC/__Snapshots__/ChatMessageReactionAuthorsVC_Tests/test_defaultAppearance_shouldNotRenderUnavailableReactions.default-light.png",
     "ChatMessageList/Reactions/ChatMessageReactionAuthorsVC/__Snapshots__/ChatMessageReactionAuthorsVC_Tests/test_defaultAppearance.default-light.png",
     "ChatMessageList/Reactions/ChatMessageReactionAuthorsVC/__Snapshots__/ChatMessageReactionAuthorsVC_Tests/test_defaultAppearance_whenOnlyOneReaction_shouldUseSingularLocalization.default-light.png",
     "ChatMessageList/Reactions/ChatMessageReactionAuthorsVC/__Snapshots__/ChatMessageReactionAuthorsVC_Tests/test_defaultAppearance.rightToLeftLayout-default.png",

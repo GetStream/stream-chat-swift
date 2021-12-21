@@ -41,6 +41,11 @@ open class ChatMessageReactionAuthorsVC:
         10
     }
 
+    /// The reactions of the message.
+    open var content: [ChatMessageReaction] {
+        messageController.reactions.filter { appearance.images.availableReactions[$0.type] != nil }
+    }
+
     /// A Boolean indicating whether the reactions are currently loading.
     /// This should be removed once our Core SDK handles duplicate requests correctly.
     private var isLoadingReactions: Bool = false
@@ -106,14 +111,14 @@ open class ChatMessageReactionAuthorsVC:
     override open func updateContent() {
         super.updateContent()
 
-        let numberOfReactions = messageController.reactions.count
+        let numberOfReactions = content.count
         topLabel.text = L10n.Reaction.Authors.numberOfReactions(numberOfReactions)
     }
 
     // MARK: - Collection View Data Source & Delegate
 
     open func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        messageController.reactions.count
+        content.count
     }
 
     override open func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
@@ -130,10 +135,15 @@ open class ChatMessageReactionAuthorsVC:
             for: indexPath
         ) as! ChatMessageReactionAuthorViewCell
 
-        let reactions = messageController.reactions
-        if let currentUserId = messageController?.client.currentUserId, let reaction = reactions[safe: indexPath.item] {
-            cell.content = ChatMessageReactionAuthorViewCell.Content(reaction: reaction, currentUserId: currentUserId)
+        guard let reaction = content[safe: indexPath.item],
+              let currentUserId = messageController?.client.currentUserId else {
+            return cell
         }
+
+        cell.content = ChatMessageReactionAuthorViewCell.Content(
+            reaction: reaction,
+            currentUserId: currentUserId
+        )
 
         return cell
     }
@@ -171,7 +181,7 @@ open class ChatMessageReactionAuthorsVC:
             return
         }
 
-        if indexPath.row > messageController.reactions.count - prefetchThreshold {
+        if indexPath.row > content.count - prefetchThreshold {
             return
         }
 
