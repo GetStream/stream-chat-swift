@@ -339,8 +339,6 @@ open class ChatMessageListVC:
     }
 
     open func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let message = dataSource?.chatMessageListVC(self, messageAt: indexPath)
-
         let cell: ChatMessageCell = listView.dequeueReusableCell(
             contentViewClass: cellContentClassForMessage(at: indexPath),
             attachmentViewInjectorType: attachmentViewInjectorClassForMessage(at: indexPath),
@@ -348,13 +346,17 @@ open class ChatMessageListVC:
             for: indexPath
         )
 
+        guard let message = dataSource?.chatMessageListVC(self, messageAt: indexPath) else {
+            return cell
+        }
+
         cell.messageContentView?.delegate = self
         cell.messageContentView?.content = message
-        
-        if let currentMessage = message {
-            cell.dateSeparatorView.isHidden = !shouldShowDateSeparator(forMessage: currentMessage, at: indexPath)
-            cell.dateSeparatorView.content = DateFormatter.messageListDateOverlay.string(from: currentMessage.createdAt)
-        }
+
+        cell.dateSeparatorView.isHidden = !shouldShowDateSeparator(forMessage: message, at: indexPath)
+        cell.dateSeparatorView.content = DateFormatter
+            .messageListDateOverlay
+            .string(from: message.createdAt)
 
         return cell
     }
