@@ -308,7 +308,7 @@ open class ChatMessageListVC:
     ///   - message: The message being displayed.
     ///   - indexPath: The indexPath of the message.
     /// - Returns: A Boolean value depending if it should show the date separator or not.
-    open func shouldShowDateSeparator(forMessage message: ChatMessage, at indexPath: IndexPath) -> Bool {
+    func shouldShowDateSeparator(forMessage message: ChatMessage, at indexPath: IndexPath) -> Bool {
         guard isDateSeparatorEnabled else {
             return false
         }
