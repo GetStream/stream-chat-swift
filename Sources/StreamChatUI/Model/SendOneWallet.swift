@@ -30,8 +30,16 @@ public struct SendOneWallet {
         dictOut["recipientAddress"] = .string(recipientAddress ?? "")
         dictOut["recipientImageUrl"] = .string(recipientImageUrl?.absoluteString ?? "")
         dictOut["myImageUrl"] = .string(myImageUrl?.absoluteString ?? "")
-        dictOut["transferAmount"] = .number(Double(transferAmount ?? 0))
+        dictOut["transferAmount"] = .number(Double(transferAmount ?? 0).rounded(toPlaces: 2))
         dictOut["txId"] = .string(txId ?? "")
         return dictOut
+    }
+}
+
+extension Double {
+    /// Rounds the double to decimal places value
+    func rounded(toPlaces places: Int) -> Double {
+        let divisor = pow(10.0, Double(places))
+        return (self * divisor).rounded() / divisor
     }
 }
