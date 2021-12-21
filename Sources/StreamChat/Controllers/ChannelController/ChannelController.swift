@@ -1135,11 +1135,9 @@ public extension ChatChannelController {
     ///
     /// Please check [documentation](https://getstream.io/chat/docs/android/watch_channel/?language=swift) for more information.
     ///
-    /// We keep these functions internal since we're not sure how we should interface this behavior.
-    /// If you have suggestions, please open a ticket or send us an email at support@getstream.io
     ///
     /// - Parameter completion: Called when the API call is finished. Called with `Error` if the remote update fails.
-    internal func startWatching(completion: ((Error?) -> Void)? = nil) {
+    func startWatching(completion: ((Error?) -> Void)? = nil) {
         /// Perform action only if channel is already created on backend side and have a valid `cid`.
         guard let cid = cid, isChannelAlreadyCreated else {
             channelModificationFailed(completion)
@@ -1165,11 +1163,11 @@ public extension ChatChannelController {
     ///
     /// Please check [documentation](https://getstream.io/chat/docs/android/watch_channel/?language=swift) for more information.
     ///
-    /// We keep these functions internal since we're not sure how we should interface this behavior.
-    /// If you have suggestions, please open a ticket or send us an email at support@getstream.io
+    /// - Warning: If you're using `ChannelListController`, calling this function can disrupt `ChannelListController`'s functions,
+    /// such as updating channel data.
     ///
     /// - Parameter completion: Called when the API call is finished. Called with `Error` if the remote update fails.
-    internal func stopWatching(completion: ((Error?) -> Void)? = nil) {
+    func stopWatching(completion: ((Error?) -> Void)? = nil) {
         /// Perform action only if channel is already created on backend side and have a valid `cid`.
         guard let cid = cid, isChannelAlreadyCreated else {
             channelModificationFailed(completion)

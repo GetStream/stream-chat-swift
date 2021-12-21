@@ -110,6 +110,31 @@ lane :publish_release do |options|
 
   version = options[:version]
 
+  # Update Frameworks (WIP)
+  # update_frameworks
+
+  # Create Github Release
+  github_release = set_github_release(
+                     repository_name: "GetStream/stream-chat-swift",
+                     api_token: ENV["GITHUB_TOKEN"],
+                     name: version,
+                     tag_name: version,
+                     description: changes
+                     # upload_assets: ["Products/StreamChat.zip", "Products/StreamChatUI.zip", "Products/StreamChat-All.zip"]
+                   )
+  push_pods(sync: options[:sync])
+
+  # Set tag
+  sh("git tag #{version}")
+
+  # Push tag to remote
+  push_to_git_remote(tags: true)
+
+  UI.success("Github release was created, please visit #{github_release["url"]} to see it")
+end
+
+desc "Update XCFrameworks and submit to the SPM repository"
+lane :update_frameworks do |options|
   # Make xcframeworks
   sh("cd .. && make frameworks")
 
@@ -118,12 +143,13 @@ lane :publish_release do |options|
   streamChatUIChecksum = sh("swift package compute-checksum ../Products/StreamChatUI.zip").strip
 
   # Update SPM Repo
-  sh("git clone git@github.com:GetStream/stream-chat-swift-spm.git ../StreamSPM")
-  file = File.open("../StreamSPM/Package.swift")
+  sh("git clone git@github.com:GetStream/stream-chat-swift-spm.git ../../StreamSPM")
+  sh("cd ../../StreamSPM")
+  file = File.open("Package.swift")
   file_data = file.read
 
   # [WIP] We can improve using regex here
-  fileLines = File.readlines("../StreamSPM/Package.swift")
+  fileLines = File.readlines("Package.swift")
 
   # We are unfortunately having to dig into a file and manually change the lines required
   fileLines.each_with_index do |line, index|
@@ -146,58 +172,54 @@ lane :publish_release do |options|
   end
 
   # Write the new changes
-  File.open("../StreamSPM/Package.swift", "w") { |file| file << file_data }
+  File.open("./Package.swift", "w") { |file| file << file_data }
 
   # Update the repo
-  sh("cd ../StreamSPM && git add -A")
+  sh("git add -A")
   sh("git commit -m 'Bump #{version}'")
   sh("git tag #{version}")
   sh("git push origin main --force --tags")
 
   # Clean Up
-  sh("cd ../")
-  sh("rm -r StreamSPM")
-
-  # Create Github Release
-  github_release = set_github_release(
-                     repository_name: "GetStream/stream-chat-swift",
-                     api_token: ENV["GITHUB_TOKEN"],
-                     name: version,
-                     tag_name: version,
-                     description: changes,
-                     upload_assets: ["Products/StreamChat.zip", "Products/StreamChatUI.zip", "Products/StreamChat-All.zip"]
-                   )
-  # The & operator makes sure truthy values are converted to bool
-  # and falsy (false and nil) values are converted to bool false
-  push_pods(sync: options[:sync] & true)
-
-  # Set tag
-  sh("git tag #{version}")
-
-  # Push tag to remote
-  push_to_git_remote(tags: true)
-
-  UI.success("Github release was created, please visit #{github_release["url"]} to see it")
+  sh("rm -r ../../StreamSPM")
 end
 
 desc "Pushes the StreamChat and StreamChatUI SDK podspecs to Cocoapods trunk"
 lane :push_pods do |options|
-  # First pod release will not have any problems
-  pod_push(path: "StreamChat.podspec", allow_warnings: true)
 
-  def release_ui(sync)
+  def release_pod(sync:, podspec:, dry:)
     begin
-      pod_push(path: "StreamChatUI.podspec", allow_warnings: true, synchronous: sync)
-    rescue
-      puts "pod_push failed. Waiting a minute until retry for trunk to get updated..."
+      UI.message "Starting to push podspec: #{podspec}"
+
+      if dry == false
+        pod_push(path: podspec, allow_warnings: true, synchronous: sync)
+      end
+    rescue => exception
+      UI.message exception
+      UI.message "pod_push failed for #{podspec}. Waiting a minute until retry for trunk to get updated..."
       sleep(60) # sleep for a minute, wait until trunk gets updates
-      release_ui(sync)
+      release_pod(sync: sync, podspec: podspec, dry: dry)
     end
   end
 
-  puts "Sleeping for 2 minutes for trunk to get updated..."
-  sleep(60 * 2)
-  release_ui(options[:sync])
+  # The == 1 comparison makes sure truthy values are converted to bool
+  # and falsy (false and nil) values are converted to bool false
+
+  # When sync is false, pod trunk push is run asynchronously
+  sync = options[:sync] == 1
+
+  # When dry option is specified - `dry:1`, the lane is executed in test/safe mode
+  # that won't cause pod_push action to fire.
+  dry = options[:dry] == 1
+
+  ["StreamChat.podspec", "StreamChatUI.podspec"].each do |podspec|
+    release_pod(sync: sync, podspec: podspec, dry: dry)
+  end
+
+  ["StreamChat-XCFramework.podspec", "StreamChatUI-XCFramework.podspec"].each do |podspec|
+    release_pod(sync: sync, podspec: podspec, dry: dry)
+  end
+
 end
 
 lane :set_SDK_version do |options|

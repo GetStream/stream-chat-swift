@@ -149,7 +149,7 @@ class MessageDTO: NSManagedObject {
         )
 
         let messageTypePredicate = NSCompoundPredicate(orPredicateWithSubpredicates: [
-            .init(format: "type != %@", MessageType.reply.rawValue),
+            .init(format: "type != %@ AND parentMessageId == nil", MessageType.reply.rawValue),
             .init(format: "type == %@ AND showReplyInChannel == 1", MessageType.reply.rawValue)
         ])
         
