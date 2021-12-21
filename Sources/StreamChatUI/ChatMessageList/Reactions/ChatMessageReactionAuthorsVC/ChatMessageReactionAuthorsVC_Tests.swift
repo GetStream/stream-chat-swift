@@ -84,6 +84,18 @@ final class ChatMessageReactionAuthorsVC_Tests: XCTestCase {
         ]
         AssertSnapshot(vc, variants: [.defaultLight])
     }
+
+    func test_defaultAppearance_shouldNotRenderUnavailableReactions() {
+        messageControllerMock.message_mock = .mock(
+            id: .unique,
+            cid: .unique,
+            text: "Some text",
+            author: .mock(id: .unique),
+            reactionCounts: ["fake": 1, "like": 1]
+        )
+        messageControllerMock.reactions = [
+            .mock(type: "like", author: .mock(id: .unique, imageURL: TestImages.vader.url)),
+            .mock(type: "fake", author: .mock(id: .unique, imageURL: TestImages.vader.url))
         ]
         AssertSnapshot(vc, variants: [.defaultLight])
     }
