@@ -40,7 +40,8 @@ open class ChatThreadHeaderView:
 
         titleContainerView.content = (
             titleText,
-            subtitleText
+            subtitleText,
+            false
         )
     }
 

@@ -8,7 +8,7 @@ import UIKit
 /// A view that displays a title label and subtitle in a container stack view.
 open class TitleContainerView: _View, AppearanceProvider, SwiftUIRepresentable {
     /// Content of the view that contains title (first line) and subtitle (second nil)
-    open var content: (title: String?, subtitle: String?) = (nil, nil) {
+    open var content: (title: String?, subtitle: String?, isOneWayChannel: Bool) = (nil, nil, false) {
         didSet {
             updateContentIfNeeded()
         }
@@ -60,8 +60,11 @@ open class TitleContainerView: _View, AppearanceProvider, SwiftUIRepresentable {
         
         titleLabel.isHidden = content.title == nil
         titleLabel.text = content.title
-        
-        subtitleLabel.isHidden = content.subtitle == nil
-        subtitleLabel.text = content.subtitle
+        if content.isOneWayChannel {
+            subtitleLabel.isHidden = true
+        } else {
+            subtitleLabel.isHidden = content.subtitle == nil
+            subtitleLabel.text = content.subtitle
+        }
     }
 }

@@ -164,6 +164,16 @@ open class ChatChannelVC:
         if let cid = channelController.cid {
             headerView.channelController = client.channelController(for: cid)
         }
+        if channelController.isOneWayChat() {
+            messageComposerVC.composerView.isUserInteractionEnabled = false
+            messageComposerVC.composerView.alpha = 0.5
+            headerView.titleContainerView.subtitleLabel.isHidden = true
+            channelAvatarView.isHidden = true
+        } else {
+            messageComposerVC.composerView.isUserInteractionEnabled = true
+            messageComposerVC.composerView.alpha = 1.0
+            channelAvatarView.isHidden = false
+        }
     }
 
     override open func viewDidLoad() {
@@ -180,9 +190,7 @@ open class ChatChannelVC:
 
     override open func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
-
         resignFirstResponder()
-
         if enableKeyboardObserver {
             keyboardHandler.stop()
         }

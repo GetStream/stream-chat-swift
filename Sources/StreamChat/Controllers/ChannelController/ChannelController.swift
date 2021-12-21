@@ -270,7 +270,28 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             self?.state = error == nil ? .localDataFetched : .localDataFetchFailed(ClientError(with: error))
         }
     }
-    
+
+    public func isOneWayChat() -> Bool {
+        guard let extraData = channel?.extraData else {
+            return false
+        }
+        return getOneWayExtraData(data: extraData)
+    }
+
+    private func getOneWayExtraData(data: [String: RawJSON]) -> Bool {
+        if let extraData = data["isOneWayChannel"] {
+            switch extraData {
+            case .bool(let bool):
+                return bool
+            default:
+                return false
+            }
+        } else {
+            return false
+        }
+    }
+
+
     /// An internal backing object for all publicly available Combine publishers. We use it to simplify the way we expose
     /// publishers. Instead of creating custom `Publisher` types, we use `CurrentValueSubject` and `PassthroughSubject` internally,
     /// and expose the published values by mapping them to a read-only `AnyPublisher` type.
