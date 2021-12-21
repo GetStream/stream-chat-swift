@@ -131,11 +131,8 @@ open class ChatMessageReactionAuthorsVC:
         ) as! ChatMessageReactionAuthorViewCell
 
         let reactions = messageController.reactions
-        if let currentUserId = messageController?.client.currentUserId {
-            cell.content = ChatMessageReactionAuthorViewCell.Content(
-                reaction: reactions[indexPath.item],
-                currentUserId: currentUserId
-            )
+        if let currentUserId = messageController?.client.currentUserId, let reaction = reactions[safe: indexPath.item] {
+            cell.content = ChatMessageReactionAuthorViewCell.Content(reaction: reaction, currentUserId: currentUserId)
         }
 
         return cell

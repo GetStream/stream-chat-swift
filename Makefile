@@ -61,7 +61,7 @@ update_dependencies:
 	echo "👉 Updating Starscream"
 	make update_starscream version=4.0.4
 	echo "👉 Updating SwiftyGif"
-	make update_swiftygif version=5.4.1
+	make update_swiftygif version=5.4.2
 
 update_nuke: check_version_parameter
 	./Scripts/updateDependency.sh $(version) Dependencies/Nuke Sources/StreamChatUI/StreamNuke Sources
