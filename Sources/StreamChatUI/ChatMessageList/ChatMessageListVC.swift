@@ -303,6 +303,31 @@ open class ChatMessageListVC:
         typingIndicatorView.isHidden = true
     }
 
+    /// Check if the current message being displayed should show the date separator.
+    /// - Parameters:
+    ///   - message: The message being displayed.
+    ///   - indexPath: The indexPath of the message.
+    /// - Returns: A Boolean value depending if it should show the date separator or not.
+    func shouldShowDateSeparator(forMessage message: ChatMessage, at indexPath: IndexPath) -> Bool {
+        guard isDateSeparatorEnabled else {
+            return false
+        }
+        
+        let previousIndexPath = IndexPath(row: indexPath.row + 1, section: indexPath.section)
+        guard let previousMessage = dataSource?.chatMessageListVC(self, messageAt: previousIndexPath) else {
+            // If previous message doesn't exist show the separator as well.
+            return true
+        }
+        
+        // Only show the separator if the previous message has a different day.
+        let isDifferentDay = !Calendar.current.isDate(
+            message.createdAt,
+            equalTo: previousMessage.createdAt,
+            toGranularity: .day
+        )
+        return isDifferentDay
+    }
+
     // MARK: - UITableViewDataSource & UITableViewDelegate
 
     open func numberOfSections(in tableView: UITableView) -> Int {
@@ -314,8 +339,6 @@ open class ChatMessageListVC:
     }
 
     open func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let message = dataSource?.chatMessageListVC(self, messageAt: indexPath)
-
         let cell: ChatMessageCell = listView.dequeueReusableCell(
             contentViewClass: cellContentClassForMessage(at: indexPath),
             attachmentViewInjectorType: attachmentViewInjectorClassForMessage(at: indexPath),
@@ -323,27 +346,17 @@ open class ChatMessageListVC:
             for: indexPath
         )
 
-        cell.messageContentView?.delegate = self
-        cell.messageContentView?.content = message
-        cell.dateSeparatorView.isHidden = true
-
-        guard isDateSeparatorEnabled, let currentMessage = message else {
+        guard let message = dataSource?.chatMessageListVC(self, messageAt: indexPath) else {
             return cell
         }
 
-        let currentDay = DateFormatter.messageListDateOverlay.string(from: currentMessage.createdAt)
-        cell.dateSeparatorView.content = currentDay
+        cell.messageContentView?.delegate = self
+        cell.messageContentView?.content = message
 
-        // Only show the separator if the previous message is from a different day
-        // TODO: simplify this and make it simpler to customize the logic (ie. extract this into a open `showDateSeparatorView` method)
-        let previousIndexPath = IndexPath(row: indexPath.row + 1, section: indexPath.section)
-        if let previousMessage = dataSource?.chatMessageListVC(self, messageAt: previousIndexPath) {
-            let previousDay = DateFormatter.messageListDateOverlay.string(from: previousMessage.createdAt)
-            cell.dateSeparatorView.isHidden = previousDay == currentDay
-        } else {
-            // If previous message doesn't exist show the separator as well
-            cell.dateSeparatorView.isHidden = false
-        }
+        cell.dateSeparatorView.isHidden = !shouldShowDateSeparator(forMessage: message, at: indexPath)
+        cell.dateSeparatorView.content = DateFormatter
+            .messageListDateOverlay
+            .string(from: message.createdAt)
 
         return cell
     }
