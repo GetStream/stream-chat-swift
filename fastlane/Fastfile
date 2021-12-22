@@ -113,22 +113,19 @@ lane :publish_release do |options|
   # Update Frameworks (WIP)
   # update_frameworks
 
+  changes = touch_changelog(release_version: version)
+
   # Create Github Release
   github_release = set_github_release(
                      repository_name: "GetStream/stream-chat-swift",
                      api_token: ENV["GITHUB_TOKEN"],
                      name: version,
                      tag_name: version,
+                     commitish: "main",
                      description: changes
                      # upload_assets: ["Products/StreamChat.zip", "Products/StreamChatUI.zip", "Products/StreamChat-All.zip"]
                    )
   push_pods(sync: options[:sync])
-
-  # Set tag
-  sh("git tag #{version}")
-
-  # Push tag to remote
-  push_to_git_remote(tags: true)
 
   UI.success("Github release was created, please visit #{github_release["url"]} to see it")
 end
