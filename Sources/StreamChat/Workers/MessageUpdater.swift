@@ -92,13 +92,21 @@ class MessageUpdater: Worker {
         database.write({ session in
             let messageDTO = try session.messageEditableByCurrentUser(messageId)
 
+            let updateQuotingMessages = {
+                messageDTO.quotedBy.forEach { message in
+                    message.updatedAt = messageDTO.updatedAt
+                }
+            }
+
             switch messageDTO.localMessageState {
             case nil, .pendingSync, .syncingFailed, .deletingFailed:
                 messageDTO.text = text
                 messageDTO.localMessageState = .pendingSync
+                updateQuotingMessages()
             case .pendingSend, .sendingFailed:
                 messageDTO.text = text
                 messageDTO.localMessageState = .pendingSend
+                updateQuotingMessages()
             case .sending, .syncing, .deleting:
                 throw ClientError.MessageEditing(
                     messageId: messageId,
