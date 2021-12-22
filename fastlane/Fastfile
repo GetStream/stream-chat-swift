@@ -209,14 +209,13 @@ lane :push_pods do |options|
   # that won't cause pod_push action to fire.
   dry = options[:dry] == 1
 
-  ["StreamChat.podspec", "StreamChatUI.podspec"].each do |podspec|
+  ["StreamChat.podspec", "StreamChat-XCFramework.podspec"].each do |podspec|
     release_pod(sync: sync, podspec: podspec, dry: dry)
   end
 
-  ["StreamChat-XCFramework.podspec", "StreamChatUI-XCFramework.podspec"].each do |podspec|
+  ["StreamChatUI.podspec", "StreamChatUI-XCFramework.podspec"].each do |podspec|
     release_pod(sync: sync, podspec: podspec, dry: dry)
   end
-
 end
 
 lane :set_SDK_version do |options|
