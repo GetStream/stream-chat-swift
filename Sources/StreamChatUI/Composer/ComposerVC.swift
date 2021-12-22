@@ -56,6 +56,8 @@ open class ComposerVC: _ViewController,
         public var mentionedUsers: Set<ChatUser>
         /// The command of the message.
         public let command: Command?
+        /// The extra data assigned to message.
+        public var extraData: [String: RawJSON]
 
         /// A boolean that checks if the message contains any content.
         public var isEmpty: Bool {
@@ -75,7 +77,8 @@ open class ComposerVC: _ViewController,
             threadMessage: ChatMessage?,
             attachments: [AnyAttachmentPayload],
             mentionedUsers: Set<ChatUser>,
-            command: Command?
+            command: Command?,
+            extraData: [String: RawJSON] = [:]
         ) {
             self.text = text
             self.state = state
@@ -85,6 +88,7 @@ open class ComposerVC: _ViewController,
             self.attachments = attachments
             self.mentionedUsers = mentionedUsers
             self.command = command
+            self.extraData = extraData
         }
 
         /// Creates a new content struct with all empty data.
@@ -97,7 +101,8 @@ open class ComposerVC: _ViewController,
                 threadMessage: nil,
                 attachments: [],
                 mentionedUsers: [],
-                command: nil
+                command: nil,
+                extraData: [:]
             )
         }
 
@@ -111,7 +116,8 @@ open class ComposerVC: _ViewController,
                 threadMessage: threadMessage,
                 attachments: [],
                 mentionedUsers: [],
-                command: nil
+                command: nil,
+                extraData: [:]
             )
         }
 
@@ -127,7 +133,8 @@ open class ComposerVC: _ViewController,
                 threadMessage: threadMessage,
                 attachments: attachments,
                 mentionedUsers: message.mentionedUsers,
-                command: command
+                command: command,
+                extraData: message.extraData
             )
         }
 
@@ -143,7 +150,8 @@ open class ComposerVC: _ViewController,
                 threadMessage: threadMessage,
                 attachments: attachments,
                 mentionedUsers: mentionedUsers,
-                command: command
+                command: command,
+                extraData: extraData
             )
         }
 
@@ -156,7 +164,8 @@ open class ComposerVC: _ViewController,
                 threadMessage: threadMessage,
                 attachments: [],
                 mentionedUsers: mentionedUsers,
-                command: command
+                command: command,
+                extraData: extraData
             )
         }
     }
@@ -517,7 +526,8 @@ open class ComposerVC: _ViewController,
                 attachments: content.attachments,
                 mentionedUserIds: content.mentionedUsers.map(\.id),
                 showReplyInChannel: composerView.checkboxControl.isSelected,
-                quotedMessageId: content.quotingMessage?.id
+                quotedMessageId: content.quotingMessage?.id,
+                extraData: content.extraData
             )
             return
         }
@@ -527,7 +537,8 @@ open class ComposerVC: _ViewController,
             pinning: nil,
             attachments: content.attachments,
             mentionedUserIds: content.mentionedUsers.map(\.id),
-            quotedMessageId: content.quotingMessage?.id
+            quotedMessageId: content.quotingMessage?.id,
+            extraData: content.extraData
         )
     }
 
@@ -543,7 +554,7 @@ open class ComposerVC: _ViewController,
         )
         // TODO: Adjust LLC to edit attachments also
         // TODO: Adjust LLC to edit mentions
-        messageController?.editMessage(text: newText)
+        messageController?.editMessage(text: newText, extraData: content.extraData)
     }
 
     /// Returns a potential user mention in case the user is currently typing a username.

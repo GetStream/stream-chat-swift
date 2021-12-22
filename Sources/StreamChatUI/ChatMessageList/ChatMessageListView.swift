@@ -240,7 +240,8 @@ open class ChatMessageListView: UITableView, Customizable, ComponentsProvider {
                 cellBeforeUpdateMessage?.type == cellAfterUpdateMessage?.type,
                 cellBeforeUpdateMessage?.deletedAt == cellAfterUpdateMessage?.deletedAt,
                 cellBeforeUpdateMessage?.text == cellAfterUpdateMessage?.text,
-                cellBeforeUpdateMessage?.quotedMessage?.text == cellAfterUpdateMessage?.quotedMessage?.text {
+                cellBeforeUpdateMessage?.quotedMessage?.text == cellAfterUpdateMessage?.quotedMessage?.text,
+                cellBeforeUpdateMessage?.extraData == cellAfterUpdateMessage?.extraData {
                 // If identifiers and messages match we can simply update the current cell with new content
                 cellBeforeUpdate?.messageContentView?.content = cellAfterUpdateMessage
             } else {

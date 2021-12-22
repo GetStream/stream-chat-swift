@@ -17,6 +17,7 @@ final class MessageUpdaterMock: MessageUpdater {
     @Atomic var editMessage_messageId: MessageId?
     @Atomic var editMessage_text: String?
     @Atomic var editMessage_completion: ((Error?) -> Void)?
+    @Atomic var editMessage_extraData: [String: RawJSON]?
     
     @Atomic var createNewReply_cid: ChannelId?
     @Atomic var createNewReply_text: String?
@@ -157,10 +158,14 @@ final class MessageUpdaterMock: MessageUpdater {
         deleteMessage_messageId = messageId
         deleteMessage_completion = completion
     }
-    
-    override func editMessage(messageId: MessageId, text: String, completion: ((Error?) -> Void)? = nil) {
+
+    override func editMessage(messageId: MessageId,
+                              text: String,
+                              extraData: [String : RawJSON]? = nil,
+                              completion: ((Error?) -> Void)? = nil) {
         editMessage_messageId = messageId
         editMessage_text = text
+        editMessage_extraData = extraData
         editMessage_completion = completion
     }
 
