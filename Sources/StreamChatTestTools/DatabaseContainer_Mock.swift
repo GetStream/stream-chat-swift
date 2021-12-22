@@ -209,6 +209,7 @@ extension DatabaseContainer {
         authorId: UserId = .unique,
         cid: ChannelId = .unique,
         text: String = .unique,
+        extraData: [String: RawJSON] = [:],
         pinned: Bool = false,
         pinnedByUserId: UserId? = nil,
         pinnedAt: Date? = nil,
@@ -234,6 +235,7 @@ extension DatabaseContainer {
                 attachments: attachments,
                 authorUserId: authorId,
                 text: text,
+                extraData: extraData,
                 latestReactions: latestReactions,
                 ownReactions: ownReactions,
                 updatedAt: updatedAt,
@@ -256,7 +258,8 @@ extension DatabaseContainer {
                     messageId: .unique,
                     parentId: id,
                     authorUserId: authorId,
-                    text: "Reply \(idx)"
+                    text: "Reply \(idx)",
+                    extraData: extraData
                 )
                 
                 let replyDTO = try session.saveMessage(payload: reply, for: cid, syncOwnReactions: true)!

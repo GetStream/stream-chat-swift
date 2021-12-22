@@ -141,6 +141,10 @@ final class MessageUpdater_Tests: XCTestCase {
             
             // Load the message
             let message = try XCTUnwrap(database.viewContext.message(id: messageId))
+            let extraData = try XCTUnwrap(
+                message.extraData
+                    .map { try? JSONDecoder.default.decode([String: RawJSON].self, from: $0) }
+            )
             
             // Assert `MessageEditing` error is received
             XCTAssertTrue(completionError is ClientError.MessageEditing)
@@ -148,7 +152,86 @@ final class MessageUpdater_Tests: XCTestCase {
             XCTAssertEqual(message.localMessageState, state)
             // Assert message's text stays the same
             XCTAssertEqual(message.text, initialText)
+            // Assert message's extra data stays the same
+            XCTAssertEqual(extraData, [:])
         }
+    }
+
+    func test_editMessage_updatesLocalMessageCorrectlyWithExtraData() throws {
+        let currentUserId: UserId = .unique
+        let messageId: MessageId = .unique
+        let updatedText: String = .unique
+        let extraData: [String: RawJSON] = ["custom": .number(0)]
+        let updatedExtraData: [String: RawJSON] = ["custom": .number(1)]
+
+        // Create current user is the database
+        try database.createCurrentUser(id: currentUserId)
+
+        // Create a new message in the database
+        try database.createMessage(id: messageId, authorId: currentUserId, extraData: extraData)
+        let createdMessage = try XCTUnwrap(database.viewContext.message(id: messageId))
+
+        let encodedCreatedExtraData = try XCTUnwrap(
+            createdMessage.extraData
+                .map { try? JSONDecoder.default.decode([String: RawJSON].self, from: $0) }
+        )
+        // Assert message's extra data is updated
+        XCTAssertEqual(encodedCreatedExtraData, extraData)
+
+        // Edit created message with new text
+        let completionError = try waitFor {
+            messageUpdater.editMessage(messageId: messageId, text: updatedText, extraData: updatedExtraData, completion: $0)
+        }
+
+        // Load the message
+        let message = try XCTUnwrap(database.viewContext.message(id: messageId))
+        let encodedExtraData = try XCTUnwrap(
+            message.extraData
+                .map { try? JSONDecoder.default.decode([String: RawJSON].self, from: $0) }
+        )
+
+        // Assert completion is called without any error
+        XCTAssertNil(completionError)
+        // Assert message's extra data is updated
+        XCTAssertEqual(encodedExtraData, updatedExtraData)
+    }
+
+    func test_editMessage_doesntUpdatesLocalMessageIfExtraDataAreNil() throws {
+        let currentUserId: UserId = .unique
+        let messageId: MessageId = .unique
+        let updatedText: String = .unique
+        let extraData: [String: RawJSON] = ["custom": .number(0)]
+
+        // Create current user is the database
+        try database.createCurrentUser(id: currentUserId)
+
+        // Create a new message in the database
+        try database.createMessage(id: messageId, authorId: currentUserId, extraData: extraData)
+        let createdMessage = try XCTUnwrap(database.viewContext.message(id: messageId))
+
+        let encodedCreatedExtraData = try XCTUnwrap(
+            createdMessage.extraData
+                .map { try? JSONDecoder.default.decode([String: RawJSON].self, from: $0) }
+        )
+        // Assert message's extra data is updated
+        XCTAssertEqual(encodedCreatedExtraData, extraData)
+
+        // Edit created message with new text
+        let completionError = try waitFor {
+            messageUpdater.editMessage(messageId: messageId, text: updatedText, extraData: nil, completion: $0)
+        }
+
+        // Load the message
+        let message = try XCTUnwrap(database.viewContext.message(id: messageId))
+        let encodedExtraData = try XCTUnwrap(
+            message.extraData
+                .map { try? JSONDecoder.default.decode([String: RawJSON].self, from: $0) }
+        )
+
+        // Assert completion is called without any error
+        XCTAssertNil(completionError)
+        // Assert message's extra data is updated
+        XCTAssertEqual(encodedExtraData, extraData)
     }
     
     // MARK: Delete message
@@ -186,7 +269,7 @@ final class MessageUpdater_Tests: XCTestCase {
         // Simulate API response with success
         let testError = TestError()
         apiClient.test_simulateResponse(Result<EmptyResponse, Error>.failure(testError))
-                
+
         // Assert completion is called without any error
         AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
     }
@@ -227,7 +310,7 @@ final class MessageUpdater_Tests: XCTestCase {
         
         // Simulate API response with success
         apiClient.test_simulateResponse(Result<EmptyResponse, Error>.success(.init()))
-                
+
         // Assert database error is propogated
         AssertAsync.willBeEqual(completionCalledError as? TestError, databaseError)
     }
@@ -242,7 +325,7 @@ final class MessageUpdater_Tests: XCTestCase {
             
             // Create current user in the database
             try database.createCurrentUser(id: currentUserId)
-                   
+
             // Create a new message in the database
             try database.createMessage(id: messageId, authorId: currentUserId, localState: state)
 
@@ -307,7 +390,7 @@ final class MessageUpdater_Tests: XCTestCase {
         
         // Simulate `getMessage(cid:, messageId:)` call
         messageUpdater.getMessage(cid: cid, messageId: messageId)
-                
+
         // Assert correct endpoint is called
         let expectedEndpoint: Endpoint<MessagePayload.Boxed> = .getMessage(messageId: messageId)
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
@@ -323,7 +406,7 @@ final class MessageUpdater_Tests: XCTestCase {
         // Simulate API response with failure
         let error = TestError()
         apiClient.test_simulateResponse(Result<MessagePayload.Boxed, Error>.failure(error))
-                
+
         // Assert the completion is called with the error
         AssertAsync.willBeEqual(completionCalledError as? TestError, error)
     }
@@ -349,7 +432,7 @@ final class MessageUpdater_Tests: XCTestCase {
         
         // Simulate API response with success
         apiClient.test_simulateResponse(Result<MessagePayload.Boxed, Error>.success(messagePayload))
-                
+
         // Assert database error is propogated
         AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
     }

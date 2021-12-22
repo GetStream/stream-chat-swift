@@ -7,6 +7,7 @@ import Foundation
 /// Coding keys for message-related JSON payloads
 enum MessagePayloadsCodingKeys: String, CodingKey, CaseIterable {
     case id
+    case cid
     case type
     case user
     case createdAt = "created_at"

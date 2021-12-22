@@ -802,6 +802,18 @@ final class MessageController_Tests: XCTestCase {
         XCTAssertEqual(env.messageUpdater.editMessage_messageId, controller.messageId)
         XCTAssertEqual(env.messageUpdater.editMessage_text, updatedText)
     }
+
+    func test_editMessage_callsMessageUpdater_withCorrectExtraDataValues() {
+        let updatedText: String = .unique
+        let extraData: [String: RawJSON] = ["myKey": .string("myValue")]
+
+        // Simulate `editMessage` call and catch the completion
+        controller.editMessage(text: updatedText, extraData: extraData)
+
+        // Assert message updater is called with correct `messageId` and `text`
+        XCTAssertEqual(env.messageUpdater.editMessage_text, updatedText)
+        XCTAssertEqual(env.messageUpdater.editMessage_extraData, extraData)
+    }
     
     // MARK: - Flag message
     

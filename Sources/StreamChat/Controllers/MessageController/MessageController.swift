@@ -194,11 +194,12 @@ public extension ChatMessageController {
     ///
     /// - Parameters:
     ///   - text: The updated message text.
+    ///   - extraData: Custom extra data. When `nil` is passed the message custom fields stay the same. Equals `nil` by default.
     ///   - completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
     ///                 If request fails, the completion will be called with an error.
     ///
-    func editMessage(text: String, completion: ((Error?) -> Void)? = nil) {
-        messageUpdater.editMessage(messageId: messageId, text: text) { error in
+    func editMessage(text: String, extraData: [String: RawJSON]? = nil, completion: ((Error?) -> Void)? = nil) {
+        messageUpdater.editMessage(messageId: messageId, text: text, extraData: extraData) { error in
             self.callback {
                 completion?(error)
             }

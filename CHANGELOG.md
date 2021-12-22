@@ -5,6 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### ✅ Added
 - `ChannelListQuery.membersLimit` param for controlling the number of members returned for each channel [#1721](https://github.com/GetStream/stream-chat-swift/issues/1721)
+- Adds support to pass extra data for message from `ComposerVC` [#1722](https://github.com/GetStream/stream-chat-swift/pull/1722)
 
 ### 🐞 Fixed
 - Fix multiple pagination requests being fired from `ChatChannelVC` and `ChatChannelListVC` [#1706](https://github.com/GetStream/stream-chat-swift/issues/1706)
