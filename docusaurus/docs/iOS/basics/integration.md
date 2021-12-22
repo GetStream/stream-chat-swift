@@ -127,6 +127,11 @@ In your project's `Cartfile`, add one of these options
 Our SwiftUI components library is not yet available using Carthage, please use Swift Package Manager or CocoaPods.
 :::
 
+Now that we’ve modified our Cartfile, let’s go ahead and install the project dependencies via the terminal with one simple command:
+
+```bash
+carthage update --use-xcframeworks --no-use-binaries --platform iOS
+```
 
 <details><summary>➤ Do you want to use <b>XCFrameworks</b>? (Click to read more)</summary>
 <p>
@@ -142,14 +147,14 @@ You can learn more about [our Module Stable XCFrameworks here](#xcframeworks)
 - For the UIKit components (**StreamChatUI**, which depends on **StreamChat**) use:
   - `binary "https://raw.githubusercontent.com/GetStream/stream-chat-swift/main/StreamChatArtifacts.json" ~> 4.6`
 
-</p>
-</details>
-
 Now that we’ve modified our Cartfile, let’s go ahead and install the project dependencies via the terminal with one simple command:
 
 ```bash
 carthage update --use-xcframeworks
 ```
+
+</p>
+</details>
 
 This command will create pre-built XCFrameworks built from our source code. You now need to add those to your project.
 
