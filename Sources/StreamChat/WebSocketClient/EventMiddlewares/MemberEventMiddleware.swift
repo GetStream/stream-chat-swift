@@ -28,33 +28,59 @@ struct MemberEventMiddleware: EventMiddleware {
                 
                 // We remove the member from the channel
                 channel.members.remove(member)
+                if let membership = channel.membership, membership.user.id == event.user.id {
+                    channel.membership = nil
+                }
                 
                 // If there are any MemberListQueries observing this channel,
                 // we need to update them too
                 member.queries.removeAll()
                 
             case let event as NotificationAddedToChannelEventDTO:
-                _ = try session.saveChannel(payload: event.channel, query: nil)
+                let channel = try session.saveChannel(payload: event.channel, query: nil)
+                let member = try session.saveMember(payload: event.member, channelId: event.channel.cid)
+                channel.membership = member
                 
             case let event as NotificationRemovedFromChannelEventDTO:
                 guard let channel = session.channel(cid: event.cid) else {
                     // No need to throw ChannelNotFound error here
-                    log.debug("Channel \(event.cid) not found for MemberRemovedEventDTO")
+                    log.debug("Channel \(event.cid) not found for NotificationRemovedFromChannelEventDTO")
                     break
                 }
                 
                 guard let member = channel.members.first(where: { $0.user.id == event.member.user.id }) else {
                     // No need to throw MemberNotFound error here
-                    log.debug("Member \(event.member.user.id) not found for MemberRemovedEventDTO")
+                    log.debug("Member \(event.member.user.id) not found for NotificationRemovedFromChannelEventDTO")
                     break
                 }
                 
                 // We remove the member from the channel
                 channel.members.remove(member)
+                if let membership = channel.membership, membership.user.id == event.member.user.id {
+                    channel.membership = nil
+                }
                 
                 // If there are any MemberListQueries observing this channel,
                 // we need to update them too
                 member.queries.removeAll()
+                
+            case let event as NotificationInviteAcceptedEventDTO:
+                let channel = try session.saveChannel(payload: event.channel, query: nil)
+                let member = try session.saveMember(payload: event.member, channelId: event.channel.cid)
+                channel.membership = member
+                
+            case let event as NotificationInviteRejectedEventDTO:
+                let channel = try session.saveChannel(payload: event.channel, query: nil)
+                let member = try session.saveMember(payload: event.member, channelId: event.channel.cid)
+                channel.membership = member
+                
+            case let event as NotificationInvitedEventDTO:
+                guard let channel = session.channel(cid: event.cid) else {
+                    // No need to throw ChannelNotFound error here
+                    break
+                }
+                let member = try session.saveMember(payload: event.member, channelId: event.cid)
+                channel.membership = member
             default:
                 break
             }
