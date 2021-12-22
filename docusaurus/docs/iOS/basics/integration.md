@@ -116,19 +116,13 @@ _More information about CocoaPods [can be found here](https://cocoapods.org/)._
 
 ### Carthage
 
-In your project's `Cartfile`, add one of these options
-
-- For the LLC (**StreamChat**) use:
-  - `github "getstream/stream-chat-swift" ~> 4.6.0`
-- For the UIKit components (**StreamChatUI**, which depends on **StreamChat**) use:
-  - `github "getstream/stream-chat-swift" ~> 4.6.0`
+If you are using **Swift 5.5 / Xcode 13** or above, the recommended method for Carthage is to use **pre-built XCFrameworks**.
 
 :::note
 Our SwiftUI components library is not yet available using Carthage, please use Swift Package Manager or CocoaPods.
 :::
 
-
-<details><summary>➤ Do you want to use <b>XCFrameworks</b>? (Click to read more)</summary>
+<details><summary>➤ Using pre-built <b>XCFrameworks</b></summary>
 <p>
 
 :::caution
@@ -142,16 +136,37 @@ You can learn more about [our Module Stable XCFrameworks here](#xcframeworks)
 - For the UIKit components (**StreamChatUI**, which depends on **StreamChat**) use:
   - `binary "https://raw.githubusercontent.com/GetStream/stream-chat-swift/main/StreamChatArtifacts.json" ~> 4.6`
 
-</p>
-</details>
-
 Now that we’ve modified our Cartfile, let’s go ahead and install the project dependencies via the terminal with one simple command:
 
 ```bash
 carthage update --use-xcframeworks
 ```
 
-This command will create pre-built XCFrameworks built from our source code. You now need to add those to your project.
+The previous command will download pre-built XCFrameworks. You now need to add those to your project. Keep reading.
+
+</p>
+</details>
+
+<details><summary>➤ Building from source <b>(OSS)</b></summary>
+<p>
+
+In your project's `Cartfile`, add one of these options
+
+- For the LLC (**StreamChat**) use:
+  - `github "getstream/stream-chat-swift" ~> 4.6.0`
+- For the UIKit components (**StreamChatUI**, which depends on **StreamChat**) use:
+  - `github "getstream/stream-chat-swift" ~> 4.6.0`
+
+Now that we’ve modified our Cartfile, let’s go ahead and install the project dependencies via the terminal with one simple command:
+
+```bash
+carthage update --use-xcframeworks --no-use-binaries --platform iOS
+```
+
+The previous command will create pre-built XCFrameworks built from our source code (This might take a while ⏱). You now need to add those to your project. Keep reading.
+
+</p>
+</details>
 
 Open the `Carthage/Build` folder that has been created in the root of your project, and drag and drop the frameworks you want to use. Those should be added to the "Frameworks, Libraries, and Embedded Content" section under General settings:
 

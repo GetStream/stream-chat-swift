@@ -9,8 +9,6 @@ all_artifacts:
 	echo "🏁 Finished creating dynamic libraries at $$(date +%T)"
 	make static_libraries
 	echo "🏁 Finished creating static libraries at $$(date +%T)"
-	make clean
-	make swiftpm_checksum
 	open ./Products
 	echo "🏁 Ended at $$(date +%T)"
 
@@ -18,15 +16,19 @@ frameworks: clean
 	echo "👉 Creating dynamic libraries. Will take a while... Logs available: DerivedData/fastlane.log"
 	bundle exec fastlane build_xcframeworks > DerivedData/fastlane.log
 	echo "👉 Creating compressed archives"
+	cp ./LICENSE ./Products/LICENSE
 	make zip_artifacts name="StreamChat-All" pattern=./*.xcframework
-	make zip_artifacts name="StreamChat" pattern=./StreamChat.xcframework
-	make zip_artifacts name="StreamChatUI" pattern=./StreamChatUI.xcframework
+	make zip_artifacts name="StreamChat" pattern="./StreamChat.xcframework ./LICENSE"
+	make zip_artifacts name="StreamChatUI" pattern="./StreamChatUI.xcframework ./LICENSE"
+	make swiftpm_checksum
+	make clean
 
 static_libraries: clean
 	echo "👉 Creating static libraries"
 	./Scripts/buildStaticLibraries.sh
 	echo "👉 Creating compressed archive"
 	make zip_artifacts name="StreamChat-All-Static" pattern='./*.xcframework ./*.bundle'
+	make clean
 
 clean:
 	echo "♻️  Cleaning ./Products & ./DerivedData"
@@ -36,6 +38,7 @@ clean:
 	rm -rf Products/*.bundle
 	rm -rf Products/*.BCSymbolMaps
 	rm -rf Products/*.dSYMs
+	rm Products/LICENSE
 
 zip_artifacts:
 	@if [ "$(name)" = "" ]; then\
