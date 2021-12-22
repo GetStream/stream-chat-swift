@@ -125,7 +125,8 @@ lane :publish_release do |options|
                      description: changes
                      # upload_assets: ["Products/StreamChat.zip", "Products/StreamChatUI.zip", "Products/StreamChat-All.zip"]
                    )
-  push_pods(sync: options[:sync])
+  # Firing this lane is done manually at the moment.
+  #push_pods(sync: options[:sync])
 
   UI.success("Github release was created, please visit #{github_release["url"]} to see it")
 end
