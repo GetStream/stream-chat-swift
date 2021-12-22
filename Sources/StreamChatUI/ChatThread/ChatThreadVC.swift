@@ -72,7 +72,9 @@ open class ChatThreadVC:
                let message = messageController?.message {
                 messageComposerVC.content.threadMessage = message
             }
-            if let message = message, message.replyCount > 0 {
+            // We only need to load the replies
+            // when we don't already have all the replies
+            if let message = message, message.latestReplies.count != message.replyCount {
                 self.loadPreviousMessages()
             }
         }
