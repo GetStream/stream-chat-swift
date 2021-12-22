@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### 🐞 Fixed
 - Fix multiple pagination requests being fired from `ChatChannelVC` and `ChatChannelListVC` [#1706](https://github.com/GetStream/stream-chat-swift/issues/1706)
 - Fix rendering unavailable reactions on `ChatMessageReactionAuthorsVC` [#1719](https://github.com/GetStream/stream-chat-swift/issues/1719)
+- Fix unncessary API calls performed when loading threads [#1716](https://github.com/GetStream/stream-chat-swift/issues/1716)
 
 # [4.6.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.6.0)
 _December 20, 2021_

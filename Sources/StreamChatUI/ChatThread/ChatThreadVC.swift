@@ -67,7 +67,7 @@ open class ChatThreadVC:
 
         messageController.delegate = self
 
-        let completeSetup: (ChatMessage?) -> Void = { [messageController, messageComposerVC] message in
+        let completeSetUp: (ChatMessage?) -> Void = { [messageController, messageComposerVC] message in
             if messageComposerVC.content.threadMessage == nil,
                let message = messageController?.message {
                 messageComposerVC.content.threadMessage = message
@@ -78,12 +78,12 @@ open class ChatThreadVC:
         }
 
         if let message = messageController.message {
-            completeSetup(message)
+            completeSetUp(message)
             return
         }
 
         messageController.synchronize { [weak self] _ in
-            completeSetup(self?.messageController.message)
+            completeSetUp(self?.messageController.message)
         }
     }
 
