@@ -142,6 +142,9 @@ final class MemberEventMiddleware_Tests: XCTestCase {
             database.viewContext.channel(cid: cid)
         )
         
+        // Assert that Channel has valid membership
+        XCTAssertNotNil(channel.membership)
+        
         // Save channel's member's id so we can remove it
         let memberId = channel.members.first!.user.id
         
@@ -191,6 +194,9 @@ final class MemberEventMiddleware_Tests: XCTestCase {
         
         // Assert that member is not linked to the query anymore
         XCTAssertEqual(queryDTO.members.count, 0)
+        
+        // Assert that membership is reset
+        XCTAssertNil(channel.membership)
         
         // Assert event is forwarded.
         XCTAssertTrue(forwardedEvent is MemberRemovedEventDTO)
@@ -285,6 +291,7 @@ final class MemberEventMiddleware_Tests: XCTestCase {
         let eventPayload: EventPayload = .init(
             eventType: .notificationAddedToChannel,
             cid: cid,
+            memberContainer: .dummy(userId: .unique),
             channel: .dummy(cid: cid),
             createdAt: .unique
         )
@@ -293,13 +300,28 @@ final class MemberEventMiddleware_Tests: XCTestCase {
         let event = try NotificationAddedToChannelEventDTO(from: eventPayload)
 
         // Create channel in the database.
-        try database.createChannel(cid: cid, withMessages: false)
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: self.dummyPayload(with: cid, numberOfMessages: 0, includeMembership: false))
+        }
+        
+        // Load the channel
+        var channel: ChatChannel? {
+            database.viewContext.channel(cid: cid)?.asModel()
+        }
+        
+        // Assert membership is nil
+        XCTAssertNotNil(channel)
+        XCTAssertNil(channel?.membership)
         
         // Setup channel list observer
         let channelListObserver = TestChannelListObserver(database: database)
 
         // Simulate `NotificationAddedToChannelEvent` event.
         let forwardedEvent = middleware.handle(event: event, session: database.viewContext)
+        
+        // Assert membership is not nil
+        XCTAssertNotNil(channel)
+        XCTAssertNotNil(channel?.membership)
         
         // Assert event is forwarded.
         XCTAssertTrue(forwardedEvent is NotificationAddedToChannelEventDTO)
@@ -317,6 +339,15 @@ final class MemberEventMiddleware_Tests: XCTestCase {
         
         // Create channel in the database.
         try database.createChannel(cid: cid, withMessages: false)
+        
+        // Load the channel
+        var channel: ChatChannel? {
+            database.viewContext.channel(cid: cid)?.asModel()
+        }
+        
+        // Assert membership is not nil
+        XCTAssertNotNil(channel)
+        XCTAssertNotNil(channel?.membership)
         
         // Get first member id to be removed
         let memberId = try XCTUnwrap(database.viewContext.channel(cid: cid)?.members.first?.user.id)
@@ -336,8 +367,162 @@ final class MemberEventMiddleware_Tests: XCTestCase {
         // Simulate `NotificationRemovedFromChannelEvent` event.
         _ = middleware.handle(event: event, session: database.viewContext)
         
+        // Assert membership is nil
+        XCTAssertNotNil(channel)
+        XCTAssertNil(channel?.membership)
+        
         // Assert member is removed from channel
         XCTAssertFalse(database.viewContext.channel(cid: cid)!.members.contains(where: { $0.user.id == memberId }))
+    }
+    
+    // MARK: - NotificationInvitedEvent
+    
+    func test_middleware_handlesNotificationInvitedEventCorrectly() throws {
+        let cid = ChannelId.unique
+        
+        // Create NotificationInvitedEvent payload
+        let eventPayload: EventPayload = .init(
+            eventType: .notificationInvited,
+            cid: cid,
+            user: .dummy(userId: .unique),
+            memberContainer: .dummy(userId: .unique),
+            createdAt: .unique
+        )
+        
+        // Create event with payload.
+        let event = try NotificationInvitedEventDTO(from: eventPayload)
+        
+        // Create channel in the database.
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: self.dummyPayload(with: cid, numberOfMessages: 0, includeMembership: false))
+        }
+        
+        // Load the channel
+        var channel: ChatChannel? {
+            database.viewContext.channel(cid: cid)?.asModel()
+        }
+        
+        // Assert membership is nil
+        XCTAssertNotNil(channel)
+        XCTAssertNil(channel?.membership)
+        
+        // Setup channel list observer
+        let channelListObserver = TestChannelListObserver(database: database)
+        
+        // Simulate `NotificationAddedToChannelEvent` event.
+        let forwardedEvent = middleware.handle(event: event, session: database.viewContext)
+        
+        // Assert membership is not nil
+        XCTAssertNotNil(channel)
+        XCTAssertNotNil(channel?.membership)
+        
+        // Assert event is forwarded.
+        XCTAssertTrue(forwardedEvent is NotificationInvitedEventDTO)
+        // Assert channel update is observed.
+        AssertAsync.willBeEqual(
+            channelListObserver.observedChanges,
+            [.update(cid, index: .init(item: 0, section: 0))]
+        )
+    }
+    
+    // MARK: - NotificationInviteAcceptedEvent
+    
+    func test_middleware_handlesNotificationInviteAcceptedEventCorrectly() throws {
+        let cid = ChannelId.unique
+        
+        // Create NotificationInviteAcceptedEvent payload
+        let eventPayload: EventPayload = .init(
+            eventType: .notificationInviteAccepted,
+            user: .dummy(userId: .unique),
+            memberContainer: .dummy(userId: .unique),
+            channel: .dummy(cid: cid),
+            createdAt: .unique
+        )
+        
+        // Create event with payload.
+        let event = try NotificationInviteAcceptedEventDTO(from: eventPayload)
+        
+        // Create channel in the database.
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: self.dummyPayload(with: cid, numberOfMessages: 0, includeMembership: false))
+        }
+        
+        // Load the channel
+        var channel: ChatChannel? {
+            database.viewContext.channel(cid: cid)?.asModel()
+        }
+        
+        // Assert membership is nil
+        XCTAssertNotNil(channel)
+        XCTAssertNil(channel?.membership)
+        
+        // Setup channel list observer
+        let channelListObserver = TestChannelListObserver(database: database)
+        
+        // Simulate `NotificationAddedToChannelEvent` event.
+        let forwardedEvent = middleware.handle(event: event, session: database.viewContext)
+        
+        // Assert membership is not nil
+        XCTAssertNotNil(channel)
+        XCTAssertNotNil(channel?.membership)
+        
+        // Assert event is forwarded.
+        XCTAssertTrue(forwardedEvent is NotificationInviteAcceptedEventDTO)
+        // Assert channel update is observed.
+        AssertAsync.willBeEqual(
+            channelListObserver.observedChanges,
+            [.update(cid, index: .init(item: 0, section: 0))]
+        )
+    }
+    
+    // MARK: - NotificationInviteRejectedEvent
+    
+    func test_middleware_handlesNotificationInviteRejectedEventCorrectly() throws {
+        let cid = ChannelId.unique
+        
+        // Create NotificationInviteRejectedEvent payload
+        let eventPayload: EventPayload = .init(
+            eventType: .notificationInviteRejected,
+            user: .dummy(userId: .unique),
+            memberContainer: .dummy(userId: .unique),
+            channel: .dummy(cid: cid),
+            createdAt: .unique
+        )
+        
+        // Create event with payload.
+        let event = try NotificationInviteRejectedEventDTO(from: eventPayload)
+        
+        // Create channel in the database.
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: self.dummyPayload(with: cid, numberOfMessages: 0, includeMembership: false))
+        }
+        
+        // Load the channel
+        var channel: ChatChannel? {
+            database.viewContext.channel(cid: cid)?.asModel()
+        }
+        
+        // Assert membership is nil
+        XCTAssertNotNil(channel)
+        XCTAssertNil(channel?.membership)
+        
+        // Setup channel list observer
+        let channelListObserver = TestChannelListObserver(database: database)
+        
+        // Simulate `NotificationAddedToChannelEvent` event.
+        let forwardedEvent = middleware.handle(event: event, session: database.viewContext)
+        
+        // Assert membership is not nil
+        XCTAssertNotNil(channel)
+        XCTAssertNotNil(channel?.membership)
+        
+        // Assert event is forwarded.
+        XCTAssertTrue(forwardedEvent is NotificationInviteRejectedEventDTO)
+        // Assert channel update is observed.
+        AssertAsync.willBeEqual(
+            channelListObserver.observedChanges,
+            [.update(cid, index: .init(item: 0, section: 0))]
+        )
     }
 }
 
