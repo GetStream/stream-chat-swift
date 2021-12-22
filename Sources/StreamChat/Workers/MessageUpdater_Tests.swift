@@ -68,35 +68,47 @@ final class MessageUpdater_Tests: XCTestCase {
             (.pendingSync, .pendingSync),
             (.pendingSend, .pendingSend)
         ]
-        
+
         for (initialState, expectedState) in pairs {
             let currentUserId: UserId = .unique
             let messageId: MessageId = .unique
             let updatedText: String = .unique
-            
+
             // Flush the database
             try database.removeAllData()
-            
+
             // Create current user is the database
             try database.createCurrentUser(id: currentUserId)
-            
+
             // Create a new message in the database
             try database.createMessage(id: messageId, authorId: currentUserId, localState: initialState)
-            
+
+            // Load the message
+            let message = try XCTUnwrap(database.viewContext.message(id: messageId))
+
+            // Create a new message quoting the message that will be edited
+            let quotingMessageId = MessageId.unique
+            try database.createMessage(id: quotingMessageId, authorId: currentUserId, quotedMessageId: messageId)
+
             // Edit created message with new text
             let completionError = try waitFor {
                 messageUpdater.editMessage(messageId: messageId, text: updatedText, completion: $0)
             }
-            
-            // Load the message
-            let message = try XCTUnwrap(database.viewContext.message(id: messageId))
-            
+
+            // Load the edited message
+            let editedMessage = try XCTUnwrap(database.viewContext.message(id: messageId))
+
+            // Load the message quoting the edited message
+            let quotingMessage = try XCTUnwrap(database.viewContext.message(id: quotingMessageId))
+
             // Assert completion is called without any error
             XCTAssertNil(completionError)
             // Assert message still has expected local state
             XCTAssertEqual(message.localMessageState, expectedState)
             // Assert message text is updated correctly
             XCTAssertEqual(message.text, updatedText)
+            // The quoting message should have the same updatedAt so that it triggers a DB Update
+            XCTAssertEqual(editedMessage.updatedAt, quotingMessage.updatedAt)
         }
     }
     

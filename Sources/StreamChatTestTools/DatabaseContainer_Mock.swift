@@ -221,7 +221,8 @@ extension DatabaseContainer {
         reactionCounts: [MessageReactionType: Int] = [:],
         localState: LocalMessageState? = nil,
         type: MessageType? = nil,
-        numberOfReplies: Int = 0
+        numberOfReplies: Int = 0,
+        quotedMessageId: MessageId? = nil
     ) throws {
         try writeSynchronously { session in
             let channelDTO = try session.saveChannel(payload: XCTestCase().dummyPayload(with: cid))
