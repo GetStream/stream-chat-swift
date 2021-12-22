@@ -327,4 +327,47 @@ class DatabaseSession_Tests: XCTestCase {
         // Assert `lastReceivedEventDate` is nil
         XCTAssertNil(currentUser?.lastReceivedEventDate)
     }
+
+    func test_saveEvent_whenMessageUpdated_shouldUpdateMessagesQuotingTheUpdatedMessage() throws {
+        let userId: UserId = .unique
+        let channelId: ChannelId = .unique
+        let messageId: MessageId = .unique
+        let quotingMessageId: MessageId = .unique
+
+        // Create current user in the DB
+        try database.createCurrentUser(id: userId)
+
+        // Create channel in the DB
+        try database.createChannel(cid: channelId)
+
+        // Save the message to the DB
+        try database.createMessage(id: messageId, authorId: userId, cid: channelId)
+
+        // Save the message that is quoting the other message
+        try database.createMessage(id: quotingMessageId, authorId: userId, cid: channelId, quotedMessageId: messageId)
+
+        let eventPayload = EventPayload(
+            eventType: .messageUpdated,
+            connectionId: .unique,
+            cid: channelId,
+            currentUser: .dummy(
+                userId: userId,
+                role: .user,
+                unreadCount: nil
+            ),
+            message: .dummy(messageId: messageId, authorUserId: userId),
+            unreadCount: .dummy,
+            createdAt: nil
+        )
+
+        try database.writeSynchronously { session in
+            try session.saveEvent(payload: eventPayload)
+        }
+
+        let message = try XCTUnwrap(database.viewContext.message(id: messageId))
+        let quotingMessage = try XCTUnwrap(database.viewContext.message(id: quotingMessageId))
+
+        // We set the same updateAt to to both messages, to trigger a DB update
+        XCTAssertEqual(message.updatedAt, quotingMessage.updatedAt)
+    }
 }

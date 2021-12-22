@@ -400,11 +400,19 @@ extension DatabaseSession {
             return
         }
         
-        try saveMessage(
+        let savedMessage = try saveMessage(
             payload: messagePayload,
             channelDTO: channelDTO,
             syncOwnReactions: false
         )
+
+        // When a message is updated, make sure to update
+        // the messages quoting the edited message by triggering a DB Update.
+        if payload.eventType == .messageUpdated {
+            savedMessage.quotedBy.forEach { message in
+                message.updatedAt = savedMessage.updatedAt
+            }
+        }
     }
 }
 

@@ -230,6 +230,7 @@ extension DatabaseContainer {
             let message: MessagePayload = .dummy(
                 type: type,
                 messageId: id,
+                quotedMessageId: quotedMessageId,
                 attachments: attachments,
                 authorUserId: authorId,
                 text: text,
