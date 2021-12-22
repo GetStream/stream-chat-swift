@@ -209,7 +209,7 @@ extension DatabaseContainer {
         authorId: UserId = .unique,
         cid: ChannelId = .unique,
         text: String = .unique,
-        extraData: [String : RawJSON] = [:],
+        extraData: [String: RawJSON] = [:],
         pinned: Bool = false,
         pinnedByUserId: UserId? = nil,
         pinnedAt: Date? = nil,

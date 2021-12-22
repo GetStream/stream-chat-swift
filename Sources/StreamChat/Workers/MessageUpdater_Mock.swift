@@ -159,10 +159,12 @@ final class MessageUpdaterMock: MessageUpdater {
         deleteMessage_completion = completion
     }
 
-    override func editMessage(messageId: MessageId,
-                              text: String,
-                              extraData: [String : RawJSON]? = nil,
-                              completion: ((Error?) -> Void)? = nil) {
+    override func editMessage(
+        messageId: MessageId,
+        text: String,
+        extraData: [String: RawJSON]? = nil,
+        completion: ((Error?) -> Void)? = nil
+    ) {
         editMessage_messageId = messageId
         editMessage_text = text
         editMessage_extraData = extraData
