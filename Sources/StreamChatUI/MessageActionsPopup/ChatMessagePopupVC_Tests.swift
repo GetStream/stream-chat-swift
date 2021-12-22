@@ -141,11 +141,11 @@ final class ChatMessagePopupVC_Tests: XCTestCase {
 
     func test_reactions_whenReactionsCountMoreThan4_shouldHaveBiggerWidth() {
         let mockReactions: [ChatMessageReaction] = [
-            .mock(),
-            .mock(),
-            .mock(),
-            .mock(),
-            .mock()
+            .mock(type: "like"),
+            .mock(type: "sad"),
+            .mock(type: "wow"),
+            .mock(type: "haha"),
+            .mock(type: "love")
         ]
         vc = makePopupVC(withReactions: mockReactions)
 
@@ -154,8 +154,8 @@ final class ChatMessagePopupVC_Tests: XCTestCase {
 
     func test_reactions_whenReactionsCountLessThan4_shouldHaveSmallerWidth() {
         let mockReactions: [ChatMessageReaction] = [
-            .mock(),
-            .mock()
+            .mock(type: "like"),
+            .mock(type: "sad")
         ]
         vc = makePopupVC(withReactions: mockReactions)
 
@@ -164,10 +164,10 @@ final class ChatMessagePopupVC_Tests: XCTestCase {
 
     func test_reactions_whenReactionsCountEqual4_shouldOnlyHaveSmallerHeight() {
         let mockReactions: [ChatMessageReaction] = [
-            .mock(),
-            .mock(),
-            .mock(),
-            .mock()
+            .mock(type: "like"),
+            .mock(type: "sad"),
+            .mock(type: "wow"),
+            .mock(type: "love")
         ]
         vc = makePopupVC(withReactions: mockReactions)
 

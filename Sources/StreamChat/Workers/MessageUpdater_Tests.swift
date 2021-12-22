@@ -1093,7 +1093,7 @@ final class MessageUpdater_Tests: XCTestCase {
             return
         }
 
-        XCTAssertEqual(reactionReloaded.localState, nil)
+        XCTAssertEqual(reactionReloaded.localState, .unknown)
     }
 
     // MARK: - Pinning message

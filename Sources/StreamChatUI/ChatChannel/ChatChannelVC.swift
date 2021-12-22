@@ -64,7 +64,7 @@ open class ChatChannelVC:
         messageListVC.listView.isLastCellFullyVisible
     }
 
-    private var loadingPreviousMessages: Bool = false
+    private var isLoadingPreviousMessages: Bool = false
 
     override open func setUp() {
         super.setUp()
@@ -168,18 +168,22 @@ open class ChatChannelVC:
             return
         }
 
+        guard messageListVC.listView.isTrackingOrDecelerating else {
+            return
+        }
+
         if indexPath.row < channelController.messages.count - 10 {
             return
         }
 
-        guard !loadingPreviousMessages else {
+        guard !isLoadingPreviousMessages else {
             return
         }
-        loadingPreviousMessages = true
+        isLoadingPreviousMessages = true
 
-        channelController.loadPreviousMessages(completion: { [weak self] _ in
-            self?.loadingPreviousMessages = false
-        })
+        channelController.loadPreviousMessages { [weak self] _ in
+            self?.isLoadingPreviousMessages = false
+        }
     }
 
     open func chatMessageListVC(
