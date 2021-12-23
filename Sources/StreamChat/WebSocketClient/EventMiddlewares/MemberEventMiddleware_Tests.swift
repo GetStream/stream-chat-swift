@@ -104,6 +104,54 @@ final class MemberEventMiddleware_Tests: XCTestCase {
         )
     }
     
+    func test_memberAddedEvent_linksNewMember_toMemberListQueries() throws {
+        let cid = ChannelId.unique
+        let newMemberId = UserId.unique
+        
+        // Create MemberAddedEventDTO payload
+        let eventPayload: EventPayload = .init(
+            eventType: .memberAdded,
+            cid: cid,
+            user: .dummy(userId: newMemberId),
+            memberContainer: .dummy(userId: newMemberId),
+            createdAt: .unique
+        )
+        
+        // Create event with payload.
+        let event = try MemberAddedEventDTO(from: eventPayload)
+        
+        // Create query
+        let memberListQuery = ChannelMemberListQuery(cid: cid)
+        let channelPayload = dummyPayload(with: cid, numberOfMessages: 0, includeMembership: false)
+        let existingMember = try XCTUnwrap(channelPayload.members.first)
+        
+        // Create channel and MemberListQuery in the database.
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: channelPayload)
+            try session.saveMember(payload: existingMember, channelId: cid, query: memberListQuery)
+        }
+        
+        // Load the channel
+        var channel: ChatChannel? {
+            database.viewContext.channel(cid: cid)?.asModel()
+        }
+        
+        // Load the MemberListQueryDTO
+        var memberListQueryDTO: ChannelMemberListQueryDTO? {
+            database.viewContext.channelMemberListQuery(queryHash: memberListQuery.queryHash)
+        }
+        
+        // Assert that there's only 1 member linked to the query
+        XCTAssertEqual(memberListQueryDTO?.members.map(\.user.id), [existingMember.user.id])
+        
+        // Simulate `MemberAddedEventDTO` event.
+        _ = middleware.handle(event: event, session: database.viewContext)
+        
+        // Assert the new member is linked to the query
+        XCTAssertEqual(memberListQueryDTO?.members.count, 2)
+        XCTAssertEqual(memberListQueryDTO?.members.map(\.user.id).sorted(), [existingMember.user.id, newMemberId].sorted())
+    }
+    
     // MARK: - MemberRemovedEvent
     
     func tests_middleware_forwardsMemberRemovedEvent_ifDatabaseWriteGeneratesError() throws {
@@ -332,6 +380,54 @@ final class MemberEventMiddleware_Tests: XCTestCase {
         )
     }
     
+    func test_notificationAddedToChannelEvent_linksNewMember_toMemberListQueries() throws {
+        let cid = ChannelId.unique
+        let newMemberId = UserId.unique
+        
+        // Create NotificationAddedToChannelEvent payload
+        let eventPayload: EventPayload = .init(
+            eventType: .notificationAddedToChannel,
+            cid: cid,
+            memberContainer: .dummy(userId: newMemberId),
+            channel: .dummy(cid: cid),
+            createdAt: .unique
+        )
+        
+        // Create event with payload.
+        let event = try NotificationAddedToChannelEventDTO(from: eventPayload)
+        
+        // Create query
+        let memberListQuery = ChannelMemberListQuery(cid: cid)
+        let channelPayload = dummyPayload(with: cid, numberOfMessages: 0, includeMembership: false)
+        let existingMember = try XCTUnwrap(channelPayload.members.first)
+        
+        // Create channel and MemberListQuery in the database.
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: channelPayload)
+            try session.saveMember(payload: existingMember, channelId: cid, query: memberListQuery)
+        }
+        
+        // Load the channel
+        var channel: ChatChannel? {
+            database.viewContext.channel(cid: cid)?.asModel()
+        }
+        
+        // Load the MemberListQueryDTO
+        var memberListQueryDTO: ChannelMemberListQueryDTO? {
+            database.viewContext.channelMemberListQuery(queryHash: memberListQuery.queryHash)
+        }
+        
+        // Assert that there's only 1 member linked to the query
+        XCTAssertEqual(memberListQueryDTO?.members.map(\.user.id), [existingMember.user.id])
+        
+        // Simulate `NotificationAddedToChannelEvent` event.
+        _ = middleware.handle(event: event, session: database.viewContext)
+        
+        // Assert the new member is linked to the query
+        XCTAssertEqual(memberListQueryDTO?.members.count, 2)
+        XCTAssertEqual(memberListQueryDTO?.members.map(\.user.id).sorted(), [existingMember.user.id, newMemberId].sorted())
+    }
+    
     // MARK: - NotificationRemovedFromChannelEvent
     
     func tests_middleware_handlesNotificationRemovedFromChannelEventCorrectly() throws {
@@ -423,6 +519,54 @@ final class MemberEventMiddleware_Tests: XCTestCase {
             channelListObserver.observedChanges,
             [.update(cid, index: .init(item: 0, section: 0))]
         )
+    }
+    
+    func test_notificationInvitedEvent_linksNewMember_toMemberListQueries() throws {
+        let cid = ChannelId.unique
+        let newMemberId = UserId.unique
+        
+        // Create NotificationInvitedEvent payload
+        let eventPayload: EventPayload = .init(
+            eventType: .memberAdded,
+            cid: cid,
+            user: .dummy(userId: newMemberId),
+            memberContainer: .dummy(userId: newMemberId),
+            createdAt: .unique
+        )
+        
+        // Create event with payload.
+        let event = try NotificationInvitedEventDTO(from: eventPayload)
+        
+        // Create query
+        let memberListQuery = ChannelMemberListQuery(cid: cid)
+        let channelPayload = dummyPayload(with: cid, numberOfMessages: 0, includeMembership: false)
+        let existingMember = try XCTUnwrap(channelPayload.members.first)
+        
+        // Create channel and MemberListQuery in the database.
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: channelPayload)
+            try session.saveMember(payload: existingMember, channelId: cid, query: memberListQuery)
+        }
+        
+        // Load the channel
+        var channel: ChatChannel? {
+            database.viewContext.channel(cid: cid)?.asModel()
+        }
+        
+        // Load the MemberListQueryDTO
+        var memberListQueryDTO: ChannelMemberListQueryDTO? {
+            database.viewContext.channelMemberListQuery(queryHash: memberListQuery.queryHash)
+        }
+        
+        // Assert that there's only 1 member linked to the query
+        XCTAssertEqual(memberListQueryDTO?.members.map(\.user.id), [existingMember.user.id])
+        
+        // Simulate `NotificationInvitedEventDTO` event.
+        _ = middleware.handle(event: event, session: database.viewContext)
+        
+        // Assert the new member is linked to the query
+        XCTAssertEqual(memberListQueryDTO?.members.count, 2)
+        XCTAssertEqual(memberListQueryDTO?.members.map(\.user.id).sorted(), [existingMember.user.id, newMemberId].sorted())
     }
     
     // MARK: - NotificationInviteAcceptedEvent
