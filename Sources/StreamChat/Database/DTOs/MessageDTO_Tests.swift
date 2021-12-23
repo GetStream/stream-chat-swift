@@ -1310,7 +1310,6 @@ class MessageDTO_Tests: XCTestCase {
             }
         }
 
-
         let request = NSFetchRequest<MessageDTO>(entityName: MessageDTO.entityName)
         request.sortDescriptors = [NSSortDescriptor(keyPath: \MessageDTO.defaultSortingKey, ascending: true)]
         request.predicate = MessageDTO.channelMessagesPredicate(
@@ -1323,7 +1322,7 @@ class MessageDTO_Tests: XCTestCase {
         do {
             retrievedMessages = try database.viewContext.fetch(request)
         } catch {
-            XCTFail()
+            XCTFail("Failed to retrieve messages")
         }
 
         XCTAssertEqual(retrievedMessages.count, 2)
