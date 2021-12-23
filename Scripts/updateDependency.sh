@@ -27,6 +27,8 @@ elif [[ $dependency_directory == *"SwiftyGif"* ]]; then
 	dependency_url="git@github.com:kirualex/SwiftyGif.git"
 elif [[ $dependency_directory == *"Starscream"* ]]; then
 	dependency_url="git@github.com:daltoniam/Starscream.git"
+elif [[ $dependency_directory == *"ULID"* ]]; then
+        dependency_url="git@github.com:yaslab/ULID.swift.git"
 else
 	echo "→ Unknown dependency at $dependency_directory"
 	exit 1

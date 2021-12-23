@@ -4,7 +4,7 @@ set -euo pipefail
 echo -e "👉 Running SwiftFormat Linting"
 
 echo -e "👉 Linting Sources..."
-mint run swiftformat --lint --config .swiftformat Sources --exclude **/Generated,Sources/StreamChat/StreamStarscream,Sources/StreamChatUI/StreamNuke,Sources/StreamChatUI/StreamSwiftyGif
+mint run swiftformat --lint --config .swiftformat Sources --exclude **/Generated,Sources/StreamChat/StreamStarscream,Sources/StreamChat/StreamULID,Sources/StreamChatUI/StreamNuke,Sources/StreamChatUI/StreamSwiftyGif
 echo -e "👉 Linting Tests..."
 mint run swiftformat --lint --config .swiftformat Tests
 echo -e "👉 Linting Sample..."
