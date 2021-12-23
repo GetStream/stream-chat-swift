@@ -1232,4 +1232,102 @@ class MessageDTO_Tests: XCTestCase {
         // The third message also quotes the first message
         XCTAssertEqual(loadedMessages[2].quotedMessage?.id, createdMessages[1].id)
     }
+
+    func test_channelMessagesPredicate_shouldNotReturnDeletedReplies() throws {
+        // We check that deleted thread replies are not shown in the channel
+        // When a reply message is deleted, its type changes from "reply" into "deleted"
+        // Therefore we use its `parent_message_id` to know if it was a reply
+
+        let channelId: ChannelId = .unique
+        let channel = ChannelDetailPayload.dummy(cid: channelId)
+        let authorId: UserId = .unique
+        let messageId: MessageId = .unique
+        let existingReplyNotInChannelId: MessageId = .unique
+        let existingReplyInChannelId: MessageId = .unique
+        let deletedReplyNotInChannelId: MessageId = .unique
+        let deletedReplyInChannelId: MessageId = .unique
+
+        let message: MessagePayload = .dummy(
+            type: .regular,
+            messageId: messageId,
+            parentId: nil,
+            attachments: [],
+            authorUserId: authorId,
+            createdAt: Date(timeIntervalSince1970: 1),
+            channel: channel
+        )
+
+        let existingReplyNotInChannel: MessagePayload = .dummy(
+            type: .reply,
+            messageId: existingReplyNotInChannelId,
+            parentId: messageId,
+            showReplyInChannel: false,
+            attachments: [],
+            authorUserId: authorId,
+            createdAt: Date(timeIntervalSince1970: 2),
+            channel: channel
+        )
+
+        let existingReplyInChannel: MessagePayload = .dummy(
+            type: .reply,
+            messageId: existingReplyInChannelId,
+            parentId: messageId,
+            showReplyInChannel: true,
+            attachments: [],
+            authorUserId: authorId,
+            createdAt: Date(timeIntervalSince1970: 3),
+            channel: channel
+        )
+
+        let deletedReplyNotInChannel: MessagePayload = .dummy(
+            type: .deleted,
+            messageId: deletedReplyNotInChannelId,
+            parentId: messageId,
+            showReplyInChannel: false,
+            attachments: [],
+            authorUserId: authorId,
+            createdAt: Date(timeIntervalSince1970: 4),
+            channel: channel
+        )
+
+        let deletedReplyInChannel: MessagePayload = .dummy(
+            type: .deleted,
+            messageId: deletedReplyInChannelId,
+            parentId: messageId,
+            showReplyInChannel: true,
+            attachments: [],
+            authorUserId: authorId,
+            createdAt: Date(timeIntervalSince1970: 5),
+            channel: channel
+        )
+
+        let messages = [message, existingReplyNotInChannel, existingReplyInChannel, deletedReplyNotInChannel, deletedReplyInChannel]
+
+        try messages.forEach { messagePayload in
+            try database.writeSynchronously { session in
+                // Save the message
+                try session.saveMessage(payload: messagePayload, for: channelId, syncOwnReactions: true)
+            }
+        }
+
+
+        let request = NSFetchRequest<MessageDTO>(entityName: MessageDTO.entityName)
+        request.sortDescriptors = [NSSortDescriptor(keyPath: \MessageDTO.defaultSortingKey, ascending: true)]
+        request.predicate = MessageDTO.channelMessagesPredicate(
+            for: channelId.rawValue,
+            deletedMessagesVisibility: .visibleForCurrentUser,
+            shouldShowShadowedMessages: false
+        )
+
+        var retrievedMessages: [MessageDTO] = []
+        do {
+            retrievedMessages = try database.viewContext.fetch(request)
+        } catch {
+            XCTFail()
+        }
+
+        XCTAssertEqual(retrievedMessages.count, 2)
+        XCTAssertEqual(retrievedMessages.first?.id, messageId)
+        XCTAssertEqual(retrievedMessages.last?.id, existingReplyInChannelId)
+    }
 }
