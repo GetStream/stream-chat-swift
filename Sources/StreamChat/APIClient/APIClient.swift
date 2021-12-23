@@ -31,7 +31,7 @@ class APIClient {
     let decoder: RequestDecoder
     
     /// Used for reobtaining tokens when they expire and API client receives token expiration error
-    let tokenRefresher: (ClientError, @escaping () -> Void) -> Void
+    let tokenRefresher: (@escaping () -> Void) -> Void
     
     let cdnClient: CDNClient
 
@@ -64,7 +64,7 @@ class APIClient {
         requestEncoder: RequestEncoder,
         requestDecoder: RequestDecoder,
         CDNClient: CDNClient,
-        tokenRefresher: @escaping (ClientError, @escaping () -> Void) -> Void
+        tokenRefresher: @escaping (@escaping () -> Void) -> Void
     ) {
         encoder = requestEncoder
         decoder = requestDecoder
@@ -237,7 +237,7 @@ class APIClient {
                 $0.failureAction()
             }
             
-            self.tokenRefresher(ClientError.ExpiredToken()) { [weak self] in
+            self.tokenRefresher() { [weak self] in
                 guard let self = self else {
                     return
                 }

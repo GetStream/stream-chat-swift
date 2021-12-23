@@ -35,8 +35,8 @@ public class ChatClient {
     /// Builder blocks used for creating `backgroundWorker`s when needed.
     private let workerBuilders: [WorkerBuilder]
     
-    /// Builder blocks used for creating `backgroundWorker`s dealing with events when needed.
-    private let eventWorkerBuilders: [EventWorkerBuilder]
+    /// Background worker that takes care about client connection recovery when the Internet comes back OR app transitions from background to foreground.
+    private(set) var connectionRecoveryHandler: ConnectionRecoveryHandler?
 
     /// The notification center used to send and receive notifications about incoming events.
     private(set) lazy var eventNotificationCenter: EventNotificationCenter = {
@@ -79,12 +79,14 @@ public class ChatClient {
                 decoder: decoder,
                 sessionConfiguration: urlSessionConfiguration
             ),
-            { [weak self] error, completion in
+            { [weak self] completion in
                 guard let self = self else {
                     completion()
                     return
                 }
-                self.refreshToken(error: error, completion: { _ in completion() })
+                self.refreshToken(
+                    completion: { _ in completion() }
+                )
             }
         )
         return apiClient
@@ -100,8 +102,7 @@ public class ChatClient {
             urlSessionConfiguration,
             encoder,
             EventDecoder(),
-            eventNotificationCenter,
-            internetConnection
+            eventNotificationCenter
         )
 
         if let currentUserId = currentUserId {
@@ -162,18 +163,14 @@ public class ChatClient {
         }
     }()
     
-    private(set) lazy var internetConnection = environment.internetConnection(eventNotificationCenter)
     private(set) lazy var clientUpdater = environment.clientUpdaterBuilder(self)
     private(set) var userConnectionProvider: UserConnectionProvider?
-    
-    /// Used for starting and ending background tasks. Hides platform specific logic.
-    private lazy var backgroundTaskScheduler = environment.backgroundTaskSchedulerBuilder()
     
     /// The environment object containing all dependencies of this `Client` instance.
     private let environment: Environment
     
     /// Retry timing strategy for refreshing an expiried token
-    private var tokenExpirationRetryStrategy: WebSocketClientReconnectionStrategy
+    private lazy var tokenExpirationRetryStrategy = environment.tokenExpirationRetryStrategy
     
     /// A timer that runs token refreshing job
     private var tokenRetryTimer: TimerControl?
@@ -235,7 +232,6 @@ public class ChatClient {
         tokenProvider: TokenProvider? = nil
     ) {
         let workerBuilders: [WorkerBuilder]
-        let eventWorkerBuilders: [EventWorkerBuilder]
         var environment = Environment()
         
         if config.isClientInActiveMode {
@@ -246,21 +242,8 @@ public class ChatClient {
                 MessageEditor.init,
                 AttachmentUploader.init
             ]
-            
-            // All production event workers
-            eventWorkerBuilders = [
-                {
-                    ConnectionRecoveryUpdater(
-                        database: $0,
-                        eventNotificationCenter: $1,
-                        apiClient: $2,
-                        useSyncEndpoint: config.isLocalStorageEnabled
-                    )
-                }
-            ]
         } else {
             workerBuilders = []
-            eventWorkerBuilders = []
             environment.webSocketClientBuilder = nil
         }
         
@@ -268,7 +251,6 @@ public class ChatClient {
             config: config,
             tokenProvider: tokenProvider,
             workerBuilders: workerBuilders,
-            eventWorkerBuilders: eventWorkerBuilders,
             environment: environment
         )
     }
@@ -285,16 +267,12 @@ public class ChatClient {
         config: ChatClientConfig,
         tokenProvider: TokenProvider? = nil,
         workerBuilders: [WorkerBuilder],
-        eventWorkerBuilders: [EventWorkerBuilder],
-        environment: Environment,
-        tokenExpirationRetryStrategy: WebSocketClientReconnectionStrategy = DefaultReconnectionStrategy()
+        environment: Environment
     ) {
         self.config = config
         self.tokenProvider = tokenProvider
         self.environment = environment
         self.workerBuilders = workerBuilders
-        self.eventWorkerBuilders = eventWorkerBuilders
-        self.tokenExpirationRetryStrategy = tokenExpirationRetryStrategy
 
         currentUserId = fetchCurrentUserIdFromDatabase()
     }
@@ -357,7 +335,6 @@ public class ChatClient {
     public func disconnect() {
         clientUpdater.disconnect()
         userConnectionProvider = nil
-        unsubscribeFromNotifications()
         apiClient.flushRequestsQueue()
     }
 
@@ -379,8 +356,16 @@ public class ChatClient {
     func createBackgroundWorkers() {
         backgroundWorkers = workerBuilders.map { builder in
             builder(self.databaseContainer, self.apiClient)
-        } + eventWorkerBuilders.map { builder in
-            builder(self.databaseContainer, self.eventNotificationCenter, self.apiClient)
+        }
+        
+        if let webSocketClient = webSocketClient {
+            connectionRecoveryHandler = environment.connectionRecoveryHandlerBuilder(
+                webSocketClient,
+                eventNotificationCenter,
+                environment.backgroundTaskSchedulerBuilder(),
+                environment.internetConnection(eventNotificationCenter),
+                config.staysConnectedInBackground
+            )
         }
     }
 
@@ -406,96 +391,9 @@ public class ChatClient {
         self.userConnectionProvider = userConnectionProvider
         clientUpdater.reloadUserIfNeeded(
             userInfo: userInfo,
-            userConnectionProvider: userConnectionProvider
-        ) { [weak self] error in
-            if error == nil {
-                self?.subscribeOnNotifications()
-            }
-            completion?(error)
-        }
-    }
-    
-    private func subscribeOnNotifications() {
-        backgroundTaskScheduler?.startListeningForAppStateUpdates(
-            onEnteringBackground: { [weak self] in self?.handleAppDidEnterBackground() },
-            onEnteringForeground: { [weak self] in self?.handleAppDidBecomeActive() }
+            userConnectionProvider: userConnectionProvider,
+            completion: completion
         )
-        
-        eventNotificationCenter.addObserver(
-            self,
-            selector: #selector(didChangeInternetConnectionStatus(_:)),
-            name: .internetConnectionStatusDidChange,
-            object: nil
-        )
-    }
-    
-    private func unsubscribeFromNotifications() {
-        backgroundTaskScheduler?.stopListeningForAppStateUpdates()
-        eventNotificationCenter.removeObserver(
-            self,
-            name: .internetConnectionStatusDidChange,
-            object: nil
-        )
-    }
-    
-    private func handleAppDidEnterBackground() {
-        // We can't disconnect if we're not connected
-        guard connectionStatus == .connected else { return }
-        
-        guard config.staysConnectedInBackground else {
-            // We immediately disconnect
-            clientUpdater.disconnect(source: .systemInitiated)
-            return
-        }
-        guard let scheduler = backgroundTaskScheduler else { return }
-        
-        let succeed = scheduler.beginTask { [weak self] in
-            self?.clientUpdater.disconnect(source: .systemInitiated)
-        }
-        
-        if !succeed {
-            // Can't initiate a background task, close the connection
-            clientUpdater.disconnect(source: .systemInitiated)
-        }
-    }
-    
-    private func handleAppDidBecomeActive() {
-        cancelBackgroundTaskIfNeeded()
-        reconnectIfNeeded()
-    }
-    
-    private func cancelBackgroundTaskIfNeeded() {
-        backgroundTaskScheduler?.endTask()
-    }
-    
-    private func reconnectIfNeeded() {
-        guard userConnectionProvider != nil else {
-            // The client has not been connected yet during this session
-            return
-        }
-        
-        guard connectionStatus != .connected && connectionStatus != .connecting else {
-            // We are connected or connecting anyway
-            return
-        }
-        
-        guard internetConnection.status.isAvailable else {
-            // We are offline. Once the connection comes back we will try to reconnect again
-            return
-        }
-        
-        clientUpdater.connect()
-    }
-
-    @objc private func didChangeInternetConnectionStatus(_ notification: Notification) {
-        switch (connectionStatus, notification.internetConnectionStatus?.isAvailable) {
-        case (.connected, false):
-            clientUpdater.disconnect(source: .systemInitiated)
-        case (.disconnected, true):
-            reconnectIfNeeded()
-        default:
-            return
-        }
     }
 }
 
@@ -507,7 +405,7 @@ extension ChatClient {
             _ requestEncoder: RequestEncoder,
             _ requestDecoder: RequestDecoder,
             _ CDNClient: CDNClient,
-            _ tokenRefresher: @escaping (ClientError, @escaping () -> Void) -> Void
+            _ tokenRefresher: @escaping (@escaping () -> Void) -> Void
         ) -> APIClient = {
             APIClient(
                 sessionConfiguration: $0,
@@ -522,15 +420,13 @@ extension ChatClient {
             _ sessionConfiguration: URLSessionConfiguration,
             _ requestEncoder: RequestEncoder,
             _ eventDecoder: AnyEventDecoder,
-            _ notificationCenter: EventNotificationCenter,
-            _ internetConnection: InternetConnection
+            _ notificationCenter: EventNotificationCenter
         ) -> WebSocketClient)? = {
             WebSocketClient(
                 sessionConfiguration: $0,
                 requestEncoder: $1,
                 eventDecoder: $2,
-                eventNotificationCenter: $3,
-                internetConnection: $4
+                eventNotificationCenter: $3
             )
         }
         
@@ -580,6 +476,26 @@ extension ChatClient {
         }
         
         var timerType: Timer.Type = DefaultTimer.self
+        
+        var tokenExpirationRetryStrategy: RetryStrategy = DefaultRetryStrategy()
+        
+        var connectionRecoveryHandlerBuilder: (
+            _ webSocketClient: WebSocketClient,
+            _ eventNotificationCenter: EventNotificationCenter,
+            _ backgroundTaskScheduler: BackgroundTaskScheduler?,
+            _ internetConnection: InternetConnection,
+            _ keepConnectionAliveInBackground: Bool
+        ) -> ConnectionRecoveryHandler = {
+            DefaultConnectionRecoveryHandler(
+                webSocketClient: $0,
+                eventNotificationCenter: $1,
+                backgroundTaskScheduler: $2,
+                internetConnection: $3,
+                reconnectionStrategy: DefaultRetryStrategy(),
+                reconnectionTimerType: DefaultTimer.self,
+                keepConnectionAliveInBackground: $4
+            )
+        }
     }
 }
 
@@ -627,6 +543,8 @@ extension ChatClient: ConnectionStateDelegate {
     func webSocketClient(_ client: WebSocketClient, didUpdateConnectionState state: WebSocketConnectionState) {
         connectionStatus = .init(webSocketConnectionState: state)
         
+        connectionRecoveryHandler?.webSocketClient(client, didUpdateConnectionState: state)
+        
         // We should notify waiters if connectionId was obtained (i.e. state is .connected)
         // or for .disconnected state except for disconnect caused by an expired token
         let shouldNotifyConnectionIdWaiters: Bool
@@ -637,8 +555,8 @@ extension ChatClient: ConnectionStateDelegate {
             connectionId = id
         case let .disconnected(source):
             if let error = source.serverError,
-               error.isTokenExpiredError {
-                refreshToken(error: error, completion: nil)
+               error.isInvalidTokenError {
+                refreshToken(completion: nil)
                 shouldNotifyConnectionIdWaiters = false
             } else {
                 shouldNotifyConnectionIdWaiters = true
@@ -647,8 +565,7 @@ extension ChatClient: ConnectionStateDelegate {
         case .initialized,
              .connecting,
              .disconnecting,
-             .waitingForConnectionId,
-             .waitingForReconnect:
+             .waitingForConnectionId:
             shouldNotifyConnectionIdWaiters = false
             connectionId = nil
         }
@@ -660,7 +577,6 @@ extension ChatClient: ConnectionStateDelegate {
     }
     
     private func refreshToken(
-        error: ClientError,
         completion: ((Error?) -> Void)?
     ) {
         guard let tokenProvider = tokenProvider else {
@@ -669,9 +585,8 @@ extension ChatClient: ConnectionStateDelegate {
             )
         }
         
-        guard let reconnectionDelay = tokenExpirationRetryStrategy.reconnectionDelay(
-            forConnectionError: error
-        ) else { return }
+        let reconnectionDelay = tokenExpirationRetryStrategy.getDelayAfterTheFailure()
+        
         tokenRetryTimer = environment
             .timerType
             .schedule(
@@ -682,7 +597,7 @@ extension ChatClient: ConnectionStateDelegate {
                     userConnectionProvider: .closure { _, completion in
                         tokenProvider() { result in
                             if case .success = result {
-                                self.tokenExpirationRetryStrategy.successfullyConnected()
+                                self.tokenExpirationRetryStrategy.resetConsecutiveFailures()
                             }
                             completion(result)
                         }
@@ -713,16 +628,6 @@ extension ChatClient: ConnectionStateDelegate {
         if shouldNotifyWaiters {
             connectionIdWaiters.forEach { $0(connectionId) }
         }
-    }
-}
-
-private extension ClientError {
-    var isTokenExpiredError: Bool {
-        if let error = underlyingError as? ErrorPayload,
-           ErrorPayload.tokenInvadlidErrorCodes ~= error.code {
-            return true
-        }
-        return false
     }
 }
 

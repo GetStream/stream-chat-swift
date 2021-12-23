@@ -48,17 +48,6 @@ class ChatClient_Tests: XCTestCase {
         NewUserQueryUpdater.init
     ]
     
-    var eventWorkerBuilders: [EventWorkerBuilder] = [
-        {
-            ConnectionRecoveryUpdater(
-                database: $0,
-                eventNotificationCenter: $1,
-                apiClient: $2,
-                useSyncEndpoint: false
-            )
-        }
-    ]
-    
     var expectedIdentifier: String {
         #if canImport(StreamChatSwiftUI)
         "swiftui"
@@ -111,7 +100,6 @@ class ChatClient_Tests: XCTestCase {
         _ = ChatClient(
             config: config,
             workerBuilders: [Worker.init],
-            eventWorkerBuilders: [],
             environment: env
         )
 
@@ -145,7 +133,6 @@ class ChatClient_Tests: XCTestCase {
         _ = ChatClient(
             config: config,
             workerBuilders: [Worker.init],
-            eventWorkerBuilders: [],
             environment: env
         )
         
@@ -186,7 +173,6 @@ class ChatClient_Tests: XCTestCase {
         _ = ChatClient(
             config: config,
             workerBuilders: [Worker.init],
-            eventWorkerBuilders: [],
             environment: env
         )
         
@@ -194,72 +180,6 @@ class ChatClient_Tests: XCTestCase {
             usedDatabaseKinds,
             [.onDisk(databaseFileURL: storeFolderURL.appendingPathComponent(config.apiKey.apiKeyString)), .inMemory]
         )
-    }
-    
-    // MARK: - Internet connection
-    
-    func test_internetConnectionConfiguration() throws {
-        // Create a new chat client
-        let client = ChatClient(
-            config: inMemoryStorageConfig,
-            workerBuilders: workerBuilders,
-            eventWorkerBuilders: eventWorkerBuilders,
-            environment: testEnv.environment
-        )
-        
-        // Assert `client.eventNotificationCenter` is passed to internet connection
-        let internetConnection = client.internetConnection as! InternetConnectionMock
-        XCTAssertEqual(internetConnection.init_notificationCenter, client.eventNotificationCenter)
-    }
-    
-    func test_whenInternetConnectionDisappearsAndComesBack_clientReconnects() {
-        // Create a new chat client
-        let client = ChatClient(
-            config: inMemoryStorageConfig,
-            workerBuilders: workerBuilders,
-            eventWorkerBuilders: eventWorkerBuilders,
-            environment: testEnv.environment
-        )
-        
-        // Connect
-        client.connectAnonymousUser()
-    
-        // Simulate successful user reload
-        testEnv.clientUpdater?.reloadUserIfNeeded_completion!(nil)
-
-        // Simulate access to `webSocketClient` so it is initialized
-        _ = client.webSocketClient
-        
-        // Simulate .connected state to obtain connection id
-        let connectionId: ConnectionId = .unique
-        testEnv.webSocketClient?.connectionStateDelegate?
-            .webSocketClient(testEnv.webSocketClient!, didUpdateConnectionState: .connected(connectionId: connectionId))
-        
-        // Assert client is connected
-        XCTAssertEqual(client.connectionStatus, .connected)
-        XCTAssertEqual(client.connectionId, connectionId)
-        
-        // Simulate loosing the internet connection
-        testEnv.internetConnection?.monitorMock.status = .unavailable
-        
-        // Assert client starts disconnecting with `systemInitiated` source
-        AssertAsync {
-            Assert.willBeTrue(self.testEnv.clientUpdater!.disconnect_called)
-            Assert.willBeEqual(self.testEnv.clientUpdater!.disconnect_source, .systemInitiated)
-        }
-        
-        // Simulate disconnected state
-        testEnv.webSocketClient?.connectionStateDelegate?
-            .webSocketClient(testEnv.webSocketClient!, didUpdateConnectionState: .disconnected(source: .systemInitiated))
-        
-        // Assert client is disconnected
-        XCTAssertEqual(client.connectionStatus, .disconnected())
-        
-        // Simulate internet connection comming back
-        testEnv.internetConnection?.monitorMock.status = .available(.great)
-        
-        // Assert client starts connecting
-        AssertAsync.willBeTrue(testEnv.clientUpdater!.connect_called)
     }
     
     // MARK: - WebSocketClient tests
@@ -270,7 +190,6 @@ class ChatClient_Tests: XCTestCase {
         let client = ChatClient(
             config: inMemoryStorageConfig,
             workerBuilders: workerBuilders,
-            eventWorkerBuilders: eventWorkerBuilders,
             environment: testEnv.environment
         )
         
@@ -300,7 +219,6 @@ class ChatClient_Tests: XCTestCase {
         let client = ChatClient(
             config: inMemoryStorageConfig,
             workerBuilders: workerBuilders,
-            eventWorkerBuilders: [],
             environment: testEnv.environment
         )
 
@@ -358,7 +276,6 @@ class ChatClient_Tests: XCTestCase {
         let client = ChatClient(
             config: config,
             workerBuilders: [],
-            eventWorkerBuilders: [],
             environment: env
         )
         
@@ -390,7 +307,12 @@ class ChatClient_Tests: XCTestCase {
         XCTAssertTrue(connectCompletionCalled)
 
         // Simulate web-socket disconnection.
-        let error = ClientError(with: TestError())
+        let stopError = WebSocketEngineError(
+            reason: .unique,
+            code: WebSocketEngineError.stopErrorCode,
+            engineError: nil
+        )
+        let error = ClientError(with: stopError)
         client.webSocketClient?.simulateConnectionStatus(.disconnected(source: .serverInitiated(error: error)))
 
         // Assert the WSConnectionState is exposed as ChatClientConnectionStatus
@@ -404,7 +326,6 @@ class ChatClient_Tests: XCTestCase {
         let client = ChatClient(
             config: inMemoryStorageConfig,
             workerBuilders: workerBuilders,
-            eventWorkerBuilders: [],
             environment: testEnv.environment
         )
 
@@ -450,7 +371,6 @@ class ChatClient_Tests: XCTestCase {
         let client = ChatClient(
             config: inMemoryStorageConfig,
             workerBuilders: workerBuilders,
-            eventWorkerBuilders: [],
             environment: testEnv.environment
         )
         
@@ -489,7 +409,6 @@ class ChatClient_Tests: XCTestCase {
         let client = ChatClient(
             config: inMemoryStorageConfig,
             workerBuilders: workerBuilders,
-            eventWorkerBuilders: [],
             environment: testEnv.environment
         )
         
@@ -552,7 +471,6 @@ class ChatClient_Tests: XCTestCase {
         let client = ChatClient(
             config: inMemoryStorageConfig,
             workerBuilders: workerBuilders,
-            eventWorkerBuilders: [],
             environment: testEnv.environment
         )
         
@@ -589,7 +507,6 @@ class ChatClient_Tests: XCTestCase {
         let client = ChatClient(
             config: inMemoryStorageConfig,
             workerBuilders: workerBuilders,
-            eventWorkerBuilders: [],
             environment: testEnv.environment
         )
 
@@ -606,7 +523,6 @@ class ChatClient_Tests: XCTestCase {
         let client = ChatClient(
             config: inMemoryStorageConfig,
             workerBuilders: workerBuilders,
-            eventWorkerBuilders: [],
             environment: testEnv.environment
         )
         
@@ -633,8 +549,8 @@ class ChatClient_Tests: XCTestCase {
         XCTAssert(client.backgroundWorkers.contains { $0 is MessageSender })
         XCTAssert(client.backgroundWorkers.contains { $0 is NewUserQueryUpdater })
         XCTAssert(client.backgroundWorkers.contains { $0 is MessageEditor })
-        XCTAssert(client.backgroundWorkers.contains { $0 is ConnectionRecoveryUpdater })
         XCTAssert(client.backgroundWorkers.contains { $0 is AttachmentUploader })
+        XCTAssertNotNil(client.connectionRecoveryHandler)
         
         AssertAsync.canBeReleased(&client)
     }
@@ -647,7 +563,6 @@ class ChatClient_Tests: XCTestCase {
         let client = ChatClient(
             config: config,
             workerBuilders: [TestWorker.init],
-            eventWorkerBuilders: [TestEventWorker.init],
             environment: testEnv.environment
         )
 
@@ -658,11 +573,7 @@ class ChatClient_Tests: XCTestCase {
         XCTAssert(testWorker?.init_database is DatabaseContainerMock)
         XCTAssert(testWorker?.init_apiClient is APIClientMock)
         
-        // Event workers are initialized after normal workers
-        let testEventWorker = client.backgroundWorkers.last as? TestEventWorker
-        XCTAssert(testEventWorker?.init_database is DatabaseContainerMock)
-        XCTAssert(testEventWorker?.init_eventNotificationCenter is EventNotificationCenterMock)
-        XCTAssert(testEventWorker?.init_apiClient is APIClientMock)
+        XCTAssertNotNil(client.connectionRecoveryHandler)
     }
     
     // MARK: - Init
@@ -719,7 +630,6 @@ class ChatClient_Tests: XCTestCase {
             let client = ChatClient(
                 config: inMemoryStorageConfig,
                 workerBuilders: [],
-                eventWorkerBuilders: [],
                 environment: testEnv.environment
             )
             client.connectAnonymousUser { error in
@@ -744,7 +654,6 @@ class ChatClient_Tests: XCTestCase {
         _ = ChatClient(
             config: inMemoryStorageConfig,
             workerBuilders: [],
-            eventWorkerBuilders: [],
             environment: testEnv.environment
         )
         
@@ -755,7 +664,6 @@ class ChatClient_Tests: XCTestCase {
         let client = ChatClient(
             config: inMemoryStorageConfig,
             workerBuilders: [],
-            eventWorkerBuilders: [],
             environment: testEnv.environment
         )
         let token = Token.unique()
@@ -776,7 +684,6 @@ class ChatClient_Tests: XCTestCase {
         let client = ChatClient(
             config: inMemoryStorageConfig,
             workerBuilders: [],
-            eventWorkerBuilders: [],
             environment: testEnv.environment
         )
         let token = Token.unique()
@@ -818,7 +725,6 @@ class ChatClient_Tests: XCTestCase {
         let client = ChatClient(
             config: inMemoryStorageConfig,
             workerBuilders: [],
-            eventWorkerBuilders: [],
             environment: testEnv.environment
         )
         XCTAssert(testEnv.clientUpdater?.reloadUserIfNeeded_called != true)
@@ -869,346 +775,12 @@ class ChatClient_Tests: XCTestCase {
         XCTAssertNil(providedConnectionId)
     }
     
-    // MARK: - App background behavior
-    
-    // App goes to background
-    
-    func test_backgroundTaskIsCreated_whenConfigAllows() {
-        // Create a new chat client
-        let client = ChatClient(
-            config: inMemoryStorageConfig,
-            workerBuilders: workerBuilders,
-            eventWorkerBuilders: [],
-            environment: testEnv.environment
-        )
-        client.connectAnonymousUser()
-        testEnv.clientUpdater?.reloadUserIfNeeded_completion?(nil)
-        
-        // Assert that config allows background task
-        assert(client.config.staysConnectedInBackground)
-        
-        // Simulate access to `webSocketClient` so it is initialized
-        _ = client.webSocketClient
-        
-        // Simulate .connected state to obtain connection id
-        let connectionId: ConnectionId = .unique
-        testEnv.webSocketClient?.connectionStateDelegate?
-            .webSocketClient(testEnv.webSocketClient!, didUpdateConnectionState: .connected(connectionId: connectionId))
-        
-        XCTAssertEqual(client.connectionId, connectionId)
-        
-        // Simulate going into background
-        testEnv.backgroundTaskScheduler?.startListeningForAppStateUpdates_onBackground?()
-        
-        // Assert that background task is created
-        XCTAssertEqual(testEnv.backgroundTaskScheduler?.beginBackgroundTask_called, true)
-    }
-    
-    func test_backgroundTaskIsNotCreated_whenStayConnectedFlagIsNotSet() {
-        // Create a new chat client
-        var config = inMemoryStorageConfig
-        config.staysConnectedInBackground = false
-        let client = ChatClient(
-            config: config,
-            workerBuilders: workerBuilders,
-            eventWorkerBuilders: [],
-            environment: testEnv.environment
-        )
-        client.connectAnonymousUser()
-        testEnv.clientUpdater?.reloadUserIfNeeded_completion?(nil)
-        
-        // Simulate access to `webSocketClient` so it is initialized
-        _ = client.webSocketClient
-        
-        // Simulate .connected state to obtain connection id
-        let connectionId: ConnectionId = .unique
-        testEnv.webSocketClient?.connectionStateDelegate?
-            .webSocketClient(testEnv.webSocketClient!, didUpdateConnectionState: .connected(connectionId: connectionId))
-        
-        XCTAssertEqual(client.connectionId, connectionId)
-        
-        // Simulate going into background
-        testEnv.backgroundTaskScheduler?.startListeningForAppStateUpdates_onBackground?()
-        
-        // Assert that background task is not created
-        XCTAssertEqual(testEnv.backgroundTaskScheduler?.beginBackgroundTask_called, false)
-        
-        // Assert that `disconnect` is called immediately
-        XCTAssertEqual(testEnv.clientUpdater?.disconnect_called, true)
-    }
-    
-    func test_backgroundTaskIsNotCreated_ifNotConnected() {
-        // Create a new chat client
-        let client = ChatClient(
-            config: inMemoryStorageConfig,
-            workerBuilders: workerBuilders,
-            eventWorkerBuilders: [],
-            environment: testEnv.environment
-        )
-        client.connectAnonymousUser()
-        
-        testEnv.clientUpdater?.reloadUserIfNeeded_completion?(nil)
-        
-        // Simulate access to `webSocketClient` so it is initialized
-        _ = client.webSocketClient
-        
-        // Simulate .disconnected state
-        testEnv.webSocketClient?.connectionStateDelegate?
-            .webSocketClient(
-                testEnv.webSocketClient!,
-                didUpdateConnectionState: .disconnected(source: .serverInitiated(error: nil))
-            )
-        
-        // Simulate going into background
-        testEnv.backgroundTaskScheduler!.startListeningForAppStateUpdates_onBackground?()
-        
-        // Assert that background task is not created
-        XCTAssertEqual(testEnv.backgroundTaskScheduler!.beginBackgroundTask_called, false)
-    }
-    
-    func test_disconnectCalled_ifBackgroundTaskCreationFails() {
-        // Create a new chat client
-        let client = ChatClient(
-            config: inMemoryStorageConfig,
-            workerBuilders: workerBuilders,
-            eventWorkerBuilders: [],
-            environment: testEnv.environment
-        )
-        client.connectAnonymousUser()
-        testEnv.clientUpdater?.reloadUserIfNeeded_completion?(nil)
-        
-        // Simulate access to `webSocketClient` so it is initialized
-        _ = client.webSocketClient
-        
-        // Simulate .connected state to obtain connection id
-        let connectionId: ConnectionId = .unique
-        testEnv.webSocketClient?.connectionStateDelegate?
-            .webSocketClient(testEnv.webSocketClient!, didUpdateConnectionState: .connected(connectionId: connectionId))
-        
-        XCTAssertEqual(client.connectionId, connectionId)
-        
-        // Simulate background task creation failure
-        testEnv.backgroundTaskScheduler?.beginBackgroundTask_returns = false
-        
-        // Simulate going into background
-        testEnv.backgroundTaskScheduler?.startListeningForAppStateUpdates_onBackground?()
-        
-        // Assert that WS disconnect is called
-        XCTAssertEqual(testEnv.clientUpdater?.disconnect_called, true)
-    }
-    
-    func test_disconnectCalled_whenBackgroundTaskFinishes() {
-        // Create a new chat client
-        let client = ChatClient(
-            config: inMemoryStorageConfig,
-            workerBuilders: workerBuilders,
-            eventWorkerBuilders: [],
-            environment: testEnv.environment
-        )
-        client.connectAnonymousUser()
-        testEnv.clientUpdater?.reloadUserIfNeeded_completion?(nil)
-        
-        // Simulate access to `webSocketClient` so it is initialized
-        _ = client.webSocketClient
-        
-        // Simulate .connected state to obtain connection id
-        let connectionId: ConnectionId = .unique
-        testEnv.webSocketClient?.connectionStateDelegate?
-            .webSocketClient(testEnv.webSocketClient!, didUpdateConnectionState: .connected(connectionId: connectionId))
-        
-        XCTAssertEqual(client.connectionId, connectionId)
-        
-        // Simulate going into background
-        testEnv.backgroundTaskScheduler?.startListeningForAppStateUpdates_onBackground?()
-        
-        // Assert that background task is created
-        XCTAssertEqual(testEnv.backgroundTaskScheduler?.beginBackgroundTask_called, true)
-        
-        // Simulate background task execution finish
-        testEnv.backgroundTaskScheduler?.beginBackgroundTask_expirationHandler?()
-        
-        // Assert that `disconnect` is called
-        XCTAssertEqual(testEnv.clientUpdater?.disconnect_called, true)
-    }
-    
-    func test_backgroundTaskCancelled_whenAppIsForegrounded() {
-        // Create a new chat client
-        let client = ChatClient(
-            config: inMemoryStorageConfig,
-            workerBuilders: workerBuilders,
-            eventWorkerBuilders: [],
-            environment: testEnv.environment
-        )
-        client.connectAnonymousUser()
-        testEnv.clientUpdater?.reloadUserIfNeeded_completion?(nil)
-        
-        // Simulate access to `webSocketClient` so it is initialized
-        _ = client.webSocketClient
-        
-        // Simulate .connected state to obtain connection id
-        let connectionId: ConnectionId = .unique
-        testEnv.webSocketClient?.connectionStateDelegate?
-            .webSocketClient(testEnv.webSocketClient!, didUpdateConnectionState: .connected(connectionId: connectionId))
-        
-        XCTAssertEqual(client.connectionId, connectionId)
-        
-        // Simulate going into background
-        testEnv.backgroundTaskScheduler?.startListeningForAppStateUpdates_onBackground?()
-        
-        // Assert that background task is created
-        XCTAssertEqual(testEnv.backgroundTaskScheduler?.beginBackgroundTask_called, true)
-        
-        // Simulate app waking from background
-        testEnv.backgroundTaskScheduler?.startListeningForAppStateUpdates_onForeground?()
-        
-        // Assert that background task is cancelled
-        XCTAssertEqual(testEnv.backgroundTaskScheduler?.endBackgroundTask_called, true)
-        
-        // Assert that background task expiration handler is not called
-        // by asserting that `disconnect` is not called
-        XCTAssertEqual(testEnv.clientUpdater?.disconnect_called, false)
-    }
-    
-    // App wakes from background
-    
-    func test_didBecomeActiveNotification_connectUserWasCalledAndOnline_callsConnect() {
-        // Create a new chat client
-        let client = ChatClient(
-            config: inMemoryStorageConfig,
-            workerBuilders: workerBuilders,
-            eventWorkerBuilders: [],
-            environment: testEnv.environment
-        )
-        client.connectAnonymousUser()
-        testEnv.clientUpdater?.reloadUserIfNeeded_completion?(nil)
-        
-        // Simulate access to `webSocketClient` so it is initialized
-        _ = client.webSocketClient
-        
-        // Assert that `connect` is not called yet
-        XCTAssertEqual(testEnv.clientUpdater?.connect_called, false)
-        
-        // Simualte active internet connection
-        testEnv.internetConnection?.monitorMock.status = .available(.great)
-        
-        // Simulate waking from background
-        testEnv.backgroundTaskScheduler?.startListeningForAppStateUpdates_onForeground?()
-        
-        // Assert that `connect` is called
-        XCTAssertEqual(testEnv.clientUpdater?.connect_called, true)
-    }
-    
-    func test_didBecomeActiveNotification_connectUserWasCalledAndOffline_doesNotCallConnect() {
-        // Create a new chat client
-        let client = ChatClient(
-            config: inMemoryStorageConfig,
-            workerBuilders: workerBuilders,
-            eventWorkerBuilders: [],
-            environment: testEnv.environment
-        )
-        client.connectAnonymousUser()
-        testEnv.clientUpdater?.reloadUserIfNeeded_completion?(nil)
-        
-        // Simulate access to `webSocketClient` so it is initialized
-        _ = client.webSocketClient
-        
-        // Assert that `connect` is not called yet
-        XCTAssertEqual(testEnv.clientUpdater?.connect_called, false)
-        
-        // Simualte missing internet connection
-        testEnv.internetConnection?.monitorMock.status = .unavailable
-        
-        // Simulate waking from background
-        testEnv.backgroundTaskScheduler?.startListeningForAppStateUpdates_onForeground?()
-        
-        // Assert that `connect` is not called
-        XCTAssertEqual(testEnv.clientUpdater?.connect_called, false)
-    }
-    
-    func test_didBecomeActiveNotification_connectUserWasNotCalled_doesNotCallConnect() {
-        // Create a new chat client
-        let client = ChatClient(
-            config: inMemoryStorageConfig,
-            workerBuilders: workerBuilders,
-            eventWorkerBuilders: [],
-            environment: testEnv.environment
-        )
-        
-        // Simulate access to `webSocketClient` so it is initialized
-        _ = client.webSocketClient
-        _ = client.clientUpdater
-        
-        // Assert that `connect` is not called yet
-        XCTAssertEqual(testEnv.clientUpdater?.connect_called, false)
-        
-        // Simulate waking from background
-        testEnv.backgroundTaskScheduler?.startListeningForAppStateUpdates_onForeground?()
-        
-        // Assert that `connect` is called
-        XCTAssertEqual(testEnv.clientUpdater?.connect_called, false)
-    }
-    
-    func test_didBecomeActiveNotification_connectedAndDiconnectedUser_shouldNotConnect() {
-        // Create a new chat client
-        let client = ChatClient(
-            config: inMemoryStorageConfig,
-            workerBuilders: workerBuilders,
-            eventWorkerBuilders: [],
-            environment: testEnv.environment
-        )
-        client.connectAnonymousUser()
-        client.disconnect()
-        
-        XCTAssertEqual(testEnv.backgroundTaskScheduler?.stopListeningForAppStateUpdates_called, true)
-
-        // Simulate access to `webSocketClient` so it is initialized
-        _ = client.webSocketClient
-        
-        // Assert that `connect` is not called yet
-        XCTAssertEqual(testEnv.clientUpdater?.connect_called, false)
-        
-        // Simulate waking from background
-        testEnv.backgroundTaskScheduler?.startListeningForAppStateUpdates_onForeground?()
-        
-        // Assert that `connect` is called
-        XCTAssertEqual(testEnv.clientUpdater?.connect_called, false)
-    }
-    
-    func test_didBecomeActiveNotification_connectedUserDiconnectedAndConnectedBack_shouldConnect() {
-        // Create a new chat client
-        let client = ChatClient(
-            config: inMemoryStorageConfig,
-            workerBuilders: workerBuilders,
-            eventWorkerBuilders: [],
-            environment: testEnv.environment
-        )
-        client.connectAnonymousUser()
-        testEnv.clientUpdater?.reloadUserIfNeeded_completion?(nil)
-        
-        // Simulate access to `webSocketClient` so it is initialized
-        _ = client.webSocketClient
-        
-        XCTAssertEqual(testEnv.clientUpdater?.connect_called, false)
-        XCTAssertEqual(testEnv.backgroundTaskScheduler?.stopListeningForAppStateUpdates_called, false)
-        
-        client.disconnect()
-        XCTAssertEqual(testEnv.backgroundTaskScheduler?.stopListeningForAppStateUpdates_called, true)
-        
-        testEnv.backgroundTaskScheduler?.startListeningForAppStateUpdates_onForeground?()
-        XCTAssertEqual(testEnv.clientUpdater?.connect_called, false)
-
-        client.connectAnonymousUser()
-        testEnv.backgroundTaskScheduler?.startListeningForAppStateUpdates_onForeground?()
-        XCTAssertEqual(testEnv.clientUpdater?.connect_called, true)
-    }
-    
     // Test identifier setup
     func test_sessionHeaders_sdkIdentifier_correctValue() {
         // Given
         let client = ChatClient(
             config: inMemoryStorageConfig,
             workerBuilders: workerBuilders,
-            eventWorkerBuilders: [],
             environment: testEnv.environment
         )
         
@@ -1235,22 +807,6 @@ class TestWorker: Worker {
         init_apiClient = apiClient
         
         super.init(database: database, apiClient: apiClient)
-    }
-}
-
-class TestEventWorker: EventWorker {
-    let id = UUID()
-    
-    var init_database: DatabaseContainer?
-    var init_eventNotificationCenter: EventNotificationCenter?
-    var init_apiClient: APIClient?
-    
-    override init(database: DatabaseContainer, eventNotificationCenter: EventNotificationCenter, apiClient: APIClient) {
-        init_database = database
-        init_eventNotificationCenter = eventNotificationCenter
-        init_apiClient = apiClient
-        
-        super.init(database: database, eventNotificationCenter: eventNotificationCenter, apiClient: apiClient)
     }
 }
 
@@ -1290,8 +846,7 @@ private class TestEnvironment {
                     sessionConfiguration: $0,
                     requestEncoder: $1,
                     eventDecoder: $2,
-                    eventNotificationCenter: $3,
-                    internetConnection: $4
+                    eventNotificationCenter: $3
                 )
                 return self.webSocketClient!
             },

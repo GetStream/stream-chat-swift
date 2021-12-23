@@ -71,7 +71,6 @@ class ReactionEventsIntegration_Tests: XCTestCase {
         client = ChatClient(
             config: config,
             workerBuilders: [],
-            eventWorkerBuilders: [],
             environment: .withZeroEventBatchingPeriod
         )
         try! client.databaseContainer.createCurrentUser(id: currentUserId)

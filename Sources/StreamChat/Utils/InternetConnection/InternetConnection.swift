@@ -6,7 +6,11 @@ import Foundation
 import Network
 
 extension Notification.Name {
-    static let internetConnectionStatusDidChange = Notification.Name("io.getstream.StreamChat.internetConnectionStatus")
+    /// Posted when any the Internet connection update is detected (including quality updates).
+    static let internetConnectionStatusDidChange = Self("io.getstream.StreamChat.internetConnectionStatus")
+    
+    /// Posted only when the Internet connection availability is changed (excluding quality updates).
+    static let internetConnectionAvailabilityDidChange = Self("io.getstream.StreamChat.internetConnectionAvailability")
 }
 
 extension Notification {
@@ -23,9 +27,22 @@ extension Notification {
 /// and default monitor based on `Network`.`NWPathMonitor` (iOS 12+).
 class InternetConnection {
     /// The current Internet connection status.
-    var status: InternetConnection.Status { monitor.status }
+    private(set) var status: InternetConnection.Status {
+        didSet {
+            guard oldValue != status else { return }
+            
+            log.info("Internet Connection: \(status)")
+            
+            postNotification(.internetConnectionStatusDidChange, with: status)
+            
+            guard oldValue.isAvailable != status.isAvailable else { return }
+            
+            postNotification(.internetConnectionAvailabilityDidChange, with: status)
+        }
+    }
     
-    private var notificationCenter: NotificationCenter
+    /// The notification center that posts notifications when connection state changes..
+    var notificationCenter: NotificationCenter
     
     /// A specific Internet connection monitor.
     private var monitor: InternetConnectionMonitor
@@ -46,6 +63,7 @@ class InternetConnection {
             self.monitor = LegacyMonitor()
         }
         
+        status = self.monitor.status
         self.monitor.delegate = self
         self.monitor.start()
     }
@@ -57,32 +75,16 @@ class InternetConnection {
 
 extension InternetConnection: InternetConnectionDelegate {
     func internetConnectionStatusDidChange(status: Status) {
-        log.info("Internet Connection: \(status)")
-        
-        notificationCenter.post(
-            name: .internetConnectionStatusDidChange,
-            object: self,
-            userInfo: [Notification.internetConnectionStatusUserInfoKey: status]
-        )
+        self.status = status
     }
 }
 
-extension InternetConnection {
-    /// Sets up a one-time observer which is called when the status chnages to the desired status.
-    func notifyOnce(when: @escaping (Status) -> Bool, callback: @escaping () -> Void) {
-        var token: NSObjectProtocol?
-        token = notificationCenter.addObserver(
-            forName: .internetConnectionStatusDidChange,
+private extension InternetConnection {
+    func postNotification(_ name: Notification.Name, with status: Status) {
+        notificationCenter.post(
+            name: name,
             object: self,
-            queue: nil,
-            using: { [weak notificationCenter] in
-                if let status = $0.internetConnectionStatus, when(status) {
-                    callback()
-                    if let token = token {
-                        notificationCenter?.removeObserver(token)
-                    }
-                }
-            }
+            userInfo: [Notification.internetConnectionStatusUserInfoKey: status]
         )
     }
 }

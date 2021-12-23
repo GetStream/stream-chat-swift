@@ -12,9 +12,7 @@ extension ChatClient {
         .init(
             config: .init(apiKey: .init(.unique)),
             workerBuilders: [],
-            eventWorkerBuilders: [],
-            environment: .mock,
-            tokenExpirationRetryStrategy: DefaultReconnectionStrategy()
+            environment: .mock
         )
     }
     
@@ -46,7 +44,6 @@ class ChatClientMock: ChatClient {
     @Atomic var init_config: ChatClientConfig
     @Atomic var init_tokenProvider: TokenProvider?
     @Atomic var init_workerBuilders: [WorkerBuilder]
-    @Atomic var init_eventWorkerBuilders: [EventWorkerBuilder]
     @Atomic var init_environment: Environment
     @Atomic var init_completion: ((Error?) -> Void)?
 
@@ -66,23 +63,18 @@ class ChatClientMock: ChatClient {
         config: ChatClientConfig,
         tokenProvider: TokenProvider? = nil,
         workerBuilders: [WorkerBuilder] = [],
-        eventWorkerBuilders: [EventWorkerBuilder] = [],
-        environment: Environment = .mock,
-        tokenExpirationRetryStrategy: WebSocketClientReconnectionStrategy = DefaultReconnectionStrategy()
+        environment: Environment = .mock
     ) {
         init_config = config
         init_tokenProvider = tokenProvider
         init_workerBuilders = workerBuilders
-        init_eventWorkerBuilders = eventWorkerBuilders
         init_environment = environment
 
         super.init(
             config: config,
             tokenProvider: tokenProvider,
             workerBuilders: workerBuilders,
-            eventWorkerBuilders: eventWorkerBuilders,
-            environment: environment,
-            tokenExpirationRetryStrategy: tokenExpirationRetryStrategy
+            environment: environment
         )
     }
 
@@ -138,8 +130,7 @@ extension ChatClient.Environment {
                     sessionConfiguration: $0,
                     requestEncoder: $1,
                     eventDecoder: $2,
-                    eventNotificationCenter: $3,
-                    internetConnection: $4
+                    eventNotificationCenter: $3
                 )
             },
             databaseContainerBuilder: {
@@ -178,7 +169,6 @@ extension ChatClient.Environment {
                     requestEncoder: $1,
                     eventDecoder: $2,
                     eventNotificationCenter: $3,
-                    internetConnection: $4,
                     environment: webSocketEnvironment
                 )
             }

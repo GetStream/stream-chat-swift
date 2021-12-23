@@ -49,7 +49,7 @@ class APIClientMock: APIClient {
         requestEncoder: RequestEncoder,
         requestDecoder: RequestDecoder,
         CDNClient: CDNClient,
-        tokenRefresher: ((ClientError, @escaping () -> Void) -> Void)!
+        tokenRefresher: ((@escaping () -> Void) -> Void)!
     ) {
         init_sessionConfiguration = sessionConfiguration
         init_requestEncoder = requestEncoder
@@ -115,7 +115,7 @@ extension APIClientMock {
             requestEncoder: DefaultRequestEncoder(baseURL: .unique(), apiKey: .init(.unique)),
             requestDecoder: DefaultRequestDecoder(),
             CDNClient: CDNClient_Mock(),
-            tokenRefresher: { _, _ in }
+            tokenRefresher: { _ in }
         )
     }
 }

@@ -20,13 +20,11 @@ class WebSocketClient_Tests: XCTestCase {
     var time: VirtualTime!
     var endpoint: Endpoint<EmptyResponse>!
     private var decoder: EventDecoderMock!
-    private var reconnectionStrategy: MockReconnectionStrategy!
     var engine: WebSocketEngineMock? { webSocketClient.engine as? WebSocketEngineMock }
     var connectionId: String!
     var user: ChatUser!
     var requestEncoder: TestRequestEncoder!
     var pingController: WebSocketPingControllerMock { webSocketClient.pingController as! WebSocketPingControllerMock }
-    var internetConnectionMonitor: InternetConnectionMonitorMock!
     var eventsBatcher: EventBatcherMock { webSocketClient.eventsBatcher as! EventBatcherMock }
     
     var eventNotificationCenter: EventNotificationCenterMock!
@@ -46,16 +44,12 @@ class WebSocketClient_Tests: XCTestCase {
         
         decoder = EventDecoderMock()
         
-        reconnectionStrategy = MockReconnectionStrategy()
-        
         requestEncoder = TestRequestEncoder(baseURL: .unique(), apiKey: .init(.unique))
         
         database = DatabaseContainerMock()
         eventNotificationCenter = EventNotificationCenterMock(database: database)
         eventNotificationCenterMiddleware = EventMiddlewareMock()
         eventNotificationCenter.add(middleware: eventNotificationCenterMiddleware)
-        
-        internetConnectionMonitor = InternetConnectionMonitorMock()
         
         var environment = WebSocketClient.Environment.mock
         environment.timerType = VirtualTimeTimer.self
@@ -65,8 +59,6 @@ class WebSocketClient_Tests: XCTestCase {
             requestEncoder: requestEncoder,
             eventDecoder: decoder,
             eventNotificationCenter: eventNotificationCenter,
-            internetConnection: InternetConnection(monitor: internetConnectionMonitor),
-            reconnectionStrategy: reconnectionStrategy,
             environment: environment
         )
         
@@ -173,26 +165,6 @@ class WebSocketClient_Tests: XCTestCase {
         }
     }
     
-    func test_callingConnect_whenWaitingForReconnection_connectsImmediately() {
-        // Simulate reconnection state
-        test_connectionFlow()
-        assert(reconnectionStrategy.reconnectionDelay_calledWithError == nil)
-        reconnectionStrategy.reconnectionDelay = 20
-        engine!.simulateDisconnect()
-        
-        assert(webSocketClient.connectionState == .waitingForReconnect())
-        // Reset counters
-        engine!.connect_calledCount = 0
-        engine!.disconnect_calledCount = 0
-        
-        // Call connect and assert calls `connect`
-        webSocketClient.connect()
-        AssertAsync {
-            Assert.willBeTrue(self.webSocketClient.connectionState == .connecting)
-            Assert.willBeTrue(self.engine!.connect_calledCount == 1)
-        }
-    }
-    
     func test_disconnect_callsEngine() {
         // Simulate connection
         test_connectionFlow()
@@ -206,26 +178,6 @@ class WebSocketClient_Tests: XCTestCase {
         
         // Assert disconnect is called
         AssertAsync.willBeEqual(engine!.disconnect_calledCount, 1)
-    }
-    
-    func test_whenConnectedAndEngineDisconnectsWithInternetConnectionError_itIsTreatedAsSystemInitiatedDisconnect() {
-        // Simulate connection
-        test_connectionFlow()
-        
-        // Simulate the engine disconnecting because there's no internet connection
-        let noInternetConnectionError = WebSocketEngineError(
-            reason: UUID().uuidString,
-            code: 0,
-            engineError: NSError(
-                domain: NSURLErrorDomain,
-                code: NSURLErrorNotConnectedToInternet,
-                userInfo: [:]
-            )
-        )
-        engine!.simulateDisconnect(noInternetConnectionError)
-        
-        // Assert state is disconnected with `systemInitiated` source
-        XCTAssertEqual(webSocketClient.connectionState, .disconnected(source: .systemInitiated))
     }
     
     func test_whenConnectedAndEngineDisconnectsWithServerError_itIsTreatedAsServerInitiatedDisconnect() {
@@ -281,115 +233,6 @@ class WebSocketClient_Tests: XCTestCase {
             // Assert state is `disconnected` with the correct source
             AssertAsync.willBeEqual(webSocketClient.connectionState, .disconnected(source: source))
         }
-    }
-    
-    func test_reconnectionStrategy_successfullyConnectedIsCalled() {
-        assert(reconnectionStrategy.sucessfullyConnected_calledCount == 0)
-        
-        // Simulate response from the encoder
-        let request = URLRequest(url: .unique())
-        requestEncoder.encodeRequest = .success(request)
-        
-        // Simulate connection
-        webSocketClient.connectEndpoint = endpoint
-        webSocketClient.connect()
-        engine!.simulateConnectionSuccess()
-        
-        // `sucessfullyConnected` shouldn't be called before the first health check event arrives
-        AssertAsync.staysTrue(reconnectionStrategy.sucessfullyConnected_calledCount == 0)
-        
-        // Simulate a health check event
-        decoder.decodedEvent = .success(HealthCheckEvent(connectionId: connectionId))
-        engine!.simulateMessageReceived()
-        
-        // `sucessfullyConnected` should be called now
-        AssertAsync.willBeEqual(reconnectionStrategy.sucessfullyConnected_calledCount, 1)
-    }
-    
-    func test_reconnectionStrategy_reconnectionDelayIsRequestedAndUsed() {
-        // Simulate connection
-        test_connectionFlow()
-        assert(reconnectionStrategy.reconnectionDelay_calledWithError == nil)
-        // Reset the counter
-        engine!.connect_calledCount = 0
-        
-        // Make the reconnection strategy return 20 seconds
-        reconnectionStrategy.reconnectionDelay = 20
-        
-        // Simulate the engine disconnects
-        let testError = WebSocketEngineError(reason: UUID().uuidString, code: 0, engineError: nil)
-        engine!.simulateDisconnect(testError)
-        
-        AssertAsync {
-            Assert.willBeEqual(self.reconnectionStrategy.reconnectionDelay_calledWithError as? WebSocketEngineError, testError)
-            Assert.willBeEqual(
-                self.webSocketClient.connectionState,
-                .waitingForReconnect(error: ClientError.WebSocket(with: testError))
-            )
-        }
-        
-        // Simulate 10 seconds passed and check `connect` is not called yet
-        time.run(numberOfSeconds: 10)
-        AssertAsync.staysEqual(engine!.connect_calledCount, 0)
-        
-        // Simulate another 11 seconds passed and `connect` is called now
-        time.run(numberOfSeconds: 11)
-        AssertAsync.willBeEqual(engine!.connect_calledCount, 1)
-    }
-    
-    func test_reconnectionStrategy_reconnectionNotHappeningWhenNilIsReturned() {
-        // Simulate connection
-        test_connectionFlow()
-        // Reset the counter
-        engine!.connect_calledCount = 0
-        
-        // Make the reconnection strategy return `nil``
-        reconnectionStrategy.reconnectionDelay = nil
-        
-        // Simulate the engine disconnects and check `connectionState` is updated
-        engine!.simulateDisconnect()
-        AssertAsync.willBeEqual(webSocketClient.connectionState, .disconnected(source: .serverInitiated(error: nil)))
-        
-        // Simulate time passed and make sure `connect` is not called
-        time.run(numberOfSeconds: 60)
-        AssertAsync.staysTrue(engine!.connect_calledCount == 0)
-    }
-    
-    func test_reconnectionStrategy_whenDisconnectWasUserInitiated_reconnectionDoesNotHappen() {
-        // Simulate connection
-        test_connectionFlow()
-        // Reset the counter
-        engine!.connect_calledCount = 0
-        
-        // Make the reconnection return 10 seconds
-        reconnectionStrategy.reconnectionDelay = 10
-        
-        // Simulate disconnect initiated by the user
-        webSocketClient.disconnect(source: .userInitiated)
-        engine!.simulateDisconnect()
-        
-        // Simulate time passed and make sure `connect` is not called
-        time.run(numberOfSeconds: 60)
-        AssertAsync.staysTrue(engine!.connect_calledCount == 0)
-    }
-    
-    func test_reconnectionStrategy_whenDisconnectWasSystemInitiated_reconnectionDoesNotHappen() {
-        // Simulate connection
-        test_connectionFlow()
-        
-        // Reset the counter
-        engine!.connect_calledCount = 0
-        
-        // Make the reconnection return 10 seconds
-        reconnectionStrategy.reconnectionDelay = 10
-        
-        // Simulate disconnect initiated by the system
-        webSocketClient.disconnect(source: .systemInitiated)
-        engine!.simulateDisconnect()
-        
-        // Simulate time passed and make sure `connect` is not called
-        time.run(numberOfSeconds: 60)
-        AssertAsync.staysTrue(engine!.connect_calledCount == 0)
     }
     
     func test_connectionState_afterDecodingError() {
@@ -679,58 +522,9 @@ private class EventDecoderMock: AnyEventDecoder {
     }
 }
 
-private class MockReconnectionStrategy: WebSocketClientReconnectionStrategy {
-    var sucessfullyConnected_calledCount: Int = 0
-    var reconnectionDelay_calledWithError: Error?
-    
-    var reconnectionDelay: TimeInterval?
-    
-    func successfullyConnected() {
-        sucessfullyConnected_calledCount += 1
-    }
-    
-    func reconnectionDelay(forConnectionError error: Error?) -> TimeInterval? {
-        reconnectionDelay_calledWithError = error
-        return reconnectionDelay
-    }
-}
-
 extension WebSocketEngineError: Equatable {
     public static func == (lhs: WebSocketEngineError, rhs: WebSocketEngineError) -> Bool {
         String(describing: lhs) == String(describing: rhs)
-    }
-}
-
-class MockBackgroundTaskScheduler: BackgroundTaskScheduler {
-    var beginBackgroundTask_called: Bool = false
-    var beginBackgroundTask_expirationHandler: (() -> Void)?
-    var beginBackgroundTask_returns: Bool = true
-    func beginTask(expirationHandler: (() -> Void)?) -> Bool {
-        beginBackgroundTask_called = true
-        beginBackgroundTask_expirationHandler = expirationHandler
-        return beginBackgroundTask_returns
-    }
-
-    var endBackgroundTask_called: Bool = false
-    func endTask() {
-        endBackgroundTask_called = true
-    }
-
-    var startListeningForAppStateUpdates_called: Bool = false
-    var startListeningForAppStateUpdates_onBackground: (() -> Void)?
-    var startListeningForAppStateUpdates_onForeground: (() -> Void)?
-    func startListeningForAppStateUpdates(
-        onEnteringBackground: @escaping () -> Void,
-        onEnteringForeground: @escaping () -> Void
-    ) {
-        startListeningForAppStateUpdates_called = true
-        startListeningForAppStateUpdates_onBackground = onEnteringBackground
-        startListeningForAppStateUpdates_onForeground = onEnteringForeground
-    }
-    
-    var stopListeningForAppStateUpdates_called: Bool = false
-    func stopListeningForAppStateUpdates() {
-        stopListeningForAppStateUpdates_called = true
     }
 }
 

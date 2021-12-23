@@ -16,6 +16,8 @@ protocol BackgroundTaskScheduler {
         onEnteringForeground: @escaping () -> Void
     )
     func stopListeningForAppStateUpdates()
+    
+    var isAppActive: Bool { get }
 }
 
 #if os(iOS)
@@ -31,6 +33,10 @@ class IOSBackgroundTaskScheduler: BackgroundTaskScheduler {
     /// The identifier of the currently running background task. `nil` if no background task is running.
     private var activeBackgroundTask: UIBackgroundTaskIdentifier?
 
+    var isAppActive: Bool {
+        app?.applicationState == .active
+    }
+    
     func beginTask(expirationHandler: (() -> Void)?) -> Bool {
         activeBackgroundTask = app?.beginBackgroundTask { [weak self] in
             expirationHandler?()
@@ -94,6 +100,10 @@ class IOSBackgroundTaskScheduler: BackgroundTaskScheduler {
 
     @objc private func handleAppDidBecomeActive() {
         onEnteringForeground()
+    }
+    
+    deinit {
+        endTask()
     }
 }
 
