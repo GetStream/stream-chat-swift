@@ -58,7 +58,7 @@ open class ChatChannelHeaderView:
 
         channelTitleText { [weak self] title in
             guard let self = self else { return }
-            self.titleContainerView.content = (title?.trimStringBy(count: 10), self.subtitleText, self.channelController?.isOneWayChat() ?? false)
+            self.titleContainerView.content = (title?.trimStringBy(count: 10), self.subtitleText, self.channelController?.channelQuery.type == .announcement ? true : false)
         }
     }
 

@@ -164,7 +164,7 @@ open class ChatChannelVC:
         if let cid = channelController.cid {
             headerView.channelController = client.channelController(for: cid)
         }
-        if channelController.isOneWayChat() {
+        if channelController.channelQuery.type == .announcement {
             messageComposerVC.composerView.isUserInteractionEnabled = false
             messageComposerVC.composerView.alpha = 0.5
             headerView.titleContainerView.subtitleLabel.isHidden = true

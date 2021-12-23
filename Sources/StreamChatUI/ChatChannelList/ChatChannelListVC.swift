@@ -300,7 +300,11 @@ open class ChatChannelListVC: _ViewController,
         let deleteAction = UIAlertAction(title: "Delete", style: .destructive) { [weak self] alert in
             guard let self = self else { return }
             let controller = self.controller.client.channelController(for: self.controller.channels[indexPath.row].cid)
-            controller.hideChannel(clearHistory: true, completion: nil)
+            if controller.channelQuery.type == .announcement {
+                controller.muteChannel(completion: nil)
+            } else {
+                controller.hideChannel(clearHistory: true, completion: nil)
+            }
         }
         let cancelAction = UIAlertAction(title: "Cancel", style: .cancel) { _ in }
         let alert = UIAlertController.showAlert(title: "Would you like to delete this conversation? It'll be permanently deleted.", message: nil, actions: [deleteAction, cancelAction], preferredStyle: .actionSheet)
