@@ -10,9 +10,6 @@
       "user" : {
           "id" : "general_grievous",
           "banned" : false,
-          "extraData" : {
-              
-          },
           "last_active" : "2021-12-21T15:50:18.579489557Z",
           "created_at" : "2020-12-07T11:37:39.918436Z",
           "image_url" : "https:\/\/vignette.wikia.nocookie.net\/starwars\/images\/d\/de\/Grievoushead.jpg",
