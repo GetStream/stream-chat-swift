@@ -10388,8 +10388,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/kean/Nuke";
 			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 9.0.0;
+				kind = exactVersion;
+				version = 10.3.3;
 			};
 		};
 		E74DB0902656631700508D22 /* XCRemoteSwiftPackageReference "swift-snapshot-testing" */ = {
