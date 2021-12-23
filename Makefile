@@ -65,6 +65,8 @@ update_dependencies:
 	make update_starscream version=4.0.4
 	echo "👉 Updating SwiftyGif"
 	make update_swiftygif version=5.4.2
+	echo "👉 Updating ULID"
+	make update_ulid version=1.1.0
 
 update_nuke: check_version_parameter
 	./Scripts/updateDependency.sh $(version) Dependencies/Nuke Sources/StreamChatUI/StreamNuke Sources
@@ -77,6 +79,10 @@ update_starscream: check_version_parameter
 update_swiftygif: check_version_parameter
 	./Scripts/updateDependency.sh $(version) Dependencies/SwiftyGif Sources/StreamChatUI/StreamSwiftyGif SwiftyGif
 	./Scripts/removePublicDeclaracions.sh Sources/StreamChatUI/StreamSwiftyGif
+	
+update_ulid: check_version_parameter
+	./Scripts/updateDependency.sh $(version) Dependencies/ULID Sources/StreamChat/ULID ULID
+	./Scripts/removePublicDeclarations.sh Sources/StreamChat/StreamULID
 
 check_version_parameter:
 	@if [ "$(version)" = "" ]; then\
