@@ -87,18 +87,36 @@ class MessageUpdater: Worker {
     ///  - Parameters:
     ///   - messageId: The message identifier.
     ///   - text: The updated message text.
+    ///   - extraData: Extra Data for the message.
     ///   - completion: The completion. Will be called with an error if smth goes wrong, otherwise - will be called with `nil`.
-    func editMessage(messageId: MessageId, text: String, completion: ((Error?) -> Void)? = nil) {
+    func editMessage(
+        messageId: MessageId,
+        text: String,
+        extraData: [String: RawJSON]? = nil,
+        completion: ((Error?) -> Void)? = nil
+    ) {
         database.write({ session in
             let messageDTO = try session.messageEditableByCurrentUser(messageId)
+            
+            let encodedExtraData = extraData.map { try? JSONEncoder.default.encode($0) } ?? messageDTO.extraData
+
+            let updateQuotingMessages = {
+                messageDTO.quotedBy.forEach { message in
+                    message.updatedAt = messageDTO.updatedAt
+                }
+            }
 
             switch messageDTO.localMessageState {
             case nil, .pendingSync, .syncingFailed, .deletingFailed:
                 messageDTO.text = text
+                messageDTO.extraData = encodedExtraData
                 messageDTO.localMessageState = .pendingSync
+                updateQuotingMessages()
             case .pendingSend, .sendingFailed:
                 messageDTO.text = text
+                messageDTO.extraData = encodedExtraData
                 messageDTO.localMessageState = .pendingSend
+                updateQuotingMessages()
             case .sending, .syncing, .deleting:
                 throw ClientError.MessageEditing(
                     messageId: messageId,

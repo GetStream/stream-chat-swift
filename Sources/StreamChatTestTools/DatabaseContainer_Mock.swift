@@ -209,6 +209,7 @@ extension DatabaseContainer {
         authorId: UserId = .unique,
         cid: ChannelId = .unique,
         text: String = .unique,
+        extraData: [String: RawJSON] = [:],
         pinned: Bool = false,
         pinnedByUserId: UserId? = nil,
         pinnedAt: Date? = nil,
@@ -221,7 +222,8 @@ extension DatabaseContainer {
         reactionCounts: [MessageReactionType: Int] = [:],
         localState: LocalMessageState? = nil,
         type: MessageType? = nil,
-        numberOfReplies: Int = 0
+        numberOfReplies: Int = 0,
+        quotedMessageId: MessageId? = nil
     ) throws {
         try writeSynchronously { session in
             let channelDTO = try session.saveChannel(payload: XCTestCase().dummyPayload(with: cid))
@@ -229,9 +231,11 @@ extension DatabaseContainer {
             let message: MessagePayload = .dummy(
                 type: type,
                 messageId: id,
+                quotedMessageId: quotedMessageId,
                 attachments: attachments,
                 authorUserId: authorId,
                 text: text,
+                extraData: extraData,
                 latestReactions: latestReactions,
                 ownReactions: ownReactions,
                 updatedAt: updatedAt,
@@ -254,7 +258,8 @@ extension DatabaseContainer {
                     messageId: .unique,
                     parentId: id,
                     authorUserId: authorId,
-                    text: "Reply \(idx)"
+                    text: "Reply \(idx)",
+                    extraData: extraData
                 )
                 
                 let replyDTO = try session.saveMessage(payload: reply, for: cid, syncOwnReactions: true)!
