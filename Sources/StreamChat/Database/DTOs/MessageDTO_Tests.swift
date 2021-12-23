@@ -1302,10 +1302,8 @@ class MessageDTO_Tests: XCTestCase {
         )
 
         let messages = [message, existingReplyNotInChannel, existingReplyInChannel, deletedReplyNotInChannel, deletedReplyInChannel]
-
-        try messages.forEach { messagePayload in
-            try database.writeSynchronously { session in
-                // Save the message
+        try database.writeSynchronously { session in
+            try messages.forEach { messagePayload in
                 try session.saveMessage(payload: messagePayload, for: channelId, syncOwnReactions: true)
             }
         }
@@ -1326,7 +1324,9 @@ class MessageDTO_Tests: XCTestCase {
         }
 
         XCTAssertEqual(retrievedMessages.count, 2)
-        XCTAssertEqual(retrievedMessages.first?.id, messageId)
-        XCTAssertEqual(retrievedMessages.last?.id, existingReplyInChannelId)
+        XCTAssertEqual(
+            retrievedMessages.map(\.id),
+            [messageId, existingReplyInChannelId]
+        )
     }
 }
