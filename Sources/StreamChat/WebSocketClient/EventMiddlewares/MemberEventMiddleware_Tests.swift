@@ -131,11 +131,6 @@ final class MemberEventMiddleware_Tests: XCTestCase {
             try session.saveMember(payload: existingMember, channelId: cid, query: memberListQuery)
         }
         
-        // Load the channel
-        var channel: ChatChannel? {
-            database.viewContext.channel(cid: cid)?.asModel()
-        }
-        
         // Load the MemberListQueryDTO
         var memberListQueryDTO: ChannelMemberListQueryDTO? {
             database.viewContext.channelMemberListQuery(queryHash: memberListQuery.queryHash)
@@ -546,11 +541,6 @@ final class MemberEventMiddleware_Tests: XCTestCase {
         try database.writeSynchronously { session in
             try session.saveChannel(payload: channelPayload)
             try session.saveMember(payload: existingMember, channelId: cid, query: memberListQuery)
-        }
-        
-        // Load the channel
-        var channel: ChatChannel? {
-            database.viewContext.channel(cid: cid)?.asModel()
         }
         
         // Load the MemberListQueryDTO

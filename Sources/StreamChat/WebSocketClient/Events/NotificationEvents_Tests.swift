@@ -224,6 +224,7 @@ class NotificationsEvents_Tests: XCTestCase {
         // Create event payload
         let eventPayload = EventPayload(
             eventType: .notificationAddedToChannel,
+            memberContainer: .dummy(userId: .unique),
             channel: .dummy(cid: .unique),
             unreadCount: .init(channels: 13, messages: 53),
             createdAt: .unique
@@ -237,6 +238,7 @@ class NotificationsEvents_Tests: XCTestCase {
         
         // Save event to database
         _ = try session.saveChannel(payload: eventPayload.channel!, query: nil)
+        _ = try session.saveMember(payload: eventPayload.memberContainer!.member!, channelId: eventPayload.channel!.cid, query: nil)
 
         // Assert event can be created and has correct fields
         let event = try XCTUnwrap(dto.toDomainEvent(session: session) as? NotificationAddedToChannelEvent)
