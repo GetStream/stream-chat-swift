@@ -341,10 +341,10 @@ class DatabaseSession_Tests: XCTestCase {
         try database.createChannel(cid: channelId)
 
         // Save the message to the DB
-        try database.createMessage(id: messageId, authorId: userId, cid: channelId)
+        try database.createMessage(id: messageId, author: .dummy(userId: userId), cid: channelId)
 
         // Save the message that is quoting the other message
-        try database.createMessage(id: quotingMessageId, authorId: userId, cid: channelId, quotedMessageId: messageId)
+        try database.createMessage(id: quotingMessageId, author: .dummy(userId: userId), cid: channelId, quotedMessageId: messageId)
 
         let eventPayload = EventPayload(
             eventType: .messageUpdated,
@@ -355,7 +355,7 @@ class DatabaseSession_Tests: XCTestCase {
                 role: .user,
                 unreadCount: nil
             ),
-            message: .dummy(messageId: messageId, authorUserId: userId),
+            message: .dummy(messageId: messageId, author: .dummy(userId: userId)),
             unreadCount: .dummy,
             createdAt: nil
         )

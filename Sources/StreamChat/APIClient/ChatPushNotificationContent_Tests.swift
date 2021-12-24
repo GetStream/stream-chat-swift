@@ -45,7 +45,7 @@ class ChatPushNotificationContent_Tests: XCTestCase {
         let msgID: MessageId = .unique
 
         exampleMessagePayload = .init(
-            message: .dummy(messageId: msgID, authorUserId: .unique, channel: ChannelDetailPayload.dummy(cid: cid))
+            message: .dummy(messageId: msgID, channel: ChannelDetailPayload.dummy(cid: cid))
         )
 
         exampleMessageNotificationContent = UNMutableNotificationContent()

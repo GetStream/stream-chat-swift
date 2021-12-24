@@ -63,7 +63,7 @@ class EventDataProcessorMiddleware_Tests: XCTestCase {
         try database.writeSynchronously { session in
             try session.saveChannel(payload: .dummy(cid: cid), query: nil)
             try session.saveMessage(
-                payload: .dummy(messageId: messageId, authorUserId: .unique, latestReactions: [reactionPayload]),
+                payload: .dummy(messageId: messageId, latestReactions: [reactionPayload]),
                 for: cid, syncOwnReactions: true
             )
         }
@@ -81,7 +81,7 @@ class EventDataProcessorMiddleware_Tests: XCTestCase {
             user: reactionPayload.user,
             message: .dummy(
                 messageId: messageId,
-                authorUserId: reactionPayload.user.id
+                author: .dummy(userId: reactionPayload.user.id)
             ),
             reaction: reactionPayload,
             createdAt: .unique
@@ -103,7 +103,7 @@ class EventDataProcessorMiddleware_Tests: XCTestCase {
     func tests_middleware_handlesReactionUpdated() throws {
         let cid: ChannelId = .unique
         let messageId: MessageId = .unique
-        let messagePayload: MessagePayload = .dummy(messageId: messageId, authorUserId: .unique)
+        let messagePayload: MessagePayload = .dummy(messageId: messageId)
         
         try database.writeSynchronously { session in
             try session.saveChannel(payload: .dummy(cid: cid), query: nil)
@@ -123,7 +123,7 @@ class EventDataProcessorMiddleware_Tests: XCTestCase {
             eventType: .reactionUpdated,
             cid: cid,
             user: user,
-            message: .dummy(messageId: messageId, authorUserId: .unique, latestReactions: [reactionPayload]),
+            message: .dummy(messageId: messageId, latestReactions: [reactionPayload]),
             reaction: reactionPayload,
             createdAt: .unique
         )
@@ -155,7 +155,7 @@ class EventDataProcessorMiddleware_Tests: XCTestCase {
     func tests_middleware_handlesReactionNewEvent() throws {
         let cid: ChannelId = .unique
         let messageId: MessageId = .unique
-        let messagePayload: MessagePayload = .dummy(messageId: messageId, authorUserId: .unique)
+        let messagePayload: MessagePayload = .dummy(messageId: messageId)
 
         try database.writeSynchronously { session in
             try session.saveChannel(payload: .dummy(cid: cid), query: nil)
@@ -174,7 +174,7 @@ class EventDataProcessorMiddleware_Tests: XCTestCase {
             eventType: .reactionNew,
             cid: cid,
             user: user,
-            message: .dummy(messageId: messageId, authorUserId: .unique, latestReactions: [reactionPayload]),
+            message: .dummy(messageId: messageId, latestReactions: [reactionPayload]),
             reaction: reactionPayload,
             createdAt: .unique
         )

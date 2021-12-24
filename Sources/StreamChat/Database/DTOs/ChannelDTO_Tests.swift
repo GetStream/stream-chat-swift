@@ -197,8 +197,8 @@ class ChannelDTO_Tests: XCTestCase {
     func test_channelPayload_pinnedMessagesArePopulated() throws {
         let channelId: ChannelId = .unique
         let pinnedMessages: [MessagePayload] = [
-            .dummy(messageId: .unique, authorUserId: .unique, pinned: true),
-            .dummy(messageId: .unique, authorUserId: .unique, pinned: true)
+            .dummy(messageId: .unique, pinned: true),
+            .dummy(messageId: .unique, pinned: true)
         ]
         let payload = dummyPayload(
             with: channelId,
@@ -230,7 +230,7 @@ class ChannelDTO_Tests: XCTestCase {
         let channelId: ChannelId = .unique
         let oldMessageCreatedAt = Date.unique
         let payload = dummyPayload(with: channelId, messages: [
-            .dummy(messageId: .unique, authorUserId: .unique, createdAt: oldMessageCreatedAt)
+            .dummy(messageId: .unique, createdAt: oldMessageCreatedAt)
         ])
 
         try database.writeSynchronously { session in
@@ -239,7 +239,7 @@ class ChannelDTO_Tests: XCTestCase {
 
         let newerMessageCreatedAt = oldMessageCreatedAt.addingTimeInterval(300)
         let newerPayload = dummyPayload(with: channelId, messages: [
-            .dummy(messageId: .unique, authorUserId: .unique, createdAt: newerMessageCreatedAt)
+            .dummy(messageId: .unique, createdAt: newerMessageCreatedAt)
         ])
 
         try database.writeSynchronously { session in
@@ -364,7 +364,7 @@ class ChannelDTO_Tests: XCTestCase {
         let allMembers: [MemberPayload] = (0..<memberLimit * 2).map { _ in .dummy() }
         let allWatchers: [UserPayload] = (0..<watcherLimit * 2).map { _ in .dummy(userId: .unique) }
         let allMessages: [MessagePayload] = (0..<messagesLimit * 2)
-            .map { _ in .dummy(messageId: .unique, authorUserId: .unique) }
+            .map { _ in .dummy(messageId: .unique) }
         let payload = dummyPayload(with: cid, members: allMembers, watchers: allWatchers, messages: allMessages)
                 
         try database.writeSynchronously { session in

@@ -29,7 +29,7 @@ class MessageDTO_Tests: XCTestCase {
         
         let quotedMessagePayload: MessagePayload = .dummy(
             messageId: .unique,
-            authorUserId: userId,
+            author: .dummy(userId: userId),
             extraData: ["k1": .string("v1")],
             createdAt: max(channelPayload.lastMessageAt ?? channelPayload.createdAt, channelPayload.createdAt) + 1,
             channel: channelPayload
@@ -39,7 +39,7 @@ class MessageDTO_Tests: XCTestCase {
             messageId: messageId,
             quotedMessageId: quotedMessagePayload.id,
             quotedMessage: quotedMessagePayload,
-            authorUserId: userId,
+            author: .dummy(userId: userId),
             extraData: ["k2": .string("v2")],
             latestReactions: [
                 .dummy(messageId: messageId, user: UserPayload.dummy(userId: .unique))
@@ -166,7 +166,7 @@ class MessageDTO_Tests: XCTestCase {
         
         let messagePayload: MessagePayload = .dummy(
             messageId: messageId,
-            authorUserId: userId,
+            author: .dummy(userId: userId),
             extraData: ["isSecretDeathStarPlanIncluded": .bool(true)],
             latestReactions: [
                 .dummy(messageId: messageId, user: UserPayload.dummy(userId: .unique))
@@ -251,7 +251,6 @@ class MessageDTO_Tests: XCTestCase {
         let channelPayload: ChannelPayload = dummyPayload(with: channelId)
         let payload: MessagePayload = .dummy(
             messageId: .unique,
-            authorUserId: .unique,
             createdAt: "2018-12-12T15:33:46.488935Z".toDate(),
             pinned: true
         )
@@ -283,7 +282,6 @@ class MessageDTO_Tests: XCTestCase {
         let channelPayload: ChannelPayload = dummyPayload(with: channelId)
         let payload: MessagePayload = .dummy(
             messageId: .unique,
-            authorUserId: .unique,
             createdAt: "2018-12-12T15:33:46.488935Z".toDate(),
             pinned: false
         )
@@ -312,7 +310,6 @@ class MessageDTO_Tests: XCTestCase {
         let channelPayload: ChannelPayload = dummyPayload(with: channelId)
         let payload: MessagePayload = .dummy(
             messageId: .unique,
-            authorUserId: .unique,
             createdAt: "2018-12-12T15:33:46.488935Z".toDate(),
             pinned: true,
             pinnedByUserId: .unique,
@@ -345,7 +342,7 @@ class MessageDTO_Tests: XCTestCase {
     }
 
     func test_messagePayloadNotStored_withoutChannelInfo() throws {
-        let payload: MessagePayload = .dummy(messageId: .unique, authorUserId: .unique)
+        let payload: MessagePayload = .dummy(messageId: .unique)
         assert(payload.channel == nil, "Channel must be `nil`")
         
         XCTAssertThrowsError(
@@ -364,7 +361,7 @@ class MessageDTO_Tests: XCTestCase {
         let channelId: ChannelId = .unique
         
         let channelPayload: ChannelPayload = dummyPayload(with: channelId)
-        let messagePayload: MessagePayload = .dummy(messageId: messageId, authorUserId: userId)
+        let messagePayload: MessagePayload = .dummy(messageId: messageId, author: .dummy(userId: userId))
         
         try database.writeSynchronously { session in
             // Create the channel first
@@ -409,7 +406,7 @@ class MessageDTO_Tests: XCTestCase {
             messageId: messageId,
             quotedMessage: .dummy(
                 messageId: quotedMessageId,
-                authorUserId: quotedMessageAuthorId
+                author: .dummy(userId: quotedMessageAuthorId)
             ),
             attachments: [
                 imageAttachmentPayload,
@@ -419,7 +416,7 @@ class MessageDTO_Tests: XCTestCase {
                 testAttachmentPayload,
                 videoAttachmentPayload
             ],
-            authorUserId: messageAuthorId,
+            author: .dummy(userId: messageAuthorId),
             extraData: ["k": .string("v")],
             latestReactions: (0..<3).map { _ in
                 .dummy(messageId: messageId, user: .dummy(userId: .unique))
@@ -580,7 +577,7 @@ class MessageDTO_Tests: XCTestCase {
         let channelId: ChannelId = .unique
         
         let channelPayload: ChannelPayload = dummyPayload(with: channelId)
-        let messagePayload: MessagePayload = .dummy(messageId: messageId, authorUserId: userId)
+        let messagePayload: MessagePayload = .dummy(messageId: messageId, author: .dummy(userId: userId))
         
         // Asynchronously save the payload to the db
         database.write { session in
@@ -703,7 +700,6 @@ class MessageDTO_Tests: XCTestCase {
         try database.createChannel(cid: channelId, withMessages: false)
         let messagePayload: MessagePayload = .dummy(
             messageId: .unique,
-            authorUserId: .unique,
             channel: ChannelDetailPayload.dummy(cid: channelId)
         )
 
@@ -964,7 +960,6 @@ class MessageDTO_Tests: XCTestCase {
             messageId: replyMessageId,
             parentId: messageId,
             showReplyInChannel: false,
-            authorUserId: .unique,
             text: "Reply",
             extraData: [:]
         )
@@ -1035,7 +1030,7 @@ class MessageDTO_Tests: XCTestCase {
         // Create a new message payload that's older than `channel.lastMessageAt`
         let olderMessagePayload: MessagePayload = .dummy(
             messageId: messageId,
-            authorUserId: userId,
+            author: .dummy(userId: userId),
             createdAt: .unique(before: channelPayload.channel.lastMessageAt!)
         )
         assert(olderMessagePayload.createdAt < channelPayload.channel.lastMessageAt!)
@@ -1049,7 +1044,7 @@ class MessageDTO_Tests: XCTestCase {
         // Create a new message payload that's newer than `channel.lastMessageAt`
         let newerMessagePayload: MessagePayload = .dummy(
             messageId: messageId,
-            authorUserId: userId,
+            author: .dummy(userId: userId),
             createdAt: .unique(after: channelPayload.channel.lastMessageAt!)
         )
         assert(newerMessagePayload.createdAt > channelPayload.channel.lastMessageAt!)
@@ -1086,7 +1081,7 @@ class MessageDTO_Tests: XCTestCase {
             messageId: firstMessageId,
             quotedMessage: nil,
             attachments: [],
-            authorUserId: messageAuthorId,
+            author: .dummy(userId: messageAuthorId),
             latestReactions: [],
             ownReactions: [],
             channel: .dummy(cid: channelId),
@@ -1102,10 +1097,10 @@ class MessageDTO_Tests: XCTestCase {
                 messageId: messageId,
                 quotedMessage: .dummy(
                     messageId: quotedMessageId,
-                    authorUserId: messageAuthorId
+                    author: .dummy(userId: messageAuthorId)
                 ),
                 attachments: [],
-                authorUserId: messageAuthorId,
+                author: .dummy(userId: messageAuthorId),
                 latestReactions: [],
                 ownReactions: [],
                 channel: .dummy(cid: channelId),
@@ -1164,7 +1159,7 @@ class MessageDTO_Tests: XCTestCase {
             messageId: firstMessageId,
             quotedMessage: nil,
             attachments: [],
-            authorUserId: messageAuthorId,
+            author: .dummy(userId: messageAuthorId),
             latestReactions: [],
             ownReactions: [],
             channel: .dummy(cid: channelId),
@@ -1179,7 +1174,7 @@ class MessageDTO_Tests: XCTestCase {
             messageId: secondMessageId,
             quotedMessage: firstMessage,
             attachments: [],
-            authorUserId: messageAuthorId,
+            author: .dummy(userId: messageAuthorId),
             latestReactions: [],
             ownReactions: [],
             channel: .dummy(cid: channelId),
@@ -1196,7 +1191,7 @@ class MessageDTO_Tests: XCTestCase {
             quotedMessageId: secondMessageId,
             quotedMessage: nil,
             attachments: [],
-            authorUserId: messageAuthorId,
+            author: .dummy(userId: messageAuthorId),
             latestReactions: [],
             ownReactions: [],
             channel: .dummy(cid: channelId),
@@ -1261,7 +1256,6 @@ class MessageDTO_Tests: XCTestCase {
             parentId: .unique,
             showReplyInChannel: true,
             attachments: [],
-            authorUserId: .unique,
             createdAt: Date(timeIntervalSince1970: 1),
             channel: channel
         )
@@ -1277,7 +1271,6 @@ class MessageDTO_Tests: XCTestCase {
             messageId: .unique,
             parentId: .unique,
             attachments: [],
-            authorUserId: .unique,
             createdAt: Date(timeIntervalSince1970: 1),
             channel: channel
         )
@@ -1292,7 +1285,6 @@ class MessageDTO_Tests: XCTestCase {
             type: .system,
             messageId: .unique,
             attachments: [],
-            authorUserId: .unique,
             createdAt: Date(timeIntervalSince1970: 1),
             channel: channel
         )
@@ -1307,7 +1299,6 @@ class MessageDTO_Tests: XCTestCase {
             type: .ephemeral,
             messageId: .unique,
             attachments: [],
-            authorUserId: .unique,
             createdAt: Date(timeIntervalSince1970: 1),
             channel: channel
         )
@@ -1323,7 +1314,6 @@ class MessageDTO_Tests: XCTestCase {
             messageId: .unique,
             parentId: .unique,
             attachments: [],
-            authorUserId: .unique,
             createdAt: Date(timeIntervalSince1970: 1),
             channel: channel
         )
@@ -1338,7 +1328,6 @@ class MessageDTO_Tests: XCTestCase {
             type: .regular,
             messageId: .unique,
             attachments: [],
-            authorUserId: .unique,
             createdAt: Date(timeIntervalSince1970: 1),
             channel: channel
         )
@@ -1353,7 +1342,6 @@ class MessageDTO_Tests: XCTestCase {
             type: .deleted,
             messageId: .unique,
             attachments: [],
-            authorUserId: .unique,
             createdAt: Date(timeIntervalSince1970: 1),
             channel: channel
         )
@@ -1370,7 +1358,6 @@ class MessageDTO_Tests: XCTestCase {
             parentId: .unique,
             showReplyInChannel: true,
             attachments: [],
-            authorUserId: .unique,
             createdAt: Date(timeIntervalSince1970: 1),
             channel: channel
         )
@@ -1387,7 +1374,6 @@ class MessageDTO_Tests: XCTestCase {
             parentId: .unique,
             showReplyInChannel: false,
             attachments: [],
-            authorUserId: .unique,
             createdAt: Date(timeIntervalSince1970: 1),
             channel: channel
         )

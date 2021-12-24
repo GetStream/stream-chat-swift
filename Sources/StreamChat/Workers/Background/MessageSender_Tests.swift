@@ -120,7 +120,7 @@ class MessageSender_Tests: XCTestCase {
 
         // Simulate successful response for message1.
         let dummyPayload: MessagePayload.Boxed = .init(
-            message: .dummy(messageId: message1Id, authorUserId: .anonymous)
+            message: .dummy(messageId: message1Id)
         )
 
         apiClient.test_simulateResponse(.success(dummyPayload))
@@ -236,7 +236,7 @@ class MessageSender_Tests: XCTestCase {
         
         // Simulate successful API response
         let callback = apiClient.request_completion as! (Result<MessagePayload.Boxed, Error>) -> Void
-        callback(.success(.init(message: .dummy(messageId: message1Id, authorUserId: .anonymous))))
+        callback(.success(.init(message: .dummy(messageId: message1Id))))
         
         // Check the temporary state is erased
         AssertAsync {
@@ -331,7 +331,7 @@ class MessageSender_Tests: XCTestCase {
         var callback: ((Result<MessagePayload.Boxed, Error>) -> Void) {
             apiClient.request_completion as! (Result<MessagePayload.Boxed, Error>) -> Void
         }
-        callback(.success(.init(message: .dummy(messageId: message1Id, authorUserId: .anonymous))))
+        callback(.success(.init(message: .dummy(messageId: message1Id))))
         
         // Check the 2nd API call
         let message2Payload: MessageRequestBody = try XCTUnwrap(
@@ -344,7 +344,7 @@ class MessageSender_Tests: XCTestCase {
         )
         
         // Simulate the second call response
-        callback(.success(.init(message: .dummy(messageId: message1Id, authorUserId: .anonymous))))
+        callback(.success(.init(message: .dummy(messageId: message1Id))))
 
         // Check the 3rd API call
         let message3Payload: MessageRequestBody = try XCTUnwrap(
@@ -357,7 +357,7 @@ class MessageSender_Tests: XCTestCase {
         )
         
         // Simulate the second call response
-        callback(.success(.init(message: .dummy(messageId: message1Id, authorUserId: .anonymous))))
+        callback(.success(.init(message: .dummy(messageId: message1Id))))
     }
     
     func test_senderSendsMessages_forMultipleChannelsInParalel_butStillInTheCorrectOrder() throws {
@@ -441,7 +441,7 @@ class MessageSender_Tests: XCTestCase {
         // Simulate successfull responses for both API calls
         apiClient.request_allRecordedCalls.forEach {
             let callback = $0.completion as! (Result<MessagePayload.Boxed, Error>) -> Void
-            callback(.success(.init(message: .dummy(messageId: .unique, authorUserId: .anonymous))))
+            callback(.success(.init(message: .dummy(messageId: .unique))))
         }
                 
         // Wait for 2 more API calls to be made
@@ -490,8 +490,7 @@ class MessageSender_Tests: XCTestCase {
         let attachment: MessageAttachmentPayload = .dummy(type: .giphy, title: .unique)
         let messagePayload: MessagePayload = .dummy(
             messageId: messageId,
-            attachments: [attachment],
-            authorUserId: .unique
+            attachments: [attachment]
         )
         
         callback(.success(.init(message: messagePayload)))

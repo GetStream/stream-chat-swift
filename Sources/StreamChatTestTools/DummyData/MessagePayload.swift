@@ -24,7 +24,7 @@ extension MessagePayload {
             .dummy(),
             .dummy()
         ],
-        authorUserId: UserId,
+        author: UserPayload = .dummy(userId: .unique),
         text: String = .unique,
         extraData: [String: RawJSON] = [:],
         latestReactions: [MessageReactionPayload] = [],
@@ -45,7 +45,7 @@ extension MessagePayload {
         .init(
             id: messageId,
             type: type ?? (parentId == nil ? .regular : showReplyInChannel == true ? .regular : .reply),
-            user: UserPayload.dummy(userId: authorUserId) as UserPayload,
+            user: author,
             createdAt: createdAt != nil ? createdAt! : XCTestCase.channelCreatedDate
                 .addingTimeInterval(TimeInterval.random(in: 100...900)),
             updatedAt: updatedAt,

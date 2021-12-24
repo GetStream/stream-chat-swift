@@ -189,7 +189,7 @@ class ReactionEventsIntegration_Tests: XCTestCase {
         
         // Create event payload
         let channel: ChannelDetailPayload = .dummy(cid: .unique)
-        let message: MessagePayload = .dummy(messageId: .unique, authorUserId: .unique)
+        let message: MessagePayload = .dummy(messageId: .unique)
         let user: UserPayload = .dummy(userId: .unique)
         let reaction: MessageReactionPayload = .dummy(messageId: message.id, user: user)
         
@@ -231,7 +231,7 @@ class ReactionEventsIntegration_Tests: XCTestCase {
         
         // Create event payload
         let channel: ChannelDetailPayload = .dummy(cid: .unique)
-        let message: MessagePayload = .dummy(messageId: .unique, authorUserId: .unique)
+        let message: MessagePayload = .dummy(messageId: .unique)
         let user: UserPayload = .dummy(userId: .unique)
         let reaction: MessageReactionPayload = .dummy(messageId: message.id, user: user)
         
@@ -273,7 +273,7 @@ class ReactionEventsIntegration_Tests: XCTestCase {
         
         // Create event payload
         let channel: ChannelDetailPayload = .dummy(cid: .unique)
-        let message: MessagePayload = .dummy(messageId: .unique, authorUserId: .unique)
+        let message: MessagePayload = .dummy(messageId: .unique)
         let user: UserPayload = .dummy(userId: .unique)
         let reaction: MessageReactionPayload = .dummy(messageId: message.id, user: user)
         

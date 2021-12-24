@@ -81,14 +81,22 @@ final class MessageUpdater_Tests: XCTestCase {
             try database.createCurrentUser(id: currentUserId)
 
             // Create a new message in the database
-            try database.createMessage(id: messageId, authorId: currentUserId, localState: initialState)
+            try database.createMessage(
+                id: messageId,
+                author: .dummy(userId: currentUserId),
+                localState: initialState
+            )
 
             // Load the message
             let message = try XCTUnwrap(database.viewContext.message(id: messageId))
 
             // Create a new message quoting the message that will be edited
             let quotingMessageId = MessageId.unique
-            try database.createMessage(id: quotingMessageId, authorId: currentUserId, quotedMessageId: messageId)
+            try database.createMessage(
+                id: quotingMessageId,
+                author: .dummy(userId: currentUserId),
+                quotedMessageId: messageId
+            )
 
             // Edit created message with new text
             let completionError = try waitFor {
@@ -132,7 +140,12 @@ final class MessageUpdater_Tests: XCTestCase {
             try database.createCurrentUser(id: currentUserId)
             
             // Create a new message in the database
-            try database.createMessage(id: messageId, authorId: currentUserId, text: initialText, localState: state)
+            try database.createMessage(
+                id: messageId,
+                author: .dummy(userId: currentUserId),
+                text: initialText,
+                localState: state
+            )
             
             // Edit created message with new text
             let completionError = try waitFor {
@@ -168,7 +181,11 @@ final class MessageUpdater_Tests: XCTestCase {
         try database.createCurrentUser(id: currentUserId)
 
         // Create a new message in the database
-        try database.createMessage(id: messageId, authorId: currentUserId, extraData: extraData)
+        try database.createMessage(
+            id: messageId,
+            author: .dummy(userId: currentUserId),
+            extraData: extraData
+        )
         let createdMessage = try XCTUnwrap(database.viewContext.message(id: messageId))
 
         let encodedCreatedExtraData = try XCTUnwrap(
@@ -206,7 +223,11 @@ final class MessageUpdater_Tests: XCTestCase {
         try database.createCurrentUser(id: currentUserId)
 
         // Create a new message in the database
-        try database.createMessage(id: messageId, authorId: currentUserId, extraData: extraData)
+        try database.createMessage(
+            id: messageId,
+            author: .dummy(userId: currentUserId),
+            extraData: extraData
+        )
         let createdMessage = try XCTUnwrap(database.viewContext.message(id: messageId))
 
         let encodedCreatedExtraData = try XCTUnwrap(
@@ -327,7 +348,11 @@ final class MessageUpdater_Tests: XCTestCase {
             try database.createCurrentUser(id: currentUserId)
 
             // Create a new message in the database
-            try database.createMessage(id: messageId, authorId: currentUserId, localState: state)
+            try database.createMessage(
+                id: messageId,
+                author: .dummy(userId: currentUserId),
+                localState: state
+            )
 
             let expectation = expectation(description: "deleteMessage")
 
@@ -363,7 +388,10 @@ final class MessageUpdater_Tests: XCTestCase {
             try database.createCurrentUser(id: currentUserId)
             
             // Create message authored by current user in the database
-            try database.createMessage(id: messageId, authorId: currentUserId)
+            try database.createMessage(
+                id: messageId,
+                author: .dummy(userId: currentUserId)
+            )
             
             // Simulate `deleteMessage(messageId:)` call
             messageUpdater.deleteMessage(messageId: messageId)
@@ -413,7 +441,7 @@ final class MessageUpdater_Tests: XCTestCase {
     
     func test_getMessage_propogatesDatabaseError() throws {
         let messagePayload: MessagePayload.Boxed = .init(
-            message: .dummy(messageId: .unique, authorUserId: .unique)
+            message: .dummy(messageId: .unique)
         )
         let channelId = ChannelId.unique
 
@@ -456,7 +484,10 @@ final class MessageUpdater_Tests: XCTestCase {
         
         // Simulate API response with success
         let messagePayload: MessagePayload.Boxed = .init(
-            message: .dummy(messageId: messageId, authorUserId: currentUserId)
+            message: .dummy(
+                messageId: messageId,
+                author: .dummy(userId: currentUserId)
+            )
         )
         apiClient.test_simulateResponse(Result<MessagePayload.Boxed, Error>.success(messagePayload))
         
@@ -610,7 +641,9 @@ final class MessageUpdater_Tests: XCTestCase {
     }
     
     func test_loadReplies_propagatesDatabaseError() throws {
-        let repliesPayload: MessageRepliesPayload = .init(messages: [.dummy(messageId: .unique, authorUserId: .unique)])
+        let repliesPayload: MessageRepliesPayload = .init(
+            messages: [.dummy(messageId: .unique)]
+        )
         let cid = ChannelId.unique
 
         // Create channel in the database
@@ -652,7 +685,7 @@ final class MessageUpdater_Tests: XCTestCase {
         
         // Simulate API response with success
         let repliesPayload: MessageRepliesPayload = .init(
-            messages: [.dummy(messageId: messageId, authorUserId: .unique)]
+            messages: [.dummy(messageId: messageId)]
         )
         apiClient.test_simulateResponse(Result<MessageRepliesPayload, Error>.success(repliesPayload))
         
@@ -782,7 +815,7 @@ final class MessageUpdater_Tests: XCTestCase {
         
         // Simulate message response with success.
         let messagePayload: MessagePayload.Boxed = .init(
-            message: .dummy(messageId: messageId, authorUserId: currentUserId)
+            message: .dummy(messageId: messageId, author: .dummy(userId: currentUserId))
         )
         apiClient.test_simulateResponse(.success(messagePayload))
         
@@ -881,7 +914,7 @@ final class MessageUpdater_Tests: XCTestCase {
         
         // Simulate message response with success.
         let messagePayload: MessagePayload.Boxed = .init(
-            message: .dummy(messageId: messageId, authorUserId: currentUserId)
+            message: .dummy(messageId: messageId, author: .dummy(userId: currentUserId))
         )
         apiClient.test_simulateResponse(.success(messagePayload))
         
@@ -988,7 +1021,7 @@ final class MessageUpdater_Tests: XCTestCase {
     func setupReactionData(userId: UserId = .unique) throws -> MessageId {
         let messageId: MessageId = .unique
         try database.createCurrentUser(id: userId)
-        try database.createMessage(id: messageId, authorId: userId)
+        try database.createMessage(id: messageId, author: .dummy(userId: userId))
         return messageId
     }
 
@@ -1222,7 +1255,7 @@ final class MessageUpdater_Tests: XCTestCase {
             try database.createCurrentUser(id: currentUserId)
 
             // Create a new message in the database
-            try database.createMessage(id: messageId, authorId: currentUserId, localState: initialState)
+            try database.createMessage(id: messageId, author: .dummy(userId: currentUserId), localState: initialState)
 
             let completionError = try waitFor {
                 messageUpdater.pinMessage(messageId: messageId, pinning: pin, completion: $0)
@@ -1259,7 +1292,7 @@ final class MessageUpdater_Tests: XCTestCase {
             try database.createCurrentUser(id: currentUserId)
 
             // Create a new message in the database
-            try database.createMessage(id: messageId, authorId: currentUserId, text: initialText, localState: state)
+            try database.createMessage(id: messageId, author: .dummy(userId: currentUserId), text: initialText, localState: state)
 
             let completionError = try waitFor {
                 messageUpdater.pinMessage(messageId: messageId, pinning: MessagePinning(expirationDate: .unique), completion: $0)
@@ -1308,7 +1341,7 @@ final class MessageUpdater_Tests: XCTestCase {
             // Create a new message in the database
             try database.createMessage(
                 id: messageId,
-                authorId: currentUserId,
+                author: .dummy(userId: currentUserId),
                 pinned: true,
                 pinnedByUserId: .unique,
                 pinnedAt: .unique,
@@ -1352,7 +1385,7 @@ final class MessageUpdater_Tests: XCTestCase {
             // Create a new message in the database
             try database.createMessage(
                 id: messageId,
-                authorId: currentUserId,
+                author: .dummy(userId: currentUserId),
                 pinned: true,
                 pinnedByUserId: .unique,
                 pinnedAt: .unique,
@@ -1532,7 +1565,7 @@ final class MessageUpdater_Tests: XCTestCase {
             let messageId: MessageId = .unique
             
             // Create a new message in the database in `sendingFailed` state
-            try database.createMessage(id: messageId, authorId: currentUserId, localState: state)
+            try database.createMessage(id: messageId, author: .dummy(userId: currentUserId), localState: state)
             
             // Try to resend the message
             let completionError = try waitFor {
@@ -1551,7 +1584,7 @@ final class MessageUpdater_Tests: XCTestCase {
         // Create current user is the database
         try database.createCurrentUser(id: currentUserId)
         // Create a new message in the database in `sendingFailed` state
-        try database.createMessage(id: messageId, authorId: currentUserId, localState: .sendingFailed)
+        try database.createMessage(id: messageId, author: .dummy(userId: currentUserId), localState: .sendingFailed)
 
         // Update database container to throw the error on write
         let databaseError = TestError()
@@ -1574,7 +1607,7 @@ final class MessageUpdater_Tests: XCTestCase {
         try database.createCurrentUser(id: currentUserId)
 
         // Create a new message in the database
-        try database.createMessage(id: messageId, authorId: currentUserId, localState: .sendingFailed)
+        try database.createMessage(id: messageId, author: .dummy(userId: currentUserId), localState: .sendingFailed)
 
         // Resend failed message
         let completionError = try waitFor {
@@ -1602,7 +1635,7 @@ final class MessageUpdater_Tests: XCTestCase {
         // Create channel is the database
         try database.createChannel(cid: cid, withMessages: false)
         // Create a new `ephemeral` message in the database
-        try database.createMessage(id: messageId, authorId: currentUserId, type: .ephemeral)
+        try database.createMessage(id: messageId, author: .dummy(userId: currentUserId), type: .ephemeral)
 
         let cancelAction = AttachmentAction(
             name: .unique,
@@ -1645,7 +1678,7 @@ final class MessageUpdater_Tests: XCTestCase {
         // Create channel is the database
         try database.createChannel(cid: cid, withMessages: false)
         // Create a new `ephemeral` message in the database
-        try database.createMessage(id: messageId, authorId: currentUserId, type: .ephemeral)
+        try database.createMessage(id: messageId, author: .dummy(userId: currentUserId), type: .ephemeral)
 
         let action = AttachmentAction(
             name: .unique,
@@ -1679,7 +1712,7 @@ final class MessageUpdater_Tests: XCTestCase {
         let messagePayload: MessagePayload.Boxed = .init(
             message: .dummy(
                 messageId: messageId,
-                authorUserId: currentUserId
+                author: .dummy(userId: currentUserId)
             )
         )
         apiClient.test_simulateResponse(.success(messagePayload))
@@ -1707,7 +1740,7 @@ final class MessageUpdater_Tests: XCTestCase {
         // Create channel is the database
         try database.createChannel(cid: cid, withMessages: false)
         // Create a new `ephemeral` message in the database
-        try database.createMessage(id: messageId, authorId: currentUserId, type: .ephemeral)
+        try database.createMessage(id: messageId, author: .dummy(userId: currentUserId), type: .ephemeral)
 
         let action = AttachmentAction(
             name: .unique,
@@ -1805,7 +1838,7 @@ final class MessageUpdater_Tests: XCTestCase {
             let messageId: MessageId = .unique
 
             // Create a new message in the database with specific type
-            try database.createMessage(id: messageId, authorId: currentUserId, type: type)
+            try database.createMessage(id: messageId, author: .dummy(userId: currentUserId), type: type)
 
             // Simulate `dispatchEphemeralMessageAction` call
             let completionError = try waitFor {
@@ -1851,7 +1884,7 @@ final class MessageUpdater_Tests: XCTestCase {
         // Create channel is the database
         try database.createChannel(cid: cid, withMessages: false)
         // Create a new `ephemeral` message in the database
-        try database.createMessage(id: messageId, authorId: currentUserId, type: .ephemeral)
+        try database.createMessage(id: messageId, author: .dummy(userId: currentUserId), type: .ephemeral)
 
         let action = AttachmentAction(
             name: .unique,
@@ -1887,7 +1920,7 @@ final class MessageUpdater_Tests: XCTestCase {
         let messagePayload: MessagePayload.Boxed = .init(
             message: .dummy(
                 messageId: messageId,
-                authorUserId: currentUserId
+                author: .dummy(userId: currentUserId)
             )
         )
         apiClient.test_simulateResponse(.success(messagePayload))

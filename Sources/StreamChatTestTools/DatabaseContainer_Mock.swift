@@ -206,7 +206,7 @@ extension DatabaseContainer {
     /// Synchronously creates a new MessageDTO in the DB with the given id.
     func createMessage(
         id: MessageId = .unique,
-        authorId: UserId = .unique,
+        author: UserPayload = .dummy(userId: .unique),
         cid: ChannelId = .unique,
         text: String = .unique,
         extraData: [String: RawJSON] = [:],
@@ -233,7 +233,7 @@ extension DatabaseContainer {
                 messageId: id,
                 quotedMessageId: quotedMessageId,
                 attachments: attachments,
-                authorUserId: authorId,
+                author: author,
                 text: text,
                 extraData: extraData,
                 latestReactions: latestReactions,
@@ -257,7 +257,7 @@ extension DatabaseContainer {
                     type: .reply,
                     messageId: .unique,
                     parentId: id,
-                    authorUserId: authorId,
+                    author: author,
                     text: "Reply \(idx)",
                     extraData: extraData
                 )

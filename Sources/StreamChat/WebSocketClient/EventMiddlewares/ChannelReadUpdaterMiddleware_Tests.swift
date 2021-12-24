@@ -56,7 +56,7 @@ class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
                 eventType: .messageNew,
                 cid: channelId,
                 user: user,
-                message: .dummy(messageId: .unique, authorUserId: user.id, createdAt: .unique(before: oldReadDate)),
+                message: .dummy(messageId: .unique, author: .dummy(userId: user.id), createdAt: .unique(before: oldReadDate)),
                 createdAt: .unique(before: oldReadDate)
             )
             let oldMessageNewEvent = try MessageNewEventDTO(from: eldEventPayload)
@@ -78,7 +78,11 @@ class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
                 eventType: .messageNew,
                 cid: channelId,
                 user: user,
-                message: .dummy(messageId: .unique, authorUserId: user.id, createdAt: .unique(after: oldReadDate)),
+                message: .dummy(
+                    messageId: .unique,
+                    author: .dummy(userId: user.id),
+                    createdAt: .unique(after: oldReadDate)
+                ),
                 createdAt: .unique(after: oldReadDate)
             )
             let messageNewEvent = try MessageNewEventDTO(from: eventPayload)
@@ -131,7 +135,7 @@ class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
                 cid: channelId,
                 user: user,
                 channel: .dummy(cid: channelId),
-                message: .dummy(messageId: .unique, authorUserId: user.id, createdAt: .unique(before: oldReadDate)),
+                message: .dummy(messageId: .unique, author: .dummy(userId: user.id), createdAt: .unique(before: oldReadDate)),
                 createdAt: .unique(before: oldReadDate)
             )
             let oldMessageNewEvent = try NotificationMessageNewEventDTO(from: eldEventPayload)
@@ -154,7 +158,7 @@ class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
                 cid: channelId,
                 user: user,
                 channel: .dummy(cid: channelId),
-                message: .dummy(messageId: .unique, authorUserId: user.id, createdAt: .unique(after: oldReadDate)),
+                message: .dummy(messageId: .unique, author: .dummy(userId: user.id), createdAt: .unique(after: oldReadDate)),
                 createdAt: .unique(after: oldReadDate)
             )
             let messageNewEvent = try NotificationMessageNewEventDTO(from: eventPayload)
@@ -200,7 +204,7 @@ class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
             eventType: .messageNew,
             cid: channelId,
             user: user,
-            message: .dummy(messageId: .unique, authorUserId: user.id, createdAt: .unique(after: oldReadDate)),
+            message: .dummy(messageId: .unique, author: .dummy(userId: user.id), createdAt: .unique(after: oldReadDate)),
             createdAt: .unique(after: oldReadDate)
         )
         let messageNewEvent = try MessageNewEventDTO(from: eventPayload)
