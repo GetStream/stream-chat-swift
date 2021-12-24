@@ -6,7 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### 🔄 Changed
 
 # [4.7.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.7.0)
-_December 23, 2021_
+_December 24, 2021_
 
 ### 🔄 Changed
 - Leverages [ULID format](https://github.com/ulid/spec) instead of `UUID` for message id generation [#1726](https://github.com/GetStream/stream-chat-swift/pull/1726)
