@@ -50,7 +50,7 @@ class MessageDTO_Tests: XCTestCase {
             createdAt: max(channelPayload.lastMessageAt ?? channelPayload.createdAt, channelPayload.createdAt) + 2,
             channel: channelPayload,
             pinned: true,
-            pinnedByUserId: .unique,
+            pinnedBy: .dummy(userId: .unique),
             pinnedAt: .unique,
             pinExpires: .unique,
             isShadowed: true
@@ -175,7 +175,7 @@ class MessageDTO_Tests: XCTestCase {
                 .dummy(messageId: messageId, user: UserPayload.dummy(userId: userId))
             ],
             pinned: true,
-            pinnedByUserId: .unique,
+            pinnedBy: .dummy(userId: .unique),
             pinnedAt: .unique,
             pinExpires: .unique
         )
@@ -312,7 +312,7 @@ class MessageDTO_Tests: XCTestCase {
             messageId: .unique,
             createdAt: "2018-12-12T15:33:46.488935Z".toDate(),
             pinned: true,
-            pinnedByUserId: .unique,
+            pinnedBy: .dummy(userId: .unique),
             pinnedAt: "2018-12-12T15:33:46.488935Z".toDate(),
             pinExpires: nil
         )
@@ -426,7 +426,7 @@ class MessageDTO_Tests: XCTestCase {
             },
             channel: .dummy(cid: channelId),
             pinned: true,
-            pinnedByUserId: .unique,
+            pinnedBy: .dummy(userId: .unique),
             pinnedAt: .unique,
             pinExpires: .unique
         )
@@ -1086,7 +1086,7 @@ class MessageDTO_Tests: XCTestCase {
             ownReactions: [],
             channel: .dummy(cid: channelId),
             pinned: true,
-            pinnedByUserId: .unique,
+            pinnedBy: .dummy(userId: .unique),
             pinnedAt: .unique,
             pinExpires: .unique
         )
@@ -1105,7 +1105,7 @@ class MessageDTO_Tests: XCTestCase {
                 ownReactions: [],
                 channel: .dummy(cid: channelId),
                 pinned: true,
-                pinnedByUserId: .unique,
+                pinnedBy: .dummy(userId: .unique),
                 pinnedAt: .unique,
                 pinExpires: .unique
             )
@@ -1164,7 +1164,7 @@ class MessageDTO_Tests: XCTestCase {
             ownReactions: [],
             channel: .dummy(cid: channelId),
             pinned: true,
-            pinnedByUserId: .unique,
+            pinnedBy: .dummy(userId: .unique),
             pinnedAt: .unique,
             pinExpires: .unique
         )
@@ -1179,7 +1179,7 @@ class MessageDTO_Tests: XCTestCase {
             ownReactions: [],
             channel: .dummy(cid: channelId),
             pinned: true,
-            pinnedByUserId: .unique,
+            pinnedBy: .dummy(userId: .unique),
             pinnedAt: .unique,
             pinExpires: .unique
         )
@@ -1196,7 +1196,7 @@ class MessageDTO_Tests: XCTestCase {
             ownReactions: [],
             channel: .dummy(cid: channelId),
             pinned: true,
-            pinnedByUserId: .unique,
+            pinnedBy: .dummy(userId: .unique),
             pinnedAt: .unique,
             pinExpires: .unique
         )

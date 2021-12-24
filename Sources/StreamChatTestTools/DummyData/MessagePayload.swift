@@ -34,7 +34,7 @@ extension MessagePayload {
         updatedAt: Date = .unique,
         channel: ChannelDetailPayload? = nil,
         pinned: Bool = false,
-        pinnedByUserId: UserId? = nil,
+        pinnedBy: UserPayload? = nil,
         pinnedAt: Date? = nil,
         pinExpires: Date? = nil,
         isSilent: Bool = false,
@@ -70,7 +70,7 @@ extension MessagePayload {
             attachments: attachments,
             channel: channel,
             pinned: pinned,
-            pinnedBy: pinnedByUserId != nil ? UserPayload.dummy(userId: pinnedByUserId!) as UserPayload : nil,
+            pinnedBy: pinnedBy,
             pinnedAt: pinnedAt,
             pinExpires: pinExpires
         )
