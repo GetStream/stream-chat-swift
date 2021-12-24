@@ -152,7 +152,7 @@ public struct ChatMessage {
     
     internal init(
         id: MessageId,
-        cid: ChannelId,
+        cid: ChannelId?,
         text: String,
         type: MessageType,
         command: String?,
@@ -378,4 +378,108 @@ public enum LocalReactionState: String {
     
     /// Deleting of the reaction failed and cannot be fulfilled
     case deletingFailed
+}
+
+extension ChatMessage {
+    init(payload: MessagePayload, session: DatabaseSession) {
+        let pinDetails: MessagePinDetails? = {
+            guard
+                let pinnedBy = payload.pinnedBy,
+                let pinnedAt = payload.pinnedAt,
+                payload.pinned
+            else { return nil }
+            
+            return .init(
+                pinnedAt: pinnedAt,
+                pinnedBy: .init(payload: pinnedBy, session: session),
+                expiresAt: payload.pinExpires
+            )
+        }()
+        
+        let quotedMessage = payload
+            .quotedMessage
+            .map { ChatMessage(payload: $0, session: session) }
+        
+        let author = ChatUser(payload: payload.user, session: session)
+        
+        let mentionedUsers = Set(
+            payload
+                .mentionedUsers
+                .map { ChatUser(payload: $0, session: session) }
+        )
+        
+        let threadParticipants = payload
+            .threadParticipants
+            .map { ChatUser(payload: $0, session: session) }
+        
+        let latestReactions = Set(
+            payload
+                .latestReactions
+                .map { ChatMessageReaction(payload: $0, session: session) }
+        )
+        
+        let ownReactions = Set(
+            payload
+                .ownReactions
+                .map { ChatMessageReaction(payload: $0, session: session) }
+        )
+        
+        let attachments: [AnyChatMessageAttachment] = {
+            guard let cid = payload.channel?.cid else { return [] }
+            
+            return payload
+                .attachments
+                .enumerated()
+                .compactMap { (index, attachment) in
+                    guard let data = try? JSONEncoder.default.encode(attachment) else { return nil }
+                    
+                    return .init(
+                        id: .init(cid: cid, messageId: payload.id, index: index),
+                        type: attachment.type,
+                        payload: data,
+                        uploadingState: nil
+                    )
+                }
+        }()
+        
+        let isFlaggedByCurrentUser = session
+            .currentUser?
+            .flaggedMessages
+            .map(\.id)
+            .contains(payload.id) ?? false
+        
+        self.init(
+            id: payload.id,
+            cid: payload.channel?.cid,
+            text: payload.text,
+            type: payload.type,
+            command: payload.command,
+            createdAt: payload.createdAt,
+            locallyCreatedAt: nil,
+            updatedAt: payload.updatedAt,
+            deletedAt: payload.deletedAt,
+            arguments: payload.args,
+            parentMessageId: payload.parentId,
+            showReplyInChannel: payload.showReplyInChannel,
+            replyCount: payload.replyCount,
+            extraData: payload.extraData,
+            quotedMessage: { quotedMessage },
+            isSilent: payload.isSilent,
+            isShadowed: payload.isShadowed,
+            reactionScores: payload.reactionScores,
+            reactionCounts: payload.reactionCounts,
+            author: { author },
+            mentionedUsers: { mentionedUsers },
+            threadParticipants: { threadParticipants },
+            attachments: { attachments },
+            latestReplies: { [] },
+            localState: nil,
+            isFlaggedByCurrentUser: isFlaggedByCurrentUser,
+            latestReactions: { latestReactions },
+            currentUserReactions: { ownReactions },
+            isSentByCurrentUser: session.currentUser?.user.id == payload.user.id,
+            pinDetails: pinDetails,
+            underlyingContext: nil
+        )
+    }
 }
