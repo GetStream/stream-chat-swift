@@ -135,3 +135,28 @@ public extension UserRole {
         }
     }
 }
+
+extension ChatUser {
+    convenience init(payload: UserPayload, session: DatabaseSession) {
+        let isFlaggedByCurrentUser = session
+            .currentUser?
+            .flaggedUsers
+            .map(\.id)
+            .contains(payload.id) ?? false
+        
+        self.init(
+            id: payload.id,
+            name: payload.name,
+            imageURL: payload.imageURL,
+            isOnline: payload.isOnline,
+            isBanned: payload.isBanned,
+            isFlaggedByCurrentUser: isFlaggedByCurrentUser,
+            userRole: payload.role,
+            createdAt: payload.createdAt,
+            updatedAt: payload.updatedAt,
+            lastActiveAt: payload.lastActiveAt,
+            teams: .init(payload.teams),
+            extraData: payload.extraData
+        )
+    }
+}
