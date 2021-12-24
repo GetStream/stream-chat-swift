@@ -604,7 +604,7 @@ class ChannelController_Tests: XCTestCase {
         // Create a new message payload that's newer than `channel.lastMessageAt`
         let newerMessagePayload: MessagePayload = .dummy(
             messageId: .unique,
-            authorUserId: userId,
+            author: .dummy(userId: userId),
             createdAt: .unique(after: channelPayload.channel.lastMessageAt!)
         )
         // Save the message payload and check `channel.lastMessageAt` is updated
@@ -886,7 +886,6 @@ class ChannelController_Tests: XCTestCase {
         let newMessageId: MessageId = .unique
         let newMessagePayload: MessagePayload = .dummy(
             messageId: newMessageId,
-            authorUserId: .unique,
             createdAt: Date()
         )
         _ = try waitFor {
@@ -912,8 +911,8 @@ class ChannelController_Tests: XCTestCase {
         )
         
         // Insert two messages
-        let message1: MessagePayload = .dummy(messageId: .unique, authorUserId: .unique)
-        let message2: MessagePayload = .dummy(messageId: .unique, authorUserId: .unique)
+        let message1: MessagePayload = .dummy(messageId: .unique)
+        let message2: MessagePayload = .dummy(messageId: .unique)
         
         try client.databaseContainer.writeSynchronously {
             try $0.saveMessage(payload: message1, for: self.channelId, syncOwnReactions: true)
@@ -938,8 +937,8 @@ class ChannelController_Tests: XCTestCase {
         )
         
         // Insert two messages
-        let message1: MessagePayload = .dummy(messageId: .unique, authorUserId: .unique)
-        let message2: MessagePayload = .dummy(messageId: .unique, authorUserId: .unique)
+        let message1: MessagePayload = .dummy(messageId: .unique)
+        let message2: MessagePayload = .dummy(messageId: .unique)
         
         try client.databaseContainer.writeSynchronously {
             try $0.saveMessage(payload: message1, for: self.channelId, syncOwnReactions: true)
@@ -960,23 +959,21 @@ class ChannelController_Tests: XCTestCase {
         )
         
         // Insert two messages
-        let message1: MessagePayload = .dummy(messageId: .unique, authorUserId: .unique)
-        let message2: MessagePayload = .dummy(messageId: .unique, authorUserId: .unique)
+        let message1: MessagePayload = .dummy(messageId: .unique)
+        let message2: MessagePayload = .dummy(messageId: .unique)
         
         // Insert reply that should be shown in channel.
         let reply1: MessagePayload = .dummy(
             messageId: .unique,
             parentId: message2.id,
-            showReplyInChannel: true,
-            authorUserId: .unique
+            showReplyInChannel: true
         )
         
         // Insert reply that should be visible only in thread.
         let reply2: MessagePayload = .dummy(
             messageId: .unique,
             parentId: message2.id,
-            showReplyInChannel: false,
-            authorUserId: .unique
+            showReplyInChannel: false
         )
         
         try client.databaseContainer.writeSynchronously {
@@ -1000,14 +997,13 @@ class ChannelController_Tests: XCTestCase {
         )
         
         // Insert a message
-        let message1: MessagePayload = .dummy(messageId: .unique, authorUserId: .unique)
+        let message1: MessagePayload = .dummy(messageId: .unique)
         
         // Insert ephemeral message in message1's thread
         let ephemeralMessage: MessagePayload = .dummy(
             type: .ephemeral,
             messageId: .unique,
-            parentId: message1.id,
-            authorUserId: .unique
+            parentId: message1.id
         )
         
         try client.databaseContainer.writeSynchronously {
@@ -1034,14 +1030,13 @@ class ChannelController_Tests: XCTestCase {
         // Create incoming deleted message
         let incomingDeletedMessage: MessagePayload = .dummy(
             messageId: .unique,
-            authorUserId: .unique,
             deletedAt: .unique
         )
 
         // Create outgoing deleted message
         let outgoingDeletedMessage: MessagePayload = .dummy(
             messageId: .unique,
-            authorUserId: currentUserID,
+            author: .dummy(userId: currentUserID),
             deletedAt: .unique
         )
 
@@ -1069,14 +1064,13 @@ class ChannelController_Tests: XCTestCase {
         // Create incoming deleted message
         let incomingDeletedMessage: MessagePayload = .dummy(
             messageId: .unique,
-            authorUserId: .unique,
             deletedAt: .unique
         )
 
         // Create outgoing deleted message
         let outgoingDeletedMessage: MessagePayload = .dummy(
             messageId: .unique,
-            authorUserId: currentUserID,
+            author: .dummy(userId: currentUserID),
             deletedAt: .unique
         )
 
@@ -1104,14 +1098,13 @@ class ChannelController_Tests: XCTestCase {
         // Create incoming deleted message
         let incomingDeletedMessage: MessagePayload = .dummy(
             messageId: .unique,
-            authorUserId: .unique,
             deletedAt: .unique
         )
 
         // Create outgoing deleted message
         let outgoingDeletedMessage: MessagePayload = .dummy(
             messageId: .unique,
-            authorUserId: currentUserID,
+            author: .dummy(userId: currentUserID),
             deletedAt: .unique
         )
 
@@ -1160,14 +1153,12 @@ class ChannelController_Tests: XCTestCase {
         // Create incoming shadowed message
         let shadowedMessage: MessagePayload = .dummy(
             messageId: .unique,
-            authorUserId: .unique,
             isShadowed: true
         )
         
         // Create incoming non-shadowed message
         let nonShadowedMessage: MessagePayload = .dummy(
             messageId: .unique,
-            authorUserId: .unique,
             isShadowed: false
         )
         
@@ -1192,14 +1183,12 @@ class ChannelController_Tests: XCTestCase {
         // Create incoming shadowed message
         let shadowedMessage: MessagePayload = .dummy(
             messageId: .unique,
-            authorUserId: .unique,
             isShadowed: true
         )
         
         // Create incoming non-shadowed message
         let nonShadowedMessage: MessagePayload = .dummy(
             messageId: .unique,
-            authorUserId: .unique,
             isShadowed: false
         )
         
@@ -2164,7 +2153,7 @@ class ChannelController_Tests: XCTestCase {
         env.channelUpdater?
             .update_completion?(.success(dummyPayload(
                 with: .unique,
-                messages: [.dummy(messageId: .unique, authorUserId: .unique)]
+                messages: [.dummy(messageId: .unique)]
             )))
         // Release reference of completion so we can deallocate stuff
         env.channelUpdater!.update_completion = nil

@@ -47,8 +47,8 @@ final class MessageEditor_Tests: XCTestCase {
         try database.createCurrentUser(id: currentUserId)
         
         // Create 2 messages in the DB, only message 1 has `.pendingSync` local state
-        try database.createMessage(id: message1Id, authorId: currentUserId, localState: .pendingSync)
-        try database.createMessage(id: message2Id, authorId: currentUserId, localState: nil)
+        try database.createMessage(id: message1Id, author: .dummy(userId: currentUserId), localState: .pendingSync)
+        try database.createMessage(id: message2Id, author: .dummy(userId: currentUserId), localState: nil)
         
         let message1Payload: MessageRequestBody = try XCTUnwrap(
             database.viewContext.message(id: message1Id)?
@@ -78,7 +78,7 @@ final class MessageEditor_Tests: XCTestCase {
         try database.createCurrentUser(id: currentUserId)
         
         // Create a messages in the DB in `.pendingSync` state
-        try database.createMessage(id: messageId, authorId: currentUserId, localState: .pendingSync)
+        try database.createMessage(id: messageId, author: .dummy(userId: currentUserId), localState: .pendingSync)
         
         // Load the message
         var message: MessageDTO? {
@@ -107,7 +107,7 @@ final class MessageEditor_Tests: XCTestCase {
         try database.createCurrentUser(id: currentUserId)
         
         // Create a messages in the DB in `.pendingSync` state
-        try database.createMessage(id: messageId, authorId: currentUserId, localState: .pendingSync)
+        try database.createMessage(id: messageId, author: .dummy(userId: currentUserId), localState: .pendingSync)
         
         // Load the message
         var message: MessageDTO? {
@@ -135,7 +135,7 @@ final class MessageEditor_Tests: XCTestCase {
         try database.createCurrentUser(id: currentUserId)
         
         // Create a messages in the DB in `.pendingSync` state
-        try database.createMessage(id: messageId, authorId: currentUserId, localState: .pendingSync)
+        try database.createMessage(id: messageId, author: .dummy(userId: currentUserId), localState: .pendingSync)
         
         // Load the message
         var message: MessageDTO? {

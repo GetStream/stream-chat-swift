@@ -141,7 +141,12 @@ final class MessageController_Tests: XCTestCase {
         try client.databaseContainer.createCurrentUser(id: currentUserId)
         
         // Create message in that matches controller's `messageId`
-        try client.databaseContainer.createMessage(id: messageId, authorId: currentUserId, cid: cid, text: messageLocalText)
+        try client.databaseContainer.createMessage(
+            id: messageId,
+            author: .dummy(userId: currentUserId),
+            cid: cid,
+            text: messageLocalText
+        )
         
         // Assert message is fetched from the database and has correct field values
         var message = try XCTUnwrap(controller.message)
@@ -151,7 +156,7 @@ final class MessageController_Tests: XCTestCase {
         // Simulate response from the backend with updated `text`, update the local message in the databse
         let messagePayload: MessagePayload = .dummy(
             messageId: messageId,
-            authorUserId: currentUserId,
+            author: .dummy(userId: currentUserId),
             text: .unique
         )
         try client.databaseContainer.writeSynchronously { session in
@@ -175,7 +180,7 @@ final class MessageController_Tests: XCTestCase {
         try client.databaseContainer.createChannel(cid: cid)
         try client.databaseContainer.createMessage(
             id: messageId,
-            authorId: currentUserId,
+            author: .dummy(userId: currentUserId),
             cid: cid,
             text: "No, I am your father.",
             numberOfReplies: 10
@@ -192,21 +197,19 @@ final class MessageController_Tests: XCTestCase {
     
     func test_replies_haveCorrectOrder() throws {
         // Insert parent message
-        try client.databaseContainer.createMessage(id: messageId, authorId: .unique, cid: cid, text: "Parent")
+        try client.databaseContainer.createMessage(id: messageId, cid: cid, text: "Parent")
         
         // Insert 2 replies for parent message
         let reply1: MessagePayload = .dummy(
             messageId: .unique,
             parentId: messageId,
-            showReplyInChannel: false,
-            authorUserId: .unique
+            showReplyInChannel: false
         )
         
         let reply2: MessagePayload = .dummy(
             messageId: .unique,
             parentId: messageId,
-            showReplyInChannel: false,
-            authorUserId: .unique
+            showReplyInChannel: false
         )
         
         try client.databaseContainer.writeSynchronously {
@@ -247,14 +250,13 @@ final class MessageController_Tests: XCTestCase {
         }
         
         // Insert parent message
-        try client.databaseContainer.createMessage(id: messageId, authorId: .unique, cid: cid, text: "Parent")
+        try client.databaseContainer.createMessage(id: messageId, cid: cid, text: "Parent")
         
         // Insert replies for parent message
         let reply1: MessagePayload = .dummy(
             messageId: .unique,
             parentId: messageId,
             showReplyInChannel: false,
-            authorUserId: .unique,
             createdAt: .unique(after: truncatedDate)
         )
         
@@ -264,7 +266,6 @@ final class MessageController_Tests: XCTestCase {
             messageId: .unique,
             parentId: messageId,
             showReplyInChannel: false,
-            authorUserId: .unique,
             createdAt: createdAt,
             deletedAt: .unique(after: createdAt)
         )
@@ -274,7 +275,6 @@ final class MessageController_Tests: XCTestCase {
             messageId: .unique,
             parentId: messageId,
             showReplyInChannel: false,
-            authorUserId: .unique,
             createdAt: .unique(before: truncatedDate)
         )
         
@@ -306,14 +306,14 @@ final class MessageController_Tests: XCTestCase {
         }
 
         // Insert parent message
-        try client.databaseContainer.createMessage(id: messageId, authorId: .unique, cid: cid, text: "Parent")
+        try client.databaseContainer.createMessage(id: messageId, cid: cid, text: "Parent")
 
         // Insert own deleted reply
         let ownReply: MessagePayload = .dummy(
             messageId: .unique,
             parentId: messageId,
             showReplyInChannel: false,
-            authorUserId: currentUserId,
+            author: .dummy(userId: currentUserId),
             createdAt: .unique(after: truncatedDate),
             deletedAt: .unique(after: truncatedDate)
         )
@@ -324,7 +324,6 @@ final class MessageController_Tests: XCTestCase {
             messageId: .unique,
             parentId: messageId,
             showReplyInChannel: false,
-            authorUserId: .unique,
             createdAt: createdAt,
             deletedAt: .unique(after: createdAt)
         )
@@ -355,14 +354,14 @@ final class MessageController_Tests: XCTestCase {
         }
 
         // Insert parent message
-        try client.databaseContainer.createMessage(id: messageId, authorId: .unique, cid: cid, text: "Parent")
+        try client.databaseContainer.createMessage(id: messageId, cid: cid, text: "Parent")
 
         // Insert own deleted reply
         let ownReply: MessagePayload = .dummy(
             messageId: .unique,
             parentId: messageId,
             showReplyInChannel: false,
-            authorUserId: currentUserId,
+            author: .dummy(userId: currentUserId),
             createdAt: .unique(after: truncatedDate),
             deletedAt: .unique(after: truncatedDate)
         )
@@ -373,7 +372,6 @@ final class MessageController_Tests: XCTestCase {
             messageId: .unique,
             parentId: messageId,
             showReplyInChannel: false,
-            authorUserId: .unique,
             createdAt: createdAt,
             deletedAt: .unique(after: createdAt)
         )
@@ -404,14 +402,14 @@ final class MessageController_Tests: XCTestCase {
         }
 
         // Insert parent message
-        try client.databaseContainer.createMessage(id: messageId, authorId: .unique, cid: cid, text: "Parent")
+        try client.databaseContainer.createMessage(id: messageId, cid: cid, text: "Parent")
 
         // Insert own deleted reply
         let ownReply: MessagePayload = .dummy(
             messageId: .unique,
             parentId: messageId,
             showReplyInChannel: false,
-            authorUserId: currentUserId,
+            author: .dummy(userId: currentUserId),
             createdAt: .unique(after: truncatedDate),
             deletedAt: .unique(after: truncatedDate)
         )
@@ -422,7 +420,6 @@ final class MessageController_Tests: XCTestCase {
             messageId: .unique,
             parentId: messageId,
             showReplyInChannel: false,
-            authorUserId: .unique,
             createdAt: createdAt,
             deletedAt: .unique(after: createdAt)
         )
@@ -453,14 +450,13 @@ final class MessageController_Tests: XCTestCase {
         }
         
         // Insert parent message
-        try client.databaseContainer.createMessage(id: messageId, authorId: .unique, cid: cid, text: "Parent")
+        try client.databaseContainer.createMessage(id: messageId, cid: cid, text: "Parent")
         
         // Insert a reply
         let nonShadowedReply: MessagePayload = .dummy(
             messageId: .unique,
             parentId: messageId,
             showReplyInChannel: false,
-            authorUserId: .unique,
             createdAt: .unique(after: truncatedDate),
             isShadowed: false
         )
@@ -471,7 +467,6 @@ final class MessageController_Tests: XCTestCase {
             messageId: .unique,
             parentId: messageId,
             showReplyInChannel: false,
-            authorUserId: .unique,
             createdAt: createdAt,
             isShadowed: true
         )
@@ -501,14 +496,13 @@ final class MessageController_Tests: XCTestCase {
         }
         
         // Insert parent message
-        try client.databaseContainer.createMessage(id: messageId, authorId: .unique, cid: cid, text: "Parent")
+        try client.databaseContainer.createMessage(id: messageId, cid: cid, text: "Parent")
         
         // Insert a reply
         let nonShadowedReply: MessagePayload = .dummy(
             messageId: .unique,
             parentId: messageId,
             showReplyInChannel: false,
-            authorUserId: .unique,
             createdAt: .unique(after: truncatedDate),
             isShadowed: false
         )
@@ -519,7 +513,6 @@ final class MessageController_Tests: XCTestCase {
             messageId: .unique,
             parentId: messageId,
             showReplyInChannel: false,
-            authorUserId: .unique,
             createdAt: createdAt,
             isShadowed: true
         )
@@ -593,7 +586,7 @@ final class MessageController_Tests: XCTestCase {
         // Simulate response from a backend with a message that doesn't exist locally
         let messagePayload: MessagePayload = .dummy(
             messageId: messageId,
-            authorUserId: currentUserId
+            author: .dummy(userId: currentUserId)
         )
         try client.databaseContainer.writeSynchronously { session in
             try session.saveMessage(payload: messagePayload, for: self.cid, syncOwnReactions: true)
@@ -617,7 +610,12 @@ final class MessageController_Tests: XCTestCase {
         try client.databaseContainer.createChannel(cid: cid)
         
         // Create message in the database with `initialMessageText`
-        try client.databaseContainer.createMessage(id: messageId, authorId: currentUserId, cid: cid, text: initialMessageText)
+        try client.databaseContainer.createMessage(
+            id: messageId,
+            author: .dummy(userId: currentUserId),
+            cid: cid,
+            text: initialMessageText
+        )
         
         // Set the delegate
         let delegate = TestDelegate(expectedQueueId: callbackQueueID)
@@ -629,7 +627,7 @@ final class MessageController_Tests: XCTestCase {
         // Simulate response from a backend with a message that exists locally but has out-dated text
         let messagePayload: MessagePayload = .dummy(
             messageId: messageId,
-            authorUserId: currentUserId,
+            author: .dummy(userId: currentUserId),
             text: "new text"
         )
         try client.databaseContainer.writeSynchronously { session in
@@ -652,7 +650,7 @@ final class MessageController_Tests: XCTestCase {
         try client.databaseContainer.createChannel(cid: cid)
         
         // Create parent message
-        try client.databaseContainer.createMessage(id: messageId, authorId: currentUserId, cid: cid)
+        try client.databaseContainer.createMessage(id: messageId, author: .dummy(userId: currentUserId), cid: cid)
         
         // Set the delegate
         let delegate = TestDelegate(expectedQueueId: callbackQueueID)
@@ -665,8 +663,7 @@ final class MessageController_Tests: XCTestCase {
         let reply: MessagePayload = .dummy(
             messageId: .unique,
             parentId: messageId,
-            showReplyInChannel: false,
-            authorUserId: .unique
+            showReplyInChannel: false
         )
         
         var replyModel: ChatMessage?
@@ -1077,7 +1074,7 @@ final class MessageController_Tests: XCTestCase {
             .success(
                 .init(
                     messages: (0...30).map {
-                        _ in MessagePayload.dummy(messageId: .unique, authorUserId: .unique)
+                        _ in MessagePayload.dummy(messageId: .unique)
                     }
                 )
             )
@@ -1196,7 +1193,7 @@ final class MessageController_Tests: XCTestCase {
 
         try client.databaseContainer.createMessage(
             id: messageId,
-            authorId: currentUserId,
+            author: .dummy(userId: currentUserId),
             cid: cid,
             text: .unique,
             latestReactions: mockedReactions

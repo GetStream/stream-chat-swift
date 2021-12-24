@@ -78,6 +78,9 @@ final class MessageUpdaterMock: MessageUpdater {
     @Atomic var dispatchEphemeralMessageAction_action: AttachmentAction?
     @Atomic var dispatchEphemeralMessageAction_completion: ((Error?) -> Void)?
     
+    @Atomic var fetch_query: MessageSearchQuery?
+    @Atomic var fetch_completion: ((Result<[MessagePayload], Error>) -> Void)?
+    
     // Cleans up all recorded values
     func cleanUp() {
         getMessage_cid = nil
@@ -146,6 +149,9 @@ final class MessageUpdaterMock: MessageUpdater {
         dispatchEphemeralMessageAction_messageId = nil
         dispatchEphemeralMessageAction_action = nil
         dispatchEphemeralMessageAction_completion = nil
+        
+        fetch_query = nil
+        fetch_completion = nil
     }
     
     override func getMessage(cid: ChannelId, messageId: MessageId, completion: ((Error?) -> Void)? = nil) {
@@ -295,5 +301,13 @@ final class MessageUpdaterMock: MessageUpdater {
         dispatchEphemeralMessageAction_messageId = messageId
         dispatchEphemeralMessageAction_action = action
         dispatchEphemeralMessageAction_completion = completion
+    }
+    
+    override func fetch(
+        query: MessageSearchQuery,
+        completion: @escaping (Result<[MessagePayload], Error>) -> Void
+    ) {
+        fetch_query = query
+        fetch_completion = completion
     }
 }

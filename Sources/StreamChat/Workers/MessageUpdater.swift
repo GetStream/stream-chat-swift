@@ -548,19 +548,21 @@ class MessageUpdater: Worker {
         })
     }
     
-    func search(query: MessageSearchQuery, completion: ((Error?) -> Void)? = nil) {
-        apiClient.request(endpoint: .search(query: query)) { result in
-            switch result {
+    /// Fetches the given message search query from the backend and invokes completion with the API call results.
+    ///
+    /// - Parameters:
+    ///   - query: The query to fetch.
+    ///   - completion: The completion to invoke with request results.
+    func fetch(
+        query: MessageSearchQuery,
+        completion: @escaping (Result<[MessagePayload], Error>) -> Void
+    ) {
+        apiClient.request(endpoint: .search(query: query)) {
+            switch $0 {
             case let .success(payload):
-                self.database.write { session in
-                    for boxedMessage in payload.results {
-                        try session.saveMessage(payload: boxedMessage.message, for: query)
-                    }
-                } completion: { error in
-                    completion?(error)
-                }
+                completion(.success(payload.results.map(\.message)))
             case let .failure(error):
-                completion?(error)
+                completion(.failure(error))
             }
         }
     }

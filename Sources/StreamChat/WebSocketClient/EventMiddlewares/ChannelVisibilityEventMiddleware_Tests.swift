@@ -189,7 +189,7 @@ final class ChannelVisibilityEventMiddleware_Tests: XCTestCase {
                 eventType: .messageNew,
                 cid: cid,
                 user: .dummy(userId: .unique),
-                message: .dummy(messageId: .unique, authorUserId: .unique),
+                message: .dummy(messageId: .unique),
                 createdAt: .unique
             ) as EventPayload
         )
