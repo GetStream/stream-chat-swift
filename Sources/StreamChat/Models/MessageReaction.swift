@@ -25,3 +25,18 @@ public struct ChatMessageReaction: Hashable {
     /// Custom data
     public let extraData: [String: RawJSON]
 }
+
+extension ChatMessageReaction {
+    init(payload: MessageReactionPayload, session: DatabaseSession) {
+        let author = ChatUser(payload: payload.user, session: session)
+        
+        self.init(
+            type: payload.type,
+            score: payload.score,
+            createdAt: payload.createdAt,
+            updatedAt: payload.updatedAt,
+            author: author,
+            extraData: payload.extraData
+        )
+    }
+}
