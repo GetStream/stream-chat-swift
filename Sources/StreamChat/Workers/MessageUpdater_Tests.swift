@@ -1343,7 +1343,7 @@ final class MessageUpdater_Tests: XCTestCase {
                 id: messageId,
                 author: .dummy(userId: currentUserId),
                 pinned: true,
-                pinnedByUserId: .unique,
+                pinnedBy: .dummy(userId: .unique),
                 pinnedAt: .unique,
                 pinExpires: .unique,
                 localState: initialState
@@ -1387,7 +1387,7 @@ final class MessageUpdater_Tests: XCTestCase {
                 id: messageId,
                 author: .dummy(userId: currentUserId),
                 pinned: true,
-                pinnedByUserId: .unique,
+                pinnedBy: .dummy(userId: .unique),
                 pinnedAt: .unique,
                 pinExpires: .unique,
                 localState: state
