@@ -276,15 +276,6 @@ extension DatabaseSessionMock {
     func delete(query: ChannelListQuery) {
         underlyingSession.delete(query: query)
     }
-
-    func saveMessage(payload: MessagePayload, for query: MessageSearchQuery) throws -> MessageDTO? {
-        try throwErrorIfNeeded()
-        return try underlyingSession.saveMessage(payload: payload, for: query)
-    }
-
-    func deleteQuery(_ query: MessageSearchQuery) {
-        underlyingSession.deleteQuery(query)
-    }
 }
 
 private extension DatabaseSessionMock {

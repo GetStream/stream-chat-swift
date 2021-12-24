@@ -95,10 +95,7 @@ protocol MessageDatabaseSession {
     /// is received via WS events. For performance reasons the API does not populate the `message.own_reactions` when sending events
     @discardableResult
     func saveMessage(payload: MessagePayload, channelDTO: ChannelDTO, syncOwnReactions: Bool) throws -> MessageDTO
-
-    @discardableResult
-    func saveMessage(payload: MessagePayload, for query: MessageSearchQuery) throws -> MessageDTO?
-
+    
     func addReaction(
         to messageId: MessageId,
         type: MessageReactionType,
@@ -137,8 +134,6 @@ protocol MessageDatabaseSession {
     /// Deletes the provided dto from a database
     /// - Parameter reaction: The DTO to be deleted
     func delete(reaction: MessageReactionDTO)
-    
-    func deleteQuery(_ query: MessageSearchQuery)
 }
 
 extension MessageDatabaseSession {

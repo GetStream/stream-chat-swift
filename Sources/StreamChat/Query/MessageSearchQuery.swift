@@ -45,8 +45,6 @@ public struct MessageSearchQuery: Encodable {
     
     public var pagination: Pagination?
     
-    var filterHash: String
-    
     public init(
         channelFilter: Filter<ChannelListFilterScope>,
         messageFilter: Filter<MessageSearchFilterScope>,
@@ -57,7 +55,6 @@ public struct MessageSearchQuery: Encodable {
         self.messageFilter = messageFilter
         self.sort = sort
         pagination = Pagination(pageSize: pageSize)
-        filterHash = messageFilter.filterHash + channelFilter.filterHash
     }
     
     public func encode(to encoder: Encoder) throws {

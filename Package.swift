@@ -142,6 +142,8 @@ var streamChatSourcesExcluded: [String] { [
     "Utils/Cached_Tests.swift",
     "Models/Member_Tests.swift",
     "Models/MessageReactionType_Tests.swift",
+    "Models/User_Tests.swift",
+    "Models/MessageReaction_Tests.swift",
     "Models/ChannelId_Tests.swift",
     "Models/Attachments/AttachmentTypes_Tests.swift",
     "Models/Attachments/AttachmentId_Tests.swift",

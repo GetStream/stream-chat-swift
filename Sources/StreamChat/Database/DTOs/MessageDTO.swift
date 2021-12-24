@@ -38,7 +38,6 @@ class MessageDTO: NSManagedObject {
     @NSManaged var attachments: Set<AttachmentDTO>
     @NSManaged var quotedMessage: MessageDTO?
     @NSManaged var quotedBy: Set<MessageDTO>
-    @NSManaged var searches: Set<MessageSearchQueryDTO>
 
     @NSManaged var pinned: Bool
     @NSManaged var pinnedBy: UserDTO?
@@ -237,13 +236,6 @@ class MessageDTO: NSManagedObject {
             deletedMessagesVisibility: deletedMessagesVisibility,
             shouldShowShadowedMessages: shouldShowShadowedMessages
         )
-        return request
-    }
-    
-    static func messagesFetchRequest(for query: MessageSearchQuery) -> NSFetchRequest<MessageDTO> {
-        let request = NSFetchRequest<MessageDTO>(entityName: MessageDTO.entityName)
-        request.predicate = NSPredicate(format: "ANY searches.filterHash == %@", query.filterHash)
-        request.sortDescriptors = [NSSortDescriptor(keyPath: \MessageDTO.defaultSortingKey, ascending: true)]
         return request
     }
     
@@ -541,15 +533,6 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         }
         
         return try saveMessage(payload: payload, channelDTO: channel, syncOwnReactions: syncOwnReactions)
-    }
-    
-    func saveMessage(payload: MessagePayload, for query: MessageSearchQuery) throws -> MessageDTO? {
-        guard let messageDTO = try saveMessage(payload: payload, for: nil) else {
-            return nil
-        }
-
-        messageDTO.searches.insert(saveQuery(query: query))
-        return messageDTO
     }
     
     func message(id: MessageId) -> MessageDTO? { .load(id: id, context: self) }

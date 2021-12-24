@@ -264,7 +264,6 @@
 		796CBD3C2600A321003299B0 /* ChatClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 796CBD3B2600A321003299B0 /* ChatClient.swift */; };
 		7973CD2F2653AE18004C7CE5 /* DefaultAttachmentPreviewProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7973CD2E2653AE18004C7CE5 /* DefaultAttachmentPreviewProvider.swift */; };
 		7978FBBA26E15A58002CA2DF /* MessageSearchQuery.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7978FBB926E15A58002CA2DF /* MessageSearchQuery.swift */; };
-		7978FBBC26E16295002CA2DF /* MessageSearchQueryDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7978FBBB26E16295002CA2DF /* MessageSearchQueryDTO.swift */; };
 		7978FBBF26E1667C002CA2DF /* MessageSearchController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7978FBBE26E1667C002CA2DF /* MessageSearchController.swift */; };
 		797A756424814E7A003CF16D /* WebSocketConnectPayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 797A756324814E7A003CF16D /* WebSocketConnectPayload.swift */; };
 		797A756624814EF8003CF16D /* SystemEnvironment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 797A756524814EF8003CF16D /* SystemEnvironment.swift */; };
@@ -1030,7 +1029,6 @@
 		C121E878274544AF00023E4C /* ChannelDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799C942A247D2FB9001F1104 /* ChannelDTO.swift */; };
 		C121E879274544AF00023E4C /* ChannelReadDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 796FD215250654940076C99B /* ChannelReadDTO.swift */; };
 		C121E87A274544AF00023E4C /* ChannelListQueryDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7964F3A3249A0ACF002A09EC /* ChannelListQueryDTO.swift */; };
-		C121E87B274544AF00023E4C /* MessageSearchQueryDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7978FBBB26E16295002CA2DF /* MessageSearchQueryDTO.swift */; };
 		C121E87C274544AF00023E4C /* EphemeralValuesContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7991D83A24F5427E00D21BA3 /* EphemeralValuesContainer.swift */; };
 		C121E87D274544AF00023E4C /* ChannelMemberListQueryDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 882C575F252C7CC400E60C44 /* ChannelMemberListQueryDTO.swift */; };
 		C121E87E274544AF00023E4C /* DeviceDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 790A4C54252F25DA001F4A23 /* DeviceDTO.swift */; };
@@ -2237,7 +2235,6 @@
 		796FD215250654940076C99B /* ChannelReadDTO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelReadDTO.swift; sourceTree = "<group>"; };
 		7973CD2E2653AE18004C7CE5 /* DefaultAttachmentPreviewProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultAttachmentPreviewProvider.swift; sourceTree = "<group>"; };
 		7978FBB926E15A58002CA2DF /* MessageSearchQuery.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageSearchQuery.swift; sourceTree = "<group>"; };
-		7978FBBB26E16295002CA2DF /* MessageSearchQueryDTO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageSearchQueryDTO.swift; sourceTree = "<group>"; };
 		7978FBBE26E1667C002CA2DF /* MessageSearchController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageSearchController.swift; sourceTree = "<group>"; };
 		797A756324814E7A003CF16D /* WebSocketConnectPayload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebSocketConnectPayload.swift; sourceTree = "<group>"; };
 		797A756524814EF8003CF16D /* SystemEnvironment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SystemEnvironment.swift; sourceTree = "<group>"; };
@@ -3597,7 +3594,6 @@
 				79877A1E2498E50D00015F8B /* ChannelDTO_Tests.swift */,
 				796FD215250654940076C99B /* ChannelReadDTO.swift */,
 				7964F3A3249A0ACF002A09EC /* ChannelListQueryDTO.swift */,
-				7978FBBB26E16295002CA2DF /* MessageSearchQueryDTO.swift */,
 				7991D83A24F5427E00D21BA3 /* EphemeralValuesContainer.swift */,
 				882C575F252C7CC400E60C44 /* ChannelMemberListQueryDTO.swift */,
 				889B00E8252CACCB007709A8 /* ChannelMemberListQueryDTO_Tests.swift */,
@@ -7419,7 +7415,6 @@
 				79877A282498E50D00015F8B /* UserDTO.swift in Sources */,
 				DBCAFE2425C44B920015AD58 /* LazyCachedMapCollection.swift in Sources */,
 				79280F47248515FA00CDEB89 /* ChannelEvents.swift in Sources */,
-				7978FBBC26E16295002CA2DF /* MessageSearchQueryDTO.swift in Sources */,
 				DA640FBE2535CF9200D32944 /* UserListSortingKey.swift in Sources */,
 				79877A182498E4EE00015F8B /* ChannelEndpoints.swift in Sources */,
 				7964F3BA249A314D002A09EC /* LogDestination.swift in Sources */,
@@ -8015,7 +8010,6 @@
 				C121E878274544AF00023E4C /* ChannelDTO.swift in Sources */,
 				C121E879274544AF00023E4C /* ChannelReadDTO.swift in Sources */,
 				C121E87A274544AF00023E4C /* ChannelListQueryDTO.swift in Sources */,
-				C121E87B274544AF00023E4C /* MessageSearchQueryDTO.swift in Sources */,
 				C121E87C274544AF00023E4C /* EphemeralValuesContainer.swift in Sources */,
 				C121E87D274544AF00023E4C /* ChannelMemberListQueryDTO.swift in Sources */,
 				C121E87E274544AF00023E4C /* DeviceDTO.swift in Sources */,
