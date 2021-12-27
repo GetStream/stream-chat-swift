@@ -157,7 +157,8 @@ class MessageDTO: NSManagedObject {
             MessageType.regular.rawValue,
             MessageType.ephemeral.rawValue,
             MessageType.system.rawValue,
-            MessageType.deleted.rawValue
+            MessageType.deleted.rawValue,
+            MessageType.error.rawValue
         ]
 
         let messageTypePredicate = NSCompoundPredicate(format: "type IN %@", validTypes)
