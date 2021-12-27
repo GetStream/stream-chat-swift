@@ -381,4 +381,21 @@ class ChannelUpdater: Worker {
             completion(.failure(ClientError.InvalidAttachmentFileURL(localFileURL)))
         }
     }
+    
+    /// Loads messages pinned in the given channel based on the provided query.
+    ///
+    /// - Parameters:
+    ///   - cid: The channel identifier messages are pinned at.
+    ///   - query: The query describing page size and pagination option.
+    ///   - completion: The completion that will be called with API request results.
+    func loadPinnedMessages(
+        in cid: ChannelId,
+        query: PinnedMessagesQuery,
+        completion: @escaping (Result<PinnedMessagesPayload, Error>) -> Void
+    ) {
+        apiClient.request(
+            endpoint: .pinnedMessages(cid: cid, query: query),
+            completion: completion
+        )
+    }
 }

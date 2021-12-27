@@ -3905,6 +3905,91 @@ class ChannelController_Tests: XCTestCase {
         // Completion should be called with the error
         AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
     }
+    
+    // MARK: - Load pinned messages
+    
+    func test_loadPinnedMessages_failsForNewChannel() throws {
+        //  Create `ChannelController` for new channel
+        let query = ChannelQuery(channelPayload: .unique)
+        setupControllerForNewChannel(query: query)
+        
+        // Simulate `loadPinnedMessages` call and assert error is returned
+        let error: Error? = try waitFor { [callbackQueueID] completion in
+            controller.loadPinnedMessages { result in
+                AssertTestQueue(withId: callbackQueueID)
+                completion(result.error)
+            }
+        }
+        
+        // Assert `ClientError.ChannelNotCreatedYet` is propagated to completion
+        XCTAssert(error is ClientError.ChannelNotCreatedYet)
+    }
+    
+    func test_loadPinnedMessages_callsChannelUpdater() {
+        let pageSize = 10
+        let pagination = PinnedMessagesPagination.aroundMessage(.unique)
+        
+        // Simulate `loadPinnedMessages` call
+        controller.loadPinnedMessages(pageSize: pageSize, pagination: pagination) { _ in }
+        
+        // Assert call is propagated to updater
+        XCTAssertEqual(env.channelUpdater!.loadPinnedMessages_cid, controller.cid)
+        XCTAssertEqual(env.channelUpdater!.loadPinnedMessages_query, .init(pageSize: pageSize, pagination: pagination))
+    }
+    
+    func test_loadPinnedMessages_propagatesMessagesFromUpdater() throws {
+        // Simulate `loadPinnedMessages` call and catch the completion
+        var completionMessages: [ChatMessage]?
+        controller.loadPinnedMessages { [callbackQueueID] in
+            AssertTestQueue(withId: callbackQueueID)
+            completionMessages = try? $0.get()
+        }
+        
+        // Simulate API response
+        let payload = PinnedMessagesPayload(messages: [
+            .dummy(messageId: .unique),
+            .dummy(messageId: .unique),
+            .dummy(messageId: .unique)
+        ])
+        env.channelUpdater!.loadPinnedMessages_completion!(.success(payload))
+        
+        // Messages are converted to models and propagated to completion
+        AssertAsync.willBeEqual(
+            completionMessages?.map(\.id),
+            payload.messages.map(\.id)
+        )
+    }
+    
+    func test_loadPinnedMessages_propagatesErrorFromUpdater() {
+        // Simulate `loadPinnedMessages` call and catch the completion
+        var completionError: Error?
+        controller.loadPinnedMessages { [callbackQueueID] in
+            AssertTestQueue(withId: callbackQueueID)
+            completionError = $0.error
+        }
+        
+        // Simulate failed update
+        let testError = TestError()
+        env.channelUpdater!.loadPinnedMessages_completion!(.failure(testError))
+        
+        // Error is propagated to completion
+        AssertAsync.willBeEqual(completionError as? TestError, testError)
+    }
+    
+    func test_loadPinnedMessages_keepsControllerAlive() {
+        // Simulate `loadPinnedMessages` call
+        controller.loadPinnedMessages { _ in }
+        
+        // Keep a weak ref so we can check if it's actually deallocated
+        weak var weakController = controller
+        
+        // (Try to) deallocate the controller
+        // by not keeping any references to it
+        controller = nil
+        
+        // Assert controller is kept alive
+        AssertAsync.staysTrue(weakController != nil)
+    }
 }
 
 private class TestEnvironment {
