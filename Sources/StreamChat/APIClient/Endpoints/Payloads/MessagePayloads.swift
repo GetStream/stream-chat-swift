@@ -279,8 +279,13 @@ struct MessageRequestBody: Encodable {
     }
 }
 
-/// An object describing the message replies JSON payload.
-struct MessageRepliesPayload: Decodable {
+/// An object describing pinned messages JSON payload.
+typealias PinnedMessagesPayload = MessageListPayload
+
+/// An object describing the message list JSON payload.
+typealias MessageRepliesPayload = MessageListPayload
+
+struct MessageListPayload: Decodable {
     let messages: [MessagePayload]
 }
 
