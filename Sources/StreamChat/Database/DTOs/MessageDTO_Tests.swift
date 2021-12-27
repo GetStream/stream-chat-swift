@@ -1233,81 +1233,7 @@ class MessageDTO_Tests: XCTestCase {
         XCTAssertEqual(loadedMessages[2].quotedMessage?.id, createdMessages[1].id)
     }
 
-    func test_channelMessagesPredicate_shouldNotReturnDeletedReplies() throws {
-        // We check that deleted thread replies are not shown in the channel
-        // When a reply message is deleted, its type changes from "reply" into "deleted"
-        // Therefore we use its `parent_message_id` to know if it was a reply
-
-        let channelId: ChannelId = .unique
-        let channel = ChannelDetailPayload.dummy(cid: channelId)
-        let authorId: UserId = .unique
-        let messageId: MessageId = .unique
-        let existingReplyNotInChannelId: MessageId = .unique
-        let existingReplyInChannelId: MessageId = .unique
-        let deletedReplyNotInChannelId: MessageId = .unique
-        let deletedReplyInChannelId: MessageId = .unique
-
-        let message: MessagePayload = .dummy(
-            type: .regular,
-            messageId: messageId,
-            parentId: nil,
-            attachments: [],
-            authorUserId: authorId,
-            createdAt: Date(timeIntervalSince1970: 1),
-            channel: channel
-        )
-
-        let existingReplyNotInChannel: MessagePayload = .dummy(
-            type: .reply,
-            messageId: existingReplyNotInChannelId,
-            parentId: messageId,
-            showReplyInChannel: false,
-            attachments: [],
-            authorUserId: authorId,
-            createdAt: Date(timeIntervalSince1970: 2),
-            channel: channel
-        )
-
-        let existingReplyInChannel: MessagePayload = .dummy(
-            type: .reply,
-            messageId: existingReplyInChannelId,
-            parentId: messageId,
-            showReplyInChannel: true,
-            attachments: [],
-            authorUserId: authorId,
-            createdAt: Date(timeIntervalSince1970: 3),
-            channel: channel
-        )
-
-        let deletedReplyNotInChannel: MessagePayload = .dummy(
-            type: .deleted,
-            messageId: deletedReplyNotInChannelId,
-            parentId: messageId,
-            showReplyInChannel: false,
-            attachments: [],
-            authorUserId: authorId,
-            createdAt: Date(timeIntervalSince1970: 4),
-            channel: channel
-        )
-
-        let deletedReplyInChannel: MessagePayload = .dummy(
-            type: .deleted,
-            messageId: deletedReplyInChannelId,
-            parentId: messageId,
-            showReplyInChannel: true,
-            attachments: [],
-            authorUserId: authorId,
-            createdAt: Date(timeIntervalSince1970: 5),
-            channel: channel
-        )
-
-        let messages = [message, existingReplyNotInChannel, existingReplyInChannel, deletedReplyNotInChannel, deletedReplyInChannel]
-        try database.writeSynchronously { session in
-            try messages.forEach { messagePayload in
-                try session.saveMessage(payload: messagePayload, for: channelId, syncOwnReactions: true)
-            }
-        }
-
+    func checkChannelMessagesPredicate(channelId: ChannelId, message: MessagePayload) throws -> Bool {
         let request = NSFetchRequest<MessageDTO>(entityName: MessageDTO.entityName)
         request.sortDescriptors = [NSSortDescriptor(keyPath: \MessageDTO.defaultSortingKey, ascending: true)]
         request.predicate = MessageDTO.channelMessagesPredicate(
@@ -1316,17 +1242,122 @@ class MessageDTO_Tests: XCTestCase {
             shouldShowShadowedMessages: false
         )
 
-        var retrievedMessages: [MessageDTO] = []
-        do {
-            retrievedMessages = try database.viewContext.fetch(request)
-        } catch {
-            XCTFail("Failed to retrieve messages")
+        try database.writeSynchronously { session in
+            try session.saveMessage(payload: message, for: channelId, syncOwnReactions: true)
         }
 
-        XCTAssertEqual(retrievedMessages.count, 2)
-        XCTAssertEqual(
-            retrievedMessages.map(\.id),
-            [messageId, existingReplyInChannelId]
+        var retrievedMessages: [MessageDTO] = []
+        retrievedMessages = try database.viewContext.fetch(request)
+        return retrievedMessages.filter { $0.id == message.id }.count == 1
+    }
+
+    func test_channelMessagesPredicate_shouldIncludeRepliesOnChannel() throws {
+        let channelId: ChannelId = .unique
+        let channel = ChannelDetailPayload.dummy(cid: channelId)
+
+        let message: MessagePayload = .dummy(
+            type: .regular,
+            messageId: .unique,
+            parentId: .unique,
+            showReplyInChannel: true,
+            attachments: [],
+            authorUserId: .unique,
+            createdAt: Date(timeIntervalSince1970: 1),
+            channel: channel
         )
+
+        XCTAssertTrue(try checkChannelMessagesPredicate(channelId: channelId, message: message))
+    }
+
+    func test_channelMessagesPredicate_shouldNotIncludeDeletedReplies() throws {
+        let channelId: ChannelId = .unique
+        let channel = ChannelDetailPayload.dummy(cid: channelId)
+        let message: MessagePayload = .dummy(
+            type: .deleted,
+            messageId: .unique,
+            parentId: .unique,
+            attachments: [],
+            authorUserId: .unique,
+            createdAt: Date(timeIntervalSince1970: 1),
+            channel: channel
+        )
+
+        XCTAssertFalse(try checkChannelMessagesPredicate(channelId: channelId, message: message))
+    }
+
+    func test_channelMessagesPredicate_shouldIncludeSystemMessages() throws {
+        let channelId: ChannelId = .unique
+        let channel = ChannelDetailPayload.dummy(cid: channelId)
+        let message: MessagePayload = .dummy(
+            type: .system,
+            messageId: .unique,
+            attachments: [],
+            authorUserId: .unique,
+            createdAt: Date(timeIntervalSince1970: 1),
+            channel: channel
+        )
+
+        XCTAssertTrue(try checkChannelMessagesPredicate(channelId: channelId, message: message))
+    }
+
+    func test_channelMessagesPredicate_shouldIncludeEphemeralMessages() throws {
+        let channelId: ChannelId = .unique
+        let channel = ChannelDetailPayload.dummy(cid: channelId)
+        let message: MessagePayload = .dummy(
+            type: .ephemeral,
+            messageId: .unique,
+            attachments: [],
+            authorUserId: .unique,
+            createdAt: Date(timeIntervalSince1970: 1),
+            channel: channel
+        )
+
+        XCTAssertTrue(try checkChannelMessagesPredicate(channelId: channelId, message: message))
+    }
+
+    func test_channelMessagesPredicate_shouldNotIncludeEphemeralMessagesOnThreads() throws {
+        let channelId: ChannelId = .unique
+        let channel = ChannelDetailPayload.dummy(cid: channelId)
+        let message: MessagePayload = .dummy(
+            type: .ephemeral,
+            messageId: .unique,
+            parentId: .unique,
+            attachments: [],
+            authorUserId: .unique,
+            createdAt: Date(timeIntervalSince1970: 1),
+            channel: channel
+        )
+
+        XCTAssertFalse(try checkChannelMessagesPredicate(channelId: channelId, message: message))
+    }
+
+    func test_channelMessagesPredicate_shouldIncludeRegularMessages() throws {
+        let channelId: ChannelId = .unique
+        let channel = ChannelDetailPayload.dummy(cid: channelId)
+        let message: MessagePayload = .dummy(
+            type: .regular,
+            messageId: .unique,
+            attachments: [],
+            authorUserId: .unique,
+            createdAt: Date(timeIntervalSince1970: 1),
+            channel: channel
+        )
+
+        XCTAssertTrue(try checkChannelMessagesPredicate(channelId: channelId, message: message))
+    }
+    
+    func test_channelMessagesPredicate_shouldIncludeDeletedMessages() throws {
+        let channelId: ChannelId = .unique
+        let channel = ChannelDetailPayload.dummy(cid: channelId)
+        let message: MessagePayload = .dummy(
+            type: .deleted,
+            messageId: .unique,
+            attachments: [],
+            authorUserId: .unique,
+            createdAt: Date(timeIntervalSince1970: 1),
+            channel: channel
+        )
+
+        XCTAssertTrue(try checkChannelMessagesPredicate(channelId: channelId, message: message))
     }
 }
