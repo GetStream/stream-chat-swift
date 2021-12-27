@@ -4,7 +4,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 # Upcoming
 
 # [4.7.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.7.0)
-_December 24, 2021_
+_December 27, 2021_
 
 ### ✅ Added
 - `ChannelListQuery.membersLimit` param for controlling the number of members returned for each channel [#1721](https://github.com/GetStream/stream-chat-swift/issues/1721)
