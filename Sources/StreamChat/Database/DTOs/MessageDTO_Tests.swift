@@ -1233,7 +1233,7 @@ class MessageDTO_Tests: XCTestCase {
         XCTAssertEqual(loadedMessages[2].quotedMessage?.id, createdMessages[1].id)
     }
 
-    func checkChannelMessagesPredicate(channelId: ChannelId, message: MessagePayload) throws -> Bool {
+    func checkChannelMessagesPredicateCount(channelId: ChannelId, message: MessagePayload) throws -> Int {
         let request = NSFetchRequest<MessageDTO>(entityName: MessageDTO.entityName)
         request.sortDescriptors = [NSSortDescriptor(keyPath: \MessageDTO.defaultSortingKey, ascending: true)]
         request.predicate = MessageDTO.channelMessagesPredicate(
@@ -1248,7 +1248,7 @@ class MessageDTO_Tests: XCTestCase {
 
         var retrievedMessages: [MessageDTO] = []
         retrievedMessages = try database.viewContext.fetch(request)
-        return retrievedMessages.filter { $0.id == message.id }.count == 1
+        return retrievedMessages.filter { $0.id == message.id }.count
     }
 
     func test_channelMessagesPredicate_shouldIncludeRepliesOnChannel() throws {
@@ -1266,7 +1266,7 @@ class MessageDTO_Tests: XCTestCase {
             channel: channel
         )
 
-        XCTAssertTrue(try checkChannelMessagesPredicate(channelId: channelId, message: message))
+        XCTAssertEqual(try checkChannelMessagesPredicateCount(channelId: channelId, message: message), 1)
     }
 
     func test_channelMessagesPredicate_shouldNotIncludeDeletedReplies() throws {
@@ -1282,7 +1282,7 @@ class MessageDTO_Tests: XCTestCase {
             channel: channel
         )
 
-        XCTAssertFalse(try checkChannelMessagesPredicate(channelId: channelId, message: message))
+        XCTAssertEqual(try checkChannelMessagesPredicateCount(channelId: channelId, message: message), 0)
     }
 
     func test_channelMessagesPredicate_shouldIncludeSystemMessages() throws {
@@ -1297,7 +1297,7 @@ class MessageDTO_Tests: XCTestCase {
             channel: channel
         )
 
-        XCTAssertTrue(try checkChannelMessagesPredicate(channelId: channelId, message: message))
+        XCTAssertEqual(try checkChannelMessagesPredicateCount(channelId: channelId, message: message), 1)
     }
 
     func test_channelMessagesPredicate_shouldIncludeEphemeralMessages() throws {
@@ -1312,7 +1312,7 @@ class MessageDTO_Tests: XCTestCase {
             channel: channel
         )
 
-        XCTAssertTrue(try checkChannelMessagesPredicate(channelId: channelId, message: message))
+        XCTAssertEqual(try checkChannelMessagesPredicateCount(channelId: channelId, message: message), 1)
     }
 
     func test_channelMessagesPredicate_shouldNotIncludeEphemeralMessagesOnThreads() throws {
@@ -1328,7 +1328,7 @@ class MessageDTO_Tests: XCTestCase {
             channel: channel
         )
 
-        XCTAssertFalse(try checkChannelMessagesPredicate(channelId: channelId, message: message))
+        XCTAssertEqual(try checkChannelMessagesPredicateCount(channelId: channelId, message: message), 0)
     }
 
     func test_channelMessagesPredicate_shouldIncludeRegularMessages() throws {
@@ -1343,7 +1343,7 @@ class MessageDTO_Tests: XCTestCase {
             channel: channel
         )
 
-        XCTAssertTrue(try checkChannelMessagesPredicate(channelId: channelId, message: message))
+        XCTAssertEqual(try checkChannelMessagesPredicateCount(channelId: channelId, message: message), 1)
     }
     
     func test_channelMessagesPredicate_shouldIncludeDeletedMessages() throws {
@@ -1358,6 +1358,40 @@ class MessageDTO_Tests: XCTestCase {
             channel: channel
         )
 
-        XCTAssertTrue(try checkChannelMessagesPredicate(channelId: channelId, message: message))
+        XCTAssertEqual(try checkChannelMessagesPredicateCount(channelId: channelId, message: message), 1)
+    }
+
+    func test_channelMessagesPredicate_shouldIncludeDeletedRepliesInChannelMessages() throws {
+        let channelId: ChannelId = .unique
+        let channel = ChannelDetailPayload.dummy(cid: channelId)
+        let message: MessagePayload = .dummy(
+            type: .deleted,
+            messageId: .unique,
+            parentId: .unique,
+            showReplyInChannel: true,
+            attachments: [],
+            authorUserId: .unique,
+            createdAt: Date(timeIntervalSince1970: 1),
+            channel: channel
+        )
+
+        XCTAssertEqual(try checkChannelMessagesPredicateCount(channelId: channelId, message: message), 1)
+    }
+
+    func test_channelMessagesPredicate_shouldNotIncludeDeletedRepliesMessages() throws {
+        let channelId: ChannelId = .unique
+        let channel = ChannelDetailPayload.dummy(cid: channelId)
+        let message: MessagePayload = .dummy(
+            type: .deleted,
+            messageId: .unique,
+            parentId: .unique,
+            showReplyInChannel: false,
+            attachments: [],
+            authorUserId: .unique,
+            createdAt: Date(timeIntervalSince1970: 1),
+            channel: channel
+        )
+
+        XCTAssertEqual(try checkChannelMessagesPredicateCount(channelId: channelId, message: message), 0)
     }
 }
