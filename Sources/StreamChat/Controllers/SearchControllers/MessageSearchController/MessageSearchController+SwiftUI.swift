@@ -17,7 +17,14 @@ extension ChatMessageSearchController {
 
         /// The current result of messages.
         @Published public private(set) var messages: LazyCachedMapCollection<ChatMessage> = []
-
+        
+        /// The current result of messages.
+        @Published public private(set) var messageArray: [ChatMessage] = [] {
+            didSet {
+                messages = .init(source: messageArray, map: { $0 })
+            }
+        }
+        
         /// The current state of the controller.
         @Published public private(set) var state: DataController.State
 
@@ -28,7 +35,7 @@ extension ChatMessageSearchController {
 
             controller.multicastDelegate.add(additionalDelegate: self)
 
-            messages = controller.messages
+            messageArray = controller.messageArray
         }
     }
 }
@@ -36,7 +43,7 @@ extension ChatMessageSearchController {
 @available(iOS 13, *)
 extension ChatMessageSearchController.ObservableObject: ChatMessageSearchControllerDelegate {
     public func controller(_ controller: ChatMessageSearchController, didChangeMessages changes: [ListChange<ChatMessage>]) {
-        messages = controller.messages
+        messageArray = controller.messageArray
     }
 
     public func controller(_ controller: DataController, didChangeState state: DataController.State) {

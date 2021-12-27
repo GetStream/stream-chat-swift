@@ -17,7 +17,7 @@ public extension ChatClient {
     }
 }
 
-/// `ChatMessageSearchController` is a controller class which allows observing a list of messages based on the provided query.
+/// `ChatMessageSearchController` is a controller class which allows paginating messages based on the provided search query.
 public class ChatMessageSearchController: DataController, DelegateCallable, DataStoreProvider {
     /// The `ChatClient` instance this controller belongs to.
     public let client: ChatClient
@@ -28,38 +28,19 @@ public class ChatMessageSearchController: DataController, DelegateCallable, Data
         self.environment = environment
         
         super.init()
-        
-        setMessagesObserver()
     }
     
-    deinit {
-        let query = self.query
-        client.databaseContainer.write { session in
-            session.deleteQuery(query)
-        }
-    }
-
-    /// Filter hash this controller observes.
-    let explicitFilterHash = UUID().uuidString
-
-    lazy var query: MessageSearchQuery = {
-        // Filter is just a mock, explicit hash will override it
-        var query = MessageSearchQuery(channelFilter: .exists(.cid), messageFilter: .queryText(""))
-        query.filterHash = explicitFilterHash
-
-        return query
-    }()
-
-    /// Copy of last search query made, used for getting next page.
-    var lastQuery: MessageSearchQuery?
-
+    /// The last search query made, used for getting next page.
+    public private(set) var query: MessageSearchQuery?
+    
     /// The messages matching the query of this controller.
     ///
     /// To observe changes of the messages, set your class as a delegate of this controller or use the provided
     /// `Combine` publishers.
-    public var messages: LazyCachedMapCollection<ChatMessage> {
-        startObserversIfNeeded()
-        return messagesObserver?.items ?? []
+    private var _messages: [ChatMessage] = []
+    public var messageArray: [ChatMessage] {
+        setLocalDataFetchedStateIfNeeded()
+        return _messages
     }
 
     lazy var messageUpdater = self.environment
@@ -67,44 +48,6 @@ public class ChatMessageSearchController: DataController, DelegateCallable, Data
             client.databaseContainer,
             client.apiClient
         )
-    
-    /// Used for observing the database for changes.
-    @Cached private var messagesObserver: ListDatabaseObserver<ChatMessage, MessageDTO>?
-    
-    private func startObserversIfNeeded() {
-        guard state == .initialized else { return }
-        do {
-            try messagesObserver?.startObserving()
-            
-            state = .localDataFetched
-        } catch {
-            log.error("Failed to perform fetch request with error: \(error). This is an internal error.")
-            state = .localDataFetchFailed(ClientError(with: error))
-        }
-    }
-    
-    private func setMessagesObserver() {
-        _messagesObserver.computeValue = { [unowned self] in
-            let observer = ListDatabaseObserver(
-                context: self.client.databaseContainer.viewContext,
-                fetchRequest: MessageDTO.messagesFetchRequest(
-                    for: query
-                ),
-                itemCreator: { $0.asModel() as ChatMessage }
-            )
-            observer.onChange = { [weak self] changes in
-                self?.delegateCallback { [weak self] in
-                    guard let self = self else {
-                        log.warning("Callback called while self is nil")
-                        return
-                    }
-                    $0.controller(self, didChangeMessages: changes)
-                }
-            }
-            
-            return observer
-        }
-    }
 
     /// An internal backing object for all publicly available Combine publishers. We use it to simplify the way we expose
     /// publishers. Instead of creating custom `Publisher` types, we use `CurrentValueSubject` and `PassthroughSubject` internally,
@@ -119,7 +62,7 @@ public class ChatMessageSearchController: DataController, DelegateCallable, Data
             stateMulticastDelegate.set(additionalDelegates: multicastDelegate.additionalDelegates)
 
             // After setting delegate local changes will be fetched and observed.
-            startObserversIfNeeded()
+            setLocalDataFetchedStateIfNeeded()
         }
     }
 
@@ -132,25 +75,27 @@ public class ChatMessageSearchController: DataController, DelegateCallable, Data
     ///
     /// - Parameters:
     ///   - text: The message text.
+    ///   - sorting: Sorting options.
     ///   - completion: Called when the controller has finished fetching remote data.
     ///   If the data fetching fails, the error variable contains more details about the problem.
-    public func search(text: String, completion: ((_ error: Error?) -> Void)? = nil) {
-        startObserversIfNeeded()
-
+    public func search(
+        text: String,
+        sorting: [Sorting<MessageSearchSortingKey>] = [],
+        completion: ((_ error: Error?) -> Void)? = nil
+    ) {
         guard let currentUserId = client.currentUserId else {
             completion?(ClientError.CurrentUserDoesNotExist("For message search with text, a current user must be logged in"))
             return
         }
-        var query = MessageSearchQuery(
+        
+        let query = MessageSearchQuery(
             channelFilter: .containMembers(userIds: [currentUserId]),
-            messageFilter: .queryText(text)
+            messageFilter: .queryText(text),
+            sort: sorting,
+            pageSize: .messagesPageSize
         )
-        query.filterHash = explicitFilterHash
-        lastQuery = query
-        messageUpdater.search(query: query) { error in
-            self.state = error == nil ? .remoteDataFetched : .remoteDataFetchFailed(ClientError(with: error))
-            self.callback { completion?(error) }
-        }
+        
+        search(query: query, completion: completion)
     }
 
     /// Searches messages for the given query.
@@ -167,17 +112,7 @@ public class ChatMessageSearchController: DataController, DelegateCallable, Data
     ///   - completion: Called when the controller has finished fetching remote data.
     ///   If the data fetching fails, the error variable contains more details about the problem.
     public func search(query: MessageSearchQuery, completion: ((_ error: Error?) -> Void)? = nil) {
-        startObserversIfNeeded()
-
-        var query = query
-        query.filterHash = explicitFilterHash
-        
-        lastQuery = query
-        
-        messageUpdater.search(query: query) { error in
-            self.state = error == nil ? .remoteDataFetched : .remoteDataFetchFailed(ClientError(with: error))
-            self.callback { completion?(error) }
-        }
+        fetch(query, replace: true, completion: completion)
     }
 
     /// Loads next messages.
@@ -191,16 +126,124 @@ public class ChatMessageSearchController: DataController, DelegateCallable, Data
         limit: Int = 25,
         completion: ((Error?) -> Void)? = nil
     ) {
-        guard let lastQuery = lastQuery else {
+        guard var nextPageQuery = query else {
             completion?(ClientError("You should make a search before calling for next page."))
             return
         }
 
-        var updatedQuery = lastQuery
-        updatedQuery.pagination = Pagination(pageSize: limit, offset: messages.count)
-        messageUpdater.search(query: updatedQuery) { error in
-            self.callback { completion?(error) }
+        nextPageQuery.pagination = Pagination(
+            pageSize: limit,
+            offset: messageArray.count
+        )
+        
+        fetch(nextPageQuery, replace: false, completion: completion)
+    }
+}
+
+private extension ChatMessageSearchController {
+    /// Fetches the given query from the API, updates the list of messages and notifies the delegate.
+    ///
+    /// - Parameters:
+    ///   - query: The query to fetch.
+    ///   - completion: The completion that is triggered when the query is processed.
+    func fetch(_ query: MessageSearchQuery, replace: Bool, completion: ((Error?) -> Void)? = nil) {
+        setLocalDataFetchedStateIfNeeded()
+        
+        messageUpdater.fetch(query: query) { result in
+            switch result {
+            case let .success(page):
+                self.save(page: page) { loadedMessages in
+                    let listChanges = self.prepareListChanges(
+                        loadedPage: loadedMessages,
+                        replace: replace
+                    )
+                    
+                    self.query = query
+                    self._messages = self.messageList(after: listChanges)
+                    self.state = .remoteDataFetched
+                    
+                    self.callback {
+                        self.multicastDelegate.invoke { $0.controller(self, didChangeMessages: listChanges) }
+                        completion?(nil)
+                    }
+                }
+            case let .failure(error):
+                self.state = .remoteDataFetchFailed(ClientError(with: error))
+                self.callback { completion?(error) }
+            }
         }
+    }
+    
+    /// Saves the given payload to the database and returns database independent models.
+    ///
+    /// - Parameters:
+    ///   - page: The page of users fetched from the API.
+    ///   - completion: The completion that will be called with user models when database write is completed.
+    func save(page: [MessagePayload], completion: @escaping ([ChatMessage]) -> Void) {
+        var loadedMessages: [ChatMessage] = []
+        client.databaseContainer.write({ session in
+            loadedMessages = page.map { .init(payload: $0, session: session) }
+        }, completion: { _ in
+            completion(loadedMessages)
+        })
+    }
+    
+    /// Creates the list of changes based on current list, the new page, and merge policy.
+    ///
+    /// - Parameters:
+    ///   - loadedPage: The page of messages.
+    ///   - replace: The update policy. If `true` the current search results are replaced with the new page.
+    /// - Returns: The list of changes that can be applied to the current list of messages.
+    func prepareListChanges(loadedPage: [ChatMessage], replace: Bool) -> [ListChange<ChatMessage>] {
+        if replace {
+            let deletions = messageArray.enumerated().reversed().map { (index, message) in
+                ListChange.remove(message, index: .init(row: index, section: 0))
+            }
+            
+            let insertions = messageArray.enumerated().map { (index, message) in
+                ListChange.insert(message, index: .init(row: index, section: 0))
+            }
+            
+            return deletions + insertions
+        } else {
+            let insertions = messageArray.enumerated().map { (index, message) in
+                ListChange.insert(message, index: .init(row: index + messageArray.count, section: 0))
+            }
+            
+            return insertions
+        }
+    }
+    
+    /// Applies the given changes to the current list of messages and returns the updated list.
+    ///
+    /// - Parameter changes: The changes to apply.
+    /// - Returns: The message list after the given changes applied.
+    ///
+    func messageList(after changes: [ListChange<ChatMessage>]) -> [ChatMessage] {
+        var messages = messageArray
+        
+        for change in changes {
+            switch change {
+            case let .insert(message, indexPath):
+                messages.insert(message, at: indexPath.row)
+            case let .remove(_, indexPath):
+                messages.remove(at: indexPath.row)
+            default:
+                log.assertionFailure("Unsupported list change observed: \(change)")
+            }
+        }
+        
+        return messages
+    }
+    
+    /// Sets state to `localDataFetched` if current state is `initialized`.
+    ///
+    /// Needed to have the same state changes as when search results were saved to database.
+    /// Can be removed in v5.
+    func setLocalDataFetchedStateIfNeeded() {
+        guard state == .initialized else { return }
+        
+        state = .localDataFetched
     }
 }
 

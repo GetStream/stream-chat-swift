@@ -213,3 +213,10 @@ public typealias NotificationInviteAccepted = NotificationInviteAcceptedEvent
 
 @available(*, deprecated, renamed: "UnknownChannelEvent")
 public typealias UnknownEvent = UnknownChannelEvent
+
+public extension ChatMessageSearchController {
+    @available(*, deprecated, message: "Use `messagesArray` instead.")
+    var messages: LazyCachedMapCollection<ChatMessage> {
+        .init(source: messageArray, map: { $0 })
+    }
+}
