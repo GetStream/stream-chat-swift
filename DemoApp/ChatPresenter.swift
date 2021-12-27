@@ -333,6 +333,28 @@ class DemoChannelListVC: ChatChannelListVC {
     override func controller(_ controller: ChatChannelListController, shouldAddNewChannelToList channel: ChatChannel) -> Bool {
         channel.lastActiveMembers.contains(where: { $0.id == controller.client.currentUserId })
     }
+
+    var didSelectChannel: ((ChatChannel) -> Void)?
+
+    override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        if UIDevice.current.userInterfaceIdiom == .pad {
+            let channel = controller.channels[indexPath.row]
+            didSelectChannel?(channel)
+            return
+        }
+
+        super.collectionView(collectionView, didSelectItemAt: indexPath)
+    }
+
+    override func controller(_ controller: DataController, didChangeState state: DataController.State) {
+        super.controller(controller, didChangeState: state)
+
+        let isIpad = UIDevice.current.userInterfaceIdiom == .pad
+        if isIpad && (state == .remoteDataFetched || state == .localDataFetched) {
+            guard let channel = self.controller.channels.first else { return }
+            didSelectChannel?(channel)
+        }
+    }
 }
 
 class HiddenChannelListVC: ChatChannelListVC {

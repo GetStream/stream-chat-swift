@@ -114,7 +114,7 @@ final class DemoAppCoordinator: NSObject, UNUserNotificationCenterDelegate {
         // Channels with the current user
         let controller = ChatClient.shared
             .channelListController(query: .init(filter: .containMembers(userIds: [userCredentials.id])))
-        let chatList = DemoChannelListVC.make(with: controller)
+        let chatList = DemoChannelListVC.make(with: controller) as! DemoChannelListVC
         
         connectionController = ChatClient.shared.connectionController()
         connectionController?.delegate = connectionDelegate
@@ -124,15 +124,19 @@ final class DemoAppCoordinator: NSObject, UNUserNotificationCenterDelegate {
         
         // Init the channel VC and navigate there directly
         if let cid = channelID {
-            let channelVC = ChatChannelVC()
+            let channelVC = CustomChannelVC()
             channelVC.channelController = ChatClient.shared.channelController(for: cid)
             navigationController.viewControllers.append(channelVC)
         }
-        
+
+        let isIpad = UIDevice.current.userInterfaceIdiom == .pad
         let window = navigationController.view.window!
+        let rootVC: UIViewController = isIpad
+            ? makeSplitViewController(channelListVC: chatList)
+            : navigationController
+
         UIView.transition(with: window, duration: 0.3, options: .transitionFlipFromRight, animations: {
-            window.rootViewController = self.navigationController
-            
+            window.rootViewController = rootVC
         })
     }
     
@@ -142,6 +146,28 @@ final class DemoAppCoordinator: NSObject, UNUserNotificationCenterDelegate {
                 self?.presentChat(userCredentials: $0)
             }
         }
+    }
+
+    private func makeSplitViewController(channelListVC: DemoChannelListVC) -> UISplitViewController {
+        let channelVC = CustomChannelVC()
+        channelVC.channelController = channelListVC.controller.client.channelController(
+            for: ChannelId(type: .messaging, id: "unknown"),
+            channelListQuery: channelListVC.controller.query
+        )
+
+        channelListVC.didSelectChannel = { channel in
+            channelVC.channelController = channelListVC.controller.client.channelController(
+                for: channel.cid,
+                channelListQuery: channelListVC.controller.query
+            )
+            channelVC.messageListVC.listView.reloadData()
+            channelVC.setUp()
+        }
+
+        let splitController = UISplitViewController()
+        splitController.viewControllers = [channelListVC, UINavigationController(rootViewController: channelVC)]
+        splitController.preferredDisplayMode = .oneBesideSecondary
+        return splitController
     }
 }
 
