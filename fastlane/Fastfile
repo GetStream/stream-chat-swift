@@ -110,8 +110,9 @@ lane :publish_release do |options|
   version = options[:version] || ""
   UI.user_error!("You need to pass the version of the release") unless version.length > 0
 
-  # Update Frameworks (WIP) - Firing this lane is done manually at the moment
-  # TODO: update_frameworks
+  # Create XCFrameworks
+  xcversion(version: "13.0")
+  sh("cd .. && make frameworks")
 
   changes = read_changelog(version: version)
 
@@ -122,14 +123,16 @@ lane :publish_release do |options|
                      name: version,
                      tag_name: version,
                      commitish: "main",
-                     description: changes
-                     # upload_assets: ["Products/StreamChat.zip", "Products/StreamChatUI.zip", "Products/StreamChat-All.zip"]
+                     description: changes,
+                     upload_assets: ["Products/StreamChat.zip", "Products/StreamChatUI.zip", "Products/StreamChat-All.zip"]
                    )
+
+  spm_github_release_url = update_spm(version: version)
   # Firing this lane is done manually at the moment.
   # TODO: push_pods(sync: options[:sync])
   # TODO: Update stream-chat-swift-integration-apps
 
-  UI.success("Github release was created, please visit #{github_release["url"]} to see it")
+  UI.success("Github releases created:\n stream-chat-swift: #{github_release["html_url"]}\nstream-chat-swift-spm: #{spm_github_release_url}")
 end
 
 desc "Read CHANGELOG"
@@ -161,41 +164,44 @@ private_lane :read_changelog do |options|
 end
 
 desc "Update XCFrameworks and submit to the SPM repository"
-lane :update_frameworks do |options|
-  # Make xcframeworks
-  sh("cd .. && make frameworks")
+private_lane :update_spm do |options|
+  version = options[:version] || ""
+  UI.user_error!("You need to pass the version of the release you want to obtain the changelog from") unless version.length > 0
 
   # Generate Checksums
   streamChatChecksum = sh("swift package compute-checksum ../Products/StreamChat.zip").strip
   streamChatUIChecksum = sh("swift package compute-checksum ../Products/StreamChatUI.zip").strip
 
+  initial_directory = Dir.pwd
+
   # Update SPM Repo
-  sh("git clone git@github.com:GetStream/stream-chat-swift-spm.git ../../StreamSPM")
-  sh("cd ../../StreamSPM")
-  file = File.open("Package.swift")
-  file_data = file.read
+  spm_directory_name = "StreamSPM"
+  spm_directory = "../../#{spm_directory_name}"
+  sh("git clone git@github.com:GetStream/stream-chat-swift-spm.git ../../#{spm_directory_name}")
+  Dir.chdir(spm_directory)
 
-  # [WIP] We can improve using regex here
-  fileLines = File.readlines("Package.swift")
+  result = sh("basename `git rev-parse --show-toplevel`").strip
+  UI.error("Not using #{spm_directory_name} repo") unless result.to_s == spm_directory_name
 
-  # We are unfortunately having to dig into a file and manually change the lines required
-  fileLines.each_with_index do |line, index|
-    if line.include?("url") && line.include?("StreamChat.zip")
-      streamChat = "url: \"https://github.com/GetStream/stream-chat-swift/releases/download/#{version}/StreamChat.zip\","
-      file_data.gsub!(line, streamChat)
+  file_lines = File.readlines("Package.swift")
+  file_data = ""
+  previous_module = ""
 
-      currentChecksumItem = fileLines[index + 1]
-      newChecksumLine = "checksum: \"#{streamChatChecksum}\"),"
-      file_data.gsub!(currentChecksumItem, newChecksumLine)
+  file_lines.each do |line|
+    formatted_line = line
+    if previous_module == "StreamChat"
+      formatted_line = formatted_line.gsub(/(checksum: ")[a-z0-9]+(")/, '\1' + "#{streamChatChecksum}" + '\2')
+    elsif previous_module == "StreamChatUI"
+      formatted_line = formatted_line.gsub(/(checksum: ")[a-z0-9]+(")/, '\1' + "#{streamChatUIChecksum}" + '\2')
     end
-    if line.include?("url") && line.include?("StreamChatUI.zip")
-      streamChatUI = "url: \"https://github.com/GetStream/stream-chat-swift/releases/download/#{version}/StreamChatUI.zip\","
-      file_data.gsub!(line, streamChatUI)
 
-      currentUIChecksumLine = fileLines[index + 1]
-      newUIChecksumLine = "checksum: \"#{streamChatUIChecksum}\"),"
-      file_data.gsub!(currentUIChecksumLine, newUIChecksumLine)
+    url_pattern = /(releases\/download\/)[.0-9]+(\/)/
+    if line.match(url_pattern)
+      formatted_line = line.gsub(url_pattern, '\1' + "#{version}" + '\2')
+      previous_module = line.match(/([a-zA-Z]+).zip/).to_s.gsub(/.zip/, '')
     end
+
+    file_data << formatted_line
   end
 
   # Write the new changes
@@ -204,11 +210,23 @@ lane :update_frameworks do |options|
   # Update the repo
   sh("git add -A")
   sh("git commit -m 'Bump #{version}'")
-  sh("git tag #{version}")
-  sh("git push origin main --force --tags")
+  sh("git push")
+
+  github_release = set_github_release(
+    repository_name: "GetStream/stream-chat-swift-spm",
+    api_token: ENV["GITHUB_TOKEN"],
+    name: version,
+    tag_name: version,
+    commitish: "main"
+  )
+
+  UI.message("Moving back to fastlane's directory - #{initial_directory}")
+  Dir.chdir(initial_directory)
 
   # Clean Up
-  sh("rm -r ../../StreamSPM")
+  sh("rm -rf #{spm_directory}")
+  UI.success("New SPM release available: #{github_release["html_url"]}")
+  github_release["html_url"]
 end
 
 desc "Pushes the StreamChat and StreamChatUI SDK podspecs to Cocoapods trunk"
