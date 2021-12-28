@@ -28,11 +28,14 @@ open class ChatMessageLayoutOptionsResolver {
         with messages: AnyRandomAccessCollection<ChatMessage>,
         appearance: Appearance
     ) -> ChatMessageLayoutOptions {
-        let messageIndex = messages.index(messages.startIndex, offsetBy: indexPath.item)
-        guard let message = messages[safe: messageIndex] else {
-            indexNotFoundAssertion()
+        // Make sure the message exists. Sometimes when switching channels really fast on iPad's split view,
+        // it can happen that this method is called for old data from a previous channel.
+        guard indexPath.item < messages.count else {
             return []
         }
+
+        let messageIndex = messages.index(messages.startIndex, offsetBy: indexPath.item)
+        let message = messages[messageIndex]
 
         let isLastInSequence = isMessageLastInSequence(
             messageIndexPath: indexPath,
