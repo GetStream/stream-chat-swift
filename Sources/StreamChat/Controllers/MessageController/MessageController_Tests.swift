@@ -1597,10 +1597,11 @@ final class MessageController_Tests: XCTestCase {
 
     func test_pinMessage_callsMessageUpdater() throws {
         let pinning = MessagePinning(expirationDate: .unique)
+        let pinnedAt: Date = .unique
 
         // Simulate `pin` calls and catch the completion
         var completionCalled = false
-        controller.pin(pinning) { [callbackQueueID] error in
+        controller.pin(pinning, pinnedAt: pinnedAt) { [callbackQueueID] error in
             AssertTestQueue(withId: callbackQueueID)
             XCTAssertNil(error)
             completionCalled = true
@@ -1617,6 +1618,7 @@ final class MessageController_Tests: XCTestCase {
         XCTAssertFalse(completionCalled)
         XCTAssertEqual(env.messageUpdater?.pinMessage_messageId, messageId)
         XCTAssertEqual(env.messageUpdater?.pinMessage_pinning, pinning)
+        XCTAssertEqual(env.messageUpdater?.pinMessage_pinnedAt, pinnedAt)
 
         // Simulate successful update
         env.messageUpdater?.pinMessage_completion?(nil)

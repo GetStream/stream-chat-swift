@@ -137,9 +137,9 @@ extension DatabaseSessionMock {
         return try underlyingSession.saveMessage(payload: payload, channelDTO: channelDTO, syncOwnReactions: syncOwnReactions)
     }
     
-    func pin(message: MessageDTO, pinning: MessagePinning) throws {
+    func pin(message: MessageDTO, pinning: MessagePinning, pinnedAt: Date) throws {
         try throwErrorIfNeeded()
-        return try underlyingSession.pin(message: message, pinning: pinning)
+        return try underlyingSession.pin(message: message, pinning: pinning, pinnedAt: pinnedAt)
     }
     
     func unpin(message: MessageDTO) {

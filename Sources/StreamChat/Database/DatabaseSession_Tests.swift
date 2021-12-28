@@ -175,14 +175,15 @@ class DatabaseSession_Tests: XCTestCase {
 
         // Pin message
         let expireDate = Date.unique
+        let pinnedAt = Date.unique
         try database.writeSynchronously { session in
             let dto = try XCTUnwrap(session.message(id: messageId))
-            try session.pin(message: dto, pinning: .expirationDate(expireDate))
+            try session.pin(message: dto, pinning: .expirationDate(expireDate), pinnedAt: pinnedAt)
         }
 
         let message = database.viewContext.message(id: messageId)
         XCTAssertNotNil(message)
-        XCTAssertNotNil(message?.pinnedAt)
+        XCTAssertEqual(message?.pinnedAt, pinnedAt)
         XCTAssertNotNil(message?.pinnedBy)
         XCTAssertEqual(message?.pinned, true)
         XCTAssertEqual(message?.pinExpires, expireDate)
@@ -202,7 +203,7 @@ class DatabaseSession_Tests: XCTestCase {
             // Pin message
             try database.writeSynchronously { session in
                 let dto = try XCTUnwrap(session.message(id: messageId))
-                try session.pin(message: dto, pinning: MessagePinning(expirationDate: .unique))
+                try session.pin(message: dto, pinning: MessagePinning(expirationDate: .unique), pinnedAt: .init())
             }
         ) { error in
             XCTAssertTrue(error is ClientError.CurrentUserDoesNotExist)
@@ -225,7 +226,7 @@ class DatabaseSession_Tests: XCTestCase {
         // Unpin message
         try database.writeSynchronously { session in
             let dto = try XCTUnwrap(session.message(id: messageId))
-            try session.pin(message: dto, pinning: .expirationTime(300))
+            try session.pin(message: dto, pinning: .expirationTime(300), pinnedAt: .unique)
             session.unpin(message: dto)
         }
 

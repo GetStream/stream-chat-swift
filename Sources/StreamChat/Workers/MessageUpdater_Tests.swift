@@ -1247,6 +1247,7 @@ final class MessageUpdater_Tests: XCTestCase {
             let currentUserId: UserId = .unique
             let messageId: MessageId = .unique
             let pin = MessagePinning(expirationDate: .unique)
+            let pinnedAt: Date = .unique
 
             // Flush the database
             try database.removeAllData()
@@ -1258,7 +1259,7 @@ final class MessageUpdater_Tests: XCTestCase {
             try database.createMessage(id: messageId, author: .dummy(userId: currentUserId), localState: initialState)
 
             let completionError = try waitFor {
-                messageUpdater.pinMessage(messageId: messageId, pinning: pin, completion: $0)
+                messageUpdater.pinMessage(messageId: messageId, pinning: pin, pinnedAt: pinnedAt, completion: $0)
             }
 
             // Load the message
@@ -1269,7 +1270,7 @@ final class MessageUpdater_Tests: XCTestCase {
             XCTAssertEqual(message.pinned, true)
             XCTAssertEqual(message.pinExpires, pin.expirationDate)
             XCTAssertEqual(message.pinnedBy?.id, currentUserId)
-            XCTAssertNotNil(message.pinnedAt)
+            XCTAssertEqual(message.pinnedAt, pinnedAt)
         }
     }
 

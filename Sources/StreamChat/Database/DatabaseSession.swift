@@ -112,7 +112,8 @@ protocol MessageDatabaseSession {
     /// - Parameters:
     ///   - message: The DTO to be pinned
     ///   - pinning: The pinning information, including the expiration.
-    func pin(message: MessageDTO, pinning: MessagePinning) throws
+    ///   - pinnedAt: The pinning date.
+    func pin(message: MessageDTO, pinning: MessagePinning, pinnedAt: Date) throws
 
     /// Unpins the provided message
     /// - Parameter message: The DTO to be unpinned

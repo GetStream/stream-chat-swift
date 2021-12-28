@@ -472,9 +472,10 @@ public extension ChatMessageController {
     /// Pin the message this controller manages.
     ///  - Parameters:
     ///   - pinning: The pinning expiration information. It supports setting an infinite expiration, setting a date, or the amount of time a message is pinned.
+    ///   - pinnedAt: The pinning date. By default, equals to the current timestamp.
     ///   - completion: A completion block with an error if the request was failed.
-    func pin(_ pinning: MessagePinning, completion: ((Error?) -> Void)? = nil) {
-        messageUpdater.pinMessage(messageId: messageId, pinning: pinning) { result in
+    func pin(_ pinning: MessagePinning, pinnedAt: Date = .init(), completion: ((Error?) -> Void)? = nil) {
+        messageUpdater.pinMessage(messageId: messageId, pinning: pinning, pinnedAt: pinnedAt) { result in
             self.callback {
                 completion?(result)
             }

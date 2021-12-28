@@ -188,8 +188,6 @@ var streamChatSourcesExcluded: [String] { [
     "Query/FilterTestExtensions_Tests.swift",
     "Query/ChannelMemberListQuery_Tests.swift",
     "Query/FilterDecoding_Tests.swift",
-    "Query/Pinned Messages/PinnedMessagesPagination_Tests.swift",
-    "Query/Pinned Messages/PinnedMessagesQuery_Tests.swift",
     "Query/FilterEncoding_Tests.swift",
     "Query/UserListQuery_Tests.swift",
     "Query/MessageSearchQuery_Tests.swift",

@@ -132,6 +132,7 @@ class MessageRequestBody_Tests: XCTestCase {
             mentionedUserIds: [.unique],
             pinned: true,
             pinExpires: "2021-05-15T06:43:08.776Z".toDate(),
+            pinnedAt: "2021-04-15T06:43:08.776Z".toDate(),
             extraData: ["secret_note": .string("Anakin is Vader ;-)")]
         )
         
@@ -148,7 +149,8 @@ class MessageRequestBody_Tests: XCTestCase {
             "secret_note": "Anakin is Vader ;-)",
             "command": payload.command!,
             "pinned": true,
-            "pin_expires": "2021-05-15T06:43:08.776Z"
+            "pin_expires": "2021-05-15T06:43:08.776Z",
+            "pinned_at": "2021-04-15T06:43:08.776Z"
         ]
         let expectedJSON = try JSONSerialization.data(withJSONObject: expected, options: [])
         AssertJSONEqual(serializedJSON, expectedJSON)

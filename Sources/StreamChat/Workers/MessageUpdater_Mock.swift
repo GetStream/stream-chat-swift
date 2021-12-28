@@ -62,6 +62,7 @@ final class MessageUpdaterMock: MessageUpdater {
 
     @Atomic var pinMessage_messageId: MessageId?
     @Atomic var pinMessage_pinning: MessagePinning?
+    @Atomic var pinMessage_pinnedAt: Date?
     @Atomic var pinMessage_completion: ((Error?) -> Void)?
 
     @Atomic var unpinMessage_messageId: MessageId?
@@ -131,6 +132,7 @@ final class MessageUpdaterMock: MessageUpdater {
 
         pinMessage_pinning = nil
         pinMessage_completion = nil
+        pinMessage_pinnedAt = nil
         pinMessage_messageId = nil
 
         unpinMessage_messageId = nil
@@ -266,9 +268,15 @@ final class MessageUpdaterMock: MessageUpdater {
         deleteReaction_completion = completion
     }
 
-    override func pinMessage(messageId: MessageId, pinning: MessagePinning, completion: ((Error?) -> Void)? = nil) {
+    override func pinMessage(
+        messageId: MessageId,
+        pinning: MessagePinning,
+        pinnedAt: Date,
+        completion: ((Error?) -> Void)? = nil
+    ) {
         pinMessage_messageId = messageId
         pinMessage_pinning = pinning
+        pinMessage_pinnedAt = pinnedAt
         pinMessage_completion = completion
     }
 

@@ -401,8 +401,14 @@ class MessageUpdater: Worker {
     ///  - Parameters:
     ///   - messageId: The message identifier.
     ///   - pinning: The pinning expiration information. It supports setting an infinite expiration, setting a date, or the amount of time a message is pinned.
+    ///   - pinnedAt: The pinning date. By default, equals to the current date.
     ///   - completion: The completion. Will be called with an error if smth goes wrong, otherwise - will be called with `nil`.
-    func pinMessage(messageId: MessageId, pinning: MessagePinning, completion: ((Error?) -> Void)? = nil) {
+    func pinMessage(
+        messageId: MessageId,
+        pinning: MessagePinning,
+        pinnedAt: Date = Date(),
+        completion: ((Error?) -> Void)? = nil
+    ) {
         database.write({ session in
             guard let messageDTO = session.message(id: messageId) else {
                 throw ClientError.MessageDoesNotExist(messageId: messageId)
@@ -410,10 +416,10 @@ class MessageUpdater: Worker {
 
             switch messageDTO.localMessageState {
             case nil, .pendingSync, .syncingFailed, .deletingFailed:
-                try session.pin(message: messageDTO, pinning: pinning)
+                try session.pin(message: messageDTO, pinning: pinning, pinnedAt: pinnedAt)
                 messageDTO.localMessageState = .pendingSync
             case .pendingSend, .sendingFailed:
-                try session.pin(message: messageDTO, pinning: pinning)
+                try session.pin(message: messageDTO, pinning: pinning, pinnedAt: pinnedAt)
                 messageDTO.localMessageState = .pendingSend
             case .sending, .syncing, .deleting:
                 throw ClientError.MessageEditing(

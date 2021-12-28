@@ -351,7 +351,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         message.updatedAt = createdAt
 
         if let pinning = pinning {
-            try pin(message: message, pinning: pinning)
+            try pin(message: message, pinning: pinning, pinnedAt: .init())
         }
         
         message.type = parentMessageId == nil ? MessageType.regular.rawValue : MessageType.reply.rawValue
@@ -561,13 +561,13 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         delete(message)
     }
 
-    func pin(message: MessageDTO, pinning: MessagePinning) throws {
+    func pin(message: MessageDTO, pinning: MessagePinning, pinnedAt: Date) throws {
         guard let currentUserDTO = currentUser else {
             throw ClientError.CurrentUserDoesNotExist()
         }
-        let pinnedDate = Date()
+        
         message.pinned = true
-        message.pinnedAt = pinnedDate
+        message.pinnedAt = pinnedAt
         message.pinnedBy = currentUserDTO.user
         message.pinExpires = pinning.expirationDate
     }
@@ -705,6 +705,7 @@ extension MessageDTO {
             mentionedUserIds: mentionedUsers.map(\.id),
             pinned: pinned,
             pinExpires: pinExpires,
+            pinnedAt: pinnedAt,
             extraData: decodedExtraData
         )
     }

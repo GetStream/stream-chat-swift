@@ -220,6 +220,7 @@ struct MessageRequestBody: Encodable {
     let mentionedUserIds: [UserId]
     var pinned: Bool
     var pinExpires: Date?
+    let pinnedAt: Date?
     let extraData: [String: RawJSON]
 
     init(
@@ -236,6 +237,7 @@ struct MessageRequestBody: Encodable {
         mentionedUserIds: [UserId] = [],
         pinned: Bool = false,
         pinExpires: Date? = nil,
+        pinnedAt: Date? = nil,
         extraData: [String: RawJSON]
     ) {
         self.id = id
@@ -251,6 +253,7 @@ struct MessageRequestBody: Encodable {
         self.mentionedUserIds = mentionedUserIds
         self.pinned = pinned
         self.pinExpires = pinExpires
+        self.pinnedAt = pinnedAt
         self.extraData = extraData
     }
     
@@ -265,6 +268,7 @@ struct MessageRequestBody: Encodable {
         try container.encodeIfPresent(quotedMessageId, forKey: .quotedMessageId)
         try container.encode(pinned, forKey: .pinned)
         try container.encodeIfPresent(pinExpires, forKey: .pinExpires)
+        try container.encodeIfPresent(pinnedAt, forKey: .pinnedAt)
         try container.encode(isSilent, forKey: .isSilent)
 
         if !attachments.isEmpty {
