@@ -12,6 +12,7 @@ class WalletInputView: UIInputView {
 
     // MARK: - Variables
     var keyboardToolTipTapped: ((_ tooltip: ToolKit) -> Void)?
+    var showKeypad: (() -> Void)?
     lazy var toolTipList: [ToolKit] = {
         return KeyboardToolKit().getList()
     }()
@@ -78,6 +79,7 @@ class WalletInputView: UIInputView {
         toolBarCollectionView.trailingAnchor.constraint(equalTo: self.trailingAnchor).isActive = true
         toolBarCollectionView.topAnchor.constraint(equalTo: self.topAnchor).isActive = true
         toolBarCollectionView.reloadData()
+        toolBarCollectionView.backgroundColor = Appearance.default.colorPalette.walletTabbarBackground
 
         containerView.leadingAnchor.constraint(equalTo: self.leadingAnchor).isActive = true
         containerView.trailingAnchor.constraint(equalTo: self.trailingAnchor).isActive = true
@@ -94,7 +96,7 @@ class WalletInputView: UIInputView {
         //Add containerInputView
         self.containerView.addSubview(containerInputView)
         containerInputView.centerXAnchor.constraint(equalTo: containerView.centerXAnchor).isActive = true
-        containerInputView.centerYAnchor.constraint(equalTo: containerView.centerYAnchor).isActive = true
+        containerInputView.topAnchor.constraint(equalTo: containerView.topAnchor, constant: 100).isActive = true
 
         var requestStack = UIStackView()
         requestStack.distribution = .fillEqually
@@ -125,13 +127,12 @@ class WalletInputView: UIInputView {
 
         //Amount Stack
         var amountStack = UIStackView()
-        amountStack.distribution = .fillEqually
         let btnAdd = UIButton()
         btnAdd.setTitle("+", for: .normal)
         btnAdd.setTitleColor(.white, for: .normal)
         btnAdd.backgroundColor = Appearance.default.colorPalette.walletTabbarBackground
         btnAdd.widthAnchor.constraint(equalToConstant: 40).isActive = true
-        btnAdd.layer.cornerRadius = 37
+        btnAdd.layer.cornerRadius = 35
         btnAdd.layer.maskedCorners = [.layerMinXMinYCorner, .layerMinXMaxYCorner]
 
         let btnRemove = UIButton()
@@ -139,7 +140,7 @@ class WalletInputView: UIInputView {
         btnRemove.setTitleColor(.white, for: .normal)
         btnRemove.backgroundColor = Appearance.default.colorPalette.walletTabbarBackground
         btnRemove.widthAnchor.constraint(equalToConstant: 40).isActive = true
-        btnRemove.layer.cornerRadius = 37
+        btnRemove.layer.cornerRadius = 35
         btnRemove.layer.maskedCorners = [.layerMaxXMinYCorner, .layerMaxXMaxYCorner]
 
         let viewAmount = UIStackView()
@@ -155,10 +156,11 @@ class WalletInputView: UIInputView {
         btnShowKeyboard.setTitle("Show Keypad", for: .normal)
         btnShowKeyboard.titleLabel?.font = .systemFont(ofSize: 10)
         btnShowKeyboard.setTitleColor(.white, for: .normal)
+        btnShowKeyboard.addTarget(self, action: #selector(btnShowKeyboardAction), for: .touchUpInside)
 
         viewAmount.addArrangedSubview(lblAmount)
         viewAmount.addArrangedSubview(btnShowKeyboard)
-        viewAmount.widthAnchor.constraint(equalToConstant: 120).isActive = true
+        viewAmount.widthAnchor.constraint(equalToConstant: 150).isActive = true
         viewAmount.backgroundColor = Appearance.default.colorPalette.walletTabbarBackground
 
         amountStack.addArrangedSubview(btnAdd)
@@ -191,6 +193,10 @@ class WalletInputView: UIInputView {
         let y = self.frame.minY
         containerView.frame = CGRect(x: 0, y: y + translation.y, width: self.frame.width, height: self.frame.height)
         recognizer.setTranslation(CGPoint.zero, in: self)
+    }
+
+    @objc func btnShowKeyboardAction() {
+        showKeypad?()
     }
 }
 

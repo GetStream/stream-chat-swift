@@ -540,11 +540,35 @@ open class ComposerVC: _ViewController,
 
     @objc open func sendONEAction() {
         animateToolkitView(isHide: true)
-        composerView.inputMessageView.textView.becomeFirstResponder()
-        let inputView = WalletInputView()
-        composerView.inputMessageView.textView.inputView = WalletInputView()
-        composerView.inputMessageView.textView.reloadInputViews()
-        composerView.inputMessageView.textView.inputView?.autoresizingMask = .flexibleHeight
+        if let viewC = UIStoryboard(name: "Wallet", bundle: Bundle.main).instantiateInitialViewController() as? WalletInputViewController {
+            composerView.inputMessageView.textView.becomeFirstResponder()
+            let inputView = viewC.view
+            composerView.inputMessageView.textView.inputView = inputView
+            composerView.inputMessageView.textView.reloadInputViews()
+            composerView.inputMessageView.textView.inputView?.autoresizingMask = .flexibleHeight
+            viewC.didHideView = { [weak self] in
+                guard let `self` = self else { return }
+                self.composerView.inputMessageView.textView.inputView = inputView
+                self.composerView.inputMessageView.textView.reloadInputViews()
+            }
+            viewC.showKeypad = { [weak self] in
+                guard let `self` = self else { return }
+                viewC.removeFromParent()
+//                let walletView = UIStoryboard(name: "Wallet", bundle: Bundle.main).instantiateInitialViewController() as! WalletInputViewController
+    //            let myViewController = MyViewController(nibName: "MyViewController", bundle: nil)
+
+    //            let input = WalletInputView()
+    //            inputView.toolBarCollectionView.isHidden = true
+    //            viewC.view.addSubview(input)
+    //            input.translatesAutoresizingMaskIntoConstraints = false
+    //            input.pin(to: viewC.view)
+                UIApplication.shared.windows.first?.rootViewController?.present(viewC, animated: true, completion: nil)
+    //            inputView.intrinsicHeight = 700
+    //            self.composerView.inputMessageView.textView.inputView = nil
+    //            self.composerView.inputMessageView.textView.inputView = inputView
+    //            self.composerView.inputMessageView.textView.reloadInputViews()
+            }
+        }
 
 //        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
 //            inputView.intrinsicHeight = 500.0

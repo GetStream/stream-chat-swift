@@ -16,7 +16,7 @@ Pod::Spec.new do |spec|
     spec.source_files = "Sources/StreamChatUI/**/*.swift"
     spec.exclude_files = ["Sources/StreamChatUI/**/*_Tests.swift", "Sources/StreamChatUI/**/*_Mock.swift"]
     spec.resource_bundles = { "StreamChatUI" => ["Sources/StreamChatUI/Resources/**/*"] }
-  
+    spec.resource = 'Sources/StreamChatUI/Composer/Wallet.storyboard'
     spec.framework = "Foundation", "UIKit"
   
     spec.dependency "StreamChat", "#{spec.version}"
