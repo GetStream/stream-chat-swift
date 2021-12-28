@@ -148,18 +148,21 @@ class MessageDTO: NSManagedObject {
             format: "channel.cid == %@", cid
         )
 
-        let messageTypePredicate = NSCompoundPredicate(orPredicateWithSubpredicates: [
-            .init(format: "type != %@ AND parentMessageId == nil", MessageType.reply.rawValue),
-            .init(format: "type == %@ AND showReplyInChannel == 1", MessageType.reply.rawValue)
+        let channelMessagePredicate = NSCompoundPredicate(orPredicateWithSubpredicates: [
+            .init(format: "showReplyInChannel == 1"),
+            .init(format: "parentMessageId == nil")
         ])
-        
-        // When an ephemeral message (like a giphy) exists in a thread reply,
-        // it shouldn't be visible in the main channel.
-        let ephemeralRepliesPredicate = NSCompoundPredicate(orPredicateWithSubpredicates: [
-            .init(format: "type != %@", MessageType.ephemeral.rawValue),
-            .init(format: "type == %@ AND parentMessageId == nil", MessageType.ephemeral.rawValue)
-        ])
-        
+
+        let validTypes = [
+            MessageType.regular.rawValue,
+            MessageType.ephemeral.rawValue,
+            MessageType.system.rawValue,
+            MessageType.deleted.rawValue,
+            MessageType.error.rawValue
+        ]
+
+        let messageTypePredicate = NSCompoundPredicate(format: "type IN %@", validTypes)
+
         // Some pinned messages might be in the local database, but should not be fetched
         // if they do not belong to the regular channel query.
         let ignoreOlderMessagesPredicate = NSCompoundPredicate(orPredicateWithSubpredicates: [
@@ -169,8 +172,8 @@ class MessageDTO: NSManagedObject {
         
         var subpredicates = [
             channelMessage,
+            channelMessagePredicate,
             messageTypePredicate,
-            ephemeralRepliesPredicate,
             nonTruncatedMessagesPredicate(),
             ignoreOlderMessagesPredicate,
             deletedMessagesPredicate(deletedMessagesVisibility: deletedMessagesVisibility)

@@ -107,13 +107,13 @@ end
 
 desc "Completes an SDK Release"
 lane :publish_release do |options|
+  version = options[:version] || ""
+  UI.user_error!("You need to pass the version of the release") unless version.length > 0
 
-  version = options[:version]
+  # Update Frameworks (WIP) - Firing this lane is done manually at the moment
+  # TODO: update_frameworks
 
-  # Update Frameworks (WIP)
-  # update_frameworks
-
-  changes = touch_changelog(release_version: version)
+  changes = read_changelog(version: version)
 
   # Create Github Release
   github_release = set_github_release(
@@ -126,9 +126,38 @@ lane :publish_release do |options|
                      # upload_assets: ["Products/StreamChat.zip", "Products/StreamChatUI.zip", "Products/StreamChat-All.zip"]
                    )
   # Firing this lane is done manually at the moment.
-  #push_pods(sync: options[:sync])
+  # TODO: push_pods(sync: options[:sync])
+  # TODO: Update stream-chat-swift-integration-apps
 
   UI.success("Github release was created, please visit #{github_release["url"]} to see it")
+end
+
+desc "Read CHANGELOG"
+private_lane :read_changelog do |options|
+  version = options[:version] || ""
+  UI.user_error!("You need to pass the version of the release you want to obtain the changelog from") unless version.length > 0
+
+  UI.message("Getting changelog for #{version}")
+  reading_changelog = false
+  changes = ""
+  changelog_lines = File.readlines("../CHANGELOG.md")
+  changelog_lines.each do | line |
+    start_token = "# ["
+    if reading_changelog
+      if line.start_with?(start_token)
+        break
+      end
+      changes << line
+    end
+
+    if line.start_with?("#{start_token}#{version}")
+      reading_changelog = true
+    end
+  end
+
+  UI.user_error!("No changelog found for #{version}") unless changes.length > 0
+  UI.success("Changelog for #{version}: \n#{changes}")
+  changes
 end
 
 desc "Update XCFrameworks and submit to the SPM repository"
