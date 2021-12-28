@@ -960,12 +960,12 @@ class ChannelController_Tests: XCTestCase {
         )
         
         // Insert two messages
-        let message1: MessagePayload = .dummy(messageId: .unique, authorUserId: .unique)
-        let message2: MessagePayload = .dummy(messageId: .unique, authorUserId: .unique)
+        let message1: MessagePayload = .dummy(messageId: "msg1-" + .unique, authorUserId: .unique)
+        let message2: MessagePayload = .dummy(messageId: "msg2-" + .unique, authorUserId: .unique)
         
         // Insert reply that should be shown in channel.
         let reply1: MessagePayload = .dummy(
-            messageId: .unique,
+            messageId: "reply1-" + .unique,
             parentId: message2.id,
             showReplyInChannel: true,
             authorUserId: .unique
@@ -973,7 +973,7 @@ class ChannelController_Tests: XCTestCase {
         
         // Insert reply that should be visible only in thread.
         let reply2: MessagePayload = .dummy(
-            messageId: .unique,
+            messageId: "reply2-" + .unique,
             parentId: message2.id,
             showReplyInChannel: false,
             authorUserId: .unique
