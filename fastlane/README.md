@@ -37,10 +37,10 @@ Start a new release
 
 Completes an SDK Release
 
-### update_frameworks
+### create_frameworks
 
 ```sh
-[bundle exec] fastlane update_frameworks
+[bundle exec] fastlane create_frameworks
 ```
 
 Update XCFrameworks and submit to the SPM repository
