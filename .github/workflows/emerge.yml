@@ -5,6 +5,8 @@ on:
     branches:
       - main
       - develop
+    branches-ignore:
+      - test-framework
   pull_request:
     branches:
       - main
