@@ -44,7 +44,7 @@ extension MessagePayload {
     ) -> MessagePayload {
         .init(
             id: messageId,
-            type: type ?? (parentId == nil ? .regular : .reply),
+            type: type ?? (parentId == nil ? .regular : showReplyInChannel == true ? .regular : .reply),
             user: UserPayload.dummy(userId: authorUserId) as UserPayload,
             createdAt: createdAt != nil ? createdAt! : XCTestCase.channelCreatedDate
                 .addingTimeInterval(TimeInterval.random(in: 100...900)),
