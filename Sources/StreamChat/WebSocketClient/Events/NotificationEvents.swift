@@ -416,3 +416,35 @@ class NotificationInviteRejectedEventDTO: EventDTO {
         )
     }
 }
+
+/// Triggered when the current user rejects an invite to a channel.
+public struct NotificationChannelDeletedEvent: ChannelSpecificEvent {
+    let cid: ChannelId
+    let channel: ChatChannel
+    let createdAt: Date
+    let payload: EventPayload
+}
+
+class NotificationChannelDeletedEventDTO: EventDTO {
+    let cid: ChannelId
+    let channel: ChannelDetailPayload
+    let createdAt: Date
+    let payload: EventPayload
+
+    init(from response: EventPayload) throws {
+        cid = try response.value(at: \.cid)
+        channel = try response.value(at: \.channel)
+        createdAt = try response.value(at: \.createdAt)
+        payload = response
+    }
+    
+    func toDomainEvent(session: DatabaseSession) -> Event? {
+        guard let channelDTO = session.channel(cid: channel.cid) else { return nil }
+        return NotificationChannelDeletedEvent(
+            cid: cid,
+            channel: channelDTO.asModel(),
+            createdAt: createdAt,
+            payload: payload
+        )
+    }
+}

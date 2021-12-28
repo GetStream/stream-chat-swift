@@ -103,6 +103,9 @@ public extension EventType {
 
     /// When a user was removed from a channel.
     static let notificationRemovedFromChannel: Self = "notification.removed_from_channel"
+    
+    /// When a channel was deleted
+    static let notificationChannelDeleted: Self = "notification.channel_deleted"
 }
 
 extension EventType {
@@ -153,6 +156,7 @@ extension EventType {
             return try NotificationInviteAcceptedEventDTO(from: response)
         case .notificationInviteRejected:
             return try NotificationInviteRejectedEventDTO(from: response)
+        case .notificationChannelDeleted: return try NotificationChannelDeletedEventDTO(from: response)
         default:
             if response.cid == nil {
                 throw ClientError.UnknownUserEvent(response.eventType)
