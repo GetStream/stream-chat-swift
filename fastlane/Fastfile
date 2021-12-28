@@ -113,7 +113,7 @@ lane :publish_release do |options|
   # Update Frameworks (WIP)
   # update_frameworks
 
-  changes = touch_changelog(release_version: version)
+  changes = read_changelog(version: version)
 
   # Create Github Release
   github_release = set_github_release(
@@ -132,7 +132,7 @@ lane :publish_release do |options|
 end
 
 desc "Read CHANGELOG"
-lane :read_changelog do |options|
+private_lane :read_changelog do |options|
   version = options[:version] || ""
   UI.user_error!("You need to pass the version of the release you want to obtain the changelog from") unless version.length > 0
 

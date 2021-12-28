@@ -37,14 +37,6 @@ Start a new release
 
 Completes an SDK Release
 
-### read_changelog
-
-```sh
-[bundle exec] fastlane read_changelog
-```
-
-Read CHANGELOG
-
 ### update_frameworks
 
 ```sh
