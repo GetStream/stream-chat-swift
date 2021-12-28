@@ -38,7 +38,7 @@ clean:
 	rm -rf Products/*.bundle
 	rm -rf Products/*.BCSymbolMaps
 	rm -rf Products/*.dSYMs
-	rm Products/LICENSE
+	rm Products/LICENSE || true
 
 zip_artifacts:
 	@if [ "$(name)" = "" ]; then\
