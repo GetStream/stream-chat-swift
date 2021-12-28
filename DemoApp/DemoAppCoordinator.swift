@@ -149,17 +149,18 @@ final class DemoAppCoordinator: NSObject, UNUserNotificationCenterDelegate {
     }
 
     private func makeSplitViewController(channelListVC: DemoChannelListVC) -> UISplitViewController {
-        let channelVC = CustomChannelVC()
-        channelVC.channelController = channelListVC.controller.client.channelController(
-            for: ChannelId(type: .messaging, id: "unknown"),
-            channelListQuery: channelListVC.controller.query
-        )
-
-        channelListVC.didSelectChannel = { channel in
-            channelVC.channelController = channelListVC.controller.client.channelController(
-                for: channel.cid,
+        let makeChannelController: (String) -> ChatChannelController = { cid in
+            channelListVC.controller.client.channelController(
+                for: ChannelId(type: .messaging, id: cid),
                 channelListQuery: channelListVC.controller.query
             )
+        }
+
+        let channelVC = CustomChannelVC()
+        channelVC.channelController = makeChannelController("unknown")
+
+        channelListVC.didSelectChannel = { channel in
+            channelVC.channelController = makeChannelController(channel.cid.id)
             channelVC.messageListVC.listView.reloadData()
             channelVC.setUp()
         }
@@ -170,6 +171,8 @@ final class DemoAppCoordinator: NSObject, UNUserNotificationCenterDelegate {
         return splitController
     }
 }
+
+// MARK: Custom Components for the Demo App
 
 class CustomChannelVC: ChatChannelVC {
     override func viewDidLoad() {
@@ -188,5 +191,96 @@ class CustomChannelVC: ChatChannelVC {
         if let cid = channelController.cid {
             (navigationController?.viewControllers.first as? ChatChannelListVC)?.router.didTapMoreButton(for: cid)
         }
+    }
+}
+
+class DemoChannelListVC: ChatChannelListVC {
+    /// The `UIButton` instance used for navigating to new channel screen creation.
+    lazy var createChannelButton: UIButton = {
+        let button = UIButton()
+        button.setImage(UIImage(systemName: "plus.message")!, for: .normal)
+        return button
+    }()
+
+    lazy var hiddenChannelsButton: UIButton = {
+        let button = UIButton()
+        button.setImage(UIImage(systemName: "archivebox")!, for: .normal)
+        return button
+    }()
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+
+        navigationItem.rightBarButtonItems = [
+            UIBarButtonItem(customView: hiddenChannelsButton),
+            UIBarButtonItem(customView: createChannelButton)
+        ]
+        createChannelButton.addTarget(self, action: #selector(didTapCreateNewChannel), for: .touchUpInside)
+        hiddenChannelsButton.addTarget(self, action: #selector(didTapHiddenChannelsButton), for: .touchUpInside)
+    }
+
+    @objc private func didTapCreateNewChannel(_ sender: Any) {
+        (router as! DemoChatChannelListRouter).showCreateNewChannelFlow()
+    }
+
+    @objc private func didTapHiddenChannelsButton(_ sender: Any) {
+        let channelListVC = HiddenChannelListVC()
+        channelListVC.controller = controller
+            .client
+            .channelListController(
+                query: .init(
+                    filter: .and(
+                        [
+                            .containMembers(userIds: [controller.client.currentUserId!]),
+                            .equal(.hidden, to: true)
+                        ]
+                    )
+                )
+            )
+        navigationController?.pushViewController(channelListVC, animated: true)
+    }
+
+    override func controller(_ controller: ChatChannelListController, shouldListUpdatedChannel channel: ChatChannel) -> Bool {
+        channel.lastActiveMembers.contains(where: { $0.id == controller.client.currentUserId })
+    }
+
+    override func controller(_ controller: ChatChannelListController, shouldAddNewChannelToList channel: ChatChannel) -> Bool {
+        channel.lastActiveMembers.contains(where: { $0.id == controller.client.currentUserId })
+    }
+
+    var didSelectChannel: ((ChatChannel) -> Void)?
+
+    override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        if UIDevice.current.userInterfaceIdiom == .pad {
+            let channel = controller.channels[indexPath.row]
+            didSelectChannel?(channel)
+            selectedIndexPath = indexPath
+            let selectedCell = collectionView.cellForItem(at: indexPath)
+            let selectedBgColor = appearance.colorPalette.highlightedBackground
+            selectedCell?.contentView.backgroundColor = selectedBgColor
+            return
+        }
+
+        super.collectionView(collectionView, didSelectItemAt: indexPath)
+    }
+
+    override func controller(_ controller: DataController, didChangeState state: DataController.State) {
+        super.controller(controller, didChangeState: state)
+
+        let isIpad = UIDevice.current.userInterfaceIdiom == .pad
+        if isIpad && (state == .remoteDataFetched || state == .localDataFetched) {
+            guard let channel = self.controller.channels.first else { return }
+            selectedIndexPath = IndexPath(row: 0, section: 0)
+            didSelectChannel?(channel)
+        }
+    }
+}
+
+class HiddenChannelListVC: ChatChannelListVC {
+    override func setUpAppearance() {
+        super.setUpAppearance()
+
+        title = "Hidden Channels"
+        navigationItem.leftBarButtonItem = nil
     }
 }
