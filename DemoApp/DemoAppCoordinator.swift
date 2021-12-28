@@ -248,16 +248,21 @@ class DemoChannelListVC: ChatChannelListVC {
         channel.lastActiveMembers.contains(where: { $0.id == controller.client.currentUserId })
     }
 
+    var isPad: Bool { UIDevice.current.userInterfaceIdiom == .pad }
+
     var didSelectChannel: ((ChatChannel) -> Void)?
+    var selectedChannel: ChatChannel? {
+        didSet {
+            if selectedChannel != oldValue, let channel = selectedChannel {
+                didSelectChannel?(channel)
+            }
+        }
+    }
 
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        if UIDevice.current.userInterfaceIdiom == .pad {
+        if isPad {
             let channel = controller.channels[indexPath.row]
-            didSelectChannel?(channel)
-            selectedIndexPath = indexPath
-            let selectedCell = collectionView.cellForItem(at: indexPath)
-            let selectedBgColor = appearance.colorPalette.highlightedBackground
-            selectedCell?.contentView.backgroundColor = selectedBgColor
+            selectedChannel = channel
             return
         }
 
@@ -267,12 +272,28 @@ class DemoChannelListVC: ChatChannelListVC {
     override func controller(_ controller: DataController, didChangeState state: DataController.State) {
         super.controller(controller, didChangeState: state)
 
-        let isIpad = UIDevice.current.userInterfaceIdiom == .pad
-        if isIpad && (state == .remoteDataFetched || state == .localDataFetched) {
+        if isPad && (state == .remoteDataFetched || state == .localDataFetched) {
             guard let channel = self.controller.channels.first else { return }
-            selectedIndexPath = IndexPath(row: 0, section: 0)
-            didSelectChannel?(channel)
+            selectedChannel = channel
         }
+    }
+
+    override func controller(_ controller: ChatChannelListController, didChangeChannels changes: [ListChange<ChatChannel>]) {
+        super.controller(controller, didChangeChannels: changes)
+
+        guard isPad else { return }
+        guard let selectedChannel = selectedChannel else { return }
+        guard let selectedChannelRow = controller.channels.firstIndex(of: selectedChannel) else {
+            return
+        }
+
+        let selectedItemIndexPath = IndexPath(row: selectedChannelRow, section: 0)
+
+        collectionView.selectItem(
+            at: selectedItemIndexPath,
+            animated: false,
+            scrollPosition: .centeredHorizontally
+        )
     }
 }
 
