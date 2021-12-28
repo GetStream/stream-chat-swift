@@ -110,8 +110,8 @@ lane :publish_release do |options|
   version = options[:version] || ""
   UI.user_error!("You need to pass the version of the release") unless version.length > 0
 
-  # Update Frameworks (WIP)
-  # update_frameworks
+  # Update Frameworks (WIP) - Firing this lane is done manually at the moment
+  # TODO: update_frameworks
 
   changes = read_changelog(version: version)
 
@@ -126,7 +126,8 @@ lane :publish_release do |options|
                      # upload_assets: ["Products/StreamChat.zip", "Products/StreamChatUI.zip", "Products/StreamChat-All.zip"]
                    )
   # Firing this lane is done manually at the moment.
-  #push_pods(sync: options[:sync])
+  # TODO: push_pods(sync: options[:sync])
+  # TODO: Update stream-chat-swift-integration-apps
 
   UI.success("Github release was created, please visit #{github_release["url"]} to see it")
 end
