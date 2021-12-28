@@ -539,6 +539,21 @@ open class ComposerVC: _ViewController,
     }
 
     @objc open func sendONEAction() {
+        animateToolkitView(isHide: true)
+        composerView.inputMessageView.textView.becomeFirstResponder()
+        let inputView = WalletInputView()
+        composerView.inputMessageView.textView.inputView = WalletInputView()
+        composerView.inputMessageView.textView.reloadInputViews()
+        composerView.inputMessageView.textView.inputView?.autoresizingMask = .flexibleHeight
+
+//        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+//            inputView.intrinsicHeight = 500.0
+//            self.composerView.inputMessageView.textView.inputView = nil
+//            self.composerView.inputMessageView.textView.inputView = inputView
+//            self.composerView.inputMessageView.textView.reloadInputViews()
+//        }
+
+        return;
         composerView.inputMessageView.textView.text = nil
         composerView.inputMessageView.textView.resignFirstResponder()
         guard let channelId = channelController?.channel?.cid else { return }
@@ -556,29 +571,30 @@ open class ComposerVC: _ViewController,
         NotificationCenter.default.post(name: .sendRedPacketTapAction, object: nil, userInfo: userInfo)
     }
 
+    func animateToolkitView(isHide: Bool) {
+        UIView.animate(
+                    withDuration: 0.35,
+                    delay: 0,
+                    usingSpringWithDamping: 0.9,
+                    initialSpringVelocity: 1,
+                    options: [],
+                    animations: { [weak self] in
+                        guard let weakSelf = self else {
+                            return
+                        }
+                        weakSelf.composerView.toolKitView.isHidden = isHide
+                        if isHide {
+                            weakSelf.composerView.toolKitView.alpha = 0
+                        } else {
+                            weakSelf.composerView.toolKitView.alpha = 1
+                        }
+                        weakSelf.composerView.layoutIfNeeded()
+                    },
+                    completion: nil
+                )
+    }
+
     @objc open func toolKitToggleAction(sender: UIButton) {
-        func animateToolkitView(isHide: Bool) {
-            UIView.animate(
-                        withDuration: 0.35,
-                        delay: 0,
-                        usingSpringWithDamping: 0.9,
-                        initialSpringVelocity: 1,
-                        options: [],
-                        animations: { [weak self] in
-                            guard let weakSelf = self else {
-                                return
-                            }
-                            weakSelf.composerView.toolKitView.isHidden = isHide
-                            if isHide {
-                                weakSelf.composerView.toolKitView.alpha = 0
-                            } else {
-                                weakSelf.composerView.toolKitView.alpha = 1
-                            }
-                            weakSelf.composerView.layoutIfNeeded()
-                        },
-                        completion: nil
-                    )
-        }
         if composerView.toolKitView.isHidden {
             animateToolkitView(isHide: false)
         } else {
