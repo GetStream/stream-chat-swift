@@ -40,3 +40,6 @@ public struct Sorting<Key: SortingKey>: Encodable, CustomStringConvertible {
         direction = isAscending ? 1 : -1
     }
 }
+
+extension Sorting: Equatable where Key: Equatable {}
+extension Sorting: Hashable where Key: Hashable {}

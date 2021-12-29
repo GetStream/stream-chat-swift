@@ -13,6 +13,7 @@ _December 28, 2021_
 ### ✅ Added
 - `ChannelListQuery.membersLimit` param for controlling the number of members returned for each channel [#1721](https://github.com/GetStream/stream-chat-swift/issues/1721)
 - Adds support to pass extra data for message from `ComposerVC` [#1722](https://github.com/GetStream/stream-chat-swift/pull/1722)
+- Add support to paginate messages pinned in a channel [#1732](https://github.com/GetStream/stream-chat-swift/issues/1732)
 
 ### 🐞 Fixed
 - Fix multiple pagination requests being fired from `ChatChannelVC` and `ChatChannelListVC` [#1706](https://github.com/GetStream/stream-chat-swift/issues/1706)
