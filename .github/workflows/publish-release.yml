@@ -41,7 +41,7 @@ jobs:
           VERSION=${BRANCH_NAME#release/}
           echo "RELEASE_VERSION=$VERSION" >> $GITHUB_ENV
       - uses: ./.github/actions/bootstrap
-      - name: "Starting on the Fastlane Publish Release"
+      - name: "Fastlane - Publish Release"
         if: startsWith(github.event.pull_request.head.ref, 'release/')
         env:
             GITHUB_API_TOKEN: ${{ secrets.DANGER_GITHUB_API_TOKEN }}

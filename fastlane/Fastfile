@@ -132,7 +132,7 @@ lane :publish_release do |options|
   # TODO: push_pods(sync: options[:sync])
   # TODO: Update stream-chat-swift-integration-apps
 
-  UI.success("Github releases created:\n stream-chat-swift: #{github_release["html_url"]}\nstream-chat-swift-spm: #{spm_github_release_url}")
+  UI.success("🎉🎉🎉🎉🎉 Github releases successfully created:\n 👉 stream-chat-swift: #{github_release["html_url"]}\n👉 stream-chat-swift-spm: #{spm_github_release_url}")
 end
 
 desc "Read CHANGELOG"
@@ -217,7 +217,8 @@ private_lane :update_spm do |options|
     api_token: ENV["GITHUB_TOKEN"],
     name: version,
     tag_name: version,
-    commitish: "main"
+    commitish: "main",
+    description: "https://github.com/GetStream/stream-chat-swift/releases/tag/#{version}"
   )
 
   UI.message("Moving back to fastlane's directory - #{initial_directory}")
