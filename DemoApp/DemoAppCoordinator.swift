@@ -118,7 +118,7 @@ final class DemoAppCoordinator: NSObject, UNUserNotificationCenterDelegate {
         
         connectionController = ChatClient.shared.connectionController()
         connectionController?.delegate = connectionDelegate
-        
+
         navigationController.viewControllers = [chatList]
         navigationController.isNavigationBarHidden = false
         
