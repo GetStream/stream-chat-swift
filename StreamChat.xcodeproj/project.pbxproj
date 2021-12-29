@@ -879,6 +879,8 @@
 		ADCDDCC525AE1293004E15FB /* UserUpdateResponse.json in Resources */ = {isa = PBXBuildFile; fileRef = ADCDDCC425AE1293004E15FB /* UserUpdateResponse.json */; };
 		ADCDDD0025AE2784004E15FB /* UserUpdateViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADCDDCEC25AE2214004E15FB /* UserUpdateViewController.swift */; };
 		ADCDDD0825AE2F4A004E15FB /* InputViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADCDDD0725AE2F4A004E15FB /* InputViewController.swift */; };
+		ADDFDE292779EC67003B3B07 /* Atlantis in Frameworks */ = {isa = PBXBuildFile; productRef = ADDFDE282779EC67003B3B07 /* Atlantis */; };
+		ADDFDE2B2779EC8A003B3B07 /* Atlantis in Frameworks */ = {isa = PBXBuildFile; productRef = ADDFDE2A2779EC8A003B3B07 /* Atlantis */; };
 		ADEA7EB0261C88E200CA2289 /* CurrentChatUser_Mock.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADEA7EAF261C88E200CA2289 /* CurrentChatUser_Mock.swift */; };
 		ADEA7F35261D302100CA2289 /* r2.jpg in Resources */ = {isa = PBXBuildFile; fileRef = ADEA7F22261D2F8C00CA2289 /* r2.jpg */; };
 		ADEA7F3E261D302300CA2289 /* chewbacca.jpg in Resources */ = {isa = PBXBuildFile; fileRef = ADEA7F21261D2F8C00CA2289 /* chewbacca.jpg */; };
@@ -3204,6 +3206,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				ADDFDE2B2779EC8A003B3B07 /* Atlantis in Frameworks */,
 				C121EC5D2746AC8C00023E4C /* StreamChat.framework in Frameworks */,
 				C1BE72732732CA62006EB51E /* Nuke in Frameworks */,
 				C121EC612746AC8C00023E4C /* StreamChatUI.framework in Frameworks */,
@@ -3229,6 +3232,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				ADDFDE292779EC67003B3B07 /* Atlantis in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6198,6 +6202,7 @@
 			name = DemoApp;
 			packageProductDependencies = (
 				C1BE72722732CA62006EB51E /* Nuke */,
+				ADDFDE2A2779EC8A003B3B07 /* Atlantis */,
 			);
 			productName = DemoApp;
 			productReference = 792DDA57256FB69E001DB91B /* ChatSample.app */;
@@ -6255,6 +6260,7 @@
 			);
 			name = StreamChat;
 			packageProductDependencies = (
+				ADDFDE282779EC67003B3B07 /* Atlantis */,
 			);
 			productName = Sources;
 			productReference = 799C941B247D2F80001F1104 /* StreamChat.framework */;
@@ -6507,6 +6513,7 @@
 			packageReferences = (
 				AD472EF625C425FB00A96E70 /* XCRemoteSwiftPackageReference "swift-snapshot-testing" */,
 				C1BE72712732C91F006EB51E /* XCRemoteSwiftPackageReference "Nuke" */,
+				ADDFDE272779EC67003B3B07 /* XCRemoteSwiftPackageReference "atlantis" */,
 			);
 			productRefGroup = 8AD5EC9022E9A3E8005CFAC9 /* Products */;
 			projectDirPath = "";
@@ -10360,6 +10367,14 @@
 				minimumVersion = 1.8.2;
 			};
 		};
+		ADDFDE272779EC67003B3B07 /* XCRemoteSwiftPackageReference "atlantis" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/ProxymanApp/atlantis";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.0;
+			};
+		};
 		C1BE72712732C91F006EB51E /* XCRemoteSwiftPackageReference "Nuke" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/kean/Nuke";
@@ -10383,6 +10398,16 @@
 			isa = XCSwiftPackageProductDependency;
 			package = AD472EF625C425FB00A96E70 /* XCRemoteSwiftPackageReference "swift-snapshot-testing" */;
 			productName = SnapshotTesting;
+		};
+		ADDFDE282779EC67003B3B07 /* Atlantis */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = ADDFDE272779EC67003B3B07 /* XCRemoteSwiftPackageReference "atlantis" */;
+			productName = Atlantis;
+		};
+		ADDFDE2A2779EC8A003B3B07 /* Atlantis */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = ADDFDE272779EC67003B3B07 /* XCRemoteSwiftPackageReference "atlantis" */;
+			productName = Atlantis;
 		};
 		C139335E275E7BD800225E7A /* Nuke */ = {
 			isa = XCSwiftPackageProductDependency;
