@@ -15,13 +15,13 @@ extension Endpoint {
         )
     }
     
-    static func deleteMessage(messageId: MessageId) -> Endpoint<EmptyResponse> {
+    static func deleteMessage(messageId: MessageId, hard: Bool) -> Endpoint<EmptyResponse> {
         .init(
             path: messageId.path,
             method: .delete,
             queryItems: nil,
             requiresConnectionId: false,
-            body: nil
+            body: ["hard": hard]
         )
     }
     
