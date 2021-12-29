@@ -56,7 +56,7 @@ open class ChatMessageContentView: _View, ThemeProvider {
         didSet { updateContentIfNeeded() }
     }
 
-    /// The date formatter of the `timestampLabel`
+    /// The date formatter used by `timestampLabel`.
     public lazy var dateFormatter: DateFormatter = .messageTimestamp
 
     /// Specifies the max possible width of `mainContainer`.
