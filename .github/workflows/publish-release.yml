@@ -43,4 +43,6 @@ jobs:
       - uses: ./.github/actions/bootstrap
       - name: "Starting on the Fastlane Publish Release"
         if: startsWith(github.event.pull_request.head.ref, 'release/')
+        env:
+            GITHUB_API_TOKEN: ${{ secrets.DANGER_GITHUB_API_TOKEN }}
         run: bundle exec fastlane publish_release version:${{ env.RELEASE_VERSION }}
