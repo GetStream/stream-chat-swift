@@ -337,6 +337,10 @@ public struct Components {
     /// A view that displays image attachment preview in composer.
     public var imageAttachmentComposerPreview: ImageAttachmentComposerPreview
         .Type = ImageAttachmentComposerPreview.self
+
+    /// A view that displays image attachment preview in composer.
+    public var walletAttachmentComposerPreview: WalletAttachmentComposerPreview
+        .Type = WalletAttachmentComposerPreview.self
     
     /// A view that displays the video attachment preview in composer.
     public var videoAttachmentComposerPreview: VideoAttachmentComposerPreview

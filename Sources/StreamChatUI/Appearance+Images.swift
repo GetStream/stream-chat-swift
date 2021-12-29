@@ -276,5 +276,6 @@ public extension Appearance {
         public var expiredPacketThumb: UIImage = loadImageSafely(with: "expiredPacket")
         public var redPacketExpired: UIImage = loadImageSafely(with: "redPacketExpired")
         public var redPacketThumb: UIImage = loadImageSafely(with: "redPacket")
+        public var requestImg: UIImage = loadImageSafely(with: "requestImg")
     }
 }

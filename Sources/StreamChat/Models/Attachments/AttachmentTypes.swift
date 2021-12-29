@@ -19,6 +19,7 @@ enum AttachmentCodingKeys: String, CodingKey, CaseIterable {
     case assetURL = "asset_url"
     case titleLink = "title_link"
     case actions
+    case amount
 }
 
 /// A local state of the attachment. Applies only for attachments linked to the new messages sent from current device.
@@ -103,6 +104,7 @@ public extension AttachmentType {
     static let giphy = Self(rawValue: "giphy")
     static let video = Self(rawValue: "video")
     static let audio = Self(rawValue: "audio")
+    static let wallet = Self(rawValue: "wallet")
 
     /// Application custom types.
     static let linkPreview = Self(rawValue: "linkPreview")

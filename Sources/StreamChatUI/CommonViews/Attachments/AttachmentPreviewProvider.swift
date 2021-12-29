@@ -24,6 +24,17 @@ extension ImageAttachmentPayload: AttachmentPreviewProvider {
     }
 }
 
+extension WalletAttachmentPayload: AttachmentPreviewProvider {
+    public static var preferredAxis: NSLayoutConstraint.Axis { .horizontal }
+
+    /// The view representing the attachment.
+    public func previewView(components: Components) -> UIView {
+        let view = components.walletAttachmentComposerPreview.init()
+        view.amount = amount
+        return view
+    }
+}
+
 extension FileAttachmentPayload: AttachmentPreviewProvider {
     public static var preferredAxis: NSLayoutConstraint.Axis { .vertical }
 

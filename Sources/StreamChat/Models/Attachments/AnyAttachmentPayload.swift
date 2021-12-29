@@ -113,6 +113,14 @@ public extension AnyAttachmentPayload {
             localFileURL: localFileURL
         )
     }
+
+    init(wallet amount: String) {
+        self.init(
+            type: .wallet,
+            payload: WalletAttachmentPayload(amount: amount),
+            localFileURL: nil
+        )
+    }
 }
 
 extension ClientError {

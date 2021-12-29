@@ -7,58 +7,40 @@
 
 import UIKit
 
-class WalletInputViewController: UIViewController {
+class WalletInputViewController: WalletQuickInputViewController {
 
-    @IBOutlet weak var btnRemove: UIButton!
-    @IBOutlet weak var btnAdd: UIButton!
-    @IBOutlet weak var btnRequest: UIButton!
-    @IBOutlet weak var btnPay: UIButton!
-    @IBOutlet weak var btnShowKeyboard: UIButton!
     @IBOutlet weak var viewKeypad: UIStackView!
     @IBOutlet var btnKeyPad: [UIButton]!
 
-    var showKeypad: (() -> Void)?
-    var didHideView: (() -> Void)?
+    var updatedAmount = 0
+    var didHide: ((Int) -> Void)?
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        setupUI()
+    }
+
+    override func setupUI() {
+        super.setupUI()
+        btnKeyPad.forEach { btn in
+            btn.layer.cornerRadius = 30
+        }
+        self.amount = updatedAmount
     }
 
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        viewKeypad.isHidden = true
-        btnShowKeyboard.isHidden = false
-        didHideView?()
+        didHide?(amount)
     }
 
-    override func viewDidDisappear(_ animated: Bool) {
-        super.viewDidDisappear(animated)
-    }
-
-    func setupUI() {
-        btnAdd.layer.cornerRadius = btnAdd.bounds.height / 2
-        btnRemove.layer.cornerRadius = btnRemove.bounds.height / 2
-        btnRequest.layer.cornerRadius = btnRequest.bounds.height / 2
-        btnPay.layer.cornerRadius = btnPay.bounds.height / 2
-
-        btnAdd.layer.maskedCorners = [.layerMinXMinYCorner, .layerMinXMaxYCorner]
-        btnRemove.layer.maskedCorners = [.layerMaxXMinYCorner, .layerMaxXMaxYCorner]
-        btnRequest.layer.maskedCorners = [.layerMinXMinYCorner, .layerMinXMaxYCorner]
-        btnPay.layer.maskedCorners = [.layerMaxXMinYCorner, .layerMaxXMaxYCorner]
-
-        btnKeyPad.forEach { btn in
-            btn.layer.cornerRadius = 30
+    @IBAction func btnKeypadAction(_ sender: UIButton) {
+        if let keyPadNumber = sender.titleLabel?.text {
+            let amount = (lblAmount.text ?? "0") + "\(keyPadNumber)"
+            self.amount = Int(amount.replacingOccurrences(of: "$", with: "")) ?? 0
+        } else {
+            var amount = lblAmount.text ?? ""
+            _ = amount.removeLast()
+            self.amount = Int(amount.replacingOccurrences(of: "$", with: "")) ?? 0
         }
     }
 
-    @IBAction func btnShowKeypadAction(_ sender: Any) {
-        viewKeypad.isHidden = false
-        btnShowKeyboard.isHidden = true
-        showKeypad?()
-    }
-
-    func hideKeypad() {
-        viewKeypad.isHidden = true
-    }
 }

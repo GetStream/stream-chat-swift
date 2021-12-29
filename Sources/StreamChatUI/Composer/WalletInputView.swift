@@ -73,13 +73,13 @@ class WalletInputView: UIInputView {
                                        forCellWithReuseIdentifier: KeyboardToolTipCVCell.reuseId)
 
 
-        self.addSubview(toolBarCollectionView)
-        toolBarCollectionView.heightAnchor.constraint(equalToConstant: 38).isActive = true
-        toolBarCollectionView.leadingAnchor.constraint(equalTo: self.leadingAnchor).isActive = true
-        toolBarCollectionView.trailingAnchor.constraint(equalTo: self.trailingAnchor).isActive = true
-        toolBarCollectionView.topAnchor.constraint(equalTo: self.topAnchor).isActive = true
-        toolBarCollectionView.reloadData()
-        toolBarCollectionView.backgroundColor = Appearance.default.colorPalette.walletTabbarBackground
+//        self.addSubview(toolBarCollectionView)
+//        toolBarCollectionView.heightAnchor.constraint(equalToConstant: 38).isActive = true
+//        toolBarCollectionView.leadingAnchor.constraint(equalTo: self.leadingAnchor).isActive = true
+//        toolBarCollectionView.trailingAnchor.constraint(equalTo: self.trailingAnchor).isActive = true
+//        toolBarCollectionView.topAnchor.constraint(equalTo: self.topAnchor).isActive = true
+//        toolBarCollectionView.reloadData()
+//        toolBarCollectionView.backgroundColor = Appearance.default.colorPalette.walletTabbarBackground
 
         containerView.leadingAnchor.constraint(equalTo: self.leadingAnchor).isActive = true
         containerView.trailingAnchor.constraint(equalTo: self.trailingAnchor).isActive = true

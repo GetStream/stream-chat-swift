@@ -14,7 +14,8 @@ struct KeyboardToolKit {
         return [ToolKit(image: Appearance.default.images.photoPicker, type: .photoPicker),
                 ToolKit(image: Appearance.default.images.sendMoney, type: .sendOneDollar),
                 ToolKit(image: Appearance.default.images.redPacket, type: .sendRedPacket),
-                ToolKit(image: Appearance.default.images.nftGallery, type: .shareNFTGalllery)
+                ToolKit(image: Appearance.default.images.nftGallery, type: .shareNFTGalllery),
+                ToolKit(image: Appearance.default.images.nftGallery, type: .pay)
         ]
     }
 }
@@ -31,5 +32,6 @@ struct ToolKit {
         case sendOneDollar
         case sendRedPacket
         case shareNFTGalllery
+        case pay
     }
 }

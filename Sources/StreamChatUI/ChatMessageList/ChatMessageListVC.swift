@@ -89,6 +89,7 @@ open class ChatMessageListVC:
         listView.register(CryptoSentBubble.self, forCellReuseIdentifier: "CryptoSentBubble")
         listView.register(CryptoReceiveBubble.self, forCellReuseIdentifier: "CryptoReceiveBubble")
         listView.register(RedPacketSentBubble.self, forCellReuseIdentifier: "RedPacketSentBubble")
+        listView.register(RequestBubble.self, forCellReuseIdentifier: "RequestBubble")
         listView.register(RedPacketBubble.self, forCellReuseIdentifier: "RedPacketBubble")
         listView.register(RedPacketAmountBubble.self, forCellReuseIdentifier: "RedPacketAmountBubble")
         listView.register(RedPacketExpired.self, forCellReuseIdentifier: "RedPacketExpired")
@@ -427,6 +428,18 @@ open class ChatMessageListVC:
             cell.configureCell(isSender: isMessageFromCurrentUser)
             cell.configData()
             return cell
+        } else if isRequestCell(message) {
+            guard let cell = tableView.dequeueReusableCell(
+                withIdentifier: "RequestBubble",
+                for: indexPath) as? RequestBubble else {
+                return UITableViewCell()
+            }
+            cell.client = client
+            cell.options = cellLayoutOptionsForMessage(at: indexPath)
+            cell.content = message
+            cell.configureCell(isSender: isMessageFromCurrentUser)
+            cell.configData()
+            return cell
         }
         /*else if isRedPacketCell(message) {
             guard let cell = tableView.dequeueReusableCell(
@@ -560,6 +573,13 @@ open class ChatMessageListVC:
 
     private func isRedPacketAmountCell(_ message: ChatMessage?) -> Bool {
         message?.extraData.keys.contains("RedPacketOtherAmountReceived") ?? false
+    }
+
+    private func isRequestCell(_ message: ChatMessage?) -> Bool {
+        if let wallet = message?.attachments(payloadType: WalletAttachmentPayload.self) {
+            return !wallet.isEmpty
+        }
+        return false
     }
 
     open func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
