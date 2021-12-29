@@ -115,6 +115,7 @@ open class ChatChannelListItemView: _View, ThemeProvider, SwiftUIRepresentable {
 
     override open func setUpAppearance() {
         super.setUpAppearance()
+        backgroundColor = appearance.colorPalette.background
 
         titleLabel.font = appearance.fonts.bodyBold
 
