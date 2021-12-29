@@ -26,7 +26,7 @@ open class ChatChannelListItemView: _View, ThemeProvider, SwiftUIRepresentable {
     }
 
     /// The date formatter of the `timestampLabel`
-    public lazy var dateFormatter: DateFormatter = .makeDefault()
+    public lazy var dateFormatter: DateFormatter = .messageTimestamp
 
     /// Main container which holds `avatarView` and two horizontal containers `title` and `unreadCount` and
     /// `subtitle` and `timestampLabel`

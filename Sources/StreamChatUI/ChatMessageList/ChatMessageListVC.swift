@@ -355,7 +355,7 @@ open class ChatMessageListVC:
 
         cell.dateSeparatorView.isHidden = !shouldShowDateSeparator(forMessage: message, at: indexPath)
         cell.dateSeparatorView.content = DateFormatter
-            .messageListDateOverlay
+            .messageListDateSeparator
             .string(from: message.createdAt)
 
         return cell

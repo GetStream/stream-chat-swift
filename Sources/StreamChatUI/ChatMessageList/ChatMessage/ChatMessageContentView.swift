@@ -57,7 +57,7 @@ open class ChatMessageContentView: _View, ThemeProvider {
     }
 
     /// The date formatter of the `timestampLabel`
-    public lazy var dateFormatter: DateFormatter = .makeDefault()
+    public lazy var dateFormatter: DateFormatter = .messageTimestamp
 
     /// Specifies the max possible width of `mainContainer`.
     /// Should be in [0...1] range, where 1 makes the container fill the entire superview's width.
