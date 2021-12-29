@@ -5,7 +5,6 @@ ignore:
   - "**/*_Vendor.swift"
   - "**/Generated/*.swift"
   - "Sources/StreamChat/StreamStarscream"
-  - "Sources/StreamChat/StreamULID"
   - "Sources/StreamChatUI/StreamNuke"
   - "Sources/StreamChatUI/StreamSwiftyGif"
 github_checks:
