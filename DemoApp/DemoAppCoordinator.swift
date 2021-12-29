@@ -124,15 +124,19 @@ final class DemoAppCoordinator: NSObject, UNUserNotificationCenterDelegate {
         
         // Init the channel VC and navigate there directly
         if let cid = channelID {
-            let channelVC = ChatChannelVC()
+            let channelVC = CustomChannelVC()
             channelVC.channelController = ChatClient.shared.channelController(for: cid)
             navigationController.viewControllers.append(channelVC)
         }
-        
+
+        let isIpad = UIDevice.current.userInterfaceIdiom == .pad
         let window = navigationController.view.window!
+        let rootVC: UIViewController = isIpad
+            ? makeSplitViewController(channelListVC: chatList)
+            : navigationController
+
         UIView.transition(with: window, duration: 0.3, options: .transitionFlipFromRight, animations: {
-            window.rootViewController = self.navigationController
-            
+            window.rootViewController = rootVC
         })
     }
     
@@ -143,7 +147,32 @@ final class DemoAppCoordinator: NSObject, UNUserNotificationCenterDelegate {
             }
         }
     }
+
+    private func makeSplitViewController(channelListVC: DemoChannelListVC) -> UISplitViewController {
+        let makeChannelController: (String) -> ChatChannelController = { cid in
+            channelListVC.controller.client.channelController(
+                for: ChannelId(type: .messaging, id: cid),
+                channelListQuery: channelListVC.controller.query
+            )
+        }
+
+        let channelVC = CustomChannelVC()
+        channelVC.channelController = makeChannelController("unknown")
+
+        channelListVC.didSelectChannel = { channel in
+            channelVC.channelController = makeChannelController(channel.cid.id)
+            channelVC.messageListVC.listView.reloadData()
+            channelVC.setUp()
+        }
+
+        let splitController = UISplitViewController()
+        splitController.viewControllers = [channelListVC, UINavigationController(rootViewController: channelVC)]
+        splitController.preferredDisplayMode = .oneBesideSecondary
+        return splitController
+    }
 }
+
+// MARK: Custom Components for the Demo App
 
 class CustomChannelVC: ChatChannelVC {
     override func viewDidLoad() {
@@ -162,5 +191,117 @@ class CustomChannelVC: ChatChannelVC {
         if let cid = channelController.cid {
             (navigationController?.viewControllers.first as? ChatChannelListVC)?.router.didTapMoreButton(for: cid)
         }
+    }
+}
+
+class DemoChannelListVC: ChatChannelListVC {
+    /// The `UIButton` instance used for navigating to new channel screen creation.
+    lazy var createChannelButton: UIButton = {
+        let button = UIButton()
+        button.setImage(UIImage(systemName: "plus.message")!, for: .normal)
+        return button
+    }()
+
+    lazy var hiddenChannelsButton: UIButton = {
+        let button = UIButton()
+        button.setImage(UIImage(systemName: "archivebox")!, for: .normal)
+        return button
+    }()
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+
+        navigationItem.rightBarButtonItems = [
+            UIBarButtonItem(customView: hiddenChannelsButton),
+            UIBarButtonItem(customView: createChannelButton)
+        ]
+        createChannelButton.addTarget(self, action: #selector(didTapCreateNewChannel), for: .touchUpInside)
+        hiddenChannelsButton.addTarget(self, action: #selector(didTapHiddenChannelsButton), for: .touchUpInside)
+    }
+
+    @objc private func didTapCreateNewChannel(_ sender: Any) {
+        (router as! DemoChatChannelListRouter).showCreateNewChannelFlow()
+    }
+
+    @objc private func didTapHiddenChannelsButton(_ sender: Any) {
+        let channelListVC = HiddenChannelListVC()
+        channelListVC.controller = controller
+            .client
+            .channelListController(
+                query: .init(
+                    filter: .and(
+                        [
+                            .containMembers(userIds: [controller.client.currentUserId!]),
+                            .equal(.hidden, to: true)
+                        ]
+                    )
+                )
+            )
+        navigationController?.pushViewController(channelListVC, animated: true)
+    }
+
+    override func controller(_ controller: ChatChannelListController, shouldListUpdatedChannel channel: ChatChannel) -> Bool {
+        channel.lastActiveMembers.contains(where: { $0.id == controller.client.currentUserId })
+    }
+
+    override func controller(_ controller: ChatChannelListController, shouldAddNewChannelToList channel: ChatChannel) -> Bool {
+        channel.lastActiveMembers.contains(where: { $0.id == controller.client.currentUserId })
+    }
+
+    var isPad: Bool { UIDevice.current.userInterfaceIdiom == .pad }
+
+    var didSelectChannel: ((ChatChannel) -> Void)?
+    var selectedChannel: ChatChannel? {
+        didSet {
+            if selectedChannel != oldValue, let channel = selectedChannel {
+                didSelectChannel?(channel)
+            }
+        }
+    }
+
+    override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        if isPad {
+            let channel = controller.channels[indexPath.row]
+            selectedChannel = channel
+            return
+        }
+
+        super.collectionView(collectionView, didSelectItemAt: indexPath)
+    }
+
+    override func controller(_ controller: DataController, didChangeState state: DataController.State) {
+        super.controller(controller, didChangeState: state)
+
+        if isPad && (state == .remoteDataFetched || state == .localDataFetched) {
+            guard let channel = self.controller.channels.first else { return }
+            selectedChannel = channel
+        }
+    }
+
+    override func controller(_ controller: ChatChannelListController, didChangeChannels changes: [ListChange<ChatChannel>]) {
+        super.controller(controller, didChangeChannels: changes)
+
+        guard isPad else { return }
+        guard let selectedChannel = selectedChannel else { return }
+        guard let selectedChannelRow = controller.channels.firstIndex(of: selectedChannel) else {
+            return
+        }
+
+        let selectedItemIndexPath = IndexPath(row: selectedChannelRow, section: 0)
+
+        collectionView.selectItem(
+            at: selectedItemIndexPath,
+            animated: false,
+            scrollPosition: .centeredHorizontally
+        )
+    }
+}
+
+class HiddenChannelListVC: ChatChannelListVC {
+    override func setUpAppearance() {
+        super.setUpAppearance()
+
+        title = "Hidden Channels"
+        navigationItem.leftBarButtonItem = nil
     }
 }

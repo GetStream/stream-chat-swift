@@ -25,6 +25,14 @@ open class ChatChannelListCollectionViewCell: _CollectionViewCell,
         swipeableView.close()
     }
 
+    override open var isSelected: Bool {
+        didSet {
+            itemView.backgroundColor = isSelected
+                ? appearance.colorPalette.highlightedBackground
+                : appearance.colorPalette.background
+        }
+    }
+
     override open var isHighlighted: Bool {
         didSet {
             itemView.backgroundColor = isHighlighted
