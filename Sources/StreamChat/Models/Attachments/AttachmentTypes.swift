@@ -20,6 +20,7 @@ enum AttachmentCodingKeys: String, CodingKey, CaseIterable {
     case titleLink = "title_link"
     case actions
     case amount
+    case paymentType
 }
 
 /// A local state of the attachment. Applies only for attachments linked to the new messages sent from current device.

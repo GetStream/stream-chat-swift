@@ -18,7 +18,7 @@ class WalletQuickInputViewController: UIViewController {
     var showKeypad: (() -> Void)?
     var didRequestAction: ((Int) -> Void)?
     var didPayAction: ((Int) -> Void)?
-    var amount = 0 {
+    var amount: Int = 0 {
         didSet {
             lblAmount.text = "$\(amount)"
         }
@@ -40,6 +40,10 @@ class WalletQuickInputViewController: UIViewController {
         btnPay.layer.maskedCorners = [.layerMaxXMinYCorner, .layerMaxXMaxYCorner]
     }
 
+    func updateAmount(amount: Int) {
+        self.amount = amount
+    }
+
     @IBAction func btnShowKeypadAction(_ sender: Any) {
         showKeypad?()
     }
@@ -49,6 +53,7 @@ class WalletQuickInputViewController: UIViewController {
     }
 
     @IBAction func btnRemoveAction(_ sender: Any) {
+        guard amount != 0 else { return }
         amount -= 1
     }
 

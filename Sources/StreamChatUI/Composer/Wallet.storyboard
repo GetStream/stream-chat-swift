@@ -362,7 +362,7 @@
                                                     <color key="titleColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                                                 </state>
                                                 <connections>
-                                                    <action selector="btnShowKeypadAction:" destination="Y6W-OH-hqX" eventType="touchUpInside" id="WVn-qZ-Cfh"/>
+                                                    <action selector="btnPayAction:" destination="Y6W-OH-hqX" eventType="touchUpInside" id="sik-TX-q2n"/>
                                                 </connections>
                                             </button>
                                         </subviews>

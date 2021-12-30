@@ -266,6 +266,8 @@ open class ComposerVC: _ViewController,
         return view
     }()
 
+    private var walletInputView: WalletQuickInputViewController?
+
     override open func setUp() {
         super.setUp()
 
@@ -466,6 +468,7 @@ open class ComposerVC: _ViewController,
         }
 
         content.clear()
+        showMessageOption()
     }
     
     /// Shows a photo/media picker.
@@ -553,48 +556,39 @@ open class ComposerVC: _ViewController,
             composerView.inputMessageView.textView.reloadInputViews()
             return
         }
-        let walletInputView = UIStoryboard(name: "Wallet", bundle: Bundle.main).instantiateViewController(withIdentifier: "WalletQuickInputViewController") as! WalletQuickInputViewController
-        walletInputView.didRequestAction = { [weak self] amount in
-            guard let `self` = self else { return }
-            do {
-                let attachment = try AnyAttachmentPayload(wallet: "$\(amount)")
-                self.content.attachments.append(attachment)
-                self.composerView.inputMessageView.textView.inputView = nil
-                self.composerView.inputMessageView.textView.reloadInputViews()
-                self.animateToolkitView(isHide: true)
-                self.composerView.leadingContainer.isHidden = true
-            } catch {
-                print(error)
-            }
-        }
-        self.composerView.inputMessageView.textView.inputView = walletInputView.view
+        walletInputView = WalletQuickInputViewController.instantiate(appStoryboard: .wallet)
+        self.composerView.inputMessageView.textView.inputView = walletInputView?.view
         self.composerView.inputMessageView.textView.reloadInputViews()
         self.composerView.inputMessageView.textView.becomeFirstResponder()
-        walletInputView.showKeypad = { [weak self] in
+        walletInputView?.didRequestAction = { [weak self] amount in
             guard let `self` = self else { return }
-            let walletView = UIStoryboard(name: "Wallet", bundle: Bundle.main).instantiateViewController(withIdentifier: "WalletInputViewController") as! WalletInputViewController
-            walletView.didHide = { amount in
-                walletInputView.amount = amount
+            self.addWalletAttachment(amount: amount, paymentType: .request)
+        }
+        walletInputView?.didPayAction = { [weak self] amount in
+            guard let `self` = self else { return }
+            self.addWalletAttachment(amount: amount, paymentType: .pay)
+        }
+        walletInputView?.showKeypad = { [weak self] in
+            guard let `self` = self else { return }
+            guard let walletView: WalletInputViewController = WalletInputViewController.instantiate(appStoryboard: .wallet) else { return }
+            walletView.updatedAmount = self.walletInputView?.amount ?? 0
+            walletView.didHide = { [weak self] amount in
+                guard let `self` = self else { return }
+                self.walletInputView?.updateAmount(amount: amount)
             }
             walletView.didRequestAction = { [weak self] amount in
                 guard let `self` = self else { return }
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                    self.composerView.inputMessageView.textView.inputView = nil
-//                    self.composerView.inputMessageView.textView.reloadInputViews()
-                    walletView.dismiss(animated: true) {
-                        do {
-                            let attachment = try AnyAttachmentPayload(wallet: "$\(amount)")
-                            self.content.attachments.append(attachment)
-                            self.animateToolkitView(isHide: true)
-                            self.composerView.leadingContainer.isHidden = true
-                        } catch {
-                            print(error)
-                        }
-                    }
+                walletView.dismiss(animated: true) { [weak self] in
+                    guard let `self` = self else { return }
+                    self.addWalletAttachment(amount: amount, paymentType: .request)
                 }
             }
-
-            walletView.updatedAmount = walletInputView.amount
+            walletView.didPayAction = { [weak self] amount in
+                walletView.dismiss(animated: true) { [weak self] in
+                    guard let `self` = self else { return }
+                    self.addWalletAttachment(amount: amount, paymentType: .pay)
+                }
+            }
             UIApplication.shared.windows.first?.rootViewController?.present(walletView, animated: true, completion: nil)
         }
     }
@@ -602,6 +596,21 @@ open class ComposerVC: _ViewController,
     @objc func showMessageOption() {
         self.animateToolkitView(isHide: false)
         self.composerView.leadingContainer.isHidden = false
+    }
+
+    func addWalletAttachment(amount: Int, paymentType: WalletAttachmentPayload.PaymentType) {
+        do {
+            let attachment = try AnyAttachmentPayload(wallet: "$\(amount)", paymentType: paymentType)
+            self.content.attachments.append(attachment)
+            self.animateToolkitView(isHide: true)
+            self.composerView.leadingContainer.isHidden = true
+            self.composerView.inputMessageView.textView.inputView = nil
+            self.composerView.inputMessageView.textView.reloadInputViews()
+            walletInputView?.removeFromParent()
+            walletInputView = nil
+        } catch {
+            print(error)
+        }
     }
 
     @objc open func sendONEAction() {

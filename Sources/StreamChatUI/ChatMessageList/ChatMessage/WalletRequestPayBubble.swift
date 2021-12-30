@@ -8,7 +8,7 @@
 import Foundation
 import StreamChat
 
-class RequestBubble: UITableViewCell {
+class WalletRequestPayBubble: UITableViewCell {
 
     public private(set) var viewContainer: UIView!
     public private(set) var subContainer: UIView!
@@ -26,6 +26,7 @@ class RequestBubble: UITableViewCell {
     var channel: ChatChannel?
     var chatClient: ChatClient?
     var client: ChatClient?
+    var walletPaymentType: WalletAttachmentPayload.PaymentType = .pay
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -73,7 +74,6 @@ class RequestBubble: UITableViewCell {
 
         sentThumbImageView = UIImageView()
         sentThumbImageView.backgroundColor = Appearance.default.colorPalette.background6
-        sentThumbImageView.image = Appearance.default.images.requestImg
         sentThumbImageView.transform = .mirrorY
         sentThumbImageView.contentMode = .scaleAspectFill
         sentThumbImageView.translatesAutoresizingMaskIntoConstraints = false
@@ -97,9 +97,18 @@ class RequestBubble: UITableViewCell {
         descriptionLabel.transform = .mirrorY
         descriptionLabel.textAlignment = .center
 
+        walletPaymentType = content?.attachments(payloadType: WalletAttachmentPayload.self).first?.paymentType ?? .pay
+
         lblDetails = createDetailsLabel()
-        descriptionLabel.text = "Parth Requests Payment"
-        lblDetails.text = "REQUEST: 100 ONE"
+        if walletPaymentType == .request {
+            descriptionLabel.text = "Parth Requests Payment"
+            lblDetails.text = "REQUEST: 100 ONE"
+            sentThumbImageView.image = Appearance.default.images.requestImg
+        } else {
+            descriptionLabel.text = "Ajay sent you crypto"
+            lblDetails.text = "SENT: 750 ONE"
+            sentThumbImageView.image = Appearance.default.images.cryptoSentThumb
+        }
         detailsStack = UIStackView(arrangedSubviews: [lblDetails])
         detailsStack.axis = .vertical
         detailsStack.distribution = .fillEqually
@@ -116,7 +125,7 @@ class RequestBubble: UITableViewCell {
 
         pickUpButton = UIButton()
         pickUpButton.translatesAutoresizingMaskIntoConstraints = false
-        pickUpButton.setTitle("Pay", for: .normal)
+        pickUpButton.setTitle(walletPaymentType == .request ? "Pay" : "Block Explorer", for: .normal)
         pickUpButton.addTarget(self, action: #selector(btnSendPacketAction), for: .touchUpInside)
         pickUpButton.setTitleColor(.white, for: .normal)
         pickUpButton.titleLabel?.font = UIFont.systemFont(ofSize: 14, weight: .regular)

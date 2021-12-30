@@ -30,7 +30,7 @@ extension WalletAttachmentPayload: AttachmentPreviewProvider {
     /// The view representing the attachment.
     public func previewView(components: Components) -> UIView {
         let view = components.walletAttachmentComposerPreview.init()
-        view.amount = amount
+        view.walletAttachment = self
         return view
     }
 }

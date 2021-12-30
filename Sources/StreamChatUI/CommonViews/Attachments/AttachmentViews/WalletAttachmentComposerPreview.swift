@@ -13,7 +13,7 @@ open class WalletAttachmentComposerPreview: _View, ThemeProvider {
     open var width: CGFloat = 150
     open var height: CGFloat = 150
 
-    public var amount: String? {
+    public var walletAttachment: WalletAttachmentPayload! {
         didSet {
             updateContentIfNeeded()
         }
@@ -23,6 +23,9 @@ open class WalletAttachmentComposerPreview: _View, ThemeProvider {
         .withoutAutoresizingMaskConstraints
 
     private(set) lazy var lblAmount: UILabel = UILabel()
+        .withoutAutoresizingMaskConstraints
+
+    private(set) lazy var lblPaymentType: UILabel = UILabel()
         .withoutAutoresizingMaskConstraints
 
     override open func setUpAppearance() {
@@ -36,10 +39,19 @@ open class WalletAttachmentComposerPreview: _View, ThemeProvider {
         super.setUpLayout()
 
         embed(bgView)
-        embed(lblAmount)
+        bgView.embed(lblAmount)
+        bgView.addSubview(lblPaymentType)
+        lblPaymentType.topAnchor.constraint(equalTo: bgView.topAnchor, constant: 25).isActive = true
+        lblPaymentType.leadingAnchor.constraint(equalTo: bgView.leadingAnchor).isActive = true
+        lblPaymentType.trailingAnchor.constraint(equalTo: bgView.trailingAnchor).isActive = true
+        lblPaymentType.textColor = .white
+        lblPaymentType.textAlignment = .center
+        lblPaymentType.font = .systemFont(ofSize: 12)
+        lblPaymentType.text = walletAttachment.paymentType.rawValue
+
         lblAmount.font = .systemFont(ofSize: 22, weight: .bold)
         lblAmount.textColor = .white
-        lblAmount.text = amount
+        lblAmount.text = walletAttachment.amount
         lblAmount.textAlignment = .center
         bgView.backgroundColor = .darkGray
         widthAnchor.pin(equalToConstant: width).isActive = true

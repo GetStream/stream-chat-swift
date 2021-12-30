@@ -89,7 +89,7 @@ open class ChatMessageListVC:
         listView.register(CryptoSentBubble.self, forCellReuseIdentifier: "CryptoSentBubble")
         listView.register(CryptoReceiveBubble.self, forCellReuseIdentifier: "CryptoReceiveBubble")
         listView.register(RedPacketSentBubble.self, forCellReuseIdentifier: "RedPacketSentBubble")
-        listView.register(RequestBubble.self, forCellReuseIdentifier: "RequestBubble")
+        listView.register(WalletRequestPayBubble.self, forCellReuseIdentifier: "RequestBubble")
         listView.register(RedPacketBubble.self, forCellReuseIdentifier: "RedPacketBubble")
         listView.register(RedPacketAmountBubble.self, forCellReuseIdentifier: "RedPacketAmountBubble")
         listView.register(RedPacketExpired.self, forCellReuseIdentifier: "RedPacketExpired")
@@ -428,10 +428,10 @@ open class ChatMessageListVC:
             cell.configureCell(isSender: isMessageFromCurrentUser)
             cell.configData()
             return cell
-        } else if isRequestCell(message) {
+        } else if isWalletRequestPayCell(message) {
             guard let cell = tableView.dequeueReusableCell(
                 withIdentifier: "RequestBubble",
-                for: indexPath) as? RequestBubble else {
+                for: indexPath) as? WalletRequestPayBubble else {
                 return UITableViewCell()
             }
             cell.client = client
@@ -575,9 +575,9 @@ open class ChatMessageListVC:
         message?.extraData.keys.contains("RedPacketOtherAmountReceived") ?? false
     }
 
-    private func isRequestCell(_ message: ChatMessage?) -> Bool {
-        if let wallet = message?.attachments(payloadType: WalletAttachmentPayload.self) {
-            return !wallet.isEmpty
+    private func isWalletRequestPayCell(_ message: ChatMessage?) -> Bool {
+        if let wallet = message?.attachments(payloadType: WalletAttachmentPayload.self).first {
+            return true
         }
         return false
     }
