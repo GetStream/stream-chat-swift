@@ -53,6 +53,8 @@ class MessageUpdater: Worker {
                 // to try to delete the message on the backend.
                 return
             }
+
+            messageDTO.isHardDeleted = hard
             
             if messageDTO.existsOnlyLocally {
                 messageDTO.type = MessageType.deleted.rawValue
@@ -73,8 +75,12 @@ class MessageUpdater: Worker {
                     switch result {
                     case .success:
                         messageDTO?.localMessageState = nil
+                        if hard, let message = messageDTO {
+                            session.delete(message: message)
+                        }
                     case .failure:
                         messageDTO?.localMessageState = .deletingFailed
+                        messageDTO?.isHardDeleted = false
                     }
                 }, completion: { error in
                     completion?(result.error ?? error)
