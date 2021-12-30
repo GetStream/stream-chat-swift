@@ -61,6 +61,7 @@
 		437FCA1026D67CB40000223C /* StreamChat.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 799C941B247D2F80001F1104 /* StreamChat.framework */; };
 		437FCA1626D79A910000223C /* ChatRemoteNotificationHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 437FCA1526D79A910000223C /* ChatRemoteNotificationHandler.swift */; };
 		437FCA1926D906B20000223C /* ChatPushNotificationContent_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 437FCA1826D906B20000223C /* ChatPushNotificationContent_Tests.swift */; };
+		43854422277B46350079C472 /* NotificationChannelDeleted.json in Resources */ = {isa = PBXBuildFile; fileRef = 43854421277B46350079C472 /* NotificationChannelDeleted.json */; };
 		43ABF8B526C2CD900034BD62 /* ComposerVC_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43ABF8B326C2B7140034BD62 /* ComposerVC_Tests.swift */; };
 		43ABF8B726C513D20034BD62 /* CurrentUserCustomRole.json in Resources */ = {isa = PBXBuildFile; fileRef = 43ABF8B626C513D20034BD62 /* CurrentUserCustomRole.json */; };
 		43BAAD492664F59600323D8E /* UserStopTypingThread.json in Resources */ = {isa = PBXBuildFile; fileRef = 43BAAD472664F59600323D8E /* UserStopTypingThread.json */; };
@@ -2032,6 +2033,7 @@
 		437FCA1526D79A910000223C /* ChatRemoteNotificationHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatRemoteNotificationHandler.swift; sourceTree = "<group>"; };
 		437FCA1726D7E60D0000223C /* DemoAppPush.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = DemoAppPush.entitlements; sourceTree = "<group>"; };
 		437FCA1826D906B20000223C /* ChatPushNotificationContent_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatPushNotificationContent_Tests.swift; sourceTree = "<group>"; };
+		43854421277B46350079C472 /* NotificationChannelDeleted.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = NotificationChannelDeleted.json; sourceTree = "<group>"; };
 		43ABF8B326C2B7140034BD62 /* ComposerVC_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComposerVC_Tests.swift; sourceTree = "<group>"; };
 		43ABF8B626C513D20034BD62 /* CurrentUserCustomRole.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = CurrentUserCustomRole.json; sourceTree = "<group>"; };
 		43BAAD472664F59600323D8E /* UserStopTypingThread.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = UserStopTypingThread.json; sourceTree = "<group>"; };
@@ -5094,6 +5096,7 @@
 		8A0C3BD624C1E25D00CAFD19 /* Notification */ = {
 			isa = PBXGroup;
 			children = (
+				43854421277B46350079C472 /* NotificationChannelDeleted.json */,
 				8AC9CBD724C737AF006E236C /* NotificationMessageNew.json */,
 				8431843A26FB53B400B5B25E /* NotificationMessageNew+MissingFields.json */,
 				8AC9CBE524C74FFE006E236C /* NotificationMarkAllRead.json */,
@@ -6697,6 +6700,7 @@
 				8A0CC9ED24C602B600705CF9 /* MemberRemoved.json in Resources */,
 				7943379A260E04B60094471F /* ChannelUpdated_ServerSide.json in Resources */,
 				8A0C3BC724C0AEDB00CAFD19 /* UserBanned.json in Resources */,
+				43854422277B46350079C472 /* NotificationChannelDeleted.json in Resources */,
 				430156F026B2E2170006E7EA /* ChannelPayload.json in Resources */,
 				79158CE225F0E9DF00186102 /* ChannelTruncated.json in Resources */,
 				88EA9B112547271B007EE76B /* MessageReactionPayload+DefaultExtraData.json in Resources */,
