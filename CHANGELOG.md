@@ -3,6 +3,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+### 🔄 Changed
+
+# [4.8.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.8.0)
+_December 30, 2021_
+
 ### ✅ Added
 - Add support to paginate messages pinned in a channel [#1732](https://github.com/GetStream/stream-chat-swift/issues/1732)
 
