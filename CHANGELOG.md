@@ -3,6 +3,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+### 🔄 Changed
+
+# [4.8.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.8.0)
+_December 30, 2021_
+
 
 ### 🐞 Fixed
 - `notification.channel_deleted` events are now handled by the SDK [#1737](https://github.com/GetStream/stream-chat-swift/pull/1737)
