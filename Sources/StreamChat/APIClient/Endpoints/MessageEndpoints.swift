@@ -15,7 +15,7 @@ extension Endpoint {
         )
     }
     
-    static func deleteMessage(messageId: MessageId, hard: Bool) -> Endpoint<EmptyResponse> {
+    static func deleteMessage(messageId: MessageId, hard: Bool) -> Endpoint<MessagePayload.Boxed> {
         .init(
             path: messageId.path,
             method: .delete,

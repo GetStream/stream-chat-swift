@@ -73,9 +73,17 @@ class MessageUpdater: Worker {
                 self.database.write({ session in
                     let messageDTO = session.message(id: messageId)
                     switch result {
-                    case .success:
-                        messageDTO?.localMessageState = nil
-                        if hard, let message = messageDTO {
+                    case let .success(response):
+                        guard let cid = messageDTO?.channel?.cid else { return }
+
+                        let deletedMessage = try session.saveMessage(
+                            payload: response.message,
+                            for: ChannelId(cid: cid),
+                            syncOwnReactions: false
+                        )
+                        deletedMessage?.localMessageState = nil
+
+                        if hard, let message = deletedMessage {
                             session.delete(message: message)
                         }
                     case .failure:
