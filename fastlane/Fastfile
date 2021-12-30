@@ -128,8 +128,7 @@ lane :publish_release do |options|
                    )
 
   spm_github_release_url = update_spm(version: version)
-  # Firing this lane is done manually at the moment.
-  # TODO: push_pods(sync: options[:sync])
+  push_pods(sync: options[:sync])
   # TODO: Update stream-chat-swift-integration-apps
 
   UI.success("🎉🎉🎉🎉🎉 Github releases successfully created:\n 👉 stream-chat-swift: #{github_release["html_url"]}\n👉 stream-chat-swift-spm: #{spm_github_release_url}")
