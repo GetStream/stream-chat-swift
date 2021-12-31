@@ -132,6 +132,7 @@
         </uniquenessConstraints>
     </entity>
     <entity name="MemberDTO" representedClassName="MemberDTO" syncable="YES">
+        <attribute name="actualChannelRoleRaw" optional="YES" attributeType="String"/>
         <attribute name="banExpiresAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="channelRoleRaw" optional="YES" attributeType="String"/>
         <attribute name="id" attributeType="String"/>

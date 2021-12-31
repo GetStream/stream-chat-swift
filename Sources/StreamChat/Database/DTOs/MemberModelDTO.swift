@@ -12,6 +12,8 @@ class MemberDTO: NSManagedObject {
     
     // This value is optional only temprorary until this is fixed https://getstream.slack.com/archives/CE5N802GP/p1592925726015900
     @NSManaged var channelRoleRaw: String?
+    @NSManaged var actualChannelRoleRaw: String?
+    
     @NSManaged var memberCreatedAt: Date
     @NSManaged var memberUpdatedAt: Date
 
@@ -105,6 +107,10 @@ extension NSManagedObjectContext {
         if let role = payload.role {
             dto.channelRoleRaw = role.rawValue
         }
+
+        if let channelRole = payload.channelRole {
+            dto.actualChannelRoleRaw = channelRole.rawValue
+        }
         
         dto.memberCreatedAt = payload.createdAt
         dto.memberUpdatedAt = payload.updatedAt
@@ -150,6 +156,7 @@ extension ChatChannelMember {
         }
 
         let role = dto.channelRoleRaw.flatMap { MemberRole(rawValue: $0) } ?? .member
+        let channelRole = dto.actualChannelRoleRaw.flatMap { MemberRole(rawValue: $0) } ?? .member
         
         return ChatChannelMember(
             id: dto.user.id,
@@ -165,6 +172,7 @@ extension ChatChannelMember {
             teams: dto.user.teams ?? [],
             extraData: extraData,
             memberRole: role,
+            channelMemberRole: channelRole,
             memberCreatedAt: dto.memberCreatedAt,
             memberUpdatedAt: dto.memberUpdatedAt,
             isInvited: dto.isInvited,

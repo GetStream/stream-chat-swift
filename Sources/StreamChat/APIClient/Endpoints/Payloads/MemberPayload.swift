@@ -30,6 +30,7 @@ struct MemberPayload: Decodable {
     private enum CodingKeys: String, CodingKey {
         case user
         case role
+        case channelRole = "channel_role"
         case isBanned = "banned"
         case isShadowBanned = "shadow_banned"
         case banExpiresAt = "ban_expires"
@@ -42,6 +43,7 @@ struct MemberPayload: Decodable {
     
     let user: UserPayload
     let role: MemberRole?
+    let channelRole:MemberRole?
     let createdAt: Date
     let updatedAt: Date
 
@@ -71,7 +73,8 @@ struct MemberPayload: Decodable {
         isShadowBanned: Bool? = nil,
         isInvited: Bool? = nil,
         inviteAcceptedAt: Date? = nil,
-        inviteRejectedAt: Date? = nil
+        inviteRejectedAt: Date? = nil,
+        channelRole:MemberRole? = nil
     ) {
         self.user = user
         self.role = role
@@ -83,6 +86,7 @@ struct MemberPayload: Decodable {
         self.isInvited = isInvited
         self.inviteAcceptedAt = inviteAcceptedAt
         self.inviteRejectedAt = inviteRejectedAt
+        self.channelRole = channelRole
     }
 }
 

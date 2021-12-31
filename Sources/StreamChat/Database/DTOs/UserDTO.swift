@@ -48,7 +48,9 @@ class UserDTO: NSManagedObject {
                 guard !member.hasChanges else { continue }
                 // this will not change object, but mark it as dirty, triggering updates
                 let assigningPropertyToItself = member.channelRoleRaw
+                let assigningPropertyToItselfOne = member.actualChannelRoleRaw
                 member.channelRoleRaw = assigningPropertyToItself
+                member.actualChannelRoleRaw = assigningPropertyToItselfOne
             }
         }
     }

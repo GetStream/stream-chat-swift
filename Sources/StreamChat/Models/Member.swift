@@ -8,6 +8,9 @@ import Foundation
 public class ChatChannelMember: ChatUser {
     /// The role of the user within the channel.
     public let memberRole: MemberRole
+
+    /// The Channel Role of the user within the channel.
+    public let channelMemberRole: MemberRole
     
     /// The date the user was added to the channel.
     public let memberCreatedAt: Date
@@ -57,6 +60,7 @@ public class ChatChannelMember: ChatUser {
         teams: Set<TeamId>,
         extraData: [String: RawJSON],
         memberRole: MemberRole,
+        channelMemberRole: MemberRole,
         memberCreatedAt: Date,
         memberUpdatedAt: Date,
         isInvited: Bool,
@@ -67,6 +71,7 @@ public class ChatChannelMember: ChatUser {
         isShadowBannedFromChannel: Bool
     ) {
         self.memberRole = memberRole
+        self.channelMemberRole = channelMemberRole
         self.memberCreatedAt = memberCreatedAt
         self.memberUpdatedAt = memberUpdatedAt
         self.isInvited = isInvited
