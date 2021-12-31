@@ -523,6 +523,7 @@ open class ChatMessageListVC:
         lblChat.translatesAutoresizingMaskIntoConstraints = false
         lblChat.centerXAnchor.constraint(equalTo: viewEmptyState.centerXAnchor, constant: 0).isActive = true
         lblChat.bottomAnchor.constraint(equalTo: imageView.bottomAnchor, constant: 50).isActive = true
+        viewEmptyState.isUserInteractionEnabled = false
     }
 
     private func isOneWalletCell(_ message: ChatMessage?) -> Bool {

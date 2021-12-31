@@ -441,7 +441,7 @@ open class ComposerVC: _ViewController,
         addChildViewController(attachmentsVC, embedIn: composerView.inputMessageView.attachmentsViewContainer)
         attachmentsVC.didTapRemoveItemButton = { [weak self] index in
             if self?.content.attachments[index].type == .wallet {
-                self?.showMessageOption()
+                self?.showMessageOption(isHide: false)
             }
             self?.content.attachments.remove(at: index)
         }
@@ -468,7 +468,7 @@ open class ComposerVC: _ViewController,
         }
 
         content.clear()
-        showMessageOption()
+        showMessageOption(isHide: false)
     }
     
     /// Shows a photo/media picker.
@@ -552,8 +552,7 @@ open class ComposerVC: _ViewController,
 
     @objc open func showPaymentRequest() {
         if composerView.inputMessageView.textView.inputView != nil {
-            composerView.inputMessageView.textView.inputView = nil
-            composerView.inputMessageView.textView.reloadInputViews()
+            hideInputView()
             return
         }
         walletInputView = WalletQuickInputViewController.instantiate(appStoryboard: .wallet)
@@ -578,12 +577,15 @@ open class ComposerVC: _ViewController,
             }
             walletView.didRequestAction = { [weak self] amount in
                 guard let `self` = self else { return }
+                self.hideInputView()
                 walletView.dismiss(animated: true) { [weak self] in
                     guard let `self` = self else { return }
                     self.addWalletAttachment(amount: amount, paymentType: .request)
                 }
             }
             walletView.didPayAction = { [weak self] amount in
+                guard let `self` = self else { return }
+                self.hideInputView()
                 walletView.dismiss(animated: true) { [weak self] in
                     guard let `self` = self else { return }
                     self.addWalletAttachment(amount: amount, paymentType: .pay)
@@ -593,23 +595,28 @@ open class ComposerVC: _ViewController,
         }
     }
 
-    @objc func showMessageOption() {
-        self.animateToolkitView(isHide: false)
-        self.composerView.leadingContainer.isHidden = false
+    private func showMessageOption(isHide: Bool) {
+        self.animateToolkitView(isHide: isHide)
+        self.composerView.leadingContainer.isHidden = isHide
     }
 
-    func addWalletAttachment(amount: Int, paymentType: WalletAttachmentPayload.PaymentType) {
-        do {
-            let attachment = try AnyAttachmentPayload(wallet: "$\(amount)", paymentType: paymentType)
-            self.content.attachments.append(attachment)
-            self.animateToolkitView(isHide: true)
-            self.composerView.leadingContainer.isHidden = true
-            self.composerView.inputMessageView.textView.inputView = nil
-            self.composerView.inputMessageView.textView.reloadInputViews()
-            walletInputView?.removeFromParent()
-            walletInputView = nil
-        } catch {
-            print(error)
+    private func hideInputView() {
+        self.composerView.inputMessageView.textView.inputView = nil
+        self.composerView.inputMessageView.textView.reloadInputViews()
+    }
+
+    private func addWalletAttachment(amount: Int, paymentType: WalletAttachmentPayload.PaymentType) {
+        DispatchQueue.main.async {
+            do {
+                let attachment = try AnyAttachmentPayload(wallet: "$\(amount)", paymentType: paymentType)
+                self.content.attachments.append(attachment)
+                self.hideInputView()
+                self.showMessageOption(isHide: true)
+//                self.walletInputView?.removeFromParent()
+//                self.walletInputView = nil
+            } catch {
+                print(error)
+            }
         }
     }
 
@@ -707,7 +714,7 @@ open class ComposerVC: _ViewController,
             return
         }
         channelController?.createNewMessage(
-            text: "",
+            text: "One Wallet Transfer",
             pinning: nil,
             attachments: [],
             mentionedUserIds: content.mentionedUsers.map(\.id),
@@ -721,7 +728,7 @@ open class ComposerVC: _ViewController,
             return
         }
         channelController?.createNewMessage(
-            text: "",
+            text: "Red Packet Drop",
             pinning: nil,
             attachments: [],
             mentionedUserIds: content.mentionedUsers.map(\.id),
