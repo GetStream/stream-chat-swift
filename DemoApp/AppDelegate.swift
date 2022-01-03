@@ -12,8 +12,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         _ application: UIApplication,
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
     ) -> Bool {
-        // Override point for customization after application launch.
-        Atlantis.start()
+        // Uncomment this to be able to proxy WebSocket events from Proxyman.app
+        // Atlantis.start()
         return true
     }
 
