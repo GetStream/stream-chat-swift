@@ -9,7 +9,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 _December 30, 2021_
 
 ### ✅ Added
-- Add support to paginate messages pinned in a channel [#1732](https://github.com/GetStream/stream-chat-swift/issues/1732)
+- Add support to paginate messages pinned in a channel [#1741](https://github.com/GetStream/stream-chat-swift/issues/1741)
 
 ### 🐞 Fixed
 - `notification.channel_deleted` events are now handled by the SDK [#1737](https://github.com/GetStream/stream-chat-swift/pull/1737)
