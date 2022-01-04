@@ -16,11 +16,10 @@ Pod::Spec.new do |spec|
     spec.source_files = "Sources/StreamChatUI/**/*.swift"
     spec.exclude_files = ["Sources/StreamChatUI/**/*_Tests.swift", "Sources/StreamChatUI/**/*_Mock.swift"]
     spec.resource_bundles = { "StreamChatUI" => ["Sources/StreamChatUI/Resources/**/*"] }
-    spec.resource = 'Sources/StreamChatUI/Composer/Wallet.storyboard'
+    spec.resource = 'Sources/StreamChatUI/Storyboard/*.storyboard'
     spec.framework = "Foundation", "UIKit"
   
     spec.dependency "StreamChat", "#{spec.version}"
     spec.dependency "Nuke", "~> 10.0"
     spec.dependency "SwiftyGif", "~> 5.4.1"
   end
-  

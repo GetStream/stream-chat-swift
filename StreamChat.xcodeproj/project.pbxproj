@@ -908,6 +908,13 @@
 		BDDD1EAE2632E6C200BA007B /* Appearance+SwiftUI_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDDD1EAD2632E6C200BA007B /* Appearance+SwiftUI_Tests.swift */; };
 		BDEB9417268211EC00928AF1 /* ChatMessageListUnreadCountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDEB9416268211EC00928AF1 /* ChatMessageListUnreadCountView.swift */; };
 		CD1C90F0272C417F00A6E85B /* CryptoSentBubble.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD1C90EF272C417F00A6E85B /* CryptoSentBubble.swift */; };
+		CD24C70C27844BC500F6378D /* PrivateGroup.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CD24C70B27844BC500F6378D /* PrivateGroup.storyboard */; };
+		CD24C70E27844C3500F6378D /* Wallet.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CD24C70D27844C3500F6378D /* Wallet.storyboard */; };
+		CD24C7112784514900F6378D /* JoinPrivateGroupVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD24C7102784514900F6378D /* JoinPrivateGroupVC.swift */; };
+		CD24C71727846C4300F6378D /* DPOTPView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD24C71627846C4300F6378D /* DPOTPView.swift */; };
+		CD24C719278484B800F6378D /* LocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD24C718278484B800F6378D /* LocationManager.swift */; };
+		CD24C71C2784881000F6378D /* Dynamic.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD24C71B2784881000F6378D /* Dynamic.swift */; };
+		CD24C71E2784892A00F6378D /* UIApplication+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD24C71D2784892A00F6378D /* UIApplication+Extension.swift */; };
 		CD66B56F273D41E600DAC5D2 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 88E779B12563FA6B00BA79B6 /* Assets.xcassets */; };
 		CD72548D275F556100CD6444 /* RedPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD72548C275F556100CD6444 /* RedPacket.swift */; };
 		CD89189E273E25B70051C651 /* KeyboardToolKitList.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD66B570273D5D1D00DAC5D2 /* KeyboardToolKitList.swift */; };
@@ -2324,6 +2331,13 @@
 		BDDD1EAD2632E6C200BA007B /* Appearance+SwiftUI_Tests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Appearance+SwiftUI_Tests.swift"; sourceTree = "<group>"; };
 		BDEB9416268211EC00928AF1 /* ChatMessageListUnreadCountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageListUnreadCountView.swift; sourceTree = "<group>"; };
 		CD1C90EF272C417F00A6E85B /* CryptoSentBubble.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CryptoSentBubble.swift; sourceTree = "<group>"; };
+		CD24C70B27844BC500F6378D /* PrivateGroup.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = PrivateGroup.storyboard; sourceTree = "<group>"; };
+		CD24C70D27844C3500F6378D /* Wallet.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Wallet.storyboard; sourceTree = "<group>"; };
+		CD24C7102784514900F6378D /* JoinPrivateGroupVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JoinPrivateGroupVC.swift; sourceTree = "<group>"; };
+		CD24C71627846C4300F6378D /* DPOTPView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DPOTPView.swift; sourceTree = "<group>"; };
+		CD24C718278484B800F6378D /* LocationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationManager.swift; sourceTree = "<group>"; };
+		CD24C71B2784881000F6378D /* Dynamic.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Dynamic.swift; sourceTree = "<group>"; };
+		CD24C71D2784892A00F6378D /* UIApplication+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIApplication+Extension.swift"; sourceTree = "<group>"; };
 		CD66B570273D5D1D00DAC5D2 /* KeyboardToolKitList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardToolKitList.swift; sourceTree = "<group>"; };
 		CD72548C275F556100CD6444 /* RedPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RedPacket.swift; sourceTree = "<group>"; };
 		CD8918A1273E32030051C651 /* SendMoneyButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendMoneyButton.swift; sourceTree = "<group>"; };
@@ -2763,6 +2777,7 @@
 		7908823025432C6400896F03 /* StreamChatUI */ = {
 			isa = PBXGroup;
 			children = (
+				CD24C70A27844B9F00F6378D /* Storyboard */,
 				CDB98D102757D41F00CA7CDE /* Model */,
 				BDDD1EA22632C50200BA007B /* Appearance.swift */,
 				8850B929255C286B003AED69 /* Components.swift */,
@@ -2775,6 +2790,7 @@
 				BDDD1E952632C4C900BA007B /* Components+SwiftUI_Tests.swift */,
 				BD4016352638411D00F09774 /* Deprecations.swift */,
 				888123D0255D42F000070D5A /* Utils */,
+				CD24C70F2784511A00F6378D /* PrivateChat */,
 				888123E5255D51BD00070D5A /* CommonViews */,
 				F833D64326393E4800651D14 /* Gallery */,
 				790882BE25486AB000896F03 /* ChatChannelList */,
@@ -4231,6 +4247,8 @@
 		888123D0255D42F000070D5A /* Utils */ = {
 			isa = PBXGroup;
 			children = (
+				CD24C71A278487ED00F6378D /* Dynamics */,
+				CD24C71527846C1A00F6378D /* DPOTPView */,
 				ACA3C98426CA23F300EB8B07 /* DateUtils_Tests.swift */,
 				ACA3C98526CA23F300EB8B07 /* DateUtils.swift */,
 				ACF73D7726CFE07900372DC0 /* Cancellable.swift */,
@@ -4275,6 +4293,8 @@
 				ACCA772D26C568D8007AE2ED /* NukeImageProcessor.swift */,
 				CD9A4705275DFA1100CA9931 /* Constants.swift */,
 				CDFA6EDC2768DB0900DC3B7F /* ActivityIndicator.swift */,
+				CD24C718278484B800F6378D /* LocationManager.swift */,
+				CD24C71D2784892A00F6378D /* UIApplication+Extension.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -4925,6 +4945,39 @@
 				849AE663270CB14000423A20 /* VideoAttachmentComposerPreview_Tests.swift */,
 			);
 			path = AttachmentViews;
+			sourceTree = "<group>";
+		};
+		CD24C70A27844B9F00F6378D /* Storyboard */ = {
+			isa = PBXGroup;
+			children = (
+				CD24C70D27844C3500F6378D /* Wallet.storyboard */,
+				CD24C70B27844BC500F6378D /* PrivateGroup.storyboard */,
+			);
+			path = Storyboard;
+			sourceTree = "<group>";
+		};
+		CD24C70F2784511A00F6378D /* PrivateChat */ = {
+			isa = PBXGroup;
+			children = (
+				CD24C7102784514900F6378D /* JoinPrivateGroupVC.swift */,
+			);
+			path = PrivateChat;
+			sourceTree = "<group>";
+		};
+		CD24C71527846C1A00F6378D /* DPOTPView */ = {
+			isa = PBXGroup;
+			children = (
+				CD24C71627846C4300F6378D /* DPOTPView.swift */,
+			);
+			path = DPOTPView;
+			sourceTree = "<group>";
+		};
+		CD24C71A278487ED00F6378D /* Dynamics */ = {
+			isa = PBXGroup;
+			children = (
+				CD24C71B2784881000F6378D /* Dynamic.swift */,
+			);
+			path = Dynamics;
 			sourceTree = "<group>";
 		};
 		CD8918A0273E31970051C651 /* SendMoneyButton */ = {
@@ -5741,7 +5794,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				88F0D74B257E50B200F4B050 /* Assets.xcassets in Resources */,
+				CD24C70E27844C3500F6378D /* Wallet.storyboard in Resources */,
 				88F0D743257E50B000F4B050 /* Localizable.strings in Resources */,
+				CD24C70C27844BC500F6378D /* PrivateGroup.storyboard in Resources */,
 				DBC8A4BB257E5BFB00B20A82 /* Localizable.stringsdict in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -6027,6 +6082,7 @@
 				22A0921725682880001FE9F0 /* ChatNavigationBar.swift in Sources */,
 				AD87D0A1263C7823008B466C /* AttachmentButton.swift in Sources */,
 				22753599257C442300D1FDB6 /* SendButton.swift in Sources */,
+				CD24C71C2784881000F6378D /* Dynamic.swift in Sources */,
 				88F836502578D16D0039AEC8 /* ChatMessageActionControl.swift in Sources */,
 				88BA7F5D258B6953006CE0C5 /* ChatLoadingIndicator.swift in Sources */,
 				883051742630366E0069D731 /* CACornerMask+Extensions.swift in Sources */,
@@ -6095,12 +6151,14 @@
 				E768AAFB2627691600328E6E /* TypingAnimationView.swift in Sources */,
 				ADB4166C26208F1C00E623E3 /* AttachmentPreviewProvider.swift in Sources */,
 				792DD9FB256E67C6001DB91B /* ComponentsProvider.swift in Sources */,
+				CD24C7112784514900F6378D /* JoinPrivateGroupVC.swift in Sources */,
 				84DA54DF2680C66A003A26CD /* PlayerView.swift in Sources */,
 				AD81AF0525ED141800F17F8F /* CellSeparatorView.swift in Sources */,
 				CD8918A6273E32AD0051C651 /* ToolTipToggleButton.swift in Sources */,
 				790882FD25486BFD00896F03 /* ChatChannelListCollectionViewCell.swift in Sources */,
 				88CABC4525933EE70061BB67 /* ChatMessageReactionsView.swift in Sources */,
 				E7166CE225BEE20600B03B07 /* Appearance+Images.swift in Sources */,
+				CD24C71E2784892A00F6378D /* UIApplication+Extension.swift in Sources */,
 				88CABC6625934CF60061BB67 /* ChatMessageReactions+Types.swift in Sources */,
 				BD69F5D52669392E00E9E3FA /* ScrollToLatestMessageButton.swift in Sources */,
 				790882F725486B8000896F03 /* ChatChannelListCollectionViewDelegate.swift in Sources */,
@@ -6125,6 +6183,7 @@
 				7844B14E25EF9F5700B87E89 /* ChatChannelAvatarView+SwiftUI.swift in Sources */,
 				BDC80CB5265CF4B800F62CE2 /* ImageCDN.swift in Sources */,
 				843F0BCD2677667000B342CB /* AttachmentActionButton.swift in Sources */,
+				CD24C719278484B800F6378D /* LocationManager.swift in Sources */,
 				843F0BC72677640000B342CB /* VideoAttachmentGalleryPreview.swift in Sources */,
 				ADB22F7D25F1626200853C92 /* ChatPresenceAvatarView.swift in Sources */,
 				2245B2B625602465006A612D /* ChatChannelAvatarView.swift in Sources */,
@@ -6139,6 +6198,7 @@
 				843F0BC526775D2D00B342CB /* VideoLoading.swift in Sources */,
 				88CABC4625933EE70061BB67 /* ChatReactionPickerBubbleView.swift in Sources */,
 				F838F6A92636D3C30025E1F5 /* ZoomTransitionController.swift in Sources */,
+				CD24C71727846C4300F6378D /* DPOTPView.swift in Sources */,
 				AD81AF0D25ED141A00F17F8F /* ListCollectionViewLayout.swift in Sources */,
 				8850B92A255C286B003AED69 /* Components.swift in Sources */,
 				AD8D1809268F7290004E3A5C /* TypingSuggester.swift in Sources */,

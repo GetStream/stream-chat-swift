@@ -21,6 +21,9 @@ public enum ChannelType: Codable, Hashable {
     // some admin announcements to the app users
     case announcement
 
+    // private channel in which user can join with password
+    case privateMessaging
+
     /// Good defaults for building something like your own version of Intercom or Drift.
     case commerce
     
@@ -40,6 +43,7 @@ public enum ChannelType: Codable, Hashable {
         case .team: return "team"
         case .gaming: return "gaming"
         case .announcement: return "announcement"
+        case .privateMessaging: return "privateMessaging"
         case .commerce: return "commerce"
         case let .custom(value):
             Self.assertCustomTypeValue(value)
@@ -57,6 +61,7 @@ public enum ChannelType: Codable, Hashable {
         case "team": self = .team
         case "gaming": self = .gaming
         case "announcement": self = .announcement
+        case "privateMessaging": self = .privateMessaging
         case "commerce": self = .commerce
         default:
             Self.assertCustomTypeValue(rawValue)
