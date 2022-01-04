@@ -1,5 +1,5 @@
 //
-// Copyright © 2021 Stream.io Inc. All rights reserved.
+// Copyright © 2022 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -74,7 +74,6 @@ class ChannelUpdater: Worker {
                 } completion: { error in
                     completion?(error)
                 }
-
             case let .failure(error):
                 log.error("Delete Channel on request fail \(error)")
                 // Note: not removing local channel if not removed on backend
@@ -379,6 +378,38 @@ class ChannelUpdater: Worker {
             apiClient.uploadAttachment(attachment, progress: progress, completion: completion)
         } catch {
             completion(.failure(ClientError.InvalidAttachmentFileURL(localFileURL)))
+        }
+    }
+    
+    /// Loads messages pinned in the given channel based on the provided query.
+    ///
+    /// - Parameters:
+    ///   - cid: The channel identifier messages are pinned at.
+    ///   - query: The query describing page size and pagination option.
+    ///   - completion: The completion that will be called with API request results.
+    func loadPinnedMessages(
+        in cid: ChannelId,
+        query: PinnedMessagesQuery,
+        completion: @escaping (Result<[ChatMessage], Error>) -> Void
+    ) {
+        apiClient.request(
+            endpoint: .pinnedMessages(cid: cid, query: query)
+        ) { [weak self] result in
+            switch result {
+            case let .success(payload):
+                var pinnedMessages: [ChatMessage] = []
+                self?.database.write { (session) in
+                    payload.messages.forEach {
+                        if let dto = try? session.saveMessage(payload: $0, for: cid, syncOwnReactions: false) {
+                            pinnedMessages.append(dto.asModel())
+                        }
+                    }
+                } completion: { _ in
+                    completion(.success(pinnedMessages.compactMap { $0 }))
+                }
+            case let .failure(error):
+                completion(.failure(error))
+            }
         }
     }
 }

@@ -2,12 +2,21 @@
   "object": {
     "pins": [
       {
+        "package": "Atlantis",
+        "repositoryURL": "https://github.com/ProxymanApp/atlantis",
+        "state": {
+          "branch": null,
+          "revision": "5e848072d45e3969bd1d69fab3b6c2151f826c41",
+          "version": "1.15.0"
+        }
+      },
+      {
         "package": "Nuke",
         "repositoryURL": "https://github.com/kean/Nuke",
         "state": {
           "branch": null,
-          "revision": "7f73ceaeacd5df75a7994cd82e165ad9ff1815db",
-          "version": "9.6.1"
+          "revision": "c0b32b0d7154afceb3fc08b199492f125ff4267e",
+          "version": "10.3.3"
         }
       },
       {

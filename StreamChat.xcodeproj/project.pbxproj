@@ -61,6 +61,7 @@
 		437FCA1026D67CB40000223C /* StreamChat.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 799C941B247D2F80001F1104 /* StreamChat.framework */; };
 		437FCA1626D79A910000223C /* ChatRemoteNotificationHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 437FCA1526D79A910000223C /* ChatRemoteNotificationHandler.swift */; };
 		437FCA1926D906B20000223C /* ChatPushNotificationContent_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 437FCA1826D906B20000223C /* ChatPushNotificationContent_Tests.swift */; };
+		43854422277B46350079C472 /* NotificationChannelDeleted.json in Resources */ = {isa = PBXBuildFile; fileRef = 43854421277B46350079C472 /* NotificationChannelDeleted.json */; };
 		43ABF8B526C2CD900034BD62 /* ComposerVC_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43ABF8B326C2B7140034BD62 /* ComposerVC_Tests.swift */; };
 		43ABF8B726C513D20034BD62 /* CurrentUserCustomRole.json in Resources */ = {isa = PBXBuildFile; fileRef = 43ABF8B626C513D20034BD62 /* CurrentUserCustomRole.json */; };
 		43BAAD492664F59600323D8E /* UserStopTypingThread.json in Resources */ = {isa = PBXBuildFile; fileRef = 43BAAD472664F59600323D8E /* UserStopTypingThread.json */; };
@@ -512,6 +513,10 @@
 		80C6027B25157E4D00A6B714 /* View+AlertTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80C6027A25157E4D00A6B714 /* View+AlertTextField.swift */; };
 		80D880432546553500908B7B /* ChatScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80D880422546553500908B7B /* ChatScrollView.swift */; };
 		840B4FCF26A9E53100D5EFAB /* CustomEventRequestBody.swift in Sources */ = {isa = PBXBuildFile; fileRef = 840B4FCE26A9E53100D5EFAB /* CustomEventRequestBody.swift */; };
+		842F9745277A09B10060A489 /* PinnedMessagesQuery.swift in Sources */ = {isa = PBXBuildFile; fileRef = 842F9744277A09B10060A489 /* PinnedMessagesQuery.swift */; };
+		842F9746277A09B10060A489 /* PinnedMessagesQuery.swift in Sources */ = {isa = PBXBuildFile; fileRef = 842F9744277A09B10060A489 /* PinnedMessagesQuery.swift */; };
+		842F9749277A1CCF0060A489 /* PinnedMessagesPagination.swift in Sources */ = {isa = PBXBuildFile; fileRef = 842F9748277A1CCF0060A489 /* PinnedMessagesPagination.swift */; };
+		842F974A277A1CCF0060A489 /* PinnedMessagesPagination.swift in Sources */ = {isa = PBXBuildFile; fileRef = 842F9748277A1CCF0060A489 /* PinnedMessagesPagination.swift */; };
 		8431843B26FB53B400B5B25E /* NotificationMessageNew+MissingFields.json in Resources */ = {isa = PBXBuildFile; fileRef = 8431843A26FB53B400B5B25E /* NotificationMessageNew+MissingFields.json */; };
 		8431843D26FB54F400B5B25E /* NotificationAddedToChannel+MissingFields.json in Resources */ = {isa = PBXBuildFile; fileRef = 8431843C26FB54F400B5B25E /* NotificationAddedToChannel+MissingFields.json */; };
 		843C53AB269370A900C7D8EA /* ImageAttachmentPayload_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 843C53AA269370A900C7D8EA /* ImageAttachmentPayload_Tests.swift */; };
@@ -534,6 +539,7 @@
 		847E946E269C687300E31D0C /* EventsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 847E946D269C687300E31D0C /* EventsController.swift */; };
 		847F3CEA2689FDEB00D240E0 /* ChatMessageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 847F3CE92689FDEB00D240E0 /* ChatMessageCell.swift */; };
 		8486CAF926FA51EE00A9AD96 /* EventDTOConverterMiddleware_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8486CAF826FA51EE00A9AD96 /* EventDTOConverterMiddleware_Tests.swift */; };
+		848EE3F8277628CB00B21ECA /* User_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 848EE3F7277628CB00B21ECA /* User_Tests.swift */; };
 		849980F1277246DB00ABA58B /* UIScrollView+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849980F0277246DB00ABA58B /* UIScrollView+Extensions.swift */; };
 		849AE662270CB00000423A20 /* VideoLoading_Mock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849AE661270CB00000423A20 /* VideoLoading_Mock.swift */; };
 		849AE664270CB14000423A20 /* VideoAttachmentComposerPreview_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849AE663270CB14000423A20 /* VideoAttachmentComposerPreview_Tests.swift */; };
@@ -552,6 +558,11 @@
 		84AA4E3626F264610056A684 /* EventDTOConverterMiddleware.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84AA4E3526F264610056A684 /* EventDTOConverterMiddleware.swift */; };
 		84ABB015269F0A84003A4585 /* EventsController+Combine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84ABB014269F0A84003A4585 /* EventsController+Combine.swift */; };
 		84CC56EC267B3F6B00DF2784 /* AnyAttachmentPayload_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84CC56EA267B3D5900DF2784 /* AnyAttachmentPayload_Tests.swift */; };
+		84D5BC59277B188E00A65C75 /* PinnedMessagesPagination_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84D5BC58277B188E00A65C75 /* PinnedMessagesPagination_Tests.swift */; };
+		84D5BC5B277B18AF00A65C75 /* PinnedMessagesQuery_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84D5BC5A277B18AF00A65C75 /* PinnedMessagesQuery_Tests.swift */; };
+		84D5BC6F277B619D00A65C75 /* PinnedMessagesSortingKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84D5BC6D277B619200A65C75 /* PinnedMessagesSortingKey.swift */; };
+		84D5BC70277B61A000A65C75 /* PinnedMessagesSortingKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84D5BC6D277B619200A65C75 /* PinnedMessagesSortingKey.swift */; };
+		84D5BC71277B61B900A65C75 /* PinnedMessagesSortingKey_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84D5BC6E277B619200A65C75 /* PinnedMessagesSortingKey_Tests.swift */; };
 		84DA54DF2680C66A003A26CD /* PlayerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84DA54DE2680C66A003A26CD /* PlayerView.swift */; };
 		84DCB84F269F46BE006CDF32 /* EventsController_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84DCB84E269F46BE006CDF32 /* EventsController_Tests.swift */; };
 		84DCB851269F4D31006CDF32 /* EventsController+Combine_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84DCB850269F4D31006CDF32 /* EventsController+Combine_Tests.swift */; };
@@ -879,6 +890,8 @@
 		ADCDDCC525AE1293004E15FB /* UserUpdateResponse.json in Resources */ = {isa = PBXBuildFile; fileRef = ADCDDCC425AE1293004E15FB /* UserUpdateResponse.json */; };
 		ADCDDD0025AE2784004E15FB /* UserUpdateViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADCDDCEC25AE2214004E15FB /* UserUpdateViewController.swift */; };
 		ADCDDD0825AE2F4A004E15FB /* InputViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADCDDD0725AE2F4A004E15FB /* InputViewController.swift */; };
+		ADDFDE292779EC67003B3B07 /* Atlantis in Frameworks */ = {isa = PBXBuildFile; productRef = ADDFDE282779EC67003B3B07 /* Atlantis */; };
+		ADDFDE2B2779EC8A003B3B07 /* Atlantis in Frameworks */ = {isa = PBXBuildFile; productRef = ADDFDE2A2779EC8A003B3B07 /* Atlantis */; };
 		ADEA7EB0261C88E200CA2289 /* CurrentChatUser_Mock.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADEA7EAF261C88E200CA2289 /* CurrentChatUser_Mock.swift */; };
 		ADEA7F35261D302100CA2289 /* r2.jpg in Resources */ = {isa = PBXBuildFile; fileRef = ADEA7F22261D2F8C00CA2289 /* r2.jpg */; };
 		ADEA7F3E261D302300CA2289 /* chewbacca.jpg in Resources */ = {isa = PBXBuildFile; fileRef = ADEA7F21261D2F8C00CA2289 /* chewbacca.jpg */; };
@@ -2020,6 +2033,7 @@
 		437FCA1526D79A910000223C /* ChatRemoteNotificationHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatRemoteNotificationHandler.swift; sourceTree = "<group>"; };
 		437FCA1726D7E60D0000223C /* DemoAppPush.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = DemoAppPush.entitlements; sourceTree = "<group>"; };
 		437FCA1826D906B20000223C /* ChatPushNotificationContent_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatPushNotificationContent_Tests.swift; sourceTree = "<group>"; };
+		43854421277B46350079C472 /* NotificationChannelDeleted.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = NotificationChannelDeleted.json; sourceTree = "<group>"; };
 		43ABF8B326C2B7140034BD62 /* ComposerVC_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComposerVC_Tests.swift; sourceTree = "<group>"; };
 		43ABF8B626C513D20034BD62 /* CurrentUserCustomRole.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = CurrentUserCustomRole.json; sourceTree = "<group>"; };
 		43BAAD472664F59600323D8E /* UserStopTypingThread.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = UserStopTypingThread.json; sourceTree = "<group>"; };
@@ -2477,6 +2491,8 @@
 		80C6027A25157E4D00A6B714 /* View+AlertTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View+AlertTextField.swift"; sourceTree = "<group>"; };
 		80D880422546553500908B7B /* ChatScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatScrollView.swift; sourceTree = "<group>"; };
 		840B4FCE26A9E53100D5EFAB /* CustomEventRequestBody.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomEventRequestBody.swift; sourceTree = "<group>"; };
+		842F9744277A09B10060A489 /* PinnedMessagesQuery.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PinnedMessagesQuery.swift; sourceTree = "<group>"; };
+		842F9748277A1CCF0060A489 /* PinnedMessagesPagination.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PinnedMessagesPagination.swift; sourceTree = "<group>"; };
 		8431843A26FB53B400B5B25E /* NotificationMessageNew+MissingFields.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "NotificationMessageNew+MissingFields.json"; sourceTree = "<group>"; };
 		8431843C26FB54F400B5B25E /* NotificationAddedToChannel+MissingFields.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "NotificationAddedToChannel+MissingFields.json"; sourceTree = "<group>"; };
 		843C53AA269370A900C7D8EA /* ImageAttachmentPayload_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageAttachmentPayload_Tests.swift; sourceTree = "<group>"; };
@@ -2517,6 +2533,10 @@
 		84AA4E3526F264610056A684 /* EventDTOConverterMiddleware.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventDTOConverterMiddleware.swift; sourceTree = "<group>"; };
 		84ABB014269F0A84003A4585 /* EventsController+Combine.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "EventsController+Combine.swift"; sourceTree = "<group>"; };
 		84CC56EA267B3D5900DF2784 /* AnyAttachmentPayload_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnyAttachmentPayload_Tests.swift; sourceTree = "<group>"; };
+		84D5BC58277B188E00A65C75 /* PinnedMessagesPagination_Tests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PinnedMessagesPagination_Tests.swift; sourceTree = "<group>"; };
+		84D5BC5A277B18AF00A65C75 /* PinnedMessagesQuery_Tests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PinnedMessagesQuery_Tests.swift; sourceTree = "<group>"; };
+		84D5BC6D277B619200A65C75 /* PinnedMessagesSortingKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PinnedMessagesSortingKey.swift; sourceTree = "<group>"; };
+		84D5BC6E277B619200A65C75 /* PinnedMessagesSortingKey_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PinnedMessagesSortingKey_Tests.swift; sourceTree = "<group>"; };
 		84DA54DE2680C66A003A26CD /* PlayerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerView.swift; sourceTree = "<group>"; };
 		84DCB84E269F46BE006CDF32 /* EventsController_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventsController_Tests.swift; sourceTree = "<group>"; };
 		84DCB850269F4D31006CDF32 /* EventsController+Combine_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "EventsController+Combine_Tests.swift"; sourceTree = "<group>"; };
@@ -3204,6 +3224,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				ADDFDE2B2779EC8A003B3B07 /* Atlantis in Frameworks */,
 				C121EC5D2746AC8C00023E4C /* StreamChat.framework in Frameworks */,
 				C1BE72732732CA62006EB51E /* Nuke in Frameworks */,
 				C121EC612746AC8C00023E4C /* StreamChatUI.framework in Frameworks */,
@@ -3229,6 +3250,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				ADDFDE292779EC67003B3B07 /* Atlantis in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3658,6 +3680,7 @@
 		792A4F412480103A00EAF71D /* Query */ = {
 			isa = PBXGroup;
 			children = (
+				842F9747277A1CBE0060A489 /* PinnedMessages */,
 				882C5745252C6FDF00E60C44 /* ChannelMemberListQuery.swift */,
 				889B00E4252C972C007709A8 /* ChannelMemberListQuery_Tests.swift */,
 				79C5CBF025F66E9700D98001 /* ChannelWatcherListQuery.swift */,
@@ -4113,6 +4136,7 @@
 				79877A032498E4BB00015F8B /* Member.swift */,
 				796CBC6425FBAD12003299B0 /* Member_Tests.swift */,
 				79877A012498E4BB00015F8B /* User.swift */,
+				848EE3F7277628CB00B21ECA /* User_Tests.swift */,
 				64C8C86D26934C6100329F82 /* UserInfo.swift */,
 				799C9431247D2FB9001F1104 /* ChatMessage.swift */,
 				64C80614262EDA9600B1F7AD /* ChatMessage_Tests.swift */,
@@ -4731,6 +4755,19 @@
 			path = "00-Quick-Start";
 			sourceTree = "<group>";
 		};
+		842F9747277A1CBE0060A489 /* PinnedMessages */ = {
+			isa = PBXGroup;
+			children = (
+				84D5BC6D277B619200A65C75 /* PinnedMessagesSortingKey.swift */,
+				84D5BC6E277B619200A65C75 /* PinnedMessagesSortingKey_Tests.swift */,
+				842F9744277A09B10060A489 /* PinnedMessagesQuery.swift */,
+				84D5BC5A277B18AF00A65C75 /* PinnedMessagesQuery_Tests.swift */,
+				842F9748277A1CCF0060A489 /* PinnedMessagesPagination.swift */,
+				84D5BC58277B188E00A65C75 /* PinnedMessagesPagination_Tests.swift */,
+			);
+			path = PinnedMessages;
+			sourceTree = "<group>";
+		};
 		843F0BCB2677666B00B342CB /* AttachmentActionButton */ = {
 			isa = PBXGroup;
 			children = (
@@ -5059,6 +5096,7 @@
 		8A0C3BD624C1E25D00CAFD19 /* Notification */ = {
 			isa = PBXGroup;
 			children = (
+				43854421277B46350079C472 /* NotificationChannelDeleted.json */,
 				8AC9CBD724C737AF006E236C /* NotificationMessageNew.json */,
 				8431843A26FB53B400B5B25E /* NotificationMessageNew+MissingFields.json */,
 				8AC9CBE524C74FFE006E236C /* NotificationMarkAllRead.json */,
@@ -6198,6 +6236,7 @@
 			name = DemoApp;
 			packageProductDependencies = (
 				C1BE72722732CA62006EB51E /* Nuke */,
+				ADDFDE2A2779EC8A003B3B07 /* Atlantis */,
 			);
 			productName = DemoApp;
 			productReference = 792DDA57256FB69E001DB91B /* ChatSample.app */;
@@ -6255,6 +6294,7 @@
 			);
 			name = StreamChat;
 			packageProductDependencies = (
+				ADDFDE282779EC67003B3B07 /* Atlantis */,
 			);
 			productName = Sources;
 			productReference = 799C941B247D2F80001F1104 /* StreamChat.framework */;
@@ -6507,6 +6547,7 @@
 			packageReferences = (
 				AD472EF625C425FB00A96E70 /* XCRemoteSwiftPackageReference "swift-snapshot-testing" */,
 				C1BE72712732C91F006EB51E /* XCRemoteSwiftPackageReference "Nuke" */,
+				ADDFDE272779EC67003B3B07 /* XCRemoteSwiftPackageReference "atlantis" */,
 			);
 			productRefGroup = 8AD5EC9022E9A3E8005CFAC9 /* Products */;
 			projectDirPath = "";
@@ -6659,6 +6700,7 @@
 				8A0CC9ED24C602B600705CF9 /* MemberRemoved.json in Resources */,
 				7943379A260E04B60094471F /* ChannelUpdated_ServerSide.json in Resources */,
 				8A0C3BC724C0AEDB00CAFD19 /* UserBanned.json in Resources */,
+				43854422277B46350079C472 /* NotificationChannelDeleted.json in Resources */,
 				430156F026B2E2170006E7EA /* ChannelPayload.json in Resources */,
 				79158CE225F0E9DF00186102 /* ChannelTruncated.json in Resources */,
 				88EA9B112547271B007EE76B /* MessageReactionPayload+DefaultExtraData.json in Resources */,
@@ -7240,6 +7282,7 @@
 				C1FC2F972742579D0062530F /* Compression.swift in Sources */,
 				847E946E269C687300E31D0C /* EventsController.swift in Sources */,
 				79DDF80E249CB920002F4412 /* RequestDecoder.swift in Sources */,
+				84D5BC6F277B619D00A65C75 /* PinnedMessagesSortingKey.swift in Sources */,
 				C1FC2FA22742579D0062530F /* WSCompression.swift in Sources */,
 				84DCB853269F569A006CDF32 /* EventsController+SwiftUI.swift in Sources */,
 				88381E65258258C20047A6A3 /* FileUploadPayload.swift in Sources */,
@@ -7330,6 +7373,7 @@
 				792A4F492480107A00EAF71D /* Sorting.swift in Sources */,
 				7937282A2498FFD300E13FE5 /* MemberPayload.swift in Sources */,
 				799C944C247D5766001F1104 /* ChannelController.swift in Sources */,
+				842F9749277A1CCF0060A489 /* PinnedMessagesPagination.swift in Sources */,
 				79C5CBF125F66E9700D98001 /* ChannelWatcherListQuery.swift in Sources */,
 				792A4F3F247FFDE700EAF71D /* Codable+Extensions.swift in Sources */,
 				8819DFCF2525F3C600FD1A50 /* UserUpdater.swift in Sources */,
@@ -7471,6 +7515,7 @@
 				8A618E4524D19D510003D83C /* WebSocketPingController.swift in Sources */,
 				8A62704E24B8660A0040BFD6 /* EventType.swift in Sources */,
 				F65D9091250A5989000B8CEB /* WebSocketConnectEndpoint.swift in Sources */,
+				842F9745277A09B10060A489 /* PinnedMessagesQuery.swift in Sources */,
 				DAE566EB24FFD26C00E39431 /* CurrentUserController+SwiftUI.swift in Sources */,
 				8836FFBB2540741D009FDF73 /* FlagUserPayload.swift in Sources */,
 				C1FC2F9F2742579D0062530F /* WebSocket.swift in Sources */,
@@ -7560,6 +7605,7 @@
 				799C946A247D791A001F1104 /* AssertAsync.swift in Sources */,
 				DA4971542549C2A000AC68C2 /* MessageAttachmentPayload_Tests.swift in Sources */,
 				DA8407302526002D005A0F62 /* UserListUpdater_Mock.swift in Sources */,
+				84D5BC59277B188E00A65C75 /* PinnedMessagesPagination_Tests.swift in Sources */,
 				F69C4BC624F66CC200A3D740 /* EventLogger.swift in Sources */,
 				888E8C51252B4BAB00195E03 /* ChannelMemberBanRequestPayload_Tests.swift in Sources */,
 				791D3D9026776BE400E3A0F9 /* ChannelMemberListSortingKey_Tests.swift in Sources */,
@@ -7568,13 +7614,16 @@
 				88FD711F25B98B61003CEEE4 /* EventPayload_Tests.swift in Sources */,
 				DA4EE5A1252B443400CB26D4 /* NewUserQueryUpdater_Tests.swift in Sources */,
 				88F6DF97252C88BB009A8AF0 /* ChannelMemberUpdater_Mock.swift in Sources */,
+				84D5BC5B277B18AF00A65C75 /* PinnedMessagesQuery_Tests.swift in Sources */,
 				7991D83F24F8F1BF00D21BA3 /* ChatClient_Mock.swift in Sources */,
 				DA4EE5BB252B69FD00CB26D4 /* UserListController+Combine_Tests.swift in Sources */,
 				84DCB84F269F46BE006CDF32 /* EventsController_Tests.swift in Sources */,
+				84D5BC71277B61B900A65C75 /* PinnedMessagesSortingKey_Tests.swift in Sources */,
 				88381E8725825A240047A6A3 /* AttachmentEndpoints_Tests.swift in Sources */,
 				792921CB24C077B400116BBB /* TestDispatchQueue.swift in Sources */,
 				84DCB855269F56A7006CDF32 /* EventsController+SwiftUI_Tests.swift in Sources */,
 				79B5517724E595DA00CE9FEC /* CurrentUserPayloads_Tests.swift in Sources */,
+				848EE3F8277628CB00B21ECA /* User_Tests.swift in Sources */,
 				79280F8324891C6A00CDEB89 /* VirtualTime_Tests.swift in Sources */,
 				79F3ABEC24EAE0B900AB9505 /* UserRequestBody.swift in Sources */,
 				7937282C249900CB00E13FE5 /* MemberPayload_Tests.swift in Sources */,
@@ -7943,6 +7992,7 @@
 				C121E84E274544AE00023E4C /* ChannelEndpoints.swift in Sources */,
 				C121E84F274544AE00023E4C /* UserEndpoints.swift in Sources */,
 				C121E850274544AE00023E4C /* SyncEndpoint.swift in Sources */,
+				84D5BC70277B61A000A65C75 /* PinnedMessagesSortingKey.swift in Sources */,
 				C121E851274544AE00023E4C /* MessageEndpoints.swift in Sources */,
 				C121E852274544AE00023E4C /* ModerationEndpoints.swift in Sources */,
 				C121E853274544AE00023E4C /* WebSocketConnectEndpoint.swift in Sources */,
@@ -7956,6 +8006,7 @@
 				C121E85B274544AE00023E4C /* EventNotificationCenter.swift in Sources */,
 				C121E85C274544AE00023E4C /* TypingEventsSender.swift in Sources */,
 				C121E85D274544AE00023E4C /* MessageUpdater.swift in Sources */,
+				842F974A277A1CCF0060A489 /* PinnedMessagesPagination.swift in Sources */,
 				C121E85E274544AE00023E4C /* UserListUpdater.swift in Sources */,
 				C121E85F274544AE00023E4C /* UserUpdater.swift in Sources */,
 				C121E860274544AE00023E4C /* ChannelMemberListUpdater.swift in Sources */,
@@ -8011,6 +8062,7 @@
 				C121E894274544B000023E4C /* ChatMessage.swift in Sources */,
 				C121E895274544B000023E4C /* MessagePinning.swift in Sources */,
 				C121E896274544B000023E4C /* UnreadCount.swift in Sources */,
+				842F9746277A09B10060A489 /* PinnedMessagesQuery.swift in Sources */,
 				C121E897274544B000023E4C /* User+SwiftUI.swift in Sources */,
 				C121E898274544B000023E4C /* MessageReaction.swift in Sources */,
 				C121E899274544B000023E4C /* MessageReactionType.swift in Sources */,
@@ -10360,12 +10412,20 @@
 				minimumVersion = 1.8.2;
 			};
 		};
+		ADDFDE272779EC67003B3B07 /* XCRemoteSwiftPackageReference "atlantis" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/ProxymanApp/atlantis";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.0;
+			};
+		};
 		C1BE72712732C91F006EB51E /* XCRemoteSwiftPackageReference "Nuke" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/kean/Nuke";
 			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 9.0.0;
+				kind = exactVersion;
+				version = 10.3.3;
 			};
 		};
 		E74DB0902656631700508D22 /* XCRemoteSwiftPackageReference "swift-snapshot-testing" */ = {
@@ -10383,6 +10443,16 @@
 			isa = XCSwiftPackageProductDependency;
 			package = AD472EF625C425FB00A96E70 /* XCRemoteSwiftPackageReference "swift-snapshot-testing" */;
 			productName = SnapshotTesting;
+		};
+		ADDFDE282779EC67003B3B07 /* Atlantis */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = ADDFDE272779EC67003B3B07 /* XCRemoteSwiftPackageReference "atlantis" */;
+			productName = Atlantis;
+		};
+		ADDFDE2A2779EC8A003B3B07 /* Atlantis */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = ADDFDE272779EC67003B3B07 /* XCRemoteSwiftPackageReference "atlantis" */;
+			productName = Atlantis;
 		};
 		C139335E275E7BD800225E7A /* Nuke */ = {
 			isa = XCSwiftPackageProductDependency;

@@ -1,5 +1,5 @@
 //
-// Copyright © 2021 Stream.io Inc. All rights reserved.
+// Copyright © 2022 Stream.io Inc. All rights reserved.
 //
 
 @testable import StreamChat
@@ -1093,5 +1093,80 @@ class ChannelUpdater_Tests: XCTestCase {
         apiClient.uploadFile_completion?(.failure(error))
         
         AssertAsync.willBeEqual(completionCalledError as? TestError, error)
+    }
+    
+    // MARK: - Load pinned messages
+    
+    func test_loadPinnedMessages_makesCorrectAPICall() {
+        // Create channel id
+        let cid = ChannelId.unique
+        
+        // Create query
+        let query = PinnedMessagesQuery(pageSize: 10, pagination: .aroundMessage(.unique))
+                
+        // Simulate `loadPinnedMessages` call
+        channelUpdater.loadPinnedMessages(in: cid, query: query, completion: { _ in })
+        
+        // Create expected endpoint
+        let endpoint: Endpoint<PinnedMessagesPayload> = .pinnedMessages(cid: cid, query: query)
+        
+        // Assert correct endpoint is called
+        XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(endpoint))
+    }
+    
+    func test_loadPinnedMessages_propagatesResultsToCompletion() {
+        // Create channel id
+        let cid = ChannelId.unique
+        
+        try! database.writeSynchronously { session in
+            try session.saveChannel(payload: .dummy(cid: cid), query: nil)
+        }
+
+        // Create query
+        let query = PinnedMessagesQuery(pageSize: 10, pagination: .aroundMessage(.unique))
+                
+        // Simulate `loadPinnedMessages` call
+        var completionPayload: [ChatMessage]?
+        channelUpdater.loadPinnedMessages(in: cid, query: query) {
+            completionPayload = try? $0.get()
+        }
+        
+        // Simulate API response
+        let payload = PinnedMessagesPayload(messages: [
+            .dummy(messageId: .unique, authorUserId: .unique),
+            .dummy(messageId: .unique, authorUserId: .unique),
+            .dummy(messageId: .unique, authorUserId: .unique)
+        ])
+        
+        apiClient.test_simulateResponse(Result<PinnedMessagesPayload, Error>.success(payload))
+
+        // Assert payload is propagated to completion
+        AssertAsync.willBeEqual(
+            completionPayload?.map(\.id),
+            payload.messages.map(\.id)
+        )
+    }
+    
+    func test_loadPinnedMessages_propagatesErrorToCompletion() {
+        // Simulate `loadPinnedMessages` call
+        var completionError: Error?
+        channelUpdater.loadPinnedMessages(in: .unique, query: .init(pageSize: 10, pagination: nil)) {
+            completionError = $0.error
+        }
+        
+        // Simulate API error
+        let error = TestError()
+        apiClient.test_simulateResponse(Result<PinnedMessagesPayload, Error>.failure(error))
+        
+        // Assert error is propagated to completion
+        AssertAsync.willBeEqual(completionError as? TestError, error)
+    }
+    
+    func test_loadPinnedMessages_doesNotRetainUpdater() {
+        // Simulate `loadPinnedMessages` call
+        channelUpdater.loadPinnedMessages(in: .unique, query: .init(pageSize: 10, pagination: nil)) { _ in }
+        
+        // Assert updater can be released
+        AssertAsync.canBeReleased(&channelUpdater)
     }
 }

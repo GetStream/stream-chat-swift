@@ -3,6 +3,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+### 🔄 Changed
+
+# [4.8.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.8.0)
+_January 4, 2022_
+
+### ✅ Added
+- Add support to paginate messages pinned in a channel [#1741](https://github.com/GetStream/stream-chat-swift/issues/1741)
+
+### 🐞 Fixed
+- `notification.channel_deleted` events are now handled by the SDK [#1737](https://github.com/GetStream/stream-chat-swift/pull/1737)
+
 # [4.7.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.7.0)
 _December 28, 2021_
 
@@ -16,6 +27,7 @@ _December 28, 2021_
 - Fix unncessary API calls performed when loading threads [#1716](https://github.com/GetStream/stream-chat-swift/issues/1716)
 - Fix quoted messages not updated after edit [#1703](https://github.com/GetStream/stream-chat-swift/pull/1703)
 - Fix deleted replies being shown in channel [#1707](https://github.com/GetStream/stream-chat-swift/pull/1707)
+- Fix Date._unconditionallyBridgeFromObjectiveC crashes [#1646](https://github.com/GetStream/stream-chat-swift/pull/1646)
 
 # [4.6.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.6.0)
 _December 20, 2021_

@@ -1,5 +1,5 @@
 //
-// Copyright © 2021 Stream.io Inc. All rights reserved.
+// Copyright © 2022 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -412,6 +412,41 @@ class NotificationInviteRejectedEventDTO: EventDTO {
             user: userDTO.asModel(),
             channel: channelDTO.asModel(),
             member: memberDTO.asModel(),
+            createdAt: createdAt
+        )
+    }
+}
+
+/// Triggered when a channel is deleted, this event is delivered to all channel members
+public struct NotificationChannelDeletedEvent: ChannelSpecificEvent {
+    /// The cid of the deleted channel
+    public let cid: ChannelId
+
+    /// The channel that was deleted
+    public let channel: ChatChannel
+
+    /// The event timestamp.
+    public let createdAt: Date
+}
+
+class NotificationChannelDeletedEventDTO: EventDTO {
+    let cid: ChannelId
+    let channel: ChannelDetailPayload
+    let createdAt: Date
+    let payload: EventPayload
+
+    init(from response: EventPayload) throws {
+        cid = try response.value(at: \.cid)
+        channel = try response.value(at: \.channel)
+        createdAt = try response.value(at: \.createdAt)
+        payload = response
+    }
+    
+    func toDomainEvent(session: DatabaseSession) -> Event? {
+        guard let channelDTO = session.channel(cid: channel.cid) else { return nil }
+        return NotificationChannelDeletedEvent(
+            cid: cid,
+            channel: channelDTO.asModel(),
             createdAt: createdAt
         )
     }
