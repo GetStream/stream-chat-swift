@@ -1,5 +1,5 @@
 //
-// Copyright © 2021 Stream.io Inc. All rights reserved.
+// Copyright © 2022 Stream.io Inc. All rights reserved.
 //
 
 import Atlantis
@@ -14,7 +14,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     ) -> Bool {
         // Uncomment this to be able to proxy WebSocket events from Proxyman.app
         // Atlantis.start()
-        return true
+        true
     }
 
     func application(
