@@ -6,7 +6,7 @@ This section provides a high-level overview of the SwiftUI components library. I
 
 ## Your First App with Stream Chat
 
-Before starting, make sure you have installed `StreamChatUI` as explained in the [Installation](./swiftui-overview.md#installation) section.
+Before starting, make sure you have installed `StreamChatSwiftUI` as explained in the [Installation](./swiftui-overview.md#installation) section.
 
 ## Creating the SwiftUI Context Provider Object
 
