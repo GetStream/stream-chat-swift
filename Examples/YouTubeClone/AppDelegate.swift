@@ -1,13 +1,9 @@
 //
-//  AppDelegate.swift
-//  YouTubeClone
-//
-//  Created by Sagar Dagdu on 29/06/21.
-//  Copyright © 2021 Stream.io Inc. All rights reserved.
+// Copyright © 2022 Stream.io Inc. All rights reserved.
 //
 
-import UIKit
 import AVKit
+import UIKit
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -26,12 +22,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let audioSession = AVAudioSession.sharedInstance()
         do {
             try audioSession.setCategory(.playback, mode: .moviePlayback)
-        }
-        catch {
+        } catch {
             print("Setting category to AVAudioSessionCategoryPlayback failed.")
         }
 
         return true
     }
 }
-

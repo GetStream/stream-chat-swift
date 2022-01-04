@@ -4,11 +4,11 @@ title: Message Composer Commands
 
 ## Composer Commands Overview
 
-The SwiftUI SDK has support for several types of commands in the composer. For example, when a user types "@" in the input field, a list of users that can be mentioned will be displayed. Additionally, the composer supports instant commands ("/"), similar to Slack. For example, you can share a giphy, by typing the "/giphy" command, or mute/unmute users. All the symbols and text for the commands are configurable, so you can use different displaying information for them. Additionally, you can create your own commands, and define their rules and handling. For example, you can create a "/pay" command, to send money to a user in the chat.
+The SwiftUI SDK has support for several types of commands in the composer. For example, when a user types "@" in the input field, a list of users that can be mentioned will be displayed. Additionally, the composer supports instant commands ("/"), similar to Slack. You can share a giphy, by typing the "/giphy" command, or mute/unmute users. All the symbols and text for the commands are configurable, so you can use different displaying information for them. The SDK allows you to create your own commands, and define their rules and handling. One such use-case can be creating a "/pay" command, to send money to a user in the chat.
 
 ## Modifying the Supported Commands
 
-Before creating your own custom commands, let's see how you can modify the supported ones, to fit your needs. First, you can change the order of the commands, as well as remove the ones you don't want to support. Additionally, you can change the invoking symbols of the commands. In order to accomplish this, you will need to implement your own `CommandsConfig` and inject it in the `Utils` class inside the `StreamChat` object.
+Before creating your own custom commands, let's see how you can modify the supported ones, to fit your needs. First, you can change the order of the commands, as well as remove the ones you don't want to support. You can also change the invoking symbols of the commands. In order to accomplish this, you will need to implement your own `CommandsConfig` and inject it in the `Utils` class inside the `StreamChat` object.
 
 ```swift
 public class CustomCommandsConfig: CommandsConfig {
