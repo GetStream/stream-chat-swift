@@ -850,6 +850,8 @@
 		AD472EF825C425FB00A96E70 /* SnapshotTesting in Frameworks */ = {isa = PBXBuildFile; productRef = AD472EF725C425FB00A96E70 /* SnapshotTesting */; };
 		AD53DCDF27271D850019290C /* MessageReactionsPayload.json in Resources */ = {isa = PBXBuildFile; fileRef = AD53DCDE27271D850019290C /* MessageReactionsPayload.json */; };
 		AD540AE2260CECA10082D802 /* QuotedChatMessageView_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD540AE1260CECA10082D802 /* QuotedChatMessageView_Tests.swift */; };
+		AD6BEFF02786070800E184B4 /* SwitchButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD6BEFEF2786070800E184B4 /* SwitchButton.swift */; };
+		AD6BEFF227862F9300E184B4 /* AppConfigViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD6BEFF127862F9300E184B4 /* AppConfigViewController.swift */; };
 		AD6F531927175FDB00D428B4 /* ChatMessageGiphyView+GiphyBadge.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD6F531827175FDB00D428B4 /* ChatMessageGiphyView+GiphyBadge.swift */; };
 		AD7112F325F12AA800932AEE /* ChatUserAvatarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD7112F225F12AA800932AEE /* ChatUserAvatarView.swift */; };
 		AD71130225F138BA00932AEE /* ChatChannelAvatarView_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E791E4D525D3E2DA00B0E076 /* ChatChannelAvatarView_Tests.swift */; };
@@ -2819,6 +2821,8 @@
 		AD470C9D26C6D9030090759A /* ChatMessageListVCDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageListVCDelegate.swift; sourceTree = "<group>"; };
 		AD53DCDE27271D850019290C /* MessageReactionsPayload.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = MessageReactionsPayload.json; sourceTree = "<group>"; };
 		AD540AE1260CECA10082D802 /* QuotedChatMessageView_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuotedChatMessageView_Tests.swift; sourceTree = "<group>"; };
+		AD6BEFEF2786070800E184B4 /* SwitchButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwitchButton.swift; sourceTree = "<group>"; };
+		AD6BEFF127862F9300E184B4 /* AppConfigViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppConfigViewController.swift; sourceTree = "<group>"; };
 		AD6F531827175FDB00D428B4 /* ChatMessageGiphyView+GiphyBadge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChatMessageGiphyView+GiphyBadge.swift"; sourceTree = "<group>"; };
 		AD7112F225F12AA800932AEE /* ChatUserAvatarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatUserAvatarView.swift; sourceTree = "<group>"; };
 		AD71131125F138D500932AEE /* ChatUserAvatarView_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatUserAvatarView_Tests.swift; sourceTree = "<group>"; };
@@ -3733,14 +3737,15 @@
 		792DDA58256FB69E001DB91B /* DemoApp */ = {
 			isa = PBXGroup;
 			children = (
+				AD6BEFF42786474A00E184B4 /* AppConfigViewController */,
 				437FC9E226D53F140000223C /* ChatSample.entitlements */,
 				792DDA59256FB69E001DB91B /* AppDelegate.swift */,
 				43016E1326B7189D0054E805 /* CustomMessageContentView.swift */,
 				792DDA5B256FB69E001DB91B /* SceneDelegate.swift */,
 				792DDA5D256FB69E001DB91B /* LoginViewController.swift */,
+				648EC575261EF9D400B8F05F /* DemoAppCoordinator.swift */,
 				7933064825712C8B00FBB586 /* DemoUsers.swift */,
 				7933060A256FF94800FBB586 /* ChatPresenter.swift */,
-				648EC575261EF9D400B8F05F /* DemoAppCoordinator.swift */,
 				6428DD5426201DCC0065DA1D /* BannerShowingConnectionDelegate.swift */,
 				79330603256FEBE600FBB586 /* AdvancedOptionsViewController.swift */,
 				792DDA5F256FB69E001DB91B /* Main.storyboard */,
@@ -5373,6 +5378,15 @@
 				43ABF8B326C2B7140034BD62 /* ComposerVC_Tests.swift */,
 			);
 			path = Composer;
+			sourceTree = "<group>";
+		};
+		AD6BEFF42786474A00E184B4 /* AppConfigViewController */ = {
+			isa = PBXGroup;
+			children = (
+				AD6BEFF127862F9300E184B4 /* AppConfigViewController.swift */,
+				AD6BEFEF2786070800E184B4 /* SwitchButton.swift */,
+			);
+			path = AppConfigViewController;
 			sourceTree = "<group>";
 		};
 		AD7112D325F10CF300932AEE /* AvatarView */ = {
@@ -7201,6 +7215,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				6428DD5526201DCC0065DA1D /* BannerShowingConnectionDelegate.swift in Sources */,
+				AD6BEFF02786070800E184B4 /* SwitchButton.swift in Sources */,
 				43016E1426B7189D0054E805 /* CustomMessageContentView.swift in Sources */,
 				647F66D5261E22C200111B19 /* BannerView.swift in Sources */,
 				648EC576261EF9D400B8F05F /* DemoAppCoordinator.swift in Sources */,
@@ -7209,6 +7224,7 @@
 				7933064925712C8B00FBB586 /* DemoUsers.swift in Sources */,
 				792DDA5A256FB69E001DB91B /* AppDelegate.swift in Sources */,
 				792DDAA125711AF2001DB91B /* CreateChatViewController.swift in Sources */,
+				AD6BEFF227862F9300E184B4 /* AppConfigViewController.swift in Sources */,
 				792DDA5C256FB69E001DB91B /* SceneDelegate.swift in Sources */,
 				43016E1626B734410054E805 /* ChatUser+CustomFields.swift in Sources */,
 				794E20F52577DF4D00790DAB /* NameGroupViewController.swift in Sources */,

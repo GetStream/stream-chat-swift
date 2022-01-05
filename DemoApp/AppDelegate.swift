@@ -1,8 +1,7 @@
 //
-// Copyright © 2021 Stream.io Inc. All rights reserved.
+// Copyright © 2022 Stream.io Inc. All rights reserved.
 //
 
-import Atlantis
 import StreamChat
 import UIKit
 
@@ -12,9 +11,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         _ application: UIApplication,
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
     ) -> Bool {
-        // Override point for customization after application launch.
-        Atlantis.start()
-        return true
+        true
     }
 
     func application(
