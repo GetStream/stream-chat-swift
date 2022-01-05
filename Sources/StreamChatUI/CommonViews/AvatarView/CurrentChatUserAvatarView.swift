@@ -75,6 +75,12 @@ open class CurrentChatUserAvatarView: _Control, ThemeProvider {
         
         alpha = state == .normal ? 1 : 0.5
     }
+    
+    override open func point(inside point: CGPoint, with event: UIEvent?) -> Bool {
+        //increase touch area for control in all directions by 20
+        let area = self.bounds.insetBy(dx: -20.0, dy: -20.0)
+        return area.contains(point)
+    }
 }
 
 // MARK: - CurrentChatUserControllerDelegate
