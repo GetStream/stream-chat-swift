@@ -9,9 +9,11 @@ import UIKit
 
 class WalletInputViewController: WalletQuickInputViewController {
 
+    // MARK: - Outlets
     @IBOutlet weak var viewKeypad: UIStackView!
     @IBOutlet var btnKeyPad: [UIButton]!
 
+    // MARK: - Variables
     var updatedAmount = 0
     var didHide: ((Int) -> Void)?
 

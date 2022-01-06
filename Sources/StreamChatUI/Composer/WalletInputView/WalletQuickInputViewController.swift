@@ -9,12 +9,14 @@ import UIKit
 
 class WalletQuickInputViewController: UIViewController {
 
+    // MARK: - Outlets
     @IBOutlet weak var btnRemove: UIButton!
     @IBOutlet weak var btnAdd: UIButton!
     @IBOutlet weak var btnRequest: UIButton!
     @IBOutlet weak var btnPay: UIButton!
     @IBOutlet weak var lblAmount: UILabel!
-
+    
+    // MARK: - Variables
     var showKeypad: (() -> Void)?
     var didRequestAction: ((Int) -> Void)?
     var didPayAction: ((Int) -> Void)?

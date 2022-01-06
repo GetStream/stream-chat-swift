@@ -5,7 +5,7 @@
 //  Created by Parth Kshatriya on 29/12/21.
 //
 
-import Foundation
+import UIKit
 import StreamChat
 
 class WalletRequestPayBubble: UITableViewCell {
@@ -15,6 +15,7 @@ class WalletRequestPayBubble: UITableViewCell {
     public private(set) var sentThumbImageView: UIImageView!
     public private(set) var timestampLabel: UILabel!
     public private(set) var descriptionLabel: UILabel!
+    public private(set) var requestMessageLabel: UILabel!
     public private(set) var sentCryptoLabel: UILabel!
     public private(set) var pickUpButton: UIButton!
     public private(set) var lblDetails: UILabel!
@@ -83,7 +84,7 @@ class WalletRequestPayBubble: UITableViewCell {
             sentThumbImageView.leadingAnchor.constraint(equalTo: subContainer.leadingAnchor, constant: 0),
             sentThumbImageView.trailingAnchor.constraint(equalTo: subContainer.trailingAnchor, constant: 0),
             sentThumbImageView.bottomAnchor.constraint(equalTo: subContainer.bottomAnchor, constant: 0),
-            sentThumbImageView.heightAnchor.constraint(equalToConstant: 250)
+            sentThumbImageView.heightAnchor.constraint(equalToConstant: 150)
         ])
 
         descriptionLabel = createDescLabel()
@@ -101,12 +102,12 @@ class WalletRequestPayBubble: UITableViewCell {
 
         lblDetails = createDetailsLabel()
         if walletPaymentType == .request {
-            descriptionLabel.text = "Parth Requests Payment"
-            lblDetails.text = "REQUEST: 100 ONE"
+            descriptionLabel.text = "Parth Requests Payment \n REQUEST: 100 ONE"
+            lblDetails.text = "\(content?.text ?? "")"
             sentThumbImageView.image = Appearance.default.images.requestImg
         } else {
-            descriptionLabel.text = "Ajay sent you crypto"
-            lblDetails.text = "SENT: 750 ONE"
+            descriptionLabel.text = "Ajay sent you crypto \n SENT: 750 ONE"
+            lblDetails.text = "\(content?.text ?? "")"
             sentThumbImageView.image = Appearance.default.images.cryptoSentThumb
         }
         detailsStack = UIStackView(arrangedSubviews: [lblDetails])
