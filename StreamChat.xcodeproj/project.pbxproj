@@ -1053,6 +1053,13 @@
 		E7DF7E2425C2C67E00AE9D21 /* ChatAvatarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7DF7E2325C2C67E00AE9D21 /* ChatAvatarView.swift */; };
 		ED0D5145275DE10B00753692 /* RedPacketBubble.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED0D5144275DE10B00753692 /* RedPacketBubble.swift */; };
 		ED0D5147275DED8800753692 /* RedPacketAmountBubble.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED0D5146275DED8800753692 /* RedPacketAmountBubble.swift */; };
+		ED1D14692786BFBC005A0EAB /* ChatMessageWalletAttachment.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED1D14682786BFBC005A0EAB /* ChatMessageWalletAttachment.swift */; };
+		ED1D146B2786C08F005A0EAB /* WalletAttachmentComposerPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED1D146A2786C08E005A0EAB /* WalletAttachmentComposerPreview.swift */; };
+		ED1D146D2786C120005A0EAB /* WalletRequestPayBubble.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED1D146C2786C120005A0EAB /* WalletRequestPayBubble.swift */; };
+		ED1D14712786C197005A0EAB /* WalletInputView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED1D146E2786C197005A0EAB /* WalletInputView.swift */; };
+		ED1D14722786C197005A0EAB /* WalletInputViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED1D146F2786C197005A0EAB /* WalletInputViewController.swift */; };
+		ED1D14732786C197005A0EAB /* WalletQuickInputViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED1D14702786C197005A0EAB /* WalletQuickInputViewController.swift */; };
+		ED1D14762786C21C005A0EAB /* Storyboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED1D14752786C21C005A0EAB /* Storyboard.swift */; };
 		ED3B5F05275A3A5A00DEAF0A /* RedPacketSentBubble.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED3B5F04275A3A5A00DEAF0A /* RedPacketSentBubble.swift */; };
 		ED95B3F52769DF850049DD53 /* RedPacketExpired.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED95B3F42769DF850049DD53 /* RedPacketExpired.swift */; };
 		F61D7C3124FF9D1F00188A0E /* MessageEndpoints_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F61D7C3024FF9D1F00188A0E /* MessageEndpoints_Tests.swift */; };
@@ -2452,6 +2459,13 @@
 		E7DF7E2325C2C67E00AE9D21 /* ChatAvatarView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatAvatarView.swift; sourceTree = "<group>"; };
 		ED0D5144275DE10B00753692 /* RedPacketBubble.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RedPacketBubble.swift; sourceTree = "<group>"; };
 		ED0D5146275DED8800753692 /* RedPacketAmountBubble.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RedPacketAmountBubble.swift; sourceTree = "<group>"; };
+		ED1D14682786BFBC005A0EAB /* ChatMessageWalletAttachment.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatMessageWalletAttachment.swift; sourceTree = "<group>"; };
+		ED1D146A2786C08E005A0EAB /* WalletAttachmentComposerPreview.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WalletAttachmentComposerPreview.swift; sourceTree = "<group>"; };
+		ED1D146C2786C120005A0EAB /* WalletRequestPayBubble.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WalletRequestPayBubble.swift; sourceTree = "<group>"; };
+		ED1D146E2786C197005A0EAB /* WalletInputView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WalletInputView.swift; sourceTree = "<group>"; };
+		ED1D146F2786C197005A0EAB /* WalletInputViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WalletInputViewController.swift; sourceTree = "<group>"; };
+		ED1D14702786C197005A0EAB /* WalletQuickInputViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WalletQuickInputViewController.swift; sourceTree = "<group>"; };
+		ED1D14752786C21C005A0EAB /* Storyboard.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Storyboard.swift; sourceTree = "<group>"; };
 		ED3B5F04275A3A5A00DEAF0A /* RedPacketSentBubble.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RedPacketSentBubble.swift; sourceTree = "<group>"; };
 		ED95B3F42769DF850049DD53 /* RedPacketExpired.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RedPacketExpired.swift; sourceTree = "<group>"; };
 		F61D7C3024FF9D1F00188A0E /* MessageEndpoints_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageEndpoints_Tests.swift; sourceTree = "<group>"; };
@@ -2722,6 +2736,7 @@
 				88BDCA892642B02D0099AD74 /* ChatMessageAttachment.swift */,
 				88089A0126529FD1007D3493 /* ChatMessageAttachment_Tests.swift */,
 				7963BD6826B0208900281F8C /* ChatMessageAudioAttachment.swift */,
+				ED1D14682786BFBC005A0EAB /* ChatMessageWalletAttachment.swift */,
 			);
 			path = Attachments;
 			sourceTree = "<group>";
@@ -4231,6 +4246,7 @@
 		888123D0255D42F000070D5A /* Utils */ = {
 			isa = PBXGroup;
 			children = (
+				ED1D14752786C21C005A0EAB /* Storyboard.swift */,
 				ACA3C98426CA23F300EB8B07 /* DateUtils_Tests.swift */,
 				ACA3C98526CA23F300EB8B07 /* DateUtils.swift */,
 				ACF73D7726CFE07900372DC0 /* Cancellable.swift */,
@@ -4731,6 +4747,7 @@
 		AD4EA229264ADE0100DF8EE2 /* Composer */ = {
 			isa = PBXGroup;
 			children = (
+				ED1D14742786C19B005A0EAB /* WalletInputView */,
 				E73A8B2A2578EB2B00FBDC56 /* ComposerVC.swift */,
 				22ADD681256C40410098EFEB /* ComposerView.swift */,
 				A35757C62613081B00DC914C /* ComposerKeyboardHandler.swift */,
@@ -4919,6 +4936,7 @@
 		BD3EA7F4264AD954003AFA09 /* AttachmentViews */ = {
 			isa = PBXGroup;
 			children = (
+				ED1D146A2786C08E005A0EAB /* WalletAttachmentComposerPreview.swift */,
 				22086B3F259509450007F8C0 /* FileAttachmentView.swift */,
 				AD4474FC263B19F90030E583 /* ImageAttachmentComposerPreview.swift */,
 				847DD2D72670F75F0084E14B /* VideoAttachmentComposerPreview.swift */,
@@ -5076,6 +5094,7 @@
 		E74346B12593546000512C2D /* ChatMessage */ = {
 			isa = PBXGroup;
 			children = (
+				ED1D146C2786C120005A0EAB /* WalletRequestPayBubble.swift */,
 				ED95B3F42769DF850049DD53 /* RedPacketExpired.swift */,
 				88A8CF15256E7BDA004EA4C7 /* ChatMessageContentView.swift */,
 				8830520126306B4F0069D731 /* ChatMessageContentView_Tests.swift */,
@@ -5126,6 +5145,16 @@
 				E7DB9F2426329C060090D9C7 /* HealthCheck.json */,
 			);
 			path = HealthCheck;
+			sourceTree = "<group>";
+		};
+		ED1D14742786C19B005A0EAB /* WalletInputView */ = {
+			isa = PBXGroup;
+			children = (
+				ED1D146E2786C197005A0EAB /* WalletInputView.swift */,
+				ED1D146F2786C197005A0EAB /* WalletInputViewController.swift */,
+				ED1D14702786C197005A0EAB /* WalletQuickInputViewController.swift */,
+			);
+			path = WalletInputView;
 			sourceTree = "<group>";
 		};
 		F62BE7882506616900D13B86 /* Sync */ = {
@@ -6004,6 +6033,7 @@
 				792057A326416776002B145B /* ChatMentionSuggestionCollectionViewCell.swift in Sources */,
 				228190EB256733420048D7C6 /* UIFont+Extensions.swift in Sources */,
 				888123D2255D430B00070D5A /* UIView+Extensions.swift in Sources */,
+				ED1D14722786C197005A0EAB /* WalletInputViewController.swift in Sources */,
 				AD158B6526C1873000C104CD /* ChatThreadVC+SwiftUI.swift in Sources */,
 				8825333E258CE7AC00B77352 /* ChatMessageActionsVC.swift in Sources */,
 				F80BCA1E26304FEE00F2107B /* CloseButton.swift in Sources */,
@@ -6019,6 +6049,7 @@
 				F87A4956260C6F38001653A8 /* ChatMessageContentView+SwiftUI.swift in Sources */,
 				88CABC4325933EE70061BB67 /* ChatMessageReactionsVC.swift in Sources */,
 				DB9A3D562582689A00555D36 /* ChatMessageListRouter.swift in Sources */,
+				ED1D14732786C197005A0EAB /* WalletQuickInputViewController.swift in Sources */,
 				AD77030225EFE24F004E2F10 /* DateFormatter+Extensions.swift in Sources */,
 				22411680258A91280034184D /* String+Extensions.swift in Sources */,
 				228C7EE52583AF4800AAE9E3 /* UITextView+Extensions.swift in Sources */,
@@ -6063,9 +6094,11 @@
 				AD4474FD263B19F90030E583 /* ImageAttachmentComposerPreview.swift in Sources */,
 				88BA7F87258B97C9006CE0C5 /* ChatMessageImageGallery+UploadingOverlay.swift in Sources */,
 				ED0D5145275DE10B00753692 /* RedPacketBubble.swift in Sources */,
+				ED1D146D2786C120005A0EAB /* WalletRequestPayBubble.swift in Sources */,
 				8806570D259A51C200E31D23 /* ChatMessageInteractiveAttachmentView+ActionButton.swift in Sources */,
 				E79AC10C25831A1500C3CE5D /* ChatSuggestionsCollectionView.swift in Sources */,
 				88D66E762599DF1400CFC102 /* ChatMessageReactionAppearance.swift in Sources */,
+				ED1D146B2786C08F005A0EAB /* WalletAttachmentComposerPreview.swift in Sources */,
 				F80BCA0A263011F500F2107B /* ImageAttachmentGalleryCell.swift in Sources */,
 				843F0BC326775CDB00B342CB /* Cache.swift in Sources */,
 				8830513E263031C40069D731 /* ChatMessageLayoutOptions.swift in Sources */,
@@ -6118,6 +6151,7 @@
 				E73BD9E6264AC21300E208B7 /* FileAttachmentViewInjector.swift in Sources */,
 				7844B10C25EF92B600B87E89 /* ChatChannelListItemView+SwiftUI.swift in Sources */,
 				224FF67B2562F1EA00725DD1 /* ChatChannelReadStatusCheckmarkView.swift in Sources */,
+				ED1D14712786C197005A0EAB /* WalletInputView.swift in Sources */,
 				DB70CFFB25702EB900DDF436 /* ChatMessagePopupVC.swift in Sources */,
 				CDB98D132757D43A00CA7CDE /* SendOneWallet.swift in Sources */,
 				BD837AF02652D23600A99AB5 /* AttachmentPreviewContainer.swift in Sources */,
@@ -6131,6 +6165,7 @@
 				88EF29FF2571288600B06EF1 /* Array+Extensions.swift in Sources */,
 				F80BCA562631D4DA00F2107B /* ZoomDismissalInteractionController.swift in Sources */,
 				BDDD1EA62632C6D600BA007B /* AppearanceProvider.swift in Sources */,
+				ED1D14762786C21C005A0EAB /* Storyboard.swift in Sources */,
 				A35757C72613081B00DC914C /* ComposerKeyboardHandler.swift in Sources */,
 				79205857264C2D6C002B145B /* TitleContainerView.swift in Sources */,
 				AD447443263AC6A10030E583 /* ChatMentionSuggestionView.swift in Sources */,
@@ -6560,6 +6595,7 @@
 				79877A0D2498E4BC00015F8B /* CurrentUser.swift in Sources */,
 				88D85D9A252F168B00AE1030 /* MemberController+Combine.swift in Sources */,
 				792A4F462480107A00EAF71D /* ChannelQuery.swift in Sources */,
+				ED1D14692786BFBC005A0EAB /* ChatMessageWalletAttachment.swift in Sources */,
 				8899BC57254337C7003CB98B /* MessageReactionsMiddleware.swift in Sources */,
 				88E26D5E2580E92000F55AB5 /* AttachmentId.swift in Sources */,
 				799C9447247D50F3001F1104 /* Worker.swift in Sources */,

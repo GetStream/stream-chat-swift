@@ -5,7 +5,7 @@
 //  Created by Parth Kshatriya on 29/12/21.
 //
 
-import Foundation
+import UIKit
 import StreamChat
 
 class WalletRequestPayBubble: UITableViewCell {
