@@ -64,6 +64,7 @@ class ChannelDTO: NSManagedObject {
     @NSManaged var reads: Set<ChannelReadDTO>
     @NSManaged var attachments: Set<AttachmentDTO>
     @NSManaged var watchers: Set<UserDTO>
+    @NSManaged var memberListQueries: Set<ChannelMemberListQueryDTO>
 
     override func willSave() {
         super.willSave()

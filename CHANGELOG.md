@@ -11,6 +11,8 @@ _January 4, 2022_
 
 ### 🐞 Fixed
 - `notification.channel_deleted` events are now handled by the SDK [#1737](https://github.com/GetStream/stream-chat-swift/pull/1737)
+- `MemberListController` receives new members correctly [#1736](https://github.com/GetStream/stream-chat-swift/issues/1736)
+- `ChatChannel.membership` is correctly reflected in all cases [#1736](https://github.com/GetStream/stream-chat-swift/issues/1736)
 
 # [4.7.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.7.0)
 _December 28, 2021_
