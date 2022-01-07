@@ -64,6 +64,8 @@ public extension Appearance {
         public var redPacketButton: UIColor = .init(rgb: 0x333333)
         public var cardBackground: UIColor = .init(rgb: 0xFFFFFF).withAlphaComponent(0.5)
         public var redPacketExpired: UIColor = .init(rgb: 0x758796)
+        public var stepperBackground: UIColor = .init(rgb: 0x282828)
+        public var stepperForeground: UIColor = .init(rgb: 0x3A3A3D)
     }
 }
 

@@ -277,5 +277,9 @@ public extension Appearance {
         public var redPacketExpired: UIImage = loadImageSafely(with: "redPacketExpired")
         public var redPacketThumb: UIImage = loadImageSafely(with: "redPacket")
         public var requestImg: UIImage = loadImageSafely(with: "requestImg")
+
+        // MARK: - Wallet Keyboard
+        public var add: UIImage = loadImageSafely(with: "add")
+        public var remove: UIImage = loadImageSafely(with: "remove")
     }
 }

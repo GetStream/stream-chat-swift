@@ -7,41 +7,46 @@
 
 import UIKit
 
-class WalletInputViewController: WalletQuickInputViewController {
+class WalletInputViewController: UIViewController {
 
     // MARK: - Outlets
     @IBOutlet weak var viewKeypad: UIStackView!
     @IBOutlet var btnKeyPad: [UIButton]!
+    @IBOutlet weak var walletStepper: WalletStepper!
 
     // MARK: - Variables
     var updatedAmount = 0
     var didHide: ((Int) -> Void)?
+    var didRequestAction: ((Int) -> Void)?
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        setupUI()
     }
 
-    override func setupUI() {
-        super.setupUI()
+    func setupUI() {
         btnKeyPad.forEach { btn in
             btn.layer.cornerRadius = 30
         }
-        self.amount = updatedAmount
     }
 
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        didHide?(amount)
+        didHide?(1)
+    }
+
+    @IBAction func btnRequestAction(_ sender: Any) {
+        didRequestAction?(1)
     }
 
     @IBAction func btnKeypadAction(_ sender: UIButton) {
         if let keyPadNumber = sender.titleLabel?.text {
-            let amount = (lblAmount.text ?? "0") + "\(keyPadNumber)"
-            self.amount = Int(amount.replacingOccurrences(of: "$", with: "")) ?? 0
+            let amount = "\(walletStepper.value)" + "\(keyPadNumber)"
+            walletStepper.updateAmount(amount: Int(amount) ?? 0)
         } else {
-            var amount = lblAmount.text ?? ""
+            var amount = "\(walletStepper.value)"
             _ = amount.removeLast()
-            self.amount = Int(amount.replacingOccurrences(of: "$", with: "")) ?? 0
+            walletStepper.updateAmount(amount: Int(amount) ?? 0)
         }
     }
 

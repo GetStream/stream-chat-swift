@@ -10,60 +10,23 @@ import UIKit
 class WalletQuickInputViewController: UIViewController {
 
     // MARK: - Outlets
-    @IBOutlet weak var btnRemove: UIButton!
-    @IBOutlet weak var btnAdd: UIButton!
     @IBOutlet weak var btnRequest: UIButton!
-    @IBOutlet weak var btnPay: UIButton!
-    @IBOutlet weak var lblAmount: UILabel!
-    
+    @IBOutlet weak var walletStepper: WalletStepper!
+
     // MARK: - Variables
     var showKeypad: (() -> Void)?
     var didRequestAction: ((Int) -> Void)?
-    var didPayAction: ((Int) -> Void)?
-    var amount: Int = 0 {
-        didSet {
-            lblAmount.text = "$\(amount)"
-        }
-    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
-        setupUI()
     }
-
-    func setupUI() {
-        btnAdd.layer.cornerRadius = btnAdd.bounds.height / 2
-        btnRemove.layer.cornerRadius = btnRemove.bounds.height / 2
-        btnRequest.layer.cornerRadius = btnRequest.bounds.height / 2
-        btnPay.layer.cornerRadius = btnPay.bounds.height / 2
-
-        btnAdd.layer.maskedCorners = [.layerMinXMinYCorner, .layerMinXMaxYCorner]
-        btnRemove.layer.maskedCorners = [.layerMaxXMinYCorner, .layerMaxXMaxYCorner]
-        btnRequest.layer.maskedCorners = [.layerMinXMinYCorner, .layerMinXMaxYCorner]
-        btnPay.layer.maskedCorners = [.layerMaxXMinYCorner, .layerMaxXMaxYCorner]
-    }
-
-    func updateAmount(amount: Int) {
-        self.amount = amount
-    }
-
+    
     @IBAction func btnShowKeypadAction(_ sender: Any) {
         showKeypad?()
     }
 
-    @IBAction func btnAddAction(_ sender: Any) {
-        amount += 1
-    }
-
-    @IBAction func btnRemoveAction(_ sender: Any) {
-        guard amount != 0 else { return }
-        amount -= 1
-    }
-
     @IBAction func btnRequestAction(_ sender: Any) {
-        didRequestAction?(amount)
+        didRequestAction?(1)
     }
 
-    @IBAction func btnPayAction(_ sender: Any) {
-        didPayAction?(amount)
-    }
 }

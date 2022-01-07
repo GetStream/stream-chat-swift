@@ -563,17 +563,12 @@ open class ComposerVC: _ViewController,
             guard let `self` = self else { return }
             self.addWalletAttachment(amount: amount, paymentType: .request)
         }
-        walletInputView?.didPayAction = { [weak self] amount in
-            guard let `self` = self else { return }
-            self.addWalletAttachment(amount: amount, paymentType: .pay)
-        }
+
         walletInputView?.showKeypad = { [weak self] in
             guard let `self` = self else { return }
             guard let walletView: WalletInputViewController = WalletInputViewController.instantiate(appStoryboard: .wallet) else { return }
-            walletView.updatedAmount = self.walletInputView?.amount ?? 0
             walletView.didHide = { [weak self] amount in
                 guard let `self` = self else { return }
-                self.walletInputView?.updateAmount(amount: amount)
             }
             walletView.didRequestAction = { [weak self] amount in
                 guard let `self` = self else { return }
@@ -581,14 +576,6 @@ open class ComposerVC: _ViewController,
                 walletView.dismiss(animated: true) { [weak self] in
                     guard let `self` = self else { return }
                     self.addWalletAttachment(amount: amount, paymentType: .request)
-                }
-            }
-            walletView.didPayAction = { [weak self] amount in
-                guard let `self` = self else { return }
-                self.hideInputView()
-                walletView.dismiss(animated: true) { [weak self] in
-                    guard let `self` = self else { return }
-                    self.addWalletAttachment(amount: amount, paymentType: .pay)
                 }
             }
             UIApplication.shared.windows.first?.rootViewController?.present(walletView, animated: true, completion: nil)

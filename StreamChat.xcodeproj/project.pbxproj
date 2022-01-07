@@ -908,7 +908,6 @@
 		BDDD1EAE2632E6C200BA007B /* Appearance+SwiftUI_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDDD1EAD2632E6C200BA007B /* Appearance+SwiftUI_Tests.swift */; };
 		BDEB9417268211EC00928AF1 /* ChatMessageListUnreadCountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDEB9416268211EC00928AF1 /* ChatMessageListUnreadCountView.swift */; };
 		CD1C90F0272C417F00A6E85B /* CryptoSentBubble.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD1C90EF272C417F00A6E85B /* CryptoSentBubble.swift */; };
-		CD66B56F273D41E600DAC5D2 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 88E779B12563FA6B00BA79B6 /* Assets.xcassets */; };
 		CD72548D275F556100CD6444 /* RedPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD72548C275F556100CD6444 /* RedPacket.swift */; };
 		CD89189E273E25B70051C651 /* KeyboardToolKitList.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD66B570273D5D1D00DAC5D2 /* KeyboardToolKitList.swift */; };
 		CD89189F273E278B0051C651 /* KeyboardToolKitList.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD66B570273D5D1D00DAC5D2 /* KeyboardToolKitList.swift */; };
@@ -1062,6 +1061,8 @@
 		ED1D14762786C21C005A0EAB /* Storyboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED1D14752786C21C005A0EAB /* Storyboard.swift */; };
 		ED3B5F05275A3A5A00DEAF0A /* RedPacketSentBubble.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED3B5F04275A3A5A00DEAF0A /* RedPacketSentBubble.swift */; };
 		ED95B3F52769DF850049DD53 /* RedPacketExpired.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED95B3F42769DF850049DD53 /* RedPacketExpired.swift */; };
+		EDE9F6632788147300DF4F31 /* Wallet.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = EDE9F6622788147300DF4F31 /* Wallet.storyboard */; };
+		EDE9F686278823E900DF4F31 /* WalletStepper.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDE9F685278823E900DF4F31 /* WalletStepper.swift */; };
 		F61D7C3124FF9D1F00188A0E /* MessageEndpoints_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F61D7C3024FF9D1F00188A0E /* MessageEndpoints_Tests.swift */; };
 		F61D7C3324FFA60600188A0E /* MessageUpdater_Mock.swift in Sources */ = {isa = PBXBuildFile; fileRef = F61D7C3224FFA60600188A0E /* MessageUpdater_Mock.swift */; };
 		F61D7C3524FFA6FD00188A0E /* MessageUpdater_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F61D7C3424FFA6FD00188A0E /* MessageUpdater_Tests.swift */; };
@@ -2468,6 +2469,8 @@
 		ED1D14752786C21C005A0EAB /* Storyboard.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Storyboard.swift; sourceTree = "<group>"; };
 		ED3B5F04275A3A5A00DEAF0A /* RedPacketSentBubble.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RedPacketSentBubble.swift; sourceTree = "<group>"; };
 		ED95B3F42769DF850049DD53 /* RedPacketExpired.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RedPacketExpired.swift; sourceTree = "<group>"; };
+		EDE9F6622788147300DF4F31 /* Wallet.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = Wallet.storyboard; path = Sources/StreamChatUI/Composer/Wallet.storyboard; sourceTree = SOURCE_ROOT; };
+		EDE9F685278823E900DF4F31 /* WalletStepper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalletStepper.swift; sourceTree = "<group>"; };
 		F61D7C3024FF9D1F00188A0E /* MessageEndpoints_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageEndpoints_Tests.swift; sourceTree = "<group>"; };
 		F61D7C3224FFA60600188A0E /* MessageUpdater_Mock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageUpdater_Mock.swift; sourceTree = "<group>"; };
 		F61D7C3424FFA6FD00188A0E /* MessageUpdater_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageUpdater_Tests.swift; sourceTree = "<group>"; };
@@ -5150,9 +5153,11 @@
 		ED1D14742786C19B005A0EAB /* WalletInputView */ = {
 			isa = PBXGroup;
 			children = (
+				EDE9F6622788147300DF4F31 /* Wallet.storyboard */,
 				ED1D146E2786C197005A0EAB /* WalletInputView.swift */,
 				ED1D146F2786C197005A0EAB /* WalletInputViewController.swift */,
 				ED1D14702786C197005A0EAB /* WalletQuickInputViewController.swift */,
+				EDE9F685278823E900DF4F31 /* WalletStepper.swift */,
 			);
 			path = WalletInputView;
 			sourceTree = "<group>";
@@ -5770,6 +5775,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				88F0D74B257E50B200F4B050 /* Assets.xcassets in Resources */,
+				EDE9F6632788147300DF4F31 /* Wallet.storyboard in Resources */,
 				88F0D743257E50B000F4B050 /* Localizable.strings in Resources */,
 				DBC8A4BB257E5BFB00B20A82 /* Localizable.stringsdict in Resources */,
 			);
@@ -5809,7 +5815,6 @@
 				E7D68C5A26B1BE4500FCF3B8 /* Localizable.strings in Resources */,
 				792DDA63256FB69F001DB91B /* Assets.xcassets in Resources */,
 				E7D68C6026B1CBA400FCF3B8 /* Localizable.stringsdict in Resources */,
-				CD66B56F273D41E600DAC5D2 /* Assets.xcassets in Resources */,
 				792DDA61256FB69E001DB91B /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -6048,6 +6053,7 @@
 				8830518E263038190069D731 /* ChatReactionsBubbleView.swift in Sources */,
 				F87A4956260C6F38001653A8 /* ChatMessageContentView+SwiftUI.swift in Sources */,
 				88CABC4325933EE70061BB67 /* ChatMessageReactionsVC.swift in Sources */,
+				EDE9F686278823E900DF4F31 /* WalletStepper.swift in Sources */,
 				DB9A3D562582689A00555D36 /* ChatMessageListRouter.swift in Sources */,
 				ED1D14732786C197005A0EAB /* WalletQuickInputViewController.swift in Sources */,
 				AD77030225EFE24F004E2F10 /* DateFormatter+Extensions.swift in Sources */,
