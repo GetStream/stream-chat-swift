@@ -128,8 +128,7 @@ lane :publish_release do |options|
                    )
 
   spm_github_release_url = update_spm(version: version)
-  # Firing this lane is done manually at the moment.
-  # TODO: push_pods(sync: options[:sync])
+  push_pods(sync: options[:sync])
   # TODO: Update stream-chat-swift-integration-apps
 
   UI.success("🎉🎉🎉🎉🎉 Github releases successfully created:\n 👉 stream-chat-swift: #{github_release["html_url"]}\n👉 stream-chat-swift-spm: #{spm_github_release_url}")
@@ -271,7 +270,7 @@ lane :set_SDK_version do |options|
   pathToVersionFile = "../Sources/StreamChat/Generated/SystemEnvironment+Version.swift"
   versionGeneratedFile = "
 //
-// Copyright © 2021 Stream.io Inc. All rights reserved.
+// Copyright © 2022 Stream.io Inc. All rights reserved.
 //
 // ⚠️  Generated file, please use `fastlane :bump_SDK_version or fastlane release major|minor|patch` lanes
 

@@ -44,5 +44,6 @@ jobs:
       - name: "Fastlane - Publish Release"
         if: startsWith(github.event.pull_request.head.ref, 'release/')
         env:
-            GITHUB_API_TOKEN: ${{ secrets.DANGER_GITHUB_API_TOKEN }}
+          GITHUB_API_TOKEN: ${{ secrets.DANGER_GITHUB_API_TOKEN }}
+          COCOAPODS_TRUNK_TOKEN: ${{ secrets.COCOAPODS_TRUNK_TOKEN }}
         run: bundle exec fastlane publish_release version:${{ env.RELEASE_VERSION }}

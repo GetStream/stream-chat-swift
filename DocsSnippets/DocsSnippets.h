@@ -3,7 +3,7 @@
 //  DocsSnippets
 //
 //  Created by Matheus Cardoso on 08/02/21.
-//  Copyright © 2021 Stream.io Inc. All rights reserved.
+//  Copyright © 2022 Stream.io Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>

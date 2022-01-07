@@ -1,14 +1,10 @@
 //
-//  YTInputChatMessageView.swift
-//  YouTubeClone
-//
-//  Created by Sagar Dagdu on 01/07/21.
-//  Copyright © 2021 Stream.io Inc. All rights reserved.
+// Copyright © 2022 Stream.io Inc. All rights reserved.
 //
 
-import UIKit
 import StreamChat
 import StreamChatUI
+import UIKit
 
 /// Custom input message view
 final class YTInputChatMessageView: InputChatMessageView {
