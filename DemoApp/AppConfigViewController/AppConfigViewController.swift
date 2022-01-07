@@ -4,6 +4,7 @@
 
 import StreamChat
 import UIKit
+
 /// The Demo App Configuration.
 struct DemoAppConfig {
     /// A Boolean value to define if an additional hard delete message action will be added.
@@ -30,6 +31,7 @@ class AppConfig {
         // Default ChatClientConfig
         chatClientConfig = ChatClientConfig(apiKeyString: apiKeyString)
         chatClientConfig.shouldShowShadowedMessages = true
+        chatClientConfig.staysConnectedInBackground = true
         chatClientConfig.applicationGroupIdentifier = applicationGroupIdentifier
         chatClientConfig.deletedMessagesVisibility = .visibleForCurrentUser
     }
@@ -91,6 +93,7 @@ class AppConfigViewController: UITableViewController {
 
     enum ChatClientConfigOption: String, CaseIterable {
         case isLocalStorageEnabled
+        case staysConnectedInBackground
         case shouldShowShadowedMessages
         case deletedMessagesVisibility
     }
@@ -197,6 +200,10 @@ class AppConfigViewController: UITableViewController {
             cell.accessoryView = makeSwitchButton(chatClientConfig.isLocalStorageEnabled) { newValue in
                 self.chatClientConfig.isLocalStorageEnabled = newValue
             }
+        case .staysConnectedInBackground:
+            cell.accessoryView = makeSwitchButton(chatClientConfig.staysConnectedInBackground) { newValue in
+                self.chatClientConfig.staysConnectedInBackground = newValue
+            }
         case .shouldShowShadowedMessages:
             cell.accessoryView = makeSwitchButton(chatClientConfig.shouldShowShadowedMessages) { newValue in
                 self.chatClientConfig.shouldShowShadowedMessages = newValue
@@ -216,10 +223,12 @@ class AppConfigViewController: UITableViewController {
         switch option {
         case .isLocalStorageEnabled:
             break
+        case .staysConnectedInBackground:
+            break
         case .shouldShowShadowedMessages:
             break
         case .deletedMessagesVisibility:
-            makeDeletedMessagesVisibilitySelectorVC
+            makeDeletedMessagesVisibilitySelectorVC()
         }
     }
 
