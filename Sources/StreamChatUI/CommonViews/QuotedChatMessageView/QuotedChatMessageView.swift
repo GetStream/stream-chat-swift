@@ -234,7 +234,8 @@ open class QuotedChatMessageView: _View, ThemeProvider, SwiftUIRepresentable {
         components.imageLoader.loadImage(
             into: attachmentPreviewView,
             url: url,
-            imageCDN: components.imageCDN
+            imageCDN: components.imageCDN,
+            preferredSize: attachmentPreviewSize
         )
     }
 

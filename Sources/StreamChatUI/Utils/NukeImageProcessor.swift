@@ -63,11 +63,23 @@ extension ImageProcessors {
             return size
         }
 
+        private let id: String
         private let sizeProvider: () -> CGSize
-        
+
         /// Initializes the processor with size providing closure.
         /// - Parameter sizeProvider: Closure to obtain size after the image is loaded.
+        @available(*, deprecated, message: "Use init(id:sizeProvider:) instead")
         public init(sizeProvider: @escaping () -> CGSize) {
+            // Backwards compatible init
+            self.init(id: "", sizeProvider: sizeProvider)
+        }
+
+        /// Initializes the processor with size providing closure.
+        /// - Parameters:
+        ///   - id: Image identifier.
+        ///   - sizeProvider: Closure to obtain size after the image is loaded.
+        public init(id: String, sizeProvider: @escaping () -> CGSize) {
+            self.id = id
             self.sizeProvider = sizeProvider
         }
 
@@ -84,7 +96,7 @@ extension ImageProcessors {
         }
 
         public var identifier: String {
-            "com.github.kean/nuke/lateResize"
+            "com.github.kean/nuke/lateResize?id=\(id)"
         }
     }
 }
