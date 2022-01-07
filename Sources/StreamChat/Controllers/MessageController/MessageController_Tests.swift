@@ -1,5 +1,5 @@
 //
-// Copyright © 2021 Stream.io Inc. All rights reserved.
+// Copyright © 2022 Stream.io Inc. All rights reserved.
 //
 
 import CoreData
@@ -739,12 +739,22 @@ final class MessageController_Tests: XCTestCase {
         AssertAsync.canBeReleased(&weakController)
     }
     
-    func test_deleteMessage_callsMessageUpdater_withCorrectValues() {
+    func test_deleteMessage_whenHardIsFalse_callsMessageUpdater_withCorrectValues() {
         // Simulate `deleteMessage` call
-        controller.deleteMessage()
+        controller.deleteMessage(hard: false)
         
         // Assert messageUpdater is called with correct `messageId`
         XCTAssertEqual(env.messageUpdater.deleteMessage_messageId, controller.messageId)
+        XCTAssertEqual(env.messageUpdater.deleteMessage_hard, false)
+    }
+
+    func test_deleteMessage_whenHardIsTrue_callsMessageUpdater_withCorrectValues() {
+        // Simulate `deleteMessage` call
+        controller.deleteMessage(hard: true)
+
+        // Assert messageUpdater is called with correct `messageId`
+        XCTAssertEqual(env.messageUpdater.deleteMessage_messageId, controller.messageId)
+        XCTAssertEqual(env.messageUpdater.deleteMessage_hard, true)
     }
     
     // MARK: - Edit message
