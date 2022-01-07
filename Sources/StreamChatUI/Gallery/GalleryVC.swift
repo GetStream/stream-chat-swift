@@ -1,5 +1,5 @@
 //
-// Copyright © 2021 Stream.io Inc. All rights reserved.
+// Copyright © 2022 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -51,14 +51,6 @@ open class GalleryVC:
 
     /// Controller for handling the transition for dismissal
     open var transitionController: ZoomTransitionController!
-    
-    /// `DateComponentsFormatter` for showing when the message was sent.
-    open private(set) lazy var dateFormatter: DateComponentsFormatter = {
-        let df = DateComponentsFormatter()
-        df.allowedUnits = [.minute]
-        df.unitsStyle = .full
-        return df
-    }()
     
     /// `UICollectionViewFlowLayout` instance for `attachmentsCollectionView`.
     open private(set) lazy var attachmentsFlowLayout: UICollectionViewFlowLayout = .init()
