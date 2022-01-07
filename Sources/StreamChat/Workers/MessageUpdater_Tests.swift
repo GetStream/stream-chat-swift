@@ -1,5 +1,5 @@
 //
-// Copyright © 2021 Stream.io Inc. All rights reserved.
+// Copyright © 2022 Stream.io Inc. All rights reserved.
 //
 
 import CoreData
@@ -243,10 +243,10 @@ final class MessageUpdater_Tests: XCTestCase {
         try database.createCurrentUser()
         
         // Simulate `deleteMessage(messageId:)` call
-        messageUpdater.deleteMessage(messageId: messageId)
+        messageUpdater.deleteMessage(messageId: messageId, hard: false)
         
         // Assert correct endpoint is called
-        let expectedEndpoint: Endpoint<EmptyResponse> = .deleteMessage(messageId: messageId)
+        let expectedEndpoint: Endpoint<MessagePayload.Boxed> = .deleteMessage(messageId: messageId, hard: false)
         AssertAsync.willBeEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
     }
     
@@ -258,17 +258,18 @@ final class MessageUpdater_Tests: XCTestCase {
         
         // Simulate `deleteMessage(messageId:)` call
         var completionCalledError: Error?
-        messageUpdater.deleteMessage(messageId: messageId) {
+        messageUpdater.deleteMessage(messageId: messageId, hard: false) {
             completionCalledError = $0
         }
         
         // Assert correct endpoint is called
-        let expectedEndpoint: Endpoint<EmptyResponse> = .deleteMessage(messageId: messageId)
+        let expectedEndpoint: Endpoint<MessagePayload.Boxed> = .deleteMessage(messageId: messageId, hard: false)
         AssertAsync.willBeEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
         
-        // Simulate API response with success
+        // Simulate API response with error
         let testError = TestError()
-        apiClient.test_simulateResponse(Result<EmptyResponse, Error>.failure(testError))
+        let response: Result<MessagePayload.Boxed, Error> = .failure(testError)
+        apiClient.test_simulateResponse(response)
 
         // Assert completion is called without any error
         AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
@@ -281,7 +282,7 @@ final class MessageUpdater_Tests: XCTestCase {
         
         // Simulate `deleteMessage(messageId:)` call
         let completionError = try waitFor {
-            messageUpdater.deleteMessage(messageId: .unique, completion: $0)
+            messageUpdater.deleteMessage(messageId: .unique, hard: false, completion: $0)
         }
         
         // Assert database error is propogated
@@ -296,12 +297,12 @@ final class MessageUpdater_Tests: XCTestCase {
 
         // Simulate `deleteMessage(messageId:)` call
         var completionCalledError: Error?
-        messageUpdater.deleteMessage(messageId: messageId) {
+        messageUpdater.deleteMessage(messageId: messageId, hard: false) {
             completionCalledError = $0
         }
         
         // Assert correct endpoint is called
-        let expectedEndpoint: Endpoint<EmptyResponse> = .deleteMessage(messageId: messageId)
+        let expectedEndpoint: Endpoint<MessagePayload.Boxed> = .deleteMessage(messageId: messageId, hard: false)
         AssertAsync.willBeEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
         
         // Update database container to throw the error on write
@@ -309,7 +310,9 @@ final class MessageUpdater_Tests: XCTestCase {
         database.write_errorResponse = databaseError
         
         // Simulate API response with success
-        apiClient.test_simulateResponse(Result<EmptyResponse, Error>.success(.init()))
+        let response: Result<MessagePayload.Boxed, Error> =
+            .success(.init(message: .dummy(messageId: .unique, authorUserId: .unique)))
+        apiClient.test_simulateResponse(response)
 
         // Assert database error is propogated
         AssertAsync.willBeEqual(completionCalledError as? TestError, databaseError)
@@ -332,7 +335,7 @@ final class MessageUpdater_Tests: XCTestCase {
             let expectation = expectation(description: "deleteMessage")
 
             // Simulate `deleteMessage(messageId:)` call
-            messageUpdater.deleteMessage(messageId: messageId) { error in
+            messageUpdater.deleteMessage(messageId: messageId, hard: false) { error in
                 XCTAssertNil(error)
                 expectation.fulfill()
             }
@@ -347,8 +350,8 @@ final class MessageUpdater_Tests: XCTestCase {
     }
     
     func test_deleteMessage_updatesMessageStateCorrectly() throws {
-        let pairs: [(Result<EmptyResponse, Error>, LocalMessageState?)] = [
-            (.success(.init()), nil),
+        let pairs: [(Result<MessagePayload.Boxed, Error>, LocalMessageState?)] = [
+            (.success(.init(message: .dummy(messageId: .unique, authorUserId: .unique))), nil),
             (.failure(TestError()), .deletingFailed)
         ]
         
@@ -366,7 +369,7 @@ final class MessageUpdater_Tests: XCTestCase {
             try database.createMessage(id: messageId, authorId: currentUserId)
             
             // Simulate `deleteMessage(messageId:)` call
-            messageUpdater.deleteMessage(messageId: messageId)
+            messageUpdater.deleteMessage(messageId: messageId, hard: false)
             
             // Load the message
             let message = try XCTUnwrap(database.viewContext.message(id: messageId))
