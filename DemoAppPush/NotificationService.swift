@@ -1,3 +1,7 @@
+//
+// Copyright © 2022 Stream.io Inc. All rights reserved.
+//
+
 import StreamChat
 import UserNotifications
 
@@ -72,7 +76,8 @@ class NotificationService: UNNotificationServiceExtension {
             return
         }
 
-        guard let userId = UserDefaults(suiteName: applicationGroupIdentifier)?.string(forKey: currentUserIdRegisteredForPush), let userCredentials = UserCredentials.builtInUsersByID(id: userId) else {
+        guard let userId = UserDefaults(suiteName: applicationGroupIdentifier)?.string(forKey: currentUserIdRegisteredForPush),
+              let userCredentials = UserCredentials.builtInUsersByID(id: userId) else {
             contentHandler(content)
             return
         }
@@ -89,10 +94,12 @@ class NotificationService: UNNotificationServiceExtension {
         let chatNotification = chatHandler.handleNotification { chatContent in
             switch chatContent {
             case let .message(messageNotification):
-                content.title = (messageNotification.message.author.name ?? "somebody") + (" on \(messageNotification.channel?.name ?? "a conversation with you")")
+                content
+                    .title = (messageNotification.message.author.name ?? "somebody") +
+                    (" on \(messageNotification.channel?.name ?? "a conversation with you")")
                 content.subtitle = ""
                 content.body = messageNotification.message.text
-                self.addMessageAttachments(message:messageNotification.message, content: content) {
+                self.addMessageAttachments(message: messageNotification.message, content: content) {
                     contentHandler($0)
                 }
             default:
@@ -111,7 +118,8 @@ class NotificationService: UNNotificationServiceExtension {
     override func serviceExtensionTimeWillExpire() {
         // Called just before the extension will be terminated by the system.
         // Use this as an opportunity to deliver your "best attempt" at modified content, otherwise the original push payload will be used.
-        if let contentHandler = contentHandler, let bestAttemptContent = request?.content.mutableCopy() as? UNMutableNotificationContent {
+        if let contentHandler = contentHandler,
+           let bestAttemptContent = request?.content.mutableCopy() as? UNMutableNotificationContent {
             contentHandler(bestAttemptContent)
         }
     }

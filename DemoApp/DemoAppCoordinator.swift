@@ -1,5 +1,5 @@
 //
-// Copyright © 2021 Stream.io Inc. All rights reserved.
+// Copyright © 2022 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat
@@ -241,11 +241,11 @@ class DemoChannelListVC: ChatChannelListVC {
     }
 
     override func controller(_ controller: ChatChannelListController, shouldListUpdatedChannel channel: ChatChannel) -> Bool {
-        channel.lastActiveMembers.contains(where: { $0.id == controller.client.currentUserId })
+        channel.membership != nil
     }
 
     override func controller(_ controller: ChatChannelListController, shouldAddNewChannelToList channel: ChatChannel) -> Bool {
-        channel.lastActiveMembers.contains(where: { $0.id == controller.client.currentUserId })
+        channel.membership != nil
     }
 
     var isPad: Bool { UIDevice.current.userInterfaceIdiom == .pad }

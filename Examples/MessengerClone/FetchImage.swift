@@ -1,9 +1,9 @@
 //
-// Copyright © 2021 Stream.io Inc. All rights reserved.
+// Copyright © 2022 Stream.io Inc. All rights reserved.
 //
 
-import SwiftUI
 import Nuke
+import SwiftUI
 
 // The MIT License (MIT)
 //
