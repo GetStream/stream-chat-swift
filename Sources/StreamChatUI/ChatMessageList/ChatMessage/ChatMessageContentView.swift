@@ -603,7 +603,7 @@ open class ChatMessageContentView: _View, ThemeProvider {
             textView?.textContainerInset = .init(top: 8, left: 8, bottom: 8, right: 8)
             textView?.textContainer.lineFragmentPadding = 0
             textView?.font = appearance.fonts.body
-            textView?.tintColor = appearance.colorPalette.tappableLinkTint
+            textView?.tintColor = appearance.colorPalette.themeBlue
         }
         return textView!
     }

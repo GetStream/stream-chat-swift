@@ -907,14 +907,16 @@
 		BDDD1EAC2632E32000BA007B /* AppearanceProvider_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDDD1EAB2632E32000BA007B /* AppearanceProvider_Tests.swift */; };
 		BDDD1EAE2632E6C200BA007B /* Appearance+SwiftUI_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDDD1EAD2632E6C200BA007B /* Appearance+SwiftUI_Tests.swift */; };
 		BDEB9417268211EC00928AF1 /* ChatMessageListUnreadCountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDEB9416268211EC00928AF1 /* ChatMessageListUnreadCountView.swift */; };
+		CD052B4727881BFC007E9DEF /* JoinPrivateGroupVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD052B4627881BFC007E9DEF /* JoinPrivateGroupVC.swift */; };
 		CD1C90F0272C417F00A6E85B /* CryptoSentBubble.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD1C90EF272C417F00A6E85B /* CryptoSentBubble.swift */; };
 		CD24C70C27844BC500F6378D /* PrivateGroup.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CD24C70B27844BC500F6378D /* PrivateGroup.storyboard */; };
 		CD24C70E27844C3500F6378D /* Wallet.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CD24C70D27844C3500F6378D /* Wallet.storyboard */; };
-		CD24C7112784514900F6378D /* JoinPrivateGroupVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD24C7102784514900F6378D /* JoinPrivateGroupVC.swift */; };
+		CD24C7112784514900F6378D /* PrivateGroupOTPVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD24C7102784514900F6378D /* PrivateGroupOTPVC.swift */; };
 		CD24C71727846C4300F6378D /* DPOTPView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD24C71627846C4300F6378D /* DPOTPView.swift */; };
 		CD24C719278484B800F6378D /* LocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD24C718278484B800F6378D /* LocationManager.swift */; };
 		CD24C71C2784881000F6378D /* Dynamic.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD24C71B2784881000F6378D /* Dynamic.swift */; };
 		CD24C71E2784892A00F6378D /* UIApplication+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD24C71D2784892A00F6378D /* UIApplication+Extension.swift */; };
+		CD6058EB278860EB00A033CD /* ChatClientConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD6058EA278860EB00A033CD /* ChatClientConfiguration.swift */; };
 		CD66B56F273D41E600DAC5D2 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 88E779B12563FA6B00BA79B6 /* Assets.xcassets */; };
 		CD72548D275F556100CD6444 /* RedPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD72548C275F556100CD6444 /* RedPacket.swift */; };
 		CD89189E273E25B70051C651 /* KeyboardToolKitList.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD66B570273D5D1D00DAC5D2 /* KeyboardToolKitList.swift */; };
@@ -923,6 +925,8 @@
 		CD8918A6273E32AD0051C651 /* ToolTipToggleButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD8918A5273E32AD0051C651 /* ToolTipToggleButton.swift */; };
 		CD8918BC273E99160051C651 /* CryptoReceiveBubble.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD8918BB273E99160051C651 /* CryptoReceiveBubble.swift */; };
 		CD9A4706275DFA1100CA9931 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD9A4705275DFA1100CA9931 /* Constants.swift */; };
+		CDA1FB07278843AF00C2F4BD /* PrivateGroupUsersCVCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDA1FB05278843AF00C2F4BD /* PrivateGroupUsersCVCell.swift */; };
+		CDA1FB08278843AF00C2F4BD /* PrivateGroupUsersCVCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = CDA1FB06278843AF00C2F4BD /* PrivateGroupUsersCVCell.xib */; };
 		CDB98D132757D43A00CA7CDE /* SendOneWallet.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDB98D112757D43A00CA7CDE /* SendOneWallet.swift */; };
 		CDC2BCE72763756500D75F6F /* Date+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8837C6392539B4A600D8FE86 /* Date+Extensions.swift */; };
 		CDFA6EDD2768DB0A00DC3B7F /* ActivityIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDFA6EDC2768DB0900DC3B7F /* ActivityIndicator.swift */; };
@@ -2337,20 +2341,24 @@
 		BDDD1EAB2632E32000BA007B /* AppearanceProvider_Tests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppearanceProvider_Tests.swift; sourceTree = "<group>"; };
 		BDDD1EAD2632E6C200BA007B /* Appearance+SwiftUI_Tests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Appearance+SwiftUI_Tests.swift"; sourceTree = "<group>"; };
 		BDEB9416268211EC00928AF1 /* ChatMessageListUnreadCountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageListUnreadCountView.swift; sourceTree = "<group>"; };
+		CD052B4627881BFC007E9DEF /* JoinPrivateGroupVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JoinPrivateGroupVC.swift; sourceTree = "<group>"; };
 		CD1C90EF272C417F00A6E85B /* CryptoSentBubble.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CryptoSentBubble.swift; sourceTree = "<group>"; };
 		CD24C70B27844BC500F6378D /* PrivateGroup.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = PrivateGroup.storyboard; sourceTree = "<group>"; };
 		CD24C70D27844C3500F6378D /* Wallet.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Wallet.storyboard; sourceTree = "<group>"; };
-		CD24C7102784514900F6378D /* JoinPrivateGroupVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JoinPrivateGroupVC.swift; sourceTree = "<group>"; };
+		CD24C7102784514900F6378D /* PrivateGroupOTPVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrivateGroupOTPVC.swift; sourceTree = "<group>"; };
 		CD24C71627846C4300F6378D /* DPOTPView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DPOTPView.swift; sourceTree = "<group>"; };
 		CD24C718278484B800F6378D /* LocationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationManager.swift; sourceTree = "<group>"; };
 		CD24C71B2784881000F6378D /* Dynamic.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Dynamic.swift; sourceTree = "<group>"; };
 		CD24C71D2784892A00F6378D /* UIApplication+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIApplication+Extension.swift"; sourceTree = "<group>"; };
+		CD6058EA278860EB00A033CD /* ChatClientConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatClientConfiguration.swift; sourceTree = "<group>"; };
 		CD66B570273D5D1D00DAC5D2 /* KeyboardToolKitList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardToolKitList.swift; sourceTree = "<group>"; };
 		CD72548C275F556100CD6444 /* RedPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RedPacket.swift; sourceTree = "<group>"; };
 		CD8918A1273E32030051C651 /* SendMoneyButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendMoneyButton.swift; sourceTree = "<group>"; };
 		CD8918A5273E32AD0051C651 /* ToolTipToggleButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToolTipToggleButton.swift; sourceTree = "<group>"; };
 		CD8918BB273E99160051C651 /* CryptoReceiveBubble.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CryptoReceiveBubble.swift; sourceTree = "<group>"; };
 		CD9A4705275DFA1100CA9931 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
+		CDA1FB05278843AF00C2F4BD /* PrivateGroupUsersCVCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrivateGroupUsersCVCell.swift; sourceTree = "<group>"; };
+		CDA1FB06278843AF00C2F4BD /* PrivateGroupUsersCVCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = PrivateGroupUsersCVCell.xib; sourceTree = "<group>"; };
 		CDB98D112757D43A00CA7CDE /* SendOneWallet.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SendOneWallet.swift; sourceTree = "<group>"; };
 		CDFA6EDC2768DB0900DC3B7F /* ActivityIndicator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityIndicator.swift; sourceTree = "<group>"; };
 		DA0BB1602513B5F200CAEFBD /* StringInterpolation+Extenstions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "StringInterpolation+Extenstions.swift"; sourceTree = "<group>"; };
@@ -2792,7 +2800,7 @@
 		7908823025432C6400896F03 /* StreamChatUI */ = {
 			isa = PBXGroup;
 			children = (
-				CD24C70A27844B9F00F6378D /* Storyboard */,
+				CDA1FB0927884FC500C2F4BD /* xibs */,
 				CDB98D102757D41F00CA7CDE /* Model */,
 				BDDD1EA22632C50200BA007B /* Appearance.swift */,
 				8850B929255C286B003AED69 /* Components.swift */,
@@ -4311,6 +4319,7 @@
 				CDFA6EDC2768DB0900DC3B7F /* ActivityIndicator.swift */,
 				CD24C718278484B800F6378D /* LocationManager.swift */,
 				CD24C71D2784892A00F6378D /* UIApplication+Extension.swift */,
+				CD6058EA278860EB00A033CD /* ChatClientConfiguration.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -4977,7 +4986,8 @@
 		CD24C70F2784511A00F6378D /* PrivateChat */ = {
 			isa = PBXGroup;
 			children = (
-				CD24C7102784514900F6378D /* JoinPrivateGroupVC.swift */,
+				CD24C7102784514900F6378D /* PrivateGroupOTPVC.swift */,
+				CD052B4627881BFC007E9DEF /* JoinPrivateGroupVC.swift */,
 			);
 			path = PrivateChat;
 			sourceTree = "<group>";
@@ -5012,6 +5022,24 @@
 				CD8918A5273E32AD0051C651 /* ToolTipToggleButton.swift */,
 			);
 			path = ToolTipToggleButton;
+			sourceTree = "<group>";
+		};
+		CDA1FB032788420A00C2F4BD /* cells */ = {
+			isa = PBXGroup;
+			children = (
+				CDA1FB05278843AF00C2F4BD /* PrivateGroupUsersCVCell.swift */,
+				CDA1FB06278843AF00C2F4BD /* PrivateGroupUsersCVCell.xib */,
+			);
+			path = cells;
+			sourceTree = "<group>";
+		};
+		CDA1FB0927884FC500C2F4BD /* xibs */ = {
+			isa = PBXGroup;
+			children = (
+				CDA1FB032788420A00C2F4BD /* cells */,
+				CD24C70A27844B9F00F6378D /* Storyboard */,
+			);
+			path = xibs;
 			sourceTree = "<group>";
 		};
 		CDB98D102757D41F00CA7CDE /* Model */ = {
@@ -5823,6 +5851,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				88F0D74B257E50B200F4B050 /* Assets.xcassets in Resources */,
+				CDA1FB08278843AF00C2F4BD /* PrivateGroupUsersCVCell.xib in Resources */,
 				CD24C70E27844C3500F6378D /* Wallet.storyboard in Resources */,
 				88F0D743257E50B000F4B050 /* Localizable.strings in Resources */,
 				CD24C70C27844BC500F6378D /* PrivateGroup.storyboard in Resources */,
@@ -6112,6 +6141,7 @@
 				22FF4365256E943F00133910 /* ChatSuggestionsVC.swift in Sources */,
 				22A0921725682880001FE9F0 /* ChatNavigationBar.swift in Sources */,
 				AD87D0A1263C7823008B466C /* AttachmentButton.swift in Sources */,
+				CD052B4727881BFC007E9DEF /* JoinPrivateGroupVC.swift in Sources */,
 				22753599257C442300D1FDB6 /* SendButton.swift in Sources */,
 				CD24C71C2784881000F6378D /* Dynamic.swift in Sources */,
 				88F836502578D16D0039AEC8 /* ChatMessageActionControl.swift in Sources */,
@@ -6119,6 +6149,7 @@
 				883051742630366E0069D731 /* CACornerMask+Extensions.swift in Sources */,
 				F86DA1B026413A2B006A7CCA /* MessageActionsTransitionController.swift in Sources */,
 				847DD2D82670F75F0084E14B /* VideoAttachmentComposerPreview.swift in Sources */,
+				CDA1FB07278843AF00C2F4BD /* PrivateGroupUsersCVCell.swift in Sources */,
 				847D60292679EDD300FB701D /* GalleryCollectionViewCell.swift in Sources */,
 				E7166CB225BED22B00B03B07 /* Appearance+ColorPalette.swift in Sources */,
 				88A11B0A2590AFBB0000AC24 /* ChatMessage+Extensions.swift in Sources */,
@@ -6184,7 +6215,7 @@
 				E768AAFB2627691600328E6E /* TypingAnimationView.swift in Sources */,
 				ADB4166C26208F1C00E623E3 /* AttachmentPreviewProvider.swift in Sources */,
 				792DD9FB256E67C6001DB91B /* ComponentsProvider.swift in Sources */,
-				CD24C7112784514900F6378D /* JoinPrivateGroupVC.swift in Sources */,
+				CD24C7112784514900F6378D /* PrivateGroupOTPVC.swift in Sources */,
 				84DA54DF2680C66A003A26CD /* PlayerView.swift in Sources */,
 				AD81AF0525ED141800F17F8F /* CellSeparatorView.swift in Sources */,
 				CD8918A6273E32AD0051C651 /* ToolTipToggleButton.swift in Sources */,
@@ -6257,6 +6288,7 @@
 				885B3D7725642B3D003E6BDF /* CurrentChatUserAvatarView.swift in Sources */,
 				224FF6912562F58F00725DD1 /* UIColor+Extensions.swift in Sources */,
 				22C2359A259CA87B00DC805A /* Animation.swift in Sources */,
+				CD6058EB278860EB00A033CD /* ChatClientConfiguration.swift in Sources */,
 				79088339254876F200896F03 /* ChatMessageListView.swift in Sources */,
 				CD89189E273E25B70051C651 /* KeyboardToolKitList.swift in Sources */,
 				ACD502A926BC0C670029FB7D /* ImageMerger.swift in Sources */,

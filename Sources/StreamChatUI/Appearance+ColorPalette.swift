@@ -52,7 +52,6 @@ public extension Appearance {
         public var border3: UIColor = .streamGrayWhisper
 
         // MARK: - Tint and alert
-        public var tappableLinkTint: UIColor = .tappableLinkLightBlue
         public var alert: UIColor = .streamAccentRed
         public var alternativeActiveTint: UIColor = .streamAccentGreen
         public var inactiveTint: UIColor = .streamGray
@@ -60,6 +59,7 @@ public extension Appearance {
 
         // MARK: - Wallet tabbar
         public var walletTabbarBackground: UIColor = .walletTabbarBackground
+        public var themeBlue: UIColor = .themeBlue
         public var redPacketColor: UIColor = .init(rgb: 0xFF6961)
         public var redPacketButton: UIColor = .init(rgb: 0x333333)
         public var cardBackground: UIColor = .init(rgb: 0xFFFFFF).withAlphaComponent(0.5)
@@ -87,7 +87,7 @@ private extension UIColor {
     static let streamAccentRed = mode(0xff3742, 0xff3742)
     static let streamAccentGreen = mode(0x20e070, 0x20e070)
     static let streamGrayDisabledText = mode(0x72767e, 0x72767e)
-    static let tappableLinkLightBlue = mode(0x8CB2F8, 0x8CB2F8)
+    static let themeBlue = mode(0x8CB2F8, 0x8CB2F8)
     // Currently we are not using the correct shadow color from figma's color palette. This is to avoid
     // an issue with snapshots inconsistency between Intel vs M1. We can't use shadows with transparency.
     // So we apply a light gray color to fake the transparency.

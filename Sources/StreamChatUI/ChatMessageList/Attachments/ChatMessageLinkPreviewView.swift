@@ -114,7 +114,7 @@ open class ChatMessageLinkPreviewView: _Control, ThemeProvider {
         let isImageHidden = payload?.previewURL == nil
         let isAuthorHidden = payload?.author == nil
 
-        authorLabel.textColor = appearance.colorPalette.tappableLinkTint //tintColor
+        authorLabel.textColor = appearance.colorPalette.themeBlue //tintColor
 
         components.imageLoader.loadImage(
             into: imagePreview,
