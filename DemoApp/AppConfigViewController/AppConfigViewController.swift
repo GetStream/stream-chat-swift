@@ -4,7 +4,6 @@
 
 import StreamChat
 import UIKit
-
 /// The Demo App Configuration.
 struct DemoAppConfig {
     /// A Boolean value to define if an additional hard delete message action will be added.
@@ -220,7 +219,7 @@ class AppConfigViewController: UITableViewController {
         case .shouldShowShadowedMessages:
             break
         case .deletedMessagesVisibility:
-            makeSelectionAlertController()
+            makeDeletedMessagesVisibilitySelectorVC
         }
     }
 
@@ -233,22 +232,18 @@ class AppConfigViewController: UITableViewController {
         return switchButton
     }
 
-    private func makeSelectionAlertController() {
-        let alertController = UIAlertController()
-        let alwaysVisibleAction = UIAlertAction(title: "alwaysVisible", style: .default) { _ in
-            self.chatClientConfig.deletedMessagesVisibility = .alwaysVisible
+    private func makeDeletedMessagesVisibilitySelectorVC() {
+        let selectorViewController = OptionsSelectorViewController(
+            options: [.alwaysHidden, .alwaysVisible, .visibleForCurrentUser],
+            initialSelectedOptions: [chatClientConfig.deletedMessagesVisibility],
+            allowsMultipleSelection: false
+        )
+        selectorViewController.didChangeSelectedOptions = { options in
+            guard let selectedOption = options.first else { return }
+            self.chatClientConfig.deletedMessagesVisibility = selectedOption
         }
-        let visibleForCurrentUserAction = UIAlertAction(title: "visibleForCurrentUser", style: .default) { _ in
-            self.chatClientConfig.deletedMessagesVisibility = .visibleForCurrentUser
-        }
-        visibleForCurrentUserAction.isEnabled = false
-        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel)
 
-        alertController.addAction(alwaysVisibleAction)
-        alertController.addAction(visibleForCurrentUserAction)
-        alertController.addAction(cancelAction)
-
-        present(alertController, animated: true, completion: nil)
+        navigationController?.pushViewController(selectorViewController, animated: true)
     }
 }
 
