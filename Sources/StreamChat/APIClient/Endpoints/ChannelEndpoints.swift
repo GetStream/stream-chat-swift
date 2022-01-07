@@ -1,5 +1,5 @@
 //
-// Copyright © 2021 Stream.io Inc. All rights reserved.
+// Copyright © 2022 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -239,6 +239,16 @@ extension Endpoint {
             queryItems: nil,
             requiresConnectionId: false,
             body: ["set": ["frozen": freeze]]
+        )
+    }
+    
+    static func pinnedMessages(cid: ChannelId, query: PinnedMessagesQuery) -> Endpoint<PinnedMessagesPayload> {
+        .init(
+            path: "channels/" + cid.apiPath + "/pinned_messages",
+            method: .get,
+            queryItems: nil,
+            requiresConnectionId: false,
+            body: ["payload": query]
         )
     }
 }

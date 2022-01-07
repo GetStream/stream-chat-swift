@@ -1,5 +1,5 @@
 //
-// Copyright © 2021 Stream.io Inc. All rights reserved.
+// Copyright © 2022 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -70,7 +70,7 @@ class ImageCDN_Tests: XCTestCase {
             preferredSize: CGSize(width: 40, height: 40)
         )
         
-        XCTAssertEqual(processedURL, thumbnailUrl)
+        assertEqualURL(processedURL, thumbnailUrl)
     }
     
     func test_thumbnail_validStreamUrl_withParameters() {
@@ -85,7 +85,7 @@ class ImageCDN_Tests: XCTestCase {
             preferredSize: CGSize(width: 40, height: 40)
         )
         
-        XCTAssertEqual(processedURL, thumbnailUrl)
+        assertEqualURL(processedURL, thumbnailUrl)
     }
     
     func test_thumbnail_validURL_unchanged() {
@@ -98,5 +98,34 @@ class ImageCDN_Tests: XCTestCase {
         )
         
         XCTAssertEqual(processedURL, url)
+    }
+
+    private func assertEqualURL(_ lhs: URL, _ rhs: URL) {
+        guard var lhsComponents = URLComponents(url: lhs, resolvingAgainstBaseURL: true),
+              var rhsComponents = URLComponents(url: rhs, resolvingAgainstBaseURL: true) else {
+            XCTFail("Unexpected url")
+            return
+        }
+
+        // Because query paramters can be placed in a different order, we need to check it key by key.
+        var lhsParameters: [String: String] = [:]
+        lhsComponents.queryItems?.forEach {
+            lhsParameters[$0.name] = $0.value
+        }
+
+        var rhsParameters: [String: String] = [:]
+        rhsComponents.queryItems?.forEach {
+            rhsParameters[$0.name] = $0.value
+        }
+
+        XCTAssertEqual(lhsParameters.count, rhsParameters.count)
+
+        lhsParameters.forEach { key, lValue in
+            XCTAssertEqual(lValue, rhsParameters[key])
+        }
+
+        lhsComponents.query = nil
+        rhsComponents.query = nil
+        XCTAssertEqual(lhsComponents.url, rhsComponents.url)
     }
 }

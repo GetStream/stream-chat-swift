@@ -1,5 +1,5 @@
 //
-// Copyright © 2021 Stream.io Inc. All rights reserved.
+// Copyright © 2022 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -40,3 +40,6 @@ public struct Sorting<Key: SortingKey>: Encodable, CustomStringConvertible {
         direction = isAscending ? 1 : -1
     }
 }
+
+extension Sorting: Equatable where Key: Equatable {}
+extension Sorting: Hashable where Key: Hashable {}

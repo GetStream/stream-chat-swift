@@ -1,5 +1,5 @@
 //
-// Copyright © 2021 Stream.io Inc. All rights reserved.
+// Copyright © 2022 Stream.io Inc. All rights reserved.
 //
 
 @testable import StreamChat
@@ -444,6 +444,26 @@ final class ChannelEndpoints_Tests: XCTestCase {
         )
         
         let endpoint: Endpoint<EmptyResponse> = .sendEvent(ideaPayload, cid: cid)
+        
+        XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
+    }
+    
+    func test_loadPinnedMessages_buildsCorrectly() {
+        let cid = ChannelId.unique
+        let query = PinnedMessagesQuery(
+            pageSize: .unique,
+            pagination: .aroundTimestamp(.unique)
+        )
+        
+        let expectedEndpoint = Endpoint<PinnedMessagesPayload>(
+            path: "channels/" + cid.apiPath + "/pinned_messages",
+            method: .get,
+            queryItems: nil,
+            requiresConnectionId: false,
+            body: ["payload": query]
+        )
+        
+        let endpoint: Endpoint<PinnedMessagesPayload> = .pinnedMessages(cid: cid, query: query)
         
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
     }

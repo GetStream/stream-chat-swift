@@ -1,5 +1,5 @@
 //
-// Copyright © 2021 Stream.io Inc. All rights reserved.
+// Copyright © 2022 Stream.io Inc. All rights reserved.
 //
 
 @testable import StreamChat
@@ -90,6 +90,10 @@ class ChannelUpdaterMock: ChannelUpdater {
     @Atomic var uploadFile_progress: ((Double) -> Void)?
     @Atomic var uploadFile_completion: ((Result<URL, Error>) -> Void)?
     
+    @Atomic var loadPinnedMessages_cid: ChannelId?
+    @Atomic var loadPinnedMessages_query: PinnedMessagesQuery?
+    @Atomic var loadPinnedMessages_completion: ((Result<[ChatMessage], Error>) -> Void)?
+    
     // Cleans up all recorded values
     func cleanUp() {
         update_channelQuery = nil
@@ -170,6 +174,10 @@ class ChannelUpdaterMock: ChannelUpdater {
         uploadFile_cid = nil
         uploadFile_progress = nil
         uploadFile_completion = nil
+        
+        loadPinnedMessages_cid = nil
+        loadPinnedMessages_query = nil
+        loadPinnedMessages_completion = nil
     }
     
     override func update(
@@ -326,5 +334,15 @@ class ChannelUpdaterMock: ChannelUpdater {
         uploadFile_cid = cid
         uploadFile_progress = progress
         uploadFile_completion = completion
+    }
+    
+    override func loadPinnedMessages(
+        in cid: ChannelId,
+        query: PinnedMessagesQuery,
+        completion: @escaping (Result<[ChatMessage], Error>) -> Void
+    ) {
+        loadPinnedMessages_cid = cid
+        loadPinnedMessages_query = query
+        loadPinnedMessages_completion = completion
     }
 }

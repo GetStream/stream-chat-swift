@@ -1,5 +1,5 @@
 //
-// Copyright © 2021 Stream.io Inc. All rights reserved.
+// Copyright © 2022 Stream.io Inc. All rights reserved.
 //
 
 @testable import StreamChat
@@ -87,6 +87,15 @@ class NotificationsEvents_Tests: XCTestCase {
         XCTAssertEqual(event?.cid, ChannelId(type: .messaging, id: "!members-jkE22mnWM5tjzHPBurvjoVz0spuz4FULak93veyK0lY"))
     }
     
+    func test_channelDeleted() throws {
+        let json = XCTestCase.mockData(fromFile: "NotificationChannelDeleted")
+        let event = try eventDecoder.decode(from: json) as? NotificationChannelDeletedEventDTO
+
+        XCTAssertEqual(event?.channel.cid, ChannelId(type: .messaging, id: "!members-BSM7Tb6_XBXTGOaqZXCFh_4c4UQsYomWNkgQ0YgiGJw"))
+        XCTAssertEqual(event?.createdAt.description, "2021-12-28 13:05:20 +0000")
+        XCTAssertEqual(event?.cid.rawValue, "messaging:!members-BSM7Tb6_XBXTGOaqZXCFh_4c4UQsYomWNkgQ0YgiGJw")
+    }
+
     // MARK: DTO -> Event
     
     func test_notificationMessageNewEventDTO_toDomainEvent() throws {
@@ -215,6 +224,7 @@ class NotificationsEvents_Tests: XCTestCase {
         // Create event payload
         let eventPayload = EventPayload(
             eventType: .notificationAddedToChannel,
+            memberContainer: .dummy(userId: .unique),
             channel: .dummy(cid: .unique),
             unreadCount: .init(channels: 13, messages: 53),
             createdAt: .unique
@@ -228,6 +238,7 @@ class NotificationsEvents_Tests: XCTestCase {
         
         // Save event to database
         _ = try session.saveChannel(payload: eventPayload.channel!, query: nil)
+        _ = try session.saveMember(payload: eventPayload.memberContainer!.member!, channelId: eventPayload.channel!.cid, query: nil)
 
         // Assert event can be created and has correct fields
         let event = try XCTUnwrap(dto.toDomainEvent(session: session) as? NotificationAddedToChannelEvent)
@@ -397,6 +408,30 @@ class NotificationsEvents_Tests: XCTestCase {
         XCTAssertEqual(event.cid, eventPayload.channel?.cid)
         XCTAssertEqual(event.user.id, eventPayload.user?.id)
         XCTAssertEqual(event.member.id, eventPayload.memberContainer?.member?.user.id)
+        XCTAssertEqual(event.createdAt, eventPayload.createdAt)
+    }
+    
+    func test_notificationChannelDeletedEventDTO_toDomainEvent() throws {
+        // Create database session
+        let session = try DatabaseContainerMock(kind: .inMemory).viewContext
+        
+        // Create event payload
+        let eventPayload = EventPayload(
+            eventType: .notificationChannelDeleted,
+            cid: .unique,
+            channel: .dummy(cid: .unique),
+            createdAt: .unique
+        )
+        
+        // Save event to database
+        _ = try session.saveChannel(payload: eventPayload.channel!, query: nil)
+
+        // Create event DTO
+        let dto = try NotificationChannelDeletedEventDTO(from: eventPayload)
+
+        // Assert event can be created and has correct fields
+        let event = try XCTUnwrap(dto.toDomainEvent(session: session) as? NotificationChannelDeletedEvent)
+        XCTAssertEqual(event.cid, eventPayload.cid)
         XCTAssertEqual(event.createdAt, eventPayload.createdAt)
     }
 }

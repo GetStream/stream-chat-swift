@@ -1,5 +1,5 @@
 //
-// Copyright © 2021 Stream.io Inc. All rights reserved.
+// Copyright © 2022 Stream.io Inc. All rights reserved.
 //
 
 @testable import StreamChat
@@ -158,6 +158,12 @@ class MemberEventsIntegration_Tests: XCTestCase {
         let event = try eventDecoder.decode(from: json) as? MemberAddedEventDTO
         
         let unwrappedEvent = try XCTUnwrap(event)
+        
+        // Add a channel so member will be saved
+        try client.databaseContainer.writeSynchronously { session in
+            try session.saveChannel(payload: self.dummyPayload(with: unwrappedEvent.cid))
+        }
+        
         client.eventNotificationCenter.process(unwrappedEvent)
         
         AssertAsync {

@@ -37,14 +37,6 @@ Start a new release
 
 Completes an SDK Release
 
-### update_frameworks
-
-```sh
-[bundle exec] fastlane update_frameworks
-```
-
-Update XCFrameworks and submit to the SPM repository
-
 ### push_pods
 
 ```sh
