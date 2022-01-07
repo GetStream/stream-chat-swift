@@ -1,5 +1,5 @@
 //
-// Copyright © 2021 Stream.io Inc. All rights reserved.
+// Copyright © 2022 Stream.io Inc. All rights reserved.
 //
 
 @testable import StreamChat
@@ -24,20 +24,42 @@ final class MessageEndpoints_Tests: XCTestCase {
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
     }
     
-    func test_deleteMessage_buildsCorrectly() {
+    func test_deleteMessage_whenHardDeleteDisabled_buildsCorrectly() {
         let messageId: MessageId = .unique
         
-        let expectedEndpoint = Endpoint<EmptyResponse>(
+        let expectedEndpoint = Endpoint<MessagePayload.Boxed>(
             path: "messages/\(messageId)",
             method: .delete,
             queryItems: nil,
             requiresConnectionId: false,
-            body: nil
+            body: [
+                "hard": false
+            ]
         )
         
         // Build endpoint
-        let endpoint: Endpoint<EmptyResponse> = .deleteMessage(messageId: messageId)
+        let endpoint: Endpoint<MessagePayload.Boxed> = .deleteMessage(messageId: messageId, hard: false)
         
+        // Assert endpoint is built correctly
+        XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
+    }
+
+    func test_deleteMessage_whenHardDeleteEnabled_buildsCorrectly() {
+        let messageId: MessageId = .unique
+
+        let expectedEndpoint = Endpoint<MessagePayload.Boxed>(
+            path: "messages/\(messageId)",
+            method: .delete,
+            queryItems: nil,
+            requiresConnectionId: false,
+            body: [
+                "hard": true
+            ]
+        )
+
+        // Build endpoint
+        let endpoint: Endpoint<MessagePayload.Boxed> = .deleteMessage(messageId: messageId, hard: true)
+
         // Assert endpoint is built correctly
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
     }
