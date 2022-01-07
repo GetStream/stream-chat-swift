@@ -1,5 +1,5 @@
 //
-// Copyright © 2021 Stream.io Inc. All rights reserved.
+// Copyright © 2022 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat
@@ -56,8 +56,8 @@ open class ChatMessageContentView: _View, ThemeProvider {
         didSet { updateContentIfNeeded() }
     }
 
-    /// The date formatter used by `timestampLabel`.
-    public lazy var dateFormatter: DateFormatter = .messageTimestamp
+    /// A formatter that converts the message timestamp to textual representation.
+    open lazy var dateFormatter: DateFormatter = appearance.formatters.messageTimestamp
 
     /// Specifies the max possible width of `mainContainer`.
     /// Should be in [0...1] range, where 1 makes the container fill the entire superview's width.

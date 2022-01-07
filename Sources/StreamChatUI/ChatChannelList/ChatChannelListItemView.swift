@@ -1,5 +1,5 @@
 //
-// Copyright © 2021 Stream.io Inc. All rights reserved.
+// Copyright © 2022 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat
@@ -25,8 +25,8 @@ open class ChatChannelListItemView: _View, ThemeProvider, SwiftUIRepresentable {
         didSet { updateContentIfNeeded() }
     }
 
-    /// The date formatter used by `timestampLabel`.
-    public lazy var dateFormatter: DateFormatter = .messageTimestamp
+    /// A formatter that converts the message timestamp to textual representation.
+    open lazy var dateFormatter: DateFormatter = appearance.formatters.messageTimestamp
 
     /// Main container which holds `avatarView` and two horizontal containers `title` and `unreadCount` and
     /// `subtitle` and `timestampLabel`

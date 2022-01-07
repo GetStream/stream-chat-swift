@@ -1,5 +1,5 @@
 //
-// Copyright © 2021 Stream.io Inc. All rights reserved.
+// Copyright © 2022 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat
@@ -80,6 +80,12 @@ open class ChatMessageListVC:
 
         return !listView.isLastCellFullyVisible && isMoreContentThanOnePage
     }
+
+    /// A Date Formatter that converts the message date to textual representation between each group message.
+    open lazy var messageListDateSeparatorFormatter = appearance.formatters.messageListDateSeparator
+
+    /// A Date Formatter that converts the message date to textual representation in the top overlay view.
+    open lazy var messageListDateOverlayFormatter = appearance.formatters.messageListDateSeparator
 
     /// A boolean value that determines wether the date overlay should be displayed while scrolling.
     open var isDateOverlayEnabled: Bool {
@@ -354,9 +360,7 @@ open class ChatMessageListVC:
         cell.messageContentView?.content = message
 
         cell.dateSeparatorView.isHidden = !shouldShowDateSeparator(forMessage: message, at: indexPath)
-        cell.dateSeparatorView.content = DateFormatter
-            .messageListDateSeparator
-            .string(from: message.createdAt)
+        cell.dateSeparatorView.content = messageListDateSeparatorFormatter.string(from: message.createdAt)
 
         return cell
     }
@@ -381,9 +385,7 @@ open class ChatMessageListVC:
             return nil
         }
 
-        return DateFormatter
-            .messageListDateOverlay
-            .string(from: message.createdAt)
+        return messageListDateOverlayFormatter.string(from: message.createdAt)
     }
 
     // MARK: - ChatMessageActionsVCDelegate

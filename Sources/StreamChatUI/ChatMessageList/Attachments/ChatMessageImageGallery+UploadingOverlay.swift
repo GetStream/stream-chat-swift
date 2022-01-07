@@ -1,5 +1,5 @@
 //
-// Copyright © 2021 Stream.io Inc. All rights reserved.
+// Copyright © 2022 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat
@@ -14,6 +14,10 @@ extension ChatMessageGalleryView {
         public var didTapActionButton: (() -> Void)?
         
         open var minBottomContainerHeight: CGFloat = 24
+
+        /// The number formatter that converts the uploading percentage to textual representation.
+        open lazy var uploadingPercentageFormatter: NumberFormatter =
+            appearance.formatters.uploadingPercentage
 
         // MARK: - Subviews
         
@@ -113,9 +117,9 @@ extension ChatMessageGalleryView {
             uploadingProgressLabel.text = content.flatMap {
                 switch $0.state {
                 case let .uploading(progress):
-                    return NumberFormatter.uploadingPercentage.string(from: .init(value: progress))
+                    return uploadingPercentageFormatter.string(from: .init(value: progress))
                 case .pendingUpload:
-                    return NumberFormatter.uploadingPercentage.string(from: 0)
+                    return uploadingPercentageFormatter.string(from: 0)
                 case .uploaded, .unknown:
                     return nil
                 case .uploadingFailed:

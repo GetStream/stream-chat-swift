@@ -1,5 +1,5 @@
 //
-// Copyright © 2021 Stream.io Inc. All rights reserved.
+// Copyright © 2022 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -216,5 +216,18 @@ extension ChatMessageListScrollOverlayView {
     @available(*, deprecated, message: "use `dateSeparatorView.textLabel` instead.")
     open var textLabel: UILabel {
         dateSeparatorView.textLabel
+    }
+}
+
+// MARK: - Formatters
+
+extension DateFormatter {
+    @available(
+        *,
+        deprecated,
+        message: "Please use `Appearance.default.formatters.messageListDateSeparator` instead"
+    )
+    public static var messageListDateOverlay: DateFormatter {
+        Appearance.default.formatters.messageListDateSeparator
     }
 }
