@@ -350,15 +350,15 @@ final class MessageUpdater_Tests: XCTestCase {
     }
     
     func test_deleteMessage_updatesMessageStateCorrectly() throws {
+        let currentUserId: UserId = .unique
+        let messageId: MessageId = .unique
+
         let pairs: [(Result<MessagePayload.Boxed, Error>, LocalMessageState?)] = [
-            (.success(.init(message: .dummy(messageId: .unique, authorUserId: .unique))), nil),
+            (.success(.init(message: .dummy(messageId: messageId, authorUserId: currentUserId))), nil),
             (.failure(TestError()), .deletingFailed)
         ]
         
         for (networkResult, expectedState) in pairs {
-            let currentUserId: UserId = .unique
-            let messageId: MessageId = .unique
-            
             // Flush the database
             try database.removeAllData()
             
@@ -367,22 +367,94 @@ final class MessageUpdater_Tests: XCTestCase {
             
             // Create message authored by current user in the database
             try database.createMessage(id: messageId, authorId: currentUserId)
-            
+
             // Simulate `deleteMessage(messageId:)` call
             messageUpdater.deleteMessage(messageId: messageId, hard: false)
-            
+
             // Load the message
             let message = try XCTUnwrap(database.viewContext.message(id: messageId))
-            
+
             // Assert message's local state becomes `deleting`
             AssertAsync.willBeEqual(message.localMessageState, .deleting)
-            
+
             // Simulate API response
             apiClient.test_simulateResponse(networkResult)
-            
+
             // Assert message's local state becomes expected
             AssertAsync.willBeEqual(message.localMessageState, expectedState)
         }
+    }
+
+    func test_deleteMessage_whenHardDelete_whenSuccess_removesFromDatabase() throws {
+        let currentUserId: UserId = .unique
+        let messageId: MessageId = .unique
+
+        // Flush the database
+        try database.removeAllData()
+
+        // Create current user in the database
+        try database.createCurrentUser(id: currentUserId)
+
+        // Create message authored by current user in the database
+        try database.createMessage(id: messageId, authorId: currentUserId)
+
+        // Simulate `deleteMessage(messageId:)` call
+        messageUpdater.deleteMessage(messageId: messageId, hard: true)
+
+        // Load the message
+        let message = try XCTUnwrap(database.viewContext.message(id: messageId))
+
+        // Assert message's local state becomes `deleting`
+        AssertAsync.willBeEqual(message.localMessageState, .deleting)
+
+        // The message is marked has being hard deleted
+        XCTAssertEqual(message.isHardDeleted, true)
+
+        // Simulate API response
+        let networkResult: Result<MessagePayload.Boxed, Error> = .success(
+            .init(message: .dummy(messageId: messageId, authorUserId: currentUserId))
+        )
+        apiClient.test_simulateResponse(networkResult)
+
+        // Message will be marked for delete
+        AssertAsync.willBeEqual(message.isDeleted, true)
+    }
+
+    func test_deleteMessage_whenHardDelete_whenFailure_resetsIsHardDelete() throws {
+        let currentUserId: UserId = .unique
+        let messageId: MessageId = .unique
+
+        // Flush the database
+        try database.removeAllData()
+
+        // Create current user in the database
+        try database.createCurrentUser(id: currentUserId)
+
+        // Create message authored by current user in the database
+        try database.createMessage(id: messageId, authorId: currentUserId)
+
+        // Simulate `deleteMessage(messageId:)` call
+        messageUpdater.deleteMessage(messageId: messageId, hard: true)
+
+        // Load the message
+        let message = try XCTUnwrap(database.viewContext.message(id: messageId))
+
+        // Assert message's local state becomes `deleting`
+        AssertAsync.willBeEqual(message.localMessageState, .deleting)
+
+        // The message is marked has being hard deleted
+        XCTAssertEqual(message.isHardDeleted, true)
+
+        // Simulate API response
+        let networkResult: Result<MessagePayload.Boxed, Error> = .failure(TestError())
+        apiClient.test_simulateResponse(networkResult)
+
+        // Local message state is set to deleting failed
+        AssertAsync.willBeEqual(message.localMessageState, .deletingFailed)
+
+        // isHardDelete state is reset
+        let messageAfterHardDelete = database.viewContext.message(id: messageId)
+        XCTAssertEqual(messageAfterHardDelete?.isHardDeleted, false)
     }
     
     // MARK: Get message
