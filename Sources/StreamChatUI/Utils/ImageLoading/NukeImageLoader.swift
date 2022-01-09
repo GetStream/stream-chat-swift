@@ -93,30 +93,33 @@ open class NukeImageLoader: ImageLoading {
         completion: ((_ result: Result<UIImage, Error>) -> Void)? = nil
     ) -> Cancellable? {
         imageView.currentImageLoadingTask?.cancel()
-        
+
         guard var url = url else {
             imageView.image = placeholder
             return nil
         }
 
         let urlRequest = imageCDN.urlRequest(forImage: url)
-        let cachingKey = imageCDN.cachingKey(forImage: url)
-        
-        let processors: [ImageProcessing] = resize
-            ? [ImageProcessors.LateResize(sizeProvider: { imageView.bounds.size })]
-            : []
-        
-        let size = preferredSize ?? imageView.bounds.size
-        if resize && size != .zero {
+        let size = preferredSize ?? .zero
+        let canResize = resize && size != .zero
+
+        // If we don't have a valid size, we will not be able to resize using our CDN.
+        if canResize {
             url = imageCDN.thumbnailURL(originalURL: url, preferredSize: size)
         }
-        
-        let request = ImageRequest(
-            urlRequest: urlRequest,
-            processors: processors,
-            userInfo: [.imageIdKey: cachingKey]
-        )
-        
+
+        // At this point, if the image will be resized using our CDN, the url will contain the size values as
+        // parameters, and this will create a unique caching key for that url with this size. Only in this case we can
+        // successfully cache the resized image.
+        let cachingKey = imageCDN.cachingKey(forImage: url)
+
+        // If we don't have a size, we cannot properly create a 1:1 matching between a caching key and the resized image
+        // that LateResize will create. Therefore, we use/cache the original resolution image.
+        let processors: [ImageProcessing] = canResize
+            ? [ImageProcessors.LateResize(id: cachingKey, sizeProvider: { imageView.bounds.size })]
+            : []
+
+        let request = ImageRequest(urlRequest: urlRequest, processors: processors, userInfo: [.imageIdKey: cachingKey])
         let options = ImageLoadingOptions(placeholder: placeholder)
         imageView.currentImageLoadingTask = StreamChatUI.loadImage(
             with: request,
@@ -130,7 +133,7 @@ open class NukeImageLoader: ImageLoading {
                 completion?(.failure(error))
             }
         }
-        
+
         return imageView.currentImageLoadingTask
     }
 }

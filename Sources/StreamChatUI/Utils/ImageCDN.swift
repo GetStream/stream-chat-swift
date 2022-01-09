@@ -67,14 +67,26 @@ open class StreamImageCDN: ImageCDN {
         else { return originalURL }
 
         let scale = UIScreen.main.scale
-        components.queryItems = components.queryItems ?? []
-        components.queryItems?.append(contentsOf: [
-            URLQueryItem(name: "w", value: String(format: "%.0f", preferredSize.width * scale)),
-            URLQueryItem(name: "h", value: String(format: "%.0f", preferredSize.height * scale)),
-            URLQueryItem(name: "crop", value: "center"),
-            URLQueryItem(name: "resize", value: "fill"),
-            URLQueryItem(name: "ro", value: "0") // Required parameter.
-        ])
+        let queryItems: [String: String] = [
+            "w": preferredSize.width == 0 ? "*" : String(format: "%.0f", preferredSize.width * scale),
+            "h": preferredSize.height == 0 ? "*" : String(format: "%.0f", preferredSize.height * scale),
+            "crop": "center",
+            "resize": "fill",
+            "ro": "0" // Required parameter.
+        ]
+
+        var items = components.queryItems ?? []
+
+        for (key, value) in queryItems {
+            if let index = items.firstIndex(where: { $0.name == key }) {
+                items[index].value = value
+            } else {
+                let item = URLQueryItem(name: key, value: value)
+                items += [item]
+            }
+        }
+
+        components.queryItems = items
         return components.url ?? originalURL
     }
 }
