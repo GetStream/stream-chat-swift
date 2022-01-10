@@ -14,13 +14,15 @@ class JoinPrivateGroupVC: UIViewController {
     // MARK: - Variables
     var controller: ChatChannelListController?
     var passWord = ""
-    /// We use private property for channels count so we can update it inside `performBatchUpdates` as [documented](https://developer.apple.com/documentation/uikit/uicollectionview/1618045-performbatchupdates#discussion)
-    private var channelsCount = 0
+    private var isChannelFetched = false
+    private var memberListController: ChatChannelMemberListController?
+    private var channelMembers: LazyCachedMapCollection<ChatChannelMember> = []
 
     // MARK: - Outlets
     @IBOutlet weak var btnBack: UIButton!
     @IBOutlet weak var lblOTP: UILabel!
     @IBOutlet weak var cvUserList: UICollectionView!
+    @IBOutlet weak var btnJoinGroup: UIButton!
 
     // MARK: - View Life cycle
     override func viewDidLoad() {
@@ -33,35 +35,34 @@ class JoinPrivateGroupVC: UIViewController {
         navigationController?.popViewController(animated: true)
     }
 
+    @IBAction func btnJoinGroupAction(_ sender: UIButton) {
+        
+    }
+
     // MARK: - Functions
     private func setupUI() {
         btnBack.setTitle("", for: .normal)
         btnBack.setImage(Appearance.default.images.backCircle, for: .normal)
+        lblOTP.text = passWord
         lblOTP.textColor = Appearance.default.colorPalette.themeBlue
         lblOTP.textDropShadow(color: Appearance.default.colorPalette.themeBlue)
         lblOTP.setTextSpacingBy(value: 10)
-        cvUserList?.register(UINib(nibName: PrivateGroupUsersCVCell.identifier, bundle: nil), forCellWithReuseIdentifier: PrivateGroupUsersCVCell.identifier)
+        btnJoinGroup.backgroundColor = Appearance.default.colorPalette.themeBlue
+        btnJoinGroup.layer.cornerRadius = 6
+        cvUserList?.register(UINib(nibName: PrivateGroupUsersCVCell.identifier, bundle: nil),
+                             forCellWithReuseIdentifier: PrivateGroupUsersCVCell.identifier)
         filterChannels()
     }
 
     private func filterChannels() {
         controller = ChatClient.shared.channelListController(
             query: .init(
-                filter: .or([
-                    .containMembers(userIds: [ChatClient.shared.currentUserId!]),
-                    .and([
-                        .equal(.type, to: .privateMessaging),
-                        .equal("password", to: passWord)
-                    ])
+                filter: .and([
+                    .equal(.type, to: .privateMessaging),
+                    .equal("password", to: passWord)
                 ])))
         controller?.synchronize()
-        channelsCount = controller?.channels.count ?? 0
-        if controller?.channels.count ?? 0 > 0 {
-            print("channel exiest")
-        } else {
-            print("channel not exiest")
-            //createPrivateChannel()
-        }
+        controller?.delegate = self
     }
 
     private func createPrivateChannel() {
@@ -76,19 +77,37 @@ class JoinPrivateGroupVC: UIViewController {
                 createChannelWithId: .init(type: .privateMessaging, id: String(UUID().uuidString.prefix(10))),
                 name: "temp group name",
                 members: [],
-                isCurrentUserMember: false,
                 extraData: extraData)
-            channelController.synchronize { error in
-                print(error)
+            channelController.synchronize { [weak self] error in
+                guard error == nil, let self = self else {
+                    return
+                }
+                self.fetchChannelMembers(id: channelController.channel?.cid.id ?? "")
             }
         } catch {
             print("error while creating channel")
         }
+    }
 
+    private func addMeInChannel(channelId: String) {
+        guard let currentUserId = ChatClient.shared.currentUserId else {
+            return
+        }
+        let channelController = ChatClient.shared.channelController(for: .init(type: .privateMessaging, id: channelId))
+        channelController.addMembers(userIds: [currentUserId], completion: nil)
+        fetchChannelMembers(id: channelId)
+    }
+
+    private func fetchChannelMembers(id: String) {
+        memberListController = ChatClient.shared.memberListController(query: .init(cid: .init(type: .privateMessaging, id: id)))
+        memberListController?.delegate = self
+        memberListController?.synchronize()
+        channelMembers = memberListController?.members ?? []
+        cvUserList.reloadData()
     }
 }
 
-/*// MARK: - ChannelList delegate
+// MARK: - ChannelList delegate
 extension JoinPrivateGroupVC: ChatChannelListControllerDelegate {
     open func controller(_ controller: ChatChannelListController, shouldAddNewChannelToList channel: ChatChannel) -> Bool {
         return true
@@ -99,41 +118,48 @@ extension JoinPrivateGroupVC: ChatChannelListControllerDelegate {
     }
 
     open func controller(_ controller: DataController, didChangeState state: DataController.State) {
-        guard let channelController = self.controller else {
+        guard let channelController = self.controller, !isChannelFetched else {
             return
         }
+         isChannelFetched = true
         switch state {
-        case .initialized, .localDataFetched:
+        case .localDataFetched, .remoteDataFetched:
             if channelController.channels.isEmpty {
-                loadingIndicator.startAnimating()
+                createPrivateChannel()
             } else {
-                loadingIndicator.stopAnimating()
+                guard let firstChannel = channelController.channels.first else {
+                    return
+                }
+                addMeInChannel(channelId: firstChannel.cid.id)
             }
         default:
-            loadingIndicator.stopAnimating()
+            break
         }
     }
+}
 
-    open func controllerWillChangeChannels(_ controller: ChatChannelListController) {
-        channelsCount = controller.channels.count
+// MARK: - ChatChannelMemberListController Delegate
+extension JoinPrivateGroupVC: ChatChannelMemberListControllerDelegate, ChatUserListControllerDelegate {
+    func memberListController(_ controller: ChatChannelMemberListController, didChangeMembers changes: [ListChange<ChatChannelMember>]) {
+        memberListController?.synchronize()
+        channelMembers = memberListController?.members ?? []
+        cvUserList.reloadData()
     }
-
-    open func controller(
-        _ controller: ChatChannelListController,
-        didChangeChannels changes: [ListChange<ChatChannel>]
-    ) {
-        channelsCount = controller.channels.count
-    }
-}*/
+}
 
 // MARK: - CollectionView delegates
 extension JoinPrivateGroupVC: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 10
+        return channelMembers.count
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: PrivateGroupUsersCVCell.identifier, for: indexPath)
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: PrivateGroupUsersCVCell.identifier, for: indexPath) as? PrivateGroupUsersCVCell
+        else {
+            return UICollectionViewCell()
+        }
+        let indexData = channelMembers[indexPath.row]
+        cell.configData(data: indexData)
         return cell
     }
 

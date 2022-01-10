@@ -54,6 +54,10 @@
                 <constraint firstAttribute="trailing" secondItem="sUz-go-7PF" secondAttribute="trailing" constant="6" id="vQy-PK-cBu"/>
             </constraints>
             <size key="customSize" width="156" height="190"/>
+            <connections>
+                <outlet property="imgAvatar" destination="9bK-CP-ruL" id="5ws-8b-w07"/>
+                <outlet property="lblUserName" destination="rTb-Pp-aKX" id="Yos-FJ-qyV"/>
+            </connections>
             <point key="canvasLocation" x="207.97101449275365" y="138.61607142857142"/>
         </collectionViewCell>
     </objects>

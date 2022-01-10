@@ -7,14 +7,27 @@
 //
 
 import UIKit
+import StreamChat
+import Nuke
 
 class PrivateGroupUsersCVCell: UICollectionViewCell {
 
     static let identifier = "PrivateGroupUsersCVCell"
+    // MARK: - Outlets
+    @IBOutlet private weak var imgAvatar: UIImageView!
+    @IBOutlet private weak var lblUserName: UILabel!
 
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
+    }
+
+    // MARK: - Functions
+    func configData(data: ChatChannelMember) {
+        NukeImageLoader().loadImage(into: imgAvatar, url: data.imageURL, imageCDN: StreamImageCDN(), placeholder: nil, resize: true) { result in
+            print(result)
+        }
+        lblUserName.text = data.name
     }
 
 }

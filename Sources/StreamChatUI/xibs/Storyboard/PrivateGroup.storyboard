@@ -186,7 +186,7 @@
                                 <color key="shadowColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             </label>
                             <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="KP0-1K-V0o">
-                                <rect key="frame" x="0.0" y="165" width="414" height="697"/>
+                                <rect key="frame" x="0.0" y="165" width="414" height="622"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="0.0" minimumInteritemSpacing="0.0" id="Gbi-Nn-uQU">
                                     <size key="itemSize" width="138" height="138"/>
@@ -209,6 +209,18 @@
                                     <outlet property="delegate" destination="jto-lA-8Ps" id="kjo-id-IAW"/>
                                 </connections>
                             </collectionView>
+                            <button opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="9ms-PI-oeJ">
+                                <rect key="frame" x="40" y="804" width="334" height="50"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="50" id="lTu-YR-BOZ"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
+                                <state key="normal" title="Join This Group"/>
+                                <connections>
+                                    <action selector="btnJoinGroupAction:" destination="jto-lA-8Ps" eventType="touchUpInside" id="6aq-4H-fWF"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="tEh-RS-mul"/>
                         <color key="backgroundColor" red="0.027450980392156862" green="0.039215686274509803" blue="0.050980392156862744" alpha="1" colorSpace="calibratedRGB"/>
@@ -220,23 +232,27 @@
                             <constraint firstItem="tEh-RS-mul" firstAttribute="trailing" secondItem="9fR-EQ-HJQ" secondAttribute="trailing" id="7mu-d2-9mg"/>
                             <constraint firstItem="tEh-RS-mul" firstAttribute="trailing" secondItem="KP0-1K-V0o" secondAttribute="trailing" id="87H-UE-89T"/>
                             <constraint firstItem="WOe-Q5-qPe" firstAttribute="centerX" secondItem="tEh-RS-mul" secondAttribute="centerX" id="8rr-Br-jxd"/>
-                            <constraint firstItem="tEh-RS-mul" firstAttribute="bottom" secondItem="KP0-1K-V0o" secondAttribute="bottom" id="BTU-XY-XzO"/>
+                            <constraint firstItem="9ms-PI-oeJ" firstAttribute="bottom" secondItem="tEh-RS-mul" secondAttribute="bottom" constant="-8" id="EEd-pN-bCM"/>
+                            <constraint firstItem="9ms-PI-oeJ" firstAttribute="leading" secondItem="tEh-RS-mul" secondAttribute="leading" constant="40" id="Iu4-BL-WvF"/>
+                            <constraint firstItem="tEh-RS-mul" firstAttribute="trailing" secondItem="9ms-PI-oeJ" secondAttribute="trailing" constant="40" id="RWs-OA-yW4"/>
                             <constraint firstItem="KP0-1K-V0o" firstAttribute="leading" secondItem="tEh-RS-mul" secondAttribute="leading" id="Ra1-8n-Fqe"/>
                             <constraint firstAttribute="trailing" secondItem="2nz-6E-EM0" secondAttribute="trailing" id="RvD-ba-8hh"/>
                             <constraint firstItem="2nz-6E-EM0" firstAttribute="top" secondItem="w5e-7e-sDz" secondAttribute="top" id="TFU-xY-JI7"/>
                             <constraint firstItem="9fR-EQ-HJQ" firstAttribute="top" secondItem="2nz-6E-EM0" secondAttribute="bottom" id="Zt1-F7-yfx"/>
                             <constraint firstItem="9fR-EQ-HJQ" firstAttribute="leading" secondItem="w5e-7e-sDz" secondAttribute="leading" id="lU8-ZN-WlG"/>
+                            <constraint firstItem="9ms-PI-oeJ" firstAttribute="top" secondItem="KP0-1K-V0o" secondAttribute="bottom" constant="17" id="ztr-yy-PQh"/>
                         </constraints>
                     </view>
                     <connections>
                         <outlet property="btnBack" destination="erV-bJ-x8g" id="OpL-xU-O3f"/>
+                        <outlet property="btnJoinGroup" destination="9ms-PI-oeJ" id="0Mu-fL-F8f"/>
                         <outlet property="cvUserList" destination="KP0-1K-V0o" id="eHM-Kp-AG8"/>
                         <outlet property="lblOTP" destination="WOe-Q5-qPe" id="zJ1-FI-zEz"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="zAI-3E-4jc" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="783" y="69"/>
+            <point key="canvasLocation" x="782.60869565217399" y="68.973214285714278"/>
         </scene>
     </scenes>
     <resources>
