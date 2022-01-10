@@ -125,13 +125,13 @@ public class ChatClient {
                 }
                 
                 // Create the folder if needed
-                try? FileManager.default.createDirectory(
+                try FileManager.default.createDirectory(
                     at: storeURL,
                     withIntermediateDirectories: true,
                     attributes: nil
                 )
                 
-                let dbFileURL = config.localStorageFolderURL!.appendingPathComponent(config.apiKey.apiKeyString)
+                let dbFileURL = storeURL.appendingPathComponent(config.apiKey.apiKeyString)
                 return try environment.databaseContainerBuilder(
                     .onDisk(databaseFileURL: dbFileURL),
                     config.shouldFlushLocalStorageOnStart,
