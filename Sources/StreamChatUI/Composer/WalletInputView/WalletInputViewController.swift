@@ -11,13 +11,14 @@ class WalletInputViewController: UIViewController {
 
     // MARK: - Outlets
     @IBOutlet weak var viewKeypad: UIStackView!
+    @IBOutlet weak var btnClose: UIButton!
     @IBOutlet var btnKeyPad: [UIButton]!
     @IBOutlet weak var walletStepper: WalletStepper!
 
     // MARK: - Variables
-    var updatedAmount = 0
-    var didHide: ((Int) -> Void)?
-    var didRequestAction: ((Int) -> Void)?
+    var updatedAmount = 0.0
+    var didHide: ((Double) -> Void)?
+    var didRequestAction: ((Double) -> Void)?
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -28,26 +29,26 @@ class WalletInputViewController: UIViewController {
         btnKeyPad.forEach { btn in
             btn.layer.cornerRadius = 30
         }
+        btnClose.setImage(Appearance.default.images.closePopup, for: .normal)
+        self.walletStepper.updateAmount(amount: updatedAmount)
     }
 
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        didHide?(1)
+        didHide?(walletStepper.value)
     }
 
     @IBAction func btnRequestAction(_ sender: Any) {
-        didRequestAction?(1)
+        didRequestAction?(walletStepper.value)
     }
 
     @IBAction func btnKeypadAction(_ sender: UIButton) {
-        if let keyPadNumber = sender.titleLabel?.text {
-            let amount = "\(walletStepper.value)" + "\(keyPadNumber)"
-            walletStepper.updateAmount(amount: Int(amount) ?? 0)
-        } else {
-            var amount = "\(walletStepper.value)"
-            _ = amount.removeLast()
-            walletStepper.updateAmount(amount: Int(amount) ?? 0)
-        }
+        walletStepper.insertNumber(numberValue: sender.titleLabel?.text)
+    }
+
+    @IBAction func btnCloseAction(_ sender: Any) {
+        didHide?(walletStepper.value)
+        self.dismiss(animated: true, completion: nil)
     }
 
 }

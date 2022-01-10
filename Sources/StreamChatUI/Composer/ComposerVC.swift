@@ -564,11 +564,13 @@ open class ComposerVC: _ViewController,
             self.addWalletAttachment(amount: amount, paymentType: .request)
         }
 
-        walletInputView?.showKeypad = { [weak self] in
+        walletInputView?.showKeypad = { [weak self] amount in
             guard let `self` = self else { return }
             guard let walletView: WalletInputViewController = WalletInputViewController.instantiate(appStoryboard: .wallet) else { return }
+            walletView.updatedAmount = amount
             walletView.didHide = { [weak self] amount in
                 guard let `self` = self else { return }
+                self.walletInputView?.walletStepper.updateAmount(amount: amount)
             }
             walletView.didRequestAction = { [weak self] amount in
                 guard let `self` = self else { return }
@@ -592,7 +594,7 @@ open class ComposerVC: _ViewController,
         self.composerView.inputMessageView.textView.reloadInputViews()
     }
 
-    private func addWalletAttachment(amount: Int, paymentType: WalletAttachmentPayload.PaymentType) {
+    private func addWalletAttachment(amount: Double, paymentType: WalletAttachmentPayload.PaymentType) {
         DispatchQueue.main.async {
             do {
                 let attachment = try AnyAttachmentPayload(wallet: "$\(amount)", paymentType: paymentType)

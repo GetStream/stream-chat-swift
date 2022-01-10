@@ -281,5 +281,6 @@ public extension Appearance {
         // MARK: - Wallet Keyboard
         public var add: UIImage = loadImageSafely(with: "add")
         public var remove: UIImage = loadImageSafely(with: "remove")
+        public var closePopup: UIImage = loadImageSafely(with: "closePopup")
     }
 }

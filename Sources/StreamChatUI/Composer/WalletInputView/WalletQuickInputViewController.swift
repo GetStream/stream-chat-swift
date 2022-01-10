@@ -14,19 +14,19 @@ class WalletQuickInputViewController: UIViewController {
     @IBOutlet weak var walletStepper: WalletStepper!
 
     // MARK: - Variables
-    var showKeypad: (() -> Void)?
-    var didRequestAction: ((Int) -> Void)?
+    var showKeypad: ((Double) -> Void)?
+    var didRequestAction: ((Double) -> Void)?
 
     override func viewDidLoad() {
         super.viewDidLoad()
     }
     
     @IBAction func btnShowKeypadAction(_ sender: Any) {
-        showKeypad?()
+        showKeypad?(walletStepper.value)
     }
 
     @IBAction func btnRequestAction(_ sender: Any) {
-        didRequestAction?(1)
+        didRequestAction?(walletStepper.value)
     }
 
 }
