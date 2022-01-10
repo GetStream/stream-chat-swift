@@ -159,11 +159,12 @@ class WalletStepper: UIView {
         if panGesture.state == .began {
             startPosition = gestureLocation
         } else if panGesture.state == .changed {
-            if scrollLock == false {
-                scrollDirection = (abs(startPosition.y - gestureLocation.y) > 3) ? .upDown : .leftRight
+            if ((abs(startPosition.y - gestureLocation.y) > 10) && scrollLock == false) || ((abs(startPosition.x - gestureLocation.x) > 10 && scrollLock == false)) {
+                scrollDirection = (abs(startPosition.y - gestureLocation.y) > 10) ? .upDown : .leftRight
                 scrollLock = true
+                print(scrollDirection)
             }
-            guard let scrollDirection = scrollDirection else { return }
+            guard let scrollDirection = scrollDirection, scrollLock else { return }
             if scrollDirection == .upDown {
                 guard let panGestureInteractionInformation = startPosition else { return }
                 let offsetFromStart = gestureLocation.y - panGestureInteractionInformation.y
@@ -222,6 +223,7 @@ class WalletStepper: UIView {
 
             centerContainerXLayoutConstraint.constant = 0
             centerContainerYLayoutConstraint.constant = 0
+            scrollDirection = nil
             self.animate(animations: { [weak self] in
                 guard let `self` = self else { return }
                 self.layoutIfNeeded()
