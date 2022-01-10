@@ -161,12 +161,14 @@ class AppConfigViewController: UITableViewController {
 
         switch option {
         case .isHardDeleteEnabled:
-            cell.accessoryView = makeSwitchButton(demoAppConfig.isHardDeleteEnabled) { newValue in
-                self.demoAppConfig.isHardDeleteEnabled = newValue
+            cell.accessoryView = makeSwitchButton(demoAppConfig.isHardDeleteEnabled) {
+                [weak self] newValue in
+                self?.demoAppConfig.isHardDeleteEnabled = newValue
             }
         case .isAtlantisEnabled:
-            cell.accessoryView = makeSwitchButton(demoAppConfig.isAtlantisEnabled) { newValue in
-                self.demoAppConfig.isAtlantisEnabled = newValue
+            cell.accessoryView = makeSwitchButton(demoAppConfig.isAtlantisEnabled) {
+                [weak self] newValue in
+                self?.demoAppConfig.isAtlantisEnabled = newValue
             }
         }
     }
@@ -197,16 +199,19 @@ class AppConfigViewController: UITableViewController {
 
         switch option {
         case .isLocalStorageEnabled:
-            cell.accessoryView = makeSwitchButton(chatClientConfig.isLocalStorageEnabled) { newValue in
-                self.chatClientConfig.isLocalStorageEnabled = newValue
+            cell.accessoryView = makeSwitchButton(chatClientConfig.isLocalStorageEnabled) {
+                [weak self] newValue in
+                self?.chatClientConfig.isLocalStorageEnabled = newValue
             }
         case .staysConnectedInBackground:
-            cell.accessoryView = makeSwitchButton(chatClientConfig.staysConnectedInBackground) { newValue in
-                self.chatClientConfig.staysConnectedInBackground = newValue
+            cell.accessoryView = makeSwitchButton(chatClientConfig.staysConnectedInBackground) {
+                [weak self] newValue in
+                self?.chatClientConfig.staysConnectedInBackground = newValue
             }
         case .shouldShowShadowedMessages:
-            cell.accessoryView = makeSwitchButton(chatClientConfig.shouldShowShadowedMessages) { newValue in
-                self.chatClientConfig.shouldShowShadowedMessages = newValue
+            cell.accessoryView = makeSwitchButton(chatClientConfig.shouldShowShadowedMessages) {
+                [weak self] newValue in
+                self?.chatClientConfig.shouldShowShadowedMessages = newValue
             }
         case .deletedMessagesVisibility:
             cell.detailTextLabel?.text = chatClientConfig.deletedMessagesVisibility.labelText
@@ -247,9 +252,9 @@ class AppConfigViewController: UITableViewController {
             initialSelectedOptions: [chatClientConfig.deletedMessagesVisibility],
             allowsMultipleSelection: false
         )
-        selectorViewController.didChangeSelectedOptions = { options in
+        selectorViewController.didChangeSelectedOptions = { [weak self] options in
             guard let selectedOption = options.first else { return }
-            self.chatClientConfig.deletedMessagesVisibility = selectedOption
+            self?.chatClientConfig.deletedMessagesVisibility = selectedOption
         }
 
         navigationController?.pushViewController(selectorViewController, animated: true)
