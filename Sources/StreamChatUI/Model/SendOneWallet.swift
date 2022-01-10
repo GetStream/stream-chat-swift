@@ -18,6 +18,7 @@ public struct SendOneWallet {
     public var myImageUrl: URL?
     public var transferAmount: Float?
     public var txId: String?
+    public var strFormattedAmount: String?
 
     public init() {
     }
