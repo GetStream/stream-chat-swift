@@ -2,6 +2,7 @@
 // Copyright © 2022 Stream.io Inc. All rights reserved.
 //
 
+import Atlantis
 import StreamChat
 import StreamChatUI
 import UIKit
@@ -75,15 +76,16 @@ final class DemoAppCoordinator: NSObject, UNUserNotificationCenterDelegate {
         LogConfig.formatters = [
             PrefixLogFormatter(prefixes: [.info: "ℹ️", .debug: "🛠", .warning: "⚠️", .error: "🚨"])
         ]
-        
-        // Define the Config
-        var config = ChatClientConfig(apiKey: .init(apiKeyString))
-//        config.isLocalStorageEnabled = true
-        config.shouldShowShadowedMessages = true
-        config.applicationGroupIdentifier = applicationGroupIdentifier
+
+        // HTTP and WebSocket Proxy with Proxyman.app
+        if AppConfig.shared.demoAppConfig.isAtlantisEnabled {
+            Atlantis.start()
+        } else {
+            Atlantis.stop()
+        }
 
         // Connect the User
-        ChatClient.shared = ChatClient(config: config)
+        ChatClient.shared = ChatClient(config: AppConfig.shared.chatClientConfig)
         ChatClient.shared.connectUser(
             userInfo: .init(id: userCredentials.id, name: userCredentials.name, imageURL: userCredentials.avatarURL),
             token: token
@@ -101,6 +103,7 @@ final class DemoAppCoordinator: NSObject, UNUserNotificationCenterDelegate {
         Components.default.messageContentView = CustomMessageContentView.self
         Components.default.messageListDateSeparatorEnabled = true
         Components.default.messageListDateOverlayEnabled = true
+        Components.default.messageActionsVC = CustomChatMessageActionsVC.self
         
         let localizationProvider = Appearance.default.localizationProvider
         Appearance.default.localizationProvider = { key, table in
@@ -303,5 +306,47 @@ class HiddenChannelListVC: ChatChannelListVC {
 
         title = "Hidden Channels"
         navigationItem.leftBarButtonItem = nil
+    }
+}
+
+class CustomChatMessageActionsVC: ChatMessageActionsVC {
+    // For the propose of the demo app, we add an extra hard delete message to test it.
+    override var messageActions: [ChatMessageActionItem] {
+        var actions = super.messageActions
+        if message?.isSentByCurrentUser == true && AppConfig.shared.demoAppConfig.isHardDeleteEnabled {
+            actions.append(hardDeleteActionItem())
+        }
+        return actions
+    }
+
+    open func hardDeleteActionItem() -> ChatMessageActionItem {
+        HardDeleteActionItem(
+            action: { [weak self] _ in
+                guard let self = self else { return }
+                self.alertsRouter.showMessageDeletionConfirmationAlert { confirmed in
+                    guard confirmed else { return }
+
+                    self.messageController.deleteMessage(hard: true) { _ in
+                        self.delegate?.chatMessageActionsVCDidFinish(self)
+                    }
+                }
+            },
+            appearance: appearance
+        )
+    }
+
+    public struct HardDeleteActionItem: ChatMessageActionItem {
+        public var title: String { "Hard Delete Message" }
+        public var isDestructive: Bool { true }
+        public let icon: UIImage
+        public let action: (ChatMessageActionItem) -> Void
+
+        public init(
+            action: @escaping (ChatMessageActionItem) -> Void,
+            appearance: Appearance = .default
+        ) {
+            self.action = action
+            icon = appearance.images.messageActionDelete
+        }
     }
 }

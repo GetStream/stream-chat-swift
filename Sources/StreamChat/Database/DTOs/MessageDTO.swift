@@ -16,6 +16,7 @@ class MessageDTO: NSManagedObject {
     @NSManaged var createdAt: Date
     @NSManaged var updatedAt: Date
     @NSManaged var deletedAt: Date?
+    @NSManaged var isHardDeleted: Bool
     @NSManaged var args: String?
     @NSManaged var parentMessageId: MessageId?
     @NSManaged var showReplyInChannel: Bool
@@ -114,6 +115,7 @@ class MessageDTO: NSManagedObject {
         deletedMessagesVisibility: ChatClientConfig.DeletedMessageVisibility
     ) -> NSPredicate {
         let deletedMessagesPredicate: NSPredicate
+
         switch deletedMessagesVisibility {
         case .alwaysHidden:
             deletedMessagesPredicate = nonDeletedMessagesPredicate()
@@ -122,7 +124,15 @@ class MessageDTO: NSManagedObject {
         case .alwaysVisible:
             deletedMessagesPredicate = NSPredicate(value: true) // an empty predicate to avoid optionals
         }
-        return deletedMessagesPredicate
+
+        let ignoreHardDeletedMessagesPredicate = NSPredicate(
+            format: "isHardDeleted == NO"
+        )
+
+        return NSCompoundPredicate(andPredicateWithSubpredicates: [
+            deletedMessagesPredicate,
+            ignoreHardDeletedMessagesPredicate
+        ])
     }
 
     /// Returns a predicate that filters out all deleted messages

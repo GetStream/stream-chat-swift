@@ -60,6 +60,12 @@ class LoginViewController: UIViewController {
             tableView.deselectRow(at: selectedRow, animated: true)
         }
     }
+
+    @IBAction func didTapConfigurationButton(_ sender: Any) {
+        let configViewController = AppConfigViewController()
+        let navController = UINavigationController(rootViewController: configViewController)
+        present(navController, animated: true, completion: nil)
+    }
 }
 
 extension LoginViewController: UITableViewDelegate, UITableViewDataSource {

@@ -2,7 +2,6 @@
 // Copyright © 2022 Stream.io Inc. All rights reserved.
 //
 
-import Atlantis
 import StreamChat
 import UIKit
 
@@ -12,8 +11,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         _ application: UIApplication,
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
     ) -> Bool {
-        // Uncomment this to be able to proxy WebSocket events from Proxyman.app
-        // Atlantis.start()
         true
     }
 

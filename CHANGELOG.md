@@ -3,6 +3,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+### ✅ Added
+- Add hard delete messages support [#1745](https://github.com/GetStream/stream-chat-swift/pull/1745)
+
 ### 🐞 Fixed
 - Fix wrong image resolution when images are being quoted [#1747](https://github.com/GetStream/stream-chat-swift/pull/1747)
 
