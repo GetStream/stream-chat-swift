@@ -22,7 +22,11 @@ open class ChatMessageListVC:
     UIGestureRecognizerDelegate,
     UIAdaptivePresentationControllerDelegate {
     /// The object that acts as the data source of the message list.
-    public weak var dataSource: ChatMessageListVCDataSource?
+    public weak var dataSource: ChatMessageListVCDataSource? {
+        didSet {
+            listView.reloadData()
+        }
+    }
 
     /// The object that acts as the delegate of the message list.
     public weak var delegate: ChatMessageListVCDelegate?
