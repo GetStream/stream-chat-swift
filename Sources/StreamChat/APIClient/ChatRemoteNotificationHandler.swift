@@ -83,7 +83,16 @@ public class ChatRemoteNotificationHandler {
     let chatCategoryIdentifiers: Set<String> = ["stream.chat", "MESSAGE_NEW"]
     let database: DatabaseContainer
 
-    private lazy var syncRepository = SyncRepository(client: client, database: database)
+    private(set) lazy var syncRepository: SyncRepository = {
+        let channelRepository = ChannelListUpdater(database: database, apiClient: client.apiClient)
+        return SyncRepository(
+            config: client.config,
+            channelRepository: channelRepository,
+            eventNotificationCenter: client.eventNotificationCenter,
+            database: database,
+            apiClient: client.apiClient
+        )
+    }()
 
     public init(client: ChatClient, content: UNNotificationContent) {
         self.client = client
@@ -139,7 +148,7 @@ public class ChatRemoteNotificationHandler {
                 return
             }
 
-            self.syncRepository.syncChannels {
+            self.syncRepository.syncExistingChannelsEvents(bumpSyncDate: true) {
                 let channel = ChannelDTO.load(cid: cid, context: self.database.viewContext)?.asModel()
                 completion(message, channel)
             }

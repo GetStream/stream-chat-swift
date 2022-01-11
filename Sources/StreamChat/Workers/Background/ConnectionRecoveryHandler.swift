@@ -1,5 +1,5 @@
 //
-// Copyright © 2021 Stream.io Inc. All rights reserved.
+// Copyright © 2022 Stream.io Inc. All rights reserved.
 //
 
 import CoreData
@@ -25,6 +25,7 @@ final class DefaultConnectionRecoveryHandler: ConnectionRecoveryHandler {
     
     private let webSocketClient: WebSocketClient
     private let eventNotificationCenter: EventNotificationCenter
+    private let syncRepository: SyncRepository
     private let backgroundTaskScheduler: BackgroundTaskScheduler?
     private let internetConnection: InternetConnection
     private let reconnectionTimerType: Timer.Type
@@ -37,6 +38,7 @@ final class DefaultConnectionRecoveryHandler: ConnectionRecoveryHandler {
     init(
         webSocketClient: WebSocketClient,
         eventNotificationCenter: EventNotificationCenter,
+        syncRepository: SyncRepository,
         backgroundTaskScheduler: BackgroundTaskScheduler?,
         internetConnection: InternetConnection,
         reconnectionStrategy: RetryStrategy,
@@ -45,6 +47,7 @@ final class DefaultConnectionRecoveryHandler: ConnectionRecoveryHandler {
     ) {
         self.webSocketClient = webSocketClient
         self.eventNotificationCenter = eventNotificationCenter
+        self.syncRepository = syncRepository
         self.backgroundTaskScheduler = backgroundTaskScheduler
         self.internetConnection = internetConnection
         self.reconnectionStrategy = reconnectionStrategy
@@ -153,6 +156,7 @@ extension DefaultConnectionRecoveryHandler {
             
         case .disconnected:
             scheduleReconnectionTimerIfNeeded()
+            sync()
             
         case .initialized, .waitingForConnectionId, .disconnecting:
             break
@@ -213,6 +217,14 @@ private extension DefaultConnectionRecoveryHandler {
         log.debug("Will reconnect automatically", subsystems: .webSocket)
         
         return true
+    }
+}
+
+// MARK: - Sync
+
+private extension DefaultConnectionRecoveryHandler {
+    func sync() {
+        syncRepository.recoverFromOfflineState {}
     }
 }
 

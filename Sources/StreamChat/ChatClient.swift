@@ -62,6 +62,18 @@ public class ChatClient {
 
         return center
     }()
+
+    /// The notification center used to send and receive notifications about incoming events.
+    private(set) lazy var syncRepository: SyncRepository = {
+        let channelRepository = ChannelListUpdater(database: databaseContainer, apiClient: apiClient)
+        return SyncRepository(
+            config: config,
+            channelRepository: channelRepository,
+            eventNotificationCenter: eventNotificationCenter,
+            database: databaseContainer,
+            apiClient: apiClient
+        )
+    }()
     
     /// The `APIClient` instance `Client` uses to communicate with Stream REST API.
     lazy var apiClient: APIClient = {
@@ -362,6 +374,7 @@ public class ChatClient {
             connectionRecoveryHandler = environment.connectionRecoveryHandlerBuilder(
                 webSocketClient,
                 eventNotificationCenter,
+                syncRepository,
                 environment.backgroundTaskSchedulerBuilder(),
                 environment.internetConnection(eventNotificationCenter),
                 config.staysConnectedInBackground
@@ -482,6 +495,7 @@ extension ChatClient {
         var connectionRecoveryHandlerBuilder: (
             _ webSocketClient: WebSocketClient,
             _ eventNotificationCenter: EventNotificationCenter,
+            _ syncRepository: SyncRepository,
             _ backgroundTaskScheduler: BackgroundTaskScheduler?,
             _ internetConnection: InternetConnection,
             _ keepConnectionAliveInBackground: Bool
@@ -489,11 +503,12 @@ extension ChatClient {
             DefaultConnectionRecoveryHandler(
                 webSocketClient: $0,
                 eventNotificationCenter: $1,
-                backgroundTaskScheduler: $2,
-                internetConnection: $3,
+                syncRepository: $2,
+                backgroundTaskScheduler: $3,
+                internetConnection: $4,
                 reconnectionStrategy: DefaultRetryStrategy(),
                 reconnectionTimerType: DefaultTimer.self,
-                keepConnectionAliveInBackground: $4
+                keepConnectionAliveInBackground: $5
             )
         }
     }

@@ -1421,6 +1421,7 @@
 		C1BE72732732CA62006EB51E /* Nuke in Frameworks */ = {isa = PBXBuildFile; productRef = C1BE72722732CA62006EB51E /* Nuke */; };
 		C1E8AD57278C8A6E0041B775 /* SyncRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1E8AD55278C8A440041B775 /* SyncRepository.swift */; };
 		C1E8AD58278C8A6F0041B775 /* SyncRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1E8AD55278C8A440041B775 /* SyncRepository.swift */; };
+		C1E8AD5C278DDEC70041B775 /* AsyncOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1E8AD5B278DDEC70041B775 /* AsyncOperation.swift */; };
 		C1FC2F6727416E150062530F /* ResumableData.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1BE728A2732CB7B006EB51E /* ResumableData.swift */; };
 		C1FC2F6827416E150062530F /* ImagePipelineCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1BE72822732CB7B006EB51E /* ImagePipelineCache.swift */; };
 		C1FC2F6927416E150062530F /* Log.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1BE72952732CB7B006EB51E /* Log.swift */; };
@@ -2978,6 +2979,7 @@
 		C1BE729B2732CB7B006EB51E /* ImageRequestKeys.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageRequestKeys.swift; sourceTree = "<group>"; };
 		C1BE729C2732CB7B006EB51E /* LinkedList.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LinkedList.swift; sourceTree = "<group>"; };
 		C1E8AD55278C8A440041B775 /* SyncRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncRepository.swift; sourceTree = "<group>"; };
+		C1E8AD5B278DDEC70041B775 /* AsyncOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AsyncOperation.swift; sourceTree = "<group>"; };
 		DA0BB1602513B5F200CAEFBD /* StringInterpolation+Extenstions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "StringInterpolation+Extenstions.swift"; sourceTree = "<group>"; };
 		DA15A20224DF256F00BE2423 /* ChannelQuery_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelQuery_Tests.swift; sourceTree = "<group>"; };
 		DA49714D2549C28000AC68C2 /* AttachmentDTO_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttachmentDTO_Tests.swift; sourceTree = "<group>"; };
@@ -3393,6 +3395,7 @@
 				799C9426247D2FB9001F1104 /* WebSocketClient */,
 				799C9435247D2FB9001F1104 /* APIClient */,
 				799C9427247D2FB9001F1104 /* Workers */,
+				C1E8AD59278DDC500041B775 /* Repositories */,
 				799C9429247D2FB9001F1104 /* Database */,
 				799C9430247D2FB9001F1104 /* Models */,
 				799C944A247D574F001F1104 /* Controllers */,
@@ -3587,7 +3590,6 @@
 				F670B50E24FE6EA900003B1A /* MessageEditor.swift */,
 				F61D7C3624FFE17200188A0E /* MessageEditor_Tests.swift */,
 				F6ED5F7325023EB4005D7327 /* ConnectionRecoveryHandler.swift */,
-				C1E8AD55278C8A440041B775 /* SyncRepository.swift */,
 				84698637274FE79200B22258 /* ConnectionRecoveryHandler_Mock.swift */,
 				F62BE7912506692700D13B86 /* ConnectionRecoveryHandler_Tests.swift */,
 				88E26D6D2580F34B00F55AB5 /* AttachmentUploader.swift */,
@@ -5807,6 +5809,23 @@
 			path = Tasks;
 			sourceTree = "<group>";
 		};
+		C1E8AD59278DDC500041B775 /* Repositories */ = {
+			isa = PBXGroup;
+			children = (
+				C1E8AD5A278DDEBB0041B775 /* Operations */,
+				C1E8AD55278C8A440041B775 /* SyncRepository.swift */,
+			);
+			path = Repositories;
+			sourceTree = "<group>";
+		};
+		C1E8AD5A278DDEBB0041B775 /* Operations */ = {
+			isa = PBXGroup;
+			children = (
+				C1E8AD5B278DDEC70041B775 /* AsyncOperation.swift */,
+			);
+			path = Operations;
+			sourceTree = "<group>";
+		};
 		DA4971652549C46400AC68C2 /* Attachment */ = {
 			isa = PBXGroup;
 			children = (
@@ -7750,6 +7769,7 @@
 				88AA928E254735CF00BFA0C3 /* MessageReactionDTO_Tests.swift in Sources */,
 				889B00E5252C972C007709A8 /* ChannelMemberListQuery_Tests.swift in Sources */,
 				7931818E24FD4275002F8C84 /* ChannelListController+Combine_Tests.swift in Sources */,
+				C1E8AD5C278DDEC70041B775 /* AsyncOperation.swift in Sources */,
 				F62BE7922506692700D13B86 /* ConnectionRecoveryHandler_Tests.swift in Sources */,
 				79200D42250118A1002F4EB1 /* iOS13TestCase.swift in Sources */,
 				88EA9B0625472430007EE76B /* MessageReactionPayload_Tests.swift in Sources */,
