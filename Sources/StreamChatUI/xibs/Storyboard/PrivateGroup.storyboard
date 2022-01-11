@@ -254,6 +254,79 @@
             </objects>
             <point key="canvasLocation" x="782.60869565217399" y="68.973214285714278"/>
         </scene>
+        <!--GroupQR CodeVC-->
+        <scene sceneID="9k8-IK-ri6">
+            <objects>
+                <viewController storyboardIdentifier="GroupQRCodeVC" id="LVN-Ia-J0W" customClass="GroupQRCodeVC" customModule="StreamChatUI" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="H2y-3g-7iv">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="1Ak-5r-pFg">
+                                <rect key="frame" x="0.0" y="0.0" width="414" height="44"/>
+                                <color key="backgroundColor" name="tabBackgroundColor"/>
+                            </view>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="WXG-8x-y2g">
+                                <rect key="frame" x="0.0" y="44" width="414" height="44"/>
+                                <subviews>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="qGP-Tu-jks">
+                                        <rect key="frame" x="8" y="0.0" width="54" height="44"/>
+                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
+                                        <state key="normal" image="back_circle"/>
+                                        <buttonConfiguration key="configuration" style="plain" image="back_circle"/>
+                                        <connections>
+                                            <action selector="btnBackAction:" destination="LVN-Ia-J0W" eventType="touchUpInside" id="XiO-Ur-qU3"/>
+                                        </connections>
+                                    </button>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="O8y-Ss-4xg">
+                                        <rect key="frame" x="207" y="22" width="0.0" height="0.0"/>
+                                        <fontDescription key="fontDescription" type="system" weight="medium" pointSize="17"/>
+                                        <nil key="textColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                </subviews>
+                                <color key="backgroundColor" name="tabBackgroundColor"/>
+                                <constraints>
+                                    <constraint firstAttribute="bottom" secondItem="qGP-Tu-jks" secondAttribute="bottom" id="45J-Hl-Ung"/>
+                                    <constraint firstItem="O8y-Ss-4xg" firstAttribute="centerY" secondItem="WXG-8x-y2g" secondAttribute="centerY" id="GLr-1z-efC"/>
+                                    <constraint firstItem="qGP-Tu-jks" firstAttribute="leading" secondItem="WXG-8x-y2g" secondAttribute="leading" constant="8" id="Ls9-pP-xFg"/>
+                                    <constraint firstItem="O8y-Ss-4xg" firstAttribute="centerX" secondItem="WXG-8x-y2g" secondAttribute="centerX" id="dUq-oQ-ep7"/>
+                                    <constraint firstAttribute="height" constant="44" id="dZV-7a-1dX"/>
+                                    <constraint firstItem="qGP-Tu-jks" firstAttribute="top" secondItem="WXG-8x-y2g" secondAttribute="top" id="vD8-Ic-nux"/>
+                                </constraints>
+                            </view>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="Kei-Ul-dnA">
+                                <rect key="frame" x="0.0" y="88" width="414" height="774"/>
+                                <color key="tintColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            </imageView>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="L56-eV-2gH"/>
+                        <color key="backgroundColor" red="0.027450980390000001" green="0.039215686270000001" blue="0.050980392159999999" alpha="1" colorSpace="calibratedRGB"/>
+                        <constraints>
+                            <constraint firstItem="L56-eV-2gH" firstAttribute="bottom" secondItem="Kei-Ul-dnA" secondAttribute="bottom" id="0W6-iW-Elz"/>
+                            <constraint firstItem="WXG-8x-y2g" firstAttribute="top" secondItem="1Ak-5r-pFg" secondAttribute="bottom" id="0fc-HT-p9z"/>
+                            <constraint firstItem="L56-eV-2gH" firstAttribute="trailing" secondItem="Kei-Ul-dnA" secondAttribute="trailing" id="5qU-tA-I4e"/>
+                            <constraint firstItem="WXG-8x-y2g" firstAttribute="leading" secondItem="H2y-3g-7iv" secondAttribute="leading" id="KQH-Sp-Ees"/>
+                            <constraint firstItem="Kei-Ul-dnA" firstAttribute="leading" secondItem="L56-eV-2gH" secondAttribute="leading" id="Y9X-SH-Hnz"/>
+                            <constraint firstItem="L56-eV-2gH" firstAttribute="trailing" secondItem="WXG-8x-y2g" secondAttribute="trailing" id="aa3-7o-ADh"/>
+                            <constraint firstItem="1Ak-5r-pFg" firstAttribute="leading" secondItem="H2y-3g-7iv" secondAttribute="leading" id="cD4-V7-ARY"/>
+                            <constraint firstAttribute="trailing" secondItem="1Ak-5r-pFg" secondAttribute="trailing" id="eg1-Ja-TNa"/>
+                            <constraint firstItem="1Ak-5r-pFg" firstAttribute="top" secondItem="H2y-3g-7iv" secondAttribute="top" id="l2m-Fn-HgJ"/>
+                            <constraint firstItem="Kei-Ul-dnA" firstAttribute="top" secondItem="WXG-8x-y2g" secondAttribute="bottom" id="ud1-15-S51"/>
+                            <constraint firstItem="L56-eV-2gH" firstAttribute="top" secondItem="1Ak-5r-pFg" secondAttribute="bottom" id="zyl-8o-Kfh"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="btnBack" destination="qGP-Tu-jks" id="FGH-7R-19V"/>
+                        <outlet property="imgQRCode" destination="Kei-Ul-dnA" id="0KF-xL-aGE"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="maW-Vp-vtB" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1562" y="69"/>
+        </scene>
     </scenes>
     <resources>
         <image name="back_circle" width="30" height="30"/>

@@ -174,6 +174,12 @@ open class ChatChannelVC:
             messageComposerVC.composerView.alpha = 1.0
             channelAvatarView.isHidden = false
         }
+        if #available(iOS 13.0, *) {
+            if channelController.channel?.type == .privateMessaging {
+                let interaction = UIContextMenuInteraction(delegate: self)
+                channelAvatarView.addInteraction(interaction)
+            }
+        }
     }
 
     override open func viewDidLoad() {
@@ -200,6 +206,18 @@ open class ChatChannelVC:
         self.navigationController?.popViewController(animated: true)
         self.dismiss(animated: true, completion: nil)
         NotificationCenter.default.post(name: .showTabbar, object: nil)
+    }
+
+    private func getGroupLink() -> String? {
+        guard let extraData = channelController.channel?.extraData["joinLink"] else {
+            return nil
+        }
+        switch extraData {
+        case .string(let link):
+            return link
+        default:
+            return nil
+        }
     }
 
     // MARK: - ChatMessageListVCDataSource
@@ -328,5 +346,25 @@ open class ChatChannelVC:
         } else {
             messageListVC.showTypingIndicator(typingUsers: typingUsersWithoutCurrentUser)
         }
+    }
+}
+
+extension ChatChannelVC: UIContextMenuInteractionDelegate {
+    @available(iOS 13.0, *)
+    public func contextMenuInteraction(_ interaction: UIContextMenuInteraction, configurationForMenuAtLocation location: CGPoint) -> UIContextMenuConfiguration? {
+        let qrCode = UIAction(title: "Group QR", image: UIImage(systemName: "qrcode.viewfinder")) { [weak self] action in
+            guard let self = self else {
+                return
+            }
+            guard let qrCodeVc: GroupQRCodeVC = GroupQRCodeVC.instantiateController(storyboard: .PrivateGroup) else {
+                return
+            }
+            qrCodeVc.strContent = self.getGroupLink()
+            self.navigationController?.pushViewController(qrCodeVc, animated: true)
+        }
+        return UIContextMenuConfiguration(identifier: nil,
+            previewProvider: nil) { _ in
+            UIMenu(title: "", children: [qrCode])
+          }
     }
 }

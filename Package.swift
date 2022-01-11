@@ -27,6 +27,7 @@ let package = Package(
         // StreamChatUI
         .package(url: "https://github.com/kean/Nuke.git", from: "10.0.0"),
         .package(url: "https://github.com/kirualex/SwiftyGif.git", from: "5.4.1")
+        .package(url: "https://github.com/EFPrefix/EFQRCode.git", from: "6.2.0")
     ],
     targets: [
         .target(

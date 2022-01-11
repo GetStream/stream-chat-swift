@@ -2,12 +2,21 @@
   "object": {
     "pins": [
       {
+        "package": "EFQRCode",
+        "repositoryURL": "https://github.com/EFPrefix/EFQRCode.git",
+        "state": {
+          "branch": null,
+          "revision": "56278ea800d7fdc20f42cd77bdbf0fecc8c1c0c8",
+          "version": "6.2.0"
+        }
+      },
+      {
         "package": "Nuke",
         "repositoryURL": "https://github.com/kean/Nuke",
         "state": {
           "branch": null,
-          "revision": "c0b32b0d7154afceb3fc08b199492f125ff4267e",
-          "version": "10.3.3"
+          "revision": "6be3e778f1663b16dd645b7e8a0a01f73b5ed7f3",
+          "version": "10.6.1"
         }
       },
       {
@@ -29,12 +38,21 @@
         }
       },
       {
+        "package": "swift_qrcodejs",
+        "repositoryURL": "https://github.com/ApolloZhu/swift_qrcodejs.git",
+        "state": {
+          "branch": null,
+          "revision": "374dc7f7b9e76c6aeb393f6a84590c6d387e1ecb",
+          "version": "2.2.2"
+        }
+      },
+      {
         "package": "SwiftyGif",
         "repositoryURL": "https://github.com/kirualex/SwiftyGif.git",
         "state": {
           "branch": null,
-          "revision": "652b344111a363a53af602b9eef0b52ab1146b42",
-          "version": "5.4.1"
+          "revision": "8d576b09553aea8e345e1b35c3b71cb6a84ac999",
+          "version": "5.4.2"
         }
       }
     ]

@@ -919,11 +919,13 @@
 		CD6058EB278860EB00A033CD /* ChatClientConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD6058EA278860EB00A033CD /* ChatClientConfiguration.swift */; };
 		CD66B56F273D41E600DAC5D2 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 88E779B12563FA6B00BA79B6 /* Assets.xcassets */; };
 		CD72548D275F556100CD6444 /* RedPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD72548C275F556100CD6444 /* RedPacket.swift */; };
+		CD72AFD4278DAEF20025999A /* EFQRCode in Frameworks */ = {isa = PBXBuildFile; productRef = CD72AFD3278DAEF20025999A /* EFQRCode */; };
 		CD89189E273E25B70051C651 /* KeyboardToolKitList.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD66B570273D5D1D00DAC5D2 /* KeyboardToolKitList.swift */; };
 		CD89189F273E278B0051C651 /* KeyboardToolKitList.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD66B570273D5D1D00DAC5D2 /* KeyboardToolKitList.swift */; };
 		CD8918A3273E32110051C651 /* SendMoneyButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD8918A1273E32030051C651 /* SendMoneyButton.swift */; };
 		CD8918A6273E32AD0051C651 /* ToolTipToggleButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD8918A5273E32AD0051C651 /* ToolTipToggleButton.swift */; };
 		CD8918BC273E99160051C651 /* CryptoReceiveBubble.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD8918BB273E99160051C651 /* CryptoReceiveBubble.swift */; };
+		CD89457B278DA65200F8B5E8 /* GroupQRCodeVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD89457A278DA65200F8B5E8 /* GroupQRCodeVC.swift */; };
 		CD9A4706275DFA1100CA9931 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD9A4705275DFA1100CA9931 /* Constants.swift */; };
 		CDA1FB07278843AF00C2F4BD /* PrivateGroupUsersCVCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDA1FB05278843AF00C2F4BD /* PrivateGroupUsersCVCell.swift */; };
 		CDA1FB08278843AF00C2F4BD /* PrivateGroupUsersCVCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = CDA1FB06278843AF00C2F4BD /* PrivateGroupUsersCVCell.xib */; };
@@ -2356,6 +2358,7 @@
 		CD8918A1273E32030051C651 /* SendMoneyButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendMoneyButton.swift; sourceTree = "<group>"; };
 		CD8918A5273E32AD0051C651 /* ToolTipToggleButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToolTipToggleButton.swift; sourceTree = "<group>"; };
 		CD8918BB273E99160051C651 /* CryptoReceiveBubble.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CryptoReceiveBubble.swift; sourceTree = "<group>"; };
+		CD89457A278DA65200F8B5E8 /* GroupQRCodeVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupQRCodeVC.swift; sourceTree = "<group>"; };
 		CD9A4705275DFA1100CA9931 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		CDA1FB05278843AF00C2F4BD /* PrivateGroupUsersCVCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrivateGroupUsersCVCell.swift; sourceTree = "<group>"; };
 		CDA1FB06278843AF00C2F4BD /* PrivateGroupUsersCVCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = PrivateGroupUsersCVCell.xib; sourceTree = "<group>"; };
@@ -2619,6 +2622,7 @@
 			files = (
 				799ADAAF2563FFA1006D43F9 /* Nuke in Frameworks */,
 				DB823107259C271C00E7D7FE /* SwiftyGif in Frameworks */,
+				CD72AFD4278DAEF20025999A /* EFQRCode in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3691,7 +3695,6 @@
 				80C6026E2514281000A6B714 /* UITableViewController+Cells.swift */,
 				F6CA70912513A1400024ED5D /* Channel+Extensions.swift */,
 				8837C6432539C17A00D8FE86 /* ChannelMember+Extensions.swift */,
-				8837C6392539B4A600D8FE86 /* Date+Extensions.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -4303,6 +4306,7 @@
 				E73262D725ED6432008CB152 /* ChatChannelNamer_Tests.swift */,
 				796CBD1B25FF9552003299B0 /* UIStackView+Extensions.swift */,
 				79F691B12604C10A000AE89B /* SystemEnvironment.swift */,
+				8837C6392539B4A600D8FE86 /* Date+Extensions.swift */,
 				883051732630366E0069D731 /* CACornerMask+Extensions.swift */,
 				F6E5E3462627A372007FA51F /* CGRect+Extensions.swift */,
 				F64DFA8B26282F8B00F7F6F9 /* CGPoint+Extensions.swift */,
@@ -4988,6 +4992,7 @@
 			children = (
 				CD24C7102784514900F6378D /* PrivateGroupOTPVC.swift */,
 				CD052B4627881BFC007E9DEF /* JoinPrivateGroupVC.swift */,
+				CD89457A278DA65200F8B5E8 /* GroupQRCodeVC.swift */,
 			);
 			path = PrivateChat;
 			sourceTree = "<group>";
@@ -5473,6 +5478,7 @@
 			packageProductDependencies = (
 				799ADAAE2563FFA1006D43F9 /* Nuke */,
 				DB823106259C271C00E7D7FE /* SwiftyGif */,
+				CD72AFD3278DAEF20025999A /* EFQRCode */,
 			);
 			productName = StreamChatUI;
 			productReference = 790881FD25432B7200896F03 /* StreamChatUI.framework */;
@@ -5814,6 +5820,7 @@
 				799ADAAD2563FFA1006D43F9 /* XCRemoteSwiftPackageReference "Nuke" */,
 				DB823105259C271C00E7D7FE /* XCRemoteSwiftPackageReference "SwiftyGif" */,
 				AD472EF625C425FB00A96E70 /* XCRemoteSwiftPackageReference "swift-snapshot-testing" */,
+				CD72AFD2278DAEF20025999A /* XCRemoteSwiftPackageReference "EFQRCode" */,
 			);
 			productRefGroup = 8AD5EC9022E9A3E8005CFAC9 /* Products */;
 			projectDirPath = "";
@@ -6258,6 +6265,7 @@
 				ED1D14762786C21C005A0EAB /* Storyboard.swift in Sources */,
 				A35757C72613081B00DC914C /* ComposerKeyboardHandler.swift in Sources */,
 				79205857264C2D6C002B145B /* TitleContainerView.swift in Sources */,
+				CD89457B278DA65200F8B5E8 /* GroupQRCodeVC.swift in Sources */,
 				AD447443263AC6A10030E583 /* ChatMentionSuggestionView.swift in Sources */,
 				E7166CBA25BED29200B03B07 /* Appearance+Fonts.swift in Sources */,
 				E7073A6325DD67B3003896B9 /* UILabel+Extensions.swift in Sources */,
@@ -9012,6 +9020,14 @@
 				minimumVersion = 1.8.2;
 			};
 		};
+		CD72AFD2278DAEF20025999A /* XCRemoteSwiftPackageReference "EFQRCode" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/EFPrefix/EFQRCode.git";
+			requirement = {
+				kind = exactVersion;
+				version = 6.2.0;
+			};
+		};
 		DB823105259C271C00E7D7FE /* XCRemoteSwiftPackageReference "SwiftyGif" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/kirualex/SwiftyGif.git";
@@ -9045,6 +9061,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = AD472EF625C425FB00A96E70 /* XCRemoteSwiftPackageReference "swift-snapshot-testing" */;
 			productName = SnapshotTesting;
+		};
+		CD72AFD3278DAEF20025999A /* EFQRCode */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CD72AFD2278DAEF20025999A /* XCRemoteSwiftPackageReference "EFQRCode" */;
+			productName = EFQRCode;
 		};
 		DB823106259C271C00E7D7FE /* SwiftyGif */ = {
 			isa = XCSwiftPackageProductDependency;

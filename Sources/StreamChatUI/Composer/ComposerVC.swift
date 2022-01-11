@@ -466,9 +466,7 @@ open class ComposerVC: _ViewController,
         } else {
             createNewMessage(text: text)
         }
-
         content.clear()
-        showMessageOption(isHide: false)
     }
     
     /// Shows a photo/media picker.

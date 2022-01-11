@@ -17,6 +17,7 @@ class JoinPrivateGroupVC: UIViewController {
     private var isChannelFetched = false
     private var memberListController: ChatChannelMemberListController?
     private var channelMembers: LazyCachedMapCollection<ChatChannelMember> = []
+    private var channelController: ChatChannelController?
 
     // MARK: - Outlets
     @IBOutlet weak var btnBack: UIButton!
@@ -36,7 +37,17 @@ class JoinPrivateGroupVC: UIViewController {
     }
 
     @IBAction func btnJoinGroupAction(_ sender: UIButton) {
-        
+        let arrViewControllers = navigationController?.viewControllers ?? []
+        guard let rootViewController = arrViewControllers.first, let channelController = channelController else {
+            return
+        }
+        var newControllers: [UIViewController] = []
+        newControllers.append(rootViewController)
+
+        let chatChannelVC = ChatChannelVC.init()
+        chatChannelVC.channelController = channelController
+        newControllers.append(chatChannelVC)
+        navigationController?.setViewControllers(newControllers, animated: true)
     }
 
     // MARK: - Functions
@@ -70,19 +81,22 @@ class JoinPrivateGroupVC: UIViewController {
             return
         }
         do {
+            let groupId = String(UUID().uuidString)
+            let expiryDate = Date().withAddedHours(hours: 24).ticks
             var extraData: [String: RawJSON] = [:]
             extraData["isPrivateChat"] = .bool(true)
             extraData["password"] = .string(passWord)
-            let channelController = try ChatClient.shared.channelController(
-                createChannelWithId: .init(type: .privateMessaging, id: String(UUID().uuidString.prefix(10))),
+            extraData["joinLink"] = .string("timeless-wallet://join-private-group?id=\(groupId)&signature=\(passWord)&expiry=\(expiryDate)")
+            channelController = try ChatClient.shared.channelController(
+                createChannelWithId: .init(type: .privateMessaging, id: groupId),
                 name: "temp group name",
                 members: [],
                 extraData: extraData)
-            channelController.synchronize { [weak self] error in
+            channelController?.synchronize { [weak self] error in
                 guard error == nil, let self = self else {
                     return
                 }
-                self.fetchChannelMembers(id: channelController.channel?.cid.id ?? "")
+                self.fetchChannelMembers(id: self.channelController?.channel?.cid.id ?? "")
             }
         } catch {
             print("error while creating channel")
@@ -93,8 +107,8 @@ class JoinPrivateGroupVC: UIViewController {
         guard let currentUserId = ChatClient.shared.currentUserId else {
             return
         }
-        let channelController = ChatClient.shared.channelController(for: .init(type: .privateMessaging, id: channelId))
-        channelController.addMembers(userIds: [currentUserId], completion: nil)
+        channelController = ChatClient.shared.channelController(for: .init(type: .privateMessaging, id: channelId))
+        channelController?.addMembers(userIds: [currentUserId], completion: nil)
         fetchChannelMembers(id: channelId)
     }
 

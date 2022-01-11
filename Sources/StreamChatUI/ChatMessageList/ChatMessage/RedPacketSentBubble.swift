@@ -331,17 +331,3 @@ class RedPacketSentBubble: UITableViewCell {
         NotificationCenter.default.post(name: .showSnackBar, object: nil, userInfo: userInfo)
     }
 }
-
-extension Date {
-    func toLocalTime() -> Date {
-        let timezone = TimeZone.current
-        let seconds = TimeInterval(timezone.secondsFromGMT(for: self))
-        return Date(timeInterval: seconds, since: self)
-    }
-
-    func minutesFromCurrentDate(_ oldDate: Date) -> Float {
-        let newDateMinutes = Date().timeIntervalSinceReferenceDate/60
-        let oldDateMinutes = oldDate.timeIntervalSinceReferenceDate/60
-        return Float(newDateMinutes - oldDateMinutes)
-    }
-}
