@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### 🐞 Fixed
 - Fix wrong image resolution when images are being quoted [#1747](https://github.com/GetStream/stream-chat-swift/pull/1747)
 - Fix message list NSInternalInconsistencyException crash [#1752](https://github.com/GetStream/stream-chat-swift/pull/1752)
+- Fix Image and Video sharing behaviour [#1753](https://github.com/GetStream/stream-chat-swift/pull/1753)
 
 # [4.8.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.8.0)
 _January 4, 2022_
