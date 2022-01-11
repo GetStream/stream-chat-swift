@@ -27,6 +27,8 @@ public struct RedPacket {
     public var endTime: String?
     public var packetId: String?
     public var strFormattedAmount: String?
+    //number of fraction digits in amount
+    public var fractionDigits: Int = 0
 
     public init() {
     }
