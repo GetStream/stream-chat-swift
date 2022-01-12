@@ -400,12 +400,28 @@ open class GalleryVC:
     /// - Returns: An item to share.
     open func shareItem(at indexPath: IndexPath) -> Any? {
         guard let item = getItem(at: indexPath) else { return nil }
-        
-        if let image = item.attachment(payloadType: ImageAttachmentPayload.self) {
-            return image.imageURL
-        } else if let video = item.attachment(payloadType: VideoAttachmentPayload.self) {
-            return video.videoURL
-        } else {
+
+        switch item.type {
+        case .image:
+            let cell = attachmentsCollectionView
+                .cellForItem(at: indexPath) as? ImageAttachmentGalleryCell
+            return cell?.imageView.image
+        case .video:
+            guard let itemAttachment = item.attachment(payloadType: VideoAttachmentPayload.self),
+                  let urlData = try? Data(contentsOf: itemAttachment.videoURL) else {
+                return nil
+            }
+
+            let fileName = itemAttachment.payload.title ?? itemAttachment.id.messageId.lowercased() + ".mp4"
+            let filePath = NSTemporaryDirectory().appending("\(fileName)")
+            let url = URL(fileURLWithPath: filePath)
+            do {
+                try urlData.write(to: url)
+                return url
+            } catch {
+                return nil
+            }
+        default:
             return nil
         }
     }
