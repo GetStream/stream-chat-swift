@@ -412,8 +412,8 @@ open class GalleryVC:
                 return nil
             }
 
-            let fileName = itemAttachment.id.messageId.lowercased()
-            let filePath = NSTemporaryDirectory().appending("\(fileName).mov")
+            let fileName = itemAttachment.payload.title ?? itemAttachment.id.messageId.lowercased() + ".mp4"
+            let filePath = NSTemporaryDirectory().appending("\(fileName)")
             let url = URL(fileURLWithPath: filePath)
             do {
                 try urlData.write(to: url)
