@@ -5,18 +5,35 @@
 import Foundation
 
 enum SyncError: Error {
+    case localStorageDisabled
+    case noNeedToSync
     case syncEndpointFailed(Error)
+    case resettingQueryFailed(Error)
     case couldNotBumpLastSyncDate(Error)
+
+    var shouldRetry: Bool {
+        switch self {
+        case .localStorageDisabled, .noNeedToSync, .couldNotBumpLastSyncDate:
+            return false
+        case .syncEndpointFailed, .resettingQueryFailed:
+            return true
+        }
+    }
 }
 
 class SyncRepository {
     /// Do not call the sync endpoint more than once every six seconds
     let syncCooldown: TimeInterval = 6.0
+    /// Maximum number of retries for each operation step.
+    let retriesCount = 2
     let config: ChatClientConfig
+    let activeChatListControllers: NSHashTable<ChatChannelListController>
     let channelRepository: ChannelListUpdater
     let eventNotificationCenter: EventNotificationCenter
     let database: DatabaseContainer
     let apiClient: APIClient
+
+    private var lastPendingConnectionDate: Date?
 
     private lazy var operationQueue: OperationQueue = {
         let operationQueue = OperationQueue()
@@ -27,12 +44,14 @@ class SyncRepository {
 
     init(
         config: ChatClientConfig,
+        activeChatListControllers: NSHashTable<ChatChannelListController>,
         channelRepository: ChannelListUpdater,
         eventNotificationCenter: EventNotificationCenter,
         database: DatabaseContainer,
         apiClient: APIClient
     ) {
         self.config = config
+        self.activeChatListControllers = activeChatListControllers
         self.channelRepository = channelRepository
         self.eventNotificationCenter = eventNotificationCenter
         self.database = database
@@ -52,31 +71,136 @@ class SyncRepository {
         //      4. Clean up local message history for channels that are outdated/will get outdated
         //      5. Bump the last sync timestamp
 
-        // A failure here should not stop the next execution, but should clean the db most probably
-        syncExistingChannelsEvents(bumpSyncDate: false) {
-            // Refetch query
+        log.info("Starting to recover offline state", subsystems: .offlineSupport)
+        var operations: [Operation] = []
+
+        // 0. We get the existing channelIds
+        let channelIds = getExistingChannelIds()
+
+        // 1. Call `/sync` endpoint and get missing events for all locally existed channels
+        let syncEvents = AsyncOperation(retries: retriesCount) { [weak self] done in
+            guard let self = self, let lastPendingConnectionDate = self.lastPendingConnectionDate else {
+                done(.continue)
+                return
+            }
+
+            self.syncMissingEvents(using: lastPendingConnectionDate, channelIds: channelIds) { result in
+                if result.error?.shouldRetry == true {
+                    done(.retry)
+                } else {
+                    self.lastPendingConnectionDate = nil
+                    done(.continue)
+                }
+            }
+        }
+        operations.append(syncEvents)
+
+        // 2. Start watching open channels *** (Not in V1)
+        // ***************************************
+        // --------------  PENDING ---------------
+        // ***************************************
+
+        // 3. Refetch channel lists queries, link only what backend returns (the 1st page)
+        let refetchQueryOperations = activeChatListControllers.allObjects.map { controller in
+            AsyncOperation(retries: retriesCount) { done in
+                self.resetChannelsQuery(for: controller) { result in
+                    switch result {
+                    case let .success(channels):
+                        done(.continue)
+                    case let .failure(error):
+                        done(error.shouldRetry ? .retry : .continue)
+                    }
+                }
+            }
+        }
+        operations.append(contentsOf: refetchQueryOperations)
+
+        // 4. Clean up local message history for channels that are outdated/will get outdated
+        // ***************************************
+        // --------------  PENDING ---------------
+        // ***************************************
+
+        // 5. Bump the last sync timestamp
+        // ***************************************
+        // --------------  PENDING ---------------
+        // ***************************************
+
+        // 6. Clean lastPendingConnectionDate and complete
+        operations.append(BlockOperation(block: completion))
+
+        // We are making sure the operations happen secuentially one after the other by setting one as the dependency
+        // of the following one
+        var previousOperation: Operation?
+        operations.reversed().forEach { operation in
+            defer { previousOperation = operation }
+            guard let previousOperation = previousOperation else { return }
+            previousOperation.addDependency(operation)
+        }
+
+        operationQueue.addOperations(operations, waitUntilFinished: false)
+    }
+
+    func updateLastPendingConnectionDate(with date: Date) {
+        // If there's a pending connection date, it means there was an issue retrieving all the past events. If that's the case, we keep the existing one.
+        guard lastPendingConnectionDate == nil else { return }
+        lastPendingConnectionDate = date
+    }
+
+    func syncExistingChannelsEvents(completion: @escaping (Result<MissingEventsPayload, SyncError>) -> Void) {
+        let lastSyncAt = obtainLastSyncDate()
+        guard let lastSyncAt = lastSyncAt, Date().timeIntervalSince(lastSyncAt) > syncCooldown else {
+            completion(.failure(.noNeedToSync))
+            return
+        }
+
+        let channelIds = getExistingChannelIds()
+        syncMissingEvents(using: lastSyncAt, channelIds: channelIds, completion: completion)
+    }
+
+    private func syncMissingEvents(
+        using date: Date,
+        channelIds: [ChannelId],
+        completion: @escaping (Result<MissingEventsPayload, SyncError>) -> Void
+    ) {
+        guard config.isLocalStorageEnabled else {
+            completion(.failure(.localStorageDisabled))
+            return
+        }
+
+        log.info("Synching events for existing channels since \(date)", subsystems: .offlineSupport)
+        getMissingEvents(since: date, channelIds: channelIds) { result in
+            switch result {
+            case let .success(payload):
+                self.bumpLastSyncDate(lastReceivedEventDate: payload.eventPayloads.first?.createdAt ?? date) { error in
+                    if let error = error {
+                        completion(.failure(error))
+                    } else {
+                        completion(.success(payload))
+                    }
+                }
+            case let .failure(error):
+                completion(.failure(error))
+            }
         }
     }
 
-    func syncExistingChannelsEvents(bumpSyncDate: Bool, completion: @escaping () -> Void) {
-        guard config.isLocalStorageEnabled else {
-            completion()
-            return
-        }
+    private func resetChannelsQuery(
+        for controller: ChatChannelListController,
+        completion: @escaping (Result<[ChatChannel], SyncError>) -> Void
+    ) {
+        log.info("Refetching query for \(controller.query.debugDescription)", subsystems: .offlineSupport)
 
-        let lastSyncAt = obtainLastSyncDate()
-        guard let lastSyncAt = lastSyncAt, Date().timeIntervalSince(lastSyncAt) > syncCooldown else {
-            completion()
-            return
-        }
-
-        getEventsSinceLastSync(at: lastSyncAt) { result in
-            guard bumpSyncDate, case let .success(payload) = result else {
-                completion()
-                return
-            }
-            self.bumpLastSyncDate(lastReceivedEventDate: payload.eventPayloads.first?.createdAt ?? lastSyncAt) { _ in
-                completion()
+        // Fetches the channels matching the query, and stores them in the database.
+        channelRepository.update(channelListQuery: controller.query) { result in
+            switch result {
+            case let .success(channels):
+                // Resets the query for the controller to only be linked to the controllers that were just fetched from
+                // the API
+                controller.resetLinkedChannels(to: channels)
+                completion(.success(channels))
+            case let .failure(error):
+                log.error("Failed refetching query for \(controller.query.debugDescription): \(error)", subsystems: .offlineSupport)
+                completion(.failure(.resettingQueryFailed(error)))
             }
         }
     }
@@ -94,7 +218,7 @@ class SyncRepository {
             session.currentUser?.lastReceivedEventDate = lastReceivedEventDate
         } completion: { error in
             if let error = error {
-                log.error(error)
+                log.error("Failed bumping last sync date: \(error)", subsystems: .offlineSupport)
                 completion(.couldNotBumpLastSyncDate(error))
             } else {
                 completion(nil)
@@ -102,12 +226,12 @@ class SyncRepository {
         }
     }
 
-    private func getEventsSinceLastSync(
-        at lastSyncDate: Date,
+    private func getMissingEvents(
+        since lastSyncDate: Date,
+        channelIds: [ChannelId],
         completion: @escaping (Result<MissingEventsPayload, SyncError>) -> Void
     ) {
-        let cids = getExistingChannelIds()
-        let endpoint: Endpoint<MissingEventsPayload> = .missingEvents(since: lastSyncDate, cids: cids)
+        let endpoint: Endpoint<MissingEventsPayload> = .missingEvents(since: lastSyncDate, cids: channelIds)
 
         apiClient.request(endpoint: endpoint) { result in
             switch result {
@@ -119,7 +243,7 @@ class SyncRepository {
                     completion(.success(payload))
                 }
             case let .failure(error):
-                log.error("Failed cleaning up channels data: \(error).")
+                log.error("Failed cleaning up channels data: \(error).", subsystems: .offlineSupport)
                 completion(.failure(.syncEndpointFailed(error)))
             }
         }
@@ -127,9 +251,7 @@ class SyncRepository {
 
     private func getExistingChannelIds() -> [ChannelId] {
         let request = ChannelDTO.allChannelsFetchRequest
-        request.fetchLimit = 1000
         request.propertiesToFetch = ["cid"]
-
         let results = (try? database.viewContext.fetch(request)) ?? []
         let cids = results.compactMap { try? ChannelId(cid: $0.cid) }
         return cids

@@ -34,6 +34,9 @@ public class ChatClient {
     
     /// Builder blocks used for creating `backgroundWorker`s when needed.
     private let workerBuilders: [WorkerBuilder]
+
+    /// Keeps a weak reference to the active channel list controllers to ensure a proper recovery when coming back online
+    private(set) var activeChatListControllers = NSHashTable<ChatChannelListController>.weakObjects()
     
     /// Background worker that takes care about client connection recovery when the Internet comes back OR app transitions from background to foreground.
     private(set) var connectionRecoveryHandler: ConnectionRecoveryHandler?
@@ -68,6 +71,7 @@ public class ChatClient {
         let channelRepository = ChannelListUpdater(database: databaseContainer, apiClient: apiClient)
         return SyncRepository(
             config: config,
+            activeChatListControllers: activeChatListControllers,
             channelRepository: channelRepository,
             eventNotificationCenter: eventNotificationCenter,
             database: databaseContainer,
@@ -382,6 +386,10 @@ public class ChatClient {
         }
     }
 
+    func trackChannelListController(_ channelListController: ChatChannelListController) {
+        activeChatListControllers.add(channelListController)
+    }
+
     func completeConnectionIdWaiters(connectionId: String?) {
         _connectionIdWaiters.mutate { waiters in
             waiters.forEach { $0(connectionId) }
@@ -568,6 +576,7 @@ extension ChatClient: ConnectionStateDelegate {
         case let .connected(connectionId: id):
             shouldNotifyConnectionIdWaiters = true
             connectionId = id
+            syncRepository.updateLastPendingConnectionDate(with: Date())
         case let .disconnected(source):
             if let error = source.serverError,
                error.isInvalidTokenError {

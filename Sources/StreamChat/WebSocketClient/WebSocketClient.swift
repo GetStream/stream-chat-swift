@@ -118,7 +118,7 @@ class WebSocketClient {
         connectionState = .connecting
         
         engineQueue.async { [engine] in
-            engine!.connect()
+            engine?.connect()
         }
     }
     

@@ -14,19 +14,21 @@ class ChannelListUpdater: Worker {
     ///
     func update(
         channelListQuery: ChannelListQuery,
-        completion: ((Result<ChannelListPayload, Error>) -> Void)? = nil
+        completion: ((Result<[ChatChannel], Error>) -> Void)? = nil
     ) {
         fetch(channelListQuery: channelListQuery) { [weak self] in
             switch $0 {
             case let .success(channelListPayload):
+                var channels: [ChatChannel] = []
                 self?.database.write { session in
-                    try session.saveChannelList(payload: channelListPayload, query: channelListQuery)
+                    let channelDTOs = try session.saveChannelList(payload: channelListPayload, query: channelListQuery)
+                    channels = channelDTOs.map { $0.asModel() }
                 } completion: { error in
                     if let error = error {
                         log.error("Failed to save `ChannelListPayload` to the database. Error: \(error)")
                         completion?(.failure(error))
                     } else {
-                        completion?(.success(channelListPayload))
+                        completion?(.success(channels))
                     }
                 }
             case let .failure(error):

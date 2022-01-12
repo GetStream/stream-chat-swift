@@ -5,9 +5,17 @@
 import Foundation
 
 class AsyncOperation: BaseOperation {
-    private let executionBlock: (_ completion: @escaping () -> Void) -> Void
+    enum Output {
+        case retry
+        case `continue`
+    }
 
-    init(executionBlock: @escaping (_ completion: @escaping () -> Void) -> Void) {
+    private let maxRetries: Int
+    private let executionBlock: (_ completion: @escaping (_ output: Output) -> Void) -> Void
+    private var executedRetries = 0
+
+    init(retries: Int = 0, executionBlock: @escaping (_ completion: @escaping (_ output: Output) -> Void) -> Void) {
+        maxRetries = retries
         self.executionBlock = executionBlock
     }
 
@@ -18,11 +26,17 @@ class AsyncOperation: BaseOperation {
         }
 
         isExecuting = true
+        executionBlock(handleResult)
+    }
 
-        executionBlock {
-            self.isExecuting = false
-            self.isFinished = true
+    private func handleResult(_ output: Output) {
+        guard output == .continue || executedRetries + 1 < maxRetries else {
+            executedRetries += 1
+            executionBlock(handleResult)
+            return
         }
+        isExecuting = false
+        isFinished = true
     }
 }
 

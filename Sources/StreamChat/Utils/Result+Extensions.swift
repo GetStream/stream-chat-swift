@@ -13,4 +13,8 @@ extension Result {
 
         return nil
     }
+
+    var isError: Bool {
+        error != nil
+    }
 }

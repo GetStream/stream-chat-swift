@@ -87,6 +87,7 @@ public class ChatRemoteNotificationHandler {
         let channelRepository = ChannelListUpdater(database: database, apiClient: client.apiClient)
         return SyncRepository(
             config: client.config,
+            activeChatListControllers: client.activeChatListControllers,
             channelRepository: channelRepository,
             eventNotificationCenter: client.eventNotificationCenter,
             database: database,
@@ -148,7 +149,7 @@ public class ChatRemoteNotificationHandler {
                 return
             }
 
-            self.syncRepository.syncExistingChannelsEvents(bumpSyncDate: true) {
+            self.syncRepository.syncExistingChannelsEvents { _ in
                 let channel = ChannelDTO.load(cid: cid, context: self.database.viewContext)?.asModel()
                 completion(message, channel)
             }

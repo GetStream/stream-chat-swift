@@ -1421,7 +1421,8 @@
 		C1BE72732732CA62006EB51E /* Nuke in Frameworks */ = {isa = PBXBuildFile; productRef = C1BE72722732CA62006EB51E /* Nuke */; };
 		C1E8AD57278C8A6E0041B775 /* SyncRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1E8AD55278C8A440041B775 /* SyncRepository.swift */; };
 		C1E8AD58278C8A6F0041B775 /* SyncRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1E8AD55278C8A440041B775 /* SyncRepository.swift */; };
-		C1E8AD5C278DDEC70041B775 /* AsyncOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1E8AD5B278DDEC70041B775 /* AsyncOperation.swift */; };
+		C1E8AD5E278EF5F30041B775 /* AsyncOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1E8AD5B278DDEC70041B775 /* AsyncOperation.swift */; };
+		C1E8AD5F278EF5F40041B775 /* AsyncOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1E8AD5B278DDEC70041B775 /* AsyncOperation.swift */; };
 		C1FC2F6727416E150062530F /* ResumableData.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1BE728A2732CB7B006EB51E /* ResumableData.swift */; };
 		C1FC2F6827416E150062530F /* ImagePipelineCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1BE72822732CB7B006EB51E /* ImagePipelineCache.swift */; };
 		C1FC2F6927416E150062530F /* Log.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1BE72952732CB7B006EB51E /* Log.swift */; };
@@ -7515,6 +7516,7 @@
 				79D6CE2725F7C83C00BE2EEC /* ChatChannelWatcherListController+Combine.swift in Sources */,
 				79877A0C2498E4BC00015F8B /* ChannelType.swift in Sources */,
 				DABC6ABC2546FD0100A8FC78 /* MessageAttachmentPayload.swift in Sources */,
+				C1E8AD5E278EF5F30041B775 /* AsyncOperation.swift in Sources */,
 				C1FC2FA02742579D0062530F /* FoundationSecurity.swift in Sources */,
 				88D85DA7252F3C1D00AE1030 /* MemberListController.swift in Sources */,
 				79280F4B248523C000CDEB89 /* ConnectionEvents.swift in Sources */,
@@ -7769,7 +7771,6 @@
 				88AA928E254735CF00BFA0C3 /* MessageReactionDTO_Tests.swift in Sources */,
 				889B00E5252C972C007709A8 /* ChannelMemberListQuery_Tests.swift in Sources */,
 				7931818E24FD4275002F8C84 /* ChannelListController+Combine_Tests.swift in Sources */,
-				C1E8AD5C278DDEC70041B775 /* AsyncOperation.swift in Sources */,
 				F62BE7922506692700D13B86 /* ConnectionRecoveryHandler_Tests.swift in Sources */,
 				79200D42250118A1002F4EB1 /* iOS13TestCase.swift in Sources */,
 				88EA9B0625472430007EE76B /* MessageReactionPayload_Tests.swift in Sources */,
@@ -8112,6 +8113,7 @@
 				C121E879274544AF00023E4C /* ChannelReadDTO.swift in Sources */,
 				C121E87A274544AF00023E4C /* ChannelListQueryDTO.swift in Sources */,
 				C121E87B274544AF00023E4C /* MessageSearchQueryDTO.swift in Sources */,
+				C1E8AD5F278EF5F40041B775 /* AsyncOperation.swift in Sources */,
 				C121E87C274544AF00023E4C /* EphemeralValuesContainer.swift in Sources */,
 				C121E87D274544AF00023E4C /* ChannelMemberListQueryDTO.swift in Sources */,
 				C121E87E274544AF00023E4C /* DeviceDTO.swift in Sources */,
