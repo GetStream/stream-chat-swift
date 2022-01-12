@@ -77,19 +77,16 @@ class JoinPrivateGroupVC: UIViewController {
     }
 
     private func createPrivateChannel() {
-        guard let currentUserId = ChatClient.shared.currentUserId else {
-            return
-        }
         do {
             let groupId = String(UUID().uuidString)
-            let expiryDate = Date().withAddedHours(hours: 24).ticks
+            let expiryDate = String(Date().withAddedHours(hours: 24).ticks).base64Encoded.string ?? ""
             var extraData: [String: RawJSON] = [:]
             extraData["isPrivateChat"] = .bool(true)
             extraData["password"] = .string(passWord)
-            extraData["joinLink"] = .string("timeless-wallet://join-private-group?id=\(groupId)&signature=\(passWord)&expiry=\(expiryDate)")
+            extraData["joinLink"] = .string("timeless-wallet://join-private-group?id=\(groupId.base64Encoded.string ?? "")&signature=\(passWord.base64Encoded.string ?? "")&expiry=\(expiryDate)")
             channelController = try ChatClient.shared.channelController(
                 createChannelWithId: .init(type: .privateMessaging, id: groupId),
-                name: "temp group name",
+                name: "temp private group",
                 members: [],
                 extraData: extraData)
             channelController?.synchronize { [weak self] error in

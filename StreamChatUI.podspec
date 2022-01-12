@@ -23,4 +23,5 @@ Pod::Spec.new do |spec|
     spec.dependency "Nuke", "~> 10.0"
     spec.dependency "SwiftyGif", "~> 5.4.1"
     spec.dependency "EFQRCode", "~> 6.2.0"
+    spec.dependency "swiftScan"
   end

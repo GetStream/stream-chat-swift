@@ -60,7 +60,8 @@ extension Date {
         withAddedMinutes(minutes: hours * 60)
     }
 
-    var ticks: Int64 {
-        return Int64(self.timeIntervalSince1970 * 1000)
+    var ticks: Double {
+        //return Int64(self.timeIntervalSince1970 * 1000)
+        return timeIntervalSince1970
     }
 }

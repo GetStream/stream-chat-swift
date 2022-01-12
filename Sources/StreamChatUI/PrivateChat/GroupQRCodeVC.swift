@@ -8,6 +8,7 @@
 
 import UIKit
 import EFQRCode
+import swiftScan
 
 class GroupQRCodeVC: UIViewController {
 
