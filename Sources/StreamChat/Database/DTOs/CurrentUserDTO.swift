@@ -15,6 +15,11 @@ class CurrentUserDTO: NSManagedObject {
     /// that returns all events that happen after the given date
     @NSManaged var lastReceivedEventDate: Date?
 
+    /// We save the last pending connection date from which we need to sync events
+    /// whenever we're recovering a connection. Only used for offline support.
+    /// See `SyncRepository` for more details.
+    @NSManaged var lastPendingConnectionDate: Date?
+
     @NSManaged var flaggedUsers: Set<UserDTO>
     @NSManaged var flaggedMessages: Set<MessageDTO>
     @NSManaged var mutedUsers: Set<UserDTO>

@@ -224,7 +224,11 @@ private extension DefaultConnectionRecoveryHandler {
 
 private extension DefaultConnectionRecoveryHandler {
     func sync() {
-        syncRepository.recoverFromOfflineState {}
+        syncRepository.recoverFromOfflineState {
+            // ***************************************
+            // --------------  PENDING ---------------
+            // ***************************************
+        }
     }
 }
 

@@ -9,11 +9,11 @@ enum SyncError: Error {
     case noNeedToSync
     case syncEndpointFailed(Error)
     case resettingQueryFailed(Error)
-    case couldNotBumpLastSyncDate(Error)
+    case couldNotUpdateUserValue(Error)
 
     var shouldRetry: Bool {
         switch self {
-        case .localStorageDisabled, .noNeedToSync, .couldNotBumpLastSyncDate:
+        case .localStorageDisabled, .noNeedToSync, .couldNotUpdateUserValue:
             return false
         case .syncEndpointFailed, .resettingQueryFailed:
             return true
@@ -33,7 +33,14 @@ class SyncRepository {
     let database: DatabaseContainer
     let apiClient: APIClient
 
-    private var lastPendingConnectionDate: Date?
+    private var lastPendingConnectionDate: Date? {
+        get {
+            getUserValue { $0?.lastPendingConnectionDate }
+        }
+        set {
+            updateUserValue { $0?.lastPendingConnectionDate = newValue }
+        }
+    }
 
     private lazy var operationQueue: OperationQueue = {
         let operationQueue = OperationQueue()
@@ -141,13 +148,14 @@ class SyncRepository {
     }
 
     func updateLastPendingConnectionDate(with date: Date) {
-        // If there's a pending connection date, it means there was an issue retrieving all the past events. If that's the case, we keep the existing one.
+        // If there's a pending connection date, it means there was an issue retrieving all the past events.
+        // If that's the case, we keep the existing one.
         guard lastPendingConnectionDate == nil else { return }
         lastPendingConnectionDate = date
     }
 
     func syncExistingChannelsEvents(completion: @escaping (Result<MissingEventsPayload, SyncError>) -> Void) {
-        let lastSyncAt = obtainLastSyncDate()
+        let lastSyncAt = getUserValue { $0?.lastReceivedEventDate }
         guard let lastSyncAt = lastSyncAt, Date().timeIntervalSince(lastSyncAt) > syncCooldown else {
             completion(.failure(.noNeedToSync))
             return
@@ -171,7 +179,9 @@ class SyncRepository {
         getMissingEvents(since: date, channelIds: channelIds) { result in
             switch result {
             case let .success(payload):
-                self.bumpLastSyncDate(lastReceivedEventDate: payload.eventPayloads.first?.createdAt ?? date) { error in
+                self.updateUserValue({
+                    $0?.lastReceivedEventDate = payload.eventPayloads.first?.createdAt ?? date
+                }) { error in
                     if let error = error {
                         completion(.failure(error))
                     } else {
@@ -205,27 +215,6 @@ class SyncRepository {
         }
     }
 
-    private func obtainLastSyncDate() -> Date? {
-        var lastReceivedEventDate: Date?
-        database.viewContext.performAndWait {
-            lastReceivedEventDate = self.database.viewContext.currentUser?.lastReceivedEventDate
-        }
-        return lastReceivedEventDate
-    }
-
-    private func bumpLastSyncDate(lastReceivedEventDate: Date, completion: @escaping (SyncError?) -> Void) {
-        database.write { session in
-            session.currentUser?.lastReceivedEventDate = lastReceivedEventDate
-        } completion: { error in
-            if let error = error {
-                log.error("Failed bumping last sync date: \(error)", subsystems: .offlineSupport)
-                completion(.couldNotBumpLastSyncDate(error))
-            } else {
-                completion(nil)
-            }
-        }
-    }
-
     private func getMissingEvents(
         since lastSyncDate: Date,
         channelIds: [ChannelId],
@@ -255,5 +244,32 @@ class SyncRepository {
         let results = (try? database.viewContext.fetch(request)) ?? []
         let cids = results.compactMap { try? ChannelId(cid: $0.cid) }
         return cids
+    }
+
+    private func getUserValue<T>(_ block: (inout CurrentUserDTO?) -> T?) -> T? {
+        var value: T?
+        database.viewContext.performAndWait {
+            var currentUser = self.database.viewContext.currentUser
+            value = block(&currentUser)
+        }
+
+        return value
+    }
+
+    private func updateUserValue(
+        _ block: @escaping (inout CurrentUserDTO?) -> Void,
+        completion: ((SyncError?) -> Void)? = nil
+    ) {
+        database.write { session in
+            var currentUser = session.currentUser
+            block(&currentUser)
+        } completion: { error in
+            if let error = error {
+                log.error("Failed updating value: \(error)", subsystems: .offlineSupport)
+                completion?(.couldNotUpdateUserValue(error))
+            } else {
+                completion?(nil)
+            }
+        }
     }
 }
