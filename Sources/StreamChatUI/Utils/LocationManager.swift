@@ -59,6 +59,14 @@ class LocationManager: NSObject, CLLocationManagerDelegate {
         self.locationManager?.requestLocation()
     }
 
+    func isEmptyCurrentLoc() -> Bool {
+        return location.value.coordinate.latitude == 0 && location.value.coordinate.longitude == 0
+    }
+
+    class func getDistanceInKm(from: CLLocation, to: CLLocation) -> Double {
+        return from.distance(from: to) / 1000
+    }
+
     class func showLocationPermissionAlert() {
         let alertController = UIAlertController(title: "Location Permission Required", message: "Please enable location permissions in settings.", preferredStyle: .alert)
         let okAction = UIAlertAction(title: "Settings", style: .default, handler: {(cAlertAction) in
@@ -78,7 +86,6 @@ extension LocationManager {
             return
         }
         self.location.value = lastLocation
-        print("location", location.value)
     }
     func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
         // check the authorization status changes here

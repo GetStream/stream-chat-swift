@@ -10,4 +10,5 @@ import Foundation
 
 public struct Constants {
     public static let blockExplorer = "https://explorer.harmony.one/tx/"
+    public static let privateGroupRadius = 10.0 //km
 }

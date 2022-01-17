@@ -16,6 +16,7 @@ open class PrivateGroupOTPVC: UIViewController {
     @IBOutlet weak var viewHeader: UIView!
     @IBOutlet weak var btnBack: UIButton!
     @IBOutlet weak var viewOTP: DPOTPView!
+    @IBOutlet weak var indicator: UIActivityIndicatorView!
 
     // MARK: - view life cycle
     open override func viewDidLoad() {
@@ -40,6 +41,18 @@ open class PrivateGroupOTPVC: UIViewController {
         btnBack.setImage(Appearance.default.images.backCircle, for: .normal)
         btnBack.setTitle("", for: .normal)
         view.backgroundColor = Appearance.default.colorPalette.background
+        indicator.startAnimating()
+        LocationManager.shared.location.bind { [weak self] location in
+            guard let self = self else {
+                return
+            }
+            self.indicator.stopAnimating()
+            if !LocationManager.shared.isEmptyCurrentLoc() {
+                if self.viewOTP.validate() {
+                    self.pushToJoinPrivateGroup()
+                }
+            }
+        }
     }
 
     private func checkLocationPermission() {
@@ -48,6 +61,7 @@ open class PrivateGroupOTPVC: UIViewController {
             viewOTP.resignFirstResponder()
         } else {
             LocationManager.shared.requestLocationAuthorization()
+            LocationManager.shared.requestGPS()
             viewOTP.becomeFirstResponder()
         }
     }
@@ -65,7 +79,7 @@ open class PrivateGroupOTPVC: UIViewController {
         viewOTP.resignFirstResponder()
         if LocationManager.shared.hasLocationPermissionDenied() {
             LocationManager.showLocationPermissionAlert()
-        } else {
+        } else if !LocationManager.shared.isEmptyCurrentLoc() {
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { [weak self] in
                 guard let self = self else { return }
                 self.pushToJoinPrivateGroup()

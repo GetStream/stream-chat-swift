@@ -42,10 +42,16 @@
                                         <nil key="textColor"/>
                                         <nil key="highlightedColor"/>
                                     </label>
+                                    <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" animating="YES" style="medium" translatesAutoresizingMaskIntoConstraints="NO" id="Tqe-Jb-2t5">
+                                        <rect key="frame" x="382" y="12" width="20" height="20"/>
+                                        <color key="color" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                    </activityIndicatorView>
                                 </subviews>
                                 <color key="backgroundColor" name="tabBackgroundColor"/>
                                 <constraints>
                                     <constraint firstItem="BqQ-GM-80b" firstAttribute="leading" secondItem="mA3-dC-Uzg" secondAttribute="leading" constant="8" id="5cc-5M-ex5"/>
+                                    <constraint firstItem="Tqe-Jb-2t5" firstAttribute="centerY" secondItem="w9o-T6-bIg" secondAttribute="centerY" id="7mE-mP-1nk"/>
+                                    <constraint firstAttribute="trailing" secondItem="Tqe-Jb-2t5" secondAttribute="trailing" constant="12" id="Ig1-de-IuS"/>
                                     <constraint firstAttribute="height" constant="44" id="Lfa-Fo-Phb"/>
                                     <constraint firstItem="BqQ-GM-80b" firstAttribute="top" secondItem="mA3-dC-Uzg" secondAttribute="top" id="PoO-zA-jAP"/>
                                     <constraint firstItem="w9o-T6-bIg" firstAttribute="centerY" secondItem="mA3-dC-Uzg" secondAttribute="centerY" id="cBp-HR-is6"/>
@@ -125,6 +131,7 @@
                     </view>
                     <connections>
                         <outlet property="btnBack" destination="BqQ-GM-80b" id="02H-L1-U9v"/>
+                        <outlet property="indicator" destination="Tqe-Jb-2t5" id="als-jR-MBI"/>
                         <outlet property="viewHeader" destination="mA3-dC-Uzg" id="e1s-mZ-ixt"/>
                         <outlet property="viewOTP" destination="0fj-2e-AMQ" id="euN-ah-6b2"/>
                         <outlet property="viewSafeAreaHeader" destination="Ojq-IW-mI6" id="8P6-d9-p4L"/>

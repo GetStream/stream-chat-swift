@@ -8,6 +8,7 @@
 
 import UIKit
 import StreamChat
+import CoreLocation
 
 class JoinPrivateGroupVC: UIViewController {
 
@@ -84,6 +85,8 @@ class JoinPrivateGroupVC: UIViewController {
             extraData["isPrivateChat"] = .bool(true)
             extraData["password"] = .string(passWord)
             extraData["joinLink"] = .string("timeless-wallet://join-private-group?id=\(groupId.base64Encoded.string ?? "")&signature=\(passWord.base64Encoded.string ?? "")&expiry=\(expiryDate)")
+            extraData["latitude"] = .string("\(LocationManager.shared.location.value.coordinate.latitude)")
+            extraData["longitude"] = .string("\(LocationManager.shared.location.value.coordinate.longitude)")
             channelController = try ChatClient.shared.channelController(
                 createChannelWithId: .init(type: .privateMessaging, id: groupId),
                 name: "temp private group",
@@ -96,7 +99,9 @@ class JoinPrivateGroupVC: UIViewController {
                 self.fetchChannelMembers(id: self.channelController?.channel?.cid.id ?? "")
             }
         } catch {
-            print("error while creating channel")
+            var userInfo = [String: Any]()
+            userInfo["message"] = "error while creating channel"
+            NotificationCenter.default.post(name: .showSnackBar, object: nil, userInfo: userInfo)
         }
     }
 
@@ -115,6 +120,32 @@ class JoinPrivateGroupVC: UIViewController {
         memberListController?.synchronize()
         channelMembers = memberListController?.members ?? []
         cvUserList.reloadData()
+    }
+
+    private func getLatitude(raw: [String: RawJSON]?) -> Double? {
+        guard let rawData = raw,
+              let latitude = rawData["latitude"],
+              let strLatitude = fetchRawData(raw: latitude) as? String
+        else { return nil }
+        return Double(strLatitude)
+    }
+
+    private func getLongitude(raw: [String: RawJSON]?) -> Double? {
+        guard let rawData = raw,
+              let longitude = rawData["longitude"],
+              let strLongitude = fetchRawData(raw: longitude) as? String
+        else { return nil }
+        return Double(strLongitude)
+    }
+
+    private func isChannelNearBy(_ channelData: [String: RawJSON]) -> Bool {
+        guard let latitude = getLatitude(raw: channelData),
+              let longitude = getLongitude(raw: channelData) else {
+                  return false
+              }
+        let coordinator = CLLocation(latitude: .init(latitude), longitude: .init(longitude))
+        let distance = LocationManager.getDistanceInKm(from: coordinator, to: LocationManager.shared.location.value)
+        return distance <= Constants.privateGroupRadius ? true : false
     }
 }
 
@@ -138,10 +169,17 @@ extension JoinPrivateGroupVC: ChatChannelListControllerDelegate {
             if channelController.channels.isEmpty {
                 createPrivateChannel()
             } else {
-                guard let firstChannel = channelController.channels.first else {
-                    return
+                let nearByChannels = channelController.channels.filter { channel in
+                    return isChannelNearBy(channel.extraData)
                 }
-                addMeInChannel(channelId: firstChannel.cid.id)
+                if nearByChannels.isEmpty {
+                    createPrivateChannel()
+                } else {
+                    guard let firstChannel = channelController.channels.first else {
+                        return
+                    }
+                    addMeInChannel(channelId: firstChannel.cid.id)
+                }
             }
         default:
             break
