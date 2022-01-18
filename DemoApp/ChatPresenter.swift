@@ -15,6 +15,8 @@ class DemoChatChannelListRouter: ChatChannelListRouter {
 
     var channelPresentingStyle: ChannelPresentingStyle = .push
 
+    let streamModalTransitioningDelegate = StreamModalTransitioningDelegate()
+
     func showCreateNewChannelFlow() {
         let storyboard = UIStoryboard(name: "Main", bundle: .main)
         
@@ -53,7 +55,8 @@ class DemoChatChannelListRouter: ChatChannelListRouter {
             let vc = components.channelVC.init()
             vc.channelController = rootViewController.controller.client.channelController(for: cid)
             let navVc = UINavigationController(rootViewController: vc)
-            navVc.isModalInPresentation = false
+            navVc.transitioningDelegate = streamModalTransitioningDelegate
+            navVc.modalPresentationStyle = .custom
             rootNavigationController?.present(navVc, animated: true, completion: nil)
 
         case .embeddedInTabBar:
