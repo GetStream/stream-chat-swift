@@ -17,13 +17,19 @@ You can completely swap the leading composer view with your own implementation. 
 
 In order to do this, you need to implement the `makeLeadingComposerView`, which receives a binding of the `PickerTypeState`. Having the `PickerTypeState` as a parameter allows you to control the visibility of the attachment picker view. The `PickerTypeState` has two states - expanded and collapsed. If the state is collapsed, the composer is in the minimal mode (only the text input and leading and trailing areas are shown). If the enum state is expanded, it has associated value with it, which is of type `AttachmentPickerType`. This defines the type of picker which is currently displayed in the attachment picker view. The possible states are `none` (nothing is selected), `media` (media picker is selected), `giphy` (giphy commands picker is shown) and custom (for your own custom pickers).
 
+Apart from the `PickerTypeState`, you also receive the `ChannelConfig` as a parameter. This config allows you to control the display of some elements from the channel response from the backend, such as enabling / disabling of the attachments, max message length, typing indicators, etc. More details about the available settings in the channel config can be found [here](https://getstream.io/chat/docs/ios-swift/channel_features/?language=swift).
+
 Here's an example on how to provide a view for the leading composer view: 
 
 ```swift
 public func makeLeadingComposerView(
-        state: Binding<PickerTypeState>
+        state: Binding<PickerTypeState>,
+        channelConfig: ChannelConfig?
 ) -> some View {
-    AttachmentPickerTypeView(pickerTypeState: state)
+    AttachmentPickerTypeView(
+        pickerTypeState: state,
+        channelConfig: channelConfig
+    )
 }
 ```
 
