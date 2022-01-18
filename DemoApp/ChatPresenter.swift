@@ -52,7 +52,9 @@ class DemoChatChannelListRouter: ChatChannelListRouter {
         case .modally:
             let vc = components.channelVC.init()
             vc.channelController = rootViewController.controller.client.channelController(for: cid)
-            rootNavigationController?.present(vc, animated: true, completion: nil)
+            let navVc = UINavigationController(rootViewController: vc)
+            navVc.isModalInPresentation = false
+            rootNavigationController?.present(navVc, animated: true, completion: nil)
 
         case .embeddedInTabBar:
             let vc = components.channelVC.init()
