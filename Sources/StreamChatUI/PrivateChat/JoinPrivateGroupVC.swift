@@ -19,6 +19,7 @@ class JoinPrivateGroupVC: UIViewController {
     private var memberListController: ChatChannelMemberListController?
     private var channelMembers: LazyCachedMapCollection<ChatChannelMember> = []
     private var channelController: ChatChannelController?
+    weak var otpViewDelegate: PrivateGroupOTPVCDelegate?
 
     // MARK: - Outlets
     @IBOutlet weak var btnBack: UIButton!
@@ -34,6 +35,7 @@ class JoinPrivateGroupVC: UIViewController {
 
     // MARK: - IBOutlets
     @IBAction func btnBackAction(_ sender: UIButton) {
+        otpViewDelegate?.popToThisVC()
         navigationController?.popViewController(animated: true)
     }
 

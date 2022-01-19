@@ -9,7 +9,14 @@
 import UIKit
 import CoreLocation
 
+protocol PrivateGroupOTPVCDelegate: class {
+    func popToThisVC()
+}
+
 open class PrivateGroupOTPVC: UIViewController {
+
+    // MARK: - Variables
+    var isPushed = false
 
     // MARK: - Outlets
     @IBOutlet private weak var viewSafeAreaHeader: UIView!
@@ -68,10 +75,13 @@ open class PrivateGroupOTPVC: UIViewController {
 
     // MARK: - Navigations
     private func pushToJoinPrivateGroup() {
-        guard let joinPrivateGroupVC: JoinPrivateGroupVC = JoinPrivateGroupVC.instantiateController(storyboard: .PrivateGroup), let opt = viewOTP.text else {
+        guard let joinPrivateGroupVC: JoinPrivateGroupVC = JoinPrivateGroupVC.instantiateController(storyboard: .PrivateGroup),
+              let opt = viewOTP.text,
+              !isPushed else {
             return
         }
         joinPrivateGroupVC.passWord = opt
+        joinPrivateGroupVC.otpViewDelegate = self
         navigationController?.pushViewController(joinPrivateGroupVC, animated: true)
     }
 
@@ -85,6 +95,13 @@ open class PrivateGroupOTPVC: UIViewController {
                 self.pushToJoinPrivateGroup()
             }
         }
+    }
+}
+
+// MARK: - PrivateGroupOTPVCDelegate
+extension PrivateGroupOTPVC: PrivateGroupOTPVCDelegate {
+    func popToThisVC() {
+        isPushed = false
     }
 }
 
