@@ -19,6 +19,8 @@ public struct SendOneWallet {
     public var transferAmount: Float?
     public var txId: String?
     public var strFormattedAmount: String?
+    //number of fraction digits in transferAmount
+    public var fractionDigits: Int = 0
 
     public init() {
     }
