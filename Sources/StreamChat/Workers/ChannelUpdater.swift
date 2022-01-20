@@ -10,20 +10,31 @@ class ChannelUpdater: Worker {
     ///
     /// - Parameters:
     ///   - channelQuery: The channel query used in the request
+    ///   - channelQuery: The channel query used in the request.
     ///   - channelCreatedCallback: For some type of channels we need to obtain id from backend.
     ///   This callback is called with the obtained `cid` before the channel payload is saved to the DB.
     ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
+    ///
+    /// **Note**: If query messages pagination parameter is `nil` AKA updater is asked to fetch the first page of messages,
+    /// the local channel's message history will be cleared before the channel payload is saved to the local storage.
     ///
     func update(
         channelQuery: ChannelQuery,
         channelCreatedCallback: ((ChannelId) -> Void)? = nil,
         completion: ((Result<ChannelPayload, Error>) -> Void)? = nil
     ) {
+        let clearMessageHistory = channelQuery.pagination?.parameter == nil
+
         apiClient.request(endpoint: .channel(query: channelQuery)) { (result) in
             do {
                 let payload = try result.get()
                 channelCreatedCallback?(payload.channel.cid)
                 self.database.write { session in
+                    if clearMessageHistory {
+                        let channelDTO = session.channel(cid: payload.channel.cid)
+                        channelDTO?.messages.removeAll()
+                    }
+
                     try session.saveChannel(payload: payload)
                 } completion: { error in
                     if let error = error {

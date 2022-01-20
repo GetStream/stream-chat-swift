@@ -7,15 +7,18 @@ import Foundation
 enum SyncError: Error {
     case localStorageDisabled
     case noNeedToSync
+    case tooManyEvents(Error)
     case syncEndpointFailed(Error)
     case resettingQueryFailed(Error)
+    case watchingActiveChannelFailed(Error)
+    case missingChannelId
     case couldNotUpdateUserValue(Error)
 
     var shouldRetry: Bool {
         switch self {
-        case .localStorageDisabled, .noNeedToSync, .couldNotUpdateUserValue:
+        case .localStorageDisabled, .noNeedToSync, .tooManyEvents, .couldNotUpdateUserValue:
             return false
-        case .syncEndpointFailed, .resettingQueryFailed:
+        case .syncEndpointFailed, .resettingQueryFailed, .watchingActiveChannelFailed, .missingChannelId:
             return true
         }
     }
@@ -27,7 +30,8 @@ class SyncRepository {
     /// Maximum number of retries for each operation step.
     let retriesCount = 2
     let config: ChatClientConfig
-    let activeChatListControllers: NSHashTable<ChatChannelListController>
+    let activeChannelControllers: NSHashTable<ChatChannelController>
+    let activeChannelListControllers: NSHashTable<ChatChannelListController>
     let channelRepository: ChannelListUpdater
     let eventNotificationCenter: EventNotificationCenter
     let database: DatabaseContainer
@@ -51,29 +55,31 @@ class SyncRepository {
 
     init(
         config: ChatClientConfig,
-        activeChatListControllers: NSHashTable<ChatChannelListController>,
+        activeChannelControllers: NSHashTable<ChatChannelController>,
+        activeChannelListControllers: NSHashTable<ChatChannelListController>,
         channelRepository: ChannelListUpdater,
         eventNotificationCenter: EventNotificationCenter,
         database: DatabaseContainer,
         apiClient: APIClient
     ) {
         self.config = config
-        self.activeChatListControllers = activeChatListControllers
+        self.activeChannelControllers = activeChannelControllers
+        self.activeChannelListControllers = activeChannelListControllers
         self.channelRepository = channelRepository
         self.eventNotificationCenter = eventNotificationCenter
         self.database = database
         self.apiClient = apiClient
     }
 
-    func recoverFromOfflineState(completion: @escaping () -> Void) {
+    func syncLocalState(completion: @escaping (SyncError?) -> Void) {
         guard config.isLocalStorageEnabled else {
-            completion()
+            completion(.localStorageDisabled)
             return
         }
 
         // [Sync and watch channels](https://www.notion.so/2-Sync-and-watch-channels-ac44feb55de3482f8f0f99e100ca40c6)
         //      1. Call `/sync` endpoint and get missing events for all locally existed channels
-        //      *** 2. Start watching open channels *** (Not in V1)
+        //      2. Start watching open channels
         //      3. Refetch channel lists queries, link only what backend returns (the 1st page)
         //      4. Clean up local message history for channels that are outdated/will get outdated
         //      5. Bump the last sync timestamp
@@ -82,37 +88,47 @@ class SyncRepository {
         var operations: [Operation] = []
 
         // 0. We get the existing channelIds
-        let channelIds = getExistingChannelIds()
+        let preSyncChannelIds = getExistingChannelIds()
 
         // 1. Call `/sync` endpoint and get missing events for all locally existed channels
+        var synchedChannelIds: Set<ChannelId> = Set(preSyncChannelIds)
         let syncEvents = AsyncOperation(retries: retriesCount) { [weak self] done in
             guard let self = self, let lastPendingConnectionDate = self.lastPendingConnectionDate else {
                 done(.continue)
                 return
             }
 
-            self.syncMissingEvents(using: lastPendingConnectionDate, channelIds: channelIds) { result in
-                if result.error?.shouldRetry == true {
-                    done(.retry)
-                } else {
+            self.syncMissingEvents(
+                using: lastPendingConnectionDate,
+                channelIds: preSyncChannelIds,
+                bumpLastSync: false
+            ) { result in
+                switch result {
+                case let .success(channelIds):
+                    synchedChannelIds = Set(channelIds)
                     self.lastPendingConnectionDate = nil
                     done(.continue)
+                case let .failure(error):
+                    done(error.shouldRetry ? .retry : .continue)
                 }
             }
         }
         operations.append(syncEvents)
 
-        // 2. Start watching open channels *** (Not in V1)
-        // ***************************************
-        // --------------  PENDING ---------------
-        // ***************************************
-
-        // 3. Refetch channel lists queries, link only what backend returns (the 1st page)
-        let refetchQueryOperations = activeChatListControllers.allObjects.map { controller in
-            AsyncOperation(retries: retriesCount) { done in
-                self.resetChannelsQuery(for: controller) { result in
+        // 2. Start watching open channels.
+        // We keep track of the watched channels to avoid clearing them out in future steps
+        var watchedChannelIds: Set<ChannelId> = []
+        let refetchChannelOperations: [AsyncOperation] = activeChannelControllers.allObjects.compactMap { controller in
+            // Reset only the controllers that need recovery
+            guard controller.isAvailableOnRemote else { return nil }
+            if let cid = controller.cid, synchedChannelIds.contains(cid) {
+                return nil
+            }
+            return AsyncOperation(retries: retriesCount) { [weak self] done in
+                self?.watchActiveChannel(for: controller) { result in
                     switch result {
-                    case let .success(channels):
+                    case let .success(channelId):
+                        watchedChannelIds.insert(channelId)
                         done(.continue)
                     case let .failure(error):
                         done(error.shouldRetry ? .retry : .continue)
@@ -120,20 +136,49 @@ class SyncRepository {
                 }
             }
         }
-        operations.append(contentsOf: refetchQueryOperations)
+        operations.append(contentsOf: refetchChannelOperations)
 
+        // 3. Refetch channel lists queries, link only what backend returns (the 1st page)
         // 4. Clean up local message history for channels that are outdated/will get outdated
-        // ***************************************
-        // --------------  PENDING ---------------
-        // ***************************************
+        // We use `synchedChannelIds` to keep track of the channels that were synched both in the previous step and
+        // after each ChannelListController recovery.
+        let refetchChannelListQueryOperations: [AsyncOperation] = activeChannelListControllers.allObjects.compactMap { controller in
+            // Reset only the controllers that need recovery
+            guard controller.isAvailableOnRemote else { return nil }
+
+            return AsyncOperation(retries: retriesCount) { [weak self] done in
+                self?.resetChannelsQuery(
+                    for: controller,
+                    watchedChannelIds: watchedChannelIds,
+                    synchedChannelIds: synchedChannelIds
+                ) { result in
+                    switch result {
+                    case let .success(channels):
+                        let queryChannelIds = channels.map(\.cid)
+                        synchedChannelIds = synchedChannelIds.union(queryChannelIds)
+                        done(.continue)
+                    case let .failure(error):
+                        done(error.shouldRetry ? .retry : .continue)
+                    }
+                }
+            }
+        }
+        operations.append(contentsOf: refetchChannelListQueryOperations)
 
         // 5. Bump the last sync timestamp
-        // ***************************************
-        // --------------  PENDING ---------------
-        // ***************************************
+        operations.append(AsyncOperation { [weak self] done in
+            self?.updateUserValue { user in
+                user?.lastSyncAt = Date()
+            } completion: { _ in
+                done(.continue)
+            }
+        })
 
         // 6. Clean lastPendingConnectionDate and complete
-        operations.append(BlockOperation(block: completion))
+        operations.append(BlockOperation(block: {
+            log.info("Finished recovering offline state", subsystems: .offlineSupport)
+            completion(nil)
+        }))
 
         // We are making sure the operations happen secuentially one after the other by setting one as the dependency
         // of the following one
@@ -154,21 +199,28 @@ class SyncRepository {
         lastPendingConnectionDate = date
     }
 
-    func syncExistingChannelsEvents(completion: @escaping (Result<MissingEventsPayload, SyncError>) -> Void) {
-        let lastSyncAt = getUserValue { $0?.lastReceivedEventDate }
-        guard let lastSyncAt = lastSyncAt, Date().timeIntervalSince(lastSyncAt) > syncCooldown else {
+    func syncExistingChannelsEvents(completion: @escaping (Result<[ChannelId], SyncError>) -> Void) {
+        guard let lastSyncAt = getUserValue({ $0?.lastSyncAt }) else {
+            // That's the first session of the current user. Bump `lastSyncAt` with current time and return.
+            updateUserValue { $0?.lastSyncAt = Date() }
+            completion(.failure(.noNeedToSync))
+            return
+        }
+
+        guard Date().timeIntervalSince(lastSyncAt) > syncCooldown else {
             completion(.failure(.noNeedToSync))
             return
         }
 
         let channelIds = getExistingChannelIds()
-        syncMissingEvents(using: lastSyncAt, channelIds: channelIds, completion: completion)
+        syncMissingEvents(using: lastSyncAt, channelIds: channelIds, bumpLastSync: true, completion: completion)
     }
 
     private func syncMissingEvents(
         using date: Date,
         channelIds: [ChannelId],
-        completion: @escaping (Result<MissingEventsPayload, SyncError>) -> Void
+        bumpLastSync: Bool,
+        completion: @escaping (Result<[ChannelId], SyncError>) -> Void
     ) {
         guard config.isLocalStorageEnabled else {
             completion(.failure(.localStorageDisabled))
@@ -176,41 +228,31 @@ class SyncRepository {
         }
 
         log.info("Synching events for existing channels since \(date)", subsystems: .offlineSupport)
-        getMissingEvents(since: date, channelIds: channelIds) { result in
+        getMissingEvents(since: date, channelIds: channelIds) { [weak self] result in
             switch result {
             case let .success(payload):
-                self.updateUserValue({
-                    $0?.lastReceivedEventDate = payload.eventPayloads.first?.createdAt ?? date
+                guard bumpLastSync else {
+                    completion(.success(channelIds))
+                    return
+                }
+
+                self?.updateUserValue({
+                    $0?.lastSyncAt = payload.eventPayloads.first?.createdAt ?? date
                 }) { error in
                     if let error = error {
                         completion(.failure(error))
                     } else {
-                        completion(.success(payload))
+                        completion(.success(channelIds))
                     }
                 }
             case let .failure(error):
-                completion(.failure(error))
-            }
-        }
-    }
-
-    private func resetChannelsQuery(
-        for controller: ChatChannelListController,
-        completion: @escaping (Result<[ChatChannel], SyncError>) -> Void
-    ) {
-        log.info("Refetching query for \(controller.query.debugDescription)", subsystems: .offlineSupport)
-
-        // Fetches the channels matching the query, and stores them in the database.
-        channelRepository.update(channelListQuery: controller.query) { result in
-            switch result {
-            case let .success(channels):
-                // Resets the query for the controller to only be linked to the controllers that were just fetched from
-                // the API
-                controller.resetLinkedChannels(to: channels)
-                completion(.success(channels))
-            case let .failure(error):
-                log.error("Failed refetching query for \(controller.query.debugDescription): \(error)", subsystems: .offlineSupport)
-                completion(.failure(.resettingQueryFailed(error)))
+                guard case .tooManyEvents = error else {
+                    completion(.failure(error))
+                    return
+                }
+                // Backend responds with 400 if there was more than 1000 events to replay
+                // Cleaning local channels data and refetching it from scratch
+                completion(.success([]))
             }
         }
     }
@@ -232,8 +274,54 @@ class SyncRepository {
                     completion(.success(payload))
                 }
             case let .failure(error):
-                log.error("Failed cleaning up channels data: \(error).", subsystems: .offlineSupport)
-                completion(.failure(.syncEndpointFailed(error)))
+                log.error("Failed synching events: \(error).", subsystems: .offlineSupport)
+                guard error.isBackendErrorWith400StatusCode else {
+                    completion(.failure(.syncEndpointFailed(error)))
+                    return
+                }
+                completion(.failure(.tooManyEvents(error)))
+            }
+        }
+    }
+
+    private func watchActiveChannel(
+        for controller: ChatChannelController,
+        completion: @escaping (Result<ChannelId, SyncError>) -> Void
+    ) {
+        let cidString = (controller.cid?.rawValue ?? "unknown")
+        log.info("Watching active channel \(cidString)", subsystems: .offlineSupport)
+        controller.watchActiveChannel { error in
+            if let error = error {
+                log.error("Failed watching active channel \(cidString): \(error)", subsystems: .offlineSupport)
+                completion(.failure(.watchingActiveChannelFailed(error)))
+            } else if let cid = controller.cid {
+                completion(.success(cid))
+            } else {
+                log.error("Failed watching active channel \(cidString): Missing channel id", subsystems: .offlineSupport)
+                completion(.failure(.missingChannelId))
+            }
+        }
+    }
+
+    private func resetChannelsQuery(
+        for controller: ChatChannelListController,
+        watchedChannelIds: Set<ChannelId>,
+        synchedChannelIds: Set<ChannelId>,
+        completion: @escaping (Result<[ChatChannel], SyncError>) -> Void
+    ) {
+        log.info("Refetching query for \(controller.query.debugDescription)", subsystems: .offlineSupport)
+
+        channelRepository.resetChannelsQuery(
+            for: controller.query,
+            watchedChannelIds: watchedChannelIds,
+            synchedChannelIds: synchedChannelIds
+        ) { result in
+            switch result {
+            case let .success(channels):
+                completion(.success(channels))
+            case let .failure(error):
+                log.error("Failed refetching query for \(controller.query.debugDescription): \(error)", subsystems: .offlineSupport)
+                completion(.failure(.resettingQueryFailed(error)))
             }
         }
     }

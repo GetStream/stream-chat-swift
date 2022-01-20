@@ -10,10 +10,9 @@ class CurrentUserDTO: NSManagedObject {
     @NSManaged var unreadChannelsCount: Int64
     @NSManaged var unreadMessagesCount: Int64
     
-    /// Into this field the creation date of last locally received event is saved.
+    /// Contains the timestamp when last sync process is finished.
     /// The date later serves as reference date for `/sync` endpoint
-    /// that returns all events that happen after the given date
-    @NSManaged var lastReceivedEventDate: Date?
+    @NSManaged var lastSyncAt: Date?
 
     /// We save the last pending connection date from which we need to sync events
     /// whenever we're recovering a connection. Only used for offline support.

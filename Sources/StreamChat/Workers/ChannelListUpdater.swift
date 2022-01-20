@@ -19,24 +19,87 @@ class ChannelListUpdater: Worker {
         fetch(channelListQuery: channelListQuery) { [weak self] in
             switch $0 {
             case let .success(channelListPayload):
-                var channels: [ChatChannel] = []
-                self?.database.write { session in
-                    let channelDTOs = try session.saveChannelList(payload: channelListPayload, query: channelListQuery)
-                    channels = channelDTOs.map { $0.asModel() }
-                } completion: { error in
-                    if let error = error {
-                        log.error("Failed to save `ChannelListPayload` to the database. Error: \(error)")
-                        completion?(.failure(error))
-                    } else {
-                        completion?(.success(channels))
-                    }
-                }
+                self?.writeChannelListPayload(
+                    payload: channelListPayload,
+                    query: channelListQuery,
+                    completion: completion
+                )
             case let .failure(error):
                 completion?(.failure(error))
             }
         }
     }
-    
+
+    func resetChannelsQuery(
+        for query: ChannelListQuery,
+        watchedChannelIds: Set<ChannelId>,
+        synchedChannelIds: Set<ChannelId>,
+        completion: @escaping (Result<[ChatChannel], Error>) -> Void
+    ) {
+        var updatedQuery = query
+        updatedQuery.pagination = .init(pageSize: .channelsPageSize, offset: 0)
+
+        // Fetches the channels matching the query, and stores them in the database.
+        fetch(channelListQuery: updatedQuery) { [self] result in
+            switch result {
+            case let .success(channelListPayload):
+                self.writeChannelListPayload(
+                    payload: channelListPayload,
+                    query: updatedQuery,
+                    initialActions: { session in
+                        guard let queryDTO = session.channelListQuery(filterHash: updatedQuery.filter.filterHash) else {
+                            throw ClientError("Channel List Query \(query) is not in database")
+                        }
+
+                        let localQueryCIDs = Set(queryDTO.channels.compactMap { try? ChannelId(cid: $0.cid) })
+                        let remoteQueryCIDs = Set(channelListPayload.channels.map(\.channel.cid))
+                        let queryAlreadySynched = remoteQueryCIDs.intersection(synchedChannelIds)
+
+                        // We are going to unlink & clear those channels that are not present in the remote query,
+                        // and that have not been synched nor watched. Those are outdated.
+                        let cidsToRemove = localQueryCIDs
+                            .subtracting(queryAlreadySynched)
+                            .subtracting(watchedChannelIds)
+
+                        for cid in cidsToRemove {
+                            guard let channelDTO = session.channel(cid: cid) else { continue }
+
+                            channelDTO.resetEphemeralValues()
+                            channelDTO.messages.removeAll()
+                        }
+
+                        // Unlink all local channels, we'll now link what we've received from backend
+                        queryDTO.channels.removeAll()
+                    },
+                    completion: completion
+                )
+            case let .failure(error):
+                completion(.failure(error))
+            }
+        }
+    }
+
+    private func writeChannelListPayload(
+        payload: ChannelListPayload,
+        query: ChannelListQuery,
+        initialActions: ((DatabaseSession) throws -> Void)? = nil,
+        completion: ((Result<[ChatChannel], Error>) -> Void)? = nil
+    ) {
+        var channels: [ChatChannel] = []
+        database.write { session in
+            try initialActions?(session)
+            let channelDTOs = try session.saveChannelList(payload: payload, query: query)
+            channels = channelDTOs.map { $0.asModel() }
+        } completion: { error in
+            if let error = error {
+                log.error("Failed to save `ChannelListPayload` to the database. Error: \(error)")
+                completion?(.failure(error))
+            } else {
+                completion?(.success(channels))
+            }
+        }
+    }
+
     /// Fetches the given query from the API and returns results via completion.
     ///
     /// - Parameters:

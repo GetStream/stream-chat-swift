@@ -87,7 +87,8 @@ public class ChatRemoteNotificationHandler {
         let channelRepository = ChannelListUpdater(database: database, apiClient: client.apiClient)
         return SyncRepository(
             config: client.config,
-            activeChatListControllers: client.activeChatListControllers,
+            activeChannelControllers: client.activeChannelControllers,
+            activeChannelListControllers: client.activeChannelListControllers,
             channelRepository: channelRepository,
             eventNotificationCenter: client.eventNotificationCenter,
             database: database,

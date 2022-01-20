@@ -28,6 +28,15 @@ public class DataController: Controller {
             }
         }
     }
+
+    var isAvailableOnRemote: Bool {
+        switch state {
+        case .remoteDataFetched, .remoteDataFetchFailed:
+            return true
+        case .initialized, .localDataFetched, .localDataFetchFailed:
+            return false
+        }
+    }
     
     /// Synchronize local data with remote.
     ///

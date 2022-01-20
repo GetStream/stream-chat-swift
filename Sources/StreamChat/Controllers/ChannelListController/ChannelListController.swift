@@ -196,16 +196,6 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
         }
         unlink(channels: channels)
     }
-
-    func resetLinkedChannels(to channels: [ChatChannel]) {
-        client.databaseContainer.write { session in
-            guard let queryDTO = session.channelListQuery(filterHash: self.query.filter.filterHash) else {
-                log.debug("Channel list query has not yet created \(self.query)")
-                return
-            }
-            queryDTO.channels = Set(channels.compactMap { session.channel(cid: $0.cid) })
-        }
-    }
     
     private func link(channels: [ChatChannel]) {
         guard !channels.isEmpty else { return }

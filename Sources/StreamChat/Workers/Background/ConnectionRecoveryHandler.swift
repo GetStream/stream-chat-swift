@@ -153,11 +153,23 @@ extension DefaultConnectionRecoveryHandler {
             
         case .connected:
             reconnectionStrategy.resetConsecutiveFailures()
-            
+            syncRepository.syncLocalState { [weak self] error in
+                guard let error = error else {
+                    log.info("Successfully synced local state", subsystems: .offlineSupport)
+                    return
+                }
+
+                switch error {
+                case .localStorageDisabled, .noNeedToSync:
+                    break
+                case .syncEndpointFailed, .resettingQueryFailed, .watchingActiveChannelFailed,
+                     .missingChannelId, .couldNotUpdateUserValue, .tooManyEvents:
+                    self?.disconnectIfNeeded()
+                }
+            }
+
         case .disconnected:
             scheduleReconnectionTimerIfNeeded()
-            sync()
-            
         case .initialized, .waitingForConnectionId, .disconnecting:
             break
         }
@@ -217,18 +229,6 @@ private extension DefaultConnectionRecoveryHandler {
         log.debug("Will reconnect automatically", subsystems: .webSocket)
         
         return true
-    }
-}
-
-// MARK: - Sync
-
-private extension DefaultConnectionRecoveryHandler {
-    func sync() {
-        syncRepository.recoverFromOfflineState {
-            // ***************************************
-            // --------------  PENDING ---------------
-            // ***************************************
-        }
     }
 }
 

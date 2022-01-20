@@ -42,7 +42,7 @@ class InternetConnection {
     }
     
     /// The notification center that posts notifications when connection state changes..
-    var notificationCenter: NotificationCenter
+    let notificationCenter: NotificationCenter
     
     /// A specific Internet connection monitor.
     private var monitor: InternetConnectionMonitor

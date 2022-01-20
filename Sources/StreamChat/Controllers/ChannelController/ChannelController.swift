@@ -302,6 +302,8 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
 
         setChannelObserver()
         setMessagesObserver()
+
+        client.trackChannelController(self)
     }
     
     private func setChannelObserver() {
@@ -385,6 +387,11 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     }
     
     override public func synchronize(_ completion: ((_ error: Error?) -> Void)? = nil) {
+        channelQuery.pagination = .init(
+            pageSize: channelQuery.pagination?.pageSize ?? .messagesPageSize,
+            parameter: nil
+        )
+
         let channelCreatedCallback = isChannelAlreadyCreated ? nil : channelCreated(forwardErrorTo: setLocalStateBasedOnError)
         updater.update(
             channelQuery: channelQuery,
@@ -1111,6 +1118,7 @@ public extension ChatChannelController {
             return
         }
         updater.startWatching(cid: cid) { error in
+            self.state = error.map { .remoteDataFetchFailed(ClientError(with: $0)) } ?? .remoteDataFetched
             self.callback {
                 completion?(error)
             }
@@ -1141,6 +1149,7 @@ public extension ChatChannelController {
             return
         }
         updater.stopWatching(cid: cid) { error in
+            self.state = error.map { .remoteDataFetchFailed(ClientError(with: $0)) } ?? .localDataFetched
             self.callback {
                 completion?(error)
             }
@@ -1276,6 +1285,14 @@ public extension ChatChannelController {
                     completion(.failure(error))
                 }
             }
+        }
+    }
+
+    func watchActiveChannel(completion: @escaping (Error?) -> Void) {
+        if cid != nil, isChannelAlreadyCreated {
+            startWatching(completion: completion)
+        } else {
+            synchronize(completion)
         }
     }
 }
