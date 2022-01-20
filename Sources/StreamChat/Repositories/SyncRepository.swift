@@ -37,15 +37,6 @@ class SyncRepository {
     let database: DatabaseContainer
     let apiClient: APIClient
 
-    private var lastPendingConnectionDate: Date? {
-        get {
-            getUserValue { $0?.lastPendingConnectionDate }
-        }
-        set {
-            updateUserValue { $0?.lastPendingConnectionDate = newValue }
-        }
-    }
-
     private lazy var operationQueue: OperationQueue = {
         let operationQueue = OperationQueue()
         operationQueue.maxConcurrentOperationCount = 1
@@ -88,28 +79,35 @@ class SyncRepository {
         var operations: [Operation] = []
 
         // 0. We get the existing channelIds
-        let preSyncChannelIds = getExistingChannelIds()
+        var preSyncChannelIds: [ChannelId] = []
+        operations.append(AsyncOperation { [weak self] done in
+            self?.getExistingChannelIds { channels in
+                preSyncChannelIds = channels
+                done(.continue)
+            }
+        })
 
         // 1. Call `/sync` endpoint and get missing events for all locally existed channels
         var synchedChannelIds: Set<ChannelId> = Set(preSyncChannelIds)
         let syncEvents = AsyncOperation(retries: retriesCount) { [weak self] done in
-            guard let self = self, let lastPendingConnectionDate = self.lastPendingConnectionDate else {
-                done(.continue)
-                return
-            }
-
-            self.syncMissingEvents(
-                using: lastPendingConnectionDate,
-                channelIds: preSyncChannelIds,
-                bumpLastSync: false
-            ) { result in
-                switch result {
-                case let .success(channelIds):
-                    synchedChannelIds = Set(channelIds)
-                    self.lastPendingConnectionDate = nil
+            self?.getUser { user in
+                guard let lastPendingConnectionDate = user?.lastPendingConnectionDate else {
                     done(.continue)
-                case let .failure(error):
-                    done(error.shouldRetry ? .retry : .continue)
+                    return
+                }
+
+                self?.syncMissingEvents(
+                    using: lastPendingConnectionDate,
+                    channelIds: preSyncChannelIds,
+                    bumpLastSync: false
+                ) { result in
+                    switch result {
+                    case let .success(channelIds):
+                        synchedChannelIds = Set(channelIds)
+                        self?.updateUserValue({ $0?.lastPendingConnectionDate = nil }, completion: { _ in done(.continue) })
+                    case let .failure(error):
+                        done(error.shouldRetry ? .retry : .continue)
+                    }
                 }
             }
         }
@@ -195,25 +193,38 @@ class SyncRepository {
     func updateLastPendingConnectionDate(with date: Date) {
         // If there's a pending connection date, it means there was an issue retrieving all the past events.
         // If that's the case, we keep the existing one.
-        guard lastPendingConnectionDate == nil else { return }
-        lastPendingConnectionDate = date
+        updateUserValue { user in
+            guard let user = user, user.lastPendingConnectionDate == nil else { return }
+            user.lastPendingConnectionDate = date
+        }
     }
 
     func syncExistingChannelsEvents(completion: @escaping (Result<[ChannelId], SyncError>) -> Void) {
-        guard let lastSyncAt = getUserValue({ $0?.lastSyncAt }) else {
-            // That's the first session of the current user. Bump `lastSyncAt` with current time and return.
-            updateUserValue { $0?.lastSyncAt = Date() }
-            completion(.failure(.noNeedToSync))
-            return
-        }
+        getUser { [weak self, syncCooldown] user in
+            guard let lastSyncAt = user?.lastSyncAt else {
+                // That's the first session of the current user. Bump `lastSyncAt` with current time and return.
+                self?.updateUserValue({
+                    $0?.lastSyncAt = Date()
+                }, completion: { _ in
+                    completion(.failure(.noNeedToSync))
+                })
+                return
+            }
 
-        guard Date().timeIntervalSince(lastSyncAt) > syncCooldown else {
-            completion(.failure(.noNeedToSync))
-            return
-        }
+            guard Date().timeIntervalSince(lastSyncAt) > syncCooldown else {
+                completion(.failure(.noNeedToSync))
+                return
+            }
 
-        let channelIds = getExistingChannelIds()
-        syncMissingEvents(using: lastSyncAt, channelIds: channelIds, bumpLastSync: true, completion: completion)
+            self?.getExistingChannelIds { channelIds in
+                self?.syncMissingEvents(
+                    using: lastSyncAt,
+                    channelIds: channelIds,
+                    bumpLastSync: true,
+                    completion: completion
+                )
+            }
+        }
     }
 
     private func syncMissingEvents(
@@ -264,10 +275,10 @@ class SyncRepository {
     ) {
         let endpoint: Endpoint<MissingEventsPayload> = .missingEvents(since: lastSyncDate, cids: channelIds)
 
-        apiClient.request(endpoint: endpoint) { result in
+        apiClient.request(endpoint: endpoint) { [weak self] result in
             switch result {
             case let .success(payload):
-                self.eventNotificationCenter.process(
+                self?.eventNotificationCenter.process(
                     payload.eventPayloads.asEvents(),
                     postNotifications: false
                 ) {
@@ -326,22 +337,23 @@ class SyncRepository {
         }
     }
 
-    private func getExistingChannelIds() -> [ChannelId] {
-        let request = ChannelDTO.allChannelsFetchRequest
-        request.propertiesToFetch = ["cid"]
-        let results = (try? database.viewContext.fetch(request)) ?? []
-        let cids = results.compactMap { try? ChannelId(cid: $0.cid) }
-        return cids
+    private func getExistingChannelIds(completion: @escaping ([ChannelId]) -> Void) {
+        database.write { session in
+            let cids =
+                session
+                    .loadAllChannelListQueries()
+                    .flatMap(\.channels)
+                    .compactMap { try? ChannelId(cid: $0.cid) }
+
+            completion(cids)
+        }
     }
 
-    private func getUserValue<T>(_ block: (inout CurrentUserDTO?) -> T?) -> T? {
-        var value: T?
-        database.viewContext.performAndWait {
-            var currentUser = self.database.viewContext.currentUser
-            value = block(&currentUser)
+    private func getUser(_ completion: @escaping (CurrentUserDTO?) -> Void) {
+        let context = database.viewContext
+        context.perform {
+            completion(context.currentUser)
         }
-
-        return value
     }
 
     private func updateUserValue(
