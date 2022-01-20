@@ -45,7 +45,6 @@ open class StreamModalPresentationController: UIPresentationController {
     open func setup() {
         overlayView.backgroundColor = UIColor.black
         overlayView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-        overlayView.isUserInteractionEnabled = true
 
         let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(dismissController))
         overlayView.addGestureRecognizer(tapGestureRecognizer)

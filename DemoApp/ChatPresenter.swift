@@ -15,7 +15,7 @@ class DemoChatChannelListRouter: ChatChannelListRouter {
 
     var channelPresentingStyle: ChannelPresentingStyle = .push
 
-    let streamModalTransitioningDelegate = StreamModalTransitioningDelegate()
+    lazy var streamModalTransitioningDelegate = StreamModalTransitioningDelegate()
 
     func showCreateNewChannelFlow() {
         let storyboard = UIStoryboard(name: "Main", bundle: .main)
