@@ -19,8 +19,7 @@ open class ChatMessageListVC:
     LinkPreviewViewDelegate,
     UITableViewDataSource,
     UITableViewDelegate,
-    UIGestureRecognizerDelegate,
-    UIAdaptivePresentationControllerDelegate {
+    UIGestureRecognizerDelegate {
     /// The object that acts as the data source of the message list.
     public weak var dataSource: ChatMessageListVCDataSource? {
         didSet {
@@ -107,8 +106,6 @@ open class ChatMessageListVC:
         tapOnList.delegate = self
         listView.addGestureRecognizer(tapOnList)
 
-        navigationController?.presentationController?.delegate = self
-        
         scrollToLatestMessageButton.addTarget(self, action: #selector(scrollToLatestMessage), for: .touchUpInside)
     }
     
@@ -534,13 +531,5 @@ open class ChatMessageListVC:
     ) -> Bool {
         // To prevent the gesture recognizer consuming up the events from UIControls, we receive touch only when the view isn't a UIControl.
         !(touch.view is UIControl)
-    }
-
-    // MARK: - UIAdaptivePresentationControllerDelegate
-
-    public func presentationControllerShouldDismiss(_ presentationController: UIPresentationController) -> Bool {
-        // A workaround is required because we are using an inverted UITableView for the message list.
-        // More details on the issue: https://github.com/GetStream/stream-chat-swift/issues/1307
-        !listView.isDragging
     }
 }
