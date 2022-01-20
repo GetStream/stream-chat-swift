@@ -187,8 +187,19 @@ open class ChatMessageListView: UITableView, Customizable, ComponentsProvider {
             return
         }
 
+        let isValidIndex: (IndexPath) -> Bool = { [weak self] indexPath in
+            guard let self = self else { return false }
+            let dataSourceCount = self.dataSource?.tableView(self, numberOfRowsInSection: 0) ?? 0
+            return indexPath.item < dataSourceCount
+        }
+
         switch change {
         case let .insert(message, index: index):
+            if !isValidIndex(index) {
+                reloadData()
+                return
+            }
+
             UIView.performWithoutAnimation {
                 self.performBatchUpdates {
                     self.insertRows(at: [index], with: .none)
@@ -211,6 +222,11 @@ open class ChatMessageListView: UITableView, Customizable, ComponentsProvider {
             moveRow(at: fromIndex, to: toIndex)
 
         case let .update(_, index: index):
+            if !isValidIndex(index) {
+                reloadData()
+                return
+            }
+
             reloadRows(at: [index], with: .automatic)
 
         case .remove:
