@@ -20,6 +20,23 @@ class JoinPrivateGroupVC: UIViewController {
     private var channelMembers: LazyCachedMapCollection<ChatChannelMember> = []
     private var channelController: ChatChannelController?
     weak var otpViewDelegate: PrivateGroupOTPVCDelegate?
+    private var nearByChannel: ChatChannel?
+    var userStatus: UserStatus? {
+        didSet {
+            if userStatus == .createGroup || userStatus == .alreadyJoined {
+                btnJoinGroup.setTitle("Go To Chat", for: .normal)
+            } else if userStatus == .joinGroup {
+                btnJoinGroup.setTitle("Join This Group", for: .normal)
+            }
+        }
+    }
+
+    // MARK: - enums
+    enum UserStatus {
+        case createGroup
+        case joinGroup
+        case alreadyJoined
+    }
 
     // MARK: - Outlets
     @IBOutlet weak var btnBack: UIButton!
@@ -40,17 +57,28 @@ class JoinPrivateGroupVC: UIViewController {
     }
 
     @IBAction func btnJoinGroupAction(_ sender: UIButton) {
-        let arrViewControllers = navigationController?.viewControllers ?? []
-        guard let rootViewController = arrViewControllers.first, let channelController = channelController else {
+        guard let channelController = channelController else {
             return
         }
-        var newControllers: [UIViewController] = []
-        newControllers.append(rootViewController)
+        if userStatus == .joinGroup {
+            addMeInChannel(channelId: channelController.cid?.id ?? "") { error in
+                guard error != nil else {
+                    var userInfo = [String: Any]()
+                    userInfo["message"] = error?.localizedDescription
+                    NotificationCenter.default.post(name: .showSnackBar, object: nil, userInfo: userInfo)
+                    return
+                }
+                DispatchQueue.main.async { [weak self] in
+                    guard let self = self else {
+                        return
+                    }
+                    self.handleNavigation()
+                }
 
-        let chatChannelVC = ChatChannelVC.init()
-        chatChannelVC.channelController = channelController
-        newControllers.append(chatChannelVC)
-        navigationController?.setViewControllers(newControllers, animated: true)
+            }
+        } else {
+            handleNavigation()
+        }
     }
 
     // MARK: - Functions
@@ -66,6 +94,23 @@ class JoinPrivateGroupVC: UIViewController {
         cvUserList?.register(UINib(nibName: PrivateGroupUsersCVCell.identifier, bundle: nil),
                              forCellWithReuseIdentifier: PrivateGroupUsersCVCell.identifier)
         filterChannels()
+    }
+
+    private func handleNavigation() {
+        guard let channelController = channelController else {
+            return
+        }
+        let arrViewControllers = navigationController?.viewControllers ?? []
+        guard let rootViewController = arrViewControllers.first else {
+            return
+        }
+        var newControllers: [UIViewController] = []
+        newControllers.append(rootViewController)
+
+        let chatChannelVC = ChatChannelVC.init()
+        chatChannelVC.channelController = channelController
+        newControllers.append(chatChannelVC)
+        navigationController?.setViewControllers(newControllers, animated: true)
     }
 
     private func filterChannels() {
@@ -107,13 +152,11 @@ class JoinPrivateGroupVC: UIViewController {
         }
     }
 
-    private func addMeInChannel(channelId: String) {
+    private func addMeInChannel(channelId: String, completion: ((Error?) -> Void)? = nil) {
         guard let currentUserId = ChatClient.shared.currentUserId else {
             return
         }
-        channelController = ChatClient.shared.channelController(for: .init(type: .privateMessaging, id: channelId))
-        channelController?.addMembers(userIds: [currentUserId], completion: nil)
-        fetchChannelMembers(id: channelId)
+        channelController?.addMembers(userIds: [currentUserId], completion: completion)
     }
 
     private func fetchChannelMembers(id: String) {
@@ -169,18 +212,39 @@ extension JoinPrivateGroupVC: ChatChannelListControllerDelegate {
         switch state {
         case .localDataFetched, .remoteDataFetched:
             if channelController.channels.isEmpty {
+                userStatus = .createGroup
                 createPrivateChannel()
             } else {
                 let nearByChannels = channelController.channels.filter { channel in
                     return isChannelNearBy(channel.extraData)
                 }
                 if nearByChannels.isEmpty {
+                    userStatus = .createGroup
                     createPrivateChannel()
                 } else {
                     guard let firstChannel = channelController.channels.first else {
                         return
                     }
-                    addMeInChannel(channelId: firstChannel.cid.id)
+                    let channelMembers = ChatClient.shared.memberListController(
+                        query: .init(
+                            cid: .init(
+                                type: .privateMessaging,
+                                id: firstChannel.cid.id)))
+
+                    channelMembers.synchronize { [weak self] error in
+                        guard error != nil, let self  = self else {
+                            self?.navigationController?.popViewController(animated: true)
+                            return
+                        }
+                        let isUserExiestInChat = !channelMembers.members.filter( {$0.id == ChatClient.shared.currentUserId}).isEmpty
+                        if isUserExiestInChat {
+                            self.userStatus = .alreadyJoined
+                        } else {
+                            self.userStatus = .joinGroup
+                        }
+                        self.channelController = ChatClient.shared.channelController(for: .init(type: .privateMessaging, id: firstChannel.cid.id))
+                        self.fetchChannelMembers(id: firstChannel.cid.id)
+                    }
                 }
             }
         default:

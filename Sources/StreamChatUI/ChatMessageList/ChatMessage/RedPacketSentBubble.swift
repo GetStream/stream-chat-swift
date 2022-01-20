@@ -272,11 +272,10 @@ class RedPacketSentBubble: UITableViewCell {
         guard let rawData = raw else { return nil }
         if let endTime = rawData ["endTime"] {
             let strEndTime = fetchRawData(raw: endTime) as? String ?? ""
-            let dateFormatter = DateFormatter()
-            dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss"
-            dateFormatter.locale = Locale.autoupdatingCurrent
-            if let date = dateFormatter.date(from: strEndTime) {
-                return date.toLocalTime()
+            let dateFormatter = ISO8601DateFormatter()
+            dateFormatter.formatOptions = [.withInternetDateTime]
+            if let date = dateFormatter.date(from: "\(strEndTime)") {
+                return date
             } else {
                 return nil
             }
@@ -298,7 +297,7 @@ class RedPacketSentBubble: UITableViewCell {
             // check end time
             if let endDate = getEndTime(raw: redPacket) {
                 let minutes = Date().minutesFromCurrentDate(endDate)
-                if minutes > 10 {
+                if minutes <= 0 {
                     showSnakBar(text: "Expired - better luck next time!")
                     return false
                 } else {

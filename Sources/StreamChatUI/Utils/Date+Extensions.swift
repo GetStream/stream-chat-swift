@@ -49,7 +49,7 @@ extension Date {
     func minutesFromCurrentDate(_ oldDate: Date) -> Float {
         let newDateMinutes = Date().timeIntervalSinceReferenceDate/60
         let oldDateMinutes = oldDate.timeIntervalSinceReferenceDate/60
-        return Float(newDateMinutes - oldDateMinutes)
+        return Float(oldDateMinutes - newDateMinutes)
     }
 
     func withAddedMinutes(minutes: Double) -> Date {

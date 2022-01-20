@@ -940,7 +940,6 @@
 		CDA1FB08278843AF00C2F4BD /* PrivateGroupUsersCVCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = CDA1FB06278843AF00C2F4BD /* PrivateGroupUsersCVCell.xib */; };
 		CDB98D132757D43A00CA7CDE /* SendOneWallet.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDB98D112757D43A00CA7CDE /* SendOneWallet.swift */; };
 		CDC2BCE72763756500D75F6F /* Date+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8837C6392539B4A600D8FE86 /* Date+Extensions.swift */; };
-		CDC43555278EE36300A07918 /* GroupQRCodeScanVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDC43554278EE36300A07918 /* GroupQRCodeScanVC.swift */; };
 		CDFA6EDD2768DB0A00DC3B7F /* ActivityIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDFA6EDC2768DB0900DC3B7F /* ActivityIndicator.swift */; };
 		DA0BB1612513B5F200CAEFBD /* StringInterpolation+Extenstions.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA0BB1602513B5F200CAEFBD /* StringInterpolation+Extenstions.swift */; };
 		DA15A20424DF257500BE2423 /* ChannelQuery_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA15A20224DF256F00BE2423 /* ChannelQuery_Tests.swift */; };
@@ -2394,7 +2393,6 @@
 		CDA1FB05278843AF00C2F4BD /* PrivateGroupUsersCVCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrivateGroupUsersCVCell.swift; sourceTree = "<group>"; };
 		CDA1FB06278843AF00C2F4BD /* PrivateGroupUsersCVCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = PrivateGroupUsersCVCell.xib; sourceTree = "<group>"; };
 		CDB98D112757D43A00CA7CDE /* SendOneWallet.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SendOneWallet.swift; sourceTree = "<group>"; };
-		CDC43554278EE36300A07918 /* GroupQRCodeScanVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupQRCodeScanVC.swift; sourceTree = "<group>"; };
 		CDFA6EDC2768DB0900DC3B7F /* ActivityIndicator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityIndicator.swift; sourceTree = "<group>"; };
 		D6D707D903EC16AD458C2F98 /* Pods-DocsSnippets.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DocsSnippets.release.xcconfig"; path = "Target Support Files/Pods-DocsSnippets/Pods-DocsSnippets.release.xcconfig"; sourceTree = "<group>"; };
 		DA0BB1602513B5F200CAEFBD /* StringInterpolation+Extenstions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "StringInterpolation+Extenstions.swift"; sourceTree = "<group>"; };
@@ -5111,7 +5109,6 @@
 				CD24C7102784514900F6378D /* PrivateGroupOTPVC.swift */,
 				CD052B4627881BFC007E9DEF /* JoinPrivateGroupVC.swift */,
 				CD89457A278DA65200F8B5E8 /* GroupQRCodeVC.swift */,
-				CDC43554278EE36300A07918 /* GroupQRCodeScanVC.swift */,
 			);
 			path = PrivateChat;
 			sourceTree = "<group>";
@@ -6723,7 +6720,6 @@
 				E7166CB225BED22B00B03B07 /* Appearance+ColorPalette.swift in Sources */,
 				88A11B0A2590AFBB0000AC24 /* ChatMessage+Extensions.swift in Sources */,
 				780DFCFC25EF7DA500A39A6E /* ChatChannelListVC+SwiftUI.swift in Sources */,
-				CDC43555278EE36300A07918 /* GroupQRCodeScanVC.swift in Sources */,
 				DBC8A5762581476E00B20A82 /* ChatMessageListVC.swift in Sources */,
 				CDC2BCE72763756500D75F6F /* Date+Extensions.swift in Sources */,
 				8800A28C258A1924006D64C4 /* ChatMessageFileAttachmentListView.swift in Sources */,
