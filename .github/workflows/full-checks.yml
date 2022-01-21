@@ -156,6 +156,9 @@ jobs:
         device: "iPhone 11"
         ios: "12.4"
         xcode: "10.3"
+      env:
+        XCODE_INSTALL_USER: ${{ secrets.XCODE_INSTALL_USER }}
+        XCODE_INSTALL_PASSWORD: ${{ secrets.XCODE_INSTALL_PASSWORD }}
     - name: Run Stress Tests
       run: bundle exec fastlane stress_test_release device:"iPhone 11 (12.4)"
 
