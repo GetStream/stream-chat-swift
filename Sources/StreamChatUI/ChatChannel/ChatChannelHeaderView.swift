@@ -135,8 +135,8 @@ open class ChatChannelHeaderView:
                 return L10n.Message.Title.offline
             }
         }
-
-        return L10n.Message.Title.group(channel.memberCount, min(channel.memberCount, channel.watcherCount))
+        let activeMembers = channel.lastActiveMembers.filter( {$0.isOnline}).count
+        return L10n.Message.Title.group(channel.memberCount, activeMembers)
     }
 
     /// Create the timer to repeatedly update the online status of the members.
