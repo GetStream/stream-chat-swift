@@ -1,5 +1,5 @@
 //
-// Copyright © 2021 Stream.io Inc. All rights reserved.
+// Copyright © 2022 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -171,6 +171,9 @@ public struct NotificationAddedToChannelEvent: ChannelSpecificEvent, HasUnreadCo
     /// The unread counts of the current user.
     public let unreadCount: UnreadCount?
     
+    /// The membership information of the current user.
+    public let member: ChatChannelMember
+    
     /// The event timestamp.
     public let createdAt: Date
 }
@@ -178,22 +181,29 @@ public struct NotificationAddedToChannelEvent: ChannelSpecificEvent, HasUnreadCo
 class NotificationAddedToChannelEventDTO: EventDTO {
     let channel: ChannelDetailPayload
     let unreadCount: UnreadCount?
+    // This `member` field is equal to the `membership` field in channel query
+    let member: MemberPayload
     let createdAt: Date
     let payload: EventPayload
     
     init(from response: EventPayload) throws {
         channel = try response.value(at: \.channel)
         unreadCount = try? response.value(at: \.unreadCount)
+        member = try response.value(at: \.memberContainer?.member)
         createdAt = try response.value(at: \.createdAt)
         payload = response
     }
     
     func toDomainEvent(session: DatabaseSession) -> Event? {
-        guard let channelDTO = session.channel(cid: channel.cid) else { return nil }
+        guard
+            let channelDTO = session.channel(cid: channel.cid),
+            let memberDTO = session.member(userId: member.user.id, cid: channel.cid)
+        else { return nil }
 
         return NotificationAddedToChannelEvent(
             channel: channelDTO.asModel(),
             unreadCount: unreadCount,
+            member: memberDTO.asModel(),
             createdAt: createdAt
         )
     }
@@ -217,6 +227,7 @@ public struct NotificationRemovedFromChannelEvent: ChannelSpecificEvent {
 class NotificationRemovedFromChannelEventDTO: EventDTO {
     let cid: ChannelId
     let user: UserPayload
+    // This `member` field is equal to the `membership` field in channel query
     let member: MemberPayload
     let createdAt: Date
     let payload: EventPayload
@@ -292,6 +303,7 @@ public struct NotificationInvitedEvent: MemberEvent, ChannelSpecificEvent {
 class NotificationInvitedEventDTO: EventDTO {
     let user: UserPayload
     let cid: ChannelId
+    // This `member` field is equal to the `membership` field in channel query
     let member: MemberPayload
     let createdAt: Date
     let payload: EventPayload
@@ -340,6 +352,7 @@ public struct NotificationInviteAcceptedEvent: MemberEvent, ChannelSpecificEvent
 class NotificationInviteAcceptedEventDTO: EventDTO {
     let user: UserPayload
     let channel: ChannelDetailPayload
+    // This `member` field is equal to the `membership` field in channel query
     let member: MemberPayload
     let createdAt: Date
     let payload: EventPayload
@@ -389,6 +402,7 @@ public struct NotificationInviteRejectedEvent: MemberEvent, ChannelSpecificEvent
 class NotificationInviteRejectedEventDTO: EventDTO {
     let user: UserPayload
     let channel: ChannelDetailPayload
+    // This `member` field is equal to the `membership` field in channel query
     let member: MemberPayload
     let createdAt: Date
     let payload: EventPayload

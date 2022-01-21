@@ -1,5 +1,5 @@
 //
-// Copyright © 2021 Stream.io Inc. All rights reserved.
+// Copyright © 2022 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat
@@ -234,7 +234,8 @@ open class QuotedChatMessageView: _View, ThemeProvider, SwiftUIRepresentable {
         components.imageLoader.loadImage(
             into: attachmentPreviewView,
             url: url,
-            imageCDN: components.imageCDN
+            imageCDN: components.imageCDN,
+            preferredSize: attachmentPreviewSize
         )
     }
 

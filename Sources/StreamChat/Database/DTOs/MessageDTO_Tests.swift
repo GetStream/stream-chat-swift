@@ -1,5 +1,5 @@
 //
-// Copyright © 2021 Stream.io Inc. All rights reserved.
+// Copyright © 2022 Stream.io Inc. All rights reserved.
 //
 
 import CoreData
@@ -1233,24 +1233,6 @@ class MessageDTO_Tests: XCTestCase {
         XCTAssertEqual(loadedMessages[2].quotedMessage?.id, createdMessages[1].id)
     }
 
-    func checkChannelMessagesPredicateCount(channelId: ChannelId, message: MessagePayload) throws -> Int {
-        let request = NSFetchRequest<MessageDTO>(entityName: MessageDTO.entityName)
-        request.sortDescriptors = [NSSortDescriptor(keyPath: \MessageDTO.defaultSortingKey, ascending: true)]
-        request.predicate = MessageDTO.channelMessagesPredicate(
-            for: channelId.rawValue,
-            deletedMessagesVisibility: .visibleForCurrentUser,
-            shouldShowShadowedMessages: false
-        )
-
-        try database.writeSynchronously { session in
-            try session.saveMessage(payload: message, for: channelId, syncOwnReactions: true)
-        }
-
-        var retrievedMessages: [MessageDTO] = []
-        retrievedMessages = try database.viewContext.fetch(request)
-        return retrievedMessages.filter { $0.id == message.id }.count
-    }
-
     func test_channelMessagesPredicate_shouldIncludeRepliesOnChannel() throws {
         let channelId: ChannelId = .unique
         let channel = ChannelDetailPayload.dummy(cid: channelId)
@@ -1393,5 +1375,50 @@ class MessageDTO_Tests: XCTestCase {
         )
 
         XCTAssertEqual(try checkChannelMessagesPredicateCount(channelId: channelId, message: message), 0)
+    }
+
+    func test_channelMessagesPredicate_shouldNotIncludeHardDeletedMessages() throws {
+        let channelId: ChannelId = .unique
+        let channel = ChannelDetailPayload.dummy(cid: channelId)
+        let message: MessagePayload = .dummy(
+            type: .deleted,
+            messageId: .unique,
+            parentId: .unique,
+            showReplyInChannel: true,
+            attachments: [],
+            authorUserId: .unique,
+            createdAt: Date(timeIntervalSince1970: 1),
+            channel: channel
+        )
+
+        let predicateCount = try checkChannelMessagesPredicateCount(channelId: channelId, message: message, isHardDeleted: true)
+        XCTAssertEqual(predicateCount, 0)
+    }
+
+    // MARK: Helpers:
+
+    private func checkChannelMessagesPredicateCount(
+        channelId: ChannelId,
+        message: MessagePayload,
+        isHardDeleted: Bool = false
+    ) throws -> Int {
+        let request = NSFetchRequest<MessageDTO>(entityName: MessageDTO.entityName)
+        request.sortDescriptors = [NSSortDescriptor(keyPath: \MessageDTO.defaultSortingKey, ascending: true)]
+        request.predicate = MessageDTO.channelMessagesPredicate(
+            for: channelId.rawValue,
+            deletedMessagesVisibility: .visibleForCurrentUser,
+            shouldShowShadowedMessages: false
+        )
+
+        try database.writeSynchronously { session in
+            let savedMessage = try session.saveMessage(payload: message, for: channelId, syncOwnReactions: true)
+            if isHardDeleted {
+                savedMessage?.isHardDeleted = isHardDeleted
+            }
+        }
+
+        var retrievedMessages: [MessageDTO] = []
+        retrievedMessages = try database.viewContext.fetch(request)
+        return retrievedMessages.filter { $0.id == message.id }.count
     }
 }

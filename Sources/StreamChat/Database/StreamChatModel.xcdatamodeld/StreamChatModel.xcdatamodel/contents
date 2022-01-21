@@ -161,6 +161,7 @@
         <attribute name="deletedAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="extraData" optional="YES" attributeType="Binary"/>
         <attribute name="id" attributeType="String"/>
+        <attribute name="isHardDeleted" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
         <attribute name="isShadowed" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
         <attribute name="isSilent" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="latestReactions" attributeType="Transformable" valueTransformerName="NSSecureUnarchiveFromDataTransformer"/>
@@ -297,7 +298,7 @@
         <element name="CurrentUserDTO" positionX="0" positionY="0" width="128" height="179"/>
         <element name="DeviceDTO" positionX="9" positionY="153" width="128" height="89"/>
         <element name="MemberDTO" positionX="0" positionY="0" width="128" height="239"/>
-        <element name="MessageDTO" positionX="160" positionY="192" width="128" height="614"/>
+        <element name="MessageDTO" positionX="160" positionY="192" width="128" height="629"/>
         <element name="MessageReactionDTO" positionX="160" positionY="192" width="128" height="179"/>
         <element name="MessageSearchQueryDTO" positionX="9" positionY="162" width="128" height="59"/>
         <element name="UserDTO" positionX="0" positionY="0" width="128" height="419"/>

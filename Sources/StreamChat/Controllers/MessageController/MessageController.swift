@@ -1,5 +1,5 @@
 //
-// Copyright © 2021 Stream.io Inc. All rights reserved.
+// Copyright © 2022 Stream.io Inc. All rights reserved.
 //
 
 import CoreData
@@ -209,11 +209,14 @@ public extension ChatMessageController {
     /// Deletes the message this controller manages.
     ///
     /// - Parameters:
+    ///   - hard: A Boolean value to determine if the message will be delete permanently on the backend. By default it is `false`.
+    ///     The recommend approach is to always do a soft delete (hard = false). You can control the UI Visibility of the deleted message in the client side.
+    ///     If you hard delete the message, the message will be permanently loss since it will be erased from the backend's database.
     ///   - completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
     ///                 If request fails, the completion will be called with an error.
     ///
-    func deleteMessage(completion: ((Error?) -> Void)? = nil) {
-        messageUpdater.deleteMessage(messageId: messageId) { error in
+    func deleteMessage(hard: Bool = false, completion: ((Error?) -> Void)? = nil) {
+        messageUpdater.deleteMessage(messageId: messageId, hard: hard) { error in
             self.callback {
                 completion?(error)
             }

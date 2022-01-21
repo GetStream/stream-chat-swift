@@ -1,5 +1,5 @@
 //
-// Copyright © 2021 Stream.io Inc. All rights reserved.
+// Copyright © 2022 Stream.io Inc. All rights reserved.
 //
 
 import SnapshotTesting
@@ -83,6 +83,7 @@ final class ChatThreadVC_Tests: XCTestCase {
         components.messageListView = TestMessageListView.self
         components.messageComposerView = TestComposerView.self
         vc.components = components
+        vc.messageListVC.components = components
         
         // Simulate view loading
         _ = vc.view

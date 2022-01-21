@@ -1,5 +1,5 @@
 //
-// Copyright © 2021 Stream.io Inc. All rights reserved.
+// Copyright © 2022 Stream.io Inc. All rights reserved.
 //
 
 import Nuke
@@ -59,6 +59,12 @@ class LoginViewController: UIViewController {
         if let selectedRow = tableView.indexPathForSelectedRow {
             tableView.deselectRow(at: selectedRow, animated: true)
         }
+    }
+
+    @IBAction func didTapConfigurationButton(_ sender: Any) {
+        let configViewController = AppConfigViewController()
+        let navController = UINavigationController(rootViewController: configViewController)
+        present(navController, animated: true, completion: nil)
     }
 }
 

@@ -3,11 +3,33 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+### 🔄 Changed
+- In case you are presenting the `ChatChannelVC` in a modal, you should now be using the `StreamModalTransitioningDelegate`. The workaround to fix the message list being dismissed when scrolling to the bottom has been removed in favor of the custom modal transition. Please check the following PR description to see how to use it: [#1760](https://github.com/GetStream/stream-chat-swift/pull/1760)
+
+### 🐞 Fixed
+- Add custom modal transition for message list [#1760](https://github.com/GetStream/stream-chat-swift/pull/1760)
+
+# [4.9.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.9.0)
+_January 18, 2022_
+
 ### ✅ Added
-- Add support to paginate messages pinned in a channel [#1732](https://github.com/GetStream/stream-chat-swift/issues/1732)
+- Add hard delete messages support [#1745](https://github.com/GetStream/stream-chat-swift/pull/1745)
+
+### 🐞 Fixed
+- Fix wrong image resolution when images are being quoted [#1747](https://github.com/GetStream/stream-chat-swift/pull/1747)
+- Fix message list NSInternalInconsistencyException crash [#1752](https://github.com/GetStream/stream-chat-swift/pull/1752)
+- Fix Image and Video sharing behaviour [#1753](https://github.com/GetStream/stream-chat-swift/pull/1753)
+
+# [4.8.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.8.0)
+_January 4, 2022_
+
+### ✅ Added
+- Add support to paginate messages pinned in a channel [#1741](https://github.com/GetStream/stream-chat-swift/issues/1741)
 
 ### 🐞 Fixed
 - `notification.channel_deleted` events are now handled by the SDK [#1737](https://github.com/GetStream/stream-chat-swift/pull/1737)
+- `MemberListController` receives new members correctly [#1736](https://github.com/GetStream/stream-chat-swift/issues/1736)
+- `ChatChannel.membership` is correctly reflected in all cases [#1736](https://github.com/GetStream/stream-chat-swift/issues/1736)
 
 # [4.7.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.7.0)
 _December 28, 2021_

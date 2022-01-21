@@ -1,5 +1,5 @@
 //
-// Copyright © 2021 Stream.io Inc. All rights reserved.
+// Copyright © 2022 Stream.io Inc. All rights reserved.
 //
 
 @testable import StreamChat
@@ -369,5 +369,89 @@ class DatabaseSession_Tests: XCTestCase {
 
         // We set the same updateAt to to both messages, to trigger a DB update
         XCTAssertEqual(message.updatedAt, quotingMessage.updatedAt)
+    }
+
+    func test_saveEvent_whenMessageDelete_whenHardDeleted_shouldHardDeleteMessageFromDatabase() throws {
+        let userId: UserId = .unique
+        let channelId: ChannelId = .unique
+        let messageId: MessageId = .unique
+
+        // Create current user in the DB
+        try database.createCurrentUser(id: userId)
+
+        // Create channel in the DB
+        try database.createChannel(cid: channelId)
+
+        // Save the message to the DB
+        try database.createMessage(id: messageId, authorId: userId, cid: channelId)
+
+        let eventPayload = EventPayload(
+            eventType: .messageDeleted,
+            connectionId: .unique,
+            cid: channelId,
+            currentUser: .dummy(
+                userId: userId,
+                role: .user,
+                unreadCount: nil
+            ),
+            message: .dummy(messageId: messageId, authorUserId: userId),
+            unreadCount: .dummy,
+            createdAt: nil,
+            hardDelete: true
+        )
+
+        let messageBeforeEvent = database.viewContext.message(id: messageId)
+
+        XCTAssertNotNil(messageBeforeEvent)
+
+        try database.writeSynchronously { session in
+            try session.saveEvent(payload: eventPayload)
+        }
+
+        let messageAfterEvent = database.viewContext.message(id: messageId)
+
+        XCTAssertNil(messageAfterEvent)
+    }
+
+    func test_saveEvent_whenMessageDelete_whenNotHardDeleted_shouldNotHardDeleteMessageFromDatabase() throws {
+        let userId: UserId = .unique
+        let channelId: ChannelId = .unique
+        let messageId: MessageId = .unique
+
+        // Create current user in the DB
+        try database.createCurrentUser(id: userId)
+
+        // Create channel in the DB
+        try database.createChannel(cid: channelId)
+
+        // Save the message to the DB
+        try database.createMessage(id: messageId, authorId: userId, cid: channelId)
+
+        let eventPayload = EventPayload(
+            eventType: .messageDeleted,
+            connectionId: .unique,
+            cid: channelId,
+            currentUser: .dummy(
+                userId: userId,
+                role: .user,
+                unreadCount: nil
+            ),
+            message: .dummy(messageId: messageId, authorUserId: userId),
+            unreadCount: .dummy,
+            createdAt: nil,
+            hardDelete: false
+        )
+
+        let messageBeforeEvent = database.viewContext.message(id: messageId)
+
+        XCTAssertNotNil(messageBeforeEvent)
+
+        try database.writeSynchronously { session in
+            try session.saveEvent(payload: eventPayload)
+        }
+
+        let messageAfterEvent = database.viewContext.message(id: messageId)
+
+        XCTAssertNotNil(messageAfterEvent)
     }
 }

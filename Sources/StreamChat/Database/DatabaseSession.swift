@@ -1,5 +1,5 @@
 //
-// Copyright © 2021 Stream.io Inc. All rights reserved.
+// Copyright © 2022 Stream.io Inc. All rights reserved.
 //
 
 import CoreData
@@ -407,12 +407,17 @@ extension DatabaseSession {
             // Message does not exits locally and should not be saved
             return
         }
-        
+
         let savedMessage = try saveMessage(
             payload: messagePayload,
             channelDTO: channelDTO,
             syncOwnReactions: false
         )
+
+        if payload.eventType == .messageDeleted && payload.hardDelete {
+            delete(message: savedMessage)
+            return
+        }
 
         // When a message is updated, make sure to update
         // the messages quoting the edited message by triggering a DB Update.

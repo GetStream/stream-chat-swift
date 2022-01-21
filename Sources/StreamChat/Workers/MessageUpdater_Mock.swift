@@ -1,5 +1,5 @@
 //
-// Copyright © 2021 Stream.io Inc. All rights reserved.
+// Copyright © 2022 Stream.io Inc. All rights reserved.
 //
 
 @testable import StreamChat
@@ -13,6 +13,7 @@ final class MessageUpdaterMock: MessageUpdater {
 
     @Atomic var deleteMessage_messageId: MessageId?
     @Atomic var deleteMessage_completion: ((Error?) -> Void)?
+    @Atomic var deleteMessage_hard: Bool?
 
     @Atomic var editMessage_messageId: MessageId?
     @Atomic var editMessage_text: String?
@@ -154,8 +155,9 @@ final class MessageUpdaterMock: MessageUpdater {
         getMessage_completion = completion
     }
     
-    override func deleteMessage(messageId: MessageId, completion: ((Error?) -> Void)? = nil) {
+    override func deleteMessage(messageId: MessageId, hard: Bool, completion: ((Error?) -> Void)? = nil) {
         deleteMessage_messageId = messageId
+        deleteMessage_hard = hard
         deleteMessage_completion = completion
     }
 

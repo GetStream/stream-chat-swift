@@ -1,5 +1,5 @@
 //
-// Copyright © 2021 Stream.io Inc. All rights reserved.
+// Copyright © 2022 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat
@@ -14,6 +14,8 @@ class DemoChatChannelListRouter: ChatChannelListRouter {
     }
 
     var channelPresentingStyle: ChannelPresentingStyle = .push
+
+    lazy var streamModalTransitioningDelegate = StreamModalTransitioningDelegate()
 
     func showCreateNewChannelFlow() {
         let storyboard = UIStoryboard(name: "Main", bundle: .main)
@@ -52,7 +54,10 @@ class DemoChatChannelListRouter: ChatChannelListRouter {
         case .modally:
             let vc = components.channelVC.init()
             vc.channelController = rootViewController.controller.client.channelController(for: cid)
-            rootNavigationController?.present(vc, animated: true, completion: nil)
+            let navVc = UINavigationController(rootViewController: vc)
+            navVc.transitioningDelegate = streamModalTransitioningDelegate
+            navVc.modalPresentationStyle = .custom
+            rootNavigationController?.present(navVc, animated: true, completion: nil)
 
         case .embeddedInTabBar:
             let vc = components.channelVC.init()

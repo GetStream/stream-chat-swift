@@ -1,5 +1,5 @@
 //
-// Copyright © 2021 Stream.io Inc. All rights reserved.
+// Copyright © 2022 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -15,13 +15,13 @@ extension Endpoint {
         )
     }
     
-    static func deleteMessage(messageId: MessageId) -> Endpoint<EmptyResponse> {
+    static func deleteMessage(messageId: MessageId, hard: Bool) -> Endpoint<MessagePayload.Boxed> {
         .init(
             path: messageId.path,
             method: .delete,
             queryItems: nil,
             requiresConnectionId: false,
-            body: nil
+            body: ["hard": hard]
         )
     }
     

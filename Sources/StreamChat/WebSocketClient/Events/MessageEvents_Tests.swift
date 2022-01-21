@@ -1,5 +1,5 @@
 //
-// Copyright © 2021 Stream.io Inc. All rights reserved.
+// Copyright © 2022 Stream.io Inc. All rights reserved.
 //
 
 @testable import StreamChat
@@ -57,6 +57,18 @@ class MessageEvents_Tests: XCTestCase {
         XCTAssertEqual(event?.cid, ChannelId(type: .messaging, id: "general"))
         XCTAssertEqual(event?.message.id, messageId)
         XCTAssertEqual(event?.createdAt.description, "2020-07-17 13:49:48 +0000")
+    }
+
+    func test_messageDeletedEvent_whenNotHardDelete_hardDeleteIsFalse() throws {
+        let json = XCTestCase.mockData(fromFile: "MessageDeleted")
+        let event = try eventDecoder.decode(from: json) as? MessageDeletedEventDTO
+        XCTAssertEqual(event?.hardDelete, false)
+    }
+
+    func test_messageDeletedEvent_whenHardDelete_hardDeleteIsTrue() throws {
+        let json = XCTestCase.mockData(fromFile: "MessageDeletedHard")
+        let event = try eventDecoder.decode(from: json) as? MessageDeletedEventDTO
+        XCTAssertEqual(event?.hardDelete, true)
     }
     
     func test_read() throws {
