@@ -186,10 +186,10 @@ public extension Appearance {
 
         // MARK: - Message Actions
 
-        public var messageActionInlineReply: UIImage = loadImageSafely(with: "icn_inline_reply")
+        public var messageActionInlineReply: UIImage = loadImageSafely(with: "reply") //icn_inline_reply
         public var messageActionThreadReply: UIImage = loadImageSafely(with: "icn_thread_reply")
         public var messageActionEdit: UIImage = loadImageSafely(with: "icn_edit")
-        public var messageActionCopy: UIImage = loadImageSafely(with: "icn_copy")
+        public var messageActionCopy: UIImage = loadImageSafely(with: "copy") //icn_copy
         public var messageActionTranslate: UIImage = loadImageSafely(with: "icn_translate")
         public var moreAction: UIImage = loadImageSafely(with: "icn_more")
         public var messageActionBlockUser: UIImage = loadImageSafely(with: "icn_block_user")
