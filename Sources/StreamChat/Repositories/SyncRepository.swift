@@ -172,10 +172,11 @@ class SyncRepository {
             }
         })
 
-        // 6. Clean lastPendingConnectionDate and complete
         operations.append(BlockOperation(block: {
             log.info("Finished recovering offline state", subsystems: .offlineSupport)
-            completion(nil)
+            DispatchQueue.main.async {
+                completion(nil)
+            }
         }))
 
         // We are making sure the operations happen secuentially one after the other by setting one as the dependency
@@ -238,6 +239,11 @@ class SyncRepository {
             return
         }
 
+        guard !channelIds.isEmpty else {
+            completion(.success([]))
+            return
+        }
+
         log.info("Synching events for existing channels since \(date)", subsystems: .offlineSupport)
         getMissingEvents(since: date, channelIds: channelIds) { [weak self] result in
             switch result {
@@ -247,6 +253,7 @@ class SyncRepository {
                     return
                 }
 
+                log.info("Bumping last sync date", subsystems: .offlineSupport)
                 self?.updateUserValue({
                     $0?.lastSyncAt = payload.eventPayloads.first?.createdAt ?? date
                 }) { error in
@@ -263,6 +270,7 @@ class SyncRepository {
                 }
                 // Backend responds with 400 if there was more than 1000 events to replay
                 // Cleaning local channels data and refetching it from scratch
+                log.info("/sync returned too many events. Continuing...", subsystems: .offlineSupport)
                 completion(.success([]))
             }
         }
@@ -278,10 +286,15 @@ class SyncRepository {
         apiClient.request(endpoint: endpoint) { [weak self] result in
             switch result {
             case let .success(payload):
+                log.info("Processing pending events. Count \(payload.eventPayloads.count)", subsystems: .offlineSupport)
                 self?.eventNotificationCenter.process(
                     payload.eventPayloads.asEvents(),
                     postNotifications: false
                 ) {
+                    log.info(
+                        "Successfully processed pending events. Count \(payload.eventPayloads.count)",
+                        subsystems: .offlineSupport
+                    )
                     completion(.success(payload))
                 }
             case let .failure(error):
@@ -306,6 +319,7 @@ class SyncRepository {
                 log.error("Failed watching active channel \(cidString): \(error)", subsystems: .offlineSupport)
                 completion(.failure(.watchingActiveChannelFailed(error)))
             } else if let cid = controller.cid {
+                log.info("Successfully watched active channel \(cidString)", subsystems: .offlineSupport)
                 completion(.success(cid))
             } else {
                 log.error("Failed watching active channel \(cidString): Missing channel id", subsystems: .offlineSupport)
@@ -329,6 +343,7 @@ class SyncRepository {
         ) { result in
             switch result {
             case let .success(channels):
+                log.info("Successfully refetched query for \(controller.query.debugDescription)", subsystems: .offlineSupport)
                 completion(.success(channels))
             case let .failure(error):
                 log.error("Failed refetching query for \(controller.query.debugDescription): \(error)", subsystems: .offlineSupport)
@@ -344,7 +359,7 @@ class SyncRepository {
                     .loadAllChannelListQueries()
                     .flatMap(\.channels)
                     .compactMap { try? ChannelId(cid: $0.cid) }
-
+            log.info("Retrieved channels from existing queries from DB. Count \(cids.count)", subsystems: .offlineSupport)
             completion(cids)
         }
     }
@@ -352,6 +367,7 @@ class SyncRepository {
     private func getUser(_ completion: @escaping (CurrentUserDTO?) -> Void) {
         let context = database.viewContext
         context.perform {
+            log.info("Retrieved CurrentUserDTO from DB", subsystems: .offlineSupport)
             completion(context.currentUser)
         }
     }
@@ -368,6 +384,7 @@ class SyncRepository {
                 log.error("Failed updating value: \(error)", subsystems: .offlineSupport)
                 completion?(.couldNotUpdateUserValue(error))
             } else {
+                log.info("Updated user value", subsystems: .offlineSupport)
                 completion?(nil)
             }
         }
