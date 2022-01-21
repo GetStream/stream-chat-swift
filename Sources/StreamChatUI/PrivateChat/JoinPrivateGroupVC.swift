@@ -118,7 +118,7 @@ class JoinPrivateGroupVC: UIViewController {
             query: .init(
                 filter: .and([
                     .equal(.type, to: .privateMessaging),
-                    .equal("password", to: passWord)
+                    .in("password", values: [passWord])
                 ])))
         controller?.synchronize()
         controller?.delegate = self
@@ -183,14 +183,28 @@ class JoinPrivateGroupVC: UIViewController {
         return Double(strLongitude)
     }
 
+    private func getPassword(raw: [String: RawJSON]?) -> String? {
+        guard let rawDate = raw,
+              let password = rawDate["password"],
+              let strPassword = fetchRawData(raw: password) as? String else {
+            return nil
+        }
+        return strPassword
+    }
+
     private func isChannelNearBy(_ channelData: [String: RawJSON]) -> Bool {
         guard let latitude = getLatitude(raw: channelData),
-              let longitude = getLongitude(raw: channelData) else {
+              let longitude = getLongitude(raw: channelData),
+              let password = getPassword(raw: channelData) else {
                   return false
               }
         let coordinator = CLLocation(latitude: .init(latitude), longitude: .init(longitude))
         let distance = LocationManager.getDistanceInKm(from: coordinator, to: LocationManager.shared.location.value)
-        return distance <= Constants.privateGroupRadius ? true : false
+        if password == self.passWord && distance <= Constants.privateGroupRadius {
+            return true
+        } else {
+            return false
+        }
     }
 }
 
@@ -222,7 +236,7 @@ extension JoinPrivateGroupVC: ChatChannelListControllerDelegate {
                     userStatus = .createGroup
                     createPrivateChannel()
                 } else {
-                    guard let firstChannel = channelController.channels.first else {
+                    guard let firstChannel = nearByChannels.first else {
                         return
                     }
                     let channelMembers = ChatClient.shared.memberListController(
