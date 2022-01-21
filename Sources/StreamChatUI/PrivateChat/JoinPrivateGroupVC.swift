@@ -232,7 +232,7 @@ extension JoinPrivateGroupVC: ChatChannelListControllerDelegate {
                                 id: firstChannel.cid.id)))
 
                     channelMembers.synchronize { [weak self] error in
-                        guard error != nil, let self  = self else {
+                        guard error == nil, let self  = self else {
                             self?.navigationController?.popViewController(animated: true)
                             return
                         }
