@@ -136,7 +136,7 @@ open class ChatChannelHeaderView:
             }
         }
 
-        return L10n.Message.Title.group(channel.memberCount, channel.watcherCount)
+        return L10n.Message.Title.group(channel.memberCount, min(channel.memberCount, channel.watcherCount))
     }
 
     /// Create the timer to repeatedly update the online status of the members.
