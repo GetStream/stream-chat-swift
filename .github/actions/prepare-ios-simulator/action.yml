@@ -12,7 +12,11 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - run: |
+    - name: Set Xcode Version
+      env:
+        FASTLANE_USER: ${{ secrets.FASTLANE_USER }}
+        FASTLANE_PASS: ${{ secrets.FASTLANE_PASS }}
+      run: |
         xcode_version=${{ inputs.xcode }}
         ios_version=${{ inputs.ios }}
         ios_version_dash=${ios_version//./-} # ex: 12.4 -> 12-4
@@ -30,4 +34,3 @@ runs:
         xcrun simctl create custom-test-device "${{ inputs.device }}" "com.apple.CoreSimulator.SimRuntime.iOS-$ios_version_dash"
         xcrun simctl list devices $ios_version
       shell: bash
-  
