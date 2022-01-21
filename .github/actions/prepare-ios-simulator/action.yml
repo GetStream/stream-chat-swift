@@ -14,8 +14,8 @@ runs:
   steps:
     - name: Set Xcode Version
       env:
-        FASTLANE_USER: ${{ secrets.FASTLANE_USER }}
-        FASTLANE_PASS: ${{ secrets.FASTLANE_PASS }}
+        XCODE_INSTALL_USER: ${{ secrets.FASTLANE_USER }}
+        XCODE_INSTALL_PASSWORD: ${{ secrets.FASTLANE_PASS }}
       run: |
         xcode_version=${{ inputs.xcode }}
         ios_version=${{ inputs.ios }}
