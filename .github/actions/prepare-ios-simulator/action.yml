@@ -17,6 +17,11 @@ runs:
         ios_version=${{ inputs.ios }}
         ios_version_dash=${ios_version//./-} # ex: 12.4 -> 12-4
 
+        sudo gem install xcode-install
+        xcversion install $xcode_version
+
+        sudo xcode-select -switch /Applications/Xcode$xcode_version.app
+
         sudo mkdir -p /Library/Developer/CoreSimulator/Profiles/Runtimes
 
         sudo ln -s /Applications/Xcode_$xcode_version.app/Contents/Developer/Platforms/iPhoneOS.platform/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS.simruntime /Library/Developer/CoreSimulator/Profiles/Runtimes/iOS\ $ios_version.simruntime
