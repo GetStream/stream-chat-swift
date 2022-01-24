@@ -30,7 +30,7 @@ open class ChatMessageActionControl: _Control, AppearanceProvider {
 
     override open func setUpAppearance() {
         super.setUpAppearance()
-        titleLabel.font = appearance.fonts.body
+        titleLabel.font = UIFont.systemFont(ofSize: 16)//appearance.fonts.body
         titleLabel.adjustsFontForContentSizeCategory = true
     }
 
@@ -45,8 +45,8 @@ open class ChatMessageActionControl: _Control, AppearanceProvider {
         embed(containerStackView)
         containerStackView.isLayoutMarginsRelativeArrangement = true
 
-        containerStackView.addArrangedSubview(imageView)
         containerStackView.addArrangedSubview(titleLabel.flexible(axis: .horizontal))
+        containerStackView.addArrangedSubview(imageView)
     }
 
     override open func tintColorDidChange() {
@@ -71,13 +71,13 @@ open class ChatMessageActionControl: _Control, AppearanceProvider {
         if isHighlighted {
             titleLabel.textColor = appearance.colorPalette.highlightedColorForColor(titleTextColor)
             imageView.image = content?.icon
-                .tinted(with: appearance.colorPalette.highlightedColorForColor(imageTintСolor))
+                .tinted(with: .white/*appearance.colorPalette.highlightedColorForColor(imageTintСolor)*/)
             backgroundColor = appearance.colorPalette.highlightedColorForColor(appearance.colorPalette.background)
         } else {
             titleLabel.textColor = titleTextColor
             imageView.image = content?.icon
-                .tinted(with: imageTintСolor)
-            backgroundColor = appearance.colorPalette.background
+                .tinted(with: .white/*imageTintСolor*/)
+            backgroundColor = appearance.colorPalette.popoverBackground//appearance.colorPalette.background
         }
     }
     

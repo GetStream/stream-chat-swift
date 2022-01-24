@@ -161,7 +161,7 @@ class CryptoSentBubble: UITableViewCell {
                 .withoutAutoresizingMaskConstraints
             descriptionLabel.textAlignment = .center
             descriptionLabel.numberOfLines = 0
-            descriptionLabel.textColor = Appearance.default.colorPalette.tappableLinkTint
+            descriptionLabel.textColor = Appearance.default.colorPalette.themeBlue
             descriptionLabel.font = Appearance.default.fonts.subheadlineBold.withSize(16)
         }
         return descriptionLabel

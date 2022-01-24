@@ -39,4 +39,29 @@ extension Date {
             }
         }
     }
+
+    func toLocalTime() -> Date {
+        let timezone = TimeZone.current
+        let seconds = TimeInterval(timezone.secondsFromGMT(for: self))
+        return Date(timeInterval: seconds, since: self)
+    }
+
+    func minutesFromCurrentDate(_ oldDate: Date) -> Float {
+        let newDateMinutes = Date().timeIntervalSinceReferenceDate/60
+        let oldDateMinutes = oldDate.timeIntervalSinceReferenceDate/60
+        return Float(oldDateMinutes - newDateMinutes)
+    }
+
+    func withAddedMinutes(minutes: Double) -> Date {
+        addingTimeInterval(minutes * 60)
+    }
+
+    func withAddedHours(hours: Double) -> Date {
+        withAddedMinutes(minutes: hours * 60)
+    }
+
+    var ticks: Double {
+        //return Int64(self.timeIntervalSince1970 * 1000)
+        return timeIntervalSince1970
+    }
 }

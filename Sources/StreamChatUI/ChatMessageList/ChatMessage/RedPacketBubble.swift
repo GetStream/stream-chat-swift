@@ -238,7 +238,7 @@ class RedPacketBubble: UITableViewCell {
         if let receivedAmount = topAmount["receivedAmount"] {
             let dblReceivedAmount = fetchRawData(raw: receivedAmount) as? Double ?? 0
             let strReceivedAmount = String(format: "%.2f", dblReceivedAmount)
-            if chatClient?.currentUserId ?? "" == getUserId(raw: topAmount) {
+            if ChatClient.shared.currentUserId ?? "" == getUserId(raw: topAmount) {
                 lblDetails.text = "You just picked up \(strReceivedAmount) ONE!"
             } else {
                 lblDetails.text = "\(getUserName(raw: topAmount)) just picked up \(strReceivedAmount) ONE!"

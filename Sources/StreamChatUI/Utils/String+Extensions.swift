@@ -7,6 +7,19 @@ import Foundation
 extension StringProtocol {
     var firstUppercased: String { prefix(1).uppercased() + dropFirst() }
     var firstLowercased: String { prefix(1).lowercased() + dropFirst() }
+    public var data: Data { Data(utf8) }
+    public var base64Encoded: Data { data.base64EncodedData() }
+    public var base64Decoded: Data? { Data(base64Encoded: string) }
+}
+
+extension LosslessStringConvertible {
+    public var string: String { .init(self) }
+}
+
+extension Sequence where Element == UInt8 {
+    public var data: Data { .init(self) }
+    public var base64Decoded: Data? { Data(base64Encoded: data) }
+    public var string: String? { String(bytes: self, encoding: .utf8) }
 }
 
 // MARK: - Emoji
@@ -79,6 +92,10 @@ extension String {
         }
 
         return mat[sCount][oCount]
+    }
+
+    var isBlank: Bool {
+        return self.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
     }
 }
 

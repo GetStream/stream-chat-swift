@@ -466,9 +466,7 @@ open class ComposerVC: _ViewController,
         } else {
             createNewMessage(text: text)
         }
-
         content.clear()
-        showMessageOption(isHide: false)
     }
     
     /// Shows a photo/media picker.
@@ -555,7 +553,7 @@ open class ComposerVC: _ViewController,
             hideInputView()
             return
         }
-        walletInputView = WalletQuickInputViewController.instantiate(appStoryboard: .wallet)
+        walletInputView = WalletQuickInputViewController.instantiateController(storyboard: .wallet)
         self.composerView.inputMessageView.textView.inputView = walletInputView?.view
         self.composerView.inputMessageView.textView.reloadInputViews()
         self.composerView.inputMessageView.textView.becomeFirstResponder()
@@ -566,7 +564,7 @@ open class ComposerVC: _ViewController,
 
         walletInputView?.showKeypad = { [weak self] amount in
             guard let `self` = self else { return }
-            guard let walletView: WalletInputViewController = WalletInputViewController.instantiate(appStoryboard: .wallet) else { return }
+            guard let walletView: WalletInputViewController = WalletInputViewController.instantiateController(storyboard: .wallet) else { return }
             walletView.updatedAmount = amount
             walletView.didHide = { [weak self] amount in
                 guard let `self` = self else { return }
