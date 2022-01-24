@@ -24,13 +24,7 @@ public extension Appearance {
         }()
 
         /// A formatter that converts the video duration to textual representation.
-        public var videoDuration: DateComponentsFormatter = {
-            let formatter = DateComponentsFormatter()
-            formatter.unitsStyle = .positional
-            formatter.allowedUnits = [.minute, .second]
-            formatter.zeroFormattingBehavior = .pad
-            return formatter
-        }()
+        public var videoDuration: VideoDurationFormatter = DefaultVideoDurationFormatter()
 
         /// A formatter that converts the uploading percentage to textual representation.
         public var uploadingPercentage: NumberFormatter = {
