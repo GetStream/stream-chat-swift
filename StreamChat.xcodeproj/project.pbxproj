@@ -873,6 +873,8 @@
 		AD8D180B268F8ED4004E3A5C /* SlackComposerVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD8D180A268F8ED4004E3A5C /* SlackComposerVC.swift */; };
 		AD90D18525D56196001D03BB /* CurrentUserUpdater_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD90D18425D56196001D03BB /* CurrentUserUpdater_Tests.swift */; };
 		AD90D18D25D5619C001D03BB /* CurrentUserUpdater_Mock.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD90D18C25D5619C001D03BB /* CurrentUserUpdater_Mock.swift */; };
+		AD99C904279B073B009DD9C5 /* MessageTimestampFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD99C902279B0716009DD9C5 /* MessageTimestampFormatter.swift */; };
+		AD99C905279B0741009DD9C5 /* MessageTimestampFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD99C902279B0716009DD9C5 /* MessageTimestampFormatter.swift */; };
 		ADA3572F269C807A004AD8E9 /* ChatChannelHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADA3572D269C562A004AD8E9 /* ChatChannelHeaderView.swift */; };
 		ADA5A0F8276790C100E1C465 /* ChatMessageListDateSeparatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADA5A0F7276790C100E1C465 /* ChatMessageListDateSeparatorView.swift */; };
 		ADA5A0F9276790C100E1C465 /* ChatMessageListDateSeparatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADA5A0F7276790C100E1C465 /* ChatMessageListDateSeparatorView.swift */; };
@@ -2842,6 +2844,7 @@
 		AD8D180A268F8ED4004E3A5C /* SlackComposerVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlackComposerVC.swift; sourceTree = "<group>"; };
 		AD90D18425D56196001D03BB /* CurrentUserUpdater_Tests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CurrentUserUpdater_Tests.swift; sourceTree = "<group>"; };
 		AD90D18C25D5619C001D03BB /* CurrentUserUpdater_Mock.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CurrentUserUpdater_Mock.swift; sourceTree = "<group>"; };
+		AD99C902279B0716009DD9C5 /* MessageTimestampFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageTimestampFormatter.swift; sourceTree = "<group>"; };
 		AD9BE32526680E4200A6D284 /* Stream.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = Stream.playground; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		AD9F7B7C25C8215400DF8CD2 /* SnapshotVariant.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnapshotVariant.swift; sourceTree = "<group>"; };
 		AD9F7B8525C821C300DF8CD2 /* AssertSnapshot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssertSnapshot.swift; sourceTree = "<group>"; };
@@ -3385,16 +3388,16 @@
 			children = (
 				C1BE72742732CB7B006EB51E /* StreamNuke */,
 				C13C74D1273932D200F93B34 /* StreamSwiftyGif */,
-				BDDD1EA22632C50200BA007B /* Appearance.swift */,
 				8850B929255C286B003AED69 /* Components.swift */,
+				BDDD1E982632C4C900BA007B /* Components+SwiftUI.swift */,
+				BDDD1E952632C4C900BA007B /* Components+SwiftUI_Tests.swift */,
+				BDDD1EA22632C50200BA007B /* Appearance.swift */,
 				E7166CB125BED22B00B03B07 /* Appearance+ColorPalette.swift */,
 				E7166CE125BEE20600B03B07 /* Appearance+Images.swift */,
 				E7166CB925BED29200B03B07 /* Appearance+Fonts.swift */,
-				ADC4AAAF2788C8850004BB35 /* Appearance+Formatters.swift */,
 				BDDD1EA92632CE3C00BA007B /* Appearance+SwiftUI.swift */,
 				BDDD1EAD2632E6C200BA007B /* Appearance+SwiftUI_Tests.swift */,
-				BDDD1E982632C4C900BA007B /* Components+SwiftUI.swift */,
-				BDDD1E952632C4C900BA007B /* Components+SwiftUI_Tests.swift */,
+				AD99C901279B06E9009DD9C5 /* Appearance+Formatters */,
 				BD4016352638411D00F09774 /* Deprecations.swift */,
 				888123D0255D42F000070D5A /* Utils */,
 				888123E5255D51BD00070D5A /* CommonViews */,
@@ -5464,6 +5467,14 @@
 			path = CommandLabelView;
 			sourceTree = "<group>";
 		};
+		AD99C901279B06E9009DD9C5 /* Appearance+Formatters */ = {
+			isa = PBXGroup;
+			children = (
+				AD99C902279B0716009DD9C5 /* MessageTimestampFormatter.swift */,
+			);
+			path = "Appearance+Formatters";
+			sourceTree = "<group>";
+		};
 		ADA35730269C9B3B004AD8E9 /* TitleContainerView */ = {
 			isa = PBXGroup;
 			children = (
@@ -6994,6 +7005,7 @@
 				C1FC2F6927416E150062530F /* Log.swift in Sources */,
 				843F0BC72677640000B342CB /* VideoAttachmentGalleryPreview.swift in Sources */,
 				ADB22F7D25F1626200853C92 /* ChatPresenceAvatarView.swift in Sources */,
+				AD99C904279B073B009DD9C5 /* MessageTimestampFormatter.swift in Sources */,
 				2245B2B625602465006A612D /* ChatChannelAvatarView.swift in Sources */,
 				C1FC2F6E27416E150062530F /* ImagePipeline.swift in Sources */,
 				C1FC2F8027416E150062530F /* ImagePrefetcher.swift in Sources */,
@@ -8295,6 +8307,7 @@
 				C121EBCD2746A1EA00023E4C /* ChatChannelVC.swift in Sources */,
 				C121EBCE2746A1EA00023E4C /* ChatChannelVC+SwiftUI.swift in Sources */,
 				C121EBCF2746A1EA00023E4C /* ChatChannelHeaderView.swift in Sources */,
+				AD99C905279B0741009DD9C5 /* MessageTimestampFormatter.swift in Sources */,
 				C121EBD02746A1EA00023E4C /* ChatThreadVC.swift in Sources */,
 				C121EBD12746A1EA00023E4C /* ChatThreadVC+SwiftUI.swift in Sources */,
 				C121EBD22746A1EA00023E4C /* ChatThreadHeaderView.swift in Sources */,

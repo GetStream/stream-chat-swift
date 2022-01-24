@@ -26,7 +26,7 @@ open class ChatChannelListItemView: _View, ThemeProvider, SwiftUIRepresentable {
     }
 
     /// A formatter that converts the message timestamp to textual representation.
-    open lazy var dateFormatter: DateFormatter = appearance.formatters.messageTimestamp
+    public lazy var timestampFormatter: MessageTimestampFormatter = appearance.formatters.messageTimestamp
 
     /// Main container which holds `avatarView` and two horizontal containers `title` and `unreadCount` and
     /// `subtitle` and `timestampLabel`
@@ -99,7 +99,7 @@ open class ChatChannelListItemView: _View, ThemeProvider, SwiftUIRepresentable {
     /// Text of `timestampLabel` which contains the time of the last sent message.
     open var timestampText: String? {
         if let lastMessageAt = content?.channel.lastMessageAt {
-            return dateFormatter.string(from: lastMessageAt)
+            return timestampFormatter.format(lastMessageAt)
         } else {
             return nil
         }

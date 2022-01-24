@@ -3,17 +3,12 @@
 //
 
 import Foundation
+import StreamChat
 
 public extension Appearance {
     struct Formatters {
-        /// A formatter that converts the message timestamp to textual representation.
-        public var messageTimestamp: DateFormatter = {
-            let formatter = DateFormatter()
-            formatter.dateStyle = .none
-            formatter.timeStyle = .short
-            formatter.locale = Locale.autoupdatingCurrent
-            return formatter
-        }()
+        /// A formatter that converts the message date separator used in the message list to textual representation.
+        public var messageTimestamp: MessageTimestampFormatter = DefaultMessageTimestampFormatter()
 
         /// A formatter that converts the message date separator to textual representation.
         public var messageListDateSeparator: DateFormatter = {

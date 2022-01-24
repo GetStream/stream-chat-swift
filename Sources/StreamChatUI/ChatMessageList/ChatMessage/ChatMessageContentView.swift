@@ -57,7 +57,7 @@ open class ChatMessageContentView: _View, ThemeProvider {
     }
 
     /// A formatter that converts the message timestamp to textual representation.
-    open lazy var dateFormatter: DateFormatter = appearance.formatters.messageTimestamp
+    public lazy var timestampFormatter: MessageTimestampFormatter = appearance.formatters.messageTimestamp
 
     /// Specifies the max possible width of `mainContainer`.
     /// Should be in [0...1] range, where 1 makes the container fill the entire superview's width.
@@ -502,7 +502,7 @@ open class ChatMessageContentView: _View, ThemeProvider {
         authorNameLabel?.text = content?.author.name
 
         if let createdAt = content?.createdAt {
-            timestampLabel?.text = dateFormatter.string(from: createdAt)
+            timestampLabel?.text = timestampFormatter.format(createdAt)
         } else {
             timestampLabel?.text = nil
         }
