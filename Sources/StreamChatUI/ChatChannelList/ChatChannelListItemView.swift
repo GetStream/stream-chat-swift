@@ -78,7 +78,7 @@ open class ChatChannelListItemView: _View, ThemeProvider, SwiftUIRepresentable {
     /// Text of `titleLabel` which contains the channel name.
     open var titleText: String? {
         if let channel = content?.channel {
-            return components.channelNamer(channel, channel.membership?.id)
+            return appearance.formatters.channelName.format(channel: channel, forCurrentUserId: channel.membership?.id)
         } else {
             return nil
         }

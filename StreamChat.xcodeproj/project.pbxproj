@@ -891,6 +891,8 @@
 		ADBBDA20279F0CEA00E47B1C /* VideoDurationFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADBBDA1E279F0CEA00E47B1C /* VideoDurationFormatter.swift */; };
 		ADBBDA22279F0CFA00E47B1C /* UploadingProgressFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADBBDA21279F0CFA00E47B1C /* UploadingProgressFormatter.swift */; };
 		ADBBDA23279F0CFA00E47B1C /* UploadingProgressFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADBBDA21279F0CFA00E47B1C /* UploadingProgressFormatter.swift */; };
+		ADBBDA28279F0E9B00E47B1C /* ChannelNameFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADBBDA27279F0E9B00E47B1C /* ChannelNameFormatter.swift */; };
+		ADBBDA29279F0E9B00E47B1C /* ChannelNameFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADBBDA27279F0E9B00E47B1C /* ChannelNameFormatter.swift */; };
 		ADC40C3226E26E9F005B616C /* UserSearchController_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 795297052583B52000435B2E /* UserSearchController_Tests.swift */; };
 		ADC40C3426E294EB005B616C /* MessageSearchController+Combine.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADC40C3326E294EB005B616C /* MessageSearchController+Combine.swift */; };
 		ADC40C3626E2980D005B616C /* MessageSearchController+SwiftUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADC40C3526E2980D005B616C /* MessageSearchController+SwiftUI.swift */; };
@@ -2866,6 +2868,7 @@
 		ADB4165026208C7900E623E3 /* AttachmentPreviewProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttachmentPreviewProvider.swift; sourceTree = "<group>"; };
 		ADBBDA1E279F0CEA00E47B1C /* VideoDurationFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoDurationFormatter.swift; sourceTree = "<group>"; };
 		ADBBDA21279F0CFA00E47B1C /* UploadingProgressFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UploadingProgressFormatter.swift; sourceTree = "<group>"; };
+		ADBBDA27279F0E9B00E47B1C /* ChannelNameFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelNameFormatter.swift; sourceTree = "<group>"; };
 		ADC40C3326E294EB005B616C /* MessageSearchController+Combine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MessageSearchController+Combine.swift"; sourceTree = "<group>"; };
 		ADC40C3526E2980D005B616C /* MessageSearchController+SwiftUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MessageSearchController+SwiftUI.swift"; sourceTree = "<group>"; };
 		ADC4AAAF2788C8850004BB35 /* Appearance+Formatters.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Appearance+Formatters.swift"; sourceTree = "<group>"; };
@@ -5488,6 +5491,7 @@
 				AD99C90A279B1363009DD9C5 /* UserLastActivityFormatter.swift */,
 				ADBBDA1E279F0CEA00E47B1C /* VideoDurationFormatter.swift */,
 				ADBBDA21279F0CFA00E47B1C /* UploadingProgressFormatter.swift */,
+				ADBBDA27279F0E9B00E47B1C /* ChannelNameFormatter.swift */,
 			);
 			path = "Appearance+Formatters";
 			sourceTree = "<group>";
@@ -7081,6 +7085,7 @@
 				C1FC2F7A27416E150062530F /* ImageTask.swift in Sources */,
 				883998212576397900294DB9 /* ChatMessageGalleryView.swift in Sources */,
 				F64DFA8C26282F8B00F7F6F9 /* CGPoint+Extensions.swift in Sources */,
+				ADBBDA28279F0E9B00E47B1C /* ChannelNameFormatter.swift in Sources */,
 				2210525F256FE16600A5F0DB /* CommandLabelView.swift in Sources */,
 				ADB22F7C25F1626200853C92 /* OnlineIndicatorView.swift in Sources */,
 				AD447586263B463D0030E583 /* ConfirmButton.swift in Sources */,
@@ -8409,6 +8414,7 @@
 				C121EC162746A1EC00023E4C /* ImageProcessing.swift in Sources */,
 				C121EC172746A1EC00023E4C /* ImagePipelineConfiguration.swift in Sources */,
 				C121EC182746A1EC00023E4C /* ImageEncoding.swift in Sources */,
+				ADBBDA29279F0E9B00E47B1C /* ChannelNameFormatter.swift in Sources */,
 				C121EC192746A1EC00023E4C /* ImageRequest.swift in Sources */,
 				C121EC1A2746A1EC00023E4C /* DataCache.swift in Sources */,
 				C121EC1B2746A1EC00023E4C /* ImageDecoding.swift in Sources */,

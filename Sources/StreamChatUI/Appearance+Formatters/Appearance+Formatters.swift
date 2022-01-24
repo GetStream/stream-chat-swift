@@ -23,5 +23,8 @@ public extension Appearance {
 
         /// A formatter that converts the progress percentage to textual representation.
         public var uploadingProgress: UploadingProgressFormatter = DefaultUploadingProgressFormatter()
+
+        /// A formatter that generates a name for the given channel.
+        public var channelName: ChannelNameFormatter = DefaultChannelNameFormatter()
     }
 }
