@@ -10,7 +10,7 @@ class CurrentUserDTO: NSManagedObject {
     @NSManaged var unreadChannelsCount: Int64
     @NSManaged var unreadMessagesCount: Int64
     
-    /// Contains the timestamp when last sync process is finished.
+    /// Contains the timestamp when last sync process was finished.
     /// The date later serves as reference date for `/sync` endpoint
     @NSManaged var lastSyncAt: Date?
 

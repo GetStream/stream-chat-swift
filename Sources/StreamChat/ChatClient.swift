@@ -67,7 +67,7 @@ public class ChatClient {
         return center
     }()
 
-    /// The notification center used to send and receive notifications about incoming events.
+    /// A repository that handles all the executions needed to keep the Database in sync with remote.
     private(set) lazy var syncRepository: SyncRepository = {
         let channelRepository = ChannelListUpdater(database: databaseContainer, apiClient: apiClient)
         return SyncRepository(

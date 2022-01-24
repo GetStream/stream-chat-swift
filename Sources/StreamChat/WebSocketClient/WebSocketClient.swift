@@ -41,7 +41,7 @@ class WebSocketClient {
     /// Changing this value doesn't automatically update the existing connection. You need to manually call `disconnect`
     /// and `connect` to make a new connection to the updated endpoint.
     var connectEndpoint: Endpoint<EmptyResponse>?
-    
+
     /// The decoder used to decode incoming events
     private let eventDecoder: AnyEventDecoder
     
