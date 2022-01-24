@@ -225,9 +225,9 @@ extension DateFormatter {
     @available(
         *,
         deprecated,
-        message: "Please use `Appearance.default.formatters.messageListDateSeparator` instead"
+        message: "Please use `Appearance.default.formatters.messageDateSeparator` instead"
     )
     public static var messageListDateOverlay: DateFormatter {
-        Appearance.default.formatters.messageListDateSeparator
+        DefaultMessageDateSeparatorFormatter().dateFormatter
     }
 }

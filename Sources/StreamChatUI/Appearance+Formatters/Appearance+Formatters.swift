@@ -11,12 +11,9 @@ public extension Appearance {
         public var messageTimestamp: MessageTimestampFormatter = DefaultMessageTimestampFormatter()
 
         /// A formatter that converts the message date separator to textual representation.
-        public var messageListDateSeparator: DateFormatter = {
-            let formatter = DateFormatter()
-            formatter.setLocalizedDateFormatFromTemplate("MMMdd")
-            formatter.locale = .autoupdatingCurrent
-            return formatter
-        }()
+        /// This formatter is used to display the message date between each group of messages
+        /// and the top date overlay in the message list.
+        public var messageDateSeparator: MessageDateSeparatorFormatter = DefaultMessageDateSeparatorFormatter()
 
         /// A formatter that converts the minutes passed to textual representation.
         public var minutes: DateComponentsFormatter = {
