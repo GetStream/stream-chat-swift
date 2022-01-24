@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import StreamChat
 
 class WalletQuickInputViewController: UIViewController {
 
@@ -15,7 +16,7 @@ class WalletQuickInputViewController: UIViewController {
 
     // MARK: - Variables
     var showKeypad: ((Double) -> Void)?
-    var didRequestAction: ((Double) -> Void)?
+    var didRequestAction: ((Double, WalletAttachmentPayload.PaymentType) -> Void)?
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -26,7 +27,10 @@ class WalletQuickInputViewController: UIViewController {
     }
 
     @IBAction func btnRequestAction(_ sender: Any) {
-        didRequestAction?(walletStepper.value)
+        didRequestAction?(walletStepper.value, .request)
     }
 
+    @IBAction func btnSendAction(_ sender: Any) {
+        didRequestAction?(walletStepper.value, .pay)
+    }
 }

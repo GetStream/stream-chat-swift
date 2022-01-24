@@ -5,6 +5,7 @@
 import Foundation
 import StreamChat
 import UIKit
+import SwiftUI
 
 extension Notification.Name {
     public static let sendOneWalletTapAction = Notification.Name("kStreamChatOneWalletTapAction")
@@ -316,7 +317,7 @@ open class ComposerVC: _ViewController,
                 weakSelf.composerView.inputMessageView.textView.resignFirstResponder()
                 weakSelf.showAvailableCommands()
             case .pay:
-                weakSelf.showPayment(type: .request)
+                weakSelf.showPayment()
             }
         }
         setupAttachmentsView()
@@ -471,10 +472,10 @@ open class ComposerVC: _ViewController,
             case .contact:
                 self.animateToolkitView(isHide: true)
                 break
-            case .request:
-                self.showPayment(type: .request)
-            case .send:
-                self.showPayment(type: .pay)
+            case .weather:
+                break
+            case .crypto:
+                self.showPayment()
             case .oneN:
                 self.animateToolkitView(isHide: true)
                 break
@@ -594,11 +595,13 @@ open class ComposerVC: _ViewController,
         content.clear()
     }
 
-    open func showPayment(type: WalletAttachmentPayload.PaymentType) {
+    open func showPayment() {
         walletInputView = WalletQuickInputViewController.instantiateController(storyboard: .wallet)
         showInputViewController(walletInputView)
-        walletInputView?.didRequestAction = { [weak self] amount in
+        walletInputView?.didRequestAction = { [weak self] (amount, type) in
             guard let `self` = self else { return }
+            self.showInputViewController(SendPaymentViewController())
+            return;
             self.addWalletAttachment(amount: amount, paymentType: type)
         }
 
@@ -610,8 +613,11 @@ open class ComposerVC: _ViewController,
                 guard let `self` = self else { return }
                 self.walletInputView?.walletStepper.updateAmount(amount: amount)
             }
-            walletView.didRequestAction = { [weak self] amount in
+            walletView.didRequestAction = { [weak self] (amount, type) in
                 guard let `self` = self else { return }
+                self.composerView.toolbarToggleButton.setImage(self.appearance.images.backMenuOption, for: .normal)
+                self.showInputViewController(SendPaymentViewController())
+                return;
                 self.hideInputView()
                 walletView.dismiss(animated: true) { [weak self] in
                     guard let `self` = self else { return }
@@ -648,7 +654,7 @@ open class ComposerVC: _ViewController,
     private func addWalletAttachment(amount: Double, paymentType: WalletAttachmentPayload.PaymentType) {
         DispatchQueue.main.async {
             do {
-                let attachment = try AnyAttachmentPayload(wallet: "$\(amount)", paymentType: paymentType)
+                let attachment = try AnyAttachmentPayload(wallet: "\(amount)", paymentType: paymentType)
                 self.content.attachments.append(attachment)
                 self.hideInputView()
                 self.showMessageOption(isHide: true)

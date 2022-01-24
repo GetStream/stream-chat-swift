@@ -29,27 +29,53 @@
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="gjv-Np-0uA">
-                                <rect key="frame" x="151.5" y="594" width="111" height="44"/>
-                                <color key="backgroundColor" red="0.46274509800000002" green="0.46274509800000002" blue="0.50196078430000002" alpha="0.23999999999999999" colorSpace="custom" customColorSpace="calibratedRGB"/>
-                                <constraints>
-                                    <constraint firstAttribute="width" constant="111" id="0CZ-aZ-zj1"/>
-                                    <constraint firstAttribute="height" constant="44" id="XkT-cx-cw2"/>
-                                </constraints>
-                                <fontDescription key="fontDescription" name="SFProText-Semibold" family="SF Pro Text" pointSize="17"/>
-                                <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
-                                <state key="normal" title="Request">
-                                    <color key="titleColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
-                                </state>
-                                <userDefinedRuntimeAttributes>
-                                    <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
-                                        <real key="value" value="22"/>
-                                    </userDefinedRuntimeAttribute>
-                                </userDefinedRuntimeAttributes>
-                                <connections>
-                                    <action selector="btnRequestAction:" destination="Y6W-OH-hqX" eventType="touchUpInside" id="LMT-OP-bPP"/>
-                                </connections>
-                            </button>
+                            <stackView opaque="NO" contentMode="scaleToFill" spacing="15" translatesAutoresizingMaskIntoConstraints="NO" id="IZg-r0-iLV">
+                                <rect key="frame" x="88.5" y="594" width="237" height="44"/>
+                                <subviews>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="gjv-Np-0uA">
+                                        <rect key="frame" x="0.0" y="0.0" width="111" height="44"/>
+                                        <color key="backgroundColor" red="0.46274509800000002" green="0.46274509800000002" blue="0.50196078430000002" alpha="0.23999999999999999" colorSpace="custom" customColorSpace="calibratedRGB"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="111" id="0CZ-aZ-zj1"/>
+                                            <constraint firstAttribute="height" constant="44" id="XkT-cx-cw2"/>
+                                        </constraints>
+                                        <fontDescription key="fontDescription" name="SFProText-Semibold" family="SF Pro Text" pointSize="17"/>
+                                        <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
+                                        <state key="normal" title="Request">
+                                            <color key="titleColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                        </state>
+                                        <userDefinedRuntimeAttributes>
+                                            <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
+                                                <real key="value" value="22"/>
+                                            </userDefinedRuntimeAttribute>
+                                        </userDefinedRuntimeAttributes>
+                                        <connections>
+                                            <action selector="btnRequestAction:" destination="Y6W-OH-hqX" eventType="touchUpInside" id="sAb-Yk-xmd"/>
+                                        </connections>
+                                    </button>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Rbp-X7-nFn">
+                                        <rect key="frame" x="126" y="0.0" width="111" height="44"/>
+                                        <color key="backgroundColor" red="0.46274509800000002" green="0.46274509800000002" blue="0.50196078430000002" alpha="0.23999999999999999" colorSpace="custom" customColorSpace="calibratedRGB"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="111" id="l8f-ft-VX1"/>
+                                            <constraint firstAttribute="height" constant="44" id="y16-wY-dTS"/>
+                                        </constraints>
+                                        <fontDescription key="fontDescription" name="SFProText-Semibold" family="SF Pro Text" pointSize="17"/>
+                                        <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
+                                        <state key="normal" title="Send">
+                                            <color key="titleColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                        </state>
+                                        <userDefinedRuntimeAttributes>
+                                            <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
+                                                <real key="value" value="22"/>
+                                            </userDefinedRuntimeAttribute>
+                                        </userDefinedRuntimeAttributes>
+                                        <connections>
+                                            <action selector="btnSendAction:" destination="Y6W-OH-hqX" eventType="touchUpInside" id="1et-a1-iPY"/>
+                                        </connections>
+                                    </button>
+                                </subviews>
+                            </stackView>
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="60" translatesAutoresizingMaskIntoConstraints="NO" id="rUK-HS-mWW">
                                 <rect key="frame" x="77" y="114" width="260" height="460"/>
                                 <subviews>
@@ -265,11 +291,11 @@
                             <constraint firstItem="qMD-wk-byz" firstAttribute="leading" secondItem="ycs-2s-2WE" secondAttribute="trailing" constant="15" id="8aR-rl-yAp"/>
                             <constraint firstItem="qMD-wk-byz" firstAttribute="top" secondItem="vDu-zF-Fre" secondAttribute="top" constant="10" id="Cfl-Fg-Mpj"/>
                             <constraint firstItem="rUK-HS-mWW" firstAttribute="top" secondItem="vDu-zF-Fre" secondAttribute="top" constant="70" id="NT4-iA-BAa"/>
-                            <constraint firstItem="gjv-Np-0uA" firstAttribute="top" secondItem="rUK-HS-mWW" secondAttribute="bottom" constant="20" id="OyT-KV-8bh"/>
                             <constraint firstItem="vDu-zF-Fre" firstAttribute="trailing" secondItem="qMD-wk-byz" secondAttribute="trailing" constant="5" id="TyS-cY-oaa"/>
+                            <constraint firstItem="IZg-r0-iLV" firstAttribute="top" secondItem="rUK-HS-mWW" secondAttribute="bottom" constant="20" id="W6K-RH-Koo"/>
                             <constraint firstItem="rUK-HS-mWW" firstAttribute="centerX" secondItem="vDu-zF-Fre" secondAttribute="centerX" id="Y1w-iY-YgD"/>
+                            <constraint firstItem="IZg-r0-iLV" firstAttribute="centerX" secondItem="5EZ-qb-Rvc" secondAttribute="centerX" id="nCe-Ov-0KH"/>
                             <constraint firstItem="ycs-2s-2WE" firstAttribute="leading" secondItem="vDu-zF-Fre" secondAttribute="leading" constant="30" id="rXj-ko-Id5"/>
-                            <constraint firstItem="gjv-Np-0uA" firstAttribute="centerX" secondItem="vDu-zF-Fre" secondAttribute="centerX" id="tbI-Lw-fqW"/>
                         </constraints>
                     </view>
                     <connections>
@@ -313,27 +339,53 @@
                                             <constraint firstAttribute="height" constant="90" id="QtQ-5l-zqW"/>
                                         </constraints>
                                     </view>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="QYb-xw-347">
-                                        <rect key="frame" x="151.5" y="212" width="111" height="44"/>
-                                        <color key="backgroundColor" red="0.46274509803921571" green="0.46274509803921571" blue="0.50196078431372548" alpha="0.23999999999999999" colorSpace="custom" customColorSpace="calibratedRGB"/>
-                                        <constraints>
-                                            <constraint firstAttribute="width" constant="111" id="5AJ-Gn-Kqk"/>
-                                            <constraint firstAttribute="height" constant="44" id="Oyh-mn-r5Y"/>
-                                        </constraints>
-                                        <fontDescription key="fontDescription" name="SFProText-Semibold" family="SF Pro Text" pointSize="17"/>
-                                        <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
-                                        <state key="normal" title="Request">
-                                            <color key="titleColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
-                                        </state>
-                                        <userDefinedRuntimeAttributes>
-                                            <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
-                                                <real key="value" value="22"/>
-                                            </userDefinedRuntimeAttribute>
-                                        </userDefinedRuntimeAttributes>
-                                        <connections>
-                                            <action selector="btnRequestAction:" destination="pjR-mA-8kr" eventType="touchUpInside" id="4cS-YR-stN"/>
-                                        </connections>
-                                    </button>
+                                    <stackView opaque="NO" contentMode="scaleToFill" spacing="15" translatesAutoresizingMaskIntoConstraints="NO" id="HD2-Nr-6Qe">
+                                        <rect key="frame" x="88.5" y="212" width="237" height="44"/>
+                                        <subviews>
+                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="QYb-xw-347">
+                                                <rect key="frame" x="0.0" y="0.0" width="111" height="44"/>
+                                                <color key="backgroundColor" red="0.46274509803921571" green="0.46274509803921571" blue="0.50196078431372548" alpha="0.23999999999999999" colorSpace="custom" customColorSpace="calibratedRGB"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="width" constant="111" id="5AJ-Gn-Kqk"/>
+                                                    <constraint firstAttribute="height" constant="44" id="Oyh-mn-r5Y"/>
+                                                </constraints>
+                                                <fontDescription key="fontDescription" name="SFProText-Semibold" family="SF Pro Text" pointSize="17"/>
+                                                <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
+                                                <state key="normal" title="Request">
+                                                    <color key="titleColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                                </state>
+                                                <userDefinedRuntimeAttributes>
+                                                    <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
+                                                        <real key="value" value="22"/>
+                                                    </userDefinedRuntimeAttribute>
+                                                </userDefinedRuntimeAttributes>
+                                                <connections>
+                                                    <action selector="btnRequestAction:" destination="pjR-mA-8kr" eventType="touchUpInside" id="4cS-YR-stN"/>
+                                                </connections>
+                                            </button>
+                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="hjv-tS-Tka">
+                                                <rect key="frame" x="126" y="0.0" width="111" height="44"/>
+                                                <color key="backgroundColor" red="0.46274509800000002" green="0.46274509800000002" blue="0.50196078430000002" alpha="0.23999999999999999" colorSpace="custom" customColorSpace="calibratedRGB"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="width" constant="111" id="3VW-9f-i5Y"/>
+                                                    <constraint firstAttribute="height" constant="44" id="Dc2-14-Ph3"/>
+                                                </constraints>
+                                                <fontDescription key="fontDescription" name="SFProText-Semibold" family="SF Pro Text" pointSize="17"/>
+                                                <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
+                                                <state key="normal" title="Send">
+                                                    <color key="titleColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                                </state>
+                                                <userDefinedRuntimeAttributes>
+                                                    <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
+                                                        <real key="value" value="22"/>
+                                                    </userDefinedRuntimeAttribute>
+                                                </userDefinedRuntimeAttributes>
+                                                <connections>
+                                                    <action selector="btnSendAction:" destination="pjR-mA-8kr" eventType="touchUpInside" id="LnI-Kc-doa"/>
+                                                </connections>
+                                            </button>
+                                        </subviews>
+                                    </stackView>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="fnk-oM-sbS">
                                         <rect key="frame" x="30" y="160" width="354" height="22"/>
                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -357,9 +409,9 @@
                                 </subviews>
                                 <color key="backgroundColor" red="0.17254901960784313" green="0.17254901960784313" blue="0.1803921568627451" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <constraints>
-                                    <constraint firstItem="QYb-xw-347" firstAttribute="centerX" secondItem="CSJ-5H-Jgw" secondAttribute="centerX" id="9fX-pj-cd6"/>
+                                    <constraint firstItem="HD2-Nr-6Qe" firstAttribute="centerX" secondItem="CSJ-5H-Jgw" secondAttribute="centerX" id="1RP-F5-v73"/>
                                     <constraint firstItem="qHy-do-36n" firstAttribute="centerX" secondItem="CSJ-5H-Jgw" secondAttribute="centerX" id="Fkx-AC-sYy"/>
-                                    <constraint firstItem="QYb-xw-347" firstAttribute="top" secondItem="fnk-oM-sbS" secondAttribute="bottom" constant="30" id="GLX-Qx-nwR"/>
+                                    <constraint firstItem="HD2-Nr-6Qe" firstAttribute="top" secondItem="fnk-oM-sbS" secondAttribute="bottom" constant="30" id="K7p-9T-l42"/>
                                     <constraint firstItem="fnk-oM-sbS" firstAttribute="leading" secondItem="CSJ-5H-Jgw" secondAttribute="leading" constant="30" id="Oyh-RG-BgC"/>
                                     <constraint firstItem="qHy-do-36n" firstAttribute="top" secondItem="CSJ-5H-Jgw" secondAttribute="top" constant="30" id="Uy6-8G-95F"/>
                                     <constraint firstAttribute="trailing" secondItem="fnk-oM-sbS" secondAttribute="trailing" constant="30" id="Y0L-Ge-q97"/>
@@ -555,7 +607,7 @@
                                                                             </userDefinedRuntimeAttribute>
                                                                         </userDefinedRuntimeAttributes>
                                                                     </view>
-                                                                    <label opaque="NO" userInteractionEnabled="NO" alpha="0.60000002384185791" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Request" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="eXF-Db-BTl">
+                                                                    <label opaque="NO" userInteractionEnabled="NO" alpha="0.60000002384185791" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Weather" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="eXF-Db-BTl">
                                                                         <rect key="frame" x="0.0" y="80" width="82.5" height="15"/>
                                                                         <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                                         <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -616,7 +668,7 @@
                                                                             </userDefinedRuntimeAttribute>
                                                                         </userDefinedRuntimeAttributes>
                                                                     </view>
-                                                                    <label opaque="NO" userInteractionEnabled="NO" alpha="0.60000002384185791" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Send" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="GnZ-ML-tNx">
+                                                                    <label opaque="NO" userInteractionEnabled="NO" alpha="0.60000002384185791" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Crypto" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="GnZ-ML-tNx">
                                                                         <rect key="frame" x="0.0" y="80" width="82.5" height="15"/>
                                                                         <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                                         <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
