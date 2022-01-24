@@ -13,6 +13,7 @@ extension Notification.Name {
     public static let sendRedPacket = Notification.Name("kTimelessWalletsendRedPacket")
     public static let pickUpRedPacket = Notification.Name("kStreamChatPickUpRedPacket")
     public static let showSnackBar = Notification.Name("kStreamshowSnackBar")
+    public static let payRequestTapAction = Notification.Name("kPayRequestTapAction")
 }
 
 /// The possible errors that can occur in attachment validation

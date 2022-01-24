@@ -104,7 +104,7 @@ class WalletRequestPayBubble: UITableViewCell {
         if walletPaymentType == .request {
             let payload = content?.attachments(payloadType: WalletAttachmentPayload.self).first
             print("-------------",payload?.extraData)
-            descriptionLabel.text = "Parth Requests Payment \n REQUEST: 100 ONE"
+            descriptionLabel.text = "\(requestedUserName(raw: payload?.extraData) ?? "-") Requests Payment \n REQUEST: \(requestedAmount(raw: payload?.extraData) ?? "0") ONE"
             lblDetails.text = "\(content?.text ?? "")"
             sentThumbImageView.image = Appearance.default.images.requestImg
         } else {
@@ -262,6 +262,39 @@ class WalletRequestPayBubble: UITableViewCell {
         }
     }
 
+    private func requestedUserName(raw: [String: RawJSON]?) -> String? {
+        guard let extraData = raw else {
+            return nil
+        }
+        if let userId = extraData["requestedName"] {
+            return fetchRawData(raw: userId) as? String ?? ""
+        } else {
+            return nil
+        }
+    }
+
+    private func requestedUserId(raw: [String: RawJSON]?) -> String? {
+        guard let extraData = raw else {
+            return nil
+        }
+        if let userId = extraData["requestedUserId"] {
+            return fetchRawData(raw: userId) as? String ?? ""
+        } else {
+            return nil
+        }
+    }
+
+    private func requestedAmount(raw: [String: RawJSON]?) -> String? {
+        guard let extraData = raw else {
+            return nil
+        }
+        if let userId = extraData["oneAmount"] {
+            return fetchRawData(raw: userId) as? String ?? ""
+        } else {
+            return nil
+        }
+    }
+
     private func getExtraData(key: String) -> [String: RawJSON]? {
         if let extraData = content?.extraData[key] {
             switch extraData {
@@ -276,9 +309,23 @@ class WalletRequestPayBubble: UITableViewCell {
     }
 
     @objc func btnSendPacketAction() {
-        guard let channelId = channel?.cid else { return }
-        var userInfo = [String: Any]()
-        userInfo["channelId"] = channelId
-        NotificationCenter.default.post(name: .sendRedPacketTapAction, object: nil, userInfo: userInfo)
+        if walletPaymentType == .request {
+            print("--------%%%%%%%%%%")
+            //payRequestTapAction
+            guard let payload = content?.attachments(payloadType: WalletAttachmentPayload.self).first else {
+                return
+            }
+            var userInfo = [String: Any]()
+            userInfo["oneAmount"] = requestedAmount(raw: payload.extraData)
+            userInfo["requestedName"] = requestedUserName(raw: payload.extraData)
+            userInfo["requestedUserId"] = requestedUserId(raw: payload.extraData)
+            NotificationCenter.default.post(name: .payRequestTapAction, object: nil, userInfo: userInfo)
+        } else {
+            guard let channelId = channel?.cid else { return }
+            var userInfo = [String: Any]()
+            userInfo["channelId"] = channelId
+            NotificationCenter.default.post(name: .sendRedPacketTapAction, object: nil, userInfo: userInfo)
+        }
+
     }
 }
