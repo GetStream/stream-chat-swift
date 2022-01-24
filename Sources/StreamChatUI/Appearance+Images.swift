@@ -283,5 +283,18 @@ public extension Appearance {
         public var add: UIImage = loadImageSafely(with: "add")
         public var remove: UIImage = loadImageSafely(with: "remove")
         public var closePopup: UIImage = loadImageSafely(with: "closePopup")
+        public var addMenu: UIImage = loadImageSafely(with: "addMenu")
+        public var hideMenu: UIImage = loadImageSafely(with: "hideMenu")
+
+        //Menu
+        public var menu1n: UIImage = loadImageSafely(with: "1:n")
+        public var menuContact: UIImage = loadImageSafely(with: "contact")
+        public var menuDao: UIImage = loadImageSafely(with: "dao")
+        public var menuMedia: UIImage = loadImageSafely(with: "media")
+        public var menuNft: UIImage = loadImageSafely(with: "nft")
+        public var menuRedPacket: UIImage = loadImageSafely(with: "redPacketMenu")
+        public var menuRequest: UIImage = loadImageSafely(with: "request")
+        public var menuSend: UIImage = loadImageSafely(with: "send")
+
     }
 }

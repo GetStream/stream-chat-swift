@@ -267,6 +267,9 @@ open class ComposerVC: _ViewController,
     }()
 
     private var walletInputView: WalletQuickInputViewController?
+    private var menuController: ChatMenuViewController?
+    private var isMenuShowing = false
+    private var keyboardHeight = 0.0
 
     override open func setUp() {
         super.setUp()
@@ -313,11 +316,12 @@ open class ComposerVC: _ViewController,
                 weakSelf.composerView.inputMessageView.textView.resignFirstResponder()
                 weakSelf.showAvailableCommands()
             case .pay:
-                weakSelf.showPaymentRequest()
-
+                weakSelf.showPayment(type: .request)
             }
         }
         setupAttachmentsView()
+        bindMenuController()
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow(_:)), name: UIResponder.keyboardWillChangeFrameNotification, object: nil)
     }
 
     override open func setUpLayout() {
@@ -446,7 +450,49 @@ open class ComposerVC: _ViewController,
             self?.content.attachments.remove(at: index)
         }
     }
-    
+
+    @objc func keyboardWillShow(_ notification: Notification) {
+        if let keyboardFrame: NSValue = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue {
+            let keyboardRectangle = keyboardFrame.cgRectValue
+            keyboardHeight = keyboardRectangle.height
+            print(keyboardHeight)
+        }
+    }
+
+    func bindMenuController() {
+        menuController = ChatMenuViewController.instantiateController(storyboard: .wallet)
+        menuController?.didTapAction = { [weak self] action in
+            guard let `self` = self else { return }
+            switch action {
+            case .media:
+                self.composerView.inputMessageView.textView.resignFirstResponder()
+                self.showAttachmentsPicker()
+                self.animateToolkitView(isHide: true)
+            case .contact:
+                self.animateToolkitView(isHide: true)
+                break
+            case .request:
+                self.showPayment(type: .request)
+            case .send:
+                self.showPayment(type: .pay)
+            case .oneN:
+                self.animateToolkitView(isHide: true)
+                break
+            case .nft:
+                self.animateToolkitView(isHide: true)
+                self.composerView.inputMessageView.textView.resignFirstResponder()
+                self.showAvailableCommands()
+            case .redPacket:
+                self.animateToolkitView(isHide: true)
+                self.composerView.inputMessageView.textView.resignFirstResponder()
+                self.sendRedPacketAction()
+            case .dao:
+                self.animateToolkitView(isHide: true)
+                break
+            }
+        }
+    }
+
     // MARK: - Actions
     
     @objc open func publishMessage(sender: UIButton) {
@@ -548,18 +594,12 @@ open class ComposerVC: _ViewController,
         content.clear()
     }
 
-    @objc open func showPaymentRequest() {
-        if composerView.inputMessageView.textView.inputView != nil {
-            hideInputView()
-            return
-        }
+    open func showPayment(type: WalletAttachmentPayload.PaymentType) {
         walletInputView = WalletQuickInputViewController.instantiateController(storyboard: .wallet)
-        self.composerView.inputMessageView.textView.inputView = walletInputView?.view
-        self.composerView.inputMessageView.textView.reloadInputViews()
-        self.composerView.inputMessageView.textView.becomeFirstResponder()
+        showInputViewController(walletInputView)
         walletInputView?.didRequestAction = { [weak self] amount in
             guard let `self` = self else { return }
-            self.addWalletAttachment(amount: amount, paymentType: .request)
+            self.addWalletAttachment(amount: amount, paymentType: type)
         }
 
         walletInputView?.showKeypad = { [weak self] amount in
@@ -575,7 +615,7 @@ open class ComposerVC: _ViewController,
                 self.hideInputView()
                 walletView.dismiss(animated: true) { [weak self] in
                     guard let `self` = self else { return }
-                    self.addWalletAttachment(amount: amount, paymentType: .request)
+                    self.addWalletAttachment(amount: amount, paymentType: type)
                 }
             }
             UIApplication.shared.windows.first?.rootViewController?.present(walletView, animated: true, completion: nil)
@@ -592,6 +632,19 @@ open class ComposerVC: _ViewController,
         self.composerView.inputMessageView.textView.reloadInputViews()
     }
 
+    private func showInputViewController(_ uiViewController: UIViewController?) {
+        let walletView = UIView()
+        if let menu = uiViewController?.view {
+            walletView.embed(menu)
+            menu.widthAnchor.constraint(equalToConstant: self.view.bounds.width).isActive = true
+            menu.heightAnchor.constraint(equalToConstant: keyboardHeight).isActive = true
+        }
+        walletView.frame = CGRect(x: 0, y: 0, width: self.view.bounds.width, height: keyboardHeight)
+        self.composerView.inputMessageView.textView.inputView = walletView
+        self.composerView.inputMessageView.textView.reloadInputViews()
+        self.composerView.inputMessageView.textView.becomeFirstResponder()
+    }
+
     private func addWalletAttachment(amount: Double, paymentType: WalletAttachmentPayload.PaymentType) {
         DispatchQueue.main.async {
             do {
@@ -599,8 +652,6 @@ open class ComposerVC: _ViewController,
                 self.content.attachments.append(attachment)
                 self.hideInputView()
                 self.showMessageOption(isHide: true)
-//                self.walletInputView?.removeFromParent()
-//                self.walletInputView = nil
             } catch {
                 print(error)
             }
@@ -626,30 +677,36 @@ open class ComposerVC: _ViewController,
     }
 
     func animateToolkitView(isHide: Bool) {
-        UIView.animate(
-                    withDuration: 0.35,
-                    delay: 0,
-                    usingSpringWithDamping: 0.9,
-                    initialSpringVelocity: 1,
-                    options: [],
-                    animations: { [weak self] in
-                        guard let weakSelf = self else {
-                            return
-                        }
-                        weakSelf.composerView.toolKitView.isHidden = isHide
-                        if isHide {
-                            weakSelf.composerView.toolKitView.alpha = 0
-                        } else {
-                            weakSelf.composerView.toolKitView.alpha = 1
-                        }
-                        weakSelf.composerView.layoutIfNeeded()
-                    },
-                    completion: nil
-                )
+        if !isMenuShowing {
+            UIView.animate(withDuration: 0.5, delay: 0.0, usingSpringWithDamping: 0.5, initialSpringVelocity: 5, options: .curveEaseInOut, animations: { [weak self] in
+                guard let `self` = self else { return }
+                self.composerView.toolbarToggleButton.transform = CGAffineTransform(rotationAngle: CGFloat(Double.pi/4))
+            }, completion: { [weak self] _ in
+                guard let `self` = self else { return }
+                self.isMenuShowing = true
+            })
+        } else {
+            UIView.animate(withDuration: 0.5, delay: 0.0, usingSpringWithDamping: 0.5, initialSpringVelocity: 5, options: .curveEaseInOut, animations: { [weak self] in
+                guard let `self` = self else { return }
+                self.composerView.toolbarToggleButton.transform = CGAffineTransform.identity
+            }, completion: { [weak self] _ in
+                guard let `self` = self else { return }
+                self.isMenuShowing = false
+            })
+        }
+        if !isHide {
+            self.composerView.inputMessageView.textView.becomeFirstResponder()
+            self.showInputViewController(menuController)
+            self.isMenuShowing = true
+        } else {
+            self.composerView.inputMessageView.textView.inputView = nil
+            self.composerView.inputMessageView.textView.reloadInputViews()
+            self.isMenuShowing = false
+        }
     }
 
     @objc open func toolKitToggleAction(sender: UIButton) {
-        if composerView.toolKitView.isHidden {
+        if !isMenuShowing {
             animateToolkitView(isHide: false)
         } else {
             animateToolkitView(isHide: true)
