@@ -15,9 +15,9 @@ extension ChatMessageGalleryView {
         
         open var minBottomContainerHeight: CGFloat = 24
 
-        /// The number formatter that converts the uploading percentage to textual representation.
-        open lazy var uploadingPercentageFormatter: NumberFormatter =
-            appearance.formatters.uploadingPercentage
+        /// The number formatter that converts the uploading progress percentage to textual representation.
+        open lazy var uploadingProgressFormatter: UploadingProgressFormatter =
+            appearance.formatters.uploadingProgress
 
         // MARK: - Subviews
         
@@ -117,9 +117,9 @@ extension ChatMessageGalleryView {
             uploadingProgressLabel.text = content.flatMap {
                 switch $0.state {
                 case let .uploading(progress):
-                    return uploadingPercentageFormatter.string(from: .init(value: progress))
+                    return uploadingProgressFormatter.format(progress)
                 case .pendingUpload:
-                    return uploadingPercentageFormatter.string(from: 0)
+                    return uploadingProgressFormatter.format(0)
                 case .uploaded, .unknown:
                     return nil
                 case .uploadingFailed:

@@ -26,11 +26,7 @@ public extension Appearance {
         /// A formatter that converts the video duration to textual representation.
         public var videoDuration: VideoDurationFormatter = DefaultVideoDurationFormatter()
 
-        /// A formatter that converts the uploading percentage to textual representation.
-        public var uploadingPercentage: NumberFormatter = {
-            let formatter = NumberFormatter()
-            formatter.numberStyle = .percent
-            return formatter
-        }()
+        /// A formatter that converts the progress percentage to textual representation.
+        public var uploadingProgress: UploadingProgressFormatter = DefaultUploadingProgressFormatter()
     }
 }
