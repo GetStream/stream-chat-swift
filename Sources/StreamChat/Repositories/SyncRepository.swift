@@ -36,6 +36,7 @@ class SyncRepository {
     let eventNotificationCenter: EventNotificationCenter
     let database: DatabaseContainer
     let apiClient: APIClient
+    private var lastConnection: Date?
 
     private lazy var operationQueue: OperationQueue = {
         let operationQueue = OperationQueue()
@@ -81,6 +82,7 @@ class SyncRepository {
         // 0. We get the existing channelIds
         var preSyncChannelIds: [ChannelId] = []
         operations.append(AsyncOperation { [weak self] done in
+            log.info("0. We get the existing channelIds", subsystems: .offlineSupport)
             self?.getExistingChannelIds { channels in
                 preSyncChannelIds = channels
                 done(.continue)
@@ -90,6 +92,10 @@ class SyncRepository {
         // 1. Call `/sync` endpoint and get missing events for all locally existed channels
         var synchedChannelIds: Set<ChannelId> = Set(preSyncChannelIds)
         let syncEvents = AsyncOperation(retries: retriesCount) { [weak self] done in
+            log.info(
+                "1. Call `/sync` endpoint and get missing events for all locally existed channels",
+                subsystems: .offlineSupport
+            )
             self?.getUser { user in
                 guard let lastPendingConnectionDate = user?.lastPendingConnectionDate else {
                     done(.continue)
@@ -104,7 +110,11 @@ class SyncRepository {
                     switch result {
                     case let .success(channelIds):
                         synchedChannelIds = Set(channelIds)
-                        self?.updateUserValue({ $0?.lastPendingConnectionDate = nil }, completion: { _ in done(.continue) })
+                        // As per our sync logic, we should keep the last connection date.
+                        self?.updateUserValue(
+                            { $0?.lastPendingConnectionDate = self?.lastConnection },
+                            completion: { _ in done(.continue) }
+                        )
                     case let .failure(error):
                         done(error.shouldRetry ? .retry : .continue)
                     }
@@ -123,6 +133,7 @@ class SyncRepository {
                 return nil
             }
             return AsyncOperation(retries: retriesCount) { [weak self] done in
+                log.info("2. Start watching open channel", subsystems: .offlineSupport)
                 self?.watchActiveChannel(for: controller) { result in
                     switch result {
                     case let .success(channelId):
@@ -145,6 +156,7 @@ class SyncRepository {
             guard controller.isAvailableOnRemote else { return nil }
 
             return AsyncOperation(retries: retriesCount) { [weak self] done in
+                log.info("3. Refetch channel lists queries & 4. Clean up local message history", subsystems: .offlineSupport)
                 self?.resetChannelsQuery(
                     for: controller,
                     watchedChannelIds: watchedChannelIds,
@@ -165,6 +177,7 @@ class SyncRepository {
 
         // 5. Bump the last sync timestamp
         operations.append(AsyncOperation { [weak self] done in
+            log.info("5. Bump the last sync timestamp", subsystems: .offlineSupport)
             self?.updateUserValue { user in
                 user?.lastSyncAt = Date()
             } completion: { _ in
@@ -192,10 +205,13 @@ class SyncRepository {
     }
 
     func updateLastPendingConnectionDate(with date: Date) {
-        // If there's a pending connection date, it means there was an issue retrieving all the past events.
-        // If that's the case, we keep the existing one.
+        // We store the last connection date in memory.
+        lastConnection = date
         updateUserValue { user in
+            // If there's a pending connection date, it means there was an issue retrieving all the past events.
+            // If that's the case, we keep the existing one.
             guard let user = user, user.lastPendingConnectionDate == nil else { return }
+            log.info("Updating last pending connection date", subsystems: .offlineSupport)
             user.lastPendingConnectionDate = date
         }
     }
@@ -249,6 +265,7 @@ class SyncRepository {
             switch result {
             case let .success(payload):
                 guard bumpLastSync else {
+                    log.info("Successfully synched events", subsystems: .offlineSupport)
                     completion(.success(channelIds))
                     return
                 }
