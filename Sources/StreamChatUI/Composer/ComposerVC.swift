@@ -597,8 +597,8 @@ open class ComposerVC: _ViewController,
             do {
                 var extraData = [String: RawJSON]()
                 extraData["oneAmount"] = .string("\(amount)")
-                extraData["requestedUserId"] = .string(ChatClient.shared.currentUserController().currentUser?.name ?? "")
-                extraData["requestedWalletAddress"] = .string(ChatClient.shared.currentUserId ?? "")
+                extraData["requestedName"] = .string(ChatClient.shared.currentUserController().currentUser?.name ?? "")
+                extraData["requestedUserId"] = .string(ChatClient.shared.currentUserId ?? "")
                 extraData["isPaid"] = .bool(false)
                 let attachment = try AnyAttachmentPayload(extraData: extraData, paymentType: paymentType)
                 self.content.attachments.append(attachment)
