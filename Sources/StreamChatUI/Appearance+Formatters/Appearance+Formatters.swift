@@ -15,13 +15,8 @@ public extension Appearance {
         /// and the top date overlay in the message list.
         public var messageDateSeparator: MessageDateSeparatorFormatter = DefaultMessageDateSeparatorFormatter()
 
-        /// A formatter that converts the minutes passed to textual representation.
-        public var minutes: DateComponentsFormatter = {
-            let formatter = DateComponentsFormatter()
-            formatter.allowedUnits = [.minute]
-            formatter.unitsStyle = .full
-            return formatter
-        }()
+        /// A formatter that converts the time a user was last active to textual representation.
+        public var userLastActivity: UserLastActivityFormatter = DefaultUserLastActivityFormatter()
 
         /// A formatter that converts the video duration to textual representation.
         public var videoDuration: VideoDurationFormatter = DefaultVideoDurationFormatter()

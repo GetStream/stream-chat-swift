@@ -46,8 +46,8 @@ open class GalleryVC:
         return videos + images
     }
     
-    /// Returns the date formater function used to represent when the user was last seen online
-    open var lastSeenDateFormatter: (Date) -> String? { DateUtils.timeAgo }
+    /// Returns the date formatter function used to represent when the user was last seen online.
+    open var lastSeenDateFormatter: (Date) -> String? { appearance.formatters.userLastActivity.format }
 
     /// Controller for handling the transition for dismissal
     open var transitionController: ZoomTransitionController!

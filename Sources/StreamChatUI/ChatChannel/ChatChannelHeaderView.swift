@@ -18,7 +18,7 @@ open class ChatChannelHeaderView:
     }
 
     /// Returns the date formater function used to represent when the user was last seen online
-    open var lastSeenDateFormatter: (Date) -> String? { DateUtils.timeAgo }
+    open var lastSeenDateFormatter: (Date) -> String? { appearance.formatters.userLastActivity.format }
 
     /// The user id of the current logged in user.
     open var currentUserId: UserId? {
