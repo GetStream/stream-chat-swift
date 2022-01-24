@@ -595,7 +595,12 @@ open class ComposerVC: _ViewController,
     private func addWalletAttachment(amount: Double, paymentType: WalletAttachmentPayload.PaymentType) {
         DispatchQueue.main.async {
             do {
-                let attachment = try AnyAttachmentPayload(wallet: "$\(amount)", paymentType: paymentType)
+                var extraData = [String: RawJSON]()
+                extraData["oneAmount"] = .string("\(amount)")
+                extraData["requestedUserId"] = .string(ChatClient.shared.currentUserController().currentUser?.name ?? "")
+                extraData["requestedWalletAddress"] = .string(ChatClient.shared.currentUserId ?? "")
+                extraData["isPaid"] = .bool(false)
+                let attachment = try AnyAttachmentPayload(extraData: extraData, paymentType: paymentType)
                 self.content.attachments.append(attachment)
                 self.hideInputView()
                 self.showMessageOption(isHide: true)

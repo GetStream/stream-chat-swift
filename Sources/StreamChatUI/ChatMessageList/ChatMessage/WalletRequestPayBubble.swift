@@ -102,6 +102,7 @@ class WalletRequestPayBubble: UITableViewCell {
 
         lblDetails = createDetailsLabel()
         if walletPaymentType == .request {
+            let payload = content?.attachments(payloadType: WalletAttachmentPayload.self).first
             descriptionLabel.text = "Parth Requests Payment \n REQUEST: 100 ONE"
             lblDetails.text = "\(content?.text ?? "")"
             sentThumbImageView.image = Appearance.default.images.requestImg
