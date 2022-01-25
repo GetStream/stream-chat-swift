@@ -79,12 +79,24 @@
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="60" translatesAutoresizingMaskIntoConstraints="NO" id="rUK-HS-mWW">
                                 <rect key="frame" x="77" y="114" width="260" height="460"/>
                                 <subviews>
-                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Gmf-pA-FAh" customClass="WalletStepper" customModule="StreamChatUI" customModuleProvider="target">
+                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="SYs-2b-Sh5">
                                         <rect key="frame" x="0.0" y="0.0" width="260" height="90"/>
-                                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                        <subviews>
+                                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Gmf-pA-FAh" customClass="WalletStepper" customModule="StreamChatUI" customModuleProvider="target">
+                                                <rect key="frame" x="17.5" y="0.0" width="225" height="90"/>
+                                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="height" constant="90" id="X7q-Sc-IQB"/>
+                                                    <constraint firstAttribute="width" constant="225" id="sv8-h0-Dgy"/>
+                                                </constraints>
+                                            </view>
+                                        </subviews>
+                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <constraints>
-                                            <constraint firstAttribute="height" constant="90" id="X7q-Sc-IQB"/>
-                                            <constraint firstAttribute="width" constant="260" id="sv8-h0-Dgy"/>
+                                            <constraint firstAttribute="height" constant="90" id="J2W-3a-y9u"/>
+                                            <constraint firstItem="Gmf-pA-FAh" firstAttribute="centerY" secondItem="SYs-2b-Sh5" secondAttribute="centerY" id="Svj-5u-e36"/>
+                                            <constraint firstItem="Gmf-pA-FAh" firstAttribute="centerX" secondItem="SYs-2b-Sh5" secondAttribute="centerX" id="WDi-4s-hO9"/>
+                                            <constraint firstAttribute="width" constant="260" id="bZj-qy-0mq"/>
                                         </constraints>
                                     </view>
                                     <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="fillEqually" spacing="30" translatesAutoresizingMaskIntoConstraints="NO" id="3TD-Wc-zXo">
@@ -332,15 +344,15 @@
                                 <rect key="frame" x="0.0" y="44" width="414" height="852"/>
                                 <subviews>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="qHy-do-36n" customClass="WalletStepper" customModule="StreamChatUI" customModuleProvider="target">
-                                        <rect key="frame" x="77" y="30" width="260" height="90"/>
+                                        <rect key="frame" x="94.5" y="40" width="225" height="90"/>
                                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                         <constraints>
-                                            <constraint firstAttribute="width" constant="260" id="95I-8f-tUd"/>
+                                            <constraint firstAttribute="width" constant="225" id="95I-8f-tUd"/>
                                             <constraint firstAttribute="height" constant="90" id="QtQ-5l-zqW"/>
                                         </constraints>
                                     </view>
                                     <stackView opaque="NO" contentMode="scaleToFill" spacing="15" translatesAutoresizingMaskIntoConstraints="NO" id="HD2-Nr-6Qe">
-                                        <rect key="frame" x="88.5" y="212" width="237" height="44"/>
+                                        <rect key="frame" x="88.5" y="175" width="237" height="44"/>
                                         <subviews>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="QYb-xw-347">
                                                 <rect key="frame" x="0.0" y="0.0" width="111" height="44"/>
@@ -386,11 +398,11 @@
                                             </button>
                                         </subviews>
                                     </stackView>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="fnk-oM-sbS">
-                                        <rect key="frame" x="30" y="160" width="354" height="22"/>
+                                    <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="fnk-oM-sbS">
+                                        <rect key="frame" x="30" y="145" width="354" height="0.0"/>
                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <constraints>
-                                            <constraint firstAttribute="height" constant="22" id="SVn-Fw-XOc"/>
+                                            <constraint firstAttribute="height" id="SVn-Fw-XOc"/>
                                         </constraints>
                                         <fontDescription key="fontDescription" name="SFProText-Regular" family="SF Pro Text" pointSize="18"/>
                                         <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
@@ -406,16 +418,24 @@
                                             <action selector="btnShowKeypadAction:" destination="pjR-mA-8kr" eventType="touchUpInside" id="xkM-4e-KlM"/>
                                         </connections>
                                     </button>
+                                    <view hidden="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="MI2-fv-e8B">
+                                        <rect key="frame" x="0.0" y="0.0" width="414" height="852"/>
+                                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                    </view>
                                 </subviews>
                                 <color key="backgroundColor" red="0.17254901960784313" green="0.17254901960784313" blue="0.1803921568627451" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <constraints>
                                     <constraint firstItem="HD2-Nr-6Qe" firstAttribute="centerX" secondItem="CSJ-5H-Jgw" secondAttribute="centerX" id="1RP-F5-v73"/>
+                                    <constraint firstItem="MI2-fv-e8B" firstAttribute="top" secondItem="CSJ-5H-Jgw" secondAttribute="top" id="6WS-Kb-60s"/>
                                     <constraint firstItem="qHy-do-36n" firstAttribute="centerX" secondItem="CSJ-5H-Jgw" secondAttribute="centerX" id="Fkx-AC-sYy"/>
                                     <constraint firstItem="HD2-Nr-6Qe" firstAttribute="top" secondItem="fnk-oM-sbS" secondAttribute="bottom" constant="30" id="K7p-9T-l42"/>
                                     <constraint firstItem="fnk-oM-sbS" firstAttribute="leading" secondItem="CSJ-5H-Jgw" secondAttribute="leading" constant="30" id="Oyh-RG-BgC"/>
-                                    <constraint firstItem="qHy-do-36n" firstAttribute="top" secondItem="CSJ-5H-Jgw" secondAttribute="top" constant="30" id="Uy6-8G-95F"/>
+                                    <constraint firstAttribute="trailing" secondItem="MI2-fv-e8B" secondAttribute="trailing" id="RiY-vy-15c"/>
+                                    <constraint firstItem="qHy-do-36n" firstAttribute="top" secondItem="CSJ-5H-Jgw" secondAttribute="top" constant="40" id="Uy6-8G-95F"/>
                                     <constraint firstAttribute="trailing" secondItem="fnk-oM-sbS" secondAttribute="trailing" constant="30" id="Y0L-Ge-q97"/>
-                                    <constraint firstItem="fnk-oM-sbS" firstAttribute="top" secondItem="qHy-do-36n" secondAttribute="bottom" constant="40" id="wou-80-EVY"/>
+                                    <constraint firstItem="fnk-oM-sbS" firstAttribute="top" secondItem="qHy-do-36n" secondAttribute="bottom" constant="15" id="wou-80-EVY"/>
+                                    <constraint firstItem="MI2-fv-e8B" firstAttribute="leading" secondItem="CSJ-5H-Jgw" secondAttribute="leading" id="z6w-yY-3HG"/>
+                                    <constraint firstAttribute="bottom" secondItem="MI2-fv-e8B" secondAttribute="bottom" id="zxp-S3-PLv"/>
                                 </constraints>
                                 <userDefinedRuntimeAttributes>
                                     <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
@@ -435,6 +455,7 @@
                     </view>
                     <connections>
                         <outlet property="btnRequest" destination="QYb-xw-347" id="hRT-48-9m3"/>
+                        <outlet property="viewPaymentOption" destination="MI2-fv-e8B" id="r2a-Ca-tFC"/>
                         <outlet property="walletStepper" destination="qHy-do-36n" id="P7H-5E-fPa"/>
                     </connections>
                 </viewController>

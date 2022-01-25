@@ -39,8 +39,6 @@ class WalletStepper: UIView {
     private lazy var lblAmount: UILabel = UILabel()
         .withoutAutoresizingMaskConstraints
 
-    private lazy var lblAmountType: UILabel = UILabel()
-        .withoutAutoresizingMaskConstraints
     private lazy var imgClose: UIImageView = UIImageView()
         .withoutAutoresizingMaskConstraints
 
@@ -55,11 +53,7 @@ class WalletStepper: UIView {
     public var minimumValue: Double = 0.0
     public var maximumValue: Double = 400
     private var scrollDirection: ScrollDirection?
-    private var currencyType: CurrencyType = .ONE {
-        didSet {
-            self.lblAmountType.text = currencyType.rawValue
-        }
-    }
+    private var currencyType: CurrencyType = .ONE
     private var scrollLock = false
     private(set) lazy var bgView = UIView()
         .withoutAutoresizingMaskConstraints
@@ -92,14 +86,14 @@ class WalletStepper: UIView {
         btnAdd.pin(anchors: [.height, .width], to: 30)
 
         containerView.insertSubview(detailView, aboveSubview: btnAdd)
-        detailView.heightAnchor.constraint(equalToConstant: 65).isActive = true
-        detailView.widthAnchor.constraint(equalToConstant: 100).isActive = true
+        detailView.heightAnchor.constraint(equalToConstant: 60).isActive = true
+        detailView.widthAnchor.constraint(equalToConstant: 60).isActive = true
         centerContainerXLayoutConstraint = detailView.centerXAnchor.constraint(equalTo: containerView.centerXAnchor)
         centerContainerXLayoutConstraint?.isActive = true
         centerContainerYLayoutConstraint = detailView.centerYAnchor.constraint(equalTo: containerView.centerYAnchor)
         centerContainerYLayoutConstraint?.isActive = true
         detailView.backgroundColor = Appearance.default.colorPalette.stepperForeground
-        detailView.cornerRadius = 10
+        detailView.cornerRadius = 30
 
         var dragView = UIStackView()
         dragView.axis = .vertical
@@ -110,7 +104,6 @@ class WalletStepper: UIView {
 
         dragView.addArrangedSubview(lblAmount)
         lblAmount.widthAnchor.constraint(equalToConstant: 90).isActive = true
-        dragView.addArrangedSubview(lblAmountType)
 
         containerView.insertSubview(imgClose, belowSubview: detailView)
         imgClose.centerXAnchor.constraint(equalTo: containerView.centerXAnchor).isActive = true
@@ -120,24 +113,18 @@ class WalletStepper: UIView {
 
         lblAmount.font = .systemFont(ofSize: 22)
         lblAmount.adjustsFontSizeToFitWidth = true
-        lblAmountType.font = .systemFont(ofSize: 12)
         lblAmount.text = "0"
         lblAmount.textAlignment = .center
-        lblAmountType.textAlignment = .center
-        lblAmountType.text = "ONE"
         lblAmount.textColor = .white
-        lblAmountType.textColor = .white.withAlphaComponent(0.6)
-        setupGestureRecognizer()
         self.clipsToBounds = false
         containerView.clipsToBounds = false
         detailView.clipsToBounds = true
+        setupGestureRecognizer()
     }
 
     func setupGestureRecognizer() {
         let panGestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(panGestureDidReceiveInteraction(_:)))
         addGestureRecognizer(panGestureRecognizer)
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(switchCurrencyFormat))
-        self.detailView.addGestureRecognizer(tapGesture)
     }
 
     @objc func btnAddAction() {
@@ -146,11 +133,6 @@ class WalletStepper: UIView {
 
     @objc func btnRemoveAction() {
         updateAmount(amount: value - 1.0)
-    }
-
-    @objc func switchCurrencyFormat() {
-        currencyType = currencyType == .ONE ? .USD : .ONE
-        value = 0.0
     }
 
     @objc func panGestureDidReceiveInteraction(_ panGesture: UIPanGestureRecognizer) {
@@ -162,14 +144,13 @@ class WalletStepper: UIView {
             if ((abs(startPosition.y - gestureLocation.y) > 10) && scrollLock == false) || ((abs(startPosition.x - gestureLocation.x) > 10 && scrollLock == false)) {
                 scrollDirection = (abs(startPosition.y - gestureLocation.y) > 10) ? .upDown : .leftRight
                 scrollLock = true
-                print(scrollDirection)
             }
             guard let scrollDirection = scrollDirection, scrollLock else { return }
             if scrollDirection == .upDown {
                 guard let panGestureInteractionInformation = startPosition else { return }
                 let offsetFromStart = gestureLocation.y - panGestureInteractionInformation.y
                 if offsetFromStart > 0 {
-                    let centerX = (detailView.bounds.height / 2) + 15
+                    let centerX = (detailView.bounds.height / 2) + 25
                     let viewAlpha = max((1 - abs(offsetFromStart) / centerX), 0.2)
                     btnAdd.alpha = viewAlpha
                     btnRemove.alpha = viewAlpha

@@ -8,34 +8,13 @@
 import UIKit
 import SwiftUI
 
-class SendPaymentViewController: UIViewController {
-
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        self.view.backgroundColor = UIColor(rgb: 0x2C2C2E)
-        if #available(iOS 14.0.0, *) {
-            let controller = UIHostingController(rootView: SendPaymentView())
-            addChild(controller)
-            controller.view.translatesAutoresizingMaskIntoConstraints = false
-            view.addSubview(controller.view)
-            controller.didMove(toParent: self)
-
-            NSLayoutConstraint.activate([
-                controller.view.widthAnchor.constraint(equalTo: view.widthAnchor),
-                controller.view.heightAnchor.constraint(equalTo: view.heightAnchor),
-                controller.view.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-                controller.view.centerYAnchor.constraint(equalTo: view.centerYAnchor)
-            ])
-        } else {
-            // Fallback on earlier versions
-        }
-    }
-
-}
 
 @available(iOS 14.0.0, *)
-struct SendPaymentView: View {
+struct SendPaymentOptionView: View {
     @State private var selectedPaymentMode = ""
+    @Binding var amount: String!
+    var didSelectPayment: ((String) -> Void)?
+
     let rows = [
            GridItem(.flexible())
        ]
@@ -54,7 +33,7 @@ struct SendPaymentView: View {
             Spacer()
                 .frame(height: 15)
             VStack(spacing: 0) {
-                Text("SENDING 750 ONE")
+                Text("SENDING \(amount) ONE")
                     .font(.system(size: 16, weight: .medium))
                     .foregroundColor(.white.opacity(0.6))
                     .frame(maxWidth: .infinity, alignment: .leading)
@@ -80,7 +59,10 @@ struct SendPaymentView: View {
                                 }
                             }
                             .onTapGesture {
-                                selectedPaymentMode = type
+                                self.selectedPaymentMode = type
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                                    self.didSelectPayment?(type)
+                                }
                             }
                             .cornerRadius(4)
                             .frame(width: 130)

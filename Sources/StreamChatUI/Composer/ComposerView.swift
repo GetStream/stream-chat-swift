@@ -69,6 +69,10 @@ open class ComposerView: _View, ThemeProvider {
         .toolTipToggleButton.init()
         .withoutAutoresizingMaskConstraints
 
+    public private(set) lazy var toolbarBackButton: UIButton = components
+        .toolTipToggleButton.init()
+        .withoutAutoresizingMaskConstraints
+
     public private(set) lazy var toolBarCollectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.minimumLineSpacing = 8
@@ -192,7 +196,9 @@ open class ComposerView: _View, ThemeProvider {
         //leadingContainer.addArrangedSubview(moneyTransferButton)
         //leadingContainer.addArrangedSubview(shrinkInputButton)
         leadingContainer.addArrangedSubview(toolbarToggleButton)
-
+        leadingContainer.addArrangedSubview(toolbarBackButton)
+        toolbarBackButton.isHidden = true
+        toolbarBackButton.setImage(appearance.images.backMenuOption, for: .normal)
         shrinkInputButton.isHidden = true
 
         dismissButton.widthAnchor.pin(equalToConstant: 22).isActive = true

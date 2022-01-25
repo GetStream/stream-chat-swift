@@ -295,6 +295,6 @@ public extension Appearance {
         public var menuRedPacket: UIImage = loadImageSafely(with: "redPacketMenu")
         public var menuWeather: UIImage = loadImageSafely(with: "weather")
         public var menuCrypto: UIImage = loadImageSafely(with: "crypto")
-        public var backMenuOption: UIImage = loadImageSafely(with: "backMenuOption")
+        public var backMenuOption: UIImage = loadImageSafely(with: "back")
     }
 }

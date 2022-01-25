@@ -8,6 +8,7 @@ import UIKit
 extension Notification.Name {
     public static let showTabbar = Notification.Name("kStreamChatshowTabbar")
     public static let hideTabbar = Notification.Name("kStreamHideTabbar")
+    public static let hidePaymentOptions = Notification.Name("kStreamHidePaymentOptions")
 }
 
 /// Controller responsible for displaying the channel messages.

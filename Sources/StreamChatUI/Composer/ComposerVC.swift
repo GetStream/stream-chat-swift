@@ -294,6 +294,7 @@ open class ComposerVC: _ViewController,
         composerView.dismissButton.addTarget(self, action: #selector(clearContent(sender:)), for: .touchUpInside)
         //composerView.moneyTransferButton.addTarget(self, action: #selector(sendMoneyAction(sender:)), for: .touchUpInside)
         composerView.toolbarToggleButton.addTarget(self, action: #selector(toolKitToggleAction(sender:)), for: .touchUpInside)
+        composerView.toolbarBackButton.addTarget(self, action: #selector(toolKitBackAction(sender:)), for: .touchUpInside)
         composerView.inputMessageView.clearButton.addTarget(
             self,
             action: #selector(clearContent(sender:)),
@@ -456,7 +457,18 @@ open class ComposerVC: _ViewController,
         if let keyboardFrame: NSValue = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue {
             let keyboardRectangle = keyboardFrame.cgRectValue
             keyboardHeight = keyboardRectangle.height
-            print(keyboardHeight)
+        }
+    }
+
+    private func bindWalletOption() {
+        walletInputView?.didShowPaymentOption = { [weak self] in
+            guard let `self` = self else { return }
+            self.composerView.toolbarBackButton.isHidden.toggle()
+            self.composerView.toolbarToggleButton.isHidden.toggle()
+        }
+        walletInputView?.didRequestAction = { [weak self] (amount, type) in
+            guard let `self` = self else { return }
+            self.addWalletAttachment(amount: amount, paymentType: type)
         }
     }
 
@@ -492,6 +504,7 @@ open class ComposerVC: _ViewController,
                 break
             }
         }
+
     }
 
     // MARK: - Actions
@@ -514,6 +527,7 @@ open class ComposerVC: _ViewController,
             createNewMessage(text: text)
         }
         content.clear()
+        showMessageOption(isHide: false)
     }
     
     /// Shows a photo/media picker.
@@ -597,14 +611,8 @@ open class ComposerVC: _ViewController,
 
     open func showPayment() {
         walletInputView = WalletQuickInputViewController.instantiateController(storyboard: .wallet)
+        bindWalletOption()
         showInputViewController(walletInputView)
-        walletInputView?.didRequestAction = { [weak self] (amount, type) in
-            guard let `self` = self else { return }
-            self.showInputViewController(SendPaymentViewController())
-            return;
-            self.addWalletAttachment(amount: amount, paymentType: type)
-        }
-
         walletInputView?.showKeypad = { [weak self] amount in
             guard let `self` = self else { return }
             guard let walletView: WalletInputViewController = WalletInputViewController.instantiateController(storyboard: .wallet) else { return }
@@ -615,9 +623,6 @@ open class ComposerVC: _ViewController,
             }
             walletView.didRequestAction = { [weak self] (amount, type) in
                 guard let `self` = self else { return }
-                self.composerView.toolbarToggleButton.setImage(self.appearance.images.backMenuOption, for: .normal)
-                self.showInputViewController(SendPaymentViewController())
-                return;
                 self.hideInputView()
                 walletView.dismiss(animated: true) { [weak self] in
                     guard let `self` = self else { return }
@@ -717,6 +722,12 @@ open class ComposerVC: _ViewController,
         } else {
             animateToolkitView(isHide: true)
         }
+    }
+
+    @objc open func toolKitBackAction(sender: UIButton) {
+        sender.isHidden.toggle()
+        self.composerView.toolbarToggleButton.isHidden = false
+        NotificationCenter.default.post(name: .hidePaymentOptions, object: nil)
     }
 
     /// Creates a new message and notifies the delegate that a new message was created.
