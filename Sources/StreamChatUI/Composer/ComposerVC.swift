@@ -287,8 +287,7 @@ open class ComposerVC: _ViewController,
             weakSelf.composerView.toolKitView.isHidden = isHidden
         }
 
-        //composerView.attachmentButton.addTarget(self, action: #selector(showAttachmentsPicker), for: .touchUpInside)
-        composerView.sendButton.addTarget(self, action: #selector(publishMessage), for: .touchUpInside)
+        composerView.inputMessageView.sendButton.addTarget(self, action: #selector(publishMessage), for: .touchUpInside)
         composerView.confirmButton.addTarget(self, action: #selector(publishMessage), for: .touchUpInside)
         composerView.shrinkInputButton.addTarget(self, action: #selector(shrinkInput), for: .touchUpInside)
         //composerView.commandsButton.addTarget(self, action: #selector(showAvailableCommands), for: .touchUpInside)
@@ -363,7 +362,7 @@ open class ComposerVC: _ViewController,
             composerView.inputMessageView.textView.placeholderLabel.text = L10n.Composer.Placeholder.message
             Animate {
                 self.composerView.confirmButton.isHidden = true
-                self.composerView.sendButton.isHidden = false
+                self.composerView.inputMessageView.sendButton.isHidden = false
                 self.composerView.headerView.isHidden = true
             }
         case .quote:
@@ -375,14 +374,14 @@ open class ComposerVC: _ViewController,
             composerView.titleLabel.text = L10n.Composer.Title.edit
             Animate {
                 self.composerView.confirmButton.isHidden = false
-                self.composerView.sendButton.isHidden = true
+                self.composerView.inputMessageView.sendButton.isHidden = true
                 self.composerView.headerView.isHidden = false
             }
         default:
             log.warning("The composer state \(content.state.description) was not handled.")
         }
 
-        composerView.sendButton.isEnabled = !content.isEmpty
+        composerView.inputMessageView.sendButton.isEnabled = !content.isEmpty
         composerView.confirmButton.isEnabled = !content.isEmpty
 
         let isAttachmentButtonHidden = !content.isEmpty || !isAttachmentsEnabled || content.hasCommand
@@ -528,7 +527,7 @@ open class ComposerVC: _ViewController,
             createNewMessage(text: text)
         }
         content.clear()
-        showMessageOption(isHide: false)
+        self.composerView.leadingContainer.isHidden = false
     }
     
     /// Shows a photo/media picker.
