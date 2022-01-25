@@ -277,7 +277,7 @@ class WalletRequestPayBubble: UITableViewCell {
         guard let extraData = raw else {
             return nil
         }
-        if let userId = extraData["requestedUserId"] {
+        if let userId = extraData["recipientUserId"] {
             return fetchRawData(raw: userId) as? String
         } else {
             return nil
@@ -288,7 +288,7 @@ class WalletRequestPayBubble: UITableViewCell {
         guard let extraData = raw else {
             return nil
         }
-        if let userId = extraData["oneAmount"] {
+        if let userId = extraData["transferAmount"] {
             return fetchRawData(raw: userId) as? String
         } else {
             return nil
@@ -337,9 +337,9 @@ class WalletRequestPayBubble: UITableViewCell {
                 return
             }
             var userInfo = [String: Any]()
-            userInfo["oneAmount"] = requestedAmount(raw: payload.extraData)
-            userInfo["requestedName"] = requestedUserName(raw: payload.extraData)
-            userInfo["requestedUserId"] = requestedUserId(raw: payload.extraData)
+            userInfo["transferAmount"] = requestedAmount(raw: payload.extraData)
+            userInfo["recipientName"] = requestedUserName(raw: payload.extraData)
+            userInfo["recipientUserId"] = requestedUserId(raw: payload.extraData)
             userInfo["requestedImageUrl"] = requestedImageUrl(raw: payload.extraData)
             NotificationCenter.default.post(name: .payRequestTapAction, object: nil, userInfo: userInfo)
         } else {
