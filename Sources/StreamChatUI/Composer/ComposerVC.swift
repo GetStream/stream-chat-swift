@@ -9,6 +9,7 @@ import SwiftUI
 
 extension Notification.Name {
     public static let sendOneWalletTapAction = Notification.Name("kStreamChatOneWalletTapAction")
+    public static let sendOneAction = Notification.Name("kStreamChatSendOneAction")
     public static let sendRedPacketTapAction = Notification.Name("kStreamChatSendRedPacketTapAction")
     public static let sendOneWallet = Notification.Name("kTimelessWalletsendOneWallet")
     public static let sendRedPacket = Notification.Name("kTimelessWalletsendRedPacket")
@@ -467,9 +468,21 @@ open class ComposerVC: _ViewController,
             self.composerView.toolbarBackButton.isHidden.toggle()
             self.composerView.toolbarToggleButton.isHidden.toggle()
         }
-        walletInputView?.didRequestAction = { [weak self] (amount, type) in
+        walletInputView?.didRequestAction = { [weak self] (amount, type, theme) in
             guard let `self` = self else { return }
-            self.addWalletAttachment(amount: amount, paymentType: type)
+            if type == .request {
+                self.addWalletAttachment(amount: amount, paymentType: type, paymentTheme: theme)
+            } else {
+                self.composerView.inputMessageView.textView.text = nil
+                self.composerView.inputMessageView.textView.resignFirstResponder()
+                guard let channelId = self.channelController?.channel?.cid else { return }
+                var userInfo = [String: Any]()
+                userInfo["channelId"] = channelId
+                userInfo["currencyValue"] = "\(amount)"
+                userInfo["currencyDisplay"] = "\(amount)"
+                userInfo["paymentTheme"] = theme.getPaymentThemeUrl()
+                NotificationCenter.default.post(name: .sendOneAction, object: nil, userInfo: userInfo)
+            }
         }
     }
 
@@ -494,8 +507,6 @@ open class ComposerVC: _ViewController,
                 break
             case .nft:
                 self.animateToolkitView(isHide: true)
-                self.composerView.inputMessageView.textView.resignFirstResponder()
-                self.showAvailableCommands()
             case .redPacket:
                 self.animateToolkitView(isHide: true)
                 self.composerView.inputMessageView.textView.resignFirstResponder()
@@ -528,7 +539,7 @@ open class ComposerVC: _ViewController,
             createNewMessage(text: text)
         }
         content.clear()
-        showMessageOption(isHide: false)
+        self.composerView.leadingContainer.isHidden = false
     }
     
     /// Shows a photo/media picker.
@@ -618,17 +629,10 @@ open class ComposerVC: _ViewController,
             guard let `self` = self else { return }
             guard let walletView: WalletInputViewController = WalletInputViewController.instantiateController(storyboard: .wallet) else { return }
             walletView.updatedAmount = amount
-            walletView.didHide = { [weak self] amount in
+            walletView.didHide = { [weak self] amount, type in
                 guard let `self` = self else { return }
+                self.walletInputView?.paymentType = type
                 self.walletInputView?.walletStepper.updateAmount(amount: amount)
-            }
-            walletView.didRequestAction = { [weak self] (amount, type) in
-                guard let `self` = self else { return }
-                self.hideInputView()
-                walletView.dismiss(animated: true) { [weak self] in
-                    guard let `self` = self else { return }
-                    self.addWalletAttachment(amount: amount, paymentType: type)
-                }
             }
             UIApplication.shared.windows.first?.rootViewController?.present(walletView, animated: true, completion: nil)
         }
@@ -657,7 +661,11 @@ open class ComposerVC: _ViewController,
         self.composerView.inputMessageView.textView.becomeFirstResponder()
     }
 
-    private func addWalletAttachment(amount: Double, paymentType: WalletAttachmentPayload.PaymentType) {
+    private func addWalletAttachment(
+        amount: Double,
+        paymentType: WalletAttachmentPayload.PaymentType,
+        paymentTheme: WalletAttachmentPayload.PaymentTheme
+    ) {
         DispatchQueue.main.async {
             do {
                 var extraData = [String: RawJSON]()
@@ -665,6 +673,7 @@ open class ComposerVC: _ViewController,
                 extraData["recipientName"] = .string(ChatClient.shared.currentUserController().currentUser?.name ?? "")
                 extraData["recipientUserId"] = .string(ChatClient.shared.currentUserId ?? "")
                 extraData["isPaid"] = .bool(false)
+                extraData["paymentTheme"] = .string(paymentTheme.getPaymentThemeUrl())
                 extraData["recipientImageUrl"] = .string(ChatClient.shared.currentUserController().currentUser?.imageURL?.absoluteString ?? "")
                 let attachment = try AnyAttachmentPayload(extraData: extraData, paymentType: paymentType)
                 self.content.attachments.append(attachment)

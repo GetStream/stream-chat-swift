@@ -7,25 +7,20 @@
 
 import UIKit
 import SwiftUI
+import StreamChat
 
 
 @available(iOS 14.0.0, *)
 struct SendPaymentOptionView: View {
-    @State private var selectedPaymentMode = ""
+    @State private var selectedPaymentMode: WalletAttachmentPayload.PaymentTheme = .none
     @Binding var amount: String!
-    var didSelectPayment: ((String) -> Void)?
+    var didSelectPayment: ((WalletAttachmentPayload.PaymentTheme) -> Void)?
 
     let rows = [
            GridItem(.flexible())
        ]
-    var paymentTypes: [String] {
-        return ["Default",
-                "Anniversary",
-                "Birthday",
-                "Booze",
-                "Gracias",
-                "Je t'aime",
-                "Holiday"]
+    var paymentTypes: [WalletAttachmentPayload.PaymentTheme] {
+        return WalletAttachmentPayload.PaymentTheme.allCases
     }
     var body: some View {
         ZStack {
@@ -50,7 +45,7 @@ struct SendPaymentOptionView: View {
                                     Color.white.opacity(0.2)
                                 }
                                 VStack {
-                                    Text(type)
+                                    Text(type.rawValue)
                                         .font(.system(size: 14))
                                         .foregroundColor(Color.white)
                                         .padding(.top, 10)

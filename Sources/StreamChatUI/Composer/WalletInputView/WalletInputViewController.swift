@@ -18,8 +18,8 @@ class WalletInputViewController: UIViewController {
 
     // MARK: - Variables
     var updatedAmount = 0.0
-    var didHide: ((Double) -> Void)?
-    var didRequestAction: ((Double, WalletAttachmentPayload.PaymentType) -> Void)?
+    var paymentType: WalletAttachmentPayload.PaymentType = .request
+    var didHide: ((Double, WalletAttachmentPayload.PaymentType) -> Void)?
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -36,15 +36,17 @@ class WalletInputViewController: UIViewController {
 
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        didHide?(walletStepper.value)
+        didHide?(walletStepper.value, paymentType)
     }
 
     @IBAction func btnRequestAction(_ sender: Any) {
+        paymentType = .request
         NotificationCenter.default.post(name: .hidePaymentOptions, object: nil, userInfo: ["isHide": false])
         self.dismiss(animated: true, completion: nil)
     }
 
     @IBAction func btnSendAction(_ sender: Any) {
+        paymentType = .pay
         NotificationCenter.default.post(name: .hidePaymentOptions, object: nil, userInfo: ["isHide": false])
         self.dismiss(animated: true, completion: nil)
     }
@@ -54,7 +56,7 @@ class WalletInputViewController: UIViewController {
     }
 
     @IBAction func btnCloseAction(_ sender: Any) {
-        didHide?(walletStepper.value)
+        didHide?(walletStepper.value, paymentType)
         self.dismiss(animated: true, completion: nil)
     }
 

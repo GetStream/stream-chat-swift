@@ -7,6 +7,7 @@
 
 import UIKit
 import StreamChat
+import Nuke
 
 class WalletRequestPayBubble: UITableViewCell {
 
@@ -84,7 +85,7 @@ class WalletRequestPayBubble: UITableViewCell {
             sentThumbImageView.leadingAnchor.constraint(equalTo: subContainer.leadingAnchor, constant: 0),
             sentThumbImageView.trailingAnchor.constraint(equalTo: subContainer.trailingAnchor, constant: 0),
             sentThumbImageView.bottomAnchor.constraint(equalTo: subContainer.bottomAnchor, constant: 0),
-            sentThumbImageView.heightAnchor.constraint(equalToConstant: 150)
+            sentThumbImageView.heightAnchor.constraint(equalToConstant: 200)
         ])
 
         descriptionLabel = createDescLabel()
@@ -103,19 +104,15 @@ class WalletRequestPayBubble: UITableViewCell {
         lblDetails = createDetailsLabel()
         if walletPaymentType == .request {
             let payload = content?.attachments(payloadType: WalletAttachmentPayload.self).first
-            print("-------------",payload?.extraData)
-            descriptionLabel.text = "\(requestedUserName(raw: payload?.extraData) ?? "-") Requests Payment \n REQUEST: \(requestedAmount(raw: payload?.extraData) ?? "0") ONE"
-            lblDetails.text = "\(content?.text ?? "")"
-            sentThumbImageView.image = Appearance.default.images.requestImg
-        } else {
-            descriptionLabel.text = "Ajay sent you crypto \n SENT: 750 ONE"
-            lblDetails.text = "\(content?.text ?? "")"
-            sentThumbImageView.image = Appearance.default.images.cryptoSentThumb
+            descriptionLabel.text = "\(requestedUserName(raw: payload?.extraData) ?? "-") Requests Payment"
+            let themeURL = requestedThemeURL(raw: payload?.extraData)
+            Nuke.loadImage(with: themeURL, into: sentThumbImageView)
+            lblDetails.text = "REQUEST: \(requestedAmount(raw: payload?.extraData) ?? "0") ONE"
         }
         detailsStack = UIStackView(arrangedSubviews: [lblDetails])
         detailsStack.axis = .vertical
         detailsStack.distribution = .fillEqually
-        detailsStack.spacing = 2
+        detailsStack.spacing = 0
         subContainer.addSubview(detailsStack)
         detailsStack.transform = .mirrorY
         detailsStack.alignment = .center
@@ -128,7 +125,7 @@ class WalletRequestPayBubble: UITableViewCell {
 
         pickUpButton = UIButton()
         pickUpButton.translatesAutoresizingMaskIntoConstraints = false
-        pickUpButton.setTitle(walletPaymentType == .request ? "Pay" : "Block Explorer", for: .normal)
+        pickUpButton.setTitle("Pay", for: .normal)
         pickUpButton.addTarget(self, action: #selector(btnSendPacketAction), for: .touchUpInside)
         pickUpButton.setTitleColor(.white, for: .normal)
         pickUpButton.titleLabel?.font = UIFont.systemFont(ofSize: 14, weight: .regular)
@@ -181,7 +178,7 @@ class WalletRequestPayBubble: UITableViewCell {
                 .withoutAutoresizingMaskConstraints
             descriptionLabel.textAlignment = .center
             descriptionLabel.numberOfLines = 0
-            descriptionLabel.textColor = Appearance.default.colorPalette.redPacketExpired
+            descriptionLabel.textColor = .white
             descriptionLabel.font = Appearance.default.fonts.subheadlineBold.withSize(16)
         }
         return descriptionLabel
@@ -266,10 +263,21 @@ class WalletRequestPayBubble: UITableViewCell {
         guard let extraData = raw else {
             return nil
         }
-        if let userId = extraData["requestedName"] {
+        if let userId = extraData["recipientName"] {
             return fetchRawData(raw: userId) as? String ?? ""
         } else {
             return nil
+        }
+    }
+
+    private func requestedThemeURL(raw: [String: RawJSON]?) -> String? {
+        guard let extraData = raw else {
+            return nil
+        }
+        if let userId = extraData["paymentTheme"] {
+            return fetchRawData(raw: userId) as? String ?? ""
+        } else {
+            return "https://res.cloudinary.com/timeless/image/upload/v1/app/Wallet/shh.png"
         }
     }
 

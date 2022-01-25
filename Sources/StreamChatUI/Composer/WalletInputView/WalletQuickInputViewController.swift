@@ -18,7 +18,7 @@ class WalletQuickInputViewController: UIViewController {
 
     // MARK: - Variables
     var showKeypad: ((Double) -> Void)?
-    var didRequestAction: ((Double, WalletAttachmentPayload.PaymentType) -> Void)?
+    var didRequestAction: ((Double, WalletAttachmentPayload.PaymentType, WalletAttachmentPayload.PaymentTheme) -> Void)?
     var paymentType: WalletAttachmentPayload.PaymentType = .request
     var didShowPaymentOption: (() -> Void)?
 
@@ -71,7 +71,7 @@ class WalletQuickInputViewController: UIViewController {
                 guard let `self` = self else { return }
                 self.viewPaymentOption.isHidden = true
                 self.didShowPaymentOption?()
-                self.didRequestAction?(self.walletStepper.value, self.paymentType)
+                self.didRequestAction?(self.walletStepper.value, self.paymentType, paymentOption)
             }
             let controller = UIHostingController(rootView: paymentSelection)
             addChild(controller)

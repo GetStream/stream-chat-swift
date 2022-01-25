@@ -19,6 +19,7 @@ public struct SendOneWallet {
     public var transferAmount: Float?
     public var txId: String?
     public var strFormattedAmount: String?
+    public var paymentTheme: String?
     //number of fraction digits in transferAmount
     public var fractionDigits: Int = 0
 
@@ -35,6 +36,7 @@ public struct SendOneWallet {
         dictOut["myImageUrl"] = .string(myImageUrl?.absoluteString ?? "")
         dictOut["transferAmount"] = .number(Double(transferAmount ?? 0).rounded(toPlaces: 2))
         dictOut["txId"] = .string(txId ?? "")
+        dictOut["paymentTheme"] = .string(paymentTheme ?? "")
         return dictOut
     }
 }

@@ -9,6 +9,7 @@
 import UIKit
 import StreamChat
 import StreamChatUI
+import Nuke
 
 class CryptoSentBubble: UITableViewCell {
 
@@ -161,7 +162,7 @@ class CryptoSentBubble: UITableViewCell {
                 .withoutAutoresizingMaskConstraints
             descriptionLabel.textAlignment = .center
             descriptionLabel.numberOfLines = 0
-            descriptionLabel.textColor = Appearance.default.colorPalette.themeBlue
+            descriptionLabel.textColor = .white
             descriptionLabel.font = Appearance.default.fonts.subheadlineBold.withSize(16)
         }
         return descriptionLabel
@@ -201,6 +202,13 @@ class CryptoSentBubble: UITableViewCell {
         if let amount = walletData["transferAmount"] {
             let one = fetchRawData(raw: amount) as? Double ?? 0
             sentCryptoLabel.text = "SENT: \(one) ONE"
+        }
+        let defaultURL = WalletAttachmentPayload.PaymentTheme.none.getPaymentThemeUrl()
+        if let themeURl = walletData["paymentTheme"] {
+            let theme = fetchRawData(raw: themeURl) as? String ?? defaultURL
+            Nuke.loadImage(with: theme, into: sentThumbImageView)
+        } else {
+            Nuke.loadImage(with: defaultURL, into: sentThumbImageView)
         }
     }
 
