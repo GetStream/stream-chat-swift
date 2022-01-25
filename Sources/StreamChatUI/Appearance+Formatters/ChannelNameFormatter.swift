@@ -12,6 +12,8 @@ public protocol ChannelNameFormatter {
 
 /// The default channel name formatter.
 open class DefaultChannelNameFormatter: ChannelNameFormatter {
+    public init() {}
+
     open func format(channel: ChatChannel, forCurrentUserId currentUserId: UserId?) -> String? {
         Components.default.channelNamer(channel, currentUserId)
     }

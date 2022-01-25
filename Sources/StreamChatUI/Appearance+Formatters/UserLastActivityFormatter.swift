@@ -11,13 +11,7 @@ public protocol UserLastActivityFormatter {
 
 /// The default user last activity formatter.
 open class DefaultUserLastActivityFormatter: UserLastActivityFormatter {
-    public lazy var dateFormatter: DateFormatter = {
-        let formatter = DateFormatter()
-        formatter.dateStyle = .none
-        formatter.timeStyle = .short
-        formatter.locale = .autoupdatingCurrent
-        return formatter
-    }()
+    public init() {}
 
     open func format(_ date: Date) -> String? {
         DateUtils.timeAgo(relativeTo: date)

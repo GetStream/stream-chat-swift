@@ -19,6 +19,8 @@ open class DefaultVideoDurationFormatter: VideoDurationFormatter {
         return formatter
     }()
 
+    public init() {}
+
     open func format(_ time: TimeInterval) -> String? {
         dateComponentsFormatter.string(from: time)
     }

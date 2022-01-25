@@ -17,6 +17,8 @@ open class DefaultUploadingProgressFormatter: UploadingProgressFormatter {
         return formatter
     }()
 
+    public init() {}
+
     open func format(_ progress: Double) -> String? {
         numberFormatter.string(from: .init(value: progress))
     }

@@ -19,6 +19,8 @@ open class DefaultMessageTimestampFormatter: MessageTimestampFormatter {
         return formatter
     }()
 
+    public init() {}
+
     open func format(_ date: Date) -> String {
         dateFormatter.string(from: date)
     }
