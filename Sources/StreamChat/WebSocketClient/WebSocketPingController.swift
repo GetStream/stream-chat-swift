@@ -6,27 +6,26 @@ import Foundation
 
 /// A delegate to control `WebSocketClient` connection by `WebSocketPingController`.
 protocol WebSocketPingControllerDelegate: AnyObject {
-    /// `WebSocketPingController` will call it method periodically to keep a connection alive.
+    /// `WebSocketPingController` will call this func periodically to keep a connection alive.
     func sendPing()
     
-    /// `WebSocketPingController` will call it to force disconnect `WebSocketClient`.
+    /// `WebSocketPingController` will call this func to force disconnect `WebSocketClient`.
     func disconnectOnNoPongReceived()
 }
 
-/// The controller manages ping and pont timers. It send ping periodically to keep a web socket connection alive.
-/// After ping is sent, a pong waiting timer is started and if it does not come, a force disconnect is called.
+/// The controller manages ping and pong timers. It sends ping periodically to keep a web socket connection alive.
+/// After ping is sent, a pong waiting timer is started, and if pong does not come, a forced disconnect is called.
 class WebSocketPingController {
     /// The time interval to ping connection to keep it alive.
-    static let pingTimeInterval: TimeInterval = 25
+    static let pingTimeInterval: TimeInterval = 0.1
     /// The time interval for pong timeout.
-    static let pongTimeoutTimeInterval: TimeInterval = 3
+    static let pongTimeoutTimeInterval: TimeInterval = 0.1
     
     private let timerType: Timer.Type
     private let timerQueue: DispatchQueue
     
     /// The timer used for scheduling `ping` calls
-    private lazy var pingTimerControl: RepeatingTimerControl =
-        timerType.scheduleRepeating(timeInterval: Self.pingTimeInterval, queue: timerQueue) { [weak self] in self?.sendPing() }
+    private var pingTimerControl: RepeatingTimerControl?
     
     /// The pong timeout timer.
     private var pongTimeoutTimer: TimerControl?
@@ -52,37 +51,51 @@ class WebSocketPingController {
         guard delegate != nil else { return }
         
         cancelPongTimeoutTimer()
+        createPingTimerIfNeeded()
         
         if connectionState.isConnected {
             log.info("Resume WebSocket Ping timer")
-            pingTimerControl.resume()
+            pingTimerControl?.resume()
         } else {
-            pingTimerControl.suspend()
+            pingTimerControl?.suspend()
         }
     }
     
     // MARK: - Ping
     
     private func sendPing() {
+        schedulePongTimeoutTimer()
+
+        log.info("WebSocket Ping")
+        delegate?.sendPing()
+    }
+    
+    func pongReceived() {
+        log.info("WebSocket Pong")
+        cancelPongTimeoutTimer()
+    }
+    
+    
+    // MARK: Timers
+    
+    private func createPingTimerIfNeeded() {
+        guard pingTimerControl == nil else { return }
+        pingTimerControl = timerType.scheduleRepeating(timeInterval: Self.pingTimeInterval, queue: timerQueue) { [weak self] in
+            self?.sendPing()
+        }
+    }
+    
+    private func schedulePongTimeoutTimer() {
+        cancelPongTimeoutTimer()
         // Start pong timeout timer.
         pongTimeoutTimer = timerType.schedule(timeInterval: Self.pongTimeoutTimeInterval, queue: timerQueue) { [weak self] in
             log.info("WebSocket Pong timeout. Reconnect")
             self?.delegate?.disconnectOnNoPongReceived()
         }
-        
-        log.info("WebSocket Ping")
-        delegate?.sendPing()
-    }
-    
-    func pongRecieved() {
-        log.info("WebSocket Pong")
-        cancelPongTimeoutTimer()
     }
     
     private func cancelPongTimeoutTimer() {
-        if pongTimeoutTimer?.isCancelled == false {
-            pongTimeoutTimer?.cancel()
-        }
+        pongTimeoutTimer?.cancel()
         pongTimeoutTimer = nil
     }
 }

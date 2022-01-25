@@ -54,7 +54,9 @@ class URLSessionWebSocketEngine: NSObject, WebSocketEngine, URLSessionDataDelega
             switch result {
             case let .success(message):
                 if case let .string(string) = message {
-                    self.delegate?.webSocketDidReceiveMessage(string)
+                    self.callbackQueue.async { [weak self] in
+                        self?.delegate?.webSocketDidReceiveMessage(string)
+                    }
                 }
                 self.doRead()
                 
@@ -69,7 +71,9 @@ class URLSessionWebSocketEngine: NSObject, WebSocketEngine, URLSessionDataDelega
         webSocketTask: URLSessionWebSocketTask,
         didOpenWithProtocol protocol: String?
     ) {
-        delegate?.webSocketDidConnect()
+        callbackQueue.async { [weak self] in
+            self?.delegate?.webSocketDidConnect()
+        }
     }
     
     func urlSession(
@@ -88,7 +92,9 @@ class URLSessionWebSocketEngine: NSObject, WebSocketEngine, URLSessionDataDelega
             )
         }
         
-        delegate?.webSocketDidDisconnect(error: error)
+        callbackQueue.async { [weak self] in
+            self?.delegate?.webSocketDidDisconnect(error: error)
+        }
     }
     
     func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
@@ -97,6 +103,8 @@ class URLSessionWebSocketEngine: NSObject, WebSocketEngine, URLSessionDataDelega
         // Delegate is already informed with `didCloseWith` callback,
         // so we don't need to call delegate again.
         guard let error = error else { return }
-        delegate?.webSocketDidDisconnect(error: WebSocketEngineError(error: error))
+        callbackQueue.async { [weak self] in
+            self?.delegate?.webSocketDidDisconnect(error: WebSocketEngineError(error: error))
+        }
     }
 }

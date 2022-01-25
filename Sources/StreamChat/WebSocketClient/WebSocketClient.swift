@@ -129,8 +129,8 @@ class WebSocketClient {
         
         connectionState = .connecting
         
-        engineQueue.async { [engine] in
-            engine!.connect()
+        engineQueue.async { [weak engine] in
+            engine?.connect()
         }
     }
     
@@ -140,7 +140,7 @@ class WebSocketClient {
     /// - Parameter source: Additional information about the source of the disconnection. Default value is `.userInitiated`.
     func disconnect(source: WebSocketConnectionState.DisconnectionSource = .userInitiated) {
         connectionState = .disconnecting(source: source)
-        engineQueue.async { [engine] in
+        engineQueue.async { [weak engine] in
             engine?.disconnect()
         }
     }
@@ -190,8 +190,10 @@ extension WebSocketClient: WebSocketEngineDelegate {
             let event = try eventDecoder.decode(from: messageData)
             if let healthCheckEvent = event as? HealthCheckEvent {
                 eventNotificationCenter.process(healthCheckEvent) { [weak self] connectionId in
-                    self?.pingController.pongRecieved()
-                    self?.connectionState = .connected(connectionId: connectionId)
+                    self?.engineQueue.async { [weak self] in
+                        self?.pingController.pongReceived()
+                        self?.connectionState = .connected(connectionId: connectionId)
+                    }
                 }
             } else {
                 eventNotificationCenter.process(event)
@@ -257,8 +259,8 @@ extension WebSocketClient: WebSocketEngineDelegate {
 
 extension WebSocketClient: WebSocketPingControllerDelegate {
     func sendPing() {
-        engineQueue.async { [weak self] in
-            self?.engine?.sendPing()
+        engineQueue.async { [weak engine] in
+            engine?.sendPing()
         }
     }
     
