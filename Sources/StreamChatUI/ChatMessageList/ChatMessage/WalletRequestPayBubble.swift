@@ -278,7 +278,7 @@ class WalletRequestPayBubble: UITableViewCell {
             return nil
         }
         if let userId = extraData["requestedUserId"] {
-            return fetchRawData(raw: userId) as? String ?? ""
+            return fetchRawData(raw: userId) as? String
         } else {
             return nil
         }
@@ -289,9 +289,31 @@ class WalletRequestPayBubble: UITableViewCell {
             return nil
         }
         if let userId = extraData["oneAmount"] {
-            return fetchRawData(raw: userId) as? String ?? ""
+            return fetchRawData(raw: userId) as? String
         } else {
             return nil
+        }
+    }
+
+    private func requestedImageUrl(raw: [String: RawJSON]?) -> String? {
+        guard let extraData = raw else {
+            return nil
+        }
+        if let imageUrl = extraData["recipientImageUrl"] {
+            return fetchRawData(raw: imageUrl) as? String
+        } else {
+            return nil
+        }
+    }
+
+    private func requestedIsPaid(raw: [String: RawJSON]?) -> Bool {
+        guard let extraData = raw else {
+            return true
+        }
+        if let imageUrl = extraData["isPaid"] {
+            return fetchRawData(raw: imageUrl) as? Bool ?? true
+        } else {
+            return true
         }
     }
 
@@ -310,15 +332,15 @@ class WalletRequestPayBubble: UITableViewCell {
 
     @objc func btnSendPacketAction() {
         if walletPaymentType == .request {
-            print("--------%%%%%%%%%%")
-            //payRequestTapAction
-            guard let payload = content?.attachments(payloadType: WalletAttachmentPayload.self).first else {
+            guard let payload = content?.attachments(payloadType: WalletAttachmentPayload.self).first,
+                  requestedIsPaid(raw: payload.extraData) == false else {
                 return
             }
             var userInfo = [String: Any]()
             userInfo["oneAmount"] = requestedAmount(raw: payload.extraData)
             userInfo["requestedName"] = requestedUserName(raw: payload.extraData)
             userInfo["requestedUserId"] = requestedUserId(raw: payload.extraData)
+            userInfo["requestedImageUrl"] = requestedImageUrl(raw: payload.extraData)
             NotificationCenter.default.post(name: .payRequestTapAction, object: nil, userInfo: userInfo)
         } else {
             guard let channelId = channel?.cid else { return }

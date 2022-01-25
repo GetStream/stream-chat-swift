@@ -601,6 +601,7 @@ open class ComposerVC: _ViewController,
                 extraData["requestedName"] = .string(ChatClient.shared.currentUserController().currentUser?.name ?? "")
                 extraData["requestedUserId"] = .string(ChatClient.shared.currentUserId ?? "")
                 extraData["isPaid"] = .bool(false)
+                extraData["recipientImageUrl"] = .string(ChatClient.shared.currentUserController().currentUser?.imageURL?.absoluteString ?? "")
                 let attachment = try AnyAttachmentPayload(extraData: extraData, paymentType: paymentType)
                 self.content.attachments.append(attachment)
                 self.hideInputView()
