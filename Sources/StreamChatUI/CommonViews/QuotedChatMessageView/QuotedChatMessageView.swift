@@ -250,17 +250,12 @@ open class QuotedChatMessageView: _View, ThemeProvider, SwiftUIRepresentable {
     open func setVideoAttachmentPreviewImage(url: URL?) {
         guard let url = url else { return }
         
-        DispatchQueue.global().async {
-            // Using AVKit to generate a preview video image
-            let asset = AVURLAsset(url: url)
-            let generator = AVAssetImageGenerator(asset: asset)
-            generator.appliesPreferredTrackTransform = true
-            
-            // Create a CGImage from the generator
-            if let cgImage = try? generator.copyCGImage(at: CMTime(seconds: 2, preferredTimescale: 60), actualTime: nil) {
-                DispatchQueue.main.async { [weak self] in
-                    self?.attachmentPreviewView.image = UIImage(cgImage: cgImage)
-                }
+        components.videoLoader.loadPreviewForVideo(at: url) { [weak self] in
+            switch $0 {
+            case let .success(preview):
+                self?.attachmentPreviewView.image = preview
+            case .failure:
+                self?.attachmentPreviewView.image = nil
             }
         }
     }
