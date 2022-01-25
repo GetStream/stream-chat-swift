@@ -67,19 +67,10 @@ open class WalletAttachmentComposerPreview: _View, ThemeProvider {
         guard let extraData = data else {
             return nil
         }
-        if let oneAmount = extraData["oneAmount"] {
+        if let oneAmount = extraData["transferAmount"] {
             return fetchRawData(raw: oneAmount) as? String ?? ""
         } else {
             return nil
         }
     }
 }
-
-
-/**
- if let userId = raw["highestAmountUserId"] {
-     return fetchRawData(raw: userId) as? String ?? ""
- } else {
-     return ""
- }
- */

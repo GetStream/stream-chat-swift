@@ -597,9 +597,9 @@ open class ComposerVC: _ViewController,
         DispatchQueue.main.async {
             do {
                 var extraData = [String: RawJSON]()
-                extraData["oneAmount"] = .string("\(amount)")
-                extraData["requestedName"] = .string(ChatClient.shared.currentUserController().currentUser?.name ?? "")
-                extraData["requestedUserId"] = .string(ChatClient.shared.currentUserId ?? "")
+                extraData["transferAmount"] = .string("\(amount)")
+                extraData["recipientName"] = .string(ChatClient.shared.currentUserController().currentUser?.name ?? "")
+                extraData["recipientUserId"] = .string(ChatClient.shared.currentUserId ?? "")
                 extraData["isPaid"] = .bool(false)
                 extraData["recipientImageUrl"] = .string(ChatClient.shared.currentUserController().currentUser?.imageURL?.absoluteString ?? "")
                 let attachment = try AnyAttachmentPayload(extraData: extraData, paymentType: paymentType)
