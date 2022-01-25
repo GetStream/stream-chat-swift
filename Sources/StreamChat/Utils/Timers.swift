@@ -84,17 +84,17 @@ private class RepeatingTimer: RepeatingTimerControl {
     }
     
     private var state: State = .suspended
-    private var timer: DispatchSourceTimer?
+    private let timer: DispatchSourceTimer
     
     init(timeInterval: TimeInterval, queue: DispatchQueue, onFire: @escaping () -> Void) {
         timer = DispatchSource.makeTimerSource(queue: queue)
-        timer?.schedule(deadline: .now() + .milliseconds(Int(timeInterval)), repeating: timeInterval, leeway: .seconds(1))
-        timer?.setEventHandler(handler: onFire)
+        timer.schedule(deadline: .now() + .milliseconds(Int(timeInterval)), repeating: timeInterval, leeway: .seconds(1))
+        timer.setEventHandler(handler: onFire)
     }
     
     deinit {
-        timer?.setEventHandler {}
-        timer?.cancel()
+        timer.setEventHandler {}
+        timer.cancel()
         // If the timer is suspended, calling cancel without resuming
         // triggers a crash. This is documented here https://forums.developer.apple.com/thread/15902
         resume()
@@ -106,7 +106,7 @@ private class RepeatingTimer: RepeatingTimerControl {
         }
         
         state = .resumed
-        timer?.resume()
+        timer.resume()
     }
     
     func suspend() {
@@ -115,6 +115,6 @@ private class RepeatingTimer: RepeatingTimerControl {
         }
         
         state = .suspended
-        timer?.suspend()
+        timer.suspend()
     }
 }
