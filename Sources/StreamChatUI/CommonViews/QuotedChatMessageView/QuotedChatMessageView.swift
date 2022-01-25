@@ -2,6 +2,7 @@
 // Copyright © 2022 Stream.io Inc. All rights reserved.
 //
 
+import AVKit
 import StreamChat
 import UIKit
 
@@ -52,6 +53,7 @@ open class QuotedChatMessageView: _View, ThemeProvider, SwiftUIRepresentable {
             && content.message.imageAttachments.isEmpty
             && content.message.linkAttachments.isEmpty
             && content.message.giphyAttachments.isEmpty
+            && content.message.videoAttachments.isEmpty
     }
 
     /// The container view that holds the `authorAvatarView` and the `contentContainerView`.
@@ -225,6 +227,10 @@ open class QuotedChatMessageView: _View, ThemeProvider, SwiftUIRepresentable {
             attachmentPreviewView.contentMode = .scaleAspectFill
             setAttachmentPreviewImage(url: giphyPayload.previewURL)
             textView.text = message.text.isEmpty ? "Giphy" : message.text
+        } else if let videoPayload = message.videoAttachments.first?.payload {
+            attachmentPreviewView.contentMode = .scaleAspectFill
+            setVideoAttachmentPreviewImage(url: videoPayload.videoURL)
+            textView.text = message.text.isEmpty ? videoPayload.title : message.text
         }
     }
     
@@ -237,6 +243,26 @@ open class QuotedChatMessageView: _View, ThemeProvider, SwiftUIRepresentable {
             imageCDN: components.imageCDN,
             preferredSize: attachmentPreviewSize
         )
+    }
+    
+    /// Set the image from the given URL into `attachmentPreviewImage.image`
+    /// - Parameter url: The URL from which to generate the image on the video
+    open func setVideoAttachmentPreviewImage(url: URL?) {
+        guard let url = url else { return }
+        
+        DispatchQueue.global().async {
+            // Using AVKit to generate a preview video image
+            let asset = AVURLAsset(url: url)
+            let generator = AVAssetImageGenerator(asset: asset)
+            generator.appliesPreferredTrackTransform = true
+            
+            // Create a CGImage from the generator
+            if let cgImage = try? generator.copyCGImage(at: CMTime(seconds: 2, preferredTimescale: 60), actualTime: nil) {
+                DispatchQueue.main.async { [weak self] in
+                    self?.attachmentPreviewView.image = UIImage(cgImage: cgImage)
+                }
+            }
+        }
     }
 
     /// Show the attachment preview view.
