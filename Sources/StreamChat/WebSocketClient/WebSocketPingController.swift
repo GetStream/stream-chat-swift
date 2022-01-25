@@ -17,9 +17,9 @@ protocol WebSocketPingControllerDelegate: AnyObject {
 /// After ping is sent, a pong waiting timer is started, and if pong does not come, a forced disconnect is called.
 class WebSocketPingController {
     /// The time interval to ping connection to keep it alive.
-    static let pingTimeInterval: TimeInterval = 0.1
+    static let pingTimeInterval: TimeInterval = 25
     /// The time interval for pong timeout.
-    static let pongTimeoutTimeInterval: TimeInterval = 0.1
+    static let pongTimeoutTimeInterval: TimeInterval = 3
     
     private let timerType: Timer.Type
     private let timerQueue: DispatchQueue
