@@ -83,11 +83,11 @@
                                         <rect key="frame" x="0.0" y="0.0" width="260" height="90"/>
                                         <subviews>
                                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Gmf-pA-FAh" customClass="WalletStepper" customModule="StreamChatUI" customModuleProvider="target">
-                                                <rect key="frame" x="17.5" y="0.0" width="225" height="90"/>
+                                                <rect key="frame" x="1.5" y="0.0" width="257" height="90"/>
                                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                                 <constraints>
                                                     <constraint firstAttribute="height" constant="90" id="X7q-Sc-IQB"/>
-                                                    <constraint firstAttribute="width" constant="225" id="sv8-h0-Dgy"/>
+                                                    <constraint firstAttribute="width" constant="257" id="sv8-h0-Dgy"/>
                                                 </constraints>
                                             </view>
                                         </subviews>
@@ -344,15 +344,15 @@
                                 <rect key="frame" x="0.0" y="44" width="414" height="852"/>
                                 <subviews>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="qHy-do-36n" customClass="WalletStepper" customModule="StreamChatUI" customModuleProvider="target">
-                                        <rect key="frame" x="94.5" y="40" width="225" height="90"/>
+                                        <rect key="frame" x="78.5" y="40" width="257" height="90"/>
                                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                         <constraints>
-                                            <constraint firstAttribute="width" constant="225" id="95I-8f-tUd"/>
+                                            <constraint firstAttribute="width" constant="257" id="95I-8f-tUd"/>
                                             <constraint firstAttribute="height" constant="90" id="QtQ-5l-zqW"/>
                                         </constraints>
                                     </view>
                                     <stackView opaque="NO" contentMode="scaleToFill" spacing="15" translatesAutoresizingMaskIntoConstraints="NO" id="HD2-Nr-6Qe">
-                                        <rect key="frame" x="88.5" y="175" width="237" height="44"/>
+                                        <rect key="frame" x="88.5" y="209" width="237" height="44"/>
                                         <subviews>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="QYb-xw-347">
                                                 <rect key="frame" x="0.0" y="0.0" width="111" height="44"/>
@@ -398,12 +398,9 @@
                                             </button>
                                         </subviews>
                                     </stackView>
-                                    <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="fnk-oM-sbS">
-                                        <rect key="frame" x="30" y="145" width="354" height="0.0"/>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="fnk-oM-sbS">
+                                        <rect key="frame" x="30" y="145" width="354" height="34"/>
                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                        <constraints>
-                                            <constraint firstAttribute="height" id="SVn-Fw-XOc"/>
-                                        </constraints>
                                         <fontDescription key="fontDescription" name="SFProText-Regular" family="SF Pro Text" pointSize="18"/>
                                         <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
                                         <state key="normal" title="show keypad">

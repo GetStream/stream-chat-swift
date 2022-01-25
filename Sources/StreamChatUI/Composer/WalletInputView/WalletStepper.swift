@@ -136,8 +136,6 @@ class WalletStepper: UIView {
     func setupGestureRecognizer() {
         let panGestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(panGestureDidReceiveInteraction(_:)))
         addGestureRecognizer(panGestureRecognizer)
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(switchCurrencyFormat))
-        self.detailView.addGestureRecognizer(tapGesture)
     }
 
     @objc func btnAddAction() {
@@ -146,11 +144,6 @@ class WalletStepper: UIView {
 
     @objc func btnRemoveAction() {
         updateAmount(amount: value - 1.0)
-    }
-
-    @objc func switchCurrencyFormat() {
-        currencyType = currencyType == .ONE ? .USD : .ONE
-        value = 0.0
     }
 
     @objc func panGestureDidReceiveInteraction(_ panGesture: UIPanGestureRecognizer) {
@@ -162,7 +155,6 @@ class WalletStepper: UIView {
             if ((abs(startPosition.y - gestureLocation.y) > 10) && scrollLock == false) || ((abs(startPosition.x - gestureLocation.x) > 10 && scrollLock == false)) {
                 scrollDirection = (abs(startPosition.y - gestureLocation.y) > 10) ? .upDown : .leftRight
                 scrollLock = true
-                print(scrollDirection)
             }
             guard let scrollDirection = scrollDirection, scrollLock else { return }
             if scrollDirection == .upDown {

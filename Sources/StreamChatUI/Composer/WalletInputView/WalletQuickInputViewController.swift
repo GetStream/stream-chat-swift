@@ -24,15 +24,23 @@ class WalletQuickInputViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        NotificationCenter.default.addObserver(self, selector: #selector(hidePaymentOptions), name: .hidePaymentOptions, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(hidePaymentOptions(_:)), name: .hidePaymentOptions, object: nil)
     }
 
     deinit {
         NotificationCenter.default.removeObserver(self)
     }
 
-    @objc func hidePaymentOptions() {
-        viewPaymentOption.isHidden = true
+    @objc func hidePaymentOptions(_ notification: Notification) {
+        if let isHide = notification.userInfo?["isHide"] as? Bool {
+            if !isHide {
+                showPaymentOptions()
+                didShowPaymentOption?()
+                viewPaymentOption.isHidden = false
+            } else {
+                viewPaymentOption.isHidden = true
+            }
+        }
     }
     
     @IBAction func btnShowKeypadAction(_ sender: Any) {

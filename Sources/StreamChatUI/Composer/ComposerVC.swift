@@ -734,7 +734,7 @@ open class ComposerVC: _ViewController,
     @objc open func toolKitBackAction(sender: UIButton) {
         sender.isHidden.toggle()
         self.composerView.toolbarToggleButton.isHidden = false
-        NotificationCenter.default.post(name: .hidePaymentOptions, object: nil)
+        NotificationCenter.default.post(name: .hidePaymentOptions, object: nil, userInfo: ["isHide": true])
     }
 
     /// Creates a new message and notifies the delegate that a new message was created.
