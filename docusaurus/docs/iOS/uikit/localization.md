@@ -2,8 +2,6 @@
 title: Localization
 ---
 
-## Introduction
-
 If you deploy your app to users who speak another language, you'll need to internationalize (localize) it. That means you need to write the app in a way that makes it possible to localize values like text and layouts for each language or locale that the app supports.
 
 ## Adding a new Language
