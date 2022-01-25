@@ -56,9 +56,9 @@ open class ComposerView: _View, ThemeProvider {
         .withoutAutoresizingMaskConstraints
 
     /// A button to send the message.
-    public private(set) lazy var sendButton: UIButton = components
+    /*public private(set) lazy var sendButton: UIButton = components
         .sendButton.init()
-        .withoutAutoresizingMaskConstraints
+        .withoutAutoresizingMaskConstraints*/
 
     /// A button to transfer p2p payment
     public private(set) lazy var moneyTransferButton: UIButton = components
@@ -170,7 +170,7 @@ open class ComposerView: _View, ThemeProvider {
         centerContainer.layoutMargins = UIEdgeInsets(top: 4, left: 8, bottom: 4, right: 8)
         centerContainer.isLayoutMarginsRelativeArrangement = true
         centerContainer.axis = .horizontal
-        centerContainer.alignment = .bottom
+        centerContainer.alignment = .center//.bottom
         centerContainer.spacing = .auto
         centerContainer.addArrangedSubview(leadingContainer)
         centerContainer.addArrangedSubview(inputMessageView, respectsLayoutMargins: true)
@@ -181,7 +181,7 @@ open class ComposerView: _View, ThemeProvider {
         trailingContainer.distribution = .equal
         trailingContainer.isLayoutMarginsRelativeArrangement = true
         trailingContainer.directionalLayoutMargins = .zero
-        trailingContainer.addArrangedSubview(sendButton)
+        //trailingContainer.addArrangedSubview(sendButton)
         trailingContainer.addArrangedSubview(confirmButton)
         confirmButton.isHidden = true
 
@@ -213,8 +213,8 @@ open class ComposerView: _View, ThemeProvider {
                 button.pin(anchors: [.height], to: 38)
             }*/
         toolbarToggleButton.pin(anchors: [.width], to: 40)
-        toolbarToggleButton.pin(anchors: [.height], to: 38)
-        [sendButton, confirmButton]
+        toolbarToggleButton.pin(anchors: [.height], to: 38) //44
+        [confirmButton]
             .forEach { button in
                 button.pin(anchors: [.width], to: 30)
                 button.pin(anchors: [.height], to: 38)
