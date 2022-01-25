@@ -451,6 +451,7 @@ open class ComposerVC: _ViewController,
                 self?.showMessageOption(isHide: false)
             }
             self?.content.attachments.remove(at: index)
+            self?.composerView.inputMessageView.sendButton.isHidden = self?.content.attachments.isEmpty ?? true
         }
     }
 
@@ -481,6 +482,9 @@ open class ComposerVC: _ViewController,
                 userInfo["currencyDisplay"] = "\(amount)"
                 userInfo["paymentTheme"] = theme.getPaymentThemeUrl()
                 NotificationCenter.default.post(name: .sendOneAction, object: nil, userInfo: userInfo)
+                self.hideInputView()
+                self.composerView.leadingContainer.isHidden = false
+                self.animateToolkitView(isHide: true)
             }
         }
     }
@@ -632,6 +636,7 @@ open class ComposerVC: _ViewController,
                 guard let `self` = self else { return }
                 self.walletInputView?.paymentType = type
                 self.walletInputView?.walletStepper.updateAmount(amount: amount)
+                self.walletInputView?.showPaymentOptionView()
             }
             UIApplication.shared.windows.first?.rootViewController?.present(walletView, animated: true, completion: nil)
         }
@@ -676,6 +681,7 @@ open class ComposerVC: _ViewController,
                 extraData["recipientImageUrl"] = .string(ChatClient.shared.currentUserController().currentUser?.imageURL?.absoluteString ?? "")
                 let attachment = try AnyAttachmentPayload(extraData: extraData, paymentType: paymentType)
                 self.content.attachments.append(attachment)
+                self.composerView.inputMessageView.sendButton.isHidden = false
                 self.hideInputView()
                 self.showMessageOption(isHide: true)
             } catch {
@@ -702,7 +708,7 @@ open class ComposerVC: _ViewController,
         NotificationCenter.default.post(name: .sendRedPacketTapAction, object: nil, userInfo: userInfo)
     }
 
-    func animateToolkitView(isHide: Bool) {
+    private func animateMenuButton() {
         if !isMenuShowing {
             UIView.animate(withDuration: 0.5, delay: 0.0, usingSpringWithDamping: 0.5, initialSpringVelocity: 5, options: .curveEaseInOut, animations: { [weak self] in
                 guard let `self` = self else { return }
@@ -720,6 +726,10 @@ open class ComposerVC: _ViewController,
                 self.isMenuShowing = false
             })
         }
+    }
+
+    func animateToolkitView(isHide: Bool) {
+        animateMenuButton()
         if !isHide {
             self.composerView.inputMessageView.textView.becomeFirstResponder()
             self.showInputViewController(menuController)
@@ -1035,6 +1045,7 @@ open class ComposerVC: _ViewController,
         
         let attachment = try AnyAttachmentPayload(localFileURL: url, attachmentType: type)
         content.attachments.append(attachment)
+        self.composerView.inputMessageView.sendButton.isHidden = false
     }
     
     /// Shows an alert for the error thrown when adding attachment to a composer.

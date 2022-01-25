@@ -9,7 +9,6 @@ import UIKit
 import SwiftUI
 import StreamChat
 
-
 @available(iOS 14.0.0, *)
 struct SendPaymentOptionView: View {
     @State private var selectedPaymentMode: WalletAttachmentPayload.PaymentTheme = .none

@@ -32,15 +32,13 @@ class WalletQuickInputViewController: UIViewController {
     }
 
     @objc func hidePaymentOptions(_ notification: Notification) {
-        if let isHide = notification.userInfo?["isHide"] as? Bool {
-            if !isHide {
-                showPaymentOptions()
-                didShowPaymentOption?()
-                viewPaymentOption.isHidden = false
-            } else {
-                viewPaymentOption.isHidden = true
-            }
-        }
+        viewPaymentOption.isHidden = true
+    }
+
+    func showPaymentOptionView() {
+        showPaymentOptions()
+        didShowPaymentOption?()
+        viewPaymentOption.isHidden = false
     }
     
     @IBAction func btnShowKeypadAction(_ sender: Any) {
