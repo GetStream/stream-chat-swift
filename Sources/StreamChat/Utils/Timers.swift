@@ -51,6 +51,8 @@ protocol RepeatingTimerControl {
 protocol TimerControl {
     /// Cancels the timer.
     func cancel()
+    
+    var isCancelled: Bool { get }
 }
 
 extension DispatchWorkItem: TimerControl {}

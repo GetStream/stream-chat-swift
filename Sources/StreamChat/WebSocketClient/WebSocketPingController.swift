@@ -34,12 +34,14 @@ class WebSocketPingController {
     /// A delegate to control `WebSocketClient` connection by `WebSocketPingController`.
     weak var delegate: WebSocketPingControllerDelegate?
     
+    deinit {
+        cancelPongTimeoutTimer()
+    }
+    
     /// Creates a ping controller.
     /// - Parameters:
     ///   - timerType: a timer type.
     ///   - timerQueue: a timer dispatch queue.
-    ///   - ping: an action for `WebSocketClient` to send a ping.
-    ///   - forceReconnect: an action for `WebSocketClient` to force disconnect and reconnect.
     init(timerType: Timer.Type, timerQueue: DispatchQueue) {
         self.timerType = timerType
         self.timerQueue = timerQueue
@@ -78,7 +80,9 @@ class WebSocketPingController {
     }
     
     private func cancelPongTimeoutTimer() {
-        pongTimeoutTimer?.cancel()
+        if pongTimeoutTimer?.isCancelled == false {
+            pongTimeoutTimer?.cancel()
+        }
         pongTimeoutTimer = nil
     }
 }

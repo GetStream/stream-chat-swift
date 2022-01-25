@@ -257,8 +257,8 @@ extension WebSocketClient: WebSocketEngineDelegate {
 
 extension WebSocketClient: WebSocketPingControllerDelegate {
     func sendPing() {
-        engineQueue.async { [engine] in
-            engine?.sendPing()
+        engineQueue.async { [weak self] in
+            self?.engine?.sendPing()
         }
     }
     
