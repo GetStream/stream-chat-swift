@@ -75,7 +75,6 @@ class WebSocketPingController {
         cancelPongTimeoutTimer()
     }
     
-    
     // MARK: Timers
     
     private func createPingTimerIfNeeded() {
