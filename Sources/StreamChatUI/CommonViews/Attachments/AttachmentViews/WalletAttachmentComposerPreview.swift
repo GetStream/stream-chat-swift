@@ -51,7 +51,7 @@ open class WalletAttachmentComposerPreview: _View, ThemeProvider {
 
         lblAmount.font = .systemFont(ofSize: 22, weight: .bold)
         lblAmount.textColor = .white
-        lblAmount.text = walletAttachment.amount
+        lblAmount.text = getOneAmount(data: walletAttachment.extraData) ?? "0 ONE"//walletAttachment.oneAmount
         lblAmount.textAlignment = .center
         bgView.backgroundColor = .darkGray
         widthAnchor.pin(equalToConstant: width).isActive = true
@@ -62,4 +62,24 @@ open class WalletAttachmentComposerPreview: _View, ThemeProvider {
         super.updateContent()
 
     }
+
+    func getOneAmount(data: [String: RawJSON]?) -> String? {
+        guard let extraData = data else {
+            return nil
+        }
+        if let oneAmount = extraData["oneAmount"] {
+            return fetchRawData(raw: oneAmount) as? String ?? ""
+        } else {
+            return nil
+        }
+    }
 }
+
+
+/**
+ if let userId = raw["highestAmountUserId"] {
+     return fetchRawData(raw: userId) as? String ?? ""
+ } else {
+     return ""
+ }
+ */

@@ -14,6 +14,7 @@ extension Notification.Name {
     public static let sendRedPacket = Notification.Name("kTimelessWalletsendRedPacket")
     public static let pickUpRedPacket = Notification.Name("kStreamChatPickUpRedPacket")
     public static let showSnackBar = Notification.Name("kStreamshowSnackBar")
+    public static let payRequestTapAction = Notification.Name("kPayRequestTapAction")
 }
 
 /// The possible errors that can occur in attachment validation
@@ -659,7 +660,13 @@ open class ComposerVC: _ViewController,
     private func addWalletAttachment(amount: Double, paymentType: WalletAttachmentPayload.PaymentType) {
         DispatchQueue.main.async {
             do {
-                let attachment = try AnyAttachmentPayload(wallet: "\(amount)", paymentType: paymentType)
+                var extraData = [String: RawJSON]()
+                extraData["oneAmount"] = .string("\(amount)")
+                extraData["requestedName"] = .string(ChatClient.shared.currentUserController().currentUser?.name ?? "")
+                extraData["requestedUserId"] = .string(ChatClient.shared.currentUserId ?? "")
+                extraData["isPaid"] = .bool(false)
+                extraData["recipientImageUrl"] = .string(ChatClient.shared.currentUserController().currentUser?.imageURL?.absoluteString ?? "")
+                let attachment = try AnyAttachmentPayload(extraData: extraData, paymentType: paymentType)
                 self.content.attachments.append(attachment)
                 self.hideInputView()
                 self.showMessageOption(isHide: true)
