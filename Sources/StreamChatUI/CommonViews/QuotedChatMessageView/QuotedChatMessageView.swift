@@ -254,8 +254,9 @@ open class QuotedChatMessageView: _View, ThemeProvider, SwiftUIRepresentable {
             switch $0 {
             case let .success(preview):
                 self?.attachmentPreviewView.image = preview
-            case .failure:
+            case let .failure(error):
                 self?.attachmentPreviewView.image = nil
+                log.error("This \(error) received for processing Video Preview image.")
             }
         }
     }
