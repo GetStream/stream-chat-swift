@@ -67,7 +67,9 @@
             "swiftui/components/message-reactions",
             "swiftui/components/message-threads",
             "swiftui/components/inline-replies",
-            "swiftui/components/composer-commands"
+            "swiftui/components/composer-commands",
+            "swiftui/components/typing-indicators",
+            "swiftui/components/read-indicators"
           ]
         }
       ]

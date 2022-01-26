@@ -41,8 +41,9 @@ class MessageUpdater: Worker {
     ///
     /// - Parameters:
     ///   - messageId: The message identifier.
+    ///   - hard: A Boolean value to determine if the message will be delete permanently on the backend.
     ///   - completion: The completion. Will be called with an error if smth goes wrong, otherwise - will be called with `nil`.
-    func deleteMessage(messageId: MessageId, completion: ((Error?) -> Void)? = nil) {
+    func deleteMessage(messageId: MessageId, hard: Bool, completion: ((Error?) -> Void)? = nil) {
         var shouldDeleteOnBackend = true
         
         database.write({ session in
@@ -52,6 +53,8 @@ class MessageUpdater: Worker {
                 // to try to delete the message on the backend.
                 return
             }
+
+            messageDTO.isHardDeleted = hard
             
             if messageDTO.existsOnlyLocally {
                 messageDTO.type = MessageType.deleted.rawValue
@@ -66,14 +69,26 @@ class MessageUpdater: Worker {
                 return
             }
             
-            self.apiClient.request(endpoint: .deleteMessage(messageId: messageId)) { result in
+            self.apiClient.request(endpoint: .deleteMessage(messageId: messageId, hard: hard)) { result in
                 self.database.write({ session in
                     let messageDTO = session.message(id: messageId)
                     switch result {
-                    case .success:
-                        messageDTO?.localMessageState = nil
+                    case let .success(response):
+                        guard let cid = messageDTO?.channel?.cid else { return }
+
+                        let deletedMessage = try session.saveMessage(
+                            payload: response.message,
+                            for: ChannelId(cid: cid),
+                            syncOwnReactions: false
+                        )
+                        deletedMessage?.localMessageState = nil
+
+                        if hard, let message = deletedMessage {
+                            session.delete(message: message)
+                        }
                     case .failure:
                         messageDTO?.localMessageState = .deletingFailed
+                        messageDTO?.isHardDeleted = false
                     }
                 }, completion: { error in
                     completion?(result.error ?? error)

@@ -132,7 +132,7 @@ open class ChatMessageActionsVC: _ViewController, ThemeProvider {
                 self.alertsRouter.showMessageDeletionConfirmationAlert { confirmed in
                     guard confirmed else { return }
 
-                    self.messageController.deleteMessage { _ in
+                    self.messageController.deleteMessage() { _ in
                         self.delegate?.chatMessageActionsVCDidFinish(self)
                     }
                 }

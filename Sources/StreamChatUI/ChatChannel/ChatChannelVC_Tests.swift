@@ -206,6 +206,7 @@ final class ChatChannelVC_Tests: XCTestCase {
         components.messageListView = TestMessageListView.self
         components.messageComposerView = TestComposerView.self
         vc.components = components
+        vc.messageListVC.components = components
         
         // Simulate view loading
         _ = vc.view
