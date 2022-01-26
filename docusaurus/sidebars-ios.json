@@ -14,6 +14,7 @@
         "uikit/getting-started",
         "uikit/localization",
         "uikit/theming",
+        "uikit/data-formatting",
         {
             "Controllers and Delegates": [
               "uikit/controllers/controllers-overview",
