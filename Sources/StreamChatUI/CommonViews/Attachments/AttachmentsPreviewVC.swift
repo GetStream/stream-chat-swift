@@ -115,6 +115,16 @@ open class AttachmentsPreviewVC: _ViewController, ComponentsProvider {
     }
     
     open func setupVerticalStackView() {
+        horizontalStackView.isHidden = true
+        verticalStackView.isHidden = false
+
+        verticalStackView.removeAllArrangedSubviews()
+        verticalStackView.addArrangedSubviews(attachmentViews)
+    }
+
+    override open func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+
         // Disable scroll when not needed
         scrollView.isScrollEnabled = content.count > maxNumberOfVerticalItems
 
@@ -122,8 +132,11 @@ open class AttachmentsPreviewVC: _ViewController, ComponentsProvider {
         // constraint is not yet created, append to the vertical constraint and activate it.
         if content.count > maxNumberOfVerticalItems {
             if scrollViewHeightConstraint == nil {
+                let scrollViewHeight = scrollView.frame.height
+                let itemHeight = scrollViewHeight / CGFloat(content.count)
+                let maxScrollViewHeight = itemHeight * CGFloat(maxNumberOfVerticalItems)
                 scrollViewHeightConstraint = scrollView.heightAnchor.pin(
-                    lessThanOrEqualToConstant: scrollView.frame.size.height
+                    lessThanOrEqualToConstant: maxScrollViewHeight
                 )
                 scrollViewHeightConstraint?.isActive = true
             }
@@ -133,11 +146,5 @@ open class AttachmentsPreviewVC: _ViewController, ComponentsProvider {
             scrollViewHeightConstraint?.isActive = false
             scrollViewHeightConstraint = nil
         }
-
-        horizontalStackView.isHidden = true
-        verticalStackView.isHidden = false
-        
-        verticalStackView.removeAllArrangedSubviews()
-        verticalStackView.addArrangedSubviews(attachmentViews)
     }
 }
