@@ -1,5 +1,5 @@
 //
-// Copyright © 2021 Stream.io Inc. All rights reserved.
+// Copyright © 2022 Stream.io Inc. All rights reserved.
 //
 
 import CoreData
@@ -488,6 +488,7 @@ private extension ConnectionRecoveryHandler_Tests {
         let handler = DefaultConnectionRecoveryHandler(
             webSocketClient: mockChatClient.mockWebSocketClient,
             eventNotificationCenter: mockChatClient.eventNotificationCenter,
+            syncRepository: SyncRepositoryMock(client: mockChatClient),
             backgroundTaskScheduler: mockBackgroundTaskScheduler,
             internetConnection: mockInternetConnection,
             reconnectionStrategy: mockRetryStrategy,
