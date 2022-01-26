@@ -44,7 +44,7 @@ class CustomUserLastActivityFormatter: UserLastActivityFormatter {
 }
 ```
 
-Then, set the custom formatter in the `Appearance` config:
+Finally, set the custom formatter in the `Appearance` config:
 ```swift
 // Set the custom formatter in the Appearance config
 Appearance.default.formatters.userLastActivity = CustomUserLastActivityFormatter()
