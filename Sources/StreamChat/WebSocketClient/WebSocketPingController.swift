@@ -6,10 +6,10 @@ import Foundation
 
 /// A delegate to control `WebSocketClient` connection by `WebSocketPingController`.
 protocol WebSocketPingControllerDelegate: AnyObject {
-    /// `WebSocketPingController` will call this func periodically to keep a connection alive.
+    /// `WebSocketPingController` will call this function periodically to keep a connection alive.
     func sendPing()
     
-    /// `WebSocketPingController` will call this func to force disconnect `WebSocketClient`.
+    /// `WebSocketPingController` will call this function to force disconnect `WebSocketClient`.
     func disconnectOnNoPongReceived()
 }
 
@@ -51,7 +51,7 @@ class WebSocketPingController {
         guard delegate != nil else { return }
         
         cancelPongTimeoutTimer()
-        createPingTimerIfNeeded()
+        schedulePingTimerIfNeeded()
         
         if connectionState.isConnected {
             log.info("Resume WebSocket Ping timer")
@@ -77,7 +77,7 @@ class WebSocketPingController {
     
     // MARK: Timers
     
-    private func createPingTimerIfNeeded() {
+    private func schedulePingTimerIfNeeded() {
         guard pingTimerControl == nil else { return }
         pingTimerControl = timerType.scheduleRepeating(timeInterval: Self.pingTimeInterval, queue: timerQueue) { [weak self] in
             self?.sendPing()
