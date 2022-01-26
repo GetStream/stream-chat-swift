@@ -5,6 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### ✅ Added
 - Make Date Formatters Configurable [#1742](https://github.com/GetStream/stream-chat-swift/pull/1742)
+- Add quoted video support [#1765](https://github.com/GetStream/stream-chat-swift/pull/1765)
 
 ### 🔄 Changed
 - In case you are presenting the `ChatChannelVC` in a modal, you should now be using the `StreamModalTransitioningDelegate`. The workaround to fix the message list being dismissed when scrolling to the bottom has been removed in favor of the custom modal transition. Please check the following PR description to see how to use it: [#1760](https://github.com/GetStream/stream-chat-swift/pull/1760)
