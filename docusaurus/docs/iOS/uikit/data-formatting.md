@@ -4,7 +4,7 @@ title: Data Formatting
 
 import ThemingNote from '../common-content/theming-note.md'
 
-You can customize how data is formatted across all the UI components provided by `StreamChatUI`. The SDK allows you to change the data formatting through the `Appearance` configuration where you can change, for example, how message dates, video durations, and times are formatted in each component. Each formatter can be accessed through the `Appearance.formatters` property. You can replace a formatter with a custom one since each formatter is represented by a `Protocol`, but you can also do simple changes by changing the default formatters provided by the SDK.
+You can customize how data is formatted across all the UI components provided by `StreamChatUI`. The SDK allows you to change the data formatting through the `Appearance.formatters` configuration. For simple customizations, you can use the default formatters provided by the SDK, for more custom logic you can leverage your own formatter by adhering it to the respective data formatter `protocol`.
 
 ## Changing the message timestamp formatting
 
