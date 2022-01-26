@@ -382,7 +382,7 @@ open class ComposerVC: _ViewController,
             log.warning("The composer state \(content.state.description) was not handled.")
         }
 
-        composerView.inputMessageView.sendButton.isEnabled = !content.isEmpty
+        composerView.inputMessageView.sendButton.isHidden = content.isEmpty && content.attachments.isEmpty
         composerView.confirmButton.isEnabled = !content.isEmpty
 
         let isAttachmentButtonHidden = !content.isEmpty || !isAttachmentsEnabled || content.hasCommand
@@ -750,8 +750,8 @@ open class ComposerVC: _ViewController,
     }
 
     @objc open func toolKitBackAction(sender: UIButton) {
-        sender.isHidden.toggle()
-        self.composerView.toolbarToggleButton.isHidden = false
+        self.composerView.toolbarBackButton.isHidden.toggle()
+        self.composerView.toolbarToggleButton.isHidden.toggle()
         NotificationCenter.default.post(name: .hidePaymentOptions, object: nil, userInfo: ["isHide": true])
     }
 

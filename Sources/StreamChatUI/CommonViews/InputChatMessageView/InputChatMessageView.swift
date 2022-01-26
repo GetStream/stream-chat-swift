@@ -27,6 +27,10 @@ open class InputChatMessageView: _View, ComponentsProvider, AppearanceProvider {
         .sendButton.init()
         .withoutAutoresizingMaskConstraints
 
+    public private(set) lazy var emojiButton: UIButton = components
+        .emojiButton.init()
+        .withoutAutoresizingMaskConstraints
+
     public private(set) lazy var emptyView: UIView = {
         let view = UIView()
         view.frame = .zero
@@ -97,14 +101,15 @@ open class InputChatMessageView: _View, ComponentsProvider, AppearanceProvider {
         container.addArrangedSubview(inputTextContainer)
         quotedMessageView.isHidden = true
         attachmentsViewContainer.isHidden = true
-
+        emojiButton.setImage(appearance.images.emojiIcon, for: .normal)
         inputTextContainer.isLayoutMarginsRelativeArrangement = true
         inputTextContainer.alignment = .center
-        inputTextContainer.spacing = 4
+        inputTextContainer.spacing = 6
         inputTextContainer.directionalLayoutMargins = .init(top: 0, leading: 6, bottom: 0, trailing: 6)
         inputTextContainer.addArrangedSubview(commandLabelView)
         inputTextContainer.addArrangedSubview(textView)
         inputTextContainer.addArrangedSubview(clearButton)
+        inputTextContainer.addArrangedSubview(emojiButton)
         inputTextContainer.addArrangedSubview(sendButton)
         inputTextContainer.addArrangedSubview(emptyView)
 
@@ -121,6 +126,8 @@ open class InputChatMessageView: _View, ComponentsProvider, AppearanceProvider {
         ])
         sendButton.pin(anchors: [.width], to: 24)
         sendButton.pin(anchors: [.height], to: 24)
+        emojiButton.pin(anchors: [.width], to: 24)
+        emojiButton.pin(anchors: [.height], to: 24)
     }
 
     override open func updateContent() {
@@ -143,7 +150,6 @@ open class InputChatMessageView: _View, ComponentsProvider, AppearanceProvider {
             self.quotedMessageView.isHidden = content.quotingMessage == nil
             self.commandLabelView.isHidden = content.command == nil
             self.clearButton.isHidden = content.command == nil
-            self.sendButton.isHidden = self.textView.text.isBlank
         }
     }
 }

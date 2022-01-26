@@ -344,6 +344,11 @@ class WalletRequestPayBubble: UITableViewCell {
                   requestedIsPaid(raw: payload.extraData) == false else {
                 return
             }
+            if requestedUserId(raw: payload.extraData) == self.content?.author.id.string {
+
+                Snackbar.show(text: "You can not send one to your own wallet")
+                return
+            }
             var userInfo = [String: Any]()
             userInfo["transferAmount"] = requestedAmount(raw: payload.extraData)
             userInfo["recipientName"] = requestedUserName(raw: payload.extraData)

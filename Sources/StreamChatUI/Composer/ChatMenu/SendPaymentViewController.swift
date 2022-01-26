@@ -23,7 +23,7 @@ struct SendPaymentOptionView: View {
     }
     var body: some View {
         ZStack {
-            Color(UIColor(rgb: 0x2C2C2E))
+            Color(UIColor(rgb: 0x1E1F1F))
             Spacer()
                 .frame(height: 15)
             VStack(spacing: 0) {
@@ -67,7 +67,7 @@ struct SendPaymentOptionView: View {
                 .frame(height: 130)
                 Spacer()
             }
-            .background(Color(UIColor(rgb: 0x2C2C2E)))
+            .background(Color(UIColor(rgb: 0x1E1F1F)))
             .padding(15)
         }
     }

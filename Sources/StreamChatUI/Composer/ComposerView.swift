@@ -125,12 +125,12 @@ open class ComposerView: _View, ThemeProvider {
 
     override open func setUpAppearance() {
         super.setUpAppearance()
-        backgroundColor = appearance.colorPalette.walletTabbarBackground
+        backgroundColor = .black
         toolKitView.backgroundColor = appearance.colorPalette.walletTabbarBackground
         headerView.backgroundColor = appearance.colorPalette.walletTabbarBackground
         centerContainer.backgroundColor = appearance.colorPalette.walletTabbarBackground
         bottomContainer.backgroundColor = appearance.colorPalette.walletTabbarBackground
-        layer.shadowColor = UIColor.systemGray.cgColor
+        layer.shadowColor = UIColor.clear.cgColor
         layer.shadowOpacity = 1
         layer.shadowOffset = .zero
         layer.shadowRadius = 0.5
@@ -173,8 +173,8 @@ open class ComposerView: _View, ThemeProvider {
         centerContainer.alignment = .center//.bottom
         centerContainer.spacing = .auto
         centerContainer.addArrangedSubview(leadingContainer)
-        centerContainer.addArrangedSubview(inputMessageView, respectsLayoutMargins: true)
-        inputMessageView.layoutMargins = UIEdgeInsets(top: 2, left: 0, bottom: 3, right: 0)
+        centerContainer.addArrangedSubview(inputMessageView)
+        inputMessageView.layoutMargins = UIEdgeInsets(top: 2, left: -5, bottom: 3, right: 0)
         centerContainer.addArrangedSubview(trailingContainer)
         trailingContainer.alignment = .center
         trailingContainer.spacing = .auto
@@ -187,7 +187,7 @@ open class ComposerView: _View, ThemeProvider {
 
         leadingContainer.axis = .horizontal
         leadingContainer.alignment = .center
-        leadingContainer.spacing = .auto
+        leadingContainer.spacing = .init(0)
         leadingContainer.distribution = .equal
         leadingContainer.isLayoutMarginsRelativeArrangement = true
         leadingContainer.directionalLayoutMargins = .zero
@@ -214,6 +214,8 @@ open class ComposerView: _View, ThemeProvider {
             }*/
         toolbarToggleButton.pin(anchors: [.width], to: 40)
         toolbarToggleButton.pin(anchors: [.height], to: 38) //44
+        toolbarBackButton.pin(anchors: [.width], to: 40)
+        toolbarBackButton.pin(anchors: [.height], to: 38)
         [confirmButton]
             .forEach { button in
                 button.pin(anchors: [.width], to: 30)

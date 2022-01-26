@@ -4,6 +4,7 @@
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="19519"/>
+        <capability name="Named colors" minToolsVersion="9.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="Stack View standard spacing" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
@@ -297,7 +298,7 @@
                             </label>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="vDu-zF-Fre"/>
-                        <color key="backgroundColor" red="0.17254901960784313" green="0.17254901960784313" blue="0.1803921568627451" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <color key="backgroundColor" name="walletMenuBackground"/>
                         <constraints>
                             <constraint firstItem="ycs-2s-2WE" firstAttribute="top" secondItem="vDu-zF-Fre" secondAttribute="top" constant="15" id="7Yb-Ae-Y3K"/>
                             <constraint firstItem="qMD-wk-byz" firstAttribute="leading" secondItem="ycs-2s-2WE" secondAttribute="trailing" constant="15" id="8aR-rl-yAp"/>
@@ -420,7 +421,7 @@
                                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                     </view>
                                 </subviews>
-                                <color key="backgroundColor" red="0.17254901960784313" green="0.17254901960784313" blue="0.1803921568627451" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <color key="backgroundColor" name="walletMenuBackground"/>
                                 <constraints>
                                     <constraint firstItem="HD2-Nr-6Qe" firstAttribute="centerX" secondItem="CSJ-5H-Jgw" secondAttribute="centerX" id="1RP-F5-v73"/>
                                     <constraint firstItem="MI2-fv-e8B" firstAttribute="top" secondItem="CSJ-5H-Jgw" secondAttribute="top" id="6WS-Kb-60s"/>
@@ -434,11 +435,6 @@
                                     <constraint firstItem="MI2-fv-e8B" firstAttribute="leading" secondItem="CSJ-5H-Jgw" secondAttribute="leading" id="z6w-yY-3HG"/>
                                     <constraint firstAttribute="bottom" secondItem="MI2-fv-e8B" secondAttribute="bottom" id="zxp-S3-PLv"/>
                                 </constraints>
-                                <userDefinedRuntimeAttributes>
-                                    <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
-                                        <real key="value" value="15"/>
-                                    </userDefinedRuntimeAttribute>
-                                </userDefinedRuntimeAttributes>
                             </view>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="hyM-U9-yu8"/>
@@ -987,17 +983,12 @@
                                         </subviews>
                                     </stackView>
                                 </subviews>
-                                <color key="backgroundColor" red="0.17254901959999999" green="0.17254901959999999" blue="0.18039215689999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <color key="backgroundColor" name="walletMenuBackground"/>
                                 <constraints>
                                     <constraint firstItem="8OF-Da-aUC" firstAttribute="leading" secondItem="kyY-Dz-Eih" secondAttribute="leading" constant="30" id="1TP-zY-B7s"/>
                                     <constraint firstItem="8OF-Da-aUC" firstAttribute="top" secondItem="kyY-Dz-Eih" secondAttribute="top" constant="25" id="Gd2-tX-tTo"/>
                                     <constraint firstAttribute="trailing" secondItem="8OF-Da-aUC" secondAttribute="trailing" constant="30" id="jXQ-aA-9j4"/>
                                 </constraints>
-                                <userDefinedRuntimeAttributes>
-                                    <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
-                                        <real key="value" value="15"/>
-                                    </userDefinedRuntimeAttribute>
-                                </userDefinedRuntimeAttributes>
                             </view>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="PHc-Ni-LsP"/>
@@ -1029,6 +1020,9 @@
         <image name="closePopup" width="30" height="30"/>
         <image name="delete.left.fill" catalog="system" width="128" height="104"/>
         <image name="media" width="29" height="24"/>
+        <namedColor name="walletMenuBackground">
+            <color red="0.11764705882352941" green="0.12156862745098039" blue="0.12156862745098039" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </namedColor>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>

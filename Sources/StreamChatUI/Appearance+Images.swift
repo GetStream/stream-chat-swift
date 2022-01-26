@@ -296,5 +296,6 @@ public extension Appearance {
         public var menuWeather: UIImage = loadImageSafely(with: "weather")
         public var menuCrypto: UIImage = loadImageSafely(with: "crypto")
         public var backMenuOption: UIImage = loadImageSafely(with: "back")
+        public var emojiIcon: UIImage = loadImageSafely(with: "emoji")
     }
 }
