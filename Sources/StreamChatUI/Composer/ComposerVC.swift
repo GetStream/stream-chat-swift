@@ -447,11 +447,12 @@ open class ComposerVC: _ViewController,
     open func setupAttachmentsView() {
         addChildViewController(attachmentsVC, embedIn: composerView.inputMessageView.attachmentsViewContainer)
         attachmentsVC.didTapRemoveItemButton = { [weak self] index in
-            if self?.content.attachments[index].type == .wallet {
-                self?.showMessageOption(isHide: false)
+            guard let `self` = self else { return }
+            if self.content.attachments[index].type == .wallet {
+                self.showMessageOption(isHide: false)
             }
-            self?.content.attachments.remove(at: index)
-            self?.composerView.inputMessageView.sendButton.isHidden = self?.content.attachments.isEmpty ?? true
+            self.content.attachments.remove(at: index)
+            self.composerView.inputMessageView.sendButton.isHidden = self.content.isEmpty && self.content.attachments.isEmpty
         }
     }
 
