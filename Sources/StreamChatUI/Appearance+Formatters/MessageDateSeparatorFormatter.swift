@@ -13,7 +13,7 @@ public protocol MessageDateSeparatorFormatter {
 
 /// The default message date separator formatter.
 open class DefaultMessageDateSeparatorFormatter: MessageDateSeparatorFormatter {
-    public lazy var dateFormatter: DateFormatter = {
+    public var dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
         formatter.setLocalizedDateFormatFromTemplate("MMMdd")
         formatter.locale = .autoupdatingCurrent

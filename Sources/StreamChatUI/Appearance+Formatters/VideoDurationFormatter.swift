@@ -11,7 +11,7 @@ public protocol VideoDurationFormatter {
 
 /// The default video duration formatter.
 open class DefaultVideoDurationFormatter: VideoDurationFormatter {
-    public lazy var dateComponentsFormatter: DateComponentsFormatter = {
+    public var dateComponentsFormatter: DateComponentsFormatter = {
         let formatter = DateComponentsFormatter()
         formatter.unitsStyle = .positional
         formatter.allowedUnits = [.minute, .second]

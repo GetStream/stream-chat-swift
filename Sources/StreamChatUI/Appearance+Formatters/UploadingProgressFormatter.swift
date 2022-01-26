@@ -11,7 +11,7 @@ public protocol UploadingProgressFormatter {
 
 /// The default uploading progress formatter.
 open class DefaultUploadingProgressFormatter: UploadingProgressFormatter {
-    public lazy var numberFormatter: NumberFormatter = {
+    public var numberFormatter: NumberFormatter = {
         let formatter = NumberFormatter()
         formatter.numberStyle = .percent
         return formatter

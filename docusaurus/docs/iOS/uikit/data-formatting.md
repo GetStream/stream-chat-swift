@@ -29,7 +29,7 @@ As an example to showcase how to create a custom formatter let's change the form
 
 ```swift
 class CustomUserLastActivityFormatter: UserLastActivityFormatter {
-    public lazy var dateFormatter: DateFormatter = {
+    public var dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
         formatter.dateStyle = .short
         formatter.timeStyle = .short

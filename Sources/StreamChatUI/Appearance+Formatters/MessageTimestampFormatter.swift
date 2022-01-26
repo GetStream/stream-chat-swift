@@ -11,7 +11,7 @@ public protocol MessageTimestampFormatter {
 
 /// The default message timestamp formatter.
 open class DefaultMessageTimestampFormatter: MessageTimestampFormatter {
-    public lazy var dateFormatter: DateFormatter = {
+    public var dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
         formatter.dateStyle = .none
         formatter.timeStyle = .short
