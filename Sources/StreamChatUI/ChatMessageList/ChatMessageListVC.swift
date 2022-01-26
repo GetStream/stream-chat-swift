@@ -84,6 +84,10 @@ open class ChatMessageListVC:
         return !listView.isLastCellFullyVisible && isMoreContentThanOnePage
     }
 
+    /// A formatter that converts the message date to textual representation.
+    /// This date formatter is used between each group message and the top overlay.
+    public lazy var dateSeparatorFormatter = appearance.formatters.messageDateSeparator
+
     /// A boolean value that determines wether the date overlay should be displayed while scrolling.
     open var isDateOverlayEnabled: Bool {
         components.messageListDateOverlayEnabled
@@ -355,9 +359,7 @@ open class ChatMessageListVC:
         cell.messageContentView?.content = message
 
         cell.dateSeparatorView.isHidden = !shouldShowDateSeparator(forMessage: message, at: indexPath)
-        cell.dateSeparatorView.content = DateFormatter
-            .messageListDateOverlay
-            .string(from: message.createdAt)
+        cell.dateSeparatorView.content = dateSeparatorFormatter.format(message.createdAt)
 
         return cell
     }
@@ -382,9 +384,7 @@ open class ChatMessageListVC:
             return nil
         }
 
-        return DateFormatter
-            .messageListDateOverlay
-            .string(from: message.createdAt)
+        return dateSeparatorFormatter.format(message.createdAt)
     }
 
     // MARK: - ChatMessageActionsVCDelegate

@@ -18,7 +18,7 @@ open class ChatChannelHeaderView:
     }
 
     /// Returns the date formater function used to represent when the user was last seen online
-    open var lastSeenDateFormatter: (Date) -> String? { DateUtils.timeAgo }
+    open var lastSeenDateFormatter: (Date) -> String? { appearance.formatters.userLastActivity.format }
 
     /// The user id of the current logged in user.
     open var currentUserId: UserId? {
@@ -62,7 +62,10 @@ open class ChatChannelHeaderView:
     /// The title text used to render the title label. By default it is the channel name.
     open var titleText: String? {
         guard let channel = channelController?.channel else { return nil }
-        return components.channelNamer(channel, currentUserId)
+        return appearance.formatters.channelName.format(
+            channel: channel,
+            forCurrentUserId: currentUserId
+        )
     }
 
     /// The subtitle text used in the subtitle label. By default it shows member online status.

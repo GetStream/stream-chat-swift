@@ -17,8 +17,8 @@ public final class ChatMessageCell: _TableViewCell, ComponentsProvider {
 
     /// The date separator view that groups messages from the same day.
     /// This is internal since it is a temporary solution.
-    internal lazy var dateSeparatorView: ChatMessageListScrollOverlayView = components
-        .messageListScrollOverlayView.init()
+    internal lazy var dateSeparatorView: ChatMessageListDateSeparatorView = components
+        .messageListDateSeparatorView.init()
         .withoutAutoresizingMaskConstraints
     
     /// The message content view the cell is showing.
