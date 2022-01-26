@@ -8,6 +8,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### 🐞 Fixed
 - Add custom modal transition for message list [#1760](https://github.com/GetStream/stream-chat-swift/pull/1760)
+- Fix composer not showing any files when >3 files are selected in bulk [#1768](https://github.com/GetStream/stream-chat-swift/issues/1768)
 
 # [4.9.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.9.0)
 _January 18, 2022_
