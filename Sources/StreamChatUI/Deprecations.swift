@@ -218,3 +218,16 @@ extension ChatMessageListScrollOverlayView {
         dateSeparatorView.textLabel
     }
 }
+
+// MARK: - Formatters
+
+extension DateFormatter {
+    @available(
+        *,
+        deprecated,
+        message: "Please use `Appearance.default.formatters.messageDateSeparator` instead"
+    )
+    public static var messageListDateOverlay: DateFormatter {
+        DefaultMessageDateSeparatorFormatter().dateFormatter
+    }
+}

@@ -52,7 +52,10 @@ open class ChatThreadHeaderView:
     /// The subtitle text used in the subtitle label. By default it is the channel name.
     open var subtitleText: String? {
         guard let channel = channelController?.channel else { return nil }
-        let channelName = components.channelNamer(channel, currentUserId)
+        let channelName = appearance.formatters.channelName.format(
+            channel: channel,
+            forCurrentUserId: currentUserId
+        )
         return channelName.map { L10n.Message.Threads.replyWith($0) }
     }
 

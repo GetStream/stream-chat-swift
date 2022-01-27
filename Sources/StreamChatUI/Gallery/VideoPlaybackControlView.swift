@@ -101,6 +101,9 @@ open class VideoPlaybackControlView: _View, ThemeProvider {
     /// A container for playback button and time labels.
     open private(set) lazy var rootContainer: ContainerStackView = ContainerStackView(axis: .vertical)
         .withoutAutoresizingMaskConstraints
+
+    /// A formatter to convert video duration to textual representation.
+    open lazy var videoDurationFormatter: VideoDurationFormatter = appearance.formatters.videoDuration
     
     override open func setUp() {
         super.setUp()
@@ -142,16 +145,16 @@ open class VideoPlaybackControlView: _View, ThemeProvider {
         super.setUpAppearance()
         
         playPauseButton.setTitleColor(.black, for: .normal)
-        timestampLabel.text = DateComponentsFormatter.videoDuration.string(from: 0)
-        durationLabel.text = DateComponentsFormatter.videoDuration.string(from: 0)
+        timestampLabel.text = videoDurationFormatter.format(0)
+        durationLabel.text = videoDurationFormatter.format(0)
     }
     
     override open func updateContent() {
         super.updateContent()
         
         timeSlider.value = .init(content.playingProgress)
-        timestampLabel.text = DateComponentsFormatter.videoDuration.string(from: content.currentTime)
-        durationLabel.text = DateComponentsFormatter.videoDuration.string(from: content.videoDuration)
+        timestampLabel.text = videoDurationFormatter.format(content.currentTime)
+        durationLabel.text = videoDurationFormatter.format(content.videoDuration)
                 
         switch content.videoState {
         case .playing:
