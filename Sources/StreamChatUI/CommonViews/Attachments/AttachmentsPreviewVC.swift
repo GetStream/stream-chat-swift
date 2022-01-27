@@ -127,8 +127,8 @@ open class AttachmentsPreviewVC: _ViewController, ComponentsProvider {
                 let attachmentHeight = firstAttachmentView
                     .systemLayoutSizeFitting(.init(width: CGFloat.infinity, height: CGFloat.infinity))
                     .height
-                let maxScrollViewHeight: CGFloat = CGFloat(maxNumberOfVerticalItems) * attachmentHeight +
-                    CGFloat(attachmentViews.count + 1) * verticalStackView.spacing.rawValue
+                let spacingSize = CGFloat(attachmentViews.count + 1) * verticalStackView.spacing.rawValue
+                let maxScrollViewHeight: CGFloat = CGFloat(maxNumberOfVerticalItems) * attachmentHeight + spacingSize
                 
                 scrollViewHeightConstraint = scrollView.heightAnchor.pin(
                     lessThanOrEqualToConstant: maxScrollViewHeight
