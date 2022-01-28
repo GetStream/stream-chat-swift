@@ -24,11 +24,13 @@ enum SyncError: Error {
     }
 }
 
+/// This class is in charge of the synchronization of our local storage with the remote.
+/// When executing a sync, it will remove outdated elements, and will refresh the content to always show the latest data.
 class SyncRepository {
     /// Do not call the sync endpoint more than once every six seconds
     let syncCooldown: TimeInterval = 6.0
     /// Maximum number of retries for each operation step.
-    let retriesCount = 2
+    let maxRetriesCount = 2
     let config: ChatClientConfig
     let activeChannelControllers: NSHashTable<ChatChannelController>
     let activeChannelListControllers: NSHashTable<ChatChannelListController>
@@ -63,18 +65,24 @@ class SyncRepository {
         self.apiClient = apiClient
     }
 
-    func syncLocalState(completion: @escaping (SyncError?) -> Void) {
+    /// Syncs the local state with the server to make sure the local database is up to date.
+    /// It features queuing, serialization and retries
+    ///
+    /// [Sync and watch channels](https://www.notion.so/2-Sync-and-watch-channels-ac44feb55de3482f8f0f99e100ca40c6)
+    /// 1. Call `/sync` endpoint and get missing events for all locally existed channels
+    /// 2. Start watching open channels
+    /// 3. Refetch channel lists queries, link only what backend returns (the 1st page)
+    /// 4. Clean up local message history for channels that are outdated/will get outdated
+    /// 5. Bump the last sync timestamp
+    ///
+    /// - Parameter completion: A block that will get executed upon completion of the synchronization
+    func syncLocalState(completion: @escaping () -> Void) {
         guard config.isLocalStorageEnabled else {
-            completion(.localStorageDisabled)
+            completion()
             return
         }
 
-        // [Sync and watch channels](https://www.notion.so/2-Sync-and-watch-channels-ac44feb55de3482f8f0f99e100ca40c6)
-        //      1. Call `/sync` endpoint and get missing events for all locally existed channels
-        //      2. Start watching open channels
-        //      3. Refetch channel lists queries, link only what backend returns (the 1st page)
-        //      4. Clean up local message history for channels that are outdated/will get outdated
-        //      5. Bump the last sync timestamp
+        operationQueue.cancelAllOperations()
 
         log.info("Starting to recover offline state", subsystems: .offlineSupport)
         var operations: [Operation] = []
@@ -91,7 +99,7 @@ class SyncRepository {
 
         // 1. Call `/sync` endpoint and get missing events for all locally existed channels
         var synchedChannelIds: Set<ChannelId> = Set(preSyncChannelIds)
-        let syncEvents = AsyncOperation(retries: retriesCount) { [weak self] done in
+        let syncEvents = AsyncOperation(maxRetries: maxRetriesCount) { [weak self] done in
             log.info(
                 "1. Call `/sync` endpoint and get missing events for all locally existed channels",
                 subsystems: .offlineSupport
@@ -116,6 +124,7 @@ class SyncRepository {
                             completion: { _ in done(.continue) }
                         )
                     case let .failure(error):
+                        synchedChannelIds = Set([])
                         done(error.shouldRetry ? .retry : .continue)
                     }
                 }
@@ -132,7 +141,7 @@ class SyncRepository {
             if let cid = controller.cid, synchedChannelIds.contains(cid) {
                 return nil
             }
-            return AsyncOperation(retries: retriesCount) { [weak self] done in
+            return AsyncOperation(maxRetries: maxRetriesCount) { [weak self] done in
                 log.info("2. Start watching open channel", subsystems: .offlineSupport)
                 self?.watchActiveChannel(for: controller) { result in
                     switch result {
@@ -155,7 +164,7 @@ class SyncRepository {
             // Reset only the controllers that need recovery
             guard controller.isAvailableOnRemote else { return nil }
 
-            return AsyncOperation(retries: retriesCount) { [weak self] done in
+            return AsyncOperation(maxRetries: maxRetriesCount) { [weak self] done in
                 log.info("3. Refetch channel lists queries & 4. Clean up local message history", subsystems: .offlineSupport)
                 self?.resetChannelsQuery(
                     for: controller,
@@ -188,11 +197,11 @@ class SyncRepository {
         operations.append(BlockOperation(block: {
             log.info("Finished recovering offline state", subsystems: .offlineSupport)
             DispatchQueue.main.async {
-                completion(nil)
+                completion()
             }
         }))
 
-        // We are making sure the operations happen secuentially one after the other by setting one as the dependency
+        // We are making sure the operations happen sequentially one after the other by setting one as the dependency
         // of the following one
         var previousOperation: Operation?
         operations.reversed().forEach { operation in
@@ -204,6 +213,10 @@ class SyncRepository {
         operationQueue.addOperations(operations, waitUntilFinished: false)
     }
 
+    /// Receives a date when the connection has been stablished
+    /// It updates user's lastPendingConnectionDate if there's no other pending date. If there is another pending date, this date passed as parameter is stored in
+    /// memory for this class to use it when needed
+    /// - Parameter date: Date of the connection
     func updateLastPendingConnectionDate(with date: Date) {
         // We store the last connection date in memory.
         lastConnection = date
@@ -216,6 +229,8 @@ class SyncRepository {
         }
     }
 
+    /// Syncs the events for the active chat channels using the last sync date.
+    /// - Parameter completion: A block that will get executed upon completion of the synchronization
     func syncExistingChannelsEvents(completion: @escaping (Result<[ChannelId], SyncError>) -> Void) {
         getUser { [weak self, syncCooldown] user in
             guard let lastSyncAt = user?.lastSyncAt else {

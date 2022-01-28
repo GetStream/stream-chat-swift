@@ -30,7 +30,7 @@ public struct LogSubsystem: OptionSet {
     /// The subsystem responsible for websocket operations.
     public static let webSocket = Self(rawValue: 1 << 3)
     /// The subsystem responsible for offline support.
-    public static let offlineSupport = Self(rawValue: 1 << 3)
+    public static let offlineSupport = Self(rawValue: 1 << 4)
 }
 
 public enum LogConfig {

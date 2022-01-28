@@ -153,19 +153,8 @@ extension DefaultConnectionRecoveryHandler {
             
         case .connected:
             reconnectionStrategy.resetConsecutiveFailures()
-            syncRepository.syncLocalState { [weak self] error in
-                guard let error = error else {
-                    log.info("Successfully synced local state", subsystems: .offlineSupport)
-                    return
-                }
-
-                switch error {
-                case .localStorageDisabled, .noNeedToSync:
-                    break
-                case .syncEndpointFailed, .resettingQueryFailed, .watchingActiveChannelFailed,
-                     .missingChannelId, .couldNotUpdateUserValue, .tooManyEvents:
-                    self?.disconnectIfNeeded()
-                }
+            syncRepository.syncLocalState {
+                log.info("Local state sync completed", subsystems: .offlineSupport)
             }
 
         case .disconnected:
