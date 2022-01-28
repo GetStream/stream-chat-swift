@@ -46,7 +46,6 @@ open class ChatMessageListView: UITableView, Customizable, ComponentsProvider {
     open func setUp() {
         keyboardDismissMode = .onDrag
         rowHeight = UITableView.automaticDimension
-        estimatedRowHeight = 150
         separatorStyle = .none
         transform = .mirrorY
     }

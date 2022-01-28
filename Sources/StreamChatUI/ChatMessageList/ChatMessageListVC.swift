@@ -23,7 +23,10 @@ open class ChatMessageListVC:
     /// The object that acts as the data source of the message list.
     public weak var dataSource: ChatMessageListVCDataSource? {
         didSet {
-            listView.reloadData()
+            guard #available(iOS 13.0, *) else {
+                listView.reloadData()
+                return
+            }
         }
     }
 
@@ -38,11 +41,34 @@ open class ChatMessageListVC:
         .messageListRouter
         .init(rootViewController: self)
 
-    /// A View used to display the messages
+    /// Strong reference of the `UITableViewDiffableDataSource`.
+    internal var _diffableDataSource: UITableViewDataSource?
+
+    /// Only stored properties support being marked with @available, so we need to maintain
+    /// a private _diffableDataSource property to keep the strong reference. This stored
+    /// property will cast the regular table view data source to the diffing one.
+    @available(iOS 13.0, *)
+    internal var diffableDataSource: UITableViewDiffableDataSource<Int, ChatMessage>? {
+        get { _diffableDataSource as? UITableViewDiffableDataSource }
+        set { _diffableDataSource = newValue }
+    }
+
+    /// All messages provided by the data source.
+    internal var messages: [ChatMessage] {
+        dataSource?.messages ?? []
+    }
+
+    /// A View used to display the messages.
     open private(set) lazy var listView: ChatMessageListView = {
         let listView = components.messageListView.init().withoutAutoresizingMaskConstraints
         listView.delegate = self
-        listView.dataSource = self
+
+        if #available(iOS 13.0, *) {
+            setupDiffableDataSource(for: listView)
+        } else {
+            listView.dataSource = self
+        }
+
         return listView
     }()
 
@@ -211,7 +237,11 @@ open class ChatMessageListVC:
 
     /// Updates the collection view data with given `changes`.
     open func updateMessages(with changes: [ListChange<ChatMessage>], completion: (() -> Void)? = nil) {
-        listView.updateMessages(with: changes, completion: completion)
+        if #available(iOS 13.0, *) {
+            updateMessagesSnapshot(with: changes, completion: completion)
+        } else {
+            listView.updateMessages(with: changes, completion: completion)
+        }
     }
 
     /// Handles tap action on the table view.
@@ -531,5 +561,93 @@ open class ChatMessageListVC:
     ) -> Bool {
         // To prevent the gesture recognizer consuming up the events from UIControls, we receive touch only when the view isn't a UIControl.
         !(touch.view is UIControl)
+    }
+}
+
+// MARK: - Backwards Compatibility DataSource Diffing
+
+@available(iOS 13.0, *)
+internal extension ChatMessageListVC {
+    /// Setup the `UITableViewDiffableDataSource`.
+    func setupDiffableDataSource(for listView: ChatMessageListView) {
+        let diffableDataSource = UITableViewDiffableDataSource<Int, ChatMessage>(
+            tableView: listView
+        ) { [weak self] _, indexPath, _ -> UITableViewCell? in
+            /// Re-use old `cellForRowAt` to maintain customer's customisations.
+            let cell = self?.tableView(listView, cellForRowAt: indexPath)
+            return cell
+        }
+
+        self.diffableDataSource = diffableDataSource
+        listView.dataSource = diffableDataSource
+
+        /// Populate the Initial messages data.
+        var snapshot = NSDiffableDataSourceSnapshot<Int, ChatMessage>()
+        snapshot.appendSections([0])
+        snapshot.appendItems(messages, toSection: 0)
+        diffableDataSource.apply(snapshot, animatingDifferences: false)
+    }
+
+    /// Transforms an array of changes to a diffable data source snapshot.
+    func updateMessagesSnapshot(with changes: [ListChange<ChatMessage>], completion: (() -> Void)?) {
+        var snapshot = NSDiffableDataSourceSnapshot<Int, ChatMessage>()
+        let messages = self.messages
+
+        var updatedMessages: [ChatMessage] = []
+        var removedMessages: [ChatMessage] = []
+        var movedMessages: [(from: ChatMessage, to: ChatMessage)] = []
+
+        var insertionAtIndex: Int = -1
+
+        changes.forEach { change in
+            switch change {
+            case let .insert(_, index):
+                insertionAtIndex = index.item
+            case let .update(message, _):
+                updatedMessages.append(message)
+            case let .remove(message, _):
+                removedMessages.append(message)
+            case let .move(message, fromIndex, _):
+                guard let fromMessage = messages[safe: fromIndex.item] else { break }
+                movedMessages.append((fromMessage, message))
+            }
+        }
+
+        let hasInsertions = insertionAtIndex >= 0
+
+        if hasInsertions {
+            // Because of the inverted table view, whenever there's in an insertion
+            // we need to re-append all items again.
+            snapshot.appendSections([0])
+            snapshot.appendItems(messages, toSection: 0)
+        } else if let currentSnapshot = diffableDataSource?.snapshot() {
+            // If there are no insertions, we can re-use the current snapshot.
+            snapshot = currentSnapshot
+        }
+
+        snapshot.deleteItems(removedMessages)
+        snapshot.reloadItems(updatedMessages)
+        movedMessages.forEach {
+            snapshot.moveItem($0.from, beforeItem: $0.to)
+        }
+
+        // Update the second message to hide the timestamp if needed.
+        // Note: This in theory should only be done when there are insertions, but we do
+        // the other way around. The reason is to avoid an UI glitch when uploading images.
+        // Because an update is always triggered after creating a new messages, this approach also works.
+        if !hasInsertions, let secondMessage = messages[safe: 1] {
+            snapshot.reloadItems([secondMessage])
+        }
+
+        diffableDataSource?.apply(snapshot, animatingDifferences: false) { [weak self] in
+            let currentUserSentNewMessage = hasInsertions && insertionAtIndex == 0
+                && messages.first?.isSentByCurrentUser == true
+
+            if currentUserSentNewMessage {
+                self?.listView.scrollToMostRecentMessage()
+            }
+
+            completion?()
+        }
     }
 }

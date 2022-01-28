@@ -23,6 +23,10 @@ open class ChatThreadVC:
         channelController.client
     }
 
+    public var messages: [ChatMessage] {
+        Array(messageController.replies)
+    }
+
     /// Component responsible for setting the correct offset when keyboard frame is changed
     open lazy var keyboardHandler: KeyboardHandler = ComposerKeyboardHandler(
         composerParentVC: self,
