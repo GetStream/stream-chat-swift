@@ -146,21 +146,17 @@ public class ChatUserSearchController: DataController, DelegateCallable, DataSto
             query.filter = .exists(.id) // Pseudo-filter to fetch all users
         }*/
         if let term = term, !term.isEmpty {
-            query.filter = .or([
+            query.filter = .and([
                 .autocomplete(.name, text: term),
-                //.autocomplete(.id, text: term)
-                .and([
-                    .exists(.id),
-                    .notEqual(.role, to: .admin),
-                    .notEqual(.id, to: client.currentUserId ?? "")
-                ])
+                .notEqual(.role, to: .admin),
+                .notEqual(.id, to: client.currentUserId ?? ""),
             ])
         } else {
             //query.filter = .exists(.id) // Pseudo-filter to fetch all users
             query.filter = .and([
                 .exists(.id),
                 .notEqual(.role, to: .admin),
-                .notEqual(.id, to: client.currentUserId ?? "")
+                .notEqual(.id, to: client.currentUserId ?? ""),
             ])
         }
         // Backend suggest not sorting by name
@@ -169,7 +165,6 @@ public class ChatUserSearchController: DataController, DelegateCallable, DataSto
         query.shouldBeUpdatedInBackground = false
         
         lastQuery = query
-        
         userQueryUpdater.update(userListQuery: query, policy: .replace) { error in
             self.state = error == nil ? .remoteDataFetched : .remoteDataFetchFailed(ClientError(with: error))
             self.callback { completion?(error) }
