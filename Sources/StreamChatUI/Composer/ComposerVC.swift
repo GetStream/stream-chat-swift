@@ -272,7 +272,7 @@ open class ComposerVC: _ViewController,
     private var walletInputView: WalletQuickInputViewController?
     private var menuController: ChatMenuViewController?
     private var isMenuShowing = false
-    private var keyboardHeight = 0.0
+    private var keyboardHeight = UIScreen.main.bounds.height * 0.33
 
     override open func setUp() {
         super.setUp()
@@ -324,7 +324,10 @@ open class ComposerVC: _ViewController,
         }
         setupAttachmentsView()
         bindMenuController()
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow(_:)), name: UIResponder.keyboardWillChangeFrameNotification, object: nil)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { [weak self] in
+            guard let `self` = self else { return }
+            self.keyboardHeight = KeyboardService.shared.measuredSize
+        }
     }
 
     override open func setUpLayout() {
@@ -453,13 +456,6 @@ open class ComposerVC: _ViewController,
             }
             self.content.attachments.remove(at: index)
             self.composerView.inputMessageView.sendButton.isHidden = self.content.isEmpty && self.content.attachments.isEmpty
-        }
-    }
-
-    @objc func keyboardWillShow(_ notification: Notification) {
-        if let keyboardFrame: NSValue = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue {
-            let keyboardRectangle = keyboardFrame.cgRectValue
-            keyboardHeight = keyboardRectangle.height
         }
     }
 
@@ -732,7 +728,6 @@ open class ComposerVC: _ViewController,
     func animateToolkitView(isHide: Bool) {
         animateMenuButton()
         if !isHide {
-            self.composerView.inputMessageView.textView.becomeFirstResponder()
             self.showInputViewController(menuController)
             self.isMenuShowing = true
         } else {

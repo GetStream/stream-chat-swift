@@ -185,6 +185,7 @@ open class ChatChannelVC:
 
     override open func viewDidLoad() {
         super.viewDidLoad()
+        KeyboardService.shared.observeKeyboard(self.view)
     }
 
     override open func viewDidAppear(_ animated: Bool) {

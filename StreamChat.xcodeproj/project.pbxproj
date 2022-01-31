@@ -1073,6 +1073,8 @@
 		E7DD8EA825E3F7F50059A322 /* MessageWithBrokenAttachments.json in Resources */ = {isa = PBXBuildFile; fileRef = E7DD8EA725E3F7F50059A322 /* MessageWithBrokenAttachments.json */; };
 		E7DD8EC125E4083B0059A322 /* OptionalDecodable.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7DD8EC025E4083B0059A322 /* OptionalDecodable.swift */; };
 		E7DF7E2425C2C67E00AE9D21 /* ChatAvatarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7DF7E2325C2C67E00AE9D21 /* ChatAvatarView.swift */; };
+		ED00E2AF27A8071800AA1A13 /* KeyboardService.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED00E2AE27A8071800AA1A13 /* KeyboardService.swift */; };
+		ED00E2B027A8158D00AA1A13 /* KeyboardService.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED00E2AE27A8071800AA1A13 /* KeyboardService.swift */; };
 		ED0D5145275DE10B00753692 /* RedPacketBubble.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED0D5144275DE10B00753692 /* RedPacketBubble.swift */; };
 		ED0D5147275DED8800753692 /* RedPacketAmountBubble.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED0D5146275DED8800753692 /* RedPacketAmountBubble.swift */; };
 		ED1D14692786BFBC005A0EAB /* ChatMessageWalletAttachment.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED1D14682786BFBC005A0EAB /* ChatMessageWalletAttachment.swift */; };
@@ -2523,6 +2525,7 @@
 		E7E14FEFE1C69BA27F79177A /* Pods-Messenger.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Messenger.release.xcconfig"; path = "Target Support Files/Pods-Messenger/Pods-Messenger.release.xcconfig"; sourceTree = "<group>"; };
 		E99EAF5B47BF3E7B254910C9 /* Pods-StreamChatUI-StreamChatUITests.releasetests.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-StreamChatUI-StreamChatUITests.releasetests.xcconfig"; path = "Target Support Files/Pods-StreamChatUI-StreamChatUITests/Pods-StreamChatUI-StreamChatUITests.releasetests.xcconfig"; sourceTree = "<group>"; };
 		EA93F827081EC7057BBE6A38 /* Pods_StreamChatTestTools_StreamChatTestToolsTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_StreamChatTestTools_StreamChatTestToolsTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		ED00E2AE27A8071800AA1A13 /* KeyboardService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardService.swift; sourceTree = "<group>"; };
 		ED0D5144275DE10B00753692 /* RedPacketBubble.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RedPacketBubble.swift; sourceTree = "<group>"; };
 		ED0D5146275DED8800753692 /* RedPacketAmountBubble.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RedPacketAmountBubble.swift; sourceTree = "<group>"; };
 		ED1D14682786BFBC005A0EAB /* ChatMessageWalletAttachment.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatMessageWalletAttachment.swift; sourceTree = "<group>"; };
@@ -3208,6 +3211,7 @@
 				881506EB258212BF0013935B /* MultipartFormData.swift */,
 				BCE48068C1C02C0689BEB64E /* JSONDecoder_Tests.swift */,
 				BCE489A4B136D48249DD6969 /* JSONEncoder_Tests.swift */,
+				ED00E2AE27A8071800AA1A13 /* KeyboardService.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -6718,6 +6722,7 @@
 				E798D6D325FF69120002C3B9 /* SwipeableView.swift in Sources */,
 				E701201E2583EBD50036DACD /* CALayer+Extensions.swift in Sources */,
 				A3BB3FFF261DA74D00365496 /* ContainerStackView.swift in Sources */,
+				ED00E2B027A8158D00AA1A13 /* KeyboardService.swift in Sources */,
 				8830518E263038190069D731 /* ChatReactionsBubbleView.swift in Sources */,
 				F87A4956260C6F38001653A8 /* ChatMessageContentView+SwiftUI.swift in Sources */,
 				88CABC4325933EE70061BB67 /* ChatMessageReactionsVC.swift in Sources */,
@@ -7299,6 +7304,7 @@
 				697C6F90260CFA37000E9023 /* Deprecations.swift in Sources */,
 				7964F3A4249A0ACF002A09EC /* ChannelListQueryDTO.swift in Sources */,
 				79280F3F2484E3BA00CDEB89 /* ClientError.swift in Sources */,
+				ED00E2AF27A8071800AA1A13 /* KeyboardService.swift in Sources */,
 				884C61222594A449008B70DC /* AttachmentActionRequestBody.swift in Sources */,
 				84A43CAF26A9A25000302763 /* UnknownEvent.swift in Sources */,
 				DAFAD6A124DC476A0043ED06 /* Result+Extensions.swift in Sources */,

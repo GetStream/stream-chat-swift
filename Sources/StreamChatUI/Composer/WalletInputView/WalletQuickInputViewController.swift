@@ -36,6 +36,7 @@ class WalletQuickInputViewController: UIViewController {
     }
 
     func showPaymentOptionView() {
+        guard validateAmount() else { return }
         showPaymentOptions()
         didShowPaymentOption?()
         viewPaymentOption.isHidden = false
@@ -46,6 +47,7 @@ class WalletQuickInputViewController: UIViewController {
     }
 
     @IBAction func btnRequestAction(_ sender: Any) {
+        guard validateAmount() else { return }
         showPaymentOptions()
         viewPaymentOption.isHidden = false
         didShowPaymentOption?()
@@ -53,13 +55,23 @@ class WalletQuickInputViewController: UIViewController {
     }
 
     @IBAction func btnSendAction(_ sender: Any) {
+        guard validateAmount() else { return }
         showPaymentOptions()
         viewPaymentOption.isHidden = false
         didShowPaymentOption?()
         paymentType = .pay
     }
 
+    private func validateAmount() -> Bool {
+        if walletStepper.value == 0 {
+            Snackbar.show(text: "You cannot send/request 0 ONE.")
+            return false
+        }
+        return true
+    }
+
     private func showPaymentOptions() {
+        guard validateAmount() else { return }
         if #available(iOS 14.0.0, *) {
             self.children.forEach { vc in
                 vc.removeFromParent()
