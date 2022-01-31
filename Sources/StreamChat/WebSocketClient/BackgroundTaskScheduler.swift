@@ -34,7 +34,20 @@ class IOSBackgroundTaskScheduler: BackgroundTaskScheduler {
     private var activeBackgroundTask: UIBackgroundTaskIdentifier?
 
     var isAppActive: Bool {
-        app?.applicationState == .active
+        let app = self.app
+        if Thread.isMainThread {
+            return app?.applicationState == .active
+        }
+
+        var isActive = false
+        let group = DispatchGroup()
+        group.enter()
+        DispatchQueue.main.async {
+            isActive = app?.applicationState == .active
+            group.leave()
+        }
+        group.wait()
+        return isActive
     }
     
     func beginTask(expirationHandler: (() -> Void)?) -> Bool {

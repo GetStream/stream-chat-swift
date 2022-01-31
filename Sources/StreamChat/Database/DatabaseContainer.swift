@@ -162,7 +162,7 @@ class DatabaseContainer: NSPersistentContainer {
         }
     }
     
-    /// Use this method to safely mutate the content of the database.
+    /// Use this method to safely mutate the content of the database. This method is asynchronous.
     ///
     /// - Parameter actions: A block that performs the actual mutation.
     func write(_ actions: @escaping (DatabaseSession) throws -> Void) {
@@ -172,7 +172,7 @@ class DatabaseContainer: NSPersistentContainer {
     // This 👆 overload shouldn't be needed, but when a default parameter for completion 👇 is used,
     // the compiler gets confused and incorrectly evaluates `write { /* changes */ }`.
     
-    /// Use this method to safely mutate the content of the database.
+    /// Use this method to safely mutate the content of the database. This method is asynchronous.
     ///
     /// - Parameters:
     ///   - actions: A block that performs the actual mutation.

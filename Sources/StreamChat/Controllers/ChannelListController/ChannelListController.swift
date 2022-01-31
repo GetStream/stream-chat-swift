@@ -61,7 +61,6 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
     /// Used for observing the database for changes.
     private(set) lazy var channelListObserver: ListDatabaseObserver<ChatChannel, ChannelDTO> = {
         let request = ChannelDTO.channelListFetchRequest(query: self.query)
-        
         let observer = self.environment.createChannelListDatabaseObserver(
             client.databaseContainer.viewContext,
             request,
@@ -124,6 +123,8 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
         self.client = client
         self.query = query
         self.environment = environment
+        super.init()
+        client.trackChannelListController(self)
     }
     
     override public func synchronize(_ completion: ((_ error: Error?) -> Void)? = nil) {
@@ -255,8 +256,8 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
         updatedQuery.pagination = Pagination(pageSize: limit, offset: channels.count)
         worker.update(channelListQuery: updatedQuery) { result in
             switch result {
-            case let .success(payload):
-                self.hasLoadedAllPreviousChannels = payload.channels.count < limit
+            case let .success(channels):
+                self.hasLoadedAllPreviousChannels = channels.count < limit
                 self.callback { completion?(nil) }
             case let .failure(error):
                 self.callback { completion?(error) }

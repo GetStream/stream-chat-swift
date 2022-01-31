@@ -34,7 +34,11 @@ public class ChatClient {
     
     /// Builder blocks used for creating `backgroundWorker`s when needed.
     private let workerBuilders: [WorkerBuilder]
-    
+
+    /// Keeps a weak reference to the active channel list controllers to ensure a proper recovery when coming back online
+    private(set) var activeChannelListControllers = NSHashTable<ChatChannelListController>.weakObjects()
+    private(set) var activeChannelControllers = NSHashTable<ChatChannelController>.weakObjects()
+
     /// Background worker that takes care about client connection recovery when the Internet comes back OR app transitions from background to foreground.
     private(set) var connectionRecoveryHandler: ConnectionRecoveryHandler?
 
@@ -61,6 +65,20 @@ public class ChatClient {
         center.add(middlewares: middlewares)
 
         return center
+    }()
+
+    /// A repository that handles all the executions needed to keep the Database in sync with remote.
+    private(set) lazy var syncRepository: SyncRepository = {
+        let channelRepository = ChannelListUpdater(database: databaseContainer, apiClient: apiClient)
+        return SyncRepository(
+            config: config,
+            activeChannelControllers: activeChannelControllers,
+            activeChannelListControllers: activeChannelListControllers,
+            channelRepository: channelRepository,
+            eventNotificationCenter: eventNotificationCenter,
+            database: databaseContainer,
+            apiClient: apiClient
+        )
     }()
     
     /// The `APIClient` instance `Client` uses to communicate with Stream REST API.
@@ -125,13 +143,13 @@ public class ChatClient {
                 }
                 
                 // Create the folder if needed
-                try? FileManager.default.createDirectory(
+                try FileManager.default.createDirectory(
                     at: storeURL,
                     withIntermediateDirectories: true,
                     attributes: nil
                 )
                 
-                let dbFileURL = config.localStorageFolderURL!.appendingPathComponent(config.apiKey.apiKeyString)
+                let dbFileURL = storeURL.appendingPathComponent(config.apiKey.apiKeyString)
                 return try environment.databaseContainerBuilder(
                     .onDisk(databaseFileURL: dbFileURL),
                     config.shouldFlushLocalStorageOnStart,
@@ -274,6 +292,17 @@ public class ChatClient {
         self.environment = environment
         self.workerBuilders = workerBuilders
 
+        if let webSocketClient = webSocketClient {
+            connectionRecoveryHandler = environment.connectionRecoveryHandlerBuilder(
+                webSocketClient,
+                eventNotificationCenter,
+                syncRepository,
+                environment.backgroundTaskSchedulerBuilder(),
+                environment.internetConnection(eventNotificationCenter),
+                config.staysConnectedInBackground
+            )
+        }
+
         currentUserId = fetchCurrentUserIdFromDatabase()
     }
     
@@ -357,16 +386,14 @@ public class ChatClient {
         backgroundWorkers = workerBuilders.map { builder in
             builder(self.databaseContainer, self.apiClient)
         }
-        
-        if let webSocketClient = webSocketClient {
-            connectionRecoveryHandler = environment.connectionRecoveryHandlerBuilder(
-                webSocketClient,
-                eventNotificationCenter,
-                environment.backgroundTaskSchedulerBuilder(),
-                environment.internetConnection(eventNotificationCenter),
-                config.staysConnectedInBackground
-            )
-        }
+    }
+
+    func trackChannelController(_ channelController: ChatChannelController) {
+        activeChannelControllers.add(channelController)
+    }
+
+    func trackChannelListController(_ channelListController: ChatChannelListController) {
+        activeChannelListControllers.add(channelListController)
     }
 
     func completeConnectionIdWaiters(connectionId: String?) {
@@ -482,6 +509,7 @@ extension ChatClient {
         var connectionRecoveryHandlerBuilder: (
             _ webSocketClient: WebSocketClient,
             _ eventNotificationCenter: EventNotificationCenter,
+            _ syncRepository: SyncRepository,
             _ backgroundTaskScheduler: BackgroundTaskScheduler?,
             _ internetConnection: InternetConnection,
             _ keepConnectionAliveInBackground: Bool
@@ -489,11 +517,12 @@ extension ChatClient {
             DefaultConnectionRecoveryHandler(
                 webSocketClient: $0,
                 eventNotificationCenter: $1,
-                backgroundTaskScheduler: $2,
-                internetConnection: $3,
+                syncRepository: $2,
+                backgroundTaskScheduler: $3,
+                internetConnection: $4,
                 reconnectionStrategy: DefaultRetryStrategy(),
                 reconnectionTimerType: DefaultTimer.self,
-                keepConnectionAliveInBackground: $4
+                keepConnectionAliveInBackground: $5
             )
         }
     }
@@ -553,6 +582,7 @@ extension ChatClient: ConnectionStateDelegate {
         case let .connected(connectionId: id):
             shouldNotifyConnectionIdWaiters = true
             connectionId = id
+            syncRepository.updateLastPendingConnectionDate(with: Date())
         case let .disconnected(source):
             if let error = source.serverError,
                error.isInvalidTokenError {

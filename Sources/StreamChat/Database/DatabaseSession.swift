@@ -353,10 +353,6 @@ extension DatabaseSession {
             try saveCurrentUserUnreadCount(count: unreadCount)
         }
         
-        if let currentUser = currentUser, let date = payload.createdAt {
-            currentUser.lastReceivedEventDate = date
-        }
-
         try saveMessageIfNeeded(from: payload)
         
         // handle reaction events for messages that already exist in the database and for this user
