@@ -186,6 +186,11 @@ open class ChatChannelVC:
         super.viewDidLoad()
     }
 
+    open override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        NotificationCenter.default.post(name: .hideTabbar, object: nil)
+    }
+
     override open func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
