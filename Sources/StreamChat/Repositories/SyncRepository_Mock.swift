@@ -26,7 +26,7 @@ class SyncRepositoryMock: SyncRepository {
         self._activeChannelListControllers = _activeChannelListControllers
     }
 
-    override func syncLocalState(completion: @escaping (SyncError?) -> Void) {}
+    override func syncLocalState(completion: @escaping () -> Void) {}
 
     override func updateLastPendingConnectionDate(with date: Date) {}
 
