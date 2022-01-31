@@ -20,6 +20,14 @@ class WebSocketPingController_Tests: XCTestCase {
         pingController.delegate = delegate
     }
     
+    override func tearDown() {
+        time = nil
+        VirtualTimeTimer.time = nil
+        pingController = nil
+        delegate = nil
+        super.tearDown()
+    }
+    
     func test_sendPing_called_whenTheConnectionIsConnected() throws {
         assert(delegate.sendPing_calledCount == 0)
         
@@ -54,7 +62,7 @@ class WebSocketPingController_Tests: XCTestCase {
         }
         
         // Simulate pong received
-        pingController.pongRecieved()
+        pingController.pongReceived()
         
         // Simulate time passed pongTimeoutTimeInterval + 1 and check disconnectOnNoPongReceived wasn't called
         assert(delegate.disconnectOnNoPongReceived_calledCount == 0)
