@@ -71,7 +71,7 @@ public func makeChannelListItem(
 ) -> ChatChannelSwipeableListItem<Self> {
     ChatChannelSwipeableListItem(
         factory: self,
-        currentChannelId: swipedChannelId,
+        swipedChannelId: swipedChannelId,
         channel: channel,
         channelName: channelName,
         avatar: avatar,
@@ -102,7 +102,31 @@ In the channel list item creation method, you are provided with several paramete
 - `trailingSwipeLeftButtonTapped`: called when the left button of the trailing swiped area is tapped.
 - `leadingSwipeButtonTapped`: called when the button of the leading swiped area is tapped.
 
-The last three parameters have no effect if you have specified `EmptyView` for the leading and trailing swipe area of a channel list item. By default, the leading area returns `EmptyView`. In the following section, we will see how these areas can be customized.
+The last three parameters have no effect if you have specified `EmptyView` for the leading and trailing swipe area of a channel list item. By default, the leading area returns `EmptyView`. In one of the following sections, we will see how these areas can be customized.
+
+## Changing the Divider of the Chat Channel List
+
+It is not only possible to swap the channel list items itself but also to customize the divider between the items. You can do that by implementing `makeChannelListDividerItem` in the `ViewFactory`. The only requisite is that the item you return needs to be a `View`, which offers you all the freedom you need.
+
+The default implementation uses a simple `Divider` and looks like this:
+
+```swift
+public func makeChannelListDividerItem() -> some View {
+    Divider()
+}
+```
+
+If you want your list to not have a divider whatsoever, you can simply return an `EmptyView` here.
+
+Remember to always inject your custom view factory in your view hierarchy:
+
+```swift
+var body: some Scene {
+    WindowGroup {
+        ChatChannelListView(viewFactory: CustomViewFactory.shared)
+    }
+}
+```
 
 ## Customizing the Leading and Trailing Areas
 
@@ -113,6 +137,7 @@ public func makeTrailingSwipeActionsView(
     channel: ChatChannel,
     offsetX: CGFloat,
     buttonWidth: CGFloat,
+    swipedChannelId: Binding<String?>,
     leftButtonTapped: @escaping (ChatChannel) -> (),
     rightButtonTapped: @escaping (ChatChannel) -> ()
 ) -> some View {
@@ -135,6 +160,7 @@ func makeLeadingSwipeActionsView(
     channel: ChatChannel,
     offsetX: CGFloat,
     buttonWidth: CGFloat,
+    swipedChannelId: Binding<String?>,
     buttonTapped: @escaping (ChatChannel) -> ()
 ) -> some View {
     HStack {
@@ -149,6 +175,8 @@ func makeLeadingSwipeActionsView(
     }
 }
 ```
+
+In both methods, the `swipedChannelId` is provided. This parameter provides binding to the currently swiped channel. You can set this value to nil, in case you want to revert back the channel list item to its original state after performing an action.
 
 Finally, you need to inject your custom view factory in your view hierarchy.
 
