@@ -23,9 +23,8 @@ open class ChatMessageListVC:
     /// The object that acts as the data source of the message list.
     public weak var dataSource: ChatMessageListVCDataSource? {
         didSet {
-            guard #available(iOS 13.0, *) else {
+            if isDiffingEnabled {
                 listView.reloadData()
-                return
             }
         }
     }
@@ -40,6 +39,13 @@ open class ChatMessageListVC:
     open lazy var router: ChatMessageListRouter = components
         .messageListRouter
         .init(rootViewController: self)
+
+    internal var isDiffingEnabled: Bool {
+        if #available(iOS 13.0, *) {
+            return self.components.messageListDiffingEnabled
+        }
+        return false
+    }
 
     /// Strong reference of the `UITableViewDiffableDataSource`.
     internal var _diffableDataSource: UITableViewDataSource?
@@ -63,7 +69,7 @@ open class ChatMessageListVC:
         let listView = components.messageListView.init().withoutAutoresizingMaskConstraints
         listView.delegate = self
 
-        if #available(iOS 13.0, *) {
+        if #available(iOS 13.0, *), isDiffingEnabled {
             setupDiffableDataSource(for: listView)
         } else {
             listView.dataSource = self
@@ -237,7 +243,7 @@ open class ChatMessageListVC:
 
     /// Updates the collection view data with given `changes`.
     open func updateMessages(with changes: [ListChange<ChatMessage>], completion: (() -> Void)? = nil) {
-        if #available(iOS 13.0, *) {
+        if #available(iOS 13.0, *), isDiffingEnabled {
             updateMessagesSnapshot(with: changes, completion: completion)
         } else {
             listView.updateMessages(with: changes, completion: completion)
