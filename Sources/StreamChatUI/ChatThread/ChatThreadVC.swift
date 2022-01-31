@@ -24,7 +24,7 @@ open class ChatThreadVC:
     }
 
     public var messages: [ChatMessage] {
-        Array(messageController.replies)
+        replies
     }
 
     /// Component responsible for setting the correct offset when keyboard frame is changed
