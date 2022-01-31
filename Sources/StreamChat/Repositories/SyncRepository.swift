@@ -217,7 +217,7 @@ class SyncRepository {
     /// It updates user's lastPendingConnectionDate if there's no other pending date. If there is another pending date, this date passed as parameter is stored in
     /// memory for this class to use it when needed
     /// - Parameter date: Date of the connection
-    func updateLastPendingConnectionDate(with date: Date) {
+    func updateLastConnectionDate(with date: Date) {
         // We store the last connection date in memory.
         lastConnection = date
         updateUserValue { user in

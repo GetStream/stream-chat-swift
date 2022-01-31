@@ -28,7 +28,7 @@ class SyncRepositoryMock: SyncRepository {
 
     override func syncLocalState(completion: @escaping () -> Void) {}
 
-    override func updateLastPendingConnectionDate(with date: Date) {}
+    override func updateLastConnectionDate(with date: Date) {}
 
     override func syncExistingChannelsEvents(completion: @escaping (Result<[ChannelId], SyncError>) -> Void) {}
 }
