@@ -793,6 +793,18 @@ class ChannelListController_Tests: XCTestCase {
             .bottomToTop
         )
     }
+
+    // MARK: Init registers active controller
+
+    func test_initRegistersActiveController() {
+        let client = ChatClient.mock
+        let query = ChannelListQuery(filter: .in(.members, values: [.unique]))
+        let controller = ChatChannelListController(query: query, client: client, environment: env.environment)
+
+        XCTAssert(controller.client === client)
+        XCTAssert(client.activeChannelListControllers.count == 1)
+        XCTAssert(client.activeChannelListControllers.allObjects.first === controller)
+    }
 }
 
 private class TestEnvironment {

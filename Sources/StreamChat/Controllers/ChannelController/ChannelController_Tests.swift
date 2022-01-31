@@ -154,7 +154,7 @@ class ChannelController_Tests: XCTestCase {
         XCTAssertEqual(controller.channelListQuery, channelListQuery)
         XCTAssert(controller.client === client)
     }
-        
+
     // MARK: - Channel
     
     func test_channel_accessible_initially() throws {
@@ -3854,6 +3854,24 @@ class ChannelController_Tests: XCTestCase {
         
         // Assert controller is kept alive
         AssertAsync.staysTrue(weakController != nil)
+    }
+
+    // MARK: Init registers active controller
+
+    func test_initRegistersActiveController() {
+        let client = ChatClient.mock
+        let channelQuery = ChannelQuery(cid: channelId)
+        let channelListQuery = ChannelListQuery(filter: .containMembers(userIds: [.unique]))
+
+        let controller = ChatChannelController(
+            channelQuery: channelQuery,
+            channelListQuery: channelListQuery,
+            client: client
+        )
+
+        XCTAssert(controller.client === client)
+        XCTAssert(client.activeChannelControllers.count == 1)
+        XCTAssert(client.activeChannelControllers.allObjects.first === controller)
     }
 }
 
