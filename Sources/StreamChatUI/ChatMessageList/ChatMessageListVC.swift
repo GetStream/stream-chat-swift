@@ -23,9 +23,7 @@ open class ChatMessageListVC:
     /// The object that acts as the data source of the message list.
     public weak var dataSource: ChatMessageListVCDataSource? {
         didSet {
-            if isDiffingEnabled {
-                listView.reloadData()
-            }
+            listView.reloadData()
         }
     }
 
