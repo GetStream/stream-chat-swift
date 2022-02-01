@@ -47,7 +47,7 @@ class WalletStepper: UIView {
     private var centerContainerXLayoutConstraint: NSLayoutConstraint?
     private var centerContainerYLayoutConstraint: NSLayoutConstraint?
     private var startPosition: CGPoint!
-    public var value: Double = 0 {
+    public var value: Double = 1 {
         didSet {
             formatAmount()
         }
@@ -121,7 +121,7 @@ class WalletStepper: UIView {
         lblAmount.font = .systemFont(ofSize: 22)
         lblAmount.adjustsFontSizeToFitWidth = true
         lblAmountType.font = .systemFont(ofSize: 12)
-        lblAmount.text = "0"
+        lblAmount.text = "1"
         lblAmount.textAlignment = .center
         lblAmountType.textAlignment = .center
         lblAmountType.text = "ONE"
