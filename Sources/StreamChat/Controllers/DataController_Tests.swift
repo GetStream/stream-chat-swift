@@ -23,6 +23,36 @@ class DataController_Tests: XCTestCase {
         // Check if state of delegate method is called after state change.
         AssertAsync.willBeEqual(delegate.state, .localDataFetched)
     }
+
+    func test_isAvailableOnRemoteTrueWhenStateIs_remoteDataFetched() {
+        let controller = DataController()
+        controller.state = .remoteDataFetched
+        XCTAssertTrue(controller.isAvailableOnRemote)
+    }
+
+    func test_isAvailableOnRemoteTrueWhenStateIs_remoteDataFetchFailed() {
+        let controller = DataController()
+        controller.state = .remoteDataFetchFailed(ClientError(""))
+        XCTAssertTrue(controller.isAvailableOnRemote)
+    }
+
+    func test_isAvailableOnRemoteTrueWhenStateIs_initialized() {
+        let controller = DataController()
+        controller.state = .initialized
+        XCTAssertFalse(controller.isAvailableOnRemote)
+    }
+
+    func test_isAvailableOnRemoteTrueWhenStateIs_localDataFetched() {
+        let controller = DataController()
+        controller.state = .localDataFetched
+        XCTAssertFalse(controller.isAvailableOnRemote)
+    }
+
+    func test_isAvailableOnRemoteTrueWhenStateIs_localDataFetchFailed() {
+        let controller = DataController()
+        controller.state = .localDataFetchFailed(ClientError(""))
+        XCTAssertFalse(controller.isAvailableOnRemote)
+    }
 }
 
 private class TestDelegate: QueueAwareDelegate, DataControllerStateDelegate {
