@@ -66,10 +66,8 @@ class ChannelListUpdater: Worker {
 
                             channelDTO.resetEphemeralValues()
                             channelDTO.messages.removeAll()
+                            queryDTO.channels.remove(channelDTO)
                         }
-
-                        // Unlink all local channels, we'll now link what we've received from backend
-                        queryDTO.channels.removeAll()
                     },
                     completion: completion
                 )
