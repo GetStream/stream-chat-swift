@@ -1,0 +1,221 @@
+{
+  "user" : {
+    "id" : "luke_skywalker",
+    "banned" : false,
+    "extraData" : {
+
+    },
+    "yetAnotherField" : "40",
+    "last_active" : "2022-02-16T08:18:05.815342Z",
+    "created_at" : "2020-12-07T11:36:47.059906Z",
+    "image_url" : "https:\/\/vignette.wikia.nocookie.net\/starwars\/images\/2\/20\/LukeTLJ.jpg",
+    "testing-this" : 3.1400000000000001,
+    "image" : "https:\/\/bit.ly\/2TIt8NR",
+    "updated_at" : "2022-02-16T08:20:09.001193Z",
+    "birthland" : "Tatooine",
+    "role" : "user",
+    "extra_data" : {
+
+    },
+    "testing" : false,
+    "online" : false,
+    "name" : "Luke Skywalker"
+  },
+  "channel" : {
+    "id" : "8372DE11-E",
+    "truncated_at" : "2022-02-16T08:20:13.862494Z",
+    "members" : [
+      {
+        "banned" : false,
+        "shadow_banned" : false,
+        "created_at" : "2022-02-16T00:16:47.561336Z",
+        "role" : "member",
+        "channel_role" : "channel_member",
+        "user_id" : "leia_organa",
+        "updated_at" : "2022-02-16T00:16:47.561336Z",
+        "user" : {
+          "banned" : false,
+          "online" : true,
+          "AdditionalProperties" : {
+
+          },
+          "id" : "leia_organa",
+          "role" : "user",
+          "created_at" : "2020-12-07T11:37:33.78879Z",
+          "image" : "https:\/\/vignette.wikia.nocookie.net\/starwars\/images\/f\/fc\/Leia_Organa_TLJ.png",
+          "updated_at" : "2022-02-15T00:56:45.316975Z",
+          "last_active" : "2022-02-16T08:17:06.043704722Z",
+          "name" : "Leia Organa"
+        }
+      },
+      {
+        "banned" : false,
+        "shadow_banned" : false,
+        "created_at" : "2022-02-16T00:16:47.561336Z",
+        "role" : "owner",
+        "channel_role" : "channel_member",
+        "user_id" : "luke_skywalker",
+        "updated_at" : "2022-02-16T00:16:47.561336Z",
+        "user" : {
+          "id" : "luke_skywalker",
+          "banned" : false,
+          "extraData" : {
+
+          },
+          "yetAnotherField" : "40",
+          "last_active" : "2022-02-16T08:18:05.815342Z",
+          "created_at" : "2020-12-07T11:36:47.059906Z",
+          "image_url" : "https:\/\/vignette.wikia.nocookie.net\/starwars\/images\/2\/20\/LukeTLJ.jpg",
+          "testing-this" : 3.1400000000000001,
+          "image" : "https:\/\/bit.ly\/2TIt8NR",
+          "updated_at" : "2022-02-16T08:20:09.001193Z",
+          "birthland" : "Tatooine",
+          "role" : "user",
+          "extra_data" : {
+
+          },
+          "testing" : false,
+          "online" : false,
+          "name" : "Luke Skywalker"
+        }
+      }
+    ],
+    "created_at" : "2022-02-16T00:16:47.556896Z",
+    "created_by" : {
+      "id" : "luke_skywalker",
+      "banned" : false,
+      "extraData" : {
+
+      },
+      "yetAnotherField" : "40",
+      "last_active" : "2022-02-16T08:18:05.815342Z",
+      "created_at" : "2020-12-07T11:36:47.059906Z",
+      "image_url" : "https:\/\/vignette.wikia.nocookie.net\/starwars\/images\/2\/20\/LukeTLJ.jpg",
+      "testing-this" : 3.1400000000000001,
+      "image" : "https:\/\/bit.ly\/2TIt8NR",
+      "updated_at" : "2022-02-16T08:20:09.001193Z",
+      "birthland" : "Tatooine",
+      "role" : "user",
+      "extra_data" : {
+
+      },
+      "testing" : false,
+      "online" : false,
+      "name" : "Luke Skywalker"
+    },
+    "disabled" : false,
+    "type" : "messaging",
+    "cid" : "messaging:8372DE11-E",
+    "frozen" : false,
+    "member_count" : 2,
+    "updated_at" : "2022-02-16T08:20:13.865089Z",
+    "config" : {
+      "typing_events" : true,
+      "connect_events" : true,
+      "reactions" : true,
+      "replies" : true,
+      "uploads" : true,
+      "push_notifications" : true,
+      "updated_at" : "2021-09-01T17:42:21.99149Z",
+      "automod_behavior" : "block",
+      "commands" : [
+        {
+          "set" : "fun_set",
+          "args" : "[text]",
+          "name" : "giphy",
+          "description" : "Post a random gif to the channel"
+        }
+      ],
+      "url_enrichment" : true,
+      "mutes" : true,
+      "custom_events" : true,
+      "message_retention" : "infinite",
+      "name" : "messaging",
+      "automod" : "AI",
+      "blocklist" : "profanity_en_2020_v1",
+      "quotes" : true,
+      "automod_thresholds" : {
+        "spam" : {
+          "flag" : 0.84999999999999998,
+          "block" : 0.90000000000000002
+        },
+        "toxic" : {
+          "flag" : 0.84999999999999998,
+          "block" : 0.90000000000000002
+        },
+        "explicit" : {
+          "flag" : 0.84999999999999998,
+          "block" : 0.90000000000000002
+        }
+      },
+      "created_at" : "2021-03-01T19:26:18.406502Z",
+      "max_message_length" : 5000,
+      "blocklist_behavior" : "block",
+      "read_events" : true,
+      "search" : true
+    },
+    "name" : "Empty",
+    "last_message_at" : "2022-02-16T08:20:13.863494Z"
+  },
+  "channel_type" : "messaging",
+  "channel_id" : "8372DE11-E",
+  "created_at" : "2022-02-16T08:20:13.883558691Z",
+  "message" : {
+    "updated_at" : "2022-02-16T08:20:13.863494Z",
+    "reply_count" : 0,
+    "html" : "<p>Channel truncated<\/p>\n",
+    "type" : "system",
+    "own_reactions" : [
+
+    ],
+    "cid" : "messaging:8372DE11-E",
+    "id" : "4870413A-FF30-426B-B192-30A682486E96",
+    "user" : {
+      "id" : "luke_skywalker",
+      "banned" : false,
+      "extraData" : {
+
+      },
+      "yetAnotherField" : "40",
+      "last_active" : "2022-02-16T08:18:05.815342Z",
+      "created_at" : "2020-12-07T11:36:47.059906Z",
+      "image_url" : "https:\/\/vignette.wikia.nocookie.net\/starwars\/images\/2\/20\/LukeTLJ.jpg",
+      "testing-this" : 3.1400000000000001,
+      "image" : "https:\/\/bit.ly\/2TIt8NR",
+      "updated_at" : "2022-02-16T08:20:09.001193Z",
+      "birthland" : "Tatooine",
+      "role" : "user",
+      "extra_data" : {
+
+      },
+      "testing" : false,
+      "online" : false,
+      "name" : "Luke Skywalker"
+    },
+    "shadowed" : false,
+    "pinned_at" : null,
+    "pin_expires" : null,
+    "attachments" : [
+
+    ],
+    "reaction_counts" : {
+
+    },
+    "reaction_scores" : {
+
+    },
+    "silent" : false,
+    "text" : "Channel truncated",
+    "pinned_by" : null,
+    "created_at" : "2022-02-16T08:20:13.863494Z",
+    "mentioned_users" : [
+
+    ],
+    "pinned" : false,
+    "latest_reactions" : [
+
+    ]
+  },
+  "type" : "channel.truncated",
+  "cid" : "messaging:8372DE11-E"
+}

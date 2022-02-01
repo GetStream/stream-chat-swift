@@ -82,12 +82,68 @@ class ChannelUpdater: Worker {
         }
     }
 
-    /// Truncates the specific channel.
+    /// Truncates messages of the channel, but doesn't affect the channel data or members.
     /// - Parameters:
     ///   - cid: The channel identifier.
+    ///   - skipPush: If true, skips sending push notification to channel members.
+    ///   - hardDelete: If true, messages are deleted instead of hiding.
+    ///   - systemMessage: A system message to be added via truncation.
     ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
-    func truncateChannel(cid: ChannelId, completion: ((Error?) -> Void)? = nil) {
-        apiClient.request(endpoint: .truncateChannel(cid: cid)) {
+    func truncateChannel(
+        cid: ChannelId,
+        skipPush: Bool = false,
+        hardDelete: Bool = true,
+        systemMessage: String? = nil,
+        completion: ((Error?) -> Void)? = nil
+    ) {
+        guard let message = systemMessage else {
+            truncate(cid: cid, skipPush: skipPush, hardDelete: hardDelete, completion: completion)
+            return
+        }
+        
+        let context = database.backgroundReadOnlyContext
+        context.perform { [weak self] in
+            guard let user = context.currentUser?.user.asRequestBody() else {
+                completion?(ClientError.Unknown("Couldn't fetch current user from local cache."))
+                return
+            }
+            let requestBody = MessageRequestBody(
+                id: .newUniqueId,
+                user: user,
+                text: message,
+                command: nil,
+                args: nil,
+                parentId: nil,
+                showReplyInChannel: false,
+                isSilent: false,
+                quotedMessageId: nil,
+                attachments: [],
+                mentionedUserIds: [],
+                pinned: false,
+                pinExpires: nil,
+                extraData: [:]
+            )
+            self?.truncate(
+                cid: cid,
+                skipPush: skipPush,
+                hardDelete: hardDelete,
+                requestBody: requestBody,
+                completion: completion
+            )
+        }
+    }
+    
+    private func truncate(
+        cid: ChannelId,
+        skipPush: Bool = false,
+        hardDelete: Bool = true,
+        requestBody: MessageRequestBody? = nil,
+        completion: ((Error?) -> Void)? = nil
+    ) {
+        apiClient.request(endpoint: .truncateChannel(cid: cid, skipPush: skipPush, hardDelete: hardDelete, message: requestBody)) {
+            if let error = $0.error {
+                log.error(error)
+            }
             completion?($0.error)
         }
     }

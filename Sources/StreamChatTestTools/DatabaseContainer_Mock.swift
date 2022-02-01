@@ -126,10 +126,11 @@ extension DatabaseContainer {
     }
 
     /// Synchronously creates a new CurrentUserDTO in the DB with the given id.
-    func createCurrentUser(id: UserId = .unique) throws {
+    func createCurrentUser(id: UserId = .unique, name: String = .unique) throws {
         try writeSynchronously { session in
             let payload: CurrentUserPayload = .dummy(
                 userId: id,
+                name: name,
                 role: .admin,
                 extraData: [:]
             )
@@ -144,10 +145,15 @@ extension DatabaseContainer {
         withQuery: Bool = false,
         isHidden: Bool = false,
         channelReads: Set<ChannelReadDTO> = [],
-        channelExtraData: [String: RawJSON] = [:]
+        channelExtraData: [String: RawJSON] = [:],
+        truncatedAt: Date? = nil
     ) throws {
         try writeSynchronously { session in
-            let dto = try session.saveChannel(payload: XCTestCase().dummyPayload(with: cid, channelExtraData: channelExtraData))
+            let dto = try session
+                .saveChannel(
+                    payload: XCTestCase()
+                        .dummyPayload(with: cid, channelExtraData: channelExtraData, truncatedAt: truncatedAt)
+                )
 
             dto.isHidden = isHidden
             dto.reads = channelReads

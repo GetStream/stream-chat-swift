@@ -113,17 +113,27 @@ final class ChannelEndpoints_Tests: XCTestCase {
 
     func test_truncateChannel_buildsCorrectly() {
         let cid = ChannelId.unique
+        let skipPush = false
+        let hardDelete = true
+        let systemMessage = "System Message"
+        let messageBody = MessageRequestBody(id: .unique, user: .dummy(userId: .unique), text: systemMessage, extraData: [:])
+        let payload = ChannelTruncateRequestPayload(skipPush: skipPush, hardDelete: hardDelete, message: messageBody)
 
         let expectedEndpoint = Endpoint<EmptyResponse>(
             path: "channels/\(cid.type.rawValue)/\(cid.id)/truncate",
             method: .post,
             queryItems: nil,
             requiresConnectionId: false,
-            body: nil
+            body: payload
         )
 
         // Build endpoint
-        let endpoint: Endpoint<EmptyResponse> = .truncateChannel(cid: cid)
+        let endpoint: Endpoint<EmptyResponse> = .truncateChannel(
+            cid: cid,
+            skipPush: skipPush,
+            hardDelete: hardDelete,
+            message: messageBody
+        )
 
         // Assert endpoint is built correctly
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))

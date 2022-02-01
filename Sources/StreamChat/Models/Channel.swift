@@ -29,6 +29,9 @@ public struct ChatChannel {
     /// If the channel was deleted, this field contains the date of the deletion.
     public let deletedAt: Date?
     
+    /// If the channel was truncated, this field contains the date of the truncation.
+    public let truncatedAt: Date?
+    
     /// Flag for representing hidden state for the channel.
     public let isHidden: Bool
     
@@ -156,6 +159,7 @@ public struct ChatChannel {
         createdAt: Date = .init(),
         updatedAt: Date = .init(),
         deletedAt: Date? = nil,
+        truncatedAt: Date? = nil,
         isHidden: Bool,
         createdBy: ChatUser? = nil,
         config: ChannelConfig = .init(),
@@ -194,6 +198,7 @@ public struct ChatChannel {
         self.reads = reads
         self.cooldownDuration = cooldownDuration
         self.extraData = extraData
+        self.truncatedAt = truncatedAt
         
         $_unreadCount = (unreadCount, underlyingContext)
         $_latestMessages = (latestMessages, underlyingContext)
