@@ -66,6 +66,19 @@ final class ChannelListFilterScope_Tests: XCTestCase {
             XCTAssertEqual(testValue.0.hiddenFilterValue, testValue.1, "\(testValue) failed")
         }
     }
+
+    func test_debugDescription() {
+        let id = "theid"
+        let query = ChannelListQuery(
+            filter: .containMembers(userIds: [id]),
+            sort: [Sorting<ChannelListSortingKey>(key: .cid)],
+            pageSize: 1,
+            messagesLimit: 2,
+            membersLimit: 3
+        )
+
+        XCTAssertEqual(query.debugDescription, "Filter: members IN [\"theid\"] | Sort: [cid:-1]")
+    }
 }
 
 final class ChannelListQuery_Tests: XCTestCase {
