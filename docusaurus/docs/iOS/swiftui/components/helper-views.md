@@ -61,9 +61,9 @@ public func makeChannelListItem(
     avatar: UIImage,
     onlineIndicatorShown: Bool,
     disabled: Bool,
-    selectedChannel: Binding<ChatChannel?>,
+    selectedChannel: Binding<ChannelSelectionInfo?>,
     swipedChannelId: Binding<String?>,
-    channelDestination: @escaping (ChatChannel) -> ChannelDestination,
+    channelDestination: @escaping (ChannelSelectionInfo) -> ChannelDestination,
     onItemTap: @escaping (ChatChannel) -> Void,
     trailingSwipeRightButtonTapped: @escaping (ChatChannel) -> Void,
     trailingSwipeLeftButtonTapped: @escaping (ChatChannel) -> Void,
@@ -94,7 +94,7 @@ In the channel list item creation method, you are provided with several paramete
 - `avatar`: the avatar of the channel.
 - `onlineIndicatorShown`: whether the online indicator (about last active members) is shown on the avatar.
 - `disabled`: whether the user interactions with the channel are disabled. You should use this value while the view is being swiped, in order to avoid clicking the channel list item instead.
-- `selectedChannel`: binding of the currently selected channel.
+- `selectedChannel`: binding of the currently selected channel selection info (channel and optional message).
 - `swipedChannelId`: optional id of the swiped channel id.
 - `channelDestination`: closure that creates the channel destination.
 - `onItemTap`: called when a channel list item is tapped.
