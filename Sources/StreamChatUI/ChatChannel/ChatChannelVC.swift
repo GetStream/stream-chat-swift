@@ -14,13 +14,7 @@ open class ChatChannelVC:
     ChatMessageListVCDelegate,
     ChatChannelControllerDelegate {
     /// Controller for observing data changes within the channel.
-    open var channelController: ChatChannelController! {
-        didSet {
-            // Clean up the old data when the channel controller is replaced.
-            oldValue?.delegate = nil
-            setUp()
-        }
-    }
+    open var channelController: ChatChannelController!
 
     /// User search controller for suggestion users when typing in the composer.
     open lazy var userSuggestionSearchController: ChatUserSearchController =

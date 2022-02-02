@@ -153,23 +153,24 @@ final class DemoAppCoordinator: NSObject, UNUserNotificationCenterDelegate {
     }
 
     private func makeSplitViewController(channelListVC: DemoChannelListVC) -> UISplitViewController {
-        let makeChannelController: (String) -> ChatChannelController = { cid in
-            channelListVC.controller.client.channelController(
+        let makeChannelVC: (String) -> UIViewController = { cid in
+            let channelVC = CustomChannelVC()
+            let channelController = channelListVC.controller.client.channelController(
                 for: ChannelId(type: .messaging, id: cid),
                 channelListQuery: channelListVC.controller.query
             )
-        }
-
-        let channelVC = CustomChannelVC()
-        channelVC.channelController = makeChannelController("unknown")
-
-        channelListVC.didSelectChannel = { channel in
-            channelVC.channelController = makeChannelController(channel.cid.id)
+            channelVC.channelController = channelController
+            return UINavigationController(rootViewController: channelVC)
         }
 
         let splitController = UISplitViewController()
-        splitController.viewControllers = [channelListVC, UINavigationController(rootViewController: channelVC)]
+        splitController.viewControllers = [channelListVC, makeChannelVC("unknown")]
         splitController.preferredDisplayMode = .oneBesideSecondary
+
+        channelListVC.didSelectChannel = { channel in
+            splitController.viewControllers[1] = makeChannelVC(channel.cid.id)
+        }
+
         return splitController
     }
 }
