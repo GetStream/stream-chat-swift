@@ -28,6 +28,17 @@ class GetChannelIdsOperation: AsyncOperation {
     }
 }
 
+class GetCurrentUserOperation: AsyncOperation {
+    init(database: DatabaseContainer, context: SyncContext) {
+        super.init(maxRetries: 2) { [weak database] done in
+            database?.write { session in
+                context.currentUser = session.currentUser
+                done(.continue)
+            }
+        }
+    }
+}
+
 class SyncEventsOperation: AsyncOperation {
     init(database: DatabaseContainer, syncRepository: SyncRepository, context: SyncContext) {
         super.init(maxRetries: 2) { [weak database, weak syncRepository] done in
@@ -35,8 +46,7 @@ class SyncEventsOperation: AsyncOperation {
                 "1. Call `/sync` endpoint and get missing events for all locally existed channels",
                 subsystems: .offlineSupport
             )
-            let user = database?.viewContext.currentUser
-            guard let lastPendingConnectionDate = user?.lastPendingConnectionDate else {
+            guard let lastPendingConnectionDate = context.currentUser?.lastPendingConnectionDate else {
                 done(.continue)
                 return
             }

@@ -86,8 +86,10 @@ class SyncRepository {
         context.lastConnectionDate = lastConnection
         var operations: [Operation] = []
 
-        // 0. We get the existing channelIds
+        // Get the existing channelIds
         operations.append(GetChannelIdsOperation(database: database, context: context))
+        // Get current user
+        operations.append(GetCurrentUserOperation(database: database, context: context))
 
         // 1. Call `/sync` endpoint and get missing events for all locally existed channels
         operations.append(SyncEventsOperation(database: database, syncRepository: self, context: context))
@@ -160,33 +162,49 @@ class SyncRepository {
     /// Syncs the events for the active chat channels using the last sync date.
     /// - Parameter completion: A block that will get executed upon completion of the synchronization
     func syncExistingChannelsEvents(completion: @escaping (Result<[ChannelId], SyncError>) -> Void) {
-        let user = database.viewContext.currentUser
-        guard let lastSyncAt = user?.lastSyncAt else {
-            // That's the first session of the current user. Bump `lastSyncAt` with current time and return.
-            updateUserValue({
-                $0?.lastSyncAt = Date()
-            }, completion: { _ in
+        let syncCooldown = self.syncCooldown
+        getUser { [weak self] user in
+            guard let lastSyncAt = user?.lastSyncAt else {
+                // That's the first session of the current user. Bump `lastSyncAt` with current time and return.
+                self?.updateUserValue({
+                    $0?.lastSyncAt = Date()
+                }, completion: { _ in
+                    completion(.failure(.noNeedToSync))
+                })
+                return
+            }
+
+            guard Date().timeIntervalSince(lastSyncAt) > syncCooldown else {
                 completion(.failure(.noNeedToSync))
-            })
-            return
+                return
+            }
+
+            let request = ChannelDTO.allChannelsFetchRequest
+            request.fetchLimit = 1000
+            request.propertiesToFetch = ["cid"]
+
+            guard let results = try? self?.database.viewContext.fetch(request) else {
+                completion(.failure(.failedFetchingChannels))
+                return
+            }
+
+            let channelIds = results.compactMap { try? ChannelId(cid: $0.cid) }
+            self?.syncMissingEvents(
+                using: lastSyncAt,
+                channelIds: channelIds,
+                bumpLastSync: true,
+                completion: completion
+            )
         }
+    }
 
-        guard Date().timeIntervalSince(lastSyncAt) > syncCooldown else {
-            completion(.failure(.noNeedToSync))
-            return
+    private func getUser(completion: @escaping (CurrentUserDTO?) -> Void) {
+        var user: CurrentUserDTO?
+        database.write { session in
+            user = session.currentUser
+        } completion: { _ in
+            completion(user)
         }
-
-        let request = ChannelDTO.allChannelsFetchRequest
-        request.fetchLimit = 1000
-        request.propertiesToFetch = ["cid"]
-
-        guard let results = try? database.viewContext.fetch(request) else {
-            completion(.failure(.failedFetchingChannels))
-            return
-        }
-
-        let channelIds = results.compactMap { try? ChannelId(cid: $0.cid) }
-        syncMissingEvents(using: lastSyncAt, channelIds: channelIds, bumpLastSync: true, completion: completion)
     }
 
     func syncMissingEvents(
