@@ -6,7 +6,7 @@ title: Handling Channel List Tap Events
 
 The SwiftUI SDK comes with default navigation, which can be updated per your needs. For example, you can completely swap the default chat channel view with your own implementation. Alternatively, you can also intercept the on-tap events and provide your own handling.
 
-First, let's see how you can update the screen that is shown when you tap on a channel. In the `ViewFactory` protocol, there's a method called `makeChannelDestination`, which returns a function with channel as a parameter and a view as a result. This function tells the `ChatChannelListView` how to create the navigation destination for the channel tap. You need to provide your own implementation with your custom view.
+First, let's see how you can update the screen that is shown when you tap on a channel. In the `ViewFactory` protocol, there's a method called `makeChannelDestination`, which returns a function with `ChannelSelectionInfo` as a parameter and a view as a result. This function tells the `ChatChannelListView` how to create the navigation destination for the channel tap. You need to provide your own implementation with your custom view.  The `ChannelSelectionInfo` type consists of a channel and an optional message. If the message is a not a nil value, you can use it to scroll to a particular message (e.g. in search results or deep linking).
 
 For simplicity, we are creating a custom view which just displays the name of the channel. Next, in our custom factory, we provide a new creation function for the chat channel.
 
@@ -31,9 +31,9 @@ class CustomFactory: ViewFactory {
     
     public static let shared = CustomFactory()
     
-    func makeChannelDestination() -> (ChatChannel) -> CustomChannelDestination {
-        { channel in
-            CustomChannelDestination(channel: channel)
+    func makeChannelDestination() -> (ChannelSelectionInfo) -> CustomChannelDestination {
+        { selectionInfo in
+            CustomChannelDestination(channel: selectionInfo.channel)
         }
     }
 }

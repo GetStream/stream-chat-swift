@@ -47,7 +47,7 @@ public typealias ChatChannelNamer =
 public func DefaultChatChannelNamer(
     maxMemberNames: Int = 2,
     separator: String = ","
-) -> ChatChannelNamer {
+) -> (_ channel: ChatChannel, _ currentUserId: UserId?) -> String? {
     { channel, currentUserId in
         if let channelName = channel.name, !channelName.isEmpty {
             // If there's an assigned name and it's not empty, we use it

@@ -132,15 +132,6 @@ class ChatChannelListItemView_Tests: XCTestCase {
         )
         
         let itemView = ChatChannelListItemView()
-
-        var components = Components()
-        components.channelNamer = { namerChannel, namerUserId in
-            XCTAssertEqual(namerChannel, channel)
-            XCTAssertEqual(namerUserId, userId)
-            return namerChannel.name
-        }
-        itemView.components = components
-        
         itemView.content = .init(channel: channel, currentUserId: nil)
         
         XCTAssertEqual(itemView.titleText, channel.name)
