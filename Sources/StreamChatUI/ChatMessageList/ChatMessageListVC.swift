@@ -19,8 +19,7 @@ open class ChatMessageListVC:
     LinkPreviewViewDelegate,
     UITableViewDataSource,
     UITableViewDelegate,
-    UIGestureRecognizerDelegate,
-    UIAdaptivePresentationControllerDelegate {
+    UIGestureRecognizerDelegate {
     /// The object that acts as the data source of the message list.
     public weak var dataSource: ChatMessageListVCDataSource? {
         didSet {
@@ -85,6 +84,10 @@ open class ChatMessageListVC:
         return !listView.isLastCellFullyVisible && isMoreContentThanOnePage
     }
 
+    /// A formatter that converts the message date to textual representation.
+    /// This date formatter is used between each group message and the top overlay.
+    public lazy var dateSeparatorFormatter = appearance.formatters.messageDateSeparator
+
     /// A boolean value that determines wether the date overlay should be displayed while scrolling.
     open var isDateOverlayEnabled: Bool {
         components.messageListDateOverlayEnabled
@@ -107,8 +110,6 @@ open class ChatMessageListVC:
         tapOnList.delegate = self
         listView.addGestureRecognizer(tapOnList)
 
-        navigationController?.presentationController?.delegate = self
-        
         scrollToLatestMessageButton.addTarget(self, action: #selector(scrollToLatestMessage), for: .touchUpInside)
     }
     
@@ -358,9 +359,7 @@ open class ChatMessageListVC:
         cell.messageContentView?.content = message
 
         cell.dateSeparatorView.isHidden = !shouldShowDateSeparator(forMessage: message, at: indexPath)
-        cell.dateSeparatorView.content = DateFormatter
-            .messageListDateOverlay
-            .string(from: message.createdAt)
+        cell.dateSeparatorView.content = dateSeparatorFormatter.format(message.createdAt)
 
         return cell
     }
@@ -385,9 +384,7 @@ open class ChatMessageListVC:
             return nil
         }
 
-        return DateFormatter
-            .messageListDateOverlay
-            .string(from: message.createdAt)
+        return dateSeparatorFormatter.format(message.createdAt)
     }
 
     // MARK: - ChatMessageActionsVCDelegate
@@ -534,13 +531,5 @@ open class ChatMessageListVC:
     ) -> Bool {
         // To prevent the gesture recognizer consuming up the events from UIControls, we receive touch only when the view isn't a UIControl.
         !(touch.view is UIControl)
-    }
-
-    // MARK: - UIAdaptivePresentationControllerDelegate
-
-    public func presentationControllerShouldDismiss(_ presentationController: UIPresentationController) -> Bool {
-        // A workaround is required because we are using an inverted UITableView for the message list.
-        // More details on the issue: https://github.com/GetStream/stream-chat-swift/issues/1307
-        !listView.isDragging
     }
 }

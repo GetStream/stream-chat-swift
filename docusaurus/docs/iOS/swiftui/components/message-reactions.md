@@ -6,6 +6,8 @@ title: Message reactions
 
 The SwiftUI chat SDK provides a default view that's displayed as an overlay of the message. When you long press on a message, the message reactions overlay is shown. By default, it shows a blurred background and a possibility to react to a message or remove a reaction. Additionally, the reactions overlay has a "message actions" slot, which allows you to perform actions on the message. Both the displayed reactions on a message and the reactions overlay can be replaced by your own views. 
 
+When reactions are added to a message, a view displaying the added reactions is shown above the message. When this view is tapped or long-pressed, a new overlay view displaying the list of people who reacted to a message is presented. That view can also be swapped with your own implementation.
+
 ## Customizing the Message Reactions View
 
 The simplest way to customize the message reactions view is to replace its reaction icons. Those are available under the `availableReactions` property in the Images class, which is part of the Appearance class in the StreamChat object. The `availableReactions` property is a dictionary, which contains mappings between `MessageReactionType` and its corresponding `ChatMessageReactionAppearanceType`, which consists of small and large icon for a reaction. If you change these properties, make sure to inject the updated `Images` class in the StreamChat object.
@@ -260,7 +262,21 @@ public func makeMessageActionsView(
 }
 ```
 
-Additionally, you can swap the whole `ReactionsOverlayView` with your own implementation. In order to do this, you need to implement the `makeReactionsOverlayView` method in the `ViewFactory`. The current snapshot of the message list is provided to you, in case you want to blur it or apply any other effects.
+As mentioned at the beginning, when the reactions are tapped or long-pressed, a view with the list of users who reacted to the message is displayed. In order to change this view with your own implementation, you will need to implement the `makeReactionsUsersView` in the `ViewFactory`. In this method, you receive the message which contains the reactions, as well as the maximum height available for this view.
+
+```swift
+func makeReactionsUsersView(
+    message: ChatMessage,
+    maxHeight: CGFloat
+) -> some View {
+    ReactionsUsersView(
+        message: message,
+        maxHeight: maxHeight
+    )
+}
+```
+
+Finally, you can swap the whole `ReactionsOverlayView` with your own implementation. In order to do this, you need to implement the `makeReactionsOverlayView` method in the `ViewFactory`. The current snapshot of the message list is provided to you, in case you want to blur it or apply any other effects.
 
 ```swift
 public func makeReactionsOverlayView(

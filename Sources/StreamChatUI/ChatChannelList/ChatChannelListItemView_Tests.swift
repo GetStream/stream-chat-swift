@@ -89,7 +89,9 @@ class ChatChannelListItemView_Tests: XCTestCase {
             override func updateContent() {
                 super.updateContent()
                 unreadCountView.content = .mock(messages: 3)
-                footnoteLabel.text = dateFormatter.string(from: content!.channel.lastMessageAt!)
+                footnoteLabel.text = appearance.formatters
+                    .messageTimestamp
+                    .format(content!.channel.lastMessageAt!)
             }
         }
         
@@ -130,15 +132,6 @@ class ChatChannelListItemView_Tests: XCTestCase {
         )
         
         let itemView = ChatChannelListItemView()
-
-        var components = Components()
-        components.channelNamer = { namerChannel, namerUserId in
-            XCTAssertEqual(namerChannel, channel)
-            XCTAssertEqual(namerUserId, userId)
-            return namerChannel.name
-        }
-        itemView.components = components
-        
         itemView.content = .init(channel: channel, currentUserId: nil)
         
         XCTAssertEqual(itemView.titleText, channel.name)
@@ -273,17 +266,13 @@ class ChatChannelListItemView_Tests: XCTestCase {
             cid: .unique,
             lastMessageAt: Date(timeIntervalSince1970: 1)
         )
-        
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
-        
+
         let itemView = ChatChannelListItemView()
-        itemView.dateFormatter = dateFormatter
         itemView.content = .init(channel: channel, currentUserId: nil)
         
         XCTAssertEqual(
             itemView.timestampText,
-            "1970-01-01 00:00:01"
+            "12:00 AM"
         )
     }
 }

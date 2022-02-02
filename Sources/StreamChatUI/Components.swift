@@ -260,7 +260,19 @@ public struct Components {
     public var channelHeaderView: ChatChannelHeaderView.Type = ChatChannelHeaderView.self
 
     /// The logic to generate a name for the given channel.
-    public var channelNamer: ChatChannelNamer = DefaultChatChannelNamer()
+    @available(
+        *,
+        deprecated,
+        message: "Please use `Appearance.default.formatters.channelName` instead"
+    )
+    public var channelNamer: ChatChannelNamer {
+        get {
+            DefaultChannelNameFormatter.channelNamer
+        }
+        set {
+            DefaultChannelNameFormatter.channelNamer = newValue
+        }
+    }
 
     /// The collection view layout of the channel list.
     public var channelListLayout: UICollectionViewLayout.Type = ListCollectionViewLayout.self
