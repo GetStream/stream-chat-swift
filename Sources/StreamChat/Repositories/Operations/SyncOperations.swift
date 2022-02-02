@@ -32,7 +32,7 @@ class GetChannelIdsOperation: AsyncOperation {
     }
 }
 
-class GetCurrentUserOperation: AsyncOperation {
+class GetPendingConnectionDateOperation: AsyncOperation {
     init(database: DatabaseContainer, context: SyncContext) {
         super.init(maxRetries: 2) { [weak database] done in
             database?.backgroundReadOnlyContext.perform {
@@ -93,11 +93,10 @@ class WatchChannelOperation: AsyncOperation {
             let cidString = (controller.cid?.rawValue ?? "unknown")
             log.info("Watching active channel \(cidString)", subsystems: .offlineSupport)
             controller.watchActiveChannel { error in
-                if let cid = controller.cid {
+                if let cid = controller.cid, error == nil {
                     log.info("Successfully watched active channel \(cidString)", subsystems: .offlineSupport)
                     context.watchedChannelIds.insert(cid)
                     done(.continue)
-                    return
                 } else {
                     let errorMessage = error?.localizedDescription ?? "missing cid"
                     log.error("Failed watching active channel \(cidString): \(errorMessage)", subsystems: .offlineSupport)

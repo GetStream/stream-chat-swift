@@ -8,6 +8,7 @@ import StreamChatTestTools
 
 class SyncRepositoryMock: SyncRepository, Spy {
     var recordedFunctions: [String] = []
+    var syncMissingEventsResult: Result<[ChannelId], SyncError>?
     var _activeChannelControllers = NSHashTable<ChatChannelController>.weakObjects()
     var _activeChannelListControllers = NSHashTable<ChatChannelListController>.weakObjects()
 
@@ -38,5 +39,15 @@ class SyncRepositoryMock: SyncRepository, Spy {
 
     override func syncExistingChannelsEvents(completion: @escaping (Result<[ChannelId], SyncError>) -> Void) {
         record()
+    }
+
+    override func syncMissingEvents(
+        using date: Date,
+        channelIds: [ChannelId],
+        bumpLastSync: Bool,
+        completion: @escaping (Result<[ChannelId], SyncError>) -> Void
+    ) {
+        record()
+        syncMissingEventsResult.map(completion)
     }
 }

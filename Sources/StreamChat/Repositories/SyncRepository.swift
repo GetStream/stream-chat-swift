@@ -88,8 +88,8 @@ class SyncRepository {
 
         // Get the existing channelIds
         operations.append(GetChannelIdsOperation(database: database, context: context))
-        // Get current user
-        operations.append(GetCurrentUserOperation(database: database, context: context))
+        // Get pending connection date
+        operations.append(GetPendingConnectionDateOperation(database: database, context: context))
 
         // 1. Call `/sync` endpoint and get missing events for all locally existed channels
         operations.append(SyncEventsOperation(database: database, syncRepository: self, context: context))
