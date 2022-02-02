@@ -32,7 +32,7 @@ class SyncRepositoryMock: SyncRepository, Spy {
         record()
     }
 
-    override func updateLastConnectionDate(with date: Date) {
+    override func updateLastConnectionDate(with date: Date, completion: ((SyncError?) -> Void)? = nil) {
         record()
     }
 
