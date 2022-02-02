@@ -212,6 +212,7 @@ var streamChatSourcesExcluded: [String] { [
     "Controllers/EventsController/EventsController_Tests.swift",
     "Controllers/EventsController/EventsController+SwiftUI_Tests.swift",
     "Controllers/EventsController/EventsController+Combine_Tests.swift",
+    "Controllers/ChannelController/ChatChannelController_Mock.swift",
     "Controllers/ChannelController/ChannelController+SwiftUI_Tests.swift",
     "Controllers/ChannelController/ChannelController_Tests.swift",
     "Controllers/ChannelController/ChannelController+Combine_Tests.swift",

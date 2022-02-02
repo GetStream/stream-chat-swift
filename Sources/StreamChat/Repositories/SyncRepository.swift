@@ -183,27 +183,32 @@ class SyncRepository {
             request.fetchLimit = 1000
             request.propertiesToFetch = ["cid"]
 
-            guard let results = try? self?.database.viewContext.fetch(request) else {
-                completion(.failure(.failedFetchingChannels))
-                return
+            self?.getChannelIds { channelIds in
+                self?.syncMissingEvents(
+                    using: lastSyncAt,
+                    channelIds: channelIds,
+                    bumpLastSync: true,
+                    completion: completion
+                )
             }
-
-            let channelIds = results.compactMap { try? ChannelId(cid: $0.cid) }
-            self?.syncMissingEvents(
-                using: lastSyncAt,
-                channelIds: channelIds,
-                bumpLastSync: true,
-                completion: completion
-            )
         }
     }
 
     private func getUser(completion: @escaping (CurrentUserDTO?) -> Void) {
         var user: CurrentUserDTO?
-        database.write { session in
-            user = session.currentUser
-        } completion: { _ in
+        database.backgroundReadOnlyContext.perform {
+            user = self.database.backgroundReadOnlyContext.currentUser
             completion(user)
+        }
+    }
+
+    private func getChannelIds(completion: @escaping ([ChannelId]) -> Void) {
+        database.backgroundReadOnlyContext.perform {
+            let request = ChannelDTO.allChannelsFetchRequest
+            request.fetchLimit = 1000
+            request.propertiesToFetch = ["cid"]
+            let channels = (try? self.database.backgroundReadOnlyContext.fetch(request)) ?? []
+            completion(channels.compactMap { try? ChannelId(cid: $0.cid) })
         }
     }
 

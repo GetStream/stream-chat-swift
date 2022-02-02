@@ -7,8 +7,8 @@ import Foundation
 /// A class that holds the context for the ongoing operations during the sync process
 class SyncContext {
     var lastConnectionDate: Date?
+    var lastPendingConnectionDate: Date?
     var localChannelIds: [ChannelId] = []
-    var currentUser: CurrentUserDTO?
     var synchedChannelIds: Set<ChannelId> = Set()
     var watchedChannelIds: Set<ChannelId> = Set()
 }
@@ -16,8 +16,12 @@ class SyncContext {
 class GetChannelIdsOperation: AsyncOperation {
     init(database: DatabaseContainer, context: SyncContext) {
         super.init(maxRetries: 2) { [weak database] done in
-            database?.write { session in
-                let cids = session.loadAllChannelListQueries()
+            guard let database = database else {
+                done(.continue)
+                return
+            }
+            database.backgroundReadOnlyContext.perform {
+                let cids = database.backgroundReadOnlyContext.loadAllChannelListQueries()
                     .flatMap(\.channels)
                     .compactMap { try? ChannelId(cid: $0.cid) }
                 log.info("Retrieved channels from existing queries from DB. Count \(cids.count)", subsystems: .offlineSupport)
@@ -31,8 +35,8 @@ class GetChannelIdsOperation: AsyncOperation {
 class GetCurrentUserOperation: AsyncOperation {
     init(database: DatabaseContainer, context: SyncContext) {
         super.init(maxRetries: 2) { [weak database] done in
-            database?.write { session in
-                context.currentUser = session.currentUser
+            database?.backgroundReadOnlyContext.perform {
+                context.lastPendingConnectionDate = database?.backgroundReadOnlyContext.currentUser?.lastPendingConnectionDate
                 done(.continue)
             }
         }
@@ -46,7 +50,7 @@ class SyncEventsOperation: AsyncOperation {
                 "1. Call `/sync` endpoint and get missing events for all locally existed channels",
                 subsystems: .offlineSupport
             )
-            guard let lastPendingConnectionDate = context.currentUser?.lastPendingConnectionDate else {
+            guard let lastPendingConnectionDate = context.lastPendingConnectionDate else {
                 done(.continue)
                 return
             }
