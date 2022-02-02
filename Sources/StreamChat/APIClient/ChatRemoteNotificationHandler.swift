@@ -140,7 +140,8 @@ public class ChatRemoteNotificationHandler {
 
     private func getMessageAndSync(cid: ChannelId, messageId: String, completion: @escaping (ChatMessage?, ChatChannel?) -> Void) {
         let controller = client.messageController(cid: cid, messageId: messageId)
-        controller.synchronize { error in
+        let database = self.database
+        controller.synchronize { [weak self] error in
             if let error = error {
                 log.error(error)
                 completion(nil, nil)
@@ -150,9 +151,11 @@ public class ChatRemoteNotificationHandler {
                 return
             }
 
-            self.syncRepository.syncExistingChannelsEvents { _ in
-                let channel = ChannelDTO.load(cid: cid, context: self.database.viewContext)?.asModel()
-                completion(message, channel)
+            self?.syncRepository.syncExistingChannelsEvents { _ in
+                database.backgroundReadOnlyContext.perform {
+                    let channel = ChannelDTO.load(cid: cid, context: database.backgroundReadOnlyContext)?.asModel()
+                    completion(message, channel)
+                }
             }
         }
     }
