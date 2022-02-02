@@ -29,10 +29,6 @@ open class ChatChannelVC:
         channelController.client
     }
 
-    public var messages: [ChatMessage] {
-        Array(channelController.messages)
-    }
-
     /// Component responsible for setting the correct offset when keyboard frame is changed.
     open lazy var keyboardHandler: KeyboardHandler = ComposerKeyboardHandler(
         composerParentVC: self,
@@ -135,6 +131,10 @@ open class ChatChannelVC:
     }
 
     // MARK: - ChatMessageListVCDataSource
+    
+    public var messages: [ChatMessage] {
+        Array(channelController.messages)
+    }
     
     open func channel(for vc: ChatMessageListVC) -> ChatChannel? {
         channelController.channel
