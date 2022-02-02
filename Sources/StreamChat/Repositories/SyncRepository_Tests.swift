@@ -81,7 +81,7 @@ final class SyncRepository_Tests: XCTestCase {
         waitForSyncLocalStateRun()
 
         XCTAssertTrue(hasUpdatedLastSyncAtNow)
-        XCTAssertEqual(database.writeSessionCounter, 1)
+        XCTAssertEqual(database.writeSessionCounter, 2)
         XCTAssertEqual(repository.activeChannelControllers.count, 0)
         XCTAssertEqual(repository.activeChannelListControllers.count, 0)
         XCTAssertEqual(apiClient.request_allRecordedCalls.count, 0)

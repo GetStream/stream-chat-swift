@@ -5841,7 +5841,7 @@
 			isa = PBXGroup;
 			children = (
 				C1E8AD5B278DDEC70041B775 /* AsyncOperation.swift */,
-				C186BFA527A7F4E10099CCA6 /* AsyncOperation_Tests.swift */,
+			C186BFA527A7F4E10099CCA6 /* AsyncOperation_Tests.swift */,
 				C186BFAE27AADB410099CCA6 /* SyncOperations.swift */,
 				C186BFB527AAFDAB0099CCA6 /* SyncOperations_Tests.swift */,
 			);
