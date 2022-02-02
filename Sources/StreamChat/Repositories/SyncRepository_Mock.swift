@@ -4,8 +4,10 @@
 
 import Foundation
 @testable import StreamChat
+import StreamChatTestTools
 
-class SyncRepositoryMock: SyncRepository {
+class SyncRepositoryMock: SyncRepository, Spy {
+    var recordedFunctions: [String] = []
     var _activeChannelControllers = NSHashTable<ChatChannelController>.weakObjects()
     var _activeChannelListControllers = NSHashTable<ChatChannelListController>.weakObjects()
 
@@ -26,9 +28,15 @@ class SyncRepositoryMock: SyncRepository {
         self._activeChannelListControllers = _activeChannelListControllers
     }
 
-    override func syncLocalState(completion: @escaping () -> Void) {}
+    override func syncLocalState(completion: @escaping () -> Void) {
+        record()
+    }
 
-    override func updateLastConnectionDate(with date: Date) {}
+    override func updateLastConnectionDate(with date: Date) {
+        record()
+    }
 
-    override func syncExistingChannelsEvents(completion: @escaping (Result<[ChannelId], SyncError>) -> Void) {}
+    override func syncExistingChannelsEvents(completion: @escaping (Result<[ChannelId], SyncError>) -> Void) {
+        record()
+    }
 }
