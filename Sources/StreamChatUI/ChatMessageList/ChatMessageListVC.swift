@@ -23,7 +23,7 @@ open class ChatMessageListVC:
     /// The object that acts as the data source of the message list.
     public weak var dataSource: ChatMessageListVCDataSource? {
         didSet {
-            listView.reloadData()
+            updateContent()
         }
     }
 
@@ -63,18 +63,10 @@ open class ChatMessageListVC:
     }
 
     /// A View used to display the messages.
-    open private(set) lazy var listView: ChatMessageListView = {
-        let listView = components.messageListView.init().withoutAutoresizingMaskConstraints
-        listView.delegate = self
-
-        if #available(iOS 13.0, *), isDiffingEnabled {
-            setupDiffableDataSource(for: listView)
-        } else {
-            listView.dataSource = self
-        }
-
-        return listView
-    }()
+    open private(set) lazy var listView: ChatMessageListView = components
+        .messageListView
+        .init()
+        .withoutAutoresizingMaskConstraints
 
     /// A View used to display date of currently displayed messages
     open private(set) lazy var dateOverlayView: ChatMessageListScrollOverlayView = {
@@ -181,6 +173,19 @@ open class ChatMessageListVC:
         view.backgroundColor = appearance.colorPalette.background
         
         listView.backgroundColor = appearance.colorPalette.background
+    }
+
+    override open func updateContent() {
+        super.updateContent()
+
+        listView.delegate = self
+
+        if #available(iOS 13.0, *), isDiffingEnabled {
+            setupDiffableDataSource(for: listView)
+        } else {
+            listView.dataSource = self
+            listView.reloadData()
+        }
     }
 
     override open func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
