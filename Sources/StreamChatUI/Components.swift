@@ -268,7 +268,14 @@ public struct Components {
         deprecated,
         message: "Please use `Appearance.default.formatters.channelName` instead"
     )
-    public var channelNamer: ChatChannelNamer = DefaultChatChannelNamer()
+    public var channelNamer: ChatChannelNamer {
+        get {
+            DefaultChannelNameFormatter.channelNamer
+        }
+        set {
+            DefaultChannelNameFormatter.channelNamer = newValue
+        }
+    }
 
     /// The collection view layout of the channel list.
     public var channelListLayout: UICollectionViewLayout.Type = ListCollectionViewLayout.self

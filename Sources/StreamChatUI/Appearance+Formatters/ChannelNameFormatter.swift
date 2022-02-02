@@ -14,7 +14,13 @@ public protocol ChannelNameFormatter {
 open class DefaultChannelNameFormatter: ChannelNameFormatter {
     public init() {}
 
+    /// Internal static property to add backwards compatibility to `Components.channelNamer`
+    internal static var channelNamer: (
+        _ channel: ChatChannel,
+        _ currentUserId: UserId?
+    ) -> String? = DefaultChatChannelNamer()
+
     open func format(channel: ChatChannel, forCurrentUserId currentUserId: UserId?) -> String? {
-        Components.default.channelNamer(channel, currentUserId)
+        Self.channelNamer(channel, currentUserId)
     }
 }

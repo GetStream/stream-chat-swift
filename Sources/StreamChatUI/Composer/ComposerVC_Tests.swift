@@ -111,4 +111,50 @@ class ComposerVC_Tests: XCTestCase {
         XCTAssertEqual(searchUsers([user], by: "françois"), [user])
         XCTAssertEqual(searchUsers([user], by: "franc"), [user])
     }
+    
+    func test_attachmentsPreview_withFourAttachments_addedSameTime() {
+        let composerVC = ComposerVC()
+        composerVC.appearance = Appearance.default
+        
+        composerVC.content = .initial()
+        composerVC.content.attachments = [.mockFile, .mockFile, .mockFile, .mockFile]
+        
+        AssertSnapshot(composerVC)
+    }
+    
+    func test_attachmentsPreview_withFourAttachments_addedOneAfterThree() {
+        let composerVC = ComposerVC()
+        composerVC.appearance = Appearance.default
+        
+        composerVC.content = .initial()
+        composerVC.content.attachments = [.mockFile, .mockFile, .mockFile]
+        
+        composerVC.content.attachments.append(.mockFile)
+        
+        AssertSnapshot(composerVC)
+    }
+    
+    func test_attachmentsPreview_withFourAttachments_addedTwoAfterTwo() {
+        let composerVC = ComposerVC()
+        composerVC.appearance = Appearance.default
+        
+        composerVC.content = .initial()
+        composerVC.content.attachments = [.mockFile, .mockFile]
+        
+        composerVC.content.attachments.append(contentsOf: [.mockFile, .mockFile])
+        
+        AssertSnapshot(composerVC)
+    }
+    
+    func test_attachmentsPreview_withFourAttachments_addedThreeAfterOne() {
+        let composerVC = ComposerVC()
+        composerVC.appearance = Appearance.default
+        
+        composerVC.content = .initial()
+        composerVC.content.attachments = [.mockFile]
+        
+        composerVC.content.attachments.append(contentsOf: [.mockFile, .mockFile, .mockFile])
+        
+        AssertSnapshot(composerVC)
+    }
 }
