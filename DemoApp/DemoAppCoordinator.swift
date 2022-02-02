@@ -165,7 +165,6 @@ final class DemoAppCoordinator: NSObject, UNUserNotificationCenterDelegate {
 
         channelListVC.didSelectChannel = { channel in
             channelVC.channelController = makeChannelController(channel.cid.id)
-            channelVC.setUp()
         }
 
         let splitController = UISplitViewController()
