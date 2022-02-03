@@ -55,11 +55,53 @@ open class ChatChannelVC:
         return view
     }()
 
+    open private(set) lazy var moreButton: UIButton = {
+        let button = UIButton()
+        button.setImage(appearance.images.moreVertical, for: .normal)
+        button.tintColor = .white
+        button.addTarget(self, action: #selector(moreButtonAction), for: .touchUpInside)
+        return button.withoutAutoresizingMaskConstraints
+    }()
+
+    open private(set) lazy var rightStackView: UIStackView = {
+        let stack = UIStackView().withoutAutoresizingMaskConstraints
+        stack.axis = .horizontal
+        stack.spacing = 4
+        stack.alignment = .center
+        stack.distribution = .fillProportionally
+        return stack
+    }()
+
+    open private(set) lazy var shareView: UIView = {
+        let view = UIView(frame: .zero).withoutAutoresizingMaskConstraints
+        view.backgroundColor = appearance.colorPalette.walletTabbarBackground
+        return view
+    }()
+
+    private(set) lazy var shareButton: UIButton = {
+        let button = UIButton()
+        button.setImage(appearance.images.arrowUpRightSquare, for: .normal)
+        button.tintColor = appearance.colorPalette.themeBlue
+        button.setTitle(" SHARE", for: .normal)
+        button.setTitleColor(appearance.colorPalette.themeBlue, for: .normal)
+        button.titleLabel?.font =  UIFont.systemFont(ofSize: 15, weight: .semibold)
+        button.addTarget(self, action: #selector(shareAction), for: .touchUpInside)
+        return button.withoutAutoresizingMaskConstraints
+    }()
+
     open private(set) lazy var backButton: UIButton = {
         let button = UIButton()
         button.setImage(appearance.images.backCircle, for: .normal)
         button.tintColor = .white
         button.addTarget(self, action: #selector(backAction), for: .touchUpInside)
+        return button.withoutAutoresizingMaskConstraints
+    }()
+
+    open private(set) lazy var closePinButton: UIButton = {
+        let button = UIButton()
+        button.setImage(appearance.images.closeBold, for: .normal)
+        button.tintColor = .white
+        button.addTarget(self, action: #selector(closePinViewAction), for: .touchUpInside)
         return button.withoutAutoresizingMaskConstraints
     }()
 
@@ -132,34 +174,59 @@ open class ChatChannelVC:
             backButton.widthAnchor.constraint(equalToConstant: 32)
         ])
 
-        navigationHeaderView.addSubview(channelAvatarView)
-        channelAvatarView.content = (channelController.channel, client.currentUserId)
+        navigationHeaderView.addSubview(rightStackView)
+        rightStackView.addArrangedSubview(channelAvatarView)
+        rightStackView.addArrangedSubview(moreButton)
+
         NSLayoutConstraint.activate([
+            rightStackView.centerYAnchor.constraint(equalTo: navigationHeaderView.centerYAnchor, constant: 0),
+            rightStackView.trailingAnchor.constraint(equalTo: navigationHeaderView.trailingAnchor, constant: -8),
             channelAvatarView.widthAnchor.constraint(equalToConstant: channelAvatarSize.width),
+            moreButton.widthAnchor.constraint(equalToConstant: 30),
             channelAvatarView.heightAnchor.constraint(equalToConstant: channelAvatarSize.height),
-            channelAvatarView.trailingAnchor.constraint(equalTo: navigationHeaderView.trailingAnchor, constant: -8),
-            channelAvatarView.centerYAnchor.constraint(equalTo: navigationHeaderView.centerYAnchor, constant: 0)
         ])
 
         navigationHeaderView.addSubview(headerView)
         NSLayoutConstraint.activate([
             headerView.centerYAnchor.constraint(equalTo: navigationHeaderView.centerYAnchor, constant: 0),
             headerView.centerXAnchor.constraint(equalTo: navigationHeaderView.centerXAnchor, constant: 0),
-            headerView.leadingAnchor.constraint(equalTo: backButton.trailingAnchor, constant: 8),
-            headerView.trailingAnchor.constraint(equalTo: channelAvatarView.leadingAnchor, constant: -8)
+            headerView.widthAnchor.constraint(equalTo: navigationHeaderView.widthAnchor, multiplier: 0.6)
         ])
+
         addChildViewController(messageListVC, targetView: view)
         NSLayoutConstraint.activate([
             messageListVC.view.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 0),
             messageListVC.view.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: 0),
             messageListVC.view.topAnchor.constraint(equalTo: navigationHeaderView.bottomAnchor, constant: 0),
-            //messageListVC.view.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: 0)
         ])
         addChildViewController(messageComposerVC, targetView: view)
         messageComposerVC.view.pin(anchors: [.leading, .trailing], to: view)
         messageComposerVC.view.topAnchor.pin(equalTo: messageListVC.view.bottomAnchor).isActive = true
         messageComposerBottomConstraint = messageComposerVC.view.bottomAnchor.pin(equalTo: view.bottomAnchor)
         messageComposerBottomConstraint?.isActive = true
+
+        view.addSubview(shareView)
+        NSLayoutConstraint.activate([
+            shareView.heightAnchor.constraint(equalToConstant: 52),
+            shareView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 0),
+            shareView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: 0),
+            shareView.topAnchor.constraint(equalTo: navigationHeaderView.bottomAnchor, constant: 0)
+        ])
+
+        shareView.addSubview(shareButton)
+        NSLayoutConstraint.activate([
+            shareButton.centerXAnchor.constraint(equalTo: shareView.centerXAnchor, constant: 0),
+            shareButton.centerYAnchor.constraint(equalTo: shareView.centerYAnchor, constant: 0),
+            shareButton.heightAnchor.constraint(equalToConstant: 25),
+        ])
+
+        shareView.addSubview(closePinButton)
+        NSLayoutConstraint.activate([
+            closePinButton.trailingAnchor.constraint(equalTo: shareView.trailingAnchor, constant: -20),
+            closePinButton.centerYAnchor.constraint(equalTo: shareView.centerYAnchor, constant: 0),
+            closePinButton.widthAnchor.constraint(equalToConstant: 20),
+            closePinButton.heightAnchor.constraint(equalToConstant: 20)
+        ])
 
         if let cid = channelController.cid {
             headerView.channelController = client.channelController(for: cid)
@@ -184,6 +251,7 @@ open class ChatChannelVC:
 
     override open func viewDidLoad() {
         super.viewDidLoad()
+        shareView.isHidden = true
     }
 
     open override func viewWillAppear(_ animated: Bool) {
@@ -211,6 +279,18 @@ open class ChatChannelVC:
         self.navigationController?.popViewController(animated: true)
         self.dismiss(animated: true, completion: nil)
         NotificationCenter.default.post(name: .showTabbar, object: nil)
+    }
+
+    @objc func shareAction(_ sender: Any) {
+
+    }
+
+    @objc func moreButtonAction(_ sender: Any) {
+        shareView.isHidden = false
+    }
+
+    @objc func closePinViewAction(_ sender: Any) {
+        shareView.isHidden = true
     }
 
     private func getGroupLink() -> String? {

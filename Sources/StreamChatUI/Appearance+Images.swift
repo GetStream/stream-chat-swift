@@ -27,27 +27,16 @@ public extension Appearance {
         // MARK: - General
 
         public var loadingIndicator: UIImage = loadImageSafely(with: "loading_indicator")
-        public var close: UIImage = {
-            if #available(iOS 13.0, *) {
-                return UIImage(systemName: "xmark")!
-            } else {
-                return loadImageSafely(with: "close")
-            }
-        }()
-
+        public var close: UIImage = UIImage(systemName: "xmark")!
+        public var closeBold: UIImage = loadImageSafely(with: "close")
         public var closeCircleTransparent: UIImage = loadImageSafely(with: "close_circle_transparent")
         public var closeCircle: UIImage = loadImageSafely(with: "close_circle")
         public var discardAttachment: UIImage = loadImageSafely(with: "close_circle_filled")
         public var back: UIImage = loadImageSafely(with: "icn_back")
         public var onlyVisibleToCurrentUser = loadImageSafely(with: "eye")
         public var more = loadImageSafely(with: "icn_more")
-        public var share: UIImage = {
-            if #available(iOS 13.0, *) {
-                return UIImage(systemName: "square.and.arrow.up")!
-            } else {
-                return loadImageSafely(with: "share")
-            }
-        }()
+        public var arrowUpRightSquare = UIImage(systemName: "arrow.up.right.square")
+        public var share: UIImage = UIImage(systemName: "square.and.arrow.up")!
 
         public var commands: UIImage = loadImageSafely(with: "bolt")
         public var smallBolt: UIImage = loadImageSafely(with: "bolt_small")
@@ -56,6 +45,7 @@ public extension Appearance {
         public var sendArrow: UIImage = loadImageSafely(with: "arrow_send")
         public var moneyTransaction: UIImage = loadImageSafely(with: "money-transaction")
         public var moreRounded: UIImage = loadImageSafely(with: "more-rounded")
+        public var moreVertical: UIImage = loadImageSafely(with: "more-vertical")
         public var scrollDownArrow: UIImage = loadImageSafely(with: "arrow_down")
         public var backCircle: UIImage = loadImageSafely(with: "back_circle")
         public var messageSent: UIImage = loadImageSafely(with: "checkmark_grey")
