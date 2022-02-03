@@ -65,7 +65,6 @@ final class AsyncOperation_Tests: XCTestCase {
         let operation = AsyncOperation(maxRetries: 10) { completion in
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
                 operationBlockCalls += 1
-                print("Hey")
                 completion(.retry)
             }
         }

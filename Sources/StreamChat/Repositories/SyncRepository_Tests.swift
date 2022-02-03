@@ -88,17 +88,13 @@ final class SyncRepository_Tests: XCTestCase {
     }
 
     func test_syncLocalState_localStorageEnabled_pendingConnectionDate_channels() throws {
-        try database.createCurrentUser()
-        try database.writeSynchronously { session in
-            session.currentUser?.lastPendingConnectionDate = Date().addingTimeInterval(-3600)
-            let query = ChannelListQuery(filter: .exists(.cid))
-            try session.saveChannel(payload: self.dummyPayload(with: .unique, numberOfMessages: 0), query: query)
-        }
-        database.writeSessionCounter = 0
+        try prepareForSyncLocalStorage(
+            createUser: true,
+            lastPendingConnection: Date().addingTimeInterval(-3600),
+            createChannel: true
+        )
 
-        let json = XCTestCase.mockData(fromFile: "MissingEventsPayload")
-        let payload = try JSONDecoder.default.decode(MissingEventsPayload.self, from: json)
-        waitForSyncLocalStateRun(requestResult: .success(payload))
+        try waitForSyncLocalStateRun(requestResult: .success(messageEventPayload()))
 
         XCTAssertTrue(hasUpdatedLastSyncAtNow)
         // Write: API Response, lastPendingConnectionDate, lastSyncAt
@@ -109,21 +105,17 @@ final class SyncRepository_Tests: XCTestCase {
     }
 
     func test_syncLocalState_localStorageEnabled_pendingConnectionDate_channels_activeRemoteChannelController() throws {
-        try database.createCurrentUser()
-        try database.writeSynchronously { session in
-            session.currentUser?.lastPendingConnectionDate = Date().addingTimeInterval(-3600)
-            let query = ChannelListQuery(filter: .exists(.cid))
-            try session.saveChannel(payload: self.dummyPayload(with: .unique, numberOfMessages: 0), query: query)
-        }
-        database.writeSessionCounter = 0
+        try prepareForSyncLocalStorage(
+            createUser: true,
+            lastPendingConnection: Date().addingTimeInterval(-3600),
+            createChannel: true
+        )
 
         let chatController = ChatChannelControllerMock(client: client)
         chatController.state = .remoteDataFetched
         _activeChannelControllers.add(chatController)
-        let json = XCTestCase.mockData(fromFile: "MissingEventsPayload")
-        let payload = try JSONDecoder.default.decode(MissingEventsPayload.self, from: json)
 
-        waitForSyncLocalStateRun(requestResult: .success(payload))
+        try waitForSyncLocalStateRun(requestResult: .success(messageEventPayload()))
 
         XCTAssertTrue(hasUpdatedLastSyncAtNow)
         // Write: API Response, lastPendingConnectionDate, lastSyncAt
@@ -135,22 +127,18 @@ final class SyncRepository_Tests: XCTestCase {
     }
 
     func test_syncLocalState_localStorageEnabled_pendingConnectionDate_channels_activeRemoteChannelListController() throws {
-        try database.createCurrentUser()
-        try database.writeSynchronously { session in
-            session.currentUser?.lastPendingConnectionDate = Date().addingTimeInterval(-3600)
-            let query = ChannelListQuery(filter: .exists(.cid))
-            try session.saveChannel(payload: self.dummyPayload(with: .unique, numberOfMessages: 0), query: query)
-        }
-        database.writeSessionCounter = 0
+        try prepareForSyncLocalStorage(
+            createUser: true,
+            lastPendingConnection: Date().addingTimeInterval(-3600),
+            createChannel: true
+        )
 
         let chatListController = ChatChannelListController(query: .init(filter: .exists(.cid)), client: client)
         chatListController.state = .remoteDataFetched
         _activeChannelListControllers.add(chatListController)
         channelRepository.resetChannelsQueryResult = .success([])
-        let json = XCTestCase.mockData(fromFile: "MissingEventsPayload")
-        let payload = try JSONDecoder.default.decode(MissingEventsPayload.self, from: json)
 
-        waitForSyncLocalStateRun(requestResult: .success(payload))
+        try waitForSyncLocalStateRun(requestResult: .success(messageEventPayload()))
 
         XCTAssertTrue(hasUpdatedLastSyncAtNow)
         // Write: API Response, lastPendingConnectionDate, lastSyncAt
@@ -166,8 +154,33 @@ final class SyncRepository_Tests: XCTestCase {
 
     private var hasUpdatedLastSyncAtNow: Bool {
         guard let lastSyncAt = database.viewContext.currentUser?.lastSyncAt else { return false }
-        let referenceDate = Date()
-        return (referenceDate - 0.01)...referenceDate ~= lastSyncAt
+        return lastSyncAt.isNearlySameDate(as: Date())
+    }
+
+    func messageEventPayload() throws -> MissingEventsPayload {
+        let json = XCTestCase.mockData(fromFile: "MissingEventsPayload")
+        return try JSONDecoder.default.decode(MissingEventsPayload.self, from: json)
+    }
+
+    private func prepareForSyncLocalStorage(
+        createUser: Bool,
+        lastPendingConnection: Date?,
+        createChannel: Bool
+    ) throws {
+        if createUser {
+            try database.createCurrentUser()
+        }
+
+        try database.writeSynchronously { session in
+            if let lastPendingConnection = lastPendingConnection {
+                session.currentUser?.lastPendingConnectionDate = lastPendingConnection
+            }
+            if createChannel {
+                let query = ChannelListQuery(filter: .exists(.cid))
+                try session.saveChannel(payload: self.dummyPayload(with: .unique, numberOfMessages: 0), query: query)
+            }
+        }
+        database.writeSessionCounter = 0
     }
 
     private func waitForSyncLocalStateRun(requestResult: Result<MissingEventsPayload, Error>? = nil) {

@@ -270,7 +270,7 @@ class ChannelListController_Tests: XCTestCase {
         }
         
         // Simulate successful response from backend
-        env.channelListUpdater?.update_completion!(.success([channel]))
+        env.channelListUpdater?.update_completion?(.success([channel]))
         
         AssertAsync {
             // Assert synchronized completion is invoked
@@ -322,7 +322,7 @@ class ChannelListController_Tests: XCTestCase {
         }
 
         // Simulate successful response from backend
-        env.channelListUpdater?.update_completion!(.success([channel]))
+        env.channelListUpdater?.update_completion?(.success([channel]))
         
         AssertAsync {
             // Assert synchronized completion is invoked
@@ -388,7 +388,7 @@ class ChannelListController_Tests: XCTestCase {
         }
 
         // Simulate successful response from backend
-        env.channelListUpdater?.update_completion!(.success([channel]))
+        env.channelListUpdater?.update_completion?(.success([channel]))
         
         AssertAsync {
             // Assert synchronized completion is invoked

@@ -756,10 +756,8 @@ class ChatClient_Tests: XCTestCase {
                 XCTFail("Should have a pending connection date")
                 return
             }
-            let pendingConnectionTimestamp = pendingConnectionDate.timeIntervalSince1970
-            let dateTimestamp = date.timeIntervalSince1970
-            let sameDate = dateTimestamp...(dateTimestamp + 0.01) ~= pendingConnectionTimestamp
-            XCTAssertTrue(sameDate)
+
+            XCTAssertNearlySameDate(pendingConnectionDate, date)
         }
     }
 
