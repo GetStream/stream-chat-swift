@@ -247,8 +247,8 @@ open class ChatMessageListVC:
 
     /// Updates the collection view data with given `changes`.
     open func updateMessages(with changes: [ListChange<ChatMessage>], completion: (() -> Void)? = nil) {
-        // Cleanup the cached cell heights for the message that will be updated.
-        cleanCachedCellHeights(before: changes)
+        // Clear the cached cell heights for the message that will be updated.
+        clearCachedCellHeights(before: changes)
 
         if #available(iOS 13.0, *), isDiffingEnabled {
             updateMessagesSnapshot(with: changes, completion: completion)
@@ -414,11 +414,7 @@ open class ChatMessageListVC:
         delegate?.chatMessageListVC(self, willDisplayMessageAt: indexPath)
 
         if let message = dataSource?.chatMessageListVC(self, messageAt: indexPath) {
-            // Cache Cell Heights only if iOS below 15, since iOS 15+ automatic cell sizing works fine.
-            guard #available(iOS 15, *) else {
-                cachedCellHeights[message.id] = cell.frame.size.height
-                return
-            }
+            cachedCellHeights[message.id] = cell.frame.size.height
         }
     }
 
@@ -430,8 +426,8 @@ open class ChatMessageListVC:
         return cachedCellHeights[message.id] ?? UITableView.automaticDimension
     }
 
-    /// Clean the cached cell heights for the messages that will be updated.
-    func cleanCachedCellHeights(before changes: [ListChange<ChatMessage>]) {
+    /// Clear the cached cell heights for the messages that will be updated.
+    func clearCachedCellHeights(before changes: [ListChange<ChatMessage>]) {
         for change in changes {
             let message: ChatMessage
 
