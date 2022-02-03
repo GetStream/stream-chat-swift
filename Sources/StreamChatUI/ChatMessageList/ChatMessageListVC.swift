@@ -419,8 +419,8 @@ open class ChatMessageListVC:
     }
 
     open func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
-        guard let message = dataSource?.chatMessageListVC(self, messageAt: indexPath) else {
-            return UITableView.automaticDimension
+        guard isDiffingEnabled, let message = dataSource?.chatMessageListVC(self, messageAt: indexPath) else {
+            return 150
         }
 
         return cachedCellHeights[message.id] ?? UITableView.automaticDimension
