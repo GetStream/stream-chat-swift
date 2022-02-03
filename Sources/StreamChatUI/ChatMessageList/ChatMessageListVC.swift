@@ -58,11 +58,6 @@ open class ChatMessageListVC:
         set { _diffableDataSource = newValue }
     }
 
-    /// All messages provided by the data source.
-    internal var messages: [ChatMessage] {
-        dataSource?.messages ?? []
-    }
-
     /// A View used to display the messages.
     open private(set) lazy var listView: ChatMessageListView = components
         .messageListView
@@ -632,59 +627,65 @@ internal extension ChatMessageListVC {
         /// Populate the Initial messages data.
         var snapshot = NSDiffableDataSourceSnapshot<Int, ChatMessage>()
         snapshot.appendSections([0])
-        snapshot.appendItems(messages, toSection: 0)
+        snapshot.appendItems(dataSource?.messages ?? [], toSection: 0)
         diffableDataSource.apply(snapshot, animatingDifferences: false)
     }
 
     /// Transforms an array of changes to a diffable data source snapshot.
     func updateMessagesSnapshot(with changes: [ListChange<ChatMessage>], completion: (() -> Void)?) {
-        var snapshot = NSDiffableDataSourceSnapshot<Int, ChatMessage>()
-        let messages = self.messages
+        var snapshot = diffableDataSource?.snapshot() ?? NSDiffableDataSourceSnapshot<Int, ChatMessage>()
 
         var updatedMessages: [ChatMessage] = []
         var removedMessages: [ChatMessage] = []
+        var insertedMessages: [(ChatMessage, row: Int)] = []
+        var movedMessages: [(from: ChatMessage, to: ChatMessage)] = []
 
-        var hasInsertions = false
-        var hasNewInsertions = false // If messages are being inserted at the bottom
+        var hasNewInsertions = false
 
         changes.forEach { change in
             switch change {
-            case let .insert(_, indexPath):
-                hasInsertions = true
-                if indexPath.row == 0 {
-                    hasNewInsertions = true
-                }
+            case let .insert(message, indexPath):
+                insertedMessages.append((message, row: indexPath.row))
+                hasNewInsertions = indexPath.row == 0
             case let .update(message, _):
                 updatedMessages.append(message)
             case let .remove(message, _):
                 removedMessages.append(message)
-            case .move:
-                // Right now, we treat moves as insertions and re-create the snapshot because
-                // LLC currently has some workarounds for the perform batch updates scenario
-                // that break the diffable approach.
-                hasInsertions = true
+            case let .move(_, fromIndex, toIndex):
+                guard let fromMessage = snapshot.itemIdentifiers[safe: fromIndex.row] else { break }
+                guard let toMessage = snapshot.itemIdentifiers[safe: toIndex.row] else { break }
+                movedMessages.append((from: fromMessage, to: toMessage))
             }
         }
 
-        if hasInsertions {
-            // Because of the inverted table view, whenever there's in an insertion
-            // we need to re-append all items again.
-            snapshot.appendSections([0])
-            snapshot.appendItems(messages, toSection: 0)
-        } else if let currentSnapshot = diffableDataSource?.snapshot() {
-            // If there are no insertions, we can re-use the current snapshot.
-            snapshot = currentSnapshot
-            snapshot.deleteItems(removedMessages)
-            snapshot.reloadItems(updatedMessages)
+        let sortedInsertedMessages = insertedMessages
+            .sorted(by: { $0.row < $1.row })
+            .map(\.0)
+
+        if hasNewInsertions, let currentFirstMessage = snapshot.itemIdentifiers.first {
+            // Insert new messages at the bottom.
+            snapshot.insertItems(sortedInsertedMessages, beforeItem: currentFirstMessage)
+        } else if let currentLastMessage = snapshot.itemIdentifiers.last {
+            // Load new messages at the top.
+            snapshot.insertItems(sortedInsertedMessages, afterItem: currentLastMessage)
+        }
+
+        snapshot.deleteItems(removedMessages)
+        snapshot.reloadItems(updatedMessages)
+
+        movedMessages.forEach {
+            snapshot.moveItem($0.from, afterItem: $0.to)
+            snapshot.reloadItems([$0.from, $0.to])
         }
 
         diffableDataSource?.apply(snapshot, animatingDifferences: false) { [weak self] in
-            if hasNewInsertions && messages.first?.isSentByCurrentUser == true {
+            let newestMessage = snapshot.itemIdentifiers.first
+            if hasNewInsertions && newestMessage?.isSentByCurrentUser == true {
                 self?.listView.scrollToMostRecentMessage()
             }
 
             // When new message is inserted, update the previous message to hide the timestamp if needed.
-            if hasNewInsertions, let previousMessage = messages[safe: 1] {
+            if hasNewInsertions, let previousMessage = snapshot.itemIdentifiers[safe: 1] {
                 let indexPath = IndexPath(row: 1, section: 0)
                 // The completion block from `apply()` should always be called on main thread,
                 // but on iOS 14 this doesn't seem to be the case, and it crashes.
