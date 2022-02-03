@@ -684,7 +684,7 @@ internal extension ChatMessageListVC {
             }
 
             // When new message is inserted, update the previous message to hide the timestamp if needed.
-            if hasInsertions, let previousMessage = messages[safe: 1] {
+            if hasNewInsertions, let previousMessage = messages[safe: 1] {
                 let indexPath = IndexPath(row: 1, section: 0)
                 // The completion block from `apply()` should always be called on main thread,
                 // but on iOS 14 this doesn't seem to be the case, and it crashes.
