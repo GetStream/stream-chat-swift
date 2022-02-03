@@ -647,25 +647,24 @@ internal extension ChatMessageListVC {
 
         var updatedMessages: [ChatMessage] = []
         var removedMessages: [ChatMessage] = []
-        var movedMessages: [(from: ChatMessage, to: ChatMessage)] = []
 
-        var insertionAtIndex: Int = -1
+        var hasInsertions = false
 
         changes.forEach { change in
             switch change {
-            case let .insert(_, index):
-                insertionAtIndex = index.item
+            case .insert:
+                hasInsertions = true
             case let .update(message, _):
                 updatedMessages.append(message)
             case let .remove(message, _):
                 removedMessages.append(message)
-            case let .move(message, fromIndex, _):
-                guard let fromMessage = messages[safe: fromIndex.item] else { break }
-                movedMessages.append((fromMessage, message))
+            case .move:
+                // Right now, we treat moves as insertions and re-create the snapshot because
+                // LLC currently has some workarounds for the perform batch updates scenario
+                // that break the diffable approach.
+                hasInsertions = true
             }
         }
-
-        let hasInsertions = insertionAtIndex >= 0
 
         if hasInsertions {
             // Because of the inverted table view, whenever there's in an insertion
@@ -675,28 +674,26 @@ internal extension ChatMessageListVC {
         } else if let currentSnapshot = diffableDataSource?.snapshot() {
             // If there are no insertions, we can re-use the current snapshot.
             snapshot = currentSnapshot
-        }
-
-        snapshot.deleteItems(removedMessages)
-        snapshot.reloadItems(updatedMessages)
-        movedMessages.forEach {
-            snapshot.moveItem($0.from, beforeItem: $0.to)
-        }
-
-        // Update the second message to hide the timestamp if needed.
-        // Note: This in theory should only be done when there are insertions, but we do
-        // the other way around. The reason is to avoid an UI glitch when uploading images.
-        // Because an update is always triggered after creating a new messages, this approach also works.
-        if !hasInsertions, let secondMessage = messages[safe: 1] {
-            snapshot.reloadItems([secondMessage])
+            snapshot.deleteItems(removedMessages)
+            snapshot.reloadItems(updatedMessages)
         }
 
         diffableDataSource?.apply(snapshot, animatingDifferences: false) { [weak self] in
-            let currentUserSentNewMessage = hasInsertions && insertionAtIndex == 0
-                && messages.first?.isSentByCurrentUser == true
-
-            if currentUserSentNewMessage {
+            if hasInsertions && messages.first?.isSentByCurrentUser == true {
                 self?.listView.scrollToMostRecentMessage()
+            }
+
+            // When new message is inserted, update the previous message to hide the timestamp if needed.
+            if hasInsertions, let previousMessage = messages[safe: 1] {
+                let indexPath = IndexPath(row: 1, section: 0)
+                // The completion block from `apply()` should always be called on main thread,
+                // but on iOS 14 this doesn't seem to be the case, and it crashes.
+                DispatchQueue.main.async {
+                    self?.updateMessagesSnapshot(
+                        with: [.update(previousMessage, index: indexPath)],
+                        completion: nil
+                    )
+                }
             }
 
             completion?()
