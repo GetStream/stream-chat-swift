@@ -645,11 +645,15 @@ internal extension ChatMessageListVC {
         var removedMessages: [ChatMessage] = []
 
         var hasInsertions = false
+        var hasNewInsertions = false // If messages are being inserted at the bottom
 
         changes.forEach { change in
             switch change {
-            case .insert:
+            case let .insert(_, indexPath):
                 hasInsertions = true
+                if indexPath.row == 0 {
+                    hasNewInsertions = true
+                }
             case let .update(message, _):
                 updatedMessages.append(message)
             case let .remove(message, _):
@@ -675,7 +679,7 @@ internal extension ChatMessageListVC {
         }
 
         diffableDataSource?.apply(snapshot, animatingDifferences: false) { [weak self] in
-            if hasInsertions && messages.first?.isSentByCurrentUser == true {
+            if hasNewInsertions && messages.first?.isSentByCurrentUser == true {
                 self?.listView.scrollToMostRecentMessage()
             }
 
