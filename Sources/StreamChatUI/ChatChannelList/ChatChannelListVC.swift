@@ -6,6 +6,10 @@ import StreamChat
 import UIKit
 import SwiftUI
 
+public extension Notification.Name {
+    static let pushToChatMessageScreen = Notification.Name("pushToChatMessageScreen")
+}
+
 /// A `UIViewController` subclass  that shows list of channels.
 @available(iOSApplicationExtension, unavailable)
 open class ChatChannelListVC: _ViewController,
@@ -113,6 +117,23 @@ open class ChatChannelListVC: _ViewController,
         }
 
         loadMoreChannels()
+    }
+
+    open override func viewDidLoad() {
+        super.viewDidLoad()
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(pushToChatMessageScreen(_:)),
+            name: .pushToChatMessageScreen,
+            object: nil)
+    }
+
+    @objc private func pushToChatMessageScreen(_ notification: NSNotification) {
+        guard let controller = notification.userInfo?["channelController"] as? ChatChannelController,
+              let cid = controller.cid else {
+            return
+        }
+        self.router.showChannel(for: cid)
     }
 
     override open func setUpLayout() {

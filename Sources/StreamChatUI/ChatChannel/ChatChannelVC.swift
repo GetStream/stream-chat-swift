@@ -8,6 +8,7 @@ import UIKit
 extension Notification.Name {
     public static let showTabbar = Notification.Name("kStreamChatshowTabbar")
     public static let hideTabbar = Notification.Name("kStreamHideTabbar")
+    public static let showDaoShareScreen = Notification.Name("showDaoShareScreen")
 }
 
 /// Controller responsible for displaying the channel messages.
@@ -176,13 +177,15 @@ open class ChatChannelVC:
 
         navigationHeaderView.addSubview(rightStackView)
         rightStackView.addArrangedSubview(channelAvatarView)
-        rightStackView.addArrangedSubview(moreButton)
+        if channelController.channel?.type == .dao {
+            rightStackView.addArrangedSubview(moreButton)
+            moreButton.widthAnchor.constraint(equalToConstant: 30).isActive = true
+        }
 
         NSLayoutConstraint.activate([
             rightStackView.centerYAnchor.constraint(equalTo: navigationHeaderView.centerYAnchor, constant: 0),
             rightStackView.trailingAnchor.constraint(equalTo: navigationHeaderView.trailingAnchor, constant: -8),
             channelAvatarView.widthAnchor.constraint(equalToConstant: channelAvatarSize.width),
-            moreButton.widthAnchor.constraint(equalToConstant: 30),
             channelAvatarView.heightAnchor.constraint(equalToConstant: channelAvatarSize.height),
         ])
 
@@ -282,7 +285,13 @@ open class ChatChannelVC:
     }
 
     @objc func shareAction(_ sender: Any) {
-
+        guard let extraData = channelController.channel?.extraData,
+              channelController.channel?.type == .dao else {
+            return
+        }
+        var userInfo = [AnyHashable: Any]()
+        userInfo["extraData"] = channelController.channel?.extraData
+        NotificationCenter.default.post(name: .showDaoShareScreen, object: nil, userInfo: userInfo)
     }
 
     @objc func moreButtonAction(_ sender: Any) {

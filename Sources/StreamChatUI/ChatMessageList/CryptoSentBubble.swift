@@ -218,7 +218,7 @@ class CryptoSentBubble: UITableViewCell {
     }
 }
 
-func fetchRawData(raw: RawJSON) -> Any? {
+public func fetchRawData(raw: RawJSON) -> Any? {
     switch raw {
     case .number(let double):
         return double
