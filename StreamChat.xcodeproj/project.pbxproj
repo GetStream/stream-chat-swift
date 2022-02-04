@@ -926,6 +926,7 @@
 		CD24C71C2784881000F6378D /* Dynamic.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD24C71B2784881000F6378D /* Dynamic.swift */; };
 		CD24C71E2784892A00F6378D /* UIApplication+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD24C71D2784892A00F6378D /* UIApplication+Extension.swift */; };
 		CD6058EB278860EB00A033CD /* ChatClientConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD6058EA278860EB00A033CD /* ChatClientConfiguration.swift */; };
+		CD6A29D627AD688700007D7B /* ExtraDataHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD6A29D427AD688700007D7B /* ExtraDataHelper.swift */; };
 		CD72548D275F556100CD6444 /* RedPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD72548C275F556100CD6444 /* RedPacket.swift */; };
 		CD72AFD4278DAEF20025999A /* EFQRCode in Frameworks */ = {isa = PBXBuildFile; productRef = CD72AFD3278DAEF20025999A /* EFQRCode */; };
 		CD89189E273E25B70051C651 /* KeyboardToolKitList.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD66B570273D5D1D00DAC5D2 /* KeyboardToolKitList.swift */; };
@@ -2392,6 +2393,7 @@
 		CD24C71D2784892A00F6378D /* UIApplication+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIApplication+Extension.swift"; sourceTree = "<group>"; };
 		CD6058EA278860EB00A033CD /* ChatClientConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatClientConfiguration.swift; sourceTree = "<group>"; };
 		CD66B570273D5D1D00DAC5D2 /* KeyboardToolKitList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardToolKitList.swift; sourceTree = "<group>"; };
+		CD6A29D427AD688700007D7B /* ExtraDataHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtraDataHelper.swift; sourceTree = "<group>"; };
 		CD72548C275F556100CD6444 /* RedPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RedPacket.swift; sourceTree = "<group>"; };
 		CD8918A1273E32030051C651 /* SendMoneyButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendMoneyButton.swift; sourceTree = "<group>"; };
 		CD8918A5273E32AD0051C651 /* ToolTipToggleButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToolTipToggleButton.swift; sourceTree = "<group>"; };
@@ -4442,6 +4444,7 @@
 				CD24C71D2784892A00F6378D /* UIApplication+Extension.swift */,
 				CD6058EA278860EB00A033CD /* ChatClientConfiguration.swift */,
 				EDAB4B3E27A15D1D00F07D53 /* Snackbar.swift */,
+				CD6A29D427AD688700007D7B /* ExtraDataHelper.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -6890,6 +6893,7 @@
 				224FF6912562F58F00725DD1 /* UIColor+Extensions.swift in Sources */,
 				22C2359A259CA87B00DC805A /* Animation.swift in Sources */,
 				CD6058EB278860EB00A033CD /* ChatClientConfiguration.swift in Sources */,
+				CD6A29D627AD688700007D7B /* ExtraDataHelper.swift in Sources */,
 				79088339254876F200896F03 /* ChatMessageListView.swift in Sources */,
 				EDAB4B4227A17A0300F07D53 /* EmojiButton.swift in Sources */,
 				CD89189E273E25B70051C651 /* KeyboardToolKitList.swift in Sources */,
