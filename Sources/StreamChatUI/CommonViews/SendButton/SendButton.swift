@@ -10,11 +10,7 @@ open class SendButton: _Button, AppearanceProvider {
     /// Override this variable to enable custom behavior upon button enabled.
     override open var isEnabled: Bool {
         didSet {
-            Animate {
-                self.transform = self.isEnabled
-                    ? CGAffineTransform(rotationAngle: -CGFloat.pi / 2.0)
-                    : .identity
-            }
+            isEnabledChangeAnimation()
         }
     }
 
@@ -27,5 +23,14 @@ open class SendButton: _Button, AppearanceProvider {
         let buttonColor: UIColor = appearance.colorPalette.alternativeInactiveTint
         let disabledStateImage = appearance.images.sendArrow.tinted(with: buttonColor)
         setImage(disabledStateImage, for: .disabled)
+    }
+
+    /// The animation when the `isEnabled` state changes.
+    open func isEnabledChangeAnimation() {
+        Animate {
+            self.transform = self.isEnabled
+                ? CGAffineTransform(rotationAngle: -CGFloat.pi / 2.0)
+                : .identity
+        }
     }
 }
