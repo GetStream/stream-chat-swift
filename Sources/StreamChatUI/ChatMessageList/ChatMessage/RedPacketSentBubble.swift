@@ -8,6 +8,7 @@
 
 import UIKit
 import StreamChat
+import StreamChatUI
 
 class RedPacketSentBubble: UITableViewCell {
 
@@ -286,25 +287,25 @@ class RedPacketSentBubble: UITableViewCell {
 
     private func isAllowToPick() -> Bool {
         guard let redPacket = getRedPacketExtraData() else {
-            showSnakBar(text: "Expired - better luck next time!")
+            Snackbar.show(text: "Expired - better luck next time!")
             return false
         }
         // check userId
         if content?.isSentByCurrentUser ?? false {
-            showSnakBar(text: "You can not pickup your own packet")
+            Snackbar.show(text: "You can not pickup your own packet")
             return false
         } else {
             // check end time
             if let endDate = getEndTime(raw: redPacket) {
                 let minutes = Date().minutesFromCurrentDate(endDate)
                 if minutes <= 0 {
-                    showSnakBar(text: "Expired - better luck next time!")
+                    Snackbar.show(text: "Expired - better luck next time!")
                     return false
                 } else {
                     return true
                 }
             } else {
-                showSnakBar(text: "Expired - better luck next time!")
+                Snackbar.show(text: "Expired - better luck next time!")
                 return false
             }
         }
@@ -322,11 +323,5 @@ class RedPacketSentBubble: UITableViewCell {
                 NotificationCenter.default.post(name: .pickUpRedPacket, object: nil, userInfo: userInfo)
             }
         }
-    }
-
-    private func showSnakBar(text: String) {
-        var userInfo = [String: Any]()
-        userInfo["message"] = text
-        NotificationCenter.default.post(name: .showSnackBar, object: nil, userInfo: userInfo)
     }
 }

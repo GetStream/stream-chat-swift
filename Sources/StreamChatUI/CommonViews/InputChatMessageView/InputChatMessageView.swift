@@ -22,6 +22,23 @@ open class InputChatMessageView: _View, ComponentsProvider, AppearanceProvider {
         }
     }
 
+    /// A button to send the message.
+    public private(set) lazy var sendButton: UIButton = components
+        .sendButton.init()
+        .withoutAutoresizingMaskConstraints
+
+    public private(set) lazy var emojiButton: UIButton = components
+        .emojiButton.init()
+        .withoutAutoresizingMaskConstraints
+
+    public private(set) lazy var emptyView: UIView = {
+        let view = UIView()
+        view.frame = .zero
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.backgroundColor = .clear
+        return view
+    }()
+    
     /// The main container stack view that layouts all the message input content views.
     public private(set) lazy var container = ContainerStackView()
         .withoutAutoresizingMaskConstraints
@@ -84,14 +101,17 @@ open class InputChatMessageView: _View, ComponentsProvider, AppearanceProvider {
         container.addArrangedSubview(inputTextContainer)
         quotedMessageView.isHidden = true
         attachmentsViewContainer.isHidden = true
-
+        emojiButton.setImage(appearance.images.emojiIcon, for: .normal)
         inputTextContainer.isLayoutMarginsRelativeArrangement = true
         inputTextContainer.alignment = .center
-        inputTextContainer.spacing = 4
+        inputTextContainer.spacing = 6
         inputTextContainer.directionalLayoutMargins = .init(top: 0, leading: 6, bottom: 0, trailing: 6)
         inputTextContainer.addArrangedSubview(commandLabelView)
         inputTextContainer.addArrangedSubview(textView)
         inputTextContainer.addArrangedSubview(clearButton)
+        inputTextContainer.addArrangedSubview(emojiButton)
+        inputTextContainer.addArrangedSubview(sendButton)
+        inputTextContainer.addArrangedSubview(emptyView)
 
         commandLabelView.setContentCompressionResistancePriority(.streamRequire, for: .horizontal)
         textView.setContentCompressionResistancePriority(.streamLow, for: .horizontal)
@@ -100,8 +120,14 @@ open class InputChatMessageView: _View, ComponentsProvider, AppearanceProvider {
         textView.textColor = .white
         NSLayoutConstraint.activate([
             clearButton.heightAnchor.pin(equalToConstant: 24),
-            clearButton.widthAnchor.pin(equalTo: clearButton.heightAnchor, multiplier: 1)
+            clearButton.widthAnchor.pin(equalTo: clearButton.heightAnchor, multiplier: 1),
+            emptyView.heightAnchor.pin(equalToConstant: 24),
+            emptyView.widthAnchor.pin(equalToConstant: 2),
         ])
+        sendButton.pin(anchors: [.width], to: 24)
+        sendButton.pin(anchors: [.height], to: 24)
+        emojiButton.pin(anchors: [.width], to: 24)
+        emojiButton.pin(anchors: [.height], to: 24)
     }
 
     override open func updateContent() {

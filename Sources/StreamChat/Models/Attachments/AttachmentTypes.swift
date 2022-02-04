@@ -19,7 +19,6 @@ enum AttachmentCodingKeys: String, CodingKey, CaseIterable {
     case assetURL = "asset_url"
     case titleLink = "title_link"
     case actions
-    case amount
     case paymentType
 }
 

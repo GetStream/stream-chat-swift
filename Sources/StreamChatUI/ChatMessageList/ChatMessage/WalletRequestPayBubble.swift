@@ -7,6 +7,7 @@
 
 import UIKit
 import StreamChat
+import Nuke
 
 class WalletRequestPayBubble: UITableViewCell {
 
@@ -84,7 +85,7 @@ class WalletRequestPayBubble: UITableViewCell {
             sentThumbImageView.leadingAnchor.constraint(equalTo: subContainer.leadingAnchor, constant: 0),
             sentThumbImageView.trailingAnchor.constraint(equalTo: subContainer.trailingAnchor, constant: 0),
             sentThumbImageView.bottomAnchor.constraint(equalTo: subContainer.bottomAnchor, constant: 0),
-            sentThumbImageView.heightAnchor.constraint(equalToConstant: 150)
+            sentThumbImageView.heightAnchor.constraint(equalToConstant: 200)
         ])
 
         descriptionLabel = createDescLabel()
@@ -102,18 +103,16 @@ class WalletRequestPayBubble: UITableViewCell {
 
         lblDetails = createDetailsLabel()
         if walletPaymentType == .request {
-            descriptionLabel.text = "Parth Requests Payment \n REQUEST: 100 ONE"
-            lblDetails.text = "\(content?.text ?? "")"
-            sentThumbImageView.image = Appearance.default.images.requestImg
-        } else {
-            descriptionLabel.text = "Ajay sent you crypto \n SENT: 750 ONE"
-            lblDetails.text = "\(content?.text ?? "")"
-            sentThumbImageView.image = Appearance.default.images.cryptoSentThumb
+            let payload = content?.attachments(payloadType: WalletAttachmentPayload.self).first
+            descriptionLabel.text = "\(requestedUserName(raw: payload?.extraData) ?? "-") Requests Payment"
+            let themeURL = requestedThemeURL(raw: payload?.extraData)
+            Nuke.loadImage(with: themeURL, into: sentThumbImageView)
+            lblDetails.text = "REQUEST: \(requestedAmount(raw: payload?.extraData) ?? "0") ONE"
         }
         detailsStack = UIStackView(arrangedSubviews: [lblDetails])
         detailsStack.axis = .vertical
         detailsStack.distribution = .fillEqually
-        detailsStack.spacing = 2
+        detailsStack.spacing = 0
         subContainer.addSubview(detailsStack)
         detailsStack.transform = .mirrorY
         detailsStack.alignment = .center
@@ -126,7 +125,7 @@ class WalletRequestPayBubble: UITableViewCell {
 
         pickUpButton = UIButton()
         pickUpButton.translatesAutoresizingMaskIntoConstraints = false
-        pickUpButton.setTitle(walletPaymentType == .request ? "Pay" : "Block Explorer", for: .normal)
+        pickUpButton.setTitle("Pay", for: .normal)
         pickUpButton.addTarget(self, action: #selector(btnSendPacketAction), for: .touchUpInside)
         pickUpButton.setTitleColor(.white, for: .normal)
         pickUpButton.titleLabel?.font = UIFont.systemFont(ofSize: 14, weight: .regular)
@@ -179,7 +178,7 @@ class WalletRequestPayBubble: UITableViewCell {
                 .withoutAutoresizingMaskConstraints
             descriptionLabel.textAlignment = .center
             descriptionLabel.numberOfLines = 0
-            descriptionLabel.textColor = Appearance.default.colorPalette.redPacketExpired
+            descriptionLabel.textColor = .white
             descriptionLabel.font = Appearance.default.fonts.subheadlineBold.withSize(16)
         }
         return descriptionLabel
@@ -260,6 +259,72 @@ class WalletRequestPayBubble: UITableViewCell {
         }
     }
 
+    private func requestedUserName(raw: [String: RawJSON]?) -> String? {
+        guard let extraData = raw else {
+            return nil
+        }
+        if let userId = extraData["recipientName"] {
+            return fetchRawData(raw: userId) as? String ?? ""
+        } else {
+            return nil
+        }
+    }
+
+    private func requestedThemeURL(raw: [String: RawJSON]?) -> String? {
+        guard let extraData = raw else {
+            return nil
+        }
+        if let userId = extraData["paymentTheme"] {
+            return fetchRawData(raw: userId) as? String ?? ""
+        } else {
+            return "https://res.cloudinary.com/timeless/image/upload/v1/app/Wallet/shh.png"
+        }
+    }
+
+    private func requestedUserId(raw: [String: RawJSON]?) -> String? {
+        guard let extraData = raw else {
+            return nil
+        }
+        if let userId = extraData["recipientUserId"] {
+            return fetchRawData(raw: userId) as? String
+        } else {
+            return nil
+        }
+    }
+
+    private func requestedAmount(raw: [String: RawJSON]?) -> String? {
+        guard let extraData = raw else {
+            return nil
+        }
+        if let userId = extraData["transferAmount"] {
+            return fetchRawData(raw: userId) as? String
+        } else {
+            return nil
+        }
+    }
+
+    private func requestedImageUrl(raw: [String: RawJSON]?) -> String? {
+        guard let extraData = raw else {
+            return nil
+        }
+        if let imageUrl = extraData["recipientImageUrl"] {
+            return fetchRawData(raw: imageUrl) as? String
+        } else {
+            return nil
+        }
+    }
+
+    private func requestedIsPaid(raw: [String: RawJSON]?) -> Bool {
+        guard let extraData = raw else {
+            return true
+        }
+        if let imageUrl = extraData["isPaid"] {
+            return fetchRawData(raw: imageUrl) as? Bool ?? true
+        } else {
+            return true
+        }
+    }
+
     private func getExtraData(key: String) -> [String: RawJSON]? {
         if let extraData = content?.extraData[key] {
             switch extraData {
@@ -274,9 +339,28 @@ class WalletRequestPayBubble: UITableViewCell {
     }
 
     @objc func btnSendPacketAction() {
-        guard let channelId = channel?.cid else { return }
-        var userInfo = [String: Any]()
-        userInfo["channelId"] = channelId
-        NotificationCenter.default.post(name: .sendRedPacketTapAction, object: nil, userInfo: userInfo)
+        if walletPaymentType == .request {
+            guard let payload = content?.attachments(payloadType: WalletAttachmentPayload.self).first,
+                  requestedIsPaid(raw: payload.extraData) == false else {
+                return
+            }
+            if requestedUserId(raw: payload.extraData) == self.content?.author.id.string {
+
+                Snackbar.show(text: "You can not send one to your own wallet")
+                return
+            }
+            var userInfo = [String: Any]()
+            userInfo["transferAmount"] = requestedAmount(raw: payload.extraData)
+            userInfo["recipientName"] = requestedUserName(raw: payload.extraData)
+            userInfo["recipientUserId"] = requestedUserId(raw: payload.extraData)
+            userInfo["requestedImageUrl"] = requestedImageUrl(raw: payload.extraData)
+            NotificationCenter.default.post(name: .payRequestTapAction, object: nil, userInfo: userInfo)
+        } else {
+            guard let channelId = channel?.cid else { return }
+            var userInfo = [String: Any]()
+            userInfo["channelId"] = channelId
+            NotificationCenter.default.post(name: .sendRedPacketTapAction, object: nil, userInfo: userInfo)
+        }
+
     }
 }

@@ -5,14 +5,17 @@
 import Foundation
 import StreamChat
 import UIKit
+import SwiftUI
 
 extension Notification.Name {
     public static let sendOneWalletTapAction = Notification.Name("kStreamChatOneWalletTapAction")
+    public static let sendOneAction = Notification.Name("kStreamChatSendOneAction")
     public static let sendRedPacketTapAction = Notification.Name("kStreamChatSendRedPacketTapAction")
     public static let sendOneWallet = Notification.Name("kTimelessWalletsendOneWallet")
     public static let sendRedPacket = Notification.Name("kTimelessWalletsendRedPacket")
     public static let pickUpRedPacket = Notification.Name("kStreamChatPickUpRedPacket")
     public static let showSnackBar = Notification.Name("kStreamshowSnackBar")
+    public static let payRequestTapAction = Notification.Name("kPayRequestTapAction")
 }
 
 /// The possible errors that can occur in attachment validation
@@ -267,10 +270,15 @@ open class ComposerVC: _ViewController,
     }()
 
     private var walletInputView: WalletQuickInputViewController?
+    private var menuController: ChatMenuViewController?
+    private var isMenuShowing = false
+    private var keyboardHeight: CGFloat {
+        return KeyboardService.shared.measuredSize
+    }
 
     override open func setUp() {
         super.setUp()
-
+        KeyboardService.shared.observeKeyboard(self.view)
         composerView.inputMessageView.textView.delegate = self
         // Set the delegate for handling the pasting of UIImages in the text view
         composerView.inputMessageView.textView.clipboardAttachmentDelegate = self
@@ -282,14 +290,14 @@ open class ComposerVC: _ViewController,
             weakSelf.composerView.toolKitView.isHidden = isHidden
         }
 
-        //composerView.attachmentButton.addTarget(self, action: #selector(showAttachmentsPicker), for: .touchUpInside)
-        composerView.sendButton.addTarget(self, action: #selector(publishMessage), for: .touchUpInside)
+        composerView.inputMessageView.sendButton.addTarget(self, action: #selector(publishMessage), for: .touchUpInside)
         composerView.confirmButton.addTarget(self, action: #selector(publishMessage), for: .touchUpInside)
         composerView.shrinkInputButton.addTarget(self, action: #selector(shrinkInput), for: .touchUpInside)
         //composerView.commandsButton.addTarget(self, action: #selector(showAvailableCommands), for: .touchUpInside)
         composerView.dismissButton.addTarget(self, action: #selector(clearContent(sender:)), for: .touchUpInside)
         //composerView.moneyTransferButton.addTarget(self, action: #selector(sendMoneyAction(sender:)), for: .touchUpInside)
         composerView.toolbarToggleButton.addTarget(self, action: #selector(toolKitToggleAction(sender:)), for: .touchUpInside)
+        composerView.toolbarBackButton.addTarget(self, action: #selector(toolKitBackAction(sender:)), for: .touchUpInside)
         composerView.inputMessageView.clearButton.addTarget(
             self,
             action: #selector(clearContent(sender:)),
@@ -313,11 +321,17 @@ open class ComposerVC: _ViewController,
                 weakSelf.composerView.inputMessageView.textView.resignFirstResponder()
                 weakSelf.showAvailableCommands()
             case .pay:
-                weakSelf.showPaymentRequest()
-
+                weakSelf.showPayment()
             }
         }
         setupAttachmentsView()
+        bindMenuController()
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { [weak self] in
+            guard let `self` = self else { return }
+            if self.keyboardHeight == 0.0 {
+                self.composerView.inputMessageView.textView.becomeFirstResponder()
+            }
+        }
     }
 
     override open func setUpLayout() {
@@ -356,7 +370,7 @@ open class ComposerVC: _ViewController,
             composerView.inputMessageView.textView.placeholderLabel.text = L10n.Composer.Placeholder.message
             Animate {
                 self.composerView.confirmButton.isHidden = true
-                self.composerView.sendButton.isHidden = false
+                self.composerView.inputMessageView.sendButton.isHidden = false
                 self.composerView.headerView.isHidden = true
             }
         case .quote:
@@ -368,14 +382,14 @@ open class ComposerVC: _ViewController,
             composerView.titleLabel.text = L10n.Composer.Title.edit
             Animate {
                 self.composerView.confirmButton.isHidden = false
-                self.composerView.sendButton.isHidden = true
+                self.composerView.inputMessageView.sendButton.isHidden = true
                 self.composerView.headerView.isHidden = false
             }
         default:
             log.warning("The composer state \(content.state.description) was not handled.")
         }
 
-        composerView.sendButton.isEnabled = !content.isEmpty
+        composerView.inputMessageView.sendButton.isHidden = content.isEmpty && content.attachments.isEmpty
         composerView.confirmButton.isEnabled = !content.isEmpty
 
         let isAttachmentButtonHidden = !content.isEmpty || !isAttachmentsEnabled || content.hasCommand
@@ -440,13 +454,75 @@ open class ComposerVC: _ViewController,
     open func setupAttachmentsView() {
         addChildViewController(attachmentsVC, embedIn: composerView.inputMessageView.attachmentsViewContainer)
         attachmentsVC.didTapRemoveItemButton = { [weak self] index in
-            if self?.content.attachments[index].type == .wallet {
-                self?.showMessageOption(isHide: false)
+            guard let `self` = self else { return }
+            if self.content.attachments[index].type == .wallet {
+                self.showMessageOption(isHide: false)
             }
-            self?.content.attachments.remove(at: index)
+            self.content.attachments.remove(at: index)
+            self.composerView.inputMessageView.sendButton.isHidden = self.content.isEmpty && self.content.attachments.isEmpty
         }
     }
-    
+
+    private func bindWalletOption() {
+        walletInputView?.didShowPaymentOption = { [weak self] in
+            guard let `self` = self else { return }
+            self.composerView.toolbarBackButton.isHidden.toggle()
+            self.composerView.toolbarToggleButton.isHidden.toggle()
+        }
+        walletInputView?.didRequestAction = { [weak self] (amount, type, theme) in
+            guard let `self` = self else { return }
+            if type == .request {
+                self.addWalletAttachment(amount: amount, paymentType: type, paymentTheme: theme)
+            } else {
+                self.composerView.inputMessageView.textView.text = nil
+                self.composerView.inputMessageView.textView.resignFirstResponder()
+                guard let channelId = self.channelController?.channel?.cid else { return }
+                var userInfo = [String: Any]()
+                userInfo["channelId"] = channelId
+                userInfo["currencyValue"] = "\(amount)"
+                userInfo["currencyDisplay"] = "\(amount)"
+                userInfo["paymentTheme"] = theme.getPaymentThemeUrl()
+                NotificationCenter.default.post(name: .sendOneAction, object: nil, userInfo: userInfo)
+                self.hideInputView()
+                self.composerView.leadingContainer.isHidden = false
+                self.animateToolkitView(isHide: true)
+            }
+        }
+    }
+
+    func bindMenuController() {
+        menuController = ChatMenuViewController.instantiateController(storyboard: .wallet)
+        menuController?.didTapAction = { [weak self] action in
+            guard let `self` = self else { return }
+            switch action {
+            case .media:
+                self.composerView.inputMessageView.textView.resignFirstResponder()
+                self.showAttachmentsPicker()
+                self.animateToolkitView(isHide: true)
+            case .contact:
+                self.animateToolkitView(isHide: true)
+                break
+            case .weather:
+                break
+            case .crypto:
+                self.showPayment()
+            case .oneN:
+                self.animateToolkitView(isHide: true)
+                break
+            case .nft:
+                self.animateToolkitView(isHide: true)
+            case .redPacket:
+                self.animateToolkitView(isHide: true)
+                self.composerView.inputMessageView.textView.resignFirstResponder()
+                self.sendRedPacketAction()
+            case .dao:
+                self.animateToolkitView(isHide: true)
+                break
+            }
+        }
+
+    }
+
     // MARK: - Actions
     
     @objc open func publishMessage(sender: UIButton) {
@@ -467,6 +543,7 @@ open class ComposerVC: _ViewController,
             createNewMessage(text: text)
         }
         content.clear()
+        self.composerView.leadingContainer.isHidden = false
     }
     
     /// Shows a photo/media picker.
@@ -548,46 +625,19 @@ open class ComposerVC: _ViewController,
         content.clear()
     }
 
-    @objc open func showPaymentRequest() {
-        if composerView.inputMessageView.textView.inputView != nil {
-            hideInputView()
-            return
-        }
+    open func showPayment() {
         walletInputView = WalletQuickInputViewController.instantiateController(storyboard: .wallet)
-        self.composerView.inputMessageView.textView.inputView = walletInputView?.view
-        self.composerView.inputMessageView.textView.reloadInputViews()
-        self.composerView.inputMessageView.textView.becomeFirstResponder()
-        walletInputView?.didRequestAction = { [weak self] amount in
-            guard let `self` = self else { return }
-            self.addWalletAttachment(amount: amount, paymentType: .request)
-        }
-        walletInputView?.didPayAction = { [weak self] amount in
-            guard let `self` = self else { return }
-            self.addWalletAttachment(amount: amount, paymentType: .pay)
-        }
-        walletInputView?.showKeypad = { [weak self] in
+        bindWalletOption()
+        showInputViewController(walletInputView)
+        walletInputView?.showKeypad = { [weak self] amount in
             guard let `self` = self else { return }
             guard let walletView: WalletInputViewController = WalletInputViewController.instantiateController(storyboard: .wallet) else { return }
-            walletView.updatedAmount = self.walletInputView?.amount ?? 0
-            walletView.didHide = { [weak self] amount in
+            walletView.updatedAmount = amount
+            walletView.didHide = { [weak self] amount, type in
                 guard let `self` = self else { return }
-                self.walletInputView?.updateAmount(amount: amount)
-            }
-            walletView.didRequestAction = { [weak self] amount in
-                guard let `self` = self else { return }
-                self.hideInputView()
-                walletView.dismiss(animated: true) { [weak self] in
-                    guard let `self` = self else { return }
-                    self.addWalletAttachment(amount: amount, paymentType: .request)
-                }
-            }
-            walletView.didPayAction = { [weak self] amount in
-                guard let `self` = self else { return }
-                self.hideInputView()
-                walletView.dismiss(animated: true) { [weak self] in
-                    guard let `self` = self else { return }
-                    self.addWalletAttachment(amount: amount, paymentType: .pay)
-                }
+                self.walletInputView?.paymentType = type
+                self.walletInputView?.walletStepper.updateAmount(amount: amount)
+                self.walletInputView?.showPaymentOptionView()
             }
             UIApplication.shared.windows.first?.rootViewController?.present(walletView, animated: true, completion: nil)
         }
@@ -603,15 +653,38 @@ open class ComposerVC: _ViewController,
         self.composerView.inputMessageView.textView.reloadInputViews()
     }
 
-    private func addWalletAttachment(amount: Int, paymentType: WalletAttachmentPayload.PaymentType) {
+    private func showInputViewController(_ uiViewController: UIViewController?) {
+        let walletView = UIView()
+        if let menu = uiViewController?.view {
+            walletView.embed(menu)
+            menu.widthAnchor.constraint(equalToConstant: self.view.bounds.width).isActive = true
+            menu.heightAnchor.constraint(equalToConstant: keyboardHeight).isActive = true
+        }
+        walletView.frame = CGRect(x: 0, y: 0, width: self.view.bounds.width, height: keyboardHeight)
+        self.composerView.inputMessageView.textView.inputView = walletView
+        self.composerView.inputMessageView.textView.reloadInputViews()
+        self.composerView.inputMessageView.textView.becomeFirstResponder()
+    }
+
+    private func addWalletAttachment(
+        amount: Double,
+        paymentType: WalletAttachmentPayload.PaymentType,
+        paymentTheme: WalletAttachmentPayload.PaymentTheme
+    ) {
         DispatchQueue.main.async {
             do {
-                let attachment = try AnyAttachmentPayload(wallet: "$\(amount)", paymentType: paymentType)
+                var extraData = [String: RawJSON]()
+                extraData["transferAmount"] = .string("\(amount)")
+                extraData["recipientName"] = .string(ChatClient.shared.currentUserController().currentUser?.name ?? "")
+                extraData["recipientUserId"] = .string(ChatClient.shared.currentUserId ?? "")
+                extraData["isPaid"] = .bool(false)
+                extraData["paymentTheme"] = .string(paymentTheme.getPaymentThemeUrl())
+                extraData["recipientImageUrl"] = .string(ChatClient.shared.currentUserController().currentUser?.imageURL?.absoluteString ?? "")
+                let attachment = try AnyAttachmentPayload(extraData: extraData, paymentType: paymentType)
                 self.content.attachments.append(attachment)
+                self.composerView.inputMessageView.sendButton.isHidden = false
                 self.hideInputView()
                 self.showMessageOption(isHide: true)
-//                self.walletInputView?.removeFromParent()
-//                self.walletInputView = nil
             } catch {
                 print(error)
             }
@@ -636,35 +709,50 @@ open class ComposerVC: _ViewController,
         NotificationCenter.default.post(name: .sendRedPacketTapAction, object: nil, userInfo: userInfo)
     }
 
+    private func animateMenuButton() {
+        if !isMenuShowing {
+            UIView.animate(withDuration: 0.5, delay: 0.0, usingSpringWithDamping: 0.5, initialSpringVelocity: 5, options: .curveEaseInOut, animations: { [weak self] in
+                guard let `self` = self else { return }
+                self.composerView.toolbarToggleButton.transform = CGAffineTransform(rotationAngle: CGFloat(Double.pi/4))
+            }, completion: { [weak self] _ in
+                guard let `self` = self else { return }
+                self.isMenuShowing = true
+            })
+        } else {
+            UIView.animate(withDuration: 0.5, delay: 0.0, usingSpringWithDamping: 0.5, initialSpringVelocity: 5, options: .curveEaseInOut, animations: { [weak self] in
+                guard let `self` = self else { return }
+                self.composerView.toolbarToggleButton.transform = CGAffineTransform.identity
+            }, completion: { [weak self] _ in
+                guard let `self` = self else { return }
+                self.isMenuShowing = false
+            })
+        }
+    }
+
     func animateToolkitView(isHide: Bool) {
-        UIView.animate(
-                    withDuration: 0.35,
-                    delay: 0,
-                    usingSpringWithDamping: 0.9,
-                    initialSpringVelocity: 1,
-                    options: [],
-                    animations: { [weak self] in
-                        guard let weakSelf = self else {
-                            return
-                        }
-                        weakSelf.composerView.toolKitView.isHidden = isHide
-                        if isHide {
-                            weakSelf.composerView.toolKitView.alpha = 0
-                        } else {
-                            weakSelf.composerView.toolKitView.alpha = 1
-                        }
-                        weakSelf.composerView.layoutIfNeeded()
-                    },
-                    completion: nil
-                )
+        animateMenuButton()
+        if !isHide {
+            self.showInputViewController(menuController)
+            self.isMenuShowing = true
+        } else {
+            self.composerView.inputMessageView.textView.inputView = nil
+            self.composerView.inputMessageView.textView.reloadInputViews()
+            self.isMenuShowing = false
+        }
     }
 
     @objc open func toolKitToggleAction(sender: UIButton) {
-        if composerView.toolKitView.isHidden {
+        if !isMenuShowing {
             animateToolkitView(isHide: false)
         } else {
             animateToolkitView(isHide: true)
         }
+    }
+
+    @objc open func toolKitBackAction(sender: UIButton) {
+        self.composerView.toolbarBackButton.isHidden.toggle()
+        self.composerView.toolbarToggleButton.isHidden.toggle()
+        NotificationCenter.default.post(name: .hidePaymentOptions, object: nil, userInfo: ["isHide": true])
     }
 
     /// Creates a new message and notifies the delegate that a new message was created.
@@ -957,6 +1045,7 @@ open class ComposerVC: _ViewController,
         
         let attachment = try AnyAttachmentPayload(localFileURL: url, attachmentType: type)
         content.attachments.append(attachment)
+        self.composerView.inputMessageView.sendButton.isHidden = false
     }
     
     /// Shows an alert for the error thrown when adding attachment to a composer.

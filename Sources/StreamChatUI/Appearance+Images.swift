@@ -27,7 +27,13 @@ public extension Appearance {
         // MARK: - General
 
         public var loadingIndicator: UIImage = loadImageSafely(with: "loading_indicator")
-        public var close: UIImage = UIImage(systemName: "xmark")!
+        public var close: UIImage = {
+            if #available(iOS 13.0, *) {
+                return UIImage(systemName: "xmark")!
+            } else {
+                return loadImageSafely(with: "close")
+            }
+        }()
         public var closeBold: UIImage = loadImageSafely(with: "close")
         public var closeCircleTransparent: UIImage = loadImageSafely(with: "close_circle_transparent")
         public var closeCircle: UIImage = loadImageSafely(with: "close_circle")
@@ -35,8 +41,20 @@ public extension Appearance {
         public var back: UIImage = loadImageSafely(with: "icn_back")
         public var onlyVisibleToCurrentUser = loadImageSafely(with: "eye")
         public var more = loadImageSafely(with: "icn_more")
-        public var arrowUpRightSquare = UIImage(systemName: "arrow.up.right.square")
-        public var share: UIImage = UIImage(systemName: "square.and.arrow.up")!
+        public var share: UIImage = {
+            if #available(iOS 13.0, *) {
+                return UIImage(systemName: "square.and.arrow.up")!
+            } else {
+                return loadImageSafely(with: "share")
+            }
+        }()
+        public var arrowUpRightSquare: UIImage = {
+            if #available(iOS 13.0, *) {
+                return UIImage(systemName: "arrow.up.right.square")!
+            } else {
+                return loadImageSafely(with: "arrow")
+            }
+        }()
 
         public var commands: UIImage = loadImageSafely(with: "bolt")
         public var smallBolt: UIImage = loadImageSafely(with: "bolt_small")
@@ -268,5 +286,24 @@ public extension Appearance {
         public var redPacketExpired: UIImage = loadImageSafely(with: "redPacketExpired")
         public var redPacketThumb: UIImage = loadImageSafely(with: "redPacket")
         public var requestImg: UIImage = loadImageSafely(with: "requestImg")
+
+        // MARK: - Wallet Keyboard
+        public var add: UIImage = loadImageSafely(with: "add")
+        public var remove: UIImage = loadImageSafely(with: "remove")
+        public var closePopup: UIImage = loadImageSafely(with: "closePopup")
+        public var addMenu: UIImage = loadImageSafely(with: "addMenu")
+        public var hideMenu: UIImage = loadImageSafely(with: "hideMenu")
+
+        //Menu
+        public var menu1n: UIImage = loadImageSafely(with: "1:n")
+        public var menuContact: UIImage = loadImageSafely(with: "contact")
+        public var menuDao: UIImage = loadImageSafely(with: "dao")
+        public var menuMedia: UIImage = loadImageSafely(with: "media")
+        public var menuNft: UIImage = loadImageSafely(with: "nft")
+        public var menuRedPacket: UIImage = loadImageSafely(with: "redPacketMenu")
+        public var menuWeather: UIImage = loadImageSafely(with: "weather")
+        public var menuCrypto: UIImage = loadImageSafely(with: "crypto")
+        public var backMenuOption: UIImage = loadImageSafely(with: "back")
+        public var emojiIcon: UIImage = loadImageSafely(with: "emoji")
     }
 }

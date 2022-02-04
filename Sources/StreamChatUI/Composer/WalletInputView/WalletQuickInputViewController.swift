@@ -6,64 +6,97 @@
 //
 
 import UIKit
+import StreamChat
+import SwiftUI
 
 class WalletQuickInputViewController: UIViewController {
 
     // MARK: - Outlets
-    @IBOutlet weak var btnRemove: UIButton!
-    @IBOutlet weak var btnAdd: UIButton!
     @IBOutlet weak var btnRequest: UIButton!
-    @IBOutlet weak var btnPay: UIButton!
-    @IBOutlet weak var lblAmount: UILabel!
-    
+    @IBOutlet weak var walletStepper: WalletStepper!
+    @IBOutlet weak var viewPaymentOption: UIView!
+
     // MARK: - Variables
-    var showKeypad: (() -> Void)?
-    var didRequestAction: ((Int) -> Void)?
-    var didPayAction: ((Int) -> Void)?
-    var amount: Int = 0 {
-        didSet {
-            lblAmount.text = "$\(amount)"
-        }
-    }
+    var showKeypad: ((Double) -> Void)?
+    var didRequestAction: ((Double, WalletAttachmentPayload.PaymentType, WalletAttachmentPayload.PaymentTheme) -> Void)?
+    var paymentType: WalletAttachmentPayload.PaymentType = .request
+    var didShowPaymentOption: (() -> Void)?
+
     override func viewDidLoad() {
         super.viewDidLoad()
-        setupUI()
+        NotificationCenter.default.addObserver(self, selector: #selector(hidePaymentOptions(_:)), name: .hidePaymentOptions, object: nil)
     }
 
-    func setupUI() {
-        btnAdd.layer.cornerRadius = btnAdd.bounds.height / 2
-        btnRemove.layer.cornerRadius = btnRemove.bounds.height / 2
-        btnRequest.layer.cornerRadius = btnRequest.bounds.height / 2
-        btnPay.layer.cornerRadius = btnPay.bounds.height / 2
-
-        btnAdd.layer.maskedCorners = [.layerMinXMinYCorner, .layerMinXMaxYCorner]
-        btnRemove.layer.maskedCorners = [.layerMaxXMinYCorner, .layerMaxXMaxYCorner]
-        btnRequest.layer.maskedCorners = [.layerMinXMinYCorner, .layerMinXMaxYCorner]
-        btnPay.layer.maskedCorners = [.layerMaxXMinYCorner, .layerMaxXMaxYCorner]
+    deinit {
+        NotificationCenter.default.removeObserver(self)
     }
 
-    func updateAmount(amount: Int) {
-        self.amount = amount
+    @objc func hidePaymentOptions(_ notification: Notification) {
+        viewPaymentOption.isHidden = true
     }
 
+    func showPaymentOptionView() {
+        guard validateAmount() else { return }
+        showPaymentOptions()
+        didShowPaymentOption?()
+        viewPaymentOption.isHidden = false
+    }
+    
     @IBAction func btnShowKeypadAction(_ sender: Any) {
-        showKeypad?()
-    }
-
-    @IBAction func btnAddAction(_ sender: Any) {
-        amount += 1
-    }
-
-    @IBAction func btnRemoveAction(_ sender: Any) {
-        guard amount != 0 else { return }
-        amount -= 1
+        showKeypad?(walletStepper.value)
     }
 
     @IBAction func btnRequestAction(_ sender: Any) {
-        didRequestAction?(amount)
+        guard validateAmount() else { return }
+        showPaymentOptions()
+        viewPaymentOption.isHidden = false
+        didShowPaymentOption?()
+        paymentType = .request
     }
 
-    @IBAction func btnPayAction(_ sender: Any) {
-        didPayAction?(amount)
+    @IBAction func btnSendAction(_ sender: Any) {
+        guard validateAmount() else { return }
+        showPaymentOptions()
+        viewPaymentOption.isHidden = false
+        didShowPaymentOption?()
+        paymentType = .pay
+    }
+
+    private func validateAmount() -> Bool {
+        if walletStepper.value == 0 {
+            Snackbar.show(text: "You cannot send/request 0 ONE.")
+            return false
+        }
+        return true
+    }
+
+    private func showPaymentOptions() {
+        guard validateAmount() else { return }
+        if #available(iOS 14.0.0, *) {
+            self.children.forEach { vc in
+                vc.removeFromParent()
+            }
+            var paymentSelection = SendPaymentOptionView(amount: .constant("\(walletStepper.value)"))
+            paymentSelection.didSelectPayment = { [weak self] paymentOption in
+                guard let `self` = self else { return }
+                self.viewPaymentOption.isHidden = true
+                self.didShowPaymentOption?()
+                self.didRequestAction?(self.walletStepper.value, self.paymentType, paymentOption)
+            }
+            let controller = UIHostingController(rootView: paymentSelection)
+            addChild(controller)
+            controller.view.translatesAutoresizingMaskIntoConstraints = false
+            viewPaymentOption.addSubview(controller.view)
+            controller.didMove(toParent: self)
+
+            NSLayoutConstraint.activate([
+                controller.view.widthAnchor.constraint(equalTo: viewPaymentOption.widthAnchor),
+                controller.view.heightAnchor.constraint(equalTo: viewPaymentOption.heightAnchor),
+                controller.view.centerXAnchor.constraint(equalTo: viewPaymentOption.centerXAnchor),
+                controller.view.centerYAnchor.constraint(equalTo: viewPaymentOption.centerYAnchor)
+            ])
+        } else {
+            // Fallback on earlier versions
+        }
     }
 }

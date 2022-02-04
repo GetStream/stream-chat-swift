@@ -6,43 +6,58 @@
 //
 
 import UIKit
+import StreamChat
 
-class WalletInputViewController: WalletQuickInputViewController {
+class WalletInputViewController: UIViewController {
 
     // MARK: - Outlets
     @IBOutlet weak var viewKeypad: UIStackView!
+    @IBOutlet weak var btnClose: UIButton!
     @IBOutlet var btnKeyPad: [UIButton]!
+    @IBOutlet weak var walletStepper: WalletStepper!
 
     // MARK: - Variables
-    var updatedAmount = 0
-    var didHide: ((Int) -> Void)?
+    var updatedAmount = 0.0
+    var paymentType: WalletAttachmentPayload.PaymentType = .request
+    var didHide: ((Double, WalletAttachmentPayload.PaymentType) -> Void)?
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        setupUI()
     }
 
-    override func setupUI() {
-        super.setupUI()
+    func setupUI() {
         btnKeyPad.forEach { btn in
             btn.layer.cornerRadius = 30
         }
-        self.amount = updatedAmount
+        btnClose.setImage(Appearance.default.images.closePopup, for: .normal)
+        self.walletStepper.updateAmount(amount: updatedAmount)
     }
 
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        didHide?(amount)
+        didHide?(walletStepper.value, paymentType)
+    }
+
+    @IBAction func btnRequestAction(_ sender: Any) {
+        paymentType = .request
+        NotificationCenter.default.post(name: .hidePaymentOptions, object: nil, userInfo: ["isHide": false])
+        self.dismiss(animated: true, completion: nil)
+    }
+
+    @IBAction func btnSendAction(_ sender: Any) {
+        paymentType = .pay
+        NotificationCenter.default.post(name: .hidePaymentOptions, object: nil, userInfo: ["isHide": false])
+        self.dismiss(animated: true, completion: nil)
     }
 
     @IBAction func btnKeypadAction(_ sender: UIButton) {
-        if let keyPadNumber = sender.titleLabel?.text {
-            let amount = (lblAmount.text ?? "0") + "\(keyPadNumber)"
-            self.amount = Int(amount.replacingOccurrences(of: "$", with: "")) ?? 0
-        } else {
-            var amount = lblAmount.text ?? ""
-            _ = amount.removeLast()
-            self.amount = Int(amount.replacingOccurrences(of: "$", with: "")) ?? 0
-        }
+        walletStepper.insertNumber(numberValue: sender.titleLabel?.text)
+    }
+
+    @IBAction func btnCloseAction(_ sender: Any) {
+        didHide?(walletStepper.value, paymentType)
+        self.dismiss(animated: true, completion: nil)
     }
 
 }

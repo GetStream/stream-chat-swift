@@ -4,6 +4,7 @@
 
 import StreamChat
 import UIKit
+import StreamChatUI
 
 /// An object containing types of UI Components that are used through the UI SDK.
 public struct Components {
@@ -39,6 +40,9 @@ public struct Components {
 
     /// A button used for sending a message, or any type of content.
     public var sendButton: UIButton.Type = SendButton.self
+
+    /// A button used for emoji, or any type of content.
+    public var emojiButton: UIButton.Type = EmojiButton.self
     
     /// A button used for sending digital currency
     public var sendMoneyButton: UIButton.Type = SendMoneyButton.self
