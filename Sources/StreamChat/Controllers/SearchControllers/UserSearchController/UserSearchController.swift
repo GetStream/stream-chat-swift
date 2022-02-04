@@ -134,43 +134,97 @@ public class ChatUserSearchController: DataController, DelegateCallable, DataSto
     ///   - completion: Called when the controller has finished fetching remote data.
     ///   If the data fetching fails, the error variable contains more details about the problem.
     public func search(term: String?, completion: ((_ error: Error?) -> Void)? = nil) {
-        startUserListObserverIfNeeded()
-        
-        var query = UserListQuery(sort: [.init(key: .name, isAscending: true)])
-        /*if let term = term, !term.isEmpty {
-            query.filter = .or([
-                .autocomplete(.name, text: term),
-                .autocomplete(.id, text: term)
-            ])
-        } else {
-            query.filter = .exists(.id) // Pseudo-filter to fetch all users
-        }*/
-        if let term = term, !term.isEmpty {
-            query.filter = .and([
-                .autocomplete(.name, text: term),
-                .notEqual(.role, to: .admin),
-                .notEqual(.id, to: client.currentUserId ?? ""),
-            ])
-        } else {
-            //query.filter = .exists(.id) // Pseudo-filter to fetch all users
-            query.filter = .and([
-                .exists(.id),
-                .notEqual(.role, to: .admin),
-                .notEqual(.id, to: client.currentUserId ?? ""),
-            ])
+            startUserListObserverIfNeeded()
+            /* Commented by Jit
+             4 Feb 2022
+            var query = UserListQuery(sort: [.init(key: .name, isAscending: true)])
+            /*if let term = term, !term.isEmpty {
+                query.filter = .or([
+                    .autocomplete(.name, text: term),
+                    .autocomplete(.id, text: term)
+                ])
+            } else {
+                query.filter = .exists(.id) // Pseudo-filter to fetch all users
+            }*/
+            if let term = term, !term.isEmpty {
+                query.filter = .and([
+                    .autocomplete(.name, text: term),
+                    .notEqual(.role, to: .admin),
+                    .notEqual(.id, to: client.currentUserId ?? ""),
+                ])
+            } else {
+                //query.filter = .exists(.id) // Pseudo-filter to fetch all users
+                query.filter = .and([
+                    .exists(.id),
+                    .notEqual(.role, to: .admin),
+                    .notEqual(.id, to: client.currentUserId ?? ""),
+                ])
+            }
+            // Backend suggest not sorting by name
+            // so we only sort client-side
+            query.filter?.explicitHash = explicitFilterHash
+            query.shouldBeUpdatedInBackground = false
+
+            lastQuery = query
+            userQueryUpdater.update(userListQuery: query, policy: .replace) { error in
+                self.state = error == nil ? .remoteDataFetched : .remoteDataFetchFailed(ClientError(with: error))
+                self.callback { completion?(error) }
+            }
+             */
+            // Added 4 feb 2022
+            var newQuery = query
+
+            /*if let term = term, !term.isEmpty {
+                query.filter = .or([
+                    .autocomplete(.name, text: term),
+                    .autocomplete(.id, text: term)
+                ])
+            } else {
+                query.filter = .exists(.id) // Pseudo-filter to fetch all users
+            }*/
+            if let term = term, !term.isEmpty {
+    //            newQuery.filter = .or([
+    //                .autocomplete(.name, text: term),
+    //                .and([
+    //                    .exists(.id),
+    //                    .notEqual(.role, to: .admin),
+    //                    .notEqual(.id, to: client.currentUserId ?? "")
+    //                ])
+    //            ])
+                newQuery.filter = .and([
+                    .autocomplete(.name, text: term),
+                    .exists(.lastActiveAt),
+                    .notEqual(.role, to: .admin),
+                    .notEqual(.id, to: client.currentUserId ?? ""),
+                ])
+            } else {
+                //query.filter = .exists(.id) // Pseudo-filter to fetch all users
+                newQuery.filter = .and([
+                    .exists(.id),
+                    .exists(.lastActiveAt),
+                    .notEqual(.role, to: .admin),
+                    .notEqual(.id, to: client.currentUserId ?? "")
+                ])
+            }
+            // Backend suggest not sorting by name
+            // so we only sort client-side
+
+    //        newQuery.filter = .and([
+    //            .exists(.id, exists: true),
+    //        ])
+    //
+            newQuery.filter?.explicitHash = explicitFilterHash
+            newQuery.shouldBeUpdatedInBackground = false
+            //
+            lastQuery = newQuery
+            //
+
+            userQueryUpdater.update(userListQuery: newQuery, policy: .replace) { error in
+                //
+                self.state = error == nil ? .remoteDataFetched : .remoteDataFetchFailed(ClientError(with: error))
+                self.callback { completion?(error) }
+            }
         }
-        // Backend suggest not sorting by name
-        // so we only sort client-side
-        query.filter?.explicitHash = explicitFilterHash
-        query.shouldBeUpdatedInBackground = false
-        
-        lastQuery = query
-        userQueryUpdater.update(userListQuery: query, policy: .replace) { error in
-            self.state = error == nil ? .remoteDataFetched : .remoteDataFetchFailed(ClientError(with: error))
-            self.callback { completion?(error) }
-        }
-    }
-    
     /// Searches users for the given query.
     ///
     /// When this function is called, `users` property of this controller will refresh with new users matching the term.
