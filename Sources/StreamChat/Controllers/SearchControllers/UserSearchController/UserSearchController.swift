@@ -25,7 +25,7 @@ public class ChatUserSearchController: DataController, DelegateCallable, DataSto
     /// Filter hash this controller observes.
     let explicitFilterHash = UUID().uuidString
     
-    lazy var query: UserListQuery = {
+    public lazy var query: UserListQuery = {
         // Filter is just a mock, explicit hash will override it
         var query = UserListQuery(filter: .exists(.id), sort: [.init(key: .name, isAscending: true)])
         // Setting `shouldBeObserved` to false prevents NewUserQueryUpdater to pick this query up
