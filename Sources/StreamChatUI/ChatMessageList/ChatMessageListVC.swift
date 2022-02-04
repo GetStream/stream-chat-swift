@@ -678,26 +678,31 @@ internal extension ChatMessageListVC {
             snapshot.reloadItems([$0.from, $0.to])
         }
 
-        diffableDataSource?.apply(snapshot, animatingDifferences: false) { [weak self] in
-            let newestMessage = snapshot.itemIdentifiers.first
-            if hasNewInsertions && newestMessage?.isSentByCurrentUser == true {
-                self?.listView.scrollToMostRecentMessage()
-            }
-
-            // When new message is inserted, update the previous message to hide the timestamp if needed.
-            if hasNewInsertions, let previousMessage = snapshot.itemIdentifiers[safe: 1] {
-                let indexPath = IndexPath(row: 1, section: 0)
-                // The completion block from `apply()` should always be called on main thread,
-                // but on iOS 14 this doesn't seem to be the case, and it crashes.
-                DispatchQueue.main.async {
-                    self?.updateMessagesSnapshot(
-                        with: [.update(previousMessage, index: indexPath)],
-                        completion: nil
-                    )
+        // The reason we call `performWithoutAnimation` and `animatingDifferences: true` at the same time
+        // is because we don't want animations, but on iOS 14 calling `animatingDifferences: false`
+        // is the same as calling `reloadData()`. Info: https://developer.apple.com/videos/play/wwdc2021/10252/?time=158
+        UIView.performWithoutAnimation {
+            diffableDataSource?.apply(snapshot, animatingDifferences: true) { [weak self] in
+                let newestMessage = snapshot.itemIdentifiers.first
+                if hasNewInsertions && newestMessage?.isSentByCurrentUser == true {
+                    self?.listView.scrollToMostRecentMessage()
                 }
-            }
 
-            completion?()
+                // When new message is inserted, update the previous message to hide the timestamp if needed.
+                if hasNewInsertions, let previousMessage = snapshot.itemIdentifiers[safe: 1] {
+                    let indexPath = IndexPath(row: 1, section: 0)
+                    // The completion block from `apply()` should always be called on main thread,
+                    // but on iOS 14 this doesn't seem to be the case, and it crashes.
+                    DispatchQueue.main.async {
+                        self?.updateMessagesSnapshot(
+                            with: [.update(previousMessage, index: indexPath)],
+                            completion: nil
+                        )
+                    }
+                }
+
+                completion?()
+            }
         }
     }
 }
