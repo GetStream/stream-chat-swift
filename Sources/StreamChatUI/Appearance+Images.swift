@@ -34,7 +34,7 @@ public extension Appearance {
                 return loadImageSafely(with: "close")
             }
         }()
-
+        public var closeBold: UIImage = loadImageSafely(with: "close")
         public var closeCircleTransparent: UIImage = loadImageSafely(with: "close_circle_transparent")
         public var closeCircle: UIImage = loadImageSafely(with: "close_circle")
         public var discardAttachment: UIImage = loadImageSafely(with: "close_circle_filled")
@@ -48,6 +48,13 @@ public extension Appearance {
                 return loadImageSafely(with: "share")
             }
         }()
+        public var arrowUpRightSquare: UIImage = {
+            if #available(iOS 13.0, *) {
+                return UIImage(systemName: "arrow.up.right.square")!
+            } else {
+                return loadImageSafely(with: "arrow")
+            }
+        }()
 
         public var commands: UIImage = loadImageSafely(with: "bolt")
         public var smallBolt: UIImage = loadImageSafely(with: "bolt_small")
@@ -56,6 +63,7 @@ public extension Appearance {
         public var sendArrow: UIImage = loadImageSafely(with: "arrow_send")
         public var moneyTransaction: UIImage = loadImageSafely(with: "money-transaction")
         public var moreRounded: UIImage = loadImageSafely(with: "more-rounded")
+        public var moreVertical: UIImage = loadImageSafely(with: "more-vertical")
         public var scrollDownArrow: UIImage = loadImageSafely(with: "arrow_down")
         public var backCircle: UIImage = loadImageSafely(with: "back_circle")
         public var messageSent: UIImage = loadImageSafely(with: "checkmark_grey")

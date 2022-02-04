@@ -8,6 +8,7 @@
 
 import UIKit
 import StreamChat
+import StreamChatUI
 
 class RedPacketSentBubble: UITableViewCell {
 

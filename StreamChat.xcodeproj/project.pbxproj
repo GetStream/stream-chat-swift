@@ -1085,6 +1085,8 @@
 		ED1D14732786C197005A0EAB /* WalletQuickInputViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED1D14702786C197005A0EAB /* WalletQuickInputViewController.swift */; };
 		ED1D14762786C21C005A0EAB /* Storyboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED1D14752786C21C005A0EAB /* Storyboard.swift */; };
 		ED3B5F05275A3A5A00DEAF0A /* RedPacketSentBubble.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED3B5F04275A3A5A00DEAF0A /* RedPacketSentBubble.swift */; };
+		ED7DAB3127AC2CD30085E2B9 /* Snackbar.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDAB4B3E27A15D1D00F07D53 /* Snackbar.swift */; };
+		ED7DAB3227AC2D000085E2B9 /* ChatMenuViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDD8450F279E6930004BF3CD /* ChatMenuViewController.swift */; };
 		ED95B3F52769DF850049DD53 /* RedPacketExpired.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED95B3F42769DF850049DD53 /* RedPacketExpired.swift */; };
 		EDAB4B3F27A15D1D00F07D53 /* Snackbar.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDAB4B3E27A15D1D00F07D53 /* Snackbar.swift */; };
 		EDAB4B4227A17A0300F07D53 /* EmojiButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDAB4B4027A179D600F07D53 /* EmojiButton.swift */; };
@@ -7282,6 +7284,7 @@
 				88BEBCD62536FDBF00D9E8B7 /* MemberListController+SwiftUI.swift in Sources */,
 				88F6DF91252C8845009A8AF0 /* ChannelMemberUpdater.swift in Sources */,
 				79BF83F2248F8F60007611A1 /* Logger.swift in Sources */,
+				ED7DAB3127AC2CD30085E2B9 /* Snackbar.swift in Sources */,
 				799C943B247D2FB9001F1104 /* MessageDTO.swift in Sources */,
 				88D85D97252F168000AE1030 /* MemberController+SwiftUI.swift in Sources */,
 				79877A0D2498E4BC00015F8B /* CurrentUser.swift in Sources */,
@@ -7303,6 +7306,7 @@
 				7963BD6926B0208900281F8C /* ChatMessageAudioAttachment.swift in Sources */,
 				697C6F90260CFA37000E9023 /* Deprecations.swift in Sources */,
 				7964F3A4249A0ACF002A09EC /* ChannelListQueryDTO.swift in Sources */,
+				ED7DAB3227AC2D000085E2B9 /* ChatMenuViewController.swift in Sources */,
 				79280F3F2484E3BA00CDEB89 /* ClientError.swift in Sources */,
 				ED00E2AF27A8071800AA1A13 /* KeyboardService.swift in Sources */,
 				884C61222594A449008B70DC /* AttachmentActionRequestBody.swift in Sources */,

@@ -272,11 +272,13 @@ open class ComposerVC: _ViewController,
     private var walletInputView: WalletQuickInputViewController?
     private var menuController: ChatMenuViewController?
     private var isMenuShowing = false
-    private var keyboardHeight = UIScreen.main.bounds.height * 0.33
+    private var keyboardHeight: CGFloat {
+        return KeyboardService.shared.measuredSize
+    }
 
     override open func setUp() {
         super.setUp()
-
+        KeyboardService.shared.observeKeyboard(self.view)
         composerView.inputMessageView.textView.delegate = self
         // Set the delegate for handling the pasting of UIImages in the text view
         composerView.inputMessageView.textView.clipboardAttachmentDelegate = self
@@ -326,7 +328,9 @@ open class ComposerVC: _ViewController,
         bindMenuController()
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { [weak self] in
             guard let `self` = self else { return }
-            self.keyboardHeight = KeyboardService.shared.measuredSize
+            if self.keyboardHeight == 0.0 {
+                self.composerView.inputMessageView.textView.becomeFirstResponder()
+            }
         }
     }
 

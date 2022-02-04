@@ -4,6 +4,7 @@
 
 import StreamChat
 import UIKit
+import StreamChatUI
 
 /// An object containing types of UI Components that are used through the UI SDK.
 public struct Components {

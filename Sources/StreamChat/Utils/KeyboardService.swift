@@ -25,10 +25,6 @@ open class KeyboardService: NSObject {
    public func observeKeyboard(_ view: UIView) {
         if let keyboardHeight = UserDefaults.standard.value(forKey: "keyboardHeight") as? CGFloat {
             measuredSize = keyboardHeight
-        } else {
-            let field = UITextField()
-            view.addSubview(field)
-            field.becomeFirstResponder()
         }
     }
 
