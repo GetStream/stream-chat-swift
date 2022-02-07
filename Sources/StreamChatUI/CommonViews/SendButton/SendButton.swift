@@ -10,7 +10,7 @@ open class SendButton: _Button, AppearanceProvider {
     /// Override this variable to enable custom behavior upon button enabled.
     override open var isEnabled: Bool {
         didSet {
-            isEnabledChangeAnimation()
+            isEnabledChangeAnimation(isEnabled)
         }
     }
 
@@ -26,9 +26,9 @@ open class SendButton: _Button, AppearanceProvider {
     }
 
     /// The animation when the `isEnabled` state changes.
-    open func isEnabledChangeAnimation() {
+    open func isEnabledChangeAnimation(_ isEnabled: Bool) {
         Animate {
-            self.transform = self.isEnabled
+            self.transform = isEnabled
                 ? CGAffineTransform(rotationAngle: -CGFloat.pi / 2.0)
                 : .identity
         }
