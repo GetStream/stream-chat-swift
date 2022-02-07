@@ -327,8 +327,20 @@ open class ChatChannelListVC: _ViewController,
                 controller.hideChannel(clearHistory: true, completion: nil)
             }
         }
-        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel) { _ in }
-        let alert = UIAlertController.showAlert(title: "Would you like to delete this conversation? It'll be permanently deleted.", message: nil, actions: [deleteAction, cancelAction], preferredStyle: .actionSheet)
+        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel) { [weak self] _ in
+            guard let self = self else {
+                return
+            }
+            let cell = self.collectionView.cellForItem(at: indexPath) as? ChatChannelListCollectionViewCell
+            cell?.swipeableView.close()
+            Animate { [weak self] in
+                guard let self = self else {
+                    return
+                }
+                self.collectionView.layoutIfNeeded()
+            }
+        }
+        let alert = UIAlertController.showAlert(title: "Would you like to delete this conversation?\nIt'll be permanently deleted.", message: nil, actions: [deleteAction, cancelAction], preferredStyle: .actionSheet)
         self.present(alert, animated: true, completion: nil)
     }
 
