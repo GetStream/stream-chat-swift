@@ -497,6 +497,14 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             }
         ]
     }
+
+    func watchActiveChannel(completion: @escaping (Error?) -> Void) {
+        if cid != nil, isChannelAlreadyCreated {
+            startWatching(completion: completion)
+        } else {
+            synchronize(completion)
+        }
+    }
 }
 
 // MARK: - Channel features
@@ -1285,14 +1293,6 @@ public extension ChatChannelController {
                     completion(.failure(error))
                 }
             }
-        }
-    }
-
-    func watchActiveChannel(completion: @escaping (Error?) -> Void) {
-        if cid != nil, isChannelAlreadyCreated {
-            startWatching(completion: completion)
-        } else {
-            synchronize(completion)
         }
     }
 }

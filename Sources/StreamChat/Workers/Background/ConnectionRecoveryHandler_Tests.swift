@@ -1,5 +1,5 @@
 //
-// Copyright © 2021 Stream.io Inc. All rights reserved.
+// Copyright © 2022 Stream.io Inc. All rights reserved.
 //
 
 import CoreData
@@ -479,15 +479,111 @@ final class ConnectionRecoveryHandler_Tests: XCTestCase {
         // Assert timer is cancelled
         XCTAssertFalse(timer.isActive)
     }
+
+    // MARK: - Websocket connection
+
+    func test_webSocketStateUpdate_connecting() {
+        let syncRepository = SyncRepositoryMock(client: mockChatClient)
+        handler = makeConnectionRecoveryHandler(keepConnectionAliveInBackground: false, syncRepository: syncRepository)
+
+        // Simulate connection update
+        handler.webSocketClient(mockChatClient.mockWebSocketClient, didUpdateConnectionState: .connecting)
+
+        XCTAssertTrue("syncLocalState(completion:)".wasNotCalled(on: syncRepository))
+    }
+
+    func test_webSocketStateUpdate_connected() {
+        let syncRepository = SyncRepositoryMock(client: mockChatClient)
+        handler = makeConnectionRecoveryHandler(keepConnectionAliveInBackground: false, syncRepository: syncRepository)
+
+        // Simulate connection update
+        handler.webSocketClient(mockChatClient.mockWebSocketClient, didUpdateConnectionState: .connected(connectionId: "124"))
+
+        XCTAssertTrue("resetConsecutiveFailures()".wasCalled(on: mockRetryStrategy, times: 1))
+        XCTAssertTrue("syncLocalState(completion:)".wasCalled(on: syncRepository, times: 1))
+    }
+
+    func test_webSocketStateUpdate_disconnected_userInitiated() {
+        let syncRepository = SyncRepositoryMock(client: mockChatClient)
+        handler = makeConnectionRecoveryHandler(keepConnectionAliveInBackground: false, syncRepository: syncRepository)
+
+        // We need to set the state on the client as well
+        let status = WebSocketConnectionState.disconnected(source: .userInitiated)
+        mockChatClient.webSocketClient?.simulateConnectionStatus(status)
+        // Simulate connection update
+        handler.webSocketClient(mockChatClient.mockWebSocketClient, didUpdateConnectionState: status)
+
+        // getDelayAfterTheFailure() calls nextRetryDelay() & incrementConsecutiveFailures() internally
+        XCTAssertTrue("nextRetryDelay()".wasNotCalled(on: mockRetryStrategy))
+        XCTAssertTrue("incrementConsecutiveFailures()".wasNotCalled(on: mockRetryStrategy))
+        XCTAssertTrue("syncLocalState(completion:)".wasNotCalled(on: syncRepository))
+    }
+
+    func test_webSocketStateUpdate_disconnected_systemInitiated() {
+        let syncRepository = SyncRepositoryMock(client: mockChatClient)
+        handler = makeConnectionRecoveryHandler(keepConnectionAliveInBackground: false, syncRepository: syncRepository)
+
+        // We need to set the state on the client as well
+        let status = WebSocketConnectionState.disconnected(source: .systemInitiated)
+        mockRetryStrategy.mock_nextRetryDelay.returns(5)
+        mockChatClient.webSocketClient?.simulateConnectionStatus(status)
+        mockRetryStrategy.clear()
+        syncRepository.clear()
+
+        // Simulate connection update
+        handler.webSocketClient(mockChatClient.mockWebSocketClient, didUpdateConnectionState: status)
+
+        // getDelayAfterTheFailure() calls nextRetryDelay() & incrementConsecutiveFailures() internally
+        XCTAssertTrue("nextRetryDelay()".wasCalled(on: mockRetryStrategy, times: 1))
+        XCTAssertTrue("incrementConsecutiveFailures()".wasCalled(on: mockRetryStrategy, times: 1))
+        XCTAssertTrue("syncLocalState(completion:)".wasNotCalled(on: syncRepository))
+    }
+
+    func test_webSocketStateUpdate_initialized() {
+        let syncRepository = SyncRepositoryMock(client: mockChatClient)
+        handler = makeConnectionRecoveryHandler(keepConnectionAliveInBackground: false, syncRepository: syncRepository)
+
+        // Simulate connection update
+        handler.webSocketClient(mockChatClient.mockWebSocketClient, didUpdateConnectionState: .initialized)
+
+        XCTAssertTrue("syncLocalState(completion:)".wasNotCalled(on: syncRepository))
+    }
+
+    func test_webSocketStateUpdate_waitingForConnectionId() {
+        let syncRepository = SyncRepositoryMock(client: mockChatClient)
+        handler = makeConnectionRecoveryHandler(keepConnectionAliveInBackground: false, syncRepository: syncRepository)
+
+        // Simulate connection update
+        handler.webSocketClient(mockChatClient.mockWebSocketClient, didUpdateConnectionState: .waitingForConnectionId)
+
+        XCTAssertTrue("syncLocalState(completion:)".wasNotCalled(on: syncRepository))
+    }
+
+    func test_webSocketStateUpdate_disconnecting() {
+        let syncRepository = SyncRepositoryMock(client: mockChatClient)
+        handler = makeConnectionRecoveryHandler(keepConnectionAliveInBackground: false, syncRepository: syncRepository)
+
+        // Simulate connection update
+        handler.webSocketClient(
+            mockChatClient.mockWebSocketClient,
+            didUpdateConnectionState: .disconnecting(source: .systemInitiated)
+        )
+
+        XCTAssertTrue("syncLocalState(completion:)".wasNotCalled(on: syncRepository))
+    }
 }
 
 // MARK: - Private
 
 private extension ConnectionRecoveryHandler_Tests {
-    func makeConnectionRecoveryHandler(keepConnectionAliveInBackground: Bool) -> DefaultConnectionRecoveryHandler {
+    func makeConnectionRecoveryHandler(
+        keepConnectionAliveInBackground: Bool,
+        syncRepository: SyncRepository? = nil
+    ) -> DefaultConnectionRecoveryHandler {
         let handler = DefaultConnectionRecoveryHandler(
             webSocketClient: mockChatClient.mockWebSocketClient,
             eventNotificationCenter: mockChatClient.eventNotificationCenter,
+            syncRepository: syncRepository ?? SyncRepositoryMock(client: mockChatClient),
             backgroundTaskScheduler: mockBackgroundTaskScheduler,
             internetConnection: mockInternetConnection,
             reconnectionStrategy: mockRetryStrategy,

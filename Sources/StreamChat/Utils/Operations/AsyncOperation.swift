@@ -30,7 +30,7 @@ class AsyncOperation: BaseOperation {
     }
 
     private func handleResult(_ output: Output) {
-        let shouldRetry = output == .retry && executedRetries + 1 < maxRetries
+        let shouldRetry = output == .retry && executedRetries < maxRetries
 
         if shouldRetry && !isCancelled {
             executedRetries += 1

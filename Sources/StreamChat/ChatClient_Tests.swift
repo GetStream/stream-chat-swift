@@ -737,6 +737,30 @@ class ChatClient_Tests: XCTestCase {
         AssertAsync.willBeTrue(providedToken != nil)
     }
 
+    // MARK: - Last connection date
+
+    func test_lastConnectionDateIsPassedToSyncRepository() throws {
+        let client = ChatClient(
+            config: inMemoryStorageConfig,
+            workerBuilders: [],
+            environment: testEnv.environment
+        )
+        try client.databaseContainer.writeSynchronously { session in
+            try session.saveCurrentUser(payload: self.dummyCurrentUser)
+        }
+
+        let date = Date()
+        client.webSocketClient(client.webSocketClient!, didUpdateConnectionState: .connected(connectionId: "ConnectionId"))
+        try client.databaseContainer.writeSynchronously { session in
+            guard let pendingConnectionDate = session.currentUser?.lastPendingConnectionDate else {
+                XCTFail("Should have a pending connection date")
+                return
+            }
+
+            XCTAssertNearlySameDate(pendingConnectionDate, date)
+        }
+    }
+
     // MARK: - Passive (not active) Client tests
     
     func test_passiveClient_doesNotHaveWorkers() {

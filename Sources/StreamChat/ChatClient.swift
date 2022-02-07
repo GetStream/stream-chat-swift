@@ -582,7 +582,7 @@ extension ChatClient: ConnectionStateDelegate {
         case let .connected(connectionId: id):
             shouldNotifyConnectionIdWaiters = true
             connectionId = id
-            syncRepository.updateLastPendingConnectionDate(with: Date())
+            syncRepository.updateLastConnectionDate(with: Date())
         case let .disconnected(source):
             if let error = source.serverError,
                error.isInvalidTokenError {

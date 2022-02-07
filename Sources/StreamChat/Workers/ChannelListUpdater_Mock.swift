@@ -3,15 +3,20 @@
 //
 
 @testable import StreamChat
+import StreamChatTestTools
 import XCTest
 
 /// Mock implementation of ChannelListUpdater
-class ChannelListUpdaterMock: ChannelListUpdater {
+class ChannelListUpdaterMock: ChannelListUpdater, Spy {
+    var recordedFunctions: [String] = []
+
     @Atomic var update_queries: [ChannelListQuery] = []
-    @Atomic var update_completion: ((Result<ChannelListPayload, Error>) -> Void)? = nil
+    @Atomic var update_completion: ((Result<[ChatChannel], Error>) -> Void)? = nil
     
     @Atomic var fetch_queries: [ChannelListQuery] = []
     @Atomic var fetch_completion: ((Result<ChannelListPayload, Error>) -> Void)? = nil
+
+    var resetChannelsQueryResult: Result<[ChatChannel], Error>?
     
     @Atomic var markAllRead_completion: ((Error?) -> Void)?
     
@@ -27,7 +32,7 @@ class ChannelListUpdaterMock: ChannelListUpdater {
     
     override func update(
         channelListQuery: ChannelListQuery,
-        completion: ((Result<ChannelListPayload, Error>) -> Void)? = nil
+        completion: ((Result<[ChatChannel], Error>) -> Void)? = nil
     ) {
         _update_queries.mutate { $0.append(channelListQuery) }
         update_completion = completion
@@ -43,5 +48,15 @@ class ChannelListUpdaterMock: ChannelListUpdater {
     ) {
         _fetch_queries.mutate { $0.append(channelListQuery) }
         fetch_completion = completion
+    }
+
+    override func resetChannelsQuery(
+        for query: ChannelListQuery,
+        watchedChannelIds: Set<ChannelId>,
+        synchedChannelIds: Set<ChannelId>,
+        completion: @escaping (Result<[ChatChannel], Error>) -> Void
+    ) {
+        record()
+        resetChannelsQueryResult.map(completion)
     }
 }

@@ -154,7 +154,7 @@ class ChannelController_Tests: XCTestCase {
         XCTAssertEqual(controller.channelListQuery, channelListQuery)
         XCTAssert(controller.client === client)
     }
-        
+
     // MARK: - Channel
     
     func test_channel_accessible_initially() throws {
@@ -3383,6 +3383,78 @@ class ChannelController_Tests: XCTestCase {
         // Completion should be called with the error
         AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
     }
+
+    func test_watchActiveChannelWithoutCidAlreadyCreated() {
+        let editPayload = ChannelEditDetailPayload(
+            type: .messaging,
+            name: nil,
+            imageURL: nil,
+            team: nil,
+            members: Set(),
+            invites: Set(),
+            extraData: [:]
+        )
+
+        let receivedError = watchActiveChannelAndWait(
+            channelQuery: ChannelQuery(channelPayload: editPayload),
+            isChannelAlreadyCreated: true,
+            requestBlock: { channelUpdater in
+                channelUpdater?.update_completion?(.success(dummyPayload(with: .unique)))
+            }
+        )
+
+        XCTAssertNil(receivedError)
+        XCTAssertNil(env.channelUpdater?.startWatching_cid)
+        XCTAssertEqual(env.channelUpdater?.update_callCount, 1)
+    }
+
+    func test_watchActiveChannelWithCidNotAlreadyCreated() {
+        let receivedError = watchActiveChannelAndWait(isChannelAlreadyCreated: false, requestBlock: { channelUpdater in
+            channelUpdater?.update_completion?(.success(dummyPayload(with: .unique)))
+        })
+
+        XCTAssertNil(receivedError)
+        XCTAssertNil(env.channelUpdater?.startWatching_cid)
+        XCTAssertEqual(env.channelUpdater?.update_callCount, 1)
+    }
+
+    func test_watchActiveChannelWithCidAlreadyCreated() {
+        let receivedError = watchActiveChannelAndWait(isChannelAlreadyCreated: true, requestBlock: { channelUpdater in
+            channelUpdater?.startWatching_completion?(nil)
+        })
+
+        XCTAssertNil(receivedError)
+        XCTAssertEqual(env.channelUpdater?.startWatching_cid, channelId)
+        XCTAssertEqual(env.channelUpdater?.update_callCount, 0)
+    }
+
+    private func watchActiveChannelAndWait(
+        channelQuery: ChannelQuery? = nil,
+        isChannelAlreadyCreated: Bool,
+        requestBlock: (ChannelUpdaterMock?) -> Void
+    ) -> Error? {
+        controller = ChatChannelController(
+            channelQuery: channelQuery ?? .init(cid: channelId),
+            channelListQuery: nil,
+            client: client,
+            environment: env.environment,
+            isChannelAlreadyCreated: isChannelAlreadyCreated
+        )
+
+        env.channelUpdater?.cleanUp()
+
+        var receivedError: Error?
+        let expectation = self.expectation(description: "watchActiveChannel completion")
+        controller.watchActiveChannel { error in
+            receivedError = error
+            expectation.fulfill()
+        }
+
+        requestBlock(env.channelUpdater)
+
+        waitForExpectations(timeout: 0.2, handler: nil)
+        return receivedError
+    }
     
     // MARK: - Stop watching
     
@@ -3854,6 +3926,24 @@ class ChannelController_Tests: XCTestCase {
         
         // Assert controller is kept alive
         AssertAsync.staysTrue(weakController != nil)
+    }
+
+    // MARK: Init registers active controller
+
+    func test_initRegistersActiveController() {
+        let client = ChatClient.mock
+        let channelQuery = ChannelQuery(cid: channelId)
+        let channelListQuery = ChannelListQuery(filter: .containMembers(userIds: [.unique]))
+
+        let controller = ChatChannelController(
+            channelQuery: channelQuery,
+            channelListQuery: channelListQuery,
+            client: client
+        )
+
+        XCTAssert(controller.client === client)
+        XCTAssert(client.activeChannelControllers.count == 1)
+        XCTAssert(client.activeChannelControllers.allObjects.first === controller)
     }
 }
 
