@@ -91,7 +91,7 @@ final class SyncOperations_Tests: XCTestCase {
         XCTAssertTrue("syncMissingEvents(using:channelIds:bumpLastSync:completion:)".wasNotCalled(on: syncRepository))
     }
 
-    func test_SyncEventsOperation_pendingDate_syncFailure_shouldRetry2times() throws {
+    func test_SyncEventsOperation_pendingDate_syncFailure_shouldRetry() throws {
         let context = SyncContext()
         try database.createCurrentUser()
         context.lastPendingConnectionDate = Date().addingTimeInterval(-3600)

@@ -3694,6 +3694,7 @@
 				F6D61D992510B3E300EB0624 /* Database */,
 				8AE335A324FCF95D002B6677 /* InternetConnection */,
 				79BF83EA248F8EC0007611A1 /* Logger */,
+				C1E8AD5A278DDEBB0041B775 /* Operations */,
 				79280F6F2487CD2B00CDEB89 /* Atomic.swift */,
 				E7DD8EC025E4083B0059A322 /* OptionalDecodable.swift */,
 				79280F702487CD2B00CDEB89 /* Atomic_Tests.swift */,
@@ -5832,7 +5833,8 @@
 		C1E8AD59278DDC500041B775 /* Repositories */ = {
 			isa = PBXGroup;
 			children = (
-				C1E8AD5A278DDEBB0041B775 /* Operations */,
+				C186BFAE27AADB410099CCA6 /* SyncOperations.swift */,
+				C186BFB527AAFDAB0099CCA6 /* SyncOperations_Tests.swift */,
 				C1E8AD55278C8A440041B775 /* SyncRepository.swift */,
 				C186BFA927AA979B0099CCA6 /* SyncRepository_Tests.swift */,
 				C186BFA227A048690099CCA6 /* SyncRepository_Mock.swift */,
@@ -5845,8 +5847,6 @@
 			children = (
 				C1E8AD5B278DDEC70041B775 /* AsyncOperation.swift */,
 				C186BFA527A7F4E10099CCA6 /* AsyncOperation_Tests.swift */,
-				C186BFAE27AADB410099CCA6 /* SyncOperations.swift */,
-				C186BFB527AAFDAB0099CCA6 /* SyncOperations_Tests.swift */,
 			);
 			path = Operations;
 			sourceTree = "<group>";
