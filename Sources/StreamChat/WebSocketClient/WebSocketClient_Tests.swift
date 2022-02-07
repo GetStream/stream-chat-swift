@@ -270,16 +270,16 @@ class WebSocketClient_Tests: XCTestCase {
         AssertAsync.willBeEqual(engine!.sendPing_calledCount, 1)
     }
     
-    func test_pongReceived_callsPingController_pongRecieved() {
+    func test_pongReceived_callsPingController_pongReceived() {
         // Simulate connection to make sure web socket engine exists
         test_connectionFlow()
-        assert(pingController.pongRecievedCount == 1)
+        assert(pingController.pongReceivedCount == 1)
         
         // Simulate a health check (pong) event is received
         decoder.decodedEvent = .success(HealthCheckEvent(connectionId: connectionId))
         engine!.simulateMessageReceived()
         
-        AssertAsync.willBeEqual(pingController.pongRecievedCount, 2)
+        AssertAsync.willBeEqual(pingController.pongReceivedCount, 2)
     }
     
     func test_webSocketPingController_disconnectOnNoPongReceived_disconnectsEngine() {
@@ -530,15 +530,15 @@ extension WebSocketEngineError: Equatable {
 
 class WebSocketPingControllerMock: WebSocketPingController {
     var connectionStateDidChange_connectionStates: [WebSocketConnectionState] = []
-    var pongRecievedCount = 0
+    var pongReceivedCount = 0
     
     override func connectionStateDidChange(_ connectionState: WebSocketConnectionState) {
         connectionStateDidChange_connectionStates.append(connectionState)
         super.connectionStateDidChange(connectionState)
     }
     
-    override func pongRecieved() {
-        pongRecievedCount += 1
-        super.pongRecieved()
+    override func pongReceived() {
+        pongReceivedCount += 1
+        super.pongReceived()
     }
 }

@@ -117,13 +117,21 @@ open class AttachmentsPreviewVC: _ViewController, ComponentsProvider {
     open func setupVerticalStackView() {
         // Disable scroll when not needed
         scrollView.isScrollEnabled = content.count > maxNumberOfVerticalItems
+        
+        let attachmentViews = attachmentViews
 
         // If the content is bigger than the max vertical items and the scroll view height
         // constraint is not yet created, append to the vertical constraint and activate it.
-        if content.count > maxNumberOfVerticalItems {
+        if content.count > maxNumberOfVerticalItems, let firstAttachmentView = attachmentViews.first {
             if scrollViewHeightConstraint == nil {
+                let attachmentHeight = firstAttachmentView
+                    .systemLayoutSizeFitting(.init(width: CGFloat.infinity, height: CGFloat.infinity))
+                    .height
+                let spacingSize = CGFloat(attachmentViews.count + 1) * verticalStackView.spacing.rawValue
+                let maxScrollViewHeight: CGFloat = CGFloat(maxNumberOfVerticalItems) * attachmentHeight + spacingSize
+                
                 scrollViewHeightConstraint = scrollView.heightAnchor.pin(
-                    lessThanOrEqualToConstant: scrollView.frame.size.height
+                    lessThanOrEqualToConstant: maxScrollViewHeight
                 )
                 scrollViewHeightConstraint?.isActive = true
             }
