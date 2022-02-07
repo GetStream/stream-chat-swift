@@ -39,11 +39,6 @@ public typealias ChatChannelNamer =
 ///   - separator: Separator of the members, defaults to `y`
 /// - Returns: A closure with 2 parameters carrying `channel` used for name generation and `currentUserId` to decide
 /// which members' names are going to be displayed
-@available(
-    *,
-    deprecated,
-    message: "Please use a `ChannelNameFormatter` instead"
-)
 public func DefaultChatChannelNamer(
     maxMemberNames: Int = 2,
     separator: String = ","
