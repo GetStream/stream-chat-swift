@@ -9,6 +9,23 @@
 import Foundation
 import StreamChat
 
+
+public extension Dictionary where Key == String, Value == RawJSON {
+    func getExtraData(key: String) -> [String: RawJSON]? {
+        if let extraData = self[key] {
+            switch extraData {
+            case .dictionary(let dictionary):
+                return dictionary
+            default:
+                return nil
+            }
+        } else {
+            return nil
+        }
+    }
+}
+
+// MARK: - DAO
 public extension Dictionary where Key == String, Value == RawJSON {
     var minimumContribution: String? {
         if let minimumContribution = self["minimumContribution"] {
@@ -69,6 +86,20 @@ public extension Dictionary where Key == String, Value == RawJSON {
     var daoDescription: String? {
         if let daoDescription = self["daoDescription"] {
             return fetchRawData(raw: daoDescription) as? String
+        } else {
+            return nil
+        }
+    }
+}
+
+// MARK: - Admin Message
+public extension Dictionary where Key == String, Value == RawJSON {
+    var adminMessage: String? {
+        guard let adminMessage = getExtraData(key: "adminMessage") else {
+            return nil
+        }
+        if let strMessage = adminMessage["adminMessage"] {
+            return fetchRawData(raw: strMessage) as? String
         } else {
             return nil
         }

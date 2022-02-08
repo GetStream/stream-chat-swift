@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="19529" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_1" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="19519"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="AdminMessageTVCell" rowHeight="112" id="KGk-i7-Jjw" customClass="AdminMessageTVCell" customModule="StreamChatUI" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="389" height="131"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+            <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="KGk-i7-Jjw" id="H2p-sc-9uM">
+                <rect key="frame" x="0.0" y="0.0" width="389" height="131"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="3:00 PM" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="5g7-0c-JK1">
+                        <rect key="frame" x="170.5" y="8" width="48" height="15"/>
+                        <fontDescription key="fontDescription" type="system" pointSize="12"/>
+                        <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="4Ax-WY-kA9">
+                        <rect key="frame" x="0.0" y="31.5" width="389" height="83.5"/>
+                        <subviews>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="You created this group with Nikola and 3 others. Try using the menu item to share with others." textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="QGe-f7-QAg">
+                                <rect key="frame" x="16" y="25" width="357" height="33.5"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <color key="textColor" white="1" alpha="0.87" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                        </subviews>
+                        <color key="backgroundColor" red="0.10980392156862745" green="0.10980392156862745" blue="0.11764705882352941" alpha="1" colorSpace="calibratedRGB"/>
+                        <constraints>
+                            <constraint firstItem="QGe-f7-QAg" firstAttribute="leading" secondItem="4Ax-WY-kA9" secondAttribute="leading" constant="16" id="4um-bg-yZ4"/>
+                            <constraint firstItem="QGe-f7-QAg" firstAttribute="top" secondItem="4Ax-WY-kA9" secondAttribute="top" constant="25" id="Wpe-HL-G5x"/>
+                            <constraint firstAttribute="bottom" secondItem="QGe-f7-QAg" secondAttribute="bottom" constant="25" id="h2U-1U-3MR"/>
+                            <constraint firstAttribute="trailing" secondItem="QGe-f7-QAg" secondAttribute="trailing" constant="16" id="tsH-jQ-JcZ"/>
+                        </constraints>
+                    </view>
+                </subviews>
+                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                <constraints>
+                    <constraint firstItem="5g7-0c-JK1" firstAttribute="centerX" secondItem="4Ax-WY-kA9" secondAttribute="centerX" id="0Bh-RN-0oR"/>
+                    <constraint firstItem="4Ax-WY-kA9" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" id="0Zj-Mn-c4E"/>
+                    <constraint firstItem="4Ax-WY-kA9" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" id="RCG-Ju-WZA"/>
+                    <constraint firstItem="4Ax-WY-kA9" firstAttribute="top" secondItem="5g7-0c-JK1" secondAttribute="bottom" constant="8.5" id="b4X-nZ-jlB"/>
+                    <constraint firstAttribute="trailing" secondItem="4Ax-WY-kA9" secondAttribute="trailing" id="qco-sy-h7X"/>
+                    <constraint firstAttribute="bottom" secondItem="4Ax-WY-kA9" secondAttribute="bottom" constant="16" id="qtc-oI-UVk"/>
+                    <constraint firstAttribute="trailing" secondItem="4Ax-WY-kA9" secondAttribute="trailing" id="tfh-ba-REp"/>
+                    <constraint firstItem="5g7-0c-JK1" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="top" constant="8" id="wxI-aL-OXj"/>
+                </constraints>
+            </tableViewCellContentView>
+            <viewLayoutGuide key="safeArea" id="njF-e1-oar"/>
+            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+            <connections>
+                <outlet property="lblDesc" destination="QGe-f7-QAg" id="vHU-XG-tVT"/>
+                <outlet property="lblTime" destination="5g7-0c-JK1" id="HeS-Ed-aFc"/>
+            </connections>
+            <point key="canvasLocation" x="181.8840579710145" y="125.89285714285714"/>
+        </tableViewCell>
+    </objects>
+</document>

@@ -91,6 +91,7 @@ open class ChatMessageListVC:
         listView.register(RedPacketSentBubble.self, forCellReuseIdentifier: "RedPacketSentBubble")
         listView.register(WalletRequestPayBubble.self, forCellReuseIdentifier: "RequestBubble")
         listView.register(RedPacketBubble.self, forCellReuseIdentifier: "RedPacketBubble")
+        listView.register(.init(nibName: "AdminMessageTVCell", bundle: nil), forCellReuseIdentifier: "AdminMessageTVCell")
         listView.register(RedPacketAmountBubble.self, forCellReuseIdentifier: "RedPacketAmountBubble")
         listView.register(RedPacketExpired.self, forCellReuseIdentifier: "RedPacketExpired")
         setupEmptyState()
@@ -440,52 +441,17 @@ open class ChatMessageListVC:
             cell.configureCell(isSender: isMessageFromCurrentUser)
             cell.configData()
             return cell
-        }
-        /*else if isRedPacketCell(message) {
+        } else if isAdminMessage(message) {
             guard let cell = tableView.dequeueReusableCell(
-                withIdentifier: "RedPacketSentBubble",
-                for: indexPath) as? RedPacketSentBubble else {
-                return UITableViewCell()
+                withIdentifier: "AdminMessageTVCell",
+                for: indexPath) as? AdminMessageTVCell else {
+                    return UITableViewCell()
             }
-            cell.options = cellLayoutOptionsForMessage(at: indexPath)
             cell.content = message
-            cell.configureCell(isSender: isMessageFromCurrentUser)
-            cell.configData()
+            cell.configCell()
+            cell.transform = .mirrorY
             return cell
-        } else if isRedPacketExpiredCell(message) {
-            guard let cell = tableView.dequeueReusableCell(
-                withIdentifier: "RedPacketBubble",
-                for: indexPath) as? RedPacketBubble else {
-                return UITableViewCell()
-            }
-            cell.options = cellLayoutOptionsForMessage(at: indexPath)
-            cell.content = message
-            cell.configureCell(isSender: isMessageFromCurrentUser, with: .EXPIRED)
-            cell.configData()
-            return cell
-        } else if isRedPacketReceivedCell(message) {
-            guard let cell = tableView.dequeueReusableCell(
-                withIdentifier: "RedPacketBubble",
-                for: indexPath) as? RedPacketBubble else {
-                return UITableViewCell()
-            }
-            cell.options = cellLayoutOptionsForMessage(at: indexPath)
-            cell.content = message
-            cell.configureCell(isSender: isMessageFromCurrentUser, with: .RECEIVED)
-            cell.configData()
-            return cell
-        } else if isRedPacketAmountCell(message) {
-            guard let cell = tableView.dequeueReusableCell(
-                withIdentifier: "RedPacketAmountBubble",
-                for: indexPath) as? RedPacketAmountBubble else {
-                return UITableViewCell()
-            }
-            cell.options = cellLayoutOptionsForMessage(at: indexPath)
-            cell.content = message
-            cell.configureCell(isSender: isMessageFromCurrentUser)
-            cell.configData()
-            return cell
-        }*/ else {
+        } else {
             let cell: ChatMessageCell = listView.dequeueReusableCell(
                 contentViewClass: cellContentClassForMessage(at: indexPath),
                 attachmentViewInjectorType: attachmentViewInjectorClassForMessage(at: indexPath),
@@ -581,6 +547,10 @@ open class ChatMessageListVC:
             return true
         }
         return false
+    }
+
+    private func isAdminMessage(_ message: ChatMessage?) -> Bool {
+        message?.extraData.keys.contains("adminMessage") ?? false
     }
 
     open func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
