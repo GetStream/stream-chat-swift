@@ -178,6 +178,7 @@ open class ChatChannelVC:
 
         navigationHeaderView.addSubview(rightStackView)
         rightStackView.addArrangedSubview(channelAvatarView)
+        channelAvatarView.content = (channelController.channel, client.currentUserId)
         if channelController.channel?.type == .dao {
             rightStackView.addArrangedSubview(moreButton)
             moreButton.widthAnchor.constraint(equalToConstant: 30).isActive = true
