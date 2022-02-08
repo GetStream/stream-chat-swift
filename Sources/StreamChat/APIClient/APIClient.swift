@@ -226,11 +226,19 @@ class APIClient {
         progress: ((Double) -> Void)?,
         completion: @escaping (Result<URL, Error>) -> Void
     ) {
-        cdnClient.uploadAttachment(
-            attachment,
-            progress: progress,
-            completion: completion
-        )
+        let cdnClient = self.cdnClient
+        let uploadOperation = AsyncOperation(maxRetries: maximumRetries) { [weak self] operation, done in
+            cdnClient.uploadAttachment(attachment, progress: progress) { result in
+                switch result {
+                case let .failure(error) where self?.shouldRetry(error, operation: operation) == true:
+                    done(.retry)
+                case .success, .failure:
+                    completion(result)
+                    done(.continue)
+                }
+            }
+        }
+        operationQueue.addOperation(uploadOperation)
     }
 
     func flushRequestsQueue() {
