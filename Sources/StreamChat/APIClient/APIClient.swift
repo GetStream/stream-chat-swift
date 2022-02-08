@@ -4,25 +4,10 @@
 
 import Foundation
 
-/// The retry policy to use by the API retry mechanism
-struct RetryOptions {
-    /// How many attempts should be performed at most
-    let maxRetries: Int = 3
-    /// How much time there should be in between attempts, this function is usually dependant on the amount of attempts already performed
-    let backoff: (Int) -> Double = {
-        min(max(Double($0) * Double($0), 0.5), 6.0)
-    }
-}
-
 /// An object allowing making request to Stream Chat servers.
 class APIClient {
-    struct RequestsQueueItem {
-        let requestAction: () -> Void
-        let failureAction: () -> Void
-    }
-    
     /// The URL session used for all requests.
-    var session: URLSession
+    let session: URLSession
     
     /// `APIClient` uses this object to encode `Endpoint` objects into `URLRequest`s.
     let encoder: RequestEncoder
@@ -32,17 +17,9 @@ class APIClient {
     
     /// Used for reobtaining tokens when they expire and API client receives token expiration error
     let tokenRefresher: (@escaping () -> Void) -> Void
-    
+
+    /// Client that handles the work related to content (e.g. attachments)
     let cdnClient: CDNClient
-
-    /// Used for synchronizing access to requestsQueue
-    private let requestsAccessQueue = DispatchQueue(label: "io.getstream.requests")
-    
-    /// Used for request retries
-    private let requestsRetriesQueue = DispatchQueue(label: "io.getstream.request-retries")
-
-    /// Stores request failed with token expired error for retrying them later
-    private var requestsQueue = [RequestsQueueItem]()
 
     /// Queue in charge of handling incoming requests
     private let operationQueue: OperationQueue = {
@@ -51,17 +28,17 @@ class APIClient {
         return operationQueue
     }()
 
-    private let maximumRetries = 3
-    private let timeout: TimeInterval = 60
-
     /// Shows whether the token is being refreshed at the moment
     @Atomic private var isRefreshingToken: Bool = false
     
-    /// How many times refreshing the token failed consecutively
+    /// Amount of consecutive token refresh attempts
     @Atomic private var tokenRefreshConsecutiveFailures: Int = 0
 
-    /// How many times can the token refresh fail before giving up with an error
-    let maxTokenRefreshAttempts = 10
+    /// Maximum amount of consecutive token refresh attempts before failing
+    let maximumTokenRefreshAttempts = 10
+
+    /// Maximum amount of times a request can be retried
+    private let maximumRequestRetries = 3
 
     /// Creates a new `APIClient`.
     ///
@@ -82,10 +59,6 @@ class APIClient {
         cdnClient = CDNClient
         self.tokenRefresher = tokenRefresher
     }
-    
-    deinit {
-        requestsQueue = []
-    }
 
     /// Performs a network request and retries in case of network failures
     ///
@@ -104,9 +77,8 @@ class APIClient {
         endpoint: Endpoint<Response>,
         completion: @escaping (Result<Response, Error>) -> Void
     ) -> AsyncOperation {
-        let timeout = self.timeout
-        return AsyncOperation(maxRetries: maximumRetries) { [weak self] operation, done in
-            self?.executeRequest(endpoint: endpoint, timeout: timeout) { result in
+        AsyncOperation(maxRetries: maximumRequestRetries) { [weak self] operation, done in
+            self?.executeRequest(endpoint: endpoint) { result in
                 switch result {
                 case .failure(_ as ClientError.RefreshingToken):
                     // Requeue request
@@ -129,10 +101,9 @@ class APIClient {
     ///   - completion: Called when the networking request is finished.
     private func executeRequest<Response: Decodable>(
         endpoint: Endpoint<Response>,
-        timeout: TimeInterval,
         completion: @escaping (Result<Response, Error>) -> Void
     ) {
-        if tokenRefreshConsecutiveFailures > maxTokenRefreshAttempts {
+        if tokenRefreshConsecutiveFailures > maximumTokenRefreshAttempts {
             return completion(.failure(ClientError.TooManyTokenRefreshAttempts()))
         }
 
@@ -227,7 +198,7 @@ class APIClient {
         completion: @escaping (Result<URL, Error>) -> Void
     ) {
         let cdnClient = self.cdnClient
-        let uploadOperation = AsyncOperation(maxRetries: maximumRetries) { [weak self] operation, done in
+        let uploadOperation = AsyncOperation(maxRetries: maximumRequestRetries) { [weak self] operation, done in
             cdnClient.uploadAttachment(attachment, progress: progress) { result in
                 switch result {
                 case let .failure(error) where self?.shouldRetry(error, operation: operation) == true:
