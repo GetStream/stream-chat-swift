@@ -41,4 +41,36 @@ public extension Dictionary where Key == String, Value == RawJSON {
             return nil
         }
     }
+
+    var masterWalletAddress: String? {
+        if let masterWalletAddress = self["masterWalletAddress"] {
+            return fetchRawData(raw: masterWalletAddress) as? String
+        } else {
+            return nil
+        }
+    }
+
+    var daoExpireDate: String? {
+        if let daoExpireDate = self["daoExpireDate"] {
+            return fetchRawData(raw: daoExpireDate) as? String
+        } else {
+            return nil
+        }
+    }
+
+    var daoJoinLink: String? {
+        if let daoJoinLink = self["daoJoinLink"] {
+            return fetchRawData(raw: daoJoinLink) as? String
+        } else {
+            return nil
+        }
+    }
+
+    var daoDescription: String? {
+        if let daoDescription = self["daoDescription"] {
+            return fetchRawData(raw: daoDescription) as? String
+        } else {
+            return nil
+        }
+    }
 }
