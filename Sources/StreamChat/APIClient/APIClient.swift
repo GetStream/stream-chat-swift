@@ -43,7 +43,17 @@ class APIClient {
 
     /// Stores request failed with token expired error for retrying them later
     private var requestsQueue = [RequestsQueueItem]()
-    
+
+    /// Queue in charge of handling incoming requests
+    private let operationQueue: OperationQueue = {
+        let operationQueue = OperationQueue()
+        operationQueue.name = "com.stream.api-client"
+        return operationQueue
+    }()
+
+    private let maximumRetries = 3
+    private let timeout: TimeInterval = 60
+
     /// Shows whether the token is being refreshed at the moment
     @Atomic private var isRefreshingToken: Bool = false
     
@@ -81,75 +91,54 @@ class APIClient {
     ///
     /// - Parameters:
     ///   - endpoint: The `Endpoint` used to create the network request.
-    ///   - timeout: The timeout in seconds for the API request.
-    ///   - retryOptions: The `RetryOptions` used to retry the request.
     ///   - completion: Called when the networking request is finished.
     func request<Response: Decodable>(
         endpoint: Endpoint<Response>,
-        timeout: TimeInterval = 60,
-        retryOptions: RetryOptions,
         completion: @escaping (Result<Response, Error>) -> Void
     ) {
-        requestsRetriesQueue.async { [weak self] in
-            self?.request(attempt: 0, endpoint: endpoint, timeout: timeout, retryOptions: retryOptions, completion: completion)
-        }
+        let requestOperation = operation(endpoint: endpoint, completion: completion)
+        operationQueue.addOperation(requestOperation)
     }
 
-    private func request<Response: Decodable>(
-        attempt: Int,
+    private func operation<Response: Decodable>(
         endpoint: Endpoint<Response>,
-        timeout: TimeInterval,
-        retryOptions: RetryOptions,
         completion: @escaping (Result<Response, Error>) -> Void
-    ) {
-        request(endpoint: endpoint) {
-            let backoff = retryOptions.backoff(attempt)
-
-            guard case let .failure(error) = $0 else {
-                return completion($0)
-            }
-
-            // we only retry transient errors like connectivity stuff or HTTP 5xx errors
-            guard ClientError.isEphemeral(error: error) else {
-                return completion($0)
-            }
-
-            let offlineErrorCodes: Set<Int> = [NSURLErrorDataNotAllowed, NSURLErrorNotConnectedToInternet]
-            let connectionError = offlineErrorCodes.contains((error as NSError).code)
-
-            // give up after `retryOptions.MaxRetries` unless its a connection problem
-            if attempt <= retryOptions.maxRetries && !connectionError {
-                return completion($0)
-            }
-
-            self.requestsRetriesQueue.asyncAfter(deadline: .now() + backoff) {
-                self.request(
-                    attempt: attempt + 1,
-                    endpoint: endpoint,
-                    timeout: timeout,
-                    retryOptions: retryOptions,
-                    completion: completion
-                )
+    ) -> AsyncOperation {
+        let timeout = self.timeout
+        return AsyncOperation(maxRetries: maximumRetries) { [weak self] operation, done in
+            self?.executeRequest(endpoint: endpoint, timeout: timeout) { result in
+                if let self = self, case let .failure(error) = result, self.shouldRetry(error, operation: operation) {
+                    done(.retry)
+                } else {
+                    completion(result)
+                    done(.continue)
+                }
             }
         }
     }
-    
+
     /// Performs a network request.
     ///
     /// - Parameters:
     ///   - endpoint: The `Endpoint` used to create the network request.
     ///   - completion: Called when the networking request is finished.
-    func request<Response: Decodable>(
+    private func executeRequest<Response: Decodable>(
         endpoint: Endpoint<Response>,
-        timeout: TimeInterval = 60,
+        timeout: TimeInterval,
         completion: @escaping (Result<Response, Error>) -> Void
     ) {
         if tokenRefreshConsecutiveFailures > maxTokenRefreshAttempts {
             return completion(.failure(ClientError.TooManyTokenRefreshAttempts()))
         }
 
-        if isRefreshingToken {
-            return requeueRequestOnTokenExpired(endpoint: endpoint, timeout: timeout, completion: completion)
+        let requeueRequest: () -> Void = { [weak self] in
+            self?.request(endpoint: endpoint, completion: completion)
+        }
+
+        guard !isRefreshingToken else {
+            requeueRequest()
+            completion(.failure(ClientError.ExpiredToken()))
+            return
         }
 
         encoder.encodeRequest(for: endpoint) { [weak self] (requestResult) in
@@ -170,8 +159,10 @@ class APIClient {
 
             guard let self = self else {
                 log.warning("Callback called while self is nil", subsystems: .httpRequests)
+                completion(.failure(ClientError("APIClient was deallocated")))
                 return
             }
+
             let task = self.session.dataTask(with: urlRequest) { [decoder = self.decoder] (data, response, error) in
                 do {
                     let decodedResponse: Response = try decoder.decodeRequestResponse(
@@ -183,7 +174,10 @@ class APIClient {
                     completion(.success(decodedResponse))
                 } catch {
                     if error is ClientError.ExpiredToken {
-                        self.requeueRequestOnTokenExpired(endpoint: endpoint, timeout: timeout, completion: completion)
+                        self.refreshToken {
+                            completion(.failure(error))
+                        }
+                        requeueRequest()
                     } else {
                         completion(.failure(error))
                     }
@@ -192,7 +186,41 @@ class APIClient {
             task.resume()
         }
     }
-    
+
+    private func refreshToken(completion: @escaping () -> Void) {
+        // We stop the queue so no more operations are triggered
+        operationQueue.isSuspended = true
+
+        guard _isRefreshingToken.compareAndSwap(old: false, new: true) else {
+            completion()
+            return
+        }
+
+        // Increase the amount of consecutive failures
+        _tokenRefreshConsecutiveFailures.mutate { $0 += 1 }
+
+        tokenRefresher { [weak self] in
+            self?.isRefreshingToken = false
+            // We restart the queue now that token refresh is completed
+            self?.operationQueue.isSuspended = true
+            completion()
+        }
+    }
+
+    private func shouldRetry(_ error: Error, operation: AsyncOperation) -> Bool {
+        // We only retry transient errors like connectivity stuff or HTTP 5xx errors
+        guard ClientError.isEphemeral(error: error) else {
+            return false
+        }
+
+        let offlineErrorCodes: Set<Int> = [NSURLErrorDataNotAllowed, NSURLErrorNotConnectedToInternet]
+        let isConnectionError = offlineErrorCodes.contains((error as NSError).code)
+
+        // Do not retry unless its a connection problem
+        guard !isConnectionError else { return true }
+        return operation.canRetry
+    }
+
     func uploadAttachment(
         _ attachment: AnyChatMessageAttachment,
         progress: ((Double) -> Void)?,
@@ -204,72 +232,13 @@ class APIClient {
             completion: completion
         )
     }
-    
-    /// Queues a failed request for executing later or failing after a timeout
-    func requeueRequestOnTokenExpired<Response: Decodable>(
-        endpoint: Endpoint<Response>,
-        timeout: TimeInterval,
-        completion: @escaping (Result<Response, Error>) -> Void
-    ) {
-        requestsAccessQueue.async {
-            let item = RequestsQueueItem(
-                requestAction: { [weak self] in
-                    self?.request(
-                        endpoint: endpoint,
-                        timeout: timeout,
-                        completion: completion
-                    )
-                },
-                failureAction: { completion(.failure(ClientError.ExpiredToken())) }
-            )
-            
-            self.requestsQueue.append(item)
-            
-            // Only initiate token refreshing once
-            guard self._isRefreshingToken.compareAndSwap(old: false, new: true) else { return }
-            
-            /// Increase the amount of consecutive failures
-            self._tokenRefreshConsecutiveFailures.mutate { $0 += 1 }
 
-            // The moment we queue a first request for execution later we also set a timeout for 60 seconds
-            // after which we fail all the queued requests
-            self.flushRequestsQueue(after: timeout) {
-                $0.failureAction()
-            }
-            
-            self.tokenRefresher() { [weak self] in
-                guard let self = self else {
-                    return
-                }
-
-                self.isRefreshingToken = false
-                self.flushRequestsQueue {
-                    $0.requestAction()
-                }
-            }
-        }
-    }
-    
-    /// Flushes the request queue after the given timeout.
-    ///
-    /// - Parameters:
-    ///   - timeout: The timeout when the request queue has to be flushed.
-    ///   - itemAction: The item action invoked for every request item when the queue is flushed.
-    func flushRequestsQueue(
-        after timeout: TimeInterval = 0,
-        itemAction: ((RequestsQueueItem) -> Void)? = nil
-    ) {
-        requestsAccessQueue.asyncAfter(deadline: .now() + timeout) { [weak self] in
-            guard let self = self else { return }
-            
-            let queue = self.requestsQueue
-            self.requestsQueue = []
-            queue.forEach { itemAction?($0) }
-        }
+    func flushRequestsQueue() {
+        operationQueue.cancelAllOperations()
     }
 }
 
-extension URLRequest {
+private extension URLRequest {
     var queryItems: [URLQueryItem] {
         if let url = url,
            let urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: false),
@@ -280,7 +249,7 @@ extension URLRequest {
     }
 }
 
-extension Array where Element == URLQueryItem {
+private extension Array where Element == URLQueryItem {
     var prettyPrinted: String {
         var message = ""
         

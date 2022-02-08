@@ -15,7 +15,7 @@ class SyncContext {
 
 class GetChannelIdsOperation: AsyncOperation {
     init(database: DatabaseContainer, context: SyncContext) {
-        super.init(maxRetries: 2) { [weak database] done in
+        super.init(maxRetries: 2) { [weak database] _, done in
             guard let database = database else {
                 done(.continue)
                 return
@@ -34,7 +34,7 @@ class GetChannelIdsOperation: AsyncOperation {
 
 class GetPendingConnectionDateOperation: AsyncOperation {
     init(database: DatabaseContainer, context: SyncContext) {
-        super.init(maxRetries: 2) { [weak database] done in
+        super.init(maxRetries: 2) { [weak database] _, done in
             database?.backgroundReadOnlyContext.perform {
                 context.lastPendingConnectionDate = database?.backgroundReadOnlyContext.currentUser?.lastPendingConnectionDate
                 done(.continue)
@@ -45,7 +45,7 @@ class GetPendingConnectionDateOperation: AsyncOperation {
 
 class SyncEventsOperation: AsyncOperation {
     init(database: DatabaseContainer, syncRepository: SyncRepository, context: SyncContext) {
-        super.init(maxRetries: 2) { [weak database, weak syncRepository] done in
+        super.init(maxRetries: 2) { [weak database, weak syncRepository] _, done in
             log.info(
                 "1. Call `/sync` endpoint and get missing events for all locally existed channels",
                 subsystems: .offlineSupport
@@ -78,7 +78,7 @@ class SyncEventsOperation: AsyncOperation {
 
 class WatchChannelOperation: AsyncOperation {
     init(controller: ChatChannelController, context: SyncContext) {
-        super.init(maxRetries: 2) { [weak controller] done in
+        super.init(maxRetries: 2) { [weak controller] _, done in
             guard let controller = controller, controller.isAvailableOnRemote else {
                 done(.continue)
                 return
@@ -109,7 +109,7 @@ class WatchChannelOperation: AsyncOperation {
 
 class RefetchChannelListQueryOperation: AsyncOperation {
     init(controller: ChatChannelListController, channelRepository: ChannelListUpdater, context: SyncContext) {
-        super.init(maxRetries: 2) { [weak controller] done in
+        super.init(maxRetries: 2) { [weak controller] _, done in
             guard let controller = controller, controller.isAvailableOnRemote else {
                 done(.continue)
                 return

@@ -352,7 +352,7 @@ class MessageUpdater: Worker {
                 reaction.version = version
             }
         } completion: { error in
-            self.apiClient.request(endpoint: endpoint, retryOptions: self.retryOptions) { result in
+            self.apiClient.request(endpoint: endpoint) { result in
                 if result.error == nil {
                     return
                 }
@@ -393,7 +393,7 @@ class MessageUpdater: Worker {
             reaction.localState = .pendingDelete
         } completion: { error in
             self.apiClient
-                .request(endpoint: .deleteReaction(type, messageId: messageId), retryOptions: self.retryOptions) { result in
+                .request(endpoint: .deleteReaction(type, messageId: messageId)) { result in
                     if result.error == nil {
                         return
                     }
