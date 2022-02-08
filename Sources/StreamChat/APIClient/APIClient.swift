@@ -159,13 +159,13 @@ class APIClient {
     }
 
     private func refreshToken(completion: @escaping () -> Void) {
-        // We stop the queue so no more operations are triggered
-        operationQueue.isSuspended = true
-
         guard _isRefreshingToken.compareAndSwap(old: false, new: true) else {
             completion()
             return
         }
+
+        // We stop the queue so no more operations are triggered
+        operationQueue.isSuspended = true
 
         // Increase the amount of consecutive failures
         _tokenRefreshConsecutiveFailures.mutate { $0 += 1 }
@@ -173,7 +173,7 @@ class APIClient {
         tokenRefresher { [weak self] in
             self?.isRefreshingToken = false
             // We restart the queue now that token refresh is completed
-            self?.operationQueue.isSuspended = true
+            self?.operationQueue.isSuspended = false
             completion()
         }
     }
