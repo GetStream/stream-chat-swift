@@ -107,9 +107,14 @@ class APIClient {
         let timeout = self.timeout
         return AsyncOperation(maxRetries: maximumRetries) { [weak self] operation, done in
             self?.executeRequest(endpoint: endpoint, timeout: timeout) { result in
-                if let self = self, case let .failure(error) = result, self.shouldRetry(error, operation: operation) {
+                switch result {
+                case .failure(_ as ClientError.RefreshingToken):
+                    // Requeue request
+                    self?.request(endpoint: endpoint, completion: completion)
+                    done(.continue)
+                case let .failure(error) where self?.shouldRetry(error, operation: operation) == true:
                     done(.retry)
-                } else {
+                case .success, .failure:
                     completion(result)
                     done(.continue)
                 }
@@ -131,13 +136,8 @@ class APIClient {
             return completion(.failure(ClientError.TooManyTokenRefreshAttempts()))
         }
 
-        let requeueRequest: () -> Void = { [weak self] in
-            self?.request(endpoint: endpoint, completion: completion)
-        }
-
         guard !isRefreshingToken else {
-            requeueRequest()
-            completion(.failure(ClientError.ExpiredToken()))
+            completion(.failure(ClientError.RefreshingToken()))
             return
         }
 
@@ -175,9 +175,9 @@ class APIClient {
                 } catch {
                     if error is ClientError.ExpiredToken {
                         self.refreshToken {
-                            completion(.failure(error))
+                            log.info("Token Refreshed", subsystems: .httpRequests)
                         }
-                        requeueRequest()
+                        completion(.failure(ClientError.RefreshingToken()))
                     } else {
                         completion(.failure(error))
                     }
