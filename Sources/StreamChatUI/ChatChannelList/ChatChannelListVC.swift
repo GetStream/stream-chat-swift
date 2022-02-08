@@ -7,7 +7,7 @@ import UIKit
 import SwiftUI
 
 public extension Notification.Name {
-    static let pushToChatMessageScreen = Notification.Name("pushToChatMessageScreen")
+    static let pushToDaoChatMessageScreen = Notification.Name("pushToDaoChatMessageScreen")
 }
 
 /// A `UIViewController` subclass  that shows list of channels.
@@ -123,17 +123,23 @@ open class ChatChannelListVC: _ViewController,
         super.viewDidLoad()
         NotificationCenter.default.addObserver(
             self,
-            selector: #selector(pushToChatMessageScreen(_:)),
-            name: .pushToChatMessageScreen,
+            selector: #selector(pushToDaoChatMessageScreen(_:)),
+            name: .pushToDaoChatMessageScreen,
             object: nil)
     }
 
-    @objc private func pushToChatMessageScreen(_ notification: NSNotification) {
+    @objc private func pushToDaoChatMessageScreen(_ notification: NSNotification) {
+        navigationController?.popToRootViewController(animated: false)
         guard let controller = notification.userInfo?["channelController"] as? ChatChannelController,
               let cid = controller.cid else {
             return
         }
-        self.router.showChannel(for: cid)
+        let chatChannelVC = ChatChannelVC.init()
+        let channelController = ChatClient.shared.channelController(
+            for: .init(type: .dao,
+                       id: cid.id))
+        chatChannelVC.channelController = channelController
+        navigationController?.pushViewController(chatChannelVC, animated: true)
     }
 
     override open func setUpLayout() {
