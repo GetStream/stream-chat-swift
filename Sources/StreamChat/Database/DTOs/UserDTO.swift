@@ -23,7 +23,7 @@ class UserDTO: NSManagedObject {
 
     @NSManaged var members: Set<MemberDTO>?
     @NSManaged var currentUser: CurrentUserDTO?
-    @NSManaged var teams: Set<TeamId>?
+    @NSManaged var teams: [TeamId]
     @NSManaged var channelMutes: Set<ChannelMuteDTO>
 
     /// Returns a fetch request for the dto with the provided `userId`.
@@ -87,6 +87,7 @@ extension UserDTO {
         
         let new = NSEntityDescription.insertNewObject(forEntityName: Self.entityName, into: context) as! UserDTO
         new.id = id
+        new.teams = []
         return new
     }
     
@@ -132,7 +133,7 @@ extension NSManagedObjectContext: UserDatabaseSession {
             dto.extraData = Data()
         }
 
-        dto.teams = Set(payload.teams)
+        dto.teams = payload.teams
 
         // payloadHash doesn't cover the query
         if let query = query, let queryDTO = try saveQuery(query: query) {
@@ -217,7 +218,7 @@ extension ChatUser {
             createdAt: dto.userCreatedAt,
             updatedAt: dto.userUpdatedAt,
             lastActiveAt: dto.lastActivityAt,
-            teams: dto.teams ?? [],
+            teams: Set(dto.teams),
             extraData: extraData
         )
     }
