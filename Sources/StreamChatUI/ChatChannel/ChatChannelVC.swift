@@ -13,6 +13,10 @@ extension Notification.Name {
     public static let showFriendScreen = Notification.Name("showFriendScreen")
 }
 
+public let kExtraDataChannelDescription = "channelDescription"
+public let kExtraDataOneToOneChat = "OneToOneChat"
+public let kExtraDataIsGroupChat = "DataIsGroupChat"
+
 /// Controller responsible for displaying the channel messages.
 @available(iOSApplicationExtension, unavailable)
 open class ChatChannelVC:
@@ -142,6 +146,7 @@ open class ChatChannelVC:
 
     private var loadingPreviousMessages: Bool = false
 
+    
     override open func setUp() {
         super.setUp()
 
@@ -323,7 +328,7 @@ open class ChatChannelVC:
         NotificationCenter.default.post(name: .showDaoShareScreen, object: nil, userInfo: userInfo)
     }
     @objc func addFriendAction(_ sender: Any) {
-        NotificationCenter.default.post(name: .showFriendScreen, object: nil)
+        
     }
     
     @objc func moreButtonAction(_ sender: Any) {
