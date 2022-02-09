@@ -55,7 +55,13 @@ public extension Appearance {
                 return loadImageSafely(with: "arrow")
             }
         }()
-    
+        public var personBadgePlus: UIImage = {
+            if #available(iOS 13.0, *) {
+                return UIImage(systemName: "person.badge.plus")!
+            } else {
+                return loadImageSafely(with: "arrow")
+            }
+        }()
         public var commands: UIImage = loadImageSafely(with: "bolt")
         public var smallBolt: UIImage = loadImageSafely(with: "bolt_small")
         public var openAttachments: UIImage = loadImageSafely(with: "clip")

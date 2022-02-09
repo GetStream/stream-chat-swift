@@ -24,6 +24,9 @@ open class ChatChannelVC:
     /// Controller for observing data changes within the channel.
     open var channelController: ChatChannelController!
 
+    /// boolean flag for first time navigate here after creating new channel
+    open var isChannelCreated = false
+
     /// Listen to keyboard observer or not
     open var enableKeyboardObserver = false
 
@@ -95,9 +98,11 @@ open class ChatChannelVC:
 
     private(set) lazy var addFriendButton: UIButton = {
         let button = UIButton()
-        button.setImage(UIImage(named: "chat_AddFriend"), for: .normal)
+        button.setImage(appearance.images.personBadgePlus, for: .normal)
         button.tintColor = appearance.colorPalette.themeBlue
-        button.setTitle("", for: .normal)
+        button.setTitle(" ADD FRIENDS", for: .normal)
+        button.setTitleColor(appearance.colorPalette.themeBlue, for: .normal)
+        button.titleLabel?.font =  UIFont.systemFont(ofSize: 15, weight: .semibold)
         button.addTarget(self, action: #selector(addFriendAction), for: .touchUpInside)
         return button.withoutAutoresizingMaskConstraints
     }()
@@ -320,6 +325,7 @@ open class ChatChannelVC:
     
     @objc func moreButtonAction(_ sender: Any) {
         shareView.isHidden = false
+        showPinViewButton()
     }
 
     @objc func closePinViewAction(_ sender: Any) {
@@ -339,19 +345,26 @@ open class ChatChannelVC:
     }
 
     private func setupUI() {
-        if channelController.channel?.isDirectMessageChannel {
-            self.shareButton.isHidden = true
-            self.addFriendButton.isHidden = true
+        if channelController.channel?.isDirectMessageChannel ?? false {
+            shareView.isHidden = true
+            moreButton.isHidden = true
         } else {
-            if channelController.channel?.type == .dao {
-                self.shareButton.isHidden = false
-                self.addFriendButton.isHidden = true
-            } else {
-                self.addFriendButton.isHidden = false
-                self.shareButton.isHidden = true
+            shareView.isHidden = isChannelCreated ? false : true
+            if isChannelCreated {
+                showPinViewButton()
             }
         }
         channelController.markRead()
+    }
+
+    private func showPinViewButton() {
+        if channelController.channel?.type == .dao {
+            shareButton.isHidden = false
+            addFriendButton.isHidden = true
+        } else {
+            addFriendButton.isHidden = false
+            shareButton.isHidden = true
+        }
     }
 
     // MARK: - ChatMessageListVCDataSource
