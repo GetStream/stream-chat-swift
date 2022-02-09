@@ -74,12 +74,11 @@ class APIClient_Tests: XCTestCase {
         let testEndpoint = Endpoint<Data>(path: .unique, method: .post, queryItems: nil, requiresConnectionId: false, body: nil)
         
         // Create a request
-        let expectation = self.expectation(description: "Request completes")
-        apiClient.request(endpoint: testEndpoint) { _ in
-            expectation.fulfill()
+        waitUntil { done in
+            apiClient.request(endpoint: testEndpoint) { _ in
+                done()
+            }
         }
-
-        waitForExpectations(timeout: 0.1, handler: nil)
 
         // Check the encoder is called with the correct endpoint
         XCTAssertEqual(encoder.encodeRequest_endpoint, AnyEndpoint(testEndpoint))
@@ -196,15 +195,14 @@ class APIClient_Tests: XCTestCase {
 
         var receivedProgress: Double?
         var receivedResult: Result<URL, Error>?
+        waitUntil { done in
+            apiClient.uploadAttachment(
+                attachment,
+                progress: { receivedProgress = $0 },
+                completion: { receivedResult = $0; done() }
+            )
+        }
 
-        let expectation = self.expectation(description: "Attachment upload completes")
-        apiClient.uploadAttachment(
-            attachment,
-            progress: { receivedProgress = $0 },
-            completion: { receivedResult = $0; expectation.fulfill() }
-        )
-
-        waitForExpectations(timeout: 0.2, handler: nil)
         XCTAssertTrue("uploadAttachment(_:progress:completion:)".wasCalled(on: cdnClient, times: 1))
         XCTAssertEqual(receivedProgress, mockedProgress)
         XCTAssertEqual(receivedResult?.value, mockedURL)
@@ -331,16 +329,15 @@ class APIClient_Tests: XCTestCase {
         
         let testEndpoint = Endpoint<TestUser>.mock()
 
-        let expectation = self.expectation(description: "Request completes")
         var result: Result<TestUser, Error>?
-        apiClient.request(
-            endpoint: testEndpoint,
-            completion: {
-                result = $0; expectation.fulfill()
-            }
-        )
-
-        waitForExpectations(timeout: 0.1, handler: nil)
+        waitUntil { done in
+            apiClient.request(
+                endpoint: testEndpoint,
+                completion: {
+                    result = $0; done()
+                }
+            )
+        }
 
         XCTAssertTrue(tokenRefresherWasCalled)
 
