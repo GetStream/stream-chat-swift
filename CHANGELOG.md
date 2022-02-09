@@ -3,9 +3,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+### 🔄 Changed
+- `ChannelListVC` now keeps track of channels where user is a member only instead of all channels loaded in the SDK. [#1785](https://github.com/GetStream/stream-chat-swift/pull/1785)
+
 ### 🐞 Fixed
 - Make SendButton animation overridable [#1781](https://github.com/GetStream/stream-chat-swift/issues/1781)
 - Make ChannelId.rawValue public [#1780](https://github.com/GetStream/stream-chat-swift/pull/1780)
+- Fix channel not removed from channel list when user leaves the channel [#1785](https://github.com/GetStream/stream-chat-swift/pull/1785)
 
 # [4.10.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.10.0)
 _February 01, 2022_
