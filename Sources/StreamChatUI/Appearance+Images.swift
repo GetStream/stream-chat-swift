@@ -62,6 +62,41 @@ public extension Appearance {
                 return loadImageSafely(with: "arrow")
             }
         }()
+        public var search: UIImage = {
+            if #available(iOS 13.0, *) {
+                return UIImage(systemName: "magnifyingglass")!
+            } else {
+                return loadImageSafely(with: "arrow")
+            }
+        }()
+        public var qrCode: UIImage = {
+            if #available(iOS 13.0, *) {
+                return UIImage(systemName: "qrcode")!
+            } else {
+                return loadImageSafely(with: "arrow")
+            }
+        }()
+        public var mute: UIImage = {
+            if #available(iOS 13.0, *) {
+                return UIImage(systemName: "speaker.slash")!
+            } else {
+                return loadImageSafely(with: "arrow")
+            }
+        }()
+        public var unMute: UIImage = {
+            if #available(iOS 13.0, *) {
+                return UIImage(systemName: "speaker")!
+            } else {
+                return loadImageSafely(with: "arrow")
+            }
+        }()
+        public var photo: UIImage = {
+            if #available(iOS 13.0, *) {
+                return UIImage(systemName: "photo")!
+            } else {
+                return loadImageSafely(with: "arrow")
+            }
+        }()
         public var commands: UIImage = loadImageSafely(with: "bolt")
         public var smallBolt: UIImage = loadImageSafely(with: "bolt_small")
         public var openAttachments: UIImage = loadImageSafely(with: "clip")
