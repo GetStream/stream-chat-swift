@@ -15,11 +15,11 @@ struct ChatUserListData {
     var users = [ChatUser]()
 }
 
-protocol ChatUserListDelegate: AnyObject {
+public protocol ChatUserListDelegate: AnyObject {
     func chatListStateUpdated(state: ChatUserListVC.ChatUserLoadingState)
     func chatUserDidSelect()
 }
-public class ChatUserListVC: UIViewController {
+open class ChatUserListVC: UIViewController {
     //
     public enum ChatUserLoadingState {
         case searching, loading, noUsers, selected, error, completed
