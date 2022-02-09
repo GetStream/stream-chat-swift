@@ -78,6 +78,7 @@ open class ChatChannelVC:
     open private(set) lazy var shareView: UIStackView = {
         let view = UIStackView(frame: .zero).withoutAutoresizingMaskConstraints
         view.backgroundColor = appearance.colorPalette.walletTabbarBackground
+        view.distribution = .fill
         return view
     }()
 
@@ -94,7 +95,7 @@ open class ChatChannelVC:
 
     private(set) lazy var addFriendButton: UIButton = {
         let button = UIButton()
-        button.setImage("chat_AddFriend", for: .normal)
+        button.setImage(UIImage(named: "chat_AddFriend"), for: .normal)
         button.tintColor = appearance.colorPalette.themeBlue
         button.setTitle("", for: .normal)
         button.addTarget(self, action: #selector(addFriendAction), for: .touchUpInside)
@@ -189,10 +190,11 @@ open class ChatChannelVC:
         navigationHeaderView.addSubview(rightStackView)
         rightStackView.addArrangedSubview(channelAvatarView)
         channelAvatarView.content = (channelController.channel, client.currentUserId)
-        if channelController.channel?.type == .dao {
-            rightStackView.addArrangedSubview(moreButton)
-            moreButton.widthAnchor.constraint(equalToConstant: 30).isActive = true
-        }
+        rightStackView.addArrangedSubview(moreButton)
+        moreButton.widthAnchor.constraint(equalToConstant: 30).isActive = true
+//        if channelController.channel?.type == .dao {
+//
+//        }
 
         NSLayoutConstraint.activate([
             rightStackView.centerYAnchor.constraint(equalTo: navigationHeaderView.centerYAnchor, constant: 0),
@@ -229,15 +231,18 @@ open class ChatChannelVC:
         ])
 
         //shareView.addSubview(shareButton)
-        shareView.addSubview(shareButton)
-        shareView.addSubview(addFriendButton)
+        shareView.addArrangedSubview(shareButton)
+        shareView.addArrangedSubview(addFriendButton)
         //        NSLayoutConstraint.activate([
         //            shareButton.centerXAnchor.constraint(equalTo: shareView.centerXAnchor, constant: 0),
         //            shareButton.centerYAnchor.constraint(equalTo: shareView.centerYAnchor, constant: 0),
         //            shareButton.heightAnchor.constraint(equalToConstant: 25),
         //        ])
 
-
+        NSLayoutConstraint.activate([
+            shareButton.heightAnchor.constraint(equalToConstant: 52),
+            addFriendButton.heightAnchor.constraint(equalToConstant: 52),
+        ])
 
         shareView.addSubview(closePinButton)
         NSLayoutConstraint.activate([
@@ -270,7 +275,15 @@ open class ChatChannelVC:
 
     override open func viewDidLoad() {
         super.viewDidLoad()
-        shareView.isHidden = true
+        //
+        self.shareButton.isHidden = true
+        self.addFriendButton.isHidden = true
+        //
+        if channelController.channel?.type == .dao {
+            self.shareButton.isHidden = false
+        } else {
+            self.addFriendButton.isHidden = false
+        }
     }
 
     open override func viewWillAppear(_ animated: Bool) {

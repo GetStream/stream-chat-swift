@@ -129,6 +129,7 @@ open class ChatChannelListVC: _ViewController,
 
     open override func viewDidLoad() {
         super.viewDidLoad()
+        
         NotificationCenter.default.addObserver(
             self,
             selector: #selector(pushToDaoChatMessageScreen(_:)),
@@ -185,10 +186,10 @@ open class ChatChannelListVC: _ViewController,
         //
         headerView.addSubview(lblTitle)
         NSLayoutConstraint.activate([
-            lblTitle.trailingAnchor.constraint(equalTo: createChannelButton.leadingAnchor, constant: -10),
+            lblTitle.leadingAnchor.constraint(equalTo: headerView.leadingAnchor, constant: 60),
             lblTitle.centerYAnchor.constraint(equalTo: headerView.centerYAnchor, constant: 0),
             lblTitle.centerXAnchor.constraint(equalTo: headerView.centerXAnchor, constant: 0),
-            lblTitle.leadingAnchor.constraint(equalTo: userAvatarView.leadingAnchor, constant: 10),
+            lblTitle.trailingAnchor.constraint(equalTo: createChannelButton.leadingAnchor, constant: -10),
         ])
         //
         
