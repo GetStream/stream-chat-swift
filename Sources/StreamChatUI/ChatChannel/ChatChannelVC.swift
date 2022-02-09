@@ -275,15 +275,7 @@ open class ChatChannelVC:
 
     override open func viewDidLoad() {
         super.viewDidLoad()
-        //
-        self.shareButton.isHidden = true
-        self.addFriendButton.isHidden = true
-        //
-        if channelController.channel?.type == .dao {
-            self.shareButton.isHidden = false
-        } else {
-            self.addFriendButton.isHidden = false
-        }
+        setupUI()
     }
 
     open override func viewWillAppear(_ animated: Bool) {
@@ -344,6 +336,22 @@ open class ChatChannelVC:
         default:
             return nil
         }
+    }
+
+    private func setupUI() {
+        if channelController.channel?.isDirectMessageChannel {
+            self.shareButton.isHidden = true
+            self.addFriendButton.isHidden = true
+        } else {
+            if channelController.channel?.type == .dao {
+                self.shareButton.isHidden = false
+                self.addFriendButton.isHidden = true
+            } else {
+                self.addFriendButton.isHidden = false
+                self.shareButton.isHidden = true
+            }
+        }
+        channelController.markRead()
     }
 
     // MARK: - ChatMessageListVCDataSource
