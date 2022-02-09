@@ -8,7 +8,7 @@
 import UIKit
 import SwiftUI
 
-class TableViewHeaderChatUserList: UITableViewCell {
+public class TableViewHeaderChatUserList: UITableViewCell {
     //
     static let reuseId: String = "TableViewHeaderChatUserList"
     //

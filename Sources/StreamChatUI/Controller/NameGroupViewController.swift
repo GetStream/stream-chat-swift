@@ -7,12 +7,12 @@ import Nuke
 import StreamChat
 import StreamChatUI
 import UIKit
-import Lottie
+
 
 private let GroupNameLimit = 40
 private let HashtagNameLimit = 100
 
-class NameGroupViewController: UIViewController {
+open class NameGroupViewController: UIViewController {
 
     var client: ChatClient?
     @IBOutlet private var searchFieldStack: UIStackView!

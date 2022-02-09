@@ -9,9 +9,8 @@ import Foundation
 import Nuke
 import StreamChat
 import UIKit
-import Lottie
 
-class ChatGroupDetailsVC: UIViewController {
+public class ChatGroupDetailsVC: UIViewController {
 
     var client: ChatClient?
     @IBOutlet private weak var btnNext: UIButton!
