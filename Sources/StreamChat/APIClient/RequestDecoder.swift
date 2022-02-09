@@ -81,6 +81,7 @@ struct DefaultRequestDecoder: RequestDecoder {
 extension ClientError {
     class ExpiredToken: ClientError {}
     class RefreshingToken: ClientError {}
+    class RecoveryMode: ClientError {}
     class TooManyTokenRefreshAttempts: ClientError {
         override var localizedDescription: String {
             "Authentication failed on expired tokens after too many refresh attempts, please check that your user tokens are created correctly."

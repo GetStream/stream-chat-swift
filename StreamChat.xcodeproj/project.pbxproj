@@ -1429,6 +1429,7 @@
 		C139335F275E7BD800225E7A /* Nuke in Frameworks */ = {isa = PBXBuildFile; productRef = C139335E275E7BD800225E7A /* Nuke */; };
 		C1393361275F5D1E00225E7A /* Nuke in Frameworks */ = {isa = PBXBuildFile; productRef = C1393360275F5D1E00225E7A /* Nuke */; };
 		C147D78427B3D8BC00F8E7C5 /* WaitUntil.swift in Sources */ = {isa = PBXBuildFile; fileRef = C147D78327B3D8BC00F8E7C5 /* WaitUntil.swift */; };
+		C147D78627B4294900F8E7C5 /* Logger_Mock.swift in Sources */ = {isa = PBXBuildFile; fileRef = C147D78527B4294900F8E7C5 /* Logger_Mock.swift */; };
 		C171041E2768C34E008FB3F2 /* Array+SafeSubscript.swift in Sources */ = {isa = PBXBuildFile; fileRef = C171041D2768C34E008FB3F2 /* Array+SafeSubscript.swift */; };
 		C171041F2768C34E008FB3F2 /* Array+SafeSubscript.swift in Sources */ = {isa = PBXBuildFile; fileRef = C171041D2768C34E008FB3F2 /* Array+SafeSubscript.swift */; };
 		C186BFA327A048690099CCA6 /* SyncRepository_Mock.swift in Sources */ = {isa = PBXBuildFile; fileRef = C186BFA227A048690099CCA6 /* SyncRepository_Mock.swift */; };
@@ -2972,6 +2973,7 @@
 		C13C7509273936DA00F93B34 /* NativeEngine.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NativeEngine.swift; sourceTree = "<group>"; };
 		C13C750A273936DA00F93B34 /* WSEngine.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WSEngine.swift; sourceTree = "<group>"; };
 		C147D78327B3D8BC00F8E7C5 /* WaitUntil.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WaitUntil.swift; sourceTree = "<group>"; };
+		C147D78527B4294900F8E7C5 /* Logger_Mock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logger_Mock.swift; sourceTree = "<group>"; };
 		C171041D2768C34E008FB3F2 /* Array+SafeSubscript.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array+SafeSubscript.swift"; sourceTree = "<group>"; };
 		C186BFA227A048690099CCA6 /* SyncRepository_Mock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncRepository_Mock.swift; sourceTree = "<group>"; };
 		C186BFA527A7F4E10099CCA6 /* AsyncOperation_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AsyncOperation_Tests.swift; sourceTree = "<group>"; };
@@ -4309,6 +4311,7 @@
 				7964F3AF249A314D002A09EC /* Formatter */,
 				7964F3B2249A314D002A09EC /* Destination */,
 				79BF83F1248F8F60007611A1 /* Logger.swift */,
+				C147D78527B4294900F8E7C5 /* Logger_Mock.swift */,
 				DA0BB1602513B5F200CAEFBD /* StringInterpolation+Extenstions.swift */,
 			);
 			path = Logger;
@@ -7881,6 +7884,7 @@
 				79CD959424F9381700E87377 /* MulticastDelegate_Tests.swift in Sources */,
 				C186BFA627A7F4E10099CCA6 /* AsyncOperation_Tests.swift in Sources */,
 				792921C724C047DD00116BBB /* APIClient_Mock.swift in Sources */,
+				C147D78627B4294900F8E7C5 /* Logger_Mock.swift in Sources */,
 				DAD5C836250278AD0045117A /* ChannelController+Combine_Tests.swift in Sources */,
 				88EA9AFC25472269007EE76B /* MessageReactionType_Tests.swift in Sources */,
 				79A0E9BC2498C31A00E9BD50 /* TypingStartCleanupMiddleware_Tests.swift in Sources */,

@@ -28,6 +28,18 @@ class APIClient {
         return operationQueue
     }()
 
+    /// Queue in charge of handling recovery related requests. Handles operations in serial
+    private let recoveryQueue: OperationQueue = {
+        let operationQueue = OperationQueue()
+        operationQueue.name = "com.stream.api-client.recovery"
+        operationQueue.maxConcurrentOperationCount = 1
+        return operationQueue
+    }()
+
+    /// Determines whether the APIClient is in recovery mode. During recovery period we limit the concurrent operations to 1, and we only allow recovery related
+    /// requests to be run,
+    @Atomic private var isRecoveryModeOn: Bool = false
+
     /// Shows whether the token is being refreshed at the moment
     @Atomic private var isRefreshingToken: Bool = false
     
@@ -71,6 +83,24 @@ class APIClient {
     ) {
         let requestOperation = operation(endpoint: endpoint, completion: completion)
         operationQueue.addOperation(requestOperation)
+    }
+
+    /// Performs a network request and retries in case of network failures
+    ///
+    /// - Parameters:
+    ///   - endpoint: The `Endpoint` used to create the network request.
+    ///   - completion: Called when the networking request is finished.
+    func recoveryRequest<Response: Decodable>(
+        endpoint: Endpoint<Response>,
+        completion: @escaping (Result<Response, Error>) -> Void
+    ) {
+        guard isRecoveryModeOn else {
+            log.assertionFailure("We should not call this method if not in recovery mode")
+            return
+        }
+
+        let requestOperation = operation(endpoint: endpoint, completion: completion)
+        recoveryQueue.addOperation(requestOperation)
     }
 
     private func operation<Response: Decodable>(
@@ -214,6 +244,18 @@ class APIClient {
 
     func flushRequestsQueue() {
         operationQueue.cancelAllOperations()
+    }
+
+    func enterRecoveryMode() {
+        // Pauses all the regular requests until recovery is completed.
+        isRecoveryModeOn = true
+        operationQueue.isSuspended = true
+    }
+
+    func exitRecoveryMode() {
+        // Once recovery is done, regular requests can go through again.
+        isRecoveryModeOn = false
+        operationQueue.isSuspended = false
     }
 }
 

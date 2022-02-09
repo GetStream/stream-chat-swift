@@ -102,8 +102,6 @@ class APIClient_Tests: XCTestCase {
         XCTAssertNotCall("decodeRequestResponse(data:response:error:)", on: decoder)
     }
 
-    // MARK: - Networking
-    
     func test_callingRequest_createsNetworkRequest() throws {
         // Create a test request and set it as a response from the encoder
         let uniquePath: String = .unique
@@ -195,6 +193,23 @@ class APIClient_Tests: XCTestCase {
         // Check the outgoing error from the encoder is the result data
         AssertResultFailure(result, encoderError)
         XCTEnsureRequestsWereExecuted(times: 1)
+    }
+
+    func test_startingMultipleRequestsAtTheSameTimeShouldResultInParallelRequests() {
+        let testUser = TestUser(name: "test")
+        decoder.decodeRequestResponse = .success(testUser)
+
+        (1...5).forEach { _ in
+            self.apiClient.request(endpoint: Endpoint<TestUser>.mock(), completion: { _ in })
+        }
+
+        waitUntil { done in
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
+                done()
+            }
+        }
+
+        XCTEnsureRequestsWereExecuted(times: 5)
     }
 
     // MARK: - CDN Client
@@ -351,6 +366,91 @@ class APIClient_Tests: XCTestCase {
         XCTEnsureRequestsWereExecuted(times: 1)
     }
 
+    // MARK: - Recovery mode
+
+    func test_whenInRecoveryModeRegularRequestsShouldNotGoThrough() {
+        apiClient.enterRecoveryMode()
+
+        let testUser = TestUser(name: "test")
+        decoder.decodeRequestResponse = .success(testUser)
+        (1...5).forEach { _ in
+            self.apiClient.request(endpoint: Endpoint<TestUser>.mock(), completion: { _ in })
+        }
+
+        waitUntil { done in
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
+                done()
+            }
+        }
+        XCTAssertNotCall("encodeRequest(for:completion:)", on: encoder)
+        XCTAssertNotCall("decodeRequestResponse(data:response:error:)", on: decoder)
+    }
+
+    func test_whenInRecoveryModeRecoveryRequestsShouldGoThrough() {
+        apiClient.enterRecoveryMode()
+
+        let testUser = TestUser(name: "test")
+        decoder.decodeRequestResponse = .success(testUser)
+        (1...5).forEach { _ in
+            self.apiClient.recoveryRequest(endpoint: Endpoint<TestUser>.mock(), completion: { _ in })
+        }
+
+        waitUntil { done in
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
+                done()
+            }
+        }
+        XCTEnsureRequestsWereExecuted(times: 5)
+    }
+
+    func test_whenInRegularModeRecoveryRequestsShouldThrowAnAssert() {
+        let testUser = TestUser(name: "test")
+        decoder.decodeRequestResponse = .success(testUser)
+        let loggerMock = LoggerMock()
+        loggerMock.injectMock()
+
+        (1...5).forEach { _ in
+            self.apiClient.recoveryRequest(endpoint: Endpoint<TestUser>.mock(), completion: { _ in })
+        }
+
+        waitUntil { done in
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
+                done()
+            }
+        }
+        XCTAssertEqual(loggerMock.assertionFailureCalls, 5)
+        XCTAssertNotCall("encodeRequest(for:completion:)", on: encoder)
+        XCTAssertNotCall("decodeRequestResponse(data:response:error:)", on: decoder)
+    }
+
+    func test_whenInRecoveryMode_startingMultipleRecoveryRequestsAtTheSameTimeShouldRunThemInSerial() {
+        apiClient.enterRecoveryMode()
+
+        let testUser = TestUser(name: "test")
+        decoder.decodeRequestResponse = .success(testUser)
+        decoder.decodeRequestDelay = 0.01
+
+        (1...5).forEach { _ in
+            self.apiClient.recoveryRequest(endpoint: Endpoint<TestUser>.mock(), completion: { _ in })
+        }
+
+        waitUntil { done in
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.01) {
+                done()
+            }
+        }
+
+        XCTEnsureRequestsWereExecuted(times: 1)
+
+        waitUntil { done in
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
+                done()
+            }
+        }
+
+        XCTEnsureRequestsWereExecuted(times: 5)
+    }
+
     // MARK: - Helpers
 
     private func XCTEnsureRequestsWereExecuted(times: Int, file: StaticString = #filePath, line: UInt = #line) {
@@ -413,23 +513,33 @@ class TestRequestEncoder: RequestEncoder, Spy {
 class TestRequestDecoder: RequestDecoder, Spy {
     var recordedFunctions: [String] = []
     var decodeRequestResponse: Result<Any, Error>?
-    
+    var decodeRequestDelay: TimeInterval?
+
     var decodeRequestResponse_data: Data?
     var decodeRequestResponse_response: HTTPURLResponse?
     var decodeRequestResponse_error: Error?
     
-    func decodeRequestResponse<ResponseType>(data: Data?, response: URLResponse?, error: Error?) throws -> ResponseType
-        where ResponseType: Decodable {
+    func decodeRequestResponse<ResponseType>(
+        data: Data?,
+        response: URLResponse?,
+        error: Error?
+    ) throws -> ResponseType where ResponseType: Decodable {
         record()
         decodeRequestResponse_data = data
         decodeRequestResponse_response = response as? HTTPURLResponse
         decodeRequestResponse_error = error
-        
+
         guard let simulatedResponse = decodeRequestResponse else {
             log.warning("TestRequestDecoder simulated response not set. Throwing a TestError.")
             throw TestError()
         }
-        
+
+        if let decodeRequestDelay = decodeRequestDelay {
+            let group = DispatchGroup()
+            group.enter()
+            DispatchQueue.main.asyncAfter(deadline: .now() + decodeRequestDelay) { group.leave() }
+            group.wait()
+        }
         switch simulatedResponse {
         case let .success(response):
             return response as! ResponseType
