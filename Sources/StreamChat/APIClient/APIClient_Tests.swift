@@ -39,7 +39,6 @@ class APIClient_Tests: XCTestCase {
         encoder = TestRequestEncoder(baseURL: baseURL, apiKey: apiKey)
         decoder = TestRequestDecoder()
         cdnClient = CDNClient_Mock()
-        cdnClient.uploadAttachmentMockFunc.returns(())
         tokenRefresher = { _ in }
         
         apiClient = APIClient(
@@ -75,8 +74,13 @@ class APIClient_Tests: XCTestCase {
         let testEndpoint = Endpoint<Data>(path: .unique, method: .post, queryItems: nil, requiresConnectionId: false, body: nil)
         
         // Create a request
-        apiClient.request(endpoint: testEndpoint) { _ in }
-        
+        let expectation = self.expectation(description: "Request completes")
+        apiClient.request(endpoint: testEndpoint) { _ in
+            expectation.fulfill()
+        }
+
+        waitForExpectations(timeout: 0.1, handler: nil)
+
         // Check the encoder is called with the correct endpoint
         XCTAssertEqual(encoder.encodeRequest_endpoint, AnyEndpoint(testEndpoint))
     }
@@ -185,27 +189,25 @@ class APIClient_Tests: XCTestCase {
     
     func test_uploadAttachment_calls_CDNClient() throws {
         let attachment = AnyChatMessageAttachment.sample()
-        
-        var progress: Double?
-        var result: Result<URL, Error>?
-        
+        let mockedProgress: Double = 42
+        let mockedURL = URL(string: "https://hello.com")!
+        cdnClient.uploadAttachmentProgress = mockedProgress
+        cdnClient.uploadAttachmentResult = .success(mockedURL)
+
+        var receivedProgress: Double?
+        var receivedResult: Result<URL, Error>?
+
+        let expectation = self.expectation(description: "Attachment upload completes")
         apiClient.uploadAttachment(
             attachment,
-            progress: { progress = $0 },
-            completion: { result = $0 }
+            progress: { receivedProgress = $0 },
+            completion: { receivedResult = $0; expectation.fulfill() }
         )
-        
-        XCTAssertTrue(cdnClient.uploadAttachmentMockFunc.called)
-        
-        let parameters = try XCTUnwrap(cdnClient.uploadAttachmentMockFunc.calls.last)
-        
-        let sampleProgress: Double = 42
-        parameters.1?(sampleProgress)
-        XCTAssertEqual(progress, sampleProgress)
-        
-        let imageURL = URL.localYodaImage
-        parameters.2(.success(imageURL))
-        XCTAssertEqual(try result?.get(), imageURL)
+
+        waitForExpectations(timeout: 0.2, handler: nil)
+        XCTAssertTrue("uploadAttachment(_:progress:completion:)".wasCalled(on: cdnClient, times: 1))
+        XCTAssertEqual(receivedProgress, mockedProgress)
+        XCTAssertEqual(receivedResult?.value, mockedURL)
     }
     
     func test_requestFailedWithExpiredToken_refreshesToken() throws {
@@ -285,7 +287,7 @@ class APIClient_Tests: XCTestCase {
         decoder.decodeRequestResponse = .success(testUser)
         
         tokenRefresherCompletion()
-        
+
         MockNetworkURLProtocol.mockResponse(
             request: testRequest,
             statusCode: 200
@@ -302,8 +304,9 @@ class APIClient_Tests: XCTestCase {
     
     func test_requestFailedWithExpiredToken_requestsTimeout() throws {
         var tokenRefresherWasCalled = false
-        tokenRefresher = { _ in
+        tokenRefresher = { completion in
             tokenRefresherWasCalled = true
+            completion()
         }
         
         let apiClient = APIClient(
@@ -327,25 +330,26 @@ class APIClient_Tests: XCTestCase {
         )
         
         let testEndpoint = Endpoint<TestUser>.mock()
-        
+
+        let expectation = self.expectation(description: "Request completes")
         var result: Result<TestUser, Error>?
         apiClient.request(
             endpoint: testEndpoint,
-            timeout: 0.001,
             completion: {
-                result = $0
+                result = $0; expectation.fulfill()
             }
         )
-        
-        AssertAsync.willBeTrue(tokenRefresherWasCalled)
-        
-        AssertAsync.willBeTrue(result != nil)
-        
-        if case .failure = result {
-            XCTAssertTrue(true)
-        } else {
+
+        waitForExpectations(timeout: 0.1, handler: nil)
+
+        XCTAssertTrue(tokenRefresherWasCalled)
+
+        guard let result = result, case let .failure(error) = result else {
             XCTFail()
+            return
         }
+
+        XCTAssertTrue(error is ClientError.TooManyTokenRefreshAttempts)
     }
 }
 

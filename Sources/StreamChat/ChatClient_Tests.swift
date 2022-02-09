@@ -531,8 +531,7 @@ class ChatClient_Tests: XCTestCase {
         
         // Assert `flushRequestsQueue` is triggered, client is not recreated
         XCTAssertTrue(testEnv.apiClient! === client.apiClient)
-        XCTAssertEqual(testEnv.apiClient!.flushRequestsQueue_timeout, 0)
-        XCTAssertNil(testEnv.apiClient!.flushRequestsQueue_itemAction)
+        XCTAssertTrue("flushRequestsQueue()".wasCalled(on: testEnv.apiClient!, times: 1))
     }
     
     // MARK: - Background workers tests

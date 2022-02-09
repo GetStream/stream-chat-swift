@@ -9,7 +9,7 @@ final class AsyncOperation_Tests: XCTestCase {
     func testOperationCallsCompletion() {
         let expectation = expectation(description: "operation concludes")
 
-        let operation = AsyncOperation { completion in
+        let operation = AsyncOperation { _, completion in
             completion(.continue)
             expectation.fulfill()
         }
@@ -25,7 +25,7 @@ final class AsyncOperation_Tests: XCTestCase {
 
     func testOperationDoesNotRetryIfValueIsNotPassed() {
         var operationBlockCalls = 0
-        let operation = AsyncOperation { completion in
+        let operation = AsyncOperation { _, completion in
             operationBlockCalls += 1
             completion(.retry)
         }
@@ -36,7 +36,7 @@ final class AsyncOperation_Tests: XCTestCase {
 
     func testOperationRetriesUpTillMaximumRetries() {
         var operationBlockCalls = 0
-        let operation = AsyncOperation(maxRetries: 2) { completion in
+        let operation = AsyncOperation(maxRetries: 2) { _, completion in
             operationBlockCalls += 1
             completion(.retry)
         }
@@ -47,7 +47,7 @@ final class AsyncOperation_Tests: XCTestCase {
 
     func testOperationRetriesUpTillSuccess() {
         var operationBlockCalls = 0
-        let operation = AsyncOperation(maxRetries: 10) { completion in
+        let operation = AsyncOperation(maxRetries: 10) { _, completion in
             operationBlockCalls += 1
             if operationBlockCalls == 2 {
                 completion(.continue)
@@ -62,7 +62,7 @@ final class AsyncOperation_Tests: XCTestCase {
 
     func testOperationDoesNotRetryIfCancelled() {
         var operationBlockCalls = 0
-        let operation = AsyncOperation(maxRetries: 10) { completion in
+        let operation = AsyncOperation(maxRetries: 10) { _, completion in
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
                 operationBlockCalls += 1
                 completion(.retry)
@@ -92,7 +92,7 @@ final class AsyncOperation_Tests: XCTestCase {
 
     func testOperationShouldNotStartIfCancelled() {
         var operationBlockCalls = 0
-        let operation = AsyncOperation(maxRetries: 10) { completion in
+        let operation = AsyncOperation(maxRetries: 10) { _, completion in
             operationBlockCalls += 1
             completion(.retry)
         }
