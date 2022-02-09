@@ -49,7 +49,15 @@ open class ChatChannelListVC: _ViewController,
     open private(set) lazy var headerSafeAreaView: UIView = UIView(frame: .zero).withoutAutoresizingMaskConstraints
 
     open private(set) lazy var headerView: UIView = UIView(frame: .zero).withoutAutoresizingMaskConstraints
-
+    //
+    public let lblTitle: UILabel = {
+        let lbl = UILabel()
+        lbl.translatesAutoresizingMaskIntoConstraints = false
+        lbl.font = UIFont.boldSystemFont(ofSize: 16)
+        lbl.textColor = .white
+        return lbl.withoutAutoresizingMaskConstraints
+    }()
+    //
     open private(set) lazy var createChannelButton: UIButton = {
         let button = UIButton()
         button.setImage(appearance.images.editCircle, for: .normal)
@@ -166,7 +174,7 @@ open class ChatChannelListVC: _ViewController,
             userAvatarView.leadingAnchor.constraint(equalTo: headerView.leadingAnchor, constant: 16),
             userAvatarView.centerYAnchor.constraint(equalTo: headerView.centerYAnchor, constant: 0)
         ])
-
+        
         headerView.addSubview(createChannelButton)
         NSLayoutConstraint.activate([
             createChannelButton.trailingAnchor.constraint(equalTo: headerView.trailingAnchor, constant: -16),
@@ -174,7 +182,16 @@ open class ChatChannelListVC: _ViewController,
             createChannelButton.heightAnchor.constraint(equalToConstant: 32),
             createChannelButton.widthAnchor.constraint(equalToConstant: 32),
         ])
-
+        //
+        headerView.addSubview(lblTitle)
+        NSLayoutConstraint.activate([
+            lblTitle.trailingAnchor.constraint(equalTo: createChannelButton.leadingAnchor, constant: -10),
+            lblTitle.centerYAnchor.constraint(equalTo: headerView.centerYAnchor, constant: 0),
+            lblTitle.centerXAnchor.constraint(equalTo: headerView.centerXAnchor, constant: 0),
+            lblTitle.leadingAnchor.constraint(equalTo: userAvatarView.leadingAnchor, constant: 10),
+        ])
+        //
+        
         view.addSubview(collectionView)
         NSLayoutConstraint.activate([
             collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 0),
