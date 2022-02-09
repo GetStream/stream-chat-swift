@@ -123,13 +123,6 @@ open class InputTextView: UITextView, AppearanceProvider {
         delegate?.textViewDidChange?(self)
         handleTextChange()
     }
-
-    override open func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
-        super.traitCollectionDidChange(previousTraitCollection)
-
-        // Make sure to recalculate height when trait text size changes
-        setTextViewHeight()
-    }
         
     @objc open func handleTextChange() {
         placeholderLabel.isHidden = !text.isEmpty
