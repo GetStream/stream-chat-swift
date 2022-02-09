@@ -139,6 +139,7 @@ open class ChatChannelListVC: _ViewController,
             for: .init(type: .dao,
                        id: cid.id))
         chatChannelVC.channelController = channelController
+        chatChannelVC.isChannelCreated = true
         navigationController?.pushViewController(chatChannelVC, animated: true)
     }
 

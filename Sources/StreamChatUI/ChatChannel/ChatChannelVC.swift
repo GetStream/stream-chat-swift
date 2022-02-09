@@ -23,6 +23,9 @@ open class ChatChannelVC:
     /// Controller for observing data changes within the channel.
     open var channelController: ChatChannelController!
 
+    /// boolean flag for first time navigate here after creating new channel
+    open var isChannelCreated = false
+
     /// Listen to keyboard observer or not
     open var enableKeyboardObserver = false
 
@@ -256,7 +259,7 @@ open class ChatChannelVC:
 
     override open func viewDidLoad() {
         super.viewDidLoad()
-        shareView.isHidden = true
+        shareView.isHidden = isChannelCreated ? false : true
     }
 
     open override func viewWillAppear(_ animated: Bool) {
