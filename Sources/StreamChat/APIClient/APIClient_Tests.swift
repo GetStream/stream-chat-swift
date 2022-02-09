@@ -13,7 +13,7 @@ class APIClient_Tests: XCTestCase {
     var baseURL: URL!
     var sessionConfiguration: URLSessionConfiguration!
     
-    var uniqeHeaderValue: String!
+    var uniqueHeaderValue: String!
     
     var encoder: TestRequestEncoder!
     var decoder: TestRequestDecoder!
@@ -33,8 +33,8 @@ class APIClient_Tests: XCTestCase {
         sessionConfiguration.httpMaximumConnectionsPerHost = Int.max
         
         // Some random value to ensure the headers are respected
-        uniqeHeaderValue = .unique
-        sessionConfiguration.httpAdditionalHeaders?["unique_value"] = uniqeHeaderValue
+        uniqueHeaderValue = .unique
+        sessionConfiguration.httpAdditionalHeaders?["unique_value"] = uniqueHeaderValue
         
         encoder = TestRequestEncoder(baseURL: baseURL, apiKey: apiKey)
         decoder = TestRequestDecoder()
@@ -64,6 +64,8 @@ class APIClient_Tests: XCTestCase {
         XCTAssert(apiClient.decoder as AnyObject === decoder)
         XCTAssertTrue(apiClient.session.configuration.isTestEqual(to: sessionConfiguration))
     }
+
+    // MARK: - Request
     
     func test_requestEncoderIsCalledWithEndpoint() {
         // Setup mock encoder response (it's not actually used, we just need to return something)
@@ -82,6 +84,7 @@ class APIClient_Tests: XCTestCase {
 
         // Check the encoder is called with the correct endpoint
         XCTAssertEqual(encoder.encodeRequest_endpoint, AnyEndpoint(testEndpoint))
+        XCTEnsureRequestsWereExecuted(times: 1)
     }
     
     func test_requestEncoderFailingToEncode() throws {
@@ -95,6 +98,8 @@ class APIClient_Tests: XCTestCase {
         // Create a request and assert the result is failure
         let result = try waitFor { apiClient.request(endpoint: testEndpoint, completion: $0) }
         AssertResultFailure(result, testError)
+        XCTAssertCall("encodeRequest(for:completion:)", on: encoder, times: 1)
+        XCTAssertNotCall("decodeRequestResponse(data:response:error:)", on: decoder)
     }
 
     // MARK: - Networking
@@ -113,17 +118,21 @@ class APIClient_Tests: XCTestCase {
         let testEndpoint = Endpoint<Data>.mock()
         
         // Create a request
-        apiClient.request(endpoint: testEndpoint) { _ in }
+        waitUntil { done in
+            apiClient.request(endpoint: testEndpoint) { _ in done() }
+        }
         
         // Check a network request is made with the values from `testRequest`
         AssertNetworkRequest(
             method: .post,
             path: "/" + uniquePath,
             // the "name" header value comes from the request, "unique_value" from the session config
-            headers: ["surname": "Organa", "unique_value": uniqeHeaderValue],
+            headers: ["surname": "Organa", "unique_value": uniqueHeaderValue],
             queryParameters: ["item": uniqueQueryItem],
             body: try JSONEncoder().encode(["name": "Leia"])
         )
+        XCTAssertCall("encodeRequest(for:completion:)", on: encoder, times: 1)
+        XCTEnsureRequestsWereExecuted(times: 1)
     }
     
     func test_requestSuccess() throws {
@@ -131,14 +140,15 @@ class APIClient_Tests: XCTestCase {
         let testRequest = URLRequest(url: .unique())
         encoder.encodeRequest = .success(testRequest)
         
-        // Set up a succssfull mock network response for the request
-        let mockResponseData = try JSONEncoder.stream.encode(TestUser(name: "Leia!"))
-        MockNetworkURLProtocol.mockResponse(request: testRequest, statusCode: 234, responseBody: mockResponseData)
+        // Set up a successful mock network response for the request
+        let mockNetworkResponseData = try JSONEncoder.stream.encode(TestUser(name: "Network Response"))
+        MockNetworkURLProtocol.mockResponse(request: testRequest, statusCode: 234, responseBody: mockNetworkResponseData)
         
         // Set up a decoder response
         // ⚠️ Watch out: the user is different there, so we can distinguish between the incoming data
         // to the encoder, and the outgoing data).
-        decoder.decodeRequestResponse = .success(TestUser(name: "Luke"))
+        let mockDecoderResponseData = TestUser(name: "Decoder Response")
+        decoder.decodeRequestResponse = .success(mockDecoderResponseData)
         
         // Create a test endpoint (it's actually ignored, because APIClient uses the testRequest returned from the encoder)
         let testEndpoint = Endpoint<TestUser>.mock()
@@ -147,11 +157,12 @@ class APIClient_Tests: XCTestCase {
         let result = try waitFor { apiClient.request(endpoint: testEndpoint, completion: $0) }
         
         // Check the incoming data to the encoder is the URLResponse and data from the network
-        XCTAssertEqual(decoder.decodeRequestResponse_data, try! JSONEncoder.stream.encode(TestUser(name: "Leia!")))
+        XCTAssertEqual(decoder.decodeRequestResponse_data, mockNetworkResponseData)
         XCTAssertEqual(decoder.decodeRequestResponse_response?.statusCode, 234)
         
         // Check the outgoing data from the encoder is the result data
-        AssertResultSuccess(result, TestUser(name: "Luke"))
+        AssertResultSuccess(result, mockDecoderResponseData)
+        XCTEnsureRequestsWereExecuted(times: 1)
     }
     
     func test_requestFailure() throws {
@@ -176,15 +187,17 @@ class APIClient_Tests: XCTestCase {
         let result = try waitFor { apiClient.request(endpoint: testEndpoint, completion: $0) }
         
         // Check the incoming error to the encoder is the error from the response
-        assert(decoder.decodeRequestResponse_error != nil)
-        
+        XCTAssertNotNil(decoder.decodeRequestResponse_error)
         // We have to compare error codes, since iOS14 wraps network errors into `NSURLError`
         // in which we cannot retrieve the wrapper error
         XCTAssertEqual((decoder.decodeRequestResponse_error as NSError?)?.code, networkError.code)
         
         // Check the outgoing error from the encoder is the result data
         AssertResultFailure(result, encoderError)
+        XCTEnsureRequestsWereExecuted(times: 1)
     }
+
+    // MARK: - CDN Client
     
     func test_uploadAttachment_calls_CDNClient() throws {
         let attachment = AnyChatMessageAttachment.sample()
@@ -203,136 +216,77 @@ class APIClient_Tests: XCTestCase {
             )
         }
 
-        XCTAssertTrue("uploadAttachment(_:progress:completion:)".wasCalled(on: cdnClient, times: 1))
+        XCTAssertCall("uploadAttachment(_:progress:completion:)", on: cdnClient, times: 1)
         XCTAssertEqual(receivedProgress, mockedProgress)
         XCTAssertEqual(receivedResult?.value, mockedURL)
     }
+
+    // MARK: - Token Refresh
     
     func test_requestFailedWithExpiredToken_refreshesToken() throws {
         var tokenRefresherWasCalled = false
-        tokenRefresher = { _ in
+        createClient(with: { _ in
             tokenRefresherWasCalled = true
-        }
-        
-        let apiClient = APIClient(
-            sessionConfiguration: sessionConfiguration,
-            requestEncoder: encoder,
-            requestDecoder: decoder,
-            CDNClient: cdnClient,
-            tokenRefresher: tokenRefresher
-        )
-        
-        let testRequest = URLRequest(url: .unique())
-        
-        let networkError = NSError(domain: "TestNetworkError", code: -1, userInfo: nil)
+        })
+
         let encoderError = ClientError.ExpiredToken()
-        
-        MockNetworkURLProtocol.mockResponse(
-            request: testRequest,
-            statusCode: 401,
-            error: networkError
-        )
-        
         decoder.decodeRequestResponse = .failure(encoderError)
 
         let testEndpoint = Endpoint<TestUser>.mock()
         apiClient.request(endpoint: testEndpoint, completion: { _ in })
         
         AssertAsync.willBeTrue(tokenRefresherWasCalled)
+        XCTEnsureRequestsWereExecuted(times: 1)
     }
-    
-    func test_requestFailedWithExpiredToken_reschedulesTaskForLater() throws {
-        var tokenRefresherWasCalled = false
-        var tokenRefresherCompletion = {}
-        tokenRefresher = { completion in
-            tokenRefresherWasCalled = true
-            tokenRefresherCompletion = completion
-        }
-        
-        let apiClient = APIClient(
-            sessionConfiguration: sessionConfiguration,
-            requestEncoder: encoder,
-            requestDecoder: decoder,
-            CDNClient: cdnClient,
-            tokenRefresher: tokenRefresher
-        )
-        
-        let testRequest = URLRequest(url: .unique())
-        
-        let networkError = NSError(domain: "TestNetworkError", code: -1, userInfo: nil)
+
+    func test_requestFailedWithExpiredToken_requeuedOperationAndRetries() throws {
+        var completeTokenRefresh = {}
+        let tokenRefreshIsCalled = expectation(description: "Token refresh is called")
+        createClient(with: { completion in
+            tokenRefreshIsCalled.fulfill()
+            completeTokenRefresh = completion
+        })
+
         let encoderError = ClientError.ExpiredToken()
         decoder.decodeRequestResponse = .failure(encoderError)
 
-        MockNetworkURLProtocol.mockResponse(
-            request: testRequest,
-            statusCode: 401,
-            error: networkError
-        )
-        
-        let testUser = TestUser(name: "test")
-        let testEndpoint = Endpoint<TestUser>.mock()
-        
         var result: Result<TestUser, Error>?
         apiClient.request(
-            endpoint: testEndpoint,
+            endpoint: Endpoint<TestUser>.mock(),
             completion: {
                 result = $0
             }
         )
-        
-        AssertAsync.willBeTrue(tokenRefresherWasCalled)
-        
-        decoder.decodeRequestResponse = .success(testUser)
-        
-        tokenRefresherCompletion()
+        wait(for: [tokenRefreshIsCalled], timeout: 0.1)
 
-        MockNetworkURLProtocol.mockResponse(
-            request: testRequest,
-            statusCode: 200
-        )
-        
+        let testUser = TestUser(name: "test")
+        decoder.decodeRequestResponse = .success(testUser)
+        completeTokenRefresh()
+
         AssertAsync.willBeTrue(result != nil)
-        
+
         if case let .success(user) = result {
             XCTAssertEqual(user, testUser)
         } else {
             XCTFail()
         }
+        XCTEnsureRequestsWereExecuted(times: 2)
     }
     
-    func test_requestFailedWithExpiredToken_requestsTimeout() throws {
+    func test_requestFailedWithExpiredToken_retriesRequestUntilReachingMaximumAttempts() throws {
         var tokenRefresherWasCalled = false
-        tokenRefresher = { completion in
+        createClient(with: { completion in
             tokenRefresherWasCalled = true
             completion()
-        }
+        })
         
-        let apiClient = APIClient(
-            sessionConfiguration: sessionConfiguration,
-            requestEncoder: encoder,
-            requestDecoder: decoder,
-            CDNClient: cdnClient,
-            tokenRefresher: tokenRefresher
-        )
-        
-        let testRequest = URLRequest(url: .unique())
-        
-        let networkError = NSError(domain: "TestNetworkError", code: -1, userInfo: nil)
         let encoderError = ClientError.ExpiredToken()
         decoder.decodeRequestResponse = .failure(encoderError)
-
-        MockNetworkURLProtocol.mockResponse(
-            request: testRequest,
-            statusCode: 401,
-            error: networkError
-        )
-        
-        let testEndpoint = Endpoint<TestUser>.mock()
 
         var result: Result<TestUser, Error>?
         waitUntil { done in
             apiClient.request(
-                endpoint: testEndpoint,
+                endpoint: Endpoint<TestUser>.mock(),
                 completion: {
                     result = $0; done()
                 }
@@ -347,6 +301,72 @@ class APIClient_Tests: XCTestCase {
         }
 
         XCTAssertTrue(error is ClientError.TooManyTokenRefreshAttempts)
+        // 1 request + 10 refresh attempts
+        XCTEnsureRequestsWereExecuted(times: 11)
+    }
+
+    // MARK: - Flush
+
+    func test_flushRequestsQueue_whenThereAreOperationsOngoing_shouldStopQueuedOnes() {
+        var completeTokenRefresh = {}
+        let tokenRefreshIsCalled = expectation(description: "Token refresh is called")
+        createClient(with: { completion in
+            tokenRefreshIsCalled.fulfill()
+            completeTokenRefresh = completion
+        })
+
+        let encoderError = ClientError.ExpiredToken()
+        decoder.decodeRequestResponse = .failure(encoderError)
+        apiClient.request(
+            endpoint: Endpoint<TestUser>.mock(),
+            completion: { _ in
+                XCTFail("Should not complete")
+            }
+        )
+
+        wait(for: [tokenRefreshIsCalled], timeout: 0.1)
+        // The queue is now paused waiting for a token refresh response
+
+        // 1. We add 5 more requests to the queue
+        (1...5).forEach { _ in
+            self.apiClient.request(endpoint: Endpoint<TestUser>.mock(), completion: { _ in })
+        }
+
+        // 2. We make sure they succeed if they are ever executed
+        let testUser = TestUser(name: "test")
+        decoder.decodeRequestResponse = .success(testUser)
+
+        // 3. We flush the queue
+        apiClient.flushRequestsQueue()
+
+        // 4. We restart the queue by completing the token refresh
+        completeTokenRefresh()
+
+        // 5. We verify only one request (the initial one) went through
+        waitUntil { done in
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                done()
+            }
+        }
+        XCTEnsureRequestsWereExecuted(times: 1)
+    }
+
+    // MARK: - Helpers
+
+    private func XCTEnsureRequestsWereExecuted(times: Int, file: StaticString = #filePath, line: UInt = #line) {
+        XCTAssertCall("encodeRequest(for:completion:)", on: encoder, times: times, file: file, line: line)
+        XCTAssertCall("decodeRequestResponse(data:response:error:)", on: decoder, times: times, file: file, line: line)
+    }
+
+    private func createClient(with tokenRefresher: @escaping (@escaping () -> Void) -> Void) {
+        self.tokenRefresher = tokenRefresher
+        apiClient = APIClient(
+            sessionConfiguration: sessionConfiguration,
+            requestEncoder: encoder,
+            requestDecoder: decoder,
+            CDNClient: cdnClient,
+            tokenRefresher: tokenRefresher
+        )
     }
 }
 
@@ -360,7 +380,8 @@ private struct TestUser: Codable, Equatable {
     let name: String
 }
 
-class TestRequestEncoder: RequestEncoder {
+class TestRequestEncoder: RequestEncoder, Spy {
+    var recordedFunctions: [String] = []
     let init_baseURL: URL
     let init_apiKey: APIKey
     
@@ -374,6 +395,7 @@ class TestRequestEncoder: RequestEncoder {
         for endpoint: Endpoint<ResponsePayload>,
         completion: @escaping (Result<URLRequest, Error>) -> Void
     ) where ResponsePayload: Decodable {
+        record()
         encodeRequest_endpoint = AnyEndpoint(endpoint)
         encodeRequest_completion = completion
         
@@ -388,7 +410,8 @@ class TestRequestEncoder: RequestEncoder {
     }
 }
 
-class TestRequestDecoder: RequestDecoder {
+class TestRequestDecoder: RequestDecoder, Spy {
+    var recordedFunctions: [String] = []
     var decodeRequestResponse: Result<Any, Error>?
     
     var decodeRequestResponse_data: Data?
@@ -397,6 +420,7 @@ class TestRequestDecoder: RequestDecoder {
     
     func decodeRequestResponse<ResponseType>(data: Data?, response: URLResponse?, error: Error?) throws -> ResponseType
         where ResponseType: Decodable {
+        record()
         decodeRequestResponse_data = data
         decodeRequestResponse_response = response as? HTTPURLResponse
         decodeRequestResponse_error = error

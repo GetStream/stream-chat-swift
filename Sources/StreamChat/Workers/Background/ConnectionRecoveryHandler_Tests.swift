@@ -489,7 +489,7 @@ final class ConnectionRecoveryHandler_Tests: XCTestCase {
         // Simulate connection update
         handler.webSocketClient(mockChatClient.mockWebSocketClient, didUpdateConnectionState: .connecting)
 
-        XCTAssertTrue("syncLocalState(completion:)".wasNotCalled(on: syncRepository))
+        XCTAssertNotCall("syncLocalState(completion:)", on: syncRepository)
     }
 
     func test_webSocketStateUpdate_connected() {
@@ -499,8 +499,8 @@ final class ConnectionRecoveryHandler_Tests: XCTestCase {
         // Simulate connection update
         handler.webSocketClient(mockChatClient.mockWebSocketClient, didUpdateConnectionState: .connected(connectionId: "124"))
 
-        XCTAssertTrue("resetConsecutiveFailures()".wasCalled(on: mockRetryStrategy, times: 1))
-        XCTAssertTrue("syncLocalState(completion:)".wasCalled(on: syncRepository, times: 1))
+        XCTAssertCall("resetConsecutiveFailures()", on: mockRetryStrategy, times: 1)
+        XCTAssertCall("syncLocalState(completion:)", on: syncRepository, times: 1)
     }
 
     func test_webSocketStateUpdate_disconnected_userInitiated() {
@@ -514,9 +514,9 @@ final class ConnectionRecoveryHandler_Tests: XCTestCase {
         handler.webSocketClient(mockChatClient.mockWebSocketClient, didUpdateConnectionState: status)
 
         // getDelayAfterTheFailure() calls nextRetryDelay() & incrementConsecutiveFailures() internally
-        XCTAssertTrue("nextRetryDelay()".wasNotCalled(on: mockRetryStrategy))
-        XCTAssertTrue("incrementConsecutiveFailures()".wasNotCalled(on: mockRetryStrategy))
-        XCTAssertTrue("syncLocalState(completion:)".wasNotCalled(on: syncRepository))
+        XCTAssertNotCall("nextRetryDelay()", on: mockRetryStrategy)
+        XCTAssertNotCall("incrementConsecutiveFailures()", on: mockRetryStrategy)
+        XCTAssertNotCall("syncLocalState(completion:)", on: syncRepository)
     }
 
     func test_webSocketStateUpdate_disconnected_systemInitiated() {
@@ -534,9 +534,9 @@ final class ConnectionRecoveryHandler_Tests: XCTestCase {
         handler.webSocketClient(mockChatClient.mockWebSocketClient, didUpdateConnectionState: status)
 
         // getDelayAfterTheFailure() calls nextRetryDelay() & incrementConsecutiveFailures() internally
-        XCTAssertTrue("nextRetryDelay()".wasCalled(on: mockRetryStrategy, times: 1))
-        XCTAssertTrue("incrementConsecutiveFailures()".wasCalled(on: mockRetryStrategy, times: 1))
-        XCTAssertTrue("syncLocalState(completion:)".wasNotCalled(on: syncRepository))
+        XCTAssertCall("nextRetryDelay()", on: mockRetryStrategy, times: 1)
+        XCTAssertCall("incrementConsecutiveFailures()", on: mockRetryStrategy, times: 1)
+        XCTAssertNotCall("syncLocalState(completion:)", on: syncRepository)
     }
 
     func test_webSocketStateUpdate_initialized() {
@@ -546,7 +546,7 @@ final class ConnectionRecoveryHandler_Tests: XCTestCase {
         // Simulate connection update
         handler.webSocketClient(mockChatClient.mockWebSocketClient, didUpdateConnectionState: .initialized)
 
-        XCTAssertTrue("syncLocalState(completion:)".wasNotCalled(on: syncRepository))
+        XCTAssertNotCall("syncLocalState(completion:)", on: syncRepository)
     }
 
     func test_webSocketStateUpdate_waitingForConnectionId() {
@@ -556,7 +556,7 @@ final class ConnectionRecoveryHandler_Tests: XCTestCase {
         // Simulate connection update
         handler.webSocketClient(mockChatClient.mockWebSocketClient, didUpdateConnectionState: .waitingForConnectionId)
 
-        XCTAssertTrue("syncLocalState(completion:)".wasNotCalled(on: syncRepository))
+        XCTAssertNotCall("syncLocalState(completion:)", on: syncRepository)
     }
 
     func test_webSocketStateUpdate_disconnecting() {
@@ -569,7 +569,7 @@ final class ConnectionRecoveryHandler_Tests: XCTestCase {
             didUpdateConnectionState: .disconnecting(source: .systemInitiated)
         )
 
-        XCTAssertTrue("syncLocalState(completion:)".wasNotCalled(on: syncRepository))
+        XCTAssertNotCall("syncLocalState(completion:)", on: syncRepository)
     }
 }
 

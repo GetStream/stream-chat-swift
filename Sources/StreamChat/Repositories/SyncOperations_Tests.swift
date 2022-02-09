@@ -88,7 +88,7 @@ final class SyncOperations_Tests: XCTestCase {
         operation.startAndWaitForCompletion()
 
         XCTAssertEqual(context.synchedChannelIds.count, 0)
-        XCTAssertTrue("syncMissingEvents(using:channelIds:bumpLastSync:completion:)".wasNotCalled(on: syncRepository))
+        XCTAssertNotCall("syncMissingEvents(using:channelIds:bumpLastSync:completion:)", on: syncRepository)
     }
 
     func test_SyncEventsOperation_pendingDate_syncFailure_shouldRetry() throws {
@@ -103,7 +103,7 @@ final class SyncOperations_Tests: XCTestCase {
 
         XCTAssertEqual(context.synchedChannelIds.count, 0)
         XCTAssertNil(database.viewContext.currentUser?.lastPendingConnectionDate)
-        XCTAssertTrue("syncMissingEvents(using:channelIds:bumpLastSync:completion:)".wasCalled(on: syncRepository, times: 3))
+        XCTAssertCall("syncMissingEvents(using:channelIds:bumpLastSync:completion:)", on: syncRepository, times: 3)
     }
 
     func test_SyncEventsOperation_pendingDate_syncSuccess_shouldUpdateLastPendingConnectionDate() throws {
@@ -118,7 +118,7 @@ final class SyncOperations_Tests: XCTestCase {
 
         XCTAssertEqual(context.synchedChannelIds.count, 2)
         XCTAssertEqual(database.viewContext.currentUser?.lastPendingConnectionDate, context.lastConnectionDate)
-        XCTAssertTrue("syncMissingEvents(using:channelIds:bumpLastSync:completion:)".wasCalled(on: syncRepository, times: 1))
+        XCTAssertCall("syncMissingEvents(using:channelIds:bumpLastSync:completion:)", on: syncRepository, times: 1)
     }
 
     // MARK: - WatchChannelOperation
@@ -132,7 +132,7 @@ final class SyncOperations_Tests: XCTestCase {
         operation.startAndWaitForCompletion()
 
         XCTAssertEqual(context.watchedChannelIds.count, 0)
-        XCTAssertTrue("watchActiveChannel(completion:)".wasNotCalled(on: controller))
+        XCTAssertNotCall("watchActiveChannel(completion:)", on: controller)
     }
 
     func test_WatchChannelOperation_availableOnRemote_alreadySynched() {
@@ -146,7 +146,7 @@ final class SyncOperations_Tests: XCTestCase {
         operation.startAndWaitForCompletion()
 
         XCTAssertEqual(context.watchedChannelIds.count, 0)
-        XCTAssertTrue("watchActiveChannel(completion:)".wasNotCalled(on: controller))
+        XCTAssertNotCall("watchActiveChannel(completion:)", on: controller)
     }
 
     func test_WatchChannelOperation_availableOnRemote_notSynched_watchFailure_shouldRetry() {
@@ -160,7 +160,7 @@ final class SyncOperations_Tests: XCTestCase {
         operation.startAndWaitForCompletion()
 
         XCTAssertEqual(context.watchedChannelIds.count, 0)
-        XCTAssertTrue("watchActiveChannel(completion:)".wasCalled(on: controller, times: 3))
+        XCTAssertCall("watchActiveChannel(completion:)", on: controller, times: 3)
     }
 
     func test_WatchChannelOperation_availableOnRemote_notSynched_watchSuccess() {
@@ -174,7 +174,7 @@ final class SyncOperations_Tests: XCTestCase {
         operation.startAndWaitForCompletion()
 
         XCTAssertEqual(context.watchedChannelIds.count, 1)
-        XCTAssertTrue("watchActiveChannel(completion:)".wasCalled(on: controller, times: 1))
+        XCTAssertCall("watchActiveChannel(completion:)", on: controller, times: 1)
     }
 
     // MARK: - RefetchChannelListQueryOperation
@@ -192,7 +192,7 @@ final class SyncOperations_Tests: XCTestCase {
         operation.startAndWaitForCompletion()
 
         XCTAssertEqual(context.synchedChannelIds.count, 0)
-        XCTAssertTrue("resetChannelsQuery(for:watchedChannelIds:synchedChannelIds:completion:)".wasNotCalled(on: channelRepository))
+        XCTAssertNotCall("resetChannelsQuery(for:watchedChannelIds:synchedChannelIds:completion:)", on: channelRepository)
     }
 
     func test_RefetchChannelListQueryOperation_availableOnRemote_resetFailure_shouldRetry() {
@@ -209,9 +209,8 @@ final class SyncOperations_Tests: XCTestCase {
         operation.startAndWaitForCompletion()
 
         XCTAssertEqual(context.synchedChannelIds.count, 0)
-        XCTAssertTrue(
-            "resetChannelsQuery(for:watchedChannelIds:synchedChannelIds:completion:)"
-                .wasCalled(on: channelRepository, times: 3)
+        XCTAssertCall(
+            "resetChannelsQuery(for:watchedChannelIds:synchedChannelIds:completion:)", on: channelRepository, times: 3
         )
     }
 
@@ -236,9 +235,8 @@ final class SyncOperations_Tests: XCTestCase {
 
         XCTAssertEqual(context.synchedChannelIds.count, 1)
         XCTAssertEqual(context.synchedChannelIds.first?.id, channelId.id)
-        XCTAssertTrue(
-            "resetChannelsQuery(for:watchedChannelIds:synchedChannelIds:completion:)"
-                .wasCalled(on: channelRepository, times: 1)
+        XCTAssertCall(
+            "resetChannelsQuery(for:watchedChannelIds:synchedChannelIds:completion:)", on: channelRepository, times: 1
         )
     }
 }

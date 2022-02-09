@@ -121,7 +121,7 @@ final class SyncRepository_Tests: XCTestCase {
         // Write: API Response, lastPendingConnectionDate, lastSyncAt
         XCTAssertEqual(database.writeSessionCounter, 3)
         XCTAssertEqual(repository.activeChannelControllers.count, 1)
-        XCTAssertTrue("watchActiveChannel(completion:)".wasCalled(on: chatController, times: 1))
+        XCTAssertCall("watchActiveChannel(completion:)", on: chatController, times: 1)
         XCTAssertEqual(repository.activeChannelListControllers.count, 0)
         XCTAssertEqual(apiClient.request_allRecordedCalls.count, 1)
     }
@@ -145,9 +145,8 @@ final class SyncRepository_Tests: XCTestCase {
         XCTAssertEqual(database.writeSessionCounter, 3)
         XCTAssertEqual(repository.activeChannelControllers.count, 0)
         XCTAssertEqual(repository.activeChannelListControllers.count, 1)
-        XCTAssertTrue(
-            "resetChannelsQuery(for:watchedChannelIds:synchedChannelIds:completion:)"
-                .wasCalled(on: channelRepository, times: 1)
+        XCTAssertCall(
+            "resetChannelsQuery(for:watchedChannelIds:synchedChannelIds:completion:)", on: channelRepository, times: 1
         )
         XCTAssertEqual(apiClient.request_allRecordedCalls.count, 1)
     }
