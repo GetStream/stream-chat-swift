@@ -55,7 +55,7 @@ public extension Appearance {
                 return loadImageSafely(with: "arrow")
             }
         }()
-
+    
         public var commands: UIImage = loadImageSafely(with: "bolt")
         public var smallBolt: UIImage = loadImageSafely(with: "bolt_small")
         public var openAttachments: UIImage = loadImageSafely(with: "clip")

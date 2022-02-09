@@ -10,6 +10,7 @@ extension Notification.Name {
     public static let hideTabbar = Notification.Name("kStreamHideTabbar")
     public static let showDaoShareScreen = Notification.Name("showDaoShareScreen")
     public static let hidePaymentOptions = Notification.Name("kStreamHidePaymentOptions")
+    public static let showFriendScreen = Notification.Name("showFriendScreen")
 }
 
 /// Controller responsible for displaying the channel messages.
@@ -74,8 +75,8 @@ open class ChatChannelVC:
         return stack
     }()
 
-    open private(set) lazy var shareView: UIView = {
-        let view = UIView(frame: .zero).withoutAutoresizingMaskConstraints
+    open private(set) lazy var shareView: UIStackView = {
+        let view = UIStackView(frame: .zero).withoutAutoresizingMaskConstraints
         view.backgroundColor = appearance.colorPalette.walletTabbarBackground
         return view
     }()
@@ -91,6 +92,15 @@ open class ChatChannelVC:
         return button.withoutAutoresizingMaskConstraints
     }()
 
+    private(set) lazy var addFriendButton: UIButton = {
+        let button = UIButton()
+        button.setImage("chat_AddFriend", for: .normal)
+        button.tintColor = appearance.colorPalette.themeBlue
+        button.setTitle("", for: .normal)
+        button.addTarget(self, action: #selector(addFriendAction), for: .touchUpInside)
+        return button.withoutAutoresizingMaskConstraints
+    }()
+    
     open private(set) lazy var backButton: UIButton = {
         let button = UIButton()
         button.setImage(appearance.images.backCircle, for: .normal)
@@ -212,18 +222,22 @@ open class ChatChannelVC:
 
         view.addSubview(shareView)
         NSLayoutConstraint.activate([
-            shareView.heightAnchor.constraint(equalToConstant: 52),
+            //shareView.heightAnchor.constraint(equalToConstant: 52),
             shareView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 0),
             shareView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: 0),
             shareView.topAnchor.constraint(equalTo: navigationHeaderView.bottomAnchor, constant: 0)
         ])
 
+        //shareView.addSubview(shareButton)
         shareView.addSubview(shareButton)
-        NSLayoutConstraint.activate([
-            shareButton.centerXAnchor.constraint(equalTo: shareView.centerXAnchor, constant: 0),
-            shareButton.centerYAnchor.constraint(equalTo: shareView.centerYAnchor, constant: 0),
-            shareButton.heightAnchor.constraint(equalToConstant: 25),
-        ])
+        shareView.addSubview(addFriendButton)
+        //        NSLayoutConstraint.activate([
+        //            shareButton.centerXAnchor.constraint(equalTo: shareView.centerXAnchor, constant: 0),
+        //            shareButton.centerYAnchor.constraint(equalTo: shareView.centerYAnchor, constant: 0),
+        //            shareButton.heightAnchor.constraint(equalToConstant: 25),
+        //        ])
+
+
 
         shareView.addSubview(closePinButton)
         NSLayoutConstraint.activate([
@@ -295,7 +309,10 @@ open class ChatChannelVC:
         userInfo["extraData"] = channelController.channel?.extraData
         NotificationCenter.default.post(name: .showDaoShareScreen, object: nil, userInfo: userInfo)
     }
-
+    @objc func addFriendAction(_ sender: Any) {
+        NotificationCenter.default.post(name: .showFriendScreen, object: nil)
+    }
+    
     @objc func moreButtonAction(_ sender: Any) {
         shareView.isHidden = false
     }
