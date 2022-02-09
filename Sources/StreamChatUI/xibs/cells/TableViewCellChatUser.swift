@@ -24,6 +24,7 @@ public class TableViewCellChatUser: UITableViewCell {
     @IBOutlet private var descriptionLabel: UILabel!
     @IBOutlet private var avatarView: AvatarView!
     @IBOutlet private var accessoryImageView: UIImageView!
+    @IBOutlet public var lblRole: UILabel!
     // MARK: - Variables
     private var user: ChatUser?
     //
@@ -46,6 +47,7 @@ public class TableViewCellChatUser: UITableViewCell {
             descriptionLabel.text = "Never seen"
         }
         accessoryImageView.image = selectedImage
+        //
         self.user = user
     }
     //

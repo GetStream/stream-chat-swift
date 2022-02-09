@@ -10,7 +10,7 @@ import StreamChat
 import StreamChatUI
 import UIKit
 
-public class ChatAddFriendVC: UIViewController {
+public class ChatAddFriendVC: ChatBaseVC {
 
     @IBOutlet private var viewHeaderView: UIView!
     @IBOutlet private var viewHeaderViewHeightConst: NSLayoutConstraint!
@@ -20,8 +20,7 @@ public class ChatAddFriendVC: UIViewController {
     @IBOutlet private var tableviewContainerView: UIView!
     @IBOutlet private var searchField: UITextField!
     @IBOutlet private var mainStackView: UIStackView!
-    @IBOutlet private weak var btnBack: UIButton!
-    @IBOutlet private weak var btnNext: UIButton!
+    
     //
     public lazy var chatUserList: ChatUserListVC = {
         let obj = ChatUserListVC.instantiateController(storyboard: .GroupChat) as? ChatUserListVC
@@ -32,6 +31,10 @@ public class ChatAddFriendVC: UIViewController {
     private var isFullScreen = false
     //
     public var selectedUsers = [ChatUser]()
+    //
+    public var bCallbackAddUser:(([ChatUser]) -> Void)?
+    
+    //
     public override func viewDidLoad() {
         super.viewDidLoad()
         setup()
@@ -41,9 +44,10 @@ public class ChatAddFriendVC: UIViewController {
         self.view.layoutIfNeeded()
         chatUserList.tableViewFrameUpdate()
     }
-    private func setup() {
+    public func setup() {
         //
-        btnNext.isEnabled = !self.selectedUsers.isEmpty
+        btnBack?.setImage(Appearance.Images.closeCircle, for: .normal)
+        btnNext?.isEnabled = !self.selectedUsers.isEmpty
         //
         self.searchField.addTarget(self, action: #selector(textDidChange(_:)), for: .editingChanged)
         //
@@ -100,7 +104,10 @@ public class ChatAddFriendVC: UIViewController {
     }
     // swiftlint:disable redundant_type_annotation
     @IBAction private func btnDoneAction(_ sender: UIButton) {
-        
+        if self.selectedUsers.count > 0 {
+            self.bCallbackAddUser?(self.selectedUsers)
+            self.btnBackAction(sender)
+        }
     }
     //
 }
@@ -112,6 +119,6 @@ extension ChatAddFriendVC: ChatUserListDelegate {
     }
     public func chatUserDidSelect() {
         self.selectedUsers = self.chatUserList.selectedUsers
-        btnNext.isEnabled = !self.selectedUsers.isEmpty
+        self.btnNext?.isEnabled = !self.selectedUsers.isEmpty
     }
 }

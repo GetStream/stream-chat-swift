@@ -2,6 +2,7 @@
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="19455" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
+        <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="19454"/>
         <capability name="Named colors" minToolsVersion="9.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
@@ -87,7 +88,7 @@
                                                                 <rect key="frame" x="0.0" y="0.0" width="344" height="45"/>
                                                                 <subviews>
                                                                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Search" translatesAutoresizingMaskIntoConstraints="NO" id="1Y7-T7-DhS">
-                                                                        <rect key="frame" x="15" y="15" width="16" height="14.5"/>
+                                                                        <rect key="frame" x="15" y="14.5" width="16" height="16"/>
                                                                         <constraints>
                                                                             <constraint firstAttribute="width" constant="16" id="3ln-Y4-vhd"/>
                                                                             <constraint firstAttribute="width" secondItem="1Y7-T7-DhS" secondAttribute="height" multiplier="1:1" id="5fY-eU-5lj"/>
@@ -205,6 +206,8 @@
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="btnBack" destination="tXk-hI-5Ib" id="5Db-NF-qUE"/>
+                        <outlet property="btnInviteLink" destination="TeY-eJ-nB6" id="VtM-yx-VZf"/>
                         <outlet property="btnNext" destination="j4D-xK-fpC" id="nvy-LC-8b4"/>
                         <outlet property="mainStackView" destination="bFQ-ES-Ci7" id="747-io-BXs"/>
                         <outlet property="searchBarContainerView" destination="Jzp-KR-b1T" id="gcl-Rq-h2E"/>
@@ -890,6 +893,7 @@
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="btnBack" destination="jzP-ty-eDO" id="E1r-yd-tMz"/>
                         <outlet property="btnNext" destination="fEY-ac-cIW" id="8Me-4p-T2D"/>
                         <outlet property="descriptionContainerView" destination="OjL-Eu-jPg" id="guy-uS-nni"/>
                         <outlet property="groupDescriptionField" destination="d9i-Sw-F4z" id="gje-2e-bvA"/>
@@ -933,7 +937,7 @@
                                             <action selector="backBtnTapped:" destination="QuX-hB-SnA" eventType="touchUpInside" id="bpp-8O-8hV"/>
                                         </connections>
                                     </button>
-                                    <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="equalCentering" alignment="center" spacing="2" translatesAutoresizingMaskIntoConstraints="NO" id="vAB-em-s5E">
+                                    <stackView opaque="NO" userInteractionEnabled="NO" contentMode="scaleToFill" axis="vertical" distribution="equalCentering" alignment="center" spacing="2" translatesAutoresizingMaskIntoConstraints="NO" id="vAB-em-s5E">
                                         <rect key="frame" x="155" y="8" width="104.5" height="34"/>
                                         <subviews>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalCompressionResistancePriority="749" text="Group Name" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="jRx-5I-Vi8">
@@ -950,6 +954,10 @@
                                             </label>
                                         </subviews>
                                     </stackView>
+                                    <view hidden="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="vZm-ra-WbZ" customClass="ChatChannelHeaderView" customModule="StreamChatUI" customModuleProvider="target">
+                                        <rect key="frame" x="82" y="5" width="312" height="40"/>
+                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                    </view>
                                 </subviews>
                                 <color key="backgroundColor" name="tabBackgroundColor"/>
                                 <constraints>
@@ -957,9 +965,13 @@
                                     <constraint firstItem="vAB-em-s5E" firstAttribute="top" secondItem="WDy-5w-eYA" secondAttribute="top" constant="8" id="5eV-Xa-Sad"/>
                                     <constraint firstItem="tt6-hd-h5Y" firstAttribute="leading" secondItem="WDy-5w-eYA" secondAttribute="leading" constant="8" id="Hyd-Az-sAY"/>
                                     <constraint firstItem="tt6-hd-h5Y" firstAttribute="top" secondItem="WDy-5w-eYA" secondAttribute="top" id="kyk-TD-wM1"/>
+                                    <constraint firstAttribute="bottom" secondItem="vZm-ra-WbZ" secondAttribute="bottom" constant="5" id="nUj-2n-mRu"/>
                                     <constraint firstItem="vAB-em-s5E" firstAttribute="centerY" secondItem="WDy-5w-eYA" secondAttribute="centerY" id="pSI-RP-xEN"/>
+                                    <constraint firstAttribute="trailing" secondItem="vZm-ra-WbZ" secondAttribute="trailing" constant="20" symbolic="YES" id="qSq-ek-f2K"/>
+                                    <constraint firstItem="vZm-ra-WbZ" firstAttribute="top" secondItem="WDy-5w-eYA" secondAttribute="top" constant="5" id="tdi-kX-Fs8"/>
                                     <constraint firstItem="vAB-em-s5E" firstAttribute="centerX" secondItem="WDy-5w-eYA" secondAttribute="centerX" id="u2S-Ox-cDe"/>
                                     <constraint firstAttribute="bottom" secondItem="tt6-hd-h5Y" secondAttribute="bottom" id="wk6-s4-KDd"/>
+                                    <constraint firstItem="vZm-ra-WbZ" firstAttribute="leading" secondItem="tt6-hd-h5Y" secondAttribute="trailing" constant="20" id="xeT-1n-H0h"/>
                                 </constraints>
                             </view>
                             <stackView opaque="NO" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" axis="vertical" spacing="10" translatesAutoresizingMaskIntoConstraints="NO" id="6n5-OA-YSC">
@@ -1135,13 +1147,16 @@
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="btnAddFriend" destination="Y52-7w-vJr" id="J4W-iN-aYQ"/>
+                        <outlet property="btnBack" destination="tt6-hd-h5Y" id="Jcd-P2-TcP"/>
                         <outlet property="buttonFiles" destination="OWw-n9-KNI" id="bt3-hX-HFf"/>
                         <outlet property="buttonLinks" destination="vfW-h0-1MB" id="Zg8-lW-iD5"/>
                         <outlet property="buttonMedia" destination="Mrf-mc-2aD" id="tIf-24-OqH"/>
                         <outlet property="filesContainerView" destination="D4V-lX-JAA" id="9Vi-5e-BCB"/>
+                        <outlet property="headerView" destination="vZm-ra-WbZ" id="5S7-J3-wUE"/>
                         <outlet property="indicatorViewLeadingContraint" destination="vpM-Gg-8B3" id="W3m-D6-6iz"/>
-                        <outlet property="lblGroupName" destination="jRx-5I-Vi8" id="JFW-NM-aHi"/>
-                        <outlet property="lblSubtitle" destination="eQQ-0y-YRV" id="6db-Av-KKs"/>
+                        <outlet property="lblSubtitle" destination="eQQ-0y-YRV" id="ujg-zq-1WG"/>
+                        <outlet property="lblTitle" destination="jRx-5I-Vi8" id="Ku9-gi-WKq"/>
                         <outlet property="tableView" destination="K42-ig-SD5" id="1HA-eT-De9"/>
                     </connections>
                 </viewController>
@@ -1305,22 +1320,22 @@
         <image name="closePopup" width="30" height="30"/>
         <image name="magnifyingglass" catalog="system" width="128" height="115"/>
         <namedColor name="White87%">
-            <color red="0.32899999618530273" green="0.32400000095367432" blue="0.4779999852180481" alpha="0.33000001311302185" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.87800002098083496" green="0.87800002098083496" blue="0.88200002908706665" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </namedColor>
         <namedColor name="chatText">
-            <color red="0.32899999618530273" green="0.32400000095367432" blue="0.4779999852180481" alpha="0.33000001311302185" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.52899998426437378" green="0.54500001668930054" blue="0.58399999141693115" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </namedColor>
         <namedColor name="searchBarBackground">
-            <color red="0.32899999618530273" green="0.32400000095367432" blue="0.4779999852180481" alpha="0.33000001311302185" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.10999999940395355" green="0.10999999940395355" blue="0.11800000071525574" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </namedColor>
         <namedColor name="tabBackgroundColor">
-            <color red="0.32899999618530273" green="0.32400000095367432" blue="0.4779999852180481" alpha="0.33000001311302185" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.086274509803921567" green="0.086274509803921567" blue="0.086274509803921567" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </namedColor>
         <namedColor name="timelessBlue">
-            <color red="0.32899999618530273" green="0.32400000095367432" blue="0.4779999852180481" alpha="0.33000001311302185" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.5490196078431373" green="0.69803921568627447" blue="0.97254901960784312" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </namedColor>
         <namedColor name="viewBackground">
-            <color red="0.32899999618530273" green="0.32400000095367432" blue="0.4779999852180481" alpha="0.33000001311302185" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.075000002980232239" green="0.075000002980232239" blue="0.078000001609325409" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </namedColor>
         <systemColor name="labelColor">
             <color white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>

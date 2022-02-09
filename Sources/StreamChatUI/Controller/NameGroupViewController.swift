@@ -12,7 +12,22 @@ import UIKit
 private let GroupNameLimit = 40
 private let HashtagNameLimit = 100
 
-public class NameGroupViewController: UIViewController {
+public class ChatBaseVC: UIViewController {
+    @IBOutlet weak var btnNext: UIButton?
+    @IBOutlet weak var btnBack: UIButton?
+    @IBOutlet private weak var btnAddFriend: UIButton?
+    @IBOutlet private weak var btnInviteLink: UIButton?
+    public override func viewDidLoad() {
+        super.viewDidLoad()
+        self.btnBack?.setTitle("", for: .normal)
+        self.btnNext?.setTitle("", for: .normal)
+        self.btnAddFriend?.setTitle("", for: .normal)
+        self.btnInviteLink?.setTitle("", for: .normal)
+        self.btnBack?.setImage(UIImage(named: "backSheet"), for: .normal)
+    }
+}
+
+public class NameGroupViewController: ChatBaseVC {
 
     public var client: ChatClient?
     @IBOutlet private var searchFieldStack: UIStackView!
@@ -20,7 +35,7 @@ public class NameGroupViewController: UIViewController {
     @IBOutlet private var descriptionContainerView: UIView!
     @IBOutlet private var nameField: UITextField!
     @IBOutlet private var groupDescriptionField: UITextField!
-    @IBOutlet private weak var btnNext: UIButton!
+    
     //
     @IBOutlet private var lblFriendCount: UILabel!
     @IBOutlet private var lblTitle: UILabel!
@@ -36,6 +51,9 @@ public class NameGroupViewController: UIViewController {
     //
     //private let tagsField = WSTagsField()
     //
+    public var bCallbackSelectedUsers:(([ChatUser]) -> Void)?
+    
+    //
     public override func viewDidLoad() {
         super.viewDidLoad()
         //
@@ -49,7 +67,7 @@ public class NameGroupViewController: UIViewController {
     }
     
     public func setupUI() {
-        self.view.backgroundColor = UIColor.viewBackground
+        self.view.backgroundColor = UIColor.black
         //
         self.nameField.autocorrectionType = .no
         self.nameField.addTarget(self, action: #selector(textDidChange(_:)), for: .editingChanged)
@@ -248,6 +266,21 @@ extension NameGroupViewController: UITableViewDataSource {
         cell.backgroundColor = .clear
         return cell
 
+    }
+    
+    public func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
+        return true
+    }
+
+    public func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+        if (editingStyle == .delete) {
+            self.selectedUsers.remove(at: indexPath.row)
+            self.tableView.reloadData()
+            self.bCallbackSelectedUsers?(self.selectedUsers)
+            if self.selectedUsers.isEmpty {
+                self.navigationController?.popViewController(animated: false)
+            }
+        }
     }
 }
 

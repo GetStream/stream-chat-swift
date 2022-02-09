@@ -15,7 +15,7 @@ public class ChatSharedFilesVC: UIViewController {
         case link = 2
     }
     //
-    @IBOutlet private weak var lblEmpty: UILabel!
+    @IBOutlet private weak var lblEmpty: UILabel?
     //
     public override func viewDidLoad() {
         super.viewDidLoad()
@@ -27,11 +27,11 @@ public class ChatSharedFilesVC: UIViewController {
         //
         switch type {
         case .media:
-            self.lblEmpty.text = "No media available"
+            self.lblEmpty?.text = "No media available"
         case .files:
-            self.lblEmpty.text = "No files available"
+            self.lblEmpty?.text = "No files available"
         case .link:
-            self.lblEmpty.text = "No link available"
+            self.lblEmpty?.text = "No link available"
         }
     }
 }

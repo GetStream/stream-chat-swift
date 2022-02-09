@@ -274,6 +274,10 @@ open class ChatChannelVC:
             if channelController.channel?.type == .privateMessaging {
                 let interaction = UIContextMenuInteraction(delegate: self)
                 channelAvatarView.addInteraction(interaction)
+            } else {
+                let tapGesture = UITapGestureRecognizer.init(target: self, action: #selector(self.headerViewAction(_:)))
+                tapGesture.numberOfTapsRequired = 1
+                headerView.addGestureRecognizer(tapGesture)
             }
         }
     }
@@ -317,7 +321,17 @@ open class ChatChannelVC:
         self.dismiss(animated: true, completion: nil)
         NotificationCenter.default.post(name: .showTabbar, object: nil)
     }
-
+    @objc func headerViewAction(_ sender: Any) {
+        
+        if self.channelController.channel?.isDirectMessageChannel ?? true {
+            return
+        }
+        guard let controller: ChatGroupDetailsVC = ChatGroupDetailsVC.instantiateController(storyboard: .GroupChat) else {
+            return
+        }
+        controller.channelController = channelController
+        self.navigationController?.pushViewController(controller, animated: true)
+    }
     @objc func shareAction(_ sender: Any) {
         guard let extraData = channelController.channel?.extraData,
               channelController.channel?.type == .dao else {
@@ -329,6 +343,27 @@ open class ChatChannelVC:
     }
     @objc func addFriendAction(_ sender: Any) {
         
+        guard let controller = ChatAddFriendVC
+                .instantiateController(storyboard: .GroupChat)  as? ChatAddFriendVC else {
+            return
+        }
+        //
+        controller.bCallbackAddUser = { [weak self] users in
+            guard let weakSelf = self else { return }
+            let ids = users.map{ $0.id}
+            weakSelf.channelController?.addMembers(userIds: Set(ids), completion: { error in
+                if error == nil {
+                    // nothing
+                } else {
+                    weakSelf.presentAlert(title: "Error", message: error!.localizedDescription)
+                }
+            })
+        }
+        //
+        controller.modalPresentationStyle = .overCurrentContext
+        controller.modalTransitionStyle = .crossDissolve
+        
+        self.present(controller, animated: true, completion: nil)
     }
     
     @objc func moreButtonAction(_ sender: Any) {

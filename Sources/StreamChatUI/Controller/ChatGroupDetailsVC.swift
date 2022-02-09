@@ -8,14 +8,16 @@
 import Foundation
 import Nuke
 import StreamChat
+import StreamChatUI
 import UIKit
 
-open class ChatGroupDetailsVC: UIViewController {
+public class ChatGroupDetailsVC: ChatBaseVC {
 
-    var client: ChatClient?
-    @IBOutlet private weak var btnNext: UIButton!
+    
+    
     //
-    @IBOutlet private var lblGroupName: UILabel!
+    @IBOutlet private var headerView: ChatChannelHeaderView!
+    @IBOutlet private var lblTitle: UILabel!
     @IBOutlet private var lblSubtitle: UILabel!
     //
     @IBOutlet private var tableView: UITableView!
@@ -25,11 +27,13 @@ open class ChatGroupDetailsVC: UIViewController {
     @IBOutlet private var buttonLinks: UIButton!
     @IBOutlet private var indicatorViewLeadingContraint: NSLayoutConstraint!
     //
-    open var selectedUsers: [ChatUser]!
+    public var selectedUsers: [ChatChannelMember] = []
     //
     private let scrollViewFiles = UIScrollView()
     private let viewTabIndicator = UIView()
     //
+    public var channelController: ChatChannelController?
+    
     public override func viewDidLoad() {
         super.viewDidLoad()
         //
@@ -39,8 +43,31 @@ open class ChatGroupDetailsVC: UIViewController {
     }
     open func setupUI() {
         //
-        let str = self.selectedUsers.count > 1 ? "friends" : "friend"
-        lblSubtitle.text = "\(self.selectedUsers.count) \(str)"
+        self.view.backgroundColor = UIColor.black
+        //
+        let name = self.channelController?.channel?.name ?? ""
+        let friendCount = self.channelController?.channel?.memberCount ?? 0
+        //let onlineUser = self.channelController?.channel?.lastActiveMembers.count ?? 0
+        lblTitle.text = name
+        lblSubtitle.text = "\(friendCount) friends"
+        
+        if let cid = channelController?.cid {
+//            headerView.channelController = ChatClient.shared.channelController(for: cid)
+            
+            let controller = ChatClient.shared.memberListController(query: .init(cid: cid))
+            controller.synchronize { [weak self] error in
+                guard error == nil, let weakSelf = self else { return }
+                DispatchQueue.main.async {
+                    weakSelf.selectedUsers =  (controller.members ?? []).filter({ $0.id != nil })
+                    for member in controller.members {
+                        print(member.name)
+                    }
+                    weakSelf.tableView.reloadData()
+                }
+            }
+        }
+//        let str = self.selectedUsers.count > 1 ? "friends" : "friend"
+//        lblSubtitle.text = "\(channelController?.channel?.memberCount ?? 0)"
         //
         let chatUserID = TableViewCellChatUser.reuseId
         let chatUserNib = UINib(nibName: chatUserID, bundle: nil)
@@ -64,13 +91,27 @@ open class ChatGroupDetailsVC: UIViewController {
     }
     @IBAction func addFriendButtonAction(_ sender: UIButton) {
         //
-        guard let nameGroupController = ChatAddFriendVC
+        guard let controller = ChatAddFriendVC
                 .instantiateController(storyboard: .GroupChat)  as? ChatAddFriendVC else {
             return
         }
-        nameGroupController.modalPresentationStyle = .overCurrentContext
-        nameGroupController.modalTransitionStyle = .crossDissolve
-        self.present(nameGroupController, animated: true, completion: nil)
+        //
+        controller.bCallbackAddUser = { [weak self] users in
+            guard let weakSelf = self else { return }
+            let ids = users.map{ $0.id}
+            weakSelf.channelController?.addMembers(userIds: Set(ids), completion: { error in
+                if error == nil {
+                    weakSelf.navigationController?.popViewController(animated: false)
+                } else {
+                    weakSelf.presentAlert(title: "Error", message: error!.localizedDescription)
+                }
+            })
+        }
+        //
+        controller.modalPresentationStyle = .overCurrentContext
+        controller.modalTransitionStyle = .crossDissolve
+        
+        self.present(controller, animated: true, completion: nil)
     }
     @IBAction func mediaButtonAction(_ sender: UIButton) {
         //
@@ -151,11 +192,20 @@ extension ChatGroupDetailsVC: UITableViewDataSource {
             return UITableViewCell()
         }
         //
-        let user: ChatUser = selectedUsers[indexPath.row]
+        let user: ChatChannelMember = selectedUsers[indexPath.row]
         //
         cell.config(user: user,
                         selectedImage: nil,
                         avatarBG: view.tintColor)
+        //
+        cell.lblRole.text = ""
+        cell.lblRole.isHidden = true
+        if user.memberRole == .admin {
+            cell.lblRole.text = "Owner"
+            cell.lblRole.textColor = ChatColor.STATUS
+            cell.lblRole.isHidden = false
+        }
+        //
         cell.backgroundColor = .clear
         return cell
         //
