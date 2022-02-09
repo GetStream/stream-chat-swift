@@ -10,7 +10,7 @@ import StreamChat
 import StreamChatUI
 import UIKit
 
-class ChatAddFriendVC: UIViewController {
+public class ChatAddFriendVC: UIViewController {
 
     @IBOutlet private var viewHeaderView: UIView!
     @IBOutlet private var viewHeaderViewHeightConst: NSLayoutConstraint!
@@ -23,20 +23,20 @@ class ChatAddFriendVC: UIViewController {
     @IBOutlet private weak var btnBack: UIButton!
     @IBOutlet private weak var btnNext: UIButton!
     //
-    lazy var chatUserList: ChatUserListVC = {
-        let obj = self.storyboard?.instantiateViewController(withIdentifier: "ChatUserListVC") as? ChatUserListVC
+    public lazy var chatUserList: ChatUserListVC = {
+        let obj = ChatUserListVC.instantiateController(storyboard: .GroupChat) as? ChatUserListVC
         return obj!
     }()
     private var curentSortType: Em_ChatUserListFilterTypes = .sortByLastSeen
     //
     private var isFullScreen = false
     //
-    var selectedUsers = [ChatUser]()
-    override func viewDidLoad() {
+    public var selectedUsers = [ChatUser]()
+    public override func viewDidLoad() {
         super.viewDidLoad()
         setup()
     }
-    override func viewWillAppear(_ animated: Bool) {
+    public override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.view.layoutIfNeeded()
         chatUserList.tableViewFrameUpdate()
@@ -63,9 +63,13 @@ class ChatAddFriendVC: UIViewController {
         searchBarContainerView.layer.cornerRadius = 20.0
         viewHeaderView.layer.cornerRadius = 20.0
         //
-        
-        viewHeaderView.addSwipeGestureRecognizer(for: .up, target: self, action: #selector(self.addPangGesture(_:)))
-        viewHeaderView.addSwipeGestureRecognizer(for: .down, target: self, action: #selector(self.addPangGesture(_:)))
+        let swipeGestureRecognizerDown = UISwipeGestureRecognizer(target: self, action: #selector(addPangGesture(_:)))
+        let swipeGestureRecognizerUp = UISwipeGestureRecognizer(target: self, action: #selector(addPangGesture(_:)))
+        // Configure Swipe Gesture Recognizer
+        swipeGestureRecognizerDown.direction = .down
+        swipeGestureRecognizerUp.direction = .up
+        viewHeaderView.addGestureRecognizer(swipeGestureRecognizerDown)
+        viewHeaderView.addGestureRecognizer(swipeGestureRecognizerUp)
     }
     //
     @objc private func textDidChange(_ sender: UITextField) {
@@ -103,10 +107,10 @@ class ChatAddFriendVC: UIViewController {
 
 // MARK: - ChatUserListDelegate
 extension ChatAddFriendVC: ChatUserListDelegate {
-    func chatListStateUpdated(state: ChatUserListVC.ChatUserLoadingState) {
+    public func chatListStateUpdated(state: ChatUserListVC.ChatUserLoadingState) {
         
     }
-    func chatUserDidSelect() {
+    public func chatUserDidSelect() {
         self.selectedUsers = self.chatUserList.selectedUsers
         btnNext.isEnabled = !self.selectedUsers.isEmpty
     }

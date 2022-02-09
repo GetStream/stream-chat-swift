@@ -12,9 +12,9 @@ import UIKit
 private let GroupNameLimit = 40
 private let HashtagNameLimit = 100
 
-open class NameGroupViewController: UIViewController {
+public class NameGroupViewController: UIViewController {
 
-    var client: ChatClient?
+    public var client: ChatClient?
     @IBOutlet private var searchFieldStack: UIStackView!
     @IBOutlet private var nameContainerView: UIView!
     @IBOutlet private var descriptionContainerView: UIView!
@@ -32,23 +32,24 @@ open class NameGroupViewController: UIViewController {
     @IBOutlet private var tagView: UIStackView!
     @IBOutlet private var tagViewPlaceHolderView: UIView!
     //
-    var selectedUsers: [ChatUser]!
+    public var selectedUsers: [ChatUser]!
     //
-    private let tagsField = WSTagsField()
+    //private let tagsField = WSTagsField()
     //
-    override func viewDidLoad() {
+    public override func viewDidLoad() {
         super.viewDidLoad()
         //
         setupUI()
         //
         configureTagView()
     }
-    override func viewDidAppear(_ animated: Bool) {
+    public override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        tagsField.beginEditing()
+        //tagsField.beginEditing()
     }
     
-    func setupUI() {
+    public func setupUI() {
+        self.view.backgroundColor = UIColor.viewBackground
         //
         self.nameField.autocorrectionType = .no
         self.nameField.addTarget(self, action: #selector(textDidChange(_:)), for: .editingChanged)
@@ -83,7 +84,7 @@ open class NameGroupViewController: UIViewController {
     }
     //
     private func updateTagViewPlaceholder() {
-        self.tagViewPlaceHolderView.isHidden = (self.tagsField.tags.isEmpty && self.tagsField.textField.text?.isBlank ?? true) ? false : true
+        //self.tagViewPlaceHolderView.isHidden = (self.tagsField.tags.isEmpty && self.tagsField.textField.text?.isBlank ?? true) ? false : true
     }
     @objc private func textDidChange(_ sender: UITextField) {
         if sender == nameField {
@@ -139,7 +140,7 @@ open class NameGroupViewController: UIViewController {
 
 extension NameGroupViewController: UITextFieldDelegate {
     
-    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+    public func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
         if textField == nameField {
             let maxLength = 40
             let currentString: NSString = (textField.text ?? "") as NSString
@@ -160,76 +161,76 @@ extension NameGroupViewController {
     //
     private func configureTagView() {
         //
-        tagView.addArrangedSubview(tagsField)
-        tagsField.isScrollEnabled = false
-        //tagsField.suggestions = ["#intro", "#using", "#hashtags"]
-        tagsField.layoutMargins = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
-        tagsField.contentInset = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
-        tagsField.spaceBetweenLines = 15.0
-        tagsField.spaceBetweenTags = 10.0
-        //tagsField.cornerRadius = 5.0
-        tagsField.font = .systemFont(ofSize: 12.0)
-        tagsField.backgroundColor = .clear
-        self.tagsField.textField.tintColor = .white
-        tagsField.tintColor = UIColor.tabbarBackground
-        tagsField.textColor = .white
-        tagsField.fieldTextColor = .white
-//        tagsField.selectedColor = .black
-//        tagsField.selectedTextColor = .red
-        tagsField.delimiter = ""
-        tagsField.isDelimiterVisible = false
-        tagsField.placeholder = ""
-        tagsField.placeholderColor = .green
-        tagsField.placeholderAlwaysVisible = false
-        tagsField.keyboardAppearance = .dark
-        tagsField.returnKeyType = .next
-        tagsField.acceptTagOption = .space
-        tagsField.shouldTokenizeAfterResigningFirstResponder = true
-        
-        // Events
-        tagsField.onDidAddTag = { field, tag in
-            print("DidAddTag", tag.text)
-            
-        }
-        tagsField.onDidSelectTagView = { field, tag in
-            self.tagsField.removeTag(tag.displayText)
-        }
-        //
-        tagsField.onDidRemoveTag = { field, tag in
-            print("DidRemoveTag", tag.text)
-            DispatchQueue.main.async {
-                self.tagsField.textField.becomeFirstResponder()
-                self.updateTagViewPlaceholder()
-            }
-        }
-        //
-        tagsField.onDidChangeText = { _, text in
-            print("DidChangeText \(text)")
-            DispatchQueue.main.async {
-                self.updateTagViewPlaceholder()
-                self.lblHashtagCount.text = "\(text?.count ?? 0)"
-            }
-        }
-        //
-        tagsField.onDidChangeHeightTo = { _, height in
-            print("HeightTo", height)
-        }
-        //
-        tagsField.onValidateTag = { tag, tags in
-            // custom validations, called before tag is added to tags list
-            return tag.text != "#" && !tags.contains(where: { $0.text.uppercased() == tag.text.uppercased() })
-        }
-        //
-        print("List of Tags Strings:", tagsField.tags.map({$0.text}))
+//        tagView.addArrangedSubview(tagsField)
+//        tagsField.isScrollEnabled = false
+//        //tagsField.suggestions = ["#intro", "#using", "#hashtags"]
+//        tagsField.layoutMargins = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
+//        tagsField.contentInset = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
+//        tagsField.spaceBetweenLines = 15.0
+//        tagsField.spaceBetweenTags = 10.0
+//        //tagsField.cornerRadius = 5.0
+//        tagsField.font = .systemFont(ofSize: 12.0)
+//        tagsField.backgroundColor = .clear
+//        self.tagsField.textField.tintColor = .white
+//        tagsField.tintColor = UIColor.tabbarBackground
+//        tagsField.textColor = .white
+//        tagsField.fieldTextColor = .white
+////        tagsField.selectedColor = .black
+////        tagsField.selectedTextColor = .red
+//        tagsField.delimiter = ""
+//        tagsField.isDelimiterVisible = false
+//        tagsField.placeholder = ""
+//        tagsField.placeholderColor = .green
+//        tagsField.placeholderAlwaysVisible = false
+//        tagsField.keyboardAppearance = .dark
+//        tagsField.returnKeyType = .next
+//        tagsField.acceptTagOption = .space
+//        tagsField.shouldTokenizeAfterResigningFirstResponder = true
+//
+//        // Events
+//        tagsField.onDidAddTag = { field, tag in
+//            print("DidAddTag", tag.text)
+//
+//        }
+//        tagsField.onDidSelectTagView = { field, tag in
+//            self.tagsField.removeTag(tag.displayText)
+//        }
+//        //
+//        tagsField.onDidRemoveTag = { field, tag in
+//            print("DidRemoveTag", tag.text)
+//            DispatchQueue.main.async {
+//                self.tagsField.textField.becomeFirstResponder()
+//                self.updateTagViewPlaceholder()
+//            }
+//        }
+//        //
+//        tagsField.onDidChangeText = { _, text in
+//            print("DidChangeText \(text)")
+//            DispatchQueue.main.async {
+//                self.updateTagViewPlaceholder()
+//                self.lblHashtagCount.text = "\(text?.count ?? 0)"
+//            }
+//        }
+//        //
+//        tagsField.onDidChangeHeightTo = { _, height in
+//            print("HeightTo", height)
+//        }
+//        //
+//        tagsField.onValidateTag = { tag, tags in
+//            // custom validations, called before tag is added to tags list
+//            return tag.text != "#" && !tags.contains(where: { $0.text.uppercased() == tag.text.uppercased() })
+//        }
+//        //
+//        print("List of Tags Strings:", tagsField.tags.map({$0.text}))
     }
 }
 // MARK: - TABLEVIEW
 extension NameGroupViewController: UITableViewDataSource {
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         selectedUsers.count
     }
 
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+    public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
         let reuseID = TableViewCellChatUser.reuseId
         //

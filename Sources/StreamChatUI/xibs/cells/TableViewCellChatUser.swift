@@ -8,9 +8,9 @@
 import StreamChat
 import UIKit
 import Nuke
-import Lottie
+//import Lottie
 
-class TableViewCellChatUser: UITableViewCell {
+public class TableViewCellChatUser: UITableViewCell {
 
     //
     static let reuseId: String = "TableViewCellChatUser"
@@ -28,7 +28,7 @@ class TableViewCellChatUser: UITableViewCell {
     private var user: ChatUser?
     //
     // MARK: - Functions
-    func config(user: ChatUser, selectedImage: UIImage?, avatarBG: UIColor) {
+    public func config(user: ChatUser, selectedImage: UIImage?, avatarBG: UIColor) {
         if let imageURL = user.imageURL {
             Nuke.loadImage(with: imageURL, into: avatarView)
         }
@@ -49,13 +49,13 @@ class TableViewCellChatUser: UITableViewCell {
         self.user = user
     }
     //
-    override func awakeFromNib() {
+    public override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
         selectionStyle = .none
     }
 
-    override func setSelected(_ selected: Bool, animated: Bool) {
+    public override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
 
         // Configure the view for the selected state

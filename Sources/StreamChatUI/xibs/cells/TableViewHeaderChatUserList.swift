@@ -15,13 +15,13 @@ public class TableViewHeaderChatUserList: UITableViewCell {
     @IBOutlet weak var lblTitle: UILabel!
     @IBOutlet weak var titleContainerView: UIView!
     //
-    override func awakeFromNib() {
+    public override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
         selectionStyle = .none
     }
 
-    override func setSelected(_ selected: Bool, animated: Bool) {
+    public override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
 
         // Configure the view for the selected state

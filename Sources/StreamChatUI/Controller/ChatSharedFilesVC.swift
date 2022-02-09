@@ -7,9 +7,9 @@
 
 import UIKit
 
-class ChatSharedFilesVC: UIViewController {
+public class ChatSharedFilesVC: UIViewController {
     //
-    enum FileType: Int {
+    public enum FileType: Int {
         case media = 0
         case files = 1
         case link = 2
@@ -17,13 +17,13 @@ class ChatSharedFilesVC: UIViewController {
     //
     @IBOutlet private weak var lblEmpty: UILabel!
     //
-    override func viewDidLoad() {
+    public override func viewDidLoad() {
         super.viewDidLoad()
         //
         self.view.backgroundColor = .clear
     }
 
-    func setFileType(type: ChatSharedFilesVC.FileType) {
+    public func setFileType(type: ChatSharedFilesVC.FileType) {
         //
         switch type {
         case .media:

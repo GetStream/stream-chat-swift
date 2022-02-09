@@ -26,6 +26,35 @@ public extension Appearance {
         
         // MARK: - General
 
+        static var systemPerson: UIImage?  {
+            if #available(iOS 13.0, *) {
+                return UIImage(systemName: "person")
+            } else {
+                return nil
+            }
+        }
+        static var systemMagnifying: UIImage? {
+            if #available(iOS 13.0, *) {
+                return UIImage(systemName: "magnifyingglass")
+            } else {
+                return nil
+            }
+        }
+        static var systemCheckMarkCircle: UIImage? {
+            if #available(iOS 13.0, *) {
+                return UIImage(systemName: "checkmark.circle.fill")
+            } else {
+                return nil
+            }
+        }
+//        static let systemCheckMarkCircle = UIImage(systemName: "checkmark.circle.fill")
+//        static let systemPersonBadge = UIImage(systemName: "person.badge.plus")
+//        static let systemCheckmarkCircle = UIImage(systemName: "checkmark.circle.fill")
+//        static let iconArrowRight = UIImage(named: "Icon_arrow_right")
+//        static let xmas = UIImage(systemName: "xmark")
+//        static let checkMark = UIImage(systemName: "checkmark")
+//        static let backSheet = UIImage(named: "backSheet")
+        
         public var loadingIndicator: UIImage = loadImageSafely(with: "loading_indicator")
         public var close: UIImage = {
             if #available(iOS 13.0, *) {

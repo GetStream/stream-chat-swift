@@ -10,7 +10,7 @@ import Nuke
 import StreamChat
 import UIKit
 
-public class ChatGroupDetailsVC: UIViewController {
+open class ChatGroupDetailsVC: UIViewController {
 
     var client: ChatClient?
     @IBOutlet private weak var btnNext: UIButton!
@@ -25,19 +25,19 @@ public class ChatGroupDetailsVC: UIViewController {
     @IBOutlet private var buttonLinks: UIButton!
     @IBOutlet private var indicatorViewLeadingContraint: NSLayoutConstraint!
     //
-    var selectedUsers: [ChatUser]!
+    open var selectedUsers: [ChatUser]!
     //
     private let scrollViewFiles = UIScrollView()
     private let viewTabIndicator = UIView()
     //
-    override func viewDidLoad() {
+    public override func viewDidLoad() {
         super.viewDidLoad()
         //
         setupUI()
         //
         configureFilesView()
     }
-    func setupUI() {
+    open func setupUI() {
         //
         let str = self.selectedUsers.count > 1 ? "friends" : "friend"
         lblSubtitle.text = "\(self.selectedUsers.count) \(str)"
@@ -65,7 +65,7 @@ public class ChatGroupDetailsVC: UIViewController {
     @IBAction func addFriendButtonAction(_ sender: UIButton) {
         //
         guard let nameGroupController = ChatAddFriendVC
-                .instantiate(appStoryboard: .chat)  as? ChatAddFriendVC else {
+                .instantiateController(storyboard: .GroupChat)  as? ChatAddFriendVC else {
             return
         }
         nameGroupController.modalPresentationStyle = .overCurrentContext
@@ -112,7 +112,7 @@ extension ChatGroupDetailsVC {
         self.scrollViewFiles.contentSize = CGSize(width: self.scrollViewFiles.frame.size.width * 3, height: self.scrollViewFiles.frame.size.height)
     }
     //
-    func scrollToPage(page: ChatSharedFilesVC.FileType, animated: Bool) {
+    public func scrollToPage(page: ChatSharedFilesVC.FileType, animated: Bool) {
         var frame: CGRect = self.scrollViewFiles.frame
         frame.origin.x = frame.size.width * CGFloat(page.rawValue)
         frame.origin.y = 0
@@ -120,7 +120,7 @@ extension ChatGroupDetailsVC {
         self.updateIndicator(page: page, animated: true)
         
     }
-    func updateIndicator(page: ChatSharedFilesVC.FileType, animated: Bool) {
+    public func updateIndicator(page: ChatSharedFilesVC.FileType, animated: Bool) {
         UIView.animate(withDuration: 0.1) {
             switch page {
             case .media:
@@ -137,11 +137,11 @@ extension ChatGroupDetailsVC {
 }
 // MARK: - TABLEVIEW
 extension ChatGroupDetailsVC: UITableViewDataSource {
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         selectedUsers.count
     }
 
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+    public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
         let reuseID = TableViewCellChatUser.reuseId
         //
@@ -163,7 +163,7 @@ extension ChatGroupDetailsVC: UITableViewDataSource {
 }
 
 extension ChatGroupDetailsVC: UIScrollViewDelegate {
-    func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
+    public func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
 
         let pageNumber = round(scrollView.contentOffset.x / scrollView.frame.size.width)
         if let type = ChatSharedFilesVC.FileType.init(rawValue: Int(pageNumber)) {

@@ -10,16 +10,24 @@ import Nuke
 import StreamChat
 import StreamChatUI
 
-struct ChatUserListData {
+public struct ChatUserListData {
     let letter: String
     var users = [ChatUser]()
 }
-
+public struct DTFormatter {
+    public static var formatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.timeStyle = .short
+        formatter.dateStyle = .short
+        formatter.doesRelativeDateFormatting = true
+        return formatter
+    }()
+}
 public protocol ChatUserListDelegate: AnyObject {
     func chatListStateUpdated(state: ChatUserListVC.ChatUserLoadingState)
     func chatUserDidSelect()
 }
-open class ChatUserListVC: UIViewController {
+public class ChatUserListVC: UIViewController {
     //
     public enum ChatUserLoadingState {
         case searching, loading, noUsers, selected, error, completed
@@ -42,17 +50,17 @@ open class ChatUserListVC: UIViewController {
     @IBOutlet private weak var noMatchView: UIView!
     //
     // MARK: - VARIABLES
-    lazy var userListController: ChatUserListController = {
+    public lazy var userListController: ChatUserListController = {
         return ChatClient.shared.userListController()
     }()
     //
-    var tableView: UITableView?
+    public var tableView: UITableView?
     //
     //var searchController: ChatUserSearchController?
-    var selectedUsers = [ChatUser]()
-    var userSelectionType = ChatUserSelectionType.singleUser
+    public var selectedUsers = [ChatUser]()
+    public var userSelectionType = ChatUserSelectionType.singleUser
     //
-    var curentSortType: Em_ChatUserListFilterTypes = .sortByLastSeen
+    public var curentSortType: Em_ChatUserListFilterTypes = .sortByLastSeen
     
     //
     private var nameWiseUserList = [ChatUserListData]()
@@ -63,13 +71,13 @@ open class ChatUserListVC: UIViewController {
     private var searchOperation: DispatchWorkItem?
     private let throttleTime = 1000
     //
-    weak var delegate: ChatUserListDelegate?
+    public weak var delegate: ChatUserListDelegate?
     //
     public var isSearchBarVisible = false
     public var isPrefereSmallSize = false
     
     // MARK: - VIEW CYCLE
-    override func viewDidLoad() {
+    open override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
         setupUI()
@@ -89,9 +97,10 @@ open class ChatUserListVC: UIViewController {
     
 }
 // MARK: - SETUP UI
-public extension ChatUserListVC {
+extension ChatUserListVC {
     //
     private func setupUI() {
+        
         //
         self.setupSearch()
         //
@@ -137,7 +146,7 @@ public extension ChatUserListVC {
         self.tableViewFrameUpdate()
         //
     }
-    func tableViewFrameUpdate() {
+    public func tableViewFrameUpdate() {
         self.view.updateConstraints()
         self.view.layoutIfNeeded()
         tableView?.contentInsetAdjustmentBehavior = .never
@@ -172,7 +181,7 @@ public extension ChatUserListVC {
             activityIndicator.stopAnimating()
             //viewCreateGroup.isHidden = true
             tableView?.alpha = 0
-            alertImage.image = .systemMagnifying
+            alertImage.image = Appearance.Images.systemMagnifying
             alertText.text = "No user matches these keywords..."
             //
         case .loading:
@@ -207,7 +216,7 @@ public extension ChatUserListVC {
                 tableView?.alpha = 0
                 
                 if self.searchField.text?.isBlank == false {
-                    alertImage.image = .systemMagnifying
+                    alertImage.image = Appearance.Images.systemMagnifying
                     alertText.text = "No user matches these keywords..."
                 } else {
                     alertImage.image = nil
@@ -222,13 +231,13 @@ public extension ChatUserListVC {
 }
 
 // MARK: - ACTIONS
-extension ChatUserListVC {
+public extension ChatUserListVC {
     // Search
     @objc private func textDidChange(_ sender: UITextField) {
         self.searchDataUsing(searchString: sender.text)
     }
     // Public function to get search string from out side this controller
-    func searchDataUsing(searchString: String?) {
+    public func searchDataUsing(searchString: String?) {
         //
         self.update(for: .searching)
         //
@@ -250,7 +259,7 @@ extension ChatUserListVC {
     }
     
     // Sorting
-    func sortUserWith(type: Em_ChatUserListFilterTypes) {
+    public func sortUserWith(type: Em_ChatUserListFilterTypes) {
         //
         self.curentSortType = type
         //
@@ -347,7 +356,7 @@ extension ChatUserListVC {
 // MARK: - GET STREAM API
 extension ChatUserListVC {
     //
-    func fetchUserList(with name: String? = nil) {
+    open func fetchUserList(with name: String? = nil) {
         
         //
         if self.dataLoadingState != .searching {
@@ -405,7 +414,7 @@ extension ChatUserListVC {
 // MARK: - Chat user controller delegate
 extension ChatUserListVC: ChatUserSearchControllerDelegate {
     //
-    func controller(_ controller: ChatUserSearchController, didChangeUsers changes: [ListChange<ChatUser>]) {
+    public func controller(_ controller: ChatUserSearchController, didChangeUsers changes: [ListChange<ChatUser>]) {
         //
 //        if self.curentSortType == .sortByName {
 //            self.nameWiseUserList.users.append(contentsOf: changes.map({ $0.item}))
@@ -449,7 +458,7 @@ extension ChatUserListVC: ChatUserSearchControllerDelegate {
 //        }
     }
 
-    func controller(_ controller: DataController, didChangeState state: DataController.State) {
+    public func controller(_ controller: DataController, didChangeState state: DataController.State) {
         if case .remoteDataFetched = state {
             update(for: .completed)
         }
@@ -458,13 +467,13 @@ extension ChatUserListVC: ChatUserSearchControllerDelegate {
 
 // MARK: - TABLE VIEW DELEGATE & DATASOURCE
 extension ChatUserListVC: UITableViewDelegate, UITableViewDataSource {
-    func numberOfSections(in tableView: UITableView) -> Int {
+    public func numberOfSections(in tableView: UITableView) -> Int {
         if self.curentSortType == .sortByName {
             return self.nameWiseUserList.count
         }
         return 1
     }
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if self.curentSortType == .sortByName {
             return self.nameWiseUserList[section].users.count
         } else {
@@ -472,7 +481,7 @@ extension ChatUserListVC: UITableViewDelegate, UITableViewDataSource {
         }
     }
 
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+    public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         //
         let reuseID = TableViewCellChatUser.reuseId
         //
@@ -492,7 +501,7 @@ extension ChatUserListVC: UITableViewDelegate, UITableViewDataSource {
         //
         var accessaryImage: UIImage?
         if selectedUsers.firstIndex(where: { $0.id == user!.id}) != nil {
-            accessaryImage = .systemCheckMarkCircle
+            accessaryImage = Appearance.Images.systemCheckMarkCircle
         } else {
             accessaryImage = nil
         }
@@ -503,7 +512,7 @@ extension ChatUserListVC: UITableViewDelegate, UITableViewDataSource {
         return cell
     }
 
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+    public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         defer {
             tableView.deselectRow(at: indexPath, animated: true)
         }
@@ -576,7 +585,7 @@ extension ChatUserListVC: UITableViewDelegate, UITableViewDataSource {
         }
     }
 
-    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+    public func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         //
         var lastItem: Int?
         //
@@ -590,7 +599,7 @@ extension ChatUserListVC: UITableViewDelegate, UITableViewDataSource {
         }
     }
     //
-    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+    public func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         //
         if self.curentSortType == .sortByName {
             let reuseID = TableViewHeaderChatUserList.reuseId
@@ -602,16 +611,16 @@ extension ChatUserListVC: UITableViewDelegate, UITableViewDataSource {
         return nil
         //
     }
-    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+    public func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
         if self.curentSortType == .sortByName {
             return 30
         }
         return 0
     }
-    func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
+    public func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
         return 0
     }
-    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+    public func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         if self.curentSortType == .sortByName {
             return self.nameWiseUserList[section].letter.capitalized
         }
@@ -625,14 +634,14 @@ public enum Em_ChatUserListFilterTypes {
     case sortByName
     case sortByAtoZ
     //
-    var getTitle: String {
+    public var getTitle: String {
         switch self {
         case .sortByName: return "SORTED BY NAME"
         case .sortByLastSeen: return "SORTED BY LAST SEEN TIME"
         case .sortByAtoZ: return ""
         }
     }
-    var getSearchQuery: UserListQuery {
+    public var getSearchQuery: UserListQuery {
         switch self {
         case .sortByName,.sortByAtoZ:
             return UserListQuery(filter: .exists(.id), sort: [.init(key: .name, isAscending: true)])
@@ -643,14 +652,14 @@ public enum Em_ChatUserListFilterTypes {
 }
 // MARK: - Scrollview delegates
 extension ChatUserListVC {
-    public func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
+    public  func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
         // Hide keyboard on scroll
         view.endEditing(true)
     }
 }
 
 
-public extension UIView {
+extension UIView {
     //
     public func updateChildViewContraint(childView: UIView?) {
         childView?.translatesAutoresizingMaskIntoConstraints = false
@@ -670,7 +679,7 @@ public extension UIView {
     }
 }
 
-public  extension StringProtocol {
+public extension StringProtocol {
     public  var isFirstCharacterAlp: Bool {
         first?.isASCII == true && first?.isLetter == true
     }

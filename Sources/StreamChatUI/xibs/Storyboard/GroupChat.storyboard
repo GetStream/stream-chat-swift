@@ -60,7 +60,7 @@
                                                             <constraint firstAttribute="height" constant="50" id="ote-Qk-ICK"/>
                                                         </constraints>
                                                         <state key="normal" title="Button"/>
-                                                        <buttonConfiguration key="configuration" style="plain" image="closeBackup"/>
+                                                        <buttonConfiguration key="configuration" style="plain" image="closePopup"/>
                                                         <connections>
                                                             <action selector="btnBackAction:" destination="U6o-e0-s2g" eventType="touchUpInside" id="xpz-QI-DfC"/>
                                                         </connections>
@@ -87,7 +87,7 @@
                                                                 <rect key="frame" x="0.0" y="0.0" width="344" height="45"/>
                                                                 <subviews>
                                                                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Search" translatesAutoresizingMaskIntoConstraints="NO" id="1Y7-T7-DhS">
-                                                                        <rect key="frame" x="15" y="14.5" width="16" height="16"/>
+                                                                        <rect key="frame" x="15" y="15" width="16" height="14.5"/>
                                                                         <constraints>
                                                                             <constraint firstAttribute="width" constant="16" id="3ln-Y4-vhd"/>
                                                                             <constraint firstAttribute="width" secondItem="1Y7-T7-DhS" secondAttribute="height" multiplier="1:1" id="5fY-eU-5lj"/>
@@ -220,10 +220,10 @@
             </objects>
             <point key="canvasLocation" x="3170" y="836"/>
         </scene>
-        <!--Add Group Members-->
+        <!--Create Group View Controller-->
         <scene sceneID="8UP-a9-nqn">
             <objects>
-                <viewController storyboardIdentifier="CreateGroupViewController" title="Add Group Members" useStoryboardIdentifierAsRestorationIdentifier="YES" id="Ae8-n7-Chn" customClass="CreateGroupViewController" customModule="StreamChatUI" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="CreateGroupViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="Ae8-n7-Chn" customClass="CreateGroupViewController" customModule="StreamChatUI" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="Nws-oS-edT">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -495,11 +495,11 @@
             </objects>
             <point key="canvasLocation" x="778" y="836"/>
         </scene>
-        <!--Add Group Members-->
+        <!--Name Group View Controller-->
         <scene sceneID="S7z-xh-Wdc">
             <objects>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="XbA-pG-ZeX" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
-                <viewController storyboardIdentifier="NameGroupViewController" title="Add Group Members" useStoryboardIdentifierAsRestorationIdentifier="YES" id="yjH-wK-zCh" customClass="NameGroupViewController" customModule="StreamChatUI" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="NameGroupViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="yjH-wK-zCh" customClass="NameGroupViewController" customModule="StreamChatUI" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="rgj-TS-iyu">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -516,7 +516,7 @@
                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <state key="normal" title="Button"/>
-                                        <buttonConfiguration key="configuration" style="plain" image="backSheet"/>
+                                        <buttonConfiguration key="configuration" style="plain" image="back_circle"/>
                                         <connections>
                                             <action selector="backBtnTapped:" destination="yjH-wK-zCh" eventType="touchUpInside" id="EgY-7W-nSl"/>
                                         </connections>
@@ -908,10 +908,10 @@
             </objects>
             <point key="canvasLocation" x="1657.9710144927537" y="835.71428571428567"/>
         </scene>
-        <!--Add Group Members-->
+        <!--Chat Group DetailsVC-->
         <scene sceneID="Cgj-wW-XaM">
             <objects>
-                <viewController storyboardIdentifier="ChatGroupDetailsVC" title="Add Group Members" useStoryboardIdentifierAsRestorationIdentifier="YES" id="QuX-hB-SnA" customClass="ChatGroupDetailsVC" customModule="StreamChatUI" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="ChatGroupDetailsVC" useStoryboardIdentifierAsRestorationIdentifier="YES" id="QuX-hB-SnA" customClass="ChatGroupDetailsVC" customModule="StreamChatUI" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="Tds-YK-ttV">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -928,7 +928,7 @@
                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <state key="normal" title="Button"/>
-                                        <buttonConfiguration key="configuration" style="plain" image="backSheet"/>
+                                        <buttonConfiguration key="configuration" style="plain" image="back_circle"/>
                                         <connections>
                                             <action selector="backBtnTapped:" destination="QuX-hB-SnA" eventType="touchUpInside" id="bpp-8O-8hV"/>
                                         </connections>
@@ -1294,6 +1294,7 @@
         <image name="Chat_DAO" width="32" height="33"/>
         <image name="Search" width="16" height="16"/>
         <image name="backSheet" width="30" height="30"/>
+        <image name="back_circle" width="30" height="30"/>
         <image name="chat_AddFriend" width="104" height="16"/>
         <image name="chat_GroupDone" width="45" height="45"/>
         <image name="chat_GroupNext" width="45" height="45"/>
@@ -1301,7 +1302,7 @@
         <image name="chat_Notification" width="104" height="16"/>
         <image name="chat_UserDelete" width="17" height="18"/>
         <image name="chat_plus" width="35" height="35"/>
-        <image name="closeBackup" width="30" height="30"/>
+        <image name="closePopup" width="30" height="30"/>
         <image name="magnifyingglass" catalog="system" width="128" height="115"/>
         <namedColor name="White87%">
             <color red="0.32899999618530273" green="0.32400000095367432" blue="0.4779999852180481" alpha="0.33000001311302185" colorSpace="custom" customColorSpace="sRGB"/>
