@@ -105,6 +105,13 @@ public extension Appearance {
                 return loadImageSafely(with: "arrow")
             }
         }()
+        public var qrCodeViewFinder: UIImage = {
+            if #available(iOS 13.0, *) {
+                return UIImage(systemName: "qrcode.viewfinder")!
+            } else {
+                return loadImageSafely(with: "arrow")
+            }
+        }()
         public var mute: UIImage = {
             if #available(iOS 13.0, *) {
                 return UIImage(systemName: "speaker.slash")!
@@ -129,6 +136,13 @@ public extension Appearance {
         public var trash: UIImage = {
             if #available(iOS 13.0, *) {
                 return UIImage(systemName: "trash")!
+            } else {
+                return loadImageSafely(with: "arrow")
+            }
+        }()
+        public var rectangleArrowRight: UIImage = {
+            if #available(iOS 13.0, *) {
+                return UIImage(systemName: "rectangle.portrait.and.arrow.right")!
             } else {
                 return loadImageSafely(with: "arrow")
             }
