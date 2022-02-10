@@ -60,6 +60,20 @@ final class AsyncOperation_Tests: XCTestCase {
         XCTAssertEqual(operationBlockCalls, 2)
     }
 
+    func testOperationResetingRetriesShouldNotAccountPreviousRetries() {
+        var operationBlockCalls = 0
+        let operation = AsyncOperation(maxRetries: 10) { operation, completion in
+            operationBlockCalls += 1
+            if operationBlockCalls < 3 {
+                operation.resetRetries()
+            }
+            completion(.retry)
+        }
+
+        waitForOperationToFinish(operation)
+        XCTAssertEqual(operationBlockCalls, 12)
+    }
+
     func testOperationDoesNotRetryIfCancelled() {
         var operationBlockCalls = 0
         let operation = AsyncOperation(maxRetries: 10) { _, completion in

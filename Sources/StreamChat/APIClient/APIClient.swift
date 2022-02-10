@@ -114,6 +114,10 @@ class APIClient {
                     // Requeue request
                     self?.request(endpoint: endpoint, completion: completion)
                     done(.continue)
+                case .failure(_ as ClientError.ExpiredToken):
+                    // Retry request. Expired token has been refreshed
+                    done(.retry)
+                    operation.resetRetries()
                 case let .failure(error) where self?.shouldRetry(error, operation: operation) == true:
                     done(.retry)
                 case .success, .failure:
@@ -175,10 +179,9 @@ class APIClient {
                     completion(.success(decodedResponse))
                 } catch {
                     if error is ClientError.ExpiredToken {
-                        self.refreshToken {
-                            log.info("Token Refreshed", subsystems: .httpRequests)
+                        self.refreshToken { refreshError in
+                            completion(.failure(refreshError ?? error))
                         }
-                        completion(.failure(ClientError.RefreshingToken()))
                     } else {
                         completion(.failure(error))
                     }
@@ -188,13 +191,14 @@ class APIClient {
         }
     }
 
-    private func refreshToken(completion: @escaping () -> Void) {
-        guard _isRefreshingToken.compareAndSwap(old: false, new: true) else {
-            completion()
+    private func refreshToken(completion: @escaping (Error?) -> Void) {
+        guard !isRefreshingToken else {
+            completion(ClientError.RefreshingToken())
             return
         }
+        isRefreshingToken = true
 
-        // We stop the queue so no more operations are triggered
+        // We stop the queue so no more operations are triggered during the refresh
         operationQueue.isSuspended = true
 
         // Increase the amount of consecutive failures
@@ -204,7 +208,7 @@ class APIClient {
             self?.isRefreshingToken = false
             // We restart the queue now that token refresh is completed
             self?.operationQueue.isSuspended = false
-            completion()
+            completion(nil)
         }
     }
 
