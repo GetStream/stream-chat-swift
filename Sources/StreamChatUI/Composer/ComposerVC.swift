@@ -808,7 +808,7 @@ open class ComposerVC: _ViewController,
             return
         }
         channelController?.createNewMessage(
-            text: "One Wallet Transfer",
+            text: "Sent ONE",
             pinning: nil,
             attachments: [],
             mentionedUserIds: content.mentionedUsers.map(\.id),
@@ -822,7 +822,7 @@ open class ComposerVC: _ViewController,
             return
         }
         channelController?.createNewMessage(
-            text: "Red Packet Drop",
+            text: "Red Packet",
             pinning: nil,
             attachments: [],
             mentionedUserIds: content.mentionedUsers.map(\.id),
