@@ -66,6 +66,12 @@ public extension Appearance {
         public var redPacketExpired: UIColor = .init(rgb: 0x758796)
         public var stepperBackground: UIColor = .init(rgb: 0x282828)
         public var stepperForeground: UIColor = .init(rgb: 0x3A3A3D)
+        
+        public var tabbarBackground: UIColor = .tabBarBackground
+        public var viewBackgroundLightBlack: UIColor = .viewLightBlack
+        public var searchBarBackground: UIColor = .searchBackground
+        public var statusColorBlue: UIColor = .statusColor
+        public var subTitleColor: UIColor = .subTitleColorChat
     }
 }
 
@@ -75,11 +81,11 @@ public extension Appearance {
 private extension UIColor {
     /// This is color palette used by design team.
     /// If you see any color not from this list in figma, point it out to anyone in design team.
-    static let tabbarBackground = mode(0x161616, lightAlpha: 1.0, 0x161616, darkAlpha: 1.0)
-    static let viewBackgroundLightBlack = mode(0x131314, lightAlpha: 1.0, 0x131314, darkAlpha: 1.0)
-    static let searchBarBackground = mode(0x1C1C1E, lightAlpha: 1.0, 0x1C1C1E, darkAlpha: 1.0)
-    static let statusColorBlue = mode(0x8CB2F8, lightAlpha: 1.0, 0x8CB2F8, darkAlpha: 1.0)
-    static let subTitleColor = mode(0xD8D8D8, lightAlpha: 1.0, 0xD8D8D8, darkAlpha: 1.0)
+    static let tabBarBackground = mode(0x161616, lightAlpha: 1.0, 0x161616, darkAlpha: 1.0)
+    static let viewLightBlack = mode(0x070A0D, lightAlpha: 1.0, 0x070A0D, darkAlpha: 1.0)
+    static let searchBackground = mode(0x1C1C1E, lightAlpha: 1.0, 0x1C1C1E, darkAlpha: 1.0)
+    static let statusColor = mode(0x8CB2F8, lightAlpha: 1.0, 0x8CB2F8, darkAlpha: 1.0)
+    static let subTitleColorChat = mode(0xD8D8D8, lightAlpha: 1.0, 0xD8D8D8, darkAlpha: 1.0)
     
     static let streamBlack = mode(0x000000, 0xffffff)
     static let streamGray = mode(0x7a7a7a, 0x7a7a7a)

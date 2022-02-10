@@ -52,7 +52,7 @@ public class NameGroupViewController: ChatBaseVC {
     }
     
     public func setupUI() {
-        self.view.backgroundColor = UIColor.black
+        self.view.backgroundColor = Appearance.default.colorPalette.viewBackgroundLightBlack
         //
         self.nameField.autocorrectionType = .no
         self.nameField.addTarget(self, action: #selector(textDidChange(_:)), for: .editingChanged)

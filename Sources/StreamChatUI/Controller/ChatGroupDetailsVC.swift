@@ -202,7 +202,7 @@ extension ChatGroupDetailsVC: UITableViewDataSource {
         cell.lblRole.isHidden = true
         if user.memberRole == .admin {
             cell.lblRole.text = "Owner"
-            cell.lblRole.textColor = ChatColor.STATUS
+            cell.lblRole.textColor = Appearance.default.colorPalette.statusColorBlue
             cell.lblRole.isHidden = false
         }
         //

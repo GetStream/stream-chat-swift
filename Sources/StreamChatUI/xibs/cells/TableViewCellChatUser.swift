@@ -6,6 +6,8 @@
 //
 
 import StreamChat
+import StreamChatUI
+
 import UIKit
 import Nuke
 //import Lottie
@@ -36,10 +38,10 @@ public class TableViewCellChatUser: UITableViewCell {
         avatarView.backgroundColor = avatarBG
         nameLabel.text = (user.name ?? user.id).capitalizingFirstLetter()
         //
-        descriptionLabel.textColor = ChatColor.DESCRIPTION
+        descriptionLabel.textColor = Appearance.default.colorPalette.subTitleColor
         //
         if user.isOnline {
-            descriptionLabel.textColor = ChatColor.STATUS
+            descriptionLabel.textColor = Appearance.default.colorPalette.statusColorBlue
             descriptionLabel.text = "Online"
         } else if let lastActive = user.lastActiveAt {
             descriptionLabel.text = "Last seen: " + DTFormatter.formatter.string(from: lastActive)

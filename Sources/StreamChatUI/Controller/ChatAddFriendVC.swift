@@ -45,6 +45,7 @@ public class ChatAddFriendVC: ChatBaseVC {
         chatUserList.tableViewFrameUpdate()
     }
     public func setup() {
+        self.view.backgroundColor = Appearance.default.colorPalette.viewBackgroundLightBlack
         //
         btnBack?.setImage(Appearance.Images.closeCircle, for: .normal)
         btnNext?.isEnabled = !self.selectedUsers.isEmpty
@@ -61,8 +62,8 @@ public class ChatAddFriendVC: ChatBaseVC {
         chatUserList.curentSortType = .sortByAtoZ
         chatUserList.fetchUserList()
         //
-        viewHeaderView.backgroundColor = UIColor.viewBackground
-        searchBarContainerView.backgroundColor = UIColor.searchBarBackground
+        viewHeaderView.backgroundColor = Appearance.default.colorPalette.viewBackgroundLightBlack
+        searchBarContainerView.backgroundColor = Appearance.default.colorPalette.searchBarBackground
         //
         searchBarContainerView.layer.cornerRadius = 20.0
         viewHeaderView.layer.cornerRadius = 20.0
