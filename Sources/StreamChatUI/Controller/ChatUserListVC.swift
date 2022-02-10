@@ -132,6 +132,7 @@ extension ChatUserListVC {
         tableView?.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 20, right: 0)
         tableView?.tableFooterView = UIView()
         tableView?.separatorStyle = .none
+        tableView?.backgroundColor = .clear
         //
         let reuseID = TableViewHeaderChatUserList.reuseId
         let nib = UINib(nibName: reuseID, bundle: nil)
@@ -606,6 +607,7 @@ extension ChatUserListVC: UITableViewDelegate, UITableViewDataSource {
             let header = tableView.dequeueReusableCell(withIdentifier: reuseID) as? TableViewHeaderChatUserList
             header!.lblTitle.text = self.nameWiseUserList[section].letter.capitalized
             header!.titleContainerView.layer.cornerRadius = 12.0
+            header!.backgroundColor = Appearance.default.colorPalette.viewBackgroundLightBlack
             return header!
         }
         return nil

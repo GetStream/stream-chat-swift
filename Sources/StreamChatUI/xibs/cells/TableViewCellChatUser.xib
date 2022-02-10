@@ -2,6 +2,7 @@
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="19455" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
+        <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="19454"/>
         <capability name="Named colors" minToolsVersion="9.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
@@ -9,6 +10,11 @@
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
+    <customFonts key="customFonts">
+        <array key="SFProText-Regular.ttf">
+            <string>SFProText-Regular</string>
+        </array>
+    </customFonts>
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
         <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
@@ -20,7 +26,7 @@
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <stackView opaque="NO" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" layoutMarginsFollowReadableWidth="YES" insetsLayoutMarginsFromSafeArea="NO" spacingType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="oMx-cn-1cw">
-                        <rect key="frame" x="16" y="0.0" width="122" height="40"/>
+                        <rect key="frame" x="16" y="0.0" width="119.5" height="40"/>
                         <subviews>
                             <stackView opaque="NO" contentMode="scaleToFill" alignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="IRn-XG-f2X">
                                 <rect key="frame" x="0.0" y="0.0" width="40" height="40"/>
@@ -35,17 +41,17 @@
                                 </subviews>
                             </stackView>
                             <stackView opaque="NO" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" axis="vertical" distribution="fillEqually" spacingType="standard" baselineRelativeArrangement="YES" translatesAutoresizingMaskIntoConstraints="NO" id="dlU-Jw-yEL">
-                                <rect key="frame" x="48" y="0.0" width="74" height="40"/>
+                                <rect key="frame" x="48" y="0.0" width="71.5" height="40"/>
                                 <subviews>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Name" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="puz-Tm-pnH">
-                                        <rect key="frame" x="0.0" y="0.0" width="74" height="18.5"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="71.5" height="18.5"/>
                                         <fontDescription key="fontDescription" style="UICTFontTextStyleHeadline"/>
                                         <nil key="textColor"/>
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Description" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ccB-ky-41b">
-                                        <rect key="frame" x="0.0" y="21.5" width="74" height="18.5"/>
-                                        <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
+                                        <rect key="frame" x="0.0" y="21.5" width="71.5" height="18.5"/>
+                                        <fontDescription key="fontDescription" name="SFProText-Regular" family="SF Pro Text" pointSize="14"/>
                                         <color key="textColor" systemColor="systemGrayColor"/>
                                         <nil key="highlightedColor"/>
                                     </label>
@@ -54,11 +60,11 @@
                         </subviews>
                     </stackView>
                     <stackView opaque="NO" contentMode="scaleToFill" spacing="10" translatesAutoresizingMaskIntoConstraints="NO" id="DUP-2F-9Zm">
-                        <rect key="frame" x="315" y="5" width="24" height="24"/>
+                        <rect key="frame" x="315" y="8" width="24" height="24"/>
                         <subviews>
                             <label hidden="YES" opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Role" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ZYD-lS-1ay">
                                 <rect key="frame" x="0.0" y="0.0" width="0.0" height="24"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="13"/>
+                                <fontDescription key="fontDescription" name="SFProText-Regular" family="SF Pro Text" pointSize="14"/>
                                 <color key="textColor" name="AccentColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
@@ -70,12 +76,12 @@
                 </subviews>
                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                 <constraints>
+                    <constraint firstItem="DUP-2F-9Zm" firstAttribute="centerY" secondItem="oMx-cn-1cw" secondAttribute="centerY" id="24U-y6-5yL"/>
                     <constraint firstItem="oMx-cn-1cw" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="top" id="64I-zi-XYf"/>
                     <constraint firstItem="DUP-2F-9Zm" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="oMx-cn-1cw" secondAttribute="trailing" constant="5" id="K4c-2Z-Agi"/>
                     <constraint firstItem="oMx-cn-1cw" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" constant="16" id="OkK-bt-YE9"/>
                     <constraint firstAttribute="bottom" relation="greaterThanOrEqual" secondItem="oMx-cn-1cw" secondAttribute="bottom" constant="5" id="RXu-oI-8A0"/>
                     <constraint firstAttribute="trailing" secondItem="DUP-2F-9Zm" secondAttribute="trailing" constant="16" id="kSg-wd-hTw"/>
-                    <constraint firstItem="DUP-2F-9Zm" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="top" constant="5" id="mlF-Ta-QIx"/>
                 </constraints>
             </tableViewCellContentView>
             <viewLayoutGuide key="safeArea" id="njF-e1-oar"/>

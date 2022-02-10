@@ -6,14 +6,13 @@
 //
 
 import UIKit
-import SwiftUI
 
 public class TableViewHeaderChatUserList: UITableViewCell {
     //
-    static let reuseId: String = "TableViewHeaderChatUserList"
+    public static let reuseId: String = "TableViewHeaderChatUserList"
     //
-    @IBOutlet weak var lblTitle: UILabel!
-    @IBOutlet weak var titleContainerView: UIView!
+    @IBOutlet public weak var lblTitle: UILabel!
+    @IBOutlet public weak var titleContainerView: UIView!
     //
     public override func awakeFromNib() {
         super.awakeFromNib()

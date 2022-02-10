@@ -6,32 +6,41 @@
 //
 
 import UIKit
+import StreamChatUI
+import StreamChat
 
 public class ChatSharedFilesVC: UIViewController {
     //
-    public enum FileType: Int {
-        case media = 0
-        case files = 1
-        case link = 2
-    }
+    @IBOutlet public weak var lblEmpty: UILabel?
     //
-    @IBOutlet private weak var lblEmpty: UILabel?
+    public var attachmentType = AttachmentType.unknown
     //
     public override func viewDidLoad() {
         super.viewDidLoad()
         //
         self.view.backgroundColor = .clear
-    }
-
-    public func setFileType(type: ChatSharedFilesVC.FileType) {
         //
-        switch type {
-        case .media:
+        self.setupUI()
+    }
+    //
+}
+// MARK: - UI
+
+extension ChatSharedFilesVC {
+    //
+    public func setupUI() {
+        lblEmpty?.textColor = Appearance.default.colorPalette.subtitleText
+        //
+        switch self.attachmentType {
+        case .image,.video:
             self.lblEmpty?.text = "No media available"
-        case .files:
+        case .file:
             self.lblEmpty?.text = "No files available"
-        case .link:
+        case .linkPreview:
             self.lblEmpty?.text = "No link available"
+        default:
+            self.lblEmpty?.text = "unknown type"
         }
     }
 }
+// MARK: - UI

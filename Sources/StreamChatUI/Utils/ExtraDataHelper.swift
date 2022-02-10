@@ -9,7 +9,6 @@
 import Foundation
 import StreamChat
 
-
 public extension Dictionary where Key == String, Value == RawJSON {
     func getExtraData(key: String) -> [String: RawJSON]? {
         if let extraData = self[key] {

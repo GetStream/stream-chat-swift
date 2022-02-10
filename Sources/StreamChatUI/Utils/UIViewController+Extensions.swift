@@ -112,6 +112,7 @@ extension UIViewController {
         }
     }
 }
+
 extension UIViewController {
     func presentAlert(title: String?,
                       message: String? = nil,
@@ -159,17 +160,13 @@ extension UIViewController {
 
     func presentAlert(title: String?,
                       message: String? = nil,
-                      actions: [UIAlertAction],
-                      cancelHandler: (() -> Void)? = nil) {
+                      actions: [UIAlertAction]) {
         let alert = UIAlertController(
             title: title,
             message: message,
             preferredStyle: .alert
         )
         actions.forEach { alert.addAction($0) }
-        alert.addAction(.init(title: "Cancel", style: .destructive, handler: { _ in
-            cancelHandler?()
-        }))
         present(alert, animated: true, completion: nil)
     }
 }

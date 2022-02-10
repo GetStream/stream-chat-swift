@@ -7,15 +7,13 @@
 
 import StreamChat
 import StreamChatUI
-
 import UIKit
 import Nuke
-//import Lottie
 
 public class TableViewCellChatUser: UITableViewCell {
 
     //
-    static let reuseId: String = "TableViewCellChatUser"
+    public static let reuseId: String = "TableViewCellChatUser"
     //
     @IBOutlet private var mainStackView: UIStackView! {
         didSet {
