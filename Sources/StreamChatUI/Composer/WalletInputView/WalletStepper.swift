@@ -297,7 +297,7 @@ class WalletStepper: UIView {
         currencyFormatter.currencySymbol = ""
         currencyFormatter.maximumFractionDigits = 4
         currencyFormatter.minimumFractionDigits = 0
-        currencyFormatter.locale = Locale.current
+        currencyFormatter.locale = Locale.init(identifier: "en_US")
         if let priceString = currencyFormatter.string(from: NSNumber(value: value)) {
             lblAmount.text = priceString
         }
