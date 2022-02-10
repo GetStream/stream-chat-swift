@@ -11,6 +11,7 @@ import UIKit
 public enum StreamChatStoryboard: String {
     case wallet = "Wallet"
     case PrivateGroup = "PrivateGroup"
+    case GroupChat = "GroupChat"
 }
 
 ///// Instantiate View Controller
