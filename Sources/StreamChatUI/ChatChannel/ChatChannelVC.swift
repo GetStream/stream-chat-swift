@@ -272,13 +272,13 @@ open class ChatChannelVC:
             messageComposerVC.composerView.alpha = 1.0
             channelAvatarView.isHidden = false
         }
-        if #available(iOS 13.0, *) {
-            let interaction = UIContextMenuInteraction(delegate: self)
-            channelAvatarView.addInteraction(interaction)
-        }
         let tapGesture = UITapGestureRecognizer.init(target: self, action: #selector(self.headerViewAction(_:)))
         tapGesture.numberOfTapsRequired = 1
         headerView.addGestureRecognizer(tapGesture)
+
+        let avatarTapGesture = UITapGestureRecognizer.init(target: self, action: #selector(self.avatarViewAction(_:)))
+        avatarTapGesture.numberOfTapsRequired = 1
+        channelAvatarView.addGestureRecognizer(avatarTapGesture)
     }
 
     override open func viewDidLoad() {
@@ -323,6 +323,12 @@ open class ChatChannelVC:
         controller.channelController = channelController
         self.navigationController?.pushViewController(controller, animated: true)
     }
+
+    @objc func avatarViewAction(_ sender: Any) {
+        shareView.isHidden = false
+        showPinViewButton()
+    }
+
     @objc func shareAction(_ sender: Any) {
         guard let extraData = channelController.channel?.extraData,
               channelController.channel?.type == .dao else {
@@ -358,8 +364,9 @@ open class ChatChannelVC:
     }
     
     @objc func moreButtonAction(_ sender: Any) {
-        shareView.isHidden = false
-        showPinViewButton()
+        CM.nibView = UINib(nibName: "ContextMenuCell", bundle: nil)
+        CM.items = getMenuItems()
+        CM.showMenu(viewTargeted: moreButton, delegate: self)
     }
 
     @objc func closePinViewAction(_ sender: Any) {
@@ -529,114 +536,22 @@ open class ChatChannelVC:
         }
     }
 
-    @available(iOS 13.0, *)
-    func getActions() -> [UIAction] {
-        let privateGroup = UIAction(title: "Group QR", image: UIImage(systemName: "qrcode.viewfinder")) { [weak self] action in
-            guard let self = self else {
-                return
-            }
-            guard let qrCodeVc: GroupQRCodeVC = GroupQRCodeVC.instantiateController(storyboard: .PrivateGroup) else {
-                return
-            }
-            qrCodeVc.strContent = self.getGroupLink()
-            self.navigationController?.pushViewController(qrCodeVc, animated: true)
-        }
-
-        let search = UIAction(title: "Search", image: appearance.images.qrCode) { [weak self] action in
-
-        }
-
-        let invite = UIAction(title: "Invite", image: appearance.images.personBadgePlus) { [weak self] action in
-
-        }
-
-        let groupQR = UIAction(title: "QR", image: appearance.images.qrCode) { [weak self] action in
-            guard let self = self else {
-                return
-            }
-            self.shareAction(UIButton())
-        }
-
-        let mute = UIAction(title: "Mute", image: appearance.images.mute) { [weak self] action in
-            guard let self = self else {
-                return
-            }
-            self.channelController.muteChannel(completion: nil)
-        }
-
-        let unmute = UIAction(title: "Unmute", image: appearance.images.unMute) { [weak self] action in
-            guard let self = self else {
-                return
-            }
-            self.channelController.unmuteChannel(completion: nil)
-        }
-
-        let leaveGroup = UIAction(title: "Leave Group", image: appearance.images.unMute) { [weak self] action in
-            guard let self = self else {
-                return
-            }
-            let yesAction = UIAlertAction(title: "Yes", style: .default) { _ in
-                self.channelController.removeMembers(userIds: [ChatClient.shared.currentUserId ?? ""]) { [weak self] error in
-                    guard let error = error, let self = self else {
-                        Snackbar.show(text: error?.localizedDescription ?? "")
-                        return
-                    }
-                    self.navigationController?.popViewController(animated: true)
-                }
-            }
-            let noAction = UIAlertAction(title: "No", style: .default) { _ in }
-            self.presentAlert(
-                title: "Are you sure you want to leave group?",
-                message: nil, actions: [yesAction, noAction])
-        }
-
-        let deleteAndLeave = UIAction(title: "Delete and Leave", image: appearance.images.unMute) { [weak self] action in
-            guard let self = self else {
-                return
-            }
-            let yesAction = UIAlertAction(title: "Yes", style: .default) { _ in
-                self.channelController.deleteChannel { error in
-                    guard let error = error else {
-                        Snackbar.show(text: error?.localizedDescription ?? "")
-                        return
-                    }
-                    self.navigationController?.popViewController(animated: true)
-                }
-            }
-            let noAction = UIAlertAction(title: "No", style: .default) { _ in }
-            self.presentAlert(
-                title: "Are you sure you want to delete group?",
-                message: nil, actions: [yesAction, noAction])
-        }
-
-        let deleteChat = UIAction(title: "Delete Chat", image: appearance.images.trash) { [weak self] action in
-            guard let self = self else {
-                return
-            }
-            let yesAction = UIAlertAction(title: "Yes", style: .default) { _ in
-                self.channelController.hideChannel(clearHistory: true) { error in
-                    guard let error = error else {
-                        Snackbar.show(text: error?.localizedDescription ?? "")
-                        return
-                    }
-                    self.navigationController?.popViewController(animated: true)
-                }
-            }
-            let noAction = UIAlertAction(title: "No", style: .default) { _ in }
-            self.presentAlert(
-                title: "Are you sure you want to delete chat?",
-                message: nil, actions: [yesAction, noAction])
-        }
-
-        let groupImage = UIAction(title: "Group Image", image: appearance.images.photo) { [weak self] action in
-
-        }
-
+    func getMenuItems() -> [ContextMenuItemWithImage] {
+        let privateGroup = ContextMenuItemWithImage(title: "Group QR", image: appearance.images.qrCodeViewFinder, type: .privateGroup)
+        let search = ContextMenuItemWithImage(title: "Search", image: appearance.images.qrCode, type: .searchMessage)
+        let invite = ContextMenuItemWithImage(title: "Invite", image: appearance.images.personBadgePlus, type: .invite)
+        let groupQR = ContextMenuItemWithImage(title: "QR", image: appearance.images.qrCode, type: .groupQR)
+        let mute = ContextMenuItemWithImage(title: "Mute", image: appearance.images.mute, type: .mute)
+        let unmute = ContextMenuItemWithImage(title: "Unmute", image: appearance.images.unMute, type: .unmute)
+        let leaveGroup = ContextMenuItemWithImage(title: "Leave Group", image: appearance.images.rectangleArrowRight, type: .leaveGroup)
+        let deleteAndLeave = ContextMenuItemWithImage(title: "Delete and Leave", image: appearance.images.rectangleArrowRight, type: .deleteAndLeave)
+        let deleteChat = ContextMenuItemWithImage(title: "Delete Chat", image: appearance.images.trash, type: .deleteChat)
+        let groupImage = ContextMenuItemWithImage(title: "Group Image", image: appearance.images.photo, type: .groupImage)
         if channelController.channel?.type == .privateMessaging {
             return [privateGroup]
         } else {
             if channelController.channel?.isDirectMessageChannel ?? false {
-                var actions: [UIAction] = []
+                var actions: [ContextMenuItemWithImage] = []
                 actions.append(search)
                 if channelController.channel?.isMuted ?? false {
                     actions.append(unmute)
@@ -647,7 +562,7 @@ open class ChatChannelVC:
                 return actions
             } else {
                 if channelController.channel?.membership?.userRole == .admin {
-                    var actions: [UIAction] = []
+                    var actions: [ContextMenuItemWithImage] = []
                     actions.append(contentsOf: [groupImage, search, invite, groupQR])
                     if channelController.channel?.isMuted ?? false {
                         actions.append(unmute)
@@ -657,7 +572,7 @@ open class ChatChannelVC:
                     actions.append(deleteAndLeave)
                     return actions
                 } else {
-                    var actions: [UIAction] = []
+                    var actions: [ContextMenuItemWithImage] = []
                     actions.append(contentsOf: [search, invite, groupQR])
                     if channelController.channel?.isMuted ?? false {
                         actions.append(unmute)
@@ -672,12 +587,108 @@ open class ChatChannelVC:
     }
 }
 
-extension ChatChannelVC: UIContextMenuInteractionDelegate {
-    @available(iOS 13.0, *)
-    public func contextMenuInteraction(_ interaction: UIContextMenuInteraction, configurationForMenuAtLocation location: CGPoint) -> UIContextMenuConfiguration? {
-        return UIContextMenuConfiguration(identifier: nil,
-            previewProvider: nil) { [weak self] _ in
-            UIMenu(title: "", children: self?.getActions() ?? [UIAction]())
-          }
+extension ChatChannelVC: ContextMenuDelegate {
+    public func contextMenuDidSelect(
+        _ contextMenu: ContextMenu,
+        cell: ContextMenuCell,
+        targetedView: UIView,
+        didSelect item: ContextMenuItem,
+        forRowAt index: Int) -> Bool {
+            switch item.type {
+            case .privateGroup:
+                guard let qrCodeVc: GroupQRCodeVC = GroupQRCodeVC.instantiateController(storyboard: .PrivateGroup) else {
+                    return true
+                }
+                qrCodeVc.strContent = self.getGroupLink()
+                self.navigationController?.pushViewController(qrCodeVc, animated: true)
+            case .searchMessage:
+                break
+            case .invite:
+                break
+            case .groupQR:
+                self.shareAction(UIButton())
+            case .mute:
+                channelController.muteChannel(completion: nil)
+            case .unmute:
+                channelController.unmuteChannel(completion: nil)
+            case .leaveGroup:
+                let yesAction = UIAlertAction(title: "Yes", style: .default) { [weak self] _ in
+                    guard let self = self else {
+                        return
+                    }
+                    self.channelController.removeMembers(userIds: [ChatClient.shared.currentUserId ?? ""]) { [weak self] error in
+                        guard error == nil, let self = self else {
+                            Snackbar.show(text: error?.localizedDescription ?? "")
+                            return
+                        }
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) { [weak self] in
+                            guard let self = self else { return }
+                            self.backAction(UIButton())
+                        }
+                    }
+                }
+                let noAction = UIAlertAction(title: "No", style: .default) { _ in }
+                presentAlert(
+                    title: "Are you sure you want to leave group?",
+                    message: nil, actions: [yesAction, noAction])
+            case .deleteAndLeave:
+                let yesAction = UIAlertAction(title: "Yes", style: .default) { [weak self] _ in
+                    guard let self = self else {
+                        return
+                    }
+                    self.channelController.deleteChannel { error in
+                        guard error == nil else {
+                            Snackbar.show(text: error?.localizedDescription ?? "")
+                            return
+                        }
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) { [weak self] in
+                            guard let self = self else { return }
+                            self.backAction(UIButton())
+                        }
+                    }
+                }
+                let noAction = UIAlertAction(title: "No", style: .default) { _ in }
+                self.presentAlert(
+                    title: "Are you sure you want to delete group?",
+                    message: nil, actions: [yesAction, noAction])
+            case .deleteChat:
+                let yesAction = UIAlertAction(title: "Yes", style: .default) { [weak self] _ in
+                    guard let self = self else {
+                        return
+                    }
+                    self.channelController.hideChannel(clearHistory: true) { error in
+                        guard error == nil else {
+                            Snackbar.show(text: error?.localizedDescription ?? "")
+                            return
+                        }
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) { [weak self] in
+                            guard let self = self else { return }
+                            self.backAction(UIButton())
+                        }
+                    }
+                }
+                let noAction = UIAlertAction(title: "No", style: .default) { _ in }
+                presentAlert(
+                    title: "Are you sure you want to delete chat?",
+                    message: nil, actions: [yesAction, noAction])
+            case .groupImage:
+                break
+            }
+        return true
     }
+
+    public func contextMenuDidDeselect(
+        _ contextMenu: ContextMenu,
+        cell: ContextMenuCell,
+        targetedView: UIView,
+        didSelect item: ContextMenuItem,
+        forRowAt index: Int) {
+    }
+
+    public func contextMenuDidAppear(_ contextMenu: ContextMenu) {
+    }
+
+    public func contextMenuDidDisappear(_ contextMenu: ContextMenu) {
+    }
+
 }
