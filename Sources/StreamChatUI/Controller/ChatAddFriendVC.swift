@@ -45,7 +45,7 @@ public class ChatAddFriendVC: ChatBaseVC {
         chatUserList.tableViewFrameUpdate()
     }
     public func setup() {
-        self.view.backgroundColor = Appearance.default.colorPalette.viewBackgroundLightBlack
+        self.view.backgroundColor = .clear
         //
         btnBack?.setImage(Appearance.Images.closeCircle, for: .normal)
         btnNext?.isEnabled = !self.selectedUsers.isEmpty

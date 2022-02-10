@@ -2,7 +2,6 @@
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="19455" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
-        <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="19454"/>
         <capability name="Named colors" minToolsVersion="9.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
@@ -182,7 +181,7 @@
                                         </subviews>
                                     </stackView>
                                 </subviews>
-                                <color key="backgroundColor" name="viewBackground"/>
+                                <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <constraints>
                                     <constraint firstItem="8Rq-6D-mie" firstAttribute="leading" secondItem="2hX-vZ-5CS" secondAttribute="leading" constant="16" id="4NI-9y-J4K"/>
                                     <constraint firstAttribute="trailing" secondItem="8Rq-6D-mie" secondAttribute="trailing" constant="16" id="RXo-YW-NrO"/>
@@ -370,14 +369,14 @@
                                                             <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
                                                         </collectionViewFlowLayout>
                                                         <cells>
-                                                            <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="GroupUserCell" id="LKT-oI-MeJ" customClass="GroupUserCell" customModule="Timeless_wallet" customModuleProvider="target">
+                                                            <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="GroupUserCell" id="LKT-oI-MeJ" customClass="GroupUserCell" customModule="StreamChatUI" customModuleProvider="target">
                                                                 <rect key="frame" x="0.0" y="6" width="88" height="88"/>
                                                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                                 <collectionViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="pZP-Hg-Kaq">
                                                                     <rect key="frame" x="0.0" y="0.0" width="88" height="88"/>
                                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                                     <subviews>
-                                                                        <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="zgM-lm-Zfd" customClass="AvatarView" customModule="Timeless_wallet" customModuleProvider="target">
+                                                                        <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="zgM-lm-Zfd" customClass="AvatarView" customModule="StreamChatUI" customModuleProvider="target">
                                                                             <rect key="frame" x="0.0" y="0.0" width="128" height="64"/>
                                                                             <constraints>
                                                                                 <constraint firstAttribute="height" constant="64" id="Rli-3G-fiK"/>
@@ -390,7 +389,7 @@
                                                                             <nil key="textColor"/>
                                                                             <nil key="highlightedColor"/>
                                                                         </label>
-                                                                        <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="chat_UserDelete" translatesAutoresizingMaskIntoConstraints="NO" id="plQ-2z-mzz" customClass="AvatarView" customModule="Timeless_wallet" customModuleProvider="target">
+                                                                        <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="chat_UserDelete" translatesAutoresizingMaskIntoConstraints="NO" id="plQ-2z-mzz" customClass="AvatarView" customModule="StreamChatUI" customModuleProvider="target">
                                                                             <rect key="frame" x="109" y="4" width="19" height="19"/>
                                                                             <color key="tintColor" systemColor="systemBackgroundColor"/>
                                                                             <constraints>
@@ -501,7 +500,6 @@
         <!--Name Group View Controller-->
         <scene sceneID="S7z-xh-Wdc">
             <objects>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="XbA-pG-ZeX" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
                 <viewController storyboardIdentifier="NameGroupViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="yjH-wK-zCh" customClass="NameGroupViewController" customModule="StreamChatUI" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="rgj-TS-iyu">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
@@ -619,7 +617,7 @@
                                             <constraint firstAttribute="bottom" secondItem="VGn-Kf-YWL" secondAttribute="bottom" id="xhU-ba-e5B"/>
                                         </constraints>
                                     </view>
-                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="OjL-Eu-jPg" customClass="ViewWithRadius" customModule="Timeless_wallet" customModuleProvider="target">
+                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="OjL-Eu-jPg" customClass="ViewWithRadius" customModule="StreamChatUI" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="114" width="382" height="41"/>
                                         <subviews>
                                             <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Group description" textAlignment="natural" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="d9i-Sw-F4z">
@@ -671,7 +669,7 @@
                                                     <stackView opaque="NO" contentMode="scaleToFill" spacing="15" translatesAutoresizingMaskIntoConstraints="NO" id="WqF-qn-8ZS">
                                                         <rect key="frame" x="0.0" y="0.0" width="382" height="32"/>
                                                         <subviews>
-                                                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Vzh-Cn-15u" customClass="ViewWithRadius" customModule="Timeless_wallet" customModuleProvider="target">
+                                                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Vzh-Cn-15u" customClass="ViewWithRadius" customModule="StreamChatUI" customModuleProvider="target">
                                                                 <rect key="frame" x="0.0" y="0.0" width="206" height="32"/>
                                                                 <subviews>
                                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" preservesSuperviewLayoutMargins="YES" text="#intro" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="VLS-DX-dbX">
@@ -693,7 +691,7 @@
                                                                     <constraint firstItem="VLS-DX-dbX" firstAttribute="leading" secondItem="Vzh-Cn-15u" secondAttribute="leading" constant="10" id="t3V-0A-fd0"/>
                                                                 </constraints>
                                                             </view>
-                                                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="3hr-R7-2ad" customClass="ViewWithRadius" customModule="Timeless_wallet" customModuleProvider="target">
+                                                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="3hr-R7-2ad" customClass="ViewWithRadius" customModule="StreamChatUI" customModuleProvider="target">
                                                                 <rect key="frame" x="221" y="0.0" width="61.5" height="32"/>
                                                                 <subviews>
                                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" preservesSuperviewLayoutMargins="YES" text="#using" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="kKE-QA-I88">
@@ -715,7 +713,7 @@
                                                                     <constraint firstAttribute="bottom" secondItem="kKE-QA-I88" secondAttribute="bottom" constant="4" id="xIy-JV-Aex"/>
                                                                 </constraints>
                                                             </view>
-                                                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="CwA-Co-Fo3" customClass="ViewWithRadius" customModule="Timeless_wallet" customModuleProvider="target">
+                                                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="CwA-Co-Fo3" customClass="ViewWithRadius" customModule="StreamChatUI" customModuleProvider="target">
                                                                 <rect key="frame" x="297.5" y="0.0" width="84.5" height="32"/>
                                                                 <subviews>
                                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" preservesSuperviewLayoutMargins="YES" text="#hashtags" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Uo0-3r-a4K">
@@ -827,7 +825,7 @@
                                                         <nil key="highlightedColor"/>
                                                     </label>
                                                 </subviews>
-                                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                 <constraints>
                                                     <constraint firstAttribute="bottom" secondItem="0fQ-Bb-8Nq" secondAttribute="bottom" constant="8" id="9i3-sO-FOu"/>
                                                     <constraint firstItem="0fQ-Bb-8Nq" firstAttribute="top" secondItem="XOS-Xw-gie" secondAttribute="top" constant="20" id="Iqb-Oc-AFL"/>
@@ -909,6 +907,7 @@
                         <outlet property="tagViewPlaceHolderView" destination="pgC-Iu-LJU" id="lvc-hR-Stj"/>
                     </connections>
                 </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="XbA-pG-ZeX" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="1657.9710144927537" y="835.71428571428567"/>
         </scene>
@@ -1333,9 +1332,6 @@
         </namedColor>
         <namedColor name="timelessBlue">
             <color red="0.5490196078431373" green="0.69803921568627447" blue="0.97254901960784312" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-        </namedColor>
-        <namedColor name="viewBackground">
-            <color red="0.075000002980232239" green="0.075000002980232239" blue="0.078000001609325409" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </namedColor>
         <systemColor name="labelColor">
             <color white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
