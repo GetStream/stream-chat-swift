@@ -16,6 +16,7 @@ extension Notification.Name {
     public static let pickUpRedPacket = Notification.Name("kStreamChatPickUpRedPacket")
     public static let showSnackBar = Notification.Name("kStreamshowSnackBar")
     public static let payRequestTapAction = Notification.Name("kPayRequestTapAction")
+    public static let disburseFundAction = Notification.Name("kStreamChatDisburseFundTapAction")
 }
 
 /// The possible errors that can occur in attachment validation
@@ -482,7 +483,7 @@ open class ComposerVC: _ViewController,
                 userInfo["currencyValue"] = "\(amount)"
                 userInfo["currencyDisplay"] = "\(amount)"
                 userInfo["paymentTheme"] = theme.getPaymentThemeUrl()
-                NotificationCenter.default.post(name: .sendOneAction, object: nil, userInfo: userInfo)
+                NotificationCenter.default.post(name: .sendOneWalletTapAction, object: nil, userInfo: userInfo)
                 self.hideInputView()
                 self.composerView.leadingContainer.isHidden = false
                 self.animateToolkitView(isHide: true)
@@ -499,8 +500,9 @@ open class ComposerVC: _ViewController,
                 self.composerView.inputMessageView.textView.resignFirstResponder()
                 self.showAttachmentsPicker()
                 self.animateToolkitView(isHide: true)
-            case .contact:
+            case .disburseFund:
                 self.animateToolkitView(isHide: true)
+                self.disburseFundAction()
                 break
             case .weather:
                 break
@@ -698,6 +700,12 @@ open class ComposerVC: _ViewController,
         var userInfo = [String: Any]()
         userInfo["channelId"] = channelId
         NotificationCenter.default.post(name: .sendOneWalletTapAction, object: nil, userInfo: userInfo)
+    }
+
+    @objc open func disburseFundAction() {
+        var userInfo = [String: Any]()
+        userInfo["extraData"] = self.channelController?.channel?.extraData
+        NotificationCenter.default.post(name: .disburseFundAction, object: nil, userInfo: userInfo)
     }
 
     @objc open func sendRedPacketAction() {

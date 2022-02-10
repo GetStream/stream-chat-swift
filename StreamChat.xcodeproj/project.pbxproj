@@ -926,8 +926,11 @@
 		CD24C71C2784881000F6378D /* Dynamic.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD24C71B2784881000F6378D /* Dynamic.swift */; };
 		CD24C71E2784892A00F6378D /* UIApplication+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD24C71D2784892A00F6378D /* UIApplication+Extension.swift */; };
 		CD6058EB278860EB00A033CD /* ChatClientConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD6058EA278860EB00A033CD /* ChatClientConfiguration.swift */; };
+		CD6A29D627AD688700007D7B /* ExtraDataHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD6A29D427AD688700007D7B /* ExtraDataHelper.swift */; };
 		CD72548D275F556100CD6444 /* RedPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD72548C275F556100CD6444 /* RedPacket.swift */; };
 		CD72AFD4278DAEF20025999A /* EFQRCode in Frameworks */ = {isa = PBXBuildFile; productRef = CD72AFD3278DAEF20025999A /* EFQRCode */; };
+		CD7897A227B29FA3005EB481 /* AdminMessageTVCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD7897A027B29FA3005EB481 /* AdminMessageTVCell.swift */; };
+		CD7897A327B29FA3005EB481 /* AdminMessageTVCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = CD7897A127B29FA3005EB481 /* AdminMessageTVCell.xib */; };
 		CD89189E273E25B70051C651 /* KeyboardToolKitList.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD66B570273D5D1D00DAC5D2 /* KeyboardToolKitList.swift */; };
 		CD89189F273E278B0051C651 /* KeyboardToolKitList.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD66B570273D5D1D00DAC5D2 /* KeyboardToolKitList.swift */; };
 		CD8918A3273E32110051C651 /* SendMoneyButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD8918A1273E32030051C651 /* SendMoneyButton.swift */; };
@@ -2392,7 +2395,10 @@
 		CD24C71D2784892A00F6378D /* UIApplication+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIApplication+Extension.swift"; sourceTree = "<group>"; };
 		CD6058EA278860EB00A033CD /* ChatClientConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatClientConfiguration.swift; sourceTree = "<group>"; };
 		CD66B570273D5D1D00DAC5D2 /* KeyboardToolKitList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardToolKitList.swift; sourceTree = "<group>"; };
+		CD6A29D427AD688700007D7B /* ExtraDataHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtraDataHelper.swift; sourceTree = "<group>"; };
 		CD72548C275F556100CD6444 /* RedPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RedPacket.swift; sourceTree = "<group>"; };
+		CD7897A027B29FA3005EB481 /* AdminMessageTVCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdminMessageTVCell.swift; sourceTree = "<group>"; };
+		CD7897A127B29FA3005EB481 /* AdminMessageTVCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = AdminMessageTVCell.xib; sourceTree = "<group>"; };
 		CD8918A1273E32030051C651 /* SendMoneyButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendMoneyButton.swift; sourceTree = "<group>"; };
 		CD8918A5273E32AD0051C651 /* ToolTipToggleButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToolTipToggleButton.swift; sourceTree = "<group>"; };
 		CD8918BB273E99160051C651 /* CryptoReceiveBubble.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CryptoReceiveBubble.swift; sourceTree = "<group>"; };
@@ -4442,6 +4448,7 @@
 				CD24C71D2784892A00F6378D /* UIApplication+Extension.swift */,
 				CD6058EA278860EB00A033CD /* ChatClientConfiguration.swift */,
 				EDAB4B3E27A15D1D00F07D53 /* Snackbar.swift */,
+				CD6A29D427AD688700007D7B /* ExtraDataHelper.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -5169,6 +5176,8 @@
 			children = (
 				CDA1FB05278843AF00C2F4BD /* PrivateGroupUsersCVCell.swift */,
 				CDA1FB06278843AF00C2F4BD /* PrivateGroupUsersCVCell.xib */,
+				CD7897A027B29FA3005EB481 /* AdminMessageTVCell.swift */,
+				CD7897A127B29FA3005EB481 /* AdminMessageTVCell.xib */,
 			);
 			path = cells;
 			sourceTree = "<group>";
@@ -6020,6 +6029,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				88F0D74B257E50B200F4B050 /* Assets.xcassets in Resources */,
+				CD7897A327B29FA3005EB481 /* AdminMessageTVCell.xib in Resources */,
 				CDA1FB08278843AF00C2F4BD /* PrivateGroupUsersCVCell.xib in Resources */,
 				CD24C70E27844C3500F6378D /* Wallet.storyboard in Resources */,
 				88F0D743257E50B000F4B050 /* Localizable.strings in Resources */,
@@ -6753,6 +6763,7 @@
 				780DFCFC25EF7DA500A39A6E /* ChatChannelListVC+SwiftUI.swift in Sources */,
 				EDD84510279E6930004BF3CD /* ChatMenuViewController.swift in Sources */,
 				DBC8A5762581476E00B20A82 /* ChatMessageListVC.swift in Sources */,
+				CD7897A227B29FA3005EB481 /* AdminMessageTVCell.swift in Sources */,
 				CDC2BCE72763756500D75F6F /* Date+Extensions.swift in Sources */,
 				8800A28C258A1924006D64C4 /* ChatMessageFileAttachmentListView.swift in Sources */,
 				ACCA772E26C568D8007AE2ED /* NukeImageProcessor.swift in Sources */,
@@ -6890,6 +6901,7 @@
 				224FF6912562F58F00725DD1 /* UIColor+Extensions.swift in Sources */,
 				22C2359A259CA87B00DC805A /* Animation.swift in Sources */,
 				CD6058EB278860EB00A033CD /* ChatClientConfiguration.swift in Sources */,
+				CD6A29D627AD688700007D7B /* ExtraDataHelper.swift in Sources */,
 				79088339254876F200896F03 /* ChatMessageListView.swift in Sources */,
 				EDAB4B4227A17A0300F07D53 /* EmojiButton.swift in Sources */,
 				CD89189E273E25B70051C651 /* KeyboardToolKitList.swift in Sources */,

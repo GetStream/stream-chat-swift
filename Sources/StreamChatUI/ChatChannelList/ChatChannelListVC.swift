@@ -7,7 +7,7 @@ import UIKit
 import SwiftUI
 
 public extension Notification.Name {
-    static let pushToChatMessageScreen = Notification.Name("pushToChatMessageScreen")
+    static let pushToDaoChatMessageScreen = Notification.Name("pushToDaoChatMessageScreen")
 }
 
 /// A `UIViewController` subclass  that shows list of channels.
@@ -123,17 +123,24 @@ open class ChatChannelListVC: _ViewController,
         super.viewDidLoad()
         NotificationCenter.default.addObserver(
             self,
-            selector: #selector(pushToChatMessageScreen(_:)),
-            name: .pushToChatMessageScreen,
+            selector: #selector(pushToDaoChatMessageScreen(_:)),
+            name: .pushToDaoChatMessageScreen,
             object: nil)
     }
 
-    @objc private func pushToChatMessageScreen(_ notification: NSNotification) {
+    @objc private func pushToDaoChatMessageScreen(_ notification: NSNotification) {
+        navigationController?.popToRootViewController(animated: false)
         guard let controller = notification.userInfo?["channelController"] as? ChatChannelController,
               let cid = controller.cid else {
             return
         }
-        self.router.showChannel(for: cid)
+        let chatChannelVC = ChatChannelVC.init()
+        let channelController = ChatClient.shared.channelController(
+            for: .init(type: .dao,
+                       id: cid.id))
+        chatChannelVC.channelController = channelController
+        chatChannelVC.isChannelCreated = true
+        navigationController?.pushViewController(chatChannelVC, animated: true)
     }
 
     override open func setUpLayout() {
@@ -327,8 +334,20 @@ open class ChatChannelListVC: _ViewController,
                 controller.hideChannel(clearHistory: true, completion: nil)
             }
         }
-        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel) { _ in }
-        let alert = UIAlertController.showAlert(title: "Would you like to delete this conversation? It'll be permanently deleted.", message: nil, actions: [deleteAction, cancelAction], preferredStyle: .actionSheet)
+        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel) { [weak self] _ in
+            guard let self = self else {
+                return
+            }
+            let cell = self.collectionView.cellForItem(at: indexPath) as? ChatChannelListCollectionViewCell
+            cell?.swipeableView.close()
+            Animate { [weak self] in
+                guard let self = self else {
+                    return
+                }
+                self.collectionView.layoutIfNeeded()
+            }
+        }
+        let alert = UIAlertController.showAlert(title: "Would you like to delete this conversation?\nIt'll be permanently deleted.", message: nil, actions: [deleteAction, cancelAction], preferredStyle: .actionSheet)
         self.present(alert, animated: true, completion: nil)
     }
 

@@ -305,5 +305,7 @@ public extension Appearance {
         public var menuCrypto: UIImage = loadImageSafely(with: "crypto")
         public var backMenuOption: UIImage = loadImageSafely(with: "back")
         public var emojiIcon: UIImage = loadImageSafely(with: "emoji")
+        public var disburseFund: UIImage = loadImageSafely(with: "disburseFund")
+
     }
 }

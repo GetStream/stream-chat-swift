@@ -23,6 +23,9 @@ open class ChatChannelVC:
     /// Controller for observing data changes within the channel.
     open var channelController: ChatChannelController!
 
+    /// boolean flag for first time navigate here after creating new channel
+    open var isChannelCreated = false
+
     /// Listen to keyboard observer or not
     open var enableKeyboardObserver = false
 
@@ -178,6 +181,7 @@ open class ChatChannelVC:
 
         navigationHeaderView.addSubview(rightStackView)
         rightStackView.addArrangedSubview(channelAvatarView)
+        channelAvatarView.content = (channelController.channel, client.currentUserId)
         if channelController.channel?.type == .dao {
             rightStackView.addArrangedSubview(moreButton)
             moreButton.widthAnchor.constraint(equalToConstant: 30).isActive = true
@@ -257,6 +261,7 @@ open class ChatChannelVC:
         super.viewDidLoad()
         KeyboardService.shared.observeKeyboard(self.view)
         shareView.isHidden = true
+        shareView.isHidden = isChannelCreated ? false : true
     }
 
     open override func viewWillAppear(_ animated: Bool) {

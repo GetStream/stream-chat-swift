@@ -22,7 +22,7 @@ class ChatMenuViewController: UIViewController {
 
     enum MenuType: Int {
         case media = 1
-        case contact = 2
+        case disburseFund = 2
         case weather = 3
         case crypto = 4
         case oneN = 5
@@ -41,7 +41,7 @@ class ChatMenuViewController: UIViewController {
 
     func setupUI() {
         imgMedia.image = Appearance.default.images.menuMedia
-        imgContact.image = Appearance.default.images.menuContact
+        imgContact.image = Appearance.default.images.disburseFund
         imgRequest.image = Appearance.default.images.menuWeather
         imgSend.image = Appearance.default.images.menuCrypto
         img1n.image = Appearance.default.images.menu1n

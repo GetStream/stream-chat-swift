@@ -104,7 +104,11 @@ class WalletRequestPayBubble: UITableViewCell {
         lblDetails = createDetailsLabel()
         if walletPaymentType == .request {
             let payload = content?.attachments(payloadType: WalletAttachmentPayload.self).first
-            descriptionLabel.text = "\(requestedUserName(raw: payload?.extraData) ?? "-") Requests Payment"
+            if isSender  {
+                descriptionLabel.text = "You Requests Payment"
+            } else {
+                descriptionLabel.text = "\(requestedUserName(raw: payload?.extraData) ?? "-") Requests Payment"
+            }
             let themeURL = requestedThemeURL(raw: payload?.extraData)
             Nuke.loadImage(with: themeURL, into: sentThumbImageView)
             lblDetails.text = "REQUEST: \(requestedAmount(raw: payload?.extraData) ?? "0") ONE"
@@ -344,8 +348,7 @@ class WalletRequestPayBubble: UITableViewCell {
                   requestedIsPaid(raw: payload.extraData) == false else {
                 return
             }
-            if requestedUserId(raw: payload.extraData) == self.content?.author.id.string {
-
+            if requestedUserId(raw: payload.extraData) == ChatClient.shared.currentUserId {
                 Snackbar.show(text: "You can not send one to your own wallet")
                 return
             }
