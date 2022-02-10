@@ -12,21 +12,6 @@ import UIKit
 private let GroupNameLimit = 40
 private let HashtagNameLimit = 100
 
-public class ChatBaseVC: UIViewController {
-    @IBOutlet weak var btnNext: UIButton?
-    @IBOutlet weak var btnBack: UIButton?
-    @IBOutlet private weak var btnAddFriend: UIButton?
-    @IBOutlet private weak var btnInviteLink: UIButton?
-    public override func viewDidLoad() {
-        super.viewDidLoad()
-        self.btnBack?.setTitle("", for: .normal)
-        self.btnNext?.setTitle("", for: .normal)
-        self.btnAddFriend?.setTitle("", for: .normal)
-        self.btnInviteLink?.setTitle("", for: .normal)
-        self.btnBack?.setImage(UIImage(named: "backSheet"), for: .normal)
-    }
-}
-
 public class NameGroupViewController: ChatBaseVC {
 
     public var client: ChatClient?
