@@ -87,7 +87,6 @@ public class ChatUserListVC: UIViewController {
 extension ChatUserListVC {
     //
     private func setupUI() {
-        
         //
         self.setupSearch()
         //

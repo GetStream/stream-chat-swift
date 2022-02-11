@@ -12,6 +12,7 @@ import UIKit
 
 public class ChatAddFriendVC: ChatBaseVC {
 
+    @IBOutlet private var viewHeaderTitleView: UIView!
     @IBOutlet private var viewHeaderView: UIView!
     @IBOutlet private var viewHeaderViewHeightConst: NSLayoutConstraint!
     @IBOutlet private var viewHeaderViewTopConst: NSLayoutConstraint!
@@ -45,7 +46,11 @@ public class ChatAddFriendVC: ChatBaseVC {
         chatUserList.tableViewFrameUpdate()
     }
     public func setup() {
+        //
         self.view.backgroundColor = .clear
+        //
+        let panGesture = UIPanGestureRecognizer(target: self, action: #selector(viewDidDrag(_:)))
+        viewHeaderTitleView.addGestureRecognizer(panGesture)
         //
         btnBack?.setImage(Appearance.Images.closeCircle, for: .normal)
         btnNext?.isEnabled = !self.selectedUsers.isEmpty
@@ -68,13 +73,13 @@ public class ChatAddFriendVC: ChatBaseVC {
         searchBarContainerView.layer.cornerRadius = 20.0
         viewHeaderView.layer.cornerRadius = 20.0
         //
-        let swipeGestureRecognizerDown = UISwipeGestureRecognizer(target: self, action: #selector(addPangGesture(_:)))
-        let swipeGestureRecognizerUp = UISwipeGestureRecognizer(target: self, action: #selector(addPangGesture(_:)))
-        // Configure Swipe Gesture Recognizer
-        swipeGestureRecognizerDown.direction = .down
-        swipeGestureRecognizerUp.direction = .up
-        viewHeaderView.addGestureRecognizer(swipeGestureRecognizerDown)
-        viewHeaderView.addGestureRecognizer(swipeGestureRecognizerUp)
+//        let swipeGestureRecognizerDown = UISwipeGestureRecognizer(target: self, action: #selector(addPangGesture(_:)))
+//        let swipeGestureRecognizerUp = UISwipeGestureRecognizer(target: self, action: #selector(addPangGesture(_:)))
+//        // Configure Swipe Gesture Recognizer
+//        swipeGestureRecognizerDown.direction = .down
+//        swipeGestureRecognizerUp.direction = .up
+//        viewHeaderView.addGestureRecognizer(swipeGestureRecognizerDown)
+//        viewHeaderView.addGestureRecognizer(swipeGestureRecognizerUp)
     }
     //
     @objc private func textDidChange(_ sender: UITextField) {
@@ -85,13 +90,25 @@ public class ChatAddFriendVC: ChatBaseVC {
             if self.isFullScreen {
                 self.viewHeaderViewTopConst.priority = .defaultLow
                 self.viewHeaderViewHeightConst.priority = .defaultHigh
-                self.isFullScreen = false
+                //self.isFullScreen = false
             } else {
-                self.isFullScreen = true
+                //self.isFullScreen = true
                 self.viewHeaderViewTopConst.priority = .defaultHigh
                 self.viewHeaderViewHeightConst.priority = .defaultLow
             }
             self.view.layoutIfNeeded()
+        }
+    }
+    @objc private func viewDidDrag(_ sender: UIPanGestureRecognizer) {
+        
+        let velocity = sender.velocity(in: viewHeaderTitleView)
+        
+        if velocity.y > 0 {
+            self.isFullScreen = true
+            self.addPangGesture(sender)
+        } else if velocity.y < 0  {
+            self.isFullScreen = false
+            self.addPangGesture(sender)
         }
     }
     //
