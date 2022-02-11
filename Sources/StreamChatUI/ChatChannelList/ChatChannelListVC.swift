@@ -317,11 +317,11 @@ open class ChatChannelListVC: _ViewController,
     }
     
     open func controller(_ controller: ChatChannelListController, shouldAddNewChannelToList channel: ChatChannel) -> Bool {
-        true
+        channel.membership != nil
     }
     
     open func controller(_ controller: ChatChannelListController, shouldListUpdatedChannel channel: ChatChannel) -> Bool {
-        true
+        channel.membership != nil
     }
     
     // MARK: - DataControllerStateDelegate

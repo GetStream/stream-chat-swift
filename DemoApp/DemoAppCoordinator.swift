@@ -243,14 +243,6 @@ class DemoChannelListVC: ChatChannelListVC {
         navigationController?.pushViewController(channelListVC, animated: true)
     }
 
-    override func controller(_ controller: ChatChannelListController, shouldListUpdatedChannel channel: ChatChannel) -> Bool {
-        channel.membership != nil
-    }
-
-    override func controller(_ controller: ChatChannelListController, shouldAddNewChannelToList channel: ChatChannel) -> Bool {
-        channel.membership != nil
-    }
-
     var isPad: Bool { UIDevice.current.userInterfaceIdiom == .pad }
 
     var didSelectChannel: ((ChatChannel) -> Void)?
