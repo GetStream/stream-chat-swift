@@ -45,19 +45,19 @@ public class ChatGroupDetailsVC: ChatBaseVC {
         view.backgroundColor = Appearance.default.colorPalette.viewBackgroundLightBlack
         //
         let name = self.channelController?.channel?.name ?? ""
-        let friendCount = self.channelController?.channel?.memberCount ?? 0
-        let onlineUser = self.channelController?.channel?.lastActiveMembers.filter( {$0.isOnline}).count ?? 0
         lblTitle.text = name
-        lblSubtitle.text = "\(friendCount) friends, \(onlineUser) online"
-        
+        self.upupdateMemberCount()
+        //
         if let cid = channelController?.cid {
          
             let controller = ChatClient.shared.memberListController(query: .init(cid: cid))
+            
             controller.synchronize { [weak self] error in
                 guard error == nil, let weakSelf = self else { return }
                 DispatchQueue.main.async {
                     weakSelf.selectedUsers =  (controller.members ?? []).filter({ $0.id != nil })
                     weakSelf.tableView.reloadData()
+                    weakSelf.updateMemberCount()
                 }
             }
         }
@@ -74,6 +74,14 @@ public class ChatGroupDetailsVC: ChatBaseVC {
         tableView.tableFooterView = UIView()
         tableView.reloadData()
         tableView.separatorStyle = .none
+    }
+    //
+    private func updateMemberCount() {
+        
+        let friendCount = selectedUsers.count
+        let onlineUser = selectedUsers.filter( {$0.isOnline}).count ?? 0
+        
+        lblSubtitle.text = "\(friendCount) friends, \(onlineUser) online"
     }
     //
     private func ShowAttachement() {
