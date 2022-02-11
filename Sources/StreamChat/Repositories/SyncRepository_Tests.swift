@@ -58,6 +58,7 @@ final class SyncRepository_Tests: XCTestCase {
         XCTAssertEqual(database.writeSessionCounter, 0)
         XCTAssertEqual(repository.activeChannelControllers.count, 0)
         XCTAssertEqual(repository.activeChannelListControllers.count, 0)
+        XCTAssertEqual(apiClient.recoveryRequest_allRecordedCalls.count, 0)
         XCTAssertEqual(apiClient.request_allRecordedCalls.count, 0)
     }
 
@@ -68,6 +69,7 @@ final class SyncRepository_Tests: XCTestCase {
         XCTAssertEqual(database.writeSessionCounter, 1)
         XCTAssertEqual(repository.activeChannelControllers.count, 0)
         XCTAssertEqual(repository.activeChannelListControllers.count, 0)
+        XCTAssertEqual(apiClient.recoveryRequest_allRecordedCalls.count, 0)
         XCTAssertEqual(apiClient.request_allRecordedCalls.count, 0)
     }
 
@@ -84,6 +86,7 @@ final class SyncRepository_Tests: XCTestCase {
         XCTAssertEqual(database.writeSessionCounter, 2)
         XCTAssertEqual(repository.activeChannelControllers.count, 0)
         XCTAssertEqual(repository.activeChannelListControllers.count, 0)
+        XCTAssertEqual(apiClient.recoveryRequest_allRecordedCalls.count, 0)
         XCTAssertEqual(apiClient.request_allRecordedCalls.count, 0)
     }
 
@@ -101,7 +104,8 @@ final class SyncRepository_Tests: XCTestCase {
         XCTAssertEqual(database.writeSessionCounter, 3)
         XCTAssertEqual(repository.activeChannelControllers.count, 0)
         XCTAssertEqual(repository.activeChannelListControllers.count, 0)
-        XCTAssertEqual(apiClient.request_allRecordedCalls.count, 1)
+        XCTAssertEqual(apiClient.recoveryRequest_allRecordedCalls.count, 1)
+        XCTAssertEqual(apiClient.request_allRecordedCalls.count, 0)
     }
 
     func test_syncLocalState_localStorageEnabled_pendingConnectionDate_channels_activeRemoteChannelController() throws {
@@ -123,7 +127,8 @@ final class SyncRepository_Tests: XCTestCase {
         XCTAssertEqual(repository.activeChannelControllers.count, 1)
         XCTAssertCall("watchActiveChannel(completion:)", on: chatController, times: 1)
         XCTAssertEqual(repository.activeChannelListControllers.count, 0)
-        XCTAssertEqual(apiClient.request_allRecordedCalls.count, 1)
+        XCTAssertEqual(apiClient.recoveryRequest_allRecordedCalls.count, 1)
+        XCTAssertEqual(apiClient.request_allRecordedCalls.count, 0)
     }
 
     func test_syncLocalState_localStorageEnabled_pendingConnectionDate_channels_activeRemoteChannelListController() throws {
@@ -148,7 +153,8 @@ final class SyncRepository_Tests: XCTestCase {
         XCTAssertCall(
             "resetChannelsQuery(for:watchedChannelIds:synchedChannelIds:completion:)", on: channelRepository, times: 1
         )
-        XCTAssertEqual(apiClient.request_allRecordedCalls.count, 1)
+        XCTAssertEqual(apiClient.recoveryRequest_allRecordedCalls.count, 1)
+        XCTAssertEqual(apiClient.request_allRecordedCalls.count, 0)
     }
 
     private var hasUpdatedLastSyncAtNow: Bool {
