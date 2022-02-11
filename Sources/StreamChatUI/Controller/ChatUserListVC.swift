@@ -82,19 +82,6 @@ public class ChatUserListVC: UIViewController {
         // Do any additional setup after loading the view.
         setupUI()
     }
-    //
-//    func addSearchController(controller: ChatUserSearchController) {
-////        self.searchController = controller
-////        self.searchController?.delegate = self
-////        self.searchController?.query = self.curentSortType.getSearchQuery
-////        //
-////        self.update(for: .searching)
-////        // Empty initial search to get all users
-////        self.searchDataUsing(searchString: nil)
-//        //
-//        fetchUserList()
-//    }
-    
 }
 // MARK: - SETUP UI
 extension ChatUserListVC {
@@ -247,7 +234,7 @@ public extension ChatUserListVC {
         searchOperation = DispatchWorkItem { [weak self] in
             self?.fetchUserList(with: searchString)
         }
-        DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(throttleTime), execute: searchOperation!)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1, execute: searchOperation!)
         
 //        searchController?.search(term: searchString) { [weak self] error in
 //            guard let weakSelf = self else {
@@ -371,17 +358,16 @@ extension ChatUserListVC {
         self.searchField.text = name
         //
         if let strName = name, strName.isEmpty == false {
-            if strName.isAlphabet {
-                userListController = ChatClient.shared.userListController(
-                    query: .init(filter: .autocomplete(.name, text: strName))
-                )
-            } else {
+            if strName.containsEmoji  || strName.isBlank {
                 let alert = UIAlertController(title: "", message: "Please enter valid name", preferredStyle: .alert)
                 alert.addAction(UIAlertAction.init(title: "Ok", style: .cancel, handler: nil))
                 self.present(alert, animated: true, completion: nil)
                 self.update(for: .error)
                 return
             }
+            userListController = ChatClient.shared.userListController(
+                query: .init(filter: .autocomplete(.name, text: strName))
+            )
         } else {
             userListController = ChatClient.shared.userListController()
         }

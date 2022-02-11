@@ -22,6 +22,7 @@ class AdminMessageTVCell: UITableViewCell {
     // MARK: - View life cycle
     override func awakeFromNib() {
         super.awakeFromNib()
+        selectionStyle = .none
     }
 
     // MARK: - Functions
@@ -32,5 +33,14 @@ class AdminMessageTVCell: UITableViewCell {
             lblTime.text = nil
         }
         lblDesc.text = content?.extraData.adminMessage
+    }
+    
+    func configCell(with date: Date?, message: String) {
+        if let createdAt = date {
+            lblTime.text = dateFormatter.string(from: createdAt)
+        } else {
+            lblTime.text = nil
+        }
+        lblDesc.text = message
     }
 }

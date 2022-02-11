@@ -127,6 +127,11 @@ open class ChatChannelVC:
         return button.withoutAutoresizingMaskConstraints
     }()
 
+    lazy var groupCreateMessageView: AdminMessageTVCell? = {
+        return Bundle.main.loadNibNamed("AdminMessageTVCell", owner: nil, options: nil)?.first as? AdminMessageTVCell
+    }()
+
+    
     /// The message list component responsible to render the messages.
     open lazy var messageListVC: ChatMessageListVC = components
         .messageListVC
@@ -351,8 +356,11 @@ open class ChatChannelVC:
             weakSelf.channelController?.addMembers(userIds: Set(ids), completion: { error in
                 if error == nil {
                     // nothing
+                    DispatchQueue.main.async {
+                        Snackbar.show(text: "Group Member updated")
+                    }
                 } else {
-                    weakSelf.presentAlert(title: "Error", message: error!.localizedDescription)
+                    Snackbar.show(text: error!.localizedDescription)
                 }
             })
         }
@@ -396,6 +404,7 @@ open class ChatChannelVC:
                 showPinViewButton()
             }
         }
+       
         channelController.markRead()
     }
 
@@ -406,6 +415,36 @@ open class ChatChannelVC:
         } else {
             addFriendButton.isHidden = false
             shareButton.isHidden = true
+            
+            
+            let members = channelController.channel?.lastActiveMembers ?? []
+            let randomUser = members.filter({ $0.id != ChatClient.shared.currentUserId}).randomElement()
+            //
+            var joiningText = "You created this group with \(randomUser?.name ?? "")"
+            //
+            if members.count > 2 {
+                joiningText.append(" and \(members.count - 2) other.")
+            }
+            joiningText.append("\nTry using the menu item to share with others.")
+            //
+            let memberShip = channelController.channel?.membership
+            if let groupCreateMessageView = groupCreateMessageView , let memberRole =  memberShip?.memberRole , memberRole == .owner  && memberShip?.id == ChatClient.shared.currentUserId! {
+                
+                let suggestionsView = groupCreateMessageView.contentView
+                self.messageComposerVC.view.addSubview(suggestionsView)
+                
+                suggestionsView.translatesAutoresizingMaskIntoConstraints = false
+                NSLayoutConstraint.activate([
+                    suggestionsView.leadingAnchor.constraint(equalTo: self.messageComposerVC.view.leadingAnchor, constant: 0),
+                    suggestionsView.trailingAnchor.constraint(equalTo: self.messageComposerVC.view.trailingAnchor, constant: 0),
+                    suggestionsView.topAnchor.pin(greaterThanOrEqualTo: self.view.topAnchor),
+                    suggestionsView.bottomAnchor.pin(equalTo: self.messageComposerVC.view.topAnchor),
+                    //suggestionsView.heightAnchor.constraint(equalToConstant: 300),
+                ])
+                
+                groupCreateMessageView.configCell(with: self.channelController.channel?.createdAt, message: joiningText)
+            }
+        
         }
     }
 
@@ -510,6 +549,10 @@ open class ChatChannelVC:
             channelController.markRead()
         }
         messageListVC.updateMessages(with: changes)
+        if channelController.messages.count > 0 {
+            self.groupCreateMessageView?.contentView.removeFromSuperview()
+            self.groupCreateMessageView = nil
+        }
     }
 
     open func channelController(
@@ -518,6 +561,10 @@ open class ChatChannelVC:
     ) {
         let channelUnreadCount = channelController.channel?.unreadCount ?? .noUnread
         messageListVC.scrollToLatestMessageButton.content = channelUnreadCount
+        if channelController.messages.count > 0 {
+            self.groupCreateMessageView?.contentView.removeFromSuperview()
+            self.groupCreateMessageView = nil
+        }
     }
 
     open func channelController(

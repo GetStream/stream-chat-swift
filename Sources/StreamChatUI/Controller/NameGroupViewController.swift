@@ -57,9 +57,10 @@ public class NameGroupViewController: ChatBaseVC {
         self.nameField.autocorrectionType = .no
         self.nameField.addTarget(self, action: #selector(textDidChange(_:)), for: .editingChanged)
         groupDescriptionField.addTarget(self, action: #selector(textDidChange(_:)), for: .editingChanged)
+        //
         groupDescriptionField.delegate = self
         nameField.delegate = self
-        
+        nameField.becomeFirstResponder()
         
         nameContainerView.layer.cornerRadius = 6.0
         descriptionContainerView.layer.cornerRadius = 6.0
@@ -111,32 +112,47 @@ public class NameGroupViewController: ChatBaseVC {
         //
         
         guard let name = nameField.text, !name.isEmpty else {
-            presentAlert(title: "Name cannot be empty")
+            Snackbar.show(text: "Name cannot be empty")
             return
         }
         do {
+            
             let channelController = try ChatClient.shared.channelController(
                 createChannelWithId: .init(type: .messaging, id: String(UUID().uuidString.prefix(10))),
                 name: name,
                 members: Set(selectedUsers.map(\.id)), extraData: [kExtraDataChannelDescription: .string(self.groupDescriptionField.text ?? "")])
+            
             channelController.synchronize { [weak self] error in
                 guard let weakSelf = self else {
                     return
                 }
                 if let error = error {
-                    weakSelf.presentAlert(title: "Error when creating the channel", message: error.localizedDescription)
+                    DispatchQueue.main.async {
+                        Snackbar.show(text: error.localizedDescription)
+                    }
                 } else {
                     //
                     DispatchQueue.main.async {
-                        weakSelf.navigationController?.popToRootViewController(animated: true)
+        
                         let chatChannelVC = ChatChannelVC.init()
+                        chatChannelVC.isChannelCreated = true
                         chatChannelVC.channelController = channelController
+                        
                         weakSelf.navigationController?.pushViewController(chatChannelVC, animated: true)
+                        
+                        let navControllers = weakSelf.navigationController?.viewControllers ?? []
+                        
+                        for (index,navController) in navControllers.enumerated() {
+                            if index == 0 || navController.isKind(of: ChatChannelVC.self) {
+                                continue
+                            }
+                            navController.removeFromParent()
+                        }
                     }
                 }
             }
         } catch {
-            presentAlert(title: "Error when creating the channel", message: error.localizedDescription)
+            Snackbar.show(text: "Error when creating the channel")
         }
     }
 }

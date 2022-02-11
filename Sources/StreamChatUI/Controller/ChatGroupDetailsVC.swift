@@ -112,10 +112,11 @@ public class ChatGroupDetailsVC: ChatBaseVC {
             weakSelf.channelController?.addMembers(userIds: Set(ids), completion: { error in
                 if error == nil {
                     DispatchQueue.main.async {
+                        Snackbar.show(text: "Group Member updated")
                         weakSelf.setupUI()
                     }
                 } else {
-                    weakSelf.presentAlert(title: "Error", message: error!.localizedDescription)
+                    Snackbar.show(text: error!.localizedDescription)
                 }
             })
         }
