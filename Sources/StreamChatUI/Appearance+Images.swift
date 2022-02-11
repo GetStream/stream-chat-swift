@@ -26,6 +26,35 @@ public extension Appearance {
         
         // MARK: - General
 
+        static var systemPerson: UIImage?  {
+            if #available(iOS 13.0, *) {
+                return UIImage(systemName: "person")
+            } else {
+                return nil
+            }
+        }
+        static var systemMagnifying: UIImage? {
+            if #available(iOS 13.0, *) {
+                return UIImage(systemName: "magnifyingglass")
+            } else {
+                return nil
+            }
+        }
+        static var systemCheckMarkCircle: UIImage? {
+            if #available(iOS 13.0, *) {
+                return UIImage(systemName: "checkmark.circle.fill")
+            } else {
+                return nil
+            }
+        }
+//        static let systemCheckMarkCircle = UIImage(systemName: "checkmark.circle.fill")
+//        static let systemPersonBadge = UIImage(systemName: "person.badge.plus")
+//        static let systemCheckmarkCircle = UIImage(systemName: "checkmark.circle.fill")
+//        static let iconArrowRight = UIImage(named: "Icon_arrow_right")
+//        static let xmas = UIImage(systemName: "xmark")
+//        static let checkMark = UIImage(systemName: "checkmark")
+//        static let backSheet = UIImage(named: "backSheet")
+        
         public var loadingIndicator: UIImage = loadImageSafely(with: "loading_indicator")
         public var close: UIImage = {
             if #available(iOS 13.0, *) {
@@ -36,7 +65,7 @@ public extension Appearance {
         }()
         public var closeBold: UIImage = loadImageSafely(with: "close")
         public var closeCircleTransparent: UIImage = loadImageSafely(with: "close_circle_transparent")
-        public var closeCircle: UIImage = loadImageSafely(with: "close_circle")
+        static let closeCircle: UIImage = loadImageSafely(with: "close_circle")
         public var discardAttachment: UIImage = loadImageSafely(with: "close_circle_filled")
         public var back: UIImage = loadImageSafely(with: "icn_back")
         public var onlyVisibleToCurrentUser = loadImageSafely(with: "eye")
@@ -55,7 +84,69 @@ public extension Appearance {
                 return loadImageSafely(with: "arrow")
             }
         }()
-
+        public var personBadgePlus: UIImage = {
+            if #available(iOS 13.0, *) {
+                return UIImage(systemName: "person.badge.plus")!
+            } else {
+                return loadImageSafely(with: "arrow")
+            }
+        }()
+        public var search: UIImage = {
+            if #available(iOS 13.0, *) {
+                return UIImage(systemName: "magnifyingglass")!
+            } else {
+                return loadImageSafely(with: "arrow")
+            }
+        }()
+        public var qrCode: UIImage = {
+            if #available(iOS 13.0, *) {
+                return UIImage(systemName: "qrcode")!
+            } else {
+                return loadImageSafely(with: "arrow")
+            }
+        }()
+        public var qrCodeViewFinder: UIImage = {
+            if #available(iOS 13.0, *) {
+                return UIImage(systemName: "qrcode.viewfinder")!
+            } else {
+                return loadImageSafely(with: "arrow")
+            }
+        }()
+        public var mute: UIImage = {
+            if #available(iOS 13.0, *) {
+                return UIImage(systemName: "speaker.slash")!
+            } else {
+                return loadImageSafely(with: "arrow")
+            }
+        }()
+        public var unMute: UIImage = {
+            if #available(iOS 13.0, *) {
+                return UIImage(systemName: "speaker")!
+            } else {
+                return loadImageSafely(with: "arrow")
+            }
+        }()
+        public var photo: UIImage = {
+            if #available(iOS 13.0, *) {
+                return UIImage(systemName: "photo")!
+            } else {
+                return loadImageSafely(with: "arrow")
+            }
+        }()
+        public var trash: UIImage = {
+            if #available(iOS 13.0, *) {
+                return UIImage(systemName: "trash")!
+            } else {
+                return loadImageSafely(with: "arrow")
+            }
+        }()
+        public var rectangleArrowRight: UIImage = {
+            if #available(iOS 13.0, *) {
+                return UIImage(systemName: "rectangle.portrait.and.arrow.right")!
+            } else {
+                return loadImageSafely(with: "arrow")
+            }
+        }()
         public var commands: UIImage = loadImageSafely(with: "bolt")
         public var smallBolt: UIImage = loadImageSafely(with: "bolt_small")
         public var openAttachments: UIImage = loadImageSafely(with: "clip")

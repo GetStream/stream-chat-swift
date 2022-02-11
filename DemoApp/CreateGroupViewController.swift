@@ -7,10 +7,10 @@ import Nuke
 import StreamChat
 import UIKit
 
-class GroupUserCell: UICollectionViewCell {
-    @IBOutlet var nameLabel: UILabel!
-    @IBOutlet var avatarView: AvatarView!
-}
+//class GroupUserCell: UICollectionViewCell {
+//    @IBOutlet var nameLabel: UILabel!
+//    @IBOutlet var avatarView: AvatarView!
+//}
 
 class SearchUserCell: UITableViewCell {
     @IBOutlet var mainStackView: UIStackView! {

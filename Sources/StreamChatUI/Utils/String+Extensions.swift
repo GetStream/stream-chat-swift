@@ -104,3 +104,14 @@ extension String {
         self[self.index(startIndex, offsetBy: index)]
     }
 }
+
+extension String {
+   
+    var isAlphabet: Bool {
+        return !isEmpty && range(of: "[^a-zA-Z]", options: .regularExpression) == nil
+    }
+    
+    func capitalizingFirstLetter() -> String {
+        return prefix(1).capitalized + dropFirst()
+    }
+}

@@ -80,14 +80,42 @@ open class ChatChannelListItemView: _View, ThemeProvider, SwiftUIRepresentable {
 
     /// Text of `subtitleLabel` which contains current typing user or the last message in the channel.
     open var subtitleText: String? {
-        guard let content = content else { return nil }
+        guard let content = content, let lastMessage = content.channel.latestMessages.first else {
+            return L10n.Channel.Item.emptyMessages
+        }
+        let message: String?
+        let authorName = "\(lastMessage.author.name ?? lastMessage.author.id):"
         if let typingUsersInfo = typingUserString {
-            return typingUsersInfo
-        } else if let latestMessage = content.channel.latestMessages.first {
-            return "\(latestMessage.author.name ?? latestMessage.author.id): \(latestMessage.textContent ?? latestMessage.text)"
+            message = typingUsersInfo
+        } else if lastMessage.extraData.keys.contains("oneWalletTx") {
+            if content.channel.latestMessages.first?.author.id == ChatClient.shared.currentUserId {
+                return "Sent ONE"
+            } else {
+                return "Received ONE"
+            }
+        } else if !lastMessage.imageAttachments.isEmpty {
+            return content.channel.isDirectMessageChannel ? "Photo" : "\(authorName) Photo"
+        } else if !lastMessage.fileAttachments.isEmpty {
+            return content.channel.isDirectMessageChannel ? "File" : "\(authorName) File"
+        } else if !lastMessage.videoAttachments.isEmpty {
+            return content.channel.isDirectMessageChannel ? "Video" : "\(authorName) Video"
+        } else if !lastMessage.giphyAttachments.isEmpty {
+            return content.channel.isDirectMessageChannel ? "Gif" : "\(authorName) Gif"
+        } else if lastMessage.attachments(payloadType: WalletAttachmentPayload.self).first != nil {
+            return content.channel.isDirectMessageChannel ? "Request Payment" : "\(authorName) Request Payment"
+        } else if lastMessage.extraData.keys.contains("redPacketPickup") {
+            return content.channel.isDirectMessageChannel ? "Red Packet" : "\(authorName) Red Packet"
+        } else if lastMessage.extraData.keys.contains("RedPacketExpired") {
+            return "Red Packet expired"
+        } else if lastMessage.extraData.keys.contains("RedPacketTopAmountReceived")
+                    || lastMessage.extraData.keys.contains("RedPacketOtherAmountReceived") {
+            return "Red Packet Amount Received"
+        } else if !lastMessage.text.isEmpty {
+            return content.channel.isDirectMessageChannel ? lastMessage.text : "\(authorName) \(lastMessage.text)"
         } else {
             return L10n.Channel.Item.emptyMessages
         }
+        return L10n.Channel.Item.emptyMessages
     }
 
     /// Text of `timestampLabel` which contains the time of the last sent message.

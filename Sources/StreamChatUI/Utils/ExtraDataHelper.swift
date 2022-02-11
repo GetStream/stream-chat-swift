@@ -104,3 +104,23 @@ public extension Dictionary where Key == String, Value == RawJSON {
         }
     }
 }
+
+// MARK: - Normal Channel
+
+public extension Dictionary where Key == String, Value == RawJSON {
+
+    var channelDescription: String? {
+
+        if let channelDescription = self[kExtraDataChannelDescription] {
+
+            return fetchRawData(raw: channelDescription) as? String
+
+        } else {
+
+            return nil
+
+        }
+
+    }
+
+}
