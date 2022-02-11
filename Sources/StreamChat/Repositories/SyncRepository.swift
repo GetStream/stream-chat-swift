@@ -86,6 +86,9 @@ class SyncRepository {
         context.lastConnectionDate = lastConnection
         var operations: [Operation] = []
 
+        // Enter recovery mode so no other requests are triggered.
+        apiClient.enterRecoveryMode()
+
         // Get the existing channelIds
         operations.append(GetChannelIdsOperation(database: database, context: context))
         // Get pending connection date
@@ -124,9 +127,10 @@ class SyncRepository {
             }
         })
 
-        operations.append(BlockOperation(block: {
+        operations.append(BlockOperation(block: { [weak self] in
             log.info("❌Finished recovering offline state", subsystems: .offlineSupport)
             DispatchQueue.main.async {
+                self?.apiClient.exitRecoveryMode()
                 completion()
             }
         }))
@@ -188,6 +192,7 @@ class SyncRepository {
                     using: lastSyncAt,
                     channelIds: channelIds,
                     bumpLastSync: true,
+                    isRecoveryRequest: false,
                     completion: completion
                 )
             }
@@ -216,6 +221,7 @@ class SyncRepository {
         using date: Date,
         channelIds: [ChannelId],
         bumpLastSync: Bool,
+        isRecoveryRequest: Bool,
         completion: @escaping (Result<[ChannelId], SyncError>) -> Void
     ) {
         guard config.isLocalStorageEnabled else {
@@ -229,7 +235,7 @@ class SyncRepository {
         }
 
         log.info("Synching events for existing channels since \(date)", subsystems: .offlineSupport)
-        getMissingEvents(since: date, channelIds: channelIds) { [weak self] result in
+        getMissingEvents(since: date, channelIds: channelIds, isRecoveryRequest: isRecoveryRequest) { [weak self] result in
             switch result {
             case let .success(payload):
                 guard bumpLastSync else {
@@ -264,11 +270,11 @@ class SyncRepository {
     private func getMissingEvents(
         since lastSyncDate: Date,
         channelIds: [ChannelId],
+        isRecoveryRequest: Bool,
         completion: @escaping (Result<MissingEventsPayload, SyncError>) -> Void
     ) {
         let endpoint: Endpoint<MissingEventsPayload> = .missingEvents(since: lastSyncDate, cids: channelIds)
-
-        apiClient.request(endpoint: endpoint) { [weak self] result in
+        let requestCompletion: (Result<MissingEventsPayload, Error>) -> Void = { [weak self] result in
             switch result {
             case let .success(payload):
                 log.info("Processing pending events. Count \(payload.eventPayloads.count)", subsystems: .offlineSupport)
@@ -290,6 +296,12 @@ class SyncRepository {
                 }
                 completion(.failure(.tooManyEvents(error)))
             }
+        }
+
+        if isRecoveryRequest {
+            apiClient.recoveryRequest(endpoint: endpoint, completion: requestCompletion)
+        } else {
+            apiClient.request(endpoint: endpoint, completion: requestCompletion)
         }
     }
 

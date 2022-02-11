@@ -58,7 +58,8 @@ class SyncEventsOperation: AsyncOperation {
             syncRepository?.syncMissingEvents(
                 using: lastPendingConnectionDate,
                 channelIds: context.localChannelIds,
-                bumpLastSync: false
+                bumpLastSync: false,
+                isRecoveryRequest: true
             ) { result in
                 switch result {
                 case let .success(channelIds):

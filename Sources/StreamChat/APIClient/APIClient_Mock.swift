@@ -17,6 +17,10 @@ class APIClientMock: APIClient, Spy {
     @Atomic var request_endpoint: AnyEndpoint?
     @Atomic var request_completion: Any?
 
+    /// The last endpoint `recoveryRequest` function was called with.
+    @Atomic var recoveryRequest_endpoint: AnyEndpoint?
+    @Atomic var recoveryRequest_completion: Any?
+
     /// The last endpoint `uploadFile` function was called with.
     @Atomic var uploadFile_attachment: AnyChatMessageAttachment?
     @Atomic var uploadFile_progress: ((Double) -> Void)?
@@ -76,6 +80,15 @@ class APIClientMock: APIClient, Spy {
         request_completion = completion
         _request_allRecordedCalls.mutate { $0.append((request_endpoint!, request_completion!)) }
         request_expectation.fulfill()
+    }
+
+    override func recoveryRequest<Response>(
+        endpoint: Endpoint<Response>,
+        completion: @escaping (Result<Response, Error>) -> Void
+    ) where Response: Decodable {
+        recoveryRequest_endpoint = AnyEndpoint(endpoint)
+        recoveryRequest_completion = completion
+        _request_allRecordedCalls.mutate { $0.append((recoveryRequest_endpoint!, recoveryRequest_completion!)) }
     }
     
     override func uploadAttachment(
