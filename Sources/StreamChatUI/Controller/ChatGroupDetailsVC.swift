@@ -46,7 +46,7 @@ public class ChatGroupDetailsVC: ChatBaseVC {
         //
         let name = self.channelController?.channel?.name ?? ""
         lblTitle.text = name
-        self.upupdateMemberCount()
+        self.updateMemberCount()
         //
         if let cid = channelController?.cid {
          
