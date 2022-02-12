@@ -232,17 +232,7 @@ extension ChatGroupDetailsVC: UITableViewDataSource {
         //
         let user: ChatChannelMember = selectedUsers[indexPath.row]
         //
-        cell.config(user: user,
-                        selectedImage: nil,
-                        avatarBG: view.tintColor)
-        //
-        cell.lblRole.text = ""
-        cell.lblRole.isHidden = true
-        if user.memberRole == .owner {
-            cell.lblRole.text = "Owner"
-            cell.lblRole.textColor = Appearance.default.colorPalette.statusColorBlue
-            cell.lblRole.isHidden = false
-        }
+        cell.configGroupDetails(channelMember: user, selectedImage: nil, avatarBG: view.tintColor)
         //
         cell.backgroundColor = .clear
         return cell

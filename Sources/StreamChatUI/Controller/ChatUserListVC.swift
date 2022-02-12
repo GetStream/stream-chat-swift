@@ -50,9 +50,10 @@ public class ChatUserListVC: UIViewController {
     @IBOutlet private weak var noMatchView: UIView!
     //
     // MARK: - VARIABLES
-    public lazy var userListController: ChatUserListController = {
+    private lazy var userListController: ChatUserListController = {
         return ChatClient.shared.userListController()
     }()
+    //public var userListController: ChatUserListController!
     //
     public var tableView: UITableView?
     //
@@ -96,6 +97,8 @@ extension ChatUserListVC {
         //
         searchBarView.layer.cornerRadius = 20.0
         searchBarContainerView.isHidden = !isSearchBarVisible
+        //
+        userListController.delegate = self
     }
     //
     private func setupSearch() {
@@ -177,31 +180,16 @@ extension ChatUserListVC {
             //
         case .selected:
             break
-            //
-//            noMatchView.isHidden = false
-//            activityIndicator.stopAnimating()
-//            viewCreateGroup.isHidden = true
-//            tableView.alpha = 0
-//            //addPersonButton.setImage(.systemPersonBadge, for: .normal)
-//            //infoLabelStackView.isHidden = true
-//            alertImage.image = nil
-//            alertText.text = "No chats here yet..."
         case .completed:
-            //
             activityIndicator.stopAnimating()
-            //
             let lastItem: Int = self.curentSortType == .sortByName ? self.nameWiseUserList.count : self.lastSeenWiseUserList.count
-            //
             if lastItem > 0 {
                 noMatchView.isHidden = true
                 activityIndicator.stopAnimating()
-                //viewCreateGroup.isHidden = searchField.hasText || !selectedUserIds.isEmpty
                 tableView?.alpha = 1
             } else {
                 noMatchView.isHidden = false
-                //viewCreateGroup.isHidden = true
                 tableView?.alpha = 0
-                
                 if self.searchField.text?.isBlank == false {
                     alertImage.image = Appearance.Images.systemMagnifying
                     alertText.text = "No user matches these keywords..."
@@ -209,7 +197,6 @@ extension ChatUserListVC {
                     alertImage.image = nil
                     alertText.text = "No chats here yet..."
                 }
-               
             }
         }
         //
@@ -234,23 +221,11 @@ public extension ChatUserListVC {
             self?.fetchUserList(with: searchString)
         }
         DispatchQueue.main.asyncAfter(deadline: .now() + 1, execute: searchOperation!)
-        
-//        searchController?.search(term: searchString) { [weak self] error in
-//            guard let weakSelf = self else {
-//                return
-//            }
-//            if error != nil {
-//                weakSelf.update(for: .error)
-//            }
-//        }
     }
     
     // Sorting
     public func sortUserWith(type: Em_ChatUserListFilterTypes) {
-        //
         self.curentSortType = type
-        //
-        //update(for: .searching)
         self.lastSeenWiseUserList.removeAll()
         self.nameWiseUserList = []
         self.tableView?.reloadData()
@@ -344,7 +319,7 @@ public extension ChatUserListVC {
 extension ChatUserListVC {
     //
     open func fetchUserList(with name: String? = nil) {
-        
+    
         //
         if self.dataLoadingState != .searching {
             update(for: .searching)
@@ -388,67 +363,39 @@ extension ChatUserListVC {
                 self.sortUserWith(type: self.curentSortType)
             }
         }
-        
-        //
-        //        // load more if needed
-        //        controller.loadNextUsers(limit: 10) { error in
-        //            // handle error / access users
-        //        }
     }
     
 }
 // MARK: - Chat user controller delegate
-extension ChatUserListVC: ChatUserSearchControllerDelegate {
+extension ChatUserListVC: ChatUserListControllerDelegate {
     //
-    public func controller(_ controller: ChatUserSearchController, didChangeUsers changes: [ListChange<ChatUser>]) {
-        //
-//        if self.curentSortType == .sortByName {
-//            self.nameWiseUserList.users.append(contentsOf: changes.map({ $0.item}))
-//        } else {
-//
-//        }
-        
-        //
-//        DispatchQueue.main.async {
-//            //self.tableView.beginUpdates()
-//            self.lastSeenWiseUserList.removeAll()
-//            self.nameWiseUserList = []
-//            let sortedArr = self.searchController?.users.filter({ $0.name?.isEmpty == false && $0.id.isEmpty == false }) ?? []
-//            //
-//            let groupByName = Dictionary(grouping: sortedArr) { (user) -> Substring in
-//                return user.name!.prefix(1)
-//            }
-//            let keys = groupByName.keys.sorted()
-//            // map the sorted keys to a struct
-//            //
-//            keys.forEach { item  in
-//                self.lastSeenWiseUserList.append(contentsOf: groupByName[item] ?? [])
-//                self.nameWiseUserList.append(ChatUserListData.init(letter: String(item), users: groupByName[item] ?? []))
-//            }
-//            //
-////            for change in changes {
-////                switch change {
-////                case let .insert(_, index: index):
-////                    self.tableView.insertRows(at: [index], with: .automatic)
-////                case let .move(_, fromIndex: fromIndex, toIndex: toIndex):
-////                    self.tableView.moveRow(at: fromIndex, to: toIndex)
-////                case let .update(_, index: index):
-////                    self.tableView.reloadRows(at: [index], with: .automatic)
-////                case let .remove(_, index: index):
-////                    self.tableView.deleteRows(at: [index], with: .automatic)
-////                }
-////            }
-//            self.tableView?.reloadData()
-//            self.update(for: .completed)
-//            //self.tableView.endUpdates()
-//        }
+    public func controller(_ controller: ChatUserListController, didChangeUsers changes: [ListChange<ChatUser>]) {
+        // user change event
+        self.sortUserWith(type: self.curentSortType)
     }
 
     public func controller(_ controller: DataController, didChangeState state: DataController.State) {
-        if case .remoteDataFetched = state {
-            update(for: .completed)
+//        if case .remoteDataFetched = state {
+//            update(for: .completed)
+//        }
+        debugPrint("\(state)")
+        switch state {
+        case .initialized:
+            break
+        case .localDataFetched:
+            if self.userListController.users.count <= 1 {
+                self.update(for: .searching)
+                self.fetchUserList(with: nil)
+            } else {
+                self.sortUserWith(type: self.curentSortType)
+                self.update(for: .completed)
+            }
+        default:
+            break
         }
+        
     }
+    
 }
 
 // MARK: - TABLE VIEW DELEGATE & DATASOURCE
@@ -661,8 +608,6 @@ extension UIView {
         childView?.centerXAnchor.constraint(equalTo: centerXAnchor).isActive = true
         childView?.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
         childView?.widthAnchor.constraint(equalToConstant: constant).isActive = true
-//        childView?.leftAnchor.constraint(equalTo: leftAnchor, constant: constant).isActive = true
-//        childView?.rightAnchor.constraint(equalTo: rightAnchor, constant: -constant).isActive = true
     }
 }
 

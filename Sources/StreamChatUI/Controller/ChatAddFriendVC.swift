@@ -11,7 +11,17 @@ import StreamChatUI
 import UIKit
 
 public class ChatAddFriendVC: ChatBaseVC {
-
+    
+    public enum SelectionType {
+        case addFriend,inviteUser
+        var title: String {
+            switch self {
+            case .addFriend: return "Add Friends"
+            case .inviteUser: return "Invite Friends"
+            }
+        }
+    }
+    @IBOutlet private var titleLabel: UILabel!
     @IBOutlet private var viewHeaderTitleView: UIView!
     @IBOutlet private var viewHeaderView: UIView!
     @IBOutlet private var viewHeaderViewHeightConst: NSLayoutConstraint!
@@ -21,7 +31,8 @@ public class ChatAddFriendVC: ChatBaseVC {
     @IBOutlet private var tableviewContainerView: UIView!
     @IBOutlet private var searchField: UITextField!
     @IBOutlet private var mainStackView: UIStackView!
-    
+    //
+    public var selectionType = ChatAddFriendVC.SelectionType.addFriend
     //
     public lazy var chatUserList: ChatUserListVC = {
         let obj = ChatUserListVC.instantiateController(storyboard: .GroupChat) as? ChatUserListVC
@@ -48,6 +59,7 @@ public class ChatAddFriendVC: ChatBaseVC {
     public func setup() {
         //
         self.view.backgroundColor = .clear
+        self.titleLabel.text = selectionType.title
         //
         let panGesture = UIPanGestureRecognizer(target: self, action: #selector(viewDidDrag(_:)))
         viewHeaderTitleView.addGestureRecognizer(panGesture)
@@ -65,7 +77,7 @@ public class ChatAddFriendVC: ChatBaseVC {
         chatUserList.userSelectionType = .addFriend
         chatUserList.tableViewFrameUpdate()
         chatUserList.curentSortType = .sortByAtoZ
-        chatUserList.fetchUserList()
+        //chatUserList.fetchUserList()
         //
         viewHeaderView.backgroundColor = Appearance.default.colorPalette.viewBackgroundLightBlack
         searchBarContainerView.backgroundColor = Appearance.default.colorPalette.searchBarBackground

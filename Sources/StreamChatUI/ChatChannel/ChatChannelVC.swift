@@ -447,7 +447,33 @@ open class ChatChannelVC:
         
         }
     }
-
+    // MARK: - Menu actions
+    public func inviteUserAction() {
+        //
+        guard let controller = ChatAddFriendVC
+                .instantiateController(storyboard: .GroupChat)  as? ChatAddFriendVC else {
+            return
+        }
+        //
+        controller.bCallbackAddUser = { [weak self] users in
+            guard let weakSelf = self else { return }
+            let ids = users.map{ $0.id}
+            weakSelf.channelController?.inviteMembers(userIds: Set(ids), completion: { error in
+                if error == nil {
+                    DispatchQueue.main.async {
+                        Snackbar.show(text: "Group invite sent")
+                    }
+                } else {
+                    Snackbar.show(text: "Error while sending invitation link")
+                }
+            })
+        }
+        //
+        controller.modalPresentationStyle = .overCurrentContext
+        controller.modalTransitionStyle = .crossDissolve
+        
+        self.present(controller, animated: true, completion: nil)
+    }
     // MARK: - ChatMessageListVCDataSource
     
     open func channel(for vc: ChatMessageListVC) -> ChatChannel? {
@@ -652,6 +678,7 @@ extension ChatChannelVC: ContextMenuDelegate {
             case .searchMessage:
                 break
             case .invite:
+                inviteUserAction()
                 break
             case .groupQR:
                 self.shareAction(UIButton())

@@ -43,6 +43,8 @@ public class TableViewCellChatUser: UITableViewCell {
             descriptionLabel.text = "Online"
         } else if let lastActive = user.lastActiveAt {
             descriptionLabel.text = "Last seen: " + DTFormatter.formatter.string(from: lastActive)
+        } else if let lastActive = user.lastActiveAt {
+            descriptionLabel.text = "Last seen: " + DTFormatter.formatter.string(from: lastActive)
         } else {
             descriptionLabel.text = "Never seen"
         }
@@ -50,6 +52,23 @@ public class TableViewCellChatUser: UITableViewCell {
         //
         self.user = user
     }
+    
+    public func configGroupDetails(channelMember: ChatChannelMember, selectedImage: UIImage?, avatarBG: UIColor) {
+        self.config(user: channelMember, selectedImage: selectedImage, avatarBG: avatarBG)
+        //
+        lblRole.text = ""
+        lblRole.isHidden = true
+        if channelMember.memberRole == .owner {
+            lblRole.text = "Owner"
+            lblRole.textColor = Appearance.default.colorPalette.statusColorBlue
+            lblRole.isHidden = false
+        } else if channelMember.isInvited {
+           lblRole.text = "Invited"
+           lblRole.textColor = Appearance.default.colorPalette.statusColorBlue
+           lblRole.isHidden = false
+        }
+    }
+    
     //
     public override func awakeFromNib() {
         super.awakeFromNib()
