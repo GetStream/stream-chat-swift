@@ -668,6 +668,9 @@ internal extension ChatMessageListVC {
         } else if let currentLastMessage = snapshot.itemIdentifiers.last {
             // Load new messages at the top.
             snapshot.insertItems(sortedInsertedMessages, afterItem: currentLastMessage)
+        } else if snapshot.itemIdentifiers.isEmpty {
+            // If the message list is empty, append the new messages
+            snapshot.appendItems(sortedInsertedMessages)
         }
 
         snapshot.deleteItems(removedMessages)
