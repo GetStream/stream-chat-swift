@@ -636,7 +636,7 @@ internal extension ChatMessageListVC {
         var snapshot = diffableDataSource?.snapshot() ?? NSDiffableDataSourceSnapshot<Int, ChatMessage>()
 
         var updatedMessages: [ChatMessage] = []
-        var removedMessages: [ChatMessage] = []
+        var removedMessages: [(ChatMessage, row: Int)] = []
         var insertedMessages: [(ChatMessage, row: Int)] = []
         var movedMessages: [(from: ChatMessage, to: ChatMessage)] = []
 
@@ -649,8 +649,8 @@ internal extension ChatMessageListVC {
                 hasNewInsertions = indexPath.row == 0
             case let .update(message, _):
                 updatedMessages.append(message)
-            case let .remove(message, _):
-                removedMessages.append(message)
+            case let .remove(message, indexPath):
+                removedMessages.append((message, row: indexPath.row))
             case let .move(_, fromIndex, toIndex):
                 guard let fromMessage = snapshot.itemIdentifiers[safe: fromIndex.row] else { break }
                 guard let toMessage = snapshot.itemIdentifiers[safe: toIndex.row] else { break }
@@ -673,7 +673,7 @@ internal extension ChatMessageListVC {
             snapshot.appendItems(sortedInsertedMessages)
         }
 
-        snapshot.deleteItems(removedMessages)
+        snapshot.deleteItems(removedMessages.map(\.0))
         snapshot.reloadItems(updatedMessages)
 
         movedMessages.forEach {
@@ -686,6 +686,7 @@ internal extension ChatMessageListVC {
         // is the same as calling `reloadData()`. Info: https://developer.apple.com/videos/play/wwdc2021/10252/?time=158
         UIView.performWithoutAnimation {
             diffableDataSource?.apply(snapshot, animatingDifferences: true) { [weak self] in
+
                 let newestMessage = snapshot.itemIdentifiers.first
                 if hasNewInsertions && newestMessage?.isSentByCurrentUser == true {
                     self?.listView.scrollToMostRecentMessage()
@@ -699,6 +700,22 @@ internal extension ChatMessageListVC {
                     DispatchQueue.main.async {
                         self?.updateMessagesSnapshot(
                             with: [.update(previousMessage, index: indexPath)],
+                            completion: nil
+                        )
+                    }
+                }
+
+                // When there are deletions, we should update the previous message, so that we add the avatar image back.
+                // Because we have an inverted list, the previous message has the same index of the deleted message after
+                // the deletion has been executed.
+                let previousRemovedMessages = removedMessages.compactMap { _, row -> (ChatMessage, IndexPath)? in
+                    guard let message = snapshot.itemIdentifiers[safe: row] else { return nil }
+                    return (message, IndexPath(row: row, section: 0))
+                }
+                if !previousRemovedMessages.isEmpty {
+                    DispatchQueue.main.async {
+                        self?.updateMessagesSnapshot(
+                            with: previousRemovedMessages.map { ListChange.update($0, index: $1) },
                             completion: nil
                         )
                     }
