@@ -483,7 +483,7 @@ open class ComposerVC: _ViewController,
                 userInfo["currencyValue"] = "\(amount)"
                 userInfo["currencyDisplay"] = "\(amount)"
                 userInfo["paymentTheme"] = theme.getPaymentThemeUrl()
-                NotificationCenter.default.post(name: .sendOneWalletTapAction, object: nil, userInfo: userInfo)
+                NotificationCenter.default.post(name: .sendOneAction, object: nil, userInfo: userInfo)
                 self.hideInputView()
                 self.composerView.leadingContainer.isHidden = false
                 self.animateToolkitView(isHide: true)
