@@ -614,7 +614,6 @@ extension ChatUserListVC {
 
 
 extension UIView {
-    //
     public func updateChildViewContraint(childView: UIView?) {
         childView?.translatesAutoresizingMaskIntoConstraints = false
         childView?.topAnchor.constraint(equalTo: topAnchor).isActive = true

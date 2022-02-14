@@ -21,6 +21,7 @@ public class ChatAddFriendVC: ChatBaseVC {
             }
         }
     }
+    // MARK: - OUTLETS
     @IBOutlet private var titleLabel: UILabel!
     @IBOutlet private var viewHeaderTitleView: UIView!
     @IBOutlet private var viewHeaderView: UIView!
@@ -31,22 +32,17 @@ public class ChatAddFriendVC: ChatBaseVC {
     @IBOutlet private var tableviewContainerView: UIView!
     @IBOutlet private var searchField: UITextField!
     @IBOutlet private var mainStackView: UIStackView!
-    //
+    // MARK: - VARIABLES
     public var selectionType = ChatAddFriendVC.SelectionType.addFriend
-    //
     public lazy var chatUserList: ChatUserListVC = {
         let obj = ChatUserListVC.instantiateController(storyboard: .GroupChat) as? ChatUserListVC
         return obj!
     }()
     private var curentSortType: Em_ChatUserListFilterTypes = .sortByLastSeen
-    //
     private var isFullScreen = false
-    //
     public var selectedUsers = [ChatUser]()
-    //
     public var bCallbackAddUser:(([ChatUser]) -> Void)?
-    
-    //
+    // MARK: - VIEW CYCLE
     public override func viewDidLoad() {
         super.viewDidLoad()
         setup()
@@ -56,6 +52,7 @@ public class ChatAddFriendVC: ChatBaseVC {
         self.view.layoutIfNeeded()
         chatUserList.tableViewFrameUpdate()
     }
+    // MARK: - METHODS
     public func setup() {
         //
         self.view.backgroundColor = .clear
@@ -84,14 +81,6 @@ public class ChatAddFriendVC: ChatBaseVC {
         //
         searchBarContainerView.layer.cornerRadius = 20.0
         viewHeaderView.layer.cornerRadius = 20.0
-        //
-//        let swipeGestureRecognizerDown = UISwipeGestureRecognizer(target: self, action: #selector(addPangGesture(_:)))
-//        let swipeGestureRecognizerUp = UISwipeGestureRecognizer(target: self, action: #selector(addPangGesture(_:)))
-//        // Configure Swipe Gesture Recognizer
-//        swipeGestureRecognizerDown.direction = .down
-//        swipeGestureRecognizerUp.direction = .up
-//        viewHeaderView.addGestureRecognizer(swipeGestureRecognizerDown)
-//        viewHeaderView.addGestureRecognizer(swipeGestureRecognizerUp)
     }
     //
     @objc private func textDidChange(_ sender: UITextField) {

@@ -454,7 +454,7 @@ open class ChatChannelVC:
                 .instantiateController(storyboard: .GroupChat)  as? ChatAddFriendVC else {
             return
         }
-        //
+        controller.selectionType = .inviteUser
         controller.bCallbackAddUser = { [weak self] users in
             guard let weakSelf = self else { return }
             let ids = users.map{ $0.id}
@@ -468,11 +468,52 @@ open class ChatChannelVC:
                 }
             })
         }
-        //
         controller.modalPresentationStyle = .overCurrentContext
         controller.modalTransitionStyle = .crossDissolve
-        
         self.present(controller, animated: true, completion: nil)
+    }
+    public func leaveGroupAction() {
+        //
+        guard let controller = ChatAlertVC
+                .instantiateController(storyboard: .GroupChat)  as? ChatAlertVC else {
+            return
+        }
+        controller.alertType = .leaveChatRoom
+        controller.bCallbackActionHandler = { [weak self] in
+            guard let weakSelf = self else { return }
+            
+            weakSelf.channelController.removeMembers(userIds: [ChatClient.shared.currentUserId ?? ""]) { [weak self] error in
+                guard error == nil, let self = self else {
+                    Snackbar.show(text: error?.localizedDescription ?? "")
+                    return
+                }
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) { [weak self] in
+                    guard let self = self else { return }
+                    self.backAction(UIButton())
+                }
+            }
+        }
+        controller.modalPresentationStyle = .overCurrentContext
+        controller.modalTransitionStyle = .crossDissolve
+        self.present(controller, animated: true, completion: nil)
+    }
+    public func muteNotification() {
+        //
+        channelController.muteChannel { error in
+            let msg = error == nil ? "Notifications muted" : "Error while muted group notifications"
+            DispatchQueue.main.async {
+                Snackbar.show(text: msg, messageType: StreamChatMessageType.ChatGroupMute)
+            }
+        }
+    }
+    public func unMuteNotification() {
+        //
+        channelController.unmuteChannel { error in
+            let msg = error == nil ? "Notifications unmuted" : "Error while unmute group notifications"
+            DispatchQueue.main.async {
+                Snackbar.show(text: msg, messageType: StreamChatMessageType.ChatGroupUnMute)
+            }
+        }
     }
     // MARK: - ChatMessageListVCDataSource
     
@@ -683,29 +724,21 @@ extension ChatChannelVC: ContextMenuDelegate {
             case .groupQR:
                 self.shareAction(UIButton())
             case .mute:
-                channelController.muteChannel(completion: nil)
-            case .unmute:
-                channelController.unmuteChannel(completion: nil)
-            case .leaveGroup:
-                let yesAction = UIAlertAction(title: "Yes", style: .default) { [weak self] _ in
-                    guard let self = self else {
-                        return
-                    }
-                    self.channelController.removeMembers(userIds: [ChatClient.shared.currentUserId ?? ""]) { [weak self] error in
-                        guard error == nil, let self = self else {
-                            Snackbar.show(text: error?.localizedDescription ?? "")
-                            return
-                        }
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) { [weak self] in
-                            guard let self = self else { return }
-                            self.backAction(UIButton())
-                        }
-                    }
+                contextMenu.closeMenu()
+                DispatchQueue.main.async {
+                    self.muteNotification()
                 }
-                let noAction = UIAlertAction(title: "No", style: .default) { _ in }
-                presentAlert(
-                    title: "Are you sure you want to leave group?",
-                    message: nil, actions: [yesAction, noAction])
+            case .unmute:
+                contextMenu.closeMenu()
+                DispatchQueue.main.async {
+                    self.unMuteNotification()
+                }
+                
+            case .leaveGroup:
+                contextMenu.closeMenu()
+                DispatchQueue.main.async {
+                    self.leaveGroupAction()
+                }
             case .deleteAndLeave:
                 let yesAction = UIAlertAction(title: "Yes", style: .default) { [weak self] _ in
                     guard let self = self else {
