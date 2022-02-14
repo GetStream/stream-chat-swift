@@ -164,7 +164,7 @@ final class DemoAppCoordinator: NSObject, UNUserNotificationCenterDelegate {
         }
 
         let splitController = UISplitViewController()
-        splitController.viewControllers = [channelListVC, makeChannelVC("unknown")]
+        splitController.viewControllers = [channelListVC, UIViewController()]
         splitController.preferredDisplayMode = .oneBesideSecondary
 
         channelListVC.didSelectChannel = { channel in
