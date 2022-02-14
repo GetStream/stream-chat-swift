@@ -32,7 +32,7 @@ class AdminMessageTVCell: UITableViewCell {
         } else {
             lblTime.text = nil
         }
-        lblDesc.text = content?.extraData.adminMessage
+        lblDesc.text = getDescText()
     }
     
     func configCell(with date: Date?, message: String) {
@@ -42,5 +42,27 @@ class AdminMessageTVCell: UITableViewCell {
             lblTime.text = nil
         }
         lblDesc.text = message
+    }
+
+    private func getDescText() -> String {
+        var descText = ""
+        if content?.isSentByCurrentUser ?? false {
+            descText.append("You ")
+        } else {
+            descText.append(content?.author.name ?? "- ")
+        }
+        descText.append("created this group")
+        let otherAdmins = content?.extraData.daoAdmins.filter({ ($0["signerUserId"] as? String ?? "") != ChatClient.shared.currentUserId }) ?? [[String: Any]]()
+        if otherAdmins.count >= 1 {
+            descText.append(" with ")
+            descText.append(otherAdmins.first?["signerName"] as? String ?? "")
+        }
+        if otherAdmins.count >= 2 {
+            descText.append(" and")
+            descText.append(" \(otherAdmins.count - 1)")
+            descText.append(" others.")
+        }
+        descText.append("\nTry using the menu item to share with others.")
+        return descText
     }
 }
