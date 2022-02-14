@@ -18,6 +18,9 @@ class APIClient {
     /// Used for reobtaining tokens when they expire and API client receives token expiration error
     let tokenRefresher: (@escaping () -> Void) -> Void
 
+    /// Used to queue requests that happen while we are offline
+    let queueOfflineRequest: QueueOfflineRequestBlock
+
     /// Client that handles the work related to content (e.g. attachments)
     let cdnClient: CDNClient
 
@@ -63,13 +66,15 @@ class APIClient {
         requestEncoder: RequestEncoder,
         requestDecoder: RequestDecoder,
         CDNClient: CDNClient,
-        tokenRefresher: @escaping (@escaping () -> Void) -> Void
+        tokenRefresher: @escaping (@escaping () -> Void) -> Void,
+        queueOfflineRequest: @escaping QueueOfflineRequestBlock
     ) {
         encoder = requestEncoder
         decoder = requestDecoder
         session = URLSession(configuration: sessionConfiguration)
         cdnClient = CDNClient
         self.tokenRefresher = tokenRefresher
+        self.queueOfflineRequest = queueOfflineRequest
     }
 
     /// Performs a network request and retries in case of network failures
@@ -94,9 +99,8 @@ class APIClient {
         endpoint: Endpoint<Response>,
         completion: @escaping (Result<Response, Error>) -> Void
     ) {
-        guard isInRecoveryMode else {
+        if !isInRecoveryMode {
             log.assertionFailure("We should not call this method if not in recovery mode")
-            return
         }
 
         let requestOperation = operation(endpoint: endpoint, completion: completion)
@@ -118,8 +122,21 @@ class APIClient {
                     // Retry request. Expired token has been refreshed
                     done(.retry)
                     operation.resetRetries()
-                case let .failure(error) where self?.shouldRetry(error, operation: operation) == true:
-                    done(.retry)
+                case let .failure(error) where self?.isConnectionError(error) == true:
+                    // Do not retry unless its a connection problem and we still have retries left
+                    if operation.canRetry {
+                        done(.retry)
+                        return
+                    }
+
+                    if self?.isInRecoveryMode == true {
+                        completion(.failure(ClientError.ConnectionError()))
+                    } else {
+                        self?.queueOfflineRequest(endpoint.withoutResponse)
+                        completion(result)
+                    }
+
+                    done(.continue)
                 case .success, .failure:
                     completion(result)
                     done(.continue)
@@ -220,18 +237,14 @@ class APIClient {
         }
     }
 
-    private func shouldRetry(_ error: Error, operation: AsyncOperation) -> Bool {
+    private func isConnectionError(_ error: Error) -> Bool {
         // We only retry transient errors like connectivity stuff or HTTP 5xx errors
         guard ClientError.isEphemeral(error: error) else {
             return false
         }
 
         let offlineErrorCodes: Set<Int> = [NSURLErrorDataNotAllowed, NSURLErrorNotConnectedToInternet]
-        let isConnectionError = offlineErrorCodes.contains((error as NSError).code)
-
-        // Do not retry unless its a connection problem
-        guard !isConnectionError else { return true }
-        return operation.canRetry
+        return offlineErrorCodes.contains((error as NSError).code)
     }
 
     func uploadAttachment(
@@ -243,8 +256,13 @@ class APIClient {
         let uploadOperation = AsyncOperation(maxRetries: maximumRequestRetries) { [weak self] operation, done in
             cdnClient.uploadAttachment(attachment, progress: progress) { result in
                 switch result {
-                case let .failure(error) where self?.shouldRetry(error, operation: operation) == true:
-                    done(.retry)
+                case let .failure(error) where self?.isConnectionError(error) == true:
+                    // Do not retry unless its a connection problem and we still have retries left
+                    if operation.canRetry {
+                        done(.retry)
+                    } else {
+                        done(.continue)
+                    }
                 case .success, .failure:
                     completion(result)
                     done(.continue)
@@ -260,12 +278,14 @@ class APIClient {
 
     func enterRecoveryMode() {
         // Pauses all the regular requests until recovery is completed.
+        log.debug("Entering recovery mode", subsystems: .offlineSupport)
         isInRecoveryMode = true
         operationQueue.isSuspended = true
     }
 
     func exitRecoveryMode() {
         // Once recovery is done, regular requests can go through again.
+        log.debug("Leaving recovery mode", subsystems: .offlineSupport)
         isInRecoveryMode = false
         operationQueue.isSuspended = false
     }

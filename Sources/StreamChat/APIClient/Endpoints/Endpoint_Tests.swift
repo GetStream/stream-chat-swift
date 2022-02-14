@@ -108,4 +108,33 @@ final class Endpoint_Tests: XCTestCase {
         let decodedQueryItems = try? JSONDecoder.stream.decode([String: Int].self, from: queryItemsData)
         XCTAssertEqual(decodedQueryItems, ["QueryHello": 2])
     }
+
+    func test_endpointEncodingAndDecodingToEmptyResponse() {
+        let endpoint = Endpoint<SomethingDecodable>.init(
+            path: "some-path",
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: false,
+            requiresToken: true,
+            body: nil
+        )
+        let encoder = JSONEncoder()
+        guard let encodedEndpoint = try? encoder.encode(endpoint) else {
+            XCTFail("Should properly encode the endpoint")
+            return
+        }
+
+        let decoder = JSONDecoder()
+        guard let decodedEndpoint = try? decoder.decode(Endpoint<EmptyResponse>.self, from: encodedEndpoint) else {
+            XCTFail("Should properly decode the endpoint")
+            return
+        }
+
+        XCTAssertEqual(decodedEndpoint.path, "some-path")
+        XCTAssertEqual(decodedEndpoint.method, .post)
+        XCTAssertNil(decodedEndpoint.queryItems)
+        XCTAssertEqual(decodedEndpoint.requiresConnectionId, false)
+        XCTAssertEqual(decodedEndpoint.requiresToken, true)
+        XCTAssertNil(decodedEndpoint.body)
+    }
 }

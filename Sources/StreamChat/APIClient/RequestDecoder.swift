@@ -82,7 +82,7 @@ extension ClientError {
     class ExpiredToken: ClientError {}
     class RefreshingToken: ClientError {}
     class TokenRefreshed: ClientError {}
-    class RecoveryMode: ClientError {}
+    class ConnectionError: ClientError {}
     class TooManyTokenRefreshAttempts: ClientError {
         override var localizedDescription: String {
             "Authentication failed on expired tokens after too many refresh attempts, please check that your user tokens are created correctly."

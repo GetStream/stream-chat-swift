@@ -40,7 +40,7 @@ class ChannelListUpdater: Worker {
         updatedQuery.pagination = .init(pageSize: .channelsPageSize, offset: 0)
 
         // Fetches the channels matching the query, and stores them in the database.
-        fetch(channelListQuery: updatedQuery) { [self] result in
+        apiClient.recoveryRequest(endpoint: .channels(query: query)) { [self] result in
             switch result {
             case let .success(channelListPayload):
                 self.writeChannelListPayload(

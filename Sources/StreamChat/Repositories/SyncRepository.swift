@@ -38,6 +38,8 @@ class SyncRepository {
     let apiClient: APIClient
     private var lastConnection: Date?
 
+    /// Serial queue used to enqueue pending requests one after another
+    private let retryQueue = DispatchQueue(label: "com.stream.queue-requests")
     private lazy var operationQueue: OperationQueue = {
         let operationQueue = OperationQueue()
         operationQueue.maxConcurrentOperationCount = 1
@@ -71,7 +73,8 @@ class SyncRepository {
     /// 2. Start watching open channels
     /// 3. Refetch channel lists queries, link only what backend returns (the 1st page)
     /// 4. Clean up local message history for channels that are outdated/will get outdated
-    /// 5. Bump the last sync timestamp
+    /// 5. Run offline actions requests
+    /// 6. Bump the last sync timestamp
     ///
     /// - Parameter completion: A block that will get executed upon completion of the synchronization
     func syncLocalState(completion: @escaping () -> Void) {
@@ -117,9 +120,12 @@ class SyncRepository {
             }
         operations.append(contentsOf: refetchChannelListQueryOperations)
 
-        // 5. Bump the last sync timestamp
+        // 5. Run offline actions requests
+        operations.append(ExecutePendingOfflineActions(database: database, apiClient: apiClient))
+
+        // 6. Bump the last sync timestamp
         operations.append(AsyncOperation { [weak self] _, done in
-            log.info("5. Bump the last sync timestamp", subsystems: .offlineSupport)
+            log.info("6. Bump the last sync timestamp", subsystems: .offlineSupport)
             self?.updateUserValue { user in
                 user?.lastSyncAt = Date()
             } completion: { _ in
@@ -128,7 +134,7 @@ class SyncRepository {
         })
 
         operations.append(BlockOperation(block: { [weak self] in
-            log.info("❌Finished recovering offline state", subsystems: .offlineSupport)
+            log.info("Finished recovering offline state", subsystems: .offlineSupport)
             DispatchQueue.main.async {
                 self?.apiClient.exitRecoveryMode()
                 completion()
@@ -321,5 +327,37 @@ class SyncRepository {
                 completion?(nil)
             }
         }
+    }
+
+    func queueOfflineRequest(endpoint: EndpointWithoutResponse) {
+        guard config.isLocalStorageEnabled else { return }
+
+        let date = Date()
+        let database = self.database
+
+        retryQueue.async {
+            guard let data = try? JSONEncoder.stream.encode(endpoint) else { return }
+
+            database.write { _ in
+                QueuedRequestDTO.createRequest(date: date, endpoint: data, context: database.writableContext)
+                log.info("Queued request for /\(endpoint.path)", subsystems: .offlineSupport)
+            }
+        }
+    }
+}
+
+typealias QueueOfflineRequestBlock = (EndpointWithoutResponse) -> Void
+typealias EndpointWithoutResponse = Endpoint<EmptyResponse>
+
+extension Endpoint {
+    var withoutResponse: EndpointWithoutResponse {
+        Endpoint<EmptyResponse>(
+            path: path,
+            method: method,
+            queryItems: queryItems,
+            requiresConnectionId: requiresConnectionId,
+            requiresToken: requiresToken,
+            body: body
+        )
     }
 }

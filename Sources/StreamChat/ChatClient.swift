@@ -105,6 +105,9 @@ public class ChatClient {
                 self.refreshToken(
                     completion: { _ in completion() }
                 )
+            },
+            { [weak self] endpoint in
+                self?.syncRepository.queueOfflineRequest(endpoint: endpoint)
             }
         )
         return apiClient
@@ -432,14 +435,16 @@ extension ChatClient {
             _ requestEncoder: RequestEncoder,
             _ requestDecoder: RequestDecoder,
             _ CDNClient: CDNClient,
-            _ tokenRefresher: @escaping (@escaping () -> Void) -> Void
+            _ tokenRefresher: @escaping (@escaping () -> Void) -> Void,
+            _ queueOfflineRequest: @escaping QueueOfflineRequestBlock
         ) -> APIClient = {
             APIClient(
                 sessionConfiguration: $0,
                 requestEncoder: $1,
                 requestDecoder: $2,
                 CDNClient: $3,
-                tokenRefresher: $4
+                tokenRefresher: $4,
+                queueOfflineRequest: $5
             )
         }
         

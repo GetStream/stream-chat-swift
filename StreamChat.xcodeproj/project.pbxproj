@@ -1447,6 +1447,8 @@
 		C1E8AD5E278EF5F30041B775 /* AsyncOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1E8AD5B278DDEC70041B775 /* AsyncOperation.swift */; };
 		C1E8AD5F278EF5F40041B775 /* AsyncOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1E8AD5B278DDEC70041B775 /* AsyncOperation.swift */; };
 		C1EE53A727BA53F300B1A6CA /* Endpoint_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1EE53A627BA53F300B1A6CA /* Endpoint_Tests.swift */; };
+		C1EE53A927BA662B00B1A6CA /* QueuedRequestDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1EE53A827BA662B00B1A6CA /* QueuedRequestDTO.swift */; };
+		C1EE53AA27BA662B00B1A6CA /* QueuedRequestDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1EE53A827BA662B00B1A6CA /* QueuedRequestDTO.swift */; };
 		C1FC2F6727416E150062530F /* ResumableData.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1BE728A2732CB7B006EB51E /* ResumableData.swift */; };
 		C1FC2F6827416E150062530F /* ImagePipelineCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1BE72822732CB7B006EB51E /* ImagePipelineCache.swift */; };
 		C1FC2F6927416E150062530F /* Log.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1BE72952732CB7B006EB51E /* Log.swift */; };
@@ -3022,6 +3024,7 @@
 		C1E8AD55278C8A440041B775 /* SyncRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncRepository.swift; sourceTree = "<group>"; };
 		C1E8AD5B278DDEC70041B775 /* AsyncOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AsyncOperation.swift; sourceTree = "<group>"; };
 		C1EE53A627BA53F300B1A6CA /* Endpoint_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Endpoint_Tests.swift; sourceTree = "<group>"; };
+		C1EE53A827BA662B00B1A6CA /* QueuedRequestDTO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QueuedRequestDTO.swift; sourceTree = "<group>"; };
 		DA0BB1602513B5F200CAEFBD /* StringInterpolation+Extenstions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "StringInterpolation+Extenstions.swift"; sourceTree = "<group>"; };
 		DA15A20224DF256F00BE2423 /* ChannelQuery_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelQuery_Tests.swift; sourceTree = "<group>"; };
 		DA49714D2549C28000AC68C2 /* AttachmentDTO_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttachmentDTO_Tests.swift; sourceTree = "<group>"; };
@@ -3690,6 +3693,7 @@
 				790A4C57252F2AF2001F4A23 /* DeviceDTO_Tests.swift */,
 				88DA571F2631AC3100FA8C53 /* ChannelMuteDTO.swift */,
 				88DA577D2631D73800FA8C53 /* ChannelMuteDTO_Tests.swift */,
+				C1EE53A827BA662B00B1A6CA /* QueuedRequestDTO.swift */,
 			);
 			path = DTOs;
 			sourceTree = "<group>";
@@ -7640,6 +7644,7 @@
 				DA4AA3B22502718600FAAF6E /* ChannelController+Combine.swift in Sources */,
 				ADF34F8A25CDC58900AD637C /* ConnectionController.swift in Sources */,
 				79A0E9BB2498C31300E9BD50 /* TypingStartCleanupMiddleware.swift in Sources */,
+				C1EE53A927BA662B00B1A6CA /* QueuedRequestDTO.swift in Sources */,
 				790A4C42252DD377001F4A23 /* DeviceEndpoints.swift in Sources */,
 				797A756424814E7A003CF16D /* WebSocketConnectPayload.swift in Sources */,
 				F6FF1DA624FD17B400151735 /* MessageController.swift in Sources */,
@@ -8240,6 +8245,7 @@
 				C121E8A2274544B000023E4C /* UserController+Combine.swift in Sources */,
 				C121E8A3274544B000023E4C /* UserController+SwiftUI.swift in Sources */,
 				C121E8A4274544B000023E4C /* MemberController.swift in Sources */,
+				C1EE53AA27BA662B00B1A6CA /* QueuedRequestDTO.swift in Sources */,
 				C121E8A5274544B000023E4C /* MemberController+SwiftUI.swift in Sources */,
 				C121E8A6274544B000023E4C /* MemberController+Combine.swift in Sources */,
 				C121E8A7274544B000023E4C /* MemberListController.swift in Sources */,
