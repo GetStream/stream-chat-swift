@@ -125,7 +125,7 @@ open class ComposerView: _View, ThemeProvider {
 
     override open func setUpAppearance() {
         super.setUpAppearance()
-        backgroundColor = .black
+        backgroundColor = appearance.colorPalette.walletTabbarBackground
         toolKitView.backgroundColor = appearance.colorPalette.walletTabbarBackground
         headerView.backgroundColor = appearance.colorPalette.walletTabbarBackground
         centerContainer.backgroundColor = appearance.colorPalette.walletTabbarBackground
