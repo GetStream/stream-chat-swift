@@ -638,15 +638,15 @@ internal extension ChatMessageListVC {
         let currentMessages: Set<ChatMessage> = Set(snapshot.itemIdentifiers)
         var updatedMessages: [ChatMessage] = []
         var removedMessages: [(ChatMessage, row: Int)] = []
-        var insertedMessages: [(ChatMessage, row: Int)] = []
         var movedMessages: [(from: ChatMessage, to: ChatMessage)] = []
 
         var hasNewInsertions = false
+        var hasInsertions = false
 
         changes.forEach { change in
             switch change {
-            case let .insert(message, indexPath):
-                insertedMessages.append((message, row: indexPath.row))
+            case let .insert(_, indexPath):
+                hasInsertions = true
                 hasNewInsertions = indexPath.row == 0
             case let .update(message, _):
                 // Check if it is a valid update. In rare occasions we get an update for a message which
@@ -662,27 +662,18 @@ internal extension ChatMessageListVC {
             }
         }
 
-        let sortedInsertedMessages = insertedMessages
-            .sorted(by: { $0.row < $1.row })
-            .map(\.0)
+        if hasInsertions {
+            snapshot = NSDiffableDataSourceSnapshot<Int, ChatMessage>()
+            snapshot.appendSections([0])
+            snapshot.appendItems(dataSource?.messages ?? [])
+        } else {
+            snapshot.deleteItems(removedMessages.map(\.0))
+            snapshot.reloadItems(updatedMessages)
 
-        if hasNewInsertions, let currentFirstMessage = snapshot.itemIdentifiers.first {
-            // Insert new messages at the bottom.
-            snapshot.insertItems(sortedInsertedMessages, beforeItem: currentFirstMessage)
-        } else if let currentLastMessage = snapshot.itemIdentifiers.last {
-            // Load new messages at the top.
-            snapshot.insertItems(sortedInsertedMessages, afterItem: currentLastMessage)
-        } else if snapshot.itemIdentifiers.isEmpty {
-            // If the message list is empty, append the new messages
-            snapshot.appendItems(sortedInsertedMessages)
-        }
-
-        snapshot.deleteItems(removedMessages.map(\.0))
-        snapshot.reloadItems(updatedMessages)
-
-        movedMessages.forEach {
-            snapshot.moveItem($0.from, afterItem: $0.to)
-            snapshot.reloadItems([$0.from, $0.to])
+            movedMessages.forEach {
+                snapshot.moveItem($0.from, afterItem: $0.to)
+                snapshot.reloadItems([$0.from, $0.to])
+            }
         }
 
         // The reason we call `performWithoutAnimation` and `animatingDifferences: true` at the same time
