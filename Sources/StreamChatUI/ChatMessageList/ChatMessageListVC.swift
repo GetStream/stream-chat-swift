@@ -635,6 +635,7 @@ internal extension ChatMessageListVC {
     func updateMessagesSnapshot(with changes: [ListChange<ChatMessage>], completion: (() -> Void)?) {
         var snapshot = diffableDataSource?.snapshot() ?? NSDiffableDataSourceSnapshot<Int, ChatMessage>()
 
+        let currentMessages: Set<ChatMessage> = Set(snapshot.itemIdentifiers)
         var updatedMessages: [ChatMessage] = []
         var removedMessages: [(ChatMessage, row: Int)] = []
         var insertedMessages: [(ChatMessage, row: Int)] = []
@@ -648,6 +649,9 @@ internal extension ChatMessageListVC {
                 insertedMessages.append((message, row: indexPath.row))
                 hasNewInsertions = indexPath.row == 0
             case let .update(message, _):
+                // Check if it is a valid update. In rare occasions we get an update for a message which
+                // is not in the scope of the current pagination, although it is in the database.
+                guard currentMessages.contains(message) else { break }
                 updatedMessages.append(message)
             case let .remove(message, indexPath):
                 removedMessages.append((message, row: indexPath.row))
