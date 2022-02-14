@@ -89,6 +89,23 @@ public extension Dictionary where Key == String, Value == RawJSON {
             return nil
         }
     }
+
+    var daoGroupCreator: String? {
+        if let daoGroupCreator = self["groupCreator"] {
+            return fetchRawData(raw: daoGroupCreator) as? String
+        } else {
+            return nil
+        }
+    }
+
+    var signers: [String] {
+        if let arrSigners = self["signers"] {
+            let rawJson = fetchRawData(raw: arrSigners) as? [RawJSON] ?? [RawJSON]()
+            return rawJson.map({ fetchRawData(raw: $0) as? String ?? ""})
+        } else {
+            return []
+        }
+    }
 }
 
 // MARK: - Admin Message
