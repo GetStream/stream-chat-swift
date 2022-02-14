@@ -116,17 +116,10 @@ open class ChatChannelListVC: _ViewController,
         willDisplay cell: UICollectionViewCell,
         forItemAt indexPath: IndexPath
     ) {
-        if controller.state != .remoteDataFetched {
-            return
-        }
-
-        if indexPath.row < collectionView.numberOfItems(inSection: 0) - 10 {
-            return
-        }
-
-        loadMoreChannels()
+        self.loadMoreChannels(collectionView: collectionView, forItemAt: indexPath)
+        
     }
-
+    
     open override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -251,7 +244,6 @@ open class ChatChannelListVC: _ViewController,
             guard let cell = cell else { return nil }
             return self?.collectionView.indexPath(for: cell)
         }
-        
         return cell
     }
     
@@ -298,12 +290,21 @@ open class ChatChannelListVC: _ViewController,
         }
     }
 
-    open func loadMoreChannels() {
+    open func loadMoreChannels(collectionView: UICollectionView, forItemAt indexPath: IndexPath) {
+        
+        if controller.state != .remoteDataFetched {
+            return
+        }
+        guard let lastVisibleIndexPath = collectionView.indexPathsForVisibleItems.last else {
+            return
+        }
+        guard indexPath.row == channelsCount - 1  else {
+            return
+        }
         guard !loadingPreviousMessages else {
             return
         }
         loadingPreviousMessages = true
-
         controller.loadNextChannels(completion: { [weak self] _ in
             self?.loadingPreviousMessages = false
         })

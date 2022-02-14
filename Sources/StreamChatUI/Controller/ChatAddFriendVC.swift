@@ -77,7 +77,7 @@ public class ChatAddFriendVC: ChatBaseVC {
         chatUserList.userSelectionType = .addFriend
         chatUserList.tableViewFrameUpdate()
         chatUserList.curentSortType = .sortByAtoZ
-        //chatUserList.fetchUserList()
+        chatUserList.fetchUserList()
         //
         viewHeaderView.backgroundColor = Appearance.default.colorPalette.viewBackgroundLightBlack
         searchBarContainerView.backgroundColor = Appearance.default.colorPalette.searchBarBackground
