@@ -162,7 +162,7 @@ extension ChatChannelMember {
             userCreatedAt: dto.user.userCreatedAt,
             userUpdatedAt: dto.user.userUpdatedAt,
             lastActiveAt: dto.user.lastActivityAt,
-            teams: dto.user.teams ?? [],
+            teams: Set(dto.user.teams),
             extraData: extraData,
             memberRole: role,
             memberCreatedAt: dto.memberCreatedAt,
