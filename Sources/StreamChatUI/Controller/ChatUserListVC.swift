@@ -137,7 +137,7 @@ extension ChatUserListVC {
         //
         self.tableViewFrameUpdate()
         //
-        if self.curentSortType == .sortByLastSeen {
+        if self.curentSortType == .sortByLastSeen || self.curentSortType == .sortByAtoZ {
             self.tableView?.contentInset = UIEdgeInsets(top: -20, left: 0, bottom: 0, right: 0)
         }
     }

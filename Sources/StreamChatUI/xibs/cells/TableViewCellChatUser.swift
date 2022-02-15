@@ -42,6 +42,7 @@ public class TableViewCellChatUser: UITableViewCell {
             nameLabel.text = "\(first)...\(last)"
         }
         //
+        nameLabel.textColor = UIColor.white
         descriptionLabel.textColor = Appearance.default.colorPalette.subTitleColor
         //
         if user.isOnline {
