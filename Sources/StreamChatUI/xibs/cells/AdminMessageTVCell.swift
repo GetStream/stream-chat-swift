@@ -9,6 +9,11 @@
 import UIKit
 import StreamChat
 
+public enum AdminMessageType: String {
+    case daoAddInitialSigners
+    case none
+}
+
 class AdminMessageTVCell: UITableViewCell {
 
     // MARK: - Outlets
@@ -18,7 +23,7 @@ class AdminMessageTVCell: UITableViewCell {
     // MARK: - Variables
     var content: ChatMessage?
     public lazy var dateFormatter: DateFormatter = .makeDefault()
-    
+
     // MARK: - View life cycle
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -32,7 +37,12 @@ class AdminMessageTVCell: UITableViewCell {
         } else {
             lblTime.text = nil
         }
-        lblDesc.text = getDescText()
+        switch content?.extraData.adminMessageType {
+        case .daoAddInitialSigners:
+            lblDesc.text = getInitialAddSignerDesc()
+        default:
+            lblDesc.text = ""
+        }
     }
     
     func configCell(with date: Date?, message: String) {
@@ -44,14 +54,14 @@ class AdminMessageTVCell: UITableViewCell {
         lblDesc.text = message
     }
 
-    private func getDescText() -> String {
+    private func getInitialAddSignerDesc() -> String {
         var descText = ""
         if content?.isSentByCurrentUser ?? false {
-            descText.append("You ")
+            descText.append("You")
         } else {
-            descText.append(content?.author.name ?? "- ")
+            descText.append(content?.author.name ?? "-")
         }
-        descText.append("created this group")
+        descText.append(" created this group")
         let otherAdmins = content?.extraData.daoAdmins.filter({ ($0["signerUserId"] as? String ?? "") != ChatClient.shared.currentUserId }) ?? [[String: Any]]()
         if otherAdmins.count >= 1 {
             descText.append(" with ")
@@ -60,7 +70,12 @@ class AdminMessageTVCell: UITableViewCell {
         if otherAdmins.count >= 2 {
             descText.append(" and")
             descText.append(" \(otherAdmins.count - 1)")
-            descText.append(" others.")
+            if otherAdmins.count - 1 == 1 {
+                descText.append(" other.")
+            } else {
+                descText.append(" others.")
+            }
+
         }
         descText.append("\nTry using the menu item to share with others.")
         return descText
