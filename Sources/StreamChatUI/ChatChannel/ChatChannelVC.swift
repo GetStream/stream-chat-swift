@@ -391,7 +391,7 @@ open class ChatChannelVC:
     }
 
     private func setupUI() {
-        
+        KeyboardService.shared.observeKeyboard(self.view)
         if channelController.channel?.isDirectMessageChannel ?? false {
             shareView.isHidden = true
             moreButton.isHidden = true
@@ -401,7 +401,6 @@ open class ChatChannelVC:
                 showPinViewButton()
             }
         }
-       
         channelController.markRead()
     }
 

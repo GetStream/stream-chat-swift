@@ -483,7 +483,7 @@ open class ComposerVC: _ViewController,
                 userInfo["currencyValue"] = "\(amount)"
                 userInfo["currencyDisplay"] = "\(amount)"
                 userInfo["paymentTheme"] = theme.getPaymentThemeUrl()
-                NotificationCenter.default.post(name: .sendOneWalletTapAction, object: nil, userInfo: userInfo)
+                NotificationCenter.default.post(name: .sendOneAction, object: nil, userInfo: userInfo)
                 self.hideInputView()
                 self.composerView.leadingContainer.isHidden = false
                 self.animateToolkitView(isHide: true)
@@ -501,9 +501,15 @@ open class ComposerVC: _ViewController,
                 self.showAttachmentsPicker()
                 self.animateToolkitView(isHide: true)
             case .disburseFund:
-                self.animateToolkitView(isHide: true)
-                self.disburseFundAction()
-                break
+                guard let channel = self.channelController?.channel else {
+                    return
+                }
+                if channel.extraData.signers.contains(ChatClient.shared.currentUserId ?? "") {
+                    self.animateToolkitView(isHide: true)
+                    self.disburseFundAction()
+                } else {
+                    Snackbar.show(text: "Creators can only allow to disburse the fund.")
+                }
             case .weather:
                 break
             case .crypto:
