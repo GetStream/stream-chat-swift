@@ -120,7 +120,16 @@ public extension Dictionary where Key == String, Value == RawJSON {
             return nil
         }
     }
-
+    var adminMessageMembers: [String: RawJSON]? {
+        guard let adminMessage = getExtraData(key: "adminMessage") else {
+            return nil
+        }
+        if let userIDs = adminMessage["members"] {
+            return fetchRawData(raw: userIDs) as? [String: RawJSON]
+        } else {
+            return nil
+        }
+    }
     var adminMessageType: AdminMessageType {
         if let messageType = self["messageType"] {
             let rawValue = fetchRawData(raw: messageType) as? String ?? ""

@@ -11,6 +11,7 @@ import StreamChat
 
 public enum AdminMessageType: String {
     case daoAddInitialSigners
+    case simpleGroupChat
     case none
 }
 
@@ -40,6 +41,8 @@ class AdminMessageTVCell: UITableViewCell {
         switch content?.extraData.adminMessageType {
         case .daoAddInitialSigners:
             lblDesc.text = getInitialAddSignerDesc()
+        case .simpleGroupChat:
+            lblDesc.text = getGroupChatAdminMessage()
         default:
             lblDesc.text = ""
         }
@@ -79,4 +82,31 @@ class AdminMessageTVCell: UITableViewCell {
         descText.append("\nTry using the menu item to share with others.")
         return descText
     }
+    private func getGroupChatAdminMessage() -> String {
+        
+        guard let members = content?.extraData.adminMessageMembers else {
+            return content?.extraData.adminMessage ?? "Group Created\nTry using the menu item to share with others"
+        }
+        if (content?.isSentByCurrentUser ?? false) {
+            let otherUserName = fetchRawData(raw: members.randomElement()!.value) as? String ?? ""
+            var joiningText = "You created this group with \(otherUserName)"
+            //
+            if members.count > 2 {
+                joiningText.append(" and \(members.count - 2) other.")
+            }
+            joiningText.append("\nTry using the menu item to share with others.")
+            return joiningText
+        } else {
+            let authorName = (content?.author.name ?? "").capitalizingFirstLetter()
+            var joiningText = "\(authorName) created this group with you"
+            //
+            if members.count > 2 {
+                joiningText.append(" and \(members.count - 2) other.")
+            }
+            joiningText.append("\nTry using the menu item to share with others.")
+            return joiningText
+        }
+        
+    }
+
 }

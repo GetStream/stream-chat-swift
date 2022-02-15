@@ -40,6 +40,8 @@ public class NameGroupViewController: ChatBaseVC {
         self.nameField.autocorrectionType = .no
         self.nameField.addTarget(self, action: #selector(textDidChange(_:)), for: .editingChanged)
         groupDescriptionField.addTarget(self, action: #selector(textDidChange(_:)), for: .editingChanged)
+        nameField.canPerformAction(#selector(UIResponderStandardEditActions.paste(_:)), withSender: nil)
+        groupDescriptionField.canPerformAction(#selector(UIResponderStandardEditActions.paste(_:)), withSender: nil)
         //
         groupDescriptionField.delegate = self
         nameField.delegate = self
@@ -197,3 +199,8 @@ extension NameGroupViewController: UITableViewDataSource {
 }
 // MARK: - Generic View Class
 class ViewWithRadius: UIView {}
+extension UITextField {
+    open override func canPerformAction(_ action: Selector, withSender sender: Any?) -> Bool {
+        return true
+    }
+}

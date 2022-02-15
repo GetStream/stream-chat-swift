@@ -117,7 +117,10 @@ extension ChatUserListVC {
         tableView?.backgroundView = UIView()
         tableView?.backgroundColor = .clear
         tableView?.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 20, right: 0)
-        tableView?.tableFooterView = UIView()
+        var frame = CGRect.zero
+        frame.size.height = .leastNormalMagnitude
+        tableView?.tableFooterView = UIView(frame: frame)
+        tableView?.tableHeaderView = UIView(frame: frame)
         tableView?.separatorStyle = .none
         tableView?.backgroundColor = .clear
         tableView?.keyboardDismissMode = .onDrag
@@ -134,6 +137,9 @@ extension ChatUserListVC {
         //
         self.tableViewFrameUpdate()
         //
+        if self.curentSortType == .sortByLastSeen {
+            self.tableView?.contentInset = UIEdgeInsets(top: -20, left: 0, bottom: 0, right: 0)
+        }
     }
     public func tableViewFrameUpdate() {
         self.view.updateConstraints()
@@ -565,6 +571,9 @@ extension ChatUserListVC: UITableViewDelegate, UITableViewDataSource {
         }
         return nil
         //
+    }
+    public func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
+        return nil
     }
     public func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
         if self.curentSortType == .sortByName {

@@ -34,7 +34,13 @@ public class TableViewCellChatUser: UITableViewCell {
             Nuke.loadImage(with: imageURL, into: avatarView)
         }
         avatarView.backgroundColor = avatarBG
-        nameLabel.text = (user.name ?? user.id).capitalizingFirstLetter()
+        if let name = user.name , name.isBlank == false {
+            nameLabel.text = name.capitalizingFirstLetter()
+        } else {
+            let last = user.id.suffix(5)
+            let first = user.id.prefix(7)
+            nameLabel.text = "\(first)...\(last)"
+        }
         //
         descriptionLabel.textColor = Appearance.default.colorPalette.subTitleColor
         //
