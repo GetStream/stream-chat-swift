@@ -81,7 +81,6 @@ class APIClient {
         if isRefreshingToken {
             return requeueRequestOnTokenExpired(endpoint: endpoint, timeout: timeout, completion: completion)
         }
-
         encoder.encodeRequest(for: endpoint) { [weak self] (requestResult) in
             let urlRequest: URLRequest
             do {

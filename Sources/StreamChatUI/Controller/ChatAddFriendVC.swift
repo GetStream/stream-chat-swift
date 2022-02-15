@@ -11,7 +11,18 @@ import StreamChatUI
 import UIKit
 
 public class ChatAddFriendVC: ChatBaseVC {
-
+    
+    public enum SelectionType {
+        case addFriend,inviteUser
+        var title: String {
+            switch self {
+            case .addFriend: return "Add Friends"
+            case .inviteUser: return "Invite Friends"
+            }
+        }
+    }
+    // MARK: - OUTLETS
+    @IBOutlet private var titleLabel: UILabel!
     @IBOutlet private var viewHeaderTitleView: UIView!
     @IBOutlet private var viewHeaderView: UIView!
     @IBOutlet private var viewHeaderViewHeightConst: NSLayoutConstraint!
@@ -21,21 +32,17 @@ public class ChatAddFriendVC: ChatBaseVC {
     @IBOutlet private var tableviewContainerView: UIView!
     @IBOutlet private var searchField: UITextField!
     @IBOutlet private var mainStackView: UIStackView!
-    
-    //
+    // MARK: - VARIABLES
+    public var selectionType = ChatAddFriendVC.SelectionType.addFriend
     public lazy var chatUserList: ChatUserListVC = {
         let obj = ChatUserListVC.instantiateController(storyboard: .GroupChat) as? ChatUserListVC
         return obj!
     }()
     private var curentSortType: Em_ChatUserListFilterTypes = .sortByLastSeen
-    //
     private var isFullScreen = false
-    //
     public var selectedUsers = [ChatUser]()
-    //
     public var bCallbackAddUser:(([ChatUser]) -> Void)?
-    
-    //
+    // MARK: - VIEW CYCLE
     public override func viewDidLoad() {
         super.viewDidLoad()
         setup()
@@ -45,9 +52,11 @@ public class ChatAddFriendVC: ChatBaseVC {
         self.view.layoutIfNeeded()
         chatUserList.tableViewFrameUpdate()
     }
+    // MARK: - METHODS
     public func setup() {
         //
         self.view.backgroundColor = .clear
+        self.titleLabel.text = selectionType.title
         //
         let panGesture = UIPanGestureRecognizer(target: self, action: #selector(viewDidDrag(_:)))
         viewHeaderTitleView.addGestureRecognizer(panGesture)
@@ -69,10 +78,8 @@ public class ChatAddFriendVC: ChatBaseVC {
         //
         viewHeaderView.backgroundColor = Appearance.default.colorPalette.viewBackgroundLightBlack
         searchBarContainerView.backgroundColor = Appearance.default.colorPalette.searchBarBackground
-        //
         searchBarContainerView.layer.cornerRadius = 20.0
         viewHeaderView.layer.cornerRadius = 20.0
-        //
     }
     //
     @objc private func textDidChange(_ sender: UITextField) {

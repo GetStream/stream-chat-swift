@@ -25,7 +25,6 @@ public class ChatSharedFilesVC: UIViewController {
     //
 }
 // MARK: - UI
-
 extension ChatSharedFilesVC {
     //
     public func setupUI() {

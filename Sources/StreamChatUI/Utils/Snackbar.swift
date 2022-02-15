@@ -8,10 +8,17 @@
 
 import Foundation
 
+public struct StreamChatMessageType {
+    public static let ChatGroupMute = 100
+    public static let ChatGroupUnMute = 101
+}
 class Snackbar {
-    static func show(text: String) {
+    static func show(text: String, messageType: Int? = nil) {
         var userInfo = [String: Any]()
         userInfo["message"] = text
+        if let type = messageType {
+            userInfo["type"] = type
+        }
         NotificationCenter.default.post(name: .showSnackBar, object: nil, userInfo: userInfo)
     }
 }

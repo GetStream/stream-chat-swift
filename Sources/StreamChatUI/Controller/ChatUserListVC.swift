@@ -611,7 +611,6 @@ extension ChatUserListVC {
         view.endEditing(true)
     }
 }
-
 public extension StringProtocol {
     public  var isFirstCharacterAlp: Bool {
         first?.isASCII == true && first?.isLetter == true
