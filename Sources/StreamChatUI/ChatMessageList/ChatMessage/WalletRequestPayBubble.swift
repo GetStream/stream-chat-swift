@@ -109,8 +109,13 @@ class WalletRequestPayBubble: UITableViewCell {
             } else {
                 descriptionLabel.text = "\(requestedUserName(raw: payload?.extraData) ?? "-") Requests Payment"
             }
-            let themeURL = requestedThemeURL(raw: payload?.extraData)
-            Nuke.loadImage(with: themeURL, into: sentThumbImageView)
+            if let themeURL = requestedThemeURL(raw: payload?.extraData), let imageUrl = URL(string: themeURL) {
+                if imageUrl.pathExtension == "gif" {
+                    sentThumbImageView.setGifFromURL(imageUrl)
+                } else {
+                    Nuke.loadImage(with: themeURL, into: sentThumbImageView)
+                }
+            }
             lblDetails.text = "REQUEST: \(requestedAmount(raw: payload?.extraData) ?? "0") ONE"
         }
         detailsStack = UIStackView(arrangedSubviews: [lblDetails])

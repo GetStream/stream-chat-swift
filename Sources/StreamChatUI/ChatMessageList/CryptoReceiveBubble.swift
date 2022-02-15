@@ -192,11 +192,25 @@ class CryptoReceiveBubble: UITableViewCell {
             sentCryptoLabel.text = "SENT: \(one) ONE"
         }
         let defaultURL = WalletAttachmentPayload.PaymentTheme.none.getPaymentThemeUrl()
-        if let themeURl = walletData["paymentTheme"] {
-            let theme = fetchRawData(raw: themeURl) as? String ?? defaultURL
-            Nuke.loadImage(with: theme, into: sentThumbImageView)
+        if let themeURL = requestedThemeURL(raw: walletData), let imageUrl = URL(string: themeURL) {
+            if imageUrl.pathExtension == "gif" {
+                sentThumbImageView.setGifFromURL(imageUrl)
+            } else {
+                Nuke.loadImage(with: imageUrl, into: sentThumbImageView)
+            }
         } else {
             Nuke.loadImage(with: defaultURL, into: sentThumbImageView)
+        }
+    }
+
+    private func requestedThemeURL(raw: [String: RawJSON]?) -> String? {
+        guard let extraData = raw else {
+            return nil
+        }
+        if let userId = extraData["paymentTheme"] {
+            return fetchRawData(raw: userId) as? String ?? ""
+        } else {
+            return "https://res.cloudinary.com/timeless/image/upload/v1/app/Wallet/shh.png"
         }
     }
 
