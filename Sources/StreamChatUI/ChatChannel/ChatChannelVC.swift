@@ -365,10 +365,7 @@ open class ChatChannelVC:
             })
         }
         //
-        controller.modalPresentationStyle = .overCurrentContext
-        controller.modalTransitionStyle = .crossDissolve
-        
-        self.present(controller, animated: true, completion: nil)
+        presentPanModal(controller)
     }
     
     @objc func moreButtonAction(_ sender: Any) {
@@ -438,7 +435,7 @@ open class ChatChannelVC:
                     suggestionsView.leadingAnchor.constraint(equalTo: self.messageComposerVC.view.leadingAnchor, constant: 0),
                     suggestionsView.trailingAnchor.constraint(equalTo: self.messageComposerVC.view.trailingAnchor, constant: 0),
                     suggestionsView.topAnchor.pin(greaterThanOrEqualTo: self.view.topAnchor),
-                    suggestionsView.bottomAnchor.pin(equalTo: self.messageComposerVC.view.topAnchor),
+                    suggestionsView.bottomAnchor.pin(equalTo: self.messageComposerVC.composerView.topAnchor),
                     //suggestionsView.heightAnchor.constraint(equalToConstant: 300),
                 ])
                 
@@ -468,9 +465,7 @@ open class ChatChannelVC:
                 }
             })
         }
-        controller.modalPresentationStyle = .overCurrentContext
-        controller.modalTransitionStyle = .crossDissolve
-        self.present(controller, animated: true, completion: nil)
+        presentPanModal(controller)
     }
     public func leaveGroupAction() {
         //

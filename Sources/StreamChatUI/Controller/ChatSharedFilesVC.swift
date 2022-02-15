@@ -10,11 +10,11 @@ import StreamChatUI
 import StreamChat
 
 public class ChatSharedFilesVC: UIViewController {
-    //
+    // MARK: - OUTLETS
     @IBOutlet public weak var lblEmpty: UILabel?
-    //
+    // MARK: - VARIABLES
     public var attachmentType = AttachmentType.unknown
-    //
+    // MARK: - VIEW CYCEL
     public override func viewDidLoad() {
         super.viewDidLoad()
         //
@@ -42,4 +42,3 @@ extension ChatSharedFilesVC {
         }
     }
 }
-// MARK: - UI

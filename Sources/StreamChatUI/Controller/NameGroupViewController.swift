@@ -8,49 +8,35 @@ import StreamChat
 import StreamChatUI
 import UIKit
 
-
 private let GroupNameLimit = 40
 private let HashtagNameLimit = 100
 
 public class NameGroupViewController: ChatBaseVC {
-
-    public var client: ChatClient?
+    // MARK: - OUTLETS
     @IBOutlet private var searchFieldStack: UIStackView!
     @IBOutlet private var nameContainerView: UIView!
     @IBOutlet private var descriptionContainerView: UIView!
     @IBOutlet private var nameField: UITextField!
     @IBOutlet private var groupDescriptionField: UITextField!
-    
-    //
     @IBOutlet private var lblFriendCount: UILabel!
     @IBOutlet private var lblTitle: UILabel!
     @IBOutlet private var lblGroupNameCount: UILabel!
     @IBOutlet private var lblHashtagCount: UILabel!
-    //
     @IBOutlet private var tableView: UITableView!
-    //
     @IBOutlet private var tagView: UIStackView!
     @IBOutlet private var tagViewPlaceHolderView: UIView!
-    //
+    // MARK: - VARIABLES
+    public var client: ChatClient?
     public var selectedUsers: [ChatUser]!
-    //
-    //private let tagsField = WSTagsField()
-    //
     public var bCallbackSelectedUsers:(([ChatUser]) -> Void)?
-    
-    //
+    // MARK: - VIEW CYCLE
     public override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
     }
-    public override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        //tagsField.beginEditing()
-    }
-    
+    // MARK: - METHODS
     public func setupUI() {
         self.view.backgroundColor = Appearance.default.colorPalette.viewBackgroundLightBlack
-        //
         self.nameField.autocorrectionType = .no
         self.nameField.addTarget(self, action: #selector(textDidChange(_:)), for: .editingChanged)
         groupDescriptionField.addTarget(self, action: #selector(textDidChange(_:)), for: .editingChanged)
@@ -58,7 +44,6 @@ public class NameGroupViewController: ChatBaseVC {
         groupDescriptionField.delegate = self
         nameField.delegate = self
         nameField.becomeFirstResponder()
-        
         nameContainerView.layer.cornerRadius = 6.0
         descriptionContainerView.layer.cornerRadius = 6.0
         
@@ -78,15 +63,11 @@ public class NameGroupViewController: ChatBaseVC {
         //
         tableView.dataSource = self
         tableView.bounces = false
-        // An old trick to force the table view to hide empty lines
         tableView.tableFooterView = UIView()
         tableView.reloadData()
         tableView.separatorStyle = .none
     }
-    //
-    private func updateTagViewPlaceholder() {
-        //self.tagViewPlaceHolderView.isHidden = (self.tagsField.tags.isEmpty && self.tagsField.textField.text?.isBlank ?? true) ? false : true
-    }
+    // MARK: - ACTIONS
     @objc private func textDidChange(_ sender: UITextField) {
         if sender == nameField {
             DispatchQueue.main.async {
@@ -153,7 +134,7 @@ public class NameGroupViewController: ChatBaseVC {
         }
     }
 }
-
+// MARK: - UITextFieldDelegate
 extension NameGroupViewController: UITextFieldDelegate {
     
     public func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
@@ -214,77 +195,5 @@ extension NameGroupViewController: UITableViewDataSource {
         }
     }
 }
-
 // MARK: - Generic View Class
 class ViewWithRadius: UIView {}
-
-/*
-// MARK: - TAGVIEW
-extension NameGroupViewController {
-    //
-    private func configureTagView() {
-        //
-//        tagView.addArrangedSubview(tagsField)
-//        tagsField.isScrollEnabled = false
-//        //tagsField.suggestions = ["#intro", "#using", "#hashtags"]
-//        tagsField.layoutMargins = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
-//        tagsField.contentInset = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
-//        tagsField.spaceBetweenLines = 15.0
-//        tagsField.spaceBetweenTags = 10.0
-//        //tagsField.cornerRadius = 5.0
-//        tagsField.font = .systemFont(ofSize: 12.0)
-//        tagsField.backgroundColor = .clear
-//        self.tagsField.textField.tintColor = .white
-//        tagsField.tintColor = UIColor.tabbarBackground
-//        tagsField.textColor = .white
-//        tagsField.fieldTextColor = .white
-////        tagsField.selectedColor = .black
-////        tagsField.selectedTextColor = .red
-//        tagsField.delimiter = ""
-//        tagsField.isDelimiterVisible = false
-//        tagsField.placeholder = ""
-//        tagsField.placeholderColor = .green
-//        tagsField.placeholderAlwaysVisible = false
-//        tagsField.keyboardAppearance = .dark
-//        tagsField.returnKeyType = .next
-//        tagsField.acceptTagOption = .space
-//        tagsField.shouldTokenizeAfterResigningFirstResponder = true
-//
-//        // Events
-//        tagsField.onDidAddTag = { field, tag in
-//            print("DidAddTag", tag.text)
-//
-//        }
-//        tagsField.onDidSelectTagView = { field, tag in
-//            self.tagsField.removeTag(tag.displayText)
-//        }
-//        //
-//        tagsField.onDidRemoveTag = { field, tag in
-//            print("DidRemoveTag", tag.text)
-//            DispatchQueue.main.async {
-//                self.tagsField.textField.becomeFirstResponder()
-//                self.updateTagViewPlaceholder()
-//            }
-//        }
-//        //
-//        tagsField.onDidChangeText = { _, text in
-//            print("DidChangeText \(text)")
-//            DispatchQueue.main.async {
-//                self.updateTagViewPlaceholder()
-//                self.lblHashtagCount.text = "\(text?.count ?? 0)"
-//            }
-//        }
-//        //
-//        tagsField.onDidChangeHeightTo = { _, height in
-//            print("HeightTo", height)
-//        }
-//        //
-//        tagsField.onValidateTag = { tag, tags in
-//            // custom validations, called before tag is added to tags list
-//            return tag.text != "#" && !tags.contains(where: { $0.text.uppercased() == tag.text.uppercased() })
-//        }
-//        //
-//        print("List of Tags Strings:", tagsField.tags.map({$0.text}))
-    }
-}
-*/

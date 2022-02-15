@@ -130,9 +130,11 @@ public class ChatGroupDetailsVC: ChatBaseVC {
                 }
             })
         }
-        controller.modalPresentationStyle = .overCurrentContext
-        controller.modalTransitionStyle = .crossDissolve
-        self.present(controller, animated: true, completion: nil)
+        presentPanModal(controller)
+        
+//        controller.modalPresentationStyle = .overCurrentContext
+//        controller.modalTransitionStyle = .crossDissolve
+//        self.present(controller, animated: true, completion: nil)
     }
     @IBAction func mediaButtonAction(_ sender: UIButton) {
         self.scrollToPage(page: 0)

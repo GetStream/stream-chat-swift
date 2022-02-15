@@ -42,6 +42,8 @@ public class ChatAddFriendVC: ChatBaseVC {
     private var isFullScreen = false
     public var selectedUsers = [ChatUser]()
     public var bCallbackAddUser:(([ChatUser]) -> Void)?
+    var isShortFormEnabled = true
+    
     // MARK: - VIEW CYCLE
     public override func viewDidLoad() {
         super.viewDidLoad()
@@ -52,15 +54,12 @@ public class ChatAddFriendVC: ChatBaseVC {
         self.view.layoutIfNeeded()
         chatUserList.tableViewFrameUpdate()
     }
+   
     // MARK: - METHODS
     public func setup() {
         //
         self.view.backgroundColor = .clear
         self.titleLabel.text = selectionType.title
-        //
-        let panGesture = UIPanGestureRecognizer(target: self, action: #selector(viewDidDrag(_:)))
-        viewHeaderTitleView.addGestureRecognizer(panGesture)
-        //
         btnBack?.setImage(Appearance.Images.closeCircle, for: .normal)
         btnNext?.isEnabled = !self.selectedUsers.isEmpty
         //
@@ -85,32 +84,6 @@ public class ChatAddFriendVC: ChatBaseVC {
     @objc private func textDidChange(_ sender: UITextField) {
         self.chatUserList.searchDataUsing(searchString: sender.text)
     }
-    @objc private func addPangGesture(_ sender: UIPanGestureRecognizer) {
-        UIView.animate(withDuration: 0.1) {
-            if self.isFullScreen {
-                self.viewHeaderViewTopConst.priority = .defaultLow
-                self.viewHeaderViewHeightConst.priority = .defaultHigh
-                //self.isFullScreen = false
-            } else {
-                //self.isFullScreen = true
-                self.viewHeaderViewTopConst.priority = .defaultHigh
-                self.viewHeaderViewHeightConst.priority = .defaultLow
-            }
-            self.view.layoutIfNeeded()
-        }
-    }
-    @objc private func viewDidDrag(_ sender: UIPanGestureRecognizer) {
-        
-        let velocity = sender.velocity(in: viewHeaderTitleView)
-        
-        if velocity.y > 0 {
-            self.isFullScreen = true
-            self.addPangGesture(sender)
-        } else if velocity.y < 0  {
-            self.isFullScreen = false
-            self.addPangGesture(sender)
-        }
-    }
     //
     // MARK: - Actions
     //
@@ -127,9 +100,7 @@ public class ChatAddFriendVC: ChatBaseVC {
             self.btnBackAction(sender)
         }
     }
-    //
 }
-
 // MARK: - ChatUserListDelegate
 extension ChatAddFriendVC: ChatUserListDelegate {
     public func chatListStateUpdated(state: ChatUserListVC.ChatUserLoadingState) {
@@ -138,5 +109,43 @@ extension ChatAddFriendVC: ChatUserListDelegate {
     public func chatUserDidSelect() {
         self.selectedUsers = self.chatUserList.selectedUsers
         self.btnNext?.isEnabled = !self.selectedUsers.isEmpty
+    }
+}
+// MARK: - Pan Modal Presentable
+extension ChatAddFriendVC: PanModalPresentable {
+
+    public override var preferredStatusBarStyle: UIStatusBarStyle {
+        return .lightContent
+    }
+//    public var panScrollable: UIScrollView? {
+//        return self.chatUserList.view
+//    }
+    public var panScrollable: UIScrollView? {
+        return nil
+    }
+//    public var longFormHeight: PanModalHeight {
+//        return .maxHeightWithTopInset(0)
+//    }
+    public var shortFormHeight: PanModalHeight {
+        return isShortFormEnabled ? .contentHeight(UIScreen.main.bounds.height/2) : longFormHeight
+    }
+    public var anchorModalToLongForm: Bool {
+        return false
+    }
+    public var showDragIndicator: Bool {
+        return false
+    }
+    public var allowsExtendedPanScrolling: Bool {
+        return true
+    }
+    public var allowsDragToDismiss: Bool {
+        return true
+    }
+    public func willTransition(to state: PanModalPresentationController.PresentationState) {
+        guard isShortFormEnabled, case .longForm = state
+            else { return }
+
+        isShortFormEnabled = false
+        panModalSetNeedsLayoutUpdate()
     }
 }
