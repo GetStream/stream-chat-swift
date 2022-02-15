@@ -14,7 +14,7 @@ class GroupQRCodeVC: UIViewController {
 
     // MARK: - Variables
     var strContent: String?
-
+    
     // MARK: - Outlets
     @IBOutlet weak var btnBack: UIButton!
     @IBOutlet weak var imgQRCode: UIImageView!
