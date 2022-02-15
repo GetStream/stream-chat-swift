@@ -508,7 +508,7 @@ open class ComposerVC: _ViewController,
                     self.animateToolkitView(isHide: true)
                     self.disburseFundAction()
                 } else {
-                    Snackbar.show(text: "Creators can only allow to disburse the fund.")
+                    Snackbar.show(text: "Only admins are allowed to disburse the fund.")
                 }
             case .weather:
                 break

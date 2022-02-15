@@ -57,14 +57,9 @@ public class ChatUserListVC: UIViewController {
         return ChatClient.shared.userSearchController()
     }()
     public var tableView: UITableView?
-    //
-    //var searchController: ChatUserSearchController?
     public var selectedUsers = [ChatUser]()
     public var userSelectionType = ChatUserSelectionType.singleUser
-    //
     public var curentSortType: Em_ChatUserListFilterTypes = .sortByLastSeen
-    
-    //
     private var nameWiseUserList = [ChatUserListData]()
     private var lastSeenWiseUserList = [ChatUser]()
     //
@@ -77,7 +72,6 @@ public class ChatUserListVC: UIViewController {
     //
     public var isSearchBarVisible = false
     public var isPrefereSmallSize = false
-    
     private var loadingPreviousData: Bool = false
     private var hasLoadedAllData: Bool = false
     private var pageSize: Int = 100
@@ -126,6 +120,7 @@ extension ChatUserListVC {
         tableView?.tableFooterView = UIView()
         tableView?.separatorStyle = .none
         tableView?.backgroundColor = .clear
+        tableView?.keyboardDismissMode = .onDrag
         //
         let reuseID = TableViewHeaderChatUserList.reuseId
         let nib = UINib(nibName: reuseID, bundle: nil)
@@ -450,6 +445,9 @@ extension ChatUserListVC: UITableViewDelegate, UITableViewDataSource {
         } else {
             user = self.lastSeenWiseUserList[indexPath.row]
         }
+        if user == nil {
+            return UITableViewCell()
+        }
         //
         var accessaryImage: UIImage?
         if selectedUsers.firstIndex(where: { $0.id == user!.id}) != nil {
@@ -553,8 +551,11 @@ extension ChatUserListVC: UITableViewDelegate, UITableViewDataSource {
     }
     //
     public func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        //
         if self.curentSortType == .sortByName {
+            guard self.nameWiseUserList.indices.contains(section) else {
+                return nil
+            }
+            //
             let reuseID = TableViewHeaderChatUserList.reuseId
             let header = tableView.dequeueReusableCell(withIdentifier: reuseID) as? TableViewHeaderChatUserList
             header!.lblTitle.text = self.nameWiseUserList[section].letter.capitalized
@@ -576,6 +577,9 @@ extension ChatUserListVC: UITableViewDelegate, UITableViewDataSource {
     }
     public func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         if self.curentSortType == .sortByName {
+            guard self.nameWiseUserList.indices.contains(section) else {
+                return nil
+            }
             return self.nameWiseUserList[section].letter.capitalized
         }
         return nil
@@ -611,7 +615,6 @@ extension ChatUserListVC {
         view.endEditing(true)
     }
 }
-
 public extension StringProtocol {
     public  var isFirstCharacterAlp: Bool {
         first?.isASCII == true && first?.isLetter == true

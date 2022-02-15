@@ -121,6 +121,15 @@ public extension Dictionary where Key == String, Value == RawJSON {
         }
     }
 
+    var adminMessageType: AdminMessageType {
+        if let messageType = self["messageType"] {
+            let rawValue = fetchRawData(raw: messageType) as? String ?? ""
+            return AdminMessageType(rawValue: rawValue) ?? .none
+        } else {
+            return .none
+        }
+    }
+
     var daoAdmins: [[String: Any]] {
         var arrOut: [[String: Any]] = []
         if let admin = self["adminMessage"] {

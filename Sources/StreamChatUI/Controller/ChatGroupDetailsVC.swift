@@ -12,25 +12,24 @@ import StreamChatUI
 import UIKit
 
 public class ChatGroupDetailsVC: ChatBaseVC {
-    //
+    // MARK: - OUTLETS
     @IBOutlet private var headerView: ChatChannelHeaderView!
     @IBOutlet private var lblTitle: UILabel!
     @IBOutlet private var lblSubtitle: UILabel!
-    //
     @IBOutlet private var tableView: UITableView!
     @IBOutlet private var filesContainerView: UIView!
     @IBOutlet private var buttonMedia: UIButton!
     @IBOutlet private var buttonFiles: UIButton!
     @IBOutlet private var buttonLinks: UIButton!
+    @IBOutlet private var notificationSwitch: UISwitch!
     @IBOutlet private var indicatorViewLeadingContraint: NSLayoutConstraint!
-    //
+    // MARK: - VARIABLES
     public var selectedUsers: [ChatChannelMember] = []
-    //
     private let scrollViewFiles = UIScrollView()
     private let viewTabIndicator = UIView()
-    //
     public var channelController: ChatChannelController?
     private var arrController = [UIViewController]()
+    // MARK: - VIEW CYCLE
     public override func viewDidLoad() {
         super.viewDidLoad()
         //
@@ -40,6 +39,7 @@ public class ChatGroupDetailsVC: ChatBaseVC {
         //
         ShowAttachement()
     }
+    // MARK: - METHOD
     open func setupUI() {
         //
         view.backgroundColor = Appearance.default.colorPalette.viewBackgroundLightBlack
@@ -49,9 +49,7 @@ public class ChatGroupDetailsVC: ChatBaseVC {
         self.updateMemberCount()
         //
         if let cid = channelController?.cid {
-         
             let controller = ChatClient.shared.memberListController(query: .init(cid: cid))
-            
             controller.synchronize { [weak self] error in
                 guard error == nil, let weakSelf = self else { return }
                 DispatchQueue.main.async {
@@ -61,33 +59,25 @@ public class ChatGroupDetailsVC: ChatBaseVC {
                 }
             }
         }
-//        let str = self.selectedUsers.count > 1 ? "friends" : "friend"
-//        lblSubtitle.text = "\(channelController?.channel?.memberCount ?? 0)"
-        //
         let chatUserID = TableViewCellChatUser.reuseId
         let chatUserNib = UINib(nibName: chatUserID, bundle: nil)
         tableView?.register(chatUserNib, forCellReuseIdentifier: chatUserID)
         //
         tableView.dataSource = self
         tableView.bounces = false
-        // An old trick to force the table view to hide empty lines
         tableView.tableFooterView = UIView()
         tableView.reloadData()
         tableView.separatorStyle = .none
+        //
+        notificationSwitch.isOn = !(channelController?.channel?.isMuted ?? true)
     }
-    //
     private func updateMemberCount() {
-        
         let friendCount = selectedUsers.count
         let onlineUser = selectedUsers.filter( {$0.isOnline}).count ?? 0
-        
         lblSubtitle.text = "\(friendCount) friends, \(onlineUser) online"
     }
-    //
     private func ShowAttachement() {
-        //
         let arr = self.channelController?.messages.filter({ $0.attachments(payloadType: ImageAttachmentPayload.self).count > 0 }) ?? []
-        
         for subView in  self.scrollViewFiles.subviews {
             guard let attachView = subView as? AttachmentListContainerView else {
                 continue
@@ -95,25 +85,37 @@ public class ChatGroupDetailsVC: ChatBaseVC {
             if let identifier = subView.accessibilityIdentifier , identifier == AttachmentType.image.rawValue {
                 attachView.setupChatMessage(arr)
             }
-            
         }
     }
-    //
+    public func muteNotification() {
+        self.channelController?.muteChannel { error in
+            let msg = error == nil ? "Notifications muted" : "Error while muted group notifications"
+            DispatchQueue.main.async {
+                Snackbar.show(text: msg, messageType: StreamChatMessageType.ChatGroupMute)
+                self.notificationSwitch.isOn = false
+            }
+        }
+    }
+    public func unMuteNotification() {
+        self.channelController?.unmuteChannel { error in
+            let msg = error == nil ? "Notifications unmuted" : "Error while unmute group notifications"
+            DispatchQueue.main.async {
+                Snackbar.show(text: msg, messageType: StreamChatMessageType.ChatGroupUnMute)
+                self.notificationSwitch.isOn = true
+            }
+        }
+    }
+    // MARK: - ACTIONS
     @IBAction func backBtnTapped(_ sender: UIButton) {
         navigationController?.popViewController(animated: true)
     }
-
-    @IBAction func doneTapped(_ sender: UIButton) {
-        //
-        
-    }
+    @IBAction func doneTapped(_ sender: UIButton) { }
     @IBAction func addFriendButtonAction(_ sender: UIButton) {
-        //
         guard let controller = ChatAddFriendVC
                 .instantiateController(storyboard: .GroupChat)  as? ChatAddFriendVC else {
             return
         }
-        //
+        controller.selectionType = .addFriend
         controller.bCallbackAddUser = { [weak self] users in
             guard let weakSelf = self else { return }
             let ids = users.map{ $0.id}
@@ -128,26 +130,30 @@ public class ChatGroupDetailsVC: ChatBaseVC {
                 }
             })
         }
-        //
-        controller.modalPresentationStyle = .overCurrentContext
-        controller.modalTransitionStyle = .crossDissolve
+        presentPanModal(controller)
         
-        self.present(controller, animated: true, completion: nil)
+//        controller.modalPresentationStyle = .overCurrentContext
+//        controller.modalTransitionStyle = .crossDissolve
+//        self.present(controller, animated: true, completion: nil)
     }
     @IBAction func mediaButtonAction(_ sender: UIButton) {
-        //
         self.scrollToPage(page: 0)
-        
     }
     @IBAction func fileButtonAction(_ sender: UIButton) {
-        //
         self.scrollToPage(page: 1)
     }
     @IBAction func linkButtonAction(_ sender: UIButton) {
-        //
         self.scrollToPage(page: 2)
     }
+    @IBAction func notificationToggle(_ sender: UISwitch) {
+        if sender.isOn {
+            self.unMuteNotification()
+        } else {
+            self.muteNotification()
+        }
+    }
 }
+
 // MARK: - Collection View
 extension ChatGroupDetailsVC {
     //
@@ -161,35 +167,22 @@ extension ChatGroupDetailsVC {
         //
         let arrAttachmentOptions: [AttachmentType] = [.image, .file, .linkPreview]
         for index in 0..<arrAttachmentOptions.count {
-            //
-            
-            //let childView = AttachmentListContainerView(frame: )
-            //childView.backgroundColor = .red
-            //childView.accessibilityIdentifier = arrAttachmentOptions[index].rawValue
             guard let subView: ChatSharedFilesVC = ChatSharedFilesVC
                     .instantiateController(storyboard: .GroupChat) else {
                 continue
             }
             xValue = self.scrollViewFiles.frame.size.width * CGFloat(index)
-
-            //let subView = ChatSharedFilesVC()
             addChild(subView)
             scrollViewFiles.addSubview(subView.view)
             subView.didMove(toParent: self)
             subView.view.frame = CGRect.init(x: xValue, y: 0, width: width, height: self.filesContainerView.bounds.height)
             subView.attachmentType = arrAttachmentOptions[index]
             subView.setupUI()
-//
-//            childView.attachmentType = arrAttachmentOptions[index]
-//            childView.updateEmptyMessage()
         }
         let widthTotal = self.filesContainerView.bounds.size.width * 3
         self.scrollViewFiles.isPagingEnabled = true
         self.scrollViewFiles.contentSize = CGSize(width: widthTotal, height: self.scrollViewFiles.frame.size.height)
-        //self.scrollViewFiles.widthAnchor.constraint(equalToConstant: widthTotal).isActive = true
     }
-    //
-    
     public func scrollToPage(page: Int) {
         var frame: CGRect = self.scrollViewFiles.frame
         frame.origin.x = frame.size.width * CGFloat(page)
@@ -219,11 +212,8 @@ extension ChatGroupDetailsVC: UITableViewDataSource {
     public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         selectedUsers.count
     }
-
     public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        
         let reuseID = TableViewCellChatUser.reuseId
-        //
         guard let cell = tableView.dequeueReusableCell(
             withIdentifier: reuseID,
             for: indexPath) as? TableViewCellChatUser else {
@@ -232,17 +222,7 @@ extension ChatGroupDetailsVC: UITableViewDataSource {
         //
         let user: ChatChannelMember = selectedUsers[indexPath.row]
         //
-        cell.config(user: user,
-                        selectedImage: nil,
-                        avatarBG: view.tintColor)
-        //
-        cell.lblRole.text = ""
-        cell.lblRole.isHidden = true
-        if user.memberRole == .owner {
-            cell.lblRole.text = "Owner"
-            cell.lblRole.textColor = Appearance.default.colorPalette.statusColorBlue
-            cell.lblRole.isHidden = false
-        }
+        cell.configGroupDetails(channelMember: user, selectedImage: nil, avatarBG: view.tintColor)
         //
         cell.backgroundColor = .clear
         return cell
@@ -252,7 +232,6 @@ extension ChatGroupDetailsVC: UITableViewDataSource {
 
 extension ChatGroupDetailsVC: UIScrollViewDelegate {
     public func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
-
         let pageNumber = round(scrollView.contentOffset.x / scrollView.frame.size.width)
         self.updateIndicator(page: Int(pageNumber))
     }

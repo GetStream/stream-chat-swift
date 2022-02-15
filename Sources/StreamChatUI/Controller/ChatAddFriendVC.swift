@@ -11,7 +11,18 @@ import StreamChatUI
 import UIKit
 
 public class ChatAddFriendVC: ChatBaseVC {
-
+    
+    public enum SelectionType {
+        case addFriend,inviteUser
+        var title: String {
+            switch self {
+            case .addFriend: return "Add Friends"
+            case .inviteUser: return "Invite Friends"
+            }
+        }
+    }
+    // MARK: - OUTLETS
+    @IBOutlet private var titleLabel: UILabel!
     @IBOutlet private var viewHeaderTitleView: UIView!
     @IBOutlet private var viewHeaderView: UIView!
     @IBOutlet private var viewHeaderViewHeightConst: NSLayoutConstraint!
@@ -21,21 +32,19 @@ public class ChatAddFriendVC: ChatBaseVC {
     @IBOutlet private var tableviewContainerView: UIView!
     @IBOutlet private var searchField: UITextField!
     @IBOutlet private var mainStackView: UIStackView!
-    
-    //
+    // MARK: - VARIABLES
+    public var selectionType = ChatAddFriendVC.SelectionType.addFriend
     public lazy var chatUserList: ChatUserListVC = {
         let obj = ChatUserListVC.instantiateController(storyboard: .GroupChat) as? ChatUserListVC
         return obj!
     }()
     private var curentSortType: Em_ChatUserListFilterTypes = .sortByLastSeen
-    //
     private var isFullScreen = false
-    //
     public var selectedUsers = [ChatUser]()
-    //
     public var bCallbackAddUser:(([ChatUser]) -> Void)?
+    var isShortFormEnabled = true
     
-    //
+    // MARK: - VIEW CYCLE
     public override func viewDidLoad() {
         super.viewDidLoad()
         setup()
@@ -45,13 +54,12 @@ public class ChatAddFriendVC: ChatBaseVC {
         self.view.layoutIfNeeded()
         chatUserList.tableViewFrameUpdate()
     }
+   
+    // MARK: - METHODS
     public func setup() {
         //
         self.view.backgroundColor = .clear
-        //
-        let panGesture = UIPanGestureRecognizer(target: self, action: #selector(viewDidDrag(_:)))
-        viewHeaderTitleView.addGestureRecognizer(panGesture)
-        //
+        self.titleLabel.text = selectionType.title
         btnBack?.setImage(Appearance.Images.closeCircle, for: .normal)
         btnNext?.isEnabled = !self.selectedUsers.isEmpty
         //
@@ -69,40 +77,12 @@ public class ChatAddFriendVC: ChatBaseVC {
         //
         viewHeaderView.backgroundColor = Appearance.default.colorPalette.viewBackgroundLightBlack
         searchBarContainerView.backgroundColor = Appearance.default.colorPalette.searchBarBackground
-        //
         searchBarContainerView.layer.cornerRadius = 20.0
         viewHeaderView.layer.cornerRadius = 20.0
-        //
     }
     //
     @objc private func textDidChange(_ sender: UITextField) {
         self.chatUserList.searchDataUsing(searchString: sender.text)
-    }
-    @objc private func addPangGesture(_ sender: UIPanGestureRecognizer) {
-        UIView.animate(withDuration: 0.1) {
-            if self.isFullScreen {
-                self.viewHeaderViewTopConst.priority = .defaultLow
-                self.viewHeaderViewHeightConst.priority = .defaultHigh
-                //self.isFullScreen = false
-            } else {
-                //self.isFullScreen = true
-                self.viewHeaderViewTopConst.priority = .defaultHigh
-                self.viewHeaderViewHeightConst.priority = .defaultLow
-            }
-            self.view.layoutIfNeeded()
-        }
-    }
-    @objc private func viewDidDrag(_ sender: UIPanGestureRecognizer) {
-        
-        let velocity = sender.velocity(in: viewHeaderTitleView)
-        
-        if velocity.y > 0 {
-            self.isFullScreen = true
-            self.addPangGesture(sender)
-        } else if velocity.y < 0  {
-            self.isFullScreen = false
-            self.addPangGesture(sender)
-        }
     }
     //
     // MARK: - Actions
@@ -120,9 +100,7 @@ public class ChatAddFriendVC: ChatBaseVC {
             self.btnBackAction(sender)
         }
     }
-    //
 }
-
 // MARK: - ChatUserListDelegate
 extension ChatAddFriendVC: ChatUserListDelegate {
     public func chatListStateUpdated(state: ChatUserListVC.ChatUserLoadingState) {
@@ -131,5 +109,43 @@ extension ChatAddFriendVC: ChatUserListDelegate {
     public func chatUserDidSelect() {
         self.selectedUsers = self.chatUserList.selectedUsers
         self.btnNext?.isEnabled = !self.selectedUsers.isEmpty
+    }
+}
+// MARK: - Pan Modal Presentable
+extension ChatAddFriendVC: PanModalPresentable {
+
+    public override var preferredStatusBarStyle: UIStatusBarStyle {
+        return .lightContent
+    }
+//    public var panScrollable: UIScrollView? {
+//        return self.chatUserList.view
+//    }
+    public var panScrollable: UIScrollView? {
+        return nil
+    }
+//    public var longFormHeight: PanModalHeight {
+//        return .maxHeightWithTopInset(0)
+//    }
+    public var shortFormHeight: PanModalHeight {
+        return isShortFormEnabled ? .contentHeight(UIScreen.main.bounds.height/2) : longFormHeight
+    }
+    public var anchorModalToLongForm: Bool {
+        return false
+    }
+    public var showDragIndicator: Bool {
+        return false
+    }
+    public var allowsExtendedPanScrolling: Bool {
+        return true
+    }
+    public var allowsDragToDismiss: Bool {
+        return true
+    }
+    public func willTransition(to state: PanModalPresentationController.PresentationState) {
+        guard isShortFormEnabled, case .longForm = state
+            else { return }
+
+        isShortFormEnabled = false
+        panModalSetNeedsLayoutUpdate()
     }
 }
