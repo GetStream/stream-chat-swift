@@ -120,6 +120,7 @@ extension ChatUserListVC {
         tableView?.tableFooterView = UIView()
         tableView?.separatorStyle = .none
         tableView?.backgroundColor = .clear
+        tableView?.keyboardDismissMode = .onDrag
         //
         let reuseID = TableViewHeaderChatUserList.reuseId
         let nib = UINib(nibName: reuseID, bundle: nil)
