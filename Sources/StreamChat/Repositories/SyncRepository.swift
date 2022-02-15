@@ -33,13 +33,12 @@ class SyncRepository {
     let activeChannelControllers: NSHashTable<ChatChannelController>
     let activeChannelListControllers: NSHashTable<ChatChannelListController>
     let channelRepository: ChannelListUpdater
+    let offlineRequestsRepository: OfflineRequestsRepository
     let eventNotificationCenter: EventNotificationCenter
     let database: DatabaseContainer
     let apiClient: APIClient
     private var lastConnection: Date?
 
-    /// Serial queue used to enqueue pending requests one after another
-    private let retryQueue = DispatchQueue(label: "com.stream.queue-requests")
     private lazy var operationQueue: OperationQueue = {
         let operationQueue = OperationQueue()
         operationQueue.maxConcurrentOperationCount = 1
@@ -52,6 +51,7 @@ class SyncRepository {
         activeChannelControllers: NSHashTable<ChatChannelController>,
         activeChannelListControllers: NSHashTable<ChatChannelListController>,
         channelRepository: ChannelListUpdater,
+        offlineRequestsRepository: OfflineRequestsRepository,
         eventNotificationCenter: EventNotificationCenter,
         database: DatabaseContainer,
         apiClient: APIClient
@@ -60,6 +60,7 @@ class SyncRepository {
         self.activeChannelControllers = activeChannelControllers
         self.activeChannelListControllers = activeChannelListControllers
         self.channelRepository = channelRepository
+        self.offlineRequestsRepository = offlineRequestsRepository
         self.eventNotificationCenter = eventNotificationCenter
         self.database = database
         self.apiClient = apiClient
@@ -121,7 +122,7 @@ class SyncRepository {
         operations.append(contentsOf: refetchChannelListQueryOperations)
 
         // 5. Run offline actions requests
-        operations.append(ExecutePendingOfflineActions(database: database, apiClient: apiClient))
+        operations.append(ExecutePendingOfflineActions(offlineRequestsRepository: offlineRequestsRepository))
 
         // 6. Bump the last sync timestamp
         operations.append(AsyncOperation { [weak self] _, done in
@@ -329,35 +330,8 @@ class SyncRepository {
         }
     }
 
-    func queueOfflineRequest(endpoint: EndpointWithoutResponse) {
+    func queueOfflineRequest(endpoint: DataEndpoint) {
         guard config.isLocalStorageEnabled else { return }
-
-        let date = Date()
-        let database = self.database
-
-        retryQueue.async {
-            guard let data = try? JSONEncoder.stream.encode(endpoint) else { return }
-
-            database.write { _ in
-                QueuedRequestDTO.createRequest(date: date, endpoint: data, context: database.writableContext)
-                log.info("Queued request for /\(endpoint.path)", subsystems: .offlineSupport)
-            }
-        }
-    }
-}
-
-typealias QueueOfflineRequestBlock = (EndpointWithoutResponse) -> Void
-typealias EndpointWithoutResponse = Endpoint<EmptyResponse>
-
-extension Endpoint {
-    var withoutResponse: EndpointWithoutResponse {
-        Endpoint<EmptyResponse>(
-            path: path,
-            method: method,
-            queryItems: queryItems,
-            requiresConnectionId: requiresConnectionId,
-            requiresToken: requiresToken,
-            body: body
-        )
+        offlineRequestsRepository.queueOfflineRequest(endpoint: endpoint)
     }
 }

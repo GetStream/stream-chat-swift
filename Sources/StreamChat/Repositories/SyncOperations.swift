@@ -143,55 +143,9 @@ class RefetchChannelListQueryOperation: AsyncOperation {
 }
 
 class ExecutePendingOfflineActions: AsyncOperation {
-    init(database: DatabaseContainer, apiClient: APIClient) {
-        super.init(maxRetries: syncOperationsMaximumRetries) { [weak database, weak apiClient] _, done in
-            guard let readContext = database?.backgroundReadOnlyContext else {
-                done(.continue)
-                return
-            }
-
-            var pendingActions: [(String, Data)] = []
-            readContext.performAndWait {
-                pendingActions = QueuedRequestDTO.loadAllPendingRequests(context: readContext).map {
-                    ($0.id, $0.endpoint)
-                }
-            }
-
-            log.info(
-                "5. Running offline actions requests - Count \(pendingActions.count)",
-                subsystems: .offlineSupport
-            )
-
-            let group = DispatchGroup()
-            for (id, endpoint) in pendingActions {
-                guard let endpoint = try? JSONDecoder.stream.decode(EndpointWithoutResponse.self, from: endpoint) else {
-                    continue
-                }
-                log.info("Executing queued offline request for /\(endpoint.path)", subsystems: .offlineSupport)
-
-                group.enter()
-                apiClient?.recoveryRequest(endpoint: endpoint) { result in
-                    switch result {
-                    case .failure(_ as ClientError.ConnectionError):
-                        // If we failed because there is still no successful connection, we don't remove it from
-                        // the queue
-                        log.info(
-                            "Keeping offline request /\(endpoint.path) as there is no connection",
-                            subsystems: .offlineSupport
-                        )
-                    case .failure, .success:
-                        log.info("Completed queued offline request /\(endpoint.path)", subsystems: .offlineSupport)
-                        database?.write { session in
-                            session.deleteQueuedRequest(id: id)
-                        }
-                    }
-
-                    group.leave()
-                }
-            }
-
-            group.notify(queue: DispatchQueue.main) {
-                log.info("Done executing all queued offline requests", subsystems: .offlineSupport)
+    init(offlineRequestsRepository: OfflineRequestsRepository) {
+        super.init(maxRetries: syncOperationsMaximumRetries) { [weak offlineRequestsRepository] _, done in
+            offlineRequestsRepository?.runQueuedRequests {
                 done(.continue)
             }
         }

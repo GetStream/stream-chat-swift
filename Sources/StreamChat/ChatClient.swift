@@ -70,11 +70,13 @@ public class ChatClient {
     /// A repository that handles all the executions needed to keep the Database in sync with remote.
     private(set) lazy var syncRepository: SyncRepository = {
         let channelRepository = ChannelListUpdater(database: databaseContainer, apiClient: apiClient)
+        let offlineRequestsRepository = OfflineRequestsRepository(database: databaseContainer, apiClient: apiClient)
         return SyncRepository(
             config: config,
             activeChannelControllers: activeChannelControllers,
             activeChannelListControllers: activeChannelListControllers,
             channelRepository: channelRepository,
+            offlineRequestsRepository: offlineRequestsRepository,
             eventNotificationCenter: eventNotificationCenter,
             database: databaseContainer,
             apiClient: apiClient

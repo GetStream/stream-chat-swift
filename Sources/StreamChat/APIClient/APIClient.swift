@@ -132,7 +132,7 @@ class APIClient {
                     if self?.isInRecoveryMode == true {
                         completion(.failure(ClientError.ConnectionError()))
                     } else {
-                        self?.queueOfflineRequest(endpoint.withoutResponse)
+                        self?.queueOfflineRequest(endpoint.withDataResponse)
                         completion(result)
                     }
 
