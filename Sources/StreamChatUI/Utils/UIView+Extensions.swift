@@ -183,3 +183,22 @@ extension UIView {
         }
     }
 }
+
+
+extension UIView {
+    //
+    public func updateChildViewContraint(childView: UIView?) {
+        childView?.translatesAutoresizingMaskIntoConstraints = false
+        childView?.topAnchor.constraint(equalTo: topAnchor).isActive = true
+        childView?.leftAnchor.constraint(equalTo: leftAnchor).isActive = true
+        childView?.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
+        childView?.rightAnchor.constraint(equalTo: rightAnchor).isActive = true
+    }
+    
+    public func updateChildViewInCenter(childView: UIView?, constant: CGFloat = 200) {
+        childView?.translatesAutoresizingMaskIntoConstraints = false
+        childView?.centerXAnchor.constraint(equalTo: centerXAnchor).isActive = true
+        childView?.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
+        childView?.widthAnchor.constraint(equalToConstant: constant).isActive = true
+    }
+}

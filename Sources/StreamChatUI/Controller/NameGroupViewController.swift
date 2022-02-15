@@ -41,10 +41,7 @@ public class NameGroupViewController: ChatBaseVC {
     //
     public override func viewDidLoad() {
         super.viewDidLoad()
-        //
         setupUI()
-        //
-        configureTagView()
     }
     public override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
@@ -175,6 +172,53 @@ extension NameGroupViewController: UITextFieldDelegate {
         }
     }
 }
+
+// MARK: - TABLEVIEW
+extension NameGroupViewController: UITableViewDataSource {
+    public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        selectedUsers.count
+    }
+
+    public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        
+        let reuseID = TableViewCellChatUser.reuseId
+        //
+        guard let cell = tableView.dequeueReusableCell(
+            withIdentifier: reuseID,
+            for: indexPath) as? TableViewCellChatUser else {
+            return UITableViewCell()
+        }
+        //
+        let user: ChatUser = selectedUsers[indexPath.row]
+        //
+        cell.config(user: user,
+                        selectedImage: nil,
+                        avatarBG: view.tintColor)
+        cell.backgroundColor = .clear
+        return cell
+
+    }
+    
+    public func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
+        return true
+    }
+
+    public func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+        if (editingStyle == .delete) {
+            self.selectedUsers.remove(at: indexPath.row)
+            self.tableView.reloadData()
+            self.bCallbackSelectedUsers?(self.selectedUsers)
+            if self.selectedUsers.isEmpty {
+                self.navigationController?.popViewController(animated: false)
+            }
+        }
+    }
+}
+
+// MARK: - Generic View Class
+class ViewWithRadius: UIView {}
+
+/*
 // MARK: - TAGVIEW
 extension NameGroupViewController {
     //
@@ -243,69 +287,4 @@ extension NameGroupViewController {
 //        print("List of Tags Strings:", tagsField.tags.map({$0.text}))
     }
 }
-// MARK: - TABLEVIEW
-extension NameGroupViewController: UITableViewDataSource {
-    public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        selectedUsers.count
-    }
-
-    public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        
-        let reuseID = TableViewCellChatUser.reuseId
-        //
-        guard let cell = tableView.dequeueReusableCell(
-            withIdentifier: reuseID,
-            for: indexPath) as? TableViewCellChatUser else {
-            return UITableViewCell()
-        }
-        //
-        let user: ChatUser = selectedUsers[indexPath.row]
-        //
-        cell.config(user: user,
-                        selectedImage: nil,
-                        avatarBG: view.tintColor)
-        cell.backgroundColor = .clear
-        return cell
-
-    }
-    
-    public func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-        return true
-    }
-
-    public func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
-        if (editingStyle == .delete) {
-            self.selectedUsers.remove(at: indexPath.row)
-            self.tableView.reloadData()
-            self.bCallbackSelectedUsers?(self.selectedUsers)
-            if self.selectedUsers.isEmpty {
-                self.navigationController?.popViewController(animated: false)
-            }
-        }
-    }
-}
-
-// MARK: - Generic View Class
-
-class ViewWithRadius: UIView {
-    //
-//    private var cornerRadiusValue: CGFloat = 20
-//    //
-//    override init(frame: CGRect) {
-//        super.init(frame: frame)
-//        commonInit()
-//    }
-//    
-//    required init?(coder aDecoder: NSCoder) {
-//        super.init(coder: aDecoder)
-//        commonInit()
-//    }
-//    override func draw(_ rect: CGRect) {
-//        super.draw(rect)
-//        layer.cornerRadius = cornerRadiusValue
-//    }
-//    func commonInit(value: CGFloat = 20) {
-//        //
-//        layer.cornerRadius = value
-//    }
-}
+*/

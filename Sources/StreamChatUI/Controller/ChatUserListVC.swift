@@ -50,10 +50,12 @@ public class ChatUserListVC: UIViewController {
     @IBOutlet private weak var noMatchView: UIView!
     //
     // MARK: - VARIABLES
-    public lazy var userListController: ChatUserListController = {
+    private lazy var userListController: ChatUserListController = {
         return ChatClient.shared.userListController()
     }()
-    //
+    private lazy var serachListController: ChatUserSearchController = {
+        return ChatClient.shared.userSearchController()
+    }()
     public var tableView: UITableView?
     //
     //var searchController: ChatUserSearchController?
@@ -76,6 +78,9 @@ public class ChatUserListVC: UIViewController {
     public var isSearchBarVisible = false
     public var isPrefereSmallSize = false
     
+    private var loadingPreviousData: Bool = false
+    private var hasLoadedAllData: Bool = false
+    private var pageSize: Int = 100
     // MARK: - VIEW CYCLE
     open override func viewDidLoad() {
         super.viewDidLoad()
@@ -96,6 +101,8 @@ extension ChatUserListVC {
         //
         searchBarView.layer.cornerRadius = 20.0
         searchBarContainerView.isHidden = !isSearchBarVisible
+        //
+        //userListController.delegate = self
     }
     //
     private func setupSearch() {
@@ -150,7 +157,7 @@ extension ChatUserListVC {
         case .error:
             activityIndicator.stopAnimating()
             //
-        case .searching:
+        case .searching,.loading:
             //
             self.lastSeenWiseUserList.removeAll()
             self.nameWiseUserList = []
@@ -158,9 +165,6 @@ extension ChatUserListVC {
             self.noMatchView.isHidden = true
             self.activityIndicator.isHidden = false
             self.activityIndicator.startAnimating()
-            //viewCreateGroup.isHidden = searchField.hasText || !selectedUserIds.isEmpty
-            //self.setupTableView()
-            //
             self.tableView?.alpha = 0
             //
         case .noUsers:
@@ -171,37 +175,18 @@ extension ChatUserListVC {
             alertImage.image = Appearance.Images.systemMagnifying
             alertText.text = "No user matches these keywords..."
             //
-        case .loading:
-            activityIndicator.isHidden = false
-            activityIndicator.startAnimating()
-            //
         case .selected:
             break
-            //
-//            noMatchView.isHidden = false
-//            activityIndicator.stopAnimating()
-//            viewCreateGroup.isHidden = true
-//            tableView.alpha = 0
-//            //addPersonButton.setImage(.systemPersonBadge, for: .normal)
-//            //infoLabelStackView.isHidden = true
-//            alertImage.image = nil
-//            alertText.text = "No chats here yet..."
         case .completed:
-            //
             activityIndicator.stopAnimating()
-            //
             let lastItem: Int = self.curentSortType == .sortByName ? self.nameWiseUserList.count : self.lastSeenWiseUserList.count
-            //
             if lastItem > 0 {
                 noMatchView.isHidden = true
                 activityIndicator.stopAnimating()
-                //viewCreateGroup.isHidden = searchField.hasText || !selectedUserIds.isEmpty
                 tableView?.alpha = 1
             } else {
                 noMatchView.isHidden = false
-                //viewCreateGroup.isHidden = true
                 tableView?.alpha = 0
-                
                 if self.searchField.text?.isBlank == false {
                     alertImage.image = Appearance.Images.systemMagnifying
                     alertText.text = "No user matches these keywords..."
@@ -209,7 +194,6 @@ extension ChatUserListVC {
                     alertImage.image = nil
                     alertText.text = "No chats here yet..."
                 }
-               
             }
         }
         //
@@ -231,26 +215,14 @@ public extension ChatUserListVC {
         //self.searchController?.query = self.curentSortType.getSearchQuery
         searchOperation?.cancel()
         searchOperation = DispatchWorkItem { [weak self] in
-            self?.fetchUserList(with: searchString)
+            self?.searchUser(with: searchString)
         }
         DispatchQueue.main.asyncAfter(deadline: .now() + 1, execute: searchOperation!)
-        
-//        searchController?.search(term: searchString) { [weak self] error in
-//            guard let weakSelf = self else {
-//                return
-//            }
-//            if error != nil {
-//                weakSelf.update(for: .error)
-//            }
-//        }
     }
     
     // Sorting
-    public func sortUserWith(type: Em_ChatUserListFilterTypes) {
-        //
+    public func sortUserWith(type: Em_ChatUserListFilterTypes, filteredUsers: [ChatUser]) {
         self.curentSortType = type
-        //
-        //update(for: .searching)
         self.lastSeenWiseUserList.removeAll()
         self.nameWiseUserList = []
         self.tableView?.reloadData()
@@ -260,21 +232,19 @@ public extension ChatUserListVC {
             //
             switch self.curentSortType {
             case .sortByName:
-                self.shortByName()
+                self.shortByName(filteredUsers: filteredUsers)
             case .sortByAtoZ:
-                self.shortAtoZ()
+                self.shortAtoZ(filteredUsers: filteredUsers)
             case .sortByLastSeen:
-                self.shortLastSeen()
+                self.shortLastSeen(filteredUsers: filteredUsers)
             }
         }
     }
     
-    private func shortAtoZ() {
-        //
-        let sortedArr = self.userListController.users.filter({ $0.name?.isEmpty == false && $0.id.isEmpty == false && $0.id != ChatClient.shared.currentUserId ?? "" })
-        //
-        let alphabetUsers = sortedArr.filter { ($0.name?.isFirstCharacterAlp ?? false) }
-        var otherUsers = sortedArr.filter { ($0.name?.isFirstCharacterAlp ?? false) == false }
+    private func shortAtoZ(filteredUsers: [ChatUser]) {
+        
+        let alphabetUsers = filteredUsers.filter { ($0.name?.isFirstCharacterAlp ?? false) }
+        var otherUsers = filteredUsers.filter { ($0.name?.isFirstCharacterAlp ?? false) == false }
         //
         otherUsers.sort { obj1, obj2 in
             if let user1 = obj1.id.first, let user2 = obj2.id.first {
@@ -291,12 +261,10 @@ public extension ChatUserListVC {
             self.update(for: .completed)
         }
     }
-    private func shortLastSeen() {
-        //
-        let sortedArr = self.userListController.users.filter({ $0.name?.isEmpty == false && $0.id.isEmpty == false && $0.id != ChatClient.shared.currentUserId ?? "" })
-        //
-        let onlineUser = sortedArr.filter({ $0.isOnline })
-        let otherUsers = sortedArr.filter({ $0.isOnline == false })
+    private func shortLastSeen(filteredUsers: [ChatUser]) {
+        
+        let onlineUser = filteredUsers.filter({ $0.isOnline })
+        let otherUsers = filteredUsers.filter({ $0.isOnline == false })
         //
         self.lastSeenWiseUserList = otherUsers.sorted(by: { ($0.lastActiveAt ?? $0.userCreatedAt) > ($1.lastActiveAt ?? $1.userCreatedAt )})
         onlineUser.forEach {self.lastSeenWiseUserList.insert( $0, at: 0)}
@@ -308,12 +276,10 @@ public extension ChatUserListVC {
             self.update(for: .completed)
         }
     }
-    private func shortByName() {
-        //
-        let sortedArr = self.userListController.users.filter { $0.name?.isEmpty == false }.filter { $0.id.isEmpty == false }.filter { $0.id != ChatClient.shared.currentUserId ?? "" }
-        //
-        let alphabetUsers = sortedArr.filter { ($0.name?.isFirstCharacterAlp ?? false) }
-        var otherUsers = sortedArr.filter { ($0.name?.isFirstCharacterAlp ?? false) == false }
+    private func shortByName(filteredUsers: [ChatUser]) {
+        
+        let alphabetUsers = filteredUsers.filter { ($0.name?.isFirstCharacterAlp ?? false) }
+        var otherUsers = filteredUsers.filter { ($0.name?.isFirstCharacterAlp ?? false) == false }
         //
         otherUsers.sort { obj1, obj2 in
             if let user1 = obj1.id.first, let user2 = obj2.id.first {
@@ -343,38 +309,48 @@ public extension ChatUserListVC {
 // MARK: - GET STREAM API
 extension ChatUserListVC {
     //
-    open func fetchUserList(with name: String? = nil) {
-        
-        //
-        if self.dataLoadingState != .searching {
-            update(for: .searching)
-        }
-        //
-//        let query = UserListQuery.init(filter: .notEqual(.id, to: ChatClient.shared.currentUserId ?? ""), sort: [.init(key: .lastActivityAt, isAscending: false)], pageSize: 60)
-//
-//        userListController = ChatClient.shared.userListController(query: query)
-        //
-        self.searchField.text = name
-        //
+    private func searchUser(with name: String?) {
         if let strName = name, strName.isEmpty == false {
             if strName.containsEmoji  || strName.isBlank {
-                let alert = UIAlertController(title: "", message: "Please enter valid name", preferredStyle: .alert)
-                alert.addAction(UIAlertAction.init(title: "Ok", style: .cancel, handler: nil))
-                self.present(alert, animated: true, completion: nil)
+                Snackbar.show(text: "Please enter valid name")
                 self.update(for: .error)
                 return
             }
-            userListController = ChatClient.shared.userListController(
-                query: .init(filter: .autocomplete(.name, text: strName))
-            )
+            var newQuery = self.serachListController.query
+            newQuery.filter = .and([
+                .autocomplete(.name, text: strName),
+                .exists(.lastActiveAt),
+                .notEqual(.id, to: ChatClient.shared.currentUserId ?? ""),
+            ])
+            serachListController.search(query: newQuery) { error in
+                if let error = error {
+                    // handle error
+                    debugPrint(error)
+                    DispatchQueue.main.async {
+                        self.update(for: .error)
+                    }
+                } else {
+                    let filterData = self.serachListController.users.filter { $0.name?.isEmpty == false }.filter { $0.id.isEmpty == false }.filter { $0.id != ChatClient.shared.currentUserId ?? "" }
+                    self.sortUserWith(type: self.curentSortType, filteredUsers: filterData)
+                }
+            }
         } else {
-            userListController = ChatClient.shared.userListController()
+            self.fetchUserList()
         }
-        //
-        guard self.dataLoadingState == .searching else {
-            return
+        
+    }
+    open func fetchUserList() {
+        if self.dataLoadingState != .loading {
+            update(for: .loading)
         }
+        self.searchField.text = nil
         //
+        var newQuery = UserListQuery(filter: .and([
+            .notEqual(.id, to: ChatClient.shared.currentUserId ?? ""),
+        ]), sort: [.init(key: .lastActivityAt, isAscending: false)], pageSize: 99)
+        newQuery.pagination = Pagination(pageSize: 99)
+        self.userListController = ChatClient.shared.userListController(query: newQuery)
+        let previousCount = self.userListController.users.count
         userListController.synchronize { error in
             if let error = error {
                 // handle error
@@ -383,72 +359,62 @@ extension ChatUserListVC {
                     self.update(for: .error)
                 }
             } else {
-                // access users
-                print(self.userListController.users.count)
-                self.sortUserWith(type: self.curentSortType)
+                self.loadingPreviousData = false
+                if previousCount == self.userListController.users.count {
+                    self.hasLoadedAllData = true
+                }
+                let filterData = self.userListController.users.filter { $0.name?.isEmpty == false }.filter { $0.id.isEmpty == false }.filter { $0.id != ChatClient.shared.currentUserId ?? "" }
+                self.sortUserWith(type: self.curentSortType, filteredUsers: filterData)
             }
         }
-        
-        //
-        //        // load more if needed
-        //        controller.loadNextUsers(limit: 10) { error in
-        //            // handle error / access users
-        //        }
     }
     
-}
-// MARK: - Chat user controller delegate
-extension ChatUserListVC: ChatUserSearchControllerDelegate {
-    //
-    public func controller(_ controller: ChatUserSearchController, didChangeUsers changes: [ListChange<ChatUser>]) {
-        //
-//        if self.curentSortType == .sortByName {
-//            self.nameWiseUserList.users.append(contentsOf: changes.map({ $0.item}))
-//        } else {
-//
-//        }
-        
-        //
-//        DispatchQueue.main.async {
-//            //self.tableView.beginUpdates()
-//            self.lastSeenWiseUserList.removeAll()
-//            self.nameWiseUserList = []
-//            let sortedArr = self.searchController?.users.filter({ $0.name?.isEmpty == false && $0.id.isEmpty == false }) ?? []
-//            //
-//            let groupByName = Dictionary(grouping: sortedArr) { (user) -> Substring in
-//                return user.name!.prefix(1)
-//            }
-//            let keys = groupByName.keys.sorted()
-//            // map the sorted keys to a struct
-//            //
-//            keys.forEach { item  in
-//                self.lastSeenWiseUserList.append(contentsOf: groupByName[item] ?? [])
-//                self.nameWiseUserList.append(ChatUserListData.init(letter: String(item), users: groupByName[item] ?? []))
-//            }
-//            //
-////            for change in changes {
-////                switch change {
-////                case let .insert(_, index: index):
-////                    self.tableView.insertRows(at: [index], with: .automatic)
-////                case let .move(_, fromIndex: fromIndex, toIndex: toIndex):
-////                    self.tableView.moveRow(at: fromIndex, to: toIndex)
-////                case let .update(_, index: index):
-////                    self.tableView.reloadRows(at: [index], with: .automatic)
-////                case let .remove(_, index: index):
-////                    self.tableView.deleteRows(at: [index], with: .automatic)
-////                }
-////            }
-//            self.tableView?.reloadData()
-//            self.update(for: .completed)
-//            //self.tableView.endUpdates()
-//        }
-    }
-
-    public func controller(_ controller: DataController, didChangeState state: DataController.State) {
-        if case .remoteDataFetched = state {
-            update(for: .completed)
+    open func sortUserList() {
+        if let strName = self.searchField.text, strName.isBlank == false {
+            let filterData = self.serachListController.users.filter { $0.name?.isEmpty == false }.filter { $0.id.isEmpty == false }.filter { $0.id != ChatClient.shared.currentUserId ?? "" }
+            self.sortUserWith(type: self.curentSortType, filteredUsers: filterData)
+        } else  {
+            let filterData = self.userListController.users.filter { $0.name?.isEmpty == false }.filter { $0.id.isEmpty == false }.filter { $0.id != ChatClient.shared.currentUserId ?? "" }
+            self.sortUserWith(type: self.curentSortType, filteredUsers: filterData)
         }
     }
+    
+    open func loadMoreChannels(tableView: UITableView, forItemAt indexPath: IndexPath) {
+        
+        if userListController.state != .remoteDataFetched {
+            return
+        }
+        guard let lastVisibleIndexPath = tableView.indexPathsForVisibleRows?.last else {
+            return
+        }
+        var count = 0
+        if self.curentSortType == .sortByName {
+            count = self.nameWiseUserList[indexPath.section].users.count
+        } else {
+            count = self.lastSeenWiseUserList.count
+        }
+        guard indexPath.row == count - 1  else {
+            return
+        }
+        guard !loadingPreviousData else {
+            return
+        }
+        if hasLoadedAllData {
+            return
+        }
+        loadingPreviousData = true
+        self.fetchUserList()
+    }
+}
+// MARK: - Chat user controller delegate
+extension ChatUserListVC: ChatUserListControllerDelegate {
+    //
+    public func controller(_ controller: ChatUserListController, didChangeUsers changes: [ListChange<ChatUser>]) {
+  
+    }
+    public func controller(_ controller: DataController, didChangeState state: DataController.State) {
+    }
+    
 }
 
 // MARK: - TABLE VIEW DELEGATE & DATASOURCE
@@ -583,6 +549,7 @@ extension ChatUserListVC: UITableViewDelegate, UITableViewDataSource {
         if let lastIndex = lastItem, indexPath.row == lastIndex && self.dataLoadingState == .completed {
             //searchController?.loadNextUsers()
         }
+        self.loadMoreChannels(tableView: tableView, forItemAt: indexPath)
     }
     //
     public func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
@@ -642,27 +609,6 @@ extension ChatUserListVC {
     public  func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
         // Hide keyboard on scroll
         view.endEditing(true)
-    }
-}
-
-
-extension UIView {
-    //
-    public func updateChildViewContraint(childView: UIView?) {
-        childView?.translatesAutoresizingMaskIntoConstraints = false
-        childView?.topAnchor.constraint(equalTo: topAnchor).isActive = true
-        childView?.leftAnchor.constraint(equalTo: leftAnchor).isActive = true
-        childView?.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
-        childView?.rightAnchor.constraint(equalTo: rightAnchor).isActive = true
-    }
-    
-    public func updateChildViewInCenter(childView: UIView?, constant: CGFloat = 200) {
-        childView?.translatesAutoresizingMaskIntoConstraints = false
-        childView?.centerXAnchor.constraint(equalTo: centerXAnchor).isActive = true
-        childView?.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
-        childView?.widthAnchor.constraint(equalToConstant: constant).isActive = true
-//        childView?.leftAnchor.constraint(equalTo: leftAnchor, constant: constant).isActive = true
-//        childView?.rightAnchor.constraint(equalTo: rightAnchor, constant: -constant).isActive = true
     }
 }
 

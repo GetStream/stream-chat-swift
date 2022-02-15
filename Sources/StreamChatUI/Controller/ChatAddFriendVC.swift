@@ -73,13 +73,6 @@ public class ChatAddFriendVC: ChatBaseVC {
         searchBarContainerView.layer.cornerRadius = 20.0
         viewHeaderView.layer.cornerRadius = 20.0
         //
-//        let swipeGestureRecognizerDown = UISwipeGestureRecognizer(target: self, action: #selector(addPangGesture(_:)))
-//        let swipeGestureRecognizerUp = UISwipeGestureRecognizer(target: self, action: #selector(addPangGesture(_:)))
-//        // Configure Swipe Gesture Recognizer
-//        swipeGestureRecognizerDown.direction = .down
-//        swipeGestureRecognizerUp.direction = .up
-//        viewHeaderView.addGestureRecognizer(swipeGestureRecognizerDown)
-//        viewHeaderView.addGestureRecognizer(swipeGestureRecognizerUp)
     }
     //
     @objc private func textDidChange(_ sender: UITextField) {
