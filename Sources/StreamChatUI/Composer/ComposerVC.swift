@@ -243,7 +243,7 @@ open class ComposerVC: _ViewController,
         .init()
 
     /// The view controller for selecting image attachments.
-    open private(set) lazy var mediaPickerVC: UIImagePickerController = {
+    open private(set) lazy var mediaPickerVC: UIViewController = {
         let picker = UIImagePickerController()
         picker.mediaTypes = UIImagePickerController.availableMediaTypes(for: .savedPhotosAlbum) ?? ["public.image"]
         picker.sourceType = .savedPhotosAlbum
@@ -252,7 +252,7 @@ open class ComposerVC: _ViewController,
     }()
     
     /// The View Controller for taking a picture.
-    open private(set) lazy var cameraVC: UIImagePickerController = {
+    open private(set) lazy var cameraVC: UIViewController = {
         let camera = UIImagePickerController()
         camera.sourceType = .camera
         camera.mediaTypes = UIImagePickerController.availableMediaTypes(for: .camera) ?? ["public.image"]
@@ -444,22 +444,12 @@ open class ComposerVC: _ViewController,
         present(cameraVC, animated: true)
     }
     
-    /// Returns actions for file attachments.
-    open var fileAttachmentActions: [UIAlertAction] {
+    /// Returns actions for attachments picker.
+    open var attachmentsPickerActions: [UIAlertAction] {
         let showFilePickerAction = UIAlertAction(
             title: L10n.Composer.Picker.file,
             style: .default,
             handler: { [weak self] _ in self?.showFilePicker() }
-        )
-        return [showFilePickerAction]
-    }
-    
-    /// Returns actions for camera/photo actions.
-    open var mediaAttachmentActions: [UIAlertAction] {
-        let showCameraAction = UIAlertAction(
-            title: L10n.Composer.Picker.camera,
-            style: .default,
-            handler: { [weak self] _ in self?.showCamera() }
         )
         
         let showMediaPickerAction = UIAlertAction(
@@ -468,22 +458,24 @@ open class ComposerVC: _ViewController,
             handler: { [weak self] _ in self?.showMediaPicker() }
         )
         
-        let isCameraAvailable = UIImagePickerController.isSourceTypeAvailable(.camera)
+        let showCameraAction = UIAlertAction(
+            title: L10n.Composer.Picker.camera,
+            style: .default,
+            handler: { [weak self] _ in self?.showCamera() }
+        )
         
-        if isCameraAvailable {
-            return [showCameraAction, showMediaPickerAction]
-        }
-        
-        return [showMediaPickerAction]
-    }
-    
-    /// Returns actions for cancelling actions.
-    open var cancelMediaActions: [UIAlertAction] {
         let cancelAction = UIAlertAction(
             title: L10n.Composer.Picker.cancel,
             style: .cancel
         )
-        return [cancelAction]
+        
+        let isCameraAvailable = UIImagePickerController.isSourceTypeAvailable(.camera)
+        
+        if isCameraAvailable {
+            return [showCameraAction, showMediaPickerAction, showFilePickerAction, cancelAction]
+        }
+        
+        return [showMediaPickerAction, showFilePickerAction, cancelAction]
     }
     
     /// Action that handles tap on attachments button in composer.
@@ -495,18 +487,13 @@ open class ComposerVC: _ViewController,
             presentAlert(
                 message: L10n.Composer.Picker.title,
                 preferredStyle: .actionSheet,
-                actions: mediaAttachmentActions + fileAttachmentActions + cancelMediaActions,
+                actions: attachmentsPickerActions,
                 sourceView: sender
             )
         } else if content.attachments.contains(where: { $0.type == .file }) {
             showFilePicker()
         } else if content.attachments.contains(where: { $0.type == .image || $0.type == .video }) {
-            presentAlert(
-                message: L10n.Composer.Picker.title,
-                preferredStyle: .actionSheet,
-                actions: mediaAttachmentActions + cancelMediaActions,
-                sourceView: sender
-            )
+            showMediaPicker()
         }
     }
     
