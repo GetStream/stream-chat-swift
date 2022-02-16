@@ -62,7 +62,7 @@ class JoinPrivateGroupVC: UIViewController {
         }
         if userStatus == .joinGroup {
             addMeInChannel(channelId: channelController.cid?.id ?? "") { error in
-                guard error != nil else {
+                guard error == nil else {
                     var userInfo = [String: Any]()
                     userInfo["message"] = error?.localizedDescription
                     NotificationCenter.default.post(name: .showSnackBar, object: nil, userInfo: userInfo)
