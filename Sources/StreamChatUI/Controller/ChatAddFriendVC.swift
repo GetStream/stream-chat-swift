@@ -75,10 +75,11 @@ public class ChatAddFriendVC: ChatBaseVC {
         chatUserList.curentSortType = .sortByAtoZ
         chatUserList.fetchUserList()
         //
-        viewHeaderView.backgroundColor = Appearance.default.colorPalette.viewBackgroundLightBlack
+        viewHeaderView.backgroundColor = Appearance.default.colorPalette.chatViewBackground
         searchBarContainerView.backgroundColor = Appearance.default.colorPalette.searchBarBackground
         searchBarContainerView.layer.cornerRadius = 20.0
         viewHeaderView.layer.cornerRadius = 20.0
+        
     }
     //
     @objc private func textDidChange(_ sender: UITextField) {

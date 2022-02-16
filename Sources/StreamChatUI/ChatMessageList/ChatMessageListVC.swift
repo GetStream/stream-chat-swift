@@ -82,7 +82,7 @@ open class ChatMessageListVC:
         return !listView.isLastCellFullyVisible && isMoreContentThanOnePage
     }
 
-    var viewEmptyState: UIView!
+    var viewEmptyState: UIView = UIView()
 
     open override func viewDidLoad() {
         super.viewDidLoad()
@@ -94,10 +94,10 @@ open class ChatMessageListVC:
         listView.register(.init(nibName: "AdminMessageTVCell", bundle: nil), forCellReuseIdentifier: "AdminMessageTVCell")
         listView.register(RedPacketAmountBubble.self, forCellReuseIdentifier: "RedPacketAmountBubble")
         listView.register(RedPacketExpired.self, forCellReuseIdentifier: "RedPacketExpired")
-        setupEmptyState()
-        if let numberMessage = dataSource?.numberOfMessages(in: self) {
-            viewEmptyState.isHidden = numberMessage != 0
-        }
+        //setupEmptyState()
+//        if let numberMessage = dataSource?.numberOfMessages(in: self) {
+//            viewEmptyState.isHidden = numberMessage != 0
+//        }
     }
 
     override open func setUp() {
@@ -147,9 +147,9 @@ open class ChatMessageListVC:
     override open func setUpAppearance() {
         super.setUpAppearance()
         
-        view.backgroundColor = appearance.colorPalette.walletTabbarBackground
+        view.backgroundColor = appearance.colorPalette.background
         
-        listView.backgroundColor = appearance.colorPalette.viewBackgroundLightBlack
+        listView.backgroundColor = appearance.colorPalette.background
     }
 
     override open func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
@@ -211,9 +211,9 @@ open class ChatMessageListVC:
     /// Updates the collection view data with given `changes`.
     open func updateMessages(with changes: [ListChange<ChatMessage>], completion: (() -> Void)? = nil) {
         listView.updateMessages(with: changes, completion: completion)
-        if let numberMessage = dataSource?.numberOfMessages(in: self) {
-            viewEmptyState.isHidden = numberMessage != 0
-        }
+//        if let numberMessage = dataSource?.numberOfMessages(in: self) {
+//            viewEmptyState.isHidden = numberMessage != 0
+//        }
     }
 
     /// Handles tap action on the table view.
@@ -447,8 +447,9 @@ open class ChatMessageListVC:
                 for: indexPath) as? AdminMessageTVCell else {
                     return UITableViewCell()
             }
+            let messagesCont = dataSource?.numberOfMessages(in: self) ?? 0
             cell.content = message
-            cell.configCell()
+            cell.configCell(messageCount: messagesCont)
             cell.transform = .mirrorY
             return cell
         } else {

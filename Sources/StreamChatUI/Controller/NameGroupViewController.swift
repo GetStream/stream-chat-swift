@@ -36,7 +36,7 @@ public class NameGroupViewController: ChatBaseVC {
     }
     // MARK: - METHODS
     public func setupUI() {
-        self.view.backgroundColor = Appearance.default.colorPalette.viewBackgroundLightBlack
+        self.view.backgroundColor = Appearance.default.colorPalette.background
         self.nameField.autocorrectionType = .no
         self.nameField.addTarget(self, action: #selector(textDidChange(_:)), for: .editingChanged)
         groupDescriptionField.addTarget(self, action: #selector(textDidChange(_:)), for: .editingChanged)
@@ -53,7 +53,7 @@ public class NameGroupViewController: ChatBaseVC {
         lblFriendCount.text = "\(self.selectedUsers.count) \(str)"
         //
         navigationController?.navigationBar.isHidden = true
-        lblTitle.textColor = .white
+        lblTitle.setChatNavTitleColor()
         //
         lblTitle.text = "New Chat"
         //

@@ -20,7 +20,8 @@ class AdminMessageTVCell: UITableViewCell {
     // MARK: - Outlets
     @IBOutlet weak var lblDesc: UILabel!
     @IBOutlet weak var lblTime: UILabel!
-
+    @IBOutlet weak var messageViewBottomConstraint: NSLayoutConstraint!
+    
     // MARK: - Variables
     var content: ChatMessage?
     public lazy var dateFormatter: DateFormatter = .makeDefault()
@@ -32,7 +33,7 @@ class AdminMessageTVCell: UITableViewCell {
     }
 
     // MARK: - Functions
-    func configCell() {
+    func configCell(messageCount: Int) {
         if let createdAt = content?.createdAt {
             lblTime.text = dateFormatter.string(from: createdAt)
         } else {
@@ -46,6 +47,7 @@ class AdminMessageTVCell: UITableViewCell {
         default:
             lblDesc.text = ""
         }
+        messageViewBottomConstraint.constant = messageCount == 1 ? 0 : 16
     }
     
     func configCell(with date: Date?, message: String) {

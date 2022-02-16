@@ -279,7 +279,7 @@ public extension ChatUserListVC {
     }
     private func shortByName(filteredUsers: [ChatUser]) {
         
-        let alphabetUsers = filteredUsers.filter { ($0.name?.isFirstCharacterAlp ?? false) }
+        let alphabetUsers = filteredUsers.filter { ($0.name?.isFirstCharacterAlp ?? false)}
         var otherUsers = filteredUsers.filter { ($0.name?.isFirstCharacterAlp ?? false) == false }
         //
         otherUsers.sort { obj1, obj2 in
@@ -290,7 +290,7 @@ public extension ChatUserListVC {
         }
         //
         let groupByName = Dictionary(grouping: alphabetUsers) { (user) -> Substring in
-            return user.name!.prefix(1)
+            return user.name!.lowercased().prefix(1)
         }
         //
         let keys = groupByName.keys.sorted()
@@ -566,7 +566,7 @@ extension ChatUserListVC: UITableViewDelegate, UITableViewDataSource {
             let header = tableView.dequeueReusableCell(withIdentifier: reuseID) as? TableViewHeaderChatUserList
             header!.lblTitle.text = self.nameWiseUserList[section].letter.capitalized
             header!.titleContainerView.layer.cornerRadius = 12.0
-            header!.backgroundColor = Appearance.default.colorPalette.viewBackgroundLightBlack
+            header!.backgroundColor = .clear
             return header!
         }
         return nil

@@ -476,7 +476,7 @@ open class ChatMessageContentView: _View, ThemeProvider {
                     if message.type == .ephemeral {
                         return appearance.colorPalette.background8
                     } else {
-                        return appearance.colorPalette.background6
+                        return appearance.colorPalette.outgoingMessageColor
                         /*if content?.isAttachmentAdded() ?? false {
                             return .clear
                         } else {

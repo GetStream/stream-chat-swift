@@ -42,7 +42,7 @@ public class ChatGroupDetailsVC: ChatBaseVC {
     // MARK: - METHOD
     open func setupUI() {
         //
-        view.backgroundColor = Appearance.default.colorPalette.viewBackgroundLightBlack
+        view.backgroundColor = Appearance.default.colorPalette.chatViewBackground
         //
         let name = self.channelController?.channel?.name ?? ""
         lblTitle.text = name
