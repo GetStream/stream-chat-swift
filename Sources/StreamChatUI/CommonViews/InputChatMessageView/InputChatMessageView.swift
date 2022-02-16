@@ -124,10 +124,10 @@ open class InputChatMessageView: _View, ComponentsProvider, AppearanceProvider {
             emptyView.heightAnchor.pin(equalToConstant: 24),
             emptyView.widthAnchor.pin(equalToConstant: 2),
         ])
-        sendButton.pin(anchors: [.width], to: 24)
-        sendButton.pin(anchors: [.height], to: 24)
-        emojiButton.pin(anchors: [.width], to: 24)
-        emojiButton.pin(anchors: [.height], to: 24)
+        sendButton.pin(anchors: [.width], to: 30)
+        sendButton.pin(anchors: [.height], to: 30)
+        emojiButton.pin(anchors: [.width], to: 30)
+        emojiButton.pin(anchors: [.height], to: 30)
     }
 
     override open func updateContent() {

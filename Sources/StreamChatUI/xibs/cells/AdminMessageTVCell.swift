@@ -68,7 +68,7 @@ class AdminMessageTVCell: UITableViewCell {
         let otherAdmins = content?.extraData.daoAdmins.filter({ ($0["signerUserId"] as? String ?? "") != ChatClient.shared.currentUserId }) ?? [[String: Any]]()
         if otherAdmins.count >= 1 {
             descText.append("with ")
-            descText.append(otherAdmins.first?["signerName"] as? String ?? "")
+            descText.append("\(otherAdmins.first?["signerName"] as? String ?? "") ")
         }
         if otherAdmins.count >= 2 {
             descText.append("and ")
