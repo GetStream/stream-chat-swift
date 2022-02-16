@@ -122,6 +122,9 @@
 		6E0D12EA27B3CF85003DD1AA /* TableViewCellChatUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E0D12E727B3CF85003DD1AA /* TableViewCellChatUser.swift */; };
 		6E0D12EB27B3CF85003DD1AA /* TableViewCellChatUser.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6E0D12E827B3CF85003DD1AA /* TableViewCellChatUser.xib */; };
 		6E0D12EC27B3CF85003DD1AA /* TableViewCellChatUser.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6E0D12E827B3CF85003DD1AA /* TableViewCellChatUser.xib */; };
+		6E92FD3A27BCCBAF00DA89B6 /* ChatNavTitleLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E92FD3927BCCBAF00DA89B6 /* ChatNavTitleLabel.swift */; };
+		6E92FD3B27BCCBAF00DA89B6 /* ChatNavTitleLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E92FD3927BCCBAF00DA89B6 /* ChatNavTitleLabel.swift */; };
+		6E92FD3C27BCEEAD00DA89B6 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 88E779B12563FA6B00BA79B6 /* Assets.xcassets */; };
 		6ED3E44127B4D4C900A05C0A /* ChatBaseVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ED3E44027B4D4C900A05C0A /* ChatBaseVC.swift */; };
 		6ED3E44227B4D4C900A05C0A /* ChatBaseVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ED3E44027B4D4C900A05C0A /* ChatBaseVC.swift */; };
 		6ED3E44827B5337C00A05C0A /* AvatarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ED3E44727B5337C00A05C0A /* AvatarView.swift */; };
@@ -1625,6 +1628,7 @@
 		6E0D12DE27B3CDF4003DD1AA /* TableViewHeaderChatUserList.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TableViewHeaderChatUserList.swift; sourceTree = "<group>"; };
 		6E0D12E727B3CF85003DD1AA /* TableViewCellChatUser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TableViewCellChatUser.swift; sourceTree = "<group>"; };
 		6E0D12E827B3CF85003DD1AA /* TableViewCellChatUser.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TableViewCellChatUser.xib; sourceTree = "<group>"; };
+		6E92FD3927BCCBAF00DA89B6 /* ChatNavTitleLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatNavTitleLabel.swift; sourceTree = "<group>"; };
 		6ED3E44027B4D4C900A05C0A /* ChatBaseVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatBaseVC.swift; sourceTree = "<group>"; };
 		6ED3E44727B5337C00A05C0A /* AvatarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AvatarView.swift; sourceTree = "<group>"; };
 		6ED3E44D27B53AE200A05C0A /* AttachmentListCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttachmentListCollectionViewCell.swift; sourceTree = "<group>"; };
@@ -3011,6 +3015,7 @@
 				6EEFB76F27BB837F007224C2 /* PanModel */,
 				6ED3E44727B5337C00A05C0A /* AvatarView.swift */,
 				6ED3E45327B53D3400A05C0A /* AttachmentListContainerView.swift */,
+				6E92FD3927BCCBAF00DA89B6 /* ChatNavTitleLabel.swift */,
 			);
 			path = CustomView;
 			sourceTree = "<group>";
@@ -6310,6 +6315,7 @@
 				6ED3E45127B53AE200A05C0A /* AttachmentListCollectionViewCell.xib in Resources */,
 				6E0D12EB27B3CF85003DD1AA /* TableViewCellChatUser.xib in Resources */,
 				6E0D12DF27B3CDF4003DD1AA /* TableViewHeaderChatUserList.xib in Resources */,
+				6E92FD3C27BCEEAD00DA89B6 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -7122,6 +7128,7 @@
 				E79AC10D25831A1500C3CE5D /* ChatSuggestionsCollectionViewLayout.swift in Sources */,
 				E73A8B2B2578EB2B00FBDC56 /* ComposerVC.swift in Sources */,
 				ADFA09C926A99E0A002A6EFA /* ChatThreadHeaderView.swift in Sources */,
+				6E92FD3B27BCCBAF00DA89B6 /* ChatNavTitleLabel.swift in Sources */,
 				CDFA6EDD2768DB0A00DC3B7F /* ActivityIndicator.swift in Sources */,
 				8800A26F258A04D5006D64C4 /* ChatMessageAttachmentPreviewVC.swift in Sources */,
 				847DD2DB267233DB0084E14B /* GradientView.swift in Sources */,
@@ -7622,6 +7629,7 @@
 				8A62704E24B8660A0040BFD6 /* EventType.swift in Sources */,
 				F65D9091250A5989000B8CEB /* WebSocketConnectEndpoint.swift in Sources */,
 				DAE566EB24FFD26C00E39431 /* CurrentUserController+SwiftUI.swift in Sources */,
+				6E92FD3A27BCCBAF00DA89B6 /* ChatNavTitleLabel.swift in Sources */,
 				8836FFBB2540741D009FDF73 /* FlagUserPayload.swift in Sources */,
 				84AA4E3626F264610056A684 /* EventDTOConverterMiddleware.swift in Sources */,
 				ADF34FA625CDD8F600AD637C /* ConnectionController+Combine.swift in Sources */,

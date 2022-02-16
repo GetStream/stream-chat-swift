@@ -260,8 +260,8 @@ open class ChatChannelVC:
         NSLayoutConstraint.activate([
             closePinButton.trailingAnchor.constraint(equalTo: shareView.trailingAnchor, constant: -20),
             closePinButton.centerYAnchor.constraint(equalTo: shareView.centerYAnchor, constant: 0),
-            closePinButton.widthAnchor.constraint(equalToConstant: 20),
-            closePinButton.heightAnchor.constraint(equalToConstant: 20)
+            closePinButton.widthAnchor.constraint(equalToConstant: 30),
+            closePinButton.heightAnchor.constraint(equalToConstant: 30)
         ])
 
         if let cid = channelController.cid {
@@ -284,6 +284,11 @@ open class ChatChannelVC:
         let avatarTapGesture = UITapGestureRecognizer.init(target: self, action: #selector(self.avatarViewAction(_:)))
         avatarTapGesture.numberOfTapsRequired = 1
         channelAvatarView.addGestureRecognizer(avatarTapGesture)
+        
+        headerView.titleContainerView.titleLabel.setChatNavTitleColor()
+        headerView.titleContainerView.subtitleLabel.setChatNavSubtitleColor()
+        
+        navigationHeaderView.backgroundColor = Appearance.default.colorPalette.chatNavBarBackgroundColor
     }
 
     override open func viewDidLoad() {
@@ -411,6 +416,8 @@ open class ChatChannelVC:
         } else {
             addFriendButton.isHidden = false
             shareButton.isHidden = true
+            guard self.isChannelCreated == true else { return  }
+            self.isChannelCreated = false
             let members = (channelController.channel?.lastActiveMembers ?? []).reduce(into: [String: RawJSON](), { $0[$1.id] = .string($1.name ?? "")})
             let joiningText = "Group Created\nTry using the menu item to share with others."
             //

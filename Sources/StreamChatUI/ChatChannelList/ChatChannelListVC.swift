@@ -53,8 +53,7 @@ open class ChatChannelListVC: _ViewController,
     public let lblTitle: UILabel = {
         let lbl = UILabel()
         lbl.translatesAutoresizingMaskIntoConstraints = false
-        lbl.font = UIFont.boldSystemFont(ofSize: 16)
-        lbl.textColor = .white
+        lbl.setChatNavTitleColor()
         return lbl.withoutAutoresizingMaskConstraints
     }()
     //
@@ -86,8 +85,9 @@ open class ChatChannelListVC: _ViewController,
 
     override open func setUp() {
         super.setUp()
-        headerSafeAreaView.backgroundColor = appearance.colorPalette.walletTabbarBackground
-        headerView.backgroundColor = appearance.colorPalette.walletTabbarBackground
+        headerSafeAreaView.backgroundColor = appearance.colorPalette.chatNavBarBackgroundColor
+        headerView.backgroundColor = appearance.colorPalette.chatNavBarBackgroundColor
+        
         navigationController?.navigationBar.isHidden = true
         controller.delegate = self
         controller.synchronize()
@@ -205,7 +205,7 @@ open class ChatChannelListVC: _ViewController,
         //navigationItem.backButtonTitle = ""
         //navigationItem.leftBarButtonItem = UIBarButtonItem(customView: userAvatarView)
 
-        collectionView.backgroundColor = appearance.colorPalette.background
+        collectionView.backgroundColor = Appearance.default.colorPalette.chatViewBackground
 
         if let flowLayout = collectionViewLayout as? ListCollectionViewLayout {
             flowLayout.itemSize = UICollectionViewFlowLayout.automaticSize
@@ -238,7 +238,8 @@ open class ChatChannelListVC: _ViewController,
             channel: controller.channels[indexPath.row],
             currentUserId: controller.client.currentUserId
         )
-
+        cell.itemView.titleLabel.setChatTitleColor()
+        cell.itemView.subtitleLabel.setChatSubtitleColor()
         cell.swipeableView.delegate = self
         cell.swipeableView.indexPath = { [weak cell, weak self] in
             guard let cell = cell else { return nil }

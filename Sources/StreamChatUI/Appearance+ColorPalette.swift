@@ -68,10 +68,14 @@ public extension Appearance {
         public var stepperForeground: UIColor = .init(rgb: 0x3A3A3D)
         
         public var tabbarBackground: UIColor = .tabBarBackground
-        public var viewBackgroundLightBlack: UIColor = .viewLightBlack
+        public var chatViewBackground: UIColor = .chatViewBackground
         public var searchBarBackground: UIColor = .searchBackground
         public var statusColorBlue: UIColor = .statusColor
         public var subTitleColor: UIColor = .subTitleColorChat
+        public var chatNavigationTitleColor: UIColor = .chatNavigationTitleColor
+        public var chatNavBarBackgroundColor: UIColor = .tabBarBackground
+        public var outgoingMessageColor: UIColor = .outgoingMessageColor
+        
     }
 }
 
@@ -82,10 +86,15 @@ private extension UIColor {
     /// This is color palette used by design team.
     /// If you see any color not from this list in figma, point it out to anyone in design team.
     static let tabBarBackground = mode(0x161616, lightAlpha: 1.0, 0x161616, darkAlpha: 1.0)
-    static let viewLightBlack = mode(0x070A0D, lightAlpha: 1.0, 0x070A0D, darkAlpha: 1.0)
+    static let chatViewBackground = mode(0x131314, lightAlpha: 1.0, 0x131314, darkAlpha: 1.0)
+    //static let chatViewBackground = mode(0xFFFFFF, lightAlpha: 0.2, 0xFFFFFF, darkAlpha: 0.2)
     static let searchBackground = mode(0x1C1C1E, lightAlpha: 1.0, 0x1C1C1E, darkAlpha: 1.0)
     static let statusColor = mode(0x8CB2F8, lightAlpha: 1.0, 0x8CB2F8, darkAlpha: 1.0)
-    static let subTitleColorChat = mode(0xD8D8D8, lightAlpha: 1.0, 0xD8D8D8, darkAlpha: 1.0)
+    static let subTitleColorChat = mode(0xEBEBF5, lightAlpha: 0.6, 0xEBEBF5, darkAlpha: 0.6)
+    static let chatNavigationTitleColor = mode(0xFFFFFF, lightAlpha: 0.8, 0xFFFFFF, darkAlpha: 0.8)
+    static let chatNavBarBackgroundColor = mode(0x1D1D1D, lightAlpha: 0.94, 0x1D1D1D, darkAlpha: 0.94)
+    static let outgoingMessageColor = mode(0x00A1F2, lightAlpha: 1.0, 0x00A1F2, darkAlpha: 1.0)
+    
     
     static let streamBlack = mode(0x000000, 0xffffff)
     static let streamGray = mode(0x7a7a7a, 0x7a7a7a)

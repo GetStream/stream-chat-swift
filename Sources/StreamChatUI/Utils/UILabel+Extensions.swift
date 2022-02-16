@@ -31,3 +31,23 @@ extension UILabel {
         }
       }
 }
+
+// MARK: - CHAT UI
+extension UILabel {
+    public func setChatNavTitleColor() {
+        self.textColor = Appearance.default.colorPalette.chatNavigationTitleColor
+        self.font = UIFont.systemFont(ofSize: 16, weight: UIFont.Weight.semibold)
+    }
+    public func setChatNavSubtitleColor() {
+        self.textColor = Appearance.default.colorPalette.chatNavigationTitleColor
+        self.font = UIFont.systemFont(ofSize: 11, weight: UIFont.Weight.regular)
+    }
+    public func setChatTitleColor() {
+        self.textColor = UIColor.white
+        self.font = UIFont.systemFont(ofSize: 17, weight: UIFont.Weight.regular)
+    }
+    public func setChatSubtitleColor() {
+        self.textColor = Appearance.default.colorPalette.subTitleColor
+        self.font = UIFont.systemFont(ofSize: 11, weight: UIFont.Weight.regular)
+    }
+}
