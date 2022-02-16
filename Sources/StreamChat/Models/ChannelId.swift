@@ -11,7 +11,7 @@ import Foundation
 public struct ChannelId: Hashable, CustomStringConvertible {
     private static let separator: Character = ":"
     
-    let rawValue: String
+    public let rawValue: String
     
     /// Creates a new `ChannelId` value.
     ///

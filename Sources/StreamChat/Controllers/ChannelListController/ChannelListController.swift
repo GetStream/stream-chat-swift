@@ -41,8 +41,6 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
             client.databaseContainer,
             client.apiClient
         )
-    
-    private let requestedChannelsLimit = 25
 
     /// A Boolean value that returns wether pagination is finished
     public private(set) var hasLoadedAllPreviousChannels: Bool = false
@@ -250,7 +248,7 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
             return
         }
 
-        let limit = limit ?? requestedChannelsLimit
+        let limit = limit ?? query.pagination.pageSize
         var updatedQuery = query
         updatedQuery.pagination = Pagination(pageSize: limit, offset: channels.count)
         worker.update(channelListQuery: updatedQuery) { result in
