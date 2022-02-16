@@ -80,3 +80,6 @@ Products/
 
 # Ignore Dependencies folder
 Dependencies/
+
+# Environment Variables
+.env

@@ -8,6 +8,22 @@ The message list view in the SwiftUI SDK allows several customization options. T
 
 If you are developing an app with this use-case, you can customize the [message avatars](../custom-avatar), [reactions](../message-reactions), [theming and presentation logic](../../getting-started) and the different types of [attachments](../attachments).
 
+Additionally, you can control the display of the helper views around the message (date indicators, avatars) and paddings, via the `MessageListConfig`'s properties `MessageDisplayOptions` and `MessagePaddings`. The `MessageListConfig` is part of the `Utils` class in `StreamChat`. Here's an example on how to hide the date indicators and avatars, while also increasing the horizontal padding.
+
+```swift
+let messageDisplayOptions = MessageDisplayOptions(showAvatars: false, showMessageDate: false)
+let messagePaddings = MessagePaddings(horizontal: 16)
+let messageListConfig = MessageListConfig(
+    messageListType: .messaging,
+    typingIndicatorPlacement: .navigationBar,
+    groupMessages: true,
+    messageDisplayOptions: messageDisplayOptions,
+    messagePaddings: messagePaddings
+)
+let utils = Utils(messageListConfig: messageListConfig)
+streamChat = StreamChat(chatClient: chatClient, utils: utils)
+```
+
 However, if you are building a livestream app similar to Twitch, you will need a different type of user interface for the message views. The SwiftUI SDK allows swapping the message container view with your own implementation, without needing to implement the whole message list, the composer or the reactions. In order to do this, you need to implement the method `makeMessageContainerView` in the `ViewFactory` protocol.
 
 For example, if you need a simple text message view, alligned on the left, you can do it like this:
