@@ -250,6 +250,15 @@ open class ComposerVC: _ViewController,
         picker.delegate = self
         return picker
     }()
+    
+    /// The View Controller for taking a picture.
+    open private(set) lazy var cameraVC: UIViewController = {
+        let camera = UIImagePickerController()
+        camera.sourceType = .camera
+        camera.mediaTypes = UIImagePickerController.availableMediaTypes(for: .camera) ?? ["public.image"]
+        camera.delegate = self
+        return camera
+    }()
 
     /// The view controller for selecting file attachments.
     open private(set) lazy var filePickerVC: UIViewController = {
@@ -431,6 +440,10 @@ open class ComposerVC: _ViewController,
         present(filePickerVC, animated: true)
     }
     
+    open func showCamera() {
+        present(cameraVC, animated: true)
+    }
+    
     /// Returns actions for attachments picker.
     open var attachmentsPickerActions: [UIAlertAction] {
         let showFilePickerAction = UIAlertAction(
@@ -445,10 +458,22 @@ open class ComposerVC: _ViewController,
             handler: { [weak self] _ in self?.showMediaPicker() }
         )
         
+        let showCameraAction = UIAlertAction(
+            title: L10n.Composer.Picker.camera,
+            style: .default,
+            handler: { [weak self] _ in self?.showCamera() }
+        )
+        
         let cancelAction = UIAlertAction(
             title: L10n.Composer.Picker.cancel,
             style: .cancel
         )
+        
+        let isCameraAvailable = UIImagePickerController.isSourceTypeAvailable(.camera)
+        
+        if isCameraAvailable {
+            return [showCameraAction, showMediaPickerAction, showFilePickerAction, cancelAction]
+        }
         
         return [showMediaPickerAction, showFilePickerAction, cancelAction]
     }
