@@ -256,6 +256,7 @@ open class ComposerVC: _ViewController,
         let camera = UIImagePickerController()
         camera.sourceType = .camera
         camera.mediaTypes = UIImagePickerController.availableMediaTypes(for: .camera) ?? ["public.image"]
+        camera.delegate = self
         return camera
     }()
 
