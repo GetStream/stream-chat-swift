@@ -671,6 +671,7 @@ open class ChatChannelVC:
         }
     }
 
+    // TODO: - Invite and other action need to implement
     @available(iOS 13.0, *)
     func getMenuItems() -> [UIAction] {
         // private group
@@ -749,7 +750,15 @@ open class ChatChannelVC:
         let groupImage = UIAction(title: "Group Image", image: appearance.images.photo) { _ in
         }
         if channelController.channel?.type == .privateMessaging {
-            return [privateGroup]
+            //return [privateGroup]
+            var actions: [UIAction] = []
+            actions.append(privateGroup)
+            if channelController.channel?.membership?.userRole == .admin {
+                actions.append(deleteAndLeave)
+            } else {
+                actions.append(leaveGroup)
+            }
+            return actions
         } else {
             if channelController.channel?.isDirectMessageChannel ?? false {
                 var actions: [UIAction] = []
@@ -764,7 +773,7 @@ open class ChatChannelVC:
             } else {
                 if channelController.channel?.membership?.userRole == .admin {
                     var actions: [UIAction] = []
-                    actions.append(contentsOf: [groupImage, search, invite, groupQR])
+                    actions.append(contentsOf: [groupImage, search,/* invite,*/ groupQR])
                     if channelController.channel?.isMuted ?? false {
                         actions.append(unmute)
                     } else {
@@ -774,7 +783,7 @@ open class ChatChannelVC:
                     return actions
                 } else {
                     var actions: [UIAction] = []
-                    actions.append(contentsOf: [search, invite, groupQR])
+                    actions.append(contentsOf: [search,/* invite,*/ groupQR])
                     if channelController.channel?.isMuted ?? false {
                         actions.append(unmute)
                     } else {
