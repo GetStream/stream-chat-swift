@@ -19,7 +19,8 @@ class APIClient_Tests: XCTestCase {
     var decoder: TestRequestDecoder!
     var cdnClient: CDNClient_Mock!
     var tokenRefresher: ((@escaping () -> Void) -> Void)!
-    
+    var queueOfflineRequest: QueueOfflineRequestBlock!
+
     override func setUp() {
         super.setUp()
         
@@ -40,13 +41,15 @@ class APIClient_Tests: XCTestCase {
         decoder = TestRequestDecoder()
         cdnClient = CDNClient_Mock()
         tokenRefresher = { _ in }
+        queueOfflineRequest = { _ in }
         
         apiClient = APIClient(
             sessionConfiguration: sessionConfiguration,
             requestEncoder: encoder,
             requestDecoder: decoder,
             CDNClient: cdnClient,
-            tokenRefresher: tokenRefresher
+            tokenRefresher: tokenRefresher,
+            queueOfflineRequest: queueOfflineRequest
         )
     }
     
@@ -415,13 +418,17 @@ class APIClient_Tests: XCTestCase {
         let loggerMock = LoggerMock()
         loggerMock.injectMock()
 
-        (1...5).forEach { _ in
-            self.apiClient.recoveryRequest(endpoint: Endpoint<TestUser>.mock(), completion: { _ in })
+        let lastRequestExpectation = expectation(description: "Last request completed")
+        (1...5).forEach { index in
+            self.apiClient.recoveryRequest(endpoint: Endpoint<TestUser>.mock(), completion: { _ in
+                if index == 5 { lastRequestExpectation.fulfill() }
+            })
         }
 
-        AssertAsync.willBeEqual(loggerMock.assertionFailureCalls, 5)
-        XCTAssertNotCall("encodeRequest(for:completion:)", on: encoder)
-        XCTAssertNotCall("decodeRequestResponse(data:response:error:)", on: decoder)
+        waitForExpectations(timeout: 0.1, handler: nil)
+        XCTAssertEqual(loggerMock.assertionFailureCalls, 5)
+        XCTAssertCall("encodeRequest(for:completion:)", on: encoder, times: 5)
+        XCTAssertCall("decodeRequestResponse(data:response:error:)", on: decoder, times: 5)
     }
 
     func test_whenInRecoveryMode_startingMultipleRecoveryRequestsAtTheSameTimeShouldRunThemInSerial() {
@@ -519,7 +526,8 @@ class APIClient_Tests: XCTestCase {
             requestEncoder: encoder,
             requestDecoder: decoder,
             CDNClient: cdnClient,
-            tokenRefresher: tokenRefresher
+            tokenRefresher: tokenRefresher,
+            queueOfflineRequest: queueOfflineRequest
         )
     }
 }

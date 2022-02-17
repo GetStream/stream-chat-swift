@@ -151,6 +151,7 @@ var streamChatSourcesExcluded: [String] { [
     "Repositories/SyncOperations_Tests.swift",
     "Repositories/SyncRepository_Mock.swift",
     "Repositories/SyncRepository_Tests.swift",
+    "Repositories/OfflineRequestsRepository_Mock.swift",
     "Models/Member_Tests.swift",
     "Models/MessageReactionType_Tests.swift",
     "Models/ChannelId_Tests.swift",

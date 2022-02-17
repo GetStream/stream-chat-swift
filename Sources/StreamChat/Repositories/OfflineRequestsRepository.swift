@@ -42,10 +42,7 @@ class OfflineRequestsRepository {
             }
         }
 
-        log.info(
-            "5. Running offline actions requests - Count \(pendingActions.count)",
-            subsystems: .offlineSupport
-        )
+        log.info("\(pendingActions.count) pending offline requests", subsystems: .offlineSupport)
 
         let database = self.database
         let group = DispatchGroup()

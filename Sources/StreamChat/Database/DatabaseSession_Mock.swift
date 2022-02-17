@@ -293,6 +293,10 @@ extension DatabaseSessionMock {
     func deleteQuery(_ query: MessageSearchQuery) {
         underlyingSession.deleteQuery(query)
     }
+
+    func deleteQueuedRequest(id: String) {
+        underlyingSession.deleteQueuedRequest(id: id)
+    }
 }
 
 private extension DatabaseSessionMock {

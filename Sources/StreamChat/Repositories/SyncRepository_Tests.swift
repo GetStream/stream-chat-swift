@@ -11,6 +11,7 @@ final class SyncRepository_Tests: XCTestCase {
     var _activeChannelListControllers = NSHashTable<ChatChannelListController>.weakObjects()
     var client: ChatClientMock!
     var channelRepository: ChannelListUpdaterMock!
+    var offlineRequestsRepository: OfflineRequestsRepositoryMock!
     var database: DatabaseContainerMock!
     var apiClient: APIClientMock!
 
@@ -22,6 +23,7 @@ final class SyncRepository_Tests: XCTestCase {
         config.isLocalStorageEnabled = true
         client = ChatClientMock(config: config)
         channelRepository = ChannelListUpdaterMock(database: client.databaseContainer, apiClient: client.apiClient)
+        offlineRequestsRepository = OfflineRequestsRepositoryMock(database: client.databaseContainer, apiClient: client.apiClient)
         database = client.mockDatabaseContainer
         apiClient = client.mockAPIClient
 
@@ -30,6 +32,7 @@ final class SyncRepository_Tests: XCTestCase {
             activeChannelControllers: _activeChannelControllers,
             activeChannelListControllers: _activeChannelListControllers,
             channelRepository: channelRepository,
+            offlineRequestsRepository: offlineRequestsRepository,
             eventNotificationCenter: client.eventNotificationCenter,
             database: database,
             apiClient: apiClient
@@ -47,6 +50,7 @@ final class SyncRepository_Tests: XCTestCase {
             activeChannelControllers: _activeChannelControllers,
             activeChannelListControllers: _activeChannelListControllers,
             channelRepository: channelRepository,
+            offlineRequestsRepository: offlineRequestsRepository,
             eventNotificationCenter: repository.eventNotificationCenter,
             database: database,
             apiClient: apiClient
@@ -292,6 +296,7 @@ final class SyncRepository_Tests: XCTestCase {
             activeChannelControllers: _activeChannelControllers,
             activeChannelListControllers: _activeChannelListControllers,
             channelRepository: channelRepository,
+            offlineRequestsRepository: offlineRequestsRepository,
             eventNotificationCenter: repository.eventNotificationCenter,
             database: database,
             apiClient: apiClient

@@ -139,11 +139,11 @@ class ChannelListUpdater_Tests: XCTestCase {
         // Simulate API response with channel data
         let cid = ChannelId(type: .messaging, id: .unique)
         let payload = ChannelListPayload(channels: [dummyPayload(with: cid)])
-        apiClient.test_simulateResponse(.success(payload))
+        apiClient.test_simulateRecoveryResponse(.success(payload))
 
         waitForExpectations(timeout: 0.1, handler: nil)
 
-        let requests = apiClient.request_allRecordedCalls
+        let requests = apiClient.recoveryRequest_allRecordedCalls
         XCTAssertEqual(requests.count, 1)
         XCTAssertFalse(receivedResult.isError)
 
@@ -176,11 +176,11 @@ class ChannelListUpdater_Tests: XCTestCase {
         let payload = ChannelListPayload(
             channels: [dummyPayload(with: cid, members: [.dummy(user: .dummy(userId: userId))])]
         )
-        apiClient.test_simulateResponse(.success(payload))
+        apiClient.test_simulateRecoveryResponse(.success(payload))
 
         waitForExpectations(timeout: 0.1, handler: nil)
 
-        let requests = apiClient.request_allRecordedCalls
+        let requests = apiClient.recoveryRequest_allRecordedCalls
         XCTAssertEqual(requests.count, 1)
         XCTAssertEqual(
             (receivedResult.error as? ClientError)?.localizedDescription,
@@ -230,7 +230,7 @@ class ChannelListUpdater_Tests: XCTestCase {
         let payload = ChannelListPayload(channels: [syncedAndWatchedId, syncedId2, newRemoteChannel].map {
             self.dummyPayload(with: $0, members: [.dummy(user: .dummy(userId: userId))])
         })
-        apiClient.test_simulateResponse(.success(payload))
+        apiClient.test_simulateRecoveryResponse(.success(payload))
 
         waitForExpectations(timeout: 0.2, handler: nil)
 
@@ -242,7 +242,7 @@ class ChannelListUpdater_Tests: XCTestCase {
         // syncedAndWatchedId -> Present in remote query:           Kept        3
         // newRemoteChannel -> Present in remote query:             Added       4
 
-        let requests = apiClient.request_allRecordedCalls
+        let requests = apiClient.recoveryRequest_allRecordedCalls
         XCTAssertEqual(requests.count, 1)
         XCTAssertFalse(receivedResult.isError)
         let channels = self.channels(for: query, database: database)
