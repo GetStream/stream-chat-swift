@@ -687,6 +687,7 @@ open class ChatChannelVC:
         }
         // search
         let search = UIAction(title: "Search", image: Appearance.Images.systemMagnifying) { [weak self] _ in
+            Snackbar.show(text: "Not available on alpha release")
         }
         // invite
         let invite = UIAction(title: "Invite", image: appearance.images.personBadgePlus) { [weak self] _ in
