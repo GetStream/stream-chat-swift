@@ -11,9 +11,14 @@ class QueuedRequestDTO: NSManagedObject {
     @NSManaged var endpoint: Data
 
     @discardableResult
-    static func createRequest(date: Date, endpoint: Data, context: NSManagedObjectContext) -> QueuedRequestDTO {
+    static func createRequest(
+        id: String = .newUniqueId,
+        date: Date,
+        endpoint: Data,
+        context: NSManagedObjectContext
+    ) -> QueuedRequestDTO {
         let new = NSEntityDescription.insertNewObject(forEntityName: Self.entityName, into: context) as! QueuedRequestDTO
-        new.id = .newUniqueId
+        new.id = id
         new.date = date
         new.endpoint = endpoint
         return new
