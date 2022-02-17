@@ -147,9 +147,9 @@ open class ChatMessageListVC:
     override open func setUpAppearance() {
         super.setUpAppearance()
         
-        view.backgroundColor = appearance.colorPalette.background
+        view.backgroundColor = appearance.colorPalette.chatViewBackground
         
-        listView.backgroundColor = appearance.colorPalette.background
+        listView.backgroundColor = appearance.colorPalette.chatViewBackground
     }
 
     override open func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {

@@ -58,7 +58,7 @@ public class ChatAddFriendVC: ChatBaseVC {
     // MARK: - METHODS
     public func setup() {
         //
-        self.view.backgroundColor = .clear
+        self.view.backgroundColor = Appearance.default.colorPalette.chatViewBackground
         self.titleLabel.text = selectionType.title
         btnBack?.setImage(Appearance.Images.closeCircle, for: .normal)
         btnNext?.isEnabled = !self.selectedUsers.isEmpty

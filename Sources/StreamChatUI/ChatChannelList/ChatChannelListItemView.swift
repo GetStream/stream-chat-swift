@@ -138,15 +138,15 @@ open class ChatChannelListItemView: _View, ThemeProvider, SwiftUIRepresentable {
 
     override open func setUpAppearance() {
         super.setUpAppearance()
-        backgroundColor = appearance.colorPalette.background
+        backgroundColor = appearance.colorPalette.chatViewBackground
 
         titleLabel.font = appearance.fonts.bodyBold
 
         subtitleLabel.textColor = appearance.colorPalette.subtitleText
         subtitleLabel.font = appearance.fonts.footnote
         
-        timestampLabel.textColor = appearance.colorPalette.subtitleText
-        timestampLabel.font = appearance.fonts.footnote
+        timestampLabel.setChatSubtitleBigColor()
+        //timestampLabel.font = appearance.fonts.footnote
     }
 
     override open func setUpLayout() {

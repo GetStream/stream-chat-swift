@@ -43,7 +43,7 @@ public class TableViewCellChatUser: UITableViewCell {
         }
         //
         nameLabel.setChatTitleColor()
-        descriptionLabel.setChatSubtitleColor()
+        descriptionLabel.setChatSubtitleBigColor()
         //
         if user.isOnline {
             descriptionLabel.textColor = Appearance.default.colorPalette.statusColorBlue

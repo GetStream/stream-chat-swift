@@ -50,4 +50,8 @@ extension UILabel {
         self.textColor = Appearance.default.colorPalette.subTitleColor
         self.font = UIFont.systemFont(ofSize: 11, weight: UIFont.Weight.regular)
     }
+    public func setChatSubtitleBigColor() {
+        self.textColor = Appearance.default.colorPalette.subTitleColor
+        self.font = UIFont.systemFont(ofSize: 13, weight: UIFont.Weight.regular)
+    }
 }

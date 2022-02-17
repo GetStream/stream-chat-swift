@@ -55,13 +55,13 @@ open class ChatChannelVC:
 
     open private(set) lazy var navigationSafeAreaView: UIView = {
         let view = UIView(frame: .zero).withoutAutoresizingMaskConstraints
-        view.backgroundColor = appearance.colorPalette.walletTabbarBackground
+        view.backgroundColor =  Appearance.default.colorPalette.walletTabbarBackground
         return view
     }()
 
     open private(set) lazy var navigationHeaderView: UIView = {
         let view = UIView(frame: .zero).withoutAutoresizingMaskConstraints
-        view.backgroundColor = appearance.colorPalette.walletTabbarBackground
+        view.backgroundColor =  Appearance.default.colorPalette.walletTabbarBackground
         return view
     }()
 
@@ -91,7 +91,7 @@ open class ChatChannelVC:
 
     open private(set) lazy var shareView: UIStackView = {
         let view = UIStackView(frame: .zero).withoutAutoresizingMaskConstraints
-        view.backgroundColor = appearance.colorPalette.walletTabbarBackground
+        view.backgroundColor =  Appearance.default.colorPalette.walletTabbarBackground
         view.distribution = .fill
         return view
     }()
@@ -99,9 +99,9 @@ open class ChatChannelVC:
     private(set) lazy var shareButton: UIButton = {
         let button = UIButton()
         button.setImage(appearance.images.arrowUpRightSquare, for: .normal)
-        button.tintColor = appearance.colorPalette.themeBlue
+        button.tintColor =  Appearance.default.colorPalette.themeBlue
         button.setTitle(" SHARE", for: .normal)
-        button.setTitleColor(appearance.colorPalette.themeBlue, for: .normal)
+        button.setTitleColor( Appearance.default.colorPalette.themeBlue, for: .normal)
         button.titleLabel?.font =  UIFont.systemFont(ofSize: 15, weight: .semibold)
         button.addTarget(self, action: #selector(shareAction), for: .touchUpInside)
         return button.withoutAutoresizingMaskConstraints
@@ -110,9 +110,9 @@ open class ChatChannelVC:
     private(set) lazy var addFriendButton: UIButton = {
         let button = UIButton()
         button.setImage(appearance.images.personBadgePlus, for: .normal)
-        button.tintColor = appearance.colorPalette.themeBlue
+        button.tintColor =  Appearance.default.colorPalette.themeBlue
         button.setTitle(" ADD FRIENDS", for: .normal)
-        button.setTitleColor(appearance.colorPalette.themeBlue, for: .normal)
+        button.setTitleColor(Appearance.default.colorPalette.themeBlue, for: .normal)
         button.titleLabel?.font =  UIFont.systemFont(ofSize: 15, weight: .semibold)
         button.addTarget(self, action: #selector(addFriendAction), for: .touchUpInside)
         return button.withoutAutoresizingMaskConstraints
@@ -183,7 +183,7 @@ open class ChatChannelVC:
     override open func setUpLayout() {
         super.setUpLayout()
 
-        view.backgroundColor = appearance.colorPalette.background
+        view.backgroundColor = appearance.colorPalette.chatViewBackground
 
         view.addSubview(navigationSafeAreaView)
         NSLayoutConstraint.activate([
