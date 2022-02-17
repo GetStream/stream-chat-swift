@@ -1432,6 +1432,7 @@
 		C143788E27BBEBB900E23965 /* OfflineRequestsRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = C143788B27BBEBA000E23965 /* OfflineRequestsRepository.swift */; };
 		C143789327BD625800E23965 /* OfflineRequestsRepository_Mock.swift in Sources */ = {isa = PBXBuildFile; fileRef = C143789227BD625800E23965 /* OfflineRequestsRepository_Mock.swift */; };
 		C143789527BE65AE00E23965 /* QueuedRequestDTO_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C143789427BE65AE00E23965 /* QueuedRequestDTO_Tests.swift */; };
+		C143789727BE6D4800E23965 /* OfflineRequestsRepository_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C143789627BE6D4800E23965 /* OfflineRequestsRepository_Tests.swift */; };
 		C147D78427B3D8BC00F8E7C5 /* WaitUntil.swift in Sources */ = {isa = PBXBuildFile; fileRef = C147D78327B3D8BC00F8E7C5 /* WaitUntil.swift */; };
 		C147D78627B4294900F8E7C5 /* Logger_Mock.swift in Sources */ = {isa = PBXBuildFile; fileRef = C147D78527B4294900F8E7C5 /* Logger_Mock.swift */; };
 		C171041E2768C34E008FB3F2 /* Array+SafeSubscript.swift in Sources */ = {isa = PBXBuildFile; fileRef = C171041D2768C34E008FB3F2 /* Array+SafeSubscript.swift */; };
@@ -2982,6 +2983,7 @@
 		C143788B27BBEBA000E23965 /* OfflineRequestsRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OfflineRequestsRepository.swift; sourceTree = "<group>"; };
 		C143789227BD625800E23965 /* OfflineRequestsRepository_Mock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OfflineRequestsRepository_Mock.swift; sourceTree = "<group>"; };
 		C143789427BE65AE00E23965 /* QueuedRequestDTO_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QueuedRequestDTO_Tests.swift; sourceTree = "<group>"; };
+		C143789627BE6D4800E23965 /* OfflineRequestsRepository_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OfflineRequestsRepository_Tests.swift; sourceTree = "<group>"; };
 		C147D78327B3D8BC00F8E7C5 /* WaitUntil.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WaitUntil.swift; sourceTree = "<group>"; };
 		C147D78527B4294900F8E7C5 /* Logger_Mock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logger_Mock.swift; sourceTree = "<group>"; };
 		C171041D2768C34E008FB3F2 /* Array+SafeSubscript.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array+SafeSubscript.swift"; sourceTree = "<group>"; };
@@ -5887,6 +5889,7 @@
 			isa = PBXGroup;
 			children = (
 				C143788B27BBEBA000E23965 /* OfflineRequestsRepository.swift */,
+				C143789627BE6D4800E23965 /* OfflineRequestsRepository_Tests.swift */,
 				C143789227BD625800E23965 /* OfflineRequestsRepository_Mock.swift */,
 				C186BFAE27AADB410099CCA6 /* SyncOperations.swift */,
 				C186BFB527AAFDAB0099CCA6 /* SyncOperations_Tests.swift */,
@@ -7781,6 +7784,7 @@
 				8836133C25275170003CB958 /* MutedUserPayload.swift in Sources */,
 				88FD711F25B98B61003CEEE4 /* EventPayload_Tests.swift in Sources */,
 				DA4EE5A1252B443400CB26D4 /* NewUserQueryUpdater_Tests.swift in Sources */,
+				C143789727BE6D4800E23965 /* OfflineRequestsRepository_Tests.swift in Sources */,
 				88F6DF97252C88BB009A8AF0 /* ChannelMemberUpdater_Mock.swift in Sources */,
 				C186BFB227AAF7E00099CCA6 /* ChatChannelController_Mock.swift in Sources */,
 				84D5BC5B277B18AF00A65C75 /* PinnedMessagesQuery_Tests.swift in Sources */,

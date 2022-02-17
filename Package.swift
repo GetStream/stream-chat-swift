@@ -149,6 +149,7 @@ var streamChatSourcesExcluded: [String] { [
     "Utils/Dictionary_Tests.swift",
     "Utils/EventBatcher_Mock.swift",
     "Utils/Cached_Tests.swift",
+    "Repositories/OfflineRequestsRepository_Tests.swift",
     "Repositories/SyncOperations_Tests.swift",
     "Repositories/SyncRepository_Mock.swift",
     "Repositories/SyncRepository_Tests.swift",

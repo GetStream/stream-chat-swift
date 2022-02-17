@@ -7,7 +7,9 @@ import CoreData
 import XCTest
 
 /// A testable subclass of DatabaseContainer allowing response simulation.
-class DatabaseContainerMock: DatabaseContainer {
+class DatabaseContainerMock: DatabaseContainer, Spy {
+    var recordedFunctions: [String] = []
+
     /// If set, the `write` completion block is called with this value.
     @Atomic var write_errorResponse: Error?
     @Atomic var init_kind: DatabaseContainer.Kind
@@ -86,6 +88,7 @@ class DatabaseContainerMock: DatabaseContainer {
     @Atomic var writeSessionCounter: Int = 0
     
     override func write(_ actions: @escaping (DatabaseSession) throws -> Void, completion: @escaping (Error?) -> Void) {
+        record()
         let wrappedActions: ((DatabaseSession) throws -> Void) = { session in
             self.isWriteSessionInProgress = true
             try actions(session)
@@ -102,6 +105,7 @@ class DatabaseContainerMock: DatabaseContainer {
     }
     
     override func resetEphemeralValues() {
+        record()
         resetEphemeralValues_called = true
         super.resetEphemeralValues()
     }

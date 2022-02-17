@@ -447,7 +447,7 @@ final class SyncRepository_Tests: XCTestCase {
         )
         repository.queueOfflineRequest(endpoint: endpoint)
 
-        XCTAssertNotCall("queueOfflineRequest(endpoint:)", on: offlineRequestsRepository)
+        XCTAssertNotCall("queueOfflineRequest(endpoint:completion:)", on: offlineRequestsRepository)
     }
 
     func test_queueOfflineRequest_localStorageEnabled() {
@@ -475,6 +475,6 @@ final class SyncRepository_Tests: XCTestCase {
         )
         repository.queueOfflineRequest(endpoint: endpoint)
 
-        XCTAssertCall("queueOfflineRequest(endpoint:)", on: offlineRequestsRepository, times: 1)
+        XCTAssertCall("queueOfflineRequest(endpoint:completion:)", on: offlineRequestsRepository, times: 1)
     }
 }
