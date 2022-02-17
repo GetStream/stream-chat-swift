@@ -87,6 +87,7 @@ open class ChatChannelListItemView: _View, ThemeProvider, SwiftUIRepresentable {
         let authorName = "\(lastMessage.author.name ?? lastMessage.author.id):"
         if let typingUsersInfo = typingUserString {
             message = typingUsersInfo
+            return message
         } else if lastMessage.extraData.keys.contains("oneWalletTx") {
             if content.channel.latestMessages.first?.author.id == ChatClient.shared.currentUserId {
                 return "Sent ONE"
