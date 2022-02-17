@@ -1433,6 +1433,8 @@
 		C143789327BD625800E23965 /* OfflineRequestsRepository_Mock.swift in Sources */ = {isa = PBXBuildFile; fileRef = C143789227BD625800E23965 /* OfflineRequestsRepository_Mock.swift */; };
 		C143789527BE65AE00E23965 /* QueuedRequestDTO_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C143789427BE65AE00E23965 /* QueuedRequestDTO_Tests.swift */; };
 		C143789727BE6D4800E23965 /* OfflineRequestsRepository_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C143789627BE6D4800E23965 /* OfflineRequestsRepository_Tests.swift */; };
+		C143789027BC03EE00E23965 /* EndpointPath.swift in Sources */ = {isa = PBXBuildFile; fileRef = C143788F27BC03EE00E23965 /* EndpointPath.swift */; };
+		C143789127BC03EE00E23965 /* EndpointPath.swift in Sources */ = {isa = PBXBuildFile; fileRef = C143788F27BC03EE00E23965 /* EndpointPath.swift */; };
 		C147D78427B3D8BC00F8E7C5 /* WaitUntil.swift in Sources */ = {isa = PBXBuildFile; fileRef = C147D78327B3D8BC00F8E7C5 /* WaitUntil.swift */; };
 		C147D78627B4294900F8E7C5 /* Logger_Mock.swift in Sources */ = {isa = PBXBuildFile; fileRef = C147D78527B4294900F8E7C5 /* Logger_Mock.swift */; };
 		C171041E2768C34E008FB3F2 /* Array+SafeSubscript.swift in Sources */ = {isa = PBXBuildFile; fileRef = C171041D2768C34E008FB3F2 /* Array+SafeSubscript.swift */; };
@@ -2984,6 +2986,7 @@
 		C143789227BD625800E23965 /* OfflineRequestsRepository_Mock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OfflineRequestsRepository_Mock.swift; sourceTree = "<group>"; };
 		C143789427BE65AE00E23965 /* QueuedRequestDTO_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QueuedRequestDTO_Tests.swift; sourceTree = "<group>"; };
 		C143789627BE6D4800E23965 /* OfflineRequestsRepository_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OfflineRequestsRepository_Tests.swift; sourceTree = "<group>"; };
+		C143788F27BC03EE00E23965 /* EndpointPath.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EndpointPath.swift; sourceTree = "<group>"; };
 		C147D78327B3D8BC00F8E7C5 /* WaitUntil.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WaitUntil.swift; sourceTree = "<group>"; };
 		C147D78527B4294900F8E7C5 /* Logger_Mock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logger_Mock.swift; sourceTree = "<group>"; };
 		C171041D2768C34E008FB3F2 /* Array+SafeSubscript.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array+SafeSubscript.swift"; sourceTree = "<group>"; };
@@ -4096,6 +4099,7 @@
 				79682C4724BF37550071578E /* Payloads */,
 				DAEAF4B624DADA990015FB28 /* Requests */,
 				79877A172498E4EE00015F8B /* Endpoint.swift */,
+				C143788F27BC03EE00E23965 /* EndpointPath.swift */,
 				C1EE53A627BA53F300B1A6CA /* Endpoint_Tests.swift */,
 				8A0D649524E579A50017A3C0 /* GuestEndpoints.swift */,
 				790A4C41252DD36A001F4A23 /* DeviceEndpoints.swift */,
@@ -7587,6 +7591,7 @@
 				F688643624E6DA8700A71361 /* CurrentUserController.swift in Sources */,
 				88BEBCD32536FD7600D9E8B7 /* MemberListController+Combine.swift in Sources */,
 				888E8C36252B2AAF00195E03 /* UserController+SwiftUI.swift in Sources */,
+				C143789027BC03EE00E23965 /* EndpointPath.swift in Sources */,
 				790A4C45252DD4F1001F4A23 /* DevicePayloads.swift in Sources */,
 				C1FC2F902742579D0062530F /* NativeEngine.swift in Sources */,
 				792A4F39247FFACB00EAF71D /* WebSocketEngine.swift in Sources */,
@@ -8311,6 +8316,7 @@
 				C121E8D0274544B100023E4C /* UserListSortingKey.swift in Sources */,
 				C121E8D1274544B100023E4C /* ChannelMemberListSortingKey.swift in Sources */,
 				C121E8D2274544B100023E4C /* ClientError.swift in Sources */,
+				C143789127BC03EE00E23965 /* EndpointPath.swift in Sources */,
 				C121E8D3274544B100023E4C /* ErrorPayload.swift in Sources */,
 				C121E8D4274544B100023E4C /* NSManagedObject+Extensions.swift in Sources */,
 				C121E8D5274544B100023E4C /* NSManagedObjectContext+Extensions.swift in Sources */,

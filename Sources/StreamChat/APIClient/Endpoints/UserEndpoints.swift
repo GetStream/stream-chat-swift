@@ -8,7 +8,7 @@ extension Endpoint {
     static func users(query: UserListQuery)
         -> Endpoint<UserListPayload> {
         .init(
-            path: "users",
+            path: .users,
             method: .get,
             queryItems: nil,
             requiresConnectionId: query.options.contains(oneOf: [.presence, .state, .watch]),
@@ -28,7 +28,7 @@ extension Endpoint {
             "users": AnyEncodable([users])
         ]
         return Endpoint<UserUpdateResponse>(
-            path: "users",
+            path: .users,
             method: .patch,
             queryItems: nil,
             requiresConnectionId: false,

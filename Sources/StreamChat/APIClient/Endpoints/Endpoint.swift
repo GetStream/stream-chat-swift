@@ -5,7 +5,7 @@
 import Foundation
 
 struct Endpoint<ResponseType: Decodable>: Codable {
-    let path: String
+    let path: EndpointPath
     let method: EndpointMethod
     let queryItems: Encodable?
     let requiresConnectionId: Bool
@@ -13,7 +13,7 @@ struct Endpoint<ResponseType: Decodable>: Codable {
     let body: Encodable?
 
     init(
-        path: String,
+        path: EndpointPath,
         method: EndpointMethod,
         queryItems: Encodable? = nil,
         requiresConnectionId: Bool = false,
@@ -41,7 +41,7 @@ struct Endpoint<ResponseType: Decodable>: Codable {
 
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        path = try container.decode(String.self, forKey: .path)
+        path = try container.decode(EndpointPath.self, forKey: .path)
         method = try container.decode(EndpointMethod.self, forKey: .method)
         queryItems = try container.decodeIfPresent(Data.self, forKey: .queryItems)
         requiresConnectionId = try container.decode(Bool.self, forKey: .requiresConnectionId)

@@ -9,7 +9,7 @@ extension Endpoint {
         query: ChannelMemberListQuery
     ) -> Endpoint<ChannelMemberListPayload> {
         .init(
-            path: "members",
+            path: .members,
             method: .get,
             queryItems: nil,
             requiresConnectionId: false,

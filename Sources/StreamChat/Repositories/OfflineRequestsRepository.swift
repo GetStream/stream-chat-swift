@@ -101,7 +101,7 @@ class OfflineRequestsRepository {
         completion: @escaping () -> Void
     ) {
         // TODO: Temporary String check. We only process the response for sent messages
-        guard endpoint.path.hasSuffix("/message") else {
+        guard case .sendMessage = endpoint.path else {
             completion()
             return
         }
@@ -109,8 +109,7 @@ class OfflineRequestsRepository {
     }
 
     func queueOfflineRequest(endpoint: DataEndpoint, completion: (() -> Void)? = nil) {
-        // TODO: Temporary String check. We are ignoring events for now
-        guard !endpoint.path.hasSuffix("event") else {
+        guard endpoint.path.shouldBeQueuedOffline else {
             completion?()
             return
         }
@@ -130,5 +129,13 @@ class OfflineRequestsRepository {
                 completion?()
             }
         }
+    }
+}
+
+private extension EndpointPath {
+    var shouldBeQueuedOffline: Bool {
+        // TODO: To be finalized. We are just ignoring events for now
+        if case .channelEvent = self { return false }
+        return true
     }
 }

@@ -26,7 +26,7 @@ extension Endpoint {
         reason: String? = nil
     ) -> Endpoint<EmptyResponse> {
         .init(
-            path: "moderation/ban",
+            path: .moderationBan,
             method: .post,
             queryItems: nil,
             requiresConnectionId: false,
@@ -41,7 +41,7 @@ extension Endpoint {
     
     static func unbanMember(_ userId: UserId, cid: ChannelId) -> Endpoint<EmptyResponse> {
         .init(
-            path: "moderation/ban",
+            path: .moderationBan,
             method: .delete,
             queryItems: ChannelMemberBanRequestPayload(userId: userId, cid: cid),
             requiresConnectionId: false,
@@ -55,7 +55,7 @@ extension Endpoint {
 extension Endpoint {
     static func flagUser(_ flag: Bool, with userId: UserId) -> Endpoint<FlagUserPayload> {
         .init(
-            path: "moderation/\(flag ? "flag" : "unflag")",
+            path: .moderationFlag(flag),
             method: .post,
             queryItems: nil,
             requiresConnectionId: false,
@@ -72,7 +72,7 @@ extension Endpoint {
         with messageId: MessageId
     ) -> Endpoint<FlagMessagePayload> {
         .init(
-            path: "moderation/\(flag ? "flag" : "unflag")",
+            path: .moderationFlag(flag),
             method: .post,
             queryItems: nil,
             requiresConnectionId: false,
@@ -86,7 +86,7 @@ extension Endpoint {
 private extension Endpoint {
     static func muteUser(_ mute: Bool, with userId: UserId) -> Endpoint<EmptyResponse> {
         .init(
-            path: "moderation/\(mute ? "mute" : "unmute")",
+            path: .moderationMute(mute),
             method: .post,
             queryItems: nil,
             requiresConnectionId: false,

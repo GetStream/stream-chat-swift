@@ -11,7 +11,7 @@ class MessageUpdater: Worker {
     /// - Parameters:
     ///   - cid: The channel identifier the message relates to.
     ///   - messageId: The message identifier.
-    ///   - completion: The completion. Will be called with an error if smth goes wrong, otherwise - will be called with `nil`.
+    ///   - completion: The completion. Will be called with an error if something goes wrong, otherwise - will be called with `nil`.
     func getMessage(cid: ChannelId, messageId: MessageId, completion: ((Error?) -> Void)? = nil) {
         let endpoint: Endpoint<MessagePayload.Boxed> = .getMessage(messageId: messageId)
         apiClient.request(endpoint: endpoint) {

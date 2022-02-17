@@ -82,7 +82,7 @@ extension Endpoint {
     
     static func deleteReaction(_ type: MessageReactionType, messageId: MessageId) -> Endpoint<EmptyResponse> {
         .init(
-            path: messageId.reactionPath.appending("/\(type.rawValue)"),
+            path: .deleteReaction(messageId, type),
             method: .delete,
             queryItems: nil,
             requiresConnectionId: false,
@@ -109,28 +109,28 @@ extension Endpoint {
     }
     
     static func search(query: MessageSearchQuery) -> Endpoint<MessageSearchResultsPayload> {
-        .init(path: "search", method: .get, queryItems: nil, requiresConnectionId: false, body: ["payload": query])
+        .init(path: .search, method: .get, queryItems: nil, requiresConnectionId: false, body: ["payload": query])
     }
 }
 
 private extension MessageId {
-    var path: String {
-        "messages/\(self)"
+    var path: EndpointPath {
+        .message(self)
     }
     
-    var repliesPath: String {
-        "messages/\(self)/replies"
+    var repliesPath: EndpointPath {
+        .replies(self)
     }
 
-    var reactionsPath: String {
-        "messages/\(self)/reactions"
+    var reactionsPath: EndpointPath {
+        .reactions(self)
     }
     
-    var reactionPath: String {
-        path.appending("/reaction")
+    var reactionPath: EndpointPath {
+        .reaction(self)
     }
 
-    var actionPath: String {
-        path.appending("/action")
+    var actionPath: EndpointPath {
+        .action(self)
     }
 }
