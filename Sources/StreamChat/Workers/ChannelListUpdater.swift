@@ -38,32 +38,32 @@ class ChannelListUpdater: Worker {
     ) {
         var updatedQuery = query
         updatedQuery.pagination = .init(pageSize: .channelsPageSize, offset: 0)
-
+        
         // Fetches the channels matching the query, and stores them in the database.
-        apiClient.recoveryRequest(endpoint: .channels(query: query)) { [self] result in
+        apiClient.recoveryRequest(endpoint: .channels(query: query)) { [weak self] result in
             switch result {
             case let .success(channelListPayload):
-                self.writeChannelListPayload(
+                self?.writeChannelListPayload(
                     payload: channelListPayload,
                     query: updatedQuery,
                     initialActions: { session in
                         guard let queryDTO = session.channelListQuery(filterHash: updatedQuery.filter.filterHash) else {
                             throw ClientError("Channel List Query \(query) is not in database")
                         }
-
+                        
                         let localQueryCIDs = Set(queryDTO.channels.compactMap { try? ChannelId(cid: $0.cid) })
                         let remoteQueryCIDs = Set(channelListPayload.channels.map(\.channel.cid))
                         let queryAlreadySynched = remoteQueryCIDs.intersection(synchedChannelIds)
-
+                        
                         // We are going to unlink & clear those channels that are not present in the remote query,
                         // and that have not been synched nor watched. Those are outdated.
                         let cidsToRemove = localQueryCIDs
                             .subtracting(queryAlreadySynched)
                             .subtracting(watchedChannelIds)
-
+                        
                         for cid in cidsToRemove {
                             guard let channelDTO = session.channel(cid: cid) else { continue }
-
+                            
                             channelDTO.resetEphemeralValues()
                             channelDTO.messages.removeAll()
                             queryDTO.channels.remove(channelDTO)

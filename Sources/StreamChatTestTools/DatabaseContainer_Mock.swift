@@ -8,7 +8,7 @@ import XCTest
 
 /// A testable subclass of DatabaseContainer allowing response simulation.
 class DatabaseContainerMock: DatabaseContainer, Spy {
-    var recordedFunctions: [String] = []
+    @Atomic var recordedFunctions: [String] = []
 
     /// If set, the `write` completion block is called with this value.
     @Atomic var write_errorResponse: Error?
