@@ -95,6 +95,26 @@ class OfflineRequestsRepository {
         }
     }
 
+    func queueOfflineRequest(endpoint: DataEndpoint, completion: (() -> Void)? = nil) {
+        guard endpoint.path.shouldBeQueuedOffline else {
+            completion?()
+            return
+        }
+
+        let date = Date()
+        retryQueue.async { [database] in
+            guard let data = try? JSONEncoder.stream.encode(endpoint) else {
+                completion?()
+                return
+            }
+            database.write { _ in
+                QueuedRequestDTO.createRequest(date: date, endpoint: data, context: database.writableContext)
+                log.info("Queued request for /\(endpoint.path)", subsystems: .offlineSupport)
+                completion?()
+            }
+        }
+    }
+
     private func performDatabaseRecoveryActionsUponSuccess(
         for endpoint: DataEndpoint,
         data: Data,
@@ -105,37 +125,62 @@ class OfflineRequestsRepository {
             completion()
             return
         }
-        completion()
-    }
-
-    func queueOfflineRequest(endpoint: DataEndpoint, completion: (() -> Void)? = nil) {
-        guard endpoint.path.shouldBeQueuedOffline else {
-            completion?()
+        guard endpoint.path.queuedRequestNeedsDatabaseAction else {
+            completion()
             return
         }
 
-        let date = Date()
-        let database = self.database
-
-        retryQueue.async {
-            guard let data = try? JSONEncoder.stream.encode(endpoint) else {
-                completion?()
-                return
-            }
-
-            database.write { _ in
-                QueuedRequestDTO.createRequest(date: date, endpoint: data, context: database.writableContext)
-                log.info("Queued request for /\(endpoint.path)", subsystems: .offlineSupport)
-                completion?()
-            }
+        switch endpoint.path {
+        case .users:
+            break // To handle
+        case .devices:
+            break // To handle
+        case .channelsQuery:
+            break // To handle
+        case .deleteChannel:
+            break // To handle
+        case .showChannel:
+            break // To handle
+        case .markChannelRead:
+            break // To handle
+        case .markAllChannelsRead:
+            break // To handle
+        case .stopWatchingChannel:
+            break // To handle
+        case .uploadAttachment:
+            break // To handle
+        case .sendMessage:
+            break // To handle
+        case .editMessage:
+            break // To handle
+        case .deleteMessage:
+            break // To handle
+        case .reaction:
+            break // To handle
+        case .deleteReaction:
+            break // To handle
+        case .messageAction:
+            break // To handle
+        case .banMember:
+            break // To handle
+        case .flagUser:
+            break // To handle
+        case .flagMessage:
+            break // To handle
+        default:
+            log.assertionFailure("Should not reach here, request should not require action")
+            return
         }
+
+        completion()
     }
 }
 
-private extension EndpointPath {
+private extension Endpoint {
     var shouldBeQueuedOffline: Bool {
         // TODO: To be finalized. We are just ignoring events for now
-        if case .channelEvent = self { return false }
+        guard method != .get else { return false }
+        if case .channelEvent = path { return false }
         return true
     }
 }

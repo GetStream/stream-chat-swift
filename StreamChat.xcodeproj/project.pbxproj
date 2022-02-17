@@ -4098,8 +4098,8 @@
 			children = (
 				79682C4724BF37550071578E /* Payloads */,
 				DAEAF4B624DADA990015FB28 /* Requests */,
-				79877A172498E4EE00015F8B /* Endpoint.swift */,
 				C143788F27BC03EE00E23965 /* EndpointPath.swift */,
+				79877A172498E4EE00015F8B /* Endpoint.swift */,
 				C1EE53A627BA53F300B1A6CA /* Endpoint_Tests.swift */,
 				8A0D649524E579A50017A3C0 /* GuestEndpoints.swift */,
 				790A4C41252DD36A001F4A23 /* DeviceEndpoints.swift */,

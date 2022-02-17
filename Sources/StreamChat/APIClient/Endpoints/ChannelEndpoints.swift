@@ -49,7 +49,7 @@ extension Endpoint {
     
     static func deleteChannel(cid: ChannelId) -> Endpoint<EmptyResponse> {
         .init(
-            path: .channelUpdate(cid.apiPath),
+            path: .deleteChannel(cid.apiPath),
             method: .delete,
             queryItems: nil,
             requiresConnectionId: false,
