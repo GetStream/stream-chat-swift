@@ -142,4 +142,16 @@ class ChatMentionSuggestionView_Tests: XCTestCase {
         view.content = chatUserNoName
         AssertSnapshot(view, suffix: "user name not set")
     }
+    
+    func test_whenUserThatHasNameIsAssignedAfterUserWithoutName_usernameLabelGetsShown() {
+        let view = ChatMentionSuggestionView().withoutAutoresizingMaskConstraints
+        view.widthAnchor.constraint(equalToConstant: Self.defaultCellWidth).isActive = true
+        view.components = .mock
+        
+        view.content = chatUserNoName
+        AssertSnapshot(view, variants: [.defaultLight], suffix: "without name")
+        
+        view.content = chatUserOnline
+        AssertSnapshot(view, variants: [.defaultLight], suffix: "with name")
+    }
 }
