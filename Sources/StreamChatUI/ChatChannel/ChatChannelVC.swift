@@ -686,7 +686,7 @@ open class ChatChannelVC:
             self.navigationController?.pushViewController(qrCodeVc, animated: true)
         }
         // search
-        let search = UIAction(title: "Search", image: appearance.images.qrCode) { [weak self] _ in
+        let search = UIAction(title: "Search", image: Appearance.Images.systemMagnifying) { [weak self] _ in
         }
         // invite
         let invite = UIAction(title: "Invite", image: appearance.images.personBadgePlus) { [weak self] _ in
