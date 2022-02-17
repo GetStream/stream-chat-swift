@@ -198,8 +198,30 @@ class APIClient_Tests: XCTestCase {
         XCTEnsureRequestsWereExecuted(times: 1)
     }
 
+    func test_requestConnectionFailure() throws {
+        // Set up a decoder response to return `NSURLErrorNotConnectedToInternet` error.
+        let networkError = NSError(domain: "", code: NSURLErrorNotConnectedToInternet, userInfo: nil)
+        decoder.decodeRequestResponse = .failure(networkError)
+
+        var offlineRequestQueued = false
+        createClient(queueOfflineRequest: { _ in
+            offlineRequestQueued = true
+        })
+
+        // Create a test endpoint (it's actually ignored, because APIClient uses the testRequest returned from the encoder)
+        let testEndpoint = Endpoint<TestUser>.mock()
+
+        // Create a request and wait for the completion block
+        let result = try waitFor { apiClient.request(endpoint: testEndpoint, completion: $0) }
+
+        // When reaching the maximum retries, it gets the request queued
+        AssertResultFailure(result, networkError)
+        XCTEnsureRequestsWereExecuted(times: 4)
+        XCTAssertTrue(offlineRequestQueued)
+    }
+
     func test_startingMultipleRequestsAtTheSameTimeShouldResultInParallelRequests() {
-        createClient(with: { _ in
+        createClient(tokenRefresher: { _ in
             // If token refresh never completes, it will never complete the request
         })
 
@@ -247,7 +269,7 @@ class APIClient_Tests: XCTestCase {
     
     func test_requestFailedWithExpiredToken_refreshesToken() throws {
         var tokenRefresherWasCalled = false
-        createClient(with: { _ in
+        createClient(tokenRefresher: { _ in
             tokenRefresherWasCalled = true
         })
 
@@ -264,7 +286,7 @@ class APIClient_Tests: XCTestCase {
     func test_requestFailedWithExpiredToken_requeuedOperationAndRetries() throws {
         var completeTokenRefresh = {}
         let tokenRefreshIsCalled = expectation(description: "Token refresh is called")
-        createClient(with: { completion in
+        createClient(tokenRefresher: { completion in
             tokenRefreshIsCalled.fulfill()
             completeTokenRefresh = completion
         })
@@ -297,7 +319,7 @@ class APIClient_Tests: XCTestCase {
     
     func test_requestFailedWithExpiredToken_retriesRequestUntilReachingMaximumAttempts() throws {
         var tokenRefresherWasCalled = false
-        createClient(with: { completion in
+        createClient(tokenRefresher: { completion in
             tokenRefresherWasCalled = true
             completion()
         })
@@ -332,7 +354,7 @@ class APIClient_Tests: XCTestCase {
     func test_flushRequestsQueue_whenThereAreOperationsOngoing_shouldStopQueuedOnes() {
         var completeTokenRefresh = {}
         let tokenRefreshIsCalled = expectation(description: "Token refresh is called")
-        createClient(with: { completion in
+        createClient(tokenRefresher: { completion in
             tokenRefreshIsCalled.fulfill()
             completeTokenRefresh = completion
         })
@@ -460,7 +482,7 @@ class APIClient_Tests: XCTestCase {
         var complete3rdTokenRefresh = {}
         var tokenRefreshCalls = 0
         let tokenRefreshIsCalled3Times = expectation(description: "Token refresh is called")
-        createClient(with: { completion in
+        createClient(tokenRefresher: { completion in
             tokenRefreshCalls += 1
             if tokenRefreshCalls == 3 {
                 tokenRefreshIsCalled3Times.fulfill()
@@ -519,15 +541,23 @@ class APIClient_Tests: XCTestCase {
         XCTAssertCall("decodeRequestResponse(data:response:error:)", on: decoder, times: times, file: file, line: line)
     }
 
-    private func createClient(with tokenRefresher: @escaping (@escaping () -> Void) -> Void) {
-        self.tokenRefresher = tokenRefresher
+    private func createClient(
+        tokenRefresher: ((@escaping () -> Void) -> Void)? = nil,
+        queueOfflineRequest: QueueOfflineRequestBlock? = nil
+    ) {
+        if let tokenRefresher = tokenRefresher {
+            self.tokenRefresher = tokenRefresher
+        }
+        if let queueOfflineRequest = queueOfflineRequest {
+            self.queueOfflineRequest = queueOfflineRequest
+        }
         apiClient = APIClient(
             sessionConfiguration: sessionConfiguration,
             requestEncoder: encoder,
             requestDecoder: decoder,
             CDNClient: cdnClient,
-            tokenRefresher: tokenRefresher,
-            queueOfflineRequest: queueOfflineRequest
+            tokenRefresher: self.tokenRefresher,
+            queueOfflineRequest: self.queueOfflineRequest
         )
     }
 }
