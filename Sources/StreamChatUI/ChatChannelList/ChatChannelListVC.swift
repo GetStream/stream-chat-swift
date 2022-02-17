@@ -85,9 +85,7 @@ open class ChatChannelListVC: _ViewController,
 
     override open func setUp() {
         super.setUp()
-        headerSafeAreaView.backgroundColor = appearance.colorPalette.chatNavBarBackgroundColor
-        headerView.backgroundColor = appearance.colorPalette.chatNavBarBackgroundColor
-        
+       
         navigationController?.navigationBar.isHidden = true
         controller.delegate = self
         controller.synchronize()
@@ -122,6 +120,8 @@ open class ChatChannelListVC: _ViewController,
     
     open override func viewDidLoad() {
         super.viewDidLoad()
+        headerSafeAreaView.backgroundColor = Appearance.default.colorPalette.chatNavBarBackgroundColor
+        headerView.backgroundColor = Appearance.default.colorPalette.chatNavBarBackgroundColor
         
         NotificationCenter.default.addObserver(
             self,
@@ -206,9 +206,10 @@ open class ChatChannelListVC: _ViewController,
         //navigationItem.leftBarButtonItem = UIBarButtonItem(customView: userAvatarView)
 
         collectionView.backgroundColor = Appearance.default.colorPalette.chatViewBackground
-
+        
         if let flowLayout = collectionViewLayout as? ListCollectionViewLayout {
             flowLayout.itemSize = UICollectionViewFlowLayout.automaticSize
+            flowLayout.separatorHeight = 0
             flowLayout.estimatedItemSize = .init(
                 width: collectionView.bounds.width,
                 height: 64
@@ -239,26 +240,27 @@ open class ChatChannelListVC: _ViewController,
             currentUserId: controller.client.currentUserId
         )
         cell.itemView.titleLabel.setChatTitleColor()
-        cell.itemView.subtitleLabel.setChatSubtitleColor()
+        cell.itemView.subtitleLabel.setChatSubtitleBigColor()
         cell.swipeableView.delegate = self
         cell.swipeableView.indexPath = { [weak cell, weak self] in
             guard let cell = cell else { return nil }
             return self?.collectionView.indexPath(for: cell)
         }
+        
         return cell
     }
     
-    open func collectionView(
-        _ collectionView: UICollectionView,
-        viewForSupplementaryElementOfKind kind: String,
-        at indexPath: IndexPath
-    ) -> UICollectionReusableView {
-        collectionView.dequeueReusableSupplementaryView(
-            ofKind: ListCollectionViewLayout.separatorKind,
-            withReuseIdentifier: separatorReuseIdentifier,
-            for: indexPath
-        )
-    }
+//    open func collectionView(
+//        _ collectionView: UICollectionView,
+//        viewForSupplementaryElementOfKind kind: String,
+//        at indexPath: IndexPath
+//    ) -> UICollectionReusableView {
+//        collectionView.dequeueReusableSupplementaryView(
+//            ofKind: ListCollectionViewLayout.separatorKind,
+//            withReuseIdentifier: separatorReuseIdentifier,
+//            for: indexPath
+//        )
+//    }
         
     open func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         NotificationCenter.default.post(name: .hideTabbar, object: nil)

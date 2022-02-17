@@ -75,6 +75,8 @@ public extension Appearance {
         public var chatNavigationTitleColor: UIColor = .chatNavigationTitleColor
         public var chatNavBarBackgroundColor: UIColor = .tabBarBackground
         public var outgoingMessageColor: UIColor = .outgoingMessageColor
+        public var incommingMessageColor: UIColor = .incommingMessageColor
+        public var searchPlaceHolder: UIColor = .searchPlaceHolder
         
     }
 }
@@ -87,14 +89,14 @@ private extension UIColor {
     /// If you see any color not from this list in figma, point it out to anyone in design team.
     static let tabBarBackground = mode(0x161616, lightAlpha: 1.0, 0x161616, darkAlpha: 1.0)
     static let chatViewBackground = mode(0x131314, lightAlpha: 1.0, 0x131314, darkAlpha: 1.0)
-    //static let chatViewBackground = mode(0xFFFFFF, lightAlpha: 0.2, 0xFFFFFF, darkAlpha: 0.2)
     static let searchBackground = mode(0x1C1C1E, lightAlpha: 1.0, 0x1C1C1E, darkAlpha: 1.0)
     static let statusColor = mode(0x8CB2F8, lightAlpha: 1.0, 0x8CB2F8, darkAlpha: 1.0)
     static let subTitleColorChat = mode(0xEBEBF5, lightAlpha: 0.6, 0xEBEBF5, darkAlpha: 0.6)
     static let chatNavigationTitleColor = mode(0xFFFFFF, lightAlpha: 0.8, 0xFFFFFF, darkAlpha: 0.8)
     static let chatNavBarBackgroundColor = mode(0x1D1D1D, lightAlpha: 0.94, 0x1D1D1D, darkAlpha: 0.94)
-    static let outgoingMessageColor = mode(0x00A1F2, lightAlpha: 1.0, 0x00A1F2, darkAlpha: 1.0)
-    
+    static let outgoingMessageColor = mode(0x0B84FF, lightAlpha: 1.0, 0x0B84FF, darkAlpha: 1.0)
+    static let incommingMessageColor = mode(0x3B3B3D, lightAlpha: 1.0, 0x3B3B3D, darkAlpha: 1.0)
+    static let searchPlaceHolder = mode(0x878B95, lightAlpha: 1.0, 0x878B95, darkAlpha: 1.0)
     
     static let streamBlack = mode(0x000000, 0xffffff)
     static let streamGray = mode(0x7a7a7a, 0x7a7a7a)

@@ -484,7 +484,7 @@ open class ChatMessageContentView: _View, ThemeProvider {
                         }*/
                     }
                 } else {
-                    return appearance.colorPalette.background8
+                    return appearance.colorPalette.incommingMessageColor
                     /*if content?.isAttachmentAdded() ?? false {
                         return .clear
                     } else {

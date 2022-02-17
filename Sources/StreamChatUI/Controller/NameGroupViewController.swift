@@ -36,7 +36,7 @@ public class NameGroupViewController: ChatBaseVC {
     }
     // MARK: - METHODS
     public func setupUI() {
-        self.view.backgroundColor = Appearance.default.colorPalette.background
+        self.view.backgroundColor = Appearance.default.colorPalette.chatViewBackground
         self.nameField.autocorrectionType = .no
         self.nameField.addTarget(self, action: #selector(textDidChange(_:)), for: .editingChanged)
         groupDescriptionField.addTarget(self, action: #selector(textDidChange(_:)), for: .editingChanged)
@@ -202,5 +202,12 @@ class ViewWithRadius: UIView {}
 extension UITextField {
     open override func canPerformAction(_ action: Selector, withSender sender: Any?) -> Bool {
         return true
+    }
+    public func setAttributedPlaceHolder(placeHolder: String) {
+        let attributeString = [
+            NSAttributedString.Key.foregroundColor: Appearance.default.colorPalette.searchPlaceHolder,
+            NSAttributedString.Key.font: UIFont.systemFont(ofSize: 16, weight: .regular)
+        ] as [NSAttributedString.Key : Any]
+        self.attributedPlaceholder = NSAttributedString(string: placeHolder, attributes: attributeString)
     }
 }
