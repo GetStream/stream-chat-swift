@@ -441,7 +441,7 @@
                                                 <nil key="highlightedColor"/>
                                             </label>
                                         </subviews>
-                                        <color key="backgroundColor" name="tabBackgroundColor"/>
+                                        <color key="backgroundColor" name="searchBarBackground"/>
                                         <constraints>
                                             <constraint firstItem="VGn-Kf-YWL" firstAttribute="leading" secondItem="Rjv-J6-uMx" secondAttribute="leading" constant="10" id="76w-Lt-jsz"/>
                                             <constraint firstItem="VGn-Kf-YWL" firstAttribute="top" secondItem="Rjv-J6-uMx" secondAttribute="top" id="MKx-YX-Esj"/>
@@ -483,7 +483,7 @@
                                                 <nil key="highlightedColor"/>
                                             </label>
                                         </subviews>
-                                        <color key="backgroundColor" name="tabBackgroundColor"/>
+                                        <color key="backgroundColor" name="searchBarBackground"/>
                                         <constraints>
                                             <constraint firstItem="VMj-eX-SlU" firstAttribute="centerY" secondItem="OjL-Eu-jPg" secondAttribute="centerY" id="8iC-PU-Gyc"/>
                                             <constraint firstAttribute="bottom" secondItem="d9i-Sw-F4z" secondAttribute="bottom" id="Cjt-eF-Vtx"/>
@@ -1190,7 +1190,7 @@
         <image name="closePopup" width="30" height="30"/>
         <image name="magnifyingglass" catalog="system" width="128" height="115"/>
         <namedColor name="ChatNavColor">
-            <color red="0.11372549019607843" green="0.11372549019607843" blue="0.11372549019607843" alpha="0.94017869599011483" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.11400000005960464" green="0.11400000005960464" blue="0.11400000005960464" alpha="0.93999999761581421" colorSpace="custom" customColorSpace="sRGB"/>
         </namedColor>
         <namedColor name="White60%">
             <color red="0.63099998235702515" green="0.63099998235702515" blue="0.63099998235702515" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>

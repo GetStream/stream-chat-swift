@@ -28,8 +28,8 @@ open class ChatChannelListCollectionViewCell: _CollectionViewCell,
     override open var isHighlighted: Bool {
         didSet {
             itemView.backgroundColor = isHighlighted
-                ? appearance.colorPalette.highlightedBackground
-                : appearance.colorPalette.background
+                ?  Appearance.default.colorPalette.chatViewBackground
+                :  Appearance.default.colorPalette.chatViewBackground
         }
     }
 
