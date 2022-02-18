@@ -242,9 +242,6 @@ open class ChatMessageListVC:
 
     /// Updates the collection view data with given `changes`.
     open func updateMessages(with changes: [ListChange<ChatMessage>], completion: (() -> Void)? = nil) {
-        // Clear the cached cell heights for the message that will be updated.
-        clearCachedCellHeights(before: changes)
-
         if #available(iOS 13.0, *), isDiffingEnabled {
             updateMessagesSnapshot(with: changes, completion: completion)
         } else {
@@ -402,43 +399,8 @@ open class ChatMessageListVC:
         return cell
     }
 
-    /// Caching of the cell heights to avoid scroll jumps because of cell size calculations
-    var cachedCellHeights: [MessageId: CGFloat] = [:]
-
     open func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         delegate?.chatMessageListVC(self, willDisplayMessageAt: indexPath)
-
-        if let message = dataSource?.chatMessageListVC(self, messageAt: indexPath) {
-            cachedCellHeights[message.id] = cell.frame.size.height
-        }
-    }
-
-    open func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
-        guard isDiffingEnabled, let message = dataSource?.chatMessageListVC(self, messageAt: indexPath) else {
-            return 150
-        }
-
-        return cachedCellHeights[message.id] ?? UITableView.automaticDimension
-    }
-
-    /// Clear the cached cell heights for the messages that will be updated.
-    func clearCachedCellHeights(before changes: [ListChange<ChatMessage>]) {
-        for change in changes {
-            let message: ChatMessage
-
-            switch change {
-            case let .insert(item, _):
-                message = item
-            case let .update(item, _):
-                message = item
-            case let .move(item, _, _):
-                message = item
-            case let .remove(item, _):
-                message = item
-            }
-
-            cachedCellHeights[message.id] = nil
-        }
     }
 
     open func scrollViewDidScroll(_ scrollView: UIScrollView) {
