@@ -18,10 +18,14 @@ final class CDNClient_Mock: CDNClient, Spy {
         completion: @escaping (Result<URL, Error>) -> Void
     ) {
         record()
-        uploadAttachmentProgress.map { progress?($0) }
+        if let uploadAttachmentProgress = uploadAttachmentProgress {
+            progress?(uploadAttachmentProgress)
+        }
 
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-            self.uploadAttachmentResult.map(completion)
+        if let uploadAttachmentResult = uploadAttachmentResult {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                completion(uploadAttachmentResult)
+            }
         }
     }
 }
