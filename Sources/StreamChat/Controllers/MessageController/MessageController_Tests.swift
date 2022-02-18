@@ -237,17 +237,21 @@ final class MessageController_Tests: XCTestCase {
     func test_replies_onlyIncludeValidMessages() throws {
         // Create dummy channel
         let cid = ChannelId.unique
-        let channel = dummyPayload(with: cid)
         let truncatedDate = Date.unique
+        let channel = dummyPayload(with: cid, truncatedAt: truncatedDate)
         
         // Save channel
+        var dto: ChannelDTO? = nil
         try client.databaseContainer.writeSynchronously {
-            let dto = try $0.saveChannel(payload: channel)
-            dto.truncatedAt = truncatedDate
+            dto = try $0.saveChannel(payload: channel)
         }
         
         // Insert parent message
-        try client.databaseContainer.createMessage(id: messageId, authorId: .unique, cid: cid, text: "Parent")
+        try client.databaseContainer.createMessage(id: messageId,
+                                                   authorId: .unique,
+                                                   cid: cid,
+                                                   channel: dto,
+                                                   text: "Parent")
         
         // Insert replies for parent message
         let reply1: MessagePayload = .dummy(

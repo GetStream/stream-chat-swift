@@ -214,6 +214,7 @@ extension DatabaseContainer {
         id: MessageId = .unique,
         authorId: UserId = .unique,
         cid: ChannelId = .unique,
+        channel: ChannelDTO? = nil,
         text: String = .unique,
         extraData: [String: RawJSON] = [:],
         pinned: Bool = false,
@@ -232,7 +233,10 @@ extension DatabaseContainer {
         quotedMessageId: MessageId? = nil
     ) throws {
         try writeSynchronously { session in
-            let channelDTO = try session.saveChannel(payload: XCTestCase().dummyPayload(with: cid))
+            guard let channelDTO = channel ?? (try? session.saveChannel(payload: XCTestCase().dummyPayload(with: cid))) else {
+                XCTFail("Failed to fetch channel when creating message")
+                return
+            }
             
             let message: MessagePayload = .dummy(
                 type: type,
