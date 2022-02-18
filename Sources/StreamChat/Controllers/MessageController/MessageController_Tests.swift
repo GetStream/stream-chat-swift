@@ -241,17 +241,19 @@ final class MessageController_Tests: XCTestCase {
         let channel = dummyPayload(with: cid, truncatedAt: truncatedDate)
         
         // Save channel
-        var dto: ChannelDTO? = nil
+        var dto: ChannelDTO?
         try client.databaseContainer.writeSynchronously {
             dto = try $0.saveChannel(payload: channel)
         }
         
         // Insert parent message
-        try client.databaseContainer.createMessage(id: messageId,
-                                                   authorId: .unique,
-                                                   cid: cid,
-                                                   channel: dto,
-                                                   text: "Parent")
+        try client.databaseContainer.createMessage(
+            id: messageId,
+            authorId: .unique,
+            cid: cid,
+            channel: dto,
+            text: "Parent"
+        )
         
         // Insert replies for parent message
         let reply1: MessagePayload = .dummy(
