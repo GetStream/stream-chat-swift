@@ -139,7 +139,8 @@ extension XCTestCase {
             createdAt: XCTestCase.channelCreatedDate,
             updatedAt: .unique
         ),
-        channelExtraData: [String: RawJSON] = [:]
+        channelExtraData: [String: RawJSON] = [:],
+        truncatedAt: Date? = nil
     ) -> ChannelPayload {
         var payloadMessages: [MessagePayload] = []
         if let messages = messages {
@@ -164,6 +165,7 @@ extension XCTestCase {
                     createdAt: XCTestCase.channelCreatedDate,
                     deletedAt: nil,
                     updatedAt: .unique,
+                    truncatedAt: truncatedAt,
                     createdBy: dummyUser,
                     config: channelConfig,
                     isFrozen: true,
@@ -247,6 +249,7 @@ extension XCTestCase {
                     createdAt: .unique,
                     deletedAt: .unique,
                     updatedAt: .unique,
+                    truncatedAt: nil,
                     createdBy: dummyUser,
                     config: .init(
                         reactionsEnabled: true,

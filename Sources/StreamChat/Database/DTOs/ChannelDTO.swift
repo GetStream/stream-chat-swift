@@ -25,10 +25,6 @@ class ChannelDTO: NSManagedObject {
     // that do not belong to the regular channel query.
     @NSManaged var oldestMessageAt: Date?
 
-    // This field lives only locally and is not populated from the payload. The main purpose of having this is to
-    // visually truncate the channel that exists and have messages locally already. It should be safe to have this
-    // only locally because once the DB is flushed and the channels are fetched fresh, the messages before the
-    // `truncatedAt` date are not returned from the backend.
     //
     // This field is also used to implement the `clearHistory` option when hiding the channel.
     //
@@ -174,6 +170,7 @@ extension NSManagedObjectContext {
         dto.defaultSortingAt = payload.lastMessageAt ?? payload.createdAt
         dto.lastMessageAt = payload.lastMessageAt
         dto.memberCount = Int64(clamping: payload.memberCount)
+        dto.truncatedAt = payload.truncatedAt
 
         dto.isFrozen = payload.isFrozen
         
@@ -402,6 +399,7 @@ extension ChatChannel {
             createdAt: dto.createdAt,
             updatedAt: dto.updatedAt,
             deletedAt: dto.deletedAt,
+            truncatedAt: dto.truncatedAt,
             isHidden: dto.isHidden,
             createdBy: dto.createdBy?.asModel(),
             config: try! JSONDecoder().decode(ChannelConfig.self, from: dto.config),
@@ -414,7 +412,6 @@ extension ChatChannel {
             unreadCount: { unreadCount() },
             watcherCount: Int(dto.watcherCount),
             memberCount: Int(dto.memberCount),
-            //            banEnabling: .disabled,
             reads: reads,
             cooldownDuration: Int(dto.cooldownDuration),
             extraData: extraData,

@@ -66,9 +66,22 @@ class ChannelEvents_Tests: XCTestCase {
 
         let event = try eventDecoder.decode(from: mockData) as? ChannelTruncatedEventDTO
         XCTAssertEqual(event?.channel.cid, ChannelId(type: .messaging, id: "new_channel_7011"))
+        XCTAssertNil(event?.message)
 
         let rawPayload = try JSONDecoder.stream.decode(EventPayload.self, from: mockData)
         XCTAssertEqual(event?.payload.createdAt, rawPayload.createdAt)
+    }
+    
+    func test_channelTruncatedEventWithMessage() throws {
+        let mockData = XCTestCase.mockData(fromFile: "ChannelTruncated_with_message")
+
+        let event = try eventDecoder.decode(from: mockData) as? ChannelTruncatedEventDTO
+        XCTAssertEqual(event?.channel.cid, ChannelId(type: .messaging, id: "8372DE11-E"))
+
+        let rawPayload = try JSONDecoder.stream.decode(EventPayload.self, from: mockData)
+        XCTAssertEqual(event?.payload.createdAt, rawPayload.createdAt)
+        XCTAssertEqual(event?.message?.text, "Channel truncated")
+        XCTAssertEqual(event?.message?.type, .system)
     }
     
     // MARK: DTO -> Event

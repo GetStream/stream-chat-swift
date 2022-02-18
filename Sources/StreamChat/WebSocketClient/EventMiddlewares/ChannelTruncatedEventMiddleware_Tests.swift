@@ -61,17 +61,18 @@ final class ChannelTruncatedEventMiddleware_Tests: XCTestCase {
 
     func tests_middleware_handlesChannelTruncatedEventCorrectly() throws {
         let cid: ChannelId = .unique
+        let date = Date()
         // Create channel truncate event
         let eventPayload: EventPayload = .init(
             eventType: .channelTruncated,
             cid: cid,
             user: .dummy(userId: .unique),
-            channel: .dummy(cid: cid),
+            channel: .dummy(cid: cid, truncatedAt: date),
             createdAt: .unique
         )
         let event = try ChannelTruncatedEventDTO(from: eventPayload)
 
-        try database.createChannel(cid: cid, withMessages: true)
+        try database.createChannel(cid: cid, withMessages: true, truncatedAt: nil)
 
         // Assert `truncatedAt` is `nil` by default
         assert(database.viewContext.channel(cid: cid)?.truncatedAt == nil)
@@ -80,7 +81,8 @@ final class ChannelTruncatedEventMiddleware_Tests: XCTestCase {
         let forwardedEvent = middleware.handle(event: event, session: database.viewContext)
 
         // Assert the `truncatedAt` value is updated
-        XCTAssertEqual(database.viewContext.channel(cid: cid)?.truncatedAt, eventPayload.createdAt)
+        XCTAssertEqual(database.viewContext.channel(cid: cid)?.truncatedAt, eventPayload.channel?.truncatedAt)
+        XCTAssertEqual(database.viewContext.channel(cid: cid)?.truncatedAt, date)
         XCTAssert(forwardedEvent is ChannelTruncatedEventDTO)
     }
 }
