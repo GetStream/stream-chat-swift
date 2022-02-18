@@ -88,7 +88,7 @@ final class SyncOperations_Tests: XCTestCase {
         operation.startAndWaitForCompletion()
 
         XCTAssertEqual(context.synchedChannelIds.count, 0)
-        XCTAssertNotCall("syncMissingEvents(using:channelIds:bumpLastSync:completion:)", on: syncRepository)
+        XCTAssertNotCall("syncMissingEvents(using:channelIds:bumpLastSync:isRecoveryRequest:completion:)", on: syncRepository)
     }
 
     func test_SyncEventsOperation_pendingDate_syncFailure_shouldRetry() throws {
@@ -103,7 +103,11 @@ final class SyncOperations_Tests: XCTestCase {
 
         XCTAssertEqual(context.synchedChannelIds.count, 0)
         XCTAssertNil(database.viewContext.currentUser?.lastPendingConnectionDate)
-        XCTAssertCall("syncMissingEvents(using:channelIds:bumpLastSync:completion:)", on: syncRepository, times: 3)
+        XCTAssertCall(
+            "syncMissingEvents(using:channelIds:bumpLastSync:isRecoveryRequest:completion:)",
+            on: syncRepository,
+            times: 3
+        )
     }
 
     func test_SyncEventsOperation_pendingDate_syncSuccess_shouldUpdateLastPendingConnectionDate() throws {
@@ -118,7 +122,11 @@ final class SyncOperations_Tests: XCTestCase {
 
         XCTAssertEqual(context.synchedChannelIds.count, 2)
         XCTAssertEqual(database.viewContext.currentUser?.lastPendingConnectionDate, context.lastConnectionDate)
-        XCTAssertCall("syncMissingEvents(using:channelIds:bumpLastSync:completion:)", on: syncRepository, times: 1)
+        XCTAssertCall(
+            "syncMissingEvents(using:channelIds:bumpLastSync:isRecoveryRequest:completion:)",
+            on: syncRepository,
+            times: 1
+        )
     }
 
     // MARK: - WatchChannelOperation

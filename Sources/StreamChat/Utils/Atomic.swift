@@ -57,23 +57,3 @@ public class Atomic<T> {
         _wrappedValue = wrappedValue
     }
 }
-
-public extension Atomic where T: Equatable {
-    /// Updates the value to `new` if the current value is `old`.
-    /// - Parameters:
-    ///   - old: old value
-    ///   - new: new value
-    /// - Returns: true if the swap is successful
-    func compareAndSwap(old: T, new: T) -> Bool {
-        lock.lock()
-        defer {
-            lock.unlock()
-        }
-        
-        if _wrappedValue == old {
-            _wrappedValue = new
-            return true
-        }
-        return false
-    }
-}

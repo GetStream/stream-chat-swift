@@ -83,7 +83,7 @@ class APIClient_Tests: XCTestCase {
         }
 
         // Check the encoder is called with the correct endpoint
-        XCTAssertEqual(encoder.encodeRequest_endpoint, AnyEndpoint(testEndpoint))
+        XCTAssertEqual(encoder.encodeRequest_endpoints.first, AnyEndpoint(testEndpoint))
         XCTEnsureRequestsWereExecuted(times: 1)
     }
     
@@ -102,8 +102,6 @@ class APIClient_Tests: XCTestCase {
         XCTAssertNotCall("decodeRequestResponse(data:response:error:)", on: decoder)
     }
 
-    // MARK: - Networking
-    
     func test_callingRequest_createsNetworkRequest() throws {
         // Create a test request and set it as a response from the encoder
         let uniquePath: String = .unique
@@ -197,6 +195,27 @@ class APIClient_Tests: XCTestCase {
         XCTEnsureRequestsWereExecuted(times: 1)
     }
 
+    func test_startingMultipleRequestsAtTheSameTimeShouldResultInParallelRequests() {
+        createClient(with: { _ in
+            // If token refresh never completes, it will never complete the request
+        })
+
+        let encoderError = ClientError.ExpiredToken()
+        decoder.decodeRequestResponse = .failure(encoderError)
+
+        // We run two operations at the same time. None of them will complete
+        apiClient.request(endpoint: Endpoint<TestUser>.mock(), completion: { _ in
+            XCTFail()
+        })
+        apiClient.request(endpoint: Endpoint<TestUser>.mock(), completion: { _ in
+            XCTFail()
+        })
+
+        AssertAsync.willBeEqual(decoder.numberOfCalls(on: "decodeRequestResponse(data:response:error:)"), 2)
+        // Both are executed even though none of them have completed
+        XCTEnsureRequestsWereExecuted(times: 2)
+    }
+
     // MARK: - CDN Client
     
     func test_uploadAttachment_calls_CDNClient() throws {
@@ -284,7 +303,7 @@ class APIClient_Tests: XCTestCase {
         decoder.decodeRequestResponse = .failure(encoderError)
 
         var result: Result<TestUser, Error>?
-        waitUntil { done in
+        waitUntil(timeout: 0.2) { done in
             apiClient.request(
                 endpoint: Endpoint<TestUser>.mock(),
                 completion: {
@@ -342,13 +361,148 @@ class APIClient_Tests: XCTestCase {
         // 4. We restart the queue by completing the token refresh
         completeTokenRefresh()
 
-        // 5. We verify only one request (the initial one) went through
+        // 5. We apply a delay to verify that only one request (the initial one) went through
         waitUntil { done in
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.01) {
                 done()
             }
         }
         XCTEnsureRequestsWereExecuted(times: 1)
+    }
+
+    // MARK: - Recovery mode
+
+    func test_whenInRecoveryModeRegularRequestsShouldNotGoThrough() {
+        apiClient.enterRecoveryMode()
+
+        let testUser = TestUser(name: "test")
+        decoder.decodeRequestResponse = .success(testUser)
+        (1...5).forEach { _ in
+            self.apiClient.request(endpoint: Endpoint<TestUser>.mock(), completion: { _ in })
+        }
+
+        // 5. We apply a delay to verify that no requests are going through
+        waitUntil { done in
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.01) {
+                done()
+            }
+        }
+        XCTAssertNotCall("encodeRequest(for:completion:)", on: encoder)
+        XCTAssertNotCall("decodeRequestResponse(data:response:error:)", on: decoder)
+    }
+
+    func test_whenInRecoveryModeRecoveryRequestsShouldGoThrough() {
+        apiClient.enterRecoveryMode()
+
+        let testUser = TestUser(name: "test")
+        decoder.decodeRequestResponse = .success(testUser)
+        let lastRequestExpectation = expectation(description: "Last request completed")
+        (1...5).forEach { index in
+            self.apiClient.recoveryRequest(endpoint: Endpoint<TestUser>.mock(path: "\(index)")) { _ in
+                if index == 5 {
+                    lastRequestExpectation.fulfill()
+                }
+            }
+        }
+
+        waitForExpectations(timeout: 0.1, handler: nil)
+        XCTEnsureRequestsWereExecuted(times: 5)
+    }
+
+    func test_whenInRegularModeRecoveryRequestsShouldThrowAnAssert() {
+        let testUser = TestUser(name: "test")
+        decoder.decodeRequestResponse = .success(testUser)
+        let loggerMock = LoggerMock()
+        loggerMock.injectMock()
+
+        (1...5).forEach { _ in
+            self.apiClient.recoveryRequest(endpoint: Endpoint<TestUser>.mock(), completion: { _ in })
+        }
+
+        AssertAsync.willBeEqual(loggerMock.assertionFailureCalls, 5)
+        XCTAssertNotCall("encodeRequest(for:completion:)", on: encoder)
+        XCTAssertNotCall("decodeRequestResponse(data:response:error:)", on: decoder)
+    }
+
+    func test_whenInRecoveryMode_startingMultipleRecoveryRequestsAtTheSameTimeShouldRunThemInSerial() {
+        apiClient.enterRecoveryMode()
+
+        let testUser = TestUser(name: "test")
+        decoder.decodeRequestResponse = .success(testUser)
+        decoder.decodeRequestDelay = 0.01
+
+        let lastRequestExpectation = expectation(description: "Last request completed")
+        let testBlock: (Int) -> Void = { index in
+            // Given a request, the total amount of requests executed should equal the index
+            self.XCTEnsureRequestsWereExecuted(times: index)
+            if index == 5 {
+                lastRequestExpectation.fulfill()
+            }
+        }
+        (1...5).forEach { index in
+            self.apiClient.recoveryRequest(endpoint: Endpoint<TestUser>.mock(path: "\(index)")) { _ in
+                testBlock(index)
+            }
+        }
+
+        waitForExpectations(timeout: 0.1, handler: nil)
+        XCTEnsureRequestsWereExecuted(times: 5)
+    }
+
+    func test_whenInRecoveryModeAndARequestFailsOrderShouldBeKeptWhenRetrying() {
+        var complete3rdTokenRefresh = {}
+        var tokenRefreshCalls = 0
+        let tokenRefreshIsCalled3Times = expectation(description: "Token refresh is called")
+        createClient(with: { completion in
+            tokenRefreshCalls += 1
+            if tokenRefreshCalls == 3 {
+                tokenRefreshIsCalled3Times.fulfill()
+                complete3rdTokenRefresh = completion
+            } else {
+                completion()
+            }
+        })
+
+        apiClient.enterRecoveryMode()
+        let encoderError = ClientError.ExpiredToken()
+        decoder.decodeRequestResponse = .failure(encoderError)
+
+        // Put 5 requests on the queue. Only one should be executed at a time
+        let lastRequestExpectation = expectation(description: "Last request completed")
+        var results: [Result<TestUser, Error>] = []
+        (1...5).forEach { index in
+            self.apiClient.recoveryRequest(endpoint: Endpoint<TestUser>.mock(path: "\(index)")) { result in
+                results.append(result)
+                if index == 5 {
+                    lastRequestExpectation.fulfill()
+                }
+            }
+        }
+
+        wait(for: [tokenRefreshIsCalled3Times], timeout: 0.1)
+
+        // 3 tries, token failure was returned until now
+        // -> 1 unique | 3 total
+        XCTEnsureRequestsWereExecuted(times: 3)
+        let requestPaths = encoder.encodeRequest_endpoints.map(\.path)
+        XCTAssertEqual(requestPaths.count, 3)
+        XCTAssertEqual(Set(requestPaths).count, 1)
+
+        // From now on we will let it through
+        let testUser = TestUser(name: "test")
+        decoder.decodeRequestResponse = .success(testUser)
+
+        complete3rdTokenRefresh()
+
+        waitForExpectations(timeout: 0.1, handler: nil)
+
+        // Request 1: 3 token failures + 1 success = 4
+        // Requests 2-5: 1 success each = 4
+        // -> 5 unique | 8 total
+        XCTEnsureRequestsWereExecuted(times: 8)
+        let totalRequests = encoder.encodeRequest_endpoints.map(\.path)
+        XCTAssertEqual(totalRequests.count, 8)
+        XCTAssertEqual(Set(totalRequests).count, 5)
     }
 
     // MARK: - Helpers
@@ -371,8 +525,8 @@ class APIClient_Tests: XCTestCase {
 }
 
 extension Endpoint {
-    static func mock() -> Endpoint<ResponseType> {
-        .init(path: .unique, method: .post, queryItems: nil, requiresConnectionId: false, body: nil)
+    static func mock(path: String = .unique) -> Endpoint<ResponseType> {
+        .init(path: path, method: .post, queryItems: nil, requiresConnectionId: false, body: nil)
     }
 }
 
@@ -388,7 +542,7 @@ class TestRequestEncoder: RequestEncoder, Spy {
     weak var connectionDetailsProviderDelegate: ConnectionDetailsProviderDelegate?
     
     var encodeRequest: Result<URLRequest, Error>? = .success(URLRequest(url: .unique()))
-    var encodeRequest_endpoint: AnyEndpoint?
+    var encodeRequest_endpoints: [AnyEndpoint] = []
     var encodeRequest_completion: ((Result<URLRequest, Error>) -> Void)?
     
     func encodeRequest<ResponsePayload>(
@@ -396,7 +550,7 @@ class TestRequestEncoder: RequestEncoder, Spy {
         completion: @escaping (Result<URLRequest, Error>) -> Void
     ) where ResponsePayload: Decodable {
         record()
-        encodeRequest_endpoint = AnyEndpoint(endpoint)
+        encodeRequest_endpoints.append(AnyEndpoint(endpoint))
         encodeRequest_completion = completion
         
         if let result = encodeRequest {
@@ -413,23 +567,33 @@ class TestRequestEncoder: RequestEncoder, Spy {
 class TestRequestDecoder: RequestDecoder, Spy {
     var recordedFunctions: [String] = []
     var decodeRequestResponse: Result<Any, Error>?
-    
+    var decodeRequestDelay: TimeInterval?
+
     var decodeRequestResponse_data: Data?
     var decodeRequestResponse_response: HTTPURLResponse?
     var decodeRequestResponse_error: Error?
     
-    func decodeRequestResponse<ResponseType>(data: Data?, response: URLResponse?, error: Error?) throws -> ResponseType
-        where ResponseType: Decodable {
+    func decodeRequestResponse<ResponseType>(
+        data: Data?,
+        response: URLResponse?,
+        error: Error?
+    ) throws -> ResponseType where ResponseType: Decodable {
         record()
         decodeRequestResponse_data = data
         decodeRequestResponse_response = response as? HTTPURLResponse
         decodeRequestResponse_error = error
-        
+
         guard let simulatedResponse = decodeRequestResponse else {
             log.warning("TestRequestDecoder simulated response not set. Throwing a TestError.")
             throw TestError()
         }
-        
+
+        if let decodeRequestDelay = decodeRequestDelay {
+            let group = DispatchGroup()
+            group.enter()
+            DispatchQueue.main.asyncAfter(deadline: .now() + decodeRequestDelay) { group.leave() }
+            group.wait()
+        }
         switch simulatedResponse {
         case let .success(response):
             return response as! ResponseType

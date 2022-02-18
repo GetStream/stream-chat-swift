@@ -42,6 +42,10 @@ class AsyncOperation: BaseOperation {
             isFinished = true
         }
     }
+
+    func resetRetries() {
+        executedRetries = 0
+    }
 }
 
 class BaseOperation: Operation {

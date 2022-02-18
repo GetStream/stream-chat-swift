@@ -301,6 +301,7 @@ class WebSocketClient_Tests: XCTestCase {
     func test_changingConnectEndpointAndReconnecting() {
         // Simulate connection
         test_connectionFlow()
+        requestEncoder.encodeRequest_endpoints = []
         
         // Save the original engine reference
         let oldEngine = engine
@@ -326,7 +327,7 @@ class WebSocketClient_Tests: XCTestCase {
         
         // Reconnect again
         webSocketClient.connect()
-        XCTAssertEqual(requestEncoder.encodeRequest_endpoint, AnyEndpoint(newEndpoint))
+        XCTAssertEqual(requestEncoder.encodeRequest_endpoints.first, AnyEndpoint(newEndpoint))
         
         // Check the engige got recreated
         XCTAssert(engine !== oldEngine)

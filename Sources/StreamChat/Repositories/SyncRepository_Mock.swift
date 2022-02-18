@@ -45,6 +45,7 @@ class SyncRepositoryMock: SyncRepository, Spy {
         using date: Date,
         channelIds: [ChannelId],
         bumpLastSync: Bool,
+        isRecoveryRequest: Bool,
         completion: @escaping (Result<[ChannelId], SyncError>) -> Void
     ) {
         record()

@@ -39,7 +39,7 @@ class StreamCDNClient_Tests: XCTestCase {
         )
 
         // Check the encoder is called with the correct endpoint
-        XCTAssertEqual(builder.encoder.encodeRequest_endpoint, AnyEndpoint(testEndpoint))
+        XCTAssertEqual(builder.encoder.encodeRequest_endpoints.first, AnyEndpoint(testEndpoint))
     }
     
     func test_uploadFileEncoderFailingToEncode() throws {

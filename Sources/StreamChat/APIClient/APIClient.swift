@@ -28,6 +28,18 @@ class APIClient {
         return operationQueue
     }()
 
+    /// Queue in charge of handling recovery related requests. Handles operations in serial
+    private let recoveryQueue: OperationQueue = {
+        let operationQueue = OperationQueue()
+        operationQueue.name = "com.stream.api-client.recovery"
+        operationQueue.maxConcurrentOperationCount = 1
+        return operationQueue
+    }()
+
+    /// Determines whether the APIClient is in recovery mode. During recovery period we limit the concurrent operations to 1, and we only allow recovery related
+    /// requests to be run,
+    @Atomic private var isInRecoveryMode: Bool = false
+
     /// Shows whether the token is being refreshed at the moment
     @Atomic private var isRefreshingToken: Bool = false
     
@@ -73,6 +85,24 @@ class APIClient {
         operationQueue.addOperation(requestOperation)
     }
 
+    /// Performs a network request and retries in case of network failures
+    ///
+    /// - Parameters:
+    ///   - endpoint: The `Endpoint` used to create the network request.
+    ///   - completion: Called when the networking request is finished.
+    func recoveryRequest<Response: Decodable>(
+        endpoint: Endpoint<Response>,
+        completion: @escaping (Result<Response, Error>) -> Void
+    ) {
+        guard isInRecoveryMode else {
+            log.assertionFailure("We should not call this method if not in recovery mode")
+            return
+        }
+
+        let requestOperation = operation(endpoint: endpoint, completion: completion)
+        recoveryQueue.addOperation(requestOperation)
+    }
+
     private func operation<Response: Decodable>(
         endpoint: Endpoint<Response>,
         completion: @escaping (Result<Response, Error>) -> Void
@@ -84,6 +114,10 @@ class APIClient {
                     // Requeue request
                     self?.request(endpoint: endpoint, completion: completion)
                     done(.continue)
+                case .failure(_ as ClientError.TokenRefreshed):
+                    // Retry request. Expired token has been refreshed
+                    done(.retry)
+                    operation.resetRetries()
                 case let .failure(error) where self?.shouldRetry(error, operation: operation) == true:
                     done(.retry)
                 case .success, .failure:
@@ -144,13 +178,20 @@ class APIClient {
                     self.tokenRefreshConsecutiveFailures = 0
                     completion(.success(decodedResponse))
                 } catch {
-                    if error is ClientError.ExpiredToken {
-                        self.refreshToken {
-                            log.info("Token Refreshed", subsystems: .httpRequests)
-                        }
-                        completion(.failure(ClientError.RefreshingToken()))
-                    } else {
+                    if error is ClientError.ExpiredToken == false {
                         completion(.failure(error))
+                        return
+                    }
+
+                    /// If the error is ExpiredToken, we need to refresh it. There are 2 possibilities here:
+                    /// 1. The token is not being refreshed, so we start the refresh, and we wait until it is completed. Then the request will be retried.
+                    /// 2. The token is already being refreshed, so we just put back the request to the queue (Cannot happen when running the queue in serial)
+                    ///
+                    /// This is done leveraging 2 error types. When ClientError.RefreshingToken is returned, we put back the request on the queue.
+                    /// But when ClientError.TokenRefreshed is returned, just retry the execution.
+                    /// This is done because we want to make sure that when the queue is running serial, there order is kept.
+                    self.refreshToken { refreshResult in
+                        completion(.failure(refreshResult))
                     }
                 }
             }
@@ -158,13 +199,14 @@ class APIClient {
         }
     }
 
-    private func refreshToken(completion: @escaping () -> Void) {
-        guard _isRefreshingToken.compareAndSwap(old: false, new: true) else {
-            completion()
+    private func refreshToken(completion: @escaping (ClientError) -> Void) {
+        guard !isRefreshingToken else {
+            completion(ClientError.RefreshingToken())
             return
         }
+        isRefreshingToken = true
 
-        // We stop the queue so no more operations are triggered
+        // We stop the queue so no more operations are triggered during the refresh
         operationQueue.isSuspended = true
 
         // Increase the amount of consecutive failures
@@ -174,7 +216,7 @@ class APIClient {
             self?.isRefreshingToken = false
             // We restart the queue now that token refresh is completed
             self?.operationQueue.isSuspended = false
-            completion()
+            completion(ClientError.TokenRefreshed())
         }
     }
 
@@ -214,6 +256,18 @@ class APIClient {
 
     func flushRequestsQueue() {
         operationQueue.cancelAllOperations()
+    }
+
+    func enterRecoveryMode() {
+        // Pauses all the regular requests until recovery is completed.
+        isInRecoveryMode = true
+        operationQueue.isSuspended = true
+    }
+
+    func exitRecoveryMode() {
+        // Once recovery is done, regular requests can go through again.
+        isInRecoveryMode = false
+        operationQueue.isSuspended = false
     }
 }
 

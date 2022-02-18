@@ -11,11 +11,15 @@ import XCTest
 class APIClientMock: APIClient, Spy {
     var recordedFunctions: [String] = []
 
-    @Atomic var request_allRecordedCalls: [(endpoint: AnyEndpoint, completion: Any?)] = []
-    
     /// The last endpoint `request` function was called with.
     @Atomic var request_endpoint: AnyEndpoint?
     @Atomic var request_completion: Any?
+    @Atomic var request_allRecordedCalls: [(endpoint: AnyEndpoint, completion: Any?)] = []
+
+    /// The last endpoint `recoveryRequest` function was called with.
+    @Atomic var recoveryRequest_endpoint: AnyEndpoint?
+    @Atomic var recoveryRequest_completion: Any?
+    @Atomic var recoveryRequest_allRecordedCalls: [(endpoint: AnyEndpoint, completion: Any?)] = []
 
     /// The last endpoint `uploadFile` function was called with.
     @Atomic var uploadFile_attachment: AnyChatMessageAttachment?
@@ -76,6 +80,15 @@ class APIClientMock: APIClient, Spy {
         request_completion = completion
         _request_allRecordedCalls.mutate { $0.append((request_endpoint!, request_completion!)) }
         request_expectation.fulfill()
+    }
+
+    override func recoveryRequest<Response>(
+        endpoint: Endpoint<Response>,
+        completion: @escaping (Result<Response, Error>) -> Void
+    ) where Response: Decodable {
+        recoveryRequest_endpoint = AnyEndpoint(endpoint)
+        recoveryRequest_completion = completion
+        _recoveryRequest_allRecordedCalls.mutate { $0.append((recoveryRequest_endpoint!, recoveryRequest_completion!)) }
     }
     
     override func uploadAttachment(
