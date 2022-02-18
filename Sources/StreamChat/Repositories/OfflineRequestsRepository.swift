@@ -52,23 +52,24 @@ class OfflineRequestsRepository {
         let database = self.database
         let group = DispatchGroup()
         for (id, endpoint) in pendingActions {
+            let leave = {
+                group.leave()
+            }
+            let deleteQueuedRequestAndComplete = {
+                database.write({ session in
+                    session.deleteQueuedRequest(id: id)
+                }, completion: { _ in leave() })
+            }
+
             guard let endpoint = try? JSONDecoder.stream.decode(DataEndpoint.self, from: endpoint) else {
+                deleteQueuedRequestAndComplete()
                 continue
             }
-            log.info("Executing queued offline request for /\(endpoint.path)", subsystems: .offlineSupport)
 
             group.enter()
+            log.info("Executing queued offline request for /\(endpoint.path)", subsystems: .offlineSupport)
             apiClient.recoveryRequest(endpoint: endpoint) { [weak self] result in
-                let leave = {
-                    group.leave()
-                }
-                let deleteQueuedRequestAndComplete = {
-                    log.info("Completed queued offline request /\(endpoint.path)", subsystems: .offlineSupport)
-                    database.write({ session in
-                        session.deleteQueuedRequest(id: id)
-                    }, completion: { _ in leave() })
-                }
-
+                log.info("Completed queued offline request /\(endpoint.path)", subsystems: .offlineSupport)
                 switch result {
                 case let .success(data):
                     self?.performDatabaseRecoveryActionsUponSuccess(
