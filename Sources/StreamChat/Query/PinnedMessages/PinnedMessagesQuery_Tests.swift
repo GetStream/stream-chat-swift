@@ -144,7 +144,7 @@ final class PinnedMessagesQueryIntegration_Tests: XCTestCase {
         // Assert host is correct
         XCTAssertEqual(urlComponents.host, baseURL.host)
         // Assert path is correct
-        XCTAssertEqual(urlComponents.path, "/\(endpoint.path)")
+        XCTAssertEqual(urlComponents.path, "/\(endpoint.path.value)")
         // Assert query contains payload
         let payload = try XCTUnwrap(
             urlComponents

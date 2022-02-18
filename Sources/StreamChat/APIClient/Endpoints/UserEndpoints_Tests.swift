@@ -13,7 +13,7 @@ final class UserEndpoints_Tests: XCTestCase {
         )
         
         let expectedEndpoint = Endpoint<UserListPayload>(
-            path: "users",
+            path: .users,
             method: .get,
             queryItems: nil,
             requiresConnectionId: true,
@@ -25,6 +25,7 @@ final class UserEndpoints_Tests: XCTestCase {
         
         // Assert endpoint is built correctly
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
+        XCTAssertEqual("users", endpoint.path.value)
     }
     
     func test_updateCurrentUser_buildsCorrectly() {
@@ -42,7 +43,7 @@ final class UserEndpoints_Tests: XCTestCase {
         ]
         
         let expectedEndpoint = Endpoint<UserUpdateResponse>(
-            path: "users",
+            path: .users,
             method: .patch,
             queryItems: nil,
             requiresConnectionId: false,
@@ -52,5 +53,6 @@ final class UserEndpoints_Tests: XCTestCase {
         let endpoint: Endpoint<UserUpdateResponse> = .updateUser(id: userId, payload: payload)
         
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
+        XCTAssertEqual("users", endpoint.path.value)
     }
 }

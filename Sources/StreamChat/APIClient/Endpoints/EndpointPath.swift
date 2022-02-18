@@ -67,9 +67,9 @@ enum EndpointPath: Codable {
         case let .uploadAttachment(channelId, type): return "channels/\(channelId)/\(type)"
 
         case let .sendMessage(channelId): return "channels/\(channelId)/message"
-        case let .message(messageId): return "messages/\(messageId)/"
-        case let .editMessage(messageId): return "messages/\(messageId)/"
-        case let .deleteMessage(messageId): return "messages/\(messageId)/"
+        case let .message(messageId): return "messages/\(messageId)"
+        case let .editMessage(messageId): return "messages/\(messageId)"
+        case let .deleteMessage(messageId): return "messages/\(messageId)"
         case let .replies(messageId): return "messages/\(messageId)/replies"
         case let .reactions(messageId): return "messages/\(messageId)/reactions"
         case let .reaction(messageId): return "messages/\(messageId)/reaction"
