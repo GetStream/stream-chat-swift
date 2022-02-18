@@ -11,10 +11,14 @@ class AsyncOperation: BaseOperation {
     }
 
     private let maxRetries: Int
-    private let executionBlock: (_ completion: @escaping (_ output: Output) -> Void) -> Void
+    private(set) var executionBlock: (AsyncOperation, @escaping (_ output: Output) -> Void) -> Void
     private var executedRetries = 0
 
-    init(maxRetries: Int = 0, executionBlock: @escaping (_ completion: @escaping (_ output: Output) -> Void) -> Void) {
+    var canRetry: Bool {
+        executedRetries < maxRetries && !isCancelled
+    }
+
+    init(maxRetries: Int = 0, executionBlock: @escaping (AsyncOperation, @escaping (_ output: Output) -> Void) -> Void) {
         self.maxRetries = maxRetries
         self.executionBlock = executionBlock
     }
@@ -26,15 +30,13 @@ class AsyncOperation: BaseOperation {
         }
 
         isExecuting = true
-        executionBlock(handleResult)
+        executionBlock(self, handleResult)
     }
 
     private func handleResult(_ output: Output) {
-        let shouldRetry = output == .retry && executedRetries < maxRetries
-
-        if shouldRetry && !isCancelled {
+        if output == .retry && canRetry {
             executedRetries += 1
-            executionBlock(handleResult)
+            executionBlock(self, handleResult)
         } else {
             isExecuting = false
             isFinished = true

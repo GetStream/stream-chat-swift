@@ -115,7 +115,7 @@ class SyncRepository {
         operations.append(contentsOf: refetchChannelListQueryOperations)
 
         // 5. Bump the last sync timestamp
-        operations.append(AsyncOperation { [weak self] done in
+        operations.append(AsyncOperation { [weak self] _, done in
             log.info("5. Bump the last sync timestamp", subsystems: .offlineSupport)
             self?.updateUserValue { user in
                 user?.lastSyncAt = Date()

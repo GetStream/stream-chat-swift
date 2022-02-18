@@ -5,21 +5,27 @@
 import StreamChat
 import StreamChatTestTools
 
-final class CDNClient_Mock: CDNClient {
+final class CDNClient_Mock: CDNClient, Spy {
+    var recordedFunctions: [String] = []
+
     static var maxAttachmentSize: Int64 { .max }
-    
-    lazy var uploadAttachmentMockFunc = MockFunc.mock(for: uploadAttachment)
+    var uploadAttachmentProgress: Double?
+    var uploadAttachmentResult: Result<URL, Error>?
+
     func uploadAttachment(
         _ attachment: AnyChatMessageAttachment,
         progress: ((Double) -> Void)?,
         completion: @escaping (Result<URL, Error>) -> Void
     ) {
-        uploadAttachmentMockFunc.callAndReturn(
-            (
-                attachment,
-                progress,
-                completion
-            )
-        )
+        record()
+        if let uploadAttachmentProgress = uploadAttachmentProgress {
+            progress?(uploadAttachmentProgress)
+        }
+
+        if let uploadAttachmentResult = uploadAttachmentResult {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                completion(uploadAttachmentResult)
+            }
+        }
     }
 }

@@ -44,7 +44,6 @@ public extension ChatClient {
 class APIClient_Mock: APIClient {
     override func request<Response>(
         endpoint: Endpoint<Response>,
-        timeout: TimeInterval,
         completion: @escaping (Result<Response, Error>) -> Void
     ) where Response: Decodable {
         // Do nothing for now
