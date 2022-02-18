@@ -38,7 +38,7 @@ class APIClient {
 
     /// Determines whether the APIClient is in recovery mode. During recovery period we limit the concurrent operations to 1, and we only allow recovery related
     /// requests to be run,
-    @Atomic private var isRecoveryModeOn: Bool = false
+    @Atomic private var isInRecoveryMode: Bool = false
 
     /// Shows whether the token is being refreshed at the moment
     @Atomic private var isRefreshingToken: Bool = false
@@ -94,7 +94,7 @@ class APIClient {
         endpoint: Endpoint<Response>,
         completion: @escaping (Result<Response, Error>) -> Void
     ) {
-        guard isRecoveryModeOn else {
+        guard isInRecoveryMode else {
             log.assertionFailure("We should not call this method if not in recovery mode")
             return
         }
@@ -114,7 +114,7 @@ class APIClient {
                     // Requeue request
                     self?.request(endpoint: endpoint, completion: completion)
                     done(.continue)
-                case .failure(_ as ClientError.ExpiredToken):
+                case .failure(_ as ClientError.TokenRefreshed):
                     // Retry request. Expired token has been refreshed
                     done(.retry)
                     operation.resetRetries()
@@ -178,12 +178,20 @@ class APIClient {
                     self.tokenRefreshConsecutiveFailures = 0
                     completion(.success(decodedResponse))
                 } catch {
-                    if error is ClientError.ExpiredToken {
-                        self.refreshToken { refreshError in
-                            completion(.failure(refreshError ?? error))
-                        }
-                    } else {
+                    if error is ClientError.ExpiredToken == false {
                         completion(.failure(error))
+                        return
+                    }
+
+                    /// If the error is ExpiredToken, we need to refresh it. There are 2 possibilities here:
+                    /// 1. The token is not being refreshed, so we start the refresh, and we wait until it is completed. Then the request will be retried.
+                    /// 2. The token is already being refreshed, so we just put back the request to the queue (Cannot happen when running the queue in serial)
+                    ///
+                    /// This is done leveraging 2 error types. When ClientError.RefreshingToken is returned, we put back the request on the queue.
+                    /// But when ClientError.TokenRefreshed is returned, just retry the execution.
+                    /// This is done because we want to make sure that when the queue is running serial, there order is kept.
+                    self.refreshToken { refreshResult in
+                        completion(.failure(refreshResult))
                     }
                 }
             }
@@ -191,7 +199,7 @@ class APIClient {
         }
     }
 
-    private func refreshToken(completion: @escaping (Error?) -> Void) {
+    private func refreshToken(completion: @escaping (ClientError) -> Void) {
         guard !isRefreshingToken else {
             completion(ClientError.RefreshingToken())
             return
@@ -208,7 +216,7 @@ class APIClient {
             self?.isRefreshingToken = false
             // We restart the queue now that token refresh is completed
             self?.operationQueue.isSuspended = false
-            completion(nil)
+            completion(ClientError.TokenRefreshed())
         }
     }
 
@@ -252,13 +260,13 @@ class APIClient {
 
     func enterRecoveryMode() {
         // Pauses all the regular requests until recovery is completed.
-        isRecoveryModeOn = true
+        isInRecoveryMode = true
         operationQueue.isSuspended = true
     }
 
     func exitRecoveryMode() {
         // Once recovery is done, regular requests can go through again.
-        isRecoveryModeOn = false
+        isInRecoveryMode = false
         operationQueue.isSuspended = false
     }
 }

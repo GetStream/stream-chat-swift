@@ -198,7 +198,7 @@ final class SyncRepository_Tests: XCTestCase {
             // Simulate API Failure
             AssertAsync.willBeTrue(apiClient.recoveryRequest_completion != nil)
             guard let callback = apiClient.recoveryRequest_completion as? (Result<MissingEventsPayload, Error>) -> Void else {
-                XCTFail()
+                XCTFail("A request for /sync should have been executed")
                 return
             }
             callback(result)
