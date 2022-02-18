@@ -609,7 +609,9 @@ internal extension ChatMessageListVC {
             switch change {
             case let .insert(_, indexPath):
                 hasInsertions = true
-                hasNewInsertions = indexPath.row == 0
+                if !hasNewInsertions {
+                    hasNewInsertions = indexPath.row == 0
+                }
             case let .update(message, _):
                 // Check if it is a valid update. In rare occasions we get an update for a message which
                 // is not in the scope of the current pagination, although it is in the database.
