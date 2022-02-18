@@ -15,11 +15,12 @@ public class TableViewCellChatUser: UITableViewCell {
     //
     public static let reuseId: String = "TableViewCellChatUser"
     //
-    @IBOutlet private var mainStackView: UIStackView! {
-        didSet {
-            mainStackView.isLayoutMarginsRelativeArrangement = true
-        }
-    }
+    @IBOutlet private var mainStackView: UIStackView!
+//    {
+//        didSet {
+//            mainStackView.isLayoutMarginsRelativeArrangement = true
+//        }
+//    }
     @IBOutlet private var nameLabel: UILabel!
     @IBOutlet private var descriptionLabel: UILabel!
     @IBOutlet private var avatarView: AvatarView!
@@ -56,6 +57,8 @@ public class TableViewCellChatUser: UITableViewCell {
             descriptionLabel.text = "Never seen"
         }
         accessoryImageView.image = selectedImage
+        lblRole.text = ""
+        lblRole.isHidden = true
         //
         self.user = user
     }
@@ -80,13 +83,26 @@ public class TableViewCellChatUser: UITableViewCell {
     public override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
-        selectionStyle = .none
+        
     }
 
     public override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
 
-        // Configure the view for the selected state
+        if self.selectedBackgroundView == nil {
+            let bgView = UIView()
+            self.selectedBackgroundView = bgView
+        }
+        self.selectedBackgroundView?.backgroundColor = selected ? UIColor.lightGray.withAlphaComponent(0.1) : UIColor.clear
     }
-    //
+    
+    public override func setHighlighted(_ highlighted: Bool, animated: Bool) {
+        super.setHighlighted(highlighted, animated: animated)
+        if self.selectedBackgroundView == nil {
+            let bgView = UIView()
+            self.selectedBackgroundView = bgView
+        }
+        self.selectedBackgroundView?.backgroundColor = highlighted ? UIColor.lightGray.withAlphaComponent(0.1) : UIColor.clear
+    }
+    
 }

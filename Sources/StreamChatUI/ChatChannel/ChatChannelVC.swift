@@ -355,7 +355,21 @@ open class ChatChannelVC:
             return
         }
         //
-        controller.bCallbackAddUser = { [weak self] users in
+        controller.bCallbackInviteFriend = { [weak self] users in
+            guard let weakSelf = self else { return }
+            let ids = users.map{ $0.id}
+            weakSelf.channelController?.inviteMembers(userIds: Set(ids), completion: { error in
+                if error == nil {
+                    DispatchQueue.main.async {
+                        Snackbar.show(text: "Group invite sent")
+                    }
+                } else {
+                    Snackbar.show(text: "Error while sending invitation link")
+                }
+            })
+        }
+        //
+        controller.bCallbackAddFriend = { [weak self] users in
             guard let weakSelf = self else { return }
             let ids = users.map{ $0.id}
             weakSelf.channelController?.addMembers(userIds: Set(ids), completion: { error in
@@ -365,7 +379,7 @@ open class ChatChannelVC:
                         Snackbar.show(text: "Group Member updated")
                     }
                 } else {
-                    Snackbar.show(text: error!.localizedDescription)
+                    Snackbar.show(text: "Error operation could be completed")
                 }
             })
         }
@@ -435,7 +449,7 @@ open class ChatChannelVC:
             return
         }
         controller.selectionType = .inviteUser
-        controller.bCallbackAddUser = { [weak self] users in
+        controller.bCallbackInviteFriend = { [weak self] users in
             guard let weakSelf = self else { return }
             let ids = users.map{ $0.id}
             weakSelf.channelController?.inviteMembers(userIds: Set(ids), completion: { error in
@@ -772,9 +786,10 @@ open class ChatChannelVC:
                 actions.append(deleteChat)
                 return actions
             } else {
-                if channelController.channel?.membership?.userRole == .admin {
+                let userRole = channelController.channel?.membership?.userRole
+                if userRole == .admin {
                     var actions: [UIAction] = []
-                    actions.append(contentsOf: [groupImage, search,/* invite,*/ groupQR])
+                    actions.append(contentsOf: [groupImage, search,invite,groupQR])
                     if channelController.channel?.isMuted ?? false {
                         actions.append(unmute)
                     } else {
@@ -784,7 +799,7 @@ open class ChatChannelVC:
                     return actions
                 } else {
                     var actions: [UIAction] = []
-                    actions.append(contentsOf: [search,/* invite,*/ groupQR])
+                    actions.append(contentsOf: [search,groupQR])
                     if channelController.channel?.isMuted ?? false {
                         actions.append(unmute)
                     } else {

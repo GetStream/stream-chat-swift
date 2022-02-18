@@ -63,6 +63,7 @@ public extension Appearance {
                 return loadImageSafely(with: "close")
             }
         }()
+        public var userSelected: UIImage = loadImageSafely(with: "chat_UserStatus")
         public var closeBold: UIImage = loadImageSafely(with: "close")
         public var closeCircleTransparent: UIImage = loadImageSafely(with: "close_circle_transparent")
         static let closeCircle: UIImage = loadImageSafely(with: "close_circle")

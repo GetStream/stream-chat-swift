@@ -124,6 +124,8 @@ extension ChatUserListVC {
         tableView?.separatorStyle = .none
         tableView?.backgroundColor = .clear
         tableView?.keyboardDismissMode = .onDrag
+        tableView?.estimatedRowHeight = 44.0
+        tableView?.rowHeight = UITableView.automaticDimension
         //
         let reuseID = TableViewHeaderChatUserList.reuseId
         let nib = UINib(nibName: reuseID, bundle: nil)
@@ -264,10 +266,11 @@ public extension ChatUserListVC {
     }
     private func shortLastSeen(filteredUsers: [ChatUser]) {
         
-        let onlineUser = filteredUsers.filter({ $0.isOnline })
+        let onlineUser = filteredUsers.filter({ $0.isOnline }).sorted(by: { ($0.name ?? "") > ($1.name ?? "" )})
         let otherUsers = filteredUsers.filter({ $0.isOnline == false })
         //
         self.lastSeenWiseUserList = otherUsers.sorted(by: { ($0.lastActiveAt ?? $0.userCreatedAt) > ($1.lastActiveAt ?? $1.userCreatedAt )})
+        //
         onlineUser.forEach {self.lastSeenWiseUserList.insert( $0, at: 0)}
         //
 //        self.lastSeenWiseUserList.sort(by: { ($0.lastActiveAt ?? $0.userCreatedAt) > ($1.lastActiveAt ?? $1.userCreatedAt )})
@@ -457,7 +460,7 @@ extension ChatUserListVC: UITableViewDelegate, UITableViewDataSource {
         //
         var accessaryImage: UIImage?
         if selectedUsers.firstIndex(where: { $0.id == user!.id}) != nil {
-            accessaryImage = Appearance.Images.systemCheckMarkCircle
+            accessaryImage = Appearance.default.images.userSelected
         } else {
             accessaryImage = nil
         }
@@ -465,6 +468,7 @@ extension ChatUserListVC: UITableViewDelegate, UITableViewDataSource {
                         selectedImage: accessaryImage,
                         avatarBG: view.tintColor)
         cell.backgroundColor = .clear
+        cell.selectedBackgroundView = nil
         return cell
     }
 
@@ -472,6 +476,7 @@ extension ChatUserListVC: UITableViewDelegate, UITableViewDataSource {
         defer {
             tableView.deselectRow(at: indexPath, animated: true)
         }
+        
         //
         var user: ChatUser?
         //
@@ -496,15 +501,20 @@ extension ChatUserListVC: UITableViewDelegate, UITableViewDataSource {
             }
             
             self.delegate?.chatUserDidSelect()
-            self.tableView?.reloadData()
+            //self.tableView?.reloadData()
+            tableView.reloadRows(at: [indexPath], with: .fade)
             return
             
         case .group:
-            if selectedUsers.firstIndex(where: { $0.id == user!.id}) == nil {
+            if let index = selectedUsers.firstIndex(where: { $0.id == user!.id}) {
+                self.selectedUsers.remove(at: index)
+            } else {
                 self.selectedUsers.append(user!)
-                self.delegate?.chatUserDidSelect()
-                self.tableView?.reloadData()
             }
+            
+            self.delegate?.chatUserDidSelect()
+            //self.tableView?.reloadData()
+            tableView.reloadRows(at: [indexPath], with: .fade)
             return
         default:
             break
@@ -573,16 +583,20 @@ extension ChatUserListVC: UITableViewDelegate, UITableViewDataSource {
         //
     }
     public func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
-        return nil
+        let footerView = UIView()
+        footerView.backgroundColor = .clear
+        footerView.frame = CGRect(x: 0, y: 0, width: tableView.bounds.width, height: 20)
+        return footerView
     }
     public func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
         if self.curentSortType == .sortByName {
-            return 30
+            return 45
         }
         return 0
     }
+    
     public func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
-        return 0
+        return 20
     }
     public func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         if self.curentSortType == .sortByName {

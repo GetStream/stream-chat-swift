@@ -116,7 +116,20 @@ public class ChatGroupDetailsVC: ChatBaseVC {
             return
         }
         controller.selectionType = .addFriend
-        controller.bCallbackAddUser = { [weak self] users in
+        controller.bCallbackInviteFriend = { [weak self] users in
+            guard let weakSelf = self else { return }
+            let ids = users.map{ $0.id}
+            weakSelf.channelController?.inviteMembers(userIds: Set(ids), completion: { error in
+                if error == nil {
+                    DispatchQueue.main.async {
+                        Snackbar.show(text: "Group invite sent")
+                    }
+                } else {
+                    Snackbar.show(text: "Error while sending invitation link")
+                }
+            })
+        }
+        controller.bCallbackAddFriend = { [weak self] users in
             guard let weakSelf = self else { return }
             let ids = users.map{ $0.id}
             weakSelf.channelController?.addMembers(userIds: Set(ids), completion: { error in
@@ -126,7 +139,7 @@ public class ChatGroupDetailsVC: ChatBaseVC {
                         weakSelf.setupUI()
                     }
                 } else {
-                    Snackbar.show(text: error!.localizedDescription)
+                    Snackbar.show(text: "Error operation could be completed")
                 }
             })
         }
@@ -227,6 +240,9 @@ extension ChatGroupDetailsVC: UITableViewDataSource {
         cell.backgroundColor = .clear
         return cell
         //
+    }
+    public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
     }
 }
 
