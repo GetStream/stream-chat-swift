@@ -9,12 +9,12 @@ extension UILabel {
         adjustsFontForContentSizeCategory = true
         return self
     }
-
+    
     var withBidirectionalLanguagesSupport: Self {
         textAlignment = .natural
         return self
     }
-
+    
     func textDropShadow(color: UIColor) {
         layer.shadowColor = color.cgColor
         layer.shadowRadius = 2.0
@@ -22,14 +22,14 @@ extension UILabel {
         layer.shadowOffset = CGSize(width: 2, height: 2)
         layer.masksToBounds = false
     }
-
+    
     func setTextSpacingBy(value: Double) {
         if let textString = self.text {
-          let attributedString = NSMutableAttributedString(string: textString)
+            let attributedString = NSMutableAttributedString(string: textString)
             attributedString.addAttribute(NSAttributedString.Key.kern, value: value, range: NSRange(location: 0, length: attributedString.length - 1))
-          attributedText = attributedString
+            attributedText = attributedString
         }
-      }
+    }
 }
 
 // MARK: - CHAT UI
@@ -44,14 +44,17 @@ extension UILabel {
     }
     public func setChatTitleColor() {
         self.textColor = UIColor.white
-        self.font = UIFont.systemFont(ofSize: 17, weight: UIFont.Weight.regular)
+        let customFont = UIFont.init(name: "SFProText-Regular", size: self.font.pointSize) ?? UIFont.systemFont(ofSize: 17, weight: UIFont.Weight.regular)
+        self.font = customFont
     }
     public func setChatSubtitleColor() {
         self.textColor = Appearance.default.colorPalette.subTitleColor
-        self.font = UIFont.systemFont(ofSize: 11, weight: UIFont.Weight.regular)
+        let customFont = UIFont.init(name: "SFProText-Regular", size: 14) ?? UIFont.systemFont(ofSize: 13, weight: UIFont.Weight.regular)
+        self.font = customFont
     }
     public func setChatSubtitleBigColor() {
         self.textColor = Appearance.default.colorPalette.subTitleColor
-        self.font = UIFont.systemFont(ofSize: 13, weight: UIFont.Weight.regular)
+        let customFont = UIFont.init(name: "SFProText-Regular", size: 15) ?? UIFont.systemFont(ofSize: 15, weight: UIFont.Weight.regular)
+        self.font = customFont
     }
 }

@@ -238,6 +238,7 @@ extension ChatGroupDetailsVC: UITableViewDataSource {
         cell.configGroupDetails(channelMember: user, selectedImage: nil, avatarBG: view.tintColor)
         //
         cell.backgroundColor = .clear
+        cell.selectedBackgroundView = nil
         return cell
         //
     }

@@ -257,9 +257,13 @@ public extension ChatUserListVC {
     private func shortLastSeen(filteredUsers: [ChatUser]) {
         
         let onlineUser = filteredUsers.filter({ $0.isOnline && $0.name?.isBlank == false }).sorted{ $0.name!.localizedCaseInsensitiveCompare($1.name!) == ComparisonResult.orderedAscending}
+        let alphabetUsers = onlineUser.filter { ($0.name?.isFirstCharacterAlp ?? false) }
+        let nonAphabetUsers = onlineUser.filter { ($0.name?.isFirstCharacterAlp ?? false) == false}
+        
         let otherUsers = filteredUsers.filter({ $0.isOnline == false && $0.name?.isBlank == false}).sorted(by: { ($0.lastActiveAt ?? $0.userCreatedAt) > ($1.lastActiveAt ?? $1.userCreatedAt )})
         //
-        self.lastSeenWiseUserList.append(contentsOf: onlineUser)
+        self.lastSeenWiseUserList.append(contentsOf: alphabetUsers)
+        self.lastSeenWiseUserList.append(contentsOf: nonAphabetUsers )
         self.lastSeenWiseUserList.append(contentsOf: otherUsers)
         //
         DispatchQueue.main.async {

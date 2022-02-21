@@ -786,8 +786,8 @@ open class ChatChannelVC:
                 actions.append(deleteChat)
                 return actions
             } else {
-                let userRole = channelController.channel?.membership?.userRole
-                if userRole == .admin {
+                let isAdmin = channelController.channel?.createdBy?.id == ChatClient.shared.currentUserId
+                if isAdmin {
                     var actions: [UIAction] = []
                     actions.append(contentsOf: [groupImage, search,invite,groupQR])
                     if channelController.channel?.isMuted ?? false {

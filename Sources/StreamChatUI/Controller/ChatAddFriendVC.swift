@@ -31,6 +31,8 @@ public class ChatAddFriendVC: ChatBaseVC {
     @IBOutlet private var searchBarContainerView: UIView!
     @IBOutlet private var tableviewContainerView: UIView!
     @IBOutlet private var searchField: UITextField!
+    @IBOutlet private var viewContainerLeadingConst: NSLayoutConstraint!
+    @IBOutlet private var viewContainerTrailingConst: NSLayoutConstraint!
     // MARK: - VARIABLES
     public var selectionType = ChatAddFriendVC.SelectionType.addFriend
     public lazy var chatUserList: ChatUserListVC = {
@@ -82,11 +84,18 @@ public class ChatAddFriendVC: ChatBaseVC {
         chatUserList.curentSortType = .sortByAtoZ
         chatUserList.fetchUserList()
         //
+        viewContainerLeadingConst.constant = 5
+        viewContainerTrailingConst.constant = 5
+        //
+        setupUI()
+    }
+    private func setupUI() {
+        let cornorRadius = viewContainerLeadingConst.constant > 0 ? 32 : 0
+        
         viewHeaderView.backgroundColor = Appearance.default.colorPalette.chatViewBackground
         searchBarContainerView.backgroundColor = Appearance.default.colorPalette.searchBarBackground
         searchBarContainerView.layer.cornerRadius = 20.0
-        viewHeaderView.layer.cornerRadius = 32.0
-        
+        viewHeaderView.layer.cornerRadius = CGFloat(cornorRadius)
     }
     //
     @objc private func textDidChange(_ sender: UITextField) {
@@ -149,22 +158,30 @@ extension ChatAddFriendVC: PanModalPresentable {
 //        return .maxHeightWithTopInset(0)
 //    }
     public var shortFormHeight: PanModalHeight {
-        return isShortFormEnabled ? .contentHeight(UIScreen.main.bounds.height/2) : longFormHeight
+        return isShortFormEnabled ? .contentHeightIgnoringSafeArea(480) : longFormHeight
     }
-    public var anchorModalToLongForm: Bool {
-        return false
-    }
+//    public var anchorModalToLongForm: Bool {
+//        return false
+//    }
     public var showDragIndicator: Bool {
         return false
     }
-    public var allowsExtendedPanScrolling: Bool {
-        return true
-    }
-    public var allowsDragToDismiss: Bool {
-        return true
-    }
+//    public var allowsExtendedPanScrolling: Bool {
+//        return true
+//    }
+//    public var allowsDragToDismiss: Bool {
+//        return true
+//    }
     public func willTransition(to state: PanModalPresentationController.PresentationState) {
         self.panModelState = state
+        if state == .shortForm {
+            viewContainerLeadingConst.constant = 5
+            viewContainerTrailingConst.constant = 5
+        } else {
+            viewContainerLeadingConst.constant = 0
+            viewContainerTrailingConst.constant = 0
+        }
+        setupUI()
         guard isShortFormEnabled, case .longForm = state
             else { return }
 

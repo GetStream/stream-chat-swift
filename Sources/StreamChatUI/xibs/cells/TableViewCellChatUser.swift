@@ -16,11 +16,6 @@ public class TableViewCellChatUser: UITableViewCell {
     public static let reuseId: String = "TableViewCellChatUser"
     //
     @IBOutlet private var mainStackView: UIStackView!
-//    {
-//        didSet {
-//            mainStackView.isLayoutMarginsRelativeArrangement = true
-//        }
-//    }
     @IBOutlet private var nameLabel: UILabel!
     @IBOutlet private var descriptionLabel: UILabel!
     @IBOutlet private var avatarView: AvatarView!
@@ -35,12 +30,13 @@ public class TableViewCellChatUser: UITableViewCell {
             Nuke.loadImage(with: imageURL, into: avatarView)
         }
         avatarView.backgroundColor = avatarBG
-        if let name = user.name , name.isBlank == false {
-            nameLabel.text = name.capitalizingFirstLetter()
-        } else {
+        let name = (user.name ?? user.id)
+        if name.lowercased() == user.id.lowercased()  {
             let last = user.id.suffix(5)
             let first = user.id.prefix(7)
-            nameLabel.text = "\(first)...\(last)"
+            nameLabel.text = "\(first)...\(last)".capitalizingFirstLetter()
+        } else {
+            nameLabel.text = name.capitalizingFirstLetter()
         }
         //
         nameLabel.setChatTitleColor()
