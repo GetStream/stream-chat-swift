@@ -493,6 +493,7 @@ open class ComposerVC: _ViewController,
 
     func bindMenuController() {
         menuController = ChatMenuViewController.instantiateController(storyboard: .wallet)
+        menuController?.extraData = self.channelController?.channel?.extraData ?? [:]
         menuController?.didTapAction = { [weak self] action in
             guard let `self` = self else { return }
             switch action {

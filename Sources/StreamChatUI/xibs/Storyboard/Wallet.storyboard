@@ -1008,6 +1008,7 @@
                         <outlet property="imgRedPacket" destination="Tx5-9z-DEU" id="rua-Bj-iPS"/>
                         <outlet property="imgRequest" destination="v71-Ej-Yh4" id="2Fq-yF-V51"/>
                         <outlet property="imgSend" destination="OPy-da-MqC" id="zqj-EE-FO2"/>
+                        <outlet property="lblDaoTitle" destination="gfZ-jd-1PX" id="xep-1j-U4N"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="B1K-dw-PSd" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>

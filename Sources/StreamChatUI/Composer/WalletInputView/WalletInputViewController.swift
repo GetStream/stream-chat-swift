@@ -20,6 +20,7 @@ class WalletInputViewController: UIViewController {
     var updatedAmount = 0.0
     var paymentType: WalletAttachmentPayload.PaymentType = .request
     var didHide: ((Double, WalletAttachmentPayload.PaymentType) -> Void)?
+    var isInputViewLoad = false
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -52,7 +53,14 @@ class WalletInputViewController: UIViewController {
     }
 
     @IBAction func btnKeypadAction(_ sender: UIButton) {
-        walletStepper.insertNumber(numberValue: sender.titleLabel?.text)
+        if !isInputViewLoad {
+            if let amount = Double(sender.titleLabel?.text ?? "") {
+                walletStepper.updateAmount(amount: amount)
+            }
+            isInputViewLoad = true
+        } else {
+            walletStepper.insertNumber(numberValue: sender.titleLabel?.text)
+        }
     }
 
     @IBAction func btnCloseAction(_ sender: Any) {

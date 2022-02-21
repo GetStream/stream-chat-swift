@@ -27,10 +27,10 @@ class WalletStepper: UIView {
     private lazy var detailView: UIView = UIView()
         .withoutAutoresizingMaskConstraints
 
-    private lazy var btnAdd: UIButton = UIButton()
+    private lazy var btnAdd: CustomButton = CustomButton()
         .withoutAutoresizingMaskConstraints
 
-    private lazy var btnRemove: UIButton = UIButton()
+    private lazy var btnRemove: CustomButton = CustomButton()
         .withoutAutoresizingMaskConstraints
 
     private lazy var containerInputView: UIView = UIView()
