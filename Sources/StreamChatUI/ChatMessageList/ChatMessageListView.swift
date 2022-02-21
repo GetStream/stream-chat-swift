@@ -46,7 +46,7 @@ open class ChatMessageListView: UITableView, Customizable, ComponentsProvider {
     open func setUp() {
         keyboardDismissMode = .onDrag
         rowHeight = UITableView.automaticDimension
-        if #available(iOS 13, *), components.messageListDiffingEnabled {
+        if #available(iOS 13, *), components._messageListDiffingEnabled {
             estimatedRowHeight = UITableView.automaticDimension
         } else {
             estimatedRowHeight = 150

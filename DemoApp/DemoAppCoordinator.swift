@@ -103,7 +103,7 @@ final class DemoAppCoordinator: NSObject, UNUserNotificationCenterDelegate {
         Components.default.messageContentView = CustomMessageContentView.self
         Components.default.messageListDateSeparatorEnabled = true
         Components.default.messageListDateOverlayEnabled = true
-        Components.default.messageListDiffingEnabled = true
+        Components.default._messageListDiffingEnabled = true
         Components.default.messageActionsVC = CustomChatMessageActionsVC.self
         
         let localizationProvider = Appearance.default.localizationProvider

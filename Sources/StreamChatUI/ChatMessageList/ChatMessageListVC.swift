@@ -41,7 +41,7 @@ open class ChatMessageListVC:
     /// The diffing data sources are only used if iOS 13 is available and if the feature is enabled.
     internal var isDiffingEnabled: Bool {
         if #available(iOS 13.0, *) {
-            return self.components.messageListDiffingEnabled
+            return self.components._messageListDiffingEnabled
         }
         return false
     }

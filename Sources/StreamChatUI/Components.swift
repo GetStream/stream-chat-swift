@@ -117,7 +117,9 @@ public struct Components {
     public var messageListDateSeparatorEnabled = false
 
     /// A boolean value that determines wether the message list should use a diffable data source.
-    public var messageListDiffingEnabled = false
+    /// Note: This is currently an experimental feature that we are actively
+    /// working on and testing to make sure it is 100% stable.
+    public var _messageListDiffingEnabled = false
 
     /// The view controller used to perform message actions.
     public var messageActionsVC: ChatMessageActionsVC.Type = ChatMessageActionsVC.self
