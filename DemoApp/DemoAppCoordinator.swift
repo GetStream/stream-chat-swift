@@ -89,12 +89,12 @@ final class DemoAppCoordinator: NSObject, UNUserNotificationCenterDelegate {
         ChatClient.shared.connectUser(
             userInfo: .init(id: userCredentials.id, name: userCredentials.name, imageURL: userCredentials.avatarURL),
             token: token
-        ) { error in
+        ) { [weak self] error in
             if let error = error {
                 log.error("connecting the user failed \(error)")
                 return
             }
-            self.setupRemoteNotifications()
+            self?.setupRemoteNotifications()
         }
         
         // Config
