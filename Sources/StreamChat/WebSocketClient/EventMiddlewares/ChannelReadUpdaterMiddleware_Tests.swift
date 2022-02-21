@@ -347,6 +347,7 @@ class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
             createdAt: .unique,
             deletedAt: nil,
             updatedAt: .unique,
+            truncatedAt: nil,
             createdBy: nil,
             config: .init(),
             isFrozen: false,

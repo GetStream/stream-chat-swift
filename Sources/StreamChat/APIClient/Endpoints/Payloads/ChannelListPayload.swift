@@ -98,6 +98,8 @@ struct ChannelDetailPayload: Decodable {
     public let deletedAt: Date?
     /// A channel updated date.
     public let updatedAt: Date
+    /// A channel truncated date.
+    let truncatedAt: Date?
     
     /// A creator of the channel.
     public let createdBy: UserPayload?
@@ -140,6 +142,7 @@ struct ChannelDetailPayload: Decodable {
         createdAt = try container.decode(Date.self, forKey: .createdAt)
         updatedAt = try container.decode(Date.self, forKey: .updatedAt)
         deletedAt = try container.decodeIfPresent(Date.self, forKey: .deletedAt)
+        truncatedAt = try container.decodeIfPresent(Date.self, forKey: .truncatedAt)
         createdBy = try container.decodeIfPresent(UserPayload.self, forKey: .createdBy)
         // For `hidden`, we don't fallback to `false`
         // since this field is not sent for all API calls and for events
@@ -174,6 +177,7 @@ struct ChannelDetailPayload: Decodable {
         createdAt: Date,
         deletedAt: Date?,
         updatedAt: Date,
+        truncatedAt: Date?,
         isHidden: Bool? = nil,
         createdBy: UserPayload?,
         config: ChannelConfig,
@@ -192,6 +196,7 @@ struct ChannelDetailPayload: Decodable {
         self.createdAt = createdAt
         self.deletedAt = deletedAt
         self.updatedAt = updatedAt
+        self.truncatedAt = truncatedAt
         self.createdBy = createdBy
         self.config = config
         self.isFrozen = isFrozen

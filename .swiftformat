@@ -1,6 +1,6 @@
 # Stream rules
 --header "\nCopyright © {year} Stream.io Inc. All rights reserved.\n"
---swiftversion 5.2
+--swiftversion 5.5
 
 --ifdef no-indent
 --disable redundantType

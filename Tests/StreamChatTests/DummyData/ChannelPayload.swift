@@ -11,7 +11,8 @@ extension ChannelDetailPayload {
     /// Returns a dummy channel detail payload with the given cid
     static func dummy(
         cid: ChannelId,
-        members: [MemberPayload] = [.dummy()]
+        members: [MemberPayload] = [.dummy()],
+        truncatedAt: Date? = nil
     ) -> ChannelDetailPayload {
         let channelCreatedDate = Date.unique
         let lastMessageAt: Date? = Bool.random() ? channelCreatedDate.addingTimeInterval(.random(in: 100_000...900_000)) : nil
@@ -26,6 +27,7 @@ extension ChannelDetailPayload {
             createdAt: channelCreatedDate,
             deletedAt: nil,
             updatedAt: .unique,
+            truncatedAt: truncatedAt,
             createdBy: .dummy(userId: .unique),
             config: .init(
                 reactionsEnabled: true,

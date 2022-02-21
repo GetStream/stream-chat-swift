@@ -5,6 +5,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### ✅ Added
 - Add Support for Message List Data Source Diffing [#1770](https://github.com/GetStream/stream-chat-swift/pull/1770)
+- Show Camera option on the ComposerVC [#1798](https://github.com/GetStream/stream-chat-swift/pull/1798)
+- `ChannelController`'s `truncateChannel` function now allows you to specify `systemMessage`, `hardDelete`, `skipPush` properties [#1799](https://github.com/GetStream/stream-chat-swift/pull/1799)
+- Added `truncatedAt` property to `ChatChannel`
+
+### 🐞 Fixed
+- Fix `ChatMentionSuggestionView` permanently hiding subviews [#1800](https://github.com/GetStream/stream-chat-swift/issues/1800)
+- System message is now properly shown when channel is truncated [#1799](https://github.com/GetStream/stream-chat-swift/pull/1799)
 
 # [4.10.1](https://github.com/GetStream/stream-chat-swift/releases/tag/4.10.1)
 _February 16, 2022_

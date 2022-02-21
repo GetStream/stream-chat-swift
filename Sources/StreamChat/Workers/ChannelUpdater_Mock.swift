@@ -24,6 +24,9 @@ class ChannelUpdaterMock: ChannelUpdater {
 
     @Atomic var truncateChannel_cid: ChannelId?
     @Atomic var truncateChannel_completion: ((Error?) -> Void)?
+    @Atomic var truncateChannel_skipPush: Bool?
+    @Atomic var truncateChannel_hardDelete: Bool?
+    @Atomic var truncateChannel_systemMessage: String?
 
     @Atomic var hideChannel_cid: ChannelId?
     @Atomic var hideChannel_clearHistory: Bool?
@@ -207,8 +210,17 @@ class ChannelUpdaterMock: ChannelUpdater {
         deleteChannel_completion = completion
     }
 
-    override func truncateChannel(cid: ChannelId, completion: ((Error?) -> Void)? = nil) {
+    override func truncateChannel(
+        cid: ChannelId,
+        skipPush: Bool = false,
+        hardDelete: Bool = true,
+        systemMessage: String? = nil,
+        completion: ((Error?) -> Void)? = nil
+    ) {
         truncateChannel_cid = cid
+        truncateChannel_skipPush = skipPush
+        truncateChannel_hardDelete = hardDelete
+        truncateChannel_systemMessage = systemMessage
         truncateChannel_completion = completion
     }
 

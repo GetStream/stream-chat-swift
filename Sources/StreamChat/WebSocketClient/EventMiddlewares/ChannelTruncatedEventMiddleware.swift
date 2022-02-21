@@ -15,7 +15,7 @@ struct ChannelTruncatedEventMiddleware: EventMiddleware {
 
         do {
             if let channelDTO = session.channel(cid: truncatedEvent.channel.cid) {
-                channelDTO.truncatedAt = truncatedEvent.createdAt
+                channelDTO.truncatedAt = truncatedEvent.channel.truncatedAt
             } else {
                 throw ClientError.ChannelDoesNotExist(cid: truncatedEvent.channel.cid)
             }

@@ -13,6 +13,7 @@
     },
     "channel" : {
         "created_by" : null,
+        "truncated_at" : "2022-02-16T08:20:13.862494Z",
         "frozen" : false,
         "config" : {
             "typing_events" : true,

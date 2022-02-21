@@ -141,7 +141,7 @@ extension DateFormatter {
 // MARK: - Helper AnyEncodable
 
 struct AnyEncodable: Encodable {
-    private let encodable: Encodable
+    let encodable: Encodable
     
     init(_ encodable: Encodable) {
         self.encodable = encodable
