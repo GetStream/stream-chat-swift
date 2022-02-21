@@ -173,7 +173,6 @@ extension ChatUserListVC {
         case .noUsers:
             noMatchView.isHidden = false
             activityIndicator.stopAnimating()
-            //viewCreateGroup.isHidden = true
             tableView?.alpha = 0
             alertImage.image = Appearance.Images.systemMagnifying
             alertText.text = "No user matches these keywords..."
@@ -214,8 +213,6 @@ public extension ChatUserListVC {
     public func searchDataUsing(searchString: String?) {
         //
         self.update(for: .searching)
-        //
-        //self.searchController?.query = self.curentSortType.getSearchQuery
         searchOperation?.cancel()
         searchOperation = DispatchWorkItem { [weak self] in
             self?.searchUser(with: searchString)
@@ -246,17 +243,10 @@ public extension ChatUserListVC {
     
     private func shortAtoZ(filteredUsers: [ChatUser]) {
         
-        let alphabetUsers = filteredUsers.filter { ($0.name?.isFirstCharacterAlp ?? false) }
-        var otherUsers = filteredUsers.filter { ($0.name?.isFirstCharacterAlp ?? false) == false }
+        let alphabetUsers = filteredUsers.filter { ($0.name?.isFirstCharacterAlp ?? false) && $0.name?.isBlank == false }.sorted{ $0.name!.localizedCaseInsensitiveCompare($1.name!) == ComparisonResult.orderedAscending}
+        let otherUsers = filteredUsers.filter { ($0.name?.isFirstCharacterAlp ?? false) == false }.sorted{ $0.id.localizedCaseInsensitiveCompare($1.id) == ComparisonResult.orderedAscending}
         //
-        otherUsers.sort { obj1, obj2 in
-            if let user1 = obj1.id.first, let user2 = obj2.id.first {
-                return user1 < user2
-            }
-            return false
-        }
-        
-        self.lastSeenWiseUserList = alphabetUsers.sorted(by: { ($0.name ?? "") < ($1.name ?? "" )})
+        self.lastSeenWiseUserList = alphabetUsers
         self.lastSeenWiseUserList.append(contentsOf: otherUsers)
         //
         DispatchQueue.main.async {
@@ -266,14 +256,11 @@ public extension ChatUserListVC {
     }
     private func shortLastSeen(filteredUsers: [ChatUser]) {
         
-        let onlineUser = filteredUsers.filter({ $0.isOnline }).sorted(by: { ($0.name ?? "") > ($1.name ?? "" )})
-        let otherUsers = filteredUsers.filter({ $0.isOnline == false })
+        let onlineUser = filteredUsers.filter({ $0.isOnline && $0.name?.isBlank == false }).sorted{ $0.name!.localizedCaseInsensitiveCompare($1.name!) == ComparisonResult.orderedAscending}
+        let otherUsers = filteredUsers.filter({ $0.isOnline == false && $0.name?.isBlank == false}).sorted(by: { ($0.lastActiveAt ?? $0.userCreatedAt) > ($1.lastActiveAt ?? $1.userCreatedAt )})
         //
-        self.lastSeenWiseUserList = otherUsers.sorted(by: { ($0.lastActiveAt ?? $0.userCreatedAt) > ($1.lastActiveAt ?? $1.userCreatedAt )})
-        //
-        onlineUser.forEach {self.lastSeenWiseUserList.insert( $0, at: 0)}
-        //
-//        self.lastSeenWiseUserList.sort(by: { ($0.lastActiveAt ?? $0.userCreatedAt) > ($1.lastActiveAt ?? $1.userCreatedAt )})
+        self.lastSeenWiseUserList.append(contentsOf: onlineUser)
+        self.lastSeenWiseUserList.append(contentsOf: otherUsers)
         //
         DispatchQueue.main.async {
             self.tableView?.reloadData()
@@ -281,16 +268,9 @@ public extension ChatUserListVC {
         }
     }
     private func shortByName(filteredUsers: [ChatUser]) {
-        
-        let alphabetUsers = filteredUsers.filter { ($0.name?.isFirstCharacterAlp ?? false)}
-        var otherUsers = filteredUsers.filter { ($0.name?.isFirstCharacterAlp ?? false) == false }
-        //
-        otherUsers.sort { obj1, obj2 in
-            if let user1 = obj1.id.first, let user2 = obj2.id.first {
-                return user1 < user2
-            }
-            return false
-        }
+    
+        let alphabetUsers = filteredUsers.filter { ($0.name?.isFirstCharacterAlp ?? false) && $0.name?.isBlank == false }.sorted{ $0.name!.localizedCaseInsensitiveCompare($1.name!) == ComparisonResult.orderedAscending}
+        let otherUsers = filteredUsers.filter { ($0.name?.isFirstCharacterAlp ?? false) == false }.sorted{ $0.id.localizedCaseInsensitiveCompare($1.id) == ComparisonResult.orderedAscending}
         //
         let groupByName = Dictionary(grouping: alphabetUsers) { (user) -> Substring in
             return user.name!.lowercased().prefix(1)
@@ -413,12 +393,8 @@ extension ChatUserListVC {
 // MARK: - Chat user controller delegate
 extension ChatUserListVC: ChatUserListControllerDelegate {
     //
-    public func controller(_ controller: ChatUserListController, didChangeUsers changes: [ListChange<ChatUser>]) {
-  
-    }
-    public func controller(_ controller: DataController, didChangeState state: DataController.State) {
-    }
-    
+    public func controller(_ controller: ChatUserListController, didChangeUsers changes: [ListChange<ChatUser>]) {}
+    public func controller(_ controller: DataController, didChangeState state: DataController.State) {}
 }
 
 // MARK: - TABLE VIEW DELEGATE & DATASOURCE
@@ -501,7 +477,6 @@ extension ChatUserListVC: UITableViewDelegate, UITableViewDataSource {
             }
             
             self.delegate?.chatUserDidSelect()
-            //self.tableView?.reloadData()
             tableView.reloadRows(at: [indexPath], with: .fade)
             return
             
@@ -513,7 +488,6 @@ extension ChatUserListVC: UITableViewDelegate, UITableViewDataSource {
             }
             
             self.delegate?.chatUserDidSelect()
-            //self.tableView?.reloadData()
             tableView.reloadRows(at: [indexPath], with: .fade)
             return
         default:

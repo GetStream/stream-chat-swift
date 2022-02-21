@@ -36,6 +36,7 @@ public class NameGroupViewController: ChatBaseVC {
     }
     // MARK: - METHODS
     public func setupUI() {
+        self.btnNext?.isHidden = true
         self.view.backgroundColor = Appearance.default.colorPalette.chatViewBackground
         self.nameField.autocorrectionType = .no
         self.nameField.addTarget(self, action: #selector(textDidChange(_:)), for: .editingChanged)
@@ -80,6 +81,13 @@ public class NameGroupViewController: ChatBaseVC {
                 self.lblHashtagCount.text = "\(sender.text?.count ?? 0)"
             }
         }
+        let name = self.nameField.text ?? ""
+        let description = self.groupDescriptionField.text ?? ""
+        if name.isBlank || description.isBlank || name.containsEmoji || description.containsEmoji {
+            self.btnNext?.isHidden = true
+        } else {
+            self.btnNext?.isHidden = false
+        }
     }
     //
     @IBAction func backBtnTapped(_ sender: UIButton) {
@@ -92,7 +100,11 @@ public class NameGroupViewController: ChatBaseVC {
         //
         
         guard let name = nameField.text, !name.isEmpty else {
-            Snackbar.show(text: "Name cannot be empty")
+            Snackbar.show(text: "Group name cannot be blank")
+            return
+        }
+        guard name.containsEmoji == false else {
+            Snackbar.show(text: "Please enter valid group name")
             return
         }
         do {
@@ -138,24 +150,30 @@ public class NameGroupViewController: ChatBaseVC {
 }
 // MARK: - UITextFieldDelegate
 extension NameGroupViewController: UITextFieldDelegate {
-    
     public func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
         if textField == nameField {
             let maxLength = 40
             let currentString: NSString = (textField.text ?? "") as NSString
             let newString: NSString =
                 currentString.replacingCharacters(in: range, with: string) as NSString
-            return newString.length <= maxLength
+            let status = newString.length <= maxLength
+            if !status {
+                self.nameContainerView.shake()
+            }
+            return status
         } else {
             let maxLength = 100
             let currentString: NSString = (textField.text ?? "") as NSString
             let newString: NSString =
                 currentString.replacingCharacters(in: range, with: string) as NSString
-            return newString.length <= maxLength
+            let status = newString.length <= maxLength
+            if !status {
+                self.descriptionContainerView.shake()
+            }
+            return status
         }
     }
 }
-
 // MARK: - TABLEVIEW
 extension NameGroupViewController: UITableViewDataSource {
     public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
