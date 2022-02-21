@@ -42,9 +42,9 @@ class TypingStartCleanupMiddleware: EventMiddleware {
 
             guard typingEvent.isTyping else { return }
 
-            let stopTyping = { [emitEvent] in
+            let stopTyping = { [weak self] in
                 let typingStopEvent = CleanUpTypingEvent(cid: typingEvent.cid, userId: typingEvent.user.id)
-                emitEvent(typingStopEvent)
+                self?.emitEvent(typingStopEvent)
             }
 
             $0[typingEvent.user.id] = timer.schedule(
