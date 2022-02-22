@@ -11,6 +11,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### 🐞 Fixed
 - Fix `ChatMentionSuggestionView` permanently hiding subviews [#1800](https://github.com/GetStream/stream-chat-swift/issues/1800)
+- Fix showing channel watchers in mention suggestions list [#1797](https://github.com/GetStream/stream-chat-swift/issues/1797)
 - System message is now properly shown when channel is truncated [#1799](https://github.com/GetStream/stream-chat-swift/pull/1799)
 
 # [4.10.1](https://github.com/GetStream/stream-chat-swift/releases/tag/4.10.1)
