@@ -116,6 +116,11 @@ public struct Components {
     /// A boolean value that determines wether date separators should be shown between each message.
     public var messageListDateSeparatorEnabled = false
 
+    /// A boolean value that determines whether the message list should use a diffable data source.
+    /// Note: This is currently an experimental feature that we are actively
+    /// working on and testing to make sure it is stable.
+    public var _messageListDiffingEnabled = false
+
     /// The view controller used to perform message actions.
     public var messageActionsVC: ChatMessageActionsVC.Type = ChatMessageActionsVC.self
 

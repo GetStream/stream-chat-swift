@@ -127,6 +127,10 @@ open class ChatThreadVC:
 
     // MARK: - ChatMessageListVCDataSource
 
+    public var messages: [ChatMessage] {
+        replies
+    }
+
     open var replies: [ChatMessage] {
         /*
          Thread replies are evaluated from DTOs when converting `messageController.replies` to an array.

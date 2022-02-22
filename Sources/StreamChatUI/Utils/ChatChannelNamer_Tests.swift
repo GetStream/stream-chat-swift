@@ -45,7 +45,7 @@ class ChatChannelNamer_Tests: XCTestCase {
         )
 
         let currentUserId: String = .unique
-        let namer: ChatChannelNamer = DefaultChatChannelNamer()
+        let namer = DefaultChatChannelNamer()
         let nameForChannel = namer(channel, currentUserId)
 
         XCTAssertEqual(nameForChannel, "Darth Channel")
@@ -76,7 +76,7 @@ class ChatChannelNamer_Tests: XCTestCase {
 
         let currentUserId: String = .unique
 
-        let namer: ChatChannelNamer = DefaultChatChannelNamer()
+        let namer = DefaultChatChannelNamer()
         let nameForChannel = namer(channel, currentUserId)
 
         XCTAssertEqual(nameForChannel, "Darth Maul and Darth Vader")
@@ -90,7 +90,7 @@ class ChatChannelNamer_Tests: XCTestCase {
 
         let currentUserId: String = .unique
 
-        let namer: ChatChannelNamer = DefaultChatChannelNamer()
+        let namer = DefaultChatChannelNamer()
         let nameForChannel = namer(channel, currentUserId)
 
         XCTAssertEqual(nameForChannel, nil)
@@ -107,7 +107,7 @@ class ChatChannelNamer_Tests: XCTestCase {
 
         let currentUserId: String = currentUser.id
 
-        let namer: ChatChannelNamer = DefaultChatChannelNamer()
+        let namer = DefaultChatChannelNamer()
         let nameForChannel = namer(channel, currentUserId)
 
         XCTAssertEqual(nameForChannel, currentUser.name)
@@ -122,7 +122,7 @@ class ChatChannelNamer_Tests: XCTestCase {
 
         let currentUserId: String = .unique
 
-        let namer: ChatChannelNamer = DefaultChatChannelNamer()
+        let namer = DefaultChatChannelNamer()
         let nameForChannel = namer(channel, currentUserId)
 
         XCTAssertEqual(nameForChannel, "Darth Maul, Darth Vader and 1 more")
@@ -139,7 +139,7 @@ class ChatChannelNamer_Tests: XCTestCase {
 
         let currentUserId: String = .unique
 
-        let namer: ChatChannelNamer = DefaultChatChannelNamer()
+        let namer = DefaultChatChannelNamer()
         let nameForChannel = namer(channel, currentUserId)
 
         XCTAssertEqual(nameForChannel, nil)
@@ -155,7 +155,7 @@ class ChatChannelNamer_Tests: XCTestCase {
 
         let currentUserId: String = .unique
 
-        let namer: ChatChannelNamer = DefaultChatChannelNamer(separator: " |")
+        let namer = DefaultChatChannelNamer(separator: " |")
         let nameForChannel = namer(channel, currentUserId)
 
         XCTAssertEqual(nameForChannel, "Darth Maul | Darth Vader and 1 more")
@@ -196,7 +196,7 @@ class ChatChannelNamer_Tests: XCTestCase {
 
         let currentUserId: String = .unique
 
-        let namer: ChatChannelNamer = DefaultChatChannelNamer(maxMemberNames: 4, separator: " |")
+        let namer = DefaultChatChannelNamer(maxMemberNames: 4, separator: " |")
         let nameForChannel = namer(channel, currentUserId)
 
         XCTAssertEqual(nameForChannel, "Darth Bane | Darth Maul | Darth Vader | Kylo Ren")
