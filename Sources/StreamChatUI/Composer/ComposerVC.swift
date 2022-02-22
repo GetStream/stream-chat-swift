@@ -527,6 +527,8 @@ open class ComposerVC: _ViewController,
             case .dao:
                 self.animateToolkitView(isHide: true)
                 break
+            default:
+                break
             }
         }
 

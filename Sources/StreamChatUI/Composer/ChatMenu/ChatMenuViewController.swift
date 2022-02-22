@@ -25,6 +25,7 @@ class ChatMenuViewController: UIViewController {
     // MARK: - Variables
     var didTapAction:((_ type: MenuType) -> Void)?
     var extraData = [String: RawJSON]()
+    var menus = [MenuType]()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -33,9 +34,14 @@ class ChatMenuViewController: UIViewController {
             self.children.forEach { vc in
                 vc.removeFromParent()
             }
-            var paymentSelection = ChatMenuView()
-            paymentSelection.didTapAction = didTapAction
-            let controller = UIHostingController(rootView: paymentSelection)
+            if (extraData.signers.contains(ChatClient.shared.currentUserId ?? "")) {
+                menus = MenuType.getDaoMenu()
+            } else {
+                menus = MenuType.getNonDaoMenu()
+            }
+            var chatMenuView = ChatMenuView(menus: menus)
+            chatMenuView.didTapAction = didTapAction
+            let controller = UIHostingController(rootView: chatMenuView)
             addChild(controller)
             controller.view.translatesAutoresizingMaskIntoConstraints = false
             self.view.addSubview(controller.view)
@@ -77,10 +83,6 @@ class ChatMenuViewController: UIViewController {
         }
     }
 
-    @IBAction func menuTapAction(_ sender: UIButton) {
-//        didTapAction?(MenuType(rawValue: sender.tag) ?? .media)
-    }
-
 }
 
 enum MenuType: Int, CaseIterable {
@@ -92,6 +94,9 @@ enum MenuType: Int, CaseIterable {
     case nft = 6
     case redPacket = 7
     case dao = 8
+    case contributeToFund = 9
+    case polling = 10
+    case contact = 11
 
     func getTitle() -> String {
         switch self {
@@ -111,6 +116,12 @@ enum MenuType: Int, CaseIterable {
             return "Red Packet"
         case .dao:
             return "DAO"
+        case .contributeToFund:
+            return "Contribute to Fund"
+        case .polling:
+            return "Polling"
+        case .contact:
+            return "Contact"
         }
     }
 
@@ -132,51 +143,62 @@ enum MenuType: Int, CaseIterable {
             return Appearance.default.images.menuRedPacket
         case .dao:
             return Appearance.default.images.menuDao
+        case .contributeToFund:
+            return Appearance.default.images.polling
+        case .polling:
+            return Appearance.default.images.contributeToFund
+        case .contact:
+            return Appearance.default.images.menuContact
         }
+    }
+
+    static func getDaoMenu() -> [MenuType] {
+        return [.media, .disburseFund, .contributeToFund, .polling, .weather, .nft, .contact]
+    }
+
+    static func getNonDaoMenu() -> [MenuType] {
+        return [.media, .contact, .weather, .crypto, .oneN, .nft, .redPacket, .dao]
     }
 }
 
 @available(iOS 14.0.0, *)
 struct ChatMenuView: View {
     var gridItemLayout = [GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible())]
-
-    // MARK: - Variables
+    var menus: [MenuType]
     var didTapAction:((_ type: MenuType) -> Void)?
 
     var body: some View {
         ZStack {
             Color(UIColor(rgb: 0x1E1F1F))
-            Spacer()
-                .frame(height: 15)
-            LazyVGrid(columns: gridItemLayout, spacing: 15) {
-                ForEach(MenuType.allCases, id: \.self) { type  in
-                    ZStack(alignment: .topLeading) {
-                        VStack {
+            VStack {
+                LazyVGrid(columns: gridItemLayout, spacing: 0) {
+                    ForEach(menus, id: \.self) { type  in
+                        VStack(spacing: 5) {
                             Image(uiImage: type.getImage())
                                 .frame(width: 55, height: 55)
+                                .foregroundColor(Color(UIColor(rgb: 0x9A9A9A)))
                                 .background(Color(UIColor(rgb: 0x2E2E2E)))
+                                .cornerRadius(16)
                             Text(type.getTitle())
+                                .multilineTextAlignment(.center)
                                 .font(.system(size: 14))
-                                .foregroundColor(Color.white)
+                                .foregroundColor(Color(UIColor(rgb: 0x9A9A9A)))
                                 .frame(maxWidth: .infinity, alignment: .center)
+                                .fixedSize(horizontal: false, vertical: true)
                                 .lineLimit(2)
+                            Spacer()
+                        }
+                        .frame(height: 115)
+                        .onTapGesture {
+                            didTapAction?(type)
                         }
                     }
-                    .onTapGesture {
-                        didTapAction?(type)
-                    }
-                    .cornerRadius(4)
-                    .padding(5)
                 }
+                .padding(.horizontal, 25)
+                .padding(.vertical, 15)
+                .padding(.top, 30)
+                Spacer()
             }
-            .padding(15)
         }
-    }
-}
-
-@available(iOS 14.0.0, *)
-struct ChatMenuViewProvider_Previews: PreviewProvider {
-    static var previews: some View {
-        ChatMenuView()
     }
 }
