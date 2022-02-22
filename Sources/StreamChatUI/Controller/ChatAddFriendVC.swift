@@ -42,6 +42,7 @@ public class ChatAddFriendVC: ChatBaseVC {
     private var curentSortType: Em_ChatUserListFilterTypes = .sortByLastSeen
     private var isFullScreen = false
     public var selectedUsers = [ChatUser]()
+    public var existingUsers = [ChatUser]()
     public var bCallbackAddFriend:(([ChatUser]) -> Void)?
     public var bCallbackInviteFriend:(([ChatUser]) -> Void)?
     var isShortFormEnabled = true
@@ -54,7 +55,7 @@ public class ChatAddFriendVC: ChatBaseVC {
     public override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.view.layoutIfNeeded()
-        chatUserList.tableViewFrameUpdate()
+        //chatUserList.tableViewFrameUpdate()
     }
    
     // MARK: - METHODS
@@ -80,7 +81,8 @@ public class ChatAddFriendVC: ChatBaseVC {
         tableviewContainerView.updateChildViewContraint(childView: chatUserList.view)
         chatUserList.delegate = self
         chatUserList.userSelectionType = .addFriend
-        chatUserList.tableViewFrameUpdate()
+        chatUserList.existingUsers = existingUsers
+        //chatUserList.tableViewFrameUpdate()
         chatUserList.curentSortType = .sortByAtoZ
         chatUserList.fetchUserList()
         //
@@ -158,7 +160,7 @@ extension ChatAddFriendVC: PanModalPresentable {
 //        return .maxHeightWithTopInset(0)
 //    }
     public var shortFormHeight: PanModalHeight {
-        return isShortFormEnabled ? .contentHeightIgnoringSafeArea(480) : longFormHeight
+        return isShortFormEnabled ? .contentHeightIgnoringSafeArea(465) : longFormHeight
     }
 //    public var anchorModalToLongForm: Bool {
 //        return false
@@ -169,9 +171,9 @@ extension ChatAddFriendVC: PanModalPresentable {
 //    public var allowsExtendedPanScrolling: Bool {
 //        return true
 //    }
-//    public var allowsDragToDismiss: Bool {
-//        return true
-//    }
+    public var allowsDragToDismiss: Bool {
+        return false
+    }
     public func willTransition(to state: PanModalPresentationController.PresentationState) {
         self.panModelState = state
         if state == .shortForm {

@@ -15,11 +15,11 @@ public class TableViewCellChatUser: UITableViewCell {
     //
     public static let reuseId: String = "TableViewCellChatUser"
     //
-    @IBOutlet private var mainStackView: UIStackView!
-    @IBOutlet private var nameLabel: UILabel!
-    @IBOutlet private var descriptionLabel: UILabel!
-    @IBOutlet private var avatarView: AvatarView!
-    @IBOutlet private var accessoryImageView: UIImageView!
+    @IBOutlet public var containerView: UIView!
+    @IBOutlet public var nameLabel: UILabel!
+    @IBOutlet public var descriptionLabel: UILabel!
+    @IBOutlet public var avatarView: AvatarView!
+    @IBOutlet public var accessoryImageView: UIImageView!
     @IBOutlet public var lblRole: UILabel!
     // MARK: - Variables
     private var user: ChatUser?

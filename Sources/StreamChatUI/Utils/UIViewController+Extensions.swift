@@ -170,3 +170,37 @@ extension UIViewController {
         present(alert, animated: true, completion: nil)
     }
 }
+
+public class pushTransition: CATransition {}
+
+extension UIViewController {
+    
+    public func pushWithAnimation(controller: UIViewController) {
+        for subLayer in self.view.layer.sublayers ?? [] {
+            if subLayer.isKind(of: pushTransition.self) {
+                subLayer.removeFromSuperlayer()
+            }
+        }
+        let transition = pushTransition()
+        transition.duration = 0.2
+        transition.timingFunction = CAMediaTimingFunction(name: CAMediaTimingFunctionName.easeInEaseOut)
+        transition.type = CATransitionType.push
+        transition.subtype = .fromRight
+        self.navigationController?.view.layer.add(transition, forKey: nil)
+        self.navigationController?.pushViewController(controller, animated: false)
+    }
+    public func popWithAnimation(controller: UIViewController) {
+        for subLayer in self.view.layer.sublayers ?? [] {
+            if subLayer.isKind(of: pushTransition.self) {
+                subLayer.removeFromSuperlayer()
+            }
+        }
+        let transition = pushTransition()
+        transition.duration = 0.2
+        transition.timingFunction = CAMediaTimingFunction(name: CAMediaTimingFunctionName.easeInEaseOut)
+        transition.type = CATransitionType.push
+        transition.subtype = .fromLeft
+        self.navigationController?.view.layer.add(transition, forKey: nil)
+        self.navigationController?.pushViewController(controller, animated: false)
+    }
+}

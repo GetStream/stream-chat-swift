@@ -56,8 +56,9 @@ public class ChatUserListVC: UIViewController {
     private lazy var serachListController: ChatUserSearchController = {
         return ChatClient.shared.userSearchController()
     }()
-    public var tableView: UITableView?
+    @IBOutlet private weak var tableView: UITableView?
     public var selectedUsers = [ChatUser]()
+    public var existingUsers = [ChatUser]()
     public var userSelectionType = ChatUserSelectionType.singleUser
     public var curentSortType: Em_ChatUserListFilterTypes = .sortByLastSeen
     private var nameWiseUserList = [ChatUserListData]()
@@ -106,9 +107,9 @@ extension ChatUserListVC {
     //
     private func setupTableView() {
         //
-        self.tableView?.removeFromSuperview()
-        let tableViewStyle: UITableView.Style = self.curentSortType == .sortByName ? .grouped : .plain
-        self.tableView = UITableView.init(frame: .zero, style: tableViewStyle)
+        //self.tableView?.removeFromSuperview()
+        //let tableViewStyle: UITableView.Style = self.curentSortType == .sortByName ? .grouped : .plain
+        //self.tableView = UITableView.init(frame: .zero, style: tableViewStyle)
         //
         tableView?.delegate = self
         tableView?.dataSource = self
@@ -134,22 +135,10 @@ extension ChatUserListVC {
         let chatUserID = TableViewCellChatUser.reuseId
         let chatUserNib = UINib(nibName: chatUserID, bundle: nil)
         tableView?.register(chatUserNib, forCellReuseIdentifier: chatUserID)
-        //
-        self.containerView.addSubview(self.tableView!)
-        //
-        self.tableViewFrameUpdate()
-        //
-        if self.curentSortType == .sortByLastSeen || self.curentSortType == .sortByAtoZ {
-            self.tableView?.contentInset = UIEdgeInsets(top: -20, left: 0, bottom: 0, right: 0)
-        }
-    }
-    public func tableViewFrameUpdate() {
-        self.view.updateConstraints()
-        self.view.layoutIfNeeded()
         tableView?.contentInsetAdjustmentBehavior = .never
-        containerView.updateChildViewContraint(childView: tableView)
-        self.view.updateConstraints()
-        self.view.layoutIfNeeded()
+    }
+    public func reloadData() {
+        self.tableView?.reloadData()
     }
     //
     private func update(for state: ChatUserLoadingState) {
@@ -449,6 +438,11 @@ extension ChatUserListVC: UITableViewDelegate, UITableViewDataSource {
                         avatarBG: view.tintColor)
         cell.backgroundColor = .clear
         cell.selectedBackgroundView = nil
+        if self.existingUsers.map({ $0.id.lowercased()}).contains(user!.id.lowercased()) {
+            cell.containerView.alpha = 0.5
+        } else {
+            cell.containerView.alpha = 1.0
+        }
         return cell
     }
 
@@ -464,6 +458,9 @@ extension ChatUserListVC: UITableViewDelegate, UITableViewDataSource {
             user = self.nameWiseUserList[indexPath.section].users[indexPath.row]
         } else {
             user = self.lastSeenWiseUserList[indexPath.row]
+        }
+        if self.existingUsers.map({ $0.id.lowercased()}).contains(user!.id.lowercased()) {
+            return
         }
         //
         let selectedUserId = user!.id

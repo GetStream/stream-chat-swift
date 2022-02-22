@@ -33,8 +33,8 @@ open class ChatChannelListRouter: NavigationRouter<ChatChannelListVC>, Component
             log.error("Can't push chat detail, no navigation controller available")
             return
         }
-        
-        navController.show(vc, sender: self)
+        self.rootViewController.pushWithAnimation(controller: vc)
+        //navController.show(vc, sender: self)
     }
 
     /// Called when a user tapped `More` swipe action on a channel

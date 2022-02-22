@@ -122,6 +122,7 @@ open class ChatChannelVC:
         let button = UIButton()
         button.setImage(appearance.images.backCircle, for: .normal)
         button.tintColor = .white
+        button.contentEdgeInsets = UIEdgeInsets.init(top: 8, left: 8, bottom: 8, right: 8)
         button.addTarget(self, action: #selector(backAction), for: .touchUpInside)
         return button.withoutAutoresizingMaskConstraints
     }()
@@ -203,10 +204,10 @@ open class ChatChannelVC:
 
         navigationHeaderView.addSubview(backButton)
         NSLayoutConstraint.activate([
-            backButton.leadingAnchor.constraint(equalTo: navigationHeaderView.leadingAnchor, constant: 8),
+            backButton.leadingAnchor.constraint(equalTo: navigationHeaderView.leadingAnchor, constant: 12),
             backButton.centerYAnchor.constraint(equalTo: navigationHeaderView.centerYAnchor, constant: 0),
-            backButton.heightAnchor.constraint(equalToConstant: 32),
-            backButton.widthAnchor.constraint(equalToConstant: 32)
+            backButton.heightAnchor.constraint(equalToConstant: 46),
+            backButton.widthAnchor.constraint(equalToConstant: 46)
         ])
 
         navigationHeaderView.addSubview(rightStackView)
@@ -331,11 +332,14 @@ open class ChatChannelVC:
             return
         }
         controller.channelController = channelController
-        self.navigationController?.pushViewController(controller, animated: true)
+        self.pushWithAnimation(controller: controller)
+        //self.navigationController?.pushViewController(controller, animated: true)
     }
 
     @objc func avatarViewAction(_ sender: Any) {
-        shareView.isHidden = false
+        if self.channelController.channel?.isDirectMessageChannel ?? true {
+            return
+        }
         showPinViewButton()
     }
 
@@ -355,6 +359,7 @@ open class ChatChannelVC:
             return
         }
         //
+        controller.existingUsers = self.channelController?.channel?.lastActiveMembers as? [ChatUser] ?? []
         controller.bCallbackInviteFriend = { [weak self] users in
             guard let weakSelf = self else { return }
             let ids = users.map{ $0.id}
@@ -419,9 +424,11 @@ open class ChatChannelVC:
 
     private func showPinViewButton() {
         if channelController.channel?.type == .dao {
+            shareView.isHidden = false
             shareButton.isHidden = false
             addFriendButton.isHidden = true
-        } else {
+        } else if self.isChannelCreated {
+            shareView.isHidden = false
             addFriendButton.isHidden = false
             shareButton.isHidden = true
             guard self.isChannelCreated == true else { return  }
@@ -449,6 +456,7 @@ open class ChatChannelVC:
             return
         }
         controller.selectionType = .inviteUser
+        controller.existingUsers = self.channelController?.channel?.lastActiveMembers as? [ChatUser] ?? []
         controller.bCallbackInviteFriend = { [weak self] users in
             guard let weakSelf = self else { return }
             let ids = users.map{ $0.id}

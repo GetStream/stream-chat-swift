@@ -107,6 +107,7 @@
             <connections>
                 <outlet property="accessoryImageView" destination="oRq-RN-JEU" id="tcw-CO-bsj"/>
                 <outlet property="avatarView" destination="xOV-qz-joz" id="Su3-7c-ang"/>
+                <outlet property="containerView" destination="15d-Vn-Veq" id="ZXu-9l-QJ2"/>
                 <outlet property="descriptionLabel" destination="ccB-ky-41b" id="PAR-NW-KLU"/>
                 <outlet property="lblRole" destination="ZYD-lS-1ay" id="N2D-J6-d8J"/>
                 <outlet property="nameLabel" destination="puz-Tm-pnH" id="Vx0-iq-yuh"/>

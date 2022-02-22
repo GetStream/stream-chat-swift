@@ -57,4 +57,5 @@ extension UILabel {
         let customFont = UIFont.init(name: "SFProText-Regular", size: 15) ?? UIFont.systemFont(ofSize: 15, weight: UIFont.Weight.regular)
         self.font = customFont
     }
+    
 }

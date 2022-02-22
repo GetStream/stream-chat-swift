@@ -116,6 +116,7 @@ public class ChatGroupDetailsVC: ChatBaseVC {
             return
         }
         controller.selectionType = .addFriend
+        controller.existingUsers = selectedUsers
         controller.bCallbackInviteFriend = { [weak self] users in
             guard let weakSelf = self else { return }
             let ids = users.map{ $0.id}
