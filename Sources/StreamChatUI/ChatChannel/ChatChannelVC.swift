@@ -420,7 +420,9 @@ open class ChatChannelVC:
             }
         }
         channelController.markRead()
+        
     }
+
 
     private func showPinViewButton() {
         if channelController.channel?.type == .dao {

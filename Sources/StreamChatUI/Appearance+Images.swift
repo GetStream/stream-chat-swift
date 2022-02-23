@@ -398,6 +398,7 @@ public extension Appearance {
         public var backMenuOption: UIImage = loadImageSafely(with: "back")
         public var emojiIcon: UIImage = loadImageSafely(with: "emoji")
         public var disburseFund: UIImage = loadImageSafely(with: "disburseFund")
-
+        public var polling: UIImage = loadImageSafely(with: "polling")
+        public var contributeToFund: UIImage = loadImageSafely(with: "fundIcon")
     }
 }

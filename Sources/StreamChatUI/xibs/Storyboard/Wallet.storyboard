@@ -464,7 +464,7 @@
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="kyY-Dz-Eih">
+                            <view hidden="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="kyY-Dz-Eih">
                                 <rect key="frame" x="0.0" y="44" width="414" height="852"/>
                                 <subviews>
                                     <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="8OF-Da-aUC">
@@ -982,7 +982,7 @@
                                         </subviews>
                                     </stackView>
                                 </subviews>
-                                <color key="backgroundColor" name="walletMenuBackground"/>
+                                <color key="backgroundColor" red="0.11764705882352941" green="0.12156862745098039" blue="0.12156862745098039" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <constraints>
                                     <constraint firstItem="8OF-Da-aUC" firstAttribute="leading" secondItem="kyY-Dz-Eih" secondAttribute="leading" constant="30" id="1TP-zY-B7s"/>
                                     <constraint firstItem="8OF-Da-aUC" firstAttribute="top" secondItem="kyY-Dz-Eih" secondAttribute="top" constant="30" id="Gd2-tX-tTo"/>
@@ -991,7 +991,7 @@
                             </view>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="PHc-Ni-LsP"/>
-                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <color key="backgroundColor" red="0.11764705882352941" green="0.12156862745098039" blue="0.12156862745098039" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
                             <constraint firstItem="kyY-Dz-Eih" firstAttribute="top" secondItem="PHc-Ni-LsP" secondAttribute="top" id="6gn-Ob-4Q5"/>
                             <constraint firstAttribute="bottom" secondItem="kyY-Dz-Eih" secondAttribute="bottom" id="B9O-rJ-rGa"/>
@@ -1008,6 +1008,7 @@
                         <outlet property="imgRedPacket" destination="Tx5-9z-DEU" id="rua-Bj-iPS"/>
                         <outlet property="imgRequest" destination="v71-Ej-Yh4" id="2Fq-yF-V51"/>
                         <outlet property="imgSend" destination="OPy-da-MqC" id="zqj-EE-FO2"/>
+                        <outlet property="lblDaoTitle" destination="gfZ-jd-1PX" id="xep-1j-U4N"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="B1K-dw-PSd" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>

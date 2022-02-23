@@ -105,7 +105,7 @@ class WalletRequestPayBubble: UITableViewCell {
         if walletPaymentType == .request {
             let payload = content?.attachments(payloadType: WalletAttachmentPayload.self).first
             if isSender  {
-                descriptionLabel.text = "You Requests Payment"
+                descriptionLabel.text = "Payment Requested"
             } else {
                 descriptionLabel.text = "\(requestedUserName(raw: payload?.extraData) ?? "-") Requests Payment"
             }
