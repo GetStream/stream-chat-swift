@@ -397,6 +397,7 @@ var streamChatUIFilesExcluded: [String] { [
     "Gallery/__Snapshots__/GalleryVC_Tests/test_defaultAppearance.extraExtraExtraLarge-light.png",
     "Gallery/__Snapshots__/GalleryVC_Tests/test_appearanceCustomization_usingSubclassing.default-light.png",
     "Composer/ComposerVC_Tests.swift",
+    "Composer/__Snapshots__/ComposerVC_Tests/test_whenSuggestionsLookupIsLocal_onlyChannelMembersAreShown.default-light.png",
     "Composer/__Snapshots__/ComposerVC_Tests/test_attachmentsPreview_withFourAttachments_addedThreeAfterOne.extraExtraExtraLarge-light.png",
     "Composer/__Snapshots__/ComposerVC_Tests/test_attachmentsPreview_withFourAttachments_addedThreeAfterOne.rightToLeftLayout-default.png",
     "Composer/__Snapshots__/ComposerVC_Tests/test_attachmentsPreview_withFourAttachments_addedThreeAfterOne.small-dark.png",

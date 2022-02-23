@@ -255,6 +255,7 @@ open class ComposerVC: _ViewController,
     open private(set) lazy var cameraVC: UIViewController = {
         let camera = UIImagePickerController()
         camera.sourceType = .camera
+        camera.modalPresentationStyle = .overFullScreen
         camera.mediaTypes = UIImagePickerController.availableMediaTypes(for: .camera) ?? ["public.image"]
         camera.delegate = self
         return camera
@@ -684,7 +685,7 @@ open class ComposerVC: _ViewController,
             )
         } else {
             usersCache = searchUsers(
-                channel.lastActiveWatchers.map { $0 } + channel.lastActiveMembers.map { $0 },
+                channel.lastActiveMembers,
                 by: typingMention,
                 excludingId: currentUserId
             )

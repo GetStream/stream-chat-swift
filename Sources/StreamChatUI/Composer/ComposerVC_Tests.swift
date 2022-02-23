@@ -2,7 +2,8 @@
 // Copyright © 2022 Stream.io Inc. All rights reserved.
 //
 
-import StreamChat
+@testable import StreamChat
+import StreamChatTestTools
 @testable import StreamChatUI
 import XCTest
 
@@ -156,5 +157,58 @@ class ComposerVC_Tests: XCTestCase {
         composerVC.content.attachments.append(contentsOf: [.mockFile, .mockFile, .mockFile])
         
         AssertSnapshot(composerVC)
+    }
+    
+    func test_whenSuggestionsLookupIsLocal_onlyChannelMembersAreShown() {
+        final class ComposerContainerVC: UIViewController {
+            var composerVC: ComposerVC!
+            var textWithMention = ""
+            
+            override func viewDidLoad() {
+                super.viewDidLoad()
+                
+                view.backgroundColor = .white
+                addChildViewController(composerVC, targetView: view)
+                composerVC.view.pin(anchors: [.leading, .trailing, .bottom], to: view)
+            }
+
+            override func viewWillAppear(_ animated: Bool) {
+                super.viewWillAppear(animated)
+                
+                composerVC.content.text = textWithMention
+            }
+        }
+        
+        let member: ChatChannelMember = .mock(
+            id: "1",
+            name: "Yoda (member)",
+            imageURL: nil
+        )
+        
+        let watcher: ChatUser = .mock(
+            id: "2",
+            name: "Yoda (watcher)",
+            imageURL: nil
+        )
+        
+        let mockUserSearchController = ChatUserSearchController_Mock.mock()
+        
+        let mockChannelController = ChatChannelController_Mock.mock()
+        mockChannelController.client.currentUserId = .unique
+        mockChannelController.channel_mock = .mock(
+            cid: .unique,
+            lastActiveMembers: [member],
+            lastActiveWatchers: [watcher]
+        )
+        
+        let composerVC = ComposerVC()
+        composerVC.userSearchController = mockUserSearchController
+        composerVC.channelController = mockChannelController
+        
+        let containerVC = ComposerContainerVC()
+        containerVC.composerVC = composerVC
+        containerVC.textWithMention = "@Yo"
+        
+        AssertSnapshot(containerVC, variants: [.defaultLight])
     }
 }
