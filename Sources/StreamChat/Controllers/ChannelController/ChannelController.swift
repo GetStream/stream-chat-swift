@@ -387,6 +387,10 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     }
     
     override public func synchronize(_ completion: ((_ error: Error?) -> Void)? = nil) {
+        synchronize(isInRecoveryMode: false, completion)
+    }
+
+    private func synchronize(isInRecoveryMode: Bool, _ completion: ((_ error: Error?) -> Void)? = nil) {
         channelQuery.pagination = .init(
             pageSize: channelQuery.pagination?.pageSize ?? .messagesPageSize,
             parameter: nil
@@ -395,6 +399,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
         let channelCreatedCallback = isChannelAlreadyCreated ? nil : channelCreated(forwardErrorTo: setLocalStateBasedOnError)
         updater.update(
             channelQuery: channelQuery,
+            isInRecoveryMode: isInRecoveryMode,
             channelCreatedCallback: channelCreatedCallback
         ) { result in
             switch result {
@@ -406,7 +411,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
                 self.callback { completion?(error) }
             }
         }
-        
+
         /// Setup observers if we know the channel `cid` (if it's missing, it'll be set in `set(cid:)`
         /// Otherwise they will be set up after channel creation, in `set(cid:)`.
         if let cid = cid {
@@ -498,11 +503,11 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
         ]
     }
 
-    func watchActiveChannel(completion: @escaping (Error?) -> Void) {
+    func recoverWatchedChannel(completion: @escaping (Error?) -> Void) {
         if cid != nil, isChannelAlreadyCreated {
-            startWatching(completion: completion)
+            startWatching(isInRecoveryMode: true, completion: completion)
         } else {
-            synchronize(completion)
+            synchronize(isInRecoveryMode: true, completion)
         }
     }
 }
@@ -719,7 +724,7 @@ public extension ChatChannelController {
             return
         }
         channelQuery.pagination = MessagesPagination(pageSize: limit, parameter: .lessThan(messageId))
-        updater.update(channelQuery: channelQuery, completion: { result in
+        updater.update(channelQuery: channelQuery, isInRecoveryMode: false, completion: { result in
             switch result {
             case let .success(payload):
                 self.hasLoadedAllPreviousMessages = payload.messages.count < limit
@@ -757,7 +762,7 @@ public extension ChatChannelController {
         
         channelQuery.pagination = MessagesPagination(pageSize: limit, parameter: .greaterThan(messageId))
         
-        updater.update(channelQuery: channelQuery, completion: { result in
+        updater.update(channelQuery: channelQuery, isInRecoveryMode: false, completion: { result in
             self.callback { completion?(result.error) }
         })
     }
@@ -1119,13 +1124,13 @@ public extension ChatChannelController {
     ///
     ///
     /// - Parameter completion: Called when the API call is finished. Called with `Error` if the remote update fails.
-    func startWatching(completion: ((Error?) -> Void)? = nil) {
+    func startWatching(isInRecoveryMode: Bool, completion: ((Error?) -> Void)? = nil) {
         /// Perform action only if channel is already created on backend side and have a valid `cid`.
         guard let cid = cid, isChannelAlreadyCreated else {
             channelModificationFailed(completion)
             return
         }
-        updater.startWatching(cid: cid) { error in
+        updater.startWatching(cid: cid, isInRecoveryMode: isInRecoveryMode) { error in
             self.state = error.map { .remoteDataFetchFailed(ClientError(with: $0)) } ?? .remoteDataFetched
             self.callback {
                 completion?(error)

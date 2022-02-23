@@ -10,7 +10,7 @@ class ChannelUpdater: Worker {
     ///
     /// - Parameters:
     ///   - channelQuery: The channel query used in the request
-    ///   - channelQuery: The channel query used in the request.
+    ///   - isInRecoveryMode: Determines whether the SDK is in offline recovery mode
     ///   - channelCreatedCallback: For some type of channels we need to obtain id from backend.
     ///   This callback is called with the obtained `cid` before the channel payload is saved to the DB.
     ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
@@ -20,18 +20,18 @@ class ChannelUpdater: Worker {
     ///
     func update(
         channelQuery: ChannelQuery,
+        isInRecoveryMode: Bool,
         channelCreatedCallback: ((ChannelId) -> Void)? = nil,
         completion: ((Result<ChannelPayload, Error>) -> Void)? = nil
     ) {
         let clearMessageHistory = channelQuery.pagination?.parameter == nil
         let isChannelCreate = channelCreatedCallback != nil
-        apiClient.request(
-            endpoint: isChannelCreate ? .createChannel(query: channelQuery) : .updateChannel(query: channelQuery)
-        ) { (result) in
+
+        let completion: (Result<ChannelPayload, Error>) -> Void = { [weak database] result in
             do {
                 let payload = try result.get()
                 channelCreatedCallback?(payload.channel.cid)
-                self.database.write { session in
+                database?.write { session in
                     if clearMessageHistory {
                         let channelDTO = session.channel(cid: payload.channel.cid)
                         channelDTO?.messages.removeAll()
@@ -48,6 +48,15 @@ class ChannelUpdater: Worker {
             } catch {
                 completion?(.failure(error))
             }
+        }
+
+        let endpoint: Endpoint<ChannelPayload> = isChannelCreate ? .createChannel(query: channelQuery) :
+            .updateChannel(query: channelQuery)
+
+        if isInRecoveryMode {
+            apiClient.recoveryRequest(endpoint: endpoint, completion: completion)
+        } else {
+            apiClient.request(endpoint: endpoint, completion: completion)
         }
     }
     
@@ -301,12 +310,17 @@ class ChannelUpdater: Worker {
     /// Please check [documentation](https://getstream.io/chat/docs/android/watch_channel/?language=swift) for more information.
     ///
     /// - Parameter cid: Channel id of the channel to be watched
+    /// - Parameter isInRecoveryMode: Determines whether the SDK is in offline recovery mode
     /// - Parameter completion: Called when the API call is finished. Called with `Error` if the remote update fails.
-    func startWatching(cid: ChannelId, completion: ((Error?) -> Void)? = nil) {
+    func startWatching(cid: ChannelId, isInRecoveryMode: Bool, completion: ((Error?) -> Void)? = nil) {
         var query = ChannelQuery(cid: cid)
         query.options = .all
-        apiClient.request(endpoint: .updateChannel(query: query)) {
-            completion?($0.error)
+        let endpoint = Endpoint<ChannelPayload>.updateChannel(query: query)
+        let completion: (Result<ChannelPayload, Error>) -> Void = { completion?($0.error) }
+        if isInRecoveryMode {
+            apiClient.recoveryRequest(endpoint: endpoint, completion: completion)
+        } else {
+            apiClient.request(endpoint: endpoint, completion: completion)
         }
     }
     

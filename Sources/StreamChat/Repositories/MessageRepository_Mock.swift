@@ -15,15 +15,18 @@ class MessageRepositoryMock: MessageRepository, Spy {
     var sendMessageResult: Result<ChatMessage, MessageRepositoryError>?
     var sendMessageCalls: [MessageId: (Result<ChatMessage, MessageRepositoryError>) -> Void] = [:]
     var saveSuccessfullyDeletedMessageError: Error?
+    let lock = NSLock()
 
     override func sendMessage(
         with messageId: MessageId,
         completion: @escaping (Result<ChatMessage, MessageRepositoryError>) -> Void
     ) {
         record()
+        lock.lock()
         sendMessageCalls[messageId] = { result in
             completion(result)
         }
+        lock.unlock()
 
         if let sendMessageResult = sendMessageResult {
             completion(sendMessageResult)

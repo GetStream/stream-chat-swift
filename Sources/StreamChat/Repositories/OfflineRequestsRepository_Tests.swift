@@ -95,6 +95,31 @@ final class OfflineRequestsRepository_Tests: XCTestCase {
         XCTAssertEqual(pendingRequests.count, 1)
     }
 
+    func test_runQueuedRequestsWhichFailShouldBeRemoved() throws {
+        let count = 5
+        try createRequests(count: count)
+
+        let expectation = self.expectation(description: "Running completes")
+        repository.runQueuedRequests {
+            expectation.fulfill()
+        }
+
+        XCTAssertEqual(apiClient.recoveryRequest_allRecordedCalls.count, 5)
+        apiClient.recoveryRequest_allRecordedCalls.forEach { endpoint, completion in
+            let completion = completion as? ((Result<Data, Error>) -> Void)
+            if case let .sendMessage(id) = endpoint.path, id.id == "request2" {
+                completion?(.failure(NSError(domain: "whatever", code: 1, userInfo: nil)))
+            } else {
+                completion?(.success(Data()))
+            }
+        }
+
+        waitForExpectations(timeout: 0.1, handler: nil)
+
+        let pendingRequests = QueuedRequestDTO.loadAllPendingRequests(context: database.viewContext)
+        XCTAssertEqual(pendingRequests.count, 0)
+    }
+
     private func createRequests(count: Int) throws {
         func createRequest(index: Int) throws {
             let id = "request\(index)"
