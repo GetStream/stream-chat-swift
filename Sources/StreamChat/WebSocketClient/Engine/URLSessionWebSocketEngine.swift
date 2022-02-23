@@ -118,6 +118,10 @@ class URLSessionWebSocketEngine: NSObject, WebSocketEngine {
 
         return urlSessionDelegateHandler
     }
+
+    deinit {
+        disconnect()
+    }
 }
     
 @available(iOS 13, *)
