@@ -29,11 +29,8 @@ final class ChatFileAttachmentListViewItemView_Tests: XCTestCase {
 
     func test_appearanceCustomization_usingAppearance() {
         var appearance = Appearance()
-        appearance.colorPalette.subtitleText = .brown
-        appearance.fonts.bodyBold = UIFont.monospacedDigitSystemFont(ofSize: 13, weight: .heavy)
-        appearance.colorPalette.popoverBackground = UIColor.blue.withAlphaComponent(0.5)
-        fileAttachmentView = ChatMessageFileAttachmentListView.ItemView()
-            .withoutAutoresizingMaskConstraints
+        appearance.colorPalette.subtitleText = .red
+        appearance.fonts.bodyBold = UIFont.preferredFont(forTextStyle: .body).bold
         fileAttachmentView.appearance = appearance
         fileAttachmentView.components = .mock
         fileAttachmentView.content = .mock(id: .unique)
