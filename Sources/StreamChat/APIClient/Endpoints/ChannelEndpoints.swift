@@ -5,8 +5,7 @@
 import Foundation
 
 extension Endpoint {
-    static func channels(query: ChannelListQuery)
-        -> Endpoint<ChannelListPayload> {
+    static func channels(query: ChannelListQuery) -> Endpoint<ChannelListPayload> {
         .init(
             path: .channels,
             method: .get,
@@ -15,10 +14,18 @@ extension Endpoint {
             body: ["payload": query]
         )
     }
+
+    static func createChannel(query: ChannelQuery) -> Endpoint<ChannelPayload> {
+        createOrUpdateChannel(path: .createChannel(query.apiPath), query: query)
+    }
     
-    static func channel(query: ChannelQuery) -> Endpoint<ChannelPayload> {
+    static func updateChannel(query: ChannelQuery) -> Endpoint<ChannelPayload> {
+        createOrUpdateChannel(path: .updateChannel(query.apiPath), query: query)
+    }
+
+    private static func createOrUpdateChannel(path: EndpointPath, query: ChannelQuery) -> Endpoint<ChannelPayload> {
         .init(
-            path: .channelsQuery(query.apiPath),
+            path: path,
             method: .post,
             queryItems: nil,
             requiresConnectionId: query.options.contains(oneOf: [.presence, .state, .watch]),
@@ -90,7 +97,7 @@ extension Endpoint {
     static func sendMessage(cid: ChannelId, messagePayload: MessageRequestBody)
         -> Endpoint<MessagePayload.Boxed> {
         .init(
-            path: .sendMessage(cid.apiPath),
+            path: .sendMessage(cid),
             method: .post,
             queryItems: nil,
             requiresConnectionId: false,
@@ -224,7 +231,7 @@ extension Endpoint {
     
     static func channelWatchers(query: ChannelWatcherListQuery) -> Endpoint<ChannelPayload> {
         .init(
-            path: .channelsQuery(query.cid.apiPath),
+            path: .updateChannel(query.cid.apiPath),
             method: .post,
             queryItems: nil,
             requiresConnectionId: true,

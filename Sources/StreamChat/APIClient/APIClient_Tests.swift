@@ -423,14 +423,15 @@ class APIClient_Tests: XCTestCase {
         decoder.decodeRequestResponse = .success(testUser)
         let lastRequestExpectation = expectation(description: "Last request completed")
         (1...5).forEach { index in
-            self.apiClient.recoveryRequest(endpoint: Endpoint<TestUser>.mock(path: .sendMessage("\(index)"))) { _ in
+            let channelId = ChannelId(type: .messaging, id: "\(index)")
+            self.apiClient.recoveryRequest(endpoint: Endpoint<TestUser>.mock(path: .sendMessage(channelId))) { _ in
                 if index == 5 {
                     lastRequestExpectation.fulfill()
                 }
             }
         }
 
-        waitForExpectations(timeout: 0.1, handler: nil)
+        waitForExpectations(timeout: 0.5, handler: nil)
         XCTEnsureRequestsWereExecuted(times: 5)
     }
 
@@ -469,12 +470,13 @@ class APIClient_Tests: XCTestCase {
             }
         }
         (1...5).forEach { index in
-            self.apiClient.recoveryRequest(endpoint: Endpoint<TestUser>.mock(path: .sendMessage("\(index)"))) { _ in
+            let channelId = ChannelId(type: .messaging, id: "\(index)")
+            self.apiClient.recoveryRequest(endpoint: Endpoint<TestUser>.mock(path: .sendMessage(channelId))) { _ in
                 testBlock(index)
             }
         }
 
-        waitForExpectations(timeout: 0.1, handler: nil)
+        waitForExpectations(timeout: 0.5, handler: nil)
         XCTEnsureRequestsWereExecuted(times: 5)
     }
 
@@ -500,7 +502,8 @@ class APIClient_Tests: XCTestCase {
         let lastRequestExpectation = expectation(description: "Last request completed")
         var results: [Result<TestUser, Error>] = []
         (1...5).forEach { index in
-            self.apiClient.recoveryRequest(endpoint: Endpoint<TestUser>.mock(path: .sendMessage("\(index)"))) { result in
+            let channelId = ChannelId(type: .messaging, id: "\(index)")
+            self.apiClient.recoveryRequest(endpoint: Endpoint<TestUser>.mock(path: .sendMessage(channelId))) { result in
                 results.append(result)
                 if index == 5 {
                     lastRequestExpectation.fulfill()

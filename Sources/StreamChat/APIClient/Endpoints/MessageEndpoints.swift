@@ -65,7 +65,7 @@ extension Endpoint {
         messageId: MessageId
     ) -> Endpoint<EmptyResponse> {
         .init(
-            path: .reaction(messageId),
+            path: .addReaction(messageId),
             method: .post,
             queryItems: nil,
             requiresConnectionId: false,

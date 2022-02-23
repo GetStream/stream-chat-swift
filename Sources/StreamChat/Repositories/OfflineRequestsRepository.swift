@@ -96,8 +96,17 @@ class OfflineRequestsRepository {
         }
     }
 
+    private func performDatabaseRecoveryActionsUponSuccess(
+        for endpoint: DataEndpoint,
+        data: Data,
+        completion: @escaping () -> Void
+    ) {
+        // TODO:
+        completion()
+    }
+
     func queueOfflineRequest(endpoint: DataEndpoint, completion: (() -> Void)? = nil) {
-        guard endpoint.path.shouldBeQueuedOffline else {
+        guard endpoint.shouldBeQueuedOffline else {
             completion?()
             return
         }
@@ -114,74 +123,5 @@ class OfflineRequestsRepository {
                 completion?()
             }
         }
-    }
-
-    private func performDatabaseRecoveryActionsUponSuccess(
-        for endpoint: DataEndpoint,
-        data: Data,
-        completion: @escaping () -> Void
-    ) {
-        // TODO: Temporary String check. We only process the response for sent messages
-        guard case .sendMessage = endpoint.path else {
-            completion()
-            return
-        }
-        guard endpoint.path.queuedRequestNeedsDatabaseAction else {
-            completion()
-            return
-        }
-
-        switch endpoint.path {
-        case .users:
-            break // To handle
-        case .devices:
-            break // To handle
-        case .channelsQuery:
-            break // To handle
-        case .deleteChannel:
-            break // To handle
-        case .showChannel:
-            break // To handle
-        case .markChannelRead:
-            break // To handle
-        case .markAllChannelsRead:
-            break // To handle
-        case .stopWatchingChannel:
-            break // To handle
-        case .uploadAttachment:
-            break // To handle
-        case .sendMessage:
-            break // To handle
-        case .editMessage:
-            break // To handle
-        case .deleteMessage:
-            break // To handle
-        case .reaction:
-            break // To handle
-        case .deleteReaction:
-            break // To handle
-        case .messageAction:
-            break // To handle
-        case .banMember:
-            break // To handle
-        case .flagUser:
-            break // To handle
-        case .flagMessage:
-            break // To handle
-        default:
-            log.assertionFailure("Should not reach here, request should not require action")
-            return
-        }
-
-        completion()
-    }
-}
-
-private extension Endpoint {
-    var shouldBeQueuedOffline: Bool {
-        // TODO: To be finalized. We are just ignoring events for now
-        guard method != .get else { return false }
-        if case .channelEvent = path { return false }
-        return true
     }
 }

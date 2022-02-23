@@ -61,7 +61,7 @@ final class ChannelEndpoints_Tests: XCTestCase {
         for (query, requiresConnectionId) in testCases {
             let expectedEndpoint =
                 Endpoint<ChannelPayload>(
-                    path: .channelsQuery(query.apiPath),
+                    path: .updateChannel(query.apiPath),
                     method: .post,
                     queryItems: nil,
                     requiresConnectionId: requiresConnectionId,
@@ -69,7 +69,7 @@ final class ChannelEndpoints_Tests: XCTestCase {
                 )
             
             // Build endpoint
-            let endpoint: Endpoint<ChannelPayload> = .channel(query: query)
+            let endpoint: Endpoint<ChannelPayload> = .updateChannel(query: query)
             
             // Assert endpoint is built correctly
             XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
@@ -214,7 +214,7 @@ final class ChannelEndpoints_Tests: XCTestCase {
         )
         
         let expectedEndpoint = Endpoint<MessagePayload.Boxed>(
-            path: .sendMessage(cid.apiPath),
+            path: .sendMessage(cid),
             method: .post,
             queryItems: nil,
             requiresConnectionId: false,
@@ -418,7 +418,7 @@ final class ChannelEndpoints_Tests: XCTestCase {
         let query = ChannelWatcherListQuery(cid: cid, pagination: pagination)
         
         let expectedEndpoint = Endpoint<ChannelPayload>(
-            path: .channelsQuery(query.cid.apiPath),
+            path: .updateChannel(query.cid.apiPath),
             method: .post,
             queryItems: nil,
             requiresConnectionId: true, // Observing watchers always requires connection id

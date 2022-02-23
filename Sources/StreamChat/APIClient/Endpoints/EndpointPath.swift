@@ -14,7 +14,8 @@ enum EndpointPath: Codable {
     case devices
 
     case channels
-    case channelsQuery(String)
+    case createChannel(String)
+    case updateChannel(String)
     case deleteChannel(String)
     case channelUpdate(String)
     case muteChannel(Bool)
@@ -27,13 +28,13 @@ enum EndpointPath: Codable {
     case pinnedMessages(String)
     case uploadAttachment(String, String)
 
-    case sendMessage(String)
+    case sendMessage(ChannelId)
     case message(MessageId)
     case editMessage(MessageId)
     case deleteMessage(MessageId)
     case replies(MessageId)
     case reactions(MessageId)
-    case reaction(MessageId)
+    case addReaction(MessageId)
     case deleteReaction(MessageId, MessageReactionType)
     case messageAction(MessageId)
 
@@ -53,7 +54,8 @@ enum EndpointPath: Codable {
         case .devices: return "devices"
 
         case .channels: return "channels"
-        case let .channelsQuery(queryString): return "channels/\(queryString)/query"
+        case let .createChannel(queryString): return "channels/\(queryString)/query"
+        case let .updateChannel(queryString): return "channels/\(queryString)/query"
         case let .deleteChannel(payloadPath): return "channels/\(payloadPath)"
         case let .channelUpdate(payloadPath): return "channels/\(payloadPath)"
         case let .muteChannel(mute): return "moderation/\(mute ? "mute" : "unmute")/channel"
@@ -66,13 +68,13 @@ enum EndpointPath: Codable {
         case let .pinnedMessages(channelId): return "channels/\(channelId)/pinned_messages"
         case let .uploadAttachment(channelId, type): return "channels/\(channelId)/\(type)"
 
-        case let .sendMessage(channelId): return "channels/\(channelId)/message"
+        case let .sendMessage(channelId): return "channels/\(channelId.apiPath)/message"
         case let .message(messageId): return "messages/\(messageId)"
         case let .editMessage(messageId): return "messages/\(messageId)"
         case let .deleteMessage(messageId): return "messages/\(messageId)"
         case let .replies(messageId): return "messages/\(messageId)/replies"
         case let .reactions(messageId): return "messages/\(messageId)/reactions"
-        case let .reaction(messageId): return "messages/\(messageId)/reaction"
+        case let .addReaction(messageId): return "messages/\(messageId)/reaction"
         case let .deleteReaction(messageId, reaction): return "messages/\(messageId)/reaction/\(reaction.rawValue)"
         case let .messageAction(messageId): return "messages/\(messageId)/action"
 

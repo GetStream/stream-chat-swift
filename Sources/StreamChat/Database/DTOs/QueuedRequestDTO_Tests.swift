@@ -92,7 +92,7 @@ class QueuedRequestDTO_Tests: XCTestCase {
             let id = "request\(index)"
             let date = Date()
             let endpoint = Endpoint<EmptyResponse>(
-                path: .sendMessage("\(index)"),
+                path: .sendMessage(.init(type: .messaging, id: "\(index)")),
                 method: .post,
                 queryItems: nil,
                 requiresConnectionId: true,

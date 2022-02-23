@@ -134,7 +134,7 @@ final class MessageEndpoints_Tests: XCTestCase {
         let extraData: [String: RawJSON] = [:]
         
         let expectedEndpoint = Endpoint<EmptyResponse>(
-            path: .reaction(messageId),
+            path: .addReaction(messageId),
             method: .post,
             queryItems: nil,
             requiresConnectionId: false,
