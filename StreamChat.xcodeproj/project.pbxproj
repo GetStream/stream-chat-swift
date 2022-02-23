@@ -122,6 +122,8 @@
 		6E0D12EA27B3CF85003DD1AA /* TableViewCellChatUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E0D12E727B3CF85003DD1AA /* TableViewCellChatUser.swift */; };
 		6E0D12EB27B3CF85003DD1AA /* TableViewCellChatUser.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6E0D12E827B3CF85003DD1AA /* TableViewCellChatUser.xib */; };
 		6E0D12EC27B3CF85003DD1AA /* TableViewCellChatUser.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6E0D12E827B3CF85003DD1AA /* TableViewCellChatUser.xib */; };
+		6E1BA5C427C62A70004046D2 /* StreamChatBackButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1BA5C327C62A70004046D2 /* StreamChatBackButton.swift */; };
+		6E1BA5C527C62A70004046D2 /* StreamChatBackButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1BA5C327C62A70004046D2 /* StreamChatBackButton.swift */; };
 		6E41867B27C3CD630061E03F /* SFCompactText-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 6E41867527C3CD630061E03F /* SFCompactText-Regular.ttf */; };
 		6E41867C27C3CD630061E03F /* SFCompactText-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 6E41867527C3CD630061E03F /* SFCompactText-Regular.ttf */; };
 		6E41867D27C3CD630061E03F /* SFProText-Semibold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 6E41867627C3CD630061E03F /* SFProText-Semibold.ttf */; };
@@ -1644,6 +1646,7 @@
 		6E0D12DE27B3CDF4003DD1AA /* TableViewHeaderChatUserList.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TableViewHeaderChatUserList.swift; sourceTree = "<group>"; };
 		6E0D12E727B3CF85003DD1AA /* TableViewCellChatUser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TableViewCellChatUser.swift; sourceTree = "<group>"; };
 		6E0D12E827B3CF85003DD1AA /* TableViewCellChatUser.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TableViewCellChatUser.xib; sourceTree = "<group>"; };
+		6E1BA5C327C62A70004046D2 /* StreamChatBackButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamChatBackButton.swift; sourceTree = "<group>"; };
 		6E41867527C3CD630061E03F /* SFCompactText-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SFCompactText-Regular.ttf"; sourceTree = "<group>"; };
 		6E41867627C3CD630061E03F /* SFProText-Semibold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SFProText-Semibold.ttf"; sourceTree = "<group>"; };
 		6E41867727C3CD630061E03F /* SFProText-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SFProText-Regular.ttf"; sourceTree = "<group>"; };
@@ -3053,6 +3056,7 @@
 				6ED3E44727B5337C00A05C0A /* AvatarView.swift */,
 				6ED3E45327B53D3400A05C0A /* AttachmentListContainerView.swift */,
 				6E92FD3927BCCBAF00DA89B6 /* ChatNavTitleLabel.swift */,
+				6E1BA5C327C62A70004046D2 /* StreamChatBackButton.swift */,
 			);
 			path = CustomView;
 			sourceTree = "<group>";
@@ -7022,6 +7026,7 @@
 				228C7EE52583AF4800AAE9E3 /* UITextView+Extensions.swift in Sources */,
 				6ED3E44227B4D4C900A05C0A /* ChatBaseVC.swift in Sources */,
 				8803E9E726398F4E002B2A7B /* ChatMessageBubbleView.swift in Sources */,
+				6E1BA5C527C62A70004046D2 /* StreamChatBackButton.swift in Sources */,
 				22FF4365256E943F00133910 /* ChatSuggestionsVC.swift in Sources */,
 				22A0921725682880001FE9F0 /* ChatNavigationBar.swift in Sources */,
 				AD87D0A1263C7823008B466C /* AttachmentButton.swift in Sources */,
@@ -7630,6 +7635,7 @@
 				79280F782489181200CDEB89 /* URLSessionWebSocketEngine.swift in Sources */,
 				792A4F3C247FFBB400EAF71D /* Timers.swift in Sources */,
 				79682C4624BC9DAF0071578E /* ChannelUpdater.swift in Sources */,
+				6E1BA5C427C62A70004046D2 /* StreamChatBackButton.swift in Sources */,
 				792A4F482480107A00EAF71D /* Pagination.swift in Sources */,
 				79AF43B42632AF1C00E75CDA /* ChannelVisibilityEventMiddleware.swift in Sources */,
 				DAF1BED525066114003CEDC0 /* MessageController+Combine.swift in Sources */,

@@ -319,7 +319,8 @@ open class ChatChannelVC:
     }
 
     @objc func backAction(_ sender: Any) {
-        self.navigationController?.popViewController(animated: true)
+        self.popWithAnimation()
+        //self.navigationController?.popViewController(animated: true)
         self.dismiss(animated: true, completion: nil)
         NotificationCenter.default.post(name: .showTabbar, object: nil)
     }
@@ -333,7 +334,6 @@ open class ChatChannelVC:
         }
         controller.channelController = channelController
         self.pushWithAnimation(controller: controller)
-        //self.navigationController?.pushViewController(controller, animated: true)
     }
 
     @objc func avatarViewAction(_ sender: Any) {
@@ -497,6 +497,31 @@ open class ChatChannelVC:
         controller.modalTransitionStyle = .crossDissolve
         self.present(controller, animated: true, completion: nil)
     }
+    public func leaveGroupDeleteGroupAction() {
+        //
+        guard let controller = ChatAlertVC
+                .instantiateController(storyboard: .GroupChat)  as? ChatAlertVC else {
+            return
+        }
+        controller.alertType = .deleteGroup
+        controller.bCallbackActionHandler = { [weak self] in
+            guard let weakSelf = self else { return }
+            weakSelf.channelController.deleteChannel { [weak self] error in
+                guard error == nil, let self = self else {
+                    Snackbar.show(text: error?.localizedDescription ?? "")
+                    return
+                }
+                Snackbar.show(text: "Group deleted successfully")
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) { [weak self] in
+                    guard let self = self else { return }
+                    self.backAction(UIButton())
+                }
+            }
+        }
+        controller.modalPresentationStyle = .overCurrentContext
+        controller.modalTransitionStyle = .crossDissolve
+        self.present(controller, animated: true, completion: nil)
+    }
     public func muteNotification() {
         //
         channelController.muteChannel { error in
@@ -514,27 +539,6 @@ open class ChatChannelVC:
                 Snackbar.show(text: msg, messageType: StreamChatMessageType.ChatGroupUnMute)
             }
         }
-    }
-    public func deleteAndLeaveGroup() {
-        let yesAction = UIAlertAction(title: "Yes", style: .default) { [weak self] _ in
-            guard let self = self else {
-                return
-            }
-            self.channelController.deleteChannel { error in
-                guard error == nil else {
-                    Snackbar.show(text: error?.localizedDescription ?? "")
-                    return
-                }
-                DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) { [weak self] in
-                    guard let self = self else { return }
-                    self.backAction(UIButton())
-                }
-            }
-        }
-        let noAction = UIAlertAction(title: "No", style: .default) { _ in }
-        self.presentAlert(
-            title: "Are you sure you want to delete group?",
-            message: nil, actions: [yesAction, noAction])
     }
     public func deleteChat() {
         let yesAction = UIAlertAction(title: "Yes", style: .default) { [weak self] _ in
@@ -705,7 +709,8 @@ open class ChatChannelVC:
                 return
             }
             qrCodeVc.strContent = self.getGroupLink()
-            self.navigationController?.pushViewController(qrCodeVc, animated: true)
+            self.pushWithAnimation(controller: qrCodeVc)
+            //self.navigationController?.pushViewController(qrCodeVc, animated: true)
         }
         // search
         let search = UIAction(title: "Search", image: Appearance.Images.systemMagnifying) { [weak self] _ in
@@ -760,7 +765,7 @@ open class ChatChannelVC:
             guard let self = self else {
                 return
             }
-            self.deleteAndLeaveGroup()
+            self.leaveGroupDeleteGroupAction()
         }
         // deleteChat
         let deleteChat = UIAction(title: "Delete Chat", image: appearance.images.trash) { [weak self] _ in

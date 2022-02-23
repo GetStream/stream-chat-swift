@@ -175,6 +175,36 @@ public class pushTransition: CATransition {}
 
 extension UIViewController {
     
+    public func pushWithAnimation(fromViewController: UIViewController , toViewController: UIViewController) {
+       
+        let containerView = self.navigationController?.view ?? UIView()
+        containerView.insertSubview(toViewController.view, belowSubview: fromViewController.view)
+
+                // Setup the initial view states
+        toViewController.view.frame = CGRect(x: 0, y: 0, width: fromViewController.view.frame.size.width, height: fromViewController.view.frame.size.height)
+        
+        let dimmingView = UIView(frame: CGRect(x: 0,y: 0, width: toViewController.view.frame.width, height: toViewController.view.frame.height))
+        dimmingView.backgroundColor = UIColor.black
+        dimmingView.alpha = 0.5
+        
+        toViewController.view.addSubview(dimmingView)
+
+        UIView.animate(withDuration: 0.5,
+                       delay: 0,
+                       options: UIView.AnimationOptions.curveLinear,
+                       animations: {
+            dimmingView.alpha = 0
+            toViewController.view.frame.origin = CGPoint(x: 0, y: 0)
+//            toViewController.view.frame = self.navigationController?.view.frame ?? CGRect.zero
+//            fromViewController.view.frame = CGRect(x: toViewController.view.frame.size.width, y: fromViewController.view.frame.origin.y, width: fromViewController.view.frame.size.width, height: fromViewController.view.frame.size.height)
+        },
+                       completion: { finished in
+            dimmingView.removeFromSuperview()
+        })
+        //self.navigationController?.pushViewController(toViewController, animated: false)
+        self.navigationController?.viewControllers.append(toViewController)
+    }
+    
     public func pushWithAnimation(controller: UIViewController) {
         for subLayer in self.view.layer.sublayers ?? [] {
             if subLayer.isKind(of: pushTransition.self) {
@@ -182,25 +212,26 @@ extension UIViewController {
             }
         }
         let transition = pushTransition()
-        transition.duration = 0.2
+        transition.duration = TimeInterval(UINavigationController.hideShowBarDuration)
         transition.timingFunction = CAMediaTimingFunction(name: CAMediaTimingFunctionName.easeInEaseOut)
-        transition.type = CATransitionType.push
+        transition.type = CATransitionType.moveIn
         transition.subtype = .fromRight
+        navigationController?.transitioningDelegate
         self.navigationController?.view.layer.add(transition, forKey: nil)
         self.navigationController?.pushViewController(controller, animated: false)
     }
-    public func popWithAnimation(controller: UIViewController) {
+    public func popWithAnimation() {
         for subLayer in self.view.layer.sublayers ?? [] {
             if subLayer.isKind(of: pushTransition.self) {
                 subLayer.removeFromSuperlayer()
             }
         }
         let transition = pushTransition()
-        transition.duration = 0.2
+        transition.duration = 0.35
         transition.timingFunction = CAMediaTimingFunction(name: CAMediaTimingFunctionName.easeInEaseOut)
-        transition.type = CATransitionType.push
+        transition.type = CATransitionType.reveal
         transition.subtype = .fromLeft
         self.navigationController?.view.layer.add(transition, forKey: nil)
-        self.navigationController?.pushViewController(controller, animated: false)
+        self.navigationController?.popViewController(animated: false)
     }
 }

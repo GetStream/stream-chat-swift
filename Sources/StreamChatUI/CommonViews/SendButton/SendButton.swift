@@ -34,4 +34,7 @@ open class SendButton: _Button, AppearanceProvider {
         let disabledStateImage = appearance.images.sendArrow.tinted(with: buttonColor)
         setImage(disabledStateImage, for: .disabled)*/
     }
+    override open func point(inside point: CGPoint, with event: UIEvent?) -> Bool {
+        return bounds.insetBy(dx: -15, dy: -15).contains(point)
+    }
 }

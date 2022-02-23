@@ -107,7 +107,8 @@ public class ChatGroupDetailsVC: ChatBaseVC {
     }
     // MARK: - ACTIONS
     @IBAction func backBtnTapped(_ sender: UIButton) {
-        navigationController?.popViewController(animated: true)
+        popWithAnimation()
+        //navigationController?.popViewController(animated: true)
     }
     @IBAction func doneTapped(_ sender: UIButton) { }
     @IBAction func addFriendButtonAction(_ sender: UIButton) {

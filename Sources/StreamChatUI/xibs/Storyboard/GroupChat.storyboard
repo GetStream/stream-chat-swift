@@ -50,14 +50,14 @@
                                                     <constraint firstAttribute="height" constant="5" id="jDJ-eL-fuh"/>
                                                 </constraints>
                                             </view>
-                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="tXk-hI-5Ib">
+                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="tXk-hI-5Ib" customClass="StreamChatBackButton" customModule="StreamChatUI" customModuleProvider="target">
                                                 <rect key="frame" x="24" y="40" width="30" height="30"/>
                                                 <constraints>
                                                     <constraint firstAttribute="width" constant="30" id="qfI-Eg-cEu"/>
                                                     <constraint firstAttribute="width" secondItem="tXk-hI-5Ib" secondAttribute="height" multiplier="1:1" id="u3S-xh-qBj"/>
                                                 </constraints>
-                                                <state key="normal" title="Button"/>
-                                                <buttonConfiguration key="configuration" style="plain" image="closePopup"/>
+                                                <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
+                                                <state key="normal" image="closePopup"/>
                                                 <connections>
                                                     <action selector="btnBackAction:" destination="U6o-e0-s2g" eventType="touchUpInside" id="xpz-QI-DfC"/>
                                                 </connections>
@@ -215,66 +215,73 @@
                                 <color key="backgroundColor" white="0.0" alpha="0.3956361109" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             </view>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="wmg-bO-KgA">
-                                <rect key="frame" x="5" y="525" width="404" height="371"/>
+                                <rect key="frame" x="5" y="530.5" width="404" height="362.5"/>
                                 <color key="backgroundColor" name="viewBackground"/>
                             </view>
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="zEJ-PD-S0X">
-                                <rect key="frame" x="20" y="575" width="374" height="257"/>
+                                <rect key="frame" x="55" y="575.5" width="304" height="276.5"/>
                                 <subviews>
-                                    <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="20" translatesAutoresizingMaskIntoConstraints="NO" id="ze2-YJ-Rqk">
-                                        <rect key="frame" x="5.5" y="0.0" width="363" height="87"/>
+                                    <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="11" translatesAutoresizingMaskIntoConstraints="NO" id="ze2-YJ-Rqk">
+                                        <rect key="frame" x="10" y="0.0" width="284" height="95.5"/>
                                         <subviews>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Leave Chatroom" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="OTq-La-9ii">
-                                                <rect key="frame" x="0.0" y="0.0" width="363" height="33.5"/>
-                                                <fontDescription key="fontDescription" name="SFProDisplay-Bold" family="SF Pro Display" pointSize="28"/>
+                                                <rect key="frame" x="0.0" y="0.0" width="284" height="34"/>
+                                                <fontDescription key="fontDescription" name="AppleSDGothicNeo-Bold" family="Apple SD Gothic Neo" pointSize="28"/>
                                                 <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                 <nil key="highlightedColor"/>
                                             </label>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Are you sure you want to leave this chatroom? If you leave, your chat history will be permanently deleted." textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="8Fr-is-VB2">
-                                                <rect key="frame" x="0.0" y="53.5" width="363" height="33.5"/>
+                                                <rect key="frame" x="0.0" y="45" width="284" height="50.5"/>
                                                 <fontDescription key="fontDescription" name="SFProText-Semibold" family="SF Pro Text" pointSize="14"/>
-                                                <color key="textColor" name="White60%"/>
+                                                <color key="textColor" red="1" green="1" blue="1" alpha="0.80213180853396049" colorSpace="custom" customColorSpace="sRGB"/>
                                                 <nil key="highlightedColor"/>
                                             </label>
                                         </subviews>
                                     </stackView>
-                                    <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="10" translatesAutoresizingMaskIntoConstraints="NO" id="ndd-Nb-Rj1">
-                                        <rect key="frame" x="62" y="87" width="250" height="170"/>
+                                    <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="ndd-Nb-Rj1">
+                                        <rect key="frame" x="6.5" y="95.5" width="291" height="181"/>
                                         <subviews>
                                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="sDR-z1-HGp">
-                                                <rect key="frame" x="0.0" y="0.0" width="250" height="70"/>
+                                                <rect key="frame" x="0.0" y="0.0" width="291" height="88"/>
                                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                 <constraints>
-                                                    <constraint firstAttribute="height" constant="70" id="qBB-0t-BZ5"/>
+                                                    <constraint firstAttribute="height" constant="88" id="qBB-0t-BZ5"/>
                                                 </constraints>
                                             </view>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="S7M-bp-k8X">
-                                                <rect key="frame" x="0.0" y="80" width="250" height="40"/>
-                                                <color key="backgroundColor" red="1" green="0.46638342132609478" blue="0.41786429138903536" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                <rect key="frame" x="0.0" y="88" width="291" height="41"/>
+                                                <color key="backgroundColor" red="1" green="0.41176470588235292" blue="0.38039215686274508" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                 <constraints>
-                                                    <constraint firstAttribute="height" constant="40" id="2BH-Ib-fVA"/>
-                                                    <constraint firstAttribute="width" constant="250" id="BK6-qZ-idC"/>
+                                                    <constraint firstAttribute="height" constant="41" id="2BH-Ib-fVA"/>
+                                                    <constraint firstAttribute="width" constant="291" id="BK6-qZ-idC"/>
                                                 </constraints>
-                                                <state key="normal" title="Button"/>
-                                                <buttonConfiguration key="configuration" style="plain" title="Delete Chatroom">
-                                                    <fontDescription key="titleFontDescription" name="SFProText-Regular" family="SF Pro Text" pointSize="15"/>
-                                                    <color key="baseForegroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                                </buttonConfiguration>
+                                                <fontDescription key="fontDescription" name="SFProText-Regular" family="SF Pro Text" pointSize="15"/>
+                                                <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
+                                                <state key="normal" title="Delete Chatroom">
+                                                    <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                </state>
                                                 <connections>
                                                     <action selector="actionButton:" destination="6iI-Xg-5Ss" eventType="touchUpInside" id="pgW-wy-VX9"/>
                                                 </connections>
                                             </button>
-                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="pJJ-cM-lop">
-                                                <rect key="frame" x="0.0" y="130" width="250" height="40"/>
-                                                <color key="backgroundColor" name="searchBarBackground"/>
+                                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="OFW-94-1D4">
+                                                <rect key="frame" x="0.0" y="129" width="291" height="11"/>
+                                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                 <constraints>
-                                                    <constraint firstAttribute="height" constant="40" id="nau-gg-gqF"/>
+                                                    <constraint firstAttribute="height" constant="11" id="ht6-Tv-bqG"/>
                                                 </constraints>
-                                                <state key="normal" title="Button"/>
-                                                <buttonConfiguration key="configuration" style="plain" title="Cancel">
-                                                    <fontDescription key="titleFontDescription" name="SFProText-Regular" family="SF Pro Text" pointSize="15"/>
-                                                    <color key="baseForegroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                                </buttonConfiguration>
+                                            </view>
+                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="pJJ-cM-lop">
+                                                <rect key="frame" x="0.0" y="140" width="291" height="41"/>
+                                                <color key="backgroundColor" red="0.20000000000000001" green="0.20000000000000001" blue="0.20000000000000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="height" constant="41" id="nau-gg-gqF"/>
+                                                </constraints>
+                                                <fontDescription key="fontDescription" name="SFProText-Regular" family="SF Pro Text" pointSize="15"/>
+                                                <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
+                                                <state key="normal" title="Cancel">
+                                                    <color key="titleColor" red="1" green="1" blue="1" alpha="0.69862594085485752" colorSpace="custom" customColorSpace="sRGB"/>
+                                                </state>
                                                 <connections>
                                                     <action selector="cancelButtonAction:" destination="6iI-Xg-5Ss" eventType="touchUpInside" id="uXa-Jc-kM2"/>
                                                 </connections>
@@ -287,13 +294,13 @@
                         <viewLayoutGuide key="safeArea" id="TG8-uv-uNI"/>
                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
-                            <constraint firstItem="TG8-uv-uNI" firstAttribute="bottom" secondItem="zEJ-PD-S0X" secondAttribute="bottom" constant="30" id="3yV-5i-eDm"/>
-                            <constraint firstAttribute="bottom" secondItem="wmg-bO-KgA" secondAttribute="bottom" id="BaT-dj-7RZ"/>
+                            <constraint firstItem="TG8-uv-uNI" firstAttribute="bottom" secondItem="zEJ-PD-S0X" secondAttribute="bottom" constant="10" id="3yV-5i-eDm"/>
+                            <constraint firstAttribute="bottom" secondItem="wmg-bO-KgA" secondAttribute="bottom" constant="3" id="BaT-dj-7RZ"/>
                             <constraint firstAttribute="bottom" secondItem="Eol-SJ-p51" secondAttribute="bottom" constant="-50" id="Mjj-Ks-Lgc"/>
-                            <constraint firstItem="zEJ-PD-S0X" firstAttribute="leading" secondItem="GND-di-ziF" secondAttribute="leading" constant="20" id="dJC-CR-rZN"/>
+                            <constraint firstItem="zEJ-PD-S0X" firstAttribute="leading" secondItem="GND-di-ziF" secondAttribute="leading" constant="55" id="dJC-CR-rZN"/>
                             <constraint firstItem="TG8-uv-uNI" firstAttribute="trailing" secondItem="Eol-SJ-p51" secondAttribute="trailing" id="guZ-Pg-gZ7"/>
-                            <constraint firstItem="wmg-bO-KgA" firstAttribute="top" secondItem="zEJ-PD-S0X" secondAttribute="top" constant="-50" id="hC9-JS-SF9"/>
-                            <constraint firstItem="TG8-uv-uNI" firstAttribute="trailing" secondItem="zEJ-PD-S0X" secondAttribute="trailing" constant="20" id="iOs-C1-v5c"/>
+                            <constraint firstItem="wmg-bO-KgA" firstAttribute="top" secondItem="zEJ-PD-S0X" secondAttribute="top" constant="-45" id="hC9-JS-SF9"/>
+                            <constraint firstItem="TG8-uv-uNI" firstAttribute="trailing" secondItem="zEJ-PD-S0X" secondAttribute="trailing" constant="55" id="iOs-C1-v5c"/>
                             <constraint firstAttribute="trailing" secondItem="wmg-bO-KgA" secondAttribute="trailing" constant="5" id="m6Y-NO-CsJ"/>
                             <constraint firstItem="Eol-SJ-p51" firstAttribute="top" secondItem="GND-di-ziF" secondAttribute="top" constant="-50" id="mhg-FZ-sqN"/>
                             <constraint firstItem="wmg-bO-KgA" firstAttribute="leading" secondItem="TG8-uv-uNI" secondAttribute="leading" constant="5" id="xhg-SU-Wd0"/>
@@ -331,7 +338,7 @@
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="jsZ-QP-Skm">
                                         <rect key="frame" x="10" y="-5" width="394" height="46"/>
                                         <subviews>
-                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="7jx-sM-T31">
+                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="7jx-sM-T31" customClass="StreamChatBackButton" customModule="StreamChatUI" customModuleProvider="target">
                                                 <rect key="frame" x="2" y="0.0" width="46" height="46"/>
                                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                 <constraints>
@@ -736,7 +743,7 @@
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="VZ6-Rw-tJQ">
                                         <rect key="frame" x="10" y="-5" width="394" height="46"/>
                                         <subviews>
-                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="hcu-TO-6v5">
+                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="hcu-TO-6v5" customClass="StreamChatBackButton" customModule="StreamChatUI" customModuleProvider="target">
                                                 <rect key="frame" x="2" y="0.0" width="46" height="46"/>
                                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                 <constraints>
@@ -1178,9 +1185,6 @@
         <image name="magnifyingglass" catalog="system" width="128" height="115"/>
         <namedColor name="ChatNavColor">
             <color red="0.11400000005960464" green="0.11400000005960464" blue="0.11400000005960464" alpha="0.93999999761581421" colorSpace="custom" customColorSpace="sRGB"/>
-        </namedColor>
-        <namedColor name="White60%">
-            <color red="0.63099998235702515" green="0.63099998235702515" blue="0.63099998235702515" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </namedColor>
         <namedColor name="White87%">
             <color red="0.87800002098083496" green="0.87800002098083496" blue="0.88200002908706665" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>

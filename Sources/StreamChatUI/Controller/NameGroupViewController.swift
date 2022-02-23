@@ -91,7 +91,8 @@ public class NameGroupViewController: ChatBaseVC {
     }
     //
     @IBAction func backBtnTapped(_ sender: UIButton) {
-        navigationController?.popViewController(animated: true)
+        popWithAnimation()
+        //navigationController?.popViewController(animated: true)
     }
 
     @IBAction func doneTapped(_ sender: UIButton) {
@@ -130,7 +131,8 @@ public class NameGroupViewController: ChatBaseVC {
                         chatChannelVC.isChannelCreated = true
                         chatChannelVC.channelController = channelController
                         
-                        weakSelf.navigationController?.pushViewController(chatChannelVC, animated: true)
+                        //weakSelf.navigationController?.pushViewController(chatChannelVC, animated: true)
+                        weakSelf.pushWithAnimation(controller: chatChannelVC)
                         
                         let navControllers = weakSelf.navigationController?.viewControllers ?? []
                         
@@ -212,7 +214,8 @@ extension NameGroupViewController: UITableViewDataSource {
             self.tableView.reloadData()
             self.bCallbackSelectedUsers?(self.selectedUsers)
             if self.selectedUsers.isEmpty {
-                self.navigationController?.popViewController(animated: false)
+                self.popWithAnimation()
+                //self.navigationController?.popViewController(animated: false)
             }
         }
     }
