@@ -10,10 +10,10 @@ public extension ChatClient {
     static func mock(isLocalStorageEnabled: Bool = false) -> ChatClient {
         var config = ChatClientConfig(apiKey: .init("--== Mock ChatClient ==--"))
         config.isLocalStorageEnabled = isLocalStorageEnabled
+        config.isClientInActiveMode = false
         
         return .init(
             config: config,
-            workerBuilders: [],
             environment: .init(
                 apiClientBuilder: APIClient_Mock.init,
                 webSocketClientBuilder: {

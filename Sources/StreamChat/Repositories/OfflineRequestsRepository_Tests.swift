@@ -15,7 +15,8 @@ final class OfflineRequestsRepository_Tests: XCTestCase {
         let client = ChatClient.mock
         database = client.mockDatabaseContainer
         apiClient = client.mockAPIClient
-        repository = OfflineRequestsRepository(database: database, apiClient: apiClient)
+        let messageRepository = MessageRepositoryMock(database: database, apiClient: apiClient)
+        repository = OfflineRequestsRepository(messageRepository: messageRepository, database: database, apiClient: apiClient)
     }
 
     // MARK: - Run queued requests

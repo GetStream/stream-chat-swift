@@ -207,7 +207,7 @@ struct DefaultRequestEncoder: RequestEncoder {
     }
     
     private func encodeJSONToQueryItems(request: inout URLRequest, data: Encodable) throws {
-        let data = try JSONEncoder.stream.encode(AnyEncodable(data))
+        let data = try (data as? Data) ?? JSONEncoder.stream.encode(AnyEncodable(data))
         guard let json = try JSONSerialization.jsonObject(with: data) as? [String: Any] else {
             throw ClientError.InvalidJSON("Data is not a valid JSON: \(String(data: data, encoding: .utf8) ?? "nil")")
         }

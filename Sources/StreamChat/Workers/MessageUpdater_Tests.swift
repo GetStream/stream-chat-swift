@@ -11,6 +11,7 @@ final class MessageUpdater_Tests: XCTestCase {
     var webSocketClient: WebSocketClientMock!
     var apiClient: APIClientMock!
     var database: DatabaseContainerMock!
+    var messageRepository: MessageRepositoryMock!
     var messageUpdater: MessageUpdater!
     
     // MARK: Setup
@@ -21,13 +22,15 @@ final class MessageUpdater_Tests: XCTestCase {
         webSocketClient = WebSocketClientMock()
         apiClient = APIClientMock()
         database = DatabaseContainerMock()
-        messageUpdater = MessageUpdater(database: database, apiClient: apiClient)
+        messageRepository = MessageRepositoryMock(database: database, apiClient: apiClient)
+        messageUpdater = MessageUpdater(messageRepository: messageRepository, database: database, apiClient: apiClient)
     }
     
     override func tearDown() {
         apiClient.cleanUp()
         
         AssertAsync {
+            Assert.canBeReleased(&messageRepository)
             Assert.canBeReleased(&messageUpdater)
             Assert.canBeReleased(&webSocketClient)
             Assert.canBeReleased(&apiClient)
@@ -39,7 +42,7 @@ final class MessageUpdater_Tests: XCTestCase {
     
     // MARK: Edit message
     
-    func test_editMessage_propogates_CurrentUserDoesNotExist_Error() throws {
+    func test_editMessage_propagates_CurrentUserDoesNotExist_Error() throws {
         // Simulate `editMessage(messageId:, text:)` call
         let completionError = try waitFor {
             messageUpdater.editMessage(messageId: .unique, text: .unique, completion: $0)
@@ -49,7 +52,7 @@ final class MessageUpdater_Tests: XCTestCase {
         XCTAssertTrue(completionError is ClientError.CurrentUserDoesNotExist)
     }
     
-    func test_editMessage_propogates_MessageDoesNotExist_Error() throws {
+    func test_editMessage_propagates_MessageDoesNotExist_Error() throws {
         // Create current user is the database
         try database.createCurrentUser()
         
@@ -297,8 +300,10 @@ final class MessageUpdater_Tests: XCTestCase {
 
         // Simulate `deleteMessage(messageId:)` call
         var completionCalledError: Error?
+        let expectation = self.expectation(description: "Delete message completion")
         messageUpdater.deleteMessage(messageId: messageId, hard: false) {
             completionCalledError = $0
+            expectation.fulfill()
         }
         
         // Assert correct endpoint is called
@@ -307,15 +312,16 @@ final class MessageUpdater_Tests: XCTestCase {
         
         // Update database container to throw the error on write
         let databaseError = TestError()
-        database.write_errorResponse = databaseError
+        messageRepository.saveSuccessfullyDeletedMessageError = databaseError
         
         // Simulate API response with success
         let response: Result<MessagePayload.Boxed, Error> =
             .success(.init(message: .dummy(messageId: .unique, authorUserId: .unique)))
         apiClient.test_simulateResponse(response)
 
+        waitForExpectations(timeout: 0.1, handler: nil)
         // Assert database error is propogated
-        AssertAsync.willBeEqual(completionCalledError as? TestError, databaseError)
+        XCTAssertEqual(completionCalledError as? TestError, databaseError)
     }
 
     func test_deleteMessage_softlyRemovesMessageThatExistOnlyLocally() throws {
@@ -359,6 +365,8 @@ final class MessageUpdater_Tests: XCTestCase {
         ]
         
         for (networkResult, expectedState) in pairs {
+            messageRepository.clear()
+
             // Flush the database
             try database.removeAllData()
             
@@ -381,7 +389,11 @@ final class MessageUpdater_Tests: XCTestCase {
             apiClient.test_simulateResponse(networkResult)
 
             // Assert message's local state becomes expected
-            AssertAsync.willBeEqual(message.localMessageState, expectedState)
+            if expectedState == nil {
+                XCTAssertCall("saveSuccessfullyDeletedMessage(message:completion:)", on: messageRepository, times: 1)
+            } else {
+                XCTAssertNotCall("saveSuccessfullyDeletedMessage(message:completion:)", on: messageRepository)
+            }
         }
     }
 
@@ -417,7 +429,7 @@ final class MessageUpdater_Tests: XCTestCase {
         apiClient.test_simulateResponse(networkResult)
 
         // Message will be marked for delete
-        AssertAsync.willBeEqual(message.isDeleted, true)
+        XCTAssertCall("saveSuccessfullyDeletedMessage(message:completion:)", on: messageRepository, times: 1)
     }
 
     func test_deleteMessage_whenHardDelete_whenFailure_resetsIsHardDelete() throws {

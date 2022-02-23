@@ -34,7 +34,7 @@ class ChatPushNotificationContent_Tests: XCTestCase {
         env.databaseContainerBuilder = { _, _, _, _, _, _ in self.database }
         env.apiClientBuilder = { _, _, _, _, _, _ in self.apiClient }
         
-        clientWithOffline = ChatClient(
+        clientWithOffline = ChatClientMock(
             config: configOffline,
             workerBuilders: [],
             environment: env

@@ -44,7 +44,6 @@ class ChatClient_Tests: XCTestCase {
     }
     
     var workerBuilders: [WorkerBuilder] = [
-        MessageSender.init,
         NewUserQueryUpdater.init
     ]
     
@@ -99,7 +98,6 @@ class ChatClient_Tests: XCTestCase {
         // Create a `Client` and assert that a DB file is created on the provided URL + APIKey path
         _ = ChatClient(
             config: config,
-            workerBuilders: [Worker.init],
             environment: env
         )
 
@@ -132,7 +130,6 @@ class ChatClient_Tests: XCTestCase {
         // Create a `Client` and assert the correct DB kind is used
         _ = ChatClient(
             config: config,
-            workerBuilders: [Worker.init],
             environment: env
         )
         
@@ -172,7 +169,6 @@ class ChatClient_Tests: XCTestCase {
         // to the in-memory option.
         _ = ChatClient(
             config: config,
-            workerBuilders: [Worker.init],
             environment: env
         )
         
@@ -189,7 +185,6 @@ class ChatClient_Tests: XCTestCase {
         // Create a new chat client
         let client = ChatClient(
             config: inMemoryStorageConfig,
-            workerBuilders: workerBuilders,
             environment: testEnv.environment
         )
         
@@ -218,7 +213,6 @@ class ChatClient_Tests: XCTestCase {
         // Create a new chat client, which in turn creates a webSocketClient
         let client = ChatClient(
             config: inMemoryStorageConfig,
-            workerBuilders: workerBuilders,
             environment: testEnv.environment
         )
 
@@ -275,7 +269,6 @@ class ChatClient_Tests: XCTestCase {
         var initCompletionCalled = false
         let client = ChatClient(
             config: config,
-            workerBuilders: [],
             environment: env
         )
         
@@ -325,7 +318,6 @@ class ChatClient_Tests: XCTestCase {
         // Create a new chat client
         let client = ChatClient(
             config: inMemoryStorageConfig,
-            workerBuilders: workerBuilders,
             environment: testEnv.environment
         )
 
@@ -370,7 +362,6 @@ class ChatClient_Tests: XCTestCase {
         // Create a new chat client
         let client = ChatClient(
             config: inMemoryStorageConfig,
-            workerBuilders: workerBuilders,
             environment: testEnv.environment
         )
         
@@ -408,7 +399,6 @@ class ChatClient_Tests: XCTestCase {
         // Create a new chat client
         let client = ChatClient(
             config: inMemoryStorageConfig,
-            workerBuilders: workerBuilders,
             environment: testEnv.environment
         )
         
@@ -470,7 +460,6 @@ class ChatClient_Tests: XCTestCase {
         // Create a new chat client
         let client = ChatClient(
             config: inMemoryStorageConfig,
-            workerBuilders: workerBuilders,
             environment: testEnv.environment
         )
         
@@ -506,7 +495,6 @@ class ChatClient_Tests: XCTestCase {
         // Create a new chat client
         let client = ChatClient(
             config: inMemoryStorageConfig,
-            workerBuilders: workerBuilders,
             environment: testEnv.environment
         )
 
@@ -522,7 +510,6 @@ class ChatClient_Tests: XCTestCase {
         // Create a chat client
         let client = ChatClient(
             config: inMemoryStorageConfig,
-            workerBuilders: workerBuilders,
             environment: testEnv.environment
         )
         
@@ -561,17 +548,14 @@ class ChatClient_Tests: XCTestCase {
         // Create a Client instance and check the workers are initialized properly
         let client = ChatClient(
             config: config,
-            workerBuilders: [TestWorker.init],
             environment: testEnv.environment
         )
 
         // Simulate `createBackgroundWorkers` so workers are created.
         client.createBackgroundWorkers()
-        
-        let testWorker = client.backgroundWorkers.first as? TestWorker
-        XCTAssert(testWorker?.init_database is DatabaseContainerMock)
-        XCTAssert(testWorker?.init_apiClient is APIClientMock)
-        
+
+        XCTAssert(client.backgroundWorkers.first is MessageSender)
+
         XCTAssertNotNil(client.connectionRecoveryHandler)
     }
     
@@ -628,7 +612,6 @@ class ChatClient_Tests: XCTestCase {
             // Create a client, provide the completion and catch the result.
             let client = ChatClient(
                 config: inMemoryStorageConfig,
-                workerBuilders: [],
                 environment: testEnv.environment
             )
             client.connectAnonymousUser { error in
@@ -652,7 +635,6 @@ class ChatClient_Tests: XCTestCase {
     func test_reloadUserIfNeededIsNotCalled_whenClientIsInitialized_andTokenProviderIsNil() {
         _ = ChatClient(
             config: inMemoryStorageConfig,
-            workerBuilders: [],
             environment: testEnv.environment
         )
         
@@ -662,7 +644,6 @@ class ChatClient_Tests: XCTestCase {
     func test_connectUser_setsTokenProvider_andInitiatesConnection() {
         let client = ChatClient(
             config: inMemoryStorageConfig,
-            workerBuilders: [],
             environment: testEnv.environment
         )
         let token = Token.unique()
@@ -682,7 +663,6 @@ class ChatClient_Tests: XCTestCase {
     func test_connectGuestUser_setsTokenProvider_andInitiatesConnection() {
         let client = ChatClient(
             config: inMemoryStorageConfig,
-            workerBuilders: [],
             environment: testEnv.environment
         )
         let token = Token.unique()
@@ -723,7 +703,6 @@ class ChatClient_Tests: XCTestCase {
     func test_connectAnonymoususer_setsTokenProvider_andInitiatesConnection() {
         let client = ChatClient(
             config: inMemoryStorageConfig,
-            workerBuilders: [],
             environment: testEnv.environment
         )
         XCTAssert(testEnv.clientUpdater?.reloadUserIfNeeded_called != true)
@@ -741,7 +720,6 @@ class ChatClient_Tests: XCTestCase {
     func test_lastConnectionDateIsPassedToSyncRepository() throws {
         let client = ChatClient(
             config: inMemoryStorageConfig,
-            workerBuilders: [],
             environment: testEnv.environment
         )
         try client.databaseContainer.writeSynchronously { session in
@@ -803,7 +781,6 @@ class ChatClient_Tests: XCTestCase {
         // Given
         let client = ChatClient(
             config: inMemoryStorageConfig,
-            workerBuilders: workerBuilders,
             environment: testEnv.environment
         )
         

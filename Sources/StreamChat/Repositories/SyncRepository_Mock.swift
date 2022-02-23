@@ -16,7 +16,12 @@ class SyncRepositoryMock: SyncRepository, Spy {
         let _activeChannelControllers = NSHashTable<ChatChannelController>.weakObjects()
         let _activeChannelListControllers = NSHashTable<ChatChannelListController>.weakObjects()
         let channelRepository = ChannelListUpdater(database: client.databaseContainer, apiClient: client.apiClient)
-        let offlineRepository = OfflineRequestsRepositoryMock(database: client.databaseContainer, apiClient: client.apiClient)
+        let messageRepository = MessageRepository(database: client.databaseContainer, apiClient: client.apiClient)
+        let offlineRepository = OfflineRequestsRepositoryMock(
+            messageRepository: messageRepository,
+            database: client.databaseContainer,
+            apiClient: client.apiClient
+        )
         super.init(
             config: client.config,
             activeChannelControllers: _activeChannelControllers,

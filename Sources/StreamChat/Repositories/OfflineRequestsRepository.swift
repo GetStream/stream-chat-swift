@@ -23,13 +23,15 @@ extension Endpoint {
 /// OfflineRequestsRepository handles both the enqueuing and the execution of offline requests when needed.
 /// When running the queued requests, it basically passes the requests on to the APIClient, and waits for its result.
 class OfflineRequestsRepository {
+    let messageRepository: MessageRepository
     let database: DatabaseContainer
     let apiClient: APIClient
 
     /// Serial queue used to enqueue pending requests one after another
     private let retryQueue = DispatchQueue(label: "com.stream.queue-requests")
 
-    init(database: DatabaseContainer, apiClient: APIClient) {
+    init(messageRepository: MessageRepository, database: DatabaseContainer, apiClient: APIClient) {
+        self.messageRepository = messageRepository
         self.database = database
         self.apiClient = apiClient
     }
@@ -84,7 +86,11 @@ class OfflineRequestsRepository {
                         subsystems: .offlineSupport
                     )
                     leave()
-                case .failure:
+                case let .failure(error):
+                    log.info(
+                        "Request for /\(endpoint.path) failed: \(error)",
+                        subsystems: .offlineSupport
+                    )
                     deleteQueuedRequestAndComplete()
                 }
             }
@@ -101,8 +107,36 @@ class OfflineRequestsRepository {
         data: Data,
         completion: @escaping () -> Void
     ) {
-        // TODO:
-        completion()
+        func decodeTo<T: Decodable>(_ type: T.Type) -> T? { try? JSONDecoder.stream.decode(T.self, from: data) }
+
+        switch endpoint.path {
+        case .createChannel:
+            guard let payload = decodeTo(ChannelPayload.self) else {
+                completion()
+                return
+            }
+            database.write { try $0.saveChannel(payload: payload) } completion: { _ in completion() }
+        case let .sendMessage(channelId):
+            guard let message = decodeTo(MessagePayload.Boxed.self) else {
+                completion()
+                return
+            }
+            messageRepository.saveSuccessfullySentMessage(cid: channelId, message: message.message) { _ in completion() }
+        case let .editMessage(messageId):
+            messageRepository.saveSuccessfullyEditedMessage(for: messageId, completion: completion)
+        case .deleteMessage:
+            guard let message = decodeTo(MessagePayload.Boxed.self) else {
+                completion()
+                return
+            }
+            messageRepository.saveSuccessfullyDeletedMessage(message: message.message) { _ in completion() }
+        case .addReaction, .deleteReaction:
+            // No further action
+            completion()
+        default:
+            log.assertionFailure("Should not reach here, request should not require action")
+            completion()
+        }
     }
 
     func queueOfflineRequest(endpoint: DataEndpoint, completion: (() -> Void)? = nil) {
