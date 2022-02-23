@@ -44,9 +44,10 @@ class ChatMenuViewController: UIViewController {
             let controller = UIHostingController(rootView: chatMenuView)
             addChild(controller)
             controller.view.translatesAutoresizingMaskIntoConstraints = false
+            controller.view.clipsToBounds = true
             self.view.addSubview(controller.view)
             controller.didMove(toParent: self)
-
+            self.view.clipsToBounds = true
             NSLayoutConstraint.activate([
                 controller.view.widthAnchor.constraint(equalTo: self.view.widthAnchor),
                 controller.view.heightAnchor.constraint(equalTo: self.view.heightAnchor),
@@ -73,6 +74,7 @@ class ChatMenuViewController: UIViewController {
         imgNft.image = Appearance.default.images.menuNft
         imgRedPacket.image = Appearance.default.images.menuRedPacket
         imgDao.image = Appearance.default.images.menuDao
+        self.view.backgroundColor = .red
     }
 
     func configureView(with data: [String: RawJSON]?) {
@@ -200,5 +202,6 @@ struct ChatMenuView: View {
                 Spacer()
             }
         }
+        .clipped()
     }
 }

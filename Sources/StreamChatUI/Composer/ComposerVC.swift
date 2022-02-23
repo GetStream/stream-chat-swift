@@ -666,6 +666,7 @@ open class ComposerVC: _ViewController,
 
     private func showInputViewController(_ uiViewController: UIViewController?) {
         let walletView = UIView()
+        walletView.clipsToBounds = true
         if let menu = uiViewController?.view {
             walletView.embed(menu)
             menu.widthAnchor.constraint(equalToConstant: self.view.bounds.width).isActive = true
@@ -752,6 +753,7 @@ open class ComposerVC: _ViewController,
             self.showInputViewController(menuController)
             self.isMenuShowing = true
         } else {
+            self.composerView.inputMessageView.textView.resignFirstResponder()
             self.composerView.inputMessageView.textView.inputView = nil
             self.composerView.inputMessageView.textView.reloadInputViews()
             self.isMenuShowing = false
