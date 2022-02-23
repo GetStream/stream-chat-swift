@@ -173,7 +173,13 @@ public extension Appearance {
                 return loadImageSafely(with: "download")
             }
         }()
-
+        public var senOneImage: UIImage? = {
+            if #available(iOS 13.0, *) {
+                return UIImage(systemName: "paperplane.fill")?.withTintColor(.white)
+            } else {
+                return Appearance.default.images.sendArrow.tinted(with: .white)
+            }
+        }()
         // MARK: - Reactions
 
         public var reactionLoveSmall: UIImage = loadImageSafely(with: "reaction_love_small")
