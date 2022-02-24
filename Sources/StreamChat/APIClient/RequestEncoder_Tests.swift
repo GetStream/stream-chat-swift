@@ -371,6 +371,41 @@ class RequestEncoder_Tests: XCTestCase {
         XCTAssertFalse(urlComponents.url!.query!.contains("+"))
         XCTAssertTrue(urlComponents.url!.query!.contains("%2B"))
     }
+
+    func test_encodingRequestBodyAsData_GET() throws {
+        // Prepare a GET endpoint with Data body
+        let bodyAsData = try JSONEncoder.stream.encode([
+            "user1": TestUser(name: "Luke", age: 22),
+            // Test non-alphanumeric characters, too
+            "user2": TestUser(name: "Leia is the best! + ♥️", age: 22)
+        ])
+        let endpoint = Endpoint<Data>(
+            path: .guest,
+            method: .get,
+            queryItems: nil,
+            requiresConnectionId: false,
+            requiresToken: false,
+            body: bodyAsData
+        )
+
+        // Encode the request and wait for the result
+        let request = try waitFor { encoder.encodeRequest(for: endpoint, completion: $0) }.get()
+
+        // Check both JSONs are present in the query items
+        let urlComponents = try XCTUnwrap(URLComponents(url: request.url!, resolvingAgainstBaseURL: false))
+
+        let user1String = try XCTUnwrap(urlComponents.queryItems?["user1"])
+        let user1JSON = try JSONDecoder.default.decode(TestUser.self, from: user1String.data(using: .utf8)!)
+        XCTAssertEqual(user1JSON, TestUser(name: "Luke", age: 22))
+
+        let user2String = try XCTUnwrap(urlComponents.queryItems?["user2"])
+        let user2JSON = try JSONDecoder.default.decode(TestUser.self, from: user2String.data(using: .utf8)!)
+        XCTAssertEqual(user2JSON, TestUser(name: "Leia is the best! + ♥️", age: 22))
+
+        // Check the + sign is encoded properly in the query
+        XCTAssertFalse(urlComponents.url!.query!.contains("+"))
+        XCTAssertTrue(urlComponents.url!.query!.contains("%2B"))
+    }
     
     func test_encodingGETRequestBody_withQueryItems() throws {
         // Prepare a GET endpoint with both, the query items and JSON body
@@ -391,6 +426,34 @@ class RequestEncoder_Tests: XCTestCase {
         // Check the query item
         XCTAssertEqual(urlComponents.queryItems?["father"], "Anakin")
         
+        // Check the query-item encoded body
+        let userString = try XCTUnwrap(urlComponents.queryItems?["user"])
+        let userJSON = try JSONDecoder.default.decode(TestUser.self, from: userString.data(using: .utf8)!)
+        XCTAssertEqual(userJSON, TestUser(name: "Luke", age: 22))
+    }
+
+    func test_encodingGETRequestBodyAsData_withQueryItemsAsData() throws {
+        // Prepare a GET endpoint with both, the query items and body as Data
+        let queryItemsData = try JSONEncoder.stream.encode(["father": "Anakin"])
+        let bodyAsData = try JSONEncoder.stream.encode(["user": TestUser(name: "Luke", age: 22)])
+
+        let endpoint = Endpoint<Data>(
+            path: .guest,
+            method: .get,
+            queryItems: queryItemsData,
+            requiresConnectionId: false,
+            requiresToken: false,
+            body: bodyAsData
+        )
+
+        // Encode the request and wait for the result
+        let request = try waitFor { encoder.encodeRequest(for: endpoint, completion: $0) }.get()
+
+        let urlComponents = try XCTUnwrap(URLComponents(url: request.url!, resolvingAgainstBaseURL: false))
+
+        // Check the query item
+        XCTAssertEqual(urlComponents.queryItems?["father"], "Anakin")
+
         // Check the query-item encoded body
         let userString = try XCTUnwrap(urlComponents.queryItems?["user"])
         let userJSON = try JSONDecoder.default.decode(TestUser.self, from: userString.data(using: .utf8)!)
