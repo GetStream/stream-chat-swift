@@ -84,24 +84,6 @@ class MessageRepository {
         }
     }
 
-    func saveSuccessfullyDeletedMessage(message: MessagePayload, completion: ((Error?) -> Void)? = nil) {
-        database.write({ session in
-            guard let messageDTO = session.message(id: message.id), let cid = messageDTO.channel?.cid else { return }
-            let deletedMessage = try session.saveMessage(
-                payload: message,
-                for: ChannelId(cid: cid),
-                syncOwnReactions: false
-            )
-            deletedMessage?.localMessageState = nil
-
-            if messageDTO.isHardDeleted, let message = deletedMessage {
-                session.delete(message: message)
-            }
-        }, completion: {
-            completion?($0)
-        })
-    }
-
     func saveSuccessfullySentMessage(
         cid: ChannelId,
         message: MessagePayload,
@@ -144,6 +126,24 @@ class MessageRepository {
 
     func saveSuccessfullyEditedMessage(for id: MessageId, completion: @escaping () -> Void) {
         markMessage(withID: id, as: nil, completion: completion)
+    }
+
+    func saveSuccessfullyDeletedMessage(message: MessagePayload, completion: ((Error?) -> Void)? = nil) {
+        database.write({ session in
+            guard let messageDTO = session.message(id: message.id), let cid = messageDTO.channel?.cid else { return }
+            let deletedMessage = try session.saveMessage(
+                payload: message,
+                for: ChannelId(cid: cid),
+                syncOwnReactions: false
+            )
+            deletedMessage?.localMessageState = nil
+
+            if messageDTO.isHardDeleted, let message = deletedMessage {
+                session.delete(message: message)
+            }
+        }, completion: {
+            completion?($0)
+        })
     }
 
     func markMessage(withID id: MessageId, as state: LocalMessageState?, completion: @escaping () -> Void) {
