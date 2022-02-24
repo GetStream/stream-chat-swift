@@ -175,32 +175,9 @@ public class pushTransition: CATransition {}
 
 extension UIViewController {
     public func pushWithAnimation(controller: UIViewController) {
-        for subLayer in self.view.layer.sublayers ?? [] {
-            if subLayer.isKind(of: pushTransition.self) {
-                subLayer.removeFromSuperlayer()
-            }
-        }
-        let transition = pushTransition()
-        transition.duration = TimeInterval(UINavigationController.hideShowBarDuration)
-        transition.timingFunction = CAMediaTimingFunction(name: CAMediaTimingFunctionName.easeInEaseOut)
-        transition.type = CATransitionType.moveIn
-        transition.subtype = .fromRight
-        navigationController?.transitioningDelegate
-        self.navigationController?.view.layer.add(transition, forKey: nil)
-        self.navigationController?.pushViewController(controller, animated: false)
+        self.navigationController?.pushViewController(controller, animated: true)
     }
     public func popWithAnimation() {
-        for subLayer in self.view.layer.sublayers ?? [] {
-            if subLayer.isKind(of: pushTransition.self) {
-                subLayer.removeFromSuperlayer()
-            }
-        }
-        let transition = pushTransition()
-        transition.duration = TimeInterval(UINavigationController.hideShowBarDuration)
-        transition.timingFunction = CAMediaTimingFunction(name: CAMediaTimingFunctionName.easeInEaseOut)
-        transition.type = CATransitionType.reveal
-        transition.subtype = .fromLeft
-        self.navigationController?.view.layer.add(transition, forKey: nil)
-        self.navigationController?.popViewController(animated: false)
+        self.navigationController?.popViewController(animated: true)
     }
 }
