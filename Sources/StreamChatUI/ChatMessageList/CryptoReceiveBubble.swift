@@ -23,6 +23,7 @@ class CryptoReceiveBubble: UITableViewCell {
     var content: ChatMessage?
     public lazy var dateFormatter: DateFormatter = .makeDefault()
     public var blockExpAction: ((URL) -> Void)?
+    var client: ChatClient?
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -183,9 +184,16 @@ class CryptoReceiveBubble: UITableViewCell {
         guard let walletData = getOneWalletExtraData() else {
             return
         }
-        if let fromUserName = walletData["myName"] {
+        if let fromUserName = walletData["myName"], let recipientAddress = walletData["recipientAddress"] {
             let userName = fetchRawData(raw: fromUserName) as? String ?? ""
-            descriptionLabel.text = "\(userName) has sent you crypto"
+            let recipientAdd = fetchRawData(raw: recipientAddress) as? String ?? ""
+            let recipientName = fetchRawData(raw: walletData["recipientName"] ?? .string("you")) as? String ?? ""
+            if recipientAdd == client?.currentUserId?.string ?? "" {
+                descriptionLabel.text = "\(userName) sent you crypto"
+            } else {
+                descriptionLabel.text = "\(userName) sent crypto to \(recipientName)"
+            }
+            
         }
         if let amount = walletData["transferAmount"] {
             let one = fetchRawData(raw: amount) as? Double ?? 0

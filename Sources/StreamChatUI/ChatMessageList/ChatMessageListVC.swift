@@ -349,6 +349,7 @@ open class ChatMessageListVC:
                 }
                 cell.options = cellLayoutOptionsForMessage(at: indexPath)
                 cell.content = message
+                cell.client = client
                 cell.configData()
                 cell.blockExpAction = { blockExpUrl in
                     let svc = SFSafariViewController(url: blockExpUrl)
