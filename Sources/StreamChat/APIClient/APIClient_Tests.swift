@@ -241,6 +241,50 @@ class APIClient_Tests: XCTestCase {
         XCTEnsureRequestsWereExecuted(times: 2)
     }
 
+    // MARK: - Request retries
+
+    func test_runningARequestWithConnectivityIssues() {
+        let networkError = NSError(domain: "", code: NSURLErrorNotConnectedToInternet, userInfo: nil)
+        decoder.decodeRequestResponse = .failure(networkError)
+
+        let expectation = self.expectation(description: "Request completes")
+        apiClient.request(endpoint: Endpoint<TestUser>.mock(), completion: { _ in
+            expectation.fulfill()
+        })
+        waitForExpectations(timeout: 0.1, handler: nil)
+
+        // Retries until the maximum amount
+        XCTEnsureRequestsWereExecuted(times: 4)
+    }
+
+    func test_runningARequestAndSwitchingToRecoveryMode() {
+        let networkError = NSError(domain: "", code: NSURLErrorNotConnectedToInternet, userInfo: nil)
+        decoder.decodeRequestResponse = .failure(networkError)
+
+        let expectation = self.expectation(description: "Request completes")
+        apiClient.request(endpoint: Endpoint<TestUser>.mock(), completion: { _ in
+            expectation.fulfill()
+        })
+        apiClient.enterRecoveryMode()
+
+        // We apply a delay to verify that only one request (the initial one) went through
+        waitUntil { done in
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.01) {
+                done()
+            }
+        }
+
+        // Gets enqueued because we switched to recovery mode
+        XCTEnsureRequestsWereExecuted(times: 1)
+
+        // We restart the regular queue
+        decoder.decodeRequestResponse = .success(TestUser(name: .unique))
+        apiClient.exitRecoveryMode()
+
+        waitForExpectations(timeout: 0.1, handler: nil)
+        XCTEnsureRequestsWereExecuted(times: 2)
+    }
+
     // MARK: - CDN Client
     
     func test_uploadAttachment_calls_CDNClient() throws {
