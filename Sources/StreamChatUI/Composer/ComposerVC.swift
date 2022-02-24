@@ -19,6 +19,9 @@ extension Notification.Name {
     public static let disburseFundAction = Notification.Name("kStreamChatDisburseFundTapAction")
 }
 
+// TODO: Need to check memory issue
+fileprivate var sendMessageLock = false
+
 /// The possible errors that can occur in attachment validation
 public enum AttachmentValidationError: Error {
     /// The size of the attachment exceeds the max file size
@@ -216,7 +219,7 @@ open class ComposerVC: _ViewController,
     public var channelConfig: ChannelConfig? {
         channelController?.channel?.config
     }
-
+    
     /// The component responsible for mention suggestions.
     open lazy var mentionSuggester = TypingSuggester(
         options: TypingSuggestionOptions(
@@ -344,13 +347,14 @@ open class ComposerVC: _ViewController,
 
     override open func viewDidLoad() {
         super.viewDidLoad()
+        NotificationCenter.default.removeObserver(self)
         NotificationCenter.default.addObserver(self, selector: #selector(sendOneWalletBubble(notification:)), name: .sendOneWallet, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(redPacketBubble(notification:)), name: .sendRedPacket, object: nil)
     }
 
     override open func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
-
+        NotificationCenter.default.removeObserver(self)
         dismissSuggestions()
     }
 
@@ -815,9 +819,13 @@ open class ComposerVC: _ViewController,
     }
 
     @objc open func sendOneWalletBubble(notification: Notification) {
+        if sendMessageLock {
+            return;
+        }
         guard let sendOneWalletData = notification.userInfo?["oneWalletTx"] as? SendOneWallet else {
             return
         }
+        sendMessageLock = true
         channelController?.createNewMessage(
             text: "Sent ONE",
             pinning: nil,
@@ -826,6 +834,9 @@ open class ComposerVC: _ViewController,
             quotedMessageId: content.quotingMessage?.id,
             extraData: ["oneWalletTx" : .dictionary(sendOneWalletData.toDictionary())],
             completion: nil)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+            sendMessageLock = false
+        }
     }
 
     @objc open func redPacketBubble(notification: Notification) {

@@ -46,7 +46,7 @@ public class ChatUserController: DataController, DelegateCallable, DataStoreProv
     }
     
     /// The worker used to fetch the remote data and communicate with servers.
-    private lazy var userUpdater = createUserUpdater()
+    lazy var userUpdater = createUserUpdater()
     
     /// The observer used to track the user changes in the database.
     private lazy var userObserver = createUserObserver()
@@ -169,6 +169,33 @@ public extension ChatUserController {
     ///
     func unflag(completion: ((Error?) -> Void)? = nil) {
         userUpdater.flagUser(false, with: userId) { error in
+            self.callback {
+                completion?(error)
+            }
+        }
+    }
+    
+    /// Updates the current user data.
+    ///
+    /// By default all data is `nil`, and it won't be updated unless a value is provided.
+    ///
+    /// - Parameters:
+    ///   - name: Optionally provide a new name to be updated.
+    ///   - imageURL: Optionally provide a new image to be updated.
+    ///   - userExtraData: Optionally provide new user extra data to be updated.
+    ///   - completion: Called when user is successfuly updated, or with error.
+    func updateUserData(
+        name: String? = nil,
+        imageURL: URL? = nil,
+        userExtraData: [String: RawJSON] = [:],
+        completion: ((Error?) -> Void)? = nil
+    ) {
+        userUpdater.updateUserData(
+            userId: userId,
+            name: name,
+            imageURL: imageURL,
+            userExtraData: userExtraData
+        ) { error in
             self.callback {
                 completion?(error)
             }
