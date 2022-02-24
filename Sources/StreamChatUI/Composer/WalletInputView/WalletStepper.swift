@@ -27,10 +27,10 @@ class WalletStepper: UIView {
     private lazy var detailView: UIView = UIView()
         .withoutAutoresizingMaskConstraints
 
-    private lazy var btnAdd: UIButton = UIButton()
+    private lazy var btnAdd: CustomButton = CustomButton()
         .withoutAutoresizingMaskConstraints
 
-    private lazy var btnRemove: UIButton = UIButton()
+    private lazy var btnRemove: CustomButton = CustomButton()
         .withoutAutoresizingMaskConstraints
 
     private lazy var containerInputView: UIView = UIView()
@@ -61,6 +61,7 @@ class WalletStepper: UIView {
         }
     }
     private var scrollLock = false
+    private var sliderLock = false
     private(set) lazy var bgView = UIView()
         .withoutAutoresizingMaskConstraints
 
@@ -181,14 +182,14 @@ class WalletStepper: UIView {
                 } else {
                     centerContainerXLayoutConstraint.constant = min(offsetFromStart, centerX)
                 }
-            }
-
-        } else if panGesture.state == .ended {
-            scrollLock = false
-            if scrollDirection == .leftRight {
                 let offset = centerContainerXLayoutConstraint.constant
                 let maxOffset = (detailView.bounds.width / 3)
+                if (-10...10).contains(offset) {
+                    sliderLock = false
+                }
+                guard !sliderLock else { return }
                 if abs(offset) > abs(maxOffset / 2) {
+                    sliderLock = true
                     if #available(iOS 13.0, *) {
                         hapticFeedback(style: .soft)
                     } else {
@@ -200,7 +201,12 @@ class WalletStepper: UIView {
                         btnAddAction()
                     }
                 }
-            } else {
+            }
+
+        } else if panGesture.state == .ended {
+            scrollLock = false
+            sliderLock = false
+            if scrollDirection == .upDown {
                 let offset = centerContainerYLayoutConstraint.constant
                 let maxOffset = (detailView.bounds.height / 3)
                 if abs(offset) > abs(maxOffset / 2) {

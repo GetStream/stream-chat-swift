@@ -28,6 +28,46 @@ class UserUpdater: Worker {
         }
     }
     
+    /// - Parameters:
+    ///   - currentUserId: The current user identifier.
+    ///   - name: Optionally provide a new name to be updated.
+    ///   - imageURL: Optionally provide a new image to be updated.
+    ///   - userExtraData: Optionally provide new user extra data to be updated.
+    ///   - completion: Called when user is successfuly updated, or with error.
+    func updateUserData(
+        userId: UserId,
+        name: String? = nil,
+        imageURL: URL? = nil,
+        userExtraData: [String: RawJSON]? = nil,
+        completion: ((Error?) -> Void)? = nil
+    ) {
+        let params: [Any?] = [name, imageURL, userExtraData]
+        guard !params.allSatisfy({ $0 == nil }) else {
+            log.warning("Update user request not performed. All provided data was nil.")
+            completion?(nil)
+            return
+        }
+        
+        let payload = UserUpdateRequestBody(
+            name: name,
+            imageURL: imageURL,
+            extraData: userExtraData
+        )
+        
+        apiClient
+            .request(endpoint: .updateUser(id: userId, payload: payload)) { [weak self] in
+                switch $0 {
+                case let .success(response):
+                    self?.database.write({ (session) in
+                        let userDTO = try session.saveUser(payload: response.user)
+                        session.currentUser?.user = userDTO
+                    }) { completion?($0) }
+                case let .failure(error):
+                    completion?(error)
+                }
+            }
+    }
+    
     /// Makes a single user query call to the backend and updates the local storage with the results.
     ///
     /// - Parameters:

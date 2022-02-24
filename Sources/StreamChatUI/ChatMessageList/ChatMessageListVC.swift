@@ -221,6 +221,7 @@ open class ChatMessageListVC:
     /// Default implementation will dismiss the keyboard if it is open
     @objc open func handleTap(_ gesture: UITapGestureRecognizer) {
         view.endEditing(true)
+        UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
     }
 
     /// Handles long press action on collection view.
@@ -348,6 +349,7 @@ open class ChatMessageListVC:
                 }
                 cell.options = cellLayoutOptionsForMessage(at: indexPath)
                 cell.content = message
+                cell.client = client
                 cell.configData()
                 cell.blockExpAction = { blockExpUrl in
                     let svc = SFSafariViewController(url: blockExpUrl)
