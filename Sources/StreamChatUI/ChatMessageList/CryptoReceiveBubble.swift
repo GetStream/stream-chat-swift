@@ -23,6 +23,7 @@ class CryptoReceiveBubble: UITableViewCell {
     var content: ChatMessage?
     public lazy var dateFormatter: DateFormatter = .makeDefault()
     public var blockExpAction: ((URL) -> Void)?
+    var client: ChatClient?
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -183,13 +184,19 @@ class CryptoReceiveBubble: UITableViewCell {
         guard let walletData = getOneWalletExtraData() else {
             return
         }
-        if let fromUserName = walletData["myName"] {
+        if let fromUserName = walletData["myName"], let recipientAddress = walletData["recipientAddress"] {
             let userName = fetchRawData(raw: fromUserName) as? String ?? ""
+            let recipientAdd = fetchRawData(raw: recipientAddress) as? String ?? ""
+            let recipientName = fetchRawData(raw: walletData["recipientName"] ?? .string("you")) as? String ?? ""
             let imageAttachment = NSTextAttachment()
             imageAttachment.image = Appearance.default.images.senOneImage
             let fullString = NSMutableAttributedString(string: "\(userName) ")
             fullString.append(NSAttributedString(attachment: imageAttachment))
-            fullString.append(NSAttributedString(string: " You"))
+            if recipientAdd == client?.currentUserId?.string ?? "" {
+                fullString.append(NSAttributedString(string: " You"))
+            } else {
+                fullString.append(NSAttributedString(string: " \(recipientName)"))
+            }
             descriptionLabel.attributedText = fullString
         }
         if let amount = walletData["transferAmount"] {
