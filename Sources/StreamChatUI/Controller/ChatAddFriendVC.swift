@@ -55,26 +55,19 @@ public class ChatAddFriendVC: ChatBaseVC {
     public override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.view.layoutIfNeeded()
-        //chatUserList.tableViewFrameUpdate()
     }
-   
     // MARK: - METHODS
     public func setup() {
-        //
         self.view.backgroundColor = .clear
-        //
         btnBack?.setImage(Appearance.Images.closeCircle, for: .normal)
-        //
         btnAddFriend?.setTitle("", for: .normal)
         btnAddFriend?.isEnabled = !self.selectedUsers.isEmpty
         btnInviteLink?.isEnabled = !self.selectedUsers.isEmpty
-        //
         btnAddFriend?.isHidden = selectionType == .inviteUser
         titleLabel.text = selectionType.title
-        //
         self.searchField.addTarget(self, action: #selector(textDidChange(_:)), for: .editingChanged)
         self.searchField.delegate = self
-        //
+        
         addChild(chatUserList)
         tableviewContainerView.addSubview(chatUserList.view)
         chatUserList.didMove(toParent: self)
@@ -82,13 +75,10 @@ public class ChatAddFriendVC: ChatBaseVC {
         chatUserList.delegate = self
         chatUserList.userSelectionType = .addFriend
         chatUserList.existingUsers = existingUsers
-        //chatUserList.tableViewFrameUpdate()
         chatUserList.curentSortType = .sortByAtoZ
         chatUserList.fetchUserList()
-        //
         viewContainerLeadingConst.constant = 5
         viewContainerTrailingConst.constant = 5
-        //
         setupUI()
     }
     private func setupUI() {
@@ -99,7 +89,7 @@ public class ChatAddFriendVC: ChatBaseVC {
         searchBarContainerView.layer.cornerRadius = 20.0
         viewHeaderView.layer.cornerRadius = CGFloat(cornorRadius)
     }
-    //
+    
     @objc private func textDidChange(_ sender: UITextField) {
         self.chatUserList.searchDataUsing(searchString: sender.text)
     }
@@ -135,9 +125,7 @@ extension ChatAddFriendVC: UITextFieldDelegate {
 }
 // MARK: - ChatUserListDelegate
 extension ChatAddFriendVC: ChatUserListDelegate {
-    public func chatListStateUpdated(state: ChatUserListVC.ChatUserLoadingState) {
-        
-    }
+    public func chatListStateUpdated(state: ChatUserListVC.ChatUserLoadingState) {}
     public func chatUserDidSelect() {
         self.selectedUsers = self.chatUserList.selectedUsers
         self.btnAddFriend?.isEnabled = !self.selectedUsers.isEmpty
@@ -146,33 +134,20 @@ extension ChatAddFriendVC: ChatUserListDelegate {
 }
 // MARK: - Pan Modal Presentable
 extension ChatAddFriendVC: PanModalPresentable {
-
     public override var preferredStatusBarStyle: UIStatusBarStyle {
         return .lightContent
     }
-//    public var panScrollable: UIScrollView? {
-//        return self.chatUserList.view
-//    }
     public var panScrollable: UIScrollView? {
         return nil
     }
-//    public var longFormHeight: PanModalHeight {
-//        return .maxHeightWithTopInset(0)
-//    }
     public var shortFormHeight: PanModalHeight {
         return isShortFormEnabled ? .contentHeightIgnoringSafeArea(465) : longFormHeight
     }
-//    public var anchorModalToLongForm: Bool {
-//        return false
-//    }
     public var showDragIndicator: Bool {
         return false
     }
-//    public var allowsExtendedPanScrolling: Bool {
-//        return true
-//    }
     public var allowsDragToDismiss: Bool {
-        return false
+        return true
     }
     public func willTransition(to state: PanModalPresentationController.PresentationState) {
         self.panModelState = state

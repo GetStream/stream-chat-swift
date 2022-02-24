@@ -35,7 +35,6 @@ open class PrivateGroupOTPVC: UIViewController {
     @IBAction func btnBackAction(_ sender: UIButton) {
         NotificationCenter.default.post(name: .showTabbar, object: nil)
         popWithAnimation()
-        //navigationController?.popViewController(animated: true)
     }
 
     // MARK: - Functions

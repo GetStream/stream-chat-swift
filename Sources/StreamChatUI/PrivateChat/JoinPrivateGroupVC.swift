@@ -54,7 +54,6 @@ class JoinPrivateGroupVC: UIViewController {
     @IBAction func btnBackAction(_ sender: UIButton) {
         otpViewDelegate?.popToThisVC()
         popWithAnimation()
-        //navigationController?.popViewController(animated: true)
     }
 
     @IBAction func btnJoinGroupAction(_ sender: UIButton) {
@@ -248,7 +247,6 @@ extension JoinPrivateGroupVC: ChatChannelListControllerDelegate {
 
                     channelMembers.synchronize { [weak self] error in
                         guard error == nil, let self  = self else {
-                            //self?.navigationController?.popViewController(animated: true)
                             self?.popWithAnimation()
                             return
                         }

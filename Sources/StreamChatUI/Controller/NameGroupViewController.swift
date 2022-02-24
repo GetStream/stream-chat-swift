@@ -36,6 +36,7 @@ public class NameGroupViewController: ChatBaseVC {
     }
     // MARK: - METHODS
     public func setupUI() {
+        navigationController?.navigationBar.isHidden = true
         self.btnNext?.isHidden = true
         self.view.backgroundColor = Appearance.default.colorPalette.chatViewBackground
         self.nameField.autocorrectionType = .no
@@ -43,23 +44,16 @@ public class NameGroupViewController: ChatBaseVC {
         groupDescriptionField.addTarget(self, action: #selector(textDidChange(_:)), for: .editingChanged)
         nameField.canPerformAction(#selector(UIResponderStandardEditActions.paste(_:)), withSender: nil)
         groupDescriptionField.canPerformAction(#selector(UIResponderStandardEditActions.paste(_:)), withSender: nil)
-        //
         groupDescriptionField.delegate = self
         nameField.delegate = self
         nameField.becomeFirstResponder()
         nameContainerView.layer.cornerRadius = 6.0
         descriptionContainerView.layer.cornerRadius = 6.0
-        
         let str = self.selectedUsers.count > 1 ? "friends" : "friend"
         lblFriendCount.text = "\(self.selectedUsers.count) \(str)"
-        //
-        navigationController?.navigationBar.isHidden = true
         lblTitle.setChatNavTitleColor()
-        //
         lblTitle.text = "New Chat"
-        //
         nameField.placeholder = "Group chat name"
-        //
         let chatUserID = TableViewCellChatUser.reuseId
         let chatUserNib = UINib(nibName: chatUserID, bundle: nil)
         tableView?.register(chatUserNib, forCellReuseIdentifier: chatUserID)
@@ -92,14 +86,10 @@ public class NameGroupViewController: ChatBaseVC {
     //
     @IBAction func backBtnTapped(_ sender: UIButton) {
         popWithAnimation()
-        //navigationController?.popViewController(animated: true)
     }
 
     @IBAction func doneTapped(_ sender: UIButton) {
-        //
         self.view.endEditing(true)
-        //
-        
         guard let name = nameField.text, !name.isEmpty else {
             Snackbar.show(text: "Group name cannot be blank")
             return
@@ -124,18 +114,12 @@ public class NameGroupViewController: ChatBaseVC {
                         Snackbar.show(text: error.localizedDescription)
                     }
                 } else {
-                    //
                     DispatchQueue.main.async {
-        
                         let chatChannelVC = ChatChannelVC.init()
                         chatChannelVC.isChannelCreated = true
                         chatChannelVC.channelController = channelController
-                        
-                        //weakSelf.navigationController?.pushViewController(chatChannelVC, animated: true)
                         weakSelf.pushWithAnimation(controller: chatChannelVC)
-                        
                         let navControllers = weakSelf.navigationController?.viewControllers ?? []
-                        
                         for (index,navController) in navControllers.enumerated() {
                             if index == 0 || navController.isKind(of: ChatChannelVC.self) {
                                 continue
@@ -181,19 +165,14 @@ extension NameGroupViewController: UITableViewDataSource {
     public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         selectedUsers.count
     }
-
     public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        
         let reuseID = TableViewCellChatUser.reuseId
-        //
         guard let cell = tableView.dequeueReusableCell(
             withIdentifier: reuseID,
             for: indexPath) as? TableViewCellChatUser else {
             return UITableViewCell()
         }
-        //
         let user: ChatUser = selectedUsers[indexPath.row]
-        //
         cell.config(user: user,
                         selectedImage: nil,
                         avatarBG: view.tintColor)
@@ -215,7 +194,6 @@ extension NameGroupViewController: UITableViewDataSource {
             self.bCallbackSelectedUsers?(self.selectedUsers)
             if self.selectedUsers.isEmpty {
                 self.popWithAnimation()
-                //self.navigationController?.popViewController(animated: false)
             }
         }
     }
