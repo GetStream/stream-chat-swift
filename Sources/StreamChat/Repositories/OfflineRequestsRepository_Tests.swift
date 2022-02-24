@@ -7,6 +7,7 @@
 import XCTest
 
 final class OfflineRequestsRepository_Tests: XCTestCase {
+    var messageRepository: MessageRepositoryMock!
     var repository: OfflineRequestsRepository!
     var database: DatabaseContainerMock!
     var apiClient: APIClientMock!
@@ -15,7 +16,7 @@ final class OfflineRequestsRepository_Tests: XCTestCase {
         let client = ChatClient.mock
         database = client.mockDatabaseContainer
         apiClient = client.mockAPIClient
-        let messageRepository = MessageRepositoryMock(database: database, apiClient: apiClient)
+        messageRepository = MessageRepositoryMock(database: database, apiClient: apiClient)
         repository = OfflineRequestsRepository(messageRepository: messageRepository, database: database, apiClient: apiClient)
     }
 
@@ -32,7 +33,7 @@ final class OfflineRequestsRepository_Tests: XCTestCase {
     }
 
     func test_runQueuedRequestsWithPendingRequests() throws {
-        try createRequests(count: 1)
+        try createSendMessageRequests(count: 1)
 
         let expectation = self.expectation(description: "Running completes")
         repository.runQueuedRequests {
@@ -47,11 +48,109 @@ final class OfflineRequestsRepository_Tests: XCTestCase {
         XCTAssertEqual(apiClient.recoveryRequest_allRecordedCalls.count, 1)
         let pendingRequests = QueuedRequestDTO.loadAllPendingRequests(context: database.viewContext)
         XCTAssertEqual(pendingRequests.count, 0)
+        XCTAssertNotCall("saveSuccessfullySentMessage(cid:message:completion:)", on: messageRepository)
+    }
+
+    func test_runQueuedRequestsWithPendingRequests_createChannel() throws {
+        try createRequest(id: .unique, path: .createChannel(""))
+
+        let expectation = self.expectation(description: "Running completes")
+        repository.runQueuedRequests {
+            expectation.fulfill()
+        }
+
+        database.writeSessionCounter = 0
+        AssertAsync.willBeTrue(apiClient.recoveryRequest_endpoint != nil)
+
+        let jsonData = XCTestCase.mockData(fromFile: "ChannelOnly-ChannelPayload")
+        apiClient.test_simulateRecoveryResponse(.success(jsonData))
+
+        waitForExpectations(timeout: 0.1, handler: nil)
+
+        XCTAssertEqual(apiClient.recoveryRequest_allRecordedCalls.count, 1)
+        let pendingRequests = QueuedRequestDTO.loadAllPendingRequests(context: database.viewContext)
+        XCTAssertEqual(pendingRequests.count, 0)
+        // 1 to remove the request from the queue - 1 to update the channel
+        XCTAssertEqual(database.writeSessionCounter, 2)
+    }
+
+    func test_runQueuedRequestsWithPendingRequests_sendMessage() throws {
+        try createRequest(id: .unique, path: .sendMessage(.unique))
+
+        let expectation = self.expectation(description: "Running completes")
+        repository.runQueuedRequests {
+            expectation.fulfill()
+        }
+
+        database.writeSessionCounter = 0
+        AssertAsync.willBeTrue(apiClient.recoveryRequest_endpoint != nil)
+
+        let jsonData = XCTestCase.mockData(fromFile: "Message")
+        apiClient.test_simulateRecoveryResponse(.success(jsonData))
+
+        waitForExpectations(timeout: 0.1, handler: nil)
+
+        XCTAssertEqual(apiClient.recoveryRequest_allRecordedCalls.count, 1)
+        let pendingRequests = QueuedRequestDTO.loadAllPendingRequests(context: database.viewContext)
+        XCTAssertEqual(pendingRequests.count, 0)
+
+        // 1 to remove the request from the queue
+        XCTAssertEqual(database.writeSessionCounter, 1)
+        XCTAssertCall("saveSuccessfullySentMessage(cid:message:completion:)", on: messageRepository, times: 1)
+    }
+
+    func test_runQueuedRequestsWithPendingRequests_editMessage() throws {
+        try createRequest(id: .unique, path: .editMessage(.unique))
+
+        let expectation = self.expectation(description: "Running completes")
+        repository.runQueuedRequests {
+            expectation.fulfill()
+        }
+
+        database.writeSessionCounter = 0
+        AssertAsync.willBeTrue(apiClient.recoveryRequest_endpoint != nil)
+
+        apiClient.test_simulateRecoveryResponse(.success(Data()))
+
+        waitForExpectations(timeout: 0.1, handler: nil)
+
+        XCTAssertEqual(apiClient.recoveryRequest_allRecordedCalls.count, 1)
+        let pendingRequests = QueuedRequestDTO.loadAllPendingRequests(context: database.viewContext)
+        XCTAssertEqual(pendingRequests.count, 0)
+
+        // 1 to remove the request from the queue
+        XCTAssertEqual(database.writeSessionCounter, 1)
+        XCTAssertCall("saveSuccessfullyEditedMessage(for:completion:)", on: messageRepository, times: 1)
+    }
+
+    func test_runQueuedRequestsWithPendingRequests_deleteMessage() throws {
+        try createRequest(id: .unique, path: .deleteMessage(.unique))
+
+        let expectation = self.expectation(description: "Running completes")
+        repository.runQueuedRequests {
+            expectation.fulfill()
+        }
+
+        database.writeSessionCounter = 0
+        AssertAsync.willBeTrue(apiClient.recoveryRequest_endpoint != nil)
+
+        let jsonData = XCTestCase.mockData(fromFile: "Message")
+        apiClient.test_simulateRecoveryResponse(.success(jsonData))
+
+        waitForExpectations(timeout: 0.1, handler: nil)
+
+        XCTAssertEqual(apiClient.recoveryRequest_allRecordedCalls.count, 1)
+        let pendingRequests = QueuedRequestDTO.loadAllPendingRequests(context: database.viewContext)
+        XCTAssertEqual(pendingRequests.count, 0)
+
+        // 1 to remove the request from the queue
+        XCTAssertEqual(database.writeSessionCounter, 1)
+        XCTAssertCall("saveSuccessfullyDeletedMessage(message:completion:)", on: messageRepository, times: 1)
     }
 
     func test_runQueuedRequestsWithManyPendingRequests() throws {
         let count = 5
-        try createRequests(count: count)
+        try createSendMessageRequests(count: count)
 
         let expectation = self.expectation(description: "Running completes")
         repository.runQueuedRequests {
@@ -72,7 +171,7 @@ final class OfflineRequestsRepository_Tests: XCTestCase {
 
     func test_runQueuedRequestsWithManyPendingRequestsOneNetworkFailureShouldBeKept() throws {
         let count = 5
-        try createRequests(count: count)
+        try createSendMessageRequests(count: count)
 
         let expectation = self.expectation(description: "Running completes")
         repository.runQueuedRequests {
@@ -97,7 +196,7 @@ final class OfflineRequestsRepository_Tests: XCTestCase {
 
     func test_runQueuedRequestsWhichFailShouldBeRemoved() throws {
         let count = 5
-        try createRequests(count: count)
+        try createSendMessageRequests(count: count)
 
         let expectation = self.expectation(description: "Running completes")
         repository.runQueuedRequests {
@@ -120,30 +219,30 @@ final class OfflineRequestsRepository_Tests: XCTestCase {
         XCTAssertEqual(pendingRequests.count, 0)
     }
 
-    private func createRequests(count: Int) throws {
-        func createRequest(index: Int) throws {
-            let id = "request\(index)"
-            let date = Date()
-            let endpoint = Endpoint<EmptyResponse>(
-                path: .sendMessage(.init(type: .messaging, id: id)),
-                method: .post,
-                queryItems: nil,
-                requiresConnectionId: true,
-                requiresToken: false,
-                body: ["something\(index)": 123]
-            )
-            let endpointData: Data = try JSONEncoder.stream.encode(endpoint)
-            QueuedRequestDTO.createRequest(id: id, date: date, endpoint: endpointData, context: database.writableContext)
-        }
-
-        try database.writeSynchronously { _ in
-            try (1...count).forEach {
-                try createRequest(index: $0)
-            }
+    private func createSendMessageRequests(count: Int) throws {
+        try (1...count).forEach {
+            let id = "request\($0)"
+            try self.createRequest(id: id, path: .sendMessage(.init(type: .messaging, id: id)), body: ["some\($0)": 123])
         }
 
         let allRequests = QueuedRequestDTO.loadAllPendingRequests(context: database.viewContext)
         XCTAssertEqual(allRequests.count, count)
+    }
+
+    private func createRequest(id: String, path: EndpointPath, body: Encodable? = nil) throws {
+        let date = Date()
+        let endpoint = Endpoint<EmptyResponse>(
+            path: path,
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: true,
+            requiresToken: false,
+            body: body
+        )
+        let endpointData: Data = try JSONEncoder.stream.encode(endpoint)
+        try database.writeSynchronously { _ in
+            QueuedRequestDTO.createRequest(id: id, date: date, endpoint: endpointData, context: self.database.writableContext)
+        }
     }
 
     // MARK: - Queue requests
