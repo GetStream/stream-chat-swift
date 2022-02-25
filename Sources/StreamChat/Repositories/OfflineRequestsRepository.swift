@@ -23,9 +23,9 @@ extension Endpoint {
 /// OfflineRequestsRepository handles both the enqueuing and the execution of offline requests when needed.
 /// When running the queued requests, it basically passes the requests on to the APIClient, and waits for its result.
 class OfflineRequestsRepository {
-    let messageRepository: MessageRepository
-    let database: DatabaseContainer
-    let apiClient: APIClient
+    private let messageRepository: MessageRepository
+    private let database: DatabaseContainer
+    private let apiClient: APIClient
 
     /// Serial queue used to enqueue pending requests one after another
     private let retryQueue = DispatchQueue(label: "com.stream.queue-requests")

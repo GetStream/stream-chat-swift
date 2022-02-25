@@ -26,18 +26,17 @@ enum SyncError: Error {
 /// When executing a sync, it will remove outdated elements, and will refresh the content to always show the latest data.
 class SyncRepository {
     /// Do not call the sync endpoint more than once every six seconds
-    let syncCooldown: TimeInterval = 6.0
+    private let syncCooldown: TimeInterval = 6.0
     /// Maximum number of retries for each operation step.
-    let maxRetriesCount = 2
-    let config: ChatClientConfig
+    private let maxRetriesCount = 2
+    private let config: ChatClientConfig
+    private let database: DatabaseContainer
+    private let apiClient: APIClient
     let activeChannelControllers: NSHashTable<ChatChannelController>
     let activeChannelListControllers: NSHashTable<ChatChannelListController>
     let channelRepository: ChannelListUpdater
     let offlineRequestsRepository: OfflineRequestsRepository
     let eventNotificationCenter: EventNotificationCenter
-    let database: DatabaseContainer
-    let apiClient: APIClient
-    private var lastConnection: Date?
 
     private lazy var operationQueue: OperationQueue = {
         let operationQueue = OperationQueue()

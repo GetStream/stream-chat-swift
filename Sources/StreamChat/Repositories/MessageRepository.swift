@@ -156,4 +156,20 @@ class MessageRepository {
             completion()
         })
     }
+
+    func removeUnsuccessfulReaction(
+        on messageId: MessageId,
+        type: MessageReactionType,
+        completion: (() -> Void)? = nil
+    ) {
+        database.write {
+            let reaction = try $0.removeReaction(from: messageId, type: type, on: nil)
+            reaction?.localState = .sendingFailed
+        } completion: { error in
+            if let error = error {
+                log.error("Error removing reaction for message with id \(messageId): \(error)")
+            }
+            completion?()
+        }
+    }
 }

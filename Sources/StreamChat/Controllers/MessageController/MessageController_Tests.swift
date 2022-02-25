@@ -1919,7 +1919,12 @@ private class TestEnvironment {
                 return self.repliesObserver!
             },
             messageUpdaterBuilder: { [unowned self] in
-                self.messageUpdater = MessageUpdaterMock(messageRepository: $0, database: $1, apiClient: $2)
+                self.messageUpdater = MessageUpdaterMock(
+                    isLocalStorageEnabled: $0,
+                    messageRepository: $1,
+                    database: $2,
+                    apiClient: $3
+                )
                 return self.messageUpdater
             }
         )
