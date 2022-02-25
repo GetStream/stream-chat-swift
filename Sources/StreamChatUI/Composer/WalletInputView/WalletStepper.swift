@@ -153,6 +153,7 @@ class WalletStepper: UIView {
         if panGesture.state == .began {
             startPosition = gestureLocation
         } else if panGesture.state == .changed {
+            guard startPosition != nil else { return }
             if ((abs(startPosition.y - gestureLocation.y) > 10) && scrollLock == false) || ((abs(startPosition.x - gestureLocation.x) > 10 && scrollLock == false)) {
                 scrollDirection = (abs(startPosition.y - gestureLocation.y) > 10) ? .upDown : .leftRight
                 scrollLock = true
