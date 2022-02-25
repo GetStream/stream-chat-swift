@@ -82,13 +82,13 @@ class URLSessionWebSocketEngine: NSObject, WebSocketEngine {
 
     private func makeURLSessionDelegateHandler() -> URLSessionDelegateHandler {
         let urlSessionDelegateHandler = URLSessionDelegateHandler()
-        urlSessionDelegateHandler.didOpenWith = { [weak self] _ in
+        urlSessionDelegateHandler.onOpen = { [weak self] _ in
             self?.callbackQueue.async {
                 self?.delegate?.webSocketDidConnect()
             }
         }
 
-        urlSessionDelegateHandler.didCloseWith = { [weak self] closeCode, reason in
+        urlSessionDelegateHandler.onClose = { [weak self] closeCode, reason in
             var error: WebSocketEngineError?
 
             if let reasonData = reason, let reasonString = String(data: reasonData, encoding: .utf8) {
@@ -104,7 +104,7 @@ class URLSessionWebSocketEngine: NSObject, WebSocketEngine {
             }
         }
 
-        urlSessionDelegateHandler.didCompleteWith = { [weak self] error in
+        urlSessionDelegateHandler.onCompletion = { [weak self] error in
             // If we received this callback because we closed the WS connection
             // intentionally, `error` param will be `nil`.
             // Delegate is already informed with `didCloseWith` callback,
@@ -126,16 +126,16 @@ class URLSessionWebSocketEngine: NSObject, WebSocketEngine {
     
 @available(iOS 13, *)
 class URLSessionDelegateHandler: NSObject, URLSessionDataDelegate, URLSessionWebSocketDelegate {
-    var didOpenWith: ((_ protocol: String?) -> Void)?
-    var didCloseWith: ((_ code: URLSessionWebSocketTask.CloseCode, _ reason: Data?) -> Void)?
-    var didCompleteWith: ((Error?) -> Void)?
+    var onOpen: ((_ protocol: String?) -> Void)?
+    var onClose: ((_ code: URLSessionWebSocketTask.CloseCode, _ reason: Data?) -> Void)?
+    var onCompletion: ((Error?) -> Void)?
 
     public func urlSession(
         _ session: URLSession,
         webSocketTask: URLSessionWebSocketTask,
         didOpenWithProtocol protocol: String?
     ) {
-        didOpenWith?(`protocol`)
+        onOpen?(`protocol`)
     }
 
     func urlSession(
@@ -144,10 +144,10 @@ class URLSessionDelegateHandler: NSObject, URLSessionDataDelegate, URLSessionWeb
         didCloseWith closeCode: URLSessionWebSocketTask.CloseCode,
         reason: Data?
     ) {
-        didCloseWith?(closeCode, reason)
+        onClose?(closeCode, reason)
     }
 
     func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
-        didCompleteWith?(error)
+        onCompletion?(error)
     }
 }
