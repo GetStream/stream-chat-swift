@@ -11,13 +11,8 @@ class CurrentUserDTO: NSManagedObject {
     @NSManaged var unreadMessagesCount: Int64
     
     /// Contains the timestamp when last sync process was finished.
-    /// The date later serves as reference date for `/sync` endpoint
-    @NSManaged var lastSyncAt: Date?
-
-    /// We save the last pending connection date from which we need to sync events
-    /// whenever we're recovering a connection. Only used for offline support.
-    /// See `SyncRepository` for more details.
-    @NSManaged var lastPendingConnectionDate: Date?
+    /// The date later serves as reference date for the last event synced using `/sync` endpoint
+    @NSManaged var lastSynchedEventDate: Date?
 
     @NSManaged var flaggedUsers: Set<UserDTO>
     @NSManaged var flaggedMessages: Set<MessageDTO>

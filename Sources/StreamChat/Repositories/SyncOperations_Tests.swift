@@ -42,69 +42,24 @@ final class SyncOperations_Tests: XCTestCase {
         XCTAssertEqual(context.localChannelIds.count, 1)
     }
 
-    // MARK: - GetPendingConnectionDateOperation
-
-    func test_GetPendingConnectionDateOperation_noUser() {
-        let context = SyncContext()
-        let operation = GetPendingConnectionDateOperation(database: database, context: context)
-
-        operation.startAndWaitForCompletion()
-
-        XCTAssertNil(context.lastPendingConnectionDate)
-    }
-
-    func test_GetPendingConnectionDateOperation_noPendingDate() throws {
-        let context = SyncContext()
-        try database.createCurrentUser()
-        let operation = GetPendingConnectionDateOperation(database: database, context: context)
-
-        operation.startAndWaitForCompletion()
-
-        XCTAssertNil(context.lastPendingConnectionDate)
-    }
-
-    func test_GetPendingConnectionDateOperation_pendingDate() throws {
-        let context = SyncContext()
-        try database.createCurrentUser()
-        let date = Date().addingTimeInterval(-3600)
-        try database.writeSynchronously { session in
-            session.currentUser?.lastPendingConnectionDate = date
-        }
-
-        let operation = GetPendingConnectionDateOperation(database: database, context: context)
-
-        operation.startAndWaitForCompletion()
-
-        XCTAssertEqual(context.lastPendingConnectionDate, date)
-    }
-
     // MARK: - SyncEventsOperation
-
-    func test_SyncEventsOperation_noPendingDate() {
-        let context = SyncContext()
-        context.lastPendingConnectionDate = nil
-        let operation = SyncEventsOperation(database: database, syncRepository: syncRepository, context: context)
-
-        operation.startAndWaitForCompletion()
-
-        XCTAssertEqual(context.synchedChannelIds.count, 0)
-        XCTAssertNotCall("syncMissingEvents(using:channelIds:bumpLastSync:isRecoveryRequest:completion:)", on: syncRepository)
-    }
 
     func test_SyncEventsOperation_pendingDate_syncFailure_shouldRetry() throws {
         let context = SyncContext()
         try database.createCurrentUser()
-        context.lastPendingConnectionDate = Date().addingTimeInterval(-3600)
-        context.lastConnectionDate = Date()
-        let operation = SyncEventsOperation(database: database, syncRepository: syncRepository, context: context)
+        let originalDate = Date().addingTimeInterval(-3600)
+        try database.writeSynchronously { session in
+            session.currentUser?.lastSynchedEventDate = originalDate
+        }
+        let operation = SyncEventsOperation(syncRepository: syncRepository, context: context)
         syncRepository.syncMissingEventsResult = .failure(.syncEndpointFailed(ClientError("")))
 
         operation.startAndWaitForCompletion()
 
         XCTAssertEqual(context.synchedChannelIds.count, 0)
-        XCTAssertNil(database.viewContext.currentUser?.lastPendingConnectionDate)
+        XCTAssertEqual(database.viewContext.currentUser?.lastSynchedEventDate, originalDate)
         XCTAssertCall(
-            "syncMissingEvents(using:channelIds:bumpLastSync:isRecoveryRequest:completion:)",
+            "syncChannelsEvents(channelIds:isRecovery:completion:)",
             on: syncRepository,
             times: 3
         )
@@ -113,17 +68,18 @@ final class SyncOperations_Tests: XCTestCase {
     func test_SyncEventsOperation_pendingDate_syncSuccess_shouldUpdateLastPendingConnectionDate() throws {
         let context = SyncContext()
         try database.createCurrentUser()
-        context.lastPendingConnectionDate = Date().addingTimeInterval(-3600)
-        context.lastConnectionDate = Date()
-        let operation = SyncEventsOperation(database: database, syncRepository: syncRepository, context: context)
+        try database.writeSynchronously { session in
+            session.currentUser?.lastSynchedEventDate = Date().addingTimeInterval(-3600)
+        }
+
+        let operation = SyncEventsOperation(syncRepository: syncRepository, context: context)
         syncRepository.syncMissingEventsResult = .success([.unique, .unique])
 
         operation.startAndWaitForCompletion()
 
         XCTAssertEqual(context.synchedChannelIds.count, 2)
-        XCTAssertEqual(database.viewContext.currentUser?.lastPendingConnectionDate, context.lastConnectionDate)
         XCTAssertCall(
-            "syncMissingEvents(using:channelIds:bumpLastSync:isRecoveryRequest:completion:)",
+            "syncChannelsEvents(channelIds:isRecovery:completion:)",
             on: syncRepository,
             times: 1
         )

@@ -40,19 +40,13 @@ class SyncRepositoryMock: SyncRepository, Spy {
         record()
     }
 
-    override func updateLastConnectionDate(with date: Date, completion: ((SyncError?) -> Void)? = nil) {
-        record()
-    }
-
     override func syncExistingChannelsEvents(completion: @escaping (Result<[ChannelId], SyncError>) -> Void) {
         record()
     }
 
-    override func syncMissingEvents(
-        using date: Date,
+    override func syncChannelsEvents(
         channelIds: [ChannelId],
-        bumpLastSync: Bool,
-        isRecoveryRequest: Bool,
+        isRecovery: Bool,
         completion: @escaping (Result<[ChannelId], SyncError>) -> Void
     ) {
         record()
