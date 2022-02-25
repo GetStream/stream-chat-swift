@@ -54,7 +54,7 @@ public class ChatUserListVC: UIViewController {
     private lazy var serachListController: ChatUserSearchController = {
         return ChatClient.shared.userSearchController()
     }()
-    @IBOutlet private weak var tableView: UITableView?
+    @IBOutlet public weak var tableView: UITableView?
     public var selectedUsers = [ChatUser]()
     public var existingUsers = [ChatUser]()
     public var userSelectionType = ChatUserSelectionType.singleUser
@@ -90,6 +90,8 @@ extension ChatUserListVC {
         self.searchField.autocorrectionType = .no
         self.searchField.addTarget(self, action: #selector(textDidChange(_:)), for: .editingChanged)
     }
+    
+    public func tableViewFrameUpdate() { }
     
     private func setupTableView() {
         tableView?.delegate = self
