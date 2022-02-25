@@ -53,7 +53,7 @@ class JoinPrivateGroupVC: UIViewController {
     // MARK: - IBOutlets
     @IBAction func btnBackAction(_ sender: UIButton) {
         otpViewDelegate?.popToThisVC()
-        navigationController?.popViewController(animated: true)
+        popWithAnimation()
     }
 
     @IBAction func btnJoinGroupAction(_ sender: UIButton) {
@@ -247,7 +247,7 @@ extension JoinPrivateGroupVC: ChatChannelListControllerDelegate {
 
                     channelMembers.synchronize { [weak self] error in
                         guard error == nil, let self  = self else {
-                            self?.navigationController?.popViewController(animated: true)
+                            self?.popWithAnimation()
                             return
                         }
                         let isUserExiestInChat = !channelMembers.members.filter( {$0.id == ChatClient.shared.currentUserId}).isEmpty

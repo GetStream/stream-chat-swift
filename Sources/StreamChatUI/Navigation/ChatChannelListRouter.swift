@@ -3,6 +3,7 @@
 //
 
 import StreamChat
+import StreamChatUI
 import UIKit
 
 /// A `NavigationRouter` subclass that handles navigation actions of `ChatChannelListVC`.
@@ -33,8 +34,8 @@ open class ChatChannelListRouter: NavigationRouter<ChatChannelListVC>, Component
             log.error("Can't push chat detail, no navigation controller available")
             return
         }
+        self.rootViewController.pushWithAnimation(controller: vc)
         
-        navController.show(vc, sender: self)
     }
 
     /// Called when a user tapped `More` swipe action on a channel

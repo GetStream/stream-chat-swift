@@ -15,15 +15,11 @@ public class TableViewCellChatUser: UITableViewCell {
     //
     public static let reuseId: String = "TableViewCellChatUser"
     //
-    @IBOutlet private var mainStackView: UIStackView! {
-        didSet {
-            mainStackView.isLayoutMarginsRelativeArrangement = true
-        }
-    }
-    @IBOutlet private var nameLabel: UILabel!
-    @IBOutlet private var descriptionLabel: UILabel!
-    @IBOutlet private var avatarView: AvatarView!
-    @IBOutlet private var accessoryImageView: UIImageView!
+    @IBOutlet public var containerView: UIView!
+    @IBOutlet public var nameLabel: UILabel!
+    @IBOutlet public var descriptionLabel: UILabel!
+    @IBOutlet public var avatarView: AvatarView!
+    @IBOutlet public var accessoryImageView: UIImageView!
     @IBOutlet public var lblRole: UILabel!
     // MARK: - Variables
     private var user: ChatUser?
@@ -34,12 +30,13 @@ public class TableViewCellChatUser: UITableViewCell {
             Nuke.loadImage(with: imageURL, into: avatarView)
         }
         avatarView.backgroundColor = avatarBG
-        if let name = user.name , name.isBlank == false {
-            nameLabel.text = name.capitalizingFirstLetter()
-        } else {
+        let name = (user.name ?? user.id)
+        if name.lowercased() == user.id.lowercased()  {
             let last = user.id.suffix(5)
             let first = user.id.prefix(7)
-            nameLabel.text = "\(first)...\(last)"
+            nameLabel.text = "\(first)...\(last)".capitalizingFirstLetter()
+        } else {
+            nameLabel.text = name.capitalizingFirstLetter()
         }
         //
         nameLabel.setChatTitleColor()
@@ -56,6 +53,8 @@ public class TableViewCellChatUser: UITableViewCell {
             descriptionLabel.text = "Never seen"
         }
         accessoryImageView.image = selectedImage
+        lblRole.text = ""
+        lblRole.isHidden = true
         //
         self.user = user
     }
@@ -80,13 +79,26 @@ public class TableViewCellChatUser: UITableViewCell {
     public override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
-        selectionStyle = .none
+        
     }
 
     public override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
 
-        // Configure the view for the selected state
+        if self.selectedBackgroundView == nil {
+            let bgView = UIView()
+            self.selectedBackgroundView = bgView
+        }
+        self.selectedBackgroundView?.backgroundColor = selected ? UIColor.lightGray.withAlphaComponent(0.1) : UIColor.clear
     }
-    //
+    
+    public override func setHighlighted(_ highlighted: Bool, animated: Bool) {
+        super.setHighlighted(highlighted, animated: animated)
+        if self.selectedBackgroundView == nil {
+            let bgView = UIView()
+            self.selectedBackgroundView = bgView
+        }
+        self.selectedBackgroundView?.backgroundColor = highlighted ? UIColor.lightGray.withAlphaComponent(0.1) : UIColor.clear
+    }
+    
 }

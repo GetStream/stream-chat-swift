@@ -34,7 +34,7 @@ open class PrivateGroupOTPVC: UIViewController {
     // MARK: - IBAction
     @IBAction func btnBackAction(_ sender: UIButton) {
         NotificationCenter.default.post(name: .showTabbar, object: nil)
-        navigationController?.popViewController(animated: true)
+        popWithAnimation()
     }
 
     // MARK: - Functions
@@ -82,7 +82,8 @@ open class PrivateGroupOTPVC: UIViewController {
         }
         joinPrivateGroupVC.passWord = opt
         joinPrivateGroupVC.otpViewDelegate = self
-        navigationController?.pushViewController(joinPrivateGroupVC, animated: true)
+        pushWithAnimation(controller: joinPrivateGroupVC)
+        //navigationController?.pushViewController(joinPrivateGroupVC, animated: true)
     }
 
     private func handleLocationPermissionAndPush() {

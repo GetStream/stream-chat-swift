@@ -36,29 +36,24 @@ public class NameGroupViewController: ChatBaseVC {
     }
     // MARK: - METHODS
     public func setupUI() {
+        navigationController?.navigationBar.isHidden = true
+        self.btnNext?.isHidden = true
         self.view.backgroundColor = Appearance.default.colorPalette.chatViewBackground
         self.nameField.autocorrectionType = .no
         self.nameField.addTarget(self, action: #selector(textDidChange(_:)), for: .editingChanged)
         groupDescriptionField.addTarget(self, action: #selector(textDidChange(_:)), for: .editingChanged)
         nameField.canPerformAction(#selector(UIResponderStandardEditActions.paste(_:)), withSender: nil)
         groupDescriptionField.canPerformAction(#selector(UIResponderStandardEditActions.paste(_:)), withSender: nil)
-        //
         groupDescriptionField.delegate = self
         nameField.delegate = self
         nameField.becomeFirstResponder()
         nameContainerView.layer.cornerRadius = 6.0
         descriptionContainerView.layer.cornerRadius = 6.0
-        
         let str = self.selectedUsers.count > 1 ? "friends" : "friend"
         lblFriendCount.text = "\(self.selectedUsers.count) \(str)"
-        //
-        navigationController?.navigationBar.isHidden = true
         lblTitle.setChatNavTitleColor()
-        //
         lblTitle.text = "New Chat"
-        //
         nameField.placeholder = "Group chat name"
-        //
         let chatUserID = TableViewCellChatUser.reuseId
         let chatUserNib = UINib(nibName: chatUserID, bundle: nil)
         tableView?.register(chatUserNib, forCellReuseIdentifier: chatUserID)
@@ -80,19 +75,27 @@ public class NameGroupViewController: ChatBaseVC {
                 self.lblHashtagCount.text = "\(sender.text?.count ?? 0)"
             }
         }
+        let name = self.nameField.text ?? ""
+        let description = self.groupDescriptionField.text ?? ""
+        if name.isBlank || description.isBlank || name.containsEmoji || description.containsEmoji {
+            self.btnNext?.isHidden = true
+        } else {
+            self.btnNext?.isHidden = false
+        }
     }
     //
     @IBAction func backBtnTapped(_ sender: UIButton) {
-        navigationController?.popViewController(animated: true)
+        popWithAnimation()
     }
 
     @IBAction func doneTapped(_ sender: UIButton) {
-        //
         self.view.endEditing(true)
-        //
-        
         guard let name = nameField.text, !name.isEmpty else {
-            Snackbar.show(text: "Name cannot be empty")
+            Snackbar.show(text: "Group name cannot be blank")
+            return
+        }
+        guard name.containsEmoji == false else {
+            Snackbar.show(text: "Please enter valid group name")
             return
         }
         do {
@@ -111,17 +114,12 @@ public class NameGroupViewController: ChatBaseVC {
                         Snackbar.show(text: error.localizedDescription)
                     }
                 } else {
-                    //
                     DispatchQueue.main.async {
-        
                         let chatChannelVC = ChatChannelVC.init()
                         chatChannelVC.isChannelCreated = true
                         chatChannelVC.channelController = channelController
-                        
-                        weakSelf.navigationController?.pushViewController(chatChannelVC, animated: true)
-                        
+                        weakSelf.pushWithAnimation(controller: chatChannelVC)
                         let navControllers = weakSelf.navigationController?.viewControllers ?? []
-                        
                         for (index,navController) in navControllers.enumerated() {
                             if index == 0 || navController.isKind(of: ChatChannelVC.self) {
                                 continue
@@ -138,42 +136,43 @@ public class NameGroupViewController: ChatBaseVC {
 }
 // MARK: - UITextFieldDelegate
 extension NameGroupViewController: UITextFieldDelegate {
-    
     public func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
         if textField == nameField {
             let maxLength = 40
             let currentString: NSString = (textField.text ?? "") as NSString
             let newString: NSString =
                 currentString.replacingCharacters(in: range, with: string) as NSString
-            return newString.length <= maxLength
+            let status = newString.length <= maxLength
+            if !status {
+                self.nameContainerView.shake()
+            }
+            return status
         } else {
             let maxLength = 100
             let currentString: NSString = (textField.text ?? "") as NSString
             let newString: NSString =
                 currentString.replacingCharacters(in: range, with: string) as NSString
-            return newString.length <= maxLength
+            let status = newString.length <= maxLength
+            if !status {
+                self.descriptionContainerView.shake()
+            }
+            return status
         }
     }
 }
-
 // MARK: - TABLEVIEW
 extension NameGroupViewController: UITableViewDataSource {
     public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         selectedUsers.count
     }
-
     public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        
         let reuseID = TableViewCellChatUser.reuseId
-        //
         guard let cell = tableView.dequeueReusableCell(
             withIdentifier: reuseID,
             for: indexPath) as? TableViewCellChatUser else {
             return UITableViewCell()
         }
-        //
         let user: ChatUser = selectedUsers[indexPath.row]
-        //
         cell.config(user: user,
                         selectedImage: nil,
                         avatarBG: view.tintColor)
@@ -181,7 +180,9 @@ extension NameGroupViewController: UITableViewDataSource {
         return cell
 
     }
-    
+    public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
+    }
     public func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
         return true
     }
@@ -192,7 +193,7 @@ extension NameGroupViewController: UITableViewDataSource {
             self.tableView.reloadData()
             self.bCallbackSelectedUsers?(self.selectedUsers)
             if self.selectedUsers.isEmpty {
-                self.navigationController?.popViewController(animated: false)
+                self.popWithAnimation()
             }
         }
     }

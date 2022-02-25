@@ -122,6 +122,7 @@ open class ChatChannelVC:
         let button = UIButton()
         button.setImage(appearance.images.backCircle, for: .normal)
         button.tintColor = .white
+        button.contentEdgeInsets = UIEdgeInsets.init(top: 8, left: 8, bottom: 8, right: 8)
         button.addTarget(self, action: #selector(backAction), for: .touchUpInside)
         return button.withoutAutoresizingMaskConstraints
     }()
@@ -203,10 +204,10 @@ open class ChatChannelVC:
 
         navigationHeaderView.addSubview(backButton)
         NSLayoutConstraint.activate([
-            backButton.leadingAnchor.constraint(equalTo: navigationHeaderView.leadingAnchor, constant: 8),
+            backButton.leadingAnchor.constraint(equalTo: navigationHeaderView.leadingAnchor, constant: 12),
             backButton.centerYAnchor.constraint(equalTo: navigationHeaderView.centerYAnchor, constant: 0),
-            backButton.heightAnchor.constraint(equalToConstant: 32),
-            backButton.widthAnchor.constraint(equalToConstant: 32)
+            backButton.heightAnchor.constraint(equalToConstant: 46),
+            backButton.widthAnchor.constraint(equalToConstant: 46)
         ])
 
         navigationHeaderView.addSubview(rightStackView)
@@ -303,7 +304,6 @@ open class ChatChannelVC:
 
     override open func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-
         if enableKeyboardObserver {
             keyboardHandler.start()
         }
@@ -318,12 +318,12 @@ open class ChatChannelVC:
     }
 
     @objc func backAction(_ sender: Any) {
-        self.navigationController?.popViewController(animated: true)
+        self.popWithAnimation()
         self.dismiss(animated: true, completion: nil)
         NotificationCenter.default.post(name: .showTabbar, object: nil)
     }
+    
     @objc func headerViewAction(_ sender: Any) {
-        
         if self.channelController.channel?.isDirectMessageChannel ?? true {
             return
         }
@@ -331,11 +331,13 @@ open class ChatChannelVC:
             return
         }
         controller.channelController = channelController
-        self.navigationController?.pushViewController(controller, animated: true)
+        self.pushWithAnimation(controller: controller)
     }
 
     @objc func avatarViewAction(_ sender: Any) {
-        shareView.isHidden = false
+        if self.channelController.channel?.isDirectMessageChannel ?? true {
+            return
+        }
         showPinViewButton()
     }
 
@@ -349,13 +351,27 @@ open class ChatChannelVC:
         NotificationCenter.default.post(name: .showDaoShareScreen, object: nil, userInfo: userInfo)
     }
     @objc func addFriendAction(_ sender: Any) {
-        
         guard let controller = ChatAddFriendVC
                 .instantiateController(storyboard: .GroupChat)  as? ChatAddFriendVC else {
             return
         }
-        //
-        controller.bCallbackAddUser = { [weak self] users in
+        controller.existingUsers = self.channelController?.channel?.lastActiveMembers as? [ChatUser] ?? []
+        
+        controller.bCallbackInviteFriend = { [weak self] users in
+            guard let weakSelf = self else { return }
+            let ids = users.map{ $0.id}
+            weakSelf.channelController?.inviteMembers(userIds: Set(ids), completion: { error in
+                if error == nil {
+                    DispatchQueue.main.async {
+                        Snackbar.show(text: "Group invite sent")
+                    }
+                } else {
+                    Snackbar.show(text: "Error while sending invitation link")
+                }
+            })
+        }
+        
+        controller.bCallbackAddFriend = { [weak self] users in
             guard let weakSelf = self else { return }
             let ids = users.map{ $0.id}
             weakSelf.channelController?.addMembers(userIds: Set(ids), completion: { error in
@@ -365,11 +381,11 @@ open class ChatChannelVC:
                         Snackbar.show(text: "Group Member updated")
                     }
                 } else {
-                    Snackbar.show(text: error!.localizedDescription)
+                    Snackbar.show(text: "Error operation could be completed")
                 }
             })
         }
-        //
+    
         presentPanModal(controller)
     }
 
@@ -401,15 +417,15 @@ open class ChatChannelVC:
             }
         }
         channelController.markRead()
-        
     }
-
 
     private func showPinViewButton() {
         if channelController.channel?.type == .dao {
+            shareView.isHidden = false
             shareButton.isHidden = false
             addFriendButton.isHidden = true
-        } else {
+        } else if self.isChannelCreated {
+            shareView.isHidden = false
             addFriendButton.isHidden = false
             shareButton.isHidden = true
             guard self.isChannelCreated == true else { return  }
@@ -431,13 +447,13 @@ open class ChatChannelVC:
     }
     // MARK: - Menu actions
     public func inviteUserAction() {
-        //
         guard let controller = ChatAddFriendVC
                 .instantiateController(storyboard: .GroupChat)  as? ChatAddFriendVC else {
             return
         }
         controller.selectionType = .inviteUser
-        controller.bCallbackAddUser = { [weak self] users in
+        controller.existingUsers = self.channelController?.channel?.lastActiveMembers as? [ChatUser] ?? []
+        controller.bCallbackInviteFriend = { [weak self] users in
             guard let weakSelf = self else { return }
             let ids = users.map{ $0.id}
             weakSelf.channelController?.inviteMembers(userIds: Set(ids), completion: { error in
@@ -452,8 +468,8 @@ open class ChatChannelVC:
         }
         presentPanModal(controller)
     }
+    
     public func leaveGroupAction() {
-        //
         guard let controller = ChatAlertVC
                 .instantiateController(storyboard: .GroupChat)  as? ChatAlertVC else {
             return
@@ -477,9 +493,35 @@ open class ChatChannelVC:
         controller.modalTransitionStyle = .crossDissolve
         self.present(controller, animated: true, completion: nil)
     }
+    
+    public func leaveGroupDeleteGroupAction() {
+        guard let controller = ChatAlertVC
+                .instantiateController(storyboard: .GroupChat)  as? ChatAlertVC else {
+            return
+        }
+        controller.alertType = .deleteGroup
+        controller.bCallbackActionHandler = { [weak self] in
+            guard let weakSelf = self else { return }
+            weakSelf.channelController.deleteChannel { [weak self] error in
+                guard error == nil, let self = self else {
+                    Snackbar.show(text: error?.localizedDescription ?? "")
+                    return
+                }
+                Snackbar.show(text: "Group deleted successfully")
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) { [weak self] in
+                    guard let self = self else { return }
+                    self.backAction(UIButton())
+                }
+            }
+        }
+        controller.modalPresentationStyle = .overCurrentContext
+        controller.modalTransitionStyle = .crossDissolve
+        self.present(controller, animated: true, completion: nil)
+    }
+    
     public func muteNotification() {
-        //
-        channelController.muteChannel { error in
+        channelController.muteChannel { [weak self] error in
+            guard let weakSelf = self else { return }
             let msg = error == nil ? "Notifications muted" : "Error while muted group notifications"
             DispatchQueue.main.async {
                 Snackbar.show(text: msg, messageType: StreamChatMessageType.ChatGroupMute)
@@ -487,41 +529,21 @@ open class ChatChannelVC:
         }
     }
     public func unMuteNotification() {
-        //
-        channelController.unmuteChannel { error in
+        channelController.unmuteChannel { [weak self] error in
+            guard let weakSelf = self else { return }
             let msg = error == nil ? "Notifications unmuted" : "Error while unmute group notifications"
             DispatchQueue.main.async {
                 Snackbar.show(text: msg, messageType: StreamChatMessageType.ChatGroupUnMute)
             }
         }
     }
-    public func deleteAndLeaveGroup() {
-        let yesAction = UIAlertAction(title: "Yes", style: .default) { [weak self] _ in
-            guard let self = self else {
-                return
-            }
-            self.channelController.deleteChannel { error in
-                guard error == nil else {
-                    Snackbar.show(text: error?.localizedDescription ?? "")
-                    return
-                }
-                DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) { [weak self] in
-                    guard let self = self else { return }
-                    self.backAction(UIButton())
-                }
-            }
-        }
-        let noAction = UIAlertAction(title: "No", style: .default) { _ in }
-        self.presentAlert(
-            title: "Are you sure you want to delete group?",
-            message: nil, actions: [yesAction, noAction])
-    }
     public func deleteChat() {
         let yesAction = UIAlertAction(title: "Yes", style: .default) { [weak self] _ in
             guard let self = self else {
                 return
             }
-            self.channelController.hideChannel(clearHistory: true) { error in
+            self.channelController.hideChannel(clearHistory: true) { [weak self] error in
+                guard let weakSelf = self else { return }
                 guard error == nil else {
                     Snackbar.show(text: error?.localizedDescription ?? "")
                     return
@@ -538,7 +560,6 @@ open class ChatChannelVC:
             message: nil, actions: [yesAction, noAction])
     }
     // MARK: - ChatMessageListVCDataSource
-    
     open func channel(for vc: ChatMessageListVC) -> ChatChannel? {
         channelController.channel
     }
@@ -685,7 +706,7 @@ open class ChatChannelVC:
                 return
             }
             qrCodeVc.strContent = self.getGroupLink()
-            self.navigationController?.pushViewController(qrCodeVc, animated: true)
+            self.pushWithAnimation(controller: qrCodeVc)
         }
         // search
         let search = UIAction(title: "Search", image: Appearance.Images.systemMagnifying) { [weak self] _ in
@@ -740,7 +761,7 @@ open class ChatChannelVC:
             guard let self = self else {
                 return
             }
-            self.deleteAndLeaveGroup()
+            self.leaveGroupDeleteGroupAction()
         }
         // deleteChat
         let deleteChat = UIAction(title: "Delete Chat", image: appearance.images.trash) { [weak self] _ in
@@ -774,9 +795,10 @@ open class ChatChannelVC:
                 actions.append(deleteChat)
                 return actions
             } else {
-                if channelController.channel?.membership?.userRole == .admin {
+                let isAdmin = channelController.channel?.createdBy?.id == ChatClient.shared.currentUserId
+                if isAdmin {
                     var actions: [UIAction] = []
-                    actions.append(contentsOf: [groupImage, search,/* invite,*/ groupQR])
+                    actions.append(contentsOf: [groupImage, search,invite,groupQR])
                     if channelController.channel?.isMuted ?? false {
                         actions.append(unmute)
                     } else {
@@ -786,7 +808,7 @@ open class ChatChannelVC:
                     return actions
                 } else {
                     var actions: [UIAction] = []
-                    actions.append(contentsOf: [search,/* invite,*/ groupQR])
+                    actions.append(contentsOf: [search,groupQR])
                     if channelController.channel?.isMuted ?? false {
                         actions.append(unmute)
                     } else {

@@ -142,7 +142,7 @@ open class ChatChannelListVC: _ViewController,
                        id: cid.id))
         chatChannelVC.channelController = channelController
         chatChannelVC.isChannelCreated = true
-        navigationController?.pushViewController(chatChannelVC, animated: true)
+        self.pushWithAnimation(controller: chatChannelVC)
     }
 
     override open func setUpLayout() {

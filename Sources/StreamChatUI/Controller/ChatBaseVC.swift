@@ -11,8 +11,8 @@ import Foundation
 public class ChatBaseVC: UIViewController {
     @IBOutlet weak var btnNext: UIButton?
     @IBOutlet weak var btnBack: UIButton?
-    @IBOutlet private weak var btnAddFriend: UIButton?
-    @IBOutlet private weak var btnInviteLink: UIButton?
+    @IBOutlet weak var btnAddFriend: UIButton?
+    @IBOutlet weak var btnInviteLink: UIButton?
     public override func viewDidLoad() {
         super.viewDidLoad()
         self.btnBack?.setTitle("", for: .normal)

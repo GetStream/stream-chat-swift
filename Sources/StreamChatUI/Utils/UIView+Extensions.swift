@@ -201,4 +201,21 @@ extension UIView {
         childView?.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
         childView?.widthAnchor.constraint(equalToConstant: constant).isActive = true
     }
+    public func shake(for duration: TimeInterval = 0.3, withTranslation translation: CGFloat = 5) {
+        let propertyAnimator = UIViewPropertyAnimator(duration: duration, dampingRatio: 0.3) {
+            self.layer.borderColor = UIColor.red.cgColor
+            self.layer.borderWidth = 1
+            self.transform = CGAffineTransform(translationX: translation, y: 0)
+        }
+
+        propertyAnimator.addAnimations({
+            self.transform = CGAffineTransform(translationX: 0, y: 0)
+        }, delayFactor: 0.2)
+
+        propertyAnimator.addCompletion { (_) in
+            self.layer.borderWidth = 0
+        }
+
+        propertyAnimator.startAnimation()
+    }
 }

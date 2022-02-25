@@ -188,16 +188,20 @@ class CryptoReceiveBubble: UITableViewCell {
             let userName = fetchRawData(raw: fromUserName) as? String ?? ""
             let recipientAdd = fetchRawData(raw: recipientAddress) as? String ?? ""
             let recipientName = fetchRawData(raw: walletData["recipientName"] ?? .string("you")) as? String ?? ""
+            let imageAttachment = NSTextAttachment()
+            imageAttachment.image = Appearance.default.images.senOneImage
+            let fullString = NSMutableAttributedString(string: "\(userName) ")
+            fullString.append(NSAttributedString(attachment: imageAttachment))
             if recipientAdd == client?.currentUserId?.string ?? "" {
-                descriptionLabel.text = "\(userName) sent you crypto"
+                fullString.append(NSAttributedString(string: " You"))
             } else {
-                descriptionLabel.text = "\(userName) sent crypto to \(recipientName)"
+                fullString.append(NSAttributedString(string: " \(recipientName)"))
             }
-            
+            descriptionLabel.attributedText = fullString
         }
         if let amount = walletData["transferAmount"] {
             let one = fetchRawData(raw: amount) as? Double ?? 0
-            sentCryptoLabel.text = "SENT: \(one) ONE"
+            sentCryptoLabel.text = "RECEIVED: \(one) ONE"
         }
         let defaultURL = WalletAttachmentPayload.PaymentTheme.none.getPaymentThemeUrl()
         if let themeURL = requestedThemeURL(raw: walletData), let imageUrl = URL(string: themeURL) {

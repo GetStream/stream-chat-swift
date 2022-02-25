@@ -63,6 +63,7 @@ public extension Appearance {
                 return loadImageSafely(with: "close")
             }
         }()
+        public var userSelected: UIImage = loadImageSafely(with: "chat_UserStatus")
         public var closeBold: UIImage = loadImageSafely(with: "close")
         public var closeCircleTransparent: UIImage = loadImageSafely(with: "close_circle_transparent")
         static let closeCircle: UIImage = loadImageSafely(with: "close_circle")
@@ -172,7 +173,13 @@ public extension Appearance {
                 return loadImageSafely(with: "download")
             }
         }()
-
+        public var senOneImage: UIImage? = {
+            if #available(iOS 13.0, *) {
+                return UIImage(systemName: "paperplane.fill")?.withTintColor(.white)
+            } else {
+                return Appearance.default.images.sendArrow.tinted(with: .white)
+            }
+        }()
         // MARK: - Reactions
 
         public var reactionLoveSmall: UIImage = loadImageSafely(with: "reaction_love_small")

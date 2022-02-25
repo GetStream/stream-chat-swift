@@ -31,7 +31,8 @@ public class ChatAddFriendVC: ChatBaseVC {
     @IBOutlet private var searchBarContainerView: UIView!
     @IBOutlet private var tableviewContainerView: UIView!
     @IBOutlet private var searchField: UITextField!
-    @IBOutlet private var mainStackView: UIStackView!
+    @IBOutlet private var viewContainerLeadingConst: NSLayoutConstraint!
+    @IBOutlet private var viewContainerTrailingConst: NSLayoutConstraint!
     // MARK: - VARIABLES
     public var selectionType = ChatAddFriendVC.SelectionType.addFriend
     public lazy var chatUserList: ChatUserListVC = {
@@ -41,9 +42,11 @@ public class ChatAddFriendVC: ChatBaseVC {
     private var curentSortType: Em_ChatUserListFilterTypes = .sortByLastSeen
     private var isFullScreen = false
     public var selectedUsers = [ChatUser]()
-    public var bCallbackAddUser:(([ChatUser]) -> Void)?
+    public var existingUsers = [ChatUser]()
+    public var bCallbackAddFriend:(([ChatUser]) -> Void)?
+    public var bCallbackInviteFriend:(([ChatUser]) -> Void)?
     var isShortFormEnabled = true
-    
+    private lazy var panModelState: PanModalPresentationController.PresentationState = .shortForm
     // MARK: - VIEW CYCLE
     public override func viewDidLoad() {
         super.viewDidLoad()
@@ -52,36 +55,41 @@ public class ChatAddFriendVC: ChatBaseVC {
     public override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.view.layoutIfNeeded()
-        chatUserList.tableViewFrameUpdate()
     }
-   
     // MARK: - METHODS
     public func setup() {
-        //
-        self.view.backgroundColor = Appearance.default.colorPalette.chatViewBackground
-        self.titleLabel.text = selectionType.title
+        self.view.backgroundColor = .clear
         btnBack?.setImage(Appearance.Images.closeCircle, for: .normal)
-        btnNext?.isEnabled = !self.selectedUsers.isEmpty
-        //
+        btnAddFriend?.setTitle("", for: .normal)
+        btnAddFriend?.isEnabled = !self.selectedUsers.isEmpty
+        btnInviteLink?.isEnabled = !self.selectedUsers.isEmpty
+        btnAddFriend?.isHidden = selectionType == .inviteUser
+        titleLabel.text = selectionType.title
         self.searchField.addTarget(self, action: #selector(textDidChange(_:)), for: .editingChanged)
-        //
+        self.searchField.delegate = self
+        
         addChild(chatUserList)
         tableviewContainerView.addSubview(chatUserList.view)
         chatUserList.didMove(toParent: self)
         tableviewContainerView.updateChildViewContraint(childView: chatUserList.view)
         chatUserList.delegate = self
         chatUserList.userSelectionType = .addFriend
-        chatUserList.tableViewFrameUpdate()
+        chatUserList.existingUsers = existingUsers
         chatUserList.curentSortType = .sortByAtoZ
         chatUserList.fetchUserList()
-        //
+        viewContainerLeadingConst.constant = 5
+        viewContainerTrailingConst.constant = 5
+        setupUI()
+    }
+    private func setupUI() {
+        let cornorRadius = viewContainerLeadingConst.constant > 0 ? 32 : 0
+        
         viewHeaderView.backgroundColor = Appearance.default.colorPalette.chatViewBackground
         searchBarContainerView.backgroundColor = Appearance.default.colorPalette.searchBarBackground
         searchBarContainerView.layer.cornerRadius = 20.0
-        viewHeaderView.layer.cornerRadius = 20.0
-        
+        viewHeaderView.layer.cornerRadius = CGFloat(cornorRadius)
     }
-    //
+    
     @objc private func textDidChange(_ sender: UITextField) {
         self.chatUserList.searchDataUsing(searchString: sender.text)
     }
@@ -92,57 +100,65 @@ public class ChatAddFriendVC: ChatBaseVC {
         self.dismiss(animated: true, completion: nil)
     }
     @IBAction private func invitLinkAction(_ sender: UIButton) {
-        //
+        if self.selectedUsers.count > 0 {
+            self.bCallbackInviteFriend?(self.selectedUsers)
+            self.btnBackAction(sender)
+        }
     }
     // swiftlint:disable redundant_type_annotation
     @IBAction private func btnDoneAction(_ sender: UIButton) {
         if self.selectedUsers.count > 0 {
-            self.bCallbackAddUser?(self.selectedUsers)
+            self.bCallbackAddFriend?(self.selectedUsers)
             self.btnBackAction(sender)
         }
     }
 }
+// MARK: - UITextFieldDelegate
+extension ChatAddFriendVC: UITextFieldDelegate {
+    public func textFieldShouldBeginEditing(_ textField: UITextField) -> Bool {
+        if self.panModelState == .shortForm {
+            panModalSetNeedsLayoutUpdate()
+            panModalTransition(to: .longForm)
+        }
+        return true
+    }
+}
 // MARK: - ChatUserListDelegate
 extension ChatAddFriendVC: ChatUserListDelegate {
-    public func chatListStateUpdated(state: ChatUserListVC.ChatUserLoadingState) {
-        
-    }
+    public func chatListStateUpdated(state: ChatUserListVC.ChatUserLoadingState) {}
     public func chatUserDidSelect() {
         self.selectedUsers = self.chatUserList.selectedUsers
-        self.btnNext?.isEnabled = !self.selectedUsers.isEmpty
+        self.btnAddFriend?.isEnabled = !self.selectedUsers.isEmpty
+        self.btnInviteLink?.isEnabled = !self.selectedUsers.isEmpty
     }
 }
 // MARK: - Pan Modal Presentable
 extension ChatAddFriendVC: PanModalPresentable {
-
     public override var preferredStatusBarStyle: UIStatusBarStyle {
         return .lightContent
     }
-//    public var panScrollable: UIScrollView? {
-//        return self.chatUserList.view
-//    }
     public var panScrollable: UIScrollView? {
         return nil
     }
-//    public var longFormHeight: PanModalHeight {
-//        return .maxHeightWithTopInset(0)
-//    }
     public var shortFormHeight: PanModalHeight {
-        return isShortFormEnabled ? .contentHeight(UIScreen.main.bounds.height/2) : longFormHeight
-    }
-    public var anchorModalToLongForm: Bool {
-        return false
+        return isShortFormEnabled ? .contentHeightIgnoringSafeArea(465) : longFormHeight
     }
     public var showDragIndicator: Bool {
         return false
-    }
-    public var allowsExtendedPanScrolling: Bool {
-        return true
     }
     public var allowsDragToDismiss: Bool {
         return true
     }
     public func willTransition(to state: PanModalPresentationController.PresentationState) {
+        self.panModelState = state
+        if state == .shortForm {
+            viewContainerLeadingConst.constant = 5
+            viewContainerTrailingConst.constant = 5
+        } else {
+            viewContainerLeadingConst.constant = 0
+            viewContainerTrailingConst.constant = 0
+        }
+        setupUI()
         guard isShortFormEnabled, case .longForm = state
             else { return }
 

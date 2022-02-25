@@ -197,7 +197,12 @@ class CryptoSentBubble: UITableViewCell {
         }
         if let toUserName = walletData["recipientName"] {
             let recipientName = fetchRawData(raw: toUserName) as? String ?? ""
-            descriptionLabel.text = "You sent $ONE to \(recipientName)"
+            let imageAttachment = NSTextAttachment()
+            imageAttachment.image = Appearance.default.images.senOneImage
+            let fullString = NSMutableAttributedString(string: "You ")
+            fullString.append(NSAttributedString(attachment: imageAttachment))
+            fullString.append(NSAttributedString(string: " \(recipientName)"))
+            descriptionLabel.attributedText = fullString
         }
         if let amount = walletData["transferAmount"] {
             let one = fetchRawData(raw: amount) as? Double ?? 0

@@ -32,18 +32,13 @@ public class ChatGroupDetailsVC: ChatBaseVC {
     // MARK: - VIEW CYCLE
     public override func viewDidLoad() {
         super.viewDidLoad()
-        //
         setupUI()
-        //
         configureFilesView()
-        //
         ShowAttachement()
     }
     // MARK: - METHOD
     open func setupUI() {
-        //
         view.backgroundColor = Appearance.default.colorPalette.chatViewBackground
-        //
         let name = self.channelController?.channel?.name ?? ""
         lblTitle.text = name
         self.updateMemberCount()
@@ -62,13 +57,12 @@ public class ChatGroupDetailsVC: ChatBaseVC {
         let chatUserID = TableViewCellChatUser.reuseId
         let chatUserNib = UINib(nibName: chatUserID, bundle: nil)
         tableView?.register(chatUserNib, forCellReuseIdentifier: chatUserID)
-        //
         tableView.dataSource = self
         tableView.bounces = false
         tableView.tableFooterView = UIView()
         tableView.reloadData()
         tableView.separatorStyle = .none
-        //
+        
         notificationSwitch.isOn = !(channelController?.channel?.isMuted ?? true)
     }
     private func updateMemberCount() {
@@ -107,7 +101,7 @@ public class ChatGroupDetailsVC: ChatBaseVC {
     }
     // MARK: - ACTIONS
     @IBAction func backBtnTapped(_ sender: UIButton) {
-        navigationController?.popViewController(animated: true)
+        popWithAnimation()
     }
     @IBAction func doneTapped(_ sender: UIButton) { }
     @IBAction func addFriendButtonAction(_ sender: UIButton) {
@@ -116,7 +110,21 @@ public class ChatGroupDetailsVC: ChatBaseVC {
             return
         }
         controller.selectionType = .addFriend
-        controller.bCallbackAddUser = { [weak self] users in
+        controller.existingUsers = selectedUsers
+        controller.bCallbackInviteFriend = { [weak self] users in
+            guard let weakSelf = self else { return }
+            let ids = users.map{ $0.id}
+            weakSelf.channelController?.inviteMembers(userIds: Set(ids), completion: { error in
+                if error == nil {
+                    DispatchQueue.main.async {
+                        Snackbar.show(text: "Group invite sent")
+                    }
+                } else {
+                    Snackbar.show(text: "Error while sending invitation link")
+                }
+            })
+        }
+        controller.bCallbackAddFriend = { [weak self] users in
             guard let weakSelf = self else { return }
             let ids = users.map{ $0.id}
             weakSelf.channelController?.addMembers(userIds: Set(ids), completion: { error in
@@ -126,15 +134,11 @@ public class ChatGroupDetailsVC: ChatBaseVC {
                         weakSelf.setupUI()
                     }
                 } else {
-                    Snackbar.show(text: error!.localizedDescription)
+                    Snackbar.show(text: "Error operation could be completed")
                 }
             })
         }
         presentPanModal(controller)
-        
-//        controller.modalPresentationStyle = .overCurrentContext
-//        controller.modalTransitionStyle = .crossDissolve
-//        self.present(controller, animated: true, completion: nil)
     }
     @IBAction func mediaButtonAction(_ sender: UIButton) {
         self.scrollToPage(page: 0)
@@ -153,18 +157,15 @@ public class ChatGroupDetailsVC: ChatBaseVC {
         }
     }
 }
-
 // MARK: - Collection View
 extension ChatGroupDetailsVC {
-    //
     private func configureFilesView() {
         scrollViewFiles.delegate = self
         self.filesContainerView.addSubview(scrollViewFiles)
         scrollViewFiles.frame = filesContainerView.bounds
-        //self.filesContainerView.updateChildViewContraint(childView: scrollViewFiles)
         var xValue: CGFloat = 0
         let width = UIScreen.main.bounds.width
-        //
+        
         let arrAttachmentOptions: [AttachmentType] = [.image, .file, .linkPreview]
         for index in 0..<arrAttachmentOptions.count {
             guard let subView: ChatSharedFilesVC = ChatSharedFilesVC
@@ -194,7 +195,6 @@ extension ChatGroupDetailsVC {
         UIView.animate(withDuration: 0.1) {
             switch page {
             case 0:
-                //let center = self.buttonMedia.center
                 self.indicatorViewLeadingContraint.constant = self.buttonMedia.frame.origin.x
             case 1:
                 self.indicatorViewLeadingContraint.constant = self.buttonFiles.frame.origin.x
@@ -219,26 +219,25 @@ extension ChatGroupDetailsVC: UITableViewDataSource {
             for: indexPath) as? TableViewCellChatUser else {
             return UITableViewCell()
         }
-        //
         let user: ChatChannelMember = selectedUsers[indexPath.row]
-        //
         cell.configGroupDetails(channelMember: user, selectedImage: nil, avatarBG: view.tintColor)
-        //
         cell.backgroundColor = .clear
+        cell.selectedBackgroundView = nil
         return cell
-        //
+    }
+    public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
     }
 }
-
+// MARK: - UIScrollViewDelegate
 extension ChatGroupDetailsVC: UIScrollViewDelegate {
     public func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
         let pageNumber = round(scrollView.contentOffset.x / scrollView.frame.size.width)
         self.updateIndicator(page: Int(pageNumber))
     }
 }
-
+// MARK: - AttachmentType
 extension AttachmentType {
-    
     init(tagValue: Int) {
         switch tagValue {
         case 0:
