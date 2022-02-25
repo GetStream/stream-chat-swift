@@ -78,10 +78,6 @@ class SyncRepository {
     ///
     /// - Parameter completion: A block that will get executed upon completion of the synchronization
     func syncLocalState(completion: @escaping () -> Void) {
-        guard config.isLocalStorageEnabled else {
-            completion()
-            return
-        }
         operationQueue.cancelAllOperations()
 
         log.info("Starting to recover offline state", subsystems: .offlineSupport)
@@ -118,7 +114,9 @@ class SyncRepository {
         operations.append(contentsOf: refetchChannelListQueryOperations)
 
         // 5. Run offline actions requests
-        operations.append(ExecutePendingOfflineActions(offlineRequestsRepository: offlineRequestsRepository))
+        if config.isLocalStorageEnabled {
+            operations.append(ExecutePendingOfflineActions(offlineRequestsRepository: offlineRequestsRepository))
+        }
 
         operations.append(BlockOperation(block: { [weak self] in
             log.info("Finished recovering offline state", subsystems: .offlineSupport)

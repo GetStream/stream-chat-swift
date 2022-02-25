@@ -61,11 +61,7 @@ final class SyncRepository_Tests: XCTestCase {
             apiClient: apiClient
         )
 
-        let expectation = self.expectation(description: "syncLocalState completion")
-        repository.syncLocalState {
-            expectation.fulfill()
-        }
-        waitForExpectations(timeout: 0.1, handler: nil)
+        waitForSyncLocalStateRun()
 
         XCTAssertNil(lastSyncAtValue)
         XCTAssertEqual(database.writeSessionCounter, 0)
@@ -73,12 +69,12 @@ final class SyncRepository_Tests: XCTestCase {
         XCTAssertEqual(repository.activeChannelListControllers.count, 0)
         XCTAssertEqual(apiClient.recoveryRequest_allRecordedCalls.count, 0)
         XCTAssertEqual(apiClient.request_allRecordedCalls.count, 0)
+        // When isLocalStorageEnabled is false, we don't need to run any offline requests related task
         XCTAssertNotCall("runQueuedRequests(completion:)", on: offlineRequestsRepository)
     }
 
     func test_syncLocalState_localStorageEnabled_noChannels() throws {
         try database.createCurrentUser()
-        database.writeSessionCounter = 0
 
         waitForSyncLocalStateRun()
 
