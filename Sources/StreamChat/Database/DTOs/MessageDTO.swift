@@ -600,7 +600,8 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         to messageId: MessageId,
         type: MessageReactionType,
         score: Int,
-        extraData: [String: RawJSON]
+        extraData: [String: RawJSON],
+        localState: LocalReactionState?
     ) throws -> MessageReactionDTO {
         guard let currentUserDTO = currentUser else {
             throw ClientError.CurrentUserDoesNotExist()
@@ -633,6 +634,10 @@ extension NSManagedObjectContext: MessageDatabaseSession {
 
         if !message.ownReactions.contains(reactionId) {
             message.ownReactions.append(reactionId)
+        }
+
+        if let localState = localState {
+            dto.localState = localState
         }
 
         return dto

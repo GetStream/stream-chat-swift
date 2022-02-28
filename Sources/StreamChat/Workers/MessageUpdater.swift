@@ -336,23 +336,23 @@ class MessageUpdater: Worker {
                     to: messageId,
                     type: type,
                     score: score,
-                    extraData: extraData
+                    extraData: extraData,
+                    localState: .sending
                 )
             } catch {
                 log.warning("Failed to optimistically add the reaction to the database: \(error)")
             }
 
             if let reaction = reactionDTO {
-                reaction.localState = .sending
                 reaction.version = version
             }
         } completion: { [weak self, weak repository] error in
             self?.apiClient.request(endpoint: endpoint) { result in
                 guard let error = result.error else { return }
 
-                if self?.canKeepReaction(for: error) == true { return }
+                if self?.canKeepReactionState(for: error) == true { return }
 
-                repository?.removeUnsuccessfulReaction(on: messageId, type: type)
+                repository?.undoReactionAddition(on: messageId, type: type)
             }
             completion?(error)
         }
@@ -377,25 +377,21 @@ class MessageUpdater: Worker {
                 log.warning("Failed to remove the reaction from to the database: \(error)")
             }
 
-            guard let reaction = reactionDTO else {
-                return
-            }
+            guard let reaction = reactionDTO else { return }
             reaction.localState = .pendingDelete
-        } completion: { [weak self] error in
+        } completion: { [weak self, weak repository] error in
             self?.apiClient.request(endpoint: .deleteReaction(type, messageId: messageId)) { result in
-                guard result.error != nil, let reaction = reactionDTO else { return }
+                guard let error = result.error else { return }
 
-                self?.database.write { session in
-                    if let reaction = session.reaction(messageId: messageId, userId: reaction.user.id, type: type) {
-                        reaction.localState = nil
-                    }
-                }
+                if self?.canKeepReactionState(for: error) == true { return }
+
+                repository?.undoReactionDeletion(on: messageId, type: type)
             }
             completion?(error)
         }
     }
 
-    private func canKeepReaction(for error: Error) -> Bool {
+    private func canKeepReactionState(for error: Error) -> Bool {
         isLocalStorageEnabled && ClientError.isEphemeral(error: error)
     }
 
