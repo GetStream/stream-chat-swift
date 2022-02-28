@@ -232,10 +232,10 @@ public class ChatClient {
     @Atomic var connectionId: String?
     
     /// An array of requests waiting for the connection id
-    @Atomic var connectionIdWaiters: [(String?) -> Void] = []
+    @Atomic var connectionIdWaiters: [String: (String?) -> Void] = [:]
 
     /// An array of requests waiting for the token
-    @Atomic var tokenWaiters: [(Token?) -> Void] = []
+    @Atomic var tokenWaiters: [String: (Token?) -> Void] = [:]
     
     /// The token of the current user. If the current user is anonymous, the token is `nil`.
     @Atomic var currentToken: Token?
@@ -399,14 +399,14 @@ public class ChatClient {
 
     func completeConnectionIdWaiters(connectionId: String?) {
         _connectionIdWaiters.mutate { waiters in
-            waiters.forEach { $0(connectionId) }
+            waiters.forEach { $0.value(connectionId) }
             waiters.removeAll()
         }
     }
 
     func completeTokenWaiters(token: Token?) {
         _tokenWaiters.mutate { waiters in
-            waiters.forEach { $0(token) }
+            waiters.forEach { $0.value(token) }
             waiters.removeAll()
         }
     }
@@ -647,7 +647,7 @@ extension ChatClient: ConnectionStateDelegate {
         connectionId: String?,
         shouldNotifyWaiters: Bool
     ) {
-        var connectionIdWaiters: [(String?) -> Void]!
+        var connectionIdWaiters: [String: (String?) -> Void]!
         _connectionId.mutate { mutableConnectionId in
             mutableConnectionId = connectionId
             _connectionIdWaiters.mutate { _connectionIdWaiters in
@@ -658,24 +658,29 @@ extension ChatClient: ConnectionStateDelegate {
             }
         }
         if shouldNotifyWaiters {
-            connectionIdWaiters.forEach { $0(connectionId) }
+            connectionIdWaiters.forEach { $0.value(connectionId) }
         }
     }
 }
 
 /// `Client` provides connection details for the `RequestEncoder`s it creates.
 extension ChatClient: ConnectionDetailsProviderDelegate {
-    func provideToken(completion: @escaping (_ token: Token?) -> Void) {
+    @discardableResult
+    func provideToken(completion: @escaping (_ token: Token?) -> Void) -> WaiterToken {
+        let waiterToken = String.newUniqueId
         if let token = currentToken {
             completion(token)
         } else {
             _tokenWaiters.mutate {
-                $0.append(completion)
+                $0[waiterToken] = completion
             }
         }
+        return waiterToken
     }
-    
-    func provideConnectionId(completion: @escaping (String?) -> Void) {
+
+    @discardableResult
+    func provideConnectionId(completion: @escaping (String?) -> Void) -> WaiterToken {
+        let waiterToken = String.newUniqueId
         if let connectionId = connectionId {
             completion(connectionId)
         } else if !config.isClientInActiveMode {
@@ -684,8 +689,21 @@ extension ChatClient: ConnectionDetailsProviderDelegate {
             completion(nil)
         } else {
             _connectionIdWaiters.mutate {
-                $0.append(completion)
+                $0[waiterToken] = completion
             }
+        }
+        return waiterToken
+    }
+
+    func invalidateTokenWaiter(_ waiter: WaiterToken) {
+        _tokenWaiters.mutate {
+            $0[waiter] = nil
+        }
+    }
+
+    func invalidateConnectionIdWaiter(_ waiter: WaiterToken) {
+        _connectionIdWaiters.mutate {
+            $0[waiter] = nil
         }
     }
 }

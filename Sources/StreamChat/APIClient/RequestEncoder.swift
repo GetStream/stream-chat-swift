@@ -62,7 +62,8 @@ extension RequestEncoder {
 struct DefaultRequestEncoder: RequestEncoder {
     let baseURL: URL
     let apiKey: APIKey
-    
+
+    private let waiterTimeout: TimeInterval = 60
     weak var connectionDetailsProviderDelegate: ConnectionDetailsProviderDelegate?
     
     func encodeRequest<ResponsePayload: Decodable>(
@@ -129,7 +130,18 @@ struct DefaultRequestEncoder: RequestEncoder {
             "The endpoint requires `token` but `connectionDetailsProviderDelegate` is not set.", subsystems: .httpRequests
         )
 
-        connectionDetailsProviderDelegate?.provideToken {
+        let missingTokenError = ClientError.MissingToken("Failed to get `token`, request can't be created.")
+
+        var waiterToken: WaiterToken?
+        let timer = DefaultTimer
+            .schedule(timeInterval: waiterTimeout, queue: .global()) { [weak connectionDetailsProviderDelegate] in
+                defer { completion(.failure(missingTokenError)) }
+                guard let waiterToken = waiterToken else { return }
+                connectionDetailsProviderDelegate?.invalidateTokenWaiter(waiterToken)
+            }
+
+        waiterToken = connectionDetailsProviderDelegate?.provideToken {
+            timer.cancel()
             if let token = $0 {
                 var updatedRequest = request
 
@@ -141,8 +153,7 @@ struct DefaultRequestEncoder: RequestEncoder {
 
                 completion(.success(updatedRequest))
             } else {
-                let error = ClientError.MissingToken("Failed to get `token`, request can't be created.")
-                completion(.failure(error))
+                completion(.failure(missingTokenError))
             }
         }
     }
@@ -162,14 +173,27 @@ struct DefaultRequestEncoder: RequestEncoder {
             "The endpoint requires `connectionId` but `connectionDetailsProviderDelegate` is not set.", subsystems: .httpRequests
         )
 
-        connectionDetailsProviderDelegate?.provideConnectionId {
+        let missingConnectionIdError = ClientError.MissingConnectionId(
+            "Failed to get `connectionId`, request can't be created."
+        )
+
+        var waiterToken: WaiterToken?
+        let timer = DefaultTimer
+            .schedule(timeInterval: waiterTimeout, queue: .global()) { [weak connectionDetailsProviderDelegate] in
+                defer { completion(.failure(missingConnectionIdError)) }
+                guard let waiterToken = waiterToken else { return }
+                connectionDetailsProviderDelegate?.invalidateConnectionIdWaiter(waiterToken)
+            }
+
+        waiterToken = connectionDetailsProviderDelegate?.provideConnectionId {
+            timer.cancel()
             do {
                 if let connectionId = $0 {
                     var updatedRequest = request
                     updatedRequest.url = try updatedRequest.url?.appendingQueryItems(["connection_id": connectionId])
                     completion(.success(updatedRequest))
                 } else {
-                    throw ClientError.MissingConnectionId("Failed to get `connectionId`, request can't be created.")
+                    throw missingConnectionIdError
                 }
             } catch {
                 completion(.failure(error))
@@ -255,9 +279,14 @@ private extension URL {
     }
 }
 
+typealias WaiterToken = String
 protocol ConnectionDetailsProviderDelegate: AnyObject {
-    func provideConnectionId(completion: @escaping (_ connectionId: ConnectionId?) -> Void)
-    func provideToken(completion: @escaping (Token?) -> Void)
+    @discardableResult
+    func provideConnectionId(completion: @escaping (_ connectionId: ConnectionId?) -> Void) -> WaiterToken
+    @discardableResult
+    func provideToken(completion: @escaping (Token?) -> Void) -> WaiterToken
+    func invalidateTokenWaiter(_ waiter: WaiterToken)
+    func invalidateConnectionIdWaiter(_ waiter: WaiterToken)
 }
 
 extension ClientError {
