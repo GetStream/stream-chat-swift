@@ -30,6 +30,8 @@ open class ChatMessageListVC:
 
     /// The root object representing the Stream Chat.
     public var client: ChatClient!
+    
+    public var channelType: ChannelType!
 
     /// The router object that handles navigation to other view controllers.
     open lazy var router: ChatMessageListRouter = components
@@ -94,6 +96,7 @@ open class ChatMessageListVC:
         listView.register(.init(nibName: "AdminMessageTVCell", bundle: nil), forCellReuseIdentifier: "AdminMessageTVCell")
         listView.register(RedPacketAmountBubble.self, forCellReuseIdentifier: "RedPacketAmountBubble")
         listView.register(RedPacketExpired.self, forCellReuseIdentifier: "RedPacketExpired")
+        listView.register(.init(nibName: "AnnouncementTableViewCell", bundle: nil), forCellReuseIdentifier: "AnnouncementTableViewCell")
         //setupEmptyState()
 //        if let numberMessage = dataSource?.numberOfMessages(in: self) {
 //            viewEmptyState.isHidden = numberMessage != 0
@@ -454,6 +457,11 @@ open class ChatMessageListVC:
             cell.configCell(messageCount: messagesCont)
             cell.transform = .mirrorY
             return cell
+        } else if channelType == .announcement {
+            let cell = listView.dequeueReusableCell(withIdentifier: "AnnouncementTableViewCell") as! AnnouncementTableViewCell
+            cell.configureCell(message)
+            cell.transform = .mirrorY
+            return cell
         } else {
             let cell: ChatMessageCell = listView.dequeueReusableCell(
                 contentViewClass: cellContentClassForMessage(at: indexPath),
@@ -732,5 +740,27 @@ open class ChatMessageListVC:
         // A workaround is required because we are using an inverted UITableView for the message list.
         // More details on the issue: https://github.com/GetStream/stream-chat-swift/issues/1307
         !listView.isDragging
+    }
+    
+    func pausePlayVideos() {
+        ASVideoPlayerController.sharedVideoPlayer.pausePlayVideosFor(tableView: listView)
+    }
+}
+
+extension ChatMessageListVC: UIScrollViewDelegate {
+    public func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
+        if !decelerate {
+            pausePlayVideos()
+        }
+        // Disable swipe down gesture
+        /*
+        if scrollView.contentOffset.y < 0 && !self.viewModel.isPopup {
+            self.tblEvents.isScrollEnabled = false
+        }
+        */
+    }
+
+    public func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
+        pausePlayVideos()
     }
 }

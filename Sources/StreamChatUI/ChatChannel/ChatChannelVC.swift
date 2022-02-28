@@ -171,6 +171,7 @@ open class ChatChannelVC:
         messageListVC.delegate = self
         messageListVC.dataSource = self
         messageListVC.client = client
+        messageListVC.channelType = channelController.channel?.type ?? .messaging
 
         messageComposerVC.channelController = channelController
         messageComposerVC.userSearchController = userSuggestionSearchController
@@ -273,10 +274,12 @@ open class ChatChannelVC:
             messageComposerVC.composerView.alpha = 0.5
             headerView.titleContainerView.subtitleLabel.isHidden = true
             channelAvatarView.isHidden = true
+            moreButton.isHidden = true
         } else {
             messageComposerVC.composerView.isUserInteractionEnabled = true
             messageComposerVC.composerView.alpha = 1.0
             channelAvatarView.isHidden = false
+            moreButton.isHidden = false
         }
         let tapGesture = UITapGestureRecognizer.init(target: self, action: #selector(self.headerViewAction(_:)))
         tapGesture.numberOfTapsRequired = 1

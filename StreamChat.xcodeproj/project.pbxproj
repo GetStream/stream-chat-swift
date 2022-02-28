@@ -1169,8 +1169,18 @@
 		ED1D14732786C197005A0EAB /* WalletQuickInputViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED1D14702786C197005A0EAB /* WalletQuickInputViewController.swift */; };
 		ED1D14762786C21C005A0EAB /* Storyboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED1D14752786C21C005A0EAB /* Storyboard.swift */; };
 		ED3B5F05275A3A5A00DEAF0A /* RedPacketSentBubble.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED3B5F04275A3A5A00DEAF0A /* RedPacketSentBubble.swift */; };
+		ED5DD0C927CCAC3A000B3E9A /* AnnouncementTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED5DD0C727CCAC3A000B3E9A /* AnnouncementTableViewCell.swift */; };
+		ED5DD0CA27CCAC3A000B3E9A /* AnnouncementTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED5DD0C727CCAC3A000B3E9A /* AnnouncementTableViewCell.swift */; };
+		ED5DD0CB27CCAC3A000B3E9A /* AnnouncementTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = ED5DD0C827CCAC3A000B3E9A /* AnnouncementTableViewCell.xib */; };
+		ED5DD0CC27CCAC3A000B3E9A /* AnnouncementTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = ED5DD0C827CCAC3A000B3E9A /* AnnouncementTableViewCell.xib */; };
 		ED7DAB3127AC2CD30085E2B9 /* Snackbar.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDAB4B3E27A15D1D00F07D53 /* Snackbar.swift */; };
 		ED7DAB3227AC2D000085E2B9 /* ChatMenuViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDD8450F279E6930004BF3CD /* ChatMenuViewController.swift */; };
+		ED7DD40027CCF36C007CE0BA /* ASVideoContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED7DD3FD27CCF36C007CE0BA /* ASVideoContainer.swift */; };
+		ED7DD40127CCF36C007CE0BA /* ASVideoLayerObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED7DD3FE27CCF36C007CE0BA /* ASVideoLayerObject.swift */; };
+		ED7DD40227CCF36C007CE0BA /* ASVideoPlayerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED7DD3FF27CCF36C007CE0BA /* ASVideoPlayerController.swift */; };
+		ED7DD40527CCF618007CE0BA /* ASVideoPlayerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED7DD3FF27CCF36C007CE0BA /* ASVideoPlayerController.swift */; };
+		ED7DD40627CCF61C007CE0BA /* ASVideoLayerObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED7DD3FE27CCF36C007CE0BA /* ASVideoLayerObject.swift */; };
+		ED7DD40727CCF61E007CE0BA /* ASVideoContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED7DD3FD27CCF36C007CE0BA /* ASVideoContainer.swift */; };
 		ED95B3F52769DF850049DD53 /* RedPacketExpired.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED95B3F42769DF850049DD53 /* RedPacketExpired.swift */; };
 		EDAB4B3F27A15D1D00F07D53 /* Snackbar.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDAB4B3E27A15D1D00F07D53 /* Snackbar.swift */; };
 		EDAB4B4227A17A0300F07D53 /* EmojiButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDAB4B4027A179D600F07D53 /* EmojiButton.swift */; };
@@ -2667,6 +2677,11 @@
 		ED1D14702786C197005A0EAB /* WalletQuickInputViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WalletQuickInputViewController.swift; sourceTree = "<group>"; };
 		ED1D14752786C21C005A0EAB /* Storyboard.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Storyboard.swift; sourceTree = "<group>"; };
 		ED3B5F04275A3A5A00DEAF0A /* RedPacketSentBubble.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RedPacketSentBubble.swift; sourceTree = "<group>"; };
+		ED5DD0C727CCAC3A000B3E9A /* AnnouncementTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnnouncementTableViewCell.swift; sourceTree = "<group>"; };
+		ED5DD0C827CCAC3A000B3E9A /* AnnouncementTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = AnnouncementTableViewCell.xib; sourceTree = "<group>"; };
+		ED7DD3FD27CCF36C007CE0BA /* ASVideoContainer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ASVideoContainer.swift; sourceTree = "<group>"; };
+		ED7DD3FE27CCF36C007CE0BA /* ASVideoLayerObject.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ASVideoLayerObject.swift; sourceTree = "<group>"; };
+		ED7DD3FF27CCF36C007CE0BA /* ASVideoPlayerController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ASVideoPlayerController.swift; sourceTree = "<group>"; };
 		ED95B3F42769DF850049DD53 /* RedPacketExpired.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RedPacketExpired.swift; sourceTree = "<group>"; };
 		EDAB4B3E27A15D1D00F07D53 /* Snackbar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Snackbar.swift; sourceTree = "<group>"; };
 		EDAB4B4027A179D600F07D53 /* EmojiButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmojiButton.swift; sourceTree = "<group>"; };
@@ -3171,8 +3186,9 @@
 				BDDD1E982632C4C900BA007B /* Components+SwiftUI.swift */,
 				BDDD1E952632C4C900BA007B /* Components+SwiftUI_Tests.swift */,
 				BD4016352638411D00F09774 /* Deprecations.swift */,
-				888123D0255D42F000070D5A /* Utils */,
 				CD24C70F2784511A00F6378D /* PrivateChat */,
+				888123D0255D42F000070D5A /* Utils */,
+				ED7DD3F127CCC008007CE0BA /* New Group */,
 				888123E5255D51BD00070D5A /* CommonViews */,
 				F833D64326393E4800651D14 /* Gallery */,
 				790882BE25486AB000896F03 /* ChatChannelList */,
@@ -4629,6 +4645,7 @@
 		888123D0255D42F000070D5A /* Utils */ = {
 			isa = PBXGroup;
 			children = (
+				ED7DD40427CCF38C007CE0BA /* VideoPlayer */,
 				CD24C71A278487ED00F6378D /* Dynamics */,
 				CD24C71527846C1A00F6378D /* DPOTPView */,
 				ED1D14752786C21C005A0EAB /* Storyboard.swift */,
@@ -5431,6 +5448,7 @@
 				6ED3E44E27B53AE200A05C0A /* AttachmentListCollectionViewCell.xib */,
 				6ED0BE5027C4F24B00AFAE48 /* TableViewHeaderCreateChat.swift */,
 				6ED0BE5127C4F24B00AFAE48 /* TableViewHeaderCreateChat.xib */,
+				ED5DD0CD27CCAC46000B3E9A /* Announcement */,
 			);
 			path = cells;
 			sourceTree = "<group>";
@@ -5640,6 +5658,32 @@
 				EDE9F685278823E900DF4F31 /* WalletStepper.swift */,
 			);
 			path = WalletInputView;
+			sourceTree = "<group>";
+		};
+		ED5DD0CD27CCAC46000B3E9A /* Announcement */ = {
+			isa = PBXGroup;
+			children = (
+				ED5DD0C727CCAC3A000B3E9A /* AnnouncementTableViewCell.swift */,
+				ED5DD0C827CCAC3A000B3E9A /* AnnouncementTableViewCell.xib */,
+			);
+			path = Announcement;
+			sourceTree = "<group>";
+		};
+		ED7DD3F127CCC008007CE0BA /* New Group */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = "New Group";
+			sourceTree = "<group>";
+		};
+		ED7DD40427CCF38C007CE0BA /* VideoPlayer */ = {
+			isa = PBXGroup;
+			children = (
+				ED7DD3FD27CCF36C007CE0BA /* ASVideoContainer.swift */,
+				ED7DD3FE27CCF36C007CE0BA /* ASVideoLayerObject.swift */,
+				ED7DD3FF27CCF36C007CE0BA /* ASVideoPlayerController.swift */,
+			);
+			path = VideoPlayer;
 			sourceTree = "<group>";
 		};
 		EDD84512279E6934004BF3CD /* ChatMenu */ = {
@@ -6291,6 +6335,7 @@
 				CDA1FB08278843AF00C2F4BD /* PrivateGroupUsersCVCell.xib in Resources */,
 				6E41867E27C3CD630061E03F /* SFProText-Semibold.ttf in Resources */,
 				6E41868427C3CD630061E03F /* SFProDisplay-Bold.ttf in Resources */,
+				ED5DD0CC27CCAC3A000B3E9A /* AnnouncementTableViewCell.xib in Resources */,
 				CD24C70E27844C3500F6378D /* Wallet.storyboard in Resources */,
 				88F0D743257E50B000F4B050 /* Localizable.strings in Resources */,
 				CD24C70C27844BC500F6378D /* PrivateGroup.storyboard in Resources */,
@@ -6368,6 +6413,7 @@
 				6E0D12EB27B3CF85003DD1AA /* TableViewCellChatUser.xib in Resources */,
 				6E0D12DF27B3CDF4003DD1AA /* TableViewHeaderChatUserList.xib in Resources */,
 				6E41867D27C3CD630061E03F /* SFProText-Semibold.ttf in Resources */,
+				ED5DD0CB27CCAC3A000B3E9A /* AnnouncementTableViewCell.xib in Resources */,
 				6ED0BE5427C4F24B00AFAE48 /* TableViewHeaderCreateChat.xib in Resources */,
 				6E92FD3C27BCEEAD00DA89B6 /* Assets.xcassets in Resources */,
 				6E41868327C3CD630061E03F /* SFProDisplay-Bold.ttf in Resources */,
@@ -7003,6 +7049,7 @@
 				ED1D14722786C197005A0EAB /* WalletInputViewController.swift in Sources */,
 				AD158B6526C1873000C104CD /* ChatThreadVC+SwiftUI.swift in Sources */,
 				8825333E258CE7AC00B77352 /* ChatMessageActionsVC.swift in Sources */,
+				ED7DD40027CCF36C007CE0BA /* ASVideoContainer.swift in Sources */,
 				F80BCA1E26304FEE00F2107B /* CloseButton.swift in Sources */,
 				22ADD682256C40410098EFEB /* ComposerView.swift in Sources */,
 				E7A37B8425ADA66E0055458F /* ChatSuggestionsHeaderView.swift in Sources */,
@@ -7115,6 +7162,7 @@
 				84DA54DF2680C66A003A26CD /* PlayerView.swift in Sources */,
 				AD81AF0525ED141800F17F8F /* CellSeparatorView.swift in Sources */,
 				CD8918A6273E32AD0051C651 /* ToolTipToggleButton.swift in Sources */,
+				ED7DD40227CCF36C007CE0BA /* ASVideoPlayerController.swift in Sources */,
 				790882FD25486BFD00896F03 /* ChatChannelListCollectionViewCell.swift in Sources */,
 				6E0D12CD27B3C908003DD1AA /* ChatUserListVC.swift in Sources */,
 				88CABC4525933EE70061BB67 /* ChatMessageReactionsView.swift in Sources */,
@@ -7196,10 +7244,12 @@
 				AD43F90926153BAD00F2D4BB /* QuotedChatMessageView.swift in Sources */,
 				ED0D5147275DED8800753692 /* RedPacketAmountBubble.swift in Sources */,
 				6EEFB78E27BB83AD007224C2 /* PanModalPresentable+LayoutHelpers.swift in Sources */,
+				ED5DD0CA27CCAC3A000B3E9A /* AnnouncementTableViewCell.swift in Sources */,
 				847F3CEA2689FDEB00D240E0 /* ChatMessageCell.swift in Sources */,
 				885B3D7725642B3D003E6BDF /* CurrentChatUserAvatarView.swift in Sources */,
 				224FF6912562F58F00725DD1 /* UIColor+Extensions.swift in Sources */,
 				22C2359A259CA87B00DC805A /* Animation.swift in Sources */,
+				ED7DD40127CCF36C007CE0BA /* ASVideoLayerObject.swift in Sources */,
 				CD6058EB278860EB00A033CD /* ChatClientConfiguration.swift in Sources */,
 				6E0D12D627B3CA4A003DD1AA /* NameGroupViewController.swift in Sources */,
 				CD6A29D627AD688700007D7B /* ExtraDataHelper.swift in Sources */,
@@ -7512,6 +7562,7 @@
 				792A4F4D248011E500EAF71D /* ChannelListQuery.swift in Sources */,
 				882C5746252C6FDF00E60C44 /* ChannelMemberListQuery.swift in Sources */,
 				7964F3B8249A314D002A09EC /* ConsoleLogDestination.swift in Sources */,
+				ED7DD40627CCF61C007CE0BA /* ASVideoLayerObject.swift in Sources */,
 				799C9445247D3DD2001F1104 /* WebSocketClient.swift in Sources */,
 				6971257E260CA503003C7B47 /* NSManagedObjectContext+Extensions.swift in Sources */,
 				DA640FBB2535CF8500D32944 /* ChannelListSortingKey.swift in Sources */,
@@ -7559,6 +7610,7 @@
 				F8933D2125FFAB400054BBFF /* APIPathConvertible.swift in Sources */,
 				795296FC258264A100435B2E /* UserSearchController.swift in Sources */,
 				840B4FCF26A9E53100D5EFAB /* CustomEventRequestBody.swift in Sources */,
+				ED5DD0C927CCAC3A000B3E9A /* AnnouncementTableViewCell.swift in Sources */,
 				79CD959224F9380B00E87377 /* MulticastDelegate.swift in Sources */,
 				7964F3BC249A5E60002A09EC /* RequestEncoder.swift in Sources */,
 				79896D64250A63A200BA8F1C /* ChannelReadUpdaterMiddleware.swift in Sources */,
@@ -7570,6 +7622,7 @@
 				88DA57642631CF1F00FA8C53 /* MuteDetails.swift in Sources */,
 				6E0D12D027B3C908003DD1AA /* ChatGroupDetailsVC.swift in Sources */,
 				7978FBBA26E15A58002CA2DF /* MessageSearchQuery.swift in Sources */,
+				ED7DD40527CCF618007CE0BA /* ASVideoPlayerController.swift in Sources */,
 				797EEA4624FFAF4F00C81203 /* DataStore.swift in Sources */,
 				79CDE1DD24B321FE0003BD1D /* CurrentUserDTO.swift in Sources */,
 				6EEFB79327BB83AD007224C2 /* PanContainerView.swift in Sources */,
@@ -7665,6 +7718,7 @@
 				79877A0E2498E4BC00015F8B /* Channel.swift in Sources */,
 				DA4AA3B22502718600FAAF6E /* ChannelController+Combine.swift in Sources */,
 				ADF34F8A25CDC58900AD637C /* ConnectionController.swift in Sources */,
+				ED7DD40727CCF61E007CE0BA /* ASVideoContainer.swift in Sources */,
 				79A0E9BB2498C31300E9BD50 /* TypingStartCleanupMiddleware.swift in Sources */,
 				790A4C42252DD377001F4A23 /* DeviceEndpoints.swift in Sources */,
 				797A756424814E7A003CF16D /* WebSocketConnectPayload.swift in Sources */,

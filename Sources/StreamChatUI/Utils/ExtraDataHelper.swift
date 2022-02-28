@@ -22,6 +22,19 @@ public extension Dictionary where Key == String, Value == RawJSON {
             return nil
         }
     }
+    
+    func getExtraDataArray(key: String) -> [RawJSON]? {
+        if let extraData = self[key] {
+            switch extraData {
+            case .array(let array):
+                return array
+            default:
+                return nil
+            }
+        } else {
+            return nil
+        }
+    }
 }
 
 // MARK: - DAO
@@ -110,6 +123,12 @@ public extension Dictionary where Key == String, Value == RawJSON {
 
 // MARK: - Admin Message
 public extension Dictionary where Key == String, Value == RawJSON {
+    var tag: [String]? {
+        guard let tags = getExtraDataArray(key: "tags") else {
+            return nil
+        }
+        return tags.map { fetchRawData(raw: $0) as? String ?? "" }
+    }
     var adminMessage: String? {
         guard let adminMessage = getExtraData(key: "adminMessage") else {
             return nil
