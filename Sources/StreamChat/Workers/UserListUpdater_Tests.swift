@@ -84,6 +84,28 @@ class UserListUpdater_Tests: XCTestCase {
         // Assert the completion is called with the error
         AssertAsync.willBeEqual(completionCalledError as? TestError, error)
     }
+
+    func test_update_shouldNotHaveMemoryLeaks() {
+        let exp = expectation(description: "should clean the listUpdater")
+
+        weak var weakListUpdater: UserListUpdater?
+
+        weakListUpdater = listUpdater
+        let query = UserListQuery(filter: .equal(.id, to: "Luke"))
+        listUpdater.update(userListQuery: query, completion: { [weak self] _ in
+            self?.listUpdater = nil
+            exp.fulfill()
+        })
+
+        // Simualte API response with user data
+        let dummyUser1 = dummyUser
+        let payload = UserListPayload(users: [dummyUser1])
+        apiClient.test_simulateResponse(.success(payload))
+
+        wait(for: [exp], timeout: 0.5)
+
+        XCTAssertNil(weakListUpdater)
+    }
     
     func test_mergePolicy_takesAffect() throws {
         // Simulate `update` call

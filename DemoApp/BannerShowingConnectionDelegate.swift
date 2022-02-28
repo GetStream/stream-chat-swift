@@ -26,12 +26,15 @@ extension BannerShowingConnectionDelegate: ChatConnectionControllerDelegate {
     public func connectionController(_ controller: ChatConnectionController, didUpdateConnectionStatus status: ConnectionStatus) {
         switch status {
         case .disconnected:
+            bannerView.update(text: "Disconnected")
             showBanner()
         case .connected:
             hideBanner()
-        case .initialized,
-             .disconnecting,
-             .connecting:
+        case .disconnecting:
+            bannerView.update(text: "Disconnecting...")
+        case .connecting:
+            bannerView.update(text: "Connecting...")
+        case .initialized:
             break
         }
     }
