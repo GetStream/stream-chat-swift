@@ -52,6 +52,10 @@ class DatabaseContainerMock: DatabaseContainer {
         // Remove the database file if the container requests that
         if shouldCleanUpTempDBFiles, case let .onDisk(databaseFileURL: url) = init_kind {
             do {
+                // Remove all loaded persistent stores first
+                try persistentStoreCoordinator.persistentStores.forEach { store in
+                    try persistentStoreCoordinator.remove(store)
+                }
                 try FileManager.default.removeItem(at: url)
             } catch {
                 fatalError("Failed to remove temp database file: \(error)")

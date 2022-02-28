@@ -8,6 +8,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Show Camera option on the ComposerVC [#1798](https://github.com/GetStream/stream-chat-swift/pull/1798)
 - `ChannelController`'s `truncateChannel` function now allows you to specify `systemMessage`, `hardDelete`, `skipPush` properties [#1799](https://github.com/GetStream/stream-chat-swift/pull/1799)
 - Added `truncatedAt` property to `ChatChannel`
+- Added increased logging for CoreData crashes caused by lingering models from previous sessions [#1814](https://github.com/GetStream/stream-chat-swift/issues/1814)
 
 ### 🐞 Fixed
 - Fix `ChatMentionSuggestionView` permanently hiding subviews [#1800](https://github.com/GetStream/stream-chat-swift/issues/1800)
