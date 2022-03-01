@@ -3,6 +3,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+### 🔄 Changed
+
+# [4.11.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.11.0)
+_March 01, 2022_
+
 ### ✅ Added
 - Add Support for Message List Data Source Diffing (Experimental) [#1770](https://github.com/GetStream/stream-chat-swift/pull/1770)
 - Show Camera option on the ComposerVC [#1798](https://github.com/GetStream/stream-chat-swift/pull/1798)
