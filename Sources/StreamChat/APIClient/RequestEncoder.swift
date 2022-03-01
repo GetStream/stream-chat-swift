@@ -197,8 +197,12 @@ struct DefaultRequestEncoder: RequestEncoder {
             guard let body = endpoint.body else { return }
             try encodeJSONToQueryItems(request: &request, data: body)
         case .post, .patch:
-            let body = try JSONEncoder.stream.encode(AnyEncodable(endpoint.body ?? EmptyBody()))
-            request.httpBody = body
+            if let data = endpoint.body as? Data {
+                request.httpBody = data
+            } else {
+                let body = try JSONEncoder.stream.encode(AnyEncodable(endpoint.body ?? EmptyBody()))
+                request.httpBody = body
+            }
         }
     }
     

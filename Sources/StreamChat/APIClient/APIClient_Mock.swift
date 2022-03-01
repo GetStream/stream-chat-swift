@@ -43,13 +43,14 @@ class APIClientMock: APIClient, Spy {
         uploadFile_progress = nil
         uploadFile_completion = nil
     }
-    
+
     override init(
         sessionConfiguration: URLSessionConfiguration,
         requestEncoder: RequestEncoder,
         requestDecoder: RequestDecoder,
         CDNClient: CDNClient,
-        tokenRefresher: ((@escaping () -> Void) -> Void)!
+        tokenRefresher: ((@escaping () -> Void) -> Void)!,
+        queueOfflineRequest: @escaping QueueOfflineRequestBlock
     ) {
         init_sessionConfiguration = sessionConfiguration
         init_requestEncoder = requestEncoder
@@ -62,14 +63,20 @@ class APIClientMock: APIClient, Spy {
             requestEncoder: requestEncoder,
             requestDecoder: requestDecoder,
             CDNClient: CDNClient,
-            tokenRefresher: tokenRefresher
+            tokenRefresher: tokenRefresher,
+            queueOfflineRequest: queueOfflineRequest
         )
     }
     
     /// Simulates the response of the last `request` method call
     func test_simulateResponse<Response: Decodable>(_ response: Result<Response, Error>) {
-        let completion = request_completion as! ((Result<Response, Error>) -> Void)
-        completion(response)
+        let completion = request_completion as? ((Result<Response, Error>) -> Void)
+        completion?(response)
+    }
+
+    func test_simulateRecoveryResponse<Response: Decodable>(_ response: Result<Response, Error>) {
+        let completion = recoveryRequest_completion as? ((Result<Response, Error>) -> Void)
+        completion?(response)
     }
     
     override func request<Response>(
@@ -119,7 +126,8 @@ extension APIClientMock {
             requestEncoder: DefaultRequestEncoder(baseURL: .unique(), apiKey: .init(.unique)),
             requestDecoder: DefaultRequestDecoder(),
             CDNClient: CDNClient_Mock(),
-            tokenRefresher: { _ in }
+            tokenRefresher: { _ in },
+            queueOfflineRequest: { _ in }
         )
     }
 }

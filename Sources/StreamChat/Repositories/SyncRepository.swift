@@ -33,6 +33,7 @@ class SyncRepository {
     let activeChannelControllers: NSHashTable<ChatChannelController>
     let activeChannelListControllers: NSHashTable<ChatChannelListController>
     let channelRepository: ChannelListUpdater
+    let offlineRequestsRepository: OfflineRequestsRepository
     let eventNotificationCenter: EventNotificationCenter
     let database: DatabaseContainer
     let apiClient: APIClient
@@ -50,6 +51,7 @@ class SyncRepository {
         activeChannelControllers: NSHashTable<ChatChannelController>,
         activeChannelListControllers: NSHashTable<ChatChannelListController>,
         channelRepository: ChannelListUpdater,
+        offlineRequestsRepository: OfflineRequestsRepository,
         eventNotificationCenter: EventNotificationCenter,
         database: DatabaseContainer,
         apiClient: APIClient
@@ -58,6 +60,7 @@ class SyncRepository {
         self.activeChannelControllers = activeChannelControllers
         self.activeChannelListControllers = activeChannelListControllers
         self.channelRepository = channelRepository
+        self.offlineRequestsRepository = offlineRequestsRepository
         self.eventNotificationCenter = eventNotificationCenter
         self.database = database
         self.apiClient = apiClient
@@ -71,7 +74,8 @@ class SyncRepository {
     /// 2. Start watching open channels
     /// 3. Refetch channel lists queries, link only what backend returns (the 1st page)
     /// 4. Clean up local message history for channels that are outdated/will get outdated
-    /// 5. Bump the last sync timestamp
+    /// 5. Run offline actions requests
+    /// 6. Bump the last sync timestamp
     ///
     /// - Parameter completion: A block that will get executed upon completion of the synchronization
     func syncLocalState(completion: @escaping () -> Void) {
@@ -117,9 +121,12 @@ class SyncRepository {
             }
         operations.append(contentsOf: refetchChannelListQueryOperations)
 
-        // 5. Bump the last sync timestamp
+        // 5. Run offline actions requests
+        operations.append(ExecutePendingOfflineActions(offlineRequestsRepository: offlineRequestsRepository))
+
+        // 6. Bump the last sync timestamp
         operations.append(AsyncOperation { [weak self] _, done in
-            log.info("5. Bump the last sync timestamp", subsystems: .offlineSupport)
+            log.info("6. Bump the last sync timestamp", subsystems: .offlineSupport)
             self?.updateUserValue { user in
                 user?.lastSyncAt = Date()
             } completion: { _ in
@@ -128,7 +135,7 @@ class SyncRepository {
         })
 
         operations.append(BlockOperation(block: { [weak self] in
-            log.info("❌Finished recovering offline state", subsystems: .offlineSupport)
+            log.info("Finished recovering offline state", subsystems: .offlineSupport)
             DispatchQueue.main.async {
                 self?.apiClient.exitRecoveryMode()
                 completion()
@@ -321,5 +328,10 @@ class SyncRepository {
                 completion?(nil)
             }
         }
+    }
+
+    func queueOfflineRequest(endpoint: DataEndpoint) {
+        guard config.isLocalStorageEnabled else { return }
+        offlineRequestsRepository.queueOfflineRequest(endpoint: endpoint)
     }
 }

@@ -301,6 +301,10 @@ protocol AttachmentDatabaseSession {
     ) throws -> AttachmentDTO
 }
 
+protocol QueuedRequestDatabaseSession {
+    func deleteQueuedRequest(id: String)
+}
+
 protocol DatabaseSession: UserDatabaseSession,
     CurrentUserDatabaseSession,
     MessageDatabaseSession,
@@ -309,7 +313,8 @@ protocol DatabaseSession: UserDatabaseSession,
     MemberDatabaseSession,
     MemberListQueryDatabaseSession,
     AttachmentDatabaseSession,
-    ChannelMuteDatabaseSession {}
+    ChannelMuteDatabaseSession,
+    QueuedRequestDatabaseSession {}
 
 extension DatabaseSession {
     @discardableResult

@@ -11,6 +11,7 @@ final class SyncRepository_Tests: XCTestCase {
     var _activeChannelListControllers = NSHashTable<ChatChannelListController>.weakObjects()
     var client: ChatClientMock!
     var channelRepository: ChannelListUpdaterMock!
+    var offlineRequestsRepository: OfflineRequestsRepositoryMock!
     var database: DatabaseContainerMock!
     var apiClient: APIClientMock!
 
@@ -22,6 +23,7 @@ final class SyncRepository_Tests: XCTestCase {
         config.isLocalStorageEnabled = true
         client = ChatClientMock(config: config)
         channelRepository = ChannelListUpdaterMock(database: client.databaseContainer, apiClient: client.apiClient)
+        offlineRequestsRepository = OfflineRequestsRepositoryMock(database: client.databaseContainer, apiClient: client.apiClient)
         database = client.mockDatabaseContainer
         apiClient = client.mockAPIClient
 
@@ -30,6 +32,7 @@ final class SyncRepository_Tests: XCTestCase {
             activeChannelControllers: _activeChannelControllers,
             activeChannelListControllers: _activeChannelListControllers,
             channelRepository: channelRepository,
+            offlineRequestsRepository: offlineRequestsRepository,
             eventNotificationCenter: client.eventNotificationCenter,
             database: database,
             apiClient: apiClient
@@ -47,6 +50,7 @@ final class SyncRepository_Tests: XCTestCase {
             activeChannelControllers: _activeChannelControllers,
             activeChannelListControllers: _activeChannelListControllers,
             channelRepository: channelRepository,
+            offlineRequestsRepository: offlineRequestsRepository,
             eventNotificationCenter: repository.eventNotificationCenter,
             database: database,
             apiClient: apiClient
@@ -60,6 +64,7 @@ final class SyncRepository_Tests: XCTestCase {
         XCTAssertEqual(repository.activeChannelListControllers.count, 0)
         XCTAssertEqual(apiClient.recoveryRequest_allRecordedCalls.count, 0)
         XCTAssertEqual(apiClient.request_allRecordedCalls.count, 0)
+        XCTAssertNotCall("runQueuedRequests(completion:)", on: offlineRequestsRepository)
     }
 
     func test_syncLocalState_localStorageEnabled_noPendingConnectionDate() throws {
@@ -71,6 +76,7 @@ final class SyncRepository_Tests: XCTestCase {
         XCTAssertEqual(repository.activeChannelListControllers.count, 0)
         XCTAssertEqual(apiClient.recoveryRequest_allRecordedCalls.count, 0)
         XCTAssertEqual(apiClient.request_allRecordedCalls.count, 0)
+        XCTAssertCall("runQueuedRequests(completion:)", on: offlineRequestsRepository, times: 1)
     }
 
     func test_syncLocalState_localStorageEnabled_pendingConnectionDate_noChannels() throws {
@@ -88,6 +94,7 @@ final class SyncRepository_Tests: XCTestCase {
         XCTAssertEqual(repository.activeChannelListControllers.count, 0)
         XCTAssertEqual(apiClient.recoveryRequest_allRecordedCalls.count, 0)
         XCTAssertEqual(apiClient.request_allRecordedCalls.count, 0)
+        XCTAssertCall("runQueuedRequests(completion:)", on: offlineRequestsRepository, times: 1)
     }
 
     func test_syncLocalState_localStorageEnabled_pendingConnectionDate_channels() throws {
@@ -106,6 +113,7 @@ final class SyncRepository_Tests: XCTestCase {
         XCTAssertEqual(repository.activeChannelListControllers.count, 0)
         XCTAssertEqual(apiClient.recoveryRequest_allRecordedCalls.count, 1)
         XCTAssertEqual(apiClient.request_allRecordedCalls.count, 0)
+        XCTAssertCall("runQueuedRequests(completion:)", on: offlineRequestsRepository, times: 1)
     }
 
     func test_syncLocalState_localStorageEnabled_pendingConnectionDate_channels_activeRemoteChannelController() throws {
@@ -129,6 +137,7 @@ final class SyncRepository_Tests: XCTestCase {
         XCTAssertEqual(repository.activeChannelListControllers.count, 0)
         XCTAssertEqual(apiClient.recoveryRequest_allRecordedCalls.count, 1)
         XCTAssertEqual(apiClient.request_allRecordedCalls.count, 0)
+        XCTAssertCall("runQueuedRequests(completion:)", on: offlineRequestsRepository, times: 1)
     }
 
     func test_syncLocalState_localStorageEnabled_pendingConnectionDate_channels_activeRemoteChannelListController() throws {
@@ -155,6 +164,7 @@ final class SyncRepository_Tests: XCTestCase {
         )
         XCTAssertEqual(apiClient.recoveryRequest_allRecordedCalls.count, 1)
         XCTAssertEqual(apiClient.request_allRecordedCalls.count, 0)
+        XCTAssertCall("runQueuedRequests(completion:)", on: offlineRequestsRepository, times: 1)
     }
 
     private var hasUpdatedLastSyncAtNow: Bool {
@@ -292,6 +302,7 @@ final class SyncRepository_Tests: XCTestCase {
             activeChannelControllers: _activeChannelControllers,
             activeChannelListControllers: _activeChannelListControllers,
             channelRepository: channelRepository,
+            offlineRequestsRepository: offlineRequestsRepository,
             eventNotificationCenter: repository.eventNotificationCenter,
             database: database,
             apiClient: apiClient
@@ -407,5 +418,63 @@ final class SyncRepository_Tests: XCTestCase {
 
         waitForExpectations(timeout: 0.1, handler: nil)
         return receivedResult
+    }
+
+    // MARK: - Queue offline requests
+
+    func test_queueOfflineRequest_localStorageDisabled() {
+        var config = ChatClientConfig(apiKeyString: .unique)
+        config.isLocalStorageEnabled = false
+        let client = ChatClientMock(config: config)
+        repository = SyncRepository(
+            config: client.config,
+            activeChannelControllers: _activeChannelControllers,
+            activeChannelListControllers: _activeChannelListControllers,
+            channelRepository: channelRepository,
+            offlineRequestsRepository: offlineRequestsRepository,
+            eventNotificationCenter: repository.eventNotificationCenter,
+            database: database,
+            apiClient: apiClient
+        )
+
+        let endpoint = DataEndpoint(
+            path: "",
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: true,
+            requiresToken: true,
+            body: nil
+        )
+        repository.queueOfflineRequest(endpoint: endpoint)
+
+        XCTAssertNotCall("queueOfflineRequest(endpoint:completion:)", on: offlineRequestsRepository)
+    }
+
+    func test_queueOfflineRequest_localStorageEnabled() {
+        var config = ChatClientConfig(apiKeyString: .unique)
+        config.isLocalStorageEnabled = true
+        let client = ChatClientMock(config: config)
+        repository = SyncRepository(
+            config: client.config,
+            activeChannelControllers: _activeChannelControllers,
+            activeChannelListControllers: _activeChannelListControllers,
+            channelRepository: channelRepository,
+            offlineRequestsRepository: offlineRequestsRepository,
+            eventNotificationCenter: repository.eventNotificationCenter,
+            database: database,
+            apiClient: apiClient
+        )
+
+        let endpoint = DataEndpoint(
+            path: "",
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: true,
+            requiresToken: true,
+            body: nil
+        )
+        repository.queueOfflineRequest(endpoint: endpoint)
+
+        XCTAssertCall("queueOfflineRequest(endpoint:completion:)", on: offlineRequestsRepository, times: 1)
     }
 }

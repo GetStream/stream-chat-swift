@@ -860,7 +860,8 @@ private class TestEnvironment {
                     requestEncoder: $1,
                     requestDecoder: $2,
                     CDNClient: $3,
-                    tokenRefresher: $4
+                    tokenRefresher: $4,
+                    queueOfflineRequest: $5
                 )
                 return self.apiClient!
             },

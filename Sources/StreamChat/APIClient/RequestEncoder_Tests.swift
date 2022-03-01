@@ -229,7 +229,28 @@ class RequestEncoder_Tests: XCTestCase {
         
         XCTAssertEqual(serializedBody, endpoint.body as! TestUser)
     }
-    
+
+    func test_encodingRequestBodyAsData_POST() throws {
+        // Prepare a POST endpoint with JSON body
+        let bodyAsData = try JSONEncoder.stream.encode(TestUser(name: "Luke", age: 22))
+
+        let endpoint = Endpoint<Data>(
+            path: .unique,
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: false,
+            requiresToken: false,
+            body: bodyAsData
+        )
+
+        // Encode the request and wait for the result
+        let request = try waitFor { encoder.encodeRequest(for: endpoint, completion: $0) }.get()
+
+        // Check the body is sent as is
+        let sentBody = try XCTUnwrap(request.httpBody)
+        XCTAssertEqual(sentBody, bodyAsData)
+    }
+
     func test_encodingRequestWithoutBody_POST() throws {
         // Our backend expects all POST requests will have a body, even if empty
         // nil body is not acceptable (causes invalid json - 400 error)
@@ -273,6 +294,27 @@ class RequestEncoder_Tests: XCTestCase {
         let serializedBody = try JSONDecoder.stream.decode(TestUser.self, from: body)
         
         XCTAssertEqual(serializedBody, endpoint.body as! TestUser)
+    }
+
+    func test_encodingRequestBodyAsData_PATCH() throws {
+        // Prepare a PATCH endpoint with JSON body
+        let bodyAsData = try JSONEncoder.stream.encode(TestUser(name: "Luke", age: 22))
+
+        let endpoint = Endpoint<Data>(
+            path: .unique,
+            method: .patch,
+            queryItems: nil,
+            requiresConnectionId: false,
+            requiresToken: false,
+            body: bodyAsData
+        )
+
+        // Encode the request and wait for the result
+        let request = try waitFor { encoder.encodeRequest(for: endpoint, completion: $0) }.get()
+
+        // Check the body is present
+        let sentBody = try XCTUnwrap(request.httpBody)
+        XCTAssertEqual(sentBody, bodyAsData)
     }
     
     func test_encodingRequestWithoutBody_PATCH() throws {

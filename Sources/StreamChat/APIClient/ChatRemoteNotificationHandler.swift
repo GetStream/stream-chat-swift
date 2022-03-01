@@ -82,24 +82,13 @@ public class ChatRemoteNotificationHandler {
     var content: UNNotificationContent
     let chatCategoryIdentifiers: Set<String> = ["stream.chat", "MESSAGE_NEW"]
     let database: DatabaseContainer
-
-    private(set) lazy var syncRepository: SyncRepository = {
-        let channelRepository = ChannelListUpdater(database: database, apiClient: client.apiClient)
-        return SyncRepository(
-            config: client.config,
-            activeChannelControllers: client.activeChannelControllers,
-            activeChannelListControllers: client.activeChannelListControllers,
-            channelRepository: channelRepository,
-            eventNotificationCenter: client.eventNotificationCenter,
-            database: database,
-            apiClient: client.apiClient
-        )
-    }()
+    let syncRepository: SyncRepository
 
     public init(client: ChatClient, content: UNNotificationContent) {
         self.client = client
         self.content = content
         database = client.databaseContainer
+        syncRepository = client.syncRepository
     }
 
     public func handleNotification(completion: @escaping (ChatPushNotificationContent) -> Void) -> Bool {
