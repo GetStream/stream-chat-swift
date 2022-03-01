@@ -74,9 +74,9 @@ public class ChatAddFriendVC: ChatBaseVC {
         tableviewContainerView.updateChildViewContraint(childView: chatUserList.view)
         chatUserList.delegate = self
         chatUserList.userSelectionType = .addFriend
-        chatUserList.existingUsers = existingUsers
-        chatUserList.curentSortType = .sortByAtoZ
-        chatUserList.fetchUserList()
+        chatUserList.sortType = .sortByAtoZ
+        chatUserList.viewModel.existingUsers = existingUsers
+        chatUserList.viewModel.fetchUserList()
         viewContainerLeadingConst.constant = 5
         viewContainerTrailingConst.constant = 5
         setupUI()
@@ -91,7 +91,7 @@ public class ChatAddFriendVC: ChatBaseVC {
     }
     
     @objc private func textDidChange(_ sender: UITextField) {
-        self.chatUserList.searchDataUsing(searchString: sender.text)
+        self.chatUserList.viewModel.searchDataUsing(searchString: sender.text)
     }
     //
     // MARK: - Actions
@@ -125,9 +125,9 @@ extension ChatAddFriendVC: UITextFieldDelegate {
 }
 // MARK: - ChatUserListDelegate
 extension ChatAddFriendVC: ChatUserListDelegate {
-    public func chatListStateUpdated(state: ChatUserListVC.ChatUserLoadingState) {}
+    public func chatListStateUpdated(state: UserListViewModel.ChatUserLoadingState) {}
     public func chatUserDidSelect() {
-        self.selectedUsers = self.chatUserList.selectedUsers
+        self.selectedUsers = self.chatUserList.viewModel.selectedUsers
         self.btnAddFriend?.isEnabled = !self.selectedUsers.isEmpty
         self.btnInviteLink?.isEnabled = !self.selectedUsers.isEmpty
     }

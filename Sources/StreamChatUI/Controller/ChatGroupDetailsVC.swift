@@ -23,12 +23,14 @@ public class ChatGroupDetailsVC: ChatBaseVC {
     @IBOutlet private var buttonLinks: UIButton!
     @IBOutlet private var notificationSwitch: UISwitch!
     @IBOutlet private var indicatorViewLeadingContraint: NSLayoutConstraint!
+    @IBOutlet private var buttonShowMore: UIButton!
     // MARK: - VARIABLES
     public var selectedUsers: [ChatChannelMember] = []
     private let scrollViewFiles = UIScrollView()
     private let viewTabIndicator = UIView()
     public var channelController: ChatChannelController?
     private var arrController = [UIViewController]()
+    private var usersCount = 0
     // MARK: - VIEW CYCLE
     public override func viewDidLoad() {
         super.viewDidLoad()
@@ -41,6 +43,7 @@ public class ChatGroupDetailsVC: ChatBaseVC {
         view.backgroundColor = Appearance.default.colorPalette.chatViewBackground
         let name = self.channelController?.channel?.name ?? ""
         lblTitle.text = name
+        self.buttonShowMore.isHidden = true
         self.updateMemberCount()
         //
         if let cid = channelController?.cid {
@@ -48,17 +51,31 @@ public class ChatGroupDetailsVC: ChatBaseVC {
             controller.synchronize { [weak self] error in
                 guard error == nil, let weakSelf = self else { return }
                 DispatchQueue.main.async {
-                    weakSelf.selectedUsers =  (controller.members ?? []).filter({ $0.id != nil })
-                    weakSelf.tableView.reloadData()
+                    weakSelf.selectedUsers = []
+                    if let ownerUser = (controller.members ?? []).filter({ $0.id != nil && $0.memberRole == .owner }).first {
+                        weakSelf.selectedUsers.append(ownerUser)
+                    }
+                    let filteredUsers = (controller.members ?? []).filter({ $0.id != nil && $0.memberRole != .owner })
+                    let onlineUser = filteredUsers.filter({ $0.isOnline && $0.name?.isBlank == false }).sorted{ $0.name!.localizedCaseInsensitiveCompare($1.name!) == ComparisonResult.orderedAscending}
+                    let alphabetUsers = filteredUsers.filter { ($0.name?.isFirstCharacterAlp ?? false) && $0.name?.isBlank == false }.sorted{ $0.name!.localizedCaseInsensitiveCompare($1.name!) == ComparisonResult.orderedAscending}
+                    let otherUsers = filteredUsers.filter { ($0.name?.isFirstCharacterAlp ?? false) == false }.sorted{ $0.id.localizedCaseInsensitiveCompare($1.id) == ComparisonResult.orderedAscending}
+                    
+                    weakSelf.selectedUsers.append(contentsOf: onlineUser)
+                    weakSelf.selectedUsers.append(contentsOf: alphabetUsers)
+                    weakSelf.selectedUsers.append(contentsOf: otherUsers)
+                    weakSelf.updateShowMoreButtonStatus()
                     weakSelf.updateMemberCount()
+                    weakSelf.tableView.reloadData()
                 }
             }
         }
         let chatUserID = TableViewCellChatUser.reuseId
         let chatUserNib = UINib(nibName: chatUserID, bundle: nil)
-        tableView?.register(chatUserNib, forCellReuseIdentifier: chatUserID)
+        tableView.register(chatUserNib, forCellReuseIdentifier: chatUserID)
         tableView.dataSource = self
+        tableView.delegate = self
         tableView.bounces = false
+        tableView.tableHeaderView = UIView()
         tableView.tableFooterView = UIView()
         tableView.reloadData()
         tableView.separatorStyle = .none
@@ -69,6 +86,16 @@ public class ChatGroupDetailsVC: ChatBaseVC {
         let friendCount = selectedUsers.count
         let onlineUser = selectedUsers.filter( {$0.isOnline}).count ?? 0
         lblSubtitle.text = "\(friendCount) friends, \(onlineUser) online"
+    }
+    private func updateShowMoreButtonStatus() {
+        let contentSize = selectedUsers.count * 60
+        if CGFloat(contentSize) > self.tableView.bounds.height {
+            self.buttonShowMore.isHidden = false
+            self.usersCount = Int(self.tableView.bounds.height / 60)
+        } else {
+            self.buttonShowMore.isHidden = true
+            self.usersCount = selectedUsers.count
+        }
     }
     private func ShowAttachement() {
         let arr = self.channelController?.messages.filter({ $0.attachments(payloadType: ImageAttachmentPayload.self).count > 0 }) ?? []
@@ -156,6 +183,15 @@ public class ChatGroupDetailsVC: ChatBaseVC {
             self.muteNotification()
         }
     }
+    @IBAction func showMoreButtonAction(_ sender: UIButton) {
+        self.buttonShowMore.isHidden = true
+        let visibleRow = IndexPath.init(row: self.usersCount, section: 0)
+        self.usersCount = self.selectedUsers.count
+        self.tableView.reloadData()
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+            self.tableView.scrollToRow(at: visibleRow, at: .bottom, animated: true)
+        }
+    }
 }
 // MARK: - Collection View
 extension ChatGroupDetailsVC {
@@ -208,9 +244,9 @@ extension ChatGroupDetailsVC {
     }
 }
 // MARK: - TABLEVIEW
-extension ChatGroupDetailsVC: UITableViewDataSource {
+extension ChatGroupDetailsVC: UITableViewDataSource , UITableViewDelegate {
     public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        selectedUsers.count
+        return usersCount
     }
     public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let reuseID = TableViewCellChatUser.reuseId
@@ -225,8 +261,11 @@ extension ChatGroupDetailsVC: UITableViewDataSource {
         cell.selectedBackgroundView = nil
         return cell
     }
+    
     public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        tableView.deselectRow(at: indexPath, animated: true)
+        defer {
+            tableView.deselectRow(at: indexPath, animated: false)
+        }
     }
 }
 // MARK: - UIScrollViewDelegate

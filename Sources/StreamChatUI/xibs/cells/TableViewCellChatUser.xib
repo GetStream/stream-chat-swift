@@ -39,6 +39,9 @@
                                             <constraint firstAttribute="width" constant="17" id="YFu-wU-FYc"/>
                                             <constraint firstAttribute="width" secondItem="oRq-RN-JEU" secondAttribute="height" multiplier="1:1" id="fio-rj-adv"/>
                                         </constraints>
+                                        <userDefinedRuntimeAttributes>
+                                            <userDefinedRuntimeAttribute type="boolean" keyPath="isSkeletonable" value="YES"/>
+                                        </userDefinedRuntimeAttributes>
                                     </imageView>
                                 </subviews>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -52,29 +55,38 @@
                                     <constraint firstItem="xOV-qz-joz" firstAttribute="leading" secondItem="Fe9-qx-1da" secondAttribute="leading" id="zJ1-sg-hnh"/>
                                     <constraint firstAttribute="bottom" secondItem="xOV-qz-joz" secondAttribute="bottom" id="zty-qx-MZ8"/>
                                 </constraints>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="boolean" keyPath="isSkeletonable" value="YES"/>
+                                </userDefinedRuntimeAttributes>
                             </view>
                             <stackView opaque="NO" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="dlU-Jw-yEL">
-                                <rect key="frame" x="50" y="13" width="76" height="34"/>
+                                <rect key="frame" x="50" y="13" width="235" height="34"/>
                                 <subviews>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Name" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="puz-Tm-pnH">
-                                        <rect key="frame" x="0.0" y="0.0" width="76" height="17"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="235" height="17"/>
                                         <fontDescription key="fontDescription" style="UICTFontTextStyleHeadline"/>
                                         <nil key="textColor"/>
                                         <nil key="highlightedColor"/>
+                                        <userDefinedRuntimeAttributes>
+                                            <userDefinedRuntimeAttribute type="boolean" keyPath="isSkeletonable" value="YES"/>
+                                        </userDefinedRuntimeAttributes>
                                     </label>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Description" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ccB-ky-41b">
-                                        <rect key="frame" x="0.0" y="17" width="76" height="17"/>
+                                        <rect key="frame" x="0.0" y="17" width="235" height="17"/>
                                         <fontDescription key="fontDescription" name="SFProText-Regular" family="SF Pro Text" pointSize="14"/>
                                         <color key="textColor" systemColor="systemGrayColor"/>
                                         <nil key="highlightedColor"/>
+                                        <userDefinedRuntimeAttributes>
+                                            <userDefinedRuntimeAttribute type="boolean" keyPath="isSkeletonable" value="YES"/>
+                                        </userDefinedRuntimeAttributes>
                                     </label>
                                 </subviews>
                             </stackView>
                             <stackView opaque="NO" contentMode="scaleToFill" spacing="10" translatesAutoresizingMaskIntoConstraints="NO" id="DUP-2F-9Zm">
-                                <rect key="frame" x="266" y="21.5" width="29" height="17"/>
+                                <rect key="frame" x="295" y="30" width="0.0" height="0.0"/>
                                 <subviews>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Role" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ZYD-lS-1ay">
-                                        <rect key="frame" x="0.0" y="0.0" width="29" height="17"/>
+                                    <label hidden="YES" opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Role" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ZYD-lS-1ay">
+                                        <rect key="frame" x="0.0" y="0.0" width="0.0" height="17"/>
                                         <fontDescription key="fontDescription" name="SFProText-Regular" family="SF Pro Text" pointSize="14"/>
                                         <color key="textColor" name="AccentColor"/>
                                         <nil key="highlightedColor"/>
@@ -86,6 +98,7 @@
                         <constraints>
                             <constraint firstItem="dlU-Jw-yEL" firstAttribute="leading" secondItem="Fe9-qx-1da" secondAttribute="trailing" constant="10" id="64M-LY-Asc"/>
                             <constraint firstAttribute="height" constant="60" id="FPX-co-fGH"/>
+                            <constraint firstAttribute="trailing" secondItem="dlU-Jw-yEL" secondAttribute="trailing" priority="750" id="GEB-rg-Rup"/>
                             <constraint firstItem="Fe9-qx-1da" firstAttribute="centerY" secondItem="15d-Vn-Veq" secondAttribute="centerY" id="Goi-T1-CwG"/>
                             <constraint firstItem="DUP-2F-9Zm" firstAttribute="centerY" secondItem="15d-Vn-Veq" secondAttribute="centerY" id="LIq-Iw-aSL"/>
                             <constraint firstItem="DUP-2F-9Zm" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="dlU-Jw-yEL" secondAttribute="trailing" constant="10" id="NpR-ue-rdZ"/>
