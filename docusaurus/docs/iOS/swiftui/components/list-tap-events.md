@@ -57,3 +57,14 @@ var body: some Scene {
 ```
 
 You can keep the state in the view container that has the `ChatChannelListView` in its body. Also, you can attach alerts and sheets on the `ChatChannelListView` itself, to customize the tap behaviour.
+
+## Deep linking
+
+The SwiftUI SDK supports deep linking. For example, when you receive a push notification for a new message, you want to be navigated directly to the channel where the message was sent. In order to do this, you can initalize the `ChatChannelListView` with additional parameter `selectedChannelId`, which can be extracted from the push notification's payload.
+
+```swift
+ChatChannelListView(
+    viewFactory: DemoAppFactory.shared,
+    selectedChannelId: "someChannelId"
+)
+```
