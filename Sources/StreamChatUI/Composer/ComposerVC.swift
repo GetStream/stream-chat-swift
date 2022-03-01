@@ -563,7 +563,10 @@ open class ComposerVC: _ViewController,
     
     /// Shows a photo/media picker.
     open func showMediaPicker() {
-        present(mediaPickerVC, animated: true)
+        DispatchQueue.main.async { [weak self] in
+            guard let `self` = self else { return }
+            self.present(self.mediaPickerVC, animated: true)
+        }
     }
     
     /// Shows a document picker.

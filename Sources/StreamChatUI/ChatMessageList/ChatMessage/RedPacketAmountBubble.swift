@@ -19,8 +19,10 @@ class RedPacketAmountBubble: UITableViewCell {
     var content: ChatMessage?
     var client: ChatClient?
     public lazy var dateFormatter: DateFormatter = .makeDefault()
+    public var blockExpAction: ((URL) -> Void)?
 
     var isSender = false
+    var btnExplore: UIButton!
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -41,17 +43,17 @@ class RedPacketAmountBubble: UITableViewCell {
         viewContainer.translatesAutoresizingMaskIntoConstraints = false
         viewContainer.backgroundColor = .clear
         viewContainer.clipsToBounds = true
-        addSubview(viewContainer)
+        contentView.addSubview(viewContainer)
         NSLayoutConstraint.activate([
-            viewContainer.topAnchor.constraint(equalTo: self.topAnchor, constant: 4),
-            viewContainer.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: -4)
+            viewContainer.topAnchor.constraint(equalTo: self.contentView.topAnchor, constant: 4),
+            viewContainer.bottomAnchor.constraint(equalTo: self.contentView.bottomAnchor, constant: -4)
         ])
         if isSender {
-            viewContainer.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: cellWidth).isActive = true
-            viewContainer.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -8).isActive = true
+            viewContainer.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor, constant: cellWidth).isActive = true
+            viewContainer.trailingAnchor.constraint(equalTo: self.contentView.trailingAnchor, constant: -8).isActive = true
         } else {
-            viewContainer.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 8).isActive = true
-            viewContainer.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -cellWidth).isActive = true
+            viewContainer.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor, constant: 8).isActive = true
+            viewContainer.trailingAnchor.constraint(equalTo: self.contentView.trailingAnchor, constant: -cellWidth).isActive = true
         }
 
         subContainer = UIView()
@@ -65,7 +67,7 @@ class RedPacketAmountBubble: UITableViewCell {
             subContainer.leadingAnchor.constraint(equalTo: viewContainer.leadingAnchor, constant: 0),
             subContainer.trailingAnchor.constraint(equalTo: viewContainer.trailingAnchor, constant: 0),
         ])
-
+        
         descriptionLabel = createDescLabel()
         descriptionLabel.translatesAutoresizingMaskIntoConstraints = false
         subContainer.addSubview(descriptionLabel)
@@ -77,6 +79,20 @@ class RedPacketAmountBubble: UITableViewCell {
         ])
         descriptionLabel.transform = .mirrorY
         descriptionLabel.textAlignment = .left
+        
+        btnExplore = CustomButton()
+        btnExplore.translatesAutoresizingMaskIntoConstraints = false
+        subContainer.insertSubview(btnExplore, aboveSubview: descriptionLabel)
+        btnExplore.setTitle("", for: .normal)
+        btnExplore.backgroundColor = .clear
+        btnExplore.isUserInteractionEnabled = true
+        btnExplore.clipsToBounds = true
+
+        btnExplore.leadingAnchor.constraint(equalTo: descriptionLabel.leadingAnchor).isActive = true
+        btnExplore.trailingAnchor.constraint(equalTo: descriptionLabel.trailingAnchor).isActive = true
+        btnExplore.heightAnchor.constraint(equalToConstant: 25).isActive = true
+        btnExplore.topAnchor.constraint(equalTo: descriptionLabel.topAnchor).isActive = true
+        btnExplore.addTarget(self, action: #selector(btnTapExploreAction), for: .touchUpInside)
 
         timestampLabel = createTimestampLabel()
         timestampLabel.translatesAutoresizingMaskIntoConstraints = false
@@ -92,6 +108,15 @@ class RedPacketAmountBubble: UITableViewCell {
         timestampLabel.transform = .mirrorY
     }
 
+    @objc func btnTapExploreAction() {
+        if let txID = getExtraData()?["txId"] {
+            let rawTxId = fetchRawData(raw: txID) as? String ?? ""
+            if let blockExpURL = URL(string: "\(Constants.blockExplorer)\(rawTxId)") {
+                blockExpAction?(blockExpURL)
+            }
+        }
+    }
+    
     private func createTimestampLabel() -> UILabel {
         if timestampLabel == nil {
             timestampLabel = UILabel()
@@ -146,13 +171,25 @@ class RedPacketAmountBubble: UITableViewCell {
         }
         if let userId = extraData["userId"] {
             let strUserId = fetchRawData(raw: userId) as? String ?? ""
+            var descriptionText = ""
             if strUserId == client?.currentUserId ?? "" {
                 // I picked up other amount
-                descriptionLabel.text = "\(getCongrates(extraData)) \nYou just picked up \(getAmount(extraData)) ONE! \n\n🧧Red Packet"
+                descriptionText = "\(getCongrates(extraData)) \nYou just picked up \(getAmount(extraData)) ONE! \n\n🧧Red Packet"
+
             } else {
                 // someone pickup amount
-                descriptionLabel.text = "\(getCongrates(extraData)) \n\(getUserName(extraData)) just picked up \(getAmount(extraData)) ONE! \n\n🧧Red Packet"
+                descriptionText = "\(getCongrates(extraData)) \n\(getUserName(extraData)) just picked up \(getAmount(extraData)) ONE! \n\n🧧Red Packet"
             }
+            
+            let imageAttachment = NSTextAttachment()
+            if #available(iOS 13.0, *) {
+                imageAttachment.image = Appearance.default.images.arrowUpRightSquare.withTintColor(.white)
+            } else {
+                // Fallback on earlier versions
+            }
+            let fullString = NSMutableAttributedString(string: descriptionText + "  ")
+            fullString.append(NSAttributedString(attachment: imageAttachment))
+            descriptionLabel.attributedText = fullString
         }
     }
 
