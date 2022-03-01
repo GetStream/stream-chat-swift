@@ -242,7 +242,7 @@
     <entity name="QueuedRequestDTO" representedClassName="QueuedRequestDTO" syncable="YES">
         <attribute name="date" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="endpoint" attributeType="Binary"/>
-        <attribute name="id" optional="YES" attributeType="String"/>
+        <attribute name="id" attributeType="String"/>
         <fetchIndex name="date">
             <fetchIndexElement property="date" type="Binary" order="ascending"/>
         </fetchIndex>
