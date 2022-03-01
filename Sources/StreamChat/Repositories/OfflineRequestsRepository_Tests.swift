@@ -81,7 +81,7 @@ final class OfflineRequestsRepository_Tests: XCTestCase {
         XCTAssertEqual(apiClient.recoveryRequest_allRecordedCalls.count, 5)
         apiClient.recoveryRequest_allRecordedCalls.forEach { endpoint, completion in
             let completion = completion as? ((Result<Data, Error>) -> Void)
-            if endpoint.path == "thepath2" {
+            if case let .sendMessage(id) = endpoint.path, id.id == "request2" {
                 completion?(.failure(ClientError.ConnectionError()))
             } else {
                 completion?(.success(Data()))
@@ -99,7 +99,7 @@ final class OfflineRequestsRepository_Tests: XCTestCase {
             let id = "request\(index)"
             let date = Date()
             let endpoint = Endpoint<EmptyResponse>(
-                path: "thepath\(index)",
+                path: .sendMessage(.init(type: .messaging, id: id)),
                 method: .post,
                 queryItems: nil,
                 requiresConnectionId: true,
@@ -124,7 +124,7 @@ final class OfflineRequestsRepository_Tests: XCTestCase {
 
     func test_queueOfflineRequestNotWanted() {
         let endpoint = DataEndpoint(
-            path: "event",
+            path: .channelEvent("id"),
             method: .post,
             queryItems: nil,
             requiresConnectionId: true,
@@ -142,7 +142,7 @@ final class OfflineRequestsRepository_Tests: XCTestCase {
 
     func test_queueOfflineRequestWanted() {
         let endpoint = DataEndpoint(
-            path: "something",
+            path: .sendMessage(.unique),
             method: .post,
             queryItems: nil,
             requiresConnectionId: true,

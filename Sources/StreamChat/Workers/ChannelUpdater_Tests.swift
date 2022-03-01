@@ -37,7 +37,7 @@ class ChannelUpdater_Tests: XCTestCase {
         let query = ChannelQuery(cid: .unique)
         channelUpdater.update(channelQuery: query)
         
-        let referenceEndpoint: Endpoint<ChannelPayload> = .channel(query: query)
+        let referenceEndpoint: Endpoint<ChannelPayload> = .updateChannel(query: query)
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
     }
     
@@ -934,7 +934,7 @@ class ChannelUpdater_Tests: XCTestCase {
         
         var query = ChannelQuery(cid: cid)
         query.options = .all
-        let referenceEndpoint: Endpoint<ChannelPayload> = .channel(query: query)
+        let referenceEndpoint: Endpoint<ChannelPayload> = .updateChannel(query: query)
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
     }
     

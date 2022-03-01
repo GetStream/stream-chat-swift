@@ -145,6 +145,7 @@ class RefetchChannelListQueryOperation: AsyncOperation {
 class ExecutePendingOfflineActions: AsyncOperation {
     init(offlineRequestsRepository: OfflineRequestsRepository) {
         super.init(maxRetries: syncOperationsMaximumRetries) { [weak offlineRequestsRepository] _, done in
+            log.info("5. Running offline actions requests", subsystems: .offlineSupport)
             offlineRequestsRepository?.runQueuedRequests {
                 done(.continue)
             }

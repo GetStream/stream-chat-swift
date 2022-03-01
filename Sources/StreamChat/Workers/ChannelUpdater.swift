@@ -24,8 +24,10 @@ class ChannelUpdater: Worker {
         completion: ((Result<ChannelPayload, Error>) -> Void)? = nil
     ) {
         let clearMessageHistory = channelQuery.pagination?.parameter == nil
-
-        apiClient.request(endpoint: .channel(query: channelQuery)) { (result) in
+        let isChannelCreate = channelCreatedCallback != nil
+        apiClient.request(
+            endpoint: isChannelCreate ? .createChannel(query: channelQuery) : .updateChannel(query: channelQuery)
+        ) { (result) in
             do {
                 let payload = try result.get()
                 channelCreatedCallback?(payload.channel.cid)
@@ -303,7 +305,7 @@ class ChannelUpdater: Worker {
     func startWatching(cid: ChannelId, completion: ((Error?) -> Void)? = nil) {
         var query = ChannelQuery(cid: cid)
         query.options = .all
-        apiClient.request(endpoint: .channel(query: query)) {
+        apiClient.request(endpoint: .updateChannel(query: query)) {
             completion?($0.error)
         }
     }

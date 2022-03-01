@@ -10,7 +10,7 @@ final class Endpoint_Tests: XCTestCase {
 
     func test_endpointWithoutQueryItemsNorBodyEncodingAndDecoding() {
         let endpoint = Endpoint<SomethingDecodable>.init(
-            path: "some-path",
+            path: .guest,
             method: .post,
             queryItems: nil,
             requiresConnectionId: false,
@@ -29,7 +29,7 @@ final class Endpoint_Tests: XCTestCase {
             return
         }
 
-        XCTAssertEqual(decodedEndpoint.path, "some-path")
+        XCTAssertEqual(decodedEndpoint.path.value, "guest")
         XCTAssertEqual(decodedEndpoint.method, .post)
         XCTAssertNil(decodedEndpoint.queryItems)
         XCTAssertEqual(decodedEndpoint.requiresConnectionId, false)
@@ -39,7 +39,7 @@ final class Endpoint_Tests: XCTestCase {
 
     func test_endpointWithBodyEncodingAndDecoding() {
         let endpoint = Endpoint<SomethingDecodable>.init(
-            path: "some-path",
+            path: .guest,
             method: .post,
             queryItems: nil,
             requiresConnectionId: false,
@@ -58,7 +58,7 @@ final class Endpoint_Tests: XCTestCase {
             return
         }
 
-        XCTAssertEqual(decodedEndpoint.path, "some-path")
+        XCTAssertEqual(decodedEndpoint.path.value, "guest")
         XCTAssertEqual(decodedEndpoint.method, .post)
         XCTAssertNil(decodedEndpoint.queryItems)
         XCTAssertEqual(decodedEndpoint.requiresConnectionId, false)
@@ -75,7 +75,7 @@ final class Endpoint_Tests: XCTestCase {
 
     func test_endpointWithQueryItemsEncodingAndDecoding() {
         let endpoint = Endpoint<SomethingDecodable>.init(
-            path: "some-path",
+            path: .guest,
             method: .get,
             queryItems: ["QueryHello": 2],
             requiresConnectionId: false,
@@ -94,7 +94,7 @@ final class Endpoint_Tests: XCTestCase {
             return
         }
 
-        XCTAssertEqual(decodedEndpoint.path, "some-path")
+        XCTAssertEqual(decodedEndpoint.path.value, "guest")
         XCTAssertEqual(decodedEndpoint.method, .get)
         XCTAssertNil(decodedEndpoint.body)
         XCTAssertEqual(decodedEndpoint.requiresConnectionId, false)
@@ -111,7 +111,7 @@ final class Endpoint_Tests: XCTestCase {
 
     func test_endpointEncodingAndDecodingToEmptyResponse() {
         let endpoint = Endpoint<SomethingDecodable>.init(
-            path: "some-path",
+            path: .guest,
             method: .post,
             queryItems: nil,
             requiresConnectionId: false,
@@ -130,7 +130,7 @@ final class Endpoint_Tests: XCTestCase {
             return
         }
 
-        XCTAssertEqual(decodedEndpoint.path, "some-path")
+        XCTAssertEqual(decodedEndpoint.path.value, "guest")
         XCTAssertEqual(decodedEndpoint.method, .post)
         XCTAssertNil(decodedEndpoint.queryItems)
         XCTAssertEqual(decodedEndpoint.requiresConnectionId, false)

@@ -52,24 +52,25 @@ class OfflineRequestsRepository {
         let database = self.database
         let group = DispatchGroup()
         for (id, endpoint) in pendingActions {
+            let leave = {
+                group.leave()
+            }
+            let deleteQueuedRequestAndComplete = {
+                database.write({ session in
+                    session.deleteQueuedRequest(id: id)
+                }, completion: { _ in leave() })
+            }
+
             guard let endpoint = try? JSONDecoder.stream.decode(DataEndpoint.self, from: endpoint) else {
-                log.error("Could not dencode queued request \(id)", subsystems: .offlineSupport)
+                log.error("Could not decode queued request \(id)", subsystems: .offlineSupport)
+                deleteQueuedRequestAndComplete()
                 continue
             }
-            log.info("Executing queued offline request for /\(endpoint.path)", subsystems: .offlineSupport)
 
             group.enter()
+            log.info("Executing queued offline request for /\(endpoint.path)", subsystems: .offlineSupport)
             apiClient.recoveryRequest(endpoint: endpoint) { [weak self] result in
-                let leave = {
-                    group.leave()
-                }
-                let deleteQueuedRequestAndComplete = {
-                    log.info("Completed queued offline request /\(endpoint.path)", subsystems: .offlineSupport)
-                    database.write({ session in
-                        session.deleteQueuedRequest(id: id)
-                    }, completion: { _ in leave() })
-                }
-
+                log.info("Completed queued offline request /\(endpoint.path)", subsystems: .offlineSupport)
                 switch result {
                 case let .success(data):
                     self?.performDatabaseRecoveryActionsUponSuccess(
@@ -101,25 +102,18 @@ class OfflineRequestsRepository {
         data: Data,
         completion: @escaping () -> Void
     ) {
-        // TODO: Temporary String check. We only process the response for sent messages
-        guard endpoint.path.hasSuffix("/message") else {
-            completion()
-            return
-        }
+        // TODO:
         completion()
     }
 
     func queueOfflineRequest(endpoint: DataEndpoint, completion: (() -> Void)? = nil) {
-        // TODO: Temporary String check. We are ignoring events for now
-        guard !endpoint.path.hasSuffix("event") else {
+        guard endpoint.shouldBeQueuedOffline else {
             completion?()
             return
         }
 
         let date = Date()
-        let database = self.database
-
-        retryQueue.async {
+        retryQueue.async { [database] in
             guard let data = try? JSONEncoder.stream.encode(endpoint) else {
                 log.error("Could not encode queued request for /\(endpoint.path)", subsystems: .offlineSupport)
                 completion?()

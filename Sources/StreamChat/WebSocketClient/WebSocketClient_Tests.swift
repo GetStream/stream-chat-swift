@@ -308,7 +308,7 @@ class WebSocketClient_Tests: XCTestCase {
         
         // Simulate connect endpoint is updated (i.e. new user is logged in)
         let newEndpoint = Endpoint<EmptyResponse>(
-            path: .unique,
+            path: .guest,
             method: .get,
             queryItems: nil,
             requiresConnectionId: false,
@@ -329,7 +329,7 @@ class WebSocketClient_Tests: XCTestCase {
         webSocketClient.connect()
         XCTAssertEqual(requestEncoder.encodeRequest_endpoints.first, AnyEndpoint(newEndpoint))
         
-        // Check the engige got recreated
+        // Check the engine got recreated
         XCTAssert(engine !== oldEngine)
         
         AssertAsync {

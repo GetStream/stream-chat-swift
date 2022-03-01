@@ -76,7 +76,7 @@ class APIClient_Tests: XCTestCase {
         encoder.encodeRequest = .success(request)
         
         // Create a test endpoint
-        let testEndpoint = Endpoint<Data>(path: .unique, method: .post, queryItems: nil, requiresConnectionId: false, body: nil)
+        let testEndpoint = Endpoint<Data>(path: .guest, method: .post, queryItems: nil, requiresConnectionId: false, body: nil)
         
         // Create a request
         waitUntil { done in
@@ -423,14 +423,15 @@ class APIClient_Tests: XCTestCase {
         decoder.decodeRequestResponse = .success(testUser)
         let lastRequestExpectation = expectation(description: "Last request completed")
         (1...5).forEach { index in
-            self.apiClient.recoveryRequest(endpoint: Endpoint<TestUser>.mock(path: "\(index)")) { _ in
+            let channelId = ChannelId(type: .messaging, id: "\(index)")
+            self.apiClient.recoveryRequest(endpoint: Endpoint<TestUser>.mock(path: .sendMessage(channelId))) { _ in
                 if index == 5 {
                     lastRequestExpectation.fulfill()
                 }
             }
         }
 
-        waitForExpectations(timeout: 0.1, handler: nil)
+        waitForExpectations(timeout: 0.5, handler: nil)
         XCTEnsureRequestsWereExecuted(times: 5)
     }
 
@@ -469,12 +470,13 @@ class APIClient_Tests: XCTestCase {
             }
         }
         (1...5).forEach { index in
-            self.apiClient.recoveryRequest(endpoint: Endpoint<TestUser>.mock(path: "\(index)")) { _ in
+            let channelId = ChannelId(type: .messaging, id: "\(index)")
+            self.apiClient.recoveryRequest(endpoint: Endpoint<TestUser>.mock(path: .sendMessage(channelId))) { _ in
                 testBlock(index)
             }
         }
 
-        waitForExpectations(timeout: 0.1, handler: nil)
+        waitForExpectations(timeout: 0.5, handler: nil)
         XCTEnsureRequestsWereExecuted(times: 5)
     }
 
@@ -500,7 +502,8 @@ class APIClient_Tests: XCTestCase {
         let lastRequestExpectation = expectation(description: "Last request completed")
         var results: [Result<TestUser, Error>] = []
         (1...5).forEach { index in
-            self.apiClient.recoveryRequest(endpoint: Endpoint<TestUser>.mock(path: "\(index)")) { result in
+            let channelId = ChannelId(type: .messaging, id: "\(index)")
+            self.apiClient.recoveryRequest(endpoint: Endpoint<TestUser>.mock(path: .sendMessage(channelId))) { result in
                 results.append(result)
                 if index == 5 {
                     lastRequestExpectation.fulfill()
@@ -513,7 +516,7 @@ class APIClient_Tests: XCTestCase {
         // 3 tries, token failure was returned until now
         // -> 1 unique | 3 total
         XCTEnsureRequestsWereExecuted(times: 3)
-        let requestPaths = encoder.encodeRequest_endpoints.map(\.path)
+        let requestPaths = encoder.encodeRequest_endpoints.map(\.path.value)
         XCTAssertEqual(requestPaths.count, 3)
         XCTAssertEqual(Set(requestPaths).count, 1)
 
@@ -529,7 +532,7 @@ class APIClient_Tests: XCTestCase {
         // Requests 2-5: 1 success each = 4
         // -> 5 unique | 8 total
         XCTEnsureRequestsWereExecuted(times: 8)
-        let totalRequests = encoder.encodeRequest_endpoints.map(\.path)
+        let totalRequests = encoder.encodeRequest_endpoints.map(\.path.value)
         XCTAssertEqual(totalRequests.count, 8)
         XCTAssertEqual(Set(totalRequests).count, 5)
     }
@@ -563,7 +566,7 @@ class APIClient_Tests: XCTestCase {
 }
 
 extension Endpoint {
-    static func mock(path: String = .unique) -> Endpoint<ResponseType> {
+    static func mock(path: EndpointPath = .guest) -> Endpoint<ResponseType> {
         .init(path: path, method: .post, queryItems: nil, requiresConnectionId: false, body: nil)
     }
 }
@@ -656,7 +659,7 @@ extension AnyEncodable: Equatable {
 }
 
 struct AnyEndpoint: Equatable {
-    let path: String
+    let path: EndpointPath
     let method: EndpointMethod
     let queryItems: AnyEncodable?
     let requiresConnectionId: Bool
@@ -673,7 +676,7 @@ struct AnyEndpoint: Equatable {
     }
     
     static func == (lhs: AnyEndpoint, rhs: AnyEndpoint) -> Bool {
-        lhs.path == rhs.path
+        lhs.path.value == rhs.path.value
             && lhs.method == rhs.method
             && lhs.queryItems == rhs.queryItems
             && lhs.requiresConnectionId == rhs.requiresConnectionId
