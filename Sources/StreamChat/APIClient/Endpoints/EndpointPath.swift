@@ -26,7 +26,7 @@ enum EndpointPath: Codable {
     case channelEvent(String)
     case stopWatchingChannel(String)
     case pinnedMessages(String)
-    case uploadAttachment(String, String)
+    case uploadAttachment(channelId: String, type: String)
 
     case sendMessage(ChannelId)
     case message(MessageId)
