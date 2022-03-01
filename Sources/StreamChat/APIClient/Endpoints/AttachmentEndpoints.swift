@@ -7,7 +7,7 @@ import Foundation
 extension Endpoint {
     static func uploadAttachment(with cid: ChannelId, type: AttachmentType) -> Endpoint<FileUploadPayload> {
         .init(
-            path: .uploadAttachment(cid.apiPath, type == .image ? "image" : "file"),
+            path: .uploadAttachment(channelId: cid.apiPath, type: type == .image ? "image" : "file"),
             method: .post,
             queryItems: nil,
             requiresConnectionId: false,
