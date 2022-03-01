@@ -37,7 +37,11 @@ class QueuedRequestDTO_Tests: XCTestCase {
         }
 
         let allRequests = QueuedRequestDTO.loadAllPendingRequests(context: database.viewContext)
+
+        // We should only have one request stored
         XCTAssertEqual(allRequests.count, 1)
+
+        // We check the stored request has all the expected fields
         let request = allRequests.first
         XCTAssertEqual(request?.id, id)
         XCTAssertEqual(request?.date, date)
@@ -49,6 +53,8 @@ class QueuedRequestDTO_Tests: XCTestCase {
         XCTAssertNil(databaseEndpoint.queryItems)
         XCTAssertTrue(databaseEndpoint.requiresConnectionId)
         XCTAssertFalse(databaseEndpoint.requiresToken)
+
+        // We make sure decoding the body gives us the original body
         let databaseEndpointBodyData = try XCTUnwrap(databaseEndpoint.body as? Data)
         try XCTAssertEqual(
             JSONDecoder.stream.decode([String: Int].self, from: databaseEndpointBodyData),

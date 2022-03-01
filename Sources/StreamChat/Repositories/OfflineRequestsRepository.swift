@@ -27,7 +27,7 @@ class OfflineRequestsRepository {
     let apiClient: APIClient
 
     /// Serial queue used to enqueue pending requests one after another
-    private let retryQueue = DispatchQueue(label: "com.stream.queue-requests")
+    private let retryQueue = DispatchQueue(label: "io.getstream.queue-requests")
 
     init(database: DatabaseContainer, apiClient: APIClient) {
         self.database = database
@@ -62,6 +62,7 @@ class OfflineRequestsRepository {
             }
 
             guard let endpoint = try? JSONDecoder.stream.decode(DataEndpoint.self, from: endpoint) else {
+                log.error("Could not decode queued request \(id)", subsystems: .offlineSupport)
                 deleteQueuedRequestAndComplete()
                 continue
             }
@@ -114,9 +115,11 @@ class OfflineRequestsRepository {
         let date = Date()
         retryQueue.async { [database] in
             guard let data = try? JSONEncoder.stream.encode(endpoint) else {
+                log.error("Could not encode queued request for /\(endpoint.path)", subsystems: .offlineSupport)
                 completion?()
                 return
             }
+
             database.write { _ in
                 QueuedRequestDTO.createRequest(date: date, endpoint: data, context: database.writableContext)
                 log.info("Queued request for /\(endpoint.path)", subsystems: .offlineSupport)
