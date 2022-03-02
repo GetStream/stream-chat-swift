@@ -63,7 +63,7 @@ struct DefaultRequestEncoder: RequestEncoder {
     let baseURL: URL
     let apiKey: APIKey
 
-    private let waiterTimeout: TimeInterval = 60
+    private let waiterTimeout: TimeInterval = 10
     weak var connectionDetailsProviderDelegate: ConnectionDetailsProviderDelegate?
     
     func encodeRequest<ResponsePayload: Decodable>(
@@ -135,7 +135,9 @@ struct DefaultRequestEncoder: RequestEncoder {
         var waiterToken: WaiterToken?
         let timer = DefaultTimer
             .schedule(timeInterval: waiterTimeout, queue: .global()) { [weak connectionDetailsProviderDelegate] in
-                defer { completion(.failure(missingTokenError)) }
+                // We complete with a success to account for the most probable case for the timeout: No connection.
+                // That way, when reaching the APIClient, we would properly report a connection error.
+                defer { completion(.success(request)) }
                 guard let waiterToken = waiterToken else { return }
                 connectionDetailsProviderDelegate?.invalidateTokenWaiter(waiterToken)
             }
@@ -180,7 +182,9 @@ struct DefaultRequestEncoder: RequestEncoder {
         var waiterToken: WaiterToken?
         let timer = DefaultTimer
             .schedule(timeInterval: waiterTimeout, queue: .global()) { [weak connectionDetailsProviderDelegate] in
-                defer { completion(.failure(missingConnectionIdError)) }
+                // We complete with a success to account for the most probable case for the timeout: No connection.
+                // That way, when reaching the APIClient, we would properly report a connection error.
+                defer { completion(.success(request)) }
                 guard let waiterToken = waiterToken else { return }
                 connectionDetailsProviderDelegate?.invalidateConnectionIdWaiter(waiterToken)
             }
