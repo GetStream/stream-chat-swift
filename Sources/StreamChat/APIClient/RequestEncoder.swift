@@ -63,6 +63,14 @@ struct DefaultRequestEncoder: RequestEncoder {
     let baseURL: URL
     let apiKey: APIKey
 
+    /// The most probable reason why a RequestEncoder can timeout when waiting for token or connectionId is because there's no connection.
+    /// When returning an error, it will just fail without giving an opportunity to know if the timeout occurred because of a networking problem.
+    /// Instead, now, returning a success, even without the needed token/connectionId, it will account for this case and instead will let the APIClient
+    /// return a connection error if needed.
+    /// That way, the request can be requeued, and we give a much better experience.
+    ///
+    /// On the other hand, any big number for a timeout here would be "to much". In normal situations, the requests should be back in less than a second,
+    /// otherwise we have a connection problem, which is handled as described above.
     private let waiterTimeout: TimeInterval = 10
     weak var connectionDetailsProviderDelegate: ConnectionDetailsProviderDelegate?
     

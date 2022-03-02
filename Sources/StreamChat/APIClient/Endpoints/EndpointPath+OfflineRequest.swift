@@ -7,9 +7,10 @@ import Foundation
 extension EndpointPath {
     var shouldBeQueuedOffline: Bool {
         switch self {
-        case .createChannel, .sendMessage, .editMessage, .deleteMessage, .addReaction, .deleteReaction:
+        case .sendMessage, .editMessage, .deleteMessage, .addReaction, .deleteReaction:
             return true
-        case .connect, .sync, .users, .guest, .members, .search, .devices, .channels, .updateChannel, .deleteChannel,
+        case .createChannel, .connect, .sync, .users, .guest, .members, .search, .devices, .channels, .updateChannel,
+             .deleteChannel,
              .channelUpdate, .muteChannel, .showChannel, .truncateChannel, .markChannelRead, .markAllChannelsRead,
              .channelEvent, .stopWatchingChannel, .pinnedMessages, .uploadAttachment, .message, .replies, .reactions,
              .messageAction, .banMember, .flagUser, .flagMessage, .muteUser:

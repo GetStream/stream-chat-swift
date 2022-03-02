@@ -20,8 +20,10 @@ class CreateChatViewController: UIViewController {
                   let controller = channelController else { return }
             // Create the Channel on backend
             controller.synchronize { error in
-                // TODO: handle error
-                if let error = error { print("###", error) }
+                if let error = error {
+                    self.presentAlert(title: "Error when creating the channel", message: error.localizedDescription)
+                    return
+                }
                 
                 // Send the message
                 super.createNewMessage(text: text)
