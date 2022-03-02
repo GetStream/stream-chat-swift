@@ -463,41 +463,49 @@ class RequestEncoder_Tests: XCTestCase {
 
 private class TestConnectionDetailsProviderDelegate: ConnectionDetailsProviderDelegate {
     @Atomic var token: Token?
-    @Atomic var tokenWaiters: [(Token?) -> Void] = []
+    @Atomic var tokenWaiters: [String: (Token?) -> Void] = [:]
 
     @Atomic var connectionId: ConnectionId?
-    @Atomic var connectionWaiters: [(ConnectionId?) -> Void] = []
+    @Atomic var connectionWaiters: [String: (ConnectionId?) -> Void] = [:]
     
-    func provideConnectionId(completion: @escaping (ConnectionId?) -> Void) {
+    func provideConnectionId(completion: @escaping (ConnectionId?) -> Void) -> WaiterToken {
+        let waiterToken = String.newUniqueId
         _connectionWaiters.mutate {
-            $0.append(completion)
+            $0[waiterToken] = completion
         }
 
         if let connectionId = connectionId {
             completion(connectionId)
         }
+        return waiterToken
     }
 
-    func provideToken(completion: @escaping (Token?) -> Void) {
+    func provideToken(completion: @escaping (Token?) -> Void) -> WaiterToken {
+        let waiterToken = String.newUniqueId
         _tokenWaiters.mutate {
-            $0.append(completion)
+            $0[waiterToken] = completion
         }
 
         if let token = token {
             completion(token)
         }
+        return waiterToken
     }
+
+    func invalidateTokenWaiter(_ waiter: WaiterToken) {}
+
+    func invalidateConnectionIdWaiter(_ waiter: WaiterToken) {}
 
     func completeConnectionIdWaiters(passing connectionId: String?) {
         _connectionWaiters.mutate { waiters in
-            waiters.forEach { $0(connectionId) }
+            waiters.forEach { $0.value(connectionId) }
             waiters.removeAll()
         }
     }
 
     func completeTokenWaiters(passing token: Token?) {
         _tokenWaiters.mutate { waiters in
-            waiters.forEach { $0(token) }
+            waiters.forEach { $0.value(token) }
             waiters.removeAll()
         }
     }

@@ -1371,12 +1371,12 @@ final class MessageUpdater_Tests: XCTestCase {
             return
         }
 
-        XCTAssertEqual(reactionReloaded.localState, .unknown)
+        XCTAssertEqual(reactionReloaded.localState, .deletingFailed)
     }
 
     // MARK: - Pinning message
 
-    func test_pinMessage_propogates_MessageDoesNotExist_Error() throws {
+    func test_pinMessage_propagates_MessageDoesNotExist_Error() throws {
         try database.createCurrentUser()
 
         let completionError = try waitFor {
