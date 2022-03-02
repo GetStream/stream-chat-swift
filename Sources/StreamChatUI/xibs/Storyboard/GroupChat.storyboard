@@ -866,117 +866,99 @@
                                         </constraints>
                                     </view>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="l5b-oG-8bd">
-                                        <rect key="frame" x="0.0" y="132" width="414" height="447"/>
+                                        <rect key="frame" x="0.0" y="132" width="414" height="620"/>
                                         <subviews>
                                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="K42-ig-SD5">
-                                                <rect key="frame" x="0.0" y="0.0" width="414" height="442"/>
+                                                <rect key="frame" x="0.0" y="0.0" width="414" height="615"/>
                                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                             </tableView>
-                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="eIj-kh-92z">
-                                                <rect key="frame" x="301" y="413" width="93" height="34"/>
-                                                <fontDescription key="fontDescription" name="SFProDisplay-Bold" family="SF Pro Display" pointSize="15"/>
-                                                <inset key="contentEdgeInsets" minX="8" minY="8" maxX="8" maxY="8"/>
-                                                <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
-                                                <state key="normal" title="Show more">
-                                                    <color key="titleColor" name="timelessBlue"/>
-                                                </state>
-                                                <connections>
-                                                    <action selector="showMoreButtonAction:" destination="QuX-hB-SnA" eventType="touchUpInside" id="Gyf-8i-g1c"/>
-                                                </connections>
-                                            </button>
                                         </subviews>
                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <constraints>
-                                            <constraint firstAttribute="bottom" secondItem="eIj-kh-92z" secondAttribute="bottom" id="ARD-pL-ugj"/>
                                             <constraint firstItem="K42-ig-SD5" firstAttribute="leading" secondItem="l5b-oG-8bd" secondAttribute="leading" id="LDe-Gm-n1K"/>
-                                            <constraint firstAttribute="trailing" secondItem="eIj-kh-92z" secondAttribute="trailing" constant="20" id="dKt-Lt-lHu"/>
                                             <constraint firstAttribute="bottom" secondItem="K42-ig-SD5" secondAttribute="bottom" constant="5" id="leX-9P-bGb"/>
                                             <constraint firstItem="K42-ig-SD5" firstAttribute="top" secondItem="l5b-oG-8bd" secondAttribute="top" id="pTa-ys-wOp"/>
                                             <constraint firstAttribute="trailing" secondItem="K42-ig-SD5" secondAttribute="trailing" id="suw-z4-CdB"/>
                                         </constraints>
                                     </view>
-                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ZgH-Tz-i59">
-                                        <rect key="frame" x="0.0" y="579" width="414" height="9"/>
+                                    <view hidden="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ZgH-Tz-i59">
+                                        <rect key="frame" x="0.0" y="752" width="414" height="9"/>
                                         <color key="backgroundColor" name="ChatNavColor"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="9" id="8rQ-4t-Cgv"/>
                                         </constraints>
                                     </view>
-                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="dtf-DG-LVF">
-                                        <rect key="frame" x="0.0" y="588" width="414" height="40"/>
+                                    <stackView hidden="YES" opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="9re-e4-fAr">
+                                        <rect key="frame" x="0.0" y="752" width="414" height="164"/>
                                         <subviews>
-                                            <stackView opaque="NO" contentMode="scaleToFill" spacing="10" translatesAutoresizingMaskIntoConstraints="NO" id="E7x-yt-chs">
-                                                <rect key="frame" x="47" y="10" width="320" height="29"/>
+                                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="dtf-DG-LVF">
+                                                <rect key="frame" x="0.0" y="0.0" width="414" height="40"/>
                                                 <subviews>
-                                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Mrf-mc-2aD">
-                                                        <rect key="frame" x="0.0" y="0.0" width="100" height="29"/>
+                                                    <stackView opaque="NO" contentMode="scaleToFill" spacing="10" translatesAutoresizingMaskIntoConstraints="NO" id="E7x-yt-chs">
+                                                        <rect key="frame" x="47" y="10" width="320" height="29"/>
+                                                        <subviews>
+                                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Mrf-mc-2aD">
+                                                                <rect key="frame" x="0.0" y="0.0" width="100" height="29"/>
+                                                                <constraints>
+                                                                    <constraint firstAttribute="width" constant="100" id="ydF-fi-chW"/>
+                                                                </constraints>
+                                                                <fontDescription key="fontDescription" name="SFProText-Regular" family="SF Pro Text" pointSize="14"/>
+                                                                <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
+                                                                <state key="normal" title="Media">
+                                                                    <color key="titleColor" white="1" alpha="0.29887390139999997" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                                </state>
+                                                            </button>
+                                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="OWw-n9-KNI">
+                                                                <rect key="frame" x="110" y="0.0" width="100" height="29"/>
+                                                                <constraints>
+                                                                    <constraint firstAttribute="width" constant="100" id="1QO-j2-qut"/>
+                                                                </constraints>
+                                                                <fontDescription key="fontDescription" name="SFProText-Regular" family="SF Pro Text" pointSize="14"/>
+                                                                <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
+                                                                <state key="normal" title="Files">
+                                                                    <color key="titleColor" white="1" alpha="0.29887390139999997" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                                </state>
+                                                            </button>
+                                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="vfW-h0-1MB">
+                                                                <rect key="frame" x="220" y="0.0" width="100" height="29"/>
+                                                                <constraints>
+                                                                    <constraint firstAttribute="width" constant="100" id="kag-6f-1xb"/>
+                                                                </constraints>
+                                                                <fontDescription key="fontDescription" name="SFProText-Regular" family="SF Pro Text" pointSize="14"/>
+                                                                <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
+                                                                <state key="normal" title="Links">
+                                                                    <color key="titleColor" white="1" alpha="0.29887390139999997" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                                </state>
+                                                            </button>
+                                                        </subviews>
+                                                    </stackView>
+                                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="pfv-ZC-TCv">
+                                                        <rect key="frame" x="77" y="39" width="40" height="1"/>
+                                                        <color key="backgroundColor" name="timelessBlue"/>
                                                         <constraints>
-                                                            <constraint firstAttribute="width" constant="100" id="ydF-fi-chW"/>
+                                                            <constraint firstAttribute="width" constant="40" id="6Ux-Us-Krw"/>
+                                                            <constraint firstAttribute="height" constant="1" id="DKl-YW-HDi"/>
                                                         </constraints>
-                                                        <fontDescription key="fontDescription" name="SFProText-Regular" family="SF Pro Text" pointSize="14"/>
-                                                        <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
-                                                        <state key="normal" title="Media">
-                                                            <color key="titleColor" white="1" alpha="0.29887390139999997" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                                        </state>
-                                                        <connections>
-                                                            <action selector="mediaButtonAction:" destination="QuX-hB-SnA" eventType="touchUpInside" id="Muw-UN-5cO"/>
-                                                        </connections>
-                                                    </button>
-                                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="OWw-n9-KNI">
-                                                        <rect key="frame" x="110" y="0.0" width="100" height="29"/>
-                                                        <constraints>
-                                                            <constraint firstAttribute="width" constant="100" id="1QO-j2-qut"/>
-                                                        </constraints>
-                                                        <fontDescription key="fontDescription" name="SFProText-Regular" family="SF Pro Text" pointSize="14"/>
-                                                        <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
-                                                        <state key="normal" title="Files">
-                                                            <color key="titleColor" white="1" alpha="0.29887390139999997" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                                        </state>
-                                                        <connections>
-                                                            <action selector="fileButtonAction:" destination="QuX-hB-SnA" eventType="touchUpInside" id="RjS-fj-HSe"/>
-                                                        </connections>
-                                                    </button>
-                                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="vfW-h0-1MB">
-                                                        <rect key="frame" x="220" y="0.0" width="100" height="29"/>
-                                                        <constraints>
-                                                            <constraint firstAttribute="width" constant="100" id="kag-6f-1xb"/>
-                                                        </constraints>
-                                                        <fontDescription key="fontDescription" name="SFProText-Regular" family="SF Pro Text" pointSize="14"/>
-                                                        <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
-                                                        <state key="normal" title="Links">
-                                                            <color key="titleColor" white="1" alpha="0.29887390139999997" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                                        </state>
-                                                        <connections>
-                                                            <action selector="linkButtonAction:" destination="QuX-hB-SnA" eventType="touchUpInside" id="6Pc-oy-bGp"/>
-                                                        </connections>
-                                                    </button>
+                                                    </view>
                                                 </subviews>
-                                            </stackView>
-                                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="pfv-ZC-TCv">
-                                                <rect key="frame" x="77" y="39" width="40" height="1"/>
-                                                <color key="backgroundColor" name="timelessBlue"/>
+                                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                 <constraints>
-                                                    <constraint firstAttribute="width" constant="40" id="6Ux-Us-Krw"/>
-                                                    <constraint firstAttribute="height" constant="1" id="DKl-YW-HDi"/>
+                                                    <constraint firstAttribute="bottom" secondItem="pfv-ZC-TCv" secondAttribute="bottom" id="Pyq-zU-qeI"/>
+                                                    <constraint firstItem="E7x-yt-chs" firstAttribute="centerX" secondItem="dtf-DG-LVF" secondAttribute="centerX" id="Vba-i9-KOU"/>
+                                                    <constraint firstItem="E7x-yt-chs" firstAttribute="top" secondItem="dtf-DG-LVF" secondAttribute="top" constant="10" id="bN4-80-GSF"/>
+                                                    <constraint firstAttribute="height" constant="40" id="oJZ-Ke-UPt"/>
+                                                    <constraint firstItem="pfv-ZC-TCv" firstAttribute="centerX" secondItem="Mrf-mc-2aD" secondAttribute="centerX" id="vpM-Gg-8B3"/>
+                                                </constraints>
+                                            </view>
+                                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="D4V-lX-JAA">
+                                                <rect key="frame" x="0.0" y="40" width="414" height="124"/>
+                                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="height" constant="124" id="7Nh-1H-4Uv"/>
                                                 </constraints>
                                             </view>
                                         </subviews>
-                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                        <constraints>
-                                            <constraint firstAttribute="bottom" secondItem="pfv-ZC-TCv" secondAttribute="bottom" id="Pyq-zU-qeI"/>
-                                            <constraint firstItem="E7x-yt-chs" firstAttribute="centerX" secondItem="dtf-DG-LVF" secondAttribute="centerX" id="Vba-i9-KOU"/>
-                                            <constraint firstItem="E7x-yt-chs" firstAttribute="top" secondItem="dtf-DG-LVF" secondAttribute="top" constant="10" id="bN4-80-GSF"/>
-                                            <constraint firstAttribute="height" constant="40" id="oJZ-Ke-UPt"/>
-                                            <constraint firstItem="pfv-ZC-TCv" firstAttribute="centerX" secondItem="Mrf-mc-2aD" secondAttribute="centerX" id="vpM-Gg-8B3"/>
-                                        </constraints>
-                                    </view>
-                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="D4V-lX-JAA">
-                                        <rect key="frame" x="0.0" y="628" width="414" height="124"/>
-                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                        <constraints>
-                                            <constraint firstAttribute="height" constant="124" id="7Nh-1H-4Uv"/>
-                                        </constraints>
-                                    </view>
+                                    </stackView>
                                 </subviews>
                             </stackView>
                         </subviews>
@@ -999,12 +981,6 @@
                     <connections>
                         <outlet property="btnAddFriend" destination="Y52-7w-vJr" id="J4W-iN-aYQ"/>
                         <outlet property="btnBack" destination="hcu-TO-6v5" id="D0c-cf-z1g"/>
-                        <outlet property="buttonFiles" destination="OWw-n9-KNI" id="bt3-hX-HFf"/>
-                        <outlet property="buttonLinks" destination="vfW-h0-1MB" id="Zg8-lW-iD5"/>
-                        <outlet property="buttonMedia" destination="Mrf-mc-2aD" id="tIf-24-OqH"/>
-                        <outlet property="buttonShowMore" destination="eIj-kh-92z" id="sow-YO-XzS"/>
-                        <outlet property="filesContainerView" destination="D4V-lX-JAA" id="9Vi-5e-BCB"/>
-                        <outlet property="indicatorViewLeadingContraint" destination="vpM-Gg-8B3" id="W3m-D6-6iz"/>
                         <outlet property="lblSubtitle" destination="eQQ-0y-YRV" id="ujg-zq-1WG"/>
                         <outlet property="lblTitle" destination="jRx-5I-Vi8" id="Ku9-gi-WKq"/>
                         <outlet property="notificationSwitch" destination="W6i-cr-luP" id="oba-yo-Eze"/>
@@ -1114,13 +1090,6 @@
                                     <constraint firstItem="p83-Nl-kth" firstAttribute="top" secondItem="AbU-9p-mrW" secondAttribute="bottom" constant="16" id="hIw-gn-uwL"/>
                                 </constraints>
                             </view>
-                            <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="large" translatesAutoresizingMaskIntoConstraints="NO" id="FgT-Vq-bwC">
-                                <rect key="frame" x="182" y="423" width="50" height="50"/>
-                                <constraints>
-                                    <constraint firstAttribute="width" constant="50" id="4eZ-7w-dvB"/>
-                                    <constraint firstAttribute="height" constant="50" id="Ov9-kB-Aza"/>
-                                </constraints>
-                            </activityIndicatorView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="Efe-Sz-vQv"/>
                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -1129,9 +1098,7 @@
                             <constraint firstItem="lc9-mm-5aZ" firstAttribute="bottom" secondItem="Efe-Sz-vQv" secondAttribute="bottom" id="7Yr-e8-qxS"/>
                             <constraint firstItem="vjB-0n-oKx" firstAttribute="leading" secondItem="Efe-Sz-vQv" secondAttribute="leading" constant="16" id="Aq4-7W-uk0"/>
                             <constraint firstItem="lc9-mm-5aZ" firstAttribute="top" secondItem="vjB-0n-oKx" secondAttribute="bottom" id="BMz-mk-qcz"/>
-                            <constraint firstItem="FgT-Vq-bwC" firstAttribute="centerX" secondItem="4j7-hX-DLb" secondAttribute="centerX" id="Bw8-lc-fEK"/>
                             <constraint firstItem="8gW-gn-Hdy" firstAttribute="centerX" secondItem="4j7-hX-DLb" secondAttribute="centerX" id="MJT-VG-nUL"/>
-                            <constraint firstItem="FgT-Vq-bwC" firstAttribute="centerY" secondItem="4j7-hX-DLb" secondAttribute="centerY" id="N9P-ag-hJw"/>
                             <constraint firstItem="lc9-mm-5aZ" firstAttribute="trailing" secondItem="Efe-Sz-vQv" secondAttribute="trailing" id="Rg8-Sc-Vv3"/>
                             <constraint firstItem="lc9-mm-5aZ" firstAttribute="leading" secondItem="Efe-Sz-vQv" secondAttribute="leading" id="c8f-13-vb6"/>
                             <constraint firstItem="vjB-0n-oKx" firstAttribute="top" secondItem="Efe-Sz-vQv" secondAttribute="top" id="f8S-ae-Rw7"/>
@@ -1139,7 +1106,6 @@
                         </constraints>
                     </view>
                     <connections>
-                        <outlet property="activityIndicator" destination="FgT-Vq-bwC" id="mLn-bM-3IV"/>
                         <outlet property="alertImage" destination="AbU-9p-mrW" id="DLy-ad-nXo"/>
                         <outlet property="alertText" destination="p83-Nl-kth" id="Xca-u4-n9A"/>
                         <outlet property="containerView" destination="lc9-mm-5aZ" id="Oov-mc-pnp"/>

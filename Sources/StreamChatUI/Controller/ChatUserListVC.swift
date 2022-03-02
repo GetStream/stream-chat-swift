@@ -17,7 +17,6 @@ public struct ChatUserListData {
     var users = [ChatUser]()
 }
 public protocol ChatUserListDelegate: AnyObject {
-    func chatListStateUpdated(state: UserListViewModel.ChatUserLoadingState)
     func chatUserDidSelect()
 }
 public class ChatUserListVC: UIViewController {
@@ -33,7 +32,6 @@ public class ChatUserListVC: UIViewController {
     @IBOutlet private weak var searchBarView: UIView!
     @IBOutlet private weak var daoButton: UIButton!
     @IBOutlet private weak var searchField: UITextField!
-    @IBOutlet private weak var activityIndicator: UIActivityIndicatorView!
     @IBOutlet private weak var alertView: UIView!
     @IBOutlet private weak var alertImage: UIImageView!
     @IBOutlet private weak var alertText: UILabel!
@@ -44,7 +42,11 @@ public class ChatUserListVC: UIViewController {
     public var viewModel = UserListViewModel(sortType: .sortByLastSeen)
     public var sortType: Em_ChatUserListFilterTypes = .sortByLastSeen {
         didSet {
+            self.sectionWiseList.removeAll()
             self.viewModel.sortType = sortType
+            if sortType != self.viewModel.sortType {
+                self.setupTableView()
+            }
         }
     }
     public var userSelectionType = ChatUserSelectionType.singleUser
@@ -66,17 +68,16 @@ public class ChatUserListVC: UIViewController {
 // MARK: - SETUP UI
 extension ChatUserListVC {
     private func setupUI() {
-        self.update(for: .none)
+        self.updateUI()
         self.setupSearch()
         self.setupTableView()
-        self.activityIndicator.hidesWhenStopped = true
         searchBarView.layer.cornerRadius = 20.0
         searchBarContainerView.isHidden = !isSearchBarVisible
         // UserListCallaback
         self.viewModel.bCallbackDataLoadingStateUpdated = { [weak self] loadingState in
             guard let weakSelf = self else { return }
             DispatchQueue.main.async {
-                weakSelf.update(for: loadingState)
+                weakSelf.updateUI()
             }
         }
         self.viewModel.bCallbackDataUserList = { [weak self] users in
@@ -128,50 +129,31 @@ extension ChatUserListVC {
         self.tableView?.reloadData()
     }
     
-    private func update(for state: UserListViewModel.ChatUserLoadingState) {
-        self.activityIndicator.isHidden = true
-        
+    private func updateUI() {
+        noMatchView.isHidden = true
         switch self.viewModel.dataLoadingState {
         case .error,.searchingError:
-            activityIndicator.stopAnimating()
             self.noMatchView.isHidden = true
         case .searching,.loading:
-            sectionWiseList.removeAll()
-            self.tableView?.reloadData()
             self.noMatchView.isHidden = true
-        case .noUsers:
-            noMatchView.isHidden = false
-            alertImage.image = Appearance.Images.systemMagnifying
-            alertText.text = "No user matches these keywords..."
-        case .selected:
+            self.tableView?.reloadData()
+        case .loadMoreData:
+            self.noMatchView.isHidden = true
             break
         case .completed:
-            activityIndicator.stopAnimating()
             noMatchView.isHidden = true
-            tableView?.alpha = 1
+            let userCount = self.sectionWiseList.filter({ $0.sectionType != .createChatHeader}).filter({$0.users.count > 0 })
+            if self.viewModel.searchText != nil && userCount.count == 0 {
+                self.sectionWiseList.removeAll()
+                noMatchView.isHidden = false
+                alertImage.image = Appearance.Images.systemMagnifying
+                alertText.text = "No user matches these keywords..."
+            }
             self.tableView?.reloadData()
-//            let lastItem: Int = self.curentSortType == .sortByName ? self.nameWiseUserList.count : self.lastSeenWiseUserList.count
-//            if lastItem > 0 {
-//                noMatchView.isHidden = true
-//                activityIndicator.stopAnimating()
-//                tableView?.alpha = 1
-//            } else {
-//                noMatchView.isHidden = false
-//                tableView?.alpha = 0
-//                if self.searchField.text?.isBlank == false {
-//                    alertImage.image = Appearance.Images.systemMagnifying
-//                    alertText.text = "No user matches these keywords..."
-//                } else {
-//                    alertImage.image = nil
-//                    alertText.text = "No chats here yet..."
-//                }
-//            }
-        case .none:
+        case .none,.loadMoreData:
             self.noMatchView.isHidden = true
-            sectionWiseList.removeAll()
             self.tableView?.reloadData()
         }
-        self.delegate?.chatListStateUpdated(state: self.viewModel.dataLoadingState)
     }
 }
 // MARK: - ACTIONS
@@ -179,30 +161,72 @@ public extension ChatUserListVC {
     @objc private func textDidChange(_ sender: UITextField) {
         self.viewModel.searchDataUsing(searchString: sender.text)
     }
-    
     // Sorting
     public func sortUserWith(filteredUsers: [ChatUser]) {
-        self.sortType = viewModel.sortType
         sectionWiseList.removeAll()
-        self.tableView?.reloadData()
+        tableView?.reloadData()
         DispatchQueue.main.async { [weak self] in
             guard let weakSelf = self else { return }
-            weakSelf.setupTableView()
             switch weakSelf.sortType {
             case .sortByName:
                 let data = weakSelf.viewModel.shortByName(filteredUsers: filteredUsers)
                 weakSelf.sectionWiseList.append(contentsOf: data)
+                if weakSelf.curentSectionType == .createChatHeader {
+                    weakSelf.sectionWiseList.insert(ChatUserListData.init(letter: "", sectionType: .createChatHeader), at: 0)
+                }
             case .sortByAtoZ:
                 let data = weakSelf.viewModel.shortAtoZ(filteredUsers: filteredUsers)
                 weakSelf.sectionWiseList.append(data)
             case .sortByLastSeen:
                 let data = weakSelf.viewModel.shortLastSeen(filteredUsers: filteredUsers)
                 weakSelf.sectionWiseList.append(data)
-            }
-            if weakSelf.curentSectionType == .createChatHeader {
-                weakSelf.sectionWiseList.insert(ChatUserListData(letter: "", sectionType: .createChatHeader), at: 0)
+                if weakSelf.curentSectionType == .createChatHeader {
+                    weakSelf.sectionWiseList.insert(ChatUserListData.init(letter: "", sectionType: .createChatHeader), at: 0)
+                }
             }
             weakSelf.tableView?.reloadData()
+            weakSelf.updateUI()
+        }
+    }
+    // TO DO
+    private func updateUserList(list: ChatUserListData) {
+        guard self.viewModel.searchText == nil else {
+            sectionWiseList.removeAll()
+            tableView?.reloadData()
+            self.sectionWiseList.append(list)
+            tableView?.reloadData()
+            return
+        }
+        if let sectionIndex = sectionWiseList.firstIndex(where: { $0.sectionType == list.sectionType }) {
+            var section = sectionWiseList[sectionIndex]
+            if section.users.count == list.users.count {
+                return
+            }
+            var indexPathToAdd = [IndexPath]()
+            var indexPathToUpdate = [IndexPath]()
+            var indexPathToDelete = [IndexPath]()
+            for (i,user) in list.users.enumerated() {
+                if let index = section.users.firstIndex(where: { $0.id.lowercased() == user.id.lowercased()}) {
+                    if i == index {
+                    } else {
+                        sectionWiseList[sectionIndex].users.insert(user, at: i)
+                        indexPathToAdd.append(IndexPath.init(row: i, section: sectionIndex))
+                        sectionWiseList[sectionIndex].users.remove(at: index)
+                        indexPathToDelete.append(IndexPath.init(row: index, section: sectionIndex))
+                    }
+                } else {
+                    sectionWiseList[sectionIndex].users.append(user)
+                    indexPathToAdd.append(IndexPath.init(row: sectionWiseList[sectionIndex].users.count - 1, section: sectionIndex))
+                }
+            }
+            tableView?.beginUpdates()
+            tableView?.deleteRows(at: indexPathToDelete, with: .automatic)
+            tableView?.insertRows(at: indexPathToAdd, with: .automatic)
+            tableView?.reloadRows(at: indexPathToUpdate, with: .automatic)
+            tableView?.endUpdates()
+        } else {
+            sectionWiseList.append(list)
+            tableView?.reloadData()
         }
     }
 }
@@ -227,7 +251,8 @@ extension ChatUserListVC: UITableViewDelegate, UITableViewDataSource {
         return sectionWiseList[section].users.count
     }
     public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        if self.viewModel.dataLoadingState == .searching || self.viewModel.dataLoadingState == .loading || self.viewModel.dataLoadingState == .none {
+        switch self.viewModel.dataLoadingState {
+        case .searching,.loading,.none:
             let reuseID = TableViewCellChatUser.reuseId
             guard let cell = tableView.dequeueReusableCell(
                 withIdentifier: reuseID,
@@ -236,55 +261,62 @@ extension ChatUserListVC: UITableViewDelegate, UITableViewDataSource {
             }
             cell.backgroundColor = .clear
             cell.selectedBackgroundView = nil
-            
             cell.showShimmer()
             return cell
+        default:
+            let sectionType = sectionWiseList[indexPath.section].sectionType
+            switch sectionType {
+            case .createChatHeader:
+                let reuseID = TableViewHeaderCreateChat.reuseID
+                guard let header = tableView.dequeueReusableCell(withIdentifier: reuseID) as? TableViewHeaderCreateChat else { return UITableViewCell.init(frame: .zero)}
+                header.labelSortingType.text = self.sortType.getTitle
+                header.backgroundColor = .clear
+                header.bCallbackGroupCreate = self.bCallbackGroupCreate
+                header.bCallbackGroupSelect = self.bCallbackGroupSelect
+                header.bCallbackGroupWeHere = self.bCallbackGroupWeHere
+                header.bCallbackGroupJoinViaQR = self.bCallbackGroupJoinViaQR
+                header.selectionStyle = .none
+                return header
+            case .noHeader,.aphabetHeader:
+                let reuseID = TableViewCellChatUser.reuseId
+                guard let cell = tableView.dequeueReusableCell(
+                    withIdentifier: reuseID, for: indexPath) as? TableViewCellChatUser else {
+                    return UITableViewCell()
+                }
+                cell.hideShimmer()
+                var user: ChatUser? = sectionWiseList[indexPath.section].users[indexPath.row]
+                if user == nil {
+                    return UITableViewCell.init(frame: .zero)
+                }
+                var accessaryImage: UIImage? = nil
+                if self.viewModel.selectedUsers.firstIndex(where: { $0.id == user!.id}) != nil {
+                    accessaryImage = Appearance.default.images.userSelected
+                }
+                cell.config(user: user!,selectedImage: accessaryImage)
+                cell.backgroundColor = .clear
+                cell.selectionStyle = .none
+                if self.viewModel.existingUsers.map({ $0.id.lowercased()}).contains(user!.id.lowercased()) {
+                    cell.containerView.alpha = 0.5
+                } else {
+                    cell.containerView.alpha = 1.0
+                }
+                return cell
+            }
         }
-        let sectionType = sectionWiseList[indexPath.section].sectionType
-        if sectionType == .createChatHeader {
-            let reuseID = TableViewHeaderCreateChat.reuseID
-            let header = tableView.dequeueReusableCell(withIdentifier: reuseID) as? TableViewHeaderCreateChat
-            header?.labelSortingType.text = self.sortType.getTitle
-            header!.backgroundColor = .clear
-            header!.bCallbackGroupCreate = self.bCallbackGroupCreate
-            header!.bCallbackGroupSelect = self.bCallbackGroupSelect
-            header!.bCallbackGroupWeHere = self.bCallbackGroupWeHere
-            header!.bCallbackGroupJoinViaQR = self.bCallbackGroupJoinViaQR
-            return header!
-        }
-        let reuseID = TableViewCellChatUser.reuseId
-        guard let cell = tableView.dequeueReusableCell(
-            withIdentifier: reuseID,
-            for: indexPath) as? TableViewCellChatUser else {
-            return UITableViewCell()
-        }
-        cell.hideShimmer()
-        var user: ChatUser? = sectionWiseList[indexPath.section].users[indexPath.row]
-        if user == nil {
-            return UITableViewCell()
-        }
-        var accessaryImage: UIImage?
-        if self.viewModel.selectedUsers.firstIndex(where: { $0.id == user!.id}) != nil {
-            accessaryImage = Appearance.default.images.userSelected
-        } else {
-            accessaryImage = nil
-        }
-        cell.config(user: user!,
-                        selectedImage: accessaryImage,
-                        avatarBG: view.tintColor)
-        cell.backgroundColor = .clear
-        cell.selectedBackgroundView = nil
-        if self.viewModel.existingUsers.map({ $0.id.lowercased()}).contains(user!.id.lowercased()) {
-            cell.containerView.alpha = 0.5
-        } else {
-            cell.containerView.alpha = 1.0
-        }
-        return cell
     }
 
     public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         defer {
             tableView.deselectRow(at: indexPath, animated: true)
+        }
+        if let cell = tableView.cellForRow(at: indexPath) as? TableViewCellChatUser {
+            let selectionColor = Appearance.default.colorPalette.placeHolderBalanceBG.withAlphaComponent(0.7)
+            UIView.animate(withDuration: 0.2, delay: 0, options: []) {
+                cell.contentView.backgroundColor = selectionColor
+                self.view.layoutIfNeeded()
+            } completion: { status in
+                cell.contentView.backgroundColor = .clear
+            }
         }
         guard self.sectionWiseList.indices.contains(indexPath.section) else {
             return
@@ -376,11 +408,11 @@ extension ChatUserListVC: UITableViewDelegate, UITableViewDataSource {
                 return nil
             }
             let reuseID = TableViewHeaderChatUserList.reuseId
-            let header = tableView.dequeueReusableCell(withIdentifier: reuseID) as? TableViewHeaderChatUserList
-            header!.lblTitle.text = self.sectionWiseList[section].letter.capitalized
-            header!.titleContainerView.layer.cornerRadius = 12.0
-            header!.backgroundColor = .clear
-            return header!
+            guard let header = tableView.dequeueReusableCell(withIdentifier: reuseID) as? TableViewHeaderChatUserList else { return nil }
+            header.lblTitle.text = self.sectionWiseList[section].letter.capitalized
+            header.titleContainerView.layer.cornerRadius = 12.0
+            header.backgroundColor = .clear
+            return header
         }
         return nil
     }
@@ -457,7 +489,7 @@ extension ChatUserListVC: UITableViewDelegate, UITableViewDataSource {
     }
 }
 // MARK: - ChatUserListFilterTypes
-public enum Em_ChatUserListFilterTypes {
+public enum Em_ChatUserListFilterTypes: Hashable {
     case sortByLastSeen
     case sortByName
     case sortByAtoZ

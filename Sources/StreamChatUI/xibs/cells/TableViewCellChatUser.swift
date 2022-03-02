@@ -22,8 +22,8 @@ public class TableViewCellChatUser: UITableViewCell {
     @IBOutlet public var lblRole: UILabel!
     // MARK: - Variables
     private var user: ChatUser?
-    let simmerBackgroundColor = Appearance.default.colorPalette.placeHolderBalanceBG.withAlphaComponent(0.9)
-    lazy var gradient = SkeletonGradient(colors: [UIColor.clear,simmerBackgroundColor,UIColor.clear])
+    private let shimmerBackgroundColor = Appearance.default.colorPalette.placeHolderBalanceBG
+    private lazy var shimmerGradient = SkeletonGradient(colors: [shimmerBackgroundColor.withAlphaComponent(0.3),shimmerBackgroundColor.withAlphaComponent(0.5), shimmerBackgroundColor.withAlphaComponent(0.3)])
     //MARK: - LIFE CYCEL
     public override func awakeFromNib() {
         super.awakeFromNib()
@@ -31,33 +31,15 @@ public class TableViewCellChatUser: UITableViewCell {
         avatarView.layer.cornerRadius = avatarView.bounds.height / 2
         accessoryImageView.layer.cornerRadius = accessoryImageView.bounds.height / 2
         self.containerView.backgroundColor = .clear
+        SkeletonAppearance.default.gradient = shimmerGradient
     }
-    //    public override func setSelected(_ selected: Bool, animated: Bool) {
-    //        super.setSelected(selected, animated: animated)
-    //
-    //        if self.selectedBackgroundView == nil {
-    //            let bgView = UIView()
-    //            self.selectedBackgroundView = bgView
-    //        }
-    //        self.selectedBackgroundView?.backgroundColor = selected ? UIColor.lightGray.withAlphaComponent(0.1) : UIColor.clear
-    //    }
-    //
-    //    public override func setHighlighted(_ highlighted: Bool, animated: Bool) {
-    //        super.setHighlighted(highlighted, animated: animated)
-    //        if self.selectedBackgroundView == nil {
-    //            let bgView = UIView()
-    //            self.selectedBackgroundView = bgView
-    //        }
-    //        self.selectedBackgroundView?.backgroundColor = highlighted ? UIColor.lightGray.withAlphaComponent(0.1) : UIColor.clear
-    //    }
 }
 // MARK: - Config
 extension TableViewCellChatUser {
-    public func config(user: ChatUser, selectedImage: UIImage?, avatarBG: UIColor) {
+    public func config(user: ChatUser, selectedImage: UIImage?) {
         if let imageURL = user.imageURL {
             Nuke.loadImage(with: imageURL, into: avatarView)
         }
-        //avatarView.backgroundColor = avatarBG
         nameLabel.setChatTitleColor()
         descriptionLabel.setChatSubtitleBigColor()
         let name = (user.name ?? user.id)
@@ -85,9 +67,8 @@ extension TableViewCellChatUser {
         self.user = user
     }
     
-    public func configGroupDetails(channelMember: ChatChannelMember, selectedImage: UIImage?, avatarBG: UIColor) {
-        self.config(user: channelMember, selectedImage: selectedImage, avatarBG: avatarBG)
-        //
+    public func configGroupDetails(channelMember: ChatChannelMember, selectedImage: UIImage?) {
+        self.config(user: channelMember, selectedImage: selectedImage)
         lblRole.text = ""
         lblRole.isHidden = true
         if channelMember.memberRole == .owner {
@@ -104,15 +85,12 @@ extension TableViewCellChatUser {
 //MARK: - SHIMMER EFFECT
 extension TableViewCellChatUser {
     public func showShimmer() {
-        avatarView.image = nil
-        avatarView.backgroundColor = simmerBackgroundColor
+        avatarView.image = UIImage()
+        avatarView.backgroundColor = shimmerBackgroundColor
         accessoryImageView.image = nil
-//        avatarView.showGradientSkeleton(usingGradient: gradient, transition: .none)
-//        nameLabel.showGradientSkeleton(usingGradient: gradient, transition: .none)
-//        descriptionLabel.showGradientSkeleton(usingGradient: gradient, transition: .none)
-        avatarView.showSkeleton()
-        nameLabel.showSkeleton()
-        descriptionLabel.showSkeleton()
+        avatarView.showAnimatedGradientSkeleton()
+        nameLabel.showAnimatedGradientSkeleton()
+        descriptionLabel.showAnimatedGradientSkeleton()
     }
     public func hideShimmer() {
         accessoryImageView.hideSkeleton()

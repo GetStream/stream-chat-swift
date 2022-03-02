@@ -12,31 +12,34 @@ import StreamChatUI
 import UIKit
 
 public class ChatGroupDetailsVC: ChatBaseVC {
+    enum GroupDetailsSection: CaseIterable {
+        case userList,attachmentList
+    }
     // MARK: - OUTLETS
-    @IBOutlet private var headerView: ChatChannelHeaderView!
     @IBOutlet private var lblTitle: UILabel!
     @IBOutlet private var lblSubtitle: UILabel!
     @IBOutlet private var tableView: UITableView!
-    @IBOutlet private var filesContainerView: UIView!
-    @IBOutlet private var buttonMedia: UIButton!
-    @IBOutlet private var buttonFiles: UIButton!
-    @IBOutlet private var buttonLinks: UIButton!
     @IBOutlet private var notificationSwitch: UISwitch!
-    @IBOutlet private var indicatorViewLeadingContraint: NSLayoutConstraint!
-    @IBOutlet private var buttonShowMore: UIButton!
+    //@IBOutlet private var buttonShowMore: UIButton!
+    var filesContainerView = UIView()
     // MARK: - VARIABLES
     public var selectedUsers: [ChatChannelMember] = []
-    private let scrollViewFiles = UIScrollView()
-    private let viewTabIndicator = UIView()
     public var channelController: ChatChannelController?
     private var arrController = [UIViewController]()
     private var usersCount = 0
+    private var sectionWiseList = [GroupDetailsSection]()
+    private lazy var buttonShowMore: UIButton = {
+        let btnShowMore = UIButton(frame: CGRect.init(x: UIScreen.main.bounds.width - 120, y: 0, width: 100, height: 35))
+        btnShowMore.setTitle("Show more", for: .normal)
+        btnShowMore.setTitleColor(Appearance.default.colorPalette.statusColorBlue, for: .normal)
+        btnShowMore.titleLabel?.font = UIFont.systemFont(ofSize: 14)
+        btnShowMore.addTarget(self, action: #selector(self.showMoreButtonAction(_ :)), for: .touchUpInside)
+        return btnShowMore
+    }()
     // MARK: - VIEW CYCLE
     public override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
-        configureFilesView()
-        ShowAttachement()
     }
     // MARK: - METHOD
     open func setupUI() {
@@ -45,6 +48,8 @@ public class ChatGroupDetailsVC: ChatBaseVC {
         lblTitle.text = name
         self.buttonShowMore.isHidden = true
         self.updateMemberCount()
+        sectionWiseList.removeAll()
+        tableView.reloadData()
         //
         if let cid = channelController?.cid {
             let controller = ChatClient.shared.memberListController(query: .init(cid: cid))
@@ -65,6 +70,7 @@ public class ChatGroupDetailsVC: ChatBaseVC {
                     weakSelf.selectedUsers.append(contentsOf: otherUsers)
                     weakSelf.updateShowMoreButtonStatus()
                     weakSelf.updateMemberCount()
+                    weakSelf.sectionWiseList = GroupDetailsSection.allCases
                     weakSelf.tableView.reloadData()
                 }
             }
@@ -72,6 +78,9 @@ public class ChatGroupDetailsVC: ChatBaseVC {
         let chatUserID = TableViewCellChatUser.reuseId
         let chatUserNib = UINib(nibName: chatUserID, bundle: nil)
         tableView.register(chatUserNib, forCellReuseIdentifier: chatUserID)
+        let attchmentID = TableViewCellGroupDetailsAttachmentsList.reuseID
+        let attachmentNib = UINib(nibName: attchmentID, bundle: nil)
+        tableView.register(attachmentNib, forCellReuseIdentifier: attchmentID)
         tableView.dataSource = self
         tableView.delegate = self
         tableView.bounces = false
@@ -79,7 +88,6 @@ public class ChatGroupDetailsVC: ChatBaseVC {
         tableView.tableFooterView = UIView()
         tableView.reloadData()
         tableView.separatorStyle = .none
-        
         notificationSwitch.isOn = !(channelController?.channel?.isMuted ?? true)
     }
     private func updateMemberCount() {
@@ -89,23 +97,12 @@ public class ChatGroupDetailsVC: ChatBaseVC {
     }
     private func updateShowMoreButtonStatus() {
         let contentSize = selectedUsers.count * 60
-        if CGFloat(contentSize) > self.tableView.bounds.height {
+        if CGFloat(contentSize) > (self.tableView.bounds.height - 200) {
             self.buttonShowMore.isHidden = false
-            self.usersCount = Int(self.tableView.bounds.height / 60)
+            self.usersCount = Int((self.tableView.bounds.height - 200) / 60)
         } else {
             self.buttonShowMore.isHidden = true
             self.usersCount = selectedUsers.count
-        }
-    }
-    private func ShowAttachement() {
-        let arr = self.channelController?.messages.filter({ $0.attachments(payloadType: ImageAttachmentPayload.self).count > 0 }) ?? []
-        for subView in  self.scrollViewFiles.subviews {
-            guard let attachView = subView as? AttachmentListContainerView else {
-                continue
-            }
-            if let identifier = subView.accessibilityIdentifier , identifier == AttachmentType.image.rawValue {
-                attachView.setupChatMessage(arr)
-            }
         }
     }
     public func muteNotification() {
@@ -130,12 +127,11 @@ public class ChatGroupDetailsVC: ChatBaseVC {
     @IBAction func backBtnTapped(_ sender: UIButton) {
         popWithAnimation()
     }
-    @IBAction func doneTapped(_ sender: UIButton) { }
     @IBAction func addFriendButtonAction(_ sender: UIButton) {
         guard let controller = ChatAddFriendVC
                 .instantiateController(storyboard: .GroupChat)  as? ChatAddFriendVC else {
-            return
-        }
+                    return
+                }
         controller.selectionType = .addFriend
         controller.existingUsers = selectedUsers
         controller.bCallbackInviteFriend = { [weak self] users in
@@ -167,15 +163,6 @@ public class ChatGroupDetailsVC: ChatBaseVC {
         }
         presentPanModal(controller)
     }
-    @IBAction func mediaButtonAction(_ sender: UIButton) {
-        self.scrollToPage(page: 0)
-    }
-    @IBAction func fileButtonAction(_ sender: UIButton) {
-        self.scrollToPage(page: 1)
-    }
-    @IBAction func linkButtonAction(_ sender: UIButton) {
-        self.scrollToPage(page: 2)
-    }
     @IBAction func notificationToggle(_ sender: UISwitch) {
         if sender.isOn {
             self.unMuteNotification()
@@ -183,7 +170,7 @@ public class ChatGroupDetailsVC: ChatBaseVC {
             self.muteNotification()
         }
     }
-    @IBAction func showMoreButtonAction(_ sender: UIButton) {
+    @objc func showMoreButtonAction(_ sender: UIButton) {
         self.buttonShowMore.isHidden = true
         let visibleRow = IndexPath.init(row: self.usersCount, section: 0)
         self.usersCount = self.selectedUsers.count
@@ -193,88 +180,76 @@ public class ChatGroupDetailsVC: ChatBaseVC {
         }
     }
 }
-// MARK: - Collection View
-extension ChatGroupDetailsVC {
-    private func configureFilesView() {
-        scrollViewFiles.delegate = self
-        self.filesContainerView.addSubview(scrollViewFiles)
-        scrollViewFiles.frame = filesContainerView.bounds
-        var xValue: CGFloat = 0
-        let width = UIScreen.main.bounds.width
-        
-        let arrAttachmentOptions: [AttachmentType] = [.image, .file, .linkPreview]
-        for index in 0..<arrAttachmentOptions.count {
-            guard let subView: ChatSharedFilesVC = ChatSharedFilesVC
-                    .instantiateController(storyboard: .GroupChat) else {
-                continue
-            }
-            xValue = self.scrollViewFiles.frame.size.width * CGFloat(index)
-            addChild(subView)
-            scrollViewFiles.addSubview(subView.view)
-            subView.didMove(toParent: self)
-            subView.view.frame = CGRect.init(x: xValue, y: 0, width: width, height: self.filesContainerView.bounds.height)
-            subView.attachmentType = arrAttachmentOptions[index]
-            subView.setupUI()
-        }
-        let widthTotal = self.filesContainerView.bounds.size.width * 3
-        self.scrollViewFiles.isPagingEnabled = true
-        self.scrollViewFiles.contentSize = CGSize(width: widthTotal, height: self.scrollViewFiles.frame.size.height)
-    }
-    public func scrollToPage(page: Int) {
-        var frame: CGRect = self.scrollViewFiles.frame
-        frame.origin.x = frame.size.width * CGFloat(page)
-        frame.origin.y = 0
-        self.scrollViewFiles.scrollRectToVisible(frame, animated: true)
-        self.updateIndicator(page: page)
-    }
-    public func updateIndicator(page: Int) {
-        UIView.animate(withDuration: 0.1) {
-            switch page {
-            case 0:
-                self.indicatorViewLeadingContraint.constant = self.buttonMedia.frame.origin.x
-            case 1:
-                self.indicatorViewLeadingContraint.constant = self.buttonFiles.frame.origin.x
-            case 2:
-                self.indicatorViewLeadingContraint.constant = self.buttonLinks.frame.origin.x
-            default:
-                break
-            }
-            self.view.layoutIfNeeded()
-        }
-    }
-}
+
 // MARK: - TABLEVIEW
 extension ChatGroupDetailsVC: UITableViewDataSource , UITableViewDelegate {
+    public func numberOfSections(in tableView: UITableView) -> Int {
+        return sectionWiseList.count
+    }
     public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return usersCount
+        switch sectionWiseList[section] {
+        case .userList:
+            return usersCount
+        case .attachmentList:
+            return 1
+        }
     }
     public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let reuseID = TableViewCellChatUser.reuseId
-        guard let cell = tableView.dequeueReusableCell(
-            withIdentifier: reuseID,
-            for: indexPath) as? TableViewCellChatUser else {
-            return UITableViewCell()
+        switch sectionWiseList[indexPath.section] {
+        case .userList:
+            let reuseID = TableViewCellChatUser.reuseId
+            guard let cell = tableView.dequeueReusableCell(
+                withIdentifier: reuseID,
+                for: indexPath) as? TableViewCellChatUser else {
+                return UITableViewCell()
+            }
+            let user: ChatChannelMember = selectedUsers[indexPath.row]
+            cell.configGroupDetails(channelMember: user, selectedImage: nil)
+            cell.backgroundColor = .clear
+            cell.selectionStyle = .none
+            return cell
+        case .attachmentList:
+            guard let cell = tableView.dequeueReusableCell(withIdentifier: TableViewCellGroupDetailsAttachmentsList.reuseID) as? TableViewCellGroupDetailsAttachmentsList else {
+                return UITableViewCell.init(frame: .zero)
+            }
+            cell.selectionStyle = .none
+            cell.backgroundColor = .clear
+            cell.filesContainerView.backgroundColor = Appearance.default.colorPalette.chatViewBackground
+            return cell
         }
-        let user: ChatChannelMember = selectedUsers[indexPath.row]
-        cell.configGroupDetails(channelMember: user, selectedImage: nil, avatarBG: view.tintColor)
-        cell.backgroundColor = .clear
-        cell.selectedBackgroundView = nil
-        return cell
     }
-    
+    public func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
+        switch sectionWiseList[section] {
+        case .userList:
+            if usersCount == self.selectedUsers.count {
+                return nil
+            }
+            let footerView = UIView()
+            footerView.backgroundColor = .clear
+            footerView.addSubview(buttonShowMore)
+            return footerView
+        default:
+            return nil
+        }
+    }
+    public func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
+        switch sectionWiseList[section] {
+        case .userList:
+            if usersCount == self.selectedUsers.count {
+                return 0
+            }
+            return 35
+        default:
+            return 0
+        }
+    }
     public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         defer {
             tableView.deselectRow(at: indexPath, animated: false)
         }
     }
 }
-// MARK: - UIScrollViewDelegate
-extension ChatGroupDetailsVC: UIScrollViewDelegate {
-    public func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
-        let pageNumber = round(scrollView.contentOffset.x / scrollView.frame.size.width)
-        self.updateIndicator(page: Int(pageNumber))
-    }
-}
+
 // MARK: - AttachmentType
 extension AttachmentType {
     init(tagValue: Int) {

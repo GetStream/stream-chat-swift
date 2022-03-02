@@ -11,25 +11,21 @@ import StreamChat
 import StreamChatUI
 
 public class UserListViewModel: NSObject {
-    
+    // MARK: - VARIABLE
+    public enum ChatUserLoadingState {
+        case searching,searchingError, loading, loadMoreData, error, completed , none
+    }
     var bCallbackDataLoadingStateUpdated: ((UserListViewModel.ChatUserLoadingState) -> Void)?
     var bCallbackDataUserList: (([ChatUser]) -> Void)?
-    //var bCallbackDataLoadingStateUpdated(() -> Void)?
-    
-    public enum ChatUserLoadingState {
-        case searching,searchingError, loading, noUsers, selected, error, completed , none
-    }
     public lazy var dataLoadingState = UserListViewModel.ChatUserLoadingState.none {
         didSet {
             self.bCallbackDataLoadingStateUpdated?(dataLoadingState)
         }
     }
-    private var searchText: String?
-    
+    public var searchText: String?
     public lazy var selectedUsers = [ChatUser]()
     public lazy var existingUsers = [ChatUser]()
     public var sortType:Em_ChatUserListFilterTypes
-    
     private lazy var userListController: ChatUserListController = {
         return ChatClient.shared.userListController()
     }()
@@ -38,16 +34,17 @@ public class UserListViewModel: NSObject {
     }()
     private var searchOperation: DispatchWorkItem?
     private let throttleTime = 1000
-    
     private var loadingPreviousData: Bool = false
     private var hasLoadedAllData: Bool = false
     private var pageSize: Int = 100
-    
+    public lazy var sectionWiseUserList = [ChatUserListData]()
+    // MARK: - INIT
     init(sortType: Em_ChatUserListFilterTypes) {
         self.sortType = sortType
+        super.init()
+        self.userListController.delegate = self
     }
-    public lazy var sectionWiseUserList = [ChatUserListData]()
-    
+    // MARK: - METHOD
     public func isUserSelected(chatUser: ChatUser) -> Int? {
         return self.selectedUsers.firstIndex(where: { $0.id.lowercased() == chatUser.id.lowercased()})
     }
@@ -92,7 +89,6 @@ extension UserListViewModel {
 }
 // MARK: - GET STREAM API
 extension UserListViewModel {
-    // Public function to get search string from out side this controller
     public func searchDataUsing(searchString: String?) {
         if self.dataLoadingState != .searching {
             self.dataLoadingState = .searching
@@ -142,24 +138,35 @@ extension UserListViewModel {
         if self.dataLoadingState != .loading && fetchMoreData == false {
             self.dataLoadingState = .loading
         }
-        var newQuery = UserListQuery(filter: .and([
-            .notEqual(.id, to: ChatClient.shared.currentUserId ?? ""),
-        ]), sort: [.init(key: .lastActivityAt, isAscending: false)], pageSize: 99)
-        newQuery.pagination = Pagination(pageSize: 99)
-        self.userListController = ChatClient.shared.userListController(query: newQuery)
-        let previousCount = self.userListController.users.count
-        userListController.synchronize { [weak self] error in
-            guard let weakSelf = self else { return }
-            if let error = error {
-                weakSelf.dataLoadingState = .error
-            } else {
-                weakSelf.loadingPreviousData = false
-                if previousCount == weakSelf.userListController.users.count {
-                    weakSelf.hasLoadedAllData = true
+        if fetchMoreData {
+            self.dataLoadingState = .loadMoreData
+            var userQuery = UserListQuery(filter: .and([
+                .notEqual(.id, to: ChatClient.shared.currentUserId ?? ""),
+            ]), sort: [], pageSize: 99)
+            self.userListController = ChatClient.shared.userListController(query: userQuery)
+            self.userListController.synchronize { [weak self] error in
+                guard let weakSelf = self else { return }
+                if error == nil {
+                    let filterData = weakSelf.userListController.users.filter { $0.name?.isEmpty == false }.filter { $0.id.isEmpty == false }.filter { $0.id != ChatClient.shared.currentUserId ?? "" }
+                    weakSelf.bCallbackDataUserList?(filterData)
+                    weakSelf.dataLoadingState = .completed
+                    return
                 }
-                let filterData = weakSelf.userListController.users.filter { $0.name?.isEmpty == false }.filter { $0.id.isEmpty == false }.filter { $0.id != ChatClient.shared.currentUserId ?? "" }
-                weakSelf.bCallbackDataUserList?(filterData)
-                weakSelf.dataLoadingState = .completed
+                weakSelf.dataLoadingState = .error
+            }
+        } else {
+            let date = Calendar.current.date(byAdding: .day, value: -1, to: Date())!
+            let userQuery = UserListQuery.init(filter: .greaterOrEqual(.lastActiveAt, than: date), sort: [], pageSize: 99)
+            self.userListController.query = userQuery
+            self.userListController.synchronize { [weak self] error in
+                guard let weakSelf = self else { return }
+                if error == nil {
+                    let filterData = weakSelf.userListController.users.filter { $0.name?.isEmpty == false }.filter { $0.id.isEmpty == false }.filter { $0.id != ChatClient.shared.currentUserId ?? "" }
+                    weakSelf.bCallbackDataUserList?(filterData)
+                    weakSelf.dataLoadingState = .completed
+                    return
+                }
+                weakSelf.dataLoadingState = .error
             }
         }
     }
@@ -174,12 +181,11 @@ extension UserListViewModel {
         }
     }
 }
-
 // MARK: - Chat user controller delegate
-extension ChatUserListVC: ChatUserListControllerDelegate {
-    //
-    public func controller(_ controller: ChatUserListController, didChangeUsers changes: [ListChange<ChatUser>]) {}
-    public func controller(_ controller: DataController, didChangeState state: DataController.State) {}
+extension UserListViewModel: ChatUserListControllerDelegate {
+    public func controller(_ controller: ChatUserListController, didChangeUsers changes: [ListChange<ChatUser>]) {
+        // To Do
+    }
 }
 public struct DTFormatter {
     public static var formatter: DateFormatter = {

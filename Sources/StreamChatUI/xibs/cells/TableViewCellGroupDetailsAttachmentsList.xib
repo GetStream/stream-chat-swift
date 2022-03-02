@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="19455" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_1" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="19454"/>
+        <capability name="Named colors" minToolsVersion="9.0"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <customFonts key="customFonts">
+        <array key="SFProText-Regular.ttf">
+            <string>SFProText-Regular</string>
+        </array>
+    </customFonts>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" rowHeight="182" id="KGk-i7-Jjw" customClass="TableViewCellGroupDetailsAttachmentsList" customModule="StreamChatUI" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="336" height="182"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+            <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="KGk-i7-Jjw" id="H2p-sc-9uM">
+                <rect key="frame" x="0.0" y="0.0" width="336" height="182"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="ojv-w4-lh0">
+                        <rect key="frame" x="0.0" y="0.0" width="336" height="173"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="nQI-8v-brP">
+                                <rect key="frame" x="0.0" y="0.0" width="336" height="9"/>
+                                <color key="backgroundColor" name="ChatNavColor"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="9" id="YL0-nZ-PIB"/>
+                                </constraints>
+                            </view>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="7We-se-o1z">
+                                <rect key="frame" x="0.0" y="9" width="336" height="40"/>
+                                <subviews>
+                                    <stackView opaque="NO" contentMode="scaleToFill" spacing="10" translatesAutoresizingMaskIntoConstraints="NO" id="vgF-Ka-OCq">
+                                        <rect key="frame" x="8" y="10" width="320" height="29"/>
+                                        <subviews>
+                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="QxG-XA-zex">
+                                                <rect key="frame" x="0.0" y="0.0" width="100" height="29"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="width" constant="100" id="b4W-Os-S86"/>
+                                                </constraints>
+                                                <fontDescription key="fontDescription" name="SFProText-Regular" family="SF Pro Text" pointSize="14"/>
+                                                <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
+                                                <state key="normal" title="Media">
+                                                    <color key="titleColor" white="1" alpha="0.29887390139999997" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                </state>
+                                                <connections>
+                                                    <action selector="mediaButtonAction:" destination="KGk-i7-Jjw" eventType="touchUpInside" id="zqO-6c-h3c"/>
+                                                </connections>
+                                            </button>
+                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="1Nn-P3-OhI">
+                                                <rect key="frame" x="110" y="0.0" width="100" height="29"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="width" constant="100" id="KpA-1l-ZSk"/>
+                                                </constraints>
+                                                <fontDescription key="fontDescription" name="SFProText-Regular" family="SF Pro Text" pointSize="14"/>
+                                                <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
+                                                <state key="normal" title="Files">
+                                                    <color key="titleColor" white="1" alpha="0.29887390139999997" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                </state>
+                                                <connections>
+                                                    <action selector="fileButtonAction:" destination="KGk-i7-Jjw" eventType="touchUpInside" id="zDD-ok-G2b"/>
+                                                </connections>
+                                            </button>
+                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="fcQ-Zh-00l">
+                                                <rect key="frame" x="220" y="0.0" width="100" height="29"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="width" constant="100" id="zyr-dD-lyB"/>
+                                                </constraints>
+                                                <fontDescription key="fontDescription" name="SFProText-Regular" family="SF Pro Text" pointSize="14"/>
+                                                <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
+                                                <state key="normal" title="Links">
+                                                    <color key="titleColor" white="1" alpha="0.29887390139999997" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                </state>
+                                                <connections>
+                                                    <action selector="linkButtonAction:" destination="KGk-i7-Jjw" eventType="touchUpInside" id="XqB-Ik-acX"/>
+                                                </connections>
+                                            </button>
+                                        </subviews>
+                                    </stackView>
+                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="TqO-u3-hGB">
+                                        <rect key="frame" x="38" y="39" width="40" height="1"/>
+                                        <color key="backgroundColor" name="timelessBlue"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="1" id="G6y-2C-7er"/>
+                                            <constraint firstAttribute="width" constant="40" id="Gsn-p6-5Np"/>
+                                        </constraints>
+                                    </view>
+                                </subviews>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <constraints>
+                                    <constraint firstItem="TqO-u3-hGB" firstAttribute="centerX" secondItem="QxG-XA-zex" secondAttribute="centerX" id="26X-Sw-4Qa"/>
+                                    <constraint firstItem="vgF-Ka-OCq" firstAttribute="centerX" secondItem="7We-se-o1z" secondAttribute="centerX" id="Tzs-rm-I1K"/>
+                                    <constraint firstItem="vgF-Ka-OCq" firstAttribute="top" secondItem="7We-se-o1z" secondAttribute="top" constant="10" id="hHc-nP-vKS"/>
+                                    <constraint firstAttribute="height" constant="40" id="pvQ-QN-zi6"/>
+                                    <constraint firstAttribute="bottom" secondItem="TqO-u3-hGB" secondAttribute="bottom" id="rvt-Gw-gzR"/>
+                                </constraints>
+                            </view>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="uem-5t-MLv">
+                                <rect key="frame" x="0.0" y="49" width="336" height="124"/>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="124" id="Vwf-B6-yHv"/>
+                                </constraints>
+                            </view>
+                        </subviews>
+                    </stackView>
+                </subviews>
+                <color key="backgroundColor" name="viewBackground"/>
+                <constraints>
+                    <constraint firstItem="ojv-w4-lh0" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="top" id="1My-xS-dXF"/>
+                    <constraint firstAttribute="trailing" secondItem="ojv-w4-lh0" secondAttribute="trailing" id="S4v-QM-YoM"/>
+                    <constraint firstAttribute="bottom" relation="greaterThanOrEqual" secondItem="ojv-w4-lh0" secondAttribute="bottom" id="dvR-F9-ZRA"/>
+                    <constraint firstItem="ojv-w4-lh0" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" id="uVg-Og-PIh"/>
+                </constraints>
+            </tableViewCellContentView>
+            <viewLayoutGuide key="safeArea" id="njF-e1-oar"/>
+            <connections>
+                <outlet property="buttonFiles" destination="1Nn-P3-OhI" id="aFV-Kj-14C"/>
+                <outlet property="buttonLinks" destination="fcQ-Zh-00l" id="XQk-jz-Hrw"/>
+                <outlet property="buttonMedia" destination="QxG-XA-zex" id="zWk-fg-Hcj"/>
+                <outlet property="filesContainerView" destination="uem-5t-MLv" id="eZ2-EX-AEx"/>
+                <outlet property="indicatorViewLeadingContraint" destination="26X-Sw-4Qa" id="qIo-GP-SK5"/>
+            </connections>
+            <point key="canvasLocation" x="143.47826086956522" y="87.053571428571431"/>
+        </tableViewCell>
+    </objects>
+    <resources>
+        <namedColor name="ChatNavColor">
+            <color red="0.11400000005960464" green="0.11400000005960464" blue="0.11400000005960464" alpha="0.93999999761581421" colorSpace="custom" customColorSpace="sRGB"/>
+        </namedColor>
+        <namedColor name="timelessBlue">
+            <color red="0.5490196078431373" green="0.69803921568627447" blue="0.97254901960784312" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </namedColor>
+        <namedColor name="viewBackground">
+            <color red="0.075000002980232239" green="0.075000002980232239" blue="0.078000001609325409" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </namedColor>
+    </resources>
+</document>

@@ -125,7 +125,6 @@ extension ChatAddFriendVC: UITextFieldDelegate {
 }
 // MARK: - ChatUserListDelegate
 extension ChatAddFriendVC: ChatUserListDelegate {
-    public func chatListStateUpdated(state: UserListViewModel.ChatUserLoadingState) {}
     public func chatUserDidSelect() {
         self.selectedUsers = self.chatUserList.viewModel.selectedUsers
         self.btnAddFriend?.isEnabled = !self.selectedUsers.isEmpty

@@ -179,9 +179,7 @@ extension NameGroupViewController: UITableViewDataSource {
             return UITableViewCell()
         }
         let user: ChatUser = selectedUsers[indexPath.row]
-        cell.config(user: user,
-                        selectedImage: nil,
-                        avatarBG: view.tintColor)
+        cell.config(user: user,selectedImage: nil)
         cell.backgroundColor = .clear
         return cell
 
