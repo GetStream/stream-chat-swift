@@ -3313,7 +3313,7 @@ class ChannelController_Tests: XCTestCase {
         
         // Simulate `startWatching` call and assert error is returned
         var error: Error? = try waitFor { [callbackQueueID] completion in
-            controller.startWatching { error in
+            controller.startWatching(isInRecoveryMode: false) { error in
                 AssertTestQueue(withId: callbackQueueID)
                 completion(error)
             }
@@ -3325,7 +3325,7 @@ class ChannelController_Tests: XCTestCase {
         
         // Simulate `startWatching` call and assert no error is returned
         error = try waitFor { [callbackQueueID] completion in
-            controller.startWatching { error in
+            controller.startWatching(isInRecoveryMode: false) { error in
                 AssertTestQueue(withId: callbackQueueID)
                 completion(error)
             }
@@ -3338,7 +3338,7 @@ class ChannelController_Tests: XCTestCase {
     func test_startWatching_callsChannelUpdater() {
         // Simulate `startWatching` call and catch the completion
         var completionCalled = false
-        controller.startWatching { [callbackQueueID] error in
+        controller.startWatching(isInRecoveryMode: false) { [callbackQueueID] error in
             AssertTestQueue(withId: callbackQueueID)
             XCTAssertNil(error)
             completionCalled = true
@@ -3371,7 +3371,7 @@ class ChannelController_Tests: XCTestCase {
     func test_startWatching_propagatesErrorFromUpdater() {
         // Simulate `startWatching` call and catch the completion
         var completionCalledError: Error?
-        controller.startWatching { [callbackQueueID] in
+        controller.startWatching(isInRecoveryMode: false) { [callbackQueueID] in
             AssertTestQueue(withId: callbackQueueID)
             completionCalledError = $0
         }
@@ -3445,7 +3445,7 @@ class ChannelController_Tests: XCTestCase {
 
         var receivedError: Error?
         let expectation = self.expectation(description: "watchActiveChannel completion")
-        controller.watchActiveChannel { error in
+        controller.recoverWatchedChannel { error in
             receivedError = error
             expectation.fulfill()
         }

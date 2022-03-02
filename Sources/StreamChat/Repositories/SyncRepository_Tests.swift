@@ -23,7 +23,12 @@ final class SyncRepository_Tests: XCTestCase {
         config.isLocalStorageEnabled = true
         client = ChatClientMock(config: config)
         channelRepository = ChannelListUpdaterMock(database: client.databaseContainer, apiClient: client.apiClient)
-        offlineRequestsRepository = OfflineRequestsRepositoryMock(database: client.databaseContainer, apiClient: client.apiClient)
+        let messageRepository = MessageRepositoryMock(database: client.databaseContainer, apiClient: client.apiClient)
+        offlineRequestsRepository = OfflineRequestsRepositoryMock(
+            messageRepository: messageRepository,
+            database: client.databaseContainer,
+            apiClient: client.apiClient
+        )
         database = client.mockDatabaseContainer
         apiClient = client.mockAPIClient
 
@@ -133,7 +138,7 @@ final class SyncRepository_Tests: XCTestCase {
         // Write: API Response, lastPendingConnectionDate, lastSyncAt
         XCTAssertEqual(database.writeSessionCounter, 3)
         XCTAssertEqual(repository.activeChannelControllers.count, 1)
-        XCTAssertCall("watchActiveChannel(completion:)", on: chatController, times: 1)
+        XCTAssertCall("recoverWatchedChannel(completion:)", on: chatController, times: 1)
         XCTAssertEqual(repository.activeChannelListControllers.count, 0)
         XCTAssertEqual(apiClient.recoveryRequest_allRecordedCalls.count, 1)
         XCTAssertEqual(apiClient.request_allRecordedCalls.count, 0)

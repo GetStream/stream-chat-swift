@@ -14,7 +14,7 @@ class ChatChannelControllerMock: ChatChannelController, Spy {
         super.init(channelQuery: .init(cid: .unique), channelListQuery: nil, client: client)
     }
 
-    override func watchActiveChannel(completion: @escaping (Error?) -> Void) {
+    override func recoverWatchedChannel(completion: @escaping (Error?) -> Void) {
         record()
         completion(watchActiveChannelError)
     }

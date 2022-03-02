@@ -31,9 +31,6 @@ public class ChatClient {
     /// `ChatClient` initializes a set of background workers that keep observing the current state of the system and perform
     /// work if needed (i.e. when a new message pending sent appears in the database, a worker tries to send it.)
     private(set) var backgroundWorkers: [Worker] = []
-    
-    /// Builder blocks used for creating `backgroundWorker`s when needed.
-    private let workerBuilders: [WorkerBuilder]
 
     /// Keeps a weak reference to the active channel list controllers to ensure a proper recovery when coming back online
     private(set) var activeChannelListControllers = NSHashTable<ChatChannelListController>.weakObjects()
@@ -67,10 +64,18 @@ public class ChatClient {
         return center
     }()
 
+    // MARK: Repositories
+
+    private(set) lazy var messageRepository = MessageRepository(database: databaseContainer, apiClient: apiClient)
+    private(set) lazy var offlineRequestsRepository = OfflineRequestsRepository(
+        messageRepository: messageRepository,
+        database: databaseContainer,
+        apiClient: apiClient
+    )
+
     /// A repository that handles all the executions needed to keep the Database in sync with remote.
     private(set) lazy var syncRepository: SyncRepository = {
         let channelRepository = ChannelListUpdater(database: databaseContainer, apiClient: apiClient)
-        let offlineRequestsRepository = OfflineRequestsRepository(database: databaseContainer, apiClient: apiClient)
         return SyncRepository(
             config: config,
             activeChannelControllers: activeChannelControllers,
@@ -254,26 +259,15 @@ public class ChatClient {
         config: ChatClientConfig,
         tokenProvider: TokenProvider? = nil
     ) {
-        let workerBuilders: [WorkerBuilder]
         var environment = Environment()
         
-        if config.isClientInActiveMode {
-            // All production workers
-            workerBuilders = [
-                MessageSender.init,
-                NewUserQueryUpdater.init,
-                MessageEditor.init,
-                AttachmentUploader.init
-            ]
-        } else {
-            workerBuilders = []
+        if !config.isClientInActiveMode {
             environment.webSocketClientBuilder = nil
         }
         
         self.init(
             config: config,
             tokenProvider: tokenProvider,
-            workerBuilders: workerBuilders,
             environment: environment
         )
     }
@@ -282,20 +276,16 @@ public class ChatClient {
     ///
     /// - Parameters:
     ///   - config: The config object for the `Client`.
-    ///   - workerBuilders: An array of worker builders the `Client` instance will instantiate and run in the background
-    ///   for the whole duration of its lifetime.
     ///   - environment: An object with all external dependencies the new `Client` instance should use.
     ///
     init(
         config: ChatClientConfig,
         tokenProvider: TokenProvider? = nil,
-        workerBuilders: [WorkerBuilder],
         environment: Environment
     ) {
         self.config = config
         self.tokenProvider = tokenProvider
         self.environment = environment
-        self.workerBuilders = workerBuilders
 
         if let webSocketClient = webSocketClient {
             connectionRecoveryHandler = environment.connectionRecoveryHandlerBuilder(
@@ -388,9 +378,15 @@ public class ChatClient {
     }
     
     func createBackgroundWorkers() {
-        backgroundWorkers = workerBuilders.map { builder in
-            builder(self.databaseContainer, self.apiClient)
-        }
+        guard config.isClientInActiveMode else { return }
+
+        // All production workers
+        backgroundWorkers = [
+            MessageSender(messageRepository: messageRepository, database: databaseContainer, apiClient: apiClient),
+            NewUserQueryUpdater(database: databaseContainer, apiClient: apiClient),
+            MessageEditor(messageRepository: messageRepository, database: databaseContainer, apiClient: apiClient),
+            AttachmentUploader(database: databaseContainer, apiClient: apiClient)
+        ]
     }
 
     func trackChannelController(_ channelController: ChatChannelController) {

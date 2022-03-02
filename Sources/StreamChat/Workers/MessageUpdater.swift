@@ -7,6 +7,13 @@ import Foundation
 
 /// The type provides the API for getting/editing/deleting a message
 class MessageUpdater: Worker {
+    let repository: MessageRepository
+
+    init(messageRepository: MessageRepository, database: DatabaseContainer, apiClient: APIClient) {
+        repository = messageRepository
+        super.init(database: database, apiClient: apiClient)
+    }
+
     /// Fetches the message from the backend and saves it into the database
     /// - Parameters:
     ///   - cid: The channel identifier the message relates to.
@@ -61,36 +68,24 @@ class MessageUpdater: Worker {
             } else {
                 messageDTO.localMessageState = .deleting
             }
-        }, completion: { error in
+        }, completion: { [weak database, weak apiClient, weak repository] error in
             guard shouldDeleteOnBackend, error == nil else {
                 completion?(error)
                 return
             }
             
-            self.apiClient.request(endpoint: .deleteMessage(messageId: messageId, hard: hard)) { result in
-                self.database.write({ session in
-                    let messageDTO = session.message(id: messageId)
-                    switch result {
-                    case let .success(response):
-                        guard let cid = messageDTO?.channel?.cid else { return }
-
-                        let deletedMessage = try session.saveMessage(
-                            payload: response.message,
-                            for: ChannelId(cid: cid),
-                            syncOwnReactions: false
-                        )
-                        deletedMessage?.localMessageState = nil
-
-                        if hard, let message = deletedMessage {
-                            session.delete(message: message)
-                        }
-                    case .failure:
+            apiClient?.request(endpoint: .deleteMessage(messageId: messageId, hard: hard)) { result in
+                switch result {
+                case let .success(response):
+                    repository?.saveSuccessfullyDeletedMessage(message: response.message, completion: completion)
+                case let .failure(error):
+                    database?.write { session in
+                        let messageDTO = session.message(id: messageId)
                         messageDTO?.localMessageState = .deletingFailed
                         messageDTO?.isHardDeleted = false
+                        completion?(error)
                     }
-                }, completion: { error in
-                    completion?(result.error ?? error)
-                })
+                }
             }
         })
     }

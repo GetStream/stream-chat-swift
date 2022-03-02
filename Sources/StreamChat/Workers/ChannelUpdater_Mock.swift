@@ -182,6 +182,7 @@ class ChannelUpdaterMock: ChannelUpdater {
     
     override func update(
         channelQuery: ChannelQuery,
+        isInRecoveryMode: Bool,
         channelCreatedCallback: ((ChannelId) -> Void)?,
         completion: ((Result<ChannelPayload, Error>) -> Void)?
     ) {
@@ -301,7 +302,7 @@ class ChannelUpdaterMock: ChannelUpdater {
         enableSlowMode_completion = completion
     }
     
-    override func startWatching(cid: ChannelId, completion: ((Error?) -> Void)? = nil) {
+    override func startWatching(cid: ChannelId, isInRecoveryMode: Bool, completion: ((Error?) -> Void)? = nil) {
         startWatching_cid = cid
         startWatching_completion = completion
     }

@@ -249,7 +249,7 @@ final class ChatClientUpdater_Tests: XCTestCase {
             let updater = ChatClientUpdater(client: client)
 
             // Save current background worker ids.
-            let oldWorkerIDs = client.testBackgroundWorkerIDs
+            let oldWorkerIDs = client.testBackgroundWorkerId
 
             // Simulate `reloadUserIfNeeded` call.
             var reloadUserIfNeededCompletionCalled = false
@@ -287,7 +287,7 @@ final class ChatClientUpdater_Tests: XCTestCase {
                 // Assert `completeTokenWaiters` was called with updated token.
                 XCTAssertEqual(client.completeTokenWaiters_token, options.updatedToken)
                 // Assert background workers stay the same.
-                XCTAssertEqual(client.testBackgroundWorkerIDs, oldWorkerIDs)
+                XCTAssertEqual(client.testBackgroundWorkerId, oldWorkerIDs)
                 // Assert database is not flushed.
                 XCTAssertFalse(client.mockDatabaseContainer.removeAllData_called)
             } else {
@@ -295,7 +295,7 @@ final class ChatClientUpdater_Tests: XCTestCase {
                 // pending requests were cancelled.
                 XCTAssertNil(client.completeTokenWaiters_token)
                 // Assert background workers are recreated since the user has changed.
-                XCTAssertNotEqual(client.testBackgroundWorkerIDs, oldWorkerIDs)
+                XCTAssertNotEqual(client.testBackgroundWorkerId, oldWorkerIDs)
                 // Assert database was flushed.
                 XCTAssertTrue(client.mockDatabaseContainer.removeAllData_called)
                 // Assert completion hasn't been called yet.
@@ -473,7 +473,7 @@ final class ChatClientUpdater_Tests: XCTestCase {
         // Assert `completeTokenWaiters` is called with the token.
         XCTAssertEqual(client.completeTokenWaiters_token, token)
         // Assert background workers are instantiated
-        XCTAssertFalse(client.testBackgroundWorkerIDs.isEmpty)
+        XCTAssertNotNil(client.testBackgroundWorkerId)
         // Assert store recreation was not triggered since there's no data from prev. user
         XCTAssertFalse(client.mockDatabaseContainer.removeAllData_called)
         // Assert completion hasn't been called yet.
@@ -508,10 +508,7 @@ final class ChatClientUpdater_Tests: XCTestCase {
         config.isClientInActiveMode = isActive
 
         // Create a client.
-        let client = ChatClientMock(
-            config: config,
-            workerBuilders: [TestWorker.init]
-        )
+        let client = ChatClientMock(config: config)
         client.connectUser(userInfo: .init(id: token.userId), token: token)
 
         client.currentUserId = token.userId
@@ -532,13 +529,7 @@ final class ChatClientUpdater_Tests: XCTestCase {
 // MARK: - Private
 
 private extension ChatClient {
-    var testBackgroundWorkerIDs: Set<UUID> {
-        .init(
-            backgroundWorkers.compactMap {
-                let testWorker = $0 as? TestWorker
-
-                return testWorker?.id
-            }
-        )
+    var testBackgroundWorkerId: Int? {
+        backgroundWorkers.first { $0 is MessageSender || $0 is TestWorker }.map { ObjectIdentifier($0).hashValue }
     }
 }

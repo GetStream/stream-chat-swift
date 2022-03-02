@@ -120,8 +120,8 @@ class APIClient {
                     done(.continue)
                 case .failure(_ as ClientError.TokenRefreshed):
                     // Retry request. Expired token has been refreshed
-                    done(.retry)
                     operation.resetRetries()
+                    done(.retry)
                 case let .failure(error) where self?.isConnectionError(error) == true:
                     // Do not retry unless its a connection problem and we still have retries left
                     if operation.canRetry {

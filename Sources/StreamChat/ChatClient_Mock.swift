@@ -9,7 +9,7 @@ import XCTest
 
 extension ChatClient {
     static var mock: ChatClient {
-        .init(
+        ChatClientMock(
             config: .init(apiKey: .init(.unique)),
             workerBuilders: [],
             environment: .mock
@@ -43,7 +43,6 @@ extension ChatClient {
 class ChatClientMock: ChatClient {
     @Atomic var init_config: ChatClientConfig
     @Atomic var init_tokenProvider: TokenProvider?
-    @Atomic var init_workerBuilders: [WorkerBuilder]
     @Atomic var init_environment: Environment
     @Atomic var init_completion: ((Error?) -> Void)?
 
@@ -57,9 +56,15 @@ class ChatClientMock: ChatClient {
     @Atomic var completeTokenWaiters_called = false
     @Atomic var completeTokenWaiters_token: Token?
 
+    override var backgroundWorkers: [Worker] {
+        _backgroundWorkers ?? super.backgroundWorkers
+    }
+
+    private var _backgroundWorkers: [Worker]?
+
     // MARK: - Overrides
 
-    override init(
+    init(
         config: ChatClientConfig,
         tokenProvider: TokenProvider? = nil,
         workerBuilders: [WorkerBuilder] = [],
@@ -67,15 +72,16 @@ class ChatClientMock: ChatClient {
     ) {
         init_config = config
         init_tokenProvider = tokenProvider
-        init_workerBuilders = workerBuilders
         init_environment = environment
 
         super.init(
             config: config,
             tokenProvider: tokenProvider,
-            workerBuilders: workerBuilders,
             environment: environment
         )
+        if !workerBuilders.isEmpty {
+            _backgroundWorkers = workerBuilders.map { $0(databaseContainer, apiClient) }
+        }
     }
 
     override func fetchCurrentUserIdFromDatabase() -> UserId? {

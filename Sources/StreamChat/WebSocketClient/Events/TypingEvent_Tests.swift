@@ -145,7 +145,6 @@ class TypingEventsIntegration_Tests: XCTestCase {
         currentUserId = .unique
         client = ChatClient(
             config: config,
-            workerBuilders: [],
             environment: .withZeroEventBatchingPeriod
         )
         try! client.databaseContainer.createCurrentUser(id: currentUserId)
