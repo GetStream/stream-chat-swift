@@ -20,7 +20,6 @@ public class ChatGroupDetailsVC: ChatBaseVC {
     @IBOutlet private var lblSubtitle: UILabel!
     @IBOutlet private var tableView: UITableView!
     @IBOutlet private var notificationSwitch: UISwitch!
-    //@IBOutlet private var buttonShowMore: UIButton!
     var filesContainerView = UIView()
     // MARK: - VARIABLES
     public var selectedUsers: [ChatChannelMember] = []
