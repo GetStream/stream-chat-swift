@@ -9,6 +9,8 @@
 import UIKit
 import Nuke
 import StreamChat
+import AVKit
+import SwiftyGif
 
 class AnnouncementTableViewCell: ASVideoTableViewCell {
 
@@ -16,27 +18,25 @@ class AnnouncementTableViewCell: ASVideoTableViewCell {
     //swiftlint:disable private_outlet
     @IBOutlet weak var containerView: UIView!
     @IBOutlet weak var imgPlay: UIImageView!
-    @IBOutlet weak var viewOverlay: UIView!
-    @IBOutlet weak var imgView: UIImageView!
     @IBOutlet weak var lblHashTag: UILabel!
     @IBOutlet weak var lblInfo: UILabel!
     @IBOutlet weak var playerView: UIView!
-    @IBOutlet weak var viewContainer: UIView!
     @IBOutlet weak var imgHeightConst: NSLayoutConstraint!
+    @IBOutlet weak var btnContainer: UIButton!
     
     // MARK: - Variables
     var content: ChatMessage?
     var streamVideoLoader: StreamVideoLoader?
-
+    var didTapAnnouncement: (() -> Void)?
+    var message: ChatMessage?
+    
     override func awakeFromNib() {
         super.awakeFromNib()
-        playerView.layer.addSublayer(videoLayer)
+        setupUI()
     }
 
     override func layoutSubviews() {
         super.layoutSubviews()
-        // TODO: - 3. Thumbnail placeholder jumps
-        //Check for video frame issue on first time.
         videoLayer.frame = playerView.frame
     }
 
@@ -44,14 +44,14 @@ class AnnouncementTableViewCell: ASVideoTableViewCell {
         self.selectionStyle = .none
         containerView.layer.cornerRadius = 8
         lblInfo.text = message?.text
-        streamVideoLoader = StreamVideoLoader()
         if let hashTag = message?.extraData.tag {
             lblHashTag.text = "#" +  hashTag.joined(separator: " #")
         }
         if let imageAttachments = message?.imageAttachments.first {
             imgHeightConst.constant = 250
             if imageAttachments.imageURL.pathExtension == "gif" {
-                imgView.setGifFromURL(imageAttachments.imageURL)
+                imgView.setGifFromURL(imageAttachments.imageURL, loopCount: 1)
+                imgView.startAnimatingGif()
             } else {
                 Nuke.loadImage(with: imageAttachments.imagePreviewURL, into: self.imgView)
             }
@@ -76,42 +76,20 @@ class AnnouncementTableViewCell: ASVideoTableViewCell {
         }
     }
     
-//    func configCell(feed: FeedItem) {
-//        lblDay.text = getDayString(feed.startDate)
-//        lblMonth.text = getMonthString(feed.startDate).uppercased()
-//        imgPlay.isHidden = true
-//        if feed.attachment?.type == .video {
-//            videoURL = feed.attachment?.url.absoluteString
-//            imgView.kf.setImage(
-//                with: feed.attachment?.videoThumbnail,
-//                placeholder: UIImage(named: "placeholder"),
-//                options: [.transition(.fade(0.1)), .loadDiskFileSynchronously]
-//            ) { [weak self] result in
-//                guard let `self` = self else { return }
-//                switch result {
-//                case .success(_):
-//                    self.imgPlay.isHidden = false
-//                case .failure(_): break
-//                }
-//            }
-//            playerView.isHidden = false
-//        } else if feed.attachment?.type == .image {
-//            imgView.kf.setImage(
-//                with: feed.attachment?.url,
-//                placeholder: nil,
-//                options: [.transition(.fade(0.1)), .loadDiskFileSynchronously])
-//            self.imgPlay.isHidden = true
-//            videoURL = nil
-//            playerView.isHidden = true
-//        } else {
-//            playerView.isHidden = true
-//            imgView.image = nil
-//        }
-//        lblTitle.text = feed.title
-//        lblDetails.text = feed.details
-//        lblInfo.text = feed.message
-//        lblNoLikes.text = "\(feed.likesCount)"
-//        lblHashTag.text = feed.hashtag
-//    }
+    private func setupUI() {
+        videoLayer.backgroundColor = UIColor.clear.cgColor
+        videoLayer.videoGravity = AVLayerVideoGravity.resizeAspectFill
+        playerView.layer.addSublayer(videoLayer)
+    }
 }
 
+extension AnnouncementTableViewCell: GalleryItemPreview {
+    var attachmentId: AttachmentId? {
+        return message?.firstAttachmentId
+    }
+    
+    override var imageView: UIImageView {
+        self.imgView
+    }
+    
+}

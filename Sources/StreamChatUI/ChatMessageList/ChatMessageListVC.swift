@@ -85,7 +85,8 @@ open class ChatMessageListVC:
     }
 
     var viewEmptyState: UIView = UIView()
-
+    var streamVideoLoader = StreamVideoLoader()
+    
     open override func viewDidLoad() {
         super.viewDidLoad()
         listView.register(CryptoSentBubble.self, forCellReuseIdentifier: "CryptoSentBubble")
@@ -459,6 +460,9 @@ open class ChatMessageListVC:
             return cell
         } else if channelType == .announcement {
             let cell = listView.dequeueReusableCell(withIdentifier: "AnnouncementTableViewCell") as! AnnouncementTableViewCell
+            cell.btnContainer.addTarget(self, action: #selector(didSelectAnnouncement(_:)), for: .touchUpInside)
+            cell.streamVideoLoader = streamVideoLoader
+            cell.message = message
             cell.configureCell(message)
             cell.transform = .mirrorY
             return cell
@@ -503,18 +507,22 @@ open class ChatMessageListVC:
         viewEmptyState.isUserInteractionEnabled = false
     }
 
+    @objc private func didSelectAnnouncement(_ sender: UIButton) {
+        guard let cell = sender.superview?.superview?.superview as? AnnouncementTableViewCell,
+        let indexPath = listView.indexPath(for: cell),
+        let message = dataSource?.chatMessageListVC(self, messageAt: indexPath),
+        let attachmentId = message.firstAttachmentId
+        else { return }
+        router.showGallery(
+            message: message,
+            initialAttachmentId: attachmentId,
+            previews: [cell]
+        )
+        
+    }
+    
     private func isOneWalletCell(_ message: ChatMessage?) -> Bool {
         message?.extraData.keys.contains("oneWalletTx") ?? false
-//        if let rawJson = message?.extraData["oneWalletTx"] {
-//            switch rawJson {
-//            case .bool(let bool):
-//                return bool
-//            default:
-//                return false
-//            }
-//        } else {
-//            return false
-//        }
     }
 
     private func isRedPacketCell(_ message: ChatMessage?) -> Bool {

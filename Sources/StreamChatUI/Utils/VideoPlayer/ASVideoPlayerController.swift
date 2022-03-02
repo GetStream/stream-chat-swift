@@ -8,6 +8,7 @@
 
 import UIKit
 import AVFoundation
+import SwiftyGif
 
 /**
  Protocol that needs to be adopted by subclass of any UIView
@@ -72,11 +73,13 @@ open class ASVideoPlayerController: NSObject, NSCacheDelegate {
             switch status {
             case .loaded:
                 break
-            case .failed, .cancelled:
-                print("Failed to load asset successfully")
+            case .failed:
+                print("Failed to load asset")
                 return
+            case .cancelled:
+                print("Cancelled to load asset")
             default:
-                print("Unkown state of asset")
+                print("Unknown state of asset")
                 return
             }
             let player = AVPlayer()
@@ -225,6 +228,7 @@ open class ASVideoPlayerController: NSObject, NSCacheDelegate {
             containerCell.isVideoPlaying = false
             if let cell = containerCell as? ASVideoTableViewCell {
                 cell.videoLayer.isHidden = !cell.isVideoPlaying
+                cell.imgView.stopAnimatingGif()
             }
             pauseRemoveLayer(layer: containerCell.videoLayer, url: videoCellURL, layerHeight: height)
         }
@@ -246,6 +250,7 @@ open class ASVideoPlayerController: NSObject, NSCacheDelegate {
             videoCell.isVideoPlaying = true
             if let cell = videoCell as? ASVideoTableViewCell {
                 cell.videoLayer.isHidden = !cell.isVideoPlaying
+                cell.imgView.startAnimatingGif()
             }
             playVideo(withLayer: videoCell.videoLayer, url: videoCellURL)
         }

@@ -267,7 +267,7 @@ open class GalleryVC:
                 let timeAgo = lastSeenDateFormatter(lastActive) {
                 dateLabel.text = timeAgo
             } else {
-                dateLabel.text = L10n.Message.Title.offline
+                dateLabel.text = ""
             }
         }
         
