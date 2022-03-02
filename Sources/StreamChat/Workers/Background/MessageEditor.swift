@@ -74,10 +74,10 @@ class MessageEditor: Worker {
             }
             
             let requestBody = dto.asRequestBody() as MessageRequestBody
-            messageRepository?.markMessage(withID: messageId, as: .syncing) {
+            messageRepository?.updateMessage(withID: messageId, localState: .syncing) {
                 self?.apiClient.request(endpoint: .editMessage(payload: requestBody)) {
                     let newMessageState: LocalMessageState? = $0.error == nil ? nil : .syncingFailed
-                    messageRepository?.markMessage(withID: messageId, as: newMessageState) {
+                    messageRepository?.updateMessage(withID: messageId, localState: newMessageState) {
                         self?.removeMessageIDAndContinue(messageId)
                     }
                 }

@@ -6,7 +6,7 @@ import Foundation
 
 enum MessageRepositoryError: LocalizedError {
     case messageDoesNotExist
-    case messageIsNotPending
+    case messageNotPendingSend
     case messageDoesNotHaveValidChannel
     case failedToSendMessage
 }
@@ -35,7 +35,7 @@ class MessageRepository {
             // Check the message still have `pendingSend` state.
             guard dto.localMessageState == .pendingSend else {
                 log.info("Skipping sending message with id \(dto.id) because it doesn't have `pendingSend` local state.")
-                completion(.failure(.messageIsNotPending))
+                completion(.failure(.messageNotPendingSend))
                 return
             }
 
@@ -51,7 +51,6 @@ class MessageRepository {
             self?.database.write({
                 let messageDTO = $0.message(id: messageId)
                 messageDTO?.localMessageState = .sending
-
             }, completion: { error in
                 if let error = error {
                     log.error("Error changing localMessageState message with id \(messageId) to `sending`: \(error)")
@@ -125,7 +124,7 @@ class MessageRepository {
     }
 
     func saveSuccessfullyEditedMessage(for id: MessageId, completion: @escaping () -> Void) {
-        markMessage(withID: id, as: nil, completion: completion)
+        updateMessage(withID: id, localState: nil, completion: completion)
     }
 
     func saveSuccessfullyDeletedMessage(message: MessagePayload, completion: ((Error?) -> Void)? = nil) {
@@ -146,12 +145,15 @@ class MessageRepository {
         })
     }
 
-    func markMessage(withID id: MessageId, as state: LocalMessageState?, completion: @escaping () -> Void) {
+    func updateMessage(withID id: MessageId, localState: LocalMessageState?, completion: @escaping () -> Void) {
         database.write({
-            $0.message(id: id)?.localMessageState = state
+            $0.message(id: id)?.localMessageState = localState
         }, completion: { error in
             if let error = error {
-                log.error("Error changing localMessageState for message with id \(id) to `\(String(describing: state))`: \(error)")
+                log
+                    .error(
+                        "Error changing localMessageState for message with id \(id) to `\(String(describing: localState))`: \(error)"
+                    )
             }
             completion()
         })

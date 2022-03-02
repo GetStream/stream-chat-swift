@@ -108,7 +108,9 @@ class OfflineRequestsRepository {
         data: Data,
         completion: @escaping () -> Void
     ) {
-        func decodeTo<T: Decodable>(_ type: T.Type) -> T? { try? JSONDecoder.stream.decode(T.self, from: data) }
+        func decodeTo<T: Decodable>(_ type: T.Type) -> T? {
+            try? JSONDecoder.stream.decode(T.self, from: data)
+        }
 
         switch endpoint.path {
         case .createChannel:

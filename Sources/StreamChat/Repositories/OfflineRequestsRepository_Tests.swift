@@ -29,10 +29,12 @@ final class OfflineRequestsRepository_Tests: XCTestCase {
         }
         waitForExpectations(timeout: 0.1, handler: nil)
 
+        // No calls should be performed when there are no queued requests
         XCTAssertEqual(apiClient.recoveryRequest_allRecordedCalls.count, 0)
     }
 
     func test_runQueuedRequestsWithPendingRequests() throws {
+        // We add one request to the queue
         try createSendMessageRequests(count: 1)
 
         let expectation = self.expectation(description: "Running completes")
@@ -45,13 +47,16 @@ final class OfflineRequestsRepository_Tests: XCTestCase {
 
         waitForExpectations(timeout: 0.1, handler: nil)
 
+        // One call should be performed
         XCTAssertEqual(apiClient.recoveryRequest_allRecordedCalls.count, 1)
+
+        // Upon completing, the request should be removed from the queue
         let pendingRequests = QueuedRequestDTO.loadAllPendingRequests(context: database.viewContext)
         XCTAssertEqual(pendingRequests.count, 0)
-        XCTAssertNotCall("saveSuccessfullySentMessage(cid:message:completion:)", on: messageRepository)
     }
 
     func test_runQueuedRequestsWithPendingRequests_createChannel() throws {
+        // We add one .createChannel request to the queue
         try createRequest(id: .unique, path: .createChannel(""))
 
         let expectation = self.expectation(description: "Running completes")
@@ -59,6 +64,7 @@ final class OfflineRequestsRepository_Tests: XCTestCase {
             expectation.fulfill()
         }
 
+        // We reset the counter to properly assert later
         database.writeSessionCounter = 0
         AssertAsync.willBeTrue(apiClient.recoveryRequest_endpoint != nil)
 
@@ -75,6 +81,7 @@ final class OfflineRequestsRepository_Tests: XCTestCase {
     }
 
     func test_runQueuedRequestsWithPendingRequests_sendMessage() throws {
+        // We add one .sendMessage request to the queue
         try createRequest(id: .unique, path: .sendMessage(.unique))
 
         let expectation = self.expectation(description: "Running completes")
@@ -82,6 +89,7 @@ final class OfflineRequestsRepository_Tests: XCTestCase {
             expectation.fulfill()
         }
 
+        // We reset the counter to properly assert later
         database.writeSessionCounter = 0
         AssertAsync.willBeTrue(apiClient.recoveryRequest_endpoint != nil)
 
@@ -100,6 +108,7 @@ final class OfflineRequestsRepository_Tests: XCTestCase {
     }
 
     func test_runQueuedRequestsWithPendingRequests_editMessage() throws {
+        // We add one .editMessage request to the queue
         try createRequest(id: .unique, path: .editMessage(.unique))
 
         let expectation = self.expectation(description: "Running completes")
@@ -107,6 +116,7 @@ final class OfflineRequestsRepository_Tests: XCTestCase {
             expectation.fulfill()
         }
 
+        // We reset the counter to properly assert later
         database.writeSessionCounter = 0
         AssertAsync.willBeTrue(apiClient.recoveryRequest_endpoint != nil)
 
@@ -124,6 +134,7 @@ final class OfflineRequestsRepository_Tests: XCTestCase {
     }
 
     func test_runQueuedRequestsWithPendingRequests_deleteMessage() throws {
+        // We add one .deleteMessage request to the queue
         try createRequest(id: .unique, path: .deleteMessage(.unique))
 
         let expectation = self.expectation(description: "Running completes")
@@ -131,6 +142,7 @@ final class OfflineRequestsRepository_Tests: XCTestCase {
             expectation.fulfill()
         }
 
+        // We reset the counter to properly assert later
         database.writeSessionCounter = 0
         AssertAsync.willBeTrue(apiClient.recoveryRequest_endpoint != nil)
 
@@ -149,6 +161,7 @@ final class OfflineRequestsRepository_Tests: XCTestCase {
     }
 
     func test_runQueuedRequestsWithManyPendingRequests() throws {
+        // We put 5 .sendMessage requests in the queue
         let count = 5
         try createSendMessageRequests(count: count)
 
@@ -158,6 +171,7 @@ final class OfflineRequestsRepository_Tests: XCTestCase {
         }
 
         XCTAssertEqual(apiClient.recoveryRequest_allRecordedCalls.count, 5)
+        // We make all the requests succeed
         apiClient.recoveryRequest_allRecordedCalls.forEach { _, completion in
             let completion = completion as? ((Result<Data, Error>) -> Void)
             completion?(.success(Data()))
@@ -165,11 +179,13 @@ final class OfflineRequestsRepository_Tests: XCTestCase {
 
         waitForExpectations(timeout: 0.1, handler: nil)
 
+        // Queued requests should be removed once completed
         let pendingRequests = QueuedRequestDTO.loadAllPendingRequests(context: database.viewContext)
         XCTAssertEqual(pendingRequests.count, 0)
     }
 
     func test_runQueuedRequestsWithManyPendingRequestsOneNetworkFailureShouldBeKept() throws {
+        // We put 5 .sendMessage requests in the queue
         let count = 5
         try createSendMessageRequests(count: count)
 
@@ -179,6 +195,8 @@ final class OfflineRequestsRepository_Tests: XCTestCase {
         }
 
         XCTAssertEqual(apiClient.recoveryRequest_allRecordedCalls.count, 5)
+
+        // We make all the requests succeed but 1, which receives a Connection Error
         apiClient.recoveryRequest_allRecordedCalls.forEach { endpoint, completion in
             let completion = completion as? ((Result<Data, Error>) -> Void)
             if case let .sendMessage(id) = endpoint.path, id.id == "request2" {
@@ -190,11 +208,13 @@ final class OfflineRequestsRepository_Tests: XCTestCase {
 
         waitForExpectations(timeout: 0.1, handler: nil)
 
+        // Queued requests with ConnectionError should be kept
         let pendingRequests = QueuedRequestDTO.loadAllPendingRequests(context: database.viewContext)
         XCTAssertEqual(pendingRequests.count, 1)
     }
 
     func test_runQueuedRequestsWhichFailShouldBeRemoved() throws {
+        // We put 5 .sendMessage requests in the queue
         let count = 5
         try createSendMessageRequests(count: count)
 
@@ -204,6 +224,8 @@ final class OfflineRequestsRepository_Tests: XCTestCase {
         }
 
         XCTAssertEqual(apiClient.recoveryRequest_allRecordedCalls.count, 5)
+
+        // We make all the requests succeed but 1, which receives a random error
         apiClient.recoveryRequest_allRecordedCalls.forEach { endpoint, completion in
             let completion = completion as? ((Result<Data, Error>) -> Void)
             if case let .sendMessage(id) = endpoint.path, id.id == "request2" {
@@ -215,6 +237,7 @@ final class OfflineRequestsRepository_Tests: XCTestCase {
 
         waitForExpectations(timeout: 0.1, handler: nil)
 
+        // Queued requests should be removed when result is either success or an error that is not connection related
         let pendingRequests = QueuedRequestDTO.loadAllPendingRequests(context: database.viewContext)
         XCTAssertEqual(pendingRequests.count, 0)
     }
