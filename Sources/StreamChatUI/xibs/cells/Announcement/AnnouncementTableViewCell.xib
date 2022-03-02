@@ -23,10 +23,10 @@
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <view clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="BmX-Br-KI2">
-                        <rect key="frame" x="10" y="10" width="300" height="351"/>
+                        <rect key="frame" x="10" y="20" width="300" height="341"/>
                         <subviews>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="0Vm-ha-Tp1">
-                                <rect key="frame" x="0.0" y="10" width="300" height="341"/>
+                                <rect key="frame" x="0.0" y="0.0" width="300" height="341"/>
                                 <subviews>
                                     <stackView opaque="NO" contentMode="scaleToFill" spacing="15" translatesAutoresizingMaskIntoConstraints="NO" id="lce-dG-3F7">
                                         <rect key="frame" x="25" y="307" width="103" height="18"/>
@@ -108,14 +108,14 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" alpha="0.60000002384185791" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="252" verticalCompressionResistancePriority="751" lineBreakMode="tailTruncation" numberOfLines="4" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="k59-Wr-zSE">
-                                <rect key="frame" x="13" y="270" width="274" height="66"/>
+                                <rect key="frame" x="13" y="270" width="274" height="56"/>
                                 <string key="text">Coventry is a city with a thousand years of history that has plenty to offer the visiting tourist. It is located in the heart of Warwickshire, UK.</string>
                                 <fontDescription key="fontDescription" name="SFProText-Regular" family="SF Pro Text" pointSize="14"/>
                                 <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Sg6-7u-q7k">
-                                <rect key="frame" x="0.0" y="0.0" width="300" height="351"/>
+                                <rect key="frame" x="0.0" y="0.0" width="300" height="341"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
                             </button>
@@ -149,7 +149,7 @@
                             <constraint firstItem="k59-Wr-zSE" firstAttribute="leading" secondItem="BmX-Br-KI2" secondAttribute="leadingMargin" constant="5" id="jyx-eK-4AW"/>
                             <constraint firstAttribute="trailingMargin" secondItem="k59-Wr-zSE" secondAttribute="trailing" constant="5" id="ncE-v6-4gL"/>
                             <constraint firstItem="eID-Yp-ZBm" firstAttribute="top" secondItem="bTX-bD-CGh" secondAttribute="bottom" constant="10" id="qFe-3R-Ebb"/>
-                            <constraint firstItem="0Vm-ha-Tp1" firstAttribute="top" secondItem="BmX-Br-KI2" secondAttribute="top" constant="10" id="rRK-GO-OZ7"/>
+                            <constraint firstItem="0Vm-ha-Tp1" firstAttribute="top" secondItem="BmX-Br-KI2" secondAttribute="top" id="rRK-GO-OZ7"/>
                             <constraint firstItem="Sg6-7u-q7k" firstAttribute="top" secondItem="BmX-Br-KI2" secondAttribute="top" id="rvQ-nP-XyJ"/>
                             <constraint firstItem="k59-Wr-zSE" firstAttribute="top" secondItem="eID-Yp-ZBm" secondAttribute="bottom" constant="10" id="sz6-kl-j3O"/>
                             <constraint firstItem="bTX-bD-CGh" firstAttribute="leading" secondItem="goy-Mo-hsb" secondAttribute="leading" id="vap-rk-IwU"/>
@@ -161,7 +161,7 @@
                     <constraint firstItem="BmX-Br-KI2" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" constant="10" id="6Br-Yg-WO4"/>
                     <constraint firstAttribute="bottom" secondItem="BmX-Br-KI2" secondAttribute="bottom" id="CIO-Ea-3it"/>
                     <constraint firstAttribute="trailing" secondItem="BmX-Br-KI2" secondAttribute="trailing" constant="10" id="EU5-IF-vFz"/>
-                    <constraint firstItem="BmX-Br-KI2" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="top" constant="10" id="Gt0-Ac-Fb9"/>
+                    <constraint firstItem="BmX-Br-KI2" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="top" constant="20" id="Gt0-Ac-Fb9"/>
                 </constraints>
             </tableViewCellContentView>
             <viewLayoutGuide key="safeArea" id="njF-e1-oar"/>

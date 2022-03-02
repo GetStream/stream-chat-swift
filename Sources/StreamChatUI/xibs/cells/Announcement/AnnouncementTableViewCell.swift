@@ -50,8 +50,7 @@ class AnnouncementTableViewCell: ASVideoTableViewCell {
         if let imageAttachments = message?.imageAttachments.first {
             imgHeightConst.constant = 250
             if imageAttachments.imageURL.pathExtension == "gif" {
-                imgView.setGifFromURL(imageAttachments.imageURL, loopCount: 1)
-                imgView.startAnimatingGif()
+                imgView.setGifFromURL(imageAttachments.imageURL, loopCount: -1)
             } else {
                 Nuke.loadImage(with: imageAttachments.imagePreviewURL, into: self.imgView)
             }
