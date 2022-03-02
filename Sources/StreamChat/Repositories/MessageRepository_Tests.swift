@@ -32,7 +32,7 @@ class MessageRepositoryTests: XCTestCase {
         try createMessage(id: id, localState: .deleting)
 
         let result = runSendMessageAndWait(id: id)
-        XCTAssertEqual(result?.error, MessageRepositoryError.messageIsNotPending)
+        XCTAssertEqual(result?.error, MessageRepositoryError.messageNotPendingSend)
     }
 
     func tests_sendMessage_noChannel() throws {
@@ -244,7 +244,7 @@ class MessageRepositoryTests: XCTestCase {
         let id = MessageId.unique
         try createMessage(id: id, localState: .sending)
 
-        runMarkMessageAndWait(id: id, as: nil)
+        runUpdateMessageLocalStateAndWait(id: id, to: nil)
 
         let dbMessage = message(for: id)
         XCTAssertNotNil(dbMessage)
@@ -255,16 +255,16 @@ class MessageRepositoryTests: XCTestCase {
         let id = MessageId.unique
         try createMessage(id: id, localState: .sending)
 
-        runMarkMessageAndWait(id: id, as: .deleting)
+        runUpdateMessageLocalStateAndWait(id: id, to: .deleting)
 
         let dbMessage = message(for: id)
         XCTAssertNotNil(dbMessage)
         XCTAssertEqual(dbMessage?.localState, .deleting)
     }
 
-    private func runMarkMessageAndWait(id: MessageId, as state: LocalMessageState?) {
+    private func runUpdateMessageLocalStateAndWait(id: MessageId, to state: LocalMessageState?) {
         let expectation = self.expectation(description: "Mark Message completes")
-        repository.markMessage(withID: id, as: state) {
+        repository.updateMessage(withID: id, localState: state) {
             expectation.fulfill()
         }
         waitForExpectations(timeout: 0.1, handler: nil)

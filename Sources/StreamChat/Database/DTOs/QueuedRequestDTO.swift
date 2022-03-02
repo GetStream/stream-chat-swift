@@ -6,9 +6,9 @@ import CoreData
 
 @objc(QueuedRequestDTO)
 class QueuedRequestDTO: NSManagedObject {
-    @NSManaged var id: String
-    @NSManaged var date: Date
-    @NSManaged var endpoint: Data
+    @NSManaged private(set) var id: String
+    @NSManaged private(set) var date: Date
+    @NSManaged private(set) var endpoint: Data
 
     @discardableResult
     static func createRequest(

@@ -52,11 +52,11 @@ class MessageRepositoryMock: MessageRepository, Spy {
         completion?(saveSuccessfullyDeletedMessageError)
     }
 
-    var markMessageStateArgument: LocalMessageState?
+    var updatedMessageLocalState: LocalMessageState?
 
-    override func markMessage(withID id: MessageId, as state: LocalMessageState?, completion: @escaping () -> Void) {
+    override func updateMessage(withID id: MessageId, localState: LocalMessageState?, completion: @escaping () -> Void) {
         record()
-        markMessageStateArgument = state
+        updatedMessageLocalState = localState
         completion()
     }
 }

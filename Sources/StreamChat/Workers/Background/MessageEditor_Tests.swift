@@ -72,7 +72,7 @@ final class MessageEditor_Tests: XCTestCase {
             }))
         }
 
-        XCTAssertCall("markMessage(withID:as:completion:)", on: messageRepository, times: 1)
+        XCTAssertCall("updateMessage(withID:localState:completion:)", on: messageRepository, times: 1)
     }
     
     func test_editor_changesMessageStates_whenSyncingSucceeds() throws {
@@ -86,8 +86,8 @@ final class MessageEditor_Tests: XCTestCase {
         try database.createMessage(id: messageId, authorId: currentUserId, localState: .pendingSync)
 
         // Check the state is eventually changed to `syncing`
-        AssertAsync.willBeEqual(messageRepository.markMessageStateArgument, .syncing)
-        XCTAssertCall("markMessage(withID:as:completion:)", on: messageRepository, times: 1)
+        AssertAsync.willBeEqual(messageRepository.updatedMessageLocalState, .syncing)
+        XCTAssertCall("updateMessage(withID:localState:completion:)", on: messageRepository, times: 1)
 
         // Wait for the API call to be initiated
         AssertAsync.willBeTrue(apiClient.request_endpoint != nil)
@@ -97,8 +97,8 @@ final class MessageEditor_Tests: XCTestCase {
         callback(.success(.init()))
         
         // Check the state is eventually changed to `nil`
-        AssertAsync.willBeEqual(messageRepository.markMessageStateArgument, nil)
-        XCTAssertCall("markMessage(withID:as:completion:)", on: messageRepository, times: 2)
+        AssertAsync.willBeEqual(messageRepository.updatedMessageLocalState, nil)
+        XCTAssertCall("updateMessage(withID:localState:completion:)", on: messageRepository, times: 2)
     }
     
     func test_editor_changesMessageStates_whenSyncingFails() throws {
@@ -112,8 +112,8 @@ final class MessageEditor_Tests: XCTestCase {
         try database.createMessage(id: messageId, authorId: currentUserId, localState: .pendingSync)
         
         // Check the state is eventually changed to `syncing`
-        AssertAsync.willBeEqual(messageRepository.markMessageStateArgument, .syncing)
-        XCTAssertCall("markMessage(withID:as:completion:)", on: messageRepository, times: 1)
+        AssertAsync.willBeEqual(messageRepository.updatedMessageLocalState, .syncing)
+        XCTAssertCall("updateMessage(withID:localState:completion:)", on: messageRepository, times: 1)
 
         // Wait for the API call to be initiated
         AssertAsync.willBeTrue(apiClient.request_endpoint != nil)
@@ -122,8 +122,8 @@ final class MessageEditor_Tests: XCTestCase {
         apiClient.test_simulateResponse(Result<EmptyResponse, Error>.failure(TestError()))
         
         // Check the state is eventually changed to `syncingFailed`
-        AssertAsync.willBeEqual(messageRepository.markMessageStateArgument, .syncingFailed)
-        XCTAssertCall("markMessage(withID:as:completion:)", on: messageRepository, times: 2)
+        AssertAsync.willBeEqual(messageRepository.updatedMessageLocalState, .syncingFailed)
+        XCTAssertCall("updateMessage(withID:localState:completion:)", on: messageRepository, times: 2)
     }
     
     func test_editor_doesNotRetainItself() throws {
@@ -138,12 +138,12 @@ final class MessageEditor_Tests: XCTestCase {
 
         AssertAsync {
             // Check the state is eventually changed to `syncing`
-            Assert.willBeEqual(self.messageRepository.markMessageStateArgument, .syncing)
+            Assert.willBeEqual(self.messageRepository.updatedMessageLocalState, .syncing)
             // API call is initiated
             Assert.willBeTrue(self.apiClient.request_endpoint != nil)
         }
         
-        XCTAssertCall("markMessage(withID:as:completion:)", on: messageRepository, times: 1)
+        XCTAssertCall("updateMessage(withID:localState:completion:)", on: messageRepository, times: 1)
         // Assert editor can be released even though response hasn't come yet
         AssertAsync.canBeReleased(&editor)
     }
