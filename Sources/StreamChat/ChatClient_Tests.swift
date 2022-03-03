@@ -488,6 +488,62 @@ class ChatClient_Tests: XCTestCase {
         // Assert that our waiter received the new connectionId
         AssertAsync.willBeEqual(providedConnectionId, connectionId)
     }
+
+    func test_invalidateTokenWaiterRemovesBlockFromWaiter() {
+        // Create a new chat client
+        let client = ChatClient(
+            config: inMemoryStorageConfig,
+            environment: testEnv.environment
+        )
+
+        client.provideToken { [weak client] _ in
+            // We call the block when it deinits, and this check is not important for us then
+            guard client != nil else { return }
+            XCTFail("Should not reach here because the block should be removed when invalidating")
+        }
+
+        XCTAssertEqual(client.tokenWaiters.count, 1)
+
+        guard let waiterToken = client.tokenWaiters.first?.key else {
+            XCTFail("Should have a token")
+            return
+        }
+
+        client.invalidateTokenWaiter(waiterToken)
+
+        XCTAssertEqual(client.tokenWaiters.count, 0)
+
+        // We simulate token waiters completion to make sure the previously invalidated block is not executed
+        client.completeTokenWaiters(token: nil)
+    }
+
+    func test_invalidateConnectionIdWaiterRemovesBlockFromWaiter() {
+        // Create a new chat client
+        let client = ChatClient(
+            config: inMemoryStorageConfig,
+            environment: testEnv.environment
+        )
+
+        client.provideConnectionId { [weak client] _ in
+            // We call the block when it deinits, and this check is not important for us then
+            guard client != nil else { return }
+            XCTFail("Should not reach here because the block should be removed when invalidating")
+        }
+
+        XCTAssertEqual(client.connectionIdWaiters.count, 1)
+
+        guard let waiterToken = client.connectionIdWaiters.first?.key else {
+            XCTFail("Should have a token")
+            return
+        }
+
+        client.invalidateConnectionIdWaiter(waiterToken)
+
+        XCTAssertEqual(client.connectionIdWaiters.count, 0)
+
+        // We simulate connection id waiters completion to make sure the previously invalidated block is not executed
+        client.completeConnectionIdWaiters(connectionId: nil)
+    }
     
     // MARK: - APIClient tests
     

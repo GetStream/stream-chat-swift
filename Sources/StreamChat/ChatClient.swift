@@ -232,10 +232,10 @@ public class ChatClient {
     @Atomic var connectionId: String?
     
     /// An array of requests waiting for the connection id
-    @Atomic var connectionIdWaiters: [String: (String?) -> Void] = [:]
+    @Atomic private(set) var connectionIdWaiters: [String: (String?) -> Void] = [:]
 
     /// An array of requests waiting for the token
-    @Atomic var tokenWaiters: [String: (Token?) -> Void] = [:]
+    @Atomic private(set) var tokenWaiters: [String: (Token?) -> Void] = [:]
     
     /// The token of the current user. If the current user is anonymous, the token is `nil`.
     @Atomic var currentToken: Token?
