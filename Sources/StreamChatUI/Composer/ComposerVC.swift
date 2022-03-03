@@ -279,6 +279,17 @@ open class ComposerVC: _ViewController,
     private var keyboardHeight: CGFloat {
         return KeyboardService.shared.measuredSize
     }
+    private var lockInputViewObserver = false {
+        didSet {
+            if lockInputViewObserver {
+                composerView.inputMessageView.isUserInteractionEnabled = false
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                    self.lockInputViewObserver = false
+                    self.composerView.inputMessageView.isUserInteractionEnabled = true
+                }
+            }
+        }
+    }
 
     override open func setUp() {
         super.setUp()
@@ -500,6 +511,7 @@ open class ComposerVC: _ViewController,
         menuController?.extraData = self.channelController?.channel?.extraData ?? [:]
         menuController?.didTapAction = { [weak self] action in
             guard let `self` = self else { return }
+            self.lockInputViewObserver = true
             switch action {
             case .media:
                 self.composerView.inputMessageView.textView.resignFirstResponder()
@@ -527,7 +539,10 @@ open class ComposerVC: _ViewController,
             case .redPacket:
                 self.animateToolkitView(isHide: true)
                 self.composerView.inputMessageView.textView.resignFirstResponder()
-                self.sendRedPacketAction()
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { [weak self] in
+                    guard let `self` = self else { return }
+                    self.sendRedPacketAction()
+                }
             case .dao:
                 self.animateToolkitView(isHide: true)
                 break
