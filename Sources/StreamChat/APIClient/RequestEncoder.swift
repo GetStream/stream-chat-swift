@@ -62,6 +62,7 @@ extension RequestEncoder {
 struct DefaultRequestEncoder: RequestEncoder {
     let baseURL: URL
     let apiKey: APIKey
+    let timerType: Timer.Type
 
     /// The most probable reason why a RequestEncoder can timeout when waiting for token or connectionId is because there's no connection.
     /// When returning an error, it will just fail without giving an opportunity to know if the timeout occurred because of a networking problem.
@@ -113,10 +114,15 @@ struct DefaultRequestEncoder: RequestEncoder {
             }
         }
     }
-    
+
     init(baseURL: URL, apiKey: APIKey) {
+        self.init(baseURL: baseURL, apiKey: apiKey, timerType: DefaultTimer.self)
+    }
+
+    init(baseURL: URL, apiKey: APIKey, timerType: Timer.Type) {
         self.baseURL = baseURL
         self.apiKey = apiKey
+        self.timerType = timerType
     }
     
     // MARK: - Private
@@ -141,7 +147,7 @@ struct DefaultRequestEncoder: RequestEncoder {
         let missingTokenError = ClientError.MissingToken("Failed to get `token`, request can't be created.")
 
         var waiterToken: WaiterToken?
-        let timer = DefaultTimer
+        let timer = timerType
             .schedule(timeInterval: waiterTimeout, queue: .global()) { [weak connectionDetailsProviderDelegate] in
                 // We complete with a success to account for the most probable case for the timeout: No connection.
                 // That way, when reaching the APIClient, we would properly report a connection error.
@@ -188,7 +194,7 @@ struct DefaultRequestEncoder: RequestEncoder {
         )
 
         var waiterToken: WaiterToken?
-        let timer = DefaultTimer
+        let timer = timerType
             .schedule(timeInterval: waiterTimeout, queue: .global()) { [weak connectionDetailsProviderDelegate] in
                 // We complete with a success to account for the most probable case for the timeout: No connection.
                 // That way, when reaching the APIClient, we would properly report a connection error.
