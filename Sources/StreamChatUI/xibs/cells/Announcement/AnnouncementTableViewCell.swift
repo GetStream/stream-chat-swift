@@ -23,6 +23,7 @@ class AnnouncementTableViewCell: ASVideoTableViewCell {
     @IBOutlet weak var playerView: UIView!
     @IBOutlet weak var imgHeightConst: NSLayoutConstraint!
     @IBOutlet weak var btnContainer: UIButton!
+    @IBOutlet weak var btnShowMore: UIButton!
     
     // MARK: - Variables
     var content: ChatMessage?
@@ -42,15 +43,20 @@ class AnnouncementTableViewCell: ASVideoTableViewCell {
 
     func configureCell(_ message: ChatMessage?) {
         self.selectionStyle = .none
-        containerView.layer.cornerRadius = 8
+        containerView.layer.cornerRadius = 12
         lblInfo.text = message?.text
         if let hashTag = message?.extraData.tag {
             lblHashTag.text = "#" +  hashTag.joined(separator: " #")
+            btnShowMore.isHidden = false
+        } else {
+            lblHashTag.text = nil
+            btnShowMore.isHidden = true
         }
         if let imageAttachments = message?.imageAttachments.first {
             imgHeightConst.constant = 250
+            self.imgView.image = nil
             if imageAttachments.imageURL.pathExtension == "gif" {
-                imgView.setGifFromURL(imageAttachments.imageURL, loopCount: -1)
+                imgView.setGifFromURL(imageAttachments.imageURL, loopCount: 1)
             } else {
                 Nuke.loadImage(with: imageAttachments.imagePreviewURL, into: self.imgView)
             }
@@ -70,11 +76,12 @@ class AnnouncementTableViewCell: ASVideoTableViewCell {
                 }
             })
         } else {
+            imgView.image = nil
             playerView.isHidden = true
             imgHeightConst.constant = 0
         }
     }
-    
+
     private func setupUI() {
         videoLayer.backgroundColor = UIColor.clear.cgColor
         videoLayer.videoGravity = AVLayerVideoGravity.resizeAspectFill

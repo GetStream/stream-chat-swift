@@ -464,6 +464,7 @@ open class ChatMessageListVC:
             cell.streamVideoLoader = streamVideoLoader
             cell.message = message
             cell.configureCell(message)
+            cell.btnShowMore.addTarget(self, action: #selector(didSelectAnnouncementAction(_:)), for: .touchUpInside)
             cell.transform = .mirrorY
             return cell
         } else {
@@ -518,6 +519,13 @@ open class ChatMessageListVC:
             initialAttachmentId: attachmentId,
             previews: [cell]
         )
+    }
+
+    @objc private func didSelectAnnouncementAction(_ sender: UIButton) {
+        guard let cell = sender.superview?.superview?.superview?.superview as? AnnouncementTableViewCell,
+        let indexPath = listView.indexPath(for: cell),
+        let message = dataSource?.chatMessageListVC(self, messageAt: indexPath)
+        else { return }
         
     }
     

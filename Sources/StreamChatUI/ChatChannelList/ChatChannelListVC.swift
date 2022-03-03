@@ -324,33 +324,39 @@ open class ChatChannelListVC: _ViewController,
     }
 
     open func swipeableViewActionViews(for indexPath: IndexPath) -> [UIView] {
-        let deleteView = CellActionView().withoutAutoresizingMaskConstraints
-        deleteView.actionButton.setImage(appearance.images.messageActionDelete, for: .normal)
 
-        deleteView.actionButton.backgroundColor = appearance.colorPalette.alert
-        deleteView.actionButton.tintColor = .white
-
-        deleteView.action = { self.deleteButtonPressedForCell(at: indexPath) }
-
-        /*let moreView = CellActionView().withoutAutoresizingMaskConstraints
-        moreView.actionButton.setImage(appearance.images.more, for: .normal)
-
-        moreView.actionButton.backgroundColor = appearance.colorPalette.background1
-        moreView.actionButton.tintColor = appearance.colorPalette.text
-
-        moreView.action = { self.moreButtonPressedForCell(at: indexPath) }
-
-        return [moreView, deleteView]*/
-        return [deleteView]
+        let controller = self.controller.client.channelController(for: self.controller.channels[indexPath.row].cid)
+        if controller.channelQuery.type == .announcement {
+            let unsubscribe = CellActionView().withoutAutoresizingMaskConstraints
+            unsubscribe.actionButton.setImage(appearance.images.unsubscribe, for: .normal)
+            unsubscribe.actionButton.backgroundColor = appearance.colorPalette.alert
+            unsubscribe.actionButton.tintColor = appearance.colorPalette.text
+            unsubscribe.action = { self.deleteButtonPressedForCell(at: indexPath) }
+            return [unsubscribe]
+        } else {
+            let deleteView = CellActionView().withoutAutoresizingMaskConstraints
+            deleteView.actionButton.setImage(appearance.images.messageActionDelete, for: .normal)
+            deleteView.actionButton.backgroundColor = appearance.colorPalette.alert
+            deleteView.actionButton.tintColor = .white
+            deleteView.action = { self.deleteButtonPressedForCell(at: indexPath) }
+            return [deleteView]
+        }
     }
 
     /// This function is called when delete button is pressed from action items of a cell.
     /// - Parameter indexPath: IndexPath of given cell to fetch the content of it.
     open func deleteButtonPressedForCell(at indexPath: IndexPath) {
-        let deleteAction = UIAlertAction(title: "Delete", style: .destructive) { [weak self] alert in
+        var isAnnouncement = false
+        let controller = self.controller.client.channelController(for: self.controller.channels[indexPath.row].cid)
+        isAnnouncement = controller.channelQuery.type == .announcement
+        let deleteAction = UIAlertAction(title: isAnnouncement ? "Unsubscribe" : "Delete", style: .destructive) { [weak self] alert in
             guard let self = self else { return }
             let controller = self.controller.client.channelController(for: self.controller.channels[indexPath.row].cid)
-            if controller.channelQuery.type == .announcement {
+            if isAnnouncement {
+                if controller.channel?.isMuted ?? false {
+                    controller.unmuteChannel(completion: nil)
+                    return;
+                }
                 controller.muteChannel(completion: nil)
             } else {
                 controller.hideChannel(clearHistory: true, completion: nil)
@@ -369,7 +375,11 @@ open class ChatChannelListVC: _ViewController,
                 self.collectionView.layoutIfNeeded()
             }
         }
-        let alert = UIAlertController.showAlert(title: "Would you like to delete this conversation?\nIt'll be permanently deleted.", message: nil, actions: [deleteAction, cancelAction], preferredStyle: .actionSheet)
+        var alertTitle = "Would you like to delete this conversation?\nIt'll be permanently deleted."
+        if isAnnouncement {
+            alertTitle = "Do you want to unsubscribe this channel?"
+        }
+        let alert = UIAlertController.showAlert(title: alertTitle, message: nil, actions: [deleteAction, cancelAction], preferredStyle: .actionSheet)
         self.present(alert, animated: true, completion: nil)
     }
 
