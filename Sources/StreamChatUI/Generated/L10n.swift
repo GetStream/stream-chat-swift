@@ -62,6 +62,8 @@ internal enum L10n {
       internal static var directMessageReply: String { L10n.tr("Localizable", "composer.checkmark.direct-message-reply") }
     }
     internal enum Picker {
+      /// Camera
+      internal static var camera: String { L10n.tr("Localizable", "composer.picker.camera") }
       /// Cancel
       internal static var cancel: String { L10n.tr("Localizable", "composer.picker.cancel") }
       /// File

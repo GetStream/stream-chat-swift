@@ -7,7 +7,12 @@ import Foundation
 
 extension UserRequestBody {
     /// Returns a dummy user payload with the given UserId
-    static func dummy(userId: UserId, extraData: [String: RawJSON] = [:]) -> UserRequestBody {
-        .init(id: userId, name: .unique, imageURL: .unique(), extraData: extraData)
+    static func dummy(
+        userId: UserId,
+        name: String = .unique,
+        imageURL: URL? = .unique(),
+        extraData: [String: RawJSON] = [:]
+    ) -> UserRequestBody {
+        .init(id: userId, name: name, imageURL: imageURL, extraData: extraData)
     }
 }

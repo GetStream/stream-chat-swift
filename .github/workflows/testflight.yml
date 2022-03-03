@@ -5,7 +5,7 @@ on:
     types: [published]
 
   workflow_dispatch:
-  
+
 env:
   HOMEBREW_NO_INSTALL_CLEANUP=1: 1
 
@@ -18,7 +18,7 @@ jobs:
       uses: webfactory/ssh-agent@v0.4.1
       with:
         ssh-private-key: ${{ secrets.BOT_SSH_PRIVATE_KEY }}
-    - uses: actions/checkout@v1
+    - uses: actions/checkout@v2
     - name: Set build image var
       run: echo "ImageVersion=$ImageVersion"  >> $GITHUB_ENV
     - name: Cache RubyGems
@@ -51,5 +51,3 @@ jobs:
         SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
         MATRIX_CONTEXT: ${{ toJson(matrix) }}
       if: failure()
-
-

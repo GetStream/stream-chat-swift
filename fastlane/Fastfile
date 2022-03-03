@@ -3,6 +3,7 @@ default_platform :ios
 require 'json'
 require 'net/http'
 
+xcode_version = ENV['XCODE_VERSION'].nil? ? '13.2.1' : ENV['XCODE_VERSION']
 # The number of times the stress test suite is ran
 stress_tests_cycles = 50
 
@@ -10,6 +11,8 @@ before_all do
   if is_ci
     setup_ci()
   end
+
+  xcversion(version: "~> #{xcode_version}")
 end
 
 desc "Build .xcframeworks"

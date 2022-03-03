@@ -433,6 +433,6 @@ extension DatabaseSession {
 
 private extension EventType {
     var shouldCreateMessageInDatabase: Bool {
-        [.channelUpdated, .messageNew, .notificationMessageNew].contains(self)
+        [.channelUpdated, .messageNew, .notificationMessageNew, .channelTruncated].contains(self)
     }
 }

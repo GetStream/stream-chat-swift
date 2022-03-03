@@ -140,6 +140,9 @@ class ChannelDTO_Tests: XCTestCase {
             Assert.willBeEqual(payload.channelReads[0].lastReadAt, loadedChannel.reads.first?.lastReadAt)
             Assert.willBeEqual(payload.channelReads[0].unreadMessagesCount, loadedChannel.reads.first?.unreadMessagesCount)
             Assert.willBeEqual(payload.channelReads[0].user.id, loadedChannel.reads.first?.user.id)
+            
+            // Truncated
+            Assert.willBeEqual(payload.channel.truncatedAt, loadedChannel.truncatedAt)
         }
     }
 
@@ -259,9 +262,10 @@ class ChannelDTO_Tests: XCTestCase {
             let channelDTO = try session.saveChannel(payload: payload)
 
             // Truncate the channel to leave only 10 newest messages
+            // We're dropping 9 messages to fullfil the predicate: createdAt >= channel.truncatedAt"
             let truncateDate = channelDTO.messages
                 .sorted(by: { $0.createdAt < $1.createdAt })
-                .dropLast(10)
+                .dropLast(9)
                 .last?
                 .createdAt
 

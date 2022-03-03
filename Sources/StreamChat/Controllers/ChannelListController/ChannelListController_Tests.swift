@@ -164,6 +164,44 @@ class ChannelListController_Tests: XCTestCase {
         AssertAsync.canBeReleased(&weakController)
     }
     
+    func test_synchronize_initialPageSize_isCorrect() {
+        let pageSize = Int.random(in: 1...42)
+        query = .init(filter: .in(.members, values: [.unique]), pageSize: pageSize)
+        controller = ChatChannelListController(query: query, client: client, environment: env.environment)
+        let queueId = UUID()
+        controller.callbackQueue = .testQueue(withId: queueId)
+        
+        // Simulate `synchronize` calls and catch the completion
+        var completionCalled = false
+        controller.synchronize { error in
+            XCTAssertNil(error)
+            AssertTestQueue(withId: queueId)
+            completionCalled = true
+        }
+        
+        // Keep a weak ref so we can check if it's actually deallocated
+        weak var weakController = controller
+        
+        // (Try to) deallocate the controller
+        // by not keeping any references to it
+        controller = nil
+        
+        // Assert the updater is called with the correct pageSize
+        XCTAssertEqual(env.channelListUpdater!.update_queries.first?.pagination.pageSize, pageSize)
+        // Completion shouldn't be called yet
+        XCTAssertFalse(completionCalled)
+        
+        // Simulate successful update
+        env.channelListUpdater!.update_completion?(.success([]))
+        // Release reference of completion so we can deallocate stuff
+        env.channelListUpdater!.update_completion = nil
+        
+        // Completion should be called
+        AssertAsync.willBeTrue(completionCalled)
+        // `weakController` should be deallocated too
+        AssertAsync.canBeReleased(&weakController)
+    }
+    
     func test_synchronize_callsChannelQueryUpdater_inOfflineMode() {
         let queueId = UUID()
         controller.callbackQueue = .testQueue(withId: queueId)
@@ -679,12 +717,51 @@ class ChannelListController_Tests: XCTestCase {
             completionCalledError = $0
         }
         
-        // Simulate failed udpate
+        // Simulate failed update
         let testError = TestError()
         env.channelListUpdater?.update_completion?(.failure(testError))
         
         // Completion should be called with the error
         AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
+    }
+    
+    func test_loadNextChannels_defaultPageSize_isCorrect() {
+        var completionCalled = false
+        
+        let pageSize = Int.random(in: 1...42)
+        query = .init(filter: .in(.members, values: [.unique]), pageSize: pageSize)
+        controller = ChatChannelListController(query: query, client: client, environment: env.environment)
+        
+        controller.loadNextChannels() { error in
+            XCTAssertNil(error)
+            completionCalled = true
+        }
+        
+        // Completion shouldn't be called yet
+        XCTAssertFalse(completionCalled)
+        
+        // Assert correct `Pagination` is created
+        XCTAssertEqual(
+            env!.channelListUpdater?.update_queries.first?.pagination,
+            .init(pageSize: pageSize, offset: controller.channels.count)
+        )
+        
+        // Keep a weak ref so we can check if it's actually deallocated
+        weak var weakController = controller
+        
+        // (Try to) deallocate the controller
+        // by not keeping any references to it
+        controller = nil
+        
+        // Simulate successful update
+        env!.channelListUpdater?.update_completion?(.success([]))
+        // Release reference of completion so we can deallocate stuff
+        env.channelListUpdater!.update_completion = nil
+        
+        // Completion should be called
+        AssertAsync.willBeTrue(completionCalled)
+        // `weakController` should be deallocated too
+        AssertAsync.canBeReleased(&weakController)
     }
     
     // MARK: - Mark all read

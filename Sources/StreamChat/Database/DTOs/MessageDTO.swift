@@ -144,7 +144,7 @@ class MessageDTO: NSManagedObject {
     private static func nonTruncatedMessagesPredicate() -> NSCompoundPredicate {
         .init(orPredicateWithSubpredicates: [
             .init(format: "channel.truncatedAt == nil"),
-            .init(format: "createdAt > channel.truncatedAt")
+            .init(format: "createdAt >= channel.truncatedAt")
         ])
     }
     

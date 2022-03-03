@@ -54,6 +54,10 @@ class DatabaseContainerMock: DatabaseContainer, Spy {
         // Remove the database file if the container requests that
         if shouldCleanUpTempDBFiles, case let .onDisk(databaseFileURL: url) = init_kind {
             do {
+                // Remove all loaded persistent stores first
+                try persistentStoreCoordinator.persistentStores.forEach { store in
+                    try persistentStoreCoordinator.remove(store)
+                }
                 try FileManager.default.removeItem(at: url)
             } catch {
                 fatalError("Failed to remove temp database file: \(error)")
@@ -130,10 +134,11 @@ extension DatabaseContainer {
     }
 
     /// Synchronously creates a new CurrentUserDTO in the DB with the given id.
-    func createCurrentUser(id: UserId = .unique) throws {
+    func createCurrentUser(id: UserId = .unique, name: String = .unique) throws {
         try writeSynchronously { session in
             let payload: CurrentUserPayload = .dummy(
                 userId: id,
+                name: name,
                 role: .admin,
                 extraData: [:]
             )
@@ -148,10 +153,15 @@ extension DatabaseContainer {
         withQuery: Bool = false,
         isHidden: Bool = false,
         channelReads: Set<ChannelReadDTO> = [],
-        channelExtraData: [String: RawJSON] = [:]
+        channelExtraData: [String: RawJSON] = [:],
+        truncatedAt: Date? = nil
     ) throws {
         try writeSynchronously { session in
-            let dto = try session.saveChannel(payload: XCTestCase().dummyPayload(with: cid, channelExtraData: channelExtraData))
+            let dto = try session
+                .saveChannel(
+                    payload: XCTestCase()
+                        .dummyPayload(with: cid, channelExtraData: channelExtraData, truncatedAt: truncatedAt)
+                )
 
             dto.isHidden = isHidden
             dto.reads = channelReads
@@ -212,6 +222,7 @@ extension DatabaseContainer {
         id: MessageId = .unique,
         authorId: UserId = .unique,
         cid: ChannelId = .unique,
+        channel: ChannelDTO? = nil,
         text: String = .unique,
         extraData: [String: RawJSON] = [:],
         pinned: Bool = false,
@@ -230,7 +241,10 @@ extension DatabaseContainer {
         quotedMessageId: MessageId? = nil
     ) throws {
         try writeSynchronously { session in
-            let channelDTO = try session.saveChannel(payload: XCTestCase().dummyPayload(with: cid))
+            guard let channelDTO = channel ?? (try? session.saveChannel(payload: XCTestCase().dummyPayload(with: cid))) else {
+                XCTFail("Failed to fetch channel when creating message")
+                return
+            }
             
             let message: MessagePayload = .dummy(
                 type: type,

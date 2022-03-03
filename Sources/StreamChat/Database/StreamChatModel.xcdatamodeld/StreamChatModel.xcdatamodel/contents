@@ -257,7 +257,7 @@
         <attribute name="isOnline" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="lastActivityAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="name" optional="YES" attributeType="String"/>
-        <attribute name="teams" optional="YES" attributeType="Transformable" valueTransformerName="NSSecureUnarchiveFromData" customClassName="[String]"/>
+        <attribute name="teams" attributeType="Transformable" valueTransformerName="NSSecureUnarchiveFromDataTransformer"/>
         <attribute name="userCreatedAt" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="userRoleRaw" attributeType="String"/>
         <attribute name="userUpdatedAt" attributeType="Date" usesScalarValueType="NO"/>
