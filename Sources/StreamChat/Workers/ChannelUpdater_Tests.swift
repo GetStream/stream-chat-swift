@@ -587,16 +587,101 @@ class ChannelUpdater_Tests: XCTestCase {
     }
 
     // MARK: - Truncate channel
-
-    func test_truncateChannel_makesCorrectAPICall() {
+    
+    func test_truncateChannel_makesCorrectAPICallWithoutMessage() {
         let channelID = ChannelId.unique
+        let skipPush = true
+        let hardDelete = true
 
         // Simulate `truncateChannel(cid:, completion:)` call
-        channelUpdater.truncateChannel(cid: channelID)
+        channelUpdater.truncateChannel(
+            cid: channelID,
+            skipPush: skipPush,
+            hardDelete: hardDelete,
+            systemMessage: nil
+        )
 
         // Assert correct endpoint is called
-        let referenceEndpoint: Endpoint<EmptyResponse> = .truncateChannel(cid: channelID)
+        let referenceEndpoint: Endpoint<EmptyResponse> = .truncateChannel(
+            cid: channelID,
+            skipPush: skipPush,
+            hardDelete: hardDelete,
+            message: nil
+        )
+
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
+    }
+
+    func test_truncateChannel_makesCorrectAPICallWithMessage() throws {
+        // GIVEN
+        let currentUserId: UserId = .unique
+        let currentUserName = "John"
+        try channelUpdater.database.createCurrentUser(id: currentUserId, name: currentUserName)
+        let currentUser: UserRequestBody = .dummy(
+            userId: currentUserId,
+            name: currentUserName,
+            imageURL: nil
+        )
+
+        let channelID = ChannelId.unique
+        let skipPush = true
+        let hardDelete = true
+        let systemMessage = "System message"
+
+        // WHEN
+        // Simulate `truncateChannel(cid:, completion:)` call
+        channelUpdater.truncateChannel(
+            cid: channelID,
+            skipPush: skipPush,
+            hardDelete: hardDelete,
+            systemMessage: systemMessage
+        )
+
+        // THEN
+        AssertAsync { [unowned self] in
+            // Assert correct endpoint is called
+            Assert.willBeEqual(self.apiClient.request_endpoint, AnyEndpoint(.truncateChannel(
+                cid: channelID,
+                skipPush: skipPush,
+                hardDelete: hardDelete,
+                message: MessageRequestBody(
+                    // inject generated message id
+                    id: (
+                        self.apiClient
+                            .request_endpoint?.body?
+                            .encodable as? ChannelTruncateRequestPayload
+                    )?
+                        .message?.id ?? "id",
+                    user: currentUser,
+                    text: systemMessage,
+                    extraData: [:]
+                )
+            )))
+        }
+    }
+    
+    func test_truncateChannel_failsAPICallWithMessageWhenNoCurrentUser() throws {
+        // GIVEN
+        let expectation = expectation(description: "When no current user is provided, truncate channel with system message fails")
+        let channelID = ChannelId.unique
+        let skipPush = true
+        let hardDelete = true
+        let systemMessage = "System message"
+
+        // WHEN
+        // Simulate `truncateChannel(cid:, completion:)` call
+        channelUpdater.truncateChannel(
+            cid: channelID,
+            skipPush: skipPush,
+            hardDelete: hardDelete,
+            systemMessage: systemMessage
+        ) { error in
+            // THEN
+            XCTAssertNotNil(error)
+            expectation.fulfill()
+        }
+                                       
+        wait(for: [expectation], timeout: 5.0)
     }
 
     func test_truncateChannel_successfulResponse_isPropagatedToCompletion() {

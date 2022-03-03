@@ -33,15 +33,17 @@ class TypingStartCleanupMiddleware_Tests: XCTestCase {
     func test_stopTypingEvent_notSentForExcludedUsers() {
         // Create a middleware and store emitted events.
         var emittedEvents: [Event] = []
-        var middleware: TypingStartCleanupMiddleware! = .init(
+        var middleware: TypingStartCleanupMiddleware? = .init(
             excludedUserIds: { [self.currentUser.id] },
             emitEvent: { emittedEvents.append($0) }
         )
-        middleware.timer = VirtualTimeTimer.self
+        middleware?.timer = VirtualTimeTimer.self
+
+        weak var weakMiddleware = middleware
 
         // Handle a new TypingStart event for the current user and collect resulting events
         let typingStartEvent = TypingEventDTO.startTyping(userId: currentUser.id)
-        let forwardedEvent = middleware.handle(event: typingStartEvent, session: database.viewContext)
+        let forwardedEvent = middleware!.handle(event: typingStartEvent, session: database.viewContext)
         XCTAssertEqual(forwardedEvent?.asEquatable, typingStartEvent.asEquatable)
 
         // Simulate time passed for the `typingStartTimeout` period
@@ -52,16 +54,21 @@ class TypingStartCleanupMiddleware_Tests: XCTestCase {
 
         // Assert the middleware can be released.
         AssertAsync.canBeReleased(&middleware)
+
+        middleware = nil
+        XCTAssertNil(weakMiddleware)
     }
 
     func test_stopTypingEvent_sentAfterTimeout() {
         // Create a middleware and store emitted events.
         var emittedEvents: [Event] = []
-        var middleware: TypingStartCleanupMiddleware! = .init(
+        var middleware: TypingStartCleanupMiddleware? = .init(
             excludedUserIds: { [self.currentUser.id] },
             emitEvent: { emittedEvents.append($0) }
         )
-        middleware.timer = VirtualTimeTimer.self
+        middleware?.timer = VirtualTimeTimer.self
+
+        weak var weakMiddleware = middleware
 
         // Simulate some user started typing
         let otherUser = ChatUser.mock(id: .unique)
@@ -69,7 +76,7 @@ class TypingStartCleanupMiddleware_Tests: XCTestCase {
 
         let startTyping = TypingEventDTO.startTyping(cid: cid, userId: otherUser.id)
         // Handle a new TypingStart event for the current user and collect resulting events
-        let forwardedEvent = middleware.handle(event: startTyping, session: database.viewContext)
+        let forwardedEvent = middleware!.handle(event: startTyping, session: database.viewContext)
         // Assert `TypingStart` event is propagated synchronously
         XCTAssertEqual(forwardedEvent?.asEquatable, startTyping.asEquatable)
 
@@ -86,7 +93,7 @@ class TypingStartCleanupMiddleware_Tests: XCTestCase {
         time.run(numberOfSeconds: 5 + .incomingTypingStartEventTimeout)
         XCTAssertEqual(emittedEvents.map(\.asEquatable), [stopTyping.asEquatable])
 
-        // Assert the middleware can be released.
-        AssertAsync.canBeReleased(&middleware)
+        middleware = nil
+        XCTAssertNil(weakMiddleware)
     }
 }

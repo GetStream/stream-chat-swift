@@ -132,6 +132,10 @@ open class ChatChannelVC:
 
     // MARK: - ChatMessageListVCDataSource
     
+    public var messages: [ChatMessage] {
+        Array(channelController.messages)
+    }
+    
     open func channel(for vc: ChatMessageListVC) -> ChatChannel? {
         channelController.channel
     }

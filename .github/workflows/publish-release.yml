@@ -17,7 +17,7 @@ jobs:
         uses: webfactory/ssh-agent@v0.4.1
         with:
           ssh-private-key: ${{ secrets.BOT_SSH_PRIVATE_KEY }}
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
       - name: "Set build image var"
         run: echo "ImageVersion=$ImageVersion"  >> $GITHUB_ENV
       - name: Cache RubyGems

@@ -38,6 +38,7 @@ class DatabaseContainer_Tests: XCTestCase {
                 userDTO.userCreatedAt = .init()
                 userDTO.userUpdatedAt = .init()
                 userDTO.userRoleRaw = "user"
+                userDTO.teams = []
             }, completion: { error in
                 XCTAssertNil(error)
                 goldenPathExpectation.fulfill()

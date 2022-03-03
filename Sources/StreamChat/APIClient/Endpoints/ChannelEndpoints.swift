@@ -64,13 +64,22 @@ extension Endpoint {
         )
     }
 
-    static func truncateChannel(cid: ChannelId) -> Endpoint<EmptyResponse> {
+    static func truncateChannel(
+        cid: ChannelId,
+        skipPush: Bool,
+        hardDelete: Bool,
+        message: MessageRequestBody?
+    ) -> Endpoint<EmptyResponse> {
         .init(
             path: .truncateChannel(cid.apiPath),
             method: .post,
             queryItems: nil,
             requiresConnectionId: false,
-            body: nil
+            body: ChannelTruncateRequestPayload(
+                skipPush: skipPush,
+                hardDelete: hardDelete,
+                message: message
+            )
         )
     }
 

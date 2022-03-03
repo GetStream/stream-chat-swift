@@ -22,10 +22,10 @@ class UserListUpdater: Worker {
     ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
     ///
     func update(userListQuery: UserListQuery, policy: UpdatePolicy = .merge, completion: ((Error?) -> Void)? = nil) {
-        fetch(userListQuery: userListQuery) {
-            switch $0 {
+        fetch(userListQuery: userListQuery) { [weak self] (result: Result<UserListPayload, Error>) in
+            switch result {
             case let .success(userListPayload):
-                self.database.write { session in
+                self?.database.write { session in
                     if case .replace = policy {
                         let dto = try session.saveQuery(query: userListQuery)
                         dto?.users.removeAll()

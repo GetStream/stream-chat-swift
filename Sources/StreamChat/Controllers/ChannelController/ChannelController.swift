@@ -637,17 +637,31 @@ public extension ChatChannelController {
     ///
     /// Removes all of the messages of the channel but doesn't affect the channel data or members.
     ///
-    /// - Parameter completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
+    /// - Parameters:
+    ///   - skipPush: If true, skips sending push notification to channel members.
+    ///   - hardDelete: If true, messages are deleted instead of hiding.
+    ///   - systemMessage: A system message to be added via truncation.
+    ///   - completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
     /// If request fails, the completion will be called with an error.
     ///
-    func truncateChannel(completion: ((Error?) -> Void)? = nil) {
+    func truncateChannel(
+        skipPush: Bool = false,
+        hardDelete: Bool = true,
+        systemMessage: String? = nil,
+        completion: ((Error?) -> Void)? = nil
+    ) {
         /// Perform action only if channel is already created on backend side and have a valid `cid`.
         guard let cid = cid, isChannelAlreadyCreated else {
             channelModificationFailed(completion)
             return
         }
 
-        updater.truncateChannel(cid: cid) { error in
+        updater.truncateChannel(
+            cid: cid,
+            skipPush: skipPush,
+            hardDelete: hardDelete,
+            systemMessage: systemMessage
+        ) { error in
             self.callback {
                 completion?(error)
             }

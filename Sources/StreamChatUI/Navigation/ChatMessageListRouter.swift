@@ -175,7 +175,8 @@ open class ChatMessageListRouter:
         zoomTransitionController.presentedVCImageView = { [weak galleryVC] in
             galleryVC?.imageViewToAnimateWhenDismissing
         }
-        zoomTransitionController.presentingImageView = {
+        zoomTransitionController.presentingImageView = { [weak galleryVC] in
+            guard let galleryVC = galleryVC else { return nil }
             guard let id = galleryVC.items[safe: galleryVC.content.currentPage]?.id else {
                 indexNotFoundAssertion()
                 return nil

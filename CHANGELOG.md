@@ -3,9 +3,37 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+### 🔄 Changed
+
+# [4.11.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.11.0)
+_March 01, 2022_
+
+### ✅ Added
+- Add Support for Message List Data Source Diffing (Experimental) [#1770](https://github.com/GetStream/stream-chat-swift/pull/1770)
+- Show Camera option on the ComposerVC [#1798](https://github.com/GetStream/stream-chat-swift/pull/1798)
+- `ChannelController`'s `truncateChannel` function now allows you to specify `systemMessage`, `hardDelete`, `skipPush` properties [#1799](https://github.com/GetStream/stream-chat-swift/pull/1799)
+- Added `truncatedAt` property to `ChatChannel`
+- Added increased logging for CoreData crashes caused by lingering models from previous sessions [#1814](https://github.com/GetStream/stream-chat-swift/issues/1814)
+
+### 🐞 Fixed
+- Fix `ChatMentionSuggestionView` permanently hiding subviews [#1800](https://github.com/GetStream/stream-chat-swift/issues/1800)
+- Fix showing channel watchers in mention suggestions list [#1803](https://github.com/GetStream/stream-chat-swift/issues/1803)
+- System message is now properly shown when channel is truncated [#1799](https://github.com/GetStream/stream-chat-swift/pull/1799)
+- Fix Memory Leaks when opening and closing channels [#1812](https://github.com/GetStream/stream-chat-swift/pull/1812)
+
+# [4.10.1](https://github.com/GetStream/stream-chat-swift/releases/tag/4.10.1)
+_February 16, 2022_
+
+### 🔄 Changed
+- `ChannelListVC` now keeps track of channels where user is a member only instead of all channels loaded in the SDK. [#1785](https://github.com/GetStream/stream-chat-swift/pull/1785)
+
 ### 🐞 Fixed
 - Make SendButton animation overridable [#1781](https://github.com/GetStream/stream-chat-swift/issues/1781)
 - Make ChannelId.rawValue public [#1780](https://github.com/GetStream/stream-chat-swift/pull/1780)
+- Fix channel not removed from channel list when user leaves the channel [#1785](https://github.com/GetStream/stream-chat-swift/pull/1785)
+- Fix `ChannelListController.loadNextChannels` using incorrect `limit` when argument is omitted [#1786](https://github.com/GetStream/stream-chat-swift/issues/1786)
+- Fix Message Input Accessibility for Large Text [#1787](https://github.com/GetStream/stream-chat-swift/pull/1787)
+- Fix crash on iOS 12 when local storage enabled [#1784](https://github.com/GetStream/stream-chat-swift/pull/1784)
 
 # [4.10.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.10.0)
 _February 01, 2022_

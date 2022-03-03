@@ -27,6 +27,14 @@ let appearance = Appearance(colors: colors)
 let streamChat = StreamChat(chatClient: chatClient, appearance: appearance)
 ```
 
+By default, the SDK shows a collapsed navigation bar. If you want to use a large navigation bar that's collapsible on scrolling down, you can configure it via the `navigationBarDisplayMode` method in the `ViewFactory`.
+
+```swift
+func navigationBarDisplayMode() -> NavigationBarItem.TitleDisplayMode {
+    .large
+}
+```
+
 ## Creating Your own Header
 
 In most cases, you will need to customize the navigation bar even further - either by adding branding information, like logo and text, or even additional buttons that will either push a new view, display a modal sheet or an alert.

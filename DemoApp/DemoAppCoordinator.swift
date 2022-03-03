@@ -89,12 +89,12 @@ final class DemoAppCoordinator: NSObject, UNUserNotificationCenterDelegate {
         ChatClient.shared.connectUser(
             userInfo: .init(id: userCredentials.id, name: userCredentials.name, imageURL: userCredentials.avatarURL),
             token: token
-        ) { error in
+        ) { [weak self] error in
             if let error = error {
                 log.error("connecting the user failed \(error)")
                 return
             }
-            self.setupRemoteNotifications()
+            self?.setupRemoteNotifications()
         }
         
         // Config
@@ -103,6 +103,7 @@ final class DemoAppCoordinator: NSObject, UNUserNotificationCenterDelegate {
         Components.default.messageContentView = CustomMessageContentView.self
         Components.default.messageListDateSeparatorEnabled = true
         Components.default.messageListDateOverlayEnabled = true
+        Components.default._messageListDiffingEnabled = true
         Components.default.messageActionsVC = CustomChatMessageActionsVC.self
         
         let localizationProvider = Appearance.default.localizationProvider
@@ -152,24 +153,24 @@ final class DemoAppCoordinator: NSObject, UNUserNotificationCenterDelegate {
     }
 
     private func makeSplitViewController(channelListVC: DemoChannelListVC) -> UISplitViewController {
-        let makeChannelController: (String) -> ChatChannelController = { cid in
-            channelListVC.controller.client.channelController(
+        let makeChannelVC: (String) -> UIViewController = { cid in
+            let channelVC = CustomChannelVC()
+            let channelController = channelListVC.controller.client.channelController(
                 for: ChannelId(type: .messaging, id: cid),
                 channelListQuery: channelListVC.controller.query
             )
-        }
-
-        let channelVC = CustomChannelVC()
-        channelVC.channelController = makeChannelController("unknown")
-
-        channelListVC.didSelectChannel = { channel in
-            channelVC.channelController = makeChannelController(channel.cid.id)
-            channelVC.setUp()
+            channelVC.channelController = channelController
+            return UINavigationController(rootViewController: channelVC)
         }
 
         let splitController = UISplitViewController()
-        splitController.viewControllers = [channelListVC, UINavigationController(rootViewController: channelVC)]
+        splitController.viewControllers = [channelListVC, UIViewController()]
         splitController.preferredDisplayMode = .oneBesideSecondary
+
+        channelListVC.didSelectChannel = { channel in
+            splitController.viewControllers[1] = makeChannelVC(channel.cid.id)
+        }
+
         return splitController
     }
 }
@@ -240,14 +241,6 @@ class DemoChannelListVC: ChatChannelListVC {
                 )
             )
         navigationController?.pushViewController(channelListVC, animated: true)
-    }
-
-    override func controller(_ controller: ChatChannelListController, shouldListUpdatedChannel channel: ChatChannel) -> Bool {
-        channel.membership != nil
-    }
-
-    override func controller(_ controller: ChatChannelListController, shouldAddNewChannelToList channel: ChatChannel) -> Bool {
-        channel.membership != nil
     }
 
     var isPad: Bool { UIDevice.current.userInterfaceIdiom == .pad }
