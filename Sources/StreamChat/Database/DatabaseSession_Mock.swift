@@ -285,6 +285,10 @@ extension DatabaseSessionMock {
     func deleteQuery(_ query: MessageSearchQuery) {
         underlyingSession.deleteQuery(query)
     }
+    
+    func saveQuery(query: MessageSearchQuery) -> MessageSearchQueryDTO {
+        underlyingSession.saveQuery(query: query)
+    }
 }
 
 private extension DatabaseSessionMock {

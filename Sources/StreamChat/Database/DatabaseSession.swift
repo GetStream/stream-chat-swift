@@ -137,8 +137,6 @@ protocol MessageDatabaseSession {
     /// Deletes the provided dto from a database
     /// - Parameter reaction: The DTO to be deleted
     func delete(reaction: MessageReactionDTO)
-    
-    func deleteQuery(_ query: MessageSearchQuery)
 }
 
 extension MessageDatabaseSession {
@@ -170,6 +168,12 @@ extension MessageDatabaseSession {
             extraData: extraData
         )
     }
+}
+
+protocol MessageSearchDatabaseSession {
+    func saveQuery(query: MessageSearchQuery) -> MessageSearchQueryDTO
+    
+    func deleteQuery(_ query: MessageSearchQuery)
 }
 
 protocol ChannelDatabaseSession {
@@ -296,6 +300,7 @@ protocol AttachmentDatabaseSession {
 protocol DatabaseSession: UserDatabaseSession,
     CurrentUserDatabaseSession,
     MessageDatabaseSession,
+    MessageSearchDatabaseSession,
     ChannelReadDatabaseSession,
     ChannelDatabaseSession,
     MemberDatabaseSession,

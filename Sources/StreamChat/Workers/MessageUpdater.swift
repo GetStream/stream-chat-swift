@@ -563,11 +563,16 @@ class MessageUpdater: Worker {
         })
     }
     
-    func search(query: MessageSearchQuery, completion: ((Error?) -> Void)? = nil) {
+    func search(query: MessageSearchQuery, policy: UpdatePolicy = .merge, completion: ((Error?) -> Void)? = nil) {
         apiClient.request(endpoint: .search(query: query)) { result in
             switch result {
             case let .success(payload):
                 self.database.write { session in
+                    if case .replace = policy {
+                        let dto = session.saveQuery(query: query)
+                        dto.messages.removeAll()
+                    }
+                    
                     for boxedMessage in payload.results {
                         try session.saveMessage(payload: boxedMessage.message, for: query)
                     }
@@ -577,6 +582,15 @@ class MessageUpdater: Worker {
             case let .failure(error):
                 completion?(error)
             }
+        }
+    }
+    
+    func clearSearchResults(for query: MessageSearchQuery, completion: ((Error?) -> Void)? = nil) {
+        database.write { session in
+            let dto = session.saveQuery(query: query)
+            dto.messages.removeAll()
+        } completion: { error in
+            completion?(error)
         }
     }
 }
