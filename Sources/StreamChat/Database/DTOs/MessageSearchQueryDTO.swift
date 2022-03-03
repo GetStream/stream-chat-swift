@@ -18,7 +18,7 @@ class MessageSearchQueryDTO: NSManagedObject {
     }
 }
 
-extension NSManagedObjectContext {
+extension NSManagedObjectContext: MessageSearchDatabaseSession {
     func messageSearchQuery(filterHash: String) -> MessageSearchQueryDTO? {
         MessageSearchQueryDTO.load(filterHash: filterHash, context: self)
     }

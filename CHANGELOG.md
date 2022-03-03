@@ -3,7 +3,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
-### 🔄 Changed
+### ✅ Added
+- Add `MessageSearchSortingKey.createdAt` and `updatedAt` for sorting options [#1824](https://github.com/GetStream/stream-chat-swift/issues/1824)
+
+### 🐞 Fixed
+- Fix `ChatMessageSearchController` not respecting `sort` param [#1824](https://github.com/GetStream/stream-chat-swift/issues/1824)
+- Fix `ChatMessageSearchController` not removing old search results [#1824](https://github.com/GetStream/stream-chat-swift/issues/1824)
+- Fix `ChatMessageSearchController` making empty searches [#1824](https://github.com/GetStream/stream-chat-swift/issues/1824)
+
 
 # [4.11.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.11.0)
 _March 01, 2022_

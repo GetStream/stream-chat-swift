@@ -282,6 +282,60 @@ extension DatabaseContainer {
         }
     }
     
+    func createMessage(
+        id: MessageId = .unique,
+        cid: ChannelId = .unique,
+        searchQuery: MessageSearchQuery,
+        clearAll: Bool = false
+    ) throws {
+        try writeSynchronously { session in
+            if clearAll {
+                let searchDTO = session.saveQuery(query: searchQuery)
+                searchDTO.messages.removeAll()
+            }
+            
+            let channelPayload = XCTestCase().dummyPayload(with: cid)
+            
+            try session.saveChannel(payload: channelPayload)
+            
+            let message: MessagePayload = .dummy(
+                messageId: id,
+                authorUserId: .unique,
+                channel: channelPayload.channel
+            )
+            
+            try session.saveMessage(payload: message, for: searchQuery)
+        }
+    }
+    
+    func createMessages(
+        ids: [MessageId] = [.unique],
+        cid: ChannelId = .unique,
+        searchQuery: MessageSearchQuery,
+        clearAll: Bool = false
+    ) throws {
+        try writeSynchronously { session in
+            if clearAll {
+                let searchDTO = session.saveQuery(query: searchQuery)
+                searchDTO.messages.removeAll()
+            }
+            
+            let channelPayload = XCTestCase().dummyPayload(with: cid)
+            
+            try session.saveChannel(payload: channelPayload)
+            
+            try ids.forEach {
+                let message: MessagePayload = .dummy(
+                    messageId: $0,
+                    authorUserId: .unique,
+                    channel: channelPayload.channel
+                )
+                
+                try session.saveMessage(payload: message, for: searchQuery)
+            }
+        }
+    }
+    
     func createMember(
         userId: UserId = .unique,
         role: MemberRole = .member,
