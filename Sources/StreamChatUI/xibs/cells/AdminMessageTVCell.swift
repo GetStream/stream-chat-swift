@@ -85,30 +85,29 @@ class AdminMessageTVCell: UITableViewCell {
         return descText
     }
     private func getGroupChatAdminMessage() -> String {
-        
-        guard let members = content?.extraData.adminMessageMembers else {
+        if let members = content?.extraData.adminMessageMembers?.filter { $0.key != ChatClient.shared.currentUserId }.sorted(by: { $0.key > $1.key }) {
+            if (content?.isSentByCurrentUser ?? false) {
+                let otherUserName = fetchRawData(raw: members.first?.value ?? .string("")) as? String ?? ""
+                var joiningText = "You created this group with \(otherUserName)"
+                //
+                if members.count > 2 {
+                    joiningText.append(" and \(members.count - 2) other.")
+                }
+                joiningText.append("\nTry using the menu item to share with others.")
+                return joiningText
+            } else {
+                let authorName = (content?.author.name ?? "").capitalizingFirstLetter()
+                var joiningText = "\(authorName) created this group with you"
+                //
+                if members.count > 2 {
+                    joiningText.append(" and \(members.count - 2) other.")
+                }
+                joiningText.append("\nTry using the menu item to share with others.")
+                return joiningText
+            }
+        } else {
             return content?.extraData.adminMessage ?? "Group Created\nTry using the menu item to share with others"
         }
-        if (content?.isSentByCurrentUser ?? false) {
-            let otherUserName = fetchRawData(raw: members.randomElement()!.value) as? String ?? ""
-            var joiningText = "You created this group with \(otherUserName)"
-            //
-            if members.count > 2 {
-                joiningText.append(" and \(members.count - 2) other.")
-            }
-            joiningText.append("\nTry using the menu item to share with others.")
-            return joiningText
-        } else {
-            let authorName = (content?.author.name ?? "").capitalizingFirstLetter()
-            var joiningText = "\(authorName) created this group with you"
-            //
-            if members.count > 2 {
-                joiningText.append(" and \(members.count - 2) other.")
-            }
-            joiningText.append("\nTry using the menu item to share with others.")
-            return joiningText
-        }
-        
     }
 
 }
