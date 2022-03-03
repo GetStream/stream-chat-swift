@@ -212,8 +212,7 @@ class SyncRepository {
             case let .success(payload):
                 log.info("Processing pending events. Count \(payload.eventPayloads.count)", subsystems: .offlineSupport)
                 self?.processMissingEventsPayload(payload) {
-                    #warning("Test first or last")
-                    self?.updateUserValue({ $0?.lastSynchedEventDate = payload.eventPayloads.first?.createdAt ?? date }) { error in
+                    self?.updateUserValue({ $0?.lastSynchedEventDate = payload.eventPayloads.last?.createdAt ?? date }) { error in
                         if let error = error {
                             completion(.failure(error))
                         } else {

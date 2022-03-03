@@ -121,7 +121,7 @@ final class SyncRepository_Tests: XCTestCase {
         waitForSyncLocalStateRun(requestResult: .success(payload))
 
         // Should use first event's created at date
-        XCTAssertEqual(lastSyncAtValue, firstEventDate)
+        XCTAssertEqual(lastSyncAtValue, secondEventDate)
         // Write: API Response, lastSyncAt
         XCTAssertEqual(database.writeSessionCounter, 2)
         XCTAssertEqual(repository.activeChannelControllers.count, 0)
@@ -368,7 +368,7 @@ final class SyncRepository_Tests: XCTestCase {
         XCTAssertEqual(channel?.messages.count, 2)
         XCTAssertEqual(channelIds.count, 1)
         XCTAssertEqual(channelIds.first, cid)
-        XCTAssertEqual(lastSyncAtValue, payload.eventPayloads.first?.createdAt)
+        XCTAssertEqual(lastSyncAtValue, payload.eventPayloads.last?.createdAt)
     }
 
     private func getSyncExistingChannelEventsResult(requestResult: Result<MissingEventsPayload, Error>? = nil)
